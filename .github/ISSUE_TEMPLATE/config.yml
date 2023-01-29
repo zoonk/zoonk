@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+
+contact_links:
+  - name: 🐛 Report a problem
+    url: https://github.com/zoonk/zoonk/discussions/new?category=bugs
+    about: Report a problem that needs to be fixed.
+
+  - name: 💡 Make a suggestion
+    url: https://github.com/zoonk/zoonk/discussions/new?category=ideas
+    about: Share any ideas you have to improve how we work.
+
+  - name: 🙏 Ask a question
+    url: https://github.com/zoonk/zoonk/discussions/new?category=q-a
+    about: Ask any questions you have.
