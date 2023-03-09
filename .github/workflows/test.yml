@@ -84,7 +84,8 @@ jobs:
       run: mix credo --strict
 
     - name: Scan security vulnerabilities
-      run: mix sobelow --exit
+      # We ignore `Config.Headers` because we're using a custom plug for CSP headers and sobelow doesn't identify it.
+      run: mix sobelow -i Config.Headers --exit
 
     - name: Audit dependencies
       run: mix deps.audit
