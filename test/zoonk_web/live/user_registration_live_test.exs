@@ -44,7 +44,13 @@ defmodule ZoonkWeb.UserRegistrationLiveTest do
       {:ok, lv, _html} = live(conn, ~p"/users/register")
 
       email = unique_user_email()
-      form = form(lv, "#registration_form", user: valid_user_attributes(email: email))
+      username = unique_user_username()
+
+      form =
+        form(lv, "#registration_form",
+          user: valid_user_attributes(email: email, username: username)
+        )
+
       render_submit(form)
       conn = follow_trigger_action(form, conn)
 
