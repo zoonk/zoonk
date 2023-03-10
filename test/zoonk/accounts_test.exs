@@ -97,21 +97,28 @@ defmodule Zoonk.AccountsTest do
   end
 
   describe "register_user/1" do
-    test "requires email, username and password to be set" do
+    test "requires email, username, date of birth, and password to be set" do
       {:error, changeset} = Accounts.register_user(%{})
 
       assert %{
                password: ["can't be blank"],
+               date_of_birth: ["can't be blank"],
                username: ["can't be blank"],
                email: ["can't be blank"]
              } = errors_on(changeset)
     end
 
-    test "validates email and password when given" do
+    test "validates email, username, date of birth and password when given" do
       {:error, changeset} =
-        Accounts.register_user(%{email: "not valid", username: "sh", password: "invalid"})
+        Accounts.register_user(%{
+          email: "not valid",
+          username: "sh",
+          date_of_birth: "89-24-12",
+          password: "invalid"
+        })
 
       assert %{
+               date_of_birth: ["is invalid"],
                email: ["must have the @ sign and no spaces"],
                username: ["should be at least 3 character(s)"],
                password: [
@@ -173,7 +180,7 @@ defmodule Zoonk.AccountsTest do
   describe "change_user_registration/2" do
     test "returns a changeset" do
       assert %Ecto.Changeset{} = changeset = Accounts.change_user_registration(%User{})
-      assert changeset.required == [:password, :username, :email]
+      assert changeset.required == [:password, :date_of_birth, :username, :email]
     end
 
     test "allows fields to be set" do
@@ -221,7 +228,7 @@ defmodule Zoonk.AccountsTest do
       user1 = user_fixture(username: "user1")
       user2 = user_fixture(username: "user2")
 
-      {:error, changeset} = Accounts.update_user_username(user2, %{username: "user1"})
+      {:error, changeset} = Accounts.update_user_username(user2, %{username: user1.username})
 
       assert "has already been taken" in errors_on(changeset).username
     end

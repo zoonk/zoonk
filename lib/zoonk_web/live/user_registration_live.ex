@@ -42,6 +42,14 @@ defmodule ZoonkWeb.UserRegistrationLive do
         />
 
         <.input
+          field={@form[:date_of_birth]}
+          type="date"
+          label="Date of birth"
+          autocomplete="bday"
+          required
+        />
+
+        <.input
           field={@form[:password]}
           type="password"
           label="Password"

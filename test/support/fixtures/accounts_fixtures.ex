@@ -6,12 +6,14 @@ defmodule Zoonk.AccountsFixtures do
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
   def unique_user_username, do: "user#{System.unique_integer()}"
+  def valid_user_date_of_birth, do: "1989-12-24"
   def valid_user_password, do: "User1234"
 
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
       email: unique_user_email(),
       username: unique_user_username(),
+      date_of_birth: valid_user_date_of_birth(),
       password: valid_user_password()
     })
   end

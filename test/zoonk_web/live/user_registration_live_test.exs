@@ -29,9 +29,12 @@ defmodule ZoonkWeb.UserRegistrationLiveTest do
       result =
         lv
         |> element("#registration_form")
-        |> render_change(user: %{"email" => "with spaces", "password" => "short"})
+        |> render_change(
+          user: %{"email" => "with spaces", "date_of_birth" => "89-24-12", "password" => "short"}
+        )
 
       assert result =~ "Register"
+      assert result =~ "is invalid"
       assert result =~ "at least one digit or punctuation character"
       assert result =~ "at least one upper case character"
       assert result =~ "must have the @ sign and no spaces"

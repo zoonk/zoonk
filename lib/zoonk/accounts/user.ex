@@ -8,6 +8,7 @@ defmodule Zoonk.Accounts.User do
   schema "users" do
     field :email, :string
     field :username, :string
+    field :date_of_birth, :date
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
@@ -40,9 +41,10 @@ defmodule Zoonk.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :username, :password])
+    |> cast(attrs, [:email, :username, :date_of_birth, :password])
     |> validate_email(opts)
     |> validate_username(opts)
+    |> validate_date_of_birth()
     |> validate_password(opts)
   end
 
@@ -59,6 +61,10 @@ defmodule Zoonk.Accounts.User do
     |> validate_required([:username])
     |> validate_length(:username, min: 3, max: 30)
     |> maybe_validate_unique_username(opts)
+  end
+
+  defp validate_date_of_birth(changeset) do
+    changeset |> validate_required([:date_of_birth])
   end
 
   defp validate_password(changeset, opts) do
