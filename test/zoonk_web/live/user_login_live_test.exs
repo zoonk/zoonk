@@ -33,7 +33,9 @@ defmodule ZoonkWeb.UserLoginLiveTest do
       {:ok, lv, _html} = live(conn, ~p"/users/log_in")
 
       form =
-        form(lv, "#login_form", user: %{email: user.email, password: password, remember_me: true})
+        form(lv, "#login_form",
+          user: %{email_or_username: user.email, password: password, remember_me: true}
+        )
 
       conn = submit_form(form, conn)
 
@@ -47,14 +49,30 @@ defmodule ZoonkWeb.UserLoginLiveTest do
 
       form =
         form(lv, "#login_form",
-          user: %{email: "test@email.com", password: "123456", remember_me: true}
+          user: %{email_or_username: "test@email.com", password: "123456", remember_me: true}
         )
 
       conn = submit_form(form, conn)
 
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invalid email or password"
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invalid email/username or password"
 
       assert redirected_to(conn) == "/users/log_in"
+    end
+
+    test "user authentication using username", %{conn: conn} do
+      password = "ValidPassword1"
+      user = user_fixture(%{password: password})
+
+      {:ok, lv, _html} = live(conn, ~p"/users/log_in")
+
+      form =
+        form(lv, "#login_form",
+          user: %{email_or_username: user.username, password: password, remember_me: true}
+        )
+
+      conn = submit_form(form, conn)
+
+      assert redirected_to(conn) == ~p"/"
     end
   end
 

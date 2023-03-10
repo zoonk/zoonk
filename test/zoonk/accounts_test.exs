@@ -18,21 +18,68 @@ defmodule Zoonk.AccountsTest do
     end
   end
 
-  describe "get_user_by_email_and_password/2" do
+  describe "get_user_by_username/1" do
+    test "does not return the user if the username does not exist" do
+      refute Accounts.get_user_by_username("unknown")
+    end
+
+    test "returns the user if the username exists" do
+      %{id: id} = user = user_fixture()
+      assert %User{id: ^id} = Accounts.get_user_by_username(user.username)
+    end
+  end
+
+  describe "get_user_by_username_or_password/1" do
     test "does not return the user if the email does not exist" do
-      refute Accounts.get_user_by_email_and_password("unknown@example.com", "hello world!")
+      refute Accounts.get_user_by_email_or_username("unknown@example.com")
+    end
+
+    test "returns the user if the email exists" do
+      %{id: id} = user = user_fixture()
+      assert %User{id: ^id} = Accounts.get_user_by_email_or_username(user.email)
+    end
+
+    test "does not return the user if the username does not exist" do
+      refute Accounts.get_user_by_email_or_username("unknown")
+    end
+
+    test "returns the user if the username exists" do
+      %{id: id} = user = user_fixture()
+      assert %User{id: ^id} = Accounts.get_user_by_email_or_username(user.username)
+    end
+  end
+
+  describe "get_user_by_email_or_username_and_password/2" do
+    test "does not return the user if the email does not exist" do
+      refute Accounts.get_user_by_email_or_username_and_password(
+               "unknown@example.com",
+               "hello world!"
+             )
     end
 
     test "does not return the user if the password is not valid" do
       user = user_fixture()
-      refute Accounts.get_user_by_email_and_password(user.email, "invalid")
+      refute Accounts.get_user_by_email_or_username_and_password(user.email, "invalid")
     end
 
     test "returns the user if the email and password are valid" do
       %{id: id} = user = user_fixture()
 
       assert %User{id: ^id} =
-               Accounts.get_user_by_email_and_password(user.email, valid_user_password())
+               Accounts.get_user_by_email_or_username_and_password(
+                 user.email,
+                 valid_user_password()
+               )
+    end
+
+    test "returns the user if the username and password are valid" do
+      %{id: id} = user = user_fixture()
+
+      assert %User{id: ^id} =
+               Accounts.get_user_by_email_or_username_and_password(
+                 user.username,
+                 valid_user_password()
+               )
     end
   end
 
@@ -76,7 +123,7 @@ defmodule Zoonk.AccountsTest do
     end
 
     test "requires email to have at least one lower case character" do
-      %{id: id} = user = user_fixture()
+      user = user_fixture()
       {:error, changeset} = Accounts.register_user(%{email: user.email, password: "INVALID1234"})
 
       assert %{password: ["at least one lower case character"]} = errors_on(changeset)
@@ -330,7 +377,7 @@ defmodule Zoonk.AccountsTest do
         })
 
       assert is_nil(user.password)
-      assert Accounts.get_user_by_email_and_password(user.email, "ValidPassword1")
+      assert Accounts.get_user_by_email_or_username_and_password(user.email, "ValidPassword1")
     end
 
     test "deletes all tokens for the given user", %{user: user} do
@@ -522,7 +569,7 @@ defmodule Zoonk.AccountsTest do
     test "updates the password", %{user: user} do
       {:ok, updated_user} = Accounts.reset_user_password(user, %{password: "ValidPassword1"})
       assert is_nil(updated_user.password)
-      assert Accounts.get_user_by_email_and_password(user.email, "ValidPassword1")
+      assert Accounts.get_user_by_email_or_username_and_password(user.email, "ValidPassword1")
     end
 
     test "deletes all tokens for the given user", %{user: user} do

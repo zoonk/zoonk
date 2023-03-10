@@ -16,7 +16,14 @@ defmodule ZoonkWeb.UserLoginLive do
       </.header>
 
       <.simple_form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
-        <.input field={@form[:email]} type="email" label="Email" required />
+        <.input
+          field={@form[:email_or_username]}
+          type="text"
+          label="Email or username"
+          autocomplete="username"
+          required
+        />
+
         <.input field={@form[:password]} type="password" label="Password" required />
 
         <:actions>
@@ -36,8 +43,8 @@ defmodule ZoonkWeb.UserLoginLive do
   end
 
   def mount(_params, _session, socket) do
-    email = live_flash(socket.assigns.flash, :email)
-    form = to_form(%{"email" => email}, as: "user")
+    email_or_username = live_flash(socket.assigns.flash, :email_or_username)
+    form = to_form(%{"email_or_username" => email_or_username}, as: "user")
     {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
   end
 end

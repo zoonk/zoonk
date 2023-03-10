@@ -27,20 +27,59 @@ defmodule Zoonk.Accounts do
   end
 
   @doc """
+  Gets a user by username.
+
+  ## Examples
+
+      iex> get_user_by_username("mariecurie")
+      %User{}
+
+      iex> get_user_by_username("unknown")
+      nil
+
+  """
+  def get_user_by_username(username) when is_binary(username) do
+    Repo.get_by(User, username: username)
+  end
+
+  @doc """
+  Gets a user by either their email address or username.
+
+  ## Examples
+
+      iex> get_user_by_email_or_username("foo@example.com")
+      %User{}
+
+      iex> get_user_by_username("davinci")
+      %User{}
+
+  """
+  def get_user_by_email_or_username(email_or_username) do
+    if String.contains?(email_or_username, "@") do
+      get_user_by_email(email_or_username)
+    else
+      get_user_by_username(email_or_username)
+    end
+  end
+
+  @doc """
   Gets a user by email and password.
 
   ## Examples
 
-      iex> get_user_by_email_and_password("foo@example.com", "correct_password")
+      iex> get_user_by_email_or_username_and_password("foo@example.com", "correct_password")
       %User{}
 
-      iex> get_user_by_email_and_password("foo@example.com", "invalid_password")
+      iex> get_user_by_email_or_username_and_password("adalovelace", "correct_password")
+      %User{}
+
+      iex> get_user_by_email_or_username_and_password("foo@example.com", "invalid_password")
       nil
 
   """
-  def get_user_by_email_and_password(email, password)
-      when is_binary(email) and is_binary(password) do
-    user = Repo.get_by(User, email: email)
+  def get_user_by_email_or_username_and_password(email_or_username, password)
+      when is_binary(email_or_username) and is_binary(password) do
+    user = get_user_by_email_or_username(email_or_username)
     if User.valid_password?(user, password), do: user
   end
 

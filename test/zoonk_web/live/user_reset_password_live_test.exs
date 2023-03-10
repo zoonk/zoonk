@@ -68,7 +68,7 @@ defmodule ZoonkWeb.UserResetPasswordLiveTest do
 
       refute get_session(conn, :user_token)
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Password reset successfully"
-      assert Accounts.get_user_by_email_and_password(user.email, "ValidPassword1")
+      assert Accounts.get_user_by_email_or_username_and_password(user.email, "ValidPassword1")
     end
 
     test "does not reset password on invalid data", %{conn: conn, token: token} do
