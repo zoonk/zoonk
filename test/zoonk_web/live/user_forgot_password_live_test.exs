@@ -1,4 +1,5 @@
 defmodule ZoonkWeb.UserForgotPasswordLiveTest do
+  @moduledoc false
   use ZoonkWeb.ConnCase
 
   import Phoenix.LiveViewTest

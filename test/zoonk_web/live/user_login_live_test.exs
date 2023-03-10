@@ -1,4 +1,5 @@
 defmodule ZoonkWeb.UserLoginLiveTest do
+  @moduledoc false
   use ZoonkWeb.ConnCase
 
   import Phoenix.LiveViewTest
@@ -26,7 +27,7 @@ defmodule ZoonkWeb.UserLoginLiveTest do
 
   describe "user login" do
     test "redirects if user login with valid credentials", %{conn: conn} do
-      password = "123456789abcd"
+      password = "ValidPassword1"
       user = user_fixture(%{password: password})
 
       {:ok, lv, _html} = live(conn, ~p"/users/log_in")

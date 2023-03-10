@@ -1,4 +1,5 @@
 defmodule ZoonkWeb.UserRegistrationLiveTest do
+  @moduledoc false
   use ZoonkWeb.ConnCase
 
   import Phoenix.LiveViewTest
@@ -28,11 +29,13 @@ defmodule ZoonkWeb.UserRegistrationLiveTest do
       result =
         lv
         |> element("#registration_form")
-        |> render_change(user: %{"email" => "with spaces", "password" => "too short"})
+        |> render_change(user: %{"email" => "with spaces", "password" => "short"})
 
       assert result =~ "Register"
+      assert result =~ "at least one digit or punctuation character"
+      assert result =~ "at least one upper case character"
       assert result =~ "must have the @ sign and no spaces"
-      assert result =~ "should be at least 12 character"
+      assert result =~ "should be at least 8 character"
     end
   end
 

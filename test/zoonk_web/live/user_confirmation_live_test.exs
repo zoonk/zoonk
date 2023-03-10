@@ -1,4 +1,5 @@
 defmodule ZoonkWeb.UserConfirmationLiveTest do
+  @moduledoc false
   use ZoonkWeb.ConnCase
 
   import Phoenix.LiveViewTest
