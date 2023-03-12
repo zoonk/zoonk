@@ -48,11 +48,9 @@ defmodule ZoonkWeb.UserRegistrationLiveTest do
 
       email = unique_user_email()
       username = unique_user_username()
+      user = valid_user_attributes(email: email, username: username)
 
-      form =
-        form(lv, "#registration_form",
-          user: valid_user_attributes(email: email, username: username)
-        )
+      form = form(lv, "#registration_form", user: user)
 
       render_submit(form)
       conn = follow_trigger_action(form, conn)
@@ -63,6 +61,9 @@ defmodule ZoonkWeb.UserRegistrationLiveTest do
       conn = get(conn, "/")
       response = html_response(conn, 200)
       assert response =~ email
+      assert response =~ user.first_name
+      assert response =~ user.last_name
+      assert response =~ username
       assert response =~ "Settings"
       assert response =~ "Log out"
     end
@@ -75,8 +76,21 @@ defmodule ZoonkWeb.UserRegistrationLiveTest do
       result =
         lv
         |> form("#registration_form",
-          user: %{"email" => user.email, "password" => "valid_password"}
+          user: %{"email" => user.email, "password" => "ValidPassword1"}
         )
+        |> render_submit()
+
+      assert result =~ "has already been taken"
+    end
+
+    test "renders errors for duplicated username", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      user = user_fixture(%{username: "duplicated_username"})
+
+      result =
+        lv
+        |> form("#registration_form", user: %{"username" => user.username})
         |> render_submit()
 
       assert result =~ "has already been taken"

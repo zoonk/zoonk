@@ -9,8 +9,13 @@ defmodule Zoonk.AccountsFixtures do
   def valid_user_date_of_birth, do: "1989-12-24"
   def valid_user_password, do: "User1234"
 
+  @doc """
+  Get a user with valid attributes.
+  """
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
+      first_name: "Marie",
+      last_name: "Curie",
       email: unique_user_email(),
       username: unique_user_username(),
       date_of_birth: valid_user_date_of_birth(),
@@ -18,6 +23,9 @@ defmodule Zoonk.AccountsFixtures do
     })
   end
 
+  @doc """
+  Create a valid user and register it in the database.
+  """
   def user_fixture(attrs \\ %{}) do
     {:ok, user} =
       attrs

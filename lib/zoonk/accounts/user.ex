@@ -6,6 +6,8 @@ defmodule Zoonk.Accounts.User do
   import Ecto.Changeset
 
   schema "users" do
+    field :first_name, :string
+    field :last_name, :string
     field :email, :string
     field :username, :string
     field :date_of_birth, :date
@@ -41,11 +43,11 @@ defmodule Zoonk.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :username, :date_of_birth, :password])
+    |> cast(attrs, [:first_name, :last_name, :email, :username, :date_of_birth, :password])
     |> validate_email(opts)
     |> validate_username(opts)
-    |> validate_date_of_birth()
     |> validate_password(opts)
+    |> validate_required([:first_name, :last_name, :date_of_birth])
   end
 
   defp validate_email(changeset, opts) do
@@ -61,10 +63,6 @@ defmodule Zoonk.Accounts.User do
     |> validate_required([:username])
     |> validate_length(:username, min: 3, max: 30)
     |> maybe_validate_unique_username(opts)
-  end
-
-  defp validate_date_of_birth(changeset) do
-    changeset |> validate_required([:date_of_birth])
   end
 
   defp validate_password(changeset, opts) do

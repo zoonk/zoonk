@@ -180,7 +180,15 @@ defmodule Zoonk.AccountsTest do
   describe "change_user_registration/2" do
     test "returns a changeset" do
       assert %Ecto.Changeset{} = changeset = Accounts.change_user_registration(%User{})
-      assert changeset.required == [:password, :date_of_birth, :username, :email]
+
+      assert changeset.required == [
+               :first_name,
+               :last_name,
+               :date_of_birth,
+               :password,
+               :username,
+               :email
+             ]
     end
 
     test "allows fields to be set" do

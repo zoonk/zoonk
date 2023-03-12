@@ -31,6 +31,22 @@ defmodule ZoonkWeb.UserRegistrationLive do
           Oops, something went wrong! Please check the errors below.
         </.error>
 
+        <.input
+          field={@form[:first_name]}
+          type="text"
+          label="First Name"
+          autocomplete="given-name"
+          required
+        />
+
+        <.input
+          field={@form[:last_name]}
+          type="text"
+          label="Last Name"
+          autocomplete="family-name"
+          required
+        />
+
         <.input field={@form[:email]} type="email" label="Email" autocomplete="email" required />
 
         <.input
