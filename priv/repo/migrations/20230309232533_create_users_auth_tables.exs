@@ -10,6 +10,7 @@ defmodule Zoonk.Repo.Migrations.CreateUsersAuthTables do
       add :email, :citext, null: false
       add :username, :citext, null: false
       add :date_of_birth, :date, null: false
+      add :language, :string, null: false
       add :hashed_password, :string, null: false
       add :confirmed_at, :naive_datetime
       timestamps()

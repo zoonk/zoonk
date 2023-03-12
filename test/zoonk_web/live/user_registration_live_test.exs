@@ -95,6 +95,16 @@ defmodule ZoonkWeb.UserRegistrationLiveTest do
 
       assert result =~ "has already been taken"
     end
+
+    test "use the browser's language as the default value", %{conn: conn} do
+      conn = put_req_header(conn, "accept-language", "pt-BR")
+
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      option = element(lv, ~s|option[value="pt"]|)
+
+      assert render(option) =~ "selected"
+    end
   end
 
   describe "registration navigation" do

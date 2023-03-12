@@ -6,14 +6,15 @@ defmodule Zoonk.Accounts.User do
   import Ecto.Changeset
 
   schema "users" do
-    field :first_name, :string
-    field :last_name, :string
-    field :email, :string
-    field :username, :string
-    field :date_of_birth, :date
-    field :password, :string, virtual: true, redact: true
-    field :hashed_password, :string, redact: true
     field :confirmed_at, :naive_datetime
+    field :date_of_birth, :date
+    field :email, :string
+    field :first_name, :string
+    field :hashed_password, :string, redact: true
+    field :language, Ecto.Enum, values: Zoonk.Language.supported_languages_keys()
+    field :last_name, :string
+    field :password, :string, virtual: true, redact: true
+    field :username, :string
 
     timestamps()
   end
@@ -43,11 +44,19 @@ defmodule Zoonk.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:first_name, :last_name, :email, :username, :date_of_birth, :password])
+    |> cast(attrs, [
+      :date_of_birth,
+      :email,
+      :first_name,
+      :language,
+      :last_name,
+      :password,
+      :username
+    ])
     |> validate_email(opts)
     |> validate_username(opts)
     |> validate_password(opts)
-    |> validate_required([:first_name, :last_name, :date_of_birth])
+    |> validate_required([:date_of_birth, :first_name, :language, :last_name])
   end
 
   defp validate_email(changeset, opts) do

@@ -13,6 +13,10 @@ defmodule ZoonkWeb.Router do
     plug :fetch_current_user
   end
 
+  pipeline :set_language do
+    plug ZoonkWeb.Plugs.SetLanguage
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -51,7 +55,7 @@ defmodule ZoonkWeb.Router do
   ## Authentication routes
 
   scope "/", ZoonkWeb do
-    pipe_through [:browser, :redirect_if_user_is_authenticated]
+    pipe_through [:browser, :redirect_if_user_is_authenticated, :set_language]
 
     live_session :redirect_if_user_is_authenticated,
       on_mount: [{ZoonkWeb.UserAuth, :redirect_if_user_is_authenticated}] do

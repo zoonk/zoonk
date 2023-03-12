@@ -66,6 +66,15 @@ defmodule ZoonkWeb.UserRegistrationLive do
         />
 
         <.input
+          field={@form[:language]}
+          type="select"
+          label="Language"
+          options={Zoonk.Language.language_options()}
+          value={@current_language}
+          required
+        />
+
+        <.input
           field={@form[:password]}
           type="password"
           label="Password"
@@ -81,11 +90,13 @@ defmodule ZoonkWeb.UserRegistrationLive do
     """
   end
 
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
+    language = Map.get(session, "language")
     changeset = Accounts.change_user_registration(%User{})
 
     socket =
       socket
+      |> assign(:current_language, language)
       |> assign(trigger_submit: false, check_errors: false)
       |> assign_form(changeset)
 

@@ -8,6 +8,7 @@ defmodule Zoonk.AccountsFixtures do
   def unique_user_username, do: "user#{System.unique_integer()}"
   def valid_user_date_of_birth, do: "1989-12-24"
   def valid_user_password, do: "User1234"
+  def valid_user_language, do: Zoonk.Language.supported_languages_keys() |> hd()
 
   @doc """
   Get a user with valid attributes.
@@ -19,6 +20,7 @@ defmodule Zoonk.AccountsFixtures do
       email: unique_user_email(),
       username: unique_user_username(),
       date_of_birth: valid_user_date_of_birth(),
+      language: valid_user_language(),
       password: valid_user_password()
     })
   end
