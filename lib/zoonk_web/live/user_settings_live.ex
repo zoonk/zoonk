@@ -68,13 +68,6 @@ defmodule ZoonkWeb.UserSettingsLive do
         value={@current_email}
       />
 
-      <.input field={@password_form[:password]} type="password" label="New password" required />
-
-      <.input
-        field={@password_form[:password_confirmation]}
-        type="password"
-        label="Confirm new password"
-      />
       <.input
         field={@password_form[:current_password]}
         name="current_password"
@@ -84,6 +77,22 @@ defmodule ZoonkWeb.UserSettingsLive do
         value={@current_password}
         required
       />
+
+      <.input
+        field={@password_form[:password]}
+        type="password"
+        label="New password"
+        autocomplete="new-password"
+        required
+      />
+
+      <.input
+        field={@password_form[:password_confirmation]}
+        type="password"
+        label="Confirm new password"
+        autocomplete="new-password"
+      />
+
       <:actions>
         <.button phx-disable-with="Changing...">Change Password</.button>
       </:actions>
@@ -147,7 +156,7 @@ defmodule ZoonkWeb.UserSettingsLive do
         socket =
           socket
           |> put_flash(:info, "Username updated successfully")
-          |> assign(trigger_submit: true, username_form: username_form)
+          |> assign(username_form: username_form, current_username: user_params["username"])
 
         {:noreply, socket}
 
