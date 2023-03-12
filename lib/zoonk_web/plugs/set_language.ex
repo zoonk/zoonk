@@ -25,7 +25,10 @@ defmodule ZoonkWeb.Plugs.SetLanguage do
 
   defp set_language(language, conn) do
     if language &&
-         Enum.member?(Zoonk.Language.supported_languages_keys(), String.to_atom(language)) do
+         Enum.member?(
+           Zoonk.Language.supported_languages_keys(),
+           String.to_existing_atom(language)
+         ) do
       put_session(conn, :language, language)
     else
       put_session(conn, :language, Zoonk.Language.supported_languages_keys() |> List.first())
