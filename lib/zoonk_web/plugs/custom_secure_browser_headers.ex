@@ -22,7 +22,7 @@ defmodule ZoonkWeb.Plugs.CustomSecureBrowserHeaders do
     do: %{"content-security-policy" => "style-src 'self' 'nonce-#{nonce}'"}
 
   defp get_csp_headers(_path, _nonce),
-    do: %{"content-security-policy" => "default-src 'self'"}
+    do: %{"content-security-policy" => "default-src 'self'; img-src 'self' data:"}
 
   defp generate_nonce(size \\ 10),
     do: size |> :crypto.strong_rand_bytes() |> Base.url_encode64(padding: false)
