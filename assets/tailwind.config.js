@@ -2,6 +2,7 @@
 // https://tailwindcss.com/docs/configuration
 
 const plugin = require("tailwindcss/plugin")
+const colors = require("tailwindcss/colors")
 const fs = require("fs")
 const path = require("path")
 
@@ -12,11 +13,57 @@ module.exports = {
     "../lib/*_web/**/*.*ex"
   ],
   theme: {
-    extend: {
-      colors: {
-        brand: "#FD4F00",
-      }
+    colors: {
+      transparent: 'transparent',
+      current: 'currentColor',
+      primary: {
+        light3x: colors.fuchsia[50],
+        light2x: colors.fuchsia[100],
+        light: colors.fuchsia[300],
+        DEFAULT: colors.fuchsia[500],
+        dark: colors.fuchsia[700],
+      },
+      alert: {
+        light3x: colors.pink[50],
+        light2x: colors.pink[100],
+        light: colors.pink[300],
+        DEFAULT: colors.pink[500],
+        dark: colors.pink[700]
+      },
+      info: {
+        light3x: colors.cyan[50],
+        light2x: colors.cyan[100],
+        light: colors.cyan[300],
+        DEFAULT: colors.cyan[500],
+        dark: colors.cyan[700]
+      },
+      success: {
+        light3x: colors.teal[50],
+        light2x: colors.teal[100],
+        light: colors.teal[300],
+        DEFAULT: colors.teal[500],
+        dark: colors.teal[700]
+      },
+      warning: {
+        light3x: colors.amber[50],
+        light2x: colors.amber[100],
+        light: colors.amber[300],
+        DEFAULT: colors.amber[500],
+        dark: colors.amber[700]
+      },
+      gray: {
+        light3x: colors.slate[50],
+        light2x: colors.slate[100],
+        light: colors.slate[300],
+        DEFAULT: colors.slate[500],
+        dark: colors.slate[700],
+      },
+      white: {
+        DEFAULT: colors.white,
+        dark: colors.slate[100],
+      },
     },
+    extends: {}
   },
   plugins: [
     require("@tailwindcss/forms"),

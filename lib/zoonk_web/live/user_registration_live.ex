@@ -11,7 +11,7 @@ defmodule ZoonkWeb.UserRegistrationLive do
         Register for an account
         <:subtitle>
           Already registered?
-          <.link navigate={~p"/users/log_in"} class="font-semibold text-brand hover:underline">
+          <.link navigate={~p"/users/log_in"} class="font-semibold text-primary hover:underline">
             Sign in
           </.link>
           to your account now.
