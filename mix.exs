@@ -85,7 +85,8 @@ defmodule Zoonk.MixProject do
         "sobelow -i Config.Headers",
         "deps.audit",
         "dialyzer"
-      ]
+      ],
+      locale: ["gettext.extract", "gettext.merge priv/gettext"]
     ]
   end
 end

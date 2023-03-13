@@ -5,7 +5,7 @@ defmodule ZoonkWeb.UserSettingsLive do
 
   def render(assigns) do
     ~H"""
-    <.header>Change Username</.header>
+    <.header><%= dgettext("auth", "Change Username") %></.header>
 
     <.simple_form
       for={@username_form}
@@ -16,18 +16,20 @@ defmodule ZoonkWeb.UserSettingsLive do
       <.input
         field={@username_form[:username]}
         type="text"
-        label="Username"
+        label={dgettext("auth", "Username")}
         autocomplete="username"
         required
         value={@current_username}
       />
 
       <:actions>
-        <.button phx-disable-with="Changing...">Change Username</.button>
+        <.button phx-disable-with={gettext("Changing...")}>
+          <%= dgettext("auth", "Change Username") %>
+        </.button>
       </:actions>
     </.simple_form>
 
-    <.header>Change Email</.header>
+    <.header><%= dgettext("auth", "Change Email") %></.header>
 
     <.simple_form
       for={@email_form}
@@ -36,21 +38,24 @@ defmodule ZoonkWeb.UserSettingsLive do
       phx-change="validate_email"
     >
       <.input field={@email_form[:email]} type="email" label="Email" required />
+
       <.input
         field={@email_form[:current_password]}
         name="current_password"
         id="current_password_for_email"
         type="password"
-        label="Current password"
+        label={dgettext("auth", "Current password")}
         value={@email_form_current_password}
         required
       />
       <:actions>
-        <.button phx-disable-with="Changing...">Change Email</.button>
+        <.button phx-disable-with={gettext("Changing...")}>
+          <%= dgettext("auth", "Change Email") %>
+        </.button>
       </:actions>
     </.simple_form>
 
-    <.header>Change Password</.header>
+    <.header><%= dgettext("auth", "Change Password") %></.header>
 
     <.simple_form
       for={@password_form}
@@ -72,7 +77,7 @@ defmodule ZoonkWeb.UserSettingsLive do
         field={@password_form[:current_password]}
         name="current_password"
         type="password"
-        label="Current password"
+        label={dgettext("auth", "Current password")}
         id="current_password_for_password"
         value={@current_password}
         required
@@ -81,7 +86,7 @@ defmodule ZoonkWeb.UserSettingsLive do
       <.input
         field={@password_form[:password]}
         type="password"
-        label="New password"
+        label={dgettext("auth", "New password")}
         autocomplete="new-password"
         required
       />
@@ -89,12 +94,14 @@ defmodule ZoonkWeb.UserSettingsLive do
       <.input
         field={@password_form[:password_confirmation]}
         type="password"
-        label="Confirm new password"
+        label={dgettext("auth", "Confirm new password")}
         autocomplete="new-password"
       />
 
       <:actions>
-        <.button phx-disable-with="Changing...">Change Password</.button>
+        <.button phx-disable-with={gettext("Changing...")}>
+          <%= dgettext("auth", "Change Password") %>
+        </.button>
       </:actions>
     </.simple_form>
     """
@@ -104,10 +111,14 @@ defmodule ZoonkWeb.UserSettingsLive do
     socket =
       case Accounts.update_user_email(socket.assigns.current_user, token) do
         :ok ->
-          put_flash(socket, :info, "Email changed successfully.")
+          put_flash(socket, :info, dgettext("auth", "Email changed successfully."))
 
         :error ->
-          put_flash(socket, :error, "Email change link is invalid or it has expired.")
+          put_flash(
+            socket,
+            :error,
+            dgettext("auth", "Email change link is invalid or it has expired.")
+          )
       end
 
     {:ok, push_navigate(socket, to: ~p"/users/settings")}
@@ -155,7 +166,7 @@ defmodule ZoonkWeb.UserSettingsLive do
 
         socket =
           socket
-          |> put_flash(:info, "Username updated successfully")
+          |> put_flash(:info, dgettext("auth", "Username updated successfully"))
           |> assign(username_form: username_form, current_username: user_params["username"])
 
         {:noreply, socket}
@@ -163,7 +174,7 @@ defmodule ZoonkWeb.UserSettingsLive do
       {:error, changeset} ->
         socket =
           socket
-          |> put_flash(:error, "Error updating username")
+          |> put_flash(:error, dgettext("auth", "Error updating username"))
           |> assign(username_form: to_form(changeset))
 
         {:noreply, socket}
@@ -194,7 +205,12 @@ defmodule ZoonkWeb.UserSettingsLive do
           &url(~p"/users/settings/confirm_email/#{&1}")
         )
 
-        info = "A link to confirm your email change has been sent to the new address."
+        info =
+          dgettext(
+            "auth",
+            "A link to confirm your email change has been sent to the new address."
+          )
+
         {:noreply, socket |> put_flash(:info, info) |> assign(email_form_current_password: nil)}
 
       {:error, changeset} ->

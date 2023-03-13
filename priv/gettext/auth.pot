@@ -1,0 +1,325 @@
+## This file is a PO Template file.
+##
+## "msgid"s here are often extracted from source code.
+## Add new messages manually only if they're dynamic
+## messages that can't be statically extracted.
+##
+## Run "mix gettext.extract" to bring this file up to
+## date. Leave "msgstr"s empty as changing them here has no
+## effect: edit them in PO (.po) files instead.
+#
+msgid ""
+msgstr ""
+
+#: lib/zoonk_web/live/user_settings_live.ex:209
+#, elixir-autogen, elixir-format
+msgid "A link to confirm your email change has been sent to the new address."
+msgstr ""
+
+#: lib/zoonk_web/controllers/user_session_controller.ex:8
+#, elixir-autogen, elixir-format
+msgid "Account created successfully!"
+msgstr ""
+
+#: lib/zoonk_web/live/user_registration_live.ex:13
+#, elixir-autogen, elixir-format
+msgid "Already registered?"
+msgstr ""
+
+#: lib/zoonk_web/live/user_registration_live.ex:32
+#, elixir-autogen, elixir-format
+msgid "Basic information"
+msgstr ""
+
+#: lib/zoonk_web/live/user_settings_live.ex:32
+#: lib/zoonk_web/live/user_settings_live.ex:53
+#, elixir-autogen, elixir-format
+msgid "Change Email"
+msgstr ""
+
+#: lib/zoonk_web/live/user_settings_live.ex:58
+#: lib/zoonk_web/live/user_settings_live.ex:103
+#, elixir-autogen, elixir-format
+msgid "Change Password"
+msgstr ""
+
+#: lib/zoonk_web/live/user_settings_live.ex:8
+#: lib/zoonk_web/live/user_settings_live.ex:27
+#, elixir-autogen, elixir-format
+msgid "Change Username"
+msgstr ""
+
+#: lib/zoonk_web/live/user_confirmation_live.ex:9
+#, elixir-autogen, elixir-format
+msgid "Confirm Account"
+msgstr ""
+
+#: lib/zoonk_web/live/user_confirmation_live.ex:16
+#, elixir-autogen, elixir-format
+msgid "Confirm my account"
+msgstr ""
+
+#: lib/zoonk_web/live/user_reset_password_live.ex:31
+#: lib/zoonk_web/live/user_settings_live.ex:97
+#, elixir-autogen, elixir-format
+msgid "Confirm new password"
+msgstr ""
+
+#: lib/zoonk_web/live/user_registration_live.ex:116
+#, elixir-autogen, elixir-format
+msgid "Create an account"
+msgstr ""
+
+#: lib/zoonk_web/live/user_registration_live.ex:115
+#, elixir-autogen, elixir-format
+msgid "Creating account..."
+msgstr ""
+
+#: lib/zoonk_web/live/user_registration_live.ex:80
+#, elixir-autogen, elixir-format
+msgid "Credentials"
+msgstr ""
+
+#: lib/zoonk_web/live/user_settings_live.ex:47
+#: lib/zoonk_web/live/user_settings_live.ex:80
+#, elixir-autogen, elixir-format
+msgid "Current password"
+msgstr ""
+
+#: lib/zoonk_web/live/user_registration_live.ex:65
+#, elixir-autogen, elixir-format
+msgid "Date of birth"
+msgstr ""
+
+#: lib/zoonk_web/live/user_login_live.ex:11
+#, elixir-autogen, elixir-format
+msgid "Don't have an account?"
+msgstr ""
+
+#: lib/zoonk_web/live/user_confirmation_instructions_live.ex:11
+#: lib/zoonk_web/live/user_forgot_password_live.ex:18
+#: lib/zoonk_web/live/user_registration_live.ex:93
+#, elixir-autogen, elixir-format
+msgid "Email"
+msgstr ""
+
+#: lib/zoonk_web/live/user_settings_live.ex:120
+#, elixir-autogen, elixir-format
+msgid "Email change link is invalid or it has expired."
+msgstr ""
+
+#: lib/zoonk_web/live/user_settings_live.ex:114
+#, elixir-autogen, elixir-format
+msgid "Email changed successfully."
+msgstr ""
+
+#: lib/zoonk_web/live/user_login_live.ex:24
+#, elixir-autogen, elixir-format
+msgid "Email or username"
+msgstr ""
+
+#: lib/zoonk_web/live/user_settings_live.ex:177
+#, elixir-autogen, elixir-format
+msgid "Error updating username"
+msgstr ""
+
+#: lib/zoonk_web/live/user_registration_live.ex:49
+#, elixir-autogen, elixir-format
+msgid "First Name"
+msgstr ""
+
+#: lib/zoonk_web/live/user_forgot_password_live.ex:10
+#: lib/zoonk_web/live/user_login_live.ex:44
+#, elixir-autogen, elixir-format
+msgid "Forgot your password?"
+msgstr ""
+
+#: lib/zoonk_web/live/user_confirmation_instructions_live.ex:41
+#, elixir-autogen, elixir-format
+msgid "If your email is in our system and it has not been confirmed yet, you will receive an email with instructions shortly."
+msgstr ""
+
+#: lib/zoonk_web/live/user_forgot_password_live.ex:49
+#, elixir-autogen, elixir-format
+msgid "If your email is in our system, you will receive instructions to reset your password shortly."
+msgstr ""
+
+#: lib/zoonk_web/controllers/user_session_controller.ex:37
+#, elixir-autogen, elixir-format
+msgid "Invalid email/username or password"
+msgstr ""
+
+#: lib/zoonk_web/live/user_login_live.ex:40
+#, elixir-autogen, elixir-format
+msgid "Keep me logged in"
+msgstr ""
+
+#: lib/zoonk_web/live/user_registration_live.ex:73
+#, elixir-autogen, elixir-format
+msgid "Language"
+msgstr ""
+
+#: lib/zoonk_web/live/user_registration_live.ex:57
+#, elixir-autogen, elixir-format
+msgid "Last Name"
+msgstr ""
+
+#: lib/zoonk_web/components/layouts/root.html.heex:51
+#: lib/zoonk_web/live/user_confirmation_instructions_live.ex:23
+#: lib/zoonk_web/live/user_confirmation_live.ex:24
+#: lib/zoonk_web/live/user_forgot_password_live.ex:30
+#: lib/zoonk_web/live/user_reset_password_live.ex:45
+#, elixir-autogen, elixir-format
+msgid "Log in"
+msgstr ""
+
+#: lib/zoonk_web/controllers/user_session_controller.ex:45
+#, elixir-autogen, elixir-format
+msgid "Logged out successfully."
+msgstr ""
+
+#: lib/zoonk_web/live/user_reset_password_live.ex:24
+#: lib/zoonk_web/live/user_settings_live.ex:89
+#, elixir-autogen, elixir-format
+msgid "New password"
+msgstr ""
+
+#: lib/zoonk_web/live/user_login_live.ex:32
+#: lib/zoonk_web/live/user_registration_live.ex:109
+#, elixir-autogen, elixir-format
+msgid "Password"
+msgstr ""
+
+#: lib/zoonk_web/live/user_reset_password_live.ex:73
+#, elixir-autogen, elixir-format
+msgid "Password reset successfully."
+msgstr ""
+
+#: lib/zoonk_web/controllers/user_session_controller.ex:14
+#, elixir-autogen, elixir-format
+msgid "Password updated successfully!"
+msgstr ""
+
+#: lib/zoonk_web/components/layouts/root.html.heex:43
+#: lib/zoonk_web/live/user_confirmation_instructions_live.ex:21
+#: lib/zoonk_web/live/user_confirmation_live.ex:22
+#: lib/zoonk_web/live/user_forgot_password_live.ex:28
+#: lib/zoonk_web/live/user_reset_password_live.ex:43
+#, elixir-autogen, elixir-format
+msgid "Register"
+msgstr ""
+
+#: lib/zoonk_web/live/user_registration_live.ex:11
+#, elixir-autogen, elixir-format
+msgid "Register for an account"
+msgstr ""
+
+#: lib/zoonk_web/live/user_confirmation_instructions_live.ex:8
+#: lib/zoonk_web/live/user_confirmation_instructions_live.ex:15
+#, elixir-autogen, elixir-format
+msgid "Resend confirmation instructions"
+msgstr ""
+
+#: lib/zoonk_web/live/user_reset_password_live.ex:9
+#: lib/zoonk_web/live/user_reset_password_live.ex:37
+#, elixir-autogen, elixir-format
+msgid "Reset Password"
+msgstr ""
+
+#: lib/zoonk_web/live/user_reset_password_live.ex:91
+#, elixir-autogen, elixir-format
+msgid "Reset password link is invalid or it has expired."
+msgstr ""
+
+#: lib/zoonk_web/live/user_forgot_password_live.ex:22
+#, elixir-autogen, elixir-format
+msgid "Send password reset instructions"
+msgstr ""
+
+#: lib/zoonk_web/live/user_login_live.ex:50
+#: lib/zoonk_web/live/user_registration_live.ex:16
+#, elixir-autogen, elixir-format
+msgid "Sign in"
+msgstr ""
+
+#: lib/zoonk_web/live/user_login_live.ex:8
+#, elixir-autogen, elixir-format
+msgid "Sign in to account"
+msgstr ""
+
+#: lib/zoonk_web/live/user_login_live.ex:14
+#, elixir-autogen, elixir-format
+msgid "Sign up"
+msgstr ""
+
+#: lib/zoonk_web/live/user_login_live.ex:49
+#, elixir-autogen, elixir-format
+msgid "Signing in..."
+msgstr ""
+
+#: lib/zoonk_web/live/user_registration_live.ex:83
+#, elixir-autogen, elixir-format
+msgid "This is how you access your account. You'll be able to login using either your email address or password."
+msgstr ""
+
+#: lib/zoonk_web/live/user_registration_live.ex:35
+#, elixir-autogen, elixir-format
+msgid "This is your profile information. You won't be able to edit your name or date of birth after registration."
+msgstr ""
+
+#: lib/zoonk_web/live/user_confirmation_live.ex:59
+#, elixir-autogen, elixir-format
+msgid "User confirmation link is invalid or it has expired."
+msgstr ""
+
+#: lib/zoonk_web/live/user_confirmation_live.ex:42
+#, elixir-autogen, elixir-format
+msgid "User confirmed successfully."
+msgstr ""
+
+#: lib/zoonk_web/live/user_registration_live.ex:101
+#: lib/zoonk_web/live/user_settings_live.ex:19
+#, elixir-autogen, elixir-format
+msgid "Username"
+msgstr ""
+
+#: lib/zoonk_web/live/user_settings_live.ex:169
+#, elixir-autogen, elixir-format
+msgid "Username updated successfully"
+msgstr ""
+
+#: lib/zoonk_web/live/user_forgot_password_live.ex:13
+#, elixir-autogen, elixir-format
+msgid "We'll send a password reset link to your inbox"
+msgstr ""
+
+#: lib/zoonk_web/user_auth.ex:164
+#: lib/zoonk_web/user_auth.ex:237
+#, elixir-autogen, elixir-format
+msgid "You must log in to access this page."
+msgstr ""
+
+#: lib/zoonk_web/live/user_login_live.ex:16
+#, elixir-autogen, elixir-format
+msgid "for an account now."
+msgstr ""
+
+#: lib/zoonk_web/live/user_registration_live.ex:18
+#, elixir-autogen, elixir-format
+msgid "to your account now."
+msgstr ""
+
+#: lib/zoonk_web/components/layouts/root.html.heex:34
+#, elixir-autogen, elixir-format
+msgid "Log out"
+msgstr ""
+
+#: lib/zoonk_web/components/layouts/root.html.heex:25
+#, elixir-autogen, elixir-format
+msgid "Settings"
+msgstr ""
+
+#: lib/zoonk_web/controllers/age_html/age.html.heex:2
+#, elixir-autogen, elixir-format
+msgid "You need to be, at least, 13 years old to use Zoonk. If you entered the wrong birth date on sign up, then send an email to support@zoonk.org with your ID Card."
+msgstr ""

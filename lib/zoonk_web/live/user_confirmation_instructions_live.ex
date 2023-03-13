@@ -5,19 +5,22 @@ defmodule ZoonkWeb.UserConfirmationInstructionsLive do
 
   def render(assigns) do
     ~H"""
-    <.header>Resend confirmation instructions</.header>
+    <.header><%= dgettext("auth", "Resend confirmation instructions") %></.header>
 
     <.simple_form for={@form} id="resend_confirmation_form" phx-submit="send_instructions">
-      <.input field={@form[:email]} type="email" label="Email" required />
+      <.input field={@form[:email]} type="email" label={dgettext("auth", "Email")} required />
+
       <:actions>
-        <.button phx-disable-with="Sending...">Resend confirmation instructions</.button>
+        <.button phx-disable-with={gettext("Sending...")}>
+          <%= dgettext("auth", "Resend confirmation instructions") %>
+        </.button>
       </:actions>
     </.simple_form>
 
     <p>
-      <.link href={~p"/users/register"}>Register</.link>
+      <.link href={~p"/users/register"}><%= dgettext("auth", "Register") %></.link>
       |
-      <.link href={~p"/users/log_in"}>Log in</.link>
+      <.link href={~p"/users/log_in"}><%= dgettext("auth", "Log in") %></.link>
     </p>
     """
   end
@@ -35,7 +38,10 @@ defmodule ZoonkWeb.UserConfirmationInstructionsLive do
     end
 
     info =
-      "If your email is in our system and it has not been confirmed yet, you will receive an email with instructions shortly."
+      dgettext(
+        "auth",
+        "If your email is in our system and it has not been confirmed yet, you will receive an email with instructions shortly."
+      )
 
     {:noreply,
      socket

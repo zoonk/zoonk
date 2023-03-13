@@ -19,6 +19,7 @@
 - Start a local server: `mix phx.server` (it will run on http://localhost:4000 and https://localhost:4001).
   See [SSL in Development](#ssl-in-development) for using the `HTTPS` version on port `4001`.
 - Run tests: `mix test`.
+- Update translation files: `mix locale`.
 
 ## SSL in Development
 

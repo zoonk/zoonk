@@ -8,13 +8,14 @@ defmodule ZoonkWeb.UserRegistrationLive do
     ~H"""
     <div class="mx-auto max-w-sm">
       <.header class="text-center">
-        Register for an account
+        <%= dgettext("auth", "Register for an account") %>
         <:subtitle>
-          Already registered?
+          <%= dgettext("auth", "Already registered?") %>
+
           <.link navigate={~p"/users/log_in"} class="font-semibold text-primary hover:underline">
-            Sign in
+            <%= dgettext("auth", "Sign in") %>
           </.link>
-          to your account now.
+          <%= dgettext("auth", "to your account now.") %>
         </:subtitle>
       </.header>
 
@@ -28,20 +29,24 @@ defmodule ZoonkWeb.UserRegistrationLive do
         method="post"
       >
         <.header>
-          Basic information
+          <%= dgettext("auth", "Basic information") %>
+
           <:subtitle>
-            This is your profile information. You won't be able to edit your name or date of birth after registration.
+            <%= dgettext(
+              "auth",
+              "This is your profile information. You won't be able to edit your name or date of birth after registration."
+            ) %>
           </:subtitle>
         </.header>
 
         <.error :if={@check_errors}>
-          Oops, something went wrong! Please check the errors below.
+          <%= gettext("Oops, something went wrong! Please check the errors below.") %>
         </.error>
 
         <.input
           field={@form[:first_name]}
           type="text"
-          label="First Name"
+          label={dgettext("auth", "First Name")}
           autocomplete="given-name"
           required
         />
@@ -49,7 +54,7 @@ defmodule ZoonkWeb.UserRegistrationLive do
         <.input
           field={@form[:last_name]}
           type="text"
-          label="Last Name"
+          label={dgettext("auth", "Last Name")}
           autocomplete="family-name"
           required
         />
@@ -57,7 +62,7 @@ defmodule ZoonkWeb.UserRegistrationLive do
         <.input
           field={@form[:date_of_birth]}
           type="date"
-          label="Date of birth"
+          label={dgettext("auth", "Date of birth")}
           autocomplete="bday"
           required
         />
@@ -65,25 +70,35 @@ defmodule ZoonkWeb.UserRegistrationLive do
         <.input
           field={@form[:language]}
           type="select"
-          label="Language"
+          label={dgettext("auth", "Language")}
           options={Zoonk.Language.language_options()}
           value={@current_language}
           required
         />
 
         <.header>
-          Credentials
+          <%= dgettext("auth", "Credentials") %>
+
           <:subtitle>
-            This is how you access your account. You'll be able to login using either your email address or password.
+            <%= dgettext(
+              "auth",
+              "This is how you access your account. You'll be able to login using either your email address or password."
+            ) %>
           </:subtitle>
         </.header>
 
-        <.input field={@form[:email]} type="email" label="Email" autocomplete="email" required />
+        <.input
+          field={@form[:email]}
+          type="email"
+          label={dgettext("auth", "Email")}
+          autocomplete="email"
+          required
+        />
 
         <.input
           field={@form[:username]}
           type="text"
-          label="Username"
+          label={dgettext("auth", "Username")}
           autocomplete="username"
           required
         />
@@ -91,13 +106,15 @@ defmodule ZoonkWeb.UserRegistrationLive do
         <.input
           field={@form[:password]}
           type="password"
-          label="Password"
+          label={dgettext("auth", "Password")}
           autocomplete="new-password"
           required
         />
 
         <:actions>
-          <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
+          <.button phx-disable-with={dgettext("auth", "Creating account...")} class="w-full">
+            <%= dgettext("auth", "Create an account") %>
+          </.button>
         </:actions>
       </.simple_form>
     </div>

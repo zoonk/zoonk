@@ -1,0 +1,52 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: pt\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/zoonk_web/components/core_components.ex:495
+#, elixir-autogen, elixir-format
+msgid "Actions"
+msgstr "Ações"
+
+#: lib/zoonk_web/components/core_components.ex:85
+#: lib/zoonk_web/components/core_components.ex:175
+#, elixir-autogen, elixir-format
+msgid "close"
+msgstr "fechar"
+
+#: lib/zoonk_web/live/user_settings_live.ex:26
+#: lib/zoonk_web/live/user_settings_live.ex:52
+#: lib/zoonk_web/live/user_settings_live.ex:102
+#, elixir-autogen, elixir-format
+msgid "Changing..."
+msgstr "Alterando..."
+
+#: lib/zoonk_web/live/user_confirmation_live.ex:15
+#, elixir-autogen, elixir-format
+msgid "Confirming..."
+msgstr "Confirmando..."
+
+#: lib/zoonk_web/live/user_registration_live.ex:43
+#: lib/zoonk_web/live/user_reset_password_live.ex:18
+#, elixir-autogen, elixir-format
+msgid "Oops, something went wrong! Please check the errors below."
+msgstr "Opa, algo deu errado! Dê uma olhada nos erros abaixo."
+
+#: lib/zoonk_web/live/user_reset_password_live.ex:36
+#, elixir-autogen, elixir-format
+msgid "Resetting..."
+msgstr "Resetando..."
+
+#: lib/zoonk_web/live/user_confirmation_instructions_live.ex:14
+#: lib/zoonk_web/live/user_forgot_password_live.ex:21
+#, elixir-autogen, elixir-format
+msgid "Sending..."
+msgstr "Enviando..."

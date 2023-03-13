@@ -29,6 +29,9 @@ config :zoonk, ZoonkWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :zoonk, Zoonk.Mailer, adapter: Swoosh.Adapters.Local
 
+# Configure translation
+config :zoonk, ZoonkWeb.Gettext, default_locale: "en", locales: ~w(en pt)
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.14.41",
