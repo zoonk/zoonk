@@ -15,7 +15,7 @@ defmodule ZoonkWeb.UserSessionController do
   end
 
   def create(conn, params) do
-    create(conn, params)
+    create(conn, params, dgettext("auth", "Welcome back!"))
   end
 
   defp create(conn, %{"user" => user_params}, info) do

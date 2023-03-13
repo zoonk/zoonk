@@ -323,3 +323,8 @@ msgstr "Configurações"
 #, elixir-autogen, elixir-format
 msgid "You need to be, at least, 13 years old to use Zoonk. If you entered the wrong birth date on sign up, then send an email to support@zoonk.org with your ID Card."
 msgstr "Você precisa ter, pelo menos, 13 anos para usar o Zoonk. Se digitou a data de nascimento errada no cadastra, envie um e-mail para contato@zoonk.org com um documento de identidade."
+
+#: lib/zoonk_web/controllers/user_session_controller.ex:18
+#, elixir-autogen, elixir-format
+msgid "Welcome back!"
+msgstr "Bem-vindo de volta!"
