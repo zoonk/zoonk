@@ -18,6 +18,20 @@ defmodule ZoonkWeb.UserConfirmationLiveTest do
       assert html =~ "Confirm Account"
     end
 
+    test "use the user's language as the default value", %{conn: conn} do
+      {:ok, _lv, html} =
+        conn |> log_in_user(user_fixture(language: :pt)) |> live(~p"/users/confirm/some-token")
+
+      assert html =~ "Confirmar Conta"
+    end
+
+    test "use the browser's language when the user is not logged in", %{conn: conn} do
+      conn = put_req_header(conn, "accept-language", "pt-BR")
+      {:ok, _lv, html} = live(conn, ~p"/users/confirm/some-token")
+
+      assert html =~ "Confirmar Conta"
+    end
+
     test "confirms the given token once", %{conn: conn, user: user} do
       token =
         extract_user_token(fn url ->

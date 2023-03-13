@@ -193,7 +193,7 @@ msgstr "Senha"
 #: lib/zoonk_web/live/user_reset_password_live.ex:73
 #, elixir-autogen, elixir-format
 msgid "Password reset successfully."
-msgstr "Senha restaurada."
+msgstr "Senha recuperada."
 
 #: lib/zoonk_web/controllers/user_session_controller.ex:14
 #, elixir-autogen, elixir-format
@@ -224,17 +224,17 @@ msgstr "Re-enviar as instruções de confirmação"
 #: lib/zoonk_web/live/user_reset_password_live.ex:37
 #, elixir-autogen, elixir-format
 msgid "Reset Password"
-msgstr "Restaurar Senha"
+msgstr "Recuperar Senha"
 
 #: lib/zoonk_web/live/user_reset_password_live.ex:91
 #, elixir-autogen, elixir-format
 msgid "Reset password link is invalid or it has expired."
-msgstr "O link para restaurar a senha é inválido ou expirou."
+msgstr "O link para recuperar a senha é inválido ou expirou."
 
 #: lib/zoonk_web/live/user_forgot_password_live.ex:22
 #, elixir-autogen, elixir-format
 msgid "Send password reset instructions"
-msgstr "Instruções para restaurar senha"
+msgstr "Instruções para recuperar senha"
 
 #: lib/zoonk_web/live/user_login_live.ex:50
 #: lib/zoonk_web/live/user_registration_live.ex:16

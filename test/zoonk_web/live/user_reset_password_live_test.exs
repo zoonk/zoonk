@@ -49,6 +49,13 @@ defmodule ZoonkWeb.UserResetPasswordLiveTest do
       assert result =~ "should be at least 8 character"
       assert result =~ "does not match password"
     end
+
+    test "use the browser's language as the default value", %{conn: conn, token: token} do
+      conn = put_req_header(conn, "accept-language", "pt-BR")
+      {:ok, _lv, html} = live(conn, ~p"/users/reset_password/#{token}")
+
+      assert html =~ "Recuperar Senha"
+    end
   end
 
   describe "Reset Password" do

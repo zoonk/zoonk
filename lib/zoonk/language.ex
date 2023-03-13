@@ -5,6 +5,8 @@ defmodule Zoonk.Language do
 
   @supported_languages [en: "English", pt: "Português"]
 
+  def default_language_key, do: :en
+
   @doc """
   List keys and labels for supported languages.
   """

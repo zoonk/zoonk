@@ -179,6 +179,11 @@ defmodule ZoonkWeb.UserAuth do
     end
   end
 
+  def on_mount(:set_locale_from_session, _params, session, socket) do
+    Gettext.put_locale(ZoonkWeb.Gettext, Map.get(session, "language"))
+    {:cont, socket}
+  end
+
   def on_mount(:redirect_if_not_minimum_age, _params, session, socket) do
     socket = mount_current_user(session, socket)
     user = socket.assigns.current_user
@@ -241,6 +246,17 @@ defmodule ZoonkWeb.UserAuth do
     end
   end
 
+  @doc """
+  Get the user-defined language or the browser's locale and add it to the session.
+  """
+  def set_session_language(conn, _opts) do
+    user = conn.assigns[:current_user]
+    lang = if user, do: user.language, else: get_browser_language(conn)
+    locale = if is_atom(lang), do: Atom.to_string(lang), else: lang
+    Gettext.put_locale(ZoonkWeb.Gettext, locale)
+    conn |> put_session(:language, locale)
+  end
+
   defp put_token_in_session(conn, token) do
     conn
     |> put_session(:user_token, token)
@@ -255,4 +271,20 @@ defmodule ZoonkWeb.UserAuth do
 
   defp signed_in_path(_conn), do: ~p"/"
   defp age_restriction_path(_conn), do: ~p"/age-restriction"
+
+  defp get_browser_language(conn) do
+    supported = Zoonk.Language.supported_languages_keys()
+    default_locale = Zoonk.Language.default_language_key()
+
+    locale =
+      case get_req_header(conn, "accept-language") do
+        [loc | _] ->
+          String.split(loc, "-") |> List.first() |> String.to_existing_atom()
+
+        _ ->
+          default_locale
+      end
+
+    if Enum.member?(supported, locale), do: locale, else: default_locale
+  end
 end

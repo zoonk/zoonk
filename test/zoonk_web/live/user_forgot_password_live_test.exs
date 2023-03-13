@@ -26,6 +26,13 @@ defmodule ZoonkWeb.UserForgotPasswordLiveTest do
 
       assert {:ok, _conn} = result
     end
+
+    test "use the browser's language as the default value", %{conn: conn} do
+      conn = put_req_header(conn, "accept-language", "pt-BR")
+      {:ok, _lv, html} = live(conn, ~p"/users/reset_password")
+
+      assert html =~ "Esqueceu a senha?"
+    end
   end
 
   describe "Reset link" do

@@ -99,11 +99,12 @@ defmodule ZoonkWeb.UserRegistrationLiveTest do
     test "use the browser's language as the default value", %{conn: conn} do
       conn = put_req_header(conn, "accept-language", "pt-BR")
 
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
+      {:ok, lv, html} = live(conn, ~p"/users/register")
 
       option = element(lv, ~s|option[value="pt"]|)
 
       assert render(option) =~ "selected"
+      assert html =~ "Criar uma nova conta"
     end
 
     test "does not have access if user is younger than 13 years old", %{conn: conn} do

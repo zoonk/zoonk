@@ -112,5 +112,10 @@ defmodule ZoonkWeb.UserSessionControllerTest do
       refute get_session(conn, :user_token)
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Logged out successfully"
     end
+
+    test "use the user's language as the default value", %{conn: conn} do
+      conn = conn |> log_in_user(user_fixture(language: :pt)) |> delete(~p"/users/log_out")
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Saiu da conta"
+    end
   end
 end

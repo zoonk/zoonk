@@ -25,6 +25,14 @@ defmodule ZoonkWeb.UserSettingsLiveTest do
       assert path == ~p"/users/log_in"
       assert %{"error" => "You must log in to access this page."} = flash
     end
+
+    test "use the user's language as the default value", %{conn: conn} do
+      {:ok, _lv, html} =
+        conn |> log_in_user(user_fixture(language: :pt)) |> live(~p"/users/settings")
+
+      assert html =~ "Alterar E-mail"
+      assert html =~ "Alterar Senha"
+    end
   end
 
   describe "update username form" do

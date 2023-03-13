@@ -23,6 +23,13 @@ defmodule ZoonkWeb.UserLoginLiveTest do
 
       assert {:ok, _conn} = result
     end
+
+    test "use the browser's language as the default value", %{conn: conn} do
+      conn = put_req_header(conn, "accept-language", "pt-BR")
+      {:ok, _lv, html} = live(conn, ~p"/users/log_in")
+
+      assert html =~ "Entrar na conta"
+    end
   end
 
   describe "user login" do
