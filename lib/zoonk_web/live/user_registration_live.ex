@@ -27,6 +27,13 @@ defmodule ZoonkWeb.UserRegistrationLive do
         action={~p"/users/log_in?_action=registered"}
         method="post"
       >
+        <.header>
+          Basic information
+          <:subtitle>
+            This is your profile information. You won't be able to edit your name or date of birth after registration.
+          </:subtitle>
+        </.header>
+
         <.error :if={@check_errors}>
           Oops, something went wrong! Please check the errors below.
         </.error>
@@ -47,16 +54,6 @@ defmodule ZoonkWeb.UserRegistrationLive do
           required
         />
 
-        <.input field={@form[:email]} type="email" label="Email" autocomplete="email" required />
-
-        <.input
-          field={@form[:username]}
-          type="text"
-          label="Username"
-          autocomplete="username"
-          required
-        />
-
         <.input
           field={@form[:date_of_birth]}
           type="date"
@@ -71,6 +68,23 @@ defmodule ZoonkWeb.UserRegistrationLive do
           label="Language"
           options={Zoonk.Language.language_options()}
           value={@current_language}
+          required
+        />
+
+        <.header>
+          Credentials
+          <:subtitle>
+            This is how you access your account. You'll be able to login using either your email address or password.
+          </:subtitle>
+        </.header>
+
+        <.input field={@form[:email]} type="email" label="Email" autocomplete="email" required />
+
+        <.input
+          field={@form[:username]}
+          type="text"
+          label="Username"
+          autocomplete="username"
           required
         />
 
