@@ -105,6 +105,26 @@ defmodule ZoonkWeb.UserRegistrationLiveTest do
 
       assert render(option) =~ "selected"
     end
+
+    test "does not have access if user is younger than 13 years old", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/register")
+
+      date_of_birth = Date.utc_today() |> Date.add(-365 * 12)
+      user = valid_user_attributes(date_of_birth: date_of_birth)
+
+      form = form(lv, "#registration_form", user: user)
+      render_submit(form)
+      conn = follow_trigger_action(form, conn)
+
+      assert redirected_to(conn) == ~p"/"
+      conn = get(conn, "/")
+
+      assert redirected_to(conn) == ~p"/age-restriction"
+      conn = get(conn, "/age-restriction")
+      response = html_response(conn, 200)
+
+      assert response =~ "You need to be, at least, 13 years old to use Zoonk."
+    end
   end
 
   describe "registration navigation" do

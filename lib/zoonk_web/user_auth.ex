@@ -7,7 +7,7 @@ defmodule ZoonkWeb.UserAuth do
   import Plug.Conn
   import Phoenix.Controller
 
-  alias Zoonk.Accounts
+  alias Zoonk.{Accounts, AgeChecker}
 
   # Make the remember me cookie valid for 60 days.
   # If you want bump or reduce this value, also change
@@ -84,7 +84,7 @@ defmodule ZoonkWeb.UserAuth do
     conn
     |> renew_session()
     |> delete_resp_cookie(@remember_me_cookie)
-    |> redirect(to: ~p"/")
+    |> redirect(to: ~p"/users/log_in")
   end
 
   @doc """
@@ -175,12 +175,35 @@ defmodule ZoonkWeb.UserAuth do
     end
   end
 
+  def on_mount(:redirect_if_not_minimum_age, _params, session, socket) do
+    socket = mount_current_user(session, socket)
+    user = socket.assigns.current_user
+    has_minimum_age? = AgeChecker.is_authorized?(user.date_of_birth)
+
+    if has_minimum_age? do
+      {:cont, socket}
+    else
+      {:halt, Phoenix.LiveView.redirect(socket, to: age_restriction_path(socket))}
+    end
+  end
+
   defp mount_current_user(session, socket) do
     Phoenix.Component.assign_new(socket, :current_user, fn ->
       if user_token = session["user_token"] do
         Accounts.get_user_by_session_token(user_token)
       end
     end)
+  end
+
+  def redirect_if_not_minimum_age(conn, _opts) do
+    user = conn.assigns.current_user
+    has_minimum_age? = AgeChecker.is_authorized?(user.date_of_birth)
+
+    if has_minimum_age? do
+      conn
+    else
+      conn |> redirect(to: age_restriction_path(conn)) |> halt()
+    end
   end
 
   @doc """
@@ -227,4 +250,5 @@ defmodule ZoonkWeb.UserAuth do
   defp maybe_store_return_to(conn), do: conn
 
   defp signed_in_path(_conn), do: ~p"/"
+  defp age_restriction_path(_conn), do: ~p"/age-restriction"
 end

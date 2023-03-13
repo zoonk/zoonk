@@ -22,9 +22,15 @@ defmodule ZoonkWeb.Router do
   end
 
   scope "/", ZoonkWeb do
-    pipe_through :browser
+    pipe_through [:browser, :require_authenticated_user, :redirect_if_not_minimum_age]
 
     get "/", PageController, :home
+  end
+
+  scope "/", ZoonkWeb do
+    pipe_through :browser
+
+    get "/age-restriction", AgeController, :index
   end
 
   # Other scopes may use custom stacks.
@@ -69,7 +75,7 @@ defmodule ZoonkWeb.Router do
   end
 
   scope "/", ZoonkWeb do
-    pipe_through [:browser, :require_authenticated_user]
+    pipe_through [:browser, :require_authenticated_user, :redirect_if_not_minimum_age]
 
     live_session :require_authenticated_user,
       on_mount: [{ZoonkWeb.UserAuth, :ensure_authenticated}] do
