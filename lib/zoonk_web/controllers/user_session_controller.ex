@@ -15,7 +15,7 @@ defmodule ZoonkWeb.UserSessionController do
   end
 
   def create(conn, params) do
-    create(conn, params, dgettext("auth", "Welcome back!"))
+    create(conn, params, nil)
   end
 
   defp create(conn, %{"user" => user_params}, info) do
@@ -42,7 +42,6 @@ defmodule ZoonkWeb.UserSessionController do
 
   def delete(conn, _params) do
     conn
-    |> put_flash(:info, dgettext("auth", "Logged out successfully."))
     |> UserAuth.log_out_user()
   end
 end

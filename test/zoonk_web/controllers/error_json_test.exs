@@ -1,4 +1,5 @@
 defmodule ZoonkWeb.ErrorJSONTest do
+  @moduledoc false
   use ZoonkWeb.ConnCase, async: true
 
   test "renders 404" do

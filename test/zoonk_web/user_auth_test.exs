@@ -1,4 +1,5 @@
 defmodule ZoonkWeb.UserAuthTest do
+  @moduledoc false
   use ZoonkWeb.ConnCase, async: true
 
   alias Phoenix.LiveView

@@ -59,6 +59,6 @@ defmodule ZoonkWeb.UserForgotPasswordLive do
     {:noreply,
      socket
      |> put_flash(:info, info)
-     |> redirect(to: ~p"/")}
+     |> redirect(to: ~p"/users/log_in")}
   end
 end

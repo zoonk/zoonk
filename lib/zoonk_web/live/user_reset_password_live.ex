@@ -22,6 +22,7 @@ defmodule ZoonkWeb.UserResetPasswordLive do
           field={@form[:password]}
           type="password"
           label={dgettext("auth", "New password")}
+          autocomplete="new-password"
           required
         />
 
@@ -29,6 +30,7 @@ defmodule ZoonkWeb.UserResetPasswordLive do
           field={@form[:password_confirmation]}
           type="password"
           label={dgettext("auth", "Confirm new password")}
+          autocomplete="new-password"
           required
         />
 

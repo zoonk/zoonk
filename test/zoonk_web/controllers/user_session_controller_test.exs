@@ -1,4 +1,5 @@
 defmodule ZoonkWeb.UserSessionControllerTest do
+  @moduledoc false
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AccountsFixtures
@@ -51,7 +52,6 @@ defmodule ZoonkWeb.UserSessionControllerTest do
         })
 
       assert redirected_to(conn) == "/foo/bar"
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Welcome back!"
     end
 
     test "login following registration", %{conn: conn, user: user} do
@@ -103,19 +103,12 @@ defmodule ZoonkWeb.UserSessionControllerTest do
       conn = conn |> log_in_user(user) |> delete(~p"/users/log_out")
       assert redirected_to(conn) == ~p"/users/log_in"
       refute get_session(conn, :user_token)
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Logged out successfully"
     end
 
     test "succeeds even if the user is not logged in", %{conn: conn} do
       conn = delete(conn, ~p"/users/log_out")
       assert redirected_to(conn) == ~p"/users/log_in"
       refute get_session(conn, :user_token)
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Logged out successfully"
-    end
-
-    test "use the user's language as the default value", %{conn: conn} do
-      conn = conn |> log_in_user(user_fixture(language: :pt)) |> delete(~p"/users/log_out")
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Saiu da conta"
     end
   end
 end

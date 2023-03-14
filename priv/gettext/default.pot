@@ -40,7 +40,7 @@ msgstr ""
 msgid "Oops, something went wrong! Please check the errors below."
 msgstr ""
 
-#: lib/zoonk_web/live/user_reset_password_live.ex:36
+#: lib/zoonk_web/live/user_reset_password_live.ex:38
 #, elixir-autogen, elixir-format
 msgid "Resetting..."
 msgstr ""
