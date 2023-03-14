@@ -127,6 +127,7 @@ defmodule ZoonkWeb.UserRegistrationLive do
 
     socket =
       socket
+      |> assign(:page_title, dgettext("auth", "Sign up"))
       |> assign(:current_language, language)
       |> assign(trigger_submit: false, check_errors: false)
       |> assign_form(changeset)

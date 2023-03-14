@@ -50,3 +50,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Sending..."
 msgstr ""
+
+#: lib/zoonk_web/controllers/home_controller.ex:5
+#, elixir-autogen, elixir-format
+msgid "Home"
+msgstr ""

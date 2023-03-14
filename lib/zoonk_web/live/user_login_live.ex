@@ -58,6 +58,9 @@ defmodule ZoonkWeb.UserLoginLive do
   def mount(_params, _session, socket) do
     email_or_username = live_flash(socket.assigns.flash, :email_or_username)
     form = to_form(%{"email_or_username" => email_or_username}, as: "user")
-    {:ok, assign(socket, form: form), temporary_assigns: [form: form]}
+
+    socket = socket |> assign(:page_title, dgettext("auth", "Sign in")) |> assign(form: form)
+
+    {:ok, socket, temporary_assigns: [form: form]}
   end
 end

@@ -49,7 +49,10 @@ defmodule ZoonkWeb.UserResetPasswordLive do
   end
 
   def mount(params, _session, socket) do
-    socket = assign_user_and_token(socket, params)
+    socket =
+      socket
+      |> assign(:page_title, dgettext("auth", "Reset Password"))
+      |> assign_user_and_token(params)
 
     form_source =
       case socket.assigns do

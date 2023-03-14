@@ -34,7 +34,12 @@ defmodule ZoonkWeb.UserForgotPasswordLive do
   end
 
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, form: to_form(%{}, as: "user"))}
+    socket =
+      socket
+      |> assign(:page_title, dgettext("auth", "Forgot your password?"))
+      |> assign(form: to_form(%{}, as: "user"))
+
+    {:ok, socket}
   end
 
   def handle_event("send_email", %{"user" => %{"email" => email}}, socket) do
