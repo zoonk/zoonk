@@ -22,9 +22,9 @@ msgstr "Ações"
 msgid "close"
 msgstr "fechar"
 
-#: lib/zoonk_web/live/user_settings_live.ex:26
-#: lib/zoonk_web/live/user_settings_live.ex:52
-#: lib/zoonk_web/live/user_settings_live.ex:102
+#: lib/zoonk_web/live/user_settings_live.ex:35
+#: lib/zoonk_web/live/user_settings_live.ex:61
+#: lib/zoonk_web/live/user_settings_live.ex:111
 #, elixir-autogen, elixir-format
 msgid "Changing..."
 msgstr "Alterando..."

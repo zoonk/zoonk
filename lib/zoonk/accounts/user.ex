@@ -56,7 +56,8 @@ defmodule Zoonk.Accounts.User do
     |> validate_email(opts)
     |> validate_username(opts)
     |> validate_password(opts)
-    |> validate_required([:date_of_birth, :first_name, :language, :last_name])
+    |> validate_settings()
+    |> validate_required([:date_of_birth, :first_name, :last_name])
   end
 
   defp validate_email(changeset, opts) do
@@ -65,6 +66,10 @@ defmodule Zoonk.Accounts.User do
     |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")
     |> validate_length(:email, max: 160)
     |> maybe_validate_unique_email(opts)
+  end
+
+  defp validate_settings(changeset) do
+    changeset |> validate_required([:language])
   end
 
   defp validate_username(changeset, opts) do
@@ -140,17 +145,12 @@ defmodule Zoonk.Accounts.User do
 
   @doc """
   A user changeset for changing the username.
-
-  It requires the username to change otherwise an error is added.
   """
-  def username_changeset(user, attrs, opts \\ []) do
+  def settings_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:username])
+    |> cast(attrs, [:language, :username])
+    |> validate_settings()
     |> validate_username(opts)
-    |> case do
-      %{changes: %{username: _}} = changeset -> changeset
-      %{} = changeset -> add_error(changeset, :username, "did not change")
-    end
   end
 
   @doc """

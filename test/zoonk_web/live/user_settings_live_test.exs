@@ -13,7 +13,7 @@ defmodule ZoonkWeb.UserSettingsLiveTest do
         |> log_in_user(user_fixture())
         |> live(~p"/users/settings")
 
-      assert html =~ "Change Username"
+      assert html =~ "Change Settings"
       assert html =~ "Change Email"
       assert html =~ "Change Password"
     end
@@ -35,26 +35,28 @@ defmodule ZoonkWeb.UserSettingsLiveTest do
     end
   end
 
-  describe "update username form" do
+  describe "update settings form" do
     setup %{conn: conn} do
-      user = user_fixture()
+      user = user_fixture(language: :en)
       %{conn: log_in_user(conn, user)}
     end
 
-    test "updates the user username", %{conn: conn} do
+    test "updates the user settings", %{conn: conn} do
       new_username = unique_user_username()
 
       {:ok, lv, _html} = live(conn, ~p"/users/settings")
 
       result =
         lv
-        |> form("#username_form", %{
-          "user" => %{"username" => new_username}
+        |> form("#settings_form", %{
+          "user" => %{"username" => new_username, "language" => "pt"}
         })
         |> render_submit()
 
-      assert result =~ "Username updated successfully"
-      assert Accounts.get_user_by_username(new_username)
+      assert result =~ "Configurações atualizadas"
+
+      new_user = Accounts.get_user_by_username(new_username)
+      assert new_user.language == :pt
     end
 
     test "renders errors with invalid data (phx-change)", %{conn: conn} do
@@ -62,13 +64,13 @@ defmodule ZoonkWeb.UserSettingsLiveTest do
 
       result =
         lv
-        |> element("#username_form")
+        |> element("#settings_form")
         |> render_change(%{
           "action" => "update_username",
           "user" => %{"username" => "sh"}
         })
 
-      assert result =~ "Change Username"
+      assert result =~ "Change Settings"
       assert result =~ "should be at least 3 character(s)"
     end
 
@@ -77,12 +79,12 @@ defmodule ZoonkWeb.UserSettingsLiveTest do
 
       result =
         lv
-        |> form("#username_form", %{
+        |> form("#settings_form", %{
           "user" => %{"username" => "sh"}
         })
         |> render_submit()
 
-      assert result =~ "Change Username"
+      assert result =~ "Change Settings"
       assert result =~ "should be at least 3 character(s)"
     end
   end

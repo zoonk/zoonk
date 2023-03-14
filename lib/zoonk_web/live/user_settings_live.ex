@@ -1,20 +1,21 @@
 defmodule ZoonkWeb.UserSettingsLive do
   use ZoonkWeb, :live_view
 
+  alias Phoenix.LiveView.Diff
   alias Zoonk.Accounts
 
   def render(assigns) do
     ~H"""
-    <.header><%= dgettext("auth", "Change Username") %></.header>
+    <.header><%= dgettext("auth", "Change Settings") %></.header>
 
     <.simple_form
-      for={@username_form}
-      id="username_form"
-      phx-submit="update_username"
-      phx-change="validate_username"
+      for={@settings_form}
+      id="settings_form"
+      phx-submit="update_settings"
+      phx-change="validate_settings"
     >
       <.input
-        field={@username_form[:username]}
+        field={@settings_form[:username]}
         type="text"
         label={dgettext("auth", "Username")}
         autocomplete="username"
@@ -22,9 +23,18 @@ defmodule ZoonkWeb.UserSettingsLive do
         value={@current_username}
       />
 
+      <.input
+        field={@settings_form[:language]}
+        type="select"
+        label={dgettext("auth", "Language")}
+        options={Zoonk.Language.language_options()}
+        value={@current_language}
+        required
+      />
+
       <:actions>
         <.button phx-disable-with={gettext("Changing...")}>
-          <%= dgettext("auth", "Change Username") %>
+          <%= dgettext("auth", "Change Settings") %>
         </.button>
       </:actions>
     </.simple_form>
@@ -126,18 +136,19 @@ defmodule ZoonkWeb.UserSettingsLive do
 
   def mount(_params, _session, socket) do
     user = socket.assigns.current_user
-    username_changeset = Accounts.change_user_username(user)
+    settings_changeset = Accounts.change_user_settings(user)
     email_changeset = Accounts.change_user_email(user)
     password_changeset = Accounts.change_user_password(user)
 
     socket =
       socket
       |> assign(:page_title, dgettext("auth", "Settings"))
+      |> assign(:current_language, user.language)
       |> assign(:current_username, user.username)
       |> assign(:current_password, nil)
       |> assign(:email_form_current_password, nil)
       |> assign(:current_email, user.email)
-      |> assign(:username_form, to_form(username_changeset))
+      |> assign(:settings_form, to_form(settings_changeset))
       |> assign(:email_form, to_form(email_changeset))
       |> assign(:password_form, to_form(password_changeset))
       |> assign(:trigger_submit, false)
@@ -145,38 +156,46 @@ defmodule ZoonkWeb.UserSettingsLive do
     {:ok, socket}
   end
 
-  def handle_event("validate_username", params, socket) do
+  def handle_event("validate_settings", params, socket) do
     %{"user" => user_params} = params
 
-    username_form =
+    settings_form =
       socket.assigns.current_user
-      |> Accounts.change_user_username(user_params)
+      |> Accounts.change_user_settings(user_params)
       |> Map.put(:action, :validate)
       |> to_form()
 
-    {:noreply, assign(socket, username_form: username_form)}
+    {:noreply, assign(socket, settings_form: settings_form)}
   end
 
-  def handle_event("update_username", params, socket) do
+  def handle_event("update_settings", params, socket) do
     %{"user" => user_params} = params
     user = socket.assigns.current_user
 
-    case Accounts.update_user_username(user, user_params) do
+    case Accounts.update_user_settings(user, user_params) do
       {:ok, user} ->
-        username_form = user |> Accounts.change_user_username(user_params) |> to_form()
+        settings_form = user |> Accounts.change_user_settings(user_params) |> to_form()
+
+        Gettext.put_locale(ZoonkWeb.Gettext, user_params["language"])
 
         socket =
           socket
-          |> put_flash(:info, dgettext("auth", "Username updated successfully"))
-          |> assign(username_form: username_form, current_username: user_params["username"])
+          |> put_flash(:info, dgettext("auth", "Settings updated successfully"))
+          |> assign(
+            settings_form: settings_form,
+            current_username: user_params["username"],
+            current_language: user_params["language"]
+          )
+
+        socket = %{socket | fingerprints: Diff.new_fingerprints()}
 
         {:noreply, socket}
 
       {:error, changeset} ->
         socket =
           socket
-          |> put_flash(:error, dgettext("auth", "Error updating username"))
-          |> assign(username_form: to_form(changeset))
+          |> put_flash(:error, dgettext("auth", "Error updating settings"))
+          |> assign(settings_form: to_form(changeset))
 
         {:noreply, socket}
     end

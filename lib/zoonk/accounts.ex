@@ -135,33 +135,33 @@ defmodule Zoonk.Accounts do
   ## Settings
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for changing the user username.
+  Returns an `%Ecto.Changeset{}` for changing the user settings.
 
   ## Examples
 
-      iex> change_user_username(user)
+      iex> change_user_settings(user)
       %Ecto.Changeset{data: %User{}}
 
   """
-  def change_user_username(user, attrs \\ %{}) do
-    User.username_changeset(user, attrs)
+  def change_user_settings(user, attrs \\ %{}) do
+    User.settings_changeset(user, attrs)
   end
 
   @doc """
-  Updates the user username.
+  Updates the user settings.
 
   ## Examples
 
-      iex> update_user_username(user, %{username: ...})
+      iex> update_user_settings(user, %{username: ...})
       {:ok, %User{}}
 
-      iex> update_user_username(user, %{username: ...})
+      iex> update_user_settings(user, %{username: ...})
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_user_username(user, attrs) do
+  def update_user_settings(user, attrs) do
     user
-    |> User.username_changeset(attrs)
+    |> User.settings_changeset(attrs)
     |> Repo.update()
   end
 

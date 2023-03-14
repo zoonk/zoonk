@@ -184,8 +184,8 @@ defmodule Zoonk.AccountsTest do
       assert changeset.required == [
                :date_of_birth,
                :first_name,
-               :language,
                :last_name,
+               :language,
                :password,
                :username,
                :email
@@ -211,24 +211,24 @@ defmodule Zoonk.AccountsTest do
     end
   end
 
-  describe "change_user_username/2" do
+  describe "change_user_settings/2" do
     test "returns a user changeset" do
-      assert %Ecto.Changeset{} = changeset = Accounts.change_user_username(%User{})
-      assert changeset.required == [:username]
+      assert %Ecto.Changeset{} = changeset = Accounts.change_user_settings(%User{})
+      assert changeset.required == [:username, :language]
     end
   end
 
-  describe "update_user_username/2" do
+  describe "update_user_settings/2" do
     test "updates the username when valid" do
       user = user_fixture()
-      {:ok, updated_user} = Accounts.update_user_username(user, %{username: "newusername"})
+      {:ok, updated_user} = Accounts.update_user_settings(user, %{username: "newusername"})
 
       assert updated_user.username == "newusername"
     end
 
     test "does not update the username when length is lower than 3 characters" do
       user = user_fixture()
-      {:error, changeset} = Accounts.update_user_username(user, %{username: "sh"})
+      {:error, changeset} = Accounts.update_user_settings(user, %{username: "sh"})
 
       assert "should be at least 3 character(s)" in errors_on(changeset).username
     end
@@ -237,7 +237,7 @@ defmodule Zoonk.AccountsTest do
       user1 = user_fixture(username: "user1")
       user2 = user_fixture(username: "user2")
 
-      {:error, changeset} = Accounts.update_user_username(user2, %{username: user1.username})
+      {:error, changeset} = Accounts.update_user_settings(user2, %{username: user1.username})
 
       assert "has already been taken" in errors_on(changeset).username
     end
