@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.PageController do
+defmodule ZoonkWeb.HomeController do
   use ZoonkWeb, :controller
 
   def home(conn, _params) do

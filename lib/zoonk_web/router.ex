@@ -21,7 +21,7 @@ defmodule ZoonkWeb.Router do
   scope "/", ZoonkWeb do
     pipe_through [:browser, :require_authenticated_user, :redirect_if_not_minimum_age]
 
-    get "/", PageController, :home
+    get "/", HomeController, :home
   end
 
   scope "/", ZoonkWeb do
