@@ -11,7 +11,7 @@ msgstr ""
 "Language: pt\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/zoonk_web/live/user_settings_live.ex:220
+#: lib/zoonk_web/live/user_settings_live.ex:229
 #, elixir-autogen, elixir-format
 msgid "A link to confirm your email change has been sent to the new address."
 msgstr "Enviamos um link para o seu novo e-mail para confirmar a alteração."
@@ -31,14 +31,14 @@ msgstr "Já tem conta?"
 msgid "Basic information"
 msgstr "Informações básicas"
 
-#: lib/zoonk_web/live/user_settings_live.ex:41
-#: lib/zoonk_web/live/user_settings_live.ex:62
+#: lib/zoonk_web/live/user_settings_live.ex:42
+#: lib/zoonk_web/live/user_settings_live.ex:63
 #, elixir-autogen, elixir-format
 msgid "Change Email"
 msgstr "Alterar E-mail"
 
-#: lib/zoonk_web/live/user_settings_live.ex:67
-#: lib/zoonk_web/live/user_settings_live.ex:112
+#: lib/zoonk_web/live/user_settings_live.ex:68
+#: lib/zoonk_web/live/user_settings_live.ex:113
 #, elixir-autogen, elixir-format
 msgid "Change Password"
 msgstr "Alterar Senha"
@@ -55,7 +55,7 @@ msgid "Confirm my account"
 msgstr "Confirmar minha conta"
 
 #: lib/zoonk_web/live/user_reset_password_live.ex:32
-#: lib/zoonk_web/live/user_settings_live.ex:106
+#: lib/zoonk_web/live/user_settings_live.ex:107
 #, elixir-autogen, elixir-format
 msgid "Confirm new password"
 msgstr "Confirmar nova senha"
@@ -75,8 +75,8 @@ msgstr "Criando conta..."
 msgid "Credentials"
 msgstr "Credenciais"
 
-#: lib/zoonk_web/live/user_settings_live.ex:56
-#: lib/zoonk_web/live/user_settings_live.ex:89
+#: lib/zoonk_web/live/user_settings_live.ex:57
+#: lib/zoonk_web/live/user_settings_live.ex:90
 #, elixir-autogen, elixir-format
 msgid "Current password"
 msgstr "Senha atual"
@@ -98,12 +98,12 @@ msgstr "Não tem conta?"
 msgid "Email"
 msgstr "E-mail"
 
-#: lib/zoonk_web/live/user_settings_live.ex:129
+#: lib/zoonk_web/live/user_settings_live.ex:130
 #, elixir-autogen, elixir-format
 msgid "Email change link is invalid or it has expired."
 msgstr "O link para alterar o e-mail é inválido ou expirou."
 
-#: lib/zoonk_web/live/user_settings_live.ex:123
+#: lib/zoonk_web/live/user_settings_live.ex:124
 #, elixir-autogen, elixir-format
 msgid "Email changed successfully."
 msgstr "E-mail alterado!"
@@ -146,7 +146,7 @@ msgid "Keep me logged in"
 msgstr "Manter logado"
 
 #: lib/zoonk_web/live/user_registration_live.ex:73
-#: lib/zoonk_web/live/user_settings_live.ex:28
+#: lib/zoonk_web/live/user_settings_live.ex:29
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "Idioma"
@@ -165,7 +165,7 @@ msgid "Log in"
 msgstr "Entrar"
 
 #: lib/zoonk_web/live/user_reset_password_live.ex:24
-#: lib/zoonk_web/live/user_settings_live.ex:98
+#: lib/zoonk_web/live/user_settings_live.ex:99
 #, elixir-autogen, elixir-format
 msgid "New password"
 msgstr "Nova senha"
@@ -267,7 +267,7 @@ msgid "User confirmed successfully."
 msgstr "Conta confirmada."
 
 #: lib/zoonk_web/live/user_registration_live.ex:101
-#: lib/zoonk_web/live/user_settings_live.ex:19
+#: lib/zoonk_web/live/user_settings_live.ex:20
 #, elixir-autogen, elixir-format
 msgid "Username"
 msgstr "Nome de usuário"
@@ -299,7 +299,7 @@ msgid "Log out"
 msgstr "Sair"
 
 #: lib/zoonk_web/components/layouts/root.html.heex:33
-#: lib/zoonk_web/live/user_settings_live.ex:144
+#: lib/zoonk_web/live/user_settings_live.ex:145
 #, elixir-autogen, elixir-format
 msgid "Settings"
 msgstr "Configurações"
@@ -314,18 +314,18 @@ msgstr "Você precisa ter, pelo menos, 13 anos para usar o Zoonk. Se digitou a d
 msgid "Restricted access"
 msgstr "Acesso restrito"
 
-#: lib/zoonk_web/live/user_settings_live.ex:8
-#: lib/zoonk_web/live/user_settings_live.ex:36
+#: lib/zoonk_web/live/user_settings_live.ex:9
+#: lib/zoonk_web/live/user_settings_live.ex:37
 #, elixir-autogen, elixir-format
 msgid "Change Settings"
 msgstr "Alterar Configurações"
 
-#: lib/zoonk_web/live/user_settings_live.ex:188
+#: lib/zoonk_web/live/user_settings_live.ex:197
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Error updating settings"
 msgstr "Erro ao atualizar as configurações"
 
-#: lib/zoonk_web/live/user_settings_live.ex:180
+#: lib/zoonk_web/live/user_settings_live.ex:183
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Settings updated successfully"
 msgstr "Configurações atualizadas!"

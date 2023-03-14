@@ -10,6 +10,11 @@ import Config
 config :zoonk,
   ecto_repos: [Zoonk.Repo]
 
+# App global config
+config :zoonk,
+  app_name: "Zoonk",
+  support_email: "support@zoonk.org"
+
 # Configures the endpoint
 config :zoonk, ZoonkWeb.Endpoint,
   url: [host: "localhost"],

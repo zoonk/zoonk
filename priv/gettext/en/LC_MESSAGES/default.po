@@ -22,9 +22,9 @@ msgstr ""
 msgid "close"
 msgstr ""
 
-#: lib/zoonk_web/live/user_settings_live.ex:35
-#: lib/zoonk_web/live/user_settings_live.ex:61
-#: lib/zoonk_web/live/user_settings_live.ex:111
+#: lib/zoonk_web/live/user_settings_live.ex:36
+#: lib/zoonk_web/live/user_settings_live.ex:62
+#: lib/zoonk_web/live/user_settings_live.ex:112
 #, elixir-autogen, elixir-format
 msgid "Changing..."
 msgstr ""

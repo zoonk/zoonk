@@ -1,0 +1,42 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: pt\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/zoonk/accounts/user_notifier.ex:59
+#, elixir-autogen, elixir-format
+msgid "Hi %{name},\n\nYou can reset your password by visiting the URL below:\n\n%{url}\n\nIf you didn't request this change, please ignore this.\n"
+msgstr "Oi %{name},\n\nVocê pode recuperar a sua senha visitando o link abaixo:\n\n%{url}\n\nSe você não solicitou uma nova senha, pode ignorar esta mensagem.\n"
+
+#: lib/zoonk/accounts/user_notifier.ex:56
+#, elixir-autogen, elixir-format
+msgid "Reset password instructions"
+msgstr "Recupere a sua senha"
+
+#: lib/zoonk/accounts/user_notifier.ex:31
+#, elixir-autogen, elixir-format
+msgid "Confirmation instructions"
+msgstr "Confimar a conta"
+
+#: lib/zoonk/accounts/user_notifier.ex:84
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Hi %{name},\n\nYou can change your email by visiting the URL below:\n\n%{url}\n\nIf you didn't request this change, please ignore this.\n"
+msgstr "Oi %{name},\n\nVocê pode alterar o seu e-mail visitando o link abaixo:\n\n%{url}\n\nSe você não alterou o seu e-mail, pode ignorar esta mensagem.\n"
+
+#: lib/zoonk/accounts/user_notifier.ex:34
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Hi %{name},\n\nYou can confirm your account by visiting the URL below:\n\n%{url}\n\nIf you didn't create an account with us, please ignore this.\n"
+msgstr "Oi %{name},\n\nVocê pode confirmar a sua conta visitando o link abaixo:\n\n%{url}\n\nSe você não criou uma conta conosco, pode ignorar esta mensagem.\n"
+
+#: lib/zoonk/accounts/user_notifier.ex:81
+#, elixir-autogen, elixir-format
+msgid "Update email instructions"
+msgstr "Atualizar e-mail"
