@@ -1,7 +1,6 @@
 defmodule ZoonkWeb.UserSettingsLive do
   use ZoonkWeb, :live_view
 
-  alias Phoenix.LiveView.Diff
   alias Zoonk.Accounts
 
   def render(assigns) do
@@ -187,9 +186,7 @@ defmodule ZoonkWeb.UserSettingsLive do
             current_language: user_params["language"]
           )
 
-        socket = %{socket | fingerprints: Diff.new_fingerprints()}
-
-        {:noreply, socket}
+        {:noreply, push_navigate(socket, to: ~p"/users/settings", replace: true)}
 
       {:error, changeset} ->
         socket =
