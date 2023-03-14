@@ -105,6 +105,7 @@ defmodule ZoonkWeb.UserRegistrationLiveTest do
 
       assert render(option) =~ "selected"
       assert html =~ "Criar uma nova conta"
+      assert html =~ ~s'<html lang="pt">'
     end
 
     test "does not have access if user is younger than 13 years old", %{conn: conn} do
