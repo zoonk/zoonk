@@ -10,7 +10,7 @@ defmodule ZoonkWeb.UserRegistrationLiveTest do
       {:ok, _lv, html} = live(conn, ~p"/users/register")
 
       assert html =~ "Register"
-      assert html =~ "Log in"
+      assert html =~ "Sign in"
     end
 
     test "redirects if already logged in", %{conn: conn} do
@@ -139,7 +139,7 @@ defmodule ZoonkWeb.UserRegistrationLiveTest do
         |> render_click()
         |> follow_redirect(conn, ~p"/users/log_in")
 
-      assert login_html =~ "Log in"
+      assert login_html =~ "Sign in"
     end
   end
 end

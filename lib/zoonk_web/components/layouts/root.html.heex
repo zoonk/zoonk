@@ -43,24 +43,6 @@
               <%= dgettext("auth", "Log out") %>
             </.link>
           </li>
-        <% else %>
-          <li>
-            <.link
-              href={~p"/users/register"}
-              class="text-[0.8125rem] leading-6 text-gray-dark font-semibold hover:text-gray-dark"
-            >
-              <%= dgettext("auth", "Register") %>
-            </.link>
-          </li>
-
-          <li>
-            <.link
-              href={~p"/users/log_in"}
-              class="text-[0.8125rem] leading-6 text-gray-dark font-semibold hover:text-gray-dark"
-            >
-              <%= dgettext("auth", "Log in") %>
-            </.link>
-          </li>
         <% end %>
       </ul>
     </header>
