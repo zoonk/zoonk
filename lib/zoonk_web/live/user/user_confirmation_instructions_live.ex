@@ -1,27 +1,30 @@
 defmodule ZoonkWeb.UserConfirmationInstructionsLive do
   use ZoonkWeb, :live_view
 
+  import ZoonkWeb.Components.User
+
   alias Zoonk.Accounts
 
   def render(assigns) do
     ~H"""
-    <.header><%= dgettext("auth", "Resend confirmation instructions") %></.header>
+    <.auth_container>
+      <.simple_form
+        for={@form}
+        id="resend_confirmation_form"
+        title={dgettext("auth", "Resend confirmation instructions")}
+        phx-submit="send_instructions"
+      >
+        <.input field={@form[:email]} type="email" label={dgettext("auth", "Email")} required />
 
-    <.simple_form for={@form} id="resend_confirmation_form" phx-submit="send_instructions">
-      <.input field={@form[:email]} type="email" label={dgettext("auth", "Email")} required />
+        <:actions>
+          <.button phx-disable-with={gettext("Sending...")} class="w-full">
+            <%= dgettext("auth", "Resend confirmation instructions") %>
+          </.button>
+        </:actions>
+      </.simple_form>
 
-      <:actions>
-        <.button phx-disable-with={gettext("Sending...")}>
-          <%= dgettext("auth", "Resend confirmation instructions") %>
-        </.button>
-      </:actions>
-    </.simple_form>
-
-    <p>
-      <.link href={~p"/users/register"}><%= dgettext("auth", "Register") %></.link>
-      |
-      <.link href={~p"/users/log_in"}><%= dgettext("auth", "Log in") %></.link>
-    </p>
+      <.auth_links />
+    </.auth_container>
     """
   end
 

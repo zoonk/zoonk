@@ -103,13 +103,13 @@ defmodule ZoonkWeb.UserResetPasswordLiveTest do
     test "redirects to login page when the Log in button is clicked", %{conn: conn, token: token} do
       {:ok, lv, _html} = live(conn, ~p"/users/reset_password/#{token}")
 
-      {:ok, conn} =
+      {:ok, _reset_lv, reset_html} =
         lv
         |> element(~s|main a:fl-contains("Log in")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/users/log_in")
 
-      assert conn.resp_body =~ "Sign in"
+      assert reset_html =~ "Sign in"
     end
 
     test "redirects to password reset page when the Register button is clicked", %{
@@ -118,13 +118,13 @@ defmodule ZoonkWeb.UserResetPasswordLiveTest do
     } do
       {:ok, lv, _html} = live(conn, ~p"/users/reset_password/#{token}")
 
-      {:ok, conn} =
+      {:ok, _reset_lv, reset_html} =
         lv
         |> element(~s|main a:fl-contains("Register")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/users/register")
 
-      assert conn.resp_body =~ "Register"
+      assert reset_html =~ "Register"
     end
   end
 end

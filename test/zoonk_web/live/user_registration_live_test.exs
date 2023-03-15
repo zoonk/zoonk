@@ -60,12 +60,7 @@ defmodule ZoonkWeb.UserRegistrationLiveTest do
       # Now do a logged in request and assert on the menu
       conn = get(conn, "/")
       response = html_response(conn, 200)
-      assert response =~ email
       assert response =~ user.first_name
-      assert response =~ user.last_name
-      assert response =~ username
-      assert response =~ "Settings"
-      assert response =~ "Log out"
     end
 
     test "renders errors for duplicated email", %{conn: conn} do

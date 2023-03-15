@@ -1,35 +1,32 @@
 defmodule ZoonkWeb.UserForgotPasswordLive do
   use ZoonkWeb, :live_view
 
+  import ZoonkWeb.Components.User
+
   alias Zoonk.Accounts
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
-      <.header class="text-center">
+    <.auth_container>
+      <.auth_header>
         <%= dgettext("auth", "Forgot your password?") %>
-
-        <:subtitle>
-          <%= dgettext("auth", "We'll send a password reset link to your inbox") %>
-        </:subtitle>
-      </.header>
+        <:description>
+          <%= dgettext("auth", "We'll send a password reset link to your inbox.") %>
+        </:description>
+      </.auth_header>
 
       <.simple_form for={@form} id="reset_password_form" phx-submit="send_email">
         <.input field={@form[:email]} type="email" placeholder={dgettext("auth", "Email")} required />
 
         <:actions>
           <.button phx-disable-with={gettext("Sending...")} class="w-full">
-            <%= dgettext("auth", "Send password reset instructions") %>
+            <%= dgettext("auth", "Reset Password") %>
           </.button>
         </:actions>
       </.simple_form>
 
-      <p class="text-center mt-4">
-        <.link href={~p"/users/register"}><%= dgettext("auth", "Register") %></.link>
-        |
-        <.link href={~p"/users/log_in"}><%= dgettext("auth", "Log in") %></.link>
-      </p>
-    </div>
+      <.auth_links />
+    </.auth_container>
     """
   end
 

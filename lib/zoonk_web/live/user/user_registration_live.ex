@@ -1,23 +1,21 @@
 defmodule ZoonkWeb.UserRegistrationLive do
   use ZoonkWeb, :live_view
 
+  import ZoonkWeb.Components.User
+
   alias Zoonk.Accounts
   alias Zoonk.Accounts.User
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
-      <.header class="text-center">
+    <.auth_container>
+      <.auth_header>
         <%= dgettext("auth", "Register for an account") %>
-        <:subtitle>
+        <:description>
           <%= dgettext("auth", "Already registered?") %>
-
-          <.link navigate={~p"/users/log_in"} class="font-semibold text-primary hover:underline">
-            <%= dgettext("auth", "Sign in") %>
-          </.link>
-          <%= dgettext("auth", "to your account now.") %>
-        </:subtitle>
-      </.header>
+          <.link_styled navigate={~p"/users/log_in"}><%= dgettext("auth", "Sign in") %></.link_styled>
+        </:description>
+      </.auth_header>
 
       <.simple_form
         for={@form}
@@ -113,11 +111,11 @@ defmodule ZoonkWeb.UserRegistrationLive do
 
         <:actions>
           <.button phx-disable-with={dgettext("auth", "Creating account...")} class="w-full">
-            <%= dgettext("auth", "Create an account") %>
+            <%= dgettext("auth", "Create account") %>
           </.button>
         </:actions>
       </.simple_form>
-    </div>
+    </.auth_container>
     """
   end
 

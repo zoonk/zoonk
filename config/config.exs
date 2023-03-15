@@ -13,6 +13,7 @@ config :zoonk,
 # App global config
 config :zoonk,
   app_name: "Zoonk",
+  landing_page_url: "https://zoonk.org",
   support_email: "support@zoonk.org"
 
 # Configures the endpoint

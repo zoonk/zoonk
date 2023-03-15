@@ -1,12 +1,14 @@
 defmodule ZoonkWeb.UserResetPasswordLive do
   use ZoonkWeb, :live_view
 
+  import ZoonkWeb.Components.User
+
   alias Zoonk.Accounts
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
-      <.header class="text-center"><%= dgettext("auth", "Reset Password") %></.header>
+    <.auth_container>
+      <.auth_header><%= dgettext("auth", "Reset Password") %></.auth_header>
 
       <.simple_form
         for={@form}
@@ -41,12 +43,8 @@ defmodule ZoonkWeb.UserResetPasswordLive do
         </:actions>
       </.simple_form>
 
-      <p class="text-center mt-4">
-        <.link href={~p"/users/register"}><%= dgettext("auth", "Register") %></.link>
-        |
-        <.link href={~p"/users/log_in"}><%= dgettext("auth", "Log in") %></.link>
-      </p>
-    </div>
+      <.auth_links />
+    </.auth_container>
     """
   end
 

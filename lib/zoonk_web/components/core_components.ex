@@ -222,6 +222,7 @@ defmodule ZoonkWeb.CoreComponents do
   """
   attr :for, :any, required: true, doc: "the datastructure for the form"
   attr :as, :any, default: nil, doc: "the server side parameter to collect all input under"
+  attr :title, :string, default: nil, doc: "the form title displayed before the form"
 
   attr :rest, :global,
     include: ~w(autocomplete name rel action enctype method novalidate target),
@@ -232,14 +233,17 @@ defmodule ZoonkWeb.CoreComponents do
 
   def simple_form(assigns) do
     ~H"""
-    <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="space-y-8 bg-white mt-10">
-        <%= render_slot(@inner_block, f) %>
-        <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
-          <%= render_slot(action, f) %>
+    <div class="space-y-4">
+      <.header :if={@title}><%= @title %></.header>
+      <.form :let={f} for={@for} as={@as} {@rest}>
+        <div class="space-y-4 bg-white">
+          <%= render_slot(@inner_block, f) %>
+          <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
+            <%= render_slot(action, f) %>
+          </div>
         </div>
-      </div>
-    </.form>
+      </.form>
+    </div>
     """
   end
 
@@ -610,6 +614,56 @@ defmodule ZoonkWeb.CoreComponents do
     <span class={[@name, @class]} />
     """
   end
+
+  @doc """
+  Renders a styled link using our default style guide.
+  """
+  attr :color, :atom, default: :primary, values: [:primary, :black]
+  attr :class, :string, default: nil
+  attr :rest, :global, include: ~w(href method navigate)
+
+  slot :inner_block, required: true
+
+  def link_styled(assigns) do
+    ~H"""
+    <.link
+      class={[
+        "font-semibold hover:underline",
+        @color == :primary && "text-primary",
+        @color == :black && "text-gray-dark",
+        @class
+      ]}
+      {@rest}
+      method="delete"
+    >
+      <%= render_slot(@inner_block) %>
+    </.link>
+    """
+  end
+
+  @doc """
+  Renders an avatar element.
+  """
+  attr :src, :string, default: nil
+  attr :alt, :string, required: true
+
+  def avatar(%{src: nil} = assigns) do
+    ~H"""
+    <div class={avatar_class()} title={@alt}>
+      <%= String.first(@alt) %>
+    </div>
+    """
+  end
+
+  def avatar(%{src: src} = assigns) when is_binary(src) do
+    ~H"""
+    <img src={@src} class={avatar_class()} alt={@alt} />
+    """
+  end
+
+  defp avatar_class,
+    do:
+      "h-8 w-8 rounded-full uppercase bg-primary text-white flex items-center justify-center flex-column font-semibold"
 
   ## JS Commands
 

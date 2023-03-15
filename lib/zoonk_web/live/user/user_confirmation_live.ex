@@ -1,14 +1,19 @@
 defmodule ZoonkWeb.UserConfirmationLive do
   use ZoonkWeb, :live_view
 
+  import ZoonkWeb.Components.User
+
   alias Zoonk.Accounts
 
   def render(%{live_action: :edit} = assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
-      <.header class="text-center"><%= dgettext("auth", "Confirm Account") %></.header>
-
-      <.simple_form for={@form} id="confirmation_form" phx-submit="confirm_account">
+    <.auth_container>
+      <.simple_form
+        for={@form}
+        id="confirmation_form"
+        title={dgettext("auth", "Confirm Account")}
+        phx-submit="confirm_account"
+      >
         <.input field={@form[:token]} type="hidden" />
 
         <:actions>
@@ -18,12 +23,8 @@ defmodule ZoonkWeb.UserConfirmationLive do
         </:actions>
       </.simple_form>
 
-      <p class="text-center mt-4">
-        <.link href={~p"/users/register"}><%= dgettext("auth", "Register") %></.link>
-        |
-        <.link href={~p"/users/log_in"}><%= dgettext("auth", "Log in") %></.link>
-      </p>
-    </div>
+      <.auth_links />
+    </.auth_container>
     """
   end
 

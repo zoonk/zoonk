@@ -1,21 +1,20 @@
 defmodule ZoonkWeb.UserLoginLive do
   use ZoonkWeb, :live_view
 
+  import ZoonkWeb.Components.User
+
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
-      <.header class="text-center">
+    <.auth_container>
+      <.auth_header>
         <%= dgettext("auth", "Sign in to account") %>
-
-        <:subtitle>
+        <:description>
           <%= dgettext("auth", "Don't have an account?") %>
-
-          <.link navigate={~p"/users/register"} class="font-semibold text-primary hover:underline">
+          <.link_styled navigate={~p"/users/register"}>
             <%= dgettext("auth", "Sign up") %>
-          </.link>
-          <%= dgettext("auth", "for an account now.") %>
-        </:subtitle>
-      </.header>
+          </.link_styled>
+        </:description>
+      </.auth_header>
 
       <.simple_form for={@form} id="login_form" action={~p"/users/log_in"} phx-update="ignore">
         <.input
@@ -40,9 +39,9 @@ defmodule ZoonkWeb.UserLoginLive do
             label={dgettext("auth", "Keep me logged in")}
           />
 
-          <.link href={~p"/users/reset_password"} class="text-sm font-semibold">
+          <.link_styled navigate={~p"/users/reset_password"} color={:black} class="text-sm">
             <%= dgettext("auth", "Forgot your password?") %>
-          </.link>
+          </.link_styled>
         </:actions>
 
         <:actions>
@@ -51,7 +50,7 @@ defmodule ZoonkWeb.UserLoginLive do
           </.button>
         </:actions>
       </.simple_form>
-    </div>
+    </.auth_container>
     """
   end
 

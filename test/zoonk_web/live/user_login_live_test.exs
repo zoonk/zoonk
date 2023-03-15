@@ -101,13 +101,13 @@ defmodule ZoonkWeb.UserLoginLiveTest do
     } do
       {:ok, lv, _html} = live(conn, ~p"/users/log_in")
 
-      {:ok, conn} =
+      {:ok, _login_live, login_html} =
         lv
         |> element(~s|main a:fl-contains("Forgot your password?")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/users/reset_password")
 
-      assert conn.resp_body =~ "Forgot your password?"
+      assert login_html =~ "Forgot your password?"
     end
   end
 end

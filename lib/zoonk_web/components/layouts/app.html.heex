@@ -1,4 +1,17 @@
-<main class="px-4 py-20 sm:px-6 lg:px-8">
+<header class="flex items-center justify-between p-4 sm:px-6 lg:px-8">
+  <.link
+    navigate={if @current_user, do: ~p"/", else: nil}
+    href={if @current_user, do: nil, else: Application.get_env(:zoonk, :landing_page_url)}
+  >
+    <img src={~p"/images/icon.svg"} alt={gettext("logo")} width="33px" height="30px" />
+  </.link>
+
+  <%= if @current_user do %>
+    <.link navigate={~p"/users/settings"}><.avatar alt={@current_user.first_name} /></.link>
+  <% end %>
+</header>
+
+<main class="p-4 sm:px-6 lg:px-8">
   <.flash_group flash={@flash} />
   <%= @inner_content %>
 </main>

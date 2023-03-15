@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 
-#: lib/zoonk_web/components/core_components.ex:495
+#: lib/zoonk_web/components/core_components.ex:499
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr ""
@@ -22,31 +22,31 @@ msgstr ""
 msgid "close"
 msgstr ""
 
-#: lib/zoonk_web/live/user_settings_live.ex:36
-#: lib/zoonk_web/live/user_settings_live.ex:62
-#: lib/zoonk_web/live/user_settings_live.ex:112
+#: lib/zoonk_web/live/user/user_settings_live.ex:42
+#: lib/zoonk_web/live/user/user_settings_live.ex:67
+#: lib/zoonk_web/live/user/user_settings_live.ex:116
 #, elixir-autogen, elixir-format
 msgid "Changing..."
 msgstr ""
 
-#: lib/zoonk_web/live/user_confirmation_live.ex:15
+#: lib/zoonk_web/live/user/user_confirmation_live.ex:20
 #, elixir-autogen, elixir-format
 msgid "Confirming..."
 msgstr ""
 
-#: lib/zoonk_web/live/user_registration_live.ex:43
-#: lib/zoonk_web/live/user_reset_password_live.ex:18
+#: lib/zoonk_web/live/user/user_registration_live.ex:41
+#: lib/zoonk_web/live/user/user_reset_password_live.ex:20
 #, elixir-autogen, elixir-format
 msgid "Oops, something went wrong! Please check the errors below."
 msgstr ""
 
-#: lib/zoonk_web/live/user_reset_password_live.ex:38
+#: lib/zoonk_web/live/user/user_reset_password_live.ex:40
 #, elixir-autogen, elixir-format
 msgid "Resetting..."
 msgstr ""
 
-#: lib/zoonk_web/live/user_confirmation_instructions_live.ex:14
-#: lib/zoonk_web/live/user_forgot_password_live.ex:21
+#: lib/zoonk_web/live/user/user_confirmation_instructions_live.ex:20
+#: lib/zoonk_web/live/user/user_forgot_password_live.ex:22
 #, elixir-autogen, elixir-format
 msgid "Sending..."
 msgstr ""
@@ -54,4 +54,9 @@ msgstr ""
 #: lib/zoonk_web/controllers/home_controller.ex:5
 #, elixir-autogen, elixir-format
 msgid "Home"
+msgstr ""
+
+#: lib/zoonk_web/components/layouts/app.html.heex:6
+#, elixir-autogen, elixir-format
+msgid "logo"
 msgstr ""
