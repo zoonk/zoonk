@@ -2,6 +2,7 @@ defmodule Zoonk.ContentTest do
   @moduledoc false
   use Zoonk.DataCase, async: true
 
+  import Ecto.Query, warn: false
   import Zoonk.Fixtures.Accounts
   import Zoonk.Fixtures.Content
   import Zoonk.Fixtures.Organizations
@@ -774,6 +775,14 @@ defmodule Zoonk.ContentTest do
       assert lesson_step.lesson_id == attrs.lesson_id
     end
 
+    test "allow fill steps to have long segments" do
+      text = String.duplicate("a", 1000)
+      attrs = valid_lesson_step_attributes(%{kind: :fill, content: nil, segments: [text]})
+      assert {:ok, %LessonStep{} = lesson_step} = Content.create_lesson_step(attrs)
+      assert lesson_step.segments == [text]
+      assert lesson_step.content == nil
+    end
+
     test "returns an error changeset" do
       attrs = valid_lesson_step_attributes(%{content: ""})
       assert {:error, %Ecto.Changeset{} = changeset} = Content.create_lesson_step(attrs)
@@ -794,6 +803,67 @@ defmodule Zoonk.ContentTest do
       attrs = %{content: ""}
       assert {:error, %Ecto.Changeset{} = changeset} = Content.update_lesson_step(lesson_step, attrs)
       assert "can't be blank" in errors_on(changeset).content
+    end
+  end
+
+  describe "update_lesson_step_kind/2" do
+    test "updates the kind of a lesson step" do
+      lesson_step = lesson_step_fixture(%{kind: :readonly})
+      assert {:ok, %LessonStep{} = updated} = Content.update_lesson_step_kind(lesson_step, "quiz")
+      assert updated.kind == :quiz
+    end
+
+    test "automatically adds segments for fill kind" do
+      lesson_step = lesson_step_fixture()
+      assert {:ok, _updated} = Content.update_lesson_step_kind(lesson_step, "fill")
+      assert Repo.get(LessonStep, lesson_step.id).segments == ["This is a", nil, "step."]
+    end
+
+    test "automatically adds options for fill kind" do
+      lesson_step = lesson_step_fixture()
+      assert {:ok, _updated} = Content.update_lesson_step_kind(lesson_step, "fill")
+
+      options = StepOption |> where(lesson_step_id: ^lesson_step.id) |> Repo.all()
+      assert Enum.at(options, 0).segment == 1
+      assert Enum.at(options, 1).segment == nil
+    end
+  end
+
+  describe "update_step_segment/3" do
+    test "updates a step segment" do
+      lesson_step = lesson_step_fixture(%{kind: :fill, segments: ["This is a", nil, "step."]})
+      assert {:ok, _updated} = Content.update_step_segment(lesson_step, 2, "")
+      assert Repo.get(LessonStep, lesson_step.id).segments == ["This is a", nil, nil]
+
+      option = StepOption |> where(lesson_step_id: ^lesson_step.id) |> where(segment: 2) |> Repo.one()
+      assert option.title == "draft option"
+    end
+
+    test "when a text is added, deletes any options associated with this segment" do
+      lesson_step = lesson_step_fixture(%{kind: :fill, segments: ["This is a", nil, "step."]})
+      step_option = step_option_fixture(%{kind: :fill, lesson_step_id: lesson_step.id, segment: 1})
+      assert {:ok, _updated} = Content.update_step_segment(lesson_step, 1, "new")
+      assert Repo.get(LessonStep, lesson_step.id).segments == ["This is a", "new", "step."]
+      assert Repo.get(StepOption, step_option.id) == nil
+    end
+  end
+
+  describe "delete_step_segment/2" do
+    test "deletes a segment from a lesson step" do
+      lesson_step = lesson_step_fixture(%{kind: :fill, segments: ["This is a", nil, "step."]})
+      step_option = step_option_fixture(%{kind: :fill, lesson_step_id: lesson_step.id, segment: 1})
+      assert {:ok, _updated} = Content.delete_step_segment(lesson_step, 1)
+      assert Repo.get(LessonStep, lesson_step.id).segments == ["This is a", "step."]
+      assert Repo.get(StepOption, step_option.id) == nil
+    end
+
+    test "deleting a segment should update the index of the options" do
+      lesson_step = lesson_step_fixture(%{kind: :fill, segments: ["This is a", nil, nil]})
+      step_option1 = step_option_fixture(%{kind: :fill, lesson_step_id: lesson_step.id, segment: 1})
+      step_option2 = step_option_fixture(%{kind: :fill, lesson_step_id: lesson_step.id, segment: 2})
+      assert {:ok, _updated} = Content.delete_step_segment(lesson_step, 0)
+      assert Repo.get(StepOption, step_option1.id).segment == 0
+      assert Repo.get(StepOption, step_option2.id).segment == 1
     end
   end
 
@@ -961,6 +1031,12 @@ defmodule Zoonk.ContentTest do
       assert {:error, %Ecto.Changeset{} = changeset} = Content.create_step_option(attrs)
       assert "can't be blank" in errors_on(changeset).title
     end
+
+    test "creates an option for fill steps" do
+      attrs = %{kind: :fill, segment: 1, title: "Option 1", lesson_step_id: lesson_step_fixture().id}
+      assert {:ok, %StepOption{} = step_option} = Content.create_step_option(attrs)
+      assert step_option.segment == attrs.segment
+    end
   end
 
   describe "delete_step_option/1" do
@@ -968,6 +1044,14 @@ defmodule Zoonk.ContentTest do
       step_option = step_option_fixture()
       assert {:ok, %StepOption{}} = Content.delete_step_option(step_option.id)
       assert_raise Ecto.NoResultsError, fn -> Zoonk.Repo.get!(StepOption, step_option.id) end
+    end
+
+    test "deletes the segment associated with the step option" do
+      lesson_step = lesson_step_fixture(%{kind: :fill, segments: ["test", nil, "step"]})
+      step_option = step_option_fixture(%{kind: :fill, lesson_step_id: lesson_step.id, segment: 1})
+      assert lesson_step.segments == ["test", nil, "step"]
+      assert {:ok, _option} = Content.delete_step_option(step_option.id)
+      assert Repo.get(LessonStep, lesson_step.id).segments == ["test", "step"]
     end
   end
 

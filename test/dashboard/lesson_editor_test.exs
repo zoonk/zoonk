@@ -472,6 +472,62 @@ defmodule ZoonkWeb.DashboardLessonEditorLiveTest do
       assert Content.get_lesson_step_by_order(lesson.id, 1).kind == :open_ended
     end
 
+    test "updates a step to a fill kind", %{conn: conn, course: course} do
+      lesson = lesson_fixture(%{course_id: course.id})
+      lesson_step_fixture(%{content: "Untitled step", lesson_id: lesson.id, kind: :readonly, order: 1})
+
+      assert Content.get_lesson_step_by_order(lesson.id, 1).segments == nil
+
+      {:ok, lv, _html} = live(conn, ~p"/dashboard/c/#{course.slug}/l/#{lesson.id}/s/1")
+
+      assert has_element?(lv, "span", "Untitled step")
+
+      lv |> element("button", "Fill in the blank") |> render_click()
+
+      assert Content.get_lesson_step_by_order(lesson.id, 1).kind == :fill
+      refute has_element?(lv, "span", "Untitled step")
+      assert has_element?(lv, "a", "This is a")
+      assert has_element?(lv, "a", "fill in the blank")
+      assert has_element?(lv, "a", "step")
+    end
+
+    test "hides option image in fill kind", %{conn: conn, course: course} do
+      lesson = lesson_fixture(%{course_id: course.id})
+      step = lesson_step_fixture(%{lesson_id: lesson.id, kind: :fill, order: 1, segments: ["test", nil]})
+      step_option_fixture(%{kind: :fill, lesson_step_id: step.id, segment: 1, title: "step 1"})
+
+      {:ok, lv, _html} = live(conn, ~p"/dashboard/c/#{course.slug}/l/#{lesson.id}/s/1")
+
+      assert has_element?(lv, "a", "step 1")
+      refute has_element?(lv, "div[title='step 1']")
+    end
+
+    test "hides option feedback and correct? fields when editing an option", %{conn: conn, course: course} do
+      lesson = lesson_fixture(%{course_id: course.id})
+      step = lesson_step_fixture(%{lesson_id: lesson.id, kind: :fill, order: 1, segments: ["test", nil]})
+      option = step_option_fixture(%{kind: :fill, lesson_step_id: step.id, segment: 1, title: "step 1"})
+
+      {:ok, lv, _html} = live(conn, ~p"/dashboard/c/#{course.slug}/l/#{lesson.id}/s/1/o/#{option.id}")
+
+      refute has_element?(lv, "input[name='step_option[feedback]'")
+      refute has_element?(lv, "input[name='step_option[correct?]'")
+    end
+
+    test "removing an option associated with a segment removes the segment", %{conn: conn, course: course} do
+      lesson = lesson_fixture(%{course_id: course.id})
+      step = lesson_step_fixture(%{lesson_id: lesson.id, kind: :fill, order: 1, segments: ["test", nil]})
+      step_option_fixture(%{kind: :fill, lesson_step_id: step.id, segment: 1, title: "step 1"})
+
+      {:ok, lv, _html} = live(conn, ~p"/dashboard/c/#{course.slug}/l/#{lesson.id}/s/1")
+
+      assert has_element?(lv, "#segments a", "step 1")
+
+      lv |> element("button", "Delete option") |> render_click()
+
+      assert Repo.get_by(LessonStep, id: step.id).segments == ["test"]
+      refute has_element?(lv, "#segments a", "step 1")
+    end
+
     test "embeds youtube video", %{conn: conn, course: course} do
       lesson = lesson_fixture(%{course_id: course.id})
       lesson_step_fixture(%{lesson_id: lesson.id, order: 2, content: "watch video: https://www.youtube.com/watch?v=12345678901"})

@@ -10,6 +10,7 @@ defmodule ZoonkWeb.Live.Dashboard.LessonEditor do
   alias ZoonkWeb.Components.Dashboard.LessonPublish
   alias ZoonkWeb.Components.Dashboard.OptionList
   alias ZoonkWeb.Components.Dashboard.StepContent
+  alias ZoonkWeb.Components.Dashboard.StepFill
   alias ZoonkWeb.Components.Dashboard.StepSwitch
   alias ZoonkWeb.Components.Upload
 
@@ -92,7 +93,7 @@ defmodule ZoonkWeb.Live.Dashboard.LessonEditor do
   def handle_event("update-step-kind", %{"kind" => kind}, socket) do
     %{selected_step: step, course: course, lesson: lesson} = socket.assigns
 
-    case Content.update_lesson_step(step, %{kind: kind}) do
+    case Content.update_lesson_step_kind(step, kind) do
       {:ok, _lesson_step} ->
         {:noreply, push_patch(socket, to: step_link(course, lesson, step.order))}
 
@@ -203,7 +204,20 @@ defmodule ZoonkWeb.Live.Dashboard.LessonEditor do
         icon: "tabler-writing",
         title: dgettext("orgs", "Open-ended"),
         description: dgettext("orgs", "Users can write their own answer.")
+      },
+      %{
+        kind: :fill,
+        icon: "tabler-forms",
+        title: dgettext("orgs", "Fill in the blank"),
+        description: dgettext("orgs", "Users can fill in the blank space in a sentence.")
       }
     ]
+  end
+
+  # Returns only options associated with a step segment
+  defp options_with_segments(options) do
+    options
+    |> Enum.filter(fn option -> option.segment end)
+    |> Enum.map(fn %{title: title, segment: segment} -> %{title: title, segment: segment} end)
   end
 end

@@ -29,6 +29,7 @@ defmodule Zoonk.Content do
   @type step_suggested_course_changeset :: {:ok, StepSuggestedCourse.t()} | {:error, Ecto.Changeset.t()}
   @type user_lesson_changeset :: {:ok, UserLesson.t()} | {:error, Ecto.Changeset.t()}
   @type user_selection_changeset :: {:ok, UserSelection.t()} | {:error, Ecto.Changeset.t()}
+  @type transaction_result :: {:ok, map()} | {:error, any()} | Ecto.Multi.failure()
 
   @type lesson_stats :: %{users: non_neg_integer()}
 
@@ -735,6 +736,104 @@ defmodule Zoonk.Content do
   end
 
   @doc """
+  Updates a lesson step kind.
+
+  ## Examples
+
+      iex> update_lesson_step_kind(%LessonStep{}, "fill")
+      {:ok, %LessonStep{}}
+  """
+  @spec update_lesson_step_kind(LessonStep.t(), String.t()) :: transaction_result()
+  def update_lesson_step_kind(%LessonStep{} = lesson_step, "fill") do
+    segments = [dgettext("orgs", "This is a"), nil, dgettext("orgs", "step.")]
+    changeset = change_lesson_step(lesson_step, %{kind: :fill, segments: segments})
+    option_attrs = %{kind: :fill, lesson_step_id: lesson_step.id}
+    correct_option = Map.merge(option_attrs, %{segment: 1, title: dgettext("orgs", "fill in the blank")})
+    incorrect_option = Map.put(option_attrs, :title, dgettext("orgs", "incorrect option"))
+
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:lesson_step, changeset)
+    |> Ecto.Multi.insert(:opt1, change_step_option(%StepOption{}, correct_option))
+    |> Ecto.Multi.insert(:opt2, change_step_option(%StepOption{}, incorrect_option))
+    |> Repo.transaction()
+  end
+
+  def update_lesson_step_kind(%LessonStep{} = lesson_step, kind) do
+    lesson_step |> change_lesson_step(%{kind: kind}) |> Repo.update()
+  end
+
+  @doc """
+  Updates a lesson step segment.
+
+  Take an index and a segment, and updates the segment at the given index.
+  When making a segment empty, it also adds a draft option associated to it.
+  When the segment is not empty, it also deletes any options associated to it.
+
+  ## Examples
+
+      iex> update_step_segment(%LessonStep{}, 1, "This is a")
+      {:ok, %{}}
+  """
+  @spec update_step_segment(LessonStep.t(), non_neg_integer(), String.t()) :: transaction_result()
+  def update_step_segment(%LessonStep{} = lesson_step, index, "") do
+    updated_step = change_lesson_step(lesson_step, %{kind: :fill, segments: List.replace_at(lesson_step.segments, index, nil)})
+    option_attrs = %{kind: :fill, lesson_step_id: lesson_step.id, segment: index, title: dgettext("orgs", "draft option")}
+
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:lesson_step, updated_step)
+    |> Ecto.Multi.insert(:option, change_step_option(%StepOption{}, option_attrs))
+    |> Repo.transaction()
+  end
+
+  def update_step_segment(%LessonStep{} = lesson_step, index, segment) do
+    updated_step = change_lesson_step(lesson_step, %{kind: :fill, segments: List.replace_at(lesson_step.segments, index, segment)})
+    query = StepOption |> where(lesson_step_id: ^lesson_step.id) |> where(segment: ^index)
+
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:lesson_step, updated_step)
+    |> Ecto.Multi.delete_all(:options, query)
+    |> Repo.transaction()
+  end
+
+  @doc """
+  Deletes a segment from a lesson step.
+
+  When deleting a segment, it also deletes any options associated with it.
+  It also updates options segments to match the new order.
+
+  ## Examples
+
+      iex> delete_step_segment(%LessonStep{}, 1)
+      {:ok, %{}}
+  """
+  @spec delete_step_segment(LessonStep.t(), non_neg_integer()) :: transaction_result()
+  def delete_step_segment(%LessonStep{} = lesson_step, index) do
+    updated_step = change_lesson_step(lesson_step, %{kind: :fill, segments: List.delete_at(lesson_step.segments, index)})
+    delete_query = StepOption |> where(lesson_step_id: ^lesson_step.id) |> where(segment: ^index)
+    indexes_requiring_update = segment_indexes_requiring_update(lesson_step.segments, index)
+
+    update_query =
+      StepOption
+      |> where(lesson_step_id: ^lesson_step.id)
+      |> where([so], so.segment in ^indexes_requiring_update)
+
+    Ecto.Multi.new()
+    |> Ecto.Multi.update(:lesson_step, updated_step)
+    |> Ecto.Multi.delete_all(:delete_options, delete_query)
+    |> Ecto.Multi.update_all(:update_options, update_query, inc: [segment: -1])
+    |> Repo.transaction()
+  end
+
+  # given a list of segments, return a list of indexes where the segment is nil
+  # and the index argument is greater than the index of the nil segment
+  defp segment_indexes_requiring_update(segments, index) do
+    segments
+    |> Enum.with_index()
+    |> Enum.filter(fn {segment, i} -> is_nil(segment) and i > index end)
+    |> Enum.map(fn {_, index} -> index end)
+  end
+
+  @doc """
   Deletes a lesson step.
 
   ## Examples
@@ -907,9 +1006,23 @@ defmodule Zoonk.Content do
       iex> delete_step_option(123)
       {:error, %Ecto.Changeset{}}
   """
-  @spec delete_step_option(non_neg_integer()) :: step_option_changeset()
+  @spec delete_step_option(non_neg_integer()) :: transaction_result() | step_option_changeset()
   def delete_step_option(step_option_id) do
-    StepOption |> Repo.get!(step_option_id) |> Repo.delete()
+    step_option = Repo.get!(StepOption, step_option_id)
+    delete_step_option(step_option, step_option.segment)
+  end
+
+  defp delete_step_option(step_option, nil), do: Repo.delete(step_option)
+
+  defp delete_step_option(step_option, segment) do
+    lesson_step = Repo.get!(LessonStep, step_option.lesson_step_id)
+    segments = List.delete_at(lesson_step.segments, segment)
+    changeset = change_lesson_step(lesson_step, %{kind: lesson_step.kind, segments: segments})
+
+    Ecto.Multi.new()
+    |> Ecto.Multi.delete(:step_option, step_option)
+    |> Ecto.Multi.update(:lesson_step, changeset)
+    |> Repo.transaction()
   end
 
   @doc """
