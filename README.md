@@ -12,3 +12,7 @@ Expect the first release around summer 2025. Follow the repo or the project on s
 - [Bluesky](https://bsky.app/profile/zoonk.bsky.social)
 - [Threads](https://www.threads.net/@zoonkeducation)
 - [LinkedIn](https://www.linkedin.com/company/zoonk)
+
+## Sponsors
+
+- [Gustavo A. Castillo](https://github.com/guscastilloa)
