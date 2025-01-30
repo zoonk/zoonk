@@ -5,3 +5,10 @@ Zoonk will be a platform where you can learn anything through interactive course
 The first version will focus on LLM-powered learning, but later, I’ll add tools for creating interactive courses, similar to how Uneebee worked. I’ll share more details in the coming weeks as I start working on this full-time in mid-February.
 
 Expect the first release around summer 2025. Follow the repo or the project on social media to stay updated.
+
+## Social Media
+
+- [X](https://x.com/zoonkeducation)
+- [Bluesky](https://bsky.app/profile/zoonk.bsky.social)
+- [Threads](https://www.threads.net/@zoonkeducation)
+- [LinkedIn](https://www.linkedin.com/company/zoonk)
