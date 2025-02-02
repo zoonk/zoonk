@@ -8,9 +8,9 @@ Expect the first release around summer 2025. Follow the repo or the project on s
 
 ## Social Media
 
-- [X](https://x.com/zoonkeducation)
+- [X](https://x.com/zoonkorg)
 - [Bluesky](https://bsky.app/profile/zoonk.bsky.social)
-- [Threads](https://www.threads.net/@zoonkeducation)
+- [Threads](https://www.threads.net/@zoonkorg)
 - [LinkedIn](https://www.linkedin.com/company/zoonk)
 
 ## Sponsors
