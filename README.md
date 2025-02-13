@@ -1,8 +1,20 @@
-# Zoonk
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/49bc34bc-e36f-4df9-b37d-2fd72e2e4407">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/8d018809-14b9-435b-9409-d515c599335d">
+  <img alt="Zoonk logo (a smiley brain) on the first line. Below it says 'learn anything with interactive courses'" src="https://github.com/user-attachments/assets/8d018809-14b9-435b-9409-d515c599335d">
+</picture>
 
-Zoonk will be a platform where you can learn anything through interactive courses. I’m taking what I built with [Uneebee](https://github.com/zoonk/uneebee) and rebuilding it from the ground up, so it made sense to start fresh with a new repository. Uneebee won’t be maintained anymore, but you’re welcome to fork it if you found it useful.
+<p align="center">
+  White-label platform for creating interactive courses to learn any subject - works with or without AI assistance.
+</p>
 
-The first version will focus on LLM-powered learning, with interactive course creation tools coming later—similar to what Uneebee offered. This new project will be open-sourced in Summer 2025. Follow this repository or Zoonk on social media for updates.
+> [!CAUTION]
+>
+> ## Early Development Notice
+>
+> This project is still in early development and **not ready for use**. We’re actively working to make it available as soon as possible.
+>
+> As we progress, we’ll open it for testing and contributions. Star this repository or follow us on social media to stay updated.
 
 ## Social Media
 
@@ -11,6 +23,6 @@ The first version will focus on LLM-powered learning, with interactive course cr
 - [Threads](https://www.threads.net/@zoonkorg)
 - [LinkedIn](https://www.linkedin.com/company/zoonk)
 
-## Sponsors
+## Supporters
 
 - [Gustavo A. Castillo](https://github.com/guscastilloa)
