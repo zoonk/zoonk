@@ -5,7 +5,12 @@
 </picture>
 
 <p align="center">
-  White-label platform for creating interactive courses to learn any subject - works with or without AI assistance.
+  White-label platform for creating interactive courses.
+  <br />
+  <br />
+  <a href="https://forms.gle/jHeTqPUkw1vA7wLh8">Waitlist</a>
+  .
+  <a href="https://github.com/sponsors/ceolinwill?frequency=one-time">Lifetime Access (Limited Offer)
 </p>
 
 > [!CAUTION]
@@ -24,5 +29,7 @@
 - [LinkedIn](https://www.linkedin.com/company/zoonk)
 
 ## Supporters
+
+**[Support the project and get lifetime access](https://github.com/sponsors/ceolinwill?frequency=one-time)**
 
 - [Gustavo A. Castillo](https://github.com/guscastilloa)
