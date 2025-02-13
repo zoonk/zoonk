@@ -19,15 +19,15 @@ defmodule ZoonkWeb.ConnCase do
 
   using do
     quote do
-      # The default endpoint for testing
-      @endpoint ZoonkWeb.Endpoint
-
       use ZoonkWeb, :verified_routes
 
       # Import conveniences for testing with connections
-      import Plug.Conn
       import Phoenix.ConnTest
+      import Plug.Conn
       import ZoonkWeb.ConnCase
+
+      # The default endpoint for testing
+      @endpoint ZoonkWeb.Endpoint
     end
   end
 
