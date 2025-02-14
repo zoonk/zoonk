@@ -22,7 +22,7 @@ defmodule ZoonkWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :zoonk,
-    gzip: false,
+    gzip: true,
     only: ZoonkWeb.static_paths()
 
   # Code reloading can be explicitly enabled under the
