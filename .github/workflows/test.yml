@@ -70,6 +70,12 @@ jobs:
     needs: install-deps
 
     steps:
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{env.ELIXIR_VERSION}}
+          otp-version: ${{env.OTP_VERSION}}
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -93,6 +99,12 @@ jobs:
     needs: install-deps
 
     steps:
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{env.ELIXIR_VERSION}}
+          otp-version: ${{env.OTP_VERSION}}
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -104,6 +116,12 @@ jobs:
     needs: install-deps
 
     steps:
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{env.ELIXIR_VERSION}}
+          otp-version: ${{env.OTP_VERSION}}
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -115,6 +133,12 @@ jobs:
     needs: install-deps
 
     steps:
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{env.ELIXIR_VERSION}}
+          otp-version: ${{env.OTP_VERSION}}
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -126,6 +150,12 @@ jobs:
     needs: install-deps
 
     steps:
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{env.ELIXIR_VERSION}}
+          otp-version: ${{env.OTP_VERSION}}
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -137,6 +167,12 @@ jobs:
     needs: install-deps
 
     steps:
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{env.ELIXIR_VERSION}}
+          otp-version: ${{env.OTP_VERSION}}
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -148,6 +184,12 @@ jobs:
     needs: install-deps
 
     steps:
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{env.ELIXIR_VERSION}}
+          otp-version: ${{env.OTP_VERSION}}
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -159,6 +201,12 @@ jobs:
     needs: install-deps
 
     steps:
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{env.ELIXIR_VERSION}}
+          otp-version: ${{env.OTP_VERSION}}
+
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -170,6 +218,12 @@ jobs:
     needs: install-deps
 
     steps:
+      - name: Set up Elixir
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{env.ELIXIR_VERSION}}
+          otp-version: ${{env.OTP_VERSION}}
+
       - name: Checkout code
         uses: actions/checkout@v4
 
