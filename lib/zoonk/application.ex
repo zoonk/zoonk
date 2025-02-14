@@ -12,8 +12,6 @@ defmodule Zoonk.Application do
       Zoonk.Repo,
       {DNSCluster, query: Application.get_env(:zoonk, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Zoonk.PubSub},
-      # Start the Finch HTTP client for sending emails
-      {Finch, name: Zoonk.Finch},
       # Start a worker by calling: Zoonk.Worker.start_link(arg)
       # {Zoonk.Worker, arg},
       # Start to serve requests, typically the last entry
