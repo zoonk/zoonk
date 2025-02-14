@@ -65,7 +65,7 @@ jobs:
         run: mix deps.get
         shell: bash
 
-      - name: Install Bun
+      - name: Set Up Bun
         uses: oven-sh/setup-bun@v2
 
       - name: Compile app
