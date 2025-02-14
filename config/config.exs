@@ -56,6 +56,9 @@ config :zoonk, ZoonkWeb.Endpoint,
   pubsub_server: Zoonk.PubSub,
   live_view: [signing_salt: "aQIHSki0"]
 
+# Configure translation
+config :zoonk, ZoonkWeb.Gettext, default_locale: "en", locales: ~w(de en es fr it ja ko pt tr zh_Hans zh_Hant)
+
 # Configures Ecto
 config :zoonk,
   ecto_repos: [Zoonk.Repo],

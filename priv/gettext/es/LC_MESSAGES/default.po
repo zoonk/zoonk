@@ -1,0 +1,53 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/zoonk_web/components/core_components.ex:479
+#, elixir-autogen, elixir-format
+msgid "Actions"
+msgstr "Acciones"
+
+#: lib/zoonk_web/components/core_components.ex:159
+#, elixir-autogen, elixir-format
+msgid "Attempting to reconnect"
+msgstr "Intentando reconectar"
+
+#: lib/zoonk_web/components/core_components.ex:150
+#, elixir-autogen, elixir-format
+msgid "Error!"
+msgstr "¡Error!"
+
+#: lib/zoonk_web/components/core_components.ex:171
+#, elixir-autogen, elixir-format
+msgid "Hang in there while we get back on track"
+msgstr "Espera mientras volvemos a la normalidad"
+
+#: lib/zoonk_web/components/core_components.ex:166
+#, elixir-autogen, elixir-format
+msgid "Something went wrong!"
+msgstr "¡Algo salió mal!"
+
+#: lib/zoonk_web/components/core_components.ex:149
+#, elixir-autogen, elixir-format
+msgid "Success!"
+msgstr "¡Éxito!"
+
+#: lib/zoonk_web/components/core_components.ex:154
+#, elixir-autogen, elixir-format
+msgid "We can't find the internet"
+msgstr "No podemos encontrar el internet"
+
+#: lib/zoonk_web/components/core_components.ex:75
+#: lib/zoonk_web/components/core_components.ex:129
+#, elixir-autogen, elixir-format
+msgid "close"
+msgstr "cerrar"
