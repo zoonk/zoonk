@@ -1,5 +1,5 @@
 defmodule ZoonkWeb.PageControllerTest do
-  use ZoonkWeb.ConnCase
+  use ZoonkWeb.ConnCase, async: true
 
   test "GET /", %{conn: conn} do
     conn = get(conn, ~p"/")
