@@ -88,7 +88,17 @@ defmodule ZoonkWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components
-      import ZoonkWeb.CoreComponents
+      import ZoonkWeb.Components.Back
+      import ZoonkWeb.Components.Button
+      import ZoonkWeb.Components.DataList
+      import ZoonkWeb.Components.Flash
+      import ZoonkWeb.Components.Form
+      import ZoonkWeb.Components.Header
+      import ZoonkWeb.Components.Icon
+      import ZoonkWeb.Components.Input
+      import ZoonkWeb.Components.Modal
+      import ZoonkWeb.Components.Table
+      import ZoonkWeb.Components.Utils
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
