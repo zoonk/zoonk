@@ -41,8 +41,6 @@ defmodule Zoonk.MixProject do
       {:finch, "~> 0.13"},
       {:floki, ">= 0.30.0", only: :test},
       {:gettext, "~> 0.26"},
-      {:heroicons,
-       github: "tailwindlabs/heroicons", tag: "v2.1.1", sparse: "optimized", app: false, compile: false, depth: 1},
       {:jason, "~> 1.2"},
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.2", only: [:dev, :test], runtime: false},
@@ -56,6 +54,9 @@ defmodule Zoonk.MixProject do
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
       {:styler, "~> 1.3", only: [:dev, :test], runtime: false},
       {:swoosh, "~> 1.5"},
+      # Using the main branch instead of tags because of the size. Using the tag had over 1gb. Using a branch has less than 60mb.
+      {:tabler_icons,
+       github: "tabler/tabler-icons", branch: "main", sparse: "icons", app: false, compile: false, depth: 1},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
       {:tailwind_formatter, "~> 0.4.2", only: [:dev, :test], runtime: false},
       {:telemetry_metrics, "~> 1.0"},

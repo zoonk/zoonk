@@ -40,47 +40,45 @@ module.exports = {
       ]),
     ),
 
-    // Embeds Heroicons (https://heroicons.com) into your app.css bundle
-    // See your `CoreComponents.icon/1` for more information.
-    //
+    // Embeds Tabler Icons (https://tabler-icons.io/) into your app.css bundle
+    // Credits: [Florian Arens](https://farens.me/blog/how-to-integrate-tabler-icons-into-your-phoenix-project)
     plugin(function ({ matchComponents, theme }) {
-      let iconsDir = path.join(__dirname, "../deps/heroicons/optimized");
-      let values = {};
-      let icons = [
-        ["", "/24/outline"],
-        ["-solid", "/24/solid"],
-        ["-mini", "/20/solid"],
-        ["-micro", "/16/solid"],
+      const iconsDir = path.join(__dirname, "../deps/tabler_icons/icons");
+      const values = {};
+
+      const icons = [
+        ["", "/outline"],
+        ["-filled", "/filled"],
       ];
+
       icons.forEach(([suffix, dir]) => {
         fs.readdirSync(path.join(iconsDir, dir)).forEach((file) => {
-          let name = path.basename(file, ".svg") + suffix;
+          const name = path.basename(file, ".svg") + suffix;
           values[name] = { name, fullPath: path.join(iconsDir, dir, file) };
         });
       });
+
       matchComponents(
         {
-          hero: ({ name, fullPath }) => {
-            let content = fs
+          tabler: ({ name, fullPath }) => {
+            const content = fs
               .readFileSync(fullPath)
               .toString()
-              .replace(/\r?\n|\r/g, "");
-            let size = theme("spacing.6");
-            if (name.endsWith("-mini")) {
-              size = theme("spacing.5");
-            } else if (name.endsWith("-micro")) {
-              size = theme("spacing.4");
-            }
+              .replace(/\r?\n|\r/g, "")
+              .replace(/width="[^"]*"/, "")
+              .replace(/height="[^"]*"/, "")
+              .replace('stroke-width="2"', 'stroke-width="1"');
+
             return {
-              [`--hero-${name}`]: `url('data:image/svg+xml;utf8,${content}')`,
-              "-webkit-mask": `var(--hero-${name})`,
-              mask: `var(--hero-${name})`,
+              [`--tabler-${name}`]: `url('data:image/svg+xml;utf8,${content}')`,
+              "-webkit-mask": `var(--tabler-${name})`,
+              mask: `var(--tabler-${name})`,
               "mask-repeat": "no-repeat",
               "background-color": "currentColor",
               "vertical-align": "middle",
               display: "inline-block",
-              width: size,
-              height: size,
+              width: theme("spacing.5"),
+              height: theme("spacing.5"),
             };
           },
         },

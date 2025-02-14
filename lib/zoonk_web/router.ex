@@ -7,7 +7,7 @@ defmodule ZoonkWeb.Router do
     plug :fetch_live_flash
     plug :put_root_layout, html: {ZoonkWeb.Layouts, :root}
     plug :protect_from_forgery
-    plug :put_secure_browser_headers, %{"content-security-policy" => "default-src 'self';"}
+    plug :put_secure_browser_headers, %{"content-security-policy" => "default-src 'self';img-src 'self' data: blob:;"}
   end
 
   pipeline :api do
