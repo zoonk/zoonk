@@ -65,14 +65,20 @@ jobs:
         run: mix deps.get
         shell: bash
 
+      - name: Set Up Bun
+        uses: oven-sh/setup-bun@v2
+
       - name: Compile app
         run: mix compile --all-warnings --warnings-as-errors
 
       - name: Check for transitive compilation dependencies
         run: mix xref graph --label compile-connected --fail-above 0
 
-      - name: Check formatter
+      - name: Check Elixir formatter
         run: mix format --check-formatted
+
+      - name: Check Prettier formatter
+        run: bunx prettier . --check
 
       - name: Lint
         run: mix credo --strict
