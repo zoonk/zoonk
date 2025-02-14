@@ -9,7 +9,7 @@
 //
 //     import "../vendor/some-package.js"
 //
-// Alternatively, you can `npm install some-package --prefix assets` and import
+// Alternatively, you can `bun install some-package --cwd assets` and import
 // them using a path starting with the package name:
 //
 //     import "some-package"
@@ -20,7 +20,7 @@ import "phoenix_html";
 // Establish Phoenix Socket and LiveView configuration.
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
-import topbar from "../vendor/topbar";
+import topbar from "topbar";
 
 let csrfToken = document
   .querySelector("meta[name='csrf-token']")

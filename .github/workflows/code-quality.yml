@@ -61,12 +61,15 @@ jobs:
             ${{ runner.os }}-mix-${{ env.cache-name }}-
             ${{ runner.os }}-mix-
 
+      - name: Set Up Bun
+        uses: oven-sh/setup-bun@v2
+
       - name: Install dependencies
         run: mix deps.get
         shell: bash
 
-      - name: Set Up Bun
-        uses: oven-sh/setup-bun@v2
+      - name: Install assets dependencies
+        run: bun install --cwd assets
 
       - name: Compile app
         run: mix compile --all-warnings --warnings-as-errors
