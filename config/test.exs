@@ -10,8 +10,7 @@ config :mix_test_watch, clear: true
 config :phoenix, :plug_init_mode, :runtime
 
 # Enable helpful, but potentially expensive runtime checks
-config :phoenix_live_view,
-  enable_expensive_runtime_checks: true
+config :phoenix_live_view, enable_expensive_runtime_checks: true
 
 # Disable swoosh api client as it is only required for production adapters
 config :swoosh, :api_client, false
