@@ -22,10 +22,11 @@ import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "topbar";
 
-let csrfToken = document
+const csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
-let liveSocket = new LiveSocket("/live", Socket, {
+
+const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: { _csrf_token: csrfToken },
 });
