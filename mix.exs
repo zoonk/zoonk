@@ -78,6 +78,7 @@ defmodule Zoonk.MixProject do
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind zoonk", "esbuild zoonk"],
       "assets.deploy": ["tailwind zoonk --minify", "esbuild zoonk --minify", "phx.digest"],
+      locale: ["gettext.extract", "gettext.merge priv/gettext"],
       ci: [
         "compile --all-warnings --warnings-as-errors",
         "format --check-formatted",
