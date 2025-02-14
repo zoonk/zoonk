@@ -9,7 +9,8 @@ defmodule Zoonk.MixProject do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      preferred_cli_env: ["test.watch": :test]
     ]
   end
 
@@ -44,6 +45,7 @@ defmodule Zoonk.MixProject do
        github: "tailwindlabs/heroicons", tag: "v2.1.1", sparse: "optimized", app: false, compile: false, depth: 1},
       {:jason, "~> 1.2"},
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
+      {:mix_test_watch, "~> 1.2", only: [:dev, :test], runtime: false},
       {:phoenix_ecto, "~> 4.5"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_dashboard, "~> 0.8.3"},
