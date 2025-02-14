@@ -50,6 +50,7 @@ defmodule Zoonk.MixProject do
       {:phoenix_live_view, "~> 1.0.0"},
       {:phoenix, "~> 1.7.19"},
       {:postgrex, ">= 0.0.0"},
+      {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
       {:styler, "~> 1.3", only: [:dev, :test], runtime: false},
       {:swoosh, "~> 1.5"},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
@@ -73,11 +74,7 @@ defmodule Zoonk.MixProject do
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind zoonk", "esbuild zoonk"],
-      "assets.deploy": [
-        "tailwind zoonk --minify",
-        "esbuild zoonk --minify",
-        "phx.digest"
-      ]
+      "assets.deploy": ["tailwind zoonk --minify", "esbuild zoonk --minify", "phx.digest"]
     ]
   end
 end
