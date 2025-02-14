@@ -1,0 +1,13 @@
+{
+  "lockfileVersion": 1,
+  "workspaces": {
+    "": {
+      "dependencies": {
+        "topbar": "^3.0.0",
+      },
+    },
+  },
+  "packages": {
+    "topbar": ["topbar@3.0.0", "", {}, "sha512-mhczD7KfYi1anfoMPKRdl0wPSWiYc0YOK4KyycYs3EaNT15pVVNDG5CtfgZcEBWIPJEdfR7r8K4hTXDD2ECBVQ=="],
+  }
+}
