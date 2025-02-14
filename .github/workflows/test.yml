@@ -1,0 +1,177 @@
+name: Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+env:
+  MIX_ENV: test
+  OTP_VERSION: 27.2.2
+  ELIXIR_VERSION: 1.18.2
+
+jobs:
+  install-deps:
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres:17
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Set up Elixir
+        id: beam
+        uses: erlef/setup-beam@v1
+        with:
+          elixir-version: ${{env.ELIXIR_VERSION}}
+          otp-version: ${{env.OTP_VERSION}}
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Restore dependencies cache
+        id: cache-deps
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-elixir-deps
+        with:
+          path: deps
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-
+
+      - name: Restore build cache
+        id: cache-build
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-compiled-build
+        with:
+          path: _build
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-
+            ${{ runner.os }}-mix-
+
+      - name: Install dependencies
+        run: mix deps.get
+        shell: bash
+
+  compile:
+    runs-on: ubuntu-latest
+    needs: install-deps
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Restore build cache
+        id: cache-build
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-compiled-build
+        with:
+          path: _build
+          key: ${{ runner.os }}-mix-${{ env.cache-name }}-${{ hashFiles('**/mix.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-mix-${{ env.cache-name }}-
+            ${{ runner.os }}-mix-
+
+      - name: Compile app
+        run: mix compile --all-warnings --warnings-as-errors
+
+  check-transitive-deps:
+    runs-on: ubuntu-latest
+    needs: install-deps
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check for transitive compilation dependencies
+        run: mix xref graph --label compile-connected --fail-above 0
+
+  check-formatter:
+    runs-on: ubuntu-latest
+    needs: install-deps
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check formatter
+        run: mix format --check-formatted
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: install-deps
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Lint
+        run: mix credo --strict
+
+  scan-security:
+    runs-on: ubuntu-latest
+    needs: install-deps
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Scan security vulnerabilities
+        run: mix sobelow --config
+
+  check-unused-deps:
+    runs-on: ubuntu-latest
+    needs: install-deps
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check unused dependencies
+        run: mix deps.unlock --check-unused
+
+  audit-deps:
+    runs-on: ubuntu-latest
+    needs: install-deps
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Audit dependencies
+        run: mix deps.audit
+
+  scan-retired-deps:
+    runs-on: ubuntu-latest
+    needs: install-deps
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Scan retired dependencies
+        run: mix hex.audit
+
+  run-tests:
+    runs-on: ubuntu-latest
+    needs: install-deps
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run tests
+        run: mix test

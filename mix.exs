@@ -77,7 +77,16 @@ defmodule Zoonk.MixProject do
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
       "assets.build": ["tailwind zoonk", "esbuild zoonk"],
-      "assets.deploy": ["tailwind zoonk --minify", "esbuild zoonk --minify", "phx.digest"]
+      "assets.deploy": ["tailwind zoonk --minify", "esbuild zoonk --minify", "phx.digest"],
+      ci: [
+        "compile --all-warnings --warnings-as-errors",
+        "format --check-formatted",
+        "credo --strict",
+        "sobelow --config",
+        "deps.unlock --check-unused",
+        "deps.audit",
+        "xref graph --label compile-connected --fail-above 0"
+      ]
     ]
   end
 end
