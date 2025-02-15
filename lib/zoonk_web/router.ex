@@ -16,6 +16,10 @@ defmodule ZoonkWeb.Router do
 
   scope "/", ZoonkWeb do
     pipe_through :browser
+
+    live_session :public do
+      live "/", Live.Home
+    end
   end
 
   # Other scopes may use custom stacks.
