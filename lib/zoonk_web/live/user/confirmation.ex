@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.UserLive.Confirmation do
+defmodule ZoonkWeb.Live.UserConfirmation do
   @moduledoc false
   use ZoonkWeb, :live_view
 

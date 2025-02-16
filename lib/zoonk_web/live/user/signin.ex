@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.UserLive.SignIn do
+defmodule ZoonkWeb.Live.UserSignIn do
   @moduledoc false
   use ZoonkWeb, :live_view
 
