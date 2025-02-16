@@ -4,8 +4,8 @@ defmodule Zoonk.AuthTest do
   import Zoonk.AuthFixtures
 
   alias Zoonk.Auth
-  alias Zoonk.Auth.User
-  alias Zoonk.Auth.UserToken
+  alias ZoonkSchema.User
+  alias ZoonkSchema.UserToken
 
   describe "get_user_by_email/1" do
     test "does not return the user if the email does not exist" do

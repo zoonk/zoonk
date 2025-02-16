@@ -1,10 +1,10 @@
-defmodule Zoonk.Auth.UserToken do
+defmodule ZoonkSchema.UserToken do
   @moduledoc false
   use Ecto.Schema
 
   import Ecto.Query
 
-  alias Zoonk.Auth.UserToken
+  alias ZoonkSchema.UserToken
 
   @hash_algorithm :sha256
   @rand_size 32
@@ -19,7 +19,7 @@ defmodule Zoonk.Auth.UserToken do
     field :token, :binary
     field :context, :string
     field :sent_to, :string
-    belongs_to :user, Zoonk.Auth.User
+    belongs_to :user, ZoonkSchema.User
 
     timestamps(type: :utc_datetime, updated_at: false)
   end

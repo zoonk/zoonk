@@ -1,4 +1,4 @@
-defmodule Zoonk.Auth.User do
+defmodule ZoonkSchema.User do
   @moduledoc false
   use Ecto.Schema
 

@@ -5,10 +5,10 @@ defmodule Zoonk.Auth do
 
   import Ecto.Query, warn: false
 
-  alias Zoonk.Auth.User
   alias Zoonk.Auth.UserNotifier
-  alias Zoonk.Auth.UserToken
   alias Zoonk.Repo
+  alias ZoonkSchema.User
+  alias ZoonkSchema.UserToken
 
   ## Database getters
 
@@ -83,7 +83,7 @@ defmodule Zoonk.Auth do
   @doc """
   Returns an `%Ecto.Changeset{}` for changing the user email.
 
-  See `Zoonk.Auth.User.email_changeset/3` for a list of supported options.
+  See `ZoonkSchema.User.email_changeset/3` for a list of supported options.
 
   ## Examples
 
