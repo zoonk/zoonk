@@ -1,6 +1,12 @@
 defmodule Zoonk.Auth do
   @moduledoc """
-  The Auth context.
+  Authentication context for managing user authentication and session handling.
+
+  This module is responsible for:
+    - User authentication via session tokens and magic links.
+    - User registration and email verification.
+    - Managing session lifecycle, including login and logout.
+    - Handling sudo mode for elevated access.
   """
 
   import Ecto.Query, warn: false
