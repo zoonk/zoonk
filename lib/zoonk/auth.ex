@@ -5,6 +5,7 @@ defmodule Zoonk.Auth do
 
   import Ecto.Query, warn: false
 
+  alias Zoonk.Auth.TokenManager
   alias Zoonk.Auth.UserNotifier
   alias Zoonk.Repo
   alias ZoonkSchema.User
@@ -103,7 +104,7 @@ defmodule Zoonk.Auth do
   def update_user_email(user, token) do
     context = "change:#{user.email}"
 
-    with {:ok, query} <- UserToken.verify_change_email_token_query(token, context),
+    with {:ok, query} <- TokenManager.verify_change_email_token_query(token, context),
          %UserToken{sent_to: email} <- Repo.one(query),
          {:ok, _res} <-
            user
@@ -120,7 +121,7 @@ defmodule Zoonk.Auth do
 
     Ecto.Multi.new()
     |> Ecto.Multi.update(:user, changeset)
-    |> Ecto.Multi.delete_all(:tokens, UserToken.by_user_and_contexts_query(user, [context]))
+    |> Ecto.Multi.delete_all(:tokens, TokenManager.by_user_and_contexts_query(user, [context]))
   end
 
   ## Session
@@ -129,7 +130,7 @@ defmodule Zoonk.Auth do
   Generates a session token.
   """
   def generate_user_session_token(user) do
-    {token, user_token} = UserToken.build_session_token(user)
+    {token, user_token} = TokenManager.build_session_token(user)
     Repo.insert!(user_token)
     token
   end
@@ -138,7 +139,7 @@ defmodule Zoonk.Auth do
   Gets the user with the given signed token.
   """
   def get_user_by_session_token(token) do
-    {:ok, query} = UserToken.verify_session_token_query(token)
+    {:ok, query} = TokenManager.verify_session_token_query(token)
     Repo.one(query)
   end
 
@@ -146,7 +147,7 @@ defmodule Zoonk.Auth do
   Gets the user with the given magic link token.
   """
   def get_user_by_magic_link_token(token) do
-    with {:ok, query} <- UserToken.verify_magic_link_token_query(token),
+    with {:ok, query} <- TokenManager.verify_magic_link_token_query(token),
          {user, _token} <- Repo.one(query) do
       user
     else
@@ -168,7 +169,7 @@ defmodule Zoonk.Auth do
      exist but we delete all of them for best security practices.
   """
   def signin_user_by_magic_link(token) do
-    {:ok, query} = UserToken.verify_magic_link_token_query(token)
+    {:ok, query} = TokenManager.verify_magic_link_token_query(token)
 
     case Repo.one(query) do
       {%User{confirmed_at: nil} = user, _token} ->
@@ -196,7 +197,7 @@ defmodule Zoonk.Auth do
   """
   def deliver_user_update_email_instructions(%User{} = user, current_email, update_email_url_fun)
       when is_function(update_email_url_fun, 1) do
-    {encoded_token, user_token} = UserToken.build_email_token(user, "change:#{current_email}")
+    {encoded_token, user_token} = TokenManager.build_email_token(user, "change:#{current_email}")
 
     Repo.insert!(user_token)
     UserNotifier.deliver_update_email_instructions(user, update_email_url_fun.(encoded_token))
@@ -206,7 +207,7 @@ defmodule Zoonk.Auth do
   Delivers the magic link signin instructions to the given user.
   """
   def deliver_signin_instructions(%User{} = user, magic_link_url_fun) when is_function(magic_link_url_fun, 1) do
-    {encoded_token, user_token} = UserToken.build_email_token(user, "signin")
+    {encoded_token, user_token} = TokenManager.build_email_token(user, "signin")
     Repo.insert!(user_token)
     UserNotifier.deliver_signin_instructions(user, magic_link_url_fun.(encoded_token))
   end
@@ -216,7 +217,7 @@ defmodule Zoonk.Auth do
   """
   def delete_user_session_token(token) do
     token
-    |> UserToken.by_token_and_context_query("session")
+    |> TokenManager.by_token_and_context_query("session")
     |> Repo.delete_all()
 
     :ok
@@ -230,9 +231,9 @@ defmodule Zoonk.Auth do
     with {:ok, %{user: user, tokens_to_expire: expired_tokens}} <-
            Ecto.Multi.new()
            |> Ecto.Multi.update(:user, changeset)
-           |> Ecto.Multi.all(:tokens_to_expire, UserToken.by_user_and_contexts_query(user, :all))
+           |> Ecto.Multi.all(:tokens_to_expire, TokenManager.by_user_and_contexts_query(user, :all))
            |> Ecto.Multi.delete_all(:tokens, fn %{tokens_to_expire: tokens_to_expire} ->
-             UserToken.delete_all_query(tokens_to_expire)
+             TokenManager.delete_all_query(tokens_to_expire)
            end)
            |> Repo.transaction() do
       {:ok, user, expired_tokens}

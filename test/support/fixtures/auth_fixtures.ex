@@ -52,7 +52,7 @@ defmodule Zoonk.AuthFixtures do
   end
 
   def generate_user_magic_link_token(user) do
-    {encoded_token, user_token} = UserToken.build_email_token(user, "signin")
+    {encoded_token, user_token} = Zoonk.Auth.TokenManager.build_email_token(user, "signin")
     Zoonk.Repo.insert!(user_token)
     {encoded_token, user_token.token}
   end
