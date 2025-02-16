@@ -6,9 +6,11 @@ defmodule ZoonkWeb.UserAuthTest do
   alias Phoenix.LiveView
   alias Phoenix.Socket.Broadcast
   alias Zoonk.Auth
+  alias Zoonk.Configuration
   alias ZoonkWeb.UserAuth
 
   @remember_me_cookie "_zoonk_web_user_remember_me"
+  @max_age Configuration.get_token_max_age_in_seconds()
 
   setup %{conn: conn} do
     conn =
@@ -57,7 +59,7 @@ defmodule ZoonkWeb.UserAuthTest do
 
       assert %{value: signed_token, max_age: max_age} = conn.resp_cookies[@remember_me_cookie]
       assert signed_token != get_session(conn, :user_token)
-      assert max_age == 5_184_000
+      assert max_age == @max_age
     end
 
     test "redirects to settings when user is already logged in", %{conn: conn, user: user} do
@@ -83,8 +85,8 @@ defmodule ZoonkWeb.UserAuthTest do
       next_conn = UserAuth.log_in_user(conn, user)
       assert %{value: signed_token, max_age: max_age} = next_conn.resp_cookies[@remember_me_cookie]
       assert signed_token != get_session(next_conn, :user_token)
-      assert max_age == 5_184_000
-      assert get_session(conn, :user_remember_me) == true
+      assert max_age == @max_age
+      assert get_session(next_conn, :user_remember_me) == true
     end
   end
 

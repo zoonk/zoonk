@@ -13,7 +13,7 @@ defmodule Zoonk.Auth.UserToken do
   # since someone with access to the email may take over the account.
   @magic_link_validity_in_minutes 15
   @change_email_validity_in_days 7
-  @session_validity_in_days 60
+  @session_validity_in_days 365
 
   schema "users_tokens" do
     field :token, :binary
@@ -176,4 +176,9 @@ defmodule Zoonk.Auth.UserToken do
   def delete_all_query(tokens) do
     from t in UserToken, where: t.id in ^Enum.map(tokens, & &1.id)
   end
+
+  @doc """
+  Returns the number of days a token is valid for.
+  """
+  def get_token_max_age, do: @session_validity_in_days
 end
