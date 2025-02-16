@@ -1,4 +1,5 @@
-defmodule ZoonkWeb.UserSessionController do
+defmodule ZoonkWeb.Controller.UserSession do
+  @moduledoc false
   use ZoonkWeb, :controller
 
   alias Zoonk.Auth

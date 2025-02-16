@@ -61,8 +61,12 @@ defmodule ZoonkWeb.Router do
       live "/users/signin", UserLive.SignIn, :new
       live "/users/signin/:token", UserLive.Confirmation, :new
     end
+  end
 
-    post "/users/signin", UserSessionController, :create
-    delete "/users/signout", UserSessionController, :delete
+  scope "/", ZoonkWeb.Controller do
+    pipe_through [:browser]
+
+    post "/users/signin", UserSession, :create
+    delete "/users/signout", UserSession, :delete
   end
 end
