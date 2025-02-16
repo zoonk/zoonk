@@ -155,7 +155,7 @@ defmodule ZoonkWeb.UserAuth do
       socket =
         socket
         |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
-        |> Phoenix.LiveView.redirect(to: ~p"/users/log-in")
+        |> Phoenix.LiveView.redirect(to: ~p"/users/signin")
 
       {:halt, socket}
     end
@@ -170,7 +170,7 @@ defmodule ZoonkWeb.UserAuth do
       socket =
         socket
         |> Phoenix.LiveView.put_flash(:error, "You must re-authenticate to access this page.")
-        |> Phoenix.LiveView.redirect(to: ~p"/users/log-in")
+        |> Phoenix.LiveView.redirect(to: ~p"/users/signin")
 
       {:halt, socket}
     end
@@ -197,7 +197,7 @@ defmodule ZoonkWeb.UserAuth do
       conn
       |> put_flash(:error, "You must log in to access this page.")
       |> maybe_store_return_to()
-      |> redirect(to: ~p"/users/log-in")
+      |> redirect(to: ~p"/users/signin")
       |> halt()
     end
   end

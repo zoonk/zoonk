@@ -12,7 +12,7 @@ defmodule ZoonkWeb.UserLive.Registration do
         Register for an account
         <:subtitle>
           Already registered?
-          <.link navigate={~p"/users/log-in"} class="text-brand font-semibold hover:underline">
+          <.link navigate={~p"/users/signin"} class="text-brand font-semibold hover:underline">
             Sign in
           </.link>
           to your account now.
@@ -55,7 +55,7 @@ defmodule ZoonkWeb.UserLive.Registration do
         {:ok, _url_fn} =
           Auth.deliver_login_instructions(
             user,
-            &url(~p"/users/log-in/#{&1}")
+            &url(~p"/users/signin/#{&1}")
           )
 
         {:noreply,
@@ -64,7 +64,7 @@ defmodule ZoonkWeb.UserLive.Registration do
            :info,
            "An email was sent to #{user.email}, please access it to confirm your account."
          )
-         |> push_navigate(to: ~p"/users/log-in")}
+         |> push_navigate(to: ~p"/users/signin")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply,

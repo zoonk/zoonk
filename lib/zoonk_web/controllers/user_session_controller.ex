@@ -25,7 +25,7 @@ defmodule ZoonkWeb.UserSessionController do
       _error ->
         conn
         |> put_flash(:error, "The link is invalid or it has expired.")
-        |> redirect(to: ~p"/users/log-in")
+        |> redirect(to: ~p"/users/signin")
     end
   end
 

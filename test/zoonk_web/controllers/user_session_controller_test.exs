@@ -9,12 +9,12 @@ defmodule ZoonkWeb.UserSessionControllerTest do
     %{unconfirmed_user: unconfirmed_user_fixture(), user: user_fixture()}
   end
 
-  describe "POST /users/log-in - magic link" do
+  describe "POST /users/signin - magic link" do
     test "logs the user in", %{conn: conn, user: user} do
       {token, _hashed_token} = generate_user_magic_link_token(user)
 
       post_conn =
-        post(conn, ~p"/users/log-in", %{
+        post(conn, ~p"/users/signin", %{
           "user" => %{"token" => token}
         })
 
@@ -34,7 +34,7 @@ defmodule ZoonkWeb.UserSessionControllerTest do
       refute user.confirmed_at
 
       post_conn =
-        post(conn, ~p"/users/log-in", %{
+        post(conn, ~p"/users/signin", %{
           "user" => %{"token" => token},
           "_action" => "confirmed"
         })
@@ -55,14 +55,14 @@ defmodule ZoonkWeb.UserSessionControllerTest do
 
     test "redirects to login page when magic link is invalid", %{conn: conn} do
       conn =
-        post(conn, ~p"/users/log-in", %{
+        post(conn, ~p"/users/signin", %{
           "user" => %{"token" => "invalid"}
         })
 
       assert Phoenix.Flash.get(conn.assigns.flash, :error) ==
                "The link is invalid or it has expired."
 
-      assert redirected_to(conn) == ~p"/users/log-in"
+      assert redirected_to(conn) == ~p"/users/signin"
     end
   end
 

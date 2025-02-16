@@ -6,7 +6,7 @@ defmodule ZoonkWeb.UserLive.LoginTest do
 
   describe "login page" do
     test "renders login page", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/users/log-in")
+      {:ok, _lv, html} = live(conn, ~p"/users/signin")
 
       assert html =~ "Log in"
       assert html =~ "Register"
@@ -18,13 +18,13 @@ defmodule ZoonkWeb.UserLive.LoginTest do
     test "sends magic link email when user exists", %{conn: conn} do
       user = user_fixture()
 
-      {:ok, lv, _html} = live(conn, ~p"/users/log-in")
+      {:ok, lv, _html} = live(conn, ~p"/users/signin")
 
       {:ok, _lv, html} =
         lv
         |> form("#login_form_magic", %{email: user.email})
         |> render_submit()
-        |> follow_redirect(conn, ~p"/users/log-in")
+        |> follow_redirect(conn, ~p"/users/signin")
 
       assert html =~ "If your email is in our system"
 
@@ -33,13 +33,13 @@ defmodule ZoonkWeb.UserLive.LoginTest do
     end
 
     test "does not disclose if user is registered", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/log-in")
+      {:ok, lv, _html} = live(conn, ~p"/users/signin")
 
       {:ok, _lv, html} =
         lv
         |> form("#login_form_magic", %{email: "idonotexist@example.com"})
         |> render_submit()
-        |> follow_redirect(conn, ~p"/users/log-in")
+        |> follow_redirect(conn, ~p"/users/signin")
 
       assert html =~ "If your email is in our system"
     end
@@ -47,7 +47,7 @@ defmodule ZoonkWeb.UserLive.LoginTest do
 
   describe "login navigation" do
     test "redirects to registration page when the Register button is clicked", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/log-in")
+      {:ok, lv, _html} = live(conn, ~p"/users/signin")
 
       {:ok, _login_live, login_html} =
         lv
@@ -66,7 +66,7 @@ defmodule ZoonkWeb.UserLive.LoginTest do
     end
 
     test "shows login page with email filled in", %{conn: conn, user: user} do
-      {:ok, _lv, html} = live(conn, ~p"/users/log-in")
+      {:ok, _lv, html} = live(conn, ~p"/users/signin")
 
       assert html =~ "You need to reauthenticate"
       refute html =~ "Register"

@@ -45,7 +45,7 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
       {:ok, _lv, html} =
         form
         |> render_submit()
-        |> follow_redirect(conn, ~p"/users/log-in")
+        |> follow_redirect(conn, ~p"/users/signin")
 
       assert html =~
                ~r/An email was sent to .*, please access it to confirm your account/
@@ -75,7 +75,7 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
         lv
         |> element(~s|main a:fl-contains("Sign in")|)
         |> render_click()
-        |> follow_redirect(conn, ~p"/users/log-in")
+        |> follow_redirect(conn, ~p"/users/signin")
 
       assert login_html =~ "Log in"
     end

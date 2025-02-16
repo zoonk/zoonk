@@ -300,7 +300,7 @@ defmodule ZoonkWeb.UserAuthTest do
 
       assert conn.halted
 
-      assert redirected_to(conn) == ~p"/users/log-in"
+      assert redirected_to(conn) == ~p"/users/signin"
 
       assert Phoenix.Flash.get(conn.assigns.flash, :error) ==
                "You must log in to access this page."
