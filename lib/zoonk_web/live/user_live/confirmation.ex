@@ -18,12 +18,7 @@ defmodule ZoonkWeb.UserLive.Confirmation do
         phx-trigger-action={@trigger_submit}
       >
         <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
-        <.input
-          :if={!@current_user}
-          field={@form[:remember_me]}
-          type="checkbox"
-          label="Keep me logged in"
-        />
+
         <:actions>
           <.button phx-disable-with="Confirming..." class="w-full">Confirm my account</.button>
         </:actions>
@@ -38,12 +33,7 @@ defmodule ZoonkWeb.UserLive.Confirmation do
         phx-trigger-action={@trigger_submit}
       >
         <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
-        <.input
-          :if={!@current_user}
-          field={@form[:remember_me]}
-          type="checkbox"
-          label="Keep me logged in"
-        />
+
         <:actions>
           <.button phx-disable-with="Logging in..." class="w-full">Log in</.button>
         </:actions>

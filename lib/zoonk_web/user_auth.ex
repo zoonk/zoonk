@@ -8,7 +8,7 @@ defmodule ZoonkWeb.UserAuth do
   alias Zoonk.Auth
 
   # Make the remember me cookie valid for 60 days.
-  # If you want bump or reduce this value, also change
+  # If you want bump or redforuce this value, also change
   # the token expiry itself in UserToken.
   @max_age 60 * 60 * 24 * 60
   @remember_me_cookie "_zoonk_web_user_remember_me"
@@ -29,24 +29,16 @@ defmodule ZoonkWeb.UserAuth do
   In case the user re-authenticates for sudo mode,
   the existing remember_me setting is kept, writing a new remember_me cookie.
   """
-  def log_in_user(conn, user, params \\ %{}) do
+  def log_in_user(conn, user) do
     token = Auth.generate_user_session_token(user)
     user_return_to = get_session(conn, :user_return_to)
-    remember_me = get_session(conn, :user_remember_me)
 
     conn
     |> renew_session()
     |> put_token_in_session(token)
-    |> maybe_write_remember_me_cookie(token, params, remember_me)
+    |> write_remember_me_cookie(token)
     |> redirect(to: user_return_to || signed_in_path(conn))
   end
-
-  defp maybe_write_remember_me_cookie(conn, token, %{"remember_me" => "true"}, _value),
-    do: write_remember_me_cookie(conn, token)
-
-  defp maybe_write_remember_me_cookie(conn, token, _params, true), do: write_remember_me_cookie(conn, token)
-
-  defp maybe_write_remember_me_cookie(conn, _token, _params, _value), do: conn
 
   defp write_remember_me_cookie(conn, token) do
     conn

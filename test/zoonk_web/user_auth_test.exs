@@ -19,7 +19,7 @@ defmodule ZoonkWeb.UserAuthTest do
     %{user: %{user_fixture() | authenticated_at: DateTime.utc_now()}, conn: conn}
   end
 
-  describe "log_in_user/3" do
+  describe "log_in_user/2" do
     test "stores the user token in the session", %{conn: conn, user: user} do
       conn = UserAuth.log_in_user(conn, user)
       assert token = get_session(conn, :user_token)
@@ -46,11 +46,11 @@ defmodule ZoonkWeb.UserAuthTest do
       assert redirected_to(conn) == "/hello"
     end
 
-    test "writes a cookie if remember_me is configured", %{conn: conn, user: user} do
+    test "writes a cookie for the remember_me option", %{conn: conn, user: user} do
       conn =
         conn
         |> fetch_cookies()
-        |> UserAuth.log_in_user(user, %{"remember_me" => "true"})
+        |> UserAuth.log_in_user(user)
 
       assert get_session(conn, :user_token) == conn.cookies[@remember_me_cookie]
       assert get_session(conn, :user_remember_me) == true
@@ -80,7 +80,7 @@ defmodule ZoonkWeb.UserAuthTest do
       # the conn is already logged in and has the remeber_me cookie set,
       # now we log in again and even without explicitly setting remember_me,
       # the cookie should be set again
-      next_conn = UserAuth.log_in_user(conn, user, %{})
+      next_conn = UserAuth.log_in_user(conn, user)
       assert %{value: signed_token, max_age: max_age} = next_conn.resp_cookies[@remember_me_cookie]
       assert signed_token != get_session(next_conn, :user_token)
       assert max_age == 5_184_000
@@ -145,7 +145,7 @@ defmodule ZoonkWeb.UserAuthTest do
       logged_in_conn =
         conn
         |> fetch_cookies()
-        |> UserAuth.log_in_user(user, %{"remember_me" => "true"})
+        |> UserAuth.log_in_user(user)
 
       user_token = logged_in_conn.cookies[@remember_me_cookie]
       %{value: signed_token} = logged_in_conn.resp_cookies[@remember_me_cookie]
