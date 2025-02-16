@@ -50,7 +50,7 @@ defmodule ZoonkWeb.ConnCase do
     opts =
       context
       |> Map.take([:token_inserted_at])
-      |> Enum.into([])
+      |> Enum.to_list()
 
     %{conn: log_in_user(conn, user, opts), user: user}
   end

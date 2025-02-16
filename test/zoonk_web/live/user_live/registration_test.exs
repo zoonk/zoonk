@@ -43,7 +43,8 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
       form = form(lv, "#registration_form", user: valid_user_attributes(email: email))
 
       {:ok, _lv, html} =
-        render_submit(form)
+        form
+        |> render_submit()
         |> follow_redirect(conn, ~p"/users/log-in")
 
       assert html =~
@@ -72,7 +73,7 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
 
       {:ok, _login_live, login_html} =
         lv
-        |> element(~s|main a:fl-contains("Log in")|)
+        |> element(~s|main a:fl-contains("Sign in")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/users/log-in")
 

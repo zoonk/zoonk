@@ -50,12 +50,12 @@ defmodule ZoonkWeb.UserLive.Login do
       Phoenix.Flash.get(socket.assigns.flash, :email) ||
         get_in(socket.assigns, [:current_user, Access.key(:email)])
 
-    form = to_form(%{"email" => email}, as: "user")
+    form = to_form(%{"email" => email})
 
     {:ok, assign(socket, form: form, trigger_submit: false)}
   end
 
-  def handle_event("submit_magic", %{"user" => %{"email" => email}}, socket) do
+  def handle_event("submit_magic", %{"email" => email}, socket) do
     if user = Auth.get_user_by_email(email) do
       Auth.deliver_login_instructions(
         user,

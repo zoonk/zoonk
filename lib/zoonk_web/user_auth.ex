@@ -1,8 +1,9 @@
 defmodule ZoonkWeb.UserAuth do
+  @moduledoc false
   use ZoonkWeb, :verified_routes
 
-  import Plug.Conn
   import Phoenix.Controller
+  import Plug.Conn
 
   alias Zoonk.Auth
 
@@ -43,8 +44,7 @@ defmodule ZoonkWeb.UserAuth do
   defp maybe_write_remember_me_cookie(conn, token, %{"remember_me" => "true"}, _),
     do: write_remember_me_cookie(conn, token)
 
-  defp maybe_write_remember_me_cookie(conn, token, _params, true),
-    do: write_remember_me_cookie(conn, token)
+  defp maybe_write_remember_me_cookie(conn, token, _params, true), do: write_remember_me_cookie(conn, token)
 
   defp maybe_write_remember_me_cookie(conn, _token, _params, _), do: conn
 

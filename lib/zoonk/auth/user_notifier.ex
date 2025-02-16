@@ -1,8 +1,9 @@
 defmodule Zoonk.Auth.UserNotifier do
+  @moduledoc false
   import Swoosh.Email
 
-  alias Zoonk.Mailer
   alias Zoonk.Auth.User
+  alias Zoonk.Mailer
 
   # Delivers the email using the application mailer.
   defp deliver(recipient, subject, body) do

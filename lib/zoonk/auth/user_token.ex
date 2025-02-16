@@ -1,6 +1,9 @@
 defmodule Zoonk.Auth.UserToken do
+  @moduledoc false
   use Ecto.Schema
+
   import Ecto.Query
+
   alias Zoonk.Auth.UserToken
 
   @hash_algorithm :sha256

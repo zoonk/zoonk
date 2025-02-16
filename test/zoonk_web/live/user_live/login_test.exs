@@ -22,7 +22,7 @@ defmodule ZoonkWeb.UserLive.LoginTest do
 
       {:ok, _lv, html} =
         lv
-        |> form("#login_form_magic", user: %{email: user.email})
+        |> form("#login_form_magic", %{email: user.email})
         |> render_submit()
         |> follow_redirect(conn, ~p"/users/log-in")
 
@@ -37,7 +37,7 @@ defmodule ZoonkWeb.UserLive.LoginTest do
 
       {:ok, _lv, html} =
         lv
-        |> form("#login_form_magic", user: %{email: "idonotexist@example.com"})
+        |> form("#login_form_magic", %{email: "idonotexist@example.com"})
         |> render_submit()
         |> follow_redirect(conn, ~p"/users/log-in")
 
@@ -73,7 +73,7 @@ defmodule ZoonkWeb.UserLive.LoginTest do
       assert html =~ "Log in with email"
 
       assert html =~
-               ~s(<input type="email" name="user[email]" id="login_form_magic_email" value="#{user.email}")
+               ~s(<input type="email" name="email" id="login_form_magic_email" value="#{user.email}")
     end
   end
 end

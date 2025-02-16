@@ -1,10 +1,12 @@
 defmodule ZoonkWeb.UserAuthTest do
   use ZoonkWeb.ConnCase, async: true
 
+  import Zoonk.AuthFixtures
+
   alias Phoenix.LiveView
+  alias Phoenix.Socket.Broadcast
   alias Zoonk.Auth
   alias ZoonkWeb.UserAuth
-  import Zoonk.AuthFixtures
 
   @remember_me_cookie "_zoonk_web_user_remember_me"
 
@@ -66,7 +68,7 @@ defmodule ZoonkWeb.UserAuthTest do
       # the conn is already logged in and has the remeber_me cookie set,
       # now we log in again and even without explicitly setting remember_me,
       # the cookie should be set again
-      conn = conn |> UserAuth.log_in_user(user, %{})
+      conn = UserAuth.log_in_user(conn, user, %{})
       assert %{value: signed_token, max_age: max_age} = conn.resp_cookies[@remember_me_cookie]
       assert signed_token != get_session(conn, :user_token)
       assert max_age == 5_184_000
@@ -100,7 +102,7 @@ defmodule ZoonkWeb.UserAuthTest do
       |> put_session(:live_socket_id, live_socket_id)
       |> UserAuth.log_out_user()
 
-      assert_receive %Phoenix.Socket.Broadcast{event: "disconnect", topic: ^live_socket_id}
+      assert_receive %Broadcast{event: "disconnect", topic: ^live_socket_id}
     end
 
     test "works even if user is already logged out", %{conn: conn} do
@@ -167,7 +169,7 @@ defmodule ZoonkWeb.UserAuthTest do
     end
 
     test "assigns nil to current_user assign if there isn't a user_token", %{conn: conn} do
-      session = conn |> get_session()
+      session = get_session(conn)
 
       {:cont, updated_socket} =
         UserAuth.on_mount(:mount_current_user, %{}, session, %LiveView.Socket{})
@@ -201,7 +203,7 @@ defmodule ZoonkWeb.UserAuthTest do
     end
 
     test "redirects to login page if there isn't a user_token", %{conn: conn} do
-      session = conn |> get_session()
+      session = get_session(conn)
 
       socket = %LiveView.Socket{
         endpoint: ZoonkWeb.Endpoint,
@@ -228,7 +230,7 @@ defmodule ZoonkWeb.UserAuthTest do
     end
 
     test "redirects when authentication is too old", %{user: user} do
-      eleven_minutes_ago = DateTime.utc_now() |> DateTime.add(-11, :minute)
+      eleven_minutes_ago = DateTime.add(DateTime.utc_now(), -11, :minute)
 
       socket = %LiveView.Socket{
         endpoint: AuthAppWeb.Endpoint,
@@ -298,12 +300,12 @@ defmodule ZoonkWeb.UserAuthTest do
 
       UserAuth.disconnect_sessions(tokens)
 
-      assert_receive %Phoenix.Socket.Broadcast{
+      assert_receive %Broadcast{
         event: "disconnect",
         topic: "users_sessions:dG9rZW4x"
       }
 
-      assert_receive %Phoenix.Socket.Broadcast{
+      assert_receive %Broadcast{
         event: "disconnect",
         topic: "users_sessions:dG9rZW4y"
       }

@@ -1,4 +1,5 @@
 defmodule ZoonkWeb.UserLive.Registration do
+  @moduledoc false
   use ZoonkWeb, :live_view
 
   alias Zoonk.Auth
@@ -11,8 +12,8 @@ defmodule ZoonkWeb.UserLive.Registration do
         Register for an account
         <:subtitle>
           Already registered?
-          <.link navigate={~p"/users/log-in"} class="font-semibold text-brand hover:underline">
-            Log in
+          <.link navigate={~p"/users/log-in"} class="text-brand font-semibold hover:underline">
+            Sign in
           </.link>
           to your account now.
         </:subtitle>
@@ -33,8 +34,7 @@ defmodule ZoonkWeb.UserLive.Registration do
     """
   end
 
-  def mount(_params, _session, %{assigns: %{current_user: user}} = socket)
-      when not is_nil(user) do
+  def mount(_params, _session, %{assigns: %{current_user: user}} = socket) when not is_nil(user) do
     {:ok, redirect(socket, to: ZoonkWeb.UserAuth.signed_in_path(socket))}
   end
 
