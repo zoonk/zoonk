@@ -1,15 +1,16 @@
 defmodule ZoonkWeb.UserLive.Settings do
+  @moduledoc false
   use ZoonkWeb, :live_view
 
-  on_mount {ZoonkWeb.UserAuth, :ensure_sudo_mode}
-
   alias Zoonk.Auth
+
+  on_mount {ZoonkWeb.UserAuth, :ensure_sudo_mode}
 
   def render(assigns) do
     ~H"""
     <.header class="text-center">
       Account Settings
-      <:subtitle>Manage your account email address and password settings</:subtitle>
+      <:subtitle>Manage your account email address</:subtitle>
     </.header>
 
     <div class="space-y-12 divide-y">
@@ -29,43 +30,6 @@ defmodule ZoonkWeb.UserLive.Settings do
           />
           <:actions>
             <.button phx-disable-with="Changing...">Change Email</.button>
-          </:actions>
-        </.simple_form>
-      </div>
-      <div>
-        <.simple_form
-          for={@password_form}
-          id="password_form"
-          action={~p"/users/update-password"}
-          method="post"
-          phx-change="validate_password"
-          phx-submit="update_password"
-          phx-trigger-action={@trigger_submit}
-        >
-          <input
-            name={@password_form[:email].name}
-            type="hidden"
-            id="hidden_user_email"
-            autocomplete="username"
-            value={@current_email}
-          />
-          <.input
-            field={@password_form[:password]}
-            type="password"
-            label="New password"
-            autocomplete="new-password"
-            required
-          />
-          <.input
-            field={@password_form[:password_confirmation]}
-            type="password"
-            label="Confirm new password"
-            autocomplete="new-password"
-          />
-          <:actions>
-            <.button phx-disable-with="Saving...">
-              Save Password
-            </.button>
           </:actions>
         </.simple_form>
       </div>
@@ -89,13 +53,11 @@ defmodule ZoonkWeb.UserLive.Settings do
   def mount(_params, _session, socket) do
     user = socket.assigns.current_user
     email_changeset = Auth.change_user_email(user, %{}, validate_email: false)
-    password_changeset = Auth.change_user_password(user, %{}, hash_password: false)
 
     socket =
       socket
       |> assign(:current_email, user.email)
       |> assign(:email_form, to_form(email_changeset))
-      |> assign(:password_form, to_form(password_changeset))
       |> assign(:trigger_submit, false)
 
     {:ok, socket}
@@ -127,36 +89,10 @@ defmodule ZoonkWeb.UserLive.Settings do
         )
 
         info = "A link to confirm your email change has been sent to the new address."
-        {:noreply, socket |> put_flash(:info, info)}
+        {:noreply, put_flash(socket, :info, info)}
 
       changeset ->
         {:noreply, assign(socket, :email_form, to_form(changeset, action: :insert))}
-    end
-  end
-
-  def handle_event("validate_password", params, socket) do
-    %{"user" => user_params} = params
-
-    password_form =
-      socket.assigns.current_user
-      |> Auth.change_user_password(user_params, hash_password: false)
-      |> Map.put(:action, :validate)
-      |> to_form()
-
-    {:noreply, assign(socket, password_form: password_form)}
-  end
-
-  def handle_event("update_password", params, socket) do
-    %{"user" => user_params} = params
-    user = socket.assigns.current_user
-    true = Auth.sudo_mode?(user)
-
-    case Auth.change_user_password(user, user_params) do
-      %{valid?: true} = changeset ->
-        {:noreply, assign(socket, trigger_submit: true, password_form: to_form(changeset))}
-
-      changeset ->
-        {:noreply, assign(socket, password_form: to_form(changeset, action: :insert))}
     end
   end
 end

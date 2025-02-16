@@ -1,10 +1,11 @@
 defmodule Zoonk.AuthTest do
   use Zoonk.DataCase
 
-  alias Zoonk.Auth
-
   import Zoonk.AuthFixtures
-  alias Zoonk.Auth.{User, UserToken}
+
+  alias Zoonk.Auth
+  alias Zoonk.Auth.User
+  alias Zoonk.Auth.UserToken
 
   describe "get_user_by_email/1" do
     test "does not return the user if the email does not exist" do
@@ -14,24 +15,6 @@ defmodule Zoonk.AuthTest do
     test "returns the user if the email exists" do
       %{id: id} = user = user_fixture()
       assert %User{id: ^id} = Auth.get_user_by_email(user.email)
-    end
-  end
-
-  describe "get_user_by_email_and_password/2" do
-    test "does not return the user if the email does not exist" do
-      refute Auth.get_user_by_email_and_password("unknown@example.com", "hello world!")
-    end
-
-    test "does not return the user if the password is not valid" do
-      user = user_fixture() |> set_password()
-      refute Auth.get_user_by_email_and_password(user.email, "invalid")
-    end
-
-    test "returns the user if the email and password are valid" do
-      %{id: id} = user = user_fixture() |> set_password()
-
-      assert %User{id: ^id} =
-               Auth.get_user_by_email_and_password(user.email, valid_user_password())
     end
   end
 
@@ -77,13 +60,11 @@ defmodule Zoonk.AuthTest do
       assert "has already been taken" in errors_on(changeset).email
     end
 
-    test "registers users without password" do
+    test "registers users" do
       email = unique_user_email()
       {:ok, user} = Auth.register_user(valid_user_attributes(email: email))
       assert user.email == email
-      assert is_nil(user.hashed_password)
       assert is_nil(user.confirmed_at)
-      assert is_nil(user.password)
     end
   end
 
@@ -173,78 +154,6 @@ defmodule Zoonk.AuthTest do
     end
   end
 
-  describe "change_user_password/3" do
-    test "returns a user changeset" do
-      assert %Ecto.Changeset{} = changeset = Auth.change_user_password(%User{})
-      assert changeset.required == [:password]
-    end
-
-    test "allows fields to be set" do
-      changeset =
-        Auth.change_user_password(
-          %User{},
-          %{
-            "password" => "new valid password"
-          },
-          hash_password: false
-        )
-
-      assert changeset.valid?
-      assert get_change(changeset, :password) == "new valid password"
-      assert is_nil(get_change(changeset, :hashed_password))
-    end
-  end
-
-  describe "update_user_password/2" do
-    setup do
-      %{user: user_fixture()}
-    end
-
-    test "validates password", %{user: user} do
-      {:error, changeset} =
-        Auth.update_user_password(user, %{
-          password: "not valid",
-          password_confirmation: "another"
-        })
-
-      assert %{
-               password: ["should be at least 12 character(s)"],
-               password_confirmation: ["does not match password"]
-             } = errors_on(changeset)
-    end
-
-    test "validates maximum values for password for security", %{user: user} do
-      too_long = String.duplicate("db", 100)
-
-      {:error, changeset} =
-        Auth.update_user_password(user, %{password: too_long})
-
-      assert "should be at most 72 character(s)" in errors_on(changeset).password
-    end
-
-    test "updates the password", %{user: user} do
-      {:ok, user, expired_tokens} =
-        Auth.update_user_password(user, %{
-          password: "new valid password"
-        })
-
-      assert expired_tokens == []
-      assert is_nil(user.password)
-      assert Auth.get_user_by_email_and_password(user.email, "new valid password")
-    end
-
-    test "deletes all tokens for the given user", %{user: user} do
-      _ = Auth.generate_user_session_token(user)
-
-      {:ok, _, _} =
-        Auth.update_user_password(user, %{
-          password: "new valid password"
-        })
-
-      refute Repo.get_by(UserToken, user_id: user.id)
-    end
-  end
-
   describe "generate_user_session_token/1" do
     setup do
       %{user: user_fixture()}
@@ -330,16 +239,6 @@ defmodule Zoonk.AuthTest do
       # one time use only
       assert {:error, :not_found} = Auth.login_user_by_magic_link(encoded_token)
     end
-
-    test "raises when unconfirmed user has password set" do
-      user = unconfirmed_user_fixture()
-      {1, nil} = Repo.update_all(User, set: [hashed_password: "hashed"])
-      {encoded_token, _hashed_token} = generate_user_magic_link_token(user)
-
-      assert_raise RuntimeError, ~r/magic link log in is not allowed/, fn ->
-        Auth.login_user_by_magic_link(encoded_token)
-      end
-    end
   end
 
   describe "delete_user_session_token/1" do
@@ -367,12 +266,6 @@ defmodule Zoonk.AuthTest do
       assert user_token.user_id == user.id
       assert user_token.sent_to == user.email
       assert user_token.context == "login"
-    end
-  end
-
-  describe "inspect/2 for the User module" do
-    test "does not include password" do
-      refute inspect(%User{password: "123456"}) =~ "password: \"123456\""
     end
   end
 end

@@ -1,4 +1,5 @@
 defmodule ZoonkWeb.UserLive.Confirmation do
+  @moduledoc false
   use ZoonkWeb, :live_view
 
   alias Zoonk.Auth
@@ -47,10 +48,6 @@ defmodule ZoonkWeb.UserLive.Confirmation do
           <.button phx-disable-with="Logging in..." class="w-full">Log in</.button>
         </:actions>
       </.simple_form>
-
-      <p :if={!@user.confirmed_at} class="mt-8 p-4 border text-center">
-        Tip: If you prefer passwords, you can enable them in the user settings.
-      </p>
     </div>
     """
   end
@@ -59,8 +56,7 @@ defmodule ZoonkWeb.UserLive.Confirmation do
     if user = Auth.get_user_by_magic_link_token(token) do
       form = to_form(%{"token" => token}, as: "user")
 
-      {:ok, assign(socket, user: user, form: form, trigger_submit: false),
-       temporary_assigns: [form: nil]}
+      {:ok, assign(socket, user: user, form: form, trigger_submit: false), temporary_assigns: [form: nil]}
     else
       {:ok,
        socket
