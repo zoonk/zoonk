@@ -39,12 +39,12 @@ defmodule ZoonkWeb.ConnCase do
   @doc """
   Setup helper that registers and logs in users.
 
-      setup :register_and_log_in_user
+      setup :register_and_signin_user
 
   It stores an updated connection and a registered user in the
   test context.
   """
-  def register_and_log_in_user(%{conn: conn} = context) do
+  def register_and_signin_user(%{conn: conn} = context) do
     user = Zoonk.AuthFixtures.user_fixture()
 
     opts =
@@ -52,7 +52,7 @@ defmodule ZoonkWeb.ConnCase do
       |> Map.take([:token_inserted_at])
       |> Enum.to_list()
 
-    %{conn: log_in_user(conn, user, opts), user: user}
+    %{conn: signin_user(conn, user, opts), user: user}
   end
 
   @doc """
@@ -60,7 +60,7 @@ defmodule ZoonkWeb.ConnCase do
 
   It returns an updated `conn`.
   """
-  def log_in_user(conn, user, opts \\ []) do
+  def signin_user(conn, user, opts \\ []) do
     token = Zoonk.Auth.generate_user_session_token(user)
 
     maybe_set_token_inserted_at(token, opts[:token_inserted_at])

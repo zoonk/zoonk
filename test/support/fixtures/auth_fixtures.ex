@@ -30,10 +30,10 @@ defmodule Zoonk.AuthFixtures do
 
     token =
       extract_user_token(fn url ->
-        Auth.deliver_login_instructions(fixture, url)
+        Auth.deliver_signin_instructions(fixture, url)
       end)
 
-    {:ok, user, _expired_tokens} = Auth.login_user_by_magic_link(token)
+    {:ok, user, _expired_tokens} = Auth.signin_user_by_magic_link(token)
 
     user
   end
@@ -51,7 +51,7 @@ defmodule Zoonk.AuthFixtures do
   end
 
   def generate_user_magic_link_token(user) do
-    {encoded_token, user_token} = Auth.UserToken.build_email_token(user, "login")
+    {encoded_token, user_token} = Auth.UserToken.build_email_token(user, "signin")
     Zoonk.Repo.insert!(user_token)
     {encoded_token, user_token.token}
   end

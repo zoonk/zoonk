@@ -14,17 +14,17 @@ defmodule ZoonkWeb.UserLive.ConfirmationTest do
     test "renders confirmation page for unconfirmed user", %{conn: conn, unconfirmed_user: user} do
       token =
         extract_user_token(fn url ->
-          Auth.deliver_login_instructions(user, url)
+          Auth.deliver_signin_instructions(user, url)
         end)
 
       {:ok, _lv, html} = live(conn, ~p"/users/signin/#{token}")
       assert html =~ "Confirm my account"
     end
 
-    test "renders login page for confirmed user", %{conn: conn, confirmed_user: user} do
+    test "renders signin page for confirmed user", %{conn: conn, confirmed_user: user} do
       token =
         extract_user_token(fn url ->
-          Auth.deliver_login_instructions(user, url)
+          Auth.deliver_signin_instructions(user, url)
         end)
 
       {:ok, _lv, html} = live(conn, ~p"/users/signin/#{token}")
@@ -35,7 +35,7 @@ defmodule ZoonkWeb.UserLive.ConfirmationTest do
     test "confirms the given token once", %{conn: conn, unconfirmed_user: user} do
       token =
         extract_user_token(fn url ->
-          Auth.deliver_login_instructions(user, url)
+          Auth.deliver_signin_instructions(user, url)
         end)
 
       {:ok, lv, _html} = live(conn, ~p"/users/signin/#{token}")
@@ -54,12 +54,12 @@ defmodule ZoonkWeb.UserLive.ConfirmationTest do
       assert redirected_to(trigger_conn) == ~p"/"
 
       # log out, new conn
-      logout_conn = build_conn()
+      signout_conn = build_conn()
 
       {:ok, _lv, html} =
-        logout_conn
+        signout_conn
         |> live(~p"/users/signin/#{token}")
-        |> follow_redirect(logout_conn, ~p"/users/signin")
+        |> follow_redirect(signout_conn, ~p"/users/signin")
 
       assert html =~ "Magic link is invalid or it has expired"
     end
@@ -70,12 +70,12 @@ defmodule ZoonkWeb.UserLive.ConfirmationTest do
     } do
       token =
         extract_user_token(fn url ->
-          Auth.deliver_login_instructions(user, url)
+          Auth.deliver_signin_instructions(user, url)
         end)
 
       {:ok, lv, _html} = live(conn, ~p"/users/signin/#{token}")
 
-      form = form(lv, "#login_form", %{"user" => %{"token" => token}})
+      form = form(lv, "#signin_form", %{"user" => %{"token" => token}})
       render_submit(form)
 
       trigger_conn = follow_trigger_action(form, conn)
@@ -86,12 +86,12 @@ defmodule ZoonkWeb.UserLive.ConfirmationTest do
       assert Auth.get_user!(user.id).confirmed_at == user.confirmed_at
 
       # log out, new conn
-      logout_conn = build_conn()
+      signout_conn = build_conn()
 
       {:ok, _lv, html} =
-        logout_conn
+        signout_conn
         |> live(~p"/users/signin/#{token}")
-        |> follow_redirect(logout_conn, ~p"/users/signin")
+        |> follow_redirect(signout_conn, ~p"/users/signin")
 
       assert html =~ "Magic link is invalid or it has expired"
     end

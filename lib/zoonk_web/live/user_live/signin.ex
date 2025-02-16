@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.UserLive.Login do
+defmodule ZoonkWeb.UserLive.SignIn do
   @moduledoc false
   use ZoonkWeb, :live_view
 
@@ -14,7 +14,7 @@ defmodule ZoonkWeb.UserLive.Login do
             You need to reauthenticate to perform sensitive actions on your account.
           <% else %>
             Don't have an account? <.link
-              navigate={~p"/users/register"}
+              navigate={~p"/users/signup"}
               class="text-brand font-semibold hover:underline"
               phx-no-format
             >Sign up</.link> for an account now.
@@ -25,7 +25,7 @@ defmodule ZoonkWeb.UserLive.Login do
       <.simple_form
         :let={f}
         for={@form}
-        id="login_form_magic"
+        id="signin_form_magic"
         action={~p"/users/signin"}
         phx-submit="submit_magic"
       >
@@ -57,7 +57,7 @@ defmodule ZoonkWeb.UserLive.Login do
 
   def handle_event("submit_magic", %{"email" => email}, socket) do
     if user = Auth.get_user_by_email(email) do
-      Auth.deliver_login_instructions(
+      Auth.deliver_signin_instructions(
         user,
         &url(~p"/users/signin/#{&1}")
       )

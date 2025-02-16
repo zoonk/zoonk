@@ -21,9 +21,9 @@ defmodule ZoonkWeb.UserAuthTest do
     %{user: %{user_fixture() | authenticated_at: DateTime.utc_now()}, conn: conn}
   end
 
-  describe "log_in_user/2" do
+  describe "signin_user/2" do
     test "stores the user token in the session", %{conn: conn, user: user} do
-      conn = UserAuth.log_in_user(conn, user)
+      conn = UserAuth.signin_user(conn, user)
       assert token = get_session(conn, :user_token)
       assert get_session(conn, :live_socket_id) == "users_sessions:#{Base.url_encode64(token)}"
       assert redirected_to(conn) == ~p"/"
@@ -34,7 +34,7 @@ defmodule ZoonkWeb.UserAuthTest do
       conn =
         conn
         |> put_session(:to_be_removed, "value")
-        |> UserAuth.log_in_user(user)
+        |> UserAuth.signin_user(user)
 
       refute get_session(conn, :to_be_removed)
     end
@@ -43,7 +43,7 @@ defmodule ZoonkWeb.UserAuthTest do
       conn =
         conn
         |> put_session(:user_return_to, "/hello")
-        |> UserAuth.log_in_user(user)
+        |> UserAuth.signin_user(user)
 
       assert redirected_to(conn) == "/hello"
     end
@@ -52,7 +52,7 @@ defmodule ZoonkWeb.UserAuthTest do
       conn =
         conn
         |> fetch_cookies()
-        |> UserAuth.log_in_user(user)
+        |> UserAuth.signin_user(user)
 
       assert get_session(conn, :user_token) == conn.cookies[@remember_me_cookie]
       assert get_session(conn, :user_remember_me) == true
@@ -66,7 +66,7 @@ defmodule ZoonkWeb.UserAuthTest do
       conn =
         conn
         |> assign(:current_user, user)
-        |> UserAuth.log_in_user(user)
+        |> UserAuth.signin_user(user)
 
       assert redirected_to(conn) == "/users/settings"
     end
@@ -82,7 +82,7 @@ defmodule ZoonkWeb.UserAuthTest do
       # the conn is already logged in and has the remeber_me cookie set,
       # now we log in again and even without explicitly setting remember_me,
       # the cookie should be set again
-      next_conn = UserAuth.log_in_user(conn, user)
+      next_conn = UserAuth.signin_user(conn, user)
       assert %{value: signed_token, max_age: max_age} = next_conn.resp_cookies[@remember_me_cookie]
       assert signed_token != get_session(next_conn, :user_token)
       assert max_age == @max_age
@@ -90,7 +90,7 @@ defmodule ZoonkWeb.UserAuthTest do
     end
   end
 
-  describe "logout_user/1" do
+  describe "signout_user/1" do
     test "erases session and cookies", %{conn: conn, user: user} do
       user_token = Auth.generate_user_session_token(user)
 
@@ -99,7 +99,7 @@ defmodule ZoonkWeb.UserAuthTest do
         |> put_session(:user_token, user_token)
         |> put_req_cookie(@remember_me_cookie, user_token)
         |> fetch_cookies()
-        |> UserAuth.log_out_user()
+        |> UserAuth.signout_user()
 
       refute get_session(conn, :user_token)
       refute conn.cookies[@remember_me_cookie]
@@ -114,7 +114,7 @@ defmodule ZoonkWeb.UserAuthTest do
 
       conn
       |> put_session(:live_socket_id, live_socket_id)
-      |> UserAuth.log_out_user()
+      |> UserAuth.signout_user()
 
       assert_receive %Broadcast{event: "disconnect", topic: ^live_socket_id}
     end
@@ -123,7 +123,7 @@ defmodule ZoonkWeb.UserAuthTest do
       conn =
         conn
         |> fetch_cookies()
-        |> UserAuth.log_out_user()
+        |> UserAuth.signout_user()
 
       refute get_session(conn, :user_token)
       assert %{max_age: 0} = conn.resp_cookies[@remember_me_cookie]
@@ -147,7 +147,7 @@ defmodule ZoonkWeb.UserAuthTest do
       logged_in_conn =
         conn
         |> fetch_cookies()
-        |> UserAuth.log_in_user(user)
+        |> UserAuth.signin_user(user)
 
       user_token = logged_in_conn.cookies[@remember_me_cookie]
       %{value: signed_token} = logged_in_conn.resp_cookies[@remember_me_cookie]
@@ -226,7 +226,7 @@ defmodule ZoonkWeb.UserAuthTest do
       assert updated_socket.assigns.current_user.id == user.id
     end
 
-    test "redirects to login page if there isn't a valid user_token", %{conn: conn} do
+    test "redirects to signin page if there isn't a valid user_token", %{conn: conn} do
       user_token = "invalid_token"
 
       session =
@@ -243,7 +243,7 @@ defmodule ZoonkWeb.UserAuthTest do
       assert updated_socket.assigns.current_user == nil
     end
 
-    test "redirects to login page if there isn't a user_token", %{conn: conn} do
+    test "redirects to signin page if there isn't a user_token", %{conn: conn} do
       session = get_session(conn)
 
       socket = %LiveView.Socket{

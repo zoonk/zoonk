@@ -224,14 +224,14 @@ defmodule Zoonk.AuthTest do
     end
   end
 
-  describe "login_user_by_magic_link/1" do
+  describe "signin_user_by_magic_link/1" do
     test "confirms user and expires tokens" do
       user = unconfirmed_user_fixture()
       refute user.confirmed_at
       {encoded_token, hashed_token} = generate_user_magic_link_token(user)
 
       assert {:ok, user, [%{token: ^hashed_token}]} =
-               Auth.login_user_by_magic_link(encoded_token)
+               Auth.signin_user_by_magic_link(encoded_token)
 
       assert user.confirmed_at
     end
@@ -240,9 +240,9 @@ defmodule Zoonk.AuthTest do
       user = user_fixture()
       assert user.confirmed_at
       {encoded_token, _hashed_token} = generate_user_magic_link_token(user)
-      assert {:ok, ^user, []} = Auth.login_user_by_magic_link(encoded_token)
+      assert {:ok, ^user, []} = Auth.signin_user_by_magic_link(encoded_token)
       # one time use only
-      assert {:error, :not_found} = Auth.login_user_by_magic_link(encoded_token)
+      assert {:error, :not_found} = Auth.signin_user_by_magic_link(encoded_token)
     end
   end
 
@@ -255,7 +255,7 @@ defmodule Zoonk.AuthTest do
     end
   end
 
-  describe "deliver_login_instructions/2" do
+  describe "deliver_signin_instructions/2" do
     setup do
       %{user: unconfirmed_user_fixture()}
     end
@@ -263,14 +263,14 @@ defmodule Zoonk.AuthTest do
     test "sends token through notification", %{user: user} do
       token =
         extract_user_token(fn url ->
-          Auth.deliver_login_instructions(user, url)
+          Auth.deliver_signin_instructions(user, url)
         end)
 
       {:ok, new_token} = Base.url_decode64(token, padding: false)
       assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, new_token))
       assert user_token.user_id == user.id
       assert user_token.sent_to == user.email
-      assert user_token.context == "login"
+      assert user_token.context == "signin"
     end
   end
 end

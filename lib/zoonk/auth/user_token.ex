@@ -104,7 +104,7 @@ defmodule Zoonk.Auth.UserToken do
 
   The given token is valid if it matches its hashed counterpart in the
   database. This function also checks if the token is being used within
-  15 minutes. The context of a magic link token is always "login".
+  15 minutes. The context of a magic link token is always "signin".
   """
   def verify_magic_link_token_query(token) do
     case Base.url_decode64(token, padding: false) do
@@ -112,7 +112,7 @@ defmodule Zoonk.Auth.UserToken do
         hashed_token = :crypto.hash(@hash_algorithm, decoded_token)
 
         query =
-          from token in by_token_and_context_query(hashed_token, "login"),
+          from token in by_token_and_context_query(hashed_token, "signin"),
             join: user in assoc(token, :user),
             where: token.inserted_at > ago(^@magic_link_validity_in_minutes, "minute"),
             where: token.sent_to == user.email,

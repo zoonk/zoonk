@@ -167,7 +167,7 @@ defmodule Zoonk.Auth do
      including session ones - are expired. In theory, no other tokens
      exist but we delete all of them for best security practices.
   """
-  def login_user_by_magic_link(token) do
+  def signin_user_by_magic_link(token) do
     {:ok, query} = UserToken.verify_magic_link_token_query(token)
 
     case Repo.one(query) do
@@ -203,12 +203,12 @@ defmodule Zoonk.Auth do
   end
 
   @doc ~S"""
-  Delivers the magic link login instructions to the given user.
+  Delivers the magic link signin instructions to the given user.
   """
-  def deliver_login_instructions(%User{} = user, magic_link_url_fun) when is_function(magic_link_url_fun, 1) do
-    {encoded_token, user_token} = UserToken.build_email_token(user, "login")
+  def deliver_signin_instructions(%User{} = user, magic_link_url_fun) when is_function(magic_link_url_fun, 1) do
+    {encoded_token, user_token} = UserToken.build_email_token(user, "signin")
     Repo.insert!(user_token)
-    UserNotifier.deliver_login_instructions(user, magic_link_url_fun.(encoded_token))
+    UserNotifier.deliver_signin_instructions(user, magic_link_url_fun.(encoded_token))
   end
 
   @doc """

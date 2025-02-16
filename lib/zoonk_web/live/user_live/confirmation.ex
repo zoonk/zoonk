@@ -27,7 +27,7 @@ defmodule ZoonkWeb.UserLive.Confirmation do
       <.simple_form
         :if={@user.confirmed_at}
         for={@form}
-        id="login_form"
+        id="signin_form"
         phx-submit="submit"
         action={~p"/users/signin"}
         phx-trigger-action={@trigger_submit}

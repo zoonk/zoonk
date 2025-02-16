@@ -26,7 +26,7 @@ defmodule ZoonkWeb.UserSessionControllerTest do
       response = html_response(loggedin_conn, 200)
       assert response =~ user.email
       assert response =~ ~p"/users/settings"
-      assert response =~ ~p"/users/log-out"
+      assert response =~ ~p"/users/signout"
     end
 
     test "confirms unconfirmed user", %{conn: conn, unconfirmed_user: user} do
@@ -50,10 +50,10 @@ defmodule ZoonkWeb.UserSessionControllerTest do
       response = html_response(loggedin_conn, 200)
       assert response =~ user.email
       assert response =~ ~p"/users/settings"
-      assert response =~ ~p"/users/log-out"
+      assert response =~ ~p"/users/signout"
     end
 
-    test "redirects to login page when magic link is invalid", %{conn: conn} do
+    test "redirects to signin page when magic link is invalid", %{conn: conn} do
       conn =
         post(conn, ~p"/users/signin", %{
           "user" => %{"token" => "invalid"}
@@ -66,12 +66,12 @@ defmodule ZoonkWeb.UserSessionControllerTest do
     end
   end
 
-  describe "DELETE /users/log-out" do
+  describe "DELETE /users/signout" do
     test "logs the user out", %{conn: conn, user: user} do
       conn =
         conn
-        |> log_in_user(user)
-        |> delete(~p"/users/log-out")
+        |> signin_user(user)
+        |> delete(~p"/users/signout")
 
       assert redirected_to(conn) == ~p"/"
       refute get_session(conn, :user_token)
@@ -79,7 +79,7 @@ defmodule ZoonkWeb.UserSessionControllerTest do
     end
 
     test "succeeds even if the user is not logged in", %{conn: conn} do
-      conn = delete(conn, ~p"/users/log-out")
+      conn = delete(conn, ~p"/users/signout")
       assert redirected_to(conn) == ~p"/"
       refute get_session(conn, :user_token)
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Logged out successfully"

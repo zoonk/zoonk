@@ -10,7 +10,7 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
     test "renders settings page", %{conn: conn} do
       {:ok, _lv, html} =
         conn
-        |> log_in_user(user_fixture())
+        |> signin_user(user_fixture())
         |> live(~p"/users/settings")
 
       assert html =~ "Change Email"
@@ -27,7 +27,7 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
     test "redirects if user is not in sudo mode", %{conn: conn} do
       {:ok, conn} =
         conn
-        |> log_in_user(user_fixture(),
+        |> signin_user(user_fixture(),
           token_inserted_at: DateTime.add(DateTime.utc_now(), -11, :minute)
         )
         |> live(~p"/users/settings")
@@ -40,7 +40,7 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
   describe "update email form" do
     setup %{conn: conn} do
       user = user_fixture()
-      %{conn: log_in_user(conn, user), user: user}
+      %{conn: signin_user(conn, user), user: user}
     end
 
     test "updates the user email", %{conn: conn, user: user} do
@@ -99,7 +99,7 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
           Auth.deliver_user_update_email_instructions(%{user | email: email}, user.email, url)
         end)
 
-      %{conn: log_in_user(conn, user), token: token, email: email, user: user}
+      %{conn: signin_user(conn, user), token: token, email: email, user: user}
     end
 
     test "updates the user email once", %{conn: conn, user: user, token: token, email: email} do

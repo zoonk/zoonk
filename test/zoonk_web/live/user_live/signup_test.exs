@@ -6,38 +6,38 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
 
   describe "Registration page" do
     test "renders registration page", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/users/register")
+      {:ok, _lv, html} = live(conn, ~p"/users/signup")
 
-      assert html =~ "Register"
+      assert html =~ "Sign Up"
       assert html =~ "Log in"
     end
 
     test "redirects if already logged in", %{conn: conn} do
       result =
         conn
-        |> log_in_user(user_fixture())
-        |> live(~p"/users/register")
+        |> signin_user(user_fixture())
+        |> live(~p"/users/signup")
         |> follow_redirect(conn, ~p"/")
 
       assert {:ok, _conn} = result
     end
 
     test "renders errors for invalid data", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
+      {:ok, lv, _html} = live(conn, ~p"/users/signup")
 
       result =
         lv
         |> element("#registration_form")
         |> render_change(user: %{"email" => "with spaces"})
 
-      assert result =~ "Register"
+      assert result =~ "Sign Up"
       assert result =~ "must have the @ sign and no spaces"
     end
   end
 
   describe "register user" do
     test "creates account but does not log in", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
+      {:ok, lv, _html} = live(conn, ~p"/users/signup")
 
       email = unique_user_email()
       form = form(lv, "#registration_form", user: valid_user_attributes(email: email))
@@ -52,7 +52,7 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
     end
 
     test "renders errors for duplicated email", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
+      {:ok, lv, _html} = live(conn, ~p"/users/signup")
 
       user = user_fixture(%{email: "test@email.com"})
 
@@ -68,16 +68,16 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
   end
 
   describe "registration navigation" do
-    test "redirects to login page when the Log in button is clicked", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/register")
+    test "redirects to signin page when the Log in button is clicked", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/users/signup")
 
-      {:ok, _login_live, login_html} =
+      {:ok, _signin_live, signin_html} =
         lv
         |> element(~s|main a:fl-contains("Sign in")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/users/signin")
 
-      assert login_html =~ "Log in"
+      assert signin_html =~ "Log in"
     end
   end
 end

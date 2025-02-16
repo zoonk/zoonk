@@ -57,12 +57,12 @@ defmodule ZoonkWeb.Router do
 
     live_session :current_user,
       on_mount: [{ZoonkWeb.UserAuth, :mount_current_user}] do
-      live "/users/register", UserLive.Registration, :new
-      live "/users/signin", UserLive.Login, :new
+      live "/users/signup", UserLive.Registration, :new
+      live "/users/signin", UserLive.SignIn, :new
       live "/users/signin/:token", UserLive.Confirmation, :new
     end
 
     post "/users/signin", UserSessionController, :create
-    delete "/users/log-out", UserSessionController, :delete
+    delete "/users/signout", UserSessionController, :delete
   end
 end

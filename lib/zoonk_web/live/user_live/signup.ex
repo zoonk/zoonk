@@ -9,7 +9,7 @@ defmodule ZoonkWeb.UserLive.Registration do
     ~H"""
     <div class="mx-auto max-w-sm">
       <.header class="text-center">
-        Register for an account
+        Sign Up
         <:subtitle>
           Already registered?
           <.link navigate={~p"/users/signin"} class="text-brand font-semibold hover:underline">
@@ -53,7 +53,7 @@ defmodule ZoonkWeb.UserLive.Registration do
     case Auth.register_user(user_params) do
       {:ok, user} ->
         {:ok, _url_fn} =
-          Auth.deliver_login_instructions(
+          Auth.deliver_signin_instructions(
             user,
             &url(~p"/users/signin/#{&1}")
           )

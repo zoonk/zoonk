@@ -27,7 +27,7 @@ defmodule ZoonkWeb.UserAuth do
   In case the user re-authenticates for sudo mode,
   the existing remember_me setting is kept, writing a new remember_me cookie.
   """
-  def log_in_user(conn, user) do
+  def signin_user(conn, user) do
     token = Auth.generate_user_session_token(user)
     user_return_to = get_session(conn, :user_return_to)
 
@@ -72,7 +72,7 @@ defmodule ZoonkWeb.UserAuth do
 
   It clears all session data for safety. See renew_session.
   """
-  def log_out_user(conn) do
+  def signout_user(conn) do
     user_token = get_session(conn, :user_token)
     user_token && Auth.delete_user_session_token(user_token)
 
@@ -122,7 +122,7 @@ defmodule ZoonkWeb.UserAuth do
     * `:ensure_authenticated` - Authenticates the user from the session,
       and assigns the current_user to socket assigns based
       on user_token.
-      Redirects to login page if there's no logged user.
+      Redirects to signin page if there's no logged user.
 
   ## Examples
 
