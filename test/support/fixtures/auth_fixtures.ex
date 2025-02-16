@@ -26,11 +26,11 @@ defmodule Zoonk.AuthFixtures do
   end
 
   def user_fixture(attrs \\ %{}) do
-    user = unconfirmed_user_fixture(attrs)
+    fixture = unconfirmed_user_fixture(attrs)
 
     token =
       extract_user_token(fn url ->
-        Auth.deliver_login_instructions(user, url)
+        Auth.deliver_login_instructions(fixture, url)
       end)
 
     {:ok, user, _expired_tokens} = Auth.login_user_by_magic_link(token)
@@ -40,17 +40,14 @@ defmodule Zoonk.AuthFixtures do
 
   def extract_user_token(fun) do
     {:ok, captured_email} = fun.(&"[TOKEN]#{&1}[TOKEN]")
-    [_, token | _] = String.split(captured_email.text_body, "[TOKEN]")
+    [_str, token | _opts] = String.split(captured_email.text_body, "[TOKEN]")
     token
   end
 
   def override_token_inserted_at(token, inserted_at) when is_binary(token) do
-    Zoonk.Repo.update_all(
-      from(t in Auth.UserToken,
-        where: t.token == ^token
-      ),
-      set: [inserted_at: inserted_at]
-    )
+    Auth.UserToken
+    |> where([t], t.token == ^token)
+    |> Zoonk.Repo.update_all(set: [inserted_at: inserted_at])
   end
 
   def generate_user_magic_link_token(user) do

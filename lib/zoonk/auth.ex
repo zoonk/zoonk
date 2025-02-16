@@ -105,10 +105,13 @@ defmodule Zoonk.Auth do
 
     with {:ok, query} <- UserToken.verify_change_email_token_query(token, context),
          %UserToken{sent_to: email} <- Repo.one(query),
-         {:ok, _} <- Repo.transaction(user_email_multi(user, email, context)) do
+         {:ok, _res} <-
+           user
+           |> user_email_multi(email, context)
+           |> Repo.transaction() do
       :ok
     else
-      _ -> :error
+      _error -> :error
     end
   end
 
@@ -147,7 +150,7 @@ defmodule Zoonk.Auth do
          {user, _token} <- Repo.one(query) do
       user
     else
-      _ -> nil
+      _error -> nil
     end
   end
 
@@ -212,7 +215,10 @@ defmodule Zoonk.Auth do
   Deletes the signed token with the given context.
   """
   def delete_user_session_token(token) do
-    Repo.delete_all(UserToken.by_token_and_context_query(token, "session"))
+    token
+    |> UserToken.by_token_and_context_query("session")
+    |> Repo.delete_all()
+
     :ok
   end
 

@@ -82,8 +82,10 @@ defmodule ZoonkWeb.UserLive.Settings do
 
     case Auth.change_user_email(user, user_params) do
       %{valid?: true} = changeset ->
+        user_changeset = Ecto.Changeset.apply_action!(changeset, :insert)
+
         Auth.deliver_user_update_email_instructions(
-          Ecto.Changeset.apply_action!(changeset, :insert),
+          user_changeset,
           user.email,
           &url(~p"/users/settings/confirm-email/#{&1}")
         )

@@ -34,7 +34,7 @@ defmodule ZoonkWeb.UserLive.Registration do
     """
   end
 
-  def mount(_params, _session, %{assigns: %{current_user: user}} = socket) when not is_nil(user) do
+  def mount(_params, _session, %{assigns: %{current_user: %User{}}} = socket) do
     {:ok, redirect(socket, to: ZoonkWeb.UserAuth.signed_in_path(socket))}
   end
 
@@ -52,7 +52,7 @@ defmodule ZoonkWeb.UserLive.Registration do
   def handle_event("save", %{"user" => user_params}, socket) do
     case Auth.register_user(user_params) do
       {:ok, user} ->
-        {:ok, _} =
+        {:ok, _url_fn} =
           Auth.deliver_login_instructions(
             user,
             &url(~p"/users/log-in/#{&1}")
@@ -67,7 +67,10 @@ defmodule ZoonkWeb.UserLive.Registration do
          |> push_navigate(to: ~p"/users/log-in")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, socket |> assign(check_errors: true) |> assign_form(changeset)}
+        {:noreply,
+         socket
+         |> assign(check_errors: true)
+         |> assign_form(changeset)}
     end
   end
 

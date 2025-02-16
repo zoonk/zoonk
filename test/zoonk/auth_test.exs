@@ -1,5 +1,5 @@
 defmodule Zoonk.AuthTest do
-  use Zoonk.DataCase
+  use Zoonk.DataCase, async: true
 
   import Zoonk.AuthFixtures
 
@@ -56,13 +56,18 @@ defmodule Zoonk.AuthTest do
       assert "has already been taken" in errors_on(changeset).email
 
       # Now try with the upper cased email too, to check that email case is ignored.
-      {:error, changeset} = Auth.register_user(%{email: String.upcase(email)})
-      assert "has already been taken" in errors_on(changeset).email
+      {:error, uppercase_changeset} = Auth.register_user(%{email: String.upcase(email)})
+      assert "has already been taken" in errors_on(uppercase_changeset).email
     end
 
     test "registers users" do
       email = unique_user_email()
-      {:ok, user} = Auth.register_user(valid_user_attributes(email: email))
+
+      {:ok, user} =
+        [email: email]
+        |> valid_user_attributes()
+        |> Auth.register_user()
+
       assert user.email == email
       assert is_nil(user.confirmed_at)
     end
@@ -105,8 +110,8 @@ defmodule Zoonk.AuthTest do
           Auth.deliver_user_update_email_instructions(user, "current@example.com", url)
         end)
 
-      {:ok, token} = Base.url_decode64(token, padding: false)
-      assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, token))
+      {:ok, new_token} = Base.url_decode64(token, padding: false)
+      assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, new_token))
       assert user_token.user_id == user.id
       assert user_token.sent_to == user.email
       assert user_token.context == "change:current@example.com"
@@ -261,8 +266,8 @@ defmodule Zoonk.AuthTest do
           Auth.deliver_login_instructions(user, url)
         end)
 
-      {:ok, token} = Base.url_decode64(token, padding: false)
-      assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, token))
+      {:ok, new_token} = Base.url_decode64(token, padding: false)
+      assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, new_token))
       assert user_token.user_id == user.id
       assert user_token.sent_to == user.email
       assert user_token.context == "login"

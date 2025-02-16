@@ -136,7 +136,7 @@ defmodule Zoonk.Auth.UserToken do
   database and if it has not expired (after @change_email_validity_in_days).
   The context must always start with "change:".
   """
-  def verify_change_email_token_query(token, "change:" <> _ = context) do
+  def verify_change_email_token_query(token, "change:" <> _rest = context) do
     case Base.url_decode64(token, padding: false) do
       {:ok, decoded_token} ->
         hashed_token = :crypto.hash(@hash_algorithm, decoded_token)
@@ -166,7 +166,7 @@ defmodule Zoonk.Auth.UserToken do
     from t in UserToken, where: t.user_id == ^user.id
   end
 
-  def by_user_and_contexts_query(user, [_ | _] = contexts) do
+  def by_user_and_contexts_query(user, contexts) when is_list(contexts) do
     from t in UserToken, where: t.user_id == ^user.id and t.context in ^contexts
   end
 

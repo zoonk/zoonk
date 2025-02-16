@@ -58,7 +58,7 @@ defmodule Zoonk.Auth.User do
   Confirms the account by setting `confirmed_at`.
   """
   def confirm_changeset(user) do
-    now = DateTime.truncate(DateTime.utc_now(), :second)
+    now = DateTime.utc_now(:second)
     change(user, confirmed_at: now)
   end
 end

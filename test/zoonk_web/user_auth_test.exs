@@ -29,17 +29,29 @@ defmodule ZoonkWeb.UserAuthTest do
     end
 
     test "clears everything previously stored in the session", %{conn: conn, user: user} do
-      conn = conn |> put_session(:to_be_removed, "value") |> UserAuth.log_in_user(user)
+      conn =
+        conn
+        |> put_session(:to_be_removed, "value")
+        |> UserAuth.log_in_user(user)
+
       refute get_session(conn, :to_be_removed)
     end
 
     test "redirects to the configured path", %{conn: conn, user: user} do
-      conn = conn |> put_session(:user_return_to, "/hello") |> UserAuth.log_in_user(user)
+      conn =
+        conn
+        |> put_session(:user_return_to, "/hello")
+        |> UserAuth.log_in_user(user)
+
       assert redirected_to(conn) == "/hello"
     end
 
     test "writes a cookie if remember_me is configured", %{conn: conn, user: user} do
-      conn = conn |> fetch_cookies() |> UserAuth.log_in_user(user, %{"remember_me" => "true"})
+      conn =
+        conn
+        |> fetch_cookies()
+        |> UserAuth.log_in_user(user, %{"remember_me" => "true"})
+
       assert get_session(conn, :user_token) == conn.cookies[@remember_me_cookie]
       assert get_session(conn, :user_remember_me) == true
 
@@ -49,15 +61,15 @@ defmodule ZoonkWeb.UserAuthTest do
     end
 
     test "redirects to settings when user is already logged in", %{conn: conn, user: user} do
-      conn = conn |> assign(:current_user, user) |> UserAuth.log_in_user(user)
+      conn =
+        conn
+        |> assign(:current_user, user)
+        |> UserAuth.log_in_user(user)
+
       assert redirected_to(conn) == "/users/settings"
     end
 
     test "writes a cookie if remember_me was set in previous session", %{conn: conn, user: user} do
-      conn = conn |> fetch_cookies() |> UserAuth.log_in_user(user, %{"remember_me" => "true"})
-      assert get_session(conn, :user_token) == conn.cookies[@remember_me_cookie]
-      assert get_session(conn, :user_remember_me) == true
-
       conn =
         conn
         |> recycle()
@@ -68,9 +80,9 @@ defmodule ZoonkWeb.UserAuthTest do
       # the conn is already logged in and has the remeber_me cookie set,
       # now we log in again and even without explicitly setting remember_me,
       # the cookie should be set again
-      conn = UserAuth.log_in_user(conn, user, %{})
-      assert %{value: signed_token, max_age: max_age} = conn.resp_cookies[@remember_me_cookie]
-      assert signed_token != get_session(conn, :user_token)
+      next_conn = UserAuth.log_in_user(conn, user, %{})
+      assert %{value: signed_token, max_age: max_age} = next_conn.resp_cookies[@remember_me_cookie]
+      assert signed_token != get_session(next_conn, :user_token)
       assert max_age == 5_184_000
       assert get_session(conn, :user_remember_me) == true
     end
@@ -106,7 +118,11 @@ defmodule ZoonkWeb.UserAuthTest do
     end
 
     test "works even if user is already logged out", %{conn: conn} do
-      conn = conn |> fetch_cookies() |> UserAuth.log_out_user()
+      conn =
+        conn
+        |> fetch_cookies()
+        |> UserAuth.log_out_user()
+
       refute get_session(conn, :user_token)
       assert %{max_age: 0} = conn.resp_cookies[@remember_me_cookie]
       assert redirected_to(conn) == ~p"/"
@@ -116,13 +132,20 @@ defmodule ZoonkWeb.UserAuthTest do
   describe "fetch_current_user/2" do
     test "authenticates user from session", %{conn: conn, user: user} do
       user_token = Auth.generate_user_session_token(user)
-      conn = conn |> put_session(:user_token, user_token) |> UserAuth.fetch_current_user([])
+
+      conn =
+        conn
+        |> put_session(:user_token, user_token)
+        |> UserAuth.fetch_current_user([])
+
       assert conn.assigns.current_user.id == user.id
     end
 
     test "authenticates user from cookies", %{conn: conn, user: user} do
       logged_in_conn =
-        conn |> fetch_cookies() |> UserAuth.log_in_user(user, %{"remember_me" => "true"})
+        conn
+        |> fetch_cookies()
+        |> UserAuth.log_in_user(user, %{"remember_me" => "true"})
 
       user_token = logged_in_conn.cookies[@remember_me_cookie]
       %{value: signed_token} = logged_in_conn.resp_cookies[@remember_me_cookie]
@@ -140,7 +163,7 @@ defmodule ZoonkWeb.UserAuthTest do
     end
 
     test "does not authenticate if data is missing", %{conn: conn, user: user} do
-      _ = Auth.generate_user_session_token(user)
+      Auth.generate_user_session_token(user)
       conn = UserAuth.fetch_current_user(conn, [])
       refute get_session(conn, :user_token)
       refute conn.assigns.current_user
@@ -150,7 +173,11 @@ defmodule ZoonkWeb.UserAuthTest do
   describe "on_mount :mount_current_user" do
     test "assigns current_user based on a valid user_token", %{conn: conn, user: user} do
       user_token = Auth.generate_user_session_token(user)
-      session = conn |> put_session(:user_token, user_token) |> get_session()
+
+      session =
+        conn
+        |> put_session(:user_token, user_token)
+        |> get_session()
 
       {:cont, updated_socket} =
         UserAuth.on_mount(:mount_current_user, %{}, session, %LiveView.Socket{})
@@ -160,7 +187,11 @@ defmodule ZoonkWeb.UserAuthTest do
 
     test "assigns nil to current_user assign if there isn't a valid user_token", %{conn: conn} do
       user_token = "invalid_token"
-      session = conn |> put_session(:user_token, user_token) |> get_session()
+
+      session =
+        conn
+        |> put_session(:user_token, user_token)
+        |> get_session()
 
       {:cont, updated_socket} =
         UserAuth.on_mount(:mount_current_user, %{}, session, %LiveView.Socket{})
@@ -181,7 +212,11 @@ defmodule ZoonkWeb.UserAuthTest do
   describe "on_mount :ensure_authenticated" do
     test "authenticates current_user based on a valid user_token", %{conn: conn, user: user} do
       user_token = Auth.generate_user_session_token(user)
-      session = conn |> put_session(:user_token, user_token) |> get_session()
+
+      session =
+        conn
+        |> put_session(:user_token, user_token)
+        |> get_session()
 
       {:cont, updated_socket} =
         UserAuth.on_mount(:ensure_authenticated, %{}, session, %LiveView.Socket{})
@@ -191,7 +226,11 @@ defmodule ZoonkWeb.UserAuthTest do
 
     test "redirects to login page if there isn't a valid user_token", %{conn: conn} do
       user_token = "invalid_token"
-      session = conn |> put_session(:user_token, user_token) |> get_session()
+
+      session =
+        conn
+        |> put_session(:user_token, user_token)
+        |> get_session()
 
       socket = %LiveView.Socket{
         endpoint: ZoonkWeb.Endpoint,
@@ -218,7 +257,11 @@ defmodule ZoonkWeb.UserAuthTest do
   describe "on_mount :ensure_sudo_mode" do
     test "allows users that have authenticated in the last 10 minutes", %{conn: conn, user: user} do
       user_token = Auth.generate_user_session_token(user)
-      session = conn |> put_session(:user_token, user_token) |> get_session()
+
+      session =
+        conn
+        |> put_session(:user_token, user_token)
+        |> get_session()
 
       socket = %LiveView.Socket{
         endpoint: ZoonkWeb.Endpoint,
@@ -248,7 +291,11 @@ defmodule ZoonkWeb.UserAuthTest do
 
   describe "require_authenticated_user/2" do
     test "redirects if user is not authenticated", %{conn: conn} do
-      conn = conn |> fetch_flash() |> UserAuth.require_authenticated_user([])
+      conn =
+        conn
+        |> fetch_flash()
+        |> UserAuth.require_authenticated_user([])
+
       assert conn.halted
 
       assert redirected_to(conn) == ~p"/users/log-in"
@@ -258,33 +305,37 @@ defmodule ZoonkWeb.UserAuthTest do
     end
 
     test "stores the path to redirect to on GET", %{conn: conn} do
-      halted_conn =
+      no_query_conn =
         %{conn | path_info: ["foo"], query_string: ""}
         |> fetch_flash()
         |> UserAuth.require_authenticated_user([])
 
-      assert halted_conn.halted
-      assert get_session(halted_conn, :user_return_to) == "/foo"
+      assert no_query_conn.halted
+      assert get_session(no_query_conn, :user_return_to) == "/foo"
 
-      halted_conn =
+      query_conn =
         %{conn | path_info: ["foo"], query_string: "bar=baz"}
         |> fetch_flash()
         |> UserAuth.require_authenticated_user([])
 
-      assert halted_conn.halted
-      assert get_session(halted_conn, :user_return_to) == "/foo?bar=baz"
+      assert query_conn.halted
+      assert get_session(query_conn, :user_return_to) == "/foo?bar=baz"
 
-      halted_conn =
+      post_conn =
         %{conn | path_info: ["foo"], query_string: "bar", method: "POST"}
         |> fetch_flash()
         |> UserAuth.require_authenticated_user([])
 
-      assert halted_conn.halted
-      refute get_session(halted_conn, :user_return_to)
+      assert post_conn.halted
+      refute get_session(post_conn, :user_return_to)
     end
 
     test "does not redirect if user is authenticated", %{conn: conn, user: user} do
-      conn = conn |> assign(:current_user, user) |> UserAuth.require_authenticated_user([])
+      conn =
+        conn
+        |> assign(:current_user, user)
+        |> UserAuth.require_authenticated_user([])
+
       refute conn.halted
       refute conn.status
     end

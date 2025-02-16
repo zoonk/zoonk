@@ -113,8 +113,8 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
       assert Auth.get_user_by_email(email)
 
       # use confirm token again
-      {:error, redirect} = live(conn, ~p"/users/settings/confirm-email/#{token}")
-      assert {:live_redirect, %{to: path, flash: flash}} = redirect
+      {:error, expired_redirect} = live(conn, ~p"/users/settings/confirm-email/#{token}")
+      assert {:live_redirect, %{to: path, flash: flash}} = expired_redirect
       assert path == ~p"/users/settings"
       assert %{"error" => message} = flash
       assert message == "Email change link is invalid or it has expired."
