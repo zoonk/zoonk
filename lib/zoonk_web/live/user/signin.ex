@@ -12,7 +12,7 @@ defmodule ZoonkWeb.Live.UserSignIn do
         <:subtitle>
           <%= if @current_user do %>
             {dgettext(
-              "auth",
+              "users",
               "You need to reauthenticate to perform sensitive actions on your account."
             )}
           <% else %>
