@@ -14,6 +14,7 @@ defmodule Zoonk.Auth.TokenManager do
 
   import Ecto.Query
 
+  alias Zoonk.Configuration
   alias ZoonkSchema.UserToken
 
   @hash_algorithm :sha256
@@ -21,8 +22,8 @@ defmodule Zoonk.Auth.TokenManager do
 
   # It is very important to keep the magic link token expiry short,
   # since someone with access to the email may take over the account.
-  @magic_link_validity_in_minutes 15
-  @change_email_validity_in_days 7
+  @magic_link_validity_in_minutes Configuration.get_magic_link_validity_in_minutes()
+  @change_email_validity_in_days Configuration.get_change_email_validity_in_days()
 
   @doc """
   Generates a token that will be stored in a signed place,

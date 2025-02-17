@@ -31,6 +31,16 @@ defmodule Zoonk.Configuration do
   def get_token_max_age_in_seconds, do: get_token_max_age_in_days() * 24 * 60 * 60
 
   @doc """
+  Returns the validity of a magic link token in minutes.
+  """
+  def get_magic_link_validity_in_minutes, do: 15
+
+  @doc """
+  Returns the validity of a change email token in days.
+  """
+  def get_change_email_validity_in_days, do: 7
+
+  @doc """
   Returns a list of supported language keys.
 
   This extracts only the keys from `@supported_languages`,

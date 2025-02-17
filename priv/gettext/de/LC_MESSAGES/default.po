@@ -11,43 +11,48 @@ msgstr ""
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/zoonk_web/components/core_components.ex:479
+#: lib/zoonk_web/components/table.ex:46
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr "Aktionen"
 
-#: lib/zoonk_web/components/core_components.ex:159
+#: lib/zoonk_web/components/flash.ex:81
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "Versuche, die Verbindung wiederherzustellen"
 
-#: lib/zoonk_web/components/core_components.ex:150
+#: lib/zoonk_web/components/flash.ex:72
 #, elixir-autogen, elixir-format
 msgid "Error!"
 msgstr "Fehler!"
 
-#: lib/zoonk_web/components/core_components.ex:171
+#: lib/zoonk_web/components/flash.ex:93
 #, elixir-autogen, elixir-format
 msgid "Hang in there while we get back on track"
 msgstr "Bitte warten Sie, während wir wieder auf Kurs kommen"
 
-#: lib/zoonk_web/components/core_components.ex:166
+#: lib/zoonk_web/components/flash.ex:88
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "Etwas ist schief gelaufen!"
 
-#: lib/zoonk_web/components/core_components.ex:149
+#: lib/zoonk_web/components/flash.ex:71
 #, elixir-autogen, elixir-format
 msgid "Success!"
 msgstr "Erfolg!"
 
-#: lib/zoonk_web/components/core_components.ex:154
+#: lib/zoonk_web/components/flash.ex:76
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "Wir können das Internet nicht finden"
 
-#: lib/zoonk_web/components/core_components.ex:75
-#: lib/zoonk_web/components/core_components.ex:129
+#: lib/zoonk_web/components/flash.ex:51
+#: lib/zoonk_web/components/modal.ex:67
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr "schließen"
+
+#: lib/zoonk_web/live/user/signup.ex:30
+#, elixir-autogen, elixir-format
+msgid "Language"
+msgstr ""

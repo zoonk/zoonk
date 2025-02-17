@@ -7,7 +7,9 @@ defmodule Zoonk.Auth.UserNotifier do
   such as updating their email, signing in with a magic link,
   or confirming their account.
   """
+  use Gettext, backend: ZoonkWeb.Gettext
 
+  alias Zoonk.Configuration
   alias Zoonk.Mailer
   alias ZoonkSchema.User
 
@@ -15,20 +17,28 @@ defmodule Zoonk.Auth.UserNotifier do
   Deliver instructions to update a user email.
   """
   def deliver_update_email_instructions(user, url) do
-    Mailer.send_email(user.email, "Update email instructions", """
+    subject = dgettext("email", "Update email instructions")
 
-    ==============================
+    content =
+      dgettext(
+        "email",
+        """
+        Hi %{email},
 
-    Hi #{user.email},
+        You can change your email by visiting the URL below:
 
-    You can change your email by visiting the URL below:
+        %{url}
 
-    #{url}
+        This link will expire in %{expiration_days} days.
 
-    If you didn't request this change, please ignore this.
+        If you didn't request this change, please ignore this.
+        """,
+        email: user.email,
+        url: url,
+        expiration_days: Zoonk.Configuration.get_change_email_validity_in_days()
+      )
 
-    ==============================
-    """)
+    Mailer.send_email(user.email, subject, content)
   end
 
   @doc """
@@ -42,36 +52,52 @@ defmodule Zoonk.Auth.UserNotifier do
   end
 
   defp deliver_magic_link_instructions(user, url) do
-    Mailer.send_email(user.email, "Log in instructions", """
+    subject = dgettext("email", "Log in instructions")
 
-    ==============================
+    content =
+      dgettext(
+        "email",
+        """
+        Hi %{email},
 
-    Hi #{user.email},
+        You can log into your account by visiting the URL below:
 
-    You can log into your account by visiting the URL below:
+        %{url}
 
-    #{url}
+        This link will expire in %{expiration_minutes} minutes.
 
-    If you didn't request this email, please ignore this.
+        If you didn't request this email, please ignore this.
+        """,
+        email: user.email,
+        url: url,
+        expiration_minutes: Configuration.get_magic_link_validity_in_minutes()
+      )
 
-    ==============================
-    """)
+    Mailer.send_email(user.email, subject, content)
   end
 
   defp deliver_confirmation_instructions(user, url) do
-    Mailer.send_email(user.email, "Confirmation instructions", """
+    subject = dgettext("email", "Confirmation instructions")
 
-    ==============================
+    content =
+      dgettext(
+        "email",
+        """
+        Hi %{email},
 
-    Hi #{user.email},
+        You can confirm your account by visiting the URL below:
 
-    You can confirm your account by visiting the URL below:
+        %{url}
 
-    #{url}
+        This link will expire in %{expiration_minutes} minutes.
 
-    If you didn't create an account with us, please ignore this.
+        If you didn't create an account with us, please ignore this.
+        """,
+        email: user.email,
+        url: url,
+        expiration_minutes: Configuration.get_magic_link_validity_in_minutes()
+      )
 
-    ==============================
-    """)
+    Mailer.send_email(user.email, subject, content)
   end
 end

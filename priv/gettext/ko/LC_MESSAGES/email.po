@@ -1,0 +1,42 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: ko\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: lib/zoonk/auth/user_notifier.ex:80
+#, elixir-autogen, elixir-format
+msgid "Confirmation instructions"
+msgstr "확인 지침"
+
+#: lib/zoonk/auth/user_notifier.ex:23
+#, elixir-autogen, elixir-format
+msgid "Hi %{email},\n\nYou can change your email by visiting the URL below:\n\n%{url}\n\nThis link will expire in %{expiration_days} days.\n\nIf you didn't request this change, please ignore this.\n"
+msgstr "안녕하세요 %{email},\n\n아래 URL을 방문하여 이메일을 변경할 수 있습니다:\n\n%{url}\n\n이 링크는 %{expiration_days}일 후에 만료됩니다.\n\n변경 요청을 하지 않으셨다면 무시해 주세요."
+
+#: lib/zoonk/auth/user_notifier.ex:83
+#, elixir-autogen, elixir-format
+msgid "Hi %{email},\n\nYou can confirm your account by visiting the URL below:\n\n%{url}\n\nThis link will expire in %{expiration_minutes} minutes.\n\nIf you didn't create an account with us, please ignore this.\n"
+msgstr "안녕하세요 %{email},\n\n아래 URL을 방문하여 계정을 확인할 수 있습니다:\n\n%{url}\n\n이 링크는 %{expiration_minutes}분 후에 만료됩니다.\n\n계정을 생성하지 않으셨다면 무시해 주세요."
+
+#: lib/zoonk/auth/user_notifier.ex:58
+#, elixir-autogen, elixir-format
+msgid "Hi %{email},\n\nYou can log into your account by visiting the URL below:\n\n%{url}\n\nThis link will expire in %{expiration_minutes} minutes.\n\nIf you didn't request this email, please ignore this.\n"
+msgstr "안녕하세요 %{email},\n\n아래 URL을 방문하여 계정에 로그인할 수 있습니다:\n\n%{url}\n\n이 링크는 %{expiration_minutes}분 후에 만료됩니다.\n\n이 이메일을 요청하지 않으셨다면 무시해 주세요."
+
+#: lib/zoonk/auth/user_notifier.ex:55
+#, elixir-autogen, elixir-format
+msgid "Log in instructions"
+msgstr "로그인 지침"
+
+#: lib/zoonk/auth/user_notifier.ex:20
+#, elixir-autogen, elixir-format
+msgid "Update email instructions"
+msgstr "이메일 업데이트 지침"
