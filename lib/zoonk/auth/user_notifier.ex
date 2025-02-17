@@ -21,7 +21,7 @@ defmodule Zoonk.Auth.UserNotifier do
 
     content =
       dgettext(
-        "email",
+        "emails",
         """
         Hi %{email},
 
@@ -56,7 +56,7 @@ defmodule Zoonk.Auth.UserNotifier do
 
     content =
       dgettext(
-        "email",
+        "emails",
         """
         Hi %{email},
 
@@ -81,7 +81,7 @@ defmodule Zoonk.Auth.UserNotifier do
 
     content =
       dgettext(
-        "email",
+        "emails",
         """
         Hi %{email},
 
