@@ -33,14 +33,20 @@
 **[Support the project and get lifetime access to Zoonk](https://github.com/sponsors/ceolinwill?frequency=one-time)**
 
 ### Lifetime (Plus)
+
 People who supported the project and will get lifetime access to the `Plus` plan:
+
 - [Sephora Lillian](https://github.com/sephoralillian)
 
 ### Lifetime (Supporter)
+
 People who supported the project and will get lifetime access to the `Supporter` plan:
+
 - [David Szabo-Stuban](https://github.com/ssdavidai)
 - [Gustavo A. Castillo](https://github.com/guscastilloa)
 
 ### Recurring
+
 People who are supporting the project every month:
+
 - [Gustavo A. Castillo](https://github.com/guscastilloa)
