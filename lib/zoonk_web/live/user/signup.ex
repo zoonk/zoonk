@@ -24,7 +24,6 @@ defmodule ZoonkWeb.Live.UserSignUp do
           Oops, something went wrong! Please check the errors below.
         </.error>
 
-        <input type="hidden" name={@form[:timezone].name} value={@form[:timezone].value} />
         <input type="hidden" name={@form[:language].name} value={@form[:language].value} />
         <.input field={@form[:email]} type="email" label="Email" autocomplete="username" required />
 
@@ -41,8 +40,7 @@ defmodule ZoonkWeb.Live.UserSignUp do
   end
 
   def mount(_params, _session, socket) do
-    timezone = get_connect_params(socket)["timezone"]
-    changeset = Auth.change_user_email(%User{timezone: timezone})
+    changeset = Auth.change_user_email(%User{})
 
     socket =
       socket

@@ -37,20 +37,10 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
 
   describe "register user" do
     test "creates account but does not log in", %{conn: conn} do
-      {:ok, lv, _html} =
-        conn
-        |> put_connect_params(%{"timezone" => "Europe/London"})
-        |> live(~p"/users/signup")
+      {:ok, lv, _html} = live(conn, ~p"/users/signup")
 
       email = unique_user_email()
-
-      attrs =
-        [email: email]
-        |> valid_user_attributes()
-        # remove the default timezone to test putting the timezone from the connect
-        |> Map.delete(:timezone)
-
-      form = form(lv, "#registration_form", user: attrs)
+      form = form(lv, "#registration_form", user: valid_user_attributes(email: email))
 
       {:ok, _lv, html} =
         form
@@ -62,7 +52,6 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
 
       user = Zoonk.Auth.get_user_by_email(email)
       assert user.confirmed_at == nil
-      assert user.timezone == "Europe/London"
     end
 
     test "renders errors for duplicated email", %{conn: conn} do
