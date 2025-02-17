@@ -17,7 +17,7 @@ defmodule Zoonk.Auth.UserNotifier do
   Deliver instructions to update a user email.
   """
   def deliver_update_email_instructions(user, url) do
-    subject = dgettext("email", "Update email instructions")
+    subject = dgettext("emails", "Update email instructions")
 
     content =
       dgettext(
@@ -52,7 +52,7 @@ defmodule Zoonk.Auth.UserNotifier do
   end
 
   defp deliver_magic_link_instructions(user, url) do
-    subject = dgettext("email", "Log in instructions")
+    subject = dgettext("emails", "Log in instructions")
 
     content =
       dgettext(
@@ -77,7 +77,7 @@ defmodule Zoonk.Auth.UserNotifier do
   end
 
   defp deliver_confirmation_instructions(user, url) do
-    subject = dgettext("email", "Confirmation instructions")
+    subject = dgettext("emails", "Confirmation instructions")
 
     content =
       dgettext(
