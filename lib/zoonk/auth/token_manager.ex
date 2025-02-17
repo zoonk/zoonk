@@ -2,14 +2,20 @@ defmodule Zoonk.Auth.TokenManager do
   @moduledoc """
   Manages user authentication tokens for sessions, magic links, and email changes.
 
-  This module provides functions for generating, verifying, and managing tokens used for user authentication and session handling.
+  This module provides functions for generating, verifying, and
+  managing tokens used for user authentication and session handling.
 
   ## Features:
-    - **Session Tokens**: Used for maintaining user sessions, allowing session management and expiration.
-    - **Magic Link Tokens**: One-time tokens sent via email for passwordless authentication.
-    - **Email Change Tokens**: Secure tokens for verifying email address changes.
+    - **Session Tokens**: Used for maintaining user sessions,
+    allowing session management and expiration.
+    - **Magic Link Tokens**: One-time tokens sent via email
+    for passwordless authentication.
+    - **Email Change Tokens**: Secure tokens for verifying
+    email address changes.
 
-  Tokens are securely hashed before storage, preventing direct use if the database is compromised. The system ensures that tokens expire after a set duration to enhance security.
+  Tokens are securely hashed before storage, preventing direct
+  use if the database is compromised. The system ensures that
+  tokens expire after a set duration to enhance security.
   """
 
   import Ecto.Query
