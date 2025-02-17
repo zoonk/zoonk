@@ -43,20 +43,44 @@ defmodule Zoonk.Configuration do
   @doc """
   Returns a list of supported language keys.
 
-  This extracts only the keys from `@supported_languages`,
-  which represent the available language options.
+  ## Example
+
+      iex> supported_language_keys()
+      [:en, :de, :es, :fr, :it, :ja, :ko, :pt, :tr, :zh_Hans, :zh_Hant]
   """
   def supported_language_keys do
     Enum.map(@supported_languages, fn {key, _value} -> key end)
   end
 
   @doc """
+  Returns a list of supported language strings.
+
+  ## Example
+
+      iex> supported_language_strings()
+      ["en", "de", "es", "fr", "it", "ja", "ko", "pt", "tr", "zh_Hans", "zh_Hant"]
+  """
+  def supported_language_strings do
+    Enum.map(supported_language_keys(), fn language -> Atom.to_string(language) end)
+  end
+
+  @doc """
   Returns an atom with the default language key.
+
+  ## Example
+
+      iex> default_language_key()
+      :en
   """
   def default_language_key, do: String.to_existing_atom(@default_language)
 
   @doc """
   Returns a string with the default language key.
+
+  ## Example
+
+      iex> default_language_string()
+      "en"
   """
   def default_language_string, do: @default_language
 
@@ -66,6 +90,11 @@ defmodule Zoonk.Configuration do
   Each option is a tuple where the first element is
   the display name of the language, and the second element
   is its key as a string.
+
+  ## Example
+
+      iex> language_select_options()
+      [{"English", "en"}, {"Deutsch", "de"}, ...]
   """
   def language_select_options do
     Enum.map(@supported_languages, fn {key, value} -> {value, Atom.to_string(key)} end)
