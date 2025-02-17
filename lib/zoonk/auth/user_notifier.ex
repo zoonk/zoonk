@@ -1,29 +1,21 @@
 defmodule Zoonk.Auth.UserNotifier do
-  @moduledoc false
-  import Swoosh.Email
+  @moduledoc """
+  Handles email notifications for user authentication events.
+
+  This module is responsible for sending email instructions
+  to users for various authentication-related actions,
+  such as updating their email, signing in with a magic link,
+  or confirming their account.
+  """
 
   alias Zoonk.Mailer
   alias ZoonkSchema.User
-
-  # Delivers the email using the application mailer.
-  defp deliver(recipient, subject, body) do
-    email =
-      new()
-      |> to(recipient)
-      |> from({"Zoonk", "contact@example.com"})
-      |> subject(subject)
-      |> text_body(body)
-
-    with {:ok, _metadata} <- Mailer.deliver(email) do
-      {:ok, email}
-    end
-  end
 
   @doc """
   Deliver instructions to update a user email.
   """
   def deliver_update_email_instructions(user, url) do
-    deliver(user.email, "Update email instructions", """
+    Mailer.send_email(user.email, "Update email instructions", """
 
     ==============================
 
@@ -50,7 +42,7 @@ defmodule Zoonk.Auth.UserNotifier do
   end
 
   defp deliver_magic_link_instructions(user, url) do
-    deliver(user.email, "Log in instructions", """
+    Mailer.send_email(user.email, "Log in instructions", """
 
     ==============================
 
@@ -67,7 +59,7 @@ defmodule Zoonk.Auth.UserNotifier do
   end
 
   defp deliver_confirmation_instructions(user, url) do
-    deliver(user.email, "Confirmation instructions", """
+    Mailer.send_email(user.email, "Confirmation instructions", """
 
     ==============================
 
