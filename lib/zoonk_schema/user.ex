@@ -25,9 +25,15 @@ defmodule ZoonkSchema.User do
 
   import Ecto.Changeset
 
+  alias Zoonk.Configuration
+
   schema "users" do
     field :email, :string
-    field :language, Ecto.Enum, values: [:de, :en, :es, :fr, :it, :ja, :ko, :pt, :tr, :zh_Hans, :zh_Hant], default: :en
+
+    field :language, Ecto.Enum,
+      values: Configuration.supported_language_keys(),
+      default: Configuration.default_language_key()
+
     field :confirmed_at, :utc_datetime
     field :authenticated_at, :utc_datetime, virtual: true
 

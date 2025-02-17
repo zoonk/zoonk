@@ -24,7 +24,13 @@ defmodule ZoonkWeb.Live.UserSignUp do
           Oops, something went wrong! Please check the errors below.
         </.error>
 
-        <input type="hidden" name={@form[:language].name} value={@form[:language].value} />
+        <.input
+          field={@form[:language]}
+          type="select"
+          label={gettext("Language")}
+          options={Zoonk.Configuration.language_select_options()}
+          required
+        />
         <.input field={@form[:email]} type="email" label="Email" autocomplete="username" required />
 
         <:actions>
@@ -39,8 +45,9 @@ defmodule ZoonkWeb.Live.UserSignUp do
     {:ok, redirect(socket, to: ZoonkWeb.UserAuth.signed_in_path(socket))}
   end
 
-  def mount(_params, _session, socket) do
-    changeset = Auth.change_user_email(%User{})
+  def mount(_params, session, socket) do
+    language = Map.get(session, "language")
+    changeset = Auth.change_user_email(%User{language: language})
 
     socket =
       socket

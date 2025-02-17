@@ -36,6 +36,24 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
   end
 
   describe "register user" do
+    test "use the browser's language", %{conn: conn} do
+      conn = put_req_header(conn, "accept-language", "pt-BR")
+
+      {:ok, lv, html} = live(conn, ~p"/users/signup")
+
+      assert html =~ ~s'<html lang="pt"'
+      assert has_element?(lv, "option[value=pt][selected]")
+    end
+
+    test "handles an unsupported locale", %{conn: conn} do
+      conn = put_req_header(conn, "accept-language", "hi")
+
+      assert {:ok, _lv, html} = live(conn, ~p"/users/signup")
+
+      assert html =~ "Sign Up"
+      assert html =~ ~s'<html lang="en"'
+    end
+
     test "creates account but does not log in", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/users/signup")
 

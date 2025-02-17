@@ -1,6 +1,7 @@
 defmodule ZoonkWeb.Router do
   use ZoonkWeb, :router
 
+  import ZoonkWeb.Language
   import ZoonkWeb.UserAuth
 
   pipeline :browser do
@@ -11,6 +12,7 @@ defmodule ZoonkWeb.Router do
     plug :protect_from_forgery
     plug :put_secure_browser_headers, %{"content-security-policy" => "default-src 'self';img-src 'self' data: blob:;"}
     plug :fetch_current_user
+    plug :set_session_language
   end
 
   pipeline :api do
@@ -21,6 +23,43 @@ defmodule ZoonkWeb.Router do
   # scope "/api", ZoonkWeb do
   #   pipe_through :api
   # end
+
+  ## Authentication routes
+
+  scope "/", ZoonkWeb.Live do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live_session :require_authenticated_user,
+      on_mount: [
+        {ZoonkWeb.UserAuth, :ensure_authenticated},
+        {ZoonkWeb.Language, :set_app_language}
+      ] do
+      live "/", Home, :index
+      live "/users/settings", UserSettings, :edit
+      live "/users/settings/confirm-email/:token", UserSettings, :confirm_email
+    end
+  end
+
+  scope "/", ZoonkWeb.Live do
+    pipe_through [:browser]
+
+    live_session :current_user,
+      on_mount: [
+        {ZoonkWeb.UserAuth, :mount_current_user},
+        {ZoonkWeb.Language, :set_app_language}
+      ] do
+      live "/users/signup", UserSignUp, :new
+      live "/users/signin", UserSignIn, :new
+      live "/users/signin/:token", UserConfirmation, :new
+    end
+  end
+
+  scope "/", ZoonkWeb.Controller do
+    pipe_through [:browser]
+
+    post "/users/signin", UserSession, :create
+    delete "/users/signout", UserSession, :delete
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:zoonk, :dev_routes) do
@@ -37,36 +76,5 @@ defmodule ZoonkWeb.Router do
       live_dashboard "/dashboard", metrics: ZoonkWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
-  end
-
-  ## Authentication routes
-
-  scope "/", ZoonkWeb.Live do
-    pipe_through [:browser, :require_authenticated_user]
-
-    live_session :require_authenticated_user,
-      on_mount: [{ZoonkWeb.UserAuth, :ensure_authenticated}] do
-      live "/", Home, :index
-      live "/users/settings", UserSettings, :edit
-      live "/users/settings/confirm-email/:token", UserSettings, :confirm_email
-    end
-  end
-
-  scope "/", ZoonkWeb.Live do
-    pipe_through [:browser]
-
-    live_session :current_user,
-      on_mount: [{ZoonkWeb.UserAuth, :mount_current_user}] do
-      live "/users/signup", UserSignUp, :new
-      live "/users/signin", UserSignIn, :new
-      live "/users/signin/:token", UserConfirmation, :new
-    end
-  end
-
-  scope "/", ZoonkWeb.Controller do
-    pipe_through [:browser]
-
-    post "/users/signin", UserSession, :create
-    delete "/users/signout", UserSession, :delete
   end
 end
