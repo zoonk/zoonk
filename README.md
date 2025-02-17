@@ -32,4 +32,5 @@
 
 **[Support the project and get lifetime access](https://github.com/sponsors/ceolinwill?frequency=one-time)**
 
+- [Sephora Lillian](https://github.com/sephoralillian)
 - [Gustavo A. Castillo](https://github.com/guscastilloa)
