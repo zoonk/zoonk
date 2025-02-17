@@ -1,4 +1,46 @@
 <main class="px-4 py-20 sm:px-6 lg:px-8">
+  <ul class="relative z-10 flex items-center justify-end gap-4 px-4 sm:px-6 lg:px-8">
+    <%= if @current_user do %>
+      <li class="text-[0.8125rem] leading-6 text-zinc-900">
+        {@current_user.email}
+      </li>
+      <li>
+        <.link
+          href={~p"/users/settings"}
+          class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+        >
+          Settings
+        </.link>
+      </li>
+      <li>
+        <.link
+          href={~p"/users/signout"}
+          method="delete"
+          class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+        >
+          Log out
+        </.link>
+      </li>
+    <% else %>
+      <li>
+        <.link
+          href={~p"/users/signup"}
+          class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+        >
+          Sign Up
+        </.link>
+      </li>
+      <li>
+        <.link
+          href={~p"/users/signin"}
+          class="text-[0.8125rem] font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
+        >
+          Log in
+        </.link>
+      </li>
+    <% end %>
+  </ul>
+
   <div class="mx-auto max-w-2xl">
     <.flash_group flash={@flash} />
     {@inner_content}

@@ -1,13 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" class="[scrollbar-gutter:stable]">
+<html lang={Plug.Conn.get_session(@conn, :language)} class="[scrollbar-gutter:stable]">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
 
-    <.live_title default="Zoonk" suffix=" · Phoenix Framework">
-      {assigns[:page_title]}
-    </.live_title>
+    <.live_title default="Zoonk">{assigns[:page_title]}</.live_title>
 
     <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
 

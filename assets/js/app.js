@@ -26,9 +26,22 @@ const csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
 
+/**
+ * We use the timezone when storing a user's choice
+ * during an exercise.
+ *
+ * This is useful to show them a performance report,
+ * helping them to understand what time of the day
+ * they perform better.
+ *
+ * We're adding it to the liveSocket params so we can
+ * get them using `get_connect_params` in the LiveView.
+ */
+const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
-  params: { _csrf_token: csrfToken },
+  params: { _csrf_token: csrfToken, timezone },
 });
 
 // Show progress bar on live navigation and form submits

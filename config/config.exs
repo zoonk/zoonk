@@ -57,7 +57,7 @@ config :zoonk, ZoonkWeb.Endpoint,
   live_view: [signing_salt: "aQIHSki0"]
 
 # Configure translation
-config :zoonk, ZoonkWeb.Gettext, default_locale: "en", locales: ~w(de en es fr it ja ko pt tr zh_Hans zh_Hant)
+config :zoonk, ZoonkWeb.Gettext, default_locale: "en"
 
 # Configures Ecto
 config :zoonk,

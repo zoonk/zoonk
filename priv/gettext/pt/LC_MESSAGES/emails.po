@@ -1,0 +1,42 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: pt\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/zoonk/auth/user_notifier.ex:80
+#, elixir-autogen, elixir-format
+msgid "Confirmation instructions"
+msgstr "Instruções de confirmação"
+
+#: lib/zoonk/auth/user_notifier.ex:23
+#, elixir-autogen, elixir-format
+msgid "Hi %{email},\n\nYou can change your email by visiting the URL below:\n\n%{url}\n\nThis link will expire in %{expiration_days} days.\n\nIf you didn't request this change, please ignore this.\n"
+msgstr "Olá %{email},\n\nVocê pode alterar seu e-mail visitando o URL abaixo:\n\n%{url}\n\nEste link expirará em %{expiration_days} dias.\n\nSe você não solicitou essa alteração, ignore este e-mail."
+
+#: lib/zoonk/auth/user_notifier.ex:83
+#, elixir-autogen, elixir-format
+msgid "Hi %{email},\n\nYou can confirm your account by visiting the URL below:\n\n%{url}\n\nThis link will expire in %{expiration_minutes} minutes.\n\nIf you didn't create an account with us, please ignore this.\n"
+msgstr "Olá %{email},\n\nVocê pode confirmar sua conta visitando o URL abaixo:\n\n%{url}\n\nEste link expirará em %{expiration_minutes} minutos.\n\nSe você não criou uma conta conosco, ignore este e-mail."
+
+#: lib/zoonk/auth/user_notifier.ex:58
+#, elixir-autogen, elixir-format
+msgid "Hi %{email},\n\nYou can log into your account by visiting the URL below:\n\n%{url}\n\nThis link will expire in %{expiration_minutes} minutes.\n\nIf you didn't request this email, please ignore this.\n"
+msgstr "Olá %{email},\n\nVocê pode acessar sua conta visitando o URL abaixo:\n\n%{url}\n\nEste link expirará em %{expiration_minutes} minutos.\n\nSe você não solicitou este e-mail, ignore-o."
+
+#: lib/zoonk/auth/user_notifier.ex:55
+#, elixir-autogen, elixir-format
+msgid "Log in instructions"
+msgstr "Instruções de login"
+
+#: lib/zoonk/auth/user_notifier.ex:20
+#, elixir-autogen, elixir-format
+msgid "Update email instructions"
+msgstr "Instruções para atualizar o e-mail"
