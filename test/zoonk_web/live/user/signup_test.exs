@@ -43,7 +43,13 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
         |> live(~p"/users/signup")
 
       email = unique_user_email()
-      attrs = [email: email] |> valid_user_attributes() |> Map.delete(:timezone)
+
+      attrs =
+        [email: email]
+        |> valid_user_attributes()
+        # remove the default timezone to test putting the timezone from the connect
+        |> Map.delete(:timezone)
+
       form = form(lv, "#registration_form", user: attrs)
 
       {:ok, _lv, html} =
