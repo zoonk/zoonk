@@ -1,5 +1,25 @@
 defmodule ZoonkSchema.User do
-  @moduledoc false
+  @moduledoc """
+  Defines the `User` schema and related changesets.
+
+  This schema represents users in the system, storing their
+  email and account confirmation status. It also includes
+  changeset functions for managing user registration,
+  email validation, and account confirmation.
+
+  ## Fields
+
+    * `email` - The user's email address.
+    * `confirmed_at` - The timestamp when the account was confirmed.
+    * `authenticated_at` (virtual) - The last authentication timestamp, used temporarily.
+
+  ## Changesets
+
+    * `email_changeset/3` - Validates and updates the email
+    field, ensuring it is unique and correctly formatted.
+    * `confirm_changeset/1` - Marks the account as confirmed
+    by setting `confirmed_at`.
+  """
   use Ecto.Schema
 
   import Ecto.Changeset
