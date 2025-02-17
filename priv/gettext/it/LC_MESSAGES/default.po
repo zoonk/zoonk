@@ -51,8 +51,3 @@ msgstr "Non riusciamo a trovare internet"
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr "chiudi"
-
-#: lib/zoonk_web/live/user/signup.ex:30
-#, elixir-autogen, elixir-format
-msgid "Language"
-msgstr "Lingua"

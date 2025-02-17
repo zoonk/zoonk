@@ -1,0 +1,160 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/zoonk_web/live/user/settings.ex:95
+#, elixir-autogen, elixir-format
+msgid "A link to confirm your email change has been sent to the new address."
+msgstr "Se ha enviado un enlace para confirmar el cambio de correo electrónico a la nueva dirección."
+
+#: lib/zoonk_web/live/user/settings.ex:12
+#, elixir-autogen, elixir-format
+msgid "Account Settings"
+msgstr "Configuración de la cuenta"
+
+#: lib/zoonk_web/live/user/signup.ex:14
+#, elixir-autogen, elixir-format
+msgid "Already registered?"
+msgstr "¿Ya registrado?"
+
+#: lib/zoonk_web/live/user/signup.ex:81
+#, elixir-autogen, elixir-format
+msgid "An email was sent to %{email}, please access it to confirm your account."
+msgstr "Se ha enviado un correo electrónico a %{email}, por favor accede a él para confirmar tu cuenta."
+
+#: lib/zoonk_web/live/user/settings.ex:33
+#, elixir-autogen, elixir-format
+msgid "Change Email"
+msgstr "Cambiar correo electrónico"
+
+#: lib/zoonk_web/live/user/settings.ex:32
+#, elixir-autogen, elixir-format
+msgid "Changing..."
+msgstr "Cambiando..."
+
+#: lib/zoonk_web/live/user/confirmation.ex:26
+#, elixir-autogen, elixir-format
+msgid "Confirm my account"
+msgstr "Confirmar mi cuenta"
+
+#: lib/zoonk_web/live/user/confirmation.ex:25
+#, elixir-autogen, elixir-format
+msgid "Confirming..."
+msgstr "Confirmando..."
+
+#: lib/zoonk_web/live/user/signup.ex:44
+#, elixir-autogen, elixir-format
+msgid "Create an account"
+msgstr "Crear una cuenta"
+
+#: lib/zoonk_web/live/user/signup.ex:43
+#, elixir-autogen, elixir-format
+msgid "Creating account..."
+msgstr "Creando cuenta..."
+
+#: lib/zoonk_web/live/user/signin.ex:19
+#, elixir-autogen, elixir-format
+msgid "Don't have an account?"
+msgstr "¿No tienes una cuenta?"
+
+#: lib/zoonk_web/live/user/settings.ex:27
+#: lib/zoonk_web/live/user/signin.ex:43
+#: lib/zoonk_web/live/user/signup.ex:37
+#, elixir-autogen, elixir-format
+msgid "Email"
+msgstr "Correo electrónico"
+
+#: lib/zoonk_web/live/user/settings.ex:49
+#, elixir-autogen, elixir-format
+msgid "Email change link is invalid or it has expired."
+msgstr "El enlace para cambiar el correo electrónico no es válido o ha caducado."
+
+#: lib/zoonk_web/live/user/settings.ex:46
+#, elixir-autogen, elixir-format
+msgid "Email changed successfully."
+msgstr "El correo electrónico se cambió correctamente."
+
+#: lib/zoonk_web/live/user/signin.ex:74
+#, elixir-autogen, elixir-format
+msgid "If your email is in our system, you will receive instructions for logging in shortly."
+msgstr "Si tu correo electrónico está en nuestro sistema, recibirás instrucciones para iniciar sesión en breve."
+
+#: lib/zoonk_web/live/user/signup.ex:30
+#, elixir-autogen, elixir-format
+msgid "Language"
+msgstr "Idioma"
+
+#: lib/zoonk_web/live/user/confirmation.ex:43
+#: lib/zoonk_web/live/user/signin.ex:11
+#, elixir-autogen, elixir-format
+msgid "Log in"
+msgstr "Iniciar sesión"
+
+#: lib/zoonk_web/live/user/signin.ex:48
+#, elixir-autogen, elixir-format
+msgid "Log in with email →"
+msgstr "Iniciar sesión con correo electrónico →"
+
+#: lib/zoonk_web/live/user/confirmation.ex:42
+#, elixir-autogen, elixir-format
+msgid "Logging in..."
+msgstr "Iniciando sesión..."
+
+#: lib/zoonk_web/live/user/confirmation.ex:59
+#, elixir-autogen, elixir-format
+msgid "Magic link is invalid or it has expired."
+msgstr "El enlace mágico no es válido o ha caducado."
+
+#: lib/zoonk_web/live/user/settings.ex:13
+#, elixir-autogen, elixir-format
+msgid "Manage your account email address"
+msgstr "Gestionar la dirección de correo electrónico de tu cuenta"
+
+#: lib/zoonk_web/live/user/signup.ex:24
+#, elixir-autogen, elixir-format
+msgid "Oops, something went wrong! Please check the errors below."
+msgstr "¡Vaya, algo salió mal! Por favor, revisa los errores a continuación."
+
+#: lib/zoonk_web/live/user/signup.ex:12
+#, elixir-autogen, elixir-format
+msgid "Sign Up"
+msgstr "Registrarse"
+
+#: lib/zoonk_web/live/user/signup.ex:16
+#, elixir-autogen, elixir-format
+msgid "Sign in"
+msgstr "Iniciar sesión"
+
+#: lib/zoonk_web/live/user/signin.ex:25
+#, elixir-autogen, elixir-format
+msgid "Sign up"
+msgstr "Registrarse"
+
+#: lib/zoonk_web/live/user/confirmation.ex:11
+#, elixir-autogen, elixir-format
+msgid "Welcome %{email}"
+msgstr "Bienvenido %{email}"
+
+#: lib/zoonk_web/live/user/signin.ex:14
+#, elixir-autogen, elixir-format
+msgid "You need to reauthenticate to perform sensitive actions on your account."
+msgstr "Necesitas reautenticarte para realizar acciones sensibles en tu cuenta."
+
+#: lib/zoonk_web/live/user/signin.ex:27
+#, elixir-autogen, elixir-format
+msgid "for an account now."
+msgstr "para una cuenta ahora."
+
+#: lib/zoonk_web/live/user/signup.ex:18
+#, elixir-autogen, elixir-format
+msgid "to your account now."
+msgstr "a tu cuenta ahora."

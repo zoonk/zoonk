@@ -51,8 +51,3 @@ msgstr "我們找不到網絡"
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr "關閉"
-
-#: lib/zoonk_web/live/user/signup.ex:30
-#, elixir-autogen, elixir-format
-msgid "Language"
-msgstr "語言"

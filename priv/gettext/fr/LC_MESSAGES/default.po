@@ -51,8 +51,3 @@ msgstr "Nous ne trouvons pas l'internet"
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr "fermer"
-
-#: lib/zoonk_web/live/user/signup.ex:30
-#, elixir-autogen, elixir-format
-msgid "Language"
-msgstr "Langue"

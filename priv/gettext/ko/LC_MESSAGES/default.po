@@ -51,8 +51,3 @@ msgstr "인터넷을 찾을 수 없습니다"
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr "닫기"
-
-#: lib/zoonk_web/live/user/signup.ex:30
-#, elixir-autogen, elixir-format
-msgid "Language"
-msgstr "언어"

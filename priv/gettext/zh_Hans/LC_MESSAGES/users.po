@@ -1,0 +1,160 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: zh_Hans\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: lib/zoonk_web/live/user/settings.ex:95
+#, elixir-autogen, elixir-format
+msgid "A link to confirm your email change has been sent to the new address."
+msgstr "已将用于确认您的邮箱变更的链接发送至新地址。"
+
+#: lib/zoonk_web/live/user/settings.ex:12
+#, elixir-autogen, elixir-format
+msgid "Account Settings"
+msgstr "账户设置"
+
+#: lib/zoonk_web/live/user/signup.ex:14
+#, elixir-autogen, elixir-format
+msgid "Already registered?"
+msgstr "已注册？"
+
+#: lib/zoonk_web/live/user/signup.ex:81
+#, elixir-autogen, elixir-format
+msgid "An email was sent to %{email}, please access it to confirm your account."
+msgstr "已向 %{email} 发送邮件，请查收以确认您的账户。"
+
+#: lib/zoonk_web/live/user/settings.ex:33
+#, elixir-autogen, elixir-format
+msgid "Change Email"
+msgstr "更改邮箱"
+
+#: lib/zoonk_web/live/user/settings.ex:32
+#, elixir-autogen, elixir-format
+msgid "Changing..."
+msgstr "正在更改..."
+
+#: lib/zoonk_web/live/user/confirmation.ex:26
+#, elixir-autogen, elixir-format
+msgid "Confirm my account"
+msgstr "确认我的账户"
+
+#: lib/zoonk_web/live/user/confirmation.ex:25
+#, elixir-autogen, elixir-format
+msgid "Confirming..."
+msgstr "正在确认..."
+
+#: lib/zoonk_web/live/user/signup.ex:44
+#, elixir-autogen, elixir-format
+msgid "Create an account"
+msgstr "创建账户"
+
+#: lib/zoonk_web/live/user/signup.ex:43
+#, elixir-autogen, elixir-format
+msgid "Creating account..."
+msgstr "正在创建账户..."
+
+#: lib/zoonk_web/live/user/signin.ex:19
+#, elixir-autogen, elixir-format
+msgid "Don't have an account?"
+msgstr "还没有账户？"
+
+#: lib/zoonk_web/live/user/settings.ex:27
+#: lib/zoonk_web/live/user/signin.ex:43
+#: lib/zoonk_web/live/user/signup.ex:37
+#, elixir-autogen, elixir-format
+msgid "Email"
+msgstr "邮箱"
+
+#: lib/zoonk_web/live/user/settings.ex:49
+#, elixir-autogen, elixir-format
+msgid "Email change link is invalid or it has expired."
+msgstr "邮箱变更链接无效或已过期。"
+
+#: lib/zoonk_web/live/user/settings.ex:46
+#, elixir-autogen, elixir-format
+msgid "Email changed successfully."
+msgstr "邮箱已成功更改。"
+
+#: lib/zoonk_web/live/user/signin.ex:74
+#, elixir-autogen, elixir-format
+msgid "If your email is in our system, you will receive instructions for logging in shortly."
+msgstr "如果您的邮箱在我们的系统中，您将收到登录的说明。"
+
+#: lib/zoonk_web/live/user/signup.ex:30
+#, elixir-autogen, elixir-format
+msgid "Language"
+msgstr "语言"
+
+#: lib/zoonk_web/live/user/confirmation.ex:43
+#: lib/zoonk_web/live/user/signin.ex:11
+#, elixir-autogen, elixir-format
+msgid "Log in"
+msgstr "登录"
+
+#: lib/zoonk_web/live/user/signin.ex:48
+#, elixir-autogen, elixir-format
+msgid "Log in with email →"
+msgstr "使用邮箱登录 →"
+
+#: lib/zoonk_web/live/user/confirmation.ex:42
+#, elixir-autogen, elixir-format
+msgid "Logging in..."
+msgstr "正在登录..."
+
+#: lib/zoonk_web/live/user/confirmation.ex:59
+#, elixir-autogen, elixir-format
+msgid "Magic link is invalid or it has expired."
+msgstr "魔术链接无效或已过期。"
+
+#: lib/zoonk_web/live/user/settings.ex:13
+#, elixir-autogen, elixir-format
+msgid "Manage your account email address"
+msgstr "管理您的账户邮箱地址"
+
+#: lib/zoonk_web/live/user/signup.ex:24
+#, elixir-autogen, elixir-format
+msgid "Oops, something went wrong! Please check the errors below."
+msgstr "哎呀，出错了！请检查以下错误。"
+
+#: lib/zoonk_web/live/user/signup.ex:12
+#, elixir-autogen, elixir-format
+msgid "Sign Up"
+msgstr "注册"
+
+#: lib/zoonk_web/live/user/signup.ex:16
+#, elixir-autogen, elixir-format
+msgid "Sign in"
+msgstr "登录"
+
+#: lib/zoonk_web/live/user/signin.ex:25
+#, elixir-autogen, elixir-format
+msgid "Sign up"
+msgstr "注册"
+
+#: lib/zoonk_web/live/user/confirmation.ex:11
+#, elixir-autogen, elixir-format
+msgid "Welcome %{email}"
+msgstr "欢迎 %{email}"
+
+#: lib/zoonk_web/live/user/signin.ex:14
+#, elixir-autogen, elixir-format
+msgid "You need to reauthenticate to perform sensitive actions on your account."
+msgstr "您需要重新验证以执行敏感操作。"
+
+#: lib/zoonk_web/live/user/signin.ex:27
+#, elixir-autogen, elixir-format
+msgid "for an account now."
+msgstr "立即创建账户。"
+
+#: lib/zoonk_web/live/user/signup.ex:18
+#, elixir-autogen, elixir-format
+msgid "to your account now."
+msgstr "立即前往您的账户。"

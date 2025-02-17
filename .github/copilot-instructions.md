@@ -15,3 +15,7 @@ User
 ```
 
 This keeps queries clean and easier to extend.
+
+## i18n
+
+When translating files, make sure the translations are consistent across the application. For example, if you have a translation for "Hello" in one file, ensure it's the same in all other files. Take care to maintain the context of the message to ensure accurate translations in similar scenarios.

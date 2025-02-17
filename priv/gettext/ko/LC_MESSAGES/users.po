@@ -1,0 +1,160 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: ko\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: lib/zoonk_web/live/user/settings.ex:95
+#, elixir-autogen, elixir-format
+msgid "A link to confirm your email change has been sent to the new address."
+msgstr "새 주소로 이메일 변경 확인 링크가 전송되었습니다."
+
+#: lib/zoonk_web/live/user/settings.ex:12
+#, elixir-autogen, elixir-format
+msgid "Account Settings"
+msgstr "계정 설정"
+
+#: lib/zoonk_web/live/user/signup.ex:14
+#, elixir-autogen, elixir-format
+msgid "Already registered?"
+msgstr "이미 가입하셨습니까?"
+
+#: lib/zoonk_web/live/user/signup.ex:81
+#, elixir-autogen, elixir-format
+msgid "An email was sent to %{email}, please access it to confirm your account."
+msgstr "%{email}로 이메일이 전송되었습니다. 계정을 확인해주세요."
+
+#: lib/zoonk_web/live/user/settings.ex:33
+#, elixir-autogen, elixir-format
+msgid "Change Email"
+msgstr "이메일 변경"
+
+#: lib/zoonk_web/live/user/settings.ex:32
+#, elixir-autogen, elixir-format
+msgid "Changing..."
+msgstr "변경 중..."
+
+#: lib/zoonk_web/live/user/confirmation.ex:26
+#, elixir-autogen, elixir-format
+msgid "Confirm my account"
+msgstr "내 계정 확인"
+
+#: lib/zoonk_web/live/user/confirmation.ex:25
+#, elixir-autogen, elixir-format
+msgid "Confirming..."
+msgstr "확인 중..."
+
+#: lib/zoonk_web/live/user/signup.ex:44
+#, elixir-autogen, elixir-format
+msgid "Create an account"
+msgstr "계정 생성"
+
+#: lib/zoonk_web/live/user/signup.ex:43
+#, elixir-autogen, elixir-format
+msgid "Creating account..."
+msgstr "계정 생성 중..."
+
+#: lib/zoonk_web/live/user/signin.ex:19
+#, elixir-autogen, elixir-format
+msgid "Don't have an account?"
+msgstr "계정이 없으신가요?"
+
+#: lib/zoonk_web/live/user/settings.ex:27
+#: lib/zoonk_web/live/user/signin.ex:43
+#: lib/zoonk_web/live/user/signup.ex:37
+#, elixir-autogen, elixir-format
+msgid "Email"
+msgstr "이메일"
+
+#: lib/zoonk_web/live/user/settings.ex:49
+#, elixir-autogen, elixir-format
+msgid "Email change link is invalid or it has expired."
+msgstr "이메일 변경 링크가 유효하지 않거나 만료되었습니다."
+
+#: lib/zoonk_web/live/user/settings.ex:46
+#, elixir-autogen, elixir-format
+msgid "Email changed successfully."
+msgstr "이메일이 성공적으로 변경되었습니다."
+
+#: lib/zoonk_web/live/user/signin.ex:74
+#, elixir-autogen, elixir-format
+msgid "If your email is in our system, you will receive instructions for logging in shortly."
+msgstr "시스템에 이메일이 등록되어 있다면, 곧 로그인 안내를 받게 됩니다."
+
+#: lib/zoonk_web/live/user/signup.ex:30
+#, elixir-autogen, elixir-format
+msgid "Language"
+msgstr "언어"
+
+#: lib/zoonk_web/live/user/confirmation.ex:43
+#: lib/zoonk_web/live/user/signin.ex:11
+#, elixir-autogen, elixir-format
+msgid "Log in"
+msgstr "로그인"
+
+#: lib/zoonk_web/live/user/signin.ex:48
+#, elixir-autogen, elixir-format
+msgid "Log in with email →"
+msgstr "이메일로 로그인 →"
+
+#: lib/zoonk_web/live/user/confirmation.ex:42
+#, elixir-autogen, elixir-format
+msgid "Logging in..."
+msgstr "로그인 중..."
+
+#: lib/zoonk_web/live/user/confirmation.ex:59
+#, elixir-autogen, elixir-format
+msgid "Magic link is invalid or it has expired."
+msgstr "매직 링크가 유효하지 않거나 만료되었습니다."
+
+#: lib/zoonk_web/live/user/settings.ex:13
+#, elixir-autogen, elixir-format
+msgid "Manage your account email address"
+msgstr "계정의 이메일 주소 관리"
+
+#: lib/zoonk_web/live/user/signup.ex:24
+#, elixir-autogen, elixir-format
+msgid "Oops, something went wrong! Please check the errors below."
+msgstr "오우, 문제가 발생했습니다! 아래 오류를 확인해주세요."
+
+#: lib/zoonk_web/live/user/signup.ex:12
+#, elixir-autogen, elixir-format
+msgid "Sign Up"
+msgstr "회원가입"
+
+#: lib/zoonk_web/live/user/signup.ex:16
+#, elixir-autogen, elixir-format
+msgid "Sign in"
+msgstr "로그인"
+
+#: lib/zoonk_web/live/user/signin.ex:25
+#, elixir-autogen, elixir-format
+msgid "Sign up"
+msgstr "회원가입"
+
+#: lib/zoonk_web/live/user/confirmation.ex:11
+#, elixir-autogen, elixir-format
+msgid "Welcome %{email}"
+msgstr "%{email}님, 환영합니다"
+
+#: lib/zoonk_web/live/user/signin.ex:14
+#, elixir-autogen, elixir-format
+msgid "You need to reauthenticate to perform sensitive actions on your account."
+msgstr "민감한 작업을 위해 다시 인증해야 합니다."
+
+#: lib/zoonk_web/live/user/signin.ex:27
+#, elixir-autogen, elixir-format
+msgid "for an account now."
+msgstr "지금 계정을 위해"
+
+#: lib/zoonk_web/live/user/signup.ex:18
+#, elixir-autogen, elixir-format
+msgid "to your account now."
+msgstr "지금 계정으로 이동하세요."
