@@ -7,7 +7,7 @@ defmodule Zoonk.Mailer do
   """
   use Swoosh.Mailer, otp_app: :zoonk
 
-  import Swoosh.Email
+  alias Swoosh.Email
 
   @doc """
   Sends an email with the given recipient, subject, and body.
@@ -23,11 +23,11 @@ defmodule Zoonk.Mailer do
   """
   def send_email(recipient, subject, body) do
     email =
-      new()
-      |> to(recipient)
-      |> from({"Zoonk", "hello@zoonk.org"})
-      |> subject(subject)
-      |> text_body(body)
+      Email.new()
+      |> Email.to(recipient)
+      |> Email.from({"Zoonk", "hello@zoonk.org"})
+      |> Email.subject(subject)
+      |> Email.text_body(body)
 
     with {:ok, _metadata} <- __MODULE__.deliver(email) do
       {:ok, email}

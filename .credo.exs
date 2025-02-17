@@ -112,6 +112,7 @@
         {Credo.Check.Readability.VariableNames, []},
         {Credo.Check.Readability.WithCustomTaggedTuple, []},
         {Credo.Check.Readability.WithSingleClause, false},
+        {ZoonkCredo.PipeEctoQueries, []},
         {Credo.Check.Refactor.ABCSize, []},
         {Credo.Check.Refactor.AppendSingleItem, []},
         {Credo.Check.Refactor.Apply, []},

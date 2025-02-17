@@ -67,11 +67,11 @@ defmodule Zoonk.Auth.TokenManager do
     session_validity_in_days = Zoonk.Configuration.get_token_max_age_in_days()
 
     query =
-      from token in by_token_and_context_query(token, "session"),
-        join: user in assoc(token, :user),
-        where: token.inserted_at > ago(^session_validity_in_days, "day"),
-        select: user,
-        select_merge: %{authenticated_at: token.inserted_at}
+      token
+      |> by_token_and_context_query("session")
+      |> join(:inner, [token], user in assoc(token, :user))
+      |> where([token], token.inserted_at > ago(^session_validity_in_days, "day"))
+      |> select([token, user], %{user | authenticated_at: token.inserted_at})
 
     {:ok, query}
   end
@@ -121,11 +121,12 @@ defmodule Zoonk.Auth.TokenManager do
         hashed_token = :crypto.hash(@hash_algorithm, decoded_token)
 
         query =
-          from token in by_token_and_context_query(hashed_token, "signin"),
-            join: user in assoc(token, :user),
-            where: token.inserted_at > ago(^@magic_link_validity_in_minutes, "minute"),
-            where: token.sent_to == user.email,
-            select: {user, token}
+          hashed_token
+          |> by_token_and_context_query("signin")
+          |> join(:inner, [token], user in assoc(token, :user))
+          |> where([token], token.inserted_at > ago(^@magic_link_validity_in_minutes, "minute"))
+          |> where([token, user], token.sent_to == user.email)
+          |> select([token, user], {user, token})
 
         {:ok, query}
 
@@ -151,8 +152,9 @@ defmodule Zoonk.Auth.TokenManager do
         hashed_token = :crypto.hash(@hash_algorithm, decoded_token)
 
         query =
-          from token in by_token_and_context_query(hashed_token, context),
-            where: token.inserted_at > ago(@change_email_validity_in_days, "day")
+          hashed_token
+          |> by_token_and_context_query(context)
+          |> where([token], token.inserted_at > ago(@change_email_validity_in_days, "day"))
 
         {:ok, query}
 
@@ -165,24 +167,24 @@ defmodule Zoonk.Auth.TokenManager do
   Returns the token struct for the given token value and context.
   """
   def by_token_and_context_query(token, context) do
-    from UserToken, where: [token: ^token, context: ^context]
+    where(UserToken, [t], t.token == ^token and t.context == ^context)
   end
 
   @doc """
   Gets all tokens for the given user for the given contexts.
   """
   def by_user_and_contexts_query(user, :all) do
-    from t in UserToken, where: t.user_id == ^user.id
+    where(UserToken, [t], t.user_id == ^user.id)
   end
 
   def by_user_and_contexts_query(user, contexts) when is_list(contexts) do
-    from t in UserToken, where: t.user_id == ^user.id and t.context in ^contexts
+    where(UserToken, [t], t.user_id == ^user.id and t.context in ^contexts)
   end
 
   @doc """
   Deletes a list of tokens.
   """
   def delete_all_query(tokens) do
-    from t in UserToken, where: t.id in ^Enum.map(tokens, & &1.id)
+    where(UserToken, [t], t.id in ^Enum.map(tokens, & &1.id))
   end
 end
