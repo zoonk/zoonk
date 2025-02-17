@@ -13,7 +13,9 @@ defmodule Zoonk.AuthFixtures do
 
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
-      email: unique_user_email()
+      email: unique_user_email(),
+      timezone: "America/Sao_Paulo",
+      language: :en
     })
   end
 

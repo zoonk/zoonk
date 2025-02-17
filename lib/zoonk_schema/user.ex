@@ -35,6 +35,16 @@ defmodule ZoonkSchema.User do
   end
 
   @doc """
+  A user changeset for adding or updating a user's settings.
+  """
+  def settings_changeset(user, attrs, opts \\ []) do
+    user
+    |> email_changeset(attrs, opts)
+    |> cast(attrs, [:timezone, :language])
+    |> validate_required([:timezone, :language])
+  end
+
+  @doc """
   A user changeset for registering or changing the email.
 
   It requires the email to change otherwise an error is added.
@@ -47,7 +57,7 @@ defmodule ZoonkSchema.User do
   """
   def email_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :timezone, :language])
+    |> cast(attrs, [:email])
     |> validate_email(opts)
   end
 

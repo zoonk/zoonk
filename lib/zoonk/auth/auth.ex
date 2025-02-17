@@ -67,7 +67,7 @@ defmodule Zoonk.Auth do
   """
   def register_user(attrs) do
     %User{}
-    |> User.email_changeset(attrs)
+    |> User.settings_changeset(attrs)
     |> Repo.insert()
   end
 

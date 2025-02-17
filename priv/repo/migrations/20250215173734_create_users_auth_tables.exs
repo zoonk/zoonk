@@ -7,7 +7,7 @@ defmodule Zoonk.Repo.Migrations.CreateUsersAuthTables do
     create table(:users) do
       add :email, :citext, null: false
       add :confirmed_at, :utc_datetime
-      add :timezone, :string
+      add :timezone, :string, null: false, default: "UTC"
       add :language, :string, null: false, default: "en"
 
       timestamps(type: :utc_datetime)
