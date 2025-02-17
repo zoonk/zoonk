@@ -28,6 +28,8 @@ defmodule ZoonkSchema.User do
     field :email, :string
     field :confirmed_at, :utc_datetime
     field :authenticated_at, :utc_datetime, virtual: true
+    field :timezone, :string
+    field :language, Ecto.Enum, values: [:de, :en, :es, :fr, :it, :ja, :ko, :pt, :tr, :zh_Hans, :zh_Hant], default: :en
 
     timestamps(type: :utc_datetime)
   end
@@ -45,7 +47,7 @@ defmodule ZoonkSchema.User do
   """
   def email_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email])
+    |> cast(attrs, [:email, :timezone, :language])
     |> validate_email(opts)
   end
 
