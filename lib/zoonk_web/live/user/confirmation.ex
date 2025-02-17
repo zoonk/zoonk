@@ -7,7 +7,9 @@ defmodule ZoonkWeb.Live.UserConfirmation do
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
-      <.header class="text-center">Welcome {@user.email}</.header>
+      <.header class="text-center">
+        {dgettext("users", "Welcome %{email}", email: @user.email)}
+      </.header>
 
       <.simple_form
         :if={!@user.confirmed_at}
@@ -20,7 +22,9 @@ defmodule ZoonkWeb.Live.UserConfirmation do
         <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
 
         <:actions>
-          <.button phx-disable-with="Confirming..." class="w-full">Confirm my account</.button>
+          <.button phx-disable-with={dgettext("users", "Confirming...")} class="w-full">
+            {dgettext("users", "Confirm my account")}
+          </.button>
         </:actions>
       </.simple_form>
 
@@ -35,7 +39,9 @@ defmodule ZoonkWeb.Live.UserConfirmation do
         <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
 
         <:actions>
-          <.button phx-disable-with="Logging in..." class="w-full">Log in</.button>
+          <.button phx-disable-with={dgettext("users", "Logging in...")} class="w-full">
+            {dgettext("users", "Log in")}
+          </.button>
         </:actions>
       </.simple_form>
     </div>
@@ -50,7 +56,7 @@ defmodule ZoonkWeb.Live.UserConfirmation do
     else
       {:ok,
        socket
-       |> put_flash(:error, "Magic link is invalid or it has expired.")
+       |> put_flash(:error, dgettext("users", "Magic link is invalid or it has expired."))
        |> push_navigate(to: ~p"/users/signin")}
     end
   end

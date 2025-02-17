@@ -9,8 +9,8 @@ defmodule ZoonkWeb.Live.UserSettings do
   def render(assigns) do
     ~H"""
     <.header class="text-center">
-      Account Settings
-      <:subtitle>Manage your account email address</:subtitle>
+      {dgettext("users", "Account Settings")}
+      <:subtitle>{dgettext("users", "Manage your account email address")}</:subtitle>
     </.header>
 
     <div class="space-y-12 divide-y">
@@ -24,12 +24,14 @@ defmodule ZoonkWeb.Live.UserSettings do
           <.input
             field={@email_form[:email]}
             type="email"
-            label="Email"
+            label={dgettext("users", "Email")}
             autocomplete="username"
             required
           />
           <:actions>
-            <.button phx-disable-with="Changing...">Change Email</.button>
+            <.button phx-disable-with={dgettext("users", "Changing...")}>
+              {dgettext("users", "Change Email")}
+            </.button>
           </:actions>
         </.simple_form>
       </div>
@@ -41,10 +43,10 @@ defmodule ZoonkWeb.Live.UserSettings do
     socket =
       case Auth.update_user_email(socket.assigns.current_user, token) do
         :ok ->
-          put_flash(socket, :info, "Email changed successfully.")
+          put_flash(socket, :info, dgettext("users", "Email changed successfully."))
 
         :error ->
-          put_flash(socket, :error, "Email change link is invalid or it has expired.")
+          put_flash(socket, :error, dgettext("users", "Email change link is invalid or it has expired."))
       end
 
     {:ok, push_navigate(socket, to: ~p"/users/settings")}
@@ -90,7 +92,7 @@ defmodule ZoonkWeb.Live.UserSettings do
           &url(~p"/users/settings/confirm-email/#{&1}")
         )
 
-        info = "A link to confirm your email change has been sent to the new address."
+        info = dgettext("users", "A link to confirm your email change has been sent to the new address.")
         {:noreply, put_flash(socket, :info, info)}
 
       changeset ->

@@ -9,32 +9,40 @@ defmodule ZoonkWeb.Live.UserSignUp do
     ~H"""
     <div class="mx-auto max-w-sm">
       <.header class="text-center">
-        Sign Up
+        {dgettext("users", "Sign Up")}
         <:subtitle>
-          Already registered?
+          {dgettext("users", "Already registered?")}
           <.link navigate={~p"/users/signin"} class="text-brand font-semibold hover:underline">
-            Sign in
+            {dgettext("users", "Sign in")}
           </.link>
-          to your account now.
+          {dgettext("users", "to your account now.")}
         </:subtitle>
       </.header>
 
       <.simple_form for={@form} id="registration_form" phx-submit="save" phx-change="validate">
         <.error :if={@check_errors}>
-          Oops, something went wrong! Please check the errors below.
+          {dgettext("users", "Oops, something went wrong! Please check the errors below.")}
         </.error>
 
         <.input
           field={@form[:language]}
           type="select"
-          label={gettext("Language")}
+          label={dgettext("users", "Language")}
           options={Zoonk.Configuration.language_select_options()}
           required
         />
-        <.input field={@form[:email]} type="email" label="Email" autocomplete="username" required />
+        <.input
+          field={@form[:email]}
+          type="email"
+          label={dgettext("users", "Email")}
+          autocomplete="username"
+          required
+        />
 
         <:actions>
-          <.button phx-disable-with="Creating account..." class="w-full">Create an account</.button>
+          <.button phx-disable-with={dgettext("users", "Creating account...")} class="w-full">
+            {dgettext("users", "Create an account")}
+          </.button>
         </:actions>
       </.simple_form>
     </div>
@@ -70,7 +78,9 @@ defmodule ZoonkWeb.Live.UserSignUp do
          socket
          |> put_flash(
            :info,
-           "An email was sent to #{user.email}, please access it to confirm your account."
+           dgettext("users", "An email was sent to %{email}, please access it to confirm your account.",
+             email: user.email
+           )
          )
          |> push_navigate(to: ~p"/users/signin")}
 

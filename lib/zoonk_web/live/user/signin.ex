@@ -8,16 +8,23 @@ defmodule ZoonkWeb.Live.UserSignIn do
     ~H"""
     <div class="mx-auto max-w-sm">
       <.header class="text-center">
-        <p>Log in</p>
+        <p>{dgettext("users", "Log in")}</p>
         <:subtitle>
           <%= if @current_user do %>
-            You need to reauthenticate to perform sensitive actions on your account.
+            {dgettext(
+              "auth",
+              "You need to reauthenticate to perform sensitive actions on your account."
+            )}
           <% else %>
-            Don't have an account? <.link
+            {dgettext("users", "Don't have an account?")}
+            <.link
               navigate={~p"/users/signup"}
               class="text-brand font-semibold hover:underline"
               phx-no-format
-            >Sign up</.link> for an account now.
+            >
+              {dgettext("users", "Sign up")}
+            </.link>
+            {dgettext("users", "for an account now.")}
           <% end %>
         </:subtitle>
       </.header>
@@ -33,12 +40,12 @@ defmodule ZoonkWeb.Live.UserSignIn do
           readonly={!!@current_user}
           field={f[:email]}
           type="email"
-          label="Email"
+          label={dgettext("users", "Email")}
           autocomplete="username"
           required
         />
         <.button class="w-full">
-          Log in with email <span aria-hidden="true">→</span>
+          {dgettext("users", "Log in with email →")}
         </.button>
       </.simple_form>
     </div>
@@ -64,7 +71,7 @@ defmodule ZoonkWeb.Live.UserSignIn do
     end
 
     info =
-      "If your email is in our system, you will receive instructions for logging in shortly."
+      dgettext("users", "If your email is in our system, you will receive instructions for logging in shortly.")
 
     {:noreply,
      socket
