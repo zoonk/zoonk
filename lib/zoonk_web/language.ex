@@ -33,7 +33,7 @@ defmodule ZoonkWeb.Language do
   import Plug.Conn
 
   alias Zoonk.Configuration
-  alias ZoonkSchema.User
+  alias Zoonk.Schema.User
 
   def on_mount(:set_app_language, _params, session, socket) do
     user_language = get_user_language(socket.assigns.current_user, session)

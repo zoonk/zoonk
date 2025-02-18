@@ -1,4 +1,4 @@
-defmodule ZoonkSchema.UserToken do
+defmodule Zoonk.Schema.UserToken do
   @moduledoc """
   Represents authentication and verification tokens for users.
 
@@ -18,7 +18,7 @@ defmodule ZoonkSchema.UserToken do
     field :token, :binary
     field :context, :string
     field :sent_to, :string
-    belongs_to :user, ZoonkSchema.User
+    belongs_to :user, Zoonk.Schema.User
 
     timestamps(type: :utc_datetime, updated_at: false)
   end

@@ -1,7 +1,13 @@
 defmodule Zoonk.Configuration do
   @moduledoc """
-  This module contains general configuration and constants for the application.
-  You can use this module to store configuration that is shared across the application.
+  Centralizes configuration settings and constants for the application.
+
+  This module provides a single source of truth for various
+  configuration parameters and constants used throughout the
+  application.
+
+  It ensures consistency, ease of maintenance, and simplifies
+  the management of application-wide settings.
   """
 
   @supported_languages [
@@ -21,6 +27,11 @@ defmodule Zoonk.Configuration do
   @default_language "en"
 
   @doc """
+  Returns the default hash algorithm.
+  """
+  def get_hash_algorithm, do: :sha256
+
+  @doc """
   Returns the maximum age of a token in days.
   """
   def get_token_max_age_in_days, do: 365
@@ -32,6 +43,9 @@ defmodule Zoonk.Configuration do
 
   @doc """
   Returns the validity of a magic link token in minutes.
+
+  It is very important to keep the magic link token expiry short,
+  since someone with access to the email may take over the account.
   """
   def get_magic_link_validity_in_minutes, do: 15
 

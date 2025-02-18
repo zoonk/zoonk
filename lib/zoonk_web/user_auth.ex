@@ -227,7 +227,7 @@ defmodule ZoonkWeb.UserAuth do
 
   @doc "Returns the path to redirect to after log in."
   # the user was already logged in, redirect to settings
-  def signed_in_path(%Plug.Conn{assigns: %{current_user: %ZoonkSchema.User{}}}) do
+  def signed_in_path(%Plug.Conn{assigns: %{current_user: %Zoonk.Schema.User{}}}) do
     ~p"/users/settings"
   end
 

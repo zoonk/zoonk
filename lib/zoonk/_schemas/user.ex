@@ -1,4 +1,4 @@
-defmodule ZoonkSchema.User do
+defmodule Zoonk.Schema.User do
   @moduledoc """
   Defines the `User` schema and related changesets.
 

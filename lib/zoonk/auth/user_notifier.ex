@@ -11,7 +11,7 @@ defmodule Zoonk.Auth.UserNotifier do
 
   alias Zoonk.Configuration
   alias Zoonk.Mailer
-  alias ZoonkSchema.User
+  alias Zoonk.Schema.User
 
   @doc """
   Deliver instructions to update a user email.

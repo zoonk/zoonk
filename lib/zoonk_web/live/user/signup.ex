@@ -3,7 +3,7 @@ defmodule ZoonkWeb.Live.UserSignUp do
   use ZoonkWeb, :live_view
 
   alias Zoonk.Auth
-  alias ZoonkSchema.User
+  alias Zoonk.Schema.User
 
   def render(assigns) do
     ~H"""
