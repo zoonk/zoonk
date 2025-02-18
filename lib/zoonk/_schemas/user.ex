@@ -16,6 +16,7 @@ defmodule Zoonk.Schema.User do
 
   ## Changesets
 
+    * `settings_changeset/3` - Validates and updates the user's settings.
     * `email_changeset/3` - Validates and updates the email
     field, ensuring it is unique and correctly formatted.
     * `confirm_changeset/1` - Marks the account as confirmed

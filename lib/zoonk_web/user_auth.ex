@@ -1,5 +1,15 @@
 defmodule ZoonkWeb.UserAuth do
-  @moduledoc false
+  @moduledoc """
+  Handles user authentication.
+
+  This module provides functions to sign users in and out,
+  manage session tokens, and connect LiveViews with the
+  authenticated user context.
+
+  It renews sessions to mitigate fixation attacks, sets
+  persistent cookies for "remember me" functionality, and
+  supports secure disconnection of LiveView sessions.
+  """
   use ZoonkWeb, :verified_routes
 
   import Phoenix.Controller

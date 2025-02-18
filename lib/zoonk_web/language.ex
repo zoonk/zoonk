@@ -6,18 +6,10 @@ defmodule ZoonkWeb.Language do
   properly set based on user preferences, session data,
   or browser settings.
 
-  ## Features:
-    - Detects and sets the language on mount.
-    - Persists language preferences in the session.
-    - Retrieves language from the user's profile if available.
-    - Falls back to the browser's preferred language or
-    the default application language.
-
   ## Usage:
 
   Use the `set_session_language` plug in your router pipeline
   to set the language for the current session.
-
 
       import ZoonkWeb.Language
 

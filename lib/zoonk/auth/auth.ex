@@ -1,12 +1,12 @@
 defmodule Zoonk.Auth do
   @moduledoc """
-  Handles user authentication.
+  Manages user authentication operations.
 
-  This module is responsible for:
-    - User authentication via session tokens and magic links.
-    - User registration and email verification.
-    - Managing session lifecycle, including login and logout.
-    - Handling sudo mode for elevated access.
+  This module handles core authentication flows including user registration
+  session management, magic link authentication, and email verification.
+
+  It coordinates with the database layer to manage user records and tokens,
+  while enforcing security measures like sudo mode and token expiration.
   """
   import Ecto.Query, warn: false
 

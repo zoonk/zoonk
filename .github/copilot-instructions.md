@@ -35,51 +35,20 @@ end
 
 ## Documentation
 
-Always strive for clarity and conciseness in documentation. When writing a `@moduledoc`, return only its content—no need to include the entire module.
+Keep documentation clear and concise. When writing a `@moduledoc`, include only its content—no need to wrap the entire module.
 
-For code examples, avoid using `elixir`, as it doesn’t work well with Elixir docs. Use tabs instead.
+Avoid vague phrases like “ensures reliability” or “handles securely” and judgmental terms like “essential” or “best practices.” Instead, explain what the module does and how it works. If it follows a security measure or a recommended approach, state that directly rather than making broad claims.
 
-Keep the first line of a `@moduledoc` or `@doc` short. For example, _Handles authentication token generation_ is better than _Handles the generation of authentication tokens for different contexts, such as sessions and email-based authentication._
+Use `@moduledoc` for a high-level overview of the module’s purpose and when to use it. Avoid listing function details—they belong in their respective `@doc` tags. Only include examples if they demonstrate the module’s primary use case, such as for utility modules or workflows.
 
-When writing a `@doc` for a function, include usage examples when helpful, but they’re not needed in a `@moduledoc`.
+For schema modules (e.g., `Zoonk.Schema.User`), briefly describe the schema and its fields. Focus on why the schema exists and what it represents rather than listing attributes.
 
-For a `@moduledoc`, avoid listing features or functions. Instead, focus on the module’s purpose and its role in the application. For example, this is a bad `@moduledoc`:
+Leave detailed function usage for `@doc`, where you can include examples and explanations. Only add examples to `@moduledoc` if they clarify overall module usage; otherwise, keep them inside `@doc`.
 
-```elixir
-@moduledoc """
-Provides composable queries for `Zoonk.Schema.UserToken`.
+Keep the first line of a `@moduledoc` or `@doc` brief. For example, _Handles authentication token generation_ is better than _Handles the generation of authentication tokens for different contexts, such as sessions and email-based authentication._
 
-This module contains functions to query and manipulate user tokens, such as:
-  - Retrieving tokens by value and context
-  - Fetching tokens for a specific user and context
-  - Deleting tokens
-  - Verifying session tokens
-  - Verifying magic link tokens
-  - Verifying email change tokens
-"""
-```
-
-Instead, write a `@moduledoc` like this:
-
-```elixir
-@moduledoc """
-Provides query composition for `Zoonk.Schema.UserToken`.
-
-This module defines query builders for retrieving,
-verifying, and managing user tokens. It ensures that
-token-based authentication mechanisms, such as session
-validation, magic link authentication, and email change
-requests, are securely and efficiently handled through
-database queries.
-"""
-```
-
-However, for schema modules, it's useful to list the fields and what they represent.
+For code examples, don’t use `elixir` at the beginning, as it doesn’t work well with Elixir docs. Use tabs instead.
 
 ## i18n
 
 When translating files, make sure the translations are consistent across the application. For example, if you have a translation for "Hello" in one file, ensure it's the same in all other files. Take care to maintain the context of the message to ensure accurate translations in similar scenarios.
-
-```
-
-```

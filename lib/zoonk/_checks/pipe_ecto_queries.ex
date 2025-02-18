@@ -1,4 +1,4 @@
-defmodule ZoonkCredo.PipeEctoQueries do
+defmodule Zoonk.Check.Readability.PipeEctoQueries do
   @moduledoc false
   use Credo.Check,
     base_priority: :high,

@@ -1,9 +1,9 @@
 defmodule Zoonk.Mailer do
   @moduledoc """
-  Handles email delivery for Zoonk using Swoosh.
+  Provides email sending functionality.
 
-  This module is responsible for sending transactional emails,
-  such as account notifications and updates.
+  You can use `Zoonk.Mailer.send_email/3` to send emails,
+  such as account veritification, notifications, and more.
   """
   use Swoosh.Mailer, otp_app: :zoonk
 

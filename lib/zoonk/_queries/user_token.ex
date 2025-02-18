@@ -1,15 +1,11 @@
 defmodule Zoonk.Queries.UserToken do
   @moduledoc """
-  Provides query composition for `Zoonk.Schema.UserToken`.
+  Handles queries for `Zoonk.Schema.UserToken`.
 
-  This module defines query builders for retrieving,
-  verifying, and managing user tokens. It ensures that
-  token-based authentication mechanisms, such as session
-  validation, magic link authentication, and email change
-  requests, are securely and efficiently handled through
-  database queries.
+  This module provides query builders for retrieving, verifying,
+  and managing user tokens, including tokens for sessions,
+  magic links, and email changes.
   """
-
   import Ecto.Query
 
   alias Zoonk.Configuration

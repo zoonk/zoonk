@@ -1,5 +1,10 @@
 defmodule ZoonkWeb.Controller.UserSession do
-  @moduledoc false
+  @moduledoc """
+  Handles user authentication.
+
+  Provides actions for signing in users via a magic link
+  and signing out users.
+  """
   use ZoonkWeb, :controller
 
   alias Zoonk.Auth
