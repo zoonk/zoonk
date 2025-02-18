@@ -4,13 +4,18 @@ defmodule Zoonk.MixProject do
   def project do
     [
       app: :zoonk,
-      version: "0.1.0",
+      version: "0.1.0-dev",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      preferred_cli_env: ["test.watch": :test]
+      preferred_cli_env: ["test.watch": :test],
+
+      # Docs
+      name: "Zoonk",
+      source_url: "https://github.com/zoonk/zoonk",
+      docs: &docs/0
     ]
   end
 
@@ -38,6 +43,7 @@ defmodule Zoonk.MixProject do
       {:dns_cluster, "~> 0.1.1"},
       {:ecto_sql, "~> 3.10"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
+      {:ex_doc, "~> 0.37", only: :dev, runtime: false},
       {:floki, ">= 0.30.0", only: :test},
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.2"},
@@ -87,6 +93,86 @@ defmodule Zoonk.MixProject do
         "deps.unlock --check-unused",
         "deps.audit",
         "xref graph --label compile-connected --fail-above 0"
+      ]
+    ]
+  end
+
+  # Docs
+  defp docs do
+    [
+      main: "overview",
+      logo: "priv/static/images/logo.svg",
+      extra_section: "GUIDES",
+      extras: [
+        "guides/introduction/overview.md"
+      ],
+      groups_for_extras: [
+        Introduction: Path.wildcard("guides/introduction/*.md")
+      ],
+      groups_for_modules: [
+        Config: [
+          Zoonk.Configuration
+        ],
+        Components: [
+          ZoonkWeb.Components.Button,
+          ZoonkWeb.Components.DataList,
+          ZoonkWeb.Components.Flash,
+          ZoonkWeb.Components.Form,
+          ZoonkWeb.Components.Header,
+          ZoonkWeb.Components.Icon,
+          ZoonkWeb.Components.Input,
+          ZoonkWeb.Components.Modal,
+          ZoonkWeb.Components.Table,
+          ZoonkWeb.Components.Utils
+        ],
+        Controllers: [
+          ZoonkWeb.Controllers.UserSession
+        ],
+        "Plugs & Hooks": [
+          ZoonkWeb.UserAuth
+        ],
+        i18n: [
+          ZoonkWeb.Gettext,
+          ZoonkWeb.Language
+        ],
+        Contexts: [
+          Zoonk.Auth,
+          Zoonk.Auth.TokenBuilder,
+          Zoonk.Auth.UserNotifier
+        ],
+        Services: [
+          Zoonk.Mailer
+        ],
+        Schemas: [
+          Zoonk.Schema.User,
+          Zoonk.Schema.UserToken
+        ],
+        Queries: [
+          Zoonk.Queries.UserToken
+        ],
+        "Error Handling": [
+          ZoonkWeb.ErrorHTML,
+          ZoonkWeb.ErrorJSON
+        ],
+        "Credo Checks": [
+          Zoonk.Check.Readability.PipeEctoQueries
+        ],
+        Core: [
+          Zoonk,
+          Zoonk.Repo,
+          ZoonkWeb,
+          ZoonkWeb.Endpoint,
+          ZoonkWeb.Layouts,
+          ZoonkWeb.Router
+        ]
+      ],
+      nest_modules_by_prefix: [
+        Zoonk.Auth,
+        Zoonk.Check.Readability,
+        Zoonk.Queries,
+        Zoonk.Schema,
+        ZoonkWeb.Components,
+        ZoonkWeb.Controllers
       ]
     ]
   end

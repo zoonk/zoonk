@@ -54,7 +54,7 @@ defmodule ZoonkWeb.Router do
     end
   end
 
-  scope "/", ZoonkWeb.Controller do
+  scope "/", ZoonkWeb.Controllers do
     pipe_through [:browser]
 
     post "/users/signin", UserSession, :create
