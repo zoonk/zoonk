@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.UserSessionControllerTest do
+defmodule ZoonkWeb.UserAuthControllerTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AuthFixtures

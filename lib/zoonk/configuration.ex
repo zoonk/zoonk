@@ -26,21 +26,25 @@ defmodule Zoonk.Configuration do
 
   @default_language "en"
 
+  @doc group: "Authentication"
   @doc """
   Returns the default hash algorithm.
   """
   def get_hash_algorithm, do: :sha256
 
+  @doc group: "Authentication"
   @doc """
   Returns the maximum age of a token in days.
   """
   def get_token_max_age_in_days, do: 365
 
+  @doc group: "Authentication"
   @doc """
   Returns the maximum age of a token in seconds.
   """
   def get_token_max_age_in_seconds, do: get_token_max_age_in_days() * 24 * 60 * 60
 
+  @doc group: "Authentication"
   @doc """
   Returns the validity of a magic link token in minutes.
 
@@ -49,11 +53,19 @@ defmodule Zoonk.Configuration do
   """
   def get_magic_link_validity_in_minutes, do: 15
 
+  @doc group: "Authentication"
   @doc """
   Returns the validity of a change email token in days.
   """
   def get_change_email_validity_in_days, do: 7
 
+  @doc group: "Authentication"
+  @doc """
+  Returns the name of the remember me cookie.
+  """
+  def get_remember_me_cookie_name, do: "_zoonk_web_user_remember_me"
+
+  @doc group: "Language"
   @doc """
   Returns a list of supported language keys.
 
@@ -66,6 +78,7 @@ defmodule Zoonk.Configuration do
     Enum.map(@supported_languages, fn {key, _value} -> key end)
   end
 
+  @doc group: "Language"
   @doc """
   Returns a list of supported language strings.
 
@@ -78,6 +91,7 @@ defmodule Zoonk.Configuration do
     Enum.map(supported_language_keys(), fn language -> Atom.to_string(language) end)
   end
 
+  @doc group: "Language"
   @doc """
   Returns an atom with the default language key.
 
@@ -88,6 +102,7 @@ defmodule Zoonk.Configuration do
   """
   def default_language_key, do: String.to_existing_atom(@default_language)
 
+  @doc group: "Language"
   @doc """
   Returns a string with the default language key.
 
@@ -98,6 +113,7 @@ defmodule Zoonk.Configuration do
   """
   def default_language_string, do: @default_language
 
+  @doc group: "Language"
   @doc """
   Returns a list of language options for a select input.
 

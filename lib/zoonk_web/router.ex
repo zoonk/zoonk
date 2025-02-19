@@ -1,8 +1,10 @@
 defmodule ZoonkWeb.Router do
   use ZoonkWeb, :router
 
-  import ZoonkWeb.Language
-  import ZoonkWeb.UserAuth
+  import ZoonkWeb.Plugs.Language
+  import ZoonkWeb.Plugs.UserAuth
+
+  alias ZoonkWeb.Hooks
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -31,8 +33,8 @@ defmodule ZoonkWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [
-        {ZoonkWeb.UserAuth, :ensure_authenticated},
-        {ZoonkWeb.Language, :set_app_language}
+        {Hooks.UserAuth, :ensure_authenticated},
+        {Hooks.Language, :set_app_language}
       ] do
       live "/", Home, :index
       live "/users/settings", UserSettings, :edit
@@ -45,8 +47,8 @@ defmodule ZoonkWeb.Router do
 
     live_session :current_user,
       on_mount: [
-        {ZoonkWeb.UserAuth, :mount_current_user},
-        {ZoonkWeb.Language, :set_app_language}
+        {Hooks.UserAuth, :mount_current_user},
+        {Hooks.Language, :set_app_language}
       ] do
       live "/users/signup", UserSignUp, :new
       live "/users/signin", UserSignIn, :new
@@ -54,11 +56,11 @@ defmodule ZoonkWeb.Router do
     end
   end
 
-  scope "/", ZoonkWeb.Controller do
+  scope "/", ZoonkWeb.Controllers do
     pipe_through [:browser]
 
-    post "/users/signin", UserSession, :create
-    delete "/users/signout", UserSession, :delete
+    post "/users/signin", UserAuth, :create
+    delete "/users/signout", UserAuth, :delete
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
