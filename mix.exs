@@ -138,7 +138,6 @@ defmodule Zoonk.MixProject do
         Helpers: [
           ZoonkWeb.Helpers.UserAuth
         ],
-        i18n: [ZoonkWeb.Gettext, ZoonkWeb.Hooks.Language, ZoonkWeb.Plugs.Language],
         Contexts: [
           Zoonk.Auth,
           Zoonk.Auth.TokenBuilder,
@@ -161,6 +160,7 @@ defmodule Zoonk.MixProject do
           Zoonk.Repo,
           ZoonkWeb,
           ZoonkWeb.Endpoint,
+          ZoonkWeb.Gettext,
           ZoonkWeb.Layouts,
           ZoonkWeb.Router
         ]
