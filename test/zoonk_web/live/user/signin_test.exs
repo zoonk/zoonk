@@ -28,7 +28,7 @@ defmodule ZoonkWeb.UserLive.SignInTest do
 
       assert html =~ "If your email is in our system"
 
-      assert Zoonk.Repo.get_by!(Zoonk.Schema.UserToken, user_id: user.id).context ==
+      assert Zoonk.Repo.get_by!(Zoonk.Schemas.UserToken, user_id: user.id).context ==
                "signin"
     end
 

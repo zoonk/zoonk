@@ -35,7 +35,7 @@ Zoonk is a white-label platform for building interactive courses. You can create
   - **`zoonk`** – Business logic and domain models.
     - **`_checks`** – Custom Credo checks.
     - **`_queries`** – Organized queries for each model, making business logic explicit and composable.
-    - **`_schema`** – Ecto schemas for each model.
+    - **`_schemas`** – Ecto schemas for each model.
     - **Contexts** – Encapsulated behaviors acting as event-driven commands.
       - Example:
         - `Zoonk.Auth` – Authentication context.

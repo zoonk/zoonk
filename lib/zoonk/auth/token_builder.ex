@@ -6,7 +6,7 @@ defmodule Zoonk.Auth.TokenBuilder do
   and email-based authentication.
   """
   alias Zoonk.Configuration
-  alias Zoonk.Schema.UserToken
+  alias Zoonk.Schemas.UserToken
 
   @rand_size 32
 

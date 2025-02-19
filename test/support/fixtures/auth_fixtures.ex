@@ -7,7 +7,7 @@ defmodule Zoonk.AuthFixtures do
   import Ecto.Query
 
   alias Zoonk.Auth
-  alias Zoonk.Schema.UserToken
+  alias Zoonk.Schemas.UserToken
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
 

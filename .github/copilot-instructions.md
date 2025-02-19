@@ -16,7 +16,7 @@ User
 
 This keeps queries clean and easier to extend.
 
-Organize queries in a separate module. If you have a `Zoonk.Schema.UserToken` schema, create a `Zoonk.Queries.UserToken` module to manage all related queries. This improves clarity, making business rules more explicit and easier to understand.
+Organize queries in a separate module. If you have a `Zoonk.Schemas.UserToken` schema, create a `Zoonk.Queries.UserToken` module to manage all related queries. This improves clarity, making business rules more explicit and easier to understand.
 
 Example:
 
@@ -41,7 +41,7 @@ Avoid vague phrases like “ensures reliability” or “handles securely” and
 
 Use `@moduledoc` for a high-level overview of the module’s purpose and when to use it. Avoid listing function details—they belong in their respective `@doc` tags. Only include examples if they demonstrate the module’s primary use case, such as for utility modules or workflows.
 
-For schema modules (e.g., `Zoonk.Schema.User`), briefly describe the schema and its fields. Focus on why the schema exists and what it represents rather than listing attributes.
+For schema modules (e.g., `Zoonk.Schemas.User`), briefly describe the schema and its fields. Focus on why the schema exists and what it represents rather than listing attributes.
 
 Leave detailed function usage for `@doc`, where you can include examples and explanations. Only add examples to `@moduledoc` if they clarify overall module usage; otherwise, keep them inside `@doc`.
 

@@ -1,6 +1,6 @@
 defmodule Zoonk.Queries.UserToken do
   @moduledoc """
-  Handles queries for `Zoonk.Schema.UserToken`.
+  Handles queries for `Zoonk.Schemas.UserToken`.
 
   This module provides query builders for retrieving, verifying,
   and managing user tokens, including tokens for sessions,
@@ -9,7 +9,7 @@ defmodule Zoonk.Queries.UserToken do
   import Ecto.Query
 
   alias Zoonk.Configuration
-  alias Zoonk.Schema.UserToken
+  alias Zoonk.Schemas.UserToken
 
   @doc """
   Returns the token struct for the given token value and context.

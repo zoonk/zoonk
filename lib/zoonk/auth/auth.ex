@@ -14,8 +14,8 @@ defmodule Zoonk.Auth do
   alias Zoonk.Auth.UserNotifier
   alias Zoonk.Queries
   alias Zoonk.Repo
-  alias Zoonk.Schema.User
-  alias Zoonk.Schema.UserToken
+  alias Zoonk.Schemas.User
+  alias Zoonk.Schemas.UserToken
 
   ## Database getters
 
@@ -90,7 +90,7 @@ defmodule Zoonk.Auth do
   @doc """
   Returns an `%Ecto.Changeset{}` for changing the user email.
 
-  See `Zoonk.Schema.User.email_changeset/3` for a list of supported options.
+  See `Zoonk.Schemas.User.email_changeset/3` for a list of supported options.
 
   ## Examples
 

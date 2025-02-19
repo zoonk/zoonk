@@ -145,8 +145,8 @@ defmodule Zoonk.MixProject do
           Zoonk.Mailer
         ],
         Schemas: [
-          Zoonk.Schema.User,
-          Zoonk.Schema.UserToken
+          Zoonk.Schemas.User,
+          Zoonk.Schemas.UserToken
         ],
         Queries: [
           Zoonk.Queries.UserToken
@@ -171,7 +171,7 @@ defmodule Zoonk.MixProject do
         Zoonk.Auth,
         Zoonk.Check.Readability,
         Zoonk.Queries,
-        Zoonk.Schema,
+        Zoonk.Schemas,
         ZoonkWeb.Components,
         ZoonkWeb.Controllers
       ]
