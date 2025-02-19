@@ -125,7 +125,7 @@ defmodule Zoonk.MixProject do
           ZoonkWeb.Components.Utils
         ],
         Controllers: [
-          ZoonkWeb.Controllers.UserSession
+          ZoonkWeb.Controllers.UserAuth
         ],
         Plugs: [
           ZoonkWeb.Plugs.UserAuth

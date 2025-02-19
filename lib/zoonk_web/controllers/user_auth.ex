@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Controllers.UserSession do
+defmodule ZoonkWeb.Controllers.UserAuth do
   @moduledoc """
   Handles user authentication.
 

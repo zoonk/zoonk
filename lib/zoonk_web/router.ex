@@ -59,8 +59,8 @@ defmodule ZoonkWeb.Router do
   scope "/", ZoonkWeb.Controllers do
     pipe_through [:browser]
 
-    post "/users/signin", UserSession, :create
-    delete "/users/signout", UserSession, :delete
+    post "/users/signin", UserAuth, :create
+    delete "/users/signout", UserAuth, :delete
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
