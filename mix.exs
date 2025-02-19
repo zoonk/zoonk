@@ -157,6 +157,7 @@ defmodule Zoonk.MixProject do
         "Credo Checks": [Zoonk.Check.Readability.PipeEctoQueries],
         Core: [
           Zoonk,
+          Zoonk.Check,
           Zoonk.Repo,
           ZoonkWeb,
           ZoonkWeb.Endpoint,
