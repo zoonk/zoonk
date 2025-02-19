@@ -52,3 +52,17 @@ For code examples, don’t use `elixir` at the beginning, as it doesn’t work w
 ## i18n
 
 When translating files, make sure the translations are consistent across the application. For example, if you have a translation for "Hello" in one file, ensure it's the same in all other files. Take care to maintain the context of the message to ensure accurate translations in similar scenarios.
+
+## Naming Conventions
+
+- **Plugs**: Located in `zoonk_web/plugs`, named as `ZoonkWeb.Plugs.MyPlug`.
+- **Controllers**: Located in `zoonk_web/controllers`, named as `ZoonkWeb.Controllers.MyController`.
+- **Live View Hooks**: Located in `zoonk_web/hooks`, named as `ZoonkWeb.Hooks.MyHook`.
+- **Live Views**: Located in `zoonk_web/live`, named as `ZoonkWeb.Live.MyLive`.
+- **Components**: Located in `zoonk_web/components`, named as `ZoonkWeb.Components.MyComponent`.
+- **Helpers**: Located in `zoonk_web/helpers`, named as `ZoonkWeb.Helpers.MyHelper`.
+- **Schemas**: Located in `zoonk/_schemas`, named as `Zoonk.Schemas.MySchema`.
+- **Queries**: Located in `zoonk/_queries`, named as `Zoonk.Queries.MySchema`.
+- **Custom Credo Checks**: Located in `zoonk/_checks`, named as `Zoonk.Checks.Category.MyCheck`.
+- **Contexts**: Each has its own directory (e.g., `auth`) and is named as `Zoonk.MyContext`.
+- **Subcontexts**: Placed inside the main context's directory, named as `Zoonk.MyContext.MySubcontext`.

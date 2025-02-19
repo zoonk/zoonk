@@ -1,40 +1,32 @@
-defmodule ZoonkWeb.Language do
+defmodule ZoonkWeb.Plugs.Language do
   @moduledoc """
-  Handles language detection and setting for the application.
+  Sets the session language for a connection using the
+  current user's preference or the browser's settings.
 
-  This module ensures that the application language is
-  properly set based on user preferences, session data,
-  or browser settings.
+  If a user is logged in with a language preference,
+  that value is saved to the session. Otherwise,
+  the plug extracts the primary language from the
+  `accept-language` header.
 
-  ## Usage:
+  If this language is not supported, the default language
+  from the configuration is used.
 
-  Use the `set_session_language` plug in your router pipeline
-  to set the language for the current session.
+  When using a LiveView, we also need to add proper `on_mount`
+  hooks available in `ZoonkWeb.Hooks.Language`.
 
-      import ZoonkWeb.Language
+  ## Usage
+
+  In your router, add the plug to the pipeline:
+
+      import ZoonkWeb.Plugs.Language
 
       pipeline :browser do
         plug :set_session_language
       end
-
-  Then, use the `on_mount` lifecycle macro in LiveViews to set
-  the language based on the user's preferences or current session.
-
-      live_session :public_view, on_mount: [{ZoonkWeb.Language, :set_app_language}]
   """
   import Plug.Conn
 
   alias Zoonk.Configuration
-  alias Zoonk.Schemas.User
-
-  def on_mount(:set_app_language, _params, session, socket) do
-    user_language = get_user_language(socket.assigns.current_user, session)
-    Gettext.put_locale(ZoonkWeb.Gettext, user_language)
-    {:cont, socket}
-  end
-
-  defp get_user_language(nil, session), do: Map.get(session, "language")
-  defp get_user_language(%User{language: language}, _session), do: Atom.to_string(language)
 
   @doc """
   Sets the session language based on user preferences or browser settings.

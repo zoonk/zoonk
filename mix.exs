@@ -128,15 +128,17 @@ defmodule Zoonk.MixProject do
           ZoonkWeb.Controllers.UserAuth
         ],
         Plugs: [
+          ZoonkWeb.Plugs.Language,
           ZoonkWeb.Plugs.UserAuth
         ],
         Hooks: [
+          ZoonkWeb.Hooks.Language,
           ZoonkWeb.Hooks.UserAuth
         ],
         Helpers: [
           ZoonkWeb.Helpers.UserAuth
         ],
-        i18n: [ZoonkWeb.Gettext, ZoonkWeb.Language],
+        i18n: [ZoonkWeb.Gettext, ZoonkWeb.Hooks.Language, ZoonkWeb.Plugs.Language],
         Contexts: [
           Zoonk.Auth,
           Zoonk.Auth.TokenBuilder,
