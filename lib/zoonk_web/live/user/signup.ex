@@ -4,6 +4,7 @@ defmodule ZoonkWeb.Live.UserSignUp do
 
   alias Zoonk.Auth
   alias Zoonk.Schemas.User
+  alias ZoonkWeb.Helpers
 
   def render(assigns) do
     ~H"""
@@ -50,7 +51,7 @@ defmodule ZoonkWeb.Live.UserSignUp do
   end
 
   def mount(_params, _session, %{assigns: %{current_user: %User{}}} = socket) do
-    {:ok, redirect(socket, to: ZoonkWeb.UserAuth.signed_in_path(socket))}
+    {:ok, redirect(socket, to: Helpers.UserAuth.signed_in_path(socket))}
   end
 
   def mount(_params, session, socket) do

@@ -8,7 +8,7 @@ defmodule ZoonkWeb.Controllers.UserSession do
   use ZoonkWeb, :controller
 
   alias Zoonk.Auth
-  alias ZoonkWeb.UserAuth
+  alias ZoonkWeb.Helpers
 
   @doc """
   Signs in a user.
@@ -30,11 +30,11 @@ defmodule ZoonkWeb.Controllers.UserSession do
   defp create(conn, %{"user" => %{"token" => token}}, info) do
     case Auth.signin_user_by_magic_link(token) do
       {:ok, user, tokens_to_disconnect} ->
-        UserAuth.disconnect_sessions(tokens_to_disconnect)
+        Helpers.UserAuth.disconnect_sessions(tokens_to_disconnect)
 
         conn
         |> put_flash(:info, info)
-        |> UserAuth.signin_user(user)
+        |> Helpers.UserAuth.signin_user(user)
 
       _error ->
         conn
@@ -49,6 +49,6 @@ defmodule ZoonkWeb.Controllers.UserSession do
   def delete(conn, _params) do
     conn
     |> put_flash(:info, "Logged out successfully.")
-    |> UserAuth.signout_user()
+    |> Helpers.UserAuth.signout_user()
   end
 end

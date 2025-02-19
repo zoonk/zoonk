@@ -4,7 +4,7 @@ defmodule ZoonkWeb.Live.UserSettings do
 
   alias Zoonk.Auth
 
-  on_mount {ZoonkWeb.UserAuth, :ensure_sudo_mode}
+  on_mount {ZoonkWeb.Hooks.UserAuth, :ensure_sudo_mode}
 
   def render(assigns) do
     ~H"""

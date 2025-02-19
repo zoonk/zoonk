@@ -111,9 +111,7 @@ defmodule Zoonk.MixProject do
         Introduction: Path.wildcard("guides/introduction/*.md")
       ],
       groups_for_modules: [
-        Config: [
-          Zoonk.Configuration
-        ],
+        Config: [Zoonk.Configuration],
         Components: [
           ZoonkWeb.Components.Button,
           ZoonkWeb.Components.DataList,
@@ -129,13 +127,16 @@ defmodule Zoonk.MixProject do
         Controllers: [
           ZoonkWeb.Controllers.UserSession
         ],
-        "Plugs & Hooks": [
-          ZoonkWeb.UserAuth
+        Plugs: [
+          ZoonkWeb.Plugs.UserAuth
         ],
-        i18n: [
-          ZoonkWeb.Gettext,
-          ZoonkWeb.Language
+        Hooks: [
+          ZoonkWeb.Hooks.UserAuth
         ],
+        Helpers: [
+          ZoonkWeb.Helpers.UserAuth
+        ],
+        i18n: [ZoonkWeb.Gettext, ZoonkWeb.Language],
         Contexts: [
           Zoonk.Auth,
           Zoonk.Auth.TokenBuilder,
@@ -151,13 +152,8 @@ defmodule Zoonk.MixProject do
         Queries: [
           Zoonk.Queries.UserToken
         ],
-        "Error Handling": [
-          ZoonkWeb.ErrorHTML,
-          ZoonkWeb.ErrorJSON
-        ],
-        "Credo Checks": [
-          Zoonk.Check.Readability.PipeEctoQueries
-        ],
+        "Error Handling": [ZoonkWeb.ErrorHTML, ZoonkWeb.ErrorJSON],
+        "Credo Checks": [Zoonk.Check.Readability.PipeEctoQueries],
         Core: [
           Zoonk,
           Zoonk.Repo,
@@ -167,14 +163,7 @@ defmodule Zoonk.MixProject do
           ZoonkWeb.Router
         ]
       ],
-      nest_modules_by_prefix: [
-        Zoonk.Auth,
-        Zoonk.Check.Readability,
-        Zoonk.Queries,
-        Zoonk.Schemas,
-        ZoonkWeb.Components,
-        ZoonkWeb.Controllers
-      ]
+      nest_modules_by_prefix: [Zoonk, ZoonkWeb]
     ]
   end
 end

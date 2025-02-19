@@ -2,7 +2,9 @@ defmodule ZoonkWeb.Router do
   use ZoonkWeb, :router
 
   import ZoonkWeb.Language
-  import ZoonkWeb.UserAuth
+  import ZoonkWeb.Plugs.UserAuth
+
+  alias ZoonkWeb.Hooks
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -31,7 +33,7 @@ defmodule ZoonkWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [
-        {ZoonkWeb.UserAuth, :ensure_authenticated},
+        {Hooks.UserAuth, :ensure_authenticated},
         {ZoonkWeb.Language, :set_app_language}
       ] do
       live "/", Home, :index
@@ -45,7 +47,7 @@ defmodule ZoonkWeb.Router do
 
     live_session :current_user,
       on_mount: [
-        {ZoonkWeb.UserAuth, :mount_current_user},
+        {Hooks.UserAuth, :mount_current_user},
         {ZoonkWeb.Language, :set_app_language}
       ] do
       live "/users/signup", UserSignUp, :new

@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.UserAuth do
+defmodule ZoonkWeb.Helpers.UserAuth do
   @moduledoc """
   Handles user authentication.
 
@@ -19,7 +19,7 @@ defmodule ZoonkWeb.UserAuth do
   alias Zoonk.Configuration
 
   @max_age Configuration.get_token_max_age_in_seconds()
-  @remember_me_cookie "_zoonk_web_user_remember_me"
+  @remember_me_cookie Configuration.get_remember_me_cookie_name()
   @remember_me_options [sign: true, max_age: @max_age, same_site: "Lax"]
 
   @doc """
@@ -97,122 +97,11 @@ defmodule ZoonkWeb.UserAuth do
   end
 
   @doc """
-  Authenticates the user by looking into the session
-  and remember me token.
+  Puts the given token in the session and sets the
+  `:live_socket_id` key, so LiveView sessions are
+  identified and automatically disconnected on log out.
   """
-  def fetch_current_user(conn, _opts) do
-    {user_token, conn} = ensure_user_token(conn)
-    user = user_token && Auth.get_user_by_session_token(user_token)
-    assign(conn, :current_user, user)
-  end
-
-  defp ensure_user_token(conn) do
-    if token = get_session(conn, :user_token) do
-      {token, conn}
-    else
-      conn = fetch_cookies(conn, signed: [@remember_me_cookie])
-
-      if token = conn.cookies[@remember_me_cookie] do
-        {token, put_token_in_session(conn, token)}
-      else
-        {nil, conn}
-      end
-    end
-  end
-
-  @doc """
-  Handles mounting and authenticating the current_user in LiveViews.
-
-  ## `on_mount` arguments
-
-    * `:mount_current_user` - Assigns current_user
-      to socket assigns based on user_token, or nil if
-      there's no user_token or no matching user.
-
-    * `:ensure_authenticated` - Authenticates the user from the session,
-      and assigns the current_user to socket assigns based
-      on user_token.
-      Redirects to signin page if there's no logged user.
-
-  ## Examples
-
-  Use the `on_mount` lifecycle macro in LiveViews to mount or authenticate
-  the current_user:
-
-      defmodule ZoonkWeb.PageLive do
-        use ZoonkWeb, :live_view
-
-        on_mount {ZoonkWeb.UserAuth, :mount_current_user}
-        ...
-      end
-
-  Or use the `live_session` of your router to invoke the on_mount callback:
-
-      live_session :authenticated, on_mount: [{ZoonkWeb.UserAuth, :ensure_authenticated}] do
-        live "/profile", ProfileLive, :index
-      end
-  """
-  def on_mount(:mount_current_user, _params, session, socket) do
-    {:cont, mount_current_user(socket, session)}
-  end
-
-  def on_mount(:ensure_authenticated, _params, session, socket) do
-    socket = mount_current_user(socket, session)
-
-    if socket.assigns.current_user do
-      {:cont, socket}
-    else
-      socket =
-        socket
-        |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
-        |> Phoenix.LiveView.redirect(to: ~p"/users/signin")
-
-      {:halt, socket}
-    end
-  end
-
-  def on_mount(:ensure_sudo_mode, _params, session, socket) do
-    socket = mount_current_user(socket, session)
-
-    if Auth.sudo_mode?(socket.assigns.current_user, -10) do
-      {:cont, socket}
-    else
-      socket =
-        socket
-        |> Phoenix.LiveView.put_flash(:error, "You must re-authenticate to access this page.")
-        |> Phoenix.LiveView.redirect(to: ~p"/users/signin")
-
-      {:halt, socket}
-    end
-  end
-
-  defp mount_current_user(socket, session) do
-    Phoenix.Component.assign_new(socket, :current_user, fn ->
-      if user_token = session["user_token"] do
-        Auth.get_user_by_session_token(user_token)
-      end
-    end)
-  end
-
-  @doc """
-  Used for routes that require the user to be authenticated.
-
-  If you want to enforce the user email is confirmed before
-  they use the application at all, here would be a good place.
-  """
-  def require_authenticated_user(conn, _opts) do
-    if conn.assigns[:current_user] do
-      conn
-    else
-      conn
-      |> put_flash(:error, "You must log in to access this page.")
-      |> maybe_store_return_to()
-      |> redirect(to: ~p"/users/signin")
-      |> halt()
-    end
-  end
-
-  defp put_token_in_session(conn, token) do
+  def put_token_in_session(conn, token) do
     conn
     |> put_session(:user_token, token)
     |> put_session(:live_socket_id, user_session_topic(token))
@@ -228,12 +117,6 @@ defmodule ZoonkWeb.UserAuth do
   end
 
   defp user_session_topic(token), do: "users_sessions:#{Base.url_encode64(token)}"
-
-  defp maybe_store_return_to(%{method: "GET"} = conn) do
-    put_session(conn, :user_return_to, current_path(conn))
-  end
-
-  defp maybe_store_return_to(conn), do: conn
 
   @doc "Returns the path to redirect to after log in."
   # the user was already logged in, redirect to settings

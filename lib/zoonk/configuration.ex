@@ -113,4 +113,9 @@ defmodule Zoonk.Configuration do
   def language_select_options do
     Enum.map(@supported_languages, fn {key, value} -> {value, Atom.to_string(key)} end)
   end
+
+  @doc """
+  Returns the name of the remember me cookie.
+  """
+  def get_remember_me_cookie_name, do: "_zoonk_web_user_remember_me"
 end
