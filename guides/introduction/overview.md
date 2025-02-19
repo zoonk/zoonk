@@ -28,20 +28,24 @@ Zoonk is a white-label platform for building interactive courses. You can create
 
 ## Directory structure
 
-- `.github`: Continuous integration workflows, Copilot instructions, and anything else related to GitHub.
-- `assets`: CSS and JavaScript files/libraries.
-- `config`: Configuration files for `dev`, `test`, `runtime`, and `prod` environments.
-- `lib`: The main application code, including both the web interface and business logic.
-  - `zoonk`: Business logic and domain models.
-    - `_checks`: Custom checks for Credo.
-    - `_queries`: Queries for each model, organized here for composability and making explicit what they do/what business logic they implement/what our intent is.
-    - `_schema`: Ecto schemas for each model.
-    - Phoenix contexts for our application. Each context is a module that encapsulates a behavior. Think of them as events that trigger commands. For example, `Zoonk.Auth` is the context for authentication; `Zoonk.Auth.TokenBuilder` is a sub-context for building auth tokens; while `Zoonk.Auth.UserNotifier` is a sub-context for sending auth-related emails to users.
-  - `zoonk_web`: Web interface, including controllers, views, and templates. It includes both the API and the frontend.
-    - `components`: LiveView (see `Phoenix.LiveComponent`) and function components (see `Phoenix.Component`) to be used in the UI.
-    - `controllers`: Controllers for the API and the web interface.
-    - `layouts`: Layouts for the web interface.
-    - `live`: Frontend pages using `Phoenix.LiveView`.
-    - `router.ex`: The router for the web interface.
-- `priv`: Static files, migrations, seeds, and translations.
-- `test`: Tests for the application.
+- **`.github`** – GitHub-related files, including CI workflows and Copilot instructions.
+- **`assets`** – CSS and JavaScript files/libraries.
+- **`config`** – Configuration files for `dev`, `test`, `runtime`, and `prod` environments.
+- **`lib`** – Core application code, covering both business logic and the web interface.
+  - **`zoonk`** – Business logic and domain models.
+    - **`_checks`** – Custom Credo checks.
+    - **`_queries`** – Organized queries for each model, making business logic explicit and composable.
+    - **`_schema`** – Ecto schemas for each model.
+    - **Contexts** – Encapsulated behaviors acting as event-driven commands.
+      - Example:
+        - `Zoonk.Auth` – Authentication context.
+        - `Zoonk.Auth.TokenBuilder` – Sub-context for auth token generation.
+        - `Zoonk.Auth.UserNotifier` – Sub-context for sending auth-related emails.
+  - **`zoonk_web`** – Web interface, including API and frontend.
+    - **`components`** – LiveView (`Phoenix.LiveComponent`) and function components (`Phoenix.Component`).
+    - **`controllers`** – API and web controllers.
+    - **`layouts`** – Web interface layouts.
+    - **`live`** – Pages using `Phoenix.LiveView`.
+    - **`router.ex`** – Web interface router.
+- **`priv`** – Static files, migrations, seeds, and translations.
+- **`test`** – Application tests.
