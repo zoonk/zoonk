@@ -1,9 +1,6 @@
 name: Docs
 
-on:
-  push:
-    branches:
-      - main
+on: push
 
 permissions:
   contents: read
@@ -14,8 +11,8 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     env:
-      elixir: 1.18.2
-      otp: 27.2.2
+      ELIXIR_VERSION: 1.18.2
+      OTP_VERSION: 27.2.2
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,8 +20,8 @@ jobs:
       - name: Set up Elixir
         uses: erlef/setup-beam@v1
         with:
-          elixir-version: ${{ env.elixir }}
-          otp-version: ${{ env.otp }}
+          elixir-version: ${{ env.ELIXIR_VERSION }}
+          otp-version: ${{ env.OTP_VERSION }}
 
       - name: Restore deps and _build cache
         uses: actions/cache@v4
@@ -32,11 +29,12 @@ jobs:
           path: |
             deps
             _build
-          key: ${{ runner.os }}-mix-${{ env.elixir }}-${{ env.otp }}-${{ hashFiles('**/mix.lock') }}-docs
+          key: ${{ runner.os }}-mix-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-${{ hashFiles('**/mix.lock') }}
           restore-keys: |
-            ${{ runner.os }}-mix-${{ env.elixir }}-${{ env.otp }}-
+            ${{ runner.os }}-mix-${{ env.ELIXIR_VERSION }}-${{ env.OTP_VERSION }}-
+
       - name: Install Dependencies
-        run: mix deps.get --only docs
+        run: mix deps.get
 
       - name: Build docs
         run: mix docs
