@@ -28,6 +28,13 @@
 - [Threads](https://www.threads.net/@zoonkorg)
 - [LinkedIn](https://www.linkedin.com/company/zoonk)
 
+## Getting started
+
+You can read our full documentation at https://docs.zoonk.org or check the guides below:
+
+- [Overview](./guides/introduction/overview.md)
+- [Installation](./guides/introduction/installation.md)
+
 ## Supporters
 
 **[Support the project and get lifetime access to Zoonk](https://github.com/sponsors/ceolinwill?frequency=one-time)**

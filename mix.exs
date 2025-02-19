@@ -104,7 +104,8 @@ defmodule Zoonk.MixProject do
       logo: "priv/static/images/logo.svg",
       extra_section: "GUIDES",
       extras: [
-        "guides/introduction/overview.md"
+        "guides/introduction/overview.md",
+        "guides/introduction/installation.md"
       ],
       groups_for_extras: [
         Introduction: Path.wildcard("guides/introduction/*.md")
