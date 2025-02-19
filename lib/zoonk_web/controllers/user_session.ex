@@ -10,6 +10,14 @@ defmodule ZoonkWeb.Controllers.UserSession do
   alias Zoonk.Auth
   alias ZoonkWeb.UserAuth
 
+  @doc """
+  Signs in a user.
+
+  The user is redirected to the home page upon successful
+  authentication or to the sign-in page with an error message.
+
+  This controller is also used for confirming a user.
+  """
   def create(conn, %{"_action" => "confirmed"} = params) do
     create(conn, params, "User confirmed successfully.")
   end
@@ -35,6 +43,9 @@ defmodule ZoonkWeb.Controllers.UserSession do
     end
   end
 
+  @doc """
+  Signs out a user.
+  """
   def delete(conn, _params) do
     conn
     |> put_flash(:info, "Logged out successfully.")
