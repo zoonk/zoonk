@@ -1,14 +1,19 @@
 defmodule ZoonkWeb.Plugs.UserAuth do
   @moduledoc """
-  Handles user authentication.
+  Provides plugs for user authentication.
 
-  This module provides functions to sign users in and out,
-  manage session tokens, and connect LiveViews with the
-  authenticated user context.
+  This module fetches the current user from the session
+  or remember-me cookies and assigns it to the connection.
 
-  It renews sessions to mitigate fixation attacks, sets
-  persistent cookies for "remember me" functionality, and
-  supports secure disconnection of LiveView sessions.
+  It also enforces authentication for protected routes by
+  redirecting unauthenticated users to the sign-in page.
+
+  ## Usage
+
+      import ZoonkWeb.Plugs.UserAuth
+
+      plug :fetch_current_user
+      plug :require_authenticated_user
   """
   use ZoonkWeb, :verified_routes
 

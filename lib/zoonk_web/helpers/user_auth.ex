@@ -1,14 +1,10 @@
 defmodule ZoonkWeb.Helpers.UserAuth do
   @moduledoc """
-  Handles user authentication.
+  Session management helpers for user authentication.
 
-  This module provides functions to sign users in and out,
-  manage session tokens, and connect LiveViews with the
-  authenticated user context.
-
-  It renews sessions to mitigate fixation attacks, sets
-  persistent cookies for "remember me" functionality, and
-  supports secure disconnection of LiveView sessions.
+  This module manages user sign in and sign out by handling session tokens,
+  renewing sessions to prevent fixation attacks, and coordinating disconnects
+  for LiveView sessions.
   """
   use ZoonkWeb, :verified_routes
 
