@@ -55,6 +55,9 @@ defmodule ZoonkWeb.Router do
 
     post "/users/signin", UserAuth, :create
     delete "/users/signout", UserAuth, :delete
+
+    get "/auth/:provider", OAuth, :request
+    get "/auth/:provider/callback", OAuth, :callback
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

@@ -28,6 +28,7 @@ defmodule Zoonk.Schemas.User do
 
   alias Zoonk.Configuration
   alias Zoonk.Schemas.UserProfile
+  alias Zoonk.Schemas.UserProvider
 
   schema "users" do
     field :year_of_birth, :integer
@@ -44,6 +45,7 @@ defmodule Zoonk.Schemas.User do
     field :authenticated_at, :utc_datetime, virtual: true
 
     has_one :profile, UserProfile
+    has_many :providers, UserProvider
 
     timestamps(type: :utc_datetime)
   end

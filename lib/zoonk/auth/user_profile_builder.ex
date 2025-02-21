@@ -1,4 +1,4 @@
-defmodule Zoonk.Helpers.UserProfileBuilder do
+defmodule Zoonk.Auth.UserProfileBuilder do
   @moduledoc """
   Helper module for building user profiles.
   """
@@ -21,8 +21,12 @@ defmodule Zoonk.Helpers.UserProfileBuilder do
       iex> build_initial_user_profile(%{user: %User{id: 2, email: "leo@davinci.it"}})
       %UserProfile{username: "leo_1234566", user_id: 2}
   """
-  def build_initial_user_profile(%{user: %User{id: user_id, email: email}}) do
-    %UserProfile{username: get_username_from_email(email), user_id: user_id}
+  def build_initial_user_profile(%{user: %User{id: user_id, email: email}}, opts \\ []) do
+    %UserProfile{
+      picture_url: opts[:picture_url],
+      username: get_username_from_email(email),
+      user_id: user_id
+    }
   end
 
   defp get_username_from_email(email) do

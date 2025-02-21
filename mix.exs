@@ -65,7 +65,8 @@ defmodule Zoonk.MixProject do
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
       {:tailwind_formatter, "~> 0.4.2", only: [:dev, :test], runtime: false},
       {:telemetry_metrics, "~> 1.0"},
-      {:telemetry_poller, "~> 1.0"}
+      {:telemetry_poller, "~> 1.0"},
+      {:ueberauth_google, "~> 0.12"}
     ]
   end
 
@@ -123,6 +124,7 @@ defmodule Zoonk.MixProject do
           ZoonkWeb.Components.Utils
         ],
         Controllers: [
+          ZoonkWeb.Controllers.OAuth,
           ZoonkWeb.Controllers.UserAuth
         ],
         Plugs: [
@@ -135,13 +137,13 @@ defmodule Zoonk.MixProject do
         ],
         Helpers: [
           Zoonk.Helpers.EctoUtils,
-          Zoonk.Helpers.UserProfileBuilder,
           ZoonkWeb.Helpers.UserAuth
         ],
         Contexts: [
           Zoonk.Auth,
           Zoonk.Auth.TokenBuilder,
-          Zoonk.Auth.UserNotifier
+          Zoonk.Auth.UserNotifier,
+          Zoonk.Auth.UserProfileBuilder
         ],
         Services: [
           Zoonk.Mailer
