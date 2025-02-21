@@ -21,13 +21,6 @@ defmodule ZoonkWeb.Router do
     plug :accepts, ["json"]
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", ZoonkWeb do
-  #   pipe_through :api
-  # end
-
-  ## Authentication routes
-
   scope "/", ZoonkWeb.Live do
     pipe_through [:browser, :require_authenticated_user]
 
@@ -37,6 +30,7 @@ defmodule ZoonkWeb.Router do
         {Hooks.Language, :set_app_language}
       ] do
       live "/", Home, :index
+
       live "/users/settings", UserSettings, :edit
       live "/users/settings/confirm-email/:token", UserSettings, :confirm_email
     end
@@ -45,7 +39,7 @@ defmodule ZoonkWeb.Router do
   scope "/", ZoonkWeb.Live do
     pipe_through [:browser]
 
-    live_session :current_user,
+    live_session :public_routes,
       on_mount: [
         {Hooks.UserAuth, :mount_current_user},
         {Hooks.Language, :set_app_language}
