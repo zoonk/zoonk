@@ -5,9 +5,13 @@ defmodule Zoonk.Repo.Migrations.CreateUsersAuthTables do
     execute "CREATE EXTENSION IF NOT EXISTS citext", ""
 
     create table(:users) do
-      add :email, :citext, null: false
-      add :confirmed_at, :utc_datetime
+      add :year_of_birth, :integer
+      add :agent?, :boolean, null: false, default: false
+      add :guest?, :boolean, null: false, default: false
+      add :email, :citext
       add :language, :string, null: false, default: "en"
+      add :stripe_customer_id, :string
+      add :confirmed_at, :utc_datetime
 
       timestamps(type: :utc_datetime)
     end

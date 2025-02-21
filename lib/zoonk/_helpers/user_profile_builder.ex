@@ -1,0 +1,48 @@
+defmodule Zoonk.Helpers.UserProfileBuilder do
+  @moduledoc """
+  Helper module for building user profiles.
+  """
+  import Ecto.Query, warn: false
+
+  alias Zoonk.Repo
+  alias Zoonk.Schemas.User
+  alias Zoonk.Schemas.UserProfile
+
+  @doc """
+  Builds a `Zoonk.Schemas.UserProfile` based on the user's email address.
+
+  This is useful for initializing a user profile when a new user registers.
+
+  ## Examples
+
+      iex> build_initial_user_profile(%{user: %User{id: 1, email: "leo@davinci.it"}})
+      %UserProfile{username: "leo", user_id: 1}
+
+      iex> build_initial_user_profile(%{user: %User{id: 2, email: "leo@davinci.it"}})
+      %UserProfile{username: "leo_1234566", user_id: 2}
+  """
+  def build_initial_user_profile(%{user: %User{id: user_id, email: email}}) do
+    %UserProfile{username: get_username_from_email(email), user_id: user_id}
+  end
+
+  defp get_username_from_email(email) do
+    username =
+      email
+      |> String.split("@")
+      |> List.first()
+
+    available? = username_available?(username)
+    build_initial_username(username, available?)
+  end
+
+  # If the username is already taken, we append a unique integer to it.
+  defp build_initial_username(username, true), do: username
+  defp build_initial_username(username, false), do: "#{username}_#{System.unique_integer([:positive])}"
+
+  defp username_available?(username) do
+    UserProfile
+    |> where([p], p.username == ^username)
+    |> Repo.exists?()
+    |> Kernel.not()
+  end
+end

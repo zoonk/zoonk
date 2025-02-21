@@ -12,6 +12,7 @@ defmodule Zoonk.Auth do
 
   alias Zoonk.Auth.TokenBuilder
   alias Zoonk.Auth.UserNotifier
+  alias Zoonk.Helpers
   alias Zoonk.Queries
   alias Zoonk.Repo
   alias Zoonk.Schemas.User
@@ -66,9 +67,11 @@ defmodule Zoonk.Auth do
 
   """
   def register_user(attrs) do
-    %User{}
-    |> User.settings_changeset(attrs)
-    |> Repo.insert()
+    Ecto.Multi.new()
+    |> Ecto.Multi.insert(:user, User.settings_changeset(%User{}, attrs))
+    |> Ecto.Multi.insert(:profile, &Helpers.UserProfileBuilder.build_initial_user_profile/1)
+    |> Repo.transaction()
+    |> Helpers.EctoUtils.get_changeset_from_transaction(:user)
   end
 
   ## Settings

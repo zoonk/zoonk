@@ -134,6 +134,8 @@ defmodule Zoonk.MixProject do
           ZoonkWeb.Hooks.UserAuth
         ],
         Helpers: [
+          Zoonk.Helpers.EctoUtils,
+          Zoonk.Helpers.UserProfileBuilder,
           ZoonkWeb.Helpers.UserAuth
         ],
         Contexts: [
@@ -146,6 +148,7 @@ defmodule Zoonk.MixProject do
         ],
         Schemas: [
           Zoonk.Schemas.User,
+          Zoonk.Schemas.UserProfile,
           Zoonk.Schemas.UserToken
         ],
         Queries: [

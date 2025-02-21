@@ -27,9 +27,14 @@ defmodule Zoonk.Schemas.User do
   import Ecto.Changeset
 
   alias Zoonk.Configuration
+  alias Zoonk.Schemas.UserProfile
 
   schema "users" do
+    field :year_of_birth, :integer
+    field :agent?, :boolean, default: false
+    field :guest?, :boolean, default: false
     field :email, :string
+    field :stripe_customer_id, :string
 
     field :language, Ecto.Enum,
       values: Configuration.supported_language_keys(),
@@ -37,6 +42,8 @@ defmodule Zoonk.Schemas.User do
 
     field :confirmed_at, :utc_datetime
     field :authenticated_at, :utc_datetime, virtual: true
+
+    has_one :profile, UserProfile
 
     timestamps(type: :utc_datetime)
   end

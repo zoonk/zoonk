@@ -5,6 +5,7 @@ defmodule Zoonk.AuthTest do
 
   alias Zoonk.Auth
   alias Zoonk.Schemas.User
+  alias Zoonk.Schemas.UserProfile
   alias Zoonk.Schemas.UserToken
 
   describe "get_user_by_email/1" do
@@ -70,6 +71,7 @@ defmodule Zoonk.AuthTest do
 
       assert user.email == email
       assert is_nil(user.confirmed_at)
+      assert Repo.get_by(UserProfile, user_id: user.id)
     end
   end
 
