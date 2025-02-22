@@ -70,5 +70,19 @@ defmodule Zoonk.Auth.ProvidersTest do
 
       assert Repo.get_by!(UserProfile, user_id: user.id)
     end
+
+    test "adds a second provider to an existing user" do
+      email = unique_user_email()
+      uid = Ecto.UUID.generate()
+      user = user_fixture(%{email: email})
+
+      provider1 = %Ueberauth.Auth{uid: uid, provider: :google, info: %{email: email}}
+      {:ok, _user} = Providers.signin_with_provider(provider1, "en")
+      assert Repo.get_by!(UserProvider, user_id: user.id, provider: :google)
+
+      provider2 = %Ueberauth.Auth{uid: uid, provider: :apple, info: %{email: email}}
+      {:ok, _user} = Providers.signin_with_provider(provider2, "en")
+      assert Repo.get_by!(UserProvider, user_id: user.id, provider: :apple)
+    end
   end
 end
