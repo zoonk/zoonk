@@ -66,6 +66,7 @@ defmodule Zoonk.MixProject do
       {:tailwind_formatter, "~> 0.4.2", only: [:dev, :test], runtime: false},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
+      {:ueberauth_github, "~> 0.8"},
       {:ueberauth_google, "~> 0.12"}
     ]
   end

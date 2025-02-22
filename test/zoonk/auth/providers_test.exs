@@ -84,5 +84,18 @@ defmodule Zoonk.Auth.ProvidersTest do
       {:ok, _user} = Providers.signin_with_provider(provider2, "en")
       assert Repo.get_by!(UserProvider, user_id: user.id, provider: :apple)
     end
+
+    test "works with an integer uid" do
+      email = unique_user_email()
+      image = "https://zoonk.test/image.png"
+      uid = 123_456
+
+      auth = %Ueberauth.Auth{uid: uid, provider: :google, info: %{email: email, image: image}}
+
+      {:ok, %User{} = user} = Providers.signin_with_provider(auth, "en")
+
+      user_provider = Repo.get_by!(UserProvider, user_id: user.id)
+      assert user_provider.provider_uid == to_string(uid)
+    end
   end
 end

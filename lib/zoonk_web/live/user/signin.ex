@@ -33,6 +33,10 @@ defmodule ZoonkWeb.Live.UserSignIn do
         {dgettext("users", "Log in with Google")}
       </.link>
 
+      <.link href={~p"/auth/github"}>
+        {dgettext("users", "Log in with GitHub")}
+      </.link>
+
       <.simple_form
         :let={f}
         for={@form}

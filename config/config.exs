@@ -37,6 +37,7 @@ config :tailwind,
 
 config :ueberauth, Ueberauth,
   providers: [
+    github: {Ueberauth.Strategy.Github, [default_scope: "user:email"]},
     google: {Ueberauth.Strategy.Google, []}
   ]
 

@@ -77,6 +77,6 @@ defmodule Zoonk.Auth.Providers do
   end
 
   defp get_provider_attrs(%Ueberauth.Auth{} = auth) do
-    %{provider: auth.provider, provider_uid: auth.uid}
+    %{provider: auth.provider, provider_uid: to_string(auth.uid)}
   end
 end
