@@ -57,7 +57,7 @@ defmodule Zoonk.Auth.Providers do
   defp register_user_with_provider(%Ueberauth.Auth{} = auth, language) do
     user_attrs = %{email: auth.info.email, language: language}
     provider_attrs = get_provider_attrs(auth)
-    profile_opts = [picture_url: auth.info.image]
+    profile_opts = [display_name: auth.info.name, picture_url: auth.info.image, username: auth.info.nickname]
 
     user_changeset =
       %User{}

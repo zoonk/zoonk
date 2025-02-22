@@ -20,7 +20,7 @@ defmodule ZoonkWeb.OAuthControllerTest do
     test "redirects to the home page if it succeeds", %{conn: conn} do
       email = unique_user_email()
       image = "https://zoonk.test/image.png"
-      auth = %Ueberauth.Auth{provider: :google, uid: "123", info: %{email: email, image: image}}
+      auth = ueberauth_fixture(%{email: email, image: image})
 
       conn =
         conn

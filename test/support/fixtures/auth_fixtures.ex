@@ -57,4 +57,17 @@ defmodule Zoonk.AuthFixtures do
     Zoonk.Repo.insert!(user_token)
     {encoded_token, user_token.token}
   end
+
+  def ueberauth_fixture(attrs \\ %{}) do
+    %Ueberauth.Auth{
+      uid: Map.get(attrs, :uid, Ecto.UUID.generate()),
+      provider: Map.get(attrs, :provider, :google),
+      info: %{
+        email: Map.get(attrs, :email, unique_user_email()),
+        image: Map.get(attrs, :image, "https://zoonk.test/image.png"),
+        name: Map.get(attrs, :name, nil),
+        nickname: Map.get(attrs, :nickname, nil)
+      }
+    }
+  end
 end

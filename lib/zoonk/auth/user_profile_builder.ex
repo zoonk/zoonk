@@ -23,8 +23,9 @@ defmodule Zoonk.Auth.UserProfileBuilder do
   """
   def build_initial_user_profile(%{user: %User{id: user_id, email: email}}, opts \\ []) do
     %UserProfile{
+      display_name: opts[:display_name],
       picture_url: opts[:picture_url],
-      username: get_username_from_email(email),
+      username: get_username_from_email(opts[:username] || email),
       user_id: user_id
     }
   end

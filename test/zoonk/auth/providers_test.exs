@@ -14,7 +14,7 @@ defmodule Zoonk.Auth.ProvidersTest do
       image = "https://zoonk.test/image.png"
       uid = Ecto.UUID.generate()
 
-      auth = %Ueberauth.Auth{uid: uid, provider: :google, info: %{email: email, image: image}}
+      auth = ueberauth_fixture(%{uid: uid, email: email, image: image})
 
       {:ok, %User{} = user} = Providers.signin_with_provider(auth, "en")
 
@@ -37,7 +37,7 @@ defmodule Zoonk.Auth.ProvidersTest do
       uid = Ecto.UUID.generate()
 
       existing_user = user_fixture(%{email: email})
-      auth = %Ueberauth.Auth{uid: uid, provider: :google, info: %{email: email}}
+      auth = ueberauth_fixture(%{uid: uid, email: email})
 
       {:ok, user} = Providers.signin_with_provider(auth, "en")
 
@@ -55,7 +55,7 @@ defmodule Zoonk.Auth.ProvidersTest do
       uid = Ecto.UUID.generate()
 
       existing_user = user_fixture(%{email: email})
-      auth = %Ueberauth.Auth{uid: uid, provider: :google, info: %{email: email}}
+      auth = ueberauth_fixture(%{uid: uid, email: email})
 
       {:ok, first_user} = Providers.signin_with_provider(auth, "en")
       assert first_user.id == existing_user.id
@@ -76,11 +76,11 @@ defmodule Zoonk.Auth.ProvidersTest do
       uid = Ecto.UUID.generate()
       user = user_fixture(%{email: email})
 
-      provider1 = %Ueberauth.Auth{uid: uid, provider: :google, info: %{email: email}}
+      provider1 = ueberauth_fixture(%{uid: uid, provider: :google, email: email})
       {:ok, _user} = Providers.signin_with_provider(provider1, "en")
       assert Repo.get_by!(UserProvider, user_id: user.id, provider: :google)
 
-      provider2 = %Ueberauth.Auth{uid: uid, provider: :apple, info: %{email: email}}
+      provider2 = ueberauth_fixture(%{uid: uid, provider: :apple, email: email})
       {:ok, _user} = Providers.signin_with_provider(provider2, "en")
       assert Repo.get_by!(UserProvider, user_id: user.id, provider: :apple)
     end
@@ -90,12 +90,44 @@ defmodule Zoonk.Auth.ProvidersTest do
       image = "https://zoonk.test/image.png"
       uid = 123_456
 
-      auth = %Ueberauth.Auth{uid: uid, provider: :google, info: %{email: email, image: image}}
+      auth = ueberauth_fixture(%{uid: uid, email: email, image: image})
 
       {:ok, %User{} = user} = Providers.signin_with_provider(auth, "en")
 
       user_provider = Repo.get_by!(UserProvider, user_id: user.id)
       assert user_provider.provider_uid == to_string(uid)
+    end
+
+    test "adds name and username to profile when available" do
+      name = "John Doe"
+      username = "johndoe"
+
+      auth = ueberauth_fixture(%{name: name, nickname: username})
+
+      {:ok, %User{} = user} = Providers.signin_with_provider(auth, "en")
+
+      user_profile = Repo.get_by!(UserProfile, user_id: user.id)
+      assert user_profile.display_name == name
+      assert user_profile.username == username
+    end
+
+    test "avoid duplicated usernames from provider" do
+      email1 = unique_user_email()
+      email2 = unique_user_email()
+      username = "johndoe"
+
+      auth1 = ueberauth_fixture(%{email: email1, provider: :google, nickname: username})
+      auth2 = ueberauth_fixture(%{email: email2, provider: :apple, nickname: username})
+
+      {:ok, %User{} = user1} = Providers.signin_with_provider(auth1, "en")
+      {:ok, %User{} = user2} = Providers.signin_with_provider(auth2, "en")
+
+      profile1 = Repo.get_by!(UserProfile, user_id: user1.id)
+      profile2 = Repo.get_by!(UserProfile, user_id: user2.id)
+
+      assert profile1.username == username
+      assert profile2.username != username
+      assert String.starts_with?(profile2.username, username)
     end
   end
 end

@@ -38,7 +38,7 @@ config :tailwind,
 config :ueberauth, Ueberauth,
   providers: [
     github: {Ueberauth.Strategy.Github, [default_scope: "user:email"]},
-    google: {Ueberauth.Strategy.Google, []}
+    google: {Ueberauth.Strategy.Google, [default_scope: "email profile"]}
   ]
 
 # Configures the mailer
