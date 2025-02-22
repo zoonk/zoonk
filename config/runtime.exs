@@ -20,13 +20,17 @@ if System.get_env("PHX_SERVER") do
   config :zoonk, ZoonkWeb.Endpoint, server: true
 end
 
-config :ueberauth, Ueberauth.Strategy.Github.OAuth,
-  client_id: System.get_env("GITHUB_CLIENT_ID"),
-  client_secret: System.get_env("GITHUB_CLIENT_SECRET")
-
-config :ueberauth, Ueberauth.Strategy.Google.OAuth,
-  client_id: System.get_env("GOOGLE_CLIENT_ID"),
-  client_secret: System.get_env("GOOGLE_CLIENT_SECRET")
+config :zoonk, :strategies,
+  github: [
+    client_id: System.get_env("GITHUB_CLIENT_ID"),
+    client_secret: System.get_env("GITHUB_CLIENT_SECRET"),
+    strategy: Assent.Strategy.Github
+  ],
+  google: [
+    client_id: System.get_env("GOOGLE_CLIENT_ID"),
+    client_secret: System.get_env("GOOGLE_CLIENT_SECRET"),
+    strategy: Assent.Strategy.Google
+  ]
 
 if config_env() == :prod do
   database_url =

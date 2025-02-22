@@ -11,10 +11,10 @@ defmodule Zoonk.Auth.ProvidersTest do
   describe "signin_with_provider/2" do
     test "creates a new user and links the provider" do
       email = unique_user_email()
-      image = "https://zoonk.test/image.png"
+      picture = "https://zoonk.test/picture.png"
       uid = Ecto.UUID.generate()
 
-      auth = ueberauth_fixture(%{uid: uid, email: email, image: image})
+      auth = oauth_fixture(%{uid: uid, email: email, picture: picture})
 
       {:ok, %User{} = user} = Providers.signin_with_provider(auth, "en")
 
@@ -29,7 +29,7 @@ defmodule Zoonk.Auth.ProvidersTest do
       assert user_provider.provider_uid == uid
 
       assert user_profile.user_id == user.id
-      assert user_profile.picture_url == image
+      assert user_profile.picture_url == picture
     end
 
     test "links the provider to an existing user" do
@@ -37,7 +37,7 @@ defmodule Zoonk.Auth.ProvidersTest do
       uid = Ecto.UUID.generate()
 
       existing_user = user_fixture(%{email: email})
-      auth = ueberauth_fixture(%{uid: uid, email: email})
+      auth = oauth_fixture(%{uid: uid, email: email})
 
       {:ok, user} = Providers.signin_with_provider(auth, "en")
 
@@ -55,7 +55,7 @@ defmodule Zoonk.Auth.ProvidersTest do
       uid = Ecto.UUID.generate()
 
       existing_user = user_fixture(%{email: email})
-      auth = ueberauth_fixture(%{uid: uid, email: email})
+      auth = oauth_fixture(%{uid: uid, email: email})
 
       {:ok, first_user} = Providers.signin_with_provider(auth, "en")
       assert first_user.id == existing_user.id
@@ -76,21 +76,21 @@ defmodule Zoonk.Auth.ProvidersTest do
       uid = Ecto.UUID.generate()
       user = user_fixture(%{email: email})
 
-      provider1 = ueberauth_fixture(%{uid: uid, provider: :google, email: email})
+      provider1 = oauth_fixture(%{uid: uid, provider: :google, email: email})
       {:ok, _user} = Providers.signin_with_provider(provider1, "en")
       assert Repo.get_by!(UserProvider, user_id: user.id, provider: :google)
 
-      provider2 = ueberauth_fixture(%{uid: uid, provider: :apple, email: email})
+      provider2 = oauth_fixture(%{uid: uid, provider: :apple, email: email})
       {:ok, _user} = Providers.signin_with_provider(provider2, "en")
       assert Repo.get_by!(UserProvider, user_id: user.id, provider: :apple)
     end
 
     test "works with an integer uid" do
       email = unique_user_email()
-      image = "https://zoonk.test/image.png"
+      picture = "https://zoonk.test/picture.png"
       uid = 123_456
 
-      auth = ueberauth_fixture(%{uid: uid, email: email, image: image})
+      auth = oauth_fixture(%{uid: uid, email: email, picture: picture})
 
       {:ok, %User{} = user} = Providers.signin_with_provider(auth, "en")
 
@@ -102,7 +102,7 @@ defmodule Zoonk.Auth.ProvidersTest do
       name = "John Doe"
       username = "johndoe"
 
-      auth = ueberauth_fixture(%{name: name, nickname: username})
+      auth = oauth_fixture(%{name: name, username: username})
 
       {:ok, %User{} = user} = Providers.signin_with_provider(auth, "en")
 
@@ -116,8 +116,8 @@ defmodule Zoonk.Auth.ProvidersTest do
       email2 = unique_user_email()
       username = "johndoe"
 
-      auth1 = ueberauth_fixture(%{email: email1, provider: :google, nickname: username})
-      auth2 = ueberauth_fixture(%{email: email2, provider: :apple, nickname: username})
+      auth1 = oauth_fixture(%{email: email1, provider: :google, username: username})
+      auth2 = oauth_fixture(%{email: email2, provider: :apple, username: username})
 
       {:ok, %User{} = user1} = Providers.signin_with_provider(auth1, "en")
       {:ok, %User{} = user2} = Providers.signin_with_provider(auth2, "en")

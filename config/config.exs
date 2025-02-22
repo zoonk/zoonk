@@ -35,12 +35,6 @@ config :tailwind,
     cd: Path.expand("../assets", __DIR__)
   ]
 
-config :ueberauth, Ueberauth,
-  providers: [
-    github: {Ueberauth.Strategy.Github, [default_scope: "user:email"]},
-    google: {Ueberauth.Strategy.Google, [default_scope: "email profile"]}
-  ]
-
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails

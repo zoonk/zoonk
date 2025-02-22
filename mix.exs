@@ -38,6 +38,7 @@ defmodule Zoonk.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:assent, "~> 0.3.0"},
       {:bandit, "~> 1.5"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dns_cluster, "~> 0.1.1"},
@@ -56,6 +57,7 @@ defmodule Zoonk.MixProject do
       {:phoenix_live_view, "~> 1.0.0"},
       {:phoenix, "~> 1.7.19"},
       {:postgrex, ">= 0.0.0"},
+      {:req, "~> 0.5.0"},
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
       {:styler, "~> 1.4", only: [:dev, :test], runtime: false},
       {:swoosh, "~> 1.5"},
@@ -65,9 +67,7 @@ defmodule Zoonk.MixProject do
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
       {:tailwind_formatter, "~> 0.4.2", only: [:dev, :test], runtime: false},
       {:telemetry_metrics, "~> 1.0"},
-      {:telemetry_poller, "~> 1.0"},
-      {:ueberauth_github, "~> 0.8"},
-      {:ueberauth_google, "~> 0.12"}
+      {:telemetry_poller, "~> 1.0"}
     ]
   end
 

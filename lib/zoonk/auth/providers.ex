@@ -25,14 +25,14 @@ defmodule Zoonk.Auth.Providers do
 
   ## Examples
 
-      iex> signin_with_provider(%Ueberauth.Auth{}, "en")
+      iex> signin_with_provider(%{}, "en")
       {:ok, %User{}}
 
       iex> signin_with_provider(nil, "en")
       {:error, %Ecto.Changeset{}}
   """
-  def signin_with_provider(%Ueberauth.Auth{} = auth, language) do
-    user = Auth.get_user_by_email(auth.info.email)
+  def signin_with_provider(auth, language) do
+    user = Auth.get_user_by_email(auth["email"])
 
     case signin_with_provider(auth, language, user) do
       {:ok, %User{} = new_user} -> {:ok, new_user}
@@ -42,22 +42,22 @@ defmodule Zoonk.Auth.Providers do
   end
 
   # Create a new user if it doesn't exist
-  defp signin_with_provider(%Ueberauth.Auth{} = auth, language, nil) do
+  defp signin_with_provider(auth, language, nil) do
     register_user_with_provider(auth, language)
   end
 
   # If the user exists, then link the provider
-  defp signin_with_provider(%Ueberauth.Auth{} = auth, _lang, %User{} = user) do
+  defp signin_with_provider(auth, _lang, %User{} = user) do
     %{user: user}
     |> user_provider_changeset(get_provider_attrs(auth))
     |> Repo.insert(on_conflict: :nothing)
   end
 
   # Create a new user and link the provider
-  defp register_user_with_provider(%Ueberauth.Auth{} = auth, language) do
-    user_attrs = %{email: auth.info.email, language: language}
+  defp register_user_with_provider(auth, language) do
+    user_attrs = %{email: auth["email"], language: language}
     provider_attrs = get_provider_attrs(auth)
-    profile_opts = [display_name: auth.info.name, picture_url: auth.info.image, username: auth.info.nickname]
+    profile_opts = [display_name: auth["name"], picture_url: auth["picture"], username: auth["preferred_username"]]
 
     user_changeset =
       %User{}
@@ -76,7 +76,7 @@ defmodule Zoonk.Auth.Providers do
     UserProvider.changeset(%UserProvider{user_id: user.id}, provider_attrs)
   end
 
-  defp get_provider_attrs(%Ueberauth.Auth{} = auth) do
-    %{provider: auth.provider, provider_uid: to_string(auth.uid)}
+  defp get_provider_attrs(auth) do
+    %{provider: auth["provider"], provider_uid: to_string(auth["sub"])}
   end
 end
