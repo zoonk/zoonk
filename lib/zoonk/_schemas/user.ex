@@ -9,6 +9,13 @@ defmodule Zoonk.Schemas.User do
 
   ## Fields
 
+    * `year_of_birth` - The user's year of birth. We use this to determine
+      the user's age to see if they are eligible for certain features.
+    * `kind` - The type of user.
+      * `:regular` - A regular user.
+      * `:agent` - AI agent used to create content.
+      * `:guest` - A user who has not registered yet.
+      * `:white_label` - A user who created an account through a white label partner.
     * `email` - The user's email address.
     * `language` - The user's preferred language.
     * `confirmed_at` - The timestamp when the account was confirmed.
@@ -32,8 +39,7 @@ defmodule Zoonk.Schemas.User do
 
   schema "users" do
     field :year_of_birth, :integer
-    field :agent?, :boolean, default: false
-    field :guest?, :boolean, default: false
+    field :kind, Ecto.Enum, values: [:regular, :agent, :guest, :white_label], default: :regular
     field :email, :string
     field :stripe_customer_id, :string
 
