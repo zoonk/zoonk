@@ -108,7 +108,8 @@ defmodule Zoonk.MixProject do
       extras: [
         "guides/overview.md",
         "guides/glossary.md",
-        "guides/installation.md"
+        "guides/installation.md",
+        "guides/ssl.md"
       ],
       groups_for_modules: [
         Config: [Zoonk.Configuration],
