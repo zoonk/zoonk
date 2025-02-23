@@ -68,9 +68,6 @@ jobs:
         run: mix deps.get
         shell: bash
 
-      - name: Install assets dependencies
-        run: bun install --cwd assets
-
       - name: Compile app
         run: mix compile --all-warnings --warnings-as-errors
 
