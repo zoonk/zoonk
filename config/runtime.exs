@@ -21,6 +21,13 @@ if System.get_env("PHX_SERVER") do
 end
 
 config :zoonk, :strategies,
+  apple: [
+    client_id: System.get_env("APPLE_CLIENT_ID"),
+    team_id: System.get_env("APPLE_TEAM_ID"),
+    private_key_id: System.get_env("APPLE_KEY_ID"),
+    private_key: System.get_env("APPLE_PRIVATE_KEY"),
+    strategy: Assent.Strategy.Apple
+  ],
   github: [
     client_id: System.get_env("GITHUB_CLIENT_ID"),
     client_secret: System.get_env("GITHUB_CLIENT_SECRET"),

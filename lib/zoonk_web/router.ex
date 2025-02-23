@@ -17,6 +17,18 @@ defmodule ZoonkWeb.Router do
     plug :set_session_language
   end
 
+  # This should only be used in rare cases where you want to skip protections like CSRF
+  # One example is when using an oAuth POST request for the `Sign In with Apple` feature.
+  pipeline :unprotected_browser do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {ZoonkWeb.Layouts, :root}
+    plug :put_secure_browser_headers, %{"content-security-policy" => "default-src 'self';img-src 'self' data: blob:;"}
+    plug :fetch_current_user
+    plug :set_session_language
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -58,6 +70,14 @@ defmodule ZoonkWeb.Router do
 
     get "/auth/:provider", OAuth, :request
     get "/auth/:provider/callback", OAuth, :callback
+  end
+
+  # We need this because Apple's oAuth handling sends a POST request
+  # instead of a GET so we can't have a CSRF token in their request.
+  # We should not use this scope for anything else.
+  scope "/", ZoonkWeb.Controllers do
+    pipe_through [:unprotected_browser]
+    post "/auth/:provider/callback", OAuth, :callback
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
