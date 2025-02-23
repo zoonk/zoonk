@@ -31,13 +31,13 @@ mkdir -pv "$(brew --prefix)/etc/"
 echo 'address=/zoonk.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
 echo 'address=/.zoonk.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
 echo 'address=/team.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
-echo 'address=/.team.test/127.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
+echo 'address=/.team.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
 echo 'address=/school.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
-echo 'address=/.school.test/127.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
+echo 'address=/.school.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
 echo 'address=/store.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
-echo 'address=/.store.test/127.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
+echo 'address=/.store.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
 echo 'address=/creator.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
-echo 'address=/.creator.test/127.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
+echo 'address=/.creator.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
 
 sudo mkdir -v /etc/resolver
 sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/zoonk.test'
