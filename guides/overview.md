@@ -31,9 +31,9 @@ Zoonk is a white-label platform for building interactive courses. You can create
 - **`.github`** – GitHub-related files, including CI workflows and Copilot instructions.
 - **`assets`** – CSS and JavaScript files/libraries.
 - **`config`** – Configuration files for `dev`, `test`, `runtime`, and `prod` environments.
+- **`credo`** – Custom Credo checks.
 - **`lib`** – Core application code, covering both business logic and the web interface.
   - **`zoonk`** – Business logic and domain models.
-    - **`_checks`** – Custom Credo checks.
     - **`_queries`** – Organized queries for each model, making business logic explicit and composable.
     - **`_schemas`** – Ecto schemas for each model.
     - **Contexts** – Encapsulated behaviors acting as event-driven commands.
