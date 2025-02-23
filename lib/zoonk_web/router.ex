@@ -60,6 +60,22 @@ defmodule ZoonkWeb.Router do
     get "/auth/:provider/callback", OAuth, :callback
   end
 
+  pipeline :apple_browser do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {ZoonkWeb.Layouts, :root}
+    plug :put_secure_browser_headers, %{"content-security-policy" => "default-src 'self';img-src 'self' data: blob:;"}
+    plug :fetch_current_user
+    plug :set_session_language
+  end
+
+  scope "/", ZoonkWeb.Controllers do
+    pipe_through [:apple_browser]
+
+    post "/auth/:provider/callback", OAuth, :callback
+  end
+
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:zoonk, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put

@@ -28,9 +28,17 @@ defmodule ZoonkWeb.Controllers.OAuth do
     # retrieved when user returns for the callback phase
     conn = put_session(conn, :session_params, session_params)
 
+    IO.inspect(session_params, label: "Session Params request")
+    IO.inspect(get_session(conn, :session_params), label: "Session Params after setting request")
+
     # Redirect end-user to the provider to authorize access to their account
     # Something went wrong generating the request authorization url
     conn
+    |> put_resp_cookie("apple_oauth_state", session_params.state,
+      http_only: true,
+      secure: true,
+      same_site: "None"
+    )
     |> put_resp_header("location", url)
     |> send_resp(302, "")
   end
@@ -54,9 +62,10 @@ defmodule ZoonkWeb.Controllers.OAuth do
 
   defp config!(%Plug.Conn{} = conn, provider) do
     config = get_provider_config!(provider)
-    http_scheme = get_http_scheme(conn)
     host = get_redirect_host(conn)
-    redirect_uri = "#{http_scheme}://#{host}/auth/#{provider}/callback"
+    redirect_uri = "https://zoonk.app:4001/auth/#{provider}/callback"
+
+    IO.inspect(redirect_uri, label: "Redirect URI")
 
     Keyword.put(config, :redirect_uri, redirect_uri)
   end
@@ -74,9 +83,6 @@ defmodule ZoonkWeb.Controllers.OAuth do
     |> get_req_header("host")
     |> List.first()
   end
-
-  defp get_http_scheme(%Plug.Conn{scheme: :http}), do: "http"
-  defp get_http_scheme(%Plug.Conn{scheme: :https}), do: "https"
 
   defp get_provider_config!(provider),
     do: get_provider_config!(provider, Application.get_env(:zoonk, :strategies)[provider])
@@ -97,6 +103,15 @@ defmodule ZoonkWeb.Controllers.OAuth do
     # The session params (used for OAuth 2.0 and OIDC strategies) stored in the
     # request phase will be used in the callback phase
     session_params = get_session(conn, :session_params)
+
+    apple_cookie = conn.cookies["apple_oauth_state"]
+
+    IO.inspect(session_params, label: "Session Params callback")
+    IO.inspect(query_params, label: "Query Params callback")
+    IO.inspect(apple_cookie, label: "Apple OAuth State Cookie")
+
+    session_params = Map.put(session_params || %{}, :state, apple_cookie)
+    IO.inspect(session_params, label: "Session Params callback after putting state")
 
     config
     # Session params should be added to the config so the strategy can use them

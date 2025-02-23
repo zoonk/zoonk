@@ -39,6 +39,11 @@ config :zoonk, :strategies,
     strategy: Assent.Strategy.Google
   ]
 
+IO.inspect(System.get_env("APPLE_PRIVATE_KEY"), label: "APPLE_PRIVATE_KEY")
+IO.inspect(System.get_env("APPLE_KEY_ID"), label: "APPLE_KEY_ID")
+IO.inspect(System.get_env("APPLE_TEAM_ID"), label: "APPLE_TEAM_ID")
+IO.inspect(System.get_env("APPLE_CLIENT_ID"), label: "APPLE_CLIENT_ID")
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||
