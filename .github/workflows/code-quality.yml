@@ -2,7 +2,6 @@ name: Run tests and check code quality
 
 on:
   push:
-    branches: [main]
   pull_request:
     types: [opened, reopened, synchronize]
 
