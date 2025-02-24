@@ -9,6 +9,8 @@ defmodule ZoonkWeb.Live.UserSignUp do
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
+      <h1 class="mb-4 text-2xl font-bold">Sign Up</h1>
+      <.link navigate={~p"/login"} class="mb-4 flex items-center">Sign in</.link>
       <.simple_form for={@form} id="registration_form" phx-submit="save" phx-change="validate">
         <.error :if={@check_errors}>
           {dgettext("users", "Oops, something went wrong! Please check the errors below.")}
@@ -61,7 +63,7 @@ defmodule ZoonkWeb.Live.UserSignUp do
         {:ok, _url_fn} =
           Auth.deliver_signin_instructions(
             user,
-            &url(~p"/login/#{&1}")
+            &url(~p"/login/t/#{&1}")
           )
 
         {:noreply,
@@ -72,7 +74,7 @@ defmodule ZoonkWeb.Live.UserSignUp do
              email: user.email
            )
          )
-         |> push_navigate(to: ~p"/login")}
+         |> push_navigate(to: ~p"/login/email")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply,

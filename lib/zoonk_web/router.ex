@@ -57,8 +57,9 @@ defmodule ZoonkWeb.Router do
         {Hooks.Language, :set_app_language}
       ] do
       live "/signup", UserSignUp, :new
-      live "/login", UserSignIn, :new
-      live "/login/:token", UserConfirmation, :new
+      live "/login", UserSignIn
+      live "/login/email", UserSignInWithEmail, :new
+      live "/login/t/:token", UserConfirmation, :new
     end
   end
 

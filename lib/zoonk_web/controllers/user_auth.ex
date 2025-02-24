@@ -39,7 +39,7 @@ defmodule ZoonkWeb.Controllers.UserAuth do
       _error ->
         conn
         |> put_flash(:error, "The link is invalid or it has expired.")
-        |> redirect(to: ~p"/login")
+        |> redirect(to: ~p"/login/email")
     end
   end
 

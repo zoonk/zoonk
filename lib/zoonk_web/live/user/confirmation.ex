@@ -53,7 +53,7 @@ defmodule ZoonkWeb.Live.UserConfirmation do
       {:ok,
        socket
        |> put_flash(:error, dgettext("users", "Magic link is invalid or it has expired."))
-       |> push_navigate(to: ~p"/login")}
+       |> push_navigate(to: ~p"/login/email")}
     end
   end
 
