@@ -7,18 +7,6 @@ defmodule ZoonkWeb.Live.UserSignIn do
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
-      <.link href={~p"/auth/google"}>
-        {dgettext("users", "Log in with Google")}
-      </.link>
-
-      <.link href={~p"/auth/github"}>
-        {dgettext("users", "Log in with GitHub")}
-      </.link>
-
-      <.link href={~p"/auth/apple"}>
-        {dgettext("users", "Log in with Apple")}
-      </.link>
-
       <.simple_form
         :let={f}
         for={@form}
