@@ -16,7 +16,7 @@ defmodule ZoonkWeb.Live.UserConfirmation do
         for={@form}
         id="confirmation_form"
         phx-submit="submit"
-        action={~p"/users/signin?_action=confirmed"}
+        action={~p"/login?_action=confirmed"}
         phx-trigger-action={@trigger_submit}
       >
         <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
@@ -33,7 +33,7 @@ defmodule ZoonkWeb.Live.UserConfirmation do
         for={@form}
         id="signin_form"
         phx-submit="submit"
-        action={~p"/users/signin"}
+        action={~p"/login"}
         phx-trigger-action={@trigger_submit}
       >
         <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
@@ -57,7 +57,7 @@ defmodule ZoonkWeb.Live.UserConfirmation do
       {:ok,
        socket
        |> put_flash(:error, dgettext("users", "Magic link is invalid or it has expired."))
-       |> push_navigate(to: ~p"/users/signin")}
+       |> push_navigate(to: ~p"/login")}
     end
   end
 

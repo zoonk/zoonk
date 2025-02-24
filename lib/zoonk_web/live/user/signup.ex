@@ -13,7 +13,7 @@ defmodule ZoonkWeb.Live.UserSignUp do
         {dgettext("users", "Sign Up")}
         <:subtitle>
           {dgettext("users", "Already registered?")}
-          <.link navigate={~p"/users/signin"} class="text-brand font-semibold hover:underline">
+          <.link navigate={~p"/login"} class="text-brand font-semibold hover:underline">
             {dgettext("users", "Sign in")}
           </.link>
           {dgettext("users", "to your account now.")}
@@ -72,7 +72,7 @@ defmodule ZoonkWeb.Live.UserSignUp do
         {:ok, _url_fn} =
           Auth.deliver_signin_instructions(
             user,
-            &url(~p"/users/signin/#{&1}")
+            &url(~p"/login/#{&1}")
           )
 
         {:noreply,
@@ -83,7 +83,7 @@ defmodule ZoonkWeb.Live.UserSignUp do
              email: user.email
            )
          )
-         |> push_navigate(to: ~p"/users/signin")}
+         |> push_navigate(to: ~p"/login")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply,

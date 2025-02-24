@@ -18,7 +18,7 @@ defmodule ZoonkWeb.Live.UserSignIn do
           <% else %>
             {dgettext("users", "Don't have an account?")}
             <.link
-              navigate={~p"/users/signup"}
+              navigate={~p"/signup"}
               class="text-brand font-semibold hover:underline"
               phx-no-format
             >
@@ -45,7 +45,7 @@ defmodule ZoonkWeb.Live.UserSignIn do
         :let={f}
         for={@form}
         id="signin_form_magic"
-        action={~p"/users/signin"}
+        action={~p"/login"}
         phx-submit="submit_magic"
       >
         <.input
@@ -78,7 +78,7 @@ defmodule ZoonkWeb.Live.UserSignIn do
     if user = Auth.get_user_by_email(email) do
       Auth.deliver_signin_instructions(
         user,
-        &url(~p"/users/signin/#{&1}")
+        &url(~p"/login/#{&1}")
       )
     end
 
@@ -88,6 +88,6 @@ defmodule ZoonkWeb.Live.UserSignIn do
     {:noreply,
      socket
      |> put_flash(:info, info)
-     |> push_navigate(to: ~p"/users/signin")}
+     |> push_navigate(to: ~p"/login")}
   end
 end

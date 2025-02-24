@@ -68,7 +68,7 @@ defmodule ZoonkWeb.Controllers.OAuth do
   defp redirect_on_failure(%Plug.Conn{} = conn) do
     conn
     |> put_flash(:error, dgettext("users", "Failed to authenticate"))
-    |> redirect(to: ~p"/users/signin")
+    |> redirect(to: ~p"/login")
   end
 
   # when developing locally, we need to include the port in the redirect_uri

@@ -20,7 +20,7 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
       assert {:error, redirect} = live(conn, ~p"/users/settings")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/users/signin"
+      assert path == ~p"/login"
       assert %{"error" => "You must log in to access this page."} = flash
     end
 
@@ -31,7 +31,7 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
           token_inserted_at: DateTime.add(DateTime.utc_now(), -11, :minute)
         )
         |> live(~p"/users/settings")
-        |> follow_redirect(conn, ~p"/users/signin")
+        |> follow_redirect(conn, ~p"/login")
 
       assert conn.resp_body =~ "You must re-authenticate to access this page."
     end
@@ -133,7 +133,7 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
       conn = build_conn()
       {:error, redirect} = live(conn, ~p"/users/settings/confirm-email/#{token}")
       assert {:redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/users/signin"
+      assert path == ~p"/login"
       assert %{"error" => message} = flash
       assert message == "You must log in to access this page."
     end

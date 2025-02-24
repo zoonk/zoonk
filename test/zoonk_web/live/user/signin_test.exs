@@ -6,7 +6,7 @@ defmodule ZoonkWeb.UserLive.SignInTest do
 
   describe "signin page" do
     test "renders signin page", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/users/signin")
+      {:ok, _lv, html} = live(conn, ~p"/login")
 
       assert html =~ "Log in"
       assert html =~ "Sign Up"
@@ -18,13 +18,13 @@ defmodule ZoonkWeb.UserLive.SignInTest do
     test "sends magic link email when user exists", %{conn: conn} do
       user = user_fixture()
 
-      {:ok, lv, _html} = live(conn, ~p"/users/signin")
+      {:ok, lv, _html} = live(conn, ~p"/login")
 
       {:ok, _lv, html} =
         lv
         |> form("#signin_form_magic", %{email: user.email})
         |> render_submit()
-        |> follow_redirect(conn, ~p"/users/signin")
+        |> follow_redirect(conn, ~p"/login")
 
       assert html =~ "If your email is in our system"
 
@@ -33,13 +33,13 @@ defmodule ZoonkWeb.UserLive.SignInTest do
     end
 
     test "does not disclose if user is registered", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/signin")
+      {:ok, lv, _html} = live(conn, ~p"/login")
 
       {:ok, _lv, html} =
         lv
         |> form("#signin_form_magic", %{email: "idonotexist@example.com"})
         |> render_submit()
-        |> follow_redirect(conn, ~p"/users/signin")
+        |> follow_redirect(conn, ~p"/login")
 
       assert html =~ "If your email is in our system"
     end
@@ -47,13 +47,13 @@ defmodule ZoonkWeb.UserLive.SignInTest do
 
   describe "signin navigation" do
     test "redirects to registration page when the Register button is clicked", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/signin")
+      {:ok, lv, _html} = live(conn, ~p"/login")
 
       {:ok, _signin_live, signin_html} =
         lv
         |> element(~s|main a:fl-contains("Sign up")|)
         |> render_click()
-        |> follow_redirect(conn, ~p"/users/signup")
+        |> follow_redirect(conn, ~p"/signup")
 
       assert signin_html =~ "Sign Up"
     end
@@ -66,7 +66,7 @@ defmodule ZoonkWeb.UserLive.SignInTest do
     end
 
     test "shows signin page with email filled in", %{conn: conn, user: user} do
-      {:ok, _lv, html} = live(conn, ~p"/users/signin")
+      {:ok, _lv, html} = live(conn, ~p"/login")
 
       assert html =~ "You need to reauthenticate"
       refute html =~ "Sign Up"

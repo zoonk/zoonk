@@ -56,17 +56,17 @@ defmodule ZoonkWeb.Router do
         {Hooks.UserAuth, :mount_current_user},
         {Hooks.Language, :set_app_language}
       ] do
-      live "/users/signup", UserSignUp, :new
-      live "/users/signin", UserSignIn, :new
-      live "/users/signin/:token", UserConfirmation, :new
+      live "/signup", UserSignUp, :new
+      live "/login", UserSignIn, :new
+      live "/login/:token", UserConfirmation, :new
     end
   end
 
   scope "/", ZoonkWeb.Controllers do
     pipe_through [:browser]
 
-    post "/users/signin", UserAuth, :create
-    delete "/users/signout", UserAuth, :delete
+    post "/login", UserAuth, :create
+    delete "/logout", UserAuth, :delete
 
     get "/auth/:provider", OAuth, :request
     get "/auth/:provider/callback", OAuth, :callback

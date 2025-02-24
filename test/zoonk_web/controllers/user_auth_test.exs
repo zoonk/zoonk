@@ -9,14 +9,11 @@ defmodule ZoonkWeb.UserAuthControllerTest do
     %{unconfirmed_user: unconfirmed_user_fixture(), user: user_fixture()}
   end
 
-  describe "POST /users/signin - magic link" do
+  describe "POST /login - magic link" do
     test "logs the user in", %{conn: conn, user: user} do
       {token, _hashed_token} = generate_user_magic_link_token(user)
 
-      post_conn =
-        post(conn, ~p"/users/signin", %{
-          "user" => %{"token" => token}
-        })
+      post_conn = post(conn, ~p"/login", %{"user" => %{"token" => token}})
 
       assert get_session(post_conn, :user_token)
       assert redirected_to(post_conn) == ~p"/"
@@ -26,18 +23,14 @@ defmodule ZoonkWeb.UserAuthControllerTest do
       response = html_response(loggedin_conn, 200)
       assert response =~ user.email
       assert response =~ ~p"/users/settings"
-      assert response =~ ~p"/users/signout"
+      assert response =~ ~p"/logout"
     end
 
     test "confirms unconfirmed user", %{conn: conn, unconfirmed_user: user} do
       {token, _hashed_token} = generate_user_magic_link_token(user)
       refute user.confirmed_at
 
-      post_conn =
-        post(conn, ~p"/users/signin", %{
-          "user" => %{"token" => token},
-          "_action" => "confirmed"
-        })
+      post_conn = post(conn, ~p"/login", %{"user" => %{"token" => token}, "_action" => "confirmed"})
 
       assert get_session(post_conn, :user_token)
       assert redirected_to(post_conn) == ~p"/"
@@ -50,28 +43,22 @@ defmodule ZoonkWeb.UserAuthControllerTest do
       response = html_response(loggedin_conn, 200)
       assert response =~ user.email
       assert response =~ ~p"/users/settings"
-      assert response =~ ~p"/users/signout"
+      assert response =~ ~p"/logout"
     end
 
     test "redirects to signin page when magic link is invalid", %{conn: conn} do
-      conn =
-        post(conn, ~p"/users/signin", %{
-          "user" => %{"token" => "invalid"}
-        })
-
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) ==
-               "The link is invalid or it has expired."
-
-      assert redirected_to(conn) == ~p"/users/signin"
+      conn = post(conn, ~p"/login", %{"user" => %{"token" => "invalid"}})
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "The link is invalid or it has expired."
+      assert redirected_to(conn) == ~p"/login"
     end
   end
 
-  describe "DELETE /users/signout" do
+  describe "DELETE /logout" do
     test "logs the user out", %{conn: conn, user: user} do
       conn =
         conn
         |> signin_user(user)
-        |> delete(~p"/users/signout")
+        |> delete(~p"/logout")
 
       assert redirected_to(conn) == ~p"/"
       refute get_session(conn, :user_token)
@@ -79,7 +66,7 @@ defmodule ZoonkWeb.UserAuthControllerTest do
     end
 
     test "succeeds even if the user is not logged in", %{conn: conn} do
-      conn = delete(conn, ~p"/users/signout")
+      conn = delete(conn, ~p"/logout")
       assert redirected_to(conn) == ~p"/"
       refute get_session(conn, :user_token)
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Logged out successfully"
