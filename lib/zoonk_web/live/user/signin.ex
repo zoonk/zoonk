@@ -7,28 +7,6 @@ defmodule ZoonkWeb.Live.UserSignIn do
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
-      <.header class="text-center">
-        <p>{dgettext("users", "Log in")}</p>
-        <:subtitle>
-          <%= if @current_user do %>
-            {dgettext(
-              "users",
-              "You need to reauthenticate to perform sensitive actions on your account."
-            )}
-          <% else %>
-            {dgettext("users", "Don't have an account?")}
-            <.link
-              navigate={~p"/signup"}
-              class="text-brand font-semibold hover:underline"
-              phx-no-format
-            >
-              {dgettext("users", "Sign up")}
-            </.link>
-            {dgettext("users", "for an account now.")}
-          <% end %>
-        </:subtitle>
-      </.header>
-
       <.link href={~p"/auth/google"}>
         {dgettext("users", "Log in with Google")}
       </.link>

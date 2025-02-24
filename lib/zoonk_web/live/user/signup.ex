@@ -9,17 +9,6 @@ defmodule ZoonkWeb.Live.UserSignUp do
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
-      <.header class="text-center">
-        {dgettext("users", "Sign Up")}
-        <:subtitle>
-          {dgettext("users", "Already registered?")}
-          <.link navigate={~p"/login"} class="text-brand font-semibold hover:underline">
-            {dgettext("users", "Sign in")}
-          </.link>
-          {dgettext("users", "to your account now.")}
-        </:subtitle>
-      </.header>
-
       <.simple_form for={@form} id="registration_form" phx-submit="save" phx-change="validate">
         <.error :if={@check_errors}>
           {dgettext("users", "Oops, something went wrong! Please check the errors below.")}

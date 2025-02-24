@@ -7,10 +7,6 @@ defmodule ZoonkWeb.Live.UserConfirmation do
   def render(assigns) do
     ~H"""
     <div class="mx-auto max-w-sm">
-      <.header class="text-center">
-        {dgettext("users", "Welcome %{email}", email: @user.email)}
-      </.header>
-
       <.simple_form
         :if={!@user.confirmed_at}
         for={@form}

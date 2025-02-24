@@ -8,11 +8,6 @@ defmodule ZoonkWeb.Live.UserSettings do
 
   def render(assigns) do
     ~H"""
-    <.header class="text-center">
-      {dgettext("users", "Account Settings")}
-      <:subtitle>{dgettext("users", "Manage your account email address")}</:subtitle>
-    </.header>
-
     <div class="space-y-12 divide-y">
       <div>
         <.simple_form
