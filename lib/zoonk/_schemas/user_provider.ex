@@ -21,8 +21,10 @@ defmodule Zoonk.Schemas.UserProvider do
 
   import Ecto.Changeset
 
+  alias Zoonk.Configuration
+
   schema "user_providers" do
-    field :provider, Ecto.Enum, values: [:apple, :github, :google, :microsoft]
+    field :provider, Ecto.Enum, values: Configuration.list_supported_oauth_providers()
     field :provider_uid, :string
 
     belongs_to :user, Zoonk.Schemas.User

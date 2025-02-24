@@ -5,3 +5,8 @@
 @variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
 
 @plugin "./tabler.tailwind.plugin.js";
+
+@theme {
+  --color-background-light: var(--color-neutral-50);
+  --color-background-dark: var(--color-neutral-900);
+}

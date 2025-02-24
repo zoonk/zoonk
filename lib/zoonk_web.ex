@@ -90,6 +90,7 @@ defmodule ZoonkWeb do
       # Core UI components
       import ZoonkWeb.Components.Button
       import ZoonkWeb.Components.DataList
+      import ZoonkWeb.Components.Divider
       import ZoonkWeb.Components.Flash
       import ZoonkWeb.Components.Form
       import ZoonkWeb.Components.Icon

@@ -4,6 +4,8 @@ defmodule ZoonkWeb.Components.Button do
   """
   use Phoenix.Component
 
+  import ZoonkWeb.Components.Icon
+
   @doc """
   Renders a button.
 
@@ -31,6 +33,44 @@ defmodule ZoonkWeb.Components.Button do
     >
       {render_slot(@inner_block)}
     </button>
+    """
+  end
+
+  attr :id, :string, default: nil
+  attr :class, :string, default: nil
+  attr :icon, :string, default: nil
+  attr :rest, :global, include: ~w(href method navigate patch)
+  attr :variant, :atom, values: [:primary, :outline], default: :primary
+
+  slot :inner_block
+
+  @doc """
+  Renders a link styled as a button.
+
+  ## Examples
+
+      <.link_as_button>Send!</.link_as_button>
+      <.link_as_button class="ml-2">Send!</.link_as_button>
+  """
+  def link_as_button(assigns) do
+    ~H"""
+    <.link
+      id={@id}
+      class={[
+        "relative h-12 whitespace-nowrap rounded-md px-10 ring",
+        "inline-flex items-center justify-center gap-2",
+        "text-sm font-medium transition-colors",
+        "focus-visible:outline-none focus-visible:ring-1",
+        "disabled:pointer-events-none disabled:opacity-50",
+        @variant == :outline &&
+          "bg-white text-neutral-700 ring-neutral-200 hover:bg-neutral-100 hover:text-neutral-900",
+        @class
+      ]}
+      {@rest}
+    >
+      <.icon :if={@icon} name={@icon} class="absolute left-4 h-5 w-5" />
+      {render_slot(@inner_block)}
+    </.link>
     """
   end
 end

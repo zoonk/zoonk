@@ -65,6 +65,12 @@ defmodule Zoonk.Configuration do
   """
   def get_remember_me_cookie_name, do: "_zoonk_web_user_remember_me"
 
+  @doc group: "Authentication"
+  @doc """
+  Returns a list of supported oAuth providers.
+  """
+  def list_supported_oauth_providers, do: [:apple, :github, :google, :microsoft]
+
   @doc group: "Language"
   @doc """
   Returns a list of supported language keys.
