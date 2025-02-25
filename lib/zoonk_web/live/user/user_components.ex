@@ -33,7 +33,11 @@ defmodule ZoonkWeb.Components.User do
   defp get_auth_label(:signup, provider),
     do: dgettext("users", "Sign up with %{provider}", provider: provider_name(provider))
 
-  defp provider_name(provider), do: String.capitalize(Atom.to_string(provider))
+  defp provider_name(provider) do
+    provider
+    |> Atom.to_string()
+    |> String.capitalize()
+  end
 
   defp get_icon(:apple), do: "tabler-brand-apple-filled"
   defp get_icon(:github), do: "tabler-brand-github-filled"
