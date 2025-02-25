@@ -98,6 +98,7 @@ defmodule ZoonkWeb do
       import ZoonkWeb.Components.Input
       import ZoonkWeb.Components.Modal
       import ZoonkWeb.Components.Table
+      import ZoonkWeb.Components.Text
       import ZoonkWeb.Components.Utils
 
       # Shortcut for generating JS commands

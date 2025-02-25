@@ -6,36 +6,34 @@ defmodule ZoonkWeb.Live.UserSignIn do
 
   def render(assigns) do
     ~H"""
-    <div class="h-dvh mx-auto flex max-w-sm flex-col items-center justify-center gap-4 px-8">
-      <h1 class={[
-        "text-xl font-medium",
-        "text-zk-text-primary",
-        "dark:text-zk-text-inverse",
-        "contrast-more:text-zk-text-contrast"
-      ]}>
+    <main
+      aria-labelledby="signin-title"
+      class="h-dvh mx-auto flex max-w-sm flex-col items-center justify-center px-8 text-center"
+    >
+      <.text id="signin-title" element={:h1} size={:title} class="pb-4">
         {dgettext("users", "Access your Zoonk account")}
-      </h1>
+      </.text>
 
-      <section class="w-full">
-        <div class="flex flex-col gap-2">
-          <.auth_link provider={:apple} />
-          <.auth_link provider={:google} />
-          <.auth_link provider={:github} />
-        </div>
+      <section
+        class="flex w-full flex-col gap-2"
+        aria-label={dgettext("users", "Use one of the external providers below:")}
+      >
+        <.auth_link :for={provider <- [:apple, :google, :github]} provider={provider} />
+      </section>
 
+      <section class="w-full" aria-label={dgettext("users", "Or use your email address")}>
         <.divider label={dgettext("users", "or")} class="my-4" />
-
         <.auth_link provider={:email} />
       </section>
 
-      <footer class="text-center text-sm">
-        <p class="text-zk-text-secondary contrast-more:text-zk-text-primary dark:text-zk-text-inverse-secondary dark:contrast-more:text-zk-text-inverse">
+      <section class="pt-4" aria-labelledby="signup-title">
+        <.text id="signup-title" size={:caption} variant={:secondary}>
           {dgettext("users", "Don't have an account?")}
-        </p>
+        </.text>
 
-        <.a href={~p"/signup"}>{dgettext("users", "Sign up")}</.a>
-      </footer>
-    </div>
+        <.a href={~p"/signup"} class="text-sm">{dgettext("users", "Sign up")}</.a>
+      </section>
+    </main>
     """
   end
 

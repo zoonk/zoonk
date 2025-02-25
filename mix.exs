@@ -124,6 +124,7 @@ defmodule Zoonk.MixProject do
           ZoonkWeb.Components.Input,
           ZoonkWeb.Components.Modal,
           ZoonkWeb.Components.Table,
+          ZoonkWeb.Components.Text,
           ZoonkWeb.Components.Utils
         ],
         Controllers: [
