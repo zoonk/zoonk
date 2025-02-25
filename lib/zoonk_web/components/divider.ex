@@ -15,7 +15,7 @@ defmodule ZoonkWeb.Components.Divider do
       </div>
 
       <div class="relative flex justify-center">
-        <span class="bg-background-light px-2 text-sm text-gray-500 dark:bg-background-dark">
+        <span class="bg-zk-bg-light px-2 text-sm text-gray-500 dark:bg-zk-bg-dark">
           {@label}
         </span>
       </div>

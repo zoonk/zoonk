@@ -7,6 +7,6 @@
 @plugin "./tabler.tailwind.plugin.js";
 
 @theme {
-  --color-background-light: var(--color-neutral-50);
-  --color-background-dark: var(--color-neutral-900);
+  --color-zk-bg-light: var(--color-neutral-50);
+  --color-zk-bg-dark: var(--color-neutral-900);
 }
