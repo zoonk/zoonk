@@ -88,6 +88,7 @@ defmodule ZoonkWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components
+      import ZoonkWeb.Components.Anchor
       import ZoonkWeb.Components.Button
       import ZoonkWeb.Components.DataList
       import ZoonkWeb.Components.Divider

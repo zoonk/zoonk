@@ -62,15 +62,26 @@ defmodule ZoonkWeb.Components.Button do
         "text-sm font-medium transition-colors",
         "focus-visible:outline-none focus-visible:ring-1",
         "disabled:pointer-events-none disabled:opacity-50",
-        @variant == :outline &&
-          "ring-zk-border text-zk-text-primary/85 bg-zk-surface hover:text-zk-text-primary hover:bg-zk-surface-hover",
+        @variant == :outline && outline_class(),
         @class
       ]}
       {@rest}
     >
       <.icon :if={@icon} name={@icon} class="absolute left-4 h-5 w-5" />
-      {render_slot(@inner_block)}
+      <span>{render_slot(@inner_block)}</span>
     </.link>
     """
   end
+
+  defp outline_class,
+    do: [
+      "ring-zk-border text-zk-text-secondary bg-zk-surface",
+      "hover:text-zk-text-primary hover:bg-zk-surface-hover",
+      "focus-visible:ring-zk-border-focus",
+      "dark:bg-zk-surface-inverse dark:text-zk-text-inverse-secondary dark:ring-zk-border-inverse",
+      "dark:hover:bg-zk-surface-inverse-hover dark:hover:text-zk-text-inverse",
+      "contrast-more:text-zk-text-primary",
+      "dark:contrast-more:text-zk-text-inverse",
+      "dark:contrast-more:ring-zk-border"
+    ]
 end
