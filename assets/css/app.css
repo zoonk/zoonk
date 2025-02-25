@@ -9,4 +9,13 @@
 @theme {
   --color-zk-bg-light: var(--color-neutral-50);
   --color-zk-bg-dark: var(--color-neutral-900);
+
+  --color-zk-surface: var(--color-white);
+  --color-zk-surface-hover: var(--color-neutral-50);
+
+  --color-zk-border: var(--color-neutral-200);
+
+  --color-zk-text-primary: var(--color-neutral-700);
+  --color-zk-text-secondary: var(--color-neutral-500);
+  --color-zk-text-inverse: var(--color-neutral-100);
 }

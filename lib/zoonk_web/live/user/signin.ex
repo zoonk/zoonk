@@ -7,7 +7,7 @@ defmodule ZoonkWeb.Live.UserSignIn do
   def render(assigns) do
     ~H"""
     <div class="h-dvh mx-auto flex max-w-sm flex-col items-center justify-center gap-4 px-8">
-      <h1 class="text-xl font-medium text-neutral-900 dark:text-neutral-100">
+      <h1 class="text-zk-text-primary text-xl font-medium dark:text-zk-text-inverse">
         {dgettext("users", "Access your Zoonk account")}
       </h1>
 
@@ -23,10 +23,10 @@ defmodule ZoonkWeb.Live.UserSignIn do
         <.auth_link provider={:email} />
       </section>
 
-      <p class="text-neutral-500 dark:text-neutral-300">
-        {dgettext("users", "Don't have an account?")}
+      <p class="text-zk-text-secondary text-center dark:text-zk-text-inverse">
+        {dgettext("users", "Don't have an account?")} <br />
 
-        <.link href={~p"/signup"} class="text-blue-500 hover:underline">
+        <.link href={~p"/signup"}>
           {dgettext("users", "Sign up")}
         </.link>
       </p>

@@ -11,11 +11,11 @@ defmodule ZoonkWeb.Components.Divider do
     ~H"""
     <div class={["relative", @class]}>
       <div class="absolute inset-0 flex items-center" aria-hidden="true">
-        <div class="w-full border-t border-gray-300"></div>
+        <div class="border-zk-border w-full border-t"></div>
       </div>
 
       <div class="relative flex justify-center">
-        <span class="bg-zk-bg-light px-2 text-sm text-gray-500 dark:bg-zk-bg-dark">
+        <span class="bg-zk-bg-light text-zk-text-secondary px-2 text-sm dark:bg-zk-bg-dark">
           {@label}
         </span>
       </div>

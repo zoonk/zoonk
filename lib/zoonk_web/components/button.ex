@@ -63,7 +63,7 @@ defmodule ZoonkWeb.Components.Button do
         "focus-visible:outline-none focus-visible:ring-1",
         "disabled:pointer-events-none disabled:opacity-50",
         @variant == :outline &&
-          "bg-white text-neutral-700 ring-neutral-200 hover:bg-neutral-100 hover:text-neutral-900",
+          "ring-zk-border text-zk-text-primary/85 bg-zk-surface hover:text-zk-text-primary hover:bg-zk-surface-hover",
         @class
       ]}
       {@rest}
