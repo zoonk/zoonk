@@ -1,11 +1,21 @@
 defmodule ZoonkWeb.Components.Anchor do
-  @moduledoc false
+  @moduledoc """
+  Provides the UI for rendering anchors.
+  """
   use Phoenix.Component
 
   attr :class, :string, default: nil, doc: "CSS class to apply to the anchor"
   attr :rest, :global, include: ~w(href method navigate patch), doc: "HTML attributes to apply to the anchor"
   slot :inner_block, required: true
 
+  @doc """
+  Renders a styled link (anchor).
+
+  ## Examples
+
+      <.a>Send!</.a>
+      <.a class="ml-2">Send!</.a>
+  """
   def a(assigns) do
     ~H"""
     <.link
