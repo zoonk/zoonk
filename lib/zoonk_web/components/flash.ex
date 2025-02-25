@@ -3,7 +3,7 @@ defmodule ZoonkWeb.Components.Flash do
   Provides the UI for rendering flash messages.
   """
   use Phoenix.Component
-  use Gettext, backend: ZoonkWeb.Gettext
+  use Gettext, backend: Zoonk.Gettext
 
   import ZoonkWeb.Components.Icon
   import ZoonkWeb.Components.Utils

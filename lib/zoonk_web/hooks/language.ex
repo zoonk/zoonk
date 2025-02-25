@@ -27,7 +27,7 @@ defmodule ZoonkWeb.Hooks.Language do
   """
   def on_mount(:set_app_language, _params, session, socket) do
     user_language = get_user_language(socket.assigns.current_user, session)
-    Gettext.put_locale(ZoonkWeb.Gettext, user_language)
+    Gettext.put_locale(Zoonk.Gettext, user_language)
     {:cont, socket}
   end
 

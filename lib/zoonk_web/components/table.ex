@@ -3,7 +3,7 @@ defmodule ZoonkWeb.Components.Table do
   Provides the UI for rendering tables.
   """
   use Phoenix.Component
-  use Gettext, backend: ZoonkWeb.Gettext
+  use Gettext, backend: Zoonk.Gettext
 
   @doc ~S"""
   Renders a table with generic styling.

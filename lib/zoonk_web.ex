@@ -42,7 +42,7 @@ defmodule ZoonkWeb do
         formats: [:html, :json],
         layouts: [html: ZoonkWeb.Layouts]
 
-      use Gettext, backend: ZoonkWeb.Gettext
+      use Gettext, backend: Zoonk.Gettext
 
       import Plug.Conn
 
@@ -83,7 +83,7 @@ defmodule ZoonkWeb do
   defp html_helpers do
     quote do
       # Translation
-      use Gettext, backend: ZoonkWeb.Gettext
+      use Gettext, backend: Zoonk.Gettext
 
       # HTML escaping functionality
       import Phoenix.HTML

@@ -7,7 +7,7 @@ defmodule Zoonk.Auth.UserNotifier do
   such as updating their email, signing in with a magic link,
   or confirming their account.
   """
-  use Gettext, backend: ZoonkWeb.Gettext
+  use Gettext, backend: Zoonk.Gettext
 
   alias Zoonk.Configuration
   alias Zoonk.Mailer

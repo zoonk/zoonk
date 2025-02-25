@@ -195,9 +195,9 @@ defmodule ZoonkWeb.Components.Input do
     # with our gettext backend as first argument. Translations are
     # available in the errors.po file (as we use the "errors" domain).
     if count = opts[:count] do
-      Gettext.dngettext(ZoonkWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(Zoonk.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(ZoonkWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(Zoonk.Gettext, "errors", msg, opts)
     end
   end
 

@@ -35,6 +35,9 @@ config :tailwind,
     cd: Path.expand("../assets", __DIR__)
   ]
 
+# Configure translation
+config :zoonk, Zoonk.Gettext, default_locale: "en"
+
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails
@@ -54,9 +57,6 @@ config :zoonk, ZoonkWeb.Endpoint,
   ],
   pubsub_server: Zoonk.PubSub,
   live_view: [signing_salt: "aQIHSki0"]
-
-# Configure translation
-config :zoonk, ZoonkWeb.Gettext, default_locale: "en"
 
 # Configures Ecto
 config :zoonk,

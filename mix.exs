@@ -167,10 +167,10 @@ defmodule Zoonk.MixProject do
         Core: [
           Zoonk,
           Zoonk.Check,
+          Zoonk.Gettext,
           Zoonk.Repo,
           ZoonkWeb,
           ZoonkWeb.Endpoint,
-          ZoonkWeb.Gettext,
           ZoonkWeb.Layouts,
           ZoonkWeb.Router
         ]
