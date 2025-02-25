@@ -92,7 +92,7 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
 
       {:ok, _signin_live, signin_html} =
         lv
-        |> element(~s|main a:fl-contains("Sign in")|)
+        |> element(~s|a:fl-contains("Sign in")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/login")
 

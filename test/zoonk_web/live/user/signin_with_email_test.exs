@@ -48,7 +48,7 @@ defmodule ZoonkWeb.UserLive.SignInWithEmailTest do
 
       {:ok, _signin_live, signin_html} =
         lv
-        |> element(~s|main a:fl-contains("Sign up")|)
+        |> element(~s|a:fl-contains("Sign up")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/signup")
 
