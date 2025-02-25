@@ -5,3 +5,36 @@
 @variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
 
 @plugin "./tabler.tailwind.plugin.js";
+
+@theme {
+  --color-zk-bg-light: var(--color-neutral-50);
+  --color-zk-bg-dark: var(--color-neutral-900);
+
+  --color-zk-primary: var(--color-blue-600);
+  --color-zk-primary-subtle: var(--color-blue-400);
+  --color-zk-primary-accent: var(--color-blue-800);
+  --color-zk-primary-light: var(--color-blue-100);
+  --color-zk-primary-dark: var(--color-blue-900);
+
+  --color-zk-surface: var(--color-white);
+  --color-zk-surface-hover: var(--color-neutral-50);
+  --color-zk-surface-inverse: var(--color-neutral-900);
+  --color-zk-surface-inverse-hover: var(--color-neutral-800);
+
+  --color-zk-border: var(--color-neutral-200);
+  --color-zk-border-focus: var(--color-neutral-500);
+  --color-zk-border-inverse: var(--color-neutral-700);
+
+  --color-zk-text-primary: var(--color-neutral-700);
+  --color-zk-text-secondary: var(--color-neutral-500);
+  --color-zk-text-inverse: var(--color-neutral-200);
+  --color-zk-text-inverse-secondary: var(--color-neutral-300);
+  --color-zk-text-inverse-contrast: var(--color-neutral-50);
+  --color-zk-text-contrast: var(--color-neutral-900);
+
+  --color-zk-link: var(--color-zk-primary);
+  --color-zk-link-hover: var(--color-zk-primary-accent);
+  --color-zk-link-active: var(--color-zk-primary-dark);
+  --color-zk-link-inverse: var(--color-zk-primary-subtle);
+  --color-zk-link-inverse-hover: var(--color-zk-primary-light);
+}

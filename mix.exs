@@ -114,15 +114,17 @@ defmodule Zoonk.MixProject do
       groups_for_modules: [
         Config: [Zoonk.Configuration],
         Components: [
+          ZoonkWeb.Components.Anchor,
           ZoonkWeb.Components.Button,
           ZoonkWeb.Components.DataList,
+          ZoonkWeb.Components.Divider,
           ZoonkWeb.Components.Flash,
           ZoonkWeb.Components.Form,
-          ZoonkWeb.Components.Header,
           ZoonkWeb.Components.Icon,
           ZoonkWeb.Components.Input,
           ZoonkWeb.Components.Modal,
           ZoonkWeb.Components.Table,
+          ZoonkWeb.Components.Text,
           ZoonkWeb.Components.Utils
         ],
         Controllers: [
@@ -143,6 +145,7 @@ defmodule Zoonk.MixProject do
         ],
         Contexts: [
           Zoonk.Auth,
+          Zoonk.Auth.Providers,
           Zoonk.Auth.TokenBuilder,
           Zoonk.Auth.UserNotifier,
           Zoonk.Auth.UserProfileBuilder
@@ -153,6 +156,7 @@ defmodule Zoonk.MixProject do
         Schemas: [
           Zoonk.Schemas.User,
           Zoonk.Schemas.UserProfile,
+          Zoonk.Schemas.UserProvider,
           Zoonk.Schemas.UserToken
         ],
         Queries: [

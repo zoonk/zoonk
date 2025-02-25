@@ -1,15 +1,12 @@
-defmodule ZoonkWeb.UserLive.SignInTest do
+defmodule ZoonkWeb.UserLive.SignInWithEmailTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
   import Zoonk.AuthFixtures
 
-  describe "signin page" do
-    test "renders signin page", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/login")
-
-      assert html =~ "Log in"
-      assert html =~ "Sign Up"
+  describe "signin with email page" do
+    test "renders signin with email page", %{conn: conn} do
+      {:ok, _lv, html} = live(conn, ~p"/login/email")
       assert html =~ "Log in with email"
     end
   end
@@ -18,13 +15,13 @@ defmodule ZoonkWeb.UserLive.SignInTest do
     test "sends magic link email when user exists", %{conn: conn} do
       user = user_fixture()
 
-      {:ok, lv, _html} = live(conn, ~p"/login")
+      {:ok, lv, _html} = live(conn, ~p"/login/email")
 
       {:ok, _lv, html} =
         lv
         |> form("#signin_form_magic", %{email: user.email})
         |> render_submit()
-        |> follow_redirect(conn, ~p"/login")
+        |> follow_redirect(conn, ~p"/login/email")
 
       assert html =~ "If your email is in our system"
 
@@ -33,13 +30,13 @@ defmodule ZoonkWeb.UserLive.SignInTest do
     end
 
     test "does not disclose if user is registered", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/login")
+      {:ok, lv, _html} = live(conn, ~p"/login/email")
 
       {:ok, _lv, html} =
         lv
         |> form("#signin_form_magic", %{email: "idonotexist@example.com"})
         |> render_submit()
-        |> follow_redirect(conn, ~p"/login")
+        |> follow_redirect(conn, ~p"/login/email")
 
       assert html =~ "If your email is in our system"
     end
@@ -47,11 +44,11 @@ defmodule ZoonkWeb.UserLive.SignInTest do
 
   describe "signin navigation" do
     test "redirects to registration page when the Register button is clicked", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/login")
+      {:ok, lv, _html} = live(conn, ~p"/login/email")
 
       {:ok, _signin_live, signin_html} =
         lv
-        |> element(~s|main a:fl-contains("Sign up")|)
+        |> element(~s|a:fl-contains("Sign up")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/signup")
 
@@ -66,7 +63,7 @@ defmodule ZoonkWeb.UserLive.SignInTest do
     end
 
     test "shows signin page with email filled in", %{conn: conn, user: user} do
-      {:ok, _lv, html} = live(conn, ~p"/login")
+      {:ok, _lv, html} = live(conn, ~p"/login/email")
 
       assert html =~ "You need to reauthenticate"
       refute html =~ "Sign Up"

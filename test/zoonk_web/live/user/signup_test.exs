@@ -7,9 +7,7 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
   describe "Registration page" do
     test "renders registration page", %{conn: conn} do
       {:ok, _lv, html} = live(conn, ~p"/signup")
-
       assert html =~ "Sign Up"
-      assert html =~ "Log in"
     end
 
     test "redirects if already logged in", %{conn: conn} do
@@ -63,7 +61,7 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
       {:ok, _lv, html} =
         form
         |> render_submit()
-        |> follow_redirect(conn, ~p"/login")
+        |> follow_redirect(conn, ~p"/login/email")
 
       assert html =~
                ~r/An email was sent to .*, please access it to confirm your account/
@@ -94,11 +92,11 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
 
       {:ok, _signin_live, signin_html} =
         lv
-        |> element(~s|main a:fl-contains("Sign in")|)
+        |> element(~s|a:fl-contains("Sign in")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/login")
 
-      assert signin_html =~ "Log in"
+      assert signin_html =~ "login"
     end
   end
 end

@@ -1,9 +1,6 @@
 name: Run tests and check code quality
 
-on:
-  push:
-  pull_request:
-    types: [opened, reopened, synchronize]
+on: push
 
 env:
   MIX_ENV: test

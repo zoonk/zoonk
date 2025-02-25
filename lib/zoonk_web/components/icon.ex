@@ -16,7 +16,7 @@ defmodule ZoonkWeb.Components.Icon do
       <.icon name="tabler-refresh" class="ml-1 w-3 h-3 animate-spin" />
   """
   attr :name, :string, required: true
-  attr :class, :string, default: nil
+  attr :class, :any, default: nil
 
   def icon(%{name: "tabler-" <> _rest} = assigns) do
     ~H"""

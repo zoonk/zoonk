@@ -2,92 +2,42 @@ defmodule ZoonkWeb.Live.UserSignIn do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  alias Zoonk.Auth
+  import ZoonkWeb.Components.User
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
-      <.header class="text-center">
-        <p>{dgettext("users", "Log in")}</p>
-        <:subtitle>
-          <%= if @current_user do %>
-            {dgettext(
-              "users",
-              "You need to reauthenticate to perform sensitive actions on your account."
-            )}
-          <% else %>
-            {dgettext("users", "Don't have an account?")}
-            <.link
-              navigate={~p"/signup"}
-              class="text-brand font-semibold hover:underline"
-              phx-no-format
-            >
-              {dgettext("users", "Sign up")}
-            </.link>
-            {dgettext("users", "for an account now.")}
-          <% end %>
-        </:subtitle>
-      </.header>
+    <main
+      aria-labelledby="signin-title"
+      class="h-dvh mx-auto flex max-w-sm flex-col items-center justify-center px-8 text-center"
+    >
+      <.text id="signin-title" element={:h1} size={:title} class="pb-4">
+        {dgettext("users", "Access your Zoonk account")}
+      </.text>
 
-      <.link href={~p"/auth/google"}>
-        {dgettext("users", "Log in with Google")}
-      </.link>
-
-      <.link href={~p"/auth/github"}>
-        {dgettext("users", "Log in with GitHub")}
-      </.link>
-
-      <.link href={~p"/auth/apple"}>
-        {dgettext("users", "Log in with Apple")}
-      </.link>
-
-      <.simple_form
-        :let={f}
-        for={@form}
-        id="signin_form_magic"
-        action={~p"/login"}
-        phx-submit="submit_magic"
+      <section
+        class="flex w-full flex-col gap-2"
+        aria-label={dgettext("users", "Use one of the external providers below:")}
       >
-        <.input
-          readonly={!!@current_user}
-          field={f[:email]}
-          type="email"
-          label={dgettext("users", "Email")}
-          autocomplete="username"
-          required
-        />
-        <.button class="w-full">
-          {dgettext("users", "Log in with email →")}
-        </.button>
-      </.simple_form>
-    </div>
+        <.auth_link :for={provider <- [:apple, :google, :github]} provider={provider} />
+      </section>
+
+      <section class="w-full" aria-label={dgettext("users", "Or use your email address")}>
+        <.divider label={dgettext("users", "or")} class="my-4" />
+        <.auth_link provider={:email} />
+      </section>
+
+      <section class="pt-4" aria-labelledby="signup-title">
+        <.text id="signup-title" size={:caption} variant={:secondary}>
+          {dgettext("users", "Don't have an account?")}
+        </.text>
+
+        <.a href={~p"/signup"} class="text-sm">{dgettext("users", "Sign up")}</.a>
+      </section>
+    </main>
     """
   end
 
   def mount(_params, _session, socket) do
-    email =
-      Phoenix.Flash.get(socket.assigns.flash, :email) ||
-        get_in(socket.assigns, [:current_user, Access.key(:email)])
-
-    form = to_form(%{"email" => email})
-
-    {:ok, assign(socket, form: form, trigger_submit: false)}
-  end
-
-  def handle_event("submit_magic", %{"email" => email}, socket) do
-    if user = Auth.get_user_by_email(email) do
-      Auth.deliver_signin_instructions(
-        user,
-        &url(~p"/login/#{&1}")
-      )
-    end
-
-    info =
-      dgettext("users", "If your email is in our system, you will receive instructions for logging in shortly.")
-
-    {:noreply,
-     socket
-     |> put_flash(:info, info)
-     |> push_navigate(to: ~p"/login")}
+    {:ok, socket}
   end
 end

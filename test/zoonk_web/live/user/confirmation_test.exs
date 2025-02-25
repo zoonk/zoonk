@@ -17,7 +17,7 @@ defmodule ZoonkWeb.UserLive.ConfirmationTest do
           Auth.deliver_signin_instructions(user, url)
         end)
 
-      {:ok, _lv, html} = live(conn, ~p"/login/#{token}")
+      {:ok, _lv, html} = live(conn, ~p"/login/t/#{token}")
       assert html =~ "Confirm my account"
     end
 
@@ -27,7 +27,7 @@ defmodule ZoonkWeb.UserLive.ConfirmationTest do
           Auth.deliver_signin_instructions(user, url)
         end)
 
-      {:ok, _lv, html} = live(conn, ~p"/login/#{token}")
+      {:ok, _lv, html} = live(conn, ~p"/login/t/#{token}")
       refute html =~ "Confirm my account"
       assert html =~ "Log in"
     end
@@ -38,7 +38,7 @@ defmodule ZoonkWeb.UserLive.ConfirmationTest do
           Auth.deliver_signin_instructions(user, url)
         end)
 
-      {:ok, lv, _html} = live(conn, ~p"/login/#{token}")
+      {:ok, lv, _html} = live(conn, ~p"/login/t/#{token}")
 
       form = form(lv, "#confirmation_form", %{"user" => %{"token" => token}})
       render_submit(form)
@@ -58,8 +58,8 @@ defmodule ZoonkWeb.UserLive.ConfirmationTest do
 
       {:ok, _lv, html} =
         signout_conn
-        |> live(~p"/login/#{token}")
-        |> follow_redirect(signout_conn, ~p"/login")
+        |> live(~p"/login/t/#{token}")
+        |> follow_redirect(signout_conn, ~p"/login/email")
 
       assert html =~ "Magic link is invalid or it has expired"
     end
@@ -73,7 +73,7 @@ defmodule ZoonkWeb.UserLive.ConfirmationTest do
           Auth.deliver_signin_instructions(user, url)
         end)
 
-      {:ok, lv, _html} = live(conn, ~p"/login/#{token}")
+      {:ok, lv, _html} = live(conn, ~p"/login/t/#{token}")
 
       form = form(lv, "#signin_form", %{"user" => %{"token" => token}})
       render_submit(form)
@@ -90,8 +90,8 @@ defmodule ZoonkWeb.UserLive.ConfirmationTest do
 
       {:ok, _lv, html} =
         signout_conn
-        |> live(~p"/login/#{token}")
-        |> follow_redirect(signout_conn, ~p"/login")
+        |> live(~p"/login/t/#{token}")
+        |> follow_redirect(signout_conn, ~p"/login/email")
 
       assert html =~ "Magic link is invalid or it has expired"
     end
@@ -99,8 +99,8 @@ defmodule ZoonkWeb.UserLive.ConfirmationTest do
     test "raises error for invalid token", %{conn: conn} do
       {:ok, _lv, html} =
         conn
-        |> live(~p"/login/invalid-token")
-        |> follow_redirect(conn, ~p"/login")
+        |> live(~p"/login/t/invalid-token")
+        |> follow_redirect(conn, ~p"/login/email")
 
       assert html =~ "Magic link is invalid or it has expired"
     end
