@@ -22,7 +22,15 @@ defmodule ZoonkWeb.Components.User do
 
   def signup_link(assigns) do
     ~H"""
-    <section class="pt-4" aria-label={dgettext("users", "Create an account")}>
+    <section
+      class={[
+        "fixed bottom-0 w-full p-4 sm:p-8",
+        "border-zk-border border-t",
+        "contrast-more:border-zk-border-inverse",
+        "dark:border-zk-border-inverse"
+      ]}
+      aria-label={dgettext("users", "Create an account")}
+    >
       <.text
         id="signup-title"
         aria-hidden="true"

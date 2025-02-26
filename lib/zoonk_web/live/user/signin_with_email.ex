@@ -10,7 +10,7 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
     ~H"""
     <main
       aria-labelledby="signin-title"
-      class="h-dvh mx-auto flex max-w-sm flex-col items-center justify-center gap-4 px-8 text-center"
+      class="h-dvh mx-auto flex max-w-sm flex-col items-center justify-center px-8 text-center"
     >
       <.text id="signin-title" element={:h1} size={:title} class="w-full pb-4">
         {dgettext("users", "What's your email address?")}
