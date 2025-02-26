@@ -22,7 +22,7 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
         id="signin_form_magic"
         action={~p"/login"}
         phx-submit="submit_magic"
-        class="w-full"
+        label={dgettext("users", "Sign in form")}
       >
         <.input
           readonly={!!@current_user}
