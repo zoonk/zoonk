@@ -22,6 +22,7 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
         id="signin_form_magic"
         action={~p"/login"}
         phx-submit="submit_magic"
+        class="w-full"
       >
         <.input
           readonly={!!@current_user}
@@ -31,8 +32,9 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
           autocomplete="username"
           required
         />
-        <.button class="w-full">
-          {dgettext("users", "Log in with email →")}
+
+        <.button full icon="tabler-mail-filled">
+          {dgettext("users", "Log in with email")}
         </.button>
       </.simple_form>
 

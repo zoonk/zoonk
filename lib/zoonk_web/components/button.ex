@@ -15,11 +15,12 @@ defmodule ZoonkWeb.Components.Button do
 
       <.button>Send!</.button>
       <.button variant={:outline}>Send!</.button>
-      <.button phx-click="go" class="ml-2">Send!</.button>
+      <.button full phx-click="go" class="ml-2">Send!</.button>
   """
   attr :type, :string, default: "button"
   attr :icon, :string, default: nil
   attr :variant, :atom, values: @variants, default: :primary
+  attr :full, :boolean, default: false
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
 
@@ -27,8 +28,9 @@ defmodule ZoonkWeb.Components.Button do
 
   def button(assigns) do
     ~H"""
-    <button type={@type} class={[button_class(@variant), @class]} {@rest}>
-      {render_slot(@inner_block)}
+    <button type={@type} class={[button_class(@variant, @full), @class]} {@rest}>
+      <.icon :if={@icon} name={@icon} class={icon_class(@full)} />
+      <span>{render_slot(@inner_block)}</span>
     </button>
     """
   end
@@ -36,6 +38,7 @@ defmodule ZoonkWeb.Components.Button do
   attr :id, :string, default: nil
   attr :icon, :string, default: nil
   attr :variant, :atom, values: @variants, default: :primary
+  attr :full, :boolean, default: false
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(href method navigate patch)
 
@@ -52,23 +55,34 @@ defmodule ZoonkWeb.Components.Button do
   """
   def link_as_button(assigns) do
     ~H"""
-    <.link id={@id} class={[button_class(@variant), @class]} {@rest}>
-      <.icon :if={@icon} name={@icon} class="absolute left-4 h-5 w-5" />
+    <.link id={@id} class={[button_class(@variant, @full), @class]} {@rest}>
+      <.icon :if={@icon} name={@icon} class={icon_class(@full)} />
       <span>{render_slot(@inner_block)}</span>
     </.link>
     """
   end
 
-  defp button_class(variant) do
+  defp button_class(variant, full?) do
     [
-      "relative h-12 whitespace-nowrap rounded-md px-10 ring",
+      "h-12 whitespace-nowrap rounded-md px-10 ring",
       "inline-flex items-center justify-center gap-2",
       "text-sm font-medium transition-colors",
       "focus-visible:outline-none focus-visible:ring-1",
       "disabled:pointer-events-none disabled:opacity-50",
-      variant == :outline && outline_class()
+      full? && "w-full relative",
+      variant == :outline && outline_class(),
+      variant == :primary && primary_class()
     ]
   end
+
+  defp primary_class,
+    do: [
+      "bg-zk-primary-50 text-zk-primary ring-zk-primary-50",
+      "hover:bg-zk-primary-100",
+      "focus-visible:ring-zk-primary",
+      "contrast-more:text-zk-primary-900 contrast-more:bg-zk-primary-100",
+      "contrast-more:focus-visible:ring-zk-primary-900"
+    ]
 
   defp outline_class,
     do: [
@@ -81,4 +95,11 @@ defmodule ZoonkWeb.Components.Button do
       "dark:contrast-more:text-zk-text-inverse",
       "dark:contrast-more:ring-zk-border"
     ]
+
+  defp icon_class(full?) do
+    [
+      full? && "absolute left-4",
+      "h-5 w-5"
+    ]
+  end
 end

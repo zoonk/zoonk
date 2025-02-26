@@ -13,7 +13,7 @@ defmodule ZoonkWeb.Components.User do
       navigate={get_auth_link(@action, @provider)}
       icon={get_icon(@provider)}
       variant={:outline}
-      class="w-full"
+      full
     >
       {get_auth_label(@action, @provider)}
     </.link_as_button>
