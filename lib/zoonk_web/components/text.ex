@@ -9,6 +9,7 @@ defmodule ZoonkWeb.Components.Text do
   attr :variant, :atom, values: [:primary, :secondary], default: :primary
   attr :class, :string, default: nil
   attr :id, :string, default: nil
+  attr :rest, :global
   slot :inner_block, required: true
 
   @doc """
@@ -23,7 +24,7 @@ defmodule ZoonkWeb.Components.Text do
   """
   def text(%{element: :h1} = assigns) do
     ~H"""
-    <h1 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]}>
+    <h1 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
       {render_slot(@inner_block)}
     </h1>
     """
@@ -31,7 +32,7 @@ defmodule ZoonkWeb.Components.Text do
 
   def text(%{element: :h2} = assigns) do
     ~H"""
-    <h2 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]}>
+    <h2 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
       {render_slot(@inner_block)}
     </h2>
     """
@@ -39,7 +40,7 @@ defmodule ZoonkWeb.Components.Text do
 
   def text(%{element: :h3} = assigns) do
     ~H"""
-    <h3 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]}>
+    <h3 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
       {render_slot(@inner_block)}
     </h3>
     """
@@ -47,7 +48,7 @@ defmodule ZoonkWeb.Components.Text do
 
   def text(%{element: :h4} = assigns) do
     ~H"""
-    <h4 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]}>
+    <h4 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
       {render_slot(@inner_block)}
     </h4>
     """
@@ -55,7 +56,7 @@ defmodule ZoonkWeb.Components.Text do
 
   def text(%{element: :h5} = assigns) do
     ~H"""
-    <h5 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]}>
+    <h5 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
       {render_slot(@inner_block)}
     </h5>
     """
@@ -63,7 +64,7 @@ defmodule ZoonkWeb.Components.Text do
 
   def text(%{element: :h6} = assigns) do
     ~H"""
-    <h6 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]}>
+    <h6 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
       {render_slot(@inner_block)}
     </h6>
     """
@@ -71,7 +72,7 @@ defmodule ZoonkWeb.Components.Text do
 
   def text(%{element: :p} = assigns) do
     ~H"""
-    <p id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]}>
+    <p id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
       {render_slot(@inner_block)}
     </p>
     """
@@ -79,7 +80,7 @@ defmodule ZoonkWeb.Components.Text do
 
   def text(%{element: :span} = assigns) do
     ~H"""
-    <span id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]}>
+    <span id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
       {render_slot(@inner_block)}
     </span>
     """
