@@ -31,11 +31,9 @@ defmodule ZoonkWeb.Live.UserSignUp do
           required
         />
 
-        <:actions>
-          <.button phx-disable-with={dgettext("users", "Creating account...")} class="w-full">
-            {dgettext("users", "Create an account")}
-          </.button>
-        </:actions>
+        <.button phx-disable-with={dgettext("users", "Creating account...")} class="w-full">
+          {dgettext("users", "Create an account")}
+        </.button>
       </.simple_form>
     </div>
     """

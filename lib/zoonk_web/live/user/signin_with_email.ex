@@ -6,7 +6,7 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
 
   def render(assigns) do
     ~H"""
-    <main class="mx-auto max-w-sm">
+    <main class="h-dvh mx-auto flex max-w-sm flex-col items-center justify-center px-8 text-center">
       <.simple_form
         :let={f}
         for={@form}

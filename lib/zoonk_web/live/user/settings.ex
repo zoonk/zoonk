@@ -23,11 +23,10 @@ defmodule ZoonkWeb.Live.UserSettings do
             autocomplete="username"
             required
           />
-          <:actions>
-            <.button phx-disable-with={dgettext("users", "Changing...")}>
-              {dgettext("users", "Change Email")}
-            </.button>
-          </:actions>
+
+          <.button phx-disable-with={dgettext("users", "Changing...")}>
+            {dgettext("users", "Change Email")}
+          </.button>
         </.simple_form>
       </div>
     </div>
