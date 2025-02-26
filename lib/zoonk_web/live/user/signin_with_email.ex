@@ -6,13 +6,7 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
-      <%= if @current_user do %>
-        {dgettext(
-          "users",
-          "You need to reauthenticate to perform sensitive actions on your account."
-        )}
-      <% end %>
+    <main class="mx-auto max-w-sm">
       <.simple_form
         :let={f}
         for={@form}
@@ -36,7 +30,7 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
       <.link navigate={~p"/signup"} class="mt-4 text-sm">
         {dgettext("users", "Sign up")}
       </.link>
-    </div>
+    </main>
     """
   end
 
@@ -47,7 +41,13 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
 
     form = to_form(%{"email" => email})
 
-    {:ok, assign(socket, form: form, trigger_submit: false)}
+    socket =
+      socket
+      |> assign(form: form)
+      |> assign(trigger_submit: false)
+      |> display_flash_for_logged_in_user()
+
+    {:ok, socket}
   end
 
   def handle_event("submit_magic", %{"email" => email}, socket) do
@@ -65,5 +65,15 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
      socket
      |> put_flash(:info, info)
      |> push_navigate(to: ~p"/login/email")}
+  end
+
+  defp display_flash_for_logged_in_user(socket) when is_nil(socket.assigns.current_user), do: socket
+
+  defp display_flash_for_logged_in_user(socket) do
+    put_flash(
+      socket,
+      :error,
+      dgettext("users", "You need to reauthenticate to perform sensitive actions on your account.")
+    )
   end
 end
