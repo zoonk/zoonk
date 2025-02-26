@@ -27,7 +27,14 @@ defmodule ZoonkWeb.Components.Form do
 
   def simple_form(assigns) do
     ~H"""
-    <.form :let={f} aria-label={@label} for={@for} as={@as} class={["w-full", @class]} {@rest}>
+    <.form
+      :let={f}
+      aria-label={@label}
+      for={@for}
+      as={@as}
+      class={["flex w-full flex-col gap-4", @class]}
+      {@rest}
+    >
       {render_slot(@inner_block, f)}
     </.form>
     """

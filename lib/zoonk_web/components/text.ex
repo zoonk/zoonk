@@ -4,11 +4,12 @@ defmodule ZoonkWeb.Components.Text do
   """
   use Phoenix.Component
 
-  attr :element, :atom, values: [:h1, :h2, :h3, :h4, :h5, :h6, :p, :span], default: :p
+  attr :element, :atom, values: [:h1, :h2, :h3, :h4, :h5, :h6, :p, :span, :label], default: :p
   attr :size, :atom, values: [:header, :title, :subtitle, :body, :caption], default: :body
   attr :variant, :atom, values: [:primary, :secondary], default: :primary
   attr :class, :string, default: nil
   attr :id, :string, default: nil
+  attr :for, :string, default: nil
   attr :rest, :global
   slot :inner_block, required: true
 
@@ -83,6 +84,19 @@ defmodule ZoonkWeb.Components.Text do
     <span id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
       {render_slot(@inner_block)}
     </span>
+    """
+  end
+
+  def text(%{element: :label} = assigns) do
+    ~H"""
+    <label
+      id={@id}
+      for={@for}
+      class={[get_size_class(@size), get_variant_class(@variant), @class]}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+    </label>
     """
   end
 
