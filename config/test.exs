@@ -6,7 +6,7 @@ config :logger, level: :warning
 # Clear the console before each test run
 config :mix_test_watch,
   clear: true,
-  tasks: ["test", "credo"]
+  tasks: ["test", "ci"]
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
