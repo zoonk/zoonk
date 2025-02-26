@@ -2,11 +2,20 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
   @moduledoc false
   use ZoonkWeb, :live_view
 
+  import ZoonkWeb.Components.User
+
   alias Zoonk.Auth
 
   def render(assigns) do
     ~H"""
-    <main class="h-dvh mx-auto flex max-w-sm flex-col items-center justify-center px-8 text-center">
+    <main
+      aria-labelledby="signin-title"
+      class="h-dvh mx-auto flex max-w-sm flex-col items-center justify-center px-8 text-center"
+    >
+      <.text id="signin-title" element={:h1} size={:title} class="pb-4">
+        {dgettext("users", "Access your Zoonk account")}
+      </.text>
+
       <.simple_form
         :let={f}
         for={@form}
@@ -27,9 +36,7 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
         </.button>
       </.simple_form>
 
-      <.link navigate={~p"/signup"} class="mt-4 text-sm">
-        {dgettext("users", "Sign up")}
-      </.link>
+      <.signup_link />
     </main>
     """
   end

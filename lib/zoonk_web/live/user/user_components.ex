@@ -20,6 +20,18 @@ defmodule ZoonkWeb.Components.User do
     """
   end
 
+  def signup_link(assigns) do
+    ~H"""
+    <section class="pt-4" aria-labelledby="signup-title">
+      <.text id="signup-title" size={:caption} variant={:secondary} class="leading-3">
+        {dgettext("users", "Don't have an account?")}
+      </.text>
+
+      <.a navigate={~p"/signup"} class="text-sm">{dgettext("users", "Sign up")}</.a>
+    </section>
+    """
+  end
+
   defp get_auth_link(:signin, :email), do: ~p"/login/email"
   defp get_auth_link(:signup, :email), do: ~p"/signup"
   defp get_auth_link(_action, provider), do: ~p"/auth/#{provider}"

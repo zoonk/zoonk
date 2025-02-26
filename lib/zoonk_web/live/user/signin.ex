@@ -26,13 +26,7 @@ defmodule ZoonkWeb.Live.UserSignIn do
         <.auth_link provider={:email} />
       </section>
 
-      <section class="pt-4" aria-labelledby="signup-title">
-        <.text id="signup-title" size={:caption} variant={:secondary}>
-          {dgettext("users", "Don't have an account?")}
-        </.text>
-
-        <.a href={~p"/signup"} class="text-sm">{dgettext("users", "Sign up")}</.a>
-      </section>
+      <.signup_link />
     </main>
     """
   end
