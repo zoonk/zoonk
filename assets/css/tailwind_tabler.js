@@ -1,9 +1,10 @@
 const fs = require("fs");
 const path = require("path");
+const plugin = require("tailwindcss/plugin");
 
 // Embeds Tabler Icons (https://tabler-icons.io/) into your app.css bundle
 // Credits: [Florian Arens](https://farens.me/blog/how-to-integrate-tabler-icons-into-your-phoenix-project)
-module.exports = function ({ matchComponents, theme }) {
+module.exports = plugin(function ({ matchComponents, theme }) {
   const iconsDir = path.join(__dirname, "../../deps/tabler_icons/icons");
   const values = {};
 
@@ -45,4 +46,4 @@ module.exports = function ({ matchComponents, theme }) {
     },
     { values },
   );
-};
+});

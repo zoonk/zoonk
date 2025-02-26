@@ -26,7 +26,7 @@ config :phoenix, :json_library, Jason
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "4.0.7",
+  version: "4.0.9",
   zoonk: [
     args: ~w(
       --input=css/app.css

@@ -1,10 +1,11 @@
 @import "tailwindcss" source("../..");
 
-@variant phx-click-loading (.phx-click-loading&, .phx-click-loading &);
-@variant phx-submit-loading (.phx-submit-loading&, .phx-submit-loading &);
-@variant phx-change-loading (.phx-change-loading&, .phx-change-loading &);
+@variant phx-click-loading ([".phx-click-loading&", ".phx-click-loading &"]);
+@variant phx-submit-loading ([".phx-submit-loading&", ".phx-submit-loading &"]);
+@variant phx-change-loading ([".phx-change-loading&", ".phx-change-loading &"]);
 
-@plugin "./tabler.tailwind.plugin.js";
+@plugin "./tailwind_tabler.js";
+@plugin "@tailwindcss/forms";
 
 @theme {
   --color-zk-bg-light: var(--color-neutral-50);
