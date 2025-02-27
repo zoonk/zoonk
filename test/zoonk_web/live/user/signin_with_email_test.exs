@@ -52,7 +52,7 @@ defmodule ZoonkWeb.UserLive.SignInWithEmailTest do
         |> render_click()
         |> follow_redirect(conn, ~p"/signup")
 
-      assert signin_html =~ "sign up"
+      assert signin_html =~ "Create a Zoonk account"
     end
   end
 

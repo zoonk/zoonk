@@ -21,7 +21,9 @@ defmodule ZoonkWeb.Components.User do
     """
   end
 
-  def signup_link(assigns) do
+  attr :action, :atom, values: [:signin, :signup], default: :signup
+
+  def footer_link(assigns) do
     ~H"""
     <section
       class={[
@@ -30,35 +32,26 @@ defmodule ZoonkWeb.Components.User do
         "contrast-more:border-zk-border-inverse",
         "dark:border-zk-border-inverse"
       ]}
-      aria-label={dgettext("users", "Create an account")}
+      aria-label={get_footer_aria_title(@action)}
     >
-      <.text
-        id="signup-title"
-        aria-hidden="true"
-        size={:caption}
-        variant={:secondary}
-        class="leading-3"
-      >
-        {dgettext("users", "Don't have an account?")}
+      <.text aria-hidden="true" size={:caption} variant={:secondary} class="leading-3">
+        {get_footer_title(@action)}
       </.text>
 
-      <.a navigate={~p"/signup"} class="text-sm">{dgettext("users", "Sign up")}</.a>
+      <.a navigate={get_footer_link(@action)} class="text-sm">{get_footer_action(@action)}</.a>
     </section>
     """
   end
 
   defp get_auth_link(:signin, :email), do: ~p"/login/email"
-  defp get_auth_link(:signup, :email), do: ~p"/signup"
+  defp get_auth_link(:signup, :email), do: ~p"/signup/email"
   defp get_auth_link(_action, provider), do: ~p"/auth/#{provider}"
 
   defp get_auth_label(:signin, :email), do: dgettext("users", "Login with Email")
   defp get_auth_label(:signup, :email), do: dgettext("users", "Sign up with Email")
 
-  defp get_auth_label(:signin, provider),
+  defp get_auth_label(_action, provider),
     do: dgettext("users", "Continue with %{provider}", provider: provider_name(provider))
-
-  defp get_auth_label(:signup, provider),
-    do: dgettext("users", "Sign up with %{provider}", provider: provider_name(provider))
 
   defp provider_name(provider) do
     provider
@@ -70,4 +63,16 @@ defmodule ZoonkWeb.Components.User do
   defp get_icon(:github), do: "tabler-brand-github-filled"
   defp get_icon(:google), do: "tabler-brand-google-filled"
   defp get_icon(:email), do: "tabler-mail-filled"
+
+  defp get_footer_aria_title(:signin), do: dgettext("users", "Login to your account")
+  defp get_footer_aria_title(:signup), do: dgettext("users", "Create an account")
+
+  defp get_footer_title(:signin), do: dgettext("users", "Already have an account?")
+  defp get_footer_title(:signup), do: dgettext("users", "Don't have an account?")
+
+  defp get_footer_link(:signin), do: ~p"/login"
+  defp get_footer_link(:signup), do: ~p"/signup"
+
+  defp get_footer_action(:signin), do: dgettext("users", "Login")
+  defp get_footer_action(:signup), do: dgettext("users", "Sign up")
 end

@@ -42,7 +42,7 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
         ← {dgettext("users", "Other login options")}
       </.a>
 
-      <.signup_link />
+      <.footer_link />
     </main>
     """
   end

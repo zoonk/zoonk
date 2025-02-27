@@ -26,7 +26,7 @@ defmodule ZoonkWeb.Live.UserSignIn do
         <.auth_link provider={:email} />
       </section>
 
-      <.signup_link />
+      <.footer_link />
     </main>
     """
   end
