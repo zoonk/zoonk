@@ -101,18 +101,28 @@ defmodule ZoonkWeb.Components.Input do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div>
+    <div class="text-left">
       <.label for={@id}>{@label}</.label>
+
       <select
         id={@id}
         name={@name}
-        class="mt-2 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus:border-zinc-400 focus:ring-0 sm:text-sm"
+        class={[
+          "mt-2 block w-full rounded-md sm:text-sm",
+          "border-zk-border border bg-white",
+          "focus:border-zk-border-focus focus:ring-0",
+          "dark:bg-zk-bg-dark dark:border-zk-border-inverse",
+          "dark:text-zk-text-inverse",
+          "dark:contrast-more:text-zk-text-inverse-contrast",
+          "dark:contrast-more:border-zk-border"
+        ]}
         multiple={@multiple}
         {@rest}
       >
         <option :if={@prompt} value="">{@prompt}</option>
         {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
+
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
