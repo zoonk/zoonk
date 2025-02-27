@@ -38,6 +38,10 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
         </.button>
       </.simple_form>
 
+      <.a navigate={~p"/login"} class="mt-4 text-sm">
+        ← {dgettext("users", "Other login options")}
+      </.a>
+
       <.signup_link />
     </main>
     """
