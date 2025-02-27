@@ -6,7 +6,7 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
 
   describe "Registration page" do
     test "renders registration page", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/signup")
+      {:ok, _lv, html} = live(conn, ~p"/signup/email")
       assert html =~ "Sign Up"
     end
 
@@ -14,14 +14,14 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
       result =
         conn
         |> signin_user(user_fixture())
-        |> live(~p"/signup")
+        |> live(~p"/signup/email")
         |> follow_redirect(conn, ~p"/")
 
       assert {:ok, _conn} = result
     end
 
     test "renders errors for invalid data", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/signup")
+      {:ok, lv, _html} = live(conn, ~p"/signup/email")
 
       result =
         lv
@@ -37,7 +37,7 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
     test "use the browser's language", %{conn: conn} do
       conn = put_req_header(conn, "accept-language", "pt-BR")
 
-      {:ok, lv, html} = live(conn, ~p"/signup")
+      {:ok, lv, html} = live(conn, ~p"/signup/email")
 
       assert html =~ ~s'<html lang="pt"'
       assert has_element?(lv, "option[value=pt][selected]")
@@ -46,14 +46,14 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
     test "handles an unsupported locale", %{conn: conn} do
       conn = put_req_header(conn, "accept-language", "hi")
 
-      assert {:ok, _lv, html} = live(conn, ~p"/signup")
+      assert {:ok, _lv, html} = live(conn, ~p"/signup/email")
 
       assert html =~ "Sign Up"
       assert html =~ ~s'<html lang="en"'
     end
 
     test "creates account but does not log in", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/signup")
+      {:ok, lv, _html} = live(conn, ~p"/signup/email")
 
       email = unique_user_email()
       form = form(lv, "#registration_form", user: valid_user_attributes(email: email))
@@ -71,7 +71,7 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
     end
 
     test "renders errors for duplicated email", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/signup")
+      {:ok, lv, _html} = live(conn, ~p"/signup/email")
 
       user = user_fixture(%{email: "test@email.com"})
 
@@ -88,7 +88,7 @@ defmodule ZoonkWeb.UserLive.RegistrationTest do
 
   describe "registration navigation" do
     test "redirects to signin page when the Log in button is clicked", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/signup")
+      {:ok, lv, _html} = live(conn, ~p"/signup/email")
 
       {:ok, _signin_live, signin_html} =
         lv

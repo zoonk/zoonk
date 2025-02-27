@@ -56,10 +56,11 @@ defmodule ZoonkWeb.Router do
         {Hooks.UserAuth, :mount_current_user},
         {Hooks.Language, :set_app_language}
       ] do
-      live "/signup", UserSignUp, :new
+      live "/signup", UserSignUp
+      live "/signup/email", UserSignUpWithEmail
       live "/login", UserSignIn
-      live "/login/email", UserSignInWithEmail, :new
-      live "/login/t/:token", UserConfirmation, :new
+      live "/login/email", UserSignInWithEmail
+      live "/login/t/:token", UserConfirmation
     end
   end
 
