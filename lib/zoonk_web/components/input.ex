@@ -75,7 +75,13 @@ defmodule ZoonkWeb.Components.Input do
 
     ~H"""
     <div>
-      <label class="flex items-center gap-4 text-sm leading-6 text-zinc-600">
+      <label class={[
+        "flex items-center gap-4 text-sm leading-6",
+        "text-zk-text-secondary",
+        "contrast-more:text-zk-text-contrast",
+        "dark:contrast-more:text-zk-text-inverse-contrast",
+        "dark:text-zk-text-inverse"
+      ]}>
         <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
         <input
           type="checkbox"
@@ -83,10 +89,10 @@ defmodule ZoonkWeb.Components.Input do
           name={@name}
           value="true"
           checked={@checked}
-          class="rounded border-zinc-300 text-zinc-900 focus:ring-0"
+          class="border-zk-border text-zk-primary rounded focus:ring-0"
           {@rest}
         />
-        {@label}
+        <span>{@label}</span>
       </label>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
@@ -144,8 +150,8 @@ defmodule ZoonkWeb.Components.Input do
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
           "text-zk-text-primary mt-2 block w-full rounded-lg focus:ring-0 sm:text-sm sm:leading-6",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
+          @errors == [] && "border-zk-border focus:border-zk-border-focus",
+          @errors != [] && "border-zk-danger-400 focus:border-zk-danger-500"
         ]}
         {@rest}
       />
