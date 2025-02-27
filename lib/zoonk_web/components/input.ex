@@ -74,7 +74,7 @@ defmodule ZoonkWeb.Components.Input do
       end)
 
     ~H"""
-    <div>
+    <div class="text-left">
       <label class={[
         "flex items-center gap-4 text-sm leading-6",
         "text-zk-text-secondary",
@@ -83,6 +83,7 @@ defmodule ZoonkWeb.Components.Input do
         "dark:text-zk-text-inverse"
       ]}>
         <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
+
         <input
           type="checkbox"
           id={@id}
@@ -94,6 +95,7 @@ defmodule ZoonkWeb.Components.Input do
         />
         <span>{@label}</span>
       </label>
+
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
@@ -107,15 +109,7 @@ defmodule ZoonkWeb.Components.Input do
       <select
         id={@id}
         name={@name}
-        class={[
-          "mt-2 block w-full rounded-md sm:text-sm",
-          "border-zk-border border bg-white",
-          "focus:border-zk-border-focus focus:ring-0",
-          "dark:bg-zk-bg-dark dark:border-zk-border-inverse",
-          "dark:text-zk-text-inverse",
-          "dark:contrast-more:text-zk-text-inverse-contrast",
-          "dark:contrast-more:border-zk-border"
-        ]}
+        class={[shared_input_class(), border_class(@errors)]}
         multiple={@multiple}
         {@rest}
       >
@@ -130,18 +124,16 @@ defmodule ZoonkWeb.Components.Input do
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <div>
+    <div class="text-left">
       <.label for={@id}>{@label}</.label>
+
       <textarea
         id={@id}
         name={@name}
-        class={[
-          "min-h-[6rem] mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
-        ]}
+        class={["min-h-[6rem]", shared_input_class(), border_class(@errors)]}
         {@rest}
       >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
+
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
@@ -158,11 +150,7 @@ defmodule ZoonkWeb.Components.Input do
         name={@name}
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        class={[
-          "text-zk-text-primary mt-2 block w-full rounded-lg focus:ring-0 sm:text-sm sm:leading-6",
-          @errors == [] && "border-zk-border focus:border-zk-border-focus",
-          @errors != [] && "border-zk-danger-400 focus:border-zk-danger-500"
-        ]}
+        class={[shared_input_class(), border_class(@errors)]}
         {@rest}
       />
 
@@ -179,7 +167,7 @@ defmodule ZoonkWeb.Components.Input do
 
   def label(assigns) do
     ~H"""
-    <.text element={:label} size={:caption} for={@for} class="font-semibold">
+    <.text element={:label} size={:caption} for={@for} class="mb-2 font-semibold">
       {render_slot(@inner_block)}
     </.text>
     """
@@ -197,6 +185,33 @@ defmodule ZoonkWeb.Components.Input do
       {render_slot(@inner_block)}
     </p>
     """
+  end
+
+  defp shared_input_class do
+    [
+      "block w-full rounded-lg",
+      "text-zk-text-primary",
+      "sm:text-sm sm:leading-6",
+      "placeholder:text-zk-text-secondary",
+      "dark:bg-zk-bg-dark",
+      "dark:text-zk-text-inverse",
+      "dark:placeholder:text-zk-text-inverse-secondary",
+      "dark:contrast-more:text-zk-text-inverse-contrast",
+      "dark:placeholder:contrast-more:text-zk-text-inverse-contrast"
+    ]
+  end
+
+  defp border_class([]) do
+    [
+      "border border-zk-border",
+      "focus:border-zk-border-focus focus:ring-0",
+      "dark:border-zk-border-inverse",
+      "dark:contrast-more:border-zk-border"
+    ]
+  end
+
+  defp border_class(_errors) do
+    ["border-zk-danger-400 focus:border-zk-danger-500"]
   end
 
   @doc """
