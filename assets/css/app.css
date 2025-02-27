@@ -56,3 +56,35 @@
   --color-zk-link-inverse: var(--color-zk-primary-400);
   --color-zk-link-inverse-hover: var(--color-zk-primary-50);
 }
+
+@utility zk-btn {
+  @apply h-12 whitespace-nowrap rounded-md px-10 ring
+  inline-flex items-center justify-center gap-2
+  text-sm font-medium transition-colors
+  focus-visible:outline-none focus-visible:ring-1
+  disabled:pointer-events-none disabled:opacity-50;
+}
+
+@utility zk-btn-primary {
+  @apply bg-zk-primary-50 text-zk-primary ring-zk-primary-50
+  hover:bg-zk-primary-100
+  focus-visible:ring-zk-primary
+  dark:text-zk-primary-50
+  dark:bg-zk-primary dark:hover:bg-zk-primary-700
+  dark:ring-zk-primary
+  dark:focus-visible:ring-zk-primary
+  contrast-more:text-zk-primary-900 contrast-more:bg-zk-primary-100
+  contrast-more:focus-visible:ring-zk-primary-900
+  dark:contrast-more:bg-zk-primary-900 dark:contrast-more:ring-zk-primary-900;
+}
+
+@utility zk-btn-outline {
+  @apply ring-zk-border text-zk-text-secondary bg-zk-surface
+  hover:text-zk-text-primary hover:bg-zk-surface-hover
+  focus-visible:ring-zk-border-focus
+  dark:bg-zk-surface-inverse dark:text-zk-text-inverse-secondary dark:ring-zk-border-inverse
+  dark:hover:bg-zk-surface-inverse-hover dark:hover:text-zk-text-inverse
+  contrast-more:text-zk-text-primary
+  dark:contrast-more:text-zk-text-inverse
+  dark:contrast-more:ring-zk-border;
+}

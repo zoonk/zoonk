@@ -9,14 +9,15 @@ defmodule ZoonkWeb.Components.User do
 
   def auth_link(assigns) do
     ~H"""
-    <.link_as_button
+    <.a
+      kind={:button}
       navigate={get_auth_link(@action, @provider)}
       icon={get_icon(@provider)}
       variant={:outline}
       full
     >
       {get_auth_label(@action, @provider)}
-    </.link_as_button>
+    </.a>
     """
   end
 
