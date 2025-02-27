@@ -6,8 +6,8 @@ defmodule ZoonkWeb.UserLive.SignInWithEmailTest do
 
   describe "signin with email page" do
     test "renders signin with email page", %{conn: conn} do
-      {:ok, _lv, html} = live(conn, ~p"/login/email")
-      assert html =~ "Log in with email"
+      {:ok, lv, _html} = live(conn, ~p"/login/email")
+      assert has_element?(lv, "button[type=submit]", "Login")
     end
   end
 
@@ -52,7 +52,7 @@ defmodule ZoonkWeb.UserLive.SignInWithEmailTest do
         |> render_click()
         |> follow_redirect(conn, ~p"/signup")
 
-      assert signin_html =~ "Create a Zoonk account"
+      assert signin_html =~ "Sign up"
     end
   end
 
@@ -63,11 +63,11 @@ defmodule ZoonkWeb.UserLive.SignInWithEmailTest do
     end
 
     test "shows signin page with email filled in", %{conn: conn, user: user} do
-      {:ok, _lv, html} = live(conn, ~p"/login/email")
+      {:ok, lv, html} = live(conn, ~p"/login/email")
 
       assert html =~ "You need to reauthenticate"
       refute html =~ "Sign Up"
-      assert html =~ "Log in with email"
+      assert has_element?(lv, "button", "Login")
 
       assert html =~
                ~s(<input type="email" name="email" id="signin_form_magic_email" value="#{user.email}")

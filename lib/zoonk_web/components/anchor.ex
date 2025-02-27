@@ -7,6 +7,7 @@ defmodule ZoonkWeb.Components.Anchor do
   import ZoonkWeb.Components.Icon
 
   attr :class, :string, default: nil, doc: "CSS class to apply to the anchor"
+  attr :weight, :atom, values: [:normal, :medium], default: :medium, doc: "Font weight of the anchor"
   attr :kind, :atom, values: [:link, :button], default: :link, doc: "Kind of anchor to render"
   attr :variant, :atom, values: [:primary, :outline], default: :primary, doc: "Variant of anchor to render"
   attr :full, :boolean, default: false, doc: "Whether the anchor should be full width"
@@ -26,7 +27,9 @@ defmodule ZoonkWeb.Components.Anchor do
     ~H"""
     <.link
       class={[
-        "text-zk-link font-medium",
+        @weight == :normal && "font-normal",
+        @weight == :medium && "font-medium",
+        "text-zk-link",
         "hover:text-zk-link-hover hover:underline",
         "active:text-zk-link-active",
         "focus-visible:text-zk-link-hover focus-visible:underline",

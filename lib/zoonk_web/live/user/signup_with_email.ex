@@ -2,16 +2,22 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
   @moduledoc false
   use ZoonkWeb, :live_view
 
+  import ZoonkWeb.Components.User
+
   alias Zoonk.Auth
   alias Zoonk.Schemas.User
   alias ZoonkWeb.Helpers
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
-      <h1 class="mb-4 text-2xl font-bold">Sign Up</h1>
-      <.link navigate={~p"/login"} class="mb-4 flex items-center">Sign in</.link>
-      <.simple_form for={@form} id="registration_form" phx-submit="save" phx-change="validate">
+    <.main_container action={:signup} show_options>
+      <.simple_form
+        for={@form}
+        id="registration_form"
+        phx-submit="save"
+        phx-change="validate"
+        label={dgettext("users", "Registration form")}
+      >
         <.error :if={@check_errors}>
           {dgettext("users", "Oops, something went wrong! Please check the errors below.")}
         </.error>
@@ -23,6 +29,7 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
           options={Zoonk.Configuration.language_select_options()}
           required
         />
+
         <.input
           field={@form[:email]}
           type="email"
@@ -31,11 +38,16 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
           required
         />
 
-        <.button phx-disable-with={dgettext("users", "Creating account...")} class="w-full">
+        <.button
+          type="submit"
+          phx-disable-with={dgettext("users", "Creating account...")}
+          full
+          icon="tabler-user-plus"
+        >
           {dgettext("users", "Create an account")}
         </.button>
       </.simple_form>
-    </div>
+    </.main_container>
     """
   end
 

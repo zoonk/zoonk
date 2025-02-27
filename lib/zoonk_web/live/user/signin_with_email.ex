@@ -8,14 +8,7 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
 
   def render(assigns) do
     ~H"""
-    <main
-      aria-labelledby="signin-title"
-      class="h-dvh mx-auto flex max-w-sm flex-col items-center justify-center px-8 text-center"
-    >
-      <.text id="signin-title" element={:h1} size={:title} class="w-full pb-4">
-        {dgettext("users", "What's your email address?")}
-      </.text>
-
+    <.main_container action={:signin} show_options>
       <.simple_form
         :let={f}
         for={@form}
@@ -33,17 +26,11 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
           required
         />
 
-        <.button full icon="tabler-mail-filled">
-          {dgettext("users", "Log in with email")}
+        <.button type="submit" full icon="tabler-mail-filled">
+          {dgettext("users", "Login")}
         </.button>
       </.simple_form>
-
-      <.a navigate={~p"/login"} class="mt-4 text-sm">
-        ← {dgettext("users", "Other login options")}
-      </.a>
-
-      <.footer_link />
-    </main>
+    </.main_container>
     """
   end
 

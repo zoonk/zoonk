@@ -4,8 +4,10 @@ defmodule ZoonkWeb.Components.User do
 
   alias Zoonk.Configuration
 
+  @actions [:signin, :signup]
+
   attr :provider, :atom, values: [:email | Configuration.list_supported_oauth_providers()], required: true
-  attr :action, :atom, values: [:signin, :signup], default: :signin
+  attr :action, :atom, values: @actions, default: :signin
 
   def auth_link(assigns) do
     ~H"""
@@ -21,13 +23,13 @@ defmodule ZoonkWeb.Components.User do
     """
   end
 
-  attr :action, :atom, values: [:signin, :signup], default: :signup
+  attr :action, :atom, values: @actions, default: :signup
 
   def footer_link(assigns) do
     ~H"""
     <section
       class={[
-        "fixed bottom-0 w-full p-4 sm:p-8",
+        "fixed bottom-0 w-full p-4 text-center sm:p-8",
         "border-zk-border border-t",
         "contrast-more:border-zk-border-inverse",
         "dark:border-zk-border-inverse"
@@ -38,10 +40,54 @@ defmodule ZoonkWeb.Components.User do
         {get_footer_title(@action)}
       </.text>
 
-      <.a navigate={get_footer_link(@action)} class="text-sm">{get_footer_action(@action)}</.a>
+      <.a navigate={get_auth_link(@action)} class="text-sm">{get_footer_cta(@action)}</.a>
     </section>
     """
   end
+
+  attr :action, :atom, values: @actions, default: :signin
+
+  def auth_title(assigns) do
+    ~H"""
+    <.text id="auth-title" element={:h1} size={:header} class="w-full pb-8">
+      {get_auth_header(@action)}
+    </.text>
+    """
+  end
+
+  attr :action, :atom, values: @actions, default: :signin
+  attr :show_options, :boolean, default: false
+  slot :inner_block, required: true
+
+  def main_container(assigns) do
+    ~H"""
+    <main
+      aria-labelledby="auth-title"
+      class="h-[calc(100dvh-70px)] mx-auto flex max-w-sm flex-col items-center justify-center px-8 text-center"
+    >
+      <.auth_title action={@action} />
+
+      {render_slot(@inner_block)}
+
+      <.a
+        :if={@show_options}
+        weight={:normal}
+        navigate={get_auth_link(get_footer_action(@action))}
+        class="mt-4 text-sm"
+      >
+        ← {get_back_label(@action)}
+      </.a>
+
+      <.footer_link action={get_footer_action(@action)} />
+    </main>
+    """
+  end
+
+  defp get_auth_header(:signin), do: dgettext("users", "Access your Zoonk account.")
+  defp get_auth_header(:signup), do: dgettext("users", "Start learning the skills to build amazing things.")
+
+  defp get_auth_link(:signin), do: ~p"/login"
+  defp get_auth_link(:signup), do: ~p"/signup"
 
   defp get_auth_link(:signin, :email), do: ~p"/login/email"
   defp get_auth_link(:signup, :email), do: ~p"/signup/email"
@@ -52,6 +98,9 @@ defmodule ZoonkWeb.Components.User do
 
   defp get_auth_label(_action, provider),
     do: dgettext("users", "Continue with %{provider}", provider: provider_name(provider))
+
+  defp get_back_label(:signin), do: dgettext("users", "Other login options")
+  defp get_back_label(:signup), do: dgettext("users", "Other sign up options")
 
   defp provider_name(provider) do
     provider
@@ -64,15 +113,19 @@ defmodule ZoonkWeb.Components.User do
   defp get_icon(:google), do: "tabler-brand-google-filled"
   defp get_icon(:email), do: "tabler-mail-filled"
 
+  # We show the opposite action in the footer
+  # If a user is in the signin page, we show the signup link
+  # If a user is in the signup page, we show the signin link
+  # So, we need to get the opposite action
+  defp get_footer_action(:signin), do: :signup
+  defp get_footer_action(:signup), do: :signin
+
   defp get_footer_aria_title(:signin), do: dgettext("users", "Login to your account")
   defp get_footer_aria_title(:signup), do: dgettext("users", "Create an account")
 
   defp get_footer_title(:signin), do: dgettext("users", "Already have an account?")
   defp get_footer_title(:signup), do: dgettext("users", "Don't have an account?")
 
-  defp get_footer_link(:signin), do: ~p"/login"
-  defp get_footer_link(:signup), do: ~p"/signup"
-
-  defp get_footer_action(:signin), do: dgettext("users", "Login")
-  defp get_footer_action(:signup), do: dgettext("users", "Sign up")
+  defp get_footer_cta(:signin), do: dgettext("users", "Login")
+  defp get_footer_cta(:signup), do: dgettext("users", "Sign up")
 end

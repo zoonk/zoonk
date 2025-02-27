@@ -9,14 +9,7 @@ defmodule ZoonkWeb.Live.UserSignUp do
 
   def render(assigns) do
     ~H"""
-    <main
-      aria-labelledby="signup-title"
-      class="h-dvh mx-auto flex max-w-sm flex-col items-center justify-center px-8 text-center"
-    >
-      <.text id="signup-title" element={:h1} size={:title} class="pb-4">
-        {dgettext("users", "Create a Zoonk account")}
-      </.text>
-
+    <.main_container action={:signup}>
       <section
         class="flex w-full flex-col gap-2"
         aria-label={dgettext("users", "Use one of the external providers below:")}
@@ -28,9 +21,7 @@ defmodule ZoonkWeb.Live.UserSignUp do
         <.divider label={dgettext("users", "or")} class="my-4" />
         <.auth_link provider={:email} action={:signup} />
       </section>
-
-      <.footer_link action={:signin} />
-    </main>
+    </.main_container>
     """
   end
 
