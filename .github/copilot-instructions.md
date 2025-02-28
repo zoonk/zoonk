@@ -56,13 +56,13 @@ When translating files, make sure the translations are consistent across the app
 ## Naming Conventions
 
 - **Plugs**: Located in `zoonk_web/plugs`, named as `ZoonkWeb.Plugs.MyPlug`.
-- **Controllers**: Located in `zoonk_web/controllers`, named as `ZoonkWeb.Controllers.MyController`.
-- **Live View Hooks**: Located in `zoonk_web/hooks`, named as `ZoonkWeb.Hooks.MyHook`.
-- **Live Views**: Located in `zoonk_web/live`, named as `ZoonkWeb.Live.MyLive`.
-- **Components**: Located in `zoonk_web/components`, named as `ZoonkWeb.Components.MyComponent`.
-- **Helpers**: Located in `zoonk_web/helpers`, named as `ZoonkWeb.Helpers.MyHelper`.
-- **Schemas**: Located in `zoonk/_schemas`, named as `Zoonk.Schemas.MySchema`.
-- **Queries**: Located in `zoonk/_queries`, named as `Zoonk.Queries.MySchema`.
-- **Custom Credo Checks**: Located in `zoonk/_checks`, named as `Zoonk.Checks.Category.MyCheck`.
-- **Contexts**: Each has its own directory (e.g., `auth`) and is named as `Zoonk.MyContext`.
-- **Subcontexts**: Placed inside the main context's directory, named as `Zoonk.MyContext.MySubcontext`.
+- **Controllers**: Located in `zoonk_web/controllers`, named as `ZoonkWeb.Controllers.UserAuth`.
+- **Live View Hooks**: Located in `zoonk_web/hooks`, named as `ZoonkWeb.Hooks.UserAuth`.
+- **Live Views**: Located in `zoonk_web/live`, named as `ZoonkWeb.Live.UserAuth`.
+- **Components**: Located in `zoonk_web/components`, named as `ZoonkWeb.Components.Button`.
+- **Helpers**: Located in `zoonk_web/helpers`, named as `ZoonkWeb.Helpers.UserAuth`.
+- **Schemas**: Located in `zoonk/_schemas`, named as `Zoonk.Schemas.User`.
+- **Queries**: Located in `zoonk/_queries`, named as `Zoonk.Queries.User`.
+- **Custom Credo Checks**: Located in `zoonk/_checks`, named as `Zoonk.Checks.Category.RemoveItem`.
+- **Contexts**: Each has its own directory (e.g., `auth`) and is named as `Zoonk.Auth`.
+- **Subcontexts**: Placed inside the main context's directory, named as `Zoonk.Auth.UserProvider`.

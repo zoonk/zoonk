@@ -78,6 +78,20 @@ defmodule ZoonkWeb.Components.User do
         ← {get_back_label(@action)}
       </.a>
 
+      <section
+        :if={@action == :signup}
+        aria-label={dgettext("users", "Terms of user and privacy policy")}
+        class="pt-8"
+      >
+        <.text size={:caption} variant={:secondary}>
+          {dgettext("users", "By signing up, you agree to our %{terms} and %{privacy}.",
+            terms: get_terms_link("/terms", dgettext("users", "Terms of Use")),
+            privacy: get_terms_link("/privacy", dgettext("users", "Privacy Policy"))
+          )
+          |> Phoenix.HTML.raw()}
+        </.text>
+      </section>
+
       <.footer_link action={get_footer_action(@action)} />
     </main>
     """
@@ -128,4 +142,8 @@ defmodule ZoonkWeb.Components.User do
 
   defp get_footer_cta(:signin), do: dgettext("users", "Login")
   defp get_footer_cta(:signup), do: dgettext("users", "Sign up")
+
+  defp get_terms_link(link, label) do
+    "<a href='#{link}' class=\"underline\">#{label}</a>"
+  end
 end

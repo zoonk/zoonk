@@ -72,6 +72,10 @@ defmodule ZoonkWeb.Router do
 
     get "/auth/:provider", OAuth, :request
     get "/auth/:provider/callback", OAuth, :callback
+
+    # Legal routes
+    get "/terms", Legal, :terms
+    get "/privacy", Legal, :privacy
   end
 
   # We need this because Apple's oAuth handling sends a POST request
