@@ -45,7 +45,7 @@ defmodule Zoonk.Queries.UserToken do
   not expired (after @session_validity_in_days).
   """
   def verify_session_token(token) do
-    session_validity_in_days = Zoonk.Configuration.get_token_max_age_in_days()
+    session_validity_in_days = Zoonk.Configuration.get_token_max_age(:days)
 
     query =
       token

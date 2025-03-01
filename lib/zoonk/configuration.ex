@@ -34,15 +34,18 @@ defmodule Zoonk.Configuration do
 
   @doc group: "Authentication"
   @doc """
-  Returns the maximum age of a token in days.
-  """
-  def get_token_max_age_in_days, do: 365
+  Returns the maximum age of a token.
 
-  @doc group: "Authentication"
-  @doc """
-  Returns the maximum age of a token in seconds.
+  ## Example
+
+      iex> get_token_max_age(:days)
+      365
+
+      iex> get_token_max_age(:seconds)
+      31536000
   """
-  def get_token_max_age_in_seconds, do: get_token_max_age_in_days() * 24 * 60 * 60
+  def get_token_max_age(:days), do: 365
+  def get_token_max_age(:seconds), do: get_token_max_age(:days) * 24 * 60 * 60
 
   @doc group: "Authentication"
   @doc """
