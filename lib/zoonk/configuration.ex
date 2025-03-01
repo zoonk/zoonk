@@ -77,24 +77,18 @@ defmodule Zoonk.Configuration do
 
   ## Example
 
-      iex> supported_language_keys()
+      iex> list_language_keys(:atom)
       [:en, :de, :es, :fr, :it, :ja, :ko, :pt, :tr, :zh_Hans, :zh_Hant]
+
+      iex> list_language_keys(:string)
+      ["en", "de", "es", "fr", "it", "ja", "ko", "pt", "tr", "zh_Hans", "zh_Hant"]
   """
-  def supported_language_keys do
+  def list_language_keys(:atom) do
     Enum.map(@supported_languages, fn {key, _value} -> key end)
   end
 
-  @doc group: "Language"
-  @doc """
-  Returns a list of supported language strings.
-
-  ## Example
-
-      iex> supported_language_strings()
-      ["en", "de", "es", "fr", "it", "ja", "ko", "pt", "tr", "zh_Hans", "zh_Hant"]
-  """
-  def supported_language_strings do
-    Enum.map(supported_language_keys(), fn language -> Atom.to_string(language) end)
+  def list_language_keys(:string) do
+    Enum.map(@supported_languages, fn {key, _value} -> Atom.to_string(key) end)
   end
 
   @doc group: "Language"

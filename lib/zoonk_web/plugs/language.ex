@@ -71,6 +71,8 @@ defmodule ZoonkWeb.Plugs.Language do
   defp extract_primary_language([]), do: Configuration.default_language_string()
 
   defp primary_language_supported?(language) do
-    Enum.member?(Configuration.supported_language_strings(), language)
+    :string
+    |> Configuration.list_language_keys()
+    |> Enum.member?(language)
   end
 end

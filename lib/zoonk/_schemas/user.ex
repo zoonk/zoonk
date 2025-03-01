@@ -44,7 +44,7 @@ defmodule Zoonk.Schemas.User do
     field :stripe_customer_id, :string
 
     field :language, Ecto.Enum,
-      values: Configuration.supported_language_keys(),
+      values: Configuration.list_language_keys(:atom),
       default: Configuration.default_language_key()
 
     field :confirmed_at, :utc_datetime
