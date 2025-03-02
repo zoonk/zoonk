@@ -39,6 +39,7 @@ defmodule Zoonk.Schemas.User do
 
   schema "users" do
     field :year_of_birth, :integer
+    field :currency, Ecto.Enum, values: Configuration.list_currencies(:atom), default: :USD
     field :kind, Ecto.Enum, values: [:regular, :agent, :guest, :white_label], default: :regular
     field :email, :string
     field :stripe_customer_id, :string

@@ -26,7 +26,7 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
           field={@form[:language]}
           type="select"
           label={dgettext("users", "Language")}
-          options={Zoonk.Configuration.list_language_options()}
+          options={Zoonk.Configuration.list_languages(:options)}
           required
         />
 
