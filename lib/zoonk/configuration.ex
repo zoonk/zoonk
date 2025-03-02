@@ -34,63 +34,64 @@ defmodule Zoonk.Configuration do
 
   @doc group: "Authentication"
   @doc """
-  Returns the maximum age of a token.
+  Returns the maximum age or validity of an item.
+
+  For magic link tokens, it is very important to keep their expiry short,
+  since someone with access to the email may take over the account.
 
   ## Example
 
-      iex> get_token_max_age(:days)
+      iex> get_max_age(:token, :days)
       365
 
-      iex> get_token_max_age(:seconds)
+      iex> get_max_age(:token, :seconds)
       31536000
+
+      iex> get_max_age(:magic_link, :minutes)
+      15
+
+      iex> get_max_age(:change_email, :days)
+      7
   """
-  def get_token_max_age(:days), do: 365
-  def get_token_max_age(:seconds), do: get_token_max_age(:days) * 24 * 60 * 60
+  def get_max_age(:token, :days), do: 365
+  def get_max_age(:token, :seconds), do: get_max_age(:token, :days) * 24 * 60 * 60
+  def get_max_age(:magic_link, :minutes), do: 15
+  def get_max_age(:change_email, :days), do: 7
 
   @doc group: "Authentication"
   @doc """
-  Returns the validity of a magic link token in minutes.
+  Returns the name of a cookie.
 
-  It is very important to keep the magic link token expiry short,
-  since someone with access to the email may take over the account.
-  """
-  def get_magic_link_validity_in_minutes, do: 15
+  ## Example
 
-  @doc group: "Authentication"
-  @doc """
-  Returns the validity of a change email token in days.
+      iex> get_cookie_name(:remember_me)
+      "_zoonk_web_user_remember_me"
   """
-  def get_change_email_validity_in_days, do: 7
-
-  @doc group: "Authentication"
-  @doc """
-  Returns the name of the remember me cookie.
-  """
-  def get_remember_me_cookie_name, do: "_zoonk_web_user_remember_me"
+  def get_cookie_name(:remember_me), do: "_zoonk_web_user_remember_me"
 
   @doc group: "Authentication"
   @doc """
   Returns a list of supported oAuth providers.
   """
-  def list_supported_oauth_providers, do: [:apple, :github, :google, :microsoft]
+  def list_providers, do: [:apple, :github, :google, :microsoft]
 
   @doc group: "Language"
   @doc """
-  Returns a list of supported language keys.
+  Returns a list of supported languages.
 
   ## Example
 
-      iex> list_language_keys(:atom)
+      iex> list_languages(:atom)
       [:en, :de, :es, :fr, :it, :ja, :ko, :pt, :tr, :zh_Hans, :zh_Hant]
 
-      iex> list_language_keys(:string)
+      iex> list_languages(:string)
       ["en", "de", "es", "fr", "it", "ja", "ko", "pt", "tr", "zh_Hans", "zh_Hant"]
   """
-  def list_language_keys(:atom) do
+  def list_languages(:atom) do
     Enum.map(@supported_languages, fn {key, _value} -> key end)
   end
 
-  def list_language_keys(:string) do
+  def list_languages(:string) do
     Enum.map(@supported_languages, fn {key, _value} -> Atom.to_string(key) end)
   end
 
@@ -100,21 +101,14 @@ defmodule Zoonk.Configuration do
 
   ## Example
 
-      iex> default_language_key()
+      iex> get_default_language(:atom)
       :en
-  """
-  def default_language_key, do: String.to_existing_atom(@default_language)
 
-  @doc group: "Language"
-  @doc """
-  Returns a string with the default language key.
-
-  ## Example
-
-      iex> default_language_string()
+      iex> get_default_language(:string)
       "en"
   """
-  def default_language_string, do: @default_language
+  def get_default_language(:atom), do: String.to_existing_atom(@default_language)
+  def get_default_language(:string), do: @default_language
 
   @doc group: "Language"
   @doc """
@@ -126,10 +120,10 @@ defmodule Zoonk.Configuration do
 
   ## Example
 
-      iex> language_select_options()
+      iex> list_language_options()
       [{"English", "en"}, {"Deutsch", "de"}, ...]
   """
-  def language_select_options do
+  def list_language_options do
     Enum.map(@supported_languages, fn {key, value} -> {value, Atom.to_string(key)} end)
   end
 end

@@ -24,7 +24,7 @@ defmodule ZoonkWeb.Plugs.UserAuth do
   alias Zoonk.Configuration
   alias ZoonkWeb.Helpers
 
-  @remember_me_cookie Configuration.get_remember_me_cookie_name()
+  @remember_me_cookie Configuration.get_cookie_name(:remember_me)
 
   @doc """
   Authenticates the user by looking into the session

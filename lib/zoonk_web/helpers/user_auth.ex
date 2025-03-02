@@ -14,8 +14,8 @@ defmodule ZoonkWeb.Helpers.UserAuth do
   alias Zoonk.Auth
   alias Zoonk.Configuration
 
-  @max_age Configuration.get_token_max_age(:seconds)
-  @remember_me_cookie Configuration.get_remember_me_cookie_name()
+  @max_age Configuration.get_max_age(:token, :seconds)
+  @remember_me_cookie Configuration.get_cookie_name(:remember_me)
   @remember_me_options [sign: true, max_age: @max_age, same_site: "Lax"]
 
   @doc """

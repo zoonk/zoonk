@@ -45,7 +45,7 @@ defmodule Zoonk.Queries.UserToken do
   not expired (after @session_validity_in_days).
   """
   def verify_session_token(token) do
-    session_validity_in_days = Zoonk.Configuration.get_token_max_age(:days)
+    session_validity_in_days = Zoonk.Configuration.get_max_age(:token, :days)
 
     query =
       token
@@ -75,7 +75,7 @@ defmodule Zoonk.Queries.UserToken do
           hashed_token
           |> by_token_and_context("signin")
           |> join(:inner, [token], user in assoc(token, :user))
-          |> where([token], token.inserted_at > ago(^Configuration.get_magic_link_validity_in_minutes(), "minute"))
+          |> where([token], token.inserted_at > ago(^Configuration.get_max_age(:magic_link, :minutes), "minute"))
           |> where([token, user], token.sent_to == user.email)
           |> select([token, user], {user, token})
 
@@ -105,7 +105,7 @@ defmodule Zoonk.Queries.UserToken do
         query =
           hashed_token
           |> by_token_and_context(context)
-          |> where([token], token.inserted_at > ago(^Configuration.get_change_email_validity_in_days(), "day"))
+          |> where([token], token.inserted_at > ago(^Configuration.get_max_age(:change_email, :days), "day"))
 
         {:ok, query}
 

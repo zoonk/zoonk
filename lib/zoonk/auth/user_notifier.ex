@@ -35,7 +35,7 @@ defmodule Zoonk.Auth.UserNotifier do
         """,
         email: user.email,
         url: url,
-        expiration_days: Zoonk.Configuration.get_change_email_validity_in_days()
+        expiration_days: Zoonk.Configuration.get_max_age(:change_email, :days)
       )
 
     Mailer.send_email(user.email, subject, content)
@@ -70,7 +70,7 @@ defmodule Zoonk.Auth.UserNotifier do
         """,
         email: user.email,
         url: url,
-        expiration_minutes: Configuration.get_magic_link_validity_in_minutes()
+        expiration_minutes: Configuration.get_max_age(:magic_link, :minutes)
       )
 
     Mailer.send_email(user.email, subject, content)
@@ -95,7 +95,7 @@ defmodule Zoonk.Auth.UserNotifier do
         """,
         email: user.email,
         url: url,
-        expiration_minutes: Configuration.get_magic_link_validity_in_minutes()
+        expiration_minutes: Configuration.get_max_age(:magic_link, :minutes)
       )
 
     Mailer.send_email(user.email, subject, content)

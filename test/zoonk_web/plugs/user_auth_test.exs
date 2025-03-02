@@ -8,7 +8,7 @@ defmodule ZoonkWeb.UserAuthPlugTest do
   alias ZoonkWeb.Helpers
   alias ZoonkWeb.Plugs
 
-  @remember_me_cookie Configuration.get_remember_me_cookie_name()
+  @remember_me_cookie Configuration.get_cookie_name(:remember_me)
 
   setup %{conn: conn} do
     conn =

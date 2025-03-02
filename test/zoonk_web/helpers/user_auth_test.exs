@@ -8,8 +8,8 @@ defmodule ZoonkWeb.UserAuthHelperTest do
   alias Zoonk.Configuration
   alias ZoonkWeb.Helpers
 
-  @remember_me_cookie Configuration.get_remember_me_cookie_name()
-  @max_age Configuration.get_token_max_age(:seconds)
+  @remember_me_cookie Configuration.get_cookie_name(:remember_me)
+  @max_age Configuration.get_max_age(:token, :seconds)
 
   setup %{conn: conn} do
     conn =

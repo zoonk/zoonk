@@ -6,7 +6,7 @@ defmodule ZoonkWeb.Components.User do
 
   @actions [:signin, :signup]
 
-  attr :provider, :atom, values: [:email | Configuration.list_supported_oauth_providers()], required: true
+  attr :provider, :atom, values: [:email | Configuration.list_providers()], required: true
   attr :action, :atom, values: @actions, default: :signin
 
   def auth_link(assigns) do
