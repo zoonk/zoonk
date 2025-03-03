@@ -15,7 +15,8 @@ defmodule Zoonk.Application do
       # Start a worker by calling: Zoonk.Worker.start_link(arg)
       # {Zoonk.Worker, arg},
       # Start to serve requests, typically the last entry
-      ZoonkWeb.Endpoint
+      ZoonkWeb.Endpoint,
+      Zoonk.Vault
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

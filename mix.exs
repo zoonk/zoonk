@@ -40,6 +40,7 @@ defmodule Zoonk.MixProject do
     [
       {:assent, "~> 0.3.0"},
       {:bandit, "~> 1.5"},
+      {:cloak_ecto, "~> 1.3.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dns_cluster, "~> 0.1.1"},
       {:ecto_sql, "~> 3.10"},
@@ -101,7 +102,7 @@ defmodule Zoonk.MixProject do
         "sobelow --config",
         "deps.unlock --check-unused",
         "deps.audit",
-        "xref graph --label compile-connected --fail-above 0"
+        "xref graph --label compile-connected --fail-above 0 --exclude lib/zoonk/_encrypted/binary.ex"
       ]
     ]
   end
@@ -135,6 +136,7 @@ defmodule Zoonk.MixProject do
           ZoonkWeb.Components.Utils
         ],
         Controllers: [
+          ZoonkWeb.Controllers.Legal,
           ZoonkWeb.Controllers.OAuth,
           ZoonkWeb.Controllers.UserAuth
         ],
@@ -161,6 +163,11 @@ defmodule Zoonk.MixProject do
           Zoonk.Mailer
         ],
         Schemas: [
+          Zoonk.Schemas.City,
+          Zoonk.Schemas.Country,
+          Zoonk.Schemas.Region,
+          Zoonk.Schemas.State,
+          Zoonk.Schemas.Subregion,
           Zoonk.Schemas.User,
           Zoonk.Schemas.UserProfile,
           Zoonk.Schemas.UserProvider,
@@ -176,6 +183,7 @@ defmodule Zoonk.MixProject do
           Zoonk.Check,
           Zoonk.Gettext,
           Zoonk.Repo,
+          Zoonk.Vault,
           ZoonkWeb,
           ZoonkWeb.Endpoint,
           ZoonkWeb.Layouts,

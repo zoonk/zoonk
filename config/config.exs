@@ -58,6 +58,11 @@ config :zoonk, ZoonkWeb.Endpoint,
   pubsub_server: Zoonk.PubSub,
   live_view: [signing_salt: "aQIHSki0"]
 
+# Make sure all schemas are migrated when running `mix cloak.migrate.ecto`
+config :zoonk,
+  cloak_repo: Zoonk.Repo,
+  cloak_schemas: [Zoonk.Schemas.User]
+
 # Configures Ecto
 config :zoonk,
   ecto_repos: [Zoonk.Repo],

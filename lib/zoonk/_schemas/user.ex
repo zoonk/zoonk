@@ -43,6 +43,7 @@ defmodule Zoonk.Schemas.User do
     field :kind, Ecto.Enum, values: [:regular, :agent, :guest, :white_label], default: :regular
     field :email, :string
     field :stripe_customer_id, :string
+    field :tax_id, Zoonk.Encrypted.Binary
 
     field :language, Ecto.Enum,
       values: Configuration.list_languages(:atom),
@@ -63,7 +64,7 @@ defmodule Zoonk.Schemas.User do
   def settings_changeset(user, attrs, opts \\ []) do
     user
     |> email_changeset(attrs, opts)
-    |> cast(attrs, [:language])
+    |> cast(attrs, [:language, :tax_id])
     |> validate_required([:language])
   end
 
