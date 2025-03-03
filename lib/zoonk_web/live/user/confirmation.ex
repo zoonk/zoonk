@@ -6,7 +6,7 @@ defmodule ZoonkWeb.Live.UserConfirmation do
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+    <div class="h-[calc(100dvh-70px)] mx-auto flex max-w-sm flex-col items-center justify-center px-8 text-center">
       <.simple_form
         :if={!@user.confirmed_at}
         for={@form}
