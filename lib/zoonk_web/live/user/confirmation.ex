@@ -17,7 +17,7 @@ defmodule ZoonkWeb.Live.UserConfirmation do
       >
         <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
 
-        <.button phx-disable-with={dgettext("users", "Confirming...")} class="w-full">
+        <.button type="submit" phx-disable-with={dgettext("users", "Confirming...")} class="w-full">
           {dgettext("users", "Confirm my account")}
         </.button>
       </.simple_form>
@@ -32,7 +32,7 @@ defmodule ZoonkWeb.Live.UserConfirmation do
       >
         <input type="hidden" name={@form[:token].name} value={@form[:token].value} />
 
-        <.button phx-disable-with={dgettext("users", "Logging in...")} class="w-full">
+        <.button type="submit" phx-disable-with={dgettext("users", "Logging in...")} class="w-full">
           {dgettext("users", "Log in")}
         </.button>
       </.simple_form>

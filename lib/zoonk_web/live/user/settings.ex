@@ -24,7 +24,7 @@ defmodule ZoonkWeb.Live.UserSettings do
             required
           />
 
-          <.button phx-disable-with={dgettext("users", "Changing...")}>
+          <.button type="submit" phx-disable-with={dgettext("users", "Changing...")}>
             {dgettext("users", "Change Email")}
           </.button>
         </.simple_form>
