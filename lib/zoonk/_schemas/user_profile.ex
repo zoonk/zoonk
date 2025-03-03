@@ -23,6 +23,7 @@ defmodule Zoonk.Schemas.UserProfile do
 
   import Ecto.Changeset
 
+  alias Zoonk.Schemas.City
   alias Zoonk.Schemas.User
 
   schema "user_profiles" do
@@ -33,6 +34,7 @@ defmodule Zoonk.Schemas.UserProfile do
     field :username, :string
 
     belongs_to :user, User
+    belongs_to :city, City
 
     timestamps(type: :utc_datetime)
   end
@@ -42,7 +44,7 @@ defmodule Zoonk.Schemas.UserProfile do
   """
   def changeset(profile, attrs) do
     profile
-    |> cast(attrs, [:bio, :display_name, :picture_url, :public?, :username, :user_id])
+    |> cast(attrs, [:bio, :display_name, :picture_url, :public?, :username, :city_id, :user_id])
     |> validate_required([:public?, :username, :user_id])
     |> unique_constraint(:username)
   end
