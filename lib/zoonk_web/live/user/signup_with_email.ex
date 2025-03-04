@@ -73,7 +73,7 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
         {:ok, _url_fn} =
           Auth.deliver_signin_instructions(
             user,
-            &url(~p"/login/t/#{&1}")
+            &url(~p"/confirm/#{&1}")
           )
 
         {:noreply,

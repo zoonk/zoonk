@@ -54,7 +54,7 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
     if user = Auth.get_user_by_email(email) do
       Auth.deliver_signin_instructions(
         user,
-        &url(~p"/login/t/#{&1}")
+        &url(~p"/confirm/#{&1}")
       )
     end
 

@@ -23,27 +23,47 @@ defmodule ZoonkWeb.UserAuthControllerTest do
       html_response(loggedin_conn, 200)
     end
 
-    test "confirms unconfirmed user", %{conn: conn, unconfirmed_user: user} do
-      {token, _hashed_token} = generate_user_magic_link_token(user)
-      refute user.confirmed_at
-
-      post_conn = post(conn, ~p"/login", %{"user" => %{"token" => token}, "_action" => "confirmed"})
-
-      assert get_session(post_conn, :user_token)
-      assert redirected_to(post_conn) == ~p"/"
-      assert Phoenix.Flash.get(post_conn.assigns.flash, :info) =~ "User confirmed successfully."
-
-      assert Auth.get_user!(user.id).confirmed_at
-
-      # Now do a logged in request and assert on the menu
-      loggedin_conn = get(post_conn, ~p"/")
-      html_response(loggedin_conn, 200)
-    end
-
     test "redirects to signin page when magic link is invalid", %{conn: conn} do
       conn = post(conn, ~p"/login", %{"user" => %{"token" => "invalid"}})
       assert Phoenix.Flash.get(conn.assigns.flash, :error) == "The link is invalid or it has expired."
       assert redirected_to(conn) == ~p"/login/email"
+    end
+  end
+
+  describe "GET /confirm/:token" do
+    test "confirms the given token once", %{conn: conn, unconfirmed_user: user} do
+      token = extract_user_token(fn url -> Auth.deliver_signin_instructions(user, url) end)
+
+      conn = get(conn, ~p"/confirm/#{token}")
+
+      assert Auth.get_user!(user.id).confirmed_at
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "User confirmed successfully."
+
+      # we are logged in now
+      assert redirected_to(conn) == ~p"/"
+      assert get_session(conn, :user_token)
+
+      # log out, new conn
+      signout_conn = get(build_conn(), ~p"/confirm/#{token}")
+      assert redirected_to(signout_conn) == ~p"/login/email"
+      assert Phoenix.Flash.get(signout_conn.assigns.flash, :error) =~ "Magic link is invalid or it has expired."
+      refute get_session(signout_conn, :user_token)
+    end
+
+    test "logs confirmed user in without changing confirmed_at", %{conn: conn, user: user} do
+      token = extract_user_token(fn url -> Auth.deliver_signin_instructions(user, url) end)
+      conn = get(conn, ~p"/confirm/#{token}")
+
+      assert get_session(conn, :user_token)
+      assert Auth.get_user!(user.id).confirmed_at == user.confirmed_at
+      assert redirected_to(conn) == ~p"/"
+      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "User confirmed successfully."
+    end
+
+    test "redirects to the signin page if the token is invalid", %{conn: conn} do
+      conn = get(conn, ~p"/confirm/invalid_token")
+      assert redirected_to(conn) == ~p"/login/email"
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "Magic link is invalid or it has expired."
     end
   end
 

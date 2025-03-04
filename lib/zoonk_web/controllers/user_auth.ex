@@ -18,12 +18,8 @@ defmodule ZoonkWeb.Controllers.UserAuth do
 
   This controller is also used for confirming a user.
   """
-  def create(conn, %{"_action" => "confirmed"} = params) do
-    create(conn, params, "User confirmed successfully.")
-  end
-
   def create(conn, params) do
-    create(conn, params, "Welcome back!")
+    create(conn, params, nil)
   end
 
   # magic link signin
@@ -50,5 +46,18 @@ defmodule ZoonkWeb.Controllers.UserAuth do
     conn
     |> put_flash(:info, "Logged out successfully.")
     |> Helpers.UserAuth.signout_user()
+  end
+
+  @doc """
+  Confirms a user account.
+  """
+  def confirm(conn, %{"token" => token}) do
+    if Auth.get_user_by_magic_link_token(token) do
+      create(conn, %{"user" => %{"token" => token}}, "User confirmed successfully.")
+    else
+      conn
+      |> put_flash(:error, "Magic link is invalid or it has expired.")
+      |> redirect(to: ~p"/login/email")
+    end
   end
 end

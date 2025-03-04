@@ -60,7 +60,6 @@ defmodule ZoonkWeb.Router do
       live "/signup/email", UserSignUpWithEmail
       live "/login", UserSignIn
       live "/login/email", UserSignInWithEmail
-      live "/login/t/:token", UserConfirmation
     end
   end
 
@@ -69,6 +68,7 @@ defmodule ZoonkWeb.Router do
 
     post "/login", UserAuth, :create
     delete "/logout", UserAuth, :delete
+    get "/confirm/:token", UserAuth, :confirm
 
     get "/auth/:provider", OAuth, :request
     get "/auth/:provider/callback", OAuth, :callback
