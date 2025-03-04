@@ -37,20 +37,26 @@ defmodule ZoonkWeb.Components.Flash do
       phx-hook="ClearFlash"
       data-kind={@kind}
       role="alert"
+      aria-label={@title}
+      tabindex="0"
       class={[
-        "fixed top-2 right-2 z-50 mr-2 w-80 rounded-lg p-3 ring-1 sm:w-96",
-        @kind == :info && "bg-emerald-50 fill-cyan-900 text-emerald-800 ring-emerald-500",
-        @kind == :error && "bg-rose-50 fill-rose-900 text-rose-900 shadow-md ring-rose-500"
+        "fixed top-4 right-4 z-50 rounded-lg px-4 py-2",
+        "max-w-80 sm:max-w-96",
+        "transition-all duration-300 ease-in-out",
+        @kind == :info &&
+          [
+            "bg-zk-surface text-zk-text-secondary",
+            "ring-zk-border shadow-sm ring-1",
+            "contrast-more:text-zk-text-contrast",
+            "dark:bg-zk-surface-inverse dark:ring-zk-border-inverse",
+            "dark:text-zk-text-inverse",
+            "dark:contrast-more:ring-zk-border"
+          ],
+        @kind == :error && ["bg-zk-danger-700 text-zk-danger-50 contrast-more:bg-zk-danger-900"]
       ]}
       {@rest}
     >
-      <p :if={@title} class="flex items-center gap-1.5 text-sm font-semibold leading-6">
-        <.icon :if={@kind == :info} name="tabler-info-square-rounded" class="h-4 w-4" />
-        <.icon :if={@kind == :error} name="tabler-alert-square-rounded" class="h-4 w-4" />
-        {@title}
-      </p>
-
-      <p class="mt-2 text-sm leading-5">{msg}</p>
+      <span class="text-sm">{msg}</span>
     </div>
     """
   end
