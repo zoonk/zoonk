@@ -34,6 +34,8 @@ defmodule ZoonkWeb.Components.Flash do
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
+      phx-hook="ClearFlash"
+      data-kind={@kind}
       role="alert"
       class={[
         "fixed top-2 right-2 z-50 mr-2 w-80 rounded-lg p-3 ring-1 sm:w-96",
@@ -47,10 +49,8 @@ defmodule ZoonkWeb.Components.Flash do
         <.icon :if={@kind == :error} name="tabler-alert-square-rounded" class="h-4 w-4" />
         {@title}
       </p>
+
       <p class="mt-2 text-sm leading-5">{msg}</p>
-      <button type="button" class="group absolute top-1 right-1 p-2" aria-label={gettext("close")}>
-        <.icon name="tabler-x" class="h-5 w-5 opacity-40 group-hover:opacity-70" />
-      </button>
     </div>
     """
   end
@@ -70,6 +70,7 @@ defmodule ZoonkWeb.Components.Flash do
     <div id={@id}>
       <.flash kind={:info} title={gettext("Success!")} flash={@flash} />
       <.flash kind={:error} title={gettext("Error!")} flash={@flash} />
+
       <.flash
         id="client-error"
         kind={:error}
