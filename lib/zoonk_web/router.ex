@@ -68,6 +68,7 @@ defmodule ZoonkWeb.Router do
 
     post "/login", UserAuth, :create
     delete "/logout", UserAuth, :delete
+    get "/logout", UserAuth, :delete
     get "/confirm/:token", UserAuth, :confirm
 
     get "/auth/:provider", OAuth, :request
