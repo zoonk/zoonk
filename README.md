@@ -44,6 +44,7 @@ You can read our full documentation at https://docs.zoonk.org or check the guide
 People who supported the project and will get lifetime access to the `Plus` plan:
 
 - [Sephora Lillian](https://github.com/sephoralillian)
+- [Ben Biran](https://github.com/benbiran)
 
 ### Lifetime (Supporter)
 
