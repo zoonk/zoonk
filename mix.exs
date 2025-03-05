@@ -130,9 +130,11 @@ defmodule Zoonk.MixProject do
           ZoonkWeb.Components.Form,
           ZoonkWeb.Components.Icon,
           ZoonkWeb.Components.Input,
+          ZoonkWeb.Components.Layout,
           ZoonkWeb.Components.Modal,
           ZoonkWeb.Components.Table,
           ZoonkWeb.Components.Text,
+          ZoonkWeb.Components.User,
           ZoonkWeb.Components.Utils
         ],
         Controllers: [

@@ -55,6 +55,7 @@ defmodule ZoonkWeb.Live.UserSettings do
       |> assign(:current_email, user.email)
       |> assign(:email_form, to_form(email_changeset))
       |> assign(:trigger_submit, false)
+      |> assign(:page_title, dgettext("users", "Settings"))
 
     {:ok, socket}
   end

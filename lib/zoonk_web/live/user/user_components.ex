@@ -1,11 +1,16 @@
 defmodule ZoonkWeb.Components.User do
-  @moduledoc false
+  @moduledoc """
+  Shared components for user authentication and settings.
+  """
   use ZoonkWeb, :html
 
   alias Zoonk.Configuration
 
   @actions [:signin, :signup]
 
+  @doc """
+  Generates a link to the authentication provider.
+  """
   attr :provider, :atom, values: [:email | Configuration.list_providers()], required: true
   attr :action, :atom, values: @actions, default: :signin
 
@@ -23,13 +28,18 @@ defmodule ZoonkWeb.Components.User do
     """
   end
 
+  @doc """
+  Displays the footer link.
+
+  When on the signin page, it shows the signup link and vice versa.
+  """
   attr :action, :atom, values: @actions, default: :signup
 
   def footer_link(assigns) do
     ~H"""
     <section
       class={[
-        "fixed bottom-0 w-full p-4 text-center sm:p-8",
+        "zk-bg fixed bottom-0 w-full p-4 text-center sm:p-8",
         "border-zk-border border-t",
         "contrast-more:border-zk-border-inverse",
         "dark:border-zk-border-inverse"
@@ -45,6 +55,9 @@ defmodule ZoonkWeb.Components.User do
     """
   end
 
+  @doc """
+  Displays the authentication page title.
+  """
   attr :action, :atom, values: @actions, default: :signin
 
   def auth_title(assigns) do
@@ -55,6 +68,9 @@ defmodule ZoonkWeb.Components.User do
     """
   end
 
+  @doc """
+  Wraps the authentication page into a container.
+  """
   attr :action, :atom, values: @actions, default: :signin
   attr :show_options, :boolean, default: false
   slot :inner_block, required: true

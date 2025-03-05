@@ -5,6 +5,8 @@ defmodule ZoonkWeb.Router do
   import ZoonkWeb.Plugs.UserAuth
 
   alias ZoonkWeb.Hooks
+  alias ZoonkWeb.Live.BrowseGoals
+  alias ZoonkWeb.Live.BrowseLibrary
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -43,6 +45,12 @@ defmodule ZoonkWeb.Router do
       ] do
       live "/", Home, :index
 
+      live "/goals", BrowseGoals
+
+      live "/catalog", BrowseCatalog
+
+      live "/library", BrowseLibrary
+
       live "/users/settings", UserSettings, :edit
       live "/users/settings/confirm-email/:token", UserSettings, :confirm_email
     end
@@ -52,6 +60,7 @@ defmodule ZoonkWeb.Router do
     pipe_through [:browser]
 
     live_session :public_routes,
+      layout: {ZoonkWeb.Layouts, :auth},
       on_mount: [
         {Hooks.UserAuth, :mount_current_user},
         {Hooks.Language, :set_app_language}

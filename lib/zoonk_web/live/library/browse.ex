@@ -1,10 +1,10 @@
-defmodule ZoonkWeb.Live.Home do
+defmodule ZoonkWeb.Live.BrowseLibrary do
   @moduledoc false
   use ZoonkWeb, :live_view
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    socket = assign(socket, :page_title, dgettext("content", "Summary"))
+    socket = assign(socket, :page_title, dgettext("content", "Library"))
 
     {:ok, socket}
   end

@@ -57,6 +57,10 @@
   --color-zk-link-inverse-hover: var(--color-zk-primary-50);
 }
 
+@utility zk-bg {
+  @apply bg-zk-bg-light dark:bg-zk-bg-dark;
+}
+
 @utility zk-btn {
   @apply h-12 whitespace-nowrap rounded-md px-10 ring
   inline-flex items-center justify-center gap-2

@@ -63,6 +63,7 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
       socket
       |> assign(check_errors: false)
       |> assign_form(changeset)
+      |> assign(page_title: dgettext("users", "Create an account"))
 
     {:ok, socket, temporary_assigns: [form: nil]}
   end

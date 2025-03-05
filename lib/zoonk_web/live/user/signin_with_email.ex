@@ -45,6 +45,7 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
       socket
       |> assign(form: form)
       |> assign(trigger_submit: false)
+      |> assign(page_title: dgettext("users", "Sign in with email"))
       |> display_flash_for_logged_in_user()
 
     {:ok, socket}

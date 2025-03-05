@@ -1,2 +1,12 @@
+<main aria-labelledby="page-title">
+  <header
+    aria-label={gettext("Search and settings")}
+    class="mx-auto max-w-3xl p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 2xl:p-14"
+  >
+    <.text element={:h1} size={:header} id="page-title">{@page_title}</.text>
+  </header>
+
+  {@inner_content}
+</main>
+
 <.flash_group flash={@flash} />
-{@inner_content}
