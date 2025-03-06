@@ -103,3 +103,8 @@
   dark:contrast-more:text-zk-text-inverse
   dark:contrast-more:ring-zk-border;
 }
+
+@utility zk-rounded-table-corner {
+  @apply first:before:absolute first:before:h-full first:before:w-4 first:before:top-0 first:before:-left-4 first:before:group-hover:bg-zinc-50 first:before:sm:rounded-l-xl
+      last:before:absolute last:before:h-full last:before:w-4 last:before:top-0 last:before:-right-4 last:before:group-hover:bg-zinc-50 last:before:sm:rounded-r-xl;
+}
