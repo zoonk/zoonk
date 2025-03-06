@@ -23,7 +23,7 @@ config :swoosh, :api_client, false
 config :zoonk, Zoonk.Repo,
   username: "postgres",
   password: "postgres",
-  hostname: "localhost",
+  hostname: System.get_env("DATABASE_HOST") || "localhost",
   database: "zoonk_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
@@ -44,7 +44,6 @@ config :zoonk, Zoonk.Vault,
 # to bundle .js and .css sources.
 # Binding to loopback ipv4 address prevents access from other machines.
 config :zoonk, ZoonkWeb.Endpoint,
-  # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
   http: [ip: {0, 0, 0, 0}, port: 4000],
   https: [
     ip: {0, 0, 0, 0},
