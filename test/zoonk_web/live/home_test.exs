@@ -3,6 +3,13 @@ defmodule ZoonkWeb.HomeLiveTest do
 
   import Phoenix.LiveViewTest
 
+  describe "home page (unauthenticated)" do
+    test "redirects to the login page", %{conn: conn} do
+      conn = get(conn, ~p"/")
+      assert redirected_to(conn) == ~p"/login"
+    end
+  end
+
   describe "home page" do
     setup :register_and_signin_user
 

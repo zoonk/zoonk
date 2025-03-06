@@ -3,6 +3,13 @@ defmodule ZoonkWeb.CatalogLive.BrowseTest do
 
   import Phoenix.LiveViewTest
 
+  describe "browse catalog page (unauthenticated)" do
+    test "redirects to the login page", %{conn: conn} do
+      conn = get(conn, ~p"/catalog")
+      assert redirected_to(conn) == ~p"/login"
+    end
+  end
+
   describe "browse catalog page" do
     setup :register_and_signin_user
 
