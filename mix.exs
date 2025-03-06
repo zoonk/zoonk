@@ -5,7 +5,7 @@ defmodule Zoonk.MixProject do
     [
       app: :zoonk,
       version: "0.1.0-dev",
-      elixir: "~> 1.14",
+      elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -117,7 +117,9 @@ defmodule Zoonk.MixProject do
         "guides/overview.md",
         "guides/glossary.md",
         "guides/installation.md",
-        "guides/ssl.md"
+        "guides/ssl.md",
+        "guides/oauth.md",
+        "guides/production.md"
       ],
       groups_for_modules: [
         Config: [Zoonk.Configuration],

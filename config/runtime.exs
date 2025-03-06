@@ -22,7 +22,7 @@ end
 
 config :zoonk, :strategies,
   apple: [
-    client_id: System.get_env("APPLE_CLIENT_ID"),
+    client_id: System.get_env("APPLE_SERVICE_ID"),
     team_id: System.get_env("APPLE_TEAM_ID"),
     private_key_id: System.get_env("APPLE_KEY_ID"),
     private_key: System.get_env("APPLE_PRIVATE_KEY"),
@@ -68,8 +68,8 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
-  host = System.get_env("PHX_HOST") || "example.com"
-  port = String.to_integer(System.get_env("PORT") || "4000")
+  host = System.get_env("PHX_HOST") || "zoonk.org"
+  port = String.to_integer(System.get_env("PORT") || "8080")
 
   config :zoonk, Zoonk.Repo,
     # ssl: true,

@@ -2,13 +2,13 @@
 
 You can run this project locally or in a Docker container.
 
-## Docker
+## Using Docker
 
 - `cd docker`
 - `docker-compose build`
 - `docker-compose up`
 
-## Locally
+## Using Elixir locally
 
 ### Requirements
 
