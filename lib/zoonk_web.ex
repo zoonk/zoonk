@@ -40,7 +40,7 @@ defmodule ZoonkWeb do
     quote do
       use Phoenix.Controller,
         formats: [:html, :json],
-        layouts: [html: ZoonkWeb.Layouts]
+        layouts: [html: {ZoonkWeb.Layouts, :app}]
 
       use Gettext, backend: Zoonk.Gettext
 
