@@ -16,6 +16,7 @@ defmodule ZoonkWeb.LibraryLive.BrowseTest do
         |> follow_redirect(conn, ~p"/library")
 
       assert has_element?(catalog_lv, "h1", "Library")
+      assert has_element?(catalog_lv, "li[aria-current='page']", "Library")
     end
   end
 end

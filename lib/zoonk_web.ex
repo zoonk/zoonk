@@ -52,8 +52,9 @@ defmodule ZoonkWeb do
 
   def live_view do
     quote do
-      use Phoenix.LiveView,
-        layout: {ZoonkWeb.Layouts, :app}
+      use Phoenix.LiveView, layout: {ZoonkWeb.Layouts, :app}
+
+      on_mount ZoonkWeb.Hooks.ActivePage
 
       unquote(html_helpers())
     end

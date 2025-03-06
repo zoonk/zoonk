@@ -147,10 +147,12 @@ defmodule Zoonk.MixProject do
           ZoonkWeb.Plugs.UserAuth
         ],
         Hooks: [
+          ZoonkWeb.Hooks.ActivePage,
           ZoonkWeb.Hooks.Language,
           ZoonkWeb.Hooks.UserAuth
         ],
         Helpers: [
+          Zoonk.Helpers,
           Zoonk.Helpers.EctoUtils,
           ZoonkWeb.Helpers.UserAuth
         ],
