@@ -10,5 +10,7 @@ defmodule ZoonkWeb.Layouts do
   """
   use ZoonkWeb, :html
 
+  import ZoonkWeb.Components.Layout
+
   embed_templates "layouts/*"
 end

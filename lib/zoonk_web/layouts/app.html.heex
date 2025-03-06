@@ -7,6 +7,46 @@
   </header>
 
   {@inner_content}
+
+  <nav
+    aria-label={gettext("Main menu")}
+    class={[
+      "zk-surface fixed bottom-0 flex w-full justify-around",
+      "zk-border border-t",
+      "backdrop-blur-3xl",
+      "md:left-1/2 md:-translate-x-1/2",
+      "md:rounded-4xl md:bottom-4",
+      "md:max-w-md md:border-t-0",
+      "md:shadow-sm"
+    ]}
+  >
+    <ul class={["flex w-full"]}>
+      <.nav_menu_item
+        active
+        label={dgettext("content", "Summary")}
+        icon="tabler-brain"
+        href={~p"/"}
+      />
+
+      <.nav_menu_item
+        label={dgettext("content", "Goals")}
+        icon="tabler-target-arrow"
+        href={~p"/goals"}
+      />
+
+      <.nav_menu_item
+        label={dgettext("content", "Catalog")}
+        icon="tabler-layout-grid"
+        href={~p"/catalog"}
+      />
+
+      <.nav_menu_item
+        label={dgettext("content", "Library")}
+        icon="tabler-stack-2"
+        href={~p"/library"}
+      />
+    </ul>
+  </nav>
 </main>
 
 <.flash_group flash={@flash} />

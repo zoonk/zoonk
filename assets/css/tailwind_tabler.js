@@ -28,8 +28,7 @@ module.exports = plugin(function ({ matchComponents, theme }) {
           .toString()
           .replace(/\r?\n|\r/g, "")
           .replace(/width="[^"]*"/, "")
-          .replace(/height="[^"]*"/, "")
-          .replace('stroke-width="2"', 'stroke-width="1"');
+          .replace(/height="[^"]*"/, "");
 
         return {
           [`--tabler-${name}`]: `url('data:image/svg+xml;utf8,${content}')`,

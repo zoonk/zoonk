@@ -61,6 +61,17 @@
   @apply bg-zk-bg-light dark:bg-zk-bg-dark;
 }
 
+@utility zk-surface {
+  @apply bg-zk-surface dark:bg-zk-surface-inverse
+  hover:bg-zk-surface-hover dark:hover:bg-zk-surface-inverse-hover
+  focus-visible:bg-zk-surface-hover dark:focus-visible:bg-zk-surface-inverse-hover
+  focus-visible:outline-none;
+}
+
+@utility zk-border {
+  @apply border-zk-border dark:border-zk-border-inverse;
+}
+
 @utility zk-btn {
   @apply h-12 whitespace-nowrap rounded-md px-10 ring
   inline-flex items-center justify-center gap-2

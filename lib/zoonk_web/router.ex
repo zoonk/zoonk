@@ -5,8 +5,6 @@ defmodule ZoonkWeb.Router do
   import ZoonkWeb.Plugs.UserAuth
 
   alias ZoonkWeb.Hooks
-  alias ZoonkWeb.Live.BrowseGoals
-  alias ZoonkWeb.Live.BrowseLibrary
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -43,7 +41,7 @@ defmodule ZoonkWeb.Router do
         {Hooks.UserAuth, :ensure_authenticated},
         {Hooks.Language, :set_app_language}
       ] do
-      live "/", Home, :index
+      live "/", Home
 
       live "/goals", BrowseGoals
 
