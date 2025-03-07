@@ -37,7 +37,7 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
         |> live(~p"/users/settings")
         |> follow_redirect(conn, ~p"/login")
 
-      assert conn.resp_body =~ "You must re-authenticate to access this page."
+      assert conn.resp_body =~ "You need to reauthenticate to access this page."
     end
   end
 

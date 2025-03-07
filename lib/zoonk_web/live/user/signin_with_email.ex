@@ -46,7 +46,6 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
       |> assign(form: form)
       |> assign(trigger_submit: false)
       |> assign(page_title: dgettext("users", "Sign in with email"))
-      |> display_flash_for_logged_in_user()
 
     {:ok, socket}
   end
@@ -66,15 +65,5 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
      socket
      |> put_flash(:info, info)
      |> push_navigate(to: ~p"/login/email")}
-  end
-
-  defp display_flash_for_logged_in_user(socket) when is_nil(socket.assigns.current_scope), do: socket
-
-  defp display_flash_for_logged_in_user(socket) do
-    put_flash(
-      socket,
-      :error,
-      dgettext("users", "You need to reauthenticate to perform sensitive actions on your account.")
-    )
   end
 end

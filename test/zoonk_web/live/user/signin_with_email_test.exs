@@ -65,8 +65,6 @@ defmodule ZoonkWeb.UserLive.SignInWithEmailTest do
     test "shows signin page with email filled in", %{conn: conn, user: user} do
       {:ok, lv, html} = live(conn, ~p"/login/email")
 
-      assert html =~ "You need to reauthenticate"
-      refute html =~ "Sign Up"
       assert has_element?(lv, "button", "Login")
 
       assert html =~
