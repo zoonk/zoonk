@@ -6,6 +6,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
   alias Phoenix.LiveView
   alias Zoonk.Auth
   alias Zoonk.Auth.Scope
+  alias Zoonk.Configuration
   alias ZoonkWeb.Hooks
   alias ZoonkWeb.Plugs
 
@@ -125,14 +126,15 @@ defmodule ZoonkWeb.UserAuthHookTest do
     end
 
     test "redirects when authentication is too old", %{user: user} do
-      eleven_minutes_ago = DateTime.add(DateTime.utc_now(), -11, :minute)
+      sudo_mode_minutes = Configuration.get_max_age(:sudo_mode, :minutes)
+      too_old = DateTime.add(DateTime.utc_now(), sudo_mode_minutes - 1, :minute)
 
       socket = %LiveView.Socket{
         endpoint: AuthAppWeb.Endpoint,
         assigns: %{
           __changed__: %{},
           flash: %{},
-          current_scope: Scope.for_user(%{user | authenticated_at: eleven_minutes_ago})
+          current_scope: Scope.for_user(%{user | authenticated_at: too_old})
         }
       }
 

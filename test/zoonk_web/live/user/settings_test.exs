@@ -5,6 +5,7 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
   import Zoonk.AuthFixtures
 
   alias Zoonk.Auth
+  alias Zoonk.Configuration
 
   describe "Settings page" do
     test "renders settings page", %{conn: conn} do
@@ -25,10 +26,13 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
     end
 
     test "redirects if user is not in sudo mode", %{conn: conn} do
+      sudo_mode_minutes = Configuration.get_max_age(:sudo_mode, :minutes)
+      too_old = sudo_mode_minutes - 1
+
       {:ok, conn} =
         conn
         |> signin_user(user_fixture(),
-          token_inserted_at: DateTime.add(DateTime.utc_now(), -11, :minute)
+          token_inserted_at: DateTime.add(DateTime.utc_now(), too_old, :minute)
         )
         |> live(~p"/users/settings")
         |> follow_redirect(conn, ~p"/login")

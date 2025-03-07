@@ -13,6 +13,7 @@ defmodule Zoonk.Auth do
   alias Zoonk.Auth.TokenBuilder
   alias Zoonk.Auth.UserNotifier
   alias Zoonk.Auth.UserProfileBuilder
+  alias Zoonk.Configuration
   alias Zoonk.Helpers
   alias Zoonk.Queries
   alias Zoonk.Repo
@@ -80,16 +81,14 @@ defmodule Zoonk.Auth do
   @doc """
   Checks whether the user is in sudo mode.
 
-  The user is in sudo mode when the last authentication was done no further
-  than 20 minutes ago. The limit can be given as second argument in minutes.
+  The user is in sudo mode when the last authentication was done recently.
   """
-  def sudo_mode?(user, minutes \\ -20)
-
-  def sudo_mode?(%User{authenticated_at: ts}, minutes) when is_struct(ts, DateTime) do
+  def sudo_mode?(%User{authenticated_at: ts}) when is_struct(ts, DateTime) do
+    minutes = Configuration.get_max_age(:sudo_mode, :minutes)
     DateTime.after?(ts, DateTime.add(DateTime.utc_now(), minutes, :minute))
   end
 
-  def sudo_mode?(_user, _minutes), do: false
+  def sudo_mode?(_user), do: false
 
   @doc """
   Returns an `%Ecto.Changeset{}` for changing the user email.

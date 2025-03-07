@@ -68,7 +68,7 @@ defmodule ZoonkWeb.Hooks.UserAuth do
   def on_mount(:ensure_sudo_mode, _params, session, socket) do
     socket = mount_current_scope(socket, session)
 
-    if Auth.sudo_mode?(socket.assigns.current_scope.user, -10) do
+    if Auth.sudo_mode?(socket.assigns.current_scope.user) do
       {:cont, socket}
     else
       socket =

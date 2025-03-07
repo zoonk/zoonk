@@ -4,6 +4,7 @@ defmodule Zoonk.AuthTest do
   import Zoonk.AuthFixtures
 
   alias Zoonk.Auth
+  alias Zoonk.Configuration
   alias Zoonk.Schemas.User
   alias Zoonk.Schemas.UserProfile
   alias Zoonk.Schemas.UserToken
@@ -75,19 +76,17 @@ defmodule Zoonk.AuthTest do
     end
   end
 
-  describe "sudo_mode?/2" do
+  describe "sudo_mode?/1" do
     test "validates the authenticated_at time" do
+      sudo_mode_minutes = Configuration.get_max_age(:sudo_mode, :minutes)
+      valid_minutes = sudo_mode_minutes + 1
+      invalid_minutes = sudo_mode_minutes - 1
+
       now = DateTime.utc_now()
 
       assert Auth.sudo_mode?(%User{authenticated_at: DateTime.utc_now()})
-      assert Auth.sudo_mode?(%User{authenticated_at: DateTime.add(now, -19, :minute)})
-      refute Auth.sudo_mode?(%User{authenticated_at: DateTime.add(now, -21, :minute)})
-
-      # minute override
-      refute Auth.sudo_mode?(
-               %User{authenticated_at: DateTime.add(now, -11, :minute)},
-               -10
-             )
+      assert Auth.sudo_mode?(%User{authenticated_at: DateTime.add(now, valid_minutes, :minute)})
+      refute Auth.sudo_mode?(%User{authenticated_at: DateTime.add(now, invalid_minutes, :minute)})
 
       # not authenticated
       refute Auth.sudo_mode?(%User{})

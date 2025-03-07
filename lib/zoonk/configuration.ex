@@ -72,11 +72,15 @@ defmodule Zoonk.Configuration do
 
       iex> get_max_age(:change_email, :days)
       7
+
+      iex> get_max_age(:sudo_mode, :minutes)
+      -10
   """
   def get_max_age(:token, :days), do: 365
   def get_max_age(:token, :seconds), do: get_max_age(:token, :days) * 24 * 60 * 60
   def get_max_age(:magic_link, :minutes), do: 15
   def get_max_age(:change_email, :days), do: 7
+  def get_max_age(:sudo_mode, :minutes), do: -10
 
   @doc group: "Authentication"
   @doc """
