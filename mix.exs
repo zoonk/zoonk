@@ -42,9 +42,9 @@ defmodule Zoonk.MixProject do
       {:bandit, "~> 1.5"},
       {:cloak_ecto, "~> 1.3.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
-      {:dns_cluster, "~> 0.1.1"},
+      {:dns_cluster, "~> 0.2.0"},
       {:ecto_sql, "~> 3.10"},
-      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
+      {:esbuild, "~> 0.9", runtime: Mix.env() == :dev},
       {:ex_doc, "~> 0.37", only: :dev, runtime: false},
       {:floki, ">= 0.30.0", only: :test},
       {:gettext, "~> 0.26"},
@@ -72,7 +72,7 @@ defmodule Zoonk.MixProject do
       # Using the main branch instead of tags because of the size. Using the tag had over 1gb. Using a branch has less than 60mb.
       {:tabler_icons,
        github: "tabler/tabler-icons", branch: "main", sparse: "icons", app: false, compile: false, depth: 1},
-      {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.3", runtime: Mix.env() == :dev},
       {:tailwind_formatter, "~> 0.4.2", only: [:dev, :test], runtime: false},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"}
