@@ -12,7 +12,7 @@ defmodule ZoonkWeb.Plugs.UserAuth do
 
       import ZoonkWeb.Plugs.UserAuth
 
-      plug :fetch_current_user
+      plug :fetch_current_scope_for_user
       plug :require_authenticated_user
   """
   use ZoonkWeb, :verified_routes
@@ -21,6 +21,7 @@ defmodule ZoonkWeb.Plugs.UserAuth do
   import Plug.Conn
 
   alias Zoonk.Auth
+  alias Zoonk.Auth.Scope
   alias Zoonk.Configuration
   alias ZoonkWeb.Helpers
 
@@ -30,10 +31,10 @@ defmodule ZoonkWeb.Plugs.UserAuth do
   Authenticates the user by looking into the session
   and remember me token.
   """
-  def fetch_current_user(conn, _opts) do
+  def fetch_current_scope_for_user(conn, _opts) do
     {user_token, conn} = ensure_user_token(conn)
     user = user_token && Auth.get_user_by_session_token(user_token)
-    assign(conn, :current_user, user)
+    assign(conn, :current_scope, Scope.for_user(user))
   end
 
   defp ensure_user_token(conn) do
@@ -57,7 +58,7 @@ defmodule ZoonkWeb.Plugs.UserAuth do
   they use the application at all, here would be a good place.
   """
   def require_authenticated_user(conn, _opts) do
-    if conn.assigns[:current_user] do
+    if conn.assigns.current_scope do
       conn
     else
       conn

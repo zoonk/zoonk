@@ -5,7 +5,9 @@ defmodule ZoonkWeb.UserAuthHookTest do
 
   alias Phoenix.LiveView
   alias Zoonk.Auth
+  alias Zoonk.Auth.Scope
   alias ZoonkWeb.Hooks
+  alias ZoonkWeb.Plugs
 
   setup %{conn: conn} do
     conn =
@@ -16,8 +18,12 @@ defmodule ZoonkWeb.UserAuthHookTest do
     %{user: %{user_fixture() | authenticated_at: DateTime.utc_now()}, conn: conn}
   end
 
-  describe "on_mount :mount_current_user" do
-    test "assigns current_user based on a valid user_token", %{conn: conn, user: user} do
+  describe "on_mount :mount_current_scope" do
+    setup %{conn: conn} do
+      %{conn: Plugs.UserAuth.fetch_current_scope_for_user(conn, [])}
+    end
+
+    test "assigns current_scope based on a valid user_token", %{conn: conn, user: user} do
       user_token = Auth.generate_user_session_token(user)
 
       session =
@@ -26,12 +32,12 @@ defmodule ZoonkWeb.UserAuthHookTest do
         |> get_session()
 
       {:cont, updated_socket} =
-        Hooks.UserAuth.on_mount(:mount_current_user, %{}, session, %LiveView.Socket{})
+        Hooks.UserAuth.on_mount(:mount_current_scope, %{}, session, %LiveView.Socket{})
 
-      assert updated_socket.assigns.current_user.id == user.id
+      assert updated_socket.assigns.current_scope.user.id == user.id
     end
 
-    test "assigns nil to current_user assign if there isn't a valid user_token", %{conn: conn} do
+    test "assigns nil to current_scope assign if there isn't a valid user_token", %{conn: conn} do
       user_token = "invalid_token"
 
       session =
@@ -40,23 +46,23 @@ defmodule ZoonkWeb.UserAuthHookTest do
         |> get_session()
 
       {:cont, updated_socket} =
-        Hooks.UserAuth.on_mount(:mount_current_user, %{}, session, %LiveView.Socket{})
+        Hooks.UserAuth.on_mount(:mount_current_scope, %{}, session, %LiveView.Socket{})
 
-      assert updated_socket.assigns.current_user == nil
+      assert updated_socket.assigns.current_scope == nil
     end
 
-    test "assigns nil to current_user assign if there isn't a user_token", %{conn: conn} do
+    test "assigns nil to current_scope assign if there isn't a user_token", %{conn: conn} do
       session = get_session(conn)
 
       {:cont, updated_socket} =
-        Hooks.UserAuth.on_mount(:mount_current_user, %{}, session, %LiveView.Socket{})
+        Hooks.UserAuth.on_mount(:mount_current_scope, %{}, session, %LiveView.Socket{})
 
-      assert updated_socket.assigns.current_user == nil
+      assert updated_socket.assigns.current_scope == nil
     end
   end
 
   describe "on_mount :ensure_authenticated" do
-    test "authenticates current_user based on a valid user_token", %{conn: conn, user: user} do
+    test "authenticates current_scope based on a valid user_token", %{conn: conn, user: user} do
       user_token = Auth.generate_user_session_token(user)
 
       session =
@@ -67,7 +73,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
       {:cont, updated_socket} =
         Hooks.UserAuth.on_mount(:ensure_authenticated, %{}, session, %LiveView.Socket{})
 
-      assert updated_socket.assigns.current_user.id == user.id
+      assert updated_socket.assigns.current_scope.user.id == user.id
     end
 
     test "redirects to signin page if there isn't a valid user_token", %{conn: conn} do
@@ -84,7 +90,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
       }
 
       {:halt, updated_socket} = Hooks.UserAuth.on_mount(:ensure_authenticated, %{}, session, socket)
-      assert updated_socket.assigns.current_user == nil
+      assert updated_socket.assigns.current_scope == nil
     end
 
     test "redirects to signin page if there isn't a user_token", %{conn: conn} do
@@ -96,7 +102,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
       }
 
       {:halt, updated_socket} = Hooks.UserAuth.on_mount(:ensure_authenticated, %{}, session, socket)
-      assert updated_socket.assigns.current_user == nil
+      assert updated_socket.assigns.current_scope == nil
     end
   end
 
@@ -126,7 +132,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
         assigns: %{
           __changed__: %{},
           flash: %{},
-          current_user: %{user | authenticated_at: eleven_minutes_ago}
+          current_scope: Scope.for_user(%{user | authenticated_at: eleven_minutes_ago})
         }
       }
 

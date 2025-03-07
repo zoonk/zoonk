@@ -18,7 +18,7 @@ defmodule ZoonkWeb.Router do
         "base-uri 'self'; frame-ancestors 'self'; default-src 'self'; img-src 'self' data: blob:;"
     }
 
-    plug :fetch_current_user
+    plug :fetch_current_scope_for_user
     plug :set_session_language
   end
 
@@ -30,7 +30,7 @@ defmodule ZoonkWeb.Router do
     plug :fetch_live_flash
     plug :put_root_layout, html: {ZoonkWeb.Layouts, :root}
     plug :put_secure_browser_headers, %{"content-security-policy" => "default-src 'self';img-src 'self' data: blob:;"}
-    plug :fetch_current_user
+    plug :fetch_current_scope_for_user
     plug :set_session_language
   end
 
@@ -65,7 +65,7 @@ defmodule ZoonkWeb.Router do
     live_session :public_routes,
       layout: {ZoonkWeb.Layouts, :auth},
       on_mount: [
-        {Hooks.UserAuth, :mount_current_user},
+        {Hooks.UserAuth, :mount_current_scope},
         {Hooks.Language, :set_app_language}
       ] do
       live "/signup", UserSignUp

@@ -18,7 +18,7 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
         label={dgettext("users", "Sign in form")}
       >
         <.input
-          readonly={!!@current_user}
+          readonly={!!@current_scope}
           field={f[:email]}
           type="email"
           placeholder={dgettext("users", "Email")}
@@ -37,7 +37,7 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
   def mount(_params, _session, socket) do
     email =
       Phoenix.Flash.get(socket.assigns.flash, :email) ||
-        get_in(socket.assigns, [:current_user, Access.key(:email)])
+        get_in(socket.assigns, [:current_scope, Access.key(:user), Access.key(:email)])
 
     form = to_form(%{"email" => email})
 
@@ -68,7 +68,7 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
      |> push_navigate(to: ~p"/login/email")}
   end
 
-  defp display_flash_for_logged_in_user(socket) when is_nil(socket.assigns.current_user), do: socket
+  defp display_flash_for_logged_in_user(socket) when is_nil(socket.assigns.current_scope), do: socket
 
   defp display_flash_for_logged_in_user(socket) do
     put_flash(

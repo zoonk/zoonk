@@ -7,6 +7,7 @@ defmodule Zoonk.AuthFixtures do
   import Ecto.Query
 
   alias Zoonk.Auth
+  alias Zoonk.Auth.Scope
   alias Zoonk.Schemas.UserToken
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
@@ -38,6 +39,15 @@ defmodule Zoonk.AuthFixtures do
     {:ok, user, _expired_tokens} = Auth.signin_user_by_magic_link(token)
 
     user
+  end
+
+  def user_scope_fixture do
+    user = user_fixture()
+    user_scope_fixture(user)
+  end
+
+  def user_scope_fixture(user) do
+    Scope.for_user(user)
   end
 
   def extract_user_token(fun) do

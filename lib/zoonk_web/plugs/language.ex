@@ -26,7 +26,9 @@ defmodule ZoonkWeb.Plugs.Language do
   """
   import Plug.Conn
 
+  alias Zoonk.Auth.Scope
   alias Zoonk.Configuration
+  alias Zoonk.Schemas.User
 
   @doc """
   Sets the session language based on user preferences or browser settings.
@@ -36,7 +38,7 @@ defmodule ZoonkWeb.Plugs.Language do
 
   The selected language is then stored in the session.
   """
-  def set_session_language(%{assigns: %{current_user: %{language: language}}} = conn, _opts) do
+  def set_session_language(%{assigns: %{current_scope: %Scope{user: %User{language: language}}}} = conn, _opts) do
     put_session(conn, :language, Atom.to_string(language))
   end
 

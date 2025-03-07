@@ -46,13 +46,14 @@ defmodule ZoonkWeb.ConnCase do
   """
   def register_and_signin_user(%{conn: conn} = context) do
     user = Zoonk.AuthFixtures.user_fixture()
+    scope = Zoonk.Auth.Scope.for_user(user)
 
     opts =
       context
       |> Map.take([:token_inserted_at])
       |> Enum.to_list()
 
-    %{conn: signin_user(conn, user, opts), user: user}
+    %{conn: signin_user(conn, user, opts), user: user, scope: scope}
   end
 
   @doc """

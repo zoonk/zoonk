@@ -5,6 +5,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
 
   alias Phoenix.Socket.Broadcast
   alias Zoonk.Auth
+  alias Zoonk.Auth.Scope
   alias Zoonk.Configuration
   alias ZoonkWeb.Helpers
 
@@ -64,7 +65,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
     test "redirects to settings when user is already logged in", %{conn: conn, user: user} do
       conn =
         conn
-        |> assign(:current_user, user)
+        |> assign(:current_scope, Scope.for_user(user))
         |> Helpers.UserAuth.signin_user(user)
 
       assert redirected_to(conn) == "/users/settings"

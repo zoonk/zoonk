@@ -10,33 +10,33 @@ defmodule ZoonkWeb.Hooks.UserAuth do
   use ZoonkWeb, :verified_routes
 
   alias Zoonk.Auth
+  alias Zoonk.Auth.Scope
 
   @doc """
-  Handles mounting and authenticating the current_user in LiveViews.
+  Handles mounting and authenticating the current_scope in LiveViews.
 
   ## `on_mount` arguments
 
-    * `:mount_current_user` - Assigns current_user
+    * `:mount_current_scope` - Assigns current_scope
       to socket assigns based on user_token, or nil if
       there's no user_token or no matching user.
 
     * `:ensure_authenticated` - Authenticates the user from the session,
-      and assigns the current_user to socket assigns based
-      on user_token.
-      Redirects to signin page if there's no logged user.
+      and assigns the current_scope to socket assigns
+      based on user_token. Redirects to signin page if there's no logged user.
 
     * `:ensure_sudo_mode` - Check if the user has been authenticated
-      recently enough to access to a certain page.
+      recently enough to access a certain page.
 
   ## Examples
 
   Use the `on_mount` lifecycle macro in LiveViews to mount or authenticate
-  the current_user:
+  the current_scope:
 
       defmodule ZoonkWeb.PageLive do
         use ZoonkWeb, :live_view
 
-        on_mount {ZoonkWeb.Hooks.UserAuth, :mount_current_user}
+        on_mount {ZoonkWeb.Hooks.UserAuth, :mount_current_scope}
         ...
       end
 
@@ -46,14 +46,14 @@ defmodule ZoonkWeb.Hooks.UserAuth do
         live "/profile", ProfileLive, :index
       end
   """
-  def on_mount(:mount_current_user, _params, session, socket) do
-    {:cont, mount_current_user(socket, session)}
+  def on_mount(:mount_current_scope, _params, session, socket) do
+    {:cont, mount_current_scope(socket, session)}
   end
 
   def on_mount(:ensure_authenticated, _params, session, socket) do
-    socket = mount_current_user(socket, session)
+    socket = mount_current_scope(socket, session)
 
-    if socket.assigns.current_user do
+    if socket.assigns.current_scope do
       {:cont, socket}
     else
       socket =
@@ -66,9 +66,9 @@ defmodule ZoonkWeb.Hooks.UserAuth do
   end
 
   def on_mount(:ensure_sudo_mode, _params, session, socket) do
-    socket = mount_current_user(socket, session)
+    socket = mount_current_scope(socket, session)
 
-    if Auth.sudo_mode?(socket.assigns.current_user, -10) do
+    if Auth.sudo_mode?(socket.assigns.current_scope.user, -10) do
       {:cont, socket}
     else
       socket =
@@ -80,11 +80,14 @@ defmodule ZoonkWeb.Hooks.UserAuth do
     end
   end
 
-  defp mount_current_user(socket, session) do
-    Phoenix.Component.assign_new(socket, :current_user, fn ->
-      if user_token = session["user_token"] do
-        Auth.get_user_by_session_token(user_token)
-      end
+  defp mount_current_scope(socket, session) do
+    Phoenix.Component.assign_new(socket, :current_scope, fn ->
+      user =
+        if user_token = session["user_token"] do
+          Auth.get_user_by_session_token(user_token)
+        end
+
+      Scope.for_user(user)
     end)
   end
 end

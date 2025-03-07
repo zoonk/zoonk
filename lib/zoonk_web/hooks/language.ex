@@ -2,6 +2,7 @@ defmodule ZoonkWeb.Hooks.Language do
   @moduledoc """
   LiveView hooks for setting the application language.
   """
+  alias Zoonk.Auth.Scope
   alias Zoonk.Schemas.User
 
   @doc """
@@ -26,11 +27,11 @@ defmodule ZoonkWeb.Hooks.Language do
       end
   """
   def on_mount(:set_app_language, _params, session, socket) do
-    user_language = get_user_language(socket.assigns.current_user, session)
+    user_language = get_user_language(socket.assigns.current_scope, session)
     Gettext.put_locale(Zoonk.Gettext, user_language)
     {:cont, socket}
   end
 
   defp get_user_language(nil, session), do: Map.get(session, "language")
-  defp get_user_language(%User{language: language}, _session), do: Atom.to_string(language)
+  defp get_user_language(%Scope{user: %User{language: language}}, _session), do: Atom.to_string(language)
 end

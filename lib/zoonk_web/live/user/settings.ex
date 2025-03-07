@@ -35,7 +35,7 @@ defmodule ZoonkWeb.Live.UserSettings do
 
   def mount(%{"token" => token}, _session, socket) do
     socket =
-      case Auth.update_user_email(socket.assigns.current_user, token) do
+      case Auth.update_user_email(socket.assigns.current_scope.user, token) do
         :ok ->
           put_flash(socket, :info, dgettext("users", "Email changed successfully."))
 
@@ -47,7 +47,7 @@ defmodule ZoonkWeb.Live.UserSettings do
   end
 
   def mount(_params, _session, socket) do
-    user = socket.assigns.current_user
+    user = socket.assigns.current_scope.user
     email_changeset = Auth.change_user_email(user, %{}, validate_email: false)
 
     socket =
@@ -64,7 +64,7 @@ defmodule ZoonkWeb.Live.UserSettings do
     %{"user" => user_params} = params
 
     email_form =
-      socket.assigns.current_user
+      socket.assigns.current_scope.user
       |> Auth.change_user_email(user_params, validate_email: false)
       |> Map.put(:action, :validate)
       |> to_form()
@@ -74,7 +74,7 @@ defmodule ZoonkWeb.Live.UserSettings do
 
   def handle_event("update_email", params, socket) do
     %{"user" => user_params} = params
-    user = socket.assigns.current_user
+    user = socket.assigns.current_scope.user
     true = Auth.sudo_mode?(user)
 
     case Auth.change_user_email(user, user_params) do

@@ -165,6 +165,7 @@ defmodule Zoonk.MixProject do
           Zoonk.Auth.UserNotifier,
           Zoonk.Auth.UserProfileBuilder
         ],
+        Scopes: [Zoonk.Auth.Scope],
         Services: [
           Zoonk.Mailer
         ],
