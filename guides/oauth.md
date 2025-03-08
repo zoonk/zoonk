@@ -68,3 +68,9 @@ export APPLE_PRIVATE_KEY=your_private_key
 ```
 
 Apple's private key is a multi-line string. Make sure to keep the new lines. Otherwise, it won't work.
+
+### Redirect URI
+
+Apple doesn't allow using `localhost` or `.test` domains. So, for testing the `Sign in with Apple` flow, you will need to add a domain like `zoonk.app` to the `scripts/ssl.sh` file. Make sure to remove it after testing this flow as it will redirect `zoonk.app` requests to `localhost`.
+
+Then, add the redirect URI to the list of authorized redirect URIs. It should look like `https://zoonk.app:4001/auth/apple/callback`.
