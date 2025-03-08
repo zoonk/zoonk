@@ -39,19 +39,13 @@ You can read our full documentation at https://docs.zoonk.org or check the guide
 
 **[Support the project and get lifetime access to Zoonk](https://github.com/sponsors/ceolinwill?frequency=one-time)**
 
-### Lifetime (Plus)
-
-People who supported the project and will get lifetime access to the `Plus` plan:
+People who supported the project and got lifetime access:
 
 - [Sephora Lillian](https://github.com/sephoralillian)
 - [Ben Biran](https://github.com/benbiran)
-
-### Lifetime (Supporter)
-
-People who supported the project and will get lifetime access to the `Supporter` plan:
-
 - [David Szabo-Stuban](https://github.com/ssdavidai)
 - [Gustavo A. Castillo](https://github.com/guscastilloa)
+- [Greg Lind](https://github.com/glind)
 
 ### Recurring
 
