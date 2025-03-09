@@ -191,6 +191,8 @@ defmodule Zoonk.AuthTest do
     test "returns user by token", %{user: user, token: token} do
       assert session_user = Auth.get_user_by_session_token(token)
       assert session_user.id == user.id
+      assert session_user.profile.user_id == user.id
+      assert session_user.profile.public? == false
     end
 
     test "does not return user for invalid token" do

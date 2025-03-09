@@ -149,7 +149,10 @@ defmodule Zoonk.Auth do
   """
   def get_user_by_session_token(token) do
     {:ok, query} = Queries.UserToken.verify_session_token(token)
-    Repo.one(query)
+
+    query
+    |> Repo.one()
+    |> Repo.preload(:profile)
   end
 
   @doc """

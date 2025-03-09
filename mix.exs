@@ -125,6 +125,7 @@ defmodule Zoonk.MixProject do
         Config: [Zoonk.Configuration],
         Components: [
           ZoonkWeb.Components.Anchor,
+          ZoonkWeb.Components.Avatar,
           ZoonkWeb.Components.Button,
           ZoonkWeb.Components.DataList,
           ZoonkWeb.Components.Divider,

@@ -6,6 +6,8 @@ defmodule ZoonkWeb.Router do
 
   alias ZoonkWeb.Hooks
 
+  @allowed_images "https://avatars.githubusercontent.com https://*.googleusercontent.com"
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -15,7 +17,7 @@ defmodule ZoonkWeb.Router do
 
     plug :put_secure_browser_headers, %{
       "content-security-policy" =>
-        "base-uri 'self'; frame-ancestors 'self'; default-src 'self'; img-src 'self' data: blob:;"
+        "base-uri 'self'; frame-ancestors 'self'; default-src 'self'; img-src 'self' #{@allowed_images} data: blob:;"
     }
 
     plug :fetch_current_scope_for_user

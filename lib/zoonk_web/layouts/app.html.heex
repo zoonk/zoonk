@@ -1,9 +1,25 @@
 <main aria-labelledby="page-title">
   <header
     aria-label={gettext("Search and settings")}
-    class="mx-auto max-w-3xl p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 2xl:p-14"
+    class="mx-auto flex max-w-3xl items-center justify-between p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 2xl:p-14"
   >
     <.text element={:h1} size={:header} id="page-title">{@page_title}</.text>
+
+    <.link
+      navigate={~p"/users/settings"}
+      class="zk-avatar-link size-8"
+      aria-label={dgettext("users", "Go to user settings")}
+    >
+      <.avatar
+        src={@current_scope.user.profile.picture_url}
+        alt={
+          dgettext("users", "Profile picture of %{username}",
+            username: @current_scope.user.profile.username
+          )
+        }
+        label={@current_scope.user.profile.username}
+      />
+    </.link>
   </header>
 
   {@inner_content}
