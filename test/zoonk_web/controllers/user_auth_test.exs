@@ -23,7 +23,7 @@ defmodule ZoonkWeb.UserAuthControllerTest do
       html_response(loggedin_conn, 200)
     end
 
-    test "redirects to signin page when magic link is invalid", %{conn: conn} do
+    test "redirects to login page when magic link is invalid", %{conn: conn} do
       conn = post(conn, ~p"/login", %{"user" => %{"token" => "invalid"}})
       assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Magic link is invalid or it has expired."
       assert redirected_to(conn) == ~p"/login/email"
@@ -32,7 +32,7 @@ defmodule ZoonkWeb.UserAuthControllerTest do
 
   describe "GET /confirm/:token" do
     test "confirms the given token once", %{conn: conn, unconfirmed_user: user} do
-      token = extract_user_token(fn url -> Auth.deliver_signin_instructions(user, url) end)
+      token = extract_user_token(fn url -> Auth.deliver_login_instructions(user, url) end)
 
       conn = get(conn, ~p"/confirm/#{token}")
 
@@ -44,14 +44,14 @@ defmodule ZoonkWeb.UserAuthControllerTest do
       assert get_session(conn, :user_token)
 
       # log out, new conn
-      signout_conn = get(build_conn(), ~p"/confirm/#{token}")
-      assert redirected_to(signout_conn) == ~p"/login/email"
-      assert Phoenix.Flash.get(signout_conn.assigns.flash, :error) =~ "Magic link is invalid or it has expired."
-      refute get_session(signout_conn, :user_token)
+      logout_conn = get(build_conn(), ~p"/confirm/#{token}")
+      assert redirected_to(logout_conn) == ~p"/login/email"
+      assert Phoenix.Flash.get(logout_conn.assigns.flash, :error) =~ "Magic link is invalid or it has expired."
+      refute get_session(logout_conn, :user_token)
     end
 
     test "logs confirmed user in without changing confirmed_at", %{conn: conn, user: user} do
-      token = extract_user_token(fn url -> Auth.deliver_signin_instructions(user, url) end)
+      token = extract_user_token(fn url -> Auth.deliver_login_instructions(user, url) end)
       conn = get(conn, ~p"/login/t/#{token}")
 
       assert get_session(conn, :user_token)
@@ -60,7 +60,7 @@ defmodule ZoonkWeb.UserAuthControllerTest do
       assert is_nil(Phoenix.Flash.get(conn.assigns.flash, :info))
     end
 
-    test "redirects to the signin page if the token is invalid", %{conn: conn} do
+    test "redirects to the login page if the token is invalid", %{conn: conn} do
       conn = get(conn, ~p"/confirm/invalid_token")
       assert redirected_to(conn) == ~p"/login/email"
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "Magic link is invalid or it has expired."
@@ -71,7 +71,7 @@ defmodule ZoonkWeb.UserAuthControllerTest do
     test "logs the user out", %{conn: conn, user: user} do
       conn =
         conn
-        |> signin_user(user)
+        |> login_user(user)
         |> delete(~p"/logout")
 
       assert redirected_to(conn) == ~p"/"

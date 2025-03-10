@@ -2,7 +2,7 @@ defmodule Zoonk.Auth do
   @moduledoc """
   Manages user authentication operations.
 
-  This module handles core authentication flows including user registration
+  This module handles core authentication flows including user signup
   session management, magic link authentication, and email verification.
 
   It coordinates with the database layer to manage user records and tokens,
@@ -54,21 +54,21 @@ defmodule Zoonk.Auth do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
-  ## User registration
+  ## User signup
 
   @doc """
-  Registers a user.
+  Signs up a user.
 
   ## Examples
 
-      iex> register_user(%{field: value})
+      iex> signup_user(%{field: value})
       {:ok, %User{}}
 
-      iex> register_user(%{field: bad_value})
+      iex> signup_user(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def register_user(attrs) do
+  def signup_user(attrs) do
     Ecto.Multi.new()
     |> Ecto.Multi.insert(:user, User.settings_changeset(%User{}, attrs))
     |> Ecto.Multi.insert(:profile, &UserProfileBuilder.build_initial_user_profile/1)
@@ -180,7 +180,7 @@ defmodule Zoonk.Auth do
      including session ones - are expired. In theory, no other tokens
      exist but we delete all of them for best security practices.
   """
-  def signin_user_by_magic_link(token) do
+  def login_user_by_magic_link(token) do
     {:ok, query} = Queries.UserToken.verify_magic_link_token(token)
 
     case Repo.one(query) do
@@ -216,12 +216,12 @@ defmodule Zoonk.Auth do
   end
 
   @doc ~S"""
-  Delivers the magic link signin instructions to the given user.
+  Delivers the magic link login instructions to the given user.
   """
-  def deliver_signin_instructions(%User{} = user, magic_link_url_fun) when is_function(magic_link_url_fun, 1) do
-    {encoded_token, user_token} = TokenBuilder.build_email_token(user, "signin")
+  def deliver_login_instructions(%User{} = user, magic_link_url_fun) when is_function(magic_link_url_fun, 1) do
+    {encoded_token, user_token} = TokenBuilder.build_email_token(user, "login")
     Repo.insert!(user_token)
-    UserNotifier.deliver_signin_instructions(user, magic_link_url_fun.(encoded_token))
+    UserNotifier.deliver_login_instructions(user, magic_link_url_fun.(encoded_token))
   end
 
   @doc """

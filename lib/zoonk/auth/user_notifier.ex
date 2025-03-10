@@ -4,7 +4,7 @@ defmodule Zoonk.Auth.UserNotifier do
 
   This module is responsible for sending email instructions
   to users for various authentication-related actions,
-  such as updating their email, signing in with a magic link,
+  such as updating their email, logging in with a magic link,
   or confirming their account.
   """
   use Gettext, backend: Zoonk.Gettext
@@ -44,7 +44,7 @@ defmodule Zoonk.Auth.UserNotifier do
   @doc """
   Deliver instructions to log in with a magic link.
   """
-  def deliver_signin_instructions(user, url) do
+  def deliver_login_instructions(user, url) do
     case user do
       %User{confirmed_at: nil} -> deliver_confirmation_instructions(user, url)
       _confirmed -> deliver_magic_link_instructions(user, url)

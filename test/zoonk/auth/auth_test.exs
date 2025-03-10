@@ -33,42 +33,42 @@ defmodule Zoonk.AuthTest do
     end
   end
 
-  describe "register_user/1" do
+  describe "signup_user/1" do
     test "requires email to be set" do
-      {:error, changeset} = Auth.register_user(%{})
+      {:error, changeset} = Auth.signup_user(%{})
 
       assert %{email: ["can't be blank"]} = errors_on(changeset)
     end
 
     test "validates email when given" do
-      {:error, changeset} = Auth.register_user(%{email: "not valid"})
+      {:error, changeset} = Auth.signup_user(%{email: "not valid"})
 
       assert %{email: ["must have the @ sign and no spaces"]} = errors_on(changeset)
     end
 
     test "validates maximum values for email for security" do
       too_long = String.duplicate("db", 100)
-      {:error, changeset} = Auth.register_user(%{email: too_long})
+      {:error, changeset} = Auth.signup_user(%{email: too_long})
       assert "should be at most 160 character(s)" in errors_on(changeset).email
     end
 
     test "validates email uniqueness" do
       %{email: email} = user_fixture()
-      {:error, changeset} = Auth.register_user(%{email: email})
+      {:error, changeset} = Auth.signup_user(%{email: email})
       assert "has already been taken" in errors_on(changeset).email
 
       # Now try with the upper cased email too, to check that email case is ignored.
-      {:error, uppercase_changeset} = Auth.register_user(%{email: String.upcase(email)})
+      {:error, uppercase_changeset} = Auth.signup_user(%{email: String.upcase(email)})
       assert "has already been taken" in errors_on(uppercase_changeset).email
     end
 
-    test "registers users" do
+    test "signs up users" do
       email = unique_user_email()
 
       {:ok, user} =
         [email: email]
         |> valid_user_attributes()
-        |> Auth.register_user()
+        |> Auth.signup_user()
 
       assert user.email == email
       assert is_nil(user.confirmed_at)
@@ -227,14 +227,14 @@ defmodule Zoonk.AuthTest do
     end
   end
 
-  describe "signin_user_by_magic_link/1" do
+  describe "login_user_by_magic_link/1" do
     test "confirms user and expires tokens" do
       user = unconfirmed_user_fixture()
       refute user.confirmed_at
       {encoded_token, hashed_token} = generate_user_magic_link_token(user)
 
       assert {:ok, user, [%{token: ^hashed_token}]} =
-               Auth.signin_user_by_magic_link(encoded_token)
+               Auth.login_user_by_magic_link(encoded_token)
 
       assert user.confirmed_at
     end
@@ -243,9 +243,9 @@ defmodule Zoonk.AuthTest do
       user = user_fixture()
       assert user.confirmed_at
       {encoded_token, _hashed_token} = generate_user_magic_link_token(user)
-      assert {:ok, ^user, []} = Auth.signin_user_by_magic_link(encoded_token)
+      assert {:ok, ^user, []} = Auth.login_user_by_magic_link(encoded_token)
       # one time use only
-      assert {:error, :not_found} = Auth.signin_user_by_magic_link(encoded_token)
+      assert {:error, :not_found} = Auth.login_user_by_magic_link(encoded_token)
     end
   end
 
@@ -258,7 +258,7 @@ defmodule Zoonk.AuthTest do
     end
   end
 
-  describe "deliver_signin_instructions/2" do
+  describe "deliver_login_instructions/2" do
     setup do
       %{user: unconfirmed_user_fixture()}
     end
@@ -266,14 +266,14 @@ defmodule Zoonk.AuthTest do
     test "sends token through notification", %{user: user} do
       token =
         extract_user_token(fn url ->
-          Auth.deliver_signin_instructions(user, url)
+          Auth.deliver_login_instructions(user, url)
         end)
 
       {:ok, new_token} = Base.url_decode64(token, padding: false)
       assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, new_token))
       assert user_token.user_id == user.id
       assert user_token.sent_to == user.email
-      assert user_token.context == "signin"
+      assert user_token.context == "login"
     end
   end
 end

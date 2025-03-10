@@ -6,7 +6,7 @@ defmodule ZoonkWeb.Plugs.UserAuth do
   or remember-me cookies and assigns it to the connection.
 
   It also enforces authentication for protected routes by
-  redirecting unauthenticated users to the sign-in page.
+  redirecting unauthenticated users to the login page.
 
   ## Usage
 

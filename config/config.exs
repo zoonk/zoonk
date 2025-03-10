@@ -69,7 +69,7 @@ config :zoonk, :scopes,
     schema_type: :id,
     schema_table: :users,
     test_data_fixture: Zoonk.AuthFixtures,
-    test_login_helper: :register_and_log_in_user
+    test_login_helper: :signup_and_login_user
   ]
 
 # Make sure all schemas are migrated when running `mix cloak.migrate.ecto`

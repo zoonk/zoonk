@@ -44,9 +44,9 @@ defmodule ZoonkWeb.Controllers.OAuth do
     language = get_session(conn, :language)
     auth = Map.put(user_from_provider, "provider", provider)
 
-    case Providers.signin_with_provider(auth, language) do
+    case Providers.login_with_provider(auth, language) do
       {:ok, %User{} = user} ->
-        UserAuth.signin_user(conn, user)
+        UserAuth.login_user(conn, user)
 
       {:error, _changeset} ->
         redirect_on_failure(conn)

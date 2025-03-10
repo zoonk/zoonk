@@ -16,38 +16,47 @@ msgstr ""
 msgid "Actions"
 msgstr "작업"
 
-#: lib/zoonk_web/components/flash.ex:81
+#: lib/zoonk_web/components/flash.ex:88
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "다시 연결을 시도 중입니다"
 
-#: lib/zoonk_web/components/flash.ex:72
+#: lib/zoonk_web/components/flash.ex:78
 #, elixir-autogen, elixir-format
 msgid "Error!"
 msgstr "오류!"
 
-#: lib/zoonk_web/components/flash.ex:93
+#: lib/zoonk_web/components/flash.ex:100
 #, elixir-autogen, elixir-format
 msgid "Hang in there while we get back on track"
 msgstr "다시 정상으로 돌아올 때까지 기다려 주세요"
 
-#: lib/zoonk_web/components/flash.ex:88
+#: lib/zoonk_web/components/flash.ex:95
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "문제가 발생했습니다!"
 
-#: lib/zoonk_web/components/flash.ex:71
+#: lib/zoonk_web/components/flash.ex:77
 #, elixir-autogen, elixir-format
 msgid "Success!"
 msgstr "성공!"
 
-#: lib/zoonk_web/components/flash.ex:76
+#: lib/zoonk_web/components/flash.ex:83
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "인터넷을 찾을 수 없습니다"
 
-#: lib/zoonk_web/components/flash.ex:51
 #: lib/zoonk_web/components/modal.ex:67
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr "닫기"
+
+#: lib/zoonk_web/layouts/app.html.heex:28
+#, elixir-autogen, elixir-format
+msgid "Main menu"
+msgstr ""
+
+#: lib/zoonk_web/layouts/app.html.heex:3
+#, elixir-autogen, elixir-format
+msgid "Search and settings"
+msgstr ""

@@ -14,10 +14,10 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
     <.main_container action={:signup} show_options>
       <.simple_form
         for={@form}
-        id="registration_form"
+        id="signup_form"
         phx-submit="save"
         phx-change="validate"
-        label={dgettext("users", "Registration form")}
+        label={dgettext("users", "Signup form")}
       >
         <.error :if={@check_errors}>
           {dgettext("users", "Oops, something went wrong! Please check the errors below.")}
@@ -70,10 +70,10 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do
-    case Auth.register_user(user_params) do
+    case Auth.signup_user(user_params) do
       {:ok, user} ->
         {:ok, _url_fn} =
-          Auth.deliver_signin_instructions(
+          Auth.deliver_login_instructions(
             user,
             &url(~p"/confirm/#{&1}")
           )

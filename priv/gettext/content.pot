@@ -1,0 +1,36 @@
+## This file is a PO Template file.
+##
+## "msgid"s here are often extracted from source code.
+## Add new messages manually only if they're dynamic
+## messages that can't be statically extracted.
+##
+## Run "mix gettext.extract" to bring this file up to
+## date. Leave "msgstr"s empty as changing them here has no
+## effect: edit them in PO (.po) files instead.
+#
+msgid ""
+msgstr ""
+
+#: lib/zoonk_web/layouts/app.html.heex:56
+#: lib/zoonk_web/live/catalog/browse.ex:7
+#, elixir-autogen, elixir-format
+msgid "Catalog"
+msgstr ""
+
+#: lib/zoonk_web/layouts/app.html.heex:49
+#: lib/zoonk_web/live/goals/browse.ex:7
+#, elixir-autogen, elixir-format
+msgid "Goals"
+msgstr ""
+
+#: lib/zoonk_web/layouts/app.html.heex:63
+#: lib/zoonk_web/live/library/browse.ex:7
+#, elixir-autogen, elixir-format
+msgid "Library"
+msgstr ""
+
+#: lib/zoonk_web/layouts/app.html.heex:42
+#: lib/zoonk_web/live/home.ex:7
+#, elixir-autogen, elixir-format
+msgid "Summary"
+msgstr ""

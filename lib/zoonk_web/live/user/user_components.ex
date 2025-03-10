@@ -6,13 +6,13 @@ defmodule ZoonkWeb.Components.User do
 
   alias Zoonk.Configuration
 
-  @actions [:signin, :signup]
+  @actions [:login, :signup]
 
   @doc """
   Generates a link to the authentication provider.
   """
   attr :provider, :atom, values: [:email | Configuration.list_providers()], required: true
-  attr :action, :atom, values: @actions, default: :signin
+  attr :action, :atom, values: @actions, default: :login
 
   def auth_link(assigns) do
     ~H"""
@@ -31,7 +31,7 @@ defmodule ZoonkWeb.Components.User do
   @doc """
   Displays the footer link.
 
-  When on the signin page, it shows the signup link and vice versa.
+  When on the login page, it shows the signup link and vice versa.
   """
   attr :action, :atom, values: @actions, default: :signup
 
@@ -58,7 +58,7 @@ defmodule ZoonkWeb.Components.User do
   @doc """
   Displays the authentication page title.
   """
-  attr :action, :atom, values: @actions, default: :signin
+  attr :action, :atom, values: @actions, default: :login
 
   def auth_title(assigns) do
     ~H"""
@@ -71,7 +71,7 @@ defmodule ZoonkWeb.Components.User do
   @doc """
   Wraps the authentication page into a container.
   """
-  attr :action, :atom, values: @actions, default: :signin
+  attr :action, :atom, values: @actions, default: :login
   attr :show_options, :boolean, default: false
   slot :inner_block, required: true
 
@@ -113,23 +113,23 @@ defmodule ZoonkWeb.Components.User do
     """
   end
 
-  defp get_auth_header(:signin), do: dgettext("users", "Access your Zoonk account.")
+  defp get_auth_header(:login), do: dgettext("users", "Access your Zoonk account.")
   defp get_auth_header(:signup), do: dgettext("users", "Start learning the skills to build amazing things.")
 
-  defp get_auth_link(:signin), do: ~p"/login"
+  defp get_auth_link(:login), do: ~p"/login"
   defp get_auth_link(:signup), do: ~p"/signup"
 
-  defp get_auth_link(:signin, :email), do: ~p"/login/email"
+  defp get_auth_link(:login, :email), do: ~p"/login/email"
   defp get_auth_link(:signup, :email), do: ~p"/signup/email"
   defp get_auth_link(_action, provider), do: ~p"/auth/#{provider}"
 
-  defp get_auth_label(:signin, :email), do: dgettext("users", "Login with Email")
+  defp get_auth_label(:login, :email), do: dgettext("users", "Login with Email")
   defp get_auth_label(:signup, :email), do: dgettext("users", "Sign up with Email")
 
   defp get_auth_label(_action, provider),
     do: dgettext("users", "Continue with %{provider}", provider: provider_name(provider))
 
-  defp get_back_label(:signin), do: dgettext("users", "Other login options")
+  defp get_back_label(:login), do: dgettext("users", "Other login options")
   defp get_back_label(:signup), do: dgettext("users", "Other sign up options")
 
   defp provider_name(provider) do
@@ -144,19 +144,19 @@ defmodule ZoonkWeb.Components.User do
   defp get_icon(:email), do: "tabler-mail-filled"
 
   # We show the opposite action in the footer
-  # If a user is in the signin page, we show the signup link
-  # If a user is in the signup page, we show the signin link
+  # If a user is in the login page, we show the signup link
+  # If a user is in the signup page, we show the login link
   # So, we need to get the opposite action
-  defp get_footer_action(:signin), do: :signup
-  defp get_footer_action(:signup), do: :signin
+  defp get_footer_action(:login), do: :signup
+  defp get_footer_action(:signup), do: :login
 
-  defp get_footer_aria_title(:signin), do: dgettext("users", "Login to your account")
+  defp get_footer_aria_title(:login), do: dgettext("users", "Login to your account")
   defp get_footer_aria_title(:signup), do: dgettext("users", "Create an account")
 
-  defp get_footer_title(:signin), do: dgettext("users", "Already have an account?")
+  defp get_footer_title(:login), do: dgettext("users", "Already have an account?")
   defp get_footer_title(:signup), do: dgettext("users", "Don't have an account?")
 
-  defp get_footer_cta(:signin), do: dgettext("users", "Login")
+  defp get_footer_cta(:login), do: dgettext("users", "Login")
   defp get_footer_cta(:signup), do: dgettext("users", "Sign up")
 
   defp get_terms_link(link, label) do

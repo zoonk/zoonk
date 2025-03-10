@@ -16,38 +16,47 @@ msgstr ""
 msgid "Actions"
 msgstr "アクション"
 
-#: lib/zoonk_web/components/flash.ex:81
+#: lib/zoonk_web/components/flash.ex:88
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "再接続を試みています"
 
-#: lib/zoonk_web/components/flash.ex:72
+#: lib/zoonk_web/components/flash.ex:78
 #, elixir-autogen, elixir-format
 msgid "Error!"
 msgstr "エラー！"
 
-#: lib/zoonk_web/components/flash.ex:93
+#: lib/zoonk_web/components/flash.ex:100
 #, elixir-autogen, elixir-format
 msgid "Hang in there while we get back on track"
 msgstr "復旧するまでお待ちください"
 
-#: lib/zoonk_web/components/flash.ex:88
+#: lib/zoonk_web/components/flash.ex:95
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "何かがうまくいきませんでした！"
 
-#: lib/zoonk_web/components/flash.ex:71
+#: lib/zoonk_web/components/flash.ex:77
 #, elixir-autogen, elixir-format
 msgid "Success!"
 msgstr "成功！"
 
-#: lib/zoonk_web/components/flash.ex:76
+#: lib/zoonk_web/components/flash.ex:83
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "インターネットに接続できません"
 
-#: lib/zoonk_web/components/flash.ex:51
 #: lib/zoonk_web/components/modal.ex:67
 #, elixir-autogen, elixir-format
 msgid "close"
 msgstr "閉じる"
+
+#: lib/zoonk_web/layouts/app.html.heex:28
+#, elixir-autogen, elixir-format
+msgid "Main menu"
+msgstr ""
+
+#: lib/zoonk_web/layouts/app.html.heex:3
+#, elixir-autogen, elixir-format
+msgid "Search and settings"
+msgstr ""

@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Live.UserSignIn do
+defmodule ZoonkWeb.Live.UserLogin do
   @moduledoc false
   use ZoonkWeb, :live_view
 
@@ -6,7 +6,7 @@ defmodule ZoonkWeb.Live.UserSignIn do
 
   def render(assigns) do
     ~H"""
-    <.main_container action={:signin}>
+    <.main_container action={:login}>
       <section
         class="flex w-full flex-col gap-2"
         aria-label={dgettext("users", "Use one of the external providers below:")}

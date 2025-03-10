@@ -21,9 +21,9 @@ defmodule ZoonkWeb.UserAuthHelperTest do
     %{user: %{user_fixture() | authenticated_at: DateTime.utc_now()}, conn: conn}
   end
 
-  describe "signin_user/2" do
+  describe "login_user/2" do
     test "stores the user token in the session", %{conn: conn, user: user} do
-      conn = Helpers.UserAuth.signin_user(conn, user)
+      conn = Helpers.UserAuth.login_user(conn, user)
       assert token = get_session(conn, :user_token)
       assert get_session(conn, :live_socket_id) == "users_sessions:#{Base.url_encode64(token)}"
       assert redirected_to(conn) == ~p"/"
@@ -34,7 +34,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
       conn =
         conn
         |> put_session(:to_be_removed, "value")
-        |> Helpers.UserAuth.signin_user(user)
+        |> Helpers.UserAuth.login_user(user)
 
       refute get_session(conn, :to_be_removed)
     end
@@ -43,7 +43,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
       conn =
         conn
         |> put_session(:user_return_to, "/hello")
-        |> Helpers.UserAuth.signin_user(user)
+        |> Helpers.UserAuth.login_user(user)
 
       assert redirected_to(conn) == "/hello"
     end
@@ -52,7 +52,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
       conn =
         conn
         |> fetch_cookies()
-        |> Helpers.UserAuth.signin_user(user)
+        |> Helpers.UserAuth.login_user(user)
 
       assert get_session(conn, :user_token) == conn.cookies[@remember_me_cookie]
       assert get_session(conn, :user_remember_me) == true
@@ -66,7 +66,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
       conn =
         conn
         |> assign(:current_scope, Scope.for_user(user))
-        |> Helpers.UserAuth.signin_user(user)
+        |> Helpers.UserAuth.login_user(user)
 
       assert redirected_to(conn) == "/users/settings"
     end
@@ -82,7 +82,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
       # the conn is already logged in and has the remeber_me cookie set,
       # now we log in again and even without explicitly setting remember_me,
       # the cookie should be set again
-      next_conn = Helpers.UserAuth.signin_user(conn, user)
+      next_conn = Helpers.UserAuth.login_user(conn, user)
       assert %{value: signed_token, max_age: max_age} = next_conn.resp_cookies[@remember_me_cookie]
       assert signed_token != get_session(next_conn, :user_token)
       assert max_age == @max_age
@@ -90,7 +90,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
     end
   end
 
-  describe "signout_user/1" do
+  describe "logout_user/1" do
     test "erases session and cookies", %{conn: conn, user: user} do
       user_token = Auth.generate_user_session_token(user)
 
@@ -99,7 +99,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
         |> put_session(:user_token, user_token)
         |> put_req_cookie(@remember_me_cookie, user_token)
         |> fetch_cookies()
-        |> Helpers.UserAuth.signout_user()
+        |> Helpers.UserAuth.logout_user()
 
       refute get_session(conn, :user_token)
       refute conn.cookies[@remember_me_cookie]
@@ -114,7 +114,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
 
       conn
       |> put_session(:live_socket_id, live_socket_id)
-      |> Helpers.UserAuth.signout_user()
+      |> Helpers.UserAuth.logout_user()
 
       assert_receive %Broadcast{event: "disconnect", topic: ^live_socket_id}
     end
@@ -123,7 +123,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
       conn =
         conn
         |> fetch_cookies()
-        |> Helpers.UserAuth.signout_user()
+        |> Helpers.UserAuth.logout_user()
 
       refute get_session(conn, :user_token)
       assert %{max_age: 0} = conn.resp_cookies[@remember_me_cookie]

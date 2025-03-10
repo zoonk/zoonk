@@ -2,8 +2,8 @@ defmodule ZoonkWeb.Controllers.UserAuth do
   @moduledoc """
   Handles user authentication.
 
-  Provides actions for signing in users via a magic link
-  and signing out users.
+  Provides actions for logging in users via a magic link
+  and logging out users.
   """
   use ZoonkWeb, :controller
 
@@ -11,10 +11,10 @@ defmodule ZoonkWeb.Controllers.UserAuth do
   alias ZoonkWeb.Helpers
 
   @doc """
-  Signs in a user.
+  Logs in a user.
 
   The user is redirected to the home page upon successful
-  authentication or to the sign-in page with an error message.
+  authentication or to the login page with an error message.
 
   This controller is also used for confirming a user.
   """
@@ -22,15 +22,15 @@ defmodule ZoonkWeb.Controllers.UserAuth do
     create(conn, params, nil)
   end
 
-  # magic link signin
+  # magic link login
   defp create(conn, %{"user" => %{"token" => token}}, info) do
-    case Auth.signin_user_by_magic_link(token) do
+    case Auth.login_user_by_magic_link(token) do
       {:ok, user, tokens_to_disconnect} ->
         Helpers.UserAuth.disconnect_sessions(tokens_to_disconnect)
 
         conn
         |> put_flash(:info, info)
-        |> Helpers.UserAuth.signin_user(user)
+        |> Helpers.UserAuth.login_user(user)
 
       _error ->
         conn
@@ -45,22 +45,22 @@ defmodule ZoonkWeb.Controllers.UserAuth do
   def delete(conn, _params) do
     conn
     |> put_flash(:info, dgettext("users", "Logged out successfully."))
-    |> Helpers.UserAuth.signout_user()
+    |> Helpers.UserAuth.logout_user()
   end
 
   @doc """
   Confirms a user account.
   """
-  def confirm(conn, %{"token" => token}), do: signin_user(conn, token, :confirm)
+  def confirm(conn, %{"token" => token}), do: login_user(conn, token, :confirm)
 
   @doc """
   Signs in a user via a magic link token sent to their email.
   """
-  def login(conn, %{"token" => token}), do: signin_user(conn, token, :login)
+  def login(conn, %{"token" => token}), do: login_user(conn, token, :login)
 
-  defp signin_user(conn, token, action) do
+  defp login_user(conn, token, action) do
     if Auth.get_user_by_magic_link_token(token) do
-      create(conn, %{"user" => %{"token" => token}}, signin_flash(action))
+      create(conn, %{"user" => %{"token" => token}}, login_flash(action))
     else
       conn
       |> put_flash(:error, expired_link())
@@ -68,8 +68,8 @@ defmodule ZoonkWeb.Controllers.UserAuth do
     end
   end
 
-  defp signin_flash(:confirm), do: dgettext("users", "User confirmed successfully.")
-  defp signin_flash(:login), do: nil
+  defp login_flash(:confirm), do: dgettext("users", "User confirmed successfully.")
+  defp login_flash(:login), do: nil
 
   defp expired_link, do: dgettext("users", "Magic link is invalid or it has expired.")
 end

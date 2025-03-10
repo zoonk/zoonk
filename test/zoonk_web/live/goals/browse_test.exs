@@ -11,7 +11,7 @@ defmodule ZoonkWeb.GoalsLive.BrowseTest do
   end
 
   describe "browse goals page" do
-    setup :register_and_signin_user
+    setup :signup_and_login_user
 
     test "renders page", %{conn: conn} do
       {:ok, home_lv, _html} = live(conn, ~p"/")

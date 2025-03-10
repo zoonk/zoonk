@@ -11,7 +11,7 @@ defmodule Zoonk.Auth.UserProfileBuilder do
   @doc """
   Builds a `Zoonk.Schemas.UserProfile` based on the user's email address.
 
-  This is useful for initializing a user profile when a new user registers.
+  This is useful for initializing a user profile when a new user signs up.
 
   ## Examples
 

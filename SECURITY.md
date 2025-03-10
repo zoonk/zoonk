@@ -5,7 +5,7 @@ _Based on [Supabase's security policy](https://supabase.com/.well-known/security
 ## Out of scope vulnerabilities
 
 - Clickjacking on pages with no sensitive actions.
-- Unauthenticated/signout/signin CSRF.
+- Unauthenticated/logout/login CSRF.
 - Attacks requiring MITM or physical access to a user's device.
 - Attacks requiring social engineering.
 - Any activity that could lead to the disruption of our service (DoS).

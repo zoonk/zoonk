@@ -8,7 +8,7 @@ defmodule Zoonk.Auth.ProvidersTest do
   alias Zoonk.Schemas.UserProfile
   alias Zoonk.Schemas.UserProvider
 
-  describe "signin_with_provider/2" do
+  describe "login_with_provider/2" do
     test "creates a new user and links the provider" do
       email = unique_user_email()
       picture = "https://zoonk.test/picture.png"
@@ -16,7 +16,7 @@ defmodule Zoonk.Auth.ProvidersTest do
 
       auth = oauth_fixture(%{uid: uid, email: email, picture: picture})
 
-      {:ok, %User{} = user} = Providers.signin_with_provider(auth, "en")
+      {:ok, %User{} = user} = Providers.login_with_provider(auth, "en")
 
       assert user.email == email
       assert user.language == :en
@@ -39,7 +39,7 @@ defmodule Zoonk.Auth.ProvidersTest do
       existing_user = user_fixture(%{email: email})
       auth = oauth_fixture(%{uid: uid, email: email})
 
-      {:ok, user} = Providers.signin_with_provider(auth, "en")
+      {:ok, user} = Providers.login_with_provider(auth, "en")
 
       assert user.id == existing_user.id
 
@@ -57,10 +57,10 @@ defmodule Zoonk.Auth.ProvidersTest do
       existing_user = user_fixture(%{email: email})
       auth = oauth_fixture(%{uid: uid, email: email})
 
-      {:ok, first_user} = Providers.signin_with_provider(auth, "en")
+      {:ok, first_user} = Providers.login_with_provider(auth, "en")
       assert first_user.id == existing_user.id
 
-      {:ok, user} = Providers.signin_with_provider(auth, "en")
+      {:ok, user} = Providers.login_with_provider(auth, "en")
 
       assert user.id == existing_user.id
 
@@ -77,11 +77,11 @@ defmodule Zoonk.Auth.ProvidersTest do
       user = user_fixture(%{email: email})
 
       provider1 = oauth_fixture(%{uid: uid, provider: :google, email: email})
-      {:ok, _user} = Providers.signin_with_provider(provider1, "en")
+      {:ok, _user} = Providers.login_with_provider(provider1, "en")
       assert Repo.get_by!(UserProvider, user_id: user.id, provider: :google)
 
       provider2 = oauth_fixture(%{uid: uid, provider: :apple, email: email})
-      {:ok, _user} = Providers.signin_with_provider(provider2, "en")
+      {:ok, _user} = Providers.login_with_provider(provider2, "en")
       assert Repo.get_by!(UserProvider, user_id: user.id, provider: :apple)
     end
 
@@ -92,7 +92,7 @@ defmodule Zoonk.Auth.ProvidersTest do
 
       auth = oauth_fixture(%{uid: uid, email: email, picture: picture})
 
-      {:ok, %User{} = user} = Providers.signin_with_provider(auth, "en")
+      {:ok, %User{} = user} = Providers.login_with_provider(auth, "en")
 
       user_provider = Repo.get_by!(UserProvider, user_id: user.id)
       assert user_provider.provider_uid == to_string(uid)
@@ -104,7 +104,7 @@ defmodule Zoonk.Auth.ProvidersTest do
 
       auth = oauth_fixture(%{name: name, username: username})
 
-      {:ok, %User{} = user} = Providers.signin_with_provider(auth, "en")
+      {:ok, %User{} = user} = Providers.login_with_provider(auth, "en")
 
       user_profile = Repo.get_by!(UserProfile, user_id: user.id)
       assert user_profile.display_name == name
@@ -119,8 +119,8 @@ defmodule Zoonk.Auth.ProvidersTest do
       auth1 = oauth_fixture(%{email: email1, provider: :google, username: username})
       auth2 = oauth_fixture(%{email: email2, provider: :apple, username: username})
 
-      {:ok, %User{} = user1} = Providers.signin_with_provider(auth1, "en")
-      {:ok, %User{} = user2} = Providers.signin_with_provider(auth2, "en")
+      {:ok, %User{} = user1} = Providers.login_with_provider(auth1, "en")
+      {:ok, %User{} = user2} = Providers.login_with_provider(auth2, "en")
 
       profile1 = Repo.get_by!(UserProfile, user_id: user1.id)
       profile2 = Repo.get_by!(UserProfile, user_id: user2.id)

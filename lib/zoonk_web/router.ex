@@ -72,8 +72,8 @@ defmodule ZoonkWeb.Router do
       ] do
       live "/signup", UserSignUp
       live "/signup/email", UserSignUpWithEmail
-      live "/login", UserSignIn
-      live "/login/email", UserSignInWithEmail
+      live "/login", UserLogin
+      live "/login/email", UserLoginWithEmail
     end
   end
 

@@ -11,7 +11,7 @@ defmodule ZoonkWeb.HomeLiveTest do
   end
 
   describe "home page" do
-    setup :register_and_signin_user
+    setup :signup_and_login_user
 
     test "renders page", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/")

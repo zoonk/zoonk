@@ -36,7 +36,7 @@ defmodule ZoonkWeb.UserAuthPlugTest do
       logged_in_conn =
         conn
         |> fetch_cookies()
-        |> Helpers.UserAuth.signin_user(user)
+        |> Helpers.UserAuth.login_user(user)
 
       user_token = logged_in_conn.cookies[@remember_me_cookie]
       %{value: signed_token} = logged_in_conn.resp_cookies[@remember_me_cookie]

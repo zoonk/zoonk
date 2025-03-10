@@ -5,7 +5,7 @@ defmodule ZoonkWeb.Hooks.UserAuth do
   Use this module within LiveViews or live sessions to either
   mount the current user without enforcing authentication
   or to enforce user authentication by redirecting
-  unauthenticated users to the sign-in page.
+  unauthenticated users to the login page.
   """
   use ZoonkWeb, :verified_routes
 
@@ -23,7 +23,7 @@ defmodule ZoonkWeb.Hooks.UserAuth do
 
     * `:ensure_authenticated` - Authenticates the user from the session,
       and assigns the current_scope to socket assigns
-      based on user_token. Redirects to signin page if there's no logged user.
+      based on user_token. Redirects to login page if there's no logged user.
 
     * `:ensure_sudo_mode` - Check if the user has been authenticated
       recently enough to access a certain page.

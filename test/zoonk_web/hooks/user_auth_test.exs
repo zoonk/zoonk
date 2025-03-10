@@ -77,7 +77,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
       assert updated_socket.assigns.current_scope.user.id == user.id
     end
 
-    test "redirects to signin page if there isn't a valid user_token", %{conn: conn} do
+    test "redirects to login page if there isn't a valid user_token", %{conn: conn} do
       user_token = "invalid_token"
 
       session =
@@ -94,7 +94,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
       assert updated_socket.assigns.current_scope == nil
     end
 
-    test "redirects to signin page if there isn't a user_token", %{conn: conn} do
+    test "redirects to login page if there isn't a user_token", %{conn: conn} do
       session = get_session(conn)
 
       socket = %LiveView.Socket{

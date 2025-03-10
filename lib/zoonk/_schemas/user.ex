@@ -4,7 +4,7 @@ defmodule Zoonk.Schemas.User do
 
   This schema represents users in the system, storing their
   email and account confirmation status. It also includes
-  changeset functions for managing user registration,
+  changeset functions for managing user signup,
   email validation, and account confirmation.
 
   ## Fields
@@ -14,7 +14,7 @@ defmodule Zoonk.Schemas.User do
     * `kind` - The type of user.
       * `:regular` - A regular user.
       * `:agent` - AI agent used to create content.
-      * `:guest` - A user who has not registered yet.
+      * `:guest` - A user who has not signed up yet.
       * `:white_label` - A user who created an account through a white label partner.
     * `email` - The user's email address.
     * `language` - The user's preferred language.
@@ -69,7 +69,7 @@ defmodule Zoonk.Schemas.User do
   end
 
   @doc """
-  A user changeset for registering or changing the email.
+  A user changeset for signing up or changing the email.
 
   It requires the email to change otherwise an error is added.
 

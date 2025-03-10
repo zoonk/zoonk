@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Live.UserSignInWithEmail do
+defmodule ZoonkWeb.Live.UserLoginWithEmail do
   @moduledoc false
   use ZoonkWeb, :live_view
 
@@ -8,11 +8,11 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
 
   def render(assigns) do
     ~H"""
-    <.main_container action={:signin} show_options>
+    <.main_container action={:login} show_options>
       <.simple_form
         :let={f}
         for={@form}
-        id="signin_form_magic"
+        id="login_form_magic"
         action={~p"/login"}
         phx-submit="submit_magic"
         label={dgettext("users", "Sign in form")}
@@ -52,7 +52,7 @@ defmodule ZoonkWeb.Live.UserSignInWithEmail do
 
   def handle_event("submit_magic", %{"email" => email}, socket) do
     if user = Auth.get_user_by_email(email) do
-      Auth.deliver_signin_instructions(
+      Auth.deliver_login_instructions(
         user,
         &url(~p"/login/t/#{&1}")
       )

@@ -5,7 +5,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
   import Zoonk.AuthFixtures
 
   describe "Sign up with email page" do
-    test "renders registration page", %{conn: conn} do
+    test "renders signup page", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/signup/email")
       assert has_element?(lv, "button[type=submit]", "Create an account")
     end
@@ -13,7 +13,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
     test "redirects if already logged in", %{conn: conn} do
       result =
         conn
-        |> signin_user(user_fixture())
+        |> login_user(user_fixture())
         |> live(~p"/signup/email")
         |> follow_redirect(conn, ~p"/")
 
@@ -25,7 +25,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
 
       result =
         lv
-        |> element("#registration_form")
+        |> element("#signup_form")
         |> render_change(user: %{"email" => "with spaces"})
 
       assert result =~ "Create an account"
@@ -33,7 +33,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
     end
   end
 
-  describe "register user" do
+  describe "signs up user" do
     test "use the browser's language", %{conn: conn} do
       conn = put_req_header(conn, "accept-language", "pt-BR")
 
@@ -56,7 +56,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
       {:ok, lv, _html} = live(conn, ~p"/signup/email")
 
       email = unique_user_email()
-      form = form(lv, "#registration_form", user: valid_user_attributes(email: email))
+      form = form(lv, "#signup_form", user: valid_user_attributes(email: email))
 
       {:ok, _lv, html} =
         form
@@ -77,7 +77,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
 
       result =
         lv
-        |> form("#registration_form",
+        |> form("#signup_form",
           user: %{"email" => user.email}
         )
         |> render_submit()
@@ -86,17 +86,17 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
     end
   end
 
-  describe "registration navigation" do
-    test "redirects to signin page when the Log in button is clicked", %{conn: conn} do
+  describe "signup navigation" do
+    test "redirects to login page when the Log in button is clicked", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/signup/email")
 
-      {:ok, _signin_live, signin_html} =
+      {:ok, _login_live, login_html} =
         lv
         |> element(~s|a:fl-contains("Login")|)
         |> render_click()
         |> follow_redirect(conn, ~p"/login")
 
-      assert signin_html =~ "login"
+      assert login_html =~ "login"
     end
   end
 end
