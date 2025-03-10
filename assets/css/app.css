@@ -99,6 +99,19 @@
   dark:contrast-more:bg-zk-primary-900 dark:contrast-more:ring-zk-primary-900;
 }
 
+@utility zk-btn-danger {
+  @apply bg-zk-danger-50 text-zk-danger-600 ring-zk-danger-50
+  hover:bg-zk-danger-100
+  focus-visible:ring-zk-danger-500
+  dark:text-zk-danger-50
+  dark:bg-zk-danger-600 dark:hover:bg-zk-danger-700
+  dark:ring-zk-danger-600
+  dark:focus-visible:ring-zk-danger-600
+  contrast-more:text-zk-danger-900 contrast-more:bg-zk-danger-100
+  contrast-more:focus-visible:ring-zk-danger-900
+  dark:contrast-more:bg-zk-danger-900 dark:contrast-more:ring-zk-danger-900;
+}
+
 @utility zk-btn-outline {
   @apply ring-zk-border text-zk-text-secondary bg-zk-surface
   hover:text-zk-text-primary hover:bg-zk-surface-hover

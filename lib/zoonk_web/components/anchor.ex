@@ -9,7 +9,7 @@ defmodule ZoonkWeb.Components.Anchor do
   attr :class, :string, default: nil, doc: "CSS class to apply to the anchor"
   attr :weight, :atom, values: [:normal, :medium], default: :medium, doc: "Font weight of the anchor"
   attr :kind, :atom, values: [:link, :button], default: :link, doc: "Kind of anchor to render"
-  attr :variant, :atom, values: [:primary, :outline], default: :primary, doc: "Variant of anchor to render"
+  attr :variant, :atom, values: [:primary, :outline, :danger], default: :primary, doc: "Variant of anchor to render"
   attr :full, :boolean, default: false, doc: "Whether the anchor should be full width"
   attr :icon, :string, default: nil, doc: "Icon to display in the anchor"
   attr :rest, :global, include: ~w(href method navigate patch), doc: "HTML attributes to apply to the anchor"
@@ -58,6 +58,7 @@ defmodule ZoonkWeb.Components.Anchor do
         @full && "relative w-full",
         @variant == :outline && "zk-btn-outline",
         @variant == :primary && "zk-btn-primary",
+        @variant == :danger && "zk-btn-danger",
         @class
       ]}
       {@rest}

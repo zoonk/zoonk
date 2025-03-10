@@ -17,6 +17,10 @@
 
   <header class="zk-container flex items-center justify-between py-4 sm:py-6">
     <.text element={:h1} size={:header} id="page-title">{@page_title}</.text>
+
+    <.a kind={:button} navigate={@user_return_to} variant={:danger}>
+      {gettext("Back")}
+    </.a>
   </header>
 
   {@inner_content}
