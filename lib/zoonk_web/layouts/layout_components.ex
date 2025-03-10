@@ -22,7 +22,7 @@ defmodule ZoonkWeb.Components.Layout do
         class={[
           "flex flex-col items-center justify-center gap-1 p-4",
           "text-center text-sm font-medium",
-          "zk-surface",
+          "zk-surface zk-border group-last:border-r-0 md:border-r",
           "md:group-first:rounded-l-4xl md:group-last:rounded-r-4xl",
           @active and "text-zk-primary dark:text-zk-primary-300",
           !@active and "text-zk-text-secondary dark:text-zk-text-inverse-secondary",
@@ -55,7 +55,7 @@ defmodule ZoonkWeb.Components.Layout do
         "md:left-1/2 md:-translate-x-1/2",
         "md:rounded-4xl md:bottom-4",
         "md:max-w-md md:border-t-0",
-        "md:shadow-sm"
+        "md:shadow-md"
       ]}
     >
       <ul class="flex w-full">

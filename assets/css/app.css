@@ -39,7 +39,7 @@
   --color-zk-surface-inverse: var(--color-neutral-900);
   --color-zk-surface-inverse-hover: var(--color-neutral-800);
 
-  --color-zk-border: var(--color-neutral-200);
+  --color-zk-border: var(--color-neutral-100);
   --color-zk-border-focus: var(--color-neutral-500);
   --color-zk-border-inverse: var(--color-neutral-700);
 
@@ -73,7 +73,9 @@
 }
 
 @utility zk-border {
-  @apply border-zk-border dark:border-zk-border-inverse;
+  @apply border-zk-border dark:border-zk-border-inverse
+  contrast-more:border-zk-border-inverse
+  dark:contrast-more:border-zk-border;
 }
 
 @utility zk-btn {
@@ -133,10 +135,7 @@
 }
 
 @utility zk-input-border {
-  @apply border border-zk-border
-  focus:border-zk-border-focus focus:ring-0
-  dark:border-zk-border-inverse
-  dark:contrast-more:border-zk-border;
+  @apply border zk-border focus:border-zk-border-focus focus:ring-0;
 }
 
 @utility zk-input-border-error {
