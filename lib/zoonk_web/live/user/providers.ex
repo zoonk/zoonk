@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Live.UserProviderSettings do
+defmodule ZoonkWeb.Live.UserProviders do
   @moduledoc false
   use ZoonkWeb, :live_view
 
@@ -12,6 +12,6 @@ defmodule ZoonkWeb.Live.UserProviderSettings do
 
   def mount(_params, _session, socket) do
     socket = assign(socket, page_title: dgettext("users", "Providers"))
-    {:ok, socket}
+    {:ok, socket, layout: {ZoonkWeb.Layouts, :user_settings}}
   end
 end

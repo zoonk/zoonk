@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Live.UserEmailSettings do
+defmodule ZoonkWeb.Live.UserEmail do
   @moduledoc false
   use ZoonkWeb, :live_view
 
@@ -40,7 +40,7 @@ defmodule ZoonkWeb.Live.UserEmailSettings do
           put_flash(socket, :error, dgettext("users", "Email change link is invalid or it has expired."))
       end
 
-    {:ok, push_navigate(socket, to: ~p"/users/settings/email")}
+    {:ok, push_navigate(socket, to: ~p"/users/settings/email", layout: {ZoonkWeb.Layouts, :user_settings})}
   end
 
   def mount(_params, _session, socket) do
@@ -52,9 +52,9 @@ defmodule ZoonkWeb.Live.UserEmailSettings do
       |> assign(:current_email, user.email)
       |> assign(:email_form, to_form(email_changeset))
       |> assign(:trigger_submit, false)
-      |> assign(:page_title, dgettext("users", "Settings"))
+      |> assign(:page_title, dgettext("users", "Change Email"))
 
-    {:ok, socket}
+    {:ok, socket, layout: {ZoonkWeb.Layouts, :user_settings}}
   end
 
   def handle_event("validate_email", params, socket) do

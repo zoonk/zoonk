@@ -35,4 +35,33 @@ defmodule ZoonkWeb.Components.Layout do
     </li>
     """
   end
+
+  @doc """
+  Tab bar component.
+
+  Renders a tab bar fixed to the bottom of the screen.
+  It can be used in combination with the `ZoonkWeb.Components.Layout.nav_menu_item/1` component.
+  """
+  slot :inner_block, required: true
+
+  def tab_bar(assigns) do
+    ~H"""
+    <nav
+      aria-label={gettext("Main menu")}
+      class={[
+        "zk-surface fixed bottom-0 flex w-full justify-around",
+        "zk-border border-t",
+        "backdrop-blur-3xl",
+        "md:left-1/2 md:-translate-x-1/2",
+        "md:rounded-4xl md:bottom-4",
+        "md:max-w-md md:border-t-0",
+        "md:shadow-sm"
+      ]}
+    >
+      <ul class="flex w-full">
+        {render_slot(@inner_block)}
+      </ul>
+    </nav>
+    """
+  end
 end

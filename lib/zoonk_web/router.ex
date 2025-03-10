@@ -57,9 +57,9 @@ defmodule ZoonkWeb.Router do
       live "/library", BrowseLibrary
 
       live "/users/settings", UserSettings
-      live "/users/settings/email", UserEmailSettings, :edit
-      live "/users/settings/email/confirm/:token", UserEmailSettings, :confirm_email
-      live "/users/settings/providers", UserProviderSettings
+      live "/users/settings/email", UserEmail
+      live "/users/settings/email/confirm/:token", UserEmail
+      live "/users/settings/providers", UserProviders
     end
   end
 

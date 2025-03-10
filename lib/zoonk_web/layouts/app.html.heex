@@ -1,4 +1,34 @@
 <main aria-labelledby="page-title">
+  <.tab_bar>
+    <.nav_menu_item
+      active={@active_page == :home}
+      label={dgettext("content", "Summary")}
+      icon="tabler-brain"
+      href={~p"/"}
+    />
+
+    <.nav_menu_item
+      active={@active_page == :browse_goals}
+      label={dgettext("content", "Goals")}
+      icon="tabler-target-arrow"
+      href={~p"/goals"}
+    />
+
+    <.nav_menu_item
+      active={@active_page == :browse_catalog}
+      label={dgettext("content", "Catalog")}
+      icon="tabler-layout-grid"
+      href={~p"/catalog"}
+    />
+
+    <.nav_menu_item
+      active={@active_page == :browse_library}
+      label={dgettext("content", "Library")}
+      icon="tabler-stack-2"
+      href={~p"/library"}
+    />
+  </.tab_bar>
+
   <header
     aria-label={gettext("Search and settings")}
     class="zk-container flex items-center justify-between py-4 sm:py-6"
@@ -23,49 +53,6 @@
   </header>
 
   {@inner_content}
-
-  <nav
-    aria-label={gettext("Main menu")}
-    class={[
-      "zk-surface fixed bottom-0 flex w-full justify-around",
-      "zk-border border-t",
-      "backdrop-blur-3xl",
-      "md:left-1/2 md:-translate-x-1/2",
-      "md:rounded-4xl md:bottom-4",
-      "md:max-w-md md:border-t-0",
-      "md:shadow-sm"
-    ]}
-  >
-    <ul class={["flex w-full"]}>
-      <.nav_menu_item
-        active={@active_page == :home}
-        label={dgettext("content", "Summary")}
-        icon="tabler-brain"
-        href={~p"/"}
-      />
-
-      <.nav_menu_item
-        active={@active_page == :browse_goals}
-        label={dgettext("content", "Goals")}
-        icon="tabler-target-arrow"
-        href={~p"/goals"}
-      />
-
-      <.nav_menu_item
-        active={@active_page == :browse_catalog}
-        label={dgettext("content", "Catalog")}
-        icon="tabler-layout-grid"
-        href={~p"/catalog"}
-      />
-
-      <.nav_menu_item
-        active={@active_page == :browse_library}
-        label={dgettext("content", "Library")}
-        icon="tabler-stack-2"
-        href={~p"/library"}
-      />
-    </ul>
-  </nav>
 </main>
 
 <.flash_group flash={@flash} />

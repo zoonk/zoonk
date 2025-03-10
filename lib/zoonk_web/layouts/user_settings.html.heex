@@ -1,0 +1,25 @@
+<main aria-labelledby="page-title">
+  <.tab_bar>
+    <.nav_menu_item
+      active={@active_page == :user_email}
+      label={dgettext("content", "Email")}
+      icon="tabler-mail"
+      href={~p"/users/settings/email"}
+    />
+
+    <.nav_menu_item
+      active={@active_page == :user_providers}
+      label={dgettext("content", "Providers")}
+      icon="tabler-users"
+      href={~p"/users/settings/providers"}
+    />
+  </.tab_bar>
+
+  <header class="zk-container flex items-center justify-between py-4 sm:py-6">
+    <.text element={:h1} size={:header} id="page-title">{@page_title}</.text>
+  </header>
+
+  {@inner_content}
+</main>
+
+<.flash_group flash={@flash} />
