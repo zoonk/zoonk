@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.UserLive.SettingsTest do
+defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
@@ -12,13 +12,13 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
       {:ok, _lv, html} =
         conn
         |> login_user(user_fixture())
-        |> live(~p"/users/settings")
+        |> live(~p"/users/settings/email")
 
       assert html =~ "Change Email"
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
-      assert {:error, redirect} = live(conn, ~p"/users/settings")
+      assert {:error, redirect} = live(conn, ~p"/users/settings/email")
 
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/login"
@@ -34,7 +34,7 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
         |> login_user(user_fixture(),
           token_inserted_at: DateTime.add(DateTime.utc_now(), too_old, :minute)
         )
-        |> live(~p"/users/settings")
+        |> live(~p"/users/settings/email")
         |> follow_redirect(conn, ~p"/login")
 
       assert conn.resp_body =~ "You need to reauthenticate to access this page."
@@ -50,7 +50,7 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
     test "updates the user email", %{conn: conn, user: user} do
       new_email = unique_user_email()
 
-      {:ok, lv, _html} = live(conn, ~p"/users/settings")
+      {:ok, lv, _html} = live(conn, ~p"/users/settings/email")
 
       result =
         lv
@@ -64,7 +64,7 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
     end
 
     test "renders errors with invalid data (phx-change)", %{conn: conn} do
-      {:ok, lv, _html} = live(conn, ~p"/users/settings")
+      {:ok, lv, _html} = live(conn, ~p"/users/settings/email")
 
       result =
         lv
@@ -79,7 +79,7 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
     end
 
     test "renders errors with invalid data (phx-submit)", %{conn: conn, user: user} do
-      {:ok, lv, _html} = live(conn, ~p"/users/settings")
+      {:ok, lv, _html} = live(conn, ~p"/users/settings/email")
 
       result =
         lv
@@ -107,27 +107,27 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
     end
 
     test "updates the user email once", %{conn: conn, user: user, token: token, email: email} do
-      {:error, redirect} = live(conn, ~p"/users/settings/confirm-email/#{token}")
+      {:error, redirect} = live(conn, ~p"/users/settings/email/confirm/#{token}")
 
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/users/settings"
+      assert path == ~p"/users/settings/email"
       assert %{"info" => message} = flash
       assert message == "Email changed successfully."
       refute Auth.get_user_by_email(user.email)
       assert Auth.get_user_by_email(email)
 
       # use confirm token again
-      {:error, expired_redirect} = live(conn, ~p"/users/settings/confirm-email/#{token}")
+      {:error, expired_redirect} = live(conn, ~p"/users/settings/email/confirm/#{token}")
       assert {:live_redirect, %{to: path, flash: flash}} = expired_redirect
-      assert path == ~p"/users/settings"
+      assert path == ~p"/users/settings/email"
       assert %{"error" => message} = flash
       assert message == "Email change link is invalid or it has expired."
     end
 
     test "does not update email with invalid token", %{conn: conn, user: user} do
-      {:error, redirect} = live(conn, ~p"/users/settings/confirm-email/oops")
+      {:error, redirect} = live(conn, ~p"/users/settings/email/confirm/oops")
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
-      assert path == ~p"/users/settings"
+      assert path == ~p"/users/settings/email"
       assert %{"error" => message} = flash
       assert message == "Email change link is invalid or it has expired."
       assert Auth.get_user_by_email(user.email)
@@ -135,7 +135,7 @@ defmodule ZoonkWeb.UserLive.SettingsTest do
 
     test "redirects if user is not logged in", %{token: token} do
       conn = build_conn()
-      {:error, redirect} = live(conn, ~p"/users/settings/confirm-email/#{token}")
+      {:error, redirect} = live(conn, ~p"/users/settings/email/confirm/#{token}")
       assert {:redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/login"
       assert %{"error" => message} = flash

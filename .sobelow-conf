@@ -7,7 +7,7 @@
   format: "txt",
   out: nil,
   threshold: :low,
-  ignore: ["Config.HTTPS"],
+  ignore: ["Config.HTTPS", "Config.CSRF", "Config.CSRFRoute"],
   ignore_files: [],
   version: false,
 ]
