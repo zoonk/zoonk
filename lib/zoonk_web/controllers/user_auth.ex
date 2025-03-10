@@ -40,7 +40,7 @@ defmodule ZoonkWeb.Controllers.UserAuth do
   end
 
   @doc """
-  Signs out a user.
+  Logs out a user.
   """
   def delete(conn, _params) do
     conn

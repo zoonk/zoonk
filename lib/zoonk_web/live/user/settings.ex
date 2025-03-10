@@ -8,28 +8,25 @@ defmodule ZoonkWeb.Live.UserSettings do
 
   def render(assigns) do
     ~H"""
-    <div class="space-y-12 divide-y">
-      <div>
-        <.simple_form
-          for={@email_form}
-          id="email_form"
-          phx-submit="update_email"
-          phx-change="validate_email"
-        >
-          <.input
-            field={@email_form[:email]}
-            type="email"
-            label={dgettext("users", "Email")}
-            autocomplete="username"
-            required
-          />
+    <.simple_form
+      for={@email_form}
+      id="email_form"
+      phx-submit="update_email"
+      phx-change="validate_email"
+      class="zk-container"
+    >
+      <.input
+        field={@email_form[:email]}
+        type="email"
+        label={dgettext("users", "Email")}
+        autocomplete="username"
+        required
+      />
 
-          <.button type="submit" phx-disable-with={dgettext("users", "Changing...")}>
-            {dgettext("users", "Change Email")}
-          </.button>
-        </.simple_form>
-      </div>
-    </div>
+      <.button type="submit" phx-disable-with={dgettext("users", "Changing...")}>
+        {dgettext("users", "Change Email")}
+      </.button>
+    </.simple_form>
     """
   end
 

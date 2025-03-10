@@ -31,6 +31,7 @@ defmodule ZoonkWeb.Components.Button do
       class={[
         "zk-btn",
         @full && "relative w-full",
+        !@full && "w-max",
         @variant == :outline && "zk-btn-outline",
         @variant == :primary && "zk-btn-primary",
         @class
