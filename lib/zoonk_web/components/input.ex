@@ -109,7 +109,7 @@ defmodule ZoonkWeb.Components.Input do
       <select
         id={@id}
         name={@name}
-        class={[shared_input_class(), border_class(@errors)]}
+        class={["zk-input", border_class(@errors)]}
         multiple={@multiple}
         {@rest}
       >
@@ -127,12 +127,7 @@ defmodule ZoonkWeb.Components.Input do
     <div class="text-left">
       <.label for={@id}>{@label}</.label>
 
-      <textarea
-        id={@id}
-        name={@name}
-        class={["min-h-[6rem]", shared_input_class(), border_class(@errors)]}
-        {@rest}
-      >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
+      <textarea id={@id} name={@name} class={["min-h-[6rem] zk-input", border_class(@errors)]} {@rest}>{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
 
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
@@ -150,7 +145,7 @@ defmodule ZoonkWeb.Components.Input do
         name={@name}
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        class={[shared_input_class(), border_class(@errors)]}
+        class={["zk-input", border_class(@errors)]}
         {@rest}
       />
 
@@ -180,39 +175,15 @@ defmodule ZoonkWeb.Components.Input do
 
   def error(assigns) do
     ~H"""
-    <p class="mt-3 flex gap-3 text-sm leading-6 text-rose-600">
+    <p class="text-zk-danger-600 mt-3 flex gap-3 text-sm leading-6">
       <.icon name="tabler-alert-circle-filled" class="mt-0.5 h-5 w-5 flex-none" />
       {render_slot(@inner_block)}
     </p>
     """
   end
 
-  defp shared_input_class do
-    [
-      "block w-full rounded-lg",
-      "text-zk-text-primary",
-      "sm:text-sm sm:leading-6",
-      "placeholder:text-zk-text-secondary",
-      "dark:bg-zk-bg-dark",
-      "dark:text-zk-text-inverse",
-      "dark:placeholder:text-zk-text-inverse-secondary",
-      "dark:contrast-more:text-zk-text-inverse-contrast",
-      "dark:placeholder:contrast-more:text-zk-text-inverse-contrast"
-    ]
-  end
-
-  defp border_class([]) do
-    [
-      "border border-zk-border",
-      "focus:border-zk-border-focus focus:ring-0",
-      "dark:border-zk-border-inverse",
-      "dark:contrast-more:border-zk-border"
-    ]
-  end
-
-  defp border_class(_errors) do
-    ["border-zk-danger-400 focus:border-zk-danger-500"]
-  end
+  defp border_class([]), do: "zk-input-border"
+  defp border_class(_errors), do: "zk-input-border-error"
 
   @doc """
   Translates an error message using gettext.

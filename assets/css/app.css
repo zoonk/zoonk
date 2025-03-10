@@ -121,3 +121,24 @@
 @utility zk-avatar-link {
   @apply block rounded-full ring-zk-primary focus-visible:ring-2;
 }
+
+@utility zk-input {
+  @apply block w-full rounded-lg text-zk-text-primary
+  placeholder:text-zk-text-secondary
+  sm:text-sm sm:leading-6
+  dark:bg-zk-bg-dark dark:text-zk-text-inverse
+  dark:placeholder:text-zk-text-inverse-secondary
+  dark:contrast-more:text-zk-text-inverse-contrast
+  dark:placeholder:contrast-more:text-zk-text-inverse-contrast;
+}
+
+@utility zk-input-border {
+  @apply border border-zk-border
+  focus:border-zk-border-focus focus:ring-0
+  dark:border-zk-border-inverse
+  dark:contrast-more:border-zk-border;
+}
+
+@utility zk-input-border-error {
+  @apply border-zk-danger-400 focus:border-zk-danger-500;
+}
