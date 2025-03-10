@@ -34,7 +34,7 @@ defmodule ZoonkWeb.Controllers.UserAuth do
 
       _error ->
         conn
-        |> put_flash(:error, "The link is invalid or it has expired.")
+        |> put_flash(:error, expired_link())
         |> redirect(to: ~p"/login/email")
     end
   end
@@ -44,7 +44,7 @@ defmodule ZoonkWeb.Controllers.UserAuth do
   """
   def delete(conn, _params) do
     conn
-    |> put_flash(:info, "Logged out successfully.")
+    |> put_flash(:info, dgettext("users", "Logged out successfully."))
     |> Helpers.UserAuth.signout_user()
   end
 
@@ -63,11 +63,13 @@ defmodule ZoonkWeb.Controllers.UserAuth do
       create(conn, %{"user" => %{"token" => token}}, signin_flash(action))
     else
       conn
-      |> put_flash(:error, "Magic link is invalid or it has expired.")
+      |> put_flash(:error, expired_link())
       |> redirect(to: ~p"/login/email")
     end
   end
 
   defp signin_flash(:confirm), do: dgettext("users", "User confirmed successfully.")
   defp signin_flash(:login), do: nil
+
+  defp expired_link, do: dgettext("users", "Magic link is invalid or it has expired.")
 end

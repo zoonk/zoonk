@@ -58,7 +58,7 @@ defmodule ZoonkWeb.Hooks.UserAuth do
     else
       socket =
         socket
-        |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
+        |> Phoenix.LiveView.put_flash(:error, dgettext("users", "You must log in to access this page."))
         |> Phoenix.LiveView.redirect(to: ~p"/login")
 
       {:halt, socket}
@@ -73,7 +73,7 @@ defmodule ZoonkWeb.Hooks.UserAuth do
     else
       socket =
         socket
-        |> Phoenix.LiveView.put_flash(:error, "You need to reauthenticate to access this page.")
+        |> Phoenix.LiveView.put_flash(:error, dgettext("users", "You need to reauthenticate to access this page."))
         |> Phoenix.LiveView.redirect(to: ~p"/login")
 
       {:halt, socket}

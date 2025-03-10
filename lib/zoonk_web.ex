@@ -117,6 +117,8 @@ defmodule ZoonkWeb do
         endpoint: ZoonkWeb.Endpoint,
         router: ZoonkWeb.Router,
         statics: ZoonkWeb.static_paths()
+
+      use Gettext, backend: Zoonk.Gettext
     end
   end
 

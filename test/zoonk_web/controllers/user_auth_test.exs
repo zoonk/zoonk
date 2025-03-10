@@ -25,7 +25,7 @@ defmodule ZoonkWeb.UserAuthControllerTest do
 
     test "redirects to signin page when magic link is invalid", %{conn: conn} do
       conn = post(conn, ~p"/login", %{"user" => %{"token" => "invalid"}})
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "The link is invalid or it has expired."
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Magic link is invalid or it has expired."
       assert redirected_to(conn) == ~p"/login/email"
     end
   end
