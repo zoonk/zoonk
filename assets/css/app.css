@@ -39,7 +39,7 @@
   --color-zk-surface-inverse: var(--color-neutral-900);
   --color-zk-surface-inverse-hover: var(--color-neutral-800);
 
-  --color-zk-border: var(--color-neutral-100);
+  --color-zk-border: var(--color-neutral-200);
   --color-zk-border-focus: var(--color-neutral-500);
   --color-zk-border-inverse: var(--color-neutral-700);
 
@@ -59,6 +59,10 @@
 
 @utility zk-container {
   @apply mx-auto max-w-3xl px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14;
+}
+
+@utility zk-container-wide {
+  @apply mx-auto max-w-7xl px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14;
 }
 
 @utility zk-bg {

@@ -15,15 +15,17 @@
     />
   </.tab_bar>
 
-  <header class="zk-container flex items-center justify-between py-4 sm:py-6">
-    <.text element={:h1} size={:header} id="page-title">{@page_title}</.text>
+  <div class="bg-zk-surface zk-border w-full border-b dark:bg-zk-surface-inverse">
+    <header class="zk-container-wide flex items-center justify-between py-4 sm:py-6">
+      <.text element={:h1} size={:header} id="page-title">{@page_title}</.text>
 
-    <.a kind={:button} navigate={@user_return_to} variant={:danger}>
-      {gettext("Back")}
-    </.a>
-  </header>
+      <.a kind={:button} navigate={@user_return_to} variant={:danger}>
+        {gettext("Back")}
+      </.a>
+    </header>
+  </div>
 
-  {@inner_content}
+  <article class="zk-container-wide">{@inner_content}</article>
 </main>
 
 <.flash_group flash={@flash} />

@@ -13,7 +13,6 @@ defmodule ZoonkWeb.Live.UserEmail do
       id="email_form"
       phx-submit="update_email"
       phx-change="validate_email"
-      class="zk-container"
     >
       <.input
         field={@email_form[:email]}
