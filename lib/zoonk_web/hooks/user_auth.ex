@@ -52,7 +52,7 @@ defmodule ZoonkWeb.Hooks.UserAuth do
 
   def on_mount(:ensure_authenticated, params, session, socket) do
     socket = mount_current_scope(socket, session)
-    user_return_to = Map.get(params, "redirect_to") || session["user_return_to"]
+    user_return_to = Map.get(params, "redirect_to") || ~p"/"
 
     if socket.assigns.current_scope do
       {:cont, Phoenix.Component.assign(socket, :user_return_to, user_return_to)}

@@ -164,5 +164,18 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
       assert has_element?(back_lv, "h1", "Goals")
       assert has_element?(back_lv, "li[aria-current='page']", "Goals")
     end
+
+    test "goes to the home page if the previous page isn't set", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/user/email")
+
+      assert {:ok, back_lv, _html} =
+               lv
+               |> element("a", "Back")
+               |> render_click()
+               |> follow_redirect(conn, ~p"/")
+
+      assert has_element?(back_lv, "h1", "Summary")
+      assert has_element?(back_lv, "li[aria-current='page']", "Summary")
+    end
   end
 end

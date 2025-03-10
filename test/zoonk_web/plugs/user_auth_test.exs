@@ -115,15 +115,5 @@ defmodule ZoonkWeb.UserAuthPlugTest do
       refute conn.halted
       refute conn.status
     end
-
-    test "updates the redirect session if there's a redirect_to param", %{conn: conn, user: user} do
-      conn =
-        %{conn | params: %{"return_to" => "/foo"}}
-        |> assign(:current_scope, Scope.for_user(user))
-        |> Plugs.UserAuth.require_authenticated_user([])
-
-      refute conn.halted
-      assert get_session(conn, :user_return_to) == "/foo"
-    end
   end
 end

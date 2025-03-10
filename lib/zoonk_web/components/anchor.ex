@@ -8,7 +8,7 @@ defmodule ZoonkWeb.Components.Anchor do
 
   attr :class, :string, default: nil, doc: "CSS class to apply to the anchor"
   attr :weight, :atom, values: [:normal, :medium], default: :medium, doc: "Font weight of the anchor"
-  attr :kind, :atom, values: [:link, :button], default: :link, doc: "Kind of anchor to render"
+  attr :kind, :atom, values: [:link, :button, :icon], default: :link, doc: "Kind of anchor to render"
   attr :variant, :atom, values: [:primary, :outline, :danger], default: :primary, doc: "Variant of anchor to render"
   attr :full, :boolean, default: false, doc: "Whether the anchor should be full width"
   attr :icon, :string, default: nil, doc: "Icon to display in the anchor"
@@ -22,6 +22,10 @@ defmodule ZoonkWeb.Components.Anchor do
 
       <.a>Send!</.a>
       <.a class="ml-2">Send!</.a>
+
+      <.a kind={:icon} icon="tabler-name">
+        <span class="sr-only">Icon</span>
+      </.a>
   """
   def a(%{kind: :link} = assigns) do
     ~H"""
@@ -64,6 +68,26 @@ defmodule ZoonkWeb.Components.Anchor do
       {@rest}
     >
       <.icon :if={@icon} name={@icon} class={[@full && "absolute left-4", "h-5 w-5"]} />
+      {render_slot(@inner_block)}
+    </.link>
+    """
+  end
+
+  def a(%{kind: :icon, icon: icon}) when is_nil(icon), do: raise("Icon is required for icon kind")
+
+  def a(%{kind: :icon} = assigns) do
+    ~H"""
+    <.link
+      class={[
+        "zk-btn size-8 px-0",
+        @variant == :outline && "zk-btn-outline",
+        @variant == :primary && "zk-btn-primary",
+        @variant == :danger && "zk-btn-danger",
+        @class
+      ]}
+      {@rest}
+    >
+      <.icon :if={@icon} name={@icon} class="h-5 w-5" />
       {render_slot(@inner_block)}
     </.link>
     """

@@ -59,7 +59,7 @@ defmodule ZoonkWeb.Plugs.UserAuth do
   """
   def require_authenticated_user(conn, _opts) do
     if conn.assigns.current_scope do
-      maybe_store_return_to(conn)
+      conn
     else
       conn
       |> put_flash(:error, dgettext("users", "You must log in to access this page."))
@@ -67,10 +67,6 @@ defmodule ZoonkWeb.Plugs.UserAuth do
       |> redirect(to: ~p"/login")
       |> halt()
     end
-  end
-
-  defp maybe_store_return_to(%{params: %{"return_to" => return_to}} = conn) do
-    put_session(conn, :user_return_to, return_to)
   end
 
   defp maybe_store_return_to(%{method: "GET"} = conn) do
