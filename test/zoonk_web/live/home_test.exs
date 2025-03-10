@@ -28,9 +28,9 @@ defmodule ZoonkWeb.HomeLiveTest do
 
       assert {:ok, _redirect_lv, _html} =
                lv
-               |> element("a[href='/users/settings']")
+               |> element("a[href='/user/email']")
                |> render_click()
-               |> follow_redirect(conn, ~p"/users/settings")
+               |> follow_redirect(conn, ~p"/user/email")
     end
   end
 end

@@ -40,7 +40,7 @@ defmodule ZoonkWeb.Live.UserEmail do
           put_flash(socket, :error, dgettext("users", "Email change link is invalid or it has expired."))
       end
 
-    {:ok, push_navigate(socket, to: ~p"/users/settings/email", layout: {ZoonkWeb.Layouts, :user_settings})}
+    {:ok, push_navigate(socket, to: ~p"/user/email", layout: {ZoonkWeb.Layouts, :user_settings})}
   end
 
   def mount(_params, _session, socket) do
@@ -81,7 +81,7 @@ defmodule ZoonkWeb.Live.UserEmail do
         Auth.deliver_user_update_email_instructions(
           user_changeset,
           user.email,
-          &url(~p"/users/settings/email/confirm/#{&1}")
+          &url(~p"/user/email/confirm/#{&1}")
         )
 
         info = dgettext("users", "A link to confirm your email change has been sent to the new address.")

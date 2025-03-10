@@ -4,14 +4,14 @@
       active={@active_page == :user_email}
       label={dgettext("content", "Email")}
       icon="tabler-mail"
-      href={~p"/users/settings/email"}
+      href={~p"/user/email"}
     />
 
     <.nav_menu_item
       active={@active_page == :user_providers}
       label={dgettext("content", "Providers")}
       icon="tabler-users"
-      href={~p"/users/settings/providers"}
+      href={~p"/user/providers"}
     />
   </.tab_bar>
 
