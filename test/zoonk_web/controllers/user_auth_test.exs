@@ -52,12 +52,12 @@ defmodule ZoonkWeb.UserAuthControllerTest do
 
     test "logs confirmed user in without changing confirmed_at", %{conn: conn, user: user} do
       token = extract_user_token(fn url -> Auth.deliver_signin_instructions(user, url) end)
-      conn = get(conn, ~p"/confirm/#{token}")
+      conn = get(conn, ~p"/login/t/#{token}")
 
       assert get_session(conn, :user_token)
       assert Auth.get_user!(user.id).confirmed_at == user.confirmed_at
       assert redirected_to(conn) == ~p"/"
-      assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "User confirmed successfully."
+      assert is_nil(Phoenix.Flash.get(conn.assigns.flash, :info))
     end
 
     test "redirects to the signin page if the token is invalid", %{conn: conn} do

@@ -51,13 +51,23 @@ defmodule ZoonkWeb.Controllers.UserAuth do
   @doc """
   Confirms a user account.
   """
-  def confirm(conn, %{"token" => token}) do
+  def confirm(conn, %{"token" => token}), do: signin_user(conn, token, :confirm)
+
+  @doc """
+  Signs in a user via a magic link token sent to their email.
+  """
+  def login(conn, %{"token" => token}), do: signin_user(conn, token, :login)
+
+  defp signin_user(conn, token, action) do
     if Auth.get_user_by_magic_link_token(token) do
-      create(conn, %{"user" => %{"token" => token}}, "User confirmed successfully.")
+      create(conn, %{"user" => %{"token" => token}}, signin_flash(action))
     else
       conn
       |> put_flash(:error, "Magic link is invalid or it has expired.")
       |> redirect(to: ~p"/login/email")
     end
   end
+
+  defp signin_flash(:confirm), do: dgettext("users", "User confirmed successfully.")
+  defp signin_flash(:login), do: nil
 end
