@@ -65,6 +65,10 @@
   @apply mx-auto max-w-7xl px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14;
 }
 
+@utility zk-container-inner {
+  @apply mt-4 sm:mt-6 md:mt-8 lg:mt-10 xl:mt-12 2xl:mt-14;
+}
+
 @utility zk-bg {
   @apply bg-zk-bg-light dark:bg-zk-bg-dark;
 }
@@ -83,11 +87,23 @@
 }
 
 @utility zk-btn {
-  @apply h-12 whitespace-nowrap rounded-md px-10 ring
+  @apply whitespace-nowrap rounded-md ring
   inline-flex items-center justify-center gap-2
   text-sm font-medium transition-colors
   focus-visible:outline-none focus-visible:ring-1
   disabled:pointer-events-none disabled:opacity-50;
+}
+
+@utility zk-btn-sm {
+  @apply h-8 px-4;
+}
+
+@utility zk-btn-md {
+  @apply h-10 px-8;
+}
+
+@utility zk-btn-lg {
+  @apply h-12 px-10;
 }
 
 @utility zk-btn-primary {

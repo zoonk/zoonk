@@ -37,8 +37,12 @@ defmodule ZoonkWeb.Components.Input do
   """
   attr :id, :any, default: nil
   attr :name, :any
-  attr :label, :string, default: nil
+  attr :label, :string, required: true
   attr :value, :any
+
+  attr :hide_label, :boolean,
+    default: false,
+    doc: "if true, the label will be hidden - used only for screen readers"
 
   attr :type, :string,
     default: "text",
@@ -93,7 +97,7 @@ defmodule ZoonkWeb.Components.Input do
           class="border-zk-border text-zk-primary rounded focus:ring-0"
           {@rest}
         />
-        <span>{@label}</span>
+        <span class={@hide_label && "sr-only"}>{@label}</span>
       </label>
 
       <.error :for={msg <- @errors}>{msg}</.error>
@@ -104,7 +108,7 @@ defmodule ZoonkWeb.Components.Input do
   def input(%{type: "select"} = assigns) do
     ~H"""
     <div class="text-left">
-      <.label for={@id}>{@label}</.label>
+      <.label hide_label={@hide_label} for={@id}>{@label}</.label>
 
       <select
         id={@id}
@@ -125,7 +129,7 @@ defmodule ZoonkWeb.Components.Input do
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <div class="text-left">
-      <.label for={@id}>{@label}</.label>
+      <.label hide_label={@hide_label} for={@id}>{@label}</.label>
 
       <textarea id={@id} name={@name} class={["min-h-[6rem] zk-input", border_class(@errors)]} {@rest}>{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
 
@@ -138,7 +142,7 @@ defmodule ZoonkWeb.Components.Input do
   def input(assigns) do
     ~H"""
     <div class="text-left">
-      <.label for={@id}>{@label}</.label>
+      <.label hide_label={@hide_label} for={@id}>{@label}</.label>
 
       <input
         type={@type}
@@ -158,11 +162,17 @@ defmodule ZoonkWeb.Components.Input do
   Renders a label.
   """
   attr :for, :string, default: nil
+  attr :hide_label, :boolean, default: false
   slot :inner_block, required: true
 
   def label(assigns) do
     ~H"""
-    <.text element={:label} size={:caption} for={@for} class="mb-2 font-semibold">
+    <.text
+      element={:label}
+      size={:caption}
+      for={@for}
+      class={["mb-2 font-semibold", @hide_label && "sr-only"]}
+    >
       {render_slot(@inner_block)}
     </.text>
     """

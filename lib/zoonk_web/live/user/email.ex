@@ -8,24 +8,36 @@ defmodule ZoonkWeb.Live.UserEmail do
 
   def render(assigns) do
     ~H"""
-    <.simple_form
+    <.form_container
       for={@email_form}
       id="email_form"
       phx-submit="update_email"
       phx-change="validate_email"
+      class="zk-container-inner"
     >
+      <:title>{dgettext("users", "Change Email")}</:title>
+
+      <:subtitle>
+        {dgettext(
+          "users",
+          "This is the email address that will be used to sign in. This is not visible to other users."
+        )}
+      </:subtitle>
+
       <.input
+        id="user-email"
         field={@email_form[:email]}
+        label={dgettext("users", "Email address")}
         type="email"
-        label={dgettext("users", "Email")}
         autocomplete="username"
         required
+        hide_label
       />
 
-      <.button type="submit" phx-disable-with={dgettext("users", "Changing...")}>
-        {dgettext("users", "Change Email")}
-      </.button>
-    </.simple_form>
+      <:requirements>
+        {dgettext("users", "You'll need to confirm your email address.")}
+      </:requirements>
+    </.form_container>
     """
   end
 
@@ -51,7 +63,7 @@ defmodule ZoonkWeb.Live.UserEmail do
       |> assign(:current_email, user.email)
       |> assign(:email_form, to_form(email_changeset))
       |> assign(:trigger_submit, false)
-      |> assign(:page_title, dgettext("users", "Change Email"))
+      |> assign(:page_title, dgettext("users", "Email Settings"))
 
     {:ok, socket, layout: {ZoonkWeb.Layouts, :user_settings}}
   end

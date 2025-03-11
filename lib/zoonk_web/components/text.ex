@@ -7,7 +7,7 @@ defmodule ZoonkWeb.Components.Text do
   attr :element, :atom, values: [:h1, :h2, :h3, :h4, :h5, :h6, :p, :span, :label], default: :p
   attr :size, :atom, values: [:header, :title, :subtitle, :body, :caption], default: :body
   attr :variant, :atom, values: [:primary, :secondary], default: :primary
-  attr :class, :string, default: nil
+  attr :class, :any, default: nil
   attr :id, :string, default: nil
   attr :for, :string, default: nil
   attr :rest, :global

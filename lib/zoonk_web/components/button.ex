@@ -18,6 +18,7 @@ defmodule ZoonkWeb.Components.Button do
   attr :type, :string, default: "button"
   attr :icon, :string, default: nil
   attr :variant, :atom, values: [:primary, :outline], default: :primary
+  attr :size, :atom, values: [:sm, :md, :lg], default: :md
   attr :full, :boolean, default: false
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
@@ -34,6 +35,9 @@ defmodule ZoonkWeb.Components.Button do
         !@full && "w-max",
         @variant == :outline && "zk-btn-outline",
         @variant == :primary && "zk-btn-primary",
+        @size == :sm && "zk-btn-sm",
+        @size == :md && "zk-btn-md",
+        @size == :lg && "zk-btn-lg",
         @class
       ]}
       {@rest}

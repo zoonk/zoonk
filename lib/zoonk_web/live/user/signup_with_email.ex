@@ -18,6 +18,7 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
         phx-submit="save"
         phx-change="validate"
         label={dgettext("users", "Signup form")}
+        class="flex w-full flex-col gap-4"
       >
         <.error :if={@check_errors}>
           {dgettext("users", "Oops, something went wrong! Please check the errors below.")}

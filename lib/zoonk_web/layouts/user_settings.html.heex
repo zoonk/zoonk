@@ -16,8 +16,11 @@
   </.tab_bar>
 
   <div class="bg-zk-surface zk-border w-full border-b dark:bg-zk-surface-inverse">
-    <header class="zk-container-wide flex items-center justify-between py-4 sm:py-6">
-      <.text element={:h1} size={:header} id="page-title">{@page_title}</.text>
+    <header
+      aria-label={gettext("Go back to the previous page")}
+      class="zk-container-wide flex items-center justify-between py-4 sm:py-6"
+    >
+      <.text aria-hidden="true" element={:h1} size={:header} id="page-title">{@page_title}</.text>
 
       <.a kind={:icon} icon="tabler-x" navigate={@user_return_to} variant={:danger}>
         <span class="sr-only">{gettext("Back")}</span>
@@ -25,7 +28,9 @@
     </header>
   </div>
 
-  <article class="zk-container-wide">{@inner_content}</article>
+  <section aria-label={gettext("Update this form")} class="zk-container-wide">
+    {@inner_content}
+  </section>
 </main>
 
 <.flash_group flash={@flash} />

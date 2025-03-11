@@ -15,11 +15,14 @@ defmodule ZoonkWeb.Live.UserLoginWithEmail do
         id="login_form_magic"
         action={~p"/login"}
         phx-submit="submit_magic"
+        class="flex w-full flex-col gap-4"
         label={dgettext("users", "Sign in form")}
       >
         <.input
           readonly={!!@current_scope}
           field={f[:email]}
+          label={dgettext("users", "Email address")}
+          hide_label
           type="email"
           placeholder={dgettext("users", "Email")}
           autocomplete="username"
