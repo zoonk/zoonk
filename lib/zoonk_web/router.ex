@@ -58,7 +58,7 @@ defmodule ZoonkWeb.Router do
 
       live "/user/email", UserEmail
       live "/user/email/confirm/:token", UserEmail
-      live "/user/providers", UserProviders
+      live "/user/linked", UserLinkedAccounts
     end
   end
 

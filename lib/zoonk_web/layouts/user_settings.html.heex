@@ -8,10 +8,10 @@
     />
 
     <.nav_menu_item
-      active={@active_page == :user_providers}
-      label={dgettext("content", "Providers")}
-      icon="tabler-users"
-      href={~p"/user/providers?redirect_to=#{@user_return_to}"}
+      active={@active_page == :user_linked_accounts}
+      label={dgettext("content", "Linked Accounts")}
+      icon="tabler-link"
+      href={~p"/user/linked?redirect_to=#{@user_return_to}"}
     />
   </.tab_bar>
 
