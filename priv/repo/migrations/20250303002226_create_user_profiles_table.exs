@@ -4,7 +4,7 @@ defmodule Zoonk.Repo.Migrations.CreateUserProfilesTable do
   def change do
     create table(:user_profiles) do
       add :user_id, references(:users, on_delete: :delete_all), null: false
-      add :city_id, references(:cities, on_delete: :nothing), null: false
+      add :city_id, references(:cities, on_delete: :nothing)
 
       add :public?, :boolean, null: false, default: false
 
