@@ -20,19 +20,6 @@ defmodule Zoonk.AccountsTest do
     end
   end
 
-  describe "get_user!/1" do
-    test "raises if id is invalid" do
-      assert_raise Ecto.NoResultsError, fn ->
-        Accounts.get_user!(-1)
-      end
-    end
-
-    test "returns the user with the given id" do
-      %{id: id} = user = user_fixture()
-      assert %User{id: ^id} = Accounts.get_user!(user.id)
-    end
-  end
-
   describe "signup_user/1" do
     test "requires email to be set" do
       {:error, changeset} = Accounts.signup_user(%{})
