@@ -62,13 +62,13 @@ config :zoonk, ZoonkWeb.Endpoint,
 config :zoonk, :scopes,
   user: [
     default: true,
-    module: Zoonk.Auth.Scope,
+    module: Zoonk.Accounts.Scope,
     assign_key: :current_scope,
     access_path: [:user, :id],
     schema_key: :user_id,
     schema_type: :id,
     schema_table: :users,
-    test_data_fixture: Zoonk.AuthFixtures,
+    test_data_fixture: Zoonk.AccountFixtures,
     test_login_helper: :signup_and_login_user
   ]
 

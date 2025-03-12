@@ -2,9 +2,9 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
-  import Zoonk.AuthFixtures
+  import Zoonk.AccountFixtures
 
-  alias Zoonk.Auth
+  alias Zoonk.Accounts
   alias Zoonk.Configuration
 
   describe "Settings page" do
@@ -60,7 +60,7 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
         |> render_submit()
 
       assert result =~ "A link to confirm your email"
-      assert Auth.get_user_by_email(user.email)
+      assert Accounts.get_user_by_email(user.email)
     end
 
     test "renders errors with invalid data (phx-change)", %{conn: conn} do
@@ -100,7 +100,7 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
 
       token =
         extract_user_token(fn url ->
-          Auth.deliver_user_update_email_instructions(%{user | email: email}, user.email, url)
+          Accounts.deliver_user_update_email_instructions(%{user | email: email}, user.email, url)
         end)
 
       %{conn: login_user(conn, user), token: token, email: email, user: user}
@@ -113,8 +113,8 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
       assert path == ~p"/user/email"
       assert %{"info" => message} = flash
       assert message == "Email changed successfully."
-      refute Auth.get_user_by_email(user.email)
-      assert Auth.get_user_by_email(email)
+      refute Accounts.get_user_by_email(user.email)
+      assert Accounts.get_user_by_email(email)
 
       # use confirm token again
       {:error, expired_redirect} = live(conn, ~p"/user/email/confirm/#{token}")
@@ -130,7 +130,7 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
       assert path == ~p"/user/email"
       assert %{"error" => message} = flash
       assert message == "Email change link is invalid or it has expired."
-      assert Auth.get_user_by_email(user.email)
+      assert Accounts.get_user_by_email(user.email)
     end
 
     test "redirects if user is not logged in", %{token: token} do

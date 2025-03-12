@@ -2,7 +2,7 @@ defmodule ZoonkWeb.Live.UserEmail do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  alias Zoonk.Auth
+  alias Zoonk.Accounts
 
   on_mount {ZoonkWeb.Hooks.UserAuth, :ensure_sudo_mode}
 
@@ -43,7 +43,7 @@ defmodule ZoonkWeb.Live.UserEmail do
 
   def mount(%{"token" => token}, _session, socket) do
     socket =
-      case Auth.update_user_email(socket.assigns.current_scope.user, token) do
+      case Accounts.update_user_email(socket.assigns.current_scope.user, token) do
         :ok ->
           put_flash(socket, :info, dgettext("users", "Email changed successfully."))
 
@@ -56,7 +56,7 @@ defmodule ZoonkWeb.Live.UserEmail do
 
   def mount(_params, _session, socket) do
     user = socket.assigns.current_scope.user
-    email_changeset = Auth.change_user_email(user, %{}, validate_email: false)
+    email_changeset = Accounts.change_user_email(user, %{}, validate_email: false)
 
     socket =
       socket
@@ -73,7 +73,7 @@ defmodule ZoonkWeb.Live.UserEmail do
 
     email_form =
       socket.assigns.current_scope.user
-      |> Auth.change_user_email(user_params, validate_email: false)
+      |> Accounts.change_user_email(user_params, validate_email: false)
       |> Map.put(:action, :validate)
       |> to_form()
 
@@ -83,13 +83,13 @@ defmodule ZoonkWeb.Live.UserEmail do
   def handle_event("update_email", params, socket) do
     %{"user" => user_params} = params
     user = socket.assigns.current_scope.user
-    true = Auth.sudo_mode?(user)
+    true = Accounts.sudo_mode?(user)
 
-    case Auth.change_user_email(user, user_params) do
+    case Accounts.change_user_email(user, user_params) do
       %{valid?: true} = changeset ->
         user_changeset = Ecto.Changeset.apply_action!(changeset, :insert)
 
-        Auth.deliver_user_update_email_instructions(
+        Accounts.deliver_user_update_email_instructions(
           user_changeset,
           user.email,
           &url(~p"/user/email/confirm/#{&1}")

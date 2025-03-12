@@ -7,7 +7,7 @@ defmodule ZoonkWeb.Controllers.UserAuth do
   """
   use ZoonkWeb, :controller
 
-  alias Zoonk.Auth
+  alias Zoonk.Accounts
   alias ZoonkWeb.Helpers
 
   @doc """
@@ -24,7 +24,7 @@ defmodule ZoonkWeb.Controllers.UserAuth do
 
   # magic link login
   defp create(conn, %{"user" => %{"token" => token}}, info) do
-    case Auth.login_user_by_magic_link(token) do
+    case Accounts.login_user_by_magic_link(token) do
       {:ok, user, tokens_to_disconnect} ->
         Helpers.UserAuth.disconnect_sessions(tokens_to_disconnect)
 
@@ -59,7 +59,7 @@ defmodule ZoonkWeb.Controllers.UserAuth do
   def login(conn, %{"token" => token}), do: login_user(conn, token, :login)
 
   defp login_user(conn, token, action) do
-    if Auth.get_user_by_magic_link_token(token) do
+    if Accounts.get_user_by_magic_link_token(token) do
       create(conn, %{"user" => %{"token" => token}}, login_flash(action))
     else
       conn

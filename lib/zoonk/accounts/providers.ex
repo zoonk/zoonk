@@ -1,4 +1,4 @@
-defmodule Zoonk.Auth.Providers do
+defmodule Zoonk.Accounts.Providers do
   @moduledoc """
   Handles user authentication via third-party providers.
 
@@ -10,8 +10,8 @@ defmodule Zoonk.Auth.Providers do
   """
   import Ecto.Query, warn: false
 
-  alias Zoonk.Auth
-  alias Zoonk.Auth.UserProfileBuilder
+  alias Zoonk.Accounts
+  alias Zoonk.Accounts.UserProfileBuilder
   alias Zoonk.Helpers
   alias Zoonk.Repo
   alias Zoonk.Schemas.User
@@ -32,7 +32,7 @@ defmodule Zoonk.Auth.Providers do
       {:error, %Ecto.Changeset{}}
   """
   def login_with_provider(auth, language) do
-    user = Auth.get_user_by_email(auth["email"])
+    user = Accounts.get_user_by_email(auth["email"])
 
     case login_with_provider(auth, language, user) do
       {:ok, %User{} = new_user} -> {:ok, new_user}

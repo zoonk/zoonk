@@ -160,13 +160,13 @@ defmodule Zoonk.MixProject do
           ZoonkWeb.Helpers.UserAuth
         ],
         Contexts: [
-          Zoonk.Auth,
-          Zoonk.Auth.Providers,
-          Zoonk.Auth.TokenBuilder,
-          Zoonk.Auth.UserNotifier,
-          Zoonk.Auth.UserProfileBuilder
+          Zoonk.Accounts,
+          Zoonk.Accounts.Providers,
+          Zoonk.Accounts.TokenBuilder,
+          Zoonk.Accounts.UserNotifier,
+          Zoonk.Accounts.UserProfileBuilder
         ],
-        Scopes: [Zoonk.Auth.Scope],
+        Scopes: [Zoonk.Accounts.Scope],
         Services: [
           Zoonk.Mailer
         ],

@@ -1,10 +1,10 @@
 defmodule ZoonkWeb.UserAuthPlugTest do
   use ZoonkWeb.ConnCase, async: true
 
-  import Zoonk.AuthFixtures
+  import Zoonk.AccountFixtures
 
-  alias Zoonk.Auth
-  alias Zoonk.Auth.Scope
+  alias Zoonk.Accounts
+  alias Zoonk.Accounts.Scope
   alias Zoonk.Configuration
   alias ZoonkWeb.Helpers
   alias ZoonkWeb.Plugs
@@ -22,7 +22,7 @@ defmodule ZoonkWeb.UserAuthPlugTest do
 
   describe "fetch_current_scope_for_user/2" do
     test "authenticates user from session", %{conn: conn, user: user} do
-      user_token = Auth.generate_user_session_token(user)
+      user_token = Accounts.generate_user_session_token(user)
 
       conn =
         conn
@@ -54,7 +54,7 @@ defmodule ZoonkWeb.UserAuthPlugTest do
     end
 
     test "does not authenticate if data is missing", %{conn: conn, user: user} do
-      Auth.generate_user_session_token(user)
+      Accounts.generate_user_session_token(user)
       conn = Plugs.UserAuth.fetch_current_scope_for_user(conn, [])
       refute get_session(conn, :user_token)
       refute conn.assigns.current_scope

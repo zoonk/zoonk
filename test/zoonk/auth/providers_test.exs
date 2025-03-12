@@ -1,9 +1,9 @@
-defmodule Zoonk.Auth.ProvidersTest do
+defmodule Zoonk.Accounts.ProvidersTest do
   use Zoonk.DataCase, async: true
 
-  import Zoonk.AuthFixtures
+  import Zoonk.AccountFixtures
 
-  alias Zoonk.Auth.Providers
+  alias Zoonk.Accounts.Providers
   alias Zoonk.Schemas.User
   alias Zoonk.Schemas.UserProfile
   alias Zoonk.Schemas.UserProvider

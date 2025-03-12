@@ -1,4 +1,4 @@
-defmodule Zoonk.Auth.UserProfileBuilder do
+defmodule Zoonk.Accounts.UserProfileBuilder do
   @moduledoc """
   Helper module for building user profiles.
   """

@@ -4,7 +4,7 @@ defmodule ZoonkWeb.Controllers.OAuth do
   """
   use ZoonkWeb, :controller
 
-  alias Zoonk.Auth.Providers
+  alias Zoonk.Accounts.Providers
   alias Zoonk.Schemas.User
   alias ZoonkWeb.Helpers.UserAuth
 

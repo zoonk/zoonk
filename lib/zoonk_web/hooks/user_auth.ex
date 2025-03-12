@@ -9,8 +9,8 @@ defmodule ZoonkWeb.Hooks.UserAuth do
   """
   use ZoonkWeb, :verified_routes
 
-  alias Zoonk.Auth
-  alias Zoonk.Auth.Scope
+  alias Zoonk.Accounts
+  alias Zoonk.Accounts.Scope
 
   @doc """
   Handles mounting and authenticating the current_scope in LiveViews.
@@ -69,7 +69,7 @@ defmodule ZoonkWeb.Hooks.UserAuth do
   def on_mount(:ensure_sudo_mode, _params, session, socket) do
     socket = mount_current_scope(socket, session)
 
-    if Auth.sudo_mode?(socket.assigns.current_scope.user) do
+    if Accounts.sudo_mode?(socket.assigns.current_scope.user) do
       {:cont, socket}
     else
       socket =
@@ -85,7 +85,7 @@ defmodule ZoonkWeb.Hooks.UserAuth do
     Phoenix.Component.assign_new(socket, :current_scope, fn ->
       user =
         if user_token = session["user_token"] do
-          Auth.get_user_by_session_token(user_token)
+          Accounts.get_user_by_session_token(user_token)
         end
 
       Scope.for_user(user)

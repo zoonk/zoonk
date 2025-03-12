@@ -4,7 +4,7 @@ defmodule ZoonkWeb.Live.UserSignUp do
 
   import ZoonkWeb.Components.User
 
-  alias Zoonk.Auth.Scope
+  alias Zoonk.Accounts.Scope
   alias Zoonk.Schemas.User
   alias ZoonkWeb.Helpers
 

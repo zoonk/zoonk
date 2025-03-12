@@ -4,8 +4,8 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
 
   import ZoonkWeb.Components.User
 
-  alias Zoonk.Auth
-  alias Zoonk.Auth.Scope
+  alias Zoonk.Accounts
+  alias Zoonk.Accounts.Scope
   alias Zoonk.Schemas.User
   alias ZoonkWeb.Helpers
 
@@ -59,7 +59,7 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
 
   def mount(_params, session, socket) do
     language = Map.get(session, "language")
-    changeset = Auth.change_user_email(%User{language: language})
+    changeset = Accounts.change_user_email(%User{language: language})
 
     socket =
       socket
@@ -71,10 +71,10 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do
-    case Auth.signup_user(user_params) do
+    case Accounts.signup_user(user_params) do
       {:ok, user} ->
         {:ok, _url_fn} =
-          Auth.deliver_login_instructions(
+          Accounts.deliver_login_instructions(
             user,
             &url(~p"/confirm/#{&1}")
           )
@@ -98,7 +98,7 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
   end
 
   def handle_event("validate", %{"user" => user_params}, socket) do
-    changeset = Auth.change_user_email(%User{}, user_params)
+    changeset = Accounts.change_user_email(%User{}, user_params)
     {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
   end
 

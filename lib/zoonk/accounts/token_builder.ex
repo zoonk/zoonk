@@ -1,4 +1,4 @@
-defmodule Zoonk.Auth.TokenBuilder do
+defmodule Zoonk.Accounts.TokenBuilder do
   @moduledoc """
   Handles the generation of authentication tokens.
 

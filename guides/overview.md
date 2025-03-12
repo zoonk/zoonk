@@ -38,9 +38,9 @@ Zoonk is a white-label platform for building interactive courses. You can create
     - **`_schemas`** – Ecto schemas for each model.
     - **Contexts** – Encapsulated behaviors acting as event-driven commands.
       - Example:
-        - `Zoonk.Auth` – Authentication context.
-        - `Zoonk.Auth.TokenBuilder` – Sub-context for auth token generation.
-        - `Zoonk.Auth.UserNotifier` – Sub-context for sending auth-related emails.
+        - `Zoonk.Accounts` – Accounts context.
+        - `Zoonk.Accounts.TokenBuilder` – Sub-context for token generation.
+        - `Zoonk.Accounts.UserNotifier` – Sub-context for sending account-related notifications.
   - **`zoonk_web`** – Web interface, including API and frontend.
     - **`components`** – LiveView (`Phoenix.LiveComponent`) and function components (`Phoenix.Component`).
     - **`controllers`** – API and web controllers.

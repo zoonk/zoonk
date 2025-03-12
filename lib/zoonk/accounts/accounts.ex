@@ -1,18 +1,18 @@
-defmodule Zoonk.Auth do
+defmodule Zoonk.Accounts do
   @moduledoc """
-  Manages user authentication operations.
+  Manages user accounts.
 
-  This module handles core authentication flows including user signup
-  session management, magic link authentication, and email verification.
+  This module handles core account management flows including user signup,
+  session management, and email verification.
 
   It coordinates with the database layer to manage user records and tokens,
   while enforcing security measures like sudo mode and token expiration.
   """
   import Ecto.Query, warn: false
 
-  alias Zoonk.Auth.TokenBuilder
-  alias Zoonk.Auth.UserNotifier
-  alias Zoonk.Auth.UserProfileBuilder
+  alias Zoonk.Accounts.TokenBuilder
+  alias Zoonk.Accounts.UserNotifier
+  alias Zoonk.Accounts.UserProfileBuilder
   alias Zoonk.Configuration
   alias Zoonk.Helpers
   alias Zoonk.Queries

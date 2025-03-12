@@ -1,9 +1,9 @@
 defmodule ZoonkWeb.UserAuthControllerTest do
   use ZoonkWeb.ConnCase, async: true
 
-  import Zoonk.AuthFixtures
+  import Zoonk.AccountFixtures
 
-  alias Zoonk.Auth
+  alias Zoonk.Accounts
 
   setup do
     %{unconfirmed_user: unconfirmed_user_fixture(), user: user_fixture()}
@@ -32,11 +32,11 @@ defmodule ZoonkWeb.UserAuthControllerTest do
 
   describe "GET /confirm/:token" do
     test "confirms the given token once", %{conn: conn, unconfirmed_user: user} do
-      token = extract_user_token(fn url -> Auth.deliver_login_instructions(user, url) end)
+      token = extract_user_token(fn url -> Accounts.deliver_login_instructions(user, url) end)
 
       conn = get(conn, ~p"/confirm/#{token}")
 
-      assert Auth.get_user!(user.id).confirmed_at
+      assert Accounts.get_user!(user.id).confirmed_at
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "User confirmed successfully."
 
       # we are logged in now
@@ -51,11 +51,11 @@ defmodule ZoonkWeb.UserAuthControllerTest do
     end
 
     test "logs confirmed user in without changing confirmed_at", %{conn: conn, user: user} do
-      token = extract_user_token(fn url -> Auth.deliver_login_instructions(user, url) end)
+      token = extract_user_token(fn url -> Accounts.deliver_login_instructions(user, url) end)
       conn = get(conn, ~p"/login/t/#{token}")
 
       assert get_session(conn, :user_token)
-      assert Auth.get_user!(user.id).confirmed_at == user.confirmed_at
+      assert Accounts.get_user!(user.id).confirmed_at == user.confirmed_at
       assert redirected_to(conn) == ~p"/"
       assert is_nil(Phoenix.Flash.get(conn.assigns.flash, :info))
     end

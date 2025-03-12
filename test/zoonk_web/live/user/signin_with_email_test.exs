@@ -2,7 +2,7 @@ defmodule ZoonkWeb.UserLive.LoginWithEmailTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
-  import Zoonk.AuthFixtures
+  import Zoonk.AccountFixtures
 
   describe "login with email page" do
     test "renders login with email page", %{conn: conn} do

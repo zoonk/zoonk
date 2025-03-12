@@ -11,8 +11,8 @@ defmodule ZoonkWeb.Helpers.UserAuth do
   import Phoenix.Controller
   import Plug.Conn
 
-  alias Zoonk.Auth
-  alias Zoonk.Auth.Scope
+  alias Zoonk.Accounts
+  alias Zoonk.Accounts.Scope
   alias Zoonk.Configuration
   alias Zoonk.Schemas.User
 
@@ -36,7 +36,7 @@ defmodule ZoonkWeb.Helpers.UserAuth do
   the existing remember_me setting is kept, writing a new remember_me cookie.
   """
   def login_user(conn, user) do
-    token = Auth.generate_user_session_token(user)
+    token = Accounts.generate_user_session_token(user)
     user_return_to = get_session(conn, :user_return_to)
 
     conn
@@ -82,7 +82,7 @@ defmodule ZoonkWeb.Helpers.UserAuth do
   """
   def logout_user(conn) do
     user_token = get_session(conn, :user_token)
-    user_token && Auth.delete_user_session_token(user_token)
+    user_token && Accounts.delete_user_session_token(user_token)
 
     if live_socket_id = get_session(conn, :live_socket_id) do
       ZoonkWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})

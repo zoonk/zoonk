@@ -1,11 +1,11 @@
 defmodule ZoonkWeb.UserAuthHelperTest do
   use ZoonkWeb.ConnCase, async: true
 
-  import Zoonk.AuthFixtures
+  import Zoonk.AccountFixtures
 
   alias Phoenix.Socket.Broadcast
-  alias Zoonk.Auth
-  alias Zoonk.Auth.Scope
+  alias Zoonk.Accounts
+  alias Zoonk.Accounts.Scope
   alias Zoonk.Configuration
   alias ZoonkWeb.Helpers
 
@@ -27,7 +27,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
       assert token = get_session(conn, :user_token)
       assert get_session(conn, :live_socket_id) == "users_sessions:#{Base.url_encode64(token)}"
       assert redirected_to(conn) == ~p"/"
-      assert Auth.get_user_by_session_token(token)
+      assert Accounts.get_user_by_session_token(token)
     end
 
     test "clears everything previously stored in the session", %{conn: conn, user: user} do
@@ -92,7 +92,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
 
   describe "logout_user/1" do
     test "erases session and cookies", %{conn: conn, user: user} do
-      user_token = Auth.generate_user_session_token(user)
+      user_token = Accounts.generate_user_session_token(user)
 
       conn =
         conn
@@ -105,7 +105,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
       refute conn.cookies[@remember_me_cookie]
       assert %{max_age: 0} = conn.resp_cookies[@remember_me_cookie]
       assert redirected_to(conn) == ~p"/"
-      refute Auth.get_user_by_session_token(user_token)
+      refute Accounts.get_user_by_session_token(user_token)
     end
 
     test "broadcasts to the given live_socket_id", %{conn: conn} do

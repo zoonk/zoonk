@@ -45,8 +45,8 @@ defmodule ZoonkWeb.ConnCase do
   test context.
   """
   def signup_and_login_user(%{conn: conn} = context) do
-    user = Zoonk.AuthFixtures.user_fixture()
-    scope = Zoonk.Auth.Scope.for_user(user)
+    user = Zoonk.AccountFixtures.user_fixture()
+    scope = Zoonk.Accounts.Scope.for_user(user)
 
     opts =
       context
@@ -62,7 +62,7 @@ defmodule ZoonkWeb.ConnCase do
   It returns an updated `conn`.
   """
   def login_user(conn, user, opts \\ []) do
-    token = Zoonk.Auth.generate_user_session_token(user)
+    token = Zoonk.Accounts.generate_user_session_token(user)
 
     maybe_set_token_inserted_at(token, opts[:token_inserted_at])
 
@@ -74,6 +74,6 @@ defmodule ZoonkWeb.ConnCase do
   defp maybe_set_token_inserted_at(_token, nil), do: nil
 
   defp maybe_set_token_inserted_at(token, inserted_at) do
-    Zoonk.AuthFixtures.override_token_inserted_at(token, inserted_at)
+    Zoonk.AccountFixtures.override_token_inserted_at(token, inserted_at)
   end
 end

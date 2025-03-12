@@ -1,4 +1,4 @@
-defmodule Zoonk.Auth.UserNotifier do
+defmodule Zoonk.Accounts.UserNotifier do
   @moduledoc """
   Handles email notifications for user authentication events.
 

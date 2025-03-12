@@ -1,11 +1,11 @@
 defmodule ZoonkWeb.UserAuthHookTest do
   use ZoonkWeb.ConnCase, async: true
 
-  import Zoonk.AuthFixtures
+  import Zoonk.AccountFixtures
 
   alias Phoenix.LiveView
-  alias Zoonk.Auth
-  alias Zoonk.Auth.Scope
+  alias Zoonk.Accounts
+  alias Zoonk.Accounts.Scope
   alias Zoonk.Configuration
   alias ZoonkWeb.Hooks
   alias ZoonkWeb.Plugs
@@ -25,7 +25,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
     end
 
     test "assigns current_scope based on a valid user_token", %{conn: conn, user: user} do
-      user_token = Auth.generate_user_session_token(user)
+      user_token = Accounts.generate_user_session_token(user)
 
       session =
         conn
@@ -64,7 +64,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
 
   describe "on_mount :ensure_authenticated" do
     test "authenticates current_scope based on a valid user_token", %{conn: conn, user: user} do
-      user_token = Auth.generate_user_session_token(user)
+      user_token = Accounts.generate_user_session_token(user)
 
       session =
         conn
@@ -109,7 +109,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
 
   describe "on_mount :ensure_sudo_mode" do
     test "allows users that have authenticated in the last 10 minutes", %{conn: conn, user: user} do
-      user_token = Auth.generate_user_session_token(user)
+      user_token = Accounts.generate_user_session_token(user)
 
       session =
         conn

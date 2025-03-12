@@ -26,7 +26,7 @@ defmodule ZoonkWeb.Plugs.Language do
   """
   import Plug.Conn
 
-  alias Zoonk.Auth.Scope
+  alias Zoonk.Accounts.Scope
   alias Zoonk.Configuration
   alias Zoonk.Schemas.User
 

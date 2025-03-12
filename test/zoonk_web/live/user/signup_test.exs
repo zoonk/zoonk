@@ -2,7 +2,7 @@ defmodule ZoonkWeb.UserLive.SignUpTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
-  import Zoonk.AuthFixtures
+  import Zoonk.AccountFixtures
 
   describe "Signup page" do
     test "renders signup page", %{conn: conn} do

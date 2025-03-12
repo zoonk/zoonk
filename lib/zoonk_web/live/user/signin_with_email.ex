@@ -4,7 +4,7 @@ defmodule ZoonkWeb.Live.UserLoginWithEmail do
 
   import ZoonkWeb.Components.User
 
-  alias Zoonk.Auth
+  alias Zoonk.Accounts
 
   def render(assigns) do
     ~H"""
@@ -54,8 +54,8 @@ defmodule ZoonkWeb.Live.UserLoginWithEmail do
   end
 
   def handle_event("submit_magic", %{"email" => email}, socket) do
-    if user = Auth.get_user_by_email(email) do
-      Auth.deliver_login_instructions(
+    if user = Accounts.get_user_by_email(email) do
+      Accounts.deliver_login_instructions(
         user,
         &url(~p"/login/t/#{&1}")
       )

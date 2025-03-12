@@ -1,13 +1,13 @@
-defmodule Zoonk.AuthFixtures do
+defmodule Zoonk.AccountFixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `Zoonk.Auth` context.
+  entities via the `Zoonk.Accounts` context.
   """
 
   import Ecto.Query
 
-  alias Zoonk.Auth
-  alias Zoonk.Auth.Scope
+  alias Zoonk.Accounts
+  alias Zoonk.Accounts.Scope
   alias Zoonk.Schemas.UserToken
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
@@ -23,7 +23,7 @@ defmodule Zoonk.AuthFixtures do
     {:ok, user} =
       attrs
       |> valid_user_attributes()
-      |> Auth.signup_user()
+      |> Accounts.signup_user()
 
     user
   end
@@ -33,10 +33,10 @@ defmodule Zoonk.AuthFixtures do
 
     token =
       extract_user_token(fn url ->
-        Auth.deliver_login_instructions(fixture, url)
+        Accounts.deliver_login_instructions(fixture, url)
       end)
 
-    {:ok, user, _expired_tokens} = Auth.login_user_by_magic_link(token)
+    {:ok, user, _expired_tokens} = Accounts.login_user_by_magic_link(token)
 
     user
   end
@@ -63,7 +63,7 @@ defmodule Zoonk.AuthFixtures do
   end
 
   def generate_user_magic_link_token(user) do
-    {encoded_token, user_token} = Zoonk.Auth.TokenBuilder.build_email_token(user, "login")
+    {encoded_token, user_token} = Zoonk.Accounts.TokenBuilder.build_email_token(user, "login")
     Zoonk.Repo.insert!(user_token)
     {encoded_token, user_token.token}
   end

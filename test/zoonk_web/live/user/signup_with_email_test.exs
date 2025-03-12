@@ -2,7 +2,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Phoenix.LiveViewTest
-  import Zoonk.AuthFixtures
+  import Zoonk.AccountFixtures
 
   describe "Sign up with email page" do
     test "renders signup page", %{conn: conn} do
@@ -66,7 +66,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
       assert html =~
                ~r/An email was sent to .*, please access it to confirm your account/
 
-      user = Zoonk.Auth.get_user_by_email(email)
+      user = Zoonk.Accounts.get_user_by_email(email)
       assert user.confirmed_at == nil
     end
 
