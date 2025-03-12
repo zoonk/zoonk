@@ -54,7 +54,7 @@
 ## Contexts
 
 - Keep contexts thin and focused. Each context should have a single responsibility. Think of them as events that trigger actions.
-- If a context is too large, consider splitting it into smaller contexts. For example, if you have a `Zoonk.Accounts` context that handles multiple events, then split it into multiple context modules, such as `Zoonk.Accounts.Providers`, `Zoonk.Accounts.TokenBuilder`, `Zoonk.Accounts.UserNotifier`, etc.
+- If a context is too large, consider splitting it into smaller contexts. For example, if you have a `Zoonk.Accounts` context that handles multiple events, then split it into multiple context modules, such as `Zoonk.Accounts.TokenBuilder`, `Zoonk.Accounts.UserNotifier`, etc.
 - Place contexts (and sub-contexts) in the `lib/zoonk/{context_name}` directory (e.g., `lib/zoonk/accounts`).
 - Use the module name as the file name (e.g., `lib/zoonk/accounts.ex`).
 

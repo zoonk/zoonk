@@ -161,7 +161,6 @@ defmodule Zoonk.MixProject do
         ],
         Contexts: [
           Zoonk.Accounts,
-          Zoonk.Accounts.Providers,
           Zoonk.Accounts.TokenBuilder,
           Zoonk.Accounts.UserNotifier,
           Zoonk.Accounts.UserProfileBuilder
