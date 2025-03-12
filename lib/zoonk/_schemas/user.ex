@@ -34,6 +34,7 @@ defmodule Zoonk.Schemas.User do
   import Ecto.Changeset
 
   alias Zoonk.Configuration
+  alias Zoonk.Schemas.Member
   alias Zoonk.Schemas.UserProfile
   alias Zoonk.Schemas.UserProvider
 
@@ -54,6 +55,7 @@ defmodule Zoonk.Schemas.User do
 
     has_one :profile, UserProfile
     has_many :providers, UserProvider
+    has_many :teams, Member
 
     timestamps(type: :utc_datetime)
   end

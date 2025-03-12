@@ -173,9 +173,13 @@ defmodule Zoonk.MixProject do
         Schemas: [
           Zoonk.Schemas.City,
           Zoonk.Schemas.Country,
+          Zoonk.Schemas.Member,
+          Zoonk.Schemas.Org,
+          Zoonk.Schemas.OrgMember,
           Zoonk.Schemas.Region,
           Zoonk.Schemas.State,
           Zoonk.Schemas.Subregion,
+          Zoonk.Schemas.Team,
           Zoonk.Schemas.User,
           Zoonk.Schemas.UserProfile,
           Zoonk.Schemas.UserProvider,

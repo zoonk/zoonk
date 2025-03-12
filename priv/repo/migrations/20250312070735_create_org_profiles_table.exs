@@ -1,0 +1,22 @@
+defmodule Zoonk.Repo.Migrations.CreateOrgProfilesTable do
+  use Ecto.Migration
+
+  def change do
+    create table(:org_profiles) do
+      add :org_id, references(:orgs, on_delete: :delete_all), null: false
+      add :city_id, references(:cities, on_delete: :nothing)
+
+      add :display_name, :string, null: false
+      add :bio, :string
+      add :public_email, :string
+      add :icon_url, :string
+      add :logo_url, :string
+
+      timestamps(type: :utc_datetime)
+    end
+
+    create unique_index(:org_profiles, [:org_id])
+    create index(:org_profiles, [:city_id])
+    create index(:org_profiles, [:display_name])
+  end
+end
