@@ -4,7 +4,7 @@ defmodule Zoonk.Repo.Migrations.CreateOrgProfilesTable do
   def change do
     create table(:org_profiles) do
       add :org_id, references(:orgs, on_delete: :delete_all), null: false
-      add :city_id, :integer
+      add :city_id, references(:cities, on_delete: :nothing), null: false
 
       add :display_name, :citext, null: false
       add :bio, :string

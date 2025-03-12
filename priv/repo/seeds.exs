@@ -21,4 +21,28 @@ password = Application.fetch_env!(:zoonk, Zoonk.Repo)[:password]
 host = Application.fetch_env!(:zoonk, Zoonk.Repo)[:hostname]
 sql_file = Path.expand("deps/regions_db/psql/world.sql")
 
+# Drop the foreign key constraint before running the SQL file
+drop_fk_sql = """
+ALTER TABLE user_profiles DROP CONSTRAINT IF EXISTS user_profiles_city_id_fkey;
+ALTER TABLE org_profiles DROP CONSTRAINT IF EXISTS org_profiles_city_id_fkey;
+"""
+
+System.cmd("psql", ["-h", host, "-U", username, "-d", db_name, "-c", drop_fk_sql], env: [{"PGPASSWORD", password}])
+
+# Import the world.sql data
 System.cmd("psql", ["-h", host, "-U", username, "-d", db_name, "-f", sql_file], env: [{"PGPASSWORD", password}])
+
+# Add the foreign key constraint back
+add_fk_sql = """
+ALTER TABLE user_profiles
+ADD CONSTRAINT user_profiles_city_id_fkey
+FOREIGN KEY (city_id)
+REFERENCES cities(id);
+
+ALTER TABLE org_profiles
+ADD CONSTRAINT org_profiles_city_id_fkey
+FOREIGN KEY (city_id)
+REFERENCES cities(id);
+"""
+
+System.cmd("psql", ["-h", host, "-U", username, "-d", db_name, "-c", add_fk_sql], env: [{"PGPASSWORD", password}])
