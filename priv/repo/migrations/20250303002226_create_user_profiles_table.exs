@@ -8,7 +8,7 @@ defmodule Zoonk.Repo.Migrations.CreateUserProfilesTable do
 
       add :public?, :boolean, null: false, default: false
 
-      add :display_name, :string
+      add :display_name, :citext
       add :picture_url, :string
       add :username, :citext, null: false
 

@@ -18,7 +18,7 @@ defmodule Zoonk.Accounts do
   alias Zoonk.Queries
   alias Zoonk.Repo
   alias Zoonk.Schemas.User
-  alias Zoonk.Schemas.UserProvider
+  alias Zoonk.Schemas.UserIdentity
   alias Zoonk.Schemas.UserToken
 
   ## Database getters
@@ -238,45 +238,45 @@ defmodule Zoonk.Accounts do
   end
 
   @doc """
-  Signs in a user with a third-party provider.
+  Signs in a user with a third-party account.
 
-  It either links the provider to an existing user
-  or signs up a new user and links the provider.
+  It either links the account to an existing user
+  or signs up a new user and links the external identity.
 
   ## Examples
 
-      iex> login_with_provider(%{}, "en")
+      iex> login_with_external_account(%{}, "en")
       {:ok, %User{}}
 
-      iex> login_with_provider(nil, "en")
+      iex> login_with_external_account(nil, "en")
       {:error, %Ecto.Changeset{}}
   """
-  def login_with_provider(auth, language) do
+  def login_with_external_account(auth, language) do
     user = get_user_by_email(auth["email"])
 
-    case login_with_provider(auth, language, user) do
+    case login_with_external_account(auth, language, user) do
       {:ok, %User{} = new_user} -> {:ok, new_user}
-      {:ok, %UserProvider{}} -> {:ok, user}
+      {:ok, %UserIdentity{}} -> {:ok, user}
       {:error, changeset} -> {:error, changeset}
     end
   end
 
   # Create a new user if it doesn't exist
-  defp login_with_provider(auth, language, nil) do
-    signup_user_with_provider(auth, language)
+  defp login_with_external_account(auth, language, nil) do
+    signup_user_with_external_account(auth, language)
   end
 
-  # If the user exists, then link the provider
-  defp login_with_provider(auth, _lang, %User{} = user) do
+  # If the user exists, then link the external account
+  defp login_with_external_account(auth, _lang, %User{} = user) do
     %{user: user}
-    |> user_provider_changeset(get_provider_attrs(auth))
+    |> user_identity_changeset(get_identity_attrs(auth))
     |> Repo.insert(on_conflict: :nothing)
   end
 
-  # Create a new user and link the provider
-  defp signup_user_with_provider(auth, language) do
+  # Create a new user and link the external account
+  defp signup_user_with_external_account(auth, language) do
     user_attrs = %{email: auth["email"], language: language}
-    provider_attrs = get_provider_attrs(auth)
+    identity_attrs = get_identity_attrs(auth)
     profile_opts = [display_name: auth["name"], picture_url: auth["picture"], username: auth["preferred_username"]]
 
     user_changeset =
@@ -287,16 +287,16 @@ defmodule Zoonk.Accounts do
     Ecto.Multi.new()
     |> Ecto.Multi.insert(:user, user_changeset)
     |> Ecto.Multi.insert(:profile, &UserProfileBuilder.build_initial_user_profile(&1, profile_opts))
-    |> Ecto.Multi.insert(:provider, &user_provider_changeset(&1, provider_attrs))
+    |> Ecto.Multi.insert(:identity, &user_identity_changeset(&1, identity_attrs))
     |> Repo.transaction()
     |> Helpers.EctoUtils.get_changeset_from_transaction(:user)
   end
 
-  defp user_provider_changeset(%{user: %User{} = user}, provider_attrs) do
-    UserProvider.changeset(%UserProvider{user_id: user.id}, provider_attrs)
+  defp user_identity_changeset(%{user: %User{} = user}, identity_attrs) do
+    UserIdentity.changeset(%UserIdentity{user_id: user.id}, identity_attrs)
   end
 
-  defp get_provider_attrs(auth) do
-    %{provider: auth["provider"], provider_uid: to_string(auth["sub"])}
+  defp get_identity_attrs(auth) do
+    %{identity: auth["provider"], identity_uid: to_string(auth["sub"])}
   end
 end

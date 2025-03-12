@@ -44,7 +44,7 @@ defmodule ZoonkWeb.Controllers.OAuth do
     language = get_session(conn, :language)
     auth = Map.put(user_from_provider, "provider", provider)
 
-    case Accounts.login_with_provider(auth, language) do
+    case Accounts.login_with_external_account(auth, language) do
       {:ok, %User{} = user} ->
         UserAuth.login_user(conn, user)
 

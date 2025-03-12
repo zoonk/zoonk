@@ -9,21 +9,21 @@ defmodule ZoonkWeb.Components.User do
   @actions [:login, :signup]
 
   @doc """
-  Generates a link to the authentication provider.
+  Generates a link to the authentication identity.
   """
-  attr :provider, :atom, values: [:email | Configuration.list_providers()], required: true
+  attr :identity, :atom, values: Configuration.list_user_identities(), required: true
   attr :action, :atom, values: @actions, default: :login
 
   def auth_link(assigns) do
     ~H"""
     <.a
       kind={:button}
-      navigate={get_auth_link(@action, @provider)}
-      icon={get_icon(@provider)}
+      navigate={get_auth_link(@action, @identity)}
+      icon={get_icon(@identity)}
       variant={:outline}
       full
     >
-      {get_auth_label(@action, @provider)}
+      {get_auth_label(@action, @identity)}
     </.a>
     """
   end
@@ -121,19 +121,19 @@ defmodule ZoonkWeb.Components.User do
 
   defp get_auth_link(:login, :email), do: ~p"/login/email"
   defp get_auth_link(:signup, :email), do: ~p"/signup/email"
-  defp get_auth_link(_action, provider), do: ~p"/auth/#{provider}"
+  defp get_auth_link(_action, identity), do: ~p"/auth/#{identity}"
 
   defp get_auth_label(:login, :email), do: dgettext("users", "Login with Email")
   defp get_auth_label(:signup, :email), do: dgettext("users", "Sign up with Email")
 
-  defp get_auth_label(_action, provider),
-    do: dgettext("users", "Continue with %{provider}", provider: provider_name(provider))
+  defp get_auth_label(_action, identity),
+    do: dgettext("users", "Continue with %{identity}", identity: identity_name(identity))
 
   defp get_back_label(:login), do: dgettext("users", "Other login options")
   defp get_back_label(:signup), do: dgettext("users", "Other sign up options")
 
-  defp provider_name(provider) do
-    provider
+  defp identity_name(identity) do
+    identity
     |> Atom.to_string()
     |> String.capitalize()
   end

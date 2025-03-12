@@ -32,7 +32,7 @@ defmodule Zoonk.Schemas.User do
   | `confirmed_at` | `utc_datetime` | Timestamp when the account was confirmed. |
   | `authenticated_at` | `utc_datetime` | Timestamp when the user was last authenticated. |
   | `profile` | `Zoonk.Schemas.UserProfile` | The user's public profile. |
-  | `providers` | `Zoonk.Schemas.UserProvider` | The user's OAuth providers. |
+  | `identities` | `Zoonk.Schemas.UserIdentity` | Identities used by the user for authentication. |
   | `teams` | `Zoonk.Schemas.Member` | The teams the user is a member of. |
   | `inserted_at` | `DateTime` | Timestamp when the user was created. |
   | `updated_at` | `DateTime` | Timestamp when the user was last updated. |
@@ -43,8 +43,8 @@ defmodule Zoonk.Schemas.User do
 
   alias Zoonk.Configuration
   alias Zoonk.Schemas.Member
+  alias Zoonk.Schemas.UserIdentity
   alias Zoonk.Schemas.UserProfile
-  alias Zoonk.Schemas.UserProvider
 
   schema "users" do
     field :year_of_birth, :integer
@@ -62,7 +62,7 @@ defmodule Zoonk.Schemas.User do
     field :authenticated_at, :utc_datetime, virtual: true
 
     has_one :profile, UserProfile
-    has_many :providers, UserProvider
+    has_many :identities, UserIdentity
     has_many :teams, Member
 
     timestamps(type: :utc_datetime)

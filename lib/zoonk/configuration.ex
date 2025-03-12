@@ -95,9 +95,15 @@ defmodule Zoonk.Configuration do
 
   @doc group: "Authentication"
   @doc """
-  Returns a list of supported oAuth providers.
+  Returns a list of supported external accounts.
   """
-  def list_providers, do: [:apple, :github, :google, :microsoft]
+  def list_external_accounts, do: [:apple, :github, :google]
+
+  @doc group: "Authentication"
+  @doc """
+  Returns a list of supported user identities.
+  """
+  def list_user_identities, do: [:email | list_external_accounts()]
 
   @doc group: "Language"
   @doc """
