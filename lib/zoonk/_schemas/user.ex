@@ -1,33 +1,41 @@
 defmodule Zoonk.Schemas.User do
   @moduledoc """
-  Defines the `User` schema and related changesets.
+  Defines the `User` schema.
 
   This schema represents users in the system, storing their
   email and account confirmation status. It also includes
   changeset functions for managing user signup,
   email validation, and account confirmation.
 
+  For public information, we use the `Zoonk.Schemas.UserProfile` schema instead.
+
+  ## User Types
+
+  | Type | Description |
+  |------|-------------|
+  | `:regular` | Regular users who signed up on the main platform. |
+  | `:agent` | AI bots and agents. |
+  | `:guest` | Users who didn't create an account. |
+  | `:white_label` | Users who signed up from a partner platform. |
+
   ## Fields
 
-    * `year_of_birth` - The user's year of birth. We use this to determine
-      the user's age to see if they are eligible for certain features.
-    * `kind` - The type of user.
-      * `:regular` - A regular user.
-      * `:agent` - AI agent used to create content.
-      * `:guest` - A user who has not signed up yet.
-      * `:white_label` - A user who created an account through a white label partner.
-    * `email` - The user's email address.
-    * `language` - The user's preferred language.
-    * `confirmed_at` - The timestamp when the account was confirmed.
-    * `authenticated_at` (virtual) - The last authentication timestamp, used temporarily.
-
-  ## Changesets
-
-    * `settings_changeset/3` - Validates and updates the user's settings.
-    * `email_changeset/3` - Validates and updates the email
-    field, ensuring it is unique and correctly formatted.
-    * `confirm_changeset/1` - Marks the account as confirmed
-    by setting `confirmed_at`.
+  | Field Name | Type | Description |
+  |------------|------|-------------|
+  | `year_of_birth` | `integer` | We need the year of birth for legal reasons when a profile is public. |
+  | `currency` | `Ecto.Enum` | The currency used for payments. |
+  | `kind` | `Ecto.Enum` | Users can have different types: `regular`, `agent`, `guest`, or `white_label`. |
+  | `email` | `string` | The user's email address. |
+  | `stripe_customer_id` | `string` | Customer ID used for Stripe payments. |
+  | `tax_id` | `Zoonk.Encrypted.Binary` | Tax ID required by some jurisdictions. |
+  | `language` | `Ecto.Enum` | The language used by the user. |
+  | `confirmed_at` | `utc_datetime` | Timestamp when the account was confirmed. |
+  | `authenticated_at` | `utc_datetime` | Timestamp when the user was last authenticated. |
+  | `profile` | `Zoonk.Schemas.UserProfile` | The user's public profile. |
+  | `providers` | `Zoonk.Schemas.UserProvider` | The user's OAuth providers. |
+  | `teams` | `Zoonk.Schemas.Member` | The teams the user is a member of. |
+  | `inserted_at` | `DateTime` | Timestamp when the user was created. |
+  | `updated_at` | `DateTime` | Timestamp when the user was last updated. |
   """
   use Ecto.Schema
 

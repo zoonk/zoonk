@@ -7,10 +7,14 @@ defmodule Zoonk.Schemas.UserToken do
 
   ## Fields
 
-    * `token` - A unique binary token used for authentication or verification.
-    * `context` - A string defining the token's purpose (e.g., "session").
-    * `sent_to` - The email address to which the token was sent.
-    * `user_id` - References the associated user.
+  | Field Name | Type | Description |
+  |------------|------|-------------
+  | `token` | `Binary` | The token used for authentication or verification. |
+  | `context` | `String` | The context in which the token is used (e.g., "email_verification"). |
+  | `sent_to` | `String` | The email address or phone number to which the token was sent. |
+  | `user_id` | `Integer` | The ID from `Zoonk.Schemas.User`. |
+  | `inserted_at` | `DateTime` | Timestamp when the token was created. |
+  | `updated_at` | `DateTime` | Timestamp when the token was last updated. |
   """
   use Ecto.Schema
 

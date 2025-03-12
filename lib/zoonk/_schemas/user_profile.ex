@@ -5,19 +5,22 @@ defmodule Zoonk.Schemas.UserProfile do
   A user can have one profile, which contains information
   that can become public if they set `public?` to true.
 
+  We keep profiles separate from `Zoonk.Schemas.User` to prevent
+  other people from accessing the user's sensitive information.
+
   ## Fields
 
-    * `bio` - A short biography of the user.
-    * `display_name` - The name displayed to other users.
-    * `picture_url` - A URL to the user's profile picture.
-    * `public?` - A boolean indicating if the profile is public.
-    * `username` - The user's username (unique).
-
-  ## Associations
-    * `user` - The `Zoonk.Schemas.User` associated with this profile.
-
-  ## Changesets
-    * `changeset/2` - Validates and updates the profile fields.
+  | Field Name | Type | Description |
+  |------------|------|-------------|
+  | `public?` | `boolean` | Indicates if the profile is public. |
+  | `bio` | `string` | A short biography of the user. |
+  | `display_name` | `string` | The name displayed to other users. |
+  | `picture_url` | `string` | URL of the user's profile picture. |
+  | `username` | `string` | Unique username used to view a user's profile. |
+  | `user_id` | `integer` | The ID from `Zoonk.Schemas.User`. |
+  | `city_id` | `integer` | The ID from `Zoonk.Schemas.City`. |
+  | `inserted_at` | `DateTime` | Timestamp when the profile was created. |
+  | `updated_at` | `DateTime` | Timestamp when the profile was last updated. |
   """
   use Ecto.Schema
 

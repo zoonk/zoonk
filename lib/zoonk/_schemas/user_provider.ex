@@ -1,21 +1,19 @@
 defmodule Zoonk.Schemas.UserProvider do
   @moduledoc """
-  Defines the `UserProvider` schema and related changesets.
+  Defines the `UserProvider` schema.
 
   We support multiple OAuth providers. Use can sign in with
   any of them and we store the provider data in this table.
 
   ## Fields
 
-    * `provider` - The OAuth provider (e.g., :apple, :github, :google, :microsoft).
-    * `provider_uid` - The unique identifier for the user from the provider.
-
-  ## Associations
-
-    * `user` - The associated `Zoonk.Schemas.User`.
-
-  ## Changesets
-    * `changeset/2` - Validates and updates the user provider data.
+  | Field Name | Type | Description |
+  |------------|------|-------------|
+  | `provider` | `Ecto.Enum` | The OAuth provider used for authentication. |
+  | `provider_uid` | `String` | The unique identifier for the user in the provider's system. |
+  | `user_id` | `Integer` | The ID from `Zoonk.Schemas.User`. |
+  | `inserted_at` | `DateTime` | Timestamp when the provider data was created. |
+  | `updated_at` | `DateTime` | Timestamp when the provider data was last updated. |
   """
   use Ecto.Schema
 
