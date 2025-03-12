@@ -175,7 +175,7 @@ defmodule Zoonk.MixProject do
           Zoonk.Schemas.Country,
           Zoonk.Schemas.Member,
           Zoonk.Schemas.Org,
-          Zoonk.Schemas.OrgMember,
+          Zoonk.Schemas.OrgProfile,
           Zoonk.Schemas.Region,
           Zoonk.Schemas.State,
           Zoonk.Schemas.Subregion,
@@ -200,6 +200,9 @@ defmodule Zoonk.MixProject do
           ZoonkWeb.Endpoint,
           ZoonkWeb.Layouts,
           ZoonkWeb.Router
+        ],
+        "Encrypted Data": [
+          Zoonk.Encrypted.Binary
         ]
       ],
       nest_modules_by_prefix: [Zoonk, ZoonkWeb]
