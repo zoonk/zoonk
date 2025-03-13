@@ -14,8 +14,8 @@ After running the script above, you can start your local server (`mix phx.server
 
 | URL                               | Product                | Production URL        |
 | --------------------------------- | ---------------------- | --------------------- |
-| https://localhost:4001            | Main app               | zoonk.org             |
-| https://zoonk.test:4001           | Main app               | zoonk.org             |
+| https://localhost:4001            | Main app               | zoonk.com             |
+| https://zoonk.test:4001           | Main app               | zoonk.com             |
 | https://team.test:4001            | Teams, landing page    | zoonk.team            |
 | https://myorg.team.test:4001      | Org white label        | myorg.zoonk.team      |
 | https://school.test:4001          | Schools, landing page  | zoonk.school          |

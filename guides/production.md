@@ -15,7 +15,7 @@ Make sure to include the following environment variables in your production envi
 
 Optionally, you can include the following environment variables:
 
-- `PHX_HOST`: The host of your Zoonk application (e.g., `zoonk.org`). Default is `zoonk.org`.
+- `PHX_HOST`: The host of your Zoonk application (e.g., `zoonk.com`). Default is `zoonk.com`.
 - `PORT`: The port on which your Zoonk application will run (e.g., `8080`).
 - `POOL_SIZE`: The number of database connections to keep in the pool. The default is `10`.
 - `DNS_CLUSTER_QUERY`: The DNS cluster query for your Zoonk application. See `DNSCluster` for more information.

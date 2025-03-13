@@ -25,7 +25,7 @@ defmodule Zoonk.Mailer do
     email =
       Email.new()
       |> Email.to(recipient)
-      |> Email.from({"Zoonk", "hello@zoonk.org"})
+      |> Email.from({"Zoonk", "hello@zoonk.com"})
       |> Email.subject(subject)
       |> Email.text_body(body)
 

@@ -68,7 +68,7 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
-  host = System.get_env("PHX_HOST") || "zoonk.org"
+  host = System.get_env("PHX_HOST") || "zoonk.com"
   port = String.to_integer(System.get_env("PORT") || "8080")
 
   config :zoonk, Zoonk.Repo,

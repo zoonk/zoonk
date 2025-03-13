@@ -30,7 +30,7 @@
 
 ## Getting started
 
-You can read our full documentation at https://docs.zoonk.org or check the guides below:
+You can read our full documentation at https://docs.zoonk.com or check the guides below:
 
 - [Overview](./guides/introduction/overview.md)
 - [Installation](./guides/introduction/installation.md)
