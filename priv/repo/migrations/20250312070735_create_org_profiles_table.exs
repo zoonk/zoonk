@@ -9,6 +9,8 @@ defmodule Zoonk.Repo.Migrations.CreateOrgProfilesTable do
       add :display_name, :citext, null: false
       add :bio, :string
       add :public_email, :citext
+      add :subdomain, :citext, null: false
+      add :custom_domain, :citext
       add :icon_url, :string
       add :logo_url, :string
 
@@ -16,6 +18,8 @@ defmodule Zoonk.Repo.Migrations.CreateOrgProfilesTable do
     end
 
     create unique_index(:org_profiles, [:org_id])
+    create unique_index(:org_profiles, [:subdomain])
+    create unique_index(:org_profiles, [:custom_domain])
     create index(:org_profiles, [:city_id])
     create index(:org_profiles, [:display_name])
   end

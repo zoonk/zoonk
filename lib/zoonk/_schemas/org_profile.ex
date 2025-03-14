@@ -16,6 +16,8 @@ defmodule Zoonk.Schemas.OrgProfile do
   | `public_email` | `String` | The public email address for the organization. |
   | `icon_url` | `String` | URL for the organization's icon. |
   | `logo_url` | `String` | URL for the organization's logo. |
+  | `subdomain` | `String` | The subdomain used for the organization's white-label page. |
+  | `custom_domain` | `String` | The custom domain used for the organization's white-label page. |
   | `org_id` | `Integer` | ID from `Zoonk.Schemas.Org` |
   | `city_id` | `Integer` | ID from `Zoonk.Schemas.City` |
   | `inserted_at` | `DateTime` | Timestamp when the organization profile was created. |
@@ -33,6 +35,9 @@ defmodule Zoonk.Schemas.OrgProfile do
     field :bio, :string
     field :public_email, :string
 
+    field :subdomain, :string
+    field :custom_domain, :string
+
     field :icon_url, :string
     field :logo_url, :string
 
@@ -45,9 +50,23 @@ defmodule Zoonk.Schemas.OrgProfile do
   @doc false
   def changeset(profile, attrs) do
     profile
-    |> cast(attrs, [:display_name, :bio, :public_email, :icon_url, :logo_url, :city_id, :org_id])
-    |> validate_required([:display_name, :org_id])
+    |> cast(attrs, [
+      :display_name,
+      :bio,
+      :public_email,
+      :icon_url,
+      :logo_url,
+      :subdomain,
+      :custom_domain,
+      :city_id,
+      :org_id
+    ])
+    |> validate_required([:display_name, :org_id, :subdomain])
     |> validate_length(:display_name, min: 1, max: 32)
+    |> unsafe_validate_unique(:subdomain, Zoonk.Repo)
+    |> unsafe_validate_unique(:custom_domain, Zoonk.Repo)
+    |> unique_constraint(:subdomain)
+    |> unique_constraint(:custom_domain)
     |> unique_constraint(:org_id)
   end
 end

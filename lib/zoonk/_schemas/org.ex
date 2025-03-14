@@ -26,8 +26,6 @@ defmodule Zoonk.Schemas.Org do
   |------------|------|-------------|
   | `currency` | `Ecto.Enum` | Currency used for payments. |
   | `kind` | `Ecto.Enum` | The type of organization. |
-  | `subdomain` | `String` | The subdomain used for the organization's white-label page. |
-  | `custom_domain` | `String` | The custom domain used for the organization's white-label page. |
   | `stripe_customer_id` | `String` | Customer ID used for Stripe payments. |
   | `tax_id` | `Zoonk.Encrypted.Binary` | Tax ID required by some jurisdictions. |
   | `profile` | `Zoonk.Schemas.OrgProfile` | Profile visible to org members. |
@@ -49,9 +47,6 @@ defmodule Zoonk.Schemas.Org do
     field :currency, Ecto.Enum, values: Configuration.list_currencies(:atom), default: :USD
     field :kind, Ecto.Enum, values: [:business, :creator, :school], default: :business
 
-    field :subdomain, :string
-    field :custom_domain, :string
-
     field :stripe_customer_id, :string
     field :tax_id, Zoonk.Encrypted.Binary
 
@@ -65,10 +60,8 @@ defmodule Zoonk.Schemas.Org do
   @doc false
   def changeset(org, attrs) do
     org
-    |> cast(attrs, [:currency, :kind, :subdomain, :custom_domain, :stripe_customer_id, :tax_id])
-    |> validate_required([:currency, :kind, :subdomain])
-    |> unique_constraint(:subdomain)
-    |> unique_constraint(:custom_domain)
+    |> cast(attrs, [:currency, :kind, :stripe_customer_id, :tax_id])
+    |> validate_required([:currency, :kind])
     |> validate_length(:subdomain, min: 1, max: 32)
   end
 end
