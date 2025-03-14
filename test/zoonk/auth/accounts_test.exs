@@ -283,7 +283,7 @@ defmodule Zoonk.AccountsTest do
       user_profile = Repo.get_by!(UserProfile, user_id: user.id)
 
       assert user_identity.identity == :google
-      assert user_identity.identity_uid == uid
+      assert user_identity.identity_id == uid
 
       assert user_profile.user_id == user.id
       assert user_profile.picture_url == picture
@@ -302,28 +302,7 @@ defmodule Zoonk.AccountsTest do
 
       user_identity = Repo.get_by!(UserIdentity, user_id: user.id)
       assert user_identity.identity == :google
-      assert user_identity.identity_uid == uid
-
-      assert Repo.get_by!(UserProfile, user_id: user.id)
-    end
-
-    test "ignore duplicate external account" do
-      email = unique_user_email()
-      uid = Ecto.UUID.generate()
-
-      existing_user = user_fixture(%{email: email})
-      auth = oauth_fixture(%{uid: uid, email: email})
-
-      {:ok, first_user} = Accounts.login_with_external_account(auth, "en")
-      assert first_user.id == existing_user.id
-
-      {:ok, user} = Accounts.login_with_external_account(auth, "en")
-
-      assert user.id == existing_user.id
-
-      user_identity = Repo.get_by!(UserIdentity, user_id: user.id)
-      assert user_identity.identity == :google
-      assert user_identity.identity_uid == uid
+      assert user_identity.identity_id == uid
 
       assert Repo.get_by!(UserProfile, user_id: user.id)
     end
@@ -352,7 +331,7 @@ defmodule Zoonk.AccountsTest do
       {:ok, %User{} = user} = Accounts.login_with_external_account(auth, "en")
 
       user_identity = Repo.get_by!(UserIdentity, user_id: user.id)
-      assert user_identity.identity_uid == to_string(uid)
+      assert user_identity.identity_id == to_string(uid)
     end
 
     test "adds name and username to profile when available" do

@@ -297,6 +297,6 @@ defmodule Zoonk.Accounts do
   end
 
   defp get_identity_attrs(auth) do
-    %{identity: auth["provider"], identity_uid: to_string(auth["sub"])}
+    %{identity: auth["provider"], identity_id: to_string(auth["sub"])}
   end
 end
