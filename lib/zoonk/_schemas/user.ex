@@ -22,15 +22,15 @@ defmodule Zoonk.Schemas.User do
 
   | Field Name | Type | Description |
   |------------|------|-------------|
-  | `year_of_birth` | `integer` | We need the year of birth for legal reasons when a profile is public. |
+  | `year_of_birth` | `Integer` | We need the year of birth for legal reasons when a profile is public. |
   | `currency` | `Ecto.Enum` | The currency used for payments. |
   | `kind` | `Ecto.Enum` | Users can have different types: `regular`, `agent`, `guest`, or `white_label`. |
-  | `email` | `string` | The user's email address. |
-  | `stripe_customer_id` | `string` | Customer ID used for Stripe payments. |
+  | `email` | `String` | The user's email address. |
+  | `stripe_customer_id` | `String` | Customer ID used for Stripe payments. |
   | `tax_id` | `Zoonk.Encrypted.Binary` | Tax ID required by some jurisdictions. |
   | `language` | `Ecto.Enum` | The language used by the user. |
-  | `confirmed_at` | `utc_datetime` | Timestamp when the account was confirmed. |
-  | `authenticated_at` | `utc_datetime` | Timestamp when the user was last authenticated. |
+  | `confirmed_at` | `DateTime` | Timestamp when the account was confirmed. |
+  | `authenticated_at` | `DateTime` | Timestamp when the user was last authenticated. |
   | `profile` | `Zoonk.Schemas.UserProfile` | The user's public profile. |
   | `identities` | `Zoonk.Schemas.UserIdentity` | Identities used by the user for authentication. |
   | `teams` | `Zoonk.Schemas.Member` | The teams the user is a member of. |

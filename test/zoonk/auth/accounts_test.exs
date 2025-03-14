@@ -180,7 +180,7 @@ defmodule Zoonk.AccountsTest do
       assert session_user = Accounts.get_user_by_session_token(token)
       assert session_user.id == user.id
       assert session_user.profile.user_id == user.id
-      assert session_user.profile.public? == false
+      assert session_user.profile.is_public == false
     end
 
     test "does not return user for invalid token" do

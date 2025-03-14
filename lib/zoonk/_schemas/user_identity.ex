@@ -11,6 +11,7 @@ defmodule Zoonk.Schemas.UserIdentity do
   |------------|------|-------------|
   | `identity` | `Ecto.Enum` | Identity used for authentication. |
   | `identity_id` | `String` | UID used by third-party accounts or the user's email address. |
+  | `is_primary` | `Boolean` | Indicates if this is the primary identity. |
   | `user_id` | `Integer` | The ID from `Zoonk.Schemas.User`. |
   | `inserted_at` | `DateTime` | Timestamp when the identity data was created. |
   | `updated_at` | `DateTime` | Timestamp when the identity data was last updated. |

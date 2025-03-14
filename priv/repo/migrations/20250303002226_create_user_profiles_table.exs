@@ -6,7 +6,7 @@ defmodule Zoonk.Repo.Migrations.CreateUserProfilesTable do
       add :user_id, references(:users, on_delete: :delete_all), null: false
       add :city_id, references(:cities, on_delete: :nothing)
 
-      add :public?, :boolean, null: false, default: false
+      add :is_public, :boolean, null: false, default: false
 
       add :display_name, :citext
       add :picture_url, :string
