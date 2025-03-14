@@ -8,7 +8,7 @@ Zoonk is a multi-tenant application. This means that multiple organizations can 
 
 Our own app deployed at `zoonk.com` is an example of an organization. It has an `admin` kind but organizations can have other kinds such as `team`, `school`, or `store` because we provide a managed cloud service for organizations wanting to use Zoonk as a white-label solution.
 
-Use a [multi tenancy with foreign keys](https://hexdocs.pm/ecto/multi-tenancy-with-foreign-keys.html) approach to implement this.
+We use a [multi tenancy with foreign keys](https://hexdocs.pm/ecto/multi-tenancy-with-foreign-keys.html) approach to implement this.
 
 ## App Kind
 
