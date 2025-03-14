@@ -140,5 +140,15 @@ defmodule Zoonk.UserIdentityTest do
       changeset3 = UserIdentity.changeset(%UserIdentity{}, attrs3)
       assert {:ok, %UserIdentity{}} = Repo.insert(changeset3)
     end
+
+    test "doesn't allow external accounts to be primary, only emails" do
+      user = user_fixture()
+      uid = Ecto.UUID.generate()
+      attrs = %{identity: :google, identity_id: uid, user_id: user.id, is_primary: true}
+
+      changeset = UserIdentity.changeset(%UserIdentity{}, attrs)
+      refute changeset.valid?
+      assert "only email identities can be primary" in errors_on(changeset).is_primary
+    end
   end
 end

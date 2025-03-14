@@ -41,6 +41,7 @@ defmodule Zoonk.Schemas.UserIdentity do
     |> cast(attrs, [:identity, :identity_id, :is_primary, :user_id])
     |> validate_required([:identity, :identity_id, :is_primary, :user_id])
     |> validate_length(:identity_id, min: 6, max: 160)
+    |> validate_primary()
     |> validate_id()
     |> unsafe_validate_unique([:identity, :identity_id], Zoonk.Repo)
     |> unique_constraint([:identity, :identity_id])
@@ -59,4 +60,15 @@ defmodule Zoonk.Schemas.UserIdentity do
   defp validate_id(changeset, _identity) do
     validate_format(changeset, :identity_id, ~r/^[^@]+$/, message: dgettext("errors", "must NOT be an email address"))
   end
+
+  # Only `email` identities can be primary.
+  defp validate_primary(changeset), do: validate_primary(changeset, valid_primary?(changeset))
+  defp validate_primary(changeset, true), do: changeset
+
+  defp validate_primary(changeset, false),
+    do: add_error(changeset, :is_primary, dgettext("errors", "only email identities can be primary"))
+
+  defp primary?(changeset), do: get_field(changeset, :is_primary) == true
+  defp email?(changeset), do: get_field(changeset, :identity) == :email
+  defp valid_primary?(changeset), do: email?(changeset) or not primary?(changeset)
 end
