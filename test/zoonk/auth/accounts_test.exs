@@ -87,7 +87,7 @@ defmodule Zoonk.AccountsTest do
   describe "change_user_identity/3" do
     test "returns a user identity changeset" do
       assert %Ecto.Changeset{} = changeset = Accounts.change_user_identity(%UserIdentity{})
-      assert changeset.required == [:identity]
+      assert changeset.required == [:identity, :identity_id, :is_primary, :user_id]
     end
   end
 
