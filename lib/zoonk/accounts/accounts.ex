@@ -314,9 +314,9 @@ defmodule Zoonk.Accounts do
 
     Ecto.Multi.new()
     |> Ecto.Multi.insert(:user, User.changeset(%User{}, %{language: language}))
-    |> Ecto.Multi.insert(:profile, &UserProfileBuilder.build_initial_user_profile(&1, profile_opts))
     # we also need to add the email identity when signing up with an external account
     |> Ecto.Multi.insert(:user_identity, &user_identity_changeset(&1, get_identity_attrs(auth, :email)))
+    |> Ecto.Multi.insert(:profile, &UserProfileBuilder.build_initial_user_profile(&1, profile_opts))
     |> Ecto.Multi.insert(:external_identity, &user_identity_changeset(&1, get_identity_attrs(auth)))
     |> Repo.transaction()
     |> Helpers.EctoUtils.get_changeset_from_transaction(:user_identity)

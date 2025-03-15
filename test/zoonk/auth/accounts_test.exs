@@ -286,14 +286,19 @@ defmodule Zoonk.AccountsTest do
 
       {:ok, %UserIdentity{} = user_identity} = Accounts.login_with_external_account(auth, "en")
 
-      assert user_identity.identity == :google
-      assert user_identity.identity_id == uid
+      assert user_identity.identity == :email
+      assert user_identity.identity_id == email
+      assert user_identity.is_primary == true
+
+      provider_identity = Repo.get_by!(UserIdentity, user_id: user_identity.user_id, identity: :google)
+      assert provider_identity.identity == :google
+      assert provider_identity.identity_id == uid
+      assert provider_identity.is_primary == false
 
       user = Repo.get!(User, user_identity.user_id)
-      user_profile = Repo.get_by!(UserProfile, user_id: user.id)
-
       assert user.language == :en
 
+      user_profile = Repo.get_by!(UserProfile, user_id: user.id)
       assert user_profile.user_id == user.id
       assert user_profile.picture_url == picture
     end
