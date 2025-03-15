@@ -287,19 +287,14 @@ defmodule Zoonk.Accounts do
   ## Examples
 
       iex> login_with_external_account(%{}, "en")
-      {:ok, %User{}}
+      {:ok, %UserIdentity{}}
 
       iex> login_with_external_account(nil, "en")
       {:error, %Ecto.Changeset{}}
   """
   def login_with_external_account(auth, language) do
     user = get_user_by_email(auth["email"])
-
-    case login_with_external_account(auth, language, user) do
-      {:ok, %User{} = new_user} -> {:ok, new_user}
-      {:ok, %UserIdentity{}} -> {:ok, user}
-      {:error, changeset} -> {:error, changeset}
-    end
+    login_with_external_account(auth, language, user)
   end
 
   # If the user exists, then link the external account
@@ -325,7 +320,7 @@ defmodule Zoonk.Accounts do
     |> Ecto.Multi.insert(:user_identity, &user_identity_changeset(&1, get_identity_attrs(auth, :email)))
     |> Ecto.Multi.insert(:external_identity, &user_identity_changeset(&1, get_identity_attrs(auth)))
     |> Repo.transaction()
-    |> Helpers.EctoUtils.get_changeset_from_transaction(:user)
+    |> Helpers.EctoUtils.get_changeset_from_transaction(:user_identity)
   end
 
   defp user_identity_changeset(%{user: %User{} = user}, %{confirmed?: true} = identity_attrs) do
