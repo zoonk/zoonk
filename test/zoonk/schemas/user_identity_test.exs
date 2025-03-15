@@ -123,23 +123,19 @@ defmodule Zoonk.UserIdentityTest do
 
     test "raises a constraint error if a user has two primary identities" do
       %{user: %User{} = user} = user_fixture()
-      email1 = unique_user_email()
-      attrs = %{identity: :email, identity_id: email1, user_id: user.id, is_primary: true}
-      changeset1 = UserIdentity.changeset(%UserIdentity{}, attrs)
-      assert {:ok, %UserIdentity{}} = Repo.insert(changeset1)
 
       # Raises when trying to create a second primary identity
-      email2 = unique_user_email()
-      attrs2 = %{identity: :email, identity_id: email2, user_id: user.id, is_primary: true}
-      changeset2 = UserIdentity.changeset(%UserIdentity{}, attrs2)
+      email1 = unique_user_email()
+      attrs1 = %{identity: :email, identity_id: email1, user_id: user.id, is_primary: true}
+      changeset1 = UserIdentity.changeset(%UserIdentity{}, attrs1)
 
-      assert_raise Ecto.ConstraintError, fn -> Repo.insert!(changeset2) end
+      assert_raise Ecto.ConstraintError, fn -> Repo.insert!(changeset1) end
 
       # Allow to create a new non-primary identity
-      email3 = unique_user_email()
-      attrs3 = %{identity: :email, identity_id: email3, user_id: user.id, is_primary: false}
-      changeset3 = UserIdentity.changeset(%UserIdentity{}, attrs3)
-      assert {:ok, %UserIdentity{}} = Repo.insert(changeset3)
+      email2 = unique_user_email()
+      attrs2 = %{identity: :email, identity_id: email2, user_id: user.id, is_primary: false}
+      changeset2 = UserIdentity.changeset(%UserIdentity{}, attrs2)
+      assert {:ok, %UserIdentity{}} = Repo.insert(changeset2)
     end
 
     test "doesn't allow external accounts to be primary, only emails" do
