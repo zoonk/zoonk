@@ -135,10 +135,10 @@ defmodule Zoonk.AccountsTest do
       refute Repo.get_by(UserToken, user_identity_id: user_identity.id)
     end
 
-    test "does not update email with invalid token", %{user: user} do
-      assert Accounts.update_user_email(user, "oops") == :error
-      assert Repo.get!(User, user.id).email == user.email
-      assert Repo.get_by(UserToken, user_id: user.id)
+    test "does not update email with invalid token", %{user_identity: user_identity} do
+      assert Accounts.update_user_email(user_identity, "oops") == :error
+      assert Repo.get!(UserIdentity, user_identity.id).identity_id == user_identity.identity_id
+      assert Repo.get_by(UserToken, user_identity_id: user_identity.id)
     end
 
     test "does not update email if user email changed", %{user_identity: user_identity, token: token} do
