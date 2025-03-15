@@ -174,12 +174,20 @@ defmodule Zoonk.Accounts do
   end
 
   @doc """
-  Gets the user with the given magic link token.
+  Gets the user identity with the given magic link token.
+
+  ## Examples
+
+      iex> get_user_identity_by_magic_link_token(token)
+      %UserIdentity{}
+
+      iex> get_user_identity_by_magic_link_token(token)
+      nil
   """
-  def get_user_by_magic_link_token(token) do
+  def get_user_identity_by_magic_link_token(token) do
     with {:ok, query} <- Queries.UserToken.verify_magic_link_token(token),
-         {user, _token} <- Repo.one(query) do
-      user
+         {user_identity, _token} <- Repo.one(query) do
+      user_identity
     else
       _error -> nil
     end

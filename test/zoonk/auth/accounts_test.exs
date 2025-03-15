@@ -200,25 +200,25 @@ defmodule Zoonk.AccountsTest do
     end
   end
 
-  describe "get_user_by_magic_link_token/1" do
+  describe "get_user_identity_by_magic_link_token/1" do
     setup do
-      %{user: %User{} = user, user_identity: %UserIdentity{} = user_identity} = user_fixture()
+      %{user_identity: %UserIdentity{} = user_identity} = user_fixture()
       {encoded_token, _hashed_token} = generate_user_magic_link_token(user_identity)
-      %{user: user, token: encoded_token}
+      %{user_identity: user_identity, token: encoded_token}
     end
 
-    test "returns user by token", %{user: user, token: token} do
-      assert session_user = Accounts.get_user_by_magic_link_token(token)
-      assert session_user.id == user.id
+    test "returns user by token", %{user_identity: user_identity, token: token} do
+      assert session_user = Accounts.get_user_identity_by_magic_link_token(token)
+      assert session_user.id == user_identity.id
     end
 
     test "does not return user for invalid token" do
-      refute Accounts.get_user_by_magic_link_token("oops")
+      refute Accounts.get_user_identity_by_magic_link_token("oops")
     end
 
     test "does not return user for expired token", %{token: token} do
       {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
-      refute Accounts.get_user_by_magic_link_token(token)
+      refute Accounts.get_user_identity_by_magic_link_token(token)
     end
   end
 

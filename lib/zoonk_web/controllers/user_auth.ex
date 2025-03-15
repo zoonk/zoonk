@@ -59,7 +59,7 @@ defmodule ZoonkWeb.Controllers.UserAuth do
   def login(conn, %{"token" => token}), do: login_user(conn, token, :login)
 
   defp login_user(conn, token, action) do
-    if Accounts.get_user_by_magic_link_token(token) do
+    if Accounts.get_user_identity_by_magic_link_token(token) do
       create(conn, %{"user" => %{"token" => token}}, login_flash(action))
     else
       conn
