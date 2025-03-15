@@ -14,7 +14,6 @@ defmodule ZoonkWeb.Helpers.UserAuth do
   alias Zoonk.Accounts
   alias Zoonk.Accounts.Scope
   alias Zoonk.Configuration
-  alias Zoonk.Schemas.User
   alias Zoonk.Schemas.UserIdentity
 
   @max_age Configuration.get_max_age(:token, :seconds)
@@ -124,7 +123,7 @@ defmodule ZoonkWeb.Helpers.UserAuth do
 
   @doc "Returns the path to redirect to after log in."
   # the user was already logged in, redirect to settings
-  def signed_in_path(%Plug.Conn{assigns: %{current_scope: %Scope{user: %User{}}}}) do
+  def signed_in_path(%Plug.Conn{assigns: %{current_scope: %Scope{user_identity: %UserIdentity{}}}}) do
     ~p"/user/email"
   end
 
