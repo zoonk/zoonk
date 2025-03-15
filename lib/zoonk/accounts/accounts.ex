@@ -162,13 +162,13 @@ defmodule Zoonk.Accounts do
 
   ## Examples
 
-      iex> get_user_by_session_token(token)
+      iex> get_user_identity_by_session_token(token)
       %UserIdentity{}
 
-      iex> get_user_by_session_token(token)
+      iex> get_user_identity_by_session_token(token)
       nil
   """
-  def get_user_by_session_token(token) do
+  def get_user_identity_by_session_token(token) do
     {:ok, query} = Queries.UserToken.verify_session_token(token)
     query |> Repo.one() |> Repo.preload(user: :profile)
   end

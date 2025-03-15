@@ -30,7 +30,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
       assert token = get_session(conn, :user_token)
       assert get_session(conn, :live_socket_id) == "users_sessions:#{Base.url_encode64(token)}"
       assert redirected_to(conn) == ~p"/"
-      assert Accounts.get_user_by_session_token(token)
+      assert Accounts.get_user_identity_by_session_token(token)
     end
 
     test "clears everything previously stored in the session", %{
@@ -117,7 +117,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
       refute conn.cookies[@remember_me_cookie]
       assert %{max_age: 0} = conn.resp_cookies[@remember_me_cookie]
       assert redirected_to(conn) == ~p"/"
-      refute Accounts.get_user_by_session_token(user_token)
+      refute Accounts.get_user_identity_by_session_token(user_token)
     end
 
     test "broadcasts to the given live_socket_id", %{conn: conn} do

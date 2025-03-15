@@ -176,27 +176,27 @@ defmodule Zoonk.AccountsTest do
     end
   end
 
-  describe "get_user_by_session_token/1" do
+  describe "get_user_identity_by_session_token/1" do
     setup do
-      %{user: user, user_identity: user_identity} = user_fixture()
+      %{user_identity: user_identity} = user_fixture()
       token = Accounts.generate_user_session_token(user_identity)
-      %{user: user, token: token}
+      %{user_identity: user_identity, token: token}
     end
 
-    test "returns user by token", %{user: %User{} = user, token: token} do
-      assert session_user = Accounts.get_user_by_session_token(token)
-      assert session_user.id == user.id
-      assert session_user.profile.user_id == user.id
-      assert session_user.profile.is_public == false
+    test "returns user identity by token", %{user_identity: user_identity, token: token} do
+      assert session_user = Accounts.get_user_identity_by_session_token(token)
+      assert session_user.id == user_identity.id
+      assert session_user.user_id == user_identity.user_id
+      assert session_user.user.profile.is_public == false
     end
 
     test "does not return user for invalid token" do
-      refute Accounts.get_user_by_session_token("oops")
+      refute Accounts.get_user_identity_by_session_token("oops")
     end
 
     test "does not return user for expired token", %{token: token} do
       {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
-      refute Accounts.get_user_by_session_token(token)
+      refute Accounts.get_user_identity_by_session_token(token)
     end
   end
 
@@ -248,7 +248,7 @@ defmodule Zoonk.AccountsTest do
     test "deletes the token" do
       token = Accounts.generate_user_session_token(user_fixture().user_identity)
       assert Accounts.delete_user_session_token(token) == :ok
-      refute Accounts.get_user_by_session_token(token)
+      refute Accounts.get_user_identity_by_session_token(token)
     end
   end
 

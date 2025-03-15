@@ -33,7 +33,7 @@ defmodule ZoonkWeb.Plugs.UserAuth do
   """
   def fetch_current_scope_for_user(conn, _opts) do
     {user_token, conn} = ensure_user_token(conn)
-    user_identity = user_token && Accounts.get_user_by_session_token(user_token)
+    user_identity = user_token && Accounts.get_user_identity_by_session_token(user_token)
     assign(conn, :current_scope, Scope.for_user(user_identity))
   end
 
