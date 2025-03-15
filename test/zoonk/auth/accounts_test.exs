@@ -47,7 +47,7 @@ defmodule Zoonk.AccountsTest do
 
       # Now try with the upper cased identity_id too, to check that identity_id case is ignored.
       {:error, _field, uppercase_changeset, _data} =
-        Accounts.signup_user_with_email(%{identity: :email, identity_id: String.upcase(identity_id)})
+        Accounts.signup_user_with_email(%{identity_id: String.upcase(identity_id)})
 
       assert "has already been taken" in errors_on(uppercase_changeset).identity
     end
@@ -55,15 +55,8 @@ defmodule Zoonk.AccountsTest do
     test "signs up users" do
       email = unique_user_email()
 
-      {:ok,
-       %{
-         user: %User{} = user,
-         user_identity: %UserIdentity{} = user_identity,
-         user_profile: %UserProfile{} = user_profile
-       }} =
-        [email: email]
-        |> valid_user_attributes()
-        |> Accounts.signup_user_with_email()
+      {:ok, %{user: user, user_identity: user_identity, user_profile: user_profile}} =
+        Accounts.signup_user_with_email(%{identity_id: email})
 
       assert user_identity.user_id == user.id
       assert user_identity.identity == :email
