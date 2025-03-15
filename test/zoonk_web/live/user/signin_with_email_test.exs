@@ -19,7 +19,7 @@ defmodule ZoonkWeb.UserLive.LoginWithEmailTest do
 
       {:ok, _lv, html} =
         lv
-        |> form("#login_form_magic", %{identity_id: user_identity.identity_id})
+        |> form("#login_form_magic", %{"identity_id" => user_identity.identity_id})
         |> render_submit()
         |> follow_redirect(conn, ~p"/login/email")
 
@@ -34,7 +34,7 @@ defmodule ZoonkWeb.UserLive.LoginWithEmailTest do
 
       {:ok, _lv, html} =
         lv
-        |> form("#login_form_magic", %{email: "idonotexist@example.com"})
+        |> form("#login_form_magic", %{"identity_id" => "idonotexist@example.com"})
         |> render_submit()
         |> follow_redirect(conn, ~p"/login/email")
 

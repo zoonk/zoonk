@@ -20,7 +20,7 @@ defmodule ZoonkWeb.Live.UserLoginWithEmail do
       >
         <.input
           readonly={!!@current_scope}
-          field={f[:email]}
+          field={f[:identity_id]}
           label={dgettext("users", "Email address")}
           hide_label
           type="email"
@@ -39,8 +39,8 @@ defmodule ZoonkWeb.Live.UserLoginWithEmail do
 
   def mount(_params, _session, socket) do
     email =
-      Phoenix.Flash.get(socket.assigns.flash, :email) ||
-        get_in(socket.assigns, [:current_scope, Access.key(:user), Access.key(:email)])
+      Phoenix.Flash.get(socket.assigns.flash, :identity_id) ||
+        get_in(socket.assigns, [:current_scope, Access.key(:user_identity), Access.key(:identity_id)])
 
     form = to_form(%{"email" => email})
 
@@ -53,8 +53,8 @@ defmodule ZoonkWeb.Live.UserLoginWithEmail do
     {:ok, socket}
   end
 
-  def handle_event("submit_magic", %{"email" => email}, socket) do
-    if user_identity = Accounts.get_user_identity_by_email(email) do
+  def handle_event("submit_magic", %{"identity_id" => identity_id}, socket) do
+    if user_identity = Accounts.get_user_identity_by_email(identity_id) do
       Accounts.deliver_login_instructions(
         user_identity,
         &url(~p"/login/t/#{&1}")

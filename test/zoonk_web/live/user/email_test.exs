@@ -95,12 +95,7 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
       %{conn: login_user(conn, user_identity), token: token, email: email, user_identity: user_identity}
     end
 
-    test "updates the user email once", %{
-      conn: conn,
-      user_identity: %UserIdentity{} = user_identity,
-      token: token,
-      email: email
-    } do
+    test "updates the user email once", %{conn: conn, user_identity: user_identity, token: token, email: email} do
       {:error, redirect} = live(conn, ~p"/user/email/confirm/#{token}")
 
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
