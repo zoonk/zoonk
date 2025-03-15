@@ -71,7 +71,7 @@ defmodule ZoonkWeb.Live.UserEmail do
 
     email_form =
       socket.assigns.current_scope.user_identity
-      |> Accounts.change_user_identity(user_params, validate_identity: false)
+      |> Accounts.change_user_identity(user_params)
       |> Map.put(:action, :validate)
       |> to_form(as: "user")
 
