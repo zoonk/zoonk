@@ -27,10 +27,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
       %{conn: Plugs.UserAuth.fetch_current_scope_for_user(conn, [])}
     end
 
-    test "assigns current_scope based on a valid user_token", %{
-      conn: conn,
-      user_identity: %UserIdentity{} = user_identity
-    } do
+    test "assigns current_scope based on a valid user_token", %{conn: conn, user_identity: user_identity} do
       user_token = Accounts.generate_user_session_token(user_identity)
 
       session =
@@ -41,7 +38,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
       {:cont, updated_socket} =
         Hooks.UserAuth.on_mount(:mount_current_scope, %{}, session, %LiveView.Socket{})
 
-      assert updated_socket.assigns.current_scope.user.id == user_identity.user.id
+      assert updated_socket.assigns.current_scope.user_identity.id == user_identity.id
     end
 
     test "assigns nil to current_scope assign if there isn't a valid user_token", %{conn: conn} do
