@@ -96,9 +96,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
 
       result =
         lv
-        |> form("#signup_form",
-          user: %{"identity_id" => user_identity.identity_id}
-        )
+        |> form("#signup_form", user: %{identity_id: user_identity.identity_id})
         |> render_submit()
 
       assert result =~ "has already been taken"

@@ -87,7 +87,7 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
          )
          |> push_navigate(to: ~p"/login/email")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, :user_identity, %Ecto.Changeset{} = changeset, _user_info} ->
         {:noreply,
          socket
          |> assign(check_errors: true)
