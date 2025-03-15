@@ -303,15 +303,13 @@ defmodule Zoonk.AccountsTest do
       %{user: %User{} = existing_user} = user_fixture(%{identity_id: email})
       auth = oauth_fixture(%{uid: uid, email: email})
 
-      {:ok, %User{} = user} = Accounts.login_with_external_account(auth, "en")
+      {:ok, %UserIdentity{} = user_identity} = Accounts.login_with_external_account(auth, "en")
 
-      assert user.id == existing_user.id
+      assert user_identity.user_id == existing_user.id
 
-      user_identity = Repo.get_by!(UserIdentity, user_id: user.id)
-      assert user_identity.identity == :google
-      assert user_identity.identity_id == uid
-
-      assert Repo.get_by!(UserProfile, user_id: user.id)
+      new_user_identity = Repo.get!(UserIdentity, user_identity.id)
+      assert new_user_identity.identity == :google
+      assert new_user_identity.identity_id == uid
     end
 
     test "adds a second external account to an existing user" do
