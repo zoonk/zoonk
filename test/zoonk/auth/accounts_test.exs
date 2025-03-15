@@ -41,7 +41,7 @@ defmodule Zoonk.AccountsTest do
     end
 
     test "validates identity_id uniqueness" do
-      %{identity_id: identity_id} = user_fixture()
+      %{identity_id: identity_id} = user_fixture().user_identity
       {:error, _field, changeset, _data} = Accounts.signup_user_with_email(%{identity_id: identity_id})
       assert "has already been taken" in errors_on(changeset).identity_id
 
@@ -148,10 +148,10 @@ defmodule Zoonk.AccountsTest do
       assert Repo.get_by(UserToken, user_id: user.id)
     end
 
-    test "does not update email if user email changed", %{user: user, token: token} do
-      assert Accounts.update_user_email(%{user | email: "current@example.com"}, token) == :error
-      assert Repo.get!(User, user.id).email == user.email
-      assert Repo.get_by(UserToken, user_id: user.id)
+    test "does not update email if user email changed", %{user_identity: user_identity, token: token} do
+      assert Accounts.update_user_email(%{user_identity | identity_id: "current@example.com"}, token) == :error
+      assert Repo.get!(UserIdentity, user_identity.id).identity_id == user_identity.identity_id
+      assert Repo.get_by(UserToken, user_identity_id: user_identity.id)
     end
 
     test "does not update email if token expired", %{user: user, token: token} do
@@ -193,7 +193,7 @@ defmodule Zoonk.AccountsTest do
     test "returns user by token", %{user: %User{} = user, token: token} do
       assert session_user = Accounts.get_user_by_session_token(token)
       assert session_user.id == user.id
-      assert session_user.profile.user_id == user.user_id
+      assert session_user.profile.user_id == user.id
       assert session_user.profile.is_public == false
     end
 
