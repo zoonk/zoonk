@@ -75,7 +75,10 @@ defmodule Zoonk.Accounts do
 
   """
   def signup_user_with_email(attrs) do
-    attrs = Enum.into(attrs, %{"identity" => :email, "is_primary" => true})
+    attrs =
+      attrs
+      |> Helpers.normalize_keys()
+      |> Map.merge(%{identity: :email, is_primary: true})
 
     Ecto.Multi.new()
     |> Ecto.Multi.insert(:user, User.changeset(%User{}, attrs))

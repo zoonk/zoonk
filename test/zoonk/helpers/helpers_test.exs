@@ -20,4 +20,22 @@ defmodule Zoonk.HelpersTest do
       assert to_snake_case("Hello") == "hello"
     end
   end
+
+  describe "normalize_keys/1" do
+    test "normalizes string keys to atoms" do
+      assert normalize_keys(%{"hello" => "world"}) == %{hello: "world"}
+    end
+
+    test "keeps atom keys as is" do
+      assert normalize_keys(%{hello: "world"}) == %{hello: "world"}
+    end
+
+    test "normalizes keys with spaces to snake case" do
+      assert normalize_keys(%{"Hello World" => "test"}) == %{hello_world: "test"}
+    end
+
+    test "normalizes mixed keys to snake case" do
+      assert normalize_keys(%{"Hello World" => "test", hello: "world"}) == %{hello_world: "test", hello: "world"}
+    end
+  end
 end
