@@ -23,30 +23,32 @@ defmodule Zoonk.AccountsTest do
 
   describe "signup_user_with_email/1" do
     test "requires email to be set" do
-      {:error, changeset} = Accounts.signup_user_with_email(%{})
-
-      assert %{email: ["can't be blank"]} = errors_on(changeset)
+      {:error, _field, changeset, _data} = Accounts.signup_user_with_email(%{identity: :email})
+      assert %{identity_id: ["can't be blank"]} = errors_on(changeset)
     end
 
     test "validates email when given" do
-      {:error, changeset} = Accounts.signup_user_with_email(%{identity_id: "not valid"})
+      {:error, _field, changeset, _data} =
+        Accounts.signup_user_with_email(%{identity: :email, identity_id: "not valid"})
 
       assert %{identity_id: ["must have the @ sign and no spaces"]} = errors_on(changeset)
     end
 
     test "validates maximum values for identity_id for security" do
       too_long = String.duplicate("db", 100)
-      {:error, changeset} = Accounts.signup_user_with_email(%{identity_id: too_long})
+      {:error, _field, changeset, _data} = Accounts.signup_user_with_email(%{identity_id: too_long})
       assert "should be at most 160 character(s)" in errors_on(changeset).identity_id
     end
 
     test "validates identity_id uniqueness" do
       %{identity_id: identity_id} = user_fixture()
-      {:error, changeset} = Accounts.signup_user_with_email(%{identity_id: identity_id})
+      {:error, _field, changeset, _data} = Accounts.signup_user_with_email(%{identity_id: identity_id})
       assert "has already been taken" in errors_on(changeset).identity_id
 
       # Now try with the upper cased identity_id too, to check that identity_id case is ignored.
-      {:error, uppercase_changeset} = Accounts.signup_user_with_email(%{identity_id: String.upcase(identity_id)})
+      {:error, _field, uppercase_changeset, _data} =
+        Accounts.signup_user_with_email(%{identity_id: String.upcase(identity_id)})
+
       assert "has already been taken" in errors_on(uppercase_changeset).identity_id
     end
 

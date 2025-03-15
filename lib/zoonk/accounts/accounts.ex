@@ -71,7 +71,7 @@ defmodule Zoonk.Accounts do
       {:ok, %{user: user, user_identity: user_identity, user_profile: user_profile}}
 
       iex> signup_user_with_email(%{field: bad_value})
-      {:error, any()}
+      {:error, :user_identity, changeset, _data}
 
   """
   def signup_user_with_email(attrs) do
