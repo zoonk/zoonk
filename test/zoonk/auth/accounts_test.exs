@@ -330,12 +330,11 @@ defmodule Zoonk.AccountsTest do
       email = unique_user_email()
       picture = "https://zoonk.test/picture.png"
       uid = 123_456
+      user_fixture(%{identity_id: email})
 
       auth = oauth_fixture(%{uid: uid, email: email, picture: picture})
 
-      {:ok, %User{} = user} = Accounts.login_with_external_account(auth, "en")
-
-      user_identity = Repo.get_by!(UserIdentity, user_id: user.id)
+      assert {:ok, %UserIdentity{} = user_identity} = Accounts.login_with_external_account(auth, "en")
       assert user_identity.identity_id == to_string(uid)
     end
 
