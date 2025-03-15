@@ -344,9 +344,9 @@ defmodule Zoonk.AccountsTest do
 
       auth = oauth_fixture(%{name: name, username: username})
 
-      {:ok, %User{} = user} = Accounts.login_with_external_account(auth, "en")
+      assert {:ok, %UserIdentity{} = user_identity} = Accounts.login_with_external_account(auth, "en")
 
-      user_profile = Repo.get_by!(UserProfile, user_id: user.id)
+      user_profile = Repo.get_by!(UserProfile, user_id: user_identity.user_id)
       assert user_profile.display_name == name
       assert user_profile.username == username
     end
@@ -359,11 +359,11 @@ defmodule Zoonk.AccountsTest do
       auth1 = oauth_fixture(%{email: email1, provider: :google, username: username})
       auth2 = oauth_fixture(%{email: email2, provider: :apple, username: username})
 
-      {:ok, %User{} = user1} = Accounts.login_with_external_account(auth1, "en")
-      {:ok, %User{} = user2} = Accounts.login_with_external_account(auth2, "en")
+      {:ok, %UserIdentity{} = user_identity1} = Accounts.login_with_external_account(auth1, "en")
+      {:ok, %UserIdentity{} = user_identity2} = Accounts.login_with_external_account(auth2, "en")
 
-      profile1 = Repo.get_by!(UserProfile, user_id: user1.id)
-      profile2 = Repo.get_by!(UserProfile, user_id: user2.id)
+      profile1 = Repo.get_by!(UserProfile, user_id: user_identity1.user_id)
+      profile2 = Repo.get_by!(UserProfile, user_id: user_identity2.user_id)
 
       assert profile1.username == username
       assert profile2.username != username
