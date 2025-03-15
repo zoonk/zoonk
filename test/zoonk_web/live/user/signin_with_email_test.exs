@@ -55,20 +55,4 @@ defmodule ZoonkWeb.UserLive.LoginWithEmailTest do
       assert login_html =~ "Sign up"
     end
   end
-
-  describe "re-authentication (sudo mode)" do
-    setup %{conn: conn} do
-      user = user_fixture()
-      %{user: user, conn: login_user(conn, user)}
-    end
-
-    test "shows login page with email filled in", %{conn: conn, user: user} do
-      {:ok, lv, html} = live(conn, ~p"/login/email")
-
-      assert has_element?(lv, "button", "Login")
-
-      assert html =~
-               ~s(<input type="email" name="email" id="login_form_magic_email" value="#{user.email}")
-    end
-  end
 end

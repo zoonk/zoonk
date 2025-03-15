@@ -21,46 +21,54 @@ defmodule Zoonk.AccountsTest do
     end
   end
 
-  describe "signup_user/1" do
+  describe "signup_user_with_email/1" do
     test "requires email to be set" do
-      {:error, changeset} = Accounts.signup_user(%{})
+      {:error, changeset} = Accounts.signup_user_with_email(%{})
 
       assert %{email: ["can't be blank"]} = errors_on(changeset)
     end
 
     test "validates email when given" do
-      {:error, changeset} = Accounts.signup_user(%{email: "not valid"})
+      {:error, changeset} = Accounts.signup_user_with_email(%{identity_id: "not valid"})
 
-      assert %{email: ["must have the @ sign and no spaces"]} = errors_on(changeset)
+      assert %{identity_id: ["must have the @ sign and no spaces"]} = errors_on(changeset)
     end
 
-    test "validates maximum values for email for security" do
+    test "validates maximum values for identity_id for security" do
       too_long = String.duplicate("db", 100)
-      {:error, changeset} = Accounts.signup_user(%{email: too_long})
-      assert "should be at most 160 character(s)" in errors_on(changeset).email
+      {:error, changeset} = Accounts.signup_user_with_email(%{identity_id: too_long})
+      assert "should be at most 160 character(s)" in errors_on(changeset).identity_id
     end
 
-    test "validates email uniqueness" do
-      %{email: email} = user_fixture()
-      {:error, changeset} = Accounts.signup_user(%{email: email})
-      assert "has already been taken" in errors_on(changeset).email
+    test "validates identity_id uniqueness" do
+      %{identity_id: identity_id} = user_fixture()
+      {:error, changeset} = Accounts.signup_user_with_email(%{identity_id: identity_id})
+      assert "has already been taken" in errors_on(changeset).identity_id
 
-      # Now try with the upper cased email too, to check that email case is ignored.
-      {:error, uppercase_changeset} = Accounts.signup_user(%{email: String.upcase(email)})
-      assert "has already been taken" in errors_on(uppercase_changeset).email
+      # Now try with the upper cased identity_id too, to check that identity_id case is ignored.
+      {:error, uppercase_changeset} = Accounts.signup_user_with_email(%{identity_id: String.upcase(identity_id)})
+      assert "has already been taken" in errors_on(uppercase_changeset).identity_id
     end
 
     test "signs up users" do
       email = unique_user_email()
 
-      {:ok, user} =
+      {:ok,
+       %{
+         user: %User{} = user,
+         user_identity: %UserIdentity{} = user_identity,
+         user_profile: %UserProfile{} = user_profile
+       }} =
         [email: email]
         |> valid_user_attributes()
-        |> Accounts.signup_user()
+        |> Accounts.signup_user_with_email()
 
-      assert user.email == email
-      assert is_nil(user.confirmed_at)
-      assert Repo.get_by(UserProfile, user_id: user.id)
+      assert user_identity.user_id == user.id
+      assert user_identity.identity == :email
+      assert user_identity.identity_id == email
+      assert user_identity.is_primary == true
+      assert is_nil(user_identity.confirmed_at)
+      assert user_profile.user_id == user.id
     end
   end
 
@@ -72,19 +80,19 @@ defmodule Zoonk.AccountsTest do
 
       now = DateTime.utc_now()
 
-      assert Accounts.sudo_mode?(%User{authenticated_at: DateTime.utc_now()})
-      assert Accounts.sudo_mode?(%User{authenticated_at: DateTime.add(now, valid_minutes, :minute)})
-      refute Accounts.sudo_mode?(%User{authenticated_at: DateTime.add(now, invalid_minutes, :minute)})
+      assert Accounts.sudo_mode?(%UserIdentity{authenticated_at: DateTime.utc_now()})
+      assert Accounts.sudo_mode?(%UserIdentity{authenticated_at: DateTime.add(now, valid_minutes, :minute)})
+      refute Accounts.sudo_mode?(%UserIdentity{authenticated_at: DateTime.add(now, invalid_minutes, :minute)})
 
       # not authenticated
-      refute Accounts.sudo_mode?(%User{})
+      refute Accounts.sudo_mode?(%UserIdentity{})
     end
   end
 
-  describe "change_user_email/3" do
-    test "returns a user changeset" do
-      assert %Ecto.Changeset{} = changeset = Accounts.change_user_email(%User{})
-      assert changeset.required == [:email]
+  describe "change_user_identity/3" do
+    test "returns a user identity changeset" do
+      assert %Ecto.Changeset{} = changeset = Accounts.change_user_identity(%UserIdentity{})
+      assert changeset.required == [:identity]
     end
   end
 
@@ -159,10 +167,12 @@ defmodule Zoonk.AccountsTest do
       assert user_token.context == "session"
 
       # Creating the same token for another user should fail
+      user = user_fixture(%{preload: :identities})
+
       assert_raise Ecto.ConstraintError, fn ->
         Repo.insert!(%UserToken{
           token: user_token.token,
-          user_id: user_fixture().id,
+          user_identity_id: List.first(user.identities).id,
           context: "session"
         })
       end

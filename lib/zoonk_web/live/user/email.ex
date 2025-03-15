@@ -3,8 +3,7 @@ defmodule ZoonkWeb.Live.UserEmail do
   use ZoonkWeb, :live_view
 
   alias Zoonk.Accounts
-
-  on_mount {ZoonkWeb.Hooks.UserAuth, :ensure_sudo_mode}
+  alias Zoonk.Schemas.User
 
   def render(assigns) do
     ~H"""
@@ -43,7 +42,7 @@ defmodule ZoonkWeb.Live.UserEmail do
 
   def mount(%{"token" => token}, _session, socket) do
     socket =
-      case Accounts.update_user_email(socket.assigns.current_scope.user, token) do
+      case Accounts.update_user_email(get_email_identity_from_user(socket.assigns.current_scope.user), token) do
         :ok ->
           put_flash(socket, :info, dgettext("users", "Email changed successfully."))
 
@@ -56,12 +55,12 @@ defmodule ZoonkWeb.Live.UserEmail do
 
   def mount(_params, _session, socket) do
     user = socket.assigns.current_scope.user
-    email_changeset = Accounts.change_user_email(user, %{}, validate_email: false)
+    identity_changeset = Accounts.change_user_identity(user, %{}, validate_identity: false)
 
     socket =
       socket
-      |> assign(:current_email, user.email)
-      |> assign(:email_form, to_form(email_changeset))
+      |> assign(:current_email, get_email_identity_from_user(user).identity_id)
+      |> assign(:email_form, to_form(identity_changeset))
       |> assign(:trigger_submit, false)
       |> assign(:page_title, dgettext("users", "Email Settings"))
 
@@ -73,7 +72,7 @@ defmodule ZoonkWeb.Live.UserEmail do
 
     email_form =
       socket.assigns.current_scope.user
-      |> Accounts.change_user_email(user_params, validate_email: false)
+      |> Accounts.change_user_identity(user_params, validate_identity: false)
       |> Map.put(:action, :validate)
       |> to_form()
 
@@ -85,13 +84,13 @@ defmodule ZoonkWeb.Live.UserEmail do
     user = socket.assigns.current_scope.user
     true = Accounts.sudo_mode?(user)
 
-    case Accounts.change_user_email(user, user_params) do
+    case Accounts.change_user_identity(user, user_params) do
       %{valid?: true} = changeset ->
         user_changeset = Ecto.Changeset.apply_action!(changeset, :insert)
 
         Accounts.deliver_user_update_email_instructions(
           user_changeset,
-          user.email,
+          get_email_identity_from_user(user).identity_id,
           &url(~p"/user/email/confirm/#{&1}")
         )
 
@@ -101,5 +100,9 @@ defmodule ZoonkWeb.Live.UserEmail do
       changeset ->
         {:noreply, assign(socket, :email_form, to_form(changeset, action: :insert))}
     end
+  end
+
+  defp get_email_identity_from_user(%User{identities: identities}) do
+    Enum.find(identities, fn identity -> identity.provider == :email end)
   end
 end

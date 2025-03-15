@@ -8,37 +8,39 @@ defmodule Zoonk.AccountFixtures do
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.Scope
+  alias Zoonk.Schemas.User
+  alias Zoonk.Schemas.UserIdentity
+  alias Zoonk.Schemas.UserProfile
   alias Zoonk.Schemas.UserToken
 
-  def unique_user_email, do: "user#{System.unique_integer()}@example.com"
+  def unique_user_email, do: "user#{System.unique_integer()}@zoonk.test"
 
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
-      email: unique_user_email(),
-      language: :en
+      language: :en,
+      identity: :email,
+      identity_id: unique_user_email(),
+      is_primary: true
     })
   end
 
   def unconfirmed_user_fixture(attrs \\ %{}) do
-    {:ok, user} =
+    {:ok,
+     %{user: %User{} = user, user_identity: %UserIdentity{} = user_identity, user_profile: %UserProfile{} = user_profile}} =
       attrs
       |> valid_user_attributes()
-      |> Accounts.signup_user()
+      |> Accounts.signup_user_with_email()
 
-    user
+    %{user: user, user_identity: user_identity, user_profile: user_profile}
   end
 
   def user_fixture(attrs \\ %{}) do
-    fixture = unconfirmed_user_fixture(attrs)
+    %{user: user, user_identity: user_identity, user_profile: user_profile} = unconfirmed_user_fixture(attrs)
+    token = extract_user_token(fn url -> Accounts.deliver_login_instructions(user_identity, url) end)
 
-    token =
-      extract_user_token(fn url ->
-        Accounts.deliver_login_instructions(fixture, url)
-      end)
+    {:ok, %UserIdentity{} = confirmed_user_identity, _expired_tokens} = Accounts.login_user_by_magic_link(token)
 
-    {:ok, user, _expired_tokens} = Accounts.login_user_by_magic_link(token)
-
-    user
+    %{user: user, user_identity: confirmed_user_identity, user_profile: user_profile}
   end
 
   def user_scope_fixture do

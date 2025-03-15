@@ -25,12 +25,9 @@ defmodule Zoonk.Schemas.User do
   | `year_of_birth` | `Integer` | We need the year of birth for legal reasons when a profile is public. |
   | `currency` | `Ecto.Enum` | The currency used for payments. |
   | `kind` | `Ecto.Enum` | Users can have different types: `regular`, `agent`, `guest`, or `white_label`. |
-  | `email` | `String` | The user's email address. |
   | `stripe_customer_id` | `String` | Customer ID used for Stripe payments. |
   | `tax_id` | `Zoonk.Encrypted.Binary` | Tax ID required by some jurisdictions. |
   | `language` | `Ecto.Enum` | The language used by the user. |
-  | `confirmed_at` | `DateTime` | Timestamp when the account was confirmed. |
-  | `authenticated_at` | `DateTime` | Timestamp when the user was last authenticated. |
   | `profile` | `Zoonk.Schemas.UserProfile` | The user's public profile. |
   | `identities` | `Zoonk.Schemas.UserIdentity` | Identities used by the user for authentication. |
   | `teams` | `Zoonk.Schemas.Member` | The teams the user is a member of. |
@@ -50,16 +47,12 @@ defmodule Zoonk.Schemas.User do
     field :year_of_birth, :integer
     field :currency, Ecto.Enum, values: Configuration.list_currencies(:atom), default: :USD
     field :kind, Ecto.Enum, values: [:regular, :agent, :guest, :white_label], default: :regular
-    field :email, :string
     field :stripe_customer_id, :string
     field :tax_id, Zoonk.Encrypted.Binary
 
     field :language, Ecto.Enum,
       values: Configuration.list_languages(:atom),
       default: Configuration.get_default_language(:atom)
-
-    field :confirmed_at, :utc_datetime
-    field :authenticated_at, :utc_datetime, virtual: true
 
     has_one :profile, UserProfile
     has_many :identities, UserIdentity
@@ -71,60 +64,9 @@ defmodule Zoonk.Schemas.User do
   @doc """
   A user changeset for adding or updating a user's settings.
   """
-  def settings_changeset(user, attrs, opts \\ []) do
+  def changeset(user, attrs) do
     user
-    |> email_changeset(attrs, opts)
     |> cast(attrs, [:language, :tax_id])
     |> validate_required([:language])
-  end
-
-  @doc """
-  A user changeset for signing up or changing the email.
-
-  It requires the email to change otherwise an error is added.
-
-  ## Options
-
-    * `:validate_email` - Set to false if you don't want to validate the
-      uniqueness of the email, useful when displaying live validations.
-      Defaults to `true`.
-  """
-  def email_changeset(user, attrs, opts \\ []) do
-    user
-    |> cast(attrs, [:email])
-    |> validate_email(opts)
-  end
-
-  defp validate_email(changeset, opts) do
-    changeset =
-      changeset
-      |> validate_required([:email])
-      |> validate_format(:email, ~r/^[^@,;\s]+@[^@,;\s]+$/, message: "must have the @ sign and no spaces")
-      |> validate_length(:email, max: 160)
-
-    if Keyword.get(opts, :validate_email, true) do
-      changeset
-      |> unsafe_validate_unique(:email, Zoonk.Repo)
-      |> unique_constraint(:email)
-      |> validate_email_changed()
-    else
-      changeset
-    end
-  end
-
-  defp validate_email_changed(changeset) do
-    if get_field(changeset, :email) && get_change(changeset, :email) == nil do
-      add_error(changeset, :email, "did not change")
-    else
-      changeset
-    end
-  end
-
-  @doc """
-  Confirms the account by setting `confirmed_at`.
-  """
-  def confirm_changeset(user) do
-    now = DateTime.utc_now(:second)
-    change(user, confirmed_at: now)
   end
 end

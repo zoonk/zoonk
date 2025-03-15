@@ -36,7 +36,13 @@ defmodule Zoonk.Accounts do
 
   """
   def get_user_by_email(email) when is_binary(email) do
-    Repo.get_by(User, email: email)
+    UserIdentity
+    |> Repo.get_by(identity_id: email)
+    |> Repo.preload(:user)
+    |> case do
+      %UserIdentity{user: %User{} = user} -> user
+      _ -> nil
+    end
   end
 
   ## User signup
@@ -46,19 +52,19 @@ defmodule Zoonk.Accounts do
 
   ## Examples
 
-      iex> signup_user(%{field: value})
-      {:ok, %User{}}
+      iex> signup_user_with_email(%{field: value})
+      {:ok, %{user: user, user_identity: user_identity, user_profile: user_profile}}
 
-      iex> signup_user(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
+      iex> signup_user_with_email(%{field: bad_value})
+      {:error, any()}
 
   """
-  def signup_user(attrs) do
+  def signup_user_with_email(attrs) do
     Ecto.Multi.new()
-    |> Ecto.Multi.insert(:user, User.settings_changeset(%User{}, attrs))
-    |> Ecto.Multi.insert(:profile, &UserProfileBuilder.build_initial_user_profile/1)
+    |> Ecto.Multi.insert(:user, User.changeset(%User{}, attrs))
+    |> Ecto.Multi.insert(:user_identity, &user_identity_changeset(&1, attrs))
+    |> Ecto.Multi.insert(:user_profile, &UserProfileBuilder.build_initial_user_profile/1)
     |> Repo.transaction()
-    |> Helpers.EctoUtils.get_changeset_from_transaction(:user)
   end
 
   ## Settings
@@ -68,7 +74,7 @@ defmodule Zoonk.Accounts do
 
   The user is in sudo mode when the last authentication was done recently.
   """
-  def sudo_mode?(%User{authenticated_at: ts}) when is_struct(ts, DateTime) do
+  def sudo_mode?(%UserIdentity{authenticated_at: ts}) when is_struct(ts, DateTime) do
     minutes = Configuration.get_max_age(:sudo_mode, :minutes)
     DateTime.after?(ts, DateTime.add(DateTime.utc_now(), minutes, :minute))
   end
@@ -76,32 +82,30 @@ defmodule Zoonk.Accounts do
   def sudo_mode?(_user), do: false
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for changing the user email.
-
-  See `Zoonk.Schemas.User.email_changeset/3` for a list of supported options.
+  Returns an `%Ecto.Changeset{}` for changing the user identity.
 
   ## Examples
 
-      iex> change_user_email(user)
-      %Ecto.Changeset{data: %User{}}
+      iex> change_user_identity(%UserIdentity{}, %{})
+      %Ecto.Changeset{data: %UserIdentity{}}
 
   """
-  def change_user_email(user, attrs \\ %{}, opts \\ []) do
-    User.email_changeset(user, attrs, opts)
+  def change_user_identity(%UserIdentity{} = user_identity, attrs \\ %{}, opts \\ []) do
+    UserIdentity.changeset(user_identity, attrs, opts)
   end
 
   @doc """
-  Updates the user email using the given token.
+  Updates the user identity email using the given token.
 
   If the token matches, the user email is updated and the token is deleted.
   """
-  def update_user_email(user, token) do
-    context = "change:#{user.email}"
+  def update_user_email(%UserIdentity{} = user_identity, token) do
+    context = "change:#{user_identity.identity_id}"
 
     with {:ok, query} <- Queries.UserToken.verify_change_email_token(token, context),
          %UserToken{sent_to: email} <- Repo.one(query),
          {:ok, _res} <-
-           user
+           user_identity
            |> user_email_multi(email, context)
            |> Repo.transaction() do
       :ok
@@ -110,12 +114,12 @@ defmodule Zoonk.Accounts do
     end
   end
 
-  defp user_email_multi(user, email, context) do
-    changeset = User.email_changeset(user, %{email: email})
+  defp user_email_multi(%UserIdentity{} = user_identity, email, context) do
+    changeset = UserIdentity.changeset(user_identity, %{identity_id: email})
 
     Ecto.Multi.new()
-    |> Ecto.Multi.update(:user, changeset)
-    |> Ecto.Multi.delete_all(:tokens, Queries.UserToken.by_user_and_contexts(user, [context]))
+    |> Ecto.Multi.update(:user_identity, changeset)
+    |> Ecto.Multi.delete_all(:tokens, Queries.UserToken.by_user_and_contexts(user_identity, [context]))
   end
 
   ## Session
@@ -137,7 +141,7 @@ defmodule Zoonk.Accounts do
 
     query
     |> Repo.one()
-    |> Repo.preload(:profile)
+    |> Repo.preload([:identities, :profile])
   end
 
   @doc """
@@ -169,14 +173,14 @@ defmodule Zoonk.Accounts do
     {:ok, query} = Queries.UserToken.verify_magic_link_token(token)
 
     case Repo.one(query) do
-      {%User{confirmed_at: nil} = user, _token} ->
-        user
-        |> User.confirm_changeset()
+      {%UserIdentity{confirmed_at: nil} = user_identity, _token} ->
+        user_identity
+        |> UserIdentity.confirm_changeset()
         |> update_user_and_delete_all_tokens()
 
-      {user, token} ->
+      {%UserIdentity{} = user_identity, token} ->
         Repo.delete!(token)
-        {:ok, user, []}
+        {:ok, user_identity, []}
 
       nil ->
         {:error, :not_found}
@@ -184,29 +188,30 @@ defmodule Zoonk.Accounts do
   end
 
   @doc ~S"""
-  Delivers the update email instructions to the given user.
+  Delivers the update email instructions to the given user identity.
 
   ## Examples
 
-      iex> deliver_user_update_email_instructions(user, current_email, &url(~p"/user/email/confirm/#{&1}"))
+      iex> deliver_user_update_email_instructions(user_identity, current_email, &url(~p"/user/email/confirm/#{&1}"))
       {:ok, %{to: ..., body: ...}}
 
   """
-  def deliver_user_update_email_instructions(%User{} = user, current_email, update_email_url_fun)
+  def deliver_user_update_email_instructions(%UserIdentity{} = user_identity, current_email, update_email_url_fun)
       when is_function(update_email_url_fun, 1) do
-    {encoded_token, user_token} = TokenBuilder.build_email_token(user, "change:#{current_email}")
+    {encoded_token, user_token} = TokenBuilder.build_email_token(user_identity, "change:#{current_email}")
 
     Repo.insert!(user_token)
-    UserNotifier.deliver_update_email_instructions(user, update_email_url_fun.(encoded_token))
+    UserNotifier.deliver_update_email_instructions(user_identity, update_email_url_fun.(encoded_token))
   end
 
   @doc ~S"""
-  Delivers the magic link login instructions to the given user.
+  Delivers the magic link login instructions to the given user identity.
   """
-  def deliver_login_instructions(%User{} = user, magic_link_url_fun) when is_function(magic_link_url_fun, 1) do
-    {encoded_token, user_token} = TokenBuilder.build_email_token(user, "login")
+  def deliver_login_instructions(%UserIdentity{} = user_identity, magic_link_url_fun)
+      when is_function(magic_link_url_fun, 1) do
+    {encoded_token, user_token} = TokenBuilder.build_email_token(user_identity, "login")
     Repo.insert!(user_token)
-    UserNotifier.deliver_login_instructions(user, magic_link_url_fun.(encoded_token))
+    UserNotifier.deliver_login_instructions(user_identity, magic_link_url_fun.(encoded_token))
   end
 
   @doc """
@@ -223,17 +228,17 @@ defmodule Zoonk.Accounts do
   ## Token helper
 
   defp update_user_and_delete_all_tokens(changeset) do
-    %{data: %User{} = user} = changeset
+    %{data: %UserIdentity{} = user_identity} = changeset
 
-    with {:ok, %{user: user, tokens_to_expire: expired_tokens}} <-
+    with {:ok, %{user_identity: user_identity, tokens_to_expire: expired_tokens}} <-
            Ecto.Multi.new()
-           |> Ecto.Multi.update(:user, changeset)
-           |> Ecto.Multi.all(:tokens_to_expire, Queries.UserToken.by_user_and_contexts(user, :all))
+           |> Ecto.Multi.update(:user_identity, changeset)
+           |> Ecto.Multi.all(:tokens_to_expire, Queries.UserToken.by_user_and_contexts(user_identity, :all))
            |> Ecto.Multi.delete_all(:tokens, fn %{tokens_to_expire: tokens_to_expire} ->
              Queries.UserToken.delete_all(tokens_to_expire)
            end)
            |> Repo.transaction() do
-      {:ok, user, expired_tokens}
+      {:ok, user_identity, expired_tokens}
     end
   end
 
@@ -275,21 +280,22 @@ defmodule Zoonk.Accounts do
 
   # Create a new user and link the external account
   defp signup_user_with_external_account(auth, language) do
-    user_attrs = %{email: auth["email"], language: language}
-    identity_attrs = get_identity_attrs(auth)
     profile_opts = [display_name: auth["name"], picture_url: auth["picture"], username: auth["preferred_username"]]
 
-    user_changeset =
-      %User{}
-      |> User.settings_changeset(user_attrs)
-      |> User.confirm_changeset()
-
     Ecto.Multi.new()
-    |> Ecto.Multi.insert(:user, user_changeset)
+    |> Ecto.Multi.insert(:user, User.changeset(%User{}, %{language: language}))
     |> Ecto.Multi.insert(:profile, &UserProfileBuilder.build_initial_user_profile(&1, profile_opts))
-    |> Ecto.Multi.insert(:identity, &user_identity_changeset(&1, identity_attrs))
+    # we also need to add the email identity when signing up with an external account
+    |> Ecto.Multi.insert(:user_identity, &user_identity_changeset(&1, get_identity_attrs(auth, :email)))
+    |> Ecto.Multi.insert(:external_identity, &user_identity_changeset(&1, get_identity_attrs(auth)))
     |> Repo.transaction()
     |> Helpers.EctoUtils.get_changeset_from_transaction(:user)
+  end
+
+  defp user_identity_changeset(%{user: %User{} = user}, %{confirmed?: true} = identity_attrs) do
+    %UserIdentity{user_id: user.id}
+    |> UserIdentity.changeset(identity_attrs)
+    |> UserIdentity.confirm_changeset()
   end
 
   defp user_identity_changeset(%{user: %User{} = user}, identity_attrs) do
@@ -297,6 +303,10 @@ defmodule Zoonk.Accounts do
   end
 
   defp get_identity_attrs(auth) do
-    %{identity: auth["provider"], identity_id: to_string(auth["sub"])}
+    %{identity: auth["provider"], identity_id: to_string(auth["sub"]), confirmed?: true}
+  end
+
+  defp get_identity_attrs(auth, :email) do
+    %{identity: :email, identity_id: to_string(auth["email"]), is_primary: true, confirmed?: true}
   end
 end

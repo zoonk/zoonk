@@ -73,12 +73,12 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
     test "renders errors for duplicated email", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/signup/email")
 
-      user = user_fixture(%{email: "test@email.com"})
+      user = user_fixture(%{identity_id: "test@email.com"})
 
       result =
         lv
         |> form("#signup_form",
-          user: %{"email" => user.email}
+          user: %{"identity_id" => user.identity_id}
         )
         |> render_submit()
 
