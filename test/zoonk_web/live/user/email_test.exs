@@ -5,7 +5,6 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
   import Zoonk.AccountFixtures
 
   alias Zoonk.Accounts
-  alias Zoonk.Configuration
   alias Zoonk.Schemas.UserIdentity
 
   describe "Settings page" do
@@ -57,9 +56,22 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
         lv
         |> element("#email_form")
         |> render_change(%{
-          "action" => "update_email",
-          "user" => %{"email" => "with spaces"}
+          "user" => %{"identity_id" => "with spaces"}
         })
+
+      assert result =~ "Change Email"
+      assert result =~ "must have the @ sign and no spaces"
+    end
+
+    test "renders errors with invalid data (phx-submit)", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/user/email")
+
+      result =
+        lv
+        |> form("#email_form", %{
+          "user" => %{"identity_id" => "with spaces"}
+        })
+        |> render_submit()
 
       assert result =~ "Change Email"
       assert result =~ "must have the @ sign and no spaces"
