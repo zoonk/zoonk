@@ -23,7 +23,7 @@ defmodule Zoonk.Queries.UserToken do
   Gets all tokens for the given user identity for the given contexts.
   """
   def by_user_and_contexts(%UserIdentity{} = user_identity, :all) do
-    where(UserToken, [t], t.user_id == ^user_identity.id)
+    where(UserToken, [t], t.user_identity_id == ^user_identity.id)
   end
 
   def by_user_and_contexts(%UserIdentity{} = user_identity, contexts) when is_list(contexts) do
@@ -77,7 +77,7 @@ defmodule Zoonk.Queries.UserToken do
           |> by_token_and_context("login")
           |> join(:inner, [token], user_identity in assoc(token, :user_identity))
           |> where([token], token.inserted_at > ago(^Configuration.get_max_age(:magic_link, :minutes), "minute"))
-          |> where([token, user_identity], token.sent_to == user_identity.email)
+          |> where([token, user_identity], token.sent_to == user_identity.identity_id)
           |> select([token, user_identity], {user_identity, token})
 
         {:ok, query}
