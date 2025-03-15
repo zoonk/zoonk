@@ -32,7 +32,7 @@ defmodule ZoonkWeb.UserAuthPlugTest do
         |> put_session(:user_token, user_token)
         |> Plugs.UserAuth.fetch_current_scope_for_user([])
 
-      assert conn.assigns.current_scope.user.id == user_identity.user_id
+      assert conn.assigns.current_scope.user_identity.id == user_identity.id
     end
 
     test "authenticates user from cookies", %{conn: conn, user_identity: %UserIdentity{} = user_identity} do
@@ -49,7 +49,7 @@ defmodule ZoonkWeb.UserAuthPlugTest do
         |> put_req_cookie(@remember_me_cookie, signed_token)
         |> Plugs.UserAuth.fetch_current_scope_for_user([])
 
-      assert conn.assigns.current_scope.user.id == user_identity.user_id
+      assert conn.assigns.current_scope.user_identity.id == user_identity.id
       assert get_session(conn, :user_token) == user_token
 
       assert get_session(conn, :live_socket_id) ==
