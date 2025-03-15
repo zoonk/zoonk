@@ -158,9 +158,15 @@ defmodule Zoonk.Accounts do
   def get_user_by_session_token(token) do
     {:ok, query} = Queries.UserToken.verify_session_token(token)
 
-    query
-    |> Repo.one()
-    |> Repo.preload([:identities, :profile])
+    # TODO: we need to fix this in the query.
+    # it's returning a %UserIdentity{} but we need a %User{}
+    # that preloads the identity and the profile.
+    # or do we? what if, we add the identity to the scope
+    # then do the opposite: preload the user and, from the user,
+    # we can also preload the profile.
+    # maybe Scope.for_user_identity(%UserIdentity{})
+    # %{user: %User{profile: profile}, user_identity: %UserIdentity{}}
+    Repo.one(query)
   end
 
   @doc """

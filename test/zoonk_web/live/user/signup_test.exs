@@ -13,7 +13,7 @@ defmodule ZoonkWeb.UserLive.SignUpTest do
     test "redirects if already logged in", %{conn: conn} do
       result =
         conn
-        |> login_user(user_fixture())
+        |> login_user(user_fixture().user_identity)
         |> live(~p"/signup")
         |> follow_redirect(conn, ~p"/")
 

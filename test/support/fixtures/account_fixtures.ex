@@ -44,11 +44,10 @@ defmodule Zoonk.AccountFixtures do
   end
 
   def user_scope_fixture do
-    user = user_fixture()
-    user_scope_fixture(user)
+    user_scope_fixture(user_fixture().user)
   end
 
-  def user_scope_fixture(user) do
+  def user_scope_fixture(%User{} = user) do
     Scope.for_user(user)
   end
 

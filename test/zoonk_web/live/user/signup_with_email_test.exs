@@ -4,6 +4,8 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
   import Phoenix.LiveViewTest
   import Zoonk.AccountFixtures
 
+  alias Zoonk.Schemas.UserIdentity
+
   describe "Sign up with email page" do
     test "renders signup page", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/signup/email")
@@ -13,7 +15,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
     test "redirects if already logged in", %{conn: conn} do
       result =
         conn
-        |> login_user(user_fixture())
+        |> login_user(user_fixture().user_identity)
         |> live(~p"/signup/email")
         |> follow_redirect(conn, ~p"/")
 
@@ -73,12 +75,12 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
     test "renders errors for duplicated email", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/signup/email")
 
-      user = user_fixture(%{identity_id: "test@email.com"})
+      %{user_identity: %UserIdentity{} = user_identity} = user_fixture(%{identity_id: "test@email.com"})
 
       result =
         lv
         |> form("#signup_form",
-          user: %{"identity_id" => user.identity_id}
+          user: %{"identity_id" => user_identity.identity_id}
         )
         |> render_submit()
 

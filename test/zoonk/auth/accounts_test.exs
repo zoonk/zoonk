@@ -16,8 +16,8 @@ defmodule Zoonk.AccountsTest do
     end
 
     test "returns the user if the email exists" do
-      %{id: id} = user = user_fixture()
-      assert %User{id: ^id} = Accounts.get_user_by_email(user.email)
+      %{user: %User{id: id}, user_identity: %UserIdentity{identity_id: email}} = user_fixture()
+      assert %User{id: ^id} = Accounts.get_user_by_email(email)
     end
   end
 
@@ -98,19 +98,19 @@ defmodule Zoonk.AccountsTest do
 
   describe "deliver_user_update_email_instructions/3" do
     setup do
-      %{user: user_fixture()}
+      %{user_identity: user_fixture().user_identity}
     end
 
-    test "sends token through notification", %{user: user} do
+    test "sends token through notification", %{user_identity: user_identity} do
       token =
         extract_user_token(fn url ->
-          Accounts.deliver_user_update_email_instructions(user, "current@example.com", url)
+          Accounts.deliver_user_update_email_instructions(user_identity, "current@example.com", url)
         end)
 
       {:ok, new_token} = Base.url_decode64(token, padding: false)
       assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, new_token))
-      assert user_token.user_id == user.id
-      assert user_token.sent_to == user.email
+      assert user_token.user_identity_id == user_identity.id
+      assert user_token.sent_to == user_identity.identity_id
       assert user_token.context == "change:current@example.com"
     end
   end
@@ -162,21 +162,19 @@ defmodule Zoonk.AccountsTest do
 
   describe "generate_user_session_token/1" do
     setup do
-      %{user: user_fixture()}
+      %{user_identity: user_fixture().user_identity}
     end
 
-    test "generates a token", %{user: user} do
-      token = Accounts.generate_user_session_token(user)
+    test "generates a token", %{user_identity: user_identity} do
+      token = Accounts.generate_user_session_token(user_identity)
       assert user_token = Repo.get_by(UserToken, token: token)
       assert user_token.context == "session"
 
       # Creating the same token for another user should fail
-      user = user_fixture(%{preload: :identities})
-
       assert_raise Ecto.ConstraintError, fn ->
         Repo.insert!(%UserToken{
           token: user_token.token,
-          user_identity_id: List.first(user.identities).id,
+          user_identity_id: user_fixture().user_identity.id,
           context: "session"
         })
       end
@@ -185,15 +183,14 @@ defmodule Zoonk.AccountsTest do
 
   describe "get_user_by_session_token/1" do
     setup do
-      user = user_fixture()
       token = Accounts.generate_user_session_token(user)
-      %{user: user, token: token}
+      %{user: user_fixture().user, token: token}
     end
 
-    test "returns user by token", %{user: user, token: token} do
+    test "returns user by token", %{user: %User{} = user, token: token} do
       assert session_user = Accounts.get_user_by_session_token(token)
       assert session_user.id == user.id
-      assert session_user.profile.user_id == user.id
+      assert session_user.profile.user_id == user.user_id
       assert session_user.profile.is_public == false
     end
 
@@ -209,8 +206,8 @@ defmodule Zoonk.AccountsTest do
 
   describe "get_user_by_magic_link_token/1" do
     setup do
-      user = user_fixture()
-      {encoded_token, _hashed_token} = generate_user_magic_link_token(user)
+      %{user: %User{} = user, user_identity: %UserIdentity{} = user_identity} = user_fixture()
+      {encoded_token, _hashed_token} = generate_user_magic_link_token(user_identity)
       %{user: user, token: encoded_token}
     end
 
@@ -242,10 +239,10 @@ defmodule Zoonk.AccountsTest do
     end
 
     test "returns user and (deleted) token for confirmed user" do
-      user = user_fixture()
-      assert user.confirmed_at
-      {encoded_token, _hashed_token} = generate_user_magic_link_token(user)
-      assert {:ok, ^user, []} = Accounts.login_user_by_magic_link(encoded_token)
+      %{user_identity: %UserIdentity{} = user_identity} = user_fixture()
+      assert user_identity.confirmed_at
+      {encoded_token, _hashed_token} = generate_user_magic_link_token(user_identity)
+      assert {:ok, ^user_identity, []} = Accounts.login_user_by_magic_link(encoded_token)
       # one time use only
       assert {:error, :not_found} = Accounts.login_user_by_magic_link(encoded_token)
     end
@@ -253,8 +250,7 @@ defmodule Zoonk.AccountsTest do
 
   describe "delete_user_session_token/1" do
     test "deletes the token" do
-      user = user_fixture()
-      token = Accounts.generate_user_session_token(user)
+      token = Accounts.generate_user_session_token(user_fixture().user_identity)
       assert Accounts.delete_user_session_token(token) == :ok
       refute Accounts.get_user_by_session_token(token)
     end
@@ -305,10 +301,10 @@ defmodule Zoonk.AccountsTest do
       email = unique_user_email()
       uid = Ecto.UUID.generate()
 
-      existing_user = user_fixture(%{email: email})
+      %{user: %User{} = existing_user} = user_fixture(%{identity_id: email})
       auth = oauth_fixture(%{uid: uid, email: email})
 
-      {:ok, user} = Accounts.login_with_external_account(auth, "en")
+      {:ok, %User{} = user} = Accounts.login_with_external_account(auth, "en")
 
       assert user.id == existing_user.id
 
@@ -322,7 +318,7 @@ defmodule Zoonk.AccountsTest do
     test "adds a second external account to an existing user" do
       email = unique_user_email()
       uid = Ecto.UUID.generate()
-      user = user_fixture(%{email: email})
+      %{user: %User{} = user} = user_fixture(%{identity_id: email})
 
       external_account_1 = oauth_fixture(%{uid: uid, provider: :google, email: email})
       {:ok, _user} = Accounts.login_with_external_account(external_account_1, "en")

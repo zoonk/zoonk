@@ -15,6 +15,7 @@ defmodule ZoonkWeb.Helpers.UserAuth do
   alias Zoonk.Accounts.Scope
   alias Zoonk.Configuration
   alias Zoonk.Schemas.User
+  alias Zoonk.Schemas.UserIdentity
 
   @max_age Configuration.get_max_age(:token, :seconds)
   @remember_me_cookie Configuration.get_cookie_name(:remember_me)
@@ -34,9 +35,14 @@ defmodule ZoonkWeb.Helpers.UserAuth do
 
   In case the user re-authenticates for sudo mode,
   the existing remember_me setting is kept, writing a new remember_me cookie.
+
+  ## Examples
+
+      iex> login_user(%Plug.Conn{}, %UserIdentity{})
+      %Plug.Conn{}
   """
-  def login_user(conn, user) do
-    token = Accounts.generate_user_session_token(user)
+  def login_user(conn, %UserIdentity{} = user_identity) do
+    token = Accounts.generate_user_session_token(user_identity)
     user_return_to = get_session(conn, :user_return_to)
 
     conn
