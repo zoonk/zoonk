@@ -147,11 +147,11 @@ defmodule Zoonk.AccountsTest do
       assert Repo.get_by(UserToken, user_identity_id: user_identity.id)
     end
 
-    test "does not update email if token expired", %{user: user, token: token} do
+    test "does not update email if token expired", %{user_identity: user_identity, token: token} do
       {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
-      assert Accounts.update_user_email(user, token) == :error
-      assert Repo.get!(User, user.id).email == user.email
-      assert Repo.get_by(UserToken, user_id: user.id)
+      assert Accounts.update_user_email(user_identity, token) == :error
+      assert Repo.get!(UserIdentity, user_identity.id).identity_id == user_identity.identity_id
+      assert Repo.get_by(UserToken, user_identity_id: user_identity.id)
     end
   end
 
