@@ -109,10 +109,10 @@ defmodule ZoonkWeb.UserAuthPlugTest do
       refute get_session(post_conn, :user_return_to)
     end
 
-    test "does not redirect if user is authenticated", %{conn: conn, user: user} do
+    test "does not redirect if user is authenticated", %{conn: conn, user_identity: user_identity} do
       conn =
         conn
-        |> assign(:current_scope, Scope.for_user(user))
+        |> assign(:current_scope, Scope.for_user(user_identity))
         |> Plugs.UserAuth.require_authenticated_user([])
 
       refute conn.halted

@@ -153,20 +153,19 @@ defmodule Zoonk.Accounts do
   end
 
   @doc """
-  Gets the user with the given signed token.
+  Gets the user identity with the given signed token.
+
+  ## Examples
+
+      iex> get_user_by_session_token(token)
+      %UserIdentity{}
+
+      iex> get_user_by_session_token(token)
+      nil
   """
   def get_user_by_session_token(token) do
     {:ok, query} = Queries.UserToken.verify_session_token(token)
-
-    # TODO: we need to fix this in the query.
-    # it's returning a %UserIdentity{} but we need a %User{}
-    # that preloads the identity and the profile.
-    # or do we? what if, we add the identity to the scope
-    # then do the opposite: preload the user and, from the user,
-    # we can also preload the profile.
-    # maybe Scope.for_user_identity(%UserIdentity{})
-    # %{user: %User{profile: profile}, user_identity: %UserIdentity{}}
-    Repo.one(query)
+    query |> Repo.one() |> Repo.preload(user: :profile)
   end
 
   @doc """

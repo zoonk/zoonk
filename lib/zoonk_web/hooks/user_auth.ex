@@ -83,12 +83,12 @@ defmodule ZoonkWeb.Hooks.UserAuth do
 
   defp mount_current_scope(socket, session) do
     Phoenix.Component.assign_new(socket, :current_scope, fn ->
-      user =
+      user_identity =
         if user_token = session["user_token"] do
           Accounts.get_user_by_session_token(user_token)
         end
 
-      Scope.for_user(user)
+      Scope.for_user(user_identity)
     end)
   end
 end

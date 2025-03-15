@@ -74,7 +74,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
     } do
       conn =
         conn
-        |> assign(:current_scope, Scope.for_user(user_identity.user))
+        |> assign(:current_scope, Scope.for_user(user_identity))
         |> Helpers.UserAuth.login_user(user_identity)
 
       assert redirected_to(conn) == "/user/email"

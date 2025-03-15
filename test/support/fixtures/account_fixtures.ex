@@ -8,6 +8,7 @@ defmodule Zoonk.AccountFixtures do
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.Scope
+  alias Zoonk.Repo
   alias Zoonk.Schemas.User
   alias Zoonk.Schemas.UserIdentity
   alias Zoonk.Schemas.UserProfile
@@ -44,11 +45,12 @@ defmodule Zoonk.AccountFixtures do
   end
 
   def user_scope_fixture do
-    user_scope_fixture(user_fixture().user)
+    user_scope_fixture(user_fixture().user_identity)
   end
 
   def user_scope_fixture(%User{} = user) do
-    Scope.for_user(user)
+    user_identity = Repo.preload(user, :user_identity).user_identity
+    Scope.for_user(user_identity)
   end
 
   def extract_user_token(fun) do
