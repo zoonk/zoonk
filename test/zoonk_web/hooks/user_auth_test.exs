@@ -66,10 +66,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
   end
 
   describe "on_mount :ensure_authenticated" do
-    test "authenticates current_scope based on a valid user_token", %{
-      conn: conn,
-      user_identity: %UserIdentity{} = user_identity
-    } do
+    test "authenticates current_scope based on a valid user_token", %{conn: conn, user_identity: user_identity} do
       user_token = Accounts.generate_user_session_token(user_identity)
 
       session =
@@ -80,7 +77,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
       {:cont, updated_socket} =
         Hooks.UserAuth.on_mount(:ensure_authenticated, %{}, session, %LiveView.Socket{})
 
-      assert updated_socket.assigns.current_scope.user.id == user_identity.user.id
+      assert updated_socket.assigns.current_scope.user_identity.id == user_identity.id
     end
 
     test "redirects to login page if there isn't a valid user_token", %{conn: conn} do
@@ -114,10 +111,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
   end
 
   describe "on_mount :ensure_sudo_mode" do
-    test "allows users that have authenticated in the last 10 minutes", %{
-      conn: conn,
-      user_identity: %UserIdentity{} = user_identity
-    } do
+    test "allows users that have authenticated in the last 10 minutes", %{conn: conn, user_identity: user_identity} do
       user_token = Accounts.generate_user_session_token(user_identity)
 
       session =
@@ -130,8 +124,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
         assigns: %{__changed__: %{}, flash: %{}}
       }
 
-      assert {:cont, _updated_socket} =
-               Hooks.UserAuth.on_mount(:ensure_sudo_mode, %{}, session, socket)
+      assert {:cont, _socket} = Hooks.UserAuth.on_mount(:ensure_sudo_mode, %{}, session, socket)
     end
 
     test "redirects when authentication is too old", %{user_identity: %UserIdentity{} = user_identity} do
