@@ -24,7 +24,7 @@ defmodule ZoonkWeb.Live.UserEmail do
 
       <.input
         id="user-email"
-        field={@email_form[:email]}
+        field={@email_form[:identity_id]}
         label={dgettext("users", "Email address")}
         type="email"
         autocomplete="username"
@@ -59,7 +59,7 @@ defmodule ZoonkWeb.Live.UserEmail do
     socket =
       socket
       |> assign(:current_email, user_identity.identity_id)
-      |> assign(:email_form, to_form(identity_changeset))
+      |> assign(:email_form, to_form(identity_changeset, as: "user"))
       |> assign(:trigger_submit, false)
       |> assign(:page_title, dgettext("users", "Email Settings"))
 
@@ -70,10 +70,10 @@ defmodule ZoonkWeb.Live.UserEmail do
     %{"user" => user_params} = params
 
     email_form =
-      socket.assigns.current_scope.user
+      socket.assigns.current_scope.user_identity
       |> Accounts.change_user_identity(user_params, validate_identity: false)
       |> Map.put(:action, :validate)
-      |> to_form()
+      |> to_form(as: "user")
 
     {:noreply, assign(socket, email_form: email_form)}
   end
@@ -97,7 +97,7 @@ defmodule ZoonkWeb.Live.UserEmail do
         {:noreply, put_flash(socket, :info, info)}
 
       changeset ->
-        {:noreply, assign(socket, :email_form, to_form(changeset, action: :insert))}
+        {:noreply, assign(socket, :email_form, to_form(changeset, as: "user", action: :insert))}
     end
   end
 end

@@ -60,6 +60,8 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
         })
         |> render_submit()
 
+      IO.inspect(new_email, label: "New Email")
+
       assert result =~ "A link to confirm your email"
       assert new_identity = Accounts.get_user_identity_by_email(new_email)
       assert is_nil(new_identity.confirmed_at)
