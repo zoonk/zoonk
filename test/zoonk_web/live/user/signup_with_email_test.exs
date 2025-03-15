@@ -43,7 +43,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
       {:ok, lv, _html} = live(conn, ~p"/signup/email")
 
       email = unique_user_email()
-      form = form(lv, "#signup_form", user: %{identity_id: email})
+      form = form(lv, "#signup_form", user: %{"identity_id" => email})
 
       {:ok, _lv, _html} =
         form
@@ -60,7 +60,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
       assert {:ok, lv, _html} = live(conn, ~p"/signup/email")
 
       email = unique_user_email()
-      form = form(lv, "#signup_form", user: %{identity_id: email})
+      form = form(lv, "#signup_form", user: %{"identity_id" => email})
 
       {:ok, _lv, _html} =
         form
@@ -75,7 +75,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
       {:ok, lv, _html} = live(conn, ~p"/signup/email")
 
       email = unique_user_email()
-      form = form(lv, "#signup_form", user: %{identity_id: email})
+      form = form(lv, "#signup_form", user: %{"identity_id" => email})
 
       {:ok, _lv, html} =
         form
@@ -92,11 +92,11 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
     test "renders errors for duplicated email", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/signup/email")
 
-      %{user_identity: %UserIdentity{} = user_identity} = user_fixture(%{identity_id: "test@email.com"})
+      %{user_identity: %UserIdentity{} = user_identity} = user_fixture(%{"identity_id" => "test@email.com"})
 
       result =
         lv
-        |> form("#signup_form", user: %{identity_id: user_identity.identity_id})
+        |> form("#signup_form", user: %{"identity_id" => user_identity.identity_id})
         |> render_submit()
 
       assert result =~ "has already been taken"

@@ -17,10 +17,10 @@ defmodule Zoonk.AccountFixtures do
 
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
-      language: :en,
-      identity: :email,
-      identity_id: unique_user_email(),
-      is_primary: true
+      "language" => :en,
+      "identity" => :email,
+      "identity_id" => unique_user_email(),
+      "is_primary" => true
     })
   end
 
