@@ -48,7 +48,7 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
       %{conn: login_user(conn, user_identity), user_identity: user_identity}
     end
 
-    test "updates the user email", %{conn: conn} do
+    test "updates the user email", %{conn: conn, user_identity: user_identity} do
       new_email = unique_user_email()
 
       {:ok, lv, _html} = live(conn, ~p"/user/email")
@@ -60,11 +60,9 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
         })
         |> render_submit()
 
-      IO.inspect(new_email, label: "New Email")
-
       assert result =~ "A link to confirm your email"
-      assert new_identity = Accounts.get_user_identity_by_email(new_email)
-      assert is_nil(new_identity.confirmed_at)
+      assert Accounts.get_user_identity_by_email(user_identity.identity_id)
+      assert is_nil(Accounts.get_user_identity_by_email(new_email))
     end
 
     test "renders errors with invalid data (phx-change)", %{conn: conn} do

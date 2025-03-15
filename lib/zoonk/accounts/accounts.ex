@@ -247,9 +247,7 @@ defmodule Zoonk.Accounts do
   def deliver_user_update_email_instructions(%UserIdentity{} = user_identity, current_email, update_email_url_fun)
       when is_function(update_email_url_fun, 1) do
     {encoded_token, user_token} = TokenBuilder.build_email_token(user_identity, "change:#{current_email}")
-    IO.inspect(user_token, label: "User token")
     Repo.insert!(user_token)
-    IO.inspect(Repo.get!(UserIdentity, user_identity.id), label: "User identity")
     UserNotifier.deliver_update_email_instructions(user_identity, update_email_url_fun.(encoded_token))
   end
 
