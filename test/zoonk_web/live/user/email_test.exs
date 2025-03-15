@@ -88,7 +88,11 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
 
       token =
         extract_user_token(fn url ->
-          Accounts.deliver_user_update_email_instructions(%{user_identity | identity_id: email}, user_identity.email, url)
+          Accounts.deliver_user_update_email_instructions(
+            %{user_identity | identity_id: email},
+            user_identity.identity_id,
+            url
+          )
         end)
 
       %{conn: login_user(conn, user_identity), token: token, email: email, user_identity: user_identity}
