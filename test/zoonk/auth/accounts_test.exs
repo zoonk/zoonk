@@ -42,14 +42,14 @@ defmodule Zoonk.AccountsTest do
 
     test "validates identity_id uniqueness" do
       %{identity_id: identity_id} = user_fixture().user_identity
-      {:error, _field, changeset, _data} = Accounts.signup_user_with_email(%{identity_id: identity_id})
-      assert "has already been taken" in errors_on(changeset).identity_id
+      {:error, _field, changeset, _data} = Accounts.signup_user_with_email(%{identity: :email, identity_id: identity_id})
+      assert "has already been taken" in errors_on(changeset).identity
 
       # Now try with the upper cased identity_id too, to check that identity_id case is ignored.
       {:error, _field, uppercase_changeset, _data} =
-        Accounts.signup_user_with_email(%{identity_id: String.upcase(identity_id)})
+        Accounts.signup_user_with_email(%{identity: :email, identity_id: String.upcase(identity_id)})
 
-      assert "has already been taken" in errors_on(uppercase_changeset).identity_id
+      assert "has already been taken" in errors_on(uppercase_changeset).identity
     end
 
     test "signs up users" do
