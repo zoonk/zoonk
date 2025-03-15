@@ -60,7 +60,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
       assert {:ok, lv, _html} = live(conn, ~p"/signup/email")
 
       email = unique_user_email()
-      form = form(lv, "#signup_form", user: valid_user_attributes(identity_id: email))
+      form = form(lv, "#signup_form", user: %{identity_id: email})
 
       {:ok, _lv, _html} =
         form
