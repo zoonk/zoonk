@@ -54,7 +54,7 @@ defmodule ZoonkWeb.Hooks.UserAuth do
     socket = mount_current_scope(socket, session)
     user_return_to = Map.get(params, "redirect_to") || ~p"/"
 
-    if socket.assigns.current_scope && socket.assigns.current_scope.user do
+    if socket.assigns.current_scope && socket.assigns.current_scope.user_identity do
       {:cont, Phoenix.Component.assign(socket, :user_return_to, user_return_to)}
     else
       socket =

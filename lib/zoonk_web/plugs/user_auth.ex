@@ -58,7 +58,7 @@ defmodule ZoonkWeb.Plugs.UserAuth do
   they use the application at all, here would be a good place.
   """
   def require_authenticated_user(conn, _opts) do
-    if conn.assigns.current_scope && conn.assigns.current_scope.user do
+    if conn.assigns.current_scope && conn.assigns.current_scope.user_identity do
       conn
     else
       conn

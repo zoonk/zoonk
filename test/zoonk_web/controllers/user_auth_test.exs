@@ -5,7 +5,6 @@ defmodule ZoonkWeb.UserAuthControllerTest do
 
   alias Zoonk.Accounts
   alias Zoonk.Repo
-  alias Zoonk.Schemas.User
   alias Zoonk.Schemas.UserIdentity
 
   setup do
