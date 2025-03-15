@@ -48,7 +48,7 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
       %{conn: login_user(conn, user_identity), user_identity: user_identity}
     end
 
-    test "updates the user email", %{conn: conn, user_identity: %UserIdentity{} = user_identity} do
+    test "updates the user email", %{conn: conn} do
       new_email = unique_user_email()
 
       {:ok, lv, _html} = live(conn, ~p"/user/email")

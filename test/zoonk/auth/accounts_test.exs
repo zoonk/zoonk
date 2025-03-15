@@ -183,8 +183,9 @@ defmodule Zoonk.AccountsTest do
 
   describe "get_user_by_session_token/1" do
     setup do
-      token = Accounts.generate_user_session_token(user)
-      %{user: user_fixture().user, token: token}
+      %{user: user, user_identity: user_identity} = user_fixture()
+      token = Accounts.generate_user_session_token(user_identity)
+      %{user: user, token: token}
     end
 
     test "returns user by token", %{user: %User{} = user, token: token} do
@@ -262,7 +263,7 @@ defmodule Zoonk.AccountsTest do
       %{user: user, user_identity: user_identity}
     end
 
-    test "sends token through notification", %{user: user, user_identity: user_identity} do
+    test "sends token through notification", %{user_identity: user_identity} do
       token = extract_user_token(fn url -> Accounts.deliver_login_instructions(user_identity, url) end)
 
       {:ok, new_token} = Base.url_decode64(token, padding: false)
