@@ -37,7 +37,7 @@ defmodule ZoonkWeb.Components.Input do
   """
   attr :id, :any, default: nil
   attr :name, :any
-  attr :label, :string, required: true
+  attr :label, :string, default: nil
   attr :value, :any
 
   attr :hide_label, :boolean,
@@ -46,7 +46,7 @@ defmodule ZoonkWeb.Components.Input do
 
   attr :type, :string,
     default: "text",
-    values: ~w(checkbox color date datetime-local email file month number password
+    values: ~w(checkbox color date datetime-local email file hidden month number password
                range search select tel text textarea time url week)
 
   attr :field, FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"

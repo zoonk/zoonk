@@ -24,8 +24,10 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
           {dgettext("users", "Oops, something went wrong! Please check the errors below.")}
         </.error>
 
+        <.input type="hidden" field={@form[:identity]} />
+
         <.input
-          field={@form[:email]}
+          field={@form[:identity_id]}
           type="email"
           label={dgettext("users", "Email")}
           autocomplete="username"
@@ -51,7 +53,7 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
 
   def mount(_params, session, socket) do
     language = Map.get(session, "language")
-    changeset = Accounts.change_user_identity(%UserIdentity{})
+    changeset = Accounts.change_user_identity(%UserIdentity{identity: :email})
 
     socket =
       socket

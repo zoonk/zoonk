@@ -21,7 +21,7 @@ defmodule Zoonk.Accounts.UserProfileBuilder do
       iex> build_initial_user_profile(%{identity: %UserIdentity{user_id: 2, identity_id: "leo@davinci.com"}})
       %UserProfile{username: "leo_1234566", user_id: 2}
   """
-  def build_initial_user_profile(%{identity: %UserIdentity{user_id: user_id, identity_id: email}}, opts \\ []) do
+  def build_initial_user_profile(%{user_identity: %UserIdentity{user_id: user_id, identity_id: email}}, opts \\ []) do
     %UserProfile{
       display_name: opts[:display_name],
       picture_url: opts[:picture_url],

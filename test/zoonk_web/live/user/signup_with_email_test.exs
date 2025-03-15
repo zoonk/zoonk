@@ -4,6 +4,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
   import Phoenix.LiveViewTest
   import Zoonk.AccountFixtures
 
+  alias Zoonk.Accounts
   alias Zoonk.Schemas.UserIdentity
 
   describe "Sign up with email page" do
@@ -39,19 +40,35 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
     test "use the browser's language", %{conn: conn} do
       conn = put_req_header(conn, "accept-language", "pt-BR")
 
-      {:ok, lv, html} = live(conn, ~p"/signup/email")
+      {:ok, lv, _html} = live(conn, ~p"/signup/email")
 
-      assert html =~ ~s'<html lang="pt"'
-      assert has_element?(lv, "option[value=pt][selected]")
+      email = unique_user_email()
+      form = form(lv, "#signup_form", user: %{identity_id: email})
+
+      {:ok, _lv, _html} =
+        form
+        |> render_submit()
+        |> follow_redirect(conn, ~p"/login/email")
+
+      user = Accounts.get_user_by_email(email)
+      assert user.language == :pt
     end
 
     test "handles an unsupported locale", %{conn: conn} do
       conn = put_req_header(conn, "accept-language", "hi")
 
-      assert {:ok, _lv, html} = live(conn, ~p"/signup/email")
+      assert {:ok, lv, _html} = live(conn, ~p"/signup/email")
 
-      assert html =~ "Create an account"
-      assert html =~ ~s'<html lang="en"'
+      email = unique_user_email()
+      form = form(lv, "#signup_form", user: valid_user_attributes(identity_id: email))
+
+      {:ok, _lv, _html} =
+        form
+        |> render_submit()
+        |> follow_redirect(conn, ~p"/login/email")
+
+      user = Accounts.get_user_by_email(email)
+      assert user.language == :en
     end
 
     test "creates account but does not log in", %{conn: conn} do
