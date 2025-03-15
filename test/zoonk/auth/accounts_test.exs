@@ -113,26 +113,26 @@ defmodule Zoonk.AccountsTest do
   describe "update_user_email/2" do
     setup do
       %{user: %User{} = user, user_identity: %UserIdentity{} = user_identity} = unconfirmed_user_fixture()
-      email = unique_user_email()
+      new_email = unique_user_email()
 
       token =
         extract_user_token(fn url ->
           Accounts.deliver_user_update_email_instructions(
-            %{user_identity | identity_id: email},
+            %{user_identity | identity_id: new_email},
             user_identity.identity_id,
             url
           )
         end)
 
-      %{user: user, user_identity: user_identity, token: token, email: email}
+      %{user: user, user_identity: user_identity, token: token, new_email: new_email}
     end
 
-    test "updates the email with a valid token", %{user: user, token: token, email: email} do
-      assert Accounts.update_user_email(user, token) == :ok
-      changed_user = Repo.get!(User, user.id)
-      assert changed_user.email != user.email
-      assert changed_user.email == email
-      refute Repo.get_by(UserToken, user_id: user.id)
+    test "updates the email with a valid token", %{user_identity: user_identity, token: token, new_email: new_email} do
+      assert Accounts.update_user_email(user_identity, token) == :ok
+      changed_user_identity = Repo.get!(UserIdentity, user_identity.id)
+      assert changed_user_identity.identity_id != user_identity.identity_id
+      assert changed_user_identity.identity_id == new_email
+      refute Repo.get_by(UserToken, user_identity_id: user_identity.id)
     end
 
     test "does not update email with invalid token", %{user: user} do

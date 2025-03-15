@@ -27,7 +27,7 @@ defmodule Zoonk.Queries.UserToken do
   end
 
   def by_user_and_contexts(%UserIdentity{} = user_identity, contexts) when is_list(contexts) do
-    where(UserToken, [t], t.user_id == ^user_identity.id and t.context in ^contexts)
+    where(UserToken, [t], t.user_identity_id == ^user_identity.id and t.context in ^contexts)
   end
 
   @doc """
