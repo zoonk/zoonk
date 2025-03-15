@@ -282,17 +282,15 @@ defmodule Zoonk.AccountsTest do
 
       auth = oauth_fixture(%{uid: uid, email: email, picture: picture})
 
-      {:ok, %User{} = user} = Accounts.login_with_external_account(auth, "en")
-
-      assert user.email == email
-      assert user.language == :en
-      assert user.confirmed_at != nil
-
-      user_identity = Repo.get_by!(UserIdentity, user_id: user.id)
-      user_profile = Repo.get_by!(UserProfile, user_id: user.id)
+      {:ok, %UserIdentity{} = user_identity} = Accounts.login_with_external_account(auth, "en")
 
       assert user_identity.identity == :google
       assert user_identity.identity_id == uid
+
+      user = Repo.get!(User, user_identity.user_id)
+      user_profile = Repo.get_by!(UserProfile, user_id: user.id)
+
+      assert user.language == :en
 
       assert user_profile.user_id == user.id
       assert user_profile.picture_url == picture

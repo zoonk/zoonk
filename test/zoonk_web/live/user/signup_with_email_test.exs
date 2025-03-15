@@ -28,7 +28,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
       result =
         lv
         |> element("#signup_form")
-        |> render_change(user: %{"email" => "with spaces"})
+        |> render_change(user: %{"identity_id" => "with spaces"})
 
       assert result =~ "Create an account"
       assert result =~ "must have the @ sign and no spaces"
@@ -68,8 +68,8 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
       assert html =~
                ~r/An email was sent to .*, please access it to confirm your account/
 
-      user = Zoonk.Accounts.get_user_by_email(email)
-      assert user.confirmed_at == nil
+      user_identity = Zoonk.Accounts.get_user_identity_by_email(email)
+      assert is_nil(user_identity.confirmed_at)
     end
 
     test "renders errors for duplicated email", %{conn: conn} do
