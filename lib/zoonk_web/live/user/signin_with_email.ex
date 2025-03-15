@@ -54,9 +54,9 @@ defmodule ZoonkWeb.Live.UserLoginWithEmail do
   end
 
   def handle_event("submit_magic", %{"email" => email}, socket) do
-    if user = Accounts.get_user_by_email(email) do
+    if user_identity = Accounts.get_user_identity_by_email(email) do
       Accounts.deliver_login_instructions(
-        user,
+        user_identity,
         &url(~p"/login/t/#{&1}")
       )
     end

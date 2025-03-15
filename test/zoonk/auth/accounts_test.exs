@@ -117,15 +117,19 @@ defmodule Zoonk.AccountsTest do
 
   describe "update_user_email/2" do
     setup do
-      user = unconfirmed_user_fixture()
+      %{user: %User{} = user, user_identity: %UserIdentity{} = user_identity} = unconfirmed_user_fixture()
       email = unique_user_email()
 
       token =
         extract_user_token(fn url ->
-          Accounts.deliver_user_update_email_instructions(%{user | email: email}, user.email, url)
+          Accounts.deliver_user_update_email_instructions(
+            %{user_identity | identity_id: email},
+            user_identity.identity_id,
+            url
+          )
         end)
 
-      %{user: user, token: token, email: email}
+      %{user: user, user_identity: user_identity, token: token, email: email}
     end
 
     test "updates the email with a valid token", %{user: user, token: token, email: email} do
@@ -227,14 +231,14 @@ defmodule Zoonk.AccountsTest do
 
   describe "login_user_by_magic_link/1" do
     test "confirms user and expires tokens" do
-      user = unconfirmed_user_fixture()
-      refute user.confirmed_at
-      {encoded_token, hashed_token} = generate_user_magic_link_token(user)
+      %{user_identity: %UserIdentity{} = user_identity} = unconfirmed_user_fixture()
+      refute user_identity.confirmed_at
+      {encoded_token, hashed_token} = generate_user_magic_link_token(user_identity)
 
-      assert {:ok, user, [%{token: ^hashed_token}]} =
+      assert {:ok, user_identity, [%{token: ^hashed_token}]} =
                Accounts.login_user_by_magic_link(encoded_token)
 
-      assert user.confirmed_at
+      assert user_identity.confirmed_at
     end
 
     test "returns user and (deleted) token for confirmed user" do
@@ -258,19 +262,17 @@ defmodule Zoonk.AccountsTest do
 
   describe "deliver_login_instructions/2" do
     setup do
-      %{user: unconfirmed_user_fixture()}
+      %{user: %User{} = user, user_identity: %UserIdentity{} = user_identity} = unconfirmed_user_fixture()
+      %{user: user, user_identity: user_identity}
     end
 
-    test "sends token through notification", %{user: user} do
-      token =
-        extract_user_token(fn url ->
-          Accounts.deliver_login_instructions(user, url)
-        end)
+    test "sends token through notification", %{user: user, user_identity: user_identity} do
+      token = extract_user_token(fn url -> Accounts.deliver_login_instructions(user_identity, url) end)
 
       {:ok, new_token} = Base.url_decode64(token, padding: false)
       assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, new_token))
-      assert user_token.user_id == user.id
-      assert user_token.sent_to == user.email
+      assert user_token.user_identity_id == user_identity.id
+      assert user_token.sent_to == user_identity.identity_id
       assert user_token.context == "login"
     end
   end

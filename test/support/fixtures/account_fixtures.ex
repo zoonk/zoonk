@@ -64,8 +64,8 @@ defmodule Zoonk.AccountFixtures do
     |> Zoonk.Repo.update_all(set: [inserted_at: inserted_at])
   end
 
-  def generate_user_magic_link_token(user) do
-    {encoded_token, user_token} = Zoonk.Accounts.TokenBuilder.build_email_token(user, "login")
+  def generate_user_magic_link_token(%UserIdentity{} = user_identity) do
+    {encoded_token, user_token} = Zoonk.Accounts.TokenBuilder.build_email_token(user_identity, "login")
     Zoonk.Repo.insert!(user_token)
     {encoded_token, user_token.token}
   end

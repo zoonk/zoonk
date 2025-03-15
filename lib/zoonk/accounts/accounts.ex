@@ -45,6 +45,21 @@ defmodule Zoonk.Accounts do
     end
   end
 
+  @doc """
+  Gets a user entity by email.
+
+  ## Examples
+
+      iex> get_user_identity_by_email("foo@example.com")
+      %UserIdentity{}
+
+      iex> get_user_identity_by_email("unknown@example.com")
+      nil
+  """
+  def get_user_identity_by_email(email) when is_binary(email) do
+    Repo.get_by(UserIdentity, identity_id: email)
+  end
+
   ## User signup
 
   @doc """
@@ -123,12 +138,16 @@ defmodule Zoonk.Accounts do
   end
 
   ## Session
-
   @doc """
   Generates a session token.
+
+  ## Examples
+
+      iex> generate_user_session_token(%UserIdentity{})
+      <<...>>
   """
-  def generate_user_session_token(user) do
-    {token, user_token} = TokenBuilder.build_session_token(user)
+  def generate_user_session_token(%UserIdentity{} = user_identity) do
+    {token, user_token} = TokenBuilder.build_session_token(user_identity)
     Repo.insert!(user_token)
     token
   end
@@ -168,6 +187,17 @@ defmodule Zoonk.Accounts do
      In this case, the user gets confirmed, logged in, and all tokens -
      including session ones - are expired. In theory, no other tokens
      exist but we delete all of them for best security practices.
+
+  ## Examples
+
+      iex> login_user_by_magic_link(token)
+      {:ok, %UserIdentity{}, []}
+
+      iex> login_user_by_magic_link(token)
+      {:ok, %UserIdentity{}, [%UserToken{}]}
+
+      iex> login_user_by_magic_link(token)
+      {:error, :not_found}
   """
   def login_user_by_magic_link(token) do
     {:ok, query} = Queries.UserToken.verify_magic_link_token(token)
@@ -266,16 +296,16 @@ defmodule Zoonk.Accounts do
     end
   end
 
-  # Create a new user if it doesn't exist
-  defp login_with_external_account(auth, language, nil) do
-    signup_user_with_external_account(auth, language)
-  end
-
   # If the user exists, then link the external account
   defp login_with_external_account(auth, _lang, %User{} = user) do
     %{user: user}
     |> user_identity_changeset(get_identity_attrs(auth))
     |> Repo.insert(on_conflict: :nothing)
+  end
+
+  # Create a new user if it doesn't exist
+  defp login_with_external_account(auth, language, nil) do
+    signup_user_with_external_account(auth, language)
   end
 
   # Create a new user and link the external account

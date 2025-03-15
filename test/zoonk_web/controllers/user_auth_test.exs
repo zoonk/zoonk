@@ -6,14 +6,15 @@ defmodule ZoonkWeb.UserAuthControllerTest do
   alias Zoonk.Accounts
   alias Zoonk.Repo
   alias Zoonk.Schemas.User
+  alias Zoonk.Schemas.UserIdentity
 
   setup do
-    %{unconfirmed_user: unconfirmed_user_fixture(), user: user_fixture()}
+    %{unconfirmed: unconfirmed_user_fixture(), confirmed: user_fixture()}
   end
 
   describe "POST /login - magic link" do
-    test "logs the user in", %{conn: conn, user: user} do
-      {token, _hashed_token} = generate_user_magic_link_token(user)
+    test "logs the user in", %{conn: conn, confirmed: %{user_identity: %UserIdentity{} = user_identity}} do
+      {token, _hashed_token} = generate_user_magic_link_token(user_identity)
 
       post_conn = post(conn, ~p"/login", %{"user" => %{"token" => token}})
 
@@ -33,12 +34,12 @@ defmodule ZoonkWeb.UserAuthControllerTest do
   end
 
   describe "GET /confirm/:token" do
-    test "confirms the given token once", %{conn: conn, unconfirmed_user: user} do
-      token = extract_user_token(fn url -> Accounts.deliver_login_instructions(user, url) end)
+    test "confirms the given token once", %{conn: conn, unconfirmed: %{user_identity: %UserIdentity{} = user_identity}} do
+      token = extract_user_token(fn url -> Accounts.deliver_login_instructions(user_identity, url) end)
 
       conn = get(conn, ~p"/confirm/#{token}")
 
-      assert Repo.get!(User, user.id).confirmed_at
+      assert Repo.get!(UserIdentity, user_identity.id).confirmed_at
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "User confirmed successfully."
 
       # we are logged in now
@@ -52,12 +53,15 @@ defmodule ZoonkWeb.UserAuthControllerTest do
       refute get_session(logout_conn, :user_token)
     end
 
-    test "logs confirmed user in without changing confirmed_at", %{conn: conn, user: user} do
-      token = extract_user_token(fn url -> Accounts.deliver_login_instructions(user, url) end)
+    test "logs confirmed user in without changing confirmed_at", %{
+      conn: conn,
+      confirmed: %{user_identity: %UserIdentity{} = user_identity}
+    } do
+      token = extract_user_token(fn url -> Accounts.deliver_login_instructions(user_identity, url) end)
       conn = get(conn, ~p"/login/t/#{token}")
 
       assert get_session(conn, :user_token)
-      assert Repo.get!(User, user.id).confirmed_at == user.confirmed_at
+      assert Repo.get!(UserIdentity, user_identity.id).confirmed_at == user_identity.confirmed_at
       assert redirected_to(conn) == ~p"/"
       assert is_nil(Phoenix.Flash.get(conn.assigns.flash, :info))
     end
@@ -70,10 +74,10 @@ defmodule ZoonkWeb.UserAuthControllerTest do
   end
 
   describe "DELETE /logout" do
-    test "logs the user out", %{conn: conn, user: user} do
+    test "logs the user out", %{conn: conn, confirmed: %{user_identity: %UserIdentity{} = user_identity}} do
       conn =
         conn
-        |> login_user(user)
+        |> login_user(user_identity)
         |> delete(~p"/logout")
 
       assert redirected_to(conn) == ~p"/"

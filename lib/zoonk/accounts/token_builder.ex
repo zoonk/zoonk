@@ -29,6 +29,12 @@ defmodule Zoonk.Accounts.TokenBuilder do
   You could then use this information to display all valid sessions
   and devices in the UI and allow users to explicitly expire any
   session they deem invalid.
+
+  ## Examples
+
+      iex> build_session_token(%UserIdentity{id: 1})
+      {<<...>>, %UserToken{token: <<...>>, context: "session", user_identity_id: 1}}
+
   """
   def build_session_token(%UserIdentity{} = user_identity) do
     token = :crypto.strong_rand_bytes(@rand_size)
