@@ -10,17 +10,6 @@ defmodule Zoonk.AccountsTest do
   alias Zoonk.Schemas.UserProfile
   alias Zoonk.Schemas.UserToken
 
-  describe "get_user_by_email/1" do
-    test "does not return the user if the email does not exist" do
-      refute Accounts.get_user_by_email("unknown@example.com")
-    end
-
-    test "returns the user if the email exists" do
-      %{user: %User{id: id}, user_identity: %UserIdentity{identity_id: email}} = user_fixture()
-      assert %User{id: ^id} = Accounts.get_user_by_email(email)
-    end
-  end
-
   describe "signup_user_with_email/1" do
     test "requires email to be set" do
       {:error, _field, changeset, _data} = Accounts.signup_user_with_email(%{identity: :email})

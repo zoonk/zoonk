@@ -5,6 +5,8 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
   import Zoonk.AccountFixtures
 
   alias Zoonk.Accounts
+  alias Zoonk.Repo
+  alias Zoonk.Schemas.User
   alias Zoonk.Schemas.UserIdentity
 
   describe "Sign up with email page" do
@@ -50,8 +52,8 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
         |> render_submit()
         |> follow_redirect(conn, ~p"/login/email")
 
-      user = Accounts.get_user_by_email(email)
-      assert user.language == :pt
+      user_identity = Accounts.get_user_identity_by_email(email)
+      assert Repo.get!(User, user_identity.user_id).language == :pt
     end
 
     test "handles an unsupported locale", %{conn: conn} do
@@ -67,8 +69,8 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
         |> render_submit()
         |> follow_redirect(conn, ~p"/login/email")
 
-      user = Accounts.get_user_by_email(email)
-      assert user.language == :en
+      user_identity = Accounts.get_user_identity_by_email(email)
+      assert Repo.get!(User, user_identity.user_id).language == :en
     end
 
     test "creates account but does not log in", %{conn: conn} do

@@ -21,30 +21,6 @@ defmodule Zoonk.Accounts do
   alias Zoonk.Schemas.UserIdentity
   alias Zoonk.Schemas.UserToken
 
-  ## Database getters
-
-  @doc """
-  Gets a user by email.
-
-  ## Examples
-
-      iex> get_user_by_email("foo@example.com")
-      %User{}
-
-      iex> get_user_by_email("unknown@example.com")
-      nil
-
-  """
-  def get_user_by_email(email) when is_binary(email) do
-    UserIdentity
-    |> Repo.get_by(identity_id: email)
-    |> Repo.preload(:user)
-    |> case do
-      %UserIdentity{user: %User{} = user} -> user
-      _nil -> nil
-    end
-  end
-
   @doc """
   Gets a user entity by email.
 
@@ -307,13 +283,13 @@ defmodule Zoonk.Accounts do
       {:error, %Ecto.Changeset{}}
   """
   def login_with_external_account(auth, language) do
-    user = get_user_by_email(auth["email"])
-    login_with_external_account(auth, language, user)
+    user_identity = get_user_identity_by_email(auth["email"])
+    login_with_external_account(auth, language, user_identity)
   end
 
   # If the user exists, then link the external account
-  defp login_with_external_account(auth, _lang, %User{} = user) do
-    %{user: user}
+  defp login_with_external_account(auth, _lang, %UserIdentity{} = user_identity) do
+    %{user_identity: user_identity}
     |> user_identity_changeset(get_identity_attrs(auth))
     |> Repo.insert(on_conflict: :nothing)
   end
@@ -337,15 +313,19 @@ defmodule Zoonk.Accounts do
     |> Helpers.EctoUtils.get_changeset_from_transaction(:user_identity)
   end
 
-  defp user_identity_changeset(%{user: %User{} = user}, %{confirmed?: true} = identity_attrs) do
+  defp user_identity_changeset(%{user: %User{} = user}, identity_attrs) do
     %UserIdentity{user_id: user.id}
     |> UserIdentity.changeset(identity_attrs)
-    |> UserIdentity.confirm_changeset()
+    # when signing up with an external account, we can confirm the user without sending a magic link
+    |> maybe_confirm_user(identity_attrs)
   end
 
-  defp user_identity_changeset(%{user: %User{} = user}, identity_attrs) do
-    UserIdentity.changeset(%UserIdentity{user_id: user.id}, identity_attrs)
+  defp user_identity_changeset(%{user_identity: %UserIdentity{} = user_identity}, identity_attrs) do
+    UserIdentity.changeset(%UserIdentity{user_id: user_identity.user_id}, identity_attrs)
   end
+
+  defp maybe_confirm_user(changeset, %{confirmed?: true}), do: UserIdentity.confirm_changeset(changeset)
+  defp maybe_confirm_user(changeset, _attrs), do: changeset
 
   defp get_identity_attrs(auth) do
     %{identity: auth["provider"], identity_id: to_string(auth["sub"]), confirmed?: true}
