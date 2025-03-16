@@ -300,12 +300,18 @@ defmodule Zoonk.Accounts do
   end
 
   # Create a new user and link the external account
+  # when signing up with an external, we create two identities:
+  # one for the external account and one for the email address
+  # the email one is marked as primary
+  # we don't store the email address in the external account
+  # only the identity ID because this allows us to keep
+  # the link even if the user changes their email address
+  # in the external provider.
   defp signup_user_with_external_account(auth, language) do
     profile_opts = [display_name: auth["name"], picture_url: auth["picture"], username: auth["preferred_username"]]
 
     Ecto.Multi.new()
     |> Ecto.Multi.insert(:user, User.changeset(%User{}, %{language: language}))
-    # we also need to add the email identity when signing up with an external account
     |> Ecto.Multi.insert(:user_identity, &user_identity_changeset(&1, get_identity_attrs(auth, :email)))
     |> Ecto.Multi.insert(:profile, &UserProfileBuilder.build_initial_user_profile(&1, profile_opts))
     |> Ecto.Multi.insert(:external_identity, &user_identity_changeset(&1, get_identity_attrs(auth)))
