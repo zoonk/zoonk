@@ -17,7 +17,7 @@ defmodule Zoonk.AccountFixtures do
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
       language: :en,
-      identity: :email,
+      provider: :email,
       identity_id: unique_user_email(),
       is_primary: true,
       username: unique_user_username()

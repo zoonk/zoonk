@@ -54,7 +54,7 @@ defmodule Zoonk.Accounts do
     attrs =
       attrs
       |> Helpers.normalize_keys()
-      |> Map.merge(%{identity: :email, is_primary: true})
+      |> Map.merge(%{provider: :email, is_primary: true})
 
     Ecto.Multi.new()
     |> Ecto.Multi.insert(:user, User.changeset(%User{}, attrs))
@@ -337,10 +337,10 @@ defmodule Zoonk.Accounts do
   # to mark the identity as confirmed since the external provider
   # already confirmed the user, so we don't need to send a magic link
   defp get_identity_attrs(external_account) do
-    %{identity: external_account["provider"], identity_id: to_string(external_account["sub"]), confirmed?: true}
+    %{provider: external_account["provider"], identity_id: to_string(external_account["sub"]), confirmed?: true}
   end
 
   defp get_identity_attrs(external_account, :email) do
-    %{identity: :email, identity_id: to_string(external_account["email"]), is_primary: true, confirmed?: true}
+    %{provider: :email, identity_id: to_string(external_account["email"]), is_primary: true, confirmed?: true}
   end
 end

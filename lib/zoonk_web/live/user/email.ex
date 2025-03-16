@@ -22,7 +22,7 @@ defmodule ZoonkWeb.Live.UserEmail do
         )}
       </:subtitle>
 
-      <.input type="hidden" field={@email_form[:identity]} />
+      <.input type="hidden" field={@email_form[:provider]} />
 
       <.input
         id="user-email"
@@ -56,7 +56,7 @@ defmodule ZoonkWeb.Live.UserEmail do
 
   def mount(_params, _session, socket) do
     user_identity = socket.assigns.current_scope.user_identity
-    identity_changeset = Accounts.change_user_identity(user_identity, %{identity: :email})
+    identity_changeset = Accounts.change_user_identity(user_identity, %{provider: :email})
 
     socket =
       socket

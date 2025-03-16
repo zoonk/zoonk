@@ -19,16 +19,16 @@ defmodule Zoonk.Repo.Migrations.CreateUsersAuthTables do
       add :user_id, references(:users, on_delete: :delete_all), null: false
 
       add :is_primary, :boolean, default: false, null: false
-      add :identity, :string, null: false
+      add :provider, :string, null: false
       add :identity_id, :citext, null: false
       add :confirmed_at, :utc_datetime
 
       timestamps(type: :utc_datetime)
     end
 
-    create unique_index(:user_identities, [:identity, :identity_id])
+    create unique_index(:user_identities, [:provider, :identity_id])
     create unique_index(:user_identities, [:user_id], where: "is_primary = true")
-    create index(:user_identities, [:user_id, :identity])
+    create index(:user_identities, [:user_id, :provider])
 
     create table(:users_tokens) do
       add :user_identity_id, references(:user_identities, on_delete: :delete_all), null: false

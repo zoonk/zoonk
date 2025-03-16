@@ -15,10 +15,10 @@ defmodule Zoonk.Accounts.UserProfileBuilder do
 
   ## Examples
 
-      iex> build_initial_user_profile(%{identity: %UserIdentity{user_id: 1, identity_id: "leo@davinci.it"}})
+      iex> build_initial_user_profile(%{user_identity: %UserIdentity{user_id: 1, identity_id: "leo@davinci.it"}})
       %UserProfile{username: "leo", user_id: 1}
 
-      iex> build_initial_user_profile(%{identity: %UserIdentity{user_id: 2, identity_id: "leo@davinci.com"}})
+      iex> build_initial_user_profile(%{user_identity: %UserIdentity{user_id: 2, identity_id: "leo@davinci.com"}})
       %UserProfile{username: "leo_1234566", user_id: 2}
   """
   def build_initial_user_profile(%{user_identity: %UserIdentity{user_id: user_id, identity_id: email}}, opts \\ []) do

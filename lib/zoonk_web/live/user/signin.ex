@@ -11,12 +11,12 @@ defmodule ZoonkWeb.Live.UserLogin do
         class="flex w-full flex-col gap-2"
         aria-label={dgettext("users", "Use one of the external accounts below:")}
       >
-        <.auth_link :for={identity <- [:apple, :google, :github]} identity={identity} />
+        <.auth_link :for={identity <- [:apple, :google, :github]} provider={identity} />
       </section>
 
       <section class="w-full" aria-label={dgettext("users", "Or use your email address")}>
         <.divider label={dgettext("users", "or")} class="my-4" />
-        <.auth_link identity={:email} />
+        <.auth_link provider={:email} />
       </section>
     </.main_container>
     """

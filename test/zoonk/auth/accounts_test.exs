@@ -12,13 +12,13 @@ defmodule Zoonk.AccountsTest do
 
   describe "signup_user_with_email/1" do
     test "requires email to be set" do
-      {:error, _field, changeset, _data} = Accounts.signup_user_with_email(%{identity: :email})
+      {:error, _field, changeset, _data} = Accounts.signup_user_with_email(%{provider: :email})
       assert %{identity_id: ["can't be blank"]} = errors_on(changeset)
     end
 
     test "validates email when given" do
       {:error, _field, changeset, _data} =
-        Accounts.signup_user_with_email(%{identity: :email, identity_id: "not valid"})
+        Accounts.signup_user_with_email(%{provider: :email, identity_id: "not valid"})
 
       assert %{identity_id: ["must have the @ sign and no spaces"]} = errors_on(changeset)
     end
@@ -32,13 +32,13 @@ defmodule Zoonk.AccountsTest do
     test "validates identity_id uniqueness" do
       %{identity_id: identity_id} = user_fixture().user_identity
       {:error, _field, changeset, _data} = Accounts.signup_user_with_email(%{identity_id: identity_id})
-      assert "has already been taken" in errors_on(changeset).identity
+      assert "has already been taken" in errors_on(changeset).provider
 
       # Now try with the upper cased identity_id too, to check that identity_id case is ignored.
       {:error, _field, uppercase_changeset, _data} =
         Accounts.signup_user_with_email(%{identity_id: String.upcase(identity_id)})
 
-      assert "has already been taken" in errors_on(uppercase_changeset).identity
+      assert "has already been taken" in errors_on(uppercase_changeset).provider
     end
 
     test "signs up users" do
@@ -48,7 +48,7 @@ defmodule Zoonk.AccountsTest do
         Accounts.signup_user_with_email(%{identity_id: email})
 
       assert user_identity.user_id == user.id
-      assert user_identity.identity == :email
+      assert user_identity.provider == :email
       assert user_identity.identity_id == email
       assert user_identity.is_primary == true
       assert is_nil(user_identity.confirmed_at)
@@ -76,7 +76,7 @@ defmodule Zoonk.AccountsTest do
   describe "change_user_identity/3" do
     test "returns a user identity changeset" do
       assert %Ecto.Changeset{} = changeset = Accounts.change_user_identity(%UserIdentity{})
-      assert changeset.required == [:identity, :identity_id, :is_primary, :user_id]
+      assert changeset.required == [:provider, :identity_id, :is_primary, :user_id]
     end
   end
 
@@ -268,12 +268,12 @@ defmodule Zoonk.AccountsTest do
 
       {:ok, %UserIdentity{} = user_identity} = Accounts.login_with_external_account(auth, "en")
 
-      assert user_identity.identity == :email
+      assert user_identity.provider == :email
       assert user_identity.identity_id == email
       assert user_identity.is_primary == true
 
-      provider_identity = Repo.get_by!(UserIdentity, user_id: user_identity.user_id, identity: :google)
-      assert provider_identity.identity == :google
+      provider_identity = Repo.get_by!(UserIdentity, user_id: user_identity.user_id, provider: :google)
+      assert provider_identity.provider == :google
       assert provider_identity.identity_id == uid
       assert provider_identity.is_primary == false
 
@@ -297,7 +297,7 @@ defmodule Zoonk.AccountsTest do
       assert user_identity.user_id == existing_user.id
 
       new_user_identity = Repo.get!(UserIdentity, user_identity.id)
-      assert new_user_identity.identity == :google
+      assert new_user_identity.provider == :google
       assert new_user_identity.identity_id == uid
     end
 
@@ -308,11 +308,11 @@ defmodule Zoonk.AccountsTest do
 
       external_account_1 = oauth_fixture(%{uid: uid, provider: :google, email: email})
       {:ok, _user} = Accounts.login_with_external_account(external_account_1, "en")
-      assert Repo.get_by!(UserIdentity, user_id: user.id, identity: :google)
+      assert Repo.get_by!(UserIdentity, user_id: user.id, provider: :google)
 
       external_account_2 = oauth_fixture(%{uid: uid, provider: :apple, email: email})
       {:ok, _user} = Accounts.login_with_external_account(external_account_2, "en")
-      assert Repo.get_by!(UserIdentity, user_id: user.id, identity: :apple)
+      assert Repo.get_by!(UserIdentity, user_id: user.id, provider: :apple)
     end
 
     test "works with an integer uid" do

@@ -97,13 +97,13 @@ defmodule Zoonk.Configuration do
   @doc """
   Returns a list of supported external accounts.
   """
-  def list_external_accounts, do: [:apple, :github, :google]
+  def list_external_providers, do: [:apple, :github, :google]
 
   @doc group: "Authentication"
   @doc """
   Returns a list of supported user identities.
   """
-  def list_user_identities, do: [:email | list_external_accounts()]
+  def list_user_identity_providers, do: [:email | list_external_providers()]
 
   @doc group: "Language"
   @doc """
