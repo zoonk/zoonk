@@ -52,6 +52,6 @@ defmodule Zoonk.Helpers do
     key
     |> String.replace(~r/\s+/, "_")
     |> String.downcase()
-    |> String.to_atom()
+    |> String.to_existing_atom()
   end
 end

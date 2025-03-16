@@ -41,7 +41,7 @@ defmodule Zoonk.Accounts do
     |> Repo.preload(:user)
     |> case do
       %UserIdentity{user: %User{} = user} -> user
-      _ -> nil
+      _nil -> nil
     end
   end
 
@@ -170,7 +170,10 @@ defmodule Zoonk.Accounts do
   """
   def get_user_identity_by_session_token(token) do
     {:ok, query} = Queries.UserToken.verify_session_token(token)
-    query |> Repo.one() |> Repo.preload(user: :profile)
+
+    query
+    |> Repo.one()
+    |> Repo.preload(user: :profile)
   end
 
   @doc """

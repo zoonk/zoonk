@@ -8,9 +8,7 @@ defmodule Zoonk.AccountFixtures do
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.Scope
-  alias Zoonk.Schemas.User
   alias Zoonk.Schemas.UserIdentity
-  alias Zoonk.Schemas.UserProfile
   alias Zoonk.Schemas.UserToken
 
   def unique_user_email, do: "user#{System.unique_integer()}@zoonk.test"
@@ -27,8 +25,7 @@ defmodule Zoonk.AccountFixtures do
   end
 
   def unconfirmed_user_fixture(attrs \\ %{}) do
-    {:ok,
-     %{user: %User{} = user, user_identity: %UserIdentity{} = user_identity, user_profile: %UserProfile{} = user_profile}} =
+    {:ok, %{user: user, user_identity: user_identity, user_profile: user_profile}} =
       attrs
       |> valid_user_attributes()
       |> Accounts.signup_user_with_email()
