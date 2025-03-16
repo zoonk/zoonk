@@ -7,7 +7,6 @@ defmodule ZoonkWeb.UserAuthHelperTest do
   alias Zoonk.Accounts
   alias Zoonk.Accounts.Scope
   alias Zoonk.Configuration
-  alias Zoonk.Schemas.UserIdentity
   alias ZoonkWeb.Helpers
 
   @remember_me_cookie Configuration.get_cookie_name(:remember_me)
@@ -25,7 +24,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
   end
 
   describe "login_user/2" do
-    test "stores the user token in the session", %{conn: conn, user_identity: %UserIdentity{} = user_identity} do
+    test "stores the user token in the session", %{conn: conn, user_identity: user_identity} do
       conn = Helpers.UserAuth.login_user(conn, user_identity)
       assert token = get_session(conn, :user_token)
       assert get_session(conn, :live_socket_id) == "users_sessions:#{Base.url_encode64(token)}"
@@ -33,10 +32,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
       assert Accounts.get_user_identity_by_session_token(token)
     end
 
-    test "clears everything previously stored in the session", %{
-      conn: conn,
-      user_identity: %UserIdentity{} = user_identity
-    } do
+    test "clears everything previously stored in the session", %{conn: conn, user_identity: user_identity} do
       conn =
         conn
         |> put_session(:to_be_removed, "value")
@@ -45,7 +41,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
       refute get_session(conn, :to_be_removed)
     end
 
-    test "redirects to the configured path", %{conn: conn, user_identity: %UserIdentity{} = user_identity} do
+    test "redirects to the configured path", %{conn: conn, user_identity: user_identity} do
       conn =
         conn
         |> put_session(:user_return_to, "/hello")
@@ -54,7 +50,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
       assert redirected_to(conn) == "/hello"
     end
 
-    test "writes a cookie for the remember_me option", %{conn: conn, user_identity: %UserIdentity{} = user_identity} do
+    test "writes a cookie for the remember_me option", %{conn: conn, user_identity: user_identity} do
       conn =
         conn
         |> fetch_cookies()
@@ -68,10 +64,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
       assert max_age == @max_age
     end
 
-    test "redirects to settings when user is already logged in", %{
-      conn: conn,
-      user_identity: %UserIdentity{} = user_identity
-    } do
+    test "redirects to settings when user is already logged in", %{conn: conn, user_identity: user_identity} do
       conn =
         conn
         |> assign(:current_scope, Scope.for_user(user_identity))
@@ -80,10 +73,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
       assert redirected_to(conn) == "/user/email"
     end
 
-    test "writes a cookie if remember_me was set in previous session", %{
-      conn: conn,
-      user_identity: %UserIdentity{} = user_identity
-    } do
+    test "writes a cookie if remember_me was set in previous session", %{conn: conn, user_identity: user_identity} do
       conn =
         conn
         |> recycle()
@@ -103,7 +93,7 @@ defmodule ZoonkWeb.UserAuthHelperTest do
   end
 
   describe "logout_user/1" do
-    test "erases session and cookies", %{conn: conn, user_identity: %UserIdentity{} = user_identity} do
+    test "erases session and cookies", %{conn: conn, user_identity: user_identity} do
       user_token = Accounts.generate_user_session_token(user_identity)
 
       conn =

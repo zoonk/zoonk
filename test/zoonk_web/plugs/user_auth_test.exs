@@ -6,7 +6,6 @@ defmodule ZoonkWeb.UserAuthPlugTest do
   alias Zoonk.Accounts
   alias Zoonk.Accounts.Scope
   alias Zoonk.Configuration
-  alias Zoonk.Schemas.UserIdentity
   alias ZoonkWeb.Helpers
   alias ZoonkWeb.Plugs
 
@@ -24,7 +23,7 @@ defmodule ZoonkWeb.UserAuthPlugTest do
   end
 
   describe "fetch_current_scope_for_user/2" do
-    test "authenticates user from session", %{conn: conn, user_identity: %UserIdentity{} = user_identity} do
+    test "authenticates user from session", %{conn: conn, user_identity: user_identity} do
       user_token = Accounts.generate_user_session_token(user_identity)
 
       conn =
@@ -35,7 +34,7 @@ defmodule ZoonkWeb.UserAuthPlugTest do
       assert conn.assigns.current_scope.user_identity.id == user_identity.id
     end
 
-    test "authenticates user from cookies", %{conn: conn, user_identity: %UserIdentity{} = user_identity} do
+    test "authenticates user from cookies", %{conn: conn, user_identity: user_identity} do
       logged_in_conn =
         conn
         |> fetch_cookies()
@@ -56,7 +55,7 @@ defmodule ZoonkWeb.UserAuthPlugTest do
                "users_sessions:#{Base.url_encode64(user_token)}"
     end
 
-    test "does not authenticate if data is missing", %{conn: conn, user_identity: %UserIdentity{} = user_identity} do
+    test "does not authenticate if data is missing", %{conn: conn, user_identity: user_identity} do
       Accounts.generate_user_session_token(user_identity)
       conn = Plugs.UserAuth.fetch_current_scope_for_user(conn, [])
       refute get_session(conn, :user_token)

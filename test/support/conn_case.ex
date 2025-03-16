@@ -16,9 +16,6 @@ defmodule ZoonkWeb.ConnCase do
   """
   use ExUnit.CaseTemplate
 
-  alias Zoonk.Schemas.User
-  alias Zoonk.Schemas.UserIdentity
-
   using do
     quote do
       use ZoonkWeb, :verified_routes
@@ -47,7 +44,7 @@ defmodule ZoonkWeb.ConnCase do
   test context.
   """
   def signup_and_login_user(%{conn: conn} = context) do
-    %{user: %User{} = user, user_identity: %UserIdentity{} = user_identity} = Zoonk.AccountFixtures.user_fixture()
+    %{user: user, user_identity: user_identity} = Zoonk.AccountFixtures.user_fixture()
     scope = Zoonk.Accounts.Scope.for_user(user_identity)
 
     opts =
@@ -63,9 +60,8 @@ defmodule ZoonkWeb.ConnCase do
 
   It returns an updated `conn`.
   """
-  def login_user(conn, %UserIdentity{} = user_identity, opts \\ []) do
+  def login_user(conn, user_identity, opts \\ []) do
     token = Zoonk.Accounts.generate_user_session_token(user_identity)
-
     maybe_set_token_inserted_at(token, opts[:token_inserted_at])
 
     conn

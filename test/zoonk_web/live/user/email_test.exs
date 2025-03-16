@@ -5,7 +5,6 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
   import Zoonk.AccountFixtures
 
   alias Zoonk.Accounts
-  alias Zoonk.Schemas.UserIdentity
 
   describe "Settings page" do
     test "renders settings page", %{conn: conn} do
@@ -169,7 +168,7 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
       assert message == "Email change link is invalid or it has expired."
     end
 
-    test "does not update email with invalid token", %{conn: conn, user_identity: %UserIdentity{} = user_identity} do
+    test "does not update email with invalid token", %{conn: conn, user_identity: user_identity} do
       {:error, redirect} = live(conn, ~p"/user/email/confirm/oops")
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/user/email"

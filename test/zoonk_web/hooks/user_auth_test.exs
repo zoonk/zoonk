@@ -7,7 +7,6 @@ defmodule ZoonkWeb.UserAuthHookTest do
   alias Zoonk.Accounts
   alias Zoonk.Accounts.Scope
   alias Zoonk.Configuration
-  alias Zoonk.Schemas.UserIdentity
   alias ZoonkWeb.Hooks
   alias ZoonkWeb.Plugs
 
@@ -74,8 +73,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
         |> put_session(:user_token, user_token)
         |> get_session()
 
-      {:cont, updated_socket} =
-        Hooks.UserAuth.on_mount(:ensure_authenticated, %{}, session, %LiveView.Socket{})
+      {:cont, updated_socket} = Hooks.UserAuth.on_mount(:ensure_authenticated, %{}, session, %LiveView.Socket{})
 
       assert updated_socket.assigns.current_scope.user_identity.id == user_identity.id
     end
@@ -127,7 +125,7 @@ defmodule ZoonkWeb.UserAuthHookTest do
       assert {:cont, _socket} = Hooks.UserAuth.on_mount(:ensure_sudo_mode, %{}, session, socket)
     end
 
-    test "redirects when authentication is too old", %{user_identity: %UserIdentity{} = user_identity} do
+    test "redirects when authentication is too old", %{user_identity: user_identity} do
       sudo_mode_minutes = Configuration.get_max_age(:sudo_mode, :minutes)
       too_old = DateTime.add(DateTime.utc_now(), sudo_mode_minutes - 1, :minute)
 

@@ -101,7 +101,7 @@ defmodule Zoonk.AccountsTest do
 
   describe "update_user_email/2" do
     setup do
-      %{user: %User{} = user, user_identity: %UserIdentity{} = user_identity} = unconfirmed_user_fixture()
+      %{user: user, user_identity: user_identity} = unconfirmed_user_fixture()
       new_email = unique_user_email()
 
       token =
@@ -191,7 +191,7 @@ defmodule Zoonk.AccountsTest do
 
   describe "get_user_identity_by_magic_link_token/1" do
     setup do
-      %{user_identity: %UserIdentity{} = user_identity} = user_fixture()
+      %{user_identity: user_identity} = user_fixture()
       {encoded_token, _hashed_token} = generate_user_magic_link_token(user_identity)
       %{user_identity: user_identity, token: encoded_token}
     end
@@ -213,7 +213,7 @@ defmodule Zoonk.AccountsTest do
 
   describe "login_user_by_magic_link/1" do
     test "confirms user and expires tokens" do
-      %{user_identity: %UserIdentity{} = user_identity} = unconfirmed_user_fixture()
+      %{user_identity: user_identity} = unconfirmed_user_fixture()
       refute user_identity.confirmed_at
       {encoded_token, hashed_token} = generate_user_magic_link_token(user_identity)
 
@@ -224,7 +224,7 @@ defmodule Zoonk.AccountsTest do
     end
 
     test "returns user and (deleted) token for confirmed user" do
-      %{user_identity: %UserIdentity{} = user_identity} = user_fixture()
+      %{user_identity: user_identity} = user_fixture()
       assert user_identity.confirmed_at
       {encoded_token, _hashed_token} = generate_user_magic_link_token(user_identity)
       assert {:ok, ^user_identity, []} = Accounts.login_user_by_magic_link(encoded_token)
@@ -243,7 +243,7 @@ defmodule Zoonk.AccountsTest do
 
   describe "deliver_login_instructions/2" do
     setup do
-      %{user: %User{} = user, user_identity: %UserIdentity{} = user_identity} = unconfirmed_user_fixture()
+      %{user: user, user_identity: user_identity} = unconfirmed_user_fixture()
       %{user: user, user_identity: user_identity}
     end
 
@@ -266,7 +266,7 @@ defmodule Zoonk.AccountsTest do
 
       auth = oauth_fixture(%{uid: uid, email: email, picture: picture})
 
-      {:ok, %UserIdentity{} = user_identity} = Accounts.login_with_external_account(auth, "en")
+      {:ok, user_identity} = Accounts.login_with_external_account(auth, "en")
 
       assert user_identity.provider == :email
       assert user_identity.identity_id == email
@@ -289,10 +289,10 @@ defmodule Zoonk.AccountsTest do
       email = unique_user_email()
       uid = Ecto.UUID.generate()
 
-      %{user: %User{} = existing_user} = user_fixture(%{identity_id: email})
+      %{user: existing_user} = user_fixture(%{identity_id: email})
       auth = oauth_fixture(%{uid: uid, email: email})
 
-      {:ok, %UserIdentity{} = user_identity} = Accounts.login_with_external_account(auth, "en")
+      {:ok, user_identity} = Accounts.login_with_external_account(auth, "en")
 
       assert user_identity.user_id == existing_user.id
 
@@ -304,7 +304,7 @@ defmodule Zoonk.AccountsTest do
     test "adds a second external account to an existing user" do
       email = unique_user_email()
       uid = Ecto.UUID.generate()
-      %{user: %User{} = user} = user_fixture(%{identity_id: email})
+      %{user: user} = user_fixture(%{identity_id: email})
 
       external_account_1 = oauth_fixture(%{uid: uid, provider: :google, email: email})
       {:ok, _user} = Accounts.login_with_external_account(external_account_1, "en")
@@ -323,7 +323,7 @@ defmodule Zoonk.AccountsTest do
 
       auth = oauth_fixture(%{uid: uid, email: email, picture: picture})
 
-      assert {:ok, %UserIdentity{} = user_identity} = Accounts.login_with_external_account(auth, "en")
+      assert {:ok, user_identity} = Accounts.login_with_external_account(auth, "en")
       assert user_identity.identity_id == to_string(uid)
     end
 
@@ -333,7 +333,7 @@ defmodule Zoonk.AccountsTest do
 
       auth = oauth_fixture(%{name: name, username: username})
 
-      assert {:ok, %UserIdentity{} = user_identity} = Accounts.login_with_external_account(auth, "en")
+      assert {:ok, user_identity} = Accounts.login_with_external_account(auth, "en")
 
       user_profile = Repo.get_by!(UserProfile, user_id: user_identity.user_id)
       assert user_profile.display_name == name
@@ -348,8 +348,8 @@ defmodule Zoonk.AccountsTest do
       auth1 = oauth_fixture(%{email: email1, provider: :google, username: username})
       auth2 = oauth_fixture(%{email: email2, provider: :apple, username: username})
 
-      {:ok, %UserIdentity{} = user_identity1} = Accounts.login_with_external_account(auth1, "en")
-      {:ok, %UserIdentity{} = user_identity2} = Accounts.login_with_external_account(auth2, "en")
+      {:ok, user_identity1} = Accounts.login_with_external_account(auth1, "en")
+      {:ok, user_identity2} = Accounts.login_with_external_account(auth2, "en")
 
       profile1 = Repo.get_by!(UserProfile, user_id: user_identity1.user_id)
       profile2 = Repo.get_by!(UserProfile, user_id: user_identity2.user_id)

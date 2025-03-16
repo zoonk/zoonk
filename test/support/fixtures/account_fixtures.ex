@@ -8,7 +8,6 @@ defmodule Zoonk.AccountFixtures do
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.Scope
-  alias Zoonk.Schemas.UserIdentity
   alias Zoonk.Schemas.UserToken
 
   def unique_user_email, do: "user#{System.unique_integer()}@zoonk.test"
@@ -37,7 +36,7 @@ defmodule Zoonk.AccountFixtures do
     %{user: user, user_identity: user_identity, user_profile: user_profile} = unconfirmed_user_fixture(attrs)
     token = extract_user_token(fn url -> Accounts.deliver_login_instructions(user_identity, url) end)
 
-    {:ok, %UserIdentity{} = confirmed_user_identity, _expired_tokens} = Accounts.login_user_by_magic_link(token)
+    {:ok, confirmed_user_identity, _expired_tokens} = Accounts.login_user_by_magic_link(token)
 
     %{user: user, user_identity: confirmed_user_identity, user_profile: user_profile}
   end
@@ -46,7 +45,7 @@ defmodule Zoonk.AccountFixtures do
     user_scope_fixture(user_fixture().user_identity)
   end
 
-  def user_scope_fixture(%UserIdentity{} = user_identity) do
+  def user_scope_fixture(user_identity) do
     Scope.for_user(user_identity)
   end
 
@@ -62,7 +61,7 @@ defmodule Zoonk.AccountFixtures do
     |> Zoonk.Repo.update_all(set: [inserted_at: inserted_at])
   end
 
-  def generate_user_magic_link_token(%UserIdentity{} = user_identity) do
+  def generate_user_magic_link_token(user_identity) do
     {encoded_token, user_token} = Zoonk.Accounts.TokenBuilder.build_email_token(user_identity, "login")
     Zoonk.Repo.insert!(user_token)
     {encoded_token, user_token.token}

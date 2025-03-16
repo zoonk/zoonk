@@ -12,7 +12,7 @@ defmodule ZoonkWeb.UserAuthControllerTest do
   end
 
   describe "POST /login - magic link" do
-    test "logs the user in", %{conn: conn, confirmed: %{user_identity: %UserIdentity{} = user_identity}} do
+    test "logs the user in", %{conn: conn, confirmed: %{user_identity: user_identity}} do
       {token, _hashed_token} = generate_user_magic_link_token(user_identity)
 
       post_conn = post(conn, ~p"/login", %{"user" => %{"token" => token}})
@@ -33,7 +33,7 @@ defmodule ZoonkWeb.UserAuthControllerTest do
   end
 
   describe "GET /confirm/:token" do
-    test "confirms the given token once", %{conn: conn, unconfirmed: %{user_identity: %UserIdentity{} = user_identity}} do
+    test "confirms the given token once", %{conn: conn, unconfirmed: %{user_identity: user_identity}} do
       token = extract_user_token(fn url -> Accounts.deliver_login_instructions(user_identity, url) end)
 
       conn = get(conn, ~p"/confirm/#{token}")
@@ -52,10 +52,7 @@ defmodule ZoonkWeb.UserAuthControllerTest do
       refute get_session(logout_conn, :user_token)
     end
 
-    test "logs confirmed user in without changing confirmed_at", %{
-      conn: conn,
-      confirmed: %{user_identity: %UserIdentity{} = user_identity}
-    } do
+    test "logs confirmed user in without changing confirmed_at", %{conn: conn, confirmed: %{user_identity: user_identity}} do
       token = extract_user_token(fn url -> Accounts.deliver_login_instructions(user_identity, url) end)
       conn = get(conn, ~p"/login/t/#{token}")
 
@@ -73,7 +70,7 @@ defmodule ZoonkWeb.UserAuthControllerTest do
   end
 
   describe "DELETE /logout" do
-    test "logs the user out", %{conn: conn, confirmed: %{user_identity: %UserIdentity{} = user_identity}} do
+    test "logs the user out", %{conn: conn, confirmed: %{user_identity: user_identity}} do
       conn =
         conn
         |> login_user(user_identity)

@@ -7,7 +7,6 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
   alias Zoonk.Accounts
   alias Zoonk.Repo
   alias Zoonk.Schemas.User
-  alias Zoonk.Schemas.UserIdentity
 
   describe "Sign up with email page" do
     test "renders signup page", %{conn: conn} do
@@ -94,7 +93,7 @@ defmodule ZoonkWeb.UserLive.SignUpWithEmailTest do
     test "renders errors for duplicated email", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/signup/email")
 
-      %{user_identity: %UserIdentity{} = user_identity} = user_fixture(%{"identity_id" => "test@email.com"})
+      %{user_identity: user_identity} = user_fixture(%{"identity_id" => "test@email.com"})
 
       result =
         lv
