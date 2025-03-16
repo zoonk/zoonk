@@ -3,7 +3,6 @@ defmodule ZoonkWeb.Hooks.Language do
   LiveView hooks for setting the application language.
   """
   alias Zoonk.Accounts.Scope
-  alias Zoonk.Schemas.User
 
   @doc """
   Sets the application language.
@@ -33,5 +32,9 @@ defmodule ZoonkWeb.Hooks.Language do
   end
 
   defp get_user_language(nil, session), do: Map.get(session, "language")
-  defp get_user_language(%Scope{user: %User{language: language}}, _session), do: Atom.to_string(language)
+
+  defp get_user_language(%Scope{} = scope, _session) do
+    language = scope.user_identity.user.language
+    Atom.to_string(language)
+  end
 end

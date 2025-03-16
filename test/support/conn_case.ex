@@ -14,7 +14,6 @@ defmodule ZoonkWeb.ConnCase do
   by setting `use ZoonkWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
-
   use ExUnit.CaseTemplate
 
   using do
@@ -45,25 +44,24 @@ defmodule ZoonkWeb.ConnCase do
   test context.
   """
   def signup_and_login_user(%{conn: conn} = context) do
-    user = Zoonk.AccountFixtures.user_fixture()
-    scope = Zoonk.Accounts.Scope.for_user(user)
+    %{user: user, user_identity: user_identity} = Zoonk.AccountFixtures.user_fixture()
+    scope = Zoonk.Accounts.Scope.for_user(user_identity)
 
     opts =
       context
       |> Map.take([:token_inserted_at])
       |> Enum.to_list()
 
-    %{conn: login_user(conn, user, opts), user: user, scope: scope}
+    %{conn: login_user(conn, user_identity, opts), user: user, scope: scope}
   end
 
   @doc """
-  Logs the given `user` into the `conn`.
+  Logs the given `user_identity` into the `conn`.
 
   It returns an updated `conn`.
   """
-  def login_user(conn, user, opts \\ []) do
-    token = Zoonk.Accounts.generate_user_session_token(user)
-
+  def login_user(conn, user_identity, opts \\ []) do
+    token = Zoonk.Accounts.generate_user_session_token(user_identity)
     maybe_set_token_inserted_at(token, opts[:token_inserted_at])
 
     conn

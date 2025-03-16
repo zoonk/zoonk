@@ -5,7 +5,7 @@ defmodule Zoonk.Accounts.UserProfileBuilder do
   import Ecto.Query, warn: false
 
   alias Zoonk.Repo
-  alias Zoonk.Schemas.User
+  alias Zoonk.Schemas.UserIdentity
   alias Zoonk.Schemas.UserProfile
 
   @doc """
@@ -15,13 +15,13 @@ defmodule Zoonk.Accounts.UserProfileBuilder do
 
   ## Examples
 
-      iex> build_initial_user_profile(%{user: %User{id: 1, email: "leo@davinci.it"}})
+      iex> build_initial_user_profile(%{user_identity: %UserIdentity{user_id: 1, identity_id: "leo@davinci.it"}})
       %UserProfile{username: "leo", user_id: 1}
 
-      iex> build_initial_user_profile(%{user: %User{id: 2, email: "leo@davinci.it"}})
+      iex> build_initial_user_profile(%{user_identity: %UserIdentity{user_id: 2, identity_id: "leo@davinci.com"}})
       %UserProfile{username: "leo_1234566", user_id: 2}
   """
-  def build_initial_user_profile(%{user: %User{id: user_id, email: email}}, opts \\ []) do
+  def build_initial_user_profile(%{user_identity: %UserIdentity{user_id: user_id, identity_id: email}}, opts \\ []) do
     %UserProfile{
       display_name: opts[:display_name],
       picture_url: opts[:picture_url],

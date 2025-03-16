@@ -12,7 +12,7 @@ defmodule Zoonk.Schemas.UserToken do
   | `token` | `Binary` | The token used for authentication or verification. |
   | `context` | `String` | The context in which the token is used (e.g., "email_verification"). |
   | `sent_to` | `String` | The email address or phone number to which the token was sent. |
-  | `user_id` | `Integer` | The ID from `Zoonk.Schemas.User`. |
+  | `user_identity_id` | `Integer` | The ID from `Zoonk.Schemas.UserIdentity`. |
   | `inserted_at` | `DateTime` | Timestamp when the token was created. |
   | `updated_at` | `DateTime` | Timestamp when the token was last updated. |
   """
@@ -22,7 +22,8 @@ defmodule Zoonk.Schemas.UserToken do
     field :token, :binary
     field :context, :string
     field :sent_to, :string
-    belongs_to :user, Zoonk.Schemas.User
+
+    belongs_to :user_identity, Zoonk.Schemas.UserIdentity
 
     timestamps(type: :utc_datetime, updated_at: false)
   end

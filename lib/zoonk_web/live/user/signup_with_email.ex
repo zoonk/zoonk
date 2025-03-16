@@ -6,7 +6,7 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.Scope
-  alias Zoonk.Schemas.User
+  alias Zoonk.Schemas.UserIdentity
   alias ZoonkWeb.Helpers
 
   def render(assigns) do
@@ -24,16 +24,10 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
           {dgettext("users", "Oops, something went wrong! Please check the errors below.")}
         </.error>
 
-        <.input
-          field={@form[:language]}
-          type="select"
-          label={dgettext("users", "Language")}
-          options={Zoonk.Configuration.list_languages(:options)}
-          required
-        />
+        <.input type="hidden" field={@form[:provider]} />
 
         <.input
-          field={@form[:email]}
+          field={@form[:identity_id]}
           type="email"
           label={dgettext("users", "Email")}
           autocomplete="username"
@@ -53,29 +47,32 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
     """
   end
 
-  def mount(_params, _session, %{assigns: %{current_scope: %Scope{user: %User{}}}} = socket) do
+  def mount(_params, _session, %{assigns: %{current_scope: %Scope{user_identity: %UserIdentity{}}}} = socket) do
     {:ok, redirect(socket, to: Helpers.UserAuth.signed_in_path(socket))}
   end
 
   def mount(_params, session, socket) do
     language = Map.get(session, "language")
-    changeset = Accounts.change_user_email(%User{language: language})
+    changeset = Accounts.change_user_identity(%UserIdentity{provider: :email})
 
     socket =
       socket
       |> assign(check_errors: false)
       |> assign_form(changeset)
+      |> assign(:language, language)
       |> assign(page_title: dgettext("users", "Create an account"))
 
     {:ok, socket, temporary_assigns: [form: nil]}
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do
-    case Accounts.signup_user(user_params) do
-      {:ok, user} ->
+    user_params = Map.put(user_params, "language", socket.assigns.language)
+
+    case Accounts.signup_user_with_email(user_params) do
+      {:ok, %{user_identity: %UserIdentity{} = user_identity}} ->
         {:ok, _url_fn} =
           Accounts.deliver_login_instructions(
-            user,
+            user_identity,
             &url(~p"/confirm/#{&1}")
           )
 
@@ -84,12 +81,12 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
          |> put_flash(
            :info,
            dgettext("users", "An email was sent to %{email}, please access it to confirm your account.",
-             email: user.email
+             email: user_identity.identity_id
            )
          )
          |> push_navigate(to: ~p"/login/email")}
 
-      {:error, %Ecto.Changeset{} = changeset} ->
+      {:error, :user_identity, %Ecto.Changeset{} = changeset, _user_info} ->
         {:noreply,
          socket
          |> assign(check_errors: true)
@@ -98,7 +95,7 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
   end
 
   def handle_event("validate", %{"user" => user_params}, socket) do
-    changeset = Accounts.change_user_email(%User{}, user_params)
+    changeset = Accounts.change_user_identity(%UserIdentity{}, user_params)
     {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
   end
 

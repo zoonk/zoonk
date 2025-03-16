@@ -9,6 +9,7 @@ defmodule Zoonk.Queries.UserToken do
   import Ecto.Query
 
   alias Zoonk.Configuration
+  alias Zoonk.Schemas.UserIdentity
   alias Zoonk.Schemas.UserToken
 
   @doc """
@@ -19,14 +20,14 @@ defmodule Zoonk.Queries.UserToken do
   end
 
   @doc """
-  Gets all tokens for the given user for the given contexts.
+  Gets all tokens for the given user identity for the given contexts.
   """
-  def by_user_and_contexts(user, :all) do
-    where(UserToken, [t], t.user_id == ^user.id)
+  def by_user_and_contexts(%UserIdentity{} = user_identity, :all) do
+    where(UserToken, [t], t.user_identity_id == ^user_identity.id)
   end
 
-  def by_user_and_contexts(user, contexts) when is_list(contexts) do
-    where(UserToken, [t], t.user_id == ^user.id and t.context in ^contexts)
+  def by_user_and_contexts(%UserIdentity{} = user_identity, contexts) when is_list(contexts) do
+    where(UserToken, [t], t.user_identity_id == ^user_identity.id and t.context in ^contexts)
   end
 
   @doc """
@@ -39,7 +40,7 @@ defmodule Zoonk.Queries.UserToken do
   @doc """
   Checks if the token is valid and returns its underlying lookup query.
 
-  The query returns the user found by the token, if any.
+  The query returns the user identity found by the token, if any.
 
   The token is valid if it matches the value in the database and it has
   not expired (after @session_validity_in_days).
@@ -50,9 +51,9 @@ defmodule Zoonk.Queries.UserToken do
     query =
       token
       |> by_token_and_context("session")
-      |> join(:inner, [token], user in assoc(token, :user))
+      |> join(:inner, [token], user_identity in assoc(token, :user_identity))
       |> where([token], token.inserted_at > ago(^session_validity_in_days, "day"))
-      |> select([token, user], %{user | authenticated_at: token.inserted_at})
+      |> select([token, user_identity], %{user_identity | authenticated_at: token.inserted_at})
 
     {:ok, query}
   end
@@ -60,7 +61,7 @@ defmodule Zoonk.Queries.UserToken do
   @doc """
   Checks if the token is valid and returns its underlying lookup query.
 
-  If found, the query returns a tuple of the form `{user, token}`.
+  If found, the query returns a tuple of the form `{user_identity, token}`.
 
   The given token is valid if it matches its hashed counterpart in the
   database. This function also checks if the token is being used within
@@ -74,10 +75,10 @@ defmodule Zoonk.Queries.UserToken do
         query =
           hashed_token
           |> by_token_and_context("login")
-          |> join(:inner, [token], user in assoc(token, :user))
+          |> join(:inner, [token], user_identity in assoc(token, :user_identity))
           |> where([token], token.inserted_at > ago(^Configuration.get_max_age(:magic_link, :minutes), "minute"))
-          |> where([token, user], token.sent_to == user.email)
-          |> select([token, user], {user, token})
+          |> where([token, user_identity], token.sent_to == user_identity.identity_id)
+          |> select([token, user_identity], {user_identity, token})
 
         {:ok, query}
 
@@ -91,10 +92,10 @@ defmodule Zoonk.Queries.UserToken do
 
   The query returns the user_token found by the token, if any.
 
-  This is used to validate requests to change the user
-  email.
-  The given token is valid if it matches its hashed counterpart in the
-  database and if it has not expired.
+  This is used to validate requests to change the user email.
+  The given token is valid if it matches its hashed counterpart
+  in the database and if it has not expired.
+
   The context must always start with "change:".
   """
   def verify_change_email_token(token, "change:" <> _rest = context) do

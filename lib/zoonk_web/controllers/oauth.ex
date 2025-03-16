@@ -5,7 +5,7 @@ defmodule ZoonkWeb.Controllers.OAuth do
   use ZoonkWeb, :controller
 
   alias Zoonk.Accounts
-  alias Zoonk.Schemas.User
+  alias Zoonk.Schemas.UserIdentity
   alias ZoonkWeb.Helpers.UserAuth
 
   @oauth_state_cookie "_zk_oauth_state"
@@ -45,8 +45,8 @@ defmodule ZoonkWeb.Controllers.OAuth do
     auth = Map.put(user_from_provider, "provider", provider)
 
     case Accounts.login_with_external_account(auth, language) do
-      {:ok, %User{} = user} ->
-        UserAuth.login_user(conn, user)
+      {:ok, %UserIdentity{} = user_identity} ->
+        UserAuth.login_user(conn, user_identity)
 
       {:error, _changeset} ->
         redirect_on_failure(conn)

@@ -16,17 +16,17 @@ defmodule Zoonk.Accounts.Scope do
   growing application requirements.
   """
 
-  alias Zoonk.Schemas.User
+  alias Zoonk.Schemas.UserIdentity
 
-  defstruct user: nil
+  defstruct user_identity: nil
 
   @doc """
-  Creates a scope for the given user.
+  Creates a scope for the given user identity.
 
-  Returns nil if no user is given.
+  Returns nil if no user identity is given.
   """
-  def for_user(%User{} = user) do
-    %__MODULE__{user: user}
+  def for_user(%UserIdentity{} = user_identity) do
+    %__MODULE__{user_identity: user_identity}
   end
 
   def for_user(nil), do: nil

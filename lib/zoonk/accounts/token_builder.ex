@@ -6,6 +6,7 @@ defmodule Zoonk.Accounts.TokenBuilder do
   and email-based authentication.
   """
   alias Zoonk.Configuration
+  alias Zoonk.Schemas.UserIdentity
   alias Zoonk.Schemas.UserToken
 
   @rand_size 32
@@ -28,10 +29,16 @@ defmodule Zoonk.Accounts.TokenBuilder do
   You could then use this information to display all valid sessions
   and devices in the UI and allow users to explicitly expire any
   session they deem invalid.
+
+  ## Examples
+
+      iex> build_session_token(%UserIdentity{id: 1})
+      {<<...>>, %UserToken{token: <<...>>, context: "session", user_identity_id: 1}}
+
   """
-  def build_session_token(user) do
+  def build_session_token(%UserIdentity{} = user_identity) do
     token = :crypto.strong_rand_bytes(@rand_size)
-    {token, %UserToken{token: token, context: "session", user_id: user.id}}
+    {token, %UserToken{token: token, context: "session", user_identity_id: user_identity.id}}
   end
 
   @doc """
@@ -47,11 +54,11 @@ defmodule Zoonk.Accounts.TokenBuilder do
   Users can easily adapt the existing code to provide other types of delivery methods,
   for example, by phone numbers.
   """
-  def build_email_token(user, context) do
-    build_hashed_token(user, context, user.email)
+  def build_email_token(%UserIdentity{} = user_identity, context) do
+    build_hashed_token(user_identity, context, user_identity.identity_id)
   end
 
-  defp build_hashed_token(user, context, sent_to) do
+  defp build_hashed_token(%UserIdentity{} = user_identity, context, sent_to) do
     token = :crypto.strong_rand_bytes(@rand_size)
     hashed_token = :crypto.hash(Configuration.get_hash_algorithm(), token)
 
@@ -60,7 +67,7 @@ defmodule Zoonk.Accounts.TokenBuilder do
        token: hashed_token,
        context: context,
        sent_to: sent_to,
-       user_id: user.id
+       user_identity_id: user_identity.id
      }}
   end
 end
