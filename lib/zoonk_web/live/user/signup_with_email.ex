@@ -66,8 +66,7 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do
-    language = socket.assigns.language
-    user_params = Map.put(user_params, "language", language)
+    user_params = Map.put(user_params, "language", socket.assigns.language)
 
     case Accounts.signup_user_with_email(user_params) do
       {:ok, %{user_identity: %UserIdentity{} = user_identity}} ->
