@@ -2,6 +2,12 @@
 
 These are some of the terms used in our application. It helps to understand how this application is structured.
 
+## User Identity
+
+Users can have multiple identities. For example, a user can have a personal account and a work account. This is useful for organizations that want to use Zoonk as a white-label solution.
+
+We keep track of their indentities using `Zoonk.Schemas.UserIdentity`. This schema has a `user_id` field that points to `Zoonk.Schemas.User`. This means a user can have multiple email addresses, social logins, and other identities.
+
 ## Organization
 
 Zoonk is a multi-tenant application. This means that multiple organizations can use the same instance of the application. Each organization has its own set of members and data.
