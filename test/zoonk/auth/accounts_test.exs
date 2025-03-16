@@ -393,18 +393,21 @@ defmodule Zoonk.AccountsTest do
 
       {:ok, _user_identity} = Accounts.login_with_external_account(new_oauth, "en")
 
-      user_data =
+      identities =
         User
         |> Repo.get!(user.id)
         |> Repo.preload(:identities)
+        |> Map.get(:identities)
 
-      [_old_id, new_provider_identity, new_email_identity] = user_data.identities
+      assert Enum.count(identities) == 3
 
+      new_email_identity = Repo.get_by!(UserIdentity, identity_id: new_email)
       assert new_email_identity.provider == :email
-      assert new_email_identity.identity_id == new_email
       assert new_email_identity.is_primary == false
       assert new_email_identity.confirmed_at != nil
 
+      new_provider_identity = Repo.get_by!(UserIdentity, identity_id: uid)
+      assert new_provider_identity.provider == new_oauth["provider"]
       assert new_provider_identity.identity_id == uid
       assert new_provider_identity.is_primary == false
       assert new_provider_identity.confirmed_at != nil
