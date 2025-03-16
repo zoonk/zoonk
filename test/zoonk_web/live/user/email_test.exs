@@ -49,6 +49,62 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
       assert is_nil(Accounts.get_user_identity_by_email(new_email))
     end
 
+    test "doesn't show an error if the email doesn't change (phx-update)", %{conn: conn, user_identity: user_identity} do
+      {:ok, lv, _html} = live(conn, ~p"/user/email")
+
+      result =
+        lv
+        |> element("#email_form")
+        |> render_change(%{
+          "user" => %{"identity_id" => user_identity.identity_id}
+        })
+
+      refute result =~ "has already been taken"
+    end
+
+    test "doesn't show an error if the email doesn't change (phx-submit)", %{conn: conn, user_identity: user_identity} do
+      {:ok, lv, _html} = live(conn, ~p"/user/email")
+
+      result =
+        lv
+        |> form("#email_form", %{
+          "user" => %{"identity_id" => user_identity.identity_id}
+        })
+        |> render_submit()
+
+      refute result =~ "has already been taken"
+    end
+
+    test "shows error for duplicate email (phx-change)", %{conn: conn} do
+      %{user_identity: user_identity} = user_fixture()
+
+      {:ok, lv, _html} = live(conn, ~p"/user/email")
+
+      result =
+        lv
+        |> element("#email_form")
+        |> render_change(%{
+          "user" => %{"identity_id" => user_identity.identity_id}
+        })
+
+      assert result =~ "has already been taken"
+    end
+
+    test "shows error for duplicate email (phx-submit)", %{conn: conn} do
+      %{user_identity: user_identity} = user_fixture()
+
+      {:ok, lv, _html} = live(conn, ~p"/user/email")
+
+      result =
+        lv
+        |> form("#email_form", %{
+          "user" => %{"identity_id" => user_identity.identity_id}
+        })
+        |> render_submit()
+
+      assert result =~ "has already been taken"
+    end
+
     test "renders errors with invalid data (phx-change)", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/user/email")
 

@@ -110,8 +110,8 @@ defmodule Zoonk.Accounts do
       %Ecto.Changeset{data: %UserIdentity{}}
 
   """
-  def change_user_identity(%UserIdentity{} = user_identity, attrs \\ %{}, opts \\ []) do
-    UserIdentity.changeset(user_identity, attrs, opts)
+  def change_user_identity(%UserIdentity{} = user_identity, attrs \\ %{}) do
+    UserIdentity.changeset(user_identity, attrs)
   end
 
   @doc """
