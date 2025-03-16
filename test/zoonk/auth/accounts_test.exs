@@ -371,5 +371,130 @@ defmodule Zoonk.AccountsTest do
       assert profile2.username != username
       assert String.starts_with?(profile2.username, username)
     end
+
+    test "adds a new confirmed email identity when the external account email changed" do
+      old_email = unique_user_email()
+      new_email = unique_user_email()
+      uid = Ecto.UUID.generate()
+
+      old_oauth = oauth_fixture(%{uid: uid, email: old_email})
+      new_oauth = oauth_fixture(%{uid: uid, email: new_email})
+
+      %{user: user} = user_fixture(%{identity_id: old_email})
+      {:ok, _user_identity} = Accounts.login_with_external_account(old_oauth, "en")
+
+      old_email_identity = Repo.get_by!(UserIdentity, user_id: user.id, provider: :email)
+      assert old_email_identity.identity_id == old_email
+      assert old_email_identity.is_primary == true
+
+      old_provider_identity = Repo.get_by!(UserIdentity, user_id: user.id, provider: :google)
+      assert old_provider_identity.identity_id == uid
+      assert old_provider_identity.is_primary == false
+
+      {:ok, _user_identity} = Accounts.login_with_external_account(new_oauth, "en")
+
+      user_data =
+        User
+        |> Repo.get!(user.id)
+        |> Repo.preload(:identities)
+
+      [_old_id, new_provider_identity, new_email_identity] = user_data.identities
+
+      assert new_email_identity.provider == :email
+      assert new_email_identity.identity_id == new_email
+      assert new_email_identity.is_primary == false
+      assert new_email_identity.confirmed_at != nil
+
+      assert new_provider_identity.identity_id == uid
+      assert new_provider_identity.is_primary == false
+      assert new_provider_identity.confirmed_at != nil
+    end
+
+    test "unlink provider if the email changed and belongs to a confirmed user" do
+      old_email = unique_user_email()
+      new_email = unique_user_email()
+      uid = Ecto.UUID.generate()
+
+      old_oauth = oauth_fixture(%{uid: uid, email: old_email})
+      new_oauth = oauth_fixture(%{uid: uid, email: new_email})
+
+      %{user: user} = user_fixture(%{identity_id: old_email})
+      %{user: other_user} = user_fixture(%{identity_id: new_email})
+
+      # link an external account to the old email
+      {:ok, _user_identity} = Accounts.login_with_external_account(old_oauth, "en")
+
+      old_email_identity = Repo.get_by!(UserIdentity, user_id: user.id, provider: :email)
+      assert old_email_identity.identity_id == old_email
+      assert old_email_identity.is_primary == true
+
+      old_provider_identity = Repo.get_by!(UserIdentity, user_id: user.id, provider: :google)
+      assert old_provider_identity.identity_id == uid
+      assert old_provider_identity.is_primary == false
+
+      # now imagine the user changed their external account email
+      # and the new email belongs to a CONFIRMED user
+      # we need to link this email to the other user
+      {:ok, _user_identity} = Accounts.login_with_external_account(new_oauth, "en")
+
+      # check the old provider is no longer linked to the original account
+      refute Repo.get_by(UserIdentity, user_id: user.id, identity_id: uid)
+
+      # check this external account is linked to the other user
+      assert Repo.get_by!(UserIdentity, user_id: other_user.id, identity_id: uid)
+    end
+
+    test "don't unlink provider if the email changed and belongs to an unconfirmed user" do
+      old_email = unique_user_email()
+      new_email = unique_user_email()
+      uid = Ecto.UUID.generate()
+
+      old_oauth = oauth_fixture(%{uid: uid, email: old_email})
+      new_oauth = oauth_fixture(%{uid: uid, email: new_email})
+
+      %{user: user} = user_fixture(%{identity_id: old_email})
+      %{user: unconfirmed_user} = unconfirmed_user_fixture(%{identity_id: new_email})
+
+      # check the other user has an unconfirmed email identity
+      unconfirmed_identity = Repo.get_by!(UserIdentity, user_id: unconfirmed_user.id, identity_id: new_email)
+      assert is_nil(unconfirmed_identity.confirmed_at)
+
+      # link an external account to the old email
+      {:ok, _user_identity} = Accounts.login_with_external_account(old_oauth, "en")
+
+      # now imagine the user changed their external account email
+      # and the new email belongs to an UNCONFIRMED user
+      # we need to remove this email from the unconfirmed user
+      {:ok, _user_identity} = Accounts.login_with_external_account(new_oauth, "en")
+
+      # check this email is no longer linked to the unconfirmed user
+      refute Repo.get_by(UserIdentity, user_id: unconfirmed_user.id, identity_id: new_email)
+
+      # check the provider is still linked to the original user
+      assert Repo.get_by!(UserIdentity, user_id: user.id, identity_id: uid)
+    end
+  end
+
+  describe "delete_user_identity/1" do
+    test "deletes the user identity and its tokens" do
+      %{user_identity: user_identity} = user_fixture()
+
+      # add external account/identity
+      oauth = oauth_fixture(%{email: user_identity.identity_id})
+      {:ok, external_identity} = Accounts.login_with_external_account(oauth, "en")
+
+      # add token
+      Accounts.generate_user_session_token(external_identity)
+      assert Repo.get_by!(UserToken, user_identity_id: external_identity.id)
+
+      assert {:ok, _user_identity} = Accounts.delete_user_identity(external_identity)
+      refute Repo.get_by(UserToken, user_identity_id: external_identity.id)
+      refute Repo.get(UserIdentity, external_identity.id)
+    end
+
+    test "does not delete the primary identity if confirmed" do
+      %{user_identity: user_identity} = user_fixture()
+      assert {:error, :forbidden} = Accounts.delete_user_identity(user_identity)
+    end
   end
 end

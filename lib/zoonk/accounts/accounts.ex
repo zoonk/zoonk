@@ -251,6 +251,21 @@ defmodule Zoonk.Accounts do
     :ok
   end
 
+  @doc """
+  Deletes an email identity.
+  """
+  def delete_user_identity(%UserIdentity{is_primary: true, confirmed_at: %DateTime{}}) do
+    {:error, :forbidden}
+  end
+
+  def delete_user_identity(%UserIdentity{} = user_identity) do
+    Ecto.Multi.new()
+    |> Ecto.Multi.delete(:user_identity, user_identity)
+    |> Ecto.Multi.delete_all(:tokens, Queries.UserToken.by_user_and_contexts(user_identity, :all))
+    |> Repo.transaction()
+    |> Helpers.EctoUtils.get_changeset_from_transaction(:user_identity)
+  end
+
   ## Token helper
 
   defp update_user_and_delete_all_tokens(changeset) do
@@ -282,21 +297,71 @@ defmodule Zoonk.Accounts do
       iex> login_with_external_account(nil, "en")
       {:error, %Ecto.Changeset{}}
   """
-  def login_with_external_account(auth, language) do
-    user_identity = get_user_identity_by_email(auth["email"])
-    login_with_external_account(auth, language, user_identity)
+  def login_with_external_account(oauth, language) do
+    user_identity = get_user_identity_by_external_account(oauth)
+    login_with_external_account(oauth, language, user_identity)
   end
 
-  # If the user exists, then link the external account
-  defp login_with_external_account(auth, _lang, %UserIdentity{} = user_identity) do
+  # link the external account to an existing user
+  defp login_with_external_account(oauth, _lang, %UserIdentity{provider: :email} = user_identity) do
     %{user_identity: user_identity}
-    |> user_identity_changeset(get_identity_attrs(auth))
-    |> Repo.insert(on_conflict: :nothing)
+    |> user_identity_changeset(get_identity_attrs(oauth))
+    |> Repo.insert()
+  end
+
+  # if the account is already linked, check if the email stays the same
+  # if the email is different, we may need to add it to user identities
+  defp login_with_external_account(oauth, _lang, %UserIdentity{} = external_identity) do
+    email_identity = get_user_identity_by_email(oauth["email"])
+    maybe_add_email(email_identity, external_identity, oauth)
   end
 
   # Create a new user if it doesn't exist
   defp login_with_external_account(auth, language, nil) do
     signup_user_with_external_account(auth, language)
+  end
+
+  # don't add if the email stays the same and belongs to the same user
+  defp maybe_add_email(email_identity, external_identity, _oauth)
+       when email_identity.user_id == external_identity.user_id do
+    {:ok, external_identity}
+  end
+
+  # in some cases, another user may have added this email but
+  # they didn't confirm it because they don't own it
+  # in that case, we remove the unconfirmed identity from the other user
+  # and add the new email to this user's identities
+  defp maybe_add_email(email_identity, external_identity, oauth)
+       when email_identity.user_id != external_identity.user_id and is_nil(email_identity.confirmed_at) do
+    case delete_user_identity(email_identity) do
+      {:ok, _changeset} ->
+        %{user_identity: external_identity}
+        |> user_identity_changeset(get_identity_attrs(oauth, :email, primary?: false))
+        |> Repo.insert()
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
+  end
+
+  # in some cases, this user may have previously created
+  # and confirmed it with this email address.
+  # To prevent conflicts, we keep their confirmed email
+  # identity but update the external identity association
+  # to the same user as the email identity.
+  defp maybe_add_email(email_identity, external_identity, _oauth)
+       when email_identity.user_id != external_identity.user_id and email_identity.confirmed_at != nil do
+    external_identity
+    |> UserIdentity.changeset(%{user_id: email_identity.user_id})
+    |> Repo.update()
+  end
+
+  # lastly, if the user doesn't have an email identity
+  # for this external account, we create one
+  defp maybe_add_email(nil, external_identity, oauth) do
+    %{user_identity: external_identity}
+    |> user_identity_changeset(get_identity_attrs(oauth, :email, primary?: false))
+    |> Repo.insert()
   end
 
   # Create a new user and link the external account
@@ -342,7 +407,23 @@ defmodule Zoonk.Accounts do
     %{provider: external_account["provider"], identity_id: to_string(external_account["sub"]), confirmed?: true}
   end
 
-  defp get_identity_attrs(external_account, :email) do
-    %{provider: :email, identity_id: to_string(external_account["email"]), is_primary: true, confirmed?: true}
+  defp get_identity_attrs(external_account, :email, opts \\ []) do
+    primary? = Keyword.get(opts, :primary?, true)
+    %{provider: :email, identity_id: to_string(external_account["email"]), is_primary: primary?, confirmed?: true}
   end
+
+  # first check if this user already created an account with this provider
+  # if so, we return the user identity. this is important because the user
+  # may have changed their email address in the external provider
+  # otherwise, we check if the user already exists with the same email
+  defp get_user_identity_by_external_account(external_account) do
+    provider_opts = [identity_id: to_string(external_account["sub"]), provider: external_account["provider"]]
+
+    UserIdentity
+    |> Repo.get_by(provider_opts)
+    |> get_user_identity_by_external_account(external_account)
+  end
+
+  defp get_user_identity_by_external_account(%UserIdentity{} = user_identity, _external), do: user_identity
+  defp get_user_identity_by_external_account(nil, external), do: get_user_identity_by_email(external["email"])
 end
