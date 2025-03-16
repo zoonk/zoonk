@@ -290,15 +290,28 @@ defmodule Zoonk.AccountsTest do
       uid = Ecto.UUID.generate()
 
       %{user: existing_user} = user_fixture(%{identity_id: email})
-      auth = oauth_fixture(%{uid: uid, email: email})
+      oauth = oauth_fixture(%{uid: uid, email: email})
 
-      {:ok, user_identity} = Accounts.login_with_external_account(auth, "en")
+      {:ok, _user_identity} = Accounts.login_with_external_account(oauth, "en")
 
-      assert user_identity.user_id == existing_user.id
+      user =
+        User
+        |> Repo.get!(existing_user.id)
+        |> Repo.preload(:identities)
 
-      new_user_identity = Repo.get!(UserIdentity, user_identity.id)
-      assert new_user_identity.provider == :google
-      assert new_user_identity.identity_id == uid
+      assert Enum.count(user.identities) == 2
+
+      [email_identity, oauth_identity] = user.identities
+      assert email_identity.provider == :email
+      assert email_identity.identity_id == email
+      assert email_identity.is_primary == true
+      assert email_identity.user_id == existing_user.id
+
+      assert oauth_identity.provider == :google
+      assert oauth_identity.identity_id == uid
+      assert oauth_identity.is_primary == false
+      assert oauth_identity.user_id == existing_user.id
+      assert oauth_identity.confirmed_at != nil
     end
 
     test "adds a second external account to an existing user" do

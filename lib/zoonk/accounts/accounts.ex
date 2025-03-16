@@ -322,14 +322,16 @@ defmodule Zoonk.Accounts do
   defp user_identity_changeset(%{user: %User{} = user}, identity_attrs) do
     %UserIdentity{user_id: user.id}
     |> UserIdentity.changeset(identity_attrs)
-    # when signing up with an external account, we can confirm the user without sending a magic link
     |> maybe_confirm_user(identity_attrs)
   end
 
   defp user_identity_changeset(%{user_identity: %UserIdentity{} = user_identity}, identity_attrs) do
-    UserIdentity.changeset(%UserIdentity{user_id: user_identity.user_id}, identity_attrs)
+    %UserIdentity{user_id: user_identity.user_id}
+    |> UserIdentity.changeset(identity_attrs)
+    |> maybe_confirm_user(identity_attrs)
   end
 
+  # when signing up with an external account, we can confirm the user without sending a magic link
   defp maybe_confirm_user(changeset, %{confirmed?: true}), do: UserIdentity.confirm_changeset(changeset)
   defp maybe_confirm_user(changeset, _attrs), do: changeset
 
