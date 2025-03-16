@@ -333,11 +333,14 @@ defmodule Zoonk.Accounts do
   defp maybe_confirm_user(changeset, %{confirmed?: true}), do: UserIdentity.confirm_changeset(changeset)
   defp maybe_confirm_user(changeset, _attrs), do: changeset
 
-  defp get_identity_attrs(auth) do
-    %{identity: auth["provider"], identity_id: to_string(auth["sub"]), confirmed?: true}
+  # when using an external account, we use `confirmed?: true`
+  # to mark the identity as confirmed since the external provider
+  # already confirmed the user, so we don't need to send a magic link
+  defp get_identity_attrs(external_account) do
+    %{identity: external_account["provider"], identity_id: to_string(external_account["sub"]), confirmed?: true}
   end
 
-  defp get_identity_attrs(auth, :email) do
-    %{identity: :email, identity_id: to_string(auth["email"]), is_primary: true, confirmed?: true}
+  defp get_identity_attrs(external_account, :email) do
+    %{identity: :email, identity_id: to_string(external_account["email"]), is_primary: true, confirmed?: true}
   end
 end
