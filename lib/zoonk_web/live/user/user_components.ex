@@ -18,10 +18,10 @@ defmodule ZoonkWeb.Components.User do
     ~H"""
     <.a
       kind={:button}
-      navigate={get_auth_link(@action, @provider)}
       icon={get_icon(@provider)}
       variant={:outline}
       full
+      {get_navigate_attr(@action, @provider)}
     >
       {get_auth_label(@action, @provider)}
     </.a>
@@ -162,4 +162,7 @@ defmodule ZoonkWeb.Components.User do
   defp get_terms_link(link, label) do
     "<a href='#{link}' class=\"underline\">#{label}</a>"
   end
+
+  defp get_navigate_attr(action, :email), do: [navigate: get_auth_link(action, :email)]
+  defp get_navigate_attr(action, provider), do: [href: get_auth_link(action, provider)]
 end
