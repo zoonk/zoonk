@@ -12,9 +12,9 @@ defmodule ZoonkWeb.Helpers.UserAuth do
   import Plug.Conn
 
   alias Zoonk.Accounts
-  alias Zoonk.Accounts.Scope
   alias Zoonk.Configuration
   alias Zoonk.Schemas.UserIdentity
+  alias Zoonk.Scope
 
   @max_age Configuration.get_max_age(:token, :seconds)
   @remember_me_cookie Configuration.get_cookie_name(:remember_me)

@@ -21,8 +21,8 @@ defmodule ZoonkWeb.Plugs.UserAuth do
   import Plug.Conn
 
   alias Zoonk.Accounts
-  alias Zoonk.Accounts.Scope
   alias Zoonk.Configuration
+  alias Zoonk.Scope
   alias ZoonkWeb.Helpers
 
   @remember_me_cookie Configuration.get_cookie_name(:remember_me)

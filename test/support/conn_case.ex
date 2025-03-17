@@ -45,7 +45,7 @@ defmodule ZoonkWeb.ConnCase do
   """
   def signup_and_login_user(%{conn: conn} = context) do
     %{user: user, user_identity: user_identity} = Zoonk.AccountFixtures.user_fixture()
-    scope = Zoonk.Accounts.Scope.for_user(user_identity)
+    scope = Zoonk.Scope.for_user(user_identity)
 
     opts =
       context

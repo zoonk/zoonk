@@ -4,8 +4,8 @@ defmodule ZoonkWeb.UserAuthPlugTest do
   import Zoonk.AccountFixtures
 
   alias Zoonk.Accounts
-  alias Zoonk.Accounts.Scope
   alias Zoonk.Configuration
+  alias Zoonk.Scope
   alias ZoonkWeb.Helpers
   alias ZoonkWeb.Plugs
 

@@ -2,7 +2,7 @@ defmodule ZoonkWeb.Hooks.Language do
   @moduledoc """
   LiveView hooks for setting the application language.
   """
-  alias Zoonk.Accounts.Scope
+  alias Zoonk.Scope
 
   @doc """
   Sets the application language.

@@ -5,8 +5,8 @@ defmodule ZoonkWeb.UserAuthHookTest do
 
   alias Phoenix.LiveView
   alias Zoonk.Accounts
-  alias Zoonk.Accounts.Scope
   alias Zoonk.Configuration
+  alias Zoonk.Scope
   alias ZoonkWeb.Hooks
   alias ZoonkWeb.Plugs
 

@@ -7,8 +7,8 @@ defmodule Zoonk.AccountFixtures do
   import Ecto.Query
 
   alias Zoonk.Accounts
-  alias Zoonk.Accounts.Scope
   alias Zoonk.Schemas.UserToken
+  alias Zoonk.Scope
 
   def unique_user_email, do: "user#{System.unique_integer()}@zoonk.test"
   def unique_user_username, do: "user#{System.unique_integer()}"

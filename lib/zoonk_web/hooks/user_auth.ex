@@ -10,7 +10,7 @@ defmodule ZoonkWeb.Hooks.UserAuth do
   use ZoonkWeb, :verified_routes
 
   alias Zoonk.Accounts
-  alias Zoonk.Accounts.Scope
+  alias Zoonk.Scope
 
   @doc """
   Handles mounting and authenticating the current_scope in LiveViews.

@@ -5,8 +5,8 @@ defmodule ZoonkWeb.UserAuthHelperTest do
 
   alias Phoenix.Socket.Broadcast
   alias Zoonk.Accounts
-  alias Zoonk.Accounts.Scope
   alias Zoonk.Configuration
+  alias Zoonk.Scope
   alias ZoonkWeb.Helpers
 
   @remember_me_cookie Configuration.get_cookie_name(:remember_me)

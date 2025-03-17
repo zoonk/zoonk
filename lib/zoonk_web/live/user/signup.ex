@@ -4,8 +4,8 @@ defmodule ZoonkWeb.Live.UserSignUp do
 
   import ZoonkWeb.Components.User
 
-  alias Zoonk.Accounts.Scope
   alias Zoonk.Schemas.UserIdentity
+  alias Zoonk.Scope
   alias ZoonkWeb.Helpers
 
   def render(assigns) do

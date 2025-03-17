@@ -26,8 +26,8 @@ defmodule ZoonkWeb.Plugs.Language do
   """
   import Plug.Conn
 
-  alias Zoonk.Accounts.Scope
   alias Zoonk.Configuration
+  alias Zoonk.Scope
 
   @doc """
   Sets the session language based on user preferences or browser settings.

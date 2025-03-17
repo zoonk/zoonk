@@ -62,7 +62,7 @@ config :zoonk, ZoonkWeb.Endpoint,
 config :zoonk, :scopes,
   user: [
     default: true,
-    module: Zoonk.Accounts.Scope,
+    module: Zoonk.Scope,
     assign_key: :current_scope,
     access_path: [:user, :id],
     schema_key: :user_id,
