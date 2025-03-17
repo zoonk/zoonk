@@ -142,7 +142,7 @@ defmodule ZoonkWeb.Components.Input do
   def input(assigns) do
     ~H"""
     <div class="text-left">
-      <.label hide_label={@hide_label} for={@id}>{@label}</.label>
+      <.label :if={@type != "hidden"} hide_label={@hide_label} for={@id}>{@label}</.label>
 
       <input
         type={@type}
