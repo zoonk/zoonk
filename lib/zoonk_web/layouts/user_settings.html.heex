@@ -2,16 +2,24 @@
   <.tab_bar>
     <.nav_menu_item
       active={@active_page == :user_email}
-      label={dgettext("content", "Email")}
+      label={dgettext("users", "Email")}
       icon="tabler-mail"
-      href={~p"/user/email?redirect_to=#{@user_return_to}"}
+      navigate={~p"/user/email?redirect_to=#{@user_return_to}"}
     />
 
     <.nav_menu_item
       active={@active_page == :user_linked_accounts}
-      label={dgettext("content", "Linked Accounts")}
+      label={dgettext("users", "Linked Accounts")}
       icon="tabler-link"
-      href={~p"/user/linked?redirect_to=#{@user_return_to}"}
+      navigate={~p"/user/linked?redirect_to=#{@user_return_to}"}
+    />
+
+    <.nav_menu_item
+      label={dgettext("users", "Logout")}
+      icon="tabler-logout"
+      method="delete"
+      href={~p"/logout"}
+      destructive
     />
   </.tab_bar>
 

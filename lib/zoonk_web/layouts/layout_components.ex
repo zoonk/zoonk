@@ -11,23 +11,26 @@ defmodule ZoonkWeb.Components.Layout do
   """
   attr :label, :string, required: true
   attr :icon, :string, required: true
-  attr :href, :string, required: true
   attr :active, :boolean, default: false
+  attr :destructive, :boolean, default: false
+  attr :rest, :global, include: ~w(href method navigate patch)
 
   def nav_menu_item(assigns) do
     ~H"""
     <li aria-current={@active and "page"} class="group flex-1">
       <.link
-        navigate={@href}
         class={[
           "flex flex-col items-center justify-center gap-1 p-4",
           "text-center text-sm font-medium",
           "zk-surface",
           "md:group-first:rounded-l-4xl md:group-last:rounded-r-4xl",
           @active and "text-zk-primary dark:text-zk-primary-300",
-          !@active and "text-zk-text-secondary dark:text-zk-text-inverse-secondary",
-          !@active and "contrast-more:text-zk-text-contrast"
+          !@active and !@destructive and "text-zk-text-secondary dark:text-zk-text-inverse-secondary",
+          !@active and !@destructive and "contrast-more:text-zk-text-contrast",
+          @destructive and "text-zk-danger-600 dark:text-zk-danger-400",
+          @destructive and "contrast-more:text-zk-danger-800 dark:contrast-more:text-zk-danger-200"
         ]}
+        {@rest}
       >
         <.icon name={@icon} class="h-6 w-6" />
         {@label}

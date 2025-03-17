@@ -4,28 +4,28 @@
       active={@active_page == :home}
       label={dgettext("content", "Summary")}
       icon="tabler-brain"
-      href={~p"/"}
+      navigate={~p"/"}
     />
 
     <.nav_menu_item
       active={@active_page == :browse_goals}
       label={dgettext("content", "Goals")}
       icon="tabler-target-arrow"
-      href={~p"/goals"}
+      navigate={~p"/goals"}
     />
 
     <.nav_menu_item
       active={@active_page == :browse_catalog}
       label={dgettext("content", "Catalog")}
       icon="tabler-layout-grid"
-      href={~p"/catalog"}
+      navigate={~p"/catalog"}
     />
 
     <.nav_menu_item
       active={@active_page == :browse_library}
       label={dgettext("content", "Library")}
       icon="tabler-stack-2"
-      href={~p"/library"}
+      navigate={~p"/library"}
     />
   </.tab_bar>
 

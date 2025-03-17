@@ -6,7 +6,7 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
 
   alias Zoonk.Accounts
 
-  describe "Settings page" do
+  describe "Email settings page" do
     test "renders settings page", %{conn: conn} do
       {:ok, _lv, html} =
         conn
@@ -14,6 +14,19 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
         |> live(~p"/user/email")
 
       assert html =~ "Change Email"
+    end
+
+    test "logout user", %{conn: conn} do
+      {:ok, lv, _html} =
+        conn
+        |> login_user(user_fixture().user_identity)
+        |> live(~p"/user/email")
+
+      assert {:ok, _conn} =
+               lv
+               |> element("a", "Logout")
+               |> render_click()
+               |> follow_redirect(conn, ~p"/logout")
     end
 
     test "redirects if user is not logged in", %{conn: conn} do
