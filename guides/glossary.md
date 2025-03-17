@@ -8,42 +8,6 @@ Users can have multiple identities. For example, a user can have a personal acco
 
 We keep track of their indentities using `Zoonk.Schemas.UserIdentity`. This schema has a `user_id` field that points to `Zoonk.Schemas.User`. This means a user can have multiple email addresses, social logins, and other identities.
 
-## Organization
-
-Zoonk is a multi-tenant application. This means that multiple organizations can use the same instance of the application. Each organization has its own set of members and data.
-
-Our own app deployed at `zoonk.com` is an example of an organization. It has an `admin` kind but organizations can have other kinds such as `team`, `school`, or `store` because we provide a managed cloud service for organizations wanting to use Zoonk as a white-label solution.
-
-We use a [multi tenancy with foreign keys](https://hexdocs.pm/ecto/multi-tenancy-with-foreign-keys.html) approach to implement this.
-
-## App Kind
-
-Zoonk offers multiple products, each with a different `app_kind`. The `app_kind` determines which features are available in the application. Here is a breakdown of them:
-
-| App Kind  | Target | URL            | Description                                                             |
-| --------- | ------ | -------------- | ----------------------------------------------------------------------- |
-| `:main`   | B2C    | `zoonk.com`    | Learn anything you want.                                                |
-| `:team`   | B2B    | `zoonk.team`   | Landing page for our white-label solution for internal training.        |
-| `:school` | B2B    | `zoonk.school` | Landing page for our white-label solution for schools and universities. |
-| `:store`  | B2B2C  | `zoonk.store`  | Marketplace for creators.                                               |
-
-Some features are only available for certain app kinds. Therefore, we also need to distinguish if a user is visiting the main app (e.g. `zoonk.com`, `zoonk.team`, etc.) or a white-label version (e.g. `myorg.zoonk.team`, `mycustomdomain.com`, etc.). So, we have more app kinds for the white-label versions:
-
-| App Kind              | URL                     | Description                               |
-| --------------------- | ----------------------- | ----------------------------------------- |
-| `:team_white_label`   | `myteam.zoonk.team`     | White-label for teams.                    |
-| `:school_white_label` | `myschool.zoonk.school` | White-label for schools and universities. |
-| `:store_white_label`  | `mystore.zoonk.store`   | White-label for creators.                 |
-
-Keep in mind these offerings are not available yet. This is our planned roadmap:
-
-| Product      | Status      | Availability |
-| ------------ | ----------- | ------------ |
-| zoonk.com    | In Progress | Summer 2025  |
-| zoonk.team   | Not Started | Winter 2026  |
-| zoonk.school | Not Started | Spring 2026  |
-| zoonk.store  | Not Started | Summer 2026  |
-
 ## Tracks
 
 Tracks are a collection of courses. They can have multiple courses or other tracks. For example:
@@ -90,11 +54,3 @@ Zoonk supports multiple languages. This is why we have a `_translations` table f
 | `exercises` | `exercise_translations` |
 
 This allows us to update all translations at once. For example, if we fix an error in the English translation, we can update all other translations at the same time.
-
-## Dashboard
-
-Each organization has its own dashboard. This is where they can manage members, permissions, and billing.
-
-## Editor
-
-The editor is where the content is created. It allows users to create tracks, courses, lessons, and exercises - either manually or using AI.

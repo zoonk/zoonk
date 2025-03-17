@@ -30,7 +30,6 @@ defmodule Zoonk.Schemas.User do
   | `language` | `Ecto.Enum` | The language used by the user. |
   | `profile` | `Zoonk.Schemas.UserProfile` | The user's public profile. |
   | `identities` | `Zoonk.Schemas.UserIdentity` | Identities used by the user for authentication. |
-  | `teams` | `Zoonk.Schemas.Member` | The teams the user is a member of. |
   | `inserted_at` | `DateTime` | Timestamp when the user was created. |
   | `updated_at` | `DateTime` | Timestamp when the user was last updated. |
   """
@@ -39,7 +38,6 @@ defmodule Zoonk.Schemas.User do
   import Ecto.Changeset
 
   alias Zoonk.Configuration
-  alias Zoonk.Schemas.Member
   alias Zoonk.Schemas.UserIdentity
   alias Zoonk.Schemas.UserProfile
 
@@ -56,7 +54,6 @@ defmodule Zoonk.Schemas.User do
 
     has_one :profile, UserProfile
     has_many :identities, UserIdentity
-    has_many :teams, Member
 
     timestamps(type: :utc_datetime)
   end

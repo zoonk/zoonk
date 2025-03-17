@@ -23,9 +23,9 @@
 
 ## Social Media
 
-- [X](https://x.com/zoonkorg)
+- [X](https://x.com/zoonkcom)
 - [Bluesky](https://bsky.app/profile/zoonk.bsky.social)
-- [Threads](https://www.threads.net/@zoonkorg)
+- [Threads](https://www.threads.net/@zoonkcom)
 - [LinkedIn](https://www.linkedin.com/company/zoonk)
 
 ## Getting started
