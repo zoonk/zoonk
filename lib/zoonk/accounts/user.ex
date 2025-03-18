@@ -23,7 +23,7 @@ defmodule Zoonk.Accounts.User do
   |------------|------|-------------|
   | `year_of_birth` | `Integer` | We need the year of birth for legal reasons when a profile is public. |
   | `currency` | `Ecto.Enum` | The currency used for payments. |
-  | `kind` | `Ecto.Enum` | Users can have different types: `regular`, `agent`, `guest`, or `white_label`. |
+  | `kind` | `Ecto.Enum` | Users can have different types: `regular`, `agent`, `guest`. |
   | `email` | `String` | The user's email address. |
   | `stripe_customer_id` | `String` | Customer ID used for Stripe payments. |
   | `tax_id` | `Zoonk.Vault.Binary` | Tax ID required by some jurisdictions. |

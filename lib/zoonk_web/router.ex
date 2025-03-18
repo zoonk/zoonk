@@ -111,6 +111,7 @@ defmodule ZoonkWeb.Router do
         {ZoonkWeb.Language, :set_app_language}
       ] do
       live "/", AdminHome
+      live "/users", AdminUsers
     end
   end
 

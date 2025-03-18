@@ -6,6 +6,13 @@
       icon="tabler-dashboard"
       navigate={~p"/admin"}
     />
+
+    <.nav_menu_item
+      active={@active_page == :admin_users}
+      label={dgettext("admin", "Users")}
+      icon="tabler-users"
+      navigate={~p"/admin/users"}
+    />
   </.tab_bar>
 
   <div class="bg-zk-surface zk-border w-full border-b dark:bg-zk-surface-inverse">

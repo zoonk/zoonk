@@ -60,4 +60,25 @@ defmodule Zoonk.Admin do
     |> select([u], count(u.id))
     |> Repo.one()
   end
+
+  @doc """
+  Returns a list of users.
+
+  ## Examples
+
+      iex> list_users()
+      [%User{}, ...]
+
+      iex> list_users(limit: 10, offset: 0)
+      [%User{}, ...]
+  """
+  def list_users(opts \\ []) do
+    User
+    |> where([u], u.kind == :regular)
+    |> order_by([u], desc: u.updated_at)
+    |> limit(^opts[:limit])
+    |> offset(^opts[:offset])
+    |> preload([u], :profile)
+    |> Repo.all()
+  end
 end
