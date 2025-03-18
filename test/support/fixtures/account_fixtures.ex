@@ -7,7 +7,7 @@ defmodule Zoonk.AccountFixtures do
   import Ecto.Query
 
   alias Zoonk.Accounts
-  alias Zoonk.Schemas.UserToken
+  alias Zoonk.Accounts.UserToken
   alias Zoonk.Scope
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
@@ -63,7 +63,7 @@ defmodule Zoonk.AccountFixtures do
   end
 
   def generate_user_magic_link_token(user) do
-    {encoded_token, user_token} = Zoonk.Accounts.TokenBuilder.build_email_token(user, "login")
+    {encoded_token, user_token} = UserToken.build_email_token(user, "login")
     Zoonk.Repo.insert!(user_token)
     {encoded_token, user_token.token}
   end

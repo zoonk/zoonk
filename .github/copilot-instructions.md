@@ -10,7 +10,6 @@
 - Add examples to `@doc` for each function, especially if the function is complex or has multiple parameters. Use `@doc` to explain the purpose of each function and its parameters.
 - Keep the first line of a `@moduledoc` or `@doc` brief. For example, _Handles token generation for authentication_ is better than _Handles the generation of authentication tokens for different contexts, such as sessions and email-based authentication._
 - For code examples, don’t use `elixir` at the beginning, as it doesn’t work well with Elixir docs. Use tabs/spaces instead.
-- When creating a new module, add it to the `groups_for_modules` section in the `mix.exs` file.
 - When creating a new guide, add it to the `extras` section in the `mix.exs` file.
 
 ## CSS
@@ -32,31 +31,11 @@
 
 ## Schemas
 
-- Schemas should be located in the `lib/zoonk/_schemas` directory.
-- Use `Zoonk.Schemas` as the module prefix (e.g., `Zoonk.Schemas.User`).
+- Use the schema context as the module prefix (e.g., `Zoonk.Accounts.User`).
 - Add a `@moduledoc` to each schema, explaining its purpose and the fields it contains. Use a table to clearly display the fields and their descriptions. Include three columns: Field Name, Type, and Description.
 - Add `timestamps(type: :utc_datetime)` to all schemas.
 - When writing or updating a schema, also create a migration file for it. Use `mix ecto.gen.migration` to generate the migration file or store it at `priv/repo/migrations/` with a timestamp prefix.
-- When using a schema module, use `alias Zoonk.Schemas.User` to avoid long module names.
-
-## Queries
-
-- Use a separate module for queries for better composability and readability, making clear our business rules by naming each query.
-- Place queries in the `lib/zoonk/_queries` directory.
-- Use `Zoonk.Queries` as the module prefix (e.g., `Zoonk.Queries.User`).
-- Each schema should have a corresponding query module. For example, if you have a `Zoonk.Schemas.User` schema, create a `Zoonk.Queries.User` module for its queries.
-- Use `import Ecto.Query, warn: false` to import the query functions.
-- Add a `@moduledoc` to each query module.
-- Use `@doc` to explain the purpose of each query function. Include examples of how to use the query, especially if it’s complex or has multiple parameters.
-- When using a query module, use `alias Zoonk.Queries`, then `Queries.User` to avoid confusion with the schema module.
-- Use a pipe-based syntax (e.g. `Ecto.Query.where/3`) for queries instead of a keyword-based one (e.g. `Ecto.Query.from/2`). This ensures queries have better composability using pipes.
-
-## Contexts
-
-- Keep contexts thin and focused. Each context should have a single responsibility. Think of them as events that trigger actions.
-- If a context is too large, consider splitting it into smaller contexts. For example, if you have a `Zoonk.Accounts` context that handles multiple events, then split it into multiple context modules, such as `Zoonk.Accounts.TokenBuilder`, `Zoonk.Accounts.UserNotifier`, etc.
-- Place contexts (and sub-contexts) in the `lib/zoonk/{context_name}` directory (e.g., `lib/zoonk/accounts`).
-- Use the module name as the file name (e.g., `lib/zoonk/accounts.ex`).
+- When using a schema module, use `alias Zoonk.Accounts.User` to avoid long module names.
 
 ## Components
 
@@ -77,34 +56,6 @@
 - Use the module name as the file name (e.g., `lib/zoonk_web/controllers/oauth.ex`).
 - Use `use ZoonkWeb, :controller` in each controller module.
 - Add tests to the `test/zoonk_web/controllers` directory.
-
-## Hooks
-
-- LiveView hooks should be placed in the `lib/zoonk_web/hooks` directory.
-- Add a `@moduledoc` to each hook.
-- Add a `@doc` to the `on_mount` function, explaining its purpose and each hook available in this module. For example, `:mount_current_scope`, `:ensure_authenticated`, etc.
-- Hooks modules are prefixed with `ZoonkWeb.Hooks` (e.g., `ZoonkWeb.Hooks.UserAuth`).
-- Use the module name as the file name (e.g., `lib/zoonk_web/hooks/user_auth.ex`).
-- Add tests to the `test/zoonk_web/hooks` directory.
-
-## Plugs
-
-- Plugs should be placed in the `lib/zoonk_web/plugs` directory.
-- Add a `@moduledoc` to each plug.
-- Add a `@doc` to each function in the plug, explaining its purpose.
-- Plugs modules are prefixed with `ZoonkWeb.Plugs` (e.g., `ZoonkWeb.Plugs.UserAuth`).
-- Use the module name as the file name (e.g., `lib/zoonk_web/plugs/user_auth.ex`).
-- Add tests to the `test/zoonk_web/plugs` directory.
-
-## Helpers
-
-- Some plugs and hooks may share similar business logic. In this case, create a helper module in the `lib/zoonk_web/helpers` directory.
-- Add a `@moduledoc` to each helper module.
-- Add a `@doc` to each function in the helper module.
-- Helper modules are prefixed with `ZoonkWeb.Helpers` (e.g., `ZoonkWeb.Helpers.UserAuth`).
-- Use the module name as the file name (e.g., `lib/zoonk_web/helpers/user_auth.ex`).
-- When using a helper module, use `alias ZoonkWeb.Helpers`, then `Helpers.UserAuth` to avoid confusion with the plug or hook module.
-- Add tests to the `test/zoonk_web/helpers` directory.
 
 ## LiveView pages
 

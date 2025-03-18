@@ -9,9 +9,9 @@ defmodule Zoonk.Accounts.UserNotifier do
   """
   use Gettext, backend: Zoonk.Gettext
 
+  alias Zoonk.Accounts.User
   alias Zoonk.Configuration
   alias Zoonk.Mailer
-  alias Zoonk.Schemas.User
 
   @doc """
   Deliver instructions to update a user email.

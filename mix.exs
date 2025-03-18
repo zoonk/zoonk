@@ -102,7 +102,7 @@ defmodule Zoonk.MixProject do
         "sobelow --config",
         "deps.unlock --check-unused",
         "deps.audit",
-        "xref graph --label compile-connected --fail-above 0 --exclude lib/zoonk/_encrypted/binary.ex"
+        "xref graph --label compile-connected --fail-above 0 --exclude lib/zoonk/vault/binary.ex"
       ]
     ]
   end
@@ -120,85 +120,6 @@ defmodule Zoonk.MixProject do
         "guides/ssl.md",
         "guides/oauth.md",
         "guides/production.md"
-      ],
-      groups_for_modules: [
-        Config: [Zoonk.Configuration],
-        Components: [
-          ZoonkWeb.Components.Anchor,
-          ZoonkWeb.Components.Avatar,
-          ZoonkWeb.Components.Button,
-          ZoonkWeb.Components.DataList,
-          ZoonkWeb.Components.Divider,
-          ZoonkWeb.Components.Flash,
-          ZoonkWeb.Components.Form,
-          ZoonkWeb.Components.Icon,
-          ZoonkWeb.Components.Input,
-          ZoonkWeb.Components.Layout,
-          ZoonkWeb.Components.Modal,
-          ZoonkWeb.Components.Table,
-          ZoonkWeb.Components.Text,
-          ZoonkWeb.Components.User,
-          ZoonkWeb.Components.Utils
-        ],
-        Controllers: [
-          ZoonkWeb.Controllers.Legal,
-          ZoonkWeb.Controllers.OAuth,
-          ZoonkWeb.Controllers.UserAuth
-        ],
-        Plugs: [
-          ZoonkWeb.Plugs.Language,
-          ZoonkWeb.Plugs.UserAuth
-        ],
-        Hooks: [
-          ZoonkWeb.Hooks.ActivePage,
-          ZoonkWeb.Hooks.Language,
-          ZoonkWeb.Hooks.UserAuth
-        ],
-        Helpers: [
-          Zoonk.Helpers,
-          Zoonk.Helpers.EctoUtils,
-          ZoonkWeb.Helpers.UserAuth
-        ],
-        Contexts: [
-          Zoonk.Accounts,
-          Zoonk.Accounts.TokenBuilder,
-          Zoonk.Accounts.UserNotifier,
-          Zoonk.Accounts.UserProfileBuilder
-        ],
-        Scopes: [Zoonk.Scope],
-        Services: [
-          Zoonk.Mailer
-        ],
-        Schemas: [
-          Zoonk.Schemas.City,
-          Zoonk.Schemas.Country,
-          Zoonk.Schemas.Region,
-          Zoonk.Schemas.State,
-          Zoonk.Schemas.Subregion,
-          Zoonk.Schemas.User,
-          Zoonk.Schemas.UserProfile,
-          Zoonk.Schemas.UserProvider,
-          Zoonk.Schemas.UserToken
-        ],
-        Queries: [
-          Zoonk.Queries.UserToken
-        ],
-        "Error Handling": [ZoonkWeb.ErrorHTML, ZoonkWeb.ErrorJSON],
-        "Credo Checks": [Zoonk.Check.Readability.PipeEctoQueries],
-        Core: [
-          Zoonk,
-          Zoonk.Check,
-          Zoonk.Gettext,
-          Zoonk.Repo,
-          Zoonk.Vault,
-          ZoonkWeb,
-          ZoonkWeb.Endpoint,
-          ZoonkWeb.Layouts,
-          ZoonkWeb.Router
-        ],
-        "Encrypted Data": [
-          Zoonk.Encrypted.Binary
-        ]
       ],
       nest_modules_by_prefix: [Zoonk, ZoonkWeb]
     ]

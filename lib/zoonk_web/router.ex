@@ -1,11 +1,9 @@
 defmodule ZoonkWeb.Router do
   use ZoonkWeb, :router
 
-  import ZoonkWeb.Plugs.Admin
-  import ZoonkWeb.Plugs.Language
-  import ZoonkWeb.Plugs.UserAuth
-
-  alias ZoonkWeb.Hooks
+  import ZoonkWeb.Admin
+  import ZoonkWeb.Language
+  import ZoonkWeb.UserAuth
 
   @allowed_images "https://avatars.githubusercontent.com https://*.googleusercontent.com"
 
@@ -46,8 +44,8 @@ defmodule ZoonkWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [
-        {Hooks.UserAuth, :ensure_authenticated},
-        {Hooks.Language, :set_app_language}
+        {ZoonkWeb.UserAuth, :ensure_authenticated},
+        {ZoonkWeb.Language, :set_app_language}
       ] do
       live "/", Home
 
@@ -68,8 +66,8 @@ defmodule ZoonkWeb.Router do
     live_session :public_routes,
       layout: {ZoonkWeb.Layouts, :auth},
       on_mount: [
-        {Hooks.UserAuth, :mount_current_scope},
-        {Hooks.Language, :set_app_language}
+        {ZoonkWeb.UserAuth, :mount_current_scope},
+        {ZoonkWeb.Language, :set_app_language}
       ] do
       live "/signup", UserSignUp
       live "/signup/email", UserSignUpWithEmail
@@ -81,11 +79,10 @@ defmodule ZoonkWeb.Router do
   scope "/", ZoonkWeb.Controllers do
     pipe_through [:browser]
 
-    post "/login", UserAuth, :create
-    delete "/logout", UserAuth, :delete
-    get "/logout", UserAuth, :delete
-    get "/login/t/:token", UserAuth, :login
-    get "/confirm/:token", UserAuth, :confirm
+    post "/login", UserSession, :create
+    delete "/logout", UserSession, :delete
+    get "/login/t/:token", UserSession, :login
+    get "/confirm/:token", UserSession, :confirm
 
     get "/auth/:provider", OAuth, :request
     get "/auth/:provider/callback", OAuth, :callback
@@ -109,9 +106,9 @@ defmodule ZoonkWeb.Router do
     live_session :admin_dashboard,
       layout: {ZoonkWeb.Layouts, :admin},
       on_mount: [
-        {Hooks.UserAuth, :ensure_authenticated},
-        {Hooks.Admin, :ensure_user_admin},
-        {Hooks.Language, :set_app_language}
+        {ZoonkWeb.UserAuth, :ensure_authenticated},
+        {ZoonkWeb.Admin, :ensure_user_admin},
+        {ZoonkWeb.Language, :set_app_language}
       ] do
       live "/", AdminHome
     end

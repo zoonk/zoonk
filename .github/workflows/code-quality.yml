@@ -68,7 +68,7 @@ jobs:
         run: mix compile --all-warnings --warnings-as-errors
 
       - name: Check for transitive compilation dependencies
-        run: mix xref graph --label compile-connected --fail-above 0 --exclude lib/zoonk/_encrypted/binary.ex
+        run: mix xref graph --label compile-connected --fail-above 0 --exclude lib/zoonk/vault/binary.ex
 
       - name: Check Elixir formatter
         run: mix format --check-formatted

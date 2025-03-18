@@ -5,9 +5,9 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
   import ZoonkWeb.Components.User
 
   alias Zoonk.Accounts
-  alias Zoonk.Schemas.User
+  alias Zoonk.Accounts.User
   alias Zoonk.Scope
-  alias ZoonkWeb.Helpers
+  alias ZoonkWeb.UserAuth
 
   def render(assigns) do
     ~H"""
@@ -54,7 +54,7 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
   end
 
   def mount(_params, _session, %{assigns: %{current_scope: %Scope{user: %User{}}}} = socket) do
-    {:ok, redirect(socket, to: Helpers.UserAuth.signed_in_path(socket))}
+    {:ok, redirect(socket, to: UserAuth.signed_in_path(socket))}
   end
 
   def mount(_params, session, socket) do

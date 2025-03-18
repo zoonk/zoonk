@@ -4,11 +4,11 @@ defmodule Zoonk.AccountsTest do
   import Zoonk.AccountFixtures
 
   alias Zoonk.Accounts
+  alias Zoonk.Accounts.User
+  alias Zoonk.Accounts.UserProfile
+  alias Zoonk.Accounts.UserProvider
+  alias Zoonk.Accounts.UserToken
   alias Zoonk.Configuration
-  alias Zoonk.Schemas.User
-  alias Zoonk.Schemas.UserProfile
-  alias Zoonk.Schemas.UserProvider
-  alias Zoonk.Schemas.UserToken
 
   describe "get_user_by_email/1" do
     test "does not return the user if the email does not exist" do

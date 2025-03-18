@@ -2,7 +2,7 @@ defmodule Zoonk.Scope do
   @moduledoc """
   Defines the scope of the caller to be used throughout the app.
 
-  The `Zoonk.Scope` allows public interfaces to receive
+  This scope allows public interfaces to receive
   information about the caller, such as if the call is initiated from an
   end-user, and if so, which user. Additionally, such a scope can carry fields
   such as "super user" or other privileges for use as authorization, or to
@@ -16,7 +16,7 @@ defmodule Zoonk.Scope do
   growing application requirements.
   """
 
-  alias Zoonk.Schemas.User
+  alias Zoonk.Accounts.User
 
   defstruct user: nil
 
@@ -32,7 +32,7 @@ defmodule Zoonk.Scope do
   def for_user(nil), do: nil
 
   @doc """
-  Shortcut for getting a `%Zoonk.Schemas.User{}` from scope.
+  Shortcut for getting a `%Zoonk.Accounts.User{}` from scope.
   """
   def get_user(%{user: %User{} = user}), do: user
   def get_user(nil), do: nil

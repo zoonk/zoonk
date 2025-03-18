@@ -75,7 +75,7 @@ config :zoonk, :scopes,
 # Make sure all schemas are migrated when running `mix cloak.migrate.ecto`
 config :zoonk,
   cloak_repo: Zoonk.Repo,
-  cloak_schemas: [Zoonk.Schemas.User]
+  cloak_schemas: [Zoonk.Accounts.User]
 
 # Configures Ecto
 config :zoonk,

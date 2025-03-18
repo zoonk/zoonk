@@ -5,8 +5,8 @@ defmodule ZoonkWeb.Controllers.OAuth do
   use ZoonkWeb, :controller
 
   alias Zoonk.Accounts
-  alias Zoonk.Schemas.User
-  alias ZoonkWeb.Helpers.UserAuth
+  alias Zoonk.Accounts.User
+  alias ZoonkWeb.UserAuth
 
   @oauth_state_cookie "_zk_oauth_state"
 
