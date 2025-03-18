@@ -1,7 +1,7 @@
 defmodule ZoonkWeb.Router do
   use ZoonkWeb, :router
 
-  import ZoonkWeb.Admin
+  import ZoonkWeb.AdminUser
   import ZoonkWeb.Language
   import ZoonkWeb.UserAuth
 
@@ -107,11 +107,13 @@ defmodule ZoonkWeb.Router do
       layout: {ZoonkWeb.Layouts, :admin},
       on_mount: [
         {ZoonkWeb.UserAuth, :ensure_authenticated},
-        {ZoonkWeb.Admin, :ensure_user_admin},
+        {ZoonkWeb.AdminUser, :ensure_user_admin},
         {ZoonkWeb.Language, :set_app_language}
       ] do
       live "/", AdminHome
       live "/users", AdminUsers
+      live "/users/search", AdminUsers, :search
+      live "/users/:id", AdminUser
     end
   end
 

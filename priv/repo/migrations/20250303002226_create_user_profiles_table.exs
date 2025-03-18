@@ -8,7 +8,7 @@ defmodule Zoonk.Repo.Migrations.CreateUserProfilesTable do
 
       add :is_public, :boolean, null: false, default: false
 
-      add :display_name, :string
+      add :display_name, :citext
       add :picture_url, :string
       add :username, :citext, null: false
 
@@ -19,5 +19,6 @@ defmodule Zoonk.Repo.Migrations.CreateUserProfilesTable do
 
     create unique_index(:user_profiles, [:username])
     create unique_index(:user_profiles, [:user_id])
+    create index(:user_profiles, [:display_name])
   end
 end

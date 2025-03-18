@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Admin do
+defmodule ZoonkWeb.AdminUser do
   @moduledoc """
   Plugs and LiveView hooks for ensuring admin access.
   """
@@ -17,7 +17,7 @@ defmodule ZoonkWeb.Admin do
     user = Scope.get_user(socket.assigns.current_scope)
 
     if Admin.admin_user?(user) do
-      {:cont, socket}
+      {:cont, Phoenix.Component.assign(socket, search_link: nil)}
     else
       {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
     end

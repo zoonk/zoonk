@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.AdminHookTest do
+defmodule ZoonkWeb.AdminUserHookTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AccountFixtures
@@ -32,7 +32,7 @@ defmodule ZoonkWeb.AdminHookTest do
         assigns: %{__changed__: %{}, flash: %{}, current_scope: Scope.for_user(user)}
       }
 
-      {:halt, _updated_socket} = ZoonkWeb.Admin.on_mount(:ensure_user_admin, %{}, session, socket)
+      {:halt, _updated_socket} = ZoonkWeb.AdminUser.on_mount(:ensure_user_admin, %{}, session, socket)
     end
   end
 
@@ -45,7 +45,7 @@ defmodule ZoonkWeb.AdminHookTest do
       conn =
         conn
         |> assign(:current_scope, Scope.for_user(user))
-        |> ZoonkWeb.Admin.require_admin_user([])
+        |> ZoonkWeb.AdminUser.require_admin_user([])
 
       assert conn.halted
 
@@ -58,7 +58,7 @@ defmodule ZoonkWeb.AdminHookTest do
       conn =
         conn
         |> assign(:current_scope, Scope.for_user(user))
-        |> ZoonkWeb.Admin.require_admin_user([])
+        |> ZoonkWeb.AdminUser.require_admin_user([])
 
       refute conn.halted
       refute conn.status

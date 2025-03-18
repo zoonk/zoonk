@@ -123,4 +123,14 @@ defmodule Zoonk.Accounts.User do
     now = DateTime.utc_now(:second)
     change(user, confirmed_at: now)
   end
+
+  @doc """
+  Get a user's name.
+
+  Useful for displaying the user's name.
+  It handles the case where the user has not set a display name
+  and falls back to the username.
+  """
+  def get_display_name(%UserProfile{display_name: nil} = profile), do: profile.username
+  def get_display_name(%UserProfile{display_name: display_name}), do: display_name
 end

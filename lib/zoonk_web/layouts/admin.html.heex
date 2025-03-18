@@ -18,9 +18,17 @@
   <div class="bg-zk-surface zk-border w-full border-b dark:bg-zk-surface-inverse">
     <header
       aria-label={gettext("Go back to the app")}
-      class="zk-container-wide flex items-center justify-between py-4 sm:py-6"
+      class="zk-container-wide flex items-center justify-between gap-4 py-4 sm:py-6"
     >
       <.text aria-hidden="true" element={:h1} size={:header} id="page-title">{@page_title}</.text>
+
+      <.live_component
+        :if={@search_link}
+        id={:search_users}
+        module={ZoonkWeb.Components.SearchButton}
+        patch={@search_link}
+        class="ml-auto"
+      />
 
       <.a kind={:icon} icon="tabler-x" navigate={~p"/"} variant={:danger}>
         <span class="sr-only">{gettext("Back")}</span>

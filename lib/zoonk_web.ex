@@ -99,6 +99,7 @@ defmodule ZoonkWeb do
       import ZoonkWeb.Components.Icon
       import ZoonkWeb.Components.Input
       import ZoonkWeb.Components.Modal
+      import ZoonkWeb.Components.Search
       import ZoonkWeb.Components.Table
       import ZoonkWeb.Components.Text
       import ZoonkWeb.Components.Utils

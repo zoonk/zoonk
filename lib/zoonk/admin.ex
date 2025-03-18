@@ -10,6 +10,7 @@ defmodule Zoonk.Admin do
   import Ecto.Query, warn: false
 
   alias Zoonk.Accounts.User
+  alias Zoonk.Accounts.UserProfile
   alias Zoonk.Admin.AdminUser
   alias Zoonk.Repo
 
@@ -80,5 +81,47 @@ defmodule Zoonk.Admin do
     |> offset(^opts[:offset])
     |> preload([u], :profile)
     |> Repo.all()
+  end
+
+  @doc """
+  Search users.
+
+  Search a user based on their `display_name`, `username`, or `email`.
+
+  ## Examples
+
+      iex> search_users("john")
+      [%User{}, ...]
+  """
+  def search_users(query) do
+    search_query = "%#{query}%"
+
+    User
+    |> join(:inner, [u], p in UserProfile, on: u.id == p.user_id)
+    |> where(
+      [u, p],
+      ilike(u.email, ^search_query) or
+        ilike(p.username, ^search_query) or
+        ilike(p.display_name, ^search_query)
+    )
+    |> preload([u], :profile)
+    |> Repo.all()
+  end
+
+  @doc """
+  Get a user by ID.
+
+  ## Examples
+
+      iex> get_user(user_id)
+      %User{}
+
+      iex> get_user(non_existing_id)
+      nil
+  """
+  def get_user(user_id) do
+    User
+    |> Repo.get(user_id)
+    |> Repo.preload(:profile)
   end
 end
