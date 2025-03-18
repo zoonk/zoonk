@@ -6,53 +6,61 @@ defmodule Zoonk.AccountsTest do
   alias Zoonk.Accounts
   alias Zoonk.Configuration
   alias Zoonk.Schemas.User
-  alias Zoonk.Schemas.UserIdentity
   alias Zoonk.Schemas.UserProfile
+  alias Zoonk.Schemas.UserProvider
   alias Zoonk.Schemas.UserToken
 
-  describe "signup_user_with_email/1" do
+  describe "get_user_by_email/1" do
+    test "does not return the user if the email does not exist" do
+      refute Accounts.get_user_by_email("unknown@example.com")
+    end
+
+    test "returns the user if the email exists" do
+      %{id: id} = user = user_fixture()
+      assert %User{id: ^id} = Accounts.get_user_by_email(user.email)
+    end
+  end
+
+  describe "signup_user/1" do
     test "requires email to be set" do
-      {:error, _field, changeset, _data} = Accounts.signup_user_with_email(%{provider: :email})
-      assert %{identity_id: ["can't be blank"]} = errors_on(changeset)
+      {:error, changeset} = Accounts.signup_user(%{})
+
+      assert %{email: ["can't be blank"]} = errors_on(changeset)
     end
 
     test "validates email when given" do
-      {:error, _field, changeset, _data} =
-        Accounts.signup_user_with_email(%{provider: :email, identity_id: "not valid"})
+      {:error, changeset} = Accounts.signup_user(%{email: "not valid"})
 
-      assert %{identity_id: ["must have the @ sign and no spaces"]} = errors_on(changeset)
+      assert %{email: ["must have the @ sign and no spaces"]} = errors_on(changeset)
     end
 
-    test "validates maximum values for identity_id for security" do
+    test "validates maximum values for email for security" do
       too_long = String.duplicate("db", 100)
-      {:error, _field, changeset, _data} = Accounts.signup_user_with_email(%{identity_id: too_long})
-      assert "should be at most 160 character(s)" in errors_on(changeset).identity_id
+      {:error, changeset} = Accounts.signup_user(%{email: too_long})
+      assert "should be at most 160 character(s)" in errors_on(changeset).email
     end
 
-    test "validates identity_id uniqueness" do
-      %{identity_id: identity_id} = user_fixture().user_identity
-      {:error, _field, changeset, _data} = Accounts.signup_user_with_email(%{identity_id: identity_id})
-      assert "has already been taken" in errors_on(changeset).provider
+    test "validates email uniqueness" do
+      %{email: email} = user_fixture()
+      {:error, changeset} = Accounts.signup_user(%{email: email})
+      assert "has already been taken" in errors_on(changeset).email
 
-      # Now try with the upper cased identity_id too, to check that identity_id case is ignored.
-      {:error, _field, uppercase_changeset, _data} =
-        Accounts.signup_user_with_email(%{identity_id: String.upcase(identity_id)})
-
-      assert "has already been taken" in errors_on(uppercase_changeset).provider
+      # Now try with the upper cased email too, to check that email case is ignored.
+      {:error, uppercase_changeset} = Accounts.signup_user(%{email: String.upcase(email)})
+      assert "has already been taken" in errors_on(uppercase_changeset).email
     end
 
     test "signs up users" do
       email = unique_user_email()
 
-      {:ok, %{user: user, user_identity: user_identity, user_profile: user_profile}} =
-        Accounts.signup_user_with_email(%{identity_id: email})
+      {:ok, user} =
+        [email: email]
+        |> valid_user_attributes()
+        |> Accounts.signup_user()
 
-      assert user_identity.user_id == user.id
-      assert user_identity.provider == :email
-      assert user_identity.identity_id == email
-      assert user_identity.is_primary == true
-      assert is_nil(user_identity.confirmed_at)
-      assert user_profile.user_id == user.id
+      assert user.email == email
+      assert is_nil(user.confirmed_at)
+      assert Repo.get_by(UserProfile, user_id: user.id)
     end
   end
 
@@ -64,93 +72,89 @@ defmodule Zoonk.AccountsTest do
 
       now = DateTime.utc_now()
 
-      assert Accounts.sudo_mode?(%UserIdentity{authenticated_at: DateTime.utc_now()})
-      assert Accounts.sudo_mode?(%UserIdentity{authenticated_at: DateTime.add(now, valid_minutes, :minute)})
-      refute Accounts.sudo_mode?(%UserIdentity{authenticated_at: DateTime.add(now, invalid_minutes, :minute)})
+      assert Accounts.sudo_mode?(%User{authenticated_at: DateTime.utc_now()})
+      assert Accounts.sudo_mode?(%User{authenticated_at: DateTime.add(now, valid_minutes, :minute)})
+      refute Accounts.sudo_mode?(%User{authenticated_at: DateTime.add(now, invalid_minutes, :minute)})
 
       # not authenticated
-      refute Accounts.sudo_mode?(%UserIdentity{})
+      refute Accounts.sudo_mode?(%User{})
     end
   end
 
-  describe "change_user_identity/3" do
-    test "returns a user identity changeset" do
-      assert %Ecto.Changeset{} = changeset = Accounts.change_user_identity(%UserIdentity{})
-      assert changeset.required == [:provider, :identity_id, :is_primary, :user_id]
+  describe "change_user_email/3" do
+    test "returns a user changeset" do
+      assert %Ecto.Changeset{} = changeset = Accounts.change_user_email(%User{})
+      assert changeset.required == [:email]
     end
   end
 
   describe "deliver_user_update_email_instructions/3" do
     setup do
-      %{user_identity: user_fixture().user_identity}
+      %{user: user_fixture()}
     end
 
-    test "sends token through notification", %{user_identity: user_identity} do
+    test "sends token through notification", %{user: user} do
       token =
         extract_user_token(fn url ->
-          Accounts.deliver_user_update_email_instructions(user_identity, "current@example.com", url)
+          Accounts.deliver_user_update_email_instructions(user, "current@example.com", url)
         end)
 
       {:ok, new_token} = Base.url_decode64(token, padding: false)
       assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, new_token))
-      assert user_token.user_identity_id == user_identity.id
-      assert user_token.sent_to == user_identity.identity_id
+      assert user_token.user_id == user.id
+      assert user_token.sent_to == user.email
       assert user_token.context == "change:current@example.com"
     end
   end
 
   describe "update_user_email/2" do
     setup do
-      %{user: user, user_identity: user_identity} = unconfirmed_user_fixture()
-      new_email = unique_user_email()
+      user = unconfirmed_user_fixture()
+      email = unique_user_email()
 
       token =
         extract_user_token(fn url ->
-          Accounts.deliver_user_update_email_instructions(
-            %{user_identity | identity_id: new_email},
-            user_identity.identity_id,
-            url
-          )
+          Accounts.deliver_user_update_email_instructions(%{user | email: email}, user.email, url)
         end)
 
-      %{user: user, user_identity: user_identity, token: token, new_email: new_email}
+      %{user: user, token: token, email: email}
     end
 
-    test "updates the email with a valid token", %{user_identity: user_identity, token: token, new_email: new_email} do
-      assert Accounts.update_user_email(user_identity, token) == :ok
-      changed_user_identity = Repo.get!(UserIdentity, user_identity.id)
-      assert changed_user_identity.identity_id != user_identity.identity_id
-      assert changed_user_identity.identity_id == new_email
-      refute Repo.get_by(UserToken, user_identity_id: user_identity.id)
+    test "updates the email with a valid token", %{user: user, token: token, email: email} do
+      assert Accounts.update_user_email(user, token) == :ok
+      changed_user = Repo.get!(User, user.id)
+      assert changed_user.email != user.email
+      assert changed_user.email == email
+      refute Repo.get_by(UserToken, user_id: user.id)
     end
 
-    test "does not update email with invalid token", %{user_identity: user_identity} do
-      assert Accounts.update_user_email(user_identity, "oops") == :error
-      assert Repo.get!(UserIdentity, user_identity.id).identity_id == user_identity.identity_id
-      assert Repo.get_by(UserToken, user_identity_id: user_identity.id)
+    test "does not update email with invalid token", %{user: user} do
+      assert Accounts.update_user_email(user, "oops") == :error
+      assert Repo.get!(User, user.id).email == user.email
+      assert Repo.get_by(UserToken, user_id: user.id)
     end
 
-    test "does not update email if user email changed", %{user_identity: user_identity, token: token} do
-      assert Accounts.update_user_email(%{user_identity | identity_id: "current@example.com"}, token) == :error
-      assert Repo.get!(UserIdentity, user_identity.id).identity_id == user_identity.identity_id
-      assert Repo.get_by(UserToken, user_identity_id: user_identity.id)
+    test "does not update email if user email changed", %{user: user, token: token} do
+      assert Accounts.update_user_email(%{user | email: "current@example.com"}, token) == :error
+      assert Repo.get!(User, user.id).email == user.email
+      assert Repo.get_by(UserToken, user_id: user.id)
     end
 
-    test "does not update email if token expired", %{user_identity: user_identity, token: token} do
+    test "does not update email if token expired", %{user: user, token: token} do
       {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
-      assert Accounts.update_user_email(user_identity, token) == :error
-      assert Repo.get!(UserIdentity, user_identity.id).identity_id == user_identity.identity_id
-      assert Repo.get_by(UserToken, user_identity_id: user_identity.id)
+      assert Accounts.update_user_email(user, token) == :error
+      assert Repo.get!(User, user.id).email == user.email
+      assert Repo.get_by(UserToken, user_id: user.id)
     end
   end
 
   describe "generate_user_session_token/1" do
     setup do
-      %{user_identity: user_fixture().user_identity}
+      %{user: user_fixture()}
     end
 
-    test "generates a token", %{user_identity: user_identity} do
-      token = Accounts.generate_user_session_token(user_identity)
+    test "generates a token", %{user: user} do
+      token = Accounts.generate_user_session_token(user)
       assert user_token = Repo.get_by(UserToken, token: token)
       assert user_token.context == "session"
 
@@ -158,76 +162,76 @@ defmodule Zoonk.AccountsTest do
       assert_raise Ecto.ConstraintError, fn ->
         Repo.insert!(%UserToken{
           token: user_token.token,
-          user_identity_id: user_fixture().user_identity.id,
+          user_id: user_fixture().id,
           context: "session"
         })
       end
     end
   end
 
-  describe "get_user_identity_by_session_token/1" do
+  describe "get_user_by_session_token/1" do
     setup do
-      %{user_identity: user_identity} = user_fixture()
-      token = Accounts.generate_user_session_token(user_identity)
-      %{user_identity: user_identity, token: token}
+      user = user_fixture()
+      token = Accounts.generate_user_session_token(user)
+      %{user: user, token: token}
     end
 
-    test "returns user identity by token", %{user_identity: user_identity, token: token} do
-      assert session_user = Accounts.get_user_identity_by_session_token(token)
-      assert session_user.id == user_identity.id
-      assert session_user.user_id == user_identity.user_id
-      assert session_user.user.profile.is_public == false
+    test "returns user by token", %{user: user, token: token} do
+      assert session_user = Accounts.get_user_by_session_token(token)
+      assert session_user.id == user.id
+      assert session_user.profile.user_id == user.id
+      assert session_user.profile.is_public == false
     end
 
     test "does not return user for invalid token" do
-      refute Accounts.get_user_identity_by_session_token("oops")
+      refute Accounts.get_user_by_session_token("oops")
     end
 
     test "does not return user for expired token", %{token: token} do
       {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
-      refute Accounts.get_user_identity_by_session_token(token)
+      refute Accounts.get_user_by_session_token(token)
     end
   end
 
-  describe "get_user_identity_by_magic_link_token/1" do
+  describe "get_user_by_magic_link_token/1" do
     setup do
-      %{user_identity: user_identity} = user_fixture()
-      {encoded_token, _hashed_token} = generate_user_magic_link_token(user_identity)
-      %{user_identity: user_identity, token: encoded_token}
+      user = user_fixture()
+      {encoded_token, _hashed_token} = generate_user_magic_link_token(user)
+      %{user: user, token: encoded_token}
     end
 
-    test "returns user by token", %{user_identity: user_identity, token: token} do
-      assert session_user = Accounts.get_user_identity_by_magic_link_token(token)
-      assert session_user.id == user_identity.id
+    test "returns user by token", %{user: user, token: token} do
+      assert session_user = Accounts.get_user_by_magic_link_token(token)
+      assert session_user.id == user.id
     end
 
     test "does not return user for invalid token" do
-      refute Accounts.get_user_identity_by_magic_link_token("oops")
+      refute Accounts.get_user_by_magic_link_token("oops")
     end
 
     test "does not return user for expired token", %{token: token} do
       {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
-      refute Accounts.get_user_identity_by_magic_link_token(token)
+      refute Accounts.get_user_by_magic_link_token(token)
     end
   end
 
   describe "login_user_by_magic_link/1" do
     test "confirms user and expires tokens" do
-      %{user_identity: user_identity} = unconfirmed_user_fixture()
-      refute user_identity.confirmed_at
-      {encoded_token, hashed_token} = generate_user_magic_link_token(user_identity)
+      user = unconfirmed_user_fixture()
+      refute user.confirmed_at
+      {encoded_token, hashed_token} = generate_user_magic_link_token(user)
 
-      assert {:ok, user_identity, [%{token: ^hashed_token}]} =
+      assert {:ok, user, [%{token: ^hashed_token}]} =
                Accounts.login_user_by_magic_link(encoded_token)
 
-      assert user_identity.confirmed_at
+      assert user.confirmed_at
     end
 
     test "returns user and (deleted) token for confirmed user" do
-      %{user_identity: user_identity} = user_fixture()
-      assert user_identity.confirmed_at
-      {encoded_token, _hashed_token} = generate_user_magic_link_token(user_identity)
-      assert {:ok, ^user_identity, []} = Accounts.login_user_by_magic_link(encoded_token)
+      user = user_fixture()
+      assert user.confirmed_at
+      {encoded_token, _hashed_token} = generate_user_magic_link_token(user)
+      assert {:ok, ^user, []} = Accounts.login_user_by_magic_link(encoded_token)
       # one time use only
       assert {:error, :not_found} = Accounts.login_user_by_magic_link(encoded_token)
     end
@@ -235,109 +239,120 @@ defmodule Zoonk.AccountsTest do
 
   describe "delete_user_session_token/1" do
     test "deletes the token" do
-      token = Accounts.generate_user_session_token(user_fixture().user_identity)
+      user = user_fixture()
+      token = Accounts.generate_user_session_token(user)
       assert Accounts.delete_user_session_token(token) == :ok
-      refute Accounts.get_user_identity_by_session_token(token)
+      refute Accounts.get_user_by_session_token(token)
     end
   end
 
   describe "deliver_login_instructions/2" do
     setup do
-      %{user: user, user_identity: user_identity} = unconfirmed_user_fixture()
-      %{user: user, user_identity: user_identity}
+      %{user: unconfirmed_user_fixture()}
     end
 
-    test "sends token through notification", %{user_identity: user_identity} do
-      token = extract_user_token(fn url -> Accounts.deliver_login_instructions(user_identity, url) end)
+    test "sends token through notification", %{user: user} do
+      token =
+        extract_user_token(fn url ->
+          Accounts.deliver_login_instructions(user, url)
+        end)
 
       {:ok, new_token} = Base.url_decode64(token, padding: false)
       assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, new_token))
-      assert user_token.user_identity_id == user_identity.id
-      assert user_token.sent_to == user_identity.identity_id
+      assert user_token.user_id == user.id
+      assert user_token.sent_to == user.email
       assert user_token.context == "login"
     end
   end
 
-  describe "login_with_external_account/2" do
-    test "creates a new user and links the external account" do
+  describe "login_with_provider/2" do
+    test "creates a new user and links the provider" do
       email = unique_user_email()
       picture = "https://zoonk.test/picture.png"
       uid = Ecto.UUID.generate()
 
       auth = oauth_fixture(%{uid: uid, email: email, picture: picture})
 
-      {:ok, user_identity} = Accounts.login_with_external_account(auth, "en")
+      {:ok, %User{} = user} = Accounts.login_with_provider(auth, "en")
 
-      assert user_identity.provider == :email
-      assert user_identity.identity_id == email
-      assert user_identity.is_primary == true
-
-      provider_identity = Repo.get_by!(UserIdentity, user_id: user_identity.user_id, provider: :google)
-      assert provider_identity.provider == :google
-      assert provider_identity.identity_id == uid
-      assert provider_identity.is_primary == false
-
-      user = Repo.get!(User, user_identity.user_id)
+      assert user.email == email
       assert user.language == :en
+      assert user.confirmed_at != nil
 
+      user_provider = Repo.get_by!(UserProvider, user_id: user.id)
       user_profile = Repo.get_by!(UserProfile, user_id: user.id)
+
+      assert user_provider.provider == :google
+      assert user_provider.provider_uid == uid
+
       assert user_profile.user_id == user.id
       assert user_profile.picture_url == picture
     end
 
-    test "links the external account to an existing user" do
+    test "links the provider to an existing user" do
       email = unique_user_email()
       uid = Ecto.UUID.generate()
 
-      %{user: existing_user} = user_fixture(%{identity_id: email})
-      oauth = oauth_fixture(%{uid: uid, email: email})
+      existing_user = user_fixture(%{email: email})
+      auth = oauth_fixture(%{uid: uid, email: email})
 
-      {:ok, _user_identity} = Accounts.login_with_external_account(oauth, "en")
+      {:ok, user} = Accounts.login_with_provider(auth, "en")
 
-      user =
-        User
-        |> Repo.get!(existing_user.id)
-        |> Repo.preload(:identities)
+      assert user.id == existing_user.id
 
-      assert Enum.count(user.identities) == 2
+      user_provider = Repo.get_by!(UserProvider, user_id: user.id)
+      assert user_provider.provider == :google
+      assert user_provider.provider_uid == uid
 
-      [email_identity, oauth_identity] = user.identities
-      assert email_identity.provider == :email
-      assert email_identity.identity_id == email
-      assert email_identity.is_primary == true
-      assert email_identity.user_id == existing_user.id
-
-      assert oauth_identity.provider == :google
-      assert oauth_identity.identity_id == uid
-      assert oauth_identity.is_primary == false
-      assert oauth_identity.user_id == existing_user.id
-      assert oauth_identity.confirmed_at != nil
+      assert Repo.get_by!(UserProfile, user_id: user.id)
     end
 
-    test "adds a second external account to an existing user" do
+    test "ignore duplicate provider" do
       email = unique_user_email()
       uid = Ecto.UUID.generate()
-      %{user: user} = user_fixture(%{identity_id: email})
 
-      external_account_1 = oauth_fixture(%{uid: uid, provider: :google, email: email})
-      {:ok, _user} = Accounts.login_with_external_account(external_account_1, "en")
-      assert Repo.get_by!(UserIdentity, user_id: user.id, provider: :google)
+      existing_user = user_fixture(%{email: email})
+      auth = oauth_fixture(%{uid: uid, email: email})
 
-      external_account_2 = oauth_fixture(%{uid: uid, provider: :apple, email: email})
-      {:ok, _user} = Accounts.login_with_external_account(external_account_2, "en")
-      assert Repo.get_by!(UserIdentity, user_id: user.id, provider: :apple)
+      {:ok, first_user} = Accounts.login_with_provider(auth, "en")
+      assert first_user.id == existing_user.id
+
+      {:ok, user} = Accounts.login_with_provider(auth, "en")
+
+      assert user.id == existing_user.id
+
+      user_provider = Repo.get_by!(UserProvider, user_id: user.id)
+      assert user_provider.provider == :google
+      assert user_provider.provider_uid == uid
+
+      assert Repo.get_by!(UserProfile, user_id: user.id)
+    end
+
+    test "adds a second provider to an existing user" do
+      email = unique_user_email()
+      uid = Ecto.UUID.generate()
+      user = user_fixture(%{email: email})
+
+      provider1 = oauth_fixture(%{uid: uid, provider: :google, email: email})
+      {:ok, _user} = Accounts.login_with_provider(provider1, "en")
+      assert Repo.get_by!(UserProvider, user_id: user.id, provider: :google)
+
+      provider2 = oauth_fixture(%{uid: uid, provider: :apple, email: email})
+      {:ok, _user} = Accounts.login_with_provider(provider2, "en")
+      assert Repo.get_by!(UserProvider, user_id: user.id, provider: :apple)
     end
 
     test "works with an integer uid" do
       email = unique_user_email()
       picture = "https://zoonk.test/picture.png"
       uid = 123_456
-      user_fixture(%{identity_id: email})
 
       auth = oauth_fixture(%{uid: uid, email: email, picture: picture})
 
-      assert {:ok, user_identity} = Accounts.login_with_external_account(auth, "en")
-      assert user_identity.identity_id == to_string(uid)
+      {:ok, %User{} = user} = Accounts.login_with_provider(auth, "en")
+
+      user_provider = Repo.get_by!(UserProvider, user_id: user.id)
+      assert user_provider.provider_uid == to_string(uid)
     end
 
     test "adds name and username to profile when available" do
@@ -346,14 +361,14 @@ defmodule Zoonk.AccountsTest do
 
       auth = oauth_fixture(%{name: name, username: username})
 
-      assert {:ok, user_identity} = Accounts.login_with_external_account(auth, "en")
+      {:ok, %User{} = user} = Accounts.login_with_provider(auth, "en")
 
-      user_profile = Repo.get_by!(UserProfile, user_id: user_identity.user_id)
+      user_profile = Repo.get_by!(UserProfile, user_id: user.id)
       assert user_profile.display_name == name
       assert user_profile.username == username
     end
 
-    test "ensure usernames are unique across identities" do
+    test "avoid duplicated usernames from provider" do
       email1 = unique_user_email()
       email2 = unique_user_email()
       username = "johndoe"
@@ -361,143 +376,15 @@ defmodule Zoonk.AccountsTest do
       auth1 = oauth_fixture(%{email: email1, provider: :google, username: username})
       auth2 = oauth_fixture(%{email: email2, provider: :apple, username: username})
 
-      {:ok, user_identity1} = Accounts.login_with_external_account(auth1, "en")
-      {:ok, user_identity2} = Accounts.login_with_external_account(auth2, "en")
+      {:ok, %User{} = user1} = Accounts.login_with_provider(auth1, "en")
+      {:ok, %User{} = user2} = Accounts.login_with_provider(auth2, "en")
 
-      profile1 = Repo.get_by!(UserProfile, user_id: user_identity1.user_id)
-      profile2 = Repo.get_by!(UserProfile, user_id: user_identity2.user_id)
+      profile1 = Repo.get_by!(UserProfile, user_id: user1.id)
+      profile2 = Repo.get_by!(UserProfile, user_id: user2.id)
 
       assert profile1.username == username
       assert profile2.username != username
       assert String.starts_with?(profile2.username, username)
-    end
-
-    test "adds a new confirmed email identity when the external account email changed" do
-      old_email = unique_user_email()
-      new_email = unique_user_email()
-      uid = Ecto.UUID.generate()
-
-      old_oauth = oauth_fixture(%{uid: uid, email: old_email})
-      new_oauth = oauth_fixture(%{uid: uid, email: new_email})
-
-      %{user: user} = user_fixture(%{identity_id: old_email})
-      {:ok, _user_identity} = Accounts.login_with_external_account(old_oauth, "en")
-
-      old_email_identity = Repo.get_by!(UserIdentity, user_id: user.id, provider: :email)
-      assert old_email_identity.identity_id == old_email
-      assert old_email_identity.is_primary == true
-
-      old_provider_identity = Repo.get_by!(UserIdentity, user_id: user.id, provider: :google)
-      assert old_provider_identity.identity_id == uid
-      assert old_provider_identity.is_primary == false
-
-      {:ok, _user_identity} = Accounts.login_with_external_account(new_oauth, "en")
-
-      identities =
-        User
-        |> Repo.get!(user.id)
-        |> Repo.preload(:identities)
-        |> Map.get(:identities)
-
-      assert Enum.count(identities) == 3
-
-      new_email_identity = Repo.get_by!(UserIdentity, identity_id: new_email)
-      assert new_email_identity.provider == :email
-      assert new_email_identity.is_primary == false
-      assert new_email_identity.confirmed_at != nil
-
-      new_provider_identity = Repo.get_by!(UserIdentity, identity_id: uid)
-      assert new_provider_identity.provider == new_oauth["provider"]
-      assert new_provider_identity.identity_id == uid
-      assert new_provider_identity.is_primary == false
-      assert new_provider_identity.confirmed_at != nil
-    end
-
-    test "unlink provider if the email changed and belongs to a confirmed user" do
-      old_email = unique_user_email()
-      new_email = unique_user_email()
-      uid = Ecto.UUID.generate()
-
-      old_oauth = oauth_fixture(%{uid: uid, email: old_email})
-      new_oauth = oauth_fixture(%{uid: uid, email: new_email})
-
-      %{user: user} = user_fixture(%{identity_id: old_email})
-      %{user: other_user} = user_fixture(%{identity_id: new_email})
-
-      # link an external account to the old email
-      {:ok, _user_identity} = Accounts.login_with_external_account(old_oauth, "en")
-
-      old_email_identity = Repo.get_by!(UserIdentity, user_id: user.id, provider: :email)
-      assert old_email_identity.identity_id == old_email
-      assert old_email_identity.is_primary == true
-
-      old_provider_identity = Repo.get_by!(UserIdentity, user_id: user.id, provider: :google)
-      assert old_provider_identity.identity_id == uid
-      assert old_provider_identity.is_primary == false
-
-      # now imagine the user changed their external account email
-      # and the new email belongs to a CONFIRMED user
-      # we need to link this email to the other user
-      {:ok, _user_identity} = Accounts.login_with_external_account(new_oauth, "en")
-
-      # check the old provider is no longer linked to the original account
-      refute Repo.get_by(UserIdentity, user_id: user.id, identity_id: uid)
-
-      # check this external account is linked to the other user
-      assert Repo.get_by!(UserIdentity, user_id: other_user.id, identity_id: uid)
-    end
-
-    test "don't unlink provider if the email changed and belongs to an unconfirmed user" do
-      old_email = unique_user_email()
-      new_email = unique_user_email()
-      uid = Ecto.UUID.generate()
-
-      old_oauth = oauth_fixture(%{uid: uid, email: old_email})
-      new_oauth = oauth_fixture(%{uid: uid, email: new_email})
-
-      %{user: user} = user_fixture(%{identity_id: old_email})
-      %{user: unconfirmed_user} = unconfirmed_user_fixture(%{identity_id: new_email})
-
-      # check the other user has an unconfirmed email identity
-      unconfirmed_identity = Repo.get_by!(UserIdentity, user_id: unconfirmed_user.id, identity_id: new_email)
-      assert is_nil(unconfirmed_identity.confirmed_at)
-
-      # link an external account to the old email
-      {:ok, _user_identity} = Accounts.login_with_external_account(old_oauth, "en")
-
-      # now imagine the user changed their external account email
-      # and the new email belongs to an UNCONFIRMED user
-      # we need to remove this email from the unconfirmed user
-      {:ok, _user_identity} = Accounts.login_with_external_account(new_oauth, "en")
-
-      # check this email is no longer linked to the unconfirmed user
-      refute Repo.get_by(UserIdentity, user_id: unconfirmed_user.id, identity_id: new_email)
-
-      # check the provider is still linked to the original user
-      assert Repo.get_by!(UserIdentity, user_id: user.id, identity_id: uid)
-    end
-  end
-
-  describe "delete_user_identity/1" do
-    test "deletes the user identity and its tokens" do
-      %{user_identity: user_identity} = user_fixture()
-
-      # add external account/identity
-      oauth = oauth_fixture(%{email: user_identity.identity_id})
-      {:ok, external_identity} = Accounts.login_with_external_account(oauth, "en")
-
-      # add token
-      Accounts.generate_user_session_token(external_identity)
-      assert Repo.get_by!(UserToken, user_identity_id: external_identity.id)
-
-      assert {:ok, _user_identity} = Accounts.delete_user_identity(external_identity)
-      refute Repo.get_by(UserToken, user_identity_id: external_identity.id)
-      refute Repo.get(UserIdentity, external_identity.id)
-    end
-
-    test "does not delete the primary identity if confirmed" do
-      %{user_identity: user_identity} = user_fixture()
-      assert {:error, :forbidden} = Accounts.delete_user_identity(user_identity)
     end
   end
 end

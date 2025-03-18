@@ -12,7 +12,6 @@ defmodule Zoonk.Admin do
   alias Zoonk.Repo
   alias Zoonk.Schemas.AdminUser
   alias Zoonk.Schemas.User
-  alias Zoonk.Schemas.UserProfile
 
   @doc """
   Check if a user is an admin.
@@ -36,13 +35,13 @@ defmodule Zoonk.Admin do
 
   ## Examples
 
-      iex> add_admin(%UserProfile{user_id: user_id})
+      iex> add_admin(user_id)
       {:ok, %AdminUser{}}
 
-      iex> add_admin(%UserProfile{user_id: user_id})
+      iex> add_admin(user_id)
       {:error, %Ecto.Changeset{}}
   """
-  def add_admin(%UserProfile{user_id: user_id}) do
+  def add_admin(user_id) do
     %AdminUser{}
     |> AdminUser.changeset(%{user_id: user_id})
     |> Repo.insert()

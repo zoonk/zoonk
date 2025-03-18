@@ -4,7 +4,8 @@ defmodule ZoonkWeb.Live.UserSignUp do
 
   import ZoonkWeb.Components.User
 
-  alias Zoonk.Schemas.UserIdentity
+  alias Zoonk.Configuration
+  alias Zoonk.Schemas.User
   alias Zoonk.Scope
   alias ZoonkWeb.Helpers
 
@@ -13,9 +14,9 @@ defmodule ZoonkWeb.Live.UserSignUp do
     <.main_container action={:signup}>
       <section
         class="flex w-full flex-col gap-2"
-        aria-label={dgettext("users", "Use one of the external accounts below:")}
+        aria-label={dgettext("users", "Use one of the external providers below:")}
       >
-        <.auth_link :for={identity <- [:apple, :google, :github]} provider={identity} />
+        <.auth_link :for={provider <- Configuration.list_providers()} provider={provider} />
       </section>
 
       <section class="w-full" aria-label={dgettext("users", "Or use your email address")}>
@@ -26,7 +27,7 @@ defmodule ZoonkWeb.Live.UserSignUp do
     """
   end
 
-  def mount(_params, _session, %{assigns: %{current_scope: %Scope{user_identity: %UserIdentity{}}}} = socket) do
+  def mount(_params, _session, %{assigns: %{current_scope: %Scope{user: %User{}}}} = socket) do
     {:ok, redirect(socket, to: Helpers.UserAuth.signed_in_path(socket))}
   end
 

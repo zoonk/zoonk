@@ -10,7 +10,7 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
     test "renders settings page", %{conn: conn} do
       {:ok, _lv, html} =
         conn
-        |> login_user(user_fixture().user_identity)
+        |> login_user(user_fixture())
         |> live(~p"/user/email")
 
       assert html =~ "Change Email"
@@ -19,7 +19,7 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
     test "logout user", %{conn: conn} do
       {:ok, lv, _html} =
         conn
-        |> login_user(user_fixture().user_identity)
+        |> login_user(user_fixture())
         |> live(~p"/user/email")
 
       assert {:ok, _conn} =
@@ -40,11 +40,11 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
 
   describe "update email form" do
     setup %{conn: conn} do
-      %{user_identity: user_identity} = user_fixture()
-      %{conn: login_user(conn, user_identity), user_identity: user_identity}
+      user = user_fixture()
+      %{conn: login_user(conn, user), user: user}
     end
 
-    test "updates the user email", %{conn: conn, user_identity: user_identity} do
+    test "updates the user email", %{conn: conn, user: user} do
       new_email = unique_user_email()
 
       {:ok, lv, _html} = live(conn, ~p"/user/email")
@@ -52,69 +52,12 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
       result =
         lv
         |> form("#email_form", %{
-          "user" => %{"identity_id" => new_email}
+          "user" => %{"email" => new_email}
         })
         |> render_submit()
 
       assert result =~ "A link to confirm your email"
-      assert Accounts.get_user_identity_by_email(user_identity.identity_id)
-      assert is_nil(Accounts.get_user_identity_by_email(new_email))
-    end
-
-    test "doesn't show an error if the email doesn't change (phx-update)", %{conn: conn, user_identity: user_identity} do
-      {:ok, lv, _html} = live(conn, ~p"/user/email")
-
-      result =
-        lv
-        |> element("#email_form")
-        |> render_change(%{
-          "user" => %{"identity_id" => user_identity.identity_id}
-        })
-
-      refute result =~ "has already been taken"
-    end
-
-    test "doesn't show an error if the email doesn't change (phx-submit)", %{conn: conn, user_identity: user_identity} do
-      {:ok, lv, _html} = live(conn, ~p"/user/email")
-
-      result =
-        lv
-        |> form("#email_form", %{
-          "user" => %{"identity_id" => user_identity.identity_id}
-        })
-        |> render_submit()
-
-      refute result =~ "has already been taken"
-    end
-
-    test "shows error for duplicate email (phx-change)", %{conn: conn} do
-      %{user_identity: user_identity} = user_fixture()
-
-      {:ok, lv, _html} = live(conn, ~p"/user/email")
-
-      result =
-        lv
-        |> element("#email_form")
-        |> render_change(%{
-          "user" => %{"identity_id" => user_identity.identity_id}
-        })
-
-      assert result =~ "has already been taken"
-    end
-
-    test "shows error for duplicate email (phx-submit)", %{conn: conn} do
-      %{user_identity: user_identity} = user_fixture()
-
-      {:ok, lv, _html} = live(conn, ~p"/user/email")
-
-      result =
-        lv
-        |> form("#email_form", %{
-          "user" => %{"identity_id" => user_identity.identity_id}
-        })
-        |> render_submit()
-
-      assert result =~ "has already been taken"
+      assert Accounts.get_user_by_email(user.email)
     end
 
     test "renders errors with invalid data (phx-change)", %{conn: conn} do
@@ -124,54 +67,51 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
         lv
         |> element("#email_form")
         |> render_change(%{
-          "user" => %{"identity_id" => "with spaces"}
+          "action" => "update_email",
+          "user" => %{"email" => "with spaces"}
         })
 
       assert result =~ "Change Email"
       assert result =~ "must have the @ sign and no spaces"
     end
 
-    test "renders errors with invalid data (phx-submit)", %{conn: conn} do
+    test "renders errors with invalid data (phx-submit)", %{conn: conn, user: user} do
       {:ok, lv, _html} = live(conn, ~p"/user/email")
 
       result =
         lv
         |> form("#email_form", %{
-          "user" => %{"identity_id" => "with spaces"}
+          "user" => %{"email" => user.email}
         })
         |> render_submit()
 
       assert result =~ "Change Email"
-      assert result =~ "must have the @ sign and no spaces"
+      assert result =~ "did not change"
     end
   end
 
   describe "confirm email" do
     setup %{conn: conn} do
-      %{user_identity: user_identity} = user_fixture()
+      user = user_fixture()
       email = unique_user_email()
 
       token =
         extract_user_token(fn url ->
-          Accounts.deliver_user_update_email_instructions(
-            %{user_identity | identity_id: email},
-            user_identity.identity_id,
-            url
-          )
+          Accounts.deliver_user_update_email_instructions(%{user | email: email}, user.email, url)
         end)
 
-      %{conn: login_user(conn, user_identity), token: token, email: email, user_identity: user_identity}
+      %{conn: login_user(conn, user), token: token, email: email, user: user}
     end
 
-    test "updates the user email once", %{conn: conn, user_identity: user_identity, token: token, email: email} do
+    test "updates the user email once", %{conn: conn, user: user, token: token, email: email} do
       {:error, redirect} = live(conn, ~p"/user/email/confirm/#{token}")
 
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/user/email"
       assert %{"info" => message} = flash
       assert message == "Email changed successfully."
-      refute Accounts.get_user_identity_by_email(user_identity.identity_id)
-      assert Accounts.get_user_identity_by_email(email)
+      refute Accounts.get_user_by_email(user.email)
+      assert Accounts.get_user_by_email(email)
 
       # use confirm token again
       {:error, expired_redirect} = live(conn, ~p"/user/email/confirm/#{token}")
@@ -181,13 +121,13 @@ defmodule ZoonkWeb.UserLive.UserEmailSettingsTest do
       assert message == "Email change link is invalid or it has expired."
     end
 
-    test "does not update email with invalid token", %{conn: conn, user_identity: user_identity} do
+    test "does not update email with invalid token", %{conn: conn, user: user} do
       {:error, redirect} = live(conn, ~p"/user/email/confirm/oops")
       assert {:live_redirect, %{to: path, flash: flash}} = redirect
       assert path == ~p"/user/email"
       assert %{"error" => message} = flash
       assert message == "Email change link is invalid or it has expired."
-      assert Accounts.get_user_identity_by_email(user_identity.identity_id)
+      assert Accounts.get_user_by_email(user.email)
     end
 
     test "redirects if user is not logged in", %{token: token} do

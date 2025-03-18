@@ -17,28 +17,26 @@ defmodule ZoonkWeb.UserAuthPlugTest do
       |> Map.replace!(:secret_key_base, ZoonkWeb.Endpoint.config(:secret_key_base))
       |> init_test_session(%{})
 
-    %{user_identity: user_identity} = user_fixture()
-
-    %{user_identity: %{user_identity | authenticated_at: DateTime.utc_now()}, conn: conn}
+    %{user: %{user_fixture() | authenticated_at: DateTime.utc_now()}, conn: conn}
   end
 
   describe "fetch_current_scope_for_user/2" do
-    test "authenticates user from session", %{conn: conn, user_identity: user_identity} do
-      user_token = Accounts.generate_user_session_token(user_identity)
+    test "authenticates user from session", %{conn: conn, user: user} do
+      user_token = Accounts.generate_user_session_token(user)
 
       conn =
         conn
         |> put_session(:user_token, user_token)
         |> Plugs.UserAuth.fetch_current_scope_for_user([])
 
-      assert conn.assigns.current_scope.user_identity.id == user_identity.id
+      assert conn.assigns.current_scope.user.id == user.id
     end
 
-    test "authenticates user from cookies", %{conn: conn, user_identity: user_identity} do
+    test "authenticates user from cookies", %{conn: conn, user: user} do
       logged_in_conn =
         conn
         |> fetch_cookies()
-        |> Helpers.UserAuth.login_user(user_identity)
+        |> Helpers.UserAuth.login_user(user)
 
       user_token = logged_in_conn.cookies[@remember_me_cookie]
       %{value: signed_token} = logged_in_conn.resp_cookies[@remember_me_cookie]
@@ -48,15 +46,15 @@ defmodule ZoonkWeb.UserAuthPlugTest do
         |> put_req_cookie(@remember_me_cookie, signed_token)
         |> Plugs.UserAuth.fetch_current_scope_for_user([])
 
-      assert conn.assigns.current_scope.user_identity.id == user_identity.id
+      assert conn.assigns.current_scope.user.id == user.id
       assert get_session(conn, :user_token) == user_token
 
       assert get_session(conn, :live_socket_id) ==
                "users_sessions:#{Base.url_encode64(user_token)}"
     end
 
-    test "does not authenticate if data is missing", %{conn: conn, user_identity: user_identity} do
-      Accounts.generate_user_session_token(user_identity)
+    test "does not authenticate if data is missing", %{conn: conn, user: user} do
+      Accounts.generate_user_session_token(user)
       conn = Plugs.UserAuth.fetch_current_scope_for_user(conn, [])
       refute get_session(conn, :user_token)
       refute conn.assigns.current_scope
@@ -108,10 +106,10 @@ defmodule ZoonkWeb.UserAuthPlugTest do
       refute get_session(post_conn, :user_return_to)
     end
 
-    test "does not redirect if user is authenticated", %{conn: conn, user_identity: user_identity} do
+    test "does not redirect if user is authenticated", %{conn: conn, user: user} do
       conn =
         conn
-        |> assign(:current_scope, Scope.for_user(user_identity))
+        |> assign(:current_scope, Scope.for_user(user))
         |> Plugs.UserAuth.require_authenticated_user([])
 
       refute conn.halted

@@ -13,19 +13,19 @@ defmodule ZoonkWeb.UserLive.LoginWithEmailTest do
 
   describe "user login - magic link" do
     test "sends magic link email when user exists", %{conn: conn} do
-      %{user_identity: user_identity} = user_fixture()
+      user = user_fixture()
 
       {:ok, lv, _html} = live(conn, ~p"/login/email")
 
       {:ok, _lv, html} =
         lv
-        |> form("#login_form_magic", %{"identity_id" => user_identity.identity_id})
+        |> form("#login_form_magic", %{email: user.email})
         |> render_submit()
         |> follow_redirect(conn, ~p"/login/email")
 
       assert html =~ "If your email is in our system"
 
-      assert Zoonk.Repo.get_by!(Zoonk.Schemas.UserToken, user_identity_id: user_identity.id).context ==
+      assert Zoonk.Repo.get_by!(Zoonk.Schemas.UserToken, user_id: user.id).context ==
                "login"
     end
 
@@ -34,7 +34,7 @@ defmodule ZoonkWeb.UserLive.LoginWithEmailTest do
 
       {:ok, _lv, html} =
         lv
-        |> form("#login_form_magic", %{"identity_id" => "idonotexist@example.com"})
+        |> form("#login_form_magic", %{email: "idonotexist@example.com"})
         |> render_submit()
         |> follow_redirect(conn, ~p"/login/email")
 

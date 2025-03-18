@@ -9,9 +9,9 @@ defmodule ZoonkWeb.Components.User do
   @actions [:login, :signup]
 
   @doc """
-  Generates a link to the authentication identity.
+  Generates a link to the authentication provider.
   """
-  attr :provider, :atom, values: Configuration.list_user_identity_providers(), required: true
+  attr :provider, :atom, values: [:email | Configuration.list_providers()], required: true
   attr :action, :atom, values: @actions, default: :login
 
   def auth_link(assigns) do

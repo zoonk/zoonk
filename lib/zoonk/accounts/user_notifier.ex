@@ -11,12 +11,12 @@ defmodule Zoonk.Accounts.UserNotifier do
 
   alias Zoonk.Configuration
   alias Zoonk.Mailer
-  alias Zoonk.Schemas.UserIdentity
+  alias Zoonk.Schemas.User
 
   @doc """
   Deliver instructions to update a user email.
   """
-  def deliver_update_email_instructions(%UserIdentity{} = user_identity, url) do
+  def deliver_update_email_instructions(user, url) do
     subject = dgettext("emails", "Update email instructions")
 
     content =
@@ -33,25 +33,25 @@ defmodule Zoonk.Accounts.UserNotifier do
 
         If you didn't request this change, please ignore this.
         """,
-        email: user_identity.identity_id,
+        email: user.email,
         url: url,
         expiration_days: Zoonk.Configuration.get_max_age(:change_email, :days)
       )
 
-    Mailer.send_email(user_identity.identity_id, subject, content)
+    Mailer.send_email(user.email, subject, content)
   end
 
   @doc """
   Deliver instructions to log in with a magic link.
   """
-  def deliver_login_instructions(%UserIdentity{} = user_identity, url) do
-    case user_identity do
-      %UserIdentity{confirmed_at: nil} -> deliver_confirmation_instructions(user_identity, url)
-      _confirmed -> deliver_magic_link_instructions(user_identity, url)
+  def deliver_login_instructions(user, url) do
+    case user do
+      %User{confirmed_at: nil} -> deliver_confirmation_instructions(user, url)
+      _confirmed -> deliver_magic_link_instructions(user, url)
     end
   end
 
-  defp deliver_magic_link_instructions(%UserIdentity{} = user_identity, url) do
+  defp deliver_magic_link_instructions(user, url) do
     subject = dgettext("emails", "Log in instructions")
 
     content =
@@ -68,15 +68,15 @@ defmodule Zoonk.Accounts.UserNotifier do
 
         If you didn't request this email, please ignore this.
         """,
-        email: user_identity.identity_id,
+        email: user.email,
         url: url,
         expiration_minutes: Configuration.get_max_age(:magic_link, :minutes)
       )
 
-    Mailer.send_email(user_identity.identity_id, subject, content)
+    Mailer.send_email(user.email, subject, content)
   end
 
-  defp deliver_confirmation_instructions(%UserIdentity{} = user_identity, url) do
+  defp deliver_confirmation_instructions(user, url) do
     subject = dgettext("emails", "Confirmation instructions")
 
     content =
@@ -93,11 +93,11 @@ defmodule Zoonk.Accounts.UserNotifier do
 
         If you didn't create an account with us, please ignore this.
         """,
-        email: user_identity.identity_id,
+        email: user.email,
         url: url,
         expiration_minutes: Configuration.get_max_age(:magic_link, :minutes)
       )
 
-    Mailer.send_email(user_identity.identity_id, subject, content)
+    Mailer.send_email(user.email, subject, content)
   end
 end

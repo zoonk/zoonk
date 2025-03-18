@@ -16,17 +16,17 @@ defmodule Zoonk.Scope do
   growing application requirements.
   """
 
-  alias Zoonk.Schemas.UserIdentity
+  alias Zoonk.Schemas.User
 
-  defstruct user_identity: nil
+  defstruct user: nil
 
   @doc """
-  Creates a scope for the given user identity.
+  Creates a scope for the given user.
 
-  Returns nil if no user identity is given.
+  Returns nil if no user is given.
   """
-  def for_user(%UserIdentity{} = user_identity) do
-    %__MODULE__{user_identity: user_identity}
+  def for_user(%User{} = user) do
+    %__MODULE__{user: user}
   end
 
   def for_user(nil), do: nil
@@ -34,6 +34,6 @@ defmodule Zoonk.Scope do
   @doc """
   Shortcut for getting a `%Zoonk.Schemas.User{}` from scope.
   """
-  def get_user(%{user_identity: %UserIdentity{user: user}}), do: user
+  def get_user(%{user: %User{} = user}), do: user
   def get_user(nil), do: nil
 end

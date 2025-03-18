@@ -27,31 +27,4 @@ defmodule Zoonk.Helpers do
     |> String.downcase()
     |> String.trim_trailing("_")
   end
-
-  @doc """
-  Normalize all keys in a map to use atoms.
-
-  ## Examples
-
-      iex> Helpers.normalize_keys(%{"hello" => "world"})
-      %{hello: "world"}
-
-      iex> Helpers.normalize_keys(%{hello: "world"})
-      %{hello: "world"}
-
-      iex> Helpers.normalize_keys(%{"Hello World" => "test"})
-      %{hello_world: "test"}
-  """
-  def normalize_keys(map) when is_map(map) do
-    Map.new(map, fn {k, v} -> {normalize_key(k), v} end)
-  end
-
-  defp normalize_key(key) when is_atom(key), do: key
-
-  defp normalize_key(key) when is_binary(key) do
-    key
-    |> String.replace(~r/\s+/, "_")
-    |> String.downcase()
-    |> String.to_existing_atom()
-  end
 end

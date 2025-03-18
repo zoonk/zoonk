@@ -176,8 +176,8 @@ defmodule Zoonk.MixProject do
           Zoonk.Schemas.State,
           Zoonk.Schemas.Subregion,
           Zoonk.Schemas.User,
-          Zoonk.Schemas.UserIdentity,
           Zoonk.Schemas.UserProfile,
+          Zoonk.Schemas.UserProvider,
           Zoonk.Schemas.UserToken
         ],
         Queries: [

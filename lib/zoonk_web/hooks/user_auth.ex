@@ -54,7 +54,7 @@ defmodule ZoonkWeb.Hooks.UserAuth do
     socket = mount_current_scope(socket, session)
     user_return_to = Map.get(params, "redirect_to") || ~p"/"
 
-    if socket.assigns.current_scope && socket.assigns.current_scope.user_identity do
+    if socket.assigns.current_scope && socket.assigns.current_scope.user do
       {:cont, Phoenix.Component.assign(socket, :user_return_to, user_return_to)}
     else
       socket =
@@ -69,7 +69,7 @@ defmodule ZoonkWeb.Hooks.UserAuth do
   def on_mount(:ensure_sudo_mode, _params, session, socket) do
     socket = mount_current_scope(socket, session)
 
-    if Accounts.sudo_mode?(socket.assigns.current_scope.user_identity) do
+    if Accounts.sudo_mode?(socket.assigns.current_scope.user) do
       {:cont, socket}
     else
       socket =
@@ -83,12 +83,12 @@ defmodule ZoonkWeb.Hooks.UserAuth do
 
   defp mount_current_scope(socket, session) do
     Phoenix.Component.assign_new(socket, :current_scope, fn ->
-      user_identity =
+      user =
         if user_token = session["user_token"] do
-          Accounts.get_user_identity_by_session_token(user_token)
+          Accounts.get_user_by_session_token(user_token)
         end
 
-      Scope.for_user(user_identity)
+      Scope.for_user(user)
     end)
   end
 end
