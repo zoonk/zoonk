@@ -7,6 +7,7 @@ defmodule Zoonk.AccountFixtures do
   import Ecto.Query
 
   alias Zoonk.Accounts
+  alias Zoonk.Repo
   alias Zoonk.Schemas.UserToken
   alias Zoonk.Scope
 
@@ -33,12 +34,15 @@ defmodule Zoonk.AccountFixtures do
   end
 
   def user_fixture(attrs \\ %{}) do
+    preload = Map.get(attrs, :preload, [])
+
     %{user: user, user_identity: user_identity, user_profile: user_profile} = unconfirmed_user_fixture(attrs)
+
     token = extract_user_token(fn url -> Accounts.deliver_login_instructions(user_identity, url) end)
 
     {:ok, confirmed_user_identity, _expired_tokens} = Accounts.login_user_by_magic_link(token)
 
-    %{user: user, user_identity: confirmed_user_identity, user_profile: user_profile}
+    %{user: user, user_identity: Repo.preload(confirmed_user_identity, preload), user_profile: user_profile}
   end
 
   def user_scope_fixture do

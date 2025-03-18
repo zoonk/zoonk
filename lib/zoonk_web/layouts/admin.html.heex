@@ -1,0 +1,29 @@
+<main aria-labelledby="page-title">
+  <.tab_bar>
+    <.nav_menu_item
+      active={@active_page == :admin_home}
+      label={dgettext("admin", "Dashboard")}
+      icon="tabler-dashboard"
+      navigate={~p"/admin"}
+    />
+  </.tab_bar>
+
+  <div class="bg-zk-surface zk-border w-full border-b dark:bg-zk-surface-inverse">
+    <header
+      aria-label={gettext("Go back to the app")}
+      class="zk-container-wide flex items-center justify-between py-4 sm:py-6"
+    >
+      <.text aria-hidden="true" element={:h1} size={:header} id="page-title">{@page_title}</.text>
+
+      <.a kind={:icon} icon="tabler-x" navigate={~p"/"} variant={:danger}>
+        <span class="sr-only">{gettext("Back")}</span>
+      </.a>
+    </header>
+  </div>
+
+  <section class="zk-container-wide">
+    {@inner_content}
+  </section>
+</main>
+
+<.flash_group flash={@flash} />

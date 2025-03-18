@@ -30,4 +30,10 @@ defmodule Zoonk.Scope do
   end
 
   def for_user(nil), do: nil
+
+  @doc """
+  Shortcut for getting a `%Zoonk.Schemas.User{}` from scope.
+  """
+  def get_user(%{user_identity: %UserIdentity{user: user}}), do: user
+  def get_user(nil), do: nil
 end
