@@ -8,13 +8,6 @@
     />
 
     <.nav_menu_item
-      active={@active_page == :user_linked_accounts}
-      label={dgettext("users", "Linked Accounts")}
-      icon="tabler-link"
-      navigate={~p"/user/linked?redirect_to=#{@user_return_to}"}
-    />
-
-    <.nav_menu_item
       label={dgettext("users", "Logout")}
       icon="tabler-logout"
       method="delete"
