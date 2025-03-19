@@ -1,11 +1,15 @@
-@import "tailwindcss" source("../..");
+@import "tailwindcss" source(none);
 
-@variant phx-click-loading ([".phx-click-loading&", ".phx-click-loading &"]);
-@variant phx-submit-loading ([".phx-submit-loading&", ".phx-submit-loading &"]);
-@variant phx-change-loading ([".phx-change-loading&", ".phx-change-loading &"]);
+@source "../css";
+@source "../js";
+@source "../../lib/zoonk_web";
 
-@plugin "./tailwind_tabler.js";
 @plugin "@tailwindcss/forms";
+@plugin "./tailwind_tabler.js";
+
+@custom-variant phx-click-loading ([".phx-click-loading&", ".phx-click-loading &"]);
+@custom-variant phx-submit-loading ([".phx-submit-loading&", ".phx-submit-loading &"]);
+@custom-variant phx-change-loading ([".phx-change-loading&", ".phx-change-loading &"]);
 
 @theme {
   --color-zk-bg-light: var(--color-neutral-50);
@@ -144,8 +148,8 @@
 }
 
 @utility zk-rounded-table-corner {
-  @apply first:before:absolute first:before:h-full first:before:w-4 first:before:top-0 first:before:-left-4 first:before:group-hover:bg-zinc-50 first:before:sm:rounded-l-xl
-      last:before:absolute last:before:h-full last:before:w-4 last:before:top-0 last:before:-right-4 last:before:group-hover:bg-zinc-50 last:before:sm:rounded-r-xl;
+  @apply first:before:absolute first:before:h-full first:before:w-4 first:before:top-0 first:before:-left-4 group-hover:first:before:bg-zinc-50 first:before:sm:rounded-l-xl
+    last:before:absolute last:before:h-full last:before:w-4 last:before:top-0 last:before:-right-4 group-hover:last:before:bg-zinc-50 last:before:sm:rounded-r-xl;
 }
 
 @utility zk-avatar {
