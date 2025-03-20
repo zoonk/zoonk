@@ -77,11 +77,18 @@
   @apply bg-zk-bg-light dark:bg-zk-bg-dark;
 }
 
-@utility zk-surface {
-  @apply bg-zk-surface dark:bg-zk-surface-inverse
-  hover:bg-zk-surface-hover dark:hover:bg-zk-surface-inverse-hover
+@utility zk-surface-decoration {
+  @apply hover:bg-zk-surface-hover dark:hover:bg-zk-surface-inverse-hover
   focus-visible:bg-zk-surface-hover dark:focus-visible:bg-zk-surface-inverse-hover
   focus-visible:outline-none;
+}
+
+@utility zk-surface-blur {
+  @apply bg-zk-surface/80 dark:bg-zk-surface-inverse/80 backdrop-blur-md;
+}
+
+@utility zk-surface {
+  @apply bg-zk-surface dark:bg-zk-surface-inverse zk-surface-decoration;
 }
 
 @utility zk-border {

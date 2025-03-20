@@ -22,7 +22,8 @@ defmodule ZoonkWeb.Components.Layout do
         class={[
           "flex flex-col items-center justify-center gap-1 p-4",
           "text-center text-sm font-medium",
-          "zk-surface",
+          "zk-surface-decoration zk-surface-blur",
+          "zk-bg-blur",
           "md:group-first:rounded-l-4xl md:group-last:rounded-r-4xl",
           @active and "text-zk-primary dark:text-zk-primary-300",
           !@active and !@destructive and "text-zk-text-secondary dark:text-zk-text-inverse-secondary",
@@ -52,9 +53,8 @@ defmodule ZoonkWeb.Components.Layout do
     <nav
       aria-label={gettext("Main menu")}
       class={[
-        "zk-surface fixed bottom-0 flex w-full justify-around",
+        "fixed bottom-0 z-10 flex w-full justify-around",
         "zk-border border-t",
-        "backdrop-blur-3xl",
         "md:left-1/2 md:-translate-x-1/2",
         "md:rounded-4xl md:bottom-4",
         "md:max-w-md md:border-t-0",

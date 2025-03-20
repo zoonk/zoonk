@@ -40,12 +40,18 @@
 ## Components
 
 - Shared components should be placed in the `lib/zoonk_web/components` directory.
+- Use a shared component whenever available. If a component is not available, create it. Make changes to existing components if necessary to accommodate new use cases.
 - When creating a new shared component, add it to the `html_helpers` function of the `lib/zoonk_web.ex` file.
 - Add a `@moduledoc` to each module and a `@doc` to each function/component, including examples of how to use the component.
 - Group related components together. For example, the `flash.ex` contains both `flash` and `flash_group` components.
 - Add `Phoenix.Component.attr/3` to each component to define the attributes it accepts. Include the `doc` option to provide documentation for each attribute.
 - Components modules are prefixed with `ZoonkWeb.Components` (e.g., `ZoonkWeb.Components.Flash`).
 - Turn repetitive code into components. However, for code specific to a section (e.g. authentication), keep it in the section's directory instead of `lib/zoonk_web/components`. For example, `lib/zoonk_web/live/users/user_components.ex` contains components specific to the user section and `lib/zoonk_web/layouts/layout_components.ex` contains components specific to the layout section.
+
+## Icons
+
+- Use tabler icons.
+- Use the <.icon /> component for icons. For example, `<.icon name="tabler-home" />`.
 
 ## Controllers
 
