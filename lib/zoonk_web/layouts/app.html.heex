@@ -33,7 +33,7 @@
     aria-label={gettext("Search and settings")}
     class="zk-container flex items-center justify-between py-4 sm:py-6"
   >
-    <.text element={:h1} size={:header} id="page-title">{@page_title}</.text>
+    <.text tag="h1" size={:header} id="page-title">{@page_title}</.text>
 
     <.link
       navigate={~p"/user/email?redirect_to=#{user_return_to_path(@active_page)}"}

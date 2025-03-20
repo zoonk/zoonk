@@ -168,7 +168,7 @@ defmodule ZoonkWeb.Components.Input do
   def label(assigns) do
     ~H"""
     <.text
-      element={:label}
+      tag="label"
       size={:caption}
       for={@for}
       class={["mb-2 font-semibold", @hide_label && "sr-only"]}

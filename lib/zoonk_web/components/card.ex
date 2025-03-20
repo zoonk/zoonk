@@ -10,8 +10,8 @@ defmodule ZoonkWeb.Components.Card do
   ## Examples
 
       <.card>
-        <.text element={:h3} size={:title} variant={:primary}>Card Title</.text>
-        <.text element={:p} size={:body} variant={:secondary}>Card content goes here.</.text>
+        <.text tag="h3" size={:title} variant={:primary}>Card Title</.text>
+        <.text size={:body} variant={:secondary}>Card content goes here.</.text>
       </.card>
   """
   attr :tag, :string, default: "div", doc: "The HTML tag to use for the card container"

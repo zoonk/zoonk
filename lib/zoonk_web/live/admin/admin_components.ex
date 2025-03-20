@@ -5,8 +5,8 @@ defmodule ZoonkWeb.Components.Admin do
   def stats_card(assigns) do
     ~H"""
     <.card>
-      <.text element={:h3} size={:caption} variant={:secondary}>{@title}</.text>
-      <.text element={:span} size={:title} variant={:primary}>{@data}</.text>
+      <.text tag="h3" size={:caption} variant={:secondary}>{@title}</.text>
+      <.text tag="span" size={:title} variant={:primary}>{@data}</.text>
     </.card>
     """
   end

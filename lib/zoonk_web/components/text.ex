@@ -4,14 +4,14 @@ defmodule ZoonkWeb.Components.Text do
   """
   use Phoenix.Component
 
-  attr :element, :atom, values: [:h1, :h2, :h3, :h4, :h5, :h6, :p, :span, :label], default: :p
-  attr :size, :atom, values: [:header, :title, :subtitle, :body, :caption], default: :body
-  attr :variant, :atom, values: [:primary, :secondary], default: :primary
-  attr :class, :any, default: nil
-  attr :id, :string, default: nil
-  attr :for, :string, default: nil
-  attr :rest, :global
-  slot :inner_block, required: true
+  attr :tag, :string, default: "p", doc: "HTML tag to use for the text element"
+  attr :size, :atom, values: [:header, :title, :subtitle, :body, :caption], default: :body, doc: "Size of the text"
+  attr :variant, :atom, values: [:primary, :secondary], default: :primary, doc: "Color variant of the text"
+  attr :for, :string, default: nil, doc: "The for attribute for labels"
+  attr :class, :any, default: nil, doc: "CSS class to apply to the text element"
+  attr :id, :string, default: nil, doc: "ID of the text element"
+  attr :rest, :global, doc: "HTML attributes to apply to the text element"
+  slot :inner_block, required: true, doc: "Content to render inside the text element"
 
   @doc """
   Renders a text element.
@@ -19,75 +19,11 @@ defmodule ZoonkWeb.Components.Text do
   ## Examples
 
       <.text>Some text</.text>
-      <.text element={:h1}>Some text</.text>
+      <.text tag="h1">Some text</.text>
       <.text size={:title}>Some text</.text>
       <.text variant={:secondary}>Some text</.text>
   """
-  def text(%{element: :h1} = assigns) do
-    ~H"""
-    <h1 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
-      {render_slot(@inner_block)}
-    </h1>
-    """
-  end
-
-  def text(%{element: :h2} = assigns) do
-    ~H"""
-    <h2 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
-      {render_slot(@inner_block)}
-    </h2>
-    """
-  end
-
-  def text(%{element: :h3} = assigns) do
-    ~H"""
-    <h3 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
-      {render_slot(@inner_block)}
-    </h3>
-    """
-  end
-
-  def text(%{element: :h4} = assigns) do
-    ~H"""
-    <h4 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
-      {render_slot(@inner_block)}
-    </h4>
-    """
-  end
-
-  def text(%{element: :h5} = assigns) do
-    ~H"""
-    <h5 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
-      {render_slot(@inner_block)}
-    </h5>
-    """
-  end
-
-  def text(%{element: :h6} = assigns) do
-    ~H"""
-    <h6 id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
-      {render_slot(@inner_block)}
-    </h6>
-    """
-  end
-
-  def text(%{element: :p} = assigns) do
-    ~H"""
-    <p id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
-      {render_slot(@inner_block)}
-    </p>
-    """
-  end
-
-  def text(%{element: :span} = assigns) do
-    ~H"""
-    <span id={@id} class={[get_size_class(@size), get_variant_class(@variant), @class]} {@rest}>
-      {render_slot(@inner_block)}
-    </span>
-    """
-  end
-
-  def text(%{element: :label} = assigns) do
+  def text(%{tag: "label"} = assigns) do
     ~H"""
     <label
       id={@id}
@@ -97,6 +33,19 @@ defmodule ZoonkWeb.Components.Text do
     >
       {render_slot(@inner_block)}
     </label>
+    """
+  end
+
+  def text(assigns) do
+    ~H"""
+    <.dynamic_tag
+      tag_name={@tag}
+      id={@id}
+      class={[get_size_class(@size), get_variant_class(@variant), @class]}
+      {@rest}
+    >
+      {render_slot(@inner_block)}
+    </.dynamic_tag>
     """
   end
 

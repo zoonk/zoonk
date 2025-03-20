@@ -66,8 +66,8 @@ defmodule ZoonkWeb.Components.Form do
       {@rest}
     >
       <fieldset aria-label={gettext("Form fields")} class="flex flex-col gap-4 p-4 md:p-8">
-        <.text aria-hidden="true" element={:h3} size={:header}>{render_slot(@title)}</.text>
-        <.text element={:h4} size={:body} variant={:secondary}>{render_slot(@subtitle)}</.text>
+        <.text aria-hidden="true" tag="h3" size={:header}>{render_slot(@title)}</.text>
+        <.text tag="h4" size={:body} variant={:secondary}>{render_slot(@subtitle)}</.text>
 
         {render_slot(@inner_block)}
       </fieldset>
@@ -81,7 +81,7 @@ defmodule ZoonkWeb.Components.Form do
           "rounded-b-md"
         ]}
       >
-        <.text element={:p} size={:caption} variant={:secondary}>{render_slot(@requirements)}</.text>
+        <.text size={:caption} variant={:secondary}>{render_slot(@requirements)}</.text>
 
         <.button type="submit" size={:sm} phx-disable-with={gettext("Saving...")}>
           {gettext("Save")}

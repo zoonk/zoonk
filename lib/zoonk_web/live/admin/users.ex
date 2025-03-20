@@ -21,9 +21,9 @@ defmodule ZoonkWeb.Live.AdminUsers do
       >
         <.card :for={{dom_id, user} <- @streams.users} tag="li" id={dom_id} class="flex gap-4">
           <div class="flex-1">
-            <.text element={:h3} size={:title}>{User.get_display_name(user.profile)}</.text>
+            <.text tag="h3" size={:title}>{User.get_display_name(user.profile)}</.text>
 
-            <.text element={:span} size={:caption} variant={:secondary} class="italic">
+            <.text tag="span" size={:caption} variant={:secondary} class="italic">
               @{user.profile.username} - {user.email}
             </.text>
           </div>

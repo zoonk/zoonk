@@ -62,7 +62,7 @@ defmodule ZoonkWeb.Components.User do
 
   def auth_title(assigns) do
     ~H"""
-    <.text id="auth-title" element={:h1} size={:header} class="w-full pb-8">
+    <.text id="auth-title" tag="h1" size={:header} class="w-full pb-8">
       {get_auth_header(@action)}
     </.text>
     """
