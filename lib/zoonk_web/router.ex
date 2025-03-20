@@ -141,6 +141,7 @@ defmodule ZoonkWeb.Router do
         layout: {ZoonkDev.Layouts, :ui} do
         live "/", UIHome
         live "/anchor", UIAnchor
+        live "/button", UIButton
       end
     end
   end
