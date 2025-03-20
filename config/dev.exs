@@ -90,7 +90,7 @@ config :zoonk, ZoonkWeb.Endpoint,
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/zoonk_web/(controllers|live|components|layouts)/.*(ex|heex)$"
+      ~r"lib/zoonk_(web|dev)/(controllers|live|components|layouts|ui)/.*(ex|heex)$"
     ]
   ]
 

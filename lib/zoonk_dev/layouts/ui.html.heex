@@ -1,0 +1,52 @@
+<main aria-labelledby="page-title">
+  <div class="bg-zk-surface zk-border sticky top-0 z-50 w-full border-b dark:bg-zk-surface-inverse">
+    <header class="zk-container-wide flex items-center justify-between gap-4 py-4 sm:py-6">
+      <.a kind={:button} navigate={~p"/"} size={:sm} variant={:outline}>
+        Back to app
+      </.a>
+
+      <.text
+        aria-hidden="true"
+        tag="h1"
+        size={:header}
+        class="truncate"
+        variant={:secondary}
+        id="page-title"
+      >
+        {@page_title}
+      </.text>
+    </header>
+  </div>
+
+  <nav class="sticky top-20 z-10 w-full">
+    <ul class="zk-container-wide flex items-center gap-4 overflow-x-auto py-2 sm:py-4">
+      <li
+        :for={item <- menu_items()}
+        class={[
+          "shadow-xs rounded-lg px-2 py-1.5 leading-none tracking-tight",
+          @active_page == item.module && "bg-zk-primary-50 shadow-zk-primary-100",
+          @active_page != item.module && "bg-zk-surface"
+        ]}
+      >
+        <.link
+          navigate={item.path}
+          class={[
+            "inline-flex items-center gap-2 align-middle",
+            @active_page == item.module && "text-zk-primary-800"
+          ]}
+        >
+          <.icon name={item.icon} class={["size-4", @active_page != item.module && item.color]} />
+          <span class={["text-xs", @active_page != item.module && "text-zk-text-secondary"]}>
+            {item.label}
+          </span>
+        </.link>
+      </li>
+    </ul>
+  </nav>
+
+  <section class="zk-container-wide">
+    {@inner_content}
+  </section>
+</main>
+
+<.flash_group flash={@flash} />

@@ -132,5 +132,16 @@ defmodule ZoonkWeb.Router do
       live_dashboard "/dashboard", metrics: ZoonkWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
+
+    # We have a playground for testing UI components in the dev environment.
+    scope "/ui", ZoonkDev.Live do
+      pipe_through :browser
+
+      live_session :ui_playground,
+        layout: {ZoonkDev.Layouts, :ui} do
+        live "/", UIHome
+        live "/anchor", UIAnchor
+      end
+    end
   end
 end

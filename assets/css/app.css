@@ -3,6 +3,7 @@
 @source "../css";
 @source "../js";
 @source "../../lib/zoonk_web";
+@source "../../lib/zoonk_dev";
 
 @plugin "@tailwindcss/forms";
 @plugin "./tailwind_tabler.js";
