@@ -10,7 +10,7 @@ defmodule ZoonkWeb.Live.AdminHome do
   def mount(_params, _session, socket) do
     socket =
       socket
-      |> assign(:page_title, dgettext("admin", "Admin Dashboard"))
+      |> assign(:page_title, dgettext("admin", "Dashboard"))
       |> assign(total_users: Admin.count_users())
 
     {:ok, socket}
