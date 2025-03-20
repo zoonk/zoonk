@@ -14,7 +14,7 @@ defmodule ZoonkWeb.Live.AdminUser do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, socket}
+    {:ok, assign(socket, back: %{link: ~p"/admin/users", label: dgettext("admin", "users")})}
   end
 
   @impl Phoenix.LiveView
