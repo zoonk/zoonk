@@ -21,9 +21,9 @@ defmodule ZoonkWeb.Components.Layout do
       <.link
         class={[
           "flex flex-col items-center justify-center gap-1 p-4",
-          "text-center text-sm font-medium",
+          "text-center text-sm font-light",
           "zk-surface-decoration zk-surface-blur",
-          "zk-bg-blur",
+          "zk-bg-blur transition-colors",
           "md:group-first:rounded-l-4xl md:group-last:rounded-r-4xl",
           @active and "text-zk-primary dark:text-zk-primary-300",
           !@active and !@destructive and "text-zk-text-secondary dark:text-zk-text-inverse-secondary",
@@ -33,7 +33,7 @@ defmodule ZoonkWeb.Components.Layout do
         ]}
         {@rest}
       >
-        <.icon name={@icon} class="h-6 w-6" />
+        <.icon name={@icon} class="h-5 w-5" />
         {@label}
       </.link>
     </li>
@@ -56,9 +56,9 @@ defmodule ZoonkWeb.Components.Layout do
         "fixed bottom-0 z-10 flex w-full justify-around",
         "zk-border border-t",
         "md:left-1/2 md:-translate-x-1/2",
-        "md:rounded-4xl md:bottom-4",
+        "md:bottom-4 md:rounded-full",
         "md:max-w-md md:border-t-0",
-        "md:shadow-md"
+        "md:shadow-lg"
       ]}
     >
       <ul class="flex w-full">
