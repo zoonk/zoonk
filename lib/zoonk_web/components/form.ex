@@ -77,7 +77,8 @@ defmodule ZoonkWeb.Components.Form do
         class={[
           "flex items-center justify-between",
           "bg-zk-surface-hover dark:bg-zk-surface-inverse-hover",
-          "px-4 py-2 md:px-8"
+          "px-4 py-2 md:px-8",
+          "rounded-b-md"
         ]}
       >
         <.text element={:p} size={:caption} variant={:secondary}>{render_slot(@requirements)}</.text>
