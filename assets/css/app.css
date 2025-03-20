@@ -28,6 +28,18 @@
   --color-zk-primary-800: var(--color-blue-800);
   --color-zk-primary-900: var(--color-blue-900);
 
+  --color-zk-secondary: var(--color-neutral-500);
+  --color-zk-secondary-50: var(--color-neutral-50);
+  --color-zk-secondary-100: var(--color-neutral-100);
+  --color-zk-secondary-200: var(--color-neutral-200);
+  --color-zk-secondary-300: var(--color-neutral-300);
+  --color-zk-secondary-400: var(--color-neutral-400);
+  --color-zk-secondary-500: var(--color-neutral-500);
+  --color-zk-secondary-600: var(--color-neutral-600);
+  --color-zk-secondary-700: var(--color-neutral-700);
+  --color-zk-secondary-800: var(--color-neutral-800);
+  --color-zk-secondary-900: var(--color-neutral-900);
+
   --color-zk-danger-50: var(--color-pink-50);
   --color-zk-danger-100: var(--color-pink-100);
   --color-zk-danger-200: var(--color-pink-200);
