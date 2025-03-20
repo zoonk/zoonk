@@ -60,6 +60,7 @@ defmodule ZoonkWeb.Components.Anchor do
     <.link
       class={[
         "zk-btn",
+        !@full && "w-max",
         @full && "relative w-full",
         @variant == :outline && "zk-btn-outline",
         @variant == :primary && "zk-btn-primary",

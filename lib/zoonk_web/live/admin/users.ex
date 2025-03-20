@@ -20,12 +20,16 @@ defmodule ZoonkWeb.Live.AdminUsers do
         class="grid grid-cols-1 gap-4 py-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
       >
         <.card :for={{dom_id, user} <- @streams.users} tag="li" id={dom_id} class="flex gap-4">
-          <div class="flex-1">
+          <div class="flex flex-1 flex-col">
             <.text tag="h3" size={:title}>{User.get_display_name(user.profile)}</.text>
 
             <.text tag="span" size={:caption} variant={:secondary} class="italic">
               @{user.profile.username} - {user.email}
             </.text>
+
+            <.a kind={:button} size={:sm} navigate={~p"/admin/users/#{user.id}"} class="mt-4">
+              {dgettext("admin", "View")}
+            </.a>
           </div>
 
           <.avatar
