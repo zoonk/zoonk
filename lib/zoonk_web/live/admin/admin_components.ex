@@ -4,10 +4,10 @@ defmodule ZoonkWeb.Components.Admin do
 
   def stats_card(assigns) do
     ~H"""
-    <div class="bg-zk-surface rounded-lg p-4 shadow-sm dark:bg-zk-surface-inverse">
+    <.card>
       <.text element={:h3} size={:caption} variant={:secondary}>{@title}</.text>
       <.text element={:span} size={:title} variant={:primary}>{@data}</.text>
-    </div>
+    </.card>
     """
   end
 end

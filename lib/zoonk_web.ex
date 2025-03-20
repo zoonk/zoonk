@@ -92,6 +92,7 @@ defmodule ZoonkWeb do
       import ZoonkWeb.Components.Anchor
       import ZoonkWeb.Components.Avatar
       import ZoonkWeb.Components.Button
+      import ZoonkWeb.Components.Card
       import ZoonkWeb.Components.DataList
       import ZoonkWeb.Components.Divider
       import ZoonkWeb.Components.Flash

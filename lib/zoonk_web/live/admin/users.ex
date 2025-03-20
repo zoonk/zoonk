@@ -19,11 +19,7 @@ defmodule ZoonkWeb.Live.AdminUsers do
         phx-page-loading
         class="grid grid-cols-1 gap-4 py-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
       >
-        <li
-          :for={{dom_id, user} <- @streams.users}
-          id={dom_id}
-          class="bg-zk-surface flex gap-4 rounded-lg p-4 shadow-sm dark:bg-zk-surface-inverse"
-        >
+        <.card :for={{dom_id, user} <- @streams.users} tag="li" id={dom_id} class="flex gap-4">
           <div class="flex-1">
             <.text element={:h3} size={:title}>{User.get_display_name(user.profile)}</.text>
 
@@ -37,7 +33,7 @@ defmodule ZoonkWeb.Live.AdminUsers do
             alt={User.get_display_name(user.profile)}
             label={User.get_display_name(user.profile)}
           />
-        </li>
+        </.card>
       </ul>
 
       <.search
