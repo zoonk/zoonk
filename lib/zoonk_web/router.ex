@@ -145,6 +145,7 @@ defmodule ZoonkWeb.Router do
         live "/button", UIButton
         live "/card", UICard
         live "/divider", UIDivider
+        live "/flash", UIFlash
       end
     end
   end

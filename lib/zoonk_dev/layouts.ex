@@ -19,7 +19,8 @@ defmodule ZoonkDev.Layouts do
         module: :uidivider,
         label: "Divider",
         path: "/ui/divider"
-      }
+      },
+      %{icon: "tabler-bell-filled", color: "text-pink-600", module: :uiflash, label: "Flash", path: "/ui/flash"}
     ]
   end
 end
