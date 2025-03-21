@@ -20,7 +20,8 @@ defmodule ZoonkDev.Layouts do
         label: "Divider",
         path: "/ui/divider"
       },
-      %{icon: "tabler-bell-filled", color: "text-pink-600", module: :uiflash, label: "Flash", path: "/ui/flash"}
+      %{icon: "tabler-bell-filled", color: "text-pink-600", module: :uiflash, label: "Flash", path: "/ui/flash"},
+      %{icon: "tabler-forms", color: "text-purple-600", module: :uiform, label: "Form", path: "/ui/form"}
     ]
   end
 end

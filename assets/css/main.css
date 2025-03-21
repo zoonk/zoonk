@@ -110,7 +110,7 @@
 
 @media (prefers-contrast: more) and (prefers-color-scheme: light) {
   :root {
-    --background: var(--color-white);
+    --background: var(--color-neutral-50);
     --foreground: var(--color-black);
 
     --primary: var(--color-blue-800);
@@ -131,7 +131,7 @@
     --surface: var(--color-white);
     --surface-foreground: var(--color-black);
 
-    --muted: var(--color-white);
+    --muted: var(--color-neutral-50);
     --muted-foreground: var(--color-black);
 
     --success: var(--color-green-800);
@@ -180,7 +180,7 @@
     --surface: var(--color-neutral-900);
     --surface-foreground: var(--color-white);
 
-    --muted: var(--color-black);
+    --muted: var(--color-neutral-950);
     --muted-foreground: var(--color-white);
 
     --success: var(--color-green-800);
