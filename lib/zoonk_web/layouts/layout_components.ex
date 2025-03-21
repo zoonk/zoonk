@@ -27,7 +27,7 @@ defmodule ZoonkWeb.Components.Layout do
           "md:group-first:rounded-l-full md:group-last:rounded-r-full",
           @active && "text-zk-primary-text",
           !@active && !@destructive && "text-zk-secondary-foreground",
-          @destructive && "text-zk-destructive"
+          @destructive && "text-zk-destructive-text"
         ]}
         {@rest}
       >

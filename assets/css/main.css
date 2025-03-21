@@ -48,6 +48,7 @@
   --success-accent-foreground: var(--color-green-50);
 
   --destructive: var(--color-pink-700);
+  --destructive-text: var(--color-pink-700);
   --destructive-foreground: var(--color-pink-50);
 
   --destructive-subtle: var(--color-pink-50);
@@ -97,6 +98,7 @@
     --success-accent-foreground: var(--color-green-50);
 
     --destructive: var(--color-pink-700);
+    --destructive-text: var(--color-pink-400);
     --destructive-foreground: var(--color-pink-50);
 
     --destructive-subtle: var(--color-pink-600);
@@ -147,6 +149,7 @@
     --success-accent-foreground: var(--color-green-950);
 
     --destructive: var(--color-pink-800);
+    --destructive-text: var(--color-pink-800);
     --destructive-foreground: var(--color-pink-50);
 
     --destructive-subtle: var(--color-pink-50);
@@ -197,6 +200,7 @@
     --success-accent-foreground: var(--color-green-50);
 
     --destructive: var(--color-pink-800);
+    --destructive-text: var(--color-pink-200);
     --destructive-foreground: var(--color-pink-50);
 
     --destructive-subtle: var(--color-pink-700);
@@ -246,6 +250,7 @@
   --color-zk-success-accent-foreground: var(--success-accent-foreground);
 
   --color-zk-destructive: var(--destructive);
+  --color-zk-destructive-text: var(--destructive-text);
   --color-zk-destructive-foreground: var(--destructive-foreground);
 
   --color-zk-destructive-subtle: var(--destructive-subtle);
