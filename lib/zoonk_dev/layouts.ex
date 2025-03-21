@@ -12,7 +12,14 @@ defmodule ZoonkDev.Layouts do
       %{icon: "tabler-link", color: "text-blue-600", module: :uianchor, label: "Anchor", path: "/ui/anchor"},
       %{icon: "tabler-user-circle", color: "text-green-600", module: :uiavatar, label: "Avatar", path: "/ui/avatar"},
       %{icon: "tabler-pointer-filled", color: "text-red-600", module: :uibutton, label: "Button", path: "/ui/button"},
-      %{icon: "tabler-app-window-filled", color: "text-gray-600", module: :uicard, label: "Card", path: "/ui/card"}
+      %{icon: "tabler-app-window-filled", color: "text-gray-600", module: :uicard, label: "Card", path: "/ui/card"},
+      %{
+        icon: "tabler-arrows-right-left",
+        color: "text-yellow-600",
+        module: :uidivider,
+        label: "Divider",
+        path: "/ui/divider"
+      }
     ]
   end
 end
