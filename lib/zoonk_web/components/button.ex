@@ -16,7 +16,7 @@ defmodule ZoonkWeb.Components.Button do
   """
   attr :type, :string, default: "button"
   attr :icon, :string, default: nil
-  attr :variant, :atom, values: [:primary, :outline], default: :primary
+  attr :variant, :atom, values: [:primary, :destructive, :outline], default: :primary
   attr :size, :atom, values: [:sm, :md, :lg], default: :md
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
@@ -25,7 +25,21 @@ defmodule ZoonkWeb.Components.Button do
 
   def button(assigns) do
     ~H"""
-    <button type={@type} {@rest}>
+    <button
+      type={@type}
+      class={[
+        "zk-btn",
+        "disabled:pointer-events-none disabled:opacity-50",
+        @variant == :primary && "zk-btn-primary",
+        @variant == :destructive && "zk-btn-destructive",
+        @variant == :outline && "zk-btn-outline",
+        @size == :sm && "h-8 px-4 text-xs",
+        @size == :md && "h-10 px-4 text-sm",
+        @size == :lg && "text-md h-12 px-6",
+        @class
+      ]}
+      {@rest}
+    >
       <.icon :if={@icon} name={@icon} />
       {render_slot(@inner_block)}
     </button>

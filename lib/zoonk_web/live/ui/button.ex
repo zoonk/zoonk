@@ -5,13 +5,18 @@ defmodule ZoonkDev.Live.UIButton do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <article>
-      <.button variant={:primary}>Save</.button>
-      <.button variant={:outline}>Save</.button>
+    <article class="flex flex-col gap-4">
+      <.button variant={:primary}>Primary</.button>
+      <.button variant={:destructive}>Destructive</.button>
+      <.button variant={:outline}>Outline</.button>
 
-      <.button icon="tabler-check" size={:sm}>Save</.button>
-      <.button icon="tabler-check" size={:md}>Save</.button>
-      <.button icon="tabler-check" size={:lg}>Save</.button>
+      <.button icon="tabler-check" size={:sm}>Small</.button>
+      <.button icon="tabler-check" size={:md}>Medium</.button>
+      <.button icon="tabler-check" size={:lg}>Large</.button>
+
+      <.button variant={:primary} disabled>Primary Disabled</.button>
+      <.button variant={:destructive} disabled>Destructive Disabled</.button>
+      <.button variant={:outline} disabled>Outline Disabled</.button>
     </article>
     """
   end
