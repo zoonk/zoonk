@@ -12,12 +12,12 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
   def render(assigns) do
     ~H"""
     <.main_container action={:signup} show_options>
-      <.simple_form
+      <.form
         for={@form}
         id="signup_form"
         phx-submit="save"
         phx-change="validate"
-        label={dgettext("users", "Signup form")}
+        aria-label={dgettext("users", "Signup form")}
       >
         <.error :if={@check_errors}>
           {dgettext("users", "Oops, something went wrong! Please check the errors below.")}
@@ -46,7 +46,7 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
         >
           {dgettext("users", "Create an account")}
         </.button>
-      </.simple_form>
+      </.form>
     </.main_container>
     """
   end

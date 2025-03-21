@@ -9,13 +9,13 @@ defmodule ZoonkWeb.Live.UserLoginWithEmail do
   def render(assigns) do
     ~H"""
     <.main_container action={:login} show_options>
-      <.simple_form
+      <.form
         :let={f}
         for={@form}
         id="login_form_magic"
         action={~p"/login"}
         phx-submit="submit_magic"
-        label={dgettext("users", "Sign in form")}
+        aria-label={dgettext("users", "Sign in form")}
       >
         <.input
           readonly={!!@current_scope}
@@ -31,7 +31,7 @@ defmodule ZoonkWeb.Live.UserLoginWithEmail do
         <.button type="submit" class="w-full" icon="tabler-mail-filled">
           {dgettext("users", "Login")}
         </.button>
-      </.simple_form>
+      </.form>
     </.main_container>
     """
   end
