@@ -28,7 +28,7 @@ defmodule ZoonkWeb.Live.UserLoginWithEmail do
           required
         />
 
-        <.button type="submit" full icon="tabler-mail-filled">
+        <.button type="submit" class="w-full" icon="tabler-mail-filled">
           {dgettext("users", "Login")}
         </.button>
       </.simple_form>

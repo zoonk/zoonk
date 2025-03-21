@@ -29,7 +29,7 @@ config :tailwind,
   version: "4.0.14",
   zoonk: [
     args: ~w(
-      --input=assets/css/app.css
+      --input=assets/css/main.css
       --output=priv/static/assets/app.css
     ),
     cd: Path.expand("..", __DIR__)

@@ -20,8 +20,8 @@
     <header aria-label={gettext("Go back to the previous page")}>
       <.text aria-hidden="true" tag="h1" size={:header} id="page-title">{@page_title}</.text>
 
-      <.a kind={:icon} icon="tabler-x" navigate={@user_return_to} variant={:danger}>
-        <span>{gettext("Back")}</span>
+      <.a kind={:icon} icon="tabler-x" navigate={@user_return_to} variant={:destructive}>
+        <span class="sr-only">{gettext("Back")}</span>
       </.a>
     </header>
   </div>

@@ -13,13 +13,11 @@ defmodule ZoonkWeb.Components.Button do
 
       <.button>Send!</.button>
       <.button variant={:outline}>Send!</.button>
-      <.button full phx-click="go" >Send!</.button>
   """
   attr :type, :string, default: "button"
   attr :icon, :string, default: nil
   attr :variant, :atom, values: [:primary, :outline], default: :primary
   attr :size, :atom, values: [:sm, :md, :lg], default: :md
-  attr :full, :boolean, default: false
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
 

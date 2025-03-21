@@ -8,9 +8,8 @@ defmodule ZoonkWeb.Components.Anchor do
 
   attr :class, :string, default: nil, doc: "CSS class to apply to the anchor"
   attr :kind, :atom, values: [:link, :button, :icon], default: :link, doc: "Kind of anchor to render"
-  attr :variant, :atom, values: [:primary, :outline, :danger], default: :primary, doc: "Variant of anchor to render"
+  attr :variant, :atom, values: [:primary, :outline, :destructive], default: :primary, doc: "Variant of anchor to render"
   attr :size, :atom, values: [:sm, :md, :lg], default: :md, doc: "Size of the anchor"
-  attr :full, :boolean, default: false, doc: "Whether the anchor should be full width"
   attr :icon, :string, default: nil, doc: "Icon to display in the anchor"
   attr :rest, :global, include: ~w(href method navigate patch), doc: "HTML attributes to apply to the anchor"
   slot :inner_block, required: true
@@ -24,7 +23,7 @@ defmodule ZoonkWeb.Components.Anchor do
       <.a >Send!</.a>
 
       <.a kind={:icon} icon="tabler-name">
-        <span >Icon</span>
+        <span class="sr-only">Icon</span>
       </.a>
   """
   def a(%{kind: :link} = assigns) do
@@ -32,8 +31,8 @@ defmodule ZoonkWeb.Components.Anchor do
     <.link
       class={[
         "underline underline-offset-2",
-        "text-zk-primary-foreground hover:opacity-70",
-        "ring-zk-primary-foreground ring-offset-2",
+        "text-zk-primary hover:opacity-70",
+        "ring-zk-primary ring-offset-2",
         "focus-visible:no-underline focus-visible:outline-0 focus-visible:ring-1",
         @class
       ]}
@@ -46,7 +45,19 @@ defmodule ZoonkWeb.Components.Anchor do
 
   def a(%{kind: :button} = assigns) do
     ~H"""
-    <.link {@rest}>
+    <.link
+      class={[
+        "zk-btn",
+        @variant == :primary && "zk-btn-primary",
+        @variant == :destructive && "zk-btn-destructive",
+        @variant == :outline && "zk-btn-outline",
+        @size == :sm && "h-8 px-4 text-xs",
+        @size == :md && "h-10 px-4 text-sm",
+        @size == :lg && "text-md h-12 px-6",
+        @class
+      ]}
+      {@rest}
+    >
       <.icon :if={@icon} name={@icon} />
       {render_slot(@inner_block)}
     </.link>

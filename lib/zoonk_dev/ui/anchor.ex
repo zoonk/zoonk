@@ -17,11 +17,11 @@ defmodule ZoonkDev.Live.UIAnchor do
       <.a kind={:button} size={:md}>Medium</.a>
       <.a kind={:button} size={:lg}>Large</.a>
 
-      <.a kind={:button} full icon="tabler-check">Full width</.a>
+      <.a kind={:button} class="w-full" icon="tabler-check">Full width</.a>
 
       <.a kind={:button} variant={:primary}>Primary</.a>
       <.a kind={:button} variant={:outline}>Outline</.a>
-      <.a kind={:button} variant={:danger}>Danger</.a>
+      <.a kind={:button} variant={:destructive}>Destructive</.a>
     </article>
     """
   end

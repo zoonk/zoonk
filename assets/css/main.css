@@ -16,11 +16,11 @@
   --background: var(--color-neutral-100);
   --foreground: var(--color-neutral-500);
 
-  --primary: var(--color-blue-50);
-  --primary-foreground: var(--color-blue-600);
+  --primary: var(--color-blue-600);
+  --primary-foreground: var(--color-blue-50);
 
-  --primary-accent: var(--color-blue-200);
-  --primary-accent-foreground: var(--color-blue-700);
+  --primary-accent: var(--color-blue-700);
+  --primary-accent-foreground: var(--color-blue-200);
 
   --secondary: var(--color-neutral-100);
   --secondary-foreground: var(--color-neutral-600);
@@ -40,11 +40,11 @@
   --success-accent: var(--color-green-50);
   --success-accent-foreground: var(--color-green-800);
 
-  --destructive: var(--color-pink-50);
-  --destructive-foreground: var(--color-pink-700);
+  --destructive: var(--color-pink-700);
+  --destructive-foreground: var(--color-pink-50);
 
-  --destructive-accent: var(--color-pink-50);
-  --destructive-accent-foreground: var(--color-pink-800);
+  --destructive-accent: var(--color-pink-800);
+  --destructive-accent-foreground: var(--color-pink-50);
 
   --border: var(--color-neutral-200);
   --ring: var(--color-neutral-400);
@@ -97,11 +97,11 @@
     --background: var(--color-white);
     --foreground: var(--color-black);
 
-    --primary: var(--color-blue-50);
-    --primary-foreground: var(--color-blue-800);
+    --primary: var(--color-blue-800);
+    --primary-foreground: var(--color-blue-50);
 
-    --primary-accent: var(--color-blue-50);
-    --primary-accent-foreground: var(--color-blue-950);
+    --primary-accent: var(--color-blue-950);
+    --primary-accent-foreground: var(--color-blue-50);
 
     --secondary: var(--color-neutral-200);
     --secondary-foreground: var(--color-neutral-950);
@@ -121,11 +121,11 @@
     --success-accent: var(--color-green-50);
     --success-accent-foreground: var(--color-green-950);
 
-    --destructive: var(--color-pink-50);
-    --destructive-foreground: var(--color-pink-800);
+    --destructive: var(--color-pink-800);
+    --destructive-foreground: var(--color-pink-50);
 
-    --destructive-accent: var(--color-pink-50);
-    --destructive-accent-foreground: var(--color-pink-950);
+    --destructive-accent: var(--color-pink-950);
+    --destructive-accent-foreground: var(--color-pink-50);
 
     --border: var(--color-neutral-900);
     --ring: var(--color-black);
@@ -212,4 +212,27 @@
   --color-zk-ring: var(--ring);
 
   --radius: var(--radius-lg);
+}
+
+@utility zk-btn {
+  @apply inline-flex w-max items-center justify-center gap-2 rounded leading-none
+  transition-colors ring-offset-zk-background focus-visible:outline-0 focus-visible:ring-offset-2 focus-visible:ring-2;
+}
+
+@utility zk-btn-primary {
+  @apply bg-zk-primary ring-zk-primary text-zk-primary-foreground
+  hover:bg-zk-primary-accent hover:ring-zk-primary-accent
+  focus-visible:ring-zk-primary-accent;
+}
+
+@utility zk-btn-destructive {
+  @apply bg-zk-destructive ring-zk-destructive text-zk-destructive-foreground
+  hover:bg-zk-destructive-accent hover:ring-zk-destructive-accent
+  focus-visible:ring-zk-destructive-accent;
+}
+
+@utility zk-btn-outline {
+  @apply border border-zk-border bg-zk-card text-zk-card-foreground
+  hover:bg-zk-secondary hover:text-zk-secondary-foreground
+  focus-visible:ring-zk-secondary;
 }
