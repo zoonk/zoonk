@@ -11,6 +11,7 @@ defmodule ZoonkWeb.Components.Anchor do
   attr :variant, :atom, values: [:primary, :outline, :destructive], default: :primary, doc: "Variant of anchor to render"
   attr :size, :atom, values: [:sm, :md, :lg], default: :md, doc: "Size of the anchor"
   attr :icon, :string, default: nil, doc: "Icon to display in the anchor"
+  attr :icon_align, :atom, values: [:left, :right, :auto], default: :auto, doc: "Icon alignment in the anchor"
   attr :rest, :global, include: ~w(href method navigate patch), doc: "HTML attributes to apply to the anchor"
   slot :inner_block, required: true
 
@@ -48,6 +49,7 @@ defmodule ZoonkWeb.Components.Anchor do
     <.link
       class={[
         "zk-btn",
+        @icon_align in [:left, :right] && "relative",
         @variant == :primary && "zk-btn-primary",
         @variant == :destructive && "zk-btn-destructive",
         @variant == :outline && "zk-btn-outline",
@@ -58,7 +60,15 @@ defmodule ZoonkWeb.Components.Anchor do
       ]}
       {@rest}
     >
-      <.icon :if={@icon} size={@size} name={@icon} />
+      <.icon
+        :if={@icon}
+        size={:sm}
+        name={@icon}
+        class={[
+          @icon_align == :left && "absolute left-4",
+          @icon_align == :right && "absolute right-4"
+        ]}
+      />
       {render_slot(@inner_block)}
     </.link>
     """
@@ -81,7 +91,7 @@ defmodule ZoonkWeb.Components.Anchor do
       ]}
       {@rest}
     >
-      <.icon :if={@icon} size={@size} name={@icon} />
+      <.icon :if={@icon} size={} name={@icon} />
       {render_slot(@inner_block)}
     </.link>
     """
