@@ -279,3 +279,13 @@
 @utility zk-drop-shadow {
   @apply drop-shadow-xs contrast-more:drop-shadow-xl;
 }
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

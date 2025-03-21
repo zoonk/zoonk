@@ -148,6 +148,7 @@ defmodule ZoonkWeb.Router do
         live "/flash", UIFlash
         live "/form", UIForm
         live "/input", UIInput
+        live "/text", UIText
       end
     end
   end
