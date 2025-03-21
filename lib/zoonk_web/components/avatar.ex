@@ -50,7 +50,7 @@ defmodule ZoonkWeb.Components.Avatar do
     <img
       width={avatar_size_px(@size)}
       height={avatar_size_px(@size)}
-      class={["aspect-square", shared_class(), @class]}
+      class={["aspect-square", avatar_size(@size), shared_class(), @class]}
       src={@src}
       alt={@alt}
     />
