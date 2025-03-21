@@ -9,8 +9,16 @@ defmodule ZoonkDev.Live.UIAnchor do
       <.a kind={:link}>Link kind</.a>
       <.a kind={:button}>Button kind</.a>
 
-      <.a kind={:icon} icon="tabler-x">
-        <span class="sr-only">Icon kind</span>
+      <.a kind={:icon} size={:sm} icon="tabler-x">
+        <span class="sr-only">Small icon</span>
+      </.a>
+
+      <.a kind={:icon} size={:md} icon="tabler-x">
+        <span class="sr-only">Medium icon</span>
+      </.a>
+
+      <.a kind={:icon} size={:lg} icon="tabler-x">
+        <span class="sr-only">Large icon</span>
       </.a>
 
       <.a kind={:button} size={:sm}>Small</.a>

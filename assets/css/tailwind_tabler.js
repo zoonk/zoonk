@@ -39,8 +39,6 @@ module.exports = plugin(function ({ matchComponents, theme }) {
           "background-color": "currentColor",
           "vertical-align": "middle",
           display: "inline-block",
-          width: theme("spacing.5"),
-          height: theme("spacing.5"),
         };
       },
     },

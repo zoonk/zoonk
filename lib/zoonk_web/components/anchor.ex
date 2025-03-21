@@ -58,7 +58,7 @@ defmodule ZoonkWeb.Components.Anchor do
       ]}
       {@rest}
     >
-      <.icon :if={@icon} name={@icon} />
+      <.icon :if={@icon} size={@size} name={@icon} />
       {render_slot(@inner_block)}
     </.link>
     """
@@ -68,8 +68,20 @@ defmodule ZoonkWeb.Components.Anchor do
 
   def a(%{kind: :icon} = assigns) do
     ~H"""
-    <.link {@rest}>
-      <.icon :if={@icon} name={@icon} />
+    <.link
+      class={[
+        "zk-btn",
+        @variant == :primary && "zk-btn-primary",
+        @variant == :destructive && "zk-btn-destructive",
+        @variant == :outline && "zk-btn-outline",
+        @size == :sm && "size-8",
+        @size == :md && "size-10",
+        @size == :lg && "size-12",
+        @class
+      ]}
+      {@rest}
+    >
+      <.icon :if={@icon} size={@size} name={@icon} />
       {render_slot(@inner_block)}
     </.link>
     """
