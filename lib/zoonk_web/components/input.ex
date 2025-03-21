@@ -122,10 +122,15 @@ defmodule ZoonkWeb.Components.Input do
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <div>
+    <div class="text-left">
       <.label hide_label={@hide_label} for={@id}>{@label}</.label>
 
-      <textarea id={@id} name={@name} {@rest}>{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
+      <textarea
+        id={@id}
+        name={@name}
+        class={["min-h-[6rem] resize-none", shared_class(), border_class(@errors)]}
+        {@rest}
+      >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
 
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
@@ -192,7 +197,8 @@ defmodule ZoonkWeb.Components.Input do
       "bg-zk-surface text-zk-foreground",
       "placeholder:text-zk-foreground/75",
       "focus-visible:outline-0",
-      "sm:text-sm sm:leading-6"
+      "sm:text-sm sm:leading-6",
+      "disabled:cursor-not-allowed disabled:opacity-50"
     ]
 
   defp border_class([]), do: "border-zk-border focus-visible:ring-zk-ring"

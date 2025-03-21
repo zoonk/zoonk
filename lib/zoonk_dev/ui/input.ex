@@ -8,10 +8,12 @@ defmodule ZoonkDev.Live.UIInput do
     <article class="flex flex-col gap-4">
       <.input name="email" label="Email address" placeholder="youremail@zoonk.com" value="" />
 
+      <.input name="email" label="Email address" placeholder="youremail@zoonk.com" value="" disabled />
+
       <.input
         type="textarea"
         name="post"
-        label="Email address"
+        label="Your message:"
         placeholder="Type some text here."
         value=""
       />
