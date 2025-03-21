@@ -1,5 +1,5 @@
 <main aria-labelledby="page-title">
-  <div class="bg-zk-card border-zk-border sticky top-0 z-50 border-b">
+  <div class="bg-zk-surface border-zk-border sticky top-0 z-50 border-b">
     <header class="container mx-auto flex items-center justify-between gap-4 py-4 sm:py-6">
       <.a kind={:button} navigate={~p"/"} size={:sm} variant={:outline}>
         Back to app
@@ -25,7 +25,7 @@
         class={[
           "shadow-xs rounded-lg px-2 py-1.5 leading-none tracking-tight",
           @active_page == item.module && "bg-zk-primary shadow-zk-primary",
-          @active_page != item.module && "bg-zk-card"
+          @active_page != item.module && "bg-zk-surface"
         ]}
       >
         <.link
@@ -36,7 +36,7 @@
           ]}
         >
           <.icon name={item.icon} class={["size-4", @active_page != item.module && item.color]} />
-          <span class={["text-xs", @active_page != item.module && "text-zk-card-foreground"]}>
+          <span class={["text-xs", @active_page != item.module && "text-zk-surface-foreground"]}>
             {item.label}
           </span>
         </.link>

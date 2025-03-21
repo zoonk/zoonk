@@ -31,8 +31,8 @@
   --secondary-accent: var(--color-neutral-200);
   --secondary-accent-foreground: var(--color-neutral-700);
 
-  --card: var(--color-white);
-  --card-foreground: var(--color-neutral-500);
+  --surface: var(--color-white);
+  --surface-foreground: var(--color-neutral-500);
 
   --muted: var(--color-neutral-50);
   --muted-foreground: var(--color-gray-500);
@@ -79,8 +79,8 @@
     --secondary-accent: var(--color-neutral-700);
     --secondary-accent-foreground: var(--color-neutral-200);
 
-    --card: var(--color-neutral-900);
-    --card-foreground: var(--color-neutral-400);
+    --surface: var(--color-neutral-900);
+    --surface-foreground: var(--color-neutral-400);
 
     --muted: var(--color-neutral-950);
     --muted-foreground: var(--color-neutral-400);
@@ -128,8 +128,8 @@
     --secondary-accent: var(--color-neutral-300);
     --secondary-accent-foreground: var(--color-neutral-900);
 
-    --card: var(--color-white);
-    --card-foreground: var(--color-black);
+    --surface: var(--color-white);
+    --surface-foreground: var(--color-black);
 
     --muted: var(--color-white);
     --muted-foreground: var(--color-black);
@@ -177,8 +177,8 @@
     --secondary-accent: var(--color-neutral-900);
     --secondary-accent-foreground: var(--color-neutral-100);
 
-    --card: var(--color-neutral-900);
-    --card-foreground: var(--color-white);
+    --surface: var(--color-neutral-900);
+    --surface-foreground: var(--color-white);
 
     --muted: var(--color-black);
     --muted-foreground: var(--color-white);
@@ -222,8 +222,8 @@
   --color-zk-secondary-accent: var(--secondary-accent);
   --color-zk-secondary-accent-foreground: var(--secondary-accent-foreground);
 
-  --color-zk-card: var(--card);
-  --color-zk-card-foreground: var(--card-foreground);
+  --color-zk-surface: var(--surface);
+  --color-zk-surface-foreground: var(--surface-foreground);
 
   --color-zk-muted: var(--muted);
   --color-zk-muted-foreground: var(--muted-foreground);
@@ -271,7 +271,7 @@
 }
 
 @utility zk-btn-outline {
-  @apply border border-zk-border bg-zk-card text-zk-card-foreground
+  @apply border border-zk-border bg-zk-surface text-zk-surface-foreground
   hover:bg-zk-secondary hover:text-zk-secondary-foreground
   focus-visible:ring-zk-secondary;
 }

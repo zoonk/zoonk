@@ -30,7 +30,7 @@ defmodule ZoonkWeb.Components.Card do
 
   def card(assigns) do
     ~H"""
-    <.dynamic_tag tag_name={@tag} class={["bg-zk-card zk-drop-shadow rounded", @class]} {@rest}>
+    <.dynamic_tag tag_name={@tag} class={["bg-zk-surface zk-drop-shadow rounded", @class]} {@rest}>
       {render_slot(@inner_block)}
     </.dynamic_tag>
     """
