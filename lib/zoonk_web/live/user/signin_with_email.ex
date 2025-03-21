@@ -16,6 +16,7 @@ defmodule ZoonkWeb.Live.UserLoginWithEmail do
         action={~p"/login"}
         phx-submit="submit_magic"
         aria-label={dgettext("users", "Sign in form")}
+        class="flex w-full flex-col gap-4"
       >
         <.input
           readonly={!!@current_scope}
@@ -26,9 +27,10 @@ defmodule ZoonkWeb.Live.UserLoginWithEmail do
           placeholder={dgettext("users", "Email")}
           autocomplete="username"
           required
+          class="w-full"
         />
 
-        <.button type="submit" class="w-full" icon="tabler-mail-filled">
+        <.button type="submit" class="w-full" icon_align={:left} icon="tabler-mail-filled">
           {dgettext("users", "Login")}
         </.button>
       </.form>

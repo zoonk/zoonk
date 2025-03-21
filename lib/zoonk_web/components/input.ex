@@ -39,6 +39,7 @@ defmodule ZoonkWeb.Components.Input do
   attr :name, :any
   attr :label, :string, default: nil
   attr :value, :any
+  attr :class, :any, default: nil, doc: "additional classes to apply to the input"
 
   attr :hide_label, :boolean,
     default: false,
@@ -88,7 +89,10 @@ defmodule ZoonkWeb.Components.Input do
           name={@name}
           value="true"
           checked={@checked}
-          class="border-zk-border rounded-sm border focus-visible:ring-zk-primary focus-visible:outline-0"
+          class={[
+            "border-zk-border rounded-sm border focus-visible:ring-zk-primary focus-visible:outline-0",
+            @class
+          ]}
           {@rest}
         />
         <span class={@hide_label && "sr-only"}>{@label}</span>
@@ -108,7 +112,7 @@ defmodule ZoonkWeb.Components.Input do
         id={@id}
         name={@name}
         multiple={@multiple}
-        class={[shared_class(), border_class(@errors)]}
+        class={[shared_class(), border_class(@errors), @class]}
         {@rest}
       >
         <option :if={@prompt} value="">{@prompt}</option>
@@ -128,7 +132,7 @@ defmodule ZoonkWeb.Components.Input do
       <textarea
         id={@id}
         name={@name}
-        class={["min-h-[6rem] resize-none", shared_class(), border_class(@errors)]}
+        class={["min-h-[6rem] resize-none", shared_class(), border_class(@errors), @class]}
         {@rest}
       >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
 
@@ -148,7 +152,7 @@ defmodule ZoonkWeb.Components.Input do
         name={@name}
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        class={[shared_class(), border_class(@errors)]}
+        class={[shared_class(), border_class(@errors), @class]}
         {@rest}
       />
 

@@ -32,8 +32,8 @@ defmodule ZoonkWeb.Components.Anchor do
     <.link
       class={[
         "underline underline-offset-2",
-        "text-zk-primary hover:opacity-70",
-        "ring-zk-primary ring-offset-2",
+        "text-zk-primary-text hover:opacity-70",
+        "ring-zk-primary-text ring-offset-2",
         "focus-visible:no-underline focus-visible:outline-0 focus-visible:ring-1",
         @class
       ]}

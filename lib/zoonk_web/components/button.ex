@@ -16,6 +16,7 @@ defmodule ZoonkWeb.Components.Button do
   """
   attr :type, :string, default: "button"
   attr :icon, :string, default: nil
+  attr :icon_align, :atom, values: [:left, :right, :auto], default: :auto
   attr :variant, :atom, values: [:primary, :destructive, :outline], default: :primary
   attr :size, :atom, values: [:sm, :md, :lg], default: :md
   attr :class, :string, default: nil
@@ -30,6 +31,7 @@ defmodule ZoonkWeb.Components.Button do
       class={[
         "zk-btn",
         "disabled:pointer-events-none disabled:opacity-50",
+        @icon_align in [:left, :right] && "relative",
         @variant == :primary && "zk-btn-primary",
         @variant == :destructive && "zk-btn-destructive",
         @variant == :outline && "zk-btn-outline",
@@ -40,7 +42,15 @@ defmodule ZoonkWeb.Components.Button do
       ]}
       {@rest}
     >
-      <.icon :if={@icon} name={@icon} />
+      <.icon
+        :if={@icon}
+        name={@icon}
+        size={:sm}
+        class={[
+          @icon_align == :left && "absolute left-4",
+          @icon_align == :right && "absolute right-4"
+        ]}
+      />
       {render_slot(@inner_block)}
     </button>
     """
