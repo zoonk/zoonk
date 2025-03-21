@@ -78,11 +78,19 @@ defmodule ZoonkWeb.Components.Input do
       end)
 
     ~H"""
-    <div>
-      <label>
+    <div class="text-left">
+      <label class="text-zk-foreground flex items-center gap-2 text-sm leading-6">
         <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
 
-        <input type="checkbox" id={@id} name={@name} value="true" checked={@checked} {@rest} />
+        <input
+          type="checkbox"
+          id={@id}
+          name={@name}
+          value="true"
+          checked={@checked}
+          class="border-zk-border rounded-sm border focus-visible:ring-zk-primary focus-visible:outline-0"
+          {@rest}
+        />
         <span class={@hide_label && "sr-only"}>{@label}</span>
       </label>
 
