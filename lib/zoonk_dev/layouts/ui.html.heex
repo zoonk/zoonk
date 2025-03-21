@@ -1,22 +1,42 @@
 <main aria-labelledby="page-title">
-  <div>
-    <header>
+  <div class="bg-zk-card border-zk-border sticky top-0 z-50 border-b">
+    <header class="container mx-auto flex items-center justify-between gap-4 py-4 sm:py-6">
       <.a kind={:button} navigate={~p"/"} size={:sm} variant={:outline}>
         Back to app
       </.a>
 
-      <.text aria-hidden="true" tag="h1" size={:header} variant={:secondary} id="page-title">
+      <.text
+        aria-hidden="true"
+        tag="h1"
+        size={:header}
+        variant={:secondary}
+        class="truncate"
+        id="page-title"
+      >
         {@page_title}
       </.text>
     </header>
   </div>
 
-  <nav>
-    <ul>
-      <li :for={item <- menu_items()}>
-        <.link navigate={item.path}>
-          <.icon name={item.icon} />
-          <span>
+  <nav class="sticky top-20 z-10 w-full">
+    <ul class="container mx-auto flex items-center gap-2 overflow-x-auto py-2 sm:py-4">
+      <li
+        :for={item <- menu_items()}
+        class={[
+          "shadow-xs rounded-lg px-2 py-1.5 leading-none tracking-tight",
+          @active_page == item.module && "bg-zk-primary shadow-zk-primary",
+          @active_page != item.module && "bg-zk-card"
+        ]}
+      >
+        <.link
+          navigate={item.path}
+          class={[
+            "inline-flex items-center gap-2 align-middle",
+            @active_page == item.module && "text-zk-primary-foreground"
+          ]}
+        >
+          <.icon name={item.icon} class={["size-4", @active_page != item.module && item.color]} />
+          <span class={["text-xs", @active_page != item.module && "text-zk-card-foreground"]}>
             {item.label}
           </span>
         </.link>
@@ -24,7 +44,7 @@
     </ul>
   </nav>
 
-  <section>
+  <section class="container mx-auto mt-8">
     {@inner_content}
   </section>
 </main>

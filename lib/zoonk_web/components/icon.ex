@@ -20,7 +20,7 @@ defmodule ZoonkWeb.Components.Icon do
 
   def icon(%{name: "tabler-" <> _rest} = assigns) do
     ~H"""
-    <span />
+    <span class={[@name, @class]} />
     """
   end
 end

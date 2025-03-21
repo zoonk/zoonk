@@ -19,7 +19,7 @@
   --primary: var(--color-blue-50);
   --primary-foreground: var(--color-blue-600);
 
-  --primary-accent: var(--color-blue-50);
+  --primary-accent: var(--color-blue-200);
   --primary-accent-foreground: var(--color-blue-700);
 
   --secondary: var(--color-neutral-100);
