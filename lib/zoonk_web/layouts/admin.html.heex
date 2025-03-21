@@ -15,13 +15,23 @@
     />
   </.tab_bar>
 
-  <div>
-    <header aria-label={gettext("Go back to the app")}>
+  <div class="bg-zk-surface border-zk-border border-b">
+    <header
+      class="container mx-auto flex items-center justify-between gap-4 p-4 sm:p-6"
+      aria-label={gettext("Go back to the app")}
+    >
       <.a kind={:button} navigate={@back.link} size={:sm} variant={:outline}>
         {gettext("Back to %{page}", page: @back.label)}
       </.a>
 
-      <.text aria-hidden="true" tag="h1" size={:header} variant={:secondary} id="page-title">
+      <.text
+        aria-hidden="true"
+        tag="h1"
+        size={:header}
+        variant={:secondary}
+        class="truncate"
+        id="page-title"
+      >
         {@page_title}
       </.text>
 
@@ -34,7 +44,7 @@
     </header>
   </div>
 
-  <section>
+  <section class="container mx-auto p-4 sm:p-6">
     {@inner_content}
   </section>
 </main>
