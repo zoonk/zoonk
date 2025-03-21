@@ -19,7 +19,7 @@
   <div class="bg-zk-surface border-zk-border border-b">
     <header
       aria-label={gettext("Go back to the previous page")}
-      class="container mx-auto flex items-center justify-between p-4 sm:p-6"
+      class="mx-auto flex max-w-2xl items-center justify-between p-4 sm:p-6"
     >
       <.text aria-hidden="true" tag="h1" size={:header} id="page-title">{@page_title}</.text>
 
@@ -35,7 +35,7 @@
     </header>
   </div>
 
-  <section aria-label={gettext("Update this form")} class="container mx-auto p-4 sm:p-6">
+  <section aria-label={gettext("Update this form")} class="mx-auto max-w-2xl p-4 sm:p-6">
     {@inner_content}
   </section>
 </main>
