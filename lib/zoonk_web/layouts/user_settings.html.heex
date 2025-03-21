@@ -16,17 +16,26 @@
     />
   </.tab_bar>
 
-  <div>
-    <header aria-label={gettext("Go back to the previous page")}>
+  <div class="bg-zk-surface border-zk-border border-b">
+    <header
+      aria-label={gettext("Go back to the previous page")}
+      class="container mx-auto flex items-center justify-between p-4 sm:p-6"
+    >
       <.text aria-hidden="true" tag="h1" size={:header} id="page-title">{@page_title}</.text>
 
-      <.a kind={:icon} icon="tabler-x" navigate={@user_return_to} variant={:destructive}>
+      <.a
+        kind={:icon}
+        icon="tabler-x"
+        size={:sm}
+        navigate={@user_return_to}
+        variant={:destructive}
+      >
         <span class="sr-only">{gettext("Back")}</span>
       </.a>
     </header>
   </div>
 
-  <section aria-label={gettext("Update this form")}>
+  <section aria-label={gettext("Update this form")} class="container mx-auto p-4 sm:p-6">
     {@inner_content}
   </section>
 </main>
