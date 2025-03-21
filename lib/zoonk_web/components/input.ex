@@ -101,10 +101,16 @@ defmodule ZoonkWeb.Components.Input do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div>
+    <div class="text-left">
       <.label hide_label={@hide_label} for={@id}>{@label}</.label>
 
-      <select id={@id} name={@name} multiple={@multiple} {@rest}>
+      <select
+        id={@id}
+        name={@name}
+        multiple={@multiple}
+        class={[shared_class(), border_class(@errors)]}
+        {@rest}
+      >
         <option :if={@prompt} value="">{@prompt}</option>
         {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
@@ -159,7 +165,7 @@ defmodule ZoonkWeb.Components.Input do
       tag="label"
       size={:caption}
       for={@for}
-      class={["mb-2 font-semibold", @hide_label && "sr-only"]}
+      class={["font-semibold leading-8", @hide_label && "sr-only"]}
     >
       {render_slot(@inner_block)}
     </.text>
