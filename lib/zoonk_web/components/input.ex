@@ -121,7 +121,7 @@ defmodule ZoonkWeb.Components.Input do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div>
+    <div class="text-left">
       <.label :if={@type != "hidden"} hide_label={@hide_label} for={@id}>{@label}</.label>
 
       <input
@@ -129,6 +129,7 @@ defmodule ZoonkWeb.Components.Input do
         name={@name}
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+        class={[shared_class(), border_class(@errors)]}
         {@rest}
       />
 
@@ -146,7 +147,12 @@ defmodule ZoonkWeb.Components.Input do
 
   def label(assigns) do
     ~H"""
-    <.text tag="label" size={:caption} for={@for}>
+    <.text
+      tag="label"
+      size={:caption}
+      for={@for}
+      class={["mb-2 font-semibold", @hide_label && "sr-only"]}
+    >
       {render_slot(@inner_block)}
     </.text>
     """
@@ -166,8 +172,17 @@ defmodule ZoonkWeb.Components.Input do
     """
   end
 
-  defp border_class([]), do: "zk-input-border"
-  defp border_class(_errors), do: "zk-input-border-error"
+  defp shared_class,
+    do: [
+      "block rounded border-1",
+      "bg-zk-surface text-zk-foreground",
+      "placeholder:text-zk-foreground/75",
+      "focus-visible:outline-0",
+      "sm:text-sm sm:leading-6"
+    ]
+
+  defp border_class([]), do: "border-zk-border focus-visible:ring-zk-ring"
+  defp border_class(_errors), do: "border-zk-destructive focus-visible:ring-zk-destructive-accent"
 
   @doc """
   Translates an error message using gettext.
