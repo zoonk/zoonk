@@ -29,15 +29,11 @@
     />
   </.tab_bar>
 
-  <header
-    aria-label={gettext("Search and settings")}
-    class="zk-container flex items-center justify-between py-4 sm:py-6"
-  >
+  <header aria-label={gettext("Search and settings")}>
     <.text tag="h1" size={:header} id="page-title">{@page_title}</.text>
 
     <.link
       navigate={~p"/user/email?redirect_to=#{user_return_to_path(@active_page)}"}
-      class="zk-avatar-link size-8"
       aria-label={dgettext("users", "Go to user settings")}
     >
       <.avatar

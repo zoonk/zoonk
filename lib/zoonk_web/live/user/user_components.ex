@@ -37,20 +37,12 @@ defmodule ZoonkWeb.Components.User do
 
   def footer_link(assigns) do
     ~H"""
-    <section
-      class={[
-        "zk-bg fixed bottom-0 w-full p-4 text-center sm:p-8",
-        "border-zk-border border-t",
-        "contrast-more:border-zk-border-inverse",
-        "dark:border-zk-border-inverse"
-      ]}
-      aria-label={get_footer_aria_title(@action)}
-    >
-      <.text aria-hidden="true" size={:caption} variant={:secondary} class="leading-3">
+    <section aria-label={get_footer_aria_title(@action)}>
+      <.text aria-hidden="true" size={:caption} variant={:secondary}>
         {get_footer_title(@action)}
       </.text>
 
-      <.a navigate={get_auth_link(@action)} class="text-sm">{get_footer_cta(@action)}</.a>
+      <.a navigate={get_auth_link(@action)}>{get_footer_cta(@action)}</.a>
     </section>
     """
   end
@@ -62,7 +54,7 @@ defmodule ZoonkWeb.Components.User do
 
   def auth_title(assigns) do
     ~H"""
-    <.text id="auth-title" tag="h1" size={:header} class="w-full pb-8">
+    <.text id="auth-title" tag="h1" size={:header}>
       {get_auth_header(@action)}
     </.text>
     """
@@ -77,27 +69,18 @@ defmodule ZoonkWeb.Components.User do
 
   def main_container(assigns) do
     ~H"""
-    <main
-      aria-labelledby="auth-title"
-      class="h-[calc(100dvh-70px)] mx-auto flex max-w-sm flex-col items-center justify-center px-8 text-center"
-    >
+    <main aria-labelledby="auth-title">
       <.auth_title action={@action} />
 
       {render_slot(@inner_block)}
 
-      <.a
-        :if={@show_options}
-        weight={:normal}
-        navigate={get_auth_link(get_footer_action(@action))}
-        class="mt-4 text-sm"
-      >
+      <.a :if={@show_options} weight={:normal} navigate={get_auth_link(get_footer_action(@action))}>
         ← {get_back_label(@action)}
       </.a>
 
       <section
         :if={@action == :signup}
         aria-label={dgettext("users", "Terms of user and privacy policy")}
-        class="pt-8"
       >
         <.text size={:caption} variant={:secondary}>
           {dgettext("users", "By signing up, you agree to our %{terms} and %{privacy}.",

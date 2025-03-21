@@ -17,23 +17,9 @@ defmodule ZoonkWeb.Components.Layout do
 
   def nav_menu_item(assigns) do
     ~H"""
-    <li aria-current={@active and "page"} class="group flex-1">
-      <.link
-        class={[
-          "flex flex-col items-center justify-center gap-1 p-4",
-          "text-center text-sm font-light",
-          "zk-surface-decoration zk-surface-blur",
-          "zk-bg-blur transition-colors",
-          "md:group-first:rounded-l-4xl md:group-last:rounded-r-4xl",
-          @active and "text-zk-primary dark:text-zk-primary-300",
-          !@active and !@destructive and "text-zk-text-secondary dark:text-zk-text-inverse-secondary",
-          !@active and !@destructive and "contrast-more:text-zk-text-contrast",
-          @destructive and "text-zk-danger-600 dark:text-zk-danger-400",
-          @destructive and "contrast-more:text-zk-danger-800 dark:contrast-more:text-zk-danger-200"
-        ]}
-        {@rest}
-      >
-        <.icon name={@icon} class="h-5 w-5" />
+    <li aria-current={@active and "page"}>
+      <.link {@rest}>
+        <.icon name={@icon} />
         {@label}
       </.link>
     </li>
@@ -50,18 +36,8 @@ defmodule ZoonkWeb.Components.Layout do
 
   def tab_bar(assigns) do
     ~H"""
-    <nav
-      aria-label={gettext("Main menu")}
-      class={[
-        "fixed bottom-0 z-10 flex w-full justify-around",
-        "zk-border border-t",
-        "md:left-1/2 md:-translate-x-1/2",
-        "md:bottom-4 md:rounded-full",
-        "md:max-w-md md:border-t-0",
-        "md:shadow-lg"
-      ]}
-    >
-      <ul class="flex w-full">
+    <nav aria-label={gettext("Main menu")}>
+      <ul>
         {render_slot(@inner_block)}
       </ul>
     </nav>

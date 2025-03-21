@@ -78,25 +78,11 @@ defmodule ZoonkWeb.Components.Input do
       end)
 
     ~H"""
-    <div class="text-left">
-      <label class={[
-        "flex items-center gap-4 text-sm leading-6",
-        "text-zk-text-secondary",
-        "contrast-more:text-zk-text-contrast",
-        "dark:contrast-more:text-zk-text-inverse-contrast",
-        "dark:text-zk-text-inverse"
-      ]}>
+    <div>
+      <label>
         <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
 
-        <input
-          type="checkbox"
-          id={@id}
-          name={@name}
-          value="true"
-          checked={@checked}
-          class="border-zk-border text-zk-primary rounded focus:ring-0"
-          {@rest}
-        />
+        <input type="checkbox" id={@id} name={@name} value="true" checked={@checked} {@rest} />
         <span class={@hide_label && "sr-only"}>{@label}</span>
       </label>
 
@@ -107,16 +93,10 @@ defmodule ZoonkWeb.Components.Input do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div class="text-left">
+    <div>
       <.label hide_label={@hide_label} for={@id}>{@label}</.label>
 
-      <select
-        id={@id}
-        name={@name}
-        class={["zk-input", border_class(@errors)]}
-        multiple={@multiple}
-        {@rest}
-      >
+      <select id={@id} name={@name} multiple={@multiple} {@rest}>
         <option :if={@prompt} value="">{@prompt}</option>
         {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
@@ -128,10 +108,10 @@ defmodule ZoonkWeb.Components.Input do
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <div class="text-left">
+    <div>
       <.label hide_label={@hide_label} for={@id}>{@label}</.label>
 
-      <textarea id={@id} name={@name} class={["min-h-[6rem] zk-input", border_class(@errors)]} {@rest}>{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
+      <textarea id={@id} name={@name} {@rest}>{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
 
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
@@ -141,7 +121,7 @@ defmodule ZoonkWeb.Components.Input do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div class="text-left">
+    <div>
       <.label :if={@type != "hidden"} hide_label={@hide_label} for={@id}>{@label}</.label>
 
       <input
@@ -149,7 +129,6 @@ defmodule ZoonkWeb.Components.Input do
         name={@name}
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        class={["zk-input", border_class(@errors)]}
         {@rest}
       />
 
@@ -167,12 +146,7 @@ defmodule ZoonkWeb.Components.Input do
 
   def label(assigns) do
     ~H"""
-    <.text
-      tag="label"
-      size={:caption}
-      for={@for}
-      class={["mb-2 font-semibold", @hide_label && "sr-only"]}
-    >
+    <.text tag="label" size={:caption} for={@for}>
       {render_slot(@inner_block)}
     </.text>
     """
@@ -185,8 +159,8 @@ defmodule ZoonkWeb.Components.Input do
 
   def error(assigns) do
     ~H"""
-    <p class="text-zk-danger-600 mt-3 flex gap-3 text-sm leading-6">
-      <.icon name="tabler-alert-circle-filled" class="mt-0.5 h-5 w-5 flex-none" />
+    <p>
+      <.icon name="tabler-alert-circle-filled" />
       {render_slot(@inner_block)}
     </p>
     """

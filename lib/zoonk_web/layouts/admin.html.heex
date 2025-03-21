@@ -15,23 +15,13 @@
     />
   </.tab_bar>
 
-  <div class="bg-zk-surface zk-border w-full border-b dark:bg-zk-surface-inverse">
-    <header
-      aria-label={gettext("Go back to the app")}
-      class="zk-container-wide flex items-center justify-between gap-4 py-4 sm:py-6"
-    >
+  <div>
+    <header aria-label={gettext("Go back to the app")}>
       <.a kind={:button} navigate={@back.link} size={:sm} variant={:outline}>
         {gettext("Back to %{page}", page: @back.label)}
       </.a>
 
-      <.text
-        aria-hidden="true"
-        tag="h1"
-        size={:header}
-        class="truncate"
-        variant={:secondary}
-        id="page-title"
-      >
+      <.text aria-hidden="true" tag="h1" size={:header} variant={:secondary} id="page-title">
         {@page_title}
       </.text>
 
@@ -44,7 +34,7 @@
     </header>
   </div>
 
-  <section class="zk-container-wide">
+  <section>
     {@inner_content}
   </section>
 </main>

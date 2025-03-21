@@ -13,7 +13,7 @@ defmodule ZoonkWeb.Components.Button do
 
       <.button>Send!</.button>
       <.button variant={:outline}>Send!</.button>
-      <.button full phx-click="go" class="ml-2">Send!</.button>
+      <.button full phx-click="go" >Send!</.button>
   """
   attr :type, :string, default: "button"
   attr :icon, :string, default: nil
@@ -27,22 +27,8 @@ defmodule ZoonkWeb.Components.Button do
 
   def button(assigns) do
     ~H"""
-    <button
-      type={@type}
-      class={[
-        "zk-btn",
-        @full && "relative w-full",
-        !@full && "w-max",
-        @variant == :outline && "zk-btn-outline",
-        @variant == :primary && "zk-btn-primary",
-        @size == :sm && "zk-btn-sm",
-        @size == :md && "zk-btn-md",
-        @size == :lg && "zk-btn-lg",
-        @class
-      ]}
-      {@rest}
-    >
-      <.icon :if={@icon} name={@icon} class={[@full && "absolute left-4", "h-5 w-5"]} />
+    <button type={@type} {@rest}>
+      <.icon :if={@icon} name={@icon} />
       {render_slot(@inner_block)}
     </button>
     """

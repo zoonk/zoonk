@@ -53,34 +53,15 @@ defmodule ZoonkWeb.Components.Form do
 
   def form_container(assigns) do
     ~H"""
-    <.simple_form
-      for={@for}
-      as={@as}
-      label={@label}
-      class={[
-        "bg-zk-surface rounded-md",
-        "border-zk-border border dark:border-zk-border-inverse",
-        "dark:bg-zk-surface-inverse",
-        @class
-      ]}
-      {@rest}
-    >
-      <fieldset aria-label={gettext("Form fields")} class="flex flex-col gap-4 p-4 md:p-8">
+    <.simple_form for={@for} as={@as} label={@label} {@rest}>
+      <fieldset aria-label={gettext("Form fields")}>
         <.text aria-hidden="true" tag="h3" size={:header}>{render_slot(@title)}</.text>
         <.text tag="h4" size={:body} variant={:secondary}>{render_slot(@subtitle)}</.text>
 
         {render_slot(@inner_block)}
       </fieldset>
 
-      <footer
-        aria-label={gettext("More information and save button")}
-        class={[
-          "flex items-center justify-between",
-          "bg-zk-surface-hover dark:bg-zk-surface-inverse-hover",
-          "px-4 py-2 md:px-8",
-          "rounded-b-md"
-        ]}
-      >
+      <footer aria-label={gettext("More information and save button")}>
         <.text size={:caption} variant={:secondary}>{render_slot(@requirements)}</.text>
 
         <.button type="submit" size={:sm} phx-disable-with={gettext("Saving...")}>

@@ -30,16 +30,7 @@ defmodule ZoonkWeb.Components.Card do
 
   def card(assigns) do
     ~H"""
-    <.dynamic_tag
-      tag_name={@tag}
-      class={[
-        "bg-zk-surface rounded-md",
-        "border-zk-border border dark:border-zk-border-inverse",
-        "dark:bg-zk-surface-inverse",
-        @class
-      ]}
-      {@rest}
-    >
+    <.dynamic_tag tag_name={@tag} {@rest}>
       {render_slot(@inner_block)}
     </.dynamic_tag>
     """
@@ -63,21 +54,9 @@ defmodule ZoonkWeb.Components.Card do
 
   def card_header(assigns) do
     ~H"""
-    <.dynamic_tag
-      tag_name={@tag}
-      class={[
-        "flex items-center justify-between gap-4 rounded-t-md p-6",
-        "bg-zk-secondary-50 dark:bg-zk-secondary-800",
-        @class
-      ]}
-      {@rest}
-    >
-      <div class="flex flex-col gap-1.5">{render_slot(@inner_block)}</div>
-      <.icon
-        :if={@icon}
-        name={@icon}
-        class="text-zk-secondary-500 size-10 dark:text-zk-secondary-400"
-      />
+    <.dynamic_tag tag_name={@tag} {@rest}>
+      <div>{render_slot(@inner_block)}</div>
+      <.icon :if={@icon} name={@icon} />
     </.dynamic_tag>
     """
   end
@@ -96,13 +75,7 @@ defmodule ZoonkWeb.Components.Card do
 
   def card_title(assigns) do
     ~H"""
-    <.text
-      tag="h3"
-      size={:title}
-      class={["leading-none tracking-tight", @class]}
-      variant={:primary}
-      {@rest}
-    >
+    <.text tag="h3" size={:title} variant={:primary} {@rest}>
       {render_slot(@inner_block)}
     </.text>
     """
@@ -143,7 +116,7 @@ defmodule ZoonkWeb.Components.Card do
 
   def card_content(assigns) do
     ~H"""
-    <.dynamic_tag tag_name={@tag} class={["p-6", @class]} {@rest}>
+    <.dynamic_tag tag_name={@tag} {@rest}>
       {render_slot(@inner_block)}
     </.dynamic_tag>
     """

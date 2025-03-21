@@ -26,7 +26,7 @@ defmodule ZoonkWeb.Components.Avatar do
   # handles the case where the image is not available
   def avatar(%{src: nil} = assigns) do
     ~H"""
-    <span class={["zk-avatar", avatar_size(@size), @class]} aria-label={@alt}>
+    <span aria-label={@alt}>
       {avatar_label(@label)}
     </span>
     """
@@ -35,13 +35,7 @@ defmodule ZoonkWeb.Components.Avatar do
   # handles the case where the image is available
   def avatar(assigns) do
     ~H"""
-    <img
-      class={["zk-avatar", avatar_size(@size), @class]}
-      width={avatar_size_px(@size)}
-      height={avatar_size_px(@size)}
-      src={@src}
-      alt={@alt}
-    />
+    <img width={avatar_size_px(@size)} height={avatar_size_px(@size)} src={@src} alt={@alt} />
     """
   end
 

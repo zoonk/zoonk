@@ -15,7 +15,6 @@ defmodule ZoonkWeb.Live.UserLoginWithEmail do
         id="login_form_magic"
         action={~p"/login"}
         phx-submit="submit_magic"
-        class="flex w-full flex-col gap-4"
         label={dgettext("users", "Sign in form")}
       >
         <.input

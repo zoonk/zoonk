@@ -5,7 +5,7 @@ defmodule ZoonkDev.Live.UIButton do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <article class="flex flex-col gap-4 p-8">
+    <article>
       <.button variant={:primary}>Save</.button>
       <.button variant={:outline}>Save</.button>
 

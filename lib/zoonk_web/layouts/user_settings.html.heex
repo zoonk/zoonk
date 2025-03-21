@@ -16,20 +16,17 @@
     />
   </.tab_bar>
 
-  <div class="bg-zk-surface zk-border w-full border-b dark:bg-zk-surface-inverse">
-    <header
-      aria-label={gettext("Go back to the previous page")}
-      class="zk-container-wide flex items-center justify-between py-4 sm:py-6"
-    >
+  <div>
+    <header aria-label={gettext("Go back to the previous page")}>
       <.text aria-hidden="true" tag="h1" size={:header} id="page-title">{@page_title}</.text>
 
       <.a kind={:icon} icon="tabler-x" navigate={@user_return_to} variant={:danger}>
-        <span class="sr-only">{gettext("Back")}</span>
+        <span>{gettext("Back")}</span>
       </.a>
     </header>
   </div>
 
-  <section aria-label={gettext("Update this form")} class="zk-container-wide">
+  <section aria-label={gettext("Update this form")}>
     {@inner_content}
   </section>
 </main>

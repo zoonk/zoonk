@@ -25,12 +25,7 @@ defmodule ZoonkWeb.Components.Text do
   """
   def text(%{tag: "label"} = assigns) do
     ~H"""
-    <label
-      id={@id}
-      for={@for}
-      class={[get_size_class(@size), get_variant_class(@variant), @class]}
-      {@rest}
-    >
+    <label id={@id} for={@for} {@rest}>
       {render_slot(@inner_block)}
     </label>
     """
@@ -38,12 +33,7 @@ defmodule ZoonkWeb.Components.Text do
 
   def text(assigns) do
     ~H"""
-    <.dynamic_tag
-      tag_name={@tag}
-      id={@id}
-      class={[get_size_class(@size), get_variant_class(@variant), @class]}
-      {@rest}
-    >
+    <.dynamic_tag tag_name={@tag} id={@id} {@rest}>
       {render_slot(@inner_block)}
     </.dynamic_tag>
     """

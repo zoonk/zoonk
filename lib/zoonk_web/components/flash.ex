@@ -39,24 +39,9 @@ defmodule ZoonkWeb.Components.Flash do
       role="alert"
       aria-label={@title}
       tabindex="0"
-      class={[
-        "fixed top-4 right-4 z-50 rounded-lg px-4 py-2",
-        "max-w-80 sm:max-w-96",
-        "transition-all duration-300 ease-in-out",
-        @kind == :info &&
-          [
-            "bg-zk-surface text-zk-text-secondary",
-            "ring-zk-border shadow-sm ring-1",
-            "contrast-more:text-zk-text-contrast",
-            "dark:bg-zk-surface-inverse dark:ring-zk-border-inverse",
-            "dark:text-zk-text-inverse",
-            "dark:contrast-more:ring-zk-border"
-          ],
-        @kind == :error && ["bg-zk-danger-700 text-zk-danger-50 contrast-more:bg-zk-danger-900"]
-      ]}
       {@rest}
     >
-      <span class="text-sm">{msg}</span>
+      <span>{msg}</span>
     </div>
     """
   end
@@ -86,7 +71,7 @@ defmodule ZoonkWeb.Components.Flash do
         hidden
       >
         {gettext("Attempting to reconnect")}
-        <.icon name="tabler-refresh" class="ml-1 h-3 w-3 animate-spin" />
+        <.icon name="tabler-refresh" />
       </.flash>
 
       <.flash
@@ -98,7 +83,7 @@ defmodule ZoonkWeb.Components.Flash do
         hidden
       >
         {gettext("Hang in there while we get back on track")}
-        <.icon name="tabler-refresh" class="ml-1 h-3 w-3 animate-spin" />
+        <.icon name="tabler-refresh" />
       </.flash>
     </div>
     """

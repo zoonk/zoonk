@@ -13,14 +13,14 @@ defmodule ZoonkWeb.Components.Icon do
   ## Examples
 
       <.icon name="tabler-x" />
-      <.icon name="tabler-refresh" class="ml-1 w-3 h-3 animate-spin" />
+      <.icon name="tabler-refresh"  />
   """
   attr :name, :string, required: true
   attr :class, :any, default: nil
 
   def icon(%{name: "tabler-" <> _rest} = assigns) do
     ~H"""
-    <span class={[@name, @class]} />
+    <span />
     """
   end
 end
