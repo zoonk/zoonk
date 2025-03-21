@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Components.SearchButton do
+defmodule ZoonkWeb.LiveComponents.SearchButton do
   @moduledoc """
   LiveComponent for the search button.
 
