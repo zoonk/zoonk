@@ -42,7 +42,6 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
         <.button
           type="submit"
           phx-disable-with={dgettext("users", "Creating account...")}
-          full
           icon="tabler-user-plus"
         >
           {dgettext("users", "Create an account")}

@@ -20,7 +20,6 @@ defmodule ZoonkWeb.Components.User do
       kind={:button}
       icon={get_icon(@provider)}
       variant={:outline}
-      full
       {get_navigate_attr(@action, @provider)}
     >
       {get_auth_label(@action, @provider)}

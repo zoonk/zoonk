@@ -5,7 +5,7 @@ defmodule ZoonkWeb.Components.Search do
   use Phoenix.Component
   use Gettext, backend: Zoonk.Gettext
 
-  import ZoonkWeb.Components.Modal
+  import ZoonkWeb.Components.Utils
 
   alias Phoenix.LiveView.JS
 
