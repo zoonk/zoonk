@@ -74,7 +74,7 @@ defmodule ZoonkWeb.Components.User do
 
       {render_slot(@inner_block)}
 
-      <.a :if={@show_options} weight={:normal} navigate={get_auth_link(get_footer_action(@action))}>
+      <.a :if={@show_options} navigate={get_auth_link(get_footer_action(@action))}>
         ← {get_back_label(@action)}
       </.a>
 

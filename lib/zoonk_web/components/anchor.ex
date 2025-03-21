@@ -7,7 +7,6 @@ defmodule ZoonkWeb.Components.Anchor do
   import ZoonkWeb.Components.Icon
 
   attr :class, :string, default: nil, doc: "CSS class to apply to the anchor"
-  attr :weight, :atom, values: [:normal, :medium], default: :medium, doc: "Font weight of the anchor"
   attr :kind, :atom, values: [:link, :button, :icon], default: :link, doc: "Kind of anchor to render"
   attr :variant, :atom, values: [:primary, :outline, :danger], default: :primary, doc: "Variant of anchor to render"
   attr :size, :atom, values: [:sm, :md, :lg], default: :md, doc: "Size of the anchor"
@@ -30,7 +29,16 @@ defmodule ZoonkWeb.Components.Anchor do
   """
   def a(%{kind: :link} = assigns) do
     ~H"""
-    <.link {@rest}>
+    <.link
+      class={[
+        "underline underline-offset-2",
+        "text-zk-primary-foreground hover:opacity-70",
+        "ring-zk-primary-foreground ring-offset-2",
+        "focus-visible:no-underline focus-visible:outline-0 focus-visible:ring-1",
+        @class
+      ]}
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </.link>
     """
