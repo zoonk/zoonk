@@ -32,7 +32,7 @@ defmodule ZoonkWeb.Components.Avatar do
     <span
       class={[
         "flex flex-col items-center justify-center font-extrabold uppercase",
-        "bg-pink-400 text-white",
+        "bg-zk-secondary text-zk-secondary-foreground",
         shared_class(),
         avatar_size(@size),
         @class
