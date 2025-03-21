@@ -143,6 +143,7 @@ defmodule ZoonkWeb.Router do
         live "/anchor", UIAnchor
         live "/avatar", UIAvatar
         live "/button", UIButton
+        live "/card", UICard
       end
     end
   end

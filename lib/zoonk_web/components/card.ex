@@ -30,7 +30,7 @@ defmodule ZoonkWeb.Components.Card do
 
   def card(assigns) do
     ~H"""
-    <.dynamic_tag tag_name={@tag} {@rest}>
+    <.dynamic_tag tag_name={@tag} class={["bg-zk-card zk-drop-shadow rounded", @class]} {@rest}>
       {render_slot(@inner_block)}
     </.dynamic_tag>
     """
@@ -54,9 +54,13 @@ defmodule ZoonkWeb.Components.Card do
 
   def card_header(assigns) do
     ~H"""
-    <.dynamic_tag tag_name={@tag} {@rest}>
-      <div>{render_slot(@inner_block)}</div>
-      <.icon :if={@icon} name={@icon} />
+    <.dynamic_tag
+      tag_name={@tag}
+      class={["bg-zk-secondary/70 flex items-center justify-between gap-4 rounded-t p-6", @class]}
+      {@rest}
+    >
+      <div class="flex flex-col gap-1.5">{render_slot(@inner_block)}</div>
+      <.icon :if={@icon} size={:lg} class="text-zk-secondary-accent-foreground" name={@icon} />
     </.dynamic_tag>
     """
   end
@@ -116,7 +120,7 @@ defmodule ZoonkWeb.Components.Card do
 
   def card_content(assigns) do
     ~H"""
-    <.dynamic_tag tag_name={@tag} {@rest}>
+    <.dynamic_tag tag_name={@tag} class={["p-6", @class]} {@rest}>
       {render_slot(@inner_block)}
     </.dynamic_tag>
     """

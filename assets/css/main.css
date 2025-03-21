@@ -14,7 +14,7 @@
 
 :root {
   --background: var(--color-neutral-100);
-  --foreground: var(--color-neutral-500);
+  --foreground: var(--color-neutral-600);
 
   --primary: var(--color-blue-600);
   --primary-foreground: var(--color-blue-50);
@@ -48,14 +48,12 @@
 
   --border: var(--color-neutral-200);
   --ring: var(--color-neutral-400);
-
-  --tabler-stroke-width: 2;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --background: var(--color-neutral-950);
-    --foreground: var(--color-neutral-400);
+    --foreground: var(--color-neutral-200);
 
     --primary: var(--color-blue-600);
     --primary-foreground: var(--color-blue-50);
@@ -235,4 +233,8 @@
   @apply border border-zk-border bg-zk-card text-zk-card-foreground
   hover:bg-zk-secondary hover:text-zk-secondary-foreground
   focus-visible:ring-zk-secondary;
+}
+
+@utility zk-drop-shadow {
+  @apply drop-shadow-xs contrast-more:drop-shadow-xl;
 }
