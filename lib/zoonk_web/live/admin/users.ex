@@ -31,11 +31,7 @@ defmodule ZoonkWeb.Live.AdminUsers do
             </.a>
           </div>
 
-          <.avatar
-            src={user.profile.picture_url}
-            alt={User.get_display_name(user.profile)}
-            label={User.get_display_name(user.profile)}
-          />
+          <.avatar src={user.profile.picture_url} alt={User.get_display_name(user.profile)} />
         </.card>
       </ul>
 
