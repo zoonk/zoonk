@@ -5,9 +5,20 @@ defmodule ZoonkDev.Live.UIFlash do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <article class="flex flex-col gap-4">
-      <.flash kind={:info} position={:none}>Add some message here</.flash>
-      <.flash kind={:error} position={:none}>An error ocurred</.flash>
+    <article class="zk-grid">
+      <.card>
+        <.card_header>
+          <.card_title>Flash Types</.card_title>
+          <.card_description>
+            Flash messages can be of different types: info and error.
+          </.card_description>
+        </.card_header>
+
+        <.card_content class="flex flex-col gap-4">
+          <.flash kind={:info} position={:none}>This is an information message</.flash>
+          <.flash kind={:error} position={:none}>This is an error message</.flash>
+        </.card_content>
+      </.card>
     </article>
     """
   end
