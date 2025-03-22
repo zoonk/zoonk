@@ -91,7 +91,7 @@ defmodule ZoonkWeb.Components.Anchor do
       ]}
       {@rest}
     >
-      <.icon :if={@icon} size={} name={@icon} />
+      <.icon :if={@icon} size={@size} name={@icon} />
       {render_slot(@inner_block)}
     </.link>
     """
