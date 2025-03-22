@@ -30,7 +30,15 @@ defmodule ZoonkWeb.Components.Card do
 
   def card(assigns) do
     ~H"""
-    <.dynamic_tag tag_name={@tag} class={["bg-zk-surface zk-drop-shadow rounded", @class]} {@rest}>
+    <.dynamic_tag
+      tag_name={@tag}
+      class={[
+        "bg-zk-surface border-zk-border rounded drop-shadow",
+        "has-[header]:border has-[header]:drop-shadow-none",
+        @class
+      ]}
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </.dynamic_tag>
     """
@@ -46,7 +54,6 @@ defmodule ZoonkWeb.Components.Card do
         <.card_description>Card description</.card_description>
       </.card_header>
   """
-  attr :tag, :string, default: "div", doc: "The HTML tag to use for the card header"
   attr :icon, :string, default: nil, doc: "The icon to use for the card header"
   slot :inner_block, required: true, doc: "the inner block that renders the card header"
   attr :class, :any, default: nil, doc: "CSS class to apply to the card header"
@@ -54,14 +61,13 @@ defmodule ZoonkWeb.Components.Card do
 
   def card_header(assigns) do
     ~H"""
-    <.dynamic_tag
-      tag_name={@tag}
+    <header
       class={["bg-zk-secondary/70 flex items-center justify-between gap-4 rounded-t p-6", @class]}
       {@rest}
     >
       <div class="flex flex-col gap-1.5">{render_slot(@inner_block)}</div>
       <.icon :if={@icon} size={:lg} class="text-zk-muted-foreground" name={@icon} />
-    </.dynamic_tag>
+    </header>
     """
   end
 

@@ -13,7 +13,13 @@ defmodule ZoonkDev.Live.UICard do
         </.card_header>
 
         <.card_content>
-          <.text>Card content goes here.</.text>
+          <.text>Card with a header.</.text>
+        </.card_content>
+      </.card>
+
+      <.card>
+        <.card_content>
+          <.text>Card without a header.</.text>
         </.card_content>
       </.card>
     </article>
