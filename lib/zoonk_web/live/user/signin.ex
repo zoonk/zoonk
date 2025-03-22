@@ -17,7 +17,7 @@ defmodule ZoonkWeb.Live.UserLogin do
       </section>
 
       <section aria-label={dgettext("users", "Or use your email address")} class="w-full">
-        <.divider label={dgettext("users", "or")} class="my-4" />
+        <.divider label={dgettext("users", "or")} />
         <.auth_link provider={:email} />
       </section>
     </.main_container>

@@ -12,11 +12,14 @@ defmodule ZoonkWeb.Live.UserSignUp do
   def render(assigns) do
     ~H"""
     <.main_container action={:signup}>
-      <section aria-label={dgettext("users", "Use one of the external providers below:")}>
+      <section
+        aria-label={dgettext("users", "Use one of the external providers below:")}
+        class="flex w-full flex-col gap-2"
+      >
         <.auth_link :for={provider <- Configuration.list_providers()} provider={provider} />
       </section>
 
-      <section aria-label={dgettext("users", "Or use your email address")}>
+      <section aria-label={dgettext("users", "Or use your email address")} class="w-full">
         <.divider label={dgettext("users", "or")} />
         <.auth_link provider={:email} action={:signup} />
       </section>

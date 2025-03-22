@@ -9,7 +9,7 @@ defmodule ZoonkWeb.Components.Divider do
 
   def divider(assigns) do
     ~H"""
-    <div aria-hidden="true" role="presentation" class={["relative", @class]}>
+    <div aria-hidden="true" role="presentation" class={["relative my-4", @class]}>
       <div class="absolute inset-0 flex items-center">
         <div class="border-zk-border w-full border-t" />
       </div>
