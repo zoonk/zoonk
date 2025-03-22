@@ -4,7 +4,6 @@ defmodule ZoonkWeb.Components.Input do
   """
   use Phoenix.Component
 
-  import ZoonkWeb.Components.Icon
   import ZoonkWeb.Components.Text
 
   alias Phoenix.HTML.FormField
@@ -188,8 +187,7 @@ defmodule ZoonkWeb.Components.Input do
 
   def error(assigns) do
     ~H"""
-    <p>
-      <.icon name="tabler-alert-circle-filled" />
+    <p class="text-zk-destructive mt-2 text-sm">
       {render_slot(@inner_block)}
     </p>
     """
