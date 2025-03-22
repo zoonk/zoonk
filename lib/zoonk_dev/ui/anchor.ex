@@ -15,7 +15,7 @@ defmodule ZoonkDev.Live.UIAnchor do
           </.card_description>
         </.card_header>
 
-        <.card_content>
+        <.card_content align={:bottom}>
           <.a kind={:link}>Link kind</.a>
         </.card_content>
       </.card>
@@ -28,7 +28,7 @@ defmodule ZoonkDev.Live.UIAnchor do
           </.card_description>
         </.card_header>
 
-        <.card_content>
+        <.card_content align={:bottom}>
           <.a kind={:button}>Button kind</.a>
         </.card_content>
       </.card>
@@ -39,7 +39,7 @@ defmodule ZoonkDev.Live.UIAnchor do
           <.card_description>Buttons can have multiple sizes.</.card_description>
         </.card_header>
 
-        <.card_content>
+        <.card_content align={:bottom}>
           <.a kind={:button} size={:sm}>Small</.a>
           <.a kind={:button} size={:md}>Medium</.a>
           <.a kind={:button} size={:lg}>Large</.a>
@@ -52,7 +52,7 @@ defmodule ZoonkDev.Live.UIAnchor do
           <.card_description>Buttons can have multiple variants.</.card_description>
         </.card_header>
 
-        <.card_content>
+        <.card_content align={:bottom}>
           <.a kind={:button} variant={:primary}>Primary</.a>
           <.a kind={:button} variant={:destructive}>Destructive</.a>
           <.a kind={:button} variant={:outline}>Outline</.a>
@@ -65,7 +65,7 @@ defmodule ZoonkDev.Live.UIAnchor do
           <.card_description>You can have an icon in multiple positions.</.card_description>
         </.card_header>
 
-        <.card_content class="grid grid-cols-3 gap-2">
+        <.card_content align={:bottom} class="grid grid-cols-3 gap-2">
           <.a kind={:button} icon="tabler-ufo" icon_align={:left} class="w-full">Left</.a>
           <.a kind={:button} icon="tabler-ufo" icon_align={:right} class="w-full">Right</.a>
           <.a kind={:button} icon="tabler-ufo" icon_align={:auto} class="w-full">Auto</.a>
@@ -81,7 +81,7 @@ defmodule ZoonkDev.Live.UIAnchor do
           </.card_description>
         </.card_header>
 
-        <.card_content>
+        <.card_content align={:bottom}>
           <.a kind={:button} icon_align={:left} icon="tabler-ufo" class="w-full">Full width</.a>
         </.card_content>
       </.card>
@@ -95,7 +95,7 @@ defmodule ZoonkDev.Live.UIAnchor do
           </.card_description>
         </.card_header>
 
-        <.card_content>
+        <.card_content align={:bottom}>
           <.a kind={:icon} size={:sm} icon="tabler-x">
             <span class="sr-only">Small icon</span>
           </.a>

@@ -12,7 +12,7 @@ defmodule ZoonkDev.Live.UIAvatar do
           <.card_description>Avatars can have multiple sizes.</.card_description>
         </.card_header>
 
-        <.card_content class="flex items-center gap-4">
+        <.card_content align={:center} class="flex items-center justify-center gap-4">
           <.avatar src={avatar_url()} alt="Small avatar" size={:sm} />
           <.avatar src={avatar_url()} alt="Medium avatar" size={:md} />
           <.avatar src={avatar_url()} alt="Large avatar" size={:lg} />
@@ -27,7 +27,7 @@ defmodule ZoonkDev.Live.UIAvatar do
           </.card_description>
         </.card_header>
 
-        <.card_content class="flex items-center gap-4">
+        <.card_content align={:center} class="flex items-center justify-center gap-4">
           <.avatar alt="Small avatar" size={:sm} />
           <.avatar alt="Medium avatar" size={:md} />
           <.avatar alt="Large avatar" size={:lg} />
@@ -42,7 +42,7 @@ defmodule ZoonkDev.Live.UIAvatar do
           </.card_description>
         </.card_header>
 
-        <.card_content class="flex items-center gap-4">
+        <.card_content align={:center} class="flex items-center justify-center gap-4">
           <.avatar src={avatar_url()} alt="Border avatar" class="border-zk-primary border-2" />
           <.avatar alt="John Doe" class="bg-zk-primary text-zk-primary-foreground" />
         </.card_content>
@@ -56,7 +56,7 @@ defmodule ZoonkDev.Live.UIAvatar do
           </.card_description>
         </.card_header>
 
-        <.card_content class="flex items-center gap-1">
+        <.card_content align={:center} class="flex items-center justify-center gap-1">
           <.avatar src={avatar_url()} size={:md} alt="User avatar" />
 
           <div>

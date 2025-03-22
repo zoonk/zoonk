@@ -122,15 +122,43 @@ defmodule ZoonkWeb.Components.Card do
       <.card_content>
         <.text>Card content goes here.</.text>
       </.card_content>
+
+      <.card_content align={:top}>
+        <.text>This content is aligned to the top.</.text>
+      </.card_content>
+
+      <.card_content align={:center}>
+        <.text>This content is centered vertically.</.text>
+      </.card_content>
+
+      <.card_content align={:bottom}>
+        <.text>This content is aligned to the bottom.</.text>
+      </.card_content>
   """
   attr :tag, :string, default: "div", doc: "The HTML tag to use for the card content"
+
+  attr :align, :atom,
+    default: :top,
+    values: [:top, :center, :bottom],
+    doc: "The alignment of the content within the card. Can be :top, :center, or :bottom"
+
   slot :inner_block, required: true, doc: "the inner block that renders the card content"
   attr :class, :any, default: nil, doc: "CSS class to apply to the card content"
   attr :rest, :global, doc: "the arbitrary HTML attributes to add to the card content"
 
   def card_content(assigns) do
     ~H"""
-    <.dynamic_tag tag_name={@tag} class={["mt-auto w-full p-6", @class]} {@rest}>
+    <.dynamic_tag
+      tag_name={@tag}
+      class={[
+        "w-full p-6",
+        @align == :top && "mb-auto",
+        @align == :center && "my-auto",
+        @align == :bottom && "mt-auto",
+        @class
+      ]}
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </.dynamic_tag>
     """

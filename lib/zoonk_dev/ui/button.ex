@@ -12,7 +12,7 @@ defmodule ZoonkDev.Live.UIButton do
           <.card_description>Buttons can have multiple variants.</.card_description>
         </.card_header>
 
-        <.card_content>
+        <.card_content align={:bottom}>
           <.button variant={:primary}>Primary</.button>
           <.button variant={:destructive}>Destructive</.button>
           <.button variant={:outline}>Outline</.button>
@@ -25,7 +25,7 @@ defmodule ZoonkDev.Live.UIButton do
           <.card_description>Buttons can have multiple sizes.</.card_description>
         </.card_header>
 
-        <.card_content>
+        <.card_content align={:bottom}>
           <.button size={:sm}>Small</.button>
           <.button size={:md}>Medium</.button>
           <.button size={:lg}>Large</.button>
@@ -38,7 +38,7 @@ defmodule ZoonkDev.Live.UIButton do
           <.card_description>You can have an icon in multiple alignments.</.card_description>
         </.card_header>
 
-        <.card_content class="grid grid-cols-3 gap-4">
+        <.card_content align={:bottom} class="grid grid-cols-3 gap-4">
           <.button icon="tabler-ufo" icon_align={:left} class="w-full">Left</.button>
           <.button icon="tabler-ufo" icon_align={:right} class="w-full">Right</.button>
           <.button icon="tabler-ufo" icon_align={:auto} class="w-full">Auto</.button>
@@ -53,7 +53,7 @@ defmodule ZoonkDev.Live.UIButton do
           </.card_description>
         </.card_header>
 
-        <.card_content>
+        <.card_content align={:bottom}>
           <.button variant={:primary} disabled>Primary</.button>
           <.button variant={:destructive} disabled>Destructive</.button>
           <.button variant={:outline} disabled>Outline</.button>
@@ -69,7 +69,7 @@ defmodule ZoonkDev.Live.UIButton do
           </.card_description>
         </.card_header>
 
-        <.card_content>
+        <.card_content align={:bottom}>
           <.button icon="tabler-ufo" class="w-full">Full width</.button>
         </.card_content>
       </.card>
