@@ -47,6 +47,7 @@
 - Add `Phoenix.Component.attr/3` to each component to define the attributes it accepts. Include the `doc` option to provide documentation for each attribute.
 - Components modules are prefixed with `ZoonkWeb.Components` (e.g., `ZoonkWeb.Components.Flash`).
 - Turn repetitive code into components. However, for code specific to a section (e.g. authentication), keep it in the section's directory instead of `lib/zoonk_web/components`. For example, `lib/zoonk_web/live/users/user_components.ex` contains components specific to the user section and `lib/zoonk_web/layouts/layout_components.ex` contains components specific to the layout section.
+- When you want to style a component like `<.card_content>`, add a class to it (i.e. `<.card_content class="flex flex-col gap-4">`) instead of creating a div inside the component just for styling.
 
 ## Icons
 

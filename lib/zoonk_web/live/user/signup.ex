@@ -20,7 +20,7 @@ defmodule ZoonkWeb.Live.UserSignUp do
       </section>
 
       <section aria-label={dgettext("users", "Or use your email address")} class="w-full">
-        <.divider label={dgettext("users", "or")} />
+        <.divider label={dgettext("users", "or")} background={:bg} />
         <.auth_link provider={:email} action={:signup} />
       </section>
     </.main_container>
