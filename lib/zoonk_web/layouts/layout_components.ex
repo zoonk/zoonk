@@ -21,7 +21,7 @@ defmodule ZoonkWeb.Components.Layout do
       <.link
         class={[
           "flex flex-col items-center justify-center gap-1 p-4",
-          "bg-zk-surface/80 backdrop-blur-md",
+          "bg-zk-surface/70 backdrop-blur-md",
           "text-center text-sm font-light transition-colors",
           "hover:bg-zk-secondary focus-visible:bg-zk-secondary focus-visible:outline-0",
           "md:group-first:rounded-l-full md:group-last:rounded-r-full",
