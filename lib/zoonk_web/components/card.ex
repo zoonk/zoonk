@@ -60,7 +60,7 @@ defmodule ZoonkWeb.Components.Card do
       {@rest}
     >
       <div class="flex flex-col gap-1.5">{render_slot(@inner_block)}</div>
-      <.icon :if={@icon} size={:lg} class="text-zk-secondary-accent-foreground" name={@icon} />
+      <.icon :if={@icon} size={:lg} class="text-zk-muted-foreground" name={@icon} />
     </.dynamic_tag>
     """
   end
