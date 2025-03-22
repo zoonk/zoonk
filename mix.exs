@@ -121,7 +121,7 @@ defmodule Zoonk.MixProject do
         "guides/oauth.md",
         "guides/production.md"
       ],
-      nest_modules_by_prefix: [Zoonk, ZoonkWeb]
+      nest_modules_by_prefix: [Zoonk, ZoonkWeb, ZoonkDev]
     ]
   end
 end
