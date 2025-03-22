@@ -1,6 +1,6 @@
 <main aria-labelledby="page-title">
-  <div class="bg-zk-surface border-zk-border sticky top-0 z-50 border-b">
-    <header class="container mx-auto flex items-center justify-between gap-4 py-4 sm:py-6">
+  <div class="bg-zk-surface/80 border-zk-border sticky top-0 z-50 border-b backdrop-blur-2xl">
+    <header class="container mx-auto flex items-center justify-between gap-4 p-4 sm:p-6">
       <.a kind={:button} navigate={~p"/"} size={:sm} variant={:outline}>
         Back to app
       </.a>
@@ -18,8 +18,8 @@
     </header>
   </div>
 
-  <nav class="sticky top-20 z-10 w-full">
-    <ul class="scrollbar-none container mx-auto flex items-center gap-2 overflow-x-auto py-2 sm:py-4">
+  <nav class="bg-zk-background/80 sticky top-16 z-10 w-full backdrop-blur-2xl sm:top-20">
+    <ul class="scrollbar-none container mx-auto flex items-center gap-2 overflow-x-auto p-4 sm:p-6">
       <li
         :for={item <- menu_items()}
         class={[
@@ -44,7 +44,7 @@
     </ul>
   </nav>
 
-  <section class="container mx-auto mt-8">
+  <section class="container mx-auto px-4 sm:px-6">
     {@inner_content}
   </section>
 </main>
