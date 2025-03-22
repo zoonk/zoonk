@@ -13,11 +13,11 @@ defmodule ZoonkDev.Live.UIAnchor do
         <span class="sr-only">Small icon</span>
       </.a>
 
-      <.a kind={:icon} size={:md} icon="tabler-x">
+      <.a kind={:icon} size={:md} variant={:destructive} icon="tabler-x">
         <span class="sr-only">Medium icon</span>
       </.a>
 
-      <.a kind={:icon} size={:lg} icon="tabler-x">
+      <.a kind={:icon} size={:lg} variant={:outline} icon="tabler-x">
         <span class="sr-only">Large icon</span>
       </.a>
 

@@ -47,8 +47,8 @@
   --success-accent: var(--color-green-800);
   --success-accent-foreground: var(--color-green-50);
 
-  --destructive: var(--color-pink-700);
-  --destructive-text: var(--color-pink-700);
+  --destructive: var(--color-pink-500);
+  --destructive-text: var(--color-pink-500);
   --destructive-foreground: var(--color-pink-50);
 
   --destructive-subtle: var(--color-pink-50);
