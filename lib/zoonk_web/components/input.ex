@@ -79,7 +79,7 @@ defmodule ZoonkWeb.Components.Input do
       end)
 
     ~H"""
-    <div>
+    <div class="text-left">
       <label class="text-zk-foreground flex items-center gap-2 text-sm leading-6">
         <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
 
@@ -105,7 +105,7 @@ defmodule ZoonkWeb.Components.Input do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div>
+    <div class="text-left">
       <.label hide_label={@hide_label} for={@id}>{@label}</.label>
 
       <select
@@ -126,7 +126,7 @@ defmodule ZoonkWeb.Components.Input do
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <div>
+    <div class="text-left">
       <.label hide_label={@hide_label} for={@id}>{@label}</.label>
 
       <textarea
@@ -144,7 +144,7 @@ defmodule ZoonkWeb.Components.Input do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div>
+    <div class="text-left">
       <.label :if={@type != "hidden"} hide_label={@hide_label} for={@id}>{@label}</.label>
 
       <input
@@ -199,7 +199,7 @@ defmodule ZoonkWeb.Components.Input do
     do: [
       "block rounded border-1",
       "bg-zk-surface text-zk-foreground",
-      "placeholder:text-zk-foreground/75",
+      "placeholder:text-zk-foreground/40",
       "focus-visible:outline-0",
       "sm:text-sm sm:leading-6",
       "disabled:cursor-not-allowed disabled:opacity-50"

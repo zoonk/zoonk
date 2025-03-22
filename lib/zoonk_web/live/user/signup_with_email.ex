@@ -18,6 +18,7 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
         phx-submit="save"
         phx-change="validate"
         aria-label={dgettext("users", "Signup form")}
+        class="flex w-full flex-col gap-4"
       >
         <.error :if={@check_errors}>
           {dgettext("users", "Oops, something went wrong! Please check the errors below.")}
@@ -29,6 +30,7 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
           label={dgettext("users", "Language")}
           options={Zoonk.Configuration.list_languages(:options)}
           required
+          class="w-full"
         />
 
         <.input
@@ -36,13 +38,17 @@ defmodule ZoonkWeb.Live.UserSignUpWithEmail do
           type="email"
           label={dgettext("users", "Email")}
           autocomplete="username"
+          placeholder={dgettext("users", "myemail@gmail.com")}
           required
+          class="w-full"
         />
 
         <.button
           type="submit"
           phx-disable-with={dgettext("users", "Creating account...")}
           icon="tabler-user-plus"
+          icon_align={:left}
+          class="w-full"
         >
           {dgettext("users", "Create an account")}
         </.button>
