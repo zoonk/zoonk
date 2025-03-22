@@ -12,12 +12,10 @@ defmodule ZoonkDev.Live.UIAvatar do
           <.card_description>Avatars can have multiple sizes.</.card_description>
         </.card_header>
 
-        <.card_content>
-          <div class="flex items-center gap-4">
-            <.avatar src={avatar_url()} alt="Small avatar" size={:sm} />
-            <.avatar src={avatar_url()} alt="Medium avatar" size={:md} />
-            <.avatar src={avatar_url()} alt="Large avatar" size={:lg} />
-          </div>
+        <.card_content class="flex items-center gap-4">
+          <.avatar src={avatar_url()} alt="Small avatar" size={:sm} />
+          <.avatar src={avatar_url()} alt="Medium avatar" size={:md} />
+          <.avatar src={avatar_url()} alt="Large avatar" size={:lg} />
         </.card_content>
       </.card>
 
@@ -29,12 +27,10 @@ defmodule ZoonkDev.Live.UIAvatar do
           </.card_description>
         </.card_header>
 
-        <.card_content>
-          <div class="flex items-center gap-4">
-            <.avatar alt="Small avatar" size={:sm} />
-            <.avatar alt="Medium avatar" size={:md} />
-            <.avatar alt="Large avatar" size={:lg} />
-          </div>
+        <.card_content class="flex items-center gap-4">
+          <.avatar alt="Small avatar" size={:sm} />
+          <.avatar alt="Medium avatar" size={:md} />
+          <.avatar alt="Large avatar" size={:lg} />
         </.card_content>
       </.card>
 
@@ -46,11 +42,9 @@ defmodule ZoonkDev.Live.UIAvatar do
           </.card_description>
         </.card_header>
 
-        <.card_content>
-          <div class="flex items-center gap-4">
-            <.avatar src={avatar_url()} alt="Border avatar" class="border-zk-primary border-2" />
-            <.avatar alt="John Doe" class="bg-zk-primary text-zk-primary-foreground" />
-          </div>
+        <.card_content class="flex items-center gap-4">
+          <.avatar src={avatar_url()} alt="Border avatar" class="border-zk-primary border-2" />
+          <.avatar alt="John Doe" class="bg-zk-primary text-zk-primary-foreground" />
         </.card_content>
       </.card>
 
@@ -62,13 +56,12 @@ defmodule ZoonkDev.Live.UIAvatar do
           </.card_description>
         </.card_header>
 
-        <.card_content>
-          <div class="flex items-center gap-4">
-            <.avatar src={avatar_url()} alt="User avatar" />
-            <div>
-              <h4 class="font-medium">John Doe</h4>
-              <p class="text-zk-muted-foreground text-sm">Member since 2023</p>
-            </div>
+        <.card_content class="flex items-center gap-1">
+          <.avatar src={avatar_url()} size={:md} alt="User avatar" />
+
+          <div>
+            <.text tag="h4" class="font-medium">John Doe</.text>
+            <.text tag="p" size={:caption} variant={:secondary}>Member since 2023</.text>
           </div>
         </.card_content>
       </.card>
