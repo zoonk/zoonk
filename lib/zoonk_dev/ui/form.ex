@@ -5,26 +5,64 @@ defmodule ZoonkDev.Live.UIForm do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <article class="flex flex-col gap-4">
-      <.form_container for={@email_form} id="email_form">
-        <:title>Change Email</:title>
+    <article class="zk-grid">
+      <.card>
+        <.card_header>
+          <.card_title>Basic Form</.card_title>
+          <.card_description>
+            A basic form container with title, subtitle, and a save button.
+          </.card_description>
+        </.card_header>
 
-        <:subtitle>
-          This is the email address that will be used to sign in. This is not visible to other users.
-        </:subtitle>
+        <.card_content>
+          <.form_container for={@basic_form} id="basic_form">
+            <:title>Basic Form</:title>
+            <:subtitle>Enter the required information below.</:subtitle>
 
-        <.input
-          id="user-email"
-          field={@email_form[:email]}
-          label="Email address"
-          type="email"
-          autocomplete="username"
-          required
-          hide_label
-        />
+            <.input field={@basic_form[:name]} label="Name" placeholder="Enter your name" required />
 
-        <:requirements>You'll need to confirm your email address.</:requirements>
-      </.form_container>
+            <:requirements>All fields are required.</:requirements>
+          </.form_container>
+        </.card_content>
+      </.card>
+
+      <.card>
+        <.card_header>
+          <.card_title>Multiple Fields Form</.card_title>
+          <.card_description>
+            A form with multiple input fields of different types.
+          </.card_description>
+        </.card_header>
+
+        <.card_content>
+          <.form_container for={@profile_form} id="profile_form">
+            <:title>Profile Information</:title>
+            <:subtitle>Enter your profile details below.</:subtitle>
+
+            <div class="flex flex-col gap-4">
+              <.input
+                field={@profile_form[:full_name]}
+                label="Full Name"
+                placeholder="Your full name"
+                required
+                class="w-full"
+              />
+
+              <.input
+                field={@profile_form[:bio]}
+                label="Biography"
+                placeholder="Tell us about yourself"
+                type="textarea"
+                class="w-full"
+              />
+
+              <.input field={@profile_form[:birthday]} label="Birthday" type="date" />
+            </div>
+
+            <:requirements>Fill out your profile to help others know you better.</:requirements>
+          </.form_container>
+        </.card_content>
+      </.card>
     </article>
     """
   end
@@ -34,7 +72,8 @@ defmodule ZoonkDev.Live.UIForm do
     socket =
       socket
       |> assign(page_title: "Form")
-      |> assign(:email_form, to_form(%{email: ""}))
+      |> assign(:basic_form, to_form(%{name: ""}))
+      |> assign(:profile_form, to_form(%{full_name: "", bio: "", birthday: nil}))
 
     {:ok, socket}
   end
