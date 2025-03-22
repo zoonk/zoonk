@@ -22,9 +22,6 @@ import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 
-// Hooks
-import ClearFlash from "./hooks/clear_flash";
-
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
@@ -43,8 +40,9 @@ const csrfToken = document
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 const liveSocket = new LiveSocket("/live", Socket, {
-  hooks: { ClearFlash },
+  hooks: {},
   longPollFallbackMs: 2500,
+  disconnectedTimeout: 2000,
   params: { _csrf_token: csrfToken, timezone },
   metadata: {
     keydown: (e, el) => {

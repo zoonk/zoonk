@@ -6,8 +6,8 @@ defmodule ZoonkDev.Live.UIFlash do
   def render(assigns) do
     ~H"""
     <article class="flex flex-col gap-4">
-      <.flash kind={:info} position={:none} keep>Add some message here</.flash>
-      <.flash kind={:error} position={:none} keep>An error ocurred</.flash>
+      <.flash kind={:info} position={:none}>Add some message here</.flash>
+      <.flash kind={:error} position={:none}>An error ocurred</.flash>
     </article>
     """
   end

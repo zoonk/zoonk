@@ -19,7 +19,6 @@ defmodule ZoonkWeb.Components.Flash do
       <.flash kind={:info} phx-mounted={show("#flash")}>Welcome Back!</.flash>
   """
   attr :id, :string, doc: "the optional id of flash container"
-  attr :keep, :boolean, default: false, doc: "if true, the flash message will not be automatically removed"
 
   attr :position, :atom,
     values: [:top_left, :top_right, :bottom_left, :bottom_right, :none],
@@ -40,12 +39,10 @@ defmodule ZoonkWeb.Components.Flash do
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
-      phx-hook={!@keep && "ClearFlash"}
-      data-kind={@kind}
       role="alert"
       tabindex="0"
       class={[
-        "z-50 rounded border px-4 py-2 text-sm",
+        "z-50 flex items-center justify-between rounded border px-4 py-2 text-sm",
         "max-w-80 sm:max-w-96",
         "transition-all duration-300 ease-in-out",
         @kind == :info && "bg-zk-surface text-zk-secondary-foreground border-zk-border",
@@ -56,6 +53,10 @@ defmodule ZoonkWeb.Components.Flash do
       {@rest}
     >
       {msg}
+
+      <button type="button" class="group cursor-pointer self-start" aria-label={gettext("close")}>
+        <.icon name="tabler-x" class="opacity-40 group-hover:opacity-70" />
+      </button>
     </div>
     """
   end
