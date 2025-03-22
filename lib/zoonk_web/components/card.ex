@@ -35,6 +35,7 @@ defmodule ZoonkWeb.Components.Card do
       class={[
         "bg-zk-surface border-zk-border rounded drop-shadow",
         "has-[header]:border has-[header]:drop-shadow-none",
+        "flex h-full w-full flex-col justify-between",
         @class
       ]}
       {@rest}
@@ -62,7 +63,10 @@ defmodule ZoonkWeb.Components.Card do
   def card_header(assigns) do
     ~H"""
     <header
-      class={["bg-zk-secondary/70 flex items-center justify-between gap-4 rounded-t p-6", @class]}
+      class={[
+        "bg-zk-secondary/70 flex w-full items-center justify-between gap-4 rounded-t p-6",
+        @class
+      ]}
       {@rest}
     >
       <div class="flex flex-col gap-1.5">{render_slot(@inner_block)}</div>
@@ -126,7 +130,7 @@ defmodule ZoonkWeb.Components.Card do
 
   def card_content(assigns) do
     ~H"""
-    <.dynamic_tag tag_name={@tag} class={["p-6", @class]} {@rest}>
+    <.dynamic_tag tag_name={@tag} class={["mt-auto w-full p-6", @class]} {@rest}>
       {render_slot(@inner_block)}
     </.dynamic_tag>
     """

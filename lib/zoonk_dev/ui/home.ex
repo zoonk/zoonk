@@ -5,7 +5,7 @@ defmodule ZoonkDev.Live.UIHome do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <article class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <article class="zk-grid">
       <.card>
         <.card_header icon="tabler-palette-filled">
           <.card_title>UI Playground</.card_title>

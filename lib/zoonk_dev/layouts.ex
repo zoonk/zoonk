@@ -8,7 +8,7 @@ defmodule ZoonkDev.Layouts do
 
   def menu_items do
     [
-      %{icon: "tabler-home-filled", color: "text-slate-500", module: :uihome, label: "Home", path: "/ui"},
+      %{icon: "tabler-ufo", color: "text-slate-500", module: :uihome, label: "Home", path: "/ui"},
       %{icon: "tabler-link", color: "text-blue-500", module: :uianchor, label: "Anchor", path: "/ui/anchor"},
       %{icon: "tabler-user-circle", color: "text-green-500", module: :uiavatar, label: "Avatar", path: "/ui/avatar"},
       %{icon: "tabler-pointer-filled", color: "text-red-500", module: :uibutton, label: "Button", path: "/ui/button"},

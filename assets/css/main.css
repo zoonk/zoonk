@@ -296,6 +296,10 @@
   @apply drop-shadow-xs contrast-more:drop-shadow-xl;
 }
 
+@utility zk-grid {
+  @apply grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3;
+}
+
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }
