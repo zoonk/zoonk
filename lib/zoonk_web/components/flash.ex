@@ -19,8 +19,14 @@ defmodule ZoonkWeb.Components.Flash do
       <.flash kind={:info} phx-mounted={show("#flash")}>Welcome Back!</.flash>
   """
   attr :id, :string, doc: "the optional id of flash container"
+  attr :keep, :boolean, default: false, doc: "if true, the flash message will not be automatically removed"
+
+  attr :position, :atom,
+    values: [:top_left, :top_right, :bottom_left, :bottom_right, :none],
+    default: :top_right,
+    doc: "the position of the flash message on the screen"
+
   attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
-  attr :title, :string, default: nil
   attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
   attr :rest, :global, doc: "the arbitrary HTML attributes to add to the flash container"
 
@@ -34,35 +40,28 @@ defmodule ZoonkWeb.Components.Flash do
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
-      phx-hook="ClearFlash"
+      phx-hook={!@keep && "ClearFlash"}
       data-kind={@kind}
       role="alert"
-      aria-label={@title}
       tabindex="0"
       class={[
-        "fixed top-4 right-4 z-50 rounded-lg px-4 py-2",
+        "z-50 rounded border px-4 py-2 text-sm",
         "max-w-80 sm:max-w-96",
         "transition-all duration-300 ease-in-out",
-        @kind == :info &&
-          [
-            "bg-zk-surface text-zk-text-secondary",
-            "ring-zk-border shadow-sm ring-1",
-            "contrast-more:text-zk-text-contrast",
-            "dark:bg-zk-surface-inverse dark:ring-zk-border-inverse",
-            "dark:text-zk-text-inverse",
-            "dark:contrast-more:ring-zk-border"
-          ],
-        @kind == :error && ["bg-zk-danger-700 text-zk-danger-50 contrast-more:bg-zk-danger-900"]
+        @kind == :info && "bg-zk-surface text-zk-secondary-foreground border-zk-border",
+        @kind == :error &&
+          "bg-zk-destructive-subtle text-zk-destructive-subtle-foreground border-zk-destructive-subtle-foreground",
+        position_class(@position)
       ]}
       {@rest}
     >
-      <span class="text-sm">{msg}</span>
+      {msg}
     </div>
     """
   end
 
   @doc """
-  Shows the flash group with standard titles and content.
+  Shows the flash group with standard content.
 
   ## Examples
 
@@ -74,33 +73,37 @@ defmodule ZoonkWeb.Components.Flash do
   def flash_group(assigns) do
     ~H"""
     <div id={@id}>
-      <.flash kind={:info} title={gettext("Success!")} flash={@flash} />
-      <.flash kind={:error} title={gettext("Error!")} flash={@flash} />
+      <.flash kind={:info} flash={@flash} />
+      <.flash kind={:error} flash={@flash} />
 
       <.flash
         id="client-error"
         kind={:error}
-        title={gettext("We can't find the internet")}
         phx-disconnected={show(".phx-client-error #client-error")}
         phx-connected={hide("#client-error")}
         hidden
       >
-        {gettext("Attempting to reconnect")}
+        {gettext("Connection lost. Attempting to reconnect")}
         <.icon name="tabler-refresh" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
 
       <.flash
         id="server-error"
         kind={:error}
-        title={gettext("Something went wrong!")}
         phx-disconnected={show(".phx-server-error #server-error")}
         phx-connected={hide("#server-error")}
         hidden
       >
-        {gettext("Hang in there while we get back on track")}
+        {gettext("There was an error on the server")}
         <.icon name="tabler-refresh" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
     </div>
     """
   end
+
+  defp position_class(:top_left), do: "fixed top-4 left-4"
+  defp position_class(:top_right), do: "fixed top-4 right-4"
+  defp position_class(:bottom_left), do: "fixed bottom-4 left-4"
+  defp position_class(:bottom_right), do: "fixed bottom-4 right-4"
+  defp position_class(:none), do: nil
 end

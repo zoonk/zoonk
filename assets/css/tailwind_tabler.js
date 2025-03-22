@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const plugin = require("tailwindcss/plugin");
 
-// Embeds Tabler Icons (https://tabler-icons.io/) into your app.css bundle
+// Embeds Tabler Icons (https://tabler-icons.io/) into your main.css bundle
 // Credits: [Florian Arens](https://farens.me/blog/how-to-integrate-tabler-icons-into-your-phoenix-project)
 module.exports = plugin(function ({ matchComponents, theme }) {
   const iconsDir = path.join(__dirname, "../../deps/tabler_icons/icons");
@@ -39,8 +39,6 @@ module.exports = plugin(function ({ matchComponents, theme }) {
           "background-color": "currentColor",
           "vertical-align": "middle",
           display: "inline-block",
-          width: theme("spacing.5"),
-          height: theme("spacing.5"),
         };
       },
     },

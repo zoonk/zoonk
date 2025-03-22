@@ -93,15 +93,12 @@ defmodule ZoonkWeb do
       import ZoonkWeb.Components.Avatar
       import ZoonkWeb.Components.Button
       import ZoonkWeb.Components.Card
-      import ZoonkWeb.Components.DataList
       import ZoonkWeb.Components.Divider
       import ZoonkWeb.Components.Flash
       import ZoonkWeb.Components.Form
       import ZoonkWeb.Components.Icon
       import ZoonkWeb.Components.Input
-      import ZoonkWeb.Components.Modal
       import ZoonkWeb.Components.Search
-      import ZoonkWeb.Components.Table
       import ZoonkWeb.Components.Text
       import ZoonkWeb.Components.Utils
 

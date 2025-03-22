@@ -31,23 +31,17 @@
 
   <header
     aria-label={gettext("Search and settings")}
-    class="zk-container flex items-center justify-between py-4 sm:py-6"
+    class="mx-auto flex max-w-3xl items-center justify-between p-4 sm:p-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14"
   >
     <.text tag="h1" size={:header} id="page-title">{@page_title}</.text>
 
     <.link
       navigate={~p"/user/email?redirect_to=#{user_return_to_path(@active_page)}"}
-      class="zk-avatar-link size-8"
       aria-label={dgettext("users", "Go to user settings")}
     >
       <.avatar
         src={@current_scope.user.profile.picture_url}
-        alt={
-          dgettext("users", "Profile picture of %{username}",
-            username: @current_scope.user.profile.username
-          )
-        }
-        label={@current_scope.user.profile.username}
+        alt={Zoonk.Accounts.User.get_display_name(@current_scope.user.profile)}
       />
     </.link>
   </header>

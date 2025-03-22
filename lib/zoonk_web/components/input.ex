@@ -39,6 +39,7 @@ defmodule ZoonkWeb.Components.Input do
   attr :name, :any
   attr :label, :string, default: nil
   attr :value, :any
+  attr :class, :any, default: nil, doc: "additional classes to apply to the input"
 
   attr :hide_label, :boolean,
     default: false,
@@ -79,13 +80,7 @@ defmodule ZoonkWeb.Components.Input do
 
     ~H"""
     <div class="text-left">
-      <label class={[
-        "flex items-center gap-4 text-sm leading-6",
-        "text-zk-text-secondary",
-        "contrast-more:text-zk-text-contrast",
-        "dark:contrast-more:text-zk-text-inverse-contrast",
-        "dark:text-zk-text-inverse"
-      ]}>
+      <label class="text-zk-foreground flex items-center gap-2 text-sm leading-6">
         <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
 
         <input
@@ -94,7 +89,10 @@ defmodule ZoonkWeb.Components.Input do
           name={@name}
           value="true"
           checked={@checked}
-          class="border-zk-border text-zk-primary rounded focus:ring-0"
+          class={[
+            "border-zk-border rounded-sm border focus-visible:ring-zk-primary focus-visible:outline-0",
+            @class
+          ]}
           {@rest}
         />
         <span class={@hide_label && "sr-only"}>{@label}</span>
@@ -113,8 +111,8 @@ defmodule ZoonkWeb.Components.Input do
       <select
         id={@id}
         name={@name}
-        class={["zk-input", border_class(@errors)]}
         multiple={@multiple}
+        class={[shared_class(), border_class(@errors), @class]}
         {@rest}
       >
         <option :if={@prompt} value="">{@prompt}</option>
@@ -131,7 +129,12 @@ defmodule ZoonkWeb.Components.Input do
     <div class="text-left">
       <.label hide_label={@hide_label} for={@id}>{@label}</.label>
 
-      <textarea id={@id} name={@name} class={["min-h-[6rem] zk-input", border_class(@errors)]} {@rest}>{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
+      <textarea
+        id={@id}
+        name={@name}
+        class={["min-h-[6rem] resize-none", shared_class(), border_class(@errors), @class]}
+        {@rest}
+      >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
 
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
@@ -149,7 +152,7 @@ defmodule ZoonkWeb.Components.Input do
         name={@name}
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        class={["zk-input", border_class(@errors)]}
+        class={[shared_class(), border_class(@errors), @class]}
         {@rest}
       />
 
@@ -171,7 +174,7 @@ defmodule ZoonkWeb.Components.Input do
       tag="label"
       size={:caption}
       for={@for}
-      class={["mb-2 font-semibold", @hide_label && "sr-only"]}
+      class={["font-semibold leading-8", @hide_label && "sr-only"]}
     >
       {render_slot(@inner_block)}
     </.text>
@@ -185,15 +188,25 @@ defmodule ZoonkWeb.Components.Input do
 
   def error(assigns) do
     ~H"""
-    <p class="text-zk-danger-600 mt-3 flex gap-3 text-sm leading-6">
-      <.icon name="tabler-alert-circle-filled" class="mt-0.5 h-5 w-5 flex-none" />
+    <p>
+      <.icon name="tabler-alert-circle-filled" />
       {render_slot(@inner_block)}
     </p>
     """
   end
 
-  defp border_class([]), do: "zk-input-border"
-  defp border_class(_errors), do: "zk-input-border-error"
+  defp shared_class,
+    do: [
+      "block rounded border-1",
+      "bg-zk-surface text-zk-foreground",
+      "placeholder:text-zk-foreground/40",
+      "focus-visible:outline-0",
+      "sm:text-sm sm:leading-6",
+      "disabled:cursor-not-allowed disabled:opacity-50"
+    ]
+
+  defp border_class([]), do: "border-zk-border focus-visible:ring-zk-ring"
+  defp border_class(_errors), do: "border-zk-destructive focus-visible:ring-zk-destructive-accent"
 
   @doc """
   Translates an error message using gettext.

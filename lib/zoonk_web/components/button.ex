@@ -13,13 +13,12 @@ defmodule ZoonkWeb.Components.Button do
 
       <.button>Send!</.button>
       <.button variant={:outline}>Send!</.button>
-      <.button full phx-click="go" class="ml-2">Send!</.button>
   """
   attr :type, :string, default: "button"
   attr :icon, :string, default: nil
-  attr :variant, :atom, values: [:primary, :outline], default: :primary
+  attr :icon_align, :atom, values: [:left, :right, :auto], default: :auto
+  attr :variant, :atom, values: [:primary, :destructive, :outline], default: :primary
   attr :size, :atom, values: [:sm, :md, :lg], default: :md
-  attr :full, :boolean, default: false
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
 
@@ -31,18 +30,27 @@ defmodule ZoonkWeb.Components.Button do
       type={@type}
       class={[
         "zk-btn",
-        @full && "relative w-full",
-        !@full && "w-max",
-        @variant == :outline && "zk-btn-outline",
+        "disabled:pointer-events-none disabled:opacity-50",
+        @icon_align in [:left, :right] && "relative",
         @variant == :primary && "zk-btn-primary",
-        @size == :sm && "zk-btn-sm",
-        @size == :md && "zk-btn-md",
-        @size == :lg && "zk-btn-lg",
+        @variant == :destructive && "zk-btn-destructive",
+        @variant == :outline && "zk-btn-outline",
+        @size == :sm && "h-8 px-4 text-xs",
+        @size == :md && "h-10 px-4 text-sm",
+        @size == :lg && "text-md h-12 px-6",
         @class
       ]}
       {@rest}
     >
-      <.icon :if={@icon} name={@icon} class={[@full && "absolute left-4", "h-5 w-5"]} />
+      <.icon
+        :if={@icon}
+        name={@icon}
+        size={:sm}
+        class={[
+          @icon_align == :left && "absolute left-4",
+          @icon_align == :right && "absolute right-4"
+        ]}
+      />
       {render_slot(@inner_block)}
     </button>
     """

@@ -21,19 +21,17 @@ defmodule ZoonkWeb.Components.Layout do
       <.link
         class={[
           "flex flex-col items-center justify-center gap-1 p-4",
-          "text-center text-sm font-light",
-          "zk-surface-decoration zk-surface-blur",
-          "zk-bg-blur transition-colors",
-          "md:group-first:rounded-l-4xl md:group-last:rounded-r-4xl",
-          @active and "text-zk-primary dark:text-zk-primary-300",
-          !@active and !@destructive and "text-zk-text-secondary dark:text-zk-text-inverse-secondary",
-          !@active and !@destructive and "contrast-more:text-zk-text-contrast",
-          @destructive and "text-zk-danger-600 dark:text-zk-danger-400",
-          @destructive and "contrast-more:text-zk-danger-800 dark:contrast-more:text-zk-danger-200"
+          "bg-zk-surface/80 backdrop-blur-md",
+          "text-center text-sm font-light transition-colors",
+          "hover:bg-zk-secondary focus-visible:bg-zk-secondary focus-visible:outline-0",
+          "md:group-first:rounded-l-full md:group-last:rounded-r-full",
+          @active && "text-zk-primary-text",
+          !@active && !@destructive && "text-zk-secondary-foreground",
+          @destructive && "text-zk-destructive-text"
         ]}
         {@rest}
       >
-        <.icon name={@icon} class="h-5 w-5" />
+        <.icon name={@icon} />
         {@label}
       </.link>
     </li>
@@ -54,7 +52,7 @@ defmodule ZoonkWeb.Components.Layout do
       aria-label={gettext("Main menu")}
       class={[
         "fixed bottom-0 z-10 flex w-full justify-around",
-        "zk-border border-t",
+        "border-zk-border border-t",
         "md:left-1/2 md:-translate-x-1/2",
         "md:bottom-4 md:rounded-full",
         "md:max-w-md md:border-t-0",

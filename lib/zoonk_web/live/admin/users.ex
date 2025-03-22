@@ -17,26 +17,28 @@ defmodule ZoonkWeb.Live.AdminUsers do
         phx-viewport-top={@page > 1 && "prev-page"}
         phx-viewport-bottom={!@end_of_timeline? && "next-page"}
         phx-page-loading
-        class="grid grid-cols-1 gap-4 py-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
       >
-        <.card :for={{dom_id, user} <- @streams.users} tag="li" id={dom_id} class="flex gap-4">
-          <div class="flex flex-1 flex-col">
-            <.text tag="h3" size={:title}>{User.get_display_name(user.profile)}</.text>
+        <.card :for={{dom_id, user} <- @streams.users} tag="li" id={dom_id}>
+          <.card_content class="flex gap-4">
+            <div class="flex flex-1 flex-col">
+              <.text tag="h3" size={:title}>{User.get_display_name(user.profile)}</.text>
 
-            <.text tag="span" size={:caption} variant={:secondary} class="italic">
-              @{user.profile.username} - {user.email}
-            </.text>
+              <.text tag="span" size={:caption} variant={:secondary} class="italic">
+                @{user.profile.username} - {user.email}
+              </.text>
 
-            <.a kind={:button} size={:sm} navigate={~p"/admin/users/#{user.id}"} class="mt-4">
-              {dgettext("admin", "View")}
-            </.a>
-          </div>
+              <.a kind={:button} size={:sm} navigate={~p"/admin/users/#{user.id}"} class="mt-4">
+                {dgettext("admin", "View")}
+              </.a>
+            </div>
 
-          <.avatar
-            src={user.profile.picture_url}
-            alt={User.get_display_name(user.profile)}
-            label={User.get_display_name(user.profile)}
-          />
+            <.avatar
+              src={user.profile.picture_url}
+              size={:md}
+              alt={User.get_display_name(user.profile)}
+            />
+          </.card_content>
         </.card>
       </ul>
 

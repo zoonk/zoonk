@@ -11,7 +11,6 @@ defmodule ZoonkWeb.Live.UserEmail do
       id="email_form"
       phx-submit="update_email"
       phx-change="validate_email"
-      class="zk-container-inner"
     >
       <:title>{dgettext("users", "Change Email")}</:title>
 

@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Components.SearchButton do
+defmodule ZoonkWeb.LiveComponents.SearchButton do
   @moduledoc """
   LiveComponent for the search button.
 
@@ -14,19 +14,7 @@ defmodule ZoonkWeb.Components.SearchButton do
   def render(assigns) do
     ~H"""
     <div id="search-button" phx-target={@myself} phx-window-keydown="open" class={@class}>
-      <.link
-        patch={@patch}
-        class={[
-          "flex h-8 items-center gap-3 rounded-lg px-2 text-left ring-1",
-          "sm:w-56",
-          "bg-zk-surface dark:bg-zk-surface-inverse",
-          "text-zk-text-secondary/50",
-          "ring-zk-border contrast-more:ring-zk-border-focus",
-          "dark:ring-zk-border-inverse dark:contrast-more:ring-zk-border",
-          "hover:shadow-sm dark:hover:ring-zk-border-focus",
-          "focus-visible:ring-zk-primary"
-        ]}
-      >
+      <.link patch={@patch}>
         <svg
           width="24"
           height="24"
@@ -35,20 +23,15 @@ defmodule ZoonkWeb.Components.SearchButton do
           stroke-width="1"
           stroke-linecap="round"
           stroke-linejoin="round"
-          class={[
-            "flex-none",
-            "text-zk-text-secondary/40 contrast-more:text-zk-text-primary",
-            "dark:text-zk-text-secondary dark:contrast-more:text-zk-text-inverse-contrast"
-          ]}
           aria-hidden="true"
         >
           <path d="m19 19-3.5-3.5"></path>
           <circle cx="11" cy="11" r="6"></circle>
         </svg>
 
-        <span class="hidden text-sm contrast-more:text-zk-text-primary dark:contrast-more:text-zk-text-inverse-contrast sm:flex sm:w-full sm:justify-between">
-          <span class="flex-auto">{gettext("Search...")}</span>
-          <abbr title="Command" class="flex items-center no-underline">
+        <span>
+          <span>{gettext("Search...")}</span>
+          <abbr title="Command">
             ⌘ K
           </abbr>
         </span>

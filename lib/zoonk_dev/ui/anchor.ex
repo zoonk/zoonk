@@ -5,7 +5,32 @@ defmodule ZoonkDev.Live.UIAnchor do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <article>anchor component</article>
+    <article class="flex flex-col gap-4">
+      <.a kind={:link}>Link kind</.a>
+      <.a kind={:button}>Button kind</.a>
+
+      <.a kind={:icon} size={:sm} icon="tabler-x">
+        <span class="sr-only">Small icon</span>
+      </.a>
+
+      <.a kind={:icon} size={:md} icon="tabler-x">
+        <span class="sr-only">Medium icon</span>
+      </.a>
+
+      <.a kind={:icon} size={:lg} icon="tabler-x">
+        <span class="sr-only">Large icon</span>
+      </.a>
+
+      <.a kind={:button} size={:sm}>Small</.a>
+      <.a kind={:button} size={:md}>Medium</.a>
+      <.a kind={:button} size={:lg}>Large</.a>
+
+      <.a kind={:button} class="w-full" icon="tabler-check">Full width</.a>
+
+      <.a kind={:button} variant={:primary}>Primary</.a>
+      <.a kind={:button} variant={:outline}>Outline</.a>
+      <.a kind={:button} variant={:destructive}>Destructive</.a>
+    </article>
     """
   end
 

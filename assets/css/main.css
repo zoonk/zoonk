@@ -1,0 +1,307 @@
+@import "tailwindcss" source(none);
+
+@source "../css";
+@source "../js";
+@source "../../lib/zoonk_web";
+@source "../../lib/zoonk_dev";
+
+@plugin "@tailwindcss/forms";
+@plugin "./tailwind_tabler.js";
+
+@custom-variant phx-click-loading ([".phx-click-loading&", ".phx-click-loading &"]);
+@custom-variant phx-submit-loading ([".phx-submit-loading&", ".phx-submit-loading &"]);
+@custom-variant phx-change-loading ([".phx-change-loading&", ".phx-change-loading &"]);
+
+:root {
+  --background: var(--color-neutral-100);
+  --foreground: var(--color-neutral-800);
+
+  --primary: var(--color-blue-600);
+  --primary-text: var(--color-blue-600);
+  --primary-foreground: var(--color-blue-50);
+
+  --primary-subtle: var(--color-blue-50);
+  --primary-subtle-foreground: var(--color-blue-600);
+
+  --primary-accent: var(--color-blue-700);
+  --primary-accent-foreground: var(--color-blue-200);
+
+  --secondary: var(--color-neutral-100);
+  --secondary-foreground: var(--color-neutral-800);
+
+  --secondary-accent: var(--color-neutral-200);
+  --secondary-accent-foreground: var(--color-neutral-950);
+
+  --surface: var(--color-white);
+  --surface-foreground: var(--color-neutral-500);
+
+  --muted: var(--color-neutral-50);
+  --muted-foreground: var(--color-gray-500);
+
+  --success: var(--color-green-700);
+  --success-foreground: var(--color-green-50);
+
+  --success-subtle: var(--color-green-50);
+  --success-subtle-foreground: var(--color-green-700);
+
+  --success-accent: var(--color-green-800);
+  --success-accent-foreground: var(--color-green-50);
+
+  --destructive: var(--color-pink-700);
+  --destructive-text: var(--color-pink-700);
+  --destructive-foreground: var(--color-pink-50);
+
+  --destructive-subtle: var(--color-pink-50);
+  --destructive-subtle-foreground: var(--color-pink-700);
+
+  --destructive-accent: var(--color-pink-800);
+  --destructive-accent-foreground: var(--color-pink-50);
+
+  --border: var(--color-neutral-200);
+  --ring: var(--color-neutral-400);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--color-neutral-950);
+    --foreground: var(--color-neutral-100);
+
+    --primary: var(--color-blue-600);
+    --primary-text: var(--color-blue-400);
+    --primary-foreground: var(--color-blue-50);
+
+    --primary-accent: var(--color-blue-700);
+    --primary-accent-foreground: var(--color-blue-50);
+
+    --primary-subtle: var(--color-blue-600);
+    --primary-subtle-foreground: var(--color-blue-50);
+
+    --secondary: var(--color-neutral-800);
+    --secondary-foreground: var(--color-neutral-200);
+
+    --secondary-accent: var(--color-neutral-700);
+    --secondary-accent-foreground: var(--color-neutral-100);
+
+    --surface: var(--color-neutral-900);
+    --surface-foreground: var(--color-neutral-400);
+
+    --muted: var(--color-neutral-950);
+    --muted-foreground: var(--color-neutral-400);
+
+    --success: var(--color-green-700);
+    --success-foreground: var(--color-green-50);
+
+    --success-subtle: var(--color-green-600);
+    --success-subtle-foreground: var(--color-green-50);
+
+    --success-accent: var(--color-green-800);
+    --success-accent-foreground: var(--color-green-50);
+
+    --destructive: var(--color-pink-700);
+    --destructive-text: var(--color-pink-400);
+    --destructive-foreground: var(--color-pink-50);
+
+    --destructive-subtle: var(--color-pink-600);
+    --destructive-subtle-foreground: var(--color-pink-50);
+
+    --destructive-accent: var(--color-pink-800);
+    --destructive-accent-foreground: var(--color-pink-50);
+
+    --border: var(--color-neutral-700);
+    --ring: var(--color-neutral-600);
+  }
+}
+
+@media (prefers-contrast: more) and (prefers-color-scheme: light) {
+  :root {
+    --background: var(--color-neutral-50);
+    --foreground: var(--color-black);
+
+    --primary: var(--color-blue-800);
+    --primary-text: var(--color-blue-800);
+    --primary-foreground: var(--color-blue-50);
+
+    --primary-subtle: var(--color-blue-50);
+    --primary-subtle-foreground: var(--color-blue-950);
+
+    --primary-accent: var(--color-blue-950);
+    --primary-accent-foreground: var(--color-blue-50);
+
+    --secondary: var(--color-neutral-200);
+    --secondary-foreground: var(--color-neutral-950);
+
+    --secondary-accent: var(--color-neutral-300);
+    --secondary-accent-foreground: var(--color-neutral-900);
+
+    --surface: var(--color-white);
+    --surface-foreground: var(--color-black);
+
+    --muted: var(--color-neutral-50);
+    --muted-foreground: var(--color-black);
+
+    --success: var(--color-green-800);
+    --success-foreground: var(--color-green-50);
+
+    --success-subtle: var(--color-green-50);
+    --success-subtle-foreground: var(--color-green-950);
+
+    --success-accent: var(--color-green-50);
+    --success-accent-foreground: var(--color-green-950);
+
+    --destructive: var(--color-pink-800);
+    --destructive-text: var(--color-pink-800);
+    --destructive-foreground: var(--color-pink-50);
+
+    --destructive-subtle: var(--color-pink-50);
+    --destructive-subtle-foreground: var(--color-pink-950);
+
+    --destructive-accent: var(--color-pink-950);
+    --destructive-accent-foreground: var(--color-pink-50);
+
+    --border: var(--color-neutral-900);
+    --ring: var(--color-black);
+  }
+}
+
+@media (prefers-contrast: more) and (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--color-black);
+    --foreground: var(--color-white);
+
+    --primary: var(--color-blue-800);
+    --primary-text: var(--color-blue-200);
+    --primary-foreground: var(--color-white);
+
+    --primary-subtle: var(--color-blue-700);
+    --primary-subtle-foreground: var(--color-blue-50);
+
+    --primary-accent: var(--color-blue-950);
+    --primary-accent-foreground: var(--color-white);
+
+    --secondary: var(--color-neutral-950);
+    --secondary-foreground: var(--color-neutral-200);
+
+    --secondary-accent: var(--color-neutral-900);
+    --secondary-accent-foreground: var(--color-neutral-100);
+
+    --surface: var(--color-neutral-900);
+    --surface-foreground: var(--color-white);
+
+    --muted: var(--color-neutral-950);
+    --muted-foreground: var(--color-white);
+
+    --success: var(--color-green-800);
+    --success-foreground: var(--color-green-50);
+
+    --success-subtle: var(--color-green-700);
+    --success-subtle-foreground: var(--color-green-50);
+
+    --success-accent: var(--color-green-950);
+    --success-accent-foreground: var(--color-green-50);
+
+    --destructive: var(--color-pink-800);
+    --destructive-text: var(--color-pink-200);
+    --destructive-foreground: var(--color-pink-50);
+
+    --destructive-subtle: var(--color-pink-700);
+    --destructive-subtle-foreground: var(--color-pink-50);
+
+    --destructive-accent: var(--color-pink-950);
+    --destructive-accent-foreground: var(--color-pink-50);
+
+    --border: var(--color-neutral-100);
+    --ring: var(--color-white);
+  }
+}
+
+@theme {
+  --color-zk-background: var(--background);
+  --color-zk-foreground: var(--foreground);
+
+  --color-zk-primary: var(--primary);
+  --color-zk-primary-text: var(--primary-text);
+  --color-zk-primary-foreground: var(--primary-foreground);
+
+  --color-zk-primary-subtle: var(--primary-subtle);
+  --color-zk-primary-subtle-foreground: var(--primary-subtle-foreground);
+
+  --color-zk-primary-accent: var(--primary-accent);
+  --color-zk-primary-accent-foreground: var(--primary-accent-foreground);
+
+  --color-zk-secondary: var(--secondary);
+  --color-zk-secondary-foreground: var(--secondary-foreground);
+
+  --color-zk-secondary-accent: var(--secondary-accent);
+  --color-zk-secondary-accent-foreground: var(--secondary-accent-foreground);
+
+  --color-zk-surface: var(--surface);
+  --color-zk-surface-foreground: var(--surface-foreground);
+
+  --color-zk-muted: var(--muted);
+  --color-zk-muted-foreground: var(--muted-foreground);
+
+  --color-zk-success: var(--success);
+  --color-zk-success-foreground: var(--success-foreground);
+
+  --color-zk-success-subtle: var(--success-subtle);
+  --color-zk-success-subtle-foreground: var(--success-subtle-foreground);
+
+  --color-zk-success-accent: var(--success-accent);
+  --color-zk-success-accent-foreground: var(--success-accent-foreground);
+
+  --color-zk-destructive: var(--destructive);
+  --color-zk-destructive-text: var(--destructive-text);
+  --color-zk-destructive-foreground: var(--destructive-foreground);
+
+  --color-zk-destructive-subtle: var(--destructive-subtle);
+  --color-zk-destructive-subtle-foreground: var(
+    --destructive-subtle-foreground
+  );
+
+  --color-zk-destructive-accent: var(--destructive-accent);
+  --color-zk-destructive-accent-foreground: var(
+    --destructive-accent-foreground
+  );
+
+  --color-zk-border: var(--border);
+  --color-zk-ring: var(--ring);
+
+  --radius: var(--radius-lg);
+}
+
+@utility zk-btn {
+  @apply inline-flex w-max items-center justify-center gap-2 rounded leading-none select-none
+  transition-colors ring-offset-zk-background focus-visible:outline-0 focus-visible:ring-offset-2 focus-visible:ring-2;
+}
+
+@utility zk-btn-primary {
+  @apply bg-zk-primary ring-zk-primary text-zk-primary-foreground
+  hover:bg-zk-primary-accent hover:ring-zk-primary-accent
+  focus-visible:ring-zk-primary-accent;
+}
+
+@utility zk-btn-destructive {
+  @apply bg-zk-destructive ring-zk-destructive text-zk-destructive-foreground
+  hover:bg-zk-destructive-accent hover:ring-zk-destructive-accent
+  focus-visible:ring-zk-destructive-accent;
+}
+
+@utility zk-btn-outline {
+  @apply border border-zk-border bg-zk-surface text-zk-surface-foreground
+  hover:bg-zk-secondary hover:text-zk-secondary-foreground
+  focus-visible:ring-zk-secondary;
+}
+
+@utility zk-drop-shadow {
+  @apply drop-shadow-xs contrast-more:drop-shadow-xl;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}

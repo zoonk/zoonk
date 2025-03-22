@@ -15,10 +15,10 @@
     />
   </.tab_bar>
 
-  <div class="bg-zk-surface zk-border w-full border-b dark:bg-zk-surface-inverse">
+  <div class="bg-zk-surface border-zk-border border-b">
     <header
+      class="container mx-auto flex items-center justify-between gap-4 p-4 sm:p-6"
       aria-label={gettext("Go back to the app")}
-      class="zk-container-wide flex items-center justify-between gap-4 py-4 sm:py-6"
     >
       <.a kind={:button} navigate={@back.link} size={:sm} variant={:outline}>
         {gettext("Back to %{page}", page: @back.label)}
@@ -28,8 +28,8 @@
         aria-hidden="true"
         tag="h1"
         size={:header}
-        class="truncate"
         variant={:secondary}
+        class="truncate"
         id="page-title"
       >
         {@page_title}
@@ -38,13 +38,13 @@
       <.live_component
         :if={@search_link}
         id={:search_users}
-        module={ZoonkWeb.Components.SearchButton}
+        module={ZoonkWeb.LiveComponents.SearchButton}
         patch={@search_link}
       />
     </header>
   </div>
 
-  <section class="zk-container-wide">
+  <section class="container mx-auto p-4 sm:p-6">
     {@inner_content}
   </section>
 </main>
