@@ -28,3 +28,7 @@ You can run this project locally or in a Docker container.
 - Start a local server: `mix phx.server`.
 - Run tests: `mix test` or `mix test.watch` for live reloading.
 - Update translation files: `mix locale`.
+
+### UI Preview
+
+- You can have a preview of every UI component in the `/lib/zoonk_dev/ui_preview` folder. To do so, run `mix phx.server` and open your browser at http://localhost:4000/ui.

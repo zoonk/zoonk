@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.UserAuth do
+defmodule ZoonkWeb.Accounts.UserAuth do
   @moduledoc """
   Session management for user authentication.
 
@@ -142,13 +142,13 @@ defmodule ZoonkWeb.UserAuth do
       defmodule ZoonkWeb.PageLive do
         use ZoonkWeb, :live_view
 
-        on_mount {ZoonkWeb.UserAuth, :mount_current_scope}
+        on_mount {ZoonkWeb.Accounts.UserAuth, :mount_current_scope}
         ...
       end
 
   Or use the `live_session` of your router to invoke the on_mount callback:
 
-      live_session :authenticated, on_mount: [{ZoonkWeb.UserAuth, :ensure_authenticated}] do
+      live_session :authenticated, on_mount: [{ZoonkWeb.Accounts.UserAuth, :ensure_authenticated}] do
         live "/profile", ProfileLive, :index
       end
   """

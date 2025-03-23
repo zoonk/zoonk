@@ -1,7 +1,5 @@
-defmodule ZoonkWeb.Components.User do
-  @moduledoc """
-  Shared components for user authentication and settings.
-  """
+defmodule ZoonkWeb.User.UserComponents do
+  @moduledoc false
   use ZoonkWeb, :html
 
   alias Zoonk.Configuration
@@ -74,6 +72,7 @@ defmodule ZoonkWeb.Components.User do
   """
   attr :action, :atom, values: @actions, default: :login
   attr :show_options, :boolean, default: false
+  attr :flash, :map, default: %{}
   slot :inner_block, required: true
 
   def main_container(assigns) do
@@ -105,6 +104,7 @@ defmodule ZoonkWeb.Components.User do
       </section>
 
       <.footer_link action={get_footer_action(@action)} />
+      <.flash_group flash={@flash} />
     </main>
     """
   end

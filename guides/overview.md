@@ -31,21 +31,13 @@ Zoonk is a white-label platform for building interactive courses. You can create
 - **`.github`** – GitHub-related files, including CI workflows and Copilot instructions.
 - **`assets`** – CSS and JavaScript files/libraries.
 - **`config`** – Configuration files for `dev`, `test`, `runtime`, and `prod` environments.
-- **`credo`** – Custom Credo checks.
 - **`lib`** – Core application code, covering both business logic and the web interface.
-  - **`zoonk`** – Business logic and domain models.
-    - **`_queries`** – Organized queries for each model, making business logic explicit and composable.
-    - **`_schemas`** – Ecto schemas for each model.
-    - **Contexts** – Encapsulated behaviors acting as event-driven commands.
-      - Example:
-        - `Zoonk.Accounts` – Accounts context.
-        - `Zoonk.Accounts.TokenBuilder` – Sub-context for token generation.
-        - `Zoonk.Accounts.UserNotifier` – Sub-context for sending account-related notifications.
+
+  - **`zoonk`** – Business logic, schemas, and contexts.
   - **`zoonk_web`** – Web interface, including API and frontend.
     - **`components`** – LiveView (`Phoenix.LiveComponent`) and function components (`Phoenix.Component`).
     - **`controllers`** – API and web controllers.
-    - **`layouts`** – Web interface layouts.
     - **`live`** – Pages using `Phoenix.LiveView`.
-    - **`router.ex`** – Web interface router.
+
 - **`priv`** – Static files, migrations, seeds, and translations.
 - **`test`** – Application tests.
