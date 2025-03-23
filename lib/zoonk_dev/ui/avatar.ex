@@ -5,7 +5,7 @@ defmodule ZoonkDev.Live.UIAvatar do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <article class="zk-grid">
+    <ZoonkDev.Layouts.UIPreview.render active_page={:avatar} flash={@flash} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Avatar Sizes</.card_title>
@@ -65,7 +65,7 @@ defmodule ZoonkDev.Live.UIAvatar do
           </div>
         </.card_content>
       </.card>
-    </article>
+    </ZoonkDev.Layouts.UIPreview.render>
     """
   end
 

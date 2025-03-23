@@ -5,7 +5,7 @@ defmodule ZoonkDev.Live.UIButton do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <article class="zk-grid">
+    <ZoonkDev.Layouts.UIPreview.render active_page={:button} flash={@flash} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Button Variants</.card_title>
@@ -73,7 +73,7 @@ defmodule ZoonkDev.Live.UIButton do
           <.button icon="tabler-ufo" class="w-full">Full width</.button>
         </.card_content>
       </.card>
-    </article>
+    </ZoonkDev.Layouts.UIPreview.render>
     """
   end
 

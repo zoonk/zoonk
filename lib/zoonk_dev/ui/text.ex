@@ -5,7 +5,7 @@ defmodule ZoonkDev.Live.UIText do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <article class="zk-grid">
+    <ZoonkDev.Layouts.UIPreview.render active_page={:text} flash={@flash} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Text Sizes</.card_title>
@@ -72,7 +72,7 @@ defmodule ZoonkDev.Live.UIText do
           </.text>
         </.card_content>
       </.card>
-    </article>
+    </ZoonkDev.Layouts.UIPreview.render>
     """
   end
 

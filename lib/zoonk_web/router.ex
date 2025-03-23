@@ -12,6 +12,7 @@ defmodule ZoonkWeb.Router do
     plug :fetch_session
     plug :fetch_live_flash
     plug :put_root_layout, html: {ZoonkWeb.Layouts, :root}
+    plug :put_layout, false
     plug :protect_from_forgery
 
     plug :put_secure_browser_headers, %{
@@ -137,8 +138,7 @@ defmodule ZoonkWeb.Router do
     scope "/ui", ZoonkDev.Live do
       pipe_through :browser
 
-      live_session :ui_playground,
-        layout: {ZoonkDev.Layouts, :ui} do
+      live_session :ui_playground do
         live "/", UIHome
         live "/anchor", UIAnchor
         live "/avatar", UIAvatar

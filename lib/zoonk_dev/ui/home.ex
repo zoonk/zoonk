@@ -5,7 +5,7 @@ defmodule ZoonkDev.Live.UIHome do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <article class="zk-grid">
+    <ZoonkDev.Layouts.UIPreview.render active_page={:home} flash={@flash} page_title={@page_title}>
       <.card>
         <.card_header icon="tabler-palette-filled">
           <.card_title>UI Playground</.card_title>
@@ -18,14 +18,13 @@ defmodule ZoonkDev.Live.UIHome do
           </.text>
         </.card_content>
       </.card>
-    </article>
+    </ZoonkDev.Layouts.UIPreview.render>
     """
   end
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     socket = assign(socket, :page_title, "UI Playground")
-
     {:ok, socket}
   end
 end

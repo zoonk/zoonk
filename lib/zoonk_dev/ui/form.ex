@@ -5,7 +5,7 @@ defmodule ZoonkDev.Live.UIForm do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <article class="zk-grid">
+    <ZoonkDev.Layouts.UIPreview.render active_page={:form} flash={@flash} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Basic Form</.card_title>
@@ -63,7 +63,7 @@ defmodule ZoonkDev.Live.UIForm do
           </.form_container>
         </.card_content>
       </.card>
-    </article>
+    </ZoonkDev.Layouts.UIPreview.render>
     """
   end
 

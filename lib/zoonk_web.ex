@@ -38,10 +38,7 @@ defmodule ZoonkWeb do
 
   def controller do
     quote do
-      use Phoenix.Controller,
-        formats: [:html, :json],
-        layouts: [html: {ZoonkWeb.Layouts, :app}]
-
+      use Phoenix.Controller, formats: [:html, :json]
       use Gettext, backend: Zoonk.Gettext
 
       import Plug.Conn
@@ -52,7 +49,7 @@ defmodule ZoonkWeb do
 
   def live_view do
     quote do
-      use Phoenix.LiveView, layout: {ZoonkWeb.Layouts, :app}
+      use Phoenix.LiveView
 
       on_mount ZoonkWeb.ActivePage
 

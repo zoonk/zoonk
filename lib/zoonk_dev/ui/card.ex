@@ -5,7 +5,7 @@ defmodule ZoonkDev.Live.UICard do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <article class="zk-grid">
+    <ZoonkDev.Layouts.UIPreview.render active_page={:card} flash={@flash} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Basic Card</.card_title>
@@ -90,7 +90,7 @@ defmodule ZoonkDev.Live.UICard do
           </.card>
         </.card_content>
       </.card>
-    </article>
+    </ZoonkDev.Layouts.UIPreview.render>
     """
   end
 
