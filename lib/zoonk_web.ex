@@ -51,8 +51,6 @@ defmodule ZoonkWeb do
     quote do
       use Phoenix.LiveView
 
-      on_mount ZoonkWeb.ActivePage
-
       unquote(html_helpers())
     end
   end
