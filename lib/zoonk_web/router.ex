@@ -65,7 +65,6 @@ defmodule ZoonkWeb.Router do
     pipe_through [:browser]
 
     live_session :public_routes,
-      layout: {ZoonkWeb.Layouts, :auth},
       on_mount: [
         {ZoonkWeb.UserAuth, :mount_current_scope},
         {ZoonkWeb.Language, :set_app_language}
