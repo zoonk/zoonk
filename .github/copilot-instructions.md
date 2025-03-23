@@ -46,7 +46,7 @@
 - Group related components together. For example, the `flash.ex` contains both `flash` and `flash_group` components.
 - Add `Phoenix.Component.attr/3` to each component to define the attributes it accepts. Include the `doc` option to provide documentation for each attribute.
 - Components modules are prefixed with `ZoonkWeb.Components` (e.g., `ZoonkWeb.Components.Flash`).
-- Turn repetitive code into components. However, for code specific to a section (e.g. authentication), keep it in the section's directory instead of `lib/zoonk_web/components`. For example, `lib/zoonk_web/live/users/user_components.ex` contains components specific to the user section and `lib/zoonk_web/layouts/layout_components.ex` contains components specific to the layout section.
+- Turn repetitive code into components. However, for code specific to a section (e.g. authentication), keep it in the section's directory instead of `lib/zoonk_web/components`. For example, `lib/zoonk_web/live/users/user_components.ex` contains components specific to the user section.
 - When you want to style a component like `<.card_content>`, add a class to it (i.e. `<.card_content class="flex flex-col gap-4">`) instead of creating a div inside the component just for styling.
 - When creating a component, also create a preview for it in the `lib/zoonk_dev/ui_preview` directory following the same pattern from other components placed there. For example, when creating/updating `lib/zoonk_web/components/anchor.ex`, also create/update `lib/zoonk_dev/ui_preview/anchor_preview.ex`.
 - When adding a component to the `lib/zoonk_dev/ui_preview` directory, also create a router for it in the `/ui` scope along with the other component routes - and update the `lib/zoonk_dev/ui_preview_layout.ex` file to include the new component in the menu list, alphabetically ordered.
@@ -63,8 +63,8 @@
 - Controllers should be placed in the `lib/zoonk_web/controllers` directory.
 - Add a `@moduledoc` to each controller.
 - Add a `@doc` to each action in the controller, explaining its purpose.
-- Controller modules are prefixed with `ZoonkWeb.Controllers` (e.g., `ZoonkWeb.Controllers.OAuth`).
-- Use the module name as the file name (e.g., `lib/zoonk_web/controllers/oauth.ex`).
+- Controller modules are prefixed with their context name (e.g., `ZoonkWeb.Accounts.OAuthController`).
+- Use the module name as the file name (e.g., `lib/zoonk_web/controllers/accounts/oauth_controller.ex`).
 - Use `use ZoonkWeb, :controller` in each controller module.
 - Add tests to the `test/zoonk_web/controllers` directory.
 
@@ -74,11 +74,12 @@
 - Group similar pages together. For example, the `lib/zoonk_web/live/user` directory contains all user-related pages.
 - Use `@moduledoc false` for LiveView pages.
 - Keep the html and business logic in the `.ex` file, using the `render` callback from `Phoenix.LiveView`.
+- Add the `render` callback at the top of the module, before other callbacks like `mount`, `handle_params`, etc.
 - Use `use ZoonkWeb, :live_view`.
 - Add tests to the `test/zoonk_web/live` directory.
 
 ## Tests
 
 - Always add tests to any functionality you add or modify.
-- Use the same name as the controller, but with `_test` suffix (e.g., `test/zoonk_web/controllers/user_auth_test.exs`) and the module name would be `ZoonkWeb.UserAuthControllerTest`.
+- Use the same name as the controller, but with `_test` suffix (e.g., `test/zoonk_web/controllers/accounts/user_session_controller_test.exs`) and the module name would be `ZoonkWeb.Accounts.UserSessionControllerTest`.
 - Use `use ZoonkWeb.ConnCase, async: true` for `ZoonkWeb` tests and `use Zoonk.DataCase, async: true` for `Zoonk` tests.

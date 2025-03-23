@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Components.Admin do
+defmodule ZoonkWeb.Admin.AdminComponents do
   @moduledoc false
   use ZoonkWeb, :html
 

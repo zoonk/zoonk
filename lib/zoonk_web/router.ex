@@ -40,7 +40,7 @@ defmodule ZoonkWeb.Router do
     plug :accepts, ["json"]
   end
 
-  scope "/", ZoonkWeb.Live do
+  scope "/", ZoonkWeb do
     pipe_through [:browser, :require_authenticated_user]
 
     live_session :require_authenticated_user,
@@ -48,20 +48,20 @@ defmodule ZoonkWeb.Router do
         {ZoonkWeb.UserAuth, :ensure_authenticated},
         {ZoonkWeb.Language, :set_app_language}
       ] do
-      live "/", Home
+      live "/", AppHomeLive
 
-      live "/goals", BrowseGoals
+      live "/goals", Goals.GoalsHomeLive
 
-      live "/catalog", BrowseCatalog
+      live "/catalog", Catalog.CatalogHomeLive
 
-      live "/library", BrowseLibrary
+      live "/library", Library.LibraryHomeLive
 
-      live "/user/email", UserEmail
-      live "/user/email/confirm/:token", UserEmail
+      live "/user/email", User.UserEmailLive
+      live "/user/email/confirm/:token", User.UserEmailLive
     end
   end
 
-  scope "/", ZoonkWeb.Live do
+  scope "/", ZoonkWeb do
     pipe_through [:browser]
 
     live_session :public_routes,
@@ -70,38 +70,38 @@ defmodule ZoonkWeb.Router do
         {ZoonkWeb.UserAuth, :mount_current_scope},
         {ZoonkWeb.Language, :set_app_language}
       ] do
-      live "/signup", UserSignUp
-      live "/signup/email", UserSignUpWithEmail
-      live "/login", UserLogin
-      live "/login/email", UserLoginWithEmail
+      live "/signup", User.UserSignUpLive
+      live "/signup/email", User.UserSignUpWithEmailLive
+      live "/login", User.UserLoginLive
+      live "/login/email", User.UserLoginWithEmailLive
     end
   end
 
-  scope "/", ZoonkWeb.Controllers do
+  scope "/", ZoonkWeb do
     pipe_through [:browser]
 
-    post "/login", UserSession, :create
-    delete "/logout", UserSession, :delete
-    get "/login/t/:token", UserSession, :login
-    get "/confirm/:token", UserSession, :confirm
+    post "/login", Accounts.UserSessionController, :create
+    delete "/logout", Accounts.UserSessionController, :delete
+    get "/login/t/:token", Accounts.UserSessionController, :login
+    get "/confirm/:token", Accounts.UserSessionController, :confirm
 
-    get "/auth/:provider", OAuth, :request
-    get "/auth/:provider/callback", OAuth, :callback
+    get "/auth/:provider", Accounts.OAuthController, :request
+    get "/auth/:provider/callback", Accounts.OAuthController, :callback
 
     # Legal routes
-    get "/terms", Legal, :terms
-    get "/privacy", Legal, :privacy
+    get "/terms", Accounts.LegalController, :terms
+    get "/privacy", Accounts.LegalController, :privacy
   end
 
   # We need this because Apple's oAuth handling sends a POST request
   # instead of a GET so we can't have a CSRF token in their request.
   # We should not use this scope for anything else.
-  scope "/", ZoonkWeb.Controllers do
+  scope "/", ZoonkWeb do
     pipe_through [:unprotected_browser]
-    post "/auth/:provider/callback", OAuth, :callback
+    post "/auth/:provider/callback", Accounts.OAuthController, :callback
   end
 
-  scope "/admin", ZoonkWeb.Live do
+  scope "/admin", ZoonkWeb do
     pipe_through [:browser, :require_authenticated_user, :require_admin_user]
 
     live_session :admin_dashboard,
@@ -111,10 +111,10 @@ defmodule ZoonkWeb.Router do
         {ZoonkWeb.AdminUser, :ensure_user_admin},
         {ZoonkWeb.Language, :set_app_language}
       ] do
-      live "/", AdminHome
-      live "/users", AdminUsers
-      live "/users/search", AdminUsers, :search
-      live "/users/:id", AdminUser
+      live "/", Admin.AdminHomeLive
+      live "/users", Admin.AdminUserListLive
+      live "/users/search", Admin.AdminUserListLive, :search
+      live "/users/:id", Admin.AdminUserViewLive
     end
   end
 
@@ -135,20 +135,20 @@ defmodule ZoonkWeb.Router do
     end
 
     # We have a playground for testing UI components in the dev environment.
-    scope "/ui", ZoonkDev.Live do
+    scope "/ui", ZoonkDev.UIPreview do
       pipe_through :browser
 
       live_session :ui_playground do
-        live "/", UIPreviewHome
-        live "/anchor", AnchorPreview
-        live "/avatar", AvatarPreview
-        live "/button", ButtonPreview
-        live "/card", CardPreview
-        live "/divider", DividerPreview
-        live "/flash", FlashPreview
-        live "/form", FormPreview
-        live "/input", InputPreview
-        live "/text", TextPreview
+        live "/", UIPreviewHomeLive
+        live "/anchor", AnchorPreviewLive
+        live "/avatar", AvatarPreviewLive
+        live "/button", ButtonPreviewLive
+        live "/card", CardPreviewLive
+        live "/divider", DividerPreviewLive
+        live "/flash", FlashPreviewLive
+        live "/form", FormPreviewLive
+        live "/input", InputPreviewLive
+        live "/text", TextPreviewLive
       end
     end
   end

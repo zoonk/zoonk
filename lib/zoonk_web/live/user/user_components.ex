@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Components.User do
+defmodule ZoonkWeb.User.UserComponents do
   @moduledoc """
   Shared components for user authentication and settings.
   """
