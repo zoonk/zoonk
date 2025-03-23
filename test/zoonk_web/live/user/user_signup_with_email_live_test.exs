@@ -58,13 +58,9 @@ defmodule ZoonkWeb.User.SignUpWithEmailLiveTest do
       email = unique_user_email()
       form = form(lv, "#signup_form", user: valid_user_attributes(email: email))
 
-      {:ok, _lv, html} =
-        form
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/login/email")
+      render_submit(form)
 
-      assert html =~
-               ~r/An email was sent to .*, please access it to confirm your account/
+      assert has_element?(lv, "p", "An email was sent to #{email}")
 
       user = Zoonk.Accounts.get_user_by_email(email)
       assert user.confirmed_at == nil
