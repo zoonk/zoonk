@@ -24,6 +24,7 @@ defmodule ZoonkWeb.Components.Card do
       </.card>
   """
   attr :tag, :string, default: "div", doc: "The HTML tag to use for the card container"
+  attr :size, :atom, values: [:auto, :full], default: :full, doc: "The size of the card. Can be :auto or :full"
   attr :class, :any, default: nil, doc: "CSS class to apply to the card"
   attr :rest, :global, doc: "the arbitrary HTML attributes to add to the card container"
   slot :inner_block, required: true, doc: "the inner block that renders the card content"
@@ -35,7 +36,7 @@ defmodule ZoonkWeb.Components.Card do
       class={[
         "bg-zk-surface border-zk-border rounded drop-shadow",
         "has-[header]:border has-[header]:drop-shadow-none",
-        "flex h-full w-full flex-col justify-between",
+        @size == :full && "flex h-full w-full flex-col justify-between",
         @class
       ]}
       {@rest}

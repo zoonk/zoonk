@@ -17,28 +17,38 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLiveTest do
 
       {:ok, lv, _html} = live(conn, ~p"/login/email")
 
-      {:ok, _lv, html} =
-        lv
-        |> form("#login_form_magic", %{email: user.email})
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/login/email")
+      lv
+      |> form("#login_form_magic", %{email: user.email})
+      |> render_submit()
 
-      assert html =~ "If your email is in our system"
-
-      assert Zoonk.Repo.get_by!(Zoonk.Accounts.UserToken, user_id: user.id).context ==
-               "login"
+      assert has_element?(lv, "p", "If your email is in our system")
+      assert Zoonk.Repo.get_by!(Zoonk.Accounts.UserToken, user_id: user.id).context == "login"
     end
 
     test "does not disclose if user is signed up", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/login/email")
 
-      {:ok, _lv, html} =
-        lv
-        |> form("#login_form_magic", %{email: "idonotexist@example.com"})
-        |> render_submit()
-        |> follow_redirect(conn, ~p"/login/email")
+      lv
+      |> form("#login_form_magic", %{email: "idonotexist@example.com"})
+      |> render_submit()
 
-      assert html =~ "If your email is in our system"
+      assert has_element?(lv, "p", "If your email is in our system")
+    end
+
+    test "displays the login form when the user clicks 'Try again'", %{conn: conn} do
+      {:ok, lv, _html} = live(conn, ~p"/login/email")
+
+      lv
+      |> form("#login_form_magic", %{email: "user@example.com"})
+      |> render_submit()
+
+      refute has_element?(lv, "form")
+
+      lv
+      |> element("button", "Try again")
+      |> render_click()
+
+      assert has_element?(lv, "form")
     end
   end
 
