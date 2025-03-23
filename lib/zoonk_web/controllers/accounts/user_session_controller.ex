@@ -8,7 +8,7 @@ defmodule ZoonkWeb.Accounts.UserSessionController do
   use ZoonkWeb, :controller
 
   alias Zoonk.Accounts
-  alias ZoonkWeb.UserAuth
+  alias ZoonkWeb.Accounts.UserAuth
 
   @doc """
   Logs in a user.

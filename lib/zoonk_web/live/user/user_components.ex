@@ -1,7 +1,5 @@
 defmodule ZoonkWeb.User.UserComponents do
-  @moduledoc """
-  Shared components for user authentication and settings.
-  """
+  @moduledoc false
   use ZoonkWeb, :html
 
   alias Zoonk.Configuration

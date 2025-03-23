@@ -7,7 +7,7 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
   alias Zoonk.Accounts
   alias Zoonk.Accounts.User
   alias Zoonk.Scope
-  alias ZoonkWeb.UserAuth
+  alias ZoonkWeb.Accounts.UserAuth
 
   def render(assigns) do
     ~H"""

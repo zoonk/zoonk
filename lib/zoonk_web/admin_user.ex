@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.AdminUser do
+defmodule ZoonkWeb.Admin.AdminUser do
   @moduledoc """
   Plugs and LiveView hooks for ensuring admin access.
   """

@@ -1,9 +1,11 @@
 defmodule ZoonkWeb.Router do
   use ZoonkWeb, :router
 
-  import ZoonkWeb.AdminUser
+  import ZoonkWeb.Accounts.UserAuth
+  import ZoonkWeb.Admin.AdminUser
   import ZoonkWeb.Language
-  import ZoonkWeb.UserAuth
+
+  alias ZoonkWeb.Accounts.UserAuth
 
   @allowed_images "https://avatars.githubusercontent.com https://*.googleusercontent.com"
 
@@ -45,7 +47,7 @@ defmodule ZoonkWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [
-        {ZoonkWeb.UserAuth, :ensure_authenticated},
+        {UserAuth, :ensure_authenticated},
         {ZoonkWeb.Language, :set_app_language}
       ] do
       live "/", AppHomeLive
@@ -66,7 +68,7 @@ defmodule ZoonkWeb.Router do
 
     live_session :public_routes,
       on_mount: [
-        {ZoonkWeb.UserAuth, :mount_current_scope},
+        {UserAuth, :mount_current_scope},
         {ZoonkWeb.Language, :set_app_language}
       ] do
       live "/signup", User.UserSignUpLive
@@ -105,8 +107,8 @@ defmodule ZoonkWeb.Router do
 
     live_session :admin_dashboard,
       on_mount: [
-        {ZoonkWeb.UserAuth, :ensure_authenticated},
-        {ZoonkWeb.AdminUser, :ensure_user_admin},
+        {UserAuth, :ensure_authenticated},
+        {ZoonkWeb.Admin.AdminUser, :ensure_user_admin},
         {ZoonkWeb.Language, :set_app_language}
       ] do
       live "/", Admin.AdminHomeLive
