@@ -46,7 +46,7 @@
     </.link>
   </header>
 
-  {@inner_content}
-</main>
+  {render_slot(@inner_block)}
 
-<.flash_group flash={@flash} />
+  <.flash_group flash={@flash} />
+</main>

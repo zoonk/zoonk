@@ -1,8 +1,11 @@
-defmodule ZoonkWeb.Components.Layout do
+defmodule ZoonkWeb.Components.TabBar do
   @moduledoc """
-  Shared components for the `ZoonkWeb.Layouts` module.
+  Tab bar component.
   """
-  use ZoonkWeb, :html
+  use Phoenix.Component
+  use Gettext, backend: Zoonk.Gettext
+
+  import ZoonkWeb.Components.Icon
 
   @doc """
   Navigation menu item.

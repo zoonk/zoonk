@@ -12,7 +12,14 @@ defmodule ZoonkWeb.Library.LibraryHomeLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <article></article>
+    <ZoonkWeb.AppLayout.render
+      scope={@current_scope}
+      flash={@flash}
+      page_title={@page_title}
+      active_page={:library}
+    >
+      placeholder for library
+    </ZoonkWeb.AppLayout.render>
     """
   end
 end
