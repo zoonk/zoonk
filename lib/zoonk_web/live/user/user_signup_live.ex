@@ -11,7 +11,7 @@ defmodule ZoonkWeb.User.UserSignUpLive do
 
   def render(assigns) do
     ~H"""
-    <.main_container action={:signup}>
+    <.main_container action={:signup} flash={@flash}>
       <section
         aria-label={dgettext("users", "Use one of the external providers below:")}
         class="flex w-full flex-col gap-2"

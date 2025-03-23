@@ -74,6 +74,7 @@ defmodule ZoonkWeb.User.UserComponents do
   """
   attr :action, :atom, values: @actions, default: :login
   attr :show_options, :boolean, default: false
+  attr :flash, :map, default: %{}
   slot :inner_block, required: true
 
   def main_container(assigns) do
@@ -105,6 +106,7 @@ defmodule ZoonkWeb.User.UserComponents do
       </section>
 
       <.footer_link action={get_footer_action(@action)} />
+      <.flash_group flash={@flash} />
     </main>
     """
   end

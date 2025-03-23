@@ -8,7 +8,7 @@ defmodule ZoonkWeb.User.UserLoginLive do
 
   def render(assigns) do
     ~H"""
-    <.main_container action={:login}>
+    <.main_container action={:login} flash={@flash}>
       <section
         aria-label={dgettext("users", "Use one of the external providers below:")}
         class="flex w-full flex-col gap-2"

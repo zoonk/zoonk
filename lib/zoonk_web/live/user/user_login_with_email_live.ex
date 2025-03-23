@@ -8,7 +8,7 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLive do
 
   def render(assigns) do
     ~H"""
-    <.main_container action={:login} show_options>
+    <.main_container action={:login} flash={@flash} show_options>
       <.form
         :let={f}
         for={@form}

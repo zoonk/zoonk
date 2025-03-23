@@ -11,7 +11,7 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
 
   def render(assigns) do
     ~H"""
-    <.main_container action={:signup} show_options>
+    <.main_container action={:signup} show_options flash={@flash}>
       <.form
         for={@form}
         id="signup_form"
