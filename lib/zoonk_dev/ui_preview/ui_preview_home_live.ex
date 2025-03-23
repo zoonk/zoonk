@@ -5,11 +5,7 @@ defmodule ZoonkDev.UIPreview.UIPreviewHomeLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkDev.UIPreview.UIPreviewLayout.render
-      active_page={:home}
-      flash={@flash}
-      page_title={@page_title}
-    >
+    <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:home} page_title={@page_title}>
       <.card>
         <.card_header icon="tabler-palette-filled">
           <.card_title>UI Preview</.card_title>

@@ -5,11 +5,7 @@ defmodule ZoonkDev.UIPreview.AnchorPreviewLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkDev.UIPreview.UIPreviewLayout.render
-      active_page={:anchor}
-      flash={@flash}
-      page_title={@page_title}
-    >
+    <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:anchor} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Link</.card_title>

@@ -5,11 +5,7 @@ defmodule ZoonkDev.UIPreview.ButtonPreviewLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkDev.UIPreview.UIPreviewLayout.render
-      active_page={:button}
-      flash={@flash}
-      page_title={@page_title}
-    >
+    <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:button} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Button Variants</.card_title>

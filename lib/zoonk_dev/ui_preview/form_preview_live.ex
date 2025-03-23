@@ -5,11 +5,7 @@ defmodule ZoonkDev.UIPreview.FormPreviewLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkDev.UIPreview.UIPreviewLayout.render
-      active_page={:form}
-      flash={@flash}
-      page_title={@page_title}
-    >
+    <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:form} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Basic Form</.card_title>

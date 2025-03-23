@@ -5,11 +5,7 @@ defmodule ZoonkDev.UIPreview.DividerPreviewLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkDev.UIPreview.UIPreviewLayout.render
-      active_page={:divider}
-      flash={@flash}
-      page_title={@page_title}
-    >
+    <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:divider} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Basic Divider</.card_title>

@@ -5,11 +5,7 @@ defmodule ZoonkDev.UIPreview.InputPreviewLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkDev.UIPreview.UIPreviewLayout.render
-      active_page={:input}
-      flash={@flash}
-      page_title={@page_title}
-    >
+    <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:input} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Text Input</.card_title>

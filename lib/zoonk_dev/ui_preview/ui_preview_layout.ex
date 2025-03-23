@@ -2,9 +2,7 @@ defmodule ZoonkDev.UIPreview.UIPreviewLayout do
   @moduledoc false
   use ZoonkWeb, :html
 
-  attr :class, :any, default: nil
   attr :page_title, :string, required: true
-  attr :flash, :map, required: true
   attr :active_page, :atom, required: true
   slot :inner_block, required: true
 
@@ -56,11 +54,9 @@ defmodule ZoonkDev.UIPreview.UIPreviewLayout do
         </ul>
       </nav>
 
-      <article class={["zk-grid mx-auto px-4 pb-4 md:px-6 md:pb-6", @class]}>
+      <article class="zk-grid mx-auto px-4 pb-4 md:px-6 md:pb-6">
         {render_slot(@inner_block)}
       </article>
-
-      <.flash_group flash={@flash} />
     </main>
     """
   end
