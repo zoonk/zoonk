@@ -11,7 +11,7 @@ defmodule ZoonkWeb.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, html: {ZoonkWeb.Layouts, :root}
+    plug :put_root_layout, html: {ZoonkWeb.RootLayout, :render}
     plug :put_layout, false
     plug :protect_from_forgery
 
@@ -30,7 +30,7 @@ defmodule ZoonkWeb.Router do
     plug :accepts, ["html"]
     plug :fetch_session
     plug :fetch_live_flash
-    plug :put_root_layout, html: {ZoonkWeb.Layouts, :root}
+    plug :put_root_layout, html: {ZoonkWeb.RootLayout, :render}
     plug :put_secure_browser_headers, %{"content-security-policy" => "default-src 'self';img-src 'self' data: blob:;"}
     plug :fetch_current_scope_for_user
     plug :set_session_language
