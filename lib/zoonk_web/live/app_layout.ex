@@ -66,8 +66,8 @@ defmodule ZoonkWeb.AppLayout do
   end
 
   defp user_return_to_path(:home), do: ~p"/"
-  defp user_return_to_path(:browse_goals), do: ~p"/goals"
-  defp user_return_to_path(:browse_catalog), do: ~p"/catalog"
-  defp user_return_to_path(:browse_library), do: ~p"/library"
+  defp user_return_to_path(:goals), do: ~p"/goals"
+  defp user_return_to_path(:catalog), do: ~p"/catalog"
+  defp user_return_to_path(:library), do: ~p"/library"
   defp user_return_to_path(_page), do: ~p"/"
 end
