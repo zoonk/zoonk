@@ -105,7 +105,6 @@ defmodule ZoonkWeb.Router do
     pipe_through [:browser, :require_authenticated_user, :require_admin_user]
 
     live_session :admin_dashboard,
-      layout: {ZoonkWeb.Layouts, :admin},
       on_mount: [
         {ZoonkWeb.UserAuth, :ensure_authenticated},
         {ZoonkWeb.AdminUser, :ensure_user_admin},

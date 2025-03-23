@@ -9,7 +9,13 @@ defmodule ZoonkWeb.Admin.AdminUserListLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <article>
+    <ZoonkWeb.Admin.AdminLayout.render
+      flash={@flash}
+      back={%{label: dgettext("admin", "app"), link: ~p"/"}}
+      page_title={@page_title}
+      search_link={~p"/admin/users/search"}
+      active_page={:users}
+    >
       <ul
         role="list"
         id="user-list"
@@ -58,7 +64,7 @@ defmodule ZoonkWeb.Admin.AdminUserListLive do
           name={User.get_display_name(user.profile)}
         />
       </.search>
-    </article>
+    </ZoonkWeb.Admin.AdminLayout.render>
     """
   end
 
@@ -67,7 +73,6 @@ defmodule ZoonkWeb.Admin.AdminUserListLive do
     socket =
       socket
       |> assign(page_title: page_title(socket.assigns.live_action))
-      |> assign(search_link: ~p"/admin/users/search")
       |> add_pagination()
 
     {:ok, socket}

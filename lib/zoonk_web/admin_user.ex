@@ -17,10 +17,7 @@ defmodule ZoonkWeb.AdminUser do
     user = Scope.get_user(socket.assigns.current_scope)
 
     if Admin.admin_user?(user) do
-      {:cont,
-       socket
-       |> Phoenix.Component.assign(search_link: nil)
-       |> Phoenix.Component.assign(back: %{link: ~p"/", label: dgettext("admin", "app")})}
+      {:cont, socket}
     else
       {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
     end

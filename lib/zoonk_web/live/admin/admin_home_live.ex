@@ -19,9 +19,16 @@ defmodule ZoonkWeb.Admin.AdminHomeLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <article class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-      <.stats_card title={dgettext("admin", "Total users")} data={@total_users} />
-    </article>
+    <ZoonkWeb.Admin.AdminLayout.render
+      flash={@flash}
+      back={%{label: dgettext("admin", "app"), link: ~p"/"}}
+      page_title={@page_title}
+      active_page={:home}
+    >
+      <article class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <.stats_card title={dgettext("admin", "Total users")} data={@total_users} />
+      </article>
+    </ZoonkWeb.Admin.AdminLayout.render>
     """
   end
 end

@@ -9,7 +9,7 @@ defmodule ZoonkWeb.AppHomeLive do
       flash={@flash}
       scope={@current_scope}
       page_title={@page_title}
-      active_page={:app_home}
+      active_page={:home}
     >
       placeholder for app home
     </ZoonkWeb.AppLayout.render>

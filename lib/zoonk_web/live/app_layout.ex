@@ -13,7 +13,7 @@ defmodule ZoonkWeb.AppLayout do
     <main aria-labelledby="page-title pb-24">
       <.tab_bar>
         <.nav_menu_item
-          active={@active_page == :app_home}
+          active={@active_page == :home}
           label={dgettext("content", "Summary")}
           icon="tabler-brain"
           navigate={~p"/"}

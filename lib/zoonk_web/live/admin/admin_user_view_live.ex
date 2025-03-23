@@ -8,13 +8,20 @@ defmodule ZoonkWeb.Admin.AdminUserViewLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <div>{@page_title}</div>
+    <ZoonkWeb.Admin.AdminLayout.render
+      flash={@flash}
+      back={%{link: ~p"/admin/users", label: dgettext("admin", "users")}}
+      page_title={@page_title}
+      active_page={:users}
+    >
+      {@page_title}
+    </ZoonkWeb.Admin.AdminLayout.render>
     """
   end
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, back: %{link: ~p"/admin/users", label: dgettext("admin", "users")})}
+    {:ok, socket}
   end
 
   @impl Phoenix.LiveView
