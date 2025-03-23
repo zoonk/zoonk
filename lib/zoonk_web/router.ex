@@ -139,16 +139,16 @@ defmodule ZoonkWeb.Router do
       pipe_through :browser
 
       live_session :ui_playground do
-        live "/", UIHome
-        live "/anchor", UIAnchor
-        live "/avatar", UIAvatar
-        live "/button", UIButton
-        live "/card", UICard
-        live "/divider", UIDivider
-        live "/flash", UIFlash
-        live "/form", UIForm
-        live "/input", UIInput
-        live "/text", UIText
+        live "/", UIPreviewHome
+        live "/anchor", AnchorPreview
+        live "/avatar", AvatarPreview
+        live "/button", ButtonPreview
+        live "/card", CardPreview
+        live "/divider", DividerPreview
+        live "/flash", FlashPreview
+        live "/form", FormPreview
+        live "/input", InputPreview
+        live "/text", TextPreview
       end
     end
   end

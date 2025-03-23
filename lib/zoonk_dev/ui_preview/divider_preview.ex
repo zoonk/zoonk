@@ -1,4 +1,4 @@
-defmodule ZoonkDev.Live.UIDivider do
+defmodule ZoonkDev.Live.DividerPreview do
   @moduledoc false
   use ZoonkWeb, :live_view
 

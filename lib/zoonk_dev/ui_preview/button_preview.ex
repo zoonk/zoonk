@@ -1,4 +1,4 @@
-defmodule ZoonkDev.Live.UIButton do
+defmodule ZoonkDev.Live.ButtonPreview do
   @moduledoc false
   use ZoonkWeb, :live_view
 

@@ -1,4 +1,4 @@
-defmodule ZoonkDev.Live.UIHome do
+defmodule ZoonkDev.Live.UIPreviewHome do
   @moduledoc false
   use ZoonkWeb, :live_view
 
@@ -8,7 +8,7 @@ defmodule ZoonkDev.Live.UIHome do
     <ZoonkDev.Layouts.UIPreview.render active_page={:home} flash={@flash} page_title={@page_title}>
       <.card>
         <.card_header icon="tabler-palette-filled">
-          <.card_title>UI Playground</.card_title>
+          <.card_title>UI Preview</.card_title>
           <.card_description>Test and experiment with UI components</.card_description>
         </.card_header>
 
@@ -24,7 +24,7 @@ defmodule ZoonkDev.Live.UIHome do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    socket = assign(socket, :page_title, "UI Playground")
+    socket = assign(socket, :page_title, "UI Preview")
     {:ok, socket}
   end
 end

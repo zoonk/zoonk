@@ -1,4 +1,4 @@
-defmodule ZoonkDev.Live.UIInput do
+defmodule ZoonkDev.Live.InputPreview do
   @moduledoc false
   use ZoonkWeb, :live_view
 

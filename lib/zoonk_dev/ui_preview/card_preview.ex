@@ -1,4 +1,4 @@
-defmodule ZoonkDev.Live.UICard do
+defmodule ZoonkDev.Live.CardPreview do
   @moduledoc false
   use ZoonkWeb, :live_view
 

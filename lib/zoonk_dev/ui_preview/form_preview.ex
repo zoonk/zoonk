@@ -1,4 +1,4 @@
-defmodule ZoonkDev.Live.UIForm do
+defmodule ZoonkDev.Live.FormPreview do
   @moduledoc false
   use ZoonkWeb, :live_view
 

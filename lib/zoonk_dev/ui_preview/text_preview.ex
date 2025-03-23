@@ -1,4 +1,4 @@
-defmodule ZoonkDev.Live.UIText do
+defmodule ZoonkDev.Live.TextPreview do
   @moduledoc false
   use ZoonkWeb, :live_view
 

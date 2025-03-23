@@ -1,4 +1,4 @@
-defmodule ZoonkDev.Live.UIAnchor do
+defmodule ZoonkDev.Live.AnchorPreview do
   @moduledoc false
   use ZoonkWeb, :live_view
 

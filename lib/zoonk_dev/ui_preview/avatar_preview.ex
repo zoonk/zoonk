@@ -1,4 +1,4 @@
-defmodule ZoonkDev.Live.UIAvatar do
+defmodule ZoonkDev.Live.AvatarPreview do
   @moduledoc false
   use ZoonkWeb, :live_view
 

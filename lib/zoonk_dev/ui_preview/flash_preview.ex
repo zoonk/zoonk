@@ -1,4 +1,4 @@
-defmodule ZoonkDev.Live.UIFlash do
+defmodule ZoonkDev.Live.FlashPreview do
   @moduledoc false
   use ZoonkWeb, :live_view
 
