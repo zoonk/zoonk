@@ -1,6 +1,8 @@
 ## Miscellaneous
 
 - Use `@impl ModuleName` for callback implementations instead of `@impl true`.
+- Use the next HEEX syntax `{@variable}` instead of `<%= @variable %>`.
+- When you need to conditionally render an item, you don't need to create a separate div or element for it, you can use use `:if` directly in the element. For example, instead of `<% if !@empty do %><.card_content>...</.card_content><% end %>` or `<div :if={!@empty}><.card_content>...</.card_content></div>`, you can use `<.card_content :if={!@empty}>...</.card_content>`.
 
 ## Documentation
 
