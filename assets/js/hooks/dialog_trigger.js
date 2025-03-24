@@ -11,8 +11,8 @@ function getDialog(id) {
   return document.querySelector(selector);
 }
 
-function openDialog(el) {
-  el.showModal();
+function openDialog(dialog) {
+  dialog.showModal();
 }
 
 /**
@@ -44,8 +44,16 @@ function handleShortcut(event, dialog) {
  *
  * @example
  * ```heex
- * <dialog id="my-dialog" phx-hook="DialogTrigger">
- *   <.focus_wrap phx-click-away={JS.dispatch("closeDialog")}></.focus_wrap>
+ * <button
+ *  phx-hook="DialogTrigger"
+ *  data-dialog-id="my-dialog"
+ *  data-shortcut="k"
+ * >
+ *  open dialog
+ * </button>
+ *
+ * <dialog id="my-dialog">
+ *   <.div phx-click-away={JS.dispatch("closeDialog")}></.div>
  * </dialog>
  * ```
  */
@@ -54,7 +62,10 @@ export const DialogTrigger = {
     const dialog = getDialog(this.el.dataset.dialogId);
 
     // Open the dialog when the trigger is clicked
-    this.el.addEventListener("click", openDialog.bind(this, dialog));
+    this.el.addEventListener("click", (event) => {
+      event.stopPropagation();
+      openDialog(dialog);
+    });
 
     // Also open the dialog when the shortcut is pressed, e.g. "cmd+k"
     document.addEventListener("keydown", (event) =>

@@ -34,9 +34,9 @@ defmodule ZoonkWeb.Components.Dialog do
         @class
       ]}
     >
-      <.focus_wrap id={"#{@id}-container"} phx-click-away={JS.dispatch("closeDialog")}>
+      <div phx-click-away={JS.dispatch("closeDialog")}>
         {render_slot(@inner_block)}
-      </.focus_wrap>
+      </div>
     </dialog>
     """
   end
