@@ -68,4 +68,41 @@ defmodule ZoonkWeb.Components.Command do
     </button>
     """
   end
+
+  @doc """
+  Renders a styled input field for command dialogs with an icon.
+
+  This component provides a standardized input field used in command dialogs,
+  featuring a search icon and consistent styling.
+
+  ## Examples
+
+      <.command_input placeholder="Search..." />
+      <.command_input placeholder="Type to search..." icon="tabler-settings" />
+  """
+  attr :id, :string, default: nil, doc: "The unique identifier for the input"
+  attr :icon, :string, default: "tabler-search", doc: "Icon to display on the left side of the input"
+  attr :class, :string, default: nil, doc: "Additional CSS classes for the input wrapper"
+  attr :rest, :global, doc: "Additional HTML attributes for the input element"
+
+  def command_input(assigns) do
+    ~H"""
+    <div class={["relative flex items-center gap-2", @class]}>
+      <.icon name={@icon} class="size-4 text-zk-surface-foreground/70 absolute left-3" />
+
+      <input
+        id={@id}
+        type="text"
+        class={[
+          "bg-zk-surface w-full rounded-t py-2.5 pr-4 pl-10",
+          "text-zk-muted-foreground text-sm",
+          "border-zk-border border-0 border-b focus-visible:ring-0",
+          "placeholder:text-zk-muted-foreground/70",
+          "disabled:cursor-not-allowed disabled:opacity-50"
+        ]}
+        {@rest}
+      />
+    </div>
+    """
+  end
 end

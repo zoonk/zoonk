@@ -43,68 +43,40 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
       </.card>
 
       <.dialog id="search-dialog">
-        <div class="flex flex-col gap-4 p-4">
-          <div class="relative">
-            <.icon
-              name="tabler-search"
-              class="size-4 text-zk-surface-foreground/70 absolute top-1/2 left-3 -translate-y-1/2"
-            />
-            <input
-              type="text"
-              placeholder="Type to search..."
-              class="bg-zk-secondary w-full rounded-md py-2 pr-4 pl-10 text-sm outline-none focus:ring-zk-primary focus:ring-2"
-              autofocus
-            />
-          </div>
-          <div class="border-zk-border border-t pt-4">
-            <ul class="max-h-72 overflow-y-auto">
-              <li :for={i <- 1..5} class="group">
-                <button class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-zk-secondary-accent">
-                  <.icon name="tabler-file-text" class="size-4 text-zk-muted-foreground" />
-                  <span>Documentation item {i}</span>
-                </button>
-              </li>
-            </ul>
-          </div>
-        </div>
+        <.command_input placeholder="Type to search..." />
+
+        <ul class="max-h-72 overflow-y-auto">
+          <li :for={i <- 1..5} class="group">
+            <button class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-zk-secondary-accent">
+              <.icon name="tabler-file-text" class="size-4 text-zk-muted-foreground" />
+              <span>Documentation item {i}</span>
+            </button>
+          </li>
+        </ul>
       </.dialog>
 
       <.dialog id="settings-dialog">
-        <div class="flex flex-col gap-4 p-4">
-          <div class="relative">
-            <.icon
-              name="tabler-settings"
-              class="size-4 text-zk-surface-foreground/70 absolute top-1/2 left-3 -translate-y-1/2"
-            />
-            <input
-              type="text"
-              placeholder="Search settings..."
-              class="bg-zk-secondary w-full rounded-md py-2 pr-4 pl-10 text-sm outline-none focus:ring-zk-primary focus:ring-2"
-              autofocus
-            />
-          </div>
-          <div class="border-zk-border border-t pt-4">
-            <ul class="max-h-72 overflow-y-auto">
-              <li
-                :for={
-                  {icon, label} <- [
-                    {"tabler-user", "Account settings"},
-                    {"tabler-bell", "Notifications"},
-                    {"tabler-palette", "Appearance"},
-                    {"tabler-shield", "Privacy & Security"},
-                    {"tabler-language", "Language"}
-                  ]
-                }
-                class="group"
-              >
-                <button class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-zk-secondary-accent">
-                  <.icon name={icon} class="size-4 text-zk-muted-foreground" />
-                  <span>{label}</span>
-                </button>
-              </li>
-            </ul>
-          </div>
-        </div>
+        <.command_input placeholder="Search settings..." icon="tabler-settings" />
+
+        <ul class="max-h-72 overflow-y-auto">
+          <li
+            :for={
+              {icon, label} <- [
+                {"tabler-user", "Account settings"},
+                {"tabler-bell", "Notifications"},
+                {"tabler-palette", "Appearance"},
+                {"tabler-shield", "Privacy & Security"},
+                {"tabler-language", "Language"}
+              ]
+            }
+            class="group"
+          >
+            <button class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-zk-secondary-accent">
+              <.icon name={icon} class="size-4 text-zk-muted-foreground" />
+              <span>{label}</span>
+            </button>
+          </li>
+        </ul>
       </.dialog>
     </ZoonkDev.UIPreview.UIPreviewLayout.render>
     """
