@@ -15,19 +15,24 @@ defmodule ZoonkWeb.Components.Icon do
       <.icon name="tabler-x" />
       <.icon name="tabler-refresh"  />
   """
-  attr :name, :string, required: true
-  attr :class, :any, default: nil
-  attr :size, :atom, values: [:sm, :md, :lg], default: :sm
+  attr :name, :string, required: true, doc: "Icon name, e.g. `tabler-x`"
+  attr :class, :any, default: nil, doc: "Additional CSS classes to apply to the icon"
+  attr :size, :atom, values: [:sm, :md, :lg], default: :sm, doc: "Icon size, e.g. `:sm`, `:md`, `:lg`"
+  attr :label, :string, default: nil, doc: "Accessible label for the icon"
 
   def icon(%{name: "tabler-" <> _rest} = assigns) do
     ~H"""
-    <span class={[
-      @name,
-      @size == :sm && "size-5",
-      @size == :md && "size-7",
-      @size == :lg && "size-9",
-      @class
-    ]} />
+    <span
+      class={[
+        @name,
+        @size == :sm && "size-5",
+        @size == :md && "size-7",
+        @size == :lg && "size-9",
+        @class
+      ]}
+      aria-label={@label}
+      aria-hidden={is_nil(@label)}
+    />
     """
   end
 end
