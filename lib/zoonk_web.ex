@@ -88,6 +88,8 @@ defmodule ZoonkWeb do
       import ZoonkWeb.Components.Avatar
       import ZoonkWeb.Components.Button
       import ZoonkWeb.Components.Card
+      import ZoonkWeb.Components.Command
+      import ZoonkWeb.Components.Dialog
       import ZoonkWeb.Components.Divider
       import ZoonkWeb.Components.Flash
       import ZoonkWeb.Components.Form

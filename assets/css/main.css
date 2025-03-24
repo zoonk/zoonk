@@ -267,6 +267,8 @@
   --color-zk-ring: var(--ring);
 
   --radius: var(--radius-lg);
+
+  --text-2xs: 0.625rem;
 }
 
 @utility zk-btn {

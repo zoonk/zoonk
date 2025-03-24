@@ -68,6 +68,7 @@ defmodule ZoonkDev.UIPreview.UIPreviewLayout do
       %{icon: "tabler-user-circle", color: "text-green-500", module: :avatar, label: "Avatar", path: "/ui/avatar"},
       %{icon: "tabler-pointer-filled", color: "text-red-500", module: :button, label: "Button", path: "/ui/button"},
       %{icon: "tabler-app-window-filled", color: "text-gray-500", module: :card, label: "Card", path: "/ui/card"},
+      %{icon: "tabler-command", color: "text-indigo-500", module: :command, label: "Command", path: "/ui/command"},
       %{
         icon: "tabler-arrows-right-left",
         color: "text-yellow-500",
