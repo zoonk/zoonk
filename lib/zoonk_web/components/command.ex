@@ -105,4 +105,33 @@ defmodule ZoonkWeb.Components.Command do
     </div>
     """
   end
+
+  @doc """
+  Renders a styled list container for command dialog items.
+
+  This component provides a standardized container for command dialog items with
+  proper scrolling behavior and styling.
+
+  ## Examples
+
+      <.command_list>
+        <li>
+          <button>Menu item 1</button>
+        </li>
+      </.command_list>
+
+      <.command_list class="max-h-52">
+        <li>Settings item</li>
+      </.command_list>
+  """
+  attr :class, :string, default: nil, doc: "Additional CSS classes for the list"
+  slot :inner_block, required: true, doc: "The content of the list"
+
+  def command_list(assigns) do
+    ~H"""
+    <ul class={["max-h-72 overflow-y-auto overflow-x-hidden", @class]}>
+      {render_slot(@inner_block)}
+    </ul>
+    """
+  end
 end

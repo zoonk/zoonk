@@ -44,21 +44,19 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
 
       <.dialog id="search-dialog">
         <.command_input placeholder="Type to search..." />
-
-        <ul class="max-h-72 overflow-y-auto">
+        <.command_list>
           <li :for={i <- 1..5} class="group">
             <button class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-zk-secondary-accent">
               <.icon name="tabler-file-text" class="size-4 text-zk-muted-foreground" />
               <span>Documentation item {i}</span>
             </button>
           </li>
-        </ul>
+        </.command_list>
       </.dialog>
 
       <.dialog id="settings-dialog">
         <.command_input placeholder="Search settings..." icon="tabler-settings" />
-
-        <ul class="max-h-72 overflow-y-auto">
+        <.command_list>
           <li
             :for={
               {icon, label} <- [
@@ -76,7 +74,7 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
               <span>{label}</span>
             </button>
           </li>
-        </ul>
+        </.command_list>
       </.dialog>
     </ZoonkDev.UIPreview.UIPreviewLayout.render>
     """
