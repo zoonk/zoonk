@@ -13,7 +13,7 @@
 @custom-variant phx-change-loading ([".phx-change-loading&", ".phx-change-loading &"]);
 
 :root {
-  --background: var(--color-neutral-100);
+  --background: var(--color-white);
   --foreground: var(--color-neutral-800);
 
   --primary: var(--color-blue-600);
@@ -290,8 +290,8 @@
 
 @utility zk-btn-outline {
   @apply border border-zk-border bg-zk-surface text-zk-surface-foreground
-  hover:bg-zk-secondary hover:text-zk-secondary-foreground
-  focus-visible:ring-zk-secondary;
+  hover:bg-zk-muted hover:text-zk-muted-foreground
+  focus-visible:ring-zk-muted;
 }
 
 @utility zk-drop-shadow {

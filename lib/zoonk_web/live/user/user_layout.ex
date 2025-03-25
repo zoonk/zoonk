@@ -11,23 +11,6 @@ defmodule ZoonkWeb.User.UserLayout do
   def render(assigns) do
     ~H"""
     <main aria-labelledby="page-title">
-      <.tab_bar>
-        <.nav_menu_item
-          active={@active_page == :email}
-          label={dgettext("users", "Email")}
-          icon="tabler-mail"
-          navigate={~p"/user/email?redirect_to=#{@user_return_to}"}
-        />
-
-        <.nav_menu_item
-          label={dgettext("users", "Logout")}
-          icon="tabler-logout"
-          method="delete"
-          href={~p"/logout"}
-          destructive
-        />
-      </.tab_bar>
-
       <div class="bg-zk-surface border-zk-border border-b">
         <header
           aria-label={gettext("Go back to the previous page")}
