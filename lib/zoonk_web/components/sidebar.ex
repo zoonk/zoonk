@@ -8,9 +8,9 @@ defmodule ZoonkWeb.Components.Sidebar do
   use Phoenix.Component
 
   import ZoonkWeb.Components.Icon
+  import ZoonkWeb.Components.Text
 
   attr :class, :any, default: nil, doc: "Additional class for the sidebar"
-
   slot :inner_block, required: true, doc: "The inner block of the sidebar"
 
   def sidebar(assigns) do
@@ -18,7 +18,7 @@ defmodule ZoonkWeb.Components.Sidebar do
     <aside class={[
       "hidden lg:block",
       "h-dvh sticky top-0 bottom-0 left-0 w-64",
-      "overflow-y-auto overflow-x-hidden",
+      "scrollbar-none overflow-y-auto overflow-x-hidden",
       "bg-zk-muted/70",
       "border-zk-border border-r",
       @class
@@ -28,22 +28,33 @@ defmodule ZoonkWeb.Components.Sidebar do
     """
   end
 
+  attr :heading, :string, default: nil, doc: "Optional heading for the sidebar menu"
   attr :class, :any, default: nil, doc: "Additional class for the sidebar menu"
-
   slot :inner_block, required: true, doc: "The inner block of the sidebar menu"
 
   def sidebar_menu(assigns) do
     ~H"""
-    <ul class={["flex w-full min-w-0 flex-col gap-1 p-4", @class]}>
-      {render_slot(@inner_block)}
-    </ul>
+    <section class="p-4">
+      <.text
+        :if={@heading}
+        tag="h4"
+        variant={:custom}
+        size={:small}
+        class="text-zk-muted-foreground/70 px-2 pb-2 font-medium"
+      >
+        {@heading}
+      </.text>
+
+      <ul class={["flex w-full min-w-0 flex-col gap-1", @class]}>
+        {render_slot(@inner_block)}
+      </ul>
+    </section>
     """
   end
 
   attr :active, :boolean, default: false, doc: "Whether the link is active"
   attr :icon, :string, required: false, doc: "The icon name to display"
   attr :rest, :global, include: ~w(href method navigate patch), doc: "HTML attributes to apply to the link"
-
   slot :inner_block, required: true, doc: "The inner block of the sidebar menu link"
 
   def sidebar_menu_item(assigns) do

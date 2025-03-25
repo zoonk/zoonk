@@ -42,7 +42,7 @@ defmodule ZoonkWeb.AppLayout do
           </.sidebar_menu_item>
         </.sidebar_menu>
 
-        <.sidebar_menu class="mt-auto">
+        <.sidebar_menu heading={gettext("Settings")}>
           <.sidebar_menu_item
             navigate={~p"/user/email"}
             active={@active_page == :user_email}
