@@ -9,6 +9,7 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
       <.card>
         <.card_header>
           <.card_title>Command Trigger</.card_title>
+
           <.card_description>
             A command menu component that triggers a dialog when clicked.
             It also responds to keyboard shortcuts (Cmd+K or Ctrl+K).
@@ -27,6 +28,7 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
       <.card>
         <.card_header>
           <.card_title>Custom Command Trigger</.card_title>
+
           <.card_description>
             Command menus can be customized with different labels and keyboard shortcuts.
           </.card_description>
@@ -42,8 +44,28 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
         </.card_content>
       </.card>
 
+      <.card>
+        <.card_header>
+          <.card_title>Command Groups</.card_title>
+
+          <.card_description>
+            Command menus can organize items into groups with headings and separators.
+          </.card_description>
+        </.card_header>
+
+        <.card_content align={:bottom} class="flex flex-col gap-4">
+          <.command_trigger
+            id="groups-trigger"
+            label="Open grouped menu..."
+            dialog_id="groups-dialog"
+            shortcut="g"
+          />
+        </.card_content>
+      </.card>
+
       <.dialog id="search-dialog">
         <.command_input placeholder="Type to search..." />
+
         <.command_list>
           <.command_item :for={i <- 1..5}>
             <.icon name="tabler-file-text" />
@@ -54,12 +76,46 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
 
       <.dialog id="settings-dialog">
         <.command_input placeholder="Search settings..." icon="tabler-settings" />
+
         <.command_list>
           <.command_item :for={{icon, label, shortcut} <- settings()}>
             <.icon name={icon} />
             <span>{label}</span>
             <.command_shortcut>{shortcut}</.command_shortcut>
           </.command_item>
+        </.command_list>
+      </.dialog>
+
+      <.dialog id="groups-dialog">
+        <.command_input placeholder="Search commands..." />
+
+        <.command_list>
+          <.command_group heading="Suggestions">
+            <.command_item>
+              <.icon name="tabler-calendar" />
+              <span>Calendar</span>
+            </.command_item>
+
+            <.command_item>
+              <.icon name="tabler-mood-happy" />
+              <span>Search Emoji</span>
+            </.command_item>
+
+            <.command_item>
+              <.icon name="tabler-calculator" />
+              <span>Calculator</span>
+            </.command_item>
+          </.command_group>
+
+          <.command_separator />
+
+          <.command_group heading="Settings">
+            <.command_item :for={{icon, label, shortcut} <- settings()}>
+              <.icon name={icon} />
+              <span>{label}</span>
+              <.command_shortcut>{shortcut}</.command_shortcut>
+            </.command_item>
+          </.command_group>
         </.command_list>
       </.dialog>
     </ZoonkDev.UIPreview.UIPreviewLayout.render>

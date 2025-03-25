@@ -202,4 +202,62 @@ defmodule ZoonkWeb.Components.Command do
     </span>
     """
   end
+
+  @doc """
+  Renders a group of command items with an optional heading.
+
+  This component provides a way to group related command items together
+  with an optional heading.
+
+  ## Examples
+
+      <.command_group heading="Settings">
+        <.command_item>Profile</command_item>
+        <.command_item>Billing</command_item>
+      </.command_group>
+
+      <.command_group>
+        <.command_item>Profile</command_item>
+      </.command_group>
+  """
+  attr :heading, :string, default: nil, doc: "Optional heading text for the group"
+  attr :class, :string, default: nil, doc: "Additional CSS classes for the group"
+  slot :inner_block, required: true, doc: "The content of the group"
+
+  def command_group(assigns) do
+    ~H"""
+    <div class={["text-zk-foreground overflow-hidden p-1", @class]}>
+      <h6 :if={@heading} class="text-zk-muted-foreground px-2 py-1.5 text-xs font-medium">
+        {@heading}
+      </h6>
+      {render_slot(@inner_block)}
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a separator between command groups or items.
+
+  This component provides a visual separator that can be used between
+  command groups or items.
+
+  ## Examples
+
+      <.command_group heading="Group 1">
+        <.command_item>Item 1</command_item>
+      </.command_group>
+
+      <.command_separator />
+
+      <.command_group heading="Group 2">
+        <.command_item>Item 2</command_item>
+      </.command_group>
+  """
+  attr :class, :string, default: nil, doc: "Additional CSS classes for the separator"
+
+  def command_separator(assigns) do
+    ~H"""
+    <div class={["bg-zk-border -mx-1 h-px", @class]} />
+    """
+  end
 end
