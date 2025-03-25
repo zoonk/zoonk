@@ -27,7 +27,7 @@ defmodule ZoonkWeb.AppHomeLiveTest do
 
       assert {:ok, _redirect_lv, _html} =
                lv
-               |> element("a", "Email Settings")
+               |> element("a", "Email")
                |> render_click()
                |> follow_redirect(conn, ~p"/user/email")
     end
