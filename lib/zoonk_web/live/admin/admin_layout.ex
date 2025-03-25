@@ -6,7 +6,6 @@ defmodule ZoonkWeb.Admin.AdminLayout do
   attr :flash, :map, required: true
   attr :active_page, :atom, required: true
   attr :back, :map, required: true
-  attr :search_link, :string, default: nil
   slot :inner_block, required: true
 
   def render(assigns) do
@@ -47,13 +46,6 @@ defmodule ZoonkWeb.Admin.AdminLayout do
           >
             {@page_title}
           </.text>
-
-          <.live_component
-            :if={@search_link}
-            id={:search_users}
-            module={ZoonkWeb.LiveComponents.SearchButton}
-            patch={@search_link}
-          />
         </header>
       </div>
 

@@ -113,7 +113,6 @@ defmodule ZoonkWeb.Router do
       ] do
       live "/", Admin.AdminHomeLive
       live "/users", Admin.AdminUserListLive
-      live "/users/search", Admin.AdminUserListLive, :search
       live "/users/:id", Admin.AdminUserViewLive
     end
   end
