@@ -19,7 +19,7 @@ defmodule ZoonkWeb.Components.Sidebar do
       "hidden lg:block",
       "h-dvh sticky top-0 bottom-0 left-0 w-64",
       "overflow-y-auto overflow-x-hidden",
-      "bg-zk-surface",
+      "bg-zk-muted/70",
       "border-zk-border border-r",
       @class
     ]}>

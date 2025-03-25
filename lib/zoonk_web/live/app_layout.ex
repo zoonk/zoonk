@@ -69,7 +69,7 @@ defmodule ZoonkWeb.AppLayout do
         </.sidebar_menu>
       </.sidebar>
 
-      <div class="flex-1 p-6">
+      <div class="bg-zk-background flex-1 p-6">
         {render_slot(@inner_block)}
         <.flash_group flash={@flash} />
       </div>
