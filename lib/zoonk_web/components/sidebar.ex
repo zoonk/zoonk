@@ -70,7 +70,7 @@ defmodule ZoonkWeb.Components.Sidebar do
           @active && !@destructive &&
             "bg-zk-primary-subtle/90 text-zk-primary-subtle-foreground hover:bg-zk-primary-subtle",
           !@active && !@destructive && "text-zk-muted-foreground",
-          @destructive && "text-zk-destructive hover:bg-zk-destructive/10"
+          @destructive && "text-zk-destructive-text"
         ]}
         {@rest}
       >
