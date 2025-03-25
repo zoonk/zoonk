@@ -53,6 +53,7 @@ defmodule ZoonkWeb.Components.Sidebar do
   end
 
   attr :active, :boolean, default: false, doc: "Whether the link is active"
+  attr :destructive, :boolean, default: false, doc: "Indicates if the link is destructive"
   attr :icon, :string, required: false, doc: "The icon name to display"
   attr :rest, :global, include: ~w(href method navigate patch), doc: "HTML attributes to apply to the link"
   slot :inner_block, required: true, doc: "The inner block of the sidebar menu link"
@@ -66,9 +67,10 @@ defmodule ZoonkWeb.Components.Sidebar do
           "text-sm transition-colors",
           "hover:bg-zk-secondary",
           "focus-visible:ring-zk-ring focus-visible:outline-0 focus-visible:ring-2",
-          @active &&
+          @active && !@destructive &&
             "bg-zk-primary-subtle/90 text-zk-primary-subtle-foreground hover:bg-zk-primary-subtle",
-          !@active && "text-zk-muted-foreground"
+          !@active && !@destructive && "text-zk-muted-foreground",
+          @destructive && "text-zk-destructive hover:bg-zk-destructive/10"
         ]}
         {@rest}
       >

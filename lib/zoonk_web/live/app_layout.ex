@@ -51,7 +51,7 @@ defmodule ZoonkWeb.AppLayout do
             {gettext("Email Settings")}
           </.sidebar_menu_item>
 
-          <.sidebar_menu_item href={~p"/logout"} method="delete" icon="tabler-logout">
+          <.sidebar_menu_item destructive href={~p"/logout"} method="delete" icon="tabler-logout">
             {gettext("Logout")}
           </.sidebar_menu_item>
         </.sidebar_menu>
