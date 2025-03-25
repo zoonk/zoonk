@@ -17,7 +17,7 @@
 ## CSS
 
 - Use `tailwind` for CSS.
-- Never use tailwind colors directly. Instead, use the colors defined in `assets/css/main.css`.
+- Never use tailwind colors directly. Instead, use the colors defined in `assets/css/main.css`. For example, don't use `bg-white`, use `bg-zk-surface` instead.
 - Common used utilities should be added to the `assets/css/main.css` file and have a `zk` prefix. For example: `@utility zk-surface {@apply p-4}`.
 - When adding tailwind utilities, ensure they're consistent with the existing ones in `assets/css/main.css`.
 
@@ -42,7 +42,7 @@
 
 - Shared components should be placed in the `lib/zoonk_web/components` directory.
 - When coding, check the available components first to see if there's a component that can be used for what you're trying to accomplish. Use a shared component whenever available. If a component is not available, create it. Make changes to existing components if necessary to accommodate new use cases.
-- When creating a new shared component, add it to the `html_helpers` function of the `lib/zoonk_web.ex` file.
+- When creating a new component, import it in the `html_helpers` function of the `lib/zoonk_web.ex` file, so that it can be used by default in all templates without the need to import it in each module.
 - Add a `@moduledoc` to each module and a `@doc` to each function/component, including examples of how to use the component.
 - Group related components together. For example, the `flash.ex` contains both `flash` and `flash_group` components.
 - Add `Phoenix.Component.attr/3` to each component to define the attributes it accepts. Include the `doc` option to provide documentation for each attribute.
