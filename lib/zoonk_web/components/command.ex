@@ -132,7 +132,10 @@ defmodule ZoonkWeb.Components.Command do
 
   def command_list(assigns) do
     ~H"""
-    <ul class={["max-h-72 select-none overflow-y-auto overflow-x-hidden", @class]}>
+    <ul class={[
+      "max-h-72 select-none overflow-y-auto overflow-x-hidden md:max-h-100 lg:max-h-124",
+      @class
+    ]}>
       {render_slot(@inner_block)}
     </ul>
     """
