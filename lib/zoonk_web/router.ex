@@ -7,7 +7,7 @@ defmodule ZoonkWeb.Router do
 
   alias ZoonkWeb.Accounts.UserAuth
 
-  @allowed_images "https://avatars.githubusercontent.com https://*.googleusercontent.com"
+  @allowed_images "https://avatars.githubusercontent.com https://github.com https://*.googleusercontent.com"
 
   pipeline :browser do
     plug :accepts, ["html"]

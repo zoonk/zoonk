@@ -23,7 +23,7 @@ defmodule ZoonkWeb.Components.Avatar do
     required: true,
     doc: "Alt text for the avatar image - also used as a placeholder if no image is provided"
 
-  attr :size, :atom, values: [:sm, :md, :lg], default: :sm
+  attr :size, :atom, values: [:xs, :sm, :md, :lg], default: :sm
   attr :class, :any, default: nil
 
   # handles the case where the image is not available
@@ -59,10 +59,12 @@ defmodule ZoonkWeb.Components.Avatar do
 
   defp shared_class, do: ["shrink-0 rounded-full"]
 
+  defp avatar_size(:xs), do: "size-6 text-sm"
   defp avatar_size(:sm), do: "size-8 text-md"
   defp avatar_size(:md), do: "size-12 text-lg"
   defp avatar_size(:lg), do: "size-16 text-2xl"
 
+  defp avatar_size_px(:xs), do: "24px"
   defp avatar_size_px(:sm), do: "38px"
   defp avatar_size_px(:md), do: "48px"
   defp avatar_size_px(:lg), do: "64px"

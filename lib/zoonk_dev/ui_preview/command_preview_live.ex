@@ -65,6 +65,24 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
         </.card_content>
       </.card>
 
+      <.card>
+        <.card_header>
+          <.card_title>Images Example</.card_title>
+          <.card_description>
+            Command menus can display images like course covers and profile pictures.
+          </.card_description>
+        </.card_header>
+
+        <.card_content align={:bottom} class="flex flex-col gap-4">
+          <.command_trigger
+            id="courses-trigger"
+            label="Search courses..."
+            shortcut="i"
+            dialog_id="courses-dialog"
+          />
+        </.card_content>
+      </.card>
+
       <.dialog id="search-dialog">
         <form phx-change="search-docs" phx-submit="search-docs">
           <.command_input placeholder="Type to search..." />
@@ -118,6 +136,33 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
           </.command_group>
         </.command_list>
       </.dialog>
+
+      <.dialog id="courses-dialog">
+        <form phx-change="search-courses" phx-submit="search-courses">
+          <.command_input placeholder="Search courses and instructors..." />
+        </form>
+
+        <.command_list>
+          <.command_group :if={@courses_results != []} heading="Courses">
+            <.command_item :for={course <- @courses_results}>
+              <.avatar size={:xs} src={course.cover} alt={course.label} />
+              <div class="flex flex-col">
+                <span>{course.label}</span>
+                <span class="text-zk-muted-foreground/90 text-sm">{course.instructor}</span>
+              </div>
+            </.command_item>
+          </.command_group>
+
+          <.command_separator :if={@instructors_results != [] and @courses_results != []} />
+
+          <.command_group :if={@instructors_results != []} heading="Instructors">
+            <.command_item :for={instructor <- @instructors_results}>
+              <.avatar size={:xs} src={instructor.avatar} alt={instructor.label} />
+              <span>{instructor.label}</span>
+            </.command_item>
+          </.command_group>
+        </.command_list>
+      </.dialog>
     </ZoonkDev.UIPreview.UIPreviewLayout.render>
     """
   end
@@ -131,8 +176,49 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
       |> assign(settings_results: settings())
       |> assign(suggestions_results: suggestions())
       |> assign(groups_settings_results: settings())
+      |> assign(courses_results: courses())
+      |> assign(instructors_results: instructors())
 
     {:ok, socket}
+  end
+
+  defp show_suggestions?([]), do: false
+  defp show_suggestions?(_items), do: true
+
+  defp show_settings?([]), do: false
+  defp show_settings?(_items), do: true
+
+  @impl Phoenix.LiveView
+  def handle_event("search-docs", %{"query" => query}, socket) do
+    results = Helpers.fuzzy_search(documentation_items(), query, & &1.label)
+    {:noreply, assign(socket, doc_results: results)}
+  end
+
+  def handle_event("search-settings", %{"query" => query}, socket) do
+    results = Helpers.fuzzy_search(settings(), query, & &1.label)
+    {:noreply, assign(socket, settings_results: results)}
+  end
+
+  def handle_event("search-groups", %{"query" => query}, socket) do
+    suggestions_results = Helpers.fuzzy_search(suggestions(), query, & &1.label)
+    groups_settings_results = Helpers.fuzzy_search(settings(), query, & &1.label)
+
+    {:noreply,
+     assign(socket,
+       suggestions_results: suggestions_results,
+       groups_settings_results: groups_settings_results
+     )}
+  end
+
+  def handle_event("search-courses", %{"query" => query}, socket) do
+    courses_results = Helpers.fuzzy_search(courses(), query, & &1.label)
+    instructors_results = Helpers.fuzzy_search(instructors(), query, & &1.label)
+
+    {:noreply,
+     assign(socket,
+       courses_results: courses_results,
+       instructors_results: instructors_results
+     )}
   end
 
   def documentation_items do
@@ -163,31 +249,85 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
     ]
   end
 
-  defp show_suggestions?([]), do: false
-  defp show_suggestions?(_items), do: true
-
-  defp show_settings?([]), do: false
-  defp show_settings?(_items), do: true
-
-  @impl Phoenix.LiveView
-  def handle_event("search-docs", %{"query" => query}, socket) do
-    results = Helpers.fuzzy_search(documentation_items(), query, & &1.label)
-    {:noreply, assign(socket, doc_results: results)}
+  def courses do
+    [
+      %{
+        label: "Deep Learning with PyTorch",
+        instructor: "Sam Shaw",
+        cover: "https://github.com/pytorch.png"
+      },
+      %{
+        label: "Next.js Full Stack Development",
+        instructor: "Lee Robinson",
+        cover: "https://github.com/vercel.png"
+      },
+      %{
+        label: "Open Source Development",
+        instructor: "Nat Friedman",
+        cover: "https://github.com/github.png"
+      },
+      %{
+        label: "Space Science and Technology",
+        instructor: "Katie Stack",
+        cover: "https://github.com/nasa.png"
+      },
+      %{
+        label: "Digital Knowledge and Research",
+        instructor: "Jimmy Wales",
+        cover: "https://github.com/wikimedia.png"
+      },
+      %{
+        label: "Machine Learning with Scikit-learn",
+        instructor: "Dan Abramov",
+        cover: "https://github.com/scikit-learn.png"
+      },
+      %{
+        label: "Environmental Activism",
+        instructor: "Sindre Sorhus",
+        cover: "https://github.com/greenpeace.png"
+      },
+      %{
+        label: "Web Development with Elixir",
+        instructor: "Jose Valim",
+        cover: "https://github.com/elixir-lang.png"
+      }
+    ]
   end
 
-  def handle_event("search-settings", %{"query" => query}, socket) do
-    results = Helpers.fuzzy_search(settings(), query, & &1.label)
-    {:noreply, assign(socket, settings_results: results)}
-  end
-
-  def handle_event("search-groups", %{"query" => query}, socket) do
-    suggestions_results = Helpers.fuzzy_search(suggestions(), query, & &1.label)
-    groups_settings_results = Helpers.fuzzy_search(settings(), query, & &1.label)
-
-    {:noreply,
-     assign(socket,
-       suggestions_results: suggestions_results,
-       groups_settings_results: groups_settings_results
-     )}
+  def instructors do
+    [
+      %{
+        label: "Sam Shaw",
+        avatar: "https://github.com/shadcn.png"
+      },
+      %{
+        label: "Lee Robinson",
+        avatar: "https://github.com/leerob.png"
+      },
+      %{
+        label: "Nat Friedman",
+        avatar: "https://github.com/defunkt.png"
+      },
+      %{
+        label: "Cassidy Williams",
+        avatar: "https://github.com/cassidoo.png"
+      },
+      %{
+        label: "Prosper Otemuyiwa",
+        avatar: "https://github.com/unicodeveloper.png"
+      },
+      %{
+        label: "Dan Abramov",
+        avatar: "https://github.com/gaearon.png"
+      },
+      %{
+        label: "Sindre Sorhus",
+        avatar: "https://github.com/sindresorhus.png"
+      },
+      %{
+        label: "Jose Valim",
+        avatar: "https://github.com/josevalim.png"
+      }
+    ]
   end
 end
