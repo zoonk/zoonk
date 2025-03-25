@@ -2,7 +2,6 @@ defmodule ZoonkWeb.Router do
   use ZoonkWeb, :router
 
   import ZoonkWeb.Accounts.UserAuth
-  import ZoonkWeb.Admin.AdminUser
   import ZoonkWeb.Language
 
   alias ZoonkWeb.Accounts.UserAuth
@@ -100,21 +99,6 @@ defmodule ZoonkWeb.Router do
   scope "/", ZoonkWeb do
     pipe_through [:unprotected_browser]
     post "/auth/:provider/callback", Accounts.OAuthController, :callback
-  end
-
-  scope "/admin", ZoonkWeb do
-    pipe_through [:browser, :require_authenticated_user, :require_admin_user]
-
-    live_session :admin_dashboard,
-      on_mount: [
-        {UserAuth, :ensure_authenticated},
-        {ZoonkWeb.Admin.AdminUser, :ensure_user_admin},
-        {ZoonkWeb.Language, :set_app_language}
-      ] do
-      live "/", Admin.AdminHomeLive
-      live "/users", Admin.AdminUserListLive
-      live "/users/:id", Admin.AdminUserViewLive
-    end
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

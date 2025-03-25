@@ -12,7 +12,7 @@ defmodule ZoonkWeb.Pagination do
 
       defp paginate(socket, new_page) when new_page >= 1 do
         %{per_page: per_page} = socket.assigns
-        users = Admin.list_users(offset: (new_page - 1) * per_page, limit: per_page)
+        users = Orgs.list_users(offset: (new_page - 1) * per_page, limit: per_page)
         paginate(socket, new_page, users)
       end
   """
