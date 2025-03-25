@@ -93,6 +93,7 @@ defmodule ZoonkWeb.Components.Command do
       <input
         id={@id}
         type="text"
+        name="query"
         class={[
           "bg-zk-surface w-full rounded-t py-2.5 pr-4 pl-10",
           "text-zk-muted-foreground text-sm",
@@ -100,6 +101,7 @@ defmodule ZoonkWeb.Components.Command do
           "placeholder:text-zk-muted-foreground/70",
           "disabled:cursor-not-allowed disabled:opacity-50"
         ]}
+        phx-throttle
         {@rest}
       />
     </div>

@@ -2,6 +2,8 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
+  alias Zoonk.Helpers
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -75,13 +77,15 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
       </.dialog>
 
       <.dialog id="settings-dialog">
-        <.command_input placeholder="Search settings..." icon="tabler-settings" />
+        <form phx-change="search" phx-submit="search">
+          <.command_input placeholder="Search settings..." icon="tabler-settings" />
+        </form>
 
         <.command_list>
-          <.command_item :for={{icon, label, shortcut} <- settings()}>
-            <.icon name={icon} />
-            <span>{label}</span>
-            <.command_shortcut>{shortcut}</.command_shortcut>
+          <.command_item :for={item <- @results}>
+            <.icon name={item.icon} />
+            <span>{item.label}</span>
+            <.command_shortcut>{item.shortcut}</.command_shortcut>
           </.command_item>
         </.command_list>
       </.dialog>
@@ -110,10 +114,10 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
           <.command_separator />
 
           <.command_group heading="Settings">
-            <.command_item :for={{icon, label, shortcut} <- settings()}>
-              <.icon name={icon} />
-              <span>{label}</span>
-              <.command_shortcut>{shortcut}</.command_shortcut>
+            <.command_item :for={item <- settings()}>
+              <.icon name={item.icon} />
+              <span>{item.label}</span>
+              <.command_shortcut>{item.shortcut}</.command_shortcut>
             </.command_item>
           </.command_group>
         </.command_list>
@@ -124,16 +128,26 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    socket = assign(socket, page_title: "Command")
+    socket =
+      socket
+      |> assign(page_title: "Command")
+      |> assign(results: settings())
+
     {:ok, socket}
   end
 
   def settings,
     do: [
-      {"tabler-user", "Account settings", "⌘A"},
-      {"tabler-bell", "Notifications", "⌘N"},
-      {"tabler-palette", "Appearance", "⌘T"},
-      {"tabler-shield", "Privacy & Security", "⌘P"},
-      {"tabler-language", "Language", "⌘L"}
+      %{icon: "tabler-user", label: "Account settings", shortcut: "⌘A"},
+      %{icon: "tabler-bell", label: "Notifications", shortcut: "⌘N"},
+      %{icon: "tabler-palette", label: "Appearance", shortcut: "⌘T"},
+      %{icon: "tabler-shield", label: "Privacy & Security", shortcut: "⌘P"},
+      %{icon: "tabler-language", label: "Language", shortcut: "⌘L"}
     ]
+
+  @impl Phoenix.LiveView
+  def handle_event("search", %{"query" => query}, socket) do
+    results = Helpers.fuzzy_search(settings(), query, & &1.label)
+    {:noreply, assign(socket, results: results)}
+  end
 end
