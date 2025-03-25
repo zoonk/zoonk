@@ -70,7 +70,7 @@ defmodule ZoonkWeb.Components.Sidebar do
         "focus-visible:ring-zk-ring focus-visible:outline-0 focus-visible:ring-2",
         @active &&
           "bg-zk-primary-subtle/90 text-zk-primary-subtle-foreground hover:bg-zk-primary-subtle",
-        !@active && "text-zk-secondary-foreground",
+        !@active && "text-zk-muted-foreground",
         @class
       ]}
       {@rest}
