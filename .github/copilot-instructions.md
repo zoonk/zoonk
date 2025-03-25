@@ -41,7 +41,7 @@
 ## Components
 
 - Shared components should be placed in the `lib/zoonk_web/components` directory.
-- Use a shared component whenever available. If a component is not available, create it. Make changes to existing components if necessary to accommodate new use cases.
+- When coding, check the available components first to see if there's a component that can be used for what you're trying to accomplish. Use a shared component whenever available. If a component is not available, create it. Make changes to existing components if necessary to accommodate new use cases.
 - When creating a new shared component, add it to the `html_helpers` function of the `lib/zoonk_web.ex` file.
 - Add a `@moduledoc` to each module and a `@doc` to each function/component, including examples of how to use the component.
 - Group related components together. For example, the `flash.ex` contains both `flash` and `flash_group` components.
@@ -53,6 +53,7 @@
 - When adding a component to the `lib/zoonk_dev/ui_preview` directory, also create a router for it in the `/ui` scope along with the other component routes - and update the `lib/zoonk_dev/ui_preview_layout.ex` file to include the new component in the menu list, alphabetically ordered.
 - When updating a component, also update its preview in the `lib/zoonk_dev/ui_preview` directory.
 - When conditionally adding a class to a component, convert it to a list and use the `@variant == :primary && ""` pattern. For example, `class={[@variant == :primary && "bg-zk-primary"]}`.
+- When adding text, make sure to use the `<.text>` component instead of plain text. For example, instead of `<h1>Title</h1>`, use `<.text tag="h1">Title</.text>`.
 
 ## Icons
 

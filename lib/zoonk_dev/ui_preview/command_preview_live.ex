@@ -89,6 +89,7 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
         </form>
 
         <.command_list>
+          <.command_empty :if={@doc_results == []}>No documentation found.</.command_empty>
           <.command_item :for={item <- @doc_results}>
             <.icon name="tabler-file-text" />
             <span>{item.label}</span>
@@ -102,6 +103,7 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
         </form>
 
         <.command_list>
+          <.command_empty :if={@settings_results == []}>No settings found.</.command_empty>
           <.command_item :for={item <- @settings_results}>
             <.icon name={item.icon} />
             <span>{item.label}</span>
@@ -116,18 +118,20 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
         </form>
 
         <.command_list>
-          <.command_group :if={show_suggestions?(@suggestions_results)} heading="Suggestions">
+          <.command_empty :if={@suggestions_results == [] and @groups_settings_results == []}>
+            No commands found.
+          </.command_empty>
+
+          <.command_group :if={@suggestions_results != []} heading="Suggestions">
             <.command_item :for={item <- @suggestions_results}>
               <.icon name={item.icon} />
               <span>{item.label}</span>
             </.command_item>
           </.command_group>
 
-          <.command_separator :if={
-            show_suggestions?(@suggestions_results) and show_settings?(@groups_settings_results)
-          } />
+          <.command_separator :if={@suggestions_results != [] and @groups_settings_results != []} />
 
-          <.command_group :if={show_settings?(@groups_settings_results)} heading="Settings">
+          <.command_group :if={@groups_settings_results != []} heading="Settings">
             <.command_item :for={item <- @groups_settings_results}>
               <.icon name={item.icon} />
               <span>{item.label}</span>
@@ -143,6 +147,10 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
         </form>
 
         <.command_list>
+          <.command_empty :if={@courses_results == [] and @instructors_results == []}>
+            No courses or instructors found.
+          </.command_empty>
+
           <.command_group :if={@courses_results != []} heading="Courses">
             <.command_item :for={course <- @courses_results}>
               <.avatar size={:xs} src={course.cover} alt={course.label} />
@@ -181,12 +189,6 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
 
     {:ok, socket}
   end
-
-  defp show_suggestions?([]), do: false
-  defp show_suggestions?(_items), do: true
-
-  defp show_settings?([]), do: false
-  defp show_settings?(_items), do: true
 
   @impl Phoenix.LiveView
   def handle_event("search-docs", %{"query" => query}, socket) do

@@ -15,6 +15,7 @@ defmodule ZoonkWeb.Components.Command do
   use Gettext, backend: Zoonk.Gettext
 
   import ZoonkWeb.Components.Icon
+  import ZoonkWeb.Components.Text
 
   @doc """
   Renders a button that looks like a search input field.
@@ -260,6 +261,29 @@ defmodule ZoonkWeb.Components.Command do
   def command_separator(assigns) do
     ~H"""
     <div class={["bg-zk-border -mx-1 h-px", @class]} />
+    """
+  end
+
+  @doc """
+  Renders a message when no results are found in a command dialog.
+
+  This component provides a centered message to display when a search
+  returns no results.
+
+  ## Examples
+
+      <.command_empty>No results found.</.command_empty>
+      <.command_empty class="py-8">No items match your search.</.command_empty>
+  """
+  attr :class, :string, default: nil, doc: "Additional CSS classes for the empty state"
+  attr :rest, :global, doc: "Additional HTML attributes"
+  slot :inner_block, required: true, doc: "The content to display when no results are found"
+
+  def command_empty(assigns) do
+    ~H"""
+    <.text variant={:secondary} tag="p" size={:caption} class={["py-6 text-center", @class]} {@rest}>
+      {render_slot(@inner_block)}
+    </.text>
     """
   end
 end
