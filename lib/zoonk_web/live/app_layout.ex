@@ -14,8 +14,8 @@ defmodule ZoonkWeb.AppLayout do
       <.sidebar>
         <.sidebar_menu>
           <.sidebar_menu_item>
-            <.sidebar_menu_link navigate={~p"/"} active={@active_page == :home} icon="tabler-home">
-              Home
+            <.sidebar_menu_link navigate={~p"/"} active={@active_page == :home} icon="tabler-brain">
+              {gettext("Summary")}
             </.sidebar_menu_link>
           </.sidebar_menu_item>
 
@@ -23,9 +23,9 @@ defmodule ZoonkWeb.AppLayout do
             <.sidebar_menu_link
               navigate={~p"/goals"}
               active={@active_page == :goals}
-              icon="tabler-target"
+              icon="tabler-target-arrow"
             >
-              Goals
+              {gettext("Goals")}
             </.sidebar_menu_link>
           </.sidebar_menu_item>
 
@@ -33,9 +33,9 @@ defmodule ZoonkWeb.AppLayout do
             <.sidebar_menu_link
               navigate={~p"/catalog"}
               active={@active_page == :catalog}
-              icon="tabler-book"
+              icon="tabler-layout-grid"
             >
-              Catalog
+              {gettext("Catalog")}
             </.sidebar_menu_link>
           </.sidebar_menu_item>
 
@@ -43,9 +43,9 @@ defmodule ZoonkWeb.AppLayout do
             <.sidebar_menu_link
               navigate={~p"/library"}
               active={@active_page == :library}
-              icon="tabler-books"
+              icon="tabler-stack-2"
             >
-              Library
+              {gettext("Library")}
             </.sidebar_menu_link>
           </.sidebar_menu_item>
         </.sidebar_menu>
@@ -57,13 +57,13 @@ defmodule ZoonkWeb.AppLayout do
               active={@active_page == :user_email}
               icon="tabler-mail"
             >
-              Email Settings
+              {gettext("Email Settings")}
             </.sidebar_menu_link>
           </.sidebar_menu_item>
 
           <.sidebar_menu_item>
             <.sidebar_menu_link href={~p"/logout"} method="delete" icon="tabler-logout">
-              Logout
+              {gettext("Logout")}
             </.sidebar_menu_link>
           </.sidebar_menu_item>
         </.sidebar_menu>
