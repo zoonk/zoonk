@@ -10,9 +10,13 @@ defmodule ZoonkWeb.AppLayout do
 
   def render(assigns) do
     ~H"""
-    <main>
-      {render_slot(@inner_block)}
-      <.flash_group flash={@flash} />
+    <main class="flex w-full">
+      <.sidebar></.sidebar>
+
+      <div>
+        {render_slot(@inner_block)}
+        <.flash_group flash={@flash} />
+      </div>
     </main>
     """
   end

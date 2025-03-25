@@ -95,6 +95,7 @@ defmodule ZoonkWeb do
       import ZoonkWeb.Components.Form
       import ZoonkWeb.Components.Icon
       import ZoonkWeb.Components.Input
+      import ZoonkWeb.Components.Sidebar
       import ZoonkWeb.Components.Text
       import ZoonkWeb.Components.Utils
 
