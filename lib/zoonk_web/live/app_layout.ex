@@ -48,7 +48,7 @@ defmodule ZoonkWeb.AppLayout do
             active={@active_page == :user_email}
             icon="tabler-mail"
           >
-            {gettext("Email Settings")}
+            {gettext("Email")}
           </.sidebar_menu_item>
 
           <.sidebar_menu_item destructive href={~p"/logout"} method="delete" icon="tabler-logout">
