@@ -8,7 +8,6 @@ defmodule ZoonkWeb.Components.Sidebar do
   use Phoenix.Component
 
   import ZoonkWeb.Components.Icon
-  import ZoonkWeb.Components.Text
 
   attr :class, :any, default: nil, doc: "Additional class for the sidebar"
   slot :inner_block, required: true, doc: "The inner block of the sidebar"
@@ -35,15 +34,9 @@ defmodule ZoonkWeb.Components.Sidebar do
   def sidebar_menu(assigns) do
     ~H"""
     <section class="p-4">
-      <.text
-        :if={@heading}
-        tag="h4"
-        variant={:custom}
-        size={:small}
-        class="text-zk-muted-foreground/70 px-2 pb-2 font-medium"
-      >
+      <h4 :if={@heading} class="text-zk-muted-foreground/70 px-4 pb-2 text-xs font-medium">
         {@heading}
-      </.text>
+      </h4>
 
       <ul class={["flex w-full min-w-0 flex-col gap-1", @class]}>
         {render_slot(@inner_block)}
