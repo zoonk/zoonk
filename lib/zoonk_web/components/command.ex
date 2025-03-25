@@ -132,7 +132,7 @@ defmodule ZoonkWeb.Components.Command do
 
   def command_list(assigns) do
     ~H"""
-    <ul class={["max-h-72 overflow-y-auto overflow-x-hidden", @class]}>
+    <ul class={["max-h-72 select-none overflow-y-auto overflow-x-hidden", @class]}>
       {render_slot(@inner_block)}
     </ul>
     """
@@ -229,7 +229,7 @@ defmodule ZoonkWeb.Components.Command do
 
   def command_group(assigns) do
     ~H"""
-    <div class={["text-zk-foreground overflow-hidden p-1", @class]}>
+    <div class={["text-zk-foreground select-none overflow-hidden p-1", @class]}>
       <h6 :if={@heading} class="text-zk-muted-foreground px-2 py-1.5 text-xs font-medium">
         {@heading}
       </h6>
