@@ -32,7 +32,7 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
           </.card_description>
         </.card_header>
 
-        <.card_content align={:center} class="flex flex-col gap-4">
+        <.card_content align={:bottom} class="flex flex-col gap-4">
           <.command_trigger
             id="settings-trigger"
             label="Find settings..."
@@ -45,35 +45,21 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
       <.dialog id="search-dialog">
         <.command_input placeholder="Type to search..." />
         <.command_list>
-          <li :for={i <- 1..5} class="group">
-            <button class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-zk-secondary-accent">
-              <.icon name="tabler-file-text" class="size-4 text-zk-muted-foreground" />
-              <span>Documentation item {i}</span>
-            </button>
-          </li>
+          <.command_item :for={i <- 1..5}>
+            <.icon name="tabler-file-text" />
+            <span>Documentation item {i}</span>
+          </.command_item>
         </.command_list>
       </.dialog>
 
       <.dialog id="settings-dialog">
         <.command_input placeholder="Search settings..." icon="tabler-settings" />
         <.command_list>
-          <li
-            :for={
-              {icon, label} <- [
-                {"tabler-user", "Account settings"},
-                {"tabler-bell", "Notifications"},
-                {"tabler-palette", "Appearance"},
-                {"tabler-shield", "Privacy & Security"},
-                {"tabler-language", "Language"}
-              ]
-            }
-            class="group"
-          >
-            <button class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left hover:bg-zk-secondary-accent">
-              <.icon name={icon} class="size-4 text-zk-muted-foreground" />
-              <span>{label}</span>
-            </button>
-          </li>
+          <.command_item :for={{icon, label, shortcut} <- settings()}>
+            <.icon name={icon} />
+            <span>{label}</span>
+            <.command_shortcut>{shortcut}</.command_shortcut>
+          </.command_item>
         </.command_list>
       </.dialog>
     </ZoonkDev.UIPreview.UIPreviewLayout.render>
@@ -85,4 +71,13 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
     socket = assign(socket, page_title: "Command")
     {:ok, socket}
   end
+
+  def settings,
+    do: [
+      {"tabler-user", "Account settings", "⌘A"},
+      {"tabler-bell", "Notifications", "⌘N"},
+      {"tabler-palette", "Appearance", "⌘T"},
+      {"tabler-shield", "Privacy & Security", "⌘P"},
+      {"tabler-language", "Language", "⌘L"}
+    ]
 end

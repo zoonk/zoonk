@@ -134,4 +134,72 @@ defmodule ZoonkWeb.Components.Command do
     </ul>
     """
   end
+
+  @doc """
+  Renders a command item with optional icon and shortcut.
+
+  This component provides a standardized command item that can display
+  an icon or image on the left, content in the middle, and an optional
+  shortcut indicator on the right.
+
+  ## Examples
+
+      <.command_item>
+        <.icon name="tabler-settings" />
+        <span>Settings</span>
+        <.command_shortcut>⌘S</.command_shortcut>
+      </.command_item>
+
+      <.command_item disabled>
+        <.icon name="tabler-lock" />
+        <span>Restricted Option</span>
+      </.command_item>
+  """
+  attr :class, :string, default: nil, doc: "Additional CSS classes for the item"
+  attr :selected, :boolean, default: false, doc: "Whether the item is currently selected"
+  attr :rest, :global, doc: "Additional HTML attributes"
+  slot :inner_block, required: true, doc: "The content of the command item"
+
+  def command_item(assigns) do
+    ~H"""
+    <li>
+      <.link
+        class={[
+          "relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5",
+          "text-zk-secondary-foreground text-sm outline-none",
+          "hover:bg-zk-secondary",
+          "focus-visible:bg-zk-secondary",
+          @selected && "bg-zk-secondary",
+          @class
+        ]}
+        {@rest}
+      >
+        {render_slot(@inner_block)}
+      </.link>
+    </li>
+    """
+  end
+
+  @doc """
+  Renders a keyboard shortcut label for command items.
+
+  This component provides a styled span for displaying keyboard shortcuts
+  in command items.
+
+  ## Examples
+
+      <.command_shortcut>⌘K</.command_shortcut>
+      <.command_shortcut class="opacity-75">⌘P</.command_shortcut>
+  """
+  attr :class, :string, default: nil, doc: "Additional CSS classes for the shortcut"
+  attr :rest, :global, doc: "Additional HTML attributes"
+  slot :inner_block, required: true, doc: "The content of the shortcut"
+
+  def command_shortcut(assigns) do
+    ~H"""
+    <span class={["text-zk-muted-foreground ml-auto text-xs tracking-widest", @class]} {@rest}>
+      {render_slot(@inner_block)}
+    </span>
+    """
+  end
 end
