@@ -3,6 +3,7 @@
 - Use `@impl ModuleName` for callback implementations instead of `@impl true`.
 - Use the next HEEX syntax `{@variable}` instead of `<%= @variable %>`.
 - When you need to conditionally render an item, you don't need to create a separate div or element for it, you can use use `:if` directly in the element. For example, instead of `<% if !@empty do %><.card_content>...</.card_content><% end %>` or `<div :if={!@empty}><.card_content>...</.card_content></div>`, you can use `<.card_content :if={!@empty}>...</.card_content>`.
+- When writing text, use Gettext for translations. For example, instead of `Hello`, use `gettext("Hello")` or `dgettext("somedomain", "Hello")` for domain-specific translations.
 
 ## Documentation
 
@@ -54,6 +55,7 @@
 - When updating a component, also update its preview in the `lib/zoonk_dev/ui_preview` directory.
 - When conditionally adding a class to a component, convert it to a list and use the `@variant == :primary && ""` pattern. For example, `class={[@variant == :primary && "bg-zk-primary"]}`.
 - When adding text, make sure to use the `<.text>` component instead of plain text. For example, instead of `<h1>Title</h1>`, use `<.text tag="h1">Title</.text>`.
+- For components with inner blocks, use `{render_slot(@inner_block)}` to render the inner block. Never use only {@inner_block} or <%= @inner_block %> or <%= render_slot(@inner_block) %>.
 
 ## Icons
 

@@ -7,6 +7,8 @@ defmodule ZoonkWeb.Components.Sidebar do
   """
   use Phoenix.Component
 
+  import ZoonkWeb.Components.Icon
+
   attr :class, :any, default: nil, doc: "Additional class for the sidebar"
 
   slot :inner_block, required: true, doc: "The inner block of the sidebar"
@@ -23,6 +25,57 @@ defmodule ZoonkWeb.Components.Sidebar do
     ]}>
       {render_slot(@inner_block)}
     </aside>
+    """
+  end
+
+  attr :class, :any, default: nil, doc: "Additional class for the sidebar menu"
+
+  slot :inner_block, required: true, doc: "The inner block of the sidebar menu"
+
+  def sidebar_menu(assigns) do
+    ~H"""
+    <ul class={["flex w-full min-w-0 flex-col gap-1 p-4", @class]}>
+      {render_slot(@inner_block)}
+    </ul>
+    """
+  end
+
+  attr :active, :boolean, default: false, doc: "Whether the menu item is active"
+  attr :class, :any, default: nil, doc: "Additional class for the sidebar menu item"
+
+  slot :inner_block, required: true, doc: "The inner block of the sidebar menu item"
+
+  def sidebar_menu_item(assigns) do
+    ~H"""
+    <li class={["group relative", @class]}>
+      {render_slot(@inner_block)}
+    </li>
+    """
+  end
+
+  attr :active, :boolean, default: false, doc: "Whether the link is active"
+  attr :class, :any, default: nil, doc: "Additional class for the sidebar menu link"
+  attr :icon, :string, required: false, doc: "The icon name to display"
+  attr :rest, :global, include: ~w(href method navigate patch), doc: "HTML attributes to apply to the link"
+
+  slot :inner_block, required: true, doc: "The inner block of the sidebar menu link"
+
+  def sidebar_menu_link(assigns) do
+    ~H"""
+    <.link
+      class={[
+        "flex w-full items-center gap-3 rounded-md px-3 py-2",
+        "text-zk-surface-foreground hover:bg-zk-secondary hover:text-zk-secondary-foreground",
+        "transition-colors focus-visible:ring-zk-ring focus-visible:outline-none focus-visible:ring-2",
+        @active &&
+          "bg-zk-primary-subtle text-zk-primary-subtle-foreground hover:bg-zk-primary-subtle",
+        @class
+      ]}
+      {@rest}
+    >
+      <.icon :if={@icon} name={@icon} class="h-5 w-5" />
+      <span class="truncate">{render_slot(@inner_block)}</span>
+    </.link>
     """
   end
 end
