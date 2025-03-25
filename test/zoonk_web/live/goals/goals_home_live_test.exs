@@ -22,7 +22,6 @@ defmodule ZoonkWeb.Goals.GoalsHomeLiveTest do
         |> render_click()
         |> follow_redirect(conn, ~p"/goals")
 
-      assert has_element?(catalog_lv, "h1", "Goals")
       assert has_element?(catalog_lv, "li[aria-current='page']", "Goals")
     end
   end

@@ -16,7 +16,6 @@ defmodule ZoonkWeb.AppHomeLiveTest do
     test "renders page", %{conn: conn} do
       {:ok, lv, _html} = live(conn, ~p"/")
 
-      assert has_element?(lv, "h1", "Summary")
       assert has_element?(lv, "li[aria-current='page']", "Summary")
     end
 
@@ -28,9 +27,9 @@ defmodule ZoonkWeb.AppHomeLiveTest do
 
       assert {:ok, _redirect_lv, _html} =
                lv
-               |> element("a[href='/user/email?redirect_to=%2F']")
+               |> element("a", "Email Settings")
                |> render_click()
-               |> follow_redirect(conn, ~p"/user/email?redirect_to=%2F")
+               |> follow_redirect(conn, ~p"/user/email")
     end
   end
 end

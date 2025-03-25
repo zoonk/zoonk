@@ -40,44 +40,31 @@ defmodule ZoonkWeb.Components.Sidebar do
     """
   end
 
-  attr :active, :boolean, default: false, doc: "Whether the menu item is active"
-  attr :class, :any, default: nil, doc: "Additional class for the sidebar menu item"
-
-  slot :inner_block, required: true, doc: "The inner block of the sidebar menu item"
-
-  def sidebar_menu_item(assigns) do
-    ~H"""
-    <li class={["group relative", @class]}>
-      {render_slot(@inner_block)}
-    </li>
-    """
-  end
-
   attr :active, :boolean, default: false, doc: "Whether the link is active"
-  attr :class, :any, default: nil, doc: "Additional class for the sidebar menu link"
   attr :icon, :string, required: false, doc: "The icon name to display"
   attr :rest, :global, include: ~w(href method navigate patch), doc: "HTML attributes to apply to the link"
 
   slot :inner_block, required: true, doc: "The inner block of the sidebar menu link"
 
-  def sidebar_menu_link(assigns) do
+  def sidebar_menu_item(assigns) do
     ~H"""
-    <.link
-      class={[
-        "flex w-full items-center gap-3 rounded-md px-3 py-2",
-        "text-sm transition-colors",
-        "hover:bg-zk-secondary",
-        "focus-visible:ring-zk-ring focus-visible:outline-0 focus-visible:ring-2",
-        @active &&
-          "bg-zk-primary-subtle/90 text-zk-primary-subtle-foreground hover:bg-zk-primary-subtle",
-        !@active && "text-zk-muted-foreground",
-        @class
-      ]}
-      {@rest}
-    >
-      <.icon :if={@icon} name={@icon} />
-      <span class="truncate">{render_slot(@inner_block)}</span>
-    </.link>
+    <li aria-current={@active && "page"}>
+      <.link
+        class={[
+          "flex w-full items-center gap-3 rounded-md px-3 py-2",
+          "text-sm transition-colors",
+          "hover:bg-zk-secondary",
+          "focus-visible:ring-zk-ring focus-visible:outline-0 focus-visible:ring-2",
+          @active &&
+            "bg-zk-primary-subtle/90 text-zk-primary-subtle-foreground hover:bg-zk-primary-subtle",
+          !@active && "text-zk-muted-foreground"
+        ]}
+        {@rest}
+      >
+        <.icon :if={@icon} name={@icon} />
+        <span class="truncate">{render_slot(@inner_block)}</span>
+      </.link>
+    </li>
     """
   end
 end

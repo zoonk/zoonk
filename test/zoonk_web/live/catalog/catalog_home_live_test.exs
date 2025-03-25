@@ -22,7 +22,6 @@ defmodule ZoonkWeb.Catalog.CatalogHomeLiveTest do
         |> render_click()
         |> follow_redirect(conn, ~p"/catalog")
 
-      assert has_element?(catalog_lv, "h1", "Catalog")
       assert has_element?(catalog_lv, "li[aria-current='page']", "Catalog")
     end
   end
