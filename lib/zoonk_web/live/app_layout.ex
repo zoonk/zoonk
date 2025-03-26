@@ -13,72 +13,28 @@ defmodule ZoonkWeb.AppLayout do
     <main class="flex w-full">
       <.sidebar>
         <.sidebar_menu>
-          <.sidebar_menu_item navigate={~p"/"} active={@active_page == :home} icon="tabler-brain">
-            {gettext("Summary")}
-          </.sidebar_menu_item>
-
           <.sidebar_menu_item
-            navigate={~p"/goals"}
-            active={@active_page == :goals}
-            icon="tabler-target-arrow"
+            :for={item <- get_menu_items(:main)}
+            active={item.active == @active_page}
+            {item}
           >
-            {gettext("Goals")}
-          </.sidebar_menu_item>
-
-          <.sidebar_menu_item
-            navigate={~p"/catalog"}
-            active={@active_page == :catalog}
-            icon="tabler-layout-grid"
-          >
-            {gettext("Catalog")}
-          </.sidebar_menu_item>
-
-          <.sidebar_menu_item
-            navigate={~p"/library"}
-            active={@active_page == :library}
-            icon="tabler-stack-2"
-          >
-            {gettext("Library")}
+            {item.label}
           </.sidebar_menu_item>
         </.sidebar_menu>
 
         <.sidebar_menu heading={gettext("Management")}>
-          <.sidebar_menu_item navigate={~p"/editor"} icon="tabler-edit">
-            {gettext("Editor")}
-          </.sidebar_menu_item>
-
-          <.sidebar_menu_item navigate={~p"/org"} icon="tabler-building">
-            {gettext("Organization")}
+          <.sidebar_menu_item :for={item <- get_menu_items(:management)} {item}>
+            {item.label}
           </.sidebar_menu_item>
         </.sidebar_menu>
 
         <.sidebar_menu heading={gettext("Settings")}>
           <.sidebar_menu_item
-            navigate={~p"/user/interests"}
-            active={@active_page == :user_interests}
-            icon="tabler-star"
+            :for={item <- get_menu_items(:settings)}
+            active={item.active == @active_page}
+            {item}
           >
-            {gettext("Interests")}
-          </.sidebar_menu_item>
-
-          <.sidebar_menu_item
-            navigate={~p"/user/email"}
-            active={@active_page == :user_email}
-            icon="tabler-mail"
-          >
-            {gettext("Email")}
-          </.sidebar_menu_item>
-
-          <.sidebar_menu_item
-            navigate={~p"/user/billing"}
-            active={@active_page == :user_billing}
-            icon="tabler-credit-card"
-          >
-            {gettext("Billing")}
-          </.sidebar_menu_item>
-
-          <.sidebar_menu_item destructive href={~p"/logout"} method="delete" icon="tabler-logout">
-            {gettext("Logout")}
+            {item.label}
           </.sidebar_menu_item>
         </.sidebar_menu>
       </.sidebar>
@@ -89,5 +45,80 @@ defmodule ZoonkWeb.AppLayout do
       </div>
     </main>
     """
+  end
+
+  defp get_menu_items(:main) do
+    [
+      %{
+        navigate: ~p"/",
+        active: :home,
+        icon: "tabler-brain",
+        label: gettext("Summary")
+      },
+      %{
+        navigate: ~p"/goals",
+        active: :goals,
+        icon: "tabler-target-arrow",
+        label: gettext("Goals")
+      },
+      %{
+        navigate: ~p"/catalog",
+        active: :catalog,
+        icon: "tabler-layout-grid",
+        label: gettext("Catalog")
+      },
+      %{
+        navigate: ~p"/library",
+        active: :library,
+        icon: "tabler-stack-2",
+        label: gettext("Library")
+      }
+    ]
+  end
+
+  defp get_menu_items(:management) do
+    [
+      %{
+        navigate: ~p"/editor",
+        icon: "tabler-edit",
+        label: gettext("Editor")
+      },
+      %{
+        navigate: ~p"/org",
+        icon: "tabler-building",
+        label: gettext("Organization")
+      }
+    ]
+  end
+
+  defp get_menu_items(:settings) do
+    [
+      %{
+        navigate: ~p"/user/interests",
+        active: :user_interests,
+        icon: "tabler-star",
+        label: gettext("Interests")
+      },
+      %{
+        navigate: ~p"/user/email",
+        active: :user_email,
+        icon: "tabler-mail",
+        label: gettext("Email")
+      },
+      %{
+        navigate: ~p"/user/billing",
+        active: :user_billing,
+        icon: "tabler-credit-card",
+        label: gettext("Billing")
+      },
+      %{
+        href: ~p"/logout",
+        method: "delete",
+        active: false,
+        icon: "tabler-logout",
+        destructive: true,
+        label: gettext("Logout")
+      }
+    ]
   end
 end

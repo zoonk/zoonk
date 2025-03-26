@@ -13,50 +13,18 @@ defmodule ZoonkWeb.OrgLayout do
     <main class="flex w-full">
       <.sidebar>
         <.sidebar_menu>
-          <.sidebar_menu_item navigate={~p"/"} icon="tabler-brain">
-            {gettext("Back to app")}
+          <.sidebar_menu_item :for={item <- get_menu_items(:main)} {item}>
+            {item.label}
           </.sidebar_menu_item>
         </.sidebar_menu>
 
         <.sidebar_menu heading={gettext("Organization")}>
           <.sidebar_menu_item
-            navigate={~p"/org"}
-            active={@active_page == :home}
-            icon="tabler-building"
+            :for={item <- get_menu_items(:org)}
+            active={item.active == @active_page}
+            {item}
           >
-            {gettext("Overview")}
-          </.sidebar_menu_item>
-
-          <.sidebar_menu_item
-            navigate={~p"/org/teams"}
-            active={@active_page == :teams}
-            icon="tabler-users"
-          >
-            {gettext("Teams")}
-          </.sidebar_menu_item>
-
-          <.sidebar_menu_item
-            navigate={~p"/org/members"}
-            active={@active_page == :members}
-            icon="tabler-user-circle"
-          >
-            {gettext("Members")}
-          </.sidebar_menu_item>
-
-          <.sidebar_menu_item
-            navigate={~p"/org/settings"}
-            active={@active_page == :settings}
-            icon="tabler-settings"
-          >
-            {gettext("Settings")}
-          </.sidebar_menu_item>
-
-          <.sidebar_menu_item
-            navigate={~p"/org/billing"}
-            active={@active_page == :billing}
-            icon="tabler-credit-card"
-          >
-            {gettext("Billing")}
+            {item.label}
           </.sidebar_menu_item>
         </.sidebar_menu>
       </.sidebar>
@@ -67,5 +35,50 @@ defmodule ZoonkWeb.OrgLayout do
       </div>
     </main>
     """
+  end
+
+  defp get_menu_items(:main) do
+    [
+      %{
+        navigate: ~p"/",
+        icon: "tabler-brain",
+        label: gettext("Back to app")
+      }
+    ]
+  end
+
+  defp get_menu_items(:org) do
+    [
+      %{
+        navigate: ~p"/org",
+        active: :home,
+        icon: "tabler-building",
+        label: gettext("Overview")
+      },
+      %{
+        navigate: ~p"/org/teams",
+        active: :teams,
+        icon: "tabler-users",
+        label: gettext("Teams")
+      },
+      %{
+        navigate: ~p"/org/members",
+        active: :members,
+        icon: "tabler-user-circle",
+        label: gettext("Members")
+      },
+      %{
+        navigate: ~p"/org/settings",
+        active: :settings,
+        icon: "tabler-settings",
+        label: gettext("Settings")
+      },
+      %{
+        navigate: ~p"/org/billing",
+        active: :billing,
+        icon: "tabler-credit-card",
+        label: gettext("Billing")
+      }
+    ]
   end
 end

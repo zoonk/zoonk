@@ -13,22 +13,18 @@ defmodule ZoonkWeb.EditorLayout do
     <main class="flex w-full">
       <.sidebar>
         <.sidebar_menu>
-          <.sidebar_menu_item navigate={~p"/"} icon="tabler-brain">
-            {gettext("Back to app")}
+          <.sidebar_menu_item :for={item <- get_menu_items(:main)} {item}>
+            {item.label}
           </.sidebar_menu_item>
         </.sidebar_menu>
 
         <.sidebar_menu heading={gettext("Editor")}>
-          <.sidebar_menu_item navigate={~p"/editor"} active={@active_page == :home} icon="tabler-edit">
-            {gettext("Dashboard")}
-          </.sidebar_menu_item>
-
           <.sidebar_menu_item
-            navigate={~p"/editor/new"}
-            active={@active_page == :new}
-            icon="tabler-plus"
+            :for={item <- get_menu_items(:editor)}
+            active={item.active == @active_page}
+            {item}
           >
-            {gettext("Create New")}
+            {item.label}
           </.sidebar_menu_item>
         </.sidebar_menu>
       </.sidebar>
@@ -39,5 +35,32 @@ defmodule ZoonkWeb.EditorLayout do
       </div>
     </main>
     """
+  end
+
+  defp get_menu_items(:main) do
+    [
+      %{
+        navigate: ~p"/",
+        icon: "tabler-brain",
+        label: gettext("Back to app")
+      }
+    ]
+  end
+
+  defp get_menu_items(:editor) do
+    [
+      %{
+        navigate: ~p"/editor",
+        active: :home,
+        icon: "tabler-edit",
+        label: gettext("Dashboard")
+      },
+      %{
+        navigate: ~p"/editor/new",
+        active: :new,
+        icon: "tabler-plus",
+        label: gettext("Create New")
+      }
+    ]
   end
 end
