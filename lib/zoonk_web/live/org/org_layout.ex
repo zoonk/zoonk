@@ -56,12 +56,6 @@ defmodule ZoonkWeb.OrgLayout do
         label: gettext("Overview")
       },
       %{
-        navigate: ~p"/org/teams",
-        active: :teams,
-        icon: "tabler-users",
-        label: gettext("Teams")
-      },
-      %{
         navigate: ~p"/org/members",
         active: :members,
         icon: "tabler-user-circle",

@@ -66,7 +66,6 @@ defmodule ZoonkWeb.Router do
       live "/editor/new", Editor.EditorNewLive
 
       live "/org", Org.OrgHomeLive
-      live "/org/teams", Org.OrgTeamsLive
       live "/org/members", Org.OrgMembersLive
       live "/org/settings", Org.OrgSettingsLive
     end
