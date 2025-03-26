@@ -19,12 +19,12 @@ defmodule Zoonk.Orgs do
   ## Examples
 
       iex> get_profile_by_host("custom-domain.com")
-      %OrgProfile{}
+      %OrgProfile{custom_domain: "custom-domain.com"}
 
-      iex> get_profile_by_host("subdomain.zoonk.org")
-      %OrgProfile{}
+      iex> get_profile_by_host("subdomain.zoonk.com")
+      %OrgProfile{subdomain: "subdomain"}
 
-      iex> get_profile_by_host("unknown.zoonk.org")
+      iex> get_profile_by_host("unknown.zoonk.com")
       nil
 
   """
@@ -43,13 +43,13 @@ defmodule Zoonk.Orgs do
     end
   end
 
-  def get_profile_by_host(_), do: nil
+  def get_profile_by_host(_host), do: nil
 
-  # Extracts subdomain from host (e.g. "subdomain" from "subdomain.zoonk.org")
+  # Extracts subdomain from host (e.g. "subdomain" from "subdomain.zoonk.com")
   defp extract_subdomain(host) do
     case String.split(host, ".", parts: 2) do
       [subdomain, _rest] -> subdomain
-      _ -> nil
+      _invalid -> nil
     end
   end
 end
