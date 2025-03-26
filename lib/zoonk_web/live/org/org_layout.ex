@@ -72,12 +72,6 @@ defmodule ZoonkWeb.OrgLayout do
         active: :settings,
         icon: "tabler-settings",
         label: gettext("Settings")
-      },
-      %{
-        navigate: ~p"/org/billing",
-        active: :billing,
-        icon: "tabler-credit-card",
-        label: gettext("Billing")
       }
     ]
   end
