@@ -5,7 +5,12 @@ defmodule ZoonkWeb.Components.Text do
   use Phoenix.Component
 
   attr :tag, :string, default: "p", doc: "HTML tag to use for the text element"
-  attr :size, :atom, values: [:header, :title, :subtitle, :body, :caption], default: :body, doc: "Size of the text"
+
+  attr :size, :atom,
+    values: [:header, :title, :subtitle, :body, :caption, :small],
+    default: :body,
+    doc: "Size of the text"
+
   attr :variant, :atom, values: [:primary, :secondary, :custom], default: :primary, doc: "Color variant of the text"
   attr :for, :string, default: nil, doc: "The for attribute for labels"
   attr :class, :any, default: nil, doc: "CSS class to apply to the text element"
@@ -54,6 +59,7 @@ defmodule ZoonkWeb.Components.Text do
   defp get_size_class(:subtitle), do: "text-lg"
   defp get_size_class(:body), do: "text-base"
   defp get_size_class(:caption), do: "text-sm"
+  defp get_size_class(:small), do: "text-xs"
 
   defp get_variant_class(:primary), do: "text-zk-foreground"
   defp get_variant_class(:secondary), do: "text-zk-muted-foreground"

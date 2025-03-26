@@ -18,11 +18,10 @@ defmodule ZoonkWeb.Catalog.CatalogHomeLiveTest do
 
       {:ok, catalog_lv, _html} =
         home_lv
-        |> element("a", "Catalog")
+        |> element("aside a", "Catalog")
         |> render_click()
         |> follow_redirect(conn, ~p"/catalog")
 
-      assert has_element?(catalog_lv, "h1", "Catalog")
       assert has_element?(catalog_lv, "li[aria-current='page']", "Catalog")
     end
   end

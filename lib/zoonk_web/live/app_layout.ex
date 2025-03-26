@@ -10,64 +10,123 @@ defmodule ZoonkWeb.AppLayout do
 
   def render(assigns) do
     ~H"""
-    <main aria-labelledby="page-title pb-24">
+    <main class="flex w-full pb-16 lg:pb-0">
+      <.sidebar>
+        <.sidebar_menu>
+          <.sidebar_menu_item
+            :for={item <- get_menu_items(:main)}
+            active={item.active == @active_page}
+            {item}
+          >
+            {item.label}
+          </.sidebar_menu_item>
+        </.sidebar_menu>
+
+        <.sidebar_menu heading={gettext("Management")}>
+          <.sidebar_menu_item :for={item <- get_menu_items(:management)} {item}>
+            {item.label}
+          </.sidebar_menu_item>
+        </.sidebar_menu>
+
+        <.sidebar_menu heading={gettext("Settings")}>
+          <.sidebar_menu_item
+            :for={item <- get_menu_items(:settings)}
+            active={item.active == @active_page}
+            {item}
+          >
+            {item.label}
+          </.sidebar_menu_item>
+        </.sidebar_menu>
+      </.sidebar>
+
+      <div class="bg-zk-background flex-1 p-6">
+        {render_slot(@inner_block)}
+        <.flash_group flash={@flash} />
+      </div>
+
       <.tab_bar>
-        <.nav_menu_item
-          active={@active_page == :home}
-          label={dgettext("content", "Summary")}
-          icon="tabler-brain"
-          navigate={~p"/"}
-        />
-
-        <.nav_menu_item
-          active={@active_page == :goals}
-          label={dgettext("content", "Goals")}
-          icon="tabler-target-arrow"
-          navigate={~p"/goals"}
-        />
-
-        <.nav_menu_item
-          active={@active_page == :catalog}
-          label={dgettext("content", "Catalog")}
-          icon="tabler-layout-grid"
-          navigate={~p"/catalog"}
-        />
-
-        <.nav_menu_item
-          active={@active_page == :library}
-          label={dgettext("content", "Library")}
-          icon="tabler-stack-2"
-          navigate={~p"/library"}
+        <.tab_bar_item
+          :for={item <- get_menu_items(:main)}
+          active={item.active == @active_page}
+          {item}
         />
       </.tab_bar>
-
-      <header
-        aria-label={gettext("Search and settings")}
-        class="mx-auto flex max-w-3xl items-center justify-between p-4 sm:p-6 md:px-8 lg:px-10 xl:px-12 2xl:px-14"
-      >
-        <.text tag="h1" size={:header} id="page-title">{@page_title}</.text>
-
-        <.link
-          navigate={~p"/user/email?redirect_to=#{user_return_to_path(@active_page)}"}
-          aria-label={dgettext("users", "Go to user settings")}
-        >
-          <.avatar
-            src={@scope.user.profile.picture_url}
-            alt={Zoonk.Accounts.User.get_display_name(@scope.user.profile)}
-          />
-        </.link>
-      </header>
-
-      {render_slot(@inner_block)}
-
-      <.flash_group flash={@flash} />
     </main>
     """
   end
 
-  defp user_return_to_path(:home), do: ~p"/"
-  defp user_return_to_path(:goals), do: ~p"/goals"
-  defp user_return_to_path(:catalog), do: ~p"/catalog"
-  defp user_return_to_path(:library), do: ~p"/library"
-  defp user_return_to_path(_page), do: ~p"/"
+  defp get_menu_items(:main) do
+    [
+      %{
+        navigate: ~p"/",
+        active: :home,
+        icon: "tabler-brain",
+        label: gettext("Summary")
+      },
+      %{
+        navigate: ~p"/goals",
+        active: :goals,
+        icon: "tabler-target-arrow",
+        label: gettext("Goals")
+      },
+      %{
+        navigate: ~p"/catalog",
+        active: :catalog,
+        icon: "tabler-layout-grid",
+        label: gettext("Catalog")
+      },
+      %{
+        navigate: ~p"/library",
+        active: :library,
+        icon: "tabler-stack-2",
+        label: gettext("Library")
+      }
+    ]
+  end
+
+  defp get_menu_items(:management) do
+    [
+      %{
+        navigate: ~p"/editor",
+        icon: "tabler-edit",
+        label: gettext("Editor")
+      },
+      %{
+        navigate: ~p"/org",
+        icon: "tabler-building",
+        label: gettext("Organization")
+      }
+    ]
+  end
+
+  defp get_menu_items(:settings) do
+    [
+      %{
+        navigate: ~p"/user/interests",
+        active: :user_interests,
+        icon: "tabler-star",
+        label: gettext("Interests")
+      },
+      %{
+        navigate: ~p"/user/email",
+        active: :user_email,
+        icon: "tabler-mail",
+        label: gettext("Email")
+      },
+      %{
+        navigate: ~p"/user/billing",
+        active: :user_billing,
+        icon: "tabler-credit-card",
+        label: gettext("Billing")
+      },
+      %{
+        href: ~p"/logout",
+        method: "delete",
+        active: false,
+        icon: "tabler-logout",
+        destructive: true,
+        label: gettext("Logout")
+      }
+    ]
+  end
 end

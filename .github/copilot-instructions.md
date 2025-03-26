@@ -1,8 +1,12 @@
 ## Miscellaneous
 
+- When solving a problem, always try to find the simplest solution. If you find yourself writing complex code, take a step back and think about how you can simplify it. Ask yourself: "Is this the best way to do it?", "Is this the most readable way to do it?", "Is this the simplest way to do it?". Always strive for simplicity and readability.
+- When creating a design, ask yourself how companies known to have a great/clean UX (like Apple, Linear, Vercel, shadcn) would do it. Look for inspiration in their designs and try to apply similar principles to your own work. Thinking about Apple's Human Interface Guidelines can also be beneficial.
+- Try to avoid using JavaScript as much as possible, always try to see if there's a Phoenix or LiveView solution for it. When it's necessary to use JavaScript, prefer to create a LiveView hook using phx-hook.
 - Use `@impl ModuleName` for callback implementations instead of `@impl true`.
 - Use the next HEEX syntax `{@variable}` instead of `<%= @variable %>`.
 - When you need to conditionally render an item, you don't need to create a separate div or element for it, you can use use `:if` directly in the element. For example, instead of `<% if !@empty do %><.card_content>...</.card_content><% end %>` or `<div :if={!@empty}><.card_content>...</.card_content></div>`, you can use `<.card_content :if={!@empty}>...</.card_content>`.
+- When writing text, use Gettext for translations. For example, instead of `Hello`, use `gettext("Hello")` or `dgettext("somedomain", "Hello")` for domain-specific translations.
 
 ## Documentation
 
@@ -17,7 +21,7 @@
 ## CSS
 
 - Use `tailwind` for CSS.
-- Never use tailwind colors directly. Instead, use the colors defined in `assets/css/main.css`.
+- Never use tailwind colors directly. Instead, use the colors defined in `assets/css/main.css`. For example, don't use `bg-white`, use `bg-zk-surface` instead.
 - Common used utilities should be added to the `assets/css/main.css` file and have a `zk` prefix. For example: `@utility zk-surface {@apply p-4}`.
 - When adding tailwind utilities, ensure they're consistent with the existing ones in `assets/css/main.css`.
 
@@ -42,7 +46,7 @@
 
 - Shared components should be placed in the `lib/zoonk_web/components` directory.
 - When coding, check the available components first to see if there's a component that can be used for what you're trying to accomplish. Use a shared component whenever available. If a component is not available, create it. Make changes to existing components if necessary to accommodate new use cases.
-- When creating a new shared component, add it to the `html_helpers` function of the `lib/zoonk_web.ex` file.
+- When creating a new component, import it in the `html_helpers` function of the `lib/zoonk_web.ex` file, so that it can be used by default in all templates without the need to import it in each module.
 - Add a `@moduledoc` to each module and a `@doc` to each function/component, including examples of how to use the component.
 - Group related components together. For example, the `flash.ex` contains both `flash` and `flash_group` components.
 - Add `Phoenix.Component.attr/3` to each component to define the attributes it accepts. Include the `doc` option to provide documentation for each attribute.
@@ -54,6 +58,8 @@
 - When updating a component, also update its preview in the `lib/zoonk_dev/ui_preview` directory.
 - When conditionally adding a class to a component, convert it to a list and use the `@variant == :primary && ""` pattern. For example, `class={[@variant == :primary && "bg-zk-primary"]}`.
 - When adding text, make sure to use the `<.text>` component instead of plain text. For example, instead of `<h1>Title</h1>`, use `<.text tag="h1">Title</.text>`.
+- For components with inner blocks, use `{render_slot(@inner_block)}` to render the inner block. Never use only {@inner_block} or <%= @inner_block %> or <%= render_slot(@inner_block) %>.
+- Make sure your components are accessible.
 
 ## Icons
 

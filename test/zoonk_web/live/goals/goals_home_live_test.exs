@@ -16,14 +16,13 @@ defmodule ZoonkWeb.Goals.GoalsHomeLiveTest do
     test "renders page", %{conn: conn} do
       {:ok, home_lv, _html} = live(conn, ~p"/")
 
-      {:ok, catalog_lv, _html} =
+      {:ok, goals_lv, _html} =
         home_lv
-        |> element("a", "Goals")
+        |> element("aside a", "Goals")
         |> render_click()
         |> follow_redirect(conn, ~p"/goals")
 
-      assert has_element?(catalog_lv, "h1", "Goals")
-      assert has_element?(catalog_lv, "li[aria-current='page']", "Goals")
+      assert has_element?(goals_lv, "li[aria-current='page']", "Goals")
     end
   end
 end

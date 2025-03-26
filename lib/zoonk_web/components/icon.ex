@@ -26,8 +26,8 @@ defmodule ZoonkWeb.Components.Icon do
       class={[
         @name,
         @size == :sm && "size-5",
-        @size == :md && "size-7",
-        @size == :lg && "size-9",
+        @size == :md && "size-6",
+        @size == :lg && "size-8",
         @class
       ]}
       aria-label={@label}
