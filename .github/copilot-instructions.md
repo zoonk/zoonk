@@ -1,5 +1,8 @@
 ## Miscellaneous
 
+- When solving a problem, always try to find the simplest solution. If you find yourself writing complex code, take a step back and think about how you can simplify it. Ask yourself: "Is this the best way to do it?", "Is this the most readable way to do it?", "Is this the simplest way to do it?". Always strive for simplicity and readability.
+- When creating a design, ask yourself how companies known to have a great/clean UX (like Apple, Linear, Vercel, shadcn) would do it. Look for inspiration in their designs and try to apply similar principles to your own work. Thinking about Apple's Human Interface Guidelines can also be beneficial.
+- Try to avoid using JavaScript as much as possible, always try to see if there's a Phoenix or LiveView solution for it. When it's necessary to use JavaScript, prefer to create a LiveView hook using phx-hook.
 - Use `@impl ModuleName` for callback implementations instead of `@impl true`.
 - Use the next HEEX syntax `{@variable}` instead of `<%= @variable %>`.
 - When you need to conditionally render an item, you don't need to create a separate div or element for it, you can use use `:if` directly in the element. For example, instead of `<% if !@empty do %><.card_content>...</.card_content><% end %>` or `<div :if={!@empty}><.card_content>...</.card_content></div>`, you can use `<.card_content :if={!@empty}>...</.card_content>`.
@@ -56,6 +59,7 @@
 - When conditionally adding a class to a component, convert it to a list and use the `@variant == :primary && ""` pattern. For example, `class={[@variant == :primary && "bg-zk-primary"]}`.
 - When adding text, make sure to use the `<.text>` component instead of plain text. For example, instead of `<h1>Title</h1>`, use `<.text tag="h1">Title</.text>`.
 - For components with inner blocks, use `{render_slot(@inner_block)}` to render the inner block. Never use only {@inner_block} or <%= @inner_block %> or <%= render_slot(@inner_block) %>.
+- Make sure your components are accessible.
 
 ## Icons
 
