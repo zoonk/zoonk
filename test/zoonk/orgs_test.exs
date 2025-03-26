@@ -53,34 +53,22 @@ defmodule Zoonk.OrgsTest do
       assert Orgs.get_profile_by_host("malformed") == nil
     end
 
-    test "case-sensitive matching depends on database configuration" do
-      profile = org_profile_with_custom_domain_fixture()
-      host = String.upcase(profile.custom_domain)
-      result = Orgs.get_profile_by_host(host)
+    test "case-insensitive matching for custom domains" do
+      profile = org_profile_with_custom_domain_fixture(%{custom_domain: "my-domain.com"})
 
-      # Document the actual behavior rather than making assumptions
-      if result == profile do
-        # If case-insensitive
-        assert result == profile
-      else
-        # If case-sensitive
-        refute result == profile
-      end
+      # Should match regardless of case
+      assert Orgs.get_profile_by_host("MY-DOMAIN.COM") == profile
+      assert Orgs.get_profile_by_host("my-domain.com") == profile
+      assert Orgs.get_profile_by_host("My-Domain.Com") == profile
     end
 
-    test "case-sensitive matching for subdomains depends on database configuration" do
-      profile = org_profile_fixture()
-      host = "#{String.upcase(profile.subdomain)}.zoonk.com"
-      result = Orgs.get_profile_by_host(host)
+    test "case-insensitive matching for subdomains" do
+      profile = org_profile_fixture(%{subdomain: "mysubdomain"})
 
-      # Document the actual behavior rather than making assumptions
-      if result == profile do
-        # If case-insensitive
-        assert result == profile
-      else
-        # If case-sensitive
-        refute result == profile
-      end
+      # Should match regardless of case
+      assert Orgs.get_profile_by_host("MYSUBDOMAIN.zoonk.com") == profile
+      assert Orgs.get_profile_by_host("mysubdomain.zoonk.com") == profile
+      assert Orgs.get_profile_by_host("MySubdomain.zoonk.com") == profile
     end
 
     test "subdomain containing only alphanumeric characters is handled properly" do
