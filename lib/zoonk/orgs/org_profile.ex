@@ -24,6 +24,7 @@ defmodule Zoonk.Orgs.OrgProfile do
   | `updated_at` | `DateTime` | Timestamp when the organization profile was last updated. |
   """
   use Ecto.Schema
+  use Gettext, backend: Zoonk.Gettext
 
   import Ecto.Changeset
 
@@ -63,9 +64,17 @@ defmodule Zoonk.Orgs.OrgProfile do
     |> validate_required([:display_name, :org_id, :subdomain])
     |> validate_length(:display_name, min: 1, max: 32)
     |> validate_length(:subdomain, min: 1, max: 32)
+    |> validate_subdomain()
     |> unsafe_validate_unique(:subdomain, Zoonk.Repo)
     |> unsafe_validate_unique(:custom_domain, Zoonk.Repo)
     |> unique_constraint(:subdomain)
     |> unique_constraint(:custom_domain)
+  end
+
+  # don't allow the subdomain to have dots, spaces, or special characters
+  def validate_subdomain(changeset) do
+    validate_format(changeset, :subdomain, ~r/^[a-zA-Z0-9]+$/,
+      message: dgettext("errors", "Subdomain can only contain letters and numbers")
+    )
   end
 end
