@@ -69,7 +69,6 @@ defmodule ZoonkWeb.Router do
       live "/org/teams", Org.OrgTeamsLive
       live "/org/members", Org.OrgMembersLive
       live "/org/settings", Org.OrgSettingsLive
-      live "/org/billing", Org.OrgBillingLive
     end
   end
 
