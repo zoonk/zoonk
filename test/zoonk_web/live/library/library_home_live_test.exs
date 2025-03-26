@@ -16,13 +16,13 @@ defmodule ZoonkWeb.Library.LibraryHomeLiveTest do
     test "renders page", %{conn: conn} do
       {:ok, home_lv, _html} = live(conn, ~p"/")
 
-      {:ok, catalog_lv, _html} =
+      {:ok, library_lv, _html} =
         home_lv
-        |> element("a", "Library")
+        |> element("aside a", "Library")
         |> render_click()
         |> follow_redirect(conn, ~p"/library")
 
-      assert has_element?(catalog_lv, "li[aria-current='page']", "Library")
+      assert has_element?(library_lv, "li[aria-current='page']", "Library")
     end
   end
 end
