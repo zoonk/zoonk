@@ -10,7 +10,7 @@ defmodule ZoonkWeb.AppLayout do
 
   def render(assigns) do
     ~H"""
-    <main class="flex w-full">
+    <main class="flex w-full pb-16 lg:pb-0">
       <.sidebar>
         <.sidebar_menu>
           <.sidebar_menu_item
@@ -43,6 +43,14 @@ defmodule ZoonkWeb.AppLayout do
         {render_slot(@inner_block)}
         <.flash_group flash={@flash} />
       </div>
+
+      <.tab_bar>
+        <.tab_bar_item
+          :for={item <- get_menu_items(:main)}
+          active={item.active == @active_page}
+          {item}
+        />
+      </.tab_bar>
     </main>
     """
   end
