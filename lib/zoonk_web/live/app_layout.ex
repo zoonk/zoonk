@@ -42,59 +42,13 @@ defmodule ZoonkWeb.AppLayout do
           </.sidebar_menu_item>
         </.sidebar_menu>
 
-        <.sidebar_menu heading={gettext("Editor")}>
-          <.sidebar_menu_item
-            navigate={~p"/editor"}
-            active={@active_page == :editor}
-            icon="tabler-edit"
-          >
-            {gettext("Dashboard")}
+        <.sidebar_menu heading={gettext("Management")}>
+          <.sidebar_menu_item navigate={~p"/editor"} icon="tabler-edit">
+            {gettext("Editor")}
           </.sidebar_menu_item>
 
-          <.sidebar_menu_item
-            navigate={~p"/editor/new"}
-            active={@active_page == :editor_new}
-            icon="tabler-plus"
-          >
-            {gettext("Create New")}
-          </.sidebar_menu_item>
-        </.sidebar_menu>
-
-        <.sidebar_menu heading={gettext("Organization")}>
-          <.sidebar_menu_item navigate={~p"/org"} active={@active_page == :org} icon="tabler-building">
-            {gettext("Overview")}
-          </.sidebar_menu_item>
-
-          <.sidebar_menu_item
-            navigate={~p"/org/teams"}
-            active={@active_page == :org_teams}
-            icon="tabler-users"
-          >
-            {gettext("Teams")}
-          </.sidebar_menu_item>
-
-          <.sidebar_menu_item
-            navigate={~p"/org/members"}
-            active={@active_page == :org_members}
-            icon="tabler-user-circle"
-          >
-            {gettext("Members")}
-          </.sidebar_menu_item>
-
-          <.sidebar_menu_item
-            navigate={~p"/org/settings"}
-            active={@active_page == :org_settings}
-            icon="tabler-settings"
-          >
-            {gettext("Settings")}
-          </.sidebar_menu_item>
-
-          <.sidebar_menu_item
-            navigate={~p"/org/billing"}
-            active={@active_page == :org_billing}
-            icon="tabler-credit-card"
-          >
-            {gettext("Billing")}
+          <.sidebar_menu_item navigate={~p"/org"} icon="tabler-building">
+            {gettext("Organization")}
           </.sidebar_menu_item>
         </.sidebar_menu>
 

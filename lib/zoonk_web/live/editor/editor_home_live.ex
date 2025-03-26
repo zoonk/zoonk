@@ -5,14 +5,14 @@ defmodule ZoonkWeb.Editor.EditorHomeLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render
+    <ZoonkWeb.EditorLayout.render
       scope={@current_scope}
       flash={@flash}
       page_title={@page_title}
-      active_page={:editor}
+      active_page={:home}
     >
       placeholder for editor
-    </ZoonkWeb.AppLayout.render>
+    </ZoonkWeb.EditorLayout.render>
     """
   end
 

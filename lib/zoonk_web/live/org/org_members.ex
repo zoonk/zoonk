@@ -5,14 +5,14 @@ defmodule ZoonkWeb.Org.OrgMembersLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render
+    <ZoonkWeb.OrgLayout.render
       scope={@current_scope}
       flash={@flash}
       page_title={@page_title}
-      active_page={:org_members}
+      active_page={:members}
     >
       placeholder for team members
-    </ZoonkWeb.AppLayout.render>
+    </ZoonkWeb.OrgLayout.render>
     """
   end
 

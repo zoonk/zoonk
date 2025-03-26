@@ -5,14 +5,14 @@ defmodule ZoonkWeb.Editor.EditorNewLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render
+    <ZoonkWeb.EditorLayout.render
       scope={@current_scope}
       flash={@flash}
       page_title={@page_title}
-      active_page={:editor_new}
+      active_page={:new}
     >
       placeholder for adding a new track or course
-    </ZoonkWeb.AppLayout.render>
+    </ZoonkWeb.EditorLayout.render>
     """
   end
 

@@ -5,14 +5,14 @@ defmodule ZoonkWeb.Org.OrgBillingLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render
+    <ZoonkWeb.OrgLayout.render
       scope={@current_scope}
       flash={@flash}
       page_title={@page_title}
-      active_page={:org_billing}
+      active_page={:billing}
     >
       placeholder for org billing
-    </ZoonkWeb.AppLayout.render>
+    </ZoonkWeb.OrgLayout.render>
     """
   end
 
