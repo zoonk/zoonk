@@ -9,3 +9,4 @@
 - When writing text, use Gettext for translations. For example, instead of `Hello`, use `gettext("Hello")` or `dgettext("somedomain", "Hello")` for domain-specific translations.
 - When using the zoonk domain, always write `zoonk.com`, not `zoonk.org`. For testing, you can use `zoonk.test` instead.
 - Before suggesting any code, check if this code can be simplified even further. Continue doing this until you reach the simplest solution possible.
+- Always add tests to any functionality you add or modify.
