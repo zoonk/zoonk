@@ -12,11 +12,14 @@ defmodule Zoonk.Orgs.Org do
   This is useful for schools and businesses that want to
   use their own domain for their white-label page.
 
+  This schema manages public information about the organization.
+  For private settings, see `Zoonk.Orgs.OrgSettings`.
+
   ## Organization Types
 
   | Type | Description |
   |------|-------------|
-  | `:main` | The main organization that owns this entire app (e.g. Zoonk) |
+  | `:app` | The main organization that owns this entire app (e.g. Zoonk) |
   | `:team` | Organizations using Zoonk for internal training. |
   | `:creator` | Organizations selling content on Zoonk. |
   | `:school` | Educational institutions using Zoonk with their existing students. |
@@ -25,41 +28,67 @@ defmodule Zoonk.Orgs.Org do
 
   | Field Name | Type | Description |
   |------------|------|-------------|
-  | `currency` | `Ecto.Enum` | Currency used for payments. |
   | `kind` | `Ecto.Enum` | The type of organization. |
-  | `stripe_customer_id` | `String` | Customer ID used for Stripe payments. |
-  | `tax_id` | `Zoonk.Vault.Binary` | Tax ID required by some jurisdictions. |
-  | `profile` | `Zoonk.Orgs.OrgProfile` | Profile visible to org members. |
-  | `members` | `Zoonk.Orgs.Member` | List all members associated with this organization. |
-  | `inserted_at` | `DateTime` | Timestamp when the organization was created. |
-  | `updated_at` | `DateTime` | Timestamp when the organization was last updated. |
+  | `display_name` | `String` | The name of the organization as it will be displayed to users. |
+  | `bio` | `String` | A brief description of the organization. |
+  | `public_email` | `String` | The public email address for the organization. |
+  | `icon_url` | `String` | URL for the organization's icon. |
+  | `logo_url` | `String` | URL for the organization's logo. |
+  | `subdomain` | `String` | The subdomain used for the organization's white-label page. |
+  | `custom_domain` | `String` | The custom domain used for the organization's white-label page. |
+  | `org_id` | `Integer` | ID from `Zoonk.Locations.Org` |
+  | `city_id` | `Integer` | ID from `Zoonk.Locations.City` |
+  | `inserted_at` | `DateTime` | Timestamp when the organization profile was created. |
+  | `updated_at` | `DateTime` | Timestamp when the organization profile was last updated. |
   """
   use Ecto.Schema
+  use Gettext, backend: Zoonk.Gettext
 
   import Ecto.Changeset
 
-  alias Zoonk.Config.CurrencyConfig
-  alias Zoonk.Orgs.OrgMember
-  alias Zoonk.Orgs.OrgProfile
-  alias Zoonk.Vault
+  alias Zoonk.Locations.City
+  alias Zoonk.Orgs.Org
 
   schema "orgs" do
-    field :currency, Ecto.Enum, values: CurrencyConfig.list_currencies(:atom), default: :USD
-    field :kind, Ecto.Enum, values: [:main, :team, :creator, :school], default: :team
+    field :kind, Ecto.Enum, values: [:app, :team, :creator, :school], default: :team
+    field :display_name, :string
+    field :bio, :string
+    field :public_email, :string
+    field :icon_url, :string
+    field :logo_url, :string
 
-    field :stripe_customer_id, :string
-    field :tax_id, Vault.Binary
+    field :subdomain, :string
+    field :custom_domain, :string
 
-    has_one :profile, OrgProfile
-    has_many :members, OrgMember
+    belongs_to :org, Org
+    belongs_to :city, City
 
     timestamps(type: :utc_datetime)
   end
 
   @doc false
-  def changeset(org, attrs) do
-    org
-    |> cast(attrs, [:currency, :kind, :stripe_customer_id, :tax_id])
-    |> validate_required([:currency, :kind])
+  def changeset(profile, attrs) do
+    profile
+    |> cast(attrs, [
+      :display_name,
+      :bio,
+      :public_email,
+      :icon_url,
+      :logo_url,
+      :subdomain,
+      :custom_domain,
+      :city_id,
+      :org_id
+    ])
+    |> validate_required([:display_name, :org_id, :subdomain])
+    |> validate_length(:display_name, min: 1, max: 32)
+    |> validate_length(:subdomain, min: 1, max: 32)
+    |> validate_format(:subdomain, ~r/^[a-zA-Z0-9_-]+$/,
+      message: "can only contain letters, numbers, underscores, and hyphens"
+    )
+    |> unsafe_validate_unique(:subdomain, Zoonk.Repo)
+    |> unsafe_validate_unique(:custom_domain, Zoonk.Repo)
+    |> unique_constraint(:subdomain)
+    |> unique_constraint(:custom_domain)
   end
 end

@@ -1,17 +1,17 @@
-defmodule Zoonk.Repo.Migrations.CreateOrgsTable do
+defmodule Zoonk.Repo.Migrations.CreateOrgSettingsTable do
   use Ecto.Migration
 
   def change do
-    create table(:orgs) do
+    create table(:org_settings) do
+      add :org_id, references(:orgs, on_delete: :delete_all), null: false
+
       add :currency, :string, null: false, default: "USD"
-      add :kind, :string, null: false, default: "team"
       add :stripe_customer_id, :string
       add :tax_id, :binary
 
       timestamps(type: :utc_datetime)
     end
 
-    create index(:orgs, [:kind])
-    create index(:orgs, [:inserted_at])
+    create unique_index(:org_settings, [:org_id])
   end
 end
