@@ -41,11 +41,12 @@ defmodule Zoonk.Accounts.User do
 
   alias Zoonk.Accounts.UserProfile
   alias Zoonk.Accounts.UserProvider
+  alias Zoonk.Config.CurrencyConfig
   alias Zoonk.Configuration
 
   schema "users" do
     field :year_of_birth, :integer
-    field :currency, Ecto.Enum, values: Configuration.list_currencies(:atom), default: :USD
+    field :currency, Ecto.Enum, values: CurrencyConfig.list_currencies(:atom), default: :USD
     field :kind, Ecto.Enum, values: [:regular, :agent, :guest], default: :regular
     field :email, :string
     field :stripe_customer_id, :string
