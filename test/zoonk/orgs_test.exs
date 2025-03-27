@@ -1,0 +1,196 @@
+defmodule Zoonk.OrgsTest do
+  use Zoonk.DataCase, async: true
+
+  import Zoonk.OrgFixtures
+
+  alias Zoonk.Orgs
+  alias Zoonk.Orgs.Org
+
+  describe "create_org/1" do
+    test "creates an organization with valid data" do
+      attrs = valid_org_attributes()
+
+      assert {:ok, %Org{} = org} = Orgs.create_org(attrs)
+      assert org.display_name == attrs.display_name
+      assert org.subdomain == attrs.subdomain
+      assert org.kind == :team
+    end
+
+    test "creates an organization with all optional fields" do
+      valid_attrs = %{
+        display_name: "Complete Organization",
+        subdomain: "complete-org",
+        kind: :school,
+        bio: "Organization description",
+        public_email: "info@example.com",
+        icon_url: "https://example.com/icon.png",
+        logo_url: "https://example.com/logo.png",
+        custom_domain: "example-org.com"
+      }
+
+      assert {:ok, %Org{} = org} = Orgs.create_org(valid_attrs)
+      assert org.display_name == "Complete Organization"
+      assert org.subdomain == "complete-org"
+      assert org.kind == :school
+      assert org.bio == "Organization description"
+      assert org.public_email == "info@example.com"
+      assert org.icon_url == "https://example.com/icon.png"
+      assert org.logo_url == "https://example.com/logo.png"
+      assert org.custom_domain == "example-org.com"
+    end
+
+    test "returns error changeset when display_name length is invalid" do
+      # Too short (empty)
+      short_attrs = valid_org_attributes(%{display_name: ""})
+      assert {:error, changeset} = Orgs.create_org(short_attrs)
+      assert %{display_name: ["can't be blank"]} = errors_on(changeset)
+
+      # Too long (more than 32 chars)
+      long_attrs = valid_org_attributes(%{display_name: String.duplicate("a", 33)})
+      assert {:error, changeset} = Orgs.create_org(long_attrs)
+      assert %{display_name: ["should be at most 32 character(s)"]} = errors_on(changeset)
+    end
+
+    test "returns error changeset when subdomain length is invalid" do
+      # Too short (empty)
+      assert {:error, changeset} = Orgs.create_org(%{display_name: "Test Org", subdomain: ""})
+      assert %{subdomain: ["can't be blank"]} = errors_on(changeset)
+
+      # Too long (more than 32 chars)
+      assert {:error, changeset} = Orgs.create_org(%{display_name: "Test Org", subdomain: String.duplicate("a", 33)})
+      assert %{subdomain: ["should be at most 32 character(s)"]} = errors_on(changeset)
+    end
+
+    test "returns error changeset when subdomain format is invalid" do
+      invalid_formats = ["test org", "test.org", "test@org", "testørg"]
+
+      for invalid_subdomain <- invalid_formats do
+        attrs = %{display_name: "Test Org", subdomain: invalid_subdomain}
+        assert {:error, changeset} = Orgs.create_org(attrs)
+        assert %{subdomain: ["can only contain letters, numbers, underscores, and hyphens"]} = errors_on(changeset)
+      end
+    end
+
+    test "returns error changeset when subdomain is already taken" do
+      # Create an org first
+      existing = valid_org_attributes()
+      assert {:ok, %Org{}} = Orgs.create_org(existing)
+
+      # Try to create another org with the same subdomain
+      attrs = %{display_name: "Another Org", subdomain: existing.subdomain, kind: :team}
+      assert {:error, changeset} = Orgs.create_org(attrs)
+      assert %{subdomain: ["has already been taken"]} = errors_on(changeset)
+    end
+
+    test "returns error changeset when custom_domain is already taken" do
+      # Create an org first with a custom domain
+      custom_domain = "example-#{System.unique_integer([:positive])}.com"
+      attrs1 = %{display_name: "First Org", subdomain: "first-org", kind: :team, custom_domain: custom_domain}
+      assert {:ok, %Org{}} = Orgs.create_org(attrs1)
+
+      # Try to create another org with the same custom domain
+      attrs2 = %{display_name: "Second Org", subdomain: "second-org", kind: :team, custom_domain: custom_domain}
+      assert {:error, changeset} = Orgs.create_org(attrs2)
+      assert %{custom_domain: ["has already been taken"]} = errors_on(changeset)
+    end
+
+    test "returns error changeset when trying to create an org with kind = :app" do
+      attrs = valid_org_attributes(%{kind: :app})
+      assert {:error, changeset} = Orgs.create_org(attrs)
+      assert %{kind: ["is reserved"]} = errors_on(changeset)
+    end
+
+    test "creates organization with valid kinds" do
+      valid_kinds = [:team, :creator, :school]
+
+      for kind <- valid_kinds do
+        attrs = %{display_name: "#{kind} Org", subdomain: "#{kind}-#{System.unique_integer([:positive])}", kind: kind}
+        assert {:ok, %Org{} = org} = Orgs.create_org(attrs)
+        assert org.kind == kind
+      end
+    end
+  end
+
+  describe "get_org_by_host/1" do
+    test "returns org when host matches custom_domain exactly" do
+      custom_domain = "custom-domain-#{System.unique_integer()}.com"
+      org = org_fixture(%{custom_domain: custom_domain})
+      assert Orgs.get_org_by_host(custom_domain) == org
+    end
+
+    test "returns org when host contains subdomain that matches" do
+      org = org_fixture()
+      assert Orgs.get_org_by_host("#{org.subdomain}.zoonk.com") == org
+    end
+
+    test "returns org when host has multiple subdomains but first part matches" do
+      org = org_fixture()
+      assert Orgs.get_org_by_host("#{org.subdomain}.something.zoonk.com") == org
+    end
+
+    test "returns nil when no org with matching custom_domain or subdomain exists" do
+      assert Orgs.get_org_by_host("nonexistent.zoonk.com") == nil
+    end
+
+    test "returns nil when host is nil" do
+      assert Orgs.get_org_by_host(nil) == nil
+    end
+
+    test "returns nil when host is empty string" do
+      assert Orgs.get_org_by_host("") == nil
+    end
+
+    test "returns nil when host has no subdomain part" do
+      assert Orgs.get_org_by_host("zoonk.com") == nil
+    end
+
+    test "returns org with custom domain when both custom domain and subdomain would match" do
+      # Create an org with a specific custom domain
+      custom_domain = "custom-domain-#{System.unique_integer()}.com"
+      org = org_fixture(%{custom_domain: custom_domain})
+
+      # Create another org with a subdomain matching the first part of the custom domain
+      org_fixture(%{subdomain: "custom"})
+
+      # Should match the custom domain exactly rather than extracting subdomain
+      assert Orgs.get_org_by_host(custom_domain) == org
+    end
+
+    test "returns nil for malformed host" do
+      assert Orgs.get_org_by_host("malformed") == nil
+    end
+
+    test "case-insensitive matching for custom domains" do
+      org = org_fixture(%{custom_domain: "my-domain.com"})
+
+      # Should match regardless of case
+      assert Orgs.get_org_by_host("MY-DOMAIN.COM") == org
+      assert Orgs.get_org_by_host("my-domain.com") == org
+      assert Orgs.get_org_by_host("My-Domain.Com") == org
+    end
+
+    test "case-insensitive matching for subdomains" do
+      org = org_fixture(%{subdomain: "mysubdomain"})
+
+      # Should match regardless of case
+      assert Orgs.get_org_by_host("MYSUBDOMAIN.zoonk.com") == org
+      assert Orgs.get_org_by_host("mysubdomain.zoonk.com") == org
+      assert Orgs.get_org_by_host("MySubdomain.zoonk.com") == org
+    end
+
+    test "subdomain containing only alphanumeric characters is handled properly" do
+      org = org_fixture(%{subdomain: "alphanumeric123"})
+      assert Orgs.get_org_by_host("alphanumeric123.zoonk.com") == org
+    end
+
+    test "returns the app org if there's no match for either custom_domain or subdomain" do
+      app_org = app_org_fixture()
+
+      # Create another org with a different subdomain and custom domain
+      org_fixture(%{subdomain: "other-org", custom_domain: "other-org.com"})
+
+      # Should return the main org
+      assert Orgs.get_org_by_host("main-org.zoonk.com") == app_org
+    end
+  end
+end

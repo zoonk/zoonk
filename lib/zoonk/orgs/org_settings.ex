@@ -7,6 +7,17 @@ defmodule Zoonk.Orgs.OrgSettings do
   While `Zoonk.Orgs.Org` handles the public information
   shown to users, this module manages settings visible
   only to org admins or app admins.
+
+  ## Fields
+
+  | Field Name | Type | Description |
+  |------------|------|-------------|
+  | `currency` | `Ecto.Enum` | The currency used by the organization. |
+  | `stripe_customer_id` | `String` | The Stripe customer ID for the organization. |
+  | `tax_id` | `Zoonk.Vault.Binary` | The tax ID for the organization, stored securely. |
+  | `org_id` | `Integer` | The ID of the `Zoonk.Orgs.Org` this settings belongs to. |
+  | `inserted_at` | `DateTime` | Timestamp when the settings were created. |
+  | `updated_at` | `DateTime` | Timestamp when the settings were last updated. |
   """
   use Ecto.Schema
 

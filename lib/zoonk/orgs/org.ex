@@ -24,6 +24,20 @@ defmodule Zoonk.Orgs.Org do
   | `:creator` | Organizations selling content on Zoonk. |
   | `:school` | Educational institutions using Zoonk with their existing students. |
 
+  ## Why the main app is an organization?
+
+  The main app is also an organization because it allows us to query everything
+  using an `org_id`, ensuring users have access to the correct scope.
+
+  Without this, we would need to add a lot of `org_id` checks
+  everywhere in the codebase, which would be a nightmare to maintain.
+
+  Plus, we'd need to check for `is_nil(org_id)` everywhere when we need to
+  query data that is not related to main app only - and not to a specific organization.
+
+  Having an `org_id` associated with every data makes it easier to
+  manage permissions and access control.
+
   ## Fields
 
   | Field Name | Type | Description |
@@ -36,7 +50,6 @@ defmodule Zoonk.Orgs.Org do
   | `logo_url` | `String` | URL for the organization's logo. |
   | `subdomain` | `String` | The subdomain used for the organization's white-label page. |
   | `custom_domain` | `String` | The custom domain used for the organization's white-label page. |
-  | `org_id` | `Integer` | ID from `Zoonk.Locations.Org` |
   | `city_id` | `Integer` | ID from `Zoonk.Locations.City` |
   | `inserted_at` | `DateTime` | Timestamp when the organization profile was created. |
   | `updated_at` | `DateTime` | Timestamp when the organization profile was last updated. |
@@ -47,7 +60,6 @@ defmodule Zoonk.Orgs.Org do
   import Ecto.Changeset
 
   alias Zoonk.Locations.City
-  alias Zoonk.Orgs.Org
 
   schema "orgs" do
     field :kind, Ecto.Enum, values: [:app, :team, :creator, :school], default: :team
@@ -60,32 +72,32 @@ defmodule Zoonk.Orgs.Org do
     field :subdomain, :string
     field :custom_domain, :string
 
-    belongs_to :org, Org
     belongs_to :city, City
 
     timestamps(type: :utc_datetime)
   end
 
   @doc false
-  def changeset(profile, attrs) do
-    profile
+  def changeset(org, attrs) do
+    org
     |> cast(attrs, [
-      :display_name,
       :bio,
-      :public_email,
+      :city_id,
+      :kind,
+      :custom_domain,
+      :display_name,
       :icon_url,
       :logo_url,
-      :subdomain,
-      :custom_domain,
-      :city_id,
-      :org_id
+      :public_email,
+      :subdomain
     ])
-    |> validate_required([:display_name, :org_id, :subdomain])
+    |> validate_required([:display_name, :subdomain])
     |> validate_length(:display_name, min: 1, max: 32)
     |> validate_length(:subdomain, min: 1, max: 32)
     |> validate_format(:subdomain, ~r/^[a-zA-Z0-9_-]+$/,
       message: "can only contain letters, numbers, underscores, and hyphens"
     )
+    |> validate_exclusion(:kind, [:app])
     |> unsafe_validate_unique(:subdomain, Zoonk.Repo)
     |> unsafe_validate_unique(:custom_domain, Zoonk.Repo)
     |> unique_constraint(:subdomain)
