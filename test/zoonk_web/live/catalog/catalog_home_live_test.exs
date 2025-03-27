@@ -1,8 +1,6 @@
 defmodule ZoonkWeb.Catalog.CatalogHomeLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
-  import Phoenix.LiveViewTest
-
   describe "catalog home page (unauthenticated)" do
     test "redirects to the login page", %{conn: conn} do
       conn
