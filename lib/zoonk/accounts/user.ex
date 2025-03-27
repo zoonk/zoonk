@@ -32,6 +32,10 @@ defmodule Zoonk.Accounts.User do
   | `authenticated_at` | `DateTime` | Timestamp when the user was last authenticated. |
   | `profile` | `Zoonk.Accounts.UserProfile` | The user's public profile. |
   | `providers` | `Zoonk.Accounts.UserProvider` | The user's OAuth providers. |
+  | `org_memberships` | `Zoonk.Orgs.OrgMember` | Organization memberships. |
+  | `orgs` | `Zoonk.Orgs.OrgProfile` | Organizations the user is a member of. |
+  | `team_memberships` | `Zoonk.Orgs.TeamMember` | Team memberships. |
+  | `teams` | `Zoonk.Orgs.Team` | Teams the user is a member of. |
   | `inserted_at` | `DateTime` | Timestamp when the user was created. |
   | `updated_at` | `DateTime` | Timestamp when the user was last updated. |
   """
@@ -43,6 +47,8 @@ defmodule Zoonk.Accounts.User do
   alias Zoonk.Accounts.UserProvider
   alias Zoonk.Config.CurrencyConfig
   alias Zoonk.Config.LanguageConfig
+  alias Zoonk.Orgs.OrgMember
+  alias Zoonk.Orgs.TeamMember
 
   schema "users" do
     field :year_of_birth, :integer
@@ -61,6 +67,12 @@ defmodule Zoonk.Accounts.User do
 
     has_one :profile, UserProfile
     has_many :providers, UserProvider
+
+    has_many :org_memberships, OrgMember
+    has_many :orgs, through: [:org_memberships, org: :profile]
+
+    has_many :team_memberships, TeamMember
+    has_many :teams, through: [:team_memberships, :team]
 
     timestamps(type: :utc_datetime)
   end
