@@ -15,7 +15,7 @@ defmodule Zoonk.Accounts do
   alias Zoonk.Accounts.UserProfile
   alias Zoonk.Accounts.UserProvider
   alias Zoonk.Accounts.UserToken
-  alias Zoonk.Configuration
+  alias Zoonk.Config.AuthConfig
   alias Zoonk.Helpers
   alias Zoonk.Repo
 
@@ -67,7 +67,7 @@ defmodule Zoonk.Accounts do
   The user is in sudo mode when the last authentication was done recently.
   """
   def sudo_mode?(%User{authenticated_at: ts}) when is_struct(ts, DateTime) do
-    minutes = Configuration.get_max_age(:sudo_mode, :minutes)
+    minutes = AuthConfig.get_max_age(:sudo_mode, :minutes)
     DateTime.after?(ts, DateTime.add(DateTime.utc_now(), minutes, :minute))
   end
 

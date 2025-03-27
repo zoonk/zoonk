@@ -6,12 +6,12 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
   alias Phoenix.LiveView
   alias Phoenix.Socket.Broadcast
   alias Zoonk.Accounts
-  alias Zoonk.Configuration
+  alias Zoonk.Config.AuthConfig
   alias Zoonk.Scope
   alias ZoonkWeb.Accounts.UserAuth
 
-  @remember_me_cookie Configuration.get_cookie_name(:remember_me)
-  @max_age Configuration.get_max_age(:token, :seconds)
+  @remember_me_cookie AuthConfig.get_cookie_name(:remember_me)
+  @max_age AuthConfig.get_max_age(:token, :seconds)
 
   setup %{conn: conn} do
     conn =
@@ -261,7 +261,7 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
     end
 
     test "redirects when authentication is too old", %{user: user} do
-      sudo_mode_minutes = Configuration.get_max_age(:sudo_mode, :minutes)
+      sudo_mode_minutes = AuthConfig.get_max_age(:sudo_mode, :minutes)
       too_old = DateTime.add(DateTime.utc_now(), sudo_mode_minutes - 1, :minute)
 
       socket = %LiveView.Socket{

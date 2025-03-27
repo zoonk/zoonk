@@ -8,7 +8,7 @@ defmodule Zoonk.AccountsTest do
   alias Zoonk.Accounts.UserProfile
   alias Zoonk.Accounts.UserProvider
   alias Zoonk.Accounts.UserToken
-  alias Zoonk.Configuration
+  alias Zoonk.Config.AuthConfig
 
   describe "get_user_by_email/1" do
     test "does not return the user if the email does not exist" do
@@ -66,7 +66,7 @@ defmodule Zoonk.AccountsTest do
 
   describe "sudo_mode?/1" do
     test "validates the authenticated_at time" do
-      sudo_mode_minutes = Configuration.get_max_age(:sudo_mode, :minutes)
+      sudo_mode_minutes = AuthConfig.get_max_age(:sudo_mode, :minutes)
       valid_minutes = sudo_mode_minutes + 1
       invalid_minutes = sudo_mode_minutes - 1
 

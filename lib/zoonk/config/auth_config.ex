@@ -1,22 +1,21 @@
-defmodule Zoonk.Configuration do
+defmodule Zoonk.Config.AuthConfig do
   @moduledoc """
-  Centralizes configuration settings and constants for the application.
+  Manages authentication-related configurations for the application.
 
-  This module provides a single source of truth for various
-  configuration parameters and constants used throughout the
-  application.
-
-  It ensures consistency, ease of maintenance, and simplifies
-  the management of application-wide settings.
+  This module centralizes all authentication settings used throughout
+  the application, ensuring consistency and ease of maintenance.
   """
 
-  @doc group: "Authentication"
   @doc """
   Returns the default hash algorithm.
+
+  ## Example
+
+      iex> get_hash_algorithm()
+      :sha256
   """
   def get_hash_algorithm, do: :sha256
 
-  @doc group: "Authentication"
   @doc """
   Returns the maximum age or validity of an item.
 
@@ -46,7 +45,6 @@ defmodule Zoonk.Configuration do
   def get_max_age(:change_email, :days), do: 7
   def get_max_age(:sudo_mode, :minutes), do: -10
 
-  @doc group: "Authentication"
   @doc """
   Returns the name of a cookie.
 
@@ -57,9 +55,13 @@ defmodule Zoonk.Configuration do
   """
   def get_cookie_name(:remember_me), do: "_zoonk_web_user_remember_me"
 
-  @doc group: "Authentication"
   @doc """
   Returns a list of supported oAuth providers.
+
+  ## Example
+
+      iex> list_providers()
+      [:apple, :github, :google]
   """
   def list_providers, do: [:apple, :github, :google]
 end

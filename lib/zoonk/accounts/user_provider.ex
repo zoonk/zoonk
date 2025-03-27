@@ -19,10 +19,10 @@ defmodule Zoonk.Accounts.UserProvider do
 
   import Ecto.Changeset
 
-  alias Zoonk.Configuration
+  alias Zoonk.Config.AuthConfig
 
   schema "user_providers" do
-    field :provider, Ecto.Enum, values: Configuration.list_providers()
+    field :provider, Ecto.Enum, values: AuthConfig.list_providers()
     field :provider_uid, :string
 
     belongs_to :user, Zoonk.Accounts.User

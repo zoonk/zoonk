@@ -13,11 +13,11 @@ defmodule ZoonkWeb.Accounts.UserAuth do
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.User
-  alias Zoonk.Configuration
+  alias Zoonk.Config.AuthConfig
   alias Zoonk.Scope
 
-  @max_age Configuration.get_max_age(:token, :seconds)
-  @remember_me_cookie Configuration.get_cookie_name(:remember_me)
+  @max_age AuthConfig.get_max_age(:token, :seconds)
+  @remember_me_cookie AuthConfig.get_cookie_name(:remember_me)
   @remember_me_options [sign: true, max_age: @max_age, same_site: "Lax"]
 
   @doc """

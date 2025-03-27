@@ -21,7 +21,7 @@ defmodule Zoonk.Accounts.UserToken do
   import Ecto.Query
 
   alias Zoonk.Accounts.UserToken
-  alias Zoonk.Configuration
+  alias Zoonk.Config.AuthConfig
 
   @rand_size 32
 
@@ -67,7 +67,7 @@ defmodule Zoonk.Accounts.UserToken do
   not expired (after @session_validity_in_days).
   """
   def verify_session_token_query(token) do
-    session_validity_in_days = Zoonk.Configuration.get_max_age(:token, :days)
+    session_validity_in_days = AuthConfig.get_max_age(:token, :days)
 
     query =
       token
@@ -98,7 +98,7 @@ defmodule Zoonk.Accounts.UserToken do
 
   defp build_hashed_token(user, context, sent_to) do
     token = :crypto.strong_rand_bytes(@rand_size)
-    hashed_token = :crypto.hash(Configuration.get_hash_algorithm(), token)
+    hashed_token = :crypto.hash(AuthConfig.get_hash_algorithm(), token)
 
     {Base.url_encode64(token, padding: false),
      %UserToken{
@@ -121,13 +121,13 @@ defmodule Zoonk.Accounts.UserToken do
   def verify_magic_link_token_query(token) do
     case Base.url_decode64(token, padding: false) do
       {:ok, decoded_token} ->
-        hashed_token = :crypto.hash(Configuration.get_hash_algorithm(), decoded_token)
+        hashed_token = :crypto.hash(AuthConfig.get_hash_algorithm(), decoded_token)
 
         query =
           hashed_token
           |> by_token_and_context_query("login")
           |> join(:inner, [token], user in assoc(token, :user))
-          |> where([token], token.inserted_at > ago(^Configuration.get_max_age(:magic_link, :minutes), "minute"))
+          |> where([token], token.inserted_at > ago(^AuthConfig.get_max_age(:magic_link, :minutes), "minute"))
           |> where([token, user], token.sent_to == user.email)
           |> select([token, user], {user, token})
 
@@ -152,12 +152,12 @@ defmodule Zoonk.Accounts.UserToken do
   def verify_change_email_token_query(token, "change:" <> _rest = context) do
     case Base.url_decode64(token, padding: false) do
       {:ok, decoded_token} ->
-        hashed_token = :crypto.hash(Configuration.get_hash_algorithm(), decoded_token)
+        hashed_token = :crypto.hash(AuthConfig.get_hash_algorithm(), decoded_token)
 
         query =
           hashed_token
           |> by_token_and_context_query(context)
-          |> where([token], token.inserted_at > ago(^Configuration.get_max_age(:change_email, :days), "day"))
+          |> where([token], token.inserted_at > ago(^AuthConfig.get_max_age(:change_email, :days), "day"))
 
         {:ok, query}
 

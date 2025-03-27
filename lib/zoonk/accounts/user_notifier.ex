@@ -10,7 +10,7 @@ defmodule Zoonk.Accounts.UserNotifier do
   use Gettext, backend: Zoonk.Gettext
 
   alias Zoonk.Accounts.User
-  alias Zoonk.Configuration
+  alias Zoonk.Config.AuthConfig
   alias Zoonk.Mailer
 
   @doc """
@@ -35,7 +35,7 @@ defmodule Zoonk.Accounts.UserNotifier do
         """,
         email: user.email,
         url: url,
-        expiration_days: Zoonk.Configuration.get_max_age(:change_email, :days)
+        expiration_days: AuthConfig.get_max_age(:change_email, :days)
       )
 
     Mailer.send_email(user.email, subject, content)
@@ -70,7 +70,7 @@ defmodule Zoonk.Accounts.UserNotifier do
         """,
         email: user.email,
         url: url,
-        expiration_minutes: Configuration.get_max_age(:magic_link, :minutes)
+        expiration_minutes: AuthConfig.get_max_age(:magic_link, :minutes)
       )
 
     Mailer.send_email(user.email, subject, content)
@@ -95,7 +95,7 @@ defmodule Zoonk.Accounts.UserNotifier do
         """,
         email: user.email,
         url: url,
-        expiration_minutes: Configuration.get_max_age(:magic_link, :minutes)
+        expiration_minutes: AuthConfig.get_max_age(:magic_link, :minutes)
       )
 
     Mailer.send_email(user.email, subject, content)

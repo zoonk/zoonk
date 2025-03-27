@@ -2,14 +2,14 @@ defmodule ZoonkWeb.User.UserComponents do
   @moduledoc false
   use ZoonkWeb, :html
 
-  alias Zoonk.Configuration
+  alias Zoonk.Config.AuthConfig
 
   @actions [:login, :signup]
 
   @doc """
   Generates a link to the authentication provider.
   """
-  attr :provider, :atom, values: [:email | Configuration.list_providers()], required: true
+  attr :provider, :atom, values: [:email | AuthConfig.list_providers()], required: true
   attr :action, :atom, values: @actions, default: :login
 
   def auth_link(assigns) do
