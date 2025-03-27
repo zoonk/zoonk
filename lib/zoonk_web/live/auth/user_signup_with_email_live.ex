@@ -38,7 +38,7 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
         <.input
           field={@form[:email]}
           type="email"
-          label={dgettext("users", "Email")}
+          label={dgettext("users", "Email address")}
           autocomplete="username"
           placeholder={dgettext("users", "myemail@gmail.com")}
           required
