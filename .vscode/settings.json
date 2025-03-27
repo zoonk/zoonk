@@ -38,7 +38,10 @@
   ],
   "github.copilot.chat.testGeneration.instructions": [
     {
-      "file": "tests.md"
+      "file": ".github/copilot/tests.md"
+    },
+    {
+      "file": ".github/copilot/llm_docs/phoenix_test.md"
     }
   ]
 }

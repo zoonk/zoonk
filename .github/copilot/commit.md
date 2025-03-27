@@ -8,6 +8,7 @@
     - Library: for changes in `lib/zoonk_web/live/library/`
   - For asset changes in `assets/`, use Assets.
   - For CI-related changes in `.github/workflows/`, use `CI:` but for GitHub Copilot changes in `.github/copilot/`, use `Copilot:`.
+  - When we make changes to tests only, use the prefix `Tests:`.
 - In general:
   - Match the prefix to the area or feature being modified.
   - Use meaningful and specific names over generic ones.

@@ -29,6 +29,10 @@ You can run this project locally or in a Docker container.
 - Run tests: `mix test` or `mix test.watch` for live reloading.
 - Update translation files: `mix locale`.
 
+> ### Tip {: .tip}
+>
+> Run `sh scripts/docs.sh` to generate/update files that will be used by GitHub Copilot for code generation.
+
 ### UI Preview
 
 - You can have a preview of every UI component in the `/lib/zoonk_dev/ui_preview` folder. To do so, run `mix phx.server` and open your browser at http://localhost:4000/ui.
