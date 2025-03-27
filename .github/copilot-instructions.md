@@ -7,6 +7,8 @@
 - Use the next HEEX syntax `{@variable}` instead of `<%= @variable %>`.
 - When you need to conditionally render an item, you don't need to create a separate div or element for it, you can use use `:if` directly in the element. For example, instead of `<% if !@empty do %><.card_content>...</.card_content><% end %>` or `<div :if={!@empty}><.card_content>...</.card_content></div>`, you can use `<.card_content :if={!@empty}>...</.card_content>`.
 - When writing text, use Gettext for translations. For example, instead of `Hello`, use `gettext("Hello")` or `dgettext("somedomain", "Hello")` for domain-specific translations.
+- When using the zoonk domain, always write `zoonk.com`, not `zoonk.org`. For testing, you can use `zoonk.test` instead.
+- Before suggesting any code, check if this code can be simplified even further. Continue doing this until you reach the simplest solution possible.
 
 ## Documentation
 
@@ -31,8 +33,7 @@
 
 ## Configuration
 
-- Add constants and general configuration options in the `lib/zoonk/configuration.ex` file.
-- When adding a new function to `Zoonk.Configuration`, add a `@doc group` to the function (e.g., `@doc group: "Authentication"`).
+- Add constants and general configuration options in the `lib/zoonk/config` folder. Check if there's an existing file to the kind of configuration you're adding. If not, create a new file with the appropriate name. It should be prefixed with `Zoonk.Config`. For example, `Zoonk.Config.LanguageConfig`, `Zoonk.Config.CurrencyConfig`, etc. In those examples, the files would be `lib/zoonk/config/language_config.ex` and `lib/zoonk/config/currency_config.ex`.
 
 ## Schemas
 
@@ -91,3 +92,6 @@
 - Always add tests to any functionality you add or modify.
 - Use the same name as the controller, but with `_test` suffix (e.g., `test/zoonk_web/controllers/accounts/user_session_controller_test.exs`) and the module name would be `ZoonkWeb.Accounts.UserSessionControllerTest`.
 - Use `use ZoonkWeb.ConnCase, async: true` for `ZoonkWeb` tests and `use Zoonk.DataCase, async: true` for `Zoonk` tests.
+- When creating a new schema or context, create a fixtures file for it at `test/support/fixtures`.
+- Add fixtures individually to each test instead of adding them to the `setup` block.
+- After writing tests, always run `mix ci` to test our code to make sure everything is working as expected.
