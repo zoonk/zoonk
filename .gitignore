@@ -51,3 +51,6 @@ cert
 # Dialyzer
 /priv/plts/*.plt
 /priv/plts/*.plt.hash
+
+# Library docs generated for LLMs
+llm_docs

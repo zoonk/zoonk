@@ -29,6 +29,12 @@ You can run this project locally or in a Docker container.
 - Run tests: `mix test` or `mix test.watch` for live reloading.
 - Update translation files: `mix locale`.
 
+> ### Tip {: .tip}
+>
+> Add a `.github/copilot/llm_docs/phoenix_test.md` file to your project to improve testing generation.
+> You can use [hex2txt](https://hex2txt.fly.dev/phoenix_test/llms.txt) to generate a `txt` file for it.
+> Copy the content of the `txt` file and paste it into the `phoenix_test.md` file.
+
 ### UI Preview
 
 - You can have a preview of every UI component in the `/lib/zoonk_dev/ui_preview` folder. To do so, run `mix phx.server` and open your browser at http://localhost:4000/ui.
