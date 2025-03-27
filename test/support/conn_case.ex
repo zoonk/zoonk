@@ -23,6 +23,7 @@ defmodule ZoonkWeb.ConnCase do
 
       # Import conveniences for testing with connections
       import Phoenix.ConnTest
+      import PhoenixTest
       import Plug.Conn
       import ZoonkWeb.ConnCase
 
