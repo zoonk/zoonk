@@ -41,6 +41,7 @@ defmodule Zoonk.Accounts.User do
 
   alias Zoonk.Accounts.UserProfile
   alias Zoonk.Accounts.UserProvider
+  alias Zoonk.Config.LanguageConfig
   alias Zoonk.Configuration
   alias Zoonk.Orgs.OrgMember
 
@@ -53,8 +54,8 @@ defmodule Zoonk.Accounts.User do
     field :tax_id, Zoonk.Vault.Binary
 
     field :language, Ecto.Enum,
-      values: Configuration.list_languages(:atom),
-      default: Configuration.get_default_language(:atom)
+      values: LanguageConfig.list_languages(:atom),
+      default: LanguageConfig.get_default_language(:atom)
 
     field :confirmed_at, :utc_datetime
     field :authenticated_at, :utc_datetime, virtual: true

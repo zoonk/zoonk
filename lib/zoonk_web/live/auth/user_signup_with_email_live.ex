@@ -6,6 +6,7 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.User
+  alias Zoonk.Config.LanguageConfig
   alias Zoonk.Scope
   alias ZoonkWeb.Accounts.UserAuth
 
@@ -29,7 +30,7 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
           field={@form[:language]}
           type="select"
           label={dgettext("users", "Language")}
-          options={Zoonk.Configuration.list_languages(:options)}
+          options={LanguageConfig.list_languages(:options)}
           required
           class="w-full"
         />
