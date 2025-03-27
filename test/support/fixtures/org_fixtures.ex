@@ -8,6 +8,26 @@ defmodule Zoonk.OrgFixtures do
   alias Zoonk.Orgs.OrgProfile
   alias Zoonk.Repo
 
+  def valid_org_attributes(attrs \\ %{}) do
+    Enum.into(attrs, %{
+      kind: :team,
+      currency: :USD
+    })
+  end
+
+  def valid_org_profile_attributes(attrs \\ %{}) do
+    unique_int = System.unique_integer([:positive])
+    org = Map.get_lazy(attrs, :org, fn -> org_fixture() end)
+
+    attrs
+    |> Map.delete(:org)
+    |> Enum.into(%{
+      display_name: "Test Org #{unique_int}",
+      subdomain: "org#{unique_int}",
+      org_id: org.id
+    })
+  end
+
   @doc """
   Creates an organization.
 
@@ -20,15 +40,9 @@ defmodule Zoonk.OrgFixtures do
       %Org{kind: :school}
   """
   def org_fixture(attrs \\ %{}) do
-    attrs =
-      Enum.into(attrs, %{
-        kind: :team,
-        currency: :USD
-      })
-
     {:ok, org} =
       %Org{}
-      |> Org.changeset(attrs)
+      |> Org.changeset(valid_org_attributes(attrs))
       |> Repo.insert()
 
     org
@@ -46,40 +60,11 @@ defmodule Zoonk.OrgFixtures do
       %OrgProfile{subdomain: "mysubdomain"}
   """
   def org_profile_fixture(attrs \\ %{}) do
-    org = Map.get_lazy(attrs, :org, fn -> org_fixture() end)
-    unique_int = System.unique_integer([:positive])
-
-    profile_attrs =
-      attrs
-      |> Map.delete(:org)
-      |> Enum.into(%{
-        display_name: "Test Org #{unique_int}",
-        subdomain: "org#{unique_int}",
-        org_id: org.id
-      })
-
     {:ok, profile} =
       %OrgProfile{}
-      |> OrgProfile.changeset(profile_attrs)
+      |> OrgProfile.changeset(valid_org_profile_attributes(attrs))
       |> Repo.insert()
 
     profile
-  end
-
-  @doc """
-  Creates an organization profile with a custom domain.
-
-  ## Examples
-
-      iex> org_profile_with_custom_domain_fixture()
-      %OrgProfile{custom_domain: "custom-domain-123.com"}
-  """
-  def org_profile_with_custom_domain_fixture(attrs \\ %{}) do
-    attrs =
-      Map.put_new_lazy(attrs, :custom_domain, fn ->
-        "custom-domain-#{System.unique_integer([:positive])}.com"
-      end)
-
-    org_profile_fixture(attrs)
   end
 end
