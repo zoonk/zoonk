@@ -58,20 +58,6 @@ config :zoonk, ZoonkWeb.Endpoint,
   pubsub_server: Zoonk.PubSub,
   live_view: [signing_salt: "aQIHSki0"]
 
-# Scope definitions
-config :zoonk, :scopes,
-  user: [
-    default: true,
-    module: Zoonk.Scope,
-    assign_key: :current_scope,
-    access_path: [:user, :id],
-    schema_key: :user_id,
-    schema_type: :id,
-    schema_table: :users,
-    test_data_fixture: Zoonk.AccountFixtures,
-    test_login_helper: :signup_and_login_user
-  ]
-
 # Make sure all schemas are migrated when running `mix cloak.migrate.ecto`
 config :zoonk,
   cloak_repo: Zoonk.Repo,
