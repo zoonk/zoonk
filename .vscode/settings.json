@@ -3,5 +3,42 @@
     {
       "file": ".github/copilot/commit.md"
     }
+  ],
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "file": ".github/copilot/docs.md"
+    },
+    {
+      "file": ".github/copilot/css.md"
+    },
+    {
+      "file": ".github/copilot/translations.md"
+    },
+    {
+      "file": ".github/copilot/config.md"
+    },
+    {
+      "file": ".github/copilot/schemas.md"
+    },
+    {
+      "file": ".github/copilot/components.md"
+    },
+    {
+      "file": ".github/copilot/icons.md"
+    },
+    {
+      "file": ".github/copilot/controllers.md"
+    },
+    {
+      "file": ".github/copilot/liveview.md"
+    },
+    {
+      "file": ".github/copilot/project.md"
+    }
+  ],
+  "github.copilot.chat.testGeneration.instructions": [
+    {
+      "file": "tests.md"
+    }
   ]
 }
