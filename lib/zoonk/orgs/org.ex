@@ -37,13 +37,13 @@ defmodule Zoonk.Orgs.Org do
 
   import Ecto.Changeset
 
-  alias Zoonk.Configuration
+  alias Zoonk.Config.CurrencyConfig
   alias Zoonk.Orgs.OrgMember
   alias Zoonk.Orgs.OrgProfile
   alias Zoonk.Vault
 
   schema "orgs" do
-    field :currency, Ecto.Enum, values: Configuration.list_currencies(:atom), default: :USD
+    field :currency, Ecto.Enum, values: CurrencyConfig.list_currencies(:atom), default: :USD
     field :kind, Ecto.Enum, values: [:team, :creator, :school], default: :team
 
     field :stripe_customer_id, :string

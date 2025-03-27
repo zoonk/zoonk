@@ -9,25 +9,6 @@ defmodule Zoonk.Configuration do
   It ensures consistency, ease of maintenance, and simplifies
   the management of application-wide settings.
   """
-  @supported_currencies [
-    USD: "United States Dollar",
-    EUR: "Euro",
-    AUD: "Australian Dollar",
-    BRL: "Real Brasileiro",
-    CAD: "Canadian Dollar",
-    CLP: "Peso Chileno",
-    CNY: "人民币",
-    GBP: "British Pound Sterling",
-    HKD: "Hong Kong Dollar",
-    JPY: "日本円",
-    KRW: "대한민국 원",
-    MXN: "Peso Mexicano",
-    NZD: "New Zealand Dollar",
-    SGD: "Singapore Dollar",
-    TRY: "Türk Lirası",
-    TWD: "新台币",
-    UYU: "Peso Uruguayo"
-  ]
 
   @doc group: "Authentication"
   @doc """
@@ -81,23 +62,4 @@ defmodule Zoonk.Configuration do
   Returns a list of supported oAuth providers.
   """
   def list_providers, do: [:apple, :github, :google]
-
-  @doc group: "Billing"
-  @doc """
-  Lists all supported currencies.
-
-  ## Example
-
-      iex> list_currencies(:atom)
-      [:USD, :EUR, :GBP, ...]
-
-      iex> list_currencies(:string)
-      ["USD", "EUR", "GBP", ...]
-
-      iex> list_currencies(:options)
-      [{"United States Dollar", "USD"}, {"Euro", "EUR"}, ...]
-  """
-  def list_currencies(:atom), do: Enum.map(@supported_currencies, fn {key, _value} -> key end)
-  def list_currencies(:string), do: Enum.map(@supported_currencies, fn {key, _value} -> Atom.to_string(key) end)
-  def list_currencies(:options), do: Enum.map(@supported_currencies, fn {key, value} -> {value, Atom.to_string(key)} end)
 end
