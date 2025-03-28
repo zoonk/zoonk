@@ -9,6 +9,7 @@ defmodule Zoonk.AccountsTest do
   alias Zoonk.Accounts.UserProvider
   alias Zoonk.Accounts.UserToken
   alias Zoonk.Config.AuthConfig
+  alias Zoonk.Config.SubdomainConfig
 
   describe "change_user_profile/2" do
     test "allows valid usernames" do
@@ -37,6 +38,16 @@ defmodule Zoonk.AccountsTest do
         attrs = valid_user_profile_attributes(%{username: username})
         assert %Ecto.Changeset{valid?: false} = changeset = UserProfile.changeset(%UserProfile{}, attrs)
         assert %{username: ["must have letters"]} = errors_on(changeset)
+      end
+    end
+
+    test "rejects reserved subdomains" do
+      reserved = Enum.take_random(SubdomainConfig.list_reserved_subdomains(), 10)
+
+      for subdomain <- reserved do
+        attrs = valid_user_profile_attributes(%{username: subdomain})
+        assert %Ecto.Changeset{valid?: false} = changeset = UserProfile.changeset(%UserProfile{}, attrs)
+        assert "is reserved" in errors_on(changeset).username
       end
     end
   end

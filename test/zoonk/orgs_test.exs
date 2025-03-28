@@ -3,6 +3,7 @@ defmodule Zoonk.OrgsTest do
 
   import Zoonk.OrgFixtures
 
+  alias Zoonk.Config.SubdomainConfig
   alias Zoonk.Orgs
   alias Zoonk.Orgs.Org
 
@@ -33,6 +34,16 @@ defmodule Zoonk.OrgsTest do
         attrs = valid_org_attributes(%{subdomain: subdomain})
         assert %Ecto.Changeset{valid?: false} = changeset = Org.changeset(%Org{}, attrs)
         assert %{subdomain: ["must have letters"]} = errors_on(changeset)
+      end
+    end
+
+    test "rejects reserved subdomains" do
+      reserved = Enum.take_random(SubdomainConfig.list_reserved_subdomains(), 10)
+
+      for subdomain <- reserved do
+        attrs = valid_org_attributes(%{subdomain: subdomain})
+        assert %Ecto.Changeset{valid?: false} = changeset = Org.changeset(%Org{}, attrs)
+        assert "is reserved" in errors_on(changeset).subdomain
       end
     end
   end

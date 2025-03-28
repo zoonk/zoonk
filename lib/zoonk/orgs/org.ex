@@ -59,6 +59,7 @@ defmodule Zoonk.Orgs.Org do
 
   import Ecto.Changeset
 
+  alias Zoonk.Config.SubdomainConfig
   alias Zoonk.Locations.City
 
   schema "orgs" do
@@ -99,6 +100,7 @@ defmodule Zoonk.Orgs.Org do
     )
     |> validate_format(:subdomain, ~r/[a-zA-Z]/, message: dgettext("errors", "must have letters"))
     |> validate_exclusion(:kind, [:app])
+    |> validate_exclusion(:subdomain, SubdomainConfig.list_reserved_subdomains())
     |> unsafe_validate_unique(:subdomain, Zoonk.Repo)
     |> unsafe_validate_unique(:custom_domain, Zoonk.Repo)
     |> unique_constraint(:subdomain)
