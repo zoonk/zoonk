@@ -8,7 +8,6 @@ defmodule Zoonk.AccountFixtures do
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.UserToken
-  alias Zoonk.Scope
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
   def unique_user_username, do: "user#{System.unique_integer()}"
@@ -48,15 +47,6 @@ defmodule Zoonk.AccountFixtures do
     {:ok, user, _expired_tokens} = Accounts.login_user_by_magic_link(token)
 
     user
-  end
-
-  def user_scope_fixture do
-    user = user_fixture()
-    user_scope_fixture(user)
-  end
-
-  def user_scope_fixture(user) do
-    Scope.for_user(user)
   end
 
   def extract_user_token(fun) do

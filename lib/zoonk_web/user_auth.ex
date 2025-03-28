@@ -14,6 +14,7 @@ defmodule ZoonkWeb.Accounts.UserAuth do
   alias Zoonk.Accounts
   alias Zoonk.Accounts.User
   alias Zoonk.Config.AuthConfig
+  alias Zoonk.Orgs
   alias Zoonk.Scope
 
   @max_age AuthConfig.get_max_age(:token, :seconds)
@@ -98,10 +99,10 @@ defmodule ZoonkWeb.Accounts.UserAuth do
   Authenticates the user by looking into the session
   and remember me token.
   """
-  def fetch_current_scope_for_user(conn, _opts) do
+  def fetch_current_scope(conn, _opts) do
     {user_token, conn} = ensure_user_token(conn)
     user = user_token && Accounts.get_user_by_session_token(user_token)
-    assign(conn, :current_scope, Scope.for_user(user))
+    assign(conn, :current_scope, build_scope(user, conn.host))
   end
 
   defp ensure_user_token(conn) do
@@ -193,7 +194,8 @@ defmodule ZoonkWeb.Accounts.UserAuth do
           Accounts.get_user_by_session_token(user_token)
         end
 
-      Scope.for_user(user)
+      %URI{host: host} = Phoenix.LiveView.get_connect_info(socket, :uri)
+      build_scope(user, host)
     end)
   end
 
@@ -250,4 +252,13 @@ defmodule ZoonkWeb.Accounts.UserAuth do
   end
 
   def signed_in_path(_conn), do: ~p"/"
+
+  defp build_scope(user, host) do
+    org = Orgs.get_org_by_host(host)
+
+    %Scope{}
+    |> Scope.set(user)
+    |> Scope.set(org)
+    |> Scope.set(Orgs.get_org_member(org, user))
+  end
 end

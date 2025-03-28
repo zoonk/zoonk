@@ -47,14 +47,21 @@ defmodule ZoonkWeb.ConnCase do
   """
   def signup_and_login_user(%{conn: conn} = context) do
     user = Zoonk.AccountFixtures.user_fixture()
-    scope = Zoonk.Scope.for_user(user)
+    app_org = Zoonk.OrgFixtures.app_org_fixture()
+    org_member = Zoonk.OrgFixtures.org_member_fixture(%{user: user, org: app_org})
+
+    scope =
+      %Zoonk.Scope{}
+      |> Zoonk.Scope.set(app_org)
+      |> Zoonk.Scope.set(user)
+      |> Zoonk.Scope.set(org_member)
 
     opts =
       context
       |> Map.take([:token_inserted_at])
       |> Enum.to_list()
 
-    %{conn: login_user(conn, user, opts), user: user, scope: scope}
+    %{conn: login_user(conn, user, opts), user: user, org: app_org, org_member: org_member, scope: scope}
   end
 
   @doc """

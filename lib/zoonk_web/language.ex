@@ -35,8 +35,8 @@ defmodule ZoonkWeb.Language do
     {:cont, socket}
   end
 
-  defp get_user_language(nil, session), do: Map.get(session, "language")
   defp get_user_language(%Scope{user: %User{language: language}}, _session), do: Atom.to_string(language)
+  defp get_user_language(_scope, session), do: Map.get(session, "language")
 
   @doc """
   Sets the session language based on user preferences or browser settings.

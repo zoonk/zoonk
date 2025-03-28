@@ -10,7 +10,9 @@ defmodule Zoonk.Orgs do
   """
   import Ecto.Query, warn: false
 
+  alias Zoonk.Accounts.User
   alias Zoonk.Orgs.Org
+  alias Zoonk.Orgs.OrgMember
   alias Zoonk.Repo
 
   @doc """
@@ -61,7 +63,7 @@ defmodule Zoonk.Orgs do
     get_org_by_custom_domain(host) || get_org_by_subdomain(host) || get_app_org()
   end
 
-  def get_org_by_host(_host), do: nil
+  def get_org_by_host(_host), do: get_app_org()
 
   defp get_org_by_custom_domain(host) do
     Repo.get_by(Org, custom_domain: host)
@@ -81,4 +83,21 @@ defmodule Zoonk.Orgs do
   defp get_app_org do
     Repo.get_by(Org, kind: :app)
   end
+
+  @doc """
+  Gets an org member.
+
+  ## Examples
+
+      iex> get_org_member(%Org{}, %User{})
+      %OrgMember{user_id: user.id, org_id: org.id}
+
+      iex> get_org_member(%Org{}, nil)
+      nil
+  """
+  def get_org_member(%Org{} = org, %User{} = user) do
+    Repo.get_by(OrgMember, org_id: org.id, user_id: user.id)
+  end
+
+  def get_org_member(_org, _user), do: nil
 end

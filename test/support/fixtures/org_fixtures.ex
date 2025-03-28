@@ -5,6 +5,7 @@ defmodule Zoonk.OrgFixtures do
   """
 
   alias Zoonk.Orgs.Org
+  alias Zoonk.Orgs.OrgMember
   alias Zoonk.Orgs.OrgSettings
   alias Zoonk.Repo
 
@@ -75,5 +76,27 @@ defmodule Zoonk.OrgFixtures do
       |> Repo.insert()
 
     settings
+  end
+
+  @doc """
+  Creates an organization member.
+
+  ## Examples
+
+      iex> org_member_fixture(%{org: %Org{}, user: %User{}})
+      %OrgMember{}
+
+      iex> org_member_fixture(%{role: :admin})
+      %OrgMember{role: :admin}
+  """
+  def org_member_fixture(attrs \\ %{}) do
+    org = Map.get_lazy(attrs, :org, fn -> org_fixture() end)
+    user = Map.get_lazy(attrs, :user, fn -> Zoonk.AccountFixtures.user_fixture() end)
+
+    attrs = Enum.into(attrs, %{org_id: org.id, user_id: user.id, role: :member})
+
+    %OrgMember{}
+    |> OrgMember.changeset(attrs)
+    |> Repo.insert!()
   end
 end

@@ -2,6 +2,7 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AccountFixtures
+  import Zoonk.OrgFixtures
 
   alias Phoenix.LiveView
   alias Phoenix.Socket.Broadcast
@@ -14,12 +15,22 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
   @max_age AuthConfig.get_max_age(:token, :seconds)
 
   setup %{conn: conn} do
+    user = %{user_fixture() | authenticated_at: DateTime.utc_now()}
+    org = app_org_fixture()
+    org_member = org_member_fixture(%{user: user, org: org})
+
+    scope =
+      %Scope{}
+      |> Scope.set(org)
+      |> Scope.set(user)
+      |> Scope.set(org_member)
+
     conn =
       conn
       |> Map.replace!(:secret_key_base, ZoonkWeb.Endpoint.config(:secret_key_base))
       |> init_test_session(%{})
 
-    %{user: %{user_fixture() | authenticated_at: DateTime.utc_now()}, conn: conn}
+    %{user: user, scope: scope, conn: conn}
   end
 
   describe "login_user/2" do
@@ -63,11 +74,11 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
       assert max_age == @max_age
     end
 
-    test "redirects to settings when user is already logged in", %{conn: conn, user: user} do
+    test "redirects to settings when user is already logged in", %{conn: conn, scope: scope} do
       conn =
         conn
-        |> assign(:current_scope, Scope.for_user(user))
-        |> UserAuth.login_user(user)
+        |> assign(:current_scope, Scope.set(scope))
+        |> UserAuth.login_user(scope.user)
 
       assert redirected_to(conn) == "/user/email"
     end
@@ -156,7 +167,7 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
 
   describe "on_mount :mount_current_scope" do
     setup %{conn: conn} do
-      %{conn: UserAuth.fetch_current_scope_for_user(conn, [])}
+      %{conn: UserAuth.fetch_current_scope(conn, [])}
     end
 
     test "assigns current_scope based on a valid user_token", %{conn: conn, user: user} do
@@ -168,12 +179,12 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
         |> get_session()
 
       {:cont, updated_socket} =
-        UserAuth.on_mount(:mount_current_scope, %{}, session, %LiveView.Socket{})
+        UserAuth.on_mount(:mount_current_scope, %{}, session, %LiveView.Socket{private: %{connect_info: conn}})
 
       assert updated_socket.assigns.current_scope.user.id == user.id
     end
 
-    test "assigns nil to current_scope assign if there isn't a valid user_token", %{conn: conn} do
+    test "assigns nil to current_scope user if there isn't a valid user_token", %{conn: conn} do
       user_token = "invalid_token"
 
       session =
@@ -182,18 +193,20 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
         |> get_session()
 
       {:cont, updated_socket} =
-        UserAuth.on_mount(:mount_current_scope, %{}, session, %LiveView.Socket{})
+        UserAuth.on_mount(:mount_current_scope, %{}, session, %LiveView.Socket{private: %{connect_info: conn}})
 
-      assert updated_socket.assigns.current_scope == nil
+      refute updated_socket.assigns.current_scope.user
     end
 
-    test "assigns nil to current_scope assign if there isn't a user_token", %{conn: conn} do
+    test "assigns nil to current_scope.user if there isn't a user_token", %{conn: conn} do
       session = get_session(conn)
 
       {:cont, updated_socket} =
-        UserAuth.on_mount(:mount_current_scope, %{}, session, %LiveView.Socket{})
+        UserAuth.on_mount(:mount_current_scope, %{}, session, %LiveView.Socket{
+          private: %{connect_info: conn}
+        })
 
-      assert updated_socket.assigns.current_scope == nil
+      refute updated_socket.assigns.current_scope.user
     end
   end
 
@@ -207,7 +220,7 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
         |> get_session()
 
       {:cont, updated_socket} =
-        UserAuth.on_mount(:ensure_authenticated, %{}, session, %LiveView.Socket{})
+        UserAuth.on_mount(:ensure_authenticated, %{}, session, %LiveView.Socket{private: %{connect_info: conn}})
 
       assert updated_socket.assigns.current_scope.user.id == user.id
     end
@@ -222,11 +235,12 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
 
       socket = %LiveView.Socket{
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}}
+        assigns: %{__changed__: %{}, flash: %{}},
+        private: %{connect_info: conn, live_temp: %{}}
       }
 
       {:halt, updated_socket} = UserAuth.on_mount(:ensure_authenticated, %{}, session, socket)
-      assert updated_socket.assigns.current_scope == nil
+      refute updated_socket.assigns.current_scope.user
     end
 
     test "redirects to login page if there isn't a user_token", %{conn: conn} do
@@ -234,11 +248,12 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
 
       socket = %LiveView.Socket{
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}}
+        assigns: %{__changed__: %{}, flash: %{}},
+        private: %{connect_info: conn, live_temp: %{}}
       }
 
       {:halt, updated_socket} = UserAuth.on_mount(:ensure_authenticated, %{}, session, socket)
-      assert updated_socket.assigns.current_scope == nil
+      refute updated_socket.assigns.current_scope.user
     end
   end
 
@@ -253,39 +268,42 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
 
       socket = %LiveView.Socket{
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}}
+        assigns: %{__changed__: %{}, flash: %{}},
+        private: %{connect_info: conn, live_temp: %{}}
       }
 
       assert {:cont, _updated_socket} =
                UserAuth.on_mount(:ensure_sudo_mode, %{}, session, socket)
     end
 
-    test "redirects when authentication is too old", %{user: user} do
+    test "redirects when authentication is too old", %{scope: scope} do
+      %{org: org, user: user, org_member: org_member} = scope
+
       sudo_mode_minutes = AuthConfig.get_max_age(:sudo_mode, :minutes)
       too_old = DateTime.add(DateTime.utc_now(), sudo_mode_minutes - 1, :minute)
+      old_user = %{user | authenticated_at: too_old}
 
       socket = %LiveView.Socket{
         endpoint: AuthAppWeb.Endpoint,
         assigns: %{
           __changed__: %{},
           flash: %{},
-          current_scope: Scope.for_user(%{user | authenticated_at: too_old})
+          current_scope: Scope.set(%Scope{user: old_user, org: org, org_member: org_member})
         }
       }
 
-      assert {:halt, _updated_socket} =
-               UserAuth.on_mount(:ensure_sudo_mode, %{}, %{}, socket)
+      assert {:halt, _updated_socket} = UserAuth.on_mount(:ensure_sudo_mode, %{}, %{}, socket)
     end
   end
 
-  describe "fetch_current_scope_for_user/2" do
+  describe "fetch_current_scope/2" do
     test "authenticates user from session", %{conn: conn, user: user} do
       user_token = Accounts.generate_user_session_token(user)
 
       conn =
         conn
         |> put_session(:user_token, user_token)
-        |> UserAuth.fetch_current_scope_for_user([])
+        |> UserAuth.fetch_current_scope([])
 
       assert conn.assigns.current_scope.user.id == user.id
     end
@@ -302,7 +320,7 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
       conn =
         conn
         |> put_req_cookie(@remember_me_cookie, signed_token)
-        |> UserAuth.fetch_current_scope_for_user([])
+        |> UserAuth.fetch_current_scope([])
 
       assert conn.assigns.current_scope.user.id == user.id
       assert get_session(conn, :user_token) == user_token
@@ -313,15 +331,15 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
 
     test "does not authenticate if data is missing", %{conn: conn, user: user} do
       Accounts.generate_user_session_token(user)
-      conn = UserAuth.fetch_current_scope_for_user(conn, [])
+      conn = UserAuth.fetch_current_scope(conn, [])
       refute get_session(conn, :user_token)
-      refute conn.assigns.current_scope
+      refute conn.assigns.current_scope.user
     end
   end
 
   describe "require_authenticated_user/2" do
     setup %{conn: conn} do
-      %{conn: UserAuth.fetch_current_scope_for_user(conn, [])}
+      %{conn: UserAuth.fetch_current_scope(conn, [])}
     end
 
     test "redirects if user is not authenticated", %{conn: conn} do
@@ -364,10 +382,10 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
       refute get_session(post_conn, :user_return_to)
     end
 
-    test "does not redirect if user is authenticated", %{conn: conn, user: user} do
+    test "does not redirect if user is authenticated", %{conn: conn, scope: scope} do
       conn =
         conn
-        |> assign(:current_scope, Scope.for_user(user))
+        |> assign(:current_scope, Scope.set(scope))
         |> UserAuth.require_authenticated_user([])
 
       refute conn.halted

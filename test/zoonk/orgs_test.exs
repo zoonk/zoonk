@@ -1,6 +1,7 @@
 defmodule Zoonk.OrgsTest do
   use Zoonk.DataCase, async: true
 
+  import Zoonk.AccountFixtures
   import Zoonk.OrgFixtures
 
   alias Zoonk.Config.SubdomainConfig
@@ -164,12 +165,14 @@ defmodule Zoonk.OrgsTest do
       assert Orgs.get_org_by_host("nonexistent.zoonk.com") == nil
     end
 
-    test "returns nil when host is nil" do
-      assert Orgs.get_org_by_host(nil) == nil
+    test "returns the app org when host is nil" do
+      app_org = app_org_fixture()
+      assert Orgs.get_org_by_host(nil) == app_org
     end
 
-    test "returns nil when host is empty string" do
-      assert Orgs.get_org_by_host("") == nil
+    test "returns the app org when host is empty string" do
+      app_org = app_org_fixture()
+      assert Orgs.get_org_by_host("") == app_org
     end
 
     test "returns nil when host has no subdomain part" do
@@ -223,6 +226,30 @@ defmodule Zoonk.OrgsTest do
 
       # Should return the main org
       assert Orgs.get_org_by_host("main-org.zoonk.com") == app_org
+    end
+  end
+
+  describe "get_org_member/2" do
+    test "returns org member when user_id and org_id match" do
+      user = user_fixture()
+      org = org_fixture()
+      org_member = org_member_fixture(%{user: user, org: org})
+
+      assert Orgs.get_org_member(org, user) == org_member
+    end
+
+    test "returns nil when user_id and org_id do not match" do
+      user1 = user_fixture()
+      user2 = user_fixture()
+      org = org_fixture()
+      org_member_fixture(%{user: user1, org: org})
+
+      refute Orgs.get_org_member(org, user2)
+    end
+
+    test "returns nil when no matching org member exists" do
+      user = user_fixture()
+      refute Orgs.get_org_member(-1, user)
     end
   end
 end

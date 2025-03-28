@@ -17,17 +17,29 @@ defmodule Zoonk.Scope do
   """
 
   alias Zoonk.Accounts.User
+  alias Zoonk.Orgs.Org
+  alias Zoonk.Orgs.OrgMember
 
-  defstruct user: nil
+  defstruct user: nil, org: nil, org_member: nil
 
   @doc """
-  Creates a scope for the given user.
+  Sets the scope.
 
-  Returns nil if no user is given.
+  ## Examples
+
+      iex> Scope.set(scope, %Org{})
+      %Scope{}
+
+      iex> Scope.set(scope, %User{})
+      %Scope{}
+
+      iex> Scope.set(scope, %OrgMember{})
+      %Scope{}
   """
-  def for_user(%User{} = user) do
-    %__MODULE__{user: user}
-  end
+  def set(%__MODULE__{} = scope, %Org{} = org), do: %{scope | org: org}
+  def set(%__MODULE__{} = scope, %User{} = user), do: %{scope | user: user}
+  def set(%__MODULE__{} = scope, %OrgMember{} = org_member), do: %{scope | org_member: org_member}
+  def set(%__MODULE__{} = scope, nil), do: scope
 
-  def for_user(nil), do: nil
+  def set(%__MODULE__{} = scope), do: scope
 end
