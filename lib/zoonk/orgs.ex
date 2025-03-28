@@ -10,7 +10,9 @@ defmodule Zoonk.Orgs do
   """
   import Ecto.Query, warn: false
 
+  alias Ecto.Multi
   alias Zoonk.Accounts.User
+  alias Zoonk.Helpers
   alias Zoonk.Orgs.Org
   alias Zoonk.Orgs.OrgMember
   alias Zoonk.Orgs.OrgSettings
@@ -30,6 +32,18 @@ defmodule Zoonk.Orgs do
   end
 
   @doc """
+  Returns an `Ecto.Changeset{}` for tracking org settings changes.
+
+  ## Examples
+
+      iex> change_org_settings(org_settings, %{field: new_value})
+      %Ecto.Changeset{data: %OrgSettings{}}
+  """
+  def change_org_settings(%OrgSettings{} = org_settings, attrs \\ %{}) do
+    OrgSettings.changeset(org_settings, attrs)
+  end
+
+  @doc """
   Creates an organization.
 
   ## Examples
@@ -41,9 +55,11 @@ defmodule Zoonk.Orgs do
       {:error, %Ecto.Changeset{}}
   """
   def create_org(attrs \\ %{}) do
-    %Org{}
-    |> change_org(attrs)
-    |> Repo.insert()
+    Multi.new()
+    |> Multi.insert(:org, Org.changeset(%Org{}, attrs))
+    |> Multi.insert(:settings, fn %{org: org} -> change_org_settings(%OrgSettings{}, %{org_id: org.id}) end)
+    |> Repo.transaction()
+    |> Helpers.get_changeset_from_transaction(:org)
   end
 
   @doc """

@@ -142,6 +142,13 @@ defmodule Zoonk.OrgsTest do
         assert org.kind == kind
       end
     end
+
+    test "adds default settings when creating an org" do
+      attrs = valid_org_attributes()
+      assert {:ok, %Org{} = org} = Orgs.create_org(attrs)
+      scope = scope_fixture(%{org: org, role: :admin})
+      assert Orgs.get_org_settings(scope).org_id == org.id
+    end
   end
 
   describe "get_org_by_host/1" do
