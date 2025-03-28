@@ -52,7 +52,7 @@ defmodule Zoonk.OrgFixtures do
   def app_org_fixture do
     Repo.insert!(%Org{
       display_name: "App Org",
-      custom_domain: "zoonk.test",
+      custom_domain: "zoonk-#{System.unique_integer()}.test",
       subdomain: "zoonk_dev",
       kind: :app
     })
