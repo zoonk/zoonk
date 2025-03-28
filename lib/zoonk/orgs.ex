@@ -13,7 +13,9 @@ defmodule Zoonk.Orgs do
   alias Zoonk.Accounts.User
   alias Zoonk.Orgs.Org
   alias Zoonk.Orgs.OrgMember
+  alias Zoonk.Orgs.OrgSettings
   alias Zoonk.Repo
+  alias Zoonk.Scope
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking org changes.
@@ -100,4 +102,27 @@ defmodule Zoonk.Orgs do
   end
 
   def get_org_member(_org, _user), do: nil
+
+  @doc """
+  Gets org settings.
+
+  Given a `Zoonk.Scope`, allows org admins to retrieve
+  settings for their organization.
+
+  ## Examples
+
+      iex> get_org_settings(%Scope{org_member: %{role: :admin}})
+      %OrgSettings{}
+
+      iex> get_org_settings(%Scope{org_member: %{role: :member}})
+      nil
+
+      iex> get_org_settings(%Scope{org_id: nil})
+      nil
+  """
+  def get_org_settings(%Scope{org_member: %{role: :admin}} = scope) do
+    Repo.get_by(OrgSettings, org_id: scope.org.id)
+  end
+
+  def get_org_settings(_scope), do: nil
 end

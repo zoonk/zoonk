@@ -5,9 +5,11 @@ defmodule Zoonk.AccountFixtures do
   """
 
   import Ecto.Query
+  import Zoonk.OrgFixtures
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.UserToken
+  alias Zoonk.Scope
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
   def unique_user_username, do: "user#{System.unique_integer()}"
@@ -47,6 +49,15 @@ defmodule Zoonk.AccountFixtures do
     {:ok, user, _expired_tokens} = Accounts.login_user_by_magic_link(token)
 
     user
+  end
+
+  def scope_fixture(attrs \\ %{}) do
+    org = Map.get_lazy(attrs, :org, fn -> org_fixture() end)
+    user = Map.get_lazy(attrs, :user, fn -> user_fixture() end)
+    role = Map.get(attrs, :role, :member)
+    org_member = Map.get_lazy(attrs, :org_member, fn -> org_member_fixture(%{org: org, user: user, role: role}) end)
+
+    Scope.set(%Scope{org: org, user: user, org_member: org_member})
   end
 
   def extract_user_token(fun) do
