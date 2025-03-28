@@ -19,7 +19,17 @@ defmodule Zoonk.Accounts do
   alias Zoonk.Helpers
   alias Zoonk.Repo
 
-  ## Database getters
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking a user's profile changes.
+
+  ## Examples
+
+      iex> change_user_profile(%UserProfile{}, %{field: new_value})
+      %Ecto.Changeset{data: %UserProfile{}}
+  """
+  def change_user_profile(%UserProfile{} = user_profile, attrs \\ %{}) do
+    UserProfile.changeset(user_profile, attrs)
+  end
 
   @doc """
   Gets a user by email.
@@ -36,8 +46,6 @@ defmodule Zoonk.Accounts do
   def get_user_by_email(email) when is_binary(email) do
     Repo.get_by(User, email: email)
   end
-
-  ## User signup
 
   @doc """
   Signs up a user.
@@ -58,8 +66,6 @@ defmodule Zoonk.Accounts do
     |> Repo.transaction()
     |> Helpers.get_changeset_from_transaction(:user)
   end
-
-  ## Settings
 
   @doc """
   Checks whether the user is in sudo mode.
@@ -115,8 +121,6 @@ defmodule Zoonk.Accounts do
     |> Ecto.Multi.update(:user, changeset)
     |> Ecto.Multi.delete_all(:tokens, UserToken.by_user_and_contexts_query(user, [context]))
   end
-
-  ## Session
 
   @doc """
   Generates a session token.
@@ -217,8 +221,6 @@ defmodule Zoonk.Accounts do
 
     :ok
   end
-
-  ## Token helper
 
   defp update_user_and_delete_all_tokens(changeset) do
     %{data: %User{} = user} = changeset

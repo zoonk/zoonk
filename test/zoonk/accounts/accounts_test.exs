@@ -10,6 +10,37 @@ defmodule Zoonk.AccountsTest do
   alias Zoonk.Accounts.UserToken
   alias Zoonk.Config.AuthConfig
 
+  describe "change_user_profile/2" do
+    test "allows valid usernames" do
+      valid = ["user", "my-a", "my_a", "mya23", "123mya", "my-a-123", "my_a_123", "MY-A"]
+
+      for username <- valid do
+        attrs = valid_user_profile_attributes(%{username: username})
+        assert %Ecto.Changeset{valid?: true} = UserProfile.changeset(%UserProfile{}, attrs)
+      end
+    end
+
+    test "rejects usernames with special characters" do
+      invalid = ["my.a", "my@a", "my/a", "my\\a", "my:a", "my;a", "my,a", "my a"]
+
+      for username <- invalid do
+        attrs = valid_user_profile_attributes(%{username: username})
+        assert %Ecto.Changeset{valid?: false} = changeset = UserProfile.changeset(%UserProfile{}, attrs)
+        assert %{username: ["cannot have spaces for special characters"]} = errors_on(changeset)
+      end
+    end
+
+    test "rejects usernames without letters" do
+      invalid = ["123", "12_", "1--", "--", "__"]
+
+      for username <- invalid do
+        attrs = valid_user_profile_attributes(%{username: username})
+        assert %Ecto.Changeset{valid?: false} = changeset = UserProfile.changeset(%UserProfile{}, attrs)
+        assert %{username: ["must have letters"]} = errors_on(changeset)
+      end
+    end
+  end
+
   describe "get_user_by_email/1" do
     test "does not return the user if the email does not exist" do
       refute Accounts.get_user_by_email("unknown@example.com")

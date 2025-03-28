@@ -11,12 +11,21 @@ defmodule Zoonk.AccountFixtures do
   alias Zoonk.Scope
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
+  def unique_user_username, do: "user#{System.unique_integer()}"
 
   def valid_user_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
       email: unique_user_email(),
       language: :en
     })
+  end
+
+  def valid_user_profile_attributes(attrs \\ %{}) do
+    user = Map.get_lazy(attrs, :user, fn -> user_fixture() end)
+
+    attrs
+    |> Map.delete(:user)
+    |> Enum.into(%{username: unique_user_username(), user_id: user.id})
   end
 
   def unconfirmed_user_fixture(attrs \\ %{}) do

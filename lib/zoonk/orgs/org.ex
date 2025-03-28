@@ -93,10 +93,11 @@ defmodule Zoonk.Orgs.Org do
     ])
     |> validate_required([:display_name, :subdomain])
     |> validate_length(:display_name, min: 1, max: 32)
-    |> validate_length(:subdomain, min: 1, max: 32)
+    |> validate_length(:subdomain, min: 2, max: 32)
     |> validate_format(:subdomain, ~r/^[a-zA-Z0-9_-]+$/,
-      message: "can only contain letters, numbers, underscores, and hyphens"
+      message: dgettext("errors", "cannot have spaces for special characters")
     )
+    |> validate_format(:subdomain, ~r/[a-zA-Z]/, message: dgettext("errors", "must have letters"))
     |> validate_exclusion(:kind, [:app])
     |> unsafe_validate_unique(:subdomain, Zoonk.Repo)
     |> unsafe_validate_unique(:custom_domain, Zoonk.Repo)

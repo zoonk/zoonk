@@ -6,6 +6,37 @@ defmodule Zoonk.OrgsTest do
   alias Zoonk.Orgs
   alias Zoonk.Orgs.Org
 
+  describe "change_org/2" do
+    test "allows valid subdomains" do
+      valid = ["myorg", "my-org", "my_org", "myorg123", "123myorg", "my-org-123", "my_org_123", "MY-ORG"]
+
+      for subdomain <- valid do
+        attrs = valid_org_attributes(%{subdomain: subdomain})
+        assert %Ecto.Changeset{valid?: true} = Org.changeset(%Org{}, attrs)
+      end
+    end
+
+    test "rejects subdomains with special characters" do
+      invalid = ["my.org", "my@org", "my/org", "my\\org", "my:org", "my;org", "my,org", "my org"]
+
+      for subdomain <- invalid do
+        attrs = valid_org_attributes(%{subdomain: subdomain})
+        assert %Ecto.Changeset{valid?: false} = changeset = Org.changeset(%Org{}, attrs)
+        assert %{subdomain: ["cannot have spaces for special characters"]} = errors_on(changeset)
+      end
+    end
+
+    test "rejects subdomains without letters" do
+      invalid = ["123", "12_", "1--", "--", "__"]
+
+      for subdomain <- invalid do
+        attrs = valid_org_attributes(%{subdomain: subdomain})
+        assert %Ecto.Changeset{valid?: false} = changeset = Org.changeset(%Org{}, attrs)
+        assert %{subdomain: ["must have letters"]} = errors_on(changeset)
+      end
+    end
+  end
+
   describe "create_org/1" do
     test "creates an organization with valid data" do
       attrs = valid_org_attributes()
@@ -59,16 +90,6 @@ defmodule Zoonk.OrgsTest do
       # Too long (more than 32 chars)
       assert {:error, changeset} = Orgs.create_org(%{display_name: "Test Org", subdomain: String.duplicate("a", 33)})
       assert %{subdomain: ["should be at most 32 character(s)"]} = errors_on(changeset)
-    end
-
-    test "returns error changeset when subdomain format is invalid" do
-      invalid_formats = ["test org", "test.org", "test@org", "testørg"]
-
-      for invalid_subdomain <- invalid_formats do
-        attrs = %{display_name: "Test Org", subdomain: invalid_subdomain}
-        assert {:error, changeset} = Orgs.create_org(attrs)
-        assert %{subdomain: ["can only contain letters, numbers, underscores, and hyphens"]} = errors_on(changeset)
-      end
     end
 
     test "returns error changeset when subdomain is already taken" do

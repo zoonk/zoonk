@@ -23,6 +23,7 @@ defmodule Zoonk.Accounts.UserProfile do
   | `updated_at` | `DateTime` | Timestamp when the profile was last updated. |
   """
   use Ecto.Schema
+  use Gettext, backend: Zoonk.Gettext
 
   import Ecto.Changeset
 
@@ -49,6 +50,10 @@ defmodule Zoonk.Accounts.UserProfile do
     profile
     |> cast(attrs, [:bio, :display_name, :picture_url, :is_public, :username, :city_id, :user_id])
     |> validate_required([:is_public, :username, :user_id])
+    |> validate_format(:username, ~r/^[a-zA-Z0-9_-]+$/,
+      message: dgettext("errors", "cannot have spaces for special characters")
+    )
+    |> validate_format(:username, ~r/[a-zA-Z]/, message: dgettext("errors", "must have letters"))
     |> unique_constraint(:username)
   end
 end
