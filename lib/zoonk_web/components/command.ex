@@ -286,7 +286,7 @@ defmodule ZoonkWeb.Components.Command do
 
   def command_empty(assigns) do
     ~H"""
-    <.text variant={:secondary} tag="p" size={:caption} class={["py-6 text-center", @class]} {@rest}>
+    <.text variant={:secondary} tag="p" size={:sm} class={["py-6 text-center", @class]} {@rest}>
       {render_slot(@inner_block)}
     </.text>
     """

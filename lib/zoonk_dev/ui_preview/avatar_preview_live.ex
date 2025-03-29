@@ -61,7 +61,7 @@ defmodule ZoonkDev.UIPreview.AvatarPreviewLive do
 
           <div>
             <.text tag="h4" class="font-medium">John Doe</.text>
-            <.text tag="p" size={:caption} variant={:secondary}>Member since 2023</.text>
+            <.text tag="p" size={:sm} variant={:secondary}>Member since 2023</.text>
           </div>
         </.card_content>
       </.card>

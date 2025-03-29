@@ -13,11 +13,12 @@ defmodule ZoonkDev.UIPreview.TextPreviewLive do
         </.card_header>
 
         <.card_content class="flex flex-col gap-4">
-          <.text tag="h1" size={:header}>Header Text</.text>
-          <.text tag="h2" size={:title}>Title Text</.text>
-          <.text tag="h3" size={:subtitle}>Subtitle Text</.text>
-          <.text tag="p" size={:body}>Body Text</.text>
-          <.text tag="span" size={:caption}>Caption Text</.text>
+          <.text tag="h1" size={:xxl}>XXL Text</.text>
+          <.text tag="h2" size={:xl}>XL Text</.text>
+          <.text tag="h3" size={:lg}>LG Text</.text>
+          <.text tag="p" size={:md}>MD Text</.text>
+          <.text tag="span" size={:sm}>SM Text</.text>
+          <.text tag="span" size={:xs}>XS Text</.text>
         </.card_content>
       </.card>
 
@@ -28,11 +29,11 @@ defmodule ZoonkDev.UIPreview.TextPreviewLive do
         </.card_header>
 
         <.card_content class="flex flex-col gap-4">
-          <.text tag="p" size={:body} variant={:primary}>Primary Text - Main content text</.text>
-          <.text tag="p" size={:body} variant={:secondary}>
+          <.text tag="p" size={:md} variant={:primary}>Primary Text - Main content text</.text>
+          <.text tag="p" size={:md} variant={:secondary}>
             Secondary Text - Supporting content text
           </.text>
-          <.text tag="p" size={:body} variant={:custom} class="text-zk-primary">
+          <.text tag="p" size={:md} variant={:custom} class="text-zk-primary">
             Custom Text - With custom color
           </.text>
         </.card_content>

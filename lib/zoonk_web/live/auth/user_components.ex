@@ -43,7 +43,7 @@ defmodule ZoonkWeb.User.UserComponents do
         "border-zk-border border-t"
       ]}
     >
-      <.text aria-hidden="true" size={:caption} variant={:secondary} class="leading-3">
+      <.text aria-hidden="true" size={:sm} variant={:secondary} class="leading-3">
         {get_footer_title(@action)}
       </.text>
 
@@ -61,7 +61,7 @@ defmodule ZoonkWeb.User.UserComponents do
 
   def auth_title(assigns) do
     ~H"""
-    <.text id="auth-title" tag="h1" size={:header} class="w-full pb-8">
+    <.text id="auth-title" tag="h1" size={:xxl} class="w-full pb-8">
       {get_auth_header(@action)}
     </.text>
     """
@@ -94,7 +94,7 @@ defmodule ZoonkWeb.User.UserComponents do
         aria-label={dgettext("users", "Terms of user and privacy policy")}
         class="pt-8"
       >
-        <.text size={:caption} variant={:secondary}>
+        <.text size={:sm} variant={:secondary}>
           {dgettext("users", "By signing up, you agree to our %{terms} and %{privacy}.",
             terms: get_terms_link("/terms", dgettext("users", "Terms of Use")),
             privacy: get_terms_link("/privacy", dgettext("users", "Privacy Policy"))

@@ -7,8 +7,8 @@ defmodule ZoonkWeb.Components.Text do
   attr :tag, :string, default: "p", doc: "HTML tag to use for the text element"
 
   attr :size, :atom,
-    values: [:header, :title, :subtitle, :body, :caption, :small],
-    default: :body,
+    values: [:xxl, :xl, :lg, :md, :sm, :xs],
+    default: :md,
     doc: "Size of the text"
 
   attr :variant, :atom, values: [:primary, :secondary, :custom], default: :primary, doc: "Color variant of the text"
@@ -25,7 +25,7 @@ defmodule ZoonkWeb.Components.Text do
 
       <.text>Some text</.text>
       <.text tag="h1">Some text</.text>
-      <.text size={:title}>Some text</.text>
+      <.text size={:xl}>Some text</.text>
       <.text variant={:secondary}>Some text</.text>
   """
   def text(%{tag: "label"} = assigns) do
@@ -54,12 +54,12 @@ defmodule ZoonkWeb.Components.Text do
     """
   end
 
-  defp get_size_class(:header), do: "text-2xl font-semibold"
-  defp get_size_class(:title), do: "text-xl font-medium"
-  defp get_size_class(:subtitle), do: "text-lg"
-  defp get_size_class(:body), do: "text-base"
-  defp get_size_class(:caption), do: "text-sm"
-  defp get_size_class(:small), do: "text-xs"
+  defp get_size_class(:xxl), do: "text-2xl font-semibold"
+  defp get_size_class(:xl), do: "text-xl font-medium"
+  defp get_size_class(:lg), do: "text-lg"
+  defp get_size_class(:md), do: "text-base"
+  defp get_size_class(:sm), do: "text-sm"
+  defp get_size_class(:xs), do: "text-xs"
 
   defp get_variant_class(:primary), do: "text-zk-foreground"
   defp get_variant_class(:secondary), do: "text-zk-muted-foreground"

@@ -90,7 +90,7 @@ defmodule ZoonkWeb.Components.Card do
 
   def card_title(assigns) do
     ~H"""
-    <.text tag="h3" size={:title} variant={:primary} {@rest}>
+    <.text tag="h3" size={:xl} variant={:primary} {@rest}>
       {render_slot(@inner_block)}
     </.text>
     """
@@ -109,7 +109,7 @@ defmodule ZoonkWeb.Components.Card do
 
   def card_description(assigns) do
     ~H"""
-    <.text tag="h4" size={:caption} variant={:secondary} class={@class} {@rest}>
+    <.text tag="h4" size={:sm} variant={:secondary} class={@class} {@rest}>
       {render_slot(@inner_block)}
     </.text>
     """

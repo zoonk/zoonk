@@ -34,8 +34,8 @@ defmodule ZoonkWeb.Components.Form do
       {@rest}
     >
       <fieldset aria-label={gettext("Form fields")} class="flex flex-col gap-4 p-4 md:p-8">
-        <.text aria-hidden="true" tag="h3" size={:header}>{render_slot(@title)}</.text>
-        <.text tag="h4" size={:body} variant={:secondary}>{render_slot(@subtitle)}</.text>
+        <.text aria-hidden="true" tag="h3" size={:xxl}>{render_slot(@title)}</.text>
+        <.text tag="h4" size={:md} variant={:secondary}>{render_slot(@subtitle)}</.text>
 
         {render_slot(@inner_block)}
       </fieldset>
@@ -44,7 +44,7 @@ defmodule ZoonkWeb.Components.Form do
         aria-label={gettext("More information and save button")}
         class={["flex items-center justify-between", "bg-zk-muted rounded-b", "px-4 py-2 md:px-8"]}
       >
-        <.text size={:caption} variant={:secondary}>{render_slot(@requirements)}</.text>
+        <.text size={:sm} variant={:secondary}>{render_slot(@requirements)}</.text>
 
         <.button type="submit" size={:sm} phx-disable-with={gettext("Saving...")}>
           {gettext("Save")}

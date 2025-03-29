@@ -18,7 +18,7 @@ defmodule ZoonkDev.UIPreview.UIPreviewLayout do
           <.text
             aria-hidden="true"
             tag="h1"
-            size={:header}
+            size={:xxl}
             variant={:secondary}
             class="truncate"
             id="page-title"

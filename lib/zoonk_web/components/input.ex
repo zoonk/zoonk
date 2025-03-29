@@ -171,7 +171,7 @@ defmodule ZoonkWeb.Components.Input do
     ~H"""
     <.text
       tag="label"
-      size={:caption}
+      size={:sm}
       for={@for}
       class={["font-semibold leading-8", @hide_label && "sr-only"]}
     >
