@@ -40,6 +40,7 @@ defmodule Zoonk.Accounts.User do
   | `updated_at` | `DateTime` | Timestamp when the user was last updated. |
   """
   use Ecto.Schema
+  use Gettext, backend: Zoonk.Gettext
 
   import Ecto.Changeset
 
@@ -78,13 +79,22 @@ defmodule Zoonk.Accounts.User do
   end
 
   @doc """
-  A user changeset for adding or updating a user's settings.
+  A user changeset for updating a user's settings.
   """
   def settings_changeset(user, attrs, opts \\ []) do
     user
     |> email_changeset(attrs, opts)
     |> cast(attrs, [:language, :tax_id])
     |> validate_required([:language])
+  end
+
+  @doc """
+  A user changeset for signing up.
+  """
+  def signup_changeset(user, attrs, opts \\ []) do
+    user
+    |> settings_changeset(attrs)
+    |> maybe_validate_email_domain(Keyword.get(opts, :allowed_domains))
   end
 
   @doc """
@@ -146,4 +156,35 @@ defmodule Zoonk.Accounts.User do
   """
   def get_display_name(%UserProfile{display_name: nil} = profile), do: profile.username
   def get_display_name(%UserProfile{display_name: display_name}), do: display_name
+
+  # team and app orgs don't require domain validation, so we set it to nil and skip it
+  defp maybe_validate_email_domain(changeset, nil), do: changeset
+
+  # some orgs require that only emails from a specific domain are allowed to sign up
+  defp maybe_validate_email_domain(changeset, allowed_domains) do
+    domain = get_domain_from_email(get_field(changeset, :email))
+    allowed? = Enum.member?(allowed_domains, domain)
+    maybe_validate_email_domain(changeset, domain, allowed?)
+  end
+
+  defp maybe_validate_email_domain(changeset, _domain, true), do: changeset
+
+  defp maybe_validate_email_domain(changeset, domain, false) do
+    add_error(
+      changeset,
+      :email,
+      dgettext(
+        "errors",
+        "You can't signup with this email address. Ask your team manager to add %{domain} to the list of allowed domains.",
+        domain: domain
+      )
+    )
+  end
+
+  defp get_domain_from_email(email) do
+    email
+    |> String.split("@")
+    |> List.last()
+    |> String.downcase()
+  end
 end

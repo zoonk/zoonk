@@ -17,7 +17,10 @@ defmodule Zoonk.Accounts do
   alias Zoonk.Accounts.UserToken
   alias Zoonk.Config.AuthConfig
   alias Zoonk.Helpers
+  alias Zoonk.Orgs.Org
+  alias Zoonk.Orgs.OrgSettings
   alias Zoonk.Repo
+  alias Zoonk.Scope
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking a user's profile changes.
@@ -52,19 +55,35 @@ defmodule Zoonk.Accounts do
 
   ## Examples
 
-      iex> signup_user(%{field: value})
+      iex> signup_user(%{field: value}, %Scope{})
       {:ok, %User{}}
 
-      iex> signup_user(%{field: bad_value})
+      iex> signup_user(%{field: bad_value}, %Scope{})
       {:error, %Ecto.Changeset{}}
 
+      iex> signup_user(%{field: value}, nil)
+      {:error, :not_allowed}
+
   """
-  def signup_user(attrs) do
+  def signup_user(attrs, %Scope{} = scope) do
+    opts = [allowed_domains: get_allowed_domains(scope.org)]
+    changeset = User.signup_changeset(%User{}, attrs, opts)
+
     Ecto.Multi.new()
-    |> Ecto.Multi.insert(:user, User.settings_changeset(%User{}, attrs))
+    |> Ecto.Multi.insert(:user, changeset)
     |> Ecto.Multi.insert(:profile, &build_initial_user_profile/1)
     |> Repo.transaction()
     |> Helpers.get_changeset_from_transaction(:user)
+  end
+
+  # `:app` and `:creator` orgs allow any domains to sign up
+  defp get_allowed_domains(%Org{kind: kind}) when kind in [:app, :creator], do: nil
+
+  # other orgs may require specific domains to sign up
+  defp get_allowed_domains(%Org{id: id}) do
+    OrgSettings
+    |> Repo.get_by!(org_id: id)
+    |> Map.get(:allowed_domains)
   end
 
   @doc """
@@ -245,16 +264,16 @@ defmodule Zoonk.Accounts do
 
   ## Examples
 
-      iex> login_with_provider(%{}, "en")
+      iex> login_with_provider(%{}, %Scope{}, "en")
       {:ok, %User{}}
 
-      iex> login_with_provider(nil, "en")
+      iex> login_with_provider(nil, %Scope{}, "en")
       {:error, %Ecto.Changeset{}}
   """
-  def login_with_provider(auth, language) do
+  def login_with_provider(auth, %Scope{} = scope, language) do
     user = get_user_by_email(auth["email"])
 
-    case login_with_provider(auth, language, user) do
+    case login_with_provider(auth, scope, language, user) do
       {:ok, %User{} = new_user} -> {:ok, new_user}
       {:ok, %UserProvider{}} -> {:ok, user}
       {:error, changeset} -> {:error, changeset}
@@ -262,26 +281,27 @@ defmodule Zoonk.Accounts do
   end
 
   # Create a new user if it doesn't exist
-  defp login_with_provider(auth, language, nil) do
-    signup_user_with_provider(auth, language)
+  defp login_with_provider(auth, %Scope{} = scope, language, nil) do
+    signup_user_with_provider(auth, scope, language)
   end
 
   # If the user exists, then link the provider
-  defp login_with_provider(auth, _lang, %User{} = user) do
+  defp login_with_provider(auth, _scope, _lang, %User{} = user) do
     %{user: user}
     |> user_provider_changeset(get_provider_attrs(auth))
     |> Repo.insert(on_conflict: :nothing)
   end
 
   # Create a new user and link the provider
-  defp signup_user_with_provider(auth, language) do
+  defp signup_user_with_provider(auth, %Scope{} = scope, language) do
     user_attrs = %{email: auth["email"], language: language}
     provider_attrs = get_provider_attrs(auth)
     profile_opts = [display_name: auth["name"], picture_url: auth["picture"], username: auth["preferred_username"]]
+    allowed_domains = get_allowed_domains(scope.org)
 
     user_changeset =
       %User{}
-      |> User.settings_changeset(user_attrs)
+      |> User.signup_changeset(user_attrs, allowed_domains: allowed_domains)
       |> User.confirm_changeset()
 
     Ecto.Multi.new()

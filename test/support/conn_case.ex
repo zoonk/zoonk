@@ -84,4 +84,29 @@ defmodule ZoonkWeb.ConnCase do
   defp maybe_set_token_inserted_at(token, inserted_at) do
     Zoonk.AccountFixtures.override_token_inserted_at(token, inserted_at)
   end
+
+  @doc """
+  Set up helper that assigns an org to the scope.
+
+      setup :setup_org
+
+  It stores an updated connection using an org's custom
+  domain as the host and adding them to the scope.
+  """
+  def setup_org(%{conn: conn}, opts \\ []) do
+    org = get_org(Keyword.get(opts, :org_kind, :app))
+    scope = Zoonk.Scope.set(%Zoonk.Scope{}, org)
+    conn = Map.put(conn, :host, org.custom_domain)
+    %{conn: conn, org: org, scope: scope}
+  end
+
+  def setup_team(context), do: setup_org(context, org_kind: :team)
+  def setup_school(context), do: setup_org(context, org_kind: :school)
+  def setup_app(context), do: setup_org(context, org_kind: :app)
+  def setup_creator(context), do: setup_org(context, org_kind: :creator)
+
+  defp get_org(:app), do: Zoonk.OrgFixtures.app_org_fixture()
+
+  defp get_org(kind),
+    do: Zoonk.OrgFixtures.org_fixture(%{kind: kind, custom_domain: "zoonk.test-#{System.unique_integer()}"})
 end
