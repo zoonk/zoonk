@@ -65,7 +65,7 @@ defmodule ZoonkWeb.UserAuthorization do
       socket =
         socket
         |> Phoenix.LiveView.put_flash(:error, dgettext("errors", "You must be a member of this organization."))
-        |> Phoenix.LiveView.redirect(to: ~p"/login")
+        |> Phoenix.LiveView.redirect(to: ~p"/login", status: 403)
 
       {:halt, socket}
     end
