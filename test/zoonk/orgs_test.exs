@@ -131,7 +131,9 @@ defmodule Zoonk.OrgsTest do
       app_org_fixture()
 
       assert_raise Ecto.ConstraintError, fn ->
-        Orgs.create_org(valid_org_attributes(%{kind: :app}))
+        %{kind: :app}
+        |> valid_org_attributes()
+        |> Orgs.create_org()
       end
     end
 
