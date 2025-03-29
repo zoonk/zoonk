@@ -5,3 +5,4 @@
 - When creating a new schema or context, create a fixtures file for it at `test/support/fixtures`.
 - Add fixtures individually to each test instead of adding them to the `setup` block.
 - Use the `PhoenixTest` library for testing.
+- `Phoenix.ConnTest.get_flash/2` is deprecated. Use `Phoenix.Flash.get/2` instead.
