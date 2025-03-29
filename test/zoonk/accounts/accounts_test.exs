@@ -109,8 +109,8 @@ defmodule Zoonk.AccountsTest do
       assert Repo.get_by(UserProfile, user_id: user.id)
     end
 
-    test "doesn't allow to signup to a team with an invalid domain" do
-      # don't allow signup when there are no allowed domains
+    test "doesn't allow to signup to a team when sign up is not allowed" do
+      # empty allowed_domains means no signup allowed
       scope = scope_fixture(%{kind: :team, settings: %{allowed_domains: []}})
 
       {:error, changeset} =
@@ -120,6 +120,79 @@ defmodule Zoonk.AccountsTest do
 
       assert_error(changeset, :email, "You can't signup with this email address")
       assert_error(changeset, :email, "zoonk.test")
+    end
+
+    test "doesn't allow to sign up to a team with a not allowed domain" do
+      scope = scope_fixture(%{kind: :team, settings: %{allowed_domains: ["allowed.com"]}})
+
+      {:error, changeset} =
+        %{email: "user@invalid.com"}
+        |> valid_user_attributes()
+        |> Accounts.signup_user(scope)
+
+      assert_error(changeset, :email, "You can't signup with this email address")
+      assert_error(changeset, :email, "invalid.com")
+    end
+
+    test "allows to sign up to a team with an allowed domain" do
+      scope = scope_fixture(%{kind: :team, settings: %{allowed_domains: ["allowed.com"]}})
+
+      {:ok, user} =
+        %{email: "user@allowed.com"}
+        |> valid_user_attributes()
+        |> Accounts.signup_user(scope)
+
+      assert user.email == "user@allowed.com"
+      assert Repo.get_by(UserProfile, user_id: user.id)
+    end
+
+    test "doesn't allow to signup to a school when sign up is not allowed" do
+      # empty allowed_domains means no signup allowed
+      scope = scope_fixture(%{kind: :school, settings: %{allowed_domains: []}})
+
+      {:error, changeset} =
+        %{email: "user@zoonk.test"}
+        |> valid_user_attributes()
+        |> Accounts.signup_user(scope)
+
+      assert_error(changeset, :email, "You can't signup with this email address")
+      assert_error(changeset, :email, "zoonk.test")
+    end
+
+    test "doesn't allow to sign up to a school with a not allowed domain" do
+      scope = scope_fixture(%{kind: :school, settings: %{allowed_domains: ["allowed.com"]}})
+
+      {:error, changeset} =
+        %{email: "user@invalid.com"}
+        |> valid_user_attributes()
+        |> Accounts.signup_user(scope)
+
+      assert_error(changeset, :email, "You can't signup with this email address")
+      assert_error(changeset, :email, "invalid.com")
+    end
+
+    test "allows to sign up to a school with an allowed domain" do
+      scope = scope_fixture(%{kind: :school, settings: %{allowed_domains: ["allowed.com"]}})
+
+      {:ok, user} =
+        %{email: "user@allowed.com"}
+        |> valid_user_attributes()
+        |> Accounts.signup_user(scope)
+
+      assert user.email == "user@allowed.com"
+      assert Repo.get_by(UserProfile, user_id: user.id)
+    end
+
+    test "always allows to sign up to app orgs" do
+      scope = scope_fixture(%{kind: :app, settings: %{allowed_domains: []}})
+      {:ok, user} = Accounts.signup_user(valid_user_attributes(), scope)
+      assert Repo.get_by(UserProfile, user_id: user.id)
+    end
+
+    test "always allows to sign up to creator orgs" do
+      scope = scope_fixture(%{kind: :creator, settings: %{allowed_domains: []}})
+      {:ok, user} = Accounts.signup_user(valid_user_attributes(), scope)
+      assert Repo.get_by(UserProfile, user_id: user.id)
     end
   end
 
