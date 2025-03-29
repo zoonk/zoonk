@@ -127,10 +127,12 @@ defmodule Zoonk.OrgsTest do
       assert %{custom_domain: ["has already been taken"]} = errors_on(changeset)
     end
 
-    test "returns error changeset when trying to create an org with kind = :app" do
-      attrs = valid_org_attributes(%{kind: :app})
-      assert {:error, changeset} = Orgs.create_org(attrs)
-      assert %{kind: ["is reserved"]} = errors_on(changeset)
+    test "returns a ConstraintError when trying to create a second org with kind = :app" do
+      app_org_fixture()
+
+      assert_raise Ecto.ConstraintError, fn ->
+        Orgs.create_org(valid_org_attributes(%{kind: :app}))
+      end
     end
 
     test "creates organization with valid kinds" do
