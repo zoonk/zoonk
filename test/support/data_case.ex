@@ -59,4 +59,20 @@ defmodule Zoonk.DataCase do
       end)
     end)
   end
+
+  @doc """
+  A helper that checks if a substring is present in a changeset error message.
+
+  This is useful when you want to assert partial error messages instead
+  of having to pass a full string to the `errors_on/1` function,
+  which can be hard for long error messages.
+
+      assert changeset = Accounts.create_user(%{password: "short"})
+      assert_error(changeset, :email, "You can't signup with this email address")
+  """
+  def assert_error(changeset, field, message) do
+    assert errors_on(changeset)[field]
+           |> Enum.join()
+           |> String.contains?(message)
+  end
 end
