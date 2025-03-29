@@ -3,8 +3,10 @@ defmodule ZoonkWeb.Router do
 
   import ZoonkWeb.Accounts.UserAuth
   import ZoonkWeb.Language
+  import ZoonkWeb.UserAuthorization
 
   alias ZoonkWeb.Accounts.UserAuth
+  alias ZoonkWeb.UserAuthorization
 
   @allowed_images "https://avatars.githubusercontent.com https://github.com https://*.googleusercontent.com"
 
@@ -42,11 +44,12 @@ defmodule ZoonkWeb.Router do
   end
 
   scope "/", ZoonkWeb do
-    pipe_through [:browser, :require_authenticated_user]
+    pipe_through [:browser, :require_authenticated_user, :require_org_member]
 
     live_session :require_authenticated_user,
       on_mount: [
         {UserAuth, :ensure_authenticated},
+        {UserAuthorization, :ensure_org_member},
         {ZoonkWeb.Language, :set_app_language}
       ] do
       live "/", AppHomeLive
