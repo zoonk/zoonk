@@ -25,7 +25,9 @@ defmodule ZoonkWeb.User.SignUpWithEmailLiveTest do
     end
   end
 
-  describe "signs up user" do
+  describe "signs up user (:app org)" do
+    setup :setup_app
+
     test "use the browser's language", %{conn: conn} do
       conn = put_req_header(conn, "accept-language", "pt-BR")
 

@@ -272,7 +272,7 @@ defmodule Zoonk.OrgsTest do
     end
 
     test "returns nil for non-admins" do
-      scope = scope_fixture(%{role: :member})
+      scope = scope_fixture(%{kind: :team, role: :member})
       refute Orgs.get_org_settings(scope)
     end
   end
