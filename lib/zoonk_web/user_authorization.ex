@@ -13,7 +13,7 @@ defmodule ZoonkWeb.UserAuthorization do
 
   alias Zoonk.Accounts.User
   alias Zoonk.Scope
-  alias ZoonkWeb.Accounts.UserAuth
+  alias ZoonkWeb.UserAuth
 
   @doc """
   Checks if the user is a confirmed member of the current organization.

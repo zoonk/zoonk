@@ -6,7 +6,7 @@ defmodule ZoonkWeb.Accounts.OAuthController do
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.User
-  alias ZoonkWeb.Accounts.UserAuth
+  alias ZoonkWeb.UserAuth
 
   @oauth_state_cookie "_zk_oauth_state"
 

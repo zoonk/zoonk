@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Accounts.UserAuthTest do
+defmodule ZoonkWeb.UserAuthTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AccountFixtures
@@ -9,7 +9,7 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
   alias Zoonk.Accounts
   alias Zoonk.Config.AuthConfig
   alias Zoonk.Scope
-  alias ZoonkWeb.Accounts.UserAuth
+  alias ZoonkWeb.UserAuth
 
   @remember_me_cookie AuthConfig.get_cookie_name(:remember_me)
   @max_age AuthConfig.get_max_age(:token, :seconds)
