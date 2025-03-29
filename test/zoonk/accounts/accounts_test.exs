@@ -10,8 +10,6 @@ defmodule Zoonk.AccountsTest do
   alias Zoonk.Accounts.UserToken
   alias Zoonk.Config.AuthConfig
   alias Zoonk.Config.SubdomainConfig
-  alias Zoonk.Orgs
-  alias Zoonk.Orgs.OrgSettings
   alias Zoonk.Repo
 
   describe "change_user_profile/2" do
