@@ -267,14 +267,12 @@ defmodule Zoonk.OrgsTest do
   describe "get_org_settings/1" do
     test "returns org settings for admins" do
       scope = scope_fixture(%{role: :admin})
-      org_settings_fixture(%{org_id: scope.org.id})
       settings = Orgs.get_org_settings(scope)
       assert settings.org_id == scope.org.id
     end
 
     test "returns nil for non-admins" do
       scope = scope_fixture(%{role: :member})
-      org_settings_fixture(%{org_id: scope.org.id})
       refute Orgs.get_org_settings(scope)
     end
   end

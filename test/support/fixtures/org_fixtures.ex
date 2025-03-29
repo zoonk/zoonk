@@ -4,6 +4,7 @@ defmodule Zoonk.OrgFixtures do
   entities via the `Zoonk.Orgs` context.
   """
 
+  alias Zoonk.Orgs
   alias Zoonk.Orgs.Org
   alias Zoonk.Orgs.OrgMember
   alias Zoonk.Orgs.OrgSettings
@@ -33,13 +34,23 @@ defmodule Zoonk.OrgFixtures do
       iex> org_fixture(%{kind: :school})
       %Org{kind: :school}
   """
-  def org_fixture(attrs \\ %{}) do
-    {:ok, org} =
-      %Org{}
-      |> Org.changeset(valid_org_attributes(attrs))
-      |> Repo.insert()
+  def org_fixture(%{kind: :app}), do: app_org_fixture()
 
+  def org_fixture(attrs) do
+    {:ok, org} = Orgs.create_org(valid_org_attributes(attrs))
+    maybe_update_settings(Map.get(attrs, :settings, nil), org)
     org
+  end
+
+  def org_fixture, do: org_fixture(%{})
+
+  defp maybe_update_settings(nil, _org), do: nil
+
+  defp maybe_update_settings(settings, org) do
+    OrgSettings
+    |> Repo.get_by!(org_id: org.id)
+    |> OrgSettings.changeset(settings)
+    |> Repo.update!()
   end
 
   @doc """
@@ -52,8 +63,8 @@ defmodule Zoonk.OrgFixtures do
   def app_org_fixture do
     Repo.insert!(%Org{
       display_name: "App Org",
-      custom_domain: "zoonk-#{System.unique_integer()}.test",
-      subdomain: "zoonk_dev",
+      custom_domain: "zoonk.test",
+      subdomain: "zk_test",
       kind: :app
     })
   end
@@ -89,7 +100,9 @@ defmodule Zoonk.OrgFixtures do
       iex> org_member_fixture(%{role: :admin})
       %OrgMember{role: :admin}
   """
-  def org_member_fixture(attrs \\ %{}) do
+  def org_member_fixture(%{user: nil}), do: nil
+
+  def org_member_fixture(attrs) do
     org = Map.get_lazy(attrs, :org, fn -> org_fixture() end)
     user = Map.get_lazy(attrs, :user, fn -> Zoonk.AccountFixtures.user_fixture() end)
 

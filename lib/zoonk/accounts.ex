@@ -17,7 +17,10 @@ defmodule Zoonk.Accounts do
   alias Zoonk.Accounts.UserToken
   alias Zoonk.Config.AuthConfig
   alias Zoonk.Helpers
+  alias Zoonk.Orgs.Org
+  alias Zoonk.Orgs.OrgSettings
   alias Zoonk.Repo
+  alias Zoonk.Scope
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking a user's profile changes.
@@ -52,19 +55,35 @@ defmodule Zoonk.Accounts do
 
   ## Examples
 
-      iex> signup_user(%{field: value})
+      iex> signup_user(%{field: value}, %Scope{})
       {:ok, %User{}}
 
-      iex> signup_user(%{field: bad_value})
+      iex> signup_user(%{field: bad_value}, %Scope{})
       {:error, %Ecto.Changeset{}}
 
+      iex> signup_user(%{field: value}, nil)
+      {:error, :not_allowed}
+
   """
-  def signup_user(attrs) do
+  def signup_user(attrs, %Scope{} = scope) do
+    opts = [allowed_domains: get_allowed_domains(scope.org)]
+    changeset = User.signup_changeset(%User{}, attrs, opts)
+
     Ecto.Multi.new()
-    |> Ecto.Multi.insert(:user, User.settings_changeset(%User{}, attrs))
+    |> Ecto.Multi.insert(:user, changeset)
     |> Ecto.Multi.insert(:profile, &build_initial_user_profile/1)
     |> Repo.transaction()
     |> Helpers.get_changeset_from_transaction(:user)
+  end
+
+  # `:app` and `:creator` orgs allow any domains to sign up
+  defp get_allowed_domains(%Org{kind: kind}) when kind in [:app, :creator], do: nil
+
+  # other orgs may require specific domains to sign up
+  defp get_allowed_domains(%Org{id: id}) do
+    OrgSettings
+    |> Repo.get_by!(org_id: id)
+    |> Map.get(:allowed_domains)
   end
 
   @doc """

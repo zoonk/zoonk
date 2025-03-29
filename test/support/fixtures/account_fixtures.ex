@@ -33,7 +33,7 @@ defmodule Zoonk.AccountFixtures do
     {:ok, user} =
       attrs
       |> valid_user_attributes()
-      |> Accounts.signup_user()
+      |> Accounts.signup_user(scope_fixture(%{user: nil}))
 
     user
   end
@@ -52,7 +52,9 @@ defmodule Zoonk.AccountFixtures do
   end
 
   def scope_fixture(attrs \\ %{}) do
-    org = Map.get_lazy(attrs, :org, fn -> org_fixture() end)
+    org_attrs = Enum.into(attrs, %{kind: :app})
+
+    org = Map.get_lazy(attrs, :org, fn -> org_fixture(org_attrs) end)
     user = Map.get_lazy(attrs, :user, fn -> user_fixture() end)
     role = Map.get(attrs, :role, :member)
     org_member = Map.get_lazy(attrs, :org_member, fn -> org_member_fixture(%{org: org, user: user, role: role}) end)

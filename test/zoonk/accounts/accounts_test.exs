@@ -10,6 +10,9 @@ defmodule Zoonk.AccountsTest do
   alias Zoonk.Accounts.UserToken
   alias Zoonk.Config.AuthConfig
   alias Zoonk.Config.SubdomainConfig
+  alias Zoonk.Orgs
+  alias Zoonk.Orgs.OrgSettings
+  alias Zoonk.Repo
 
   describe "change_user_profile/2" do
     test "allows valid usernames" do
@@ -63,46 +66,62 @@ defmodule Zoonk.AccountsTest do
     end
   end
 
-  describe "signup_user/1" do
-    test "requires email to be set" do
-      {:error, changeset} = Accounts.signup_user(%{})
+  describe "signup_user/2" do
+    setup do
+      %{scope: scope_fixture(%{user: nil})}
+    end
 
+    test "requires email to be set", %{scope: scope} do
+      {:error, changeset} = Accounts.signup_user(%{}, scope)
       assert %{email: ["can't be blank"]} = errors_on(changeset)
     end
 
-    test "validates email when given" do
-      {:error, changeset} = Accounts.signup_user(%{email: "not valid"})
+    test "validates email when given", %{scope: scope} do
+      {:error, changeset} = Accounts.signup_user(%{email: "not valid"}, scope)
 
       assert %{email: ["must have the @ sign and no spaces"]} = errors_on(changeset)
     end
 
-    test "validates maximum values for email for security" do
+    test "validates maximum values for email for security", %{scope: scope} do
       too_long = String.duplicate("db", 100)
-      {:error, changeset} = Accounts.signup_user(%{email: too_long})
+      {:error, changeset} = Accounts.signup_user(%{email: too_long}, scope)
       assert "should be at most 160 character(s)" in errors_on(changeset).email
     end
 
-    test "validates email uniqueness" do
+    test "validates email uniqueness", %{scope: scope} do
       %{email: email} = user_fixture()
-      {:error, changeset} = Accounts.signup_user(%{email: email})
+      {:error, changeset} = Accounts.signup_user(%{email: email}, scope)
       assert "has already been taken" in errors_on(changeset).email
 
       # Now try with the upper cased email too, to check that email case is ignored.
-      {:error, uppercase_changeset} = Accounts.signup_user(%{email: String.upcase(email)})
+      {:error, uppercase_changeset} = Accounts.signup_user(%{email: String.upcase(email)}, scope)
       assert "has already been taken" in errors_on(uppercase_changeset).email
     end
 
-    test "signs up users" do
+    test "signs up users", %{scope: scope} do
       email = unique_user_email()
 
       {:ok, user} =
         [email: email]
         |> valid_user_attributes()
-        |> Accounts.signup_user()
+        |> Accounts.signup_user(scope)
 
       assert user.email == email
       assert is_nil(user.confirmed_at)
       assert Repo.get_by(UserProfile, user_id: user.id)
+    end
+
+    test "doesn't allow to signup to a team with an invalid domain" do
+      # don't allow signup when there are no allowed domains
+      scope = scope_fixture(%{kind: :team, settings: %{allowed_domains: []}})
+
+      {:error, changeset} =
+        %{email: "user@zoonk.test"}
+        |> valid_user_attributes()
+        |> Accounts.signup_user(scope)
+
+      assert "You can't signup with this email address. Ask your team manager to add zoonk.test to the list of allowed domains." =
+               errors_on(changeset).email
     end
   end
 
