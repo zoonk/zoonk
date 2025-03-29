@@ -1,11 +1,11 @@
 defmodule ZoonkWeb.Router do
   use ZoonkWeb, :router
 
-  import ZoonkWeb.Accounts.UserAuth
   import ZoonkWeb.Language
+  import ZoonkWeb.UserAuth
   import ZoonkWeb.UserAuthorization
 
-  alias ZoonkWeb.Accounts.UserAuth
+  alias ZoonkWeb.UserAuth
   alias ZoonkWeb.UserAuthorization
 
   @allowed_images "https://avatars.githubusercontent.com https://github.com https://*.googleusercontent.com"
