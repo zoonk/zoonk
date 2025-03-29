@@ -398,14 +398,15 @@ defmodule Zoonk.AccountsTest do
   end
 
   describe "login_with_provider/2" do
-    test "creates a new user and links the provider" do
+    test "creates a new user and links the provider for the :app org" do
       email = unique_user_email()
       picture = "https://zoonk.test/picture.png"
       uid = Ecto.UUID.generate()
 
       auth = oauth_fixture(%{uid: uid, email: email, picture: picture})
+      scope = scope_fixture(%{kind: :app, user: nil, settings: %{allowed_domains: []}})
 
-      {:ok, %User{} = user} = Accounts.login_with_provider(auth, "en")
+      {:ok, %User{} = user} = Accounts.login_with_provider(auth, scope, "en")
 
       assert user.email == email
       assert user.language == :en
@@ -421,14 +422,96 @@ defmodule Zoonk.AccountsTest do
       assert user_profile.picture_url == picture
     end
 
+    test "creates a new user for :creator orgs" do
+      email = unique_user_email()
+      uid = Ecto.UUID.generate()
+
+      auth = oauth_fixture(%{uid: uid, email: email})
+      scope = scope_fixture(%{kind: :creator, user: nil})
+
+      assert {:ok, %User{} = user} = Accounts.login_with_provider(auth, scope, "en")
+      assert user.email == email
+    end
+
+    test "doesn't create user if :team doesn't allow sign up" do
+      # empty allowed_domains means no signup allowed
+      scope = scope_fixture(%{kind: :team, settings: %{allowed_domains: []}})
+
+      email = unique_user_email()
+      uid = Ecto.UUID.generate()
+
+      auth = oauth_fixture(%{uid: uid, email: email})
+      assert {:error, changeset} = Accounts.login_with_provider(auth, scope, "en")
+      assert_error(changeset, :email, "You can't signup with this email address")
+    end
+
+    test "doesn't create user if :school doesn't allow sign up" do
+      # empty allowed_domains means no signup allowed
+      scope = scope_fixture(%{kind: :school, settings: %{allowed_domains: []}})
+
+      email = unique_user_email()
+      uid = Ecto.UUID.generate()
+
+      auth = oauth_fixture(%{uid: uid, email: email})
+      assert {:error, changeset} = Accounts.login_with_provider(auth, scope, "en")
+      assert_error(changeset, :email, "You can't signup with this email address")
+    end
+
+    test "doesn't create user if :team doesn't allow sign up with a not allowed domain" do
+      scope = scope_fixture(%{kind: :team, settings: %{allowed_domains: ["allowed.com"]}})
+
+      email = unique_user_email()
+      uid = Ecto.UUID.generate()
+
+      auth = oauth_fixture(%{uid: uid, email: email})
+      assert {:error, changeset} = Accounts.login_with_provider(auth, scope, "en")
+      assert_error(changeset, :email, "You can't signup with this email address")
+    end
+
+    test "doesn't create user if :school doesn't allow sign up with a not allowed domain" do
+      scope = scope_fixture(%{kind: :school, settings: %{allowed_domains: ["allowed.com"]}})
+
+      email = unique_user_email()
+      uid = Ecto.UUID.generate()
+
+      auth = oauth_fixture(%{uid: uid, email: email})
+      assert {:error, changeset} = Accounts.login_with_provider(auth, scope, "en")
+      assert_error(changeset, :email, "You can't signup with this email address")
+    end
+
+    test "creates user if :team allows sign up with an allowed domain" do
+      scope = scope_fixture(%{kind: :team, settings: %{allowed_domains: ["allowed.com"]}})
+
+      email = "#{System.unique_integer()}@allowed.com"
+      uid = Ecto.UUID.generate()
+
+      auth = oauth_fixture(%{uid: uid, email: email})
+      {:ok, user} = Accounts.login_with_provider(auth, scope, "en")
+
+      assert user.email == email
+    end
+
+    test "creates user if :school allows sign up with an allowed domain" do
+      scope = scope_fixture(%{kind: :school, settings: %{allowed_domains: ["allowed.com"]}})
+
+      email = "#{System.unique_integer()}@allowed.com"
+      uid = Ecto.UUID.generate()
+
+      auth = oauth_fixture(%{uid: uid, email: email})
+      {:ok, user} = Accounts.login_with_provider(auth, scope, "en")
+
+      assert user.email == email
+    end
+
     test "links the provider to an existing user" do
       email = unique_user_email()
       uid = Ecto.UUID.generate()
 
       existing_user = user_fixture(%{email: email})
       auth = oauth_fixture(%{uid: uid, email: email})
+      scope = scope_fixture(%{user: existing_user})
 
-      {:ok, user} = Accounts.login_with_provider(auth, "en")
+      {:ok, user} = Accounts.login_with_provider(auth, scope, "en")
 
       assert user.id == existing_user.id
 
@@ -445,11 +528,12 @@ defmodule Zoonk.AccountsTest do
 
       existing_user = user_fixture(%{email: email})
       auth = oauth_fixture(%{uid: uid, email: email})
+      scope = scope_fixture(%{user: existing_user})
 
-      {:ok, first_user} = Accounts.login_with_provider(auth, "en")
+      {:ok, first_user} = Accounts.login_with_provider(auth, scope, "en")
       assert first_user.id == existing_user.id
 
-      {:ok, user} = Accounts.login_with_provider(auth, "en")
+      {:ok, user} = Accounts.login_with_provider(auth, scope, "en")
 
       assert user.id == existing_user.id
 
@@ -464,13 +548,14 @@ defmodule Zoonk.AccountsTest do
       email = unique_user_email()
       uid = Ecto.UUID.generate()
       user = user_fixture(%{email: email})
+      scope = scope_fixture(%{user: user})
 
       provider1 = oauth_fixture(%{uid: uid, provider: :google, email: email})
-      {:ok, _user} = Accounts.login_with_provider(provider1, "en")
+      {:ok, _user} = Accounts.login_with_provider(provider1, scope, "en")
       assert Repo.get_by!(UserProvider, user_id: user.id, provider: :google)
 
       provider2 = oauth_fixture(%{uid: uid, provider: :apple, email: email})
-      {:ok, _user} = Accounts.login_with_provider(provider2, "en")
+      {:ok, _user} = Accounts.login_with_provider(provider2, scope, "en")
       assert Repo.get_by!(UserProvider, user_id: user.id, provider: :apple)
     end
 
@@ -480,8 +565,9 @@ defmodule Zoonk.AccountsTest do
       uid = 123_456
 
       auth = oauth_fixture(%{uid: uid, email: email, picture: picture})
+      scope = scope_fixture(%{user: nil})
 
-      {:ok, %User{} = user} = Accounts.login_with_provider(auth, "en")
+      {:ok, %User{} = user} = Accounts.login_with_provider(auth, scope, "en")
 
       user_provider = Repo.get_by!(UserProvider, user_id: user.id)
       assert user_provider.provider_uid == to_string(uid)
@@ -492,8 +578,9 @@ defmodule Zoonk.AccountsTest do
       username = "johndoe"
 
       auth = oauth_fixture(%{name: name, username: username})
+      scope = scope_fixture(%{user: nil})
 
-      {:ok, %User{} = user} = Accounts.login_with_provider(auth, "en")
+      {:ok, %User{} = user} = Accounts.login_with_provider(auth, scope, "en")
 
       user_profile = Repo.get_by!(UserProfile, user_id: user.id)
       assert user_profile.display_name == name
@@ -508,8 +595,12 @@ defmodule Zoonk.AccountsTest do
       auth1 = oauth_fixture(%{email: email1, provider: :google, username: username})
       auth2 = oauth_fixture(%{email: email2, provider: :apple, username: username})
 
-      {:ok, %User{} = user1} = Accounts.login_with_provider(auth1, "en")
-      {:ok, %User{} = user2} = Accounts.login_with_provider(auth2, "en")
+      scope1 = scope_fixture(%{user: nil})
+
+      {:ok, %User{} = user1} = Accounts.login_with_provider(auth1, scope1, "en")
+
+      scope2 = scope_fixture(%{user: user1})
+      {:ok, %User{} = user2} = Accounts.login_with_provider(auth2, scope2, "en")
 
       profile1 = Repo.get_by!(UserProfile, user_id: user1.id)
       profile2 = Repo.get_by!(UserProfile, user_id: user2.id)

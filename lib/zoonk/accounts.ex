@@ -264,16 +264,16 @@ defmodule Zoonk.Accounts do
 
   ## Examples
 
-      iex> login_with_provider(%{}, "en")
+      iex> login_with_provider(%{}, %Scope{}, "en")
       {:ok, %User{}}
 
-      iex> login_with_provider(nil, "en")
+      iex> login_with_provider(nil, %Scope{}, "en")
       {:error, %Ecto.Changeset{}}
   """
-  def login_with_provider(auth, language) do
+  def login_with_provider(auth, %Scope{} = scope, language) do
     user = get_user_by_email(auth["email"])
 
-    case login_with_provider(auth, language, user) do
+    case login_with_provider(auth, scope, language, user) do
       {:ok, %User{} = new_user} -> {:ok, new_user}
       {:ok, %UserProvider{}} -> {:ok, user}
       {:error, changeset} -> {:error, changeset}
@@ -281,26 +281,27 @@ defmodule Zoonk.Accounts do
   end
 
   # Create a new user if it doesn't exist
-  defp login_with_provider(auth, language, nil) do
-    signup_user_with_provider(auth, language)
+  defp login_with_provider(auth, %Scope{} = scope, language, nil) do
+    signup_user_with_provider(auth, scope, language)
   end
 
   # If the user exists, then link the provider
-  defp login_with_provider(auth, _lang, %User{} = user) do
+  defp login_with_provider(auth, _scope, _lang, %User{} = user) do
     %{user: user}
     |> user_provider_changeset(get_provider_attrs(auth))
     |> Repo.insert(on_conflict: :nothing)
   end
 
   # Create a new user and link the provider
-  defp signup_user_with_provider(auth, language) do
+  defp signup_user_with_provider(auth, %Scope{} = scope, language) do
     user_attrs = %{email: auth["email"], language: language}
     provider_attrs = get_provider_attrs(auth)
     profile_opts = [display_name: auth["name"], picture_url: auth["picture"], username: auth["preferred_username"]]
+    allowed_domains = get_allowed_domains(scope.org)
 
     user_changeset =
       %User{}
-      |> User.settings_changeset(user_attrs)
+      |> User.signup_changeset(user_attrs, allowed_domains: allowed_domains)
       |> User.confirm_changeset()
 
     Ecto.Multi.new()
