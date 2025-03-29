@@ -163,10 +163,7 @@ defmodule ZoonkWeb.UserAuth do
     if socket.assigns.current_scope && socket.assigns.current_scope.user do
       {:cont, socket}
     else
-      socket =
-        socket
-        |> Phoenix.LiveView.put_flash(:error, dgettext("users", "You must log in to access this page."))
-        |> Phoenix.LiveView.redirect(to: ~p"/login")
+      socket = Phoenix.LiveView.redirect(socket, to: ~p"/login")
 
       {:halt, socket}
     end
