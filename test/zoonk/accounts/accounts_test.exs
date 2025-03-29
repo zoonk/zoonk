@@ -118,8 +118,9 @@ defmodule Zoonk.AccountsTest do
         |> valid_user_attributes()
         |> Accounts.signup_user(scope)
 
-      assert "You can't signup with this email address. Ask your team manager to add zoonk.test to the list of allowed domains." =
-               errors_on(changeset).email
+      assert "You can't signup with this email address. Ask your team manager to add zoonk.test to the list of allowed domains." in errors_on(
+               changeset
+             ).email
     end
   end
 
