@@ -3,7 +3,6 @@ defmodule Zoonk.OrgFixtures do
   This module defines test helpers for creating
   entities via the `Zoonk.Orgs` context.
   """
-
   alias Zoonk.Orgs
   alias Zoonk.Orgs.Org
   alias Zoonk.Orgs.OrgMember
@@ -65,6 +64,16 @@ defmodule Zoonk.OrgFixtures do
   one organization can be the app organization.
   """
   def app_org_fixture do
+    Org
+    |> Repo.get_by(kind: :app)
+    |> app_org_fixture()
+  end
+
+  # we can only have one app org, if it exists we return it
+  defp app_org_fixture(%Org{} = org), do: org
+
+  # otherwise we create a new one
+  defp app_org_fixture(nil) do
     Repo.insert!(%Org{
       display_name: "App Org",
       custom_domain: "zoonk.test",
