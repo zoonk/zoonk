@@ -10,3 +10,5 @@
 - When using the zoonk domain, always write `zoonk.com`, not `zoonk.org`. For testing, you can use `zoonk.test` instead.
 - Before suggesting any code, check if this code can be simplified even further. Continue doing this until you reach the simplest solution possible.
 - Always add tests to any functionality you add or modify.
+- Use Verified Routes instead of Router helpers. For example, instead of using `Routes.page_path(@conn, :index)`, use `~p"/"` or `~p"/#{@user}"` for dynamic routes.
+- Use the new `Gettext` syntax for importing it: `use Gettext, backend: Zoonk.Gettext` instead of `import ZoonkWeb.Gettext`.
