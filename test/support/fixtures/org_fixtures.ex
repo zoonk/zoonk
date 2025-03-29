@@ -37,7 +37,11 @@ defmodule Zoonk.OrgFixtures do
   def org_fixture(%{kind: :app}), do: app_org_fixture()
 
   def org_fixture(attrs) do
-    {:ok, org} = Orgs.create_org(valid_org_attributes(attrs))
+    {:ok, org} =
+      attrs
+      |> valid_org_attributes()
+      |> Orgs.create_org()
+
     maybe_update_settings(Map.get(attrs, :settings, nil), org)
     org
   end
