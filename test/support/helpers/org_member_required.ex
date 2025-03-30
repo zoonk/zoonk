@@ -9,6 +9,11 @@ defmodule ZoonkWeb.OrgMemberRequiredHelper do
   alias ZoonkWeb.PermissionError
 
   def assert_require_org_member(page) do
+    redirects_to_login(:app, page)
+    redirects_to_login(:creator, page)
+    redirects_to_login(:team, page)
+    redirects_to_login(:school, page)
+
     allow_access_without_membership(:app, page)
     allow_access_without_membership(:creator, page)
 
@@ -46,7 +51,6 @@ defmodule ZoonkWeb.OrgMemberRequiredHelper do
   end
 
   defp test_access(org_kind, page, opts) do
-    conn = Phoenix.ConnTest.build_conn()
     user = if opts[:confirmed?], do: user_fixture(), else: unconfirmed_user_fixture()
     org = org_fixture(%{kind: org_kind})
 
@@ -55,7 +59,7 @@ defmodule ZoonkWeb.OrgMemberRequiredHelper do
     end
 
     conn =
-      conn
+      Phoenix.ConnTest.build_conn()
       |> Map.put(:host, org.custom_domain)
       |> ZoonkWeb.ConnCase.login_user(user)
 
@@ -66,5 +70,15 @@ defmodule ZoonkWeb.OrgMemberRequiredHelper do
     else
       assert_raise(PermissionError, fn -> visit(conn, page.link) end)
     end
+  end
+
+  defp redirects_to_login(org_kind, page) do
+    conn = Phoenix.ConnTest.build_conn()
+    org = org_fixture(%{kind: org_kind})
+
+    conn
+    |> Map.put(:host, org.custom_domain)
+    |> visit(page.link)
+    |> assert_path("/login")
   end
 end
