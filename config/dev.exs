@@ -54,7 +54,7 @@ config :zoonk, ZoonkWeb.Endpoint,
   ],
   check_origin: false,
   code_reloader: true,
-  debug_errors: false,
+  debug_errors: true,
   secret_key_base: "SV/6l7/SezeNb0ggc0XKvsdfWQKOyHL/a7nnO98KufNjW8waGKGbDFnD+q4ZyYpY",
   watchers: [
     esbuild: {Esbuild, :install_and_run, [:zoonk, ~w(--sourcemap=inline --watch)]},
