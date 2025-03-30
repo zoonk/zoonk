@@ -3,7 +3,9 @@ defmodule ZoonkWeb.ErrorLayout do
   use ZoonkWeb, :html
 
   def render(assigns) do
-    Gettext.put_locale(ZoonkWeb.Language.get_browser_language(assigns.conn))
+    assigns.conn
+    |> ZoonkWeb.Language.get_browser_language()
+    |> Gettext.put_locale()
 
     ~H"""
     <!DOCTYPE html>
