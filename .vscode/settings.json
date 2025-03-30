@@ -43,5 +43,13 @@
     {
       "file": ".github/copilot/llm_docs/phoenix_test.md"
     }
+  ],
+  "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
+    {
+      "file": ".github/copilot/pull_request.md"
+    },
+    {
+      "file": ".github/copilot/commit.md"
+    }
   ]
 }

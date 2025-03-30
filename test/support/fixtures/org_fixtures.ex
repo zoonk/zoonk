@@ -19,7 +19,12 @@ defmodule Zoonk.OrgFixtures do
 
   def valid_org_attributes(attrs \\ %{}) do
     unique_int = System.unique_integer([:positive])
-    Enum.into(attrs, %{display_name: "Test Org #{unique_int}", subdomain: "org#{unique_int}"})
+
+    Enum.into(attrs, %{
+      display_name: "Test Org #{unique_int}",
+      custom_domain: "zoonk_#{unique_int}.test",
+      subdomain: "org#{unique_int}"
+    })
   end
 
   @doc """

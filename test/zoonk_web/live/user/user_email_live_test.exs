@@ -2,24 +2,13 @@ defmodule ZoonkWeb.User.UserEmailLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AccountFixtures
+  import ZoonkWeb.OrgMemberRequiredHelper
 
   alias Zoonk.Accounts
 
-  describe "user email page (unauthenticated)" do
-    test "redirects to the login page", %{conn: conn} do
-      conn
-      |> visit(~p"/user/email")
-      |> assert_path(~p"/login")
-    end
-  end
-
   describe "user email page" do
-    setup :signup_and_login_user
-
-    test "renders page", %{conn: conn} do
-      conn
-      |> visit(~p"/user/email")
-      |> assert_has("h3", text: "Change Email")
+    test "handle org authorization" do
+      assert_page_authorization(%{link: ~p"/user/email", title: "Email"})
     end
   end
 

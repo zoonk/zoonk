@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Accounts.UserAuthTest do
+defmodule ZoonkWeb.UserAuthTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AccountFixtures
@@ -9,7 +9,7 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
   alias Zoonk.Accounts
   alias Zoonk.Config.AuthConfig
   alias Zoonk.Scope
-  alias ZoonkWeb.Accounts.UserAuth
+  alias ZoonkWeb.UserAuth
 
   @remember_me_cookie AuthConfig.get_cookie_name(:remember_me)
   @max_age AuthConfig.get_max_age(:token, :seconds)
@@ -349,11 +349,8 @@ defmodule ZoonkWeb.Accounts.UserAuthTest do
         |> UserAuth.require_authenticated_user([])
 
       assert conn.halted
-
       assert redirected_to(conn) == ~p"/login"
-
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) ==
-               "You must log in to access this page."
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "You must log in to access this page."
     end
 
     test "stores the path to redirect to on GET", %{conn: conn} do
