@@ -8,12 +8,9 @@ defmodule ZoonkWeb.UserAuthorization do
   use ZoonkWeb, :verified_routes
   use Gettext, backend: Zoonk.Gettext
 
-  import Phoenix.Controller
-  import Plug.Conn
-
   alias Zoonk.Accounts.User
   alias Zoonk.Scope
-  alias ZoonkWeb.UserAuth
+  alias ZoonkWeb.PermissionError
 
   @doc """
   Checks if the user is a confirmed member of the current organization.
@@ -33,11 +30,8 @@ defmodule ZoonkWeb.UserAuthorization do
 
   defp require_org_member(conn, _opts, true), do: conn
 
-  defp require_org_member(conn, _opts, false) do
-    conn
-    |> put_flash(:error, dgettext("errors", "You must be a member of this organization."))
-    |> UserAuth.logout_user()
-    |> halt()
+  defp require_org_member(_conn, _opts, false) do
+    raise PermissionError, code: :require_org_member
   end
 
   @doc """
@@ -62,12 +56,7 @@ defmodule ZoonkWeb.UserAuthorization do
     if org_member?(socket.assigns.current_scope) do
       {:cont, socket}
     else
-      socket =
-        socket
-        |> Phoenix.LiveView.put_flash(:error, dgettext("errors", "You must be a member of this organization."))
-        |> Phoenix.LiveView.redirect(to: ~p"/login", status: 403)
-
-      {:halt, socket}
+      raise PermissionError, code: :require_org_member
     end
   end
 

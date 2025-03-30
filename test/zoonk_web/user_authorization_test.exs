@@ -64,15 +64,12 @@ defmodule ZoonkWeb.UserAuthorizationTest do
       org_member = org_member_fixture(%{user: user, org: org})
       scope = %Scope{user: user, org: org, org_member: org_member}
 
-      conn =
+      assert_raise ZoonkWeb.PermissionError, fn ->
         conn
         |> assign(:current_scope, scope)
         |> fetch_flash()
         |> UserAuthorization.require_org_member([])
-
-      assert conn.halted
-      assert redirected_to(conn) == ~p"/"
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "You must be a member of this organization."
+      end
     end
 
     test "blocks access when org_member is nil", %{conn: conn} do
@@ -80,15 +77,12 @@ defmodule ZoonkWeb.UserAuthorizationTest do
       org = org_fixture(%{kind: :team})
       scope = %Scope{user: user, org: org, org_member: nil}
 
-      conn =
+      assert_raise ZoonkWeb.PermissionError, fn ->
         conn
         |> assign(:current_scope, scope)
         |> fetch_flash()
         |> UserAuthorization.require_org_member([])
-
-      assert conn.halted
-      assert redirected_to(conn) == ~p"/"
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "You must be a member of this organization."
+      end
     end
 
     test "blocks access for school organizations when user is not a member", %{conn: conn} do
@@ -96,15 +90,12 @@ defmodule ZoonkWeb.UserAuthorizationTest do
       org = org_fixture(%{kind: :school})
       scope = %Scope{user: user, org: org, org_member: nil}
 
-      conn =
+      assert_raise ZoonkWeb.PermissionError, fn ->
         conn
         |> assign(:current_scope, scope)
         |> fetch_flash()
         |> UserAuthorization.require_org_member([])
-
-      assert conn.halted
-      assert redirected_to(conn) == ~p"/"
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "You must be a member of this organization."
+      end
     end
   end
 
@@ -160,9 +151,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
         assigns: %{__changed__: %{}, flash: %{}, current_scope: scope}
       }
 
-      assert {:halt, redirected_socket} = UserAuthorization.on_mount(:ensure_org_member, %{}, %{}, socket)
-      assert redirected_socket.redirected == {:redirect, %{to: "/login", status: 403}}
-      assert redirected_socket.assigns.flash["error"] == "You must be a member of this organization."
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        UserAuthorization.on_mount(:ensure_org_member, %{}, %{}, socket)
+      end
     end
 
     test "redirects when org_member is nil" do
@@ -175,9 +166,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
         assigns: %{__changed__: %{}, flash: %{}, current_scope: scope}
       }
 
-      assert {:halt, redirected_socket} = UserAuthorization.on_mount(:ensure_org_member, %{}, %{}, socket)
-      assert redirected_socket.redirected == {:redirect, %{to: "/login", status: 403}}
-      assert redirected_socket.assigns.flash["error"] == "You must be a member of this organization."
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        UserAuthorization.on_mount(:ensure_org_member, %{}, %{}, socket)
+      end
     end
 
     test "redirects for school organizations when user is not a member" do
@@ -190,9 +181,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
         assigns: %{__changed__: %{}, flash: %{}, current_scope: scope}
       }
 
-      assert {:halt, redirected_socket} = UserAuthorization.on_mount(:ensure_org_member, %{}, %{}, socket)
-      assert redirected_socket.redirected == {:redirect, %{to: "/login", status: 403}}
-      assert redirected_socket.assigns.flash["error"] == "You must be a member of this organization."
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        UserAuthorization.on_mount(:ensure_org_member, %{}, %{}, socket)
+      end
     end
   end
 end

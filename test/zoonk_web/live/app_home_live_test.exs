@@ -90,24 +90,26 @@ defmodule ZoonkWeb.AppHomeLiveTest do
       |> assert_has("li[aria-current='page']", text: "Summary")
     end
 
-    test "redirects when user is not a member of the team organization", %{conn: conn, user: user, org: org} do
+    test "raises when user is not a member of the team organization", %{conn: conn, user: user, org: org} do
       scope = %Scope{user: user, org: org, org_member: nil}
 
-      conn
-      |> assign(:current_scope, scope)
-      |> visit(~p"/")
-      |> assert_path(~p"/login")
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        conn
+        |> assign(:current_scope, scope)
+        |> visit(~p"/")
+      end
     end
 
-    test "redirects when user is a member but not confirmed", %{conn: conn, org: org} do
+    test "raises when user is a member but not confirmed", %{conn: conn, org: org} do
       user = %{user_fixture() | confirmed_at: nil}
       org_member = org_member_fixture(%{user: user, org: org})
       scope = %Scope{user: user, org: org, org_member: org_member}
 
-      conn
-      |> assign(:current_scope, scope)
-      |> visit(~p"/")
-      |> assert_path(~p"/login")
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        conn
+        |> assign(:current_scope, scope)
+        |> visit(~p"/")
+      end
     end
   end
 
@@ -124,13 +126,14 @@ defmodule ZoonkWeb.AppHomeLiveTest do
       |> assert_has("li[aria-current='page']", text: "Summary")
     end
 
-    test "redirects when user is not a member of the school organization", %{conn: conn, user: user, org: org} do
+    test "raises when user is not a member of the school organization", %{conn: conn, user: user, org: org} do
       scope = %Scope{user: user, org: org, org_member: nil}
 
-      conn
-      |> assign(:current_scope, scope)
-      |> visit(~p"/")
-      |> assert_path(~p"/login")
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        conn
+        |> assign(:current_scope, scope)
+        |> visit(~p"/")
+      end
     end
   end
 end
