@@ -13,13 +13,10 @@ defmodule ZoonkWeb.PermissionError do
   defexception [:message, :code, :data, plug_status: 403]
 
   @impl Exception
-  def exception(code: :require_org_member = code),
-    do: %__MODULE__{message: dgettext("errors", "You must be a member of the organization"), code: code}
-
   def exception(opts) when is_list(opts) do
-    message = Keyword.get(opts, :message)
     code = Keyword.get(opts, :code)
     data = Keyword.get(opts, :data)
+    message = get_message(code)
 
     %__MODULE__{
       message: message,
@@ -29,4 +26,7 @@ defmodule ZoonkWeb.PermissionError do
   end
 
   def exception(message: message), do: %__MODULE__{message: message}
+
+  defp get_message(:require_org_member), do: dgettext("errors", "You must be a member of the organization")
+  defp get_message(_code), do: dgettext("errors", "An error occurred. Please try again later.")
 end
