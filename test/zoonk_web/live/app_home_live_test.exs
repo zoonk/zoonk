@@ -3,6 +3,7 @@ defmodule ZoonkWeb.AppHomeLiveTest do
 
   import Zoonk.AccountFixtures
   import Zoonk.OrgFixtures
+  import ZoonkWeb.OrgMemberRequiredHelper
 
   alias Zoonk.Scope
 

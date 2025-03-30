@@ -109,16 +109,4 @@ defmodule ZoonkWeb.ConnCase do
 
   defp get_org(kind),
     do: Zoonk.OrgFixtures.org_fixture(%{kind: kind, custom_domain: "zoonk.test-#{System.unique_integer()}"})
-
-  def assert_unconfirmed_member_access_denied(conn, org, page) do
-    user = %{Zoonk.AccountFixtures.user_fixture() | confirmed_at: nil}
-    org_member = Zoonk.OrgFixtures.org_member_fixture(%{user: user, org: org})
-    scope = %Zoonk.Scope{user: user, org: org, org_member: org_member}
-
-    assert_raise ZoonkWeb.PermissionError, fn ->
-      conn
-      |> Plug.Conn.assign(:current_scope, scope)
-      |> PhoenixTest.visit(page)
-    end
-  end
 end
