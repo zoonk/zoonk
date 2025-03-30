@@ -1,45 +1,141 @@
 <ZoonkWeb.ErrorLayout.render>
   <div class="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-4 py-16 text-center">
-    <div class="mb-10">
-      <div class="text-[120px] text-zk-primary font-bold tracking-tight">404</div>
-    </div>
-
     <div class="space-y-6">
+      <div class="glitch-wrapper">
+        <div class="text-[120px] text-zk-primary glitch select-none font-bold" data-text="404">
+          404
+        </div>
+      </div>
+
       <h1 class="text-zk-foreground text-2xl font-bold">
-        Page not found
+        {dgettext("errors", "Houston, we have a problem")}
       </h1>
 
       <p class="text-zk-surface-foreground">
-        We couldn't find the page you're looking for. It might have been moved, renamed, or simply vanished like
+        {dgettext(
+          "errors",
+          "We couldn't find the page you're looking for. It might have been moved, renamed, or simply vanished like"
+        )}
         <span class="typing-text border-zk-primary animate-typing inline-block overflow-hidden whitespace-nowrap border-r-2">
           <span
             class="hidden"
             id="text-options"
-            data-options="your favorite character in season finale,the last piece of cake,your keys when you're late,socks in the dryer,the TV remote,that perfect song title,the last page of a book"
+            data-options={
+              dgettext(
+                "errors",
+                "your favorite character in season finale,the last piece of cake,your keys when you're late,socks in the dryer,the TV remote,that perfect song title,the last page of a book"
+              )
+            }
           >
           </span>
-          <span id="typed-text">your favorite character in season finale</span>
+          <span id="typed-text"></span>
         </span>
       </p>
 
       <div class="pt-8">
         <a href="/" class="zk-btn zk-btn-primary rounded-lg px-6 py-3">
-          <span class="tabler tabler-home mr-2 h-4 w-4"></span> Return to Homepage
+          <span class="tabler tabler-ufo mr-2 h-5 w-5"></span>
+          {dgettext("errors", "Phone home")}
         </a>
       </div>
     </div>
 
     <div class="text-zk-muted-foreground mt-12 text-sm">
-      <p>Not what you expected? Continue your learning journey from our homepage!</p>
+      <p>
+        {dgettext(
+          "errors",
+          "Not what you expected? Continue your learning journey from our homepage!"
+        )}
+      </p>
     </div>
   </div>
 
+  <style>
+    .glitch-wrapper {
+      position: relative;
+      display: inline-flex;
+      margin-bottom: 1rem;
+    }
+
+    .glitch {
+      position: relative;
+      transform: scale3d(1, 1, 1);
+    }
+
+    .glitch::before,
+    .glitch::after {
+      content: attr(data-text);
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      overflow: hidden;
+      background: var(--color-zk-background);
+    }
+
+    .glitch::before {
+      left: 2px;
+      text-shadow: -1px 0 var(--color-zk-primary-accent);
+      animation: glitch-before 2s linear infinite alternate-reverse;
+    }
+
+    .glitch::after {
+      left: -2px;
+      text-shadow: -1px 0 var(--color-zk-secondary-accent);
+      animation: glitch-after 2s linear infinite alternate-reverse;
+    }
+
+    @keyframes glitch-before {
+      0% {
+        clip-path: inset(20% 0 30% 0);
+      }
+      20% {
+        clip-path: inset(40% 0 60% 0);
+      }
+      40% {
+        clip-path: inset(10% 0 40% 0);
+      }
+      60% {
+        clip-path: inset(50% 0 30% 0);
+      }
+      80% {
+        clip-path: inset(20% 0 50% 0);
+      }
+      100% {
+        clip-path: inset(40% 0 20% 0);
+      }
+    }
+
+    @keyframes glitch-after {
+      0% {
+        clip-path: inset(40% 0 10% 0);
+      }
+      20% {
+        clip-path: inset(20% 0 30% 0);
+      }
+      40% {
+        clip-path: inset(60% 0 30% 0);
+      }
+      60% {
+        clip-path: inset(10% 0 50% 0);
+      }
+      80% {
+        clip-path: inset(30% 0 40% 0);
+      }
+      100% {
+        clip-path: inset(50% 0 60% 0);
+      }
+    }
+  </style>
+
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      // Set up the typing effect with relatable disappearing items
       const textOptions = document.getElementById("text-options").dataset.options.split(',');
       const typedTextElement = document.getElementById("typed-text");
       let currentIndex = 0;
+      
+      // Set initial text
+      typedTextElement.textContent = textOptions[0];
       
       // Change the text every few seconds
       setInterval(() => {
