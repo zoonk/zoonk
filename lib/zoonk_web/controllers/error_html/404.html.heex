@@ -1,61 +1,42 @@
 <ZoonkWeb.ErrorLayout.render>
-  <div class="flex min-h-screen flex-col items-center justify-center px-4 py-16 text-center">
-    <div class="relative mb-8">
-      <div class="text-[150px] text-zk-primary animate-pulse select-none font-bold tracking-tighter opacity-20">
-        404
-      </div>
-      <div class="absolute top-1/2 left-1/2 flex -translate-x-1/2 -translate-y-1/2 transform items-center justify-center">
-        <div class="relative h-16 w-16">
-          <div class="tabler tabler-brain text-zk-primary h-16 w-16"></div>
-          <div class="-translate-y-[40%] absolute top-1/2 left-1/2 -translate-x-1/2 transform text-xs font-bold text-white">
-            ?!
-          </div>
-        </div>
-      </div>
-    </div>
-    
-<!-- Matrix-style particles -->
-    <div class="particles pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
-      <div id="particles-container"></div>
+  <div class="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-4 py-16 text-center">
+    <div class="mb-10">
+      <div class="text-[120px] text-zk-primary font-bold tracking-tight">404</div>
     </div>
 
-    <div class="max-w-md space-y-6">
+    <div class="space-y-6">
       <h1 class="text-zk-foreground text-2xl font-bold">
-        Oops! You've found a glitch in the learning matrix
+        Page not found
       </h1>
 
       <p class="text-zk-surface-foreground">
-        Even our most advanced AI couldn't find this page. It seems to have disappeared like
+        We couldn't find the page you're looking for. It might have been moved, renamed, or simply vanished like
         <span class="typing-text border-zk-primary animate-typing inline-block overflow-hidden whitespace-nowrap border-r-2">
           <span
             class="hidden"
             id="text-options"
-            data-options="homework excuses,Game of Thrones logic,Star Wars' plot consistency,socks in the laundry,my motivation to exercise,that USB drive I just had,the last episode of Lost"
+            data-options="your favorite character in season finale,the last piece of cake,your keys when you're late,socks in the dryer,the TV remote,that perfect song title,the last page of a book"
           >
           </span>
-          <span id="typed-text">homework excuses</span>
+          <span id="typed-text">your favorite character in season finale</span>
         </span>
       </p>
 
-      <div class="pt-4">
-        <a href="/" class="zk-btn zk-btn-primary px-4 py-2">
-          <div class="tabler tabler-home h-5 w-5"></div>
-          <span>Return to Homepage</span>
+      <div class="pt-8">
+        <a href="/" class="zk-btn zk-btn-primary rounded-lg px-6 py-3">
+          <span class="tabler tabler-home mr-2 h-4 w-4"></span> Return to Homepage
         </a>
       </div>
+    </div>
 
-      <div class="text-zk-muted-foreground mx-auto max-w-xs pt-6 text-sm">
-        <p>
-          While you're here, did you know? In sci-fi movies, 404 is the code for "Not Found" because that's the number of times programmers check Stack Overflow before giving up.
-        </p>
-        <p class="mt-2 text-xs">(Okay, that's not true, but it feels accurate)</p>
-      </div>
+    <div class="text-zk-muted-foreground mt-12 text-sm">
+      <p>Not what you expected? Continue your learning journey from our homepage!</p>
     </div>
   </div>
 
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      // Set up the typing effect
+      // Set up the typing effect with relatable disappearing items
       const textOptions = document.getElementById("text-options").dataset.options.split(',');
       const typedTextElement = document.getElementById("typed-text");
       let currentIndex = 0;
@@ -65,63 +46,6 @@
         currentIndex = (currentIndex + 1) % textOptions.length;
         typedTextElement.textContent = textOptions[currentIndex];
       }, 3000);
-      
-      // Create matrix particles
-      createMatrixParticles();
     });
-
-    function createMatrixParticles() {
-      const container = document.getElementById('particles-container');
-      const colors = ['#4361ee', '#3a0ca3', '#4cc9f0', '#7209b7']; // Blue/purple matrix-like colors
-      
-      // Create 20 particles
-      for (let i = 0; i < 20; i++) {
-        const particle = document.createElement('div');
-        const size = Math.floor(Math.random() * 20) + 10; // Random size between 10-30px
-        const color = colors[Math.floor(Math.random() * colors.length)]; // Random color from our array
-        
-        // Position randomly on screen
-        const posX = Math.random() * 100;
-        const posY = Math.random() * 100;
-        const delay = Math.random() * 5; // Random animation delay
-        
-        // Style the particle
-        particle.style.cssText = `
-          position: absolute;
-          width: ${size}px;
-          height: ${size}px;
-          background-color: ${color};
-          border-radius: 50%;
-          opacity: 0.2;
-          left: ${posX}%;
-          top: ${posY}%;
-          animation: float ${5 + Math.random() * 10}s ease-in-out ${delay}s infinite;
-        `;
-        
-        container.appendChild(particle);
-      }
-      
-      // Add some binary/matrix elements
-      for (let i = 0; i < 10; i++) {
-        const binaryEl = document.createElement('div');
-        const posX = Math.random() * 100;
-        const posY = Math.random() * 100;
-        const binary = Math.random() > 0.7 ? '1' : '0'; // 70% chance of being 0
-        const delay = Math.random() * 5;
-        
-        binaryEl.style.cssText = `
-          position: absolute;
-          font-family: monospace;
-          font-size: ${12 + Math.random() * 18}px;
-          color: rgba(67, 97, 238, 0.3);
-          left: ${posX}%;
-          top: ${posY}%;
-          animation: float ${5 + Math.random() * 10}s ease-in-out ${delay}s infinite;
-        `;
-        
-        binaryEl.textContent = binary;
-        container.appendChild(binaryEl);
-      }
-    }
   </script>
 </ZoonkWeb.ErrorLayout.render>
