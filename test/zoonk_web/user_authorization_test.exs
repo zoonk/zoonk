@@ -186,4 +186,256 @@ defmodule ZoonkWeb.UserAuthorizationTest do
       end
     end
   end
+
+  describe "require_org_admin/2" do
+    test "allows access when path doesn't start with admin paths", %{conn: conn} do
+      user = user_fixture()
+      org = org_fixture(%{kind: :team})
+      org_member = org_member_fixture(%{user: user, org: org, role: :member})
+      scope = scope_fixture(%{user: user, org: org, org_member: org_member})
+
+      conn =
+        conn
+        |> Map.put(:request_path, "/dashboard")
+        |> assign(:current_scope, scope)
+        |> UserAuthorization.require_org_admin([])
+
+      refute conn.halted
+    end
+
+    test "allows access when user is admin and path starts with /editor", %{conn: conn} do
+      user = user_fixture()
+      org = org_fixture(%{kind: :team})
+      org_member = org_member_fixture(%{user: user, org: org, role: :admin})
+      scope = scope_fixture(%{user: user, org: org, org_member: org_member})
+
+      conn =
+        conn
+        |> Map.put(:request_path, "/editor/documents")
+        |> assign(:current_scope, scope)
+        |> UserAuthorization.require_org_admin([])
+
+      refute conn.halted
+    end
+
+    test "allows access when user is admin and path starts with /org", %{conn: conn} do
+      user = user_fixture()
+      org = org_fixture(%{kind: :team})
+      org_member = org_member_fixture(%{user: user, org: org, role: :admin})
+      scope = scope_fixture(%{user: user, org: org, org_member: org_member})
+
+      conn =
+        conn
+        |> Map.put(:request_path, "/org/settings")
+        |> assign(:current_scope, scope)
+        |> UserAuthorization.require_org_admin([])
+
+      refute conn.halted
+    end
+
+    test "blocks access when user is not admin and path starts with /editor", %{conn: conn} do
+      user = user_fixture()
+      org = org_fixture(%{kind: :team})
+      org_member = org_member_fixture(%{user: user, org: org, role: :member})
+      scope = scope_fixture(%{user: user, org: org, org_member: org_member})
+
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        conn
+        |> Map.put(:request_path, "/editor/documents")
+        |> assign(:current_scope, scope)
+        |> fetch_flash()
+        |> UserAuthorization.require_org_admin([])
+      end
+    end
+
+    test "blocks access when user is not admin and path starts with /org", %{conn: conn} do
+      user = user_fixture()
+      org = org_fixture(%{kind: :team})
+      org_member = org_member_fixture(%{user: user, org: org, role: :member})
+      scope = scope_fixture(%{user: user, org: org, org_member: org_member})
+
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        conn
+        |> Map.put(:request_path, "/org/settings")
+        |> assign(:current_scope, scope)
+        |> fetch_flash()
+        |> UserAuthorization.require_org_admin([])
+      end
+    end
+
+    test "blocks access when user is not confirmed even for admin paths", %{conn: conn} do
+      user = %{user_fixture() | confirmed_at: nil}
+      org = org_fixture(%{kind: :team})
+      org_member = org_member_fixture(%{user: user, org: org, role: :admin})
+      scope = %Scope{user: user, org: org, org_member: org_member}
+
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        conn
+        |> Map.put(:request_path, "/editor/documents")
+        |> assign(:current_scope, scope)
+        |> fetch_flash()
+        |> UserAuthorization.require_org_admin([])
+      end
+    end
+
+    test "blocks access when org_member is nil for admin paths", %{conn: conn} do
+      user = user_fixture()
+      org = org_fixture(%{kind: :team})
+      scope = %Scope{user: user, org: org, org_member: nil}
+
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        conn
+        |> Map.put(:request_path, "/editor/documents")
+        |> assign(:current_scope, scope)
+        |> fetch_flash()
+        |> UserAuthorization.require_org_admin([])
+      end
+    end
+
+    test "blocks access for public orgs when user is not admin for admin paths", %{conn: conn} do
+      user = user_fixture()
+      org = org_fixture(%{kind: :app})
+      org_member = org_member_fixture(%{user: user, org: org, role: :member})
+      scope = scope_fixture(%{user: user, org: org, org_member: org_member})
+
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        conn
+        |> Map.put(:request_path, "/editor/documents")
+        |> assign(:current_scope, scope)
+        |> fetch_flash()
+        |> UserAuthorization.require_org_admin([])
+      end
+    end
+  end
+
+  describe "on_mount :ensure_org_admin" do
+    test "allows access when path doesn't start with admin paths" do
+      user = user_fixture()
+      org = org_fixture(%{kind: :team})
+      org_member = org_member_fixture(%{user: user, org: org, role: :member})
+      scope = scope_fixture(%{user: user, org: org, org_member: org_member})
+
+      socket = %LiveView.Socket{
+        endpoint: ZoonkWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope},
+        private: %{connect_info: %{uri: %URI{path: "/dashboard"}}}
+      }
+
+      assert {:cont, _socket} = UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
+    end
+
+    test "allows access when user is admin and path starts with /editor" do
+      user = user_fixture()
+      org = org_fixture(%{kind: :team})
+      org_member = org_member_fixture(%{user: user, org: org, role: :admin})
+      scope = scope_fixture(%{user: user, org: org, org_member: org_member})
+
+      socket = %LiveView.Socket{
+        endpoint: ZoonkWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope},
+        private: %{connect_info: %{uri: %URI{path: "/editor/documents"}}}
+      }
+
+      assert {:cont, _socket} = UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
+    end
+
+    test "allows access when user is admin and path starts with /org" do
+      user = user_fixture()
+      org = org_fixture(%{kind: :team})
+      org_member = org_member_fixture(%{user: user, org: org, role: :admin})
+      scope = scope_fixture(%{user: user, org: org, org_member: org_member})
+
+      socket = %LiveView.Socket{
+        endpoint: ZoonkWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope},
+        private: %{connect_info: %{uri: %URI{path: "/org/settings"}}}
+      }
+
+      assert {:cont, _socket} = UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
+    end
+
+    test "redirects when user is not admin and path starts with /editor" do
+      user = user_fixture()
+      org = org_fixture(%{kind: :team})
+      org_member = org_member_fixture(%{user: user, org: org, role: :member})
+      scope = scope_fixture(%{user: user, org: org, org_member: org_member})
+
+      socket = %LiveView.Socket{
+        endpoint: ZoonkWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope},
+        private: %{connect_info: %{uri: %URI{path: "/editor/documents"}}}
+      }
+
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
+      end
+    end
+
+    test "redirects when user is not admin and path starts with /org" do
+      user = user_fixture()
+      org = org_fixture(%{kind: :team})
+      org_member = org_member_fixture(%{user: user, org: org, role: :member})
+      scope = scope_fixture(%{user: user, org: org, org_member: org_member})
+
+      socket = %LiveView.Socket{
+        endpoint: ZoonkWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope},
+        private: %{connect_info: %{uri: %URI{path: "/org/settings"}}}
+      }
+
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
+      end
+    end
+
+    test "redirects when user is not confirmed even for admin paths" do
+      user = %{user_fixture() | confirmed_at: nil}
+      org = org_fixture(%{kind: :team})
+      org_member = org_member_fixture(%{user: user, org: org, role: :admin})
+      scope = %Scope{user: user, org: org, org_member: org_member}
+
+      socket = %LiveView.Socket{
+        endpoint: ZoonkWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope},
+        private: %{connect_info: %{uri: %URI{path: "/editor/documents"}}}
+      }
+
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
+      end
+    end
+
+    test "redirects when org_member is nil for admin paths" do
+      user = user_fixture()
+      org = org_fixture(%{kind: :team})
+      scope = %Scope{user: user, org: org, org_member: nil}
+
+      socket = %LiveView.Socket{
+        endpoint: ZoonkWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope},
+        private: %{connect_info: %{uri: %URI{path: "/editor/documents"}}}
+      }
+
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
+      end
+    end
+
+    test "redirects for public orgs when user is not admin for admin paths" do
+      user = user_fixture()
+      org = org_fixture(%{kind: :app})
+      org_member = org_member_fixture(%{user: user, org: org, role: :member})
+      scope = scope_fixture(%{user: user, org: org, org_member: org_member})
+
+      socket = %LiveView.Socket{
+        endpoint: ZoonkWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope},
+        private: %{connect_info: %{uri: %URI{path: "/editor/documents"}}}
+      }
+
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
+      end
+    end
+  end
 end
