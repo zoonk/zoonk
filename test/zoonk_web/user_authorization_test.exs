@@ -317,12 +317,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
 
       socket = %LiveView.Socket{
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope}
+        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope},
+        private: %{connect_info: %{uri: %URI{path: "/dashboard"}}}
       }
-
-      uri = %URI{path: "/dashboard"}
-
-      socket = %{socket | private: %{connect_info: %{uri: uri}}}
 
       assert {:cont, _socket} = UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
     end
@@ -335,12 +332,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
 
       socket = %LiveView.Socket{
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope}
+        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope},
+        private: %{connect_info: %{uri: %URI{path: "/editor/documents"}}}
       }
-
-      uri = %URI{path: "/editor/documents"}
-
-      socket = %{socket | private: %{connect_info: %{uri: uri}}}
 
       assert {:cont, _socket} = UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
     end
@@ -353,12 +347,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
 
       socket = %LiveView.Socket{
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope}
+        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope},
+        private: %{connect_info: %{uri: %URI{path: "/org/settings"}}}
       }
-
-      uri = %URI{path: "/org/settings"}
-
-      socket = %{socket | private: %{connect_info: %{uri: uri}}}
 
       assert {:cont, _socket} = UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
     end
@@ -371,12 +362,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
 
       socket = %LiveView.Socket{
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope}
+        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope},
+        private: %{connect_info: %{uri: %URI{path: "/editor/documents"}}}
       }
-
-      uri = %URI{path: "/editor/documents"}
-
-      socket = %{socket | private: %{connect_info: %{uri: uri}}}
 
       assert_raise ZoonkWeb.PermissionError, fn ->
         UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
@@ -391,12 +379,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
 
       socket = %LiveView.Socket{
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope}
+        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope},
+        private: %{connect_info: %{uri: %URI{path: "/org/settings"}}}
       }
-
-      uri = %URI{path: "/org/settings"}
-
-      socket = %{socket | private: %{connect_info: %{uri: uri}}}
 
       assert_raise ZoonkWeb.PermissionError, fn ->
         UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
@@ -411,12 +396,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
 
       socket = %LiveView.Socket{
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope}
+        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope},
+        private: %{connect_info: %{uri: %URI{path: "/editor/documents"}}}
       }
-
-      uri = %URI{path: "/editor/documents"}
-
-      socket = %{socket | private: %{connect_info: %{uri: uri}}}
 
       assert_raise ZoonkWeb.PermissionError, fn ->
         UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
@@ -430,12 +412,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
 
       socket = %LiveView.Socket{
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope}
+        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope},
+        private: %{connect_info: %{uri: %URI{path: "/editor/documents"}}}
       }
-
-      uri = %URI{path: "/editor/documents"}
-
-      socket = %{socket | private: %{connect_info: %{uri: uri}}}
 
       assert_raise ZoonkWeb.PermissionError, fn ->
         UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
@@ -450,12 +429,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
 
       socket = %LiveView.Socket{
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope}
+        assigns: %{__changed__: %{}, flash: %{}, current_scope: scope},
+        private: %{connect_info: %{uri: %URI{path: "/editor/documents"}}}
       }
-
-      uri = %URI{path: "/editor/documents"}
-
-      socket = %{socket | private: %{connect_info: %{uri: uri}}}
 
       assert_raise ZoonkWeb.PermissionError, fn ->
         UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
