@@ -2,6 +2,7 @@ defmodule ZoonkWeb.User.SignUpWithEmailLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AccountFixtures
+  import Zoonk.OrgFixtures
 
   describe "Sign up with email page" do
     test "renders signup page", %{conn: conn} do
@@ -26,7 +27,12 @@ defmodule ZoonkWeb.User.SignUpWithEmailLiveTest do
   end
 
   describe "signs up user (:app org)" do
-    setup :setup_app
+    setup do
+      app_org = app_org_fixture()
+      conn = Map.put(build_conn(), :host, app_org.custom_domain)
+
+      %{conn: conn}
+    end
 
     test "use the browser's language", %{conn: conn} do
       conn = put_req_header(conn, "accept-language", "pt-BR")
