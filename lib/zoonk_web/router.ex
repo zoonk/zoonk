@@ -44,12 +44,13 @@ defmodule ZoonkWeb.Router do
   end
 
   scope "/", ZoonkWeb do
-    pipe_through [:browser, :require_authenticated_user, :require_org_member]
+    pipe_through [:browser, :require_authenticated_user, :require_org_member, :require_org_admin]
 
     live_session :require_authenticated_user,
       on_mount: [
         {UserAuth, :ensure_authenticated},
         {UserAuthorization, :ensure_org_member},
+        {UserAuthorization, :ensure_org_admin},
         {ZoonkWeb.Language, :set_app_language}
       ] do
       live "/", AppHomeLive
