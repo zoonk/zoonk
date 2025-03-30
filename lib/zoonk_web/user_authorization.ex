@@ -62,17 +62,23 @@ defmodule ZoonkWeb.UserAuthorization do
   end
 
   @doc """
-  LiveView hook to check if the user is a confirmed member of the current organization.
+  LiveView hooks to check organization membership and admin permissions.
 
-  This hook verifies that either:
-  1. The user is a confirmed member of the organization
-  2. OR the organization is public (`:app` or `:creator` kind)
+  ## `on_mount` arguments
 
-  If not, then we log them out and redirect to the home page.
+    * `:ensure_org_member` - Verifies that either:
+      1. The user is a confirmed member of the organization
+      2. OR the organization is public (`:app` or `:creator` kind)
+      If not, raises a PermissionError.
+
+    * `:ensure_org_admin` - Verifies that the user has an admin role
+      in the organization when accessing paths that start with "/editor"
+      or "/org". This check applies to all organization kinds.
 
   ## Examples
 
       on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
+      on_mount {ZoonkWeb.UserAuthorization, :ensure_org_admin}
   """
   def on_mount(:ensure_org_member, _params, _session, socket)
       when socket.assigns.current_scope.org.kind in [:app, :creator] do
@@ -87,17 +93,6 @@ defmodule ZoonkWeb.UserAuthorization do
     end
   end
 
-  @doc """
-  LiveView hook to check if the user is an admin of the current organization for admin-restricted paths.
-
-  This hook verifies that the user has an admin role in the organization when
-  accessing paths that start with "/editor" or "/org". This check applies to all
-  organization kinds.
-
-  ## Examples
-
-      on_mount {ZoonkWeb.UserAuthorization, :ensure_org_admin}
-  """
   def on_mount(:ensure_org_admin, _params, _session, socket) do
     path = Phoenix.LiveView.get_connect_info(socket, :uri).path
 
