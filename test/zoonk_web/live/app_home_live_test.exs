@@ -5,7 +5,7 @@ defmodule ZoonkWeb.AppHomeLiveTest do
 
   describe "app home page" do
     test "handle org authorization" do
-      assert_require_org_member(%{link: ~p"/", title: "Summary"})
+      assert_page_authorization(%{link: ~p"/", title: "Summary"})
     end
   end
 end

@@ -8,7 +8,23 @@ defmodule ZoonkWeb.OrgMemberRequiredHelper do
 
   alias ZoonkWeb.PermissionError
 
-  def assert_require_org_member(page) do
+  @doc """
+  Tests page authorization for different organization kinds and user states.
+
+  This helper function tests multiple authorization scenarios:
+
+  - Redirects to login when user is not authenticated
+  - Allows access without membership for public organizations (:app, :creator)
+  - Allows access for unconfirmed users in public organizations
+  - Allows access for confirmed members in private organizations (:team, :school)
+  - Raises error for unconfirmed members in private organizations
+  - Raises error for non-members in private organizations
+
+  ## Example
+
+      assert_page_authorization(%{link: ~p"/", title: "Summary"})
+  """
+  def assert_page_authorization(page) do
     redirects_to_login(:app, page)
     redirects_to_login(:creator, page)
     redirects_to_login(:team, page)
