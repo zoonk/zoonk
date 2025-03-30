@@ -3,9 +3,7 @@ defmodule ZoonkWeb.ErrorLayout do
   use ZoonkWeb, :html
 
   def render(assigns) do
-    assigns.conn
-    |> ZoonkWeb.Language.get_browser_language()
-    |> Gettext.put_locale()
+    put_locale(assigns.data)
 
     ~H"""
     <!DOCTYPE html>
@@ -32,5 +30,15 @@ defmodule ZoonkWeb.ErrorLayout do
       </body>
     </html>
     """
+  end
+
+  defp put_locale(%Plug.Conn{} = conn) do
+    conn
+    |> ZoonkWeb.Language.get_browser_language()
+    |> Gettext.put_locale()
+  end
+
+  defp put_locale(%{language: language}) do
+    Gettext.put_locale(language)
   end
 end
