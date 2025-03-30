@@ -40,7 +40,7 @@ defmodule ZoonkWeb.UserAuthorization do
   Checks if the user is an admin of the current organization for admin-restricted paths.
 
   This plug verifies that the user has an admin role in the organization when
-  accessing paths that start with "/editor" or "/org". This check applies to all
+  accessing paths that start with a value from `@admin_paths`. This check applies to all
   organization kinds.
 
   ## Examples
@@ -74,8 +74,8 @@ defmodule ZoonkWeb.UserAuthorization do
       If not, raises a PermissionError.
 
     * `:ensure_org_admin` - Verifies that the user has an admin role
-      in the organization when accessing paths that start with "/editor"
-      or "/org". This check applies to all organization kinds.
+      in the organization when accessing paths that start with a value from `@admin_paths`.
+      This check applies to all organization kinds.
 
   ## Examples
 
