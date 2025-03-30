@@ -7,3 +7,4 @@
 - Keep the first line of a `@moduledoc` or `@doc` brief. For example, _Handles token generation for authentication_ is better than _Handles the generation of authentication tokens for different contexts, such as sessions and email-based authentication._
 - For code examples, don’t use `elixir` at the beginning, as it doesn’t work well with Elixir docs. Use tabs/spaces instead.
 - When creating a new guide, add it to the `extras` section in the `mix.exs` file.
+- When writing docs for a LiveView `on_mount` hook, you need to group them together in the same `@doc` tag instead of adding a new `@doc` tag for each `on_mount` function.
