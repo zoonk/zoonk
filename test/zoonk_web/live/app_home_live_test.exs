@@ -101,15 +101,7 @@ defmodule ZoonkWeb.AppHomeLiveTest do
     end
 
     test "raises when user is a member but not confirmed", %{conn: conn, org: org} do
-      user = %{user_fixture() | confirmed_at: nil}
-      org_member = org_member_fixture(%{user: user, org: org})
-      scope = %Scope{user: user, org: org, org_member: org_member}
-
-      assert_raise ZoonkWeb.PermissionError, fn ->
-        conn
-        |> assign(:current_scope, scope)
-        |> visit(~p"/")
-      end
+      assert_unconfirmed_member_access_denied(conn, org, ~p"/")
     end
   end
 
@@ -134,6 +126,10 @@ defmodule ZoonkWeb.AppHomeLiveTest do
         |> assign(:current_scope, scope)
         |> visit(~p"/")
       end
+    end
+
+    test "raises when user is a member but not confirmed", %{conn: conn, org: org} do
+      assert_unconfirmed_member_access_denied(conn, org, ~p"/")
     end
   end
 end
