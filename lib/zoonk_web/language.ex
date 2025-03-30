@@ -54,7 +54,19 @@ defmodule ZoonkWeb.Language do
     put_session(conn, :language, get_browser_language(conn))
   end
 
-  defp get_browser_language(%Plug.Conn{} = conn) do
+  @doc """
+  Retrieves the browser's preferred language from the `accept-language` header.
+
+  If the browser's preferred language is supported, it is returned.
+  Otherwise, the default language is returned.
+
+  ## Examples
+
+      iex> conn = %Plug.Conn{req_headers: [{"accept-language", "en-US,en;q=0.9"}]}
+      iex> ZoonkWeb.Language.get_browser_language(conn)
+      "en"
+  """
+  def get_browser_language(%Plug.Conn{} = conn) do
     language = extract_primary_language(conn)
     get_browser_language(language, primary_language_supported?(language))
   end
