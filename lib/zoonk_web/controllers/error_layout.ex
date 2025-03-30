@@ -19,12 +19,15 @@ defmodule ZoonkWeb.ErrorLayout do
         <title>Zoonk</title>
 
         <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+        <link phx-track-static rel="stylesheet" href={~p"/error/error.css"} />
 
         <link rel="apple-touch-icon" sizes="180x180" href={~p"/images/favicon/180.png"} />
         <link rel="icon" type="image/png" sizes="32x32" href={~p"/images/favicon/32.png"} />
         <link rel="icon" type="image/png" sizes="16x16" href={~p"/images/favicon/16.png"} />
 
         <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+        </script>
+        <script defer phx-track-static type="text/javascript" src={~p"/error/error.js"}>
         </script>
       </head>
 
