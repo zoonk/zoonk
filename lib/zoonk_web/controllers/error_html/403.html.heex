@@ -1,6 +1,6 @@
 <ZoonkWeb.ErrorLayout.render>
   <div class="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-4 py-16 text-center">
-    <div class="space-y-6">
+    <div class="flex flex-col items-center justify-center gap-6">
       <div class="glitch-wrapper">
         <div class="text-[120px] text-zk-primary glitch select-none font-bold" data-text="403">
           403
@@ -16,10 +16,10 @@
       </.text>
 
       <.text variant={:secondary}>
-        {dgettext(
-          "errors",
-          "Looks like you've hit a digital forcefield. Access denied, just like when"
-        )}
+        {dgettext("errors", "Looks like you've hit a digital forcefield.")}
+        <br />
+        {dgettext("errors", "Access denied, just like when")}
+        <br />
         <span class="typing-text border-zk-primary animate-typing inline-block overflow-hidden whitespace-nowrap border-r-2">
           <span
             class="hidden"
@@ -36,14 +36,14 @@
         </span>
       </.text>
 
-      <div class="pt-8">
+      <div>
         <.a kind={:button} navigate={~p"/"} icon="tabler-door-exit">
           {dgettext("errors", "Find another path")}
         </.a>
       </div>
     </div>
 
-    <div class="mt-12 flex flex-col">
+    <div class="mt-2 flex flex-col">
       <.text size={:sm} variant={:secondary}>
         {dgettext("errors", "Need a different route?")}
       </.text>

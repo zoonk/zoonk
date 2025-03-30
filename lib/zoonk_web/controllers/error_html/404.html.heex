@@ -1,6 +1,6 @@
 <ZoonkWeb.ErrorLayout.render conn={@reason.conn}>
   <div class="mx-auto flex min-h-screen max-w-md flex-col items-center justify-center px-4 py-16 text-center">
-    <div class="space-y-6">
+    <div class="flex flex-col items-center justify-center gap-4">
       <div class="glitch-wrapper">
         <div class="text-[120px] text-zk-primary glitch select-none font-bold" data-text="404">
           404
@@ -16,6 +16,7 @@
           "errors",
           "We couldn't find the page you're looking for. It might have been moved, renamed, or simply vanished like"
         )}
+        <br />
         <span class="typing-text border-zk-primary animate-typing inline-block overflow-hidden whitespace-nowrap border-r-2">
           <span
             class="hidden"
@@ -39,7 +40,7 @@
       </div>
     </div>
 
-    <div class="mt-12 flex flex-col">
+    <div class="mt-2 flex flex-col">
       <.text size={:sm} variant={:secondary}>
         {dgettext("errors", "Not what you expected?")}
       </.text>
