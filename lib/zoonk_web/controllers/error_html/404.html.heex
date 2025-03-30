@@ -33,18 +33,19 @@
       </.text>
 
       <div class="pt-8">
-        <.a kind={:button} href="/" icon="tabler-ufo">
+        <.a kind={:button} navigate={~p"/"} icon="tabler-ufo">
           {dgettext("errors", "Phone home")}
         </.a>
       </div>
     </div>
 
-    <div class="mt-12">
+    <div class="mt-12 flex flex-col">
       <.text size={:sm} variant={:secondary}>
-        {dgettext(
-          "errors",
-          "Not what you expected? Continue your learning journey from our homepage!"
-        )}
+        {dgettext("errors", "Not what you expected?")}
+      </.text>
+
+      <.text size={:sm} variant={:secondary}>
+        {dgettext("errors", "Continue your learning journey from our homepage!")}
       </.text>
     </div>
   </div>
