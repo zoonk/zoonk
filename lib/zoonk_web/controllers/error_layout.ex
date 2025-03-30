@@ -2,8 +2,11 @@ defmodule ZoonkWeb.ErrorLayout do
   @moduledoc false
   use ZoonkWeb, :html
 
+  attr :conn, :any, default: nil
+  slot :inner_block, required: true
+
   def render(assigns) do
-    put_locale(assigns.data)
+    put_locale(assigns.conn)
 
     ~H"""
     <!DOCTYPE html>
@@ -38,7 +41,5 @@ defmodule ZoonkWeb.ErrorLayout do
     |> Gettext.put_locale()
   end
 
-  defp put_locale(%{language: language}) do
-    Gettext.put_locale(language)
-  end
+  defp put_locale(_conn), do: nil
 end
