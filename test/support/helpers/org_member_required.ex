@@ -26,67 +26,45 @@ defmodule ZoonkWeb.OrgMemberRequiredHelper do
   end
 
   defp allow_access_without_membership(org_kind, page) do
-    conn = Phoenix.ConnTest.build_conn()
-    user = user_fixture()
-    org = org_fixture(%{kind: org_kind})
-
-    conn
-    |> Map.put(:host, org.custom_domain)
-    |> ZoonkWeb.ConnCase.login_user(user)
-    |> visit(page.link)
-    |> assert_has("li[aria-current='page']", text: page.title)
+    test_access(org_kind, page, confirmed?: true, create_member?: false, expect_success?: true)
   end
 
   defp allow_access_for_unconfirmed_user(org_kind, page) do
-    conn = Phoenix.ConnTest.build_conn()
-    user = unconfirmed_user_fixture()
-    org = org_fixture(%{kind: org_kind})
-    org_member_fixture(%{user: user, org: org})
-
-    conn
-    |> Map.put(:host, org.custom_domain)
-    |> ZoonkWeb.ConnCase.login_user(user)
-    |> visit(page.link)
-    |> assert_has("li[aria-current='page']", text: page.title)
+    test_access(org_kind, page, confirmed?: false, create_member?: true, expect_success?: true)
   end
 
   defp allow_access_for_confirmed_member(org_kind, page) do
-    conn = Phoenix.ConnTest.build_conn()
-    user = user_fixture()
-    org = org_fixture(%{kind: org_kind})
-    org_member_fixture(%{user: user, org: org})
-
-    conn
-    |> Map.put(:host, org.custom_domain)
-    |> ZoonkWeb.ConnCase.login_user(user)
-    |> visit(page.link)
-    |> assert_has("li[aria-current='page']", text: page.title)
+    test_access(org_kind, page, confirmed?: true, create_member?: true, expect_success?: true)
   end
 
   defp raises_for_unconfirmed_member(org_kind, page) do
-    conn = Phoenix.ConnTest.build_conn()
-    user = unconfirmed_user_fixture()
-    org = org_fixture(%{kind: org_kind})
-    org_member_fixture(%{user: user, org: org})
-
-    assert_raise(PermissionError, fn ->
-      conn
-      |> Map.put(:host, org.custom_domain)
-      |> ZoonkWeb.ConnCase.login_user(user)
-      |> visit(page.link)
-    end)
+    test_access(org_kind, page, confirmed?: false, create_member?: true, expect_success?: false)
   end
 
   defp raises_without_membership(org_kind, page) do
+    test_access(org_kind, page, confirmed?: true, create_member?: false, expect_success?: false)
+  end
+
+  defp test_access(org_kind, page, opts) do
     conn = Phoenix.ConnTest.build_conn()
-    user = user_fixture()
+    user = if opts[:confirmed?], do: user_fixture(), else: unconfirmed_user_fixture()
     org = org_fixture(%{kind: org_kind})
 
-    assert_raise(PermissionError, fn ->
+    if opts[:create_member?] do
+      org_member_fixture(%{user: user, org: org})
+    end
+
+    conn =
       conn
       |> Map.put(:host, org.custom_domain)
       |> ZoonkWeb.ConnCase.login_user(user)
+
+    if opts[:expect_success?] do
+      conn
       |> visit(page.link)
-    end)
+      |> assert_has("li[aria-current='page']", text: page.title)
+    else
+      assert_raise(PermissionError, fn -> visit(conn, page.link) end)
+    end
   end
 end
