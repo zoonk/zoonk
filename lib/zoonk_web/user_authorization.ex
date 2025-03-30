@@ -47,18 +47,15 @@ defmodule ZoonkWeb.UserAuthorization do
 
       plug :require_org_admin
   """
-  def require_org_admin(conn, _opts) do
-    path = conn.request_path
+  def require_org_admin(conn, opts) do
+    require_org_admin(conn, opts, admin_path?(conn.request_path), org_admin?(conn.assigns.current_scope))
+  end
 
-    if admin_path?(path) do
-      if org_admin?(conn.assigns.current_scope) do
-        conn
-      else
-        raise PermissionError, code: :require_org_admin
-      end
-    else
-      conn
-    end
+  defp require_org_admin(conn, _opts, false, _is_admin), do: conn
+  defp require_org_admin(conn, _opts, true, true), do: conn
+
+  defp require_org_admin(_conn, _opts, true, false) do
+    raise PermissionError, code: :require_org_admin
   end
 
   @doc """
@@ -95,16 +92,14 @@ defmodule ZoonkWeb.UserAuthorization do
 
   def on_mount(:ensure_org_admin, _params, _session, socket) do
     path = Phoenix.LiveView.get_connect_info(socket, :uri).path
+    on_mount_admin(socket, admin_path?(path), org_admin?(socket.assigns.current_scope))
+  end
 
-    if admin_path?(path) do
-      if org_admin?(socket.assigns.current_scope) do
-        {:cont, socket}
-      else
-        raise PermissionError, code: :require_org_admin
-      end
-    else
-      {:cont, socket}
-    end
+  defp on_mount_admin(socket, false, _is_admin), do: {:cont, socket}
+  defp on_mount_admin(socket, true, true), do: {:cont, socket}
+
+  defp on_mount_admin(_socket, true, false) do
+    raise PermissionError, code: :require_org_admin
   end
 
   defp org_member?(%Scope{user: %User{confirmed_at: nil}}), do: false
