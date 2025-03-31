@@ -228,7 +228,7 @@ Repo.insert!(%UserProfile{
   is_public: true,
   bio: "App administrator",
   display_name: "App Admin",
-  picture_url: "https://github.com/ceolinwill.png",
+  picture_url: "https://github.com/yyx990803.png",
   username: "appadmin",
   user_id: app_admin.id,
   city_id: sao_paulo.id
@@ -238,7 +238,7 @@ Repo.insert!(%UserProfile{
   is_public: true,
   bio: "Regular app member",
   display_name: "App Member",
-  picture_url: "https://github.com/octocat.png",
+  picture_url: "https://github.com/LeaVerou.png",
   username: "appmember",
   user_id: app_member.id,
   city_id: sao_paulo.id
@@ -248,7 +248,7 @@ Repo.insert!(%UserProfile{
   is_public: true,
   bio: "Team organization administrator",
   display_name: "Team Admin",
-  picture_url: "https://github.com/defunkt.png",
+  picture_url: "https://github.com/malukang.png",
   username: "teamadmin",
   user_id: team_admin.id,
   city_id: new_york.id
@@ -258,7 +258,7 @@ Repo.insert!(%UserProfile{
   is_public: false,
   bio: "Team organization member",
   display_name: "Team Member",
-  picture_url: "https://github.com/mdo.png",
+  picture_url: "https://github.com/muan.png",
   username: "teammember",
   user_id: team_member.id,
   city_id: new_york.id
@@ -268,7 +268,7 @@ Repo.insert!(%UserProfile{
   is_public: true,
   bio: "Content creator administrator",
   display_name: "Creator Admin",
-  picture_url: "https://github.com/rauchg.png",
+  picture_url: "https://github.com/noopkat.png",
   username: "creatoradmin",
   user_id: creator_admin.id,
   city_id: berlin.id
@@ -278,7 +278,7 @@ Repo.insert!(%UserProfile{
   is_public: true,
   bio: "Content creator team member",
   display_name: "Creator",
-  picture_url: "https://github.com/steveklabnik.png",
+  picture_url: "https://github.com/cassidoo.png",
   username: "creator",
   user_id: creator_member.id,
   city_id: berlin.id
@@ -288,7 +288,7 @@ Repo.insert!(%UserProfile{
   is_public: false,
   bio: "School administrator",
   display_name: "School Admin",
-  picture_url: "https://github.com/josevalim.png",
+  picture_url: "https://github.com/iheanyi.png",
   username: "schooladmin",
   user_id: school_admin.id,
   city_id: singapore.id
@@ -298,7 +298,7 @@ Repo.insert!(%UserProfile{
   is_public: false,
   bio: "School student",
   display_name: "Student",
-  picture_url: "https://github.com/sindresorhus.png",
+  picture_url: "https://github.com/sonamata.png",
   username: "student",
   user_id: school_member.id,
   city_id: singapore.id
