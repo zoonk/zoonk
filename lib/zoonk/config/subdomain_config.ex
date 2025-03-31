@@ -357,8 +357,7 @@ defmodule Zoonk.Config.SubdomainConfig do
     "ws",
     "www",
     "xhtml",
-    "xml",
-    "zoonk"
+    "xml"
   ]
 
   @doc """
