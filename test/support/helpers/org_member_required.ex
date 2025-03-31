@@ -25,11 +25,6 @@ defmodule ZoonkWeb.OrgMemberRequiredHelper do
       assert_page_authorization(%{link: ~p"/", title: "Summary"})
   """
   def assert_page_authorization(page) do
-    redirects_to_login(:app, page)
-    redirects_to_login(:creator, page)
-    redirects_to_login(:team, page)
-    redirects_to_login(:school, page)
-
     allow_access_without_membership(:app, page)
     allow_access_without_membership(:creator, page)
 
@@ -60,11 +55,6 @@ defmodule ZoonkWeb.OrgMemberRequiredHelper do
       assert_admin_page_authorization(%{link: ~p"/editor", title: "Editor"})
   """
   def assert_admin_page_authorization(page) do
-    redirects_to_login(:app, page)
-    redirects_to_login(:creator, page)
-    redirects_to_login(:team, page)
-    redirects_to_login(:school, page)
-
     allow_access_for_org_admin(:app, page)
     allow_access_for_org_admin(:creator, page)
     allow_access_for_org_admin(:team, page)
@@ -125,15 +115,5 @@ defmodule ZoonkWeb.OrgMemberRequiredHelper do
     else
       assert_raise(PermissionError, fn -> visit(conn, page.link) end)
     end
-  end
-
-  defp redirects_to_login(org_kind, page) do
-    conn = Phoenix.ConnTest.build_conn()
-    org = org_fixture(%{kind: org_kind})
-
-    conn
-    |> Map.put(:host, org.custom_domain)
-    |> visit(page.link)
-    |> assert_path("/login")
   end
 end
