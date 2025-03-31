@@ -30,7 +30,7 @@ defmodule ZoonkWeb.Language do
       end
   """
   def on_mount(:set_app_language, _params, session, socket) do
-    user_language = get_user_language(socket.assigns.current_scope, session)
+    user_language = get_user_language(socket.assigns.scope, session)
     Gettext.put_locale(Zoonk.Gettext, user_language)
     {:cont, socket}
   end
@@ -46,7 +46,7 @@ defmodule ZoonkWeb.Language do
 
   The selected language is then stored in the session.
   """
-  def set_session_language(%{assigns: %{current_scope: %Scope{user: %User{language: language}}}} = conn, _opts) do
+  def set_session_language(%{assigns: %{scope: %Scope{user: %User{language: language}}}} = conn, _opts) do
     put_session(conn, :language, Atom.to_string(language))
   end
 

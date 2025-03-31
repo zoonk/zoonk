@@ -6,7 +6,7 @@ defmodule ZoonkWeb.Editor.EditorHomeLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.EditorLayout.render
-      scope={@current_scope}
+      scope={@scope}
       flash={@flash}
       page_title={@page_title}
       active_page={:home}

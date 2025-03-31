@@ -27,7 +27,7 @@ defmodule ZoonkWeb.User.UserSignUpLive do
     """
   end
 
-  def mount(_params, _session, %{assigns: %{current_scope: %Scope{user: %User{}}}} = socket) do
+  def mount(_params, _session, %{assigns: %{scope: %Scope{user: %User{}}}} = socket) do
     {:ok, redirect(socket, to: UserAuth.signed_in_path(socket))}
   end
 

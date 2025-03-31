@@ -53,7 +53,7 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLive do
   def mount(_params, _session, socket) do
     email =
       Phoenix.Flash.get(socket.assigns.flash, :email) ||
-        get_in(socket.assigns, [:current_scope, Access.key(:user), Access.key(:email)])
+        get_in(socket.assigns, [:scope, Access.key(:user), Access.key(:email)])
 
     form = to_form(%{"email" => email})
 

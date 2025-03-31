@@ -7,7 +7,7 @@ defmodule ZoonkWeb.AppHomeLive do
     ~H"""
     <ZoonkWeb.AppLayout.render
       flash={@flash}
-      scope={@current_scope}
+      scope={@scope}
       page_title={@page_title}
       active_page={:home}
     >

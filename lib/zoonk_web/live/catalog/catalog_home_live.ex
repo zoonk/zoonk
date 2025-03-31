@@ -6,7 +6,7 @@ defmodule ZoonkWeb.Catalog.CatalogHomeLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render
-      scope={@current_scope}
+      scope={@scope}
       flash={@flash}
       page_title={@page_title}
       active_page={:catalog}

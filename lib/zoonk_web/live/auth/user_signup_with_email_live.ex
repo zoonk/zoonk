@@ -71,7 +71,7 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
     """
   end
 
-  def mount(_params, _session, %{assigns: %{current_scope: %Scope{user: %User{}}}} = socket) do
+  def mount(_params, _session, %{assigns: %{scope: %Scope{user: %User{}}}} = socket) do
     {:ok, redirect(socket, to: UserAuth.signed_in_path(socket))}
   end
 
@@ -90,7 +90,7 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
   end
 
   def handle_event("save", %{"user" => user_params}, socket) do
-    case Accounts.signup_user(user_params, socket.assigns.current_scope) do
+    case Accounts.signup_user(user_params, socket.assigns.scope) do
       {:ok, user} ->
         {:ok, _url_fn} =
           Accounts.deliver_login_instructions(

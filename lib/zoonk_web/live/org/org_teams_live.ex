@@ -6,7 +6,7 @@ defmodule ZoonkWeb.Org.OrgTeamsLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.OrgLayout.render
-      scope={@current_scope}
+      scope={@scope}
       flash={@flash}
       page_title={@page_title}
       active_page={:teams}

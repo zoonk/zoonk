@@ -99,10 +99,10 @@ defmodule ZoonkWeb.UserAuth do
   Authenticates the user by looking into the session
   and remember me token.
   """
-  def fetch_current_scope(conn, _opts) do
+  def fetch_scope(conn, _opts) do
     {user_token, conn} = ensure_user_token(conn)
     user = user_token && Accounts.get_user_by_session_token(user_token)
-    assign(conn, :current_scope, build_scope(user, conn.host))
+    assign(conn, :scope, build_scope(user, conn.host))
   end
 
   defp ensure_user_token(conn) do
@@ -120,16 +120,16 @@ defmodule ZoonkWeb.UserAuth do
   end
 
   @doc """
-  Handles mounting and authenticating the current_scope in LiveViews.
+  Handles mounting and authenticating the scope in LiveViews.
 
   ## `on_mount` arguments
 
-    * `:mount_current_scope` - Assigns current_scope
+    * `:mount_scope` - Assigns scope
       to socket assigns based on user_token, or nil if
       there's no user_token or no matching user.
 
     * `:ensure_authenticated` - Authenticates the user from the session,
-      and assigns the current_scope to socket assigns
+      and assigns the scope to socket assigns
       based on user_token. Redirects to login page if there's no logged user.
 
     * `:ensure_sudo_mode` - Check if the user has been authenticated
@@ -138,12 +138,12 @@ defmodule ZoonkWeb.UserAuth do
   ## Examples
 
   Use the `on_mount` lifecycle macro in LiveViews to mount or authenticate
-  the current_scope:
+  the scope:
 
       defmodule ZoonkWeb.PageLive do
         use ZoonkWeb, :live_view
 
-        on_mount {ZoonkWeb.UserAuth, :mount_current_scope}
+        on_mount {ZoonkWeb.UserAuth, :mount_scope}
         ...
       end
 
@@ -153,14 +153,14 @@ defmodule ZoonkWeb.UserAuth do
         live "/profile", ProfileLive, :index
       end
   """
-  def on_mount(:mount_current_scope, _params, session, socket) do
-    {:cont, mount_current_scope(socket, session)}
+  def on_mount(:mount_scope, _params, session, socket) do
+    {:cont, mount_scope(socket, session)}
   end
 
   def on_mount(:ensure_authenticated, _params, session, socket) do
-    socket = mount_current_scope(socket, session)
+    socket = mount_scope(socket, session)
 
-    if socket.assigns.current_scope && socket.assigns.current_scope.user do
+    if socket.assigns.scope && socket.assigns.scope.user do
       {:cont, socket}
     else
       socket =
@@ -173,9 +173,9 @@ defmodule ZoonkWeb.UserAuth do
   end
 
   def on_mount(:ensure_sudo_mode, _params, session, socket) do
-    socket = mount_current_scope(socket, session)
+    socket = mount_scope(socket, session)
 
-    if Accounts.sudo_mode?(socket.assigns.current_scope.user) do
+    if Accounts.sudo_mode?(socket.assigns.scope.user) do
       {:cont, socket}
     else
       socket =
@@ -187,8 +187,8 @@ defmodule ZoonkWeb.UserAuth do
     end
   end
 
-  defp mount_current_scope(socket, session) do
-    Phoenix.Component.assign_new(socket, :current_scope, fn ->
+  defp mount_scope(socket, session) do
+    Phoenix.Component.assign_new(socket, :scope, fn ->
       user =
         if user_token = session["user_token"] do
           Accounts.get_user_by_session_token(user_token)
@@ -206,7 +206,7 @@ defmodule ZoonkWeb.UserAuth do
   they use the application at all, here would be a good place.
   """
   def require_authenticated_user(conn, _opts) do
-    if conn.assigns.current_scope && conn.assigns.current_scope.user do
+    if conn.assigns.scope && conn.assigns.scope.user do
       conn
     else
       conn
@@ -247,7 +247,7 @@ defmodule ZoonkWeb.UserAuth do
 
   @doc "Returns the path to redirect to after log in."
   # the user was already logged in, redirect to settings
-  def signed_in_path(%Plug.Conn{assigns: %{current_scope: %Scope{user: %User{}}}}) do
+  def signed_in_path(%Plug.Conn{assigns: %{scope: %Scope{user: %User{}}}}) do
     ~p"/user/email"
   end
 

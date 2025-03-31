@@ -6,7 +6,7 @@ defmodule ZoonkWeb.User.UserInterestsLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render
-      scope={@current_scope}
+      scope={@scope}
       flash={@flash}
       page_title={@page_title}
       active_page={:user_interests}

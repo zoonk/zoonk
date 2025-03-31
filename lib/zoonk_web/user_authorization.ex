@@ -27,8 +27,8 @@ defmodule ZoonkWeb.UserAuthorization do
 
       plug :require_org_member
   """
-  def require_org_member(conn, _opts) when conn.assigns.current_scope.org.kind in [:app, :creator], do: conn
-  def require_org_member(conn, opts), do: require_org_member(conn, opts, org_member?(conn.assigns.current_scope))
+  def require_org_member(conn, _opts) when conn.assigns.scope.org.kind in [:app, :creator], do: conn
+  def require_org_member(conn, opts), do: require_org_member(conn, opts, org_member?(conn.assigns.scope))
 
   defp require_org_member(conn, _opts, true), do: conn
 
@@ -51,7 +51,7 @@ defmodule ZoonkWeb.UserAuthorization do
   def require_org_admin(conn, []) do
     require_org_admin(conn,
       admin_path?: admin_path?(conn.request_path),
-      org_admin?: org_admin?(conn.assigns.current_scope)
+      org_admin?: org_admin?(conn.assigns.scope)
     )
   end
 
@@ -82,13 +82,12 @@ defmodule ZoonkWeb.UserAuthorization do
       on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
       on_mount {ZoonkWeb.UserAuthorization, :ensure_org_admin}
   """
-  def on_mount(:ensure_org_member, _params, _session, socket)
-      when socket.assigns.current_scope.org.kind in [:app, :creator] do
+  def on_mount(:ensure_org_member, _params, _session, socket) when socket.assigns.scope.org.kind in [:app, :creator] do
     {:cont, socket}
   end
 
   def on_mount(:ensure_org_member, _params, _session, socket) do
-    if org_member?(socket.assigns.current_scope) do
+    if org_member?(socket.assigns.scope) do
       {:cont, socket}
     else
       raise PermissionError, code: :require_org_member
@@ -97,7 +96,7 @@ defmodule ZoonkWeb.UserAuthorization do
 
   def on_mount(:ensure_org_admin, _params, _session, socket) do
     path = Phoenix.LiveView.get_connect_info(socket, :uri).path
-    on_mount_admin(socket, admin_path?: admin_path?(path), org_admin?: org_admin?(socket.assigns.current_scope))
+    on_mount_admin(socket, admin_path?: admin_path?(path), org_admin?: org_admin?(socket.assigns.scope))
   end
 
   defp on_mount_admin(socket, admin_path?: true, org_admin?: true), do: {:cont, socket}

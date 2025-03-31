@@ -7,7 +7,7 @@ defmodule ZoonkWeb.User.UserEmailLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render
-      scope={@current_scope}
+      scope={@scope}
       flash={@flash}
       page_title={@page_title}
       active_page={:user_email}
@@ -47,7 +47,7 @@ defmodule ZoonkWeb.User.UserEmailLive do
 
   def mount(%{"token" => token}, _session, socket) do
     socket =
-      case Accounts.update_user_email(socket.assigns.current_scope.user, token) do
+      case Accounts.update_user_email(socket.assigns.scope.user, token) do
         :ok ->
           put_flash(socket, :info, dgettext("users", "Email changed successfully."))
 
@@ -59,7 +59,7 @@ defmodule ZoonkWeb.User.UserEmailLive do
   end
 
   def mount(_params, _session, socket) do
-    user = socket.assigns.current_scope.user
+    user = socket.assigns.scope.user
     email_changeset = Accounts.change_user_email(user, %{}, validate_email: false)
 
     socket =
@@ -76,7 +76,7 @@ defmodule ZoonkWeb.User.UserEmailLive do
     %{"user" => user_params} = params
 
     email_form =
-      socket.assigns.current_scope.user
+      socket.assigns.scope.user
       |> Accounts.change_user_email(user_params, validate_email: false)
       |> Map.put(:action, :validate)
       |> to_form()
@@ -86,7 +86,7 @@ defmodule ZoonkWeb.User.UserEmailLive do
 
   def handle_event("update_email", params, socket) do
     %{"user" => user_params} = params
-    user = socket.assigns.current_scope.user
+    user = socket.assigns.scope.user
     true = Accounts.sudo_mode?(user)
 
     case Accounts.change_user_email(user, user_params) do
