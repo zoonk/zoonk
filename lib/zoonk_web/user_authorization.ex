@@ -9,10 +9,12 @@ defmodule ZoonkWeb.UserAuthorization do
   use Gettext, backend: Zoonk.Gettext
 
   alias Zoonk.Accounts.User
+  alias Zoonk.Helpers
   alias Zoonk.Scope
   alias ZoonkWeb.PermissionError
 
   @admin_paths ["/editor", "/org"]
+  @admin_contexts [:editor, :org]
 
   @doc """
   Checks if the user is a confirmed member of the current organization.
@@ -95,8 +97,8 @@ defmodule ZoonkWeb.UserAuthorization do
   end
 
   def on_mount(:ensure_org_admin, _params, _session, socket) do
-    path = Phoenix.LiveView.get_connect_info(socket, :uri).path
-    on_mount_admin(socket, admin_path?: admin_path?(path), org_admin?: org_admin?(socket.assigns.scope))
+    context = Helpers.get_context_from_module(socket.view)
+    on_mount_admin(socket, admin_path?: admin_context?(context), org_admin?: org_admin?(socket.assigns.scope))
   end
 
   defp on_mount_admin(socket, admin_path?: true, org_admin?: true), do: {:cont, socket}
@@ -118,5 +120,11 @@ defmodule ZoonkWeb.UserAuthorization do
 
   defp admin_path?(path) do
     Enum.any?(@admin_paths, &String.starts_with?(path, &1))
+  end
+
+  defp admin_context?(nil), do: false
+
+  defp admin_context?(context) do
+    Enum.member?(@admin_contexts, context)
   end
 end

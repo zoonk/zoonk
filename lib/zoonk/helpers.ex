@@ -39,9 +39,9 @@ defmodule Zoonk.Helpers do
     |> get_context_from_module()
   end
 
-  def get_context_from_module(["Zoonk", scope | _]), do: scope_to_atom(scope)
-  def get_context_from_module(["ZoonkWeb", scope | _]), do: scope_to_atom(scope)
-  def get_context_from_module(_), do: nil
+  def get_context_from_module(["Zoonk", scope | _rest]), do: scope_to_atom(scope)
+  def get_context_from_module(["ZoonkWeb", scope | _rest]), do: scope_to_atom(scope)
+  def get_context_from_module(_module), do: nil
 
   defp scope_to_atom(scope) do
     scope
