@@ -128,6 +128,6 @@ defmodule Zoonk.OrgFixtures do
 
     %OrgMember{}
     |> OrgMember.changeset(attrs)
-    |> Repo.insert!()
+    |> Repo.insert!(on_conflict: :replace_all, conflict_target: [:user_id, :org_id])
   end
 end

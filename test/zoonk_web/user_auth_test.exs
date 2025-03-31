@@ -8,6 +8,7 @@ defmodule ZoonkWeb.UserAuthTest do
   alias Phoenix.Socket.Broadcast
   alias Zoonk.Accounts
   alias Zoonk.Config.AuthConfig
+  alias Zoonk.Orgs
   alias Zoonk.Scope
   alias ZoonkWeb.UserAuth
 
@@ -17,7 +18,7 @@ defmodule ZoonkWeb.UserAuthTest do
   setup %{conn: conn} do
     user = %{user_fixture() | authenticated_at: DateTime.utc_now()}
     org = app_org_fixture()
-    org_member = org_member_fixture(%{user: user, org: org})
+    org_member = Orgs.get_org_member(org, user)
 
     scope =
       %Scope{}

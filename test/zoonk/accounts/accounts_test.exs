@@ -10,6 +10,7 @@ defmodule Zoonk.AccountsTest do
   alias Zoonk.Accounts.UserToken
   alias Zoonk.Config.AuthConfig
   alias Zoonk.Config.SubdomainConfig
+  alias Zoonk.Orgs.OrgMember
   alias Zoonk.Repo
 
   describe "change_user_profile/2" do
@@ -107,6 +108,10 @@ defmodule Zoonk.AccountsTest do
       assert user.email == email
       assert is_nil(user.confirmed_at)
       assert Repo.get_by(UserProfile, user_id: user.id)
+
+      # Verify that an org member is created
+      org_member = Repo.get_by(OrgMember, user_id: user.id, org_id: scope.org.id)
+      assert org_member.role == :member
     end
 
     test "doesn't allow to signup to a team when sign up is not allowed" do
@@ -420,6 +425,10 @@ defmodule Zoonk.AccountsTest do
 
       assert user_profile.user_id == user.id
       assert user_profile.picture_url == picture
+
+      # Verify that an org member is created
+      org_member = Repo.get_by(OrgMember, user_id: user.id, org_id: scope.org.id)
+      assert org_member.role == :member
     end
 
     test "creates a new user for :creator orgs" do
