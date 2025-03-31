@@ -4,6 +4,54 @@ defmodule Zoonk.Helpers do
   """
 
   @doc """
+  Gets the context from a module name.
+
+  The context is the module name that comes after `Zoonk` or `ZoonkWeb`.
+
+  This is useful for some permission checks we make based on module names.
+  For example, `:org` and `:editor` contexts require admin permissions,
+  while a `:catalog` requires `:member` permissions for private organizations
+  but they are not required for public organizations.
+
+  ## Examples
+
+      iex> get_context_from_module(ZoonkWeb.Catalog.CatalogHomeLive)
+      :catalog
+
+      iex> get_context_from_module(ZoonkWeb.Org.OrgHomeLive)
+      :org
+
+      iex> get_context_from_module(Zoonk.Accounts.User)
+      :accounts
+
+      iex> get_context_from_module("ZoonkWeb.Catalog.CatalogHomeLive")
+      :catalog
+  """
+  def get_context_from_module(module) when is_atom(module) do
+    module
+    |> Module.split()
+    |> get_context_from_module()
+  end
+
+  def get_context_from_module(module) when is_binary(module) do
+    module
+    |> String.split(".")
+    |> get_context_from_module()
+  end
+
+  def get_context_from_module(["Zoonk", scope | _]), do: scope_to_atom(scope)
+  def get_context_from_module(["ZoonkWeb", scope | _]), do: scope_to_atom(scope)
+  def get_context_from_module(_), do: nil
+
+  defp scope_to_atom(scope) do
+    scope
+    |> String.downcase()
+    |> String.to_existing_atom()
+  rescue
+    ArgumentError -> nil
+  end
+
+  @doc """
   Converts a string into snake case.
 
   ## Examples
