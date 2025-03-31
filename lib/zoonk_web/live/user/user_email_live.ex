@@ -6,11 +6,11 @@ defmodule ZoonkWeb.User.UserEmailLive do
 
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render
+    <ZoonkWeb.UserLayout.render
       scope={@scope}
       flash={@flash}
       page_title={@page_title}
-      active_page={:user_email}
+      active_page={:email}
     >
       <.form_container
         for={@email_form}
@@ -41,7 +41,7 @@ defmodule ZoonkWeb.User.UserEmailLive do
           {dgettext("users", "You'll need to confirm your email address.")}
         </:requirements>
       </.form_container>
-    </ZoonkWeb.AppLayout.render>
+    </ZoonkWeb.UserLayout.render>
     """
   end
 

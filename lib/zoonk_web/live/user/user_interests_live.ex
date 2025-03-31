@@ -5,14 +5,14 @@ defmodule ZoonkWeb.User.UserInterestsLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render
+    <ZoonkWeb.UserLayout.render
       scope={@scope}
       flash={@flash}
       page_title={@page_title}
-      active_page={:user_interests}
+      active_page={:interests}
     >
       placeholder for user interests
-    </ZoonkWeb.AppLayout.render>
+    </ZoonkWeb.UserLayout.render>
     """
   end
 
