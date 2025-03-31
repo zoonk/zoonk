@@ -3,6 +3,35 @@ defmodule Zoonk.HelpersTest do
 
   import Zoonk.Helpers
 
+  describe "get_context_from_module/1" do
+    test "returns the scope for ZoonkWeb modules" do
+      assert :catalog = get_context_from_module(ZoonkWeb.Catalog.CatalogHomeLive)
+      assert :org = get_context_from_module(ZoonkWeb.Org.OrgHomeLive)
+      assert :library = get_context_from_module(ZoonkWeb.Library)
+    end
+
+    test "returns the scope for Zoonk modules" do
+      assert :accounts = get_context_from_module(Zoonk.Accounts.User)
+      assert :locations = get_context_from_module(Zoonk.Locations.Country)
+      assert :library = get_context_from_module(Zoonk.Library)
+    end
+
+    test "returns the scope for string module names" do
+      assert :catalog = get_context_from_module("ZoonkWeb.Catalog.CatalogHomeLive")
+      assert :accounts = get_context_from_module("Zoonk.Accounts.User")
+      assert :locations = get_context_from_module("Zoonk.Locations")
+    end
+
+    test "returns nil for invalid modules" do
+      refute get_context_from_module(InvalidModule)
+      refute get_context_from_module("InvalidModule")
+    end
+
+    test "returns nil for inexisting atoms" do
+      refute get_context_from_module(Zoonk.ThisModuleDoesNotExist.Test)
+    end
+  end
+
   describe "to_snake_case/1" do
     test "converts a string with spaces to snake case" do
       assert to_snake_case("Hello World") == "hello_world"

@@ -14,6 +14,7 @@ defmodule ZoonkWeb.UserAuth do
   alias Zoonk.Accounts
   alias Zoonk.Accounts.User
   alias Zoonk.Config.AuthConfig
+  alias Zoonk.Helpers
   alias Zoonk.Orgs
   alias Zoonk.Scope
 
@@ -22,6 +23,7 @@ defmodule ZoonkWeb.UserAuth do
   @remember_me_options [sign: true, max_age: @max_age, same_site: "Lax"]
 
   @public_paths ["/catalog"]
+  @public_contexts [:catalog]
 
   @doc """
   Logs the user in.
@@ -161,10 +163,10 @@ defmodule ZoonkWeb.UserAuth do
 
   def on_mount(:ensure_authenticated, _params, session, socket) do
     socket = mount_scope(socket, session)
-    path = Phoenix.LiveView.get_connect_info(socket, :uri).path
+    context = Helpers.get_context_from_module(socket.view)
     looged_in? = socket.assigns.scope && socket.assigns.scope.user
 
-    if public_path?(path) or looged_in? do
+    if public_context?(context) or looged_in? do
       {:cont, socket}
     else
       socket =
@@ -266,6 +268,12 @@ defmodule ZoonkWeb.UserAuth do
     |> Scope.set(user)
     |> Scope.set(org)
     |> Scope.set(Orgs.get_org_member(org, user))
+  end
+
+  defp public_context?(nil), do: false
+
+  defp public_context?(context) do
+    Enum.member?(@public_contexts, context)
   end
 
   defp public_path?(path) do

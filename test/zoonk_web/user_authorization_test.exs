@@ -316,9 +316,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
       scope = scope_fixture(%{user: user, org: org, org_member: org_member})
 
       socket = %LiveView.Socket{
+        view: ZoonkWeb.AppHomeLive,
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, scope: scope},
-        private: %{connect_info: %{uri: %URI{path: "/dashboard"}}}
+        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
       }
 
       assert {:cont, _socket} = UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
@@ -331,9 +331,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
       scope = scope_fixture(%{user: user, org: org, org_member: org_member})
 
       socket = %LiveView.Socket{
+        view: DocumentsLive,
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, scope: scope},
-        private: %{connect_info: %{uri: %URI{path: "/editor/documents"}}}
+        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
       }
 
       assert {:cont, _socket} = UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
@@ -346,9 +346,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
       scope = scope_fixture(%{user: user, org: org, org_member: org_member})
 
       socket = %LiveView.Socket{
+        view: ZoonkWeb.Org.OrgSettingsLive,
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, scope: scope},
-        private: %{connect_info: %{uri: %URI{path: "/org/settings"}}}
+        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
       }
 
       assert {:cont, _socket} = UserAuthorization.on_mount(:ensure_org_admin, %{}, %{}, socket)
@@ -361,9 +361,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
       scope = scope_fixture(%{user: user, org: org, org_member: org_member})
 
       socket = %LiveView.Socket{
+        view: ZoonkWeb.Editor.NotAdminLive,
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, scope: scope},
-        private: %{connect_info: %{uri: %URI{path: "/editor/documents"}}}
+        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
       }
 
       assert_raise ZoonkWeb.PermissionError, fn ->
@@ -378,9 +378,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
       scope = scope_fixture(%{user: user, org: org, org_member: org_member})
 
       socket = %LiveView.Socket{
+        view: ZoonkWeb.Org.OrgHomeLive,
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, scope: scope},
-        private: %{connect_info: %{uri: %URI{path: "/org/settings"}}}
+        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
       }
 
       assert_raise ZoonkWeb.PermissionError, fn ->
@@ -395,9 +395,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
       scope = %Scope{user: user, org: org, org_member: org_member}
 
       socket = %LiveView.Socket{
+        view: ZoonkWeb.Org.NotConfirmedUserLive,
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, scope: scope},
-        private: %{connect_info: %{uri: %URI{path: "/editor/documents"}}}
+        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
       }
 
       assert_raise ZoonkWeb.PermissionError, fn ->
@@ -411,9 +411,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
       scope = %Scope{user: user, org: org, org_member: nil}
 
       socket = %LiveView.Socket{
+        view: ZoonkWeb.Org.NotMemberLive,
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, scope: scope},
-        private: %{connect_info: %{uri: %URI{path: "/editor/documents"}}}
+        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
       }
 
       assert_raise ZoonkWeb.PermissionError, fn ->
@@ -428,9 +428,9 @@ defmodule ZoonkWeb.UserAuthorizationTest do
       scope = scope_fixture(%{user: user, org: org, org_member: org_member})
 
       socket = %LiveView.Socket{
+        view: ZoonkWeb.Org.NotAdminLive,
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, scope: scope},
-        private: %{connect_info: %{uri: %URI{path: "/editor/documents"}}}
+        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
       }
 
       assert_raise ZoonkWeb.PermissionError, fn ->

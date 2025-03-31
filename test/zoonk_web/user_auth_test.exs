@@ -221,7 +221,10 @@ defmodule ZoonkWeb.UserAuthTest do
         |> get_session()
 
       {:cont, updated_socket} =
-        UserAuth.on_mount(:ensure_authenticated, %{}, session, %LiveView.Socket{private: %{connect_info: conn}})
+        UserAuth.on_mount(:ensure_authenticated, %{}, session, %LiveView.Socket{
+          view: ZoonkWeb.ValidUserToken,
+          private: %{connect_info: conn}
+        })
 
       assert updated_socket.assigns.scope.user.id == user.id
     end
@@ -235,6 +238,7 @@ defmodule ZoonkWeb.UserAuthTest do
         |> get_session()
 
       socket = %LiveView.Socket{
+        view: ZoonkWeb.NoValidUserTokenLive,
         endpoint: ZoonkWeb.Endpoint,
         assigns: %{__changed__: %{}, flash: %{}},
         private: %{connect_info: conn, live_temp: %{}}
@@ -248,6 +252,7 @@ defmodule ZoonkWeb.UserAuthTest do
       session = get_session(conn)
 
       socket = %LiveView.Socket{
+        view: ZoonkWeb.NoUserTokenLive,
         endpoint: ZoonkWeb.Endpoint,
         assigns: %{__changed__: %{}, flash: %{}},
         private: %{connect_info: conn, live_temp: %{}}
