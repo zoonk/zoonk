@@ -21,6 +21,8 @@ defmodule ZoonkWeb.UserAuth do
   @remember_me_cookie AuthConfig.get_cookie_name(:remember_me)
   @remember_me_options [sign: true, max_age: @max_age, same_site: "Lax"]
 
+  @public_paths ["/catalog"]
+
   @doc """
   Logs the user in.
 
@@ -159,8 +161,10 @@ defmodule ZoonkWeb.UserAuth do
 
   def on_mount(:ensure_authenticated, _params, session, socket) do
     socket = mount_scope(socket, session)
+    path = Phoenix.LiveView.get_connect_info(socket, :uri).path
+    looged_in? = socket.assigns.scope && socket.assigns.scope.user
 
-    if socket.assigns.scope && socket.assigns.scope.user do
+    if public_path?(path) or looged_in? do
       {:cont, socket}
     else
       socket =
@@ -206,7 +210,9 @@ defmodule ZoonkWeb.UserAuth do
   they use the application at all, here would be a good place.
   """
   def require_authenticated_user(conn, _opts) do
-    if conn.assigns.scope && conn.assigns.scope.user do
+    logged_in? = conn.assigns.scope && conn.assigns.scope.user
+
+    if public_path?(conn.request_path) or logged_in? do
       conn
     else
       conn
@@ -260,5 +266,9 @@ defmodule ZoonkWeb.UserAuth do
     |> Scope.set(user)
     |> Scope.set(org)
     |> Scope.set(Orgs.get_org_member(org, user))
+  end
+
+  defp public_path?(path) do
+    Enum.any?(@public_paths, fn public_path -> String.starts_with?(path, public_path) end)
   end
 end
