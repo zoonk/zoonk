@@ -5,7 +5,8 @@ defmodule ZoonkWeb.PublicPagesPermissionTest do
       for(
         kind <- [:app, :creator],
         page <- [
-          %{link: "/catalog", title: "Catalog"}
+          %{link: "/start", title: "Get Started"},
+          %{link: "/catalog", menu: "Catalog"}
         ],
         do: %{kind: kind, page: page}
       )
@@ -19,7 +20,15 @@ defmodule ZoonkWeb.PublicPagesPermissionTest do
       conn
       |> Map.put(:host, org.custom_domain)
       |> visit(page.link)
-      |> assert_has("li[aria-current='page']", text: page.title)
+      |> assert_page(page)
     end
+  end
+
+  defp assert_page(session, %{menu: menu}) do
+    assert_has(session, "li[aria-current='page']", text: menu)
+  end
+
+  defp assert_page(session, %{title: title}) do
+    assert_has(session, "h1", text: title)
   end
 end

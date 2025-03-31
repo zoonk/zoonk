@@ -55,6 +55,8 @@ defmodule ZoonkWeb.Router do
       ] do
       live "/", AppHomeLive
 
+      live "/start", Onboarding.OnboardingStartLive
+
       live "/goals", Goals.GoalsHomeLive
 
       live "/catalog", Catalog.CatalogHomeLive
