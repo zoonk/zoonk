@@ -20,7 +20,6 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLive do
         class="flex w-full flex-col gap-4"
       >
         <.input
-          readonly={!!@current_scope}
           field={f[:email]}
           label={dgettext("users", "Email address")}
           hide_label
