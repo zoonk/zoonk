@@ -18,7 +18,7 @@ defmodule ZoonkWeb.Components.Sidebar do
       "hidden lg:block",
       "h-dvh sticky top-0 bottom-0 left-0 w-64",
       "scrollbar-none overflow-y-auto overflow-x-hidden",
-      "bg-zk-muted/70",
+      "bg-zk-background",
       "border-zk-border border-r",
       @class
     ]}>
@@ -58,7 +58,7 @@ defmodule ZoonkWeb.Components.Sidebar do
         class={[
           "flex w-full items-center gap-3 rounded-md px-3 py-2",
           "text-sm transition-colors",
-          "hover:bg-zk-secondary",
+          "hover:bg-zk-muted",
           "focus-visible:ring-zk-ring focus-visible:outline-0 focus-visible:ring-2",
           @active && !@destructive &&
             "bg-zk-primary-subtle/90 text-zk-primary-subtle-foreground hover:bg-zk-primary-subtle",
