@@ -24,11 +24,12 @@ defmodule ZoonkWeb.MenuVisibilityTest do
 
     test "guest user menu items", %{conn: conn} do
       org = org_fixture(%{kind: :app})
-      user = user_fixture(%{kind: :guest})
+      user = unconfirmed_user_fixture(%{kind: :guest})
       org_member_fixture(%{org: org, user: user, role: :member})
 
       conn
       |> login_user(user)
+      |> visit(~p"/catalog")
       |> assert_has("a", text: "Catalog")
       |> refute_has("a", text: "Login")
       |> refute_has("a", text: "Sign Up")
@@ -48,6 +49,7 @@ defmodule ZoonkWeb.MenuVisibilityTest do
 
       conn
       |> login_user(user)
+      |> visit(~p"/")
       |> assert_has("a", text: "Catalog")
       |> refute_has("a", text: "Login")
       |> refute_has("a", text: "Sign Up")
@@ -67,6 +69,7 @@ defmodule ZoonkWeb.MenuVisibilityTest do
 
       conn
       |> login_user(user)
+      |> visit(~p"/")
       |> assert_has("a", text: "Catalog")
       |> refute_has("a", text: "Login")
       |> refute_has("a", text: "Sign Up")

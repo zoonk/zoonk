@@ -29,7 +29,7 @@ defmodule ZoonkWeb.AppLayout do
 
         <.sidebar_menu heading={gettext("Account")}>
           <.sidebar_menu_item
-            :for={item <- get_menu_items(:management)}
+            :for={item <- get_menu_items(:account)}
             :if={visible?(item.visible, @scope)}
             {item}
           >
@@ -88,7 +88,7 @@ defmodule ZoonkWeb.AppLayout do
     ]
   end
 
-  defp get_menu_items(:management) do
+  defp get_menu_items(:account) do
     [
       %{
         navigate: ~p"/user/email",
@@ -139,6 +139,6 @@ defmodule ZoonkWeb.AppLayout do
   defp visible?(:guest, _scope), do: false
   defp visible?(:member, %Scope{user: %User{kind: :regular}}), do: true
   defp visible?(:member, _scope), do: false
-  defp visible?(:admin, %Scope{user: %OrgMember{role: :admin}}), do: true
+  defp visible?(:admin, %Scope{org_member: %OrgMember{role: :admin}}), do: true
   defp visible?(:admin, _scope), do: false
 end

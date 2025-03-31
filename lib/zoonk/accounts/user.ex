@@ -93,6 +93,7 @@ defmodule Zoonk.Accounts.User do
   """
   def signup_changeset(user, attrs, opts \\ []) do
     user
+    |> cast(attrs, [:kind])
     |> settings_changeset(attrs)
     |> maybe_validate_email_domain(Keyword.get(opts, :allowed_domains))
   end
