@@ -73,13 +73,7 @@ defmodule Zoonk.Accounts do
     Ecto.Multi.new()
     |> Ecto.Multi.insert(:user, changeset)
     |> Ecto.Multi.insert(:profile, &build_initial_user_profile/1)
-    |> Ecto.Multi.insert(:org_member, fn %{user: user} ->
-      OrgMember.changeset(%OrgMember{}, %{
-        org_id: scope.org.id,
-        user_id: user.id,
-        role: :member
-      })
-    end)
+    |> Ecto.Multi.insert(:org_member, &build_org_member_changeset(&1, scope.org))
     |> Repo.transaction()
     |> Helpers.get_changeset_from_transaction(:user)
   end
@@ -316,13 +310,7 @@ defmodule Zoonk.Accounts do
     |> Ecto.Multi.insert(:user, user_changeset)
     |> Ecto.Multi.insert(:profile, &build_initial_user_profile(&1, profile_opts))
     |> Ecto.Multi.insert(:provider, &user_provider_changeset(&1, provider_attrs))
-    |> Ecto.Multi.insert(:org_member, fn %{user: user} ->
-      OrgMember.changeset(%OrgMember{}, %{
-        org_id: scope.org.id,
-        user_id: user.id,
-        role: :member
-      })
-    end)
+    |> Ecto.Multi.insert(:org_member, &build_org_member_changeset(&1, scope.org))
     |> Repo.transaction()
     |> Helpers.get_changeset_from_transaction(:user)
   end
@@ -363,5 +351,13 @@ defmodule Zoonk.Accounts do
     |> where([p], p.username == ^username)
     |> Repo.exists?()
     |> Kernel.not()
+  end
+
+  defp build_org_member_changeset(%{user: user}, org) do
+    OrgMember.changeset(%OrgMember{}, %{
+      org_id: org.id,
+      user_id: user.id,
+      role: :member
+    })
   end
 end
