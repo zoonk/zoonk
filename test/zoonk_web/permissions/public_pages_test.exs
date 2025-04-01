@@ -5,7 +5,6 @@ defmodule ZoonkWeb.PublicPagesPermissionTest do
       for(
         kind <- [:app, :creator],
         page <- [
-          %{link: "/start", title: "Get Started"},
           %{link: "/catalog", menu: "Catalog"}
         ],
         do: %{kind: kind, page: page}

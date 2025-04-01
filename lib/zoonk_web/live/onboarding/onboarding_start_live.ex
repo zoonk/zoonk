@@ -2,6 +2,8 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
+  on_mount {ZoonkWeb.Onboarding.OnboardingPermissions, :onboarding_permissions}
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
