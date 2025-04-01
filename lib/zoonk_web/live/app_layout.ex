@@ -40,10 +40,10 @@ defmodule ZoonkWeb.AppLayout do
 
       <div class="bg-zk-background flex-1 p-6">
         <header class="bg-zk-background sticky top-0 z-10 flex w-full items-center justify-between">
-          <.text size={:xl}>{@page_title}</.text>
+          <.text tag="h1" size={:xl}>{@page_title}</.text>
 
           <.link :if={@scope.user} navigate={~p"/user/email"}>
-            <span class="sr-only">{gettext("Settings")}</span>
+            <span class="sr-only">{gettext("Go to settings")}</span>
             <.avatar src={@scope.user.profile.picture_url} alt={gettext("Profile Picture")} />
           </.link>
         </header>
