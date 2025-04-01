@@ -96,7 +96,7 @@ defmodule ZoonkWeb.User.UserEmailLive do
         Accounts.deliver_user_update_email_instructions(
           user_changeset,
           user.email,
-          &url(~p"/user/email/confirm/#{&1}")
+          &url(socket.assigns.uri, ~p"/user/email/confirm/#{&1}")
         )
 
         info = dgettext("users", "A link to confirm your email change has been sent to the new address.")

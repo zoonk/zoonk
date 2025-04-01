@@ -95,7 +95,7 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
         {:ok, _url_fn} =
           Accounts.deliver_login_instructions(
             user,
-            &url(~p"/confirm/#{&1}")
+            &url(socket.assigns.uri, ~p"/confirm/#{&1}")
           )
 
         {:noreply, assign(socket, user_email: user.email)}

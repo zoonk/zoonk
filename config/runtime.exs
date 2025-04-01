@@ -93,6 +93,7 @@ if config_env() == :prod do
       ip: {0, 0, 0, 0, 0, 0, 0, 0},
       port: port
     ],
+    check_origin: :conn,
     secret_key_base: secret_key_base
 
   config :zoonk, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
