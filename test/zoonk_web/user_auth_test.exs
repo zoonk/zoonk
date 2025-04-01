@@ -282,7 +282,7 @@ defmodule ZoonkWeb.UserAuthTest do
                UserAuth.on_mount(:ensure_sudo_mode, %{}, session, socket)
     end
 
-    test "redirects when authentication is too old", %{scope: scope} do
+    test "redirects when authentication is too old", %{conn: conn, scope: scope} do
       %{org: org, user: user, org_member: org_member} = scope
 
       sudo_mode_minutes = AuthConfig.get_max_age(:sudo_mode, :minutes)
@@ -295,7 +295,8 @@ defmodule ZoonkWeb.UserAuthTest do
           __changed__: %{},
           flash: %{},
           scope: Scope.set(%Scope{user: old_user, org: org, org_member: org_member})
-        }
+        },
+        private: %{connect_info: conn, live_temp: %{}}
       }
 
       assert {:halt, _updated_socket} = UserAuth.on_mount(:ensure_sudo_mode, %{}, %{}, socket)

@@ -70,7 +70,7 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLive do
     if user = Accounts.get_user_by_email(email) do
       Accounts.deliver_login_instructions(
         user,
-        &url(~p"/login/t/#{&1}")
+        &url(socket.assigns.uri, ~p"/login/t/#{&1}")
       )
     end
 
