@@ -15,7 +15,7 @@ defmodule ZoonkWeb.Components.Sidebar do
   def sidebar(assigns) do
     ~H"""
     <aside class={[
-      "hidden lg:block",
+      "hidden md:block",
       "h-dvh sticky top-0 bottom-0 left-0 w-64",
       "scrollbar-none overflow-y-auto overflow-x-hidden",
       "bg-zk-background",

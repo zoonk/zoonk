@@ -8,7 +8,9 @@ defmodule Zoonk.AccountFixtures do
   import Zoonk.OrgFixtures
 
   alias Zoonk.Accounts
+  alias Zoonk.Accounts.UserProfile
   alias Zoonk.Accounts.UserToken
+  alias Zoonk.Repo
   alias Zoonk.Scope
 
   def unique_user_email, do: "user#{System.unique_integer()}@example.com"
@@ -39,6 +41,7 @@ defmodule Zoonk.AccountFixtures do
   end
 
   def user_fixture(attrs \\ %{}) do
+    preload = Map.get(attrs, :preload, [])
     fixture = unconfirmed_user_fixture(attrs)
 
     token =
@@ -46,9 +49,14 @@ defmodule Zoonk.AccountFixtures do
         Accounts.deliver_login_instructions(fixture, url)
       end)
 
+    UserProfile
+    |> Repo.get_by!(user_id: fixture.id)
+    |> UserProfile.changeset(%{picture_url: "https://zoonk.test/image.png"})
+    |> Repo.update!()
+
     {:ok, user, _expired_tokens} = Accounts.login_user_by_magic_link(token)
 
-    user
+    Repo.preload(user, preload)
   end
 
   def scope_fixture(attrs \\ %{}) do
