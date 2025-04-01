@@ -84,6 +84,8 @@ defmodule ZoonkWeb.Router do
         {UserAuth, :mount_scope},
         {ZoonkWeb.Language, :set_app_language}
       ] do
+      live "/start", Onboarding.OnboardingStartLive
+
       live "/signup", User.UserSignUpLive
       live "/signup/email", User.UserSignUpWithEmailLive
       live "/login", User.UserLoginLive

@@ -5,12 +5,12 @@ defmodule ZoonkWeb.RequireOrgAdminPermissionTest do
       for(
         kind <- [:app, :creator, :team, :school],
         page <- [
-          %{link: "/org", title: "Overview"},
-          %{link: "/org/teams", title: "Teams"},
-          %{link: "/org/members", title: "Members"},
-          %{link: "/org/settings", title: "Settings"},
-          %{link: "/editor", title: "Dashboard"},
-          %{link: "/editor/new", title: "Create New"}
+          %{link: "/org", menu: "Overview"},
+          %{link: "/org/teams", menu: "Teams"},
+          %{link: "/org/members", menu: "Members"},
+          %{link: "/org/settings", menu: "Settings"},
+          %{link: "/editor", menu: "Dashboard"},
+          %{link: "/editor/new", menu: "Create New"}
         ],
         do: %{kind: kind, page: page}
       )
@@ -27,7 +27,7 @@ defmodule ZoonkWeb.RequireOrgAdminPermissionTest do
       conn
       |> Map.put(:host, org.custom_domain)
       |> visit(page.link)
-      |> assert_path(~p"/login")
+      |> assert_path(redirect_path(kind, page.link))
     end
 
     test "allows access for users with admin role", %{conn: conn, page: page, kind: kind} do
@@ -39,7 +39,7 @@ defmodule ZoonkWeb.RequireOrgAdminPermissionTest do
       |> Map.put(:host, org.custom_domain)
       |> login_user(user)
       |> visit(page.link)
-      |> assert_has("li[aria-current='page']", text: page.title)
+      |> assert_has("li[aria-current='page']", text: page.menu)
     end
 
     test "raises error for users with member role", %{conn: conn, page: page, kind: kind} do
