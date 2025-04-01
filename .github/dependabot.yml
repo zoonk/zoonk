@@ -13,8 +13,3 @@ updates:
       - ceolinwill
     assignees:
       - ceolinwill
-    groups:
-      production-dependencies:
-        dependency-type: "production"
-      development-dependencies:
-        dependency-type: "development"
