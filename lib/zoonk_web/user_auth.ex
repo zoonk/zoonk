@@ -24,7 +24,7 @@ defmodule ZoonkWeb.UserAuth do
   @remember_me_options [sign: true, max_age: @max_age, same_site: "Lax"]
 
   @public_paths ["/catalog"]
-  @public_contexts [:catalog, :onboarding]
+  @public_contexts [:catalog]
 
   @doc """
   Logs the user in.
