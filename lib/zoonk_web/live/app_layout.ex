@@ -14,7 +14,7 @@ defmodule ZoonkWeb.AppLayout do
 
   def render(assigns) do
     ~H"""
-    <main class="flex w-full pb-16 lg:pb-0">
+    <main class="flex w-full pb-16 md:pb-0">
       <.sidebar>
         <.sidebar_menu>
           <.sidebar_menu_item
@@ -39,8 +39,16 @@ defmodule ZoonkWeb.AppLayout do
       </.sidebar>
 
       <div class="bg-zk-background flex-1 p-6">
+        <header class="bg-zk-background sticky top-0 z-10 flex w-full items-center justify-between">
+          <.text size={:xl}>{@page_title}</.text>
+
+          <.link :if={@scope.user} navigate={~p"/user/email"}>
+            <span class="sr-only">{gettext("Settings")}</span>
+            <.avatar src={@scope.user.profile.picture_url} alt={gettext("Profile Picture")} />
+          </.link>
+        </header>
+
         {render_slot(@inner_block)}
-        <.flash_group flash={@flash} />
       </div>
 
       <.tab_bar>
@@ -51,6 +59,8 @@ defmodule ZoonkWeb.AppLayout do
           {item}
         />
       </.tab_bar>
+
+      <.flash_group flash={@flash} />
     </main>
     """
   end
