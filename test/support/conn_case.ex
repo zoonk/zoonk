@@ -79,4 +79,12 @@ defmodule ZoonkWeb.ConnCase do
   defp maybe_set_token_inserted_at(token, inserted_at) do
     Zoonk.AccountFixtures.override_token_inserted_at(token, inserted_at)
   end
+
+  @doc """
+  Returns the path to redirect unauthenticated users.
+  """
+  def redirect_path(_kind, "/user" <> _path), do: "/login"
+  def redirect_path(:app, _path), do: "/start"
+  def redirect_path(:creator, _path), do: "/catalog"
+  def redirect_path(_kind, _path), do: "/login"
 end

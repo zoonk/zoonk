@@ -27,7 +27,7 @@ defmodule ZoonkWeb.RequireOrgMemberPermissionTest do
       conn
       |> Map.put(:host, org.custom_domain)
       |> visit(page.link)
-      |> assert_path(~p"/login")
+      |> assert_path(redirect_path(kind, page.link))
     end
 
     test "allows access without membership for public organizations", %{conn: conn, page: page, kind: kind} do

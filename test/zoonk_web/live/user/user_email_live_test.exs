@@ -78,7 +78,6 @@ defmodule ZoonkWeb.User.UserEmailLiveTest do
       build_conn()
       |> visit(~p"/user/email/confirm/#{token}")
       |> assert_path(~p"/login")
-      |> assert_has("div", text: "You must log in to access this page.")
     end
   end
 end

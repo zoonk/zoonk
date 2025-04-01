@@ -165,12 +165,12 @@ defmodule ZoonkWeb.UserAuth do
   def on_mount(:ensure_authenticated, _params, session, socket) do
     socket = mount_scope(socket, session)
     context = Helpers.get_context_from_module(socket.view)
-    looged_in? = socket.assigns.scope && socket.assigns.scope.user
+    logged_in? = socket.assigns.scope && socket.assigns.scope.user
 
-    if public_context?(context) or looged_in? do
+    if public_context?(context) or logged_in? do
       {:cont, socket}
     else
-      socket = Phoenix.LiveView.redirect(socket, to: unauthenticated_path(socket.assigns.scope))
+      socket = Phoenix.LiveView.redirect(socket, to: unauthenticated_path(socket.assigns.scope, nil))
 
       {:halt, socket}
     end
@@ -217,7 +217,7 @@ defmodule ZoonkWeb.UserAuth do
     else
       conn
       |> maybe_store_return_to()
-      |> redirect(to: unauthenticated_path(conn.assigns.scope))
+      |> redirect(to: unauthenticated_path(conn.assigns.scope, conn.request_path))
       |> halt()
     end
   end
@@ -258,9 +258,10 @@ defmodule ZoonkWeb.UserAuth do
 
   def signed_in_path(_conn), do: ~p"/"
 
-  defp unauthenticated_path(%Scope{org: %Org{kind: :app}}), do: ~p"/start"
-  defp unauthenticated_path(%Scope{org: %Org{kind: :creator}}), do: ~p"/catalog"
-  defp unauthenticated_path(_scope), do: ~p"/login"
+  defp unauthenticated_path(_scope, "/user" <> _rest), do: ~p"/login"
+  defp unauthenticated_path(%Scope{org: %Org{kind: :app}}, _path), do: ~p"/start"
+  defp unauthenticated_path(%Scope{org: %Org{kind: :creator}}, _path), do: ~p"/catalog"
+  defp unauthenticated_path(_scope, _path), do: ~p"/login"
 
   defp build_scope(user, host) do
     org = Orgs.get_org_by_host(host)

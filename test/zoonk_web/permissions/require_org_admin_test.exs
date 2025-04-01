@@ -27,7 +27,7 @@ defmodule ZoonkWeb.RequireOrgAdminPermissionTest do
       conn
       |> Map.put(:host, org.custom_domain)
       |> visit(page.link)
-      |> assert_path(~p"/login")
+      |> assert_path(redirect_path(kind, page.link))
     end
 
     test "allows access for users with admin role", %{conn: conn, page: page, kind: kind} do
