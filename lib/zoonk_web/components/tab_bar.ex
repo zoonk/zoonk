@@ -15,7 +15,7 @@ defmodule ZoonkWeb.Components.TabBar do
   def tab_bar(assigns) do
     ~H"""
     <nav class={[
-      "fixed right-0 bottom-0 left-0 md:hidden",
+      "fixed right-0 bottom-0 left-0 lg:hidden",
       "bg-zk-background/80 backdrop-blur-lg",
       "border-zk-border border-t",
       "z-50",

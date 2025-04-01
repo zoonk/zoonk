@@ -15,11 +15,11 @@ defmodule ZoonkWeb.Components.Sidebar do
   def sidebar(assigns) do
     ~H"""
     <aside class={[
-      "hidden md:block",
-      "h-dvh sticky top-0 bottom-0 left-0 w-64",
+      "hidden lg:block",
+      "h-dvh sticky top-0 bottom-0 left-0 w-80",
       "scrollbar-none overflow-y-auto overflow-x-hidden",
-      "bg-zk-background",
-      "border-zk-border border-r",
+      "bg-zk-muted/60",
+      "border-zk-border contrast-more:border-r",
       @class
     ]}>
       {render_slot(@inner_block)}
