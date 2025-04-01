@@ -165,12 +165,13 @@ defmodule ZoonkWeb.UserAuth do
   def on_mount(:ensure_authenticated, _params, session, socket) do
     socket = mount_scope(socket, session)
     context = Helpers.get_context_from_module(socket.view)
-    logged_in? = socket.assigns.scope && socket.assigns.scope.user
+    scope = socket.assigns.scope
+    logged_in? = scope && scope.user
 
-    if public_context?(context) or logged_in? do
+    if public_context?(context, scope) or logged_in? do
       {:cont, socket}
     else
-      socket = Phoenix.LiveView.redirect(socket, to: unauthenticated_path(socket.assigns.scope, nil))
+      socket = Phoenix.LiveView.redirect(socket, to: unauthenticated_path(scope, nil))
 
       {:halt, socket}
     end
@@ -210,14 +211,15 @@ defmodule ZoonkWeb.UserAuth do
   they use the application at all, here would be a good place.
   """
   def require_authenticated_user(conn, _opts) do
-    logged_in? = conn.assigns.scope && conn.assigns.scope.user
+    scope = conn.assigns.scope
+    logged_in? = scope && scope.user
 
-    if public_path?(conn.request_path) or logged_in? do
+    if public_path?(conn.request_path, scope) or logged_in? do
       conn
     else
       conn
       |> maybe_store_return_to()
-      |> redirect(to: unauthenticated_path(conn.assigns.scope, conn.request_path))
+      |> redirect(to: unauthenticated_path(scope, conn.request_path))
       |> halt()
     end
   end
@@ -272,13 +274,17 @@ defmodule ZoonkWeb.UserAuth do
     |> Scope.set(Orgs.get_org_member(org, user))
   end
 
-  defp public_context?(nil), do: false
-
-  defp public_context?(context) do
+  # It's a public context only if the LiveView module is from a public page AND the org is public.
+  defp public_context?(context, %Scope{org: org}) when is_atom(context) and org.kind in [:app, :creator] do
     Enum.member?(@public_contexts, context)
   end
 
-  defp public_path?(path) do
+  defp public_context?(_context, _scope), do: false
+
+  # It's a public path only if the request path is from a public page AND the org is public.
+  defp public_path?(path, %Scope{org: org}) when is_binary(path) and org.kind in [:app, :creator] do
     Enum.any?(@public_paths, fn public_path -> String.starts_with?(path, public_path) end)
   end
+
+  defp public_path?(_path, _scope), do: false
 end
