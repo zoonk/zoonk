@@ -24,6 +24,17 @@ defmodule ZoonkWeb.PublicPagesPermissionTest do
       end
     end
 
+    test "display login button on header", %{conn: conn, page: page, kind: kind} do
+      if kind in [:app, :creator] do
+        org = org_fixture(%{kind: kind})
+
+        conn
+        |> Map.put(:host, org.custom_domain)
+        |> visit(page.link)
+        |> assert_has("header a", text: "Login")
+      end
+    end
+
     test "redirects unauthenticated users to login for private orgs", %{conn: conn, page: page, kind: kind} do
       if kind in [:team, :school] do
         org = org_fixture(%{kind: kind, public: false})

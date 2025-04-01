@@ -23,6 +23,7 @@ defmodule ZoonkWeb.AppHeaderTest do
       org_member_fixture(%{org: org, user: user})
 
       conn
+      |> Map.put(:host, org.custom_domain)
       |> login_user(user)
       |> visit(page.link)
       |> assert_has("h1", text: page.menu)

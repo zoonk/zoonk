@@ -46,6 +46,10 @@ defmodule ZoonkWeb.AppLayout do
             <span class="sr-only">{gettext("Go to settings")}</span>
             <.avatar src={@scope.user.profile.picture_url} alt={gettext("Profile Picture")} />
           </.link>
+
+          <.a :if={!@scope.user} kind={:button} variant={:outline} href={~p"/login"}>
+            {gettext("Login")}
+          </.a>
         </header>
 
         {render_slot(@inner_block)}
