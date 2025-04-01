@@ -62,14 +62,14 @@ defmodule ZoonkWeb.AppLayout do
         active: :home,
         icon: "tabler-brain",
         label: gettext("Summary"),
-        visible: :guest
+        visible: :member
       },
       %{
         navigate: ~p"/goals",
         active: :goals,
         icon: "tabler-target-arrow",
         label: gettext("Goals"),
-        visible: :guest
+        visible: :member
       },
       %{
         navigate: ~p"/catalog",
@@ -83,7 +83,7 @@ defmodule ZoonkWeb.AppLayout do
         active: :library,
         icon: "tabler-stack-2",
         label: gettext("Library"),
-        visible: :guest
+        visible: :member
       }
     ]
   end
@@ -135,8 +135,6 @@ defmodule ZoonkWeb.AppLayout do
   defp visible?(:non_authenticated, %Scope{user: nil}), do: true
   defp visible?(:non_authenticated, %Scope{user: %User{}}), do: false
   defp visible?(:public, _scope), do: true
-  defp visible?(:guest, %Scope{user: %User{}}), do: true
-  defp visible?(:guest, _scope), do: false
   defp visible?(:member, %Scope{user: %User{kind: :regular}}), do: true
   defp visible?(:member, _scope), do: false
   defp visible?(:admin, %Scope{org_member: %OrgMember{role: :admin}}), do: true

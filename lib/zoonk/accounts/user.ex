@@ -15,7 +15,6 @@ defmodule Zoonk.Accounts.User do
   |------|-------------|
   | `:regular` | Regular users. |
   | `:agent` | AI bots and agents. |
-  | `:guest` | Users who didn't create an account. |
 
   ## Fields
 
@@ -23,7 +22,7 @@ defmodule Zoonk.Accounts.User do
   |------------|------|-------------|
   | `year_of_birth` | `Integer` | We need the year of birth for legal reasons when a profile is public. |
   | `currency` | `Ecto.Enum` | The currency used for payments. |
-  | `kind` | `Ecto.Enum` | Users can have different types: `regular`, `agent`, `guest`. |
+  | `kind` | `Ecto.Enum` | Users can have different types: `regular`, `agent` |
   | `email` | `String` | The user's email address. |
   | `stripe_customer_id` | `String` | Customer ID used for Stripe payments. |
   | `tax_id` | `Zoonk.Vault.Binary` | Tax ID required by some jurisdictions. |
@@ -54,7 +53,7 @@ defmodule Zoonk.Accounts.User do
   schema "users" do
     field :year_of_birth, :integer
     field :currency, Ecto.Enum, values: CurrencyConfig.list_currencies(:atom), default: :USD
-    field :kind, Ecto.Enum, values: [:regular, :agent, :guest], default: :regular
+    field :kind, Ecto.Enum, values: [:regular, :agent], default: :regular
     field :email, :string
     field :stripe_customer_id, :string
     field :tax_id, Zoonk.Vault.Binary
@@ -93,7 +92,6 @@ defmodule Zoonk.Accounts.User do
   """
   def signup_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:kind])
     |> settings_changeset(attrs)
     |> maybe_validate_email_domain(Keyword.get(opts, :allowed_domains))
   end
