@@ -48,8 +48,18 @@ defmodule ZoonkWeb.AppLayout do
           </.sidebar_menu>
         </.sidebar>
 
-        <div class="bg-zk-background flex-1 p-4 md:px-8 md:py-0 lg:p-4">
-          <header class="bg-zk-background flex w-full items-center justify-between">
+        <div class="bg-zk-background flex-1">
+          <header
+            id="page-header"
+            phx-hook="ToolbarScroll"
+            data-scrolled="false"
+            class={[
+              "flex w-full items-center justify-between",
+              "sticky top-0 p-4",
+              "bg-transparent backdrop-blur-lg",
+              "data-[scrolled=true]:bg-zk-secondary/80"
+            ]}
+          >
             <.text tag="h1" size={:xxl}>{@page_title}</.text>
 
             <.link :if={@scope.user} navigate={~p"/user/email"} class="fixed top-4 right-4 z-50">
