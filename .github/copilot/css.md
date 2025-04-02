@@ -1,6 +1,7 @@
 ## CSS
 
-- Use `tailwind` for CSS.
+- Use Tailwind 4 for CSS.
 - Never use tailwind colors directly. Instead, use the colors defined in `assets/css/main.css`. For example, don't use `bg-white`, use `bg-zk-surface` instead.
 - Common used utilities should be added to the `assets/css/main.css` file and have a `zk` prefix. For example: `@utility zk-surface {@apply p-4}`.
 - When adding tailwind utilities, ensure they're consistent with the existing ones in `assets/css/main.css`.
+- When mentioned a screen should be adapted to mobile screens, it means Tailwind's `sm` or lower breakpoints. For tablet (portrait), you should use `md`, for tablet (landscape) `lg`, and for desktop/laptop `xl` or higher. If you want to target a specific breakpoint, for example, only tablet portrait, you can use the new `md:w-mx-lg` utility from tailwind 4.
