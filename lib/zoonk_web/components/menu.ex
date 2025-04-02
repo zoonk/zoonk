@@ -48,9 +48,9 @@ defmodule ZoonkWeb.Components.Menu do
       <.sidebar_menu heading={@heading}>{render_slot(@inner_block)}</.sidebar_menu>
 
       <nav class={[
-        "hidden md:max-lg:block",
         "md:bg-zk-secondary-accent/80 md:rounded-full",
-        "md:mx-auto md:w-fit md:max-w-xl md:py-1"
+        "md:mx-auto md:w-fit md:max-w-xl md:py-1",
+        "lg:hidden"
       ]}>
         <ul class="flex items-center justify-around px-2 md:gap-1.5 md:px-1">
           {render_slot(@inner_block)}
