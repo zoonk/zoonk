@@ -21,7 +21,7 @@ defmodule ZoonkWeb.Components.TabBar do
         "fixed right-0 bottom-0 left-0 w-full lg:hidden",
         "bg-zk-background/80 backdrop-blur-lg",
         "border-zk-border border-t",
-        "z-50",
+        "z-10",
         "md:sticky md:top-0 md:bottom-auto md:p-4",
         "md:border-0",
         "md:data-[scrolled=true]:top-0 md:data-[scrolled=true]:w-full",
