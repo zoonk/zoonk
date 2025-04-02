@@ -10,24 +10,39 @@ defmodule ZoonkWeb.Components.TabBar do
   import ZoonkWeb.Components.Icon
 
   attr :class, :any, default: nil, doc: "Additional class for the tab bar"
+  attr :id, :string, default: "tab-bar", doc: "ID for the tab bar"
   slot :inner_block, required: true, doc: "The inner block of the tab bar"
 
   def tab_bar(assigns) do
     ~H"""
-    <nav class={[
-      "fixed right-0 bottom-0 left-0 w-full lg:hidden",
-      "bg-zk-background/80 backdrop-blur-lg",
-      "border-zk-border border-t",
-      "z-50",
-      "md:sticky md:top-4 md:bottom-auto",
-      "md:bg-zk-secondary md:rounded-full md:border-0",
-      "md:min-w-md md:mx-auto md:max-w-xl md:py-1.5",
-      @class
-    ]}>
-      <ul class="flex items-center justify-around px-2">
-        {render_slot(@inner_block)}
-      </ul>
-    </nav>
+    <section
+      id={@id}
+      class={[
+        "fixed right-0 bottom-0 left-0 w-full lg:hidden",
+        "bg-zk-background/80 backdrop-blur-lg",
+        "border-zk-border border-t",
+        "z-50",
+        "md:sticky md:top-0 md:bottom-auto md:p-4",
+        "md:border-0",
+        "md:data-[scrolled=true]:top-0 md:data-[scrolled=true]:w-full",
+        "md:data-[scrolled=true]:bg-zk-secondary/70"
+      ]}
+      phx-hook="TabBarScroll"
+      data-scrolled="false"
+    >
+      <nav
+        id={@id}
+        class={[
+          "md:bg-zk-secondary-accent/80 md:rounded-full",
+          "md:mx-auto md:w-fit md:max-w-xl md:py-1.5",
+          @class
+        ]}
+      >
+        <ul class="flex items-center justify-around px-2 md:gap-1.5 md:px-1.5">
+          {render_slot(@inner_block)}
+        </ul>
+      </nav>
+    </section>
     """
   end
 
@@ -41,10 +56,11 @@ defmodule ZoonkWeb.Components.TabBar do
     <li class="flex-1">
       <.link
         class={[
-          "flex flex-col items-center gap-1 px-3 py-1.5 transition-colors",
+          "flex flex-col items-center gap-1 px-3 py-1.5",
+          "transition-colors",
           "text-xs font-medium md:text-sm",
-          "md:rounded-full md:hover:bg-zk-background",
-          @active && "text-zk-primary bg-zk-background md:font-semibold",
+          "md:rounded-full",
+          @active && "text-zk-primary md:bg-zk-background md:font-semibold",
           !@active && "text-zk-muted-foreground md:text-zk-secondary-foreground md:font-normal"
         ]}
         {@rest}
