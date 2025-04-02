@@ -15,11 +15,11 @@ defmodule ZoonkWeb.Components.Sidebar do
   def sidebar(assigns) do
     ~H"""
     <aside class={[
-      "hidden md:block",
-      "h-dvh sticky top-0 bottom-0 left-0 w-64",
+      "hidden lg:block",
+      "h-dvh sticky top-0 bottom-0 left-0 w-80",
       "scrollbar-none overflow-y-auto overflow-x-hidden",
-      "bg-zk-background",
-      "border-zk-border border-r",
+      "bg-zk-secondary/75",
+      "border-zk-border contrast-more:border-r",
       @class
     ]}>
       {render_slot(@inner_block)}
@@ -56,18 +56,17 @@ defmodule ZoonkWeb.Components.Sidebar do
     <li aria-current={@active && "page"}>
       <.link
         class={[
-          "flex w-full items-center gap-3 rounded-md px-3 py-2",
-          "text-sm transition-colors",
-          "hover:bg-zk-muted",
+          "flex w-full items-center gap-3 rounded-md px-3 py-2.5",
+          "text-base transition-colors",
+          "hover:bg-zk-background hover:shadow-sm",
           "focus-visible:ring-zk-ring focus-visible:outline-0 focus-visible:ring-2",
-          @active && !@destructive &&
-            "bg-zk-primary-subtle/90 text-zk-primary-subtle-foreground hover:bg-zk-primary-subtle",
-          !@active && !@destructive && "text-zk-muted-foreground",
+          @active && !@destructive && "bg-zk-background text-zk-primary shadow-sm",
+          !@active && !@destructive && "text-zk-secondary-foreground",
           @destructive && "text-zk-destructive-text"
         ]}
         {@rest}
       >
-        <.icon :if={@icon} name={@icon} />
+        <.icon :if={@icon} name={@icon} class={!@destructive && "text-zk-primary"} />
         <span class="truncate">{render_slot(@inner_block)}</span>
       </.link>
     </li>

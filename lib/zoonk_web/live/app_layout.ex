@@ -14,47 +14,7 @@ defmodule ZoonkWeb.AppLayout do
 
   def render(assigns) do
     ~H"""
-    <main class="flex w-full pb-16 md:pb-0">
-      <.sidebar>
-        <.sidebar_menu>
-          <.sidebar_menu_item
-            :for={item <- get_menu_items(:main)}
-            :if={visible?(item.visible, @scope)}
-            active={item.active == @active_page}
-            {item}
-          >
-            {item.label}
-          </.sidebar_menu_item>
-        </.sidebar_menu>
-
-        <.sidebar_menu heading={gettext("Account")}>
-          <.sidebar_menu_item
-            :for={item <- get_menu_items(:account)}
-            :if={visible?(item.visible, @scope)}
-            {item}
-          >
-            {item.label}
-          </.sidebar_menu_item>
-        </.sidebar_menu>
-      </.sidebar>
-
-      <div class="bg-zk-background flex-1 p-6">
-        <header class="bg-zk-background sticky top-0 z-10 flex w-full items-center justify-between">
-          <.text tag="h1" size={:xl}>{@page_title}</.text>
-
-          <.link :if={@scope.user} navigate={~p"/user/email"}>
-            <span class="sr-only">{gettext("Go to settings")}</span>
-            <.avatar src={@scope.user.profile.picture_url} alt={gettext("Profile Picture")} />
-          </.link>
-
-          <.a :if={!@scope.user} kind={:button} variant={:outline} href={~p"/login"}>
-            {gettext("Login")}
-          </.a>
-        </header>
-
-        {render_slot(@inner_block)}
-      </div>
-
+    <main class="pb-16 md:pb-0">
       <.tab_bar>
         <.tab_bar_item
           :for={item <- get_menu_items(:main)}
@@ -63,6 +23,62 @@ defmodule ZoonkWeb.AppLayout do
           {item}
         />
       </.tab_bar>
+
+      <div class="flex w-full">
+        <.sidebar>
+          <.sidebar_menu>
+            <.sidebar_menu_item
+              :for={item <- get_menu_items(:main)}
+              :if={visible?(item.visible, @scope)}
+              active={item.active == @active_page}
+              {item}
+            >
+              {item.label}
+            </.sidebar_menu_item>
+          </.sidebar_menu>
+
+          <.sidebar_menu heading={gettext("Account")}>
+            <.sidebar_menu_item
+              :for={item <- get_menu_items(:account)}
+              :if={visible?(item.visible, @scope)}
+              {item}
+            >
+              {item.label}
+            </.sidebar_menu_item>
+          </.sidebar_menu>
+        </.sidebar>
+
+        <div class="bg-zk-background flex-1">
+          <header
+            id="page-header"
+            phx-hook="ToolbarScroll"
+            data-scrolled="false"
+            class={[
+              "flex w-full items-center justify-between",
+              "sticky top-0 p-4",
+              "bg-transparent backdrop-blur-lg",
+              "data-[scrolled=true]:bg-zk-secondary/80"
+            ]}
+          >
+            <.text tag="h1" size={:xxl}>{@page_title}</.text>
+
+            <.a :if={!@scope.user} kind={:button} variant={:outline} href={~p"/login"}>
+              {gettext("Login")}
+            </.a>
+          </header>
+
+          <.link :if={@scope.user} navigate={~p"/user/email"} class="fixed top-4 right-4 z-50">
+            <span class="sr-only">{gettext("Go to settings")}</span>
+            <.avatar
+              src={@scope.user.profile.picture_url}
+              size={:md}
+              alt={gettext("Profile Picture")}
+            />
+          </.link>
+
+          {render_slot(@inner_block)}
+        </div>
+      </div>
 
       <.flash_group flash={@flash} />
     </main>
