@@ -14,7 +14,7 @@ defmodule ZoonkWeb.AppLayout do
 
   def render(assigns) do
     ~H"""
-    <main class="pb-16 md:pb-0">
+    <main class="pb-16 md:pb-0 lg:flex">
       <.menu>
         <.menu_group primary>
           <.menu_item
