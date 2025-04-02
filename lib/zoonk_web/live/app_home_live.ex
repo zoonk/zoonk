@@ -11,6 +11,7 @@ defmodule ZoonkWeb.AppHomeLive do
       page_title={@page_title}
       active_page={:home}
     >
+      <!-- Placeholder for testing scroll, remove it when we have the actual page -->
       <div class="flex w-full flex-col gap-4 p-4">
         <div :for={i <- 1..50} class=" rounded-lg bg-white p-6 shadow-md">
           <h2 class="text-2xl font-bold text-gray-800">Section {i}</h2>
