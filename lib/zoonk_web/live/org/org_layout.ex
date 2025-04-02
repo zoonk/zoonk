@@ -13,23 +13,11 @@ defmodule ZoonkWeb.OrgLayout do
     <main class="flex w-full">
       <.menu>
         <.menu_group primary>
-          <.menu_item
-            :for={item <- get_menu_items(:main)}
-            primary
-            icon={item.icon}
-            label={item.label}
-            {Map.take(item, [:navigate])}
-          />
+          <.menu_item :for={item <- get_menu_items(:main)} primary {item} />
         </.menu_group>
 
         <.menu_group heading={gettext("Organization")}>
-          <.menu_item
-            :for={item <- get_menu_items(:org)}
-            active={item.active == @active_page}
-            icon={item.icon}
-            label={item.label}
-            {Map.take(item, [:navigate])}
-          />
+          <.menu_item :for={item <- get_menu_items(:org)} active={item.active == @active_page} {item} />
         </.menu_group>
       </.menu>
 

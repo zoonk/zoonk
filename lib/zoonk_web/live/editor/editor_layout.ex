@@ -13,22 +13,14 @@ defmodule ZoonkWeb.EditorLayout do
     <main class="flex w-full">
       <.menu>
         <.menu_group primary>
-          <.menu_item
-            :for={item <- get_menu_items(:main)}
-            primary
-            icon={item.icon}
-            label={item.label}
-            {Map.take(item, [:navigate])}
-          />
+          <.menu_item :for={item <- get_menu_items(:main)} primary {item} />
         </.menu_group>
 
         <.menu_group heading={gettext("Editor")}>
           <.menu_item
             :for={item <- get_menu_items(:editor)}
             active={item.active == @active_page}
-            icon={item.icon}
-            label={item.label}
-            {Map.take(item, [:navigate])}
+            {item}
           />
         </.menu_group>
       </.menu>

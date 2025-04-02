@@ -22,9 +22,7 @@ defmodule ZoonkWeb.AppLayout do
             :if={visible?(item.visible, @scope)}
             active={item.active == @active_page}
             primary
-            icon={item.icon}
-            label={item.label}
-            {Map.take(item, [:navigate, :href, :method])}
+            {item}
           />
         </.menu_group>
 
@@ -33,10 +31,7 @@ defmodule ZoonkWeb.AppLayout do
             :for={item <- get_menu_items(:account)}
             :if={visible?(item.visible, @scope)}
             active={item.active == @active_page}
-            icon={item.icon}
-            label={item.label}
-            destructive={Map.get(item, :destructive, false)}
-            {Map.take(item, [:navigate, :href, :method])}
+            {item}
           />
         </.menu_group>
       </.menu>

@@ -13,23 +13,14 @@ defmodule ZoonkWeb.UserLayout do
     <main class="flex w-full">
       <.menu>
         <.menu_group primary>
-          <.menu_item
-            :for={item <- get_menu_items(:main)}
-            primary
-            icon={item.icon}
-            label={item.label}
-            {Map.take(item, [:navigate, :href, :method])}
-          />
+          <.menu_item :for={item <- get_menu_items(:main)} primary {item} />
         </.menu_group>
 
         <.menu_group heading={gettext("Account")}>
           <.menu_item
             :for={item <- get_menu_items(:user)}
             active={item.active == @active_page}
-            icon={item.icon}
-            label={item.label}
-            destructive={Map.get(item, :destructive, false)}
-            {Map.take(item, [:navigate, :href, :method])}
+            {item}
           />
         </.menu_group>
       </.menu>
