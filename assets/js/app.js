@@ -22,7 +22,7 @@ import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 import { DialogTrigger } from "./hooks/dialog_trigger";
-import { TabBarScroll } from "./hooks/tab_bar_scroll";
+import { ToolbarScroll } from "./hooks/toolbar_scroll";
 import { preserveAttrsFromElement } from "./dom/preserve_state";
 
 const csrfToken = document
@@ -43,12 +43,12 @@ const csrfToken = document
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 const liveSocket = new LiveSocket("/live", Socket, {
-  hooks: { DialogTrigger, TabBarScroll },
+  hooks: { DialogTrigger, ToolbarScroll },
   longPollFallbackMs: 2500,
   disconnectedTimeout: 2000,
   params: { _csrf_token: csrfToken, timezone },
   metadata: {
-    keydown: (e, el) => {
+    keydown: (e, _el) => {
       return { key: e.key, metaKey: e.metaKey, ctrlKey: e.ctrlKey };
     },
   },

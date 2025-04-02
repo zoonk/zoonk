@@ -1,18 +1,18 @@
 /**
- * Handles the scrolling effect for tab bars on tablet screens.
+ * Handles the scrolling effect for toolbars on tablet screens.
  *
  * This hook detects when the user scrolls the page and applies
- * different styles to the tab bar to create an iPadOS-like effect,
- * where the tab bar becomes translucent and full width when scrolling.
+ * different styles to the toolbar to create an iPadOS-like effect,
+ * where the toolbar becomes translucent and full width when scrolling.
  *
  * @example
  * ```heex
- * <.tab_bar phx-hook="TabBarScroll">
+ * <.tab_bar phx-hook="ToolbarScroll">
  *   <!-- tab items -->
  * </.tab_bar>
  * ```
  */
-export const TabBarScroll = {
+export const ToolbarScroll = {
   mounted() {
     // Initial state - not scrolled
     this.el.dataset.scrolled = "false";
@@ -20,8 +20,8 @@ export const TabBarScroll = {
     // Track scroll position
     let lastScrollY = window.scrollY;
 
-    // Update tab bar state based on scroll position
-    const updateTabBarState = () => {
+    // Update toolbar state based on scroll position
+    const updateToolbarState = () => {
       // Consider the page scrolled if we're more than 20px from the top
       const isScrolled = window.scrollY > 20;
 
@@ -34,11 +34,11 @@ export const TabBarScroll = {
     };
 
     // Initialize on mount
-    updateTabBarState();
+    updateToolbarState();
 
     // Add scroll listener
     this.scrollListener = () => {
-      window.requestAnimationFrame(updateTabBarState);
+      window.requestAnimationFrame(updateToolbarState);
     };
 
     window.addEventListener("scroll", this.scrollListener, { passive: true });
