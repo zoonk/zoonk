@@ -11,23 +11,27 @@ defmodule ZoonkWeb.OrgLayout do
   def render(assigns) do
     ~H"""
     <main class="flex w-full">
-      <.sidebar>
-        <.sidebar_menu>
-          <.sidebar_menu_item :for={item <- get_menu_items(:main)} {item}>
-            {item.label}
-          </.sidebar_menu_item>
-        </.sidebar_menu>
+      <.menu>
+        <.menu_group primary>
+          <.menu_item
+            :for={item <- get_menu_items(:main)}
+            primary
+            icon={item.icon}
+            label={item.label}
+            {Map.take(item, [:navigate])}
+          />
+        </.menu_group>
 
-        <.sidebar_menu heading={gettext("Organization")}>
-          <.sidebar_menu_item
+        <.menu_group heading={gettext("Organization")}>
+          <.menu_item
             :for={item <- get_menu_items(:org)}
             active={item.active == @active_page}
-            {item}
-          >
-            {item.label}
-          </.sidebar_menu_item>
-        </.sidebar_menu>
-      </.sidebar>
+            icon={item.icon}
+            label={item.label}
+            {Map.take(item, [:navigate])}
+          />
+        </.menu_group>
+      </.menu>
 
       <div class="bg-zk-background flex-1 p-6">
         {render_slot(@inner_block)}

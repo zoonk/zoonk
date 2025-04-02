@@ -15,57 +15,45 @@ defmodule ZoonkWeb.AppLayout do
   def render(assigns) do
     ~H"""
     <main class="pb-16 md:pb-0">
-      <.tab_bar>
-        <.tab_bar_item
-          :for={item <- get_menu_items(:main)}
-          :if={visible?(item.visible, @scope)}
-          active={item.active == @active_page}
-          {item}
-        />
-      </.tab_bar>
+      <.menu>
+        <.menu_group primary>
+          <.menu_item
+            :for={item <- get_menu_items(:main)}
+            :if={visible?(item.visible, @scope)}
+            active={item.active == @active_page}
+            primary
+            icon={item.icon}
+            label={item.label}
+            {Map.take(item, [:navigate, :href, :method])}
+          />
+        </.menu_group>
 
-      <div class="flex w-full">
-        <.sidebar>
-          <.sidebar_menu>
-            <.sidebar_menu_item
-              :for={item <- get_menu_items(:main)}
-              :if={visible?(item.visible, @scope)}
-              active={item.active == @active_page}
-              {item}
-            >
-              {item.label}
-            </.sidebar_menu_item>
-          </.sidebar_menu>
+        <.menu_group heading={gettext("Account")}>
+          <.menu_item
+            :for={item <- get_menu_items(:account)}
+            :if={visible?(item.visible, @scope)}
+            active={item.active == @active_page}
+            icon={item.icon}
+            label={item.label}
+            destructive={Map.get(item, :destructive, false)}
+            {Map.take(item, [:navigate, :href, :method])}
+          />
+        </.menu_group>
+      </.menu>
 
-          <.sidebar_menu heading={gettext("Account")}>
-            <.sidebar_menu_item
-              :for={item <- get_menu_items(:account)}
-              :if={visible?(item.visible, @scope)}
-              {item}
-            >
-              {item.label}
-            </.sidebar_menu_item>
-          </.sidebar_menu>
-        </.sidebar>
+      <div class="bg-zk-background flex-1">
+        <.header page_title={@page_title} scope={@scope}>
+          <.a :if={!@scope.user} kind={:button} variant={:outline} href={~p"/login"}>
+            {gettext("Login")}
+          </.a>
+        </.header>
 
-        <div class="bg-zk-background flex-1">
-          <.header page_title={@page_title} scope={@scope}>
-            <.a :if={!@scope.user} kind={:button} variant={:outline} href={~p"/login"}>
-              {gettext("Login")}
-            </.a>
-          </.header>
+        <.link :if={@scope.user} navigate={~p"/user/email"} class="fixed top-4 right-4 z-50">
+          <span class="sr-only">{gettext("Go to settings")}</span>
+          <.avatar src={@scope.user.profile.picture_url} size={:md} alt={gettext("Profile Picture")} />
+        </.link>
 
-          <.link :if={@scope.user} navigate={~p"/user/email"} class="fixed top-4 right-4 z-50">
-            <span class="sr-only">{gettext("Go to settings")}</span>
-            <.avatar
-              src={@scope.user.profile.picture_url}
-              size={:md}
-              alt={gettext("Profile Picture")}
-            />
-          </.link>
-
-          {render_slot(@inner_block)}
-        </div>
+        {render_slot(@inner_block)}
       </div>
 
       <.flash_group flash={@flash} />
