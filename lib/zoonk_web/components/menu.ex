@@ -77,23 +77,21 @@ defmodule ZoonkWeb.Components.Menu do
 
   def menu_item(assigns) do
     ~H"""
-    <li aria-current={@active && "page"} class={[@primary && "md:flex-1"]}>
+    <li aria-current={@active && "page"} class="flex-1">
       <.link
         class={[
-          "lg:flex lg:w-full lg:items-center lg:gap-3 lg:rounded-md lg:px-3 lg:py-2.5",
-          "lg:text-base lg:transition-colors",
+          "flex flex-col items-center gap-1 px-3 py-1.5",
+          "text-xs font-medium transition-colors",
+          "md:rounded-full md:text-sm",
+          "lg:flex-row lg:gap-3 lg:rounded lg:py-2.5",
+          "lg:text-base",
           "lg:hover:bg-zk-background lg:hover:shadow-sm",
-          "lg:focus-visible:ring-zk-ring lg:focus-visible:outline-0 lg:focus-visible:ring-2",
+          "focus-visible:ring-zk-primary focus-visible:outline-0 focus-visible:ring-2",
+          @active && "text-zk-primary md:bg-zk-background md:font-semibold",
+          !@active && "text-zk-muted-foreground md:text-zk-secondary-foreground md:font-normal",
           @active && !@destructive && "lg:bg-zk-background lg:text-zk-primary lg:shadow-sm",
           !@active && !@destructive && "lg:text-zk-secondary-foreground",
-          @destructive && "lg:text-zk-destructive-text",
-          @primary && "flex flex-col items-center gap-1 px-3 py-1.5",
-          @primary && "transition-colors",
-          @primary && "text-xs font-medium md:text-sm",
-          @primary && "md:rounded-full",
-          @primary && @active && "text-zk-primary md:bg-zk-background md:font-semibold",
-          @primary && !@active &&
-            "text-zk-muted-foreground md:text-zk-secondary-foreground md:font-normal"
+          @destructive && "lg:text-zk-destructive-text"
         ]}
         {@rest}
       >
