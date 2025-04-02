@@ -29,10 +29,15 @@ defmodule ZoonkWeb.UserLayout do
         </.sidebar_menu>
       </.sidebar>
 
-      <div class="bg-zk-background flex-1 p-6">
-        {render_slot(@inner_block)}
-        <.flash_group flash={@flash} />
+      <div class="bg-zk-background flex-1">
+        <.header page_title={@page_title} scope={@scope} />
+
+        <section class="p-4">
+          {render_slot(@inner_block)}
+        </section>
       </div>
+
+      <.flash_group flash={@flash} />
     </main>
     """
   end

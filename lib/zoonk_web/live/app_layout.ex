@@ -49,23 +49,11 @@ defmodule ZoonkWeb.AppLayout do
         </.sidebar>
 
         <div class="bg-zk-background flex-1">
-          <header
-            id="page-header"
-            phx-hook="ToolbarScroll"
-            data-scrolled="false"
-            class={[
-              "flex w-full items-center justify-between",
-              "sticky top-0 p-4",
-              "bg-transparent backdrop-blur-lg",
-              "data-[scrolled=true]:bg-zk-secondary/80"
-            ]}
-          >
-            <.text tag="h1" size={:xxl}>{@page_title}</.text>
-
+          <.header page_title={@page_title} scope={@scope}>
             <.a :if={!@scope.user} kind={:button} variant={:outline} href={~p"/login"}>
               {gettext("Login")}
             </.a>
-          </header>
+          </.header>
 
           <.link :if={@scope.user} navigate={~p"/user/email"} class="fixed top-4 right-4 z-50">
             <span class="sr-only">{gettext("Go to settings")}</span>
