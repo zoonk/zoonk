@@ -30,7 +30,6 @@ defmodule ZoonkWeb.AppLayout do
           <.menu_item
             :for={item <- get_menu_items(:account)}
             :if={visible?(item.visible, @scope)}
-            active={item.active == @active_page}
             {item}
           />
         </.menu_group>

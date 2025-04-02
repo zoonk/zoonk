@@ -15,35 +15,26 @@ defmodule ZoonkWeb.Components.Menu do
   def menu(assigns) do
     ~H"""
     <aside
-      id="sidebar"
+      id="app-menu"
       class={[
-        "hidden lg:block",
-        "h-dvh sticky top-0 bottom-0 left-0 w-80",
-        "scrollbar-none overflow-y-auto overflow-x-hidden",
-        "bg-zk-secondary/75",
-        "border-zk-border contrast-more:border-r"
-      ]}
-    >
-      {render_slot(@inner_block)}
-    </aside>
-
-    <section
-      id="tabbar"
-      class={[
-        "fixed right-0 bottom-0 left-0 w-full lg:hidden",
+        "fixed right-0 bottom-0 left-0 w-full",
         "bg-zk-background/80 backdrop-blur-lg",
         "border-zk-border border-t",
         "z-10",
         "md:sticky md:top-0 md:bottom-auto md:p-4",
         "md:border-0",
-        "md:data-[scrolled=true]:top-0 md:data-[scrolled=true]:w-full",
-        "md:data-[scrolled=true]:bg-zk-secondary/30"
+        "md:max-lg:data-[scrolled=true]:top-0 md:max-lg:data-[scrolled=true]:w-full",
+        "md:max-lg:data-[scrolled=true]:bg-zk-secondary/30",
+        "lg:h-dvh lg:bottom-0 lg:block lg:w-80",
+        "lg:scrollbar-none lg:overflow-y-auto lg:overflow-x-hidden",
+        "lg:bg-zk-secondary/75",
+        "lg:contrast-more:border-r"
       ]}
       phx-hook="ToolbarScroll"
       data-scrolled="false"
     >
       {render_slot(@inner_block)}
-    </section>
+    </aside>
     """
   end
 
@@ -51,32 +42,29 @@ defmodule ZoonkWeb.Components.Menu do
   attr :primary, :boolean, default: false, doc: "Whether this is a primary menu group that shows on all breakpoints"
   slot :inner_block, required: true, doc: "The inner block of the menu group"
 
-  def menu_group(assigns) do
+  def menu_group(%{primary: true} = assigns) do
     ~H"""
-    <section
-      :if={@primary || (!@primary && assigns.__changed__[:class])}
-      id={"menu-group-#{System.unique_integer([:positive])}"}
-      class={["lg:p-4", @primary && "md:p-0"]}
-    >
-      <h4
-        :if={@heading && (!@primary || (@primary && assigns.__changed__[:heading]))}
-        class="text-zk-muted-foreground/70 hidden px-4 pb-2 text-xs font-medium lg:block"
-      >
-        {@heading}
-      </h4>
+    <div>
+      <.sidebar_menu heading={@heading}>{render_slot(@inner_block)}</.sidebar_menu>
 
       <nav class={[
-        @primary && "md:bg-zk-secondary-accent/80 md:rounded-full",
-        @primary && "md:mx-auto md:w-fit md:max-w-xl md:py-1"
+        "hidden md:max-lg:block",
+        "md:bg-zk-secondary-accent/80 md:rounded-full",
+        "md:mx-auto md:w-fit md:max-w-xl md:py-1"
       ]}>
-        <ul class={[
-          "lg:flex lg:w-full lg:min-w-0 lg:flex-col lg:gap-1",
-          @primary && "flex items-center justify-around px-2 md:gap-1.5 md:px-1"
-        ]}>
+        <ul class="flex items-center justify-around px-2 md:gap-1.5 md:px-1">
           {render_slot(@inner_block)}
         </ul>
       </nav>
-    </section>
+    </div>
+    """
+  end
+
+  def menu_group(%{primary: false} = assigns) do
+    ~H"""
+    <.sidebar_menu heading={@heading}>
+      {render_slot(@inner_block)}
+    </.sidebar_menu>
     """
   end
 
@@ -118,6 +106,20 @@ defmodule ZoonkWeb.Components.Menu do
         <span class={["lg:truncate", @primary && "truncate"]}>{@label}</span>
       </.link>
     </li>
+    """
+  end
+
+  defp sidebar_menu(assigns) do
+    ~H"""
+    <section class="hidden p-4 lg:block">
+      <h4 :if={@heading} class="text-zk-muted-foreground/70 px-4 pb-2 text-xs font-medium">
+        {@heading}
+      </h4>
+
+      <ul class="flex w-full min-w-0 flex-col gap-1">
+        {render_slot(@inner_block)}
+      </ul>
+    </section>
     """
   end
 end
