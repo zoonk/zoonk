@@ -27,18 +27,18 @@ defmodule ZoonkWeb.Components.TabBar do
         "md:data-[scrolled=true]:top-0 md:data-[scrolled=true]:w-full",
         "md:data-[scrolled=true]:bg-zk-secondary/70"
       ]}
-      phx-hook="ToolbarScroll"
+      phx-hook="TabBarScroll"
       data-scrolled="false"
     >
       <nav
         id={@id}
         class={[
           "md:bg-zk-secondary-accent/80 md:rounded-full",
-          "md:mx-auto md:w-fit md:max-w-xl md:py-1.5",
+          "md:mx-auto md:w-fit md:max-w-xl md:py-1",
           @class
         ]}
       >
-        <ul class="flex items-center justify-around px-2 md:gap-1.5 md:px-1.5">
+        <ul class="flex items-center justify-around px-2 md:gap-1.5 md:px-1">
           {render_slot(@inner_block)}
         </ul>
       </nav>

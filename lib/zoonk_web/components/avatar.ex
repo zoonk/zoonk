@@ -61,12 +61,12 @@ defmodule ZoonkWeb.Components.Avatar do
 
   defp avatar_size(:xs), do: "size-6 text-sm"
   defp avatar_size(:sm), do: "size-8 text-md"
-  defp avatar_size(:md), do: "size-12 text-lg"
+  defp avatar_size(:md), do: "size-10 text-lg"
   defp avatar_size(:lg), do: "size-16 text-2xl"
 
   defp avatar_size_px(:xs), do: "24px"
   defp avatar_size_px(:sm), do: "38px"
-  defp avatar_size_px(:md), do: "48px"
+  defp avatar_size_px(:md), do: "40px"
   defp avatar_size_px(:lg), do: "64px"
 
   defp avatar_label(label) when is_binary(label), do: String.first(label)

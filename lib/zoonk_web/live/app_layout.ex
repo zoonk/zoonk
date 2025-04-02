@@ -62,15 +62,19 @@ defmodule ZoonkWeb.AppLayout do
           >
             <.text tag="h1" size={:xxl}>{@page_title}</.text>
 
-            <.link :if={@scope.user} navigate={~p"/user/email"} class="fixed top-4 right-4 z-50">
-              <span class="sr-only">{gettext("Go to settings")}</span>
-              <.avatar src={@scope.user.profile.picture_url} alt={gettext("Profile Picture")} />
-            </.link>
-
             <.a :if={!@scope.user} kind={:button} variant={:outline} href={~p"/login"}>
               {gettext("Login")}
             </.a>
           </header>
+
+          <.link :if={@scope.user} navigate={~p"/user/email"} class="fixed top-4 right-4 z-50">
+            <span class="sr-only">{gettext("Go to settings")}</span>
+            <.avatar
+              src={@scope.user.profile.picture_url}
+              size={:md}
+              alt={gettext("Profile Picture")}
+            />
+          </.link>
 
           {render_slot(@inner_block)}
         </div>
