@@ -55,16 +55,16 @@ defmodule ZoonkWeb.UserLayout do
   defp get_menu_items(:user) do
     [
       %{
-        navigate: ~p"/user/interests",
-        active: :interests,
-        icon: "tabler-star",
-        label: gettext("Interests")
-      },
-      %{
         navigate: ~p"/user/email",
         active: :email,
         icon: "tabler-mail",
         label: gettext("Email")
+      },
+      %{
+        navigate: ~p"/user/interests",
+        active: :interests,
+        icon: "tabler-star",
+        label: gettext("Interests")
       },
       %{
         navigate: ~p"/user/billing",
