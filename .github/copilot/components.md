@@ -16,3 +16,4 @@
 - When adding text, make sure to use the `<.text>` component instead of plain text. For example, instead of `<h1>Title</h1>`, use `<.text tag="h1">Title</.text>`.
 - For components with inner blocks, use `{render_slot(@inner_block)}` to render the inner block. Never use only {@inner_block} or <%= @inner_block %> or <%= render_slot(@inner_block) %>.
 - Make sure your components are accessible.
+- When creating a component inside `lib/zoonk_web/components`, use `use Phoenix.Component` instead of `ZoonkWeb, :html` to avoid circular dependencies. Then, import each individua component you need. For example, `import ZoonkWeb.Components.Text` to use the `<.text>` component. When you need to use a shared component outside of `lib/zoonk_web/components`, then you can use `ZoonkWeb, :html` to import all components.

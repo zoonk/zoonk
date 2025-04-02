@@ -11,28 +11,29 @@ defmodule ZoonkWeb.UserLayout do
   def render(assigns) do
     ~H"""
     <main class="flex w-full">
-      <.sidebar>
-        <.sidebar_menu>
-          <.sidebar_menu_item :for={item <- get_menu_items(:main)} {item}>
-            {item.label}
-          </.sidebar_menu_item>
-        </.sidebar_menu>
+      <.menu>
+        <.menu_group primary>
+          <.menu_item :for={item <- get_menu_items(:main)} primary {item} />
+        </.menu_group>
 
-        <.sidebar_menu heading={gettext("Account")}>
-          <.sidebar_menu_item
+        <.menu_group heading={gettext("Account")}>
+          <.menu_item
             :for={item <- get_menu_items(:user)}
             active={item.active == @active_page}
             {item}
-          >
-            {item.label}
-          </.sidebar_menu_item>
-        </.sidebar_menu>
-      </.sidebar>
+          />
+        </.menu_group>
+      </.menu>
 
-      <div class="bg-zk-background flex-1 p-6">
-        {render_slot(@inner_block)}
-        <.flash_group flash={@flash} />
+      <div class="bg-zk-background flex-1">
+        <.header page_title={@page_title} scope={@scope} />
+
+        <section class="p-4">
+          {render_slot(@inner_block)}
+        </section>
       </div>
+
+      <.flash_group flash={@flash} />
     </main>
     """
   end
@@ -50,16 +51,16 @@ defmodule ZoonkWeb.UserLayout do
   defp get_menu_items(:user) do
     [
       %{
-        navigate: ~p"/user/interests",
-        active: :interests,
-        icon: "tabler-star",
-        label: gettext("Interests")
-      },
-      %{
         navigate: ~p"/user/email",
         active: :email,
         icon: "tabler-mail",
         label: gettext("Email")
+      },
+      %{
+        navigate: ~p"/user/interests",
+        active: :interests,
+        icon: "tabler-star",
+        label: gettext("Interests")
       },
       %{
         navigate: ~p"/user/billing",

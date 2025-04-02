@@ -93,10 +93,10 @@ defmodule ZoonkWeb do
       import ZoonkWeb.Components.Divider
       import ZoonkWeb.Components.Flash
       import ZoonkWeb.Components.Form
+      import ZoonkWeb.Components.Header
       import ZoonkWeb.Components.Icon
       import ZoonkWeb.Components.Input
-      import ZoonkWeb.Components.Sidebar
-      import ZoonkWeb.Components.TabBar
+      import ZoonkWeb.Components.Menu
       import ZoonkWeb.Components.Text
       import ZoonkWeb.Components.Utils
 

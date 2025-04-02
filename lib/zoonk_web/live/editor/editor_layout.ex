@@ -11,23 +11,19 @@ defmodule ZoonkWeb.EditorLayout do
   def render(assigns) do
     ~H"""
     <main class="flex w-full">
-      <.sidebar>
-        <.sidebar_menu>
-          <.sidebar_menu_item :for={item <- get_menu_items(:main)} {item}>
-            {item.label}
-          </.sidebar_menu_item>
-        </.sidebar_menu>
+      <.menu>
+        <.menu_group primary>
+          <.menu_item :for={item <- get_menu_items(:main)} primary {item} />
+        </.menu_group>
 
-        <.sidebar_menu heading={gettext("Editor")}>
-          <.sidebar_menu_item
+        <.menu_group heading={gettext("Editor")}>
+          <.menu_item
             :for={item <- get_menu_items(:editor)}
             active={item.active == @active_page}
             {item}
-          >
-            {item.label}
-          </.sidebar_menu_item>
-        </.sidebar_menu>
-      </.sidebar>
+          />
+        </.menu_group>
+      </.menu>
 
       <div class="bg-zk-background flex-1 p-6">
         {render_slot(@inner_block)}
