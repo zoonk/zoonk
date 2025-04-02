@@ -49,15 +49,13 @@ defmodule ZoonkWeb.Components.Menu do
 
   attr :heading, :string, default: nil, doc: "Optional heading for the menu group"
   attr :primary, :boolean, default: false, doc: "Whether this is a primary menu group that shows on all breakpoints"
-  attr :id, :string, default: nil, doc: "Optional ID for the menu group"
   slot :inner_block, required: true, doc: "The inner block of the menu group"
 
   def menu_group(assigns) do
-    assigns = assign_new(assigns, :id, fn -> "menu-group-#{System.unique_integer([:positive])}" end)
-
     ~H"""
     <section
       :if={@primary || (!@primary && assigns.__changed__[:class])}
+      id={"menu-group-#{System.unique_integer([:positive])}"}
       class={["lg:p-4", @primary && "md:p-0"]}
     >
       <h4
@@ -67,13 +65,10 @@ defmodule ZoonkWeb.Components.Menu do
         {@heading}
       </h4>
 
-      <nav
-        id={@id}
-        class={[
-          @primary && "md:bg-zk-secondary-accent/80 md:rounded-full",
-          @primary && "md:mx-auto md:w-fit md:max-w-xl md:py-1"
-        ]}
-      >
+      <nav class={[
+        @primary && "md:bg-zk-secondary-accent/80 md:rounded-full",
+        @primary && "md:mx-auto md:w-fit md:max-w-xl md:py-1"
+      ]}>
         <ul class={[
           "lg:flex lg:w-full lg:min-w-0 lg:flex-col lg:gap-1",
           @primary && "flex items-center justify-around px-2 md:gap-1.5 md:px-1"
