@@ -100,10 +100,10 @@ defmodule ZoonkWeb.Components.Menu do
         <.icon
           :if={@icon}
           name={@icon}
-          class={[!@destructive && "lg:text-zk-primary", @primary && "md:hidden"]}
-          size={@primary && :md}
+          class={[!@destructive && "lg:text-zk-primary", "md:max-lg:hidden"]}
+          size={:md}
         />
-        <span class={["lg:truncate", @primary && "truncate"]}>{@label}</span>
+        <span class="truncate">{@label}</span>
       </.link>
     </li>
     """
