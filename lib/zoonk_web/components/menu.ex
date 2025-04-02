@@ -48,7 +48,6 @@ defmodule ZoonkWeb.Components.Menu do
   end
 
   attr :heading, :string, default: nil, doc: "Optional heading for the menu group"
-  attr :class, :any, default: nil, doc: "Additional class for the menu group"
   attr :primary, :boolean, default: false, doc: "Whether this is a primary menu group that shows on all breakpoints"
   attr :id, :string, default: nil, doc: "Optional ID for the menu group"
   slot :inner_block, required: true, doc: "The inner block of the menu group"
@@ -72,8 +71,7 @@ defmodule ZoonkWeb.Components.Menu do
         id={@id}
         class={[
           @primary && "md:bg-zk-secondary-accent/80 md:rounded-full",
-          @primary && "md:mx-auto md:w-fit md:max-w-xl md:py-1",
-          @class
+          @primary && "md:mx-auto md:w-fit md:max-w-xl md:py-1"
         ]}
       >
         <ul class={[
