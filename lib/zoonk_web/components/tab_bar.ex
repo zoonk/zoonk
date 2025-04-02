@@ -25,9 +25,9 @@ defmodule ZoonkWeb.Components.TabBar do
         "md:sticky md:top-0 md:bottom-auto md:p-4",
         "md:border-0",
         "md:data-[scrolled=true]:top-0 md:data-[scrolled=true]:w-full",
-        "md:data-[scrolled=true]:bg-zk-secondary/70"
+        "md:data-[scrolled=true]:bg-zk-secondary/30"
       ]}
-      phx-hook="TabBarScroll"
+      phx-hook="ToolbarScroll"
       data-scrolled="false"
     >
       <nav
