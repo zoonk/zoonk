@@ -8,7 +8,7 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
       build_conn()
       |> Map.put(:host, app_org_fixture().custom_domain)
       |> visit(~p"/start")
-      |> assert_has("h1", text: "Get Started")
+      |> assert_has("h1", text: "What do you want to learn?")
     end
 
     test "redirects page for :creator org" do
