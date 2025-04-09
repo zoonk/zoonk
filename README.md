@@ -37,8 +37,6 @@ You can read our full documentation at https://docs.zoonk.com or check the guide
 
 ## Supporters
 
-**[Support the project and get lifetime access to Zoonk](https://github.com/sponsors/ceolinwill?frequency=one-time)**
-
 People who supported the project and got lifetime access:
 
 - [Sephora Lillian](https://github.com/sephoralillian)
