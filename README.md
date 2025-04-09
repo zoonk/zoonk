@@ -9,8 +9,6 @@
   <br />
   <br />
   <a href="https://forms.gle/jHeTqPUkw1vA7wLh8">Waitlist</a>
-  .
-  <a href="https://github.com/sponsors/ceolinwill?frequency=one-time">Lifetime Access (Limited Offer)
 </p>
 
 > [!CAUTION]
