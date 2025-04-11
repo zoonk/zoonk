@@ -52,6 +52,28 @@ defmodule ZoonkWeb.UserAuthTest do
       refute get_session(conn, :to_be_removed)
     end
 
+    test "keeps session when re-authenticating", %{conn: conn, scope: scope, user: user} do
+      conn =
+        conn
+        |> assign(:current_scope, Scope.set(scope))
+        |> put_session(:to_be_removed, "value")
+        |> UserAuth.login_user(user)
+
+      assert get_session(conn, :to_be_removed)
+    end
+
+    test "clears session when user does not match when re-authenticating", %{conn: conn, scope: scope} do
+      other_user = user_fixture()
+
+      conn =
+        conn
+        |> assign(:current_scope, Scope.set(scope))
+        |> put_session(:to_be_removed, "value")
+        |> UserAuth.login_user(other_user)
+
+      refute get_session(conn, :to_be_removed)
+    end
+
     test "redirects to the configured path", %{conn: conn, user: user} do
       conn =
         conn

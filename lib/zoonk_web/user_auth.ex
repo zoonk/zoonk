@@ -41,12 +41,12 @@ defmodule ZoonkWeb.UserAuth do
   In case the user re-authenticates for sudo mode,
   the existing remember_me setting is kept, writing a new remember_me cookie.
   """
-  def login_user(conn, user) do
+  def login_user(conn, %User{} = user) do
     token = Accounts.generate_user_session_token(user)
     user_return_to = get_session(conn, :user_return_to)
 
     conn
-    |> renew_session()
+    |> renew_session(user)
     |> put_token_in_session(token)
     |> write_remember_me_cookie(token)
     |> redirect(to: user_return_to || signed_in_path(conn))
@@ -58,14 +58,21 @@ defmodule ZoonkWeb.UserAuth do
     |> put_resp_cookie(@remember_me_cookie, token, @remember_me_options)
   end
 
+  # Do not renew session if the user is already logged in (sudo mode reauthentication)
+  # to prevent CSRF errors for tabs that are still open
+  defp renew_session(conn, user) when conn.assigns.current_scope.user.id == user.id do
+    conn
+  end
+
   # This function renews the session ID and erases the whole
   # session to avoid fixation attacks. If there is any data
   # in the session you may want to preserve after log in/log out,
   # you must explicitly fetch the session data before clearing
   # and then immediately set it after clearing, for example:
   #
-  #     defp renew_session(conn) do
+  #     defp renew_session(conn, _user) do
   #       preferred_locale = get_session(conn, :preferred_locale)
+  #       delete_csrf_token()
   #
   #       conn
   #       |> configure_session(renew: true)
@@ -73,7 +80,7 @@ defmodule ZoonkWeb.UserAuth do
   #       |> put_session(:preferred_locale, preferred_locale)
   #     end
   #
-  defp renew_session(conn) do
+  defp renew_session(conn, _user) do
     delete_csrf_token()
 
     conn
@@ -95,7 +102,7 @@ defmodule ZoonkWeb.UserAuth do
     end
 
     conn
-    |> renew_session()
+    |> renew_session(nil)
     |> delete_resp_cookie(@remember_me_cookie)
     |> redirect(to: ~p"/")
   end
