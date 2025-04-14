@@ -29,63 +29,15 @@ defmodule ZoonkWeb.UserAuth do
   @doc """
   Logs the user in.
 
-  It renews the session ID and clears the whole session
-  to avoid fixation attacks. See the renew_session
-  function to customize this behaviour.
-
-  It also sets a `:live_socket_id` key in the session,
-  so LiveView sessions are identified and automatically
-  disconnected on log out. The line can be safely removed
-  if you are not using LiveView.
-
-  In case the user re-authenticates for sudo mode,
-  the existing remember_me setting is kept, writing a new remember_me cookie.
+  Redirects to the session's `:user_return_to` path
+  or falls back to the `signed_in_path/1`.
   """
   def login_user(conn, %User{} = user) do
-    token = Accounts.generate_user_session_token(user)
     user_return_to = get_session(conn, :user_return_to)
 
     conn
-    |> renew_session(user)
-    |> put_token_in_session(token)
-    |> write_remember_me_cookie(token)
+    |> create_or_extend_session(user)
     |> redirect(to: user_return_to || signed_in_path(conn))
-  end
-
-  defp write_remember_me_cookie(conn, token) do
-    conn
-    |> put_session(:user_remember_me, true)
-    |> put_resp_cookie(@remember_me_cookie, token, @remember_me_options)
-  end
-
-  # Do not renew session if the user is already logged in (sudo mode reauthentication)
-  # to prevent CSRF errors for tabs that are still open
-  defp renew_session(conn, user) when conn.assigns.current_scope.user.id == user.id do
-    conn
-  end
-
-  # This function renews the session ID and erases the whole
-  # session to avoid fixation attacks. If there is any data
-  # in the session you may want to preserve after log in/log out,
-  # you must explicitly fetch the session data before clearing
-  # and then immediately set it after clearing, for example:
-  #
-  #     defp renew_session(conn, _user) do
-  #       preferred_locale = get_session(conn, :preferred_locale)
-  #       delete_csrf_token()
-  #
-  #       conn
-  #       |> configure_session(renew: true)
-  #       |> clear_session()
-  #       |> put_session(:preferred_locale, preferred_locale)
-  #     end
-  #
-  defp renew_session(conn, _user) do
-    delete_csrf_token()
-
-    conn
-    |> configure_session(renew: true)
-    |> clear_session()
   end
 
   @doc """
@@ -110,11 +62,18 @@ defmodule ZoonkWeb.UserAuth do
   @doc """
   Authenticates the user by looking into the session
   and remember me token.
+
+  Will reissue the session token if it is older than the configured age.
   """
   def fetch_scope(conn, _opts) do
-    {user_token, conn} = ensure_user_token(conn)
-    user = user_token && Accounts.get_user_by_session_token(user_token)
-    assign(conn, :scope, build_scope(user, conn.host))
+    with {token, conn} <- ensure_user_token(conn),
+         {user, token_inserted_at} <- Accounts.get_user_by_session_token(token) do
+      conn
+      |> assign(:scope, build_scope(user, conn.host))
+      |> maybe_reissue_user_session_token(user, token_inserted_at)
+    else
+      nil -> assign(conn, :scope, build_scope(nil, conn.host))
+    end
   end
 
   defp ensure_user_token(conn) do
@@ -124,11 +83,76 @@ defmodule ZoonkWeb.UserAuth do
       conn = fetch_cookies(conn, signed: [@remember_me_cookie])
 
       if token = conn.cookies[@remember_me_cookie] do
-        {token, put_token_in_session(conn, token)}
-      else
-        {nil, conn}
+        {token,
+         conn
+         |> put_token_in_session(token)
+         |> put_session(:user_remember_me, true)}
       end
     end
+  end
+
+  # Reissue the session token if it is older than the configured reissue age.
+  defp maybe_reissue_user_session_token(conn, user, token_inserted_at) do
+    token_age = DateTime.diff(DateTime.utc_now(), token_inserted_at, :day)
+
+    if token_age >= AuthConfig.get_max_age(:session_token, :days) do
+      create_or_extend_session(conn, user)
+    else
+      conn
+    end
+  end
+
+  # This function is the one responsible for creating session tokens
+  # and storing them safely in the session and cookies. It may be called
+  # either when logging in, during sudo mode, or to renew a session which
+  # will soon expire.
+  #
+  # When the session is created, rather than extended, the renew_session
+  # function will clear the session to avoid fixation attacks. See the
+  # renew_session function to customize this behaviour.
+  defp create_or_extend_session(conn, user) do
+    token = Accounts.generate_user_session_token(user)
+
+    conn
+    |> renew_session(user)
+    |> put_token_in_session(token)
+    |> write_remember_me_cookie(token)
+  end
+
+  # Do not renew session if the user is already logged in
+  # to prevent CSRF errors or data being last in tabs that are still open
+  defp renew_session(conn, user) when conn.assigns.scope.user.id == user.id do
+    conn
+  end
+
+  # This function renews the session ID and erases the whole
+  # session to avoid fixation attacks. If there is any data
+  # in the session you may want to preserve after log in/log out,
+  # you must explicitly fetch the session data before clearing
+  # and then immediately set it after clearing, for example:
+  #
+  #     defp renew_session(conn, _user) do
+  #       delete_csrf_token()
+  #       preferred_locale = get_session(conn, :preferred_locale)
+  #
+  #       conn
+  #       |> configure_session(renew: true)
+  #       |> clear_session()
+  #       |> put_session(:preferred_locale, preferred_locale)
+  #     end
+  #
+  defp renew_session(conn, _user) do
+    delete_csrf_token()
+
+    conn
+    |> configure_session(renew: true)
+    |> clear_session()
+  end
+
+  defp write_remember_me_cookie(conn, token) do
+    conn
+    |> put_session(:user_remember_me, true)
+    |> put_resp_cookie(@remember_me_cookie, token, @remember_me_options)
   end
 
   @doc """
@@ -205,13 +229,18 @@ defmodule ZoonkWeb.UserAuth do
     socket
     |> Phoenix.Component.assign(uri: get_uri(uri))
     |> Phoenix.Component.assign_new(:scope, fn ->
-      user =
-        if user_token = session["user_token"] do
-          Accounts.get_user_by_session_token(user_token)
-        end
-
+      user = get_user_by_session_token(session["user_token"])
       build_scope(user, host)
     end)
+  end
+
+  defp get_user_by_session_token(nil), do: nil
+
+  defp get_user_by_session_token(user_token) do
+    case Accounts.get_user_by_session_token(user_token) do
+      nil -> nil
+      {user, _token_inserted_at} -> user
+    end
   end
 
   @doc """

@@ -29,6 +29,8 @@ defmodule Zoonk.Accounts.UserToken do
     field :token, :binary
     field :context, :string
     field :sent_to, :string
+    field :authenticated_at, :utc_datetime_usec
+
     belongs_to :user, Zoonk.Accounts.User
 
     timestamps(type: :utc_datetime, updated_at: false)
@@ -55,13 +57,15 @@ defmodule Zoonk.Accounts.UserToken do
   """
   def build_session_token(user) do
     token = :crypto.strong_rand_bytes(@rand_size)
-    {token, %UserToken{token: token, context: "session", user_id: user.id}}
+
+    dt = user.authenticated_at || DateTime.utc_now()
+    {token, %UserToken{token: token, context: "session", user_id: user.id, authenticated_at: dt}}
   end
 
   @doc """
   Checks if the token is valid and returns its underlying lookup query.
 
-  The query returns the user found by the token, if any.
+  The query returns the user found by the token, if any, along with the token's creation time.
 
   The token is valid if it matches the value in the database and it has
   not expired (after @session_validity_in_days).
@@ -73,8 +77,8 @@ defmodule Zoonk.Accounts.UserToken do
       token
       |> by_token_and_context_query("session")
       |> join(:inner, [token], user in assoc(token, :user))
-      |> where([token], token.inserted_at > ago(^session_validity_in_days, "day"))
-      |> select([token, user], %{user | authenticated_at: token.inserted_at})
+      |> where([token, user], token.inserted_at > ago(^session_validity_in_days, "day"))
+      |> select([token, user], {%{user | authenticated_at: token.authenticated_at}, token.inserted_at})
 
     {:ok, query}
   end

@@ -154,13 +154,17 @@ defmodule Zoonk.Accounts do
 
   @doc """
   Gets the user with the given signed token.
+
+  If the token is valid `{user, token_inserted_at}` is returned,
+  otherwise `nil` is returned.
   """
   def get_user_by_session_token(token) do
     {:ok, query} = UserToken.verify_session_token_query(token)
 
-    query
-    |> Repo.one()
-    |> Repo.preload(:profile)
+    case Repo.one(query) do
+      nil -> nil
+      {user, token_inserted_at} -> {Repo.preload(user, :profile), token_inserted_at}
+    end
   end
 
   @doc """

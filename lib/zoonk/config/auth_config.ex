@@ -45,6 +45,15 @@ defmodule Zoonk.Config.AuthConfig do
   def get_max_age(:change_email, :days), do: 7
   def get_max_age(:sudo_mode, :minutes), do: -10
 
+  # How old the session token should be before a new one is issued. When a request is made
+  # with a session token older than this value, then a new session token will be created
+  # and the session and remember-me cookies (if set) will be updated with the new token.
+  # Lowering this value will result in more tokens being created by active users. Increasing
+  # it will result in less time before a session token expires for a user to get issued a new
+  # token. This can be set to a value greater than `get_max_age(:token, :days)` to disable
+  # the reissuing of tokens completely.
+  def get_max_age(:session_token, :days), do: 7
+
   @doc """
   Returns the name of a cookie.
 
