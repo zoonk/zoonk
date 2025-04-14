@@ -9,6 +9,10 @@
   <br />
   <br />
   <a href="https://forms.gle/jHeTqPUkw1vA7wLh8">Waitlist</a>
+  .
+  <a href="https://github.com/orgs/zoonk/discussions/176">Long-term vision</a>
+  .
+  <a href="https://github.com/zoonk/zoonk/issues/52">v0.1 Checklist</a>
 </p>
 
 > [!CAUTION]
