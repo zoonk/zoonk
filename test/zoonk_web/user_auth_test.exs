@@ -55,7 +55,7 @@ defmodule ZoonkWeb.UserAuthTest do
     test "keeps session when re-authenticating", %{conn: conn, scope: scope, user: user} do
       conn =
         conn
-        |> assign(:current_scope, Scope.set(scope))
+        |> assign(:scope, Scope.set(scope))
         |> put_session(:to_be_removed, "value")
         |> UserAuth.login_user(user)
 
@@ -67,7 +67,7 @@ defmodule ZoonkWeb.UserAuthTest do
 
       conn =
         conn
-        |> assign(:current_scope, Scope.set(scope))
+        |> assign(:scope, Scope.set(scope))
         |> put_session(:to_be_removed, "value")
         |> UserAuth.login_user(other_user)
 
@@ -114,7 +114,7 @@ defmodule ZoonkWeb.UserAuthTest do
         |> fetch_cookies()
         |> init_test_session(%{user_remember_me: true})
 
-      # the conn is already logged in and has the remeber_me cookie set,
+      # the conn is already logged in and has the remember_me cookie set,
       # now we log in again and even without explicitly setting remember_me,
       # the cookie should be set again
       next_conn = UserAuth.login_user(conn, user)
@@ -305,23 +305,31 @@ defmodule ZoonkWeb.UserAuthTest do
     end
 
     test "redirects when authentication is too old", %{conn: conn, scope: scope} do
-      %{org: org, user: user, org_member: org_member} = scope
+      %{user: user} = scope
 
       sudo_mode_minutes = AuthConfig.get_max_age(:sudo_mode, :minutes)
       too_old = DateTime.add(DateTime.utc_now(), sudo_mode_minutes - 1, :minute)
       old_user = %{user | authenticated_at: too_old}
+      user_token = Accounts.generate_user_session_token(old_user)
+      {_user, token_inserted_at} = Accounts.get_user_by_session_token(user_token)
+
+      assert DateTime.after?(token_inserted_at, too_old)
+
+      session =
+        conn
+        |> put_session(:user_token, user_token)
+        |> get_session()
 
       socket = %LiveView.Socket{
         endpoint: AuthAppWeb.Endpoint,
         assigns: %{
           __changed__: %{},
-          flash: %{},
-          scope: Scope.set(%Scope{user: old_user, org: org, org_member: org_member})
+          flash: %{}
         },
         private: %{connect_info: conn, live_temp: %{}}
       }
 
-      assert {:halt, _updated_socket} = UserAuth.on_mount(:ensure_sudo_mode, %{}, %{}, socket)
+      assert {:halt, _updated_socket} = UserAuth.on_mount(:ensure_sudo_mode, %{}, session, socket)
     end
   end
 
@@ -335,6 +343,8 @@ defmodule ZoonkWeb.UserAuthTest do
         |> UserAuth.fetch_scope([])
 
       assert conn.assigns.scope.user.id == user.id
+      assert conn.assigns.scope.user.authenticated_at == user.authenticated_at
+      assert get_session(conn, :user_token) == user_token
     end
 
     test "authenticates user from cookies", %{conn: conn, user: user} do
@@ -352,10 +362,10 @@ defmodule ZoonkWeb.UserAuthTest do
         |> UserAuth.fetch_scope([])
 
       assert conn.assigns.scope.user.id == user.id
+      assert conn.assigns.scope.user.authenticated_at == user.authenticated_at
       assert get_session(conn, :user_token) == user_token
-
-      assert get_session(conn, :live_socket_id) ==
-               "users_sessions:#{Base.url_encode64(user_token)}"
+      assert get_session(conn, :user_remember_me) == true
+      assert get_session(conn, :live_socket_id) == "users_sessions:#{Base.url_encode64(user_token)}"
     end
 
     test "does not authenticate if data is missing", %{conn: conn, user: user} do
@@ -363,6 +373,35 @@ defmodule ZoonkWeb.UserAuthTest do
       conn = UserAuth.fetch_scope(conn, [])
       refute get_session(conn, :user_token)
       refute conn.assigns.scope.user
+    end
+
+    test "reissues a new token after a few days and refreshes cookie", %{conn: conn, user: user} do
+      logged_in_conn =
+        conn
+        |> fetch_cookies()
+        |> UserAuth.login_user(user)
+
+      token = logged_in_conn.cookies[@remember_me_cookie]
+      %{value: signed_token} = logged_in_conn.resp_cookies[@remember_me_cookie]
+      offset_user_token(token, -10, :day)
+
+      {user, _} = Accounts.get_user_by_session_token(token)
+
+      conn =
+        conn
+        |> put_session(:user_token, token)
+        |> put_session(:user_remember_me, true)
+        |> put_req_cookie(@remember_me_cookie, signed_token)
+        |> UserAuth.fetch_scope([])
+
+      assert conn.assigns.scope.user.id == user.id
+      assert conn.assigns.scope.user.authenticated_at == user.authenticated_at
+      assert new_token = get_session(conn, :user_token)
+      assert new_token != token
+
+      assert %{value: new_signed_token, max_age: max_age} = conn.resp_cookies[@remember_me_cookie]
+      assert new_signed_token != signed_token
+      assert max_age == @max_age
     end
   end
 

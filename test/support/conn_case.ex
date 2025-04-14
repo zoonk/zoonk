@@ -51,7 +51,7 @@ defmodule ZoonkWeb.ConnCase do
 
     opts =
       context
-      |> Map.take([:token_inserted_at])
+      |> Map.take([:token_authenticated_at])
       |> Enum.to_list()
 
     conn = Map.put(conn, :host, app_org.custom_domain)
@@ -67,17 +67,17 @@ defmodule ZoonkWeb.ConnCase do
   def login_user(conn, user, opts \\ []) do
     token = Zoonk.Accounts.generate_user_session_token(user)
 
-    maybe_set_token_inserted_at(token, opts[:token_inserted_at])
+    maybe_set_token_authenticated_at(token, opts[:token_authenticated_at])
 
     conn
     |> Phoenix.ConnTest.init_test_session(%{})
     |> Plug.Conn.put_session(:user_token, token)
   end
 
-  defp maybe_set_token_inserted_at(_token, nil), do: nil
+  defp maybe_set_token_authenticated_at(_token, nil), do: nil
 
-  defp maybe_set_token_inserted_at(token, inserted_at) do
-    Zoonk.AccountFixtures.override_token_inserted_at(token, inserted_at)
+  defp maybe_set_token_authenticated_at(token, authenticated_at) do
+    Zoonk.AccountFixtures.override_token_authenticated_at(token, authenticated_at)
   end
 
   @doc """

@@ -76,16 +76,24 @@ defmodule Zoonk.AccountFixtures do
     token
   end
 
-  def override_token_inserted_at(token, inserted_at) when is_binary(token) do
+  def override_token_authenticated_at(token, authenticated_at) when is_binary(token) do
     UserToken
     |> where([t], t.token == ^token)
-    |> Zoonk.Repo.update_all(set: [inserted_at: inserted_at])
+    |> Zoonk.Repo.update_all(set: [authenticated_at: authenticated_at])
   end
 
   def generate_user_magic_link_token(user) do
     {encoded_token, user_token} = UserToken.build_email_token(user, "login")
     Zoonk.Repo.insert!(user_token)
     {encoded_token, user_token.token}
+  end
+
+  def offset_user_token(token, amount_to_add, unit) do
+    dt = DateTime.add(DateTime.utc_now(), amount_to_add, unit)
+
+    UserToken
+    |> where([ut], ut.token == ^token)
+    |> Repo.update_all(set: [inserted_at: dt, authenticated_at: dt])
   end
 
   def oauth_fixture(attrs \\ %{}) do

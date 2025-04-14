@@ -32,6 +32,7 @@ defmodule Zoonk.Repo.Migrations.CreateUsersAuthTables do
 
       add :context, :string, null: false
       add :sent_to, :string
+      add :authenticated_at, :utc_datetime_usec
 
       timestamps(type: :utc_datetime, updated_at: false)
     end

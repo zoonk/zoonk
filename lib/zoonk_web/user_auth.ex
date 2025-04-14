@@ -60,7 +60,7 @@ defmodule ZoonkWeb.UserAuth do
 
   # Do not renew session if the user is already logged in (sudo mode reauthentication)
   # to prevent CSRF errors for tabs that are still open
-  defp renew_session(conn, user) when conn.assigns.current_scope.user.id == user.id do
+  defp renew_session(conn, user) when conn.assigns.scope.user.id == user.id do
     conn
   end
 
@@ -110,11 +110,18 @@ defmodule ZoonkWeb.UserAuth do
   @doc """
   Authenticates the user by looking into the session
   and remember me token.
+
+  Will reissue the session token if it is older than the configured age.
   """
   def fetch_scope(conn, _opts) do
-    {user_token, conn} = ensure_user_token(conn)
-    user = user_token && Accounts.get_user_by_session_token(user_token)
-    assign(conn, :scope, build_scope(user, conn.host))
+    with {token, conn} <- ensure_user_token(conn),
+         {user, token_inserted_at} <- Accounts.get_user_by_session_token(token) do
+      conn
+      |> assign(:scope, build_scope(user, conn.host))
+      |> maybe_reissue_user_session_token(user, token_inserted_at)
+    else
+      nil -> assign(conn, :scope, build_scope(nil, conn.host))
+    end
   end
 
   defp ensure_user_token(conn) do
@@ -124,10 +131,35 @@ defmodule ZoonkWeb.UserAuth do
       conn = fetch_cookies(conn, signed: [@remember_me_cookie])
 
       if token = conn.cookies[@remember_me_cookie] do
-        {token, put_token_in_session(conn, token)}
-      else
-        {nil, conn}
+        {token,
+         conn
+         |> put_token_in_session(token)
+         |> put_session(:user_remember_me, true)}
       end
+    end
+  end
+
+  # Reissue the session token if it is older than the configured reissue age.
+  defp maybe_reissue_user_session_token(conn, user, token_inserted_at) do
+    token_age = DateTime.diff(DateTime.utc_now(), token_inserted_at, :day)
+
+    if token_age >= AuthConfig.get_max_age(:session_token, :days) do
+      new_token = Accounts.generate_user_session_token(user)
+
+      conn
+      |> put_token_in_session(new_token)
+      |> maybe_refresh_remember_me_cookie(new_token)
+    else
+      conn
+    end
+  end
+
+  # Refresh the remember me cookie with the new token and new expiration date.
+  defp maybe_refresh_remember_me_cookie(conn, new_token) do
+    if get_session(conn, :user_remember_me) do
+      put_resp_cookie(conn, @remember_me_cookie, new_token, @remember_me_options)
+    else
+      conn
     end
   end
 
@@ -205,9 +237,11 @@ defmodule ZoonkWeb.UserAuth do
     socket
     |> Phoenix.Component.assign(uri: get_uri(uri))
     |> Phoenix.Component.assign_new(:scope, fn ->
-      user =
+      {user, _token_inserted_at} =
         if user_token = session["user_token"] do
           Accounts.get_user_by_session_token(user_token)
+        else
+          {nil, nil}
         end
 
       build_scope(user, host)

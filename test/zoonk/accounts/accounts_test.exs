@@ -294,6 +294,7 @@ defmodule Zoonk.AccountsTest do
       token = Accounts.generate_user_session_token(user)
       assert user_token = Repo.get_by(UserToken, token: token)
       assert user_token.context == "session"
+      assert user_token.authenticated_at != nil
 
       # Creating the same token for another user should fail
       assert_raise Ecto.ConstraintError, fn ->
@@ -303,6 +304,14 @@ defmodule Zoonk.AccountsTest do
           context: "session"
         })
       end
+    end
+
+    test "duplicates the authenticated_at of given user in new token", %{user: user} do
+      user = %{user | authenticated_at: DateTime.add(DateTime.utc_now(), -3600)}
+      token = Accounts.generate_user_session_token(user)
+      assert user_token = Repo.get_by(UserToken, token: token)
+      assert user_token.authenticated_at == user.authenticated_at
+      assert DateTime.after?(user_token.inserted_at, user.authenticated_at)
     end
   end
 
@@ -314,8 +323,10 @@ defmodule Zoonk.AccountsTest do
     end
 
     test "returns user by token", %{user: user, token: token} do
-      assert session_user = Accounts.get_user_by_session_token(token)
+      assert {session_user, token_inserted_at} = Accounts.get_user_by_session_token(token)
       assert session_user.id == user.id
+      assert session_user.authenticated_at != nil
+      assert token_inserted_at != nil
       assert session_user.profile.user_id == user.id
       assert session_user.profile.is_public == false
     end
@@ -325,7 +336,8 @@ defmodule Zoonk.AccountsTest do
     end
 
     test "does not return user for expired token", %{token: token} do
-      {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
+      dt = ~N[2020-01-01 00:00:00]
+      {1, nil} = Repo.update_all(UserToken, set: [inserted_at: dt, authenticated_at: dt])
       refute Accounts.get_user_by_session_token(token)
     end
   end
