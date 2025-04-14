@@ -385,7 +385,7 @@ defmodule ZoonkWeb.UserAuthTest do
       %{value: signed_token} = logged_in_conn.resp_cookies[@remember_me_cookie]
       offset_user_token(token, -10, :day)
 
-      {user, _} = Accounts.get_user_by_session_token(token)
+      {user, _token_inserted_at} = Accounts.get_user_by_session_token(token)
 
       conn =
         conn
