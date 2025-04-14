@@ -39,3 +39,15 @@ done
     /repos/zoonk/zoonk/discussions \
     --paginate | jq -r '.[] | select(.category.name == "Ideas") | "### \(.title)\n\n\(.body)\n\n---"'
 ) > .github/copilot/llm_docs/ideas.txt
+
+# Export GitHub Discussions from "Announcements" category
+(
+  echo "# Zoonk Announcements"
+  echo
+  echo "This is a list of all announcements posted on GitHub Discussions."
+  echo
+  gh api \
+    -H "Accept: application/vnd.github.v3+json" \
+    /repos/zoonk/zoonk/discussions \
+    --paginate | jq -r '.[] | select(.category.name == "Announcements") | "### \(.title)\n\n\(.body)\n\n---"'
+) > .github/copilot/llm_docs/announcements.txt
