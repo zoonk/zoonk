@@ -13,3 +13,4 @@
 - Use Verified Routes instead of Router helpers. For example, instead of using `Routes.page_path(@conn, :index)`, use `~p"/"` or `~p"/#{@user}"` for dynamic routes.
 - Use the new `Gettext` syntax for importing it: `use Gettext, backend: Zoonk.Gettext` instead of `import ZoonkWeb.Gettext`.
 - For lists that can be sort alphabetically, add `# styler:sort` above the list. This will automatically sort the list when you save the file.
+- When writing queries, use pipe-based syntax for readability and composability. For example, instead of using `from u in User, where: u.name == ^name`, use `User |> where([u], u.name == ^name)`.
