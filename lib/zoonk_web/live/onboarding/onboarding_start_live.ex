@@ -8,6 +8,16 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
   def render(assigns) do
     ~H"""
     <main class="h-dvh flex w-full items-center justify-center p-4">
+      <div class="absolute top-4 right-4">
+        <.a kind={:button} size={:sm} navigate={~p"/login"}>
+          {gettext("Login")}
+        </.a>
+
+        <.a kind={:button} variant={:outline} size={:sm} navigate={~p"/signup"}>
+          {gettext("Sign Up")}
+        </.a>
+      </div>
+
       <div class="flex w-full max-w-lg flex-col items-center gap-4 text-center">
         <.text tag="h1" size={:xxl}>
           {dgettext("onboarding", "What do you want to learn?")}
