@@ -18,7 +18,6 @@ defmodule Zoonk.Catalog.CourseTranslation do
   | `updated_at` | `DateTime` | Timestamp when the translation was last updated. |
   """
   use Ecto.Schema
-  use Gettext, backend: Zoonk.Gettext
 
   import Ecto.Changeset
 
