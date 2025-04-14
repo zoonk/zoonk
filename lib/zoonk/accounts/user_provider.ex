@@ -27,7 +27,7 @@ defmodule Zoonk.Accounts.UserProvider do
 
     belongs_to :user, Zoonk.Accounts.User
 
-    timestamps(type: :utc_datetime)
+    timestamps(type: :utc_datetime_usec)
   end
 
   @doc """

@@ -8,7 +8,7 @@ defmodule Zoonk.Repo.Migrations.CreateCourseUsers do
 
       add :role, :string, null: false, default: "member"
 
-      timestamps(type: :utc_datetime)
+      timestamps(type: :utc_datetime_usec)
     end
 
     create index(:course_users, [:course_id])

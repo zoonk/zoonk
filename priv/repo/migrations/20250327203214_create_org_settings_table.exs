@@ -10,7 +10,7 @@ defmodule Zoonk.Repo.Migrations.CreateOrgSettingsTable do
       add :tax_id, :binary
       add :allowed_domains, {:array, :string}, default: []
 
-      timestamps(type: :utc_datetime)
+      timestamps(type: :utc_datetime_usec)
     end
 
     create unique_index(:org_settings, [:org_id])

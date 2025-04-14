@@ -33,7 +33,7 @@ defmodule Zoonk.Catalog.Course do
     has_many :translations, CourseTranslation
     has_many :course_users, CourseUser
 
-    timestamps(type: :utc_datetime)
+    timestamps(type: :utc_datetime_usec)
   end
 
   @doc false

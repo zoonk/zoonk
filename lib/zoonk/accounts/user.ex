@@ -62,8 +62,8 @@ defmodule Zoonk.Accounts.User do
       values: LanguageConfig.list_languages(:atom),
       default: LanguageConfig.get_default_language(:atom)
 
-    field :confirmed_at, :utc_datetime
-    field :authenticated_at, :utc_datetime, virtual: true
+    field :confirmed_at, :utc_datetime_usec
+    field :authenticated_at, :utc_datetime_usec, virtual: true
 
     has_one :profile, UserProfile
     has_many :providers, UserProvider
@@ -74,7 +74,7 @@ defmodule Zoonk.Accounts.User do
     has_many :team_memberships, TeamMember
     has_many :teams, through: [:team_memberships, :team]
 
-    timestamps(type: :utc_datetime)
+    timestamps(type: :utc_datetime_usec)
   end
 
   @doc """
@@ -142,7 +142,7 @@ defmodule Zoonk.Accounts.User do
   Confirms the account by setting `confirmed_at`.
   """
   def confirm_changeset(user) do
-    now = DateTime.utc_now(:second)
+    now = DateTime.utc_now()
     change(user, confirmed_at: now)
   end
 

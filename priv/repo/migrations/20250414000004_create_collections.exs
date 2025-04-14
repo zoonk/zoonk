@@ -8,7 +8,7 @@ defmodule Zoonk.Repo.Migrations.CreateCollections do
       add :categories, {:array, :string}, null: false, default: []
       add :thumb_url, :string
 
-      timestamps(type: :utc_datetime)
+      timestamps(type: :utc_datetime_usec)
     end
 
     create index(:collections, [:org_id])

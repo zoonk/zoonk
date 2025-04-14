@@ -8,7 +8,7 @@ defmodule Zoonk.Repo.Migrations.CreateCollectionCourses do
 
       add :position, :integer, null: false
 
-      timestamps(type: :utc_datetime)
+      timestamps(type: :utc_datetime_usec)
     end
 
     create index(:collection_courses, [:collection_id])

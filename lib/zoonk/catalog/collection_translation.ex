@@ -35,7 +35,7 @@ defmodule Zoonk.Catalog.CollectionTranslation do
 
     belongs_to :collection, Collection
 
-    timestamps(type: :utc_datetime)
+    timestamps(type: :utc_datetime_usec)
   end
 
   @doc false

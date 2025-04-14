@@ -8,7 +8,7 @@ defmodule Zoonk.Repo.Migrations.CreateUserProvidersTable do
       add :provider, :string, null: false
       add :provider_uid, :string, null: false
 
-      timestamps(type: :utc_datetime)
+      timestamps(type: :utc_datetime_usec)
     end
 
     create unique_index(:user_providers, [:user_id, :provider])

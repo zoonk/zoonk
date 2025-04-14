@@ -8,7 +8,7 @@ defmodule Zoonk.Repo.Migrations.CreateCollectionUsers do
 
       add :role, :string, null: false, default: "member"
 
-      timestamps(type: :utc_datetime)
+      timestamps(type: :utc_datetime_usec)
     end
 
     create index(:collection_users, [:collection_id])

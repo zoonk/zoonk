@@ -67,7 +67,7 @@ config :zoonk,
 # Configures Ecto
 config :zoonk,
   ecto_repos: [Zoonk.Repo],
-  generators: [timestamp_type: :utc_datetime]
+  generators: [timestamp_type: :utc_datetime_usec]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

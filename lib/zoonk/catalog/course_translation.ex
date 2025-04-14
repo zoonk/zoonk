@@ -35,7 +35,7 @@ defmodule Zoonk.Catalog.CourseTranslation do
 
     belongs_to :course, Course
 
-    timestamps(type: :utc_datetime)
+    timestamps(type: :utc_datetime_usec)
   end
 
   @doc false

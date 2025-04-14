@@ -33,7 +33,7 @@ defmodule Zoonk.Accounts.UserToken do
 
     belongs_to :user, Zoonk.Accounts.User
 
-    timestamps(type: :utc_datetime, updated_at: false)
+    timestamps(type: :utc_datetime_usec, updated_at: false)
   end
 
   @doc """

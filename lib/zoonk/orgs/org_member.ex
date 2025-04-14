@@ -29,7 +29,7 @@ defmodule Zoonk.Orgs.OrgMember do
     belongs_to :org, Org
     belongs_to :user, User
 
-    timestamps(type: :utc_datetime)
+    timestamps(type: :utc_datetime_usec)
   end
 
   @doc false

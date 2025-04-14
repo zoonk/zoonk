@@ -15,7 +15,7 @@ defmodule Zoonk.Repo.Migrations.CreateOrgsTable do
       add :subdomain, :citext, null: false
       add :custom_domain, :citext
 
-      timestamps(type: :utc_datetime)
+      timestamps(type: :utc_datetime_usec)
     end
 
     create unique_index(:orgs, [:subdomain])

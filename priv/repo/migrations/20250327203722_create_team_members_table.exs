@@ -9,7 +9,7 @@ defmodule Zoonk.Repo.Migrations.CreateTeamMembersTable do
 
       add :role, :string, null: false, default: "member"
 
-      timestamps(type: :utc_datetime)
+      timestamps(type: :utc_datetime_usec)
     end
 
     create unique_index(:team_members, [:org_id, :team_id, :user_id])

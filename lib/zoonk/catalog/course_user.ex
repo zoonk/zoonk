@@ -28,7 +28,7 @@ defmodule Zoonk.Catalog.CourseUser do
     belongs_to :course, Course
     belongs_to :user, User
 
-    timestamps(type: :utc_datetime)
+    timestamps(type: :utc_datetime_usec)
   end
 
   @doc false

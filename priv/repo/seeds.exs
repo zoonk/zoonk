@@ -146,7 +146,7 @@ Repo.insert!(%OrgSettings{
 app_admin =
   Repo.insert!(%User{
     email: "admin@zoonk.test",
-    confirmed_at: DateTime.utc_now(:second),
+    confirmed_at: DateTime.utc_now(),
     stripe_customer_id: "cus_user1",
     year_of_birth: 1990,
     language: :en,
@@ -156,7 +156,7 @@ app_admin =
 app_member =
   Repo.insert!(%User{
     email: "member@zoonk.test",
-    confirmed_at: DateTime.utc_now(:second),
+    confirmed_at: DateTime.utc_now(),
     stripe_customer_id: "cus_user2",
     year_of_birth: 1992,
     language: :en,
@@ -166,7 +166,7 @@ app_member =
 team_admin =
   Repo.insert!(%User{
     email: "team-admin@zoonk.test",
-    confirmed_at: DateTime.utc_now(:second),
+    confirmed_at: DateTime.utc_now(),
     stripe_customer_id: "cus_user3",
     year_of_birth: 1985,
     language: :en,
@@ -176,7 +176,7 @@ team_admin =
 team_member =
   Repo.insert!(%User{
     email: "team-member@zoonk.test",
-    confirmed_at: DateTime.utc_now(:second),
+    confirmed_at: DateTime.utc_now(),
     stripe_customer_id: "cus_user4",
     year_of_birth: 1988,
     language: :en,
@@ -186,7 +186,7 @@ team_member =
 creator_admin =
   Repo.insert!(%User{
     email: "creator-admin@zoonk.test",
-    confirmed_at: DateTime.utc_now(:second),
+    confirmed_at: DateTime.utc_now(),
     stripe_customer_id: "cus_user5",
     year_of_birth: 1982,
     language: :de,
@@ -196,7 +196,7 @@ creator_admin =
 creator_member =
   Repo.insert!(%User{
     email: "creator-member@zoonk.test",
-    confirmed_at: DateTime.utc_now(:second),
+    confirmed_at: DateTime.utc_now(),
     stripe_customer_id: "cus_user6",
     year_of_birth: 1986,
     language: :de,
@@ -206,7 +206,7 @@ creator_member =
 school_admin =
   Repo.insert!(%User{
     email: "school-admin@zoonk.test",
-    confirmed_at: DateTime.utc_now(:second),
+    confirmed_at: DateTime.utc_now(),
     stripe_customer_id: "cus_user7",
     year_of_birth: 1975,
     language: :en,
@@ -216,7 +216,7 @@ school_admin =
 school_member =
   Repo.insert!(%User{
     email: "school-member@zoonk.test",
-    confirmed_at: DateTime.utc_now(:second),
+    confirmed_at: DateTime.utc_now(),
     stripe_customer_id: "cus_user8",
     year_of_birth: 1999,
     language: :en,

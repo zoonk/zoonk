@@ -75,7 +75,7 @@ defmodule Zoonk.Orgs.Org do
 
     belongs_to :city, City
 
-    timestamps(type: :utc_datetime)
+    timestamps(type: :utc_datetime_usec)
   end
 
   @doc false

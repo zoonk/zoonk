@@ -10,7 +10,7 @@ defmodule Zoonk.Repo.Migrations.CreateCollectionTranslations do
       add :slug, :citext, null: false
       add :description, :text
 
-      timestamps(type: :utc_datetime)
+      timestamps(type: :utc_datetime_usec)
     end
 
     create index(:collection_translations, [:collection_id])

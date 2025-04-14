@@ -36,7 +36,7 @@ defmodule Zoonk.Orgs.OrgSettings do
 
     belongs_to :org, Org
 
-    timestamps(type: :utc_datetime)
+    timestamps(type: :utc_datetime_usec)
   end
 
   @doc false

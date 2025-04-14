@@ -16,9 +16,9 @@ defmodule Zoonk.Repo.Migrations.CreateUsersAuthTables do
 
       add :email, :citext
 
-      add :confirmed_at, :utc_datetime
+      add :confirmed_at, :utc_datetime_usec
 
-      timestamps(type: :utc_datetime)
+      timestamps(type: :utc_datetime_usec)
     end
 
     create unique_index(:users, [:email])
@@ -34,7 +34,7 @@ defmodule Zoonk.Repo.Migrations.CreateUsersAuthTables do
       add :sent_to, :string
       add :authenticated_at, :utc_datetime_usec
 
-      timestamps(type: :utc_datetime, updated_at: false)
+      timestamps(type: :utc_datetime_usec, updated_at: false)
     end
 
     create index(:users_tokens, [:user_id])

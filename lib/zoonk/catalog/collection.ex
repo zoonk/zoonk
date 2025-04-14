@@ -36,7 +36,7 @@ defmodule Zoonk.Catalog.Collection do
     has_many :collection_users, CollectionUser
     has_many :collection_courses, CollectionCourse
 
-    timestamps(type: :utc_datetime)
+    timestamps(type: :utc_datetime_usec)
   end
 
   @doc false

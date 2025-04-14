@@ -14,7 +14,7 @@ defmodule Zoonk.Repo.Migrations.CreateUserProfilesTable do
 
       add :bio, :text
 
-      timestamps(type: :utc_datetime)
+      timestamps(type: :utc_datetime_usec)
     end
 
     create unique_index(:user_profiles, [:username])

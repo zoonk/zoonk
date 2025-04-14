@@ -31,7 +31,7 @@ defmodule Zoonk.Orgs.TeamMember do
     belongs_to :team, Team
     belongs_to :user, User
 
-    timestamps(type: :utc_datetime)
+    timestamps(type: :utc_datetime_usec)
   end
 
   @doc false
