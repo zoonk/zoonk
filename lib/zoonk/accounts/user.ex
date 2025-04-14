@@ -83,7 +83,7 @@ defmodule Zoonk.Accounts.User do
   def settings_changeset(user, attrs, opts \\ []) do
     user
     |> email_changeset(attrs, opts)
-    |> cast(attrs, [:language, :tax_id])
+    |> cast(attrs, [:language, :kind, :tax_id])
     |> validate_required([:language])
   end
 
