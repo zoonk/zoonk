@@ -237,11 +237,12 @@ defmodule ZoonkWeb.UserAuth do
     socket
     |> Phoenix.Component.assign(uri: get_uri(uri))
     |> Phoenix.Component.assign_new(:scope, fn ->
-      {user, _token_inserted_at} =
+      user =
         if user_token = session["user_token"] do
-          Accounts.get_user_by_session_token(user_token)
-        else
-          {nil, nil}
+          case Accounts.get_user_by_session_token(user_token) do
+            {user, _token_inserted_at} -> user
+            nil -> nil
+          end
         end
 
       build_scope(user, host)
