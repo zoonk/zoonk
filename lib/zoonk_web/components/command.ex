@@ -127,15 +127,19 @@ defmodule ZoonkWeb.Components.Command do
         <li>Settings item</li>
       </.command_list>
   """
+  attr :id, :string, default: nil, doc: "The unique identifier for the list"
   attr :class, :string, default: nil, doc: "Additional CSS classes for the list"
   slot :inner_block, required: true, doc: "The content of the list"
 
   def command_list(assigns) do
     ~H"""
-    <ul class={[
-      "max-h-72 select-none overflow-y-auto overflow-x-hidden md:max-h-100 lg:max-h-124",
-      @class
-    ]}>
+    <ul
+      class={[
+        "max-h-72 select-none overflow-y-auto overflow-x-hidden md:max-h-100 lg:max-h-124",
+        @class
+      ]}
+      id={@id}
+    >
       {render_slot(@inner_block)}
     </ul>
     """

@@ -45,20 +45,28 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
       </div>
 
       <.dialog id="course-search-dialog">
-        <form phx-change="search-courses" phx-submit="search-courses">
+        <form
+          phx-change={JS.push("search-courses", loading: "#command_list")}
+          phx-submit="search-courses"
+        >
           <.command_input placeholder={get_placeholder()} />
         </form>
 
-        <.command_list>
-          <.command_empty :if={@course_results == []}>
+        <.command_list id="command_list" class="group">
+          <.command_empty :if={@course_results == []} class="group-[.phx-change-loading]:hidden">
             {dgettext("onboarding", "No courses found. Try a different search term.")}
           </.command_empty>
+
+          <div class="hidden flex-col items-center justify-center py-8 group-[.phx-change-loading]:flex">
+            <.spinner class="size-12" />
+          </div>
 
           <.command_item
             :for={course <- @course_results}
             phx-click="select-course"
             phx-value-title={course.title}
             phx-value-description={course.description}
+            class="group-[.phx-change-loading]:hidden"
           >
             <div class="flex flex-col">
               <span>{course.title}</span>
