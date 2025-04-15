@@ -21,9 +21,12 @@ defmodule Zoonk.Agents do
           role: "user",
           content: """
           A user is onboarding to a learning platform.
-          They typed: "#{input}"
+          They typed this input: "#{input}"
 
-          Generate 3 to 5 broad **course suggestions** in the same language as "#{input}". If ambiguous, use "#{app_language}".
+          Generate 3 to 5 broad **course suggestions** in the same language as this input: "#{input}".
+          Always write both the title and description in the same language.
+          If the input is clear, use the same language as the input.
+          If the input is short or ambiguous (e.g. one word), use "#{app_language}" for both title and description.
 
           Each course must follow these rules:
 
@@ -62,9 +65,11 @@ defmodule Zoonk.Agents do
           - Design de Personagens – Descubra como criar personagens únicos, com estilo e personalidade.
           - Anatomia Artística – Entenda proporções e movimento para criar figuras humanas mais realistas.
 
-          Now respond with 3 to 5 course titles and descriptions for: "#{input}".
-          Remember to use the same language as the one used by them here: "#{input}".
-          If the language is ambiguous, use "#{app_language}".
+          Now respond with 3 to 5 course titles and descriptions for this input: "#{input}".
+
+          Always write both the title and description in the same language.
+          If the input is clear, use the same language as the input.
+          If the input is short or ambiguous (e.g. one word), use "#{app_language}" for both title and description.
           """
         }
       ]
