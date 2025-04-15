@@ -26,7 +26,7 @@ defmodule ZoonkWeb.Components.Dialog do
       id={@id}
       class={[
         "max-h-[85vh] w-[90vw] overflow-hidden",
-        "fixed z-50 rounded p-0 shadow-lg",
+        "ring-zk-border/60 fixed z-50 rounded p-0 shadow-lg ring",
         "bg-zk-surface text-zk-surface-foreground",
         "backdrop:bg-zk-background/20 backdrop:backdrop-blur-sm",
         "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2",
