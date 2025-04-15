@@ -102,7 +102,7 @@ defmodule ZoonkWeb.Components.Command do
           "placeholder:text-zk-muted-foreground/70",
           "disabled:cursor-not-allowed disabled:opacity-50"
         ]}
-        phx-throttle
+        phx-debounce
         {@rest}
       />
     </div>
