@@ -20,10 +20,6 @@ if System.get_env("PHX_SERVER") do
   config :zoonk, ZoonkWeb.Endpoint, server: true
 end
 
-config :instructor,
-  adapter: Instructor.Adapters.OpenAI,
-  openai: [api_key: System.fetch_env!("OPENAI_API_KEY")]
-
 config :zoonk, :strategies,
   apple: [
     client_id: System.get_env("APPLE_SERVICE_ID"),
@@ -42,6 +38,12 @@ config :zoonk, :strategies,
     client_secret: System.get_env("GOOGLE_CLIENT_SECRET"),
     strategy: Assent.Strategy.Google
   ]
+
+if config_env() in [:dev, :prod] do
+  config :instructor,
+    adapter: Instructor.Adapters.OpenAI,
+    openai: [api_key: System.fetch_env!("OPENAI_API_KEY")]
+end
 
 if config_env() == :prod do
   database_url =
