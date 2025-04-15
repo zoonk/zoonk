@@ -2,11 +2,11 @@
 
 These are some of the terms used in our application. It helps to understand how this application is structured.
 
-## Tracks
+## Collections
 
-Tracks are a collection of courses. They can have multiple courses or other tracks. For example:
+Collections are the main building blocks of Zoonk. They are used to group related courses together. For example:
 
-| Track            | Sub-tracks                                                 |
+| Collection       | Courses                                                    |
 | ---------------- | ---------------------------------------------------------- |
 | Physics          | Classical Mechanics, Quantum Mechanics, Thermodynamics     |
 | Chemistry        | Organic Chemistry, Inorganic Chemistry, Physical Chemistry |
@@ -17,7 +17,7 @@ Tracks are a collection of courses. They can have multiple courses or other trac
 
 ## Courses
 
-Courses are a collection of lessons. For example:
+Courses are a group of lessons. For example:
 
 | Course               | Lessons                                                                |
 | -------------------- | ---------------------------------------------------------------------- |
@@ -28,23 +28,25 @@ Courses are a collection of lessons. For example:
 
 Lessons are very small units of knowledge. They cover only a single topic for better understanding - and they have a fixed set of exercises:
 
-| Exercise Kind  | Description                                                                       |
-| -------------- | --------------------------------------------------------------------------------- |
-| `:explanation` | A short but practical explanation of the topic.                                   |
-| `:examples`    | Practical examples to understand where and when to use this knowledge.            |
-| `:story`       | A hands-on story to understand the topic in a real-world context.                 |
-| `:quiz`        | A quiz to test your knowledge.                                                    |
-| `:practice`    | A quiz-like exercise to practice what you've learned, focused on your weaknesses. |
+| Exercise Kind  | Description                                                                             |
+| -------------- | --------------------------------------------------------------------------------------- |
+| `:explanation` | A short but practical explanation of the topic.                                         |
+| `:examples`    | Practical examples to understand where and when to use this knowledge.                  |
+| `:story`       | A hands-on story to understand the topic in a real-world context.                       |
+| `:simulation`  | Scenarios where choices affect outcomes. It's good to see how things work in real-life. |
+| `:challenge`   | Practical problems to test critical thinking and logic skills.                          |
+| `:quiz`        | A quiz to test your knowledge.                                                          |
+| `:practice`    | A quiz-like exercise to practice what you've learned, focused on your weaknesses.       |
 
 ## Translations
 
 Zoonk supports multiple languages. This is why we have a `_translations` table for each content type. For example:
 
-| Table       | Translations Table      |
-| ----------- | ----------------------- |
-| `tracks`    | `track_translations`    |
-| `courses`   | `course_translations`   |
-| `lessons`   | `lesson_translations`   |
-| `exercises` | `exercise_translations` |
+| Table         | Translations Table        |
+| ------------- | ------------------------- |
+| `collections` | `collection_translations` |
+| `courses`     | `course_translations`     |
+| `lessons`     | `lesson_translations`     |
+| `exercises`   | `exercise_translations`   |
 
 This allows us to update all translations at once. For example, if we fix an error in the English translation, we can update all other translations at the same time.
