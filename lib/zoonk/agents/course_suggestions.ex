@@ -25,14 +25,21 @@ defmodule Zoonk.Agents.CourseSuggestions do
     embeds_many :courses, Zoonk.Agents.CourseSuggestion
   end
 
-  @impl true
+  @impl Instructor.Validator
   def validate_changeset(changeset) do
     cast_embed(changeset, :courses, required: true)
   end
 end
 
 defmodule Zoonk.Agents.CourseSuggestion do
-  @moduledoc false
+  @moduledoc """
+  Schema representing a single course suggestion.
+
+  | Field       | Type     | Description                                                                              |
+  |-------------|----------|------------------------------------------------------------------------------------------|
+  | title       | String   | The course name (1-4 words, super concise)                                               |
+  | description | String   | A 1-sentence description explaining what the course is about and why it could be useful  |
+  """
   use Ecto.Schema
 
   import Ecto.Changeset

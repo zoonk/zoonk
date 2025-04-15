@@ -33,17 +33,17 @@ defmodule Zoonk.Catalog do
   end
 
   @doc """
-  Suggests course names based on user input.
+  Suggests courses based on user input.
 
   ## Examples
 
-      iex> list_course_name_suggestions("How to program in Python", "en")
-      {:ok, %{course_name: "Introduction to Python Programming", language: "en", language_name: "English"}}
-
-      iex> list_course_name_suggestions("Como hacer pan casero", "es")
-      {:ok, %{course_name: "Panadería Casera para Principiantes", language: "es", language_name: "Spanish"}}
+      iex> list_course_suggestions("how to code", "en")
+      {:ok, [%Zoonk.Agents.CourseSuggestion{
+        title: "Computer Science",
+        description: "A comprehensive study of the principles and applications of computer science."
+      }, ...]}
   """
-  def list_course_name_suggestions(input, app_language) do
-    Agents.suggest_course_names(input, app_language)
+  def list_course_suggestions(input, app_language) do
+    Agents.suggest_courses(input, app_language)
   end
 end

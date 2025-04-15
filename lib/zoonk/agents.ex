@@ -9,9 +9,9 @@ defmodule Zoonk.Agents do
   alias Zoonk.Agents.CourseSuggestions
 
   @doc """
-  Suggests course names based on user input.
+  Suggests courses based on user input.
   """
-  def suggest_course_names(input, app_language) when is_binary(input) and input != "" do
+  def suggest_courses(input, app_language) when is_binary(input) and input != "" do
     Instructor.chat_completion(
       model: "gpt-4.1-mini",
       response_model: CourseSuggestions,
@@ -77,5 +77,5 @@ defmodule Zoonk.Agents do
     )
   end
 
-  def suggest_course_names(_input), do: {:error, :invalid_input}
+  def suggest_courses(_input), do: {:error, :invalid_input}
 end
