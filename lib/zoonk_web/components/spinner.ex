@@ -28,7 +28,7 @@ defmodule ZoonkWeb.Components.Spinner do
   def spinner(assigns) do
     ~H"""
     <div
-      class={["text-zk-foreground/40 animate-spin", @class]}
+      class={["text-zk-border animate-spin", @class]}
       role="status"
       aria-label={gettext("Loading")}
       {@rest}

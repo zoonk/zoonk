@@ -53,7 +53,7 @@ defmodule ZoonkDev.UIPreview.SpinnerPreviewLive do
               <.text tag="h3" size={:md}>Colors</.text>
               <div class="flex items-center gap-4">
                 <div class="flex flex-col items-center gap-2">
-                  <.spinner class="size-8 text-zk-foreground/40" />
+                  <.spinner class="size-8" />
                   <.text size={:xs} variant={:secondary}>Default</.text>
                 </div>
                 <div class="flex flex-col items-center gap-2">
@@ -65,12 +65,8 @@ defmodule ZoonkDev.UIPreview.SpinnerPreviewLive do
                   <.text size={:xs} variant={:secondary}>Success</.text>
                 </div>
                 <div class="flex flex-col items-center gap-2">
-                  <.spinner class="size-8 text-zk-warning" />
-                  <.text size={:xs} variant={:secondary}>Warning</.text>
-                </div>
-                <div class="flex flex-col items-center gap-2">
-                  <.spinner class="size-8 text-zk-danger" />
-                  <.text size={:xs} variant={:secondary}>Danger</.text>
+                  <.spinner class="size-8 text-zk-destructive" />
+                  <.text size={:xs} variant={:secondary}>Destructive</.text>
                 </div>
               </div>
             </div>

@@ -142,7 +142,7 @@ defmodule ZoonkWeb.Components.Command do
       id={@id}
     >
       <div class="hidden flex-col items-center justify-center py-8 group-[.phx-change-loading]:flex">
-        <.spinner class="size-12" />
+        <.spinner class="size-4" />
       </div>
 
       {render_slot(@inner_block)}
