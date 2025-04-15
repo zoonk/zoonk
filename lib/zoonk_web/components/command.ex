@@ -170,7 +170,6 @@ defmodule ZoonkWeb.Components.Command do
     ~H"""
     <li role="option">
       <.link
-        role="button"
         tabindex="0"
         class={[
           "relative flex w-full select-none items-center gap-2 rounded-sm px-2 py-1.5",
