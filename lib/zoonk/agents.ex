@@ -27,6 +27,7 @@ defmodule Zoonk.Agents do
           Always write both the title and description in the same language.
           If the input is clear, use the same language as the input.
           If the input is short or ambiguous (e.g. one word), use "#{app_language}" for both title and description.
+          If you're not sure what language to use, then use "#{app_language}".
 
           Each course must follow these rules:
 
@@ -70,10 +71,6 @@ defmodule Zoonk.Agents do
           - Anatomia Artística – Entenda proporções e movimento para criar figuras humanas mais realistas.
 
           Now respond with 3 to 5 course titles and descriptions for this input: "#{input}".
-
-          Always write both the title and description in the same language.
-          If the input is clear, use the same language as the input.
-          If the input is short or ambiguous (e.g. one word), use "#{app_language}" for both title and description.
           """
         }
       ]
