@@ -13,7 +13,7 @@ defmodule Zoonk.Agents do
   """
   def suggest_course_names(input, app_language) when is_binary(input) and input != "" do
     Instructor.chat_completion(
-      model: "gpt-4.1-nano",
+      model: "gpt-4.1-mini",
       response_model: CourseSuggestions,
       max_retries: 3,
       messages: [
@@ -46,6 +46,10 @@ defmodule Zoonk.Agents do
           - Electrical Engineering
           - Cognitive Psychology
           - Artificial Intelligence
+
+          If the user input is already a valid or common course name (e.g. "Educação Financeira", "Digital Transformation", "Leadership"), include it as one of the suggestions — ideally the first.
+          Do not replace it with more academic fields unless the original term is too vague or nonstandard.
+          If the input closely resembles a good course title, include a suggestion using the same or very similar title.
 
           Each course must also include a 1-sentence description that:
           - Clearly explains what the course covers.
