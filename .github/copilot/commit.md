@@ -7,7 +7,8 @@
     - Catalog: for changes in `lib/zoonk_web/live/catalog/`
     - Library: for changes in `lib/zoonk_web/live/library/`
   - For asset changes in `assets/`, use Assets.
-  - For CI-related changes in `.github/workflows/`, use `CI:` but for GitHub Copilot changes in `.github/copilot/`, use `Copilot:`.
+  - For changes in the `guides` folder, use Docs.
+  - For CI-related changes in `.github/workflows/`, use `CI:` but for changes in `.github/copilot/`, use `Copilot:`.
   - When we make changes to tests only, use the prefix `Tests:`.
   - When the commit only adds a function, use the function arity. For example: `Orgs: Add get_org_settings/1` is better than `Orgs: Add get_org_settings function`.
 - In general:
