@@ -48,6 +48,7 @@ defmodule Zoonk.MixProject do
       {:ex_doc, "~> 0.37", only: :dev, runtime: false},
       {:floki, ">= 0.30.0", only: :test},
       {:gettext, "~> 0.26"},
+      {:instructor, "~> 0.1.0"},
       {:jason, "~> 1.2"},
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.2", only: [:dev, :test], runtime: false},
