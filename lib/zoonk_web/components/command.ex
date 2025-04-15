@@ -15,6 +15,7 @@ defmodule ZoonkWeb.Components.Command do
   use Gettext, backend: Zoonk.Gettext
 
   import ZoonkWeb.Components.Icon
+  import ZoonkWeb.Components.Spinner
   import ZoonkWeb.Components.Text
 
   @doc """
@@ -102,7 +103,7 @@ defmodule ZoonkWeb.Components.Command do
           "placeholder:text-zk-muted-foreground/70",
           "disabled:cursor-not-allowed disabled:opacity-50"
         ]}
-        phx-throttle
+        phx-debounce
         {@rest}
       />
     </div>
@@ -127,15 +128,23 @@ defmodule ZoonkWeb.Components.Command do
         <li>Settings item</li>
       </.command_list>
   """
+  attr :id, :string, default: "command_list", doc: "The unique identifier for the list"
   attr :class, :string, default: nil, doc: "Additional CSS classes for the list"
   slot :inner_block, required: true, doc: "The content of the list"
 
   def command_list(assigns) do
     ~H"""
-    <ul class={[
-      "max-h-72 select-none overflow-y-auto overflow-x-hidden md:max-h-100 lg:max-h-124",
-      @class
-    ]}>
+    <ul
+      class={[
+        "group max-h-72 select-none overflow-y-auto overflow-x-hidden md:max-h-100 lg:max-h-124",
+        @class
+      ]}
+      id={@id}
+    >
+      <div class="hidden flex-col items-center justify-center py-8 group-[.phx-change-loading]:flex">
+        <.spinner class="size-4" />
+      </div>
+
       {render_slot(@inner_block)}
     </ul>
     """
@@ -168,12 +177,11 @@ defmodule ZoonkWeb.Components.Command do
 
   def command_item(assigns) do
     ~H"""
-    <li role="option">
+    <li role="option" class="group-[.phx-change-loading]:hidden">
       <.link
-        role="button"
         tabindex="0"
         class={[
-          "relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5",
+          "relative flex w-full select-none items-center gap-2 rounded-sm px-2 py-1.5",
           "text-zk-secondary-foreground text-sm outline-none",
           "hover:bg-zk-secondary",
           "focus-visible:bg-zk-secondary",
@@ -286,7 +294,13 @@ defmodule ZoonkWeb.Components.Command do
 
   def command_empty(assigns) do
     ~H"""
-    <.text variant={:secondary} tag="p" size={:sm} class={["py-6 text-center", @class]} {@rest}>
+    <.text
+      variant={:secondary}
+      tag="p"
+      size={:sm}
+      class={["py-6 text-center group-[.phx-change-loading]:hidden", @class]}
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </.text>
     """
