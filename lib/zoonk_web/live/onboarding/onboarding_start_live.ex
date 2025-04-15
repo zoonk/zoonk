@@ -52,21 +52,16 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
           <.command_input placeholder={get_placeholder()} />
         </form>
 
-        <.command_list id="command_list" class="group">
-          <.command_empty :if={@course_results == []} class="group-[.phx-change-loading]:hidden">
+        <.command_list>
+          <.command_empty :if={@course_results == []}>
             {dgettext("onboarding", "No courses found. Try a different search term.")}
           </.command_empty>
-
-          <div class="hidden flex-col items-center justify-center py-8 group-[.phx-change-loading]:flex">
-            <.spinner class="size-12" />
-          </div>
 
           <.command_item
             :for={course <- @course_results}
             phx-click="select-course"
             phx-value-title={course.title}
             phx-value-description={course.description}
-            class="group-[.phx-change-loading]:hidden"
           >
             <div class="flex flex-col">
               <span>{course.title}</span>

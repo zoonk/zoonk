@@ -15,6 +15,7 @@ defmodule ZoonkWeb.Components.Command do
   use Gettext, backend: Zoonk.Gettext
 
   import ZoonkWeb.Components.Icon
+  import ZoonkWeb.Components.Spinner
   import ZoonkWeb.Components.Text
 
   @doc """
@@ -127,7 +128,7 @@ defmodule ZoonkWeb.Components.Command do
         <li>Settings item</li>
       </.command_list>
   """
-  attr :id, :string, default: nil, doc: "The unique identifier for the list"
+  attr :id, :string, default: "command_list", doc: "The unique identifier for the list"
   attr :class, :string, default: nil, doc: "Additional CSS classes for the list"
   slot :inner_block, required: true, doc: "The content of the list"
 
@@ -135,11 +136,15 @@ defmodule ZoonkWeb.Components.Command do
     ~H"""
     <ul
       class={[
-        "max-h-72 select-none overflow-y-auto overflow-x-hidden md:max-h-100 lg:max-h-124",
+        "group max-h-72 select-none overflow-y-auto overflow-x-hidden md:max-h-100 lg:max-h-124",
         @class
       ]}
       id={@id}
     >
+      <div class="hidden flex-col items-center justify-center py-8 group-[.phx-change-loading]:flex">
+        <.spinner class="size-12" />
+      </div>
+
       {render_slot(@inner_block)}
     </ul>
     """
@@ -172,7 +177,7 @@ defmodule ZoonkWeb.Components.Command do
 
   def command_item(assigns) do
     ~H"""
-    <li role="option">
+    <li role="option" class="group-[.phx-change-loading]:hidden">
       <.link
         tabindex="0"
         class={[
@@ -289,7 +294,13 @@ defmodule ZoonkWeb.Components.Command do
 
   def command_empty(assigns) do
     ~H"""
-    <.text variant={:secondary} tag="p" size={:sm} class={["py-6 text-center", @class]} {@rest}>
+    <.text
+      variant={:secondary}
+      tag="p"
+      size={:sm}
+      class={["py-6 text-center group-[.phx-change-loading]:hidden", @class]}
+      {@rest}
+    >
       {render_slot(@inner_block)}
     </.text>
     """
