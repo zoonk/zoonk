@@ -8,6 +8,8 @@
     - Library: for changes in `lib/zoonk_web/live/library/`
   - For asset changes in `assets/`, use Assets.
   - For changes in the `guides` folder, use Docs.
+  - When adding a component, use `Components: Add {component_name}`. Don't do `Components: Add {component_name} component` or `Components: Add {component_name} and preview`. It's implicit that it's a component and we're adding a preview.
+  - When updating a component, use `{ComponentName}` as the prefix.
   - For CI-related changes in `.github/workflows/`, use `CI:` but for changes in `.github/copilot/`, use `Copilot:`.
   - When we make changes to tests only, use the prefix `Tests:`.
   - When the commit only adds a function, use the function arity. For example: `Orgs: Add get_org_settings/1` is better than `Orgs: Add get_org_settings function`.
