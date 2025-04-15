@@ -37,13 +37,13 @@ defmodule Zoonk.Catalog do
 
   ## Examples
 
-      iex> list_course_name_suggestions("How to program in Python")
+      iex> list_course_name_suggestions("How to program in Python", "en")
       {:ok, %{course_name: "Introduction to Python Programming", language: "en", language_name: "English"}}
 
-      iex> list_course_name_suggestions("Como hacer pan casero")
+      iex> list_course_name_suggestions("Como hacer pan casero", "es")
       {:ok, %{course_name: "Panadería Casera para Principiantes", language: "es", language_name: "Spanish"}}
   """
-  def list_course_name_suggestions(input) do
-    Agents.suggest_course_names(input)
+  def list_course_name_suggestions(input, app_language) do
+    Agents.suggest_course_names(input, app_language)
   end
 end
