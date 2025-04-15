@@ -39,6 +39,12 @@ config :zoonk, :strategies,
     strategy: Assent.Strategy.Google
   ]
 
+if config_env() in [:dev, :prod] do
+  config :instructor,
+    adapter: Instructor.Adapters.OpenAI,
+    openai: [api_key: System.fetch_env!("OPENAI_API_KEY")]
+end
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||
