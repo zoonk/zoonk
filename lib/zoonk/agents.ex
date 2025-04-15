@@ -27,12 +27,22 @@ defmodule Zoonk.Agents do
 
           Each course must follow these rules:
 
-          - The **title** must be short, broad, and serious-sounding — 1 to 2 words, like a real university subject or catalog category.
+          - The title must be a broad, serious-sounding name of a real academic or professional field. Titles may include 1–3 words if that’s part of the standard name of the field (e.g. "Data Science", "UI Design", "Mechanical Engineering"). Avoid vague or invented titles. Prefer canonical ones.
           - Never include qualifiers like "Basics", "Foundations", "Intro", "Beginner", "Advanced", "Essentials", "101", etc.
           - Never include "and", "or", or slashes (/) in the title.
           - Never group topics into one title. Always split them.
           - Titles should be canonical academic or professional fields (e.g. "Physics", "Law", "Art", "Engineering", "Neuroscience").
           - If the user input is vague (e.g. “I want to code”), map it to broader established fields (e.g. “Computer Science”, “Web Development”, “Mobile Development”).
+
+          Examples of valid course titles:
+          - Computer Science
+          - Data Science
+          - UI Design
+          - UX Design
+          - Mechanical Engineering
+          - Electrical Engineering
+          - Cognitive Psychology
+          - Artificial Intelligence
 
           Each course must also include a 1-sentence description that:
           - Clearly explains what the course covers.
