@@ -91,7 +91,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
       {:ok, suggestions} ->
         {:noreply, assign(socket, :course_results, suggestions.courses)}
 
-      {:error, _} ->
+      {:error, _error} ->
         {:noreply, assign(socket, :course_results, [])}
     end
   end
