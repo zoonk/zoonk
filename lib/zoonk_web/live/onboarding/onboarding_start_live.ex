@@ -47,7 +47,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
       <.dialog id="course-search-dialog">
         <form
           phx-change={JS.push("search-courses", loading: "#command_list")}
-          phx-submit="search-courses"
+          phx-submit={JS.push("search-courses", loading: "#command_list")}
         >
           <.command_input placeholder={get_placeholder()} />
         </form>
