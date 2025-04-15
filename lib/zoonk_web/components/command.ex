@@ -173,7 +173,7 @@ defmodule ZoonkWeb.Components.Command do
         role="button"
         tabindex="0"
         class={[
-          "relative flex w-full cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5",
+          "relative flex w-full select-none items-center gap-2 rounded-sm px-2 py-1.5",
           "text-zk-secondary-foreground text-sm outline-none",
           "hover:bg-zk-secondary",
           "focus-visible:bg-zk-secondary",
