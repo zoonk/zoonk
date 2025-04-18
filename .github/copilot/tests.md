@@ -6,3 +6,4 @@
 - Add fixtures individually to each test instead of adding them to the `setup` block.
 - Use the `PhoenixTest` library for testing.
 - `Phoenix.ConnTest.get_flash/2` is deprecated. Use `Phoenix.Flash.get/2` instead.
+- When testing private functions, don't make them public for testing purposes only. Instead, test public functions that call them.
