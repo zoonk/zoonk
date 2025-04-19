@@ -52,5 +52,5 @@ config :zoonk, ZoonkWeb.Endpoint,
 
 config :zoonk, :ai,
   openai: [
-    plug: {Req.Test, Zoonk.OpenAIClient}
+    plug: {Req.Test, :openai_client}
   ]

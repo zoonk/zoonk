@@ -6,7 +6,6 @@ defmodule Zoonk.AITest do
 
   describe "set_model/2" do
     test "uses default model if none provided" do
-      Application.put_env(:zoonk, :ai, default_model: "gpt-4.1-mini")
       assert %AI{}.model == "gpt-4.1-mini"
     end
 

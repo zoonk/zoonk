@@ -5,7 +5,7 @@ defmodule Zoonk.AI.AIClient.OpenAIClientTest do
 
   describe "generate_object/1" do
     test "returns the object when successful" do
-      Req.Test.stub(Zoonk.OpenAIClient, fn conn ->
+      Req.Test.stub(:openai_client, fn conn ->
         Req.Test.json(conn, %{
           "error" => nil,
           "output" => [
