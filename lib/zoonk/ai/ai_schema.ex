@@ -7,6 +7,7 @@ defmodule Zoonk.AI.AISchema do
 
   It supports nested schemas and field definitions with various data types.
   """
+  @derive Jason.Encoder
   defstruct type: "json_schema",
             name: "",
             strict: true,

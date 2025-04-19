@@ -20,12 +20,16 @@ defmodule Zoonk.AITest do
   describe "set_schema/2" do
     test "sets the schema" do
       schema =
-        %AISchema{}
+        %AISchema{name: "user"}
         |> AISchema.add_field(%{name: "string"})
         |> AISchema.add_field(%{age: "integer"})
 
       %AI{} = ai = AI.set_schema(%AI{}, schema)
       assert ai.text.format == schema
+    end
+
+    test "schema must have a valid name" do
+      assert_raise ArgumentError, fn -> AI.set_schema(%AI{}, %AISchema{}) end
     end
   end
 

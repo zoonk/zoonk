@@ -59,9 +59,6 @@ config :zoonk, ZoonkWeb.Endpoint,
   pubsub_server: Zoonk.PubSub,
   live_view: [signing_salt: "aQIHSki0"]
 
-# AI model configuration
-config :zoonk, :ai, default_model: System.get_env("AI_DEFAULT_MODEL")
-
 # Make sure all schemas are migrated when running `mix cloak.migrate.ecto`
 config :zoonk,
   cloak_repo: Zoonk.Repo,

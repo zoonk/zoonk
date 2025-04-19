@@ -8,10 +8,13 @@ defmodule Zoonk.AI do
   It supports structured output via JSON Schema
   to ensure consistent responses.
   """
-  defstruct model: Application.compile_env(:zoonk, :ai)[:default_model] || "gpt-4.1-mini",
+  alias Zoonk.AI.AISchema
+
+  @derive Jason.Encoder
+  defstruct model: "gpt-4.1-mini",
             instructions: "",
             input: [],
-            text: %{format: %Zoonk.AI.AISchema{}}
+            text: %{format: %AISchema{}}
 
   @doc """
   Set the AI model to use.
@@ -28,12 +31,25 @@ defmodule Zoonk.AI do
   @doc """
   Set a schema.
 
+  Raises `ArgumentError` if schema's name is missing or empty.
+
   ## Examples
 
+      iex> AI.set_schema(%Zoonk.AI{}, %Zoonk.AI.AISchema{name: "test"})
+      %AI{text: %{format: %Zoonk.AI.AISchema{name: "test"}}}
+
       iex> AI.set_schema(%Zoonk.AI{}, %Zoonk.AI.AISchema{})
-      %AI{text: %{format: %Zoonk.AI.AISchema{}}}
+      ** (ArgumentError) schema name cannot be empty
   """
+  def set_schema(%__MODULE__{}, %AISchema{} = schema) when schema.name == "" do
+    raise ArgumentError, "schema name cannot be empty"
+  end
+
   def set_schema(%__MODULE__{} = ai, schema) do
+    if schema.name == "" do
+      raise ArgumentError, "schema name cannot be empty"
+    end
+
     %{ai | text: %{format: schema}}
   end
 
