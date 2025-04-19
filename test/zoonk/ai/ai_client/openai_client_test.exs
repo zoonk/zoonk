@@ -18,8 +18,7 @@ defmodule Zoonk.AI.AIClient.OpenAIClientTest do
         })
       end)
 
-      assert {:ok, %{"language" => "English"}} =
-               OpenAIClient.generate_object(%Zoonk.AI{})
+      assert {:ok, %{language: "English"}} = OpenAIClient.generate_object(%Zoonk.AI{})
     end
   end
 end

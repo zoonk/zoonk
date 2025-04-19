@@ -22,9 +22,11 @@ defmodule Zoonk.AI.AIClient.OpenAIClient do
       {:ok, %Req.Response{}}
   """
   def generate_object(%AI{} = payload) do
-    case Req.post(@responses_endpoint, json: payload, auth: {:bearer, get_api_key()}) do
+    opts = Keyword.merge([json: payload], Application.get_env(:zoonk, :ai)[:openai] || [])
+
+    case Req.post(@responses_endpoint, opts) do
       {:ok, %Req.Response{body: %{"error" => nil} = body}} ->
-        object_response(hd(body["output"]["content"]))
+        object_response(hd(body["output"])["content"])
 
       {:ok, %Req.Response{body: %{"error" => error}}} ->
         {:error, error}
@@ -35,14 +37,10 @@ defmodule Zoonk.AI.AIClient.OpenAIClient do
   end
 
   defp object_response([%{"type" => "output_text"} = content]) do
-    {:ok, JSON.decode!(content["text"])}
+    {:ok, Jason.decode!(content["text"], keys: :atoms)}
   end
 
   defp object_response([%{"type" => "refusal"} = content]) do
     {:error, content["refusal"]}
-  end
-
-  defp get_api_key do
-    Application.get_env(:zoonk, :openai)[:api_key]
   end
 end
