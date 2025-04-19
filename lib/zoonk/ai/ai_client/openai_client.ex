@@ -37,7 +37,7 @@ defmodule Zoonk.AI.AIClient.OpenAIClient do
   end
 
   defp object_response([%{"type" => "output_text"} = content]) do
-    {:ok, Jason.decode!(content["text"], keys: :atoms)}
+    {:ok, JSON.decode!(content["text"])}
   end
 
   defp object_response([%{"type" => "refusal"} = content]) do
