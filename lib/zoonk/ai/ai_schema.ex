@@ -41,8 +41,7 @@ defmodule Zoonk.AI.AISchema do
       %AISchema{schema: %{properties: %{age: %{type: "integer"}, name: %{type: "string"}}}}
   """
   def add_field(%__MODULE__{schema: schema} = ai_schema, fields) do
-    new_props = Map.new(fields, fn {k, v} -> {k, %{type: v}} end)
-    props = Map.merge(schema.properties, new_props)
+    props = Map.merge(schema.properties, fields_to_json_props(fields))
 
     new_schema = %{
       schema
@@ -57,5 +56,9 @@ defmodule Zoonk.AI.AISchema do
     map
     |> Map.keys()
     |> Enum.map(&to_string/1)
+  end
+
+  defp fields_to_json_props(%{} = fields) do
+    Map.new(fields, fn {key, type} -> {key, %{type: type}} end)
   end
 end
