@@ -24,4 +24,16 @@ defmodule Zoonk.AI do
   def set_model(%__MODULE__{} = ai, model) do
     %{ai | model: model}
   end
+
+  @doc """
+  Set a schema.
+
+  ## Examples
+
+      iex> AI.set_schema(%Zoonk.AI{}, %Zoonk.AI.AISchema{})
+      %AI{text: %{format: %Zoonk.AI.AISchema{}}}
+  """
+  def set_schema(%__MODULE__{} = ai, schema) do
+    %{ai | text: %{format: schema}}
+  end
 end
