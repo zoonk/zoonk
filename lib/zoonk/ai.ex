@@ -36,4 +36,18 @@ defmodule Zoonk.AI do
   def set_schema(%__MODULE__{} = ai, schema) do
     %{ai | text: %{format: schema}}
   end
+
+  @doc """
+  Add instructions to the AI.
+
+  Inserts a system message as the first item in the model's context.
+
+  ## Examples
+
+      iex> AI.add_instructions(%Zoonk.AI{}, "Please summarize the text.")
+      %AI{instructions: "Please summarize the text."}
+  """
+  def add_instructions(%__MODULE__{} = ai, instructions) do
+    %{ai | instructions: instructions}
+  end
 end

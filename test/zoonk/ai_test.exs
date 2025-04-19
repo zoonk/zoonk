@@ -28,4 +28,12 @@ defmodule Zoonk.AITest do
       assert ai.text.format == schema
     end
   end
+
+  describe "add_instructions/2" do
+    test "adds instructions to the AI" do
+      instructions = "Please summarize the text."
+      ai = AI.add_instructions(%AI{}, instructions)
+      assert ai.instructions == instructions
+    end
+  end
 end
