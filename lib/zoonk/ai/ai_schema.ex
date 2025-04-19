@@ -40,7 +40,7 @@ defmodule Zoonk.AI.AISchema do
       iex> AISchema.add_field(%AISchema{}, %{age: "integer", name: "string"})
       %AISchema{schema: %{properties: %{age: %{type: "integer"}, name: %{type: "string"}}}}
   """
-  def add_field(%__MODULE__{schema: schema} = ai_schema, fields) do
+  def add_field(%__MODULE__{schema: schema} = ai_schema, %{} = fields) do
     %{ai_schema | schema: merge_fields(schema, fields)}
   end
 
