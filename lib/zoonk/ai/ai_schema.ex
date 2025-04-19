@@ -57,5 +57,6 @@ defmodule Zoonk.AI.AISchema do
     map
     |> Map.keys()
     |> Enum.map(&to_string/1)
+    |> Enum.sort()
   end
 end
