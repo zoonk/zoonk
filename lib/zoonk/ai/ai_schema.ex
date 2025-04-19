@@ -40,7 +40,28 @@ defmodule Zoonk.AI.AISchema do
 
       iex> AISchema.add_field(%AISchema{}, %{courses: [%{title: "string"}]})
       %AISchema{schema: %{properties: %{courses: %{type: "array", items: %{type: "object", properties: %{title: %{type: "string"}}}}}}}
+
+      iex> AISchema.add_field(%AISchema{}, [%{title: "string"}])
+      %AISchema{schema: %{type: "array", items: %{type: "object", properties: %{title: %{type: "string"}}}}}
   """
+  def add_field(%__MODULE__{} = ai_schema, [%{} = item_schema]) do
+    items_props = fields_to_json_props(item_schema)
+
+    %{
+      ai_schema
+      | schema: %{
+          type: "array",
+          items: %{
+            type: "object",
+            properties: items_props,
+            required: keys_to_string(items_props),
+            additionalProperties: false
+          },
+          additionalProperties: false
+        }
+    }
+  end
+
   def add_field(%__MODULE__{schema: schema} = ai_schema, %{} = fields) do
     %{ai_schema | schema: merge_fields(schema, fields)}
   end
