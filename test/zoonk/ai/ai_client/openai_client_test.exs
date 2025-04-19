@@ -18,6 +18,11 @@ defmodule Zoonk.AI.AIClient.OpenAIClientTest do
       mock_response(%{"type" => "refusal", "refusal" => "Refusal message"})
       assert {:error, "Refusal message"} = OpenAIClient.generate_object(%Zoonk.AI{})
     end
+
+    test "returns an error when the API returns an unexpected response" do
+      mock_response(%{"type" => "unknown"})
+      assert {:error, "Unknown error"} = OpenAIClient.generate_object(%Zoonk.AI{})
+    end
   end
 
   defp mock_response(mock_data, error \\ nil) do

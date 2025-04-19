@@ -43,4 +43,8 @@ defmodule Zoonk.AI.AIClient.OpenAIClient do
   defp object_response([%{"type" => "refusal"} = content]) do
     {:error, content["refusal"]}
   end
+
+  defp object_response(_content) do
+    {:error, "Unknown error"}
+  end
 end
