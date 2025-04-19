@@ -63,6 +63,6 @@ defmodule Zoonk.AI do
   """
   def add_message(%__MODULE__{} = ai, message) do
     new_message = %{role: "user", content: message}
-    %{ai | input: [new_message | ai.input]}
+    %{ai | input: Enum.reverse([new_message | ai.input])}
   end
 end

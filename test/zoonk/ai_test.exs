@@ -44,5 +44,19 @@ defmodule Zoonk.AITest do
       assert length(ai.input) == 1
       assert hd(ai.input) == %{role: "user", content: message}
     end
+
+    test "adds multiple messages to the AI's context" do
+      message1 = "What's the weather?"
+      message2 = "Tell me a joke."
+
+      ai =
+        %AI{}
+        |> AI.add_message(message1)
+        |> AI.add_message(message2)
+
+      assert hd(ai.input) == %{role: "user", content: message1}
+      assert hd(tl(ai.input)) == %{role: "user", content: message2}
+      assert length(ai.input) == 2
+    end
   end
 end
