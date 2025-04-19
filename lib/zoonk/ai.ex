@@ -50,4 +50,19 @@ defmodule Zoonk.AI do
   def add_instructions(%__MODULE__{} = ai, instructions) do
     %{ai | instructions: instructions}
   end
+
+  @doc """
+  Add a message to the AI's context.
+
+  This is usually a user message or input.
+
+  ## Examples
+
+      iex> AI.add_message(%Zoonk.AI{}, "What's the weather?")
+      %AI{input: [%{role: "user", content: "What's the weather?"}]}
+  """
+  def add_message(%__MODULE__{} = ai, message) do
+    new_message = %{role: "user", content: message}
+    %{ai | input: [new_message | ai.input]}
+  end
 end
