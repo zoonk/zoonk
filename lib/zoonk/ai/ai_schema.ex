@@ -6,21 +6,6 @@ defmodule Zoonk.AI.AISchema do
   AI responses follow a specific structure.
 
   It supports nested schemas and field definitions with various data types.
-
-  ## Examples
-
-      # Creating a basic schema
-      %AISchema{}
-      |> AISchema.add_field(%{name: "string"})
-      |> AISchema.add_field(%{age: "integer"})
-
-      # Creating a list
-      address = %AISchema{}
-      |> AISchema.add_field(%{courses: [%{title: "string", description: "string"}]})
-
-      # Passing options
-      %AISchema{}
-      |> AISchema.add_field(%{name: "string"}, optional: true)
   """
   defstruct type: "json_schema",
             name: "",
