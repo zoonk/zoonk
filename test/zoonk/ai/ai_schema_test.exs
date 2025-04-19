@@ -41,5 +41,25 @@ defmodule Zoonk.AI.AISchemaTest do
       assert ai_schema.schema.properties.address.properties.street.type == "string"
       assert ai_schema.schema.properties.address.properties.city.type == "string"
     end
+
+    test "supports arrays" do
+      ai_schema = AISchema.add_field(%AISchema{}, %{courses: [%{title: "string", description: "string"}]})
+
+      assert ai_schema.type == "json_schema"
+      assert ai_schema.name == ""
+      assert ai_schema.strict == true
+
+      assert ai_schema.schema.type == "object"
+      assert ai_schema.schema.required == ["courses"]
+      assert ai_schema.schema.additionalProperties == false
+
+      assert ai_schema.schema.properties.courses.type == "array"
+      assert ai_schema.schema.properties.courses.items.type == "object"
+      assert ai_schema.schema.properties.courses.items.required == ["description", "title"]
+      assert ai_schema.schema.properties.courses.items.additionalProperties == false
+
+      assert ai_schema.schema.properties.courses.items.properties.title.type == "string"
+      assert ai_schema.schema.properties.courses.items.properties.description.type == "string"
+    end
   end
 end
