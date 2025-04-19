@@ -35,7 +35,7 @@ defmodule Zoonk.AI.AISchemaTest do
       assert ai_schema.schema.additionalProperties == false
 
       assert ai_schema.schema.properties.address.type == "object"
-      assert ai_schema.schema.properties.address.required == ["street", "city"]
+      assert ai_schema.schema.properties.address.required == ["city", "street"]
       assert ai_schema.schema.properties.address.additionalProperties == false
 
       assert ai_schema.schema.properties.address.properties.street.type == "string"

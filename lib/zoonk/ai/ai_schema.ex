@@ -50,7 +50,22 @@ defmodule Zoonk.AI.AISchema do
   end
 
   defp fields_to_json_props(%{} = fields) do
-    Map.new(fields, fn {key, type} -> {key, %{type: type}} end)
+    Map.new(fields, fn
+      {key, %{} = nested_fields} ->
+        nested_props = fields_to_json_props(nested_fields)
+        nested_required = keys_to_string(nested_props)
+
+        {key,
+         %{
+           type: "object",
+           properties: nested_props,
+           required: nested_required,
+           additionalProperties: false
+         }}
+
+      {key, type} ->
+        {key, %{type: type}}
+    end)
   end
 
   defp keys_to_string(map) do
