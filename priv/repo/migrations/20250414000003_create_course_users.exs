@@ -3,6 +3,7 @@ defmodule Zoonk.Repo.Migrations.CreateCourseUsers do
 
   def change do
     create table(:course_users) do
+      add :org_id, references(:orgs, on_delete: :delete_all), null: false
       add :course_id, references(:courses, on_delete: :delete_all), null: false
       add :user_id, references(:users, on_delete: :delete_all), null: false
 
@@ -13,6 +14,7 @@ defmodule Zoonk.Repo.Migrations.CreateCourseUsers do
 
     create index(:course_users, [:course_id])
     create index(:course_users, [:user_id])
-    create unique_index(:course_users, [:course_id, :user_id])
+
+    create unique_index(:course_users, [:org_id, :course_id, :user_id])
   end
 end

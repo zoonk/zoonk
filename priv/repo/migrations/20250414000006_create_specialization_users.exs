@@ -3,6 +3,7 @@ defmodule Zoonk.Repo.Migrations.CreateSpecializationUsers do
 
   def change do
     create table(:specialization_users) do
+      add :org_id, references(:orgs, on_delete: :delete_all), null: false
       add :specialization_id, references(:specializations, on_delete: :delete_all), null: false
       add :user_id, references(:users, on_delete: :delete_all), null: false
 
@@ -13,6 +14,7 @@ defmodule Zoonk.Repo.Migrations.CreateSpecializationUsers do
 
     create index(:specialization_users, [:specialization_id])
     create index(:specialization_users, [:user_id])
-    create unique_index(:specialization_users, [:specialization_id, :user_id])
+
+    create unique_index(:specialization_users, [:org_id, :specialization_id, :user_id])
   end
 end
