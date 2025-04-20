@@ -13,6 +13,7 @@ defmodule Zoonk.Catalog.SpecializationCourse do
   | `specialization_id`| Integer   | The ID of the specialization that contains the course          |
   | `course_id`        | Integer   | The ID of the course included in the specialization            |
   | `position`         | Integer   | Course's position within the specialization, used for ordering |
+  | `level`            | Integer   | The level of the course within the specialization              |
   | `inserted_at`      | DateTime  | Timestamp when the association was created                     |
   | `updated_at`       | DateTime  | Timestamp when the association was last updated                |
   """
@@ -24,6 +25,7 @@ defmodule Zoonk.Catalog.SpecializationCourse do
   alias Zoonk.Catalog.Specialization
 
   schema "specialization_courses" do
+    field :level, :integer
     field :position, :integer
 
     belongs_to :specialization, Specialization
@@ -35,8 +37,8 @@ defmodule Zoonk.Catalog.SpecializationCourse do
   @doc false
   def changeset(specialization_course, attrs) do
     specialization_course
-    |> cast(attrs, [:specialization_id, :course_id, :position])
-    |> validate_required([:specialization_id, :course_id, :position])
+    |> cast(attrs, [:specialization_id, :course_id, :position, :level])
+    |> validate_required([:specialization_id, :course_id, :position, :level])
     |> unique_constraint([:specialization_id, :course_id])
   end
 end
