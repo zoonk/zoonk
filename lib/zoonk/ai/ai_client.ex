@@ -12,7 +12,11 @@ defmodule Zoonk.AI.AIClient do
   alias Zoonk.AI
   alias Zoonk.AI.AIClient.OpenAIClient
 
-  def generate_object(%AI{} = payload) do
+  def generate_object(%AI{model: "gpt-" <> _gpt} = payload) do
     OpenAIClient.generate_object(payload)
+  end
+
+  def generate_object(_payload) do
+    {:error, "Unsupported model"}
   end
 end
