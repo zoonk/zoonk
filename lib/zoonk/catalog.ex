@@ -8,7 +8,6 @@ defmodule Zoonk.Catalog do
 
   import Ecto.Query, warn: false
 
-  alias Zoonk.Agents
   alias Zoonk.Catalog.CourseUser
   alias Zoonk.Repo
 
@@ -30,20 +29,5 @@ defmodule Zoonk.Catalog do
     |> where([cu], cu.user_id == ^user_id)
     |> limit(1)
     |> Repo.exists?()
-  end
-
-  @doc """
-  Suggests courses based on user input.
-
-  ## Examples
-
-      iex> list_course_suggestions("how to code", "en")
-      {:ok, [%Zoonk.Agents.CourseSuggestion{
-        title: "Computer Science",
-        description: "A comprehensive study of the principles and applications of computer science."
-      }, ...]}
-  """
-  def list_course_suggestions(input, app_language) do
-    Agents.suggest_courses(input, app_language)
   end
 end
