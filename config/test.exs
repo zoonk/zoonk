@@ -49,3 +49,8 @@ config :zoonk, ZoonkWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
   secret_key_base: "oR5QwNJN5R6aqfWx9lZhHUZ58uqJFBNdGN89Dk5fAZz1LX+19tGo9tUULRYzv4el",
   server: false
+
+config :zoonk, :ai,
+  openai: [
+    plug: {Req.Test, :openai_client}
+  ]

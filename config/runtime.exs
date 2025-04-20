@@ -40,9 +40,10 @@ config :zoonk, :strategies,
   ]
 
 if config_env() in [:dev, :prod] do
-  config :instructor,
-    adapter: Instructor.Adapters.OpenAI,
-    openai: [api_key: System.fetch_env!("OPENAI_API_KEY")]
+  config :zoonk, :ai,
+    openai: [
+      auth: {:bearer, System.fetch_env!("OPENAI_API_KEY")}
+    ]
 end
 
 if config_env() == :prod do
