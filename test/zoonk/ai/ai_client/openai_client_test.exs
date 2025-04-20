@@ -6,7 +6,7 @@ defmodule Zoonk.AI.AIClient.OpenAIClientTest do
   describe "generate_object/1" do
     test "returns the object when successful" do
       mock_response(%{"type" => "output_text", "text" => ~s({"language":"English"})})
-      assert {:ok, %{"language" => "English"}} = OpenAIClient.generate_object(%Zoonk.AI{})
+      assert {:ok, %{language: "English"}} = OpenAIClient.generate_object(%Zoonk.AI{})
     end
 
     test "returns an error when the API call fails" do

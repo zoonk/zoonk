@@ -2,7 +2,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  alias Zoonk.Catalog
+  alias Zoonk.AI.Agents.OnboardingRecommender
 
   on_mount {ZoonkWeb.Onboarding.OnboardingPermissions, :onboarding_permissions}
 
@@ -90,7 +90,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
 
   @impl Phoenix.LiveView
   def handle_event("search-courses", %{"query" => query}, socket) when byte_size(query) > 2 do
-    case Catalog.list_course_suggestions(query, socket.assigns.app_language) do
+    case OnboardingRecommender.recommend(query, socket.assigns.app_language) do
       {:ok, suggestions} ->
         {:noreply, assign(socket, :course_results, suggestions.courses)}
 
