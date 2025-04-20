@@ -2,11 +2,11 @@
 
 These are some of the terms used in our application. It helps to understand how this application is structured.
 
-## Collections
+## Specializations
 
-Collections are the main building blocks of Zoonk. They are used to group related courses together. For example:
+Specializations are the main building blocks of Zoonk. They group multiple courses and they are used to go deeper into a specific subject. For example:
 
-| Collection       | Courses                                                    |
+| Specialization   | Courses                                                    |
 | ---------------- | ---------------------------------------------------------- |
 | Physics          | Classical Mechanics, Quantum Mechanics, Thermodynamics     |
 | Chemistry        | Organic Chemistry, Inorganic Chemistry, Physical Chemistry |
@@ -42,11 +42,11 @@ Lessons are very small units of knowledge. They cover only a single topic for be
 
 Zoonk supports multiple languages. This is why we have a `_translations` table for each content type. For example:
 
-| Table         | Translations Table        |
-| ------------- | ------------------------- |
-| `collections` | `collection_translations` |
-| `courses`     | `course_translations`     |
-| `lessons`     | `lesson_translations`     |
-| `exercises`   | `exercise_translations`   |
+| Table             | Translations Table            |
+| ----------------- | ----------------------------- |
+| `specializations` | `specialization_translations` |
+| `courses`         | `course_translations`         |
+| `lessons`         | `lesson_translations`         |
+| `exercises`       | `exercise_translations`       |
 
 This allows us to update all translations at once. For example, if we fix an error in the English translation, we can update all other translations at the same time.
