@@ -44,7 +44,7 @@ defmodule Zoonk.CatalogFixtures do
   def course_user_fixture(attrs \\ %{}) do
     course = Map.get_lazy(attrs, :course, fn -> course_fixture() end)
     user = Map.get_lazy(attrs, :user, fn -> Zoonk.AccountFixtures.user_fixture() end)
-    attrs = Enum.into(attrs, %{course_id: course.id, user_id: user.id, role: :member})
+    attrs = Enum.into(attrs, %{org_id: course.org_id, course_id: course.id, user_id: user.id, role: :member})
 
     %CourseUser{}
     |> CourseUser.changeset(attrs)

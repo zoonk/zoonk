@@ -9,6 +9,7 @@ defmodule Zoonk.Catalog.SpecializationUser do
 
   | Field Name         | Type        | Description                                               |
   |--------------------|-------------|-----------------------------------------------------------|
+  | `org_id`           | Integer     | The ID of the organization this data belongs to.          |
   | `specialization_id`| Integer     | The ID of the specialization the user has access to.      |
   | `user_id`          | Integer     | The ID of the user who has access to the specialization.  |
   | `role`             | Ecto.Enum   | The role of the user in the specialization.               |
@@ -21,10 +22,12 @@ defmodule Zoonk.Catalog.SpecializationUser do
 
   alias Zoonk.Accounts.User
   alias Zoonk.Catalog.Specialization
+  alias Zoonk.Orgs.Org
 
   schema "specialization_users" do
     field :role, Ecto.Enum, values: [:editor, :member], default: :member
 
+    belongs_to :org, Org
     belongs_to :specialization, Specialization
     belongs_to :user, User
 
@@ -34,8 +37,8 @@ defmodule Zoonk.Catalog.SpecializationUser do
   @doc false
   def changeset(specialization_user, attrs) do
     specialization_user
-    |> cast(attrs, [:specialization_id, :user_id, :role])
-    |> validate_required([:specialization_id, :user_id, :role])
-    |> unique_constraint([:specialization_id, :user_id])
+    |> cast(attrs, [:org_id, :specialization_id, :user_id, :role])
+    |> validate_required([:org_id, :specialization_id, :user_id, :role])
+    |> unique_constraint([:org_id, :specialization_id, :user_id])
   end
 end
