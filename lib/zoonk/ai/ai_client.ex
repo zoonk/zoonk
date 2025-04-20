@@ -12,6 +12,21 @@ defmodule Zoonk.AI.AIClient do
   alias Zoonk.AI
   alias Zoonk.AI.AIClient.OpenAIClient
 
+  @doc """
+  Generates structured output from an AI service based on the given payload.
+
+  Takes an `%AI{}` struct containing the model, messages, and schema configuration.
+  Delegates to the appropriate client based on the model specified.
+
+  ## Examples
+
+      iex> payload = %AI{model: "gpt-4", schema: schema, messages: messages}
+      iex> AIClient.generate_object(payload)
+      {:ok, %{field: "value"}}
+
+      iex> AIClient.generate_object(%AI{model: "unsupported"})
+      {:error, "Unsupported model"}
+  """
   def generate_object(%AI{model: "gpt-" <> _gpt} = payload) do
     OpenAIClient.generate_object(payload)
   end
