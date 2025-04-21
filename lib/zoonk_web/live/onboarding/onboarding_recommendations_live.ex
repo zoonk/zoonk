@@ -8,26 +8,17 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
   def render(assigns) do
     ~H"""
     <main class="h-dvh flex flex-col items-center justify-center">
-      <div
+      <.full_page_spinner
         :if={@recommendations == []}
-        class="flex w-full max-w-md flex-col items-center justify-center p-8 text-center"
-      >
-        <div class="mb-8">
-          <.spinner size={:lg} />
-        </div>
-
-        <.text tag="h2" size={:xl} class="mb-4">
-          {dgettext("onboarding", "We're finding specializations that will help you learn")}
-          <em class="text-zk-primary">{@input}</em>
-        </.text>
-
-        <.text variant={:secondary}>
-          {dgettext(
+        title={dgettext("onboarding", "We're finding specializations that will help you learn")}
+        feature={@input}
+        subtitle={
+          dgettext(
             "onboarding",
             "This might take a moment as we prepare personalized recommendations for you."
-          )}
-        </.text>
-      </div>
+          )
+        }
+      />
 
       <div :if={@recommendations != []} class="w-full"></div>
     </main>
