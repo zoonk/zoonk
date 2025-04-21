@@ -13,7 +13,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
         class="flex w-full max-w-md flex-col items-center justify-center p-8 text-center"
       >
         <div class="mb-8">
-          <div class="border-zk-primary mx-auto h-16 w-16 animate-spin rounded-full border-t-4"></div>
+          <.spinner size={:lg} />
         </div>
 
         <.text tag="h2" size={:xl} class="mb-4">
