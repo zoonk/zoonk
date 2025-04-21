@@ -42,10 +42,39 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
     |> AI.add_instructions(get_instructions())
     |> AI.add_message(build_message(input, language))
     |> AIClient.generate_object()
+    |> case do
+      {:ok, %{courses: recommendations} = response} ->
+        add_recommendation_to_db(%{
+          query: input,
+          language: language,
+          recommendations: recommendations
+        })
+
+        {:ok, response}
+
+      {:error, error} ->
+        {:error, error}
+    end
   end
 
   defp get_schema do
-    AISchema.add_field(%AISchema{name: "onboarding_recommender"}, %{courses: [%{title: "string", description: "string"}]})
+    courses = %{
+      courses: [
+        %{
+          title: "string",
+          description: "string",
+          english_title: "string"
+        }
+      ]
+    }
+
+    AISchema.add_field(%AISchema{name: "onboarding_recommender"}, courses)
+  end
+
+  defp add_recommendation_to_db(attrs) do
+    %OnboardingRecommendation{}
+    |> OnboardingRecommendation.changeset(attrs)
+    |> Repo.insert!()
   end
 
   defp get_instructions do
@@ -63,6 +92,7 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
     - Never group topics into one title. Always split them.
     - Titles should be canonical academic or professional fields (e.g. "Physics", "Law", "Art", "Engineering", "Neuroscience").
     - If the user input is vague (e.g. “I want to code”), map it to broader established fields (e.g. “Computer Science”, “Web Development”, “Mobile Development”).
+    - Each course must also include an `english_title` field that is a string representing the `title` in English.
 
     Examples of valid course titles:
     - Computer Science
@@ -98,17 +128,15 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
     """
   end
 
-  defp build_message(input, app_language) do
+  defp build_message(input, language) do
     """
     This is their input: "#{input}"
     This means they want to learn about #{input}.
     So, generate 3 to 5 course suggestions based on this input.
 
-    Always write both the title and description in the same language.
-    If their input is clear, use the same language as their input.
-    If their input is short or ambiguous (e.g. one word), then use the browser language for both title and description.
-    If you're not sure what language to use, then use the browser language.
-    The browser language is: "#{app_language}".
+    Write both the `title` and `description` fields in the same language.
+    They want to see results in this language: #{language}.
+    If it's not English, translate the title and add it to the `english_title` field.
     """
   end
 end
