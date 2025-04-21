@@ -7,9 +7,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <main class="h-dvh flex">
-      recommendations
-    </main>
+    <main class="h-dvh flex"></main>
     """
   end
 
@@ -17,7 +15,11 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
   def mount(params, _session, socket) do
     input = params["input"]
 
-    socket = assign(socket, :page_title, dgettext("onboarding", "Recommendations for %{input}", input: input))
+    socket =
+      socket
+      |> assign(:page_title, dgettext("onboarding", "Recommendations for %{input}", input: input))
+      |> assign(:input, input)
+      |> assign(:recommendations, [])
 
     {:ok, socket}
   end
