@@ -7,3 +7,4 @@
 - Add the `render` callback at the top of the module, before other callbacks like `mount`, `handle_params`, etc.
 - Use `use ZoonkWeb, :live_view`.
 - Add tests to the `test/zoonk_web/live` directory.
+- When adding text to the page, use `gettext` or `dgettext` for translations. For example, `gettext("Hello")`. Don't write plain text.
