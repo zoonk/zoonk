@@ -1,4 +1,4 @@
-defmodule Zoonk.Catalog.OnboardingRecommendation do
+defmodule Zoonk.AI.OnboardingRecommendation do
   @moduledoc """
   Schema for storing onboarding recommendations.
 
