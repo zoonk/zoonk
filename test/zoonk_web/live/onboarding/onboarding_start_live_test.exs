@@ -1,11 +1,12 @@
 defmodule ZoonkWeb.OnboardingStartLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
-  import Zoonk.AccountFixtures
   import Zoonk.CatalogFixtures
   import Zoonk.OrgFixtures
 
+  alias Zoonk.Accounts
   alias Zoonk.Catalog
+  alias Zoonk.Scope
 
   @page_title "What do you want to learn?"
 
@@ -53,11 +54,11 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
     setup do
       app_org = app_org_fixture()
       conn = Map.put(build_conn(), :host, app_org.custom_domain)
-      %{conn: conn}
+      %{conn: conn, org: app_org}
     end
 
-    test "allows guest user without courses to see the page", %{conn: conn} do
-      user = user_fixture(%{kind: :guest})
+    test "allows guest user without courses to see the page", %{conn: conn, org: org} do
+      {:ok, user} = Accounts.create_guest_user(%{language: "en"}, %Scope{org: org, user: nil})
 
       # Verify the user is not enrolled in a course
       refute Catalog.user_enrolled_in_any_course?(user.id)
@@ -69,8 +70,8 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
       |> assert_has("h1", text: @page_title)
     end
 
-    test "redirects guest user with courses to the home page", %{conn: conn} do
-      user = user_fixture(%{kind: :guest})
+    test "redirects guest user with courses to the home page", %{conn: conn, org: org} do
+      {:ok, user} = Accounts.create_guest_user(%{language: "en"}, %Scope{org: org, user: nil})
       course = course_fixture()
       course_user_fixture(%{user_id: user.id, course_id: course.id})
 

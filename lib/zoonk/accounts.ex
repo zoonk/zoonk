@@ -99,7 +99,7 @@ defmodule Zoonk.Accounts do
   """
   def create_guest_user(attrs, %Scope{org: org}) when org.kind == :app do
     email = "guest_#{System.unique_integer([:positive])}@zoonk.dev"
-    user = %User{email: email, language: String.to_existing_atom(attrs.language)}
+    user = %User{email: email, kind: :guest, language: String.to_existing_atom(attrs.language)}
 
     Ecto.Multi.new()
     |> Ecto.Multi.insert(:user, user)

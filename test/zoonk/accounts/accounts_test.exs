@@ -216,6 +216,7 @@ defmodule Zoonk.AccountsTest do
       scope = scope_fixture(%{kind: :app})
       {:ok, %User{} = user} = Accounts.create_guest_user(%{language: "pt"}, scope)
       assert user.language == :pt
+      assert user.kind == :guest
       assert String.starts_with?(user.email, "guest_")
       assert String.ends_with?(user.email, "@zoonk.dev")
       assert user.confirmed_at == nil
