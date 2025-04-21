@@ -54,7 +54,7 @@ defmodule Zoonk.Accounts.User do
   schema "users" do
     field :year_of_birth, :integer
     field :currency, Ecto.Enum, values: CurrencyConfig.list_currencies(:atom), default: :USD
-    field :kind, Ecto.Enum, values: [:regular, :guest, :agent], default: :regular
+    field :kind, Ecto.Enum, values: [:regular, :guest], default: :regular
     field :email, :string
     field :stripe_customer_id, :string
     field :tax_id, Zoonk.Vault.Binary
@@ -87,7 +87,7 @@ defmodule Zoonk.Accounts.User do
   def settings_changeset(user, attrs, opts \\ []) do
     user
     |> email_changeset(attrs, opts)
-    |> cast(attrs, [:language, :kind, :tax_id])
+    |> cast(attrs, [:language, :tax_id])
     |> validate_required([:language])
   end
 

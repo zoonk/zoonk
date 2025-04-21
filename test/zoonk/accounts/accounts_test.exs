@@ -201,6 +201,29 @@ defmodule Zoonk.AccountsTest do
     end
   end
 
+  describe "create_guest_user/2" do
+    test "don't create guest users for creator orgs" do
+      scope = scope_fixture(%{kind: :creator})
+      refute Accounts.create_guest_user(%{language: "en"}, scope)
+    end
+
+    test "don't create guest users for team orgs" do
+      scope = scope_fixture(%{kind: :team})
+      refute Accounts.create_guest_user(%{language: "en"}, scope)
+    end
+
+    test "creates a guest user for app orgs" do
+      scope = scope_fixture(%{kind: :app})
+      {:ok, %User{} = user} = Accounts.create_guest_user(%{language: "pt"}, scope)
+      assert user.language == :pt
+      assert String.starts_with?(user.email, "guest_")
+      assert String.ends_with?(user.email, "@zoonk.dev")
+      assert user.confirmed_at == nil
+      assert Repo.get_by(UserProfile, user_id: user.id)
+      assert Repo.get_by(OrgMember, user_id: user.id, org_id: scope.org.id)
+    end
+  end
+
   describe "sudo_mode?/1" do
     test "validates the authenticated_at time" do
       sudo_mode_minutes = AuthConfig.get_max_age(:sudo_mode, :minutes)
