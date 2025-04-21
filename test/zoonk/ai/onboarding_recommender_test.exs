@@ -1,6 +1,8 @@
 defmodule Zoonk.AI.OnboardingRecommenderTest do
   use Zoonk.DataCase, async: true
 
+  import Zoonk.AIFixtures
+
   alias Zoonk.AI.Agents.OnboardingRecommender
   alias Zoonk.AI.OnboardingRecommendation
   alias Zoonk.Repo
@@ -11,21 +13,7 @@ defmodule Zoonk.AI.OnboardingRecommenderTest do
       title = "Data Science"
       description = "A field that uses scientific methods to analyze data."
 
-      Req.Test.stub(:openai_client, fn conn ->
-        Req.Test.json(conn, %{
-          "error" => nil,
-          "output" => [
-            %{
-              "content" => [
-                %{
-                  "type" => "output_text",
-                  "text" => ~s({"courses":[{"title":"#{title}","description":"#{description}"}]})
-                }
-              ]
-            }
-          ]
-        })
-      end)
+      openai_stub(%{courses: [%{title: title, description: description}]})
 
       assert {:ok, recommendations} = OnboardingRecommender.recommend(input, :en)
       recommendation = hd(recommendations.courses)
