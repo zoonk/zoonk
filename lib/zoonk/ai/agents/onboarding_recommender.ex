@@ -11,6 +11,8 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
   alias Zoonk.AI
   alias Zoonk.AI.AIClient
   alias Zoonk.AI.AISchema
+  alias Zoonk.AI.OnboardingRecommendation
+  alias Zoonk.Repo
 
   @doc """
   Recommend specializations based on user input.
@@ -23,12 +25,22 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
       iex> OnboardingRecommender.recommend("forbidden input")
       {:error, "This violates our content policy."}
   """
-  def recommend(input, app_language) do
+  def recommend(input, language) do
+    OnboardingRecommendation
+    |> Repo.get_by(query: input, language: language)
+    |> recommend(input, language)
+  end
+
+  defp recommend(%OnboardingRecommendation{} = recommendation, _input, _lang) do
+    {:ok, %{courses: recommendation.recommendations}}
+  end
+
+  defp recommend(nil, input, language) do
     %AI{}
     |> AI.set_model("gpt-4.1-mini")
     |> AI.set_schema(get_schema())
     |> AI.add_instructions(get_instructions())
-    |> AI.add_message(build_message(input, app_language))
+    |> AI.add_message(build_message(input, language))
     |> AIClient.generate_object()
   end
 

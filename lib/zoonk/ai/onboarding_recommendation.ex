@@ -29,7 +29,11 @@ defmodule Zoonk.AI.OnboardingRecommendation do
       values: LanguageConfig.list_languages(:atom),
       default: LanguageConfig.get_default_language(:atom)
 
-    field :recommendations, {:array, :map}, default: []
+    embeds_many :recommendations, Recommendation do
+      field :title, :string
+      field :description, :string
+      field :english_title, :string
+    end
 
     timestamps(type: :utc_datetime_usec)
   end
@@ -44,7 +48,8 @@ defmodule Zoonk.AI.OnboardingRecommendation do
   """
   def changeset(onboarding_recommendation, attrs) do
     onboarding_recommendation
-    |> cast(attrs, [:query, :language, :recommendations])
+    |> cast(attrs, [:query, :language])
     |> validate_required([:query, :language])
+    |> cast_embed(:recommendations)
   end
 end
