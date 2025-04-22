@@ -26,9 +26,11 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
       {:error, "This violates our content policy."}
   """
   def recommend(input, language) do
+    trimmed_input = String.trim(input)
+
     OnboardingRecommendation
-    |> Repo.get_by(query: input, language: language)
-    |> recommend(input, language)
+    |> Repo.get_by(query: trimmed_input, language: language)
+    |> recommend(trimmed_input, language)
   end
 
   defp recommend(%OnboardingRecommendation{} = recommendation, _input, _lang) do
