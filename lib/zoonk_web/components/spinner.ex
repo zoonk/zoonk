@@ -19,10 +19,6 @@ defmodule ZoonkWeb.Components.Spinner do
       <.spinner />
       <.spinner variant={:secondary} />
       <.spinner size={:sm} />
-
-  ## Attributes
-
-  - `class` - Additional CSS classes to apply to the spinner
   """
   attr :class, :string, default: nil, doc: "Additional CSS classes for the spinner"
 

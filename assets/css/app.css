@@ -307,6 +307,10 @@
   @apply grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3;
 }
 
+@utility zk-full {
+  @apply min-h-dvh flex flex-col items-center justify-center;
+}
+
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }

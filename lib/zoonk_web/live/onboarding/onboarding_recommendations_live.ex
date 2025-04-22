@@ -9,44 +9,38 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <main class="min-h-dvh flex flex-col items-center justify-center">
-      <.async_result :let={recommendations} assign={@courses}>
-        <:loading>
-          <.full_page_spinner
-            title={dgettext("onboarding", "We're finding specializations that will help you learn")}
-            feature={@input}
-            delay_loading
-            subtitle={
-              dgettext(
-                "onboarding",
-                "This might take a moment as we prepare personalized recommendations for you."
-              )
-            }
-          />
-        </:loading>
+    <.async_page
+      :let={recommendations}
+      data={@courses}
+      loading_title={dgettext("onboarding", "We're finding specializations that will help you learn")}
+      loading_subtitle={
+        dgettext(
+          "onboarding",
+          "This might take a moment as we prepare personalized recommendations for you."
+        )
+      }
+      loading_feature={@input}
+      failure_message={dgettext("onboarding", "Sorry, we couldn't find any recommendations for you.")}
+      failure_link={~p"/start"}
+      failure_link_text={gettext("Back")}
+    >
+      <ul :if={recommendations} class="divide-zk-border mx-auto w-full max-w-4xl divide-y px-4">
+        <li
+          :for={recommendation <- recommendations}
+          class="group cursor-pointer py-6 transition-colors hover:bg-zk-muted"
+        >
+          <div class="flex flex-col gap-2 px-4">
+            <.text tag="h3" size={:lg} variant={:primary} class="group-hover:text-zk-primary-text">
+              {recommendation.title}
+            </.text>
 
-        <:failed :let={_failure}>
-          {dgettext("onboarding", "Sorry, we couldn't find any recommendations for you.")}
-        </:failed>
-
-        <ul :if={recommendations} class="divide-zk-border mx-auto w-full max-w-4xl divide-y px-4">
-          <li
-            :for={recommendation <- recommendations}
-            class="group cursor-pointer py-6 transition-colors hover:bg-zk-muted"
-          >
-            <div class="flex flex-col gap-2 px-4">
-              <.text tag="h3" size={:lg} variant={:primary} class="group-hover:text-zk-primary-text">
-                {recommendation.title}
-              </.text>
-
-              <.text variant={:secondary} class="max-w-prose">
-                {recommendation.description}
-              </.text>
-            </div>
-          </li>
-        </ul>
-      </.async_result>
-    </main>
+            <.text variant={:secondary} class="max-w-prose">
+              {recommendation.description}
+            </.text>
+          </div>
+        </li>
+      </ul>
+    </.async_page>
     """
   end
 
