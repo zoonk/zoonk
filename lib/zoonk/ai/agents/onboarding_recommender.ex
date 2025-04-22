@@ -58,10 +58,6 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
 
         {:ok, response}
 
-      {:error, %Req.TransportError{reason: :timeout}} ->
-        # try again on timeout
-        recommend(nil, input, language)
-
       {:error, error} ->
         {:error, error}
     end

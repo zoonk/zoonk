@@ -25,7 +25,8 @@ defmodule Zoonk.AI.AIClient.OpenAIClient do
     req_opts = [
       json: payload,
       receive_timeout: 300_000,
-      connect_options: [timeout: 300_000]
+      connect_options: [timeout: 300_000],
+      retry: :transient
     ]
 
     opts = Keyword.merge(req_opts, Application.get_env(:zoonk, :ai)[:openai] || [])
