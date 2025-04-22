@@ -55,7 +55,12 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
         </.text>
       </header>
 
-      <ul :if={recommendations} class="mx-auto max-w-xl">
+      <ul
+        :if={recommendations}
+        class="mx-auto max-w-xl"
+        phx-window-keydown={JS.navigate(~p"/start")}
+        phx-key="escape"
+      >
         <li :for={{recommendation, index} <- Enum.with_index(recommendations)} class="group">
           <a
             href="#"
