@@ -18,6 +18,22 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
       |> assert_has("h1", text: @page_title)
     end
 
+    test "creates guest user" do
+      response =
+        build_conn()
+        |> Map.put(:host, app_org_fixture().custom_domain)
+        |> visit(~p"/start")
+        |> select("Language", option: "Deutsch")
+        |> fill_in("What do you want to learn?", with: "programming")
+        |> submit()
+        |> assert_path(~p"/start/programming")
+
+      conn = response.conn
+      assert conn.assigns.scope.user.kind == :guest
+      assert conn.assigns.scope.user.language == :de
+      assert get_session(conn, :language) == "de"
+    end
+
     test "redirects page for :creator org" do
       build_conn()
       |> Map.put(:host, org_fixture(%{kind: :creator}).custom_domain)
@@ -68,6 +84,7 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
       |> visit(~p"/start")
       |> assert_path(~p"/start")
       |> assert_has("h1", text: @page_title)
+      |> refute_has("select")
     end
 
     test "redirects guest user with courses to the home page", %{conn: conn, org: org} do

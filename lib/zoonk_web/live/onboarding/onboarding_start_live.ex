@@ -28,6 +28,8 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
         <.form for={@form} action={~p"/start"} class="w-full">
           <.input
             field={@form[:query]}
+            label={dgettext("onboarding", "What do you want to learn?")}
+            hide_label
             type="text"
             class="w-full"
             required
@@ -36,7 +38,10 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
 
           <div class="mt-2 flex items-center justify-between gap-4">
             <.input
+              :if={!@scope.user}
               field={@form[:language]}
+              hide_label
+              label={dgettext("users", "Language")}
               type="select"
               options={LanguageConfig.list_languages(:options)}
               required
@@ -47,6 +52,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
               size={:md}
               variant={:primary}
               phx-disable-with={dgettext("onboarding", "Loading...")}
+              class="ml-auto"
             >
               {dgettext("onboarding", "Get Started")}
             </.button>
