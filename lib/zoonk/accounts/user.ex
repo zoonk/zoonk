@@ -14,7 +14,7 @@ defmodule Zoonk.Accounts.User do
   | Type | Description |
   |------|-------------|
   | `:regular` | Regular users. |
-  | `:agent` | AI bots and agents. |
+  | `:guest` | Users who didn't sign up. |
 
   ## Fields
 
@@ -22,7 +22,7 @@ defmodule Zoonk.Accounts.User do
   |------------|------|-------------|
   | `year_of_birth` | `Integer` | We need the year of birth for legal reasons when a profile is public. |
   | `currency` | `Ecto.Enum` | The currency used for payments. |
-  | `kind` | `Ecto.Enum` | Users can have different types: `regular`, `guest`, `agent` |
+  | `kind` | `Ecto.Enum` | Users can have different types: `regular`, `guest` |
   | `email` | `String` | The user's email address. |
   | `stripe_customer_id` | `String` | Customer ID used for Stripe payments. |
   | `tax_id` | `Zoonk.Vault.Binary` | Tax ID required by some jurisdictions. |
@@ -147,7 +147,7 @@ defmodule Zoonk.Accounts.User do
   """
   def confirm_changeset(user) do
     now = DateTime.utc_now()
-    change(user, confirmed_at: now)
+    change(user, confirmed_at: now, kind: :regular)
   end
 
   @doc """

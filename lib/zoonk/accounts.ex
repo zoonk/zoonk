@@ -161,9 +161,11 @@ defmodule Zoonk.Accounts do
 
   defp user_email_multi(user, email, context) do
     changeset = User.email_changeset(user, %{email: email})
+    confirm = User.confirm_changeset(user)
 
     Ecto.Multi.new()
     |> Ecto.Multi.update(:user, changeset)
+    |> Ecto.Multi.update(:confirm, confirm)
     |> Ecto.Multi.delete_all(:tokens, UserToken.by_user_and_contexts_query(user, [context]))
   end
 
