@@ -41,7 +41,11 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
             placeholder={dgettext("onboarding", "E.g. Computer Science, Astronomy, Biology, etc.")}
           />
 
-          <div class="mt-2 flex items-center justify-between gap-4">
+          <div class={[
+            "mt-2 flex items-center gap-4",
+            @scope.user && "justify-around",
+            !@scope.user && "justify-between"
+          ]}>
             <.input
               :if={!@scope.user}
               field={@form[:language]}
@@ -57,7 +61,6 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
               size={:md}
               variant={:primary}
               phx-disable-with={dgettext("onboarding", "Loading...")}
-              class="ml-auto"
             >
               {dgettext("onboarding", "Get Started")}
             </.button>
