@@ -9,7 +9,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <main class="h-dvh flex flex-col items-center justify-center">
+    <main class="min-h-dvh flex flex-col items-center justify-center">
       <.async_result :let={recommendations} assign={@courses}>
         <:loading>
           <.full_page_spinner
@@ -29,9 +29,22 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
           {dgettext("onboarding", "Sorry, we couldn't find any recommendations for you.")}
         </:failed>
 
-        <div :for={recommendation <- recommendations} :if={recommendations} class="course-item">
-          <p>{recommendation.title}</p>
-        </div>
+        <ul :if={recommendations} class="divide-zk-border mx-auto w-full max-w-4xl divide-y px-4">
+          <li
+            :for={recommendation <- recommendations}
+            class="group cursor-pointer py-6 transition-colors hover:bg-zk-muted"
+          >
+            <div class="flex flex-col gap-2 px-4">
+              <.text tag="h3" size={:lg} variant={:primary} class="group-hover:text-zk-primary-text">
+                {recommendation.title}
+              </.text>
+
+              <.text variant={:secondary} class="max-w-prose">
+                {recommendation.description}
+              </.text>
+            </div>
+          </li>
+        </ul>
       </.async_result>
     </main>
     """
