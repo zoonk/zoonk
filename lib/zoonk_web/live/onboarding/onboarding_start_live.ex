@@ -2,6 +2,8 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
+  alias Zoonk.Config.LanguageConfig
+
   on_mount {ZoonkWeb.Onboarding.OnboardingPermissions, :onboarding_start}
 
   @impl Phoenix.LiveView
@@ -23,15 +25,23 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
           {dgettext("onboarding", "What do you want to learn?")}
         </.text>
 
-        <form class="w-full">
+        <.form for={@form} phx-submit="submit" class="w-full">
           <.input
-            name="subject"
+            field={@form[:query]}
             type="text"
-            value=""
             class="w-full"
+            required
             placeholder={dgettext("onboarding", "E.g. Computer Science, Astronomy, Biology, etc.")}
           />
-        </form>
+
+          <.input
+            field={@form[:language]}
+            type="select"
+            options={LanguageConfig.list_languages(:options)}
+            required
+            class="mt-2"
+          />
+        </.form>
       </div>
     </main>
     """
@@ -44,8 +54,13 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
     socket =
       socket
       |> assign(:page_title, dgettext("onboarding", "Get Started"))
-      |> assign(:app_language, app_language)
+      |> assign(:form, to_form(%{"language" => app_language, "query" => ""}))
 
     {:ok, socket}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("submit", _params, socket) do
+    {:noreply, socket}
   end
 end
