@@ -11,6 +11,11 @@ defmodule ZoonkWeb.Components.Text do
     default: :md,
     doc: "Size of the text"
 
+  attr :weight, :atom,
+    values: [:bold, :semibold, :medium, :normal, nil],
+    default: nil,
+    doc: "Font weight of the text"
+
   attr :variant, :atom, values: [:primary, :secondary, :custom], default: :primary, doc: "Color variant of the text"
   attr :for, :string, default: nil, doc: "The for attribute for labels"
   attr :class, :any, default: nil, doc: "CSS class to apply to the text element"
@@ -33,7 +38,12 @@ defmodule ZoonkWeb.Components.Text do
     <label
       id={@id}
       for={@for}
-      class={[get_size_class(@size), get_variant_class(@variant), @class]}
+      class={[
+        get_size_class(@size),
+        get_variant_class(@variant),
+        get_weight_class(@weight, @size),
+        @class
+      ]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -46,7 +56,12 @@ defmodule ZoonkWeb.Components.Text do
     <.dynamic_tag
       tag_name={@tag}
       id={@id}
-      class={[get_size_class(@size), get_variant_class(@variant), @class]}
+      class={[
+        get_size_class(@size),
+        get_variant_class(@variant),
+        get_weight_class(@weight, @size),
+        @class
+      ]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -64,4 +79,12 @@ defmodule ZoonkWeb.Components.Text do
   defp get_variant_class(:primary), do: "text-zk-foreground"
   defp get_variant_class(:secondary), do: "text-zk-muted-foreground"
   defp get_variant_class(:custom), do: nil
+
+  defp get_weight_class(:bold, _size), do: "font-bold"
+  defp get_weight_class(:semibold, _size), do: "font-semibold"
+  defp get_weight_class(:medium, _size), do: "font-medium"
+  defp get_weight_class(:normal, _size), do: "font-normal"
+  defp get_weight_class(nil, :xxl), do: "font-semibold"
+  defp get_weight_class(nil, :xl), do: "font-medium"
+  defp get_weight_class(nil, _size), do: "font-normal"
 end
