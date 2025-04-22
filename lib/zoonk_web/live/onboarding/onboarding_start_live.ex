@@ -11,7 +11,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
     ~H"""
     <main class="h-dvh flex w-full items-center justify-center p-4">
       <div class="absolute top-4 right-4">
-        <.a kind={:button} size={:sm} navigate={~p"/login"}>
+        <.a :if={!@scope.user} kind={:button} size={:sm} navigate={~p"/login"}>
           {gettext("Login")}
         </.a>
 
