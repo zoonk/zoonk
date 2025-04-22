@@ -60,7 +60,7 @@ defmodule ZoonkWeb.Components.Icon do
   attr :variant, :atom, default: :outline, values: [:outline, :filled]
   attr :class, :any, default: nil
 
-  def dynamic_icon(%{name: "tabler-" <> _rest} = assigns) do
+  def dynamic_icon(assigns) do
     ~H"""
     <div class={@class}>
       {Phoenix.HTML.raw(load_svg(@name, @variant))}

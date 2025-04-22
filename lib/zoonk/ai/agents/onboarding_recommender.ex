@@ -63,7 +63,8 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
         %{
           title: "string",
           description: "string",
-          english_title: "string"
+          english_title: "string",
+          icon: "string"
         }
       ]
     }
@@ -125,6 +126,13 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
     - Ilustração Digital – Aprenda a desenhar personagens usando ferramentas como o Procreate e o Photoshop.
     - Design de Personagens – Descubra como criar personagens únicos, com estilo e personalidade.
     - Anatomia Artística – Entenda proporções e movimento para criar figuras humanas mais realistas.
+
+    Each course must also have an `icon` field with a tabler icon to illustrate this course. For example:
+    - Computer Science – icon: "tabler-code"
+    - Data Science – icon: "tabler-chart-pie"
+    - UI Design – icon: "tabler-palette"
+
+    Always add the `tabler-` prefix to the icon name.
     """
   end
 

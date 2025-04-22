@@ -56,7 +56,7 @@ defmodule Zoonk.AI.OnboardingRecommendation do
 
   defp recommendation_changeset(recommendation, attrs) do
     recommendation
-    |> cast(attrs, [:title, :description, :english_title])
+    |> cast(attrs, [:title, :description, :english_title, :icon])
     |> validate_required([:title, :description, :english_title])
   end
 end
