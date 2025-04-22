@@ -1,6 +1,7 @@
 defmodule ZoonkWeb.OnboardingStartLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
+  import Zoonk.AIFixtures
   import Zoonk.CatalogFixtures
   import Zoonk.OrgFixtures
 
@@ -19,6 +20,8 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
     end
 
     test "creates guest user" do
+      data = onboarding_recommendation_fixture()
+
       response =
         build_conn()
         |> Map.put(:host, app_org_fixture().custom_domain)
@@ -27,6 +30,7 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
         |> fill_in("What do you want to learn?", with: "programming")
         |> submit()
         |> assert_path(~p"/start/programming")
+        |> assert_has("h3", text: data.title, timeout: 1)
 
       conn = response.conn
       assert conn.assigns.scope.user.kind == :guest
@@ -74,6 +78,8 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
     end
 
     test "allows guest user without courses to see the page", %{conn: conn, org: org} do
+      data = onboarding_recommendation_fixture()
+
       {:ok, user} = Accounts.create_guest_user(%{language: "en"}, %Scope{org: org, user: nil})
 
       # Verify the user is not enrolled in a course
@@ -88,6 +94,7 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
       |> fill_in("What do you want to learn?", with: "programming")
       |> submit()
       |> assert_path(~p"/start/programming")
+      |> assert_has("h3", text: data.title, timeout: 1)
     end
 
     test "redirects guest user with courses to the home page", %{conn: conn, org: org} do

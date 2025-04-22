@@ -47,6 +47,8 @@ defmodule ZoonkWeb.OnboardingRecommendationsLiveTest do
     end
 
     test "allows guest user without courses to see the page", %{conn: conn, org: org} do
+      onboarding_recommendation_fixture()
+
       {:ok, user} = Accounts.create_guest_user(%{language: "en"}, %Scope{org: org, user: nil})
 
       # Verify the user is not enrolled in a course
