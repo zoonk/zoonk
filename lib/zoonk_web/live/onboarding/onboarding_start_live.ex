@@ -4,7 +4,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
 
   alias Zoonk.AI.Agents.OnboardingRecommender
 
-  on_mount {ZoonkWeb.Onboarding.OnboardingPermissions, :onboarding_permissions}
+  on_mount {ZoonkWeb.Onboarding.OnboardingPermissions, :onboarding_start}
 
   @impl Phoenix.LiveView
   def render(assigns) do

@@ -4,7 +4,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
 
   alias Zoonk.AI.Agents.OnboardingRecommender
 
-  on_mount {ZoonkWeb.Onboarding.OnboardingPermissions, :onboarding_permissions}
+  on_mount {ZoonkWeb.Onboarding.OnboardingPermissions, :onboarding_progress}
 
   @colors [
     "text-red-500",
