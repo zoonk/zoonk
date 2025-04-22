@@ -27,23 +27,23 @@ defmodule ZoonkDev.UIPreview.SpinnerPreviewLive do
               <.text tag="h3" size={:md}>Sizes</.text>
               <div class="flex items-center gap-4">
                 <div class="flex flex-col items-center gap-2">
-                  <.spinner class="size-4" />
+                  <.spinner size={:xs} />
                   <.text size={:xs} variant={:secondary}>Extra Small</.text>
                 </div>
                 <div class="flex flex-col items-center gap-2">
-                  <.spinner class="size-6" />
+                  <.spinner size={:sm} />
                   <.text size={:xs} variant={:secondary}>Small</.text>
                 </div>
                 <div class="flex flex-col items-center gap-2">
-                  <.spinner class="size-8" />
+                  <.spinner size={:md} />
                   <.text size={:xs} variant={:secondary}>Medium</.text>
                 </div>
                 <div class="flex flex-col items-center gap-2">
-                  <.spinner class="size-12" />
+                  <.spinner size={:lg} />
                   <.text size={:xs} variant={:secondary}>Large</.text>
                 </div>
                 <div class="flex flex-col items-center gap-2">
-                  <.spinner class="size-16" />
+                  <.spinner size={:xl} />
                   <.text size={:xs} variant={:secondary}>Extra Large</.text>
                 </div>
               </div>
@@ -53,20 +53,16 @@ defmodule ZoonkDev.UIPreview.SpinnerPreviewLive do
               <.text tag="h3" size={:md}>Colors</.text>
               <div class="flex items-center gap-4">
                 <div class="flex flex-col items-center gap-2">
-                  <.spinner class="size-8" />
-                  <.text size={:xs} variant={:secondary}>Default</.text>
-                </div>
-                <div class="flex flex-col items-center gap-2">
-                  <.spinner class="size-8 text-zk-primary" />
+                  <.spinner variant={:primary} />
                   <.text size={:xs} variant={:secondary}>Primary</.text>
                 </div>
                 <div class="flex flex-col items-center gap-2">
-                  <.spinner class="size-8 text-zk-success" />
-                  <.text size={:xs} variant={:secondary}>Success</.text>
+                  <.spinner variant={:secondary} />
+                  <.text size={:xs} variant={:secondary}>Secondary</.text>
                 </div>
-                <div class="flex flex-col items-center gap-2">
-                  <.spinner class="size-8 text-zk-destructive" />
-                  <.text size={:xs} variant={:secondary}>Destructive</.text>
+                <div class="flex flex-col items-center gap-2 bg-black p-4">
+                  <.spinner variant={:white} />
+                  <.text size={:xs} variant={:secondary}>White</.text>
                 </div>
               </div>
             </div>
@@ -86,7 +82,7 @@ defmodule ZoonkDev.UIPreview.SpinnerPreviewLive do
                 <.card size={:full}>
                   <.card_content class="flex items-center justify-center p-8">
                     <.button disabled class="flex items-center gap-2">
-                      <.spinner class="size-4" />
+                      <.spinner size={:xs} variant={:white} />
                       <span>Saving...</span>
                     </.button>
                   </.card_content>

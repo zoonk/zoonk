@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.OnboardingStartLiveTest do
+defmodule ZoonkWeb.OnboardingRecommendationsLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AIFixtures
@@ -9,33 +9,12 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
   alias Zoonk.Catalog
   alias Zoonk.Scope
 
-  @page_title "What do you want to learn?"
-
-  describe "onboarding start page (unauthenticated)" do
-    test "renders page for :app org" do
+  describe "onboarding recommendations (unauthenticated)" do
+    test "redirects to /start for :app org" do
       build_conn()
       |> Map.put(:host, app_org_fixture().custom_domain)
-      |> visit(~p"/start")
-      |> assert_has("h1", text: @page_title)
-    end
-
-    test "creates guest user" do
-      data = onboarding_recommendation_fixture()
-
-      response =
-        build_conn()
-        |> Map.put(:host, app_org_fixture().custom_domain)
-        |> visit(~p"/start")
-        |> select("Language", option: "Deutsch")
-        |> fill_in("What do you want to learn?", with: "programming")
-        |> submit()
-        |> assert_path(~p"/start/programming")
-        |> assert_has("h3", text: data.title, timeout: 1)
-
-      conn = response.conn
-      assert conn.assigns.scope.user.kind == :guest
-      assert conn.assigns.scope.user.language == :de
-      assert get_session(conn, :language) == "de"
+      |> visit(~p"/start/coding")
+      |> assert_path(~p"/start")
     end
 
     test "redirects page for :creator org" do
@@ -60,17 +39,7 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
     end
   end
 
-  describe "onboarding start page (authenticated)" do
-    setup :signup_and_login_user
-
-    test "redirects to the home page", %{conn: conn} do
-      conn
-      |> visit(~p"/start")
-      |> assert_path(~p"/")
-    end
-  end
-
-  describe "onboarding start page (guest user)" do
+  describe "onboarding recommendations (guest user)" do
     setup do
       app_org = app_org_fixture()
       conn = Map.put(build_conn(), :host, app_org.custom_domain)
@@ -78,7 +47,7 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
     end
 
     test "allows guest user without courses to see the page", %{conn: conn, org: org} do
-      data = onboarding_recommendation_fixture()
+      onboarding_recommendation_fixture()
 
       {:ok, user} = Accounts.create_guest_user(%{language: "en"}, %Scope{org: org, user: nil})
 
@@ -87,14 +56,9 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
 
       conn
       |> login_user(user)
-      |> visit(~p"/start")
-      |> assert_path(~p"/start")
-      |> assert_has("h1", text: @page_title)
-      |> refute_has("select")
-      |> fill_in("What do you want to learn?", with: "programming")
-      |> submit()
-      |> assert_path(~p"/start/programming")
-      |> assert_has("h3", text: data.title, timeout: 1)
+      |> visit(~p"/start/coding")
+      |> assert_path(~p"/start/coding")
+      |> assert_has("h2", text: "We're finding specializations")
     end
 
     test "redirects guest user with courses to the home page", %{conn: conn, org: org} do
@@ -107,8 +71,20 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
 
       conn
       |> login_user(user)
-      |> visit(~p"/start")
+      |> visit(~p"/start/coding")
       |> assert_path(~p"/")
+    end
+
+    test "loads the data", %{conn: conn, org: org} do
+      {:ok, user} = Accounts.create_guest_user(%{language: "en"}, %Scope{org: org, user: nil})
+
+      data = onboarding_recommendation_fixture()
+
+      conn
+      |> login_user(user)
+      |> visit(~p"/start/coding")
+      |> assert_path(~p"/start/coding")
+      |> assert_has("h3", text: data.title, timeout: 1)
     end
   end
 end

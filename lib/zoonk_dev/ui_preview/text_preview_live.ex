@@ -41,6 +41,23 @@ defmodule ZoonkDev.UIPreview.TextPreviewLive do
 
       <.card>
         <.card_header>
+          <.card_title>Text Weight</.card_title>
+          <.card_description>Text can have multiple weights.</.card_description>
+        </.card_header>
+
+        <.card_content class="flex flex-col gap-4">
+          <.text weight={:normal}>Normal Text</.text>
+          <.text weight={:medium}>Medium Text</.text>
+          <.text weight={:semibold}>Semibold Text</.text>
+          <.text weight={:bold}>Bold Text</.text>
+          <.text size={:xxl}>Default For Extra Large Text</.text>
+          <.text size={:xl}>Default For Extra Large Text</.text>
+          <.text>Default Text</.text>
+        </.card_content>
+      </.card>
+
+      <.card>
+        <.card_header>
           <.card_title>HTML Tags</.card_title>
           <.card_description>Text can use different HTML tags for semantic markup.</.card_description>
         </.card_header>

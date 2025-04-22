@@ -1,0 +1,42 @@
+defmodule Zoonk.AIFixtures do
+  @moduledoc false
+
+  def openai_stub(data, opts \\ []) do
+    error = Keyword.get(opts, :error, nil)
+    refusal = Keyword.get(opts, :refusal, nil)
+    output = get_openai_output(data, refusal)
+
+    Req.Test.stub(:openai_client, fn conn ->
+      Req.Test.json(conn, %{
+        "error" => error,
+        "output" => [%{"content" => [output]}]
+      })
+    end)
+  end
+
+  def onboarding_recommendation_fixture(attrs \\ %{}) do
+    title = Map.get(attrs, :title, "Data Science")
+    description = Map.get(attrs, :description, "A field that uses scientific methods to analyze data.")
+    english_title = Map.get(attrs, :english_title, "Data Science")
+    icon = Map.get(attrs, :icon, "tabler-ufo")
+    data = %{title: title, description: description, english_title: english_title, icon: icon}
+
+    openai_stub(%{courses: [data]})
+
+    data
+  end
+
+  defp get_openai_output(data, nil) do
+    %{
+      "type" => "output_text",
+      "text" => JSON.encode!(data)
+    }
+  end
+
+  defp get_openai_output(_data, refusal) do
+    %{
+      "type" => "refusal",
+      "refusal" => refusal
+    }
+  end
+end

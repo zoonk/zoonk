@@ -85,6 +85,7 @@ defmodule ZoonkWeb do
       import Phoenix.HTML
       # Core UI components
       import ZoonkWeb.Components.Anchor
+      import ZoonkWeb.Components.AsyncPage
       import ZoonkWeb.Components.Avatar
       import ZoonkWeb.Components.Button
       import ZoonkWeb.Components.Card

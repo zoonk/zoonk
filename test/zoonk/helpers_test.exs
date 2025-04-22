@@ -103,4 +103,34 @@ defmodule Zoonk.HelpersTest do
              |> Enum.sort() == ["taste", "test"]
     end
   end
+
+  describe "remove_accents/1" do
+    test "removes accents from Latin characters" do
+      assert remove_accents("Café") == "Cafe"
+      assert remove_accents("Crème brûlée") == "Creme brulee"
+      assert remove_accents("naïve") == "naive"
+    end
+
+    test "handles strings without accents" do
+      assert remove_accents("Hello World") == "Hello World"
+      assert remove_accents("Testing 123") == "Testing 123"
+    end
+
+    test "removes other diacritical marks" do
+      assert remove_accents("piñata") == "pinata"
+      assert remove_accents("São Paulo") == "Sao Paulo"
+      assert remove_accents("über") == "uber"
+    end
+
+    test "removes special characters" do
+      assert remove_accents("café@home") == "cafehome"
+      assert remove_accents("test#123") == "test123"
+      assert remove_accents("hello-world") == "helloworld"
+    end
+
+    test "preserves alphanumeric characters and spaces" do
+      assert remove_accents("Café 123") == "Cafe 123"
+      assert remove_accents("Hello World 2025") == "Hello World 2025"
+    end
+  end
 end

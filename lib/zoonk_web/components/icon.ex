@@ -4,6 +4,11 @@ defmodule ZoonkWeb.Components.Icon do
   """
   use Phoenix.Component
 
+  @icon_path %{
+    filled: Path.expand("deps/tabler_icons/icons/filled"),
+    outline: Path.expand("deps/tabler_icons/icons/outline")
+  }
+
   @doc """
   Renders a [Tabler Icon](https://tabler-icons.io/).
 
@@ -34,5 +39,59 @@ defmodule ZoonkWeb.Components.Icon do
       aria-hidden={is_nil(@label)}
     />
     """
+  end
+
+  @doc """
+  Renders a dynamic icon.
+
+  `<.icon />` only allows us to render icons at compile time.
+
+  Sometimes we need to dynamically load icons based on
+  user input or other runtime data like AI's recommendations.
+
+  We can use this component to load icons dynamically.
+
+  ## Examples
+
+      <.dynamic_icon name="tabler-x" />
+      <.dynamic_icon name="tabler-refresh" />
+  """
+  attr :name, :string, required: true
+  attr :variant, :atom, default: :outline, values: [:outline, :filled]
+  attr :default, :string, required: true, doc: "Default icon name to use if the icon is not found"
+  attr :class, :any, default: nil
+
+  def dynamic_icon(assigns) do
+    ~H"""
+    <div class={@class}>
+      {Phoenix.HTML.raw(load_svg(@name, @variant, @default))}
+    </div>
+    """
+  end
+
+  defp load_svg(name, variant, default) do
+    alt_variant = if variant == :outline, do: :filled, else: :outline
+
+    read_svg(name, variant) ||
+      read_svg(name, alt_variant) ||
+      read_svg(default, variant) ||
+      read_svg(default, alt_variant)
+  end
+
+  # sobelow_skip ["Traversal.FileModule"]
+  defp read_svg(name, variant) do
+    dir = Map.fetch!(@icon_path, variant)
+
+    safe_name =
+      name
+      |> String.replace_prefix("tabler-", "")
+      |> Kernel.<>(".svg")
+
+    path = Path.join(dir, safe_name)
+
+    case File.read(path) do
+      {:ok, content} -> String.replace(content, ~r/\s(width|height)="[^"]*"/, "")
+      _error -> nil
+    end
   end
 end

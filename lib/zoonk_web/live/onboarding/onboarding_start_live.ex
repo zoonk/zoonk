@@ -2,16 +2,16 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  alias Zoonk.AI.Agents.OnboardingRecommender
+  alias Zoonk.Config.LanguageConfig
 
-  on_mount {ZoonkWeb.Onboarding.OnboardingPermissions, :onboarding_permissions}
+  on_mount {ZoonkWeb.Onboarding.OnboardingPermissions, :onboarding_start}
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <main class="h-dvh flex w-full items-center justify-center p-4">
-      <div :if={is_nil(@selected_course)} class="absolute top-4 right-4">
-        <.a kind={:button} size={:sm} navigate={~p"/login"}>
+      <div class="absolute top-4 right-4">
+        <.a :if={!@scope.user} kind={:button} size={:sm} navigate={~p"/login"}>
           {gettext("Login")}
         </.a>
 
@@ -21,55 +21,52 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
       </div>
 
       <div class="flex w-full max-w-lg flex-col items-center gap-4 text-center">
-        <.text :if={is_nil(@selected_course)} tag="h1" size={:xxl}>
+        <.text tag="h1" size={:xxl}>
           {dgettext("onboarding", "What do you want to learn?")}
         </.text>
 
-        <div :if={is_nil(@selected_course)}>
-          <.command_trigger
-            id="course-search-trigger"
-            label={get_placeholder()}
-            dialog_id="course-search-dialog"
-          />
-        </div>
-
-        <div :if={@selected_course} class="flex w-full flex-col items-center gap-6">
-          <.text variant={:secondary} class="animate-pulse">
-            {dgettext("onboarding", "Building your learning path for %{title}...",
-              title: @selected_course.title
-            )}
-          </.text>
-
-          <.spinner class="size-12" />
-        </div>
-      </div>
-
-      <.dialog id="course-search-dialog">
-        <form
-          phx-change={JS.push("search-courses", loading: "#command_list")}
-          phx-submit={JS.push("search-courses", loading: "#command_list")}
+        <.form
+          for={@form}
+          action={if @scope.user, do: nil, else: ~p"/start"}
+          phx-submit={@scope.user && "submit"}
+          class="w-full"
         >
-          <.command_input placeholder={get_placeholder()} />
-        </form>
+          <.input
+            field={@form[:query]}
+            label={dgettext("onboarding", "What do you want to learn?")}
+            hide_label
+            type="text"
+            class="w-full"
+            required
+            placeholder={dgettext("onboarding", "E.g. Computer Science, Astronomy, Biology, etc.")}
+          />
 
-        <.command_list>
-          <.command_empty :if={@course_results == []}>
-            {dgettext("onboarding", "No courses found. Try a different search term.")}
-          </.command_empty>
+          <div class={[
+            "mt-2 flex items-center gap-4",
+            @scope.user && "justify-around",
+            !@scope.user && "justify-between"
+          ]}>
+            <.input
+              :if={!@scope.user}
+              field={@form[:language]}
+              hide_label
+              label={dgettext("users", "Language")}
+              type={if @scope.user, do: "hidden", else: "select"}
+              options={LanguageConfig.list_languages(:options)}
+              required
+            />
 
-          <.command_item
-            :for={course <- @course_results}
-            phx-click="select-course"
-            phx-value-title={course.title}
-            phx-value-description={course.description}
-          >
-            <div class="flex flex-col">
-              <span>{course.title}</span>
-              <span class="text-zk-muted-foreground/90 text-xs">{course.description}</span>
-            </div>
-          </.command_item>
-        </.command_list>
-      </.dialog>
+            <.button
+              type="submit"
+              size={:md}
+              variant={:primary}
+              phx-disable-with={dgettext("onboarding", "Loading...")}
+            >
+              {dgettext("onboarding", "Get Started")}
+            </.button>
+          </div>
+        </.form>
+      </div>
     </main>
     """
   end
@@ -81,35 +78,13 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
     socket =
       socket
       |> assign(:page_title, dgettext("onboarding", "Get Started"))
-      |> assign(:course_results, [])
-      |> assign(:app_language, app_language)
-      |> assign(:selected_course, nil)
+      |> assign(:form, to_form(%{"language" => app_language, "query" => ""}))
 
     {:ok, socket}
   end
 
   @impl Phoenix.LiveView
-  def handle_event("search-courses", %{"query" => query}, socket) when byte_size(query) > 2 do
-    case OnboardingRecommender.recommend(query, socket.assigns.app_language) do
-      {:ok, suggestions} ->
-        {:noreply, assign(socket, :course_results, suggestions.courses)}
-
-      {:error, _error} ->
-        {:noreply, assign(socket, :course_results, [])}
-    end
+  def handle_event("submit", %{"query" => query}, socket) do
+    {:noreply, push_navigate(socket, to: ~p"/start/#{query}")}
   end
-
-  def handle_event("search-courses", _params, socket) do
-    {:noreply, assign(socket, :course_results, [])}
-  end
-
-  def handle_event("select-course", %{"title" => title, "description" => description}, socket) do
-    selected_course = %{title: title, description: description}
-
-    socket = assign(socket, selected_course: selected_course)
-
-    {:noreply, socket}
-  end
-
-  defp get_placeholder, do: dgettext("onboarding", "E.g. Computer Science, Astronomy, Biology, etc.")
 end

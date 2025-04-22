@@ -85,6 +85,7 @@ defmodule ZoonkWeb.Router do
         {ZoonkWeb.Language, :set_app_language}
       ] do
       live "/start", Onboarding.OnboardingStartLive
+      live "/start/:input", Onboarding.OnboardingRecommendationsLive
 
       live "/signup", User.UserSignUpLive
       live "/signup/email", User.UserSignUpWithEmailLive
@@ -100,6 +101,8 @@ defmodule ZoonkWeb.Router do
     delete "/logout", Accounts.UserSessionController, :delete
     get "/login/t/:token", Accounts.UserSessionController, :login
     get "/confirm/:token", Accounts.UserSessionController, :confirm
+
+    post "/start", Onboarding.OnboardingController, :create
 
     get "/auth/:provider", Accounts.OAuthController, :request
     get "/auth/:provider/callback", Accounts.OAuthController, :callback

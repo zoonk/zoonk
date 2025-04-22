@@ -21,6 +21,7 @@ import "phoenix_html";
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
+import { DelayLoading } from "./hooks/delay_loading";
 import { DialogTrigger } from "./hooks/dialog_trigger";
 import { ToolbarScroll } from "./hooks/toolbar_scroll";
 import { preserveAttrsFromElement } from "./dom/preserve_state";
@@ -43,7 +44,7 @@ const csrfToken = document
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 const liveSocket = new LiveSocket("/live", Socket, {
-  hooks: { DialogTrigger, ToolbarScroll },
+  hooks: { DelayLoading, DialogTrigger, ToolbarScroll },
   longPollFallbackMs: 2500,
   disconnectedTimeout: 2000,
   params: { _csrf_token: csrfToken, timezone },
