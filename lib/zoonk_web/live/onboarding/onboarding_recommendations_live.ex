@@ -10,23 +10,29 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
   def render(assigns) do
     ~H"""
     <main class="h-dvh flex flex-col items-center justify-center">
-      <.full_page_spinner
-        :if={@courses.loading}
-        title={dgettext("onboarding", "We're finding specializations that will help you learn")}
-        feature={@input}
-        subtitle={
-          dgettext(
-            "onboarding",
-            "This might take a moment as we prepare personalized recommendations for you."
-          )
-        }
-      />
+      <.async_result :let={courses} assign={@courses}>
+        <:loading>
+          <.full_page_spinner
+            title={dgettext("onboarding", "We're finding specializations that will help you learn")}
+            feature={@input}
+            subtitle={
+              dgettext(
+                "onboarding",
+                "This might take a moment as we prepare personalized recommendations for you."
+              )
+            }
+            class={["opacity-0 transition-opacity delay-150 duration-300 ease-in-out"]}
+          />
+        </:loading>
 
-      <div :if={@courses.ok?} class="w-full">
-        <div :for={recommendation <- @courses.result} class="course-item">
+        <:failed :let={_failure}>
+          {dgettext("onboarding", "Sorry, we couldn't find any recommendations for you.")}
+        </:failed>
+
+        <div :for={recommendation <- courses} :if={courses} class="course-item">
           <p>{recommendation.title}</p>
         </div>
-      </div>
+      </.async_result>
     </main>
     """
   end

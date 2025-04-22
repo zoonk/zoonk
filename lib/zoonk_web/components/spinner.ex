@@ -76,7 +76,7 @@ defmodule ZoonkWeb.Components.Spinner do
       />
 
   """
-  attr :class, :string, default: nil, doc: "Additional CSS classes for the container"
+  attr :class, :any, default: nil, doc: "Additional CSS classes for the container"
   attr :title, :string, required: true, doc: "Main message displayed below the spinner"
   attr :subtitle, :string, default: nil, doc: "Secondary text explaining the loading process"
   attr :feature, :string, default: nil, doc: "Text highlighted in primary color (optional)"
