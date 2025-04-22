@@ -32,6 +32,7 @@ defmodule Zoonk.AI.OnboardingRecommendation do
     embeds_many :recommendations, Recommendation do
       field :title, :string
       field :description, :string
+      field :icon, :string
       field :english_title, :string
     end
 

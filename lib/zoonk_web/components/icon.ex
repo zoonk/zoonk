@@ -6,7 +6,7 @@ defmodule ZoonkWeb.Components.Icon do
 
   @icon_path %{
     filled: Path.expand("deps/tabler_icons/icons/filled"),
-    outlined: Path.expand("deps/tabler_icons/icons/outline")
+    outline: Path.expand("deps/tabler_icons/icons/outline")
   }
 
   @doc """
@@ -57,23 +57,36 @@ defmodule ZoonkWeb.Components.Icon do
       <.dynamic_icon name="tabler-refresh" />
   """
   attr :name, :string, required: true
-  attr :style, :atom, default: :outlined, values: [:outlined, :filled]
-  attr :class, :string, default: nil
+  attr :variant, :atom, default: :outline, values: [:outline, :filled]
+  attr :class, :any, default: nil
 
   def dynamic_icon(%{name: "tabler-" <> _rest} = assigns) do
     ~H"""
     <div class={@class}>
-      {Phoenix.HTML.raw(load_svg(@name, @style))}
+      {Phoenix.HTML.raw(load_svg(@name, @variant))}
     </div>
     """
   end
 
+  defp load_svg(name, variant) do
+    alt_variant = if variant == :outline, do: :filled, else: :outline
+    read_svg(name, variant) || read_svg(name, alt_variant) || ""
+  end
+
   # sobelow_skip ["Traversal.FileModule"]
-  defp load_svg(name, style) do
-    dir = Map.fetch!(@icon_path, style)
-    icon_name = String.replace_prefix(name, "tabler-", "")
-    basename = Path.basename(icon_name <> ".svg")
-    path = Path.join(dir, basename)
-    File.read!(path)
+  defp read_svg(name, variant) do
+    dir = Map.fetch!(@icon_path, variant)
+
+    safe_name =
+      name
+      |> String.replace_prefix("tabler-", "")
+      |> Kernel.<>(".svg")
+
+    path = Path.join(dir, safe_name)
+
+    case File.read(path) do
+      {:ok, content} -> String.replace(content, ~r/\s(width|height)="[^"]*"/, "")
+      _error -> nil
+    end
   end
 end

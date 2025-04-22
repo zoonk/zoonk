@@ -6,6 +6,20 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
 
   on_mount {ZoonkWeb.Onboarding.OnboardingPermissions, :onboarding_permissions}
 
+  @colors [
+    "text-red-500",
+    "text-orange-500",
+    "text-amber-500",
+    "text-green-500",
+    "text-blue-500",
+    "text-indigo-500",
+    "text-purple-500",
+    "text-violet-500",
+    "text-fuchsia-500",
+    "text-pink-500",
+    "text-gray-500"
+  ]
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -42,23 +56,32 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
       </header>
 
       <ul :if={recommendations} class="mx-auto max-w-xl">
-        <li :for={recommendation <- recommendations} class="group">
+        <li :for={{recommendation, index} <- Enum.with_index(recommendations)} class="group">
           <a
             href="#"
             class={[
-              "border-zk-border flex flex-col gap-1 border-b py-4",
+              "border-zk-border flex gap-1 border-b py-4",
               "hover:bg-zk-secondary/75",
               "group-first:pt-0 group-last:border-b-0",
               "focus-visible:bg-zk-secondary/75 focus-visible:outline-0"
             ]}
           >
-            <.text tag="h3" weight={:semibold}>
-              {recommendation.title}
-            </.text>
+            <div class="flex flex-col gap-1">
+              <.text tag="h3" weight={:semibold}>
+                {recommendation.title}
+              </.text>
 
-            <.text size={:sm} variant={:secondary} class="line-clamp-2">
-              {recommendation.description}
-            </.text>
+              <.text size={:sm} variant={:secondary} class="line-clamp-2">
+                {recommendation.description}
+              </.text>
+            </div>
+
+            <div class="size-20 bg-zk-muted flex shrink-0 flex-col items-center justify-center rounded-lg">
+              <.dynamic_icon
+                name={recommendation.icon || "tabler-book"}
+                class={["size-8", get_color(index)]}
+              />
+            </div>
           </a>
         </li>
       </ul>
@@ -78,5 +101,11 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
       |> assign_async(:courses, fn -> OnboardingRecommender.recommend(input, language) end)
 
     {:ok, socket}
+  end
+
+  defp get_color(index) do
+    @colors
+    |> Enum.shuffle()
+    |> Enum.at(index)
   end
 end
