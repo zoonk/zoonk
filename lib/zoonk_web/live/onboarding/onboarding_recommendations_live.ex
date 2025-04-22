@@ -47,7 +47,9 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
             href="#"
             class="border-zk-border flex flex-col gap-1 border-b py-4 group-first:pt-0 group-last:border-b-0"
           >
-            <.text tag="h3" weight={:semibold}>{recommendation.title}</.text>
+            <.text tag="h3" weight={:semibold}>
+              {recommendation.title}
+            </.text>
 
             <.text size={:sm} variant={:secondary} class="line-clamp-2">
               {recommendation.description}
