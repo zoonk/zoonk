@@ -34,13 +34,23 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
             placeholder={dgettext("onboarding", "E.g. Computer Science, Astronomy, Biology, etc.")}
           />
 
-          <.input
-            field={@form[:language]}
-            type="select"
-            options={LanguageConfig.list_languages(:options)}
-            required
-            class="mt-2"
-          />
+          <div class="mt-2 flex items-center justify-between gap-4">
+            <.input
+              field={@form[:language]}
+              type="select"
+              options={LanguageConfig.list_languages(:options)}
+              required
+            />
+
+            <.button
+              type="submit"
+              size={:md}
+              variant={:primary}
+              phx-disable-with={dgettext("onboarding", "Loading...")}
+            >
+              {dgettext("onboarding", "Get Started")}
+            </.button>
+          </div>
         </.form>
       </div>
     </main>
