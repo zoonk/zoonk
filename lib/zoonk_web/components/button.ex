@@ -18,7 +18,7 @@ defmodule ZoonkWeb.Components.Button do
   attr :icon, :string, default: nil
   attr :icon_align, :atom, values: [:left, :right, :auto], default: :auto
   attr :variant, :atom, values: [:primary, :destructive, :outline], default: :primary
-  attr :size, :atom, values: [:sm, :md, :lg], default: :md
+  attr :size, :atom, values: [:sm, :md, :lg], default: :sm
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
 
