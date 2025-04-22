@@ -25,8 +25,7 @@ defmodule Zoonk.AI.AIClient.OpenAIClient do
     req_opts = [
       json: payload,
       receive_timeout: 300_000,
-      connect_options: [timeout: 300_000],
-      json_decode: [keys: :atoms!]
+      connect_options: [timeout: 300_000]
     ]
 
     opts = Keyword.merge(req_opts, Application.get_env(:zoonk, :ai)[:openai] || [])
@@ -44,7 +43,7 @@ defmodule Zoonk.AI.AIClient.OpenAIClient do
   end
 
   defp object_response([%{"type" => "output_text"} = content]) do
-    {:ok, content["text"]}
+    {:ok, Jason.decode!(content["text"], keys: :atoms!)}
   end
 
   defp object_response([%{"type" => "refusal"} = content]) do
