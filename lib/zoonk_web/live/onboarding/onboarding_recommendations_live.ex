@@ -45,7 +45,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
         <li :for={recommendation <- recommendations} class="group">
           <a
             href="#"
-            class="border-zk-border flex flex-col gap-1 border-b py-4 group-first:pt-0 group-last:border-b-0"
+            class="border-zk-border flex flex-col gap-1 border-b py-4 hover:bg-zk-muted/75 group-first:pt-0 group-last:border-b-0"
           >
             <.text tag="h3" weight={:semibold}>
               {recommendation.title}
