@@ -23,15 +23,15 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
       failure_message={dgettext("onboarding", "Sorry, we couldn't find any recommendations for you.")}
       failure_link={~p"/start"}
       failure_link_text={gettext("Back")}
-      class="mx-auto flex max-w-5xl flex-col gap-4 p-0"
+      class="mx-auto flex max-w-5xl flex-col gap-4 p-4 xl:px-0"
     >
-      <nav class="p-4 xl:px-0">
+      <nav>
         <.a navigate={~p"/start"} kind={:button} size={:sm} variant={:outline}>
           {gettext("Back")}
         </.a>
       </nav>
 
-      <header class="mx-auto px-4 text-center">
+      <header class="mx-auto py-8 text-center">
         <.text tag="h1" size={:xxl}>
           {dgettext("onboarding", "Recommendations for you")}
         </.text>
@@ -43,7 +43,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
 
       <ul :if={recommendations}>
         <li :for={recommendation <- recommendations}>
-          <div>
+          <a href="#">
             <.text tag="h3" size={:lg} variant={:primary} class="group-hover:text-zk-primary-text">
               {recommendation.title}
             </.text>
@@ -51,7 +51,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
             <.text variant={:secondary} class="max-w-prose">
               {recommendation.description}
             </.text>
-          </div>
+          </a>
         </li>
       </ul>
     </.async_page>
