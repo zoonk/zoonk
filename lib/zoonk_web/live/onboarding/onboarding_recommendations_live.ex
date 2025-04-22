@@ -76,7 +76,10 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
               </.text>
             </div>
 
-            <div class="size-17 bg-zk-secondary/75 flex shrink-0 flex-col items-center justify-center rounded-lg">
+            <div
+              aria-hidden
+              class="size-17 bg-zk-secondary/75 flex shrink-0 flex-col items-center justify-center rounded-lg"
+            >
               <.dynamic_icon
                 name={recommendation.icon || "tabler-book"}
                 variant={:filled}
