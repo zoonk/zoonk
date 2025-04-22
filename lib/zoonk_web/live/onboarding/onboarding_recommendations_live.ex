@@ -81,7 +81,8 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
               class="size-17 bg-zk-secondary/75 flex shrink-0 flex-col items-center justify-center rounded-lg"
             >
               <.dynamic_icon
-                name={recommendation.icon || "tabler-book"}
+                name={recommendation.icon}
+                default="tabler-book"
                 variant={:filled}
                 class={["size-8", get_color(index)]}
               />

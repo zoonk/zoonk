@@ -58,19 +58,20 @@ defmodule ZoonkWeb.Components.Icon do
   """
   attr :name, :string, required: true
   attr :variant, :atom, default: :outline, values: [:outline, :filled]
+  attr :default, :string, required: true, doc: "Default icon name to use if the icon is not found"
   attr :class, :any, default: nil
 
   def dynamic_icon(assigns) do
     ~H"""
     <div class={@class}>
-      {Phoenix.HTML.raw(load_svg(@name, @variant))}
+      {Phoenix.HTML.raw(load_svg(@name, @variant, @default))}
     </div>
     """
   end
 
-  defp load_svg(name, variant) do
+  defp load_svg(name, variant, default) do
     alt_variant = if variant == :outline, do: :filled, else: :outline
-    read_svg(name, variant) || read_svg(name, alt_variant) || ""
+    read_svg(name, variant) || read_svg(name, alt_variant) || read_svg(default, variant) || read_svg(default, alt_variant)
   end
 
   # sobelow_skip ["Traversal.FileModule"]
