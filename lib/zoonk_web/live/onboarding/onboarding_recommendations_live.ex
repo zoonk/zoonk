@@ -47,8 +47,9 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
             href="#"
             class={[
               "border-zk-border flex flex-col gap-1 border-b py-4",
-              "hover:bg-zk-muted/75",
-              "group-first:pt-0 group-last:border-b-0"
+              "hover:bg-zk-secondary/75",
+              "group-first:pt-0 group-last:border-b-0",
+              "focus-visible:bg-zk-secondary/75 focus-visible:outline-0"
             ]}
           >
             <.text tag="h3" weight={:semibold}>
