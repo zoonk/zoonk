@@ -71,7 +71,11 @@ defmodule ZoonkWeb.Components.Icon do
 
   defp load_svg(name, variant, default) do
     alt_variant = if variant == :outline, do: :filled, else: :outline
-    read_svg(name, variant) || read_svg(name, alt_variant) || read_svg(default, variant) || read_svg(default, alt_variant)
+
+    read_svg(name, variant) ||
+      read_svg(name, alt_variant) ||
+      read_svg(default, variant) ||
+      read_svg(default, alt_variant)
   end
 
   # sobelow_skip ["Traversal.FileModule"]
