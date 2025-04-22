@@ -10,7 +10,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
   def render(assigns) do
     ~H"""
     <main class="h-dvh flex flex-col items-center justify-center">
-      <.async_result :let={courses} assign={@courses}>
+      <.async_result :let={recommendations} assign={@courses}>
         <:loading>
           <.full_page_spinner
             title={dgettext("onboarding", "We're finding specializations that will help you learn")}
@@ -29,7 +29,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
           {dgettext("onboarding", "Sorry, we couldn't find any recommendations for you.")}
         </:failed>
 
-        <div :for={recommendation <- courses} :if={courses} class="course-item">
+        <div :for={recommendation <- recommendations} :if={recommendations} class="course-item">
           <p>{recommendation.title}</p>
         </div>
       </.async_result>
