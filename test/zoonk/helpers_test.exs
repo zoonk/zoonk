@@ -123,9 +123,9 @@ defmodule Zoonk.HelpersTest do
     end
 
     test "removes special characters" do
-      assert remove_accents("café@home") == "cafe home"
+      assert remove_accents("café@home") == "cafehome"
       assert remove_accents("test#123") == "test123"
-      assert remove_accents("hello-world") == "hello world"
+      assert remove_accents("hello-world") == "helloworld"
     end
 
     test "preserves alphanumeric characters and spaces" do
