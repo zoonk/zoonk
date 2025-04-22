@@ -147,4 +147,25 @@ defmodule Zoonk.Helpers do
         String.jaro_distance(item_text, query) >= threshold
     end)
   end
+
+  @doc """
+  Remove accents from a string.
+
+  ## Examples
+
+      iex> remove_accents("Café")
+      "Cafe"
+
+      iex> remove_accents("Crème brûlée")
+      "Creme brulee"
+
+      iex> remove_accents("naïve")
+      "naive"
+  """
+  def remove_accents(string) do
+    string
+    |> String.normalize(:nfd)
+    |> String.replace(~r/\p{Mn}/u, "")
+    |> String.replace(~r/[^a-zA-Z0-9\s]/u, "")
+  end
 end
