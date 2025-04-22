@@ -102,6 +102,8 @@ defmodule ZoonkWeb.Router do
     get "/login/t/:token", Accounts.UserSessionController, :login
     get "/confirm/:token", Accounts.UserSessionController, :confirm
 
+    post "/start", Onboarding.OnboardingController, :create
+
     get "/auth/:provider", Accounts.OAuthController, :request
     get "/auth/:provider/callback", Accounts.OAuthController, :callback
 

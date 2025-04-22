@@ -110,7 +110,7 @@ defmodule Zoonk.Accounts do
   end
 
   # Don't create guest users for other orgs
-  def create_guest_user(_attrs, _scope), do: nil
+  def create_guest_user(_attrs, _scope), do: {:error, :not_allowed}
 
   @doc """
   Checks whether the user is in sudo mode.

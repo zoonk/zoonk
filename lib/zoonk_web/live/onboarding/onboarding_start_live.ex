@@ -25,7 +25,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
           {dgettext("onboarding", "What do you want to learn?")}
         </.text>
 
-        <.form for={@form} phx-submit="submit" class="w-full">
+        <.form for={@form} action={~p"/start"} class="w-full">
           <.input
             field={@form[:query]}
             type="text"
@@ -67,10 +67,5 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
       |> assign(:form, to_form(%{"language" => app_language, "query" => ""}))
 
     {:ok, socket}
-  end
-
-  @impl Phoenix.LiveView
-  def handle_event("submit", _params, socket) do
-    {:noreply, socket}
   end
 end

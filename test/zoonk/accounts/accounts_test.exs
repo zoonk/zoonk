@@ -204,12 +204,12 @@ defmodule Zoonk.AccountsTest do
   describe "create_guest_user/2" do
     test "don't create guest users for creator orgs" do
       scope = scope_fixture(%{kind: :creator})
-      refute Accounts.create_guest_user(%{language: "en"}, scope)
+      assert {:error, :not_allowed} = Accounts.create_guest_user(%{language: "en"}, scope)
     end
 
     test "don't create guest users for team orgs" do
       scope = scope_fixture(%{kind: :team})
-      refute Accounts.create_guest_user(%{language: "en"}, scope)
+      assert {:error, :not_allowed} = Accounts.create_guest_user(%{language: "en"}, scope)
     end
 
     test "creates a guest user for app orgs" do
