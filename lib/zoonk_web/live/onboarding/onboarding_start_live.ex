@@ -38,11 +38,10 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
 
           <div class="mt-2 flex items-center justify-between gap-4">
             <.input
-              :if={!@scope.user}
               field={@form[:language]}
               hide_label
               label={dgettext("users", "Language")}
-              type="select"
+              type={if @scope.user, do: "hidden", else: "select"}
               options={LanguageConfig.list_languages(:options)}
               required
             />

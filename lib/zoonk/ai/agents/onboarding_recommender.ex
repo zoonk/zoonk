@@ -26,16 +26,21 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
       {:error, "This violates our content policy."}
   """
   def recommend(input, language) do
+    IO.inspect("loaded")
+
     OnboardingRecommendation
     |> Repo.get_by(query: input, language: language)
     |> recommend(input, language)
   end
 
   defp recommend(%OnboardingRecommendation{} = recommendation, _input, _lang) do
+    IO.inspect("cached")
     {:ok, %{courses: recommendation.recommendations}}
   end
 
   defp recommend(nil, input, language) do
+    IO.inspect("not cached")
+
     %AI{}
     |> AI.set_model("gpt-4.1-mini")
     |> AI.set_schema(get_schema())
