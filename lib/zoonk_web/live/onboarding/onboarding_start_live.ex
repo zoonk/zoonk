@@ -25,7 +25,12 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
           {dgettext("onboarding", "What do you want to learn?")}
         </.text>
 
-        <.form for={@form} action={~p"/start"} class="w-full">
+        <.form
+          for={@form}
+          action={if @scope.user, do: nil, else: ~p"/start"}
+          phx-submit={@scope.user && "submit"}
+          class="w-full"
+        >
           <.input
             field={@form[:query]}
             label={dgettext("onboarding", "What do you want to learn?")}
@@ -38,6 +43,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
 
           <div class="mt-2 flex items-center justify-between gap-4">
             <.input
+              :if={!@scope.user}
               field={@form[:language]}
               hide_label
               label={dgettext("users", "Language")}
@@ -72,5 +78,10 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
       |> assign(:form, to_form(%{"language" => app_language, "query" => ""}))
 
     {:ok, socket}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("submit", %{"query" => query}, socket) do
+    {:noreply, push_navigate(socket, to: ~p"/start/#{query}")}
   end
 end
