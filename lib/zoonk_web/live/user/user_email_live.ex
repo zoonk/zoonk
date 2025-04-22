@@ -87,7 +87,6 @@ defmodule ZoonkWeb.User.UserEmailLive do
   def handle_event("update_email", params, socket) do
     %{"user" => user_params} = params
     user = socket.assigns.scope.user
-    true = Accounts.sudo_mode?(user)
 
     case Accounts.change_user_email(user, user_params) do
       %{valid?: true} = changeset ->
