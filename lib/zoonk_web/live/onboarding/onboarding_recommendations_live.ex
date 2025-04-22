@@ -25,6 +25,12 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
       failure_link_text={gettext("Back")}
       class="mx-auto flex max-w-4xl flex-col gap-4 p-0"
     >
+      <nav class="p-4 lg:px-0">
+        <.a navigate={~p"/start"} kind={:button} size={:sm} variant={:outline}>
+          {gettext("Back")}
+        </.a>
+      </nav>
+
       <ul :if={recommendations}>
         <li :for={recommendation <- recommendations}>
           <div>
