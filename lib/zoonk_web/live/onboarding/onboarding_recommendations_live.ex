@@ -23,13 +23,11 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
       failure_message={dgettext("onboarding", "Sorry, we couldn't find any recommendations for you.")}
       failure_link={~p"/start"}
       failure_link_text={gettext("Back")}
+      class="mx-auto flex max-w-4xl flex-col gap-4 p-0"
     >
-      <ul :if={recommendations} class="divide-zk-border mx-auto w-full max-w-4xl divide-y px-4">
-        <li
-          :for={recommendation <- recommendations}
-          class="group cursor-pointer py-6 transition-colors hover:bg-zk-muted"
-        >
-          <div class="flex flex-col gap-2 px-4">
+      <ul :if={recommendations}>
+        <li :for={recommendation <- recommendations}>
+          <div>
             <.text tag="h3" size={:lg} variant={:primary} class="group-hover:text-zk-primary-text">
               {recommendation.title}
             </.text>
