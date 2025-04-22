@@ -1,6 +1,7 @@
 defmodule ZoonkWeb.OnboardingRecommendationsLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
+  import Zoonk.AIFixtures
   import Zoonk.CatalogFixtures
   import Zoonk.OrgFixtures
 
@@ -38,7 +39,7 @@ defmodule ZoonkWeb.OnboardingRecommendationsLiveTest do
     end
   end
 
-  describe "onboarding start page (guest user)" do
+  describe "onboarding recommendations (guest user)" do
     setup do
       app_org = app_org_fixture()
       conn = Map.put(build_conn(), :host, app_org.custom_domain)
@@ -70,6 +71,18 @@ defmodule ZoonkWeb.OnboardingRecommendationsLiveTest do
       |> login_user(user)
       |> visit(~p"/start/coding")
       |> assert_path(~p"/")
+    end
+
+    test "loads the data", %{conn: conn, org: org} do
+      {:ok, user} = Accounts.create_guest_user(%{language: "en"}, %Scope{org: org, user: nil})
+
+      data = onboarding_recommendation_fixture()
+
+      conn
+      |> login_user(user)
+      |> visit(~p"/start/coding")
+      |> assert_path(~p"/start/coding")
+      |> assert_has("h3", text: data.title, timeout: 1)
     end
   end
 end
