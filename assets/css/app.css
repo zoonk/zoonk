@@ -307,10 +307,6 @@
   @apply grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3;
 }
 
-@utility delay-loading {
-  @apply opacity-0 transition-opacity delay-150 duration-300 ease-in-out;
-}
-
 .scrollbar-none::-webkit-scrollbar {
   display: none;
 }

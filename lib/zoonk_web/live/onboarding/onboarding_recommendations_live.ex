@@ -15,13 +15,13 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
           <.full_page_spinner
             title={dgettext("onboarding", "We're finding specializations that will help you learn")}
             feature={@input}
+            delay_loading
             subtitle={
               dgettext(
                 "onboarding",
                 "This might take a moment as we prepare personalized recommendations for you."
               )
             }
-            class="delay-loading"
           />
         </:loading>
 

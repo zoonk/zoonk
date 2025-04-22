@@ -76,16 +76,28 @@ defmodule ZoonkWeb.Components.Spinner do
       />
 
   """
+  attr :id, :string, default: "spinner_#{System.unique_integer()}", doc: "ID of the spinner container"
   attr :class, :any, default: nil, doc: "Additional CSS classes for the container"
   attr :title, :string, required: true, doc: "Main message displayed below the spinner"
   attr :subtitle, :string, default: nil, doc: "Secondary text explaining the loading process"
   attr :feature, :string, default: nil, doc: "Text highlighted in primary color (optional)"
+
+  attr :delay_loading, :boolean,
+    default: false,
+    doc: "Delay loading spinner to avoid flicker on fast operations"
+
   attr :rest, :global, doc: "Additional HTML attributes"
 
   def full_page_spinner(assigns) do
     ~H"""
     <div
-      class={["flex w-full max-w-md flex-col items-center justify-center p-8 text-center", @class]}
+      id={@id}
+      phx-hook={@delay_loading && "DelayLoading"}
+      class={[
+        "flex w-full max-w-md flex-col items-center justify-center p-8 text-center",
+        @delay_loading && "opacity-0",
+        @class
+      ]}
       {@rest}
     >
       <div class="mb-8">
