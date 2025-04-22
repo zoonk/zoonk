@@ -36,19 +36,20 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
           {dgettext("onboarding", "Recommendations for you")}
         </.text>
 
-        <.text tag="h3" size={:lg} variant={:secondary}>
+        <.text tag="h2" size={:lg} variant={:secondary}>
           {dgettext("onboarding", "Pick one to get started")}
         </.text>
       </header>
 
-      <ul :if={recommendations}>
-        <li :for={recommendation <- recommendations}>
-          <a href="#">
-            <.text tag="h3" size={:lg} variant={:primary} class="group-hover:text-zk-primary-text">
-              {recommendation.title}
-            </.text>
+      <ul :if={recommendations} class="mx-auto max-w-xl">
+        <li :for={recommendation <- recommendations} class="group">
+          <a
+            href="#"
+            class="border-zk-border flex flex-col gap-1 border-b py-4 group-first:pt-0 group-last:border-b-0"
+          >
+            <.text tag="h3">{recommendation.title}</.text>
 
-            <.text variant={:secondary} class="max-w-prose">
+            <.text size={:sm} variant={:secondary} class="line-clamp-2">
               {recommendation.description}
             </.text>
           </a>
