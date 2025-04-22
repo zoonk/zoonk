@@ -85,6 +85,9 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
       |> assert_path(~p"/start")
       |> assert_has("h1", text: @page_title)
       |> refute_has("select")
+      |> fill_in("What do you want to learn?", with: "programming")
+      |> submit()
+      |> assert_path(~p"/start/programming")
     end
 
     test "redirects guest user with courses to the home page", %{conn: conn, org: org} do
