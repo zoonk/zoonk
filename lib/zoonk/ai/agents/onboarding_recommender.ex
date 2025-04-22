@@ -12,6 +12,7 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
   alias Zoonk.AI.AIClient
   alias Zoonk.AI.AISchema
   alias Zoonk.AI.OnboardingRecommendation
+  alias Zoonk.Helpers
   alias Zoonk.Repo
 
   @doc """
@@ -26,11 +27,14 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
       {:error, "This violates our content policy."}
   """
   def recommend(input, language) do
-    trimmed_input = String.trim(input)
+    formatted_input =
+      input
+      |> String.trim()
+      |> Helpers.remove_accents()
 
     OnboardingRecommendation
-    |> Repo.get_by(query: trimmed_input, language: language)
-    |> recommend(trimmed_input, language)
+    |> Repo.get_by(query: formatted_input, language: language)
+    |> recommend(formatted_input, language)
   end
 
   defp recommend(%OnboardingRecommendation{} = recommendation, _input, _lang) do
