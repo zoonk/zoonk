@@ -1,6 +1,7 @@
 defmodule ZoonkWeb.Onboarding.OnboardingControllerTest do
   use ZoonkWeb.ConnCase, async: true
 
+  import Zoonk.AccountFixtures
   import Zoonk.OrgFixtures
 
   alias Zoonk.Accounts.User
@@ -31,5 +32,22 @@ defmodule ZoonkWeb.Onboarding.OnboardingControllerTest do
     assert get_session(logged_in_conn, :language) == "en"
     assert logged_in_conn.assigns.scope.user.kind == :guest
     assert html_response(logged_in_conn, 200)
+  end
+
+  test "POST /start - redirects when user is already logged in", %{conn: conn} do
+    user = user_fixture()
+    query = "computer science"
+    params = %{"language" => "en", "query" => query}
+
+    conn =
+      conn
+      |> login_user(user)
+      |> post(~p"/start", params)
+
+    assert redirected_to(conn) == ~p"/start/#{query}"
+
+    # it should be logged in with the same user
+    logged_in_conn = get(conn, ~p"/start/#{query}")
+    assert logged_in_conn.assigns.scope.user.id == user.id
   end
 end
