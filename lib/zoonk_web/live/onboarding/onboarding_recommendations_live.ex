@@ -21,7 +21,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
                 "This might take a moment as we prepare personalized recommendations for you."
               )
             }
-            class={["opacity-0 transition-opacity delay-150 duration-300 ease-in-out"]}
+            class="delay-loading"
           />
         </:loading>
 
