@@ -82,7 +82,7 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
     A user is onboarding to our learning platform.
     We asked them what they would like to learn.
 
-    Generate 3 to 5 broad **course suggestions**.
+    Generate 3 to 10 broad **course suggestions**.
 
     Each course must follow these rules:
 
@@ -132,7 +132,7 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
     """
     This is their input: "#{input}"
     This means they want to learn about #{input}.
-    So, generate 3 to 5 course suggestions based on this input.
+    So, generate 3 to 10 course suggestions based on this input.
 
     Write both the `title` and `description` fields in the same language.
     They want to see results in this language: #{language}.
