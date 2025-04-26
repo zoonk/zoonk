@@ -7,6 +7,10 @@ env:
   OTP_VERSION: 27.2.2
   ELIXIR_VERSION: 1.18.2
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   code-quality:
     runs-on: ubuntu-latest
