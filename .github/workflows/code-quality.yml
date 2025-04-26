@@ -7,6 +7,10 @@ env:
   OTP_VERSION: 27.2.2
   ELIXIR_VERSION: 1.18.2
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   code-quality:
     runs-on: ubuntu-latest
@@ -26,7 +30,7 @@ jobs:
     steps:
       - name: Set up Elixir
         id: beam
-        uses: erlef/setup-beam@v1
+        uses: erlef/setup-beam@4b97eeaf23ad23397976bb25e8345cb633a53ee4
         with:
           elixir-version: ${{env.ELIXIR_VERSION}}
           otp-version: ${{env.OTP_VERSION}}
@@ -58,7 +62,7 @@ jobs:
             ${{ runner.os }}-mix-
 
       - name: Set Up Bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@54cb141c5c91e2fdc396be3155a391f28e1822eb
 
       - name: Install dependencies
         run: mix deps.get
