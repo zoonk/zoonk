@@ -7,12 +7,13 @@ defmodule Zoonk.Catalog.Interest do
 
   ## Fields
 
-  | Field Name | Type | Description |
-  |------------|------|-------------|
-  | `category` | `Ecto.Enum` | The category of the interest (watch, read, use, etc). |
-  | `thumb_url` | `String` | URL for the interest thumbnail image. |
-  | `inserted_at` | `DateTime` | Timestamp when the interest was created. |
-  | `updated_at` | `DateTime` | Timestamp when the interest was last updated. |
+  | Field Name   | Type        | Description                              |
+  |--------------|-------------|------------------------------------------|
+  | `category`   | `Ecto.Enum` | The category of the interest (watch, read, use, etc). |
+  | `slug`       | `String`    | Unique identifier for the interest.      |
+  | `thumb_url`  | `String`    | URL for the interest thumbnail image.    |
+  | `inserted_at`| `DateTime`  | Timestamp when the interest was created. |
+  | `updated_at` | `DateTime`  | Timestamp when the interest was last updated. |
   """
   use Ecto.Schema
 
@@ -23,6 +24,7 @@ defmodule Zoonk.Catalog.Interest do
 
   schema "interests" do
     field :category, Ecto.Enum, values: InterestConfig.list_categories(:atom), default: :other
+    field :slug, :string
     field :thumb_url, :string
 
     has_many :translations, InterestTranslation
@@ -33,7 +35,8 @@ defmodule Zoonk.Catalog.Interest do
   @doc false
   def changeset(interest, attrs) do
     interest
-    |> cast(attrs, [:category, :thumb_url])
-    |> validate_required([:category])
+    |> cast(attrs, [:category, :thumb_url, :slug])
+    |> validate_required([:category, :slug])
+    |> unique_constraint([:slug])
   end
 end

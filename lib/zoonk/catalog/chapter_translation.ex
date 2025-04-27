@@ -12,7 +12,6 @@ defmodule Zoonk.Catalog.ChapterTranslation do
   | `chapter_id` | `Integer`   | The ID of the chapter this translation belongs to.       |
   | `language`   | `Ecto.Enum` | The language of this translation.                        |
   | `title`      | `String`    | The title of the chapter in the specified language.      |
-  | `slug`       | `String`    | URL-friendly version of the title (case insensitive).    |
   | `description`| `String`    | The description of the chapter in the specified language.|
   | `inserted_at`| `DateTime`  | Timestamp when the translation was created.              |
   | `updated_at` | `DateTime`  | Timestamp when the translation was last updated.         |
@@ -30,7 +29,6 @@ defmodule Zoonk.Catalog.ChapterTranslation do
       default: LanguageConfig.get_default_language(:atom)
 
     field :title, :string
-    field :slug, :string
     field :description, :string
 
     belongs_to :chapter, Chapter
@@ -41,11 +39,9 @@ defmodule Zoonk.Catalog.ChapterTranslation do
   @doc false
   def changeset(translation, attrs) do
     translation
-    |> cast(attrs, [:chapter_id, :language, :title, :description, :slug])
-    |> validate_required([:chapter_id, :language, :title, :description, :slug])
+    |> cast(attrs, [:chapter_id, :language, :title, :description])
+    |> validate_required([:chapter_id, :language, :title, :description])
     |> validate_length(:title, min: 1, max: 255)
-    |> validate_length(:slug, min: 1, max: 255)
     |> unique_constraint([:chapter_id, :language])
-    |> unique_constraint([:language, :slug])
   end
 end

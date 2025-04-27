@@ -13,6 +13,7 @@ defmodule Zoonk.Catalog.Course do
   | Field Name       | Type       | Description                                   |
   |------------------|------------|-----------------------------------------------|
   | `org_id`         | `Integer`  | The ID of the org that owns this course.      |
+  | `slug`           | `String`   | Unique identifier for the course.             |
   | `categories`     | `List`     | List of categories the course belongs to.     |
   | `thumb_url`      | `String`   | URL for the course thumbnail image.           |
   | `translations`   | `List`     | List of translations for the course.          |
@@ -34,11 +35,12 @@ defmodule Zoonk.Catalog.Course do
   schema "courses" do
     field :categories, {:array, Ecto.Enum}, values: CategoryConfig.list_categories(:atom), default: []
     field :thumb_url, :string
+    field :slug, :string
 
     belongs_to :org, Org
 
     has_many :translations, CourseTranslation
-    has_many :couse_users, CourseUser
+    has_many :course_users, CourseUser
     has_many :course_chapters, CourseChapter
 
     timestamps(type: :utc_datetime_usec)
@@ -47,7 +49,8 @@ defmodule Zoonk.Catalog.Course do
   @doc false
   def changeset(course, attrs) do
     course
-    |> cast(attrs, [:org_id, :categories, :thumb_url])
-    |> validate_required([:org_id, :categories])
+    |> cast(attrs, [:org_id, :categories, :slug, :thumb_url])
+    |> validate_required([:org_id, :categories, :slug])
+    |> unique_constraint([:slug])
   end
 end

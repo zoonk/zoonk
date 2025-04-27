@@ -34,7 +34,7 @@ defmodule Zoonk.Catalog.Chapter do
   |--------------------|------------|---------------------------------------------------|
   | `org_id`           | `Integer`  | ID of the organization that owns this chapter.    |
   | `course_id`        | `Integer`  | Course that expands this chapter's content.       |
-  | `categories`       | `List`     | List of categories the chapter belongs to.        |
+  | `slug`             | `String`   | Unique identifier for the chapter.                |
   | `thumb_url`        | `String`   | URL for the chapter thumbnail image.              |
   | `inserted_at`      | `DateTime` | Timestamp when the chapter was created.           |
   | `updated_at`       | `DateTime` | Timestamp when the chapter was last updated.      |
@@ -45,11 +45,10 @@ defmodule Zoonk.Catalog.Chapter do
 
   alias Zoonk.Catalog.ChapterTranslation
   alias Zoonk.Catalog.Course
-  alias Zoonk.Config.CategoryConfig
   alias Zoonk.Orgs.Org
 
   schema "chapters" do
-    field :categories, {:array, Ecto.Enum}, values: CategoryConfig.list_categories(:atom), default: []
+    field :slug, :string
     field :thumb_url, :string
 
     belongs_to :org, Org
@@ -63,7 +62,8 @@ defmodule Zoonk.Catalog.Chapter do
   @doc false
   def changeset(chapter, attrs) do
     chapter
-    |> cast(attrs, [:org_id, :course_id, :categories, :thumb_url])
-    |> validate_required([:org_id, :categories])
+    |> cast(attrs, [:org_id, :course_id, :slug, :thumb_url])
+    |> validate_required([:org_id, :slug])
+    |> unique_constraint([:slug])
   end
 end
