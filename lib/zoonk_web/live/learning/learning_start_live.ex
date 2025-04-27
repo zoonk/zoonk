@@ -8,6 +8,12 @@ defmodule ZoonkWeb.Learning.LearningStartLive do
   def render(assigns) do
     ~H"""
     <main class="h-dvh flex w-full items-center justify-center p-4">
+      <div class="absolute top-4 left-4">
+        <.a kind={:button} variant={:outline} navigate={~p"/"}>
+          {gettext("Back to app")}
+        </.a>
+      </div>
+
       <div class="flex w-full max-w-lg flex-col items-center gap-4 text-center">
         <.text tag="h1" size={:xxl}>
           {dgettext("learning", "What do you want to learn?")}
