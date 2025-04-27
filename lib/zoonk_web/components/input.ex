@@ -3,7 +3,9 @@ defmodule ZoonkWeb.Components.Input do
   Provides the UI for rendering input fields.
   """
   use Phoenix.Component
+  use Gettext, backend: Zoonk.Gettext
 
+  import ZoonkWeb.Components.Icon
   import ZoonkWeb.Components.Text
 
   alias Phoenix.HTML.FormField
@@ -33,6 +35,8 @@ defmodule ZoonkWeb.Components.Input do
 
       <.input field={@form[:email]} type="email" />
       <.input name="my-input" errors={["oh no!"]} />
+      <.input name="search" show_submit placeholder="Search..." />
+      <.input name="search-custom" show_submit submit_icon="tabler-search" placeholder="Search..." />
   """
   attr :id, :any, default: nil
   attr :name, :any
@@ -56,6 +60,8 @@ defmodule ZoonkWeb.Components.Input do
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
+
+  attr :submit_icon, :string, default: nil, doc: "The Tabler icon name to use for the submit button"
 
   attr :rest, :global, include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
                 multiple pattern placeholder readonly required rows size step)
@@ -146,14 +152,33 @@ defmodule ZoonkWeb.Components.Input do
     <div class="text-left">
       <.label :if={@type != "hidden"} hide_label={@hide_label} for={@id}>{@label}</.label>
 
-      <input
-        type={@type}
-        name={@name}
-        id={@id}
-        value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-        class={[shared_class(), border_class(@errors), @class]}
-        {@rest}
-      />
+      <div class="relative">
+        <input
+          type={@type}
+          name={@name}
+          id={@id}
+          value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+          class={["peer", shared_class(), border_class(@errors), @submit_icon && "pr-10", @class]}
+          {@rest}
+        />
+
+        <button
+          :if={is_binary(@submit_icon)}
+          type="submit"
+          class={[
+            "pointer-events-none flex items-center justify-center",
+            "size-6 absolute top-1/2 right-2 flex -translate-y-1/2 rounded-full",
+            "text-zk-primary-foreground bg-zk-primary",
+            "hover:opacity-75 focus-visible:ring-zk-ring focus-visible:outline-0",
+            "opacity-0 transition-all duration-200 ease-in-out",
+            "peer-[&:not(:placeholder-shown)]:opacity-100",
+            "peer-[&:not(:placeholder-shown)]:pointer-events-auto"
+          ]}
+          aria-label={gettext("Submit")}
+        >
+          <.icon name={@submit_icon} size={:xs} />
+        </button>
+      </div>
 
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>

@@ -22,7 +22,7 @@ defmodule ZoonkWeb.Components.Icon do
   """
   attr :name, :string, required: true, doc: "Icon name, e.g. `tabler-x`"
   attr :class, :any, default: nil, doc: "Additional CSS classes to apply to the icon"
-  attr :size, :atom, values: [:sm, :md, :lg], default: :sm, doc: "Icon size, e.g. `:sm`, `:md`, `:lg`"
+  attr :size, :atom, values: [:xs, :sm, :md, :lg], default: :sm, doc: "Icon size, e.g. `:sm`, `:md`, `:lg`"
   attr :label, :string, default: nil, doc: "Accessible label for the icon"
 
   def icon(%{name: "tabler-" <> _rest} = assigns) do
@@ -30,6 +30,7 @@ defmodule ZoonkWeb.Components.Icon do
     <span
       class={[
         @name,
+        @size == :xs && "size-4",
         @size == :sm && "size-5",
         @size == :md && "size-6",
         @size == :lg && "size-8",
