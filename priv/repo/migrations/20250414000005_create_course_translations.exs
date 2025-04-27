@@ -5,7 +5,7 @@ defmodule Zoonk.Repo.Migrations.CreateCourseTranslations do
     create table(:course_translations) do
       add :course_id, references(:courses, on_delete: :delete_all), null: false
 
-      add :language, :string, null: false
+      add :language, :string, null: false, default: "en"
       add :title, :citext, null: false
       add :slug, :citext, null: false
       add :description, :text

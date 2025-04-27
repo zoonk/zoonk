@@ -1,11 +1,11 @@
 defmodule Zoonk.AI.Agents.OnboardingRecommender do
   @moduledoc """
-  Recommend specializations based on user input.
+  Recommend courses based on user input.
 
   During the onboarding process, we ask users what
   they would like to learn.
 
-  Based on their input, we recommend specializations
+  Based on their input, we recommend courses
   that they might be interested in.
   """
   alias Zoonk.AI
@@ -16,7 +16,7 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
   alias Zoonk.Repo
 
   @doc """
-  Recommend specializations based on user input.
+  Recommend courses based on user input.
 
   ## Examples
 

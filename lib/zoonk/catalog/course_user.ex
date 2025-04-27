@@ -7,14 +7,14 @@ defmodule Zoonk.Catalog.CourseUser do
 
   ## Fields
 
-  | Field Name   | Type        | Description                                      |
-  |--------------|-------------|--------------------------------------------------|
-  | `org_id`     | `Integer`   | The ID of the organization this data belongs to. |
-  | `course_id`  | `Integer`   | The ID of the course the user has access to.     |
-  | `user_id`    | `Integer`   | The ID of the user who has access to the course. |
-  | `role`       | `Ecto.Enum` | The role of the user in the course.              |
-  | `inserted_at`| `DateTime`  | Timestamp when the association was created.      |
-  | `updated_at` | `DateTime`  | Timestamp when the association was last updated. |
+  | Field Name         | Type        | Description                                               |
+  |--------------------|-------------|-----------------------------------------------------------|
+  | `org_id`           | Integer     | The ID of the organization this data belongs to.          |
+  | `course_id`        | Integer     | The ID of the course the user has access to.              |
+  | `user_id`          | Integer     | The ID of the user who has access to the course.          |
+  | `role`             | Ecto.Enum   | The role of the user in the course.                       |
+  | `inserted_at`      | DateTime    | Timestamp when the association was created.               |
+  | `updated_at`       | DateTime    | Timestamp when the association was last updated.          |
   """
   use Ecto.Schema
 
@@ -37,8 +37,8 @@ defmodule Zoonk.Catalog.CourseUser do
   @doc false
   def changeset(course_user, attrs) do
     course_user
-    |> cast(attrs, [:course_id, :user_id, :role, :org_id])
-    |> validate_required([:course_id, :user_id, :role, :org_id])
+    |> cast(attrs, [:org_id, :course_id, :user_id, :role])
+    |> validate_required([:org_id, :course_id, :user_id, :role])
     |> unique_constraint([:org_id, :course_id, :user_id])
   end
 end
