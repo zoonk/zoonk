@@ -84,7 +84,6 @@ defmodule ZoonkWeb.ConnCase do
   Returns the path to redirect unauthenticated users.
   """
   def redirect_path(_kind, "/user" <> _path), do: "/login"
-  def redirect_path(:app, _path), do: "/start"
-  def redirect_path(:creator, _path), do: "/catalog"
+  def redirect_path(kind, _path) when kind in [:app, :creator], do: "/catalog"
   def redirect_path(_kind, _path), do: "/login"
 end

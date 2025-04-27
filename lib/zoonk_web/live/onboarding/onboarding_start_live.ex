@@ -4,8 +4,6 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
 
   alias Zoonk.Config.LanguageConfig
 
-  on_mount {ZoonkWeb.Onboarding.OnboardingPermissions, :onboarding_start}
-
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""

@@ -89,30 +89,6 @@ defmodule Zoonk.Accounts do
   end
 
   @doc """
-  Creates a guest user.
-
-  ## Examples
-
-      iex> create_guest_user(%{}, %Scope{})
-      {:ok, %User{}}
-
-  """
-  def create_guest_user(attrs, %Scope{org: org}) when org.kind == :app do
-    email = "guest_#{System.unique_integer([:positive])}@zoonk.dev"
-    user = %User{email: email, kind: :guest, language: String.to_existing_atom(attrs.language)}
-
-    Ecto.Multi.new()
-    |> Ecto.Multi.insert(:user, user)
-    |> Ecto.Multi.insert(:profile, &build_initial_user_profile/1)
-    |> Ecto.Multi.insert(:org_member, &build_org_member_changeset(&1, org))
-    |> Repo.transaction()
-    |> Helpers.get_changeset_from_transaction(:user)
-  end
-
-  # Don't create guest users for other orgs
-  def create_guest_user(_attrs, _scope), do: {:error, :not_allowed}
-
-  @doc """
   Checks whether the user is in sudo mode.
 
   The user is in sudo mode when the last authentication was done recently.

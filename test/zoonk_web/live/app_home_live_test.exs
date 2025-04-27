@@ -8,7 +8,7 @@ defmodule ZoonkWeb.AppHomeLiveTest do
       build_conn()
       |> Map.put(:host, app_org_fixture().custom_domain)
       |> visit(~p"/")
-      |> assert_path(~p"/start")
+      |> assert_path(~p"/catalog")
     end
 
     test "redirects to catalog for :creator org" do
