@@ -4,7 +4,7 @@ defmodule ZoonkWeb.AppHomeLiveTest do
   import Zoonk.OrgFixtures
 
   describe "app home page (unauthenticated)" do
-    test "redirects to onboarding for :app org" do
+    test "redirects to catalog for :app org" do
       build_conn()
       |> Map.put(:host, app_org_fixture().custom_domain)
       |> visit(~p"/")

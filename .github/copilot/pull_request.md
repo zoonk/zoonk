@@ -1,7 +1,7 @@
 # Pull Request description instructions
 
 - Keep the title short and descriptive.
-- Titles should reflect the main purpose of the PR, not incidental changes. For example, use Onboarding: Improve search UX instead of Components: Add spinner, even if a spinner was added.
+- Titles should reflect the main purpose of the PR, not incidental changes. For example, use Search: Improve UX instead of Components: Add spinner, even if a spinner was added.
 - Add a prefix to the title similar to how you would in a commit message - in general, follow commit message conventions for PR titles.
 - Focus on the main goal of the pull request. If there are small unrelated changes (e.g. minor UI tweaks or new components), don’t make them the title unless they are the core purpose of the PR.
 - If necessary, add bullet points to explain the changes in detail.
@@ -13,3 +13,4 @@ Always generate both:
 • Description: A few sentences explaining:
 • What was changed and why
 • Any relevant context (e.g. fixes a bug, improves UX, prepares for future feature)
+• Add the issue number, for example, Fixes #1234 or Closes #1234
