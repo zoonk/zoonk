@@ -2,11 +2,11 @@
 
 These are some of the terms used in our application. It helps to understand how this application is structured.
 
-## Specializations
+## Courses
 
-Specializations are the main building blocks of Zoonk. They group multiple courses and they are used to go deeper into a specific subject. For example:
+Courses are the main building blocks of Zoonk. They group multiple chapters and they are used to go deeper into a specific subject. For example:
 
-| Specialization   | Courses                                                    |
+| Course           | Chapters                                                   |
 | ---------------- | ---------------------------------------------------------- |
 | Physics          | Classical Mechanics, Quantum Mechanics, Thermodynamics     |
 | Chemistry        | Organic Chemistry, Inorganic Chemistry, Physical Chemistry |
@@ -15,11 +15,11 @@ Specializations are the main building blocks of Zoonk. They group multiple cours
 | Computer Science | Algorithms, Data Structures, Operating Systems             |
 | History          | Ancient History, Medieval History, Modern History          |
 
-## Courses
+## Chapters
 
-Courses are a group of lessons. For example:
+Chapters are a group of lessons. For example:
 
-| Course               | Lessons                                                                |
+| Chapter              | Lessons                                                                |
 | -------------------- | ---------------------------------------------------------------------- |
 | Intro to Programming | Variables, Data Types, Control Flow, Functions, Arrays, Objects, Loops |
 | Chemistry of Life    | Atoms, Molecules, Cells, Tissues, Organs, Organ Systems                |
@@ -42,11 +42,11 @@ Lessons are very small units of knowledge. They cover only a single topic for be
 
 Zoonk supports multiple languages. This is why we have a `_translations` table for each content type. For example:
 
-| Table             | Translations Table            |
-| ----------------- | ----------------------------- |
-| `specializations` | `specialization_translations` |
-| `courses`         | `course_translations`         |
-| `lessons`         | `lesson_translations`         |
-| `exercises`       | `exercise_translations`       |
+| Table       | Translations Table      |
+| ----------- | ----------------------- |
+| `courses`   | `course_translations`   |
+| `chapters`  | `chapter_translations`  |
+| `lessons`   | `lesson_translations`   |
+| `exercises` | `exercise_translations` |
 
 This allows us to update all translations at once. For example, if we fix an error in the English translation, we can update all other translations at the same time.
