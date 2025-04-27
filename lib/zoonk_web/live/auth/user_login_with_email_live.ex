@@ -30,7 +30,7 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLive do
           class="w-full"
         />
 
-        <.button type="submit" class="w-full" icon_align={:left} icon="tabler-mail-filled">
+        <.button type="submit" class="w-full" size={:md} icon_align={:left} icon="tabler-mail-filled">
           {dgettext("users", "Login")}
         </.button>
       </.form>
@@ -41,7 +41,7 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLive do
             {dgettext("users", "If your email is in our system, you will receive a link to login.")}
           </.text>
 
-          <.button phx-click="try_again" variant={:outline} class="w-full">
+          <.button phx-click="try_again" variant={:outline} size={:md} class="w-full">
             {dgettext("users", "Try again")}
           </.button>
         </.card_content>
