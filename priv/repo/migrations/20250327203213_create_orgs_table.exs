@@ -6,7 +6,7 @@ defmodule Zoonk.Repo.Migrations.CreateOrgsTable do
       add :city_id, references(:cities, on_delete: :nothing)
 
       add :kind, :string, null: false, default: "team"
-      add :display_name, :citext, null: false
+      add :display_name, :text, null: false
       add :bio, :string
       add :public_email, :citext
       add :icon_url, :string
