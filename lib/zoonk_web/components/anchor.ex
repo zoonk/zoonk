@@ -80,7 +80,7 @@ defmodule ZoonkWeb.Components.Anchor do
     ~H"""
     <.link
       class={[
-        "zk-btn",
+        "zk-btn rounded-full",
         @variant == :primary && "zk-btn-primary",
         @variant == :destructive && "zk-btn-destructive",
         @variant == :outline && "zk-btn-outline",
