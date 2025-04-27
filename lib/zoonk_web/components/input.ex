@@ -158,14 +158,22 @@ defmodule ZoonkWeb.Components.Input do
           name={@name}
           id={@id}
           value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-          class={[shared_class(), border_class(@errors), @submit_icon && "pr-10", @class]}
+          class={["peer", shared_class(), border_class(@errors), @submit_icon && "pr-10", @class]}
           {@rest}
         />
 
         <button
           :if={is_binary(@submit_icon)}
           type="submit"
-          class="text-zk-primary-foreground bg-zk-primary size-6 absolute top-1/2 right-2 flex -translate-y-1/2 items-center justify-center rounded-full hover:opacity-75 focus-visible:ring-zk-ring focus-visible:outline-0"
+          class={[
+            "pointer-events-none flex items-center justify-center",
+            "size-6 absolute top-1/2 right-2 flex -translate-y-1/2 rounded-full",
+            "text-zk-primary-foreground bg-zk-primary",
+            "hover:opacity-75 focus-visible:ring-zk-ring focus-visible:outline-0",
+            "opacity-0 transition-all duration-200 ease-in-out",
+            "peer-[&:not(:placeholder-shown)]:opacity-100",
+            "peer-[&:not(:placeholder-shown)]:pointer-events-auto"
+          ]}
           aria-label={gettext("Submit")}
         >
           <.icon name={@submit_icon} size={:xs} />
