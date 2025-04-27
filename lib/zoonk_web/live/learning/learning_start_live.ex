@@ -2,8 +2,6 @@ defmodule ZoonkWeb.Learning.LearningStartLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  alias Zoonk.Config.LanguageConfig
-
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -27,33 +25,9 @@ defmodule ZoonkWeb.Learning.LearningStartLive do
             type="text"
             class="w-full"
             required
+            submit_icon="tabler-arrow-up"
             placeholder={dgettext("learning", "E.g. Computer Science, Astronomy, Biology, etc.")}
           />
-
-          <div class={[
-            "mt-2 flex items-center gap-4",
-            @scope.user && "justify-around",
-            !@scope.user && "justify-between"
-          ]}>
-            <.input
-              :if={!@scope.user}
-              field={@form[:language]}
-              hide_label
-              label={dgettext("users", "Language")}
-              type={if @scope.user, do: "hidden", else: "select"}
-              options={LanguageConfig.list_languages(:options)}
-              required
-            />
-
-            <.button
-              type="submit"
-              size={:md}
-              variant={:primary}
-              phx-disable-with={dgettext("learning", "Loading...")}
-            >
-              {dgettext("learning", "Get Started")}
-            </.button>
-          </div>
         </.form>
       </div>
     </main>
