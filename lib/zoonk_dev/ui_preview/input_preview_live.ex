@@ -25,6 +25,26 @@ defmodule ZoonkDev.UIPreview.InputPreviewLive do
 
       <.card>
         <.card_header>
+          <.card_title>Input with Submit Button</.card_title>
+          <.card_description>Input field with a submit button on the right side.</.card_description>
+        </.card_header>
+
+        <.card_content align={:center}>
+          <.form for={@form} phx-submit="submit" class="w-full">
+            <.input
+              name="search"
+              label="Search"
+              placeholder="Type and press the arrow to search..."
+              value=""
+              submit_icon="tabler-arrow-up"
+              class="w-full"
+            />
+          </.form>
+        </.card_content>
+      </.card>
+
+      <.card>
+        <.card_header>
           <.card_title>Disabled Input</.card_title>
           <.card_description>Input fields can be disabled to prevent interaction.</.card_description>
         </.card_header>
@@ -136,6 +156,12 @@ defmodule ZoonkDev.UIPreview.InputPreviewLive do
 
   @impl Phoenix.LiveView
   def handle_event("validate", _params, socket) do
+    {:noreply, socket}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_event("submit", _params, socket) do
+    # Just for demonstration, no actual submission is performed
     {:noreply, socket}
   end
 end
