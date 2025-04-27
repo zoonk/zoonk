@@ -83,7 +83,7 @@ defmodule ZoonkWeb.Components.Anchor do
         "zk-btn rounded-full",
         @variant == :primary && "zk-btn-primary",
         @variant == :destructive && "zk-btn-destructive",
-        @variant == :outline && "zk-btn-outline",
+        @variant == :outline && "zk-btn-shadow",
         @size == :sm && "size-8",
         @size == :md && "size-10",
         @size == :lg && "size-12",

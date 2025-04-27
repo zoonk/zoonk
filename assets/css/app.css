@@ -299,6 +299,13 @@
   focus-visible:ring-zk-muted;
 }
 
+@utility zk-btn-shadow {
+  @apply bg-zk-surface/5 backdrop-blur-md text-zk-surface-foreground
+  ring-1 ring-inset ring-zk-border/12 shadow-sm
+  hover:bg-zk-muted hover:text-zk-muted-foreground
+  focus-visible:ring-zk-muted;
+}
+
 @utility zk-drop-shadow {
   @apply drop-shadow-xs contrast-more:drop-shadow-xl;
 }
