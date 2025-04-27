@@ -220,7 +220,7 @@ defmodule ZoonkWeb.Components.Input do
 
   defp shared_class,
     do: [
-      "block rounded border-1",
+      "block rounded",
       "bg-zk-surface text-zk-foreground",
       "placeholder:text-zk-foreground/40",
       "focus-visible:outline-0",
@@ -228,7 +228,7 @@ defmodule ZoonkWeb.Components.Input do
       "disabled:cursor-not-allowed disabled:opacity-50"
     ]
 
-  defp border_class([]), do: "border-zk-border focus-visible:ring-zk-ring"
+  defp border_class([]), do: "border-zk-border focus-visible:ring-zk-border"
   defp border_class(_errors), do: "border-zk-destructive focus-visible:ring-zk-destructive-accent"
 
   @doc """
