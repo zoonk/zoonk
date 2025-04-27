@@ -19,12 +19,7 @@ defmodule ZoonkWeb.Learning.LearningStartLive do
           {dgettext("learning", "What do you want to learn?")}
         </.text>
 
-        <.form
-          for={@form}
-          action={if @scope.user, do: nil, else: ~p"/learn"}
-          phx-submit={@scope.user && "submit"}
-          class="w-full"
-        >
+        <.form for={@form} phx-submit="submit" class="w-full">
           <.input
             field={@form[:query]}
             label={dgettext("learning", "What do you want to learn?")}
