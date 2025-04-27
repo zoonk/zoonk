@@ -25,7 +25,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
 
         <.form
           for={@form}
-          action={if @scope.user, do: nil, else: ~p"/start"}
+          action={if @scope.user, do: nil, else: ~p"/learn"}
           phx-submit={@scope.user && "submit"}
           class="w-full"
         >
@@ -83,6 +83,6 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
 
   @impl Phoenix.LiveView
   def handle_event("submit", %{"query" => query}, socket) do
-    {:noreply, push_navigate(socket, to: ~p"/start/#{query}")}
+    {:noreply, push_navigate(socket, to: ~p"/learn/#{query}")}
   end
 end

@@ -33,12 +33,12 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
       }
       loading_feature={@input}
       failure_message={dgettext("onboarding", "Sorry, we couldn't find any recommendations for you.")}
-      failure_link={~p"/start"}
+      failure_link={~p"/learn"}
       failure_link_text={gettext("Back")}
       class="mx-auto flex max-w-5xl flex-col gap-4 p-4 xl:px-0"
     >
       <nav>
-        <.a navigate={~p"/start"} kind={:button} size={:sm} variant={:outline}>
+        <.a navigate={~p"/learn"} kind={:button} size={:sm} variant={:outline}>
           {gettext("Back")}
         </.a>
       </nav>
@@ -56,7 +56,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
       <ul
         :if={recommendations}
         class="mx-auto max-w-xl"
-        phx-window-keydown={JS.navigate(~p"/start")}
+        phx-window-keydown={JS.navigate(~p"/learn")}
         phx-key="escape"
       >
         <li :for={{recommendation, index} <- Enum.with_index(recommendations)} class="group">
