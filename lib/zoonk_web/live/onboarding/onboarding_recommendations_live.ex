@@ -24,7 +24,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
     <.async_page
       :let={recommendations}
       data={@courses}
-      loading_title={dgettext("onboarding", "We're finding specializations that will help you learn")}
+      loading_title={dgettext("onboarding", "We're finding courses that will help you learn")}
       loading_subtitle={
         dgettext(
           "onboarding",

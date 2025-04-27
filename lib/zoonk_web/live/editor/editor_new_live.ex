@@ -11,14 +11,14 @@ defmodule ZoonkWeb.Editor.EditorNewLive do
       page_title={@page_title}
       active_page={:new}
     >
-      placeholder for adding a new track or course
+      placeholder for adding a new course
     </ZoonkWeb.EditorLayout.render>
     """
   end
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    socket = assign(socket, :page_title, dgettext("editor", "Create a track or course"))
+    socket = assign(socket, :page_title, dgettext("editor", "Create a course"))
     {:ok, socket}
   end
 end
