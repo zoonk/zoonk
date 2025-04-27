@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
+defmodule ZoonkWeb.Learning.LearningStartLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
@@ -20,7 +20,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
 
       <div class="flex w-full max-w-lg flex-col items-center gap-4 text-center">
         <.text tag="h1" size={:xxl}>
-          {dgettext("onboarding", "What do you want to learn?")}
+          {dgettext("learning", "What do you want to learn?")}
         </.text>
 
         <.form
@@ -31,12 +31,12 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
         >
           <.input
             field={@form[:query]}
-            label={dgettext("onboarding", "What do you want to learn?")}
+            label={dgettext("learning", "What do you want to learn?")}
             hide_label
             type="text"
             class="w-full"
             required
-            placeholder={dgettext("onboarding", "E.g. Computer Science, Astronomy, Biology, etc.")}
+            placeholder={dgettext("learning", "E.g. Computer Science, Astronomy, Biology, etc.")}
           />
 
           <div class={[
@@ -58,9 +58,9 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
               type="submit"
               size={:md}
               variant={:primary}
-              phx-disable-with={dgettext("onboarding", "Loading...")}
+              phx-disable-with={dgettext("learning", "Loading...")}
             >
-              {dgettext("onboarding", "Get Started")}
+              {dgettext("learning", "Get Started")}
             </.button>
           </div>
         </.form>
@@ -75,7 +75,7 @@ defmodule ZoonkWeb.Onboarding.OnboardingStartLive do
 
     socket =
       socket
-      |> assign(:page_title, dgettext("onboarding", "Get Started"))
+      |> assign(:page_title, dgettext("learning", "Get Started"))
       |> assign(:form, to_form(%{"language" => app_language, "query" => ""}))
 
     {:ok, socket}

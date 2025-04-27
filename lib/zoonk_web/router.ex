@@ -61,8 +61,8 @@ defmodule ZoonkWeb.Router do
 
       live "/library", Library.LibraryHomeLive
 
-      live "/learn", Onboarding.OnboardingStartLive
-      live "/learn/:input", Onboarding.OnboardingRecommendationsLive
+      live "/learn", Learning.LearningStartLive
+      live "/learn/:input", Learning.LearningRecommendationsLive
 
       live "/user/email", User.UserEmailLive
       live "/user/email/confirm/:token", User.UserEmailLive

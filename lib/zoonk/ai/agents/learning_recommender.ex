@@ -1,17 +1,14 @@
-defmodule Zoonk.AI.Agents.OnboardingRecommender do
+defmodule Zoonk.AI.Agents.LearningRecommender do
   @moduledoc """
   Recommend courses based on user input.
 
-  During the onboarding process, we ask users what
-  they would like to learn.
-
-  Based on their input, we recommend courses
-  that they might be interested in.
+  We display a form to the user asking what they want to learn.
+  Based on their input, we recommend courses they might be interested in.
   """
   alias Zoonk.AI
   alias Zoonk.AI.AIClient
   alias Zoonk.AI.AISchema
-  alias Zoonk.AI.OnboardingRecommendation
+  alias Zoonk.AI.LearningRecommendation
   alias Zoonk.Helpers
   alias Zoonk.Repo
 
@@ -20,10 +17,10 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
 
   ## Examples
 
-      iex> OnboardingRecommender.recommend("I want to learn about data science")
+      iex> LearningRecommender.recommend("I want to learn about data science")
       {:ok, [%{title: "Data Science", description: "A field that uses scientific methods..."}]}
 
-      iex> OnboardingRecommender.recommend("forbidden input")
+      iex> LearningRecommender.recommend("forbidden input")
       {:error, "This violates our content policy."}
   """
   def recommend(input, language) do
@@ -32,12 +29,12 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
       |> String.trim()
       |> Helpers.remove_accents()
 
-    OnboardingRecommendation
+    LearningRecommendation
     |> Repo.get_by(query: formatted_input, language: language)
     |> recommend(formatted_input, language)
   end
 
-  defp recommend(%OnboardingRecommendation{} = recommendation, _input, _lang) do
+  defp recommend(%LearningRecommendation{} = recommendation, _input, _lang) do
     {:ok, %{courses: recommendation.recommendations}}
   end
 
@@ -75,18 +72,18 @@ defmodule Zoonk.AI.Agents.OnboardingRecommender do
       ]
     }
 
-    AISchema.add_field(%AISchema{name: "onboarding_recommender"}, courses)
+    AISchema.add_field(%AISchema{name: "learning_recommender"}, courses)
   end
 
   defp add_recommendation_to_db(attrs) do
-    %OnboardingRecommendation{}
-    |> OnboardingRecommendation.changeset(attrs)
+    %LearningRecommendation{}
+    |> LearningRecommendation.changeset(attrs)
     |> Repo.insert!()
   end
 
   defp get_instructions do
     """
-    A user is onboarding to our learning platform.
+    A user wants to learn a new subject.
     We asked them what they would like to learn.
 
     Generate 3 to 10 broad **course suggestions**.

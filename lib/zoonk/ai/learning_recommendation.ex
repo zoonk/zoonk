@@ -1,8 +1,8 @@
-defmodule Zoonk.AI.OnboardingRecommendation do
+defmodule Zoonk.AI.LearningRecommendation do
   @moduledoc """
-  Schema for storing onboarding recommendations.
+  Schema for storing learning recommendations.
 
-  This schema stores user queries during the onboarding process along with
+  This schema stores user queries when they want to learn a subject along with
   the AI-generated course recommendations. Storing these recommendations
   allows us to avoid repeated AI calls for common queries.
 
@@ -22,7 +22,7 @@ defmodule Zoonk.AI.OnboardingRecommendation do
 
   alias Zoonk.Config.LanguageConfig
 
-  schema "onboarding_recommendations" do
+  schema "learning_recommendations" do
     field :query, :string
 
     field :language, Ecto.Enum,
@@ -40,15 +40,15 @@ defmodule Zoonk.AI.OnboardingRecommendation do
   end
 
   @doc """
-  Creates a changeset for an onboarding recommendation.
+  Creates a changeset for a learning recommendation.
 
   ## Examples
 
-      iex> OnboardingRecommendation.changeset(%OnboardingRecommendation{}, %{query: "Computer Science", language: :en})
+      iex> LearningRecommendation.changeset(%LearningRecommendation{}, %{query: "Computer Science", language: :en})
       #Ecto.Changeset<...>
   """
-  def changeset(onboarding_recommendation, attrs) do
-    onboarding_recommendation
+  def changeset(learning_recommendation, attrs) do
+    learning_recommendation
     |> cast(attrs, [:query, :language])
     |> validate_required([:query, :language])
     |> cast_embed(:recommendations, with: &recommendation_changeset/2)

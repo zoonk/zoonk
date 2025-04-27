@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.OnboardingStartLiveTest do
+defmodule ZoonkWeb.LearningStartLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AIFixtures
@@ -6,7 +6,7 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
 
   @page_title "What do you want to learn?"
 
-  describe "onboarding start page (unauthenticated)" do
+  describe "learning start page (unauthenticated)" do
     test "redirects page for :app org" do
       build_conn()
       |> Map.put(:host, app_org_fixture().custom_domain)
@@ -36,11 +36,11 @@ defmodule ZoonkWeb.OnboardingStartLiveTest do
     end
   end
 
-  describe "onboarding start page" do
+  describe "learning start page" do
     setup :signup_and_login_user
 
     test "allows authenticated user to see the page", %{conn: conn} do
-      data = onboarding_recommendation_fixture()
+      data = learning_recommendation_fixture()
 
       conn
       |> visit(~p"/learn")

@@ -1,8 +1,8 @@
-defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
+defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  alias Zoonk.AI.Agents.OnboardingRecommender
+  alias Zoonk.AI.Agents.LearningRecommender
 
   @colors [
     "text-red-500",
@@ -24,15 +24,15 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
     <.async_page
       :let={recommendations}
       data={@courses}
-      loading_title={dgettext("onboarding", "We're finding courses that will help you learn")}
+      loading_title={dgettext("learning", "We're finding courses that will help you learn")}
       loading_subtitle={
         dgettext(
-          "onboarding",
+          "learning",
           "This might take a moment as we prepare personalized recommendations for you."
         )
       }
       loading_feature={@input}
-      failure_message={dgettext("onboarding", "Sorry, we couldn't find any recommendations for you.")}
+      failure_message={dgettext("learning", "Sorry, we couldn't find any recommendations for you.")}
       failure_link={~p"/learn"}
       failure_link_text={gettext("Back")}
       class="mx-auto flex max-w-5xl flex-col gap-4 p-4 xl:px-0"
@@ -45,11 +45,11 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
 
       <header class="mx-auto py-8 text-center">
         <.text tag="h1" size={:xxl}>
-          {dgettext("onboarding", "Recommendations for you")}
+          {dgettext("learning", "Recommendations for you")}
         </.text>
 
         <.text tag="h2" size={:lg} variant={:secondary}>
-          {dgettext("onboarding", "Pick one to get started")}
+          {dgettext("learning", "Pick one to get started")}
         </.text>
       </header>
 
@@ -104,9 +104,9 @@ defmodule ZoonkWeb.Onboarding.OnboardingRecommendationsLive do
 
     socket =
       socket
-      |> assign(:page_title, dgettext("onboarding", "Recommendations for %{input}", input: input))
+      |> assign(:page_title, dgettext("learning", "Recommendations for %{input}", input: input))
       |> assign(:input, input)
-      |> assign_async(:courses, fn -> OnboardingRecommender.recommend(input, language) end)
+      |> assign_async(:courses, fn -> LearningRecommender.recommend(input, language) end)
 
     {:ok, socket}
   end

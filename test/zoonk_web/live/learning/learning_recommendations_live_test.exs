@@ -1,10 +1,10 @@
-defmodule ZoonkWeb.OnboardingRecommendationsLiveTest do
+defmodule ZoonkWeb.LearningRecommendationsLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AIFixtures
   import Zoonk.OrgFixtures
 
-  describe "onboarding recommendations (unauthenticated)" do
+  describe "learning recommendations (unauthenticated)" do
     test "redirects page for :app org" do
       build_conn()
       |> Map.put(:host, app_org_fixture().custom_domain)
@@ -34,11 +34,11 @@ defmodule ZoonkWeb.OnboardingRecommendationsLiveTest do
     end
   end
 
-  describe "onboarding recommendations" do
+  describe "learning recommendations" do
     setup :signup_and_login_user
 
     test "loads the data", %{conn: conn} do
-      data = onboarding_recommendation_fixture()
+      data = learning_recommendation_fixture()
 
       conn
       |> visit(~p"/learn/coding")
