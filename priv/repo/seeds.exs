@@ -149,8 +149,7 @@ app_admin =
     confirmed_at: DateTime.utc_now(),
     stripe_customer_id: "cus_user1",
     year_of_birth: 1990,
-    language: :en,
-    kind: :regular
+    language: :en
   })
 
 app_member =
@@ -159,8 +158,7 @@ app_member =
     confirmed_at: DateTime.utc_now(),
     stripe_customer_id: "cus_user2",
     year_of_birth: 1992,
-    language: :en,
-    kind: :regular
+    language: :en
   })
 
 team_admin =
@@ -169,8 +167,7 @@ team_admin =
     confirmed_at: DateTime.utc_now(),
     stripe_customer_id: "cus_user3",
     year_of_birth: 1985,
-    language: :en,
-    kind: :regular
+    language: :en
   })
 
 team_member =
@@ -179,8 +176,7 @@ team_member =
     confirmed_at: DateTime.utc_now(),
     stripe_customer_id: "cus_user4",
     year_of_birth: 1988,
-    language: :en,
-    kind: :regular
+    language: :en
   })
 
 creator_admin =
@@ -189,8 +185,7 @@ creator_admin =
     confirmed_at: DateTime.utc_now(),
     stripe_customer_id: "cus_user5",
     year_of_birth: 1982,
-    language: :de,
-    kind: :regular
+    language: :de
   })
 
 creator_member =
@@ -199,8 +194,7 @@ creator_member =
     confirmed_at: DateTime.utc_now(),
     stripe_customer_id: "cus_user6",
     year_of_birth: 1986,
-    language: :de,
-    kind: :regular
+    language: :de
   })
 
 school_admin =
@@ -209,8 +203,7 @@ school_admin =
     confirmed_at: DateTime.utc_now(),
     stripe_customer_id: "cus_user7",
     year_of_birth: 1975,
-    language: :en,
-    kind: :regular
+    language: :en
   })
 
 school_member =
@@ -219,8 +212,7 @@ school_member =
     confirmed_at: DateTime.utc_now(),
     stripe_customer_id: "cus_user8",
     year_of_birth: 1999,
-    language: :en,
-    kind: :regular
+    language: :en
   })
 
 # Create user profiles

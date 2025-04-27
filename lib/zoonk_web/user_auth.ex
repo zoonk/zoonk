@@ -300,7 +300,7 @@ defmodule ZoonkWeb.UserAuth do
   def signed_in_path(_conn), do: ~p"/"
 
   defp unauthenticated_path(_scope, "/user" <> _rest), do: ~p"/login"
-  defp unauthenticated_path(%Scope{org: %Org{kind: :app}}, _path), do: ~p"/start"
+  defp unauthenticated_path(%Scope{org: %Org{kind: :app}}, _path), do: ~p"/catalog"
   defp unauthenticated_path(%Scope{org: %Org{kind: :creator}}, _path), do: ~p"/catalog"
   defp unauthenticated_path(_scope, _path), do: ~p"/login"
 

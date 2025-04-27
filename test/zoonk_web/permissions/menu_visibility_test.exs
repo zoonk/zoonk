@@ -24,7 +24,7 @@ defmodule ZoonkWeb.MenuVisibilityTest do
 
     test "regular user menu items", %{conn: conn} do
       org = org_fixture(%{kind: :app})
-      user = user_fixture(%{kind: :regular})
+      user = user_fixture()
       org_member_fixture(%{org: org, user: user, role: :member})
 
       conn

@@ -9,20 +9,12 @@ defmodule Zoonk.Accounts.User do
 
   For public information, we use the `Zoonk.Accounts.UserProfile` schema instead.
 
-  ## User Types
-
-  | Type | Description |
-  |------|-------------|
-  | `:regular` | Regular users. |
-  | `:guest` | Users who didn't sign up. |
-
   ## Fields
 
   | Field Name | Type | Description |
   |------------|------|-------------|
   | `year_of_birth` | `Integer` | We need the year of birth for legal reasons when a profile is public. |
   | `currency` | `Ecto.Enum` | The currency used for payments. |
-  | `kind` | `Ecto.Enum` | Users can have different types: `regular`, `guest` |
   | `email` | `String` | The user's email address. |
   | `stripe_customer_id` | `String` | Customer ID used for Stripe payments. |
   | `tax_id` | `Zoonk.Vault.Binary` | Tax ID required by some jurisdictions. |
@@ -54,7 +46,6 @@ defmodule Zoonk.Accounts.User do
   schema "users" do
     field :year_of_birth, :integer
     field :currency, Ecto.Enum, values: CurrencyConfig.list_currencies(:atom), default: :USD
-    field :kind, Ecto.Enum, values: [:regular, :guest], default: :regular
     field :email, :string
     field :stripe_customer_id, :string
     field :tax_id, Zoonk.Vault.Binary
@@ -147,7 +138,7 @@ defmodule Zoonk.Accounts.User do
   """
   def confirm_changeset(user) do
     now = DateTime.utc_now()
-    change(user, confirmed_at: now, kind: :regular)
+    change(user, confirmed_at: now)
   end
 
   @doc """

@@ -9,7 +9,6 @@ defmodule Zoonk.Repo.Migrations.CreateUsersAuthTables do
 
       add :tax_id, :binary
 
-      add :kind, :string, null: false
       add :currency, :string, null: false, default: "USD"
       add :language, :string, null: false, default: "en"
       add :stripe_customer_id, :string
@@ -22,8 +21,6 @@ defmodule Zoonk.Repo.Migrations.CreateUsersAuthTables do
     end
 
     create unique_index(:users, [:email])
-    create index(:users, [:kind])
-    create index(:users, [:kind, :updated_at])
 
     create table(:users_tokens) do
       add :user_id, references(:users, on_delete: :delete_all), null: false
