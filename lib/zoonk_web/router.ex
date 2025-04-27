@@ -55,11 +55,7 @@ defmodule ZoonkWeb.Router do
       ] do
       live "/", AppHomeLive
 
-      live "/goals", Goals.GoalsHomeLive
-
       live "/catalog", Catalog.CatalogHomeLive
-
-      live "/library", Library.LibraryHomeLive
 
       live "/learn", Learning.LearningStartLive
       live "/learn/:input", Learning.LearningRecommendationsLive
@@ -67,15 +63,6 @@ defmodule ZoonkWeb.Router do
       live "/user/email", User.UserEmailLive
       live "/user/email/confirm/:token", User.UserEmailLive
       live "/user/billing", User.UserBillingLive
-      live "/user/interests", User.UserInterestsLive
-
-      live "/editor", Editor.EditorHomeLive
-      live "/editor/new", Editor.EditorNewLive
-
-      live "/org", Org.OrgHomeLive
-      live "/org/teams", Org.OrgTeamsLive
-      live "/org/members", Org.OrgMembersLive
-      live "/org/settings", Org.OrgSettingsLive
     end
   end
 

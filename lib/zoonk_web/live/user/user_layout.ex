@@ -57,12 +57,6 @@ defmodule ZoonkWeb.UserLayout do
         label: gettext("Email")
       },
       %{
-        navigate: ~p"/user/interests",
-        active: :interests,
-        icon: "tabler-star",
-        label: gettext("Interests")
-      },
-      %{
         navigate: ~p"/user/billing",
         active: :billing,
         icon: "tabler-credit-card",
