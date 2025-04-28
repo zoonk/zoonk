@@ -42,9 +42,11 @@ defmodule ZoonkWeb.Components.Form do
 
       <footer
         aria-label={gettext("More information and save button")}
-        class={["flex items-center justify-between", "bg-zk-muted rounded-b", "px-4 py-2 md:px-8"]}
+        class={["flex items-center justify-between", "bg-zk-muted rounded-b", "p-2"]}
       >
-        <.text size={:sm} variant={:secondary}>{render_slot(@requirements)}</.text>
+        <.text size={:sm} variant={:secondary} class="px-2 md:px-6">
+          {render_slot(@requirements)}
+        </.text>
 
         <.button type="submit" size={:sm} phx-disable-with={gettext("Saving...")}>
           {gettext("Save")}
