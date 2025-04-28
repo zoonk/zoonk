@@ -16,7 +16,7 @@ defmodule Zoonk.AIFixtures do
 
   def togetherai_stub(data, opts \\ []) do
     error = Keyword.get(opts, :error, nil)
-    output = gen_togetherai_output(data)
+    output = get_togetherai_output(data)
 
     if error do
       Req.Test.stub(:togetherai_client, fn conn ->
@@ -25,6 +25,21 @@ defmodule Zoonk.AIFixtures do
     else
       Req.Test.stub(:togetherai_client, fn conn ->
         Req.Test.json(conn, %{"choices" => [output]})
+      end)
+    end
+  end
+
+  def gemini_stub(data, opts \\ []) do
+    error = Keyword.get(opts, :error, nil)
+    output = get_gemini_output(data)
+
+    if error do
+      Req.Test.stub(:gemini_client, fn conn ->
+        Req.Test.json(conn, %{"error" => %{"message" => error}})
+      end)
+    else
+      Req.Test.stub(:gemini_client, fn conn ->
+        Req.Test.json(conn, %{"candidates" => [output]})
       end)
     end
   end
@@ -55,11 +70,19 @@ defmodule Zoonk.AIFixtures do
     }
   end
 
-  defp gen_togetherai_output(data) do
+  defp get_togetherai_output(data) do
     %{
       "message" => %{
         "role" => "assistant",
         "content" => JSON.encode!(data)
+      }
+    }
+  end
+
+  defp get_gemini_output(data) do
+    %{
+      "content" => %{
+        "parts" => [%{"text" => JSON.encode!(data)}]
       }
     }
   end

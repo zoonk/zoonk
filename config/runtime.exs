@@ -42,10 +42,13 @@ config :zoonk, :strategies,
 if config_env() in [:dev, :prod] do
   config :zoonk, :ai,
     openai: [
-      auth: {:bearer, System.fetch_env!("OPENAI_API_KEY")}
+      auth: {:bearer, System.get_env("OPENAI_API_KEY")}
     ],
     togetherai: [
-      auth: {:bearer, System.fetch_env!("TOGETHERAI_API_KEY")}
+      auth: {:bearer, System.get_env("TOGETHERAI_API_KEY")}
+    ],
+    gemini: [
+      api_key: System.get_env("GEMINI_API_KEY")
     ],
     models: [
       fast: System.get_env("AI_MODEL_FAST", "gpt-4.1-mini"),

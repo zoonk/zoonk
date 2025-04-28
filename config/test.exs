@@ -57,6 +57,9 @@ config :zoonk, :ai,
   togetherai: [
     plug: {Req.Test, :togetherai_client}
   ],
+  gemini: [
+    plug: {Req.Test, :gemini_client}
+  ],
   models: [
     fast: "gpt-4.1-nano",
     smart: "gpt-4.1-mini",
