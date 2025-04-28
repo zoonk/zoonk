@@ -9,7 +9,13 @@ defmodule ZoonkWeb.AppHomeLive do
     ~H"""
     <main>
       <nav class="flex items-center justify-between p-4">
-        <.a kind={:button} icon="tabler-layout-grid" variant={:outline} navigate={~p"/catalog"}>
+        <.a
+          kind={:button}
+          icon="tabler-layout-grid"
+          icon_on_mobile
+          variant={:outline}
+          navigate={~p"/catalog"}
+        >
           {gettext("Catalog")}
         </.a>
 
