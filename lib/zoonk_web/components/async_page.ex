@@ -40,7 +40,7 @@ defmodule ZoonkWeb.Components.AsyncPage do
 
       <:failed :let={_failure}>
         <section class="zk-full">
-          <.text variant={:secondary}>
+          <.text variant={:destructive}>
             {@failure_message}
           </.text>
 
