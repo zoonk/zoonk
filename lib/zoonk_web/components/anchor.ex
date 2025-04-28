@@ -128,7 +128,7 @@ defmodule ZoonkWeb.Components.Anchor do
   def back_link(assigns) do
     ~H"""
     <.a kind={:icon} icon="tabler-arrow-left" variant={:outline} {@rest}>
-      <span class="sr-only">{gettext("Back to app")}</span>
+      <span class="sr-only">{gettext("Back")}</span>
     </.a>
     """
   end

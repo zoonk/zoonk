@@ -38,9 +38,7 @@ defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
       class="mx-auto flex max-w-5xl flex-col gap-4 p-4 xl:px-0"
     >
       <nav>
-        <.a navigate={~p"/learn"} kind={:button} size={:sm} variant={:outline}>
-          {gettext("Back")}
-        </.a>
+        <.back_link navigate={~p"/learn"} />
       </nav>
 
       <header class="mx-auto py-8 text-center">
