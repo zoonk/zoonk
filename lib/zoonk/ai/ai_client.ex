@@ -10,6 +10,7 @@ defmodule Zoonk.AI.AIClient do
   based on the model specified.
   """
   alias Zoonk.AI
+  alias Zoonk.AI.AIClient.GeminiClient
   alias Zoonk.AI.AIClient.OpenAIClient
   alias Zoonk.AI.AIClient.TogetherAIClient
 
@@ -34,6 +35,10 @@ defmodule Zoonk.AI.AIClient do
 
   def generate_object(%AI{model: "o" <> _gpt} = payload) do
     OpenAIClient.generate_object(payload)
+  end
+
+  def generate_object(%AI{model: "gemini" <> _gpt} = payload) do
+    GeminiClient.generate_object(payload)
   end
 
   def generate_object(%AI{model: "meta-llama" <> _gpt} = payload) do

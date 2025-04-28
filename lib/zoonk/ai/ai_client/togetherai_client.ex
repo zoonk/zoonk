@@ -2,9 +2,8 @@ defmodule Zoonk.AI.AIClient.TogetherAIClient do
   @moduledoc """
   TogetherAI service implementation for generating AI responses.
 
-  This module handles communication with the TogetherAI API using
-  the `Responses` endpoint, supporting structured outputs
-  with JSON schema.
+  This module handles communication with the TogetherAI API,
+  supporting structured outputs with JSON schema.
   """
   alias Zoonk.AI
 

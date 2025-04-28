@@ -21,6 +21,13 @@ defmodule Zoonk.AI.AIClientTest do
       assert {:ok, %{}} = AIClient.generate_object(payload)
     end
 
+    test "delegates to GeminiClient for Gemini models" do
+      gemini_stub(%{language: "en"})
+
+      payload = %AI{model: "gemini-1.5"}
+      assert {:ok, %{}} = AIClient.generate_object(payload)
+    end
+
     test "delegates to TogetherAIClient for meta-llama models" do
       togetherai_stub(%{language: "en"})
 
