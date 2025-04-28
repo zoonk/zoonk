@@ -30,7 +30,7 @@ defmodule ZoonkWeb.AppHomeLive do
           {gettext("New course")}
         </.a>
 
-        <.link navigate={~p"/user/email"}>
+        <.link navigate={~p"/settings"}>
           <span class="sr-only">{gettext("Go to settings")}</span>
           <.avatar
             src={@scope.user.profile.picture_url}

@@ -60,9 +60,8 @@ defmodule ZoonkWeb.Router do
       live "/learn", Learning.LearningStartLive
       live "/learn/:input", Learning.LearningRecommendationsLive
 
-      live "/user/email", User.UserEmailLive
-      live "/user/email/confirm/:token", User.UserEmailLive
-      live "/user/billing", User.UserBillingLive
+      live "/settings", User.UserSettingsLive
+      live "/settings/confirm/:token", User.UserSettingsLive
     end
   end
 

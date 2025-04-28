@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.User.UserEmailLive do
+defmodule ZoonkWeb.User.UserSettingsLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
@@ -6,42 +6,55 @@ defmodule ZoonkWeb.User.UserEmailLive do
 
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.UserLayout.render
-      scope={@scope}
-      flash={@flash}
-      page_title={@page_title}
-      active_page={:email}
-    >
-      <.form_container
-        for={@email_form}
-        id="email_form"
-        phx-submit="update_email"
-        phx-change="validate_email"
-      >
-        <:title>{dgettext("users", "Change Email")}</:title>
+    <main class="min-h-dvh flex flex-col gap-8 p-4">
+      <nav class="flex items-center justify-between">
+        <.back_link navigate={~p"/"} />
 
-        <:subtitle>
-          {dgettext(
-            "users",
-            "This is the email address that will be used to sign in. This is not visible to other users."
-          )}
-        </:subtitle>
+        <.a
+          kind={:button}
+          icon="tabler-logout"
+          variant={:destructive}
+          method="delete"
+          href={~p"/logout"}
+        >
+          {gettext("Logout")}
+        </.a>
+      </nav>
 
-        <.input
-          id="user-email"
-          field={@email_form[:email]}
-          label={dgettext("users", "Email address")}
-          type="email"
-          autocomplete="username"
-          required
-          hide_label
-        />
+      <section class="lg:mx-auto lg:max-w-3xl">
+        <.form_container
+          for={@email_form}
+          id="email_form"
+          phx-submit="update_email"
+          phx-change="validate_email"
+        >
+          <:title>{dgettext("users", "Change Email")}</:title>
 
-        <:requirements>
-          {dgettext("users", "You'll need to confirm your email address.")}
-        </:requirements>
-      </.form_container>
-    </ZoonkWeb.UserLayout.render>
+          <:subtitle>
+            {dgettext(
+              "users",
+              "This is the email address that will be used to sign in. This is not visible to other users."
+            )}
+          </:subtitle>
+
+          <.input
+            id="user-email"
+            field={@email_form[:email]}
+            label={dgettext("users", "Email address")}
+            type="email"
+            autocomplete="username"
+            required
+            hide_label
+          />
+
+          <:requirements>
+            {dgettext("users", "You'll need to confirm your email address.")}
+          </:requirements>
+        </.form_container>
+      </section>
+
+      <.flash_group flash={@flash} />
+    </main>
     """
   end
 
@@ -55,7 +68,7 @@ defmodule ZoonkWeb.User.UserEmailLive do
           put_flash(socket, :error, dgettext("users", "Email change link is invalid or it has expired."))
       end
 
-    {:ok, push_navigate(socket, to: ~p"/user/email")}
+    {:ok, push_navigate(socket, to: ~p"/settings")}
   end
 
   def mount(_params, _session, socket) do
@@ -95,7 +108,7 @@ defmodule ZoonkWeb.User.UserEmailLive do
         Accounts.deliver_user_update_email_instructions(
           user_changeset,
           user.email,
-          &url(socket.assigns.uri, ~p"/user/email/confirm/#{&1}")
+          &url(socket.assigns.uri, ~p"/settings/confirm/#{&1}")
         )
 
         info = dgettext("users", "A link to confirm your email change has been sent to the new address.")
