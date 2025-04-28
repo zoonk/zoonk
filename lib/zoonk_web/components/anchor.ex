@@ -3,6 +3,7 @@ defmodule ZoonkWeb.Components.Anchor do
   Provides the UI for rendering anchors.
   """
   use Phoenix.Component
+  use Gettext, backend: Zoonk.Gettext
 
   import ZoonkWeb.Components.Icon
 
@@ -111,6 +112,24 @@ defmodule ZoonkWeb.Components.Anchor do
       <.icon :if={@icon} size={@size} name={@icon} />
       <span class="sr-only">{render_slot(@inner_block)}</span>
     </.link>
+    """
+  end
+
+  @doc """
+  Renders a back link.
+
+  ## Examples
+
+      <.back_link navigate={~p"/"} />
+      <.back_link navigate={~p"/"} />
+  """
+  attr :rest, :global, include: ~w(href method navigate patch), doc: "HTML attributes to apply to the anchor"
+
+  def back_link(assigns) do
+    ~H"""
+    <.a kind={:icon} icon="tabler-arrow-left" variant={:outline} {@rest}>
+      <span class="sr-only">{gettext("Back to app")}</span>
+    </.a>
     """
   end
 end

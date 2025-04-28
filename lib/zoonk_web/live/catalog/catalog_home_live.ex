@@ -7,9 +7,7 @@ defmodule ZoonkWeb.Catalog.CatalogHomeLive do
     ~H"""
     <main>
       <nav class="flex items-center justify-between gap-4 p-4">
-        <.a kind={:icon} icon="tabler-arrow-left" variant={:outline} navigate={~p"/"}>
-          <span class="sr-only">{gettext("Back to app")}</span>
-        </.a>
+        <.back_link navigate={~p"/"} />
 
         <.a :if={!@scope.user} kind={:button} variant={:outline} href={~p"/login"}>
           {gettext("Login")}

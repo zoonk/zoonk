@@ -7,9 +7,7 @@ defmodule ZoonkWeb.Learning.LearningStartLive do
     ~H"""
     <main class="h-dvh flex w-full items-center justify-center p-4">
       <div class="absolute top-4 left-4">
-        <.a kind={:icon} icon="tabler-arrow-left" variant={:outline} navigate={~p"/"}>
-          <span class="sr-only">{gettext("Back to app")}</span>
-        </.a>
+        <.back_link navigate={~p"/"} />
       </div>
 
       <div class="flex w-full max-w-lg flex-col items-center gap-4 text-center">
