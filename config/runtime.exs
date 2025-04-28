@@ -43,6 +43,9 @@ if config_env() in [:dev, :prod] do
   config :zoonk, :ai,
     openai: [
       auth: {:bearer, System.fetch_env!("OPENAI_API_KEY")}
+    ],
+    togetherai: [
+      auth: {:bearer, System.fetch_env!("TOGETHERAI_API_KEY")}
     ]
 end
 
