@@ -12,8 +12,6 @@ defmodule Zoonk.AI.Agents.LearningRecommender do
   alias Zoonk.Helpers
   alias Zoonk.Repo
 
-  @model Application.compile_env(:zoonk, [:ai_models, :fast])
-
   @doc """
   Recommend courses based on user input.
 
@@ -42,7 +40,7 @@ defmodule Zoonk.AI.Agents.LearningRecommender do
 
   defp recommend(nil, input, language) do
     %AI{}
-    |> AI.set_model(@model)
+    |> AI.set_model(get_model())
     |> AI.set_schema(get_schema())
     |> AI.add_instructions(get_instructions())
     |> AI.add_message(build_message(input, language))
@@ -151,5 +149,9 @@ defmodule Zoonk.AI.Agents.LearningRecommender do
     They want to see results in this language: #{language}.
     If it's not English, translate the title and add it to the `english_title` field.
     """
+  end
+
+  defp get_model do
+    Application.get_env(:zoonk, :ai)[:models][:fast]
   end
 end

@@ -16,14 +16,5 @@ config :swoosh, local: false
 # before starting your production server.
 config :zoonk, ZoonkWeb.Endpoint, cache_static_manifest: "priv/static/cache_manifest.json"
 
-# AI models
-config :zoonk, :ai_models,
-  fast: System.get_env("AI_MODEL_FAST", "gpt-4.1-mini"),
-  smart: System.get_env("AI_MODEL_SMART", "gpt-4.1"),
-  smartest: System.get_env("AI_MODEL_SMARTEST", "o3"),
-  smartest_fast: System.get_env("AI_MODEL_SMARTEST_FAST", "o4-mini"),
-  thumbnail: System.get_env("AI_MODEL_THUMBNAIL", "gpt-image-1"),
-  exercise_image: System.get_env("AI_MODEL_EXERCISE_IMAGE", "gpt-image-1")
-
 # Runtime production configuration, including reading
 # of environment variables, is done on config/runtime.exs.
