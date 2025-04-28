@@ -80,7 +80,6 @@ defmodule ZoonkDev.UIPreview.UIPreviewLayout do
       %{icon: "tabler-forms", color: "text-purple-500", module: :form, label: "Form", path: "/ui/form"},
       %{icon: "tabler-cursor-text", color: "text-orange-500", module: :input, label: "Input", path: "/ui/input"},
       %{icon: "tabler-dots", color: "text-sky-500", module: :loader, label: "Loader", path: "/ui/loader"},
-      %{icon: "tabler-loader-2", color: "text-lime-500", module: :spinner, label: "Spinner", path: "/ui/spinner"},
       %{icon: "tabler-typography", color: "text-teal-500", module: :text, label: "Text", path: "/ui/text"}
     ]
   end

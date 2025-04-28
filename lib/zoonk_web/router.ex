@@ -137,7 +137,6 @@ defmodule ZoonkWeb.Router do
         live "/form", FormPreviewLive
         live "/input", InputPreviewLive
         live "/loader", LoaderPreviewLive
-        live "/spinner", SpinnerPreviewLive
         live "/text", TextPreviewLive
       end
     end
