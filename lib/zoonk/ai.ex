@@ -11,7 +11,7 @@ defmodule Zoonk.AI do
   alias Zoonk.AI.AISchema
 
   @derive Jason.Encoder
-  defstruct model: "gpt-4.1-mini",
+  defstruct model: Application.compile_env(:zoonk, [:ai_models, :fast]),
             instructions: "",
             input: [],
             text: %{format: %AISchema{}}

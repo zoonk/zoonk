@@ -95,5 +95,14 @@ config :zoonk, ZoonkWeb.Endpoint,
     ]
   ]
 
+# AI models
+config :zoonk, :ai_models,
+  fast: System.get_env("AI_MODEL_FAST", "gpt-4.1-nano"),
+  smart: System.get_env("AI_MODEL_SMART", "gpt-4.1-mini"),
+  smartest: System.get_env("AI_MODEL_SMARTEST", "o4-mini"),
+  smartest_fast: System.get_env("AI_MODEL_SMARTEST_FAST", "o4-mini"),
+  thumbnail: System.get_env("AI_MODEL_THUMBNAIL", "black-forest-labs/FLUX.1-schnell"),
+  exercise_image: System.get_env("AI_MODEL_EXERCISE_IMAGE", "black-forest-labs/FLUX.1-schnell")
+
 # Enable dev routes for dashboard and mailbox
 config :zoonk, dev_routes: true

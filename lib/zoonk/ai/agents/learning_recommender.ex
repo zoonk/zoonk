@@ -12,6 +12,8 @@ defmodule Zoonk.AI.Agents.LearningRecommender do
   alias Zoonk.Helpers
   alias Zoonk.Repo
 
+  @model Application.compile_env(:zoonk, [:ai_models, :fast])
+
   @doc """
   Recommend courses based on user input.
 
@@ -40,7 +42,7 @@ defmodule Zoonk.AI.Agents.LearningRecommender do
 
   defp recommend(nil, input, language) do
     %AI{}
-    |> AI.set_model("gpt-4.1-mini")
+    |> AI.set_model(@model)
     |> AI.set_schema(get_schema())
     |> AI.add_instructions(get_instructions())
     |> AI.add_message(build_message(input, language))
