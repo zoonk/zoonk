@@ -5,7 +5,7 @@ defmodule ZoonkWeb.Components.AsyncPage do
   use Phoenix.Component
 
   import ZoonkWeb.Components.Anchor
-  import ZoonkWeb.Components.Spinner
+  import ZoonkWeb.Components.Loader
   import ZoonkWeb.Components.Text
 
   @doc """
@@ -29,7 +29,7 @@ defmodule ZoonkWeb.Components.AsyncPage do
     <.async_result :let={data} assign={@data}>
       <:loading>
         <section class="zk-full">
-          <.full_page_spinner
+          <.full_page_loader
             title={@loading_title}
             feature={@loading_feature}
             delay_loading

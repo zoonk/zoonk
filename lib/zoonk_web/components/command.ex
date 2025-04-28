@@ -15,7 +15,7 @@ defmodule ZoonkWeb.Components.Command do
   use Gettext, backend: Zoonk.Gettext
 
   import ZoonkWeb.Components.Icon
-  import ZoonkWeb.Components.Spinner
+  import ZoonkWeb.Components.Loader
   import ZoonkWeb.Components.Text
 
   @doc """
@@ -142,7 +142,7 @@ defmodule ZoonkWeb.Components.Command do
       id={@id}
     >
       <div class="hidden flex-col items-center justify-center py-8 group-[.phx-change-loading]:flex">
-        <.spinner class="size-4" />
+        <.loader />
       </div>
 
       {render_slot(@inner_block)}
