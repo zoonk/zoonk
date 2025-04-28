@@ -8,14 +8,20 @@ defmodule ZoonkWeb.AppHomeLive do
   def render(assigns) do
     ~H"""
     <main>
-      <.link :if={@scope.user} navigate={~p"/user/email"} class="fixed top-4 right-4 z-50">
-        <span class="sr-only">{gettext("Go to settings")}</span>
-        <.avatar
-          src={@scope.user.profile.picture_url}
-          size={:md}
-          alt={User.get_display_name(@scope.user.profile)}
-        />
-      </.link>
+      <nav class="flex items-center justify-between p-4">
+        <.a kind={:button} icon="tabler-layout-grid" variant={:outline} navigate={~p"/catalog"}>
+          {gettext("Catalog")}
+        </.a>
+
+        <.link navigate={~p"/user/email"}>
+          <span class="sr-only">{gettext("Go to settings")}</span>
+          <.avatar
+            src={@scope.user.profile.picture_url}
+            size={:md}
+            alt={User.get_display_name(@scope.user.profile)}
+          />
+        </.link>
+      </nav>
     </main>
     """
   end
