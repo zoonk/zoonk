@@ -57,7 +57,7 @@ defmodule ZoonkWeb.Components.Avatar do
     """
   end
 
-  defp shared_class, do: ["shrink-0 rounded-full"]
+  defp shared_class, do: ["shrink-0 zk-shadow-border rounded-full"]
 
   defp avatar_size(:xs), do: "size-6 text-sm"
   defp avatar_size(:sm), do: "size-8 text-md"

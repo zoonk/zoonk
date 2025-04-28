@@ -300,12 +300,15 @@
 }
 
 @utility zk-btn-shadow {
-  @apply bg-zk-surface/5 backdrop-blur-md text-zk-surface-foreground
-  ring-1 ring-inset ring-zk-border/12
-  contrast-more:shadow-none contrast-more:ring-zk-border
-  shadow-sm dark:shadow-white/60
+  @apply bg-zk-surface/5 zk-shadow-border backdrop-blur-md text-zk-surface-foreground
   hover:bg-zk-muted hover:text-zk-muted-foreground
   focus-visible:ring-zk-muted;
+}
+
+@utility zk-shadow-border {
+  @apply ring-1 ring-inset ring-zk-border/12
+  shadow-sm dark:shadow-white/60
+  contrast-more:shadow-none contrast-more:ring-zk-border;
 }
 
 @utility zk-drop-shadow {
