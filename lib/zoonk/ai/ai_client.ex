@@ -31,6 +31,10 @@ defmodule Zoonk.AI.AIClient do
     OpenAIClient.generate_object(payload)
   end
 
+  def generate_object(%AI{model: "o" <> _gpt} = payload) do
+    OpenAIClient.generate_object(payload)
+  end
+
   def generate_object(_payload) do
     {:error, "Unsupported model"}
   end

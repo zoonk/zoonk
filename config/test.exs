@@ -54,3 +54,12 @@ config :zoonk, :ai,
   openai: [
     plug: {Req.Test, :openai_client}
   ]
+
+# AI models
+config :zoonk, :ai_models,
+  fast: "gpt-4.1-nano",
+  smart: "gpt-4.1-nano",
+  smartest: "gpt-4.1-nano",
+  smartest_fast: "gpt-4.1-nano",
+  thumbnail: "black-forest-labs/FLUX.1-schnell",
+  exercise_image: "black-forest-labs/FLUX.1-schnell"

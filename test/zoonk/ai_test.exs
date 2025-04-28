@@ -6,7 +6,7 @@ defmodule Zoonk.AITest do
 
   describe "set_model/2" do
     test "uses default model if none provided" do
-      assert %AI{}.model == "gpt-4.1-mini"
+      assert %AI{}.model == "gpt-4.1-nano"
     end
 
     test "sets the AI model" do
