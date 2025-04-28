@@ -24,7 +24,7 @@ defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
     <.async_page
       :let={recommendations}
       data={@courses}
-      loading_title={dgettext("learning", "We're finding courses that will help you learn")}
+      loading_title={dgettext("learning", "We're finding courses to help you learn")}
       loading_subtitle={
         dgettext(
           "learning",
@@ -32,15 +32,13 @@ defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
         )
       }
       loading_feature={@input}
-      failure_message={dgettext("learning", "Sorry, we couldn't find any recommendations for you.")}
+      failure_message={dgettext("learning", "Sorry, we had an internal error. Please, try again.")}
       failure_link={~p"/learn"}
       failure_link_text={gettext("Back")}
       class="mx-auto flex max-w-5xl flex-col gap-4 p-4 xl:px-0"
     >
       <nav>
-        <.a navigate={~p"/learn"} kind={:button} size={:sm} variant={:outline}>
-          {gettext("Back")}
-        </.a>
+        <.back_link navigate={~p"/learn"} />
       </nav>
 
       <header class="mx-auto py-8 text-center">

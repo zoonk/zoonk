@@ -294,12 +294,12 @@ defmodule ZoonkWeb.UserAuth do
   @doc "Returns the path to redirect to after log in."
   # the user was already logged in, redirect to settings
   def signed_in_path(%Plug.Conn{assigns: %{scope: %Scope{user: %User{}}}}) do
-    ~p"/user/email"
+    ~p"/settings"
   end
 
   def signed_in_path(_conn), do: ~p"/"
 
-  defp unauthenticated_path(_scope, "/user" <> _rest), do: ~p"/login"
+  defp unauthenticated_path(_scope, "/settings" <> _rest), do: ~p"/login"
   defp unauthenticated_path(%Scope{org: %Org{kind: :app}}, _path), do: ~p"/catalog"
   defp unauthenticated_path(%Scope{org: %Org{kind: :creator}}, _path), do: ~p"/catalog"
   defp unauthenticated_path(_scope, _path), do: ~p"/login"

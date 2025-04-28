@@ -5,14 +5,19 @@ defmodule ZoonkWeb.Catalog.CatalogHomeLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render
-      scope={@scope}
-      flash={@flash}
-      page_title={@page_title}
-      active_page={:catalog}
-    >
-      placeholder for catalog
-    </ZoonkWeb.AppLayout.render>
+    <main>
+      <nav class={[
+        "flex items-center gap-4 p-4",
+        @scope.user && "justify-between",
+        !@scope.user && "justify-end"
+      ]}>
+        <.back_link :if={@scope.user} navigate={~p"/"} />
+
+        <.a :if={!@scope.user} kind={:button} variant={:outline} href={~p"/login"}>
+          {gettext("Login")}
+        </.a>
+      </nav>
+    </main>
     """
   end
 

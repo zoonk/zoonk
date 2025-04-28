@@ -6,11 +6,7 @@ defmodule ZoonkWeb.RequireOrgMemberPermissionTest do
         kind <- [:app, :creator, :team, :school],
         page <- [
           %{link: "/", menu: "Summary"},
-          %{link: "/goals", menu: "Goals"},
-          %{link: "/library", menu: "Library"},
-          %{link: "/user/email", menu: "Email"},
-          %{link: "/user/billing", menu: "Billing"},
-          %{link: "/user/interests", menu: "Interests"}
+          %{link: "/settings", menu: "Settings"}
         ],
         do: %{kind: kind, page: page}
       )
@@ -39,7 +35,7 @@ defmodule ZoonkWeb.RequireOrgMemberPermissionTest do
         |> Map.put(:host, org.custom_domain)
         |> login_user(user)
         |> visit(page.link)
-        |> assert_has("li[aria-current='page']", text: page.menu)
+        |> assert_path(page.link)
       end
     end
 
@@ -53,7 +49,7 @@ defmodule ZoonkWeb.RequireOrgMemberPermissionTest do
         |> Map.put(:host, org.custom_domain)
         |> login_user(user)
         |> visit(page.link)
-        |> assert_has("li[aria-current='page']", text: page.menu)
+        |> assert_path(page.link)
       end
     end
 
@@ -67,7 +63,7 @@ defmodule ZoonkWeb.RequireOrgMemberPermissionTest do
         |> Map.put(:host, org.custom_domain)
         |> login_user(user)
         |> visit(page.link)
-        |> assert_has("li[aria-current='page']", text: page.menu)
+        |> assert_path(page.link)
       end
     end
 

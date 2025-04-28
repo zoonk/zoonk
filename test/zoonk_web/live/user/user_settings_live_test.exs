@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.User.UserEmailLiveTest do
+defmodule ZoonkWeb.User.UserSettingsLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AccountFixtures
@@ -12,7 +12,7 @@ defmodule ZoonkWeb.User.UserEmailLiveTest do
       new_email = unique_user_email()
 
       conn
-      |> visit(~p"/user/email")
+      |> visit(~p"/settings")
       |> fill_in("Email address", with: new_email)
       |> submit()
       |> assert_has("div", text: "A link to confirm your email")
@@ -22,14 +22,14 @@ defmodule ZoonkWeb.User.UserEmailLiveTest do
 
     test "renders errors with invalid data (phx-change)", %{conn: conn} do
       conn
-      |> visit(~p"/user/email")
+      |> visit(~p"/settings")
       |> fill_in("Email address", with: "with spaces")
       |> assert_has("p", text: "must have the @ sign and no spaces")
     end
 
     test "renders errors with invalid data (phx-submit)", %{conn: conn, user: user} do
       conn
-      |> visit(~p"/user/email")
+      |> visit(~p"/settings")
       |> fill_in("Email address", with: user.email)
       |> submit()
       |> assert_has("p", text: "did not change")
@@ -51,8 +51,8 @@ defmodule ZoonkWeb.User.UserEmailLiveTest do
 
     test "updates the user email once", %{conn: conn, user: user, token: token, email: email} do
       conn
-      |> visit(~p"/user/email/confirm/#{token}")
-      |> assert_path(~p"/user/email")
+      |> visit(~p"/settings/confirm/#{token}")
+      |> assert_path(~p"/settings")
       |> assert_has("div", text: "Email changed successfully.")
 
       refute Accounts.get_user_by_email(user.email)
@@ -60,15 +60,15 @@ defmodule ZoonkWeb.User.UserEmailLiveTest do
 
       # use confirm token again
       conn
-      |> visit(~p"/user/email/confirm/#{token}")
-      |> assert_path(~p"/user/email")
+      |> visit(~p"/settings/confirm/#{token}")
+      |> assert_path(~p"/settings")
       |> assert_has("div", text: "Email change link is invalid or it has expired.")
     end
 
     test "does not update email with invalid token", %{conn: conn, user: user} do
       conn
-      |> visit(~p"/user/email/confirm/oops")
-      |> assert_path(~p"/user/email")
+      |> visit(~p"/settings/confirm/oops")
+      |> assert_path(~p"/settings")
       |> assert_has("div", text: "Email change link is invalid or it has expired.")
 
       assert Accounts.get_user_by_email(user.email)
@@ -76,7 +76,7 @@ defmodule ZoonkWeb.User.UserEmailLiveTest do
 
     test "redirects if user is not logged in", %{token: token} do
       build_conn()
-      |> visit(~p"/user/email/confirm/#{token}")
+      |> visit(~p"/settings/confirm/#{token}")
       |> assert_path(~p"/login")
     end
   end

@@ -103,7 +103,7 @@ defmodule ZoonkWeb.UserAuthTest do
         |> assign(:scope, Scope.set(scope))
         |> UserAuth.login_user(scope.user)
 
-      assert redirected_to(conn) == "/user/email"
+      assert redirected_to(conn) == "/settings"
     end
 
     test "writes a cookie if remember_me was set in previous session", %{conn: conn, user: user} do

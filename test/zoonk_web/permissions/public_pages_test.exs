@@ -20,7 +20,7 @@ defmodule ZoonkWeb.PublicPagesPermissionTest do
         conn
         |> Map.put(:host, org.custom_domain)
         |> visit(page.link)
-        |> assert_has("li[aria-current='page']", text: page.menu)
+        |> assert_path(page.link)
       end
     end
 
@@ -31,7 +31,7 @@ defmodule ZoonkWeb.PublicPagesPermissionTest do
         conn
         |> Map.put(:host, org.custom_domain)
         |> visit(page.link)
-        |> assert_has("header a", text: "Login")
+        |> assert_has("a", text: "Login")
       end
     end
 

@@ -50,6 +50,7 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
           phx-disable-with={dgettext("users", "Creating account...")}
           icon="tabler-user-plus"
           icon_align={:left}
+          size={:md}
           class="w-full"
         >
           {dgettext("users", "Create an account")}

@@ -16,7 +16,11 @@ defmodule ZoonkWeb.Components.Text do
     default: nil,
     doc: "Font weight of the text"
 
-  attr :variant, :atom, values: [:primary, :secondary, :custom], default: :primary, doc: "Color variant of the text"
+  attr :variant, :atom,
+    values: [:primary, :secondary, :destructive, :custom],
+    default: :primary,
+    doc: "Color variant of the text"
+
   attr :for, :string, default: nil, doc: "The for attribute for labels"
   attr :class, :any, default: nil, doc: "CSS class to apply to the text element"
   attr :id, :string, default: nil, doc: "ID of the text element"
@@ -78,6 +82,7 @@ defmodule ZoonkWeb.Components.Text do
 
   defp get_variant_class(:primary), do: "text-zk-foreground"
   defp get_variant_class(:secondary), do: "text-zk-muted-foreground"
+  defp get_variant_class(:destructive), do: "text-zk-destructive"
   defp get_variant_class(:custom), do: nil
 
   defp get_weight_class(:bold, _size), do: "font-bold"
