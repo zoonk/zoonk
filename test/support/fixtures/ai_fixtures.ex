@@ -14,6 +14,21 @@ defmodule Zoonk.AIFixtures do
     end)
   end
 
+  def togetherai_stub(data, opts \\ []) do
+    error = Keyword.get(opts, :error, nil)
+    output = gen_togetherai_output(data)
+
+    if error do
+      Req.Test.stub(:togetherai_client, fn conn ->
+        Req.Test.json(conn, %{"error" => %{"message" => error}})
+      end)
+    else
+      Req.Test.stub(:togetherai_client, fn conn ->
+        Req.Test.json(conn, %{"choices" => [output]})
+      end)
+    end
+  end
+
   def learning_recommendation_fixture(attrs \\ %{}) do
     title = Map.get(attrs, :title, "Data Science")
     description = Map.get(attrs, :description, "A field that uses scientific methods to analyze data.")
@@ -37,6 +52,15 @@ defmodule Zoonk.AIFixtures do
     %{
       "type" => "refusal",
       "refusal" => refusal
+    }
+  end
+
+  defp gen_togetherai_output(data) do
+    %{
+      "message" => %{
+        "role" => "assistant",
+        "content" => JSON.encode!(data)
+      }
     }
   end
 end

@@ -11,6 +11,7 @@ defmodule Zoonk.AI.AIClient do
   """
   alias Zoonk.AI
   alias Zoonk.AI.AIClient.OpenAIClient
+  alias Zoonk.AI.AIClient.TogetherAIClient
 
   @doc """
   Generates structured output from an AI service based on the given payload.
@@ -33,6 +34,22 @@ defmodule Zoonk.AI.AIClient do
 
   def generate_object(%AI{model: "o" <> _gpt} = payload) do
     OpenAIClient.generate_object(payload)
+  end
+
+  def generate_object(%AI{model: "meta-llama" <> _gpt} = payload) do
+    TogetherAIClient.generate_object(payload)
+  end
+
+  def generate_object(%AI{model: "deepseek-ai" <> _gpt} = payload) do
+    TogetherAIClient.generate_object(payload)
+  end
+
+  def generate_object(%AI{model: "Qwen" <> _gpt} = payload) do
+    TogetherAIClient.generate_object(payload)
+  end
+
+  def generate_object(%AI{model: "mistralai" <> _gpt} = payload) do
+    TogetherAIClient.generate_object(payload)
   end
 
   def generate_object(_payload) do

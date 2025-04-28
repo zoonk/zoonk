@@ -53,6 +53,9 @@ config :zoonk, ZoonkWeb.Endpoint,
 config :zoonk, :ai,
   openai: [
     plug: {Req.Test, :openai_client}
+  ],
+  togetherai: [
+    plug: {Req.Test, :togetherai_client}
   ]
 
 # AI models

@@ -19,10 +19,10 @@ defmodule Zoonk.AI.Agents.LearningRecommender do
 
   ## Examples
 
-      iex> LearningRecommender.recommend("I want to learn about data science")
+      iex> LearningRecommender.recommend("I want to learn about data science", "en")
       {:ok, [%{title: "Data Science", description: "A field that uses scientific methods..."}]}
 
-      iex> LearningRecommender.recommend("forbidden input")
+      iex> LearningRecommender.recommend("forbidden input", "en")
       {:error, "This violates our content policy."}
   """
   def recommend(input, language) do
