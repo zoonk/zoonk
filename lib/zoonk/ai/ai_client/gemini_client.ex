@@ -23,16 +23,7 @@ defmodule Zoonk.AI.AIClient.GeminiClient do
   def generate_object(%AI{} = payload) do
     endpoint = get_endpoint(payload.model)
 
-    req_opts = [
-      json: convert_payload(payload),
-      receive_timeout: 300_000,
-      connect_options: [timeout: 300_000],
-      retry: :transient
-    ]
-
-    opts = Keyword.merge(req_opts, Application.get_env(:zoonk, :ai)[:gemini] || [])
-
-    case Req.post(endpoint, opts) do
+    case Req.post(endpoint, get_opts(payload)) do
       {:ok, %Req.Response{body: %{"error" => error}}} ->
         {:error, error["message"]}
 
@@ -73,15 +64,26 @@ defmodule Zoonk.AI.AIClient.GeminiClient do
     remove_additional_properties(ai_schema.schema)
   end
 
-  def remove_additional_properties(%{} = m) do
+  defp remove_additional_properties(%{} = m) do
     m
     |> Map.drop([:additionalProperties, "additionalProperties"])
     |> Map.new(fn {k, v} -> {k, remove_additional_properties(v)} end)
   end
 
-  def remove_additional_properties(list) when is_list(list), do: Enum.map(list, &remove_additional_properties/1)
+  defp remove_additional_properties(list) when is_list(list), do: Enum.map(list, &remove_additional_properties/1)
 
-  def remove_additional_properties(other), do: other
+  defp remove_additional_properties(other), do: other
+
+  defp get_opts(payload) do
+    [
+      json: convert_payload(payload),
+      receive_timeout: 300_000,
+      connect_options: [timeout: 300_000],
+      retry: :transient
+    ]
+    |> Keyword.merge(Application.get_env(:zoonk, :ai)[:gemini] || [])
+    |> Keyword.delete(:api_key)
+  end
 
   defp get_endpoint(model) do
     "#{@base_url}/#{model}:generateContent?key=#{get_api_key()}"
