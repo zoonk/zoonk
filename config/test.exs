@@ -53,13 +53,15 @@ config :zoonk, ZoonkWeb.Endpoint,
 config :zoonk, :ai,
   openai: [
     plug: {Req.Test, :openai_client}
+  ],
+  togetherai: [
+    plug: {Req.Test, :togetherai_client}
+  ],
+  models: [
+    fast: "gpt-4.1-nano",
+    smart: "gpt-4.1-mini",
+    smartest: "03",
+    smartest_fast: "o4-mini",
+    thumbnail: "gpt-image-1",
+    exercise_image: "gpt-image-1"
   ]
-
-# AI models
-config :zoonk, :ai_models,
-  fast: "gpt-4.1-nano",
-  smart: "gpt-4.1-nano",
-  smartest: "gpt-4.1-nano",
-  smartest_fast: "gpt-4.1-nano",
-  thumbnail: "black-forest-labs/FLUX.1-schnell",
-  exercise_image: "black-forest-labs/FLUX.1-schnell"

@@ -43,6 +43,17 @@ if config_env() in [:dev, :prod] do
   config :zoonk, :ai,
     openai: [
       auth: {:bearer, System.fetch_env!("OPENAI_API_KEY")}
+    ],
+    togetherai: [
+      auth: {:bearer, System.fetch_env!("TOGETHERAI_API_KEY")}
+    ],
+    models: [
+      fast: System.get_env("AI_MODEL_FAST", "gpt-4.1-mini"),
+      smart: System.get_env("AI_MODEL_SMART", "gpt-4.1"),
+      smartest: System.get_env("AI_MODEL_SMARTEST", "o3"),
+      smartest_fast: System.get_env("AI_MODEL_SMARTEST_FAST", "o4-mini"),
+      thumbnail: System.get_env("AI_MODEL_THUMBNAIL", "gpt-image-1"),
+      exercise_image: System.get_env("AI_MODEL_EXERCISE_IMAGE", "gpt-image-1")
     ]
 end
 

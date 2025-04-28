@@ -13,6 +13,41 @@ defmodule Zoonk.AI.AIClientTest do
       payload = %AI{model: "gpt-4.1-mini"}
       assert {:ok, %{}} = AIClient.generate_object(payload)
     end
+
+    test "delegates to OpenAIClient for reasoning models" do
+      openai_stub(%{language: "en"})
+
+      payload = %AI{model: "o3"}
+      assert {:ok, %{}} = AIClient.generate_object(payload)
+    end
+
+    test "delegates to TogetherAIClient for meta-llama models" do
+      togetherai_stub(%{language: "en"})
+
+      payload = %AI{model: "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8"}
+      assert {:ok, %{}} = AIClient.generate_object(payload)
+    end
+
+    test "delegates to TogetherAIClient for deepseek-ai models" do
+      togetherai_stub(%{language: "en"})
+
+      payload = %AI{model: "deepseek-ai/DeepSeek-7B"}
+      assert {:ok, %{}} = AIClient.generate_object(payload)
+    end
+
+    test "delegates to TogetherAIClient for Qwen models" do
+      togetherai_stub(%{language: "en"})
+
+      payload = %AI{model: "Qwen/Qwen2.5-7B-Instruct-Turbo"}
+      assert {:ok, %{}} = AIClient.generate_object(payload)
+    end
+
+    test "delegates to TogetherAIClient for mistralai models" do
+      togetherai_stub(%{language: "en"})
+
+      payload = %AI{model: "mistralai/Mistral-7B"}
+      assert {:ok, %{}} = AIClient.generate_object(payload)
+    end
   end
 
   test "returns an error for unsupported models" do
