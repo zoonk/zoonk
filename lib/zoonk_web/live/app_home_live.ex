@@ -8,7 +8,7 @@ defmodule ZoonkWeb.AppHomeLive do
   def render(assigns) do
     ~H"""
     <main>
-      <nav class="flex items-center justify-between p-4">
+      <nav class="flex items-center justify-between gap-4 p-4">
         <.a
           kind={:button}
           icon="tabler-layout-grid"
@@ -17,6 +17,17 @@ defmodule ZoonkWeb.AppHomeLive do
           navigate={~p"/catalog"}
         >
           {gettext("Catalog")}
+        </.a>
+
+        <.a
+          kind={:button}
+          icon="tabler-plus"
+          icon_on_mobile
+          variant={:outline}
+          navigate={~p"/learn"}
+          container_class="ml-auto"
+        >
+          {gettext("New course")}
         </.a>
 
         <.link navigate={~p"/user/email"}>

@@ -6,6 +6,7 @@ defmodule ZoonkWeb.Components.Anchor do
 
   import ZoonkWeb.Components.Icon
 
+  attr :container_class, :any, default: nil, doc: "CSS class to apply to the container"
   attr :class, :any, default: nil, doc: "CSS class to apply to the anchor"
   attr :kind, :atom, values: [:link, :button, :icon], default: :link, doc: "Kind of anchor to render"
   attr :variant, :atom, values: [:primary, :outline, :destructive], default: :primary, doc: "Variant of anchor to render"
@@ -47,7 +48,7 @@ defmodule ZoonkWeb.Components.Anchor do
 
   def a(%{kind: :button} = assigns) do
     ~H"""
-    <div>
+    <div class={@container_class}>
       <.link
         class={[
           "zk-btn",
