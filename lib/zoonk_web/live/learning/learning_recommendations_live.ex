@@ -61,7 +61,7 @@ defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
           <a
             href="#"
             class={[
-              "border-zk-border flex gap-2 border-b py-4",
+              "border-zk-border flex justify-between gap-2 border-b py-4",
               "hover:bg-zk-secondary/75",
               "group-first:pt-0 group-last:border-b-0",
               "focus-visible:bg-zk-secondary/75 focus-visible:outline-0"
