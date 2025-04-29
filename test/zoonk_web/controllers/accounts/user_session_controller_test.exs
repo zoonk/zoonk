@@ -87,7 +87,7 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
       assert Phoenix.Flash.get(post_conn.assigns.flash, :info) =~ "Email changed successfully."
 
       refute Accounts.get_user_by_email(user.email)
-      assert Accounts.get_user_by_email(email)
+      assert Accounts.get_user_by_email(email).confirmed_at
 
       # don't allow to use the same OTP code again
       updated_conn = post(conn, ~p"/confirm", params)
