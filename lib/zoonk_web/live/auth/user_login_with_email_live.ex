@@ -57,6 +57,6 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLive do
       Accounts.deliver_login_instructions(user)
     end
 
-    {:noreply, push_navigate(socket, to: ~p"/login/code")}
+    {:noreply, push_navigate(socket, to: ~p"/confirm/login")}
   end
 end

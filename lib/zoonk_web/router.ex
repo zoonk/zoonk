@@ -61,6 +61,7 @@ defmodule ZoonkWeb.Router do
       live "/learn/:input", Learning.LearningRecommendationsLive
 
       live "/settings", User.UserSettingsLive
+      live "/confirm/email", User.UserConfirmCodeLive, :email
     end
   end
 
@@ -77,8 +78,8 @@ defmodule ZoonkWeb.Router do
       live "/login", User.UserLoginLive
       live "/login/email", User.UserLoginWithEmailLive
 
-      live "/login/code", User.UserCodeLive, :login
-      live "/signup/code", User.UserCodeLive, :signup
+      live "/confirm/login", User.UserConfirmCodeLive, :login
+      live "/confirm/signup", User.UserConfirmCodeLive, :signup
     end
   end
 

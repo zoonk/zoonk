@@ -18,7 +18,21 @@ defmodule ZoonkWeb.Accounts.UserSessionController do
 
   This controller is also used for confirming a user.
   """
-  def create(conn, %{"user" => %{"code" => otp}, "_action" => action}) do
+  def create(conn, %{"_action" => "email", "user" => %{"code" => otp}}) do
+    case Accounts.update_user_email(conn.assigns.scope.user, otp) do
+      :ok ->
+        conn
+        |> put_flash(:info, dgettext("users", "Email changed successfully."))
+        |> redirect(to: ~p"/settings")
+
+      :error ->
+        conn
+        |> put_flash(:error, dgettext("users", "Code is invalid or it has expired."))
+        |> redirect(to: ~p"/settings")
+    end
+  end
+
+  def create(conn, %{"_action" => action, "user" => %{"code" => otp}}) do
     case Accounts.login_user_by_otp(otp) do
       {:ok, user, tokens_to_disconnect} ->
         UserAuth.disconnect_sessions(tokens_to_disconnect)
@@ -46,6 +60,6 @@ defmodule ZoonkWeb.Accounts.UserSessionController do
   defp confirmation_msg("signup"), do: dgettext("users", "Your account is confirmed!")
   defp confirmation_msg(_action), do: nil
 
-  defp error_redirect("login"), do: ~p"/login/code"
-  defp error_redirect("signup"), do: ~p"/signup/code"
+  defp error_redirect("login"), do: ~p"/confirm/login"
+  defp error_redirect("signup"), do: ~p"/confirm/signup"
 end

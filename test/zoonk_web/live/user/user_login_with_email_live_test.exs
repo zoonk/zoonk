@@ -19,7 +19,7 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLiveTest do
       |> visit(~p"/login/email")
       |> fill_in("Email address", with: user.email)
       |> submit()
-      |> assert_path(~p"/login/code")
+      |> assert_path(~p"/confirm/login")
 
       assert Zoonk.Repo.get_by!(Zoonk.Accounts.UserToken, user_id: user.id).context == "login"
     end
