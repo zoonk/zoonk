@@ -7,14 +7,14 @@ defmodule Zoonk.Accounts.UserToken do
 
   ## Fields
 
-  | Field Name | Type | Description |
-  |------------|------|-------------|
-  | `token` | `Binary` | The token used for authentication or verification. |
-  | `context` | `String` | The context in which the token is used (e.g., "email_verification"). |
-  | `sent_to` | `String` | The email address or phone number to which the token was sent. |
-  | `user_id` | `Integer` | The ID from `Zoonk.Accounts.User`. |
-  | `inserted_at` | `DateTime` | Timestamp when the token was created. |
-  | `updated_at` | `DateTime` | Timestamp when the token was last updated. |
+  | Field Name   | Type      | Description                                       |
+  |--------------|-----------|---------------------------------------------------|
+  | `token`      | `Binary`  | The token used for authentication or verification.|
+  | `context`    | `String`  | The context in which the token is used (e.g., "email_verification"). |
+  | `sent_to`    | `String`  | The email address or phone number to which the token was sent. |
+  | `user_id`    | `Integer` | The ID from `Zoonk.Accounts.User`.                |
+  | `inserted_at`| `DateTime`| Timestamp when the token was created.             |
+  | `updated_at` | `DateTime`| Timestamp when the token was last updated.        |
   """
   use Ecto.Schema
 
