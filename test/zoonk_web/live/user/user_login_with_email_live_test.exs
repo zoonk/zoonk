@@ -19,27 +19,9 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLiveTest do
       |> visit(~p"/login/email")
       |> fill_in("Email address", with: user.email)
       |> submit()
-      |> assert_has("p", text: "If your email is in our system")
+      |> assert_path(~p"/login/code")
 
       assert Zoonk.Repo.get_by!(Zoonk.Accounts.UserToken, user_id: user.id).context == "login"
-    end
-
-    test "does not disclose if user is signed up", %{conn: conn} do
-      conn
-      |> visit(~p"/login/email")
-      |> fill_in("Email address", with: "idonotexist@example.com")
-      |> submit()
-      |> assert_has("p", text: "If your email is in our system")
-    end
-
-    test "displays the login form when the user clicks 'Try again'", %{conn: conn} do
-      conn
-      |> visit(~p"/login/email")
-      |> fill_in("Email address", with: "user@example.com")
-      |> submit()
-      |> refute_has("form")
-      |> click_button("Try again")
-      |> assert_has("form")
     end
   end
 
