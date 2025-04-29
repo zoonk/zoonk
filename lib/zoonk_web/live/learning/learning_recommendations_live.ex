@@ -35,7 +35,7 @@ defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
       failure_message={dgettext("learning", "Sorry, we had an internal error. Please, try again.")}
       failure_link={~p"/learn"}
       failure_link_text={gettext("Back")}
-      class="mx-auto flex max-w-5xl flex-col gap-4 p-4 xl:px-0"
+      class="mx-auto flex flex-col gap-4 p-4"
     >
       <nav>
         <.back_link navigate={~p"/learn"} />
@@ -61,7 +61,7 @@ defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
           <a
             href="#"
             class={[
-              "border-zk-border flex gap-2 border-b py-4",
+              "border-zk-border flex justify-between gap-2 border-b py-4",
               "hover:bg-zk-secondary/75",
               "group-first:pt-0 group-last:border-b-0",
               "focus-visible:bg-zk-secondary/75 focus-visible:outline-0"
