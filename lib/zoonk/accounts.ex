@@ -116,14 +116,14 @@ defmodule Zoonk.Accounts do
   end
 
   @doc """
-  Updates the user email using the given token.
+  Updates the user email using the given OTP code.
 
-  If the token matches, the user email is updated and the token is deleted.
+  If the code matches, the user email is updated and the code is deleted.
   """
-  def update_user_email(user, token) do
+  def update_user_email(user, otp_code) do
     context = "change:#{user.email}"
 
-    with {:ok, query} <- UserToken.verify_change_email_token_query(token, context),
+    with {:ok, query} <- UserToken.verify_change_email_code_query(otp_code, context),
          %UserToken{sent_to: email} <- Repo.one(query),
          {:ok, _res} <-
            user

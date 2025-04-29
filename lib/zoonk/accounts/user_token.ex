@@ -137,31 +137,24 @@ defmodule Zoonk.Accounts.UserToken do
   end
 
   @doc """
-  Checks if the token is valid and returns its underlying lookup query.
+  Checks if the OTP code is valid and returns its underlying lookup query.
 
   The query returns the user_token found by the token, if any.
 
-  This is used to validate requests to change the user
-  email.
-  The given token is valid if it matches its hashed counterpart in the
+  This is used to validate requests to change the user email.
+  The given OTP code is valid if it matches its hashed counterpart in the
   database and if it has not expired.
   The context must always start with "change:".
   """
-  def verify_change_email_token_query(token, "change:" <> _rest = context) do
-    case Base.url_decode64(token, padding: false) do
-      {:ok, decoded_token} ->
-        hashed_token = :crypto.hash(AuthConfig.get_hash_algorithm(), decoded_token)
+  def verify_change_email_code_query(otp_code, "change:" <> _rest = context) do
+    hashed_otp = :crypto.hash(AuthConfig.get_hash_algorithm(), otp_code)
 
-        query =
-          hashed_token
-          |> by_token_and_context_query(context)
-          |> where([token], token.inserted_at > ago(^AuthConfig.get_max_age(:change_email, :days), "day"))
+    query =
+      hashed_otp
+      |> by_token_and_context_query(context)
+      |> where([token], token.inserted_at > ago(^AuthConfig.get_max_age(:change_email, :days), "day"))
 
-        {:ok, query}
-
-      :error ->
-        :error
-    end
+    {:ok, query}
   end
 
   @doc """
