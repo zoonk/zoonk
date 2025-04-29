@@ -42,7 +42,7 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
     end
 
     test "confirms the given code once", %{conn: conn, unconfirmed_user: user} do
-      code = extract_user_otp_code(fn url -> Accounts.deliver_login_instructions(user, url) end)
+      code = extract_otp_code(Accounts.deliver_login_instructions(user))
 
       params = %{"_action" => "signup", "user" => %{"code" => code}}
       post_conn = post(conn, ~p"/login", params)
@@ -56,7 +56,7 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
 
       # logs out when trying to confirm again
       logout_conn = post(build_conn(), ~p"/login", params)
-      assert redirected_to(logout_conn) == ~p"/login/signup"
+      assert redirected_to(logout_conn) == ~p"/login/code"
       assert Phoenix.Flash.get(logout_conn.assigns.flash, :error) =~ "Invalid code or account not found."
       refute get_session(logout_conn, :user_token)
     end
@@ -70,6 +70,10 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
   end
 
   describe "DELETE /logout" do
+    setup do
+      %{user: user_fixture()}
+    end
+
     test "logs the user out", %{conn: conn, user: user} do
       conn =
         conn
