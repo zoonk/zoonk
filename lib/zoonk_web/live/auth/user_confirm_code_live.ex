@@ -15,7 +15,7 @@ defmodule ZoonkWeb.User.UserConfirmCodeLive do
         :let={f}
         for={@form}
         id="otp_form"
-        action={~p"/login?_action=#{@live_action}"}
+        action={~p"/confirm?_action=#{@live_action}"}
         aria-label={dgettext("users", "Enter your code")}
         class="flex w-full flex-col gap-4"
       >

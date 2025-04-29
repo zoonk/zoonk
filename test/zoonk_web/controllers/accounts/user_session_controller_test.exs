@@ -7,7 +7,7 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
   alias Zoonk.Accounts.User
   alias Zoonk.Repo
 
-  describe "POST /login?_action=login" do
+  describe "POST /confirm?_action=login" do
     setup do
       %{user: user_fixture()}
     end
@@ -16,7 +16,7 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
       {otp_code, _hashed_token} = generate_user_otp_code(user)
 
       params = %{"_action" => "login", "user" => %{"code" => otp_code}}
-      post_conn = post(conn, ~p"/login", params)
+      post_conn = post(conn, ~p"/confirm", params)
 
       assert get_session(post_conn, :user_token)
       assert Repo.get!(User, user.id).confirmed_at == user.confirmed_at
@@ -30,13 +30,13 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
 
     test "redirects back to the code page when OTP code is invalid", %{conn: conn} do
       params = %{"_action" => "login", "user" => %{"code" => "invalid_code"}}
-      conn = post(conn, ~p"/login", params)
+      conn = post(conn, ~p"/confirm", params)
       assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Invalid code or account not found."
       assert redirected_to(conn) == ~p"/confirm/login"
     end
   end
 
-  describe "POST /login?_action=signup" do
+  describe "POST /confirm?_action=signup" do
     setup do
       %{unconfirmed_user: unconfirmed_user_fixture(), user: user_fixture()}
     end
@@ -45,7 +45,7 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
       code = extract_otp_code(Accounts.deliver_login_instructions(user))
 
       params = %{"_action" => "signup", "user" => %{"code" => code}}
-      post_conn = post(conn, ~p"/login", params)
+      post_conn = post(conn, ~p"/confirm", params)
 
       assert Repo.get!(User, user.id).confirmed_at
       assert Phoenix.Flash.get(post_conn.assigns.flash, :info) =~ "Your account is confirmed!"
@@ -55,7 +55,7 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
       assert get_session(post_conn, :user_token)
 
       # logs out when trying to confirm again
-      logout_conn = post(build_conn(), ~p"/login", params)
+      logout_conn = post(build_conn(), ~p"/confirm", params)
       assert redirected_to(logout_conn) == ~p"/confirm/signup"
       assert Phoenix.Flash.get(logout_conn.assigns.flash, :error) =~ "Invalid code or account not found."
       refute get_session(logout_conn, :user_token)
@@ -63,13 +63,13 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
 
     test "redirects back to the code page if the code is invalid", %{conn: conn} do
       params = %{"_action" => "signup", "user" => %{"code" => "invalid_code"}}
-      conn = post(conn, ~p"/login", params)
+      conn = post(conn, ~p"/confirm", params)
       assert redirected_to(conn) == ~p"/confirm/signup"
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "Invalid code or account not found."
     end
   end
 
-  describe "POST /login?_action=email" do
+  describe "POST /confirm?_action=email" do
     setup %{conn: conn} do
       user = user_fixture()
       email = unique_user_email()
@@ -81,7 +81,7 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
 
     test "updates the user email once", %{conn: conn, user: user, otp_code: otp_code, email: email} do
       params = %{"_action" => "email", "user" => %{"code" => otp_code}}
-      post_conn = post(conn, ~p"/login", params)
+      post_conn = post(conn, ~p"/confirm", params)
 
       assert redirected_to(post_conn) == ~p"/settings"
       assert Phoenix.Flash.get(post_conn.assigns.flash, :info) =~ "Email changed successfully."
@@ -90,14 +90,14 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
       assert Accounts.get_user_by_email(email)
 
       # don't allow to use the same OTP code again
-      post_conn = post(conn, ~p"/login", params)
+      post_conn = post(conn, ~p"/confirm", params)
       assert redirected_to(post_conn) == ~p"/settings"
       assert Phoenix.Flash.get(post_conn.assigns.flash, :error) =~ "Code is invalid or it has expired."
     end
 
     test "doesn't update email with invalid code", %{conn: conn, user: user} do
       params = %{"_action" => "email", "user" => %{"code" => "invalid_code"}}
-      post_conn = post(conn, ~p"/login", params)
+      post_conn = post(conn, ~p"/confirm", params)
 
       assert redirected_to(post_conn) == ~p"/settings"
       assert Phoenix.Flash.get(post_conn.assigns.flash, :error) =~ "Code is invalid or it has expired."

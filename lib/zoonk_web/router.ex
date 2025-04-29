@@ -86,7 +86,7 @@ defmodule ZoonkWeb.Router do
   scope "/", ZoonkWeb do
     pipe_through [:browser]
 
-    post "/login", Accounts.UserSessionController, :create
+    post "/confirm", Accounts.UserSessionController, :create
     delete "/logout", Accounts.UserSessionController, :delete
 
     get "/auth/:provider", Accounts.OAuthController, :request
