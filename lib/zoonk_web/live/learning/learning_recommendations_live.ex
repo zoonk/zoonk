@@ -35,7 +35,7 @@ defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
       failure_message={dgettext("learning", "Sorry, we had an internal error. Please, try again.")}
       failure_link={~p"/learn"}
       failure_link_text={gettext("Back")}
-      class="mx-auto flex max-w-5xl flex-col gap-4 p-4 xl:px-0"
+      class="mx-auto flex flex-col gap-4 p-4"
     >
       <nav>
         <.back_link navigate={~p"/learn"} />
