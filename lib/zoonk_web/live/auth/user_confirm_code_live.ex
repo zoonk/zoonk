@@ -11,13 +11,17 @@ defmodule ZoonkWeb.User.UserConfirmCodeLive do
   def render(assigns) do
     ~H"""
     <.main_container action={:confirm} flash={@flash}>
+      <.text tag="h2" variant={:secondary}>
+        {dgettext("users", "We sent a code to your email address. Please enter it below to proceed.")}
+      </.text>
+
       <.form
         :let={f}
         for={@form}
         id="otp_form"
         action={~p"/confirm?_action=#{@live_action}"}
         aria-label={dgettext("users", "Enter your code")}
-        class="flex w-full flex-col gap-4"
+        class="mt-4 flex w-full flex-col gap-4"
       >
         <.input
           field={f[:code]}
