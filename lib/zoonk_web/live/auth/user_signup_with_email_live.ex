@@ -14,7 +14,6 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
     ~H"""
     <.main_container action={:signup} show_options flash={@flash}>
       <.form
-        :if={is_nil(@user_email)}
         for={@form}
         id="signup_form"
         phx-submit="save"
@@ -56,18 +55,6 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
           {dgettext("users", "Create an account")}
         </.button>
       </.form>
-
-      <.card :if={is_binary(@user_email)} size={:auto}>
-        <.card_content class="flex flex-col gap-4">
-          <.text>
-            {dgettext(
-              "users",
-              "An email was sent to %{email}, please click on the confirmation link to access your account.",
-              email: @user_email
-            )}
-          </.text>
-        </.card_content>
-      </.card>
     </.main_container>
     """
   end
@@ -83,7 +70,6 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
     socket =
       socket
       |> assign(check_errors: false)
-      |> assign(user_email: nil)
       |> assign_form(changeset)
       |> assign(page_title: dgettext("users", "Create an account"))
 
@@ -95,7 +81,7 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
       {:ok, user} ->
         {:ok, _url_fn} = Accounts.deliver_login_instructions(user)
 
-        {:noreply, assign(socket, user_email: user.email)}
+        {:noreply, push_navigate(socket, to: ~p"/signup/code")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply,

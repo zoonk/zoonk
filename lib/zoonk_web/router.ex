@@ -61,7 +61,6 @@ defmodule ZoonkWeb.Router do
       live "/learn/:input", Learning.LearningRecommendationsLive
 
       live "/settings", User.UserSettingsLive
-      live "/settings/confirm/:code", User.UserSettingsLive
     end
   end
 
@@ -77,6 +76,9 @@ defmodule ZoonkWeb.Router do
       live "/signup/email", User.UserSignUpWithEmailLive
       live "/login", User.UserLoginLive
       live "/login/email", User.UserLoginWithEmailLive
+
+      live "/login/code", User.UserCodeLive, :login
+      live "/signup/code", User.UserCodeLive, :signup
     end
   end
 
@@ -85,8 +87,6 @@ defmodule ZoonkWeb.Router do
 
     post "/login", Accounts.UserSessionController, :create
     delete "/logout", Accounts.UserSessionController, :delete
-    get "/login/t/:token", Accounts.UserSessionController, :login
-    get "/confirm/:token", Accounts.UserSessionController, :confirm
 
     get "/auth/:provider", Accounts.OAuthController, :request
     get "/auth/:provider/callback", Accounts.OAuthController, :callback

@@ -11,7 +11,6 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLive do
     <.main_container action={:login} flash={@flash} show_options>
       <.form
         :let={f}
-        :if={!@link_sent}
         for={@form}
         id="login_form"
         action={~p"/login"}
@@ -34,18 +33,6 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLive do
           {dgettext("users", "Login")}
         </.button>
       </.form>
-
-      <.card :if={@link_sent} size={:auto}>
-        <.card_content class="flex flex-col gap-4">
-          <.text>
-            {dgettext("users", "If your email is in our system, you will receive a link to login.")}
-          </.text>
-
-          <.button phx-click="try_again" variant={:outline} size={:md} class="w-full">
-            {dgettext("users", "Try again")}
-          </.button>
-        </.card_content>
-      </.card>
     </.main_container>
     """
   end
@@ -60,7 +47,6 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLive do
     socket =
       socket
       |> assign(form: form)
-      |> assign(link_sent: false)
       |> assign(page_title: dgettext("users", "Sign in with email"))
 
     {:ok, socket}
@@ -71,10 +57,6 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLive do
       Accounts.deliver_login_instructions(user)
     end
 
-    {:noreply, assign(socket, link_sent: true)}
-  end
-
-  def handle_event("try_again", _params, socket) do
-    {:noreply, assign(socket, link_sent: false)}
+    {:noreply, push_navigate(socket, to: ~p"/login/code")}
   end
 end

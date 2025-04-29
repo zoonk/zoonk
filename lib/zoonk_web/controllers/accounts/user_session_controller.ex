@@ -18,24 +18,19 @@ defmodule ZoonkWeb.Accounts.UserSessionController do
 
   This controller is also used for confirming a user.
   """
-  def create(conn, params) do
-    create(conn, params, nil)
-  end
-
-  # OTP login
-  defp create(conn, %{"user" => %{"code" => otp}}, info) do
+  def create(conn, %{"user" => %{"code" => otp}, "_action" => action}) do
     case Accounts.login_user_by_otp(otp) do
       {:ok, user, tokens_to_disconnect} ->
         UserAuth.disconnect_sessions(tokens_to_disconnect)
 
         conn
-        |> put_flash(:info, info)
+        |> put_flash(:info, confirmation_msg(action))
         |> UserAuth.login_user(user)
 
       _error ->
         conn
-        |> put_flash(:error, expired_code())
-        |> redirect(to: ~p"/login/email")
+        |> put_flash(:error, dgettext("users", "Invalid code or account not found."))
+        |> redirect(to: error_redirect(action))
     end
   end
 
@@ -48,28 +43,9 @@ defmodule ZoonkWeb.Accounts.UserSessionController do
     |> UserAuth.logout_user()
   end
 
-  @doc """
-  Confirms a user account.
-  """
-  def confirm(conn, %{"code" => otp}), do: login_user(conn, otp, :confirm)
+  defp confirmation_msg("signup"), do: dgettext("users", "Your account is confirmed!")
+  defp confirmation_msg(_action), do: nil
 
-  @doc """
-  Signs in a user via an OTP code sent to their email.
-  """
-  def login(conn, %{"code" => otp}), do: login_user(conn, otp, :login)
-
-  defp login_user(conn, otp_code, action) do
-    if Accounts.get_user_by_otp_code(otp_code) do
-      create(conn, %{"user" => %{"code" => otp_code}}, login_flash(action))
-    else
-      conn
-      |> put_flash(:error, expired_code())
-      |> redirect(to: ~p"/login/email")
-    end
-  end
-
-  defp login_flash(:confirm), do: dgettext("users", "User confirmed successfully.")
-  defp login_flash(:login), do: nil
-
-  defp expired_code, do: dgettext("users", "Code is invalid or it has expired.")
+  defp error_redirect("login"), do: ~p"/login/code"
+  defp error_redirect("signup"), do: ~p"/signup/code"
 end

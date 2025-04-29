@@ -1,0 +1,55 @@
+defmodule ZoonkWeb.User.UserCodeLive do
+  @moduledoc false
+  use ZoonkWeb, :live_view
+
+  import ZoonkWeb.User.UserComponents
+
+  alias Zoonk.Accounts.User
+  alias Zoonk.Scope
+  alias ZoonkWeb.UserAuth
+
+  def render(assigns) do
+    ~H"""
+    <.main_container action={:login} flash={@flash} show_options>
+      <.form
+        :let={f}
+        for={@form}
+        id="otp_form"
+        action={~p"/login?_action=#{@live_action}"}
+        aria-label={dgettext("users", "Enter your code")}
+        class="flex w-full flex-col gap-4"
+      >
+        <.input
+          field={f[:code]}
+          label={dgettext("users", "One-time code")}
+          hide_label
+          type="text"
+          placeholder={dgettext("users", "Enter your code")}
+          autocomplete="one-time-code"
+          required
+          class="w-full"
+        />
+
+        <.button type="submit" class="w-full" size={:md} icon_align={:left} icon="tabler-mail-filled">
+          {dgettext("users", "Login")}
+        </.button>
+      </.form>
+    </.main_container>
+    """
+  end
+
+  def mount(_params, _session, %{assigns: %{scope: %Scope{user: %User{}}}} = socket) do
+    {:ok, redirect(socket, to: UserAuth.signed_in_path(socket))}
+  end
+
+  def mount(_params, _session, socket) do
+    form = to_form(%{"code" => ""}, as: :user)
+
+    socket =
+      socket
+      |> assign(form: form)
+      |> assign(page_title: dgettext("users", "Confirmation code"))
+
+    {:ok, socket}
+  end
+end
