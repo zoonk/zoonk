@@ -4,6 +4,7 @@ defmodule ZoonkWeb.User.UserSettingsLiveTest do
   import Zoonk.AccountFixtures
 
   alias Zoonk.Accounts
+  alias Zoonk.Config.AuthConfig
 
   describe "update email form" do
     setup :signup_and_login_user
@@ -34,6 +35,17 @@ defmodule ZoonkWeb.User.UserSettingsLiveTest do
       |> fill_in("Email address", with: user.email)
       |> submit()
       |> assert_has("p", text: "did not change")
+    end
+
+    test "redirects if user is not in sudo mode", %{conn: conn} do
+      sudo_minutes = AuthConfig.get_max_age(:sudo_mode, :minutes) - 1
+
+      conn
+      |> login_user(user_fixture(),
+        token_authenticated_at: DateTime.add(DateTime.utc_now(), sudo_minutes, :minute)
+      )
+      |> visit(~p"/settings")
+      |> assert_path(~p"/login")
     end
   end
 end

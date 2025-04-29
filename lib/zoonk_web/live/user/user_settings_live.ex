@@ -4,6 +4,8 @@ defmodule ZoonkWeb.User.UserSettingsLive do
 
   alias Zoonk.Accounts
 
+  on_mount {ZoonkWeb.UserAuth, :ensure_sudo_mode}
+
   def render(assigns) do
     ~H"""
     <main class="min-h-dvh flex flex-col gap-8 p-4">
