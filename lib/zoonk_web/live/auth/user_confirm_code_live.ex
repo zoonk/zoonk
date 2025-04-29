@@ -49,7 +49,7 @@ defmodule ZoonkWeb.User.UserConfirmCodeLive do
   end
 
   def mount(_params, _session, %{assigns: %{scope: %Scope{user: %User{}}} = assigns} = socket)
-      when assigns.live_action != :email do
+      when assigns.live_action == :signup do
     {:ok, redirect(socket, to: UserAuth.signed_in_path(socket))}
   end
 

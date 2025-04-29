@@ -6,13 +6,15 @@ defmodule ZoonkWeb.User.UserConfirmCodeLiveTest do
   alias Zoonk.Accounts
 
   describe "/confirm/login" do
-    test "redirects when user is logged in", %{conn: conn} do
+    test "doesn't redirect when user is logged in", %{conn: conn} do
       user = user_fixture()
 
+      # when in sudo mode, users need to confirm their login
+      # so, they need to have access to the confirm page
       conn
       |> login_user(user)
       |> visit(~p"/confirm/login")
-      |> assert_path(~p"/")
+      |> assert_path(~p"/confirm/login")
     end
 
     test "logs the user in with a valid code", %{conn: conn} do
