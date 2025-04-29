@@ -224,11 +224,9 @@ defmodule ZoonkWeb.UserAuth do
   end
 
   defp mount_scope(socket, session) do
-    %URI{host: host} = uri = Phoenix.LiveView.get_connect_info(socket, :uri)
+    %URI{host: host} = Phoenix.LiveView.get_connect_info(socket, :uri)
 
-    socket
-    |> Phoenix.Component.assign(uri: get_uri(uri))
-    |> Phoenix.Component.assign_new(:scope, fn ->
+    Phoenix.Component.assign_new(socket, :scope, fn ->
       user = get_user_by_session_token(session["user_token"])
       build_scope(user, host)
     end)
@@ -326,21 +324,4 @@ defmodule ZoonkWeb.UserAuth do
   end
 
   defp public_path?(_path, _scope), do: false
-
-  # We’re assigning the current URI to the socket to
-  # build verification links accurately. This ensures
-  # we’re using the right URI when sending magic links,
-  # especially since we support subdomains and custom domains,
-  # making the endpoint’s host value unreliable.
-  defp get_uri(%URI{host: host, port: port, scheme: scheme}) do
-    %URI{
-      host: host,
-      port: get_port(port, Application.get_env(:zoonk, :dev_routes)),
-      scheme: scheme
-    }
-  end
-
-  # only add port for dev routes
-  defp get_port(port, true), do: port
-  defp get_port(_port, _dev_route?), do: nil
 end

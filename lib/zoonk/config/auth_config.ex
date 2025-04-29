@@ -19,7 +19,7 @@ defmodule Zoonk.Config.AuthConfig do
   @doc """
   Returns the maximum age or validity of an item.
 
-  For magic link tokens, it is very important to keep their expiry short,
+  For OTP codes, it is very important to keep their expiry short,
   since someone with access to the email may take over the account.
 
   ## Example
@@ -30,7 +30,7 @@ defmodule Zoonk.Config.AuthConfig do
       iex> get_max_age(:token, :seconds)
       31536000
 
-      iex> get_max_age(:magic_link, :minutes)
+      iex> get_max_age(:otp, :minutes)
       15
 
       iex> get_max_age(:change_email, :days)
@@ -41,7 +41,7 @@ defmodule Zoonk.Config.AuthConfig do
   """
   def get_max_age(:token, :days), do: 365
   def get_max_age(:token, :seconds), do: get_max_age(:token, :days) * 24 * 60 * 60
-  def get_max_age(:magic_link, :minutes), do: 15
+  def get_max_age(:otp, :minutes), do: 15
   def get_max_age(:change_email, :days), do: 7
   def get_max_age(:sudo_mode, :minutes), do: -10
 
@@ -73,4 +73,17 @@ defmodule Zoonk.Config.AuthConfig do
       [:apple, :github, :google]
   """
   def list_providers, do: [:apple, :github, :google]
+
+  @doc """
+  Returns the maximum number of OTP codes that can be issued per hour.
+
+  The purpose of this rate limit is to prevent brute force attacks
+  and protect users from excessive OTP code attempts.
+
+  ## Example
+
+      iex> get_max_otp_codes_per_hour()
+      5
+  """
+  def get_max_otp_codes_per_hour, do: 5
 end

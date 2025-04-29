@@ -116,14 +116,14 @@ defmodule Zoonk.Accounts do
   end
 
   @doc """
-  Updates the user email using the given token.
+  Updates the user email using the given OTP code.
 
-  If the token matches, the user email is updated and the token is deleted.
+  If the code matches, the user email is updated and the code is deleted.
   """
-  def update_user_email(user, token) do
+  def update_user_email(user, otp_code) do
     context = "change:#{user.email}"
 
-    with {:ok, query} <- UserToken.verify_change_email_token_query(token, context),
+    with {:ok, query} <- UserToken.verify_change_email_code_query(otp_code, context),
          %UserToken{sent_to: email} <- Repo.one(query),
          {:ok, _res} <-
            user
@@ -170,10 +170,10 @@ defmodule Zoonk.Accounts do
   end
 
   @doc """
-  Gets the user with the given magic link token.
+  Gets the user with the given OTP code.
   """
-  def get_user_by_magic_link_token(token) do
-    with {:ok, query} <- UserToken.verify_magic_link_token_query(token),
+  def get_user_by_otp_code(otp_code) do
+    with {:ok, query} <- UserToken.verify_otp_code_query(otp_code),
          {user, _token} <- Repo.one(query) do
       user
     else
@@ -182,20 +182,20 @@ defmodule Zoonk.Accounts do
   end
 
   @doc """
-  Logs the user in by magic link.
+  Logs the user in by OTP code.
 
   There are three cases to consider:
 
   1. The user has already confirmed their email. They are logged in
-     and the magic link is expired.
+     and the OTP code is expired.
 
   2. The user has not confirmed their email.
      In this case, the user gets confirmed, logged in, and all tokens -
      including session ones - are expired. In theory, no other tokens
      exist but we delete all of them for best security practices.
   """
-  def login_user_by_magic_link(token) do
-    {:ok, query} = UserToken.verify_magic_link_token_query(token)
+  def login_user_by_otp(otp_code) do
+    {:ok, query} = UserToken.verify_otp_code_query(otp_code)
 
     case Repo.one(query) do
       {%User{confirmed_at: nil} = user, _token} ->
@@ -220,22 +220,40 @@ defmodule Zoonk.Accounts do
       iex> deliver_user_update_email_instructions(user, current_email, &url(~p"/settings/confirm/#{&1}"))
       {:ok, %{to: ..., body: ...}}
 
-  """
-  def deliver_user_update_email_instructions(%User{} = user, current_email, update_email_url_fun)
-      when is_function(update_email_url_fun, 1) do
-    {encoded_token, user_token} = UserToken.build_email_token(user, "change:#{current_email}")
+      iex> deliver_user_update_email_instructions(user, current_email, &url(~p"/settings/confirm/#{&1}"))
+      {:error, :rate_limit_exceeded}
 
-    Repo.insert!(user_token)
-    UserNotifier.deliver_update_email_instructions(user, update_email_url_fun.(encoded_token))
+  """
+  def deliver_user_update_email_instructions(%User{} = user, current_email) do
+    case UserToken.build_otp_code(user, "change:#{current_email}") do
+      {:ok, otp_code} ->
+        UserNotifier.deliver_update_email_instructions(user, otp_code)
+
+      {:error, :rate_limit_exceeded} = error ->
+        error
+    end
   end
 
   @doc ~S"""
-  Delivers the magic link login instructions to the given user.
+  Delivers the OTP code login instructions to the given user.
+
+  ## Examples
+
+      iex> deliver_login_instructions(user)
+      {:ok, %{to: ..., body: ...}}
+
+      iex> deliver_login_instructions(user)
+      {:error, :rate_limit_exceeded}
+
   """
-  def deliver_login_instructions(%User{} = user, magic_link_url_fun) when is_function(magic_link_url_fun, 1) do
-    {encoded_token, user_token} = UserToken.build_email_token(user, "login")
-    Repo.insert!(user_token)
-    UserNotifier.deliver_login_instructions(user, magic_link_url_fun.(encoded_token))
+  def deliver_login_instructions(%User{} = user) do
+    case UserToken.build_otp_code(user, "login") do
+      {:ok, otp_code} ->
+        UserNotifier.deliver_login_instructions(user, otp_code)
+
+      {:error, :rate_limit_exceeded} = error ->
+        error
+    end
   end
 
   @doc """

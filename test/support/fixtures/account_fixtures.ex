@@ -43,18 +43,14 @@ defmodule Zoonk.AccountFixtures do
   def user_fixture(attrs \\ %{}) do
     preload = Map.get(attrs, :preload, [])
     fixture = unconfirmed_user_fixture(attrs)
-
-    token =
-      extract_user_token(fn url ->
-        Accounts.deliver_login_instructions(fixture, url)
-      end)
+    otp_code = extract_otp_code(Accounts.deliver_login_instructions(fixture))
 
     UserProfile
     |> Repo.get_by!(user_id: fixture.id)
     |> UserProfile.changeset(%{picture_url: "https://zoonk.test/image.png"})
     |> Repo.update!()
 
-    {:ok, user, _expired_tokens} = Accounts.login_user_by_magic_link(token)
+    {:ok, user, _expired_tokens} = Accounts.login_user_by_otp(otp_code)
 
     Repo.preload(user, preload)
   end
@@ -70,10 +66,10 @@ defmodule Zoonk.AccountFixtures do
     Scope.set(%Scope{org: org, user: user, org_member: org_member})
   end
 
-  def extract_user_token(fun) do
-    {:ok, captured_email} = fun.(&"[TOKEN]#{&1}[TOKEN]")
-    [_str, token | _opts] = String.split(captured_email.text_body, "[TOKEN]")
-    token
+  def extract_otp_code({:ok, email}) do
+    ~r/\n\s*(?<otp>\d{6})\s*\n/
+    |> Regex.named_captures(email.text_body)
+    |> Map.fetch!("otp")
   end
 
   def override_token_authenticated_at(token, authenticated_at) when is_binary(token) do
@@ -82,10 +78,9 @@ defmodule Zoonk.AccountFixtures do
     |> Zoonk.Repo.update_all(set: [authenticated_at: authenticated_at])
   end
 
-  def generate_user_magic_link_token(user) do
-    {encoded_token, user_token} = UserToken.build_email_token(user, "login")
-    Zoonk.Repo.insert!(user_token)
-    {encoded_token, user_token.token}
+  def generate_user_otp_code(user) do
+    {:ok, otp_code} = UserToken.build_otp_code(user, "login")
+    otp_code
   end
 
   def offset_user_token(token, amount_to_add, unit) do

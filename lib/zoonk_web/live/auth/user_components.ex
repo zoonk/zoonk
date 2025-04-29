@@ -4,7 +4,7 @@ defmodule ZoonkWeb.User.UserComponents do
 
   alias Zoonk.Config.AuthConfig
 
-  @actions [:login, :signup]
+  @actions [:login, :signup, :confirm]
 
   @doc """
   Generates a link to the authentication provider.
@@ -103,14 +103,15 @@ defmodule ZoonkWeb.User.UserComponents do
         </.text>
       </section>
 
-      <.footer_link action={get_footer_action(@action)} />
+      <.footer_link :if={@action != :confirm} action={get_footer_action(@action)} />
       <.flash_group flash={@flash} />
     </main>
     """
   end
 
-  defp get_auth_header(:login), do: dgettext("users", "Access your Zoonk account.")
-  defp get_auth_header(:signup), do: dgettext("users", "Start learning the skills to build amazing things.")
+  defp get_auth_header(:login), do: dgettext("users", "Access your Zoonk account")
+  defp get_auth_header(:signup), do: dgettext("users", "Start learning the skills to build amazing things")
+  defp get_auth_header(:confirm), do: dgettext("users", "Validate your email address")
 
   defp get_auth_link(:login), do: ~p"/login"
   defp get_auth_link(:signup), do: ~p"/signup"

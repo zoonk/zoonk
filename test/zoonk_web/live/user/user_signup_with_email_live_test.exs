@@ -66,7 +66,7 @@ defmodule ZoonkWeb.User.SignUpWithEmailLiveTest do
       |> visit(~p"/signup/email")
       |> fill_in("Email address", with: email)
       |> submit()
-      |> assert_has("p", text: "An email was sent to #{email}")
+      |> assert_path(~p"/confirm/signup")
 
       user = Zoonk.Accounts.get_user_by_email(email)
       assert user.confirmed_at == nil

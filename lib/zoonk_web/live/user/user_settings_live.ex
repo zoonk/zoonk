@@ -4,6 +4,8 @@ defmodule ZoonkWeb.User.UserSettingsLive do
 
   alias Zoonk.Accounts
 
+  on_mount {ZoonkWeb.UserAuth, :ensure_sudo_mode}
+
   def render(assigns) do
     ~H"""
     <main class="min-h-dvh flex flex-col gap-8 p-4">
@@ -25,7 +27,7 @@ defmodule ZoonkWeb.User.UserSettingsLive do
         <.form_container
           for={@email_form}
           id="email_form"
-          phx-submit="update_email"
+          phx-submit="submit"
           phx-change="validate_email"
         >
           <:title>{dgettext("users", "Change Email")}</:title>
@@ -48,7 +50,7 @@ defmodule ZoonkWeb.User.UserSettingsLive do
           />
 
           <:requirements>
-            {dgettext("users", "You'll need to confirm your email address.")}
+            {dgettext("users", "We'll send a code to your email address.")}
           </:requirements>
         </.form_container>
       </section>
@@ -56,19 +58,6 @@ defmodule ZoonkWeb.User.UserSettingsLive do
       <.flash_group flash={@flash} />
     </main>
     """
-  end
-
-  def mount(%{"token" => token}, _session, socket) do
-    socket =
-      case Accounts.update_user_email(socket.assigns.scope.user, token) do
-        :ok ->
-          put_flash(socket, :info, dgettext("users", "Email changed successfully."))
-
-        :error ->
-          put_flash(socket, :error, dgettext("users", "Email change link is invalid or it has expired."))
-      end
-
-    {:ok, push_navigate(socket, to: ~p"/settings")}
   end
 
   def mount(_params, _session, socket) do
@@ -97,7 +86,7 @@ defmodule ZoonkWeb.User.UserSettingsLive do
     {:noreply, assign(socket, email_form: email_form)}
   end
 
-  def handle_event("update_email", params, socket) do
+  def handle_event("submit", params, socket) do
     %{"user" => user_params} = params
     user = socket.assigns.scope.user
 
@@ -105,14 +94,9 @@ defmodule ZoonkWeb.User.UserSettingsLive do
       %{valid?: true} = changeset ->
         user_changeset = Ecto.Changeset.apply_action!(changeset, :insert)
 
-        Accounts.deliver_user_update_email_instructions(
-          user_changeset,
-          user.email,
-          &url(socket.assigns.uri, ~p"/settings/confirm/#{&1}")
-        )
+        Accounts.deliver_user_update_email_instructions(user_changeset, user.email)
 
-        info = dgettext("users", "A link to confirm your email change has been sent to the new address.")
-        {:noreply, put_flash(socket, :info, info)}
+        {:noreply, push_navigate(socket, to: ~p"/confirm/email")}
 
       changeset ->
         {:noreply, assign(socket, :email_form, to_form(changeset, action: :insert))}

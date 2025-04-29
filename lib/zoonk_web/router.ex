@@ -61,7 +61,7 @@ defmodule ZoonkWeb.Router do
       live "/learn/:input", Learning.LearningRecommendationsLive
 
       live "/settings", User.UserSettingsLive
-      live "/settings/confirm/:token", User.UserSettingsLive
+      live "/confirm/email", User.UserConfirmCodeLive, :email
     end
   end
 
@@ -77,16 +77,17 @@ defmodule ZoonkWeb.Router do
       live "/signup/email", User.UserSignUpWithEmailLive
       live "/login", User.UserLoginLive
       live "/login/email", User.UserLoginWithEmailLive
+
+      live "/confirm/login", User.UserConfirmCodeLive, :login
+      live "/confirm/signup", User.UserConfirmCodeLive, :signup
     end
   end
 
   scope "/", ZoonkWeb do
     pipe_through [:browser]
 
-    post "/login", Accounts.UserSessionController, :create
+    post "/confirm", Accounts.UserSessionController, :create
     delete "/logout", Accounts.UserSessionController, :delete
-    get "/login/t/:token", Accounts.UserSessionController, :login
-    get "/confirm/:token", Accounts.UserSessionController, :confirm
 
     get "/auth/:provider", Accounts.OAuthController, :request
     get "/auth/:provider/callback", Accounts.OAuthController, :callback
