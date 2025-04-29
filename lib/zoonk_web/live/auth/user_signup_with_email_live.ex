@@ -93,11 +93,7 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
   def handle_event("save", %{"user" => user_params}, socket) do
     case Accounts.signup_user(user_params, socket.assigns.scope) do
       {:ok, user} ->
-        {:ok, _url_fn} =
-          Accounts.deliver_login_instructions(
-            user,
-            &url(socket.assigns.uri, ~p"/confirm/#{&1}")
-          )
+        {:ok, _url_fn} = Accounts.deliver_login_instructions(user)
 
         {:noreply, assign(socket, user_email: user.email)}
 

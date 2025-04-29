@@ -2,15 +2,16 @@ defmodule Zoonk.Accounts.UserToken do
   @moduledoc """
   Represents authentication and verification tokens for users.
 
-  We send tokens to users when they try to sign in or sign up
-  using a magic link, or when they change their email address.
+  We send an OTP code to users when they login, sign up, or change their email.
+  They can use this code to verify their identity and
+  generate a session token used for authentication.
 
   ## Fields
 
   | Field Name   | Type      | Description                                       |
   |--------------|-----------|---------------------------------------------------|
   | `token`      | `Binary`  | The token used for authentication or verification.|
-  | `context`    | `String`  | The context in which the token is used (e.g., "email_verification"). |
+  | `context`    | `String`  | The context in which the token is used (e.g., "login"). |
   | `sent_to`    | `String`  | The email address or phone number to which the token was sent. |
   | `user_id`    | `Integer` | The ID from `Zoonk.Accounts.User`.                |
   | `inserted_at`| `DateTime`| Timestamp when the token was created.             |
@@ -84,62 +85,55 @@ defmodule Zoonk.Accounts.UserToken do
   end
 
   @doc """
-  Builds a token and its hash to be delivered to the user's email.
+  Builds an OTP code and its hash to be delivered to the user's email.
 
-  The non-hashed token is sent to the user email while the
-  hashed part is stored in the database. The original token cannot be reconstructed,
+  The non-hashed OTP code is sent to the user email while the
+  hashed part is stored in the database. The original code cannot be reconstructed,
   which means anyone with read-only access to the database cannot directly use
-  the token in the application to gain access. Furthermore, if the user changes
-  their email in the system, the tokens sent to the previous email are no longer
+  the code in the application to gain access. Furthermore, if the user changes
+  their email in the system, the codes sent to the previous email are no longer
   valid.
-
-  Users can easily adapt the existing code to provide other types of delivery methods,
-  for example, by phone numbers.
   """
-  def build_email_token(user, context) do
-    build_hashed_token(user, context, user.email)
-  end
+  def build_otp_code(user, context) do
+    otp_code =
+      100_000..999_999
+      |> Enum.random()
+      |> Integer.to_string()
 
-  defp build_hashed_token(user, context, sent_to) do
-    token = :crypto.strong_rand_bytes(@rand_size)
-    hashed_token = :crypto.hash(AuthConfig.get_hash_algorithm(), token)
+    hashed_token = :crypto.hash(AuthConfig.get_hash_algorithm(), otp_code)
 
-    {Base.url_encode64(token, padding: false),
+    {otp_code,
      %UserToken{
        token: hashed_token,
        context: context,
-       sent_to: sent_to,
+       sent_to: user.email,
        user_id: user.id
      }}
   end
 
   @doc """
-  Checks if the token is valid and returns its underlying lookup query.
+  Checks if the OTP code is valid and returns its underlying lookup query.
 
   If found, the query returns a tuple of the form `{user, token}`.
 
-  The given token is valid if it matches its hashed counterpart in the
-  database. This function also checks if the token is being used within
-  15 minutes. The context of a magic link token is always "login".
+  The given code is valid if it matches its hashed counterpart in the
+  database. This function also checks if the code is being used within
+  15 minutes. The context of an OTP code is always "login".
   """
-  def verify_magic_link_token_query(token) do
-    case Base.url_decode64(token, padding: false) do
-      {:ok, decoded_token} ->
-        hashed_token = :crypto.hash(AuthConfig.get_hash_algorithm(), decoded_token)
+  def verify_otp_code_query(otp_code) do
+    hashed_otp = :crypto.hash(AuthConfig.get_hash_algorithm(), otp_code)
 
-        query =
-          hashed_token
-          |> by_token_and_context_query("login")
-          |> join(:inner, [token], user in assoc(token, :user))
-          |> where([token], token.inserted_at > ago(^AuthConfig.get_max_age(:magic_link, :minutes), "minute"))
-          |> where([token, user], token.sent_to == user.email)
-          |> select([token, user], {user, token})
+    query =
+      hashed_otp
+      |> by_token_and_context_query("login")
+      |> join(:inner, [token], user in assoc(token, :user))
+      |> where([token], token.inserted_at > ago(^AuthConfig.get_max_age(:otp, :minutes), "minute"))
+      |> where([token, user], token.sent_to == user.email)
+      |> select([token, user], {user, token})
 
-        {:ok, query}
-
-      :error ->
-        :error
-    end
+    {:ok, query}
+  rescue
+    _error -> :error
   end
 
   @doc """

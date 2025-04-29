@@ -231,13 +231,9 @@ defmodule Zoonk.AccountsTest do
     end
 
     test "sends token through notification", %{user: user} do
-      token =
-        extract_user_token(fn url ->
-          Accounts.deliver_user_update_email_instructions(user, "current@example.com", url)
-        end)
+      otp_code = extract_otp_code(Accounts.deliver_user_update_email_instructions(user, "current@example.com"))
 
-      {:ok, new_token} = Base.url_decode64(token, padding: false)
-      assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, new_token))
+      assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, otp_code))
       assert user_token.user_id == user.id
       assert user_token.sent_to == user.email
       assert user_token.context == "change:current@example.com"
@@ -249,37 +245,34 @@ defmodule Zoonk.AccountsTest do
       user = unconfirmed_user_fixture()
       email = unique_user_email()
 
-      token =
-        extract_user_token(fn url ->
-          Accounts.deliver_user_update_email_instructions(%{user | email: email}, user.email, url)
-        end)
+      otp_code = extract_otp_code(Accounts.deliver_user_update_email_instructions(%{user | email: email}, user.email))
 
-      %{user: user, token: token, email: email}
+      %{user: user, code: otp_code, email: email}
     end
 
-    test "updates the email with a valid token", %{user: user, token: token, email: email} do
-      assert Accounts.update_user_email(user, token) == :ok
+    test "updates the email with a valid OTP code", %{user: user, code: otp_code, email: email} do
+      assert Accounts.update_user_email(user, otp_code) == :ok
       changed_user = Repo.get!(User, user.id)
       assert changed_user.email != user.email
       assert changed_user.email == email
       refute Repo.get_by(UserToken, user_id: user.id)
     end
 
-    test "does not update email with invalid token", %{user: user} do
+    test "does not update email with invalid OTP code", %{user: user} do
       assert Accounts.update_user_email(user, "oops") == :error
       assert Repo.get!(User, user.id).email == user.email
       assert Repo.get_by(UserToken, user_id: user.id)
     end
 
-    test "does not update email if user email changed", %{user: user, token: token} do
-      assert Accounts.update_user_email(%{user | email: "current@example.com"}, token) == :error
+    test "does not update email if user email changed", %{user: user, code: otp_code} do
+      assert Accounts.update_user_email(%{user | email: "current@example.com"}, otp_code) == :error
       assert Repo.get!(User, user.id).email == user.email
       assert Repo.get_by(UserToken, user_id: user.id)
     end
 
-    test "does not update email if token expired", %{user: user, token: token} do
+    test "does not update email if OTP code expired", %{user: user, code: otp_code} do
       {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
-      assert Accounts.update_user_email(user, token) == :error
+      assert Accounts.update_user_email(user, otp_code) == :error
       assert Repo.get!(User, user.id).email == user.email
       assert Repo.get_by(UserToken, user_id: user.id)
     end
@@ -342,47 +335,45 @@ defmodule Zoonk.AccountsTest do
     end
   end
 
-  describe "get_user_by_magic_link_token/1" do
+  describe "get_user_by_otp_code/1" do
     setup do
       user = user_fixture()
-      {encoded_token, _hashed_token} = generate_user_magic_link_token(user)
-      %{user: user, token: encoded_token}
+      {encoded_code, _hashed_token} = generate_user_otp_code(user)
+      %{user: user, code: encoded_code}
     end
 
-    test "returns user by token", %{user: user, token: token} do
-      assert session_user = Accounts.get_user_by_magic_link_token(token)
+    test "returns user by OTP code", %{user: user, code: code} do
+      assert session_user = Accounts.get_user_by_otp_code(code)
       assert session_user.id == user.id
     end
 
-    test "does not return user for invalid token" do
-      refute Accounts.get_user_by_magic_link_token("oops")
+    test "does not return user for invalid OTP code" do
+      refute Accounts.get_user_by_otp_code("oops")
     end
 
-    test "does not return user for expired token", %{token: token} do
+    test "does not return user for expired OTP code", %{code: code} do
       {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
-      refute Accounts.get_user_by_magic_link_token(token)
+      refute Accounts.get_user_by_otp_code(code)
     end
   end
 
-  describe "login_user_by_magic_link/1" do
+  describe "login_user_by_otp/1" do
     test "confirms user and expires tokens" do
       user = unconfirmed_user_fixture()
       refute user.confirmed_at
-      {encoded_token, hashed_token} = generate_user_magic_link_token(user)
+      {encoded_code, hashed_token} = generate_user_otp_code(user)
 
-      assert {:ok, user, [%{token: ^hashed_token}]} =
-               Accounts.login_user_by_magic_link(encoded_token)
-
+      assert {:ok, user, [%{token: ^hashed_token}]} = Accounts.login_user_by_otp(encoded_code)
       assert user.confirmed_at
     end
 
     test "returns user and (deleted) token for confirmed user" do
       user = user_fixture()
       assert user.confirmed_at
-      {encoded_token, _hashed_token} = generate_user_magic_link_token(user)
-      assert {:ok, ^user, []} = Accounts.login_user_by_magic_link(encoded_token)
+      {encoded_code, _hashed_token} = generate_user_otp_code(user)
+      assert {:ok, ^user, []} = Accounts.login_user_by_otp(encoded_code)
       # one time use only
-      assert {:error, :not_found} = Accounts.login_user_by_magic_link(encoded_token)
+      assert {:error, :not_found} = Accounts.login_user_by_otp(encoded_code)
     end
   end
 
@@ -400,14 +391,10 @@ defmodule Zoonk.AccountsTest do
       %{user: unconfirmed_user_fixture()}
     end
 
-    test "sends token through notification", %{user: user} do
-      token =
-        extract_user_token(fn url ->
-          Accounts.deliver_login_instructions(user, url)
-        end)
+    test "sends OTP code through notification", %{user: user} do
+      otp_code = extract_otp_code(Accounts.deliver_login_instructions(user))
 
-      {:ok, new_token} = Base.url_decode64(token, padding: false)
-      assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, new_token))
+      assert user_token = Repo.get_by(UserToken, token: :crypto.hash(:sha256, otp_code))
       assert user_token.user_id == user.id
       assert user_token.sent_to == user.email
       assert user_token.context == "login"

@@ -15,7 +15,7 @@ defmodule ZoonkWeb.User.UserSettingsLiveTest do
       |> visit(~p"/settings")
       |> fill_in("Email address", with: new_email)
       |> submit()
-      |> assert_has("div", text: "A link to confirm your email")
+      |> assert_has("div", text: "A code to confirm your email")
 
       assert Accounts.get_user_by_email(user.email)
     end
@@ -41,31 +41,28 @@ defmodule ZoonkWeb.User.UserSettingsLiveTest do
       user = user_fixture()
       email = unique_user_email()
 
-      token =
-        extract_user_token(fn url ->
-          Accounts.deliver_user_update_email_instructions(%{user | email: email}, user.email, url)
-        end)
+      otp_code = extract_otp_code(Accounts.deliver_user_update_email_instructions(%{user | email: email}, user.email))
 
-      %{conn: login_user(conn, user), token: token, email: email, user: user}
+      %{conn: login_user(conn, user), otp_code: otp_code, email: email, user: user}
     end
 
-    test "updates the user email once", %{conn: conn, user: user, token: token, email: email} do
+    test "updates the user email once", %{conn: conn, user: user, otp_code: otp_code, email: email} do
       conn
-      |> visit(~p"/settings/confirm/#{token}")
+      |> visit(~p"/settings/confirm/#{otp_code}")
       |> assert_path(~p"/settings")
       |> assert_has("div", text: "Email changed successfully.")
 
       refute Accounts.get_user_by_email(user.email)
       assert Accounts.get_user_by_email(email)
 
-      # use confirm token again
+      # use confirm otp code again
       conn
-      |> visit(~p"/settings/confirm/#{token}")
+      |> visit(~p"/settings/confirm/#{otp_code}")
       |> assert_path(~p"/settings")
       |> assert_has("div", text: "Email change link is invalid or it has expired.")
     end
 
-    test "does not update email with invalid token", %{conn: conn, user: user} do
+    test "does not update email with invalid otp code", %{conn: conn, user: user} do
       conn
       |> visit(~p"/settings/confirm/oops")
       |> assert_path(~p"/settings")
@@ -74,9 +71,9 @@ defmodule ZoonkWeb.User.UserSettingsLiveTest do
       assert Accounts.get_user_by_email(user.email)
     end
 
-    test "redirects if user is not logged in", %{token: token} do
+    test "redirects if user is not logged in", %{otp_code: otp_code} do
       build_conn()
-      |> visit(~p"/settings/confirm/#{token}")
+      |> visit(~p"/settings/confirm/#{otp_code}")
       |> assert_path(~p"/login")
     end
   end

@@ -4,7 +4,7 @@ defmodule Zoonk.Accounts.UserNotifier do
 
   This module is responsible for sending email instructions
   to users for various authentication-related actions,
-  such as updating their email, logging in with a magic link,
+  such as updating their email, logging in with an OTP code,
   or confirming their account.
   """
   use Gettext, backend: Zoonk.Gettext
@@ -16,7 +16,7 @@ defmodule Zoonk.Accounts.UserNotifier do
   @doc """
   Deliver instructions to update a user email.
   """
-  def deliver_update_email_instructions(user, url) do
+  def deliver_update_email_instructions(user, otp_code) do
     subject = dgettext("emails", "Update email instructions")
 
     content =
@@ -25,16 +25,16 @@ defmodule Zoonk.Accounts.UserNotifier do
         """
         Hi %{email},
 
-        You can change your email by visiting the URL below:
+        You can confirm your email address using the code below:
 
-        %{url}
+        %{otp_code}
 
-        This link will expire in %{expiration_days} days.
+        This code will expire in %{expiration_days} days.
 
         If you didn't request this change, please ignore this.
         """,
         email: user.email,
-        url: url,
+        otp_code: otp_code,
         expiration_days: AuthConfig.get_max_age(:change_email, :days)
       )
 
@@ -42,17 +42,17 @@ defmodule Zoonk.Accounts.UserNotifier do
   end
 
   @doc """
-  Deliver instructions to log in with a magic link.
+  Deliver instructions to log in with an OTP code.
   """
-  def deliver_login_instructions(user, url) do
+  def deliver_login_instructions(user, otp_code) do
     case user do
-      %User{confirmed_at: nil} -> deliver_confirmation_instructions(user, url)
-      _confirmed -> deliver_magic_link_instructions(user, url)
+      %User{confirmed_at: nil} -> deliver_confirmation_instructions(user, otp_code)
+      _confirmed -> deliver_otp_instructions(user, otp_code)
     end
   end
 
-  defp deliver_magic_link_instructions(user, url) do
-    subject = dgettext("emails", "Log in instructions")
+  defp deliver_otp_instructions(user, otp_code) do
+    subject = dgettext("emails", "Login instructions")
 
     content =
       dgettext(
@@ -60,23 +60,23 @@ defmodule Zoonk.Accounts.UserNotifier do
         """
         Hi %{email},
 
-        You can log into your account by visiting the URL below:
+        You can log into your account by using the code below:
 
-        %{url}
+        %{otp_code}
 
-        This link will expire in %{expiration_minutes} minutes.
+        This code will expire in %{expiration_minutes} minutes.
 
         If you didn't request this email, please ignore this.
         """,
         email: user.email,
-        url: url,
-        expiration_minutes: AuthConfig.get_max_age(:magic_link, :minutes)
+        otp_code: otp_code,
+        expiration_minutes: AuthConfig.get_max_age(:otp, :minutes)
       )
 
     Mailer.send_email(user.email, subject, content)
   end
 
-  defp deliver_confirmation_instructions(user, url) do
+  defp deliver_confirmation_instructions(user, otp_code) do
     subject = dgettext("emails", "Confirmation instructions")
 
     content =
@@ -85,17 +85,17 @@ defmodule Zoonk.Accounts.UserNotifier do
         """
         Hi %{email},
 
-        You can confirm your account by visiting the URL below:
+        You can confirm your account by using the code below:
 
-        %{url}
+        %{otp_code}
 
-        This link will expire in %{expiration_minutes} minutes.
+        This code will expire in %{expiration_minutes} minutes.
 
         If you didn't create an account with us, please ignore this.
         """,
         email: user.email,
-        url: url,
-        expiration_minutes: AuthConfig.get_max_age(:magic_link, :minutes)
+        otp_code: otp_code,
+        expiration_minutes: AuthConfig.get_max_age(:otp, :minutes)
       )
 
     Mailer.send_email(user.email, subject, content)

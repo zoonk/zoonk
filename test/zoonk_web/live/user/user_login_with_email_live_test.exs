@@ -11,8 +11,8 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLiveTest do
     end
   end
 
-  describe "user login - magic link" do
-    test "sends magic link email when user exists", %{conn: conn} do
+  describe "user login - OTP code" do
+    test "sends OTP code email when user exists", %{conn: conn} do
       user = user_fixture()
 
       conn

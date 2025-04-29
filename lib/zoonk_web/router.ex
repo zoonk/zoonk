@@ -61,7 +61,7 @@ defmodule ZoonkWeb.Router do
       live "/learn/:input", Learning.LearningRecommendationsLive
 
       live "/settings", User.UserSettingsLive
-      live "/settings/confirm/:token", User.UserSettingsLive
+      live "/settings/confirm/:code", User.UserSettingsLive
     end
   end
 

@@ -11,11 +11,11 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
     %{unconfirmed_user: unconfirmed_user_fixture(), user: user_fixture()}
   end
 
-  describe "POST /login - magic link" do
+  describe "POST /login - OTP code" do
     test "logs the user in", %{conn: conn, user: user} do
-      {token, _hashed_token} = generate_user_magic_link_token(user)
+      {otp_code, _hashed_token} = generate_user_otp_code(user)
 
-      post_conn = post(conn, ~p"/login", %{"user" => %{"token" => token}})
+      post_conn = post(conn, ~p"/login", %{"user" => %{"code" => otp_code}})
 
       assert get_session(post_conn, :user_token)
       assert redirected_to(post_conn) == ~p"/"
@@ -25,18 +25,18 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
       html_response(loggedin_conn, 200)
     end
 
-    test "redirects to login page when magic link is invalid", %{conn: conn} do
-      conn = post(conn, ~p"/login", %{"user" => %{"token" => "invalid"}})
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Magic link is invalid or it has expired."
+    test "redirects to login page when OTP code is invalid", %{conn: conn} do
+      conn = post(conn, ~p"/login", %{"user" => %{"code" => "invalid"}})
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) == "Code is invalid or it has expired."
       assert redirected_to(conn) == ~p"/login/email"
     end
   end
 
-  describe "GET /confirm/:token" do
-    test "confirms the given token once", %{conn: conn, unconfirmed_user: user} do
-      token = extract_user_token(fn url -> Accounts.deliver_login_instructions(user, url) end)
+  describe "GET /confirm/:code" do
+    test "confirms the given code once", %{conn: conn, unconfirmed_user: user} do
+      code = extract_user_otp_code(fn url -> Accounts.deliver_login_instructions(user, url) end)
 
-      conn = get(conn, ~p"/confirm/#{token}")
+      conn = get(conn, ~p"/confirm/#{code}")
 
       assert Repo.get!(User, user.id).confirmed_at
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "User confirmed successfully."
@@ -46,15 +46,15 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
       assert get_session(conn, :user_token)
 
       # log out, new conn
-      logout_conn = get(build_conn(), ~p"/confirm/#{token}")
+      logout_conn = get(build_conn(), ~p"/confirm/#{code}")
       assert redirected_to(logout_conn) == ~p"/login/email"
-      assert Phoenix.Flash.get(logout_conn.assigns.flash, :error) =~ "Magic link is invalid or it has expired."
+      assert Phoenix.Flash.get(logout_conn.assigns.flash, :error) =~ "Code is invalid or it has expired."
       refute get_session(logout_conn, :user_token)
     end
 
     test "logs confirmed user in without changing confirmed_at", %{conn: conn, user: user} do
-      token = extract_user_token(fn url -> Accounts.deliver_login_instructions(user, url) end)
-      conn = get(conn, ~p"/login/t/#{token}")
+      code = extract_user_otp_code(fn url -> Accounts.deliver_login_instructions(user, url) end)
+      conn = get(conn, ~p"/login/t/#{code}")
 
       assert get_session(conn, :user_token)
       assert Repo.get!(User, user.id).confirmed_at == user.confirmed_at
@@ -62,10 +62,10 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
       assert is_nil(Phoenix.Flash.get(conn.assigns.flash, :info))
     end
 
-    test "redirects to the login page if the token is invalid", %{conn: conn} do
-      conn = get(conn, ~p"/confirm/invalid_token")
+    test "redirects to the login page if the code is invalid", %{conn: conn} do
+      conn = get(conn, ~p"/confirm/invalid_code")
       assert redirected_to(conn) == ~p"/login/email"
-      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "Magic link is invalid or it has expired."
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "Code is invalid or it has expired."
     end
   end
 

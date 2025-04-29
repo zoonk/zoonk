@@ -58,9 +58,9 @@ defmodule ZoonkWeb.User.UserSettingsLive do
     """
   end
 
-  def mount(%{"token" => token}, _session, socket) do
+  def mount(%{"code" => otp_code}, _session, socket) do
     socket =
-      case Accounts.update_user_email(socket.assigns.scope.user, token) do
+      case Accounts.update_user_email(socket.assigns.scope.user, otp_code) do
         :ok ->
           put_flash(socket, :info, dgettext("users", "Email changed successfully."))
 
@@ -105,11 +105,7 @@ defmodule ZoonkWeb.User.UserSettingsLive do
       %{valid?: true} = changeset ->
         user_changeset = Ecto.Changeset.apply_action!(changeset, :insert)
 
-        Accounts.deliver_user_update_email_instructions(
-          user_changeset,
-          user.email,
-          &url(socket.assigns.uri, ~p"/settings/confirm/#{&1}")
-        )
+        Accounts.deliver_user_update_email_instructions(user_changeset, user.email)
 
         info = dgettext("users", "A link to confirm your email change has been sent to the new address.")
         {:noreply, put_flash(socket, :info, info)}

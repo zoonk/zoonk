@@ -2,7 +2,7 @@ defmodule ZoonkWeb.Accounts.UserSessionController do
   @moduledoc """
   Handles user sessions.
 
-  Provides actions for logging in users via a magic link
+  Provides actions for logging in users via an OTP code
   and logging out users.
   """
   use ZoonkWeb, :controller
@@ -22,9 +22,9 @@ defmodule ZoonkWeb.Accounts.UserSessionController do
     create(conn, params, nil)
   end
 
-  # magic link login
-  defp create(conn, %{"user" => %{"token" => token}}, info) do
-    case Accounts.login_user_by_magic_link(token) do
+  # OTP login
+  defp create(conn, %{"user" => %{"code" => otp}}, info) do
+    case Accounts.login_user_by_otp(otp) do
       {:ok, user, tokens_to_disconnect} ->
         UserAuth.disconnect_sessions(tokens_to_disconnect)
 
@@ -34,7 +34,7 @@ defmodule ZoonkWeb.Accounts.UserSessionController do
 
       _error ->
         conn
-        |> put_flash(:error, expired_link())
+        |> put_flash(:error, expired_code())
         |> redirect(to: ~p"/login/email")
     end
   end
@@ -51,19 +51,19 @@ defmodule ZoonkWeb.Accounts.UserSessionController do
   @doc """
   Confirms a user account.
   """
-  def confirm(conn, %{"token" => token}), do: login_user(conn, token, :confirm)
+  def confirm(conn, %{"code" => otp}), do: login_user(conn, otp, :confirm)
 
   @doc """
-  Signs in a user via a magic link token sent to their email.
+  Signs in a user via an OTP code sent to their email.
   """
-  def login(conn, %{"token" => token}), do: login_user(conn, token, :login)
+  def login(conn, %{"code" => otp}), do: login_user(conn, otp, :login)
 
-  defp login_user(conn, token, action) do
-    if Accounts.get_user_by_magic_link_token(token) do
-      create(conn, %{"user" => %{"token" => token}}, login_flash(action))
+  defp login_user(conn, otp_code, action) do
+    if Accounts.get_user_by_otp_code(otp_code) do
+      create(conn, %{"user" => %{"code" => otp_code}}, login_flash(action))
     else
       conn
-      |> put_flash(:error, expired_link())
+      |> put_flash(:error, expired_code())
       |> redirect(to: ~p"/login/email")
     end
   end
@@ -71,5 +71,5 @@ defmodule ZoonkWeb.Accounts.UserSessionController do
   defp login_flash(:confirm), do: dgettext("users", "User confirmed successfully.")
   defp login_flash(:login), do: nil
 
-  defp expired_link, do: dgettext("users", "Magic link is invalid or it has expired.")
+  defp expired_code, do: dgettext("users", "Code is invalid or it has expired.")
 end

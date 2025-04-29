@@ -13,9 +13,9 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLive do
         :let={f}
         :if={!@link_sent}
         for={@form}
-        id="login_form_magic"
+        id="login_form"
         action={~p"/login"}
-        phx-submit="submit_magic"
+        phx-submit="submit"
         aria-label={dgettext("users", "Sign in form")}
         class="flex w-full flex-col gap-4"
       >
@@ -66,12 +66,9 @@ defmodule ZoonkWeb.User.UserLoginWithEmailLive do
     {:ok, socket}
   end
 
-  def handle_event("submit_magic", %{"email" => email}, socket) do
+  def handle_event("submit", %{"email" => email}, socket) do
     if user = Accounts.get_user_by_email(email) do
-      Accounts.deliver_login_instructions(
-        user,
-        &url(socket.assigns.uri, ~p"/login/t/#{&1}")
-      )
+      Accounts.deliver_login_instructions(user)
     end
 
     {:noreply, assign(socket, link_sent: true)}
