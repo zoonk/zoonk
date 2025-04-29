@@ -23,15 +23,17 @@ defmodule ZoonkWeb.User.UserCodeLive do
           field={f[:code]}
           label={dgettext("users", "One-time code")}
           hide_label
-          type="text"
           placeholder={dgettext("users", "Enter your code")}
           autocomplete="one-time-code"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          maxlength="6"
           required
           class="w-full"
         />
 
-        <.button type="submit" class="w-full" size={:md} icon_align={:left} icon="tabler-mail-filled">
-          {dgettext("users", "Login")}
+        <.button type="submit" class="w-full" size={:md} icon_align={:left} icon="tabler-check">
+          {dgettext("users", "Verify")}
         </.button>
       </.form>
     </.main_container>
