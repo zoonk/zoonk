@@ -10,7 +10,7 @@ defmodule ZoonkWeb.User.UserConfirmCodeLive do
 
   def render(assigns) do
     ~H"""
-    <.main_container action={:login} flash={@flash} show_options>
+    <.main_container action={:confirm} flash={@flash}>
       <.form
         :let={f}
         for={@form}
@@ -36,6 +36,10 @@ defmodule ZoonkWeb.User.UserConfirmCodeLive do
           {dgettext("users", "Verify")}
         </.button>
       </.form>
+
+      <.a navigate={get_back_link(@live_action)} class="mt-4 text-sm">
+        {gettext("Back")}
+      </.a>
     </.main_container>
     """
   end
@@ -55,4 +59,8 @@ defmodule ZoonkWeb.User.UserConfirmCodeLive do
 
     {:ok, socket}
   end
+
+  defp get_back_link(:email), do: ~p"/settings"
+  defp get_back_link(:login), do: ~p"/login"
+  defp get_back_link(:signup), do: ~p"/signup"
 end
