@@ -51,12 +51,12 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
       assert Phoenix.Flash.get(post_conn.assigns.flash, :info) =~ "Your account is confirmed!"
 
       # we are logged in now
-      assert redirected_to(conn) == ~p"/"
-      assert get_session(conn, :user_token)
+      assert redirected_to(post_conn) == ~p"/"
+      assert get_session(post_conn, :user_token)
 
       # logs out when trying to confirm again
       logout_conn = post(build_conn(), ~p"/login", params)
-      assert redirected_to(logout_conn) == ~p"/login/code"
+      assert redirected_to(logout_conn) == ~p"/signup/code"
       assert Phoenix.Flash.get(logout_conn.assigns.flash, :error) =~ "Invalid code or account not found."
       refute get_session(logout_conn, :user_token)
     end
