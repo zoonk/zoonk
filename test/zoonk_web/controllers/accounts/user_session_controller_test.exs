@@ -90,9 +90,9 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
       assert Accounts.get_user_by_email(email)
 
       # don't allow to use the same OTP code again
-      post_conn = post(conn, ~p"/confirm", params)
-      assert redirected_to(post_conn) == ~p"/settings"
-      assert Phoenix.Flash.get(post_conn.assigns.flash, :error) =~ "Code is invalid or it has expired."
+      updated_conn = post(conn, ~p"/confirm", params)
+      assert redirected_to(updated_conn) == ~p"/settings"
+      assert Phoenix.Flash.get(updated_conn.assigns.flash, :error) =~ "Code is invalid or it has expired."
     end
 
     test "doesn't update email with invalid code", %{conn: conn, user: user} do
