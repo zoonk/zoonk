@@ -13,7 +13,7 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
     end
 
     test "logs the user in", %{conn: conn, user: user} do
-      {otp_code, _hashed_token} = generate_user_otp_code(user)
+      otp_code = generate_user_otp_code(user)
 
       params = %{"_action" => "login", "user" => %{"code" => otp_code}}
       post_conn = post(conn, ~p"/confirm", params)

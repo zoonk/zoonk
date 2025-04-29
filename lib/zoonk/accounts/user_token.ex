@@ -23,6 +23,7 @@ defmodule Zoonk.Accounts.UserToken do
 
   alias Zoonk.Accounts.UserToken
   alias Zoonk.Config.AuthConfig
+  alias Zoonk.Repo
 
   @rand_size 32
 
@@ -93,22 +94,31 @@ defmodule Zoonk.Accounts.UserToken do
   the code in the application to gain access. Furthermore, if the user changes
   their email in the system, the codes sent to the previous email are no longer
   valid.
+
+  Returns `{:ok, otp_code}` if the code can be generated,
+  or `{:error, :rate_limit_exceeded}` if the user has exceeded the maximum
+  number of OTP codes allowed per hour.
   """
   def build_otp_code(user, context) do
-    otp_code =
-      100_000..999_999
-      |> Enum.random()
-      |> Integer.to_string()
+    if can_send_code?(user, context) do
+      otp_code =
+        100_000..999_999
+        |> Enum.random()
+        |> Integer.to_string()
 
-    hashed_token = :crypto.hash(AuthConfig.get_hash_algorithm(), otp_code)
+      hashed_token = :crypto.hash(AuthConfig.get_hash_algorithm(), otp_code)
 
-    {otp_code,
-     %UserToken{
-       token: hashed_token,
-       context: context,
-       sent_to: user.email,
-       user_id: user.id
-     }}
+      Repo.insert!(%UserToken{
+        token: hashed_token,
+        context: context,
+        sent_to: user.email,
+        user_id: user.id
+      })
+
+      {:ok, otp_code}
+    else
+      {:error, :rate_limit_exceeded}
+    end
   end
 
   @doc """
@@ -180,5 +190,18 @@ defmodule Zoonk.Accounts.UserToken do
   """
   def delete_all_query(tokens) do
     where(UserToken, [t], t.id in ^Enum.map(tokens, & &1.id))
+  end
+
+  # Private functions
+
+  @doc false
+  defp can_send_code?(user, context) do
+    one_hour_ago = DateTime.add(DateTime.utc_now(), -1, :hour)
+
+    UserToken
+    |> where([t], t.user_id == ^user.id and t.context == ^context)
+    |> where([t], t.inserted_at >= ^one_hour_ago)
+    |> Zoonk.Repo.aggregate(:count)
+    |> Kernel.<(AuthConfig.get_max_otp_codes_per_hour())
   end
 end

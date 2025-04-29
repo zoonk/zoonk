@@ -220,21 +220,40 @@ defmodule Zoonk.Accounts do
       iex> deliver_user_update_email_instructions(user, current_email, &url(~p"/settings/confirm/#{&1}"))
       {:ok, %{to: ..., body: ...}}
 
+      iex> deliver_user_update_email_instructions(user, current_email, &url(~p"/settings/confirm/#{&1}"))
+      {:error, :rate_limit_exceeded}
+
   """
   def deliver_user_update_email_instructions(%User{} = user, current_email) do
-    {otp_code, user_token} = UserToken.build_otp_code(user, "change:#{current_email}")
+    case UserToken.build_otp_code(user, "change:#{current_email}") do
+      {:ok, otp_code} ->
+        UserNotifier.deliver_update_email_instructions(user, otp_code)
 
-    Repo.insert!(user_token)
-    UserNotifier.deliver_update_email_instructions(user, otp_code)
+      {:error, :rate_limit_exceeded} = error ->
+        error
+    end
   end
 
   @doc ~S"""
   Delivers the OTP code login instructions to the given user.
+
+  ## Examples
+
+      iex> deliver_login_instructions(user)
+      {:ok, %{to: ..., body: ...}}
+
+      iex> deliver_login_instructions(user)
+      {:error, :rate_limit_exceeded}
+
   """
   def deliver_login_instructions(%User{} = user) do
-    {otp_code, user_token} = UserToken.build_otp_code(user, "login")
-    Repo.insert!(user_token)
-    UserNotifier.deliver_login_instructions(user, otp_code)
+    case UserToken.build_otp_code(user, "login") do
+      {:ok, otp_code} ->
+        UserNotifier.deliver_login_instructions(user, otp_code)
+
+      {:error, :rate_limit_exceeded} = error ->
+        error
+    end
   end
 
   @doc """

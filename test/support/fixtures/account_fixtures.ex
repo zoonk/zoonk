@@ -79,9 +79,8 @@ defmodule Zoonk.AccountFixtures do
   end
 
   def generate_user_otp_code(user) do
-    {otp_code, user_token} = UserToken.build_otp_code(user, "login")
-    Zoonk.Repo.insert!(user_token)
-    {otp_code, user_token.token}
+    {:ok, otp_code} = UserToken.build_otp_code(user, "login")
+    otp_code
   end
 
   def offset_user_token(token, amount_to_add, unit) do

@@ -338,8 +338,8 @@ defmodule Zoonk.AccountsTest do
   describe "get_user_by_otp_code/1" do
     setup do
       user = user_fixture()
-      {encoded_code, _hashed_token} = generate_user_otp_code(user)
-      %{user: user, code: encoded_code}
+      otp_code = generate_user_otp_code(user)
+      %{user: user, code: otp_code}
     end
 
     test "returns user by OTP code", %{user: user, code: code} do
@@ -361,19 +361,19 @@ defmodule Zoonk.AccountsTest do
     test "confirms user and expires tokens" do
       user = unconfirmed_user_fixture()
       refute user.confirmed_at
-      {encoded_code, hashed_token} = generate_user_otp_code(user)
+      otp_code = generate_user_otp_code(user)
 
-      assert {:ok, user, [%{token: ^hashed_token}]} = Accounts.login_user_by_otp(encoded_code)
+      assert {:ok, user, [%{token: _expired_token}]} = Accounts.login_user_by_otp(otp_code)
       assert user.confirmed_at
     end
 
     test "returns user and (deleted) token for confirmed user" do
       user = user_fixture()
       assert user.confirmed_at
-      {encoded_code, _hashed_token} = generate_user_otp_code(user)
-      assert {:ok, ^user, []} = Accounts.login_user_by_otp(encoded_code)
+      otp_code = generate_user_otp_code(user)
+      assert {:ok, ^user, []} = Accounts.login_user_by_otp(otp_code)
       # one time use only
-      assert {:error, :not_found} = Accounts.login_user_by_otp(encoded_code)
+      assert {:error, :not_found} = Accounts.login_user_by_otp(otp_code)
     end
   end
 
@@ -616,6 +616,53 @@ defmodule Zoonk.AccountsTest do
       assert profile1.username == username
       assert profile2.username != username
       assert String.starts_with?(profile2.username, username)
+    end
+  end
+
+  describe "OTP code rate limiting" do
+    test "refuses to generate more than allowed OTP codes per hour for login" do
+      user = user_fixture()
+      max_codes = AuthConfig.get_max_otp_codes_per_hour()
+
+      # Generate allowed number of codes
+      Enum.each(1..max_codes, fn _code ->
+        assert {:ok, _otp_code} = UserToken.build_otp_code(user, "login")
+      end)
+
+      # Try one more, should be rate limited
+      assert {:error, :rate_limit_exceeded} = UserToken.build_otp_code(user, "login")
+    end
+
+    test "rate limit is per context" do
+      user = user_fixture()
+      max_codes = AuthConfig.get_max_otp_codes_per_hour()
+
+      # Generate max codes for login
+      Enum.each(1..max_codes, fn _code ->
+        assert {:ok, _otp_code} = UserToken.build_otp_code(user, "login")
+      end)
+
+      # Should still allow codes for different contexts
+      assert {:ok, _otp_code} = UserToken.build_otp_code(user, "change:test@example.com")
+    end
+
+    test "rate limit resets after one hour" do
+      user = user_fixture()
+      max_codes = AuthConfig.get_max_otp_codes_per_hour()
+
+      # Generate max codes
+      Enum.each(1..max_codes, fn _code ->
+        assert {:ok, _otp_code} = UserToken.build_otp_code(user, "login")
+      end)
+
+      # Set inserted_at to more than an hour ago for all tokens
+      {_int, nil} =
+        UserToken
+        |> where([t], t.user_id == ^user.id)
+        |> Repo.update_all(set: [inserted_at: DateTime.add(DateTime.utc_now(), -2, :hour)])
+
+      # Should be able to generate new codes
+      assert {:ok, _otp_code} = UserToken.build_otp_code(user, "login")
     end
   end
 end
