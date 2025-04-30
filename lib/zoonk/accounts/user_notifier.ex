@@ -23,8 +23,6 @@ defmodule Zoonk.Accounts.UserNotifier do
       dgettext(
         "emails",
         """
-        Hi %{email},
-
         You can confirm your email address using the code below:
 
         %{otp_code}
@@ -33,7 +31,6 @@ defmodule Zoonk.Accounts.UserNotifier do
 
         If you didn't request this change, please ignore this.
         """,
-        email: user.email,
         otp_code: otp_code,
         expiration_days: AuthConfig.get_max_age(:change_email, :days)
       )
@@ -58,8 +55,6 @@ defmodule Zoonk.Accounts.UserNotifier do
       dgettext(
         "emails",
         """
-        Hi %{email},
-
         You can log into your account by using the code below:
 
         %{otp_code}
@@ -68,7 +63,6 @@ defmodule Zoonk.Accounts.UserNotifier do
 
         If you didn't request this email, please ignore this.
         """,
-        email: user.email,
         otp_code: otp_code,
         expiration_minutes: AuthConfig.get_max_age(:otp, :minutes)
       )
@@ -83,8 +77,6 @@ defmodule Zoonk.Accounts.UserNotifier do
       dgettext(
         "emails",
         """
-        Hi %{email},
-
         You can confirm your account by using the code below:
 
         %{otp_code}
@@ -93,7 +85,6 @@ defmodule Zoonk.Accounts.UserNotifier do
 
         If you didn't create an account with us, please ignore this.
         """,
-        email: user.email,
         otp_code: otp_code,
         expiration_minutes: AuthConfig.get_max_age(:otp, :minutes)
       )
