@@ -92,6 +92,11 @@ if config_env() == :prod do
   host = System.get_env("PHX_HOST") || "zoonk.com"
   port = String.to_integer(System.get_env("PORT") || "8080")
 
+  config :zoonk, Zoonk.Mailer,
+    adapter: Swoosh.Adapters.ZeptoMail,
+    api_key: System.get_env("ZEPTOMAIL_API_KEY"),
+    api_client: Swoosh.ApiClient.Req
+
   config :zoonk, Zoonk.Repo,
     # ssl: true,
     url: database_url,
