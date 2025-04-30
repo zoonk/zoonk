@@ -30,13 +30,31 @@ defmodule ZoonkWeb.AppHomeLive do
           {gettext("New course")}
         </.a>
 
-        <.link navigate={~p"/settings"}>
-          <span class="sr-only">{gettext("Go to settings")}</span>
+        <.dropdown>
           <.avatar
             src={@scope.user.profile.picture_url}
             size={:md}
             alt={User.get_display_name(@scope.user.profile)}
           />
+
+          <.dropdown_content>
+            <.dropdown_item icon="tabler-mail" navigate={~p"/settings"}>
+              {dgettext("users", "Change email")}
+            </.dropdown_item>
+
+            <.dropdown_item
+              icon="tabler-logout"
+              variant={:destructive}
+              method="delete"
+              href={~p"/logout"}
+            >
+              {dgettext("users", "Logout")}
+            </.dropdown_item>
+          </.dropdown_content>
+        </.dropdown>
+
+        <.link navigate={~p"/settings"}>
+          <span class="sr-only">{gettext("Go to settings")}</span>
         </.link>
       </nav>
     </main>

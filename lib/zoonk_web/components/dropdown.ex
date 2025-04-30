@@ -52,6 +52,7 @@ defmodule ZoonkWeb.Components.Dropdown do
         class={[
           "flex items-center gap-2 rounded-md p-2 text-sm",
           "hover:bg-zk-muted/70 focus-visible:bg-zk-muted/70",
+          @variant == :default && "text-zk-surface-foreground",
           @variant == :destructive && "text-zk-destructive"
         ]}
         {@rest}
