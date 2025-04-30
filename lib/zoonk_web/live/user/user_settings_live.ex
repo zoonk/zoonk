@@ -9,6 +9,8 @@ defmodule ZoonkWeb.User.UserSettingsLive do
   def render(assigns) do
     ~H"""
     <main class="min-h-dvh flex flex-col gap-8 p-4">
+      <.flash_group flash={@flash} />
+
       <nav class="flex items-center justify-between" aria-label={gettext("Actions")}>
         <.back_link navigate={~p"/"} label={gettext("Home page")} />
 
@@ -54,8 +56,6 @@ defmodule ZoonkWeb.User.UserSettingsLive do
           </:requirements>
         </.form_container>
       </section>
-
-      <.flash_group flash={@flash} />
     </main>
     """
   end

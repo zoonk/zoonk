@@ -20,11 +20,6 @@ defmodule ZoonkWeb.Components.Flash do
   """
   attr :id, :string, doc: "the optional id of flash container"
 
-  attr :position, :atom,
-    values: [:top_left, :top_right, :bottom_left, :bottom_right, :none],
-    default: :top_right,
-    doc: "the position of the flash message on the screen"
-
   attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
   attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
   attr :rest, :global, doc: "the arbitrary HTML attributes to add to the flash container"
@@ -47,8 +42,7 @@ defmodule ZoonkWeb.Components.Flash do
         "transition-all duration-300 ease-in-out",
         @kind == :info && "bg-zk-surface text-zk-secondary-foreground border-zk-border",
         @kind == :error &&
-          "bg-zk-destructive-subtle text-zk-destructive-subtle-foreground border-zk-destructive-subtle-foreground",
-        position_class(@position)
+          "bg-zk-destructive-subtle text-zk-destructive-subtle-foreground border-zk-destructive-subtle-foreground"
       ]}
       {@rest}
     >
@@ -73,7 +67,7 @@ defmodule ZoonkWeb.Components.Flash do
 
   def flash_group(assigns) do
     ~H"""
-    <div id={@id}>
+    <div id={@id} class="fixed top-4 right-4">
       <.flash kind={:info} flash={@flash} />
       <.flash kind={:error} flash={@flash} />
 
@@ -101,10 +95,4 @@ defmodule ZoonkWeb.Components.Flash do
     </div>
     """
   end
-
-  defp position_class(:top_left), do: "fixed top-4 left-4"
-  defp position_class(:top_right), do: "fixed top-4 right-4"
-  defp position_class(:bottom_left), do: "fixed bottom-4 left-4"
-  defp position_class(:bottom_right), do: "fixed bottom-4 right-4"
-  defp position_class(:none), do: nil
 end
