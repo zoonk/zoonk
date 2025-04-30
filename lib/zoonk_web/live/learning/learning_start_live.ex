@@ -7,7 +7,7 @@ defmodule ZoonkWeb.Learning.LearningStartLive do
     ~H"""
     <main class="h-dvh flex w-full items-center justify-center p-4">
       <nav class="absolute top-4 left-4" aria-label={gettext("Actions")}>
-        <.back_link navigate={~p"/"} />
+        <.back_link navigate={~p"/"} label={gettext("Home page")} />
       </nav>
 
       <div class="flex w-full max-w-lg flex-col items-center gap-4 text-center">

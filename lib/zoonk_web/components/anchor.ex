@@ -123,12 +123,13 @@ defmodule ZoonkWeb.Components.Anchor do
       <.back_link navigate={~p"/"} />
       <.back_link navigate={~p"/"} />
   """
+  attr :label, :string, default: gettext("Back"), doc: "Label for the back link"
   attr :rest, :global, include: ~w(href method navigate patch), doc: "HTML attributes to apply to the anchor"
 
   def back_link(assigns) do
     ~H"""
     <.a kind={:icon} icon="tabler-arrow-left" variant={:outline} {@rest}>
-      <span class="sr-only">{gettext("Back")}</span>
+      <span class="sr-only">{@label}</span>
     </.a>
     """
   end

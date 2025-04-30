@@ -38,7 +38,7 @@ defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
       class="mx-auto flex flex-col gap-4 p-4"
     >
       <nav>
-        <.back_link navigate={~p"/learn"} />
+        <.back_link navigate={~p"/learn"} label={gettext("Create a course")} />
       </nav>
 
       <header class="mx-auto py-8 text-center">

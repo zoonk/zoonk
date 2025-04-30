@@ -14,7 +14,7 @@ defmodule ZoonkWeb.Catalog.CatalogHomeLive do
         ]}
         aria-label={gettext("Actions")}
       >
-        <.back_link :if={@scope.user} navigate={~p"/"} />
+        <.back_link :if={@scope.user} label={gettext("Home page")} navigate={~p"/"} />
 
         <.a :if={!@scope.user} kind={:button} variant={:outline} href={~p"/login"}>
           {gettext("Login")}

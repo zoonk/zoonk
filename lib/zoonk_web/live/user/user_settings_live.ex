@@ -10,7 +10,7 @@ defmodule ZoonkWeb.User.UserSettingsLive do
     ~H"""
     <main class="min-h-dvh flex flex-col gap-8 p-4">
       <nav class="flex items-center justify-between">
-        <.back_link navigate={~p"/"} />
+        <.back_link navigate={~p"/"} label={gettext("Home page")} />
 
         <.a
           kind={:button}
