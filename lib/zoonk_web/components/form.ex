@@ -33,8 +33,8 @@ defmodule ZoonkWeb.Components.Form do
       class={["bg-zk-surface border-zk-border rounded border", @class]}
       {@rest}
     >
-      <fieldset aria-label={gettext("Form fields")} class="flex flex-col gap-4 p-4 md:p-8">
-        <.text aria-hidden="true" tag="h3" size={:xxl}>{render_slot(@title)}</.text>
+      <fieldset class="flex flex-col gap-4 p-4 md:p-8">
+        <.text tag="h3" size={:xxl}>{render_slot(@title)}</.text>
         <.text tag="h4" size={:md} variant={:secondary}>{render_slot(@subtitle)}</.text>
 
         {render_slot(@inner_block)}
