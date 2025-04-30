@@ -10,19 +10,14 @@ defmodule ZoonkWeb.Components.Dropdown do
 
   def dropdown(assigns) do
     ~H"""
-    <div class="relative inline-block">
+    <div
+      role="button"
+      phx-click={toggle_dropdown()}
+      aria-expanded="false"
+      class="relative inline-block cursor-pointer"
+    >
       {render_slot(@inner_block)}
     </div>
-    """
-  end
-
-  slot :inner_block, required: true, doc: "The inner block of the dropdown trigger"
-
-  def dropdown_trigger(assigns) do
-    ~H"""
-    <button phx-click={toggle_dropdown("dropdown-content")} aria-expanded="false">
-      {render_slot(@inner_block)}
-    </button>
     """
   end
 
@@ -32,8 +27,9 @@ defmodule ZoonkWeb.Components.Dropdown do
     ~H"""
     <.focus_wrap
       id="dropdown-content"
-      phx-click-away={hide_dropdown("dropdown-content")}
-      phx-window-keydown={hide_dropdown("dropdown-content")}
+      data-dropdown-content
+      phx-click-away={hide_dropdown()}
+      phx-window-keydown={hide_dropdown()}
       phx-key="Escape"
       class="bg-zk-surface ring-zk-border absolute z-10 mt-2 hidden w-48 rounded-md shadow-lg ring-1 focus:outline-none"
     >
@@ -42,18 +38,18 @@ defmodule ZoonkWeb.Components.Dropdown do
     """
   end
 
-  defp toggle_dropdown(js \\ %JS{}, id) do
+  defp toggle_dropdown(js \\ %JS{}) do
     JS.toggle(js,
-      to: "##{id}",
+      to: {:inner, "[data-dropdown-content]"},
       time: 200,
       in: {"transition-all transform ease-out duration-300", "opacity-0", "opacity-100"},
       out: {"transition-all transform ease-in duration-200", "opacity-100", "opacity-0"}
     )
   end
 
-  defp hide_dropdown(js \\ %JS{}, id) do
+  defp hide_dropdown(js \\ %JS{}) do
     JS.hide(js,
-      to: "##{id}",
+      to: "[data-dropdown-content]",
       time: 200,
       transition:
         {"transition-all transform ease-in duration-200", "opacity-100 translate-y-0 sm:scale-100",

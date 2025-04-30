@@ -14,9 +14,7 @@ defmodule ZoonkDev.UIPreview.DropdownPreviewLive do
 
         <.card_content align={:center} class="flex items-center justify-center gap-4">
           <.dropdown>
-            <.dropdown_trigger>
-              <.avatar alt="Small avatar" size={:sm} />
-            </.dropdown_trigger>
+            <.avatar alt="Small avatar" size={:sm} />
 
             <.dropdown_content>
               <button class="focus:bg-red-500">test</button>
