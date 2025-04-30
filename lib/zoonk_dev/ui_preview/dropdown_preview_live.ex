@@ -24,6 +24,25 @@ defmodule ZoonkDev.UIPreview.DropdownPreviewLive do
           </.dropdown>
         </.card_content>
       </.card>
+
+      <.card>
+        <.card_header>
+          <.card_title>Dropdown Left Aligned</.card_title>
+          <.card_description>Trigger a dropdown menu aligned to the left.</.card_description>
+        </.card_header>
+
+        <.card_content align={:center} class="flex items-center justify-center gap-4">
+          <.dropdown>
+            <.avatar alt="Small avatar" size={:sm} />
+
+            <.dropdown_content position={:left}>
+              <.dropdown_item icon="tabler-settings">Settings</.dropdown_item>
+              <.dropdown_item icon="tabler-user">Profile</.dropdown_item>
+              <.dropdown_item variant={:destructive} icon="tabler-logout">Logout</.dropdown_item>
+            </.dropdown_content>
+          </.dropdown>
+        </.card_content>
+      </.card>
     </ZoonkDev.UIPreview.UIPreviewLayout.render>
     """
   end

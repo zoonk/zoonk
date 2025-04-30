@@ -24,6 +24,7 @@ defmodule ZoonkWeb.Components.Dropdown do
     """
   end
 
+  attr :position, :atom, values: [:left, :right], default: :right, doc: "Position of the dropdown content"
   slot :inner_block, required: true, doc: "The inner block of the dropdown content"
 
   def dropdown_content(assigns) do
@@ -34,7 +35,11 @@ defmodule ZoonkWeb.Components.Dropdown do
       phx-click-away={hide_dropdown()}
       phx-window-keydown={hide_dropdown()}
       phx-key="Escape"
-      class="bg-zk-surface ring-zk-border absolute right-0 z-10 mt-2 hidden w-48 rounded-md shadow-lg ring-1 focus:outline-none"
+      class={[
+        "bg-zk-surface ring-zk-border absolute z-10 mt-2 hidden w-48 rounded-md shadow-lg ring-1 focus:outline-none",
+        @position == :left && "left-0",
+        @position == :right && "right-0"
+      ]}
     >
       <ul class="flex flex-col">{render_slot(@inner_block)}</ul>
     </.focus_wrap>
