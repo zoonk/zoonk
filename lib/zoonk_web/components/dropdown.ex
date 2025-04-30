@@ -14,6 +14,7 @@ defmodule ZoonkWeb.Components.Dropdown do
     ~H"""
     <div
       role="button"
+      data-dropdown
       phx-click={toggle_dropdown()}
       aria-expanded="false"
       class="relative inline-block cursor-pointer"
@@ -33,7 +34,7 @@ defmodule ZoonkWeb.Components.Dropdown do
       phx-click-away={hide_dropdown()}
       phx-window-keydown={hide_dropdown()}
       phx-key="Escape"
-      class="bg-zk-surface ring-zk-border absolute z-10 mt-2 hidden w-48 rounded-md shadow-lg ring-1 focus:outline-none"
+      class="bg-zk-surface ring-zk-border absolute right-0 z-10 mt-2 hidden w-48 rounded-md shadow-lg ring-1 focus:outline-none"
     >
       <ul class="flex flex-col">{render_slot(@inner_block)}</ul>
     </.focus_wrap>
@@ -66,21 +67,25 @@ defmodule ZoonkWeb.Components.Dropdown do
   end
 
   defp toggle_dropdown(js \\ %JS{}) do
-    JS.toggle(js,
+    js
+    |> JS.toggle(
       to: {:inner, "[data-dropdown-content]"},
       time: 200,
       in: {"transition-all transform ease-out duration-300", "opacity-0", "opacity-100"},
       out: {"transition-all transform ease-in duration-200", "opacity-100", "opacity-0"}
     )
+    |> JS.toggle_attribute({"aria-expanded", "false", "true"}, to: "[data-dropdown]")
   end
 
   defp hide_dropdown(js \\ %JS{}) do
-    JS.hide(js,
+    js
+    |> JS.hide(
       to: "[data-dropdown-content]",
       time: 200,
       transition:
         {"transition-all transform ease-in duration-200", "opacity-100 translate-y-0 sm:scale-100",
          "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"}
     )
+    |> JS.set_attribute({"aria-expanded", "false"}, to: "[data-dropdown]")
   end
 end
