@@ -6,11 +6,14 @@ defmodule ZoonkWeb.Catalog.CatalogHomeLive do
   def render(assigns) do
     ~H"""
     <main>
-      <nav class={[
-        "flex items-center gap-4 p-4",
-        @scope.user && "justify-between",
-        !@scope.user && "justify-end"
-      ]}>
+      <nav
+        class={[
+          "flex items-center gap-4 p-4",
+          @scope.user && "justify-between",
+          !@scope.user && "justify-end"
+        ]}
+        aria-label={gettext("Actions")}
+      >
         <.back_link :if={@scope.user} navigate={~p"/"} />
 
         <.a :if={!@scope.user} kind={:button} variant={:outline} href={~p"/login"}>
