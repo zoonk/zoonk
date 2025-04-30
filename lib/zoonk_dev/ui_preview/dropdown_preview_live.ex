@@ -17,7 +17,9 @@ defmodule ZoonkDev.UIPreview.DropdownPreviewLive do
             <.avatar alt="Small avatar" size={:sm} />
 
             <.dropdown_content>
-              <button class="focus:bg-red-500">test</button>
+              <.dropdown_item icon="tabler-settings">Settings</.dropdown_item>
+              <.dropdown_item icon="tabler-user">Profile</.dropdown_item>
+              <.dropdown_item icon="tabler-logout">Logout</.dropdown_item>
             </.dropdown_content>
           </.dropdown>
         </.card_content>

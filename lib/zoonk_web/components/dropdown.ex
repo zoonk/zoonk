@@ -4,6 +4,8 @@ defmodule ZoonkWeb.Components.Dropdown do
   """
   use Phoenix.Component
 
+  import ZoonkWeb.Components.Icon
+
   alias Phoenix.LiveView.JS
 
   slot :inner_block, required: true, doc: "The inner block of the dropdown"
@@ -33,8 +35,27 @@ defmodule ZoonkWeb.Components.Dropdown do
       phx-key="Escape"
       class="bg-zk-surface ring-zk-border absolute z-10 mt-2 hidden w-48 rounded-md shadow-lg ring-1 focus:outline-none"
     >
-      {render_slot(@inner_block)}
+      <ul class="flex flex-col">{render_slot(@inner_block)}</ul>
     </.focus_wrap>
+    """
+  end
+
+  attr :icon, :string, default: nil, doc: "Optional icon to display in the dropdown item"
+  attr :rest, :global, include: ~w(href method navigate patch), doc: "HTML attributes to apply to the dropdown item"
+  slot :inner_block, required: true, doc: "The inner block of the dropdown item"
+
+  def dropdown_item(assigns) do
+    ~H"""
+    <li>
+      <.link
+        class="flex items-center gap-2 rounded-md p-2 text-sm hover:bg-zk-muted/70 focus-visible:bg-zk-muted/70"
+        {@rest}
+      >
+        <.icon :if={@icon} name={@icon} />
+
+        {render_slot(@inner_block)}
+      </.link>
+    </li>
     """
   end
 
