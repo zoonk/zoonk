@@ -76,6 +76,13 @@ defmodule ZoonkDev.UIPreview.UIPreviewLayout do
         label: "Divider",
         path: "/ui/divider"
       },
+      %{
+        icon: "tabler-chevron-down",
+        color: "text-emerald-500",
+        module: :dropdown,
+        label: "Dropdown",
+        path: "/ui/dropdown"
+      },
       %{icon: "tabler-bell-filled", color: "text-pink-500", module: :flash, label: "Flash", path: "/ui/flash"},
       %{icon: "tabler-forms", color: "text-purple-500", module: :form, label: "Form", path: "/ui/form"},
       %{icon: "tabler-cursor-text", color: "text-orange-500", module: :input, label: "Input", path: "/ui/input"},

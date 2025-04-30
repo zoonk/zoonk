@@ -37,7 +37,7 @@ defmodule ZoonkWeb.Components.Avatar do
         avatar_size(@size),
         @class
       ]}
-      aria-label={@alt}
+      aria-hidden="true"
     >
       {avatar_label(@alt)}
     </span>
