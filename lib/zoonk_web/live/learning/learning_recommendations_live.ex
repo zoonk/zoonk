@@ -37,12 +37,12 @@ defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
       failure_link_text={gettext("Back")}
       class="mx-auto flex flex-col gap-4 p-4"
     >
-      <nav>
-        <.back_link navigate={~p"/learn"} />
+      <nav aria-label={gettext("Actions")}>
+        <.back_link navigate={~p"/learn"} label={dgettext("learning", "Create a course")} />
       </nav>
 
-      <header class="mx-auto py-8 text-center">
-        <.text tag="h1" size={:xxl}>
+      <header class="mx-auto py-8 text-center" aria-labelledby="page-header">
+        <.text id="page-header" tag="h1" size={:xxl}>
           {dgettext("learning", "Recommendations for you")}
         </.text>
 
@@ -56,6 +56,7 @@ defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
         class="mx-auto max-w-xl"
         phx-window-keydown={JS.navigate(~p"/learn")}
         phx-key="escape"
+        aria-label={dgettext("learning", "List of recommended courses")}
       >
         <li :for={{recommendation, index} <- Enum.with_index(recommendations)} class="group">
           <a
@@ -66,9 +67,10 @@ defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
               "group-first:pt-0 group-last:border-b-0",
               "focus-visible:bg-zk-secondary/75 focus-visible:outline-0"
             ]}
+            aria-labelledby={"recommendation-#{index}"}
           >
             <div class="flex flex-col gap-1">
-              <.text tag="h3" weight={:semibold}>
+              <.text id={"recommendation-#{index}"} tag="h3" weight={:semibold}>
                 {recommendation.title}
               </.text>
 

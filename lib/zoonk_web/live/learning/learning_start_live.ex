@@ -6,12 +6,12 @@ defmodule ZoonkWeb.Learning.LearningStartLive do
   def render(assigns) do
     ~H"""
     <main class="h-dvh flex w-full items-center justify-center p-4">
-      <div class="absolute top-4 left-4">
-        <.back_link navigate={~p"/"} />
-      </div>
+      <nav class="absolute top-4 left-4" aria-label={gettext("Actions")}>
+        <.back_link navigate={~p"/"} label={gettext("Home page")} />
+      </nav>
 
       <div class="flex w-full max-w-lg flex-col items-center gap-4 text-center">
-        <.text tag="h1" size={:xxl}>
+        <.text tag="h1" size={:xxl} aria-hidden="true">
           {dgettext("learning", "What do you want to learn?")}
         </.text>
 

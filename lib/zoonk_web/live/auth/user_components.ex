@@ -81,6 +81,7 @@ defmodule ZoonkWeb.User.UserComponents do
       aria-labelledby="auth-title"
       class="h-[calc(100dvh-70px)] mx-auto flex max-w-sm flex-col items-center justify-center px-8 text-center"
     >
+      <.flash_group flash={@flash} />
       <.auth_title action={@action} />
 
       {render_slot(@inner_block)}
@@ -104,7 +105,6 @@ defmodule ZoonkWeb.User.UserComponents do
       </section>
 
       <.footer_link :if={@action != :confirm} action={get_footer_action(@action)} />
-      <.flash_group flash={@flash} />
     </main>
     """
   end
