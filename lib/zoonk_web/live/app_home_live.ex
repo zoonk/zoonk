@@ -52,10 +52,6 @@ defmodule ZoonkWeb.AppHomeLive do
             </.dropdown_item>
           </.dropdown_content>
         </.dropdown>
-
-        <.link navigate={~p"/settings"}>
-          <span class="sr-only">{gettext("Go to settings")}</span>
-        </.link>
       </nav>
     </main>
     """

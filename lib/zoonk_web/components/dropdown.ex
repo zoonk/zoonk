@@ -13,16 +13,19 @@ defmodule ZoonkWeb.Components.Dropdown do
 
   def dropdown(assigns) do
     ~H"""
-    <div
-      role="button"
+    <button
+      role="menu"
       data-dropdown
       phx-click={toggle_dropdown()}
-      aria-expanded="false"
       class="relative inline-block cursor-pointer"
+      phx-keydown={toggle_dropdown()}
+      phx-key="Enter"
+      aria-haspopup="true"
+      aria-expanded="false"
       aria-label={@label}
     >
       {render_slot(@inner_block)}
-    </div>
+    </button>
     """
   end
 
