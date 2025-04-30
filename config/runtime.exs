@@ -40,6 +40,11 @@ config :zoonk, :strategies,
   ]
 
 if config_env() in [:dev, :prod] do
+  # Posthog configuration
+  config :posthog,
+    api_url: "https://us.i.posthog.com",
+    api_key: System.get_env("POSTHOG_API_KEY")
+
   config :zoonk, :ai,
     openai: [
       auth: {:bearer, System.get_env("OPENAI_API_KEY")}

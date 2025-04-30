@@ -17,6 +17,11 @@ config :phoenix_live_view, enable_expensive_runtime_checks: true
 # Endpoint for routing requests when using the Phoenix Test library
 config :phoenix_test, :endpoint, ZoonkWeb.Endpoint
 
+# Mock Posthog HTTP client for testing
+config :posthog,
+  http_client: Posthog.HTTPClient.Test,
+  enabled_capture: false
+
 # Disable swoosh api client as it is only required for production adapters
 config :swoosh, :api_client, false
 
