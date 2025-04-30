@@ -15,8 +15,8 @@ defmodule ZoonkDev.UIPreview.FlashPreviewLive do
         </.card_header>
 
         <.card_content class="flex flex-col gap-4">
-          <.flash kind={:info} position={:none}>This is an information message</.flash>
-          <.flash kind={:error} position={:none}>This is an error message</.flash>
+          <.flash kind={:info}>This is an information message</.flash>
+          <.flash kind={:error}>This is an error message</.flash>
         </.card_content>
       </.card>
     </ZoonkDev.UIPreview.UIPreviewLayout.render>
