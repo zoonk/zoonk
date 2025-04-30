@@ -19,7 +19,7 @@ defmodule ZoonkDev.UIPreview.DropdownPreviewLive do
             <.dropdown_content>
               <.dropdown_item icon="tabler-settings">Settings</.dropdown_item>
               <.dropdown_item icon="tabler-user">Profile</.dropdown_item>
-              <.dropdown_item icon="tabler-logout">Logout</.dropdown_item>
+              <.dropdown_item variant={:destructive} icon="tabler-logout">Logout</.dropdown_item>
             </.dropdown_content>
           </.dropdown>
         </.card_content>

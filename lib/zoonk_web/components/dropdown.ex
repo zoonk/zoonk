@@ -41,6 +41,7 @@ defmodule ZoonkWeb.Components.Dropdown do
   end
 
   attr :icon, :string, default: nil, doc: "Optional icon to display in the dropdown item"
+  attr :variant, :atom, values: [:default, :destructive], default: :default, doc: "Variant of the dropdown item. "
   attr :rest, :global, include: ~w(href method navigate patch), doc: "HTML attributes to apply to the dropdown item"
   slot :inner_block, required: true, doc: "The inner block of the dropdown item"
 
@@ -48,7 +49,11 @@ defmodule ZoonkWeb.Components.Dropdown do
     ~H"""
     <li>
       <.link
-        class="flex items-center gap-2 rounded-md p-2 text-sm hover:bg-zk-muted/70 focus-visible:bg-zk-muted/70"
+        class={[
+          "flex items-center gap-2 rounded-md p-2 text-sm",
+          "hover:bg-zk-muted/70 focus-visible:bg-zk-muted/70",
+          @variant == :destructive && "text-zk-destructive"
+        ]}
         {@rest}
       >
         <.icon :if={@icon} name={@icon} />
