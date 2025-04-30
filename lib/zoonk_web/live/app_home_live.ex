@@ -8,7 +8,7 @@ defmodule ZoonkWeb.AppHomeLive do
   def render(assigns) do
     ~H"""
     <main>
-      <nav class="flex items-center justify-between gap-4 p-4">
+      <nav class="flex items-center justify-between gap-4 p-4" aria-label={gettext("Main navigation")}>
         <.a
           kind={:button}
           icon="tabler-layout-grid"
