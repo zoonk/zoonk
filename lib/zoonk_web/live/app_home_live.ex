@@ -30,7 +30,7 @@ defmodule ZoonkWeb.AppHomeLive do
           {gettext("New course")}
         </.a>
 
-        <.dropdown>
+        <.dropdown label={dgettext("users", "Open settings menu")}>
           <.avatar
             src={@scope.user.profile.picture_url}
             size={:md}

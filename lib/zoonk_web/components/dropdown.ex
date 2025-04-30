@@ -8,6 +8,7 @@ defmodule ZoonkWeb.Components.Dropdown do
 
   alias Phoenix.LiveView.JS
 
+  attr :label, :string, required: true, doc: "Label for the dropdown"
   slot :inner_block, required: true, doc: "The inner block of the dropdown"
 
   def dropdown(assigns) do
@@ -18,6 +19,7 @@ defmodule ZoonkWeb.Components.Dropdown do
       phx-click={toggle_dropdown()}
       aria-expanded="false"
       class="relative inline-block cursor-pointer"
+      aria-label={@label}
     >
       {render_slot(@inner_block)}
     </div>

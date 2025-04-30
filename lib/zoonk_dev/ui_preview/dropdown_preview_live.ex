@@ -13,7 +13,7 @@ defmodule ZoonkDev.UIPreview.DropdownPreviewLive do
         </.card_header>
 
         <.card_content align={:center} class="flex items-center justify-center gap-4">
-          <.dropdown>
+          <.dropdown label="Settings">
             <.avatar alt="Small avatar" size={:sm} />
 
             <.dropdown_content>
@@ -32,7 +32,7 @@ defmodule ZoonkDev.UIPreview.DropdownPreviewLive do
         </.card_header>
 
         <.card_content align={:center} class="flex items-center justify-center gap-4">
-          <.dropdown>
+          <.dropdown label="Settings">
             <.avatar alt="Small avatar" size={:sm} />
 
             <.dropdown_content position={:left}>
