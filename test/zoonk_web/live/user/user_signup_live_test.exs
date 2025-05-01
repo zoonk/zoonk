@@ -4,6 +4,8 @@ defmodule ZoonkWeb.User.UserSignUpLiveTest do
   import Zoonk.AccountFixtures
 
   describe "Signup page" do
+    setup :setup_app
+
     test "renders signup page", %{conn: conn} do
       conn
       |> visit(~p"/signup")
@@ -19,6 +21,8 @@ defmodule ZoonkWeb.User.UserSignUpLiveTest do
   end
 
   describe "signup navigation" do
+    setup :setup_app
+
     test "redirects to login page when the Log in button is clicked", %{conn: conn} do
       conn
       |> visit(~p"/signup/email")

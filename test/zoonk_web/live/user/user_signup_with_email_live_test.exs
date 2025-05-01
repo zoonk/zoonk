@@ -5,6 +5,8 @@ defmodule ZoonkWeb.User.SignUpWithEmailLiveTest do
   import Zoonk.OrgFixtures
 
   describe "Sign up with email page" do
+    setup :setup_app
+
     test "renders signup page", %{conn: conn} do
       conn
       |> visit(~p"/signup/email")
@@ -84,6 +86,8 @@ defmodule ZoonkWeb.User.SignUpWithEmailLiveTest do
   end
 
   describe "signup navigation" do
+    setup :setup_app
+
     test "redirects to login page when the Log in button is clicked", %{conn: conn} do
       conn
       |> visit(~p"/signup/email")

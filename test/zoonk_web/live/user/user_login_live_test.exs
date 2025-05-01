@@ -1,6 +1,8 @@
 defmodule ZoonkWeb.User.UserLoginLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
+  setup :setup_app
+
   describe "login page" do
     test "renders login page", %{conn: conn} do
       conn

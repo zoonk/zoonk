@@ -60,6 +60,19 @@ defmodule ZoonkWeb.ConnCase do
   end
 
   @doc """
+  Setup basic app.
+
+      setup :setup_app
+
+  It sets the app organization without a user.
+  """
+  def setup_app(%{conn: conn}) do
+    app_org = Zoonk.OrgFixtures.app_org_fixture()
+    conn = Map.put(conn, :host, app_org.custom_domain)
+    %{conn: conn, org: app_org}
+  end
+
+  @doc """
   Logs the given `user` into the `conn`.
 
   It returns an updated `conn`.
