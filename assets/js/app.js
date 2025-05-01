@@ -65,11 +65,21 @@ topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
 window.addEventListener("phx:page-loading-start", (_info) => topbar.show(1000));
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
 
-if (process.env.NODE_ENV !== "development") {
+if (process.env.NODE_ENV === "development") {
+  const nonce = document.currentScript.dataset.nonce;
+
   // Initialize PostHog
   posthog.init(document.currentScript.dataset.phKey, {
     api_host: "https://ph.zoonk.com",
     person_profiles: "always",
+    prepare_external_dependency_script: (script) => {
+      script.nonce = nonce;
+      return script;
+    },
+    prepare_external_dependency_stylesheet: (stylesheet) => {
+      stylesheet.nonce = nonce;
+      return stylesheet;
+    },
   });
 
   // Identify the user

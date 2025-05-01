@@ -1,6 +1,7 @@
 defmodule ZoonkWeb.Router do
   use ZoonkWeb, :router
 
+  import ZoonkWeb.CSP
   import ZoonkWeb.Language
   import ZoonkWeb.UserAuth
   import ZoonkWeb.UserAuthorization
@@ -18,6 +19,7 @@ defmodule ZoonkWeb.Router do
     plug :put_root_layout, html: {ZoonkWeb.RootLayout, :render}
     plug :put_layout, false
     plug :protect_from_forgery
+    plug :set_csp_nonce
 
     plug :put_secure_browser_headers, %{
       "content-security-policy" =>
