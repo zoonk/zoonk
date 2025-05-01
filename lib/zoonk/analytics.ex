@@ -2,6 +2,7 @@ defmodule Zoonk.Analytics do
   @moduledoc """
   Captures analytics events.
   """
+  alias Zoonk.Accounts.User
   alias Zoonk.Scope
 
   @doc """
@@ -9,18 +10,22 @@ defmodule Zoonk.Analytics do
 
   Then, we send these events to our analytics provider.
   """
-  def capture(event, %Scope{} = scope, attrs \\ %{}) do
+  def capture(event, scope_or_user, attrs \\ %{})
+
+  def capture(event, %Scope{} = scope, attrs) do
     attrs = Map.put(attrs, :org_id, scope.org.id)
 
     Task.start(fn ->
-      try do
-        Posthog.capture(event, get_user_id(scope), attrs)
-      rescue
-        _error -> :error
-      end
+      Posthog.capture(event, get_user_id(scope), attrs)
     end)
   end
 
-  defp get_user_id(%Scope{user: nil}), do: nil
+  def capture(event, %User{id: user_id}, attrs) do
+    Task.start(fn ->
+      Posthog.capture(event, user_id, attrs)
+    end)
+  end
+
+  defp get_user_id(%Scope{user: nil}), do: "guest_#{System.unique_integer()}"
   defp get_user_id(%Scope{user: user}), do: user.id
 end

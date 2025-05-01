@@ -6,6 +6,7 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.User
+  alias Zoonk.Analytics
   alias Zoonk.Config.LanguageConfig
   alias Zoonk.Scope
   alias ZoonkWeb.UserAuth
@@ -66,6 +67,8 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
   def mount(_params, session, socket) do
     language = Map.get(session, "language")
     changeset = Accounts.change_user_email(%User{language: language})
+
+    Analytics.capture("signup_with_email_started", socket.assigns.scope, %{language: language})
 
     socket =
       socket
