@@ -9,6 +9,10 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    groups:
+      elixir-deps:
+        patterns:
+          - "*"
     reviewers:
       - ceolinwill
     assignees:
