@@ -65,7 +65,7 @@ topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
 window.addEventListener("phx:page-loading-start", (_info) => topbar.show(1000));
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
 
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === "development" && document.currentScript) {
   const nonce = document.currentScript.dataset.nonce;
 
   // Initialize PostHog
@@ -83,7 +83,11 @@ if (process.env.NODE_ENV === "development") {
   });
 
   // Identify the user
-  posthog.identify(document.currentScript.dataset.userId);
+  const userId = document.currentScript.dataset.userId;
+
+  if (userId) {
+    posthog.identify(document.currentScript.dataset.userId);
+  }
 
   // Capture page views with PostHog
   window.addEventListener("phx:navigate", ({ detail: { href } }) =>
