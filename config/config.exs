@@ -11,10 +11,19 @@ import Config
 config :esbuild,
   version: "0.25.0",
   zoonk: [
-    args:
-      ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --external:/error/*),
+    args: ~w(
+      js/app.js
+      --bundle
+      --target=es2022
+      --outdir=../priv/static/assets
+      --external:/fonts/*
+      --external:/images/*
+      --external:/error/*
+      ),
     cd: Path.expand("../assets", __DIR__),
-    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+    env: %{
+      "NODE_PATH" => Path.expand("../deps", __DIR__)
+    }
   ]
 
 # Configures Elixir's Logger
