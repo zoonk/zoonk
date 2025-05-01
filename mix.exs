@@ -59,6 +59,7 @@ defmodule Zoonk.MixProject do
       {:phoenix_test, "~> 0.6.0", only: :test, runtime: false},
       {:phoenix, "~> 1.7.19"},
       {:postgrex, ">= 0.0.0"},
+      {:posthog, "~> 1.0"},
       {:regions_db,
        github: "dr5hn/countries-states-cities-database",
        branch: "master",

@@ -19,7 +19,15 @@ defmodule ZoonkWeb.RootLayout do
         <link rel="icon" type="image/png" sizes="32x32" href={~p"/images/favicon/32.png"} />
         <link rel="icon" type="image/png" sizes="16x16" href={~p"/images/favicon/16.png"} />
 
-        <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+        <script
+          defer
+          phx-track-static
+          data-ph-key={Application.get_env(:posthog, :api_key)}
+          data-user-id={@scope.user && @scope.user.id}
+          data-nonce={assigns[:csp_nonce]}
+          type="text/javascript"
+          src={~p"/assets/app.js"}
+        >
         </script>
       </head>
       <body class="bg-zk-background">

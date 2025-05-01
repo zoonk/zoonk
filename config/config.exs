@@ -11,10 +11,19 @@ import Config
 config :esbuild,
   version: "0.25.0",
   zoonk: [
-    args:
-      ~w(js/app.js --bundle --target=es2022 --outdir=../priv/static/assets --external:/fonts/* --external:/images/* --external:/error/*),
+    args: ~w(
+      js/app.js
+      --bundle
+      --target=es2022
+      --outdir=../priv/static/assets
+      --external:/fonts/*
+      --external:/images/*
+      --external:/error/*
+      ),
     cd: Path.expand("../assets", __DIR__),
-    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+    env: %{
+      "NODE_PATH" => Path.expand("../deps", __DIR__)
+    }
   ]
 
 # Configures Elixir's Logger
@@ -24,6 +33,12 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+# Posthog configuration
+config :posthog,
+  api_url: "https://ph.zoonk.com",
+  # This key is public, so it's okay to get it during compile time
+  api_key: System.get_env("POSTHOG_API_KEY")
 
 # Configure tailwind (the version is required)
 config :tailwind,

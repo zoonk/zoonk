@@ -24,6 +24,7 @@ import topbar from "../vendor/topbar";
 import { DelayLoading } from "./hooks/delay_loading";
 import { DialogTrigger } from "./hooks/dialog_trigger";
 import { preserveAttrsFromElement } from "./dom/preserve_state";
+import "../vendor/posthog";
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -63,6 +64,38 @@ const liveSocket = new LiveSocket("/live", Socket, {
 topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
 window.addEventListener("phx:page-loading-start", (_info) => topbar.show(1000));
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
+
+if (process.env.NODE_ENV === "development" && document.currentScript) {
+  const nonce = document.currentScript.dataset.nonce;
+
+  // Initialize PostHog
+  posthog.init(document.currentScript.dataset.phKey, {
+    api_host: "https://ph.zoonk.com",
+    person_profiles: "always",
+    prepare_external_dependency_script: (script) => {
+      script.nonce = nonce;
+      return script;
+    },
+    prepare_external_dependency_stylesheet: (stylesheet) => {
+      stylesheet.nonce = nonce;
+      return stylesheet;
+    },
+  });
+
+  // Identify the user
+  const userId = document.currentScript.dataset.userId;
+
+  if (userId) {
+    posthog.identify(document.currentScript.dataset.userId);
+  }
+
+  // Capture page views with PostHog
+  window.addEventListener("phx:navigate", ({ detail: { href } }) =>
+    posthog.capture("$pageview", {
+      $current_url: href,
+    }),
+  );
+}
 
 // connect if there are any LiveViews on the page
 liveSocket.connect();
