@@ -21,7 +21,7 @@ defmodule ZoonkWeb.Router do
 
     plug :put_secure_browser_headers, %{
       "content-security-policy" =>
-        "base-uri 'self'; frame-ancestors 'self'; default-src 'self'; img-src 'self' #{@allowed_images} data: blob:; script-src-elem 'self' #{@allowed_scripts}; connect-src 'self' #{@allowed_scripts};"
+        "base-uri 'self'; frame-ancestors 'self'; default-src 'self'; img-src 'self' #{@allowed_images} data: blob:; script-src-elem 'self' #{@allowed_scripts}; connect-src 'self' #{@allowed_scripts}; worker-src 'self' blob: data:;"
     }
 
     plug :fetch_scope
