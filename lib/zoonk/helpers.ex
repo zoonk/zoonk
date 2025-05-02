@@ -168,4 +168,41 @@ defmodule Zoonk.Helpers do
     |> String.replace(~r/\p{Mn}/u, "")
     |> String.replace(~r/[^a-zA-Z0-9\s]/u, "")
   end
+
+  @doc """
+  Decodes a URL-safe Base64 encoded token and applies a function to the decoded result.
+
+  This helper is useful for handling encoded tokens in authentication flows,
+  particularly for session tokens that need to be decoded before use.
+
+  ## Parameters
+
+  - `token` - The Base64 URL-encoded token string
+  - `fun` - A function to apply to the successfully decoded token
+  - `error_value` - The value to return on decoding error (default: `:error`)
+
+  ## Returns
+
+  - The result of applying `fun` to the decoded token if decoding is successful
+  - `error_value` if the token cannot be decoded
+
+  ## Examples
+
+      iex> with_decoded_token("c29tZV90b2tlbg==", &String.upcase/1)
+      "SOME_TOKEN"
+
+      iex> with_decoded_token("invalid+token", &String.upcase/1)
+      :error
+
+      iex> with_decoded_token("invalid+token", &String.upcase/1, nil)
+      nil
+  """
+  def with_decoded_token(token, fun, error_value \\ :error) when is_binary(token) and is_function(fun, 1) do
+    token
+    |> Base.url_decode64(padding: false)
+    |> case do
+      {:ok, decoded_token} -> fun.(decoded_token)
+      _error -> error_value
+    end
+  end
 end

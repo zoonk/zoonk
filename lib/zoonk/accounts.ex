@@ -184,12 +184,7 @@ defmodule Zoonk.Accounts do
   end
 
   def get_user_by_session_token(token) when is_binary(token) do
-    token
-    |> Base.url_decode64(padding: false)
-    |> case do
-      {:ok, decoded_token} -> get_user_by_session_token(decoded_token)
-      _error -> nil
-    end
+    Helpers.with_decoded_token(token, &get_user_by_session_token/1, nil)
   end
 
   @doc """
@@ -291,12 +286,7 @@ defmodule Zoonk.Accounts do
   end
 
   def delete_user_session_token(token) when is_binary(token) do
-    token
-    |> Base.url_decode64(padding: false)
-    |> case do
-      {:ok, decoded_token} -> delete_user_session_token(decoded_token)
-      _error -> :error
-    end
+    Helpers.with_decoded_token(token, &delete_user_session_token/1)
   end
 
   defp update_user_and_delete_all_tokens(changeset) do
