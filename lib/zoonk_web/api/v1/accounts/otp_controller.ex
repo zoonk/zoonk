@@ -81,13 +81,11 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPController do
   def verify_code(conn, %{"code" => otp_code}) do
     case Accounts.login_user_by_otp(otp_code) do
       {:ok, user, _tokens_to_disconnect} ->
-        # Generate a session token for the user
-        token = Accounts.generate_user_session_token(user)
-        encoded_token = Base.encode64(token)
+        token = Accounts.generate_user_session_token(user, decoded: false)
 
         conn
         |> put_status(:ok)
-        |> json(%{token: encoded_token})
+        |> json(%{token: token})
 
       _error ->
         conn
