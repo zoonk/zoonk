@@ -39,16 +39,10 @@ You can read our full documentation at https://docs.zoonk.com or check the guide
 
 ## Supporters
 
-People who supported the project and got lifetime access:
+People who supported the project and will get lifetime access once we launch:
 
 - [Sephora Lillian](https://github.com/sephoralillian)
 - [Ben Biran](https://github.com/benbiran)
 - [David Szabo-Stuban](https://github.com/ssdavidai)
 - [Gustavo A. Castillo](https://github.com/guscastilloa)
 - [Greg Lind](https://github.com/glind)
-
-### Recurring
-
-People who are supporting the project every month:
-
-- [Gustavo A. Castillo](https://github.com/guscastilloa)
