@@ -76,8 +76,7 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPControllerTest do
       conn = post(conn, ~p"/api/v1/auth/verify_code", %{"code" => otp_code})
 
       assert %{"token" => token} = json_response(conn, 200)
-      decoded_token = Base.url_decode64!(token, padding: false)
-      assert {%User{}, _token_inserted_at} = Accounts.get_user_by_session_token(decoded_token)
+      assert {%User{}, _token_inserted_at} = Accounts.get_user_by_session_token(token)
     end
 
     test "returns error when the code is invalid", %{conn: conn} do

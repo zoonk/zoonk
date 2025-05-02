@@ -183,7 +183,7 @@ defmodule Zoonk.Accounts do
 
   def get_user_by_session_token(token) when is_binary(token) do
     token
-    |> Base.decode64()
+    |> Base.url_decode64(padding: false)
     |> case do
       {:ok, decoded_token} -> get_user_by_session_token(decoded_token)
       _error -> nil

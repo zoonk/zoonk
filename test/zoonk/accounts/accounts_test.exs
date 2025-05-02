@@ -348,7 +348,7 @@ defmodule Zoonk.AccountsTest do
     end
 
     test "returns user by encoded token", %{user: user, token: token} do
-      encoded_token = Base.encode64(token)
+      encoded_token = Base.url_encode64(token, padding: false)
       assert {session_user, _token_inserted_at} = Accounts.get_user_by_session_token(encoded_token)
       assert session_user.id == user.id
     end
