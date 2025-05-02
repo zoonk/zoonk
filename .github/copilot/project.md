@@ -16,3 +16,4 @@
 - When writing queries, use pipe-based syntax for readability and composability. For example, instead of using `from u in User, where: u.name == ^name`, use `User |> where([u], u.name == ^name)`.
 - Elixir now has set-theoretic types. This means the compiler can catch type issues when we use structs. They won't use `@spec` (typespecs) in the future, so you don't need to add them. Instead, focus on writing good structs and using them in functions. For example, `def foo(%MyStruct{} = my_struct)` is better than `def foo(my_struct)`.
 - When you finish your changes, run `mix test` to ensure everything is working correctly.
+- Unused variables should be named. E.g. `_error` instead of just `_`.
