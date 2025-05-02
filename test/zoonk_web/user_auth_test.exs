@@ -335,7 +335,7 @@ defmodule ZoonkWeb.UserAuthTest do
 
   describe "fetch_api_scope/2" do
     test "authenticates user with valid bearer token", %{conn: conn, user: user, org: org} do
-      user_token = Accounts.generate_user_session_token(user)
+      user_token = Accounts.generate_user_session_token(user, decoded: false)
 
       conn =
         conn
@@ -347,14 +347,14 @@ defmodule ZoonkWeb.UserAuthTest do
     end
 
     test "does not authenticate when no authorization header is present", %{conn: conn, user: user} do
-      _user_token = Accounts.generate_user_session_token(user)
+      _user_token = Accounts.generate_user_session_token(user, decoded: false)
       conn = UserAuth.fetch_api_scope(conn, [])
       refute conn.assigns.scope.user
       assert conn.assigns.scope.org
     end
 
     test "does not authenticate with invalid header format", %{conn: conn, user: user} do
-      user_token = Accounts.generate_user_session_token(user)
+      user_token = Accounts.generate_user_session_token(user, decoded: false)
 
       conn =
         conn
