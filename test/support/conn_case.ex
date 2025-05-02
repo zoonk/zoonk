@@ -99,4 +99,11 @@ defmodule ZoonkWeb.ConnCase do
   def redirect_path(_kind, "/settings" <> _path), do: "/login"
   def redirect_path(kind, _path) when kind in [:app, :creator], do: "/catalog"
   def redirect_path(_kind, _path), do: "/login"
+
+  @doc """
+  Asserts a JSON error response that calls `ZoonkWeb.API.ErrorResponse.send_error/3`.
+  """
+  def assert_json_error(conn, status) do
+    assert %{"error" => %{"code" => ^status, "message" => _message}} = Phoenix.ConnTest.json_response(conn, status)
+  end
 end

@@ -23,21 +23,21 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPControllerTest do
       email = "invalid_email"
       user_params = %{"email" => email, "language" => "en"}
       conn = post(conn, ~p"/api/v1/auth/signup", user_params)
-      assert %{"error" => %{"code" => 422, "message" => "Invalid parameters"}} = json_response(conn, 422)
+      assert_json_error(conn, 422)
       refute Accounts.get_user_by_email(email)
     end
 
     test "returns error when email is missing", %{conn: conn} do
       user_params = %{"language" => "en"}
       conn = post(conn, ~p"/api/v1/auth/signup", user_params)
-      assert %{"error" => %{"code" => 400, "message" => "Missing required parameters"}} = json_response(conn, 400)
+      assert_json_error(conn, 400)
     end
 
     test "returns error when language is missing", %{conn: conn} do
       email = unique_user_email()
       user_params = %{"email" => email}
       conn = post(conn, ~p"/api/v1/auth/signup", user_params)
-      assert %{"error" => %{"code" => 400, "message" => "Missing required parameters"}} = json_response(conn, 400)
+      assert_json_error(conn, 400)
       refute Accounts.get_user_by_email(email)
     end
   end
