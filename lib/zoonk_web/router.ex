@@ -44,6 +44,19 @@ defmodule ZoonkWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_api_scope
+  end
+
+  # API v1 routes
+  scope "/api/v1", ZoonkWeb do
+    pipe_through :api
+
+    scope "/auth", API.V1.Accounts do
+      post "/signup", OTPController, :signup
+      post "/request_code", OTPController, :request_code
+      post "/verify_code", OTPController, :verify_code
+      delete "/logout", AuthController, :logout
+    end
   end
 
   scope "/", ZoonkWeb do

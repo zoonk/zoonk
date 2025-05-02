@@ -24,6 +24,8 @@ defmodule Zoonk.Accounts do
   alias Zoonk.Repo
   alias Zoonk.Scope
 
+  @rand_size AuthConfig.get_rand_size()
+
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking a user's profile changes.
 
@@ -153,10 +155,17 @@ defmodule Zoonk.Accounts do
   @doc """
   Generates a session token.
   """
-  def generate_user_session_token(user) do
+  def generate_user_session_token(user, opts \\ [decoded: true])
+
+  def generate_user_session_token(user, decoded: true) do
     {token, user_token} = UserToken.build_session_token(user)
     Repo.insert!(user_token)
     token
+  end
+
+  def generate_user_session_token(user, decoded: false) do
+    decoded_token = generate_user_session_token(user, decoded: true)
+    Base.url_encode64(decoded_token, padding: false)
   end
 
   @doc """
@@ -165,13 +174,17 @@ defmodule Zoonk.Accounts do
   If the token is valid `{user, token_inserted_at}` is returned,
   otherwise `nil` is returned.
   """
-  def get_user_by_session_token(token) do
+  def get_user_by_session_token(<<_b::binary-size(@rand_size)>> = token) do
     {:ok, query} = UserToken.verify_session_token_query(token)
 
     case Repo.one(query) do
       nil -> nil
       {user, token_inserted_at} -> {Repo.preload(user, :profile), token_inserted_at}
     end
+  end
+
+  def get_user_by_session_token(token) when is_binary(token) do
+    Helpers.with_decoded_token(token, &get_user_by_session_token/1, nil)
   end
 
   @doc """
@@ -264,12 +277,16 @@ defmodule Zoonk.Accounts do
   @doc """
   Deletes the signed token with the given context.
   """
-  def delete_user_session_token(token) do
+  def delete_user_session_token(<<_b::binary-size(@rand_size)>> = token) do
     token
     |> UserToken.by_token_and_context_query("session")
     |> Repo.delete_all()
 
     :ok
+  end
+
+  def delete_user_session_token(token) when is_binary(token) do
+    Helpers.with_decoded_token(token, &delete_user_session_token/1)
   end
 
   defp update_user_and_delete_all_tokens(changeset) do

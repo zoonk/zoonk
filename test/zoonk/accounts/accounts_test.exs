@@ -308,6 +308,29 @@ defmodule Zoonk.AccountsTest do
     end
   end
 
+  describe "generate_user_session_token/2" do
+    setup do
+      %{user: user_fixture()}
+    end
+
+    test "generates an encoded token", %{user: user} do
+      token = Accounts.generate_user_session_token(user, decoded: false)
+      decoded_token = Base.url_decode64!(token, padding: false)
+      assert user_token = Repo.get_by(UserToken, token: decoded_token)
+      assert user_token.context == "session"
+      assert user_token.authenticated_at != nil
+
+      # Creating the same token for another user should fail
+      assert_raise Ecto.ConstraintError, fn ->
+        Repo.insert!(%UserToken{
+          token: user_token.token,
+          user_id: user_fixture().id,
+          context: "session"
+        })
+      end
+    end
+  end
+
   describe "get_user_by_session_token/1" do
     setup do
       user = user_fixture()
@@ -322,6 +345,12 @@ defmodule Zoonk.AccountsTest do
       assert token_inserted_at != nil
       assert session_user.profile.user_id == user.id
       assert session_user.profile.is_public == false
+    end
+
+    test "returns user by encoded token", %{user: user, token: token} do
+      encoded_token = Base.url_encode64(token, padding: false)
+      assert {session_user, _token_inserted_at} = Accounts.get_user_by_session_token(encoded_token)
+      assert session_user.id == user.id
     end
 
     test "does not return user for invalid token" do
@@ -381,6 +410,13 @@ defmodule Zoonk.AccountsTest do
     test "deletes the token" do
       user = user_fixture()
       token = Accounts.generate_user_session_token(user)
+      assert Accounts.delete_user_session_token(token) == :ok
+      refute Accounts.get_user_by_session_token(token)
+    end
+
+    test "handles encoded tokens" do
+      user = user_fixture()
+      token = Accounts.generate_user_session_token(user, decoded: false)
       assert Accounts.delete_user_session_token(token) == :ok
       refute Accounts.get_user_by_session_token(token)
     end

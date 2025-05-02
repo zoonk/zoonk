@@ -133,4 +133,58 @@ defmodule Zoonk.HelpersTest do
       assert remove_accents("Hello World 2025") == "Hello World 2025"
     end
   end
+
+  describe "with_decoded_token/3" do
+    test "applies the function to a successfully decoded token" do
+      # "hello" encoded as URL-safe Base64
+      encoded_token = "aGVsbG8"
+
+      result =
+        with_decoded_token(encoded_token, fn decoded ->
+          assert decoded == "hello"
+          String.upcase(decoded)
+        end)
+
+      assert result == "HELLO"
+    end
+
+    test "returns :error for invalid Base64 encoding" do
+      invalid_token = "not-valid-base64!"
+
+      result =
+        with_decoded_token(invalid_token, fn _decoded ->
+          flunk("This function should not be called")
+        end)
+
+      assert result == :error
+    end
+
+    test "returns custom error when a third argument is provided" do
+      invalid_token = "not-valid-base64!"
+
+      result =
+        with_decoded_token(
+          invalid_token,
+          fn _decoded ->
+            flunk("This function should not be called")
+          end,
+          nil
+        )
+
+      assert is_nil(result)
+    end
+
+    test "works with more complex functions" do
+      # "token:123" encoded as URL-safe Base64
+      encoded_token = "dG9rZW46MTIz"
+
+      result =
+        with_decoded_token(encoded_token, fn decoded ->
+          [prefix, number] = String.split(decoded, ":")
+          {prefix, String.to_integer(number)}
+        end)
+
+      assert result == {"token", 123}
+    end
+  end
 end
