@@ -347,6 +347,12 @@ defmodule Zoonk.AccountsTest do
       assert session_user.profile.is_public == false
     end
 
+    test "returns user by encoded token", %{user: user, token: token} do
+      encoded_token = Base.encode64(token)
+      assert {session_user, _token_inserted_at} = Accounts.get_user_by_session_token(encoded_token)
+      assert session_user.id == user.id
+    end
+
     test "does not return user for invalid token" do
       refute Accounts.get_user_by_session_token("oops")
     end

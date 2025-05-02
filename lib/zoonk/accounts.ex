@@ -172,12 +172,21 @@ defmodule Zoonk.Accounts do
   If the token is valid `{user, token_inserted_at}` is returned,
   otherwise `nil` is returned.
   """
-  def get_user_by_session_token(token) do
+  def get_user_by_session_token(<<_::binary-size(32)>> = token) do
     {:ok, query} = UserToken.verify_session_token_query(token)
 
     case Repo.one(query) do
       nil -> nil
       {user, token_inserted_at} -> {Repo.preload(user, :profile), token_inserted_at}
+    end
+  end
+
+  def get_user_by_session_token(token) when is_binary(token) do
+    token
+    |> Base.decode64()
+    |> case do
+      {:ok, decoded_token} -> get_user_by_session_token(decoded_token)
+      _error -> nil
     end
   end
 
