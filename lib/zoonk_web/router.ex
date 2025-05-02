@@ -46,7 +46,6 @@ defmodule ZoonkWeb.Router do
     plug :accepts, ["json"]
     plug :fetch_session
     plug :fetch_scope
-    plug :set_session_language
   end
 
   # API v1 routes
