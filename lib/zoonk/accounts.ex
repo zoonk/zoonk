@@ -163,7 +163,7 @@ defmodule Zoonk.Accounts do
 
   def generate_user_session_token(user, decoded: false) do
     decoded_token = generate_user_session_token(user, decoded: true)
-    Base.encode64(decoded_token)
+    Base.url_encode64(decoded_token, padding: false)
   end
 
   @doc """

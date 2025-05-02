@@ -315,7 +315,7 @@ defmodule Zoonk.AccountsTest do
 
     test "generates an encoded token", %{user: user} do
       token = Accounts.generate_user_session_token(user, decoded: false)
-      decoded_token = Base.decode64!(token)
+      decoded_token = Base.url_decode64!(token, padding: false)
       assert user_token = Repo.get_by(UserToken, token: decoded_token)
       assert user_token.context == "session"
       assert user_token.authenticated_at != nil
