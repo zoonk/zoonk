@@ -152,7 +152,7 @@ defmodule Zoonk.HelpersTest do
       invalid_token = "not-valid-base64!"
 
       result =
-        with_decoded_token(invalid_token, fn _ ->
+        with_decoded_token(invalid_token, fn _decoded ->
           flunk("This function should not be called")
         end)
 
@@ -165,7 +165,7 @@ defmodule Zoonk.HelpersTest do
       result =
         with_decoded_token(
           invalid_token,
-          fn _ ->
+          fn _decoded ->
             flunk("This function should not be called")
           end,
           nil
