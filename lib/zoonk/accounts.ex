@@ -24,6 +24,8 @@ defmodule Zoonk.Accounts do
   alias Zoonk.Repo
   alias Zoonk.Scope
 
+  @rand_size AuthConfig.get_rand_size()
+
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking a user's profile changes.
 
@@ -172,7 +174,7 @@ defmodule Zoonk.Accounts do
   If the token is valid `{user, token_inserted_at}` is returned,
   otherwise `nil` is returned.
   """
-  def get_user_by_session_token(<<_::binary-size(32)>> = token) do
+  def get_user_by_session_token(<<_::binary-size(@rand_size)>> = token) do
     {:ok, query} = UserToken.verify_session_token_query(token)
 
     case Repo.one(query) do
@@ -280,7 +282,7 @@ defmodule Zoonk.Accounts do
   @doc """
   Deletes the signed token with the given context.
   """
-  def delete_user_session_token(<<_::binary-size(32)>> = token) do
+  def delete_user_session_token(<<_::binary-size(@rand_size)>> = token) do
     token
     |> UserToken.by_token_and_context_query("session")
     |> Repo.delete_all()
