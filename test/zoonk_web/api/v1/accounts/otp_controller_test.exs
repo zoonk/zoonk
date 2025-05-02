@@ -64,4 +64,30 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPControllerTest do
       assert_json_error(conn, 400)
     end
   end
+
+  describe "verify_code/2" do
+    setup :setup_app
+
+    test "returns a session token when the code is valid", %{conn: conn} do
+      user = user_fixture()
+      otp_code = extract_otp_code(Accounts.deliver_login_instructions(user))
+
+      conn = post(conn, ~p"/api/v1/auth/verify_code", %{"code" => otp_code})
+
+      assert %{"token" => token} = json_response(conn, 200)
+      assert {:ok, _decoded} = Base.decode64(token)
+    end
+
+    test "returns error when the code is invalid", %{conn: conn} do
+      invalid_code = "invalid_code"
+      conn = post(conn, ~p"/api/v1/auth/verify_code", %{"code" => invalid_code})
+
+      assert %{"error" => %{"message" => "Invalid code or expired"}} = json_response(conn, 401)
+    end
+
+    test "returns error when code is missing", %{conn: conn} do
+      conn = post(conn, ~p"/api/v1/auth/verify_code", %{})
+      assert_json_error(conn, 400)
+    end
+  end
 end

@@ -65,6 +65,41 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPController do
     ErrorResponse.missing_params(conn)
   end
 
+  @doc """
+  Verifies an OTP code and returns a session token if valid.
+
+  ## Request body fields
+
+  - `code` - The OTP code to verify (required)
+
+  ## Response
+
+  - 200 OK with session token on success
+  - 400 Bad Request if required parameters are missing
+  - 401 Unauthorized if the code is invalid or expired
+  """
+  def verify_code(conn, %{"code" => otp_code}) do
+    case Accounts.login_user_by_otp(otp_code) do
+      {:ok, user, _tokens_to_disconnect} ->
+        # Generate a session token for the user
+        token = Accounts.generate_user_session_token(user)
+        encoded_token = Base.encode64(token)
+
+        conn
+        |> put_status(:ok)
+        |> json(%{token: encoded_token})
+
+      _error ->
+        conn
+        |> put_status(:unauthorized)
+        |> json(%{error: %{message: "Invalid code or expired"}})
+    end
+  end
+
+  def verify_code(conn, _params) do
+    ErrorResponse.missing_params(conn)
+  end
+
   defp deliver_login_instructions(conn, %User{} = user) do
     case Accounts.deliver_login_instructions(user) do
       {:ok, _url_fn} ->
