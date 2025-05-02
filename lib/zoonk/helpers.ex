@@ -197,12 +197,14 @@ defmodule Zoonk.Helpers do
       iex> with_decoded_token("invalid+token", &String.upcase/1, nil)
       nil
   """
-  def with_decoded_token(token, fun, error_value \\ :error) when is_binary(token) and is_function(fun, 1) do
+  def with_decoded_token(token, fun, error_value \\ :error)
+
+  def with_decoded_token(token, fun, error_value) when is_binary(token) and is_function(fun, 1) do
     token
     |> Base.url_decode64(padding: false)
-    |> case do
-      {:ok, decoded_token} -> fun.(decoded_token)
-      _error -> error_value
-    end
+    |> with_decoded_token(fun, error_value)
   end
+
+  def with_decoded_token({:ok, decoded_token}, fun, _error_value), do: fun.(decoded_token)
+  def with_decoded_token(_error, _fun, error_value), do: error_value
 end
