@@ -153,10 +153,17 @@ defmodule Zoonk.Accounts do
   @doc """
   Generates a session token.
   """
-  def generate_user_session_token(user) do
+  def generate_user_session_token(user, opts \\ [decoded: true])
+
+  def generate_user_session_token(user, decoded: true) do
     {token, user_token} = UserToken.build_session_token(user)
     Repo.insert!(user_token)
     token
+  end
+
+  def generate_user_session_token(user, decoded: false) do
+    decoded_token = generate_user_session_token(user, decoded: true)
+    Base.encode64(decoded_token)
   end
 
   @doc """
