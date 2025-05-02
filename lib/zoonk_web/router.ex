@@ -53,7 +53,7 @@ defmodule ZoonkWeb.Router do
     pipe_through :api
 
     scope "/auth", API.V1.Accounts do
-      post "/otp/signup", OTPController, :signup
+      post "/signup", OTPController, :signup
     end
   end
 
