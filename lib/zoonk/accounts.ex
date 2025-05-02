@@ -280,12 +280,21 @@ defmodule Zoonk.Accounts do
   @doc """
   Deletes the signed token with the given context.
   """
-  def delete_user_session_token(token) do
+  def delete_user_session_token(<<_::binary-size(32)>> = token) do
     token
     |> UserToken.by_token_and_context_query("session")
     |> Repo.delete_all()
 
     :ok
+  end
+
+  def delete_user_session_token(token) when is_binary(token) do
+    token
+    |> Base.url_decode64(padding: false)
+    |> case do
+      {:ok, decoded_token} -> delete_user_session_token(decoded_token)
+      _error -> :error
+    end
   end
 
   defp update_user_and_delete_all_tokens(changeset) do

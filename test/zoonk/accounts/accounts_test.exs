@@ -413,6 +413,13 @@ defmodule Zoonk.AccountsTest do
       assert Accounts.delete_user_session_token(token) == :ok
       refute Accounts.get_user_by_session_token(token)
     end
+
+    test "handles encoded tokens" do
+      user = user_fixture()
+      token = Accounts.generate_user_session_token(user, decoded: false)
+      assert Accounts.delete_user_session_token(token) == :ok
+      refute Accounts.get_user_by_session_token(token)
+    end
   end
 
   describe "deliver_login_instructions/2" do

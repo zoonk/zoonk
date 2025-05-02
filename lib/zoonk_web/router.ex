@@ -55,6 +55,7 @@ defmodule ZoonkWeb.Router do
       post "/signup", OTPController, :signup
       post "/request_code", OTPController, :request_code
       post "/verify_code", OTPController, :verify_code
+      delete "/logout", AuthController, :logout
     end
   end
 

@@ -43,4 +43,16 @@ defmodule ZoonkWeb.API.ErrorResponse do
   def missing_params(conn) do
     send_error(conn, :bad_request, "Missing required parameters")
   end
+
+  @doc """
+  Sends a JSON error response for unauthorized access.
+
+  ## Examples
+
+      iex> ErrorResponse.unauthorized(conn)
+      %Plug.Conn{...}
+  """
+  def unauthorized(conn) do
+    send_error(conn, :unauthorized, "Unauthorized access")
+  end
 end
