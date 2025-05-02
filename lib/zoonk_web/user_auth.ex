@@ -91,6 +91,18 @@ defmodule ZoonkWeb.UserAuth do
     end
   end
 
+  @doc """
+  Fetches the scope for API requests.
+  """
+  def fetch_api_scope(conn, _opts) do
+    with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
+         {user, _token_inserted_at} <- Accounts.get_user_by_session_token(token) do
+      assign(conn, :scope, build_scope(user, nil))
+    else
+      _header -> assign(conn, :scope, build_scope(nil, nil))
+    end
+  end
+
   # Reissue the session token if it is older than the configured reissue age.
   defp maybe_reissue_user_session_token(conn, user, token_inserted_at) do
     token_age = DateTime.diff(DateTime.utc_now(), token_inserted_at, :day)

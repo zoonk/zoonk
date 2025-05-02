@@ -31,7 +31,7 @@ defmodule ZoonkWeb.UserAuthTest do
       |> Map.replace!(:secret_key_base, ZoonkWeb.Endpoint.config(:secret_key_base))
       |> init_test_session(%{})
 
-    %{user: user, scope: scope, conn: conn}
+    %{user: user, org: org, scope: scope, conn: conn}
   end
 
   describe "login_user/2" do
@@ -330,6 +330,49 @@ defmodule ZoonkWeb.UserAuthTest do
       }
 
       assert {:halt, _updated_socket} = UserAuth.on_mount(:ensure_sudo_mode, %{}, session, socket)
+    end
+  end
+
+  describe "fetch_api_scope/2" do
+    test "authenticates user with valid bearer token", %{conn: conn, user: user, org: org} do
+      user_token = Accounts.generate_user_session_token(user)
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{user_token}")
+        |> UserAuth.fetch_api_scope([])
+
+      assert conn.assigns.scope.user.id == user.id
+      assert conn.assigns.scope.org.id == org.id
+    end
+
+    test "does not authenticate when no authorization header is present", %{conn: conn, user: user} do
+      _user_token = Accounts.generate_user_session_token(user)
+      conn = UserAuth.fetch_api_scope(conn, [])
+      refute conn.assigns.scope.user
+      assert conn.assigns.scope.org
+    end
+
+    test "does not authenticate with invalid header format", %{conn: conn, user: user} do
+      user_token = Accounts.generate_user_session_token(user)
+
+      conn =
+        conn
+        |> put_req_header("authorization", user_token)
+        |> UserAuth.fetch_api_scope([])
+
+      refute conn.assigns.scope.user
+      assert conn.assigns.scope.org
+    end
+
+    test "does not authenticate with invalid bearer token", %{conn: conn} do
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer invalid_token")
+        |> UserAuth.fetch_api_scope([])
+
+      refute conn.assigns.scope.user
+      assert conn.assigns.scope.org
     end
   end
 

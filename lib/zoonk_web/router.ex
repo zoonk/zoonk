@@ -44,8 +44,7 @@ defmodule ZoonkWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
-    plug :fetch_session
-    plug :fetch_scope
+    plug :fetch_api_scope
   end
 
   # API v1 routes
