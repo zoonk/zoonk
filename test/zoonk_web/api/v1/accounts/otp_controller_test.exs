@@ -5,6 +5,7 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPControllerTest do
   import Zoonk.AccountFixtures
 
   alias Zoonk.Accounts
+  alias Zoonk.Accounts.User
 
   describe "signup/2" do
     setup :setup_app
@@ -75,7 +76,8 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPControllerTest do
       conn = post(conn, ~p"/api/v1/auth/verify_code", %{"code" => otp_code})
 
       assert %{"token" => token} = json_response(conn, 200)
-      assert {:ok, _decoded} = Base.decode64(token)
+      assert {:ok, decoded_token} = Base.decode64(token)
+      assert {%User{}, _token_inserted_at} = Accounts.get_user_by_session_token(decoded_token)
     end
 
     test "returns error when the code is invalid", %{conn: conn} do
