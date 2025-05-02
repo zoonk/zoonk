@@ -54,6 +54,7 @@ defmodule ZoonkWeb.Router do
 
     scope "/auth", API.V1.Accounts do
       post "/signup", OTPController, :signup
+      post "/request_code", OTPController, :request_code
     end
   end
 

@@ -2,8 +2,8 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPController do
   @moduledoc """
   Controller for handling OTP-based authentication operations via API.
 
-  This controller provides endpoints for user signup and authentication
-  using one-time passwords sent via email.
+  This controller provides endpoints for user signup, authentication,
+  and requesting one-time passwords sent via email.
   """
   use ZoonkWeb, :controller
 
@@ -37,6 +37,31 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPController do
   end
 
   def signup(conn, _params) do
+    ErrorResponse.missing_params(conn)
+  end
+
+  @doc """
+  Sends a login OTP code via email to an existing user.
+
+  ## Request body fields
+
+  - `email` - User's email address (required)
+
+  ## Response
+
+  - 204 No Content on success (this response is returned even if the email doesn't exist to prevent email enumeration)
+  - 400 Bad Request if required parameters are missing
+  """
+  def request_code(conn, %{"email" => email}) do
+    if user = Accounts.get_user_by_email(email) do
+      deliver_login_instructions(conn, user)
+    else
+      # Return 204 even if user doesn't exist to prevent email enumeration
+      send_resp(conn, :no_content, "")
+    end
+  end
+
+  def request_code(conn, _params) do
     ErrorResponse.missing_params(conn)
   end
 

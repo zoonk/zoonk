@@ -41,4 +41,27 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPControllerTest do
       refute Accounts.get_user_by_email(email)
     end
   end
+
+  describe "request_code/2" do
+    setup :setup_app
+
+    test "delivers login instructions when email exists", %{conn: conn} do
+      email = user_fixture().email
+      conn = post(conn, ~p"/api/v1/auth/request_code", %{"email" => email})
+      assert response(conn, 204) == ""
+      assert_email_sent(to: email)
+    end
+
+    test "returns success even when email doesn't exist to prevent email enumeration", %{conn: conn} do
+      email = unique_user_email()
+      conn = post(conn, ~p"/api/v1/auth/request_code", %{"email" => email})
+      assert response(conn, 204) == ""
+      refute_email_sent()
+    end
+
+    test "returns error when email is missing", %{conn: conn} do
+      conn = post(conn, ~p"/api/v1/auth/request_code", %{})
+      assert_json_error(conn, 400)
+    end
+  end
 end
