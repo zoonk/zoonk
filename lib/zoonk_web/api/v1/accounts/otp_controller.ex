@@ -9,6 +9,7 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPController do
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.User
+  alias ZoonkWeb.API.ErrorResponse
 
   @doc """
   Creates a new user account and sends a login OTP code via email.
@@ -31,16 +32,12 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPController do
         deliver_login_instructions(conn, user)
 
       {:error, _changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> json(%{error: %{code: 422, message: "Invalid parameters"}})
+        ErrorResponse.invalid_params(conn)
     end
   end
 
   def signup(conn, _params) do
-    conn
-    |> put_status(:bad_request)
-    |> json(%{error: %{code: 400, message: "Missing required parameters"}})
+    ErrorResponse.missing_params(conn)
   end
 
   defp deliver_login_instructions(conn, %User{} = user) do
