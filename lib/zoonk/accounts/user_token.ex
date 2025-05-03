@@ -130,7 +130,7 @@ defmodule Zoonk.Accounts.UserToken do
   database. This function also checks if the code is being used within
   15 minutes. The context of an OTP code is always "login".
   """
-  def verify_otp_code_query(otp_code) do
+  def verify_otp_code_query(otp_code, email) do
     hashed_otp = :crypto.hash(AuthConfig.get_hash_algorithm(), otp_code)
 
     query =
@@ -138,6 +138,7 @@ defmodule Zoonk.Accounts.UserToken do
       |> by_token_and_context_query("login")
       |> join(:inner, [token], user in assoc(token, :user))
       |> where([token], token.inserted_at > ago(^AuthConfig.get_max_age(:otp, :minutes), "minute"))
+      |> where([token, user], token.sent_to == ^email)
       |> where([token, user], token.sent_to == user.email)
       |> select([token, user], {user, token})
 

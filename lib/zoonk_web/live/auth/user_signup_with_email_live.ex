@@ -84,7 +84,7 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
       {:ok, user} ->
         {:ok, _url_fn} = Accounts.deliver_login_instructions(user)
 
-        {:noreply, push_navigate(socket, to: ~p"/confirm/signup")}
+        {:noreply, push_navigate(socket, to: ~p"/confirm/signup?email=#{user.email}")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply,

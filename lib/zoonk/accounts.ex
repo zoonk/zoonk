@@ -188,18 +188,6 @@ defmodule Zoonk.Accounts do
   end
 
   @doc """
-  Gets the user with the given OTP code.
-  """
-  def get_user_by_otp_code(otp_code) do
-    with {:ok, query} <- UserToken.verify_otp_code_query(otp_code),
-         {user, _token} <- Repo.one(query) do
-      user
-    else
-      _error -> nil
-    end
-  end
-
-  @doc """
   Logs the user in by OTP code.
 
   There are three cases to consider:
@@ -212,8 +200,8 @@ defmodule Zoonk.Accounts do
      including session ones - are expired. In theory, no other tokens
      exist but we delete all of them for best security practices.
   """
-  def login_user_by_otp(otp_code) do
-    {:ok, query} = UserToken.verify_otp_code_query(otp_code)
+  def login_user_by_otp(otp_code, email) do
+    {:ok, query} = UserToken.verify_otp_code_query(otp_code, email)
 
     case Repo.one(query) do
       {%User{confirmed_at: nil} = user, _token} ->

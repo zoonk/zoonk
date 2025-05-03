@@ -78,8 +78,8 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPController do
   - 400 Bad Request if required parameters are missing
   - 401 Unauthorized if the code is invalid or expired
   """
-  def verify_code(conn, %{"code" => otp_code}) do
-    case Accounts.login_user_by_otp(otp_code) do
+  def verify_code(conn, %{"code" => otp_code, "email" => email}) do
+    case Accounts.login_user_by_otp(otp_code, email) do
       {:ok, user, _tokens_to_disconnect} ->
         token = Accounts.generate_user_session_token(user, decoded: false)
 

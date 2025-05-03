@@ -32,8 +32,8 @@ defmodule ZoonkWeb.Accounts.UserSessionController do
     end
   end
 
-  def create(conn, %{"_action" => action, "user" => %{"code" => otp}}) do
-    case Accounts.login_user_by_otp(otp) do
+  def create(conn, %{"_action" => action, "user" => %{"code" => otp, "email" => email}}) do
+    case Accounts.login_user_by_otp(otp, email) do
       {:ok, user, tokens_to_disconnect} ->
         UserAuth.disconnect_sessions(tokens_to_disconnect)
 
