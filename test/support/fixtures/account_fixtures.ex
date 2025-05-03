@@ -50,7 +50,7 @@ defmodule Zoonk.AccountFixtures do
     |> UserProfile.changeset(%{picture_url: "https://zoonk.test/image.png"})
     |> Repo.update!()
 
-    {:ok, user, _expired_tokens} = Accounts.login_user_by_otp(otp_code)
+    {:ok, user, _expired_tokens} = Accounts.login_user_by_otp(otp_code, fixture.email)
 
     Repo.preload(user, preload)
   end

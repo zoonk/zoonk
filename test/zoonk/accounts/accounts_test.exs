@@ -364,35 +364,13 @@ defmodule Zoonk.AccountsTest do
     end
   end
 
-  describe "get_user_by_otp_code/1" do
-    setup do
-      user = user_fixture()
-      otp_code = generate_user_otp_code(user)
-      %{user: user, code: otp_code}
-    end
-
-    test "returns user by OTP code", %{user: user, code: code} do
-      assert session_user = Accounts.get_user_by_otp_code(code)
-      assert session_user.id == user.id
-    end
-
-    test "does not return user for invalid OTP code" do
-      refute Accounts.get_user_by_otp_code("oops")
-    end
-
-    test "does not return user for expired OTP code", %{code: code} do
-      {1, nil} = Repo.update_all(UserToken, set: [inserted_at: ~N[2020-01-01 00:00:00]])
-      refute Accounts.get_user_by_otp_code(code)
-    end
-  end
-
-  describe "login_user_by_otp/1" do
+  describe "login_user_by_otp/2" do
     test "confirms user and expires tokens" do
       user = unconfirmed_user_fixture()
       refute user.confirmed_at
       otp_code = generate_user_otp_code(user)
 
-      assert {:ok, user, [%{token: _expired_token}]} = Accounts.login_user_by_otp(otp_code)
+      assert {:ok, user, [%{token: _expired_token}]} = Accounts.login_user_by_otp(otp_code, user.email)
       assert user.confirmed_at
     end
 
@@ -400,9 +378,26 @@ defmodule Zoonk.AccountsTest do
       user = user_fixture()
       assert user.confirmed_at
       otp_code = generate_user_otp_code(user)
-      assert {:ok, ^user, []} = Accounts.login_user_by_otp(otp_code)
+      assert {:ok, ^user, []} = Accounts.login_user_by_otp(otp_code, user.email)
       # one time use only
-      assert {:error, :not_found} = Accounts.login_user_by_otp(otp_code)
+      assert {:error, :not_found} = Accounts.login_user_by_otp(otp_code, user.email)
+    end
+
+    test "login the correct user if multiple users have the same code" do
+      user1 = user_fixture()
+      user2 = user_fixture()
+      otp_code = generate_user_otp_code(user1)
+
+      # Simulate the same OTP code for both users
+      Repo.insert!(%UserToken{
+        token: otp_code,
+        context: "login",
+        sent_to: user2.email,
+        user_id: user2.id
+      })
+
+      assert {:ok, ^user1, []} = Accounts.login_user_by_otp(otp_code, user1.email)
+      assert {:error, :not_found} = Accounts.login_user_by_otp(otp_code, user2.email)
     end
   end
 

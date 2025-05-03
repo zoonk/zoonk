@@ -23,6 +23,8 @@ defmodule ZoonkWeb.User.UserConfirmCodeLive do
         aria-label={dgettext("users", "Enter your code")}
         class="mt-4 flex w-full flex-col gap-4"
       >
+        <.input type="hidden" field={f[:email]} />
+
         <.input
           field={f[:code]}
           label={dgettext("users", "One-time code")}
@@ -53,8 +55,9 @@ defmodule ZoonkWeb.User.UserConfirmCodeLive do
     {:ok, redirect(socket, to: UserAuth.signed_in_path(socket))}
   end
 
-  def mount(_params, _session, socket) do
-    form = to_form(%{"code" => ""}, as: :user)
+  def mount(params, _session, socket) do
+    email = get_user_email(socket.assigns, params)
+    form = to_form(%{"code" => "", "email" => email}, as: :user)
 
     socket =
       socket
@@ -63,6 +66,9 @@ defmodule ZoonkWeb.User.UserConfirmCodeLive do
 
     {:ok, socket}
   end
+
+  defp get_user_email(assigns, params) when is_nil(assigns.scope.user), do: params["email"]
+  defp get_user_email(assigns, _params), do: assigns.scope.user.email
 
   defp get_back_link(:email), do: ~p"/settings"
   defp get_back_link(:login), do: ~p"/login"

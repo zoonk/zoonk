@@ -22,15 +22,17 @@ defmodule ZoonkWeb.User.UserConfirmCodeLiveTest do
       otp_code = generate_user_otp_code(user)
 
       conn
-      |> visit(~p"/confirm/login")
+      |> visit(~p"/confirm/login?email=#{user.email}")
       |> fill_in("One-time code", with: otp_code)
       |> submit()
       |> assert_path(~p"/")
     end
 
     test "shows error with an invalid code", %{conn: conn} do
+      user = user_fixture()
+
       conn
-      |> visit(~p"/confirm/login")
+      |> visit(~p"/confirm/login?email=#{user.email}")
       |> fill_in("One-time code", with: "invalid_code")
       |> submit()
       |> assert_has("div", text: "Invalid code or account not found.")
@@ -53,15 +55,17 @@ defmodule ZoonkWeb.User.UserConfirmCodeLiveTest do
       otp_code = generate_user_otp_code(user)
 
       conn
-      |> visit(~p"/confirm/signup")
+      |> visit(~p"/confirm/signup?email=#{user.email}")
       |> fill_in("One-time code", with: otp_code)
       |> submit()
       |> assert_path(~p"/")
     end
 
     test "shows error with an invalid code", %{conn: conn} do
+      user = user_fixture()
+
       conn
-      |> visit(~p"/confirm/signup")
+      |> visit(~p"/confirm/signup?email=#{user.email}")
       |> fill_in("One-time code", with: "invalid_code")
       |> submit()
       |> assert_has("div", text: "Invalid code or account not found.")
