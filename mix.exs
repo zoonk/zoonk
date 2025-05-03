@@ -51,6 +51,7 @@ defmodule Zoonk.MixProject do
       {:jason, "~> 1.2"},
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.2", only: [:dev, :test], runtime: false},
+      {:oban, "~> 2.19"},
       {:phoenix_ecto, "~> 4.5"},
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_dashboard, "~> 0.8.3"},

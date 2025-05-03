@@ -10,6 +10,7 @@ defmodule Zoonk.Application do
     children = [
       ZoonkWeb.Telemetry,
       Zoonk.Repo,
+      {Oban, Application.fetch_env!(:zoonk, Oban)},
       {DNSCluster, query: Application.get_env(:zoonk, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Zoonk.PubSub},
       # Start a worker by calling: Zoonk.Worker.start_link(arg)

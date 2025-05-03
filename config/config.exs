@@ -51,6 +51,12 @@ config :tailwind,
     cd: Path.expand("..", __DIR__)
   ]
 
+# Oban configuration
+config :zoonk, Oban,
+  engine: Oban.Engines.Basic,
+  queues: [default: 10],
+  repo: Zoonk.Repo
+
 # Configure translation
 config :zoonk, Zoonk.Gettext, default_locale: "en"
 
