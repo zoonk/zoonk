@@ -334,12 +334,28 @@ defmodule ZoonkWeb.UserAuthTest do
   end
 
   describe "fetch_api_scope/2" do
-    test "authenticates user with valid bearer token", %{conn: conn, user: user, org: org} do
+    test "authenticates user with valid bearer token", %{conn: conn, user: user} do
+      org = app_org_fixture()
       user_token = Accounts.generate_user_session_token(user, decoded: false)
 
       conn =
         conn
         |> put_req_header("authorization", "Bearer #{user_token}")
+        |> put_req_header("x-org-domain", org.custom_domain)
+        |> UserAuth.fetch_api_scope([])
+
+      assert conn.assigns.scope.user.id == user.id
+      assert conn.assigns.scope.org.id == org.id
+    end
+
+    test "adds the correct org to the scope", %{conn: conn, user: user} do
+      org = org_fixture()
+      user_token = Accounts.generate_user_session_token(user, decoded: false)
+
+      conn =
+        conn
+        |> put_req_header("authorization", "Bearer #{user_token}")
+        |> put_req_header("x-org-domain", org.custom_domain)
         |> UserAuth.fetch_api_scope([])
 
       assert conn.assigns.scope.user.id == user.id

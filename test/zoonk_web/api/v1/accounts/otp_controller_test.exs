@@ -8,7 +8,7 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPControllerTest do
   alias Zoonk.Accounts.User
 
   describe "signup/2" do
-    setup :setup_app
+    setup :setup_api_app
 
     test "creates a user and delivers login instructions when data is valid", %{conn: conn} do
       email = unique_user_email()
@@ -44,7 +44,7 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPControllerTest do
   end
 
   describe "request_code/2" do
-    setup :setup_app
+    setup :setup_api_app
 
     test "delivers login instructions when email exists", %{conn: conn} do
       email = user_fixture().email
@@ -67,7 +67,7 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPControllerTest do
   end
 
   describe "verify_code/2" do
-    setup :setup_app
+    setup :setup_api_app
 
     test "returns a session token when the code is valid", %{conn: conn} do
       user = user_fixture()

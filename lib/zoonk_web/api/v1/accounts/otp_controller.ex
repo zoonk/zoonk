@@ -71,6 +71,7 @@ defmodule ZoonkWeb.API.V1.Accounts.OTPController do
   ## Request body fields
 
   - `code` - The OTP code to verify (required)
+  - `email` - User's email address (required)
 
   ## Response
 

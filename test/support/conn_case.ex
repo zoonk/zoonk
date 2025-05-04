@@ -73,6 +73,19 @@ defmodule ZoonkWeb.ConnCase do
   end
 
   @doc """
+  Setup basic app for the API.
+
+      setup :setup_api_app
+  """
+  def setup_api_app(%{conn: conn}) do
+    app_org = Zoonk.OrgFixtures.app_org_fixture()
+
+    conn = Plug.Conn.put_req_header(conn, "x-org-domain", app_org.custom_domain)
+
+    %{conn: conn}
+  end
+
+  @doc """
   Logs the given `user` into the `conn`.
 
   It returns an updated `conn`.
