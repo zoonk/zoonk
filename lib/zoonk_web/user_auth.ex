@@ -326,7 +326,7 @@ defmodule ZoonkWeb.UserAuth do
   end
 
   defp build_scope(user, []), do: build_scope(user, nil)
-  defp build_scope(user, [domain_header]), do: build_scope(user, domain_header)
+  defp build_scope(user, [domain_header | _rest]), do: build_scope(user, domain_header)
 
   # It's a public context only if the LiveView module is from a public page AND the org is public.
   defp public_context?(context, %Scope{org: org}) when is_atom(context) and org.kind in [:app, :creator] do
