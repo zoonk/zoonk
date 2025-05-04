@@ -95,11 +95,13 @@ defmodule ZoonkWeb.UserAuth do
   Fetches the scope for API requests.
   """
   def fetch_api_scope(conn, _opts) do
+    org_domain = get_req_header(conn, "x-org-domain")
+
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
          {user, _token_inserted_at} <- Accounts.get_user_by_session_token(token) do
-      assign(conn, :scope, build_scope(user, nil))
+      assign(conn, :scope, build_scope(user, org_domain))
     else
-      _header -> assign(conn, :scope, build_scope(nil, nil))
+      _header -> assign(conn, :scope, build_scope(nil, org_domain))
     end
   end
 
@@ -314,7 +316,7 @@ defmodule ZoonkWeb.UserAuth do
   defp unauthenticated_path(%Scope{org: %Org{kind: :creator}}, _path), do: ~p"/catalog"
   defp unauthenticated_path(_scope, _path), do: ~p"/login"
 
-  defp build_scope(user, host) do
+  defp build_scope(user, host) when is_binary(host) or is_nil(host) do
     org = Orgs.get_org_by_host(host)
 
     %Scope{}
@@ -322,6 +324,9 @@ defmodule ZoonkWeb.UserAuth do
     |> Scope.set(org)
     |> Scope.set(Orgs.get_org_member(org, user))
   end
+
+  defp build_scope(user, []), do: build_scope(user, nil)
+  defp build_scope(user, [domain_header]), do: build_scope(user, domain_header)
 
   # It's a public context only if the LiveView module is from a public page AND the org is public.
   defp public_context?(context, %Scope{org: org}) when is_atom(context) and org.kind in [:app, :creator] do
