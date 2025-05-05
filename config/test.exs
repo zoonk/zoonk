@@ -77,3 +77,5 @@ config :zoonk, :ai,
     thumbnail: "gpt-image-1",
     exercise_image: "gpt-image-1"
   ]
+
+config :zoonk, dev_routes: true
