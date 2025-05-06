@@ -17,12 +17,6 @@ config :phoenix_live_view, enable_expensive_runtime_checks: true
 # Endpoint for routing requests when using the Phoenix Test library
 config :phoenix_test, :endpoint, ZoonkWeb.Endpoint
 
-# Mock Posthog HTTP client for testing
-config :posthog,
-  http_client: Posthog.HTTPClient.Test,
-  api_key: "phc_your_project_api_key",
-  enabled_capture: false
-
 # Disable swoosh api client as it is only required for production adapters
 config :swoosh, :api_client, false
 
@@ -78,4 +72,8 @@ config :zoonk, :ai,
     exercise_image: "gpt-image-1"
   ]
 
+# Disable PostHog for testing
+config :zoonk, :posthog, enabled_capture: false
+
+# Enable Dev routes for testing
 config :zoonk, dev_routes: true

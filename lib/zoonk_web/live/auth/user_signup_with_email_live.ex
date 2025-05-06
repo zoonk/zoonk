@@ -68,13 +68,14 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
     language = Map.get(session, "language")
     changeset = Accounts.change_user_email(%User{language: language})
 
-    Analytics.capture("signup_with_email_started", socket.assigns.scope, %{language: language})
+    Analytics.capture("signup_with_email_started", session["guest_user_id"], %{language: language})
 
     socket =
       socket
       |> assign(check_errors: false)
       |> assign_form(changeset)
       |> assign(page_title: dgettext("users", "Create an account"))
+      |> assign(:guest_user_id, session["guest_user_id"])
 
     {:ok, socket, temporary_assigns: [form: nil]}
   end
@@ -83,6 +84,8 @@ defmodule ZoonkWeb.User.UserSignUpWithEmailLive do
     case Accounts.signup_user(user_params, socket.assigns.scope) do
       {:ok, user} ->
         {:ok, _url_fn} = Accounts.deliver_login_instructions(user)
+
+        Analytics.capture("signup_with_email_completed", socket.assigns.guest_user_id, %{language: user.language})
 
         {:noreply, push_navigate(socket, to: ~p"/confirm/signup?email=#{user.email}")}
 

@@ -22,8 +22,11 @@ defmodule ZoonkWeb.RootLayout do
         <script
           defer
           phx-track-static
-          data-ph-key={Application.get_env(:posthog, :api_key)}
-          data-user-id={@scope.user && @scope.user.id}
+          data-ph-enable={to_string(Application.get_env(:zoonk, :posthog)[:enabled_capture])}
+          data-ph-key={Application.get_env(:zoonk, :posthog)[:api_key]}
+          data-user-id={
+            if @scope.user, do: @scope.user.id, else: Plug.Conn.get_session(@conn, :guest_user_id)
+          }
           data-nonce={assigns[:csp_nonce]}
           type="text/javascript"
           src={~p"/assets/app.js"}
