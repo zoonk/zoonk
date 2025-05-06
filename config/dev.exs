@@ -16,9 +16,6 @@ config :phoenix_live_view,
   # Enable helpful, but potentially expensive runtime checks
   enable_expensive_runtime_checks: true
 
-# Disable PostHog in development
-config :posthog, enabled_capture: false
-
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
 
@@ -97,6 +94,9 @@ config :zoonk, ZoonkWeb.Endpoint,
       ~r"lib/zoonk_dev/(layouts|ui_preview)/.*(ex|heex)$"
     ]
   ]
+
+# Disable PostHog in development
+config :zoonk, :posthog, enabled_capture: false
 
 # Enable dev routes for dashboard and mailbox
 config :zoonk, dev_routes: true

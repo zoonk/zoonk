@@ -34,12 +34,6 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-# Posthog configuration
-config :posthog,
-  api_url: "https://ph.zoonk.com",
-  # This key is public, so it's okay to get it during compile time
-  api_key: System.get_env("POSTHOG_API_KEY")
-
 # Configure tailwind (the version is required)
 config :tailwind,
   version: "4.0.14",
@@ -86,6 +80,12 @@ config :zoonk, ZoonkWeb.Endpoint,
   ],
   pubsub_server: Zoonk.PubSub,
   live_view: [signing_salt: "aQIHSki0"]
+
+# Posthog configuration
+config :zoonk, :posthog,
+  api_url: "https://ph.zoonk.com",
+  # This key is public, so it's okay to get it during compile time
+  api_key: System.get_env("POSTHOG_API_KEY")
 
 # Make sure all schemas are migrated when running `mix cloak.migrate.ecto`
 config :zoonk,

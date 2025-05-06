@@ -3,6 +3,7 @@ defmodule Zoonk.Analytics do
   Captures analytics events.
   """
   alias Zoonk.Accounts.User
+  alias Zoonk.Analytics.PostHog
   alias Zoonk.Scope
 
   @doc """
@@ -16,13 +17,13 @@ defmodule Zoonk.Analytics do
     attrs = Map.put(attrs, :org_id, scope.org.id)
 
     Task.start(fn ->
-      Posthog.capture(event, get_user_id(scope), attrs)
+      PostHog.capture(event, get_user_id(scope), attrs)
     end)
   end
 
   def capture(event, %User{id: user_id}, attrs) do
     Task.start(fn ->
-      Posthog.capture(event, user_id, attrs)
+      PostHog.capture(event, user_id, attrs)
     end)
   end
 

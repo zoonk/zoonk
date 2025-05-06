@@ -4,9 +4,9 @@ defmodule Zoonk.Analytics.PostHog do
 
   This module provides a simple interface to interact with the PostHog API.
   """
-  @api_url Application.compile_env(:posthog, :api_url)
-  @api_key Application.compile_env(:posthog, :api_key)
-  @capture? Application.compile_env(:posthog, :enabled_capture, true)
+  @api_url Application.compile_env(:zoonk, :posthog)[:api_url]
+  @api_key Application.compile_env(:zoonk, :posthog)[:api_key]
+  @capture? Application.compile_env(:zoonk, :posthog)[:enabled_capture]
 
   @capture_endpoint "#{@api_url}/i/v0/e/"
 
