@@ -42,7 +42,12 @@ defmodule ZoonkWeb.Accounts.OAuthController do
 
   defp handle_callback({:ok, %{user: user_from_provider, token: _token}}, conn, provider) do
     language = get_session(conn, :language)
-    auth = Map.put(user_from_provider, "provider", provider)
+    guest_user_id = get_session(conn, :guest_user_id)
+
+    auth =
+      user_from_provider
+      |> Map.put("provider", provider)
+      |> Map.put("guest_user_id", guest_user_id)
 
     case Accounts.login_with_provider(auth, conn.assigns.scope, language) do
       {:ok, %User{} = user} ->

@@ -32,8 +32,8 @@ defmodule ZoonkWeb.User.UserSignUpLive do
     {:ok, redirect(socket, to: UserAuth.signed_in_path(socket))}
   end
 
-  def mount(_params, _session, socket) do
-    Analytics.capture("signup_started", socket.assigns.scope)
+  def mount(_params, session, socket) do
+    Analytics.capture("signup_started", session["guest_user_id"])
 
     {:ok, assign(socket, page_title: dgettext("users", "Create an account"))}
   end

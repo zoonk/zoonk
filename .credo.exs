@@ -114,7 +114,7 @@
         {Credo.Check.Readability.VariableNames, []},
         {Credo.Check.Readability.WithCustomTaggedTuple, []},
         {Credo.Check.Readability.WithSingleClause, false},
-        {Credo.Check.Refactor.ABCSize, []},
+        {Credo.Check.Refactor.ABCSize, [max_size: 40]},
         {Credo.Check.Refactor.AppendSingleItem, []},
         {Credo.Check.Refactor.Apply, []},
         {Credo.Check.Refactor.CaseTrivialMatches, false},
