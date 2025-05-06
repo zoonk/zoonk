@@ -22,6 +22,7 @@ defmodule ZoonkWeb.RootLayout do
         <script
           defer
           phx-track-static
+          data-ph-enable={to_string(Application.get_env(:posthog, :enabled_capture, false))}
           data-ph-key={Application.get_env(:posthog, :api_key)}
           data-user-id={@scope.user && @scope.user.id}
           data-nonce={assigns[:csp_nonce]}

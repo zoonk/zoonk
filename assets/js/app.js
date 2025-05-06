@@ -65,7 +65,7 @@ topbar.config({ barColors: { 0: "#29d" }, shadowColor: "rgba(0, 0, 0, .3)" });
 window.addEventListener("phx:page-loading-start", (_info) => topbar.show(1000));
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
 
-if (process.env.NODE_ENV === "development" && document.currentScript) {
+if (document.currentScript.dataset.phEnable === "true") {
   const nonce = document.currentScript.dataset.nonce;
 
   // Initialize PostHog
