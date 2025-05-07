@@ -10,7 +10,6 @@ Make sure to include the following environment variables in your production envi
 
 - `DATABASE_URL`: The URL of your PostgreSQL database.
 - `SECRET_KEY_BASE`: A secret key used for signing and encrypting session data. You can generate one using `mix phx.gen.secret`.
-- `ECTO_ENCRYPTION_KEY`: The key used for encrypting sensitive data in the database. You can generate one using `32 |> :crypto.strong_rand_bytes() |> Base.encode64()`.
 - All variables for [OAuth providers](./oauth.md).
 
 Optionally, you can include the following environment variables:

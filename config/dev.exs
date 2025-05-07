@@ -29,13 +29,6 @@ config :zoonk, Zoonk.Repo,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
 
-# Configure Cloak
-config :zoonk, Zoonk.Vault,
-  ciphers: [
-    default:
-      {Cloak.Ciphers.AES.GCM, tag: "AES.GCM.V1", key: Base.decode64!("A7x+qcFD9yeRfl3GohiOFZM5bNCdHNu27B0Ozv8X4dE=")}
-  ]
-
 # For development, we disable any cache and enable
 # debugging and code reloading.
 #
