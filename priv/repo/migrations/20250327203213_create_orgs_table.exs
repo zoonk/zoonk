@@ -3,8 +3,6 @@ defmodule Zoonk.Repo.Migrations.CreateOrgsTable do
 
   def change do
     create table(:orgs) do
-      add :city_id, references(:cities, on_delete: :nothing)
-
       add :kind, :string, null: false, default: "team"
       add :display_name, :text, null: false
       add :bio, :string
@@ -22,7 +20,6 @@ defmodule Zoonk.Repo.Migrations.CreateOrgsTable do
     create unique_index(:orgs, [:custom_domain])
     create unique_index(:orgs, [:kind], where: "kind = 'app'", name: "orgs_kind_app_index")
     create index(:orgs, [:kind])
-    create index(:orgs, [:city_id])
     create index(:orgs, [:display_name])
   end
 end

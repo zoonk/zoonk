@@ -7,8 +7,6 @@ defmodule Zoonk.Repo.Migrations.CreateUsersAuthTables do
     create table(:users) do
       add :year_of_birth, :integer
 
-      add :tax_id, :binary
-
       add :currency, :string, null: false, default: "USD"
       add :language, :string, null: false, default: "en"
       add :stripe_customer_id, :string

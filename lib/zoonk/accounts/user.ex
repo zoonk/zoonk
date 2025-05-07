@@ -11,24 +11,17 @@ defmodule Zoonk.Accounts.User do
 
   ## Fields
 
-  | Field Name | Type | Description |
-  |------------|------|-------------|
-  | `year_of_birth` | `Integer` | We need the year of birth for legal reasons when a profile is public. |
-  | `currency` | `Ecto.Enum` | The currency used for payments. |
-  | `email` | `String` | The user's email address. |
-  | `stripe_customer_id` | `String` | Customer ID used for Stripe payments. |
-  | `tax_id` | `Zoonk.Vault.Binary` | Tax ID required by some jurisdictions. |
-  | `language` | `Ecto.Enum` | The language used by the user. |
-  | `confirmed_at` | `DateTime` | Timestamp when the account was confirmed. |
-  | `authenticated_at` | `DateTime` | Timestamp when the user was last authenticated. |
-  | `profile` | `Zoonk.Accounts.UserProfile` | The user's public profile. |
-  | `providers` | `Zoonk.Accounts.UserProvider` | The user's OAuth providers. |
-  | `org_memberships` | `Zoonk.Orgs.OrgMember` | Organization memberships. |
-  | `orgs` | `Zoonk.Orgs.OrgProfile` | Organizations the user is a member of. |
-  | `team_memberships` | `Zoonk.Orgs.TeamMember` | Team memberships. |
-  | `teams` | `Zoonk.Orgs.Team` | Teams the user is a member of. |
-  | `inserted_at` | `DateTime` | Timestamp when the user was created. |
-  | `updated_at` | `DateTime` | Timestamp when the user was last updated. |
+  | Field Name           | Type          | Description                          |
+  |----------------------|---------------|--------------------------------------|
+  | `year_of_birth`      | `Integer`     | Year of birth for legal reasons.     |
+  | `currency`           | `Ecto.Enum`   | Currency used for payments.          |
+  | `email`              | `String`      | User's email address.                |
+  | `stripe_customer_id` | `String`      | Stripe customer ID.                  |
+  | `language`           | `Ecto.Enum`   | User's language.                     |
+  | `confirmed_at`       | `DateTime`    | When the account was confirmed.      |
+  | `authenticated_at`   | `DateTime`    | When the user was last authenticated.|
+  | `inserted_at`        | `DateTime`    | When the user was created.           |
+  | `updated_at`         | `DateTime`    | When the user was last updated.      |
   """
   use Ecto.Schema
   use Gettext, backend: Zoonk.Gettext
@@ -48,7 +41,6 @@ defmodule Zoonk.Accounts.User do
     field :currency, Ecto.Enum, values: CurrencyConfig.list_currencies(:atom), default: :USD
     field :email, :string
     field :stripe_customer_id, :string
-    field :tax_id, Zoonk.Vault.Binary
 
     field :language, Ecto.Enum,
       values: LanguageConfig.list_languages(:atom),
@@ -78,7 +70,7 @@ defmodule Zoonk.Accounts.User do
   def settings_changeset(user, attrs, opts \\ []) do
     user
     |> email_changeset(attrs, opts)
-    |> cast(attrs, [:language, :tax_id])
+    |> cast(attrs, [:language])
     |> validate_required([:language])
   end
 

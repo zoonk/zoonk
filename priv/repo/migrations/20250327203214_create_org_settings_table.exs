@@ -7,7 +7,6 @@ defmodule Zoonk.Repo.Migrations.CreateOrgSettingsTable do
 
       add :currency, :string, null: false, default: "USD"
       add :stripe_customer_id, :string
-      add :tax_id, :binary
       add :allowed_domains, {:array, :string}, default: []
 
       timestamps(type: :utc_datetime_usec)

@@ -40,7 +40,6 @@ defmodule Zoonk.MixProject do
     [
       {:assent, "~> 0.3.0"},
       {:bandit, "~> 1.5"},
-      {:cloak_ecto, "~> 1.3.0"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dns_cluster, "~> 0.2.0"},
       {:ecto_sql, "~> 3.10"},
@@ -60,13 +59,6 @@ defmodule Zoonk.MixProject do
       {:phoenix_test, "~> 0.6.0", only: :test, runtime: false},
       {:phoenix, "~> 1.7.19"},
       {:postgrex, ">= 0.0.0"},
-      {:regions_db,
-       github: "dr5hn/countries-states-cities-database",
-       branch: "master",
-       sparse: "psql",
-       app: false,
-       compile: false,
-       depth: 1},
       {:req, "~> 0.5.0"},
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
       {:styler, "~> 1.4", only: [:dev, :test], runtime: false},
@@ -105,7 +97,7 @@ defmodule Zoonk.MixProject do
         "sobelow --config",
         "deps.unlock --check-unused",
         "deps.audit",
-        "xref graph --label compile-connected --fail-above 0 --exclude lib/zoonk/vault/binary.ex"
+        "xref graph --label compile-connected --fail-above 0"
       ]
     ]
   end

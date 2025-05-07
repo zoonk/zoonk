@@ -68,13 +68,6 @@ if config_env() == :prod do
       For example: ecto://USER:PASS@HOST/DATABASE
       """
 
-  ecto_encryption_key =
-    System.get_env("ECTO_ENCRYPTION_KEY") ||
-      raise """
-      environment variable ECTO_ENCRYPTION_KEY is missing.
-      You can generate one by calling: `32 |> :crypto.strong_rand_bytes() |> Base.encode64()`
-      """
-
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
   # The secret key base is used to sign/encrypt cookies and other secrets.
@@ -102,12 +95,6 @@ if config_env() == :prod do
     url: database_url,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
     socket_options: maybe_ipv6
-
-  # Configure Cloak
-  config :zoonk, Zoonk.Vault,
-    ciphers: [
-      default: {Cloak.Ciphers.AES.GCM, tag: "AES.GCM.V1", key: Base.decode64!(ecto_encryption_key)}
-    ]
 
   config :zoonk, ZoonkWeb.Endpoint,
     url: [host: host, port: 443, scheme: "https"],

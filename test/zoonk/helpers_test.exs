@@ -12,14 +12,12 @@ defmodule Zoonk.HelpersTest do
 
     test "returns the scope for Zoonk modules" do
       assert :accounts = get_context_from_module(Zoonk.Accounts.User)
-      assert :locations = get_context_from_module(Zoonk.Locations.Country)
       assert :library = get_context_from_module(Zoonk.Library)
     end
 
     test "returns the scope for string module names" do
       assert :catalog = get_context_from_module("ZoonkWeb.Catalog.CatalogHomeLive")
       assert :accounts = get_context_from_module("Zoonk.Accounts.User")
-      assert :locations = get_context_from_module("Zoonk.Locations")
     end
 
     test "returns nil for invalid modules" do
