@@ -68,5 +68,11 @@ config :zoonk, :ai,
 # Disable PostHog for testing
 config :zoonk, :posthog, enabled_capture: false
 
+# Disable Stripe calls for testing
+config :zoonk, :stripe,
+  opts: [
+    plug: {Req.Test, :stripe_client}
+  ]
+
 # Enable Dev routes for testing
 config :zoonk, dev_routes: true
