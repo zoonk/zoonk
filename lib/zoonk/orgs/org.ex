@@ -40,19 +40,18 @@ defmodule Zoonk.Orgs.Org do
 
   ## Fields
 
-  | Field Name | Type | Description |
-  |------------|------|-------------|
-  | `kind` | `Ecto.Enum` | The type of organization. |
-  | `display_name` | `String` | The name of the organization as it will be displayed to users. |
-  | `bio` | `String` | A brief description of the organization. |
-  | `public_email` | `String` | The public email address for the organization. |
-  | `icon_url` | `String` | URL for the organization's icon. |
-  | `logo_url` | `String` | URL for the organization's logo. |
-  | `subdomain` | `String` | The subdomain used for the organization's white-label page. |
-  | `custom_domain` | `String` | The custom domain used for the organization's white-label page. |
-  | `city_id` | `Integer` | ID from `Zoonk.Locations.City` |
-  | `inserted_at` | `DateTime` | Timestamp when the organization profile was created. |
-  | `updated_at` | `DateTime` | Timestamp when the organization profile was last updated. |
+  | Field Name     | Type        | Description                                   |
+  |----------------|-------------|-----------------------------------------------|
+  | `kind`         | `Ecto.Enum` | The type of organization.                     |
+  | `display_name` | `String`    | Public name of the organization               |
+  | `bio`          | `String`    | A brief description of the organization.      |
+  | `public_email` | `String`    | The public email address for the organization.|
+  | `icon_url`     | `String`    | URL for the organization's icon.              |
+  | `logo_url`     | `String`    | URL for the organization's logo.              |
+  | `subdomain`    | `String`    | Subdomain used for the white-label page.      |
+  | `custom_domain`| `String`    | Custom domain used for the white-label page.  |
+  | `inserted_at`  | `DateTime`  | Timestamp when the profile was created.       |
+  | `updated_at`   | `DateTime`  | Timestamp when the profile was last updated.  |
   """
   use Ecto.Schema
   use Gettext, backend: Zoonk.Gettext
@@ -60,7 +59,6 @@ defmodule Zoonk.Orgs.Org do
   import Ecto.Changeset
 
   alias Zoonk.Config.SubdomainConfig
-  alias Zoonk.Locations.City
 
   schema "orgs" do
     field :kind, Ecto.Enum, values: [:app, :team, :creator, :school], default: :team
@@ -73,25 +71,13 @@ defmodule Zoonk.Orgs.Org do
     field :subdomain, :string
     field :custom_domain, :string
 
-    belongs_to :city, City
-
     timestamps(type: :utc_datetime_usec)
   end
 
   @doc false
   def changeset(org, attrs) do
     org
-    |> cast(attrs, [
-      :bio,
-      :city_id,
-      :kind,
-      :custom_domain,
-      :display_name,
-      :icon_url,
-      :logo_url,
-      :public_email,
-      :subdomain
-    ])
+    |> cast(attrs, [:bio, :kind, :custom_domain, :display_name, :icon_url, :logo_url, :public_email, :subdomain])
     |> validate_required([:display_name, :subdomain])
     |> validate_length(:display_name, min: 1, max: 32)
     |> validate_length(:subdomain, min: 2, max: 32)
