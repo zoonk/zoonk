@@ -6,6 +6,7 @@ defmodule Zoonk.Billing do
   and integrating with payment providers such as Stripe.
   """
 
+  alias Zoonk.Billing.Price
   alias Zoonk.Billing.Stripe
 
   @doc """
@@ -18,8 +19,8 @@ defmodule Zoonk.Billing do
 
       iex> list_prices()
       {:ok, [
-        %{id: "price_123", lookup_key: "starter_monthly", unit_amount: 500},
-        %{id: "price_456", lookup_key: "starter_yearly", unit_amount: 5000},
+        %Price{plan: :starter_monthly, periodicity: :monthly, currencies: %{usd: 500, brl: 1999}},
+        %Price{plan: :starter_yearly, periodicity: :yearly, currencies: %{usd: 5000, brl: 19990}},
         # ... more prices
       ]}
 
@@ -41,8 +42,41 @@ defmodule Zoonk.Billing do
       ]
 
     case Stripe.get("/prices", params) do
-      {:ok, %{"data" => prices}} -> {:ok, prices}
-      {:error, message} -> {:error, message}
+      {:ok, %{"data" => prices}} ->
+        transformed_prices = Enum.map(prices, &transform_price_to_struct/1)
+        {:ok, transformed_prices}
+
+      {:error, message} ->
+        {:error, message}
     end
   end
+
+  defp transform_price_to_struct(price) do
+    # Extract the plan key from lookup_key
+    plan = String.to_existing_atom(price["lookup_key"])
+
+    # Extract periodicity from lookup_key suffix (after the last underscore)
+    periodicity =
+      price["lookup_key"]
+      |> String.split("_")
+      |> List.last()
+      |> String.to_existing_atom()
+
+    # Extract currencies from currency_options
+    currencies = extract_currencies(price["currency_options"])
+
+    %Price{
+      plan: plan,
+      periodicity: periodicity,
+      currencies: currencies
+    }
+  end
+
+  defp extract_currencies(currencies) when is_map(currencies) do
+    Map.new(currencies, fn {currency, data} ->
+      {String.to_existing_atom(currency), data["unit_amount"] / 100}
+    end)
+  end
+
+  defp extract_currencies(_currencies), do: %{}
 end

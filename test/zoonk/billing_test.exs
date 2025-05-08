@@ -4,10 +4,10 @@ defmodule Zoonk.BillingTest do
   import Zoonk.BillingFixtures
 
   alias Zoonk.Billing
+  alias Zoonk.Billing.Price
 
   describe "list_prices/0" do
     test "returns all prices when successful" do
-      # Stub the Stripe API response with mock prices data
       stripe_stub(
         data: %{
           "data" => [
@@ -15,7 +15,11 @@ defmodule Zoonk.BillingTest do
               "id" => "price_starter_monthly",
               "lookup_key" => "starter_monthly",
               "unit_amount" => 500,
-              "active" => true
+              "active" => true,
+              "currency_options" => %{
+                "usd" => %{"unit_amount" => 500},
+                "brl" => %{"unit_amount" => 1990}
+              }
             }
           ]
         }
@@ -23,16 +27,15 @@ defmodule Zoonk.BillingTest do
 
       assert {:ok, prices} = Billing.list_prices()
 
-      first_price = hd(prices)
-      assert first_price["id"] == "price_starter_monthly"
-      assert first_price["lookup_key"] == "starter_monthly"
-      assert first_price["unit_amount"] == 500
-      assert first_price["active"] == true
+      assert %Price{} = first_price = hd(prices)
+      assert first_price.plan == :starter_monthly
+      assert first_price.periodicity == :monthly
+      assert first_price.currencies.usd == 5
+      assert first_price.currencies.brl == 19.90
     end
 
     test "returns error when Stripe API fails" do
       stripe_stub(error: true)
-
       assert {:error, "Invalid request"} = Billing.list_prices()
     end
   end
