@@ -27,25 +27,17 @@ defmodule Zoonk.Billing do
       {:error, "Failed to fetch prices"}
   """
   def list_prices do
-    lookup_keys = [
-      # Starter plan
-      "starter_monthly",
-      "starter_yearly",
-      "starter_lifetime",
-      # Plus plan
-      "plus_monthly",
-      "plus_yearly",
-      "plus_lifetime",
-      # Premium plan
-      "premium_monthly",
-      "premium_yearly",
-      "premium_lifetime"
+    lookup_keys = ~w[
+      starter_monthly starter_yearly starter_lifetime
+      plus_monthly    plus_yearly    plus_lifetime
+      premium_monthly premium_yearly premium_lifetime
     ]
 
     params =
       [
-        {"active", true}
-        | Enum.map(lookup_keys, fn key -> {"lookup_keys[]", key} end)
+        {"active", true},
+        {"expand[]", "data.currency_options"}
+        | Enum.map(lookup_keys, &{"lookup_keys[]", &1})
       ]
 
     case Stripe.get("/prices", params) do
