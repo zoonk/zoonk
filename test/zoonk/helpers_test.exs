@@ -185,4 +185,24 @@ defmodule Zoonk.HelpersTest do
       assert result == {"token", 123}
     end
   end
+
+  describe "to_existing_atom/1" do
+    test "converts a string to an existing atom" do
+      assert to_existing_atom("catalog") == :catalog
+      assert to_existing_atom("accounts") == :accounts
+    end
+
+    test "returns nil for non-existent atoms" do
+      assert to_existing_atom("non_existent_atom") == nil
+    end
+
+    test "returns nil when the input is nil" do
+      assert to_existing_atom(nil) == nil
+    end
+
+    test "does not create new atoms" do
+      random_string = "random_#{System.unique_integer([:positive])}"
+      assert to_existing_atom(random_string) == nil
+    end
+  end
 end

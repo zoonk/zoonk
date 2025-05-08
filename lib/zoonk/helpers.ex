@@ -207,4 +207,28 @@ defmodule Zoonk.Helpers do
 
   def with_decoded_token({:ok, decoded_token}, fun, _error_value), do: fun.(decoded_token)
   def with_decoded_token(_error, _fun, error_value), do: error_value
+
+  @doc """
+  Converts a string to an existing atom.
+
+  Returns `nil` if the atom doesn't exist instead of raising an error.
+
+  ## Examples
+
+      iex> to_existing_atom("catalog")
+      :catalog
+
+      iex> to_existing_atom("non_existent_atom")
+      nil
+
+      iex> to_existing_atom(nil)
+      nil
+  """
+  def to_existing_atom(nil), do: nil
+
+  def to_existing_atom(string) when is_binary(string) do
+    String.to_existing_atom(string)
+  rescue
+    ArgumentError -> nil
+  end
 end
