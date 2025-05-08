@@ -10,6 +10,7 @@ defmodule Zoonk.Billing.Price do
   | periodicity | `Atom`   | Payment frequency (:monthly, :yearly, :lifetime)        |
   | currencies  | `Map`    | Available currencies with their respective prices       |
   """
+  alias Zoonk.Helpers
 
   @type t :: %__MODULE__{
           plan: atom(),
@@ -46,24 +47,23 @@ defmodule Zoonk.Billing.Price do
       }
   """
   def transform_from_stripe(price) do
-    # Extract the plan key from lookup_key
-    plan = String.to_existing_atom(price["lookup_key"])
+    # Only return prices with valid lookup keys
+    if plan = Helpers.to_existing_atom(price["lookup_key"]) do
+      periodicity =
+        price["lookup_key"]
+        |> String.split("_")
+        |> List.last()
+        |> Helpers.to_existing_atom()
 
-    # Extract periodicity from lookup_key suffix (after the last underscore)
-    periodicity =
-      price["lookup_key"]
-      |> String.split("_")
-      |> List.last()
-      |> String.to_existing_atom()
+      # Extract currencies from currency_options
+      currencies = extract_currencies(price["currency_options"])
 
-    # Extract currencies from currency_options
-    currencies = extract_currencies(price["currency_options"])
-
-    %__MODULE__{
-      plan: plan,
-      periodicity: periodicity,
-      currencies: currencies
-    }
+      %__MODULE__{
+        plan: plan,
+        periodicity: periodicity,
+        currencies: currencies
+      }
+    end
   end
 
   @doc """
@@ -83,7 +83,7 @@ defmodule Zoonk.Billing.Price do
   """
   def extract_currencies(currencies) when is_map(currencies) do
     Map.new(currencies, fn {currency, data} ->
-      {String.to_existing_atom(currency), data["unit_amount"] / 100}
+      {Helpers.to_existing_atom(currency), data["unit_amount"] / 100}
     end)
   end
 
