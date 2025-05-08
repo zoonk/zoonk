@@ -43,40 +43,11 @@ defmodule Zoonk.Billing do
 
     case Stripe.get("/prices", params) do
       {:ok, %{"data" => prices}} ->
-        transformed_prices = Enum.map(prices, &transform_price_to_struct/1)
+        transformed_prices = Enum.map(prices, &Price.transform_from_stripe/1)
         {:ok, transformed_prices}
 
       {:error, message} ->
         {:error, message}
     end
   end
-
-  defp transform_price_to_struct(price) do
-    # Extract the plan key from lookup_key
-    plan = String.to_existing_atom(price["lookup_key"])
-
-    # Extract periodicity from lookup_key suffix (after the last underscore)
-    periodicity =
-      price["lookup_key"]
-      |> String.split("_")
-      |> List.last()
-      |> String.to_existing_atom()
-
-    # Extract currencies from currency_options
-    currencies = extract_currencies(price["currency_options"])
-
-    %Price{
-      plan: plan,
-      periodicity: periodicity,
-      currencies: currencies
-    }
-  end
-
-  defp extract_currencies(currencies) when is_map(currencies) do
-    Map.new(currencies, fn {currency, data} ->
-      {String.to_existing_atom(currency), data["unit_amount"] / 100}
-    end)
-  end
-
-  defp extract_currencies(_currencies), do: %{}
 end

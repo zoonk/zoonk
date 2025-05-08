@@ -20,4 +20,72 @@ defmodule Zoonk.Billing.Price do
   defstruct plan: nil,
             periodicity: nil,
             currencies: %{}
+
+  @doc """
+  Transforms a Stripe Price object into a Price struct.
+
+  Takes a raw Price object from the Stripe API and converts it to our internal
+  Price struct, extracting the plan, periodicity, and available currencies.
+
+  For more information about the Stripe Price object structure, see:
+  https://docs.stripe.com/api/prices/object
+
+  ## Examples
+
+      iex> transform_from_stripe(%{
+      ...>   "lookup_key" => "starter_monthly",
+      ...>   "currency_options" => %{
+      ...>     "usd" => %{"unit_amount" => 500},
+      ...>     "brl" => %{"unit_amount" => 1999}
+      ...>   }
+      ...> })
+      %Price{
+        plan: :starter_monthly,
+        periodicity: :monthly,
+        currencies: %{usd: 5.0, brl: 19.99}
+      }
+  """
+  def transform_from_stripe(price) do
+    # Extract the plan key from lookup_key
+    plan = String.to_existing_atom(price["lookup_key"])
+
+    # Extract periodicity from lookup_key suffix (after the last underscore)
+    periodicity =
+      price["lookup_key"]
+      |> String.split("_")
+      |> List.last()
+      |> String.to_existing_atom()
+
+    # Extract currencies from currency_options
+    currencies = extract_currencies(price["currency_options"])
+
+    %__MODULE__{
+      plan: plan,
+      periodicity: periodicity,
+      currencies: currencies
+    }
+  end
+
+  @doc """
+  Extracts currency information from Stripe's currency_options.
+
+  Converts the raw currency data from Stripe's format to a map of
+  currency atoms to decimal prices. The unit_amount from Stripe is
+  in cents, so it's divided by 100 to get the actual price.
+
+  ## Examples
+
+      iex> extract_currencies(%{
+      ...>   "usd" => %{"unit_amount" => 500},
+      ...>   "brl" => %{"unit_amount" => 1999}
+      ...> })
+      %{usd: 5.0, brl: 19.99}
+  """
+  def extract_currencies(currencies) when is_map(currencies) do
+    Map.new(currencies, fn {currency, data} ->
+      {String.to_existing_atom(currency), data["unit_amount"] / 100}
+    end)
+  end
+
+  def extract_currencies(_currencies), do: %{}
 end

@@ -1,5 +1,5 @@
 defmodule Zoonk.BillingTest do
-  use Zoonk.DataCase
+  use Zoonk.DataCase, async: true
 
   import Zoonk.BillingFixtures
 
