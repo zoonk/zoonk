@@ -43,7 +43,12 @@ defmodule Zoonk.Billing do
 
     case Stripe.get("/prices", params) do
       {:ok, %{"data" => prices}} ->
-        transformed_prices = Enum.map(prices, &Price.transform_from_stripe/1)
+        transformed_prices =
+          prices
+          |> Enum.map(&Price.transform_from_stripe/1)
+          # remove invalid prices
+          |> Enum.reject(&is_nil/1)
+
         {:ok, transformed_prices}
 
       {:error, message} ->
