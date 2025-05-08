@@ -58,6 +58,12 @@ if config_env() in [:dev, :prod] do
       thumbnail: System.get_env("AI_MODEL_THUMBNAIL", "gpt-image-1"),
       exercise_image: System.get_env("AI_MODEL_EXERCISE_IMAGE", "gpt-image-1")
     ]
+
+  config :zoonk, :stripe,
+    webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET"),
+    opts: [
+      auth: {:bearer, System.get_env("STRIPE_API_KEY")}
+    ]
 end
 
 if config_env() == :prod do
@@ -110,10 +116,4 @@ if config_env() == :prod do
     secret_key_base: secret_key_base
 
   config :zoonk, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
-
-  config :zoonk, :stripe,
-    webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET"),
-    opts: [
-      auth: {:bearer, System.get_env("STRIPE_API_KEY")}
-    ]
 end

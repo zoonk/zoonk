@@ -10,6 +10,32 @@ defmodule Zoonk.Billing.Stripe do
   @api_version "2025-04-30.basil"
 
   @doc """
+  Sends a `GET` request to the Stripe API.
+
+  ## Parameters
+  - `endpoint`: The Stripe API endpoint to send the request to.
+  - `params`: Optional query parameters for the request.
+  - `opts`: Additional options for the request, such as headers.
+
+  ## Examples
+
+      iex> Stripe.get("/prices")
+      {:ok, %{data: [%{id: "price_1J2Y3Z4A5B6C7D8E9F0G", product: "prod_1A2B3C4D", unit_amount: 1000}]}}
+
+      iex> Stripe.get("/prices", %{lookup_keys: ["starter_monthly"]})
+      {:ok, %{data: [%{id: "price_1J2Y3Z4A5B6C7D8E9F0G", lookup_key: "starter_monthly", unit_amount: 1000}]}}
+  """
+  def get(endpoint, params \\ %{}, opts \\ []) do
+    [url: parse_url(endpoint), params: params]
+    |> Req.new()
+    |> Req.Request.merge_options(stripe_opts())
+    |> Req.Request.merge_options(opts)
+    |> Req.Request.put_header("Stripe-Version", @api_version)
+    |> Req.get()
+    |> handle_response()
+  end
+
+  @doc """
   Sends a `POST` request to the Stripe API.
 
   ## Parameters
@@ -32,18 +58,18 @@ defmodule Zoonk.Billing.Stripe do
     |> Req.Request.merge_options(opts)
     |> Req.Request.put_header("Stripe-Version", @api_version)
     |> Req.post()
-    |> handle_post_response()
+    |> handle_response()
   end
 
-  defp handle_post_response({:ok, %Req.Response{body: %{"error" => error}}}) do
+  defp handle_response({:ok, %Req.Response{body: %{"error" => error}}}) do
     {:error, error["message"]}
   end
 
-  defp handle_post_response({:ok, %Req.Response{body: body}}) do
+  defp handle_response({:ok, %Req.Response{body: body}}) do
     {:ok, body}
   end
 
-  defp handle_post_response({:error, error}) do
+  defp handle_response({:error, error}) do
     {:error, error}
   end
 
