@@ -23,7 +23,7 @@ defmodule Zoonk.Config.CurrencyConfig do
     sgd: "Singapore Dollar",
     try: "Türk Lirası",
     twd: "新台币",
-    uy: "Peso Uruguayo"
+    uyu: "Peso Uruguayo"
   ]
 
   @doc """
