@@ -28,25 +28,11 @@ defmodule Zoonk.Billing do
       {:error, "Failed to fetch prices"}
   """
   def list_prices do
-    lookup_keys = ~w[
-      starter_monthly starter_yearly starter_lifetime
-      plus_monthly    plus_yearly    plus_lifetime
-      premium_monthly premium_yearly premium_lifetime
-    ]
-
-    params =
-      [
-        {"active", true},
-        {"expand[]", "data.currency_options"}
-        | Enum.map(lookup_keys, &{"lookup_keys[]", &1})
-      ]
-
-    case Stripe.get("/prices", params) do
+    case Stripe.get("/prices", stripe_price_params()) do
       {:ok, %{"data" => prices}} ->
         transformed_prices =
           prices
           |> Enum.map(&Price.transform_from_stripe/1)
-          # remove invalid prices
           |> Enum.reject(&is_nil/1)
 
         {:ok, transformed_prices}
@@ -54,5 +40,21 @@ defmodule Zoonk.Billing do
       {:error, message} ->
         {:error, message}
     end
+  end
+
+  defp stripe_price_params do
+    [
+      {"active", true},
+      {"expand[]", "data.currency_options"}
+      | Enum.map(stripe_lookup_keys(), &{"lookup_keys[]", &1})
+    ]
+  end
+
+  defp stripe_lookup_keys do
+    ~w[
+      starter_monthly starter_yearly starter_lifetime
+      plus_monthly    plus_yearly    plus_lifetime
+      premium_monthly premium_yearly premium_lifetime
+    ]a
   end
 end
