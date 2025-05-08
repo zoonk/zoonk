@@ -28,48 +28,10 @@ defmodule Zoonk.BillingTest do
       assert {:ok, prices} = Billing.list_prices()
 
       assert %Price{} = first_price = hd(prices)
-      assert first_price.plan == :starter_monthly
-      assert first_price.periodicity == :monthly
-      assert first_price.currencies.usd == 5
-      assert first_price.currencies.brl == 19.90
-    end
-
-    test "filters out prices with invalid lookup keys" do
-      stripe_stub(
-        data: %{
-          "data" => [
-            %{
-              "id" => "price_valid",
-              "lookup_key" => "starter_monthly",
-              "unit_amount" => 500,
-              "active" => true,
-              "currency_options" => %{
-                "usd" => %{"unit_amount" => 500}
-              }
-            },
-            %{
-              "id" => "price_invalid",
-              "lookup_key" => "invalid_lookup_key",
-              "unit_amount" => 500,
-              "active" => true,
-              "currency_options" => %{
-                "usd" => %{"unit_amount" => 500},
-                "invalid_currency" => %{"unit_amount" => 500}
-              }
-            }
-          ]
-        }
-      )
-
-      assert {:ok, prices} = Billing.list_prices()
-
-      # Should only contain the valid price
-      assert length(prices) == 1
-      price = hd(prices)
-      assert price.plan == :starter_monthly
-
-      # Should only contains the valid currency
-      assert price.currencies == %{usd: 5}
+      assert first_price.plan == "starter_monthly"
+      assert first_price.periodicity == "monthly"
+      assert first_price.currencies["usd"] == 5
+      assert first_price.currencies["brl"] == 19.90
     end
 
     test "returns error when Stripe API fails" do

@@ -65,28 +65,28 @@ school_org =
 
 # Create org settings for each org
 Repo.insert!(%OrgSettings{
-  currency: :USD,
+  currency: :usd,
   org_id: app_org.id,
   stripe_customer_id: "cus_app123",
   allowed_domains: ["zoonk.test"]
 })
 
 Repo.insert!(%OrgSettings{
-  currency: :USD,
+  currency: :usd,
   org_id: team_org.id,
   stripe_customer_id: "cus_team123",
   allowed_domains: ["team.test", "company.test"]
 })
 
 Repo.insert!(%OrgSettings{
-  currency: :EUR,
+  currency: :eur,
   org_id: creator_org.id,
   stripe_customer_id: "cus_creator123",
   allowed_domains: []
 })
 
 Repo.insert!(%OrgSettings{
-  currency: :SGD,
+  currency: :sgd,
   org_id: school_org.id,
   stripe_customer_id: "cus_school123",
   allowed_domains: ["school.edu.test"]

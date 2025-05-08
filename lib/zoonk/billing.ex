@@ -18,29 +18,22 @@ defmodule Zoonk.Billing do
   ## Examples
 
       iex> list_prices()
-      {:ok, [
-        %Price{plan: :starter_monthly, periodicity: :monthly, currencies: %{usd: 500, brl: 1999}},
-        %Price{plan: :starter_yearly, periodicity: :yearly, currencies: %{usd: 5000, brl: 19990}},
-        # ... more prices
-      ]}
+      {:ok, [%Price{}]}
 
       iex> list_prices()
       {:error, "Failed to fetch prices"}
   """
   def list_prices do
-    case Stripe.get("/prices", stripe_price_params()) do
-      {:ok, %{"data" => prices}} ->
-        transformed_prices =
-          prices
-          |> Enum.map(&Price.transform_from_stripe/1)
-          |> Enum.reject(&is_nil/1)
-
-        {:ok, transformed_prices}
-
-      {:error, message} ->
-        {:error, message}
-    end
+    "/prices"
+    |> Stripe.get(stripe_price_params())
+    |> list_prices()
   end
+
+  defp list_prices({:ok, %{"data" => prices}}) do
+    {:ok, Enum.map(prices, &Price.transform_from_stripe/1)}
+  end
+
+  defp list_prices({:error, message}), do: {:error, message}
 
   defp stripe_price_params do
     [
@@ -55,6 +48,6 @@ defmodule Zoonk.Billing do
       starter_monthly starter_yearly starter_lifetime
       plus_monthly    plus_yearly    plus_lifetime
       premium_monthly premium_yearly premium_lifetime
-    ]a
+    ]
   end
 end

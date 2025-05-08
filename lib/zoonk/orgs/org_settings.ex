@@ -28,7 +28,7 @@ defmodule Zoonk.Orgs.OrgSettings do
 
   schema "org_settings" do
     field :allowed_domains, {:array, :string}, default: []
-    field :currency, Ecto.Enum, values: CurrencyConfig.list_currencies(:atom), default: :USD
+    field :currency, Ecto.Enum, values: CurrencyConfig.list_currencies(:atom)
     field :stripe_customer_id, :string
 
     belongs_to :org, Org
@@ -40,7 +40,7 @@ defmodule Zoonk.Orgs.OrgSettings do
   def changeset(org, attrs) do
     org
     |> cast(attrs, [:currency, :org_id, :stripe_customer_id, :allowed_domains])
-    |> validate_required([:currency, :org_id])
+    |> validate_required([:org_id])
     |> unique_constraint(:org_id)
   end
 end
