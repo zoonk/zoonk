@@ -10,12 +10,10 @@ defmodule Zoonk.Billing.Price do
   | periodicity | `Atom`   | Payment frequency (:monthly, :yearly, :lifetime)        |
   | currencies  | `Map`    | Available currencies with their respective prices       |
   """
-  alias Zoonk.Helpers
-
   @type t :: %__MODULE__{
-          plan: atom(),
-          periodicity: atom(),
-          currencies: %{atom() => float()}
+          plan: String.t(),
+          periodicity: String.t(),
+          currencies: %{String.t() => float()}
         }
 
   defstruct plan: nil,
@@ -41,29 +39,17 @@ defmodule Zoonk.Billing.Price do
       ...>   }
       ...> })
       %Price{
-        plan: :starter_monthly,
-        periodicity: :monthly,
-        currencies: %{usd: 5.0, brl: 19.99}
+        plan: "starter_monthly",
+        periodicity: "monthly",
+        currencies: %{"usd" => 5.0, "brl" => 19.99}
       }
   """
   def transform_from_stripe(price) do
-    # Only return prices with valid lookup keys
-    if plan = Helpers.to_existing_atom(price["lookup_key"]) do
-      periodicity =
-        price["lookup_key"]
-        |> String.split("_")
-        |> List.last()
-        |> Helpers.to_existing_atom()
-
-      # Extract currencies from currency_options
-      currencies = extract_currencies(price["currency_options"])
-
-      %__MODULE__{
-        plan: plan,
-        periodicity: periodicity,
-        currencies: currencies
-      }
-    end
+    %__MODULE__{
+      plan: price["lookup_key"],
+      periodicity: get_periodicity(price),
+      currencies: extract_currencies(price["currency_options"])
+    }
   end
 
   @doc """
@@ -79,13 +65,19 @@ defmodule Zoonk.Billing.Price do
       ...>   "usd" => %{"unit_amount" => 500},
       ...>   "brl" => %{"unit_amount" => 1999}
       ...> })
-      %{usd: 5.0, brl: 19.99}
+      %{"usd" => 5.0, "brl" => 19.99}
   """
   def extract_currencies(currencies) when is_map(currencies) do
     Map.new(currencies, fn {currency, data} ->
-      {Helpers.to_existing_atom(currency), data["unit_amount"] / 100}
+      {currency, data["unit_amount"] / 100}
     end)
   end
 
   def extract_currencies(_currencies), do: %{}
+
+  defp get_periodicity(price) do
+    price["lookup_key"]
+    |> String.split("_")
+    |> List.last()
+  end
 end
