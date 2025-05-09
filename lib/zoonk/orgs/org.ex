@@ -58,6 +58,7 @@ defmodule Zoonk.Orgs.Org do
 
   import Ecto.Changeset
 
+  alias Zoonk.Billing.BillingAccount
   alias Zoonk.Config.SubdomainConfig
 
   schema "orgs" do
@@ -70,6 +71,8 @@ defmodule Zoonk.Orgs.Org do
 
     field :subdomain, :string
     field :custom_domain, :string
+
+    has_one :billing_account, BillingAccount
 
     timestamps(type: :utc_datetime_usec)
   end
