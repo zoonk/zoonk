@@ -8,6 +8,69 @@ defmodule Zoonk.Billing do
 
   alias Zoonk.Billing.Price
   alias Zoonk.Billing.Stripe
+  alias Zoonk.Billing.UserSubscription
+  alias Zoonk.Repo
+  alias Zoonk.Scope
+
+  @doc """
+  Creates a user subscription.
+
+  Takes a scope containing the user and org information, along with
+  subscription attributes, to create a new user subscription record.
+
+  ## Examples
+
+      iex> create_user_subscription(%Scope{}, %{plan: :starter, payment_term: :monthly})
+      {:ok, %UserSubscription{}}
+
+      iex> create_user_subscription(%Scope{}, %{})
+      {:error, %Ecto.Changeset{}}
+  """
+  def create_user_subscription(%Scope{user: user, org: org}, attrs) do
+    attrs =
+      attrs
+      |> Map.merge(%{user_id: user.id, org_id: org.id})
+      |> maybe_set_lifetime_expiration()
+
+    %UserSubscription{}
+    |> UserSubscription.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  # Use a far future date (Dec 31, 9999) for lifetime subscriptions
+  defp maybe_set_lifetime_expiration(%{payment_term: :lifetime} = attrs) do
+    Map.put(attrs, :expires_at, ~U[9999-12-31 23:59:59Z])
+  end
+
+  # For non-lifetime subscriptions, keep the original attrs we get from Stripe
+  defp maybe_set_lifetime_expiration(attrs), do: attrs
+
+  @doc """
+  Updates an existing user subscription.
+
+  Takes a scope containing the user and org information, the subscription to update,
+  and the attributes to update.
+
+  The user_id and org_id cannot be changed and will be enforced from the scope.
+
+  ## Examples
+
+      iex> update_user_subscription(%Scope{}, subscription, %{plan: :premium})
+      {:ok, %UserSubscription{}}
+
+      iex> update_user_subscription(%Scope{}, subscription, %{})
+      {:ok, %UserSubscription{}}
+
+      iex> update_user_subscription(%Scope{}, subscription, %{status: :invalid})
+      {:error, %Ecto.Changeset{}}
+  """
+  def update_user_subscription(%Scope{user: user, org: org}, %UserSubscription{} = subscription, attrs) do
+    attrs = Map.merge(attrs, %{user_id: user.id, org_id: org.id})
+
+    subscription
+    |> UserSubscription.changeset(attrs)
+    |> Repo.update()
+  end
 
   @doc """
   Lists all available pricing options for plans.
