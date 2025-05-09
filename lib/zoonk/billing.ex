@@ -35,6 +35,33 @@ defmodule Zoonk.Billing do
   end
 
   @doc """
+  Updates an existing user subscription.
+
+  Takes a scope containing the user and org information, the subscription to update,
+  and the attributes to update.
+
+  The user_id and org_id cannot be changed and will be enforced from the scope.
+
+  ## Examples
+
+      iex> update_user_subscription(%Scope{}, subscription, %{plan: :premium})
+      {:ok, %UserSubscription{}}
+
+      iex> update_user_subscription(%Scope{}, subscription, %{})
+      {:ok, %UserSubscription{}}
+
+      iex> update_user_subscription(%Scope{}, subscription, %{status: :invalid})
+      {:error, %Ecto.Changeset{}}
+  """
+  def update_user_subscription(%Scope{user: user, org: org}, %UserSubscription{} = subscription, attrs) do
+    attrs = Map.merge(attrs, %{user_id: user.id, org_id: org.id})
+
+    subscription
+    |> UserSubscription.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
   Lists all available pricing options for plans.
 
   Returns a list of prices for all plan options (starter, plus, premium)
