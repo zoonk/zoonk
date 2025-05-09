@@ -27,12 +27,23 @@ defmodule Zoonk.Billing do
       {:error, %Ecto.Changeset{}}
   """
   def create_user_subscription(%Scope{user: user, org: org}, attrs) do
-    attrs = Map.merge(attrs, %{user_id: user.id, org_id: org.id})
+    attrs =
+      attrs
+      |> Map.merge(%{user_id: user.id, org_id: org.id})
+      |> maybe_set_lifetime_expiration()
 
     %UserSubscription{}
     |> UserSubscription.changeset(attrs)
     |> Repo.insert()
   end
+
+  # Use a far future date (Dec 31, 9999) for lifetime subscriptions
+  defp maybe_set_lifetime_expiration(%{payment_term: :lifetime} = attrs) do
+    Map.put(attrs, :expires_at, ~U[9999-12-31 23:59:59Z])
+  end
+
+  # For non-lifetime subscriptions, keep the original attrs we get from Stripe
+  defp maybe_set_lifetime_expiration(attrs), do: attrs
 
   @doc """
   Updates an existing user subscription.
