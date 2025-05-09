@@ -8,6 +8,35 @@ defmodule Zoonk.Billing do
 
   alias Zoonk.Billing.Price
   alias Zoonk.Billing.Stripe
+  alias Zoonk.Billing.UserSubscription
+  alias Zoonk.Repo
+  alias Zoonk.Scope
+
+  @doc """
+  Creates a user subscription.
+
+  Takes a scope containing the user and org information, along with
+  subscription attributes, to create a new user subscription record.
+
+  ## Examples
+
+      iex> create_user_subscription(%Scope{}, %{plan: :starter, payment_term: :monthly})
+      {:ok, %UserSubscription{}}
+
+      iex> create_user_subscription(%Scope{}, %{})
+      {:error, %Ecto.Changeset{}}
+  """
+  def create_user_subscription(%Scope{user: user, org: org}, attrs) do
+    attrs =
+      Map.merge(attrs, %{
+        user_id: user.id,
+        org_id: org.id
+      })
+
+    %UserSubscription{}
+    |> UserSubscription.changeset(attrs)
+    |> Repo.insert()
+  end
 
   @doc """
   Lists all available pricing options for plans.
