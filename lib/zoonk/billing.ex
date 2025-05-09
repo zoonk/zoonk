@@ -27,11 +27,7 @@ defmodule Zoonk.Billing do
       {:error, %Ecto.Changeset{}}
   """
   def create_user_subscription(%Scope{user: user, org: org}, attrs) do
-    attrs =
-      Map.merge(attrs, %{
-        user_id: user.id,
-        org_id: org.id
-      })
+    attrs = Map.merge(attrs, %{user_id: user.id, org_id: org.id})
 
     %UserSubscription{}
     |> UserSubscription.changeset(attrs)
