@@ -50,43 +50,26 @@ defmodule Zoonk.BillingTest do
       org = org_fixture()
       scope = %Scope{user: user, org: org}
 
-      expires_at = DateTime.add(DateTime.utc_now(), 30, :day)
-
-      attrs = %{
-        plan: :starter,
-        payment_term: :monthly,
-        status: :active,
-        expires_at: expires_at,
-        cancel_at_period_end: false,
-        stripe_subscription_id: "sub_123"
-      }
+      attrs = valid_user_subscription_attrs()
 
       assert {:ok, %UserSubscription{} = subscription} = Billing.create_user_subscription(scope, attrs)
       assert subscription.user_id == user.id
       assert subscription.org_id == org.id
-      assert subscription.plan == :starter
-      assert subscription.payment_term == :monthly
-      assert subscription.status == :active
-      assert subscription.stripe_subscription_id == "sub_123"
-      assert subscription.expires_at == expires_at
+      assert subscription.plan == attrs.plan
+      assert subscription.payment_term == attrs.payment_term
+      assert subscription.status == attrs.status
+      assert subscription.stripe_subscription_id == attrs.stripe_subscription_id
+      assert subscription.expires_at == attrs.expires_at
       refute subscription.cancel_at_period_end
     end
 
     test "cannot override user_id from scope" do
       user = user_fixture()
+      another_user = user_fixture()
       org = org_fixture()
       scope = %Scope{user: user, org: org}
 
-      # Attempting to set a different user_id
-      attrs = %{
-        user_id: Ecto.UUID.generate(),
-        plan: :starter,
-        payment_term: :monthly,
-        status: :active,
-        expires_at: DateTime.add(DateTime.utc_now(), 30, :day),
-        cancel_at_period_end: false,
-        stripe_subscription_id: "sub_123"
-      }
+      attrs = valid_user_subscription_attrs(%{user_id: another_user.id})
 
       assert {:ok, %UserSubscription{} = subscription} = Billing.create_user_subscription(scope, attrs)
       assert subscription.user_id == user.id
@@ -95,18 +78,10 @@ defmodule Zoonk.BillingTest do
     test "cannot override org_id from scope" do
       user = user_fixture()
       org = org_fixture()
+      another_org = org_fixture()
       scope = %Scope{user: user, org: org}
 
-      # Attempting to set a different org_id
-      attrs = %{
-        org_id: Ecto.UUID.generate(),
-        plan: :starter,
-        payment_term: :monthly,
-        status: :active,
-        expires_at: DateTime.add(DateTime.utc_now(), 30, :day),
-        cancel_at_period_end: false,
-        stripe_subscription_id: "sub_123"
-      }
+      attrs = valid_user_subscription_attrs(%{org_id: another_org.id})
 
       assert {:ok, %UserSubscription{} = subscription} = Billing.create_user_subscription(scope, attrs)
       assert subscription.org_id == org.id
