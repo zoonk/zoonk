@@ -43,6 +43,7 @@ defmodule Zoonk.Billing.BillingAccount do
     billing_account
     |> cast(attrs, [:currency, :stripe_customer_id, :user_id, :org_id])
     |> validate_required([:currency])
+    |> validate_format(:stripe_customer_id, ~r/^cus_/, message: "must start with cus_")
     |> validate_user_or_org()
     |> foreign_key_constraint(:user_id)
     |> foreign_key_constraint(:org_id)

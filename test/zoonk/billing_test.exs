@@ -296,5 +296,29 @@ defmodule Zoonk.BillingTest do
       assert {:error, changeset} = Billing.create_billing_account(attrs)
       assert "does not exist" in errors_on(changeset).org_id
     end
+
+    test "accepts a nil stripe_customer_id" do
+      user = user_fixture()
+      attrs = %{user_id: user.id, currency: :usd, stripe_customer_id: nil}
+
+      assert {:ok, %BillingAccount{} = account} = Billing.create_billing_account(attrs)
+      assert account.stripe_customer_id == nil
+    end
+
+    test "accepts a stripe_customer_id that starts with 'cus_'" do
+      user = user_fixture()
+      attrs = %{user_id: user.id, currency: :usd, stripe_customer_id: "cus_123456"}
+
+      assert {:ok, %BillingAccount{} = account} = Billing.create_billing_account(attrs)
+      assert account.stripe_customer_id == "cus_123456"
+    end
+
+    test "returns error when stripe_customer_id does not start with 'cus_'" do
+      user = user_fixture()
+      attrs = %{user_id: user.id, currency: :usd, stripe_customer_id: "invalid_123456"}
+
+      assert {:error, changeset} = Billing.create_billing_account(attrs)
+      assert "must start with cus_" in errors_on(changeset).stripe_customer_id
+    end
   end
 end
