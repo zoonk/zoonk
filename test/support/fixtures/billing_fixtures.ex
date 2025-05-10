@@ -72,4 +72,47 @@ defmodule Zoonk.BillingFixtures do
     {:ok, subscription} = Billing.create_user_subscription(scope, attrs)
     subscription
   end
+
+  @doc """
+  Generates a valid billing account attribute map.
+
+  ## Examples
+
+      iex> valid_billing_account_attrs()
+      %{currency: :usd, user_id: 123}
+
+      iex> valid_billing_account_attrs(%{currency: :eur})
+      %{currency: :eur, user_id: 123}
+
+  """
+  def valid_billing_account_attrs(attrs \\ %{}) do
+    user = Map.get_lazy(attrs, :user, fn -> user_fixture() end)
+
+    attrs
+    |> Map.delete(:user)
+    |> Enum.into(%{
+      currency: :usd,
+      user_id: user.id,
+      stripe_customer_id: "cus_#{System.unique_integer([:positive])}"
+    })
+  end
+
+  @doc """
+  Creates a billing account for testing.
+
+  ## Examples
+
+      iex> billing_account_fixture()
+      %BillingAccount{}
+
+      iex> billing_account_fixture(%{currency: :eur})
+      %BillingAccount{currency: :eur}
+
+  """
+  def billing_account_fixture(attrs \\ %{}) do
+    attrs = valid_billing_account_attrs(attrs)
+
+    {:ok, billing_account} = Billing.create_billing_account(attrs)
+    billing_account
+  end
 end

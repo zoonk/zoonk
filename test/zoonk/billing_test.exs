@@ -6,6 +6,7 @@ defmodule Zoonk.BillingTest do
   import Zoonk.OrgFixtures
 
   alias Zoonk.Billing
+  alias Zoonk.Billing.BillingAccount
   alias Zoonk.Billing.Price
   alias Zoonk.Billing.UserSubscription
   alias Zoonk.Scope
@@ -215,6 +216,85 @@ defmodule Zoonk.BillingTest do
       invalid_attrs = %{status: :invalid_status}
 
       assert {:error, %Ecto.Changeset{}} = Billing.update_user_subscription(scope, subscription, invalid_attrs)
+    end
+  end
+
+  describe "create_billing_account/1" do
+    test "creates a billing account with valid user data" do
+      user = user_fixture()
+      attrs = valid_billing_account_attrs(%{user: user})
+
+      assert {:ok, %BillingAccount{} = billing_account} = Billing.create_billing_account(attrs)
+      assert billing_account.user_id == user.id
+      assert billing_account.currency == :usd
+      assert billing_account.org_id == nil
+      assert billing_account.stripe_customer_id == attrs.stripe_customer_id
+    end
+
+    test "creates a billing account with valid org data" do
+      org = org_fixture()
+      attrs = %{org_id: org.id, currency: :eur}
+
+      assert {:ok, %BillingAccount{} = billing_account} = Billing.create_billing_account(attrs)
+      assert billing_account.org_id == org.id
+      assert billing_account.currency == :eur
+      assert billing_account.user_id == nil
+    end
+
+    test "returns error with missing currency" do
+      user = user_fixture()
+      attrs = %{user_id: user.id}
+
+      assert {:error, changeset} = Billing.create_billing_account(attrs)
+      assert "can't be blank" in errors_on(changeset).currency
+    end
+
+    test "returns error when both user_id and org_id are provided" do
+      user = user_fixture()
+      org = org_fixture()
+      attrs = %{user_id: user.id, org_id: org.id, currency: :usd}
+
+      assert {:error, changeset} = Billing.create_billing_account(attrs)
+      assert "cannot have both user_id and org_id" in errors_on(changeset).base
+    end
+
+    test "returns error when neither user_id nor org_id is provided" do
+      attrs = %{currency: :usd}
+
+      assert {:error, changeset} = Billing.create_billing_account(attrs)
+      assert "must have either user_id or org_id" in errors_on(changeset).base
+    end
+
+    test "returns error when user_id is duplicated" do
+      user = user_fixture()
+      attrs = %{user_id: user.id, currency: :usd}
+
+      assert {:ok, _account} = Billing.create_billing_account(attrs)
+      assert {:error, changeset} = Billing.create_billing_account(attrs)
+      assert "has already been taken" in errors_on(changeset).user_id
+    end
+
+    test "returns error when org_id is duplicated" do
+      org = org_fixture()
+      attrs = %{org_id: org.id, currency: :usd}
+
+      assert {:ok, _account} = Billing.create_billing_account(attrs)
+      assert {:error, changeset} = Billing.create_billing_account(attrs)
+      assert "has already been taken" in errors_on(changeset).org_id
+    end
+
+    test "returns error when user_id is invalid" do
+      attrs = %{user_id: -1, currency: :usd}
+
+      assert {:error, changeset} = Billing.create_billing_account(attrs)
+      assert "does not exist" in errors_on(changeset).user_id
+    end
+
+    test "returns error when org_id is invalid" do
+      attrs = %{org_id: -1, currency: :usd}
+
+      assert {:error, changeset} = Billing.create_billing_account(attrs)
+      assert "does not exist" in errors_on(changeset).org_id
     end
   end
 end

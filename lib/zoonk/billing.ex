@@ -6,11 +6,35 @@ defmodule Zoonk.Billing do
   and integrating with payment providers such as Stripe.
   """
 
+  alias Zoonk.Billing.BillingAccount
   alias Zoonk.Billing.Price
   alias Zoonk.Billing.Stripe
   alias Zoonk.Billing.UserSubscription
   alias Zoonk.Repo
   alias Zoonk.Scope
+
+  @doc """
+  Creates a billing account.
+
+  Takes attributes to create a new billing account record. The attributes should
+  include either a user_id or an org_id, but not both.
+
+  ## Examples
+
+      iex> create_billing_account(%{user_id: 123, currency: :usd})
+      {:ok, %BillingAccount{}}
+
+      iex> create_billing_account(%{org_id: 456, currency: :usd})
+      {:ok, %BillingAccount{}}
+
+      iex> create_billing_account(%{})
+      {:error, %Ecto.Changeset{}}
+  """
+  def create_billing_account(attrs) do
+    %BillingAccount{}
+    |> BillingAccount.changeset(attrs)
+    |> Repo.insert()
+  end
 
   @doc """
   Creates a user subscription.
