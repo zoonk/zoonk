@@ -137,4 +137,42 @@ defmodule Zoonk.Billing do
       premium_monthly premium_yearly premium_lifetime
     ]
   end
+
+  @doc """
+  Cancels a user subscription.
+
+  Updates the subscription status to `:canceled` and sets `cancel_at_period_end` to `true`.
+  Also cancels the subscription in Stripe if a Stripe subscription ID exists.
+
+  ## Examples
+
+      iex> cancel_user_subscription(scope, subscription)
+      {:ok, %UserSubscription{}}
+
+      iex> cancel_user_subscription(scope, subscription)
+      {:error, %Ecto.Changeset{}}
+  """
+  def cancel_user_subscription(%Scope{} = scope, %UserSubscription{} = subscription) do
+    subscription
+    |> cancel_stripe_subscription()
+    |> cancel_user_subscription(scope, subscription, %{status: :canceled, cancel_at_period_end: true})
+  end
+
+  defp cancel_user_subscription({:ok, _status}, scope, subscription, attrs) do
+    update_user_subscription(scope, subscription, attrs)
+  end
+
+  defp cancel_user_subscription({:error, message}, _scope, _subscription, _attrs) do
+    {:error, message}
+  end
+
+  # Don't call the Stripe API if the user isn't using Stripe
+  defp cancel_stripe_subscription(%UserSubscription{stripe_subscription_id: nil}) do
+    {:ok, %{"status" => "canceled"}}
+  end
+
+  # Cancels a Stripe subscription if a subscription ID exists
+  defp cancel_stripe_subscription(%UserSubscription{stripe_subscription_id: subscription_id}) do
+    Stripe.delete("/subscriptions/#{subscription_id}")
+  end
 end

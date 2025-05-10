@@ -219,6 +219,40 @@ defmodule Zoonk.BillingTest do
     end
   end
 
+  describe "cancel_user_subscription/2" do
+    test "successfully cancels a subscription with Stripe subscription ID" do
+      %Scope{user: user} = scope = scope_fixture()
+      subscription = user_subscription_fixture(%{user: user, stripe_subscription_id: "sub_12345"})
+
+      stripe_stub(prefix: "/subscriptions/sub_12345", data: %{"status" => "canceled"})
+
+      assert {:ok, canceled_subscription} = Billing.cancel_user_subscription(scope, subscription)
+
+      assert canceled_subscription.status == :canceled
+      assert canceled_subscription.cancel_at_period_end == true
+      assert canceled_subscription.stripe_subscription_id == "sub_12345"
+    end
+
+    test "successfully cancels a subscription without Stripe subscription ID" do
+      %Scope{user: user} = scope = scope_fixture()
+      subscription = user_subscription_fixture(%{user: user, stripe_subscription_id: nil})
+
+      assert {:ok, canceled_subscription} = Billing.cancel_user_subscription(scope, subscription)
+      assert canceled_subscription.status == :canceled
+      assert canceled_subscription.cancel_at_period_end == true
+      assert canceled_subscription.stripe_subscription_id == nil
+    end
+
+    test "handles Stripe API errors" do
+      %Scope{user: user} = scope = scope_fixture()
+      subscription = user_subscription_fixture(%{user: user, stripe_subscription_id: "sub_error"})
+
+      stripe_stub(error: true)
+
+      assert {:error, "Invalid request"} = Billing.cancel_user_subscription(scope, subscription)
+    end
+  end
+
   describe "create_billing_account/1" do
     test "creates a billing account with valid user data" do
       user = user_fixture()
