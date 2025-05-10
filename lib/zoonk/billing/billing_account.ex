@@ -51,8 +51,8 @@ defmodule Zoonk.Billing.BillingAccount do
   end
 
   defp validate_user_or_org(changeset) do
-    user_id = get_field(changeset, :user_id)
     org_id = get_field(changeset, :org_id)
+    user_id = get_field(changeset, :user_id)
     validate_user_or_org(changeset, org_id, user_id)
   end
 
