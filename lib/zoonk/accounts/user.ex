@@ -14,9 +14,7 @@ defmodule Zoonk.Accounts.User do
   | Field Name           | Type          | Description                          |
   |----------------------|---------------|--------------------------------------|
   | `year_of_birth`      | `Integer`     | Year of birth for legal reasons.     |
-  | `currency`           | `Ecto.Enum`   | Currency used for payments.          |
   | `email`              | `String`      | User's email address.                |
-  | `stripe_customer_id` | `String`      | Stripe customer ID.                  |
   | `language`           | `Ecto.Enum`   | User's language.                     |
   | `confirmed_at`       | `DateTime`    | When the account was confirmed.      |
   | `authenticated_at`   | `DateTime`    | When the user was last authenticated.|
@@ -30,17 +28,15 @@ defmodule Zoonk.Accounts.User do
 
   alias Zoonk.Accounts.UserProfile
   alias Zoonk.Accounts.UserProvider
+  alias Zoonk.Billing.BillingAccount
   alias Zoonk.Catalog.UserInterest
-  alias Zoonk.Config.CurrencyConfig
   alias Zoonk.Config.LanguageConfig
   alias Zoonk.Orgs.OrgMember
   alias Zoonk.Orgs.TeamMember
 
   schema "users" do
     field :year_of_birth, :integer
-    field :currency, Ecto.Enum, values: CurrencyConfig.list_currencies(:atom)
     field :email, :string
-    field :stripe_customer_id, :string
 
     field :language, Ecto.Enum,
       values: LanguageConfig.list_languages(:atom),
@@ -50,6 +46,7 @@ defmodule Zoonk.Accounts.User do
     field :authenticated_at, :utc_datetime_usec, virtual: true
 
     has_one :profile, UserProfile
+    has_one :billing_account, BillingAccount
     has_many :providers, UserProvider
 
     has_many :org_memberships, OrgMember

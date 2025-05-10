@@ -5,8 +5,6 @@ defmodule Zoonk.Repo.Migrations.CreateOrgSettingsTable do
     create table(:org_settings) do
       add :org_id, references(:orgs, on_delete: :delete_all), null: false
 
-      add :currency, :string
-      add :stripe_customer_id, :string
       add :allowed_domains, {:array, :string}, default: []
 
       timestamps(type: :utc_datetime_usec)

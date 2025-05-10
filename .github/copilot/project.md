@@ -17,3 +17,31 @@
 - Elixir now has set-theoretic types. This means the compiler can catch type issues when we use structs. They won't use `@spec` (typespecs) in the future, so you don't need to add them. Instead, focus on writing good structs and using them in functions. For example, `def foo(%MyStruct{} = my_struct)` is better than `def foo(my_struct)`.
 - When you finish your changes, run `mix test` to ensure everything is working correctly.
 - Unused variables should be named. E.g. `_error` instead of just `_`.
+- Prefer using pattern matching over `case` or `cond` statements. For example:
+
+```
+# Instead of this:
+defp validate_user_or_org(changeset) do
+  user_id = get_field(changeset, :user_id)
+  org_id = get_field(changeset, :org_id)
+
+  cond do
+    is_nil(user_id) && is_nil(org_id) -> add_error()
+    is_integer(user_id) && is_integer(org_id) -> add_error()
+    _ -> changeset
+  end
+end
+
+# Use this:
+defp validate_user_or_org(changeset) do
+  user_id = get_field(changeset, :user_id)
+  org_id = get_field(changeset, :org_id)
+  validate_user_or_org(changeset, org_id, user_id)
+end
+
+defp validate_user_or_org(changeset, nil, nil), do: add_error()
+
+defp validate_user_or_org(changeset, user_id, org_id) when is_integer(user_id) and is_integer(org_id), do: add_error()
+
+defp validate_user_or_org(changeset, _user_id, _org_id), do: changeset
+```
