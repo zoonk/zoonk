@@ -61,6 +61,32 @@ defmodule Zoonk.Billing.Stripe do
     |> handle_response()
   end
 
+  @doc """
+  Sends a `DELETE` request to the Stripe API.
+
+  ## Parameters
+  - `endpoint`: The Stripe API endpoint to send the request to.
+  - `params`: Optional query parameters for the request.
+  - `opts`: Additional options for the request, such as headers.
+
+  ## Examples
+
+      iex> Stripe.delete("/subscriptions/sub_1J2Y3Z4A5B6C7D8E9F0G")
+      {:ok, %{id: "sub_1J2Y3Z4A5B6C7D8E9F0G", status: "canceled"}}
+
+      iex> Stripe.delete("/subscriptions/invalid_id")
+      {:error, "No such subscription: invalid_id"}
+  """
+  def delete(endpoint, params \\ %{}, opts \\ []) do
+    [url: parse_url(endpoint), params: params]
+    |> Req.new()
+    |> Req.Request.merge_options(stripe_opts())
+    |> Req.Request.merge_options(opts)
+    |> Req.Request.put_header("Stripe-Version", @api_version)
+    |> Req.delete()
+    |> handle_response()
+  end
+
   defp handle_response({:ok, %Req.Response{body: %{"error" => error}}}) do
     {:error, error["message"]}
   end
