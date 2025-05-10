@@ -146,22 +146,24 @@ defmodule Zoonk.Billing do
 
   ## Examples
 
-      iex> cancel_user_subscription(subscription)
+      iex> cancel_user_subscription(scope, subscription)
       {:ok, %UserSubscription{}}
 
-      iex> cancel_user_subscription(subscription)
+      iex> cancel_user_subscription(scope, subscription)
       {:error, %Ecto.Changeset{}}
   """
-  def cancel_user_subscription(%UserSubscription{} = subscription) do
-    # First, update the subscription in our database
-    with {:ok, updated_subscription} <-
-           subscription
-           |> UserSubscription.changeset(%{status: :canceled, cancel_at_period_end: true})
-           |> Repo.update(),
-         # Then cancel in Stripe if needed
-         {:ok, _stripe_response} <- cancel_stripe_subscription(updated_subscription) do
-      {:ok, updated_subscription}
-    end
+  def cancel_user_subscription(%Scope{} = scope, %UserSubscription{} = subscription) do
+    subscription
+    |> cancel_stripe_subscription()
+    |> cancel_user_subscription(scope, subscription, %{status: :canceled, cancel_at_period_end: true})
+  end
+
+  defp cancel_user_subscription({:ok, _status}, scope, subscription, attrs) do
+    update_user_subscription(scope, subscription, attrs)
+  end
+
+  defp cancel_user_subscription({:error, message}, _scope, _subscription, _attrs) do
+    {:error, message}
   end
 
   # Don't call the Stripe API if the user isn't using Stripe
