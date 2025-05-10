@@ -87,14 +87,15 @@ defmodule Zoonk.BillingFixtures do
   """
   def valid_billing_account_attrs(attrs \\ %{}) do
     user = Map.get_lazy(attrs, :user, fn -> user_fixture() end)
+    org_id = Map.get(attrs, :org_id)
 
     attrs
     |> Map.delete(:user)
     |> Enum.into(%{
       currency: :usd,
-      user_id: user.id,
       stripe_customer_id: "cus_#{System.unique_integer([:positive])}"
     })
+    |> Map.put_new_lazy(:user_id, fn -> if is_nil(org_id), do: user.id end)
   end
 
   @doc """
