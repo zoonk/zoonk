@@ -138,6 +138,32 @@ defmodule Zoonk.Billing do
     ]
   end
 
+  @doc """
+  Cancels a user subscription.
+
+  Updates the subscription status to `:canceled` and sets `cancel_at_period_end` to `true`.
+  Also cancels the subscription in Stripe if a Stripe subscription ID exists.
+
+  ## Examples
+
+      iex> cancel_user_subscription(subscription)
+      {:ok, %UserSubscription{}}
+
+      iex> cancel_user_subscription(subscription)
+      {:error, %Ecto.Changeset{}}
+  """
+  def cancel_user_subscription(%UserSubscription{} = subscription) do
+    # First, update the subscription in our database
+    with {:ok, updated_subscription} <-
+           subscription
+           |> UserSubscription.changeset(%{status: :canceled, cancel_at_period_end: true})
+           |> Repo.update(),
+         # Then cancel in Stripe if needed
+         {:ok, _stripe_response} <- cancel_stripe_subscription(updated_subscription) do
+      {:ok, updated_subscription}
+    end
+  end
+
   # Don't call the Stripe API if the user isn't using Stripe
   defp cancel_stripe_subscription(%UserSubscription{stripe_subscription_id: nil}) do
     {:ok, %{"status" => "canceled"}}
