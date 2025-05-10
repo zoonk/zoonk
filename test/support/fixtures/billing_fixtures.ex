@@ -86,17 +86,16 @@ defmodule Zoonk.BillingFixtures do
 
   """
   def valid_billing_account_attrs(attrs \\ %{}) do
-    user = Map.get_lazy(attrs, :user, fn -> user_fixture() end)
-    org_id = Map.get(attrs, :org_id)
+    org = Map.get(attrs, :org)
+    user = Map.get(attrs, :user)
+    attrs = maybe_add_attrs(%{currency: :usd, stripe_customer_id: "cus_#{System.unique_integer([:positive])}"}, org, user)
 
-    attrs
-    |> Map.delete(:user)
-    |> Enum.into(%{
-      currency: :usd,
-      stripe_customer_id: "cus_#{System.unique_integer([:positive])}"
-    })
-    |> Map.put_new_lazy(:user_id, fn -> if is_nil(org_id), do: user.id end)
+    Enum.into(attrs, attrs)
   end
+
+  defp maybe_add_attrs(attrs, %{} = org, nil), do: Map.put(attrs, :org_id, org.id)
+  defp maybe_add_attrs(attrs, nil, %{} = user), do: Map.put(attrs, :user_id, user.id)
+  defp maybe_add_attrs(attrs, _org, _user), do: Map.put(attrs, :user_id, user_fixture().id)
 
   @doc """
   Creates a billing account for testing.
