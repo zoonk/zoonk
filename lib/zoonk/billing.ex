@@ -137,4 +137,14 @@ defmodule Zoonk.Billing do
       premium_monthly premium_yearly premium_lifetime
     ]
   end
+
+  # Don't call the Stripe API if the user isn't using Stripe
+  defp cancel_stripe_subscription(%UserSubscription{stripe_subscription_id: nil}) do
+    {:ok, %{"status" => "canceled"}}
+  end
+
+  # Cancels a Stripe subscription if a subscription ID exists
+  defp cancel_stripe_subscription(%UserSubscription{stripe_subscription_id: subscription_id}) do
+    Stripe.delete("/subscriptions/#{subscription_id}")
+  end
 end
