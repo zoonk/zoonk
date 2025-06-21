@@ -41,12 +41,14 @@ defmodule ZoonkWeb.Components.Dropdown do
       phx-window-keydown={hide_dropdown()}
       phx-key="Escape"
       class={[
-        "bg-zk-surface ring-zk-border absolute z-10 mt-2 hidden w-48 rounded-md shadow-lg ring-1 focus:outline-none",
+        "bg-zk-surface ring-zk-border absolute z-50 mt-2 hidden w-48 rounded-md p-1 shadow-md ring-1 focus:outline-none",
         @position == :left && "left-0",
         @position == :right && "right-0"
       ]}
     >
-      <ul class="flex flex-col">{render_slot(@inner_block)}</ul>
+      <div role="menu" class="flex flex-col">
+        {render_slot(@inner_block)}
+      </div>
     </.focus_wrap>
     """
   end
@@ -58,21 +60,27 @@ defmodule ZoonkWeb.Components.Dropdown do
 
   def dropdown_item(assigns) do
     ~H"""
-    <li>
+    <div role="menuitem">
       <.link
         class={[
-          "flex items-center gap-2 rounded-md p-2 text-sm",
-          "hover:bg-zk-muted/70 focus-visible:bg-zk-muted/70",
+          "flex select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm",
+          "hover:bg-zk-muted focus-visible:bg-zk-muted",
           @variant == :default && "text-zk-surface-foreground",
           @variant == :destructive && "text-zk-destructive-text"
         ]}
         {@rest}
       >
-        <.icon :if={@icon} name={@icon} />
+        <.icon :if={@icon} size={:xs} name={@icon} />
 
         {render_slot(@inner_block)}
       </.link>
-    </li>
+    </div>
+    """
+  end
+
+  def dropdown_separator(assigns) do
+    ~H"""
+    <div class="bg-zk-border my-1 h-px" />
     """
   end
 

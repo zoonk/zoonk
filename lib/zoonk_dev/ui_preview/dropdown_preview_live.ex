@@ -19,6 +19,7 @@ defmodule ZoonkDev.UIPreview.DropdownPreviewLive do
             <.dropdown_content>
               <.dropdown_item icon="tabler-settings">Settings</.dropdown_item>
               <.dropdown_item icon="tabler-user">Profile</.dropdown_item>
+              <.dropdown_separator />
               <.dropdown_item variant={:destructive} icon="tabler-logout">Logout</.dropdown_item>
             </.dropdown_content>
           </.dropdown>
@@ -38,6 +39,7 @@ defmodule ZoonkDev.UIPreview.DropdownPreviewLive do
             <.dropdown_content position={:left}>
               <.dropdown_item icon="tabler-settings">Settings</.dropdown_item>
               <.dropdown_item icon="tabler-user">Profile</.dropdown_item>
+              <.dropdown_separator />
               <.dropdown_item variant={:destructive} icon="tabler-logout">Logout</.dropdown_item>
             </.dropdown_content>
           </.dropdown>
