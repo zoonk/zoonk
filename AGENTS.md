@@ -28,7 +28,7 @@
 ### Schemas
 
 - Use context-prefixed names (e.g., `Zoonk.Accounts.User`).
-- Add a `@moduledoc` with a **field table**: Field Name | Type | Description.
+- Add a `@moduledoc` with a **field table** for schemas: Field Name | Type | Description.
 - Use `List` instead of `Array` for types.
 - Always include `timestamps(type: :utc_datetime_usec)`.
 - Default `array` fields to `[]`.

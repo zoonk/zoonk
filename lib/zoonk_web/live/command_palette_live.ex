@@ -8,6 +8,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
   use ZoonkWeb, :live_component
   use ZoonkWeb, :verified_routes
 
+  import Zoonk.Config.MenuIconsConfig
   import ZoonkWeb.Components.Command
   import ZoonkWeb.Components.Dialog
   import ZoonkWeb.Components.Icon
@@ -109,17 +110,17 @@ defmodule ZoonkWeb.CommandPaletteLive do
   defp navigation_items do
     [
       %{
-        icon: "tabler-home",
+        icon: get_icon(:home),
         label: gettext("Home page"),
         navigate: ~p"/"
       },
       %{
-        icon: "tabler-layout-grid",
+        icon: get_icon(:catalog),
         label: gettext("Catalog"),
         navigate: ~p"/catalog"
       },
       %{
-        icon: "tabler-circle-plus",
+        icon: get_icon(:start_course),
         label: gettext("Start new course"),
         navigate: ~p"/learn"
       }
@@ -129,22 +130,22 @@ defmodule ZoonkWeb.CommandPaletteLive do
   defp user_items do
     [
       %{
-        icon: "tabler-layout-grid",
+        icon: get_icon(:my_courses),
         label: dgettext("users", "My courses"),
         navigate: ~p"/my-courses"
       },
       %{
-        icon: "tabler-target",
+        icon: get_icon(:missions),
         label: dgettext("users", "Missions"),
         navigate: ~p"/missions"
       },
       %{
-        icon: "tabler-package",
+        icon: get_icon(:purchases),
         label: dgettext("users", "Purchases"),
         navigate: ~p"/purchases"
       },
       %{
-        icon: "tabler-diamond",
+        icon: get_icon(:subscription),
         label: dgettext("users", "Subscription"),
         navigate: ~p"/subscription"
       }
@@ -154,17 +155,17 @@ defmodule ZoonkWeb.CommandPaletteLive do
   defp settings_items do
     [
       %{
-        icon: "tabler-language",
+        icon: get_icon(:language),
         label: gettext("Change app language"),
         navigate: ~p"/language"
       },
       %{
-        icon: "tabler-id-badge",
+        icon: get_icon(:display_name),
         label: gettext("Change display name"),
         navigate: ~p"/name"
       },
       %{
-        icon: "tabler-mail",
+        icon: get_icon(:email),
         label: gettext("Change email address"),
         navigate: ~p"/email"
       }
@@ -174,22 +175,22 @@ defmodule ZoonkWeb.CommandPaletteLive do
   defp support_items do
     [
       %{
-        icon: "tabler-message-circle",
+        icon: get_icon(:feedback),
         label: dgettext("users", "Send feedback"),
         navigate: ~p"/feedback"
       },
       %{
-        icon: "tabler-lifebuoy",
+        icon: get_icon(:support),
         label: dgettext("users", "Support"),
         navigate: ~p"/support"
       },
       %{
-        icon: "tabler-ufo",
+        icon: get_icon(:follow),
         label: gettext("Follow us on social media"),
         navigate: ~p"/follow"
       },
       %{
-        icon: "tabler-logout",
+        icon: get_icon(:logout),
         label: dgettext("users", "Logout"),
         href: ~p"/logout",
         method: "delete"
