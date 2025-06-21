@@ -195,7 +195,7 @@ defmodule ZoonkWeb.Components.Command do
   """
   attr :class, :string, default: nil, doc: "Additional CSS classes for the item"
   attr :selected, :boolean, default: false, doc: "Whether the item is currently selected"
-  attr :rest, :global, doc: "Additional HTML attributes"
+  attr :rest, :global, include: ~w(href method navigate patch), doc: "Additional HTML attributes"
   slot :inner_block, required: true, doc: "The content of the command item"
 
   def command_item(assigns) do

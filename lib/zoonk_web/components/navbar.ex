@@ -33,6 +33,8 @@ defmodule ZoonkWeb.Components.Navbar do
         {gettext("Catalog")}
       </.a>
 
+      <.live_component module={ZoonkWeb.CommandPaletteLive} id="command-palette" />
+
       <.a
         kind={:button}
         icon="tabler-circle-plus"
