@@ -98,6 +98,7 @@ defmodule ZoonkWeb do
       import ZoonkWeb.Components.Icon
       import ZoonkWeb.Components.Input
       import ZoonkWeb.Components.Loader
+      import ZoonkWeb.Components.Navbar
       import ZoonkWeb.Components.Text
       import ZoonkWeb.Components.Utils
 
