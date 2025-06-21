@@ -182,7 +182,7 @@ defmodule ZoonkWeb.Components.Command do
         tabindex="0"
         class={[
           "relative flex w-full select-none items-center gap-2 rounded-sm px-2 py-1.5",
-          "text-zk-secondary-foreground text-sm outline-none",
+          "text-zk-secondary-foreground/70 text-sm outline-none",
           "hover:bg-zk-secondary",
           "focus-visible:bg-zk-secondary",
           @selected && "bg-zk-secondary",
