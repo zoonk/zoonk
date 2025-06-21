@@ -56,7 +56,6 @@ defmodule ZoonkWeb.UserAuth do
     conn
     |> renew_session(nil)
     |> delete_resp_cookie(@remember_me_cookie)
-    |> put_session(:guest_user_id, "guest_#{System.unique_integer()}")
     |> redirect(to: ~p"/")
   end
 
@@ -74,18 +73,7 @@ defmodule ZoonkWeb.UserAuth do
       |> maybe_reissue_user_session_token(user, token_inserted_at)
     else
       nil ->
-        conn
-        |> assign(:scope, build_scope(nil, conn.host))
-        |> maybe_add_guest_user_id()
-    end
-  end
-
-  # we use this for analytics to keep a consistent guest user id across sessions
-  defp maybe_add_guest_user_id(conn) do
-    if get_session(conn, :guest_user_id) do
-      conn
-    else
-      put_session(conn, :guest_user_id, "guest_#{System.unique_integer()}")
+        assign(conn, :scope, build_scope(nil, conn.host))
     end
   end
 

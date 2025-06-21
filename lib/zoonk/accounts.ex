@@ -15,7 +15,6 @@ defmodule Zoonk.Accounts do
   alias Zoonk.Accounts.UserProfile
   alias Zoonk.Accounts.UserProvider
   alias Zoonk.Accounts.UserToken
-  alias Zoonk.Analytics
   alias Zoonk.Config.AuthConfig
   alias Zoonk.Helpers
   alias Zoonk.Orgs.Org
@@ -125,8 +124,6 @@ defmodule Zoonk.Accounts do
   """
   def update_user_email(user, otp_code) do
     context = "change:#{user.email}"
-
-    Analytics.capture("update_email", user)
 
     with {:ok, query} <- UserToken.verify_change_email_code_query(otp_code, context),
          %UserToken{sent_to: email} <- Repo.one(query),
@@ -329,12 +326,9 @@ defmodule Zoonk.Accounts do
   # Create a new user and link the provider
   defp signup_user_with_provider(auth, %Scope{} = scope, language) do
     user_attrs = %{email: auth["email"], language: language}
-    guest_user_id = auth["guest_user_id"] || auth["sub"]
     provider_attrs = get_provider_attrs(auth)
     profile_opts = [display_name: auth["name"], picture_url: auth["picture"], username: auth["preferred_username"]]
     allowed_domains = get_allowed_domains(scope.org)
-
-    Analytics.capture("signup_with_provider", guest_user_id, %{provider: provider_attrs.provider})
 
     user_changeset =
       %User{}

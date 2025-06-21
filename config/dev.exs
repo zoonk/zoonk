@@ -88,8 +88,5 @@ config :zoonk, ZoonkWeb.Endpoint,
     ]
   ]
 
-# Disable PostHog in development
-config :zoonk, :posthog, enabled_capture: false
-
 # Enable dev routes for dashboard and mailbox
 config :zoonk, dev_routes: true

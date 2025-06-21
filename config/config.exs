@@ -81,17 +81,6 @@ config :zoonk, ZoonkWeb.Endpoint,
   pubsub_server: Zoonk.PubSub,
   live_view: [signing_salt: "aQIHSki0"]
 
-# Posthog configuration
-config :zoonk, :posthog,
-  api_url: "https://ph.zoonk.com",
-  # This key is public, so it's okay to get it during compile time
-  api_key: System.get_env("POSTHOG_API_KEY")
-
-# Make sure all schemas are migrated when running `mix cloak.migrate.ecto`
-config :zoonk,
-  cloak_repo: Zoonk.Repo,
-  cloak_schemas: [Zoonk.Accounts.User]
-
 # Configures Ecto
 config :zoonk,
   ecto_repos: [Zoonk.Repo],

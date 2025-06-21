@@ -2,8 +2,6 @@ defmodule ZoonkWeb.Learning.LearningStartLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  alias Zoonk.Analytics
-
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -37,8 +35,6 @@ defmodule ZoonkWeb.Learning.LearningStartLive do
   @impl Phoenix.LiveView
   def mount(_params, session, socket) do
     app_language = Map.get(session, "language", "en")
-
-    Analytics.capture("goal_learning_start", socket.assigns.scope, %{language: app_language})
 
     socket =
       socket

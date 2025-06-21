@@ -3,7 +3,6 @@ defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
   use ZoonkWeb, :live_view
 
   alias Zoonk.AI.Agents.LearningRecommender
-  alias Zoonk.Analytics
 
   @colors [
     "text-red-500",
@@ -102,8 +101,6 @@ defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
   def mount(params, session, socket) do
     input = params["input"]
     language = session["language"]
-
-    Analytics.capture("goal_learning_query", socket.assigns.scope, %{language: language, query: input})
 
     socket =
       socket

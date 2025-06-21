@@ -65,9 +65,6 @@ config :zoonk, :ai,
     exercise_image: "gpt-image-1"
   ]
 
-# Disable PostHog for testing
-config :zoonk, :posthog, enabled_capture: false
-
 # Disable Stripe calls for testing
 config :zoonk, :stripe,
   opts: [

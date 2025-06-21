@@ -5,7 +5,6 @@ defmodule ZoonkWeb.User.UserSignUpLive do
   import ZoonkWeb.User.UserComponents
 
   alias Zoonk.Accounts.User
-  alias Zoonk.Analytics
   alias Zoonk.Config.AuthConfig
   alias Zoonk.Scope
   alias ZoonkWeb.UserAuth
@@ -32,9 +31,7 @@ defmodule ZoonkWeb.User.UserSignUpLive do
     {:ok, redirect(socket, to: UserAuth.signed_in_path(socket))}
   end
 
-  def mount(_params, session, socket) do
-    Analytics.capture("signup_started", session["guest_user_id"])
-
+  def mount(_params, _session, socket) do
     {:ok, assign(socket, page_title: dgettext("users", "Create an account"))}
   end
 end
