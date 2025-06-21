@@ -8,7 +8,7 @@ defmodule ZoonkWeb.AppHomeLive do
   def render(assigns) do
     ~H"""
     <main>
-      <nav class="flex items-center justify-between gap-4 p-4" aria-label={gettext("Main navigation")}>
+      <nav class="flex items-center justify-between gap-2 p-4" aria-label={gettext("Main navigation")}>
         <.a
           kind={:button}
           icon="tabler-layout-grid"
@@ -33,7 +33,7 @@ defmodule ZoonkWeb.AppHomeLive do
         <.dropdown label={dgettext("users", "Open settings menu")}>
           <.avatar
             src={@scope.user.profile.picture_url}
-            size={:md}
+            size={:sm}
             alt={User.get_display_name(@scope.user.profile)}
           />
 
