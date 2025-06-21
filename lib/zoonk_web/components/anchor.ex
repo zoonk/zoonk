@@ -9,7 +9,12 @@ defmodule ZoonkWeb.Components.Anchor do
 
   attr :class, :any, default: nil, doc: "CSS class to apply to the anchor"
   attr :kind, :atom, values: [:link, :button, :icon], default: :link, doc: "Kind of anchor to render"
-  attr :variant, :atom, values: [:primary, :outline, :destructive], default: :primary, doc: "Variant of anchor to render"
+
+  attr :variant, :atom,
+    values: [:primary, :outline, :destructive, :secondary],
+    default: :primary,
+    doc: "Variant of anchor to render"
+
   attr :size, :atom, values: [:adaptive, :sm, :md, :lg], default: :sm, doc: "Size of the anchor"
   attr :icon, :string, default: nil, doc: "Icon to display in the anchor"
   attr :icon_align, :atom, values: [:left, :right, :auto], default: :auto, doc: "Icon alignment in the anchor"
@@ -53,6 +58,7 @@ defmodule ZoonkWeb.Components.Anchor do
         @icon_align in [:left, :right] && "relative",
         @variant == :primary && "zk-btn-primary",
         @variant == :destructive && "zk-btn-destructive",
+        @variant == :secondary && "zk-btn-secondary",
         @variant == :outline && "zk-btn-outline",
         @size == :sm && "h-8 px-3",
         @size == :md && "h-10 px-3",

@@ -308,6 +308,12 @@
   focus-visible:ring-zk-destructive-accent;
 }
 
+@utility zk-btn-secondary {
+  @apply bg-zk-secondary ring-zk-secondary text-zk-secondary-foreground/70
+  hover:bg-zk-secondary-accent hover:ring-zk-secondary-accent
+  focus-visible:ring-zk-secondary-accent;
+}
+
 @utility zk-btn-outline {
   @apply border border-zk-border bg-zk-background text-zk-foreground/70 shadow-xs
   hover:bg-zk-muted hover:text-zk-muted-foreground

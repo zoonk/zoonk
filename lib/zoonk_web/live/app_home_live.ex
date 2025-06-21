@@ -21,13 +21,13 @@ defmodule ZoonkWeb.AppHomeLive do
 
         <.a
           kind={:button}
-          icon="tabler-plus"
-          variant={:outline}
+          icon="tabler-circle-plus"
+          variant={:secondary}
           navigate={~p"/learn"}
           size={:adaptive}
           class="ml-auto"
         >
-          {gettext("New course")}
+          {gettext("Start course")}
         </.a>
 
         <.dropdown label={dgettext("users", "Open settings menu")}>

@@ -17,7 +17,7 @@ defmodule ZoonkWeb.Components.Button do
   attr :type, :string, default: "button"
   attr :icon, :string, default: nil
   attr :icon_align, :atom, values: [:left, :right, :auto], default: :auto
-  attr :variant, :atom, values: [:primary, :destructive, :outline], default: :primary
+  attr :variant, :atom, values: [:primary, :destructive, :secondary, :outline], default: :primary
   attr :size, :atom, values: [:sm, :md, :lg], default: :sm
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
@@ -34,6 +34,7 @@ defmodule ZoonkWeb.Components.Button do
         @icon_align in [:left, :right] && "relative",
         @variant == :primary && "zk-btn-primary",
         @variant == :destructive && "zk-btn-destructive",
+        @variant == :secondary && "zk-btn-secondary",
         @variant == :outline && "zk-btn-outline",
         @size == :sm && "h-8 px-3",
         @size == :md && "h-10 px-3",

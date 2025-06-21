@@ -55,6 +55,7 @@ defmodule ZoonkDev.UIPreview.AnchorPreviewLive do
         <.card_content align={:bottom}>
           <.a kind={:button} variant={:primary}>Primary</.a>
           <.a kind={:button} variant={:destructive}>Destructive</.a>
+          <.a kind={:button} variant={:secondary}>Secondary</.a>
           <.a kind={:button} variant={:outline}>Outline</.a>
         </.card_content>
       </.card>
