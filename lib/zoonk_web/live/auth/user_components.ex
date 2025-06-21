@@ -18,6 +18,7 @@ defmodule ZoonkWeb.User.UserComponents do
       kind={:button}
       icon={get_icon(@provider)}
       variant={:outline}
+      size={:md}
       class="w-full"
       icon_align={:left}
       {get_navigate_attr(@action, @provider)}

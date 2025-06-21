@@ -291,8 +291,9 @@
 }
 
 @utility zk-btn {
-  @apply inline-flex w-max items-center justify-center gap-2 rounded leading-none select-none
-  transition-colors ring-offset-zk-background focus-visible:outline-0 focus-visible:ring-offset-2 focus-visible:ring-2;
+  @apply inline-flex items-center justify-center gap-1.5 rounded-full text-sm font-medium
+  shrink-0 leading-none select-none whitespace-nowrap transition-all
+  ring-offset-zk-background outline-none focus-visible:ring-offset-2 focus-visible:ring-2;
 }
 
 @utility zk-btn-primary {
@@ -308,9 +309,9 @@
 }
 
 @utility zk-btn-outline {
-  @apply border border-zk-border bg-zk-surface text-zk-surface-foreground
+  @apply border border-zk-border bg-zk-background text-zk-foreground/70 shadow-xs
   hover:bg-zk-muted hover:text-zk-muted-foreground
-  focus-visible:ring-zk-muted;
+  focus-visible:ring-zk-border;
 }
 
 @utility zk-btn-shadow {

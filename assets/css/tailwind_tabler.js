@@ -27,7 +27,6 @@ module.exports = plugin(function ({ matchComponents, theme }) {
           .readFileSync(fullPath)
           .toString()
           .replace(/\r?\n|\r/g, "")
-          .replace('stroke-width="2"', 'stroke-width="1"')
           .replace(/width="[^"]*"/, "")
           .replace(/height="[^"]*"/, "");
 

@@ -35,9 +35,9 @@ defmodule ZoonkWeb.Components.Button do
         @variant == :primary && "zk-btn-primary",
         @variant == :destructive && "zk-btn-destructive",
         @variant == :outline && "zk-btn-outline",
-        @size == :sm && "h-8 px-4 text-xs",
-        @size == :md && "h-10 px-4 text-sm",
-        @size == :lg && "text-md h-12 px-6",
+        @size == :sm && "h-8 px-3",
+        @size == :md && "h-10 px-3",
+        @size == :lg && "h-12 px-6",
         @class
       ]}
       {@rest}

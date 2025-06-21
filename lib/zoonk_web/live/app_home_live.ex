@@ -12,9 +12,9 @@ defmodule ZoonkWeb.AppHomeLive do
         <.a
           kind={:button}
           icon="tabler-layout-grid"
-          icon_on_mobile
           variant={:outline}
           navigate={~p"/catalog"}
+          size={:adaptive}
         >
           {gettext("Catalog")}
         </.a>
@@ -22,10 +22,10 @@ defmodule ZoonkWeb.AppHomeLive do
         <.a
           kind={:button}
           icon="tabler-plus"
-          icon_on_mobile
           variant={:outline}
           navigate={~p"/learn"}
-          container_class="ml-auto"
+          size={:adaptive}
+          class="ml-auto"
         >
           {gettext("New course")}
         </.a>
