@@ -80,7 +80,7 @@ defmodule ZoonkWeb.Components.Dropdown do
 
   def dropdown_separator(assigns) do
     ~H"""
-    <div class="bg-zk-border my-1 h-px" />
+    <div class="bg-zk-border -mx-1 my-1 h-px" />
     """
   end
 

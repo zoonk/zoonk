@@ -6,6 +6,16 @@ defmodule ZoonkWeb.RequireOrgMemberPermissionTest do
         kind <- [:app, :creator, :team, :school],
         page <- [
           %{link: "/", menu: "Summary"},
+          %{link: "/my-courses", menu: "My courses"},
+          %{link: "/missions", menu: "Missions"},
+          %{link: "/purchases", menu: "Purchases"},
+          %{link: "/subscription", menu: "Subscription"},
+          %{link: "/language", menu: "App language"},
+          %{link: "/name", menu: "Display name"},
+          %{link: "/email", menu: "Change email"},
+          %{link: "/feedback", menu: "Send feedback"},
+          %{link: "/support", menu: "Support"},
+          %{link: "/follow", menu: "Follow us"},
           %{link: "/settings", menu: "Settings"}
         ],
         do: %{kind: kind, page: page}
