@@ -7,8 +7,6 @@ defmodule Zoonk.Application do
 
   @impl Application
   def start(_type, _args) do
-    Oban.Telemetry.attach_default_logger()
-
     children = [
       ZoonkWeb.Telemetry,
       Zoonk.Repo,
