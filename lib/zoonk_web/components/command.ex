@@ -14,6 +14,7 @@ defmodule ZoonkWeb.Components.Command do
   use Phoenix.Component
   use Gettext, backend: Zoonk.Gettext
 
+  import ZoonkWeb.Components.Button
   import ZoonkWeb.Components.Icon
   import ZoonkWeb.Components.Loader
   import ZoonkWeb.Components.Text
@@ -31,13 +32,14 @@ defmodule ZoonkWeb.Components.Command do
       <.command_trigger label="Find commands..." dialog_id="commands-dialog" shortcut="p" />
   """
   attr :id, :string, default: "command-trigger", doc: "The unique identifier for the button"
+  attr :variant, :atom, values: [:icon, :input], default: :input, doc: "Variant of the command trigger button"
   attr :label, :string, default: gettext("Search..."), doc: "Text to display in the button"
   attr :dialog_id, :string, default: "command-dialog", doc: "ID of the dialog to open"
   attr :class, :string, default: nil, doc: "Additional CSS classes for the button"
   attr :shortcut, :string, default: "k", doc: "Keyboard shortcut key to open the dialog"
   attr :rest, :global, doc: "Additional HTML attributes for the button"
 
-  def command_trigger(assigns) do
+  def command_trigger(%{variant: :input} = assigns) do
     ~H"""
     <button
       id={@id}
@@ -68,6 +70,27 @@ defmodule ZoonkWeb.Components.Command do
         <kbd>{@shortcut}</kbd>
       </kbd>
     </button>
+    """
+  end
+
+  def command_trigger(%{variant: :icon} = assigns) do
+    ~H"""
+    <.button
+      id={@id}
+      size={:sm}
+      kind={:icon}
+      aria-haspopup="dialog"
+      aria-controls={@dialog_id}
+      phx-hook="DialogTrigger"
+      data-dialog-id={@dialog_id}
+      data-shortcut={@shortcut}
+      class={@class}
+      icon="tabler-search"
+      variant={:outline}
+      {@rest}
+    >
+      <span class="sr-only">{@label}</span>
+    </.button>
     """
   end
 

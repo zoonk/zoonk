@@ -15,6 +15,7 @@ defmodule ZoonkWeb.Components.Button do
       <.button variant={:outline}>Send!</.button>
   """
   attr :type, :string, default: "button"
+  attr :kind, :atom, values: [:button, :icon], default: :button
   attr :icon, :string, default: nil
   attr :icon_align, :atom, values: [:left, :right, :auto], default: :auto
   attr :variant, :atom, values: [:primary, :destructive, :secondary, :outline], default: :primary
@@ -36,9 +37,12 @@ defmodule ZoonkWeb.Components.Button do
         @variant == :destructive && "zk-btn-destructive",
         @variant == :secondary && "zk-btn-secondary",
         @variant == :outline && "zk-btn-outline",
-        @size == :sm && "h-8 px-3",
-        @size == :md && "h-10 px-3",
-        @size == :lg && "h-12 px-6",
+        @size == :sm && @kind == :button && "h-8 px-3",
+        @size == :md && @kind == :button && "h-10 px-3",
+        @size == :lg && @kind == :button && "h-12 px-6",
+        @size == :sm && @kind == :icon && "size-8",
+        @size == :md && @kind == :icon && "size-10",
+        @size == :lg && @kind == :icon && "size-12",
         @class
       ]}
       {@rest}
@@ -46,7 +50,7 @@ defmodule ZoonkWeb.Components.Button do
       <.icon
         :if={@icon}
         name={@icon}
-        size={:sm}
+        size={if @kind == :button, do: :sm, else: :xs}
         class={[
           @icon_align == :left && "absolute left-4",
           @icon_align == :right && "absolute right-4"

@@ -42,6 +42,7 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
             label="Find settings..."
             dialog_id="settings-dialog"
             shortcut="p"
+            variant={:icon}
           />
         </.card_content>
       </.card>
