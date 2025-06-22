@@ -42,7 +42,7 @@ defmodule Zoonk.MixProject do
       {:bandit, "~> 1.7"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dns_cluster, "~> 0.2.0"},
-      {:ecto_sql, "~> 3.10"},
+      {:ecto_sql, "~> 3.13"},
       {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
       {:ex_doc, "~> 0.37", only: :dev, runtime: false},
       {:floki, ">= 0.38.0", only: :test},

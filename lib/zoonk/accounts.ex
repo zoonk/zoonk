@@ -76,7 +76,7 @@ defmodule Zoonk.Accounts do
     |> Ecto.Multi.insert(:user, changeset)
     |> Ecto.Multi.insert(:profile, &build_initial_user_profile/1)
     |> Ecto.Multi.insert(:org_member, &build_org_member_changeset(&1, scope.org))
-    |> Repo.transaction()
+    |> Repo.transact()
     |> Helpers.get_changeset_from_transaction(:user)
   end
 
@@ -130,7 +130,7 @@ defmodule Zoonk.Accounts do
          {:ok, _res} <-
            user
            |> user_email_multi(email, context)
-           |> Repo.transaction() do
+           |> Repo.transact() do
       :ok
     else
       _error -> :error
@@ -282,7 +282,7 @@ defmodule Zoonk.Accounts do
            |> Ecto.Multi.delete_all(:tokens, fn %{tokens_to_expire: tokens_to_expire} ->
              UserToken.delete_all_query(tokens_to_expire)
            end)
-           |> Repo.transaction() do
+           |> Repo.transact() do
       {:ok, user, expired_tokens}
     end
   end
@@ -340,7 +340,7 @@ defmodule Zoonk.Accounts do
     |> Ecto.Multi.insert(:profile, &build_initial_user_profile(&1, profile_opts))
     |> Ecto.Multi.insert(:provider, &user_provider_changeset(&1, provider_attrs))
     |> Ecto.Multi.insert(:org_member, &build_org_member_changeset(&1, scope.org))
-    |> Repo.transaction()
+    |> Repo.transact()
     |> Helpers.get_changeset_from_transaction(:user)
   end
 
