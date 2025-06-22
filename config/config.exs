@@ -9,7 +9,7 @@ import Config
 
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.25.0",
+  version: "0.25.5",
   zoonk: [
     args: ~w(
       js/app.js
@@ -22,7 +22,7 @@ config :esbuild,
       ),
     cd: Path.expand("../assets", __DIR__),
     env: %{
-      "NODE_PATH" => Path.expand("../deps", __DIR__)
+      "NODE_PATH" => [Path.expand("../deps", __DIR__), Mix.Project.build_path()]
     }
   ]
 

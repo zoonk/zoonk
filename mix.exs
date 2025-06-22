@@ -39,13 +39,13 @@ defmodule Zoonk.MixProject do
   defp deps do
     [
       {:assent, "~> 0.3.0"},
-      {:bandit, "~> 1.5"},
+      {:bandit, "~> 1.7"},
       {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
       {:dns_cluster, "~> 0.2.0"},
-      {:ecto_sql, "~> 3.10"},
-      {:esbuild, "~> 0.9", runtime: Mix.env() == :dev},
+      {:ecto_sql, "~> 3.13"},
+      {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
       {:ex_doc, "~> 0.37", only: :dev, runtime: false},
-      {:floki, ">= 0.30.0", only: :test},
+      {:floki, ">= 0.38.0", only: :test},
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.2"},
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
