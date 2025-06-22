@@ -13,7 +13,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
   import ZoonkWeb.Components.Dialog
   import ZoonkWeb.Components.Icon
 
-  alias Zoonk.Helpers
+  alias Zoonk.FuzzySearch
 
   @impl Phoenix.LiveComponent
   def render(assigns) do
@@ -218,7 +218,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
 
   defp assign_filtered_items(socket, query) do
     all_items = navigation_items() ++ user_items() ++ settings_items() ++ support_items()
-    filtered_items = Helpers.fuzzy_search(all_items, query, & &1.label)
+    filtered_items = FuzzySearch.search(all_items, query, & &1.label)
 
     socket
     |> assign(navigation_items: filter_by_category(filtered_items, navigation_items()))

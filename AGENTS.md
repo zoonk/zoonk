@@ -93,6 +93,7 @@
 - Use the **PhoenixTest** library for testing.
 - Use `Phoenix.Flash.get/2` instead of deprecated `get_flash/2`.
 - Never expose private functions for testing.
+- Use `mix test` to run tests instead of VSCode's debugging tools.
 
 ## Translations
 

@@ -2,7 +2,7 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  alias Zoonk.Helpers
+  alias Zoonk.FuzzySearch
 
   @impl Phoenix.LiveView
   def render(assigns) do
@@ -193,18 +193,18 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
 
   @impl Phoenix.LiveView
   def handle_event("search-docs", %{"query" => query}, socket) do
-    results = Helpers.fuzzy_search(documentation_items(), query, & &1.label)
+    results = FuzzySearch.search(documentation_items(), query, & &1.label)
     {:noreply, assign(socket, doc_results: results)}
   end
 
   def handle_event("search-settings", %{"query" => query}, socket) do
-    results = Helpers.fuzzy_search(settings(), query, & &1.label)
+    results = FuzzySearch.search(settings(), query, & &1.label)
     {:noreply, assign(socket, settings_results: results)}
   end
 
   def handle_event("search-groups", %{"query" => query}, socket) do
-    suggestions_results = Helpers.fuzzy_search(suggestions(), query, & &1.label)
-    groups_settings_results = Helpers.fuzzy_search(settings(), query, & &1.label)
+    suggestions_results = FuzzySearch.search(suggestions(), query, & &1.label)
+    groups_settings_results = FuzzySearch.search(settings(), query, & &1.label)
 
     {:noreply,
      assign(socket,
@@ -214,8 +214,8 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
   end
 
   def handle_event("search-courses", %{"query" => query}, socket) do
-    courses_results = Helpers.fuzzy_search(courses(), query, & &1.label)
-    instructors_results = Helpers.fuzzy_search(instructors(), query, & &1.label)
+    courses_results = FuzzySearch.search(courses(), query, & &1.label)
+    instructors_results = FuzzySearch.search(instructors(), query, & &1.label)
 
     {:noreply,
      assign(socket,
