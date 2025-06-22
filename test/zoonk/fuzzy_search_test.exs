@@ -212,5 +212,11 @@ defmodule Zoonk.FuzzySearchTest do
       result3 = FuzzySearch.search(items, "documntation")
       assert result3 == ["Help Documentation", "System Configuration"]
     end
+
+    test "scores word matches higher than full text matches" do
+      items = ["Purchases", "Change app language"]
+      result = FuzzySearch.search(items, "chanhe")
+      assert result == ["Change app language", "Purchases"]
+    end
   end
 end

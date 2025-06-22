@@ -76,9 +76,11 @@ defmodule Zoonk.FuzzySearch do
   end
 
   defp find_fuzzy_matches(items, query, match_fn, threshold) do
+    adjusted_threshold = calculate_adjusted_threshold(threshold)
+
     items
     |> Enum.map(&score_item(&1, query, match_fn, threshold))
-    |> Enum.filter(fn {_item, score} -> score > 0 end)
+    |> Enum.filter(fn {_item, score} -> score >= adjusted_threshold end)
     |> Enum.sort_by(fn {_item, score} -> -score end)
     |> Enum.map(fn {item, _score} -> item end)
   end
@@ -100,21 +102,17 @@ defmodule Zoonk.FuzzySearch do
   defp fuzzy_match_score(item_text, query, threshold) do
     adjusted_threshold = calculate_adjusted_threshold(threshold)
     full_text_score = String.jaro_distance(item_text, query)
+    word_score = score_individual_words(item_text, query, adjusted_threshold)
 
-    if full_text_score >= adjusted_threshold do
-      full_text_score
-    else
-      score_individual_words(item_text, query, adjusted_threshold)
-    end
+    max(full_text_score, word_score)
   end
 
   defp calculate_adjusted_threshold(threshold), do: max(threshold - 0.1, 0.6)
 
-  defp score_individual_words(item_text, query, adjusted_threshold) do
+  defp score_individual_words(item_text, query, _adjusted_threshold) do
     item_text
     |> String.split(~r/\s+/, trim: true)
     |> Enum.map(&String.jaro_distance(&1, query))
-    |> Enum.filter(&(&1 >= adjusted_threshold))
     |> case do
       [] -> 0
       distances -> Enum.max(distances)
