@@ -32,7 +32,6 @@ Zoonk is a white-label platform for building interactive courses. You can create
 - **`assets`** – CSS and JavaScript files/libraries.
 - **`config`** – Configuration files for `dev`, `test`, `runtime`, and `prod` environments.
 - **`lib`** – Core application code, covering both business logic and the web interface.
-
   - **`zoonk`** – Business logic, schemas, and contexts.
   - **`zoonk_web`** – Web interface, including API and frontend.
     - **`components`** – LiveView (`Phoenix.LiveComponent`) and function components (`Phoenix.Component`).
