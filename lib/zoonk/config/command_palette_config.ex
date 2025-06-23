@@ -7,8 +7,6 @@ defmodule Zoonk.Config.CommandPaletteConfig do
   """
   use ZoonkWeb, :verified_routes
 
-  alias Zoonk.Config.MenuIconsConfig
-
   @doc """
   Returns the navigation items for the command palette.
 
@@ -23,17 +21,17 @@ defmodule Zoonk.Config.CommandPaletteConfig do
   def navigation_items do
     [
       %{
-        icon: MenuIconsConfig.get_icon(:home),
+        icon: "tabler-home",
         label: gettext("Home page"),
         navigate: ~p"/"
       },
       %{
-        icon: MenuIconsConfig.get_icon(:catalog),
+        icon: "tabler-layout-grid",
         label: gettext("Catalog"),
         navigate: ~p"/catalog"
       },
       %{
-        icon: MenuIconsConfig.get_icon(:start_course),
+        icon: "tabler-circle-plus",
         label: gettext("Start new course"),
         navigate: ~p"/learn"
       }
@@ -54,22 +52,22 @@ defmodule Zoonk.Config.CommandPaletteConfig do
   def user_items do
     [
       %{
-        icon: MenuIconsConfig.get_icon(:my_courses),
+        icon: "tabler-layout-grid",
         label: dgettext("users", "My courses"),
         navigate: ~p"/my-courses"
       },
       %{
-        icon: MenuIconsConfig.get_icon(:missions),
+        icon: "tabler-target",
         label: dgettext("users", "Missions"),
         navigate: ~p"/missions"
       },
       %{
-        icon: MenuIconsConfig.get_icon(:purchases),
+        icon: "tabler-package",
         label: dgettext("users", "Purchases"),
         navigate: ~p"/purchases"
       },
       %{
-        icon: MenuIconsConfig.get_icon(:subscription),
+        icon: "tabler-diamond",
         label: dgettext("users", "Subscription"),
         navigate: ~p"/subscription"
       }
@@ -90,17 +88,17 @@ defmodule Zoonk.Config.CommandPaletteConfig do
   def settings_items do
     [
       %{
-        icon: MenuIconsConfig.get_icon(:language),
+        icon: "tabler-language",
         label: gettext("Change app language"),
         navigate: ~p"/language"
       },
       %{
-        icon: MenuIconsConfig.get_icon(:display_name),
+        icon: "tabler-id-badge",
         label: gettext("Change display name"),
         navigate: ~p"/name"
       },
       %{
-        icon: MenuIconsConfig.get_icon(:email),
+        icon: "tabler-mail",
         label: gettext("Change email address"),
         navigate: ~p"/email"
       }
@@ -121,22 +119,22 @@ defmodule Zoonk.Config.CommandPaletteConfig do
   def support_items do
     [
       %{
-        icon: MenuIconsConfig.get_icon(:feedback),
+        icon: "tabler-message-circle",
         label: dgettext("users", "Send feedback"),
         navigate: ~p"/feedback"
       },
       %{
-        icon: MenuIconsConfig.get_icon(:support),
+        icon: "tabler-lifebuoy",
         label: dgettext("users", "Support"),
         navigate: ~p"/support"
       },
       %{
-        icon: MenuIconsConfig.get_icon(:follow),
+        icon: "tabler-ufo",
         label: gettext("Follow us on social media"),
         navigate: ~p"/follow"
       },
       %{
-        icon: MenuIconsConfig.get_icon(:logout),
+        icon: "tabler-logout",
         label: dgettext("users", "Logout"),
         href: ~p"/logout",
         method: "delete"
