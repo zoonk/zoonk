@@ -17,10 +17,10 @@ defmodule ZoonkWeb.Learning.LearningStartLive do
             label={dgettext("learning", "What do you want to learn?")}
             hide_label
             type="text"
-            class="w-full"
+            class="w-full px-4 py-3.5 shadow-md md:px-6 md:text-lg"
             required
             submit_icon="tabler-arrow-up"
-            placeholder={dgettext("learning", "E.g. Computer Science, Astronomy, Biology, etc.")}
+            placeholder={dgettext("learning", "e.g. computer science, astronomy, biology, ...")}
           />
         </.form>
       </div>
