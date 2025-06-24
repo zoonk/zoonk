@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Auth.AuthLoginLiveTest do
+defmodule ZoonkWeb.AuthLoginLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
   setup :setup_app

@@ -5,7 +5,7 @@ defmodule Zoonk.HelpersTest do
 
   describe "get_context_from_module/1" do
     test "returns the scope for ZoonkWeb modules" do
-      assert :catalog = get_context_from_module(ZoonkWeb.Catalog.CatalogHomeLive)
+      assert :catalog = get_context_from_module(ZoonkWeb.CatalogLive)
       assert :org = get_context_from_module(ZoonkWeb.Org.OrgHomeLive)
       assert :library = get_context_from_module(ZoonkWeb.Library)
     end
@@ -16,7 +16,7 @@ defmodule Zoonk.HelpersTest do
     end
 
     test "returns the scope for string module names" do
-      assert :catalog = get_context_from_module("ZoonkWeb.Catalog.CatalogHomeLive")
+      assert :catalog = get_context_from_module("ZoonkWeb.CatalogLive")
       assert :accounts = get_context_from_module("Zoonk.Accounts.User")
     end
 

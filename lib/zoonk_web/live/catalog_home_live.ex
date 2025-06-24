@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Catalog.CatalogHomeLive do
+defmodule ZoonkWeb.CatalogLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 

@@ -1,8 +1,8 @@
-defmodule ZoonkWeb.Auth.AuthSignUpWithEmailLive do
+defmodule ZoonkWeb.AuthSignUpWithEmailLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  import ZoonkWeb.Auth.AuthComponents
+  import ZoonkWeb.AuthComponents
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.User

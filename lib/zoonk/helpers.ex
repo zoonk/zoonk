@@ -15,7 +15,7 @@ defmodule Zoonk.Helpers do
 
   ## Examples
 
-      iex> get_context_from_module(ZoonkWeb.Catalog.CatalogHomeLive)
+      iex> get_context_from_module(ZoonkWeb.CatalogLive)
       :catalog
 
       iex> get_context_from_module(ZoonkWeb.Org.OrgHomeLive)
@@ -24,7 +24,7 @@ defmodule Zoonk.Helpers do
       iex> get_context_from_module(Zoonk.Accounts.User)
       :accounts
 
-      iex> get_context_from_module("ZoonkWeb.Catalog.CatalogHomeLive")
+      iex> get_context_from_module("ZoonkWeb.CatalogLive")
       :catalog
   """
   def get_context_from_module(module) when is_atom(module) do

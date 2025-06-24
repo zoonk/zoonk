@@ -59,10 +59,10 @@ defmodule ZoonkWeb.Router do
       ] do
       live "/", AppHomeLive
 
-      live "/catalog", Catalog.CatalogHomeLive
+      live "/catalog", CatalogLive
 
-      live "/learn", Learning.LearningStartLive
-      live "/learn/:input", Learning.LearningRecommendationsLive
+      live "/learn", LearningStartLive
+      live "/learn/:input", LearningRecommendationsLive
 
       live "/my-courses", MyCoursesLive
       live "/missions", MissionsLive
@@ -78,7 +78,7 @@ defmodule ZoonkWeb.Router do
       live "/support", SupportLive
       live "/follow", FollowLive
 
-      live "/confirm/email", Auth.AuthConfirmCodeLive, :email
+      live "/confirm/email", AuthConfirmCodeLive, :email
     end
   end
 
@@ -90,13 +90,13 @@ defmodule ZoonkWeb.Router do
         {UserAuth, :mount_scope},
         {ZoonkWeb.Language, :set_app_language}
       ] do
-      live "/signup", Auth.AuthSignUpLive
-      live "/signup/email", Auth.AuthSignUpWithEmailLive
-      live "/login", Auth.AuthLoginLive
-      live "/login/email", Auth.AuthLoginWithEmailLive
+      live "/signup", AuthSignUpLive
+      live "/signup/email", AuthSignUpWithEmailLive
+      live "/login", AuthLoginLive
+      live "/login/email", AuthLoginWithEmailLive
 
-      live "/confirm/login", Auth.AuthConfirmCodeLive, :login
-      live "/confirm/signup", Auth.AuthConfirmCodeLive, :signup
+      live "/confirm/login", AuthConfirmCodeLive, :login
+      live "/confirm/signup", AuthConfirmCodeLive, :signup
     end
   end
 
