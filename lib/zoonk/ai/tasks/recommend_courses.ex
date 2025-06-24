@@ -8,7 +8,7 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
   alias Zoonk.AI
   alias Zoonk.AI.AIClient
   alias Zoonk.AI.AISchema
-  alias Zoonk.AI.LearningRecommendation
+  alias Zoonk.AI.CourseRecommendation
   alias Zoonk.Helpers
   alias Zoonk.Repo
 
@@ -29,13 +29,13 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
       |> String.trim()
       |> Helpers.remove_accents()
 
-    LearningRecommendation
+    CourseRecommendation
     |> Repo.get_by(query: formatted_input, language: language)
     |> recommend(formatted_input, language)
   end
 
-  defp recommend(%LearningRecommendation{} = recommendation, _input, _lang) do
-    {:ok, %{courses: recommendation.recommendations}}
+  defp recommend(%CourseRecommendation{} = recommendation, _input, _lang) do
+    {:ok, %{courses: recommendation.courses}}
   end
 
   defp recommend(nil, input, language) do
@@ -46,11 +46,11 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
     |> AI.add_message(build_message(input, language))
     |> AIClient.generate_object()
     |> case do
-      {:ok, %{courses: recommendations} = response} ->
+      {:ok, %{courses: courses} = response} ->
         add_recommendation_to_db(%{
           query: input,
           language: language,
-          recommendations: recommendations
+          courses: courses
         })
 
         {:ok, response}
@@ -72,12 +72,12 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
       ]
     }
 
-    AISchema.add_field(%AISchema{name: "learning_recommender"}, courses)
+    AISchema.add_field(%AISchema{name: "recommend_courses"}, courses)
   end
 
   defp add_recommendation_to_db(attrs) do
-    %LearningRecommendation{}
-    |> LearningRecommendation.changeset(attrs)
+    %CourseRecommendation{}
+    |> CourseRecommendation.changeset(attrs)
     |> Repo.insert!()
   end
 

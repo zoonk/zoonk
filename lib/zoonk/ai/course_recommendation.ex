@@ -1,4 +1,4 @@
-defmodule Zoonk.AI.LearningRecommendation do
+defmodule Zoonk.AI.CourseRecommendation do
   @moduledoc """
   Schema for storing learning recommendations.
 
@@ -12,7 +12,7 @@ defmodule Zoonk.AI.LearningRecommendation do
   |------------------|-------------|--------------------------------------------------|
   | `query`          | `String`    | The user's input about what they want to learn.  |
   | `language`       | `Ecto.Enum` | The language of the query and recommendations.   |
-  | `recommendations`| `List`      | Collection of recommended courses.               |
+  | `courses`        | `List`      | Collection of recommended courses.               |
   | `inserted_at`    | `DateTime`  | Timestamp when the recommendation was created.   |
   | `updated_at`     | `DateTime`  | Timestamp when the recommendation was updated.   |
   """
@@ -22,14 +22,14 @@ defmodule Zoonk.AI.LearningRecommendation do
 
   alias Zoonk.Config.LanguageConfig
 
-  schema "learning_recommendations" do
+  schema "course_recommendations" do
     field :query, :string
 
     field :language, Ecto.Enum,
       values: LanguageConfig.list_languages(:atom),
       default: LanguageConfig.get_default_language(:atom)
 
-    embeds_many :recommendations, Recommendation do
+    embeds_many :courses, Course do
       field :title, :string
       field :description, :string
       field :icon, :string
@@ -40,22 +40,22 @@ defmodule Zoonk.AI.LearningRecommendation do
   end
 
   @doc """
-  Creates a changeset for a learning recommendation.
+  Creates a changeset for a course recommendation.
 
   ## Examples
 
-      iex> LearningRecommendation.changeset(%LearningRecommendation{}, %{query: "Computer Science", language: :en})
+      iex> CourseRecommendation.changeset(%CourseRecommendation{}, %{query: "Computer Science", language: :en})
       #Ecto.Changeset<...>
   """
-  def changeset(learning_recommendation, attrs) do
-    learning_recommendation
+  def changeset(course_recommendation, attrs) do
+    course_recommendation
     |> cast(attrs, [:query, :language])
     |> validate_required([:query, :language])
-    |> cast_embed(:recommendations, with: &recommendation_changeset/2)
+    |> cast_embed(:courses, with: &course_changeset/2)
   end
 
-  defp recommendation_changeset(recommendation, attrs) do
-    recommendation
+  defp course_changeset(course, attrs) do
+    course
     |> cast(attrs, [:title, :description, :english_title, :icon])
     |> validate_required([:title, :description, :english_title])
   end

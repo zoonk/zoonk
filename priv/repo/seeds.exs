@@ -65,30 +65,22 @@ school_org =
 
 # Create org settings for each org
 Repo.insert!(%OrgSettings{
-  currency: :usd,
   org_id: app_org.id,
-  stripe_customer_id: "cus_app123",
   allowed_domains: ["zoonk.test"]
 })
 
 Repo.insert!(%OrgSettings{
-  currency: :usd,
   org_id: team_org.id,
-  stripe_customer_id: "cus_team123",
   allowed_domains: ["team.test", "company.test"]
 })
 
 Repo.insert!(%OrgSettings{
-  currency: :eur,
   org_id: creator_org.id,
-  stripe_customer_id: "cus_creator123",
   allowed_domains: []
 })
 
 Repo.insert!(%OrgSettings{
-  currency: :sgd,
   org_id: school_org.id,
-  stripe_customer_id: "cus_school123",
   allowed_domains: ["school.edu.test"]
 })
 
@@ -97,7 +89,6 @@ app_admin =
   Repo.insert!(%User{
     email: "admin@zoonk.test",
     confirmed_at: DateTime.utc_now(),
-    stripe_customer_id: "cus_user1",
     year_of_birth: 1990,
     language: :en
   })
@@ -106,7 +97,6 @@ app_member =
   Repo.insert!(%User{
     email: "member@zoonk.test",
     confirmed_at: DateTime.utc_now(),
-    stripe_customer_id: "cus_user2",
     year_of_birth: 1992,
     language: :en
   })
@@ -115,7 +105,6 @@ team_admin =
   Repo.insert!(%User{
     email: "team-admin@zoonk.test",
     confirmed_at: DateTime.utc_now(),
-    stripe_customer_id: "cus_user3",
     year_of_birth: 1985,
     language: :en
   })
@@ -124,7 +113,6 @@ team_member =
   Repo.insert!(%User{
     email: "team-member@zoonk.test",
     confirmed_at: DateTime.utc_now(),
-    stripe_customer_id: "cus_user4",
     year_of_birth: 1988,
     language: :en
   })
@@ -133,7 +121,6 @@ creator_admin =
   Repo.insert!(%User{
     email: "creator-admin@zoonk.test",
     confirmed_at: DateTime.utc_now(),
-    stripe_customer_id: "cus_user5",
     year_of_birth: 1982,
     language: :de
   })
@@ -142,7 +129,6 @@ creator_member =
   Repo.insert!(%User{
     email: "creator-member@zoonk.test",
     confirmed_at: DateTime.utc_now(),
-    stripe_customer_id: "cus_user6",
     year_of_birth: 1986,
     language: :de
   })
@@ -151,7 +137,6 @@ school_admin =
   Repo.insert!(%User{
     email: "school-admin@zoonk.test",
     confirmed_at: DateTime.utc_now(),
-    stripe_customer_id: "cus_user7",
     year_of_birth: 1975,
     language: :en
   })
@@ -160,7 +145,6 @@ school_member =
   Repo.insert!(%User{
     email: "school-member@zoonk.test",
     confirmed_at: DateTime.utc_now(),
-    stripe_customer_id: "cus_user8",
     year_of_birth: 1999,
     language: :en
   })

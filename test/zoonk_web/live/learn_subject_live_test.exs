@@ -40,14 +40,14 @@ defmodule ZoonkWeb.LearnSubjectLiveTest do
     setup :signup_and_login_user
 
     test "allows authenticated user to see the page", %{conn: conn} do
-      data = learning_recommendation_fixture()
+      data = course_recommendation_fixture()
 
       conn
       |> visit(~p"/learn")
       |> assert_path(~p"/learn")
       |> assert_has("h1", text: @page_title)
       |> refute_has("select")
-      |> fill_in("#recommendations input", "What do you want to learn?", with: "programming")
+      |> fill_in("#learn-subject input", "What do you want to learn?", with: "programming")
       |> submit()
       |> assert_path(~p"/learn/programming")
       |> assert_has("h3", text: data.title, timeout: 1)

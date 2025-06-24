@@ -3,7 +3,7 @@ defmodule Zoonk.AI.Tasks.RecommendCoursesTest do
 
   import Zoonk.AIFixtures
 
-  alias Zoonk.AI.LearningRecommendation
+  alias Zoonk.AI.CourseRecommendation
   alias Zoonk.AI.Tasks.RecommendCourses
   alias Zoonk.Repo
 
@@ -23,7 +23,7 @@ defmodule Zoonk.AI.Tasks.RecommendCoursesTest do
     end
 
     test "fetches data from cache when existing" do
-      recommendations = [
+      courses = [
         %{
           title: "Computer Science",
           description: "A field that studies the theory and practice of computing.",
@@ -31,13 +31,13 @@ defmodule Zoonk.AI.Tasks.RecommendCoursesTest do
         }
       ]
 
-      recommendation = hd(recommendations)
+      recommendation = hd(courses)
       query = String.downcase(recommendation.title)
 
-      Repo.insert!(%LearningRecommendation{
+      Repo.insert!(%CourseRecommendation{
         query: query,
         language: :en,
-        recommendations: recommendations
+        courses: courses
       })
 
       assert {:ok, cached_recommendations} = RecommendCourses.recommend(query, :en)
@@ -56,8 +56,8 @@ defmodule Zoonk.AI.Tasks.RecommendCoursesTest do
 
       assert {:ok, _recommendations} = RecommendCourses.recommend(input, :en)
 
-      cache = Repo.get_by(LearningRecommendation, query: input, language: :en)
-      recommendation = hd(cache.recommendations)
+      cache = Repo.get_by(CourseRecommendation, query: input, language: :en)
+      recommendation = hd(cache.courses)
       assert recommendation.title == title
       assert recommendation.description == description
     end

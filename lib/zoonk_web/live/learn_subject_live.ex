@@ -11,7 +11,7 @@ defmodule ZoonkWeb.LearnSubjectLive do
           {dgettext("learning", "What do you want to learn?")}
         </.text>
 
-        <.form for={@form} id="recommendations" phx-submit="submit" class="w-full">
+        <.form for={@form} id="learn-subject" phx-submit="submit" class="w-full">
           <.input
             field={@form[:query]}
             label={dgettext("learning", "What do you want to learn?")}

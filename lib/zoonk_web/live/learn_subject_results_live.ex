@@ -22,7 +22,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
   def render(assigns) do
     ~H"""
     <.async_page
-      :let={recommendations}
+      :let={courses}
       flash={@flash}
       scope={@scope}
       data={@courses}
@@ -49,13 +49,13 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
       </header>
 
       <ul
-        :if={recommendations}
+        :if={courses}
         class="mx-auto max-w-xl"
         phx-window-keydown={JS.navigate(~p"/learn")}
         phx-key="escape"
         aria-label={dgettext("learning", "List of recommended courses")}
       >
-        <li :for={{recommendation, index} <- Enum.with_index(recommendations)} class="group">
+        <li :for={{recommendation, index} <- Enum.with_index(courses)} class="group">
           <a
             href="#"
             class={[
