@@ -14,6 +14,7 @@ defmodule ZoonkWeb.Components.AsyncPage do
   This component is designed for cases where we use `assign_async`
   and we want to display loading, error, or success states.
   """
+  attr :scope, Zoonk.Scope, required: true, doc: "Scope for the component, used for layout rendering"
   attr :class, :any, default: nil, doc: "Additional CSS classes for the component"
   attr :data, :any, required: true, doc: "The data to be displayed"
   attr :loading_title, :string, required: true, doc: "Title to display while loading"
@@ -50,9 +51,9 @@ defmodule ZoonkWeb.Components.AsyncPage do
         </section>
       </:failed>
 
-      <article class={@class}>
+      <ZoonkWeb.AppLayout.render scope={@scope}>
         {render_slot(@inner_block, data)}
-      </article>
+      </ZoonkWeb.AppLayout.render>
     </.async_result>
     """
   end

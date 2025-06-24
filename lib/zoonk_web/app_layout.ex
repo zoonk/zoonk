@@ -7,7 +7,7 @@ defmodule ZoonkWeb.AppLayout do
 
   def render(assigns) do
     ~H"""
-    <main>
+    <main class="min-h-dvh flex flex-col p-4">
       <.navbar user={@scope.user} />
       {render_slot(@inner_block)}
     </main>

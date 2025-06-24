@@ -23,6 +23,7 @@ defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
     ~H"""
     <.async_page
       :let={recommendations}
+      scope={@scope}
       data={@courses}
       loading_title={dgettext("learning", "We're finding courses to help you learn")}
       loading_subtitle={
@@ -35,12 +36,7 @@ defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
       failure_message={dgettext("learning", "Sorry, we had an internal error. Please, try again.")}
       failure_link={~p"/learn"}
       failure_link_text={gettext("Back")}
-      class="mx-auto flex flex-col gap-4 p-4"
     >
-      <nav aria-label={gettext("Actions")}>
-        <.back_link navigate={~p"/learn"} label={dgettext("learning", "Create a course")} />
-      </nav>
-
       <header class="mx-auto py-8 text-center" aria-labelledby="page-header">
         <.text id="page-header" tag="h1" size={:xxl}>
           {dgettext("learning", "Recommendations for you")}

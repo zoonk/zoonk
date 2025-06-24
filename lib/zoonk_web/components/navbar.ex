@@ -22,7 +22,7 @@ defmodule ZoonkWeb.Components.Navbar do
   """
   def navbar(assigns) do
     ~H"""
-    <nav class="flex items-center justify-between gap-2 p-4" aria-label={gettext("Main navigation")}>
+    <nav class="flex items-center justify-between gap-2" aria-label={gettext("Main navigation")}>
       <.a :if={@user} kind={:icon} icon="tabler-home" variant={:outline} navigate={~p"/"} size={:sm}>
         {gettext("Home page")}
       </.a>

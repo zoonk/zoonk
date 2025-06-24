@@ -5,17 +5,13 @@ defmodule ZoonkWeb.Learning.LearningStartLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <main class="h-dvh flex w-full items-center justify-center p-4">
-      <nav class="absolute top-4 left-4" aria-label={gettext("Actions")}>
-        <.back_link navigate={~p"/"} label={gettext("Home page")} />
-      </nav>
-
-      <div class="flex w-full max-w-lg flex-col items-center gap-4 text-center">
+    <ZoonkWeb.AppLayout.render scope={@scope}>
+      <div class="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center gap-4 text-center">
         <.text tag="h1" size={:xxl} aria-hidden="true">
           {dgettext("learning", "What do you want to learn?")}
         </.text>
 
-        <.form for={@form} phx-submit="submit" class="w-full">
+        <.form for={@form} id="recommendations" phx-submit="submit" class="w-full">
           <.input
             field={@form[:query]}
             label={dgettext("learning", "What do you want to learn?")}
@@ -28,7 +24,7 @@ defmodule ZoonkWeb.Learning.LearningStartLive do
           />
         </.form>
       </div>
-    </main>
+    </ZoonkWeb.AppLayout.render>
     """
   end
 

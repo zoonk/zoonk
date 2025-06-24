@@ -47,7 +47,7 @@ defmodule ZoonkWeb.LearningStartLiveTest do
       |> assert_path(~p"/learn")
       |> assert_has("h1", text: @page_title)
       |> refute_has("select")
-      |> fill_in("What do you want to learn?", with: "programming")
+      |> fill_in("#recommendations input", "What do you want to learn?", with: "programming")
       |> submit()
       |> assert_path(~p"/learn/programming")
       |> assert_has("h3", text: data.title, timeout: 1)
