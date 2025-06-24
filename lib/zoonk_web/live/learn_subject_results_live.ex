@@ -2,7 +2,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  alias Zoonk.AI.Agents.LearningRecommender
+  alias Zoonk.AI.Tasks.RecommendCourses
 
   @colors [
     "text-red-500",
@@ -103,7 +103,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
       socket
       |> assign(:page_title, dgettext("learning", "Recommendations for %{input}", input: input))
       |> assign(:input, input)
-      |> assign_async(:courses, fn -> LearningRecommender.recommend(input, language) end)
+      |> assign_async(:courses, fn -> RecommendCourses.recommend(input, language) end)
 
     {:ok, socket}
   end

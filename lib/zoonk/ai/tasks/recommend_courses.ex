@@ -1,4 +1,4 @@
-defmodule Zoonk.AI.Agents.LearningRecommender do
+defmodule Zoonk.AI.Tasks.RecommendCourses do
   @moduledoc """
   Recommend courses based on user input.
 
@@ -17,10 +17,10 @@ defmodule Zoonk.AI.Agents.LearningRecommender do
 
   ## Examples
 
-      iex> LearningRecommender.recommend("I want to learn about data science", "en")
+      iex> RecommendCourses.recommend("I want to learn about data science", "en")
       {:ok, [%{title: "Data Science", description: "A field that uses scientific methods..."}]}
 
-      iex> LearningRecommender.recommend("forbidden input", "en")
+      iex> RecommendCourses.recommend("forbidden input", "en")
       {:error, "This violates our content policy."}
   """
   def recommend(input, language) do
