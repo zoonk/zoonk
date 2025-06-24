@@ -45,6 +45,7 @@ defmodule Zoonk.Helpers do
 
   defp scope_to_atom(scope) do
     scope
+    |> String.trim_trailing("Live")
     |> String.downcase()
     |> String.to_existing_atom()
   rescue
