@@ -92,7 +92,7 @@ defmodule ZoonkWeb.Components.Anchor do
         "zk-btn rounded-full",
         @variant == :primary && "zk-btn-primary",
         @variant == :destructive && "zk-btn-destructive",
-        @variant == :outline && "zk-btn-shadow",
+        @variant == :outline && "zk-btn-outline",
         @size == :sm && "size-8",
         @size == :md && "size-10",
         @size == :lg && "size-12",
@@ -100,7 +100,7 @@ defmodule ZoonkWeb.Components.Anchor do
       ]}
       {@rest}
     >
-      <.icon :if={@icon} size={@size} name={@icon} />
+      <.icon :if={@icon} size={:xs} name={@icon} />
       <span class="sr-only">{render_slot(@inner_block)}</span>
     </.link>
     """

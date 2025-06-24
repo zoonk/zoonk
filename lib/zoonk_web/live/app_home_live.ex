@@ -5,9 +5,9 @@ defmodule ZoonkWeb.AppHomeLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <main>
-      <.navbar user={@scope.user} />
-    </main>
+    <ZoonkWeb.AppLayout.render scope={@scope}>
+      home placeholder
+    </ZoonkWeb.AppLayout.render>
     """
   end
 

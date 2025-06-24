@@ -5,9 +5,9 @@ defmodule ZoonkWeb.MissionsLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <main>
+    <ZoonkWeb.AppLayout.render scope={@scope}>
       missions placeholder
-    </main>
+    </ZoonkWeb.AppLayout.render>
     """
   end
 

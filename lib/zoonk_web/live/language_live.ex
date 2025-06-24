@@ -5,9 +5,9 @@ defmodule ZoonkWeb.LanguageLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <main>
+    <ZoonkWeb.AppLayout.render scope={@scope}>
       app language placeholder
-    </main>
+    </ZoonkWeb.AppLayout.render>
     """
   end
 

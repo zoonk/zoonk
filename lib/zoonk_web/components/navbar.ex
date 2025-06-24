@@ -23,6 +23,10 @@ defmodule ZoonkWeb.Components.Navbar do
   def navbar(assigns) do
     ~H"""
     <nav class="flex items-center justify-between gap-2 p-4" aria-label={gettext("Main navigation")}>
+      <.a kind={:icon} icon="tabler-home" variant={:outline} navigate={~p"/"} size={:sm}>
+        {gettext("Catalog")}
+      </.a>
+
       <.a
         kind={:button}
         icon="tabler-layout-grid"

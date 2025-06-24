@@ -5,9 +5,9 @@ defmodule ZoonkWeb.FeedbackLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <main>
+    <ZoonkWeb.AppLayout.render scope={@scope}>
       send feedback placeholder
-    </main>
+    </ZoonkWeb.AppLayout.render>
     """
   end
 

@@ -5,9 +5,9 @@ defmodule ZoonkWeb.PurchasesLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <main>
+    <ZoonkWeb.AppLayout.render scope={@scope}>
       purchases placeholder
-    </main>
+    </ZoonkWeb.AppLayout.render>
     """
   end
 

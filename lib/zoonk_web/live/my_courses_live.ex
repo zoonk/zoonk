@@ -5,9 +5,9 @@ defmodule ZoonkWeb.MyCoursesLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <main>
+    <ZoonkWeb.AppLayout.render scope={@scope}>
       my courses placeholder
-    </main>
+    </ZoonkWeb.AppLayout.render>
     """
   end
 

@@ -5,9 +5,9 @@ defmodule ZoonkWeb.NameLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <main>
+    <ZoonkWeb.AppLayout.render scope={@scope}>
       display name placeholder
-    </main>
+    </ZoonkWeb.AppLayout.render>
     """
   end
 

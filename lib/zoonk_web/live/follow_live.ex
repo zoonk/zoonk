@@ -5,9 +5,9 @@ defmodule ZoonkWeb.FollowLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <main>
+    <ZoonkWeb.AppLayout.render scope={@scope}>
       follow us placeholder
-    </main>
+    </ZoonkWeb.AppLayout.render>
     """
   end
 
