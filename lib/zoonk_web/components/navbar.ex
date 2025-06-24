@@ -11,7 +11,7 @@ defmodule ZoonkWeb.Components.Navbar do
 
   alias Zoonk.Accounts.User
 
-  attr :user, User, required: true, doc: "The user scope containing user information"
+  attr :user, User, doc: "The user scope containing user information"
 
   @doc """
   Renders the main navigation bar.
@@ -23,8 +23,8 @@ defmodule ZoonkWeb.Components.Navbar do
   def navbar(assigns) do
     ~H"""
     <nav class="flex items-center justify-between gap-2 p-4" aria-label={gettext("Main navigation")}>
-      <.a kind={:icon} icon="tabler-home" variant={:outline} navigate={~p"/"} size={:sm}>
-        {gettext("Catalog")}
+      <.a :if={@user} kind={:icon} icon="tabler-home" variant={:outline} navigate={~p"/"} size={:sm}>
+        {gettext("Home page")}
       </.a>
 
       <.a
@@ -40,6 +40,7 @@ defmodule ZoonkWeb.Components.Navbar do
       <.live_component module={ZoonkWeb.CommandPaletteLive} id="command-palette" />
 
       <.a
+        :if={@user}
         kind={:button}
         icon="tabler-circle-plus"
         variant={:secondary}
@@ -50,7 +51,22 @@ defmodule ZoonkWeb.Components.Navbar do
         {gettext("Start course")}
       </.a>
 
-      <.dropdown label={dgettext("users", "Open settings menu")}>
+      <.a
+        :if={is_nil(@user)}
+        kind={:button}
+        variant={:outline}
+        navigate={~p"/login"}
+        size={:sm}
+        class="ml-auto"
+      >
+        {gettext("Login")}
+      </.a>
+
+      <.a :if={is_nil(@user)} kind={:button} navigate={~p"/signup"} size={:sm}>
+        {gettext("Sign up")}
+      </.a>
+
+      <.dropdown :if={@user} label={dgettext("users", "Open settings menu")}>
         <.avatar
           src={@user.profile.picture_url}
           size={:sm}
