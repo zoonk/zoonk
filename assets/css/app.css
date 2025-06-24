@@ -19,7 +19,7 @@
 
 :root {
   --background: var(--color-white);
-  --foreground: var(--color-neutral-800);
+  --foreground: var(--color-neutral-600);
 
   --primary: var(--color-blue-600);
   --primary-text: var(--color-blue-600);
