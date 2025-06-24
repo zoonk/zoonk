@@ -40,8 +40,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
           <div :if={@query != "" and @search_results != []}>
             <.command_item :for={item <- @search_results} {build_nav_attrs(item)}>
               <.icon name={item.icon} class="size-4" />
-              <span>{item.label}</span>
-              <.command_shortcut :if={item[:shortcut]}>{item.shortcut}</.command_shortcut>
+              {item.label}
             </.command_item>
           </div>
           
@@ -50,8 +49,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
             <.command_group heading={gettext("Navigation")}>
               <.command_item :for={item <- navigation_items()} {build_nav_attrs(item)}>
                 <.icon name={item.icon} class="size-4" />
-                <span>{item.label}</span>
-                <.command_shortcut :if={item[:shortcut]}>{item.shortcut}</.command_shortcut>
+                {item.label}
               </.command_item>
             </.command_group>
 
@@ -60,8 +58,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
             <.command_group heading={dgettext("users", "My Account")}>
               <.command_item :for={item <- user_items()} {build_nav_attrs(item)}>
                 <.icon name={item.icon} class="size-4" />
-                <span>{item.label}</span>
-                <.command_shortcut :if={item[:shortcut]}>{item.shortcut}</.command_shortcut>
+                {item.label}
               </.command_item>
             </.command_group>
 
@@ -70,8 +67,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
             <.command_group heading={gettext("Settings")}>
               <.command_item :for={item <- settings_items()} {build_nav_attrs(item)}>
                 <.icon name={item.icon} class="size-4" />
-                <span>{item.label}</span>
-                <.command_shortcut :if={item[:shortcut]}>{item.shortcut}</.command_shortcut>
+                {item.label}
               </.command_item>
             </.command_group>
 
@@ -80,8 +76,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
             <.command_group heading={dgettext("users", "Support")}>
               <.command_item :for={item <- support_items()} {build_nav_attrs(item)}>
                 <.icon name={item.icon} class="size-4" />
-                <span>{item.label}</span>
-                <.command_shortcut :if={item[:shortcut]}>{item.shortcut}</.command_shortcut>
+                {item.label}
               </.command_item>
             </.command_group>
           </div>
