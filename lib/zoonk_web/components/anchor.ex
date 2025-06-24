@@ -106,25 +106,6 @@ defmodule ZoonkWeb.Components.Anchor do
     """
   end
 
-  @doc """
-  Renders a back link.
-
-  ## Examples
-
-      <.back_link navigate={~p"/"} />
-      <.back_link navigate={~p"/"} />
-  """
-  attr :label, :string, default: gettext("Back"), doc: "Label for the back link"
-  attr :rest, :global, include: ~w(href method navigate patch), doc: "HTML attributes to apply to the anchor"
-
-  def back_link(assigns) do
-    ~H"""
-    <.a kind={:icon} icon="tabler-arrow-left" variant={:outline} {@rest}>
-      {@label}
-    </.a>
-    """
-  end
-
   defp icon_size(:sm), do: :xs
   defp icon_size(:md), do: :sm
   defp icon_size(:lg), do: :md
