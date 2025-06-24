@@ -139,7 +139,7 @@ defmodule ZoonkWeb.UserAuthTest do
       refute get_session(conn, :user_token)
       refute conn.cookies[@remember_me_cookie]
       assert %{max_age: 0} = conn.resp_cookies[@remember_me_cookie]
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/catalog"
       refute Accounts.get_user_by_session_token(user_token)
     end
 
@@ -162,7 +162,7 @@ defmodule ZoonkWeb.UserAuthTest do
 
       refute get_session(conn, :user_token)
       assert %{max_age: 0} = conn.resp_cookies[@remember_me_cookie]
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/catalog"
     end
   end
 
@@ -476,7 +476,7 @@ defmodule ZoonkWeb.UserAuthTest do
         |> UserAuth.require_authenticated_user([])
 
       assert conn.halted
-      assert redirected_to(conn) == redirect_path(:app, nil)
+      assert redirected_to(conn) == redirect_path(:app, "/")
     end
 
     test "stores the path to redirect to on GET", %{conn: conn} do

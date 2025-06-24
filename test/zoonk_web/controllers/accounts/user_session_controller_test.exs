@@ -116,14 +116,14 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
         |> login_user(user)
         |> delete(~p"/logout")
 
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/catalog"
       refute get_session(conn, :user_token)
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Logged out successfully"
     end
 
     test "succeeds even if the user is not logged in", %{conn: conn} do
       conn = delete(conn, ~p"/logout")
-      assert redirected_to(conn) == ~p"/"
+      assert redirected_to(conn) == ~p"/catalog"
       refute get_session(conn, :user_token)
       assert Phoenix.Flash.get(conn.assigns.flash, :info) =~ "Logged out successfully"
     end
