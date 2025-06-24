@@ -23,6 +23,7 @@ defmodule ZoonkWeb.Learning.LearningRecommendationsLive do
     ~H"""
     <.async_page
       :let={recommendations}
+      flash={@flash}
       scope={@scope}
       data={@courses}
       loading_title={dgettext("learning", "We're finding courses to help you learn")}

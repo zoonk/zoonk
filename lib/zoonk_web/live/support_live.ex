@@ -5,7 +5,7 @@ defmodule ZoonkWeb.SupportLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render scope={@scope}>
+    <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
       support placeholder
     </ZoonkWeb.AppLayout.render>
     """
