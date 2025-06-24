@@ -92,7 +92,7 @@ defmodule ZoonkWeb.User.UserConfirmCodeLiveTest do
       |> visit(~p"/confirm/email")
       |> fill_in("One-time code", with: otp_code)
       |> submit()
-      |> assert_path(~p"/settings")
+      |> assert_path(~p"/email")
       |> assert_has("div", text: "Email changed successfully.")
 
       # user now has the new email address

@@ -78,7 +78,6 @@ defmodule ZoonkWeb.Router do
       live "/support", SupportLive
       live "/follow", FollowLive
 
-      live "/settings", User.UserSettingsLive
       live "/confirm/email", User.UserConfirmCodeLive, :email
     end
   end

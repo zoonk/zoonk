@@ -97,15 +97,6 @@ defmodule ZoonkWeb.UserAuthTest do
       assert max_age == @max_age
     end
 
-    test "redirects to settings when user is already logged in", %{conn: conn, scope: scope} do
-      conn =
-        conn
-        |> assign(:scope, Scope.set(scope))
-        |> UserAuth.login_user(scope.user)
-
-      assert redirected_to(conn) == "/settings"
-    end
-
     test "writes a cookie if remember_me was set in previous session", %{conn: conn, user: user} do
       conn =
         conn

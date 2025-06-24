@@ -83,7 +83,7 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
       params = %{"_action" => "email", "user" => %{"code" => otp_code}}
       post_conn = post(conn, ~p"/confirm", params)
 
-      assert redirected_to(post_conn) == ~p"/settings"
+      assert redirected_to(post_conn) == ~p"/email"
       assert Phoenix.Flash.get(post_conn.assigns.flash, :info) =~ "Email changed successfully."
 
       refute Accounts.get_user_by_email(user.email)
@@ -91,7 +91,7 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
 
       # don't allow to use the same OTP code again
       updated_conn = post(conn, ~p"/confirm", params)
-      assert redirected_to(updated_conn) == ~p"/settings"
+      assert redirected_to(updated_conn) == ~p"/email"
       assert Phoenix.Flash.get(updated_conn.assigns.flash, :error) =~ "Code is invalid or it has expired."
     end
 
@@ -99,7 +99,7 @@ defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
       params = %{"_action" => "email", "user" => %{"code" => "invalid_code"}}
       post_conn = post(conn, ~p"/confirm", params)
 
-      assert redirected_to(post_conn) == ~p"/settings"
+      assert redirected_to(post_conn) == ~p"/email"
       assert Phoenix.Flash.get(post_conn.assigns.flash, :error) =~ "Code is invalid or it has expired."
       assert Accounts.get_user_by_email(user.email)
     end

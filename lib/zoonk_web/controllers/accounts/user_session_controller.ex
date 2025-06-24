@@ -23,12 +23,12 @@ defmodule ZoonkWeb.Accounts.UserSessionController do
       :ok ->
         conn
         |> put_flash(:info, dgettext("users", "Email changed successfully."))
-        |> redirect(to: ~p"/settings")
+        |> redirect(to: ~p"/email")
 
       :error ->
         conn
         |> put_flash(:error, dgettext("users", "Code is invalid or it has expired."))
-        |> redirect(to: ~p"/settings")
+        |> redirect(to: ~p"/email")
     end
   end
 

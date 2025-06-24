@@ -12,8 +12,7 @@ defmodule ZoonkWeb.RequireOrgMemberPermissionTest do
           %{link: "/subscription", menu: "Subscription"},
           %{link: "/language", menu: "App language"},
           %{link: "/name", menu: "Display name"},
-          %{link: "/email", menu: "Change email"},
-          %{link: "/settings", menu: "Settings"}
+          %{link: "/email", menu: "Change email"}
         ],
         do: %{kind: kind, page: page}
       )

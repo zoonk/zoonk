@@ -70,7 +70,7 @@ defmodule ZoonkWeb.User.UserConfirmCodeLive do
   defp get_user_email(assigns, params) when is_nil(assigns.scope.user), do: params["email"]
   defp get_user_email(assigns, _params), do: assigns.scope.user.email
 
-  defp get_back_link(:email), do: ~p"/settings"
+  defp get_back_link(:email), do: ~p"/email"
   defp get_back_link(:login), do: ~p"/login"
   defp get_back_link(:signup), do: ~p"/signup"
 end
