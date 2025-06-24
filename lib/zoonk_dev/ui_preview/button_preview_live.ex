@@ -27,15 +27,15 @@ defmodule ZoonkDev.UIPreview.ButtonPreviewLive do
         </.card_header>
 
         <.card_content align={:bottom}>
-          <.button size={:sm}>Small</.button>
-          <.button size={:md}>Medium</.button>
-          <.button size={:lg}>Large</.button>
+          <.button icon="tabler-ufo" size={:sm}>Small</.button>
+          <.button icon="tabler-ufo" size={:md}>Medium</.button>
+          <.button icon="tabler-ufo" size={:lg}>Large</.button>
         </.card_content>
       </.card>
 
       <.card>
         <.card_header>
-          <.card_title>Button Icons</.card_title>
+          <.card_title>Button With Icons</.card_title>
           <.card_description>You can have an icon in multiple alignments.</.card_description>
         </.card_header>
 
@@ -73,6 +73,30 @@ defmodule ZoonkDev.UIPreview.ButtonPreviewLive do
 
         <.card_content align={:bottom}>
           <.button icon="tabler-ufo" class="w-full">Full width</.button>
+        </.card_content>
+      </.card>
+
+      <.card>
+        <.card_header>
+          <.card_title>Icon Buttons</.card_title>
+          <.card_description>
+            You can also style buttons as icons. This is useful for
+            navigation or actions that don't require a full button.
+          </.card_description>
+        </.card_header>
+
+        <.card_content align={:bottom}>
+          <.button kind={:icon} size={:sm} icon="tabler-x">
+            Small icon
+          </.button>
+
+          <.button kind={:icon} size={:md} variant={:destructive} icon="tabler-x">
+            Medium icon
+          </.button>
+
+          <.button kind={:icon} size={:lg} variant={:outline} icon="tabler-x">
+            Large icon
+          </.button>
         </.card_content>
       </.card>
     </ZoonkDev.UIPreview.UIPreviewLayout.render>

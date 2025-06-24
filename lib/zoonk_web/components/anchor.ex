@@ -30,7 +30,7 @@ defmodule ZoonkWeb.Components.Anchor do
       <.a >Send!</.a>
 
       <.a kind={:icon} icon="tabler-name">
-        <span class="sr-only">Icon</span>
+        Icon
       </.a>
   """
   def a(%{kind: :link} = assigns) do
@@ -60,9 +60,9 @@ defmodule ZoonkWeb.Components.Anchor do
         @variant == :destructive && "zk-btn-destructive",
         @variant == :secondary && "zk-btn-secondary",
         @variant == :outline && "zk-btn-outline",
-        @size == :sm && "h-8 px-3",
-        @size == :md && "h-10 px-3",
-        @size == :lg && "h-12 px-6",
+        @size == :sm && "h-8 px-3 text-sm",
+        @size == :md && "px-4.5 h-10",
+        @size == :lg && "h-12 px-6 text-lg",
         @size == :adaptive && "size-8 sm:h-8 sm:w-auto sm:px-3",
         @class
       ]}
@@ -70,7 +70,7 @@ defmodule ZoonkWeb.Components.Anchor do
     >
       <.icon
         :if={@icon}
-        size={:xs}
+        size={icon_size(@size)}
         name={@icon}
         class={[
           @icon_align == :left && "absolute left-4",
@@ -100,7 +100,7 @@ defmodule ZoonkWeb.Components.Anchor do
       ]}
       {@rest}
     >
-      <.icon :if={@icon} size={:xs} name={@icon} />
+      <.icon :if={@icon} size={icon_size(@size)} name={@icon} />
       <span class="sr-only">{render_slot(@inner_block)}</span>
     </.link>
     """
@@ -120,8 +120,13 @@ defmodule ZoonkWeb.Components.Anchor do
   def back_link(assigns) do
     ~H"""
     <.a kind={:icon} icon="tabler-arrow-left" variant={:outline} {@rest}>
-      <span class="sr-only">{@label}</span>
+      {@label}
     </.a>
     """
   end
+
+  defp icon_size(:sm), do: :xs
+  defp icon_size(:md), do: :sm
+  defp icon_size(:lg), do: :md
+  defp icon_size(:adaptive), do: :sm
 end

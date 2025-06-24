@@ -40,9 +40,9 @@ defmodule ZoonkDev.UIPreview.AnchorPreviewLive do
         </.card_header>
 
         <.card_content align={:bottom}>
-          <.a kind={:button} size={:sm}>Small</.a>
-          <.a kind={:button} size={:md}>Medium</.a>
-          <.a kind={:button} size={:lg}>Large</.a>
+          <.a kind={:button} icon="tabler-ufo" size={:sm}>Small</.a>
+          <.a kind={:button} icon="tabler-ufo" size={:md}>Medium</.a>
+          <.a kind={:button} icon="tabler-ufo" size={:lg}>Large</.a>
         </.card_content>
       </.card>
 
@@ -98,15 +98,15 @@ defmodule ZoonkDev.UIPreview.AnchorPreviewLive do
 
         <.card_content align={:bottom}>
           <.a kind={:icon} size={:sm} icon="tabler-x">
-            <span class="sr-only">Small icon</span>
+            Small icon
           </.a>
 
           <.a kind={:icon} size={:md} variant={:destructive} icon="tabler-x">
-            <span class="sr-only">Medium icon</span>
+            Medium icon
           </.a>
 
           <.a kind={:icon} size={:lg} variant={:outline} icon="tabler-x">
-            <span class="sr-only">Large icon</span>
+            Large icon
           </.a>
         </.card_content>
       </.card>

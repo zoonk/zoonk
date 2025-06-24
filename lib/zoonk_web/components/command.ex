@@ -89,7 +89,7 @@ defmodule ZoonkWeb.Components.Command do
       variant={:outline}
       {@rest}
     >
-      <span class="sr-only">{@label}</span>
+      {@label}
     </.button>
     """
   end
