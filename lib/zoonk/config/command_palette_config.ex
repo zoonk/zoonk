@@ -121,23 +121,39 @@ defmodule Zoonk.Config.CommandPaletteConfig do
       %{
         icon: "tabler-message-circle",
         label: dgettext("users", "Send feedback"),
-        navigate: ~p"/feedback"
+        navigate: ~p"/feedback",
+        visibility: :always
       },
       %{
         icon: "tabler-lifebuoy",
         label: dgettext("users", "Support"),
-        navigate: ~p"/support"
+        navigate: ~p"/support",
+        visibility: :always
       },
       %{
         icon: "tabler-ufo",
         label: gettext("Follow us on social media"),
-        navigate: ~p"/follow"
+        navigate: ~p"/follow",
+        visibility: :always
       },
       %{
         icon: "tabler-logout",
         label: dgettext("users", "Logout"),
         href: ~p"/logout",
-        method: "delete"
+        method: "delete",
+        visibility: :authenticated
+      },
+      %{
+        icon: "tabler-user",
+        label: dgettext("users", "Login"),
+        navigate: ~p"/login",
+        visibility: :unauthenticated
+      },
+      %{
+        icon: "tabler-user-plus",
+        label: dgettext("users", "Sign up"),
+        navigate: ~p"/signup",
+        visibility: :unauthenticated
       }
     ]
   end

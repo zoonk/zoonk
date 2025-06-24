@@ -74,7 +74,11 @@ defmodule ZoonkWeb.CommandPaletteLive do
             <.command_separator />
 
             <.command_group heading={dgettext("users", "Support")}>
-              <.command_item :for={item <- support_items()} {build_nav_attrs(item)}>
+              <.command_item
+                :for={item <- support_items()}
+                :if={visible?(item.visibility, @authenticated)}
+                {build_nav_attrs(item)}
+              >
                 <.icon name={item.icon} class="size-4" />
                 {item.label}
               </.command_item>
@@ -120,4 +124,9 @@ defmodule ZoonkWeb.CommandPaletteLive do
     search_results = FuzzySearch.search(all_items(), query, & &1.label)
     assign(socket, search_results: search_results)
   end
+
+  defp visible?(:always, _status), do: true
+  defp visible?(:authenticated, true), do: true
+  defp visible?(:unauthenticated, false), do: true
+  defp visible?(_visibility, _status), do: false
 end

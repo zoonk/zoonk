@@ -37,7 +37,11 @@ defmodule ZoonkWeb.Components.Navbar do
         {gettext("Catalog")}
       </.a>
 
-      <.live_component module={ZoonkWeb.CommandPaletteLive} id="command-palette" />
+      <.live_component
+        module={ZoonkWeb.CommandPaletteLive}
+        authenticated={@user != nil}
+        id="command-palette"
+      />
 
       <.a
         :if={@user}
