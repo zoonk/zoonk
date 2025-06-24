@@ -1,14 +1,16 @@
-defmodule ZoonkWeb.LearningRecommendationsLiveTest do
+defmodule ZoonkWeb.LearnSubjectLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AIFixtures
   import Zoonk.OrgFixtures
 
-  describe "learning recommendations (unauthenticated)" do
+  @page_title "What do you want to learn?"
+
+  describe "learn subject (unauthenticated)" do
     test "redirects page for :app org" do
       build_conn()
       |> Map.put(:host, app_org_fixture().custom_domain)
-      |> visit(~p"/learn/coding")
+      |> visit(~p"/learn")
       |> assert_path(~p"/login")
     end
 
@@ -34,15 +36,20 @@ defmodule ZoonkWeb.LearningRecommendationsLiveTest do
     end
   end
 
-  describe "learning recommendations" do
+  describe "learn subject" do
     setup :signup_and_login_user
 
-    test "loads the data", %{conn: conn} do
+    test "allows authenticated user to see the page", %{conn: conn} do
       data = learning_recommendation_fixture()
 
       conn
-      |> visit(~p"/learn/coding")
-      |> assert_path(~p"/learn/coding")
+      |> visit(~p"/learn")
+      |> assert_path(~p"/learn")
+      |> assert_has("h1", text: @page_title)
+      |> refute_has("select")
+      |> fill_in("#recommendations input", "What do you want to learn?", with: "programming")
+      |> submit()
+      |> assert_path(~p"/learn/programming")
       |> assert_has("h3", text: data.title, timeout: 1)
     end
   end

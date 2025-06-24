@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.LearningRecommendationsLive do
+defmodule ZoonkWeb.LearnSubjectResultsLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 

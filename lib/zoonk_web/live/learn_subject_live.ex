@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.LearningStartLive do
+defmodule ZoonkWeb.LearnSubjectLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
