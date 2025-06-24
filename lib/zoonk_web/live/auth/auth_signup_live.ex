@@ -1,8 +1,8 @@
-defmodule ZoonkWeb.User.UserSignUpLive do
+defmodule ZoonkWeb.Auth.AuthSignUpLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  import ZoonkWeb.User.UserComponents
+  import ZoonkWeb.Auth.AuthComponents
 
   alias Zoonk.Accounts.User
   alias Zoonk.Config.AuthConfig

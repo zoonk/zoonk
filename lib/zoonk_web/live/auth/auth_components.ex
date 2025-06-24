@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.User.UserComponents do
+defmodule ZoonkWeb.Auth.AuthComponents do
   @moduledoc false
   use ZoonkWeb, :html
 

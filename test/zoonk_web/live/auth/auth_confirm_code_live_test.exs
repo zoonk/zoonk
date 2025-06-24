@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.User.UserConfirmCodeLiveTest do
+defmodule ZoonkWeb.Auth.AuthConfirmCodeLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AccountFixtures
