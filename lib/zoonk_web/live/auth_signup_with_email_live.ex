@@ -18,17 +18,17 @@ defmodule ZoonkWeb.AuthSignUpWithEmailLive do
         id="signup_form"
         phx-submit="save"
         phx-change="validate"
-        aria-label={dgettext("users", "Signup form")}
+        aria-label={dgettext("auth", "Signup form")}
         class="flex w-full flex-col gap-4"
       >
         <.error :if={@check_errors}>
-          {dgettext("users", "Oops, something went wrong! Please check the errors below.")}
+          {dgettext("auth", "Oops, something went wrong! Please check the errors below.")}
         </.error>
 
         <.input
           field={@form[:language]}
           type="select"
-          label={dgettext("users", "Language")}
+          label={dgettext("auth", "Language")}
           options={LanguageConfig.list_languages(:options)}
           required
           class="w-full"
@@ -37,22 +37,22 @@ defmodule ZoonkWeb.AuthSignUpWithEmailLive do
         <.input
           field={@form[:email]}
           type="email"
-          label={dgettext("users", "Email address")}
+          label={dgettext("auth", "Email address")}
           autocomplete="username"
-          placeholder={dgettext("users", "myemail@gmail.com")}
+          placeholder={dgettext("auth", "myemail@gmail.com")}
           required
           class="w-full"
         />
 
         <.button
           type="submit"
-          phx-disable-with={dgettext("users", "Creating account...")}
+          phx-disable-with={dgettext("auth", "Creating account...")}
           icon="tabler-user-plus"
           icon_align={:left}
           size={:md}
           class="w-full"
         >
-          {dgettext("users", "Create an account")}
+          {dgettext("auth", "Create an account")}
         </.button>
       </.form>
     </.main_container>
@@ -71,7 +71,7 @@ defmodule ZoonkWeb.AuthSignUpWithEmailLive do
       socket
       |> assign(check_errors: false)
       |> assign_form(changeset)
-      |> assign(page_title: dgettext("users", "Create an account"))
+      |> assign(page_title: dgettext("page_title", "Create an account"))
 
     {:ok, socket, temporary_assigns: [form: nil]}
   end

@@ -13,7 +13,7 @@ defmodule ZoonkWeb.PurchasesLive do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    socket = assign(socket, :page_title, dgettext("users", "Purchases"))
+    socket = assign(socket, :page_title, dgettext("page_title", "Purchases"))
     {:ok, socket}
   end
 end

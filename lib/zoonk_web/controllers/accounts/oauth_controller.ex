@@ -68,7 +68,7 @@ defmodule ZoonkWeb.Accounts.OAuthController do
 
   defp redirect_on_failure(%Plug.Conn{} = conn) do
     conn
-    |> put_flash(:error, dgettext("users", "Failed to authenticate"))
+    |> put_flash(:error, dgettext("auth", "Failed to authenticate"))
     |> redirect(to: ~p"/login")
   end
 

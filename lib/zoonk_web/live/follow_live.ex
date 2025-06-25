@@ -13,7 +13,7 @@ defmodule ZoonkWeb.FollowLive do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    socket = assign(socket, :page_title, dgettext("users", "Follow us"))
+    socket = assign(socket, :page_title, dgettext("page_title", "Follow us"))
     {:ok, socket}
   end
 end

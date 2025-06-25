@@ -12,7 +12,7 @@ defmodule ZoonkWeb.AuthConfirmCodeLive do
     ~H"""
     <.main_container action={:confirm} flash={@flash}>
       <.text tag="h2" variant={:secondary}>
-        {dgettext("users", "We sent a code to your email address. Please enter it below to proceed.")}
+        {dgettext("auth", "We sent a code to your email address. Please enter it below to proceed.")}
       </.text>
 
       <.form
@@ -20,16 +20,16 @@ defmodule ZoonkWeb.AuthConfirmCodeLive do
         for={@form}
         id="otp_form"
         action={~p"/confirm?_action=#{@live_action}"}
-        aria-label={dgettext("users", "Enter your code")}
+        aria-label={dgettext("auth", "Enter your code")}
         class="mt-4 flex w-full flex-col gap-4"
       >
         <.input type="hidden" field={f[:email]} />
 
         <.input
           field={f[:code]}
-          label={dgettext("users", "One-time code")}
+          label={dgettext("auth", "One-time code")}
           hide_label
-          placeholder={dgettext("users", "Enter your code")}
+          placeholder={dgettext("auth", "Enter your code")}
           autocomplete="one-time-code"
           inputmode="numeric"
           pattern="[0-9]*"
@@ -39,7 +39,7 @@ defmodule ZoonkWeb.AuthConfirmCodeLive do
         />
 
         <.button type="submit" class="w-full" size={:md} icon_align={:left} icon="tabler-check">
-          {dgettext("users", "Verify")}
+          {dgettext("auth", "Verify")}
         </.button>
       </.form>
 
@@ -62,7 +62,7 @@ defmodule ZoonkWeb.AuthConfirmCodeLive do
     socket =
       socket
       |> assign(form: form)
-      |> assign(page_title: dgettext("users", "Confirmation code"))
+      |> assign(page_title: dgettext("page_title", "Confirmation code"))
 
     {:ok, socket}
   end

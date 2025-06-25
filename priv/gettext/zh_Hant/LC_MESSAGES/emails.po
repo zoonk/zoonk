@@ -11,32 +11,32 @@ msgstr ""
 "Language: zh_Hant\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: lib/zoonk/auth/user_notifier.ex:80
+#: lib/zoonk/accounts/user_notifier.ex:74
 #, elixir-autogen, elixir-format
 msgid "Confirmation instructions"
-msgstr "確認指示"
+msgstr ""
 
-#: lib/zoonk/auth/user_notifier.ex:23
-#, elixir-autogen, elixir-format
-msgid "Hi %{email},\n\nYou can change your email by visiting the URL below:\n\n%{url}\n\nThis link will expire in %{expiration_days} days.\n\nIf you didn't request this change, please ignore this.\n"
-msgstr "嗨 %{email}，\n\n您可以透過訪問下面的 URL 來更改您的電子郵件：\n\n%{url}\n\n此連結將在 %{expiration_days} 天後失效。\n\n如果您沒有請求這項變更，請忽略此訊息。"
-
-#: lib/zoonk/auth/user_notifier.ex:83
-#, elixir-autogen, elixir-format
-msgid "Hi %{email},\n\nYou can confirm your account by visiting the URL below:\n\n%{url}\n\nThis link will expire in %{expiration_minutes} minutes.\n\nIf you didn't create an account with us, please ignore this.\n"
-msgstr "嗨 %{email}，\n\n您可以透過訪問下面的 URL 來確認您的帳戶：\n\n%{url}\n\n此連結將在 %{expiration_minutes} 分鐘後失效。\n\n如果您並未在我們這裡註冊帳戶，請忽略此訊息。"
-
-#: lib/zoonk/auth/user_notifier.ex:58
-#, elixir-autogen, elixir-format
-msgid "Hi %{email},\n\nYou can log into your account by visiting the URL below:\n\n%{url}\n\nThis link will expire in %{expiration_minutes} minutes.\n\nIf you didn't request this email, please ignore this.\n"
-msgstr "嗨 %{email}，\n\n您可以透過訪問下面的 URL 登入您的帳戶：\n\n%{url}\n\n此連結將在 %{expiration_minutes} 分鐘後失效。\n\n如果您沒有請求此封電子郵件，請忽略此訊息。"
-
-#: lib/zoonk/auth/user_notifier.ex:55
-#, elixir-autogen, elixir-format
-msgid "Log in instructions"
-msgstr "登入說明"
-
-#: lib/zoonk/auth/user_notifier.ex:20
+#: lib/zoonk/accounts/user_notifier.ex:20
 #, elixir-autogen, elixir-format
 msgid "Update email instructions"
-msgstr "更新電子郵件指示"
+msgstr ""
+
+#: lib/zoonk/accounts/user_notifier.ex:52
+#, elixir-autogen, elixir-format
+msgid "Login instructions"
+msgstr ""
+
+#: lib/zoonk/accounts/user_notifier.ex:77
+#, elixir-autogen, elixir-format
+msgid "You can confirm your account by using the code below:\n\n%{otp_code}\n\nThis code will expire in %{expiration_minutes} minutes.\n\nIf you didn't create an account with us, please ignore this.\n"
+msgstr ""
+
+#: lib/zoonk/accounts/user_notifier.ex:23
+#, elixir-autogen, elixir-format
+msgid "You can confirm your email address using the code below:\n\n%{otp_code}\n\nThis code will expire in %{expiration_days} days.\n\nIf you didn't request this change, please ignore this.\n"
+msgstr ""
+
+#: lib/zoonk/accounts/user_notifier.ex:55
+#, elixir-autogen, elixir-format
+msgid "You can log into your account by using the code below:\n\n%{otp_code}\n\nThis code will expire in %{expiration_minutes} minutes.\n\nIf you didn't request this email, please ignore this.\n"
+msgstr ""

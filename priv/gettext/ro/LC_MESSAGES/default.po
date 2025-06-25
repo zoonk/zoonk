@@ -1,0 +1,68 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: ro\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0||(n%100>0 && n%100<20)) ? 1 : 2);\n"
+
+#: lib/zoonk_web/components/flash.ex:51
+#, elixir-autogen, elixir-format
+msgid "close"
+msgstr ""
+
+#: lib/zoonk_web/live/auth_confirm_code_live.ex:47
+#: lib/zoonk_web/live/learn_subject_results_live.ex:39
+#, elixir-autogen, elixir-format
+msgid "Back"
+msgstr ""
+
+#: lib/zoonk_web/components/flash.ex:81
+#, elixir-autogen, elixir-format
+msgid "Connection lost. Attempting to reconnect"
+msgstr ""
+
+#: lib/zoonk_web/components/loader.ex:29
+#, elixir-autogen, elixir-format
+msgid "Loading"
+msgstr ""
+
+#: lib/zoonk_web/components/form.ex:44
+#, elixir-autogen, elixir-format
+msgid "More information and save button"
+msgstr ""
+
+#: lib/zoonk_web/components/form.ex:52
+#, elixir-autogen, elixir-format
+msgid "Save"
+msgstr ""
+
+#: lib/zoonk_web/components/form.ex:51
+#, elixir-autogen, elixir-format
+msgid "Saving..."
+msgstr ""
+
+#: lib/zoonk_web/components/command.ex:36
+#, elixir-autogen, elixir-format
+msgid "Search..."
+msgstr ""
+
+#: lib/zoonk_web/components/command.ex:66
+#, elixir-autogen, elixir-format
+msgid "Shortcut:"
+msgstr ""
+
+#: lib/zoonk_web/components/input.ex:177
+#, elixir-autogen, elixir-format
+msgid "Submit"
+msgstr ""
+
+#: lib/zoonk_web/components/flash.ex:92
+#, elixir-autogen, elixir-format
+msgid "There was an error on the server"
+msgstr ""

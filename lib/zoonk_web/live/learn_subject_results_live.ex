@@ -26,25 +26,25 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
       flash={@flash}
       scope={@scope}
       data={@courses}
-      loading_title={dgettext("learning", "We're finding courses to help you learn")}
+      loading_title={dgettext("goals", "We're finding courses to help you learn")}
       loading_subtitle={
         dgettext(
-          "learning",
+          "goals",
           "This might take a moment as we prepare personalized recommendations for you."
         )
       }
       loading_feature={@input}
-      failure_message={dgettext("learning", "Sorry, we had an internal error. Please, try again.")}
+      failure_message={dgettext("goals", "Sorry, we had an internal error. Please, try again.")}
       failure_link={~p"/learn"}
       failure_link_text={gettext("Back")}
     >
       <header class="mx-auto py-8 text-center" aria-labelledby="page-header">
         <.text id="page-header" tag="h1" size={:xxl}>
-          {dgettext("learning", "Recommendations for you")}
+          {dgettext("goals", "Recommendations for you")}
         </.text>
 
         <.text tag="h2" size={:lg} variant={:secondary}>
-          {dgettext("learning", "Pick one to get started")}
+          {dgettext("goals", "Pick one to get started")}
         </.text>
       </header>
 
@@ -53,7 +53,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
         class="mx-auto max-w-xl"
         phx-window-keydown={JS.navigate(~p"/learn")}
         phx-key="escape"
-        aria-label={dgettext("learning", "List of recommended courses")}
+        aria-label={dgettext("goals", "List of recommended courses")}
       >
         <li :for={{recommendation, index} <- Enum.with_index(courses)} class="group">
           <a
@@ -101,7 +101,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
 
     socket =
       socket
-      |> assign(:page_title, dgettext("learning", "Recommendations for %{input}", input: input))
+      |> assign(:page_title, dgettext("page_title", "Recommendations for %{input}", input: input))
       |> assign(:input, input)
       |> assign_async(:courses, fn -> RecommendCourses.recommend(input, language) end)
 

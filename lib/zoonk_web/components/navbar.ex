@@ -22,9 +22,12 @@ defmodule ZoonkWeb.Components.Navbar do
   """
   def navbar(assigns) do
     ~H"""
-    <nav class="flex items-center justify-between gap-2" aria-label={gettext("Main navigation")}>
+    <nav
+      class="flex items-center justify-between gap-2"
+      aria-label={dgettext("menu", "Main navigation")}
+    >
       <.a :if={@user} kind={:icon} icon="tabler-home" variant={:outline} navigate={~p"/"} size={:sm}>
-        {gettext("Home page")}
+        {dgettext("menu", "Home page")}
       </.a>
 
       <.a
@@ -34,7 +37,7 @@ defmodule ZoonkWeb.Components.Navbar do
         navigate={~p"/catalog"}
         size={:adaptive}
       >
-        {gettext("Catalog")}
+        {dgettext("menu", "Catalog")}
       </.a>
 
       <.live_component
@@ -52,7 +55,7 @@ defmodule ZoonkWeb.Components.Navbar do
         size={:adaptive}
         class="ml-auto"
       >
-        {gettext("Start course")}
+        {dgettext("menu", "Start course")}
       </.a>
 
       <.a
@@ -63,14 +66,14 @@ defmodule ZoonkWeb.Components.Navbar do
         size={:sm}
         class="ml-auto"
       >
-        {gettext("Login")}
+        {dgettext("menu", "Login")}
       </.a>
 
       <.a :if={is_nil(@user)} kind={:button} navigate={~p"/signup"} size={:sm}>
-        {gettext("Sign up")}
+        {dgettext("menu", "Sign up")}
       </.a>
 
-      <.dropdown :if={@user} label={dgettext("users", "Open settings menu")}>
+      <.dropdown :if={@user} label={dgettext("menu", "Open settings menu")}>
         <.avatar
           src={@user.profile.picture_url}
           size={:sm}
@@ -79,55 +82,55 @@ defmodule ZoonkWeb.Components.Navbar do
 
         <.dropdown_content>
           <.dropdown_item icon="tabler-layout-grid" navigate={~p"/my-courses"}>
-            {dgettext("users", "My courses")}
+            {dgettext("menu", "My courses")}
           </.dropdown_item>
 
           <.dropdown_item icon="tabler-target" navigate={~p"/missions"}>
-            {dgettext("users", "Missions")}
+            {dgettext("menu", "Missions")}
           </.dropdown_item>
 
           <.dropdown_separator />
 
           <.dropdown_item icon="tabler-package" navigate={~p"/purchases"}>
-            {dgettext("users", "Purchases")}
+            {dgettext("menu", "Purchases")}
           </.dropdown_item>
 
           <.dropdown_item icon="tabler-diamond" navigate={~p"/subscription"}>
-            {dgettext("users", "Subscription")}
+            {dgettext("menu", "Subscription")}
           </.dropdown_item>
 
           <.dropdown_separator />
 
           <.dropdown_item icon="tabler-language" navigate={~p"/language"}>
-            {dgettext("users", "App language")}
+            {dgettext("menu", "App language")}
           </.dropdown_item>
 
           <.dropdown_item icon="tabler-id-badge" navigate={~p"/name"}>
-            {dgettext("users", "Display name")}
+            {dgettext("menu", "Display name")}
           </.dropdown_item>
 
           <.dropdown_item icon="tabler-mail" navigate={~p"/email"}>
-            {dgettext("users", "Change email")}
+            {dgettext("menu", "Change email")}
           </.dropdown_item>
 
           <.dropdown_separator />
 
           <.dropdown_item icon="tabler-message-circle" navigate={~p"/feedback"}>
-            {dgettext("users", "Send feedback")}
+            {dgettext("menu", "Send feedback")}
           </.dropdown_item>
 
           <.dropdown_item icon="tabler-lifebuoy" navigate={~p"/support"}>
-            {dgettext("users", "Support")}
+            {dgettext("menu", "Support")}
           </.dropdown_item>
 
           <.dropdown_item icon="tabler-ufo" navigate={~p"/follow"}>
-            {dgettext("users", "Follow us")}
+            {dgettext("menu", "Follow us")}
           </.dropdown_item>
 
           <.dropdown_separator />
 
           <.dropdown_item icon="tabler-logout" method="delete" href={~p"/logout"}>
-            {dgettext("users", "Logout")}
+            {dgettext("menu", "Logout")}
           </.dropdown_item>
         </.dropdown_content>
       </.dropdown>

@@ -15,11 +15,11 @@ defmodule ZoonkWeb.EmailLive do
           phx-submit="submit"
           phx-change="validate_email"
         >
-          <:title>{dgettext("users", "Change Email")}</:title>
+          <:title>{dgettext("settings", "Change Email")}</:title>
 
           <:subtitle>
             {dgettext(
-              "users",
+              "settings",
               "This is the email address that will be used to sign in. This is not visible to other users."
             )}
           </:subtitle>
@@ -27,7 +27,7 @@ defmodule ZoonkWeb.EmailLive do
           <.input
             id="user-email"
             field={@email_form[:email]}
-            label={dgettext("users", "Email address")}
+            label={dgettext("settings", "Email address")}
             type="email"
             autocomplete="username"
             required
@@ -35,7 +35,7 @@ defmodule ZoonkWeb.EmailLive do
           />
 
           <:requirements>
-            {dgettext("users", "We'll send a code to your email address.")}
+            {dgettext("settings", "We'll send a code to your email address.")}
           </:requirements>
         </.form_container>
       </section>
@@ -53,7 +53,7 @@ defmodule ZoonkWeb.EmailLive do
       |> assign(:current_email, user.email)
       |> assign(:email_form, to_form(email_changeset))
       |> assign(:trigger_submit, false)
-      |> assign(:page_title, dgettext("users", "Change Email"))
+      |> assign(:page_title, dgettext("page_title", "Change Email"))
 
     {:ok, socket}
   end

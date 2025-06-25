@@ -1,0 +1,169 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: zh_Hans\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: lib/zoonk_web/components/navbar.ex:105
+#, elixir-autogen, elixir-format
+msgid "App language"
+msgstr ""
+
+#: lib/zoonk_web/components/navbar.ex:113
+#, elixir-autogen, elixir-format
+msgid "Change email"
+msgstr ""
+
+#: lib/zoonk_web/components/navbar.ex:109
+#, elixir-autogen, elixir-format
+msgid "Display name"
+msgstr ""
+
+#: lib/zoonk_web/components/navbar.ex:127
+#, elixir-autogen, elixir-format
+msgid "Follow us"
+msgstr ""
+
+#: lib/zoonk/config/command_palette_config.ex:135
+#, elixir-autogen, elixir-format
+msgid "Follow us on social media"
+msgstr ""
+
+#: lib/zoonk/config/command_palette_config.ex:148
+#: lib/zoonk_web/components/navbar.ex:69
+#, elixir-autogen, elixir-format
+msgid "Login"
+msgstr ""
+
+#: lib/zoonk/config/command_palette_config.ex:141
+#: lib/zoonk_web/components/navbar.ex:133
+#, elixir-autogen, elixir-format
+msgid "Logout"
+msgstr ""
+
+#: lib/zoonk/config/command_palette_config.ex:61
+#: lib/zoonk_web/components/navbar.ex:89
+#, elixir-autogen, elixir-format
+msgid "Missions"
+msgstr ""
+
+#: lib/zoonk_web/live/command_palette_live.ex:58
+#, elixir-autogen, elixir-format
+msgid "My Account"
+msgstr ""
+
+#: lib/zoonk/config/command_palette_config.ex:56
+#: lib/zoonk_web/components/navbar.ex:85
+#, elixir-autogen, elixir-format
+msgid "My courses"
+msgstr ""
+
+#: lib/zoonk_web/components/navbar.ex:76
+#, elixir-autogen, elixir-format
+msgid "Open settings menu"
+msgstr ""
+
+#: lib/zoonk/config/command_palette_config.ex:66
+#: lib/zoonk_web/components/navbar.ex:95
+#, elixir-autogen, elixir-format
+msgid "Purchases"
+msgstr ""
+
+#: lib/zoonk/config/command_palette_config.ex:123
+#: lib/zoonk_web/components/navbar.ex:119
+#, elixir-autogen, elixir-format
+msgid "Send feedback"
+msgstr ""
+
+#: lib/zoonk/config/command_palette_config.ex:154
+#: lib/zoonk_web/components/navbar.ex:73
+#, elixir-autogen, elixir-format
+msgid "Sign up"
+msgstr ""
+
+#: lib/zoonk/config/command_palette_config.ex:71
+#: lib/zoonk_web/components/navbar.ex:99
+#, elixir-autogen, elixir-format
+msgid "Subscription"
+msgstr ""
+
+#: lib/zoonk/config/command_palette_config.ex:129
+#: lib/zoonk_web/components/navbar.ex:123
+#: lib/zoonk_web/live/command_palette_live.ex:76
+#, elixir-autogen, elixir-format
+msgid "Support"
+msgstr ""
+
+#: lib/zoonk/config/command_palette_config.ex:30
+#: lib/zoonk_web/components/navbar.ex:40
+#, elixir-autogen, elixir-format
+msgid "Catalog"
+msgstr ""
+
+#: lib/zoonk/config/command_palette_config.ex:92
+#, elixir-autogen, elixir-format
+msgid "Change app language"
+msgstr ""
+
+#: lib/zoonk/config/command_palette_config.ex:97
+#, elixir-autogen, elixir-format
+msgid "Change display name"
+msgstr ""
+
+#: lib/zoonk/config/command_palette_config.ex:102
+#, elixir-autogen, elixir-format
+msgid "Change email address"
+msgstr ""
+
+#: lib/zoonk/config/command_palette_config.ex:25
+#: lib/zoonk_web/components/navbar.ex:30
+#, elixir-autogen, elixir-format
+msgid "Home page"
+msgstr ""
+
+#: lib/zoonk_web/components/navbar.ex:27
+#, elixir-autogen, elixir-format
+msgid "Main navigation"
+msgstr ""
+
+#: lib/zoonk_web/components/navbar.ex:58
+#, elixir-autogen, elixir-format
+msgid "Start course"
+msgstr ""
+
+#: lib/zoonk/config/command_palette_config.ex:35
+#, elixir-autogen, elixir-format
+msgid "Start new course"
+msgstr ""
+
+#: lib/zoonk_web/live/command_palette_live.ex:49
+#, elixir-autogen, elixir-format
+msgid "Navigation"
+msgstr ""
+
+#: lib/zoonk_web/live/command_palette_live.ex:36
+#, elixir-autogen, elixir-format
+msgid "No commands found."
+msgstr ""
+
+#: lib/zoonk_web/live/command_palette_live.ex:24
+#, elixir-autogen, elixir-format
+msgid "Open command palette"
+msgstr ""
+
+#: lib/zoonk_web/live/command_palette_live.ex:31
+#, elixir-autogen, elixir-format
+msgid "Search commands..."
+msgstr ""
+
+#: lib/zoonk_web/live/command_palette_live.ex:67
+#, elixir-autogen, elixir-format
+msgid "Settings"
+msgstr ""

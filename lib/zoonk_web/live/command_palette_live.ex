@@ -21,19 +21,19 @@ defmodule ZoonkWeb.CommandPaletteLive do
     <div>
       <.command_trigger
         variant={:icon}
-        label={gettext("Open command palette")}
+        label={dgettext("menu", "Open command palette")}
         dialog_id={"command-palette-#{@id}"}
         phx-target={@myself}
       />
 
       <.dialog id={"command-palette-#{@id}"}>
         <form phx-change="search" phx-submit="search" phx-target={@myself}>
-          <.command_input placeholder={gettext("Search commands...")} />
+          <.command_input placeholder={dgettext("menu", "Search commands...")} />
         </form>
 
         <.command_list>
           <.command_empty :if={@query != "" and @search_results == []}>
-            {gettext("No commands found.")}
+            {dgettext("menu", "No commands found.")}
           </.command_empty>
           
     <!-- Search results (flat list when searching) -->
@@ -46,7 +46,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
           
     <!-- Categorized view (when not searching) -->
           <div :if={@query == ""}>
-            <.command_group heading={gettext("Navigation")}>
+            <.command_group heading={dgettext("menu", "Navigation")}>
               <.command_item :for={item <- navigation_items()} {build_nav_attrs(item)}>
                 <.icon name={item.icon} class="size-4" />
                 {item.label}
@@ -55,7 +55,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
 
             <.command_separator />
 
-            <.command_group heading={dgettext("users", "My Account")}>
+            <.command_group heading={dgettext("menu", "My Account")}>
               <.command_item :for={item <- user_items()} {build_nav_attrs(item)}>
                 <.icon name={item.icon} class="size-4" />
                 {item.label}
@@ -64,7 +64,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
 
             <.command_separator />
 
-            <.command_group heading={gettext("Settings")}>
+            <.command_group heading={dgettext("menu", "Settings")}>
               <.command_item :for={item <- settings_items()} {build_nav_attrs(item)}>
                 <.icon name={item.icon} class="size-4" />
                 {item.label}
@@ -73,7 +73,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
 
             <.command_separator />
 
-            <.command_group heading={dgettext("users", "Support")}>
+            <.command_group heading={dgettext("menu", "Support")}>
               <.command_item
                 :for={item <- support_items()}
                 :if={visible?(item.visibility, @authenticated)}

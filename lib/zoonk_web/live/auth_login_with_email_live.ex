@@ -15,22 +15,22 @@ defmodule ZoonkWeb.AuthLoginWithEmailLive do
         id="login_form"
         action={~p"/login"}
         phx-submit="submit"
-        aria-label={dgettext("users", "Sign in form")}
+        aria-label={dgettext("auth", "Sign in form")}
         class="flex w-full flex-col gap-4"
       >
         <.input
           field={f[:email]}
-          label={dgettext("users", "Email address")}
+          label={dgettext("auth", "Email address")}
           hide_label
           type="email"
-          placeholder={dgettext("users", "Email")}
+          placeholder={dgettext("auth", "Email")}
           autocomplete="username"
           required
           class="w-full"
         />
 
         <.button type="submit" class="w-full" size={:md} icon_align={:left} icon="tabler-mail-filled">
-          {dgettext("users", "Login")}
+          {dgettext("auth", "Login")}
         </.button>
       </.form>
     </.main_container>
@@ -47,7 +47,7 @@ defmodule ZoonkWeb.AuthLoginWithEmailLive do
     socket =
       socket
       |> assign(form: form)
-      |> assign(page_title: dgettext("users", "Sign in with email"))
+      |> assign(page_title: dgettext("page_title", "Sign in with email"))
 
     {:ok, socket}
   end

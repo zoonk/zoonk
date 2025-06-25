@@ -9,54 +9,60 @@
 msgid ""
 msgstr ""
 "Language: fr\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n>1);\n"
 
-#: lib/zoonk_web/components/table.ex:46
-#, elixir-autogen, elixir-format
-msgid "Actions"
-msgstr "Actions"
-
-#: lib/zoonk_web/components/flash.ex:88
-#, elixir-autogen, elixir-format
-msgid "Attempting to reconnect"
-msgstr "Tentative de reconnexion"
-
-#: lib/zoonk_web/components/flash.ex:78
-#, elixir-autogen, elixir-format
-msgid "Error!"
-msgstr "Erreur!"
-
-#: lib/zoonk_web/components/flash.ex:100
-#, elixir-autogen, elixir-format
-msgid "Hang in there while we get back on track"
-msgstr "Patientez pendant que nous nous remettons sur les rails"
-
-#: lib/zoonk_web/components/flash.ex:95
-#, elixir-autogen, elixir-format
-msgid "Something went wrong!"
-msgstr "Quelque chose a mal tourné!"
-
-#: lib/zoonk_web/components/flash.ex:77
-#, elixir-autogen, elixir-format
-msgid "Success!"
-msgstr "Succès"
-
-#: lib/zoonk_web/components/flash.ex:83
-#, elixir-autogen, elixir-format
-msgid "We can't find the internet"
-msgstr "Nous ne trouvons pas l'internet"
-
-#: lib/zoonk_web/components/modal.ex:67
+#: lib/zoonk_web/components/flash.ex:51
 #, elixir-autogen, elixir-format
 msgid "close"
-msgstr "fermer"
-
-#: lib/zoonk_web/layouts/app.html.heex:28
-#, elixir-autogen, elixir-format
-msgid "Main menu"
 msgstr ""
 
-#: lib/zoonk_web/layouts/app.html.heex:3
+#: lib/zoonk_web/live/auth_confirm_code_live.ex:47
+#: lib/zoonk_web/live/learn_subject_results_live.ex:39
 #, elixir-autogen, elixir-format
-msgid "Search and settings"
+msgid "Back"
+msgstr ""
+
+#: lib/zoonk_web/components/flash.ex:81
+#, elixir-autogen, elixir-format
+msgid "Connection lost. Attempting to reconnect"
+msgstr ""
+
+#: lib/zoonk_web/components/loader.ex:29
+#, elixir-autogen, elixir-format
+msgid "Loading"
+msgstr ""
+
+#: lib/zoonk_web/components/form.ex:44
+#, elixir-autogen, elixir-format
+msgid "More information and save button"
+msgstr ""
+
+#: lib/zoonk_web/components/form.ex:52
+#, elixir-autogen, elixir-format
+msgid "Save"
+msgstr ""
+
+#: lib/zoonk_web/components/form.ex:51
+#, elixir-autogen, elixir-format
+msgid "Saving..."
+msgstr ""
+
+#: lib/zoonk_web/components/command.ex:36
+#, elixir-autogen, elixir-format
+msgid "Search..."
+msgstr ""
+
+#: lib/zoonk_web/components/command.ex:66
+#, elixir-autogen, elixir-format
+msgid "Shortcut:"
+msgstr ""
+
+#: lib/zoonk_web/components/input.ex:177
+#, elixir-autogen, elixir-format
+msgid "Submit"
+msgstr ""
+
+#: lib/zoonk_web/components/flash.ex:92
+#, elixir-autogen, elixir-format
+msgid "There was an error on the server"
 msgstr ""

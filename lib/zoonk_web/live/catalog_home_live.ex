@@ -13,7 +13,7 @@ defmodule ZoonkWeb.CatalogLive do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    socket = assign(socket, :page_title, dgettext("content", "Catalog"))
+    socket = assign(socket, :page_title, dgettext("page_title", "Catalog"))
     {:ok, socket}
   end
 end

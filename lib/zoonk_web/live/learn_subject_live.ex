@@ -8,19 +8,19 @@ defmodule ZoonkWeb.LearnSubjectLive do
     <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
       <div class="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center gap-4 text-center">
         <.text tag="h1" size={:xxl} aria-hidden="true">
-          {dgettext("learning", "What do you want to learn?")}
+          {dgettext("goals", "What do you want to learn?")}
         </.text>
 
         <.form for={@form} id="learn-subject" phx-submit="submit" class="w-full">
           <.input
             field={@form[:query]}
-            label={dgettext("learning", "What do you want to learn?")}
+            label={dgettext("goals", "What do you want to learn?")}
             hide_label
             type="text"
             class="w-full px-4 py-3.5 shadow-md md:px-6 md:text-lg"
             required
             submit_icon="tabler-arrow-up"
-            placeholder={dgettext("learning", "e.g. computer science, astronomy, biology, ...")}
+            placeholder={dgettext("goals", "e.g. computer science, astronomy, biology, ...")}
           />
         </.form>
       </div>
@@ -34,7 +34,7 @@ defmodule ZoonkWeb.LearnSubjectLive do
 
     socket =
       socket
-      |> assign(:page_title, dgettext("learning", "Get Started"))
+      |> assign(:page_title, dgettext("page_title", "Get Started"))
       |> assign(:form, to_form(%{"language" => app_language, "query" => ""}))
 
     {:ok, socket}

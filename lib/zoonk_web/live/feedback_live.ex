@@ -13,7 +13,7 @@ defmodule ZoonkWeb.FeedbackLive do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    socket = assign(socket, :page_title, dgettext("users", "Send feedback"))
+    socket = assign(socket, :page_title, dgettext("page_title", "Send feedback"))
     {:ok, socket}
   end
 end

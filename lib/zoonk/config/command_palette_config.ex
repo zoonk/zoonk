@@ -22,17 +22,17 @@ defmodule Zoonk.Config.CommandPaletteConfig do
     [
       %{
         icon: "tabler-home",
-        label: gettext("Home page"),
+        label: dgettext("menu", "Home page"),
         navigate: ~p"/"
       },
       %{
         icon: "tabler-layout-grid",
-        label: gettext("Catalog"),
+        label: dgettext("menu", "Catalog"),
         navigate: ~p"/catalog"
       },
       %{
         icon: "tabler-circle-plus",
-        label: gettext("Start new course"),
+        label: dgettext("menu", "Start new course"),
         navigate: ~p"/learn"
       }
     ]
@@ -53,22 +53,22 @@ defmodule Zoonk.Config.CommandPaletteConfig do
     [
       %{
         icon: "tabler-layout-grid",
-        label: dgettext("users", "My courses"),
+        label: dgettext("menu", "My courses"),
         navigate: ~p"/my-courses"
       },
       %{
         icon: "tabler-target",
-        label: dgettext("users", "Missions"),
+        label: dgettext("menu", "Missions"),
         navigate: ~p"/missions"
       },
       %{
         icon: "tabler-package",
-        label: dgettext("users", "Purchases"),
+        label: dgettext("menu", "Purchases"),
         navigate: ~p"/purchases"
       },
       %{
         icon: "tabler-diamond",
-        label: dgettext("users", "Subscription"),
+        label: dgettext("menu", "Subscription"),
         navigate: ~p"/subscription"
       }
     ]
@@ -89,17 +89,17 @@ defmodule Zoonk.Config.CommandPaletteConfig do
     [
       %{
         icon: "tabler-language",
-        label: gettext("Change app language"),
+        label: dgettext("menu", "Change app language"),
         navigate: ~p"/language"
       },
       %{
         icon: "tabler-id-badge",
-        label: gettext("Change display name"),
+        label: dgettext("menu", "Change display name"),
         navigate: ~p"/name"
       },
       %{
         icon: "tabler-mail",
-        label: gettext("Change email address"),
+        label: dgettext("menu", "Change email address"),
         navigate: ~p"/email"
       }
     ]
@@ -120,38 +120,38 @@ defmodule Zoonk.Config.CommandPaletteConfig do
     [
       %{
         icon: "tabler-message-circle",
-        label: dgettext("users", "Send feedback"),
+        label: dgettext("menu", "Send feedback"),
         navigate: ~p"/feedback",
         visibility: :always
       },
       %{
         icon: "tabler-lifebuoy",
-        label: dgettext("users", "Support"),
+        label: dgettext("menu", "Support"),
         navigate: ~p"/support",
         visibility: :always
       },
       %{
         icon: "tabler-ufo",
-        label: gettext("Follow us on social media"),
+        label: dgettext("menu", "Follow us on social media"),
         navigate: ~p"/follow",
         visibility: :always
       },
       %{
         icon: "tabler-logout",
-        label: dgettext("users", "Logout"),
+        label: dgettext("menu", "Logout"),
         href: ~p"/logout",
         method: "delete",
         visibility: :authenticated
       },
       %{
         icon: "tabler-user",
-        label: dgettext("users", "Login"),
+        label: dgettext("menu", "Login"),
         navigate: ~p"/login",
         visibility: :unauthenticated
       },
       %{
         icon: "tabler-user-plus",
-        label: dgettext("users", "Sign up"),
+        label: dgettext("menu", "Sign up"),
         navigate: ~p"/signup",
         visibility: :unauthenticated
       }

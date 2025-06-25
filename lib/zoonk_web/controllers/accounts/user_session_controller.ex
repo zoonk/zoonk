@@ -22,12 +22,12 @@ defmodule ZoonkWeb.Accounts.UserSessionController do
     case Accounts.update_user_email(conn.assigns.scope.user, otp) do
       :ok ->
         conn
-        |> put_flash(:info, dgettext("users", "Email changed successfully."))
+        |> put_flash(:info, dgettext("auth", "Email changed successfully."))
         |> redirect(to: ~p"/email")
 
       :error ->
         conn
-        |> put_flash(:error, dgettext("users", "Code is invalid or it has expired."))
+        |> put_flash(:error, dgettext("auth", "Code is invalid or it has expired."))
         |> redirect(to: ~p"/email")
     end
   end
@@ -43,7 +43,7 @@ defmodule ZoonkWeb.Accounts.UserSessionController do
 
       _error ->
         conn
-        |> put_flash(:error, dgettext("users", "Invalid code or account not found."))
+        |> put_flash(:error, dgettext("auth", "Invalid code or account not found."))
         |> redirect(to: error_redirect(action))
     end
   end
@@ -53,11 +53,11 @@ defmodule ZoonkWeb.Accounts.UserSessionController do
   """
   def delete(conn, _params) do
     conn
-    |> put_flash(:info, dgettext("users", "Logged out successfully."))
+    |> put_flash(:info, dgettext("auth", "Logged out successfully."))
     |> UserAuth.logout_user()
   end
 
-  defp confirmation_msg("signup"), do: dgettext("users", "Your account is confirmed!")
+  defp confirmation_msg("signup"), do: dgettext("auth", "Your account is confirmed!")
   defp confirmation_msg(_action), do: nil
 
   defp error_redirect("login"), do: ~p"/confirm/login"

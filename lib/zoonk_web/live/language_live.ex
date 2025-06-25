@@ -13,7 +13,7 @@ defmodule ZoonkWeb.LanguageLive do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    socket = assign(socket, :page_title, dgettext("users", "App language"))
+    socket = assign(socket, :page_title, dgettext("page_title", "App language"))
     {:ok, socket}
   end
 end

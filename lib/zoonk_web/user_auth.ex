@@ -231,7 +231,7 @@ defmodule ZoonkWeb.UserAuth do
     else
       socket =
         socket
-        |> Phoenix.LiveView.put_flash(:error, dgettext("users", "You need to reauthenticate to access this page."))
+        |> Phoenix.LiveView.put_flash(:error, dgettext("auth", "You need to reauthenticate to access this page."))
         |> Phoenix.LiveView.redirect(to: ~p"/login")
 
       {:halt, socket}

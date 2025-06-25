@@ -8,14 +8,23 @@ defmodule Zoonk.Config.LanguageConfig do
 
   @supported_languages [
     en: "English",
+    ar: "العربية",
     de: "Deutsch",
     es: "Español",
     fr: "Français",
+    hi: "हिन्दी",
+    id: "Bahasa Indonesia",
     it: "Italiano",
     ja: "日本語",
     ko: "한국어",
+    nl: "Nederlands",
+    pl: "Polski",
     pt: "Português",
+    ro: "Română",
+    ru: "Русский",
+    th: "ภาษาไทย",
     tr: "Türkçe",
+    vi: "Tiếng Việt",
     zh_Hans: "简体中文",
     zh_Hant: "繁體中文"
   ]

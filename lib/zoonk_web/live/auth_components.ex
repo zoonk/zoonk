@@ -93,13 +93,13 @@ defmodule ZoonkWeb.AuthComponents do
 
       <section
         :if={@action == :signup}
-        aria-label={dgettext("users", "Terms of user and privacy policy")}
+        aria-label={dgettext("auth", "Terms of user and privacy policy")}
         class="pt-8"
       >
         <.text size={:sm} variant={:secondary}>
-          {dgettext("users", "By signing up, you agree to our %{terms} and %{privacy}.",
-            terms: get_terms_link("/terms", dgettext("users", "Terms of Use")),
-            privacy: get_terms_link("/privacy", dgettext("users", "Privacy Policy"))
+          {dgettext("auth", "By signing up, you agree to our %{terms} and %{privacy}.",
+            terms: get_terms_link("/terms", dgettext("auth", "Terms of Use")),
+            privacy: get_terms_link("/privacy", dgettext("auth", "Privacy Policy"))
           )
           |> Phoenix.HTML.raw()}
         </.text>
@@ -110,9 +110,9 @@ defmodule ZoonkWeb.AuthComponents do
     """
   end
 
-  defp get_auth_header(:login), do: dgettext("users", "Access your Zoonk account")
-  defp get_auth_header(:signup), do: dgettext("users", "Start learning the skills to build amazing things")
-  defp get_auth_header(:confirm), do: dgettext("users", "Validate your email address")
+  defp get_auth_header(:login), do: dgettext("auth", "Access your Zoonk account")
+  defp get_auth_header(:signup), do: dgettext("auth", "Start learning the skills to build amazing things")
+  defp get_auth_header(:confirm), do: dgettext("auth", "Validate your email address")
 
   defp get_auth_link(:login), do: ~p"/login"
   defp get_auth_link(:signup), do: ~p"/signup"
@@ -121,14 +121,14 @@ defmodule ZoonkWeb.AuthComponents do
   defp get_auth_link(:signup, :email), do: ~p"/signup/email"
   defp get_auth_link(_action, provider), do: ~p"/auth/#{provider}"
 
-  defp get_auth_label(:login, :email), do: dgettext("users", "Login with Email")
-  defp get_auth_label(:signup, :email), do: dgettext("users", "Sign up with Email")
+  defp get_auth_label(:login, :email), do: dgettext("auth", "Login with Email")
+  defp get_auth_label(:signup, :email), do: dgettext("auth", "Sign up with Email")
 
   defp get_auth_label(_action, provider),
-    do: dgettext("users", "Continue with %{provider}", provider: provider_name(provider))
+    do: dgettext("auth", "Continue with %{provider}", provider: provider_name(provider))
 
-  defp get_back_label(:login), do: dgettext("users", "Other login options")
-  defp get_back_label(:signup), do: dgettext("users", "Other sign up options")
+  defp get_back_label(:login), do: dgettext("auth", "Other login options")
+  defp get_back_label(:signup), do: dgettext("auth", "Other sign up options")
 
   defp provider_name(provider) do
     provider
@@ -148,14 +148,14 @@ defmodule ZoonkWeb.AuthComponents do
   defp get_footer_action(:login), do: :signup
   defp get_footer_action(:signup), do: :login
 
-  defp get_footer_aria_title(:login), do: dgettext("users", "Login to your account")
-  defp get_footer_aria_title(:signup), do: dgettext("users", "Create an account")
+  defp get_footer_aria_title(:login), do: dgettext("auth", "Login to your account")
+  defp get_footer_aria_title(:signup), do: dgettext("auth", "Create an account")
 
-  defp get_footer_title(:login), do: dgettext("users", "Already have an account?")
-  defp get_footer_title(:signup), do: dgettext("users", "Don't have an account?")
+  defp get_footer_title(:login), do: dgettext("auth", "Already have an account?")
+  defp get_footer_title(:signup), do: dgettext("auth", "Don't have an account?")
 
-  defp get_footer_cta(:login), do: dgettext("users", "Login")
-  defp get_footer_cta(:signup), do: dgettext("users", "Sign up")
+  defp get_footer_cta(:login), do: dgettext("auth", "Login")
+  defp get_footer_cta(:signup), do: dgettext("auth", "Sign up")
 
   defp get_terms_link(link, label) do
     "<a href='#{link}' class=\"underline\">#{label}</a>"
