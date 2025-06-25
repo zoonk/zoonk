@@ -47,5 +47,13 @@ defmodule ZoonkWeb.LanguageLiveTest do
       |> assert_has("option", text: "Español")
       |> assert_has("option", text: "Français")
     end
+
+    test "rejects invalid language values", %{conn: conn} do
+      conn
+      |> visit(~p"/language")
+      |> fill_form("#language_form", user: %{language: "invalid_lang"})
+      |> submit()
+      |> assert_has("p", text: "is invalid")
+    end
   end
 end
