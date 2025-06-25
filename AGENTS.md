@@ -95,11 +95,6 @@
 - Never expose private functions for testing.
 - Never run tests using VSCode's debugging tools because they don't work properly and crash the test suite. Instead, use `mix test`.
 
-## Translations
-
-- Keep translations consistent across contexts.
-- Don't update translation files manually. Instead use `mix locale` to update them.
-
 <!-- usage-rules-start -->
 <!-- elixir-start -->
 
