@@ -52,4 +52,18 @@ defmodule ZoonkWeb.Components.Form do
     </.form>
     """
   end
+
+  attr :class, :any, default: nil, doc: "the CSS class to apply to the form layout"
+  slot :inner_block, required: true, doc: "the inner content of the form layout"
+
+  def form_layout(assigns) do
+    ~H"""
+    <section class={[
+      "mx-auto flex max-w-xl flex-1 flex-col md:items-center md:justify-center",
+      @class
+    ]}>
+      {render_slot(@inner_block)}
+    </section>
+    """
+  end
 end

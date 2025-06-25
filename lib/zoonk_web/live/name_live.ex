@@ -8,7 +8,7 @@ defmodule ZoonkWeb.NameLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <section class="mx-auto flex max-w-xl flex-1 flex-col md:items-center md:justify-center">
+      <.form_layout>
         <.form_container
           for={@name_form}
           id="name_form"
@@ -37,7 +37,7 @@ defmodule ZoonkWeb.NameLive do
             {dgettext("settings", "This is not visible to others.")}
           </:requirements>
         </.form_container>
-      </section>
+      </.form_layout>
     </ZoonkWeb.AppLayout.render>
     """
   end

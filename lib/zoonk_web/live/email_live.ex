@@ -8,7 +8,7 @@ defmodule ZoonkWeb.EmailLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <section class="flex flex-1 flex-col md:items-center md:justify-center lg:mx-auto lg:max-w-3xl">
+      <.form_layout>
         <.form_container
           for={@email_form}
           id="email_form"
@@ -38,7 +38,7 @@ defmodule ZoonkWeb.EmailLive do
             {dgettext("settings", "We'll send a code to your email address.")}
           </:requirements>
         </.form_container>
-      </section>
+      </.form_layout>
     </ZoonkWeb.AppLayout.render>
     """
   end
