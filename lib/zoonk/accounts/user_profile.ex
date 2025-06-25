@@ -48,11 +48,30 @@ defmodule Zoonk.Accounts.UserProfile do
     profile
     |> cast(attrs, [:bio, :display_name, :picture_url, :is_public, :username, :user_id])
     |> validate_required([:is_public, :username, :user_id])
+    |> validate_length(:display_name, max: 100)
     |> validate_format(:username, ~r/^[a-zA-Z0-9_-]+$/,
       message: dgettext("errors", "cannot have spaces for special characters")
     )
     |> validate_format(:username, ~r/[a-zA-Z]/, message: dgettext("errors", "must have letters"))
     |> validate_exclusion(:username, SubdomainConfig.list_reserved_subdomains())
     |> unique_constraint(:username)
+  end
+
+  @doc """
+  A user profile changeset for updating the display name.
+  """
+  def display_name_changeset(profile, attrs) do
+    profile
+    |> cast(attrs, [:display_name])
+    |> update_change(:display_name, &normalize_display_name/1)
+    |> validate_length(:display_name, max: 100)
+  end
+
+  # Normalize display name by trimming whitespace and converting empty strings to nil
+  defp normalize_display_name(nil), do: nil
+  defp normalize_display_name(""), do: nil
+  defp normalize_display_name(name) when is_binary(name) do
+    trimmed = String.trim(name)
+    if trimmed == "", do: nil, else: trimmed
   end
 end

@@ -38,6 +38,36 @@ defmodule Zoonk.Accounts do
   end
 
   @doc """
+  Returns an `%Ecto.Changeset{}` for changing the user display name.
+
+  ## Examples
+
+      iex> change_user_display_name(user_profile)
+      %Ecto.Changeset{data: %UserProfile{}}
+
+  """
+  def change_user_display_name(%UserProfile{} = user_profile, attrs \\ %{}) do
+    UserProfile.display_name_changeset(user_profile, attrs)
+  end
+
+  @doc """
+  Updates a user's profile.
+
+  ## Examples
+
+      iex> update_user_profile(user_profile, %{display_name: "New Name"})
+      {:ok, %UserProfile{}}
+
+      iex> update_user_profile(user_profile, %{display_name: ""})
+      {:error, %Ecto.Changeset{}}
+  """
+  def update_user_profile(%UserProfile{} = user_profile, attrs) do
+    user_profile
+    |> UserProfile.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
   Gets a user by email.
 
   ## Examples
