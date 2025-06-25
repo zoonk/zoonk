@@ -14,6 +14,7 @@ defmodule ZoonkWeb.NameLive do
           id="name_form"
           phx-submit="submit"
           phx-change="validate_name"
+          display_success={@display_success?}
         >
           <:title>{dgettext("settings", "Update your name")}</:title>
 
@@ -51,6 +52,7 @@ defmodule ZoonkWeb.NameLive do
       socket
       |> assign(:current_display_name, user_profile.display_name)
       |> assign(:name_form, to_form(name_changeset))
+      |> assign(:display_success?, false)
       |> assign(:page_title, dgettext("page_title", "Update your name"))
 
     {:ok, socket}
@@ -66,7 +68,12 @@ defmodule ZoonkWeb.NameLive do
       |> Map.put(:action, :validate)
       |> to_form()
 
-    {:noreply, assign(socket, name_form: name_form)}
+    socket =
+      socket
+      |> assign(:name_form, name_form)
+      |> assign(:display_success?, false)
+
+    {:noreply, socket}
   end
 
   def handle_event("submit", params, socket) do
@@ -75,10 +82,7 @@ defmodule ZoonkWeb.NameLive do
 
     case Accounts.update_user_profile(user_profile, profile_params) do
       {:ok, _updated_profile} ->
-        {:noreply,
-         socket
-         |> put_flash(:info, dgettext("settings", "Name updated successfully."))
-         |> push_navigate(to: ~p"/name")}
+        {:noreply, assign(socket, :display_success?, true)}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :name_form, to_form(changeset, action: :insert))}

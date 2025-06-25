@@ -52,7 +52,6 @@ defmodule ZoonkWeb.EmailLive do
       socket
       |> assign(:current_email, user.email)
       |> assign(:email_form, to_form(email_changeset))
-      |> assign(:trigger_submit, false)
       |> assign(:page_title, dgettext("page_title", "Change Email"))
 
     {:ok, socket}

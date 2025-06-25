@@ -63,6 +63,41 @@ defmodule ZoonkDev.UIPreview.FormPreviewLive do
           </.form_container>
         </.card_content>
       </.card>
+
+      <.card>
+        <.card_header>
+          <.card_title>Form with Success Message</.card_title>
+          <.card_description>
+            A form demonstrating the "Done!" success message that appears after submission.
+          </.card_description>
+        </.card_header>
+
+        <.card_content>
+          <.form_container for={@success_form} id="success_form" display_success={true}>
+            <:title>Settings</:title>
+            <:subtitle>Update your preferences below.</:subtitle>
+
+            <div class="flex flex-col gap-4">
+              <.input
+                field={@success_form[:email]}
+                label="Email"
+                placeholder="your@email.com"
+                type="email"
+                required
+                class="w-full"
+              />
+
+              <.input
+                field={@success_form[:notifications]}
+                label="Enable notifications"
+                type="checkbox"
+              />
+            </div>
+
+            <:requirements>Changes will be saved automatically.</:requirements>
+          </.form_container>
+        </.card_content>
+      </.card>
     </ZoonkDev.UIPreview.UIPreviewLayout.render>
     """
   end
@@ -74,6 +109,7 @@ defmodule ZoonkDev.UIPreview.FormPreviewLive do
       |> assign(page_title: "Form")
       |> assign(:basic_form, to_form(%{name: ""}))
       |> assign(:profile_form, to_form(%{full_name: "", bio: "", birthday: nil}))
+      |> assign(:success_form, to_form(%{email: "", notifications: false}))
 
     {:ok, socket}
   end

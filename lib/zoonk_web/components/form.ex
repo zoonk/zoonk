@@ -8,6 +8,8 @@ defmodule ZoonkWeb.Components.Form do
   import ZoonkWeb.Components.Button
   import ZoonkWeb.Components.Text
 
+  alias Phoenix.LiveView.JS
+
   @form_attrs ~w(autocomplete name rel action enctype method novalidate target multipart)
 
   @doc """
@@ -18,6 +20,7 @@ defmodule ZoonkWeb.Components.Form do
 
   attr :label, :string, default: nil, doc: "the aria-label for the form"
   attr :class, :any, default: nil, doc: "the CSS class to apply to the form"
+  attr :display_success, :boolean, default: false, doc: "whether to display a success message after the form is submitted"
   attr :rest, :global, include: @form_attrs, doc: "the arbitrary HTML attributes to apply to the form tag"
 
   slot :inner_block, required: true
@@ -45,9 +48,21 @@ defmodule ZoonkWeb.Components.Form do
           {render_slot(@requirements)}
         </.text>
 
-        <.button type="submit" size={:sm} phx-disable-with={gettext("Saving...")}>
-          {gettext("Save")}
-        </.button>
+        <div class="flex items-center gap-3">
+          <.text
+            :if={@display_success}
+            size={:sm}
+            variant={:secondary}
+            class="text-zk-success"
+            phx-mounted={JS.transition({"ease-in-out duration-300", "opacity-0", "opacity-100"})}
+          >
+            {gettext("Done!")}
+          </.text>
+
+          <.button type="submit" size={:sm} phx-disable>
+            {gettext("Save")}
+          </.button>
+        </div>
       </footer>
     </.form>
     """
