@@ -38,6 +38,23 @@ defmodule Zoonk.Accounts do
   end
 
   @doc """
+  Updates a user profile.
+
+  ## Examples
+
+      iex> update_user_profile(%UserProfile{}, %{display_name: "New Name"})
+      {:ok, %UserProfile{}}
+
+      iex> update_user_profile(%UserProfile{}, %{display_name: bad_value})
+      {:error, %Ecto.Changeset{}}
+  """
+  def update_user_profile(%UserProfile{} = user_profile, attrs) do
+    user_profile
+    |> change_user_profile(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
   Gets a user by email.
 
   ## Examples

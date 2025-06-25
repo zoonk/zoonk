@@ -54,6 +54,81 @@ defmodule Zoonk.AccountsTest do
     end
   end
 
+  describe "update_user_profile/2" do
+    setup do
+      %{profile: user_fixture(%{preload: :profile}).profile}
+    end
+
+    test "updates profile with valid attributes", %{profile: profile} do
+      update_attrs = %{display_name: "New Display Name", bio: "Updated bio"}
+
+      assert {:ok, %UserProfile{} = updated_profile} = Accounts.update_user_profile(profile, update_attrs)
+      assert updated_profile.display_name == "New Display Name"
+      assert updated_profile.bio == "Updated bio"
+      assert updated_profile.id == profile.id
+    end
+
+    test "allows users to remove their existing display name by setting empty string", %{profile: profile} do
+      # First set a display name
+      {:ok, profile_with_name} = Accounts.update_user_profile(profile, %{display_name: "Some Name"})
+      assert profile_with_name.display_name == "Some Name"
+
+      # Then remove it with empty string
+      assert {:ok, %UserProfile{} = updated_profile} =
+               Accounts.update_user_profile(profile_with_name, %{display_name: ""})
+
+      assert is_nil(updated_profile.display_name)
+    end
+
+    test "allows users to remove their existing display name by setting nil", %{profile: profile} do
+      # First set a display name
+      {:ok, profile_with_name} = Accounts.update_user_profile(profile, %{display_name: "Some Name"})
+      assert profile_with_name.display_name == "Some Name"
+
+      # Then remove it with nil
+      assert {:ok, %UserProfile{} = updated_profile} =
+               Accounts.update_user_profile(profile_with_name, %{display_name: nil})
+
+      assert is_nil(updated_profile.display_name)
+    end
+
+    test "prevents long display names", %{profile: profile} do
+      long_name = String.duplicate("a", 33)
+
+      assert {:error, changeset} = Accounts.update_user_profile(profile, %{display_name: long_name})
+      assert %{display_name: ["should be at most 32 character(s)"]} = errors_on(changeset)
+    end
+
+    test "allows display names at the maximum length", %{profile: profile} do
+      max_length_name = String.duplicate("a", 32)
+
+      assert {:ok, %UserProfile{} = updated_profile} =
+               Accounts.update_user_profile(profile, %{display_name: max_length_name})
+
+      assert updated_profile.display_name == max_length_name
+    end
+
+    test "returns error changeset with invalid username", %{profile: profile} do
+      invalid_attrs = %{username: "invalid.username"}
+
+      assert {:error, changeset} = Accounts.update_user_profile(profile, invalid_attrs)
+      assert %{username: ["cannot have spaces for special characters"]} = errors_on(changeset)
+    end
+
+    test "returns error changeset when username is already taken", %{profile: profile} do
+      other_user = user_fixture(%{preload: :profile})
+      taken_username = other_user.profile.username
+
+      assert {:error, changeset} = Accounts.update_user_profile(profile, %{username: taken_username})
+      assert %{username: ["has already been taken"]} = errors_on(changeset)
+    end
+
+    test "returns error changeset when required fields are missing", %{profile: profile} do
+      assert {:error, changeset} = Accounts.update_user_profile(profile, %{username: nil})
+      assert %{username: ["can't be blank"]} = errors_on(changeset)
+    end
+  end
+
   describe "get_user_by_email/1" do
     test "does not return the user if the email does not exist" do
       refute Accounts.get_user_by_email("unknown@example.com")
