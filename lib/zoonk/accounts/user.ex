@@ -97,6 +97,15 @@ defmodule Zoonk.Accounts.User do
     |> validate_email(opts)
   end
 
+  @doc """
+  A user changeset for changing the language.
+  """
+  def language_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:language])
+    |> validate_required([:language])
+  end
+
   defp validate_email(changeset, opts) do
     changeset =
       changeset

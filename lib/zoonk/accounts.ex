@@ -118,6 +118,19 @@ defmodule Zoonk.Accounts do
   end
 
   @doc """
+  Returns an `%Ecto.Changeset{}` for changing the user language.
+
+  ## Examples
+
+      iex> change_user_language(user)
+      %Ecto.Changeset{data: %User{}}
+
+  """
+  def change_user_language(user, attrs \\ %{}) do
+    User.language_changeset(user, attrs)
+  end
+
+  @doc """
   Updates the user email using the given OTP code.
 
   If the code matches, the user email is updated and the code is deleted.
@@ -135,6 +148,24 @@ defmodule Zoonk.Accounts do
     else
       _error -> :error
     end
+  end
+
+  @doc """
+  Updates the user language.
+
+  ## Examples
+
+      iex> update_user_language(user, %{language: "pt"})
+      {:ok, %User{}}
+
+      iex> update_user_language(user, %{language: "invalid"})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_user_language(user, attrs) do
+    user
+    |> User.language_changeset(attrs)
+    |> Repo.update()
   end
 
   defp user_email_multi(user, email, context) do
