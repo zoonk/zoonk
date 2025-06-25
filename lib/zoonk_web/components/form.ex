@@ -33,7 +33,7 @@ defmodule ZoonkWeb.Components.Form do
     <.form
       for={@for}
       as={@as}
-      class={["bg-zk-surface border-zk-border rounded border", @class]}
+      class={["bg-zk-surface border-zk-border w-full rounded border", @class]}
       {@rest}
     >
       <fieldset class="flex flex-col gap-4 p-4">
@@ -74,7 +74,7 @@ defmodule ZoonkWeb.Components.Form do
   def form_layout(assigns) do
     ~H"""
     <section class={[
-      "mx-auto flex max-w-xl flex-1 flex-col md:items-center md:justify-center",
+      "mx-auto flex w-full max-w-xl flex-1 flex-col md:items-center md:justify-center",
       @class
     ]}>
       {render_slot(@inner_block)}

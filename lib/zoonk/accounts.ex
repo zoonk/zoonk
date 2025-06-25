@@ -55,6 +55,35 @@ defmodule Zoonk.Accounts do
   end
 
   @doc """
+  Returns an `%Ecto.Changeset{}` for tracking a user's settings changes.
+
+  ## Examples
+
+      iex> change_user_settings(%User{}, %{language: :en})
+      %Ecto.Changeset{data: %User{}}
+  """
+  def change_user_settings(%User{} = user, attrs \\ %{}) do
+    User.settings_changeset(user, attrs, validate_email: false)
+  end
+
+  @doc """
+  Updates a user's settings.
+
+  ## Examples
+
+      iex> update_user_settings(%User{}, %{language: :en})
+      {:ok, %User{}}
+
+      iex> update_user_settings(%User{}, %{language: :invalid})
+      {:error, %Ecto.Changeset{}}
+  """
+  def update_user_settings(%User{} = user, attrs) do
+    user
+    |> change_user_settings(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
   Gets a user by email.
 
   ## Examples

@@ -8,7 +8,7 @@
 - Replace `@impl true` with **`@impl ModuleName`**.
 - Use the **new HEEX syntax** `{@variable}` instead of `<%= @variable %>`.
 - Prefer `:if` in elements instead of wrapping them in `if` blocks. E.g., `<ul :if={@items}>` instead of `<%= if @items do %>`.
-- Use **Gettext** for all text. Never hardcode strings.
+- Use **Gettext** for all text. Never hardcode strings. But you don't need to run `mix gettext.extract`, we'll do that later.
 - Use **Verified Routes** (`~p"/path"`) instead of `Routes.page_path/2`.
 - Before suggesting code, aggressively simplify it using pattern matching, guards, and helper functions.
 - Make functions short and avoid nested blocks. If a function is long, break it into smaller functions.
