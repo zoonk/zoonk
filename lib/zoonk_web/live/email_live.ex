@@ -8,7 +8,7 @@ defmodule ZoonkWeb.EmailLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <section class="lg:mx-auto lg:max-w-3xl">
+      <section class="flex flex-1 flex-col md:items-center md:justify-center lg:mx-auto lg:max-w-3xl">
         <.form_container
           for={@email_form}
           id="email_form"
