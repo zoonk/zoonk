@@ -50,12 +50,12 @@ config :zoonk, Oban,
   engine: Oban.Engines.Basic,
   queues: [default: 10],
   repo: Zoonk.Repo,
-  shutdown_grace_period: to_timeout(minute: 1),
+  shutdown_grace_period: :timer.minutes(1),
   plugins: [
     # Delete jobs after 7 days
     {Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 7},
     # Automatically move failed jobs back to available so they can run again
-    {Oban.Plugins.Lifeline, rescue_after: to_timeout(minute: 30)}
+    {Oban.Plugins.Lifeline, rescue_after: :timer.minutes(30)}
   ]
 
 # Configure translation
