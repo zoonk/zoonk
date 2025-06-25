@@ -63,7 +63,7 @@ defmodule ZoonkWeb.Components.Anchor do
         @size == :sm && "h-8 px-3 text-sm",
         @size == :md && "px-4.5 h-10",
         @size == :lg && "h-12 px-6 text-lg",
-        @size == :adaptive && "size-8 sm:h-8 sm:w-auto sm:px-3",
+        @size == :adaptive && "size-8 text-sm sm:h-8 sm:w-auto sm:px-3",
         @class
       ]}
       {@rest}
@@ -74,7 +74,8 @@ defmodule ZoonkWeb.Components.Anchor do
         name={@icon}
         class={[
           @icon_align == :left && "absolute left-4",
-          @icon_align == :right && "absolute right-4"
+          @icon_align == :right && "absolute right-4",
+          @icon_align == :auto && "sm:-ml-1"
         ]}
       />
 
@@ -109,5 +110,5 @@ defmodule ZoonkWeb.Components.Anchor do
   defp icon_size(:sm), do: :xs
   defp icon_size(:md), do: :sm
   defp icon_size(:lg), do: :md
-  defp icon_size(:adaptive), do: :sm
+  defp icon_size(:adaptive), do: :xs
 end
