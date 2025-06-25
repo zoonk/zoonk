@@ -3,6 +3,7 @@ defmodule ZoonkWeb.NameLive do
   use ZoonkWeb, :live_view
 
   alias Zoonk.Accounts
+  alias Zoonk.Repo
 
   @impl Phoenix.LiveView
   def render(assigns) do
@@ -45,11 +46,12 @@ defmodule ZoonkWeb.NameLive do
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     user = socket.assigns.scope.user
-    user_profile = Zoonk.Repo.preload(user, :profile).profile
+    user_profile = Repo.preload(user, :profile).profile
     name_changeset = Accounts.change_user_display_name(user_profile, %{})
 
     socket =
       socket
+      |> assign(:user_profile, user_profile)
       |> assign(:current_display_name, user_profile.display_name)
       |> assign(:name_form, to_form(name_changeset))
       |> assign(:trigger_submit, false)
@@ -61,8 +63,7 @@ defmodule ZoonkWeb.NameLive do
   @impl Phoenix.LiveView
   def handle_event("validate_name", params, socket) do
     %{"user_profile" => profile_params} = params
-    user = socket.assigns.scope.user
-    user_profile = Zoonk.Repo.preload(user, :profile).profile
+    user_profile = socket.assigns.user_profile
 
     name_form =
       user_profile
@@ -75,13 +76,13 @@ defmodule ZoonkWeb.NameLive do
 
   def handle_event("submit", params, socket) do
     %{"user_profile" => profile_params} = params
-    user = socket.assigns.scope.user
-    user_profile = Zoonk.Repo.preload(user, :profile).profile
+    user_profile = socket.assigns.user_profile
 
     case Accounts.update_user_profile(user_profile, profile_params) do
-      {:ok, _updated_profile} ->
+      {:ok, updated_profile} ->
         socket =
           socket
+          |> assign(:user_profile, updated_profile)
           |> put_flash(:info, dgettext("settings", "Display name updated successfully."))
           |> push_navigate(to: ~p"/name")
 
