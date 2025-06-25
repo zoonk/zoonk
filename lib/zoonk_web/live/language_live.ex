@@ -44,7 +44,7 @@ defmodule ZoonkWeb.LanguageLive do
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     user = socket.assigns.scope.user
-    language_changeset = Accounts.change_user_language(user, %{})
+    language_changeset = Accounts.change_user_language(user, %{language: user.language})
 
     socket =
       socket
