@@ -31,7 +31,7 @@ defmodule ZoonkWeb.Components.Button do
       type={@type}
       class={[
         "zk-btn",
-        "disabled:pointer-events-none disabled:opacity-50",
+        "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
         @icon_align in [:left, :right] && "relative",
         @variant == :primary && "zk-btn-primary",
         @variant == :destructive && "zk-btn-destructive",
@@ -67,7 +67,7 @@ defmodule ZoonkWeb.Components.Button do
       type={@type}
       class={[
         "zk-btn rounded-full",
-        "disabled:pointer-events-none disabled:opacity-50",
+        "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
         @variant == :primary && "zk-btn-primary",
         @variant == :destructive && "zk-btn-destructive",
         @variant == :outline && "zk-btn-outline",
