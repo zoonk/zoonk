@@ -94,6 +94,7 @@ defmodule ZoonkWeb do
       import ZoonkWeb.Components.Dialog
       import ZoonkWeb.Components.Divider
       import ZoonkWeb.Components.Dropdown
+      import ZoonkWeb.Components.FAQ
       import ZoonkWeb.Components.Flash
       import ZoonkWeb.Components.Form
       import ZoonkWeb.Components.Icon

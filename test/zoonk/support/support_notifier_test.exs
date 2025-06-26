@@ -1,6 +1,7 @@
 defmodule Zoonk.Support.SupportNotifierTest do
   use Zoonk.DataCase, async: true
 
+  alias Zoonk.Config.SupportConfig
   alias Zoonk.Support.SupportNotifier
 
   describe "deliver_support_request/2" do
@@ -11,8 +12,8 @@ defmodule Zoonk.Support.SupportNotifierTest do
       assert {:ok, email} = SupportNotifier.deliver_support_request(user_email, message)
 
       # Check email structure
-      assert email.to == [{"", "hello@zoonk.com"}]
-      assert email.from == {"Zoonk", "hello@zoonk.com"}
+      assert email.to == [{"", SupportConfig.support_email()}]
+      assert email.from == {"Zoonk", SupportConfig.support_email()}
       assert email.subject =~ "Support request"
       assert email.text_body =~ "From: #{user_email}"
       assert email.text_body =~ "Message:\n#{message}"

@@ -7,6 +7,7 @@ defmodule Zoonk.Support.SupportNotifier do
   """
   use Gettext, backend: Zoonk.Gettext
 
+  alias Zoonk.Config.SupportConfig
   alias Zoonk.Mailer
 
   @doc """
@@ -36,6 +37,6 @@ defmodule Zoonk.Support.SupportNotifier do
         message: message
       )
 
-    Mailer.send_email("hello@zoonk.com", subject, content)
+    Mailer.send_email(SupportConfig.support_email(), subject, content)
   end
 end

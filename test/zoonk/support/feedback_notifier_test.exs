@@ -1,6 +1,7 @@
 defmodule Zoonk.Support.FeedbackNotifierTest do
   use Zoonk.DataCase, async: true
 
+  alias Zoonk.Config.SupportConfig
   alias Zoonk.Support.FeedbackNotifier
 
   describe "deliver_feedback/2" do
@@ -11,8 +12,8 @@ defmodule Zoonk.Support.FeedbackNotifierTest do
       assert {:ok, email} = FeedbackNotifier.deliver_feedback(user_email, message)
 
       # Check email structure
-      assert email.to == [{"", "hello@zoonk.com"}]
-      assert email.from == {"Zoonk", "hello@zoonk.com"}
+      assert email.to == [{"", SupportConfig.support_email()}]
+      assert email.from == {"Zoonk", SupportConfig.support_email()}
       assert email.subject == "Feedback"
       assert email.text_body =~ "From: #{user_email}"
       assert email.text_body =~ "Message:\n#{message}"
