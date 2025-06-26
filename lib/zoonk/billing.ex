@@ -6,6 +6,7 @@ defmodule Zoonk.Billing do
   and integrating with payment providers such as Stripe.
   """
 
+  alias Zoonk.Accounts.User
   alias Zoonk.Billing.BillingAccount
   alias Zoonk.Billing.Price
   alias Zoonk.Billing.Stripe
@@ -156,6 +157,31 @@ defmodule Zoonk.Billing do
     subscription
     |> cancel_stripe_subscription()
     |> cancel_user_subscription(scope, subscription, %{status: :canceled, cancel_at_period_end: true})
+  end
+
+  @doc """
+  Creates a customer in Stripe.
+
+  Takes a User struct and creates a new customer record in Stripe using the user's
+  email, ID, and language preferences.
+
+  ## Examples
+
+      iex> user = %User{id: 123, email: "user@example.com", language: :en}
+      iex> create_stripe_customer(user)
+      {:ok, %{"id" => "cus_1234567890", "email" => "user@example.com"}}
+
+      iex> create_stripe_customer(%User{email: nil})
+      {:error, "Invalid request"}
+  """
+  def create_stripe_customer(%User{} = user) do
+    attrs = %{
+      "email" => user.email,
+      "metadata[user_id]" => user.id,
+      "preferred_locales[]" => Atom.to_string(user.language)
+    }
+
+    Stripe.post("/customers", attrs)
   end
 
   defp cancel_user_subscription({:ok, _status}, scope, subscription, attrs) do

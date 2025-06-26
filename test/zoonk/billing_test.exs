@@ -355,4 +355,56 @@ defmodule Zoonk.BillingTest do
       assert "must start with cus_" in errors_on(changeset).stripe_customer_id
     end
   end
+
+  describe "create_stripe_customer/1" do
+    test "successfully creates a customer with user data" do
+      user = user_fixture(%{email: "customer@example.com", language: :en})
+
+      stripe_stub(
+        prefix: "cus_",
+        data: %{
+          "email" => user.email,
+          "metadata" => %{"user_id" => to_string(user.id)},
+          "preferred_locales" => ["en"],
+          "object" => "customer"
+        }
+      )
+
+      assert {:ok, customer} = Billing.create_stripe_customer(user)
+      assert customer["email"] == user.email
+      assert customer["metadata"]["user_id"] == to_string(user.id)
+      assert customer["preferred_locales"] == ["en"]
+      assert customer["object"] == "customer"
+      assert String.starts_with?(customer["id"], "cus_")
+    end
+
+    test "creates customer with different language" do
+      user = user_fixture(%{email: "spanish@example.com", language: :es})
+
+      stripe_stub(
+        prefix: "cus_",
+        data: %{
+          "email" => user.email,
+          "metadata" => %{"user_id" => to_string(user.id)},
+          "preferred_locales" => ["es"],
+          "object" => "customer"
+        }
+      )
+
+      assert {:ok, customer} = Billing.create_stripe_customer(user)
+      assert customer["email"] == user.email
+      assert customer["metadata"]["user_id"] == to_string(user.id)
+      assert customer["preferred_locales"] == ["es"]
+      assert customer["object"] == "customer"
+      assert String.starts_with?(customer["id"], "cus_")
+    end
+
+    test "returns error when Stripe API fails" do
+      user = user_fixture(%{email: "error@example.com"})
+
+      stripe_stub(error: true)
+
+      assert {:error, "Invalid request"} = Billing.create_stripe_customer(user)
+    end
+  end
 end
