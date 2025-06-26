@@ -79,23 +79,15 @@ defmodule Zoonk.BillingFixtures do
   ## Examples
 
       iex> valid_billing_account_attrs()
-      %{currency: :usd, user_id: 123}
+      %{currency: :usd}
 
       iex> valid_billing_account_attrs(%{currency: :eur})
-      %{currency: :eur, user_id: 123}
+      %{currency: :eur}
 
   """
   def valid_billing_account_attrs(attrs \\ %{}) do
-    org = Map.get(attrs, :org)
-    user = Map.get(attrs, :user)
-    attrs = maybe_add_attrs(%{currency: :usd, stripe_customer_id: "cus_#{System.unique_integer([:positive])}"}, org, user)
-
-    Enum.into(attrs, attrs)
+    Map.merge(%{currency: :usd}, attrs)
   end
-
-  defp maybe_add_attrs(attrs, %{} = org, nil), do: Map.put(attrs, :org_id, org.id)
-  defp maybe_add_attrs(attrs, nil, %{} = user), do: Map.put(attrs, :user_id, user.id)
-  defp maybe_add_attrs(attrs, _org, _user), do: Map.put(attrs, :user_id, user_fixture().id)
 
   @doc """
   Creates a billing account for testing.
@@ -110,9 +102,21 @@ defmodule Zoonk.BillingFixtures do
 
   """
   def billing_account_fixture(attrs \\ %{}) do
+    user = Map.get_lazy(attrs, :user, fn -> user_fixture() end)
     attrs = valid_billing_account_attrs(attrs)
 
-    {:ok, billing_account} = Billing.create_billing_account(attrs)
+    # Set up Stripe stub for the customer creation
+    stripe_stub(
+      prefix: "cus_",
+      data: %{
+        "email" => user.email,
+        "metadata" => %{"user_id" => to_string(user.id)},
+        "preferred_locales" => [to_string(user.language)],
+        "object" => "customer"
+      }
+    )
+
+    {:ok, billing_account} = Billing.create_billing_account(user, attrs)
     billing_account
   end
 end

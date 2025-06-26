@@ -253,106 +253,60 @@ defmodule Zoonk.BillingTest do
     end
   end
 
-  describe "create_billing_account/1" do
-    test "creates a billing account with valid user data" do
+  describe "create_billing_account/2" do
+    test "creates a billing account with valid user data and creates Stripe customer" do
       user = user_fixture()
-      attrs = valid_billing_account_attrs(%{user: user})
 
-      assert {:ok, %BillingAccount{} = billing_account} = Billing.create_billing_account(attrs)
+      stripe_stub(
+        prefix: "cus_",
+        data: %{
+          "email" => user.email,
+          "metadata" => %{"user_id" => to_string(user.id)},
+          "preferred_locales" => [to_string(user.language)],
+          "object" => "customer"
+        }
+      )
+
+      attrs = %{currency: :usd}
+
+      assert {:ok, %BillingAccount{} = billing_account} = Billing.create_billing_account(user, attrs)
       assert billing_account.user_id == user.id
       assert billing_account.currency == :usd
       assert billing_account.org_id == nil
-      assert billing_account.stripe_customer_id == attrs.stripe_customer_id
-    end
-
-    test "creates a billing account with valid org data" do
-      org = org_fixture()
-      attrs = %{org_id: org.id, currency: :eur}
-
-      assert {:ok, %BillingAccount{} = billing_account} = Billing.create_billing_account(attrs)
-      assert billing_account.org_id == org.id
-      assert billing_account.currency == :eur
-      assert billing_account.user_id == nil
+      assert String.starts_with?(billing_account.stripe_customer_id, "cus_")
     end
 
     test "returns error with missing currency" do
       user = user_fixture()
-      attrs = %{user_id: user.id}
 
-      assert {:error, changeset} = Billing.create_billing_account(attrs)
+      stripe_stub(prefix: "cus_")
+
+      attrs = %{}
+
+      assert {:error, changeset} = Billing.create_billing_account(user, attrs)
       assert "can't be blank" in errors_on(changeset).currency
     end
 
-    test "returns error when both user_id and org_id are provided" do
+    test "returns error when user already has a billing account" do
       user = user_fixture()
-      org = org_fixture()
-      attrs = %{user_id: user.id, org_id: org.id, currency: :usd}
 
-      assert {:error, changeset} = Billing.create_billing_account(attrs)
-      assert "cannot have both user_id and org_id" in errors_on(changeset).base
-    end
+      stripe_stub(prefix: "cus_")
 
-    test "returns error when neither user_id nor org_id is provided" do
       attrs = %{currency: :usd}
 
-      assert {:error, changeset} = Billing.create_billing_account(attrs)
-      assert "must have either user_id or org_id" in errors_on(changeset).base
-    end
-
-    test "returns error when user_id is duplicated" do
-      user = user_fixture()
-      attrs = %{user_id: user.id, currency: :usd}
-
-      assert {:ok, _account} = Billing.create_billing_account(attrs)
-      assert {:error, changeset} = Billing.create_billing_account(attrs)
+      assert {:ok, _account} = Billing.create_billing_account(user, attrs)
+      assert {:error, changeset} = Billing.create_billing_account(user, attrs)
       assert "has already been taken" in errors_on(changeset).user_id
     end
 
-    test "returns error when org_id is duplicated" do
-      org = org_fixture()
-      attrs = %{org_id: org.id, currency: :usd}
-
-      assert {:ok, _account} = Billing.create_billing_account(attrs)
-      assert {:error, changeset} = Billing.create_billing_account(attrs)
-      assert "has already been taken" in errors_on(changeset).org_id
-    end
-
-    test "returns error when user_id is invalid" do
-      attrs = %{user_id: -1, currency: :usd}
-
-      assert {:error, changeset} = Billing.create_billing_account(attrs)
-      assert "does not exist" in errors_on(changeset).user_id
-    end
-
-    test "returns error when org_id is invalid" do
-      attrs = %{org_id: -1, currency: :usd}
-
-      assert {:error, changeset} = Billing.create_billing_account(attrs)
-      assert "does not exist" in errors_on(changeset).org_id
-    end
-
-    test "accepts a nil stripe_customer_id" do
+    test "returns error when Stripe customer creation fails" do
       user = user_fixture()
-      attrs = %{user_id: user.id, currency: :usd, stripe_customer_id: nil}
 
-      assert {:ok, %BillingAccount{} = account} = Billing.create_billing_account(attrs)
-      assert account.stripe_customer_id == nil
-    end
+      stripe_stub(error: true)
 
-    test "accepts a stripe_customer_id that starts with 'cus_'" do
-      user = user_fixture()
-      attrs = %{user_id: user.id, currency: :usd, stripe_customer_id: "cus_123456"}
+      attrs = %{currency: :usd}
 
-      assert {:ok, %BillingAccount{} = account} = Billing.create_billing_account(attrs)
-      assert account.stripe_customer_id == "cus_123456"
-    end
-
-    test "returns error when stripe_customer_id does not start with 'cus_'" do
-      user = user_fixture()
-      attrs = %{user_id: user.id, currency: :usd, stripe_customer_id: "invalid_123456"}
-
-      assert {:error, changeset} = Billing.create_billing_account(attrs)
-      assert "must start with cus_" in errors_on(changeset).stripe_customer_id
+      assert {:error, "Invalid request"} = Billing.create_billing_account(user, attrs)
     end
   end
 

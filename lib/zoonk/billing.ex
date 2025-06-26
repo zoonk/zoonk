@@ -17,24 +17,31 @@ defmodule Zoonk.Billing do
   @doc """
   Creates a billing account.
 
-  Takes attributes to create a new billing account record. The attributes should
-  include either a user_id or an org_id, but not both.
+  Takes a User struct and attributes to create a new billing account record.
+  First creates a Stripe customer for the user, then creates the billing account
+  with the Stripe customer ID.
 
   ## Examples
 
-      iex> create_billing_account(%{user_id: 123, currency: :usd})
+      iex> user = %User{id: 123, email: "user@example.com"}
+      iex> create_billing_account(user, %{currency: :usd})
       {:ok, %BillingAccount{}}
 
-      iex> create_billing_account(%{org_id: 456, currency: :usd})
-      {:ok, %BillingAccount{}}
-
-      iex> create_billing_account(%{})
+      iex> user = %User{id: 123, email: "user@example.com"}
+      iex> create_billing_account(user, %{})
       {:error, %Ecto.Changeset{}}
   """
-  def create_billing_account(attrs) do
-    %BillingAccount{}
-    |> BillingAccount.changeset(attrs)
-    |> Repo.insert()
+  def create_billing_account(%User{} = user, attrs) do
+    with {:ok, stripe_customer} <- create_stripe_customer(user) do
+      attrs =
+        attrs
+        |> Map.put(:user_id, user.id)
+        |> Map.put(:stripe_customer_id, stripe_customer["id"])
+
+      %BillingAccount{}
+      |> BillingAccount.changeset(attrs)
+      |> Repo.insert()
+    end
   end
 
   @doc """
