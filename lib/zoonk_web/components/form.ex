@@ -21,6 +21,7 @@ defmodule ZoonkWeb.Components.Form do
   attr :label, :string, default: nil, doc: "the aria-label for the form"
   attr :class, :any, default: nil, doc: "the CSS class to apply to the form"
   attr :display_success, :boolean, default: false, doc: "whether to display a success message after the form is submitted"
+  attr :save_label, :string, default: gettext("Save"), doc: "the label for the save button"
   attr :rest, :global, include: @form_attrs, doc: "the arbitrary HTML attributes to apply to the form tag"
 
   slot :inner_block, required: true
@@ -43,7 +44,7 @@ defmodule ZoonkWeb.Components.Form do
         {render_slot(@inner_block)}
       </fieldset>
 
-      <footer class={["flex items-center justify-between", "bg-zk-muted rounded-b", "px-4 py-2"]}>
+      <footer class={["flex items-center justify-between gap-2", "bg-zk-muted rounded-b", "px-4 py-2"]}>
         <.text size={:sm} variant={:secondary}>
           {render_slot(@requirements)}
         </.text>
@@ -60,7 +61,7 @@ defmodule ZoonkWeb.Components.Form do
           </.text>
 
           <.button type="submit" size={:sm} phx-disable>
-            {gettext("Save")}
+            {@save_label}
           </.button>
         </div>
       </footer>
