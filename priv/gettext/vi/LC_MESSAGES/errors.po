@@ -167,13 +167,13 @@ msgstr ""
 msgid "You shall not pass!"
 msgstr ""
 
-#: lib/zoonk/accounts/user_profile.ex:53
+#: lib/zoonk/accounts/user_profile.ex:52
 #: lib/zoonk/orgs/org.ex:88
 #, elixir-autogen, elixir-format
 msgid "cannot have spaces for special characters"
 msgstr ""
 
-#: lib/zoonk/accounts/user_profile.ex:55
+#: lib/zoonk/accounts/user_profile.ex:54
 #: lib/zoonk/orgs/org.ex:90
 #, elixir-autogen, elixir-format
 msgid "must have letters"

@@ -32,9 +32,19 @@ msgstr ""
 msgid "Loading"
 msgstr ""
 
-#: lib/zoonk_web/components/form.ex:24
+#: lib/zoonk_web/components/form.ex:44
+#, elixir-autogen, elixir-format
+msgid "More information and save button"
+msgstr ""
+
+#: lib/zoonk_web/components/form.ex:52
 #, elixir-autogen, elixir-format
 msgid "Save"
+msgstr ""
+
+#: lib/zoonk_web/components/form.ex:51
+#, elixir-autogen, elixir-format
+msgid "Saving..."
 msgstr ""
 
 #: lib/zoonk_web/components/command.ex:36
@@ -55,14 +65,4 @@ msgstr ""
 #: lib/zoonk_web/components/flash.ex:92
 #, elixir-autogen, elixir-format
 msgid "There was an error on the server"
-msgstr ""
-
-#: lib/zoonk_web/components/form.ex:60
-#, elixir-autogen, elixir-format
-msgid "Done!"
-msgstr ""
-
-#: lib/zoonk_web/live/follow_live.ex:43
-#, elixir-autogen, elixir-format
-msgid "Stay connected with us on social media for the latest updates and news."
 msgstr ""
