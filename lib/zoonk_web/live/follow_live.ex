@@ -18,13 +18,20 @@ defmodule ZoonkWeb.FollowLive do
         </.text>
 
         <div class="grid grid-cols-2 gap-4 pt-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-          <.social_link
+          <a
             :for={link <- SocialConfig.get_social_links(@current_language)}
-            name={link.name}
-            url={link.url}
-            icon={link.icon}
-            handle={link.handle}
-          />
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="border-zk-border bg-zk-background flex items-center gap-3 rounded border p-3 transition-colors hover:bg-zk-muted"
+          >
+            <.icon name={get_social_icon(link.name)} size={:md} class="text-zk-primary" />
+
+            <div class="flex flex-col">
+              <.text size={:sm} weight={:medium}>{link.name}</.text>
+              <.text size={:xs} variant={:secondary}>{link.handle}</.text>
+            </div>
+          </a>
         </div>
       </div>
     </ZoonkWeb.AppLayout.render>
@@ -43,21 +50,14 @@ defmodule ZoonkWeb.FollowLive do
     {:ok, socket}
   end
 
-  defp social_link(assigns) do
-    ~H"""
-    <a
-      href={@url}
-      target="_blank"
-      rel="noopener noreferrer"
-      class="border-zk-border bg-zk-background flex items-center gap-3 rounded border p-3 transition-colors hover:bg-zk-muted"
-    >
-      <.icon name={@icon} size={:md} class="text-zk-primary" />
-
-      <div class="flex flex-col">
-        <.text size={:sm} weight={:medium}>{@name}</.text>
-        <.text size={:xs} variant={:secondary}>{@handle}</.text>
-      </div>
-    </a>
-    """
-  end
+  defp get_social_icon("Bluesky"), do: "tabler-brand-bluesky"
+  defp get_social_icon("Facebook"), do: "tabler-brand-facebook"
+  defp get_social_icon("Instagram"), do: "tabler-brand-instagram"
+  defp get_social_icon("LinkedIn"), do: "tabler-brand-linkedin"
+  defp get_social_icon("Reddit"), do: "tabler-brand-reddit"
+  defp get_social_icon("Threads"), do: "tabler-brand-threads"
+  defp get_social_icon("TikTok"), do: "tabler-brand-tiktok"
+  defp get_social_icon("X"), do: "tabler-brand-x"
+  defp get_social_icon("YouTube"), do: "tabler-brand-youtube"
+  defp get_social_icon(_other), do: "tabler-link"
 end

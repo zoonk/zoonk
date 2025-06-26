@@ -25,22 +25,20 @@ defmodule Zoonk.Config.SocialConfig do
       %{
         name: "Bluesky",
         url: "https://bsky.app/profile/zoonkbr.bsky.social",
-        icon: "tabler-brand-bluesky",
         handle: "@zoonkbr"
       },
-      %{name: "Facebook", url: "https://www.facebook.com/zoonkbr", icon: "tabler-brand-facebook", handle: "@zoonkbr"},
-      %{name: "Instagram", url: "https://www.instagram.com/zoonkbr", icon: "tabler-brand-instagram", handle: "@zoonkbr"},
-      %{name: "LinkedIn", url: "https://www.linkedin.com/company/zoonk", icon: "tabler-brand-linkedin", handle: "@zoonk"},
+      %{name: "Facebook", url: "https://www.facebook.com/zoonkbr", handle: "@zoonkbr"},
+      %{name: "Instagram", url: "https://www.instagram.com/zoonkbr", handle: "@zoonkbr"},
+      %{name: "LinkedIn", url: "https://www.linkedin.com/company/zoonk", handle: "@zoonk"},
       %{
         name: "Reddit",
         url: "https://www.reddit.com/r/ZoonkBrasil",
-        icon: "tabler-brand-reddit",
         handle: "r/ZoonkBrasil"
       },
-      %{name: "Threads", url: "https://www.threads.net/@zoonkbr", icon: "tabler-brand-threads", handle: "@zoonkbr"},
-      %{name: "TikTok", url: "https://www.tiktok.com/@zoonkbr", icon: "tabler-brand-tiktok", handle: "@zoonkbr"},
-      %{name: "X", url: "https://x.com/zoonkbr", icon: "tabler-brand-x", handle: "@zoonkbr"},
-      %{name: "YouTube", url: "https://www.youtube.com/@zoonkbr", icon: "tabler-brand-youtube", handle: "@zoonkbr"}
+      %{name: "Threads", url: "https://www.threads.net/@zoonkbr", handle: "@zoonkbr"},
+      %{name: "TikTok", url: "https://www.tiktok.com/@zoonkbr", handle: "@zoonkbr"},
+      %{name: "X", url: "https://x.com/zoonkbr", handle: "@zoonkbr"},
+      %{name: "YouTube", url: "https://www.youtube.com/@zoonkbr", handle: "@zoonkbr"}
     ]
   end
 
@@ -49,22 +47,20 @@ defmodule Zoonk.Config.SocialConfig do
       %{
         name: "Bluesky",
         url: "https://bsky.app/profile/zoonk.bsky.social",
-        icon: "tabler-brand-bluesky",
         handle: "@zoonk"
       },
-      %{name: "Facebook", url: "https://www.facebook.com/zoonkcom", icon: "tabler-brand-facebook", handle: "@zoonkcom"},
+      %{name: "Facebook", url: "https://www.facebook.com/zoonkcom", handle: "@zoonkcom"},
       %{
         name: "Instagram",
         url: "https://www.instagram.com/zoonkcom",
-        icon: "tabler-brand-instagram",
         handle: "@zoonkcom"
       },
-      %{name: "LinkedIn", url: "https://www.linkedin.com/company/zoonk", icon: "tabler-brand-linkedin", handle: "@zoonk"},
-      %{name: "Reddit", url: "https://www.reddit.com/r/zoonk", icon: "tabler-brand-reddit", handle: "r/zoonk"},
-      %{name: "Threads", url: "https://www.threads.net/@zoonkcom", icon: "tabler-brand-threads", handle: "@zoonkcom"},
-      %{name: "TikTok", url: "https://www.tiktok.com/@zoonkcom", icon: "tabler-brand-tiktok", handle: "@zoonkcom"},
-      %{name: "X", url: "https://x.com/zoonkcom", icon: "tabler-brand-x", handle: "@zoonkcom"},
-      %{name: "YouTube", url: "https://www.youtube.com/@zoonkcom", icon: "tabler-brand-youtube", handle: "@zoonkcom"}
+      %{name: "LinkedIn", url: "https://www.linkedin.com/company/zoonk", handle: "@zoonk"},
+      %{name: "Reddit", url: "https://www.reddit.com/r/zoonk", handle: "r/zoonk"},
+      %{name: "Threads", url: "https://www.threads.net/@zoonkcom", handle: "@zoonkcom"},
+      %{name: "TikTok", url: "https://www.tiktok.com/@zoonkcom", handle: "@zoonkcom"},
+      %{name: "X", url: "https://x.com/zoonkcom", handle: "@zoonkcom"},
+      %{name: "YouTube", url: "https://www.youtube.com/@zoonkcom", handle: "@zoonkcom"}
     ]
   end
 end
