@@ -2,34 +2,7 @@ defmodule ZoonkWeb.FollowLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  alias Zoonk.Accounts.User
-  alias Zoonk.Scope
-
-  # Social media links - Global and Brazil versions
-  @social_media_links %{
-    global: [
-      %{name: "Bluesky", url: "https://bsky.app/profile/zoonk.bsky.social", icon: "tabler-brand-bluesky", handle: "@zoonk"},
-      %{name: "Facebook", url: "https://www.facebook.com/zoonkcom", icon: "tabler-brand-facebook", handle: "@zoonkcom"},
-      %{name: "Instagram", url: "https://www.instagram.com/zoonkcom", icon: "tabler-brand-instagram", handle: "@zoonkcom"},
-      %{name: "LinkedIn", url: "https://www.linkedin.com/company/zoonk", icon: "tabler-brand-linkedin", handle: "@zoonk"},
-      %{name: "Reddit", url: "https://www.reddit.com/r/zoonk", icon: "tabler-brand-reddit", handle: "r/zoonk"},
-      %{name: "Threads", url: "https://www.threads.net/@zoonkcom", icon: "tabler-brand-threads", handle: "@zoonkcom"},
-      %{name: "TikTok", url: "https://www.tiktok.com/@zoonkcom", icon: "tabler-brand-tiktok", handle: "@zoonkcom"},
-      %{name: "X", url: "https://x.com/zoonkcom", icon: "tabler-brand-x", handle: "@zoonkcom"},
-      %{name: "YouTube", url: "https://www.youtube.com/@zoonkcom", icon: "tabler-brand-youtube", handle: "@zoonkcom"}
-    ],
-    brazil: [
-      %{name: "Bluesky", url: "https://bsky.app/profile/zoonkbr.bsky.social", icon: "tabler-brand-bluesky", handle: "@zoonkbr"},
-      %{name: "Facebook", url: "https://www.facebook.com/zoonkbr", icon: "tabler-brand-facebook", handle: "@zoonkbr"},
-      %{name: "Instagram", url: "https://www.instagram.com/zoonkbr", icon: "tabler-brand-instagram", handle: "@zoonkbr"},
-      %{name: "LinkedIn", url: "https://www.linkedin.com/company/zoonk", icon: "tabler-brand-linkedin", handle: "@zoonk"},
-      %{name: "Reddit", url: "https://www.reddit.com/r/ZoonkBrasil", icon: "tabler-brand-reddit", handle: "r/ZoonkBrasil"},
-      %{name: "Threads", url: "https://www.threads.net/@zoonkbr", icon: "tabler-brand-threads", handle: "@zoonkbr"},
-      %{name: "TikTok", url: "https://www.tiktok.com/@zoonkbr", icon: "tabler-brand-tiktok", handle: "@zoonkbr"},
-      %{name: "X", url: "https://x.com/zoonkbr", icon: "tabler-brand-x", handle: "@zoonkbr"},
-      %{name: "YouTube", url: "https://www.youtube.com/@zoonkbr", icon: "tabler-brand-youtube", handle: "@zoonkbr"}
-    ]
-  }
+  alias Zoonk.Config.SocialMediaConfig
 
   @impl Phoenix.LiveView
   def render(assigns) do
@@ -68,8 +41,8 @@ defmodule ZoonkWeb.FollowLive do
 
   @impl Phoenix.LiveView
   def mount(_params, session, socket) do
-    user_language = get_user_language(socket.assigns.scope, session)
-    social_links = if user_language == "pt", do: @social_media_links.brazil, else: @social_media_links.global
+    language = session["language"]
+    social_links = SocialMediaConfig.get_links_for_language(language)
     
     socket = 
       socket
@@ -78,7 +51,4 @@ defmodule ZoonkWeb.FollowLive do
     
     {:ok, socket}
   end
-
-  defp get_user_language(%Scope{user: %User{language: language}}, _session), do: Atom.to_string(language)
-  defp get_user_language(_scope, session), do: Map.get(session, "language")
 end
