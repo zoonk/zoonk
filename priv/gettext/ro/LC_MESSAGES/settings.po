@@ -17,6 +17,7 @@ msgid "Change Email"
 msgstr ""
 
 #: lib/zoonk_web/live/email_live.ex:30
+#: lib/zoonk_web/live/feedback_live.ex:32
 #, elixir-autogen, elixir-format
 msgid "Email address"
 msgstr ""
@@ -29,4 +30,75 @@ msgstr ""
 #: lib/zoonk_web/live/email_live.ex:21
 #, elixir-autogen, elixir-format
 msgid "This is the email address that will be used to sign in. This is not visible to other users."
+msgstr ""
+
+#: lib/zoonk_web/live/language_live.ex:19
+#, elixir-autogen, elixir-format
+msgid "Change language"
+msgstr ""
+
+#: lib/zoonk_web/live/language_live.ex:22
+#, elixir-autogen, elixir-format
+msgid "Choose the language for the app interface."
+msgstr ""
+
+#: lib/zoonk_web/live/name_live.ex:33
+#, elixir-autogen, elixir-format
+msgid "Enter your name"
+msgstr ""
+
+#: lib/zoonk_web/live/feedback_live.ex:23
+#, elixir-autogen, elixir-format
+msgid "Help us improve by sharing your thoughts, suggestions, or reporting issues."
+msgstr ""
+
+#: lib/zoonk_web/live/language_live.ex:31
+#, elixir-autogen, elixir-format
+msgid "Language"
+msgstr ""
+
+#: lib/zoonk_web/live/feedback_live.ex:41
+#, elixir-autogen, elixir-format
+msgid "Message"
+msgstr ""
+
+#: lib/zoonk_web/live/name_live.ex:31
+#, elixir-autogen, elixir-format
+msgid "Name"
+msgstr ""
+
+#: lib/zoonk_web/live/feedback_live.ex:18
+#: lib/zoonk_web/live/feedback_live.ex:20
+#, elixir-autogen, elixir-format
+msgid "Send feedback"
+msgstr ""
+
+#: lib/zoonk_web/live/feedback_live.ex:44
+#, elixir-autogen, elixir-format
+msgid "Tell us what you think or report any issues you've encountered..."
+msgstr ""
+
+#: lib/zoonk_web/live/language_live.ex:39
+#, elixir-autogen, elixir-format
+msgid "This changes the language for the entire app."
+msgstr ""
+
+#: lib/zoonk_web/live/name_live.ex:38
+#, elixir-autogen, elixir-format
+msgid "This is not visible to others."
+msgstr ""
+
+#: lib/zoonk_web/live/name_live.ex:22
+#, elixir-autogen, elixir-format
+msgid "This is the name we use when calling you in the app."
+msgstr ""
+
+#: lib/zoonk_web/live/name_live.ex:19
+#, elixir-autogen, elixir-format
+msgid "Update your name"
+msgstr ""
+
+#: lib/zoonk_web/live/feedback_live.ex:55
+#, elixir-autogen, elixir-format
+msgid "You can also reach out to us at hello@zoonk.com"
 msgstr ""

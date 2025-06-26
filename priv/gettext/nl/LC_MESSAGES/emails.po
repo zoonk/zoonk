@@ -40,3 +40,13 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "You can log into your account by using the code below:\n\n%{otp_code}\n\nThis code will expire in %{expiration_minutes} minutes.\n\nIf you didn't request this email, please ignore this.\n"
 msgstr ""
+
+#: lib/zoonk/support/feedback_notifier.ex:22
+#, elixir-autogen, elixir-format
+msgid "New feedback from %{email}"
+msgstr ""
+
+#: lib/zoonk/support/feedback_notifier.ex:25
+#, elixir-autogen, elixir-format
+msgid "You have received new feedback from a user.\n\nFrom: %{user_email}\n\nMessage:\n%{message}\n"
+msgstr ""

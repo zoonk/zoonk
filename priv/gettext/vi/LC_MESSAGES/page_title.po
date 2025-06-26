@@ -11,7 +11,7 @@ msgstr ""
 "Language: vi\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: lib/zoonk_web/live/language_live.ex:16
+#: lib/zoonk_web/live/language_live.ex:56
 #, elixir-autogen, elixir-format
 msgid "App language"
 msgstr ""
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Catalog"
 msgstr ""
 
-#: lib/zoonk_web/live/email_live.ex:56
+#: lib/zoonk_web/live/email_live.ex:55
 #, elixir-autogen, elixir-format
 msgid "Change Email"
 msgstr ""
@@ -37,12 +37,8 @@ msgstr ""
 msgid "Create an account"
 msgstr ""
 
-#: lib/zoonk_web/live/name_live.ex:16
-#, elixir-autogen, elixir-format
-msgid "Display name"
-msgstr ""
-
-#: lib/zoonk_web/live/follow_live.ex:16
+#: lib/zoonk_web/live/follow_live.ex:40
+#: lib/zoonk_web/live/follow_live.ex:75
 #, elixir-autogen, elixir-format
 msgid "Follow us"
 msgstr ""
@@ -72,7 +68,7 @@ msgstr ""
 msgid "Recommendations for %{input}"
 msgstr ""
 
-#: lib/zoonk_web/live/feedback_live.ex:16
+#: lib/zoonk_web/live/feedback_live.ex:72
 #, elixir-autogen, elixir-format
 msgid "Send feedback"
 msgstr ""
@@ -100,4 +96,9 @@ msgstr ""
 #: lib/zoonk_web/live/support_live.ex:16
 #, elixir-autogen, elixir-format
 msgid "Support"
+msgstr ""
+
+#: lib/zoonk_web/live/name_live.ex:56
+#, elixir-autogen, elixir-format
+msgid "Update your name"
 msgstr ""
