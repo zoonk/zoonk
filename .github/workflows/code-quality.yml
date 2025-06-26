@@ -4,8 +4,8 @@ on: push
 
 env:
   MIX_ENV: test
-  OTP_VERSION: 27.2.2
-  ELIXIR_VERSION: 1.18.2
+  OTP_VERSION: 27.3.4
+  ELIXIR_VERSION: 1.18.4
 
 permissions:
   contents: read
@@ -30,7 +30,7 @@ jobs:
     steps:
       - name: Set up Elixir
         id: beam
-        uses: erlef/setup-beam@4b97eeaf23ad23397976bb25e8345cb633a53ee4
+        uses: erlef/setup-beam@75edbb82877ab10edeb12a99c3cf2f0909f3dc87
         with:
           elixir-version: ${{env.ELIXIR_VERSION}}
           otp-version: ${{env.OTP_VERSION}}
@@ -62,11 +62,10 @@ jobs:
             ${{ runner.os }}-mix-
 
       - name: Set Up Bun
-        uses: oven-sh/setup-bun@54cb141c5c91e2fdc396be3155a391f28e1822eb
+        uses: oven-sh/setup-bun@735343b667d3e6f658f44d0eca948eb6282f2b76
 
       - name: Install dependencies
         run: mix deps.get
-        shell: bash
 
       - name: Compile app
         run: mix compile --all-warnings --warnings-as-errors
