@@ -13,7 +13,7 @@ defmodule Zoonk.Support.FeedbackNotifierTest do
       # Check email structure
       assert email.to == [{"", "hello@zoonk.com"}]
       assert email.from == {"Zoonk", "hello@zoonk.com"}
-      assert email.subject =~ "New feedback from #{user_email}"
+      assert email.subject == "Feedback"
       assert email.text_body =~ "From: #{user_email}"
       assert email.text_body =~ "Message:\n#{message}"
     end
@@ -25,7 +25,7 @@ defmodule Zoonk.Support.FeedbackNotifierTest do
       assert {:ok, email} = FeedbackNotifier.deliver_feedback(user_email, message)
 
       assert email.text_body =~ message
-      assert email.subject =~ "New feedback from #{user_email}"
+      assert email.subject == "Feedback"
     end
   end
 end

@@ -19,7 +19,7 @@ defmodule Zoonk.Support.FeedbackNotifier do
 
   """
   def deliver_feedback(user_email, message) do
-    subject = dgettext("emails", "New feedback from %{email}", email: user_email)
+    subject = dgettext("emails", "Feedback", email: user_email)
 
     content =
       dgettext(
