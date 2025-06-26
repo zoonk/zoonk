@@ -46,5 +46,3 @@ People who supported the project and will get lifetime access once we launch:
 - [David Szabo-Stuban](https://github.com/ssdavidai)
 - [Gustavo A. Castillo](https://github.com/guscastilloa)
 - [Greg Lind](https://github.com/glind)
-
-# Temp: Just test if we hit cache (REMOVE BEFORE MERGING)
