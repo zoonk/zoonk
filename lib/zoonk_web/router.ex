@@ -156,6 +156,7 @@ defmodule ZoonkWeb.Router do
 
       live_session :ui_playground do
         live "/", UIPreviewHomeLive
+        live "/accordion", AccordionPreviewLive
         live "/anchor", AnchorPreviewLive
         live "/avatar", AvatarPreviewLive
         live "/button", ButtonPreviewLive

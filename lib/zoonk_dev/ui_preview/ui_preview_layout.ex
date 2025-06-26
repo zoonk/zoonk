@@ -64,6 +64,7 @@ defmodule ZoonkDev.UIPreview.UIPreviewLayout do
   defp menu_items do
     [
       %{icon: "tabler-ufo", color: "text-slate-500", module: :home, label: "Home", path: "/ui"},
+      %{icon: "tabler-arrow-down", color: "text-pink-500", module: :accordion, label: "Accordion", path: "/ui/accordion"},
       %{icon: "tabler-link", color: "text-blue-500", module: :anchor, label: "Anchor", path: "/ui/anchor"},
       %{icon: "tabler-user-circle", color: "text-green-500", module: :avatar, label: "Avatar", path: "/ui/avatar"},
       %{icon: "tabler-pointer-filled", color: "text-red-500", module: :button, label: "Button", path: "/ui/button"},

@@ -84,6 +84,7 @@ defmodule ZoonkWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components
+      import ZoonkWeb.Components.Accordion
       import ZoonkWeb.Components.Anchor
       import ZoonkWeb.Components.AsyncPage
       import ZoonkWeb.Components.Avatar
