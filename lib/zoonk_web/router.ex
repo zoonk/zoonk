@@ -47,6 +47,10 @@ defmodule ZoonkWeb.Router do
     plug :fetch_api_scope
   end
 
+  pipeline :webhooks do
+    plug :accepts, ["json"]
+  end
+
   scope "/", ZoonkWeb do
     pipe_through [:browser, :require_authenticated_user, :require_org_member, :require_org_admin]
 
@@ -120,6 +124,12 @@ defmodule ZoonkWeb.Router do
   scope "/", ZoonkWeb do
     pipe_through [:unprotected_browser]
     post "/auth/:provider/callback", Accounts.OAuthController, :callback
+  end
+
+  scope "/webhooks", ZoonkWeb do
+    pipe_through [:webhooks]
+
+    post "/stripe", StripeWebhookController, :create
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

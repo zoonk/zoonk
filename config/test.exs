@@ -67,6 +67,7 @@ config :zoonk, :ai,
 
 # Disable Stripe calls for testing
 config :zoonk, :stripe,
+  webhook_secret: "whsec_test_secret_key_for_webhook_verification",
   opts: [
     plug: {Req.Test, :stripe_client}
   ]
