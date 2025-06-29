@@ -28,15 +28,12 @@ Chapters are a group of lessons. For example:
 
 Lessons are very small units of knowledge. They cover only a single topic for better understanding - and they have a fixed set of exercises:
 
-| Exercise Kind  | Description                                                                             |
-| -------------- | --------------------------------------------------------------------------------------- |
-| `:explanation` | A short but practical explanation of the topic.                                         |
-| `:examples`    | Practical examples to understand where and when to use this knowledge.                  |
-| `:story`       | A hands-on story to understand the topic in a real-world context.                       |
-| `:simulation`  | Scenarios where choices affect outcomes. It's good to see how things work in real-life. |
-| `:challenge`   | Practical problems to test critical thinking and logic skills.                          |
-| `:quiz`        | A quiz to test your knowledge.                                                          |
-| `:practice`    | A quiz-like exercise to practice what you've learned, focused on your weaknesses.       |
+| Exercise Kind  | Description                                                                                                                                                                                         |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `:explanation` | A static exercise that provides an explanation of a topic. It provides text and visual aids to help users understand the topic. It works like swiping through social media posts.                   |
+| `:examples`    | Same format as `explanation`, but it provides examples of how to apply the knowledge in practice, showing where and when to use the knowledge.                                                      |
+| `:story`       | An interactive exercise using storytelling to show how that knowledge can be applied in real life. It has an image, a short text, and actions that the user can take to progress through the story. |
+| `:quiz`        | A quiz with multiple-choice questions to test the user's knowledge. It provides immediate feedback on the user's answers and explanations for the correct answers.                                  |
 
 ## Translations
 

@@ -1,161 +1,218 @@
-# Zoonk Agent Principles
+# Zoonk Usage Guide for AI Agents
 
-## General Principles
+This guide defines the development and design standards used in Zoonk. It ensures consistency, clarity, and simplicity across all parts of the codebase. Follow these instructions strictly when building or updating any part of the app.
 
-- Prioritize the **simplest solution**. If code feels complex, step back. Ask: “Is this the simplest, clearest way?” Repeat until simplicity is achieved.
-- For design decisions, follow principles used by companies like **Apple, Linear, Vercel**. Prioritize clean, intuitive UX.
-- Default to **Phoenix/LiveView solutions**. Only use JavaScript when unavoidable, and implement it via `phx-hook`.
-- Replace `@impl true` with **`@impl ModuleName`**.
-- Use the **new HEEX syntax** `{@variable}` instead of `<%= @variable %>`.
-- Prefer `:if` in elements instead of wrapping them in `if` blocks. E.g., `<ul :if={@items}>` instead of `<%= if @items do %>`.
-- Use **Gettext** for all text. Never hardcode strings. But you don't need to run `mix gettext.extract`, we'll do that later. NEVER generate new translation files.
-- Use **Verified Routes** (`~p"/path"`) instead of `Routes.page_path/2`.
-- Before suggesting code, aggressively simplify it using pattern matching, guards, and helper functions.
-- Make functions short and avoid nested blocks. If a function is long, break it into smaller functions.
-- Always write tests for any added or changed functionality.
-- Use **pipe-based query syntax** for clarity and composability.
-- Use **Elixir’s set-theoretic types** through structs. You don't need to add `@spec`.
-- Name unused variables (e.g., `_error`), don’t leave as `_`.
-- Favor **pattern matching** over `case` or `cond`.
+---
 
-## File and Code Structure
+## Table of Contents
+
+- [About this app](#about-this-app)
+- [Principles](#principles)
+- [Project Structure](#project-structure)
+  - [Configuration](#configuration)
+  - [Schemas](#schemas)
+  - [Controllers](#controllers)
+  - [LiveView Pages](#liveview-pages)
+  - [Components](#components)
+- [UI and Design Rules](#ui-and-design-rules)
+  - [CSS and Tailwind](#css-and-tailwind)
+  - [Icons](#icons)
+  - [Accessibility and Responsiveness](#accessibility-and-responsiveness)
+- [Routing and Text](#routing-and-text)
+- [API Standards](#api-standards)
+- [Documentation Standards](#documentation-standards)
+- [Testing Guidelines](#testing-guidelines)
+- [Elixir Usage](#elixir-usage)
+- [OTP Usage](#otp-usage)
+- [Setup and References](#setup-and-references)
+
+---
+
+## About this app
+
+Zoonk is a learning app that uses AI to create courses with short, interactive exercises that show how things work in real life.
+
+---
+
+## Principles
+
+- Always prefer the **simplest solution**. If something feels complex, refactor.
+- Favor **clarity and minimalism** in both code and UI.
+- Default to **Phoenix/LiveView** solutions. Use JavaScript only via `phx-hook` and only when unavoidable.
+- Follow design inspirations from **Apple, Linear, Vercel**.
+- Code must be **modular**, **tested**, and follow **SOLID** and **DRY** principles.
+- Favor **pattern matching**, **guards**, and **short functions**. Avoid nesting.
+- Prefer `:if` on elements instead of conditional blocks. E.g., <ul :if={@items}> instead of <%= if @items do %>
+- Use `@impl ModuleName`, not `@impl true`.
+
+---
+
+## Project Structure
 
 ### Configuration
 
-- Store global configs in `lib/zoonk/config/`.
-- Prefix modules with `Zoonk.Config.*` (e.g., `Zoonk.Config.LanguageConfig`).
+- Store in `lib/zoonk/config/`
+- Module naming: `Zoonk.Config.*` (e.g. `Zoonk.Config.LanguageConfig`)
 
 ### Schemas
 
-- Use context-prefixed names (e.g., `Zoonk.Accounts.User`).
-- Add a `@moduledoc` with a **field table** for schemas: Field Name | Type | Description.
-- Use `List` instead of `Array` for types.
-- Always include `timestamps(type: :utc_datetime_usec)`.
-- Default `array` fields to `[]`.
-- Generate migrations alongside schema changes using `mix ecto.gen.migration`.
+- Use context-prefixed names: `Zoonk.Accounts.User`
+- Include `@moduledoc` with a field table:
+  ```
+  Field Name | Type | Description
+  ```
+- Use `List`, not `Array` when defining a type in docs
+- Default `array` fields to `[]`
+- Add `timestamps(type: :utc_datetime_usec)`
+- Generate migrations along with schema changes using `mix ecto.gen.migration`
 
 ### Controllers
 
-- Located in `lib/zoonk_web/controllers/`.
-- Use `use ZoonkWeb, :controller`.
-- Add `@moduledoc` for the controller and `@doc` for each action.
-- File and module names should match.
+- Located in `lib/zoonk_web/controllers/`
+- Use `use ZoonkWeb, :controller`
+- Match file/module names
+- Add `@moduledoc` and `@doc` for each action
 
 ### LiveView Pages
 
-- Located in `lib/zoonk_web/live/`.
-- Use `@moduledoc false`.
-- Place `render` callback **at the top** of the module.
-- Use `use ZoonkWeb, :live_view`.
+- Located in `lib/zoonk_web/live/`
+- Add `@moduledoc false`
+- Place `render` at the top
+- Use `use ZoonkWeb, :live_view`
 
 ### Components
 
-- Shared components: `lib/zoonk_web/components/`.
-- Import them via `html_helpers` in `zoonk_web.ex`.
-- Use `Phoenix.Component.attr/3` for attributes.
-- Write `@moduledoc` and `@doc` with usage examples.
-- Add previews in `lib/zoonk_dev/ui_preview/` and register routes for them.
-- Use `<.text>` for any textual content, never raw tags.
-- Render slots with `{render_slot(@inner_block)}` only.
-- When styling, pass classes to the component (`<.card_content class="...">`), not through extra divs.
+- Shared components go in `lib/zoonk_web/components/`
+- Import via `html_helpers` in `zoonk_web.ex`
+- Use `Phoenix.Component.attr/3`
+- Add `@moduledoc` and `@doc` with usage examples
+- Add previews in `lib/zoonk_dev/ui_preview/` and register routes
+- Use `<.text>` for all textual content
+- Render slots via `{render_slot(@inner_block)}`
+- Pass styling through `class=` props, not wrappers
 
-### CSS
+---
 
-- Use **Tailwind CSS v4**.
-- Never use default Tailwind colors. Use tokens like `bg-zk-surface`.
-- Create reusable utilities in `app.css` with `zk-` prefix.
-- Use `size-` for equal width/height (`size-4` instead of `w-4 h-4`).
+## UI and Design Rules
+
+### CSS and Tailwind
+
+- Use **Tailwind v4**
+- Avoid default colors — use tokens like `bg-zk-surface`
+- Use `zk-` prefix for custom utilities
+- Use `size-4` instead of `w-4 h-4`
+- Only create custom utilities when we're often using the same styles
 
 ### Icons
 
-- Use **Tabler icons** via `<.icon name="tabler-icon-name" />`.
+- Use Tabler icons: `<.icon name="tabler-icon-name" />`
 
-### API
+### Accessibility and Responsiveness
 
-- Use `ZoonkWeb.API.ErrorResponse` for error formatting.
-- Add missing error formats if needed.
+- Responsive on mobile, tablet, desktop
+- Follow accessibility best practices
+- Use Tailwind breakpoints: `sm:`, `md:`, `lg:`, `xl:`
+- Extend `globals.css`, don’t create new CSS files
+- Keep animations minimal and non-distracting
+- Prefer CSS/Tailwind for animations over JavaScript
+
+---
+
+## Routing and Text
+
+- Use **Verified Routes** (`~p"/path"`) not `Routes.page_path/2`
+- Use **Gettext** for all strings
+  - Do not hardcode text
+  - Do not generate new translation files
+  - Do not run `mix gettext.extract` (this will be done later)
+
+---
+
+## API Standards
+
+- Use `ZoonkWeb.API.ErrorResponse` for error formatting
+- Extend it to add missing error types
+
+---
 
 ## Documentation Standards
 
-- Clear, concise, objective.
-- Avoid vague terms (“secure,” “best practice”); describe exact behavior.
-- Use `@moduledoc` for module overviews and `@doc` for functions.
-- Always include usage examples in `@doc`.
-- Don’t prefix examples with `elixir`.
-- Group multiple `on_mount` docs into a **single `@doc` block**.
+- Be clear, concise, objective
+- Avoid vague terms like “secure” or “best practice”
+- Use `@moduledoc` for modules
+- Use `@doc` for functions, with examples
+- Don’t prefix examples with `elixir`
+- Combine multiple `on_mount` docs into one `@doc`
 
-## Testing
+---
 
-- Mirror controller/module names with `_test` suffix.
-- Use `ZoonkWeb.ConnCase` for web, `Zoonk.DataCase` for data.
-- Create fixtures in `test/support/fixtures/`.
-- Avoid setup blocks for fixtures; call them explicitly.
-- Use the **PhoenixTest** library for testing.
-- Use `Phoenix.Flash.get/2` instead of deprecated `get_flash/2`.
-- Never expose private functions for testing.
-- Never run tests using VSCode's debugging tools because they don't work properly and crash the test suite. Instead, use `mix test`.
+## Testing Guidelines
 
-## elixir usage
+- Test file: same name as module + `_test`
+- Use:
+  - `Zoonk.DataCase` for data
+  - `ZoonkWeb.ConnCase` for web
+- Fixtures in `test/support/fixtures/`
+- Avoid `setup` for fixtures; call fixtures directly on each test
+- Use `PhoenixTest` library
+- Use `Phoenix.Flash.get/2` (not `get_flash/2`)
+- Don’t expose private functions for testing
+- Run tests with `mix test`, not VSCode debugger
 
-# Elixir Core Usage Rules
+---
 
-## Pattern Matching
+## Elixir Usage
 
-- Use pattern matching over conditional logic when possible
-- Prefer to match on function heads instead of using `if`/`else` or `case` in function bodies
+### Pattern Matching
 
-## Error Handling
+- Use function heads and guards over `if`, `case`, `cond`
+- Lists and enumerables cannot be indexed with brackets. Use pattern matching or Enum functions
 
-- Use `{:ok, result}` and `{:error, reason}` tuples for operations that can fail
-- Avoid raising exceptions for control flow
-- Use `with` for chaining operations that return `{:ok, _}` or `{:error, _}`
+### Error Handling
 
-## Common Mistakes to Avoid
+- Use `{:ok, result}` and `{:error, reason}`
+- Avoid raising for flow control
+- Use `with` for chaining
 
-- Don't use `Enum` functions on large collections when `Stream` is more appropriate
-- Avoid nested `case` statements - refactor to a single `case`, `with` or separate functions
-- Don't use `String.to_atom/1` on user input (memory leak risk)
-- Lists and enumerables cannot be indexed with brackets. Use pattern matching or `Enum` functions.
+### Data and Function Design
 
-## Function Design
+- Prefer `Stream` over `Enum` on large collections
+- Don’t use `String.to_atom/1` on user input
+- Prefer pattern matching, not indexing lists
+- Name unused variables as `_name`, not `_`
+- Use structs over maps for known shapes
+- Prefer keyword lists for options
+- Use descriptive function names
+- Use `Oban` for background jobs
+- Use **pipe-based query syntax** for clarity and composability.
+- Don't need to write `@spec` for functions but use structs in function signatures.
 
-- Use guard clauses: `when is_binary(name) and byte_size(name) > 0`
-- Prefer multiple function clauses over complex conditional logic
-- Name functions descriptively: `calculate_total_price/2` not `calc/2`
+---
 
-## Data Structures
+## OTP Usage
 
-- Use structs over maps when the shape is known: `defstruct [:name, :age]`
-- Prefer keyword lists for options: `[timeout: 5000, retries: 3]`
-- Use maps for dynamic key-value data
-- Prefer to prepend to lists `[new | list]` not `list ++ [new]`
+### GenServer
 
-## otp usage
+- Keep state serializable
+- Use `handle_continue/2` after init
+- Cleanup in `terminate/2`
+- Use `GenServer.call/3` with backpressure
+- Use `GenServer.cast/2` for fire-and-forget
 
-# OTP Usage Rules
+### Fault Tolerance
 
-## GenServer Best Practices
+- Use supervisors with limits: `:max_restarts`, `:max_seconds`
 
-- Keep state simple and serializable
-- Handle all expected messages explicitly
-- Use `handle_continue/2` for post-init work
-- Implement proper cleanup in `terminate/2` when necessary
+### Tasks
 
-## Process Communication
+- Use `Task.Supervisor`
+- Use `Task.yield/2` or `Task.shutdown/2` for failures
+- Use `Task.async_stream/3` with timeouts and backpressure
 
-- Use `GenServer.call/3` for synchronous requests expecting replies
-- Use `GenServer.cast/2` for fire-and-forget messages.
-- When in doubt, us `call` over `cast`, to ensure back-pressure
-- Set appropriate timeouts for `call/3` operations
+---
 
-## Fault Tolerance
+## Setup and References
 
-- Set up processes such that they can handle crashing and being restarted by supervisors
-- Use `:max_restarts` and `:max_seconds` to prevent restart loops
-
-## Task and Async
-
-- Use `Task.Supervisor` for better fault tolerance
-- Handle task failures with `Task.yield/2` or `Task.shutdown/2`
-- Set appropriate task timeouts
-- Use `Task.async_stream/3` for concurrent enumeration with back-pressure
+- [Installation Guide](guides/installation.md)
+- [Glossary](guides/glossary.md)
+- [Directory Overview](guides/overview.md)
