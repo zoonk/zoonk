@@ -95,9 +95,6 @@
 - Never expose private functions for testing.
 - Never run tests using VSCode's debugging tools because they don't work properly and crash the test suite. Instead, use `mix test`.
 
-<!-- usage-rules-start -->
-<!-- elixir-start -->
-
 ## elixir usage
 
 # Elixir Core Usage Rules
@@ -133,9 +130,6 @@
 - Use maps for dynamic key-value data
 - Prefer to prepend to lists `[new | list]` not `list ++ [new]`
 
-<!-- elixir-end -->
-<!-- otp-start -->
-
 ## otp usage
 
 # OTP Usage Rules
@@ -165,13 +159,3 @@
 - Handle task failures with `Task.yield/2` or `Task.shutdown/2`
 - Set appropriate task timeouts
 - Use `Task.async_stream/3` for concurrent enumeration with back-pressure
-
-<!-- otp-end -->
-<!-- igniter-start -->
-
-## igniter usage
-
-[igniter usage rules](deps/igniter/usage-rules.md)
-
-<!-- igniter-end -->
-<!-- usage-rules-end -->

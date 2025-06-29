@@ -47,7 +47,6 @@ defmodule Zoonk.MixProject do
       {:ex_doc, "~> 0.37", only: :dev, runtime: false},
       {:floki, ">= 0.37.1 and < 0.38.0", only: :test},
       {:gettext, "~> 0.26"},
-      {:igniter, "~> 0.6", only: [:dev, :test]},
       {:jason, "~> 1.2"},
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.2", only: [:dev, :test], runtime: false},
@@ -71,8 +70,7 @@ defmodule Zoonk.MixProject do
       {:tailwind_formatter, "~> 0.4.2", only: [:dev, :test], runtime: false},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
-      {:tidewave, "~> 0.1", only: :dev},
-      {:usage_rules, "~> 0.1", only: [:dev]}
+      {:tidewave, "~> 0.1", only: :dev}
     ]
   end
 
