@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Accounts.UserSessionController do
+defmodule ZoonkWeb.UserSessionController do
   @moduledoc """
   Handles user sessions.
 

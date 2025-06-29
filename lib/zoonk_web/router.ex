@@ -107,15 +107,15 @@ defmodule ZoonkWeb.Router do
   scope "/", ZoonkWeb do
     pipe_through [:browser]
 
-    post "/confirm", Accounts.UserSessionController, :create
-    delete "/logout", Accounts.UserSessionController, :delete
+    post "/confirm", UserSessionController, :create
+    delete "/logout", UserSessionController, :delete
 
-    get "/auth/:provider", Accounts.OAuthController, :request
-    get "/auth/:provider/callback", Accounts.OAuthController, :callback
+    get "/auth/:provider", OAuthController, :request
+    get "/auth/:provider/callback", OAuthController, :callback
 
     # Legal routes
-    get "/terms", Accounts.LegalController, :terms
-    get "/privacy", Accounts.LegalController, :privacy
+    get "/terms", LegalController, :terms
+    get "/privacy", LegalController, :privacy
   end
 
   # We need this because Apple's oAuth handling sends a POST request
@@ -123,7 +123,7 @@ defmodule ZoonkWeb.Router do
   # We should not use this scope for anything else.
   scope "/", ZoonkWeb do
     pipe_through [:unprotected_browser]
-    post "/auth/:provider/callback", Accounts.OAuthController, :callback
+    post "/auth/:provider/callback", OAuthController, :callback
   end
 
   scope "/webhooks", ZoonkWeb do

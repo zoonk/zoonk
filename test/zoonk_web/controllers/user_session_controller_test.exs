@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Accounts.UserSessionControllerTest do
+defmodule ZoonkWeb.UserSessionControllerTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AccountFixtures

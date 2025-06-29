@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Accounts.LegalController do
+defmodule ZoonkWeb.LegalController do
   @moduledoc """
   Renders legal documents such as terms of use and privacy policy.
   """

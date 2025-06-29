@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.Accounts.OAuthController do
+defmodule ZoonkWeb.OAuthController do
   @moduledoc """
   Handles OAuth authentication.
   """
