@@ -26,6 +26,7 @@ defmodule Zoonk.Accounts.UserToken do
   alias Zoonk.Repo
 
   @rand_size AuthConfig.get_rand_size()
+  @hash_algorithm :sha256
 
   schema "users_tokens" do
     field :token, :binary
@@ -106,7 +107,7 @@ defmodule Zoonk.Accounts.UserToken do
         |> Enum.random()
         |> Integer.to_string()
 
-      hashed_token = :crypto.hash(AuthConfig.get_hash_algorithm(), otp_code)
+      hashed_token = :crypto.hash(@hash_algorithm, otp_code)
 
       Repo.insert!(%UserToken{
         token: hashed_token,
@@ -131,7 +132,7 @@ defmodule Zoonk.Accounts.UserToken do
   15 minutes. The context of an OTP code is always "login".
   """
   def verify_otp_code_query(otp_code, email) do
-    hashed_otp = :crypto.hash(AuthConfig.get_hash_algorithm(), otp_code)
+    hashed_otp = :crypto.hash(@hash_algorithm, otp_code)
 
     query =
       hashed_otp
@@ -158,7 +159,7 @@ defmodule Zoonk.Accounts.UserToken do
   The context must always start with "change:".
   """
   def verify_change_email_code_query(otp_code, "change:" <> _rest = context) do
-    hashed_otp = :crypto.hash(AuthConfig.get_hash_algorithm(), otp_code)
+    hashed_otp = :crypto.hash(@hash_algorithm, otp_code)
 
     query =
       hashed_otp

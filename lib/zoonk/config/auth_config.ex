@@ -7,16 +7,6 @@ defmodule Zoonk.Config.AuthConfig do
   """
 
   @doc """
-  Returns the default hash algorithm.
-
-  ## Example
-
-      iex> get_hash_algorithm()
-      :sha256
-  """
-  def get_hash_algorithm, do: :sha256
-
-  @doc """
   Returns the `rand` number of bytes to use for generating tokens.
 
   This is used with `:crypto.strong_rand_bytes`.
