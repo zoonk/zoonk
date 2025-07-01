@@ -97,7 +97,7 @@ config :zoonk, :user_token,
   # the reissuing of tokens completely.
   renew_token_days: 7,
   max_age_days: %{
-    session: 365,
+    session: 14,
     change_email: 7
   },
   max_age_minutes: %{
