@@ -75,17 +75,4 @@ defmodule Zoonk.Config.AuthConfig do
       [:apple, :github, :google]
   """
   def list_providers, do: [:apple, :github, :google]
-
-  @doc """
-  Returns the maximum number of OTP codes that can be issued per hour.
-
-  The purpose of this rate limit is to prevent brute force attacks
-  and protect users from excessive OTP code attempts.
-
-  ## Example
-
-      iex> get_max_otp_codes_per_hour()
-      5
-  """
-  def get_max_otp_codes_per_hour, do: 5
 end

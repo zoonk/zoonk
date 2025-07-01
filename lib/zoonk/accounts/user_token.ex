@@ -204,6 +204,19 @@ defmodule Zoonk.Accounts.UserToken do
     |> where([t], t.user_id == ^user.id and t.context == ^context)
     |> where([t], t.inserted_at >= ^one_hour_ago)
     |> Zoonk.Repo.aggregate(:count)
-    |> Kernel.<(AuthConfig.get_max_otp_codes_per_hour())
+    |> Kernel.<(get_max_otp_codes_per_hour())
   end
+
+  @doc """
+  Returns the maximum number of OTP codes that can be issued per hour.
+
+  The purpose of this rate limit is to prevent brute force attacks
+  and protect users from excessive OTP code attempts.
+
+  ## Example
+
+      iex> get_max_otp_codes_per_hour()
+      5
+  """
+  def get_max_otp_codes_per_hour, do: 5
 end

@@ -728,7 +728,7 @@ defmodule Zoonk.AccountsTest do
   describe "OTP code rate limiting" do
     test "refuses to generate more than allowed OTP codes per hour for login" do
       user = user_fixture()
-      max_codes = AuthConfig.get_max_otp_codes_per_hour()
+      max_codes = UserToken.get_max_otp_codes_per_hour()
 
       # Generate allowed number of codes
       Enum.each(1..max_codes, fn _code ->
@@ -741,7 +741,7 @@ defmodule Zoonk.AccountsTest do
 
     test "rate limit is per context" do
       user = user_fixture()
-      max_codes = AuthConfig.get_max_otp_codes_per_hour()
+      max_codes = UserToken.get_max_otp_codes_per_hour()
 
       # Generate max codes for login
       Enum.each(1..max_codes, fn _code ->
@@ -754,7 +754,7 @@ defmodule Zoonk.AccountsTest do
 
     test "rate limit resets after one hour" do
       user = user_fixture()
-      max_codes = AuthConfig.get_max_otp_codes_per_hour()
+      max_codes = UserToken.get_max_otp_codes_per_hour()
 
       # Generate max codes
       Enum.each(1..max_codes, fn _code ->
