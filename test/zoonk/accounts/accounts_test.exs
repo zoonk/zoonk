@@ -4,11 +4,11 @@ defmodule Zoonk.AccountsTest do
   import Zoonk.AccountFixtures
 
   alias Zoonk.Accounts
+  alias Zoonk.Accounts.Subdomain
   alias Zoonk.Accounts.User
   alias Zoonk.Accounts.UserProfile
   alias Zoonk.Accounts.UserProvider
   alias Zoonk.Accounts.UserToken
-  alias Zoonk.Config.SubdomainConfig
   alias Zoonk.Orgs.OrgMember
   alias Zoonk.Repo
 
@@ -45,7 +45,7 @@ defmodule Zoonk.AccountsTest do
     end
 
     test "rejects reserved subdomains" do
-      reserved = Enum.take_random(SubdomainConfig.list_reserved_subdomains(), 10)
+      reserved = Enum.take_random(Subdomain.list_reserved_subdomains(), 10)
 
       for subdomain <- reserved do
         attrs = valid_user_profile_attributes(%{username: subdomain})

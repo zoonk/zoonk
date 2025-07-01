@@ -1,4 +1,4 @@
-defmodule Zoonk.Config.SubdomainConfig do
+defmodule Zoonk.Accounts.Subdomain do
   @moduledoc """
   Manages reserved subdomains for the application.
 
