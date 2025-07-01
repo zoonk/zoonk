@@ -123,13 +123,13 @@ defmodule ZoonkWeb.BillingLive do
   end
 
   @impl Phoenix.LiveView
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
     user = socket.assigns.scope.user
 
     # Check if user already has a billing account
     if Billing.has_billing_account?(user) do
       # Redirect to referrer or subscription page
-      referrer = get_connect_info(socket, :uri) |> Map.get(:query, "") |> URI.decode_query() |> Map.get("referrer")
+      referrer = Map.get(params, "referrer")
       redirect_to = if referrer && referrer != "", do: referrer, else: ~p"/subscription"
 
       {:ok, push_navigate(socket, to: redirect_to)}
