@@ -2,7 +2,6 @@ defmodule ZoonkWeb.SupportLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  alias Zoonk.Config.SupportConfig
   alias Zoonk.Support
 
   @impl Phoenix.LiveView
@@ -24,7 +23,7 @@ defmodule ZoonkWeb.SupportLive do
             {dgettext(
               "settings",
               "Need help? Send us a message and we'll get back to you within %{days} business days.",
-              days: SupportConfig.response_time_days()
+              days: Support.response_time_days()
             )}
           </:subtitle>
 
@@ -57,7 +56,7 @@ defmodule ZoonkWeb.SupportLive do
             {dgettext(
               "settings",
               "For urgent matters, please email us at %{email}",
-              email: SupportConfig.support_email()
+              email: Support.support_email()
             )}
           </:requirements>
         </.form_container>

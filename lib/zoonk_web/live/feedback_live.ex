@@ -2,7 +2,6 @@ defmodule ZoonkWeb.FeedbackLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  alias Zoonk.Config.SupportConfig
   alias Zoonk.Support
 
   @impl Phoenix.LiveView
@@ -56,7 +55,7 @@ defmodule ZoonkWeb.FeedbackLive do
             {dgettext(
               "settings",
               "You can also reach out to us at %{email}",
-              email: SupportConfig.support_email()
+              email: Support.support_email()
             )}
           </:requirements>
         </.form_container>

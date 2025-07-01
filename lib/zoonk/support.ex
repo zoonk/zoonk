@@ -7,6 +7,36 @@ defmodule Zoonk.Support do
   alias Zoonk.Support.SupportNotifier
 
   @doc """
+  Returns the number of business days for support response time.
+
+  ## Examples
+
+      iex> response_time_days()
+      3
+  """
+  def response_time_days, do: 3
+
+  @doc """
+  Returns the support email address.
+
+  ## Examples
+
+      iex> support_email()
+      "hello@zoonk.com"
+  """
+  def support_email, do: "hello@zoonk.com"
+
+  @doc """
+  Returns the billing email address.
+
+  ## Examples
+
+      iex> billing_email()
+      "billing@zoonk.com"
+  """
+  def billing_email, do: "billing@zoonk.com"
+
+  @doc """
   Sends feedback from a user.
 
   ## Examples
