@@ -12,7 +12,7 @@ defmodule ZoonkWeb.UserAuthTest do
   alias Zoonk.Scope
   alias ZoonkWeb.UserAuth
 
-  @remember_me_cookie AuthConfig.get_cookie_name(:remember_me)
+  @remember_me_cookie "_zoonk_web_user_remember_me"
   @max_age AuthConfig.get_max_age(:token, :seconds)
 
   setup %{conn: conn} do

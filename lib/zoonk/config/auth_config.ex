@@ -57,16 +57,6 @@ defmodule Zoonk.Config.AuthConfig do
   def get_max_age(:session_token, :days), do: 7
 
   @doc """
-  Returns the name of a cookie.
-
-  ## Example
-
-      iex> get_cookie_name(:remember_me)
-      "_zoonk_web_user_remember_me"
-  """
-  def get_cookie_name(:remember_me), do: "_zoonk_web_user_remember_me"
-
-  @doc """
   Returns a list of supported oAuth providers.
 
   ## Example

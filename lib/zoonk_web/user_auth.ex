@@ -20,7 +20,7 @@ defmodule ZoonkWeb.UserAuth do
   alias Zoonk.Scope
 
   @max_age AuthConfig.get_max_age(:token, :seconds)
-  @remember_me_cookie AuthConfig.get_cookie_name(:remember_me)
+  @remember_me_cookie "_zoonk_web_user_remember_me"
   @remember_me_options [sign: true, max_age: @max_age, same_site: "Lax"]
 
   @public_paths ["/catalog", "/feedback", "/support", "/follow"]
