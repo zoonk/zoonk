@@ -85,7 +85,7 @@ config :zoonk, ZoonkWeb.Endpoint,
 config :zoonk, :oauth_providers, [:apple, :github, :google]
 
 # Token config
-config :zoonk, :token, rand_size: 32
+config :zoonk, :user_token, rand_size: 32
 
 # Configures Ecto
 config :zoonk,

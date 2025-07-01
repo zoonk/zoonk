@@ -23,7 +23,7 @@ defmodule Zoonk.Accounts do
   alias Zoonk.Repo
   alias Zoonk.Scope
 
-  @rand_size Application.compile_env!(:zoonk, :token)[:rand_size]
+  @rand_size Application.compile_env!(:zoonk, :user_token)[:rand_size]
   @oauth_providers Application.compile_env(:zoonk, :oauth_providers, [])
 
   @doc """
