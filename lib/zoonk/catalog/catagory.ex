@@ -1,4 +1,4 @@
-defmodule Zoonk.Config.CategoryConfig do
+defmodule Zoonk.Catalog.Category do
   @moduledoc """
   Manages course category configurations for the application.
 

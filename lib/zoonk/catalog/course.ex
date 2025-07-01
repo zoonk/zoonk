@@ -26,14 +26,14 @@ defmodule Zoonk.Catalog.Course do
 
   import Ecto.Changeset
 
+  alias Zoonk.Catalog.Category
   alias Zoonk.Catalog.CourseChapter
   alias Zoonk.Catalog.CourseTranslation
   alias Zoonk.Catalog.CourseUser
-  alias Zoonk.Config.CategoryConfig
   alias Zoonk.Orgs.Org
 
   schema "courses" do
-    field :categories, {:array, Ecto.Enum}, values: CategoryConfig.list_categories(:atom), default: []
+    field :categories, {:array, Ecto.Enum}, values: Category.list_categories(:atom), default: []
     field :thumb_url, :string
     field :slug, :string
 
