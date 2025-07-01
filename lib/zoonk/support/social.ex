@@ -1,4 +1,4 @@
-defmodule Zoonk.Config.SocialConfig do
+defmodule Zoonk.Support.Social do
   @moduledoc """
   Manages social media link configurations for the application.
 

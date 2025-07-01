@@ -7,8 +7,8 @@ defmodule Zoonk.Support.FeedbackNotifier do
   """
   use Gettext, backend: Zoonk.Gettext
 
-  alias Zoonk.Config.SupportConfig
   alias Zoonk.Mailer
+  alias Zoonk.Support
 
   @doc """
   Deliver feedback from a user to the support team.
@@ -37,6 +37,6 @@ defmodule Zoonk.Support.FeedbackNotifier do
         message: message
       )
 
-    Mailer.send_email(SupportConfig.support_email(), subject, content)
+    Mailer.send_email(Support.support_email(), subject, content)
   end
 end

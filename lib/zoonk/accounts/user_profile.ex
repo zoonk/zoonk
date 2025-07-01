@@ -26,8 +26,8 @@ defmodule Zoonk.Accounts.UserProfile do
 
   import Ecto.Changeset
 
+  alias Zoonk.Accounts.Subdomain
   alias Zoonk.Accounts.User
-  alias Zoonk.Config.SubdomainConfig
 
   schema "user_profiles" do
     field :is_public, :boolean, default: false
@@ -53,7 +53,7 @@ defmodule Zoonk.Accounts.UserProfile do
       message: dgettext("errors", "cannot have spaces for special characters")
     )
     |> validate_format(:username, ~r/[a-zA-Z]/, message: dgettext("errors", "must have letters"))
-    |> validate_exclusion(:username, SubdomainConfig.list_reserved_subdomains())
+    |> validate_exclusion(:username, Subdomain.list_reserved_subdomains())
     |> unique_constraint(:username)
   end
 end

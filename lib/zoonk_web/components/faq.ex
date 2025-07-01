@@ -8,7 +8,7 @@ defmodule ZoonkWeb.Components.FAQ do
   import ZoonkWeb.Components.Accordion
   import ZoonkWeb.Components.Text
 
-  alias Zoonk.Config.SupportConfig
+  alias Zoonk.Support
 
   @doc """
   Renders the FAQ header with title and subtitle.
@@ -76,8 +76,8 @@ defmodule ZoonkWeb.Components.FAQ do
         {dgettext(
           "faq",
           "We'll get back to you within %{days} business days. You can reach us by filling the support form or by emailing %{email}.",
-          days: SupportConfig.response_time_days(),
-          email: SupportConfig.support_email()
+          days: Support.response_time_days(),
+          email: Support.support_email()
         )}
       </.faq_item>
 
@@ -85,7 +85,7 @@ defmodule ZoonkWeb.Components.FAQ do
         {dgettext(
           "faq",
           "We're developing a white-label version for organizations and schools. If you're interested in early access, email us at %{email} with details about your use case.",
-          email: SupportConfig.support_email()
+          email: Support.support_email()
         )}
       </.faq_item>
 
@@ -93,7 +93,7 @@ defmodule ZoonkWeb.Components.FAQ do
         {dgettext(
           "faq",
           "We offer a discount on yearly payments. Other discounts aren't available right now, but if you have a special case, email us at %{email}.",
-          email: SupportConfig.billing_email()
+          email: Support.billing_email()
         )}
       </.faq_item>
     </div>
@@ -122,8 +122,8 @@ defmodule ZoonkWeb.Components.FAQ do
         {dgettext(
           "faq",
           "For billing-related questions, refunds, or subscription changes, please email us directly at %{billing_email} or use the contact form above. We'll respond within %{days} business days.",
-          billing_email: SupportConfig.billing_email(),
-          days: SupportConfig.response_time_days()
+          billing_email: Support.billing_email(),
+          days: Support.response_time_days()
         )}
       </.faq_item>
 
@@ -152,7 +152,7 @@ defmodule ZoonkWeb.Components.FAQ do
         {dgettext(
           "faq",
           "You can cancel anytime from your account settings or by emailing us at %{email}.",
-          email: SupportConfig.billing_email()
+          email: Support.billing_email()
         )}
       </.faq_item>
 
@@ -160,7 +160,7 @@ defmodule ZoonkWeb.Components.FAQ do
         {dgettext(
           "faq",
           "Yes. Email %{email} and we'll work with you to find the best solution. Refunds are usually processed quickly if you haven't used Zoonk for more than 30 days or in case of errors.",
-          email: SupportConfig.billing_email()
+          email: Support.billing_email()
         )}
         <br /><br />
         {dgettext(
@@ -284,7 +284,7 @@ defmodule ZoonkWeb.Components.FAQ do
         {dgettext(
           "faq",
           "If you experience any technical issues, please reach out to our support team and we'll resolve any problems quickly so you can get back to learning. Feel free to send an email to %{email} with details about the issue you're facing.",
-          email: SupportConfig.support_email()
+          email: Support.support_email()
         )}
       </.faq_item>
     </div>

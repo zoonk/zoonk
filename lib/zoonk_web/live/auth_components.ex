@@ -2,14 +2,13 @@ defmodule ZoonkWeb.AuthComponents do
   @moduledoc false
   use ZoonkWeb, :html
 
-  alias Zoonk.Config.AuthConfig
-
   @actions [:login, :signup, :confirm]
+  @oauth_providers Application.compile_env(:zoonk, :oauth_providers, [])
 
   @doc """
   Generates a link to the authentication provider.
   """
-  attr :provider, :atom, values: [:email | AuthConfig.list_providers()], required: true
+  attr :provider, :atom, values: [:email | @oauth_providers], required: true
   attr :action, :atom, values: @actions, default: :login
 
   def auth_link(assigns) do

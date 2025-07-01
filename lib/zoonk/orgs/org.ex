@@ -58,8 +58,8 @@ defmodule Zoonk.Orgs.Org do
 
   import Ecto.Changeset
 
+  alias Zoonk.Accounts.Subdomain
   alias Zoonk.Billing.BillingAccount
-  alias Zoonk.Config.SubdomainConfig
 
   schema "orgs" do
     field :kind, Ecto.Enum, values: [:app, :team, :creator, :school], default: :team
@@ -88,7 +88,7 @@ defmodule Zoonk.Orgs.Org do
       message: dgettext("errors", "cannot have spaces for special characters")
     )
     |> validate_format(:subdomain, ~r/[a-zA-Z]/, message: dgettext("errors", "must have letters"))
-    |> validate_exclusion(:subdomain, SubdomainConfig.list_reserved_subdomains())
+    |> validate_exclusion(:subdomain, Subdomain.list_reserved_subdomains())
     |> unsafe_validate_unique(:subdomain, Zoonk.Repo)
     |> unsafe_validate_unique(:custom_domain, Zoonk.Repo)
     |> unique_constraint(:subdomain)

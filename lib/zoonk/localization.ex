@@ -1,4 +1,4 @@
-defmodule Zoonk.Config.LanguageConfig do
+defmodule Zoonk.Localization do
   @moduledoc """
   Manages supported language configurations for the application.
 

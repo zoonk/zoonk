@@ -24,7 +24,7 @@ defmodule Zoonk.Billing do
   ## Examples
 
       iex> user = %User{id: 123, email: "user@example.com"}
-      iex> create_billing_account(user, %{currency: :usd})
+      iex> create_billing_account(user, %{currency: "USD"})
       {:ok, %BillingAccount{}}
 
       iex> user = %User{id: 123, email: "user@example.com"}

@@ -21,12 +21,12 @@ defmodule Zoonk.Catalog.ChapterTranslation do
   import Ecto.Changeset
 
   alias Zoonk.Catalog.Chapter
-  alias Zoonk.Config.LanguageConfig
+  alias Zoonk.Localization
 
   schema "chapter_translations" do
     field :language, Ecto.Enum,
-      values: LanguageConfig.list_languages(:atom),
-      default: LanguageConfig.get_default_language(:atom)
+      values: Localization.list_languages(:atom),
+      default: Localization.get_default_language(:atom)
 
     field :title, :string
     field :description, :string

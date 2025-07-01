@@ -22,10 +22,13 @@ defmodule Zoonk.Accounts.UserToken do
   import Ecto.Query
 
   alias Zoonk.Accounts.UserToken
-  alias Zoonk.Config.AuthConfig
   alias Zoonk.Repo
 
-  @rand_size AuthConfig.get_rand_size()
+  @rand_size Application.compile_env!(:zoonk, :user_token)[:rand_size]
+  @hash_algorithm :sha256
+  @session_validity_in_days Application.compile_env!(:zoonk, :user_token)[:max_age_days][:session]
+  @otp_validity_in_minutes Application.compile_env!(:zoonk, :user_token)[:max_age_minutes][:otp]
+  @change_email_validity_in_days Application.compile_env!(:zoonk, :user_token)[:max_age_days][:change_email]
 
   schema "users_tokens" do
     field :token, :binary
@@ -73,13 +76,11 @@ defmodule Zoonk.Accounts.UserToken do
   not expired (after @session_validity_in_days).
   """
   def verify_session_token_query(token) do
-    session_validity_in_days = AuthConfig.get_max_age(:token, :days)
-
     query =
       token
       |> by_token_and_context_query("session")
       |> join(:inner, [token], user in assoc(token, :user))
-      |> where([token, user], token.inserted_at > ago(^session_validity_in_days, "day"))
+      |> where([token, user], token.inserted_at > ago(^@session_validity_in_days, "day"))
       |> select([token, user], {%{user | authenticated_at: token.authenticated_at}, token.inserted_at})
 
     {:ok, query}
@@ -106,7 +107,7 @@ defmodule Zoonk.Accounts.UserToken do
         |> Enum.random()
         |> Integer.to_string()
 
-      hashed_token = :crypto.hash(AuthConfig.get_hash_algorithm(), otp_code)
+      hashed_token = :crypto.hash(@hash_algorithm, otp_code)
 
       Repo.insert!(%UserToken{
         token: hashed_token,
@@ -131,13 +132,13 @@ defmodule Zoonk.Accounts.UserToken do
   15 minutes. The context of an OTP code is always "login".
   """
   def verify_otp_code_query(otp_code, email) do
-    hashed_otp = :crypto.hash(AuthConfig.get_hash_algorithm(), otp_code)
+    hashed_otp = :crypto.hash(@hash_algorithm, otp_code)
 
     query =
       hashed_otp
       |> by_token_and_context_query("login")
       |> join(:inner, [token], user in assoc(token, :user))
-      |> where([token], token.inserted_at > ago(^AuthConfig.get_max_age(:otp, :minutes), "minute"))
+      |> where([token], token.inserted_at > ago(^@otp_validity_in_minutes, "minute"))
       |> where([token, user], token.sent_to == ^email)
       |> where([token, user], token.sent_to == user.email)
       |> select([token, user], {user, token})
@@ -158,12 +159,12 @@ defmodule Zoonk.Accounts.UserToken do
   The context must always start with "change:".
   """
   def verify_change_email_code_query(otp_code, "change:" <> _rest = context) do
-    hashed_otp = :crypto.hash(AuthConfig.get_hash_algorithm(), otp_code)
+    hashed_otp = :crypto.hash(@hash_algorithm, otp_code)
 
     query =
       hashed_otp
       |> by_token_and_context_query(context)
-      |> where([token], token.inserted_at > ago(^AuthConfig.get_max_age(:change_email, :days), "day"))
+      |> where([token], token.inserted_at > ago(^@change_email_validity_in_days, "day"))
 
     {:ok, query}
   end
@@ -203,6 +204,19 @@ defmodule Zoonk.Accounts.UserToken do
     |> where([t], t.user_id == ^user.id and t.context == ^context)
     |> where([t], t.inserted_at >= ^one_hour_ago)
     |> Zoonk.Repo.aggregate(:count)
-    |> Kernel.<(AuthConfig.get_max_otp_codes_per_hour())
+    |> Kernel.<(get_max_otp_codes_per_hour())
   end
+
+  @doc """
+  Returns the maximum number of OTP codes that can be issued per hour.
+
+  The purpose of this rate limit is to prevent brute force attacks
+  and protect users from excessive OTP code attempts.
+
+  ## Example
+
+      iex> get_max_otp_codes_per_hour()
+      5
+  """
+  def get_max_otp_codes_per_hour, do: 5
 end

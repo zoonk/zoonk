@@ -1,4 +1,4 @@
-defmodule Zoonk.Config.CommandPaletteConfig do
+defmodule ZoonkWeb.CommandPaletteConfig do
   @moduledoc """
   Configuration for command palette navigation items.
 

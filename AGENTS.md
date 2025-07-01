@@ -9,7 +9,6 @@ This guide defines the development and design standards used in Zoonk. It ensure
 - [About this app](#about-this-app)
 - [Principles](#principles)
 - [Project Structure](#project-structure)
-  - [Configuration](#configuration)
   - [Schemas](#schemas)
   - [Controllers](#controllers)
   - [LiveView Pages](#liveview-pages)
@@ -48,11 +47,6 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
 ---
 
 ## Project Structure
-
-### Configuration
-
-- Store in `lib/zoonk/config/`
-- Module naming: `Zoonk.Config.*` (e.g. `Zoonk.Config.LanguageConfig`)
 
 ### Schemas
 

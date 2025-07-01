@@ -4,7 +4,7 @@ defmodule Zoonk.OrgsTest do
   import Zoonk.AccountFixtures
   import Zoonk.OrgFixtures
 
-  alias Zoonk.Config.SubdomainConfig
+  alias Zoonk.Accounts.Subdomain
   alias Zoonk.Orgs
   alias Zoonk.Orgs.Org
 
@@ -39,7 +39,7 @@ defmodule Zoonk.OrgsTest do
     end
 
     test "rejects reserved subdomains" do
-      reserved = Enum.take_random(SubdomainConfig.list_reserved_subdomains(), 10)
+      reserved = Enum.take_random(Subdomain.list_reserved_subdomains(), 10)
 
       for subdomain <- reserved do
         attrs = valid_org_attributes(%{subdomain: subdomain})

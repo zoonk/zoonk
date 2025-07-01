@@ -81,6 +81,30 @@ config :zoonk, ZoonkWeb.Endpoint,
   pubsub_server: Zoonk.PubSub,
   live_view: [signing_salt: "aQIHSki0"]
 
+# Supported OAuth providers
+config :zoonk, :oauth_providers, [:apple, :github, :google]
+
+# UserToken config
+config :zoonk, :user_token,
+  rand_size: 32,
+
+  # How old the session token should be before a new one is issued. When a request is made
+  # with a session token older than this value, then a new session token will be created
+  # and the session and remember-me cookies (if set) will be updated with the new token.
+  # Lowering this value will result in more tokens being created by active users. Increasing
+  # it will result in less time before a session token expires for a user to get issued a new
+  # token. This can be set to a value greater than `max_age_days.session` to disable
+  # the reissuing of tokens completely.
+  renew_token_days: 7,
+  max_age_days: %{
+    session: 14,
+    change_email: 7
+  },
+  max_age_minutes: %{
+    otp: 15,
+    sudo_mode: -10
+  }
+
 # Configures Ecto
 config :zoonk,
   ecto_repos: [Zoonk.Repo],

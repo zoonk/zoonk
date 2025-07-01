@@ -2,7 +2,7 @@ defmodule ZoonkWeb.FollowLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  alias Zoonk.Config.SocialConfig
+  alias Zoonk.Support.Social
 
   @impl Phoenix.LiveView
   def render(assigns) do
@@ -19,7 +19,7 @@ defmodule ZoonkWeb.FollowLive do
 
         <div class="grid grid-cols-2 gap-4 pt-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           <a
-            :for={link <- SocialConfig.get_social_links(@current_language)}
+            :for={link <- Social.get_social_links(@current_language)}
             href={link.url}
             target="_blank"
             rel="noopener noreferrer"

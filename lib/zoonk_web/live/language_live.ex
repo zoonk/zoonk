@@ -3,7 +3,7 @@ defmodule ZoonkWeb.LanguageLive do
   use ZoonkWeb, :live_view
 
   alias Zoonk.Accounts
-  alias Zoonk.Config.LanguageConfig
+  alias Zoonk.Localization
 
   @impl Phoenix.LiveView
   def render(assigns) do
@@ -30,7 +30,7 @@ defmodule ZoonkWeb.LanguageLive do
             field={@language_form[:language]}
             label={dgettext("settings", "Language")}
             type="select"
-            options={LanguageConfig.list_languages(:options)}
+            options={Localization.list_languages(:options)}
             required
             hide_label
           />

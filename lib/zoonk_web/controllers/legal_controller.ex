@@ -4,7 +4,7 @@ defmodule ZoonkWeb.LegalController do
   """
   use ZoonkWeb, :controller
 
-  alias Zoonk.Config.LanguageConfig
+  alias Zoonk.Localization
 
   @legal_dir "priv/static/legal"
 
@@ -24,7 +24,7 @@ defmodule ZoonkWeb.LegalController do
   # If a user tries to attack us with a file traversal, they will get the default page
   # sobelow_skip ["Traversal.FileModule", "XSS.HTML"]
   defp render_legal_page(conn, language, directory) do
-    languages = LanguageConfig.list_languages(:string)
+    languages = Localization.list_languages(:string)
     valid_language? = language in languages
     sanitized_language = if valid_language?, do: Path.basename(language), else: "en"
     sanitized_directory = Path.basename(directory)
