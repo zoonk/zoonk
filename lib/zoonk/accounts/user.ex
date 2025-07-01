@@ -29,7 +29,7 @@ defmodule Zoonk.Accounts.User do
   alias Zoonk.Accounts.UserProfile
   alias Zoonk.Accounts.UserProvider
   alias Zoonk.Billing.BillingAccount
-  alias Zoonk.Config.LanguageConfig
+  alias Zoonk.Localization
   alias Zoonk.Orgs.OrgMember
   alias Zoonk.Orgs.TeamMember
 
@@ -38,8 +38,8 @@ defmodule Zoonk.Accounts.User do
     field :email, :string
 
     field :language, Ecto.Enum,
-      values: LanguageConfig.list_languages(:atom),
-      default: LanguageConfig.get_default_language(:atom)
+      values: Localization.list_languages(:atom),
+      default: Localization.get_default_language(:atom)
 
     field :confirmed_at, :utc_datetime_usec
     field :authenticated_at, :utc_datetime_usec, virtual: true

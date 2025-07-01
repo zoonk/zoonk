@@ -20,14 +20,14 @@ defmodule Zoonk.AI.CourseRecommendation do
 
   import Ecto.Changeset
 
-  alias Zoonk.Config.LanguageConfig
+  alias Zoonk.Localization
 
   schema "course_recommendations" do
     field :query, :string
 
     field :language, Ecto.Enum,
-      values: LanguageConfig.list_languages(:atom),
-      default: LanguageConfig.get_default_language(:atom)
+      values: Localization.list_languages(:atom),
+      default: Localization.get_default_language(:atom)
 
     embeds_many :courses, Course do
       field :title, :string
