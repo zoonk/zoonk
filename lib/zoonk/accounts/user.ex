@@ -29,7 +29,6 @@ defmodule Zoonk.Accounts.User do
   alias Zoonk.Accounts.UserProfile
   alias Zoonk.Accounts.UserProvider
   alias Zoonk.Billing.BillingAccount
-  alias Zoonk.Catalog.UserInterest
   alias Zoonk.Config.LanguageConfig
   alias Zoonk.Orgs.OrgMember
   alias Zoonk.Orgs.TeamMember
@@ -54,9 +53,6 @@ defmodule Zoonk.Accounts.User do
 
     has_many :team_memberships, TeamMember
     has_many :teams, through: [:team_memberships, :team]
-
-    has_many :user_interests, UserInterest
-    has_many :interests, through: [:user_interests, :interest]
 
     timestamps(type: :utc_datetime_usec)
   end
