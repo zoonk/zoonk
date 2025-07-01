@@ -14,7 +14,7 @@ defmodule Zoonk.OrgFixtures do
 
     attrs
     |> Map.delete(:org)
-    |> Enum.into(%{currency: :USD, org_id: org.id})
+    |> Enum.into(%{currency: "USD", org_id: org.id})
   end
 
   def valid_org_attributes(attrs \\ %{}) do

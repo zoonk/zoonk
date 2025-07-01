@@ -9,7 +9,8 @@ defmodule Zoonk.Billing.BillingAccount do
 
   | Field Name           | Type         | Description                                                       |
   |----------------------|--------------|-------------------------------------------------------------------|
-  | `currency`           | `Ecto.Enum`  | The currency used for billing purposes.                           |
+  | `country_iso2`       | `String`     | The ISO 3166-1 alpha-2 code of the country for billing purposes.  |
+  | `currency`           | `String`     | The currency used for billing purposes.                           |
   | `stripe_customer_id` | `String`     | The Stripe customer ID for payment processing.                    |
   | `user_id`            | `Integer`    | The ID of the `Zoonk.Accounts.User` this account belongs to.      |
   | `org_id`             | `Integer`    | The ID of the `Zoonk.Orgs.Org` this account belongs to.           |
@@ -21,11 +22,11 @@ defmodule Zoonk.Billing.BillingAccount do
   import Ecto.Changeset
 
   alias Zoonk.Accounts.User
-  alias Zoonk.Config.CurrencyConfig
   alias Zoonk.Orgs.Org
 
   schema "billing_accounts" do
-    field :currency, Ecto.Enum, values: CurrencyConfig.list_currencies(:atom)
+    field :country_iso2, :string
+    field :currency, :string
     field :stripe_customer_id, :string
 
     belongs_to :user, User
@@ -41,9 +42,13 @@ defmodule Zoonk.Billing.BillingAccount do
   """
   def changeset(billing_account, attrs) do
     billing_account
-    |> cast(attrs, [:currency, :stripe_customer_id, :user_id, :org_id])
-    |> validate_required([:currency])
+    |> cast(attrs, [:country_iso2, :currency, :stripe_customer_id, :user_id, :org_id])
+    |> validate_required([:country_iso2, :currency])
     |> validate_format(:stripe_customer_id, ~r/^cus_/, message: "must start with cus_")
+    |> validate_length(:country_iso2, is: 2, message: "must be a valid ISO 3166-1 alpha-2 code")
+    |> validate_length(:currency, is: 3, message: "must be a valid ISO 4217 currency code")
+    |> update_change(:currency, &String.upcase/1)
+    |> update_change(:country_iso2, &String.upcase/1)
     |> validate_user_or_org()
     |> foreign_key_constraint(:user_id)
     |> foreign_key_constraint(:org_id)

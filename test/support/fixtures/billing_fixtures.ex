@@ -79,14 +79,14 @@ defmodule Zoonk.BillingFixtures do
   ## Examples
 
       iex> valid_billing_account_attrs()
-      %{currency: :usd}
+      %{currency: "USD", country_iso2: "US"}
 
-      iex> valid_billing_account_attrs(%{currency: :eur})
-      %{currency: :eur}
+      iex> valid_billing_account_attrs(%{currency: "EUR"})
+      %{currency: "EUR", country_iso2: "US"}
 
   """
   def valid_billing_account_attrs(attrs \\ %{}) do
-    Map.merge(%{currency: :usd}, attrs)
+    Map.merge(%{currency: "USD", country_iso2: "US"}, attrs)
   end
 
   @doc """
@@ -97,8 +97,8 @@ defmodule Zoonk.BillingFixtures do
       iex> billing_account_fixture()
       %BillingAccount{}
 
-      iex> billing_account_fixture(%{currency: :eur})
-      %BillingAccount{currency: :eur}
+      iex> billing_account_fixture(%{currency: "EUR"})
+      %BillingAccount{currency: "EUR"}
 
   """
   def billing_account_fixture(attrs \\ %{}) do

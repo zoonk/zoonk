@@ -6,6 +6,7 @@ defmodule Zoonk.Repo.Migrations.CreateBillingAccountsTable do
       add :user_id, references(:users, on_delete: :delete_all)
       add :org_id, references(:orgs, on_delete: :delete_all)
 
+      add :country_iso2, :string, null: false
       add :currency, :string, null: false
       add :stripe_customer_id, :string
 
