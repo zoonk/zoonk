@@ -7,22 +7,22 @@ defmodule Zoonk.Accounts.UserProvider do
 
   ## Fields
 
-  | Field Name | Type | Description |
-  |------------|------|-------------|
-  | `provider` | `Ecto.Enum` | The OAuth provider used for authentication. |
-  | `provider_uid` | `String` | The unique identifier for the user in the provider's system. |
-  | `user_id` | `Integer` | The ID from `Zoonk.Accounts.User`. |
-  | `inserted_at` | `DateTime` | Timestamp when the provider data was created. |
-  | `updated_at` | `DateTime` | Timestamp when the provider data was last updated. |
+  | Field Name     | Type        | Description                                         |
+  | -------------- | ----------- | --------------------------------------------------- |
+  | `provider`     | `Ecto.Enum` | The OAuth provider used for authentication.         |
+  | `provider_uid` | `String`    | The unique identifier for the user in the provider. |
+  | `user_id`      | `Integer`   | The ID from `Zoonk.Accounts.User`.                  |
+  | `inserted_at`  | `DateTime`  | Timestamp when the provider data was created.       |
+  | `updated_at`   | `DateTime`  | Timestamp when the provider data was last updated.  |
   """
   use Ecto.Schema
 
   import Ecto.Changeset
 
-  alias Zoonk.Config.AuthConfig
+  @providers Application.compile_env(:zoonk, :oauth_providers, [])
 
   schema "user_providers" do
-    field :provider, Ecto.Enum, values: AuthConfig.list_providers()
+    field :provider, Ecto.Enum, values: @providers
     field :provider_uid, :string
 
     belongs_to :user, Zoonk.Accounts.User
@@ -30,9 +30,7 @@ defmodule Zoonk.Accounts.UserProvider do
     timestamps(type: :utc_datetime_usec)
   end
 
-  @doc """
-  A user provider changeset for adding or updating a user's provider data.
-  """
+  @doc false
   def changeset(user_provider, attrs) do
     user_provider
     |> cast(attrs, [:provider, :provider_uid, :user_id])

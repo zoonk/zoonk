@@ -81,6 +81,9 @@ config :zoonk, ZoonkWeb.Endpoint,
   pubsub_server: Zoonk.PubSub,
   live_view: [signing_salt: "aQIHSki0"]
 
+# Supported OAuth providers
+config :zoonk, :oauth_providers, [:apple, :github, :google]
+
 # Configures Ecto
 config :zoonk,
   ecto_repos: [Zoonk.Repo],

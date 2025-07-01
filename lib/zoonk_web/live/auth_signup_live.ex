@@ -4,8 +4,8 @@ defmodule ZoonkWeb.AuthSignUpLive do
 
   import ZoonkWeb.AuthComponents
 
+  alias Zoonk.Accounts
   alias Zoonk.Accounts.User
-  alias Zoonk.Config.AuthConfig
   alias Zoonk.Scope
   alias ZoonkWeb.UserAuth
 
@@ -16,7 +16,7 @@ defmodule ZoonkWeb.AuthSignUpLive do
         aria-label={dgettext("auth", "Use one of the external providers below:")}
         class="flex w-full flex-col gap-2"
       >
-        <.auth_link :for={provider <- AuthConfig.list_providers()} provider={provider} />
+        <.auth_link :for={provider <- Accounts.list_providers()} provider={provider} />
       </section>
 
       <section aria-label={dgettext("auth", "Or use your email address")} class="w-full">

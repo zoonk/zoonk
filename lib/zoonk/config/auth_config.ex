@@ -55,14 +55,4 @@ defmodule Zoonk.Config.AuthConfig do
   # token. This can be set to a value greater than `get_max_age(:token, :days)` to disable
   # the reissuing of tokens completely.
   def get_max_age(:session_token, :days), do: 7
-
-  @doc """
-  Returns a list of supported oAuth providers.
-
-  ## Example
-
-      iex> list_providers()
-      [:apple, :github, :google]
-  """
-  def list_providers, do: [:apple, :github, :google]
 end

@@ -24,6 +24,7 @@ defmodule Zoonk.Accounts do
   alias Zoonk.Scope
 
   @rand_size AuthConfig.get_rand_size()
+  @oauth_providers Application.compile_env(:zoonk, :oauth_providers, [])
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking a user's profile changes.
@@ -332,6 +333,16 @@ defmodule Zoonk.Accounts do
       {:ok, user, expired_tokens}
     end
   end
+
+  @doc """
+  Returns a list of supported oAuth providers.
+
+  ## Example
+
+      iex> list_providers()
+      [:apple, :github, :google]
+  """
+  def list_providers, do: @oauth_providers
 
   @doc """
   Signs in a user with a third-party provider.
