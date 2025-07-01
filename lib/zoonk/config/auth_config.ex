@@ -7,18 +7,6 @@ defmodule Zoonk.Config.AuthConfig do
   """
 
   @doc """
-  Returns the `rand` number of bytes to use for generating tokens.
-
-  This is used with `:crypto.strong_rand_bytes`.
-
-    ## Example
-
-        iex> get_rand_size()
-        32
-  """
-  def get_rand_size, do: 32
-
-  @doc """
   Returns the maximum age or validity of an item.
 
   For OTP codes, it is very important to keep their expiry short,

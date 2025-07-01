@@ -25,7 +25,7 @@ defmodule Zoonk.Accounts.UserToken do
   alias Zoonk.Config.AuthConfig
   alias Zoonk.Repo
 
-  @rand_size AuthConfig.get_rand_size()
+  @rand_size Application.compile_env!(:zoonk, :token)[:rand_size] || 32
   @hash_algorithm :sha256
 
   schema "users_tokens" do
