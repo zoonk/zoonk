@@ -8,10 +8,11 @@ defmodule Zoonk.AccountsTest do
   alias Zoonk.Accounts.UserProfile
   alias Zoonk.Accounts.UserProvider
   alias Zoonk.Accounts.UserToken
-  alias Zoonk.Config.AuthConfig
   alias Zoonk.Config.SubdomainConfig
   alias Zoonk.Orgs.OrgMember
   alias Zoonk.Repo
+
+  @sudo_mode_max_age_minutes Application.compile_env!(:zoonk, :user_token)[:max_age_minutes][:sudo_mode]
 
   describe "change_user_profile/2" do
     test "allows valid usernames" do
@@ -278,9 +279,8 @@ defmodule Zoonk.AccountsTest do
 
   describe "sudo_mode?/1" do
     test "validates the authenticated_at time" do
-      sudo_mode_minutes = AuthConfig.get_max_age(:sudo_mode, :minutes)
-      valid_minutes = sudo_mode_minutes + 1
-      invalid_minutes = sudo_mode_minutes - 1
+      valid_minutes = @sudo_mode_max_age_minutes + 1
+      invalid_minutes = @sudo_mode_max_age_minutes - 1
 
       now = DateTime.utc_now()
 

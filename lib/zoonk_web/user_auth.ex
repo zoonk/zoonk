@@ -13,13 +13,14 @@ defmodule ZoonkWeb.UserAuth do
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.User
-  alias Zoonk.Config.AuthConfig
   alias Zoonk.Helpers
   alias Zoonk.Orgs
   alias Zoonk.Orgs.Org
   alias Zoonk.Scope
 
-  @max_age AuthConfig.get_max_age(:token, :seconds)
+  @session_validity_in_days Application.compile_env!(:zoonk, :user_token)[:max_age_days][:session]
+  @renew_token_days Application.compile_env!(:zoonk, :user_token)[:renew_token_days]
+  @max_age @session_validity_in_days * 24 * 60 * 60
   @remember_me_cookie "_zoonk_web_user_remember_me"
   @remember_me_options [sign: true, max_age: @max_age, same_site: "Lax"]
 
@@ -110,7 +111,7 @@ defmodule ZoonkWeb.UserAuth do
   defp maybe_reissue_user_session_token(conn, user, token_inserted_at) do
     token_age = DateTime.diff(DateTime.utc_now(), token_inserted_at, :day)
 
-    if token_age >= AuthConfig.get_max_age(:session_token, :days) do
+    if token_age >= @renew_token_days do
       create_or_extend_session(conn, user)
     else
       conn

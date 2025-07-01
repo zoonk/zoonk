@@ -15,7 +15,6 @@ defmodule Zoonk.Accounts do
   alias Zoonk.Accounts.UserProfile
   alias Zoonk.Accounts.UserProvider
   alias Zoonk.Accounts.UserToken
-  alias Zoonk.Config.AuthConfig
   alias Zoonk.Helpers
   alias Zoonk.Orgs.Org
   alias Zoonk.Orgs.OrgMember
@@ -25,6 +24,7 @@ defmodule Zoonk.Accounts do
 
   @rand_size Application.compile_env!(:zoonk, :user_token)[:rand_size]
   @oauth_providers Application.compile_env(:zoonk, :oauth_providers, [])
+  @sudo_mode_max_age_minutes Application.compile_env!(:zoonk, :user_token)[:max_age_minutes][:sudo_mode]
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking a user's profile changes.
@@ -143,7 +143,7 @@ defmodule Zoonk.Accounts do
   The user is in sudo mode when the last authentication was done recently.
   """
   def sudo_mode?(%User{authenticated_at: ts}) when is_struct(ts, DateTime) do
-    minutes = AuthConfig.get_max_age(:sudo_mode, :minutes)
+    minutes = @sudo_mode_max_age_minutes
     DateTime.after?(ts, DateTime.add(DateTime.utc_now(), minutes, :minute))
   end
 

@@ -7,13 +7,14 @@ defmodule ZoonkWeb.UserAuthTest do
   alias Phoenix.LiveView
   alias Phoenix.Socket.Broadcast
   alias Zoonk.Accounts
-  alias Zoonk.Config.AuthConfig
   alias Zoonk.Orgs
   alias Zoonk.Scope
   alias ZoonkWeb.UserAuth
 
   @remember_me_cookie "_zoonk_web_user_remember_me"
-  @max_age AuthConfig.get_max_age(:token, :seconds)
+  @session_validity_in_days Application.compile_env!(:zoonk, :user_token)[:max_age_days][:session]
+  @max_age @session_validity_in_days * 24 * 60 * 60
+  @sudo_mode_max_age_minutes Application.compile_env!(:zoonk, :user_token)[:max_age_minutes][:sudo_mode]
 
   setup %{conn: conn} do
     user = %{user_fixture() | authenticated_at: DateTime.utc_now()}
@@ -298,8 +299,7 @@ defmodule ZoonkWeb.UserAuthTest do
     test "redirects when authentication is too old", %{conn: conn, scope: scope} do
       %{user: user} = scope
 
-      sudo_mode_minutes = AuthConfig.get_max_age(:sudo_mode, :minutes)
-      too_old = DateTime.add(DateTime.utc_now(), sudo_mode_minutes - 1, :minute)
+      too_old = DateTime.add(DateTime.utc_now(), @sudo_mode_max_age_minutes - 1, :minute)
       old_user = %{user | authenticated_at: too_old}
       user_token = Accounts.generate_user_session_token(old_user)
       {_user, token_inserted_at} = Accounts.get_user_by_session_token(user_token)

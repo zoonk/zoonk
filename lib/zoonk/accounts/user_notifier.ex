@@ -10,8 +10,10 @@ defmodule Zoonk.Accounts.UserNotifier do
   use Gettext, backend: Zoonk.Gettext
 
   alias Zoonk.Accounts.User
-  alias Zoonk.Config.AuthConfig
   alias Zoonk.Mailer
+
+  @change_email_max_age_days Application.compile_env!(:zoonk, :user_token)[:max_age_days][:change_email]
+  @otp_max_age_minutes Application.compile_env!(:zoonk, :user_token)[:max_age_minutes][:otp]
 
   @doc """
   Deliver instructions to update a user email.
@@ -32,7 +34,7 @@ defmodule Zoonk.Accounts.UserNotifier do
         If you didn't request this change, please ignore this.
         """,
         otp_code: otp_code,
-        expiration_days: AuthConfig.get_max_age(:change_email, :days)
+        expiration_days: @change_email_max_age_days
       )
 
     Mailer.send_email(user.email, subject, content)
@@ -64,7 +66,7 @@ defmodule Zoonk.Accounts.UserNotifier do
         If you didn't request this email, please ignore this.
         """,
         otp_code: otp_code,
-        expiration_minutes: AuthConfig.get_max_age(:otp, :minutes)
+        expiration_minutes: @otp_max_age_minutes
       )
 
     Mailer.send_email(user.email, subject, content)
@@ -86,7 +88,7 @@ defmodule Zoonk.Accounts.UserNotifier do
         If you didn't create an account with us, please ignore this.
         """,
         otp_code: otp_code,
-        expiration_minutes: AuthConfig.get_max_age(:otp, :minutes)
+        expiration_minutes: @otp_max_age_minutes
       )
 
     Mailer.send_email(user.email, subject, content)

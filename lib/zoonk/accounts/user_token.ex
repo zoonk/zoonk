@@ -22,11 +22,13 @@ defmodule Zoonk.Accounts.UserToken do
   import Ecto.Query
 
   alias Zoonk.Accounts.UserToken
-  alias Zoonk.Config.AuthConfig
   alias Zoonk.Repo
 
   @rand_size Application.compile_env!(:zoonk, :user_token)[:rand_size]
   @hash_algorithm :sha256
+  @session_validity_in_days Application.compile_env!(:zoonk, :user_token)[:max_age_days][:session]
+  @otp_validity_in_minutes Application.compile_env!(:zoonk, :user_token)[:max_age_minutes][:otp]
+  @change_email_validity_in_days Application.compile_env!(:zoonk, :user_token)[:max_age_days][:change_email]
 
   schema "users_tokens" do
     field :token, :binary
@@ -74,13 +76,11 @@ defmodule Zoonk.Accounts.UserToken do
   not expired (after @session_validity_in_days).
   """
   def verify_session_token_query(token) do
-    session_validity_in_days = AuthConfig.get_max_age(:token, :days)
-
     query =
       token
       |> by_token_and_context_query("session")
       |> join(:inner, [token], user in assoc(token, :user))
-      |> where([token, user], token.inserted_at > ago(^session_validity_in_days, "day"))
+      |> where([token, user], token.inserted_at > ago(^@session_validity_in_days, "day"))
       |> select([token, user], {%{user | authenticated_at: token.authenticated_at}, token.inserted_at})
 
     {:ok, query}
@@ -138,7 +138,7 @@ defmodule Zoonk.Accounts.UserToken do
       hashed_otp
       |> by_token_and_context_query("login")
       |> join(:inner, [token], user in assoc(token, :user))
-      |> where([token], token.inserted_at > ago(^AuthConfig.get_max_age(:otp, :minutes), "minute"))
+      |> where([token], token.inserted_at > ago(^@otp_validity_in_minutes, "minute"))
       |> where([token, user], token.sent_to == ^email)
       |> where([token, user], token.sent_to == user.email)
       |> select([token, user], {user, token})
@@ -164,7 +164,7 @@ defmodule Zoonk.Accounts.UserToken do
     query =
       hashed_otp
       |> by_token_and_context_query(context)
-      |> where([token], token.inserted_at > ago(^AuthConfig.get_max_age(:change_email, :days), "day"))
+      |> where([token], token.inserted_at > ago(^@change_email_validity_in_days, "day"))
 
     {:ok, query}
   end
