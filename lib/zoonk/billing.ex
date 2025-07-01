@@ -8,11 +8,50 @@ defmodule Zoonk.Billing do
 
   alias Zoonk.Accounts.User
   alias Zoonk.Billing.BillingAccount
+  alias Zoonk.Billing.BillingForm
   alias Zoonk.Billing.Price
   alias Zoonk.Billing.Stripe
   alias Zoonk.Billing.UserSubscription
   alias Zoonk.Repo
   alias Zoonk.Scope
+
+  @doc """
+  Gets a user's billing account.
+
+  Returns the billing account if it exists, nil otherwise.
+
+  ## Examples
+
+      iex> user = %User{id: 123}
+      iex> get_billing_account(user)
+      %BillingAccount{}
+
+      iex> user = %User{id: 123}
+      iex> get_billing_account(user)
+      nil
+  """
+  def get_billing_account(%User{} = user) do
+    Repo.get_by(BillingAccount, user_id: user.id)
+  end
+
+  @doc """
+  Checks if a user has a billing account.
+
+  Returns true if the user has a billing account, false otherwise.
+
+  ## Examples
+
+      iex> user = %User{id: 123}
+      iex> has_billing_account?(user)
+      true
+
+      iex> user = %User{id: 123}
+      iex> has_billing_account?(user)
+      false
+  """
+  def has_billing_account?(%User{} = user) do
+    not is_nil(get_billing_account(user))
+  end
 
   @doc """
   Creates a billing account.
@@ -37,6 +76,40 @@ defmodule Zoonk.Billing do
         attrs
         |> Map.put(:user_id, user.id)
         |> Map.put(:stripe_customer_id, stripe_customer["id"])
+
+      %BillingAccount{}
+      |> BillingAccount.changeset(attrs)
+      |> Repo.insert()
+    end
+  end
+
+  @doc """
+  Creates a billing account with extended Stripe data.
+
+  Takes a User struct and a BillingForm struct to create a new billing account record.
+  First creates a Stripe customer for the user with address and tax ID information,
+  then creates the billing account with the Stripe customer ID.
+
+  ## Examples
+
+      iex> user = %User{id: 123, email: "user@example.com"}
+      iex> form_data = %BillingForm{country_iso2: "US", currency: "USD"}
+      iex> create_billing_account_with_stripe_data(user, form_data)
+      {:ok, %BillingAccount{}}
+
+      iex> user = %User{id: 123, email: "user@example.com"}
+      iex> form_data = %BillingForm{}
+      iex> create_billing_account_with_stripe_data(user, form_data)
+      {:error, %Ecto.Changeset{}}
+  """
+  def create_billing_account_with_stripe_data(%User{} = user, %BillingForm{} = form_data) do
+    with {:ok, stripe_customer} <- create_stripe_customer_with_data(user, form_data) do
+      attrs = %{
+        user_id: user.id,
+        stripe_customer_id: stripe_customer["id"],
+        country_iso2: form_data.country_iso2,
+        currency: form_data.currency
+      }
 
       %BillingAccount{}
       |> BillingAccount.changeset(attrs)
@@ -189,6 +262,69 @@ defmodule Zoonk.Billing do
     }
 
     Stripe.post("/customers", attrs)
+  end
+
+  @doc """
+  Creates a customer in Stripe with extended data.
+
+  Takes a User struct and BillingForm struct and creates a new customer record in Stripe
+  using the user's email, ID, language preferences, and additional billing data including
+  address and tax ID information.
+
+  ## Examples
+
+      iex> user = %User{id: 123, email: "user@example.com", language: :en}
+      iex> form_data = %BillingForm{country_iso2: "US", currency: "USD"}
+      iex> create_stripe_customer_with_data(user, form_data)
+      {:ok, %{"id" => "cus_1234567890", "email" => "user@example.com"}}
+
+      iex> user = %User{id: 123, email: "user@example.com", language: :en}
+      iex> form_data = %BillingForm{tax_id_type: "us_ein", tax_id: "12-3456789"}
+      iex> create_stripe_customer_with_data(user, form_data)
+      {:ok, %{"id" => "cus_1234567890", "email" => "user@example.com"}}
+  """
+  def create_stripe_customer_with_data(%User{} = user, %BillingForm{} = form_data) do
+    attrs = %{
+      "email" => user.email,
+      "metadata[user_id]" => user.id,
+      "preferred_locales[]" => Atom.to_string(user.language)
+    }
+
+    # Add address data if provided
+    attrs = add_address_data(attrs, form_data)
+
+    # Add tax ID data if provided
+    attrs = add_tax_id_data(attrs, form_data)
+
+    Stripe.post("/customers", attrs)
+  end
+
+  defp add_address_data(attrs, %BillingForm{} = form_data) do
+    address_fields = [
+      {"address[line1]", form_data.address_line_1},
+      {"address[line2]", form_data.address_line_2},
+      {"address[city]", form_data.city},
+      {"address[state]", form_data.state},
+      {"address[postal_code]", form_data.postal_code},
+      {"address[country]", form_data.country_iso2}
+    ]
+
+    Enum.reduce(address_fields, attrs, fn {key, value}, acc ->
+      if value && String.trim(value) != "" do
+        Map.put(acc, key, value)
+      else
+        acc
+      end
+    end)
+  end
+
+  defp add_tax_id_data(attrs, %BillingForm{tax_id_type: nil}), do: attrs
+  defp add_tax_id_data(attrs, %BillingForm{tax_id: nil}), do: attrs
+
+  defp add_tax_id_data(attrs, %BillingForm{tax_id_type: tax_id_type, tax_id: tax_id}) do
+    attrs
+    |> Map.put("tax_id_data[type]", tax_id_type)
+    |> Map.put("tax_id_data[value]", tax_id)
   end
 
   defp cancel_user_subscription({:ok, _status}, scope, subscription, attrs) do

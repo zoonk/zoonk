@@ -7,9 +7,97 @@ defmodule Zoonk.BillingTest do
 
   alias Zoonk.Billing
   alias Zoonk.Billing.BillingAccount
+  alias Zoonk.Billing.BillingForm
   alias Zoonk.Billing.Price
   alias Zoonk.Billing.UserSubscription
   alias Zoonk.Scope
+
+  describe "get_billing_account/1" do
+    test "returns billing account when user has one" do
+      user = user_fixture()
+      billing_account = billing_account_fixture(%{user: user})
+
+      assert Billing.get_billing_account(user) == billing_account
+    end
+
+    test "returns nil when user has no billing account" do
+      user = user_fixture()
+
+      assert Billing.get_billing_account(user) == nil
+    end
+  end
+
+  describe "has_billing_account?/1" do
+    test "returns true when user has billing account" do
+      user = user_fixture()
+      _billing_account = billing_account_fixture(%{user: user})
+
+      assert Billing.has_billing_account?(user) == true
+    end
+
+    test "returns false when user has no billing account" do
+      user = user_fixture()
+
+      assert Billing.has_billing_account?(user) == false
+    end
+  end
+
+  describe "create_billing_account_with_stripe_data/2" do
+    test "creates billing account with form data" do
+      user = user_fixture()
+
+      stripe_stub(
+        prefix: "cus_",
+        data: %{
+          "email" => user.email,
+          "metadata" => %{"user_id" => to_string(user.id)},
+          "preferred_locales" => [to_string(user.language)],
+          "object" => "customer"
+        }
+      )
+
+      form_data = %BillingForm{
+        country_iso2: "US",
+        currency: "USD",
+        address_line_1: "123 Main St",
+        city: "San Francisco",
+        state: "CA",
+        postal_code: "94105"
+      }
+
+      assert {:ok, %BillingAccount{} = billing_account} = Billing.create_billing_account_with_stripe_data(user, form_data)
+      assert billing_account.user_id == user.id
+      assert billing_account.currency == "USD"
+      assert billing_account.country_iso2 == "US"
+      assert String.starts_with?(billing_account.stripe_customer_id, "cus_")
+    end
+
+    test "creates billing account with tax ID data" do
+      user = user_fixture()
+
+      stripe_stub(
+        prefix: "cus_",
+        data: %{
+          "email" => user.email,
+          "metadata" => %{"user_id" => to_string(user.id)},
+          "preferred_locales" => [to_string(user.language)],
+          "object" => "customer"
+        }
+      )
+
+      form_data = %BillingForm{
+        country_iso2: "US",
+        currency: "USD",
+        tax_id_type: "us_ein",
+        tax_id: "12-3456789"
+      }
+
+      assert {:ok, %BillingAccount{} = billing_account} = Billing.create_billing_account_with_stripe_data(user, form_data)
+      assert billing_account.user_id == user.id
+      assert billing_account.currency == "USD"
+      assert billing_account.country_iso2 == "US"
+    end
+  end
 
   describe "list_prices/0" do
     test "returns all prices when successful" do

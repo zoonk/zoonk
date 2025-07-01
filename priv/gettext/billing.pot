@@ -1,0 +1,88 @@
+## This file is a PO Template file.
+##
+## `msgid`s here are often extracted from source code.
+## Add new translations manually only if they're dynamic
+## translations that can't be statically extracted.
+##
+## Run `mix gettext.extract` to bring this file up to
+## date. Leave `msgstr`s empty as changing them here as no
+## effect: edit the PO (`.po`) files directly.
+##
+## From Elixir format to PO format, variables are changed
+## from `%{var}` to `%var`. So `%{name}` becomes `%name`.
+
+#: lib/zoonk_web/live/billing_live.ex:18
+msgid "Set up billing account"
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:22
+msgid "We need some billing information to process payments and manage your subscription."
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:28
+msgid "Country"
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:36
+msgid "Currency"
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:45
+msgid "Tax ID Type"
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:54
+msgid "Tax ID"
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:56
+msgid "Enter your tax ID"
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:62
+msgid "Address Line 1"
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:64
+msgid "Street address"
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:70
+msgid "Address Line 2"
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:72
+msgid "Apartment, suite, etc. (optional)"
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:78
+msgid "City"
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:80
+msgid "City"
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:86
+msgid "State/Province"
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:88
+msgid "State or province"
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:94
+msgid "Postal Code"
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:96
+msgid "Postal code"
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:100
+msgid "Only country and currency are required. Other fields help with tax compliance."
+msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:124
+msgid "Set up billing"
+msgstr ""

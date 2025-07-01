@@ -101,3 +101,8 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgid "Support"
 msgstr ""
+
+#: lib/zoonk_web/live/billing_live.ex:124
+#, elixir-autogen, elixir-format
+msgid "Set up billing"
+msgstr ""

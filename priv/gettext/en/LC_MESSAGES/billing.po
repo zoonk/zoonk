@@ -1,0 +1,84 @@
+## `msgid`s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove `msgid`s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use `mix gettext.extract --merge` or `mix gettext.merge`
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: en\n"
+
+#: lib/zoonk_web/live/billing_live.ex:18
+msgid "Set up billing account"
+msgstr "Set up billing account"
+
+#: lib/zoonk_web/live/billing_live.ex:22
+msgid "We need some billing information to process payments and manage your subscription."
+msgstr "We need some billing information to process payments and manage your subscription."
+
+#: lib/zoonk_web/live/billing_live.ex:28
+msgid "Country"
+msgstr "Country"
+
+#: lib/zoonk_web/live/billing_live.ex:36
+msgid "Currency"
+msgstr "Currency"
+
+#: lib/zoonk_web/live/billing_live.ex:45
+msgid "Tax ID Type"
+msgstr "Tax ID Type"
+
+#: lib/zoonk_web/live/billing_live.ex:54
+msgid "Tax ID"
+msgstr "Tax ID"
+
+#: lib/zoonk_web/live/billing_live.ex:56
+msgid "Enter your tax ID"
+msgstr "Enter your tax ID"
+
+#: lib/zoonk_web/live/billing_live.ex:62
+msgid "Address Line 1"
+msgstr "Address Line 1"
+
+#: lib/zoonk_web/live/billing_live.ex:64
+msgid "Street address"
+msgstr "Street address"
+
+#: lib/zoonk_web/live/billing_live.ex:70
+msgid "Address Line 2"
+msgstr "Address Line 2"
+
+#: lib/zoonk_web/live/billing_live.ex:72
+msgid "Apartment, suite, etc. (optional)"
+msgstr "Apartment, suite, etc. (optional)"
+
+#: lib/zoonk_web/live/billing_live.ex:78
+#: lib/zoonk_web/live/billing_live.ex:80
+msgid "City"
+msgstr "City"
+
+#: lib/zoonk_web/live/billing_live.ex:86
+msgid "State/Province"
+msgstr "State/Province"
+
+#: lib/zoonk_web/live/billing_live.ex:88
+msgid "State or province"
+msgstr "State or province"
+
+#: lib/zoonk_web/live/billing_live.ex:94
+msgid "Postal Code"
+msgstr "Postal Code"
+
+#: lib/zoonk_web/live/billing_live.ex:96
+msgid "Postal code"
+msgstr "Postal code"
+
+#: lib/zoonk_web/live/billing_live.ex:100
+msgid "Only country and currency are required. Other fields help with tax compliance."
+msgstr "Only country and currency are required. Other fields help with tax compliance."
+
+#: lib/zoonk_web/live/billing_live.ex:124
+msgid "Set up billing"
+msgstr "Set up billing"
