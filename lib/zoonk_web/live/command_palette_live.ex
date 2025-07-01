@@ -8,7 +8,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
   use ZoonkWeb, :live_component
   use ZoonkWeb, :verified_routes
 
-  import Zoonk.Config.CommandPaletteConfig
+  import ZoonkWeb.CommandPaletteConfig
   import ZoonkWeb.Components.Command
   import ZoonkWeb.Components.Dialog
   import ZoonkWeb.Components.Icon
