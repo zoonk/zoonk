@@ -358,7 +358,7 @@ defmodule Zoonk.BillingTest do
 
   describe "create_stripe_customer/2 with address and tax data" do
     test "creates customer with address information" do
-      user = user_fixture()
+      scope = scope_fixture()
 
       attrs = %{
         "address_line_1" => "123 Main St",
@@ -371,12 +371,12 @@ defmodule Zoonk.BillingTest do
 
       stripe_stub(prefix: "cus_")
 
-      assert {:ok, customer} = Billing.create_stripe_customer(user, attrs)
+      assert {:ok, customer} = Billing.create_stripe_customer(scope, attrs)
       assert String.starts_with?(customer["id"], "cus_")
     end
 
     test "creates customer with tax ID information" do
-      user = user_fixture()
+      scope = scope_fixture()
 
       attrs = %{
         "tax_id" => "12-3456789",
@@ -386,12 +386,12 @@ defmodule Zoonk.BillingTest do
 
       stripe_stub(prefix: "cus_")
 
-      assert {:ok, customer} = Billing.create_stripe_customer(user, attrs)
+      assert {:ok, customer} = Billing.create_stripe_customer(scope, attrs)
       assert String.starts_with?(customer["id"], "cus_")
     end
 
     test "creates customer with full billing information" do
-      user = user_fixture()
+      scope = scope_fixture()
 
       attrs = %{
         "address_line_1" => "123 Main St",
@@ -405,12 +405,12 @@ defmodule Zoonk.BillingTest do
 
       stripe_stub(prefix: "cus_")
 
-      assert {:ok, customer} = Billing.create_stripe_customer(user, attrs)
+      assert {:ok, customer} = Billing.create_stripe_customer(scope, attrs)
       assert String.starts_with?(customer["id"], "cus_")
     end
 
     test "handles stripe error when creating customer with additional data" do
-      user = user_fixture()
+      scope = scope_fixture()
 
       attrs = %{
         "address_line_1" => "123 Main St",
@@ -419,7 +419,7 @@ defmodule Zoonk.BillingTest do
 
       stripe_stub(error: true)
 
-      assert {:error, "Invalid request"} = Billing.create_stripe_customer(user, attrs)
+      assert {:error, "Invalid request"} = Billing.create_stripe_customer(scope, attrs)
     end
   end
 end

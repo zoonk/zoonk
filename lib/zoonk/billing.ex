@@ -6,7 +6,6 @@ defmodule Zoonk.Billing do
   and integrating with payment providers such as Stripe.
   """
 
-  alias Zoonk.Accounts.User
   alias Zoonk.Billing.BillingAccount
   alias Zoonk.Billing.Price
   alias Zoonk.Billing.Stripe
@@ -77,12 +76,12 @@ defmodule Zoonk.Billing do
       iex> create_billing_account(scope, %{})
       {:error, %Ecto.Changeset{}}
   """
-  def create_billing_account(%Scope{user: user}, attrs) do
-    with {:ok, stripe_customer} <- create_stripe_customer(user, attrs) do
+  def create_billing_account(%Scope{} = scope, attrs) do
+    with {:ok, stripe_customer} <- create_stripe_customer(scope, attrs) do
       attrs =
         attrs
         |> Map.put("stripe_customer_id", stripe_customer["id"])
-        |> Map.put("user_id", user.id)
+        |> Map.put("user_id", scope.user.id)
 
       %BillingAccount{}
       |> BillingAccount.changeset(attrs)
@@ -215,19 +214,18 @@ defmodule Zoonk.Billing do
   @doc """
   Creates a customer in Stripe.
 
-  Takes a User struct and creates a new customer record in Stripe using the user's
-  email, ID, and language preferences.
+  Creates a new customer record in Stripe using the user's
+  billing preferences and optional attributes.
 
   ## Examples
 
-      iex> user = %User{id: 123, email: "user@example.com", language: :en}
-      iex> create_stripe_customer(user)
+      iex> create_stripe_customer(%Scope{})
       {:ok, %{"id" => "cus_1234567890", "email" => "user@example.com"}}
 
-      iex> create_stripe_customer(%User{email: nil})
+      iex> create_stripe_customer(%Scope{})
       {:error, "Invalid request"}
   """
-  def create_stripe_customer(%User{} = user, attrs \\ %{}) do
+  def create_stripe_customer(%Scope{user: user}, attrs \\ %{}) do
     base_attrs = %{
       "email" => user.email,
       "metadata[user_id]" => user.id,
