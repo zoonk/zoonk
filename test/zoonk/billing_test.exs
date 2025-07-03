@@ -333,8 +333,7 @@ defmodule Zoonk.BillingTest do
     test "returns unique currencies sorted by code" do
       currencies = Billing.get_unique_currencies()
 
-      assert is_list(currencies)
-      assert length(currencies) > 0
+      assert Enum.empty?(currencies) == false
 
       # Check that they are sorted by code
       codes = Enum.map(currencies, & &1.code)
