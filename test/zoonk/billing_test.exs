@@ -356,18 +356,6 @@ defmodule Zoonk.BillingTest do
     end
   end
 
-  describe "change_billing_account/2" do
-    test "returns a changeset for billing account" do
-      billing_account = %BillingAccount{}
-      attrs = %{"country_iso2" => "US", "currency" => "USD"}
-
-      changeset = Billing.change_billing_account(billing_account, attrs)
-
-      assert %Ecto.Changeset{} = changeset
-      assert changeset.data == billing_account
-    end
-  end
-
   describe "create_stripe_customer/2 with address and tax data" do
     test "creates customer with address information" do
       user = user_fixture()

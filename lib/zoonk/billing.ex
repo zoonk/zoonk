@@ -64,18 +64,6 @@ defmodule Zoonk.Billing do
   end
 
   @doc """
-  Creates a changeset for a billing account.
-
-  ## Examples
-
-      iex> change_billing_account(%BillingAccount{}, %{})
-      %Ecto.Changeset{}
-  """
-  def change_billing_account(%BillingAccount{} = billing_account, attrs \\ %{}) do
-    BillingAccount.changeset(billing_account, attrs)
-  end
-
-  @doc """
   Creates a billing account.
 
   Takes a User struct and attributes to create a new billing account record.
