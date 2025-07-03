@@ -149,10 +149,11 @@ defmodule Zoonk.Billing.TaxIdData do
     for tax_type <- tax_types, do: {format_display_name(tax_type), tax_type}
   end
 
-  defp format_display_name(tax_type) do
-    tax_type
-    |> String.replace_prefix("eu_", "")
-    |> String.replace(~r/^[a-z]{2}_/, "")
+  # remove country code prefix and format display name
+  defp format_display_name(<<_iso::binary-size(2), "_" <> rest>>), do: format_display_name(rest)
+
+  defp format_display_name(type) do
+    type
     |> String.replace("_", " ")
     |> String.upcase()
   end
