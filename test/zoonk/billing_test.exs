@@ -267,7 +267,7 @@ defmodule Zoonk.BillingTest do
         }
       )
 
-      attrs = %{currency: "usd", country_iso2: "us"}
+      attrs = %{"currency" => "usd", "country_iso2" => "us"}
 
       assert {:ok, %BillingAccount{} = billing_account} = Billing.create_billing_account(user, attrs)
       assert billing_account.user_id == user.id
@@ -293,7 +293,7 @@ defmodule Zoonk.BillingTest do
 
       stripe_stub(prefix: "cus_")
 
-      attrs = %{currency: "usd", country_iso2: "us"}
+      attrs = %{"currency" => "usd", "country_iso2" => "us"}
 
       assert {:ok, _account} = Billing.create_billing_account(user, attrs)
       assert {:error, changeset} = Billing.create_billing_account(user, attrs)
@@ -305,7 +305,7 @@ defmodule Zoonk.BillingTest do
 
       stripe_stub(error: true)
 
-      attrs = %{currency: "usd", country_iso2: "us"}
+      attrs = %{"currency" => "usd", "country_iso2" => "us"}
 
       assert {:error, "Invalid request"} = Billing.create_billing_account(user, attrs)
     end

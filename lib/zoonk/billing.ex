@@ -82,16 +82,13 @@ defmodule Zoonk.Billing do
   """
   def create_billing_account(%User{} = user, attrs) do
     with {:ok, stripe_customer} <- create_stripe_customer(user, attrs) do
-      # Ensure all keys are strings for consistency
-      billing_attrs = %{
-        "user_id" => user.id,
-        "stripe_customer_id" => stripe_customer["id"],
-        "country_iso2" => attrs["country_iso2"] || Map.get(attrs, :country_iso2),
-        "currency" => attrs["currency"] || Map.get(attrs, :currency)
-      }
+      attrs =
+        attrs
+        |> Map.put("stripe_customer_id", stripe_customer["id"])
+        |> Map.put("user_id", user.id)
 
       %BillingAccount{}
-      |> BillingAccount.changeset(billing_attrs)
+      |> BillingAccount.changeset(attrs)
       |> Repo.insert()
     end
   end
