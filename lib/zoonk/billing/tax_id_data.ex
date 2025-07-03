@@ -120,8 +120,7 @@ defmodule Zoonk.Billing.TaxIdData do
 
   # EU countries that can use EU VAT or EU OSS VAT
   @eu_countries ~w[at be cy cz dk ee fi fr de gr ie it lv lt lu mt nl pl pt sk sl es se]
-
-  @eu_vat_types ["eu_vat", "eu_oss_vat"]
+  @eu_vat_types ~w(eu_vat eu_oss_vat)
 
   @country_tax_map Enum.group_by(@tax_id_types, fn <<cc::binary-size(2), _rest::binary>> -> cc end)
 
@@ -143,11 +142,17 @@ defmodule Zoonk.Billing.TaxIdData do
   """
   def types_for_country(iso2) when is_binary(iso2) do
     code = String.downcase(iso2)
-    base = Map.get(@country_tax_map, code, [])
 
-    tax_types = if code in @eu_countries, do: base ++ @eu_vat_types, else: base
-    for tax_type <- tax_types, do: {format_display_name(tax_type), tax_type}
+    code
+    |> base_tax_types()
+    |> maybe_add_eu_taxes(code)
+    |> Enum.map(&{format_display_name(&1), &1})
   end
+
+  defp base_tax_types(code), do: Map.get(@country_tax_map, code, [])
+
+  defp maybe_add_eu_taxes(types, iso2) when iso2 in @eu_countries, do: types ++ @eu_vat_types
+  defp maybe_add_eu_taxes(types, _iso2), do: types
 
   # remove country code prefix and format display name
   defp format_display_name(<<_iso::binary-size(2), "_" <> rest>>), do: format_display_name(rest)
