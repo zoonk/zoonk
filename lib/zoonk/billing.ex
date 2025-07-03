@@ -22,16 +22,16 @@ defmodule Zoonk.Billing do
 
   ## Examples
 
-      iex> user = %User{id: 123}
-      iex> get_billing_account(user)
+      iex> user = %Scope{}
+      iex> get_billing_account(scope)
       %BillingAccount{}
 
-      iex> user = %User{id: 456}
-      iex> get_billing_account(user)
+      iex> user = %Scope{}
+      iex> get_billing_account(scope)
       nil
   """
-  def get_billing_account(%User{} = user) do
-    Repo.get_by(BillingAccount, user_id: user.id)
+  def get_billing_account(%Scope{} = scope) do
+    Repo.get_by(BillingAccount, user_id: scope.user.id)
   end
 
   @doc """

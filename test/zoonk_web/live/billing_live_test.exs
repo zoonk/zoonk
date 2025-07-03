@@ -8,7 +8,7 @@ defmodule ZoonkWeb.BillingLiveTest do
   describe "billing setup form" do
     setup :signup_and_login_user
 
-    test "creates billing account successfully", %{conn: conn, user: user} do
+    test "creates billing account successfully", %{conn: conn, scope: scope} do
       # Mock Stripe customer creation
       stripe_stub(prefix: "cus_")
 
@@ -24,7 +24,7 @@ defmodule ZoonkWeb.BillingLiveTest do
       |> assert_path(~p"/subscription")
 
       # Billing account should be created
-      assert Billing.get_billing_account(user)
+      assert Billing.get_billing_account(scope)
     end
 
     test "redirects to subscription page if user already has billing account", %{conn: conn, user: user} do

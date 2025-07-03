@@ -313,21 +313,19 @@ defmodule Zoonk.BillingTest do
 
   describe "get_billing_account/1" do
     test "returns billing account when user has one" do
-      user = user_fixture()
+      scope = scope_fixture()
       stripe_stub(prefix: "cus_")
 
-      {:ok, billing_account} = Billing.create_billing_account(user, %{"currency" => "USD", "country_iso2" => "US"})
+      {:ok, billing_account} = Billing.create_billing_account(scope.user, %{"currency" => "USD", "country_iso2" => "US"})
 
-      result = Billing.get_billing_account(user)
+      result = Billing.get_billing_account(scope)
       assert result.id == billing_account.id
-      assert result.user_id == user.id
+      assert result.user_id == scope.user.id
     end
 
     test "returns nil when user has no billing account" do
-      user = user_fixture()
-
-      result = Billing.get_billing_account(user)
-      assert result == nil
+      scope = scope_fixture()
+      refute Billing.get_billing_account(scope)
     end
   end
 

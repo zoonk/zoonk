@@ -204,10 +204,9 @@ defmodule ZoonkWeb.BillingLive do
   end
 
   def on_mount(:ensure_no_billing_account, params, _session, socket) do
-    user = socket.assigns.scope.user
     redirect_path = params["from"] || ~p"/subscription"
 
-    case Billing.get_billing_account(user) do
+    case Billing.get_billing_account(socket.assigns.scope) do
       %BillingAccount{} ->
         # Redirect if user already has billing account
         socket = Phoenix.LiveView.redirect(socket, to: redirect_path)
