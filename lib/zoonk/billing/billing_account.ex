@@ -29,7 +29,7 @@ defmodule Zoonk.Billing.BillingAccount do
     field :currency, :string
     field :stripe_customer_id, :string
 
-    # Virtual fields for form data
+    # Virtual fields for form data, used for Stripe integration only, not stored in the database
     field :address_line_1, :string, virtual: true
     field :address_line_2, :string, virtual: true
     field :city, :string, virtual: true
@@ -53,11 +53,6 @@ defmodule Zoonk.Billing.BillingAccount do
   def form_changeset(billing_account, attrs) do
     billing_account
     |> cast(attrs, [
-      :country_iso2,
-      :currency,
-      :stripe_customer_id,
-      :user_id,
-      :org_id,
       :address_line_1,
       :address_line_2,
       :city,
@@ -66,12 +61,7 @@ defmodule Zoonk.Billing.BillingAccount do
       :tax_id,
       :tax_id_type
     ])
-    |> validate_required([:country_iso2, :currency])
-    |> validate_length(:country_iso2, is: 2, message: "must be a valid ISO 3166-1 alpha-2 code")
-    |> validate_length(:currency, is: 3, message: "must be a valid ISO 4217 currency code")
-    |> update_change(:currency, &String.upcase/1)
-    |> update_change(:country_iso2, &String.upcase/1)
-    |> validate_user_or_org()
+    |> changeset(attrs)
   end
 
   @doc """
