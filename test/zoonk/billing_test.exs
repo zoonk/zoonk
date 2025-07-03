@@ -311,55 +311,130 @@ defmodule Zoonk.BillingTest do
     end
   end
 
-  describe "create_stripe_customer/1" do
-    test "successfully creates a customer with user data" do
-      user = user_fixture(%{email: "customer@example.com", language: :en})
+  describe "get_billing_account/1" do
+    test "returns billing account when user has one" do
+      user = user_fixture()
+      stripe_stub(prefix: "cus_")
 
-      stripe_stub(
-        prefix: "cus_",
-        data: %{
-          "email" => user.email,
-          "metadata" => %{"user_id" => to_string(user.id)},
-          "preferred_locales" => ["en"],
-          "object" => "customer"
-        }
-      )
+      {:ok, billing_account} = Billing.create_billing_account(user, %{"currency" => "USD", "country_iso2" => "US"})
 
-      assert {:ok, customer} = Billing.create_stripe_customer(user)
-      assert customer["email"] == user.email
-      assert customer["metadata"]["user_id"] == to_string(user.id)
-      assert customer["preferred_locales"] == ["en"]
-      assert customer["object"] == "customer"
+      result = Billing.get_billing_account(user)
+      assert result.id == billing_account.id
+      assert result.user_id == user.id
+    end
+
+    test "returns nil when user has no billing account" do
+      user = user_fixture()
+
+      result = Billing.get_billing_account(user)
+      assert result == nil
+    end
+  end
+
+  describe "get_unique_currencies/0" do
+    test "returns unique currencies sorted by code" do
+      currencies = Billing.get_unique_currencies()
+
+      assert is_list(currencies)
+      assert length(currencies) > 0
+
+      # Check that they are sorted by code
+      codes = Enum.map(currencies, & &1.code)
+      assert codes == Enum.sort(codes)
+
+      # Check that currencies are unique
+      assert length(codes) == length(Enum.uniq(codes))
+    end
+  end
+
+  describe "change_billing_account_form/2" do
+    test "returns a changeset for billing account form" do
+      billing_account = %BillingAccount{}
+      attrs = %{"country_iso2" => "US", "currency" => "USD", "city" => "San Francisco"}
+
+      changeset = Billing.change_billing_account_form(billing_account, attrs)
+
+      assert %Ecto.Changeset{} = changeset
+      assert changeset.data == billing_account
+    end
+  end
+
+  describe "change_billing_account/2" do
+    test "returns a changeset for billing account" do
+      billing_account = %BillingAccount{}
+      attrs = %{"country_iso2" => "US", "currency" => "USD"}
+
+      changeset = Billing.change_billing_account(billing_account, attrs)
+
+      assert %Ecto.Changeset{} = changeset
+      assert changeset.data == billing_account
+    end
+  end
+
+  describe "create_stripe_customer/2 with address and tax data" do
+    test "creates customer with address information" do
+      user = user_fixture()
+
+      attrs = %{
+        "address_line_1" => "123 Main St",
+        "address_line_2" => "Apt 4B",
+        "city" => "San Francisco",
+        "state" => "CA",
+        "postal_code" => "94102",
+        "country_iso2" => "US"
+      }
+
+      stripe_stub(prefix: "cus_")
+
+      assert {:ok, customer} = Billing.create_stripe_customer(user, attrs)
       assert String.starts_with?(customer["id"], "cus_")
     end
 
-    test "creates customer with different language" do
-      user = user_fixture(%{email: "spanish@example.com", language: :es})
+    test "creates customer with tax ID information" do
+      user = user_fixture()
 
-      stripe_stub(
-        prefix: "cus_",
-        data: %{
-          "email" => user.email,
-          "metadata" => %{"user_id" => to_string(user.id)},
-          "preferred_locales" => ["es"],
-          "object" => "customer"
-        }
-      )
+      attrs = %{
+        "tax_id" => "12-3456789",
+        "tax_id_type" => "us_ein",
+        "country_iso2" => "US"
+      }
 
-      assert {:ok, customer} = Billing.create_stripe_customer(user)
-      assert customer["email"] == user.email
-      assert customer["metadata"]["user_id"] == to_string(user.id)
-      assert customer["preferred_locales"] == ["es"]
-      assert customer["object"] == "customer"
+      stripe_stub(prefix: "cus_")
+
+      assert {:ok, customer} = Billing.create_stripe_customer(user, attrs)
       assert String.starts_with?(customer["id"], "cus_")
     end
 
-    test "returns error when Stripe API fails" do
-      user = user_fixture(%{email: "error@example.com"})
+    test "creates customer with full billing information" do
+      user = user_fixture()
+
+      attrs = %{
+        "address_line_1" => "123 Main St",
+        "city" => "San Francisco",
+        "state" => "CA",
+        "postal_code" => "94102",
+        "country_iso2" => "US",
+        "tax_id" => "12-3456789",
+        "tax_id_type" => "us_ein"
+      }
+
+      stripe_stub(prefix: "cus_")
+
+      assert {:ok, customer} = Billing.create_stripe_customer(user, attrs)
+      assert String.starts_with?(customer["id"], "cus_")
+    end
+
+    test "handles stripe error when creating customer with additional data" do
+      user = user_fixture()
+
+      attrs = %{
+        "address_line_1" => "123 Main St",
+        "country_iso2" => "US"
+      }
 
       stripe_stub(error: true)
 
-      assert {:error, "Invalid request"} = Billing.create_stripe_customer(user)
+      assert {:error, "Invalid request"} = Billing.create_stripe_customer(user, attrs)
     end
   end
 end

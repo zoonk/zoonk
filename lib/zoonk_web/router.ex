@@ -73,6 +73,7 @@ defmodule ZoonkWeb.Router do
 
       live "/purchases", PurchasesLive
       live "/subscription", SubscriptionLive
+      live "/billing", BillingLive
 
       live "/language", LanguageLive
       live "/name", NameLive

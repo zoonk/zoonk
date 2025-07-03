@@ -11,8 +11,69 @@ defmodule Zoonk.Billing do
   alias Zoonk.Billing.Price
   alias Zoonk.Billing.Stripe
   alias Zoonk.Billing.UserSubscription
+  alias Zoonk.Locations.CountryData
   alias Zoonk.Repo
   alias Zoonk.Scope
+
+  @doc """
+  Gets a billing account for a user.
+
+  Returns the billing account if found, otherwise returns nil.
+
+  ## Examples
+
+      iex> user = %User{id: 123}
+      iex> get_billing_account(user)
+      %BillingAccount{}
+
+      iex> user = %User{id: 456}
+      iex> get_billing_account(user)
+      nil
+  """
+  def get_billing_account(%User{} = user) do
+    Repo.get_by(BillingAccount, user_id: user.id)
+  end
+
+  @doc """
+  Gets unique currencies from all countries.
+
+  Returns a list of unique currencies sorted by their code.
+
+  ## Examples
+
+      iex> get_unique_currencies()
+      [%Currency{code: "AED", name: "UAE Dirham"}, %Currency{code: "AFN", name: "Afghan Afghani"}, ...]
+  """
+  def get_unique_currencies do
+    CountryData.list_countries()
+    |> Enum.map(& &1.currency)
+    |> Enum.uniq_by(& &1.code)
+    |> Enum.sort_by(& &1.code)
+  end
+
+  @doc """
+  Creates a changeset for a billing account form.
+
+  ## Examples
+
+      iex> change_billing_account_form(%BillingAccount{}, %{})
+      %Ecto.Changeset{}
+  """
+  def change_billing_account_form(%BillingAccount{} = billing_account, attrs \\ %{}) do
+    BillingAccount.form_changeset(billing_account, attrs)
+  end
+
+  @doc """
+  Creates a changeset for a billing account.
+
+  ## Examples
+
+      iex> change_billing_account(%BillingAccount{}, %{})
+      %Ecto.Changeset{}
+  """
+  def change_billing_account(%BillingAccount{} = billing_account, attrs \\ %{}) do
+    BillingAccount.changeset(billing_account, attrs)
+  end
 
   @doc """
   Creates a billing account.
@@ -24,7 +85,7 @@ defmodule Zoonk.Billing do
   ## Examples
 
       iex> user = %User{id: 123, email: "user@example.com"}
-      iex> create_billing_account(user, %{currency: "USD"})
+      iex> create_billing_account(user, %{currency: "USD", country_iso2: "US"})
       {:ok, %BillingAccount{}}
 
       iex> user = %User{id: 123, email: "user@example.com"}
@@ -32,14 +93,17 @@ defmodule Zoonk.Billing do
       {:error, %Ecto.Changeset{}}
   """
   def create_billing_account(%User{} = user, attrs) do
-    with {:ok, stripe_customer} <- create_stripe_customer(user) do
-      attrs =
-        attrs
-        |> Map.put(:user_id, user.id)
-        |> Map.put(:stripe_customer_id, stripe_customer["id"])
+    with {:ok, stripe_customer} <- create_stripe_customer(user, attrs) do
+      # Ensure all keys are strings for consistency
+      billing_attrs = %{
+        "user_id" => user.id,
+        "stripe_customer_id" => stripe_customer["id"],
+        "country_iso2" => attrs["country_iso2"] || Map.get(attrs, :country_iso2),
+        "currency" => attrs["currency"] || Map.get(attrs, :currency)
+      }
 
       %BillingAccount{}
-      |> BillingAccount.changeset(attrs)
+      |> BillingAccount.changeset(billing_attrs)
       |> Repo.insert()
     end
   end
@@ -181,14 +245,54 @@ defmodule Zoonk.Billing do
       iex> create_stripe_customer(%User{email: nil})
       {:error, "Invalid request"}
   """
-  def create_stripe_customer(%User{} = user) do
-    attrs = %{
+  def create_stripe_customer(%User{} = user, attrs \\ %{}) do
+    base_attrs = %{
       "email" => user.email,
       "metadata[user_id]" => user.id,
       "preferred_locales[]" => Atom.to_string(user.language)
     }
 
-    Stripe.post("/customers", attrs)
+    address_attrs = build_address_attrs(attrs)
+    tax_id_attrs = build_tax_id_attrs(attrs)
+
+    final_attrs =
+      base_attrs
+      |> Map.merge(address_attrs)
+      |> Map.merge(tax_id_attrs)
+      |> remove_nil_values()
+
+    Stripe.post("/customers", final_attrs)
+  end
+
+  defp build_address_attrs(attrs) do
+    %{
+      "address[line1]" => attrs["address_line_1"] || Map.get(attrs, :address_line_1),
+      "address[line2]" => attrs["address_line_2"] || Map.get(attrs, :address_line_2),
+      "address[city]" => attrs["city"] || Map.get(attrs, :city),
+      "address[state]" => attrs["state"] || Map.get(attrs, :state),
+      "address[postal_code]" => attrs["postal_code"] || Map.get(attrs, :postal_code),
+      "address[country]" => attrs["country_iso2"] || Map.get(attrs, :country_iso2)
+    }
+  end
+
+  defp build_tax_id_attrs(attrs) do
+    tax_id = attrs["tax_id"] || Map.get(attrs, :tax_id)
+    tax_id_type = attrs["tax_id_type"] || Map.get(attrs, :tax_id_type)
+
+    case {tax_id, tax_id_type} do
+      {tax_id, tax_id_type} when is_binary(tax_id) and is_binary(tax_id_type) ->
+        %{
+          "tax_id_data[0][type]" => tax_id_type,
+          "tax_id_data[0][value]" => tax_id
+        }
+
+      _invalid ->
+        %{}
+    end
+  end
+
+  defp remove_nil_values(map) do
+    Map.reject(map, fn {_key, value} -> is_nil(value) or value == "" end)
   end
 
   defp cancel_user_subscription({:ok, _status}, scope, subscription, attrs) do
