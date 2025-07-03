@@ -121,6 +121,10 @@ defmodule Zoonk.Billing.TaxIdData do
   # EU countries that can use EU VAT or EU OSS VAT
   @eu_countries ~w[at be cy cz dk ee fi fr de gr ie it lv lt lu mt nl pl pt sk sl es se]
 
+  @eu_vat_types ["eu_vat", "eu_oss_vat"]
+
+  @country_tax_map Enum.group_by(@tax_id_types, fn <<cc::binary-size(2), _::binary>> -> cc end)
+
   @doc """
   Returns tax ID types and their display names for a given country ISO2 code.
 
@@ -137,21 +141,11 @@ defmodule Zoonk.Billing.TaxIdData do
       iex> types_for_country("DE")
       [{"DE STN", "de_stn"}, {"EU OSS VAT", "eu_oss_vat"}, {"EU VAT", "eu_vat"}]
   """
-  def types_for_country(iso2) do
-    country_code = String.downcase(iso2)
+  def types_for_country(iso2) when is_binary(iso2) do
+    code = String.downcase(iso2)
+    base = Map.get(@country_tax_map, code, [])
 
-    # Get country-specific tax types by filtering all types with the country prefix
-    country_types = Enum.filter(@tax_id_types, &String.starts_with?(&1, country_code <> "_"))
-
-    # Add EU tax types for EU countries
-    all_types =
-      if country_code in @eu_countries do
-        country_types ++ ["eu_vat", "eu_oss_vat"]
-      else
-        country_types
-      end
-
-    # Return tuples of {display_name, type}
-    Enum.map(all_types, &{String.upcase(&1), &1})
+    tax_types = if code in @eu_countries, do: base ++ @eu_vat_types, else: base
+    for tax_type <- tax_types, do: {String.upcase(tax_type), tax_type}
   end
 end
