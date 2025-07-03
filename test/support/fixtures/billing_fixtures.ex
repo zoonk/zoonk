@@ -102,21 +102,21 @@ defmodule Zoonk.BillingFixtures do
 
   """
   def billing_account_fixture(attrs \\ %{}) do
-    user = Map.get_lazy(attrs, :user, fn -> user_fixture() end)
+    scope = Map.get_lazy(attrs, :scope, fn -> scope_fixture() end)
     attrs = valid_billing_account_attrs(attrs)
 
     # Set up Stripe stub for the customer creation
     stripe_stub(
       prefix: "cus_",
       data: %{
-        "email" => user.email,
-        "metadata" => %{"user_id" => to_string(user.id)},
-        "preferred_locales" => [to_string(user.language)],
+        "email" => scope.user.email,
+        "metadata" => %{"user_id" => to_string(scope.user.id)},
+        "preferred_locales" => [to_string(scope.user.language)],
         "object" => "customer"
       }
     )
 
-    {:ok, billing_account} = Billing.create_billing_account(user, attrs)
+    {:ok, billing_account} = Billing.create_billing_account(scope, attrs)
     billing_account
   end
 end

@@ -27,12 +27,12 @@ defmodule ZoonkWeb.BillingLiveTest do
       assert Billing.get_billing_account(scope)
     end
 
-    test "redirects to subscription page if user already has billing account", %{conn: conn, user: user} do
+    test "redirects to subscription page if user already has billing account", %{conn: conn, scope: scope} do
       # Mock Stripe customer creation for the billing account creation
       stripe_stub(prefix: "cus_")
 
       # Create a billing account for the user
-      Billing.create_billing_account(user, %{"country_iso2" => "US", "currency" => "USD"})
+      Billing.create_billing_account(scope, %{"country_iso2" => "US", "currency" => "USD"})
 
       conn
       |> visit(~p"/billing")

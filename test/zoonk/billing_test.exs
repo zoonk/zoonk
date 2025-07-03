@@ -255,22 +255,22 @@ defmodule Zoonk.BillingTest do
 
   describe "create_billing_account/2" do
     test "creates a billing account with valid user data and creates Stripe customer" do
-      user = user_fixture()
+      scope = scope_fixture()
 
       stripe_stub(
         prefix: "cus_",
         data: %{
-          "email" => user.email,
-          "metadata" => %{"user_id" => to_string(user.id)},
-          "preferred_locales" => [to_string(user.language)],
+          "email" => scope.user.email,
+          "metadata" => %{"user_id" => to_string(scope.user.id)},
+          "preferred_locales" => [to_string(scope.user.language)],
           "object" => "customer"
         }
       )
 
       attrs = %{"currency" => "usd", "country_iso2" => "us"}
 
-      assert {:ok, %BillingAccount{} = billing_account} = Billing.create_billing_account(user, attrs)
-      assert billing_account.user_id == user.id
+      assert {:ok, %BillingAccount{} = billing_account} = Billing.create_billing_account(scope, attrs)
+      assert billing_account.user_id == scope.user.id
       assert billing_account.currency == "USD"
       assert billing_account.country_iso2 == "US"
       assert billing_account.org_id == nil
@@ -278,36 +278,36 @@ defmodule Zoonk.BillingTest do
     end
 
     test "returns error with missing currency" do
-      user = user_fixture()
+      scope = scope_fixture()
 
       stripe_stub(prefix: "cus_")
 
       attrs = %{}
 
-      assert {:error, changeset} = Billing.create_billing_account(user, attrs)
+      assert {:error, changeset} = Billing.create_billing_account(scope, attrs)
       assert "can't be blank" in errors_on(changeset).currency
     end
 
     test "returns error when user already has a billing account" do
-      user = user_fixture()
+      scope = scope_fixture()
 
       stripe_stub(prefix: "cus_")
 
       attrs = %{"currency" => "usd", "country_iso2" => "us"}
 
-      assert {:ok, _account} = Billing.create_billing_account(user, attrs)
-      assert {:error, changeset} = Billing.create_billing_account(user, attrs)
+      assert {:ok, _account} = Billing.create_billing_account(scope, attrs)
+      assert {:error, changeset} = Billing.create_billing_account(scope, attrs)
       assert "has already been taken" in errors_on(changeset).user_id
     end
 
     test "returns error when Stripe customer creation fails" do
-      user = user_fixture()
+      scope = scope_fixture()
 
       stripe_stub(error: true)
 
       attrs = %{"currency" => "usd", "country_iso2" => "us"}
 
-      assert {:error, "Invalid request"} = Billing.create_billing_account(user, attrs)
+      assert {:error, "Invalid request"} = Billing.create_billing_account(scope, attrs)
     end
   end
 
@@ -316,7 +316,7 @@ defmodule Zoonk.BillingTest do
       scope = scope_fixture()
       stripe_stub(prefix: "cus_")
 
-      {:ok, billing_account} = Billing.create_billing_account(scope.user, %{"currency" => "USD", "country_iso2" => "US"})
+      {:ok, billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
 
       result = Billing.get_billing_account(scope)
       assert result.id == billing_account.id

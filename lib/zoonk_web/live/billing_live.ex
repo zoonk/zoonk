@@ -179,11 +179,8 @@ defmodule ZoonkWeb.BillingLive do
     {:noreply, socket}
   end
 
-  def handle_event("submit", params, socket) do
-    %{"billing_account" => billing_params} = params
-    user = socket.assigns.scope.user
-
-    case Billing.create_billing_account(user, billing_params) do
+  def handle_event("submit", %{"billing_account" => billing_params}, socket) do
+    case Billing.create_billing_account(socket.assigns.scope, billing_params) do
       {:ok, _billing_account} ->
         {:noreply, push_navigate(socket, to: socket.assigns.redirect_path)}
 
