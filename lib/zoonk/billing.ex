@@ -226,54 +226,30 @@ defmodule Zoonk.Billing do
       {:error, "Invalid request"}
   """
   def create_stripe_customer(%Scope{user: user}, attrs \\ %{}) do
-    base_attrs = %{
+    %{
       "email" => user.email,
       "metadata[user_id]" => user.id,
       "preferred_locales[]" => Atom.to_string(user.language)
     }
-
-    address_attrs = build_address_attrs(attrs)
-    tax_id_attrs = build_tax_id_attrs(attrs)
-
-    final_attrs =
-      base_attrs
-      |> Map.merge(address_attrs)
-      |> Map.merge(tax_id_attrs)
-      |> remove_nil_values()
-
-    Stripe.post("/customers", final_attrs)
+    |> maybe_put("address[line1]", attrs["address_line_1"])
+    |> maybe_put("address[line2]", attrs["address_line_2"])
+    |> maybe_put("address[city]", attrs["city"])
+    |> maybe_put("address[state]", attrs["state"])
+    |> maybe_put("address[postal_code]", attrs["postal_code"])
+    |> maybe_put("address[country]", attrs["country_iso2"])
+    |> Map.merge(build_tax_id_attrs(attrs))
+    |> then(&Stripe.post("/customers", &1))
   end
 
-  defp build_address_attrs(attrs) do
-    %{
-      "address[line1]" => attrs["address_line_1"] || Map.get(attrs, :address_line_1),
-      "address[line2]" => attrs["address_line_2"] || Map.get(attrs, :address_line_2),
-      "address[city]" => attrs["city"] || Map.get(attrs, :city),
-      "address[state]" => attrs["state"] || Map.get(attrs, :state),
-      "address[postal_code]" => attrs["postal_code"] || Map.get(attrs, :postal_code),
-      "address[country]" => attrs["country_iso2"] || Map.get(attrs, :country_iso2)
-    }
+  defp maybe_put(map, _key, nil), do: map
+  defp maybe_put(map, _key, ""), do: map
+  defp maybe_put(map, key, value), do: Map.put(map, key, value)
+
+  defp build_tax_id_attrs(%{"tax_id" => id, "tax_id_type" => type}) when is_binary(id) and is_binary(type) do
+    %{"tax_id_data[0][type]" => type, "tax_id_data[0][value]" => id}
   end
 
-  defp build_tax_id_attrs(attrs) do
-    tax_id = attrs["tax_id"] || Map.get(attrs, :tax_id)
-    tax_id_type = attrs["tax_id_type"] || Map.get(attrs, :tax_id_type)
-
-    case {tax_id, tax_id_type} do
-      {tax_id, tax_id_type} when is_binary(tax_id) and is_binary(tax_id_type) ->
-        %{
-          "tax_id_data[0][type]" => tax_id_type,
-          "tax_id_data[0][value]" => tax_id
-        }
-
-      _invalid ->
-        %{}
-    end
-  end
-
-  defp remove_nil_values(map) do
-    Map.reject(map, fn {_key, value} -> is_nil(value) or value == "" end)
-  end
+  defp build_tax_id_attrs(_attrs), do: %{}
 
   defp cancel_user_subscription({:ok, _status}, scope, subscription, attrs) do
     update_user_subscription(scope, subscription, attrs)
