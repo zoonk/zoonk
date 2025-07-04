@@ -29,10 +29,39 @@ defmodule Zoonk.Billing.BillingAccount do
     field :currency, :string
     field :stripe_customer_id, :string
 
+    # Virtual fields for form data, used for Stripe integration only, not stored in the database
+    field :address_line_1, :string, virtual: true
+    field :address_line_2, :string, virtual: true
+    field :city, :string, virtual: true
+    field :state, :string, virtual: true
+    field :postal_code, :string, virtual: true
+    field :tax_id, :string, virtual: true
+    field :tax_id_type, :string, virtual: true
+
     belongs_to :user, User
     belongs_to :org, Org
 
     timestamps(type: :utc_datetime_usec)
+  end
+
+  @doc """
+  Creates a changeset for the billing account form.
+
+  This changeset includes additional fields that are sent to Stripe
+  but not stored in the database.
+  """
+  def form_changeset(billing_account, attrs) do
+    billing_account
+    |> cast(attrs, [
+      :address_line_1,
+      :address_line_2,
+      :city,
+      :state,
+      :postal_code,
+      :tax_id,
+      :tax_id_type
+    ])
+    |> changeset(attrs)
   end
 
   @doc """

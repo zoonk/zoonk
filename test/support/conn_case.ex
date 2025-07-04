@@ -56,7 +56,9 @@ defmodule ZoonkWeb.ConnCase do
 
     conn = Map.put(conn, :host, app_org.custom_domain)
 
-    %{conn: login_user(conn, user, opts), user: user}
+    scope = %Zoonk.Scope{user: user, org: app_org}
+
+    %{conn: login_user(conn, user, opts), user: user, scope: scope}
   end
 
   @doc """
