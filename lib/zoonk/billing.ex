@@ -6,6 +6,8 @@ defmodule Zoonk.Billing do
   and integrating with payment providers such as Stripe.
   """
 
+  import Zoonk.Helpers, only: [maybe_put: 3]
+
   alias Zoonk.Billing.BillingAccount
   alias Zoonk.Billing.Price
   alias Zoonk.Billing.Stripe
@@ -240,10 +242,6 @@ defmodule Zoonk.Billing do
     |> Map.merge(build_tax_id_attrs(attrs))
     |> then(&Stripe.post("/customers", &1))
   end
-
-  defp maybe_put(map, _key, nil), do: map
-  defp maybe_put(map, _key, ""), do: map
-  defp maybe_put(map, key, value), do: Map.put(map, key, value)
 
   defp build_tax_id_attrs(%{"tax_id" => id, "tax_id_type" => type}) when is_binary(id) and is_binary(type) do
     %{"tax_id_data[0][type]" => type, "tax_id_data[0][value]" => id}

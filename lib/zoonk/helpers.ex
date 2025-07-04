@@ -174,4 +174,28 @@ defmodule Zoonk.Helpers do
   rescue
     ArgumentError -> nil
   end
+
+  @doc """
+  Conditionally puts a key-value pair into a map.
+
+  Returns the map unchanged if the value is `nil` or an empty string.
+  Otherwise, adds the key-value pair to the map.
+
+  ## Examples
+
+      iex> maybe_put(%{}, "key", "value")
+      %{"key" => "value"}
+
+      iex> maybe_put(%{"existing" => "data"}, "key", "value")
+      %{"existing" => "data", "key" => "value"}
+
+      iex> maybe_put(%{}, "key", nil)
+      %{}
+
+      iex> maybe_put(%{}, "key", "")
+      %{}
+  """
+  def maybe_put(map, _key, nil), do: map
+  def maybe_put(map, _key, ""), do: map
+  def maybe_put(map, key, value), do: Map.put(map, key, value)
 end

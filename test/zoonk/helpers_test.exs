@@ -151,4 +151,36 @@ defmodule Zoonk.HelpersTest do
       assert to_existing_atom(random_string) == nil
     end
   end
+
+  describe "maybe_put/3" do
+    test "adds key-value pair to empty map" do
+      assert maybe_put(%{}, "key", "value") == %{"key" => "value"}
+    end
+
+    test "adds key-value pair to existing map" do
+      map = %{"existing" => "data"}
+      result = maybe_put(map, "new_key", "new_value")
+      assert result == %{"existing" => "data", "new_key" => "new_value"}
+    end
+
+    test "returns unchanged map when value is nil" do
+      map = %{"existing" => "data"}
+      assert maybe_put(map, "key", nil) == map
+    end
+
+    test "returns unchanged map when value is empty string" do
+      map = %{"existing" => "data"}
+      assert maybe_put(map, "key", "") == map
+    end
+
+    test "handles atom keys" do
+      assert maybe_put(%{}, :key, "value") == %{key: "value"}
+    end
+
+    test "overwrites existing key" do
+      map = %{"key" => "old_value"}
+      result = maybe_put(map, "key", "new_value")
+      assert result == %{"key" => "new_value"}
+    end
+  end
 end
