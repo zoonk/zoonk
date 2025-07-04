@@ -133,7 +133,7 @@ defmodule ZoonkWeb.BillingLive do
 
   @impl Phoenix.LiveView
   def handle_event("validate_billing", %{"billing_account" => params}, socket) do
-    params = maybe_update_currency(params, socket.assigns.billing_form.data.country_iso2)
+    params = maybe_update_currency(params)
 
     billing_form =
       %BillingAccount{}
@@ -168,18 +168,17 @@ defmodule ZoonkWeb.BillingLive do
     Enum.map(Billing.get_unique_currencies(), &{"#{&1.name} (#{&1.code})", &1.code})
   end
 
-  defp maybe_update_currency(%{"country_iso2" => new} = params, current) when new != current do
+  # Only update currency if it is not already set
+  defp maybe_update_currency(%{"country_iso2" => iso2, "currency" => ""} = params) when iso2 != "" do
     currency_code =
-      new
+      iso2
       |> CountryData.get_country()
       |> then(&(&1 && &1.currency.code))
 
-    params
-    |> Map.put("currency", currency_code)
-    |> Map.drop(["tax_id_type", "tax_id"])
+    Map.put(params, "currency", currency_code)
   end
 
-  defp maybe_update_currency(params, _current), do: params
+  defp maybe_update_currency(params), do: params
 
   defp tax_id_type_options(country_iso2) when is_binary(country_iso2) do
     TaxIdData.types_for_country(country_iso2)
