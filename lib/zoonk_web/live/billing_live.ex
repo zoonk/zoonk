@@ -188,18 +188,12 @@ defmodule ZoonkWeb.BillingLive do
   defp tax_id_type_options(_country_iso2), do: []
 
   def on_mount(:ensure_no_billing_account, params, _session, socket) do
-    redirect_path = params["from"] || ~p"/subscription"
+    redirect_path = Map.get(params, "from", ~p"/subscription")
 
-    case Billing.get_billing_account(socket.assigns.scope) do
-      %BillingAccount{} ->
-        # Redirect if user already has billing account
-        socket = Phoenix.LiveView.redirect(socket, to: redirect_path)
-        {:halt, socket}
-
-      nil ->
-        # Continue with mount and assign redirect path
-        socket = Phoenix.Component.assign(socket, :redirect_path, redirect_path)
-        {:cont, socket}
+    if Billing.get_billing_account(socket.assigns.scope) do
+      {:halt, Phoenix.LiveView.redirect(socket, to: redirect_path)}
+    else
+      {:cont, assign(socket, :redirect_path, redirect_path)}
     end
   end
 end
