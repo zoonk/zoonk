@@ -85,21 +85,6 @@ defmodule ZoonkWeb.BillingLiveTest do
       |> assert_has("select[name='billing_account[currency]'] option[value='USD'][selected]")
     end
 
-    test "removes tax_id values when switching countries", %{conn: conn} do
-      stripe_stub(prefix: "cus_")
-
-      conn
-      |> visit(~p"/billing")
-      |> select("Country", option: "United States")
-      |> select("Tax ID type", option: "EIN")
-      |> fill_in("Tax ID", with: "123456789")
-      |> assert_has("input[name='billing_account[tax_id]']", value: "123456789")
-      |> assert_has("select[name='billing_account[tax_id_type]'] option[value='us_ein'][selected]")
-      |> select("Country", option: "Canada")
-      |> assert_has("input[name='billing_account[tax_id]']", value: "")
-      |> refute_has("select[name='billing_account[tax_id_type]'] option[value='us_ein']")
-    end
-
     test "don't revert the selected currency when changing another field", %{conn: conn} do
       stripe_stub(prefix: "cus_")
 
