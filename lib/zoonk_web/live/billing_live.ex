@@ -35,7 +35,7 @@ defmodule ZoonkWeb.BillingLive do
             field={@billing_form[:country_iso2]}
             label={dgettext("settings", "Country")}
             type="select"
-            options={@country_options}
+            options={country_options()}
             prompt={dgettext("settings", "Select your country")}
             required
           />
@@ -45,7 +45,7 @@ defmodule ZoonkWeb.BillingLive do
             field={@billing_form[:currency]}
             label={dgettext("settings", "Currency")}
             type="select"
-            options={@currency_options}
+            options={currency_options()}
             prompt={dgettext("settings", "Select currency")}
             required
           />
@@ -120,7 +120,6 @@ defmodule ZoonkWeb.BillingLive do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    # Set up form for new billing account
     billing_changeset = Billing.change_billing_account_form(%BillingAccount{}, %{})
 
     socket =
@@ -128,8 +127,6 @@ defmodule ZoonkWeb.BillingLive do
       |> assign(:billing_form, to_form(billing_changeset))
       |> assign(:display_success?, false)
       |> assign(:page_title, dgettext("page_title", "Set up billing account"))
-      |> assign(:country_options, build_country_options())
-      |> assign(:currency_options, build_currency_options())
       |> assign(:tax_id_type_options, [])
 
     {:ok, socket}
@@ -190,13 +187,13 @@ defmodule ZoonkWeb.BillingLive do
     end
   end
 
-  defp build_country_options do
+  defp country_options do
     CountryData.list_countries()
     |> Enum.map(&{&1.name, &1.iso2})
     |> Enum.sort_by(&elem(&1, 0))
   end
 
-  defp build_currency_options do
+  defp currency_options do
     Enum.map(Billing.get_unique_currencies(), &{"#{&1.name} (#{&1.code})", &1.code})
   end
 
