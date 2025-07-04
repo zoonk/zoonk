@@ -73,6 +73,7 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
 - Add `@moduledoc false`
 - Place `render` at the top
 - Use `use ZoonkWeb, :live_view`
+- Use socket's `assign/3` only for dynamic data. For static data, define a function instead.
 
 ### Components
 
