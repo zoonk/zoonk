@@ -119,7 +119,7 @@ defmodule Zoonk.Billing.TaxIdData do
   ]
 
   # EU countries that can use EU VAT or EU OSS VAT
-  @eu_countries ~w[at be cy cz dk ee fi fr de gr ie it lv lt lu mt nl pl pt sk sl es se]
+  @eu_countries ~w[at be cy cz dk ee fi fr de gr ie it lv lt lu mt nl pl pt sk si es se]
   @eu_vat_types ~w(eu_vat eu_oss_vat)
 
   @country_tax_map Enum.group_by(@tax_id_types, fn <<cc::binary-size(2), _rest::binary>> -> cc end)
