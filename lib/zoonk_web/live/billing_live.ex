@@ -132,39 +132,19 @@ defmodule ZoonkWeb.BillingLive do
   end
 
   @impl Phoenix.LiveView
-  def handle_event("validate_billing", params, socket) do
-    %{"billing_account" => billing_params} = params
-
-    # Check if country changed to update currency
-    current_country = socket.assigns.billing_form.data.country_iso2
-    new_country = billing_params["country_iso2"]
-
-    # Update currency based on selected country if country changed
-    updated_billing_params =
-      if new_country && new_country != current_country do
-        country = CountryData.get_country(new_country)
-        currency_code = if country, do: country.currency.code
-
-        billing_params
-        |> Map.put("currency", currency_code)
-        |> Map.delete("tax_id_type")
-        |> Map.delete("tax_id")
-      else
-        billing_params
-      end
+  def handle_event("validate_billing", %{"billing_account" => params}, socket) do
+    params = maybe_update_currency(params, socket.assigns.billing_form.data.country_iso2)
 
     billing_form =
       %BillingAccount{}
-      |> Billing.change_billing_account_form(updated_billing_params)
+      |> Billing.change_billing_account_form(params)
       |> Map.put(:action, :validate)
       |> to_form()
 
-    socket =
-      socket
-      |> assign(:billing_form, billing_form)
-      |> assign(:display_success?, false)
-
-    {:noreply, socket}
+    {:noreply,
+     socket
+     |> assign(:billing_form, billing_form)
+     |> assign(:display_success?, false)}
   end
 
   def handle_event("submit", %{"billing_account" => billing_params}, socket) do
@@ -187,6 +167,19 @@ defmodule ZoonkWeb.BillingLive do
   defp currency_options do
     Enum.map(Billing.get_unique_currencies(), &{"#{&1.name} (#{&1.code})", &1.code})
   end
+
+  defp maybe_update_currency(%{"country_iso2" => new} = params, current) when new != current do
+    currency_code =
+      new
+      |> CountryData.get_country()
+      |> then(&(&1 && &1.currency.code))
+
+    params
+    |> Map.put("currency", currency_code)
+    |> Map.drop(["tax_id_type", "tax_id"])
+  end
+
+  defp maybe_update_currency(params, _current), do: params
 
   defp tax_id_type_options(country_iso2) when is_binary(country_iso2) do
     TaxIdData.types_for_country(country_iso2)
