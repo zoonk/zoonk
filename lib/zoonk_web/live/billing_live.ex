@@ -91,17 +91,17 @@ defmodule ZoonkWeb.BillingLive do
           />
 
           <.input
-            :if={@tax_id_type_options != []}
+            :if={tax_id_type_options(@billing_form[:country_iso2].value) != []}
             id="billing-tax-id-type"
             field={@billing_form[:tax_id_type]}
             label={dgettext("settings", "Tax ID type")}
             type="select"
-            options={@tax_id_type_options}
+            options={tax_id_type_options(@billing_form[:country_iso2].value)}
             prompt={dgettext("settings", "Select tax ID type")}
           />
 
           <.input
-            :if={@tax_id_type_options != []}
+            :if={tax_id_type_options(@billing_form[:country_iso2].value) != []}
             id="billing-tax-id"
             field={@billing_form[:tax_id]}
             label={dgettext("settings", "Tax ID")}
@@ -127,7 +127,6 @@ defmodule ZoonkWeb.BillingLive do
       |> assign(:billing_form, to_form(billing_changeset))
       |> assign(:display_success?, false)
       |> assign(:page_title, dgettext("page_title", "Set up billing account"))
-      |> assign(:tax_id_type_options, [])
 
     {:ok, socket}
   end
@@ -136,16 +135,9 @@ defmodule ZoonkWeb.BillingLive do
   def handle_event("validate_billing", params, socket) do
     %{"billing_account" => billing_params} = params
 
-    # Check if country changed to update tax ID types
+    # Check if country changed to update currency
     current_country = socket.assigns.billing_form.data.country_iso2
     new_country = billing_params["country_iso2"]
-
-    tax_id_type_options =
-      if new_country && new_country != current_country do
-        TaxIdData.types_for_country(new_country)
-      else
-        socket.assigns.tax_id_type_options
-      end
 
     # Update currency based on selected country if country changed
     updated_billing_params =
@@ -171,7 +163,6 @@ defmodule ZoonkWeb.BillingLive do
       socket
       |> assign(:billing_form, billing_form)
       |> assign(:display_success?, false)
-      |> assign(:tax_id_type_options, tax_id_type_options)
 
     {:noreply, socket}
   end
@@ -196,6 +187,12 @@ defmodule ZoonkWeb.BillingLive do
   defp currency_options do
     Enum.map(Billing.get_unique_currencies(), &{"#{&1.name} (#{&1.code})", &1.code})
   end
+
+  defp tax_id_type_options(country_iso2) when is_binary(country_iso2) do
+    TaxIdData.types_for_country(country_iso2)
+  end
+
+  defp tax_id_type_options(_country_iso2), do: []
 
   def on_mount(:ensure_no_billing_account, params, _session, socket) do
     redirect_path = params["from"] || ~p"/subscription"
