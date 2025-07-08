@@ -121,7 +121,7 @@ defmodule ZoonkWeb.Components.Command do
         name="query"
         class={[
           "bg-zk-surface w-full rounded-t py-2.5 pr-4 pl-10",
-          "text-zk-muted-foreground text-sm",
+          "text-zk-muted-foreground text-base sm:text-sm",
           "border-zk-border border-0 border-b focus-visible:ring-0",
           "placeholder:text-zk-muted-foreground/70",
           "disabled:cursor-not-allowed disabled:opacity-50"
