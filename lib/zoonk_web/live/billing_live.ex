@@ -13,23 +13,24 @@ defmodule ZoonkWeb.BillingLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <.form_layout>
-        <.form_container
-          for={@billing_form}
-          id="billing_form"
-          phx-submit="submit"
-          phx-change="validate_billing"
-          display_success={@display_success?}
-        >
-          <:title>{dgettext("settings", "Set up billing account")}</:title>
+      <.form_container
+        for={@billing_form}
+        id="billing_form"
+        phx-submit="submit"
+        phx-change="validate_billing"
+        display_success={@display_success?}
+      >
+        <:title>{dgettext("settings", "Set up billing account")}</:title>
 
-          <:subtitle>
-            {dgettext(
-              "settings",
-              "Set up your billing information to manage subscriptions and make purchases."
-            )}
-          </:subtitle>
-
+        <:subtitle>
+          {dgettext(
+            "settings",
+            "Set up your billing information to manage subscriptions and make purchases."
+          )}
+        </:subtitle>
+        
+    <!-- Primary information section -->
+        <div class="grid grid-cols-2 gap-4">
           <.input
             id="billing-country"
             field={@billing_form[:country_iso2]}
@@ -38,6 +39,7 @@ defmodule ZoonkWeb.BillingLive do
             options={country_options()}
             prompt={dgettext("settings", "Select your country")}
             required
+            class="w-full"
           />
 
           <.input
@@ -48,14 +50,19 @@ defmodule ZoonkWeb.BillingLive do
             options={currency_options()}
             prompt={dgettext("settings", "Select currency")}
             required
+            class="w-full"
           />
-
+        </div>
+        
+    <!-- Address section -->
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <.input
             id="billing-address-line-1"
             field={@billing_form[:address_line_1]}
             label={dgettext("settings", "Address line 1")}
             type="text"
             placeholder={dgettext("settings", "Enter your address")}
+            class="w-full"
           />
 
           <.input
@@ -64,14 +71,19 @@ defmodule ZoonkWeb.BillingLive do
             label={dgettext("settings", "Address line 2")}
             type="text"
             placeholder={dgettext("settings", "Apartment, suite, etc. (optional)")}
+            class="w-full"
           />
-
+        </div>
+        
+    <!-- City/state section -->
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
           <.input
             id="billing-city"
             field={@billing_form[:city]}
             label={dgettext("settings", "City")}
             type="text"
             placeholder={dgettext("settings", "Enter your city")}
+            class="w-full"
           />
 
           <.input
@@ -80,6 +92,7 @@ defmodule ZoonkWeb.BillingLive do
             label={dgettext("settings", "State/Province")}
             type="text"
             placeholder={dgettext("settings", "Enter your state or province")}
+            class="w-full"
           />
 
           <.input
@@ -88,32 +101,39 @@ defmodule ZoonkWeb.BillingLive do
             label={dgettext("settings", "Postal code")}
             type="text"
             placeholder={dgettext("settings", "Enter your postal code")}
+            class="w-full"
           />
-
+        </div>
+        
+    <!-- Tax information section -->
+        <div
+          :if={tax_id_type_options(@billing_form[:country_iso2].value) != []}
+          class="grid grid-cols-2 gap-4 md:grid-cols-4"
+        >
           <.input
-            :if={tax_id_type_options(@billing_form[:country_iso2].value) != []}
             id="billing-tax-id-type"
             field={@billing_form[:tax_id_type]}
             label={dgettext("settings", "Tax ID type")}
             type="select"
             options={tax_id_type_options(@billing_form[:country_iso2].value)}
             prompt={dgettext("settings", "Select tax ID type")}
+            class="w-full"
           />
 
           <.input
-            :if={tax_id_type_options(@billing_form[:country_iso2].value) != []}
             id="billing-tax-id"
             field={@billing_form[:tax_id]}
             label={dgettext("settings", "Tax ID")}
             type="text"
             placeholder={dgettext("settings", "Enter your tax ID")}
+            class="w-full"
           />
+        </div>
 
-          <:requirements>
-            {dgettext("settings", "Only country and currency are required fields.")}
-          </:requirements>
-        </.form_container>
-      </.form_layout>
+        <:requirements>
+          {dgettext("settings", "Only country and currency are required fields.")}
+        </:requirements>
+      </.form_container>
     </ZoonkWeb.AppLayout.render>
     """
   end
