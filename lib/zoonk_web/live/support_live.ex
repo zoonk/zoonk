@@ -8,68 +8,66 @@ defmodule ZoonkWeb.SupportLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <.form_layout>
-        <.form_container
-          for={@support_form}
-          id="support_form"
-          phx-submit="submit"
-          phx-change="validate_support"
-          display_success={@display_success?}
-          save_label={dgettext("settings", "Send message")}
-        >
-          <:title>{dgettext("settings", "Contact Support")}</:title>
+      <.form_container
+        for={@support_form}
+        id="support_form"
+        phx-submit="submit"
+        phx-change="validate_support"
+        display_success={@display_success?}
+        save_label={dgettext("settings", "Send message")}
+      >
+        <:title>{dgettext("settings", "Contact Support")}</:title>
 
-          <:subtitle>
-            {dgettext(
+        <:subtitle>
+          {dgettext(
+            "settings",
+            "Need help? Send us a message and we'll get back to you within %{days} business days.",
+            days: Support.response_time_days()
+          )}
+        </:subtitle>
+
+        <.input
+          id="support-email"
+          field={@support_form[:email]}
+          label={dgettext("settings", "Email address")}
+          type="email"
+          autocomplete="email"
+          required
+        />
+
+        <.input
+          id="support-message"
+          field={@support_form[:message]}
+          label={dgettext("settings", "Message")}
+          type="textarea"
+          placeholder={
+            dgettext(
               "settings",
-              "Need help? Send us a message and we'll get back to you within %{days} business days.",
-              days: Support.response_time_days()
-            )}
-          </:subtitle>
+              "Describe your issue or question in detail. Include any error messages, steps you took, and your device/browser information if relevant..."
+            )
+          }
+          rows={5}
+          required
+          class="w-full"
+        />
 
-          <.input
-            id="support-email"
-            field={@support_form[:email]}
-            label={dgettext("settings", "Email address")}
-            type="email"
-            autocomplete="email"
-            required
-          />
+        <:requirements>
+          {dgettext(
+            "settings",
+            "For urgent matters, please email us at %{email}",
+            email: Support.support_email()
+          )}
+        </:requirements>
+      </.form_container>
 
-          <.input
-            id="support-message"
-            field={@support_form[:message]}
-            label={dgettext("settings", "Message")}
-            type="textarea"
-            placeholder={
-              dgettext(
-                "settings",
-                "Describe your issue or question in detail. Include any error messages, steps you took, and your device/browser information if relevant..."
-              )
-            }
-            rows={5}
-            required
-            class="w-full"
-          />
+      <div class="mt-16 w-full">
+        <.faq_header
+          title={dgettext("faq", "Frequently Asked Questions")}
+          subtitle={dgettext("faq", "Common questions and answers about using Zoonk")}
+        />
 
-          <:requirements>
-            {dgettext(
-              "settings",
-              "For urgent matters, please email us at %{email}",
-              email: Support.support_email()
-            )}
-          </:requirements>
-        </.form_container>
-
-        <div class="mt-16 w-full">
-          <.faq_header
-            title={dgettext("faq", "Frequently Asked Questions")}
-            subtitle={dgettext("faq", "Common questions and answers about using Zoonk")}
-          />
-
-          <.faq_all />
-        </div>
-      </.form_layout>
+        <.faq_all />
+      </div>
     </ZoonkWeb.AppLayout.render>
     """
   end

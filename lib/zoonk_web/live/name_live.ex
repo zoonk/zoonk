@@ -8,37 +8,35 @@ defmodule ZoonkWeb.NameLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <.form_layout>
-        <.form_container
-          for={@name_form}
-          id="name_form"
-          phx-submit="submit"
-          phx-change="validate_name"
-          display_success={@display_success?}
-        >
-          <:title>{dgettext("settings", "Update your name")}</:title>
+      <.form_container
+        for={@name_form}
+        id="name_form"
+        phx-submit="submit"
+        phx-change="validate_name"
+        display_success={@display_success?}
+      >
+        <:title>{dgettext("settings", "Update your name")}</:title>
 
-          <:subtitle>
-            {dgettext(
-              "settings",
-              "This is the name we use when calling you in the app."
-            )}
-          </:subtitle>
+        <:subtitle>
+          {dgettext(
+            "settings",
+            "This is the name we use when calling you in the app."
+          )}
+        </:subtitle>
 
-          <.input
-            id="user-display-name"
-            field={@name_form[:display_name]}
-            label={dgettext("settings", "Name")}
-            type="text"
-            placeholder={dgettext("settings", "Enter your name")}
-            hide_label
-          />
+        <.input
+          id="user-display-name"
+          field={@name_form[:display_name]}
+          label={dgettext("settings", "Name")}
+          type="text"
+          placeholder={dgettext("settings", "Enter your name")}
+          hide_label
+        />
 
-          <:requirements>
-            {dgettext("settings", "This is not visible to others.")}
-          </:requirements>
-        </.form_container>
-      </.form_layout>
+        <:requirements>
+          {dgettext("settings", "This is not visible to others.")}
+        </:requirements>
+      </.form_container>
     </ZoonkWeb.AppLayout.render>
     """
   end

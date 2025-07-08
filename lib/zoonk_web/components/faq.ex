@@ -26,7 +26,7 @@ defmodule ZoonkWeb.Components.FAQ do
 
   def faq_header(assigns) do
     ~H"""
-    <div class={["mb-8 text-center", @class]}>
+    <div class={["mb-8", @class]}>
       <.text tag="h2" size={:xl} weight={:semibold} class="mb-2">{@title}</.text>
       <.text variant={:secondary} size={:sm}>{@subtitle}</.text>
     </div>

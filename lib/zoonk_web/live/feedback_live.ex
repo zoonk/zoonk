@@ -8,58 +8,56 @@ defmodule ZoonkWeb.FeedbackLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <.form_layout>
-        <.form_container
-          for={@feedback_form}
-          id="feedback_form"
-          phx-submit="submit"
-          phx-change="validate_feedback"
-          display_success={@display_success?}
-          save_label={dgettext("settings", "Send feedback")}
-        >
-          <:title>{dgettext("settings", "Send feedback")}</:title>
+      <.form_container
+        for={@feedback_form}
+        id="feedback_form"
+        phx-submit="submit"
+        phx-change="validate_feedback"
+        display_success={@display_success?}
+        save_label={dgettext("settings", "Send feedback")}
+      >
+        <:title>{dgettext("settings", "Send feedback")}</:title>
 
-          <:subtitle>
-            {dgettext(
+        <:subtitle>
+          {dgettext(
+            "settings",
+            "Help us improve by sharing your thoughts, suggestions, or reporting issues."
+          )}
+        </:subtitle>
+
+        <.input
+          id="feedback-email"
+          field={@feedback_form[:email]}
+          label={dgettext("settings", "Email address")}
+          type="email"
+          autocomplete="email"
+          required
+        />
+
+        <.input
+          id="feedback-message"
+          field={@feedback_form[:message]}
+          label={dgettext("settings", "Message")}
+          type="textarea"
+          placeholder={
+            dgettext(
               "settings",
-              "Help us improve by sharing your thoughts, suggestions, or reporting issues."
-            )}
-          </:subtitle>
+              "Tell us what you think or report any issues you've encountered..."
+            )
+          }
+          rows={4}
+          required
+          class="w-full"
+        />
 
-          <.input
-            id="feedback-email"
-            field={@feedback_form[:email]}
-            label={dgettext("settings", "Email address")}
-            type="email"
-            autocomplete="email"
-            required
-          />
-
-          <.input
-            id="feedback-message"
-            field={@feedback_form[:message]}
-            label={dgettext("settings", "Message")}
-            type="textarea"
-            placeholder={
-              dgettext(
-                "settings",
-                "Tell us what you think or report any issues you've encountered..."
-              )
-            }
-            rows={4}
-            required
-            class="w-full"
-          />
-
-          <:requirements>
-            {dgettext(
-              "settings",
-              "You can also reach out to us at %{email}",
-              email: Support.support_email()
-            )}
-          </:requirements>
-        </.form_container>
-      </.form_layout>
+        <:requirements>
+          {dgettext(
+            "settings",
+            "You can also reach out to us at %{email}",
+            email: Support.support_email()
+          )}
+        </:requirements>
+      </.form_container>
     </ZoonkWeb.AppLayout.render>
     """
   end

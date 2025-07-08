@@ -8,37 +8,35 @@ defmodule ZoonkWeb.EmailLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <.form_layout>
-        <.form_container
-          for={@email_form}
-          id="email_form"
-          phx-submit="submit"
-          phx-change="validate_email"
-        >
-          <:title>{dgettext("settings", "Change Email")}</:title>
+      <.form_container
+        for={@email_form}
+        id="email_form"
+        phx-submit="submit"
+        phx-change="validate_email"
+      >
+        <:title>{dgettext("settings", "Change Email")}</:title>
 
-          <:subtitle>
-            {dgettext(
-              "settings",
-              "This is the email address that will be used to sign in. This is not visible to other users."
-            )}
-          </:subtitle>
+        <:subtitle>
+          {dgettext(
+            "settings",
+            "This is the email address that will be used to sign in. This is not visible to other users."
+          )}
+        </:subtitle>
 
-          <.input
-            id="user-email"
-            field={@email_form[:email]}
-            label={dgettext("settings", "Email address")}
-            type="email"
-            autocomplete="username"
-            required
-            hide_label
-          />
+        <.input
+          id="user-email"
+          field={@email_form[:email]}
+          label={dgettext("settings", "Email address")}
+          type="email"
+          autocomplete="username"
+          required
+          hide_label
+        />
 
-          <:requirements>
-            {dgettext("settings", "We'll send a code to your email address.")}
-          </:requirements>
-        </.form_container>
-      </.form_layout>
+        <:requirements>
+          {dgettext("settings", "We'll send a code to your email address.")}
+        </:requirements>
+      </.form_container>
     </ZoonkWeb.AppLayout.render>
     """
   end

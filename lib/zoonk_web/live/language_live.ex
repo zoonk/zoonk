@@ -9,37 +9,35 @@ defmodule ZoonkWeb.LanguageLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <.form_layout>
-        <.form_container
-          for={@language_form}
-          id="language_form"
-          phx-submit="submit"
-          phx-change="validate_language"
-        >
-          <:title>{dgettext("settings", "Change language")}</:title>
+      <.form_container
+        for={@language_form}
+        id="language_form"
+        phx-submit="submit"
+        phx-change="validate_language"
+      >
+        <:title>{dgettext("settings", "Change language")}</:title>
 
-          <:subtitle>
-            {dgettext(
-              "settings",
-              "Choose the language for the app interface."
-            )}
-          </:subtitle>
+        <:subtitle>
+          {dgettext(
+            "settings",
+            "Choose the language for the app interface."
+          )}
+        </:subtitle>
 
-          <.input
-            id="user-language"
-            field={@language_form[:language]}
-            label={dgettext("settings", "Language")}
-            type="select"
-            options={Localization.list_languages(:options)}
-            required
-            hide_label
-          />
+        <.input
+          id="user-language"
+          field={@language_form[:language]}
+          label={dgettext("settings", "Language")}
+          type="select"
+          options={Localization.list_languages(:options)}
+          required
+          hide_label
+        />
 
-          <:requirements>
-            {dgettext("settings", "This changes the language for the entire app.")}
-          </:requirements>
-        </.form_container>
-      </.form_layout>
+        <:requirements>
+          {dgettext("settings", "This changes the language for the entire app.")}
+        </:requirements>
+      </.form_container>
     </ZoonkWeb.AppLayout.render>
     """
   end

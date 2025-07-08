@@ -34,18 +34,22 @@ defmodule ZoonkWeb.Components.Form do
     <.form
       for={@for}
       as={@as}
-      class={["bg-zk-surface border-zk-border w-full rounded border", @class]}
+      class={["bg-zk-surface flex w-full flex-1 flex-col gap-4", @class]}
       {@rest}
     >
-      <fieldset class="flex flex-col gap-4 p-4">
+      <fieldset class="flex flex-col gap-4">
         <.text tag="h3" size={:xxl} class="leading-none">{render_slot(@title)}</.text>
-        <.text tag="h4" size={:md} variant={:secondary}>{render_slot(@subtitle)}</.text>
+        <.text tag="h4" size={:md} variant={:secondary} class="-mt-2">{render_slot(@subtitle)}</.text>
 
         {render_slot(@inner_block)}
       </fieldset>
 
-      <footer class={["flex items-center justify-between gap-2", "bg-zk-muted rounded-b", "px-4 py-2"]}>
-        <.text size={:sm} variant={:secondary}>
+      <footer class={[
+        "mt-auto flex items-center justify-between gap-2 md:mt-0",
+        "bg-zk-muted rounded-full",
+        "p-2"
+      ]}>
+        <.text size={:sm} variant={:secondary} class="pl-2">
           {render_slot(@requirements)}
         </.text>
 
@@ -66,20 +70,6 @@ defmodule ZoonkWeb.Components.Form do
         </div>
       </footer>
     </.form>
-    """
-  end
-
-  attr :class, :any, default: nil, doc: "the CSS class to apply to the form layout"
-  slot :inner_block, required: true, doc: "the inner content of the form layout"
-
-  def form_layout(assigns) do
-    ~H"""
-    <section class={[
-      "mx-auto flex w-full max-w-xl flex-1 flex-col md:items-center md:justify-center",
-      @class
-    ]}>
-      {render_slot(@inner_block)}
-    </section>
     """
   end
 end
