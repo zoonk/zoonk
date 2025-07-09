@@ -8,11 +8,12 @@ defmodule ZoonkWeb.LanguageLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.SettingsLayout.render flash={@flash} scope={@scope} current_page={:language} has_form={true}>
-      <.settings_form_container
+    <ZoonkWeb.SettingsLayout.render flash={@flash} scope={@scope} current_page={:language} has_form={true} display_success={false}>
+      <.form_container
         for={@language_form}
         phx-submit="submit"
         phx-change="validate_language"
+        hide_footer={true}
       >
         <:title>{dgettext("settings", "Change language")}</:title>
 
@@ -32,7 +33,7 @@ defmodule ZoonkWeb.LanguageLive do
           required
           hide_label
         />
-      </.settings_form_container>
+      </.form_container>
     </ZoonkWeb.SettingsLayout.render>
     """
   end

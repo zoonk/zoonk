@@ -13,12 +13,13 @@ defmodule ZoonkWeb.FeedbackLive do
       current_page={:feedback} 
       has_form={true}
       save_label={dgettext("settings", "Send feedback")}
+      display_success={@display_success?}
     >
-      <.settings_form_container
+      <.form_container
         for={@feedback_form}
         phx-submit="submit"
         phx-change="validate_feedback"
-        display_success={@display_success?}
+        hide_footer={true}
       >
         <:title>{dgettext("settings", "Send feedback")}</:title>
 
@@ -54,7 +55,7 @@ defmodule ZoonkWeb.FeedbackLive do
           required
           class="w-full"
         />
-      </.settings_form_container>
+      </.form_container>
     </ZoonkWeb.SettingsLayout.render>
     """
   end

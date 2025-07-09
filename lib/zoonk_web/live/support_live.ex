@@ -13,12 +13,13 @@ defmodule ZoonkWeb.SupportLive do
       current_page={:support} 
       has_form={true}
       save_label={dgettext("settings", "Send message")}
+      display_success={@display_success?}
     >
-      <.settings_form_container
+      <.form_container
         for={@support_form}
         phx-submit="submit"
         phx-change="validate_support"
-        display_success={@display_success?}
+        hide_footer={true}
       >
         <:title>{dgettext("settings", "Contact Support")}</:title>
 
@@ -55,7 +56,7 @@ defmodule ZoonkWeb.SupportLive do
           required
           class="w-full"
         />
-      </.settings_form_container>
+      </.form_container>
 
       <div class="mt-16 w-full">
         <.faq_header

@@ -12,12 +12,12 @@ defmodule ZoonkWeb.BillingLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.SettingsLayout.render flash={@flash} scope={@scope} current_page={:billing} has_form={true}>
-      <.settings_form_container
+    <ZoonkWeb.SettingsLayout.render flash={@flash} scope={@scope} current_page={:billing} has_form={true} display_success={@display_success?}>
+      <.form_container
         for={@billing_form}
         phx-submit="submit"
         phx-change="validate_billing"
-        display_success={@display_success?}
+        hide_footer={true}
       >
         <:title>{dgettext("settings", "Set up billing account")}</:title>
 
@@ -128,7 +128,7 @@ defmodule ZoonkWeb.BillingLive do
             class="w-full"
           />
         </div>
-      </.settings_form_container>
+      </.form_container>
     </ZoonkWeb.SettingsLayout.render>
     """
   end
