@@ -12,10 +12,9 @@ defmodule ZoonkWeb.BillingLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <.form_container
+    <ZoonkWeb.SettingsLayout.render flash={@flash} scope={@scope} current_page={:billing} has_form={true}>
+      <.settings_form_container
         for={@billing_form}
-        id="billing_form"
         phx-submit="submit"
         phx-change="validate_billing"
         display_success={@display_success?}
@@ -25,7 +24,7 @@ defmodule ZoonkWeb.BillingLive do
         <:subtitle>
           {dgettext(
             "settings",
-            "Set up your billing information to manage subscriptions and make purchases."
+            "Set up your billing information to manage subscriptions and make purchases. Only country and currency are required fields."
           )}
         </:subtitle>
         
@@ -129,12 +128,8 @@ defmodule ZoonkWeb.BillingLive do
             class="w-full"
           />
         </div>
-
-        <:requirements>
-          {dgettext("settings", "Only country and currency are required fields.")}
-        </:requirements>
-      </.form_container>
-    </ZoonkWeb.AppLayout.render>
+      </.settings_form_container>
+    </ZoonkWeb.SettingsLayout.render>
     """
   end
 

@@ -7,10 +7,9 @@ defmodule ZoonkWeb.NameLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <.form_container
+    <ZoonkWeb.SettingsLayout.render flash={@flash} scope={@scope} current_page={:name} has_form={true}>
+      <.settings_form_container
         for={@name_form}
-        id="name_form"
         phx-submit="submit"
         phx-change="validate_name"
         display_success={@display_success?}
@@ -20,7 +19,7 @@ defmodule ZoonkWeb.NameLive do
         <:subtitle>
           {dgettext(
             "settings",
-            "This is the name we use when calling you in the app."
+            "This is the name we use when calling you in the app. This is not visible to others."
           )}
         </:subtitle>
 
@@ -32,12 +31,8 @@ defmodule ZoonkWeb.NameLive do
           placeholder={dgettext("settings", "Enter your name")}
           hide_label
         />
-
-        <:requirements>
-          {dgettext("settings", "This is not visible to others.")}
-        </:requirements>
-      </.form_container>
-    </ZoonkWeb.AppLayout.render>
+      </.settings_form_container>
+    </ZoonkWeb.SettingsLayout.render>
     """
   end
 

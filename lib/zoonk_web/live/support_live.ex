@@ -7,22 +7,27 @@ defmodule ZoonkWeb.SupportLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <.form_container
+    <ZoonkWeb.SettingsLayout.render 
+      flash={@flash} 
+      scope={@scope} 
+      current_page={:support} 
+      has_form={true}
+      save_label={dgettext("settings", "Send message")}
+    >
+      <.settings_form_container
         for={@support_form}
-        id="support_form"
         phx-submit="submit"
         phx-change="validate_support"
         display_success={@display_success?}
-        save_label={dgettext("settings", "Send message")}
       >
         <:title>{dgettext("settings", "Contact Support")}</:title>
 
         <:subtitle>
           {dgettext(
             "settings",
-            "Need help? Send us a message and we'll get back to you within %{days} business days.",
-            days: Support.response_time_days()
+            "Need help? Send us a message and we'll get back to you within %{days} business days. For urgent matters, please email us at %{email}",
+            days: Support.response_time_days(),
+            email: Support.support_email()
           )}
         </:subtitle>
 
@@ -50,15 +55,7 @@ defmodule ZoonkWeb.SupportLive do
           required
           class="w-full"
         />
-
-        <:requirements>
-          {dgettext(
-            "settings",
-            "For urgent matters, please email us at %{email}",
-            email: Support.support_email()
-          )}
-        </:requirements>
-      </.form_container>
+      </.settings_form_container>
 
       <div class="mt-16 w-full">
         <.faq_header
@@ -68,7 +65,7 @@ defmodule ZoonkWeb.SupportLive do
 
         <.faq_all />
       </div>
-    </ZoonkWeb.AppLayout.render>
+    </ZoonkWeb.SettingsLayout.render>
     """
   end
 

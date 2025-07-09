@@ -7,7 +7,7 @@ defmodule ZoonkWeb.FollowLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
+    <ZoonkWeb.SettingsLayout.render flash={@flash} scope={@scope} current_page={:follow} has_form={false}>
       <div class="flex flex-col gap-2">
         <.text tag="h1" size={:xxl}>
           {dgettext("settings", "Follow us")}
@@ -34,7 +34,7 @@ defmodule ZoonkWeb.FollowLive do
           </a>
         </div>
       </div>
-    </ZoonkWeb.AppLayout.render>
+    </ZoonkWeb.SettingsLayout.render>
     """
   end
 

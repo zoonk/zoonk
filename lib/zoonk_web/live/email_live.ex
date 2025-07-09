@@ -7,10 +7,9 @@ defmodule ZoonkWeb.EmailLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <.form_container
+    <ZoonkWeb.SettingsLayout.render flash={@flash} scope={@scope} current_page={:email} has_form={true}>
+      <.settings_form_container
         for={@email_form}
-        id="email_form"
         phx-submit="submit"
         phx-change="validate_email"
       >
@@ -19,7 +18,7 @@ defmodule ZoonkWeb.EmailLive do
         <:subtitle>
           {dgettext(
             "settings",
-            "This is the email address that will be used to sign in. This is not visible to other users."
+            "This is the email address that will be used to sign in. This is not visible to other users. We'll send a code to your email address."
           )}
         </:subtitle>
 
@@ -32,12 +31,8 @@ defmodule ZoonkWeb.EmailLive do
           required
           hide_label
         />
-
-        <:requirements>
-          {dgettext("settings", "We'll send a code to your email address.")}
-        </:requirements>
-      </.form_container>
-    </ZoonkWeb.AppLayout.render>
+      </.settings_form_container>
+    </ZoonkWeb.SettingsLayout.render>
     """
   end
 

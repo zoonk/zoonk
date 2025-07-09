@@ -7,21 +7,26 @@ defmodule ZoonkWeb.FeedbackLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <.form_container
+    <ZoonkWeb.SettingsLayout.render 
+      flash={@flash} 
+      scope={@scope} 
+      current_page={:feedback} 
+      has_form={true}
+      save_label={dgettext("settings", "Send feedback")}
+    >
+      <.settings_form_container
         for={@feedback_form}
-        id="feedback_form"
         phx-submit="submit"
         phx-change="validate_feedback"
         display_success={@display_success?}
-        save_label={dgettext("settings", "Send feedback")}
       >
         <:title>{dgettext("settings", "Send feedback")}</:title>
 
         <:subtitle>
           {dgettext(
             "settings",
-            "Help us improve by sharing your thoughts, suggestions, or reporting issues."
+            "Help us improve by sharing your thoughts, suggestions, or reporting issues. You can also reach out to us at %{email}",
+            email: Support.support_email()
           )}
         </:subtitle>
 
@@ -49,16 +54,8 @@ defmodule ZoonkWeb.FeedbackLive do
           required
           class="w-full"
         />
-
-        <:requirements>
-          {dgettext(
-            "settings",
-            "You can also reach out to us at %{email}",
-            email: Support.support_email()
-          )}
-        </:requirements>
-      </.form_container>
-    </ZoonkWeb.AppLayout.render>
+      </.settings_form_container>
+    </ZoonkWeb.SettingsLayout.render>
     """
   end
 
