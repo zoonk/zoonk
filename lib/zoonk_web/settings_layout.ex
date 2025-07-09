@@ -56,16 +56,19 @@ defmodule ZoonkWeb.SettingsLayout do
           <div class="p-4">
             <.text tag="h2" size={:lg} weight={:medium} class="mb-4">{gettext("Settings")}</.text>
             
-            <ul class="space-y-1">
+            <ul class="space-y-0.5">
               <li :for={item <- menu_items()}>
                 <.a
                   navigate={item.path}
                   kind={:link}
                   class={[
-                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors",
-                    "hover:bg-zk-muted",
-                    @current_page == item.key && "bg-zk-accent text-zk-accent-foreground font-medium",
-                    @current_page != item.key && "text-zk-muted-foreground hover:text-zk-foreground"
+                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-all duration-200",
+                    "hover:bg-zk-muted/60 hover:text-zk-foreground",
+                    "focus:outline-none focus:ring-2 focus:ring-zk-ring",
+                    if(@current_page == item.key, 
+                      do: "bg-zk-accent text-zk-accent-foreground font-medium shadow-sm",
+                      else: "text-zk-muted-foreground"
+                    )
                   ]}
                 >
                   <.icon name={item.icon} size={:sm} />
@@ -76,20 +79,24 @@ defmodule ZoonkWeb.SettingsLayout do
           </div>
         </nav>
 
-        <nav class="bg-zk-surface border-zk-border border-r md:hidden fixed bottom-0 left-0 right-0 z-40">
+        <nav class="bg-zk-surface border-zk-border border-t md:hidden fixed bottom-0 left-0 right-0 z-40 shadow-lg">
           <div class="flex justify-around py-2">
             <div :for={item <- menu_items()} class="flex flex-col items-center">
               <.a
                 navigate={item.path}
                 kind={:link}
                 class={[
-                  "flex flex-col items-center gap-1 rounded-md px-2 py-1 text-xs transition-colors",
-                  @current_page == item.key && "text-zk-primary",
-                  @current_page != item.key && "text-zk-muted-foreground"
+                  "flex flex-col items-center gap-1 rounded-md px-2 py-1 text-xs transition-all duration-200",
+                  "hover:bg-zk-muted/60",
+                  "focus:outline-none focus:ring-1 focus:ring-zk-ring",
+                  if(@current_page == item.key,
+                    do: "text-zk-primary font-medium",
+                    else: "text-zk-muted-foreground hover:text-zk-foreground"
+                  )
                 ]}
               >
                 <.icon name={item.icon} size={:sm} />
-                <span class="text-xs">{String.slice(item.label, 0..5)}</span>
+                <span class="text-xs leading-tight">{String.slice(item.label, 0..6)}</span>
               </.a>
             </div>
           </div>
