@@ -29,7 +29,7 @@ defmodule ZoonkWeb.BillingLive do
         <:subtitle>
           {dgettext(
             "settings",
-            "Set up your billing information to manage subscriptions and make purchases. Only country and currency are required fields."
+            "This information will be used to issue your invoice. Only country and currency are required fields."
           )}
         </:subtitle>
         
@@ -54,6 +54,52 @@ defmodule ZoonkWeb.BillingLive do
             options={currency_options()}
             prompt={dgettext("settings", "Select currency")}
             required
+            class="w-full"
+          />
+        </div>
+        
+    <!-- Tax information section -->
+        <div
+          :if={tax_id_type_options(@billing_form[:country_iso2].value) != []}
+          class="grid grid-cols-2 gap-4 md:grid-cols-4"
+        >
+          <.input
+            id="billing-tax-id-type"
+            field={@billing_form[:tax_id_type]}
+            label={dgettext("settings", "Tax ID type")}
+            type="select"
+            options={tax_id_type_options(@billing_form[:country_iso2].value)}
+            prompt={dgettext("settings", "Select tax ID type")}
+            class="w-full"
+          />
+
+          <.input
+            id="billing-tax-id"
+            field={@billing_form[:tax_id]}
+            label={dgettext("settings", "Tax ID")}
+            type="text"
+            placeholder={dgettext("settings", "Enter your tax ID")}
+            class="w-full"
+          />
+        </div>
+        
+    <!-- Name and phone section -->
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <.input
+            id="billing-name"
+            field={@billing_form[:name]}
+            label={dgettext("settings", "Full name")}
+            type="text"
+            placeholder={dgettext("settings", "Enter your full name")}
+            class="w-full"
+          />
+
+          <.input
+            id="billing-phone"
+            field={@billing_form[:phone]}
+            label={dgettext("settings", "Phone number")}
+            type="text"
+            placeholder={dgettext("settings", "Enter your phone number")}
             class="w-full"
           />
         </div>
@@ -105,31 +151,6 @@ defmodule ZoonkWeb.BillingLive do
             label={dgettext("settings", "Postal code")}
             type="text"
             placeholder={dgettext("settings", "Enter your postal code")}
-            class="w-full"
-          />
-        </div>
-        
-    <!-- Tax information section -->
-        <div
-          :if={tax_id_type_options(@billing_form[:country_iso2].value) != []}
-          class="grid grid-cols-2 gap-4 md:grid-cols-4"
-        >
-          <.input
-            id="billing-tax-id-type"
-            field={@billing_form[:tax_id_type]}
-            label={dgettext("settings", "Tax ID type")}
-            type="select"
-            options={tax_id_type_options(@billing_form[:country_iso2].value)}
-            prompt={dgettext("settings", "Select tax ID type")}
-            class="w-full"
-          />
-
-          <.input
-            id="billing-tax-id"
-            field={@billing_form[:tax_id]}
-            label={dgettext("settings", "Tax ID")}
-            type="text"
-            placeholder={dgettext("settings", "Enter your tax ID")}
             class="w-full"
           />
         </div>

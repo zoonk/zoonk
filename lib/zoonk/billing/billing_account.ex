@@ -30,6 +30,8 @@ defmodule Zoonk.Billing.BillingAccount do
     field :stripe_customer_id, :string
 
     # Virtual fields for form data, used for Stripe integration only, not stored in the database
+    field :name, :string, virtual: true
+    field :phone, :string, virtual: true
     field :address_line_1, :string, virtual: true
     field :address_line_2, :string, virtual: true
     field :city, :string, virtual: true
@@ -53,6 +55,8 @@ defmodule Zoonk.Billing.BillingAccount do
   def form_changeset(billing_account, attrs) do
     billing_account
     |> cast(attrs, [
+      :name,
+      :phone,
       :address_line_1,
       :address_line_2,
       :city,

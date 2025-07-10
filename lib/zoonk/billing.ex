@@ -233,6 +233,8 @@ defmodule Zoonk.Billing do
       "metadata[user_id]" => user.id,
       "preferred_locales[]" => Atom.to_string(user.language)
     }
+    |> maybe_put("name", attrs["name"])
+    |> maybe_put("phone", attrs["phone"])
     |> maybe_put("address[line1]", attrs["address_line_1"])
     |> maybe_put("address[line2]", attrs["address_line_2"])
     |> maybe_put("address[city]", attrs["city"])
