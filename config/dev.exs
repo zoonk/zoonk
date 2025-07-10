@@ -83,8 +83,8 @@ config :zoonk, ZoonkWeb.Endpoint,
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/zoonk_web/(controllers|live|components)/.*(ex|heex)$",
-      ~r"lib/zoonk_dev/(layouts|ui_preview)/.*(ex|heex)$"
+      ~r"lib/zoonk_web/.*(ex|heex)$",
+      ~r"lib/zoonk_dev/.*(ex|heex)$"
     ]
   ]
 

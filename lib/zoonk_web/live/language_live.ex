@@ -8,7 +8,13 @@ defmodule ZoonkWeb.LanguageLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
+    <ZoonkWeb.SettingsLayout.render
+      flash={@flash}
+      scope={@scope}
+      current_page={:language}
+      has_form={true}
+      form_id="language_form"
+    >
       <.form_container
         for={@language_form}
         id="language_form"
@@ -33,12 +39,8 @@ defmodule ZoonkWeb.LanguageLive do
           required
           hide_label
         />
-
-        <:requirements>
-          {dgettext("settings", "This changes the language for the entire app.")}
-        </:requirements>
       </.form_container>
-    </ZoonkWeb.AppLayout.render>
+    </ZoonkWeb.SettingsLayout.render>
     """
   end
 

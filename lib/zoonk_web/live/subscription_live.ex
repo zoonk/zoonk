@@ -5,9 +5,9 @@ defmodule ZoonkWeb.SubscriptionLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
+    <ZoonkWeb.SettingsLayout.render flash={@flash} scope={@scope} current_page={:subscription}>
       subscription placeholder
-    </ZoonkWeb.AppLayout.render>
+    </ZoonkWeb.SettingsLayout.render>
     """
   end
 

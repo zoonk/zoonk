@@ -20,8 +20,6 @@ defmodule ZoonkDev.UIPreview.FormPreviewLive do
             <:subtitle>Enter the required information below.</:subtitle>
 
             <.input field={@basic_form[:name]} label="Name" placeholder="Enter your name" required />
-
-            <:requirements>All fields are required.</:requirements>
           </.form_container>
         </.card_content>
       </.card>
@@ -58,43 +56,6 @@ defmodule ZoonkDev.UIPreview.FormPreviewLive do
 
               <.input field={@profile_form[:birthday]} label="Birthday" type="date" />
             </div>
-
-            <:requirements>Fill out your profile to help others know you better.</:requirements>
-          </.form_container>
-        </.card_content>
-      </.card>
-
-      <.card>
-        <.card_header>
-          <.card_title>Form with Success Message</.card_title>
-          <.card_description>
-            A form demonstrating the "Done!" success message that appears after submission.
-          </.card_description>
-        </.card_header>
-
-        <.card_content>
-          <.form_container for={@success_form} id="success_form" display_success={true}>
-            <:title>Settings</:title>
-            <:subtitle>Update your preferences below.</:subtitle>
-
-            <div class="flex flex-col gap-4">
-              <.input
-                field={@success_form[:email]}
-                label="Email"
-                placeholder="your@email.com"
-                type="email"
-                required
-                class="w-full"
-              />
-
-              <.input
-                field={@success_form[:notifications]}
-                label="Enable notifications"
-                type="checkbox"
-              />
-            </div>
-
-            <:requirements>Changes will be saved automatically.</:requirements>
           </.form_container>
         </.card_content>
       </.card>

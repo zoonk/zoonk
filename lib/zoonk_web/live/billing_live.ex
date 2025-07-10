@@ -12,20 +12,26 @@ defmodule ZoonkWeb.BillingLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
+    <ZoonkWeb.SettingsLayout.render
+      flash={@flash}
+      scope={@scope}
+      current_page={:billing}
+      has_form={true}
+      form_id="billing_form"
+      display_success={@display_success?}
+    >
       <.form_container
         for={@billing_form}
         id="billing_form"
         phx-submit="submit"
         phx-change="validate_billing"
-        display_success={@display_success?}
       >
         <:title>{dgettext("settings", "Set up billing account")}</:title>
 
         <:subtitle>
           {dgettext(
             "settings",
-            "Set up your billing information to manage subscriptions and make purchases."
+            "Set up your billing information to manage subscriptions and make purchases. Only country and currency are required fields."
           )}
         </:subtitle>
         
@@ -34,7 +40,7 @@ defmodule ZoonkWeb.BillingLive do
           <.input
             id="billing-country"
             field={@billing_form[:country_iso2]}
-            label={dgettext("settings", "Country")}
+            label={dgettext("settings", "Country *")}
             type="select"
             options={country_options()}
             prompt={dgettext("settings", "Select your country")}
@@ -45,7 +51,7 @@ defmodule ZoonkWeb.BillingLive do
           <.input
             id="billing-currency"
             field={@billing_form[:currency]}
-            label={dgettext("settings", "Currency")}
+            label={dgettext("settings", "Currency *")}
             type="select"
             options={currency_options()}
             prompt={dgettext("settings", "Select currency")}
@@ -129,12 +135,8 @@ defmodule ZoonkWeb.BillingLive do
             class="w-full"
           />
         </div>
-
-        <:requirements>
-          {dgettext("settings", "Only country and currency are required fields.")}
-        </:requirements>
       </.form_container>
-    </ZoonkWeb.AppLayout.render>
+    </ZoonkWeb.SettingsLayout.render>
     """
   end
 

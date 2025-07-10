@@ -13,8 +13,8 @@ defmodule ZoonkWeb.BillingLiveTest do
 
       conn
       |> visit(~p"/billing")
-      |> select("Country", option: "United States")
-      |> select("Currency", option: "United States Dollar (USD)")
+      |> select("Country *", option: "United States")
+      |> select("Currency *", option: "United States Dollar (USD)")
       |> fill_in("Address line 1", with: "123 Main St")
       |> fill_in("City", with: "San Francisco")
       |> fill_in("State/Province", with: "CA")
@@ -50,8 +50,8 @@ defmodule ZoonkWeb.BillingLiveTest do
 
       conn
       |> visit(~p"/billing?from=/purchases")
-      |> select("Country", option: "United States")
-      |> select("Currency", option: "United States Dollar (USD)")
+      |> select("Country *", option: "United States")
+      |> select("Currency *", option: "United States Dollar (USD)")
       |> submit()
       |> assert_path(~p"/purchases")
     end
@@ -59,7 +59,7 @@ defmodule ZoonkWeb.BillingLiveTest do
     test "shows tax ID fields for countries that support them", %{conn: conn} do
       conn
       |> visit(~p"/billing")
-      |> select("Country", option: "United States")
+      |> select("Country *", option: "United States")
       |> assert_has("select[name='billing_account[tax_id_type]']")
       |> assert_has("input[name='billing_account[tax_id]']")
     end
@@ -81,7 +81,7 @@ defmodule ZoonkWeb.BillingLiveTest do
 
       conn
       |> visit(~p"/billing")
-      |> select("Country", option: "United States")
+      |> select("Country *", option: "United States")
       |> assert_has("select[name='billing_account[currency]'] option[value='USD'][selected]")
     end
 
@@ -90,11 +90,11 @@ defmodule ZoonkWeb.BillingLiveTest do
 
       conn
       |> visit(~p"/billing")
-      |> select("Country", option: "United States")
-      |> select("Currency", option: "Real Brasileiro (BRL)")
+      |> select("Country *", option: "United States")
+      |> select("Currency *", option: "Real Brasileiro (BRL)")
       |> assert_has("select[name='billing_account[currency]'] option[value='BRL'][selected]")
       |> fill_in("Address line 1", with: "123 Main St")
-      |> select("Currency", option: "United States Dollar (USD)")
+      |> select("Currency *", option: "United States Dollar (USD)")
       |> assert_has("select[name='billing_account[currency]'] option[value='USD'][selected]")
       |> fill_in("City", with: "San Francisco")
       |> assert_has("input[name='billing_account[city]']", value: "San Francisco")
