@@ -422,4 +422,116 @@ defmodule Zoonk.BillingTest do
       assert {:error, "Invalid request"} = Billing.create_stripe_customer(scope, attrs)
     end
   end
+
+  describe "update_stripe_customer/2" do
+    test "updates customer with name and phone" do
+      scope = scope_fixture()
+      stripe_stub(prefix: "cus_")
+
+      # First create a billing account
+      {:ok, _billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
+
+      attrs = %{
+        "name" => "John Doe",
+        "phone" => "+1234567890"
+      }
+
+      stripe_stub(prefix: "cus_")
+
+      assert {:ok, customer} = Billing.update_stripe_customer(scope, attrs)
+      assert String.starts_with?(customer["id"], "cus_")
+    end
+
+    test "updates customer with address information" do
+      scope = scope_fixture()
+      stripe_stub(prefix: "cus_")
+
+      # First create a billing account
+      {:ok, _billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
+
+      attrs = %{
+        "address_line_1" => "456 Oak St",
+        "address_line_2" => "Suite 200",
+        "city" => "New York",
+        "state" => "NY",
+        "postal_code" => "10001",
+        "country_iso2" => "US"
+      }
+
+      stripe_stub(prefix: "cus_")
+
+      assert {:ok, customer} = Billing.update_stripe_customer(scope, attrs)
+      assert String.starts_with?(customer["id"], "cus_")
+    end
+
+    test "updates customer with tax ID information" do
+      scope = scope_fixture()
+      stripe_stub(prefix: "cus_")
+
+      # First create a billing account
+      {:ok, _billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
+
+      attrs = %{
+        "tax_id" => "98-7654321",
+        "tax_id_type" => "us_ein",
+        "country_iso2" => "US"
+      }
+
+      stripe_stub(prefix: "cus_")
+
+      assert {:ok, customer} = Billing.update_stripe_customer(scope, attrs)
+      assert String.starts_with?(customer["id"], "cus_")
+    end
+
+    test "updates customer with full billing information" do
+      scope = scope_fixture()
+      stripe_stub(prefix: "cus_")
+
+      # First create a billing account
+      {:ok, _billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
+
+      attrs = %{
+        "name" => "Jane Smith",
+        "phone" => "+1987654321",
+        "address_line_1" => "789 Pine Ave",
+        "city" => "Los Angeles",
+        "state" => "CA",
+        "postal_code" => "90210",
+        "country_iso2" => "US",
+        "tax_id" => "87-6543210",
+        "tax_id_type" => "us_ein"
+      }
+
+      stripe_stub(prefix: "cus_")
+
+      assert {:ok, customer} = Billing.update_stripe_customer(scope, attrs)
+      assert String.starts_with?(customer["id"], "cus_")
+    end
+
+    test "returns error when no billing account exists" do
+      scope = scope_fixture()
+
+      attrs = %{
+        "name" => "John Doe"
+      }
+
+      assert {:error, "No billing account found"} = Billing.update_stripe_customer(scope, attrs)
+    end
+
+    test "handles stripe error when updating customer" do
+      scope = scope_fixture()
+      stripe_stub(prefix: "cus_")
+
+      # First create a billing account
+      {:ok, _billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
+
+      attrs = %{
+        "name" => "John Doe"
+      }
+
+      stripe_stub(error: true)
+
+      assert {:error, "Invalid request"} = Billing.update_stripe_customer(scope, attrs)
+    end
+  end
 end

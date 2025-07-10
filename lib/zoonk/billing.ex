@@ -245,6 +245,41 @@ defmodule Zoonk.Billing do
     |> then(&Stripe.post("/customers", &1))
   end
 
+  @doc """
+  Updates a customer in Stripe.
+
+  Updates an existing customer record in Stripe using the user's
+  billing preferences and optional attributes. Gets the Stripe customer ID
+  from the user's billing account.
+
+  ## Examples
+
+      iex> update_stripe_customer(%Scope{}, %{"name" => "John Doe"})
+      {:ok, %{"id" => "cus_1234567890", "name" => "John Doe"}}
+
+      iex> update_stripe_customer(%Scope{}, %{})
+      {:error, "No billing account found"}
+  """
+  def update_stripe_customer(%Scope{} = scope, attrs \\ %{}) do
+    case get_billing_account(scope) do
+      %BillingAccount{stripe_customer_id: stripe_customer_id} ->
+        attrs
+        |> maybe_put("name", attrs["name"])
+        |> maybe_put("phone", attrs["phone"])
+        |> maybe_put("address[line1]", attrs["address_line_1"])
+        |> maybe_put("address[line2]", attrs["address_line_2"])
+        |> maybe_put("address[city]", attrs["city"])
+        |> maybe_put("address[state]", attrs["state"])
+        |> maybe_put("address[postal_code]", attrs["postal_code"])
+        |> maybe_put("address[country]", attrs["country_iso2"])
+        |> Map.merge(build_tax_id_attrs(attrs))
+        |> then(&Stripe.post("/customers/#{stripe_customer_id}", &1))
+
+      nil ->
+        {:error, "No billing account found"}
+    end
+  end
+
   defp build_tax_id_attrs(%{"tax_id" => id, "tax_id_type" => type}) when is_binary(id) and is_binary(type) do
     %{"tax_id_data[0][type]" => type, "tax_id_data[0][value]" => id}
   end
