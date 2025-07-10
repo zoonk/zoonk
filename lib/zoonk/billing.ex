@@ -86,8 +86,30 @@ defmodule Zoonk.Billing do
         |> Map.put("user_id", scope.user.id)
 
       %BillingAccount{}
-      |> BillingAccount.changeset(attrs)
+      |> BillingAccount.create_changeset(attrs)
       |> Repo.insert()
+    end
+  end
+
+  @doc """
+  Updates a billing account.
+
+  Updates an existing billing account and the associated Stripe customer
+  with new attributes.
+
+  ## Examples
+
+      iex> update_billing_account(scope, billing_account, %{currency: "EUR", country_iso2: "FR"})
+      {:ok, %BillingAccount{}}
+
+      iex> update_billing_account(scope, billing_account, %{currency: nil})
+      {:error, %Ecto.Changeset{}}
+  """
+  def update_billing_account(%Scope{} = scope, %BillingAccount{} = billing_account, attrs) do
+    with {:ok, _stripe_customer} <- update_stripe_customer(scope, attrs) do
+      billing_account
+      |> BillingAccount.changeset(attrs)
+      |> Repo.update()
     end
   end
 
