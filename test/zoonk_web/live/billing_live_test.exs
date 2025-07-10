@@ -25,16 +25,6 @@ defmodule ZoonkWeb.BillingLiveTest do
       assert Billing.get_billing_account(scope)
     end
 
-    test "redirects to subscription page if user already has billing account", %{conn: conn, scope: scope} do
-      stripe_stub(prefix: "cus_")
-
-      billing_account_fixture(%{"scope" => scope})
-
-      conn
-      |> visit(~p"/billing")
-      |> assert_path(~p"/subscription")
-    end
-
     test "displays validation errors for missing required fields", %{conn: conn} do
       stripe_stub(prefix: "cus_")
 

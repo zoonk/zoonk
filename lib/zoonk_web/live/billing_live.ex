@@ -7,8 +7,6 @@ defmodule ZoonkWeb.BillingLive do
   alias Zoonk.Billing.TaxIdData
   alias Zoonk.Locations.CountryData
 
-  on_mount {__MODULE__, :ensure_no_billing_account}
-
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
@@ -141,13 +139,15 @@ defmodule ZoonkWeb.BillingLive do
   end
 
   @impl Phoenix.LiveView
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
     billing_changeset = Billing.change_billing_account_form(%BillingAccount{}, %{})
+    redirect_path = Map.get(params, "from", ~p"/subscription")
 
     socket =
       socket
       |> assign(:billing_form, to_form(billing_changeset))
       |> assign(:display_success?, false)
+      |> assign(:redirect_path, redirect_path)
       |> assign(:page_title, dgettext("page_title", "Set up billing account"))
 
     {:ok, socket}
@@ -207,14 +207,4 @@ defmodule ZoonkWeb.BillingLive do
   end
 
   defp tax_id_type_options(_country_iso2), do: []
-
-  def on_mount(:ensure_no_billing_account, params, _session, socket) do
-    redirect_path = Map.get(params, "from", ~p"/subscription")
-
-    if Billing.get_billing_account(socket.assigns.scope) do
-      {:halt, Phoenix.LiveView.redirect(socket, to: redirect_path)}
-    else
-      {:cont, assign(socket, :redirect_path, redirect_path)}
-    end
-  end
 end
