@@ -218,7 +218,7 @@ defmodule ZoonkWeb.UserAuth do
     if public_context?(context, scope) or logged_in? do
       {:cont, socket}
     else
-      socket = Phoenix.LiveView.redirect(socket, to: unauthenticated_path(scope, nil))
+      socket = Phoenix.LiveView.redirect(socket, to: unauthenticated_path(scope, context))
 
       {:halt, socket}
     end
@@ -309,7 +309,9 @@ defmodule ZoonkWeb.UserAuth do
   def signed_in_path(_conn), do: ~p"/"
 
   defp unauthenticated_path(%Scope{org: %Org{kind: :app}}, "/"), do: ~p"/catalog"
+  defp unauthenticated_path(%Scope{org: %Org{kind: :app}}, :apphome), do: ~p"/catalog"
   defp unauthenticated_path(%Scope{org: %Org{kind: :creator}}, "/"), do: ~p"/catalog"
+  defp unauthenticated_path(%Scope{org: %Org{kind: :creator}}, :apphome), do: ~p"/catalog"
   defp unauthenticated_path(_scope, _path), do: ~p"/login"
 
   defp build_scope(user, host) when is_binary(host) or is_nil(host) do

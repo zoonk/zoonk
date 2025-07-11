@@ -4,7 +4,6 @@ defmodule ZoonkWeb.Router do
   import ZoonkWeb.CSP
   import ZoonkWeb.Language
   import ZoonkWeb.UserAuth
-  import ZoonkWeb.UserAuthorization
 
   alias ZoonkWeb.UserAuth
   alias ZoonkWeb.UserAuthorization
@@ -52,7 +51,7 @@ defmodule ZoonkWeb.Router do
   end
 
   scope "/", ZoonkWeb do
-    pipe_through [:browser, :require_authenticated_user, :require_org_member, :require_org_admin]
+    pipe_through [:browser, :require_authenticated_user]
 
     live_session :require_authenticated_user,
       on_mount: [

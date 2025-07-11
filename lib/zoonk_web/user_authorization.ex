@@ -13,57 +13,7 @@ defmodule ZoonkWeb.UserAuthorization do
   alias Zoonk.Scope
   alias ZoonkWeb.PermissionError
 
-  @admin_paths ["/editor", "/org"]
   @admin_contexts [:editor, :org]
-
-  @doc """
-  Checks if the user is a confirmed member of the current organization.
-
-  This plug verifies that either:
-  1. The user is a confirmed member of the organization
-  2. OR the organization is public (`:app` or `:creator` kind)
-
-  If not, then we log them out.
-
-  ## Examples
-
-      plug :require_org_member
-  """
-  def require_org_member(conn, _opts) when conn.assigns.scope.org.kind in [:app, :creator], do: conn
-  def require_org_member(conn, opts), do: require_org_member(conn, opts, org_member?(conn.assigns.scope))
-
-  defp require_org_member(conn, _opts, true), do: conn
-
-  defp require_org_member(_conn, _opts, false) do
-    raise PermissionError, code: :require_org_member
-  end
-
-  @doc """
-  Checks if the user is an admin of the current organization for admin-restricted paths.
-
-  This plug verifies that the user has an admin role in the organization when
-  accessing paths that start with a value from `@admin_paths`. This check applies to all
-  organization kinds.
-
-  ## Examples
-
-      plug :require_org_admin
-  """
-
-  def require_org_admin(conn, []) do
-    require_org_admin(conn,
-      admin_path?: admin_path?(conn.request_path),
-      org_admin?: org_admin?(conn.assigns.scope)
-    )
-  end
-
-  def require_org_admin(conn, admin_path?: true, org_admin?: true), do: conn
-
-  def require_org_admin(_conn, admin_path?: true, org_admin?: false) do
-    raise PermissionError, code: :require_org_admin
-  end
-
-  def require_org_admin(conn, _opts), do: conn
 
   @doc """
   LiveView hooks to check organization membership and admin permissions.
@@ -117,10 +67,6 @@ defmodule ZoonkWeb.UserAuthorization do
   defp org_admin?(%Scope{org_member: nil}), do: false
   defp org_admin?(%Scope{org_member: org_member}) when org_member.role == :admin, do: true
   defp org_admin?(_scope), do: false
-
-  defp admin_path?(path) do
-    Enum.any?(@admin_paths, &String.starts_with?(path, &1))
-  end
 
   defp admin_context?(nil), do: false
 
