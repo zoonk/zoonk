@@ -5,7 +5,7 @@ defmodule ZoonkWeb.AppHomeLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
+    <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope} page={:home}>
       home placeholder
     </ZoonkWeb.AppLayout.render>
     """

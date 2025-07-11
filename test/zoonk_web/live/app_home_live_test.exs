@@ -32,4 +32,16 @@ defmodule ZoonkWeb.AppHomeLiveTest do
       |> assert_path(~p"/login")
     end
   end
+
+  describe "app home page (authenticated)" do
+    setup :signup_and_login_user
+
+    test "selects the home page menu", %{conn: conn} do
+      conn
+      |> visit(~p"/")
+      |> assert_path(~p"/")
+      |> assert_has(".zk-btn-black", text: "Home")
+      |> refute_has(".zk-btn-black", text: "Catalog")
+    end
+  end
 end

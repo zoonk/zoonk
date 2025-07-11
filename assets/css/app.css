@@ -314,6 +314,12 @@
   focus-visible:ring-zk-secondary-accent;
 }
 
+@utility zk-btn-black {
+  @apply bg-black ring-black text-white
+  hover:bg-black/70 hover:ring-black/70
+  focus-visible:ring-black/70;
+}
+
 @utility zk-btn-outline {
   @apply border border-zk-border bg-zk-background text-zk-foreground/70 shadow-xs
   hover:bg-zk-muted hover:text-zk-muted-foreground

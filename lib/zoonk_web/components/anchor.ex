@@ -11,7 +11,7 @@ defmodule ZoonkWeb.Components.Anchor do
   attr :kind, :atom, values: [:link, :button, :icon], default: :link, doc: "Kind of anchor to render"
 
   attr :variant, :atom,
-    values: [:primary, :outline, :destructive, :secondary],
+    values: [:primary, :outline, :destructive, :secondary, :black],
     default: :primary,
     doc: "Variant of anchor to render"
 
@@ -60,6 +60,7 @@ defmodule ZoonkWeb.Components.Anchor do
         @variant == :destructive && "zk-btn-destructive",
         @variant == :secondary && "zk-btn-secondary",
         @variant == :outline && "zk-btn-outline",
+        @variant == :black && "zk-btn-black",
         @size == :sm && "h-8 px-3 text-sm",
         @size == :md && "px-4.5 h-10",
         @size == :lg && "h-12 px-6 text-lg",
@@ -94,6 +95,8 @@ defmodule ZoonkWeb.Components.Anchor do
         @variant == :primary && "zk-btn-primary",
         @variant == :destructive && "zk-btn-destructive",
         @variant == :outline && "zk-btn-outline",
+        @variant == :secondary && "zk-btn-secondary",
+        @variant == :black && "zk-btn-black",
         @size == :sm && "size-8",
         @size == :md && "size-10",
         @size == :lg && "size-12",

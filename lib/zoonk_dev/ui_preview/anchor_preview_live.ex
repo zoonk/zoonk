@@ -57,6 +57,7 @@ defmodule ZoonkDev.UIPreview.AnchorPreviewLive do
           <.a kind={:button} variant={:destructive}>Destructive</.a>
           <.a kind={:button} variant={:secondary}>Secondary</.a>
           <.a kind={:button} variant={:outline}>Outline</.a>
+          <.a kind={:button} variant={:black}>Black</.a>
         </.card_content>
       </.card>
 
@@ -107,6 +108,14 @@ defmodule ZoonkDev.UIPreview.AnchorPreviewLive do
 
           <.a kind={:icon} size={:lg} variant={:outline} icon="tabler-x">
             Large icon
+          </.a>
+
+          <.a kind={:icon} size={:lg} variant={:secondary} icon="tabler-x">
+            Large secondary icon
+          </.a>
+
+          <.a kind={:icon} size={:lg} variant={:black} icon="tabler-x">
+            Large black icon
           </.a>
         </.card_content>
       </.card>

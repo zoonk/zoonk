@@ -5,7 +5,7 @@ defmodule ZoonkWeb.LearnSubjectLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
+    <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope} page={:start_course}>
       <div class="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center gap-4 text-center">
         <.text tag="h1" size={:xxl} aria-hidden="true">
           {dgettext("goals", "What do you want to learn?")}

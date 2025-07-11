@@ -17,6 +17,7 @@ defmodule ZoonkDev.UIPreview.ButtonPreviewLive do
           <.button variant={:destructive}>Destructive</.button>
           <.button variant={:secondary}>Secondary</.button>
           <.button variant={:outline}>Outline</.button>
+          <.button variant={:black}>Black</.button>
         </.card_content>
       </.card>
 
@@ -59,6 +60,7 @@ defmodule ZoonkDev.UIPreview.ButtonPreviewLive do
           <.button variant={:destructive} disabled>Destructive</.button>
           <.button variant={:secondary} disabled>Secondary</.button>
           <.button variant={:outline} disabled>Outline</.button>
+          <.button variant={:black} disabled>Black</.button>
         </.card_content>
       </.card>
 
@@ -96,6 +98,14 @@ defmodule ZoonkDev.UIPreview.ButtonPreviewLive do
 
           <.button kind={:icon} size={:lg} variant={:outline} icon="tabler-x">
             Large icon
+          </.button>
+
+          <.button kind={:icon} size={:lg} variant={:secondary} icon="tabler-x">
+            Large secondary icon
+          </.button>
+
+          <.button kind={:icon} size={:lg} variant={:black} icon="tabler-x">
+            Large black icon
           </.button>
         </.card_content>
       </.card>

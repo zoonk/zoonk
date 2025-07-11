@@ -13,6 +13,11 @@ defmodule ZoonkWeb.Components.Navbar do
 
   attr :user, User, doc: "The user scope containing user information"
 
+  attr :page, :atom,
+    values: [:home, :catalog, :start_course, :other],
+    default: :other,
+    doc: "The current page"
+
   @doc """
   Renders the main navigation bar.
 
@@ -26,14 +31,21 @@ defmodule ZoonkWeb.Components.Navbar do
       class="flex items-center justify-between gap-2"
       aria-label={dgettext("menu", "Main navigation")}
     >
-      <.a :if={@user} kind={:icon} icon="tabler-home" variant={:outline} navigate={~p"/"} size={:sm}>
+      <.a
+        :if={@user}
+        kind={:icon}
+        icon="tabler-home"
+        variant={get_variant(:home, @page)}
+        navigate={~p"/"}
+        size={:sm}
+      >
         {dgettext("menu", "Home page")}
       </.a>
 
       <.a
         kind={:button}
         icon="tabler-layout-grid"
-        variant={:outline}
+        variant={get_variant(:catalog, @page)}
         navigate={~p"/catalog"}
         size={:adaptive}
       >
@@ -50,7 +62,7 @@ defmodule ZoonkWeb.Components.Navbar do
         :if={@user}
         kind={:button}
         icon="tabler-circle-plus"
-        variant={:secondary}
+        variant={get_variant(:start_course, @page)}
         navigate={~p"/learn"}
         size={:adaptive}
         class="ml-auto"
@@ -137,4 +149,8 @@ defmodule ZoonkWeb.Components.Navbar do
     </nav>
     """
   end
+
+  defp get_variant(menu, page) when menu == page, do: :black
+  defp get_variant(menu, _page) when menu == :start_course, do: :secondary
+  defp get_variant(_menu, _page), do: :outline
 end
