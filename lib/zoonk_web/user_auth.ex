@@ -13,7 +13,6 @@ defmodule ZoonkWeb.UserAuth do
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.User
-  alias Zoonk.Helpers
   alias Zoonk.Orgs
   alias Zoonk.Orgs.Org
   alias Zoonk.Scope
@@ -25,7 +24,6 @@ defmodule ZoonkWeb.UserAuth do
   @remember_me_options [sign: true, max_age: @max_age, same_site: "Lax"]
 
   @public_paths ["/catalog", "/feedback", "/support", "/follow"]
-  @public_contexts [:catalog, :feedback, :support, :follow]
 
   @doc """
   Logs the user in.
@@ -209,18 +207,14 @@ defmodule ZoonkWeb.UserAuth do
     {:cont, mount_scope(socket, session)}
   end
 
-  def on_mount(:ensure_authenticated, _params, session, socket) do
-    socket = mount_scope(socket, session)
-    context = Helpers.get_context_from_module(socket.view)
+  def on_mount(:ensure_auth_for_private_orgs, _params, _session, socket) do
     scope = socket.assigns.scope
-    logged_in? = scope && scope.user
+    public_org? = scope.org.kind in [:app, :creator]
 
-    if public_context?(context, scope) or logged_in? do
+    if public_org? do
       {:cont, socket}
     else
-      socket = Phoenix.LiveView.redirect(socket, to: unauthenticated_path(scope, context))
-
-      {:halt, socket}
+      {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/login")}
     end
   end
 
@@ -325,13 +319,6 @@ defmodule ZoonkWeb.UserAuth do
 
   defp build_scope(user, []), do: build_scope(user, nil)
   defp build_scope(user, [domain_header | _rest]), do: build_scope(user, domain_header)
-
-  # It's a public context only if the LiveView module is from a public page AND the org is public.
-  defp public_context?(context, %Scope{org: org}) when is_atom(context) and org.kind in [:app, :creator] do
-    Enum.member?(@public_contexts, context)
-  end
-
-  defp public_context?(_context, _scope), do: false
 
   # It's a public path only if the request path is from a public page AND the org is public.
   defp public_path?(path, %Scope{org: org}) when is_binary(path) and org.kind in [:app, :creator] do

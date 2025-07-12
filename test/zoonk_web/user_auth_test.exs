@@ -225,55 +225,42 @@ defmodule ZoonkWeb.UserAuthTest do
     end
   end
 
-  describe "on_mount :ensure_authenticated" do
-    test "authenticates scope based on a valid user_token", %{conn: conn, user: user} do
-      user_token = Accounts.generate_user_session_token(user)
-
-      session =
-        conn
-        |> put_session(:user_token, user_token)
-        |> get_session()
-
-      {:cont, updated_socket} =
-        UserAuth.on_mount(:ensure_authenticated, %{}, session, %LiveView.Socket{
-          view: ZoonkWeb.ValidUserToken,
-          private: %{connect_info: conn}
-        })
-
-      assert updated_socket.assigns.scope.user.id == user.id
-    end
-
-    test "redirects to login page if there isn't a valid user_token", %{conn: conn} do
-      user_token = "invalid_token"
-
-      session =
-        conn
-        |> put_session(:user_token, user_token)
-        |> get_session()
+  describe "on_mount :ensure_auth_for_private_orgs" do
+    test "allows unauthenticated access to :app orgs" do
+      org = app_org_fixture()
+      scope = scope_fixture(%{org: org, user: nil, org_member: nil})
 
       socket = %LiveView.Socket{
-        view: ZoonkWeb.NoValidUserTokenLive,
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}},
-        private: %{connect_info: conn, live_temp: %{}}
+        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
       }
 
-      {:halt, updated_socket} = UserAuth.on_mount(:ensure_authenticated, %{}, session, socket)
-      refute updated_socket.assigns.scope.user
+      assert {:cont, _socket} = UserAuth.on_mount(:ensure_auth_for_private_orgs, %{}, %{}, socket)
     end
 
-    test "redirects to login page if there isn't a user_token", %{conn: conn} do
-      session = get_session(conn)
+    test "allows unauthenticated access to :creator orgs" do
+      org = org_fixture(%{kind: :creator})
+      scope = scope_fixture(%{org: org, user: nil, org_member: nil})
 
       socket = %LiveView.Socket{
-        view: ZoonkWeb.NoUserTokenLive,
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}},
-        private: %{connect_info: conn, live_temp: %{}}
+        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
       }
 
-      {:halt, updated_socket} = UserAuth.on_mount(:ensure_authenticated, %{}, session, socket)
-      refute updated_socket.assigns.scope.user
+      assert {:cont, _socket} = UserAuth.on_mount(:ensure_auth_for_private_orgs, %{}, %{}, socket)
+    end
+
+    test "redirects unauthenticated users for :team orgs" do
+      org = org_fixture(%{kind: :team})
+      scope = scope_fixture(%{org: org, user: nil, org_member: nil})
+
+      socket = %LiveView.Socket{
+        endpoint: ZoonkWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
+      }
+
+      assert {:halt, updated_socket} = UserAuth.on_mount(:ensure_auth_for_private_orgs, %{}, %{}, socket)
+      assert updated_socket.redirected == {:redirect, %{status: 302, to: ~p"/login"}}
     end
   end
 
