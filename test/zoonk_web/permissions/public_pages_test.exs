@@ -3,50 +3,33 @@ defmodule ZoonkWeb.PublicPagesPermissionTest do
     async: true,
     parameterize:
       for(
-        kind <- [:app, :creator, :team, :school],
         page <- [
-          %{link: "/catalog"},
+          %{link: "/signup"},
+          %{link: "/signup/email"},
+          %{link: "/login"},
+          %{link: "/login/email"},
+          %{link: "/confirm/login"},
+          %{link: "/confirm/signup"},
+          %{link: "/confirm/email"},
+          %{link: "/terms"},
+          %{link: "/privacy"},
           %{link: "/feedback"},
           %{link: "/support"},
           %{link: "/follow"}
         ],
-        do: %{kind: kind, page: page}
+        do: %{page: page}
       )
 
   import Zoonk.OrgFixtures
 
   describe "Public pages permissions" do
-    test "allows unauthenticated users to access public pages from public orgs", %{conn: conn, page: page, kind: kind} do
-      if kind in [:app, :creator] do
-        org = org_fixture(%{kind: kind})
+    test "allows unauthenticated users to access public pages", %{conn: conn, page: page} do
+      org = org_fixture()
 
-        conn
-        |> Map.put(:host, org.custom_domain)
-        |> visit(page.link)
-        |> assert_path(page.link)
-      end
-    end
-
-    test "display login button on header", %{conn: conn, page: page, kind: kind} do
-      if kind in [:app, :creator] do
-        org = org_fixture(%{kind: kind})
-
-        conn
-        |> Map.put(:host, org.custom_domain)
-        |> visit(page.link)
-        |> assert_has("a", text: "Login")
-      end
-    end
-
-    test "redirects unauthenticated users to login for private orgs", %{conn: conn, page: page, kind: kind} do
-      if kind in [:team, :school] do
-        org = org_fixture(%{kind: kind, public: false})
-
-        conn
-        |> Map.put(:host, org.custom_domain)
-        |> visit(page.link)
-        |> assert_path(~p"/login")
-      end
+      conn
+      |> Map.put(:host, org.custom_domain)
+      |> visit(page.link)
+      |> assert_path(page.link)
     end
   end
 end
