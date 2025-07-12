@@ -34,6 +34,10 @@ defmodule ZoonkWeb.UserAuthorization do
       on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
       on_mount {ZoonkWeb.UserAuthorization, :ensure_org_admin}
   """
+  def on_mount(:ensure_org_member, _params, _session, socket)
+      when is_nil(socket.assigns.scope) or is_nil(socket.assigns.scope.user) do
+    {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/login")}
+  end
 
   def on_mount(:ensure_org_member, _params, _session, socket) do
     if org_member?(socket.assigns.scope) do
