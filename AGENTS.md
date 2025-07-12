@@ -51,7 +51,7 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
 ### Schemas
 
 - Use context-prefixed names: `Zoonk.Accounts.User`
-- Include `@moduledoc` with a field table:
+- Include `@moduledoc` with a field table for SCHEMA modules only:
   ```
   Field Name | Type | Description
   ```
@@ -81,10 +81,12 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
 - Import via `html_helpers` in `zoonk_web.ex`
 - Use `Phoenix.Component.attr/3`
 - Add `@moduledoc` and `@doc` with usage examples
-- Add previews in `lib/zoonk_dev/ui_preview/` and register routes
+- Add previews in `lib/zoonk_dev/ui_preview/`, register routes, and update `ui_preview_layout.ex`
 - Use `<.text>` for all textual content
 - Render slots via `{render_slot(@inner_block)}`
 - Pass styling through `class=` props, not wrappers
+- Don't write tests for UI/functional components
+- Keep CSS in the component file, not in `globals.css` (we only add utilities there for reusable/shared styles)
 
 ---
 
@@ -97,6 +99,7 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
 - Use `zk-` prefix for custom utilities
 - Use `size-4` instead of `w-4 h-4`
 - Only create custom utilities when we're often using the same styles
+- Don't use `space-y-*` or `space-x-*` classes, instead use `gap-*`
 
 ### Icons
 
