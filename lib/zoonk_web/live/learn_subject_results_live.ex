@@ -4,6 +4,8 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
 
   alias Zoonk.AI.Tasks.RecommendCourses
 
+  on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
+
   @colors [
     "text-red-500",
     "text-orange-500",

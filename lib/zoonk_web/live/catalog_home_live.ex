@@ -2,6 +2,8 @@ defmodule ZoonkWeb.CatalogLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
+  on_mount {ZoonkWeb.UserAuth, :ensure_auth_for_private_orgs}
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""

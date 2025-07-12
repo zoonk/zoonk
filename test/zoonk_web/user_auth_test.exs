@@ -180,6 +180,40 @@ defmodule ZoonkWeb.UserAuthTest do
     end
   end
 
+  describe "maybe_store_return_to/2" do
+    setup %{conn: conn} do
+      %{conn: UserAuth.fetch_scope(conn, [])}
+    end
+
+    test "stores the current path in the session for GET requests", %{conn: conn} do
+      conn = UserAuth.maybe_store_return_to(%{conn | method: "GET"}, [])
+      assert get_session(conn, :user_return_to) == "/"
+    end
+
+    test "does not store the path for non-GET requests", %{conn: conn} do
+      conn = UserAuth.maybe_store_return_to(%{conn | method: "POST"}, [])
+      refute get_session(conn, :user_return_to)
+    end
+
+    test "does not store for GET requests for the login page", %{conn: conn} do
+      conn = %{conn | path_info: ["login"], method: "GET"}
+      return_conn = UserAuth.maybe_store_return_to(conn, [])
+      refute get_session(return_conn, :user_return_to)
+    end
+
+    test "does not store for GET requests for the sign up page", %{conn: conn} do
+      conn = %{conn | path_info: ["signup"], method: "GET"}
+      return_conn = UserAuth.maybe_store_return_to(conn, [])
+      refute get_session(return_conn, :user_return_to)
+    end
+
+    test "does not store for GET requests for the confirm page", %{conn: conn} do
+      conn = %{conn | path_info: ["confirm", "login"], method: "GET"}
+      return_conn = UserAuth.maybe_store_return_to(conn, [])
+      refute get_session(return_conn, :user_return_to)
+    end
+  end
+
   describe "on_mount :mount_scope" do
     setup %{conn: conn} do
       %{conn: UserAuth.fetch_scope(conn, [])}
@@ -225,55 +259,42 @@ defmodule ZoonkWeb.UserAuthTest do
     end
   end
 
-  describe "on_mount :ensure_authenticated" do
-    test "authenticates scope based on a valid user_token", %{conn: conn, user: user} do
-      user_token = Accounts.generate_user_session_token(user)
-
-      session =
-        conn
-        |> put_session(:user_token, user_token)
-        |> get_session()
-
-      {:cont, updated_socket} =
-        UserAuth.on_mount(:ensure_authenticated, %{}, session, %LiveView.Socket{
-          view: ZoonkWeb.ValidUserToken,
-          private: %{connect_info: conn}
-        })
-
-      assert updated_socket.assigns.scope.user.id == user.id
-    end
-
-    test "redirects to login page if there isn't a valid user_token", %{conn: conn} do
-      user_token = "invalid_token"
-
-      session =
-        conn
-        |> put_session(:user_token, user_token)
-        |> get_session()
+  describe "on_mount :ensure_auth_for_private_orgs" do
+    test "allows unauthenticated access to :app orgs" do
+      org = app_org_fixture()
+      scope = scope_fixture(%{org: org, user: nil, org_member: nil})
 
       socket = %LiveView.Socket{
-        view: ZoonkWeb.NoValidUserTokenLive,
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}},
-        private: %{connect_info: conn, live_temp: %{}}
+        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
       }
 
-      {:halt, updated_socket} = UserAuth.on_mount(:ensure_authenticated, %{}, session, socket)
-      refute updated_socket.assigns.scope.user
+      assert {:cont, _socket} = UserAuth.on_mount(:ensure_auth_for_private_orgs, %{}, %{}, socket)
     end
 
-    test "redirects to login page if there isn't a user_token", %{conn: conn} do
-      session = get_session(conn)
+    test "allows unauthenticated access to :creator orgs" do
+      org = org_fixture(%{kind: :creator})
+      scope = scope_fixture(%{org: org, user: nil, org_member: nil})
 
       socket = %LiveView.Socket{
-        view: ZoonkWeb.NoUserTokenLive,
         endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}},
-        private: %{connect_info: conn, live_temp: %{}}
+        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
       }
 
-      {:halt, updated_socket} = UserAuth.on_mount(:ensure_authenticated, %{}, session, socket)
-      refute updated_socket.assigns.scope.user
+      assert {:cont, _socket} = UserAuth.on_mount(:ensure_auth_for_private_orgs, %{}, %{}, socket)
+    end
+
+    test "redirects unauthenticated users for :team orgs" do
+      org = org_fixture(%{kind: :team})
+      scope = scope_fixture(%{org: org, user: nil, org_member: nil})
+
+      socket = %LiveView.Socket{
+        endpoint: ZoonkWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
+      }
+
+      assert {:halt, updated_socket} = UserAuth.on_mount(:ensure_auth_for_private_orgs, %{}, %{}, socket)
+      assert updated_socket.redirected == {:redirect, %{status: 302, to: ~p"/login"}}
     end
   end
 
@@ -452,58 +473,6 @@ defmodule ZoonkWeb.UserAuthTest do
       assert %{value: new_signed_token, max_age: max_age} = conn.resp_cookies[@remember_me_cookie]
       assert new_signed_token != signed_token
       assert max_age == @max_age
-    end
-  end
-
-  describe "require_authenticated_user/2" do
-    setup %{conn: conn} do
-      %{conn: UserAuth.fetch_scope(conn, [])}
-    end
-
-    test "redirects if user is not authenticated", %{conn: conn} do
-      conn =
-        conn
-        |> fetch_flash()
-        |> UserAuth.require_authenticated_user([])
-
-      assert conn.halted
-      assert redirected_to(conn) == redirect_path(:app, "/")
-    end
-
-    test "stores the path to redirect to on GET", %{conn: conn} do
-      no_query_conn =
-        %{conn | path_info: ["foo"], query_string: ""}
-        |> fetch_flash()
-        |> UserAuth.require_authenticated_user([])
-
-      assert no_query_conn.halted
-      assert get_session(no_query_conn, :user_return_to) == "/foo"
-
-      query_conn =
-        %{conn | path_info: ["foo"], query_string: "bar=baz"}
-        |> fetch_flash()
-        |> UserAuth.require_authenticated_user([])
-
-      assert query_conn.halted
-      assert get_session(query_conn, :user_return_to) == "/foo?bar=baz"
-
-      post_conn =
-        %{conn | path_info: ["foo"], query_string: "bar", method: "POST"}
-        |> fetch_flash()
-        |> UserAuth.require_authenticated_user([])
-
-      assert post_conn.halted
-      refute get_session(post_conn, :user_return_to)
-    end
-
-    test "does not redirect if user is authenticated", %{conn: conn, scope: scope} do
-      conn =
-        conn
-        |> assign(:scope, Scope.set(scope))
-        |> UserAuth.require_authenticated_user([])
-
-      refute conn.halted
-      refute conn.status
     end
   end
 end

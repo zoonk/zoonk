@@ -5,6 +5,8 @@ defmodule ZoonkWeb.LanguageLive do
   alias Zoonk.Accounts
   alias Zoonk.Localization
 
+  on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""

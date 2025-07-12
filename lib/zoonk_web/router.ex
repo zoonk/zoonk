@@ -5,11 +5,7 @@ defmodule ZoonkWeb.Router do
   import ZoonkWeb.Language
   import ZoonkWeb.UserAuth
 
-  alias ZoonkWeb.UserAuth
-  alias ZoonkWeb.UserAuthorization
-
   @allowed_images "https://avatars.githubusercontent.com https://github.com https://*.googleusercontent.com"
-  @allowed_scripts "https://ph.zoonk.com"
 
   pipeline :browser do
     plug :accepts, ["html"]
@@ -22,11 +18,12 @@ defmodule ZoonkWeb.Router do
 
     plug :put_secure_browser_headers, %{
       "content-security-policy" =>
-        "base-uri 'self'; frame-ancestors 'self'; default-src 'self'; img-src 'self' #{@allowed_images} data: blob:; script-src-elem 'self' #{@allowed_scripts}; connect-src 'self' #{@allowed_scripts}; worker-src 'self' blob: data:;"
+        "base-uri 'self'; frame-ancestors 'self'; default-src 'self'; img-src 'self' #{@allowed_images} data: blob:; script-src-elem 'self'; connect-src 'self'; worker-src 'self' blob: data:;"
     }
 
     plug :fetch_scope
     plug :set_session_language
+    plug :maybe_store_return_to
   end
 
   # This should only be used in rare cases where you want to skip protections like CSRF
@@ -39,6 +36,7 @@ defmodule ZoonkWeb.Router do
     plug :put_secure_browser_headers, %{"content-security-policy" => "default-src 'self';img-src 'self' data: blob:;"}
     plug :fetch_scope
     plug :set_session_language
+    plug :maybe_store_return_to
   end
 
   pipeline :api do
@@ -51,13 +49,11 @@ defmodule ZoonkWeb.Router do
   end
 
   scope "/", ZoonkWeb do
-    pipe_through [:browser, :require_authenticated_user]
+    pipe_through [:browser]
 
-    live_session :require_authenticated_user,
+    live_session :default,
       on_mount: [
-        {UserAuth, :ensure_authenticated},
-        {UserAuthorization, :ensure_org_member},
-        {UserAuthorization, :ensure_org_admin},
+        {ZoonkWeb.UserAuth, :mount_scope},
         {ZoonkWeb.Language, :set_app_language}
       ] do
       live "/", AppHomeLive
@@ -83,17 +79,7 @@ defmodule ZoonkWeb.Router do
       live "/follow", FollowLive
 
       live "/confirm/email", AuthConfirmCodeLive, :email
-    end
-  end
 
-  scope "/", ZoonkWeb do
-    pipe_through [:browser]
-
-    live_session :public_routes,
-      on_mount: [
-        {UserAuth, :mount_scope},
-        {ZoonkWeb.Language, :set_app_language}
-      ] do
       live "/signup", AuthSignUpLive
       live "/signup/email", AuthSignUpWithEmailLive
       live "/login", AuthLoginLive

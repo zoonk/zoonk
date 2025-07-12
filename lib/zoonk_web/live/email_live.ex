@@ -4,6 +4,8 @@ defmodule ZoonkWeb.EmailLive do
 
   alias Zoonk.Accounts
 
+  on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""

@@ -17,11 +17,11 @@ defmodule Zoonk.Orgs.Org do
 
   ## Organization Types
 
-  | Type | Description |
-  |------|-------------|
-  | `:app` | The main organization that owns this entire app (e.g. Zoonk) |
-  | `:team` | Organizations using Zoonk for internal training. |
-  | `:creator` | Organizations selling content on Zoonk. |
+  | Type      | Description                                                        |
+  |-----------|--------------------------------------------------------------------|
+  | `:app`    | The main organization that owns this entire app (e.g. Zoonk)       |
+  | `:team`   | Organizations using Zoonk for internal training.                   |
+  | `:creator`| Organizations selling content on Zoonk.                            |
   | `:school` | Educational institutions using Zoonk with their existing students. |
 
   ## Why the main app is an organization?

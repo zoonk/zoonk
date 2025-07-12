@@ -7,6 +7,8 @@ defmodule ZoonkWeb.BillingLive do
   alias Zoonk.Billing.TaxIdData
   alias Zoonk.Locations.CountryData
 
+  on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""

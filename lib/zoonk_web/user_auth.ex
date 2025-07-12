@@ -13,9 +13,7 @@ defmodule ZoonkWeb.UserAuth do
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.User
-  alias Zoonk.Helpers
   alias Zoonk.Orgs
-  alias Zoonk.Orgs.Org
   alias Zoonk.Scope
 
   @session_validity_in_days Application.compile_env!(:zoonk, :user_token)[:max_age_days][:session]
@@ -23,9 +21,6 @@ defmodule ZoonkWeb.UserAuth do
   @max_age @session_validity_in_days * 24 * 60 * 60
   @remember_me_cookie "_zoonk_web_user_remember_me"
   @remember_me_options [sign: true, max_age: @max_age, same_site: "Lax"]
-
-  @public_paths ["/catalog", "/feedback", "/support", "/follow"]
-  @public_contexts [:catalog, :feedback, :support, :follow]
 
   @doc """
   Logs the user in.
@@ -180,9 +175,9 @@ defmodule ZoonkWeb.UserAuth do
       to socket assigns based on user_token, or nil if
       there's no user_token or no matching user.
 
-    * `:ensure_authenticated` - Authenticates the user from the session,
-      and assigns the scope to socket assigns
-      based on user_token. Redirects to login page if there's no logged user.
+    * `:ensure_auth_for_private_orgs` - Ensures the user is authenticated
+      for private organizations. If the organization is public, it continues;
+      otherwise, it redirects to the login page.
 
     * `:ensure_sudo_mode` - Check if the user has been authenticated
       recently enough to access a certain page.
@@ -209,18 +204,14 @@ defmodule ZoonkWeb.UserAuth do
     {:cont, mount_scope(socket, session)}
   end
 
-  def on_mount(:ensure_authenticated, _params, session, socket) do
-    socket = mount_scope(socket, session)
-    context = Helpers.get_context_from_module(socket.view)
+  def on_mount(:ensure_auth_for_private_orgs, _params, _session, socket) do
     scope = socket.assigns.scope
-    logged_in? = scope && scope.user
+    public_org? = scope.org.kind in [:app, :creator]
 
-    if public_context?(context, scope) or logged_in? do
+    if public_org? do
       {:cont, socket}
     else
-      socket = Phoenix.LiveView.redirect(socket, to: unauthenticated_path(scope, context))
-
-      {:halt, socket}
+      {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/login")}
     end
   end
 
@@ -258,30 +249,25 @@ defmodule ZoonkWeb.UserAuth do
   end
 
   @doc """
-  Used for routes that require the user to be authenticated.
+  Stores the return to path for unauthenticated users.
 
-  If you want to enforce the user email is confirmed before
-  they use the application at all, here would be a good place.
+  This is used to redirect the user back to the page they were trying to access.
+  We store it for all GET requests that are not login, signup, or confirmation pages.
   """
-  def require_authenticated_user(conn, _opts) do
+  def maybe_store_return_to(%{method: "GET"} = conn, _opts) do
     scope = conn.assigns.scope
     logged_in? = scope && scope.user
+    path = current_path(conn)
+    auth_page? = String.starts_with?(path, ["/login", "/signup", "/confirm"])
 
-    if public_path?(conn.request_path, scope) or logged_in? do
+    if logged_in? || auth_page? do
       conn
     else
-      conn
-      |> maybe_store_return_to()
-      |> redirect(to: unauthenticated_path(scope, conn.request_path))
-      |> halt()
+      put_session(conn, :user_return_to, path)
     end
   end
 
-  defp maybe_store_return_to(%{method: "GET"} = conn) do
-    put_session(conn, :user_return_to, current_path(conn))
-  end
-
-  defp maybe_store_return_to(conn), do: conn
+  def maybe_store_return_to(conn, _opts), do: conn
 
   @doc """
   Puts the given token in the session and sets the
@@ -308,12 +294,6 @@ defmodule ZoonkWeb.UserAuth do
   @doc "Returns the path to redirect to after log in."
   def signed_in_path(_conn), do: ~p"/"
 
-  defp unauthenticated_path(%Scope{org: %Org{kind: :app}}, "/"), do: ~p"/catalog"
-  defp unauthenticated_path(%Scope{org: %Org{kind: :app}}, :apphome), do: ~p"/catalog"
-  defp unauthenticated_path(%Scope{org: %Org{kind: :creator}}, "/"), do: ~p"/catalog"
-  defp unauthenticated_path(%Scope{org: %Org{kind: :creator}}, :apphome), do: ~p"/catalog"
-  defp unauthenticated_path(_scope, _path), do: ~p"/login"
-
   defp build_scope(user, host) when is_binary(host) or is_nil(host) do
     org = Orgs.get_org_by_host(host)
 
@@ -325,18 +305,4 @@ defmodule ZoonkWeb.UserAuth do
 
   defp build_scope(user, []), do: build_scope(user, nil)
   defp build_scope(user, [domain_header | _rest]), do: build_scope(user, domain_header)
-
-  # It's a public context only if the LiveView module is from a public page AND the org is public.
-  defp public_context?(context, %Scope{org: org}) when is_atom(context) and org.kind in [:app, :creator] do
-    Enum.member?(@public_contexts, context)
-  end
-
-  defp public_context?(_context, _scope), do: false
-
-  # It's a public path only if the request path is from a public page AND the org is public.
-  defp public_path?(path, %Scope{org: org}) when is_binary(path) and org.kind in [:app, :creator] do
-    Enum.any?(@public_paths, fn public_path -> String.starts_with?(path, public_path) end)
-  end
-
-  defp public_path?(_path, _scope), do: false
 end

@@ -2,6 +2,8 @@ defmodule ZoonkWeb.MissionsLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
+  on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
