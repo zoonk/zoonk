@@ -109,12 +109,6 @@ defmodule ZoonkWeb.ConnCase do
   end
 
   @doc """
-  Returns the path to redirect unauthenticated users.
-  """
-  def redirect_path(kind, "/") when kind in [:app, :creator], do: "/catalog"
-  def redirect_path(_kind, _path), do: "/login"
-
-  @doc """
   Asserts a JSON error response that calls `ZoonkWeb.API.ErrorResponse.send_error/3`.
   """
   def assert_json_error(conn, status) do
