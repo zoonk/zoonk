@@ -23,6 +23,7 @@ defmodule ZoonkWeb.Router do
 
     plug :fetch_scope
     plug :set_session_language
+    plug :maybe_store_return_to
   end
 
   # This should only be used in rare cases where you want to skip protections like CSRF
@@ -35,6 +36,7 @@ defmodule ZoonkWeb.Router do
     plug :put_secure_browser_headers, %{"content-security-policy" => "default-src 'self';img-src 'self' data: blob:;"}
     plug :fetch_scope
     plug :set_session_language
+    plug :maybe_store_return_to
   end
 
   pipeline :api do
