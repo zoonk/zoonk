@@ -12,10 +12,25 @@ defmodule ZoonkWeb.SubscriptionLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.SettingsLayout.render flash={@flash} scope={@scope} current_page={:subscription}>
-      <section :if={@billing_account}>
-        <.text tag="h2" size={:xxl}>
-          {dgettext("settings", "Subscribe to learn anything")}
-        </.text>
+      <section
+        :if={@billing_account}
+        class="mx-auto flex w-full max-w-lg flex-1 flex-col items-center gap-8 md:max-w-4xl md:py-8"
+      >
+        <header class="flex flex-col items-center gap-1 text-center">
+          <.text tag="h2" size={:xxl} class="tracking-tight md:tracking-tightest">
+            {gettext(
+              "Subscribe to learn %{open}%{word}%{close}",
+              open: ~s(<span class="text-zk-primary/70">),
+              close: "</span>",
+              word: gettext("anything")
+            )
+            |> raw()}
+          </.text>
+
+          <.text size={:md} variant={:secondary}>
+            {dgettext("settings", "Get unlimited access to all courses")}
+          </.text>
+        </header>
       </section>
 
       <section :if={!@billing_account} class="flex flex-1 flex-col gap-4">
