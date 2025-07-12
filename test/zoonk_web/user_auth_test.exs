@@ -180,7 +180,7 @@ defmodule ZoonkWeb.UserAuthTest do
     end
   end
 
-  describe "maybe_store_return_to/1" do
+  describe "maybe_store_return_to/2" do
     setup %{conn: conn} do
       %{conn: UserAuth.fetch_scope(conn, [])}
     end

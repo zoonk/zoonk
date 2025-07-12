@@ -17,10 +17,8 @@ defmodule ZoonkWeb.UserAuthorization do
 
   ## `on_mount` arguments
 
-    * `:ensure_org_member` - Verifies that either:
-      1. The user is a confirmed member of the organization
-      2. OR the organization is public (`:app` or `:creator` kind)
-      If not, raises a PermissionError.
+    * `:ensure_org_member` - Verifies that the user is a confirmed member of the organization
+      If not, raises a `PermissionError`.
 
   ## Examples
 
