@@ -5,9 +5,6 @@ defmodule ZoonkWeb.Router do
   import ZoonkWeb.Language
   import ZoonkWeb.UserAuth
 
-  alias ZoonkWeb.UserAuth
-  alias ZoonkWeb.UserAuthorization
-
   @allowed_images "https://avatars.githubusercontent.com https://github.com https://*.googleusercontent.com"
   @allowed_scripts "https://ph.zoonk.com"
 
@@ -51,13 +48,11 @@ defmodule ZoonkWeb.Router do
   end
 
   scope "/", ZoonkWeb do
-    pipe_through [:browser, :require_authenticated_user]
+    pipe_through [:browser]
 
-    live_session :require_authenticated_user,
+    live_session :default,
       on_mount: [
-        {UserAuth, :ensure_authenticated},
-        {UserAuthorization, :ensure_org_member},
-        {UserAuthorization, :ensure_org_admin},
+        {ZoonkWeb.UserAuth, :mount_scope},
         {ZoonkWeb.Language, :set_app_language}
       ] do
       live "/", AppHomeLive
@@ -83,17 +78,7 @@ defmodule ZoonkWeb.Router do
       live "/follow", FollowLive
 
       live "/confirm/email", AuthConfirmCodeLive, :email
-    end
-  end
 
-  scope "/", ZoonkWeb do
-    pipe_through [:browser]
-
-    live_session :public_routes,
-      on_mount: [
-        {UserAuth, :mount_scope},
-        {ZoonkWeb.Language, :set_app_language}
-      ] do
       live "/signup", AuthSignUpLive
       live "/signup/email", AuthSignUpWithEmailLive
       live "/login", AuthLoginLive
