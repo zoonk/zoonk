@@ -18,32 +18,6 @@ defmodule ZoonkWeb.UserAuthorizationTest do
   end
 
   describe "on_mount :ensure_org_member" do
-    test "allows access when organization kind is :app" do
-      user = %{user_fixture() | confirmed_at: nil}
-      org = app_org_fixture()
-      scope = scope_fixture(%{user: user, org: org, org_member: nil})
-
-      socket = %LiveView.Socket{
-        endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
-      }
-
-      assert {:cont, _socket} = UserAuthorization.on_mount(:ensure_org_member, %{}, %{}, socket)
-    end
-
-    test "allows access when organization kind is :creator" do
-      user = %{user_fixture() | confirmed_at: nil}
-      org = org_fixture(%{kind: :creator})
-      scope = scope_fixture(%{user: user, org: org, org_member: nil})
-
-      socket = %LiveView.Socket{
-        endpoint: ZoonkWeb.Endpoint,
-        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
-      }
-
-      assert {:cont, _socket} = UserAuthorization.on_mount(:ensure_org_member, %{}, %{}, socket)
-    end
-
     test "allows access when user is a confirmed member of the organization" do
       user = user_fixture()
       org = org_fixture(%{kind: :team})
@@ -74,7 +48,37 @@ defmodule ZoonkWeb.UserAuthorizationTest do
       end
     end
 
-    test "redirects when org_member is nil" do
+    test "redirects when org_member is nil on :app org" do
+      user = user_fixture()
+      org = org_fixture(%{kind: :app})
+      scope = %Scope{user: user, org: org, org_member: nil}
+
+      socket = %LiveView.Socket{
+        endpoint: ZoonkWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
+      }
+
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        UserAuthorization.on_mount(:ensure_org_member, %{}, %{}, socket)
+      end
+    end
+
+    test "redirects when org_member is nil on :creator org" do
+      user = user_fixture()
+      org = org_fixture(%{kind: :creator})
+      scope = %Scope{user: user, org: org, org_member: nil}
+
+      socket = %LiveView.Socket{
+        endpoint: ZoonkWeb.Endpoint,
+        assigns: %{__changed__: %{}, flash: %{}, scope: scope}
+      }
+
+      assert_raise ZoonkWeb.PermissionError, fn ->
+        UserAuthorization.on_mount(:ensure_org_member, %{}, %{}, socket)
+      end
+    end
+
+    test "redirects when org_member is nil on :team org" do
       user = user_fixture()
       org = org_fixture(%{kind: :team})
       scope = %Scope{user: user, org: org, org_member: nil}
@@ -89,7 +93,7 @@ defmodule ZoonkWeb.UserAuthorizationTest do
       end
     end
 
-    test "redirects for school organizations when user is not a member" do
+    test "redirects when org_member is nil on :school org" do
       user = user_fixture()
       org = org_fixture(%{kind: :school})
       scope = %Scope{user: user, org: org, org_member: nil}
