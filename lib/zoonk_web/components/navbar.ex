@@ -150,7 +150,7 @@ defmodule ZoonkWeb.Components.Navbar do
     """
   end
 
-  defp get_variant(menu, page) when menu == page, do: :black
+  defp get_variant(menu, page) when menu == page, do: :active
   defp get_variant(menu, _page) when menu == :start_course, do: :secondary
   defp get_variant(_menu, _page), do: :outline
 end

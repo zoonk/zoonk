@@ -46,7 +46,7 @@ defmodule ZoonkWeb.LearnSubjectLiveTest do
       |> visit(~p"/learn")
       |> assert_path(~p"/learn")
       |> assert_has("h1", text: @page_title)
-      |> assert_has(".zk-btn-black", text: "Start course")
+      |> assert_has(".zk-btn-active", text: "Start course")
       |> refute_has("select")
       |> fill_in("#learn-subject input", "What do you want to learn?", with: "programming")
       |> submit()

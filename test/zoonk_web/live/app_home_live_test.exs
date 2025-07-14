@@ -40,8 +40,8 @@ defmodule ZoonkWeb.AppHomeLiveTest do
       conn
       |> visit(~p"/")
       |> assert_path(~p"/")
-      |> assert_has(".zk-btn-black", text: "Home")
-      |> refute_has(".zk-btn-black", text: "Catalog")
+      |> assert_has(".zk-btn-active", text: "Home")
+      |> refute_has(".zk-btn-active", text: "Catalog")
     end
   end
 end

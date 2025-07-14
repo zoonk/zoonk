@@ -18,7 +18,7 @@ defmodule ZoonkWeb.Components.Button do
   attr :kind, :atom, values: [:button, :icon], default: :button
   attr :icon, :string, default: nil
   attr :icon_align, :atom, values: [:left, :right, :auto], default: :auto
-  attr :variant, :atom, values: [:primary, :destructive, :secondary, :outline, :black], default: :primary
+  attr :variant, :atom, values: [:primary, :destructive, :secondary, :outline, :active], default: :primary
   attr :size, :atom, values: [:adaptive, :sm, :md, :lg], default: :sm
   attr :class, :string, default: nil
   attr :rest, :global, include: ~w(disabled form name value)
@@ -37,7 +37,7 @@ defmodule ZoonkWeb.Components.Button do
         @variant == :destructive && "zk-btn-destructive",
         @variant == :secondary && "zk-btn-secondary",
         @variant == :outline && "zk-btn-outline",
-        @variant == :black && "zk-btn-black",
+        @variant == :active && "zk-btn-active",
         @size == :sm && "h-8 px-3 text-sm",
         @size == :md && "px-4.5 h-10",
         @size == :lg && "h-12 px-6 text-lg",
@@ -73,7 +73,7 @@ defmodule ZoonkWeb.Components.Button do
         @variant == :destructive && "zk-btn-destructive",
         @variant == :outline && "zk-btn-outline",
         @variant == :secondary && "zk-btn-secondary",
-        @variant == :black && "zk-btn-black",
+        @variant == :active && "zk-btn-active",
         @size == :sm && "size-8",
         @size == :md && "size-10",
         @size == :lg && "size-12",
