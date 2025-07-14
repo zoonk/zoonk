@@ -119,7 +119,7 @@
 
 @media (prefers-contrast: more) and (prefers-color-scheme: light) {
   :root {
-    --background: var(--color-neutral-50);
+    --background: var(--color-white);
     --foreground: var(--color-black);
 
     --primary: var(--color-blue-800);
