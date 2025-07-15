@@ -18,11 +18,21 @@ defmodule Zoonk.BillingFixtures do
   def stripe_stub(opts) do
     prefix = Keyword.get(opts, :prefix, "/cust_")
     id = "#{prefix}#{System.unique_integer([:positive])}"
-    data = Keyword.get(opts, :data, %{})
 
-    Req.Test.stub(:stripe_client, fn conn ->
-      Req.Test.json(conn, Map.merge(%{"id" => id}, data))
-    end)
+    data =
+      opts
+      |> Keyword.get(:data, %{})
+      |> Map.put("id", id)
+
+    Req.Test.stub(:stripe_client, &handle_stripe_endpoint(&1, data))
+  end
+
+  defp handle_stripe_endpoint(%{request_path: "/v1/prices"} = conn, _data) do
+    Req.Test.json(conn, stripe_prices())
+  end
+
+  defp handle_stripe_endpoint(conn, data) do
+    Req.Test.json(conn, data)
   end
 
   @doc """
@@ -31,17 +41,17 @@ defmodule Zoonk.BillingFixtures do
   ## Examples
 
       iex> valid_user_subscription_attrs()
-      %{plan: :starter, payment_term: :monthly, ...}
+      %{plan: :plus, payment_term: :monthly, ...}
 
-      iex> valid_user_subscription_attrs(%{plan: :premium})
-      %{plan: :premium, payment_term: :monthly, ...}
+      iex> valid_user_subscription_attrs(%{plan: :plus})
+      %{plan: :plus, payment_term: :monthly, ...}
 
   """
   def valid_user_subscription_attrs(attrs \\ %{}) do
     expires_at = Map.get(attrs, :expires_at, DateTime.add(DateTime.utc_now(), 30, :day))
 
     Enum.into(attrs, %{
-      plan: :starter,
+      plan: :plus,
       payment_term: :monthly,
       status: :active,
       expires_at: expires_at,
@@ -58,14 +68,14 @@ defmodule Zoonk.BillingFixtures do
       iex> user_subscription_fixture()
       %UserSubscription{}
 
-      iex> user_subscription_fixture(%{plan: :premium})
-      %UserSubscription{plan: :premium}
+      iex> user_subscription_fixture(%{plan: :plus})
+      %UserSubscription{plan: :plus}
 
   """
   def user_subscription_fixture(attrs \\ %{}) do
     user = Map.get_lazy(attrs, :user, fn -> user_fixture() end)
     org = Map.get_lazy(attrs, :org, fn -> org_fixture() end)
-    scope = %Scope{user: user, org: org}
+    scope = Map.get_lazy(attrs, :scope, fn -> %Scope{user: user, org: org} end)
 
     attrs = valid_user_subscription_attrs(attrs)
 
@@ -118,5 +128,36 @@ defmodule Zoonk.BillingFixtures do
 
     {:ok, billing_account} = Billing.create_billing_account(scope, attrs)
     billing_account
+  end
+
+  defp stripe_prices do
+    %{
+      "data" => [
+        %{
+          "id" => "price_plus_monthly",
+          "lookup_key" => "plus_monthly",
+          "currency_options" => %{
+            "usd" => %{"unit_amount" => 1000},
+            "brl" => %{"unit_amount" => 5000}
+          }
+        },
+        %{
+          "id" => "price_plus_yearly",
+          "lookup_key" => "plus_yearly",
+          "currency_options" => %{
+            "usd" => %{"unit_amount" => 10_000},
+            "brl" => %{"unit_amount" => 500_000}
+          }
+        },
+        %{
+          "id" => "price_plus_lifetime",
+          "lookup_key" => "plus_lifetime",
+          "currency_options" => %{
+            "usd" => %{"unit_amount" => 30_000},
+            "brl" => %{"unit_amount" => 1_500_000}
+          }
+        }
+      ]
+    }
   end
 end

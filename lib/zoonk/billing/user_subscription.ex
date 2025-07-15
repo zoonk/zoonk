@@ -33,7 +33,7 @@ defmodule Zoonk.Billing.UserSubscription do
     belongs_to :user, User
 
     field :stripe_subscription_id, :string
-    field :plan, Ecto.Enum, values: [:free, :starter, :plus, :premium], default: :free
+    field :plan, Ecto.Enum, values: [:free, :plus], default: :free
     field :payment_term, Ecto.Enum, values: [:monthly, :yearly, :lifetime], default: :monthly
 
     field :status, Ecto.Enum,

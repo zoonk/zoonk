@@ -67,7 +67,7 @@ defmodule ZoonkWeb.Components.Flash do
 
   def flash_group(assigns) do
     ~H"""
-    <div id={@id} class="fixed top-4 right-4">
+    <div id={@id} class="z-100 fixed top-4 right-4">
       <.flash kind={:info} flash={@flash} />
       <.flash kind={:error} flash={@flash} />
 

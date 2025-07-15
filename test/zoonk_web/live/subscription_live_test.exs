@@ -57,5 +57,76 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       |> visit(~p"/subscription")
       |> refute_has("option", text: "Select your country")
     end
+
+    test "displays subscription plans with correct currency", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope, "currency" => "BRL"})
+
+      conn
+      |> visit(~p"/subscription")
+      |> assert_has("h2", text: "Subscribe")
+      |> assert_has("span", text: "R$0")
+      |> assert_has("span", text: "R$50")
+    end
+
+    test "display dollar currency if user's currency isn't supported", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope, "currency" => "GBP"})
+
+      conn
+      |> visit(~p"/subscription")
+      |> assert_has("h2", text: "Subscribe")
+      |> assert_has("span", text: "$0")
+      |> assert_has("span", text: "$10")
+    end
+
+    test "free plan is selected when user doesn't have a subscription", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+
+      conn
+      |> visit(~p"/subscription")
+      |> assert_has("input[checked]", name: "plan", value: "free")
+      |> refute_has("input[checked]", name: "plan", value: "plus")
+      |> assert_has("p", text: "This is a limited plan")
+      |> assert_has("h3", text: "Free Current Plan")
+      |> refute_has("h3", text: "Plus Current Plan")
+    end
+
+    test "selects the plus plan when user clicks on it", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+
+      conn
+      |> visit(~p"/subscription")
+      |> choose("Plus", exact: false)
+      |> assert_has("input[checked]", name: "plan", value: "plus")
+      |> refute_has("input[checked]", name: "plan", value: "free")
+      |> assert_has("p", text: "Your subscription will renew automatically at $10/month")
+    end
+
+    test "updates the price when selecting yearly period", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+
+      conn
+      |> visit(~p"/subscription")
+      |> choose("Yearly")
+      |> assert_has("span", text: "$100")
+      |> choose("Plus", exact: false)
+      |> assert_has("p", text: "Your subscription will renew automatically at $100/year")
+    end
+
+    test "updates the price when selecting lifetime period", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+
+      conn
+      |> visit(~p"/subscription")
+      |> choose("Lifetime")
+      |> assert_has("span", text: "$300")
+      |> choose("Plus", exact: false)
+      |> assert_has("p", text: "You will pay $300 now and have access to the Plus plan forever")
+    end
   end
 end

@@ -34,4 +34,25 @@ defmodule Zoonk.Locations do
       nil
   """
   defdelegate get_country(iso2_code), to: CountryData
+
+  @doc """
+  Retrieves the symbol for a currency by its code.
+
+  Returns the currency symbol if found, or `nil` if not found.
+
+  ## Examples
+
+      iex> get_currency_symbol("USD")
+      "$"
+
+      iex> get_currency_symbol("BRL")
+      "R$"
+
+      iex> get_currency_symbol("EUR")
+      "€"
+
+      iex> get_currency_symbol("XXX")
+      nil
+  """
+  defdelegate get_currency_symbol(currency_code), to: CountryData
 end

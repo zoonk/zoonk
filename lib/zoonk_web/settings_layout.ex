@@ -94,14 +94,6 @@ defmodule ZoonkWeb.SettingsLayout do
               />
 
               <.settings_menu_item
-                icon="tabler-credit-card"
-                label={dgettext("menu", "Billing")}
-                path={~p"/billing"}
-                current_page={@current_page}
-                page={:billing}
-              />
-
-              <.settings_menu_item
                 icon="tabler-message-circle"
                 label={dgettext("menu", "Send feedback")}
                 path={~p"/feedback"}
@@ -151,7 +143,7 @@ defmodule ZoonkWeb.SettingsLayout do
         class={[
           "flex items-center gap-3 p-4 transition-colors",
           "select-none hover:bg-zk-muted focus-visible:bg-zk-muted focus-visible:outline-0",
-          @current_page == @page && "bg-zk-muted text-zk-primary",
+          @current_page == @page && "bg-zk-muted text-zk-primary-text",
           @current_page != @page && "text-zk-foreground/70"
         ]}
       >

@@ -152,10 +152,12 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
   - `ZoonkWeb.ConnCase` for web
 - Fixtures in `test/support/fixtures/`
 - Avoid `setup` for fixtures; call fixtures directly on each test
-- Use `PhoenixTest` library
+- Use `PhoenixTest` library - see [docs](./.github/copilot/llm_docs/phoenix_test.md)
 - Use `Phoenix.Flash.get/2` (not `get_flash/2`)
 - Don’t expose private functions for testing
 - Run tests with `mix test`, not VSCode debugger
+- Run `mix format` before committing
+- Run `mix ci` after formatting to ensure code quality checks pass
 
 ---
 

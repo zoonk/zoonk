@@ -11,37 +11,52 @@ defmodule Zoonk.BillingTest do
   alias Zoonk.Billing.UserSubscription
   alias Zoonk.Scope
 
-  describe "list_prices/0" do
-    test "returns all prices when successful" do
-      stripe_stub(
-        data: %{
-          "data" => [
-            %{
-              "id" => "price_starter_monthly",
-              "lookup_key" => "starter_monthly",
-              "unit_amount" => 500,
-              "active" => true,
-              "currency_options" => %{
-                "usd" => %{"unit_amount" => 500},
-                "brl" => %{"unit_amount" => 1990}
-              }
-            }
-          ]
-        }
-      )
+  describe "list_prices/1" do
+    test "returns prices in billing account currency when available" do
+      stripe_stub()
 
-      assert {:ok, prices} = Billing.list_prices()
+      billing_account = %BillingAccount{currency: "BRL"}
+      assert {:ok, prices} = Billing.list_prices(billing_account)
 
       assert %Price{} = first_price = hd(prices)
-      assert first_price.plan == "starter_monthly"
-      assert first_price.periodicity == "monthly"
-      assert first_price.currencies["usd"] == 5
-      assert first_price.currencies["brl"] == 19.90
+      assert first_price.plan == :plus
+      assert first_price.period == :monthly
+      assert first_price.currency == "brl"
+      assert first_price.value == "R$50"
+      assert String.starts_with?(first_price.stripe_price_id, "price_")
+    end
+
+    test "falls back to USD when billing account currency is not available in Stripe" do
+      stripe_stub()
+
+      billing_account = %BillingAccount{currency: "CAD"}
+      assert {:ok, prices} = Billing.list_prices(billing_account)
+
+      assert %Price{} = first_price = hd(prices)
+      assert first_price.plan == :plus
+      assert first_price.period == :monthly
+      assert first_price.currency == "usd"
+      assert first_price.value == "$10"
+      assert String.starts_with?(first_price.stripe_price_id, "price_")
+    end
+
+    test "uses USD when billing account is nil" do
+      stripe_stub()
+
+      assert {:ok, prices} = Billing.list_prices(nil)
+
+      assert %Price{} = first_price = hd(prices)
+      assert first_price.plan == :plus
+      assert first_price.period == :monthly
+      assert first_price.currency == "usd"
+      assert first_price.value == "$10"
+      assert String.starts_with?(first_price.stripe_price_id, "price_")
     end
 
     test "returns error when Stripe API fails" do
       stripe_stub(error: true)
-      assert {:error, "Invalid request"} = Billing.list_prices()
+      billing_account = %BillingAccount{currency: "USD"}
+      assert {:error, "Invalid request"} = Billing.list_prices(billing_account)
     end
   end
 
@@ -124,7 +139,7 @@ defmodule Zoonk.BillingTest do
       scope = %Scope{user: user, org: org}
 
       attrs = %{
-        plan: :premium,
+        plan: :plus,
         payment_term: :lifetime,
         status: :active
       }
@@ -154,7 +169,7 @@ defmodule Zoonk.BillingTest do
 
       # Now update it
       update_attrs = %{
-        plan: :premium,
+        plan: :plus,
         payment_term: :yearly,
         status: :active,
         cancel_at_period_end: true
@@ -164,7 +179,7 @@ defmodule Zoonk.BillingTest do
       assert updated.id == subscription.id
       assert updated.user_id == user.id
       assert updated.org_id == org.id
-      assert updated.plan == :premium
+      assert updated.plan == :plus
       assert updated.payment_term == :yearly
       assert updated.status == :active
       assert updated.cancel_at_period_end == true

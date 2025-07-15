@@ -121,7 +121,7 @@ defmodule Zoonk.Billing do
 
   ## Examples
 
-      iex> create_user_subscription(%Scope{}, %{plan: :starter, payment_term: :monthly})
+      iex> create_user_subscription(%Scope{}, %{plan: :plus, payment_term: :monthly})
       {:ok, %UserSubscription{}}
 
       iex> create_user_subscription(%Scope{}, %{})
@@ -156,7 +156,7 @@ defmodule Zoonk.Billing do
 
   ## Examples
 
-      iex> update_user_subscription(%Scope{}, subscription, %{plan: :premium})
+      iex> update_user_subscription(%Scope{}, subscription, %{plan: :plus})
       {:ok, %UserSubscription{}}
 
       iex> update_user_subscription(%Scope{}, subscription, %{})
@@ -174,30 +174,38 @@ defmodule Zoonk.Billing do
   end
 
   @doc """
-  Lists all available pricing options for plans.
+  Lists all available pricing options for plans filtered by billing account currency.
 
-  Returns a list of prices for all plan options (starter, plus, premium)
-  with all payment periodicities (monthly, yearly, lifetime).
+  Returns a list of prices for all plan options in the billing account's currency.
+  If the billing account is nil or the currency is not available in Stripe,
+  falls back to USD.
 
   ## Examples
 
-      iex> list_prices()
-      {:ok, [%Price{}]}
+      iex> list_prices(%BillingAccount{currency: "BRL"})
+      {:ok, [%Price{currency: "brl"}]}
 
-      iex> list_prices()
-      {:error, "Failed to fetch prices"}
+      iex> list_prices(%BillingAccount{currency: "CAD"})
+      {:ok, [%Price{currency: "usd"}]}
+
+      iex> list_prices(nil)
+      {:ok, [%Price{currency: "usd"}]}
   """
-  def list_prices do
+  def list_prices(%BillingAccount{currency: currency}) do
     "/prices"
     |> Stripe.get(stripe_price_params())
-    |> list_prices()
+    |> list_prices(String.downcase(currency))
   end
 
-  defp list_prices({:ok, %{"data" => prices}}) do
-    {:ok, Enum.map(prices, &Price.transform_from_stripe/1)}
+  def list_prices(nil) do
+    list_prices(%BillingAccount{currency: "USD"})
   end
 
-  defp list_prices({:error, message}), do: {:error, message}
+  defp list_prices({:ok, %{"data" => prices}}, currency) do
+    {:ok, Enum.map(prices, &Price.transform_from_stripe(&1, currency))}
+  end
+
+  defp list_prices({:error, message}, _currency), do: {:error, message}
 
   defp stripe_price_params do
     [
@@ -209,9 +217,7 @@ defmodule Zoonk.Billing do
 
   defp stripe_lookup_keys do
     ~w[
-      starter_monthly starter_yearly starter_lifetime
       plus_monthly    plus_yearly    plus_lifetime
-      premium_monthly premium_yearly premium_lifetime
     ]
   end
 
