@@ -14,7 +14,7 @@ defmodule Zoonk.Billing.UserSubscription do
   | `user_id`                | `Integer`     | Reference to `Zoonk.Accounts.User`                  |
   | `stripe_subscription_id` | `String`      | Stripe subscription ID.                             |
   | `plan`                   | `Ecto.Enum`   | The subscription plan type.                         |
-  | `payment_term`           | `Ecto.Enum`   | Payment frequency (monthly, yearly, or lifetime).   |
+  | `payment_term`           | `Ecto.Enum`   | Payment frequency (monthly, yearly).                |
   | `status`                 | `Ecto.Enum`   | Current status of the subscription.                 |
   | `expires_at`             | `DateTime`    | When the subscription expires.                      |
   | `cancel_at_period_end`   | `Boolean`     | Whether to cancel at the end of the current period. |
@@ -34,7 +34,7 @@ defmodule Zoonk.Billing.UserSubscription do
 
     field :stripe_subscription_id, :string
     field :plan, Ecto.Enum, values: [:free, :plus], default: :free
-    field :payment_term, Ecto.Enum, values: [:monthly, :yearly, :lifetime], default: :monthly
+    field :payment_term, Ecto.Enum, values: [:monthly, :yearly], default: :monthly
 
     field :status, Ecto.Enum,
       values: [:incomplete, :incomplete_expired, :trialing, :active, :past_due, :canceled, :unpaid, :paused],

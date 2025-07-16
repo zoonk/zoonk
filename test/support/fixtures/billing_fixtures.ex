@@ -148,14 +148,6 @@ defmodule Zoonk.BillingFixtures do
             "usd" => %{"unit_amount" => 10_000},
             "brl" => %{"unit_amount" => 500_000}
           }
-        },
-        %{
-          "id" => "price_plus_lifetime",
-          "lookup_key" => "plus_lifetime",
-          "currency_options" => %{
-            "usd" => %{"unit_amount" => 30_000},
-            "brl" => %{"unit_amount" => 1_500_000}
-          }
         }
       ]
     }

@@ -141,13 +141,6 @@ defmodule ZoonkWeb.Components.FAQ do
         )}
       </.faq_item>
 
-      <.faq_item question={dgettext("faq", "What's a lifetime subscription?")}>
-        {dgettext(
-          "faq",
-          "This is a limited offer for early supporters. Pay once for lifetime access to Zoonk. You'll never pay a subscription again for the chosen plan. Plus, your support helps us fund the project without outside investors."
-        )}
-      </.faq_item>
-
       <.faq_item question={dgettext("faq", "How do I cancel my subscription?")}>
         {dgettext(
           "faq",
@@ -237,13 +230,6 @@ defmodule ZoonkWeb.Components.FAQ do
         )}
       </.faq_item>
 
-      <.faq_item question={dgettext("faq", "What does lifetime access mean?")}>
-        {dgettext(
-          "faq",
-          "Lifetime access means you can access this course forever after your one-time purchase. There are no recurring fees, and you'll continue to have access even if we update our pricing or change our business model. You'll also receive any updates or improvements we make to the course content at no additional cost. However, some premium features like personalized exercises won't be included."
-        )}
-      </.faq_item>
-
       <.faq_item question={dgettext("faq", "What's included when I buy a course?")}>
         {dgettext(
           "faq",
@@ -252,9 +238,9 @@ defmodule ZoonkWeb.Components.FAQ do
         <br />
         {dgettext("faq", "• Lifetime access to all lessons in the course")}
         <br />
-        {dgettext("faq", "• All regular exercises")}
+        {dgettext("faq", "• All regular exercises: explanation, example, story, and quiz")}
         <br />
-        {dgettext("faq", "• Any future updates to the course content")}
+        {dgettext("faq", "• Any future updates to regular exercises")}
         <br />
         {dgettext("faq", "• Basic progress tracking")}
         <br /><br />

@@ -132,29 +132,6 @@ defmodule Zoonk.BillingTest do
       assert subscription.expires_at == expires_at
       refute subscription.cancel_at_period_end
     end
-
-    test "sets far-future expiration date for lifetime subscriptions" do
-      user = user_fixture()
-      org = org_fixture()
-      scope = %Scope{user: user, org: org}
-
-      attrs = %{
-        plan: :plus,
-        payment_term: :lifetime,
-        status: :active
-      }
-
-      assert {:ok, %UserSubscription{} = subscription} = Billing.create_user_subscription(scope, attrs)
-      assert subscription.payment_term == :lifetime
-
-      # Check that the expires_at is set to Dec 31, 9999
-      assert subscription.expires_at.year == 9999
-      assert subscription.expires_at.month == 12
-      assert subscription.expires_at.day == 31
-      assert subscription.expires_at.hour == 23
-      assert subscription.expires_at.minute == 59
-      assert subscription.expires_at.second == 59
-    end
   end
 
   describe "update_user_subscription/3" do

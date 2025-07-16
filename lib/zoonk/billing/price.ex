@@ -4,13 +4,13 @@ defmodule Zoonk.Billing.Price do
 
   ## Fields
 
-  | Field       | Type                | Description                                   |
-  |-------------|---------------------|-----------------------------------------------|
-  | plan        | `t:plan/0`          | The subscription plan                         |
-  | period      | `t:period/0`        | Payment frequency                             |
-  | currency    | `String`            | The currency code (e.g., "usd", "brl")        |
-  | value       | `String`            | The price value in the specified currency     |
-  | stripe_price_id | `String`        | The Stripe price ID for this plan             |
+  | Field           | Type           | Description                               |
+  |-----------------|----------------|-------------------------------------------|
+  | plan            | `t:plan/0`     | The subscription plan                     |
+  | period          | `t:period/0`   | Payment frequency                         |
+  | currency        | `String`       | The currency code (e.g., "usd", "brl")    |
+  | value           | `String`       | The price value in the specified currency |
+  | stripe_price_id | `String`       | The Stripe price ID for this plan         |
   """
   alias Zoonk.Locations
 
@@ -18,7 +18,7 @@ defmodule Zoonk.Billing.Price do
   @default_value "$10"
 
   @type plan :: :plus
-  @type period :: :monthly | :yearly | :lifetime
+  @type period :: :monthly | :yearly
 
   @type t :: %__MODULE__{
           plan: plan,

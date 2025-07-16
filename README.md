@@ -39,7 +39,7 @@ You can read our full documentation at https://docs.zoonk.com or check the guide
 
 ## Supporters
 
-People who supported the project and will get lifetime access once we launch:
+People who supported this project:
 
 - [Sephora Lillian](https://github.com/sephoralillian)
 - [Ben Biran](https://github.com/benbiran)

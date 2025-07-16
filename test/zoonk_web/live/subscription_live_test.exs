@@ -116,17 +116,5 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       |> choose("Plus", exact: false)
       |> assert_has("p", text: "Your subscription will renew automatically at $100/year")
     end
-
-    test "updates the price when selecting lifetime period", %{conn: conn, scope: scope} do
-      stripe_stub()
-      billing_account_fixture(%{"scope" => scope})
-
-      conn
-      |> visit(~p"/subscription")
-      |> choose("Lifetime")
-      |> assert_has("span", text: "$300")
-      |> choose("Plus", exact: false)
-      |> assert_has("p", text: "You will pay $300 now and have access to the Plus plan forever")
-    end
   end
 end

@@ -44,10 +44,6 @@ defmodule ZoonkWeb.SubscriptionLive do
           <.toggle_item value="yearly" name="period" checked={@period == :yearly}>
             {dgettext("settings", "Yearly")}
           </.toggle_item>
-
-          <.toggle_item value="lifetime" name="period" checked={@period == :lifetime}>
-            {dgettext("settings", "Lifetime")}
-          </.toggle_item>
         </.toggle_group>
 
         <.subscription
@@ -257,7 +253,6 @@ defmodule ZoonkWeb.SubscriptionLive do
 
   defp period_label(:monthly), do: dgettext("settings", "/month")
   defp period_label(:yearly), do: dgettext("settings", "/year")
-  defp period_label(:lifetime), do: "one-time"
 
   defp free_plan_price([%Price{currency: currency} | _rest]) do
     symbol = Locations.get_currency_symbol(currency) || "$"
@@ -286,16 +281,10 @@ defmodule ZoonkWeb.SubscriptionLive do
     )
   end
 
-  defp get_plus_disclaimer(price_label, :lifetime) do
-    dgettext("settings", "You will pay %{price} now and have access to the Plus plan forever.", price: price_label)
-  end
-
   defp get_price_label(price, :monthly), do: dgettext("settings", "%{price}/month", price: price)
   defp get_price_label(price, :yearly), do: dgettext("settings", "%{price}/year", price: price)
-  defp get_price_label(price, :lifetime), do: dgettext("settings", "%{price}", price: price)
 
   defp badge_label(plan, current_plan, _period) when plan == current_plan, do: dgettext("settings", "Current Plan")
-  defp badge_label(:plus, _current_plan, :lifetime), do: dgettext("settings", "Limited Time Offer")
   defp badge_label(:plus, _current_plan, :yearly), do: dgettext("settings", "2 Months Free")
   defp badge_label(_plan, _current_plan, _period), do: nil
 
