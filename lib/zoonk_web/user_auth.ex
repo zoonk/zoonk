@@ -207,9 +207,9 @@ defmodule ZoonkWeb.UserAuth do
 
   def on_mount(:ensure_auth_for_private_orgs, _params, _session, socket) do
     scope = socket.assigns.scope
-    public_org? = scope.org.kind in [:app, :creator]
+    public_org? = scope.org && scope.org.kind in [:app, :creator]
 
-    if public_org? do
+    if public_org? || is_nil(scope.org) do
       {:cont, socket}
     else
       {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/login")}
