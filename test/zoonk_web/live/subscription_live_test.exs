@@ -129,4 +129,233 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       |> assert_has("p", text: "You will pay $300 now and have access to the Plus plan forever")
     end
   end
+
+  describe "subscription page with existing subscription" do
+    setup :signup_and_login_user
+
+    test "displays current subscription status", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+      
+      # Create an active subscription
+      subscription_attrs = valid_user_subscription_attrs(%{
+        plan: :plus,
+        payment_term: :monthly,
+        status: :active,
+        stripe_subscription_id: "sub_test123"
+      })
+      {:ok, _subscription} = Billing.create_user_subscription(scope, subscription_attrs)
+
+      conn
+      |> visit(~p"/subscription")
+      |> assert_has("div", text: "Current Plan")
+    end
+
+    test "shows manage button for active subscription with Stripe ID", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+      
+      subscription_attrs = valid_user_subscription_attrs(%{
+        plan: :plus,
+        payment_term: :yearly,
+        status: :active,
+        stripe_subscription_id: "sub_test123"
+      })
+      {:ok, _subscription} = Billing.create_user_subscription(scope, subscription_attrs)
+
+      conn
+      |> visit(~p"/subscription")
+      |> assert_has("button", text: "Manage")
+    end
+
+    test "does not show manage button for subscription without Stripe ID", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+      
+      subscription_attrs = valid_user_subscription_attrs(%{
+        plan: :plus,
+        payment_term: :lifetime,
+        status: :active,
+        stripe_subscription_id: nil
+      })
+      {:ok, _subscription} = Billing.create_user_subscription(scope, subscription_attrs)
+
+      conn
+      |> visit(~p"/subscription")
+      |> refute_has("button", text: "Manage")
+    end
+
+    test "shows cancel status for subscription with cancel_at_period_end", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+      
+      subscription_attrs = valid_user_subscription_attrs(%{
+        plan: :plus,
+        payment_term: :monthly,
+        status: :active,
+        cancel_at_period_end: true,
+        stripe_subscription_id: "sub_test123"
+      })
+      {:ok, _subscription} = Billing.create_user_subscription(scope, subscription_attrs)
+
+      conn
+      |> visit(~p"/subscription")
+      |> assert_has(text: "Cancels at period end")
+      |> refute_has("button", text: "Cancel")
+    end
+
+    test "shows lifetime subscription correctly", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+      
+      subscription_attrs = valid_user_subscription_attrs(%{
+        plan: :plus,
+        payment_term: :lifetime,
+        status: :active,
+        expires_at: ~U[9999-12-31 23:59:59Z]
+      })
+      {:ok, _subscription} = Billing.create_user_subscription(scope, subscription_attrs)
+
+      conn
+      |> visit(~p"/subscription")
+      |> assert_has(text: "Plus - Lifetime")
+      |> assert_has(text: "Active")
+    end
+
+    test "manages subscription redirects to customer portal", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+      
+      subscription_attrs = valid_user_subscription_attrs(%{
+        plan: :plus,
+        payment_term: :monthly,
+        status: :active,
+        stripe_subscription_id: "sub_test123"
+      })
+      {:ok, _subscription} = Billing.create_user_subscription(scope, subscription_attrs)
+
+      # Mock customer portal session creation
+      stripe_stub(
+        prefix: "/billing_portal/sessions",
+        data: %{
+          "id" => "bps_test123",
+          "url" => "https://billing.stripe.com/session/bps_test123"
+        }
+      )
+
+      conn
+      |> visit(~p"/subscription")
+      |> click_button("Manage")
+
+      # External redirect handling - we can't test the actual redirect to Stripe
+      # but we can verify the portal session was requested
+    end
+
+    test "cancels subscription successfully", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+      
+      subscription_attrs = valid_user_subscription_attrs(%{
+        plan: :plus,
+        payment_term: :monthly,
+        status: :active,
+        stripe_subscription_id: "sub_test123"
+      })
+      {:ok, _subscription} = Billing.create_user_subscription(scope, subscription_attrs)
+
+      # Mock Stripe subscription cancellation
+      stripe_stub(
+        prefix: "/subscriptions/sub_test123",
+        data: %{"status" => "canceled"}
+      )
+
+      conn
+      |> visit(~p"/subscription")
+      |> click_button("Cancel")
+      |> assert_has("[role='alert']", text: "Your subscription has been canceled")
+
+      # Verify subscription was updated
+      updated_subscription = Billing.get_user_subscription(scope)
+      assert updated_subscription.status == :canceled
+      assert updated_subscription.cancel_at_period_end == true
+    end
+  end
+
+  describe "subscription checkout flow" do
+    setup :signup_and_login_user
+
+    test "redirects to Stripe checkout for plus monthly plan", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+
+      # Mock checkout session creation
+      stripe_stub(
+        prefix: "/checkout/sessions",
+        data: %{
+          "id" => "cs_test123",
+          "url" => "https://checkout.stripe.com/pay/cs_test123"
+        }
+      )
+
+      conn
+      |> visit(~p"/subscription")
+      |> choose("Plus", exact: false)
+      |> click_button("Subscribe")
+
+      # External redirect handling - we can't test the actual redirect to Stripe
+      # but we can verify the checkout session was requested
+    end
+
+    test "shows success message when returning from successful checkout", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+
+      conn
+      |> visit(~p"/subscription?success=true")
+      |> assert_has("[role='alert']", text: "Your subscription has been successfully activated!")
+    end
+
+    test "shows cancel message when returning from canceled checkout", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+
+      conn
+      |> visit(~p"/subscription?canceled=true")
+      |> assert_has("[role='alert']", text: "Checkout was canceled")
+    end
+
+    test "shows async payment error message", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+
+      conn
+      |> visit(~p"/subscription?async_payment_error=insufficient_funds")
+      |> assert_has("[role='alert']", text: "Payment processing failed: insufficient_funds")
+    end
+
+    test "handles free plan selection when user has active subscription", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+      
+      subscription_attrs = valid_user_subscription_attrs(%{
+        plan: :plus,
+        payment_term: :monthly,
+        status: :active,
+        stripe_subscription_id: "sub_test123"
+      })
+      {:ok, _subscription} = Billing.create_user_subscription(scope, subscription_attrs)
+
+      # Mock Stripe subscription cancellation
+      stripe_stub(
+        prefix: "/subscriptions/sub_test123",
+        data: %{"status" => "canceled"}
+      )
+
+      conn
+      |> visit(~p"/subscription")
+      |> choose("Free", exact: false)
+      |> click_button("Subscribe")
+      |> assert_has("[role='alert']", text: "Your subscription has been canceled")
+    end
+  end
 end

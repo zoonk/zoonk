@@ -6,6 +6,13 @@ defmodule ZoonkWeb.StripeWebhookControllerTest do
   """
   use ZoonkWeb.ConnCase, async: true
 
+  import Zoonk.AccountFixtures
+  import Zoonk.BillingFixtures
+  import Zoonk.OrgFixtures
+
+  alias Zoonk.Billing
+  alias Zoonk.Repo
+  alias Zoonk.Scope
   alias Zoonk.Stripe.WebhookSignature
 
   @valid_webhook_secret "whsec_test_secret_key_for_webhook_verification"
@@ -13,7 +20,11 @@ defmodule ZoonkWeb.StripeWebhookControllerTest do
   @test_payload ~s({"id":"evt_test_webhook","type":"payment_intent.succeeded","object":"event"})
 
   setup do
-    %{payload: @test_payload}
+    user = user_fixture()
+    org = org_fixture()
+    scope = %Scope{user: user, org: org}
+    
+    %{payload: @test_payload, user: user, org: org, scope: scope}
   end
 
   describe "POST /webhooks/stripe" do
@@ -27,7 +38,7 @@ defmodule ZoonkWeb.StripeWebhookControllerTest do
         |> put_req_header("stripe-signature", signature)
         |> post(~p"/webhooks/stripe", payload)
 
-      assert response(conn, 200) == "Webhook received"
+      assert response(conn, 200) == "Webhook received but not processed"
     end
 
     test "successfully processes different event types", %{conn: conn} do
@@ -49,7 +60,7 @@ defmodule ZoonkWeb.StripeWebhookControllerTest do
           |> put_req_header("stripe-signature", signature)
           |> post(~p"/webhooks/stripe", payload)
 
-        assert response(conn, 200) == "Webhook received"
+        assert response(conn, 200) == "Webhook received but not processed"
       end
     end
 
@@ -142,7 +153,7 @@ defmodule ZoonkWeb.StripeWebhookControllerTest do
         |> put_req_header("stripe-signature", signature_with_extras)
         |> post(~p"/webhooks/stripe", payload)
 
-      assert response(conn, 200) == "Webhook received"
+      assert response(conn, 200) == "Webhook received but not processed"
     end
 
     test "handles large webhook payloads", %{conn: conn} do
@@ -159,7 +170,7 @@ defmodule ZoonkWeb.StripeWebhookControllerTest do
         |> put_req_header("stripe-signature", signature)
         |> post(~p"/webhooks/stripe", large_payload)
 
-      assert response(conn, 200) == "Webhook received"
+      assert response(conn, 200) == "Webhook received but not processed"
     end
 
     test "handles webhook with special characters in payload", %{conn: conn} do
@@ -174,7 +185,7 @@ defmodule ZoonkWeb.StripeWebhookControllerTest do
         |> put_req_header("stripe-signature", signature)
         |> post(~p"/webhooks/stripe", special_payload)
 
-      assert response(conn, 200) == "Webhook received"
+      assert response(conn, 200) == "Webhook received but not processed"
     end
 
     test "rejects webhook when webhook secret is missing from config" do
@@ -232,7 +243,7 @@ defmodule ZoonkWeb.StripeWebhookControllerTest do
         |> put_req_header("stripe-signature", signature_with_extras)
         |> post(~p"/webhooks/stripe", payload)
 
-      assert response(conn, 200) == "Webhook received"
+      assert response(conn, 200) == "Webhook received but not processed"
     end
 
     test "verifies signature using raw body from ParsersWithRawBody", %{conn: conn, payload: payload} do
@@ -247,7 +258,7 @@ defmodule ZoonkWeb.StripeWebhookControllerTest do
         |> put_req_header("stripe-signature", signature)
         |> post(~p"/webhooks/stripe", payload)
 
-      assert response(conn, 200) == "Webhook received"
+      assert response(conn, 200) == "Webhook received but not processed"
 
       # Verify that raw_body was used by checking it exists in assigns
       # (This is set by ParsersWithRawBody for webhook endpoints)
@@ -261,13 +272,362 @@ defmodule ZoonkWeb.StripeWebhookControllerTest do
       timestamp = System.system_time(:second)
       signature = WebhookSignature.sign(payload, timestamp, @valid_webhook_secret)
 
-      # This should trigger the function clause that doesn't match the type parameter
-      assert_raise Phoenix.ActionClauseError, fn ->
+      # This should not raise an exception anymore since we handle it gracefully
+      conn =
         conn
         |> put_req_header("content-type", "application/json")
         |> put_req_header("stripe-signature", signature)
         |> post(~p"/webhooks/stripe", payload)
-      end
+
+      assert response(conn, 200) == "Webhook received but not processed"
+    end
+  end
+
+  describe "subscription webhook events" do
+    test "handles customer.subscription.created event", %{conn: conn, user: user, org: org} do
+      # Create billing account for the user
+      stripe_stub(prefix: "cus_")
+      scope = %Scope{user: user, org: org}
+      {:ok, _billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
+
+      subscription_event = %{
+        "id" => "evt_subscription_created",
+        "type" => "customer.subscription.created",
+        "data" => %{
+          "object" => %{
+            "id" => "sub_123456789",
+            "status" => "active",
+            "current_period_end" => 1_735_689_600, # Future timestamp
+            "cancel_at_period_end" => false,
+            "metadata" => %{
+              "user_id" => to_string(user.id),
+              "org_id" => to_string(org.id)
+            },
+            "items" => %{
+              "data" => [
+                %{
+                  "price" => %{
+                    "lookup_key" => "plus_monthly",
+                    "recurring" => %{"interval" => "month"}
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      payload = Jason.encode!(subscription_event)
+      timestamp = System.system_time(:second)
+      signature = WebhookSignature.sign(payload, timestamp, @valid_webhook_secret)
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("stripe-signature", signature)
+        |> post(~p"/webhooks/stripe", payload)
+
+      assert response(conn, 200) == "Webhook processed successfully"
+
+      # Verify subscription was created
+      updated_scope = %Scope{user: user, org: org}
+      subscription = Billing.get_user_subscription(updated_scope)
+      assert subscription.plan == :plus
+      assert subscription.payment_term == :monthly
+      assert subscription.status == :active
+      assert subscription.stripe_subscription_id == "sub_123456789"
+    end
+
+    test "handles customer.subscription.updated event", %{conn: conn, user: user, org: org} do
+      # Create existing subscription
+      scope = %Scope{user: user, org: org}
+      stripe_stub(prefix: "cus_")
+      {:ok, _billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
+
+      attrs = valid_user_subscription_attrs(%{
+        stripe_subscription_id: "sub_123456789",
+        status: :active
+      })
+      {:ok, _subscription} = Billing.create_user_subscription(scope, attrs)
+
+      subscription_event = %{
+        "id" => "evt_subscription_updated",
+        "type" => "customer.subscription.updated",
+        "data" => %{
+          "object" => %{
+            "id" => "sub_123456789",
+            "status" => "past_due",
+            "current_period_end" => 1_735_689_600,
+            "cancel_at_period_end" => true,
+            "metadata" => %{
+              "user_id" => to_string(user.id),
+              "org_id" => to_string(org.id)
+            },
+            "items" => %{
+              "data" => [
+                %{
+                  "price" => %{
+                    "lookup_key" => "plus_monthly",
+                    "recurring" => %{"interval" => "month"}
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      payload = Jason.encode!(subscription_event)
+      timestamp = System.system_time(:second)
+      signature = WebhookSignature.sign(payload, timestamp, @valid_webhook_secret)
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("stripe-signature", signature)
+        |> post(~p"/webhooks/stripe", payload)
+
+      assert response(conn, 200) == "Webhook processed successfully"
+
+      # Verify subscription was updated
+      updated_scope = %Scope{user: user, org: org}
+      subscription = Billing.get_user_subscription(updated_scope)
+      assert subscription.status == :past_due
+      assert subscription.cancel_at_period_end == true
+    end
+
+    test "handles customer.subscription.deleted event", %{conn: conn, user: user, org: org} do
+      # Create existing subscription
+      scope = %Scope{user: user, org: org}
+      stripe_stub(prefix: "cus_")
+      {:ok, _billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
+
+      attrs = valid_user_subscription_attrs(%{
+        stripe_subscription_id: "sub_123456789",
+        status: :active
+      })
+      {:ok, _subscription} = Billing.create_user_subscription(scope, attrs)
+
+      subscription_event = %{
+        "id" => "evt_subscription_deleted",
+        "type" => "customer.subscription.deleted",
+        "data" => %{
+          "object" => %{
+            "id" => "sub_123456789",
+            "status" => "canceled",
+            "metadata" => %{
+              "user_id" => to_string(user.id),
+              "org_id" => to_string(org.id)
+            }
+          }
+        }
+      }
+
+      payload = Jason.encode!(subscription_event)
+      timestamp = System.system_time(:second)
+      signature = WebhookSignature.sign(payload, timestamp, @valid_webhook_secret)
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("stripe-signature", signature)
+        |> post(~p"/webhooks/stripe", payload)
+
+      assert response(conn, 200) == "Webhook processed successfully"
+
+      # Verify subscription was marked as canceled
+      updated_scope = %Scope{user: user, org: org}
+      subscription = Repo.get_by(Zoonk.Billing.UserSubscription, 
+        user_id: user.id, 
+        org_id: org.id, 
+        stripe_subscription_id: "sub_123456789"
+      )
+      assert subscription.status == :canceled
+    end
+
+    test "handles checkout.session.completed for subscription", %{conn: conn, user: user, org: org} do
+      checkout_event = %{
+        "id" => "evt_checkout_completed",
+        "type" => "checkout.session.completed",
+        "data" => %{
+          "object" => %{
+            "id" => "cs_123456789",
+            "mode" => "subscription",
+            "subscription" => "sub_987654321",
+            "metadata" => %{
+              "user_id" => to_string(user.id),
+              "org_id" => to_string(org.id),
+              "plan" => "plus",
+              "payment_term" => "monthly"
+            }
+          }
+        }
+      }
+
+      payload = Jason.encode!(checkout_event)
+      timestamp = System.system_time(:second)
+      signature = WebhookSignature.sign(payload, timestamp, @valid_webhook_secret)
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("stripe-signature", signature)
+        |> post(~p"/webhooks/stripe", payload)
+
+      assert response(conn, 200) == "Webhook processed successfully"
+    end
+
+    test "handles checkout.session.completed for lifetime payment", %{conn: conn, user: user, org: org} do
+      checkout_event = %{
+        "id" => "evt_checkout_lifetime",
+        "type" => "checkout.session.completed",
+        "data" => %{
+          "object" => %{
+            "id" => "cs_lifetime123",
+            "mode" => "payment",
+            "metadata" => %{
+              "user_id" => to_string(user.id),
+              "org_id" => to_string(org.id),
+              "plan" => "plus",
+              "payment_term" => "lifetime"
+            }
+          }
+        }
+      }
+
+      payload = Jason.encode!(checkout_event)
+      timestamp = System.system_time(:second)
+      signature = WebhookSignature.sign(payload, timestamp, @valid_webhook_secret)
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("stripe-signature", signature)
+        |> post(~p"/webhooks/stripe", payload)
+
+      assert response(conn, 200) == "Webhook processed successfully"
+
+      # Verify lifetime subscription was created
+      scope = %Scope{user: user, org: org}
+      subscription = Billing.get_user_subscription(scope)
+      assert subscription.plan == :plus
+      assert subscription.payment_term == :lifetime
+      assert subscription.status == :active
+      assert subscription.expires_at.year == 9999
+    end
+
+    test "handles checkout.session.async_payment_succeeded", %{conn: conn, user: user, org: org} do
+      async_success_event = %{
+        "id" => "evt_async_success",
+        "type" => "checkout.session.async_payment_succeeded",
+        "data" => %{
+          "object" => %{
+            "id" => "cs_async123",
+            "mode" => "payment",
+            "metadata" => %{
+              "user_id" => to_string(user.id),
+              "org_id" => to_string(org.id),
+              "plan" => "plus",
+              "payment_term" => "lifetime"
+            }
+          }
+        }
+      }
+
+      payload = Jason.encode!(async_success_event)
+      timestamp = System.system_time(:second)
+      signature = WebhookSignature.sign(payload, timestamp, @valid_webhook_secret)
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("stripe-signature", signature)
+        |> post(~p"/webhooks/stripe", payload)
+
+      assert response(conn, 200) == "Webhook processed successfully"
+    end
+
+    test "handles checkout.session.async_payment_failed", %{conn: conn, user: user, org: org} do
+      async_failed_event = %{
+        "id" => "evt_async_failed",
+        "type" => "checkout.session.async_payment_failed",
+        "data" => %{
+          "object" => %{
+            "id" => "cs_failed123",
+            "metadata" => %{
+              "user_id" => to_string(user.id),
+              "org_id" => to_string(org.id),
+              "plan" => "plus",
+              "payment_term" => "monthly"
+            }
+          }
+        }
+      }
+
+      payload = Jason.encode!(async_failed_event)
+      timestamp = System.system_time(:second)
+      signature = WebhookSignature.sign(payload, timestamp, @valid_webhook_secret)
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("stripe-signature", signature)
+        |> post(~p"/webhooks/stripe", payload)
+
+      assert response(conn, 200) == "Webhook processed successfully"
+    end
+
+    test "handles webhook with invalid metadata gracefully", %{conn: conn} do
+      invalid_event = %{
+        "id" => "evt_invalid_metadata",
+        "type" => "customer.subscription.created",
+        "data" => %{
+          "object" => %{
+            "id" => "sub_invalid",
+            "status" => "active",
+            "metadata" => %{
+              "user_id" => "invalid",
+              "org_id" => "999999"
+            }
+          }
+        }
+      }
+
+      payload = Jason.encode!(invalid_event)
+      timestamp = System.system_time(:second)
+      signature = WebhookSignature.sign(payload, timestamp, @valid_webhook_secret)
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("stripe-signature", signature)
+        |> post(~p"/webhooks/stripe", payload)
+
+      assert response(conn, 500) == "Webhook processing failed"
+    end
+
+    test "handles unrecognized webhook event type", %{conn: conn} do
+      unknown_event = %{
+        "id" => "evt_unknown",
+        "type" => "unknown.event.type",
+        "data" => %{
+          "object" => %{
+            "id" => "obj_unknown"
+          }
+        }
+      }
+
+      payload = Jason.encode!(unknown_event)
+      timestamp = System.system_time(:second)
+      signature = WebhookSignature.sign(payload, timestamp, @valid_webhook_secret)
+
+      conn =
+        conn
+        |> put_req_header("content-type", "application/json")
+        |> put_req_header("stripe-signature", signature)
+        |> post(~p"/webhooks/stripe", payload)
+
+      assert response(conn, 200) == "Webhook processed successfully"
     end
   end
 
@@ -296,13 +656,14 @@ defmodule ZoonkWeb.StripeWebhookControllerTest do
       timestamp = System.system_time(:second)
       signature = WebhookSignature.sign(empty_payload, timestamp, @valid_webhook_secret)
 
-      # This should fail with Phoenix.ActionClauseError since no type parameter
-      assert_raise Phoenix.ActionClauseError, fn ->
+      # This should not fail with Phoenix.ActionClauseError anymore
+      conn =
         conn
         |> put_req_header("content-type", "application/json")
         |> put_req_header("stripe-signature", signature)
         |> post(~p"/webhooks/stripe", empty_payload)
-      end
+
+      assert response(conn, 200) == "Webhook received but not processed"
     end
 
     test "signature verification works at edge of valid time period", %{conn: conn, payload: payload} do
@@ -316,7 +677,7 @@ defmodule ZoonkWeb.StripeWebhookControllerTest do
         |> put_req_header("stripe-signature", edge_signature)
         |> post(~p"/webhooks/stripe", payload)
 
-      assert response(conn, 200) == "Webhook received"
+      assert response(conn, 200) == "Webhook received but not processed"
     end
   end
 end

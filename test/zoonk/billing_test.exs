@@ -693,4 +693,189 @@ defmodule Zoonk.BillingTest do
       assert {:error, "Invalid request"} = Billing.update_stripe_customer(scope, attrs)
     end
   end
+
+  describe "get_user_subscription/1" do
+    test "returns active subscription for user and org" do
+      user = user_fixture()
+      org = org_fixture()
+      scope = %Scope{user: user, org: org}
+
+      # Create a subscription
+      attrs = valid_user_subscription_attrs(%{status: :active})
+      {:ok, subscription} = Billing.create_user_subscription(scope, attrs)
+
+      result = Billing.get_user_subscription(scope)
+      assert result.id == subscription.id
+      assert result.user_id == user.id
+      assert result.org_id == org.id
+    end
+
+    test "returns nil when no active subscription exists" do
+      user = user_fixture()
+      org = org_fixture()
+      scope = %Scope{user: user, org: org}
+
+      refute Billing.get_user_subscription(scope)
+    end
+
+    test "returns most recent active subscription when multiple exist" do
+      user = user_fixture()
+      org = org_fixture()
+      scope = %Scope{user: user, org: org}
+
+      # Create older subscription
+      attrs1 = valid_user_subscription_attrs(%{status: :active})
+      {:ok, _old_subscription} = Billing.create_user_subscription(scope, attrs1)
+
+      # Wait a moment to ensure different timestamps
+      :timer.sleep(10)
+
+      # Create newer subscription
+      attrs2 = valid_user_subscription_attrs(%{status: :active, stripe_subscription_id: "sub_newer"})
+      {:ok, new_subscription} = Billing.create_user_subscription(scope, attrs2)
+
+      result = Billing.get_user_subscription(scope)
+      assert result.id == new_subscription.id
+    end
+
+    test "ignores canceled and inactive subscriptions" do
+      user = user_fixture()
+      org = org_fixture()
+      scope = %Scope{user: user, org: org}
+
+      # Create canceled subscription
+      attrs = valid_user_subscription_attrs(%{status: :canceled})
+      {:ok, _canceled} = Billing.create_user_subscription(scope, attrs)
+
+      refute Billing.get_user_subscription(scope)
+    end
+
+    test "returns nil when user or org is nil" do
+      user = user_fixture()
+      org = org_fixture()
+
+      refute Billing.get_user_subscription(%Scope{user: nil, org: org})
+      refute Billing.get_user_subscription(%Scope{user: user, org: nil})
+      refute Billing.get_user_subscription(%Scope{user: nil, org: nil})
+    end
+  end
+
+  describe "create_checkout_session/3" do
+    test "creates subscription checkout session for monthly plan" do
+      scope = scope_fixture()
+      stripe_stub(prefix: "cus_")
+
+      # Create billing account
+      {:ok, _billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
+
+      # Mock Stripe checkout session
+      stripe_stub(
+        prefix: "cs_",
+        data: %{
+          "url" => "https://checkout.stripe.com/pay/cs_test123"
+        }
+      )
+
+      assert {:ok, %{"id" => session_id, "url" => checkout_url}} = 
+               Billing.create_checkout_session(scope, :plus, :monthly)
+
+      assert String.starts_with?(session_id, "cs_")
+      assert String.contains?(checkout_url, "checkout.stripe.com")
+    end
+
+    test "creates payment checkout session for lifetime plan" do
+      scope = scope_fixture()
+      stripe_stub(prefix: "cus_")
+
+      # Create billing account
+      {:ok, _billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
+
+      # Mock Stripe checkout session
+      stripe_stub(
+        prefix: "cs_",
+        data: %{
+          "url" => "https://checkout.stripe.com/pay/cs_lifetime123"
+        }
+      )
+
+      assert {:ok, %{"id" => session_id, "url" => checkout_url}} = 
+               Billing.create_checkout_session(scope, :plus, :lifetime)
+
+      assert String.starts_with?(session_id, "cs_")
+      assert String.contains?(checkout_url, "checkout.stripe.com")
+    end
+
+    test "returns error when no billing account exists" do
+      scope = scope_fixture()
+
+      assert {:error, "No billing account found"} = 
+               Billing.create_checkout_session(scope, :plus, :monthly)
+    end
+
+    test "returns error for invalid plan" do
+      scope = scope_fixture()
+
+      assert {:error, "Invalid plan or payment term"} = 
+               Billing.create_checkout_session(scope, :invalid, :monthly)
+    end
+
+    test "returns error when Stripe API fails" do
+      scope = scope_fixture()
+      stripe_stub(prefix: "cus_")
+
+      # Create billing account
+      {:ok, _billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
+
+      # Mock Stripe error
+      stripe_stub(error: true)
+
+      assert {:error, "Invalid request"} = 
+               Billing.create_checkout_session(scope, :plus, :monthly)
+    end
+  end
+
+  describe "create_customer_portal_session/1" do
+    test "creates customer portal session" do
+      scope = scope_fixture()
+      stripe_stub(prefix: "cus_")
+
+      # Create billing account
+      {:ok, _billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
+
+      # Mock Stripe portal session
+      stripe_stub(
+        prefix: "bps_",
+        data: %{
+          "url" => "https://billing.stripe.com/session/bps_test123"
+        }
+      )
+
+      assert {:ok, %{"id" => session_id, "url" => portal_url}} = 
+               Billing.create_customer_portal_session(scope)
+
+      assert String.starts_with?(session_id, "bps_")
+      assert String.contains?(portal_url, "billing.stripe.com")
+    end
+
+    test "returns error when no billing account exists" do
+      scope = scope_fixture()
+
+      assert {:error, "No billing account found"} = 
+               Billing.create_customer_portal_session(scope)
+    end
+
+    test "returns error when Stripe API fails" do
+      scope = scope_fixture()
+      stripe_stub(prefix: "cus_")
+
+      # Create billing account
+      {:ok, _billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
+
+      # Mock Stripe error
+      stripe_stub(error: true)
+
+      assert {:error, "Invalid request"} = 
+               Billing.create_customer_portal_session(scope)
+    end
+  end
 end
