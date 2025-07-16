@@ -93,6 +93,32 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       |> refute_has("h3", text: "Plus Current Plan")
     end
 
+    test "plus plan is selected when user has an active subscription", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+      user_subscription_fixture(%{scope: scope, plan: :plus, status: :active})
+
+      conn
+      |> visit(~p"/subscription")
+      |> assert_has("input[checked]", name: "plan", value: "plus")
+      |> refute_has("input[checked]", name: "plan", value: "free")
+      |> assert_has("h3", text: "Plus Current Plan")
+      |> refute_has("h3", text: "Free Current Plan")
+    end
+
+    test "free plan is selected when user has an inactive subscription", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+      user_subscription_fixture(%{scope: scope, plan: :plus, status: :canceled})
+
+      conn
+      |> visit(~p"/subscription")
+      |> assert_has("input[checked]", name: "plan", value: "free")
+      |> refute_has("input[checked]", name: "plan", value: "plus")
+      |> assert_has("h3", text: "Free Current Plan")
+      |> refute_has("h3", text: "Plus Current Plan")
+    end
+
     test "selects the plus plan when user clicks on it", %{conn: conn, scope: scope} do
       stripe_stub()
       billing_account_fixture(%{"scope" => scope})

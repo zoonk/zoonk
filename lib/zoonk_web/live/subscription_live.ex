@@ -7,8 +7,10 @@ defmodule ZoonkWeb.SubscriptionLive do
   alias Zoonk.Billing
   alias Zoonk.Billing.BillingAccount
   alias Zoonk.Billing.Price
+  alias Zoonk.Billing.UserSubscription
   alias Zoonk.Locations
   alias Zoonk.Locations.CountryData
+  alias Zoonk.Scope
 
   on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
 
@@ -170,7 +172,8 @@ defmodule ZoonkWeb.SubscriptionLive do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    billing_account = Billing.get_billing_account(socket.assigns.scope)
+    scope = socket.assigns.scope
+    billing_account = Billing.get_billing_account(scope)
     country_changeset = Billing.change_billing_account_form(%BillingAccount{}, %{})
 
     socket =
@@ -179,8 +182,8 @@ defmodule ZoonkWeb.SubscriptionLive do
       |> assign(:billing_account, billing_account)
       |> assign(:country_form, to_form(country_changeset))
       |> assign(:period, :monthly)
-      |> assign(:selected_plan, :free)
-      |> assign(:current_plan, :free)
+      |> assign(:selected_plan, current_plan(scope))
+      |> assign(:current_plan, current_plan(scope))
       |> assign(:prices, list_prices(billing_account))
 
     {:ok, socket}
@@ -290,4 +293,7 @@ defmodule ZoonkWeb.SubscriptionLive do
 
   defp badge_color(plan, current_plan) when plan == current_plan, do: :secondary
   defp badge_color(_plan, _current_plan), do: :primary
+
+  defp current_plan(%Scope{subscription: %UserSubscription{status: :active, plan: plan}}), do: plan
+  defp current_plan(_scope), do: :free
 end
