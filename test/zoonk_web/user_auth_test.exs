@@ -2,6 +2,7 @@ defmodule ZoonkWeb.UserAuthTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AccountFixtures
+  import Zoonk.BillingFixtures
   import Zoonk.OrgFixtures
 
   alias Phoenix.LiveView
@@ -219,8 +220,9 @@ defmodule ZoonkWeb.UserAuthTest do
       %{conn: UserAuth.fetch_scope(conn, [])}
     end
 
-    test "assigns scope based on a valid user_token", %{conn: conn, user: user} do
+    test "assigns scope based on a valid user_token", %{conn: conn, user: user, scope: scope} do
       user_token = Accounts.generate_user_session_token(user)
+      user_subscription_fixture(%{scope: scope, plan: :plus, status: :active})
 
       session =
         conn
@@ -230,7 +232,13 @@ defmodule ZoonkWeb.UserAuthTest do
       {:cont, updated_socket} =
         UserAuth.on_mount(:mount_scope, %{}, session, %LiveView.Socket{private: %{connect_info: conn}})
 
-      assert updated_socket.assigns.scope.user.id == user.id
+      updated_scope = updated_socket.assigns.scope
+
+      assert updated_scope.user.id == user.id
+      assert updated_scope.org.id == scope.org.id
+      assert updated_scope.org_member.id == scope.org_member.id
+      assert updated_scope.subscription.status == :active
+      assert updated_scope.subscription.plan == :plus
     end
 
     test "assigns nil to scope user if there isn't a valid user_token", %{conn: conn} do

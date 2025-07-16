@@ -465,6 +465,77 @@ defmodule Zoonk.BillingTest do
     end
   end
 
+  describe "get_user_subscription/1" do
+    test "returns active subscription when user has one" do
+      user = user_fixture()
+      org = org_fixture()
+      scope = %Scope{user: user, org: org}
+
+      user_subscription_fixture(%{
+        scope: scope,
+        status: :canceled,
+        expires_at: DateTime.add(DateTime.utc_now(), -30, :day)
+      })
+
+      active_subscription =
+        user_subscription_fixture(%{
+          scope: scope,
+          status: :active,
+          plan: :plus,
+          expires_at: DateTime.add(DateTime.utc_now(), 30, :day)
+        })
+
+      result = Billing.get_user_subscription(scope)
+      assert result.id == active_subscription.id
+      assert result.status == :active
+      assert result.plan == :plus
+    end
+
+    test "returns latest subscription when no active subscription exists" do
+      user = user_fixture()
+      org = org_fixture()
+      scope = %Scope{user: user, org: org}
+
+      user_subscription_fixture(%{
+        scope: scope,
+        status: :canceled,
+        expires_at: DateTime.add(DateTime.utc_now(), -365, :day)
+      })
+
+      newer_subscription =
+        user_subscription_fixture(%{
+          scope: scope,
+          status: :incomplete,
+          expires_at: DateTime.add(DateTime.utc_now(), -30, :day)
+        })
+
+      result = Billing.get_user_subscription(scope)
+      assert result.id == newer_subscription.id
+      assert result.status == :incomplete
+    end
+
+    test "returns nil when user has no subscriptions" do
+      user = user_fixture()
+      org = org_fixture()
+      scope = %Scope{user: user, org: org}
+
+      refute Billing.get_user_subscription(scope)
+    end
+
+    test "returns nil when user exists but org doesn't match" do
+      user = user_fixture()
+      org = org_fixture()
+      scope = %Scope{user: user, org: org}
+
+      other_org = org_fixture()
+      other_scope = %Scope{user: user, org: other_org}
+
+      user_subscription_fixture(%{scope: other_scope, status: :active})
+
+      refute Billing.get_user_subscription(scope)
+    end
+  end
+
   describe "get_unique_currencies/0" do
     test "returns unique currencies sorted by code" do
       currencies = Billing.get_unique_currencies()

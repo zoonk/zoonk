@@ -6,13 +6,16 @@ defmodule Zoonk.Billing do
   and integrating with payment providers such as Stripe.
   """
 
+  import Ecto.Query
   import Zoonk.Helpers, only: [maybe_put: 3]
 
+  alias Zoonk.Accounts.User
   alias Zoonk.Billing.BillingAccount
   alias Zoonk.Billing.Price
   alias Zoonk.Billing.Stripe
   alias Zoonk.Billing.UserSubscription
   alias Zoonk.Locations.CountryData
+  alias Zoonk.Orgs.Org
   alias Zoonk.Repo
   alias Zoonk.Scope
 
@@ -33,6 +36,45 @@ defmodule Zoonk.Billing do
   """
   def get_billing_account(%Scope{} = scope) do
     Repo.get_by(BillingAccount, user_id: scope.user.id)
+  end
+
+  @doc """
+  Gets a user subscription for a user.
+
+  Returns the active subscription if found, otherwise returns the latest subscription
+  (the one with the most recent updated_at). Returns nil if no subscription exists.
+
+  ## Examples
+
+      iex> get_user_subscription(%Scope{user: user, org: org})
+      %UserSubscription{}
+
+      iex> get_user_subscription(%Scope{user: user, org: org})
+      nil
+  """
+  def get_user_subscription(%Scope{user: %User{id: user_id}, org: %Org{id: org_id}}) do
+    case find_active_subscription(user_id, org_id) do
+      nil -> find_latest_subscription(user_id, org_id)
+      subscription -> subscription
+    end
+  end
+
+  def get_user_subscription(_scope), do: nil
+
+  defp find_active_subscription(user_id, org_id) do
+    UserSubscription
+    |> where([s], s.user_id == ^user_id and s.org_id == ^org_id and s.status == :active)
+    |> order_by([s], desc: s.expires_at)
+    |> limit(1)
+    |> Repo.one()
+  end
+
+  defp find_latest_subscription(user_id, org_id) do
+    UserSubscription
+    |> where([s], s.user_id == ^user_id and s.org_id == ^org_id)
+    |> order_by([s], desc: s.expires_at)
+    |> limit(1)
+    |> Repo.one()
   end
 
   @doc """

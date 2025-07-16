@@ -13,6 +13,7 @@ defmodule ZoonkWeb.UserAuth do
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.User
+  alias Zoonk.Billing
   alias Zoonk.Orgs
   alias Zoonk.Scope
 
@@ -296,11 +297,13 @@ defmodule ZoonkWeb.UserAuth do
 
   defp build_scope(user, host) when is_binary(host) or is_nil(host) do
     org = Orgs.get_org_by_host(host)
+    subscription = Billing.get_user_subscription(%Scope{user: user, org: org})
 
     %Scope{}
     |> Scope.set(user)
     |> Scope.set(org)
     |> Scope.set(Orgs.get_org_member(org, user))
+    |> Scope.set(subscription)
   end
 
   defp build_scope(user, []), do: build_scope(user, nil)

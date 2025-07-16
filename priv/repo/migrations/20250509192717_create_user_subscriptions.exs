@@ -16,7 +16,7 @@ defmodule Zoonk.Repo.Migrations.CreateUserSubscriptions do
       timestamps(type: :utc_datetime_usec)
     end
 
-    create index(:user_subscriptions, [:org_id, :user_id])
-    create index(:user_subscriptions, [:stripe_subscription_id])
+    create index(:user_subscriptions, [:user_id, :org_id, :status, :expires_at])
+    create index(:user_subscriptions, [:user_id, :org_id, :expires_at])
   end
 end
