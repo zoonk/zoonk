@@ -36,6 +36,41 @@ defmodule ZoonkWeb.SubscriptionLive do
           </.text>
         </header>
 
+        <!-- Current subscription status -->
+        <div :if={@subscription} class="w-full max-w-md rounded-lg border border-zk-border bg-zk-surface p-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <.text size={:sm} weight={:semibold}>
+                {dgettext("settings", "Current Plan")}
+              </.text>
+              <.text size={:lg} weight={:bold} class="capitalize">
+                {subscription_plan_display(@subscription)} - {subscription_term_display(@subscription)}
+              </.text>
+              <.text size={:sm} variant={:secondary}>
+                {subscription_status_display(@subscription)}
+              </.text>
+            </div>
+            <div class="flex flex-col gap-2">
+              <.button
+                :if={subscription_can_manage?(@subscription)}
+                phx-click="manage_subscription"
+                variant={:secondary}
+                size={:sm}
+              >
+                {dgettext("settings", "Manage")}
+              </.button>
+              <.button
+                :if={subscription_can_cancel?(@subscription)}
+                phx-click="cancel_subscription"
+                variant={:destructive}
+                size={:sm}
+              >
+                {dgettext("settings", "Cancel")}
+              </.button>
+            </div>
+          </div>
+        </div>
+
         <.toggle_group class="w-full max-w-md" phx-change="change_period">
           <.toggle_item value="monthly" name="period" checked={@period == :monthly}>
             {dgettext("settings", "Monthly")}
@@ -173,19 +208,38 @@ defmodule ZoonkWeb.SubscriptionLive do
   end
 
   @impl Phoenix.LiveView
-  def mount(_params, _session, socket) do
-    billing_account = Billing.get_billing_account(socket.assigns.scope)
+  def mount(params, _session, socket) do
+    scope = socket.assigns.scope
+    billing_account = Billing.get_billing_account(scope)
+    subscription = scope.subscription
     country_changeset = Billing.change_billing_account_form(%BillingAccount{}, %{})
 
+    # Check for success/cancel/error parameters
+    show_success = params["success"] == "true"
+    show_canceled = params["canceled"] == "true"
+    async_payment_error = params["async_payment_error"]
+
+    current_plan = if subscription, do: subscription.plan, else: :free
+    
     socket =
       socket
       |> assign(:page_title, dgettext("page_title", "Subscription"))
       |> assign(:billing_account, billing_account)
+      |> assign(:subscription, subscription)
       |> assign(:country_form, to_form(country_changeset))
       |> assign(:period, :monthly)
-      |> assign(:selected_plan, :free)
-      |> assign(:current_plan, :free)
+      |> assign(:selected_plan, current_plan)
+      |> assign(:current_plan, current_plan)
       |> assign(:prices, list_prices(billing_account))
+      |> assign(:show_success, show_success)
+      |> assign(:show_canceled, show_canceled)
+      |> assign(:async_payment_error, async_payment_error)
+
+    socket =
+      socket
+      |> maybe_put_flash_for_success(show_success)
+      |> maybe_put_flash_for_cancel(show_canceled)
+      |> maybe_put_flash_for_async_error(async_payment_error)
 
     {:ok, socket}
   end
@@ -219,17 +273,71 @@ defmodule ZoonkWeb.SubscriptionLive do
   end
 
   def handle_event("subscribe", %{"plan" => plan}, socket) do
-    # Placeholder for subscription logic - will redirect to Stripe later
     plan_atom = String.to_existing_atom(plan)
+    period = socket.assigns.period
 
     case plan_atom do
       :free ->
-        # Handle free plan subscription (if needed)
-        {:noreply, put_flash(socket, :info, dgettext("settings", "You're already on the free plan!"))}
+        # Handle free plan selection (cancel existing subscription if any)
+        handle_free_plan_selection(socket)
 
       :plus ->
-        # Handle plus plan subscription - will redirect to Stripe checkout
-        {:noreply, put_flash(socket, :info, dgettext("settings", "Redirecting to checkout..."))}
+        # Redirect to Stripe checkout for Plus plan
+        case Billing.create_checkout_session(socket.assigns.scope, :plus, period) do
+          {:ok, %{"url" => checkout_url}} ->
+            {:noreply, redirect(socket, external: checkout_url)}
+
+          {:error, reason} ->
+            {:noreply, put_flash(socket, :error, dgettext("settings", "Failed to create checkout session: %{reason}", reason: reason))}
+        end
+    end
+  end
+
+  def handle_event("manage_subscription", _params, socket) do
+    case Billing.create_customer_portal_session(socket.assigns.scope) do
+      {:ok, %{"url" => portal_url}} ->
+        {:noreply, redirect(socket, external: portal_url)}
+
+      {:error, reason} ->
+        {:noreply, put_flash(socket, :error, dgettext("settings", "Failed to access customer portal: %{reason}", reason: reason))}
+    end
+  end
+
+  def handle_event("cancel_subscription", _params, socket) do
+    case socket.assigns.subscription do
+      nil ->
+        {:noreply, put_flash(socket, :error, dgettext("settings", "No active subscription to cancel"))}
+
+      subscription ->
+        case Billing.cancel_user_subscription(socket.assigns.scope, subscription) do
+          {:ok, _canceled_subscription} ->
+            {:noreply, 
+             socket
+             |> put_flash(:info, dgettext("settings", "Your subscription has been canceled. You'll retain access until the end of your billing period."))
+             |> push_navigate(to: ~p"/subscription")}
+
+          {:error, reason} ->
+            {:noreply, put_flash(socket, :error, dgettext("settings", "Failed to cancel subscription: %{reason}", reason: inspect(reason)))}
+        end
+    end
+  end
+
+  defp handle_free_plan_selection(socket) do
+    case socket.assigns.subscription do
+      nil ->
+        {:noreply, put_flash(socket, :info, dgettext("settings", "You're already on the free plan!"))}
+
+      subscription ->
+        case Billing.cancel_user_subscription(socket.assigns.scope, subscription) do
+          {:ok, _canceled_subscription} ->
+            {:noreply,
+             socket
+             |> put_flash(:info, dgettext("settings", "Your subscription has been canceled. You'll be downgraded to the free plan at the end of your billing period."))
+             |> push_navigate(to: ~p"/subscription")}
+
+          {:error, reason} ->
+            {:noreply, put_flash(socket, :error, dgettext("settings", "Failed to downgrade to free plan: %{reason}", reason: inspect(reason)))}
+        end
     end
   end
 
@@ -301,4 +409,66 @@ defmodule ZoonkWeb.SubscriptionLive do
 
   defp badge_color(plan, current_plan) when plan == current_plan, do: :secondary
   defp badge_color(_plan, _current_plan), do: :primary
+
+  defp maybe_put_flash_for_success(socket, true) do
+    put_flash(socket, :info, dgettext("settings", "Your subscription has been successfully activated!"))
+  end
+
+  defp maybe_put_flash_for_success(socket, _), do: socket
+
+  defp maybe_put_flash_for_cancel(socket, true) do
+    put_flash(socket, :info, dgettext("settings", "Checkout was canceled. You can try again anytime."))
+  end
+
+  defp maybe_put_flash_for_cancel(socket, _), do: socket
+
+  defp maybe_put_flash_for_async_error(socket, error) when is_binary(error) do
+    put_flash(socket, :error, dgettext("settings", "Payment processing failed: %{error}. Please try again.", error: error))
+  end
+
+  defp maybe_put_flash_for_async_error(socket, _), do: socket
+
+  defp subscription_plan_display(subscription) do
+    case subscription.plan do
+      :free -> dgettext("settings", "Free")
+      :plus -> dgettext("settings", "Plus")
+      _ -> dgettext("settings", "Unknown")
+    end
+  end
+
+  defp subscription_term_display(subscription) do
+    case subscription.payment_term do
+      :monthly -> dgettext("settings", "Monthly")
+      :yearly -> dgettext("settings", "Yearly") 
+      :lifetime -> dgettext("settings", "Lifetime")
+      _ -> ""
+    end
+  end
+
+  defp subscription_status_display(subscription) do
+    case subscription.status do
+      :active -> 
+        if subscription.cancel_at_period_end do
+          dgettext("settings", "Cancels at period end")
+        else
+          dgettext("settings", "Active")
+        end
+      :trialing -> dgettext("settings", "Trial period")
+      :past_due -> dgettext("settings", "Payment overdue")
+      :canceled -> dgettext("settings", "Canceled")
+      :incomplete -> dgettext("settings", "Payment incomplete")
+      :incomplete_expired -> dgettext("settings", "Payment expired")
+      :unpaid -> dgettext("settings", "Unpaid")
+      :paused -> dgettext("settings", "Paused")
+      _ -> dgettext("settings", "Unknown status")
+    end
+  end
+
+  defp subscription_can_manage?(subscription) do
+    subscription && subscription.status in [:active, :trialing, :past_due] && subscription.stripe_subscription_id
+  end
+
+  defp subscription_can_cancel?(subscription) do
+    subscription && subscription.status in [:active, :trialing] && !subscription.cancel_at_period_end
+  end
 end

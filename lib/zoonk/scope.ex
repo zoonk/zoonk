@@ -17,10 +17,11 @@ defmodule Zoonk.Scope do
   """
 
   alias Zoonk.Accounts.User
+  alias Zoonk.Billing.UserSubscription
   alias Zoonk.Orgs.Org
   alias Zoonk.Orgs.OrgMember
 
-  defstruct user: nil, org: nil, org_member: nil
+  defstruct user: nil, org: nil, org_member: nil, subscription: nil
 
   @doc """
   Sets the scope.
@@ -35,10 +36,14 @@ defmodule Zoonk.Scope do
 
       iex> Scope.set(scope, %OrgMember{})
       %Scope{}
+
+      iex> Scope.set(scope, %UserSubscription{})
+      %Scope{}
   """
   def set(%__MODULE__{} = scope, %Org{} = org), do: %{scope | org: org}
   def set(%__MODULE__{} = scope, %User{} = user), do: %{scope | user: user}
   def set(%__MODULE__{} = scope, %OrgMember{} = org_member), do: %{scope | org_member: org_member}
+  def set(%__MODULE__{} = scope, %UserSubscription{} = subscription), do: %{scope | subscription: subscription}
   def set(%__MODULE__{} = scope, nil), do: scope
 
   def set(%__MODULE__{} = scope), do: scope

@@ -114,6 +114,34 @@ defmodule Zoonk.Billing do
   end
 
   @doc """
+  Gets a user subscription for the current scope.
+
+  Returns the active subscription for the user and organization in the scope,
+  or nil if no active subscription exists.
+
+  ## Examples
+
+      iex> get_user_subscription(%Scope{user: user, org: org})
+      %UserSubscription{}
+
+      iex> get_user_subscription(%Scope{user: user, org: org})
+      nil
+  """
+  def get_user_subscription(%Scope{user: user, org: org}) when not is_nil(user) and not is_nil(org) do
+    import Ecto.Query
+
+    from(s in UserSubscription,
+      where: s.user_id == ^user.id and s.org_id == ^org.id,
+      where: s.status in [:active, :trialing, :past_due],
+      order_by: [desc: s.inserted_at],
+      limit: 1
+    )
+    |> Repo.one()
+  end
+
+  def get_user_subscription(_scope), do: nil
+
+  @doc """
   Creates a user subscription.
 
   Takes a scope containing the user and org information, along with
@@ -145,6 +173,74 @@ defmodule Zoonk.Billing do
 
   # For non-lifetime subscriptions, keep the original attrs we get from Stripe
   defp maybe_set_lifetime_expiration(attrs), do: attrs
+
+  @doc """
+  Creates a Stripe checkout session for subscription or one-time payment.
+
+  ## Examples
+
+      iex> create_checkout_session(%Scope{}, :plus, :monthly)
+      {:ok, %{"id" => "cs_1234567890", "url" => "https://checkout.stripe.com/..."}}
+
+      iex> create_checkout_session(%Scope{}, :plus, :lifetime)
+      {:ok, %{"id" => "cs_1234567890", "url" => "https://checkout.stripe.com/..."}}
+
+      iex> create_checkout_session(%Scope{}, :invalid, :monthly)
+      {:error, "Invalid plan"}
+  """
+  def create_checkout_session(%Scope{} = scope, plan, payment_term) when plan in [:plus] and payment_term in [:monthly, :yearly, :lifetime] do
+    with {:ok, billing_account} <- ensure_billing_account(scope),
+         {:ok, prices} <- list_prices(billing_account),
+         {:ok, price} <- find_price_for_plan(prices, plan, payment_term) do
+      
+      mode = if payment_term == :lifetime, do: "payment", else: "subscription"
+      
+      params = %{
+        "customer" => billing_account.stripe_customer_id,
+        "mode" => mode,
+        "line_items[0][price]" => price.stripe_price_id,
+        "line_items[0][quantity]" => 1,
+        "success_url" => success_url(scope),
+        "cancel_url" => cancel_url(scope),
+        "metadata[user_id]" => scope.user.id,
+        "metadata[org_id]" => scope.org.id,
+        "metadata[plan]" => Atom.to_string(plan),
+        "metadata[payment_term]" => Atom.to_string(payment_term)
+      }
+
+      Stripe.post("/checkout/sessions", params)
+    end
+  end
+
+  def create_checkout_session(_scope, _plan, _payment_term) do
+    {:error, "Invalid plan or payment term"}
+  end
+
+  @doc """
+  Creates a Stripe customer portal session for subscription management.
+
+  ## Examples
+
+      iex> create_customer_portal_session(%Scope{})
+      {:ok, %{"id" => "bps_1234567890", "url" => "https://billing.stripe.com/..."}}
+
+      iex> create_customer_portal_session(%Scope{})
+      {:error, "No billing account found"}
+  """
+  def create_customer_portal_session(%Scope{} = scope) do
+    case get_billing_account(scope) do
+      %BillingAccount{stripe_customer_id: stripe_customer_id} ->
+        params = %{
+          "customer" => stripe_customer_id,
+          "return_url" => return_url(scope)
+        }
+
+        Stripe.post("/billing_portal/sessions", params)
+
+      nil ->
+        {:error, "No billing account found"}
+    end
+  end
 
   @doc """
   Updates an existing user subscription.
@@ -313,6 +409,41 @@ defmodule Zoonk.Billing do
   end
 
   defp build_tax_id_attrs(_attrs), do: %{}
+
+  # Helper functions for checkout session creation
+  defp ensure_billing_account(%Scope{} = scope) do
+    case get_billing_account(scope) do
+      %BillingAccount{} = billing_account -> {:ok, billing_account}
+      nil -> {:error, "No billing account found"}
+    end
+  end
+
+  defp find_price_for_plan(prices, plan, payment_term) do
+    case Enum.find(prices, &(&1.plan == plan && &1.period == payment_term)) do
+      %Price{} = price -> {:ok, price}
+      nil -> {:error, "Price not found for plan #{plan} with term #{payment_term}"}
+    end
+  end
+
+  defp success_url(%Scope{}) do
+    base_url() <> "/subscription?success=true"
+  end
+
+  defp cancel_url(%Scope{}) do
+    base_url() <> "/subscription?canceled=true"
+  end
+
+  defp return_url(%Scope{}) do
+    base_url() <> "/subscription"
+  end
+
+  defp base_url do
+    Application.get_env(:zoonk, ZoonkWeb.Endpoint)[:url][:host] 
+    |> case do
+      "localhost" -> "http://localhost:4000"
+      host -> "https://#{host}"
+    end
+  end
 
   defp cancel_user_subscription({:ok, _status}, scope, subscription, attrs) do
     update_user_subscription(scope, subscription, attrs)
