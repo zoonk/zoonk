@@ -142,5 +142,14 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       |> choose("Plus", exact: false)
       |> assert_has("p", text: "Your subscription will renew automatically at $100/year")
     end
+
+    test "disable subscribe button if free is selected and user has no subscription", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+
+      conn
+      |> visit(~p"/subscription")
+      |> assert_has("button[disabled]", text: "Subscribe")
+    end
   end
 end

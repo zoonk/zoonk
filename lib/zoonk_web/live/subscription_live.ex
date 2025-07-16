@@ -135,7 +135,10 @@ defmodule ZoonkWeb.SubscriptionLive do
             </.subscription_item>
           </div>
 
-          <.subscription_submit disclaimer={disclaimer_text(@selected_plan, @period, @prices)}>
+          <.subscription_submit
+            disclaimer={disclaimer_text(@selected_plan, @period, @prices)}
+            disabled={@selected_plan == :free && @current_plan == :free}
+          >
             {dgettext("settings", "Subscribe")}
           </.subscription_submit>
         </.subscription>
