@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.FeedbackLiveTest do
+defmodule ZoonkWeb.AppFeedbackLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
   describe "feedback form" do

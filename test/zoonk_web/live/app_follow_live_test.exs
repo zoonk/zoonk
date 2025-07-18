@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.FollowLiveTest do
+defmodule ZoonkWeb.AppFollowLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
   describe "follow page" do

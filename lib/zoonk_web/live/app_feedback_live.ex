@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.FeedbackLive do
+defmodule ZoonkWeb.AppFeedbackLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 

@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.SupportLiveTest do
+defmodule ZoonkWeb.AppSupportLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
   describe "support request form" do

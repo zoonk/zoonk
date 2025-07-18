@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.SupportLive do
+defmodule ZoonkWeb.AppSupportLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
