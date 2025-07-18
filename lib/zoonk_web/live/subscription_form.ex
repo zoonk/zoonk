@@ -1,0 +1,128 @@
+defmodule ZoonkWeb.SubscriptionForm do
+  @moduledoc false
+  use Phoenix.Component
+  use Gettext, backend: Zoonk.Gettext
+
+  import ZoonkWeb.SubscriptionComponents
+
+  alias Zoonk.Billing.Price
+  alias Zoonk.Billing.UserSubscription
+  alias Zoonk.Locations
+
+  @plans Ecto.Enum.values(UserSubscription, :plan)
+  @periods Ecto.Enum.values(UserSubscription, :payment_term)
+
+  attr :current_plan, :atom, values: @plans, required: true
+  attr :selected_plan, :atom, values: @plans, required: true
+  attr :period, :atom, values: @periods, required: true
+  attr :prices, :list, required: true
+
+  def subscription_form(assigns) do
+    ~H"""
+    <.subscription phx-submit="subscribe" phx-change="change_plan" class="w-full max-w-4xl">
+      <div class="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+        <.subscription_item
+          :for={plan <- available_plans()}
+          value={Atom.to_string(plan.key)}
+          name="plan"
+          label={plan.label}
+          checked={@selected_plan == plan.key}
+        >
+          <.subscription_header>
+            <.subscription_title
+              badge_label={badge_label(plan.key, @current_plan, @period)}
+              badge_color={badge_color(plan.key, @current_plan)}
+            >
+              {plan.label}
+            </.subscription_title>
+
+            <.subscription_price>
+              {price(@prices, plan.key, @period)}
+            </.subscription_price>
+          </.subscription_header>
+
+          <.subscription_features :for={feature <- plan.features}>
+            <.subscription_feature icon={feature.icon}>
+              {feature.text}
+            </.subscription_feature>
+          </.subscription_features>
+        </.subscription_item>
+      </div>
+
+      <.subscription_submit
+        disabled={@selected_plan == :free && @current_plan == :free}
+        disclaimer={disclaimer_text(@selected_plan, @period, @prices)}
+      >
+        {dgettext("settings", "Subscribe")}
+      </.subscription_submit>
+    </.subscription>
+    """
+  end
+
+  defp price([], _plan, _period), do: "$0"
+
+  defp price([%Price{currency: currency} | _rest], :free, _period) do
+    symbol = Locations.get_currency_symbol(currency) || "$"
+    "#{symbol}0"
+  end
+
+  defp price(prices, plan, period) do
+    prices
+    |> Enum.find(&match?(%Price{plan: ^plan, period: ^period}, &1))
+    |> Map.get(:value, "$0")
+  end
+
+  defp disclaimer_text(:free, _period, _prices) do
+    dgettext("settings", "This is a limited plan. You will not be charged anything unless you upgrade to a paid plan.")
+  end
+
+  defp disclaimer_text(:plus, period, prices) do
+    prices
+    |> price(:plus, period)
+    |> disclaimer_price_label(period)
+    |> plus_disclaimer()
+  end
+
+  defp disclaimer_price_label(price, :monthly), do: dgettext("settings", "%{price}/month", price: price)
+  defp disclaimer_price_label(price, :yearly), do: dgettext("settings", "%{price}/year", price: price)
+
+  defp plus_disclaimer(disclaimer_price_label) do
+    dgettext(
+      "settings",
+      "Your subscription will renew automatically at %{price}. You can cancel it at any time.",
+      price: disclaimer_price_label
+    )
+  end
+
+  defp badge_label(plan, current_plan, _period) when plan == current_plan, do: dgettext("settings", "Current Plan")
+  defp badge_label(:plus, _current_plan, :yearly), do: dgettext("settings", "2 Months Free")
+  defp badge_label(_plan, _current_plan, _period), do: nil
+
+  defp badge_color(plan, current_plan) when plan == current_plan, do: :secondary
+  defp badge_color(_plan, _current_plan), do: :primary
+
+  defp available_plans do
+    [
+      %{
+        key: :free,
+        label: dgettext("settings", "Free"),
+        features: [
+          %{icon: "tabler-book", text: dgettext("settings", "Access to all courses")},
+          %{icon: "tabler-calendar", text: dgettext("settings", "1 lesson per day")},
+          %{icon: "tabler-refresh", text: dgettext("settings", "Regular updates")},
+          %{icon: "tabler-school", text: dgettext("settings", "Learn any subject")}
+        ]
+      },
+      %{
+        key: :plus,
+        label: dgettext("settings", "Plus"),
+        features: [
+          %{icon: "tabler-infinity", text: dgettext("settings", "Unlimited lessons")},
+          %{icon: "tabler-headset", text: dgettext("settings", "Priority support")},
+          %{icon: "tabler-users", text: dgettext("settings", "Exclusive community access")},
+          %{icon: "tabler-plus", text: dgettext("settings", "Everything in Free")}
+        ]
+      }
+    ]
+  end
+end

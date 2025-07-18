@@ -2,13 +2,11 @@ defmodule ZoonkWeb.SubscriptionLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  import ZoonkWeb.SubscriptionComponents
+  import ZoonkWeb.SubscriptionForm
 
   alias Zoonk.Billing
   alias Zoonk.Billing.BillingAccount
-  alias Zoonk.Billing.Price
   alias Zoonk.Billing.UserSubscription
-  alias Zoonk.Locations
   alias Zoonk.Locations.CountryData
   alias Zoonk.Scope
 
@@ -48,100 +46,13 @@ defmodule ZoonkWeb.SubscriptionLive do
           </.toggle_item>
         </.toggle_group>
 
-        <.subscription
+        <.subscription_form
           :if={@prices != []}
-          phx-submit="subscribe"
-          phx-change="change_plan"
-          class="w-full max-w-4xl"
-        >
-          <div class="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
-            <.subscription_item
-              value="free"
-              name="plan"
-              label={dgettext("settings", "Free")}
-              checked={@selected_plan == :free}
-            >
-              <.subscription_header>
-                <.subscription_title
-                  badge_label={badge_label(:free, @current_plan, @period)}
-                  badge_color={badge_color(:free, @current_plan)}
-                >
-                  {dgettext("settings", "Free")}
-                </.subscription_title>
-
-                <.subscription_price>
-                  {free_plan_price(@prices)}
-                </.subscription_price>
-              </.subscription_header>
-
-              <.subscription_features>
-                <.subscription_feature icon="tabler-book">
-                  {dgettext("settings", "Access to all courses")}
-                </.subscription_feature>
-
-                <.subscription_feature icon="tabler-calendar">
-                  {dgettext("settings", "1 lesson per day")}
-                </.subscription_feature>
-
-                <.subscription_feature icon="tabler-refresh">
-                  {dgettext("settings", "Regular updates")}
-                </.subscription_feature>
-
-                <.subscription_feature icon="tabler-school">
-                  {dgettext("settings", "Learn any subject")}
-                </.subscription_feature>
-              </.subscription_features>
-            </.subscription_item>
-
-            <.subscription_item
-              value="plus"
-              name="plan"
-              checked={@selected_plan == :plus}
-              label={dgettext("settings", "Plus")}
-            >
-              <.subscription_header>
-                <.subscription_title
-                  badge_label={badge_label(:plus, @current_plan, @period)}
-                  badge_color={badge_color(:plus, @current_plan)}
-                >
-                  {dgettext("settings", "Plus")}
-                </.subscription_title>
-
-                <.subscription_price
-                  :if={find_price(@prices, :plus, @period)}
-                  label={period_label(@period)}
-                >
-                  {find_price(@prices, :plus, @period).value}
-                </.subscription_price>
-              </.subscription_header>
-
-              <.subscription_features>
-                <.subscription_feature icon="tabler-infinity">
-                  {dgettext("settings", "Unlimited lessons")}
-                </.subscription_feature>
-
-                <.subscription_feature icon="tabler-headset">
-                  {dgettext("settings", "Priority support")}
-                </.subscription_feature>
-
-                <.subscription_feature icon="tabler-users">
-                  {dgettext("settings", "WhatsApp groups")}
-                </.subscription_feature>
-
-                <.subscription_feature icon="tabler-check">
-                  {dgettext("settings", "Everything in free")}
-                </.subscription_feature>
-              </.subscription_features>
-            </.subscription_item>
-          </div>
-
-          <.subscription_submit
-            disclaimer={disclaimer_text(@selected_plan, @period, @prices)}
-            disabled={@selected_plan == :free && @current_plan == :free}
-          >
-            {dgettext("settings", "Subscribe")}
-          </.subscription_submit>
-        </.subscription>
+          current_plan={@current_plan}
+          selected_plan={@selected_plan}
+          period={@period}
+          prices={@prices}
+        />
       </section>
 
       <section :if={!@billing_account} class="flex flex-1 flex-col gap-4">
@@ -241,13 +152,6 @@ defmodule ZoonkWeb.SubscriptionLive do
     |> Enum.sort_by(&elem(&1, 0))
   end
 
-  defp find_price(prices, plan, period) do
-    Enum.find(
-      prices,
-      &match?(%Price{plan: ^plan, period: ^period}, &1)
-    )
-  end
-
   defp list_prices(nil), do: []
 
   defp list_prices(%BillingAccount{} = billing_account) do
@@ -256,46 +160,6 @@ defmodule ZoonkWeb.SubscriptionLive do
       _error -> []
     end
   end
-
-  defp period_label(:monthly), do: dgettext("settings", "/month")
-  defp period_label(:yearly), do: dgettext("settings", "/year")
-
-  defp free_plan_price([%Price{currency: currency} | _rest]) do
-    symbol = Locations.get_currency_symbol(currency) || "$"
-    "#{symbol}0"
-  end
-
-  defp free_plan_price(_prices), do: "$0"
-
-  defp disclaimer_text(:free, _period, _prices) do
-    dgettext("settings", "This is a limited plan. You will not be charged anything unless you upgrade to a paid plan.")
-  end
-
-  defp disclaimer_text(:plus, period, prices) do
-    prices
-    |> find_price(:plus, period)
-    |> Map.get(:value, "$0")
-    |> get_price_label(period)
-    |> get_plus_disclaimer(period)
-  end
-
-  defp get_plus_disclaimer(price_label, period) when period in [:monthly, :yearly] do
-    dgettext(
-      "settings",
-      "Your subscription will renew automatically at %{price}. You can cancel it at any time.",
-      price: price_label
-    )
-  end
-
-  defp get_price_label(price, :monthly), do: dgettext("settings", "%{price}/month", price: price)
-  defp get_price_label(price, :yearly), do: dgettext("settings", "%{price}/year", price: price)
-
-  defp badge_label(plan, current_plan, _period) when plan == current_plan, do: dgettext("settings", "Current Plan")
-  defp badge_label(:plus, _current_plan, :yearly), do: dgettext("settings", "2 Months Free")
-  defp badge_label(_plan, _current_plan, _period), do: nil
-
-  defp badge_color(plan, current_plan) when plan == current_plan, do: :secondary
-  defp badge_color(_plan, _current_plan), do: :primary
 
   defp current_plan(%Scope{subscription: %UserSubscription{status: :active, plan: plan}}), do: plan
   defp current_plan(_scope), do: :free

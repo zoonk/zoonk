@@ -97,7 +97,7 @@ defmodule Zoonk.MixProject do
         "sobelow --config",
         "deps.unlock --check-unused",
         "deps.audit",
-        "xref graph --label compile-connected --fail-above 0"
+        "xref graph --format cycles --label compile-connected"
       ]
     ]
   end

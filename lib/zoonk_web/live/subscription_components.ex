@@ -1,7 +1,6 @@
 defmodule ZoonkWeb.SubscriptionComponents do
   @moduledoc false
   use Phoenix.Component
-  use Gettext, backend: Zoonk.Gettext
 
   import ZoonkWeb.Components.Button
   import ZoonkWeb.Components.Icon
