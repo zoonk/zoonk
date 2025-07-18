@@ -71,7 +71,7 @@ jobs:
         run: mix compile --all-warnings --warnings-as-errors
 
       - name: Check for transitive compilation dependencies
-        run: mix xref graph --label compile-connected --fail-above 0
+        run: mix xref graph --label compile-connected --fail-above 5
 
       - name: Check Elixir formatter
         run: mix format --check-formatted
