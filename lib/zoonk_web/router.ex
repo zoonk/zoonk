@@ -63,15 +63,15 @@ defmodule ZoonkWeb.Router do
       live "/learn", LearnSubjectLive
       live "/learn/:input", LearnSubjectResultsLive
 
-      live "/my-courses", MyCoursesLive
-      live "/missions", MissionsLive
+      live "/my-courses", UserCoursesLive
+      live "/missions", UserMissionsLive
 
-      live "/purchases", PurchasesLive
-      live "/subscription", SubscriptionLive
+      live "/purchases", UserPurchasesLive
+      live "/subscription", UserSubscriptionLive
 
-      live "/language", LanguageLive
-      live "/name", NameLive
-      live "/email", EmailLive
+      live "/language", UserLanguageLive
+      live "/name", UserNameLive
+      live "/email", UserEmailLive
 
       live "/feedback", FeedbackLive
       live "/support", SupportLive

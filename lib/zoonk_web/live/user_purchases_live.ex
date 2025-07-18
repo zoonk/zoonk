@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.PurchasesLive do
+defmodule ZoonkWeb.UserPurchasesLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 

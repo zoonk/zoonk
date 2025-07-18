@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.MissionsLive do
+defmodule ZoonkWeb.UserMissionsLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 

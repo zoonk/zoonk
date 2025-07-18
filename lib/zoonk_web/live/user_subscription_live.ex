@@ -1,8 +1,8 @@
-defmodule ZoonkWeb.SubscriptionLive do
+defmodule ZoonkWeb.UserSubscriptionLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  import ZoonkWeb.SubscriptionForm
+  import ZoonkWeb.UserSubscriptionForm
 
   alias Zoonk.Billing
   alias Zoonk.Billing.BillingAccount

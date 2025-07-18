@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.LanguageLive do
+defmodule ZoonkWeb.UserLanguageLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 

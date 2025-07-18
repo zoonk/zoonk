@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.NameLive do
+defmodule ZoonkWeb.UserNameLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 

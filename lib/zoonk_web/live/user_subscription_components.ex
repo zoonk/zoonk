@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.SubscriptionComponents do
+defmodule ZoonkWeb.UserSubscriptionComponents do
   @moduledoc false
   use Phoenix.Component
 

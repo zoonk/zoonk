@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.EmailLiveTest do
+defmodule ZoonkWeb.UserEmailLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
   import Zoonk.AccountFixtures

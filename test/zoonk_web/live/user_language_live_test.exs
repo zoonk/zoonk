@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.LanguageLiveTest do
+defmodule ZoonkWeb.UserLanguageLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
   alias Zoonk.Accounts

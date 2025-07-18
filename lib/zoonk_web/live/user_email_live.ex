@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.EmailLive do
+defmodule ZoonkWeb.UserEmailLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 

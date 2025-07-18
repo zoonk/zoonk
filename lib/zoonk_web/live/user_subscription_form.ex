@@ -1,9 +1,9 @@
-defmodule ZoonkWeb.SubscriptionForm do
+defmodule ZoonkWeb.UserSubscriptionForm do
   @moduledoc false
   use Phoenix.Component
   use Gettext, backend: Zoonk.Gettext
 
-  import ZoonkWeb.SubscriptionComponents
+  import ZoonkWeb.UserSubscriptionComponents
 
   alias Zoonk.Billing.Price
   alias Zoonk.Billing.UserSubscription
