@@ -31,15 +31,15 @@ defmodule ZoonkWeb.UserSubscriptionComponents do
       </.subscription>
   """
   attr :class, :string, default: nil
-  attr :rest, :global
+  attr :rest, :global, include: ~w(autocomplete name rel action enctype method novalidate target multipart)
 
   slot :inner_block, required: true
 
   def subscription(assigns) do
     ~H"""
-    <form class={["flex flex-col gap-8", @class]} {@rest}>
+    <.form class={["flex flex-col gap-8", @class]} {@rest}>
       {render_slot(@inner_block)}
-    </form>
+    </.form>
     """
   end
 

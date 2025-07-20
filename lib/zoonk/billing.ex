@@ -271,6 +271,47 @@ defmodule Zoonk.Billing do
   end
 
   @doc """
+  Creates a Stripe Checkout Session for subscriptions.
+
+  This function starts a checkout session where users can subscribe to a plan.
+
+  It requires a scope with user and org information, the price ID for the plan,
+  and optional attributes for the session.
+
+  ## Examples
+
+      iex> subscription_checkout_session(%Scope{}, "price_12345", %{success_url: "https://zoonk.com/subscription"})
+      {:ok, %{"id" => "cs_test_1234567890"}}
+
+      iex> subscription_checkout_session(%Scope{}, "price_12345", %{})
+      {:error, "No billing account found"}
+  """
+  def subscription_checkout_session(%Scope{} = scope, price_id, attrs \\ %{}) do
+    case get_billing_account(scope) do
+      nil ->
+        {:error, "No billing account found"}
+
+      %BillingAccount{stripe_customer_id: stripe_customer_id} ->
+        attrs =
+          attrs
+          |> Map.put("mode", "subscription")
+          |> Map.put("client_reference_id", scope.user.id)
+          |> Map.put("customer", stripe_customer_id)
+          |> Map.put("line_items[0][price]", price_id)
+          |> Map.put("line_items[0][quantity]", 1)
+          |> Map.put("allow_promotion_codes", true)
+          |> Map.put("billing_address_collection", "required")
+          |> Map.put("locale", Atom.to_string(scope.user.language))
+          |> Map.put("submit_type", "subscribe")
+          |> Map.put("customer_update[name]", "auto")
+          |> Map.put("customer_update[address]", "auto")
+          |> Map.put("tax_id_collection[enabled]", true)
+
+        Stripe.post("/checkout/sessions", attrs)
+    end
+  end
+
+  @doc """
   Creates a customer in Stripe.
 
   Creates a new customer record in Stripe using the user's

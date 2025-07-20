@@ -7,6 +7,30 @@ defmodule Zoonk.BillingFixtures do
   alias Zoonk.Billing
   alias Zoonk.Scope
 
+  @doc """
+  Creates a Stripe API stub for testing.
+
+  ## Options
+
+    * `:error` - When `true`, returns a Stripe error response
+    * `:prefix` - Prefix for generated IDs (default: "/cust_")
+    * `:data` - Custom data to return in the response
+    * `:capture_to` - PID to send request parameters to for verification
+
+  ## Examples
+
+      # Basic stub
+      stripe_stub()
+
+      # Stub with custom data
+      stripe_stub(data: %{"url" => "https://checkout.stripe.com/session_123"})
+
+      # Stub that captures request parameters for verification
+      stripe_stub(capture_to: self(), data: %{"id" => "cus_123"})
+
+      # Error response
+      stripe_stub(error: true)
+  """
   def stripe_stub(opts \\ [])
 
   def stripe_stub(error: true) do
@@ -18,22 +42,38 @@ defmodule Zoonk.BillingFixtures do
   def stripe_stub(opts) do
     prefix = Keyword.get(opts, :prefix, "/cust_")
     id = "#{prefix}#{System.unique_integer([:positive])}"
+    capture_pid = Keyword.get(opts, :capture_to)
 
     data =
       opts
       |> Keyword.get(:data, %{})
       |> Map.put("id", id)
 
-    Req.Test.stub(:stripe_client, &handle_stripe_endpoint(&1, data))
+    Req.Test.stub(:stripe_client, fn conn ->
+      maybe_capture_request(conn, capture_pid)
+      handle_stripe_endpoint(conn, data)
+    end)
   end
 
   defp handle_stripe_endpoint(%{request_path: "/v1/prices"} = conn, _data) do
     Req.Test.json(conn, stripe_prices())
   end
 
+  defp handle_stripe_endpoint(%{request_path: "/v1/checkout/sessions"} = conn, data) do
+    data = Enum.into(data, %{"url" => "https://checkout.stripe.com/session_#{System.unique_integer([:positive])}"})
+
+    Req.Test.json(conn, data)
+  end
+
   defp handle_stripe_endpoint(conn, data) do
     Req.Test.json(conn, data)
   end
+
+  defp maybe_capture_request(conn, capture_pid) when is_pid(capture_pid) do
+    send(capture_pid, {:stripe_request, conn.body_params})
+  end
+
+  defp maybe_capture_request(_conn, _capture_pid), do: :ok
 
   @doc """
   Generates a valid user subscription attribute map.

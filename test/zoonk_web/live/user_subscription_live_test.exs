@@ -151,5 +151,20 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       |> visit(~p"/subscription")
       |> assert_has("button[disabled]", text: "Subscribe")
     end
+
+    test "submit form with selected plan and period", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+
+      result =
+        conn
+        |> visit(~p"/subscription")
+        |> choose("Plus", exact: false)
+        |> submit()
+
+      path = request_url(result.conn)
+
+      assert String.starts_with?(path, "https://checkout.stripe.com/session_")
+    end
   end
 end

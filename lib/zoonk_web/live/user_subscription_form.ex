@@ -1,6 +1,6 @@
 defmodule ZoonkWeb.UserSubscriptionForm do
   @moduledoc false
-  use Phoenix.Component
+  use ZoonkWeb, :html
   use Gettext, backend: Zoonk.Gettext
 
   import ZoonkWeb.UserSubscriptionComponents
@@ -19,7 +19,19 @@ defmodule ZoonkWeb.UserSubscriptionForm do
 
   def subscription_form(assigns) do
     ~H"""
-    <.subscription phx-submit="subscribe" phx-change="change_plan" class="w-full max-w-4xl">
+    <.subscription
+      action={~p"/checkout"}
+      method="post"
+      phx-change="change_plan"
+      class="w-full max-w-4xl"
+    >
+      <input
+        :if={@selected_plan != :free}
+        type="hidden"
+        name="price"
+        value={price(@prices, @selected_plan, @period).stripe_price_id}
+      />
+
       <div class="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
         <.subscription_item
           :for={plan <- available_plans()}
@@ -37,7 +49,7 @@ defmodule ZoonkWeb.UserSubscriptionForm do
             </.subscription_title>
 
             <.subscription_price>
-              {price(@prices, plan.key, @period)}
+              {price_value(@prices, plan.key, @period)}
             </.subscription_price>
           </.subscription_header>
 
@@ -59,16 +71,20 @@ defmodule ZoonkWeb.UserSubscriptionForm do
     """
   end
 
-  defp price([], _plan, _period), do: "$0"
+  defp price(prices, plan, period) do
+    Enum.find(prices, &match?(%Price{plan: ^plan, period: ^period}, &1))
+  end
 
-  defp price([%Price{currency: currency} | _rest], :free, _period) do
+  defp price_value([], _plan, _period), do: "$0"
+
+  defp price_value([%Price{currency: currency} | _rest], :free, _period) do
     symbol = Locations.get_currency_symbol(currency) || "$"
     "#{symbol}0"
   end
 
-  defp price(prices, plan, period) do
+  defp price_value(prices, plan, period) do
     prices
-    |> Enum.find(&match?(%Price{plan: ^plan, period: ^period}, &1))
+    |> price(plan, period)
     |> Map.get(:value, "$0")
   end
 
@@ -78,7 +94,7 @@ defmodule ZoonkWeb.UserSubscriptionForm do
 
   defp disclaimer_text(:plus, period, prices) do
     prices
-    |> price(:plus, period)
+    |> price_value(:plus, period)
     |> disclaimer_price_label(period)
     |> plus_disclaimer()
   end

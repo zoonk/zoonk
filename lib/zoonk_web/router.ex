@@ -98,6 +98,8 @@ defmodule ZoonkWeb.Router do
     get "/auth/:provider", OAuthController, :request
     get "/auth/:provider/callback", OAuthController, :callback
 
+    post "/checkout", UserSubscriptionController, :checkout
+
     # Legal routes
     get "/terms", LegalController, :terms
     get "/privacy", LegalController, :privacy
