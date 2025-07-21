@@ -47,7 +47,6 @@ defmodule ZoonkWeb.UserSubscriptionLive do
         </.toggle_group>
 
         <.subscription_form
-          :if={@prices != []}
           current_plan={@current_plan}
           selected_plan={@selected_plan}
           period={@period}
@@ -116,7 +115,10 @@ defmodule ZoonkWeb.UserSubscriptionLive do
 
     case Billing.create_billing_account(socket.assigns.scope, billing_params) do
       {:ok, billing_account} ->
-        {:noreply, assign(socket, :billing_account, billing_account)}
+        {:noreply,
+         socket
+         |> assign(:billing_account, billing_account)
+         |> assign(:prices, list_prices(billing_account))}
 
       {:error, _changeset} ->
         {:noreply, put_flash(socket, :error, dgettext("settings", "Failed to create billing account. Please try again."))}

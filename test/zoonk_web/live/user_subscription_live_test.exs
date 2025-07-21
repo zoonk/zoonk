@@ -19,6 +19,8 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       |> select("Country", option: "United States")
       |> submit()
       |> assert_has("h2", text: "Subscribe")
+      |> assert_has("h3", text: "Free Current Plan")
+      |> assert_has("span", text: "$10")
 
       billing_account = Billing.get_billing_account(scope)
       assert billing_account.country_iso2 == "US"
