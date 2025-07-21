@@ -468,6 +468,18 @@ defmodule Zoonk.BillingTest do
     end
   end
 
+  describe "get_user_from_stripe_customer_id/1" do
+    test "returns user when a billing account is found" do
+      billing_account = billing_account_fixture()
+      user = Billing.get_user_from_stripe_customer_id(billing_account.stripe_customer_id)
+      assert user.id == billing_account.user_id
+    end
+
+    test "returns nil when no billing account is found" do
+      refute Billing.get_user_from_stripe_customer_id("cus_invalid")
+    end
+  end
+
   describe "get_user_subscription/1" do
     test "returns active subscription when user has one" do
       user = user_fixture()

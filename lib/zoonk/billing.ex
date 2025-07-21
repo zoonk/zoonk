@@ -39,6 +39,27 @@ defmodule Zoonk.Billing do
   end
 
   @doc """
+  Gets a user from a `stripe_customer_id`.
+
+  Returns the user if found, otherwise returns nil.
+
+  ## Examples
+
+      iex> get_user_from_stripe_customer_id("cus_1234567890")
+      %User{}
+
+      iex> get_user_from_stripe_customer_id("cus_invalid")
+      nil
+  """
+  def get_user_from_stripe_customer_id(stripe_customer_id) do
+    User
+    |> join(:inner, [u], b in BillingAccount, on: b.user_id == u.id)
+    |> where([_u, b], b.stripe_customer_id == ^stripe_customer_id)
+    |> select([u, _b], u)
+    |> Repo.one()
+  end
+
+  @doc """
   Gets a user subscription for a user.
 
   Returns the active subscription if found, otherwise returns the latest subscription
@@ -163,7 +184,7 @@ defmodule Zoonk.Billing do
 
   ## Examples
 
-      iex> create_user_subscription(%Scope{}, %{plan: :plus, payment_term: :monthly})
+      iex> create_user_subscription(%Scope{}, %{plan: :plus, interval: :monthly})
       {:ok, %UserSubscription{}}
 
       iex> create_user_subscription(%Scope{}, %{})
