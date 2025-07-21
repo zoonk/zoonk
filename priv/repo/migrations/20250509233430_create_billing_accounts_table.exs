@@ -15,6 +15,6 @@ defmodule Zoonk.Repo.Migrations.CreateBillingAccountsTable do
 
     create unique_index(:billing_accounts, [:user_id])
     create unique_index(:billing_accounts, [:org_id])
-    create index(:billing_accounts, [:stripe_customer_id])
+    create unique_index(:billing_accounts, [:stripe_customer_id])
   end
 end
