@@ -125,8 +125,7 @@ defmodule ZoonkWeb.UserSubscriptionForm do
         features: [
           %{icon: "tabler-book", text: dgettext("settings", "Access to all courses")},
           %{icon: "tabler-calendar", text: dgettext("settings", "1 lesson per day")},
-          %{icon: "tabler-refresh", text: dgettext("settings", "Regular updates")},
-          %{icon: "tabler-school", text: dgettext("settings", "Learn any subject")}
+          %{icon: "tabler-refresh", text: dgettext("settings", "Regular updates")}
         ]
       },
       %{
@@ -135,7 +134,6 @@ defmodule ZoonkWeb.UserSubscriptionForm do
         features: [
           %{icon: "tabler-infinity", text: dgettext("settings", "Unlimited lessons")},
           %{icon: "tabler-headset", text: dgettext("settings", "Priority support")},
-          %{icon: "tabler-users", text: dgettext("settings", "Exclusive community access")},
           %{icon: "tabler-plus", text: dgettext("settings", "Everything in Free")}
         ]
       }
