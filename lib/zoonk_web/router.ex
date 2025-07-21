@@ -46,6 +46,8 @@ defmodule ZoonkWeb.Router do
 
   pipeline :webhooks do
     plug :accepts, ["json"]
+    plug :fetch_session
+    plug :fetch_scope
   end
 
   scope "/", ZoonkWeb do
