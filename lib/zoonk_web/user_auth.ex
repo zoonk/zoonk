@@ -250,6 +250,23 @@ defmodule ZoonkWeb.UserAuth do
   end
 
   @doc """
+  Used for routes that require the user to be authenticated.
+  """
+  def require_authenticated_user(conn, opts) do
+    scope = conn.assigns.scope
+    logged_in? = scope && scope.user
+
+    if logged_in? do
+      conn
+    else
+      conn
+      |> maybe_store_return_to(opts)
+      |> redirect(to: ~p"/login")
+      |> halt()
+    end
+  end
+
+  @doc """
   Stores the return to path for unauthenticated users.
 
   This is used to redirect the user back to the page they were trying to access.

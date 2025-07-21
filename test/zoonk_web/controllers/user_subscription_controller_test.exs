@@ -3,7 +3,14 @@ defmodule ZoonkWeb.UserSubscriptionControllerTest do
 
   import Zoonk.BillingFixtures
 
-  describe "POST /checkout" do
+  describe "POST /checkout (unauthenticated)" do
+    test "redirects to sign in page", %{conn: conn} do
+      conn = post(conn, ~p"/checkout", %{"price" => "price_plus_monthly"})
+      assert redirected_to(conn) == ~p"/login"
+    end
+  end
+
+  describe "POST /checkout (authenticated)" do
     setup :signup_and_login_user
 
     test "creates checkout session and redirects to Stripe URL", %{conn: conn, scope: scope} do

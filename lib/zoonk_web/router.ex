@@ -98,11 +98,15 @@ defmodule ZoonkWeb.Router do
     get "/auth/:provider", OAuthController, :request
     get "/auth/:provider/callback", OAuthController, :callback
 
-    post "/checkout", UserSubscriptionController, :checkout
-
     # Legal routes
     get "/terms", LegalController, :terms
     get "/privacy", LegalController, :privacy
+  end
+
+  scope "/", ZoonkWeb do
+    pipe_through [:browser, :require_authenticated_user]
+
+    post "/checkout", UserSubscriptionController, :checkout
   end
 
   # We need this because Apple's oAuth handling sends a POST request

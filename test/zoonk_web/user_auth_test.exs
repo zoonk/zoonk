@@ -483,4 +483,56 @@ defmodule ZoonkWeb.UserAuthTest do
       assert max_age == @max_age
     end
   end
+
+  describe "require_authenticated_user/2" do
+    setup %{conn: conn} do
+      %{conn: UserAuth.fetch_scope(conn, [])}
+    end
+
+    test "redirects if user is not authenticated", %{conn: conn} do
+      conn =
+        conn
+        |> fetch_flash()
+        |> UserAuth.require_authenticated_user([])
+
+      assert conn.halted
+      assert redirected_to(conn) == ~p"/login"
+    end
+
+    test "stores the path to redirect to on GET", %{conn: conn} do
+      no_query_conn =
+        %{conn | path_info: ["foo"], query_string: ""}
+        |> fetch_flash()
+        |> UserAuth.require_authenticated_user([])
+
+      assert no_query_conn.halted
+      assert get_session(no_query_conn, :user_return_to) == "/foo"
+
+      query_conn =
+        %{conn | path_info: ["foo"], query_string: "bar=baz"}
+        |> fetch_flash()
+        |> UserAuth.require_authenticated_user([])
+
+      assert query_conn.halted
+      assert get_session(query_conn, :user_return_to) == "/foo?bar=baz"
+
+      post_conn =
+        %{conn | path_info: ["foo"], query_string: "bar", method: "POST"}
+        |> fetch_flash()
+        |> UserAuth.require_authenticated_user([])
+
+      assert post_conn.halted
+      refute get_session(post_conn, :user_return_to)
+    end
+
+    test "does not redirect if user is authenticated", %{conn: conn, scope: scope} do
+      conn =
+        conn
+        |> assign(:scope, Scope.set(scope))
+        |> UserAuth.require_authenticated_user([])
+
+      refute conn.halted
+      refute conn.status
+    end
+  end
 end
