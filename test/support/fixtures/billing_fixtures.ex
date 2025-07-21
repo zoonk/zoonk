@@ -81,18 +81,23 @@ defmodule Zoonk.BillingFixtures do
   ## Examples
 
       iex> valid_user_subscription_attrs()
-      %{plan: :plus, payment_term: :monthly, ...}
+      %{plan: :plus, interval: :monthly, ...}
 
       iex> valid_user_subscription_attrs(%{plan: :plus})
-      %{plan: :plus, payment_term: :monthly, ...}
+      %{plan: :plus, interval: :monthly, ...}
 
   """
   def valid_user_subscription_attrs(attrs \\ %{}) do
-    expires_at = Map.get(attrs, :expires_at, DateTime.add(DateTime.utc_now(), 30, :day))
+    expiration_date =
+      DateTime.utc_now()
+      |> DateTime.add(30, :day)
+      |> DateTime.truncate(:second)
+
+    expires_at = Map.get(attrs, :expires_at, expiration_date)
 
     Enum.into(attrs, %{
       plan: :plus,
-      payment_term: :monthly,
+      interval: :monthly,
       status: :active,
       expires_at: expires_at,
       cancel_at_period_end: false,
@@ -136,7 +141,14 @@ defmodule Zoonk.BillingFixtures do
 
   """
   def valid_billing_account_attrs(attrs \\ %{}) do
-    Map.merge(%{"currency" => "USD", "country_iso2" => "US"}, attrs)
+    Map.merge(
+      %{
+        "currency" => "USD",
+        "country_iso2" => "US",
+        "stripe_customer_id" => "cus_#{System.unique_integer([:positive])}"
+      },
+      attrs
+    )
   end
 
   @doc """

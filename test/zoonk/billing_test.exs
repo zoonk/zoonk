@@ -72,7 +72,7 @@ defmodule Zoonk.BillingTest do
       assert subscription.user_id == user.id
       assert subscription.org_id == org.id
       assert subscription.plan == attrs.plan
-      assert subscription.payment_term == attrs.payment_term
+      assert subscription.interval == attrs.interval
       assert subscription.status == attrs.status
       assert subscription.stripe_subscription_id == attrs.stripe_subscription_id
       assert subscription.expires_at == attrs.expires_at
@@ -118,7 +118,10 @@ defmodule Zoonk.BillingTest do
       scope = %Scope{user: user, org: org}
 
       # Only providing required fields, letting defaults handle the rest
-      expires_at = DateTime.add(DateTime.utc_now(), 30, :day)
+      expires_at =
+        DateTime.utc_now()
+        |> DateTime.add(30, :day)
+        |> DateTime.truncate(:second)
 
       attrs = %{
         status: :active,
@@ -127,7 +130,7 @@ defmodule Zoonk.BillingTest do
 
       assert {:ok, %UserSubscription{} = subscription} = Billing.create_user_subscription(scope, attrs)
       assert subscription.plan == :free
-      assert subscription.payment_term == :monthly
+      assert subscription.interval == :monthly
       assert subscription.status == :active
       assert subscription.expires_at == expires_at
       refute subscription.cancel_at_period_end
@@ -147,7 +150,7 @@ defmodule Zoonk.BillingTest do
       # Now update it
       update_attrs = %{
         plan: :plus,
-        payment_term: :yearly,
+        interval: :yearly,
         status: :active,
         cancel_at_period_end: true
       }
@@ -157,7 +160,7 @@ defmodule Zoonk.BillingTest do
       assert updated.user_id == user.id
       assert updated.org_id == org.id
       assert updated.plan == :plus
-      assert updated.payment_term == :yearly
+      assert updated.interval == :yearly
       assert updated.status == :active
       assert updated.cancel_at_period_end == true
     end

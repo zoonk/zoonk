@@ -14,7 +14,7 @@ defmodule Zoonk.Billing.UserSubscription do
   | `user_id`                | `Integer`     | Reference to `Zoonk.Accounts.User`                  |
   | `stripe_subscription_id` | `String`      | Stripe subscription ID.                             |
   | `plan`                   | `Ecto.Enum`   | The subscription plan type.                         |
-  | `payment_term`           | `Ecto.Enum`   | Payment frequency (monthly, yearly).                |
+  | `interval`               | `Ecto.Enum`   | Payment frequency (monthly, yearly).                |
   | `status`                 | `Ecto.Enum`   | Current status of the subscription.                 |
   | `expires_at`             | `DateTime`    | When the subscription expires.                      |
   | `cancel_at_period_end`   | `Boolean`     | Whether to cancel at the end of the current period. |
@@ -34,13 +34,13 @@ defmodule Zoonk.Billing.UserSubscription do
 
     field :stripe_subscription_id, :string
     field :plan, Ecto.Enum, values: [:free, :plus], default: :free
-    field :payment_term, Ecto.Enum, values: [:monthly, :yearly], default: :monthly
+    field :interval, Ecto.Enum, values: [:monthly, :yearly], default: :monthly
 
     field :status, Ecto.Enum,
       values: [:incomplete, :incomplete_expired, :trialing, :active, :past_due, :canceled, :unpaid, :paused],
       default: :incomplete
 
-    field :expires_at, :utc_datetime_usec
+    field :expires_at, :utc_datetime
     field :cancel_at_period_end, :boolean, default: false
 
     timestamps(type: :utc_datetime_usec)
@@ -55,12 +55,12 @@ defmodule Zoonk.Billing.UserSubscription do
       :org_id,
       :user_id,
       :plan,
-      :payment_term,
+      :interval,
       :status,
       :expires_at,
       :cancel_at_period_end,
       :stripe_subscription_id
     ])
-    |> validate_required([:org_id, :user_id, :plan, :payment_term, :status, :expires_at, :cancel_at_period_end])
+    |> validate_required([:org_id, :user_id, :plan, :interval, :status, :expires_at, :cancel_at_period_end])
   end
 end

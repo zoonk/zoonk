@@ -8,9 +8,9 @@ defmodule Zoonk.Repo.Migrations.CreateUserSubscriptions do
 
       add :stripe_subscription_id, :string
       add :plan, :string, null: false
-      add :payment_term, :string, null: false
+      add :interval, :string, null: false
       add :status, :string, null: false
-      add :expires_at, :utc_datetime_usec
+      add :expires_at, :utc_datetime
       add :cancel_at_period_end, :boolean, default: false, null: false
 
       timestamps(type: :utc_datetime_usec)

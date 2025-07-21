@@ -10,7 +10,7 @@ defmodule ZoonkWeb.UserSubscriptionForm do
   alias Zoonk.Locations
 
   @plans Ecto.Enum.values(UserSubscription, :plan)
-  @periods Ecto.Enum.values(UserSubscription, :payment_term)
+  @periods Ecto.Enum.values(UserSubscription, :interval)
 
   attr :current_plan, :atom, values: @plans, required: true
   attr :selected_plan, :atom, values: @plans, required: true
