@@ -93,12 +93,14 @@ defmodule Zoonk.Helpers do
       iex> to_existing_atom(nil)
       nil
   """
-  def to_existing_atom(nil), do: nil
+  def to_existing_atom(value, default \\ nil)
 
-  def to_existing_atom(string) when is_binary(string) do
+  def to_existing_atom(nil, default), do: default
+
+  def to_existing_atom(string, default) when is_binary(string) do
     String.to_existing_atom(string)
   rescue
-    ArgumentError -> nil
+    ArgumentError -> default
   end
 
   @doc """

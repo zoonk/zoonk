@@ -107,6 +107,14 @@ defmodule Zoonk.HelpersTest do
     end
   end
 
+  describe "to_existing_atom/2" do
+    test "pass a default value to be used when is nil" do
+      assert to_existing_atom(nil, :default) == :default
+      assert to_existing_atom("catalog", :default) == :catalog
+      assert to_existing_atom("non_existent_atom", :default) == :default
+    end
+  end
+
   describe "maybe_put/3" do
     test "adds key-value pair to empty map" do
       assert maybe_put(%{}, "key", "value") == %{"key" => "value"}
