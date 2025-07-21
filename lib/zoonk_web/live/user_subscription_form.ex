@@ -6,15 +6,14 @@ defmodule ZoonkWeb.UserSubscriptionForm do
   import ZoonkWeb.UserSubscriptionComponents
 
   alias Zoonk.Billing.Price
-  alias Zoonk.Billing.UserSubscription
   alias Zoonk.Locations
 
-  @plans Ecto.Enum.values(UserSubscription, :plan)
-  @periods Ecto.Enum.values(UserSubscription, :interval)
+  @plans [:free, :plus]
+  @intervals [:monthly, :yearly]
 
   attr :current_plan, :atom, values: @plans, required: true
   attr :selected_plan, :atom, values: @plans, required: true
-  attr :period, :atom, values: @periods, required: true
+  attr :interval, :atom, values: @intervals, required: true
   attr :prices, :list, required: true
 
   def subscription_form(assigns) do
@@ -29,7 +28,7 @@ defmodule ZoonkWeb.UserSubscriptionForm do
         :if={@selected_plan != :free}
         type="hidden"
         name="price"
-        value={price(@prices, @selected_plan, @period).stripe_price_id}
+        value={price(@prices, @selected_plan, @interval).stripe_price_id}
       />
 
       <div class="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
@@ -42,14 +41,14 @@ defmodule ZoonkWeb.UserSubscriptionForm do
         >
           <.subscription_header>
             <.subscription_title
-              badge_label={badge_label(plan.key, @current_plan, @period)}
+              badge_label={badge_label(plan.key, @current_plan, @interval)}
               badge_color={badge_color(plan.key, @current_plan)}
             >
               {plan.label}
             </.subscription_title>
 
             <.subscription_price>
-              {price_value(@prices, plan.key, @period)}
+              {price_value(@prices, plan.key, @interval)}
             </.subscription_price>
           </.subscription_header>
 
@@ -63,7 +62,7 @@ defmodule ZoonkWeb.UserSubscriptionForm do
 
       <.subscription_submit
         disabled={@selected_plan == :free && @current_plan == :free}
-        disclaimer={disclaimer_text(@selected_plan, @period, @prices)}
+        disclaimer={disclaimer_text(@selected_plan, @interval, @prices)}
       >
         {dgettext("settings", "Subscribe")}
       </.subscription_submit>
@@ -71,31 +70,31 @@ defmodule ZoonkWeb.UserSubscriptionForm do
     """
   end
 
-  defp price(prices, plan, period) do
-    Enum.find(prices, &match?(%Price{plan: ^plan, period: ^period}, &1))
+  defp price(prices, plan, interval) do
+    Enum.find(prices, &match?(%Price{plan: ^plan, interval: ^interval}, &1))
   end
 
-  defp price_value([], _plan, _period), do: "$0"
+  defp price_value([], _plan, _interval), do: "$0"
 
-  defp price_value([%Price{currency: currency} | _rest], :free, _period) do
+  defp price_value([%Price{currency: currency} | _rest], :free, _interval) do
     symbol = Locations.get_currency_symbol(currency) || "$"
     "#{symbol}0"
   end
 
-  defp price_value(prices, plan, period) do
+  defp price_value(prices, plan, interval) do
     prices
-    |> price(plan, period)
+    |> price(plan, interval)
     |> Map.get(:value, "$0")
   end
 
-  defp disclaimer_text(:free, _period, _prices) do
+  defp disclaimer_text(:free, _interval, _prices) do
     dgettext("settings", "This is a limited plan. You will not be charged anything unless you upgrade to a paid plan.")
   end
 
-  defp disclaimer_text(:plus, period, prices) do
+  defp disclaimer_text(:plus, interval, prices) do
     prices
-    |> price_value(:plus, period)
-    |> disclaimer_price_label(period)
+    |> price_value(:plus, interval)
+    |> disclaimer_price_label(interval)
     |> plus_disclaimer()
   end
 
@@ -110,9 +109,9 @@ defmodule ZoonkWeb.UserSubscriptionForm do
     )
   end
 
-  defp badge_label(plan, current_plan, _period) when plan == current_plan, do: dgettext("settings", "Current Plan")
+  defp badge_label(plan, current_plan, _interval) when plan == current_plan, do: dgettext("settings", "Current Plan")
   defp badge_label(:plus, _current_plan, :yearly), do: dgettext("settings", "2 Months Free")
-  defp badge_label(_plan, _current_plan, _period), do: nil
+  defp badge_label(_plan, _current_plan, _interval), do: nil
 
   defp badge_color(plan, current_plan) when plan == current_plan, do: :secondary
   defp badge_color(_plan, _current_plan), do: :primary

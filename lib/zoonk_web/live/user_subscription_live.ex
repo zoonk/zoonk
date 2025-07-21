@@ -36,12 +36,12 @@ defmodule ZoonkWeb.UserSubscriptionLive do
           </.text>
         </header>
 
-        <.toggle_group class="w-full max-w-md" phx-change="change_period">
-          <.toggle_item value="monthly" name="period" checked={@period == :monthly}>
+        <.toggle_group class="w-full max-w-md" phx-change="change_interval">
+          <.toggle_item value="monthly" name="interval" checked={@interval == :monthly}>
             {dgettext("settings", "Monthly")}
           </.toggle_item>
 
-          <.toggle_item value="yearly" name="period" checked={@period == :yearly}>
+          <.toggle_item value="yearly" name="interval" checked={@interval == :yearly}>
             {dgettext("settings", "Yearly")}
           </.toggle_item>
         </.toggle_group>
@@ -49,7 +49,7 @@ defmodule ZoonkWeb.UserSubscriptionLive do
         <.subscription_form
           current_plan={@current_plan}
           selected_plan={@selected_plan}
-          period={@period}
+          interval={@interval}
           prices={@prices}
         />
       </section>
@@ -94,7 +94,7 @@ defmodule ZoonkWeb.UserSubscriptionLive do
       |> assign(:page_title, dgettext("page_title", "Subscription"))
       |> assign(:billing_account, billing_account)
       |> assign(:country_form, to_form(country_changeset))
-      |> assign(:period, current_interval(scope))
+      |> assign(:interval, current_interval(scope))
       |> assign(:selected_plan, current_plan(scope))
       |> assign(:current_plan, current_plan(scope))
       |> assign(:prices, list_prices(billing_account))
@@ -125,8 +125,8 @@ defmodule ZoonkWeb.UserSubscriptionLive do
     end
   end
 
-  def handle_event("change_period", %{"period" => period}, socket) do
-    {:noreply, assign(socket, :period, String.to_existing_atom(period))}
+  def handle_event("change_interval", %{"interval" => interval}, socket) do
+    {:noreply, assign(socket, :interval, String.to_existing_atom(interval))}
   end
 
   def handle_event("change_plan", %{"plan" => plan}, socket) do

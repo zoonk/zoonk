@@ -133,7 +133,7 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       |> assert_has("p", text: "Your subscription will renew automatically at $10/month")
     end
 
-    test "updates the price when selecting yearly period", %{conn: conn, scope: scope} do
+    test "updates the price when selecting yearly interval", %{conn: conn, scope: scope} do
       stripe_stub()
       billing_account_fixture(%{"scope" => scope})
 
@@ -154,7 +154,7 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       |> assert_has("button[disabled]", text: "Subscribe")
     end
 
-    test "submit form with selected plan and period", %{conn: conn, scope: scope} do
+    test "submit form with selected plan and interval", %{conn: conn, scope: scope} do
       stripe_stub()
       billing_account_fixture(%{"scope" => scope})
 

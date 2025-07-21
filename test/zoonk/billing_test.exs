@@ -20,7 +20,7 @@ defmodule Zoonk.BillingTest do
 
       assert %Price{} = first_price = hd(prices)
       assert first_price.plan == :plus
-      assert first_price.period == :monthly
+      assert first_price.interval == :monthly
       assert first_price.currency == "brl"
       assert first_price.value == "R$50"
       assert String.starts_with?(first_price.stripe_price_id, "price_")
@@ -34,7 +34,7 @@ defmodule Zoonk.BillingTest do
 
       assert %Price{} = first_price = hd(prices)
       assert first_price.plan == :plus
-      assert first_price.period == :monthly
+      assert first_price.interval == :monthly
       assert first_price.currency == "usd"
       assert first_price.value == "$10"
       assert String.starts_with?(first_price.stripe_price_id, "price_")
@@ -47,7 +47,7 @@ defmodule Zoonk.BillingTest do
 
       assert %Price{} = first_price = hd(prices)
       assert first_price.plan == :plus
-      assert first_price.period == :monthly
+      assert first_price.interval == :monthly
       assert first_price.currency == "usd"
       assert first_price.value == "$10"
       assert String.starts_with?(first_price.stripe_price_id, "price_")

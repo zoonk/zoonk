@@ -7,7 +7,7 @@ defmodule Zoonk.Billing.Price do
   | Field           | Type           | Description                               |
   |-----------------|----------------|-------------------------------------------|
   | plan            | `t:plan/0`     | The subscription plan                     |
-  | period          | `t:period/0`   | Payment frequency                         |
+  | interval        | `t:interval/0` | Payment frequency                         |
   | currency        | `String`       | The currency code (e.g., "usd", "brl")    |
   | value           | `String`       | The price value in the specified currency |
   | stripe_price_id | `String`       | The Stripe price ID for this plan         |
@@ -18,18 +18,18 @@ defmodule Zoonk.Billing.Price do
   @default_value "$10"
 
   @type plan :: :plus
-  @type period :: :monthly | :yearly
+  @type interval :: :monthly | :yearly
 
   @type t :: %__MODULE__{
           plan: plan,
-          period: period,
+          interval: interval,
           currency: String.t(),
           value: String.t(),
           stripe_price_id: String.t()
         }
 
   defstruct plan: :plus,
-            period: :monthly,
+            interval: :monthly,
             currency: @default_currency,
             value: @default_value,
             stripe_price_id: nil
@@ -38,7 +38,7 @@ defmodule Zoonk.Billing.Price do
   Transforms a Stripe Price object into a Price struct for a specific currency.
 
   Takes a raw Price object from the Stripe API and converts it to our internal
-  Price struct, extracting the plan, period, and price for the specified currency.
+  Price struct, extracting the plan, interval, and price for the specified currency.
   If the currency is not available, falls back to USD, and if USD is not available,
   returns an error.
 
@@ -56,7 +56,7 @@ defmodule Zoonk.Billing.Price do
       ...> }, "brl")
       {:ok, %Price{
         plan: :plus,
-        period: :monthly,
+        interval: :monthly,
         currency: "brl",
         value: "R$19.99"
       }}
@@ -67,7 +67,7 @@ defmodule Zoonk.Billing.Price do
 
     %__MODULE__{
       plan: get_plan(price["lookup_key"]),
-      period: get_period(price),
+      interval: get_interval(price),
       currency: user_currency,
       value: Map.get(all_currencies, user_currency, @default_value),
       stripe_price_id: price["id"]
@@ -109,7 +109,7 @@ defmodule Zoonk.Billing.Price do
     |> String.to_existing_atom()
   end
 
-  defp get_period(price) do
+  defp get_interval(price) do
     price["lookup_key"]
     |> String.split("_")
     |> List.last()
