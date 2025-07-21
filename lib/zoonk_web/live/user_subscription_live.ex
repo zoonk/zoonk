@@ -94,7 +94,7 @@ defmodule ZoonkWeb.UserSubscriptionLive do
       |> assign(:page_title, dgettext("page_title", "Subscription"))
       |> assign(:billing_account, billing_account)
       |> assign(:country_form, to_form(country_changeset))
-      |> assign(:period, :monthly)
+      |> assign(:period, current_interval(scope))
       |> assign(:selected_plan, current_plan(scope))
       |> assign(:current_plan, current_plan(scope))
       |> assign(:prices, list_prices(billing_account))
@@ -165,4 +165,7 @@ defmodule ZoonkWeb.UserSubscriptionLive do
 
   defp current_plan(%Scope{subscription: %UserSubscription{status: :active, plan: plan}}), do: plan
   defp current_plan(_scope), do: :free
+
+  defp current_interval(%Scope{subscription: %UserSubscription{interval: interval}}), do: interval
+  defp current_interval(_scope), do: :monthly
 end

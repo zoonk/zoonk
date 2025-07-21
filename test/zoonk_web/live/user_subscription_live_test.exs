@@ -168,5 +168,15 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
 
       assert String.starts_with?(path, "https://checkout.stripe.com/session_")
     end
+
+    test "select yearly by default when user has an yearly subscription", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+      user_subscription_fixture(%{scope: scope, plan: :plus, status: :active, interval: :yearly})
+
+      conn
+      |> visit(~p"/subscription")
+      |> assert_has("span", text: "$100")
+    end
   end
 end
