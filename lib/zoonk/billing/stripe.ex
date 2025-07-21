@@ -7,7 +7,7 @@ defmodule Zoonk.Billing.Stripe do
   """
 
   @base_url "https://api.stripe.com/v1"
-  @api_version "2025-04-30.basil"
+  @api_version "2025-06-30.basil"
 
   @doc """
   Sends a `GET` request to the Stripe API.
