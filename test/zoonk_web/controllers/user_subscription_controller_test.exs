@@ -3,14 +3,14 @@ defmodule ZoonkWeb.UserSubscriptionControllerTest do
 
   import Zoonk.BillingFixtures
 
-  describe "POST /checkout (unauthenticated)" do
+  describe "POST /subscription/checkout (unauthenticated)" do
     test "redirects to sign in page", %{conn: conn} do
-      conn = post(conn, ~p"/checkout", %{"price" => "price_plus_monthly"})
+      conn = post(conn, ~p"/subscription/checkout", %{"price" => "price_plus_monthly"})
       assert redirected_to(conn) == ~p"/login"
     end
   end
 
-  describe "POST /checkout (authenticated)" do
+  describe "POST /subscription/checkout (authenticated)" do
     setup :signup_and_login_user
 
     test "creates checkout session and redirects to Stripe URL", %{conn: conn, scope: scope} do
@@ -23,7 +23,7 @@ defmodule ZoonkWeb.UserSubscriptionControllerTest do
         }
       )
 
-      conn = post(conn, ~p"/checkout", %{"price" => "price_plus_monthly"})
+      conn = post(conn, ~p"/subscription/checkout", %{"price" => "price_plus_monthly"})
 
       assert redirected_to(conn) =~ "https://checkout.stripe.com/session_123"
     end
@@ -32,7 +32,7 @@ defmodule ZoonkWeb.UserSubscriptionControllerTest do
       billing_account_fixture(%{"scope" => scope})
       stripe_stub(error: true)
 
-      conn = post(conn, ~p"/checkout", %{"price" => "price_plus_monthly"})
+      conn = post(conn, ~p"/subscription/checkout", %{"price" => "price_plus_monthly"})
 
       assert redirected_to(conn) == ~p"/subscription"
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "Payment service is temporarily unavailable"
@@ -41,7 +41,7 @@ defmodule ZoonkWeb.UserSubscriptionControllerTest do
     test "redirects with error flash when price parameter is missing", %{conn: conn, scope: scope} do
       billing_account_fixture(%{"scope" => scope})
 
-      conn = post(conn, ~p"/checkout", %{})
+      conn = post(conn, ~p"/subscription/checkout", %{})
 
       assert redirected_to(conn) == ~p"/subscription"
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "Invalid subscription request"
@@ -50,7 +50,7 @@ defmodule ZoonkWeb.UserSubscriptionControllerTest do
     test "redirects with error flash when price parameter is not a string", %{conn: conn, scope: scope} do
       billing_account_fixture(%{"scope" => scope})
 
-      conn = post(conn, ~p"/checkout", %{"price" => 123})
+      conn = post(conn, ~p"/subscription/checkout", %{"price" => 123})
 
       assert redirected_to(conn) == ~p"/subscription"
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "Invalid subscription request"
@@ -71,7 +71,7 @@ defmodule ZoonkWeb.UserSubscriptionControllerTest do
         conn
         |> Map.put(:host, "zoonk.test")
         |> Map.put(:port, 4000)
-        |> post(~p"/checkout", %{"price" => "price_plus_monthly"})
+        |> post(~p"/subscription/checkout", %{"price" => "price_plus_monthly"})
 
       assert redirected_to(conn) =~ "https://checkout.stripe.com/session_123"
 
@@ -91,7 +91,7 @@ defmodule ZoonkWeb.UserSubscriptionControllerTest do
         }
       )
 
-      conn = post(conn, ~p"/checkout", %{"price" => "price_plus_monthly"})
+      conn = post(conn, ~p"/subscription/checkout", %{"price" => "price_plus_monthly"})
 
       assert redirected_to(conn) =~ "https://checkout.stripe.com/c/pay/cs_test_special_chars"
     end
@@ -105,7 +105,7 @@ defmodule ZoonkWeb.UserSubscriptionControllerTest do
         }
       )
 
-      conn = post(conn, ~p"/checkout", %{"price" => "price_plus_monthly"})
+      conn = post(conn, ~p"/subscription/checkout", %{"price" => "price_plus_monthly"})
 
       assert redirected_to(conn) == ~p"/subscription"
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "Please set up billing first"
@@ -114,7 +114,7 @@ defmodule ZoonkWeb.UserSubscriptionControllerTest do
     test "handles empty price parameter", %{conn: conn, scope: scope} do
       billing_account_fixture(%{"scope" => scope})
 
-      conn = post(conn, ~p"/checkout", %{"price" => ""})
+      conn = post(conn, ~p"/subscription/checkout", %{"price" => ""})
 
       assert redirected_to(conn) == ~p"/subscription"
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "Invalid subscription request"
@@ -123,7 +123,7 @@ defmodule ZoonkWeb.UserSubscriptionControllerTest do
     test "handles malformed parameters gracefully", %{conn: conn, scope: scope} do
       billing_account_fixture(%{"scope" => scope})
 
-      conn = post(conn, ~p"/checkout", %{"invalid" => "data"})
+      conn = post(conn, ~p"/subscription/checkout", %{"invalid" => "data"})
 
       assert redirected_to(conn) == ~p"/subscription"
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "Invalid subscription request"

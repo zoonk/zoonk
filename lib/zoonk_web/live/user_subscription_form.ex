@@ -20,7 +20,7 @@ defmodule ZoonkWeb.UserSubscriptionForm do
   def subscription_form(assigns) do
     ~H"""
     <.subscription
-      action={~p"/checkout"}
+      action={~p"/subscription/checkout"}
       method="post"
       phx-change="change_plan"
       class="w-full max-w-4xl"
