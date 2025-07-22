@@ -285,7 +285,7 @@ defmodule Zoonk.Billing do
       iex> cancel_user_subscription(scope, subscription)
       {:error, %Ecto.Changeset{}}
   """
-  def cancel_user_subscription(%Scope{} = scope, %UserSubscription{} = subscription) do
+  def cancel_user_subscription(%Scope{subscription: subscription} = scope) do
     subscription
     |> cancel_stripe_subscription()
     |> cancel_user_subscription(scope, subscription, %{status: :canceled, cancel_at_period_end: true})

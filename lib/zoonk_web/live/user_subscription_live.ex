@@ -32,7 +32,10 @@ defmodule ZoonkWeb.UserSubscriptionLive do
           </.text>
 
           <.text size={:md} variant={:secondary}>
-            {dgettext("settings", "Get unlimited access to all courses")}
+            {dgettext(
+              "settings",
+              "Get unlimited access to all courses. Choose a plan below to get started."
+            )}
           </.text>
         </header>
 
@@ -133,18 +136,18 @@ defmodule ZoonkWeb.UserSubscriptionLive do
     {:noreply, assign(socket, :selected_plan, String.to_existing_atom(plan))}
   end
 
-  def handle_event("subscribe", %{"plan" => plan}, socket) do
-    # Placeholder for subscription logic - will redirect to Stripe later
-    plan_atom = String.to_existing_atom(plan)
+  def handle_event("cancel", _params, socket) do
+    scope = socket.assigns.scope
 
-    case plan_atom do
-      :free ->
-        # Handle free plan subscription (if needed)
-        {:noreply, put_flash(socket, :info, dgettext("settings", "You're already on the free plan!"))}
+    case Billing.cancel_user_subscription(scope) do
+      {:ok, _subscription} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, dgettext("settings", "Your subscription has been canceled."))
+         |> push_navigate(to: ~p"/subscription")}
 
-      :plus ->
-        # Handle plus plan subscription - will redirect to Stripe checkout
-        {:noreply, put_flash(socket, :info, dgettext("settings", "Redirecting to checkout..."))}
+      {:error, _reason} ->
+        {:noreply, put_flash(socket, :error, dgettext("settings", "Failed to cancel subscription. Please try again."))}
     end
   end
 

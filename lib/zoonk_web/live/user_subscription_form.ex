@@ -19,9 +19,10 @@ defmodule ZoonkWeb.UserSubscriptionForm do
   def subscription_form(assigns) do
     ~H"""
     <.subscription
-      action={~p"/subscription/checkout"}
+      action={form_action(@selected_plan, @current_plan)}
       method="post"
       phx-change="change_plan"
+      phx-submit={phx_submit_action(@selected_plan, @current_plan)}
       class="w-full max-w-4xl"
     >
       <input
@@ -63,8 +64,9 @@ defmodule ZoonkWeb.UserSubscriptionForm do
       <.subscription_submit
         disabled={@selected_plan == :free && @current_plan == :free}
         disclaimer={disclaimer_text(@selected_plan, @interval, @prices)}
+        variant={submit_variant(@selected_plan, @current_plan)}
       >
-        {dgettext("settings", "Subscribe")}
+        {submit_label(@selected_plan, @current_plan)}
       </.subscription_submit>
     </.subscription>
     """
@@ -138,4 +140,16 @@ defmodule ZoonkWeb.UserSubscriptionForm do
       }
     ]
   end
+
+  defp submit_label(:free, :plus), do: dgettext("settings", "Cancel Subscription")
+  defp submit_label(_selected, _current), do: dgettext("settings", "Subscribe")
+
+  defp submit_variant(:free, :plus), do: :destructive
+  defp submit_variant(_selected, _current), do: :primary
+
+  defp phx_submit_action(:free, :plus), do: "cancel"
+  defp phx_submit_action(_selected, _current), do: nil
+
+  defp form_action(:free, :plus), do: nil
+  defp form_action(_selected, _current), do: ~p"/subscription/checkout"
 end

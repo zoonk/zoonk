@@ -239,6 +239,7 @@ defmodule ZoonkWeb.UserSubscriptionComponents do
   """
   attr :disclaimer, :string, required: true
   attr :class, :string, default: nil
+  attr :variant, :atom, values: [:primary, :destructive], default: :primary
   attr :rest, :global, include: ~w(disabled)
 
   slot :inner_block, required: true
@@ -250,7 +251,15 @@ defmodule ZoonkWeb.UserSubscriptionComponents do
         {@disclaimer}
       </.text>
 
-      <.button type="submit" icon="tabler-diamond" variant={:primary} size={:md} class="w-fit" {@rest}>
+      <.button
+        type="submit"
+        icon="tabler-diamond"
+        phx-disable
+        variant={@variant}
+        size={:md}
+        class="w-fit"
+        {@rest}
+      >
         {render_slot(@inner_block)}
       </.button>
     </div>

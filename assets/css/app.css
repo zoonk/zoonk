@@ -292,7 +292,7 @@
 
 @utility zk-btn {
   @apply inline-flex items-center justify-center gap-1.5 rounded-full font-medium
-  shrink-0 leading-none select-none whitespace-nowrap transition-all
+  shrink-0 leading-none select-none whitespace-nowrap
   ring-offset-zk-background outline-none focus-visible:ring-offset-2 focus-visible:ring-2;
 }
 

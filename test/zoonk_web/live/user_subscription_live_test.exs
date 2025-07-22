@@ -178,5 +178,24 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       |> visit(~p"/subscription")
       |> assert_has("span", text: "$100")
     end
+
+    test "cancels a subscription", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+      user_subscription_fixture(%{scope: scope, plan: :plus, status: :active})
+
+      conn
+      |> visit(~p"/subscription")
+      |> choose("$0", exact: false)
+      |> assert_has("button", text: "Cancel Subscription")
+      |> click_button("button", "Cancel Subscription")
+      |> assert_has("[role='alert']", text: "Your subscription has been canceled.")
+      |> refute_has("h3", text: "Plus Current Plan")
+      |> assert_has("h3", text: "Free Current Plan")
+      |> refute_has("button", text: "Cancel Subscription")
+      |> assert_has("button", text: "Subscribe")
+
+      assert Billing.get_user_subscription(scope).status == :canceled
+    end
   end
 end

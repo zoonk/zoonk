@@ -214,14 +214,19 @@ defmodule Zoonk.BillingTest do
     end
   end
 
-  describe "cancel_user_subscription/2" do
+  describe "cancel_user_subscription/1" do
     test "successfully cancels a subscription with Stripe subscription ID" do
-      %Scope{user: user} = scope = scope_fixture()
+      user = user_fixture()
       subscription = user_subscription_fixture(%{user: user, stripe_subscription_id: "sub_12345"})
+
+      scope =
+        %{user: user}
+        |> scope_fixture()
+        |> Map.put(:subscription, subscription)
 
       stripe_stub(prefix: "/subscriptions/sub_12345", data: %{"status" => "canceled"})
 
-      assert {:ok, canceled_subscription} = Billing.cancel_user_subscription(scope, subscription)
+      assert {:ok, canceled_subscription} = Billing.cancel_user_subscription(scope)
 
       assert canceled_subscription.status == :canceled
       assert canceled_subscription.cancel_at_period_end == true
@@ -229,22 +234,32 @@ defmodule Zoonk.BillingTest do
     end
 
     test "successfully cancels a subscription without Stripe subscription ID" do
-      %Scope{user: user} = scope = scope_fixture()
+      user = user_fixture()
       subscription = user_subscription_fixture(%{user: user, stripe_subscription_id: nil})
 
-      assert {:ok, canceled_subscription} = Billing.cancel_user_subscription(scope, subscription)
+      scope =
+        %{user: user}
+        |> scope_fixture()
+        |> Map.put(:subscription, subscription)
+
+      assert {:ok, canceled_subscription} = Billing.cancel_user_subscription(scope)
       assert canceled_subscription.status == :canceled
       assert canceled_subscription.cancel_at_period_end == true
       assert canceled_subscription.stripe_subscription_id == nil
     end
 
     test "handles Stripe API errors" do
-      %Scope{user: user} = scope = scope_fixture()
+      user = user_fixture()
       subscription = user_subscription_fixture(%{user: user, stripe_subscription_id: "sub_error"})
+
+      scope =
+        %{user: user}
+        |> scope_fixture()
+        |> Map.put(:subscription, subscription)
 
       stripe_stub(error: true)
 
-      assert {:error, "Invalid request"} = Billing.cancel_user_subscription(scope, subscription)
+      assert {:error, "Invalid request"} = Billing.cancel_user_subscription(scope)
     end
   end
 
