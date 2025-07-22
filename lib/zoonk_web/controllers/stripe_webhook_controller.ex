@@ -29,6 +29,23 @@ defmodule ZoonkWeb.StripeWebhookController do
     success_response(conn)
   end
 
+  # delete subscription
+  def create(conn, %{"type" => "customer.subscription.deleted"} = event) do
+    data = event["data"]["object"]
+    stripe_subscription_id = data["id"]
+
+    user_subscription = Billing.get_user_subscription_by_stripe_id(stripe_subscription_id)
+
+    scope = %Scope{org: conn.assigns.scope.org, user: user_subscription.user, subscription: user_subscription}
+
+    Billing.update_user_subscription(scope, %{
+      status: :canceled,
+      cancel_at_period_end: true
+    })
+
+    success_response(conn)
+  end
+
   def create(conn, %{"type" => _type}) do
     success_response(conn)
   end

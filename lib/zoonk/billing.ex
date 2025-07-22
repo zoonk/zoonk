@@ -112,7 +112,10 @@ defmodule Zoonk.Billing do
       nil
   """
   def get_user_subscription_by_stripe_id(stripe_subscription_id) do
-    Repo.get_by(UserSubscription, stripe_subscription_id: stripe_subscription_id)
+    UserSubscription
+    |> where([s], s.stripe_subscription_id == ^stripe_subscription_id)
+    |> preload([:user])
+    |> Repo.one()
   end
 
   @doc """

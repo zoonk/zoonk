@@ -76,6 +76,33 @@ defmodule ZoonkWeb.StripeWebhookControllerTest do
     end
   end
 
+  describe "POST /webhooks/stripe (customer.subscription.deleted)" do
+    setup :setup_app
+
+    test "deletes a user subscription", %{conn: conn, org: org} do
+      user = user_fixture()
+      scope = %Scope{user: user, org: org}
+      subscription = user_subscription_fixture(%{user: user, org: org})
+
+      payload =
+        JSON.encode!(%{
+          "id" => "evt_test_subscription_deleted",
+          "type" => "customer.subscription.deleted",
+          "data" => %{"object" => %{"id" => subscription.stripe_subscription_id}}
+        })
+
+      {_timestamp, signature} = sign_payload(payload)
+
+      conn = make_webhook_request(conn, payload, signature)
+
+      assert response(conn, 200) == "Webhook received"
+
+      user_subscription = Billing.get_user_subscription(scope)
+      assert user_subscription.status == :canceled
+      assert user_subscription.cancel_at_period_end
+    end
+  end
+
   describe "POST /webhooks/stripe" do
     test "successfully processes webhook with valid signature", %{conn: conn, payload: payload} do
       {_timestamp, signature} = sign_payload(payload)
