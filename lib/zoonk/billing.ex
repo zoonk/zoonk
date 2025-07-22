@@ -217,7 +217,7 @@ defmodule Zoonk.Billing do
       iex> update_user_subscription(%Scope{}, subscription, %{status: :invalid})
       {:error, %Ecto.Changeset{}}
   """
-  def update_user_subscription(%Scope{user: user, org: org}, %UserSubscription{} = subscription, attrs) do
+  def update_user_subscription(%Scope{user: user, org: org, subscription: subscription}, attrs) do
     attrs = Map.merge(attrs, %{user_id: user.id, org_id: org.id})
 
     subscription
@@ -288,7 +288,7 @@ defmodule Zoonk.Billing do
   def cancel_user_subscription(%Scope{subscription: subscription} = scope) do
     subscription
     |> cancel_stripe_subscription()
-    |> cancel_user_subscription(scope, subscription, %{status: :canceled, cancel_at_period_end: true})
+    |> cancel_user_subscription(scope, %{status: :canceled, cancel_at_period_end: true})
   end
 
   @doc """
@@ -405,11 +405,11 @@ defmodule Zoonk.Billing do
 
   defp build_tax_id_attrs(_attrs), do: %{}
 
-  defp cancel_user_subscription({:ok, _status}, scope, subscription, attrs) do
-    update_user_subscription(scope, subscription, attrs)
+  defp cancel_user_subscription({:ok, _status}, scope, attrs) do
+    update_user_subscription(scope, attrs)
   end
 
-  defp cancel_user_subscription({:error, message}, _scope, _subscription, _attrs) do
+  defp cancel_user_subscription({:error, message}, _scope, _attrs) do
     {:error, message}
   end
 

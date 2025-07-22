@@ -137,15 +137,12 @@ defmodule Zoonk.BillingTest do
     end
   end
 
-  describe "update_user_subscription/3" do
+  describe "update_user_subscription/2" do
     test "updates a subscription with valid data" do
       user = user_fixture()
       org = org_fixture()
-      scope = %Scope{user: user, org: org}
-
-      # First create a subscription
-      attrs = valid_user_subscription_attrs()
-      {:ok, subscription} = Billing.create_user_subscription(scope, attrs)
+      subscription = user_subscription_fixture(%{user: user, org: org})
+      scope = %Scope{user: user, org: org, subscription: subscription}
 
       # Now update it
       update_attrs = %{
@@ -155,7 +152,7 @@ defmodule Zoonk.BillingTest do
         cancel_at_period_end: true
       }
 
-      assert {:ok, %UserSubscription{} = updated} = Billing.update_user_subscription(scope, subscription, update_attrs)
+      assert {:ok, %UserSubscription{} = updated} = Billing.update_user_subscription(scope, update_attrs)
       assert updated.id == subscription.id
       assert updated.user_id == user.id
       assert updated.org_id == org.id
@@ -169,15 +166,13 @@ defmodule Zoonk.BillingTest do
       user = user_fixture()
       another_user = user_fixture()
       org = org_fixture()
-      scope = %Scope{user: user, org: org}
-
-      # Create subscription
-      {:ok, subscription} = Billing.create_user_subscription(scope, valid_user_subscription_attrs())
+      subscription = user_subscription_fixture(%{user: user, org: org})
+      scope = %Scope{user: user, org: org, subscription: subscription}
 
       # Attempt to update user_id
       update_attrs = %{user_id: another_user.id}
 
-      assert {:ok, %UserSubscription{} = updated} = Billing.update_user_subscription(scope, subscription, update_attrs)
+      assert {:ok, %UserSubscription{} = updated} = Billing.update_user_subscription(scope, update_attrs)
       # Should remain unchanged
       assert updated.user_id == user.id
     end
@@ -186,15 +181,13 @@ defmodule Zoonk.BillingTest do
       user = user_fixture()
       org = org_fixture()
       another_org = org_fixture()
-      scope = %Scope{user: user, org: org}
-
-      # Create subscription
-      {:ok, subscription} = Billing.create_user_subscription(scope, valid_user_subscription_attrs())
+      subscription = user_subscription_fixture(%{user: user, org: org})
+      scope = %Scope{user: user, org: org, subscription: subscription}
 
       # Attempt to update org_id
       update_attrs = %{org_id: another_org.id}
 
-      assert {:ok, %UserSubscription{} = updated} = Billing.update_user_subscription(scope, subscription, update_attrs)
+      assert {:ok, %UserSubscription{} = updated} = Billing.update_user_subscription(scope, update_attrs)
       # Should remain unchanged
       assert updated.org_id == org.id
     end
@@ -202,15 +195,13 @@ defmodule Zoonk.BillingTest do
     test "returns error with invalid data when updating" do
       user = user_fixture()
       org = org_fixture()
-      scope = %Scope{user: user, org: org}
-
-      # Create subscription
-      {:ok, subscription} = Billing.create_user_subscription(scope, valid_user_subscription_attrs())
+      subscription = user_subscription_fixture(%{user: user, org: org})
+      scope = %Scope{user: user, org: org, subscription: subscription}
 
       # Invalid status
       invalid_attrs = %{status: :invalid_status}
 
-      assert {:error, %Ecto.Changeset{}} = Billing.update_user_subscription(scope, subscription, invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Billing.update_user_subscription(scope, invalid_attrs)
     end
   end
 
