@@ -109,6 +109,7 @@ defmodule ZoonkWeb.Router do
     pipe_through [:browser, :require_authenticated_user]
 
     post "/subscription/checkout", UserSubscriptionController, :checkout
+    post "/subscription/manage", UserSubscriptionController, :manage
   end
 
   # We need this because Apple's oAuth handling sends a POST request

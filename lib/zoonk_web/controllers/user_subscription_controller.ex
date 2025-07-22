@@ -42,6 +42,22 @@ defmodule ZoonkWeb.UserSubscriptionController do
     end
   end
 
+  def manage(conn, _params) do
+    scope = conn.assigns.scope
+
+    attrs = %{"return_url" => return_url(conn)}
+
+    case Billing.create_customer_portal_session(scope, attrs) do
+      {:ok, url} ->
+        redirect(conn, external: url)
+
+      {:error, _reason} ->
+        conn
+        |> put_flash(:error, dgettext("settings", "Failed to manage subscription. Please try again."))
+        |> redirect(to: ~p"/subscription")
+    end
+  end
+
   defp create_checkout_session(scope, price, _billing_account, conn) do
     url = return_url(conn)
 

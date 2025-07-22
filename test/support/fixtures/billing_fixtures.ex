@@ -65,6 +65,11 @@ defmodule Zoonk.BillingFixtures do
     Req.Test.json(conn, data)
   end
 
+  defp handle_stripe_endpoint(%{request_path: "/v1/billing_portal/sessions"} = conn, data) do
+    data = Enum.into(data, %{"url" => "https://billing.stripe.com/p/session_#{System.unique_integer([:positive])}"})
+    Req.Test.json(conn, data)
+  end
+
   defp handle_stripe_endpoint(conn, data) do
     Req.Test.json(conn, data)
   end

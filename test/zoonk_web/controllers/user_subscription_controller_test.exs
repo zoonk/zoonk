@@ -129,4 +129,48 @@ defmodule ZoonkWeb.UserSubscriptionControllerTest do
       assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "Invalid subscription request"
     end
   end
+
+  describe "POST /subscription/manage (unauthenticated)" do
+    test "redirects to sign in page", %{conn: conn} do
+      conn = post(conn, ~p"/subscription/manage")
+      assert redirected_to(conn) == ~p"/login"
+    end
+  end
+
+  describe "POST /subscription/manage (authenticated)" do
+    setup :signup_and_login_user
+
+    test "redirects to Stripe customer portal", %{conn: conn, scope: scope} do
+      billing_account_fixture(%{"scope" => scope})
+
+      stripe_stub(
+        data: %{
+          "url" => "https://billing.stripe.com/c/session_123",
+          "object" => "customer.portal.session"
+        }
+      )
+
+      conn = post(conn, ~p"/subscription/manage")
+
+      assert redirected_to(conn) =~ "https://billing.stripe.com/c/session_123"
+    end
+
+    test "redirects with error flash when Stripe API fails", %{conn: conn, scope: scope} do
+      billing_account_fixture(%{"scope" => scope})
+      stripe_stub(error: true)
+
+      conn = post(conn, ~p"/subscription/manage")
+
+      assert redirected_to(conn) == ~p"/subscription"
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "Failed to manage subscription"
+    end
+
+    test "redirects with error flash when billing account is missing", %{conn: conn} do
+      # Don't create a billing account for this test
+      conn = post(conn, ~p"/subscription/manage")
+
+      assert redirected_to(conn) == ~p"/subscription"
+      assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "Failed to manage subscription"
+    end
+  end
 end

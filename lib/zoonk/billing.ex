@@ -353,6 +353,38 @@ defmodule Zoonk.Billing do
   end
 
   @doc """
+  Creates a Customer Portal Session in Stripe.
+
+  This is used to redirect users to Stripe's Customer Portal
+  where they can manage their subscriptions and billing details.
+
+  ## Examples
+
+      iex> create_customer_portal_session(%Scope{})
+      {:ok, "https://billing.stripe.com/session/1234567890"}
+
+      iex> create_customer_portal_session(%Scope{})
+      {:error, "No billing account found"}
+  """
+  def create_customer_portal_session(%Scope{} = scope, attrs) do
+    case get_billing_account(scope) do
+      nil ->
+        {:error, "No billing account found"}
+
+      %BillingAccount{stripe_customer_id: stripe_customer_id} ->
+        attrs = Map.put(attrs, "customer", stripe_customer_id)
+
+        case Stripe.post("/billing_portal/sessions", attrs) do
+          {:ok, %{"url" => url}} ->
+            {:ok, url}
+
+          {:error, message} ->
+            {:error, message}
+        end
+    end
+  end
+
+  @doc """
   Creates a customer in Stripe.
 
   Creates a new customer record in Stripe using the user's

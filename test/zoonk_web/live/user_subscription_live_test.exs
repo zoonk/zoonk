@@ -151,7 +151,7 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
 
       conn
       |> visit(~p"/subscription")
-      |> assert_has("button[disabled]", text: "Subscribe")
+      |> assert_has("button[disabled]", text: "Manage Subscription")
     end
 
     test "submit form with selected plan and interval", %{conn: conn, scope: scope} do
@@ -188,14 +188,29 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       |> visit(~p"/subscription")
       |> choose("$0", exact: false)
       |> assert_has("button", text: "Cancel Subscription")
-      |> click_button("button", "Cancel Subscription")
+      |> click_button("Cancel Subscription")
       |> assert_has("[role='alert']", text: "Your subscription has been canceled.")
       |> refute_has("h3", text: "Plus Current Plan")
       |> assert_has("h3", text: "Free Current Plan")
       |> refute_has("button", text: "Cancel Subscription")
-      |> assert_has("button", text: "Subscribe")
+      |> assert_has("button", text: "Manage Subscription")
 
       assert Billing.get_user_subscription(scope).status == :canceled
+    end
+
+    test "manages a subscription", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+      user_subscription_fixture(%{scope: scope, plan: :plus, status: :active})
+
+      result =
+        conn
+        |> visit(~p"/subscription")
+        |> click_button("Manage Subscription")
+
+      path = request_url(result.conn)
+
+      assert String.starts_with?(path, "https://billing.stripe.com/p/session_")
     end
   end
 end

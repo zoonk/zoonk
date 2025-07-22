@@ -142,6 +142,7 @@ defmodule ZoonkWeb.UserSubscriptionForm do
   end
 
   defp submit_label(:free, :plus), do: dgettext("settings", "Cancel Subscription")
+  defp submit_label(selected, current) when selected == current, do: dgettext("settings", "Manage Subscription")
   defp submit_label(_selected, _current), do: dgettext("settings", "Subscribe")
 
   defp submit_variant(:free, :plus), do: :destructive
@@ -151,5 +152,6 @@ defmodule ZoonkWeb.UserSubscriptionForm do
   defp phx_submit_action(_selected, _current), do: nil
 
   defp form_action(:free, :plus), do: nil
+  defp form_action(:plus, :plus), do: ~p"/subscription/manage"
   defp form_action(_selected, _current), do: ~p"/subscription/checkout"
 end
