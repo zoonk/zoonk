@@ -103,6 +103,54 @@ defmodule ZoonkWeb.StripeWebhookControllerTest do
     end
   end
 
+  describe "POST /webhooks/stripe (customer.subscription.updated)" do
+    setup :setup_app
+
+    test "updates a user subscription", %{conn: conn, org: org} do
+      user = user_fixture()
+      scope = %Scope{user: user, org: org}
+      subscription = user_subscription_fixture(%{user: user, org: org, plan: :plus, interval: :monthly, status: :active})
+
+      updated_current_period_end =
+        DateTime.utc_now()
+        |> DateTime.add(365, :day)
+        |> DateTime.to_unix()
+
+      subscription_data = %{
+        "id" => subscription.stripe_subscription_id,
+        "status" => "past_due",
+        "cancel_at_period_end" => false,
+        "items" => %{
+          "data" => [
+            %{
+              "current_period_end" => updated_current_period_end,
+              "price" => %{"lookup_key" => "plus_yearly"}
+            }
+          ]
+        }
+      }
+
+      payload =
+        JSON.encode!(%{
+          "id" => "evt_test_subscription_updated",
+          "type" => "customer.subscription.updated",
+          "data" => %{"object" => subscription_data}
+        })
+
+      {_timestamp, signature} = sign_payload(payload)
+
+      conn = make_webhook_request(conn, payload, signature)
+
+      assert response(conn, 200) == "Webhook received"
+
+      updated_subscription = Billing.get_user_subscription(scope)
+      assert updated_subscription.plan == :plus
+      assert updated_subscription.interval == :yearly
+      assert updated_subscription.status == :past_due
+      assert updated_subscription.expires_at == DateTime.from_unix!(updated_current_period_end)
+    end
+  end
+
   describe "POST /webhooks/stripe" do
     test "successfully processes webhook with valid signature", %{conn: conn, payload: payload} do
       {_timestamp, signature} = sign_payload(payload)

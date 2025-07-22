@@ -29,7 +29,27 @@ defmodule ZoonkWeb.StripeWebhookController do
     success_response(conn)
   end
 
-  # delete subscription
+  def create(conn, %{"type" => "customer.subscription.updated"} = event) do
+    data = event["data"]["object"]
+    stripe_subscription_id = data["id"]
+
+    user_subscription = Billing.get_user_subscription_by_stripe_id(stripe_subscription_id)
+
+    scope = %Scope{org: conn.assigns.scope.org, user: user_subscription.user, subscription: user_subscription}
+
+    attrs = %{
+      plan: plan_from_stripe_data(data),
+      interval: interval_from_stripe_data(data),
+      status: to_existing_atom(data["status"], :incomplete),
+      cancel_at_period_end: data["cancel_at_period_end"] || false,
+      expires_at: current_period_end(data)
+    }
+
+    Billing.update_user_subscription(scope, attrs)
+
+    success_response(conn)
+  end
+
   def create(conn, %{"type" => "customer.subscription.deleted"} = event) do
     data = event["data"]["object"]
     stripe_subscription_id = data["id"]
