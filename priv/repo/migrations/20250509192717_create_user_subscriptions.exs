@@ -18,5 +18,6 @@ defmodule Zoonk.Repo.Migrations.CreateUserSubscriptions do
 
     create index(:user_subscriptions, [:user_id, :org_id, :status, :expires_at])
     create index(:user_subscriptions, [:user_id, :org_id, :expires_at])
+    create index(:user_subscriptions, [:stripe_subscription_id])
   end
 end

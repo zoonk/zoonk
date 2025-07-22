@@ -557,6 +557,18 @@ defmodule Zoonk.BillingTest do
     end
   end
 
+  describe "get_user_subscription_by_stripe_id" do
+    test "returns user subscription when found" do
+      user_subscription = user_subscription_fixture()
+      result = Billing.get_user_subscription_by_stripe_id(user_subscription.stripe_subscription_id)
+      assert result.id == user_subscription.id
+    end
+
+    test "returns nil when not found" do
+      refute Billing.get_user_subscription_by_stripe_id("sub_invalid")
+    end
+  end
+
   describe "get_unique_currencies/0" do
     test "returns unique currencies sorted by code" do
       currencies = Billing.get_unique_currencies()

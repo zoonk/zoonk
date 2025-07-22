@@ -99,6 +99,23 @@ defmodule Zoonk.Billing do
   end
 
   @doc """
+  Gets a user subscription by `stripe_subscription_id`.
+
+  Returns the user subscription if found, otherwise returns nil.
+
+  ## Examples
+
+      iex> get_user_subscription_by_stripe_id("sub_test_subscription_id")
+      %UserSubscription{}
+
+      iex> get_user_subscription_by_stripe_id("sub_invalid")
+      nil
+  """
+  def get_user_subscription_by_stripe_id(stripe_subscription_id) do
+    Repo.get_by(UserSubscription, stripe_subscription_id: stripe_subscription_id)
+  end
+
+  @doc """
   Gets unique currencies from all countries.
 
   Returns a list of unique currencies sorted by their code.
