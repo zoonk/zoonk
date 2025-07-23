@@ -39,11 +39,6 @@ defmodule ZoonkWeb.Router do
     plug :maybe_store_return_to
   end
 
-  pipeline :api do
-    plug :accepts, ["json"]
-    plug :fetch_api_scope
-  end
-
   pipeline :webhooks do
     plug :accepts, ["json"]
     plug :fetch_session
@@ -141,18 +136,6 @@ defmodule ZoonkWeb.Router do
 
       live_dashboard "/dashboard", metrics: ZoonkWeb.Telemetry
       forward "/mailbox", Plug.Swoosh.MailboxPreview
-    end
-
-    # API v1 routes, temporarily disabled for v0.1
-    scope "/api/v1", ZoonkWeb do
-      pipe_through :api
-
-      scope "/auth", API.V1.Accounts do
-        post "/signup", OTPController, :signup
-        post "/request_code", OTPController, :request_code
-        post "/verify_code", OTPController, :verify_code
-        delete "/logout", AuthController, :logout
-      end
     end
 
     # We have a playground for testing UI components in the dev environment.
