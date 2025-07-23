@@ -79,6 +79,8 @@ defmodule ZoonkWeb.Components.Icon do
       read_svg(default, alt_variant)
   end
 
+  defp read_svg(nil, _variant), do: nil
+
   # sobelow_skip ["Traversal.FileModule"]
   defp read_svg(name, variant) do
     dir = Map.fetch!(@icon_path, variant)
