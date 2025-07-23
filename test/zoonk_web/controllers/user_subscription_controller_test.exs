@@ -28,6 +28,42 @@ defmodule ZoonkWeb.UserSubscriptionControllerTest do
       assert redirected_to(conn) =~ "https://checkout.stripe.com/session_123"
     end
 
+    test "redirects Brazilian users to tax ID page on success", %{conn: conn, scope: scope} do
+      billing_account_fixture(%{"scope" => scope, "country_iso2" => "BR", "currency" => "BRL"})
+
+      stripe_stub(
+        capture_to: self(),
+        data: %{
+          "url" => "https://checkout.stripe.com/session_123",
+          "object" => "checkout.session"
+        }
+      )
+
+      post(conn, ~p"/subscription/checkout", %{"price" => "price_plus_monthly"})
+
+      # Verify that success_url points to tax-id page for Brazilian users
+      assert_receive {:stripe_request, params}
+      assert String.ends_with?(params["success_url"], "/tax-id")
+    end
+
+    test "redirects non-Brazilian users to subscription page on success", %{conn: conn, scope: scope} do
+      billing_account_fixture(%{"scope" => scope, "country_iso2" => "US", "currency" => "USD"})
+
+      stripe_stub(
+        capture_to: self(),
+        data: %{
+          "url" => "https://checkout.stripe.com/session_123",
+          "object" => "checkout.session"
+        }
+      )
+
+      post(conn, ~p"/subscription/checkout", %{"price" => "price_plus_monthly"})
+
+      # Verify that success_url points to subscription page for non-Brazilian users
+      assert_receive {:stripe_request, params}
+      assert String.ends_with?(params["success_url"], "/subscription")
+    end
+
     test "redirects with error flash when Stripe API fails", %{conn: conn, scope: scope} do
       billing_account_fixture(%{"scope" => scope})
       stripe_stub(error: true)

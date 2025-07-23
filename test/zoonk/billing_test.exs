@@ -774,4 +774,93 @@ defmodule Zoonk.BillingTest do
       assert {:error, "Invalid request"} = Billing.update_stripe_customer(scope, attrs)
     end
   end
+
+  describe "get_customer_tax_ids/1" do
+    test "returns tax IDs for customer with billing account" do
+      scope = scope_fixture()
+      billing_account_fixture(%{"scope" => scope})
+
+      tax_ids = [%{"id" => "txi_123", "type" => "br_cpf", "value" => "12345678901"}]
+      stripe_stub(data: %{"data" => tax_ids})
+
+      assert {:ok, %{"data" => ^tax_ids}} = Billing.get_customer_tax_ids(scope)
+    end
+
+    test "returns error when no billing account exists" do
+      scope = scope_fixture()
+
+      assert {:error, "No billing account found"} = Billing.get_customer_tax_ids(scope)
+    end
+
+    test "returns error when Stripe API fails" do
+      scope = scope_fixture()
+      billing_account_fixture(%{"scope" => scope})
+      stripe_stub(error: true)
+
+      assert {:error, "Invalid request"} = Billing.get_customer_tax_ids(scope)
+    end
+  end
+
+  describe "create_customer_tax_id/2" do
+    test "creates tax ID for customer with billing account" do
+      scope = scope_fixture()
+      billing_account_fixture(%{"scope" => scope})
+
+      attrs = %{"type" => "br_cpf", "value" => "12345678901"}
+      stripe_stub(data: %{"type" => "br_cpf", "value" => "12345678901"})
+
+      assert {:ok, %{"type" => "br_cpf", "value" => "12345678901"}} = Billing.create_customer_tax_id(scope, attrs)
+    end
+
+    test "returns error when no billing account exists" do
+      scope = scope_fixture()
+      attrs = %{"type" => "br_cpf", "value" => "12345678901"}
+
+      assert {:error, "No billing account found"} = Billing.create_customer_tax_id(scope, attrs)
+    end
+
+    test "returns error when Stripe API fails" do
+      scope = scope_fixture()
+      billing_account_fixture(%{"scope" => scope})
+      attrs = %{"type" => "br_cpf", "value" => "12345678901"}
+      stripe_stub(error: true)
+
+      assert {:error, "Invalid request"} = Billing.create_customer_tax_id(scope, attrs)
+    end
+  end
+
+  describe "customer_has_tax_ids?/1" do
+    test "returns true when customer has tax IDs" do
+      scope = scope_fixture()
+      billing_account_fixture(%{"scope" => scope})
+
+      tax_ids = [%{"id" => "txi_123", "type" => "br_cpf", "value" => "12345678901"}]
+      stripe_stub(data: %{"data" => tax_ids})
+
+      assert Billing.customer_has_tax_ids?(scope)
+    end
+
+    test "returns false when customer has no tax IDs" do
+      scope = scope_fixture()
+      billing_account_fixture(%{"scope" => scope})
+
+      stripe_stub(data: %{"data" => []})
+
+      refute Billing.customer_has_tax_ids?(scope)
+    end
+
+    test "returns false when no billing account exists" do
+      scope = scope_fixture()
+
+      refute Billing.customer_has_tax_ids?(scope)
+    end
+
+    test "returns false when Stripe API fails" do
+      scope = scope_fixture()
+      billing_account_fixture(%{"scope" => scope})
+      stripe_stub(error: true)
+
+      refute Billing.customer_has_tax_ids?(scope)
+    end
+  end
 end

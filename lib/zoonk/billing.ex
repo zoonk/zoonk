@@ -119,6 +119,72 @@ defmodule Zoonk.Billing do
   end
 
   @doc """
+  Gets customer tax IDs from Stripe.
+
+  Retrieves all tax IDs for a customer from Stripe using their customer ID.
+
+  ## Examples
+
+      iex> get_customer_tax_ids(%Scope{})
+      {:ok, [%{"id" => "txi_123", "type" => "br_cpf", "value" => "123.456.789-00"}]}
+
+      iex> get_customer_tax_ids(%Scope{})
+      {:error, "No billing account found"}
+  """
+  def get_customer_tax_ids(%Scope{} = scope) do
+    case get_billing_account(scope) do
+      %BillingAccount{stripe_customer_id: stripe_customer_id} ->
+        Stripe.get("/customers/#{stripe_customer_id}/tax_ids")
+
+      nil ->
+        {:error, "No billing account found"}
+    end
+  end
+
+  @doc """
+  Creates a tax ID for a customer in Stripe.
+
+  Creates a new tax ID for the customer using their Stripe customer ID.
+
+  ## Examples
+
+      iex> create_customer_tax_id(%Scope{}, %{"type" => "br_cpf", "value" => "123.456.789-00"})
+      {:ok, %{"id" => "txi_123", "type" => "br_cpf", "value" => "123.456.789-00"}}
+
+      iex> create_customer_tax_id(%Scope{}, %{})
+      {:error, "Invalid tax ID data"}
+  """
+  def create_customer_tax_id(%Scope{} = scope, attrs) do
+    case get_billing_account(scope) do
+      %BillingAccount{stripe_customer_id: stripe_customer_id} ->
+        Stripe.post("/customers/#{stripe_customer_id}/tax_ids", attrs)
+
+      nil ->
+        {:error, "No billing account found"}
+    end
+  end
+
+  @doc """
+  Checks if a customer has any tax IDs.
+
+  Returns true if the customer has any tax IDs, false otherwise.
+
+  ## Examples
+
+      iex> customer_has_tax_ids?(%Scope{})
+      true
+
+      iex> customer_has_tax_ids?(%Scope{})
+      false
+  """
+  def customer_has_tax_ids?(%Scope{} = scope) do
+    case get_customer_tax_ids(scope) do
+      {:ok, %{"data" => tax_ids}} -> not Enum.empty?(tax_ids)
+      {:error, _reason} -> false
+    end
+  end
+
+  @doc """
   Gets unique currencies from all countries.
 
   Returns a list of unique currencies sorted by their code.

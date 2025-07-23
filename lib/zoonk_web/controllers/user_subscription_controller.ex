@@ -58,17 +58,29 @@ defmodule ZoonkWeb.UserSubscriptionController do
     end
   end
 
-  defp create_checkout_session(scope, price, _billing_account, conn) do
-    url = return_url(conn)
+  defp create_checkout_session(scope, price, billing_account, conn) do
+    success_url = get_success_url(billing_account, conn)
+    cancel_url = return_url(conn)
 
     attrs = %{
-      "success_url" => url,
-      "cancel_url" => url
+      "success_url" => success_url,
+      "cancel_url" => cancel_url
     }
 
     case Billing.subscription_checkout_session(scope, price, attrs) do
       {:ok, session} -> {:ok, session}
       {:error, _reason} -> {:error, :stripe_error}
+    end
+  end
+
+  defp get_success_url(%{country_iso2: "BR"}, conn), do: tax_id_url(conn)
+  defp get_success_url(_billing_account, conn), do: return_url(conn)
+
+  defp tax_id_url(%Plug.Conn{host: host, scheme: scheme, port: port}) do
+    if Application.get_env(:zoonk, :dev_routes) do
+      "#{scheme}://#{host}:#{port}/tax-id"
+    else
+      "#{scheme}://#{host}/tax-id"
     end
   end
 
