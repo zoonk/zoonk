@@ -315,9 +315,9 @@
 }
 
 @utility zk-btn-active {
-  @apply bg-zk-foreground ring-zk-foreground text-zk-background
-  hover:bg-zk-foreground/70 hover:ring-zk-foreground/70
-  focus-visible:ring-zk-foreground/70;
+  @apply bg-zk-secondary-foreground ring-zk-secondary-foreground text-zk-secondary
+  hover:bg-zk-secondary-foreground/70 hover:ring-zk-secondary-foreground/70
+  focus-visible:ring-zk-secondary-foreground/70;
 }
 
 @utility zk-btn-outline {
