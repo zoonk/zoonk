@@ -56,6 +56,9 @@ config :zoonk, :ai,
   gemini: [
     plug: {Req.Test, :gemini_client}
   ],
+  openrouter: [
+    plug: {Req.Test, :openrouter_client}
+  ],
   models: [
     fast: "gpt-4.1-nano",
     smart: "gpt-4.1-mini",

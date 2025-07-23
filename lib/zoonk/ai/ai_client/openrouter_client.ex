@@ -1,0 +1,50 @@
+defmodule Zoonk.AI.AIClient.OpenRouterClient do
+  @moduledoc """
+  OpenRouter service implementation for generating AI responses.
+
+  This module handles communication with the OpenRouter API,
+  supporting structured outputs with JSON schema.
+  OpenRouter provides access to multiple AI providers through
+  an OpenAI-compatible chat completions API.
+  """
+  alias Zoonk.AI
+  alias Zoonk.AI.AIClient.BaseClient
+
+  @base_url "https://openrouter.ai/api/v1"
+  @chat_endpoint @base_url <> "/chat/completions"
+
+  @doc """
+  Generate an object.
+
+  Creates a structured object using the OpenRouter API.
+  The model name should have the "open-" prefix removed
+  before sending to the API.
+
+  ## Examples
+
+      iex> OpenRouterClient.generate_object(%Zoonk.AI{model: "openai/gpt-4o"})
+      {:ok, %{field: "value"}}
+  """
+  def generate_object(%AI{} = payload) do
+    BaseClient.chat_completion(@chat_endpoint, payload, :openrouter, &convert_payload/1)
+  end
+
+  defp convert_payload(%AI{} = payload) do
+    messages = BaseClient.build_messages(payload)
+
+    %{
+      model: remove_open_prefix(payload.model),
+      messages: messages,
+      response_format: %{
+        type: "json_schema",
+        json_schema: %{
+          name: payload.text.format.name,
+          schema: payload.text.format.schema
+        }
+      }
+    }
+  end
+
+  defp remove_open_prefix("open/" <> model), do: model
+  defp remove_open_prefix(model), do: model
+end

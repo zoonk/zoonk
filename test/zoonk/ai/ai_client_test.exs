@@ -55,6 +55,13 @@ defmodule Zoonk.AI.AIClientTest do
       payload = %AI{model: "mistralai/Mistral-7B"}
       assert {:ok, %{}} = AIClient.generate_object(payload)
     end
+
+    test "delegates to OpenRouterClient for open/ prefixed models" do
+      openrouter_stub(%{provider: "openrouter", model: "gpt-4o"})
+
+      payload = %AI{model: "open/openai/gpt-4o"}
+      assert {:ok, %{provider: "openrouter", model: "gpt-4o"}} = AIClient.generate_object(payload)
+    end
   end
 
   test "returns an error for unsupported models" do

@@ -12,6 +12,7 @@ defmodule Zoonk.AI.AIClient do
   alias Zoonk.AI
   alias Zoonk.AI.AIClient.GeminiClient
   alias Zoonk.AI.AIClient.OpenAIClient
+  alias Zoonk.AI.AIClient.OpenRouterClient
   alias Zoonk.AI.AIClient.TogetherAIClient
 
   @doc """
@@ -29,6 +30,10 @@ defmodule Zoonk.AI.AIClient do
       iex> AIClient.generate_object(%AI{model: "unsupported"})
       {:error, "Unsupported model"}
   """
+  def generate_object(%AI{model: "open/" <> _model} = payload) do
+    OpenRouterClient.generate_object(payload)
+  end
+
   def generate_object(%AI{model: "gpt-" <> _gpt} = payload) do
     OpenAIClient.generate_object(payload)
   end

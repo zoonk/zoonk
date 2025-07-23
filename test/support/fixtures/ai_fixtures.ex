@@ -44,6 +44,21 @@ defmodule Zoonk.AIFixtures do
     end
   end
 
+  def openrouter_stub(data, opts \\ []) do
+    error = Keyword.get(opts, :error, nil)
+    output = get_openrouter_output(data)
+
+    if error do
+      Req.Test.stub(:openrouter_client, fn conn ->
+        Req.Test.json(conn, %{"error" => %{"message" => error}})
+      end)
+    else
+      Req.Test.stub(:openrouter_client, fn conn ->
+        Req.Test.json(conn, %{"choices" => [output]})
+      end)
+    end
+  end
+
   def course_recommendation_fixture(attrs \\ %{}) do
     title = Map.get(attrs, :title, "Data Science")
     description = Map.get(attrs, :description, "A field that uses scientific methods to analyze data.")
@@ -83,6 +98,15 @@ defmodule Zoonk.AIFixtures do
     %{
       "content" => %{
         "parts" => [%{"text" => JSON.encode!(data)}]
+      }
+    }
+  end
+
+  defp get_openrouter_output(data) do
+    %{
+      "message" => %{
+        "role" => "assistant",
+        "content" => JSON.encode!(data)
       }
     }
   end

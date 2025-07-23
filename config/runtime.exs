@@ -50,6 +50,9 @@ if config_env() in [:dev, :prod] do
     gemini: [
       api_key: System.get_env("GEMINI_API_KEY")
     ],
+    openrouter: [
+      auth: {:bearer, System.get_env("OPENROUTER_API_KEY")}
+    ],
     models: [
       fast: System.get_env("AI_MODEL_FAST", "gpt-4.1-mini"),
       smart: System.get_env("AI_MODEL_SMART", "gpt-4.1"),
