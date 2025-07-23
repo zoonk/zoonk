@@ -121,7 +121,7 @@ defmodule ZoonkWeb.Components.FAQ do
       <.faq_item question={dgettext("faq", "I have questions about billing or my subscription")}>
         {dgettext(
           "faq",
-          "For billing-related questions, refunds, or subscription changes, please email us directly at %{billing_email} or use the contact form above. We'll respond within %{days} business days.",
+          "For billing-related questions, refunds, or subscription changes, please email us directly at %{billing_email} or use our contact form. We'll respond within %{days} business days.",
           billing_email: Support.billing_email(),
           days: Support.response_time_days()
         )}
@@ -146,6 +146,11 @@ defmodule ZoonkWeb.Components.FAQ do
           "faq",
           "You can cancel anytime from your account settings or by emailing us at %{email}.",
           email: Support.billing_email()
+        )}
+
+        {dgettext(
+          "faq",
+          "On the home page, click on your profile picture in the top right corner, then select 'Subscription'. From there, select the 'Free' plan and click on 'Cancel Subscription'."
         )}
       </.faq_item>
 

@@ -55,6 +55,15 @@ defmodule ZoonkWeb.UserSubscriptionLive do
           interval={@interval}
           prices={@prices}
         />
+
+        <div class="mt-16 w-full">
+          <.faq_header
+            title={dgettext("faq", "Frequently Asked Questions")}
+            subtitle={dgettext("faq", "Common questions and answers about using Zoonk")}
+          />
+
+          <.faq_subscriptions />
+        </div>
       </section>
 
       <section :if={!@billing_account} class="flex flex-1 flex-col gap-4">
