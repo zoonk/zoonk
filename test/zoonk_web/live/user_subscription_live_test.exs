@@ -20,7 +20,7 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       |> submit()
       |> assert_has("h2", text: "Subscribe")
       |> assert_has("h3", text: "Free Current Plan")
-      |> assert_has("span", text: "$10")
+      |> assert_has("div", text: "$10 /month")
 
       billing_account = Billing.get_billing_account(scope)
       assert billing_account.country_iso2 == "US"
@@ -67,8 +67,9 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       conn
       |> visit(~p"/subscription")
       |> assert_has("h2", text: "Subscribe")
-      |> assert_has("span", text: "R$0")
-      |> assert_has("span", text: "R$50")
+      |> assert_has("div", text: "R$0")
+      |> assert_has("div", text: "R$50 /month")
+      |> refute_has("div", text: "$0 /month")
     end
 
     test "display dollar currency if user's currency isn't supported", %{conn: conn, scope: scope} do
@@ -140,7 +141,7 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       conn
       |> visit(~p"/subscription")
       |> choose("Yearly")
-      |> assert_has("span", text: "$100")
+      |> assert_has("div", text: "$100 /year")
       |> choose("Plus", exact: false)
       |> assert_has("p", text: "Your subscription will renew automatically at $100/year")
     end

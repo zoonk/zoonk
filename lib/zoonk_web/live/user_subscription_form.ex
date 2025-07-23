@@ -48,7 +48,7 @@ defmodule ZoonkWeb.UserSubscriptionForm do
               {plan.label}
             </.subscription_title>
 
-            <.subscription_price>
+            <.subscription_price label={price_label(plan.key, @interval)}>
               {price_value(@prices, plan.key, @interval)}
             </.subscription_price>
           </.subscription_header>
@@ -154,4 +154,8 @@ defmodule ZoonkWeb.UserSubscriptionForm do
   defp form_action(:free, :plus), do: nil
   defp form_action(:plus, :plus), do: ~p"/subscription/manage"
   defp form_action(_selected, _current), do: ~p"/subscription/checkout"
+
+  defp price_label(:free, _interval), do: nil
+  defp price_label(_plan, :monthly), do: dgettext("settings", "/month")
+  defp price_label(_plan, :yearly), do: dgettext("settings", "/year")
 end
