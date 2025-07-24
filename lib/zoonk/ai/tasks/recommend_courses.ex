@@ -39,12 +39,8 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
   end
 
   defp recommend(nil, input, language) do
-    %AI{}
-    |> AI.set_model(get_model())
-    |> AI.set_schema(get_schema())
-    |> AI.add_instructions(get_instructions())
-    |> AI.add_message(build_message(input, language))
-    |> AIClient.generate_object()
+    input
+    |> generate_object(language, get_model())
     |> case do
       {:ok, %{courses: courses} = response} ->
         add_recommendation_to_db(%{
@@ -58,6 +54,30 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
       {:error, error} ->
         {:error, error}
     end
+  end
+
+  @doc """
+  Recommend courses for evaluation purposes.
+
+  This function bypasses caching and allows specifying a custom model
+  for evaluation purposes.
+
+  ## Examples
+
+      iex> RecommendCourses.recommend_eval("programming", "en", "open/openai/gpt-4o")
+      {:ok, %{courses: [...]}}
+  """
+  def recommend_eval(input, language, model) do
+    generate_object(input, language, model)
+  end
+
+  defp generate_object(input, language, model) do
+    %AI{}
+    |> AI.set_model(model)
+    |> AI.set_schema(get_schema())
+    |> AI.add_instructions(get_instructions())
+    |> AI.add_message(build_message(input, language))
+    |> AIClient.generate_object()
   end
 
   defp get_schema do
