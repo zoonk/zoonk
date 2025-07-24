@@ -6,7 +6,7 @@ defmodule Zoonk.AI.AIClient.OpenAIClient do
   the `Responses` endpoint, supporting structured outputs
   with JSON schema.
   """
-  alias Zoonk.AI
+  alias Zoonk.AI.AIPayload
 
   @base_url "https://api.openai.com/v1"
   @responses_endpoint @base_url <> "/responses"
@@ -18,10 +18,10 @@ defmodule Zoonk.AI.AIClient.OpenAIClient do
 
   ## Examples
 
-      iex> OpenAIClient.generate_object(%Zoonk.AI{})
+      iex> OpenAIClient.generate_object(%AIPayload{})
       {:ok, %Req.Response{}}
   """
-  def generate_object(%AI{} = payload) do
+  def generate_object(%AIPayload{} = payload) do
     req_opts = [
       json: payload,
       receive_timeout: 300_000,

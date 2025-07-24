@@ -4,16 +4,17 @@ defmodule Zoonk.AI.AIClient.GeminiClientTest do
   import Zoonk.AIFixtures
 
   alias Zoonk.AI.AIClient.GeminiClient
+  alias Zoonk.AI.AIPayload
 
   describe "generate_object/1" do
     test "returns the object when successful" do
       gemini_stub(%{language: "English"})
-      assert {:ok, %{language: "English"}} = GeminiClient.generate_object(%Zoonk.AI{})
+      assert {:ok, %{language: "English"}} = GeminiClient.generate_object(%AIPayload{})
     end
 
     test "returns an error when the API call fails" do
       gemini_stub(%{}, error: "API error")
-      assert {:error, "API error"} = GeminiClient.generate_object(%Zoonk.AI{})
+      assert {:error, "API error"} = GeminiClient.generate_object(%AIPayload{})
     end
   end
 end

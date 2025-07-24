@@ -1,4 +1,4 @@
-defmodule Zoonk.AI do
+defmodule Zoonk.AI.AIPayload do
   @moduledoc """
   Create AI payloads for external APIs/services.
 
@@ -21,8 +21,8 @@ defmodule Zoonk.AI do
 
   ## Examples
 
-      iex> AI.set_model(%Zoonk.AI{}, "gpt-4.1")
-      %AI{model: "gpt-4.1"}
+      iex> set_model(%AIPayload{}, "gpt-4.1")
+      %AIPayload{model: "gpt-4.1"}
   """
   def set_model(%__MODULE__{} = ai, model) do
     %{ai | model: model}
@@ -35,10 +35,10 @@ defmodule Zoonk.AI do
 
   ## Examples
 
-      iex> AI.set_schema(%Zoonk.AI{}, %Zoonk.AI.AISchema{name: "test"})
-      %AI{text: %{format: %Zoonk.AI.AISchema{name: "test"}}}
+      iex> set_schema(%AIPayload{}, %AISchema{name: "test"})
+      %AIPayload{text: %{format: %AISchema{name: "test"}}}
 
-      iex> AI.set_schema(%Zoonk.AI{}, %Zoonk.AI.AISchema{})
+      iex> set_schema(%AIPayload{}, %AISchema{})
       ** (ArgumentError) schema name cannot be empty
   """
   def set_schema(%__MODULE__{}, %AISchema{} = schema) when schema.name == "" do
@@ -60,8 +60,8 @@ defmodule Zoonk.AI do
 
   ## Examples
 
-      iex> AI.add_instructions(%Zoonk.AI{}, "Please summarize the text.")
-      %AI{instructions: "Please summarize the text."}
+      iex> add_instructions(%AIPayload{}, "Please summarize the text.")
+      %AIPayload{instructions: "Please summarize the text."}
   """
   def add_instructions(%__MODULE__{} = ai, instructions) do
     %{ai | instructions: instructions}
@@ -74,8 +74,8 @@ defmodule Zoonk.AI do
 
   ## Examples
 
-      iex> AI.add_message(%Zoonk.AI{}, "What's the weather?")
-      %AI{input: [%{role: "user", content: "What's the weather?"}]}
+      iex> add_message(%AIPayload{}, "What's the weather?")
+      %AIPayload{input: [%{role: "user", content: "What's the weather?"}]}
   """
   def add_message(%__MODULE__{} = ai, message) do
     new_message = %{role: "user", content: message}

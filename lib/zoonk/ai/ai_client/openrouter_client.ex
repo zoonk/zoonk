@@ -7,8 +7,8 @@ defmodule Zoonk.AI.AIClient.OpenRouterClient do
   OpenRouter provides access to multiple AI providers through
   an OpenAI-compatible chat completions API.
   """
-  alias Zoonk.AI
   alias Zoonk.AI.AIClient.BaseClient
+  alias Zoonk.AI.AIPayload
 
   @base_url "https://openrouter.ai/api/v1"
   @chat_endpoint @base_url <> "/chat/completions"
@@ -22,14 +22,14 @@ defmodule Zoonk.AI.AIClient.OpenRouterClient do
 
   ## Examples
 
-      iex> OpenRouterClient.generate_object(%Zoonk.AI{model: "openai/gpt-4o"})
+      iex> OpenRouterClient.generate_object(%AIPayload{model: "openai/gpt-4o"})
       {:ok, %{field: "value"}}
   """
-  def generate_object(%AI{} = payload) do
+  def generate_object(%AIPayload{} = payload) do
     BaseClient.chat_completion(@chat_endpoint, payload, :openrouter, &convert_payload/1)
   end
 
-  defp convert_payload(%AI{} = payload) do
+  defp convert_payload(%AIPayload{} = payload) do
     messages = BaseClient.build_messages(payload)
 
     %{

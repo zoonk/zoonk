@@ -1,17 +1,17 @@
-defmodule Zoonk.AITest do
+defmodule Zoonk.AIPayloadTest do
   use Zoonk.DataCase, async: true
 
-  alias Zoonk.AI
+  alias Zoonk.AI.AIPayload
   alias Zoonk.AI.AISchema
 
   describe "set_model/2" do
     test "uses default model if none provided" do
-      assert %AI{}.model == "gpt-4.1-nano"
+      assert %AIPayload{}.model == "gpt-4.1-nano"
     end
 
     test "sets the AI model" do
       model = "gpt-4.1"
-      %AI{} = ai = AI.set_model(%AI{}, model)
+      %AIPayload{} = ai = AIPayload.set_model(%AIPayload{}, model)
       assert ai.model == model
     end
   end
@@ -23,19 +23,19 @@ defmodule Zoonk.AITest do
         |> AISchema.add_field(%{name: "string"})
         |> AISchema.add_field(%{age: "integer"})
 
-      %AI{} = ai = AI.set_schema(%AI{}, schema)
+      %AIPayload{} = ai = AIPayload.set_schema(%AIPayload{}, schema)
       assert ai.text.format == schema
     end
 
     test "schema must have a valid name" do
-      assert_raise ArgumentError, fn -> AI.set_schema(%AI{}, %AISchema{}) end
+      assert_raise ArgumentError, fn -> AIPayload.set_schema(%AIPayload{}, %AISchema{}) end
     end
   end
 
   describe "add_instructions/2" do
     test "adds instructions to the AI" do
       instructions = "Please summarize the text."
-      %AI{} = ai = AI.add_instructions(%AI{}, instructions)
+      %AIPayload{} = ai = AIPayload.add_instructions(%AIPayload{}, instructions)
       assert ai.instructions == instructions
     end
   end
@@ -43,7 +43,7 @@ defmodule Zoonk.AITest do
   describe "add_message/2" do
     test "adds a message to the AI's context" do
       message = "What's the weather?"
-      %AI{} = ai = AI.add_message(%AI{}, message)
+      %AIPayload{} = ai = AIPayload.add_message(%AIPayload{}, message)
       assert length(ai.input) == 1
       assert hd(ai.input) == %{role: "user", content: message}
     end
@@ -53,9 +53,9 @@ defmodule Zoonk.AITest do
       message2 = "Tell me a joke."
 
       ai =
-        %AI{}
-        |> AI.add_message(message1)
-        |> AI.add_message(message2)
+        %AIPayload{}
+        |> AIPayload.add_message(message1)
+        |> AIPayload.add_message(message2)
 
       assert hd(ai.input) == %{role: "user", content: message1}
       assert hd(tl(ai.input)) == %{role: "user", content: message2}

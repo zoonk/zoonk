@@ -5,8 +5,8 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
   We display a form to the user asking what they want to learn.
   Based on their input, we recommend courses they might be interested in.
   """
-  alias Zoonk.AI
   alias Zoonk.AI.AIClient
+  alias Zoonk.AI.AIPayload
   alias Zoonk.AI.AISchema
   alias Zoonk.AI.CourseRecommendation
   alias Zoonk.Helpers
@@ -39,11 +39,11 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
   end
 
   defp recommend(nil, input, language) do
-    %AI{}
-    |> AI.set_model(get_model())
-    |> AI.set_schema(get_schema())
-    |> AI.add_instructions(get_instructions())
-    |> AI.add_message(build_message(input, language))
+    %AIPayload{}
+    |> AIPayload.set_model(get_model())
+    |> AIPayload.set_schema(get_schema())
+    |> AIPayload.add_instructions(get_instructions())
+    |> AIPayload.add_message(build_message(input, language))
     |> AIClient.generate_object()
     |> case do
       {:ok, %{courses: courses} = response} ->

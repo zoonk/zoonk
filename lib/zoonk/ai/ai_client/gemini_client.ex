@@ -5,7 +5,7 @@ defmodule Zoonk.AI.AIClient.GeminiClient do
   This module handles communication with the Gemini API,
   supporting structured outputs with JSON schema.
   """
-  alias Zoonk.AI
+  alias Zoonk.AI.AIPayload
   alias Zoonk.AI.AISchema
 
   @base_url "https://generativelanguage.googleapis.com/v1beta/models"
@@ -17,10 +17,10 @@ defmodule Zoonk.AI.AIClient.GeminiClient do
 
   ## Examples
 
-      iex> GeminiClient.generate_object(%Zoonk.AI{})
+      iex> GeminiClient.generate_object(%AIPayload{})
       {:ok, %Req.Response{}}
   """
-  def generate_object(%AI{} = payload) do
+  def generate_object(%AIPayload{} = payload) do
     endpoint = get_endpoint(payload.model)
 
     case Req.post(endpoint, get_opts(payload)) do
@@ -39,7 +39,7 @@ defmodule Zoonk.AI.AIClient.GeminiClient do
     end
   end
 
-  defp convert_payload(%AI{} = payload) do
+  defp convert_payload(%AIPayload{} = payload) do
     %{
       systemInstruction: system_instructions(payload),
       contents: [%{parts: get_messages(payload.input)}],
@@ -50,7 +50,7 @@ defmodule Zoonk.AI.AIClient.GeminiClient do
     }
   end
 
-  defp system_instructions(%AI{} = payload) do
+  defp system_instructions(%AIPayload{} = payload) do
     %{
       parts: [%{text: payload.instructions}]
     }

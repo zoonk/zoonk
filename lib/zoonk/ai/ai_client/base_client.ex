@@ -6,7 +6,7 @@ defmodule Zoonk.AI.AIClient.BaseClient do
   to AI services, reducing code duplication across different
   AI client implementations.
   """
-  alias Zoonk.AI
+  alias Zoonk.AI.AIPayload
 
   @doc """
   Makes a chat completion request to an AI service.
@@ -19,7 +19,7 @@ defmodule Zoonk.AI.AIClient.BaseClient do
       iex> BaseClient.chat_completion("https://api.service.com/chat", payload, :service)
       {:ok, %{field: "value"}}
   """
-  def chat_completion(endpoint, %AI{} = payload, config_key, payload_converter) do
+  def chat_completion(endpoint, %AIPayload{} = payload, config_key, payload_converter) do
     req_opts = [
       json: payload_converter.(payload),
       receive_timeout: 300_000,
@@ -54,7 +54,7 @@ defmodule Zoonk.AI.AIClient.BaseClient do
       iex> BaseClient.build_messages(%AI{instructions: "You are helpful", input: []})
       [%{role: "system", content: "You are helpful"}]
   """
-  def build_messages(%AI{} = payload) do
+  def build_messages(%AIPayload{} = payload) do
     instructions = payload.instructions
     messages = payload.input
     [%{role: "system", content: instructions} | messages]
