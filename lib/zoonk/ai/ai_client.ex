@@ -30,15 +30,16 @@ defmodule Zoonk.AI.AIClient do
       iex> AIClient.generate_object(%AIPayload{model: "unsupported"})
       {:error, "Unsupported model"}
   """
-  def generate_object(%AIPayload{model: "open/" <> _model} = payload) do
-    OpenRouterClient.generate_object(payload)
-  end
 
   def generate_object(%AIPayload{model: "gpt-" <> _gpt} = payload) do
     OpenAIClient.generate_object(payload)
   end
 
-  def generate_object(%AIPayload{model: "o" <> _gpt} = payload) do
+  def generate_object(%AIPayload{model: "o3" <> _gpt} = payload) do
+    OpenAIClient.generate_object(payload)
+  end
+
+  def generate_object(%AIPayload{model: "o4" <> _gpt} = payload) do
     OpenAIClient.generate_object(payload)
   end
 
@@ -46,23 +47,11 @@ defmodule Zoonk.AI.AIClient do
     GeminiClient.generate_object(payload)
   end
 
-  def generate_object(%AIPayload{model: "meta-llama" <> _gpt} = payload) do
+  def generate_object(%AIPayload{model: "together/" <> _gpt} = payload) do
     TogetherAIClient.generate_object(payload)
   end
 
-  def generate_object(%AIPayload{model: "deepseek-ai" <> _gpt} = payload) do
-    TogetherAIClient.generate_object(payload)
-  end
-
-  def generate_object(%AIPayload{model: "Qwen" <> _gpt} = payload) do
-    TogetherAIClient.generate_object(payload)
-  end
-
-  def generate_object(%AIPayload{model: "mistralai" <> _gpt} = payload) do
-    TogetherAIClient.generate_object(payload)
-  end
-
-  def generate_object(_payload) do
-    {:error, "Unsupported model"}
+  def generate_object(payload) do
+    OpenRouterClient.generate_object(payload)
   end
 end

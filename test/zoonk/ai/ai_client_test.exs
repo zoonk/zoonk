@@ -17,8 +17,12 @@ defmodule Zoonk.AI.AIClientTest do
     test "delegates to OpenAIClient for reasoning models" do
       openai_stub(%{language: "en"})
 
-      payload = %AIPayload{model: "o3"}
-      assert {:ok, %{}} = AIClient.generate_object(payload)
+      models = ["o3", "o3-mini", "o4-mini"]
+
+      Enum.each(models, fn model ->
+        payload = %AIPayload{model: model}
+        assert {:ok, %{}} = AIClient.generate_object(payload)
+      end)
     end
 
     test "delegates to GeminiClient for Gemini models" do
@@ -28,44 +32,46 @@ defmodule Zoonk.AI.AIClientTest do
       assert {:ok, %{}} = AIClient.generate_object(payload)
     end
 
-    test "delegates to TogetherAIClient for meta-llama models" do
-      togetherai_stub(%{language: "en"})
+    test "delegates to OpenRouterClient for meta-llama models" do
+      openrouter_stub(%{language: "en"})
 
-      payload = %AIPayload{model: "meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8"}
+      payload = %AIPayload{model: "meta-llama/llama-4-maverick"}
       assert {:ok, %{}} = AIClient.generate_object(payload)
     end
 
-    test "delegates to TogetherAIClient for deepseek-ai models" do
-      togetherai_stub(%{language: "en"})
+    test "delegates to OpenRouterClient for anthropic models" do
+      openrouter_stub(%{language: "en"})
 
-      payload = %AIPayload{model: "deepseek-ai/DeepSeek-7B"}
+      payload = %AIPayload{model: "anthropic/claude-sonnet-4"}
       assert {:ok, %{}} = AIClient.generate_object(payload)
     end
 
-    test "delegates to TogetherAIClient for Qwen models" do
-      togetherai_stub(%{language: "en"})
+    test "delegates to OpenRouterClient for deepseek models" do
+      openrouter_stub(%{language: "en"})
 
-      payload = %AIPayload{model: "Qwen/Qwen2.5-7B-Instruct-Turbo"}
+      payload = %AIPayload{model: "deepseek/deepseek-r1"}
       assert {:ok, %{}} = AIClient.generate_object(payload)
     end
 
-    test "delegates to TogetherAIClient for mistralai models" do
-      togetherai_stub(%{language: "en"})
+    test "delegates to OpenRouterClient for Qwen models" do
+      openrouter_stub(%{language: "en"})
 
-      payload = %AIPayload{model: "mistralai/Mistral-7B"}
+      payload = %AIPayload{model: "qwen/qwen3-235b-a22b-07-25"}
       assert {:ok, %{}} = AIClient.generate_object(payload)
     end
 
-    test "delegates to OpenRouterClient for open/ prefixed models" do
-      openrouter_stub(%{provider: "openrouter", model: "gpt-4o"})
+    test "delegates to OpenRouterClient for mistralai models" do
+      openrouter_stub(%{language: "en"})
 
-      payload = %AIPayload{model: "open/openai/gpt-4o"}
-      assert {:ok, %{provider: "openrouter", model: "gpt-4o"}} = AIClient.generate_object(payload)
+      payload = %AIPayload{model: "mistralai/mistral-medium-3"}
+      assert {:ok, %{}} = AIClient.generate_object(payload)
     end
-  end
 
-  test "returns an error for unsupported models" do
-    payload = %AIPayload{model: "unsupported-model"}
-    assert {:error, "Unsupported model"} = AIClient.generate_object(payload)
+    test "delegates to TogetherAIClient for together/ prefixed models" do
+      togetherai_stub(%{language: "en"})
+
+      payload = %AIPayload{model: "together/meta-llama/llama-4-maverick"}
+      assert {:ok, %{}} = AIClient.generate_object(payload)
+    end
   end
 end
