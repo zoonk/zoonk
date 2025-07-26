@@ -99,7 +99,7 @@ defmodule ZoonkWeb.UserSubscriptionLive do
   def mount(_params, _session, socket) do
     scope = socket.assigns.scope
     billing_account = Billing.get_billing_account(scope)
-    country_changeset = Billing.change_billing_account_form(%BillingAccount{}, %{})
+    country_changeset = Billing.change_billing_account(%BillingAccount{}, %{})
 
     socket =
       socket

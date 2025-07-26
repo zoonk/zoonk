@@ -33,8 +33,7 @@ defmodule Zoonk.Accounts.UserProvider do
   @doc false
   def changeset(user_provider, attrs) do
     user_provider
-    |> cast(attrs, [:provider, :provider_uid, :user_id])
-    |> validate_required([:provider, :provider_uid, :user_id])
-    |> unique_constraint([:user_id, :provider])
+    |> cast(attrs, [:provider, :provider_uid])
+    |> validate_required([:provider, :provider_uid])
   end
 end

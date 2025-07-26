@@ -38,8 +38,7 @@ defmodule Zoonk.Catalog.CourseChapter do
   @doc false
   def changeset(course_chapter, attrs) do
     course_chapter
-    |> cast(attrs, [:org_id, :course_id, :chapter_id, :position])
-    |> validate_required([:org_id, :course_id, :chapter_id, :position])
-    |> unique_constraint([:org_id, :course_id, :chapter_id])
+    |> cast(attrs, [:position])
+    |> validate_required([:position])
   end
 end

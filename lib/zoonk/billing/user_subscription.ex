@@ -51,16 +51,7 @@ defmodule Zoonk.Billing.UserSubscription do
   """
   def changeset(subscription, attrs) do
     subscription
-    |> cast(attrs, [
-      :org_id,
-      :user_id,
-      :plan,
-      :interval,
-      :status,
-      :expires_at,
-      :cancel_at_period_end,
-      :stripe_subscription_id
-    ])
-    |> validate_required([:org_id, :user_id, :plan, :interval, :status, :expires_at, :cancel_at_period_end])
+    |> cast(attrs, [:plan, :interval, :status, :expires_at, :cancel_at_period_end, :stripe_subscription_id])
+    |> validate_required([:plan, :interval, :status, :expires_at, :cancel_at_period_end])
   end
 end

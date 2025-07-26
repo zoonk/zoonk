@@ -39,8 +39,8 @@ defmodule Zoonk.Catalog.CourseTranslation do
   @doc false
   def changeset(translation, attrs) do
     translation
-    |> cast(attrs, [:course_id, :language, :title, :description])
-    |> validate_required([:course_id, :language, :title, :description])
+    |> cast(attrs, [:language, :title, :description])
+    |> validate_required([:language, :title, :description])
     |> validate_length(:title, min: 1, max: 255)
     |> unique_constraint([:course_id, :language])
   end

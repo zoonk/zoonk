@@ -10,11 +10,9 @@ defmodule Zoonk.OrgFixtures do
   alias Zoonk.Repo
 
   def valid_org_settings_attributes(attrs \\ %{}) do
-    org = Map.get_lazy(attrs, :org, fn -> org_fixture() end)
-
     attrs
     |> Map.delete(:org)
-    |> Enum.into(%{currency: "USD", org_id: org.id})
+    |> Enum.into(%{currency: "USD"})
   end
 
   def valid_org_attributes(attrs \\ %{}) do
@@ -99,8 +97,10 @@ defmodule Zoonk.OrgFixtures do
       %OrgSettings{subdomain: "mysubdomain"}
   """
   def org_settings_fixture(attrs \\ %{}) do
+    org = Map.get_lazy(attrs, :org, fn -> org_fixture() end)
+
     {:ok, settings} =
-      %OrgSettings{}
+      %OrgSettings{org: org.id}
       |> OrgSettings.changeset(valid_org_settings_attributes(attrs))
       |> Repo.insert()
 
@@ -124,9 +124,9 @@ defmodule Zoonk.OrgFixtures do
     org = Map.get_lazy(attrs, :org, fn -> org_fixture() end)
     user = Map.get_lazy(attrs, :user, fn -> Zoonk.AccountFixtures.user_fixture() end)
 
-    attrs = Enum.into(attrs, %{org_id: org.id, user_id: user.id, role: :member})
+    attrs = Enum.into(attrs, %{role: :member})
 
-    %OrgMember{}
+    %OrgMember{org_id: org.id, user_id: user.id}
     |> OrgMember.changeset(attrs)
     |> Repo.insert!(on_conflict: :replace_all, conflict_target: [:user_id, :org_id])
   end

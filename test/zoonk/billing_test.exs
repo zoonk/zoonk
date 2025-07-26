@@ -297,8 +297,10 @@ defmodule Zoonk.BillingTest do
       attrs = %{"currency" => "usd", "country_iso2" => "us"}
 
       assert {:ok, _account} = Billing.create_billing_account(scope, attrs)
-      assert {:error, changeset} = Billing.create_billing_account(scope, attrs)
-      assert "has already been taken" in errors_on(changeset).user_id
+
+      assert_raise Ecto.ConstraintError, fn ->
+        Billing.create_billing_account(scope, attrs)
+      end
     end
 
     test "returns error when Stripe customer creation fails" do
@@ -309,150 +311,6 @@ defmodule Zoonk.BillingTest do
       attrs = %{"currency" => "usd", "country_iso2" => "us"}
 
       assert {:error, "Invalid request"} = Billing.create_billing_account(scope, attrs)
-    end
-  end
-
-  describe "update_billing_account/3" do
-    test "updates a billing account with valid data and updates Stripe customer" do
-      scope = scope_fixture()
-
-      stripe_stub(prefix: "cus_")
-      {:ok, billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
-
-      stripe_stub(
-        prefix: "/customers/#{billing_account.stripe_customer_id}",
-        data: %{
-          "id" => billing_account.stripe_customer_id,
-          "email" => scope.user.email,
-          "address" => %{
-            "city" => "Paris",
-            "country" => "FR"
-          },
-          "object" => "customer"
-        }
-      )
-
-      update_attrs = %{"currency" => "EUR", "country_iso2" => "FR", "city" => "Paris"}
-
-      assert {:ok, %BillingAccount{} = updated_account} =
-               Billing.update_billing_account(scope, billing_account, update_attrs)
-
-      assert updated_account.id == billing_account.id
-      assert updated_account.user_id == scope.user.id
-      assert updated_account.stripe_customer_id == billing_account.stripe_customer_id
-      assert updated_account.currency == "EUR"
-      assert updated_account.country_iso2 == "FR"
-    end
-
-    test "updates billing account with address information" do
-      scope = scope_fixture()
-
-      # Create billing account first
-      stripe_stub(prefix: "cus_")
-      {:ok, billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
-
-      # Mock Stripe customer update
-      stripe_stub(prefix: "/customers/#{billing_account.stripe_customer_id}")
-
-      update_attrs = %{
-        "name" => "John Doe",
-        "phone" => "+33123456789",
-        "address_line_1" => "123 Main St",
-        "address_line_2" => "Apt 4B",
-        "city" => "Paris",
-        "state" => "Île-de-France",
-        "postal_code" => "75001",
-        "country_iso2" => "FR"
-      }
-
-      assert {:ok, %BillingAccount{} = updated_account} =
-               Billing.update_billing_account(scope, billing_account, update_attrs)
-
-      assert updated_account.id == billing_account.id
-      assert updated_account.user_id == scope.user.id
-      assert updated_account.stripe_customer_id == billing_account.stripe_customer_id
-    end
-
-    test "updates billing account with tax ID information" do
-      scope = scope_fixture()
-
-      # Create billing account first
-      stripe_stub(prefix: "cus_")
-      {:ok, billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
-
-      # Mock Stripe customer update
-      stripe_stub(prefix: "/customers/#{billing_account.stripe_customer_id}")
-
-      update_attrs = %{
-        "tax_id" => "123456789",
-        "tax_id_type" => "eu_vat",
-        "country_iso2" => "FR"
-      }
-
-      assert {:ok, %BillingAccount{} = updated_account} =
-               Billing.update_billing_account(scope, billing_account, update_attrs)
-
-      assert updated_account.id == billing_account.id
-      assert updated_account.country_iso2 == "FR"
-    end
-
-    test "returns error with invalid billing account data" do
-      scope = scope_fixture()
-
-      # Create billing account first
-      stripe_stub(prefix: "cus_")
-      {:ok, billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
-
-      # Mock Stripe customer update (will succeed)
-      stripe_stub(prefix: "/customers/#{billing_account.stripe_customer_id}")
-
-      # Invalid currency
-      invalid_attrs = %{"currency" => nil}
-
-      assert {:error, %Ecto.Changeset{}} = Billing.update_billing_account(scope, billing_account, invalid_attrs)
-    end
-
-    test "returns error when Stripe customer update fails" do
-      scope = scope_fixture()
-
-      # Create billing account first
-      stripe_stub(prefix: "cus_")
-      {:ok, billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
-
-      # Mock Stripe error
-      stripe_stub(error: true)
-
-      update_attrs = %{"currency" => "EUR", "country_iso2" => "FR"}
-
-      assert {:error, "Invalid request"} = Billing.update_billing_account(scope, billing_account, update_attrs)
-    end
-
-    test "does not change user_id or stripe_customer_id when updating" do
-      scope = scope_fixture()
-
-      # Create billing account first
-      stripe_stub(prefix: "cus_")
-      {:ok, billing_account} = Billing.create_billing_account(scope, %{"currency" => "USD", "country_iso2" => "US"})
-
-      original_user_id = billing_account.user_id
-      original_stripe_customer_id = billing_account.stripe_customer_id
-
-      # Mock Stripe customer update
-      stripe_stub(prefix: "/customers/#{billing_account.stripe_customer_id}")
-
-      # Try to update with different user_id and stripe_customer_id (should be ignored)
-      update_attrs = %{
-        "currency" => "EUR",
-        "user_id" => 99_999,
-        "stripe_customer_id" => "cus_different"
-      }
-
-      assert {:ok, %BillingAccount{} = updated_account} =
-               Billing.update_billing_account(scope, billing_account, update_attrs)
-
-      assert updated_account.user_id == original_user_id
-      assert updated_account.stripe_customer_id == original_stripe_customer_id
-      assert updated_account.currency == "EUR"
     end
   end
 
@@ -581,18 +439,6 @@ defmodule Zoonk.BillingTest do
 
       # Check that currencies are unique
       assert length(codes) == length(Enum.uniq(codes))
-    end
-  end
-
-  describe "change_billing_account_form/2" do
-    test "returns a changeset for billing account form" do
-      billing_account = %BillingAccount{}
-      attrs = %{"country_iso2" => "US", "currency" => "USD", "city" => "San Francisco"}
-
-      changeset = Billing.change_billing_account_form(billing_account, attrs)
-
-      assert %Ecto.Changeset{} = changeset
-      assert changeset.data == billing_account
     end
   end
 

@@ -33,9 +33,6 @@ defmodule Zoonk.Orgs.OrgSettings do
 
   @doc false
   def changeset(org, attrs) do
-    org
-    |> cast(attrs, [:org_id, :allowed_domains])
-    |> validate_required([:org_id])
-    |> unique_constraint(:org_id)
+    cast(org, attrs, [:allowed_domains])
   end
 end

@@ -440,10 +440,6 @@ defmodule Zoonk.Accounts do
   end
 
   defp build_org_member_changeset(%{user: user}, org) do
-    OrgMember.changeset(%OrgMember{}, %{
-      org_id: org.id,
-      user_id: user.id,
-      role: :member
-    })
+    OrgMember.changeset(%OrgMember{org_id: org.id, user_id: user.id}, %{role: :member})
   end
 end

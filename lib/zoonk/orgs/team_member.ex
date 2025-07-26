@@ -37,8 +37,8 @@ defmodule Zoonk.Orgs.TeamMember do
   @doc false
   def changeset(member, attrs) do
     member
-    |> cast(attrs, [:role, :org_id, :team_id, :user_id])
-    |> validate_required([:role, :org_id, :team_id, :user_id])
+    |> cast(attrs, [:role])
+    |> validate_required([:role])
     |> unique_constraint([:org_id, :team_id, :user_id])
   end
 end

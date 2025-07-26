@@ -202,15 +202,15 @@ defmodule Zoonk.Billing do
   end
 
   @doc """
-  Creates a changeset for a billing account form.
+  Creates a changeset for a billing account.
 
   ## Examples
 
-      iex> change_billing_account_form(%BillingAccount{}, %{})
+      iex> change_billing_account(%BillingAccount{}, %{})
       %Ecto.Changeset{}
   """
-  def change_billing_account_form(%BillingAccount{} = billing_account, attrs \\ %{}) do
-    BillingAccount.form_changeset(billing_account, attrs)
+  def change_billing_account(%BillingAccount{} = billing_account, attrs \\ %{}) do
+    BillingAccount.changeset(billing_account, attrs)
   end
 
   @doc """
@@ -229,36 +229,11 @@ defmodule Zoonk.Billing do
   """
   def create_billing_account(%Scope{} = scope, attrs) do
     with {:ok, stripe_customer} <- create_stripe_customer(scope, attrs) do
-      attrs =
-        attrs
-        |> Map.put("stripe_customer_id", stripe_customer["id"])
-        |> Map.put("user_id", scope.user.id)
+      attrs = Map.put(attrs, "stripe_customer_id", stripe_customer["id"])
 
-      %BillingAccount{}
-      |> BillingAccount.create_changeset(attrs)
+      %BillingAccount{user_id: scope.user.id}
+      |> change_billing_account(attrs)
       |> Repo.insert()
-    end
-  end
-
-  @doc """
-  Updates a billing account.
-
-  Updates an existing billing account and the associated Stripe customer
-  with new attributes.
-
-  ## Examples
-
-      iex> update_billing_account(scope, billing_account, %{currency: "EUR", country_iso2: "FR"})
-      {:ok, %BillingAccount{}}
-
-      iex> update_billing_account(scope, billing_account, %{currency: nil})
-      {:error, %Ecto.Changeset{}}
-  """
-  def update_billing_account(%Scope{} = scope, %BillingAccount{} = billing_account, attrs) do
-    with {:ok, _stripe_customer} <- update_stripe_customer(scope, attrs) do
-      billing_account
-      |> BillingAccount.changeset(attrs)
-      |> Repo.update()
     end
   end
 
@@ -277,9 +252,7 @@ defmodule Zoonk.Billing do
       {:error, %Ecto.Changeset{}}
   """
   def create_user_subscription(%Scope{user: user, org: org}, attrs) do
-    attrs = Map.merge(attrs, %{user_id: user.id, org_id: org.id})
-
-    %UserSubscription{}
+    %UserSubscription{user_id: user.id, org_id: org.id}
     |> UserSubscription.changeset(attrs)
     |> Repo.insert()
   end

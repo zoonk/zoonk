@@ -46,8 +46,8 @@ defmodule Zoonk.Accounts.UserProfile do
   """
   def changeset(profile, attrs) do
     profile
-    |> cast(attrs, [:bio, :display_name, :picture_url, :is_public, :username, :user_id])
-    |> validate_required([:is_public, :username, :user_id])
+    |> cast(attrs, [:bio, :display_name, :picture_url, :is_public, :username])
+    |> validate_required([:is_public, :username])
     |> validate_length(:display_name, max: 32)
     |> validate_format(:username, ~r/^[a-zA-Z0-9_-]+$/,
       message: dgettext("errors", "cannot have spaces for special characters")

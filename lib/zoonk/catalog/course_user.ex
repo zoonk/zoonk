@@ -37,8 +37,8 @@ defmodule Zoonk.Catalog.CourseUser do
   @doc false
   def changeset(course_user, attrs) do
     course_user
-    |> cast(attrs, [:org_id, :course_id, :user_id, :role])
-    |> validate_required([:org_id, :course_id, :user_id, :role])
+    |> cast(attrs, [:role])
+    |> validate_required([:role])
     |> unique_constraint([:org_id, :course_id, :user_id])
   end
 end

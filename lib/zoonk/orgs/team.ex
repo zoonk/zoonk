@@ -45,8 +45,8 @@ defmodule Zoonk.Orgs.Team do
   @doc false
   def changeset(team, attrs) do
     team
-    |> cast(attrs, [:name, :slug, :description, :logo_url, :org_id])
-    |> validate_required([:name, :slug, :org_id])
+    |> cast(attrs, [:name, :slug, :description, :logo_url])
+    |> validate_required([:name, :slug])
     |> validate_length(:name, min: 1, max: 32)
     |> validate_length(:slug, min: 1, max: 32)
     |> unique_constraint([:org_id, :slug])

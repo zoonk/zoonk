@@ -39,8 +39,8 @@ defmodule Zoonk.Catalog.ChapterTranslation do
   @doc false
   def changeset(translation, attrs) do
     translation
-    |> cast(attrs, [:chapter_id, :language, :title, :description])
-    |> validate_required([:chapter_id, :language, :title, :description])
+    |> cast(attrs, [:language, :title, :description])
+    |> validate_required([:language, :title, :description])
     |> validate_length(:title, min: 1, max: 255)
     |> unique_constraint([:chapter_id, :language])
   end
