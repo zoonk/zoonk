@@ -1,10 +1,5 @@
 defmodule Zoonk.AI.Tasks.RecommendCourses do
-  @moduledoc """
-  Recommend courses based on user input.
-
-  We display a form to the user asking what they want to learn.
-  Based on their input, we recommend courses they might be interested in.
-  """
+  @moduledoc false
   alias Zoonk.AI.AIClient
   alias Zoonk.AI.AIPayload
   alias Zoonk.AI.AISchema
@@ -12,18 +7,7 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
   alias Zoonk.Helpers
   alias Zoonk.Repo
 
-  @doc """
-  Recommend courses based on user input.
-
-  ## Examples
-
-      iex> RecommendCourses.recommend("I want to learn about data science", "en")
-      {:ok, [%{title: "Data Science", description: "A field that uses scientific methods..."}]}
-
-      iex> RecommendCourses.recommend("forbidden input", "en")
-      {:error, "This violates our content policy."}
-  """
-  def recommend(input, language) do
+  def recommend_courses(input, language) do
     formatted_input =
       input
       |> String.trim()
@@ -31,14 +15,14 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
 
     CourseRecommendation
     |> Repo.get_by(query: formatted_input, language: language)
-    |> recommend(formatted_input, language)
+    |> recommend_courses(formatted_input, language)
   end
 
-  defp recommend(%CourseRecommendation{} = recommendation, _input, _lang) do
+  defp recommend_courses(%CourseRecommendation{} = recommendation, _input, _lang) do
     {:ok, %{courses: recommendation.courses}}
   end
 
-  defp recommend(nil, input, language) do
+  defp recommend_courses(nil, input, language) do
     %AIPayload{}
     |> AIPayload.set_model(get_model())
     |> AIPayload.set_schema(get_schema())

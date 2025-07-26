@@ -2,7 +2,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  alias Zoonk.AI.Tasks.RecommendCourses
+  alias Zoonk.AI
 
   on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
 
@@ -105,7 +105,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
       socket
       |> assign(:page_title, dgettext("page_title", "Recommendations for %{input}", input: input))
       |> assign(:input, input)
-      |> assign_async(:courses, fn -> RecommendCourses.recommend(input, language) end)
+      |> assign_async(:courses, fn -> AI.recommend_courses(input, language) end)
 
     {:ok, socket}
   end
