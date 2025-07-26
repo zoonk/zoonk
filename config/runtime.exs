@@ -52,15 +52,9 @@ if config_env() in [:dev, :prod] do
     ],
     openrouter: [
       auth: {:bearer, System.get_env("OPENROUTER_API_KEY")}
-    ],
-    models: [
-      fast: System.get_env("AI_MODEL_FAST", "gpt-4.1-mini"),
-      smart: System.get_env("AI_MODEL_SMART", "gpt-4.1"),
-      smartest: System.get_env("AI_MODEL_SMARTEST", "o3"),
-      smartest_fast: System.get_env("AI_MODEL_SMARTEST_FAST", "o4-mini"),
-      thumbnail: System.get_env("AI_MODEL_THUMBNAIL", "gpt-image-1"),
-      exercise_image: System.get_env("AI_MODEL_EXERCISE_IMAGE", "gpt-image-1")
     ]
+
+  config :zoonk, :ai_models, recommend_courses: System.get_env("AI_MODEL_RECOMMEND_COURSES", "gpt-4.1-mini")
 
   config :zoonk, :stripe,
     webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET"),
@@ -91,8 +85,8 @@ if config_env() == :prod do
       You can generate one by calling: mix phx.gen.secret
       """
 
-  host = System.get_env("PHX_HOST") || "zoonk.com"
-  port = String.to_integer(System.get_env("PORT") || "8080")
+  host = System.get_env("PHX_HOST", "zoonk.com")
+  port = String.to_integer(System.get_env("PORT", "8080"))
 
   config :zoonk, Zoonk.Mailer,
     adapter: Swoosh.Adapters.ZeptoMail,
@@ -102,7 +96,7 @@ if config_env() == :prod do
   config :zoonk, Zoonk.Repo,
     # ssl: true,
     url: database_url,
-    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+    pool_size: String.to_integer(System.get_env("POOL_SIZE", "10")),
     socket_options: maybe_ipv6
 
   config :zoonk, ZoonkWeb.Endpoint,

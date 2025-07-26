@@ -43,6 +43,7 @@ cert
 # Environment variables
 .env
 .env.*
+!.env.example
 .envrc
 
 # Sobelow

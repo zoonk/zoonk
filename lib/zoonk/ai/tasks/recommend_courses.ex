@@ -152,6 +152,6 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
   end
 
   defp get_model do
-    Application.get_env(:zoonk, :ai)[:models][:fast]
+    Application.get_env(:zoonk, :ai_models)[:recommend_courses]
   end
 end
