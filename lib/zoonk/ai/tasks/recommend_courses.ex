@@ -8,10 +8,7 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
   alias Zoonk.Repo
 
   def recommend_courses(input, language) do
-    formatted_input =
-      input
-      |> String.trim()
-      |> Helpers.remove_accents()
+    formatted_input = format_input(input)
 
     CourseRecommendation
     |> Repo.get_by(query: formatted_input, language: language)
@@ -23,28 +20,24 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
   end
 
   defp recommend_courses(nil, input, language) do
-    %AIPayload{}
-    |> AIPayload.set_model(get_model())
-    |> AIPayload.set_schema(get_schema())
-    |> AIPayload.add_instructions(get_instructions())
-    |> AIPayload.add_message(build_message(input, language))
-    |> AIClient.generate_object()
-    |> case do
-      {:ok, %{courses: courses} = response} ->
-        add_recommendation_to_db(%{
-          query: input,
-          language: language,
-          courses: courses
-        })
-
-        {:ok, response}
-
-      {:error, error} ->
-        {:error, error}
-    end
+    input
+    |> generate_object(language, get_model())
+    |> add_recommendation_to_db(input, language)
   end
 
-  defp get_schema do
+  defp add_recommendation_to_db({:ok, %{courses: courses} = response}, input, language) do
+    %CourseRecommendation{}
+    |> CourseRecommendation.changeset(%{query: input, language: language, courses: courses})
+    |> Repo.insert!()
+
+    {:ok, response}
+  end
+
+  defp add_recommendation_to_db({:error, error}, _input, _language) do
+    {:error, error}
+  end
+
+  def json_schema do
     courses = %{
       courses: [
         %{
@@ -59,13 +52,16 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
     AISchema.add_field(%AISchema{name: "recommend_courses"}, courses)
   end
 
-  defp add_recommendation_to_db(attrs) do
-    %CourseRecommendation{}
-    |> CourseRecommendation.changeset(attrs)
-    |> Repo.insert!()
+  def generate_object(input, language, model) do
+    %AIPayload{}
+    |> AIPayload.set_model(model)
+    |> AIPayload.set_schema(json_schema())
+    |> AIPayload.add_instructions(system_prompt())
+    |> AIPayload.add_message(user_prompt(input, language))
+    |> AIClient.generate_object()
   end
 
-  defp get_instructions do
+  def system_prompt do
     """
     A user wants to learn a new subject.
     We asked them what they would like to learn.
@@ -123,7 +119,7 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
     """
   end
 
-  defp build_message(input, language) do
+  def user_prompt(input, language) do
     """
     This is their input: "#{input}"
     This means they want to learn about #{input}.
@@ -133,6 +129,12 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
     They want to see results in this language: #{language}.
     If it's not English, translate the title and add it to the `english_title` field.
     """
+  end
+
+  defp format_input(input) do
+    input
+    |> String.trim()
+    |> Helpers.remove_accents()
   end
 
   defp get_model do
