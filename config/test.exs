@@ -58,14 +58,6 @@ config :zoonk, :ai,
   ],
   openrouter: [
     plug: {Req.Test, :openrouter_client}
-  ],
-  models: [
-    fast: "gpt-4.1-nano",
-    smart: "gpt-4.1-mini",
-    smartest: "03",
-    smartest_fast: "o4-mini",
-    thumbnail: "gpt-image-1",
-    exercise_image: "gpt-image-1"
   ]
 
 # Disable Stripe calls for testing
