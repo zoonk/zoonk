@@ -18,7 +18,6 @@ This guide defines the development and design standards used in Zoonk. It ensure
   - [Icons](#icons)
   - [Accessibility and Responsiveness](#accessibility-and-responsiveness)
 - [Routing and Text](#routing-and-text)
-- [API Standards](#api-standards)
 - [Documentation Standards](#documentation-standards)
 - [Testing Guidelines](#testing-guidelines)
 - [Elixir Usage](#elixir-usage)
@@ -35,14 +34,15 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
 
 ## Principles
 
-- Always prefer the **simplest solution**. If something feels complex, refactor.
-- Favor **clarity and minimalism** in both code and UI.
-- Default to **Phoenix/LiveView** solutions. Use JavaScript only via `phx-hook` and only when unavoidable.
-- Follow design inspirations from **Apple, Linear, Vercel**.
-- Code must be **modular**, **tested**, and follow **SOLID** and **DRY** principles.
-- Favor **pattern matching**, **guards**, and **short functions**. Avoid nesting.
+- Always prefer the **simplest solution**. If something feels complex, refactor
+- Favor **clarity and minimalism** in both code and UI
+- Default to **Phoenix/LiveView** solutions. Use JavaScript only via `phx-hook` and only when unavoidable
+- Follow design inspirations from **Apple, Linear, Vercel**
+- Code must be **modular**, **tested**, and follow **SOLID** and **DRY** principles
+- Favor **pattern matching**, **guards**, and **short functions**. Avoid nesting
 - Prefer `:if` on elements instead of conditional blocks. E.g., <ul :if={@items}> instead of <%= if @items do %>
-- Use `@impl ModuleName`, not `@impl true`.
+- Use `@impl ModuleName`, not `@impl true`
+- **Never** nest multiple modules in the same file as it can cause cyclic dependencies
 
 ---
 
@@ -73,7 +73,17 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
 - Add `@moduledoc false`
 - Place `render` at the top
 - Use `use ZoonkWeb, :live_view`
-- Use socket's `assign/3` only for dynamic data. For static data, define a function instead.
+- Use socket's `assign/3` only for dynamic data. For static data, define a function instead
+- **Avoid LiveComponent's** unless you have a strong, specific need for them
+- Remember anytime you use `phx-hook="MyHook"` and that js hook manages its own DOM, you **must** also set the `phx-update="ignore"` attribute
+- **Always** use LiveView streams for collections for assigning regular lists to avoid memory ballooning and runtime termination with the following operations:
+  - basic append of N items - `stream(socket, :messages, [new_msg])`
+  - resetting stream with new items - `stream(socket, :messages, [new_msg], reset: true)` (e.g. for filtering items)
+  - prepend to stream - `stream(socket, :messages, [new_msg], at: -1)`
+  - deleting items - `stream_delete(socket, :messages, msg)`
+- When using the `stream/3` interfaces in the LiveView, the LiveView template must 1) always set `phx-update="stream"` on the parent element, with a DOM id on the parent element like `id="messages"` and 2) consume the `@streams.stream_name` collection and use the id as the DOM id for each child
+- LiveView streams are _not_ enumerable, so you cannot use `Enum.filter/2` or `Enum.reject/2` on them. Instead, if you want to filter, prune, or refresh a list of items on the UI, you **must refetch the data and re-stream the entire stream collection, passing reset: true**
+- LiveView streams _do not support counting or empty states_. If you need to display a count, you must track it using a separate assign. For empty states, you can use Tailwind classes like `<div class="hidden only:block">No tasks yet</div>`
 
 ### Components
 
@@ -118,18 +128,11 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
 
 ## Routing and Text
 
-- Use **Verified Routes** (`~p"/path"`) not `Routes.page_path/2`
+- Use **Verified Routes** (`~p"/path"`), never use `Routes.page_path/2`
 - Use **Gettext** for all strings
   - Do not hardcode text
   - Do not generate new translation files
   - Do not run `mix gettext.extract` (this will be done later)
-
----
-
-## API Standards
-
-- Use `ZoonkWeb.API.ErrorResponse` for error formatting
-- Extend it to add missing error types
 
 ---
 
@@ -184,8 +187,22 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
 - Prefer keyword lists for options
 - Use descriptive function names
 - Use `Oban` for background jobs
-- Use **pipe-based query syntax** for clarity and composability.
-- Don't need to write `@spec` for functions but use structs in function signatures.
+- Use **pipe-based query syntax** for clarity and composability
+- Don't need to write `@spec` for functions but use structs in function signatures
+- Elixir has everything necessary for date and time manipulation. Familiarize yourself with the common `Time`, `Date`, `DateTime`, and `Calendar` interfaces by accessing their documentation as necessary. **Never** install additional dependencies unless asked or for date/time parsing (which you can use the `date_time_parser` package)
+- Predicate function names should not start with `is_` and should end in a question mark. Names like `is_thing` should be reserved for guards
+- Use the already included and available `:req` (`Req`) library for HTTP requests, **avoid** `:httpoison`, `:tesla`, and `:httpc`. Req is included by default and is the preferred HTTP client for Phoenix apps
+
+### Ecto
+
+- **Always** preload Ecto associations in queries when they'll be accessed in templates, ie a message that needs to reference the `message.user.email`
+- Fields which are set programatically, such as `user_id`, must not be listed in `cast` calls or similar for security purposes. Instead they must be explicitly set when creating the struct
+
+### Mix
+
+- Read the docs and options before using tasks (by using `mix help task_name`)
+- To debug test failures, run tests in a specific file with `mix test test/my_test.exs` or run all previously failed tests with `mix test --failed`
+- `mix deps.clean --all` is **almost never needed**. **Avoid** using it unless you have good reason
 
 ---
 
