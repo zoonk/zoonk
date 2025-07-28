@@ -9,7 +9,10 @@ defmodule Zoonk.AIFixtures do
     Req.Test.stub(:openai_client, fn conn ->
       Req.Test.json(conn, %{
         "error" => error,
-        "output" => [%{"content" => [output]}]
+        "output" => [
+          %{"type" => "reasoning"},
+          %{"content" => [output], "type" => "message"}
+        ]
       })
     end)
   end
