@@ -19,9 +19,9 @@ defmodule Zoonk.AI.AIClient.BaseClient do
       iex> BaseClient.chat_completion("https://api.service.com/chat", payload, :service)
       {:ok, %{field: "value"}}
   """
-  def chat_completion(endpoint, %AIPayload{} = payload, config_key, payload_converter) do
+  def chat_completion(endpoint, payload, config_key) do
     req_opts = [
-      json: payload_converter.(payload),
+      json: payload,
       receive_timeout: 300_000,
       connect_options: [timeout: 300_000],
       retry: :transient

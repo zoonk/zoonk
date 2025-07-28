@@ -26,14 +26,14 @@ defmodule Zoonk.AI.AIClient.OpenRouterClient do
       {:ok, %{field: "value"}}
   """
   def generate_object(%AIPayload{} = payload) do
-    BaseClient.chat_completion(@chat_endpoint, payload, :openrouter, &convert_payload/1)
+    BaseClient.chat_completion(@chat_endpoint, req_payload(payload), :openrouter)
   end
 
-  defp convert_payload(%AIPayload{} = payload) do
+  defp req_payload(%AIPayload{} = payload) do
     messages = BaseClient.build_messages(payload)
 
     %{
-      model: remove_open_prefix(payload.model),
+      model: payload.model,
       messages: messages,
       response_format: %{
         type: "json_schema",
@@ -44,7 +44,4 @@ defmodule Zoonk.AI.AIClient.OpenRouterClient do
       }
     }
   end
-
-  defp remove_open_prefix("open/" <> model), do: model
-  defp remove_open_prefix(model), do: model
 end

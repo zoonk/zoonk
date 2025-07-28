@@ -22,16 +22,19 @@ defmodule Zoonk.AI.AIClient.TogetherAIClient do
       {:ok, %Req.Response{}}
   """
   def generate_object(%AIPayload{} = payload) do
-    BaseClient.chat_completion(@responses_endpoint, payload, :togetherai, &convert_payload/1)
+    BaseClient.chat_completion(@responses_endpoint, req_payload(payload), :togetherai)
   end
 
-  defp convert_payload(%AIPayload{} = payload) do
+  defp req_payload(%AIPayload{} = payload) do
     messages = BaseClient.build_messages(payload)
 
     %{
-      model: payload.model,
+      model: remove_prefix(payload.model),
       messages: messages,
       response_format: payload.text.format
     }
   end
+
+  defp remove_prefix("together/" <> model), do: model
+  defp remove_prefix(model), do: model
 end
