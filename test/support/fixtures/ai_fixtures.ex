@@ -1,6 +1,18 @@
 defmodule Zoonk.AIFixtures do
   @moduledoc false
 
+  @usage_input 50
+  @usage_output 50
+  @usage_total @usage_input + @usage_output
+
+  def token_usage do
+    %{
+      input: @usage_input,
+      output: @usage_output,
+      total: @usage_total
+    }
+  end
+
   def openai_stub(data, opts \\ []) do
     error = Keyword.get(opts, :error, nil)
     refusal = Keyword.get(opts, :refusal, nil)
@@ -12,7 +24,8 @@ defmodule Zoonk.AIFixtures do
         "output" => [
           %{"type" => "reasoning"},
           %{"content" => [output], "type" => "message"}
-        ]
+        ],
+        "usage" => %{"input_tokens" => @usage_input, "output_tokens" => @usage_output, "total_tokens" => @usage_total}
       })
     end)
   end
@@ -27,7 +40,14 @@ defmodule Zoonk.AIFixtures do
       end)
     else
       Req.Test.stub(:togetherai_client, fn conn ->
-        Req.Test.json(conn, %{"choices" => [output]})
+        Req.Test.json(conn, %{
+          "choices" => [output],
+          "usage" => %{
+            "prompt_tokens" => @usage_input,
+            "completion_tokens" => @usage_output,
+            "total_tokens" => @usage_total
+          }
+        })
       end)
     end
   end
@@ -42,7 +62,14 @@ defmodule Zoonk.AIFixtures do
       end)
     else
       Req.Test.stub(:gemini_client, fn conn ->
-        Req.Test.json(conn, %{"candidates" => [output]})
+        Req.Test.json(conn, %{
+          "candidates" => [output],
+          "usageMetadata" => %{
+            "promptTokenCount" => @usage_input,
+            "candidatesTokenCount" => @usage_output,
+            "totalTokenCount" => @usage_total
+          }
+        })
       end)
     end
   end
@@ -57,7 +84,14 @@ defmodule Zoonk.AIFixtures do
       end)
     else
       Req.Test.stub(:openrouter_client, fn conn ->
-        Req.Test.json(conn, %{"choices" => [output]})
+        Req.Test.json(conn, %{
+          "choices" => [output],
+          "usage" => %{
+            "prompt_tokens" => @usage_input,
+            "completion_tokens" => @usage_output,
+            "total_tokens" => @usage_total
+          }
+        })
       end)
     end
   end

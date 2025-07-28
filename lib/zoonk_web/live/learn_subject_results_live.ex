@@ -105,7 +105,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
       socket
       |> assign(:page_title, dgettext("page_title", "Recommendations for %{input}", input: input))
       |> assign(:input, input)
-      |> assign_async(:courses, fn -> AI.recommend_courses(input, language) end)
+      |> assign_async(:courses, fn -> assign_courses(input, language) end)
 
     {:ok, socket}
   end
@@ -114,5 +114,12 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
     @colors
     |> Enum.shuffle()
     |> Enum.at(index)
+  end
+
+  defp assign_courses(input, language) do
+    case AI.recommend_courses(input, language) do
+      {:ok, %{courses: courses}} -> {:ok, %{courses: courses}}
+      {:error, reason} -> {:error, reason}
+    end
   end
 end

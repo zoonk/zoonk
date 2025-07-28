@@ -9,7 +9,9 @@ defmodule Zoonk.AI.AIClient.TogetherAIClientTest do
   describe "generate_object/1" do
     test "returns the object when successful" do
       togetherai_stub(%{language: "English"})
-      assert {:ok, %{language: "English"}} = TogetherAIClient.generate_object(%AIPayload{})
+      assert {:ok, response} = TogetherAIClient.generate_object(%AIPayload{})
+      assert response.language == "English"
+      assert response.usage == token_usage()
     end
 
     test "returns an error when the API call fails" do

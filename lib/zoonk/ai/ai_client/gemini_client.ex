@@ -29,11 +29,7 @@ defmodule Zoonk.AI.AIClient.GeminiClient do
         {:error, error["message"]}
 
       {:ok, %Req.Response{body: body}} ->
-        candidates = hd(body["candidates"])
-        parts = candidates["content"]["parts"]
-        content = hd(parts)["text"]
-
-        {:ok, Jason.decode!(content, keys: :atoms!)}
+        {:ok, response_content(body)}
 
       {:error, error} ->
         {:error, error}
@@ -80,6 +76,24 @@ defmodule Zoonk.AI.AIClient.GeminiClient do
     |> convert_payload()
     |> ClientConfig.req_opts(:gemini)
     |> Keyword.delete(:api_key)
+  end
+
+  defp response_content(%{"candidates" => candidates} = body) do
+    candidates
+    |> hd()
+    |> get_in(["content", "parts"])
+    |> hd()
+    |> Map.get("text")
+    |> Jason.decode!(keys: :atoms!)
+    |> Map.put(:usage, token_usage(body))
+  end
+
+  defp token_usage(%{"usageMetadata" => usage}) do
+    %{
+      input: usage["promptTokenCount"],
+      output: usage["candidatesTokenCount"],
+      total: usage["totalTokenCount"]
+    }
   end
 
   defp get_endpoint(model) do

@@ -11,7 +11,8 @@ defmodule Zoonk.AI.AIClientTest do
       openai_stub(%{language: "en"})
 
       payload = %AIPayload{model: "gpt-4.1-mini"}
-      assert {:ok, %{}} = AIClient.generate_object(payload)
+      assert {:ok, %{} = response} = AIClient.generate_object(payload)
+      assert_usage(response)
     end
 
     test "delegates to OpenAIClient for reasoning models" do
@@ -21,7 +22,8 @@ defmodule Zoonk.AI.AIClientTest do
 
       Enum.each(models, fn model ->
         payload = %AIPayload{model: model}
-        assert {:ok, %{}} = AIClient.generate_object(payload)
+        assert {:ok, %{} = response} = AIClient.generate_object(payload)
+        assert_usage(response)
       end)
     end
 
@@ -29,14 +31,16 @@ defmodule Zoonk.AI.AIClientTest do
       gemini_stub(%{language: "en"})
 
       payload = %AIPayload{model: "gemini-1.5"}
-      assert {:ok, %{}} = AIClient.generate_object(payload)
+      assert {:ok, %{} = response} = AIClient.generate_object(payload)
+      assert_usage(response)
     end
 
     test "delegates to OpenRouterClient for meta-llama models" do
       openrouter_stub(%{language: "en"})
 
       payload = %AIPayload{model: "meta-llama/llama-4-maverick"}
-      assert {:ok, %{}} = AIClient.generate_object(payload)
+      assert {:ok, %{} = response} = AIClient.generate_object(payload)
+      assert_usage(response)
     end
 
     test "delegates to OpenRouterClient for anthropic models" do
@@ -71,7 +75,13 @@ defmodule Zoonk.AI.AIClientTest do
       togetherai_stub(%{language: "en"})
 
       payload = %AIPayload{model: "together/meta-llama/llama-4-maverick"}
-      assert {:ok, %{}} = AIClient.generate_object(payload)
+      assert {:ok, %{} = response} = AIClient.generate_object(payload)
+      assert_usage(response)
     end
+  end
+
+  defp assert_usage(response) do
+    assert %{usage: usage} = response
+    assert %{input: 50, output: 50, total: 100} = usage
   end
 end

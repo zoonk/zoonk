@@ -28,10 +28,7 @@ defmodule Zoonk.AI.AIClient.BaseClient do
         {:error, error["message"]}
 
       {:ok, %Req.Response{body: body}} ->
-        choices = hd(body["choices"])
-        content = choices["message"]["content"]
-
-        {:ok, Jason.decode!(content, keys: :atoms!)}
+        {:ok, response_content(body)}
 
       {:error, error} ->
         {:error, error}
@@ -52,5 +49,21 @@ defmodule Zoonk.AI.AIClient.BaseClient do
     instructions = payload.instructions
     messages = payload.input
     [%{role: "system", content: instructions} | messages]
+  end
+
+  defp response_content(%{"choices" => choices} = body) do
+    choices
+    |> hd()
+    |> get_in(["message", "content"])
+    |> Jason.decode!(keys: :atoms!)
+    |> Map.put(:usage, token_usage(body))
+  end
+
+  defp token_usage(%{"usage" => usage}) do
+    %{
+      input: usage["prompt_tokens"],
+      output: usage["completion_tokens"],
+      total: usage["total_tokens"]
+    }
   end
 end
