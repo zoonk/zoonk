@@ -20,8 +20,6 @@ if System.get_env("PHX_SERVER") do
   config :zoonk, ZoonkWeb.Endpoint, server: true
 end
 
-config :zoonk, :ai_models, recommend_courses: System.get_env("AI_MODEL_RECOMMEND_COURSES", "gpt-4.1-mini")
-
 config :zoonk, :strategies,
   apple: [
     client_id: System.get_env("APPLE_SERVICE_ID"),
@@ -55,6 +53,8 @@ if config_env() in [:dev, :prod] do
     openrouter: [
       auth: {:bearer, System.get_env("OPENROUTER_API_KEY")}
     ]
+
+  config :zoonk, :ai_models, recommend_courses: System.get_env("AI_MODEL_RECOMMEND_COURSES", "gpt-4.1-mini")
 
   config :zoonk, :stripe,
     webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET"),

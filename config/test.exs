@@ -60,6 +60,8 @@ config :zoonk, :ai,
     plug: {Req.Test, :openrouter_client}
   ]
 
+config :zoonk, :ai_models, recommend_courses: "gpt-4.1-nano"
+
 # Disable Stripe calls for testing
 config :zoonk, :stripe,
   webhook_secret: "whsec_test_secret_key_for_webhook_verification",
