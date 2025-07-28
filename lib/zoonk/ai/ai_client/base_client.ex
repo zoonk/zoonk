@@ -6,6 +6,7 @@ defmodule Zoonk.AI.AIClient.BaseClient do
   to AI services, reducing code duplication across different
   AI client implementations.
   """
+  alias Zoonk.AI.AIClient.ClientConfig
   alias Zoonk.AI.AIPayload
 
   @doc """
@@ -20,14 +21,7 @@ defmodule Zoonk.AI.AIClient.BaseClient do
       {:ok, %{field: "value"}}
   """
   def chat_completion(endpoint, payload, config_key) do
-    req_opts = [
-      json: payload,
-      receive_timeout: 300_000,
-      connect_options: [timeout: 300_000],
-      retry: :transient
-    ]
-
-    opts = Keyword.merge(req_opts, Application.get_env(:zoonk, :ai)[config_key] || [])
+    opts = ClientConfig.req_opts(payload, config_key)
 
     case Req.post(endpoint, opts) do
       {:ok, %Req.Response{body: %{"error" => error}}} ->

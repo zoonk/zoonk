@@ -5,6 +5,7 @@ defmodule Zoonk.AI.AIClient.GeminiClient do
   This module handles communication with the Gemini API,
   supporting structured outputs with JSON schema.
   """
+  alias Zoonk.AI.AIClient.ClientConfig
   alias Zoonk.AI.AIPayload
   alias Zoonk.AI.AISchema
 
@@ -75,13 +76,9 @@ defmodule Zoonk.AI.AIClient.GeminiClient do
   defp remove_additional_properties(other), do: other
 
   defp get_opts(payload) do
-    [
-      json: convert_payload(payload),
-      receive_timeout: 300_000,
-      connect_options: [timeout: 300_000],
-      retry: :transient
-    ]
-    |> Keyword.merge(Application.get_env(:zoonk, :ai)[:gemini] || [])
+    payload
+    |> convert_payload()
+    |> ClientConfig.req_opts(:gemini)
     |> Keyword.delete(:api_key)
   end
 
