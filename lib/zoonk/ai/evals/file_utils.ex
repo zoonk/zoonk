@@ -20,18 +20,9 @@ defmodule Zoonk.AI.Evals.FileUtils do
   def store_model(model, prompt, results_dir, filename, data) do
     Logger.info("Storing model results for #{model} in #{filename}")
 
-    model_name = String.replace(model, "/", "_")
-    prompt = prompt_name(prompt)
-
-    dir = Path.join(["priv", "evals", "models", model_name, prompt, results_dir])
-    File.mkdir_p!(dir)
-
-    file_path = Path.join(dir, filename)
-    file_content = Jason.encode!(data, pretty: true)
-
-    File.write!(file_path, file_content)
-
-    Logger.info("Stored model results in #{file_path}")
+    model
+    |> model_dir!(prompt, results_dir)
+    |> write_file!(filename, data)
   end
 
   @doc """
@@ -51,9 +42,25 @@ defmodule Zoonk.AI.Evals.FileUtils do
   def store_prompt(prompt, results_dir, filename, data) do
     Logger.info("Storing prompt results for #{prompt} in #{filename}")
 
+    prompt
+    |> prompt_dir!(results_dir)
+    |> write_file!(filename, data)
+  end
+
+  defp model_dir!(model, prompt, results_dir) do
+    model_name = String.replace(model, "/", "_")
     prompt = prompt_name(prompt)
 
-    dir = Path.join(["priv", "evals", "prompts", prompt, results_dir])
+    Path.join(["priv", "evals", "models", model_name, prompt, results_dir])
+  end
+
+  defp prompt_dir!(prompt, results_dir) do
+    prompt = prompt_name(prompt)
+
+    Path.join(["priv", "evals", "prompts", prompt, results_dir])
+  end
+
+  defp write_file!(dir, filename, data) do
     File.mkdir_p!(dir)
 
     file_path = Path.join(dir, filename)
@@ -61,7 +68,7 @@ defmodule Zoonk.AI.Evals.FileUtils do
 
     File.write!(file_path, file_content)
 
-    Logger.info("Stored prompt results in #{file_path}")
+    Logger.info("Stored results in #{file_path}")
   end
 
   defp prompt_name(prompt) when is_atom(prompt), do: Atom.to_string(prompt)
