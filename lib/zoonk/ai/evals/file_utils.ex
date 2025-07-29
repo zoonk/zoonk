@@ -47,6 +47,48 @@ defmodule Zoonk.AI.Evals.FileUtils do
     |> write_file!(filename, data)
   end
 
+  @doc """
+  Checks if a model file exists.
+
+  This is useful to avoid sending duplicated requests
+  to LLMs when we've already stored the results.
+
+  ## Examples
+
+      iex> model_file_exists?("openai/gpt-4.1-mini", :recommend_courses, "outputs", "test_1.json")
+      true
+
+      iex> model_file_exists?("openai/gpt-4.1-mini", :recommend_courses, "scores", "test_1.json")
+      false
+  """
+  def model_file_exists?(model, prompt, results_dir, filename) do
+    model
+    |> model_dir!(prompt, results_dir)
+    |> Path.join(filename)
+    |> File.exists?()
+  end
+
+  @doc """
+  Checks if a prompt file exists.
+
+  This is useful to avoid sending duplicated requests
+  to LLMs when we've already stored the results.
+
+  ## Examples
+
+      iex> prompt_file_exists?(:recommend_courses, "outputs", "test_1.json")
+      true
+
+      iex> prompt_file_exists?(:recommend_courses, "scores", "test_1.json")
+      false
+  """
+  def prompt_file_exists?(prompt, results_dir, filename) do
+    prompt
+    |> prompt_dir!(results_dir)
+    |> Path.join(filename)
+    |> File.exists?()
+  end
+
   defp model_dir!(model, prompt, results_dir) do
     model_name = String.replace(model, "/", "_")
     prompt = prompt_name(prompt)
