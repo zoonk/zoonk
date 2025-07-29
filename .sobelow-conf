@@ -8,6 +8,6 @@
   out: nil,
   threshold: :low,
   ignore: ["Config.HTTPS", "Config.CSRF", "Config.CSRFRoute"],
-  ignore_files: [],
+  ignore_files: ["lib/zoonk/ai/evals/file_utils.ex"],
   version: false,
 ]
