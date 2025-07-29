@@ -1,5 +1,7 @@
 defmodule Zoonk.AI.Tasks.RecommendCourses do
   @moduledoc false
+  @behaviour Zoonk.AI.Tasks.AITask
+
   alias Zoonk.AI.AIClient
   alias Zoonk.AI.AIPayload
   alias Zoonk.AI.AISchema
