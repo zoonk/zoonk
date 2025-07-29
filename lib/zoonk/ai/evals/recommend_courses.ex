@@ -10,7 +10,7 @@ defmodule Zoonk.AI.Evals.RecommendCoursesEval do
 
     model_test_cases()
     |> Enum.with_index()
-    |> Task.async_stream(&generate_model_output(model, &1), max_concurrency: 3, timeout: :infinity)
+    |> Task.async_stream(&generate_model_output(model, &1), max_concurrency: 5, timeout: :infinity)
     |> Stream.run()
   end
 
@@ -35,6 +35,40 @@ defmodule Zoonk.AI.Evals.RecommendCoursesEval do
 
       {:error, error} ->
         Logger.error("Error generating output for model #{model}: #{error}")
+        {:error, error}
+    end
+  end
+
+  def prompt_output(model) do
+    Logger.info("Generating prompt output, using model #{model}")
+
+    prompt_test_cases()
+    |> Enum.with_index()
+    |> Task.async_stream(&generate_prompt_output(model, &1), max_concurrency: 5, timeout: :infinity)
+    |> Stream.run()
+  end
+
+  defp generate_prompt_output(model, {test_case, index}) do
+    file_exists? = FileUtils.prompt_file_exists?(:recommend_courses, "outputs", test_filename(index))
+    generate_prompt_output(model, {test_case, index}, file_exists?)
+  end
+
+  defp generate_prompt_output(_model, {test_case, _index}, true) do
+    Logger.info("Skipping existing prompt output for input #{inspect(test_case)}")
+    {:ok, %{output: "Output already exists", input: test_case}}
+  end
+
+  defp generate_prompt_output(model, {test_case, index}, false) do
+    Logger.info("Processing prompt input: #{inspect(test_case)}")
+
+    case RecommendCourses.generate_object(test_case.input, test_case.language, model) do
+      {:ok, response} ->
+        data = %{output: response, input: test_case}
+        FileUtils.store_prompt(:recommend_courses, "outputs", test_filename(index), data)
+        {:ok, data}
+
+      {:error, error} ->
+        Logger.error("Error generating prompt output: #{error}")
         {:error, error}
     end
   end

@@ -1,0 +1,57 @@
+{
+  "input": {
+    "input": "Quero me comunicar melhor",
+    "language": "pt"
+  },
+  "output": {
+    "usage": {
+      "input": 736,
+      "output": 418,
+      "total": 1154
+    },
+    "courses": [
+      {
+        "description": "Aprenda técnicas eficazes de comunicação verbal e não verbal para expressar suas ideias com clareza e confiança.",
+        "title": "Comunicação Eficaz",
+        "icon": "tabler-message",
+        "english_title": "Effective Communication"
+      },
+      {
+        "description": "Domine a arte de falar em público, desde a preparação até a entrega de apresentações impactantes.",
+        "title": "Oratória",
+        "icon": "tabler-microphone",
+        "english_title": "Public Speaking"
+      },
+      {
+        "description": "Explore como a inteligência emocional pode melhorar suas interações pessoais e profissionais.",
+        "title": "Inteligência Emocional",
+        "icon": "tabler-brain",
+        "english_title": "Emotional Intelligence"
+      },
+      {
+        "description": "Desenvolva habilidades essenciais para negociações e resolução de conflitos.",
+        "title": "Negociação",
+        "icon": "tabler-handshake",
+        "english_title": "Negotiation"
+      },
+      {
+        "description": "Melhore sua capacidade de ouvir ativamente e compreender as necessidades dos outros.",
+        "title": "Escuta Ativa",
+        "icon": "tabler-headphones",
+        "english_title": "Active Listening"
+      },
+      {
+        "description": "Aprenda estratégias para construir relacionamentos profissionais sólidos e eficazes.",
+        "title": "Networking",
+        "icon": "tabler-users",
+        "english_title": "Networking"
+      },
+      {
+        "description": "Entenda como a linguagem corporal influencia a comunicação e como usá-la a seu favor.",
+        "title": "Linguagem Corporal",
+        "icon": "tabler-armchair",
+        "english_title": "Body Language"
+      }
+    ]
+  }
+}

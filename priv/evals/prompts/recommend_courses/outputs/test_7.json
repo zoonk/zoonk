@@ -1,0 +1,51 @@
+{
+  "input": {
+    "input": "How to design a website?",
+    "language": "en"
+  },
+  "output": {
+    "usage": {
+      "input": 735,
+      "output": 347,
+      "total": 1082
+    },
+    "courses": [
+      {
+        "description": "Master the principles of designing visually appealing and functional websites, covering layout, typography, and user experience.",
+        "title": "Web Design",
+        "icon": "tabler-browser",
+        "english_title": "Web Design"
+      },
+      {
+        "description": "Develop the coding skills needed to build responsive websites using HTML, CSS, JavaScript, and modern frameworks.",
+        "title": "Frontend Development",
+        "icon": "tabler-code",
+        "english_title": "Frontend Development"
+      },
+      {
+        "description": "Learn how to create intuitive and engaging user experiences by focusing on usability and accessibility in web design.",
+        "title": "UX Design",
+        "icon": "tabler-device-imac",
+        "english_title": "UX Design"
+      },
+      {
+        "description": "Explore the essential rules and techniques for structuring website layouts to improve visual hierarchy and readability.",
+        "title": "Visual Design",
+        "icon": "tabler-layout",
+        "english_title": "Visual Design"
+      },
+      {
+        "description": "Study the business and strategic aspects of digital branding, including how websites contribute to a company’s identity.",
+        "title": "Digital Branding",
+        "icon": "tabler-brand-safari",
+        "english_title": "Digital Branding"
+      },
+      {
+        "description": "Gain expertise in optimizing websites for search engines, enhancing visibility, and driving organic traffic.",
+        "title": "SEO",
+        "icon": "tabler-search",
+        "english_title": "SEO"
+      }
+    ]
+  }
+}
