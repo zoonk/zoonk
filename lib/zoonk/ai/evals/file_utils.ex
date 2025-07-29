@@ -1,5 +1,15 @@
 defmodule Zoonk.AI.Evals.FileUtils do
-  @moduledoc false
+  @moduledoc """
+  Utility functions to store and retrieve evaluation
+  results for AI models and prompts.
+
+  This module helps persist outputs and scores from
+  LLM evaluations, avoiding duplicate processing and
+  enabling comparison between models and prompts.
+
+  It organizes the results in a structured directory
+  format under `priv/evals`.
+  """
   require Logger
 
   @doc """
