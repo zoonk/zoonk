@@ -1,56 +1,64 @@
 {
   "input": {
     "input": "I want to learn programming",
-    "language": "en"
+    "language": "en",
+    "system_prompt": "A user wants to learn a new subject.\nWe asked them what they would like to learn.\n\nGenerate 3 to 10 broad **course suggestions**.\n\nEach course must follow these rules:\n\n- The title must be a broad, serious-sounding name of a real academic or professional field. Titles may include 1–3 words if that’s part of the standard name of the field (e.g. \"Data Science\", \"UI Design\", \"Mechanical Engineering\"). Avoid vague or invented titles. Prefer canonical ones.\n- Never include qualifiers like \"Basics\", \"Foundations\", \"Intro\", \"Beginner\", \"Advanced\", \"Essentials\", \"101\", etc.\n- Never include \"and\", \"or\", or slashes (/) in the title.\n- Never group topics into one title. Always split them.\n- Titles should be canonical academic or professional fields (e.g. \"Physics\", \"Law\", \"Art\", \"Engineering\", \"Neuroscience\").\n- If the user input is vague (e.g. “I want to code”), map it to broader established fields (e.g. “Computer Science”, “Web Development”, “Mobile Development”).\n- Each course must also include an `english_title` field that is a string representing the `title` in English.\n\nExamples of valid course titles:\n- Computer Science\n- Data Science\n- UI Design\n- UX Design\n- Mechanical Engineering\n- Electrical Engineering\n- Cognitive Psychology\n- Artificial Intelligence\n\nIf the user input is already a valid or common course name (e.g. \"Educação Financeira\", \"Digital Transformation\", \"Leadership\"), include it as one of the suggestions — ideally the first.\nDo not replace it with more academic fields unless the original term is too vague or nonstandard.\nIf the input closely resembles a good course title, include a suggestion using the same or very similar title.\n\nEach course must also include a 1-sentence description that:\n- Clearly explains what the course covers.\n- Highlights why it may be useful or relevant to the user.\n\nExamples:\n\nInput: I want to build mobile apps\nOutput:\n- Mobile Development – Learn how to create apps for iOS and Android using tools like Swift, Kotlin, and Flutter.\n- UI Design – Explore how to design intuitive and responsive mobile interfaces.\n- Computer Science – Understand the foundational concepts behind software and app development.\n\nInput: Quero aprender a desenhar personagens\nOutput:\n- Ilustração Digital – Aprenda a desenhar personagens usando ferramentas como o Procreate e o Photoshop.\n- Design de Personagens – Descubra como criar personagens únicos, com estilo e personalidade.\n- Anatomia Artística – Entenda proporções e movimento para criar figuras humanas mais realistas.\n\nEach course must also have an `icon` field with a tabler icon to illustrate this course. For example:\n- Computer Science – icon: \"tabler-code\"\n- Data Science – icon: \"tabler-chart-pie\"\n- UI Design – icon: \"tabler-palette\"\n\nAlways add the `tabler-` prefix to the icon name.\n",
+    "user_prompt": "This is their input: \"I want to learn programming\"\nThis means they want to learn about I want to learn programming.\nSo, generate 3 to 10 course suggestions based on this input.\n\nWrite both the `title` and `description` fields in the same language.\nThey want to see results in this language: en.\nIf it's not English, translate the title and add it to the `english_title` field.\n"
   },
   "output": {
     "usage": {
       "input": 732,
-      "output": 394,
-      "total": 1126
+      "output": 452,
+      "total": 1184
     },
     "courses": [
       {
-        "description": "Build a strong foundation in programming principles, algorithms, and data structures to solve complex problems efficiently.",
-        "title": "Computer Science",
-        "icon": "tabler-code",
-        "english_title": "Computer Science"
+        "description": "Learn how to create apps for iOS and Android using tools like Swift, Kotlin, and Flutter.",
+        "title": "Mobile Development",
+        "icon": "tabler-device-mobile-code",
+        "english_title": "Mobile Development"
       },
       {
-        "description": "Develop skills to create interactive and responsive websites using languages like HTML, CSS, and JavaScript.",
+        "description": "Design dynamic and engaging websites using HTML, CSS, and JavaScript.",
         "title": "Web Development",
-        "icon": "tabler-browser",
+        "icon": "tabler-browser-code",
         "english_title": "Web Development"
       },
       {
-        "description": "Master backend systems, APIs, and databases to build scalable server-side applications and services.",
+        "description": "Gain foundational knowledge of algorithms, data structures, and software engineering principles.",
+        "title": "Computer Science",
+        "icon": "tabler-circuit-chip",
+        "english_title": "Computer Science"
+      },
+      {
+        "description": "Build server-side applications and APIs using languages like Python, Java, Node.js, or Ruby.",
         "title": "Backend Development",
-        "icon": "tabler-server",
+        "icon": "tabler-server-code",
         "english_title": "Backend Development"
       },
       {
-        "description": "Learn to design user-facing software components and create intuitive interfaces with frameworks like React or Flutter.",
-        "title": "Frontend Development",
-        "icon": "tabler-layout",
-        "english_title": "Frontend Development"
-      },
-      {
-        "description": "Understand how to retrieve insights from data using statistical methods, machine learning, and visualization tools.",
+        "description": "Focus on writing programs to process, analyze, and extract insights from large datasets.",
         "title": "Data Science",
-        "icon": "tabler-chart-line",
+        "icon": "tabler-chart-data",
         "english_title": "Data Science"
       },
       {
-        "description": "Explore creating algorithms that enable machines to learn from data and make autonomous decisions.",
+        "description": "Ensure code quality with techniques like unit testing, integration testing, and test-driven development.",
+        "title": "Software Testing",
+        "icon": "tabler-checklist",
+        "english_title": "Software Testing"
+      },
+      {
+        "description": "Understand cloud infrastructure, deployment, and scaling using platforms like AWS, Azure, or Google Cloud.",
+        "title": "Cloud Computing",
+        "icon": "tabler-cloud-computing",
+        "english_title": "Cloud Computing"
+      },
+      {
+        "description": "Explore the development of machine learning models and neural networks for predictive analytics.",
         "title": "Artificial Intelligence",
         "icon": "tabler-brain",
         "english_title": "Artificial Intelligence"
-      },
-      {
-        "description": "Focus on securing systems, networks, and data from cyber threats through ethical hacking and encryption techniques.",
-        "title": "Cybersecurity",
-        "icon": "tabler-shield-lock",
-        "english_title": "Cybersecurity"
       }
     ]
   }

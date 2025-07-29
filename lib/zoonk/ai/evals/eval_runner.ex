@@ -37,19 +37,24 @@ defmodule Zoonk.AI.Evals.EvalRunner do
       Logger.info("Skipping existing output for #{prompt} #{output_type} and input #{inspect(test_case)}")
       {:ok, %{output: "Output already exists", input: test_case}}
     else
+      system_prompt = task_module.system_prompt()
+      user_prompt = task_module.user_prompt(test_case)
+
+      input = Map.merge(%{user_prompt: user_prompt, system_prompt: system_prompt}, test_case)
+
       test_case
       |> task_module.generate_object(model)
-      |> store_generate_output(prompt, output_type, model, test_case, filename)
+      |> store_generate_output(prompt, output_type, model, input, filename)
     end
   end
 
-  defp store_generate_output({:ok, response}, prompt, output_type, model, test_case, filename) do
-    data = %{output: response, input: test_case}
+  defp store_generate_output({:ok, response}, prompt, output_type, model, input, filename) do
+    data = %{output: response, input: input}
     FileUtils.store_output(output_type, model, prompt, "outputs", filename, data)
     {:ok, data}
   end
 
-  defp store_generate_output({:error, error}, _prompt, _output_type, _model, _test_case, _filename) do
+  defp store_generate_output({:error, error}, _prompt, _output_type, _model, _input, _filename) do
     Logger.error("Error generating output: #{inspect(error)}")
     {:error, error}
   end

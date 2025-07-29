@@ -61,7 +61,7 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
     |> AIPayload.set_model(model)
     |> AIPayload.set_schema(json_schema())
     |> AIPayload.add_instructions(system_prompt())
-    |> AIPayload.add_message(user_prompt(input, language))
+    |> AIPayload.add_message(user_prompt(%{input: input, language: language}))
     |> AIClient.generate_object()
   end
 
@@ -123,7 +123,7 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
     """
   end
 
-  def user_prompt(input, language) do
+  def user_prompt(%{input: input, language: language}) do
     """
     This is their input: "#{input}"
     This means they want to learn about #{input}.
