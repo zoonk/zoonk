@@ -80,10 +80,15 @@ config :zoonk, ZoonkWeb.Endpoint,
 # Watch static and templates for browser reloading.
 config :zoonk, ZoonkWeb.Endpoint,
   live_reload: [
+    notify: [
+      live_view: [
+        ~r"lib/zoonk_web/(live|components)/.*(ex|heex)$"
+      ]
+    ],
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/zoonk_web/.*(ex|heex)$",
+      ~r"lib/zoonk_web/controllers/.*(ex|heex)$",
       ~r"lib/zoonk_dev/.*(ex|heex)$"
     ]
   ]
