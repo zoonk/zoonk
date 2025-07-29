@@ -61,7 +61,7 @@ defmodule Zoonk.MixProject do
       {:postgrex, ">= 0.0.0"},
       {:req, "~> 0.5.0"},
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
-      {:styler, "~> 1.4", only: [:dev, :test], runtime: false},
+      {:styler, "~> 1.6", only: [:dev, :test], runtime: false},
       {:swoosh, "~> 1.5"},
       # Using the main branch instead of tags because of the size. Using the tag had over 1gb. Using a branch has less than 60mb.
       {:tabler_icons,

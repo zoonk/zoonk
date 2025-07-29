@@ -362,7 +362,7 @@ defmodule Zoonk.AccountsTest do
       token = Accounts.generate_user_session_token(user)
       assert user_token = Repo.get_by(UserToken, token: token)
       assert user_token.context == "session"
-      assert user_token.authenticated_at != nil
+      assert user_token.authenticated_at
 
       # Creating the same token for another user should fail
       assert_raise Ecto.ConstraintError, fn ->
@@ -393,7 +393,7 @@ defmodule Zoonk.AccountsTest do
       decoded_token = Base.url_decode64!(token, padding: false)
       assert user_token = Repo.get_by(UserToken, token: decoded_token)
       assert user_token.context == "session"
-      assert user_token.authenticated_at != nil
+      assert user_token.authenticated_at
 
       # Creating the same token for another user should fail
       assert_raise Ecto.ConstraintError, fn ->
@@ -416,8 +416,8 @@ defmodule Zoonk.AccountsTest do
     test "returns user by token", %{user: user, token: token} do
       assert {session_user, token_inserted_at} = Accounts.get_user_by_session_token(token)
       assert session_user.id == user.id
-      assert session_user.authenticated_at != nil
-      assert token_inserted_at != nil
+      assert session_user.authenticated_at
+      assert token_inserted_at
       assert session_user.profile.user_id == user.id
       assert session_user.profile.is_public == false
     end
@@ -520,7 +520,7 @@ defmodule Zoonk.AccountsTest do
 
       assert user.email == email
       assert user.language == :en
-      assert user.confirmed_at != nil
+      assert user.confirmed_at
 
       user_provider = Repo.get_by!(UserProvider, user_id: user.id)
       user_profile = Repo.get_by!(UserProfile, user_id: user.id)

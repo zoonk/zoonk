@@ -75,7 +75,7 @@ defmodule Zoonk.AccountFixtures do
   def override_token_authenticated_at(token, authenticated_at) when is_binary(token) do
     UserToken
     |> where([t], t.token == ^token)
-    |> Zoonk.Repo.update_all(set: [authenticated_at: authenticated_at])
+    |> Repo.update_all(set: [authenticated_at: authenticated_at])
   end
 
   def generate_user_otp_code(user) do

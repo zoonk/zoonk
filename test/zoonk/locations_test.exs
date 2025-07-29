@@ -25,12 +25,12 @@ defmodule Zoonk.LocationsTest do
   describe "get_country/1" do
     test "returns the correct country for a valid ISO2 code (case-insensitive)" do
       us = Locations.get_country("US")
-      assert us != nil
+      assert us
       assert us.iso2 == "US"
       assert us.currency.code == "USD"
 
       us_lower = Locations.get_country("us")
-      assert us_lower != nil
+      assert us_lower
       assert us_lower.iso2 == "US"
     end
 

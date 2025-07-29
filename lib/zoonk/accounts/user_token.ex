@@ -203,7 +203,7 @@ defmodule Zoonk.Accounts.UserToken do
     UserToken
     |> where([t], t.user_id == ^user.id and t.context == ^context)
     |> where([t], t.inserted_at >= ^one_hour_ago)
-    |> Zoonk.Repo.aggregate(:count)
+    |> Repo.aggregate(:count)
     |> Kernel.<(get_max_otp_codes_per_hour())
   end
 
