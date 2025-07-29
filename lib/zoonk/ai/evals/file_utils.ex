@@ -31,6 +31,22 @@ defmodule Zoonk.AI.Evals.FileUtils do
     Logger.info("Stored model output in #{file_path}")
   end
 
+  def store_prompt_output(prompt, filename, data) do
+    Logger.info("Storing prompt output for #{prompt} in #{filename}")
+
+    prompt = prompt_name(prompt)
+
+    dir = Path.join(["priv", "evals", "prompts", prompt])
+    File.mkdir_p!(dir)
+
+    file_path = Path.join(dir, filename)
+    file_content = Jason.encode!(data, pretty: true)
+
+    File.write!(file_path, file_content)
+
+    Logger.info("Stored prompt output in #{file_path}")
+  end
+
   defp prompt_name(prompt) when is_atom(prompt), do: Atom.to_string(prompt)
   defp prompt_name(prompt) when is_binary(prompt), do: prompt
 end
