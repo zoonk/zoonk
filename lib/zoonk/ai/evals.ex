@@ -7,8 +7,8 @@ defmodule Zoonk.AI.Evals do
   new models as they become available.
   """
 
+  alias Zoonk.AI.Evals.EvalFiles
   alias Zoonk.AI.Evals.EvalRunner
-  alias Zoonk.AI.Evals.FileUtils
 
   @doc """
   Generate outputs for a prompt.
@@ -24,7 +24,7 @@ defmodule Zoonk.AI.Evals do
       iex> generate_output(:recommend_courses, "gpt-4.1-nano", :model)
       {:ok, output}
   """
-  @spec generate_output(atom(), String.t(), FileUtils.output_type()) :: :ok
+  @spec generate_output(atom(), String.t(), EvalFiles.output_type()) :: :ok
   def generate_output(prompt, model, output_type) do
     EvalRunner.generate_object(prompt, output_type, model)
   end

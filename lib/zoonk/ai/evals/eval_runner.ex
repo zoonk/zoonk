@@ -2,7 +2,7 @@ defmodule Zoonk.AI.Evals.EvalRunner do
   @moduledoc """
   A module for running evaluations on AI models.
   """
-  alias Zoonk.AI.Evals.FileUtils
+  alias Zoonk.AI.Evals.EvalFiles
 
   require Logger
 
@@ -11,7 +11,7 @@ defmodule Zoonk.AI.Evals.EvalRunner do
   @doc """
   Generate objects for a given task module and output type using the specified model.
   """
-  @spec generate_object(atom(), FileUtils.output_type(), String.t()) :: :ok
+  @spec generate_object(atom(), EvalFiles.output_type(), String.t()) :: :ok
   def generate_object(prompt, output_type, model) do
     task_module = task_module(prompt)
     eval_module = eval_module(prompt)
@@ -33,7 +33,7 @@ defmodule Zoonk.AI.Evals.EvalRunner do
   defp generate_object(task_module, prompt, output_type, model, test_case, index) do
     filename = "test_#{index}.json"
 
-    if FileUtils.file_exists?(output_type, model, prompt, "outputs", filename) do
+    if EvalFiles.file_exists?(output_type, model, prompt, "outputs", filename) do
       Logger.info("Skipping existing output for #{prompt} #{output_type} and input #{inspect(test_case)}")
       {:ok, %{output: "Output already exists", input: test_case}}
     else
@@ -50,7 +50,7 @@ defmodule Zoonk.AI.Evals.EvalRunner do
 
   defp store_generate_output({:ok, response}, prompt, output_type, model, input, filename) do
     data = %{output: response, input: input}
-    FileUtils.store_output(output_type, model, prompt, "outputs", filename, data)
+    EvalFiles.store_output(output_type, model, prompt, "outputs", filename, data)
     {:ok, data}
   end
 

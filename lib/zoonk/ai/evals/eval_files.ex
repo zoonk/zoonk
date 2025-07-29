@@ -1,4 +1,4 @@
-defmodule Zoonk.AI.Evals.FileUtils do
+defmodule Zoonk.AI.Evals.EvalFiles do
   @moduledoc """
   Utility functions to store and retrieve evaluation
   results for AI models and prompts.
