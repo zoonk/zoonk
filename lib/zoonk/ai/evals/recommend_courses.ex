@@ -5,70 +5,48 @@ defmodule Zoonk.AI.Evals.RecommendCoursesEval do
 
   require Logger
 
-  def model_output(model) do
-    Logger.info("Generating model output for: #{model}")
+  def generate_outputs(:model, model) do
+    generate_outputs(model_test_cases(), model, :model)
+  end
 
-    model_test_cases()
+  def generate_outputs(:prompt, model) do
+    generate_outputs(prompt_test_cases(), model, :prompt)
+  end
+
+  defp generate_outputs(test_cases, model, output_type) do
+    Logger.info("Generating #{output_type} outputs for model #{model}")
+
+    test_cases
     |> Enum.with_index()
-    |> Task.async_stream(&generate_model_output(model, &1), max_concurrency: 5, timeout: :infinity)
+    |> Task.async_stream(&generate_output(&1, output_type, model), max_concurrency: 5, timeout: :infinity)
     |> Stream.run()
   end
 
-  defp generate_model_output(model, {test_case, index}) do
-    file_exists? = FileUtils.model_file_exists?(model, :recommend_courses, "outputs", test_filename(index))
-    generate_model_output(model, {test_case, index}, file_exists?)
+  defp generate_output({test_case, index}, output_type, model) do
+    filename = test_filename(index)
+    file_exists? = FileUtils.file_exists?(output_type, model, :recommend_courses, "outputs", filename)
+
+    if file_exists? do
+      Logger.info("Skipping existing output for #{output_type} and input #{inspect(test_case)}")
+      {:ok, %{output: "Output already exists", input: test_case}}
+    else
+      generate_test_case(model, test_case, index, output_type)
+    end
   end
 
-  defp generate_model_output(model, {test_case, _index}, true) do
-    Logger.info("Skipping existing output for model #{model} and input #{inspect(test_case)}")
-    {:ok, %{output: "Output already exists", input: test_case}}
-  end
-
-  defp generate_model_output(model, {test_case, index}, false) do
+  defp generate_test_case(model, test_case, index, output_type) do
     Logger.info("Processing input: #{inspect(test_case)} for model: #{model}")
 
     case RecommendCourses.generate_object(test_case.input, test_case.language, model) do
       {:ok, response} ->
         data = %{output: response, input: test_case}
-        FileUtils.store_model(model, :recommend_courses, "outputs", test_filename(index), data)
+        filename = test_filename(index)
+
+        FileUtils.store_output(output_type, model, :recommend_courses, "outputs", filename, data)
         {:ok, data}
 
       {:error, error} ->
         Logger.error("Error generating output for model #{model}: #{error}")
-        {:error, error}
-    end
-  end
-
-  def prompt_output(model) do
-    Logger.info("Generating prompt output, using model #{model}")
-
-    prompt_test_cases()
-    |> Enum.with_index()
-    |> Task.async_stream(&generate_prompt_output(model, &1), max_concurrency: 5, timeout: :infinity)
-    |> Stream.run()
-  end
-
-  defp generate_prompt_output(model, {test_case, index}) do
-    file_exists? = FileUtils.prompt_file_exists?(:recommend_courses, "outputs", test_filename(index))
-    generate_prompt_output(model, {test_case, index}, file_exists?)
-  end
-
-  defp generate_prompt_output(_model, {test_case, _index}, true) do
-    Logger.info("Skipping existing prompt output for input #{inspect(test_case)}")
-    {:ok, %{output: "Output already exists", input: test_case}}
-  end
-
-  defp generate_prompt_output(model, {test_case, index}, false) do
-    Logger.info("Processing prompt input: #{inspect(test_case)}")
-
-    case RecommendCourses.generate_object(test_case.input, test_case.language, model) do
-      {:ok, response} ->
-        data = %{output: response, input: test_case}
-        FileUtils.store_prompt(:recommend_courses, "outputs", test_filename(index), data)
-        {:ok, data}
-
-      {:error, error} ->
-        Logger.error("Error generating prompt output: #{error}")
         {:error, error}
     end
   end
