@@ -20,8 +20,8 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
   end
 
   defp recommend_courses(nil, input, language) do
-    input
-    |> generate_object(language, get_model())
+    %{input: input, language: language}
+    |> generate_object(get_model())
     |> add_recommendation_to_db(input, language)
   end
 
@@ -52,11 +52,11 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
     AISchema.add_field(%AISchema{name: "recommend_courses"}, courses)
   end
 
-  def generate_object(input, language) do
-    generate_object(input, language, get_model())
+  def generate_object(attrs) do
+    generate_object(attrs, get_model())
   end
 
-  def generate_object(input, language, model) do
+  def generate_object(%{input: input, language: language}, model) do
     %AIPayload{}
     |> AIPayload.set_model(model)
     |> AIPayload.set_schema(json_schema())

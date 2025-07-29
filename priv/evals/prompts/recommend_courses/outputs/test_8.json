@@ -1,0 +1,51 @@
+{
+  "input": {
+    "input": "I want to build robots",
+    "language": "en"
+  },
+  "output": {
+    "usage": {
+      "input": 734,
+      "output": 331,
+      "total": 1065
+    },
+    "courses": [
+      {
+        "description": "Learn how to design and build robotic systems from mechanical components to intelligent control systems.",
+        "title": "Robotics",
+        "icon": "tabler-robot",
+        "english_title": "Robotics"
+      },
+      {
+        "description": "Study the integration of mechanical and electronic systems used in robotics and automation.",
+        "title": "Mechatronics Engineering",
+        "icon": "tabler-circuit-board",
+        "english_title": "Mechatronics Engineering"
+      },
+      {
+        "description": "Explore the principles of motion, force, and energy to understand the mechanics behind robotic movements.",
+        "title": "Mechanical Engineering",
+        "icon": "tabler-engine",
+        "english_title": "Mechanical Engineering"
+      },
+      {
+        "description": "Master the skills needed to program robot behaviors, including perception, decision-making, and control.",
+        "title": "Artificial Intelligence",
+        "icon": "tabler-brain",
+        "english_title": "Artificial Intelligence"
+      },
+      {
+        "description": "Understand circuit design and embedded systems, which are fundamental for developing robotic hardware.",
+        "title": "Electrical Engineering",
+        "icon": "tabler-microchip",
+        "english_title": "Electrical Engineering"
+      },
+      {
+        "description": "Learn how to simulate and optimize robotic movements through mathematical models and algorithms.",
+        "title": "Control Systems",
+        "icon": "tabler-settings-automation",
+        "english_title": "Control Systems"
+      }
+    ]
+  }
+}

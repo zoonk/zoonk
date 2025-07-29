@@ -1,0 +1,69 @@
+{
+  "input": {
+    "input": "Engineering",
+    "language": "en"
+  },
+  "output": {
+    "usage": {
+      "input": 726,
+      "output": 495,
+      "total": 1221
+    },
+    "courses": [
+      {
+        "description": "Learn how to design, analyze, and improve mechanical systems, from engines to manufacturing processes.",
+        "title": "Mechanical Engineering",
+        "icon": "tabler-engine",
+        "english_title": "Mechanical Engineering"
+      },
+      {
+        "description": "Explore the principles of electrical circuits, power systems, and electronic devices.",
+        "title": "Electrical Engineering",
+        "icon": "tabler-circuit-bulb",
+        "english_title": "Electrical Engineering"
+      },
+      {
+        "description": "Understand the development and maintenance of software applications and computing systems.",
+        "title": "Computer Engineering",
+        "icon": "tabler-cpu",
+        "english_title": "Computer Engineering"
+      },
+      {
+        "description": "Study the design and construction of infrastructure, including roads, bridges, and buildings.",
+        "title": "Civil Engineering",
+        "icon": "tabler-building-bridge",
+        "english_title": "Civil Engineering"
+      },
+      {
+        "description": "Dive into chemical processes and the production of materials, fuels, and pharmaceuticals.",
+        "title": "Chemical Engineering",
+        "icon": "tabler-flask",
+        "english_title": "Chemical Engineering"
+      },
+      {
+        "description": "Learn about aerospace systems, including aircraft, spacecraft, and propulsion technologies.",
+        "title": "Aerospace Engineering",
+        "icon": "tabler-plane",
+        "english_title": "Aerospace Engineering"
+      },
+      {
+        "description": "Focus on sustainable environmental solutions, such as waste management and pollution control.",
+        "title": "Environmental Engineering",
+        "icon": "tabler-leaf",
+        "english_title": "Environmental Engineering"
+      },
+      {
+        "description": "Discover how to design and optimize industrial systems for efficiency and productivity.",
+        "title": "Industrial Engineering",
+        "icon": "tabler-factory",
+        "english_title": "Industrial Engineering"
+      },
+      {
+        "description": "Master the principles of biomedical devices, prosthetics, and healthcare technology.",
+        "title": "Biomedical Engineering",
+        "icon": "tabler-heartbeat",
+        "english_title": "Biomedical Engineering"
+      }
+    ]
+  }
+}
