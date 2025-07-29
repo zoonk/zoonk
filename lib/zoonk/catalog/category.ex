@@ -8,22 +8,21 @@ defmodule Zoonk.Catalog.Category do
 
   # styler:sort
   @supported_categories [
-    :astronomy,
-    :biology,
+    :arts,
     :business,
-    :chemistry,
     :communication,
     :culture,
-    :design,
     :economics,
+    :education,
     :engineering,
     :exams,
     :geography,
     :health,
     :history,
     :languages,
+    :law,
     :math,
-    :physics,
+    :science,
     :society,
     :tech
   ]
@@ -33,13 +32,13 @@ defmodule Zoonk.Catalog.Category do
 
   ## Example
       iex> list_categories(:atom)
-      [:physics, :communication, :history, :astronomy, :chemistry, :tech, :design, :geography, :engineering, :health, :math, :culture, :society, :biology, :economics, :business]
+      [:arts, ...]
 
       iex> list_categories(:string)
-      ["physics", "communication", "history", "astronomy", "chemistry", "tech", "design", "geography", "engineering", "health", "math", "culture", "society", "biology", "economics", "business"]
+      ["arts", ...]
 
       iex> list_categories(:options)
-      [{"Physics", "physics"}, {"Communication", "communication"}, {"History", "history"}, ...]
+      [{"Arts", "arts"}, ...]
   """
   def list_categories(:atom), do: @supported_categories
 
