@@ -52,6 +52,10 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
     AISchema.add_field(%AISchema{name: "recommend_courses"}, courses)
   end
 
+  def generate_object(input, language) do
+    generate_object(input, language, get_model())
+  end
+
   def generate_object(input, language, model) do
     %AIPayload{}
     |> AIPayload.set_model(model)
