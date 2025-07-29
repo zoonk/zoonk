@@ -8,52 +8,44 @@
   "output": {
     "usage": {
       "input": 740,
-      "output": 454,
-      "total": 1194
+      "output": 317,
+      "total": 1057
     },
     "courses": [
       {
-        "description": "Aprende estrategias de marketing digital para aumentar tu alcance y engagement en plataformas como Instagram, TikTok y YouTube.",
-        "title": "Marketing Digital",
+        "description": "Desarrolla estrategias efectivas para aumentar el engagement y seguidores en plataformas sociales.",
+        "title": "Marketing en Redes Sociales",
         "icon": "tabler-brand-instagram",
-        "english_title": "Digital Marketing"
+        "english_title": "Social Media Marketing"
       },
       {
-        "description": "Domina técnicas avanzadas de gestión de redes sociales, incluyendo calendarios de contenido y análisis de métricas clave.",
-        "title": "Gestión de Redes Sociales",
-        "icon": "tabler-social",
-        "english_title": "Social Media Management"
+        "description": "Aprende técnicas analíticas para medir y aprovechar datos en la optimización de contenido social.",
+        "title": "Análisis de Datos Digitales",
+        "icon": "tabler-chart-arrows",
+        "english_title": "Digital Data Analysis"
       },
       {
-        "description": "Entiende cómo crear contenido viral utilizando storytelling, elementos visuales impactantes y tendencias actuales.",
-        "title": "Creación de Contenido Viral",
-        "icon": "tabler-virus",
-        "english_title": "Viral Content Creation"
+        "description": "Domina la creación de contenido visual atractivo que capte la atención en redes sociales.",
+        "title": "Creación de Contenido Visual",
+        "icon": "tabler-photo",
+        "english_title": "Visual Content Creation"
       },
       {
-        "description": "Mejora tu presencia en redes con técnicas profesionales de fotografía y edición para destacar en feeds competitivos.",
-        "title": "Fotografía para Redes",
-        "icon": "tabler-camera",
-        "english_title": "Social Media Photography"
+        "description": "Optimiza perfiles y contenido para aumentar la visibilidad en motores de búsqueda y redes sociales.",
+        "title": "SEO y Marketing de Contenidos",
+        "icon": "tabler-seo",
+        "english_title": "SEO and Content Marketing"
       },
       {
-        "description": "Analiza datos de audiencia y rendimiento para optimizar estrategias y tomar decisiones basadas en evidencia.",
-        "title": "Analítica Web",
-        "icon": "tabler-chart-line",
-        "english_title": "Web Analytics"
-      },
-      {
-        "description": "Aplica principios de diseño gráfico para crear publicaciones visualmente coherentes y atractivas que capten atención.",
-        "title": "Diseño Gráfico",
-        "icon": "tabler-color-swatch",
-        "english_title": "Graphic Design"
-      },
-      {
-        "description": "Desarrolla relaciones sólidas con tu audiencia y otras marcas mediante estrategias de colaboración y comunicación efectiva.",
-        "title": "Community Management",
-        "icon": "tabler-users",
-        "english_title": "Community Management"
+        "description": "Fundamenta acciones de mercadotecnia en bases psicológicas para aumentar la conexión con audiencias.",
+        "title": "Psicología del Consumidor",
+        "icon": "tabler-brain",
+        "english_title": "Consumer Psychology"
       }
     ]
+  },
+  "cost_per_100_tasks": {
+    "input": 0.029600000000000005,
+    "output": 0.0634
   }
 }

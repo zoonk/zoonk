@@ -8,58 +8,62 @@
   "output": {
     "usage": {
       "input": 732,
-      "output": 452,
-      "total": 1184
+      "output": 459,
+      "total": 1191
     },
     "courses": [
       {
-        "description": "Learn how to create apps for iOS and Android using tools like Swift, Kotlin, and Flutter.",
-        "title": "Mobile Development",
-        "icon": "tabler-device-mobile-code",
-        "english_title": "Mobile Development"
-      },
-      {
-        "description": "Design dynamic and engaging websites using HTML, CSS, and JavaScript.",
-        "title": "Web Development",
-        "icon": "tabler-browser-code",
-        "english_title": "Web Development"
-      },
-      {
-        "description": "Gain foundational knowledge of algorithms, data structures, and software engineering principles.",
+        "description": "Learn the fundamental principles of programming, algorithms, and software development to build efficient and scalable applications.",
         "title": "Computer Science",
-        "icon": "tabler-circuit-chip",
+        "icon": "tabler-code",
         "english_title": "Computer Science"
       },
       {
-        "description": "Build server-side applications and APIs using languages like Python, Java, Node.js, or Ruby.",
-        "title": "Backend Development",
-        "icon": "tabler-server-code",
-        "english_title": "Backend Development"
+        "description": "Master web technologies like HTML, CSS, JavaScript, and frameworks to create interactive and responsive websites.",
+        "title": "Web Development",
+        "icon": "tabler-browser",
+        "english_title": "Web Development"
       },
       {
-        "description": "Focus on writing programs to process, analyze, and extract insights from large datasets.",
-        "title": "Data Science",
-        "icon": "tabler-chart-data",
-        "english_title": "Data Science"
+        "description": "Develop cross-platform mobile applications using languages and tools such as Swift, Kotlin, or Flutter.",
+        "title": "Mobile Development",
+        "icon": "tabler-device-mobile",
+        "english_title": "Mobile Development"
       },
       {
-        "description": "Ensure code quality with techniques like unit testing, integration testing, and test-driven development.",
-        "title": "Software Testing",
-        "icon": "tabler-checklist",
-        "english_title": "Software Testing"
+        "description": "Design and implement database systems, manage data effectively, and work with SQL and NoSQL databases.",
+        "title": "Database Management",
+        "icon": "tabler-database",
+        "english_title": "Database Management"
       },
       {
-        "description": "Understand cloud infrastructure, deployment, and scaling using platforms like AWS, Azure, or Google Cloud.",
-        "title": "Cloud Computing",
-        "icon": "tabler-cloud-computing",
-        "english_title": "Cloud Computing"
+        "description": "Study automated testing, deployment pipelines, and tools like Jenkins and Docker to ensure reliable software delivery.",
+        "title": "DevOps",
+        "icon": "tabler-settings-automation",
+        "english_title": "DevOps"
       },
       {
-        "description": "Explore the development of machine learning models and neural networks for predictive analytics.",
+        "description": "Explore machine learning algorithms, neural networks, and data analysis techniques to build intelligent systems.",
         "title": "Artificial Intelligence",
-        "icon": "tabler-brain",
+        "icon": "tabler-circuit-bulb",
         "english_title": "Artificial Intelligence"
+      },
+      {
+        "description": "Understand how to identify and mitigate security vulnerabilities in code and systems to protect against cyber threats.",
+        "title": "Cybersecurity",
+        "icon": "tabler-shield-lock",
+        "english_title": "Cybersecurity"
+      },
+      {
+        "description": "Create engaging game mechanics, graphics, and physics using engines like Unity or Unreal Engine.",
+        "title": "Game Development",
+        "icon": "tabler-device-gamepad",
+        "english_title": "Game Development"
       }
     ]
+  },
+  "cost_per_100_tasks": {
+    "input": 0.02928,
+    "output": 0.09179999999999999
   }
 }

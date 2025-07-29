@@ -8,46 +8,68 @@
   "output": {
     "usage": {
       "input": 733,
-      "output": 316,
-      "total": 1049
+      "output": 511,
+      "total": 1244
     },
     "courses": [
       {
-        "description": "Study the properties and interactions of matter and energy, forming a foundational understanding for many scientific careers.",
-        "title": "Physics",
+        "description": "Explore the fundamental principles of physics, chemistry, and biology to understand the natural world and build a strong scientific foundation.",
+        "title": "Natural Sciences",
         "icon": "tabler-atom",
-        "english_title": "Physics"
+        "english_title": "Natural Sciences"
       },
       {
-        "description": "Explore the structure, function, and behavior of living organisms to build expertise in biological research.",
-        "title": "Biology",
-        "icon": "tabler-dna",
-        "english_title": "Biology"
-      },
-      {
-        "description": "Dive into the composition, structure, and reactions of substances to understand molecular-level processes.",
-        "title": "Chemistry",
-        "icon": "tabler-flask",
-        "english_title": "Chemistry"
-      },
-      {
-        "description": "Develop analytical and mathematical skills to model and solve complex scientific problems.",
+        "description": "Master mathematical theories and statistical methods essential for modeling, analysis, and problem-solving in scientific research.",
         "title": "Mathematics",
         "icon": "tabler-calculator",
         "english_title": "Mathematics"
       },
       {
-        "description": "Learn scientific methods for conducting experiments and analyzing data in controlled environments.",
-        "title": "Laboratory Research",
-        "icon": "tabler-microscope",
-        "english_title": "Laboratory Research"
+        "description": "Study biochemical processes, molecular interactions, and cellular systems to address medical, environmental, and industrial challenges.",
+        "title": "Biochemistry",
+        "icon": "tabler-dna-2",
+        "english_title": "Biochemistry"
       },
       {
-        "description": "Understand computational techniques for processing scientific data and simulating complex systems.",
-        "title": "Scientific Computing",
-        "icon": "tabler-circuit-chip",
-        "english_title": "Scientific Computing"
+        "description": "Learn experimental design, data collection, and analytical techniques critical for conducting rigorous scientific investigations.",
+        "title": "Research Methodology",
+        "icon": "tabler-microscope",
+        "english_title": "Research Methodology"
+      },
+      {
+        "description": "Focus on computational models, algorithms, and programming to solve complex scientific problems across various disciplines.",
+        "title": "Computer Science",
+        "icon": "tabler-code",
+        "english_title": "Computer Science"
+      },
+      {
+        "description": "Explore the application of engineering principles to biological systems, bridging technology with healthcare and sustainability.",
+        "title": "Biomedical Engineering",
+        "icon": "tabler-heartbeat",
+        "english_title": "Biomedical Engineering"
+      },
+      {
+        "description": "Investigate the Earth's systems, including geology, meteorology, and oceanography, to address environmental and planetary challenges.",
+        "title": "Earth Sciences",
+        "icon": "tabler-world",
+        "english_title": "Earth Sciences"
+      },
+      {
+        "description": "Study neural mechanisms, brain function, and behavior to uncover how biological processes influence cognition and perception.",
+        "title": "Neuroscience",
+        "icon": "tabler-brain",
+        "english_title": "Neuroscience"
+      },
+      {
+        "description": "Learn ethical guidelines and responsible practices in scientific research to ensure integrity and societal impact of discoveries.",
+        "title": "Scientific Ethics",
+        "icon": "tabler-scale",
+        "english_title": "Scientific Ethics"
       }
     ]
+  },
+  "cost_per_100_tasks": {
+    "input": 0.029320000000000002,
+    "output": 0.10219999999999999
   }
 }

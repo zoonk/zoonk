@@ -8,40 +8,50 @@
   "output": {
     "usage": {
       "input": 738,
-      "output": 336,
-      "total": 1074
+      "output": 377,
+      "total": 1115
     },
     "courses": [
       {
-        "description": "Estude os princípios fundamentais do Direito, incluindo direitos civis, constitucionais e a estrutura do sistema jurídico brasileiro.",
-        "title": "Direito Civil",
-        "icon": "tabler-scale",
-        "english_title": "Civil Law"
-      },
-      {
-        "description": "Aprofunde-se no estudo da Constituição Federal, interpretando normas e garantias fundamentais para a prática jurídica.",
-        "title": "Direito Constitucional",
-        "icon": "tabler-book-2",
-        "english_title": "Constitutional Law"
-      },
-      {
-        "description": "Compreenda as normas que regulam as relações profissionais e conflitos trabalhistas entre empregadores e empregados.",
-        "title": "Direito do Trabalho",
-        "icon": "tabler-briefcase",
-        "english_title": "Labor Law"
-      },
-      {
-        "description": "Explore as leis que regem o sistema penal brasileiro, incluindo processos criminais e direitos do acusado.",
+        "description": "Aprofunde seus conhecimentos nos princípios fundamentais do Direito, incluindo ramos como penal, civil e constitucional.",
         "title": "Direito Penal",
-        "icon": "tabler-hand-stop",
+        "icon": "tabler-scale",
         "english_title": "Criminal Law"
       },
       {
-        "description": "Aprenda sobre contratos, obrigações e relações empresariais no contexto jurídico comercial e corporativo.",
+        "description": "Estude os direitos e deveres nas relações privadas, abrangendo contratos, propriedade e obrigações legais.",
+        "title": "Direito Civil",
+        "icon": "tabler-book",
+        "english_title": "Civil Law"
+      },
+      {
+        "description": "Explore as normas que regulam a estrutura e o funcionamento do Estado, além dos direitos constitucionais.",
+        "title": "Direito Constitucional",
+        "icon": "tabler-building-capitol",
+        "english_title": "Constitutional Law"
+      },
+      {
+        "description": "Entenda as leis que regem as atividades empresariais, societárias e comerciais.",
         "title": "Direito Empresarial",
-        "icon": "tabler-building-skyscraper",
-        "english_title": "Corporate Law"
+        "icon": "tabler-briefcase",
+        "english_title": "Business Law"
+      },
+      {
+        "description": "Aprenda sobre processos judiciais, recursos e técnicas para atuação eficaz em tribunais.",
+        "title": "Direito Processual",
+        "icon": "tabler-gavel",
+        "english_title": "Procedural Law"
+      },
+      {
+        "description": "Estude os direitos humanos em âmbito nacional e internacional, incluindo tratados e proteção jurídica.",
+        "title": "Direitos Humanos",
+        "icon": "tabler-hand-stop",
+        "english_title": "Human Rights"
       }
     ]
+  },
+  "cost_per_100_tasks": {
+    "input": 0.02952,
+    "output": 0.0754
   }
 }

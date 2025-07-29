@@ -8,46 +8,50 @@
   "output": {
     "usage": {
       "input": 728,
-      "output": 335,
-      "total": 1063
+      "output": 276,
+      "total": 1004
     },
     "courses": [
       {
-        "description": "Study the design and development of interactive experiences, game mechanics, and storytelling techniques.",
-        "title": "Game Design",
-        "icon": "tabler-device-gamepad",
-        "english_title": "Game Design"
+        "description": "Study fundamental programming concepts, algorithms, and data structures necessary for game development.",
+        "title": "Computer Science",
+        "icon": "tabler-code",
+        "english_title": "Computer Science"
       },
       {
-        "description": "Focus on programming skills for developing games, including game engines like Unity and Unreal Engine.",
-        "title": "Game Development",
-        "icon": "tabler-brand-unity",
-        "english_title": "Game Development"
+        "description": "Explore techniques for crafting immersive stories and characters that drive engaging game experiences.",
+        "title": "Narrative Design",
+        "icon": "tabler-book",
+        "english_title": "Narrative Design"
       },
       {
-        "description": "Learn to create 2D and 3D art, animations, and visual effects tailored for video games.",
+        "description": "Learn 2D and 3D modeling tools, animation principles, and asset creation for game environments.",
         "title": "Game Art",
-        "icon": "tabler-3d-cube-sphere",
+        "icon": "tabler-color-picker",
         "english_title": "Game Art"
       },
       {
-        "description": "Understand the use of physics, mathematics, and software engineering principles in game systems.",
+        "description": "Master game physics, engine architecture, and optimization strategies for creating smooth gameplay.",
         "title": "Game Programming",
-        "icon": "tabler-code",
+        "icon": "tabler-brand-unity",
         "english_title": "Game Programming"
       },
       {
-        "description": "Explore storytelling techniques, character development, and narrative design in video games.",
-        "title": "Interactive Storytelling",
-        "icon": "tabler-book",
-        "english_title": "Interactive Storytelling"
+        "description": "Understand player behavior, motivation, and mechanics to design enjoyable and balanced game systems.",
+        "title": "Game Design",
+        "icon": "tabler-dice",
+        "english_title": "Game Design"
       },
       {
-        "description": "Study the psychology of player behavior and techniques for creating engaging game experiences.",
-        "title": "Player Psychology",
-        "icon": "tabler-brain",
-        "english_title": "Player Psychology"
+        "description": "Dive into creating dynamic soundscapes, music composition, and audio integration for games.",
+        "title": "Sound Design",
+        "icon": "tabler-headphones",
+        "english_title": "Sound Design"
       }
     ]
+  },
+  "cost_per_100_tasks": {
+    "input": 0.029120000000000004,
+    "output": 0.0552
   }
 }

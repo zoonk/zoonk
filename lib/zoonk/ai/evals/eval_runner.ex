@@ -3,10 +3,13 @@ defmodule Zoonk.AI.Evals.EvalRunner do
   A module for running evaluations on AI models.
   """
   alias Zoonk.AI.Evals.EvalFiles
+  alias Zoonk.AI.Evals.EvalModels
 
   require Logger
 
   @stream_opts [max_concurrency: 5, timeout: :infinity]
+  @token_cost_factor 1_000_000
+  @tasks_factor 100
 
   @doc """
   Generate objects for a given task module and output type using the specified model.
@@ -49,7 +52,7 @@ defmodule Zoonk.AI.Evals.EvalRunner do
   end
 
   defp store_generate_output({:ok, response}, prompt, output_type, model, input, filename) do
-    data = %{output: response, input: input}
+    data = %{output: response, input: input, cost_per_100_tasks: calculate_cost(response, model)}
     EvalFiles.store_output(output_type, model, prompt, "outputs", filename, data)
     {:ok, data}
   end
@@ -71,5 +74,25 @@ defmodule Zoonk.AI.Evals.EvalRunner do
     prompt
     |> Atom.to_string()
     |> Macro.camelize()
+  end
+
+  defp calculate_cost(response, model) do
+    input_tokens = get_in(response, [:usage, :input])
+    output_tokens = get_in(response, [:usage, :output])
+    cost = cost_per_token(model)
+
+    %{
+      input: input_tokens * cost.input * @tasks_factor,
+      output: output_tokens * cost.output * @tasks_factor
+    }
+  end
+
+  defp cost_per_token(model) do
+    model_data = EvalModels.get_model(model)
+
+    %{
+      input: model_data.input / @token_cost_factor,
+      output: model_data.output / @token_cost_factor
+    }
   end
 end
