@@ -1,0 +1,57 @@
+{
+  "input": {
+    "input": "How to become a scientist?",
+    "language": "en"
+  },
+  "output": {
+    "usage": {
+      "input": 733,
+      "output": 414,
+      "total": 1147
+    },
+    "courses": [
+      {
+        "description": "Understand the fundamental principles underlying the natural world, from quantum mechanics to thermodynamics, forming the basis for scientific inquiry.",
+        "title": "Physics",
+        "icon": "tabler-atom",
+        "english_title": "Physics"
+      },
+      {
+        "description": "Explore the study of life and living organisms, covering topics like genetics, evolution, and cellular biology for diverse scientific applications.",
+        "title": "Biology",
+        "icon": "tabler-dna-2",
+        "english_title": "Biology"
+      },
+      {
+        "description": "Investigate the composition, properties, and reactions of matter, providing essential knowledge for fields like medicine, engineering, and environmental science.",
+        "title": "Chemistry",
+        "icon": "tabler-flask",
+        "english_title": "Chemistry"
+      },
+      {
+        "description": "Learn statistical analysis and computational techniques to interpret complex data, a critical skill across modern scientific research domains.",
+        "title": "Data Science",
+        "icon": "tabler-chart-dots",
+        "english_title": "Data Science"
+      },
+      {
+        "description": "Study computational systems and algorithms, enabling problem-solving in areas like simulations, AI, and bioinformatics.",
+        "title": "Computer Science",
+        "icon": "tabler-circuit-battery",
+        "english_title": "Computer Science"
+      },
+      {
+        "description": "Analyze Earth's systems and processes, including climate, geology, and ecology, to address environmental challenges through scientific understanding.",
+        "title": "Environmental Science",
+        "icon": "tabler-leaf",
+        "english_title": "Environmental Science"
+      },
+      {
+        "description": "Focus on human cognition, behavior, and brain function to apply psychological principles in research and experimental design.",
+        "title": "Cognitive Neuroscience",
+        "icon": "tabler-brain",
+        "english_title": "Cognitive Neuroscience"
+      }
+    ]
+  }
+}

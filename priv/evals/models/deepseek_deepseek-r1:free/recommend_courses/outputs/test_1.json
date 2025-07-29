@@ -1,0 +1,57 @@
+{
+  "input": {
+    "input": "I want to learn programming",
+    "language": "en"
+  },
+  "output": {
+    "usage": {
+      "input": 732,
+      "output": 394,
+      "total": 1126
+    },
+    "courses": [
+      {
+        "description": "Build a strong foundation in programming principles, algorithms, and data structures to solve complex problems efficiently.",
+        "title": "Computer Science",
+        "icon": "tabler-code",
+        "english_title": "Computer Science"
+      },
+      {
+        "description": "Develop skills to create interactive and responsive websites using languages like HTML, CSS, and JavaScript.",
+        "title": "Web Development",
+        "icon": "tabler-browser",
+        "english_title": "Web Development"
+      },
+      {
+        "description": "Master backend systems, APIs, and databases to build scalable server-side applications and services.",
+        "title": "Backend Development",
+        "icon": "tabler-server",
+        "english_title": "Backend Development"
+      },
+      {
+        "description": "Learn to design user-facing software components and create intuitive interfaces with frameworks like React or Flutter.",
+        "title": "Frontend Development",
+        "icon": "tabler-layout",
+        "english_title": "Frontend Development"
+      },
+      {
+        "description": "Understand how to retrieve insights from data using statistical methods, machine learning, and visualization tools.",
+        "title": "Data Science",
+        "icon": "tabler-chart-line",
+        "english_title": "Data Science"
+      },
+      {
+        "description": "Explore creating algorithms that enable machines to learn from data and make autonomous decisions.",
+        "title": "Artificial Intelligence",
+        "icon": "tabler-brain",
+        "english_title": "Artificial Intelligence"
+      },
+      {
+        "description": "Focus on securing systems, networks, and data from cyber threats through ethical hacking and encryption techniques.",
+        "title": "Cybersecurity",
+        "icon": "tabler-shield-lock",
+        "english_title": "Cybersecurity"
+      }
+    ]
+  }
+}

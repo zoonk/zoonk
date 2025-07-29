@@ -11,14 +11,17 @@ defmodule Zoonk.AI.Evals.EvalRunner do
   @doc """
   Generate objects for a given task module and output type using the specified model.
   """
-  @spec generate_object(module(), FileUtils.output_type(), String.t()) :: :ok
-  def generate_object(task_module, output_type, model) do
-    prompt = prompt_name_from_module(task_module)
+  @spec generate_object(atom(), FileUtils.output_type(), String.t()) :: :ok
+  def generate_object(prompt, output_type, model) do
+    task_module = task_module(prompt)
+    eval_module = eval_module(prompt)
 
     Logger.info("Generating #{prompt} #{output_type} using model #{model}")
+    Logger.info("Using task module: #{inspect(task_module)}")
+    Logger.info("Using eval module: #{inspect(eval_module)}")
 
-    task_module
-    |> test_cases(output_type)
+    eval_module
+    |> apply(output_type, [])
     |> Enum.with_index(1)
     |> Task.async_stream(
       fn {test_case, index} -> generate_object(task_module, prompt, output_type, model, test_case, index) end,
@@ -34,8 +37,8 @@ defmodule Zoonk.AI.Evals.EvalRunner do
       Logger.info("Skipping existing output for #{prompt} #{output_type} and input #{inspect(test_case)}")
       {:ok, %{output: "Output already exists", input: test_case}}
     else
-      model
-      |> task_module.generate_object(test_case)
+      test_case
+      |> task_module.generate_object(model)
       |> store_generate_output(prompt, output_type, model, test_case, filename)
     end
   end
@@ -51,15 +54,17 @@ defmodule Zoonk.AI.Evals.EvalRunner do
     {:error, error}
   end
 
-  defp test_cases(task_module, :model), do: task_module.model_cases()
-  defp test_cases(task_module, :prompt), do: task_module.prompt_cases()
+  defp task_module(prompt) do
+    Module.safe_concat(["Zoonk.AI.Tasks", module_name(prompt)])
+  end
 
-  defp prompt_name_from_module(mod) do
-    mod
-    |> Module.split()
-    |> List.last()
-    |> String.replace_suffix("Eval", "")
-    |> Macro.underscore()
-    |> String.to_existing_atom()
+  defp eval_module(prompt) do
+    Module.safe_concat(["Zoonk.AI.Evals", module_name(prompt) <> "Eval"])
+  end
+
+  defp module_name(prompt) do
+    prompt
+    |> Atom.to_string()
+    |> Macro.camelize()
   end
 end

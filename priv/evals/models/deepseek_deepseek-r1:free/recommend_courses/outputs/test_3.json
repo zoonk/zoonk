@@ -1,0 +1,57 @@
+{
+  "input": {
+    "input": "Create video games",
+    "language": "en"
+  },
+  "output": {
+    "usage": {
+      "input": 728,
+      "output": 395,
+      "total": 1123
+    },
+    "courses": [
+      {
+        "description": "Master the principles of game development, including gameplay mechanics, physics simulations, and optimization techniques for various platforms.",
+        "title": "Game Development",
+        "icon": "tabler-brand-google-play",
+        "english_title": "Game Development"
+      },
+      {
+        "description": "Design virtual environments and interactive worlds using tools like Unity and Unreal Engine.",
+        "title": "Game Design",
+        "icon": "tabler-3d-cube-sphere",
+        "english_title": "Game Design"
+      },
+      {
+        "description": "Learn to program systems and interactions in games using languages like C#, C++, and Blueprints.",
+        "title": "Game Programming",
+        "icon": "tabler-code",
+        "english_title": "Game Programming"
+      },
+      {
+        "description": "Develop storytelling techniques and narrative structures tailored for interactive experiences in games.",
+        "title": "Interactive Storytelling",
+        "icon": "tabler-book",
+        "english_title": "Interactive Storytelling"
+      },
+      {
+        "description": "Study the mathematical concepts behind 3D graphics rendering, simulations, and animation in gaming.",
+        "title": "Computer Graphics",
+        "icon": "tabler-device-gamepad-2",
+        "english_title": "Computer Graphics"
+      },
+      {
+        "description": "Create character designs, animations, and visual assets for games using industry-standard software.",
+        "title": "Digital Art",
+        "icon": "tabler-palette",
+        "english_title": "Digital Art"
+      },
+      {
+        "description": "Understand user-centered design principles to create engaging and intuitive game interfaces.",
+        "title": "User Experience Design",
+        "icon": "tabler-device-gamepad",
+        "english_title": "User Experience Design"
+      }
+    ]
+  }
+}

@@ -1,0 +1,63 @@
+{
+  "input": {
+    "input": "Quero me tornar um advogado",
+    "language": "pt"
+  },
+  "output": {
+    "usage": {
+      "input": 738,
+      "output": 482,
+      "total": 1220
+    },
+    "courses": [
+      {
+        "description": "Aprofunde-se nas leis e normas que regem a sociedade, essencial para a formação jurídica e prática advocatícia.",
+        "title": "Direito Civil",
+        "icon": "tabler-scale",
+        "english_title": "Civil Law"
+      },
+      {
+        "description": "Estude os princípios constitucionais e a estrutura do Estado, base fundamental para atuação em questões jurídicas de alta complexidade.",
+        "title": "Direito Constitucional",
+        "icon": "tabler-building-capitol",
+        "english_title": "Constitutional Law"
+      },
+      {
+        "description": "Compreenda as normas que regulam as relações trabalhistas entre empregadores e empregados, área crucial para advocacia social e empresarial.",
+        "title": "Direito do Trabalho",
+        "icon": "tabler-briefcase",
+        "english_title": "Labor Law"
+      },
+      {
+        "description": "Explore as regras que regem o comércio e as empresas, essencial para atuar em direito empresarial e negociações corporativas.",
+        "title": "Direito Comercial",
+        "icon": "tabler-building-store",
+        "english_title": "Commercial Law"
+      },
+      {
+        "description": "Aprenda sobre crimes, penas e processos penais, fundamental para atuação na área criminal e defensoria pública.",
+        "title": "Direito Penal",
+        "icon": "tabler-gavel",
+        "english_title": "Criminal Law"
+      },
+      {
+        "description": "Entenda como as normas internacionais afetam países e indivíduos, relevante para atuação em organizações internacionais e diplomacia.",
+        "title": "Direito Internacional",
+        "icon": "tabler-world",
+        "english_title": "International Law"
+      },
+      {
+        "description": "Domine as técnicas de argumentação jurídica escrita e oral, habilidades críticas para a prática forense e tribunais.",
+        "title": "Direito Processual",
+        "icon": "tabler-writing",
+        "english_title": "Procedural Law"
+      },
+      {
+        "description": "Estude as questões ligadas à família, herança e direitos da personalidade, área essencial para advocacia de família e sucessões.",
+        "title": "Direito de Família",
+        "icon": "tabler-heart",
+        "english_title": "Family Law"
+      }
+    ]
+  }
+}

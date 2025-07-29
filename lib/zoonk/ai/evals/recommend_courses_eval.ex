@@ -3,17 +3,11 @@ defmodule Zoonk.AI.Evals.RecommendCoursesEval do
   @behaviour Zoonk.AI.Evals.EvalTask
 
   alias Zoonk.AI.Evals.EvalTask
-  alias Zoonk.AI.Tasks.RecommendCourses
 
   require Logger
 
   @impl EvalTask
-  def generate_object(model, attrs) do
-    RecommendCourses.generate_object(attrs, model)
-  end
-
-  @impl EvalTask
-  def model_cases do
+  def model do
     [
       %{language: "en", input: "I want to learn programming"},
       %{language: "en", input: "How to become a scientist?"},
@@ -24,7 +18,7 @@ defmodule Zoonk.AI.Evals.RecommendCoursesEval do
   end
 
   @impl EvalTask
-  def prompt_cases do
+  def prompt do
     [
       %{language: "en", input: "I want to learn about painting"},
       %{language: "en", input: "I'm curious about the universe"},

@@ -15,7 +15,7 @@ defmodule Zoonk.AI.Evals.EvalTask do
   Create a list of 3-5 test cases that can be used to
   evaluate a prompt across different models.
   """
-  @callback model_cases() :: [map()]
+  @callback model() :: [map()]
 
   @doc """
   Test cases for evaluating prompts.
@@ -26,13 +26,5 @@ defmodule Zoonk.AI.Evals.EvalTask do
   We run this when we make a prompt change to check for
   regressions in the prompt's performance.
   """
-  @callback prompt_cases() :: [map()]
-
-  @doc """
-  Send a request to the AI service to generate an object.
-
-  This function should return a map with the generated object
-  or an error tuple if the generation fails.
-  """
-  @callback generate_object(String.t(), map()) :: {:ok, map()} | {:error, term()}
+  @callback prompt() :: [map()]
 end

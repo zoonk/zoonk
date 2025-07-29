@@ -1,0 +1,51 @@
+{
+  "input": {
+    "input": "Como ganar seguidores en redes sociales",
+    "language": "es"
+  },
+  "output": {
+    "usage": {
+      "input": 740,
+      "output": 377,
+      "total": 1117
+    },
+    "courses": [
+      {
+        "description": "Aprende estrategias efectivas para aumentar tu presencia en redes sociales y ganar seguidores orgánicos.",
+        "title": "Marketing en Redes Sociales",
+        "icon": "tabler-brand-instagram",
+        "english_title": "Social Media Marketing"
+      },
+      {
+        "description": "Domina técnicas para crear contenido visualmente atractivo que capte la atención y fidelice audiencias.",
+        "title": "Creación de Contenido Visual",
+        "icon": "tabler-photo",
+        "english_title": "Visual Content Creation"
+      },
+      {
+        "description": "Entiende métricas clave y herramientas para analizar el rendimiento de tus campañas en redes sociales.",
+        "title": "Analítica Digital",
+        "icon": "tabler-chart-line",
+        "english_title": "Digital Analytics"
+      },
+      {
+        "description": "Desarrolla identidades de marca coherentes que generen reconocimiento y conexión con tu audiencia.",
+        "title": "Branding",
+        "icon": "tabler-brush",
+        "english_title": "Branding"
+      },
+      {
+        "description": "Adquiere habilidades en estrategias de pago para maximizar el alcance y crecimiento de cuentas.",
+        "title": "Publicidad Digital",
+        "icon": "tabler-currency-dollar",
+        "english_title": "Digital Advertising"
+      },
+      {
+        "description": "Aprende a redactar textos persuasivos que promuevan la interacción y conversión en redes.",
+        "title": "Copywriting",
+        "icon": "tabler-pencil",
+        "english_title": "Copywriting"
+      }
+    ]
+  }
+}

@@ -9,7 +9,6 @@ defmodule Zoonk.AI.Evals do
 
   alias Zoonk.AI.Evals.EvalRunner
   alias Zoonk.AI.Evals.FileUtils
-  alias Zoonk.AI.Evals.RecommendCoursesEval
 
   @doc """
   Generate outputs for a prompt.
@@ -27,11 +26,6 @@ defmodule Zoonk.AI.Evals do
   """
   @spec generate_output(atom(), String.t(), FileUtils.output_type()) :: :ok
   def generate_output(prompt, model, output_type) do
-    prompt
-    |> prompt_module()
-    |> EvalRunner.generate_object(output_type, model)
+    EvalRunner.generate_object(prompt, output_type, model)
   end
-
-  defp prompt_module(:recommend_courses), do: RecommendCoursesEval
-  defp prompt_module(_prompt), do: nil
 end
