@@ -1,0 +1,51 @@
+{
+  "input": {
+    "input": "Create video games",
+    "language": "en"
+  },
+  "output": {
+    "usage": {
+      "input": 730,
+      "output": 332,
+      "total": 1062
+    },
+    "courses": [
+      {
+        "description": "Master the programming and design skills needed to develop interactive video games for various platforms.",
+        "title": "Game Development",
+        "icon": "tabler-joystick",
+        "english_title": "Game Development"
+      },
+      {
+        "description": "Learn techniques to design compelling characters, environments, and objects for video games.",
+        "title": "Game Design",
+        "icon": "tabler-puzzle",
+        "english_title": "Game Design"
+      },
+      {
+        "description": "Understand the mathematical and algorithmic foundations essential for game physics and mechanics.",
+        "title": "Computer Graphics",
+        "icon": "tabler-cpu",
+        "english_title": "Computer Graphics"
+      },
+      {
+        "description": "Explore advanced engine tools like Unity and Unreal to bring game worlds to life.",
+        "title": "Game Engine Programming",
+        "icon": "tabler-3d-cube-sphere",
+        "english_title": "Game Engine Programming"
+      },
+      {
+        "description": "Study human and creature structure to create realistic or stylized in-game models.",
+        "title": "Character Animation",
+        "icon": "tabler-run",
+        "english_title": "Character Animation"
+      },
+      {
+        "description": "Craft immersive soundscapes and music to enhance gameplay experiences.",
+        "title": "Audio Design for Games",
+        "icon": "tabler-music",
+        "english_title": "Audio Design for Games"
+      }
+    ]
+  }
+}

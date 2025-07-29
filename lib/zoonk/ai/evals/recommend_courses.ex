@@ -1,5 +1,47 @@
 defmodule Zoonk.AI.Evals.RecommendCoursesEval do
   @moduledoc false
+  alias Zoonk.AI.Evals.FileUtils
+  alias Zoonk.AI.Tasks.RecommendCourses
+
+  require Logger
+
+  def model_output(model) do
+    Logger.info("Generating model output for: #{model}")
+
+    model_test_cases()
+    |> Enum.with_index()
+    |> Task.async_stream(&generate_model_output(model, &1), max_concurrency: 3, timeout: :infinity)
+    |> Stream.run()
+  end
+
+  defp generate_model_output(model, {test_case, index}) do
+    file_exists? = FileUtils.model_file_exists?(model, :recommend_courses, "outputs", test_filename(index))
+    generate_model_output(model, {test_case, index}, file_exists?)
+  end
+
+  defp generate_model_output(model, {test_case, _index}, true) do
+    Logger.info("Skipping existing output for model #{model} and input #{inspect(test_case)}")
+    {:ok, %{output: "Output already exists", input: test_case}}
+  end
+
+  defp generate_model_output(model, {test_case, index}, false) do
+    Logger.info("Processing input: #{inspect(test_case)} for model: #{model}")
+
+    case RecommendCourses.generate_object(test_case.input, test_case.language, model) do
+      {:ok, response} ->
+        data = %{output: response, input: test_case}
+        FileUtils.store_model(model, :recommend_courses, "outputs", test_filename(index), data)
+        {:ok, data}
+
+      {:error, error} ->
+        Logger.error("Error generating output for model #{model}: #{error}")
+        {:error, error}
+    end
+  end
+
+  defp test_filename(index) do
+    "test_#{index + 1}.json"
+  end
 
   defp model_test_cases do
     [

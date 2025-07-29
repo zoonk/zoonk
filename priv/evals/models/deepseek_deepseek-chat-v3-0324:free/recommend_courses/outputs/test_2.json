@@ -1,0 +1,57 @@
+{
+  "input": {
+    "input": "How to become a scientist?",
+    "language": "en"
+  },
+  "output": {
+    "usage": {
+      "input": 735,
+      "output": 391,
+      "total": 1126
+    },
+    "courses": [
+      {
+        "description": "Explore the fundamental principles of physical and natural phenomena, forming the backbone of scientific inquiry and research.",
+        "title": "Physics",
+        "icon": "tabler-atom",
+        "english_title": "Physics"
+      },
+      {
+        "description": "Study the substances that make up matter, their properties, and how they interact in chemical reactions.",
+        "title": "Chemistry",
+        "icon": "tabler-flask",
+        "english_title": "Chemistry"
+      },
+      {
+        "description": "Learn about living organisms, their structure, function, evolution, and interactions with ecosystems.",
+        "title": "Biology",
+        "icon": "tabler-microscope",
+        "english_title": "Biology"
+      },
+      {
+        "description": "Understand the mathematical and computational principles essential for modeling, simulation, and scientific problem-solving.",
+        "title": "Mathematics",
+        "icon": "tabler-math",
+        "english_title": "Mathematics"
+      },
+      {
+        "description": "Delve into the study of the Earth’s structure, processes, and history, including geology, meteorology, and oceanography.",
+        "title": "Earth Science",
+        "icon": "tabler-world",
+        "english_title": "Earth Science"
+      },
+      {
+        "description": "Gain expertise in designing, conducting, interpreting, and presenting scientific research methods and experiments.",
+        "title": "Research Methodology",
+        "icon": "tabler-notes",
+        "english_title": "Research Methodology"
+      },
+      {
+        "description": "Master computational techniques and programming languages to analyze data, model systems, and solve scientific problems.",
+        "title": "Computational Science",
+        "icon": "tabler-terminal",
+        "english_title": "Computational Science"
+      }
+    ]
+  }
+}

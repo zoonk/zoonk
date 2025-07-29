@@ -1,0 +1,51 @@
+{
+  "input": {
+    "input": "Como ganar seguidores en redes sociales",
+    "language": "es"
+  },
+  "output": {
+    "usage": {
+      "input": 742,
+      "output": 401,
+      "total": 1143
+    },
+    "courses": [
+      {
+        "description": "Aprende estrategias efectivas para aumentar tu audiencia y engagement en plataformas como Instagram, TikTok y Twitter.",
+        "title": "Marketing en Redes Sociales",
+        "icon": "tabler-brand-instagram",
+        "english_title": "Social Media Marketing"
+      },
+      {
+        "description": "Descubre técnicas para crear contenido visual atractivo que capte la atención y fomente el crecimiento de seguidores.",
+        "title": "Creación de Contenido",
+        "icon": "tabler-photo",
+        "english_title": "Content Creation"
+      },
+      {
+        "description": "Entiende cómo analizar métricas y datos para optimizar tus estrategias y aumentar tu alcance en redes sociales.",
+        "title": "Análisis Digital",
+        "icon": "tabler-chart-bar",
+        "english_title": "Digital Analytics"
+      },
+      {
+        "description": "Domina algoritmos y tendencias de plataformas para posicionar tu perfil y ganar visibilidad orgánica.",
+        "title": "Algoritmos de Redes Sociales",
+        "icon": "tabler-binary-tree",
+        "english_title": "Social Media Algorithms"
+      },
+      {
+        "description": "Aprende técnicas avanzadas de fotografía y edición para mejorar la calidad visual de tu contenido.",
+        "title": "Fotografía para Redes",
+        "icon": "tabler-camera",
+        "english_title": "Photography for Social Media"
+      },
+      {
+        "description": "Desarrolla habilidades comunicativas y estrategias para conectar con tu audiencia de manera auténtica.",
+        "title": "Marca Personal",
+        "icon": "tabler-user",
+        "english_title": "Personal Branding"
+      }
+    ]
+  }
+}

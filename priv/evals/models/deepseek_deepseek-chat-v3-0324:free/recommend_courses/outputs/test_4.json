@@ -1,0 +1,63 @@
+{
+  "input": {
+    "input": "Quero me tornar um advogado",
+    "language": "pt"
+  },
+  "output": {
+    "usage": {
+      "input": 740,
+      "output": 477,
+      "total": 1217
+    },
+    "courses": [
+      {
+        "description": "Estude as leis e normas que regem a sociedade, incluindo direito civil, penal, constitucional e mais.",
+        "title": "Direito",
+        "icon": "tabler-scale",
+        "english_title": "Law"
+      },
+      {
+        "description": "Aprofunde-se nas normas fundamentais do Estado, direitos individuais e a estrutura do poder público.",
+        "title": "Direito Constitucional",
+        "icon": "tabler-book",
+        "english_title": "Constitutional Law"
+      },
+      {
+        "description": "Domine as leis sobre contratos, propriedade, família e responsabilidade civil.",
+        "title": "Direito Civil",
+        "icon": "tabler-files",
+        "english_title": "Civil Law"
+      },
+      {
+        "description": "Entenda as leis criminais, processos penais e defesa jurídica em casos de delitos.",
+        "title": "Direito Penal",
+        "icon": "tabler-hand-stop",
+        "english_title": "Criminal Law"
+      },
+      {
+        "description": "Explore os princípios jurídicos que regulam relações trabalhistas e previdenciárias.",
+        "title": "Direito Trabalhista",
+        "icon": "tabler-briefcase",
+        "english_title": "Labor Law"
+      },
+      {
+        "description": "Aprenda sobre os processos judiciais, recursos e técnicas de argumentação jurídica.",
+        "title": "Direito Processual",
+        "icon": "tabler-gavel",
+        "english_title": "Procedural Law"
+      },
+      {
+        "description": "Estude normas que regulam a atividade empresarial e os negócios privados.",
+        "title": "Direito Empresarial",
+        "icon": "tabler-building",
+        "english_title": "Business Law"
+      },
+      {
+        "description": "Descubra como estruturar argumentos jurídicos e defender casos em tribunais.",
+        "title": "Oratória Jurídica",
+        "icon": "tabler-speakerphone",
+        "english_title": "Legal Rhetoric"
+      }
+    ]
+  }
+}

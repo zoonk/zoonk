@@ -1,0 +1,63 @@
+{
+  "input": {
+    "input": "I want to learn programming",
+    "language": "en"
+  },
+  "output": {
+    "usage": {
+      "input": 734,
+      "output": 533,
+      "total": 1267
+    },
+    "courses": [
+      {
+        "description": "Gain a solid understanding of core programming concepts, algorithms, and data structures used in software development.",
+        "title": "Computer Science",
+        "icon": "tabler-code",
+        "english_title": "Computer Science"
+      },
+      {
+        "description": "Learn how to build interactive and responsive websites using languages like HTML, CSS, and JavaScript.",
+        "title": "Web Development",
+        "icon": "tabler-browser",
+        "english_title": "Web Development"
+      },
+      {
+        "description": "Explore the development of applications for iOS and Android platforms using languages like Swift, Kotlin, or cross-platform frameworks.",
+        "title": "Mobile Development",
+        "icon": "tabler-device-mobile",
+        "english_title": "Mobile Development"
+      },
+      {
+        "description": "Master Python, one of the most versatile programming languages, used in web development, data science, automation, and more.",
+        "title": "Python Programming",
+        "icon": "tabler-brand-python",
+        "english_title": "Python Programming"
+      },
+      {
+        "description": "Understand how to work with databases, write SQL queries, and manage data efficiently for software applications.",
+        "title": "Database Management",
+        "icon": "tabler-database",
+        "english_title": "Database Management"
+      },
+      {
+        "description": "Dive into the principles of artificial intelligence, machine learning, and neural networks to create intelligent systems.",
+        "title": "Artificial Intelligence",
+        "icon": "tabler-brain",
+        "english_title": "Artificial Intelligence"
+      },
+      {
+        "description": "Learn how to protect computer systems and networks from cyber threats, vulnerabilities, and malicious attacks.",
+        "title": "Cybersecurity",
+        "icon": "tabler-shield-lock",
+        "english_title": "Cybersecurity"
+      },
+      {
+        "description": "Discover the principles of automating tasks and building efficient workflows using programming and scripting.",
+        "title": "Software Automation",
+        "icon": "tabler-robot",
+        "english_title": "Software Automation"
+      }
+    ]
+  }
+}
