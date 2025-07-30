@@ -59,7 +59,7 @@ defmodule Zoonk.AI.Evals.EvalFiles do
   end
 
   defp output_dir!(:model, model, prompt, results_dir) do
-    model_name = String.replace(model, "/", "_")
+    model_name = model_name(model)
     prompt = prompt_name(prompt)
 
     Path.join(["priv", "evals", "models", model_name, prompt, results_dir])
@@ -84,4 +84,10 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   defp prompt_name(prompt) when is_atom(prompt), do: Atom.to_string(prompt)
   defp prompt_name(prompt) when is_binary(prompt), do: prompt
+
+  defp model_name(model) do
+    model
+    |> String.replace("/", "_")
+    |> String.replace_suffix(":free", "")
+  end
 end
