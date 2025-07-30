@@ -87,6 +87,8 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   defp model_name(model) do
     model
+    |> String.split("/", parts: 2)
+    |> List.last()
     |> String.replace("/", "_")
     |> String.replace_suffix(":free", "")
   end
