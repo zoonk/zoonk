@@ -4,9 +4,8 @@ defmodule Zoonk.AI.Evals.EvalTask do
 
   ## Callbacks
 
-  - `model_cases/0`: Returns a list of test cases for evaluating models.
-  - `prompt_cases/0`: Returns a list of test cases for evaluating prompts.
-  - `generate_object/2`: Sends a request to the AI service to generate an object
+  - `model/0`: Returns a list of test cases for evaluating models.
+  - `prompt/0`: Returns a list of test cases for evaluating prompts.
   """
 
   @doc """
