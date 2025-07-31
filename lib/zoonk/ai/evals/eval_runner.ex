@@ -12,7 +12,21 @@ defmodule Zoonk.AI.Evals.EvalRunner do
   @tasks_factor 100
 
   @doc """
-  Generate objects for a given task module and output type using the specified model.
+  Generate objects for a given task module and eval type for all models.
+  """
+  @spec generate_object(atom(), EvalFiles.eval_type()) :: :ok
+  def generate_object(prompt, eval_type) do
+    models = EvalModels.list_models()
+
+    Logger.info("Generating objects for prompt #{prompt} with eval type #{eval_type}")
+
+    Enum.each(models, fn model -> generate_object(prompt, eval_type, model.name) end)
+
+    :ok
+  end
+
+  @doc """
+  Generate objects for a given task module and eval type using the specified model.
   """
   @spec generate_object(atom(), EvalFiles.eval_type(), String.t()) :: :ok
   def generate_object(prompt, eval_type, model) do
