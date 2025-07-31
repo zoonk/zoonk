@@ -24,8 +24,8 @@ defmodule Zoonk.AI.Evals do
       iex> generate_output(:recommend_courses, "gpt-4.1-nano", :model)
       {:ok, output}
   """
-  @spec generate_output(atom(), String.t(), EvalFiles.output_type()) :: :ok
-  def generate_output(prompt, model, output_type) do
-    EvalRunner.generate_object(prompt, output_type, model)
+  @spec generate_output(atom(), String.t(), EvalFiles.eval_type()) :: :ok
+  def generate_output(prompt, model, eval_type) do
+    EvalRunner.generate_object(prompt, eval_type, model)
   end
 end
