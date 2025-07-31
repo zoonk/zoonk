@@ -1,5 +1,7 @@
 defmodule Zoonk.AI.Tasks.RecommendCourses do
   @moduledoc false
+  @behaviour Zoonk.AI.Tasks.AITask
+
   alias Zoonk.AI.AIClient
   alias Zoonk.AI.AIPayload
   alias Zoonk.AI.AISchema
@@ -20,8 +22,8 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
   end
 
   defp recommend_courses(nil, input, language) do
-    input
-    |> generate_object(language, get_model())
+    %{input: input, language: language}
+    |> generate_object(get_model())
     |> add_recommendation_to_db(input, language)
   end
 
@@ -52,12 +54,16 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
     AISchema.add_field(%AISchema{name: "recommend_courses"}, courses)
   end
 
-  def generate_object(input, language, model) do
+  def generate_object(attrs) do
+    generate_object(attrs, get_model())
+  end
+
+  def generate_object(%{input: input, language: language}, model) do
     %AIPayload{}
     |> AIPayload.set_model(model)
     |> AIPayload.set_schema(json_schema())
     |> AIPayload.add_instructions(system_prompt())
-    |> AIPayload.add_message(user_prompt(input, language))
+    |> AIPayload.add_message(user_prompt(%{input: input, language: language}))
     |> AIClient.generate_object()
   end
 
@@ -119,7 +125,7 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
     """
   end
 
-  def user_prompt(input, language) do
+  def user_prompt(%{input: input, language: language}) do
     """
     This is their input: "#{input}"
     This means they want to learn about #{input}.
