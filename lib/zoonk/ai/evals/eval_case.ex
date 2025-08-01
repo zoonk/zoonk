@@ -1,6 +1,6 @@
-defmodule Zoonk.AI.Evals.EvalTask do
+defmodule Zoonk.AI.Evals.EvalCase do
   @moduledoc """
-  Behaviour for AI evaluation tasks.
+  Behaviour for AI evaluation cases.
 
   ## Callbacks
 

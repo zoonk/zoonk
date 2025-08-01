@@ -1,12 +1,12 @@
 defmodule Zoonk.AI.Evals.RecommendCoursesEval do
   @moduledoc false
-  @behaviour Zoonk.AI.Evals.EvalTask
+  @behaviour Zoonk.AI.Evals.EvalCase
 
-  alias Zoonk.AI.Evals.EvalTask
+  alias Zoonk.AI.Evals.EvalCase
 
   require Logger
 
-  @impl EvalTask
+  @impl EvalCase
   def model do
     [
       %{
@@ -42,7 +42,7 @@ defmodule Zoonk.AI.Evals.RecommendCoursesEval do
     ]
   end
 
-  @impl EvalTask
+  @impl EvalCase
   def prompt do
     [
       %{
