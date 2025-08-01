@@ -90,5 +90,20 @@ defmodule Zoonk.AI.AISchemaTest do
       assert ai_schema.schema.properties.projects.items.properties.name.type == "string"
       assert ai_schema.schema.properties.projects.items.properties.status.type == "string"
     end
+
+    test "supports enum fields" do
+      ai_schema = AISchema.add_field(%AISchema{}, %{status: ["active", "inactive", "pending"]})
+
+      assert ai_schema.type == "json_schema"
+      assert ai_schema.name == ""
+      assert ai_schema.strict == true
+
+      assert ai_schema.schema.type == "object"
+      assert ai_schema.schema.required == ["status"]
+      assert ai_schema.schema.additionalProperties == false
+
+      assert ai_schema.schema.properties.status.type == "string"
+      assert ai_schema.schema.properties.status.enum == ["active", "inactive", "pending"]
+    end
   end
 end

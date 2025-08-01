@@ -70,6 +70,14 @@ defmodule Zoonk.AI.AISchema do
      }}
   end
 
+  defp fields_to_json_props({key, [first | _rest] = item_schema}) when is_binary(first) do
+    {key,
+     %{
+       type: "string",
+       enum: item_schema
+     }}
+  end
+
   defp fields_to_json_props({key, type}) do
     {key, %{type: type}}
   end
