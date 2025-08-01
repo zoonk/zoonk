@@ -54,7 +54,9 @@ if config_env() in [:dev, :prod] do
       auth: {:bearer, System.get_env("OPENROUTER_API_KEY")}
     ]
 
-  config :zoonk, :ai_models, recommend_courses: System.get_env("AI_MODEL_RECOMMEND_COURSES", "gpt-4.1-mini")
+  config :zoonk, :ai_models,
+    eval: System.get_env("AI_MODEL_EVAL", "o4-mini"),
+    recommend_courses: System.get_env("AI_MODEL_RECOMMEND_COURSES", "gpt-4.1-mini")
 
   config :zoonk, :stripe,
     webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET"),
