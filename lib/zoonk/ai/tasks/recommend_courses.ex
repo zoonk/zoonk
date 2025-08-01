@@ -6,6 +6,7 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
   alias Zoonk.AI.AIPayload
   alias Zoonk.AI.AISchema
   alias Zoonk.AI.CourseRecommendation
+  alias Zoonk.AI.Tasks.AITask
   alias Zoonk.Helpers
   alias Zoonk.Repo
 
@@ -23,7 +24,7 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
 
   defp recommend_courses(nil, input, language) do
     %{input: input, language: language}
-    |> generate_object(get_model())
+    |> generate_object(model())
     |> add_recommendation_to_db(input, language)
   end
 
@@ -39,6 +40,7 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
     {:error, error}
   end
 
+  @impl AITask
   def json_schema do
     courses = %{
       courses: [
@@ -54,10 +56,12 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
     AISchema.add_field(%AISchema{name: "recommend_courses"}, courses)
   end
 
+  @impl AITask
   def generate_object(attrs) do
-    generate_object(attrs, get_model())
+    generate_object(attrs, model())
   end
 
+  @impl AITask
   def generate_object(%{input: input, language: language}, model) do
     %AIPayload{}
     |> AIPayload.set_model(model)
@@ -67,6 +71,7 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
     |> AIClient.generate_object()
   end
 
+  @impl AITask
   def system_prompt do
     """
     A user wants to learn a new subject.
@@ -125,6 +130,7 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
     """
   end
 
+  @impl AITask
   def user_prompt(%{input: input, language: language}) do
     """
     This is their input: "#{input}"
@@ -143,7 +149,8 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
     |> Helpers.remove_accents()
   end
 
-  defp get_model do
+  @impl AITask
+  def model do
     Application.get_env(:zoonk, :ai_models)[:recommend_courses]
   end
 end
