@@ -14,17 +14,15 @@ defmodule Zoonk.AI.Evals do
   Generate outputs for all models.
 
   For generating outputs for a specific model,
-  use `generate_output/3`.
+  use `generate_object/3`.
 
   ## Examples
 
-      iex> generate_output(:recommend_courses, :model)
+      iex> generate_object(:recommend_courses, :model)
       :ok
   """
-  @spec generate_output(atom(), EvalFiles.eval_type()) :: :ok
-  def generate_output(prompt, eval_type) do
-    EvalRunner.generate_object(prompt, eval_type)
-  end
+  @spec generate_object(atom(), EvalFiles.eval_type()) :: :ok
+  defdelegate generate_object(prompt, eval_type), to: EvalRunner
 
   @doc """
   Generate outputs for a prompt.
@@ -35,16 +33,14 @@ defmodule Zoonk.AI.Evals do
   This function will store outputs in `priv/evals`,
   allowing us to compare them later and run evaluations.
 
-  For generating outputs for all supported models,
-  use `generate_output/2`.
+  For generating objects for all supported models,
+  use `generate_object/2`.
 
   ## Examples
 
-      iex> generate_output(:recommend_courses, :model, "gpt-4.1-nano")
+      iex> generate_object(:recommend_courses, :model, "gpt-4.1-nano")
       {:ok, output}
   """
-  @spec generate_output(atom(), EvalFiles.eval_type(), String.t()) :: :ok
-  def generate_output(prompt, eval_type, model) do
-    EvalRunner.generate_object(prompt, eval_type, model)
-  end
+  @spec generate_object(atom(), EvalFiles.eval_type(), String.t()) :: :ok
+  defdelegate generate_object(prompt, eval_type, model), to: EvalRunner
 end
