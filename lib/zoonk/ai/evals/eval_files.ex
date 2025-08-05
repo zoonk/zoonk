@@ -34,7 +34,7 @@ defmodule Zoonk.AI.Evals.EvalFiles do
     Logger.info("Storing #{eval_type} results for #{model} in #{filename}")
 
     eval_type
-    |> output_dir!(model, prompt, results_dir)
+    |> results_dir!(model, prompt, results_dir)
     |> write_file!(filename, data)
   end
 
@@ -57,7 +57,7 @@ defmodule Zoonk.AI.Evals.EvalFiles do
   @spec load_results(eval_type(), String.t(), atom(), String.t(), String.t()) :: map()
   def load_results(eval_type, model, prompt, results_dir, filename) do
     eval_type
-    |> output_dir!(model, prompt, results_dir)
+    |> results_dir!(model, prompt, results_dir)
     |> Path.join(filename)
     |> File.read!()
     |> Jason.decode!()
@@ -80,19 +80,19 @@ defmodule Zoonk.AI.Evals.EvalFiles do
   @spec file_exists?(eval_type(), String.t(), atom(), String.t(), String.t()) :: boolean()
   def file_exists?(eval_type, model, prompt, results_dir, filename) do
     eval_type
-    |> output_dir!(model, prompt, results_dir)
+    |> results_dir!(model, prompt, results_dir)
     |> Path.join(filename)
     |> File.exists?()
   end
 
-  defp output_dir!(:model, model, prompt, results_dir) do
+  defp results_dir!(:model, model, prompt, results_dir) do
     model_name = model_name(model)
     prompt = prompt_name(prompt)
 
     Path.join(["priv", "evals", "models", model_name, prompt, results_dir])
   end
 
-  defp output_dir!(:prompt, _model, prompt, results_dir) do
+  defp results_dir!(:prompt, _model, prompt, results_dir) do
     prompt = prompt_name(prompt)
 
     Path.join(["priv", "evals", "prompts", prompt, results_dir])
