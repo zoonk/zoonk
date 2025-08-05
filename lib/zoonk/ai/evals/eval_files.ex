@@ -60,6 +60,76 @@ defmodule Zoonk.AI.Evals.EvalFiles do
     |> File.exists?()
   end
 
+  @doc """
+  Loads all score files for a prompt.
+
+  This function reads all JSON files from the scores directory
+  for a given prompt and returns their parsed content.
+
+  ## Examples
+
+      iex> load_prompt_outputs(:recommend_courses)
+      [%{"usage" => %{...}, "steps" => [...]}, ...]
+  """
+  @spec load_prompt_outputs(atom() | String.t()) :: [map()]
+  def load_prompt_outputs(prompt) do
+    prompt_name = prompt_name(prompt)
+    scores_dir = Path.join(["priv", "evals", "prompts", prompt_name, "scores"])
+
+    case File.ls(scores_dir) do
+      {:ok, files} ->
+        files
+        |> Enum.filter(&String.ends_with?(&1, ".json"))
+        |> Enum.map(&load_score_file(scores_dir, &1))
+        |> Enum.reject(&is_nil/1)
+
+      {:error, _reason} ->
+        Logger.warning("No scores directory found for prompt: #{prompt_name}")
+        []
+    end
+  end
+
+  @doc """
+  Updates the markdown file with the calculated scores for a prompt.
+
+  This function creates or updates a markdown file in `priv/evals/{prompt_name}.md`
+  with the average and median scores.
+
+  ## Examples
+
+      iex> update_scores_markdown(:recommend_courses, %{average: 7.76, median: 9.0})
+      :ok
+  """
+  @spec update_scores_markdown(%{average: float(), median: float()}, atom() | String.t()) :: :ok
+  def update_scores_markdown(%{average: average, median: median}, prompt_name) do
+    prompt_str = prompt_name(prompt_name)
+    file_path = Path.join(["priv", "evals", "#{prompt_str}.md"])
+    title = score_file_title(prompt_str)
+
+    content = """
+    ## #{title}
+
+    - **Average score**: #{average}
+    - **Median score**: #{median}
+    """
+
+    maybe_create_dir(file_path)
+
+    if File.exists?(file_path) do
+      update_existing_markdown(file_path, content, title)
+    else
+      File.write!(file_path, content)
+    end
+
+    :ok
+  end
+
+  defp score_file_title(prompt_name) do
+    prompt_name
+    |> String.split("_")
+    |> Enum.map_join(" ", &String.capitalize/1)
+  end
+
   defp results_dir!(:model, model, prompt, results_dir) do
     model_name = model_name(model)
     prompt = prompt_name(prompt)
@@ -73,6 +143,12 @@ defmodule Zoonk.AI.Evals.EvalFiles do
     Path.join(["priv", "evals", "prompts", prompt, results_dir])
   end
 
+  defp maybe_create_dir(file_path) do
+    file_path
+    |> Path.dirname()
+    |> File.mkdir_p!()
+  end
+
   defp write_file!(dir, filename, data) do
     File.mkdir_p!(dir)
 
@@ -82,6 +158,45 @@ defmodule Zoonk.AI.Evals.EvalFiles do
     File.write!(file_path, file_content)
 
     Logger.info("Stored results in #{file_path}")
+  end
+
+  defp load_score_file(scores_dir, filename) do
+    scores_dir
+    |> Path.join(filename)
+    |> File.read!()
+    |> Jason.decode!()
+  end
+
+  defp update_existing_markdown(file_path, new_content, title) do
+    existing = File.read!(file_path)
+    updated = upsert_section(existing, title, new_content)
+    File.write!(file_path, updated)
+  end
+
+  defp upsert_section(content, title, new_section) do
+    if section_exists?(content, title) do
+      replace_section(content, title, new_section)
+    else
+      append_section(content, new_section)
+    end
+  end
+
+  defp section_exists?(content, title) do
+    String.contains?(content, "## #{title}")
+  end
+
+  defp replace_section(content, title, new_section) do
+    title
+    |> section_regex()
+    |> Regex.replace(content, new_section)
+  end
+
+  defp append_section(content, new_section) do
+    content <> "\n\n" <> new_section
+  end
+
+  defp section_regex(title) do
+    ~r/## #{Regex.escape(title)}.*?(?=\n## |\z)/s
   end
 
   defp prompt_name(prompt) when is_atom(prompt), do: Atom.to_string(prompt)
