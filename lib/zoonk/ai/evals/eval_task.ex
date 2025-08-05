@@ -95,7 +95,7 @@ defmodule Zoonk.AI.Evals.EvalTask do
     Once you predicted all the above fields you need to assign
     a float between 1 and 10 to indicate the response's utility
     compared to the alternative responses. Use your best judgment
-    for the meaning of `final_score`.
+    for the meaning of `score`.
 
     Your response should be a valid JSON that contains:
     - steps: An array of objects representing your reasoning steps.
@@ -104,6 +104,8 @@ defmodule Zoonk.AI.Evals.EvalTask do
       e.g., "major_errors", "minor_errors", "potential_improvements".
     - conclusion (string): Detailed reasoning for this step,
       e.g., "None" or a list of errors/improvements.
+      Always write this in English, no matter the language of the
+      original response.
     - score (float):
       A numeric quality score, in the inclusive range [1,10].
 

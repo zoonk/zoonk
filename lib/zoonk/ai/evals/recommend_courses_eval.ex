@@ -28,12 +28,12 @@ defmodule Zoonk.AI.Evals.RecommendCoursesEval do
         language: "pt",
         input: "Quero me tornar um advogado",
         expectations:
-          "Include Direito as the top result with require_region: true. If global/general topics like Direitos Humanos and Direito Internacional are included, they should be marked require_region: false."
+          "User speaks Portuguese. Include Direito as the top result with require_region: true. If global/general topics like Direitos Humanos and Direito Internacional are included, they should be marked require_region: false."
       },
       %{
         language: "es",
         input: "Como ganar seguidores en redes sociales",
-        expectations: "Courses should be in Spanish"
+        expectations: "User speaks Spanish"
       }
     ]
   end
@@ -66,13 +66,13 @@ defmodule Zoonk.AI.Evals.RecommendCoursesEval do
       %{
         language: "pt",
         input: "Quero me comunicar melhor",
-        expectations: "Show results in Portuguese"
+        expectations: "User speaks Portuguese"
       },
       %{
         language: "pt",
         input: "kpop",
         expectations:
-          "Show results in Portuguese, include something directly related to K-Pop as the top result since the user is specific about this interest. Broader topics like Korean Culture or Music can follow, but K-Pop should be prioritized."
+          "User speaks Portuguese. Include something directly related to K-Pop as the top result since the user is specific about this interest. Broader topics like Korean Culture or Music can follow, but K-Pop should be prioritized."
       },
       %{
         language: "en",
@@ -88,18 +88,18 @@ defmodule Zoonk.AI.Evals.RecommendCoursesEval do
         language: "pt",
         input: "Como funcionam os vulcões?",
         expectations:
-          "Show courses in Portuguese, include a course specifically about volcanoes as the top result, followed by broader geology or earth science courses."
+          "User speaks Portuguese. Include a course specifically about volcanoes as the top result, followed by broader geology or earth science courses."
       },
       %{
         language: "pt",
         input: "Quero cuidar da minha saúde",
-        expectations: "Show courses in Portuguese"
+        expectations: "User speaks Portuguese."
       },
       %{
         language: "es",
         input: "Quiero entender la Segunda Guerra Mundial",
         expectations:
-          "Show courses in Spanish, include a course specifically about World War II as the top result since the user is specific about this interest. Broader history courses can follow, but World War II should be prioritized."
+          "User speaks Spanish. Include a course specifically about World War II as the top result since the user is specific about this interest. Broader history courses can follow, but World War II should be prioritized."
       },
       %{
         language: "en",
@@ -116,13 +116,13 @@ defmodule Zoonk.AI.Evals.RecommendCoursesEval do
         language: "pt",
         input: "direito constitucional",
         expectations:
-          "Show Direito Constitucional as the top result (require_region: true). Only show courses in Portuguese. If global topics like Direitos Humanos or Direito Internacional are included, they should be marked require_region: false."
+          "User speaks Portuguese. Show Direito Constitucional as the top result (require_region: true). If global topics like Direitos Humanos or Direito Internacional are included, they should be marked require_region: false."
       },
       %{
         language: "es",
         input: "derecho",
         expectations:
-          "Show Derecho as the top result with require_region: true. Only show courses in Spanish. If global/general topics like Derechos Humanos and Derecho Internacional are included, they should be marked require_region: false."
+          "User speaks Spanish. Show Derecho as the top result with require_region: true. If global/general topics like Derechos Humanos and Derecho Internacional are included, they should be marked require_region: false."
       },
       %{
         language: "en",
@@ -132,7 +132,7 @@ defmodule Zoonk.AI.Evals.RecommendCoursesEval do
       %{
         language: "pt",
         input: "Quero entender como funciona a sociedade",
-        expectations: "Only show courses in Portuguese"
+        expectations: "User speaks Portuguese"
       },
       %{
         language: "en",
@@ -147,7 +147,7 @@ defmodule Zoonk.AI.Evals.RecommendCoursesEval do
       %{
         language: "pt",
         input: "quero ficar rico",
-        expectations: "Only show courses in Portuguese."
+        expectations: "User speaks Portuguese"
       },
       %{
         language: "en",
@@ -158,19 +158,19 @@ defmodule Zoonk.AI.Evals.RecommendCoursesEval do
         language: "pt",
         input: "Educação Financeira",
         expectations:
-          "Only show courses in Portuguese. Make sure a course related to financial education is the top result since the user is specific about this interest."
+          "User speaks Portuguese. Make sure a course related to financial education is the top result since the user is specific about this interest."
       },
       %{
         language: "pt",
         input: "como funciona o sus",
         expectations:
-          "Include Sistema Único de Saúde (SUS) (exact match, require_region: false) as the top result since the user is specific about this interest. Broader health or public health courses can follow, but SUS should be prioritized. Only show courses in Portuguese."
+          "User speaks Portuguese. Include Sistema Único de Saúde (SUS) (exact match, require_region: false) as the top result since the user is specific about this interest. Broader health or public health courses can follow, but SUS should be prioritized."
       },
       %{
         language: "pt",
         input: "historia do brasil",
         expectations:
-          "Only show courses in Portuguese. Include História do Brasil (exact match) as the top result since the user is specific about this interest. Broader Brazilian history or Latin American history courses can follow, but História do Brasil should be prioritized."
+          "User speaks Portuguese. Include História do Brasil (exact match) as the top result since the user is specific about this interest. Broader Brazilian history or Latin American history courses can follow, but História do Brasil should be prioritized."
       },
       %{
         language: "en",
@@ -210,7 +210,7 @@ defmodule Zoonk.AI.Evals.RecommendCoursesEval do
         language: "pt",
         input: "futebol",
         expectations:
-          "It should include soccer related courses; ensure all englishTitle use Soccer (e.g., Soccer Tactics); list only soccer-related courses, not other sports or general sports courses"
+          "User speaks Portuguese. It should include soccer related courses; ensure all englishTitle use Soccer (e.g., Soccer Tactics); list only soccer-related courses, not other sports or general sports courses"
       },
       %{
         language: "en",
@@ -222,7 +222,7 @@ defmodule Zoonk.AI.Evals.RecommendCoursesEval do
         language: "fr",
         input: "harry potter",
         expectations:
-          "Harry Potter should be the top result (exact match) since the user is specific about this interest. Broader fantasy or literature courses can follow, but Harry Potter should be prioritized. Only show courses in French."
+          "User speaks French. Harry Potter should be the top result (exact match) since the user is specific about this interest. Broader fantasy or literature courses can follow, but Harry Potter should be prioritized."
       }
     ]
   end
