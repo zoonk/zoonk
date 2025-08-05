@@ -132,7 +132,7 @@ defmodule Zoonk.AI.Evals.EvalTask do
     #{attrs.expectations}
 
     **Result**
-    #{attrs.results}
+    #{inspect(attrs.results, pretty: true)}
     """
   end
 
