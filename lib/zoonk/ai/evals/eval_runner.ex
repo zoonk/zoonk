@@ -67,7 +67,7 @@ defmodule Zoonk.AI.Evals.EvalRunner do
 
   defp store_generate_output({:ok, response}, prompt, eval_type, model, input, filename) do
     data = %{output: response, input: input, cost_per_100_tasks: calculate_cost(response, model)}
-    EvalFiles.store_output(eval_type, model, prompt, "outputs", filename, data)
+    EvalFiles.store_results(eval_type, model, prompt, "outputs", filename, data)
     {:ok, data}
   end
 

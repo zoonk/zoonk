@@ -22,15 +22,15 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> store_output(:model, "openai/gpt-4.1-mini", :recommend_courses, "outputs", "test_1.json", %{})
+      iex> store_results(:model, "openai/gpt-4.1-mini", :recommend_courses, "outputs", "test_1.json", %{})
       :ok
 
-      iex> store_output(:prompt, "openai/gpt-4.1-mini", :recommend_courses, "scores", "test_1.json", %{})
+      iex> store_results(:prompt, "openai/gpt-4.1-mini", :recommend_courses, "scores", "test_1.json", %{})
       :ok
 
   """
-  @spec store_output(eval_type(), String.t(), atom(), String.t(), String.t(), map()) :: :ok
-  def store_output(eval_type, model, prompt, results_dir, filename, data) do
+  @spec store_results(eval_type(), String.t(), atom(), String.t(), String.t(), map()) :: :ok
+  def store_results(eval_type, model, prompt, results_dir, filename, data) do
     Logger.info("Storing #{eval_type} results for #{model} in #{filename}")
 
     eval_type
