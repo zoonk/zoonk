@@ -39,31 +39,6 @@ defmodule Zoonk.AI.Evals.EvalFiles do
   end
 
   @doc """
-  Loads results from a file.
-
-  This is useful to retrieve previously stored results
-  for evaluation without needing to re-run the model.
-
-  It parses the JSON file and returns the data as a map with string keys.
-
-  ## Examples
-
-      iex> load_results(:model, "openai/gpt-4.1-mini", :recommend_courses, "outputs", "test_1.json")
-      %{...}
-
-      iex> load_results(:prompt, "openai/gpt-4.1-mini", :recommend_courses, "scores", "test_1.json")
-      %{...}
-  """
-  @spec load_results(eval_type(), String.t(), atom(), String.t(), String.t()) :: map()
-  def load_results(eval_type, model, prompt, results_dir, filename) do
-    eval_type
-    |> results_dir!(model, prompt, results_dir)
-    |> Path.join(filename)
-    |> File.read!()
-    |> Jason.decode!()
-  end
-
-  @doc """
   Checks if a model file exists.
 
   This is useful to avoid sending duplicated requests
