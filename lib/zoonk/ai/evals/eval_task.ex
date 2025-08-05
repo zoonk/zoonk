@@ -20,7 +20,7 @@ defmodule Zoonk.AI.Evals.EvalTask do
     and expectations.
 
     Given the conversation messages, assign a quality score
-    in the `result` key of the response in the inclusive
+    in the `score` key of the response in the inclusive
     range between 1.0 (poor) and 10.0 (excellent).
     Customers will analyze your collective scores and reasoning
     to gain actionable insights into their models' performance.
@@ -32,11 +32,15 @@ defmodule Zoonk.AI.Evals.EvalTask do
     You'll be provided with the user's variables and values in
     the **User provided variables and values** section, then
     you'll be provided with the instructions template in the
-    **Instructions** section. Then, you'll be provided with the
-    **Expectations** section, which contains some comments on what
-    was the expected results that should have been returned by
-    the AI system for this specific input and instructions.
+    **Instructions** section.
 
+    Then, you'll be provided with an optional **Expectations**
+    section, which contains some comments on what might be
+    expected. If absent, you can assume what the user expects
+    according to their prompt. Treat expectations as guidelines
+    rather than strict rules. They're just a hint to help you
+    understand the user's intent better. Make your own judgment
+    based on all the information provided.
 
     Finally, you'll be provided with the final response in the
     **Result** section. The final **Result** is the outcome of
@@ -70,21 +74,18 @@ defmodule Zoonk.AI.Evals.EvalTask do
     Your structured output must match the provided schema:
 
     - `steps`: A JSON array of objects, each containing:
-    - `description`: A detailed explanation of your reasoning for each step.
-    - `result`: The float score reached based on the reasoning in this step.
+    - `conclusion`: A detailed explanation of your reasoning for each step.
+    - `score`: The float score reached based on the reasoning in this step.
 
     ### Steps to Predict (in order):
 
     1. **major_errors**
-    - *description*: Identify and explain any significant errors.
     - *conclusion*: List major errors found, or indicate "None".
 
     2. **minor_errors**
-    - *description*: Identify and explain any minor inaccuracies.
     - *conclusion*: List minor errors found, or indicate "None".
 
     3. **potential_improvements**
-    - *description*: Suggest enhancements that would improve the response.
     - *conclusion*: List suggested improvements, or indicate "None".
 
     ---
@@ -101,10 +102,9 @@ defmodule Zoonk.AI.Evals.EvalTask do
       Each step includes:
     - kind (string): The type of step,
       e.g., "major_errors", "minor_errors", "potential_improvements".
-    - description (string): Detailed reasoning for this step.
-    - conclusion (string): The conclusion of this step,
+    - conclusion (string): Detailed reasoning for this step,
       e.g., "None" or a list of errors/improvements.
-    - result (float):
+    - score (float):
       A numeric quality score, in the inclusive range [1,10].
 
     ---
@@ -142,9 +142,8 @@ defmodule Zoonk.AI.Evals.EvalTask do
       steps: [
         %{
           kind: ["major_errors", "minor_errors", "potential_improvements"],
-          description: "string",
           conclusion: "string",
-          result: "number"
+          score: "number"
         }
       ]
     }
