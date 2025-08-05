@@ -39,10 +39,16 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
 - Default to **Phoenix/LiveView** solutions. Use JavaScript only via `phx-hook` and only when unavoidable
 - Follow design inspirations from **Apple, Linear, Vercel**
 - Code must be **modular**, **tested**, and follow **SOLID** and **DRY** principles
-- Favor **pattern matching**, **guards**, and **short functions**. Avoid nesting
+- Avoid nested conditionals and complex logic. Prefer short and composable functions, making good use of pipes, pattern matching, and guards
 - Prefer `:if` on elements instead of conditional blocks. E.g., <ul :if={@items}> instead of <%= if @items do %>
 - Use `@impl ModuleName`, not `@impl true`
 - **Never** nest multiple modules in the same file as it can cause cyclic dependencies
+- Before submitting code, make sure to review your approach and ask yourself:
+  - Is this the simplest and most readable solution?
+  - Is it clear and easy to understand?
+  - Does it follow the principles outlined in this guide?
+  - Is it the most performant solution?
+- If you answer "no" to any of these questions, consider refactoring or simplifying your code before submitting
 
 ---
 
