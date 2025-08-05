@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2157,
+    "output": 1657,
+    "total": 3814
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "Icons mapping are slightly mismatched semantically; for example, tabler-rocket for Biotechnology and tabler-brain for Genomics may be non-intuitive.",
+      "score": 9.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Include additional specific fields such as Genetic Engineering or Population Genetics; refine icon choices for stronger semantic alignment; consider adding a pure DNA technology field if relevant.",
+      "score": 8.0
+    }
+  ]
+}

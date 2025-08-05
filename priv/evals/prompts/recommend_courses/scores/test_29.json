@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2138,
+    "output": 1301,
+    "total": 3439
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None",
+      "score": 9.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "Some course titles are arguably too narrow or not standard canonical fields (e.g., “CSS Design” and “Accessibility” as standalone field names, and “User Experience” without “Design”).",
+      "score": 9.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Use more established field names (e.g., “Cascading Style Sheets” or “CSS Development,” “Accessibility Engineering,” “User Experience Design”) and consider adding a broader foundational course like “Computer Science” or “Software Engineering” for deeper context.",
+      "score": 9.0
+    }
+  ]
+}

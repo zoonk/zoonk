@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2017,
+    "output": 1854,
+    "total": 3871
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The response adheres to the key requirements: 6 courses within 3–10 range, titles are canonical academic/professional fields (except one minor connector issue), descriptions are clear one-sentence Portuguese, icons correctly prefixed, english_title fields present.",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "The title \"Atividade Física e Exercício\" uses a connector (“e”) to group two topics, which violates the rule against including “and/or” or grouping topics in a single title.",
+      "score": 9.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Replace or rephrase the fourth course title to a single canonical field without a connector, e.g., “Fisiologia do Exercício” or “Educação Física,” or split into separate courses.",
+      "score": 9.0
+    }
+  ]
+}

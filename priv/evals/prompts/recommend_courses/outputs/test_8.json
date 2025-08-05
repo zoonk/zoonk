@@ -1,0 +1,76 @@
+{
+  "input": {
+    "input": "Engineering",
+    "language": "en",
+    "system_prompt": "A user wants to learn a new subject.\nWe asked them what they would like to learn.\n\nGenerate 3 to 10 broad **course suggestions**.\n\nEach course must follow these rules:\n\n- The title must be a broad, serious-sounding name of a real academic or professional field. Titles may include 1–3 words if that’s part of the standard name of the field (e.g. \"Data Science\", \"UI Design\", \"Mechanical Engineering\"). Avoid vague or invented titles. Prefer canonical ones.\n- Never include qualifiers like \"Basics\", \"Foundations\", \"Intro\", \"Beginner\", \"Advanced\", \"Essentials\", \"101\", etc.\n- Never include \"and\", \"or\", or slashes (/) in the title.\n- Never group topics into one title. Always split them.\n- Titles should be canonical academic or professional fields (e.g. \"Physics\", \"Law\", \"Art\", \"Engineering\", \"Neuroscience\").\n- If the user input is vague (e.g. “I want to code”), map it to broader established fields (e.g. “Computer Science”, “Web Development”, “Mobile Development”).\n- Each course must also include an `english_title` field that is a string representing the `title` in English.\n\nExamples of valid course titles:\n- Computer Science\n- Data Science\n- UI Design\n- UX Design\n- Mechanical Engineering\n- Electrical Engineering\n- Cognitive Psychology\n- Artificial Intelligence\n\nIf the user input is already a valid or common course name (e.g. \"Educação Financeira\", \"Digital Transformation\", \"Leadership\"), include it as one of the suggestions — ideally the first.\nDo not replace it with more academic fields unless the original term is too vague or nonstandard.\nIf the input closely resembles a good course title, include a suggestion using the same or very similar title.\n\nEach course must also include a 1-sentence description that:\n- Clearly explains what the course covers.\n- Highlights why it may be useful or relevant to the user.\n\nExamples:\n\nInput: I want to build mobile apps\nOutput:\n- Mobile Development – Learn how to create apps for iOS and Android using tools like Swift, Kotlin, and Flutter.\n- UI Design – Explore how to design intuitive and responsive mobile interfaces.\n- Computer Science – Understand the foundational concepts behind software and app development.\n\nInput: Quero aprender a desenhar personagens\nOutput:\n- Ilustração Digital – Aprenda a desenhar personagens usando ferramentas como o Procreate e o Photoshop.\n- Design de Personagens – Descubra como criar personagens únicos, com estilo e personalidade.\n- Anatomia Artística – Entenda proporções e movimento para criar figuras humanas mais realistas.\n\nEach course must also have an `icon` field with a tabler icon to illustrate this course. For example:\n- Computer Science – icon: \"tabler-code\"\n- Data Science – icon: \"tabler-chart-pie\"\n- UI Design – icon: \"tabler-palette\"\n\nAlways add the `tabler-` prefix to the icon name.\n",
+    "user_prompt": "This is their input: \"Engineering\"\nThis means they want to learn about Engineering.\nSo, generate 3 to 10 course suggestions based on this input.\n\nWrite both the `title` and `description` fields in the same language.\nThey want to see results in this language: en.\nIf it's not English, translate the title and add it to the `english_title` field.\n",
+    "expectations": ""
+  },
+  "output": {
+    "usage": {
+      "input": 772,
+      "output": 348,
+      "total": 1120
+    },
+    "courses": [
+      {
+        "description": "Explore the principles and applications of designing, building, and maintaining structures, machines, and systems across various industries.",
+        "title": "Engineering",
+        "icon": "tabler-building-skyscraper",
+        "english_title": "Engineering"
+      },
+      {
+        "description": "Study the design, analysis, and manufacturing of mechanical systems used in industries from automotive to robotics.",
+        "title": "Mechanical Engineering",
+        "icon": "tabler-cog",
+        "english_title": "Mechanical Engineering"
+      },
+      {
+        "description": "Learn about electrical systems and circuits, including power generation, electronics, and telecommunications.",
+        "title": "Electrical Engineering",
+        "icon": "tabler-flash",
+        "english_title": "Electrical Engineering"
+      },
+      {
+        "description": "Focus on the design, construction, and maintenance of infrastructure such as roads, bridges, and buildings.",
+        "title": "Civil Engineering",
+        "icon": "tabler-bridge",
+        "english_title": "Civil Engineering"
+      },
+      {
+        "description": "Understand the processes of converting raw materials into valuable chemicals, fuels, and materials through chemical reactions.",
+        "title": "Chemical Engineering",
+        "icon": "tabler-flask",
+        "english_title": "Chemical Engineering"
+      },
+      {
+        "description": "Combine principles of electrical engineering and computer science to develop computer systems and hardware.",
+        "title": "Computer Engineering",
+        "icon": "tabler-device-laptop",
+        "english_title": "Computer Engineering"
+      },
+      {
+        "description": "Learn to design solutions that protect and improve the environment and manage natural resources sustainably.",
+        "title": "Environmental Engineering",
+        "icon": "tabler-leaf",
+        "english_title": "Environmental Engineering"
+      },
+      {
+        "description": "Study the design and development of aircraft, spacecraft, and related systems and technologies.",
+        "title": "Aerospace Engineering",
+        "icon": "tabler-rocket",
+        "english_title": "Aerospace Engineering"
+      },
+      {
+        "description": "Focus on optimizing complex processes, systems, and organizations to improve efficiency and productivity.",
+        "title": "Industrial Engineering",
+        "icon": "tabler-settings",
+        "english_title": "Industrial Engineering"
+      }
+    ]
+  },
+  "cost_per_100_tasks": {
+    "input": 0.03088,
+    "output": 0.05568000000000001
+  }
+}

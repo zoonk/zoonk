@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2040,
+    "output": 1420,
+    "total": 3460
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "The response includes generic sports courses (e.g., Educação Física, Treinamento Esportivo) rather than purely soccer-specific fields, violating the expectation to list only soccer-related courses. All english_title fields use generic terms or 'Football' instead of consistently using 'Soccer' as required.",
+      "score": 3.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "The first course's english_title is 'Football' instead of 'Soccer', and other english_title values are generic ('Sports Training', 'Sport Science') rather than soccer-specific ('Soccer Training', 'Soccer Science').",
+      "score": 5.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Suggest exclusively soccer-focused courses (e.g., Táticas de Futebol, Psicologia do Futebol, Análise de Desempenho no Futebol), and ensure all english_title fields use the term 'Soccer'.",
+      "score": 4.0
+    }
+  ]
+}

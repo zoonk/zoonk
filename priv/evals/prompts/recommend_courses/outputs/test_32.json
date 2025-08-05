@@ -1,0 +1,58 @@
+{
+  "input": {
+    "input": "dragon ball",
+    "language": "en",
+    "system_prompt": "A user wants to learn a new subject.\nWe asked them what they would like to learn.\n\nGenerate 3 to 10 broad **course suggestions**.\n\nEach course must follow these rules:\n\n- The title must be a broad, serious-sounding name of a real academic or professional field. Titles may include 1–3 words if that’s part of the standard name of the field (e.g. \"Data Science\", \"UI Design\", \"Mechanical Engineering\"). Avoid vague or invented titles. Prefer canonical ones.\n- Never include qualifiers like \"Basics\", \"Foundations\", \"Intro\", \"Beginner\", \"Advanced\", \"Essentials\", \"101\", etc.\n- Never include \"and\", \"or\", or slashes (/) in the title.\n- Never group topics into one title. Always split them.\n- Titles should be canonical academic or professional fields (e.g. \"Physics\", \"Law\", \"Art\", \"Engineering\", \"Neuroscience\").\n- If the user input is vague (e.g. “I want to code”), map it to broader established fields (e.g. “Computer Science”, “Web Development”, “Mobile Development”).\n- Each course must also include an `english_title` field that is a string representing the `title` in English.\n\nExamples of valid course titles:\n- Computer Science\n- Data Science\n- UI Design\n- UX Design\n- Mechanical Engineering\n- Electrical Engineering\n- Cognitive Psychology\n- Artificial Intelligence\n\nIf the user input is already a valid or common course name (e.g. \"Educação Financeira\", \"Digital Transformation\", \"Leadership\"), include it as one of the suggestions — ideally the first.\nDo not replace it with more academic fields unless the original term is too vague or nonstandard.\nIf the input closely resembles a good course title, include a suggestion using the same or very similar title.\n\nEach course must also include a 1-sentence description that:\n- Clearly explains what the course covers.\n- Highlights why it may be useful or relevant to the user.\n\nExamples:\n\nInput: I want to build mobile apps\nOutput:\n- Mobile Development – Learn how to create apps for iOS and Android using tools like Swift, Kotlin, and Flutter.\n- UI Design – Explore how to design intuitive and responsive mobile interfaces.\n- Computer Science – Understand the foundational concepts behind software and app development.\n\nInput: Quero aprender a desenhar personagens\nOutput:\n- Ilustração Digital – Aprenda a desenhar personagens usando ferramentas como o Procreate e o Photoshop.\n- Design de Personagens – Descubra como criar personagens únicos, com estilo e personalidade.\n- Anatomia Artística – Entenda proporções e movimento para criar figuras humanas mais realistas.\n\nEach course must also have an `icon` field with a tabler icon to illustrate this course. For example:\n- Computer Science – icon: \"tabler-code\"\n- Data Science – icon: \"tabler-chart-pie\"\n- UI Design – icon: \"tabler-palette\"\n\nAlways add the `tabler-` prefix to the icon name.\n",
+    "user_prompt": "This is their input: \"dragon ball\"\nThis means they want to learn about dragon ball.\nSo, generate 3 to 10 course suggestions based on this input.\n\nWrite both the `title` and `description` fields in the same language.\nThey want to see results in this language: en.\nIf it's not English, translate the title and add it to the `english_title` field.\n",
+    "expectations": "Dragon Ball should be the top result (exact match) since the user is specific about this interest. Broader anime or manga courses can follow, but Dragon Ball should be prioritized."
+  },
+  "output": {
+    "usage": {
+      "input": 774,
+      "output": 253,
+      "total": 1027
+    },
+    "courses": [
+      {
+        "description": "Explore the history, cultural impact, and artistic techniques of Japanese animation, including iconic series like Dragon Ball.",
+        "title": "Anime Studies",
+        "icon": "tabler-movie",
+        "english_title": "Anime Studies"
+      },
+      {
+        "description": "Learn the fundamentals of manga drawing styles, character design, and storytelling, inspired by popular works like Dragon Ball.",
+        "title": "Manga Art",
+        "icon": "tabler-palette",
+        "english_title": "Manga Art"
+      },
+      {
+        "description": "Study the trends, media, and societal influences of modern Japanese entertainment such as anime and manga.",
+        "title": "Japanese Pop Culture",
+        "icon": "tabler-star",
+        "english_title": "Japanese Pop Culture"
+      },
+      {
+        "description": "Understand the processes involved in creating animated series, including storyboarding, character animation, and voice acting.",
+        "title": "Animation Production",
+        "icon": "tabler-film",
+        "english_title": "Animation Production"
+      },
+      {
+        "description": "Examine how narratives are constructed in various media forms, focusing on genre fiction like action-adventure series Dragon Ball.",
+        "title": "Storytelling in Media",
+        "icon": "tabler-book",
+        "english_title": "Storytelling in Media"
+      },
+      {
+        "description": "Discover how to create compelling and memorable characters for animation and comics, drawing inspiration from Dragon Ball.",
+        "title": "Character Design",
+        "icon": "tabler-mask",
+        "english_title": "Character Design"
+      }
+    ]
+  },
+  "cost_per_100_tasks": {
+    "input": 0.030960000000000005,
+    "output": 0.04048
+  }
+}

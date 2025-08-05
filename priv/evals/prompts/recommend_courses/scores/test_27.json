@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2111,
+    "output": 1993,
+    "total": 4104
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "1. Omission of the required `category` field for each course, violating the expectation that language-learning courses use category: :language.\n2. Title “Pronunciación y Fonética del Inglés” combines two distinct topics with “y” (Spanish for “and”), against the rule to avoid qualifiers like “and” and to not group topics.\n3. Title “Inmersión Cultural en Países de Habla Inglesa” is more a phrase than a canonical academic field.",
+      "score": 4.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "1. The English translation “Foreign Language Didactics” is slightly awkward compared to the more common “Foreign Language Teaching.”\n2. Lack of fully canonical single-field titles for pronunciation and phonetics—these could be separate or more standardized.\n3. No non-language courses were included to diversify the suggestions, though it was allowed.",
+      "score": 7.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "1. Add the `category: :language` field to all language courses as specified.\n2. Split combined topics into separate courses (e.g., separate “Fonética Inglesa” and “Pronunciación Inglesa”), or choose the more standard field.\n3. Replace “Inmersión Cultural en Países de Habla Inglesa” with a canonical field title like “Cultura Inglesa.”\n4. Refine English translations for greater clarity (e.g., “Foreign Language Teaching”).",
+      "score": 6.0
+    }
+  ]
+}

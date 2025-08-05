@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2132,
+    "output": 2503,
+    "total": 4635
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None",
+      "score": 9.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "O título “Programação Mobile” mistura inglês e português em vez de usar um termo totalmente em português, o que reduz ligeiramente a consistência do conjunto.",
+      "score": 9.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Substituir “Programação Mobile” por “Desenvolvimento de Aplicativos Móveis” ou “Desenvolvimento Mobile” e considerar adicionar áreas como Ciência de Dados ou Segurança Cibernética para maior abrangência.",
+      "score": 9.0
+    }
+  ]
+}

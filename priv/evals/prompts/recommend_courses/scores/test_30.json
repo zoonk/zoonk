@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1959,
+    "output": 681,
+    "total": 2640
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None",
+      "score": 10.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Consider adding complementary fields such as “Software Engineering” or “React Native” to diversify learning paths; refine icons to more closely match each domain’s typical symbolism (e.g., a browser icon for Frontend Development).",
+      "score": 9.0
+    }
+  ]
+}

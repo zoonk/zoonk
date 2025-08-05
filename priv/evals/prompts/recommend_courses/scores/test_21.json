@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2040,
+    "output": 1466,
+    "total": 3506
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The response follows all instructions, uses canonical course titles, avoids prohibited qualifiers, includes 6 appropriate suggestions with valid icons and descriptions.",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. There are no factual inaccuracies or formatting issues.",
+      "score": 10.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Could consider adding complementary fields like \"Backend Development\" or \"DevOps\" to cover server-side skills, but not strictly required.",
+      "score": 9.0
+    }
+  ]
+}

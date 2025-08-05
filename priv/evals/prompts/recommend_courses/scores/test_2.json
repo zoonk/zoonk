@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1974,
+    "output": 640,
+    "total": 2614
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None",
+      "score": 9.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "The icon for Physics (“tabler-flask”) is more closely associated with chemistry, a more fitting icon like “tabler-atom” or “tabler-math” could improve alignment.",
+      "score": 9.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Use a more suitable icon for Physics; optionally include related fields like Planetary Science or Astrobiology to broaden the range of universe-focused courses.",
+      "score": 9.0
+    }
+  ]
+}

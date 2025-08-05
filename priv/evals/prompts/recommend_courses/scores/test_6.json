@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2026,
+    "output": 1422,
+    "total": 3448
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None",
+      "score": 9.5
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Adicionar cursos como \"Língua Coreana\" ou \"Produção Musical\" para complementar o aprendizado prático relacionado ao K-pop; considerar ajustar \"Dança Contemporânea\" para um estilo de dança mais próximo às coreografias do K-pop, como \"Dança de Rua\"; incluir também áreas técnicas como \"Engenharia de Som\" ou \"Gestão de Eventos\" para maior diversidade.",
+      "score": 9.0
+    }
+  ]
+}
