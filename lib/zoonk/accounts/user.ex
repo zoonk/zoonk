@@ -31,7 +31,6 @@ defmodule Zoonk.Accounts.User do
   alias Zoonk.Billing.BillingAccount
   alias Zoonk.Localization
   alias Zoonk.Orgs.OrgMember
-  alias Zoonk.Orgs.TeamMember
 
   schema "users" do
     field :year_of_birth, :integer
@@ -50,9 +49,6 @@ defmodule Zoonk.Accounts.User do
 
     has_many :org_memberships, OrgMember
     has_many :orgs, through: [:org_memberships, org: :profile]
-
-    has_many :team_memberships, TeamMember
-    has_many :teams, through: [:team_memberships, :team]
 
     timestamps(type: :utc_datetime_usec)
   end
