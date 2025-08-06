@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2069,
+    "output": 703,
+    "total": 2772
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "score": 10.0,
+      "conclusion": "None"
+    },
+    {
+      "kind": "minor_errors",
+      "score": 10.0,
+      "conclusion": "None"
+    },
+    {
+      "kind": "potential_improvements",
+      "score": 10.0,
+      "conclusion": "None"
+    }
+  ]
+}

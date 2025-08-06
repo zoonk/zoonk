@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1944,
+    "output": 1154,
+    "total": 3098
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "score": 6.0,
+      "conclusion": "Four out of five courses are missing the required `icon` field, violating the instruction that each course must include a tabler icon."
+    },
+    {
+      "kind": "minor_errors",
+      "score": 6.0,
+      "conclusion": "None."
+    },
+    {
+      "kind": "potential_improvements",
+      "score": 6.0,
+      "conclusion": "Add appropriate `icon` fields to all courses using relevant tabler icons (e.g., `tabler-dev`, `tabler-browser`, `tabler-device-mobile`, `tabler-chart-pie`)."
+    }
+  ]
+}
