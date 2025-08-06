@@ -56,12 +56,10 @@ defmodule ZoonkWeb.UserNameLive do
   end
 
   @impl Phoenix.LiveView
-  def handle_event("validate_name", params, socket) do
-    %{"user_profile" => profile_params} = params
-
+  def handle_event("validate_name", %{"user_profile" => params}, socket) do
     name_form =
       socket.assigns.scope.user.profile
-      |> Accounts.change_user_profile(profile_params)
+      |> Accounts.change_user_profile(params)
       |> Map.put(:action, :validate)
       |> to_form()
 
@@ -73,11 +71,10 @@ defmodule ZoonkWeb.UserNameLive do
     {:noreply, socket}
   end
 
-  def handle_event("submit", params, socket) do
-    %{"user_profile" => profile_params} = params
-    user_profile = socket.assigns.scope.user.profile
+  def handle_event("submit", %{"user_profile" => params}, socket) do
+    scope = socket.assigns.scope
 
-    case Accounts.update_user_profile(user_profile, profile_params) do
+    case Accounts.update_user_profile(scope, scope.user.profile, params) do
       {:ok, _updated_profile} ->
         {:noreply, assign(socket, :display_success?, true)}
 

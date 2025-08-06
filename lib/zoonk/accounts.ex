@@ -43,16 +43,20 @@ defmodule Zoonk.Accounts do
 
   ## Examples
 
-      iex> update_user_profile(%UserProfile{}, %{display_name: "New Name"})
+      iex> update_user_profile(%Scope{}, %UserProfile{}, %{display_name: "New Name"})
       {:ok, %UserProfile{}}
 
-      iex> update_user_profile(%UserProfile{}, %{display_name: bad_value})
+      iex> update_user_profile(%Scope{}, %UserProfile{}, %{display_name: bad_value})
       {:error, %Ecto.Changeset{}}
   """
-  def update_user_profile(%UserProfile{} = user_profile, attrs) do
-    user_profile
+  def update_user_profile(%Scope{} = scope, %UserProfile{} = profile, attrs) when scope.user.id == profile.user_id do
+    profile
     |> change_user_profile(attrs)
     |> Repo.update()
+  end
+
+  def update_user_profile(_scope, _user_profile, _attrs) do
+    {:error, :unauthorized}
   end
 
   @doc """

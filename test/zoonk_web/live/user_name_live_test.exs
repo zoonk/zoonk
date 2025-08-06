@@ -24,10 +24,10 @@ defmodule ZoonkWeb.UserNameLiveTest do
       assert updated_profile.display_name == new_display_name
     end
 
-    test "allows users to clear their display name", %{conn: conn, user: user} do
+    test "allows users to clear their display name", %{conn: conn, user: user, scope: scope} do
       # First set a display name
       profile = Repo.get_by!(UserProfile, user_id: user.id)
-      {:ok, _updated_profile} = Accounts.update_user_profile(profile, %{display_name: "Initial Name"})
+      {:ok, _updated_profile} = Accounts.update_user_profile(scope, profile, %{display_name: "Initial Name"})
 
       conn
       |> visit(~p"/name")
@@ -64,10 +64,10 @@ defmodule ZoonkWeb.UserNameLiveTest do
       |> refute_has("p", text: "Done!")
     end
 
-    test "displays current display name in the form", %{conn: conn, user: user} do
+    test "displays current display name in the form", %{conn: conn, user: user, scope: scope} do
       current_name = "Current Display Name"
       profile = Repo.get_by!(UserProfile, user_id: user.id)
-      {:ok, _updated_profile} = Accounts.update_user_profile(profile, %{display_name: current_name})
+      {:ok, _updated_profile} = Accounts.update_user_profile(scope, profile, %{display_name: current_name})
 
       conn
       |> visit(~p"/name")

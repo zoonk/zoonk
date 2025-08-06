@@ -11,6 +11,7 @@ defmodule Zoonk.AccountsTest do
   alias Zoonk.Accounts.UserToken
   alias Zoonk.Orgs.OrgMember
   alias Zoonk.Repo
+  alias Zoonk.Scope
 
   @sudo_mode_max_age_minutes Application.compile_env!(:zoonk, :user_token)[:max_age_minutes][:sudo_mode]
 
@@ -55,78 +56,83 @@ defmodule Zoonk.AccountsTest do
     end
   end
 
-  describe "update_user_profile/2" do
+  describe "update_user_profile/3" do
     setup do
-      %{profile: user_fixture(%{preload: :profile}).profile}
+      user = user_fixture(%{preload: :profile})
+      %{profile: user.profile, scope: %Scope{user: user}}
     end
 
-    test "updates profile with valid attributes", %{profile: profile} do
+    test "updates profile with valid attributes", %{profile: profile, scope: scope} do
       update_attrs = %{display_name: "New Display Name", bio: "Updated bio"}
 
-      assert {:ok, %UserProfile{} = updated_profile} = Accounts.update_user_profile(profile, update_attrs)
+      assert {:ok, %UserProfile{} = updated_profile} = Accounts.update_user_profile(scope, profile, update_attrs)
       assert updated_profile.display_name == "New Display Name"
       assert updated_profile.bio == "Updated bio"
       assert updated_profile.id == profile.id
     end
 
-    test "allows users to remove their existing display name by setting empty string", %{profile: profile} do
+    test "allows users to remove their existing display name by setting empty string", %{profile: profile, scope: scope} do
       # First set a display name
-      {:ok, profile_with_name} = Accounts.update_user_profile(profile, %{display_name: "Some Name"})
+      {:ok, profile_with_name} = Accounts.update_user_profile(scope, profile, %{display_name: "Some Name"})
       assert profile_with_name.display_name == "Some Name"
 
       # Then remove it with empty string
       assert {:ok, %UserProfile{} = updated_profile} =
-               Accounts.update_user_profile(profile_with_name, %{display_name: ""})
+               Accounts.update_user_profile(scope, profile_with_name, %{display_name: ""})
 
       assert is_nil(updated_profile.display_name)
     end
 
-    test "allows users to remove their existing display name by setting nil", %{profile: profile} do
+    test "allows users to remove their existing display name by setting nil", %{profile: profile, scope: scope} do
       # First set a display name
-      {:ok, profile_with_name} = Accounts.update_user_profile(profile, %{display_name: "Some Name"})
+      {:ok, profile_with_name} = Accounts.update_user_profile(scope, profile, %{display_name: "Some Name"})
       assert profile_with_name.display_name == "Some Name"
 
       # Then remove it with nil
       assert {:ok, %UserProfile{} = updated_profile} =
-               Accounts.update_user_profile(profile_with_name, %{display_name: nil})
+               Accounts.update_user_profile(scope, profile_with_name, %{display_name: nil})
 
       assert is_nil(updated_profile.display_name)
     end
 
-    test "prevents long display names", %{profile: profile} do
+    test "prevents long display names", %{profile: profile, scope: scope} do
       long_name = String.duplicate("a", 33)
 
-      assert {:error, changeset} = Accounts.update_user_profile(profile, %{display_name: long_name})
+      assert {:error, changeset} = Accounts.update_user_profile(scope, profile, %{display_name: long_name})
       assert %{display_name: ["should be at most 32 character(s)"]} = errors_on(changeset)
     end
 
-    test "allows display names at the maximum length", %{profile: profile} do
+    test "allows display names at the maximum length", %{profile: profile, scope: scope} do
       max_length_name = String.duplicate("a", 32)
+      attrs = %{display_name: max_length_name}
 
-      assert {:ok, %UserProfile{} = updated_profile} =
-               Accounts.update_user_profile(profile, %{display_name: max_length_name})
-
+      assert {:ok, %UserProfile{} = updated_profile} = Accounts.update_user_profile(scope, profile, attrs)
       assert updated_profile.display_name == max_length_name
     end
 
-    test "returns error changeset with invalid username", %{profile: profile} do
+    test "returns error changeset with invalid username", %{profile: profile, scope: scope} do
       invalid_attrs = %{username: "invalid.username"}
 
-      assert {:error, changeset} = Accounts.update_user_profile(profile, invalid_attrs)
+      assert {:error, changeset} = Accounts.update_user_profile(scope, profile, invalid_attrs)
       assert %{username: ["cannot have spaces for special characters"]} = errors_on(changeset)
     end
 
-    test "returns error changeset when username is already taken", %{profile: profile} do
+    test "returns error changeset when username is already taken", %{profile: profile, scope: scope} do
       other_user = user_fixture(%{preload: :profile})
       taken_username = other_user.profile.username
 
-      assert {:error, changeset} = Accounts.update_user_profile(profile, %{username: taken_username})
+      assert {:error, changeset} = Accounts.update_user_profile(scope, profile, %{username: taken_username})
       assert %{username: ["has already been taken"]} = errors_on(changeset)
     end
 
-    test "returns error changeset when required fields are missing", %{profile: profile} do
-      assert {:error, changeset} = Accounts.update_user_profile(profile, %{username: nil})
+    test "returns error changeset when required fields are missing", %{profile: profile, scope: scope} do
+      assert {:error, changeset} = Accounts.update_user_profile(scope, profile, %{username: nil})
       assert %{username: ["can't be blank"]} = errors_on(changeset)
+    end
+
+    test "returns error when trying to update profile of another user", %{profile: profile} do
+      scope = scope_fixture()
+      assert {:error, :unauthorized} = Accounts.update_user_profile(scope, profile, %{display_name: "New Name"})
     end
   end
 
