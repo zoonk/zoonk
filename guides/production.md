@@ -11,6 +11,7 @@ Make sure to include the following environment variables in your production envi
 - `DATABASE_URL`: The URL of your PostgreSQL database.
 - `SECRET_KEY_BASE`: A secret key used for signing and encrypting session data. You can generate one using `mix phx.gen.secret`.
 - All variables for [OAuth providers](./oauth.md).
+- Environment variables from [.env.example](https://github.com/zoonk/zoonk/blob/main/.env.example).
 
 Optionally, you can include the following environment variables:
 

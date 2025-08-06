@@ -7,14 +7,14 @@ defmodule Zoonk.Catalog.CourseTranslation do
 
   ## Fields
 
-  | Field Name    | Type        | Description                                             |
-  |---------------|-------------|---------------------------------------------------------|
-  | `course_id`   | Integer     | The ID of the course this translation belongs to.       |
-  | `language`    | Ecto.Enum   | The language of this translation.                       |
-  | `title`       | String      | The title of the course in the specified language.      |
-  | `description` | String      | The description of the course in the specified language.|
-  | `inserted_at` | DateTime    | Timestamp when the translation was created.             |
-  | `updated_at`  | DateTime    | Timestamp when the translation was last updated.        |
+  | Field Name    | Type          | Description                                             |
+  |---------------|---------------|---------------------------------------------------------|
+  | `course_id`   | `Integer`     | The ID of the course this translation belongs to.       |
+  | `language`    | `Ecto.Enum`   | The language of this translation.                       |
+  | `title`       | `String`      | The title of the course in the specified language.      |
+  | `description` | `String`      | The description of the course in the specified language.|
+  | `inserted_at` | `DateTime`    | Timestamp when the translation was created.             |
+  | `updated_at`  | `DateTime`    | Timestamp when the translation was last updated.        |
   """
   use Ecto.Schema
 

@@ -1,12 +1,6 @@
 # SSL on localhost
 
-Prefer to do local development using SSL to resemble production as much as possible. If you're using `MacOS`, you can run this script to set everything up:
-
-```sh
-sudo sh ./scripts/ssl.sh
-```
-
-If you're not running `MacOS`, have a look at the `scripts/ssl.sh` script and adapt it to your OS.
+Sometimes you may need to test SSL on your local machine. Have a look at the `scripts/ssl.sh` script on how to set it up. You can also find it [on GitHub](https://github.com/zoonk/zoonk/blob/main/scripts/ssl.sh).
 
 ## Running the SSL server
 

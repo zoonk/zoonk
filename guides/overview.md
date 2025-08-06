@@ -5,7 +5,7 @@
 > This project is a work in progress, and we're building it in public. DO NOT USE IT.
 > We'll update this notice once the features described here are available for production use.
 
-Zoonk is a white-label platform for building interactive courses. You can create content manually or use LLMs to generate it from a topic or your own documents. We also offer a REST API for seamless integration with other systems.
+Zoonk is an open-source app for learning anything using AI. Check out our [long-term vision](https://github.com/orgs/zoonk/discussions/176) to see how we plan to evolve the product.
 
 ## Our tech stack
 
@@ -13,14 +13,13 @@ Zoonk is a white-label platform for building interactive courses. You can create
 - **Framework**: [Phoenix](https://www.phoenixframework.org/)
 - **Database**: [PostgreSQL](https://www.postgresql.org/), [Ecto](https://hexdocs.pm/ecto)
 - **Frontend**: [LiveView](https://hexdocs.pm/phoenix_live_view), [Tailwind CSS](https://tailwindcss.com/)
-- **AI**: [OpenAI](https://openai.com/), [Black Forest Labs](https://blackforestlabs.ai), [Together AI](https://together.ai/)
+- **AI**: [OpenAI](https://openai.com/), [OpenRouter](https://openrouter.ai/), [Google AI](https://ai.google.dev), [Together AI](https://together.ai/)
 - **Deployment**: [Fly.io](https://fly.io/)
 - **File storage**: [Tigris](https://tigrisdata.com/)
-- **Emails**: [Resend](https://resend.com/), [Swoosh](https://hexdocs.pm/swoosh)
+- **Emails**: [ZeptoMail by Zoho](https://www.zoho.com/zeptomail/), [Swoosh](https://hexdocs.pm/swoosh)
 - **Payments**: [Stripe](https://stripe.com/)
 - **Background jobs**: [Oban](https://hexdocs.pm/oban)
 - **Translations**: [Gettext](https://hexdocs.pm/gettext)
-- **Monitoring**: [AppSignal](https://www.appsignal.com/)
 - **Testing**: [ExUnit](https://hexdocs.pm/ex_unit)
 - **Continuous integration**: [GitHub Actions](https://docs.github.com/en/actions)
 - **Documentation**: [ex_doc](https://hexdocs.pm/ex_doc)
@@ -33,10 +32,11 @@ Zoonk is a white-label platform for building interactive courses. You can create
 - **`config`** – Configuration files for `dev`, `test`, `runtime`, and `prod` environments.
 - **`lib`** – Core application code, covering both business logic and the web interface.
   - **`zoonk`** – Business logic, schemas, and contexts.
+  - **`zoonk_dev`** – Development utilities like UI Preview.
   - **`zoonk_web`** – Web interface, including API and frontend.
     - **`components`** – LiveView (`Phoenix.LiveComponent`) and function components (`Phoenix.Component`).
     - **`controllers`** – API and web controllers.
     - **`live`** – Pages using `Phoenix.LiveView`.
 
-- **`priv`** – Static files, migrations, seeds, and translations.
+- **`priv`** – Static files, migrations, seeds, AI evals, and translations.
 - **`test`** – Application tests.

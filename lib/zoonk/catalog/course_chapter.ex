@@ -8,14 +8,14 @@ defmodule Zoonk.Catalog.CourseChapter do
 
   ## Fields
 
-  | Field Name   | Type     | Description                                             |
-  |--------------|----------|---------------------------------------------------------|
-  | `org_id`     | Integer  | The ID of the organization this data belongs to.        |
-  | `course_id`  | Integer  | The ID of the course that contains the chapter.         |
-  | `chapter_id` | Integer  | The ID of the chapter included in the course.           |
-  | `position`   | Integer  | Chapter's position within the course, used for ordering.|
-  | `inserted_at`| DateTime | Timestamp when the association was created.             |
-  | `updated_at` | DateTime | Timestamp when the association was last updated.        |
+  | Field Name   | Type       | Description                                             |
+  |--------------|------------|---------------------------------------------------------|
+  | `org_id`     | `Integer`  | The ID of the organization this data belongs to.        |
+  | `course_id`  | `Integer`  | The ID of the course that contains the chapter.         |
+  | `chapter_id` | `Integer`  | The ID of the chapter included in the course.           |
+  | `position`   | `Integer`  | Chapter's position within the course, used for ordering.|
+  | `inserted_at`| `DateTime` | Timestamp when the association was created.             |
+  | `updated_at` | `DateTime` | Timestamp when the association was last updated.        |
   """
   use Ecto.Schema
 

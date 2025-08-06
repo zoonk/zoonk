@@ -2,7 +2,7 @@
 
 Make sure to create the environment variables below.
 
-You can store them in a `.env` file and run `source .env` to load them. Alternatively, you can use [direnv](https://direnv.net/) to load them automatically.
+You can store them in a `.env` file and run `source .env` to load them. Alternatively, you can use [direnv](https://direnv.net/) to load them automatically using `direnv allow` at the root of the project.
 
 ## Google
 
