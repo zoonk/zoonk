@@ -37,6 +37,10 @@ You can read our full documentation at https://docs.zoonk.com or check the guide
 - [Overview](./guides/overview.md)
 - [Installation](./guides/installation.md)
 
+## Model Evaluations
+
+We evaluate various AI models on different prompts. You can find the results in the [priv/evals](./priv/evals/README.md) directory.
+
 ## Supporters
 
 People who supported this project:
