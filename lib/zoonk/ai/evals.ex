@@ -7,44 +7,40 @@ defmodule Zoonk.AI.Evals do
   new models as they become available.
   """
 
-  alias Zoonk.AI.Evals.EvalFiles
   alias Zoonk.AI.Evals.EvalRunner
+  alias Zoonk.AI.Evals.ScoreEvals
 
   @doc """
-  Generate outputs for all models.
+  Evaluate a model for a specific prompt.
 
-  For generating outputs for a specific model,
-  use `generate_output/3`.
+  It's meant to test model capabilities for a specific prompt.
+  This will usually test a small set of test cases (e.g. 3-5).
 
   ## Examples
 
-      iex> generate_output(:recommend_courses, :model)
+      iex> evaluate_model(:recommend_courses, "openai/gpt-4.1")
       :ok
   """
-  @spec generate_output(atom(), EvalFiles.eval_type()) :: :ok
-  def generate_output(prompt, eval_type) do
-    EvalRunner.generate_object(prompt, eval_type)
+  @spec evaluate_model(atom(), String.t()) :: :ok
+  def evaluate_model(prompt, model) do
+    EvalRunner.generate_object(prompt, :model, model)
+    ScoreEvals.update_leaderboard(prompt, model)
   end
 
   @doc """
-  Generate outputs for a prompt.
+  Evaluate a prompt.
 
-  We use these outputs to compare the performance of
-  different models and prompt versions.
-
-  This function will store outputs in `priv/evals`,
-  allowing us to compare them later and run evaluations.
-
-  For generating outputs for all supported models,
-  use `generate_output/2`.
+  It's meant to test a prompt's performance across a larger
+  set of test cases (e.g. 20-50).
 
   ## Examples
 
-      iex> generate_output(:recommend_courses, :model, "gpt-4.1-nano")
-      {:ok, output}
+      iex> evaluate_prompt(:recommend_courses, "openai/gpt-4.1")
+      :ok
   """
-  @spec generate_output(atom(), EvalFiles.eval_type(), String.t()) :: :ok
-  def generate_output(prompt, eval_type, model) do
-    EvalRunner.generate_object(prompt, eval_type, model)
+  @spec evaluate_prompt(atom(), String.t()) :: :ok
+  def evaluate_prompt(prompt, model) do
+    EvalRunner.generate_object(prompt, :prompt, model)
+    ScoreEvals.calculate_score(prompt)
   end
 end

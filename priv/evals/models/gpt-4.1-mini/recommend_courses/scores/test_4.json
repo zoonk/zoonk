@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2131,
+    "output": 911,
+    "total": 3042
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "score": 7.0,
+      "conclusion": "The response fails to include the required \"require_region\" field for any courses, particularly missing require_region: true for the top suggestion \"Direito\" as explicitly requested in the expectations."
+    },
+    {
+      "kind": "minor_errors",
+      "score": 7.0,
+      "conclusion": "None."
+    },
+    {
+      "kind": "potential_improvements",
+      "score": 7.0,
+      "conclusion": "Add the \"require_region\" property with true for \"Direito\" and false for any global topics; consider including other key legal fields relevant in Brazil such as Direito do Trabalho or Direito Tributário to broaden the selection."
+    }
+  ]
+}

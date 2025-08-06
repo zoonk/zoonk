@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2142,
+    "output": 1514,
+    "total": 3656
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "The course title “Scientific Methodology” is somewhat nonstandard compared to typical academic field names, and some icon choices (e.g., “tabler-binary” for Computer Science) may not match standard tabler icons.",
+      "score": 8.5
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Consider replacing “Scientific Methodology” with a more canonical field like “Research Methods” or “Philosophy of Science,” refine icon selections to more common tabler icons (e.g., “tabler-code” for Computer Science), and possibly include additional specialized courses such as “Laboratory Techniques” or “Research Ethics.”",
+      "score": 8.0
+    }
+  ]
+}

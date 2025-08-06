@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2017,
+    "output": 1987,
+    "total": 4004
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "Includes an extra `usage` field that was not requested; slight grammatical issue in the Interaction Design description (‘tasks completion’ should be ‘task completion’).",
+      "score": 8.5
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Remove the unnecessary `usage` field; correct the grammar in the Interaction Design description; optionally choose a more semantically aligned icon for User Experience Design (e.g., `tabler-layout-dashboard`).",
+      "score": 9.0
+    }
+  ]
+}

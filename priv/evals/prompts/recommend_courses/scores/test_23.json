@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2045,
+    "output": 645,
+    "total": 2690
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "The response fails to include “Sistema Único de Saúde (SUS)” as the top suggestion exactly as required by the expectations, despite explicit instructions.",
+      "score": 4.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None",
+      "score": 4.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Add “Sistema Único de Saúde (SUS)” as the first course with its own description and icon; reorder other courses accordingly and possibly expand to closer align with the user’s specific interest in how the SUS functions.",
+      "score": 4.0
+    }
+  ]
+}

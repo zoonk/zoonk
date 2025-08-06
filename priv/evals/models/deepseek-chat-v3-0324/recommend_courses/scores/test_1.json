@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2154,
+    "output": 760,
+    "total": 2914
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None",
+      "score": 9.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "The response omits the canonical field “Computer Science,” which is broader and often the standard suggestion for someone wanting to learn programming.",
+      "score": 8.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Replace or supplement “Programming” with “Computer Science” as a course title to provide a more established academic field; consider adding a brief note on career paths for each course.",
+      "score": 8.5
+    }
+  ]
+}

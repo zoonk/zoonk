@@ -1,0 +1,52 @@
+{
+  "input": {
+    "input": "What is the periodic table?",
+    "language": "en",
+    "system_prompt": "A user wants to learn a new subject.\nWe asked them what they would like to learn.\n\nGenerate 3 to 10 broad **course suggestions**.\n\nEach course must follow these rules:\n\n- The title must be a broad, serious-sounding name of a real academic or professional field. Titles may include 1–3 words if that’s part of the standard name of the field (e.g. \"Data Science\", \"UI Design\", \"Mechanical Engineering\"). Avoid vague or invented titles. Prefer canonical ones.\n- Never include qualifiers like \"Basics\", \"Foundations\", \"Intro\", \"Beginner\", \"Advanced\", \"Essentials\", \"101\", etc.\n- Never include \"and\", \"or\", or slashes (/) in the title.\n- Never group topics into one title. Always split them.\n- Titles should be canonical academic or professional fields (e.g. \"Physics\", \"Law\", \"Art\", \"Engineering\", \"Neuroscience\").\n- If the user input is vague (e.g. “I want to code”), map it to broader established fields (e.g. “Computer Science”, “Web Development”, “Mobile Development”).\n- Each course must also include an `english_title` field that is a string representing the `title` in English.\n\nExamples of valid course titles:\n- Computer Science\n- Data Science\n- UI Design\n- UX Design\n- Mechanical Engineering\n- Electrical Engineering\n- Cognitive Psychology\n- Artificial Intelligence\n\nIf the user input is already a valid or common course name (e.g. \"Educação Financeira\", \"Digital Transformation\", \"Leadership\"), include it as one of the suggestions — ideally the first.\nDo not replace it with more academic fields unless the original term is too vague or nonstandard.\nIf the input closely resembles a good course title, include a suggestion using the same or very similar title.\n\nEach course must also include a 1-sentence description that:\n- Clearly explains what the course covers.\n- Highlights why it may be useful or relevant to the user.\n\nExamples:\n\nInput: I want to build mobile apps\nOutput:\n- Mobile Development – Learn how to create apps for iOS and Android using tools like Swift, Kotlin, and Flutter.\n- UI Design – Explore how to design intuitive and responsive mobile interfaces.\n- Computer Science – Understand the foundational concepts behind software and app development.\n\nInput: Quero aprender a desenhar personagens\nOutput:\n- Ilustração Digital – Aprenda a desenhar personagens usando ferramentas como o Procreate e o Photoshop.\n- Design de Personagens – Descubra como criar personagens únicos, com estilo e personalidade.\n- Anatomia Artística – Entenda proporções e movimento para criar figuras humanas mais realistas.\n\nEach course must also have an `icon` field with a tabler icon to illustrate this course. For example:\n- Computer Science – icon: \"tabler-code\"\n- Data Science – icon: \"tabler-chart-pie\"\n- UI Design – icon: \"tabler-palette\"\n\nAlways add the `tabler-` prefix to the icon name.\n",
+    "user_prompt": "This is their input: \"What is the periodic table?\"\nThis means they want to learn about What is the periodic table?.\nSo, generate 3 to 10 course suggestions based on this input.\n\nWrite both the `title` and `description` fields in the same language.\nThey want to see results in this language: en.\nIf it's not English, translate the title and add it to the `english_title` field.\n",
+    "expectations": "This is a specific chemistry topic, so the top result should be a course directly related to the periodic table, not something broader like Chemistry or Science."
+  },
+  "output": {
+    "usage": {
+      "input": 780,
+      "output": 224,
+      "total": 1004
+    },
+    "courses": [
+      {
+        "description": "Study the composition, properties, and reactions of matter, including the organization of elements in the periodic table, essential for understanding the chemical world.",
+        "title": "Chemistry",
+        "icon": "tabler-atom",
+        "english_title": "Chemistry"
+      },
+      {
+        "description": "Explore the properties and behaviors of inorganic compounds, focusing on elements from the periodic table and their interactions.",
+        "title": "Inorganic Chemistry",
+        "icon": "tabler-flask-chemical",
+        "english_title": "Inorganic Chemistry"
+      },
+      {
+        "description": "Understand the structure and behavior of atoms, which underpin the organization and classification of elements in the periodic table.",
+        "title": "Atomic Physics",
+        "icon": "tabler-atom",
+        "english_title": "Atomic Physics"
+      },
+      {
+        "description": "Learn about the properties and applications of different elements and compounds, guided by their position in the periodic table to innovate new materials.",
+        "title": "Materials Science",
+        "icon": "tabler-cpu",
+        "english_title": "Materials Science"
+      },
+      {
+        "description": "Discover the physical principles that govern chemical systems, including atomic structure and the periodic trends of elements.",
+        "title": "Physical Chemistry",
+        "icon": "tabler-atom-3",
+        "english_title": "Physical Chemistry"
+      }
+    ]
+  },
+  "cost_per_100_tasks": {
+    "input": 0.031200000000000006,
+    "output": 0.035840000000000004
+  }
+}

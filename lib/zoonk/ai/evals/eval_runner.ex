@@ -4,6 +4,7 @@ defmodule Zoonk.AI.Evals.EvalRunner do
   """
   alias Zoonk.AI.Evals.EvalFiles
   alias Zoonk.AI.Evals.EvalModels
+  alias Zoonk.AI.Evals.EvalTask
 
   require Logger
 
@@ -61,18 +62,40 @@ defmodule Zoonk.AI.Evals.EvalRunner do
 
       test_case
       |> task_module.generate_object(model)
-      |> store_generate_output(prompt, eval_type, model, input, filename)
+      |> store_generated_output(prompt, eval_type, model, input, filename)
     end
   end
 
-  defp store_generate_output({:ok, response}, prompt, eval_type, model, input, filename) do
+  defp store_generated_output({:ok, response}, prompt, eval_type, model, input, filename) do
     data = %{output: response, input: input, cost_per_100_tasks: calculate_cost(response, model)}
-    EvalFiles.store_output(eval_type, model, prompt, "outputs", filename, data)
-    {:ok, data}
+
+    EvalFiles.store_results(eval_type, model, prompt, "outputs", filename, data)
+
+    Logger.info("Generating scores for #{prompt} #{eval_type} and model #{model}")
+
+    %{
+      user_prompt: input.user_prompt,
+      system_prompt: input.system_prompt,
+      expectations: input.expectations,
+      results: response
+    }
+    |> EvalTask.generate_object()
+    |> store_generated_scores(prompt, eval_type, model, filename)
   end
 
-  defp store_generate_output({:error, error}, _prompt, _eval_type, _model, _input, _filename) do
+  defp store_generated_output({:error, error}, _prompt, _eval_type, _model, _input, _filename) do
     Logger.error("Error generating output: #{inspect(error)}")
+    {:error, error}
+  end
+
+  defp store_generated_scores({:ok, response}, prompt, eval_type, model, filename) do
+    EvalFiles.store_results(eval_type, model, prompt, "scores", filename, response)
+    Logger.info("Scores stored for #{prompt} #{eval_type} and model #{model}")
+    {:ok, response}
+  end
+
+  defp store_generated_scores({:error, error}, _prompt, _eval_type, _model, _filename) do
+    Logger.error("Error generating scores: #{inspect(error)}")
     {:error, error}
   end
 

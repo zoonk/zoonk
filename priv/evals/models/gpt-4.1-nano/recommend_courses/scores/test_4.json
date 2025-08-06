@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1926,
+    "output": 1241,
+    "total": 3167
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "score": 4.0,
+      "conclusion": "1) Missing the required `require_region` field on each course suggestion, particularly failing to mark `Direito` with `require_region: true` and any global topics with `require_region: false` as per expectations.\n2) The title “Procedimentos Legais” is not a canonical broad academic or professional field but rather a specific procedural topic, violating the requirement for established field names.\n3) Did not include other relevant law specialties (e.g., Direito Constitucional, Direito Penal) or general law topics with proper regional flags as suggested."
+    },
+    {
+      "kind": "minor_errors",
+      "score": 4.0,
+      "conclusion": "1) Only provided the minimum of three course suggestions; additional related fields could increase breadth.\n2) Descriptions for \"Ciências Jurídicas\" and \"Procedimentos Legais\" overlap in content, reducing distinctiveness.\n3) The output is formatted as an Elixir map rather than JSON, which may not match the expected format."
+    },
+    {
+      "kind": "potential_improvements",
+      "score": 4.0,
+      "conclusion": "1) Add a `require_region` boolean to each course: `true` for regional law topics (e.g., Direito), `false` for global topics.\n2) Replace or supplement “Procedimentos Legais” with canonical fields such as Direito Civil, Direito Penal, Direito Constitucional.\n3) Expand the list to include other law specializations (e.g., Direito Empresarial, Direitos Humanos) with clear English titles and icons.\n4) Ensure the final output is valid JSON if required by the integration."
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2133,
+    "output": 1212,
+    "total": 3345
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None",
+      "score": 9.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "1. Missing `require_region: false` flag for the global topic “Direitos Humanos” as per expectations. 2. Inconsistent use of scale icons (tabler-scale vs tabler-balance-scale) may cause confusion. 3. The English title “Constitutional Procedural Law” is slightly awkward; “Procedural Constitutional Law” might be more natural.",
+      "score": 8.5
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "1. Add `require_region: false` to global topics like Direitos Humanos. 2. Standardize icon selection to avoid multiple scale icons. 3. Refine the English translation of “Direito Processual Constitucional” to “Procedural Constitutional Law.”",
+      "score": 8.5
+    }
+  ]
+}

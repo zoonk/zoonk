@@ -1,0 +1,64 @@
+{
+  "input": {
+    "input": "Quiero entender la Segunda Guerra Mundial",
+    "language": "es",
+    "system_prompt": "A user wants to learn a new subject.\nWe asked them what they would like to learn.\n\nGenerate 3 to 10 broad **course suggestions**.\n\nEach course must follow these rules:\n\n- The title must be a broad, serious-sounding name of a real academic or professional field. Titles may include 1–3 words if that’s part of the standard name of the field (e.g. \"Data Science\", \"UI Design\", \"Mechanical Engineering\"). Avoid vague or invented titles. Prefer canonical ones.\n- Never include qualifiers like \"Basics\", \"Foundations\", \"Intro\", \"Beginner\", \"Advanced\", \"Essentials\", \"101\", etc.\n- Never include \"and\", \"or\", or slashes (/) in the title.\n- Never group topics into one title. Always split them.\n- Titles should be canonical academic or professional fields (e.g. \"Physics\", \"Law\", \"Art\", \"Engineering\", \"Neuroscience\").\n- If the user input is vague (e.g. “I want to code”), map it to broader established fields (e.g. “Computer Science”, “Web Development”, “Mobile Development”).\n- Each course must also include an `english_title` field that is a string representing the `title` in English.\n\nExamples of valid course titles:\n- Computer Science\n- Data Science\n- UI Design\n- UX Design\n- Mechanical Engineering\n- Electrical Engineering\n- Cognitive Psychology\n- Artificial Intelligence\n\nIf the user input is already a valid or common course name (e.g. \"Educação Financeira\", \"Digital Transformation\", \"Leadership\"), include it as one of the suggestions — ideally the first.\nDo not replace it with more academic fields unless the original term is too vague or nonstandard.\nIf the input closely resembles a good course title, include a suggestion using the same or very similar title.\n\nEach course must also include a 1-sentence description that:\n- Clearly explains what the course covers.\n- Highlights why it may be useful or relevant to the user.\n\nExamples:\n\nInput: I want to build mobile apps\nOutput:\n- Mobile Development – Learn how to create apps for iOS and Android using tools like Swift, Kotlin, and Flutter.\n- UI Design – Explore how to design intuitive and responsive mobile interfaces.\n- Computer Science – Understand the foundational concepts behind software and app development.\n\nInput: Quero aprender a desenhar personagens\nOutput:\n- Ilustração Digital – Aprenda a desenhar personagens usando ferramentas como o Procreate e o Photoshop.\n- Design de Personagens – Descubra como criar personagens únicos, com estilo e personalidade.\n- Anatomia Artística – Entenda proporções e movimento para criar figuras humanas mais realistas.\n\nEach course must also have an `icon` field with a tabler icon to illustrate this course. For example:\n- Computer Science – icon: \"tabler-code\"\n- Data Science – icon: \"tabler-chart-pie\"\n- UI Design – icon: \"tabler-palette\"\n\nAlways add the `tabler-` prefix to the icon name.\n",
+    "user_prompt": "This is their input: \"Quiero entender la Segunda Guerra Mundial\"\nThis means they want to learn about Quiero entender la Segunda Guerra Mundial.\nSo, generate 3 to 10 course suggestions based on this input.\n\nWrite both the `title` and `description` fields in the same language.\nThey want to see results in this language: es.\nIf it's not English, translate the title and add it to the `english_title` field.\n",
+    "expectations": "User speaks Spanish. Include a course specifically about World War II as the top result since the user is specific about this interest. Broader history courses can follow, but World War II should be prioritized."
+  },
+  "output": {
+    "usage": {
+      "input": 784,
+      "output": 332,
+      "total": 1116
+    },
+    "courses": [
+      {
+        "description": "Estudia los eventos, procesos y cambios desde finales del siglo XVIII hasta la actualidad para comprender contextos como la Segunda Guerra Mundial.",
+        "title": "Historia Moderna",
+        "icon": "tabler-book",
+        "english_title": "Modern History"
+      },
+      {
+        "description": "Analiza los acontecimientos importantes del siglo XX, incluyendo la Segunda Guerra Mundial, para entender su impacto global.",
+        "title": "Historia Contemporánea",
+        "icon": "tabler-timeline",
+        "english_title": "Contemporary History"
+      },
+      {
+        "description": "Explora las causas, desarrollo y consecuencias del conflicto más grande del siglo XX para comprender su influencia en la sociedad actual.",
+        "title": "Estudios sobre la Segunda Guerra Mundial",
+        "icon": "tabler-shield-check",
+        "english_title": "World War II Studies"
+      },
+      {
+        "description": "Investiga las estrategias, batallas y evolución de los ejércitos, con especial énfasis en la Segunda Guerra Mundial.",
+        "title": "Historia Militar",
+        "icon": "tabler-sword",
+        "english_title": "Military History"
+      },
+      {
+        "description": "Comprende cómo los sistemas políticos, las ideologías y las relaciones internacionales influyeron en el estallido y desarrollo de la Segunda Guerra Mundial.",
+        "title": "Ciencias Políticas",
+        "icon": "tabler-world",
+        "english_title": "Political Science"
+      },
+      {
+        "description": "Estudia las interacciones entre países durante y después de la Segunda Guerra Mundial para entender la diplomacia y conflictos internacionales.",
+        "title": "Relaciones Internacionales",
+        "icon": "tabler-globe",
+        "english_title": "International Relations"
+      },
+      {
+        "description": "Analiza el impacto social de la Segunda Guerra Mundial, incluyendo cambios en la sociedad y movimientos sociales posteriores.",
+        "title": "Sociología",
+        "icon": "tabler-users",
+        "english_title": "Sociology"
+      }
+    ]
+  },
+  "cost_per_100_tasks": {
+    "input": 0.031360000000000006,
+    "output": 0.05312
+  }
+}

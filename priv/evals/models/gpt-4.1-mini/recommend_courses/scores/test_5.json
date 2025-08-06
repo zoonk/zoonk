@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2050,
+    "output": 2374,
+    "total": 4424
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "score": 3.0,
+      "conclusion": "Four of the six course titles are in English instead of Spanish, violating the explicit requirement to write titles in the user’s language and only add an english_title when translating non-English titles."
+    },
+    {
+      "kind": "minor_errors",
+      "score": 6.0,
+      "conclusion": "The icon for the Branding course is incorrect (`tabler-brand-jenkins` is a Jenkins icon, not a branding symbol); the english_title for Branding duplicates the Spanish title without providing new information."
+    },
+    {
+      "kind": "potential_improvements",
+      "score": 6.5,
+      "conclusion": "Translate all course titles into Spanish (e.g. “Gestión de Redes Sociales” instead of “Social Media Management”), choose appropriate branding-related icons (e.g. `tabler-brand-adobe`), and consider adding a course on Social Media Advertising or Paid Social Media to cover promotion strategies more directly."
+    }
+  ]
+}

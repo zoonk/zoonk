@@ -7,6 +7,7 @@ defmodule Zoonk.AI.Tasks.AITask do
   - `system_prompt/0`: Returns the system prompt for the task.
   - `user_prompt/1`: Returns the user prompt for the task.
   - `json_schema/0`: Returns the JSON schema for the task.
+  - `model/0`: Returns the default model for the task.
   - `generate_object/1`: Sends a request to the AI service using the default model.
   - `generate_object/2`: Sends a request to the AI service using a specified model.
   """
@@ -22,6 +23,18 @@ defmodule Zoonk.AI.Tasks.AITask do
   The input is a map containing the user's input and language.
   """
   @callback user_prompt(map()) :: String.t()
+
+  @doc """
+  Sets the JSON schema for the task.
+
+  It must use our schema module for composing schemas: `Zoonk.AI.AISchema`
+  """
+  @callback json_schema() :: map()
+
+  @doc """
+  Returns the default model for the task.
+  """
+  @callback model() :: String.t()
 
   @doc """
   Generates an object using the AI service
@@ -41,11 +54,4 @@ defmodule Zoonk.AI.Tasks.AITask do
   you can use the `generate_object/1` function.
   """
   @callback generate_object(map(), String.t()) :: {:ok, map()} | {:error, term()}
-
-  @doc """
-  Sets the JSON schema for the task.
-
-  It must use our schema module for composing schemas: `Zoonk.AI.AISchema`
-  """
-  @callback json_schema() :: map()
 end

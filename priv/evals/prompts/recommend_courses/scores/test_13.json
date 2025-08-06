@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2174,
+    "output": 1053,
+    "total": 3227
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "The response omits the required `require_region` field for each course, including marking `Law` with `require_region: true` and global topics like `International Law` and `Human Rights Law` with `require_region: false` as specified in Expectations.",
+      "score": 5.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None.",
+      "score": 5.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Include a `require_region` boolean field for each course, setting `true` for region-specific topics like `Law` and `false` for global/general topics like `International Law`, `Human Rights Law`, etc.",
+      "score": 6.0
+    }
+  ]
+}

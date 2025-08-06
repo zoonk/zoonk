@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2111,
+    "output": 1529,
+    "total": 3640
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "O curso 'Vulcanologia' deveria ser o primeiro resultado conforme as expectativas do usuário, mas está em segundo lugar.",
+      "score": 8.5
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Reordenar a lista para colocar 'Vulcanologia' como primeiro curso sugerido; considerar incluir cursos adicionais relacionados como 'Petrologia' ou 'Mineralogia'.",
+      "score": 8.5
+    }
+  ]
+}

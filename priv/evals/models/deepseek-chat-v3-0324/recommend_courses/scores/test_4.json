@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2124,
+    "output": 716,
+    "total": 2840
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "The response omitted the required `require_region` field for the 'Direito' course (should be true) and for 'Direitos Humanos' (should be false) as specified in the instructions.",
+      "score": 5.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None.",
+      "score": 0.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Add the `require_region` attribute to each course: set `require_region: true` for 'Direito' and `require_region: false` for global/general topics like 'Direitos Humanos'.",
+      "score": 0.0
+    }
+  ]
+}
