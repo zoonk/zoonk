@@ -61,12 +61,10 @@ defmodule ZoonkWeb.UserLanguageLive do
   end
 
   @impl Phoenix.LiveView
-  def handle_event("validate_language", params, socket) do
-    %{"user" => user_params} = params
-
+  def handle_event("validate_language", %{"user" => params}, socket) do
     language_form =
       socket.assigns.scope.user
-      |> Accounts.change_user_settings(user_params)
+      |> Accounts.change_user_settings(params)
       |> Map.put(:action, :validate)
       |> to_form()
 
@@ -75,11 +73,8 @@ defmodule ZoonkWeb.UserLanguageLive do
     {:noreply, socket}
   end
 
-  def handle_event("submit", params, socket) do
-    %{"user" => user_params} = params
-    user = socket.assigns.scope.user
-
-    case Accounts.update_user_settings(user, user_params) do
+  def handle_event("submit", %{"user" => params}, socket) do
+    case Accounts.update_user_settings(socket.assigns.scope, params) do
       {:ok, _updated_user} ->
         {:noreply, push_navigate(socket, to: ~p"/language")}
 

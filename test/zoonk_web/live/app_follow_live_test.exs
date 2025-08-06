@@ -12,9 +12,8 @@ defmodule ZoonkWeb.AppFollowLiveTest do
       |> refute_has("p", text: "@zoonkbr")
     end
 
-    test "renders follow page with Brazil links for pt locale", %{conn: conn, user: user} do
-      # Update user language to Portuguese
-      Zoonk.Accounts.update_user_settings(user, %{language: :pt})
+    test "renders follow page with Brazil links for pt locale", %{conn: conn, scope: scope} do
+      Zoonk.Accounts.update_user_settings(scope, %{language: :pt})
 
       conn
       |> visit(~p"/follow")

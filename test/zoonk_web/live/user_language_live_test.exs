@@ -27,9 +27,8 @@ defmodule ZoonkWeb.UserLanguageLiveTest do
       assert Accounts.get_user_by_email(user.email).language == :ja
     end
 
-    test "displays current language as selected", %{conn: conn, user: user} do
-      # Update user to have German as language
-      Accounts.update_user_settings(user, %{language: :de})
+    test "displays current language as selected", %{conn: conn, scope: scope} do
+      Accounts.update_user_settings(scope, %{language: :de})
 
       conn
       |> visit(~p"/language")

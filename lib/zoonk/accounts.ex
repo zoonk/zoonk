@@ -76,13 +76,13 @@ defmodule Zoonk.Accounts do
 
   ## Examples
 
-      iex> update_user_settings(%User{}, %{language: :en})
+      iex> update_user_settings(%Scope{}, %{language: :en})
       {:ok, %User{}}
 
-      iex> update_user_settings(%User{}, %{language: :invalid})
+      iex> update_user_settings(%Scope{}, %{language: :invalid})
       {:error, %Ecto.Changeset{}}
   """
-  def update_user_settings(%User{} = user, attrs) do
+  def update_user_settings(%Scope{user: user}, attrs) do
     user
     |> change_user_settings(attrs)
     |> Repo.update()
