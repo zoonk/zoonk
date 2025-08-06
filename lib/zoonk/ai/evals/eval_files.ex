@@ -327,7 +327,7 @@ defmodule Zoonk.AI.Evals.EvalFiles do
   defp sort_leaderboard_entries(leaderboard) do
     leaderboard
     |> Enum.map(&normalize_scores/1)
-    |> Enum.sort_by(& &1.median, :desc)
+    |> Enum.sort_by(fn entry -> {entry.median, entry.average} end, :desc)
   end
 
   defp format_leaderboard_rows(entries) do
