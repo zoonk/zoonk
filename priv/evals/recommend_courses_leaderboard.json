@@ -1,0 +1,10 @@
+{
+  "deepseek-chat-v3-0324": {
+    "average": 0,
+    "median": 4
+  },
+  "gpt-4.1-mini": {
+    "average": 8.1,
+    "median": 8.4
+  }
+}

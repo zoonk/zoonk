@@ -10,6 +10,15 @@ defmodule Zoonk.AI.Evals.ScoreEvals do
     |> EvalFiles.update_scores_markdown(prompt_name)
   end
 
+  @spec update_leaderboard(atom() | String.t(), String.t()) :: :ok
+  def update_leaderboard(prompt_name, model) do
+    prompt_name
+    |> EvalFiles.load_model_outputs(model)
+    |> calculate_scores()
+    |> EvalFiles.update_leaderboard_json(prompt_name, model)
+    |> EvalFiles.update_leaderboard_markdown(prompt_name)
+  end
+
   defp calculate_scores(files) when is_list(files) do
     files
     |> extract_scores()

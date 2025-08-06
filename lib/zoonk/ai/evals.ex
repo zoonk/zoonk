@@ -59,4 +59,19 @@ defmodule Zoonk.AI.Evals do
   """
   @spec calculate_score(atom() | String.t()) :: :ok
   defdelegate calculate_score(prompt_name), to: ScoreEvals
+
+  @doc """
+  Update the model leaderboard for a prompt.
+
+  This function loads all output files for a specific model and prompt,
+  calculates the average and median scores, updates the leaderboard JSON file,
+  and updates the markdown file with the sorted leaderboard.
+
+  ## Examples
+
+      iex> update_leaderboard(:recommend_courses, "deepseek-chat-v3-0324")
+      :ok
+  """
+  @spec update_leaderboard(atom() | String.t(), String.t()) :: :ok
+  defdelegate update_leaderboard(prompt_name, model), to: ScoreEvals
 end

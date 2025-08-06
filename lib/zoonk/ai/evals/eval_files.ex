@@ -75,7 +75,29 @@ defmodule Zoonk.AI.Evals.EvalFiles do
   def load_prompt_outputs(prompt) do
     prompt_name = prompt_name(prompt)
     scores_dir = Path.join(["priv", "evals", "prompts", prompt_name, "scores"])
+    load_scores_from_dir(scores_dir, "prompt: #{prompt_name}")
+  end
 
+  @doc """
+  Loads all output files for a model and prompt.
+
+  This function reads all JSON files from the outputs directory
+  for a given model and prompt and returns their parsed content.
+
+  ## Examples
+
+      iex> load_model_outputs(:recommend_courses, "deepseek-chat-v3-0324")
+      [%{"usage" => %{...}, "steps" => [...]}, ...]
+  """
+  @spec load_model_outputs(atom() | String.t(), String.t()) :: [map()]
+  def load_model_outputs(prompt, model) do
+    prompt_name = prompt_name(prompt)
+    model_name = model_name(model)
+    scores_dir = Path.join(["priv", "evals", "models", model_name, prompt_name, "scores"])
+    load_scores_from_dir(scores_dir, "model: #{model_name}, prompt: #{prompt_name}")
+  end
+
+  defp load_scores_from_dir(scores_dir, context) do
     case File.ls(scores_dir) do
       {:ok, files} ->
         files
@@ -84,7 +106,7 @@ defmodule Zoonk.AI.Evals.EvalFiles do
         |> Enum.reject(&is_nil/1)
 
       {:error, _reason} ->
-        Logger.warning("No scores directory found for prompt: #{prompt_name}")
+        Logger.warning("No scores directory found for #{context}")
         []
     end
   end
@@ -113,15 +135,61 @@ defmodule Zoonk.AI.Evals.EvalFiles do
     - **Median score**: #{median}
     """
 
+    update_markdown_section(file_path, title, content)
+  end
+
+  @doc """
+  Updates the markdown file with the model leaderboard.
+
+  This function creates or updates the leaderboard section in the markdown file
+  for a given prompt with sorted model scores.
+
+  ## Examples
+
+      iex> update_leaderboard_markdown(%{"model1" => %{average: 8.0, median: 9.0}}, :recommend_courses)
+      :ok
+  """
+  @spec update_leaderboard_markdown(map(), atom() | String.t()) :: :ok
+  def update_leaderboard_markdown(leaderboard, prompt_name) do
+    prompt_str = prompt_name(prompt_name)
+    file_path = Path.join(["priv", "evals", "#{prompt_str}.md"])
+    title = "Model Leaderboard"
+
+    leaderboard_content = generate_leaderboard_content(leaderboard)
+    update_markdown_section(file_path, title, leaderboard_content)
+  end
+
+  defp update_markdown_section(file_path, title, content) do
     maybe_create_dir(file_path)
+    section_content = content
 
     if File.exists?(file_path) do
-      update_existing_markdown(file_path, content, title)
+      update_existing_markdown(file_path, section_content, title)
     else
-      File.write!(file_path, content)
+      File.write!(file_path, section_content)
     end
+  end
 
-    :ok
+  @doc """
+  Updates the leaderboard JSON file with model scores.
+
+  This function creates or updates a JSON file in `priv/evals/{prompt_name}_leaderboard.json`
+  with the model scores.
+
+  ## Examples
+
+      iex> update_leaderboard_json(%{average: 7.76, median: 9.0}, :recommend_courses, "deepseek-chat-v3-0324")
+      %{"deepseek-chat-v3-0324" => %{average: 7.76, median: 9.0}}
+  """
+  @spec update_leaderboard_json(map(), atom() | String.t(), String.t()) :: map()
+  def update_leaderboard_json(model_scores, prompt, model) do
+    prompt_str = prompt_name(prompt)
+    path = Path.join(["priv", "evals", "#{prompt_str}_leaderboard.json"])
+
+    current = read_file_or_default!(path, %{})
+    updated = Map.put(current, model_name(model), model_scores)
+    write_json!(path, updated)
+    updated
   end
 
   defp score_file_title(prompt_name) do
@@ -158,6 +226,22 @@ defmodule Zoonk.AI.Evals.EvalFiles do
     File.write!(file_path, file_content)
 
     Logger.info("Stored results in #{file_path}")
+  end
+
+  defp read_file_or_default!(path, default) do
+    if File.exists?(path) do
+      path
+      |> File.read!()
+      |> Jason.decode!()
+    else
+      default
+    end
+  end
+
+  defp write_json!(path, data) do
+    maybe_create_dir(path)
+    File.write!(path, Jason.encode!(data, pretty: true))
+    :ok
   end
 
   defp load_score_file(scores_dir, filename) do
@@ -208,5 +292,38 @@ defmodule Zoonk.AI.Evals.EvalFiles do
     |> List.last()
     |> String.replace("/", "_")
     |> String.replace_suffix(":free", "")
+  end
+
+  defp generate_leaderboard_content(leaderboard) do
+    rows =
+      leaderboard
+      |> Enum.map(&normalize_scores/1)
+      |> Enum.sort_by(& &1.median, :desc)
+      |> Enum.map_join("\n", &format_row/1)
+
+    """
+    ## Model Leaderboard
+
+    | Model                 | Average | Median |
+    | --------------------- | ------- | ------ |
+    #{rows}
+
+    """
+  end
+
+  defp normalize_scores({model, scores}) do
+    %{
+      model: model,
+      average: get_score(scores, :average),
+      median: get_score(scores, :median)
+    }
+  end
+
+  defp get_score(scores, key) when is_map(scores) do
+    Map.get(scores, key) || Map.get(scores, to_string(key), 0)
+  end
+
+  defp format_row(%{model: model, average: avg, median: med}) do
+    "| #{String.pad_trailing(model, 21)} | #{String.pad_trailing(to_string(avg), 7)} | #{String.pad_trailing(to_string(med), 6)} |"
   end
 end
