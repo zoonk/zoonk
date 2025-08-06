@@ -7,8 +7,6 @@ defmodule ZoonkWeb.RequireOrgMemberPermissionTest do
         page <- [
           %{link: "/learn", menu: "Get Started"},
           %{link: "/my-courses", menu: "My courses"},
-          %{link: "/missions", menu: "Missions"},
-          %{link: "/purchases", menu: "Purchases"},
           %{link: "/subscription", menu: "Subscription"},
           %{link: "/language", menu: "App language"},
           %{link: "/name", menu: "Display name"},

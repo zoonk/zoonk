@@ -57,16 +57,6 @@ defmodule ZoonkWeb.CommandPaletteConfig do
         navigate: ~p"/my-courses"
       },
       %{
-        icon: "tabler-target",
-        label: dgettext("menu", "Missions"),
-        navigate: ~p"/missions"
-      },
-      %{
-        icon: "tabler-package",
-        label: dgettext("menu", "Purchases"),
-        navigate: ~p"/purchases"
-      },
-      %{
         icon: "tabler-diamond",
         label: dgettext("menu", "Subscription"),
         navigate: ~p"/subscription"

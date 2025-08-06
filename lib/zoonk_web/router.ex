@@ -61,9 +61,7 @@ defmodule ZoonkWeb.Router do
       live "/learn/:input", LearnSubjectResultsLive
 
       live "/my-courses", UserCoursesLive
-      live "/missions", UserMissionsLive
 
-      live "/purchases", UserPurchasesLive
       live "/subscription", UserSubscriptionLive
       live "/tax-id", UserTaxIdLive
 

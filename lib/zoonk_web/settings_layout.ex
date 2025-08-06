@@ -86,14 +86,6 @@ defmodule ZoonkWeb.SettingsLayout do
               />
 
               <.settings_menu_item
-                icon="tabler-package"
-                label={dgettext("menu", "Purchases")}
-                path={~p"/purchases"}
-                current_page={@current_page}
-                page={:purchases}
-              />
-
-              <.settings_menu_item
                 icon="tabler-message-circle"
                 label={dgettext("menu", "Send feedback")}
                 path={~p"/feedback"}

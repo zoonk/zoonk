@@ -97,15 +97,7 @@ defmodule ZoonkWeb.Components.Navbar do
             {dgettext("menu", "My courses")}
           </.dropdown_item>
 
-          <.dropdown_item icon="tabler-target" navigate={~p"/missions"}>
-            {dgettext("menu", "Missions")}
-          </.dropdown_item>
-
           <.dropdown_separator />
-
-          <.dropdown_item icon="tabler-package" navigate={~p"/purchases"}>
-            {dgettext("menu", "Purchases")}
-          </.dropdown_item>
 
           <.dropdown_item icon="tabler-diamond" navigate={~p"/subscription"}>
             {dgettext("menu", "Subscription")}

@@ -127,20 +127,6 @@ defmodule ZoonkWeb.Components.FAQ do
         )}
       </.faq_item>
 
-      <.faq_item question={
-        dgettext("faq", "What's the difference between a subscription and buying a course?")
-      }>
-        {dgettext(
-          "faq",
-          "When you buy a course, you pay once and get lifetime access to that course only. You won't get other courses or personalized exercises and premium features for the course you bought."
-        )}
-        <br /><br />
-        {dgettext(
-          "faq",
-          "When you subscribe, you get access to all courses, including personalized exercises and premium features, as long as your subscription is active."
-        )}
-      </.faq_item>
-
       <.faq_item question={dgettext("faq", "How do I cancel my subscription?")}>
         {dgettext(
           "faq",
@@ -205,84 +191,6 @@ defmodule ZoonkWeb.Components.FAQ do
   end
 
   @doc """
-  Renders course purchase related FAQ items.
-
-  ## Example
-
-      <.faq_courses />
-      <.faq_courses title="Course Purchases" />
-  """
-  attr :class, :string, default: ""
-  attr :title, :string, default: nil
-
-  def faq_courses(assigns) do
-    ~H"""
-    <div class={@class}>
-      <.text :if={@title} tag="h3" size={:lg} weight={:semibold} class="text-zk-foreground mb-4">
-        {@title}
-      </.text>
-      <.faq_item question={
-        dgettext("faq", "What's the difference between buying a course and a subscription?")
-      }>
-        {dgettext(
-          "faq",
-          "When you buy a course, you pay once and get lifetime access to that specific course only. You'll have access to all lessons and regular exercises for that course forever, but you won't get access to other courses, personalized exercises, or premium features."
-        )}
-        <br /><br />
-        {dgettext(
-          "faq",
-          "When you subscribe, you get access to all courses, including personalized exercises and premium features, as long as your subscription is active."
-        )}
-      </.faq_item>
-
-      <.faq_item question={dgettext("faq", "What's included when I buy a course?")}>
-        {dgettext(
-          "faq",
-          "When you buy a course, you get:"
-        )}
-        <br />
-        {dgettext("faq", "• Lifetime access to all lessons in the course")}
-        <br />
-        {dgettext("faq", "• All regular exercises: explanation, example, story, and quiz")}
-        <br />
-        {dgettext("faq", "• Any future updates to regular exercises")}
-        <br />
-        {dgettext("faq", "• Basic progress tracking")}
-        <br /><br />
-        {dgettext(
-          "faq",
-          "You will not get access to personalized exercises, premium features, or other courses on the platform."
-        )}
-      </.faq_item>
-
-      <.faq_item question={
-        dgettext("faq", "Can I get personalized exercises with a course purchase?")
-      }>
-        {dgettext(
-          "faq",
-          "No, personalized exercises are only available with a subscription. When you buy a course, you get access to all the regular exercises, which are the same for everyone. Personalized exercises are tailored to your specific interests and goals, and they're more expensive to generate, so they're only included in our subscription plans."
-        )}
-      </.faq_item>
-
-      <.faq_item question={dgettext("faq", "Can I upgrade to a subscription later?")}>
-        {dgettext(
-          "faq",
-          "Yes, you can upgrade to a subscription at any time. Your course purchase won't be credited toward the subscription cost, but you'll gain access to all other courses, personalized exercises, and premium features while your subscription is active."
-        )}
-      </.faq_item>
-
-      <.faq_item question={dgettext("faq", "What if I have technical issues with the course?")}>
-        {dgettext(
-          "faq",
-          "If you experience any technical issues, please reach out to our support team and we'll resolve any problems quickly so you can get back to learning. Feel free to send an email to %{email} with details about the issue you're facing.",
-          email: Support.support_email()
-        )}
-      </.faq_item>
-    </div>
-    """
-  end
-
-  @doc """
   Renders all FAQ sections together with section titles.
 
   ## Example
@@ -295,7 +203,6 @@ defmodule ZoonkWeb.Components.FAQ do
     ~H"""
     <div class={["flex flex-col gap-8", @class]}>
       <.faq_subscriptions title={dgettext("faq", "Subscriptions & Billing")} />
-      <.faq_courses title={dgettext("faq", "Course Purchases")} />
       <.faq_general title={dgettext("faq", "General")} />
     </div>
     """
