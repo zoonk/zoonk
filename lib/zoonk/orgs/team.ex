@@ -12,16 +12,16 @@ defmodule Zoonk.Orgs.Team do
 
   ## Fields
 
-  | Field Name | Type | Description |
-  |------------|------|-------------|
-  | `name` | `String` | Team name is visible to members. |
-  | `slug` | `String` | Slug used for the team's URL. |
-  | `description` | `String` | Description of the team. |
-  | `logo_url` | `String` | URL for the team's logo. |
-  | `org_id` | `Integer` | ID from `Zoonk.Orgs.Org` |
-  | `members` | `Zoonk.Orgs.TeamMember` | List all members associated with this team. |
-  | `inserted_at` | `DateTime` | Timestamp when the team was created. |
-  | `updated_at` | `DateTime` | Timestamp when the team was last updated. |
+  | Field Name     | Type                       | Description                                |
+  |----------------|---------------------------|---------------------------------------------|
+  | `name`         | `String`                  | Team name is visible to members.            |
+  | `slug`         | `String`                  | Slug used for the team's URL.               |
+  | `description`  | `String`                  | Description of the team.                    |
+  | `logo_url`     | `String`                  | URL for the team's logo.                    |
+  | `org_id`       | `Integer`                 | ID from `Zoonk.Orgs.Org`                    |
+  | `members`      | `Zoonk.Orgs.TeamMember`   | List all members associated with this team. |
+  | `inserted_at`  | `DateTime`                | Timestamp when the team was created.        |
+  | `updated_at`   | `DateTime`                | Timestamp when the team was last updated.   |
   """
   use Ecto.Schema
 

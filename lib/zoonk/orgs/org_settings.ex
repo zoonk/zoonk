@@ -10,12 +10,12 @@ defmodule Zoonk.Orgs.OrgSettings do
 
   ## Fields
 
-  | Field Name           | Type         | Description                                                                                                    |
-  |----------------------|--------------|----------------------------------------------------------------------------------------------------------------|
-  | `allowed_domains`    | `List`       | Domains that allow users to automatically sign in/up. If empty, admins need to manually add users.             |
-  | `org_id`             | `Integer`    | The ID of the `Zoonk.Orgs.Org` this settings belongs to.                                                       |
-  | `inserted_at`        | `DateTime`   | Timestamp when the settings were created.                                                                      |
-  | `updated_at`         | `DateTime`   | Timestamp when the settings were last updated.                                                                 |
+  | Field Name           | Type         | Description                                                                                        |
+  |----------------------|--------------|----------------------------------------------------------------------------------------------------|
+  | `allowed_domains`    | `List`       | Domains that allow users to automatically sign in/up. If empty, admins need to manually add users. |
+  | `org_id`             | `Integer`    | The ID of the `Zoonk.Orgs.Org` this settings belongs to.                                           |
+  | `inserted_at`        | `DateTime`   | Timestamp when the settings were created.                                                          |
+  | `updated_at`         | `DateTime`   | Timestamp when the settings were last updated.                                                     |
   """
   use Ecto.Schema
 

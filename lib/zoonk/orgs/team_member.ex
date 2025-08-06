@@ -7,14 +7,14 @@ defmodule Zoonk.Orgs.TeamMember do
 
   ## Fields
 
-  | Field Name | Type | Description |
-  |------------|------|-------------|
-  | `role` | `Ecto.Enum` | Role is used for permission checks. |
-  | `org_id` | `Integer` | ID from `Zoonk.Orgs.Org` |
-  | `team_id` | `Integer` | ID from `Zoonk.Orgs.Team` |
-  | `user_id` | `Integer` | ID from `Zoonk.Accounts.User` |
-  | `inserted_at` | `DateTime` | Timestamp when the member was created. |
-  | `updated_at` | `DateTime` | Timestamp when the member was last updated. |
+  | Field Name   | Type        | Description                              |
+  |------------- |------------ |------------------------------------------|
+  | `role`       | `Ecto.Enum` | Role is used for permission checks.      |
+  | `org_id`     | `Integer`   | ID from `Zoonk.Orgs.Org`                 |
+  | `team_id`    | `Integer`   | ID from `Zoonk.Orgs.Team`                |
+  | `user_id`    | `Integer`   | ID from `Zoonk.Accounts.User`            |
+  | `inserted_at`| `DateTime`  | Timestamp when the member was created.   |
+  | `updated_at` | `DateTime`  | Timestamp when the member was updated.   |
   """
   use Ecto.Schema
 
