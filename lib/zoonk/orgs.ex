@@ -54,9 +54,9 @@ defmodule Zoonk.Orgs do
       iex> create_org(%{name: "My Org"})
       {:error, %Ecto.Changeset{}}
   """
-  def create_org(attrs \\ %{}) do
+  def create_org(kind, attrs \\ %{}) do
     Multi.new()
-    |> Multi.insert(:org, Org.changeset(%Org{}, attrs))
+    |> Multi.insert(:org, Org.changeset(%Org{kind: kind}, attrs))
     |> Multi.insert(:settings, fn %{org: org} -> change_org_settings(%OrgSettings{org_id: org.id}) end)
     |> Repo.transact()
     |> Helpers.get_changeset_from_transaction(:org)

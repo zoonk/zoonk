@@ -53,7 +53,7 @@ defmodule Zoonk.OrgsTest do
     test "creates an organization with valid data" do
       attrs = valid_org_attributes()
 
-      assert {:ok, %Org{} = org} = Orgs.create_org(attrs)
+      assert {:ok, %Org{} = org} = Orgs.create_org(:team, attrs)
       assert org.display_name == attrs.display_name
       assert org.subdomain == attrs.subdomain
       assert org.kind == :team
@@ -63,7 +63,8 @@ defmodule Zoonk.OrgsTest do
       valid_attrs = %{
         display_name: "Complete Organization",
         subdomain: "complete-org",
-        kind: :school,
+        # Don't allow to override kind
+        kind: :team,
         bio: "Organization description",
         public_email: "info@example.com",
         icon_url: "https://example.com/icon.png",
@@ -71,7 +72,7 @@ defmodule Zoonk.OrgsTest do
         custom_domain: "example-org.com"
       }
 
-      assert {:ok, %Org{} = org} = Orgs.create_org(valid_attrs)
+      assert {:ok, %Org{} = org} = Orgs.create_org(:school, valid_attrs)
       assert org.display_name == "Complete Organization"
       assert org.subdomain == "complete-org"
       assert org.kind == :school
@@ -85,33 +86,35 @@ defmodule Zoonk.OrgsTest do
     test "returns error changeset when display_name length is invalid" do
       # Too short (empty)
       short_attrs = valid_org_attributes(%{display_name: ""})
-      assert {:error, changeset} = Orgs.create_org(short_attrs)
+      assert {:error, changeset} = Orgs.create_org(:team, short_attrs)
       assert %{display_name: ["can't be blank"]} = errors_on(changeset)
 
       # Too long (more than 32 chars)
       long_attrs = valid_org_attributes(%{display_name: String.duplicate("a", 33)})
-      assert {:error, changeset} = Orgs.create_org(long_attrs)
+      assert {:error, changeset} = Orgs.create_org(:team, long_attrs)
       assert %{display_name: ["should be at most 32 character(s)"]} = errors_on(changeset)
     end
 
     test "returns error changeset when subdomain length is invalid" do
       # Too short (empty)
-      assert {:error, changeset} = Orgs.create_org(%{display_name: "Test Org", subdomain: ""})
+      assert {:error, changeset} = Orgs.create_org(:team, %{display_name: "Test Org", subdomain: ""})
       assert %{subdomain: ["can't be blank"]} = errors_on(changeset)
 
       # Too long (more than 32 chars)
-      assert {:error, changeset} = Orgs.create_org(%{display_name: "Test Org", subdomain: String.duplicate("a", 33)})
+      assert {:error, changeset} =
+               Orgs.create_org(:team, %{display_name: "Test Org", subdomain: String.duplicate("a", 33)})
+
       assert %{subdomain: ["should be at most 32 character(s)"]} = errors_on(changeset)
     end
 
     test "returns error changeset when subdomain is already taken" do
       # Create an org first
       existing = valid_org_attributes()
-      assert {:ok, %Org{}} = Orgs.create_org(existing)
+      assert {:ok, %Org{}} = Orgs.create_org(:team, existing)
 
       # Try to create another org with the same subdomain
       attrs = %{display_name: "Another Org", subdomain: existing.subdomain, kind: :team}
-      assert {:error, changeset} = Orgs.create_org(attrs)
+      assert {:error, changeset} = Orgs.create_org(:team, attrs)
       assert %{subdomain: ["has already been taken"]} = errors_on(changeset)
     end
 
@@ -119,11 +122,11 @@ defmodule Zoonk.OrgsTest do
       # Create an org first with a custom domain
       custom_domain = "example-#{System.unique_integer([:positive])}.com"
       attrs1 = %{display_name: "First Org", subdomain: "first-org", kind: :team, custom_domain: custom_domain}
-      assert {:ok, %Org{}} = Orgs.create_org(attrs1)
+      assert {:ok, %Org{}} = Orgs.create_org(:team, attrs1)
 
       # Try to create another org with the same custom domain
       attrs2 = %{display_name: "Second Org", subdomain: "second-org", kind: :team, custom_domain: custom_domain}
-      assert {:error, changeset} = Orgs.create_org(attrs2)
+      assert {:error, changeset} = Orgs.create_org(:team, attrs2)
       assert %{custom_domain: ["has already been taken"]} = errors_on(changeset)
     end
 
@@ -131,9 +134,7 @@ defmodule Zoonk.OrgsTest do
       app_org_fixture()
 
       assert_raise Ecto.ConstraintError, fn ->
-        %{kind: :app}
-        |> valid_org_attributes()
-        |> Orgs.create_org()
+        Orgs.create_org(:app, valid_org_attributes())
       end
     end
 
@@ -142,14 +143,14 @@ defmodule Zoonk.OrgsTest do
 
       for kind <- valid_kinds do
         attrs = %{display_name: "#{kind} Org", subdomain: "#{kind}-#{System.unique_integer([:positive])}", kind: kind}
-        assert {:ok, %Org{} = org} = Orgs.create_org(attrs)
+        assert {:ok, %Org{} = org} = Orgs.create_org(kind, attrs)
         assert org.kind == kind
       end
     end
 
     test "adds default settings when creating an org" do
       attrs = valid_org_attributes()
-      assert {:ok, %Org{} = org} = Orgs.create_org(attrs)
+      assert {:ok, %Org{} = org} = Orgs.create_org(:team, attrs)
       scope = scope_fixture(%{org: org, role: :admin})
       assert Orgs.get_org_settings(scope).org_id == org.id
     end

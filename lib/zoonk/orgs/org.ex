@@ -80,7 +80,7 @@ defmodule Zoonk.Orgs.Org do
   @doc false
   def changeset(org, attrs) do
     org
-    |> cast(attrs, [:bio, :kind, :custom_domain, :display_name, :icon_url, :logo_url, :public_email, :subdomain])
+    |> cast(attrs, [:bio, :custom_domain, :display_name, :icon_url, :logo_url, :public_email, :subdomain])
     |> validate_required([:display_name, :subdomain])
     |> validate_length(:display_name, min: 1, max: 32)
     |> validate_length(:subdomain, min: 2, max: 32)
