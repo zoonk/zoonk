@@ -22,10 +22,13 @@ jobs:
 
     steps:
       - name: Set up Elixir
-        uses: erlef/setup-beam@75edbb82877ab10edeb12a99c3cf2f0909f3dc87
+        uses: erlef/setup-beam@033f1034211ab8be21f54cbd0547fbb06e31860f
         with:
           otp-version: "27.3.4"
           elixir-version: "1.18.4"
+
+      - name: Install inotify-tools
+        run: apt-get update && apt-get install -y inotify-tools && apt-get clean
 
       - name: Checkout code
         uses: actions/checkout@v4
