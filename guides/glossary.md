@@ -26,14 +26,24 @@ Chapters are a group of lessons. For example:
 
 ## Lessons
 
-Lessons are very small units of knowledge. They cover only a single topic for better understanding - and they have a fixed set of exercises:
+Lessons are very small units of knowledge. They cover only a single topic for better understanding and they have a fixed set of exercises:
 
-| Exercise Kind  | Description                                                                                                                                                                                         |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `:explanation` | A static exercise that provides an explanation of a topic. It provides text and visual aids to help users understand the topic. It works like swiping through social media posts.                   |
-| `:examples`    | Same format as `explanation`, but it provides examples of how to apply the knowledge in practice, showing where and when to use the knowledge.                                                      |
-| `:story`       | An interactive exercise using storytelling to show how that knowledge can be applied in real life. It has an image, a short text, and actions that the user can take to progress through the story. |
-| `:quiz`        | A quiz with multiple-choice questions to test the user's knowledge. It provides immediate feedback on the user's answers and explanations for the correct answers.                                  |
+| Exercise Kind  | Description                                                                                                           |
+| -------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `:background`  | Explains the problem that led to a topic’s creation, what came before it, and why it matters. The “why” of a concept. |
+| `:explanation` | Covers the key theoretical concepts so the topic is clearly understood. The “what” of a concept.                      |
+| `:mechanics`   | Breaks down the processes or systems that make the topic work under the hood. The “how” of a concept.                 |
+| `:examples`    | Shows practical, real-world uses or appearances of the topic. The “where” of a concept.                               |
+| `:connections` | Relates the topic to the learner’s personal interests and daily life using AI.                                        |
+| `:story`       | Puts the learner in an interactive story to experience practical situations tied to the topic.                        |
+| `:logic`       | Challenges the learner to use reasoning and critical thinking to solve a problem.                                     |
+| `:challenge`   | Presents complex, decision-based problems where choices affect resources and outcomes.                                |
+| `:simulation`  | Lets learners manipulate variables to see how actions change a system’s state over time.                              |
+
+### Notes
+
+- Most static exercises also have an interactive counterpart to enhance understanding. It works like a quiz where learners can test their knowledge and receive immediate feedback.
+- `:connections`, `:challenge`, and `:simulation` are planned but won't be included in v0.1.
 
 ## Translations
 

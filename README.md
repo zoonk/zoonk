@@ -5,7 +5,7 @@
 </picture>
 
 <p align="center">
-  White-label platform for creating interactive courses.
+  Web app for creating interactive courses using AI.
   <br />
   <br />
   <a href="https://forms.gle/jHeTqPUkw1vA7wLh8">Waitlist</a>
