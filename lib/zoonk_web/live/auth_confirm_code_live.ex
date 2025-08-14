@@ -43,7 +43,7 @@ defmodule ZoonkWeb.AuthConfirmCodeLive do
         </.button>
       </.form>
 
-      <.a navigate={get_back_link(@live_action)} class="mt-4 text-sm">
+      <.a navigate={back_link(@live_action)} class="mt-4 text-sm">
         {gettext("Back")}
       </.a>
     </.main_container>
@@ -56,7 +56,7 @@ defmodule ZoonkWeb.AuthConfirmCodeLive do
   end
 
   def mount(params, _session, socket) do
-    email = get_user_email(socket.assigns, params)
+    email = user_email(socket.assigns, params)
     form = to_form(%{"code" => "", "email" => email}, as: :user)
 
     socket =
@@ -67,10 +67,10 @@ defmodule ZoonkWeb.AuthConfirmCodeLive do
     {:ok, socket}
   end
 
-  defp get_user_email(assigns, params) when is_nil(assigns.scope.user), do: params["email"]
-  defp get_user_email(assigns, _params), do: assigns.scope.user.email
+  defp user_email(assigns, params) when is_nil(assigns.scope.user), do: params["email"]
+  defp user_email(assigns, _params), do: assigns.scope.user.email
 
-  defp get_back_link(:email), do: ~p"/email"
-  defp get_back_link(:login), do: ~p"/login"
-  defp get_back_link(:signup), do: ~p"/signup"
+  defp back_link(:email), do: ~p"/email"
+  defp back_link(:login), do: ~p"/login"
+  defp back_link(:signup), do: ~p"/signup"
 end

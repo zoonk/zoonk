@@ -42,24 +42,24 @@ defmodule Zoonk.LocationsTest do
     end
   end
 
-  describe "get_currency_symbol/1" do
+  describe "currency_symbol/1" do
     test "returns the correct symbol for valid currency codes (case-insensitive)" do
-      assert Locations.get_currency_symbol("USD") == "$"
-      assert Locations.get_currency_symbol("usd") == "$"
-      assert Locations.get_currency_symbol("BRL") == "R$"
-      assert Locations.get_currency_symbol("brl") == "R$"
-      assert Locations.get_currency_symbol("EUR") == "€"
-      assert Locations.get_currency_symbol("eur") == "€"
-      assert Locations.get_currency_symbol("JPY") == "¥"
-      assert Locations.get_currency_symbol("GBP") == "£"
+      assert Locations.currency_symbol("USD") == "$"
+      assert Locations.currency_symbol("usd") == "$"
+      assert Locations.currency_symbol("BRL") == "R$"
+      assert Locations.currency_symbol("brl") == "R$"
+      assert Locations.currency_symbol("EUR") == "€"
+      assert Locations.currency_symbol("eur") == "€"
+      assert Locations.currency_symbol("JPY") == "¥"
+      assert Locations.currency_symbol("GBP") == "£"
     end
 
     test "returns nil for invalid currency codes" do
-      assert Locations.get_currency_symbol("XXX") == nil
-      assert Locations.get_currency_symbol("INVALID") == nil
-      assert Locations.get_currency_symbol("") == nil
-      assert Locations.get_currency_symbol(nil) == nil
-      assert Locations.get_currency_symbol(123) == nil
+      assert Locations.currency_symbol("XXX") == nil
+      assert Locations.currency_symbol("INVALID") == nil
+      assert Locations.currency_symbol("") == nil
+      assert Locations.currency_symbol(nil) == nil
+      assert Locations.currency_symbol(123) == nil
     end
   end
 end

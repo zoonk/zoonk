@@ -14,13 +14,13 @@ defmodule Zoonk.Support.Social do
 
   ## Examples
 
-      iex> get_social_links("pt")
+      iex> social_links("pt")
       [%{name: "Facebook", url: "https://www.facebook.com/zoonkbr", ...}, ...]
 
-      iex> get_social_links("en")
+      iex> social_links("en")
       [%{name: "Facebook", url: "https://www.facebook.com/zoonkcom", ...}, ...]
   """
-  def get_social_links("pt") do
+  def social_links("pt") do
     [
       %{
         name: "Bluesky",
@@ -42,7 +42,7 @@ defmodule Zoonk.Support.Social do
     ]
   end
 
-  def get_social_links(_locale) do
+  def social_links(_locale) do
     [
       %{
         name: "Bluesky",

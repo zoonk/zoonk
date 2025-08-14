@@ -13,7 +13,7 @@
   - When updating a component, use `{ComponentName}` as the prefix.
   - For CI-related changes in `.github/workflows/`, use `CI:` but for changes in `.github/copilot/`, use `Copilot:`.
   - When we make changes to tests only, use the prefix `Tests:`.
-  - When the commit only adds a function, use the function arity. For example: `Orgs: Add get_org_settings/1` is better than `Orgs: Add get_org_settings function`.
+  - When the commit only adds a function, use the function arity. For example: `Orgs: Add org_settings/1` is better than `Orgs: Add org_settings function`.
 - In general:
   - Match the prefix to the area or feature being modified.
   - Use meaningful and specific names over generic ones.

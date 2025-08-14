@@ -1524,21 +1524,21 @@ defmodule Zoonk.Locations.CountryData do
 
   ## Examples
 
-      iex> get_currency_symbol("USD")
+      iex> currency_symbol("USD")
       "$"
 
-      iex> get_currency_symbol("BRL")
+      iex> currency_symbol("BRL")
       "R$"
 
-      iex> get_currency_symbol("XXX")
+      iex> currency_symbol("XXX")
       nil
   """
-  def get_currency_symbol(currency_code) when is_binary(currency_code) do
+  def currency_symbol(currency_code) when is_binary(currency_code) do
     case Map.get(@currencies_map, String.upcase(currency_code)) do
       %Currency{symbol: symbol} -> symbol
       nil -> nil
     end
   end
 
-  def get_currency_symbol(_invalid), do: nil
+  def currency_symbol(_invalid), do: nil
 end

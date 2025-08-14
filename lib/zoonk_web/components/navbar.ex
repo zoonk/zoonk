@@ -35,7 +35,7 @@ defmodule ZoonkWeb.Components.Navbar do
         :if={@user}
         kind={:icon}
         icon="tabler-home"
-        variant={get_variant(:home, @page)}
+        variant={variant(:home, @page)}
         navigate={~p"/"}
         size={:sm}
       >
@@ -45,7 +45,7 @@ defmodule ZoonkWeb.Components.Navbar do
       <.a
         kind={:button}
         icon="tabler-layout-grid"
-        variant={get_variant(:catalog, @page)}
+        variant={variant(:catalog, @page)}
         navigate={~p"/catalog"}
         size={:adaptive}
       >
@@ -62,7 +62,7 @@ defmodule ZoonkWeb.Components.Navbar do
         :if={@user}
         kind={:button}
         icon="tabler-circle-plus"
-        variant={get_variant(:start_course, @page)}
+        variant={variant(:start_course, @page)}
         navigate={~p"/learn"}
         size={:adaptive}
         class="ml-auto"
@@ -142,7 +142,7 @@ defmodule ZoonkWeb.Components.Navbar do
     """
   end
 
-  defp get_variant(menu, page) when menu == page, do: :active
-  defp get_variant(menu, _page) when menu == :start_course, do: :secondary
-  defp get_variant(_menu, _page), do: :outline
+  defp variant(menu, page) when menu == page, do: :active
+  defp variant(menu, _page) when menu == :start_course, do: :secondary
+  defp variant(_menu, _page), do: :outline
 end

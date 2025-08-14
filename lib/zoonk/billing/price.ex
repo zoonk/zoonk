@@ -123,6 +123,6 @@ defmodule Zoonk.Billing.Price do
   end
 
   defp format_price(value, currency) do
-    Locations.get_currency_symbol(currency) <> format_price(value)
+    Locations.currency_symbol(currency) <> format_price(value)
   end
 end

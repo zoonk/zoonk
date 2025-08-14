@@ -15,14 +15,14 @@ defmodule ZoonkWeb.AuthComponents do
     ~H"""
     <.a
       kind={:button}
-      icon={get_icon(@provider)}
+      icon={auth_icon(@provider)}
       variant={:outline}
       size={:md}
       class="w-full"
       icon_align={:left}
-      {get_navigate_attr(@action, @provider)}
+      {navigate_attr(@action, @provider)}
     >
-      {get_auth_label(@action, @provider)}
+      {auth_label(@action, @provider)}
     </.a>
     """
   end
@@ -37,18 +37,18 @@ defmodule ZoonkWeb.AuthComponents do
   def footer_link(assigns) do
     ~H"""
     <section
-      aria-label={get_footer_aria_title(@action)}
+      aria-label={footer_aria_title(@action)}
       class={[
         "bg-zk-background fixed bottom-0 w-full p-4 text-center sm:p-8",
         "border-zk-border border-t"
       ]}
     >
       <.text aria-hidden="true" size={:sm} variant={:secondary} class="leading-3">
-        {get_footer_title(@action)}
+        {footer_title(@action)}
       </.text>
 
-      <.a navigate={get_auth_link(@action)} class="text-sm font-semibold">
-        {get_footer_cta(@action)}
+      <.a navigate={auth_link_href(@action)} class="text-sm font-semibold">
+        {footer_cta(@action)}
       </.a>
     </section>
     """
@@ -62,7 +62,7 @@ defmodule ZoonkWeb.AuthComponents do
   def auth_title(assigns) do
     ~H"""
     <.text id="auth-title" tag="h1" size={:xxl} class="w-full pb-8">
-      {get_auth_header(@action)}
+      {auth_header(@action)}
     </.text>
     """
   end
@@ -86,8 +86,8 @@ defmodule ZoonkWeb.AuthComponents do
 
       {render_slot(@inner_block)}
 
-      <.a :if={@show_options} navigate={get_auth_link(@action)} class="mt-4 text-sm">
-        ← {get_back_label(@action)}
+      <.a :if={@show_options} navigate={auth_link_href(@action)} class="mt-4 text-sm">
+        ← {back_label(@action)}
       </.a>
 
       <section
@@ -97,37 +97,36 @@ defmodule ZoonkWeb.AuthComponents do
       >
         <.text size={:sm} variant={:secondary}>
           {dgettext("auth", "By signing up, you agree to our %{terms} and %{privacy}.",
-            terms: get_terms_link("/terms", dgettext("auth", "Terms of Use")),
-            privacy: get_terms_link("/privacy", dgettext("auth", "Privacy Policy"))
+            terms: terms_link("/terms", dgettext("auth", "Terms of Use")),
+            privacy: terms_link("/privacy", dgettext("auth", "Privacy Policy"))
           )
           |> Phoenix.HTML.raw()}
         </.text>
       </section>
 
-      <.footer_link :if={@action != :confirm} action={get_footer_action(@action)} />
+      <.footer_link :if={@action != :confirm} action={footer_action(@action)} />
     </main>
     """
   end
 
-  defp get_auth_header(:login), do: dgettext("auth", "Access your Zoonk account")
-  defp get_auth_header(:signup), do: dgettext("auth", "Start learning the skills to build amazing things")
-  defp get_auth_header(:confirm), do: dgettext("auth", "Validate your email address")
+  defp auth_header(:login), do: dgettext("auth", "Access your Zoonk account")
+  defp auth_header(:signup), do: dgettext("auth", "Start learning the skills to build amazing things")
+  defp auth_header(:confirm), do: dgettext("auth", "Validate your email address")
 
-  defp get_auth_link(:login), do: ~p"/login"
-  defp get_auth_link(:signup), do: ~p"/signup"
+  defp auth_link_href(:login), do: ~p"/login"
+  defp auth_link_href(:signup), do: ~p"/signup"
 
-  defp get_auth_link(:login, :email), do: ~p"/login/email"
-  defp get_auth_link(:signup, :email), do: ~p"/signup/email"
-  defp get_auth_link(_action, provider), do: ~p"/auth/#{provider}"
+  defp auth_link_href(:login, :email), do: ~p"/login/email"
+  defp auth_link_href(:signup, :email), do: ~p"/signup/email"
+  defp auth_link_href(_action, provider), do: ~p"/auth/#{provider}"
 
-  defp get_auth_label(:login, :email), do: dgettext("auth", "Login with Email")
-  defp get_auth_label(:signup, :email), do: dgettext("auth", "Sign up with Email")
+  defp auth_label(:login, :email), do: dgettext("auth", "Login with Email")
+  defp auth_label(:signup, :email), do: dgettext("auth", "Sign up with Email")
 
-  defp get_auth_label(_action, provider),
-    do: dgettext("auth", "Continue with %{provider}", provider: provider_name(provider))
+  defp auth_label(_action, provider), do: dgettext("auth", "Continue with %{provider}", provider: provider_name(provider))
 
-  defp get_back_label(:login), do: dgettext("auth", "Other login options")
-  defp get_back_label(:signup), do: dgettext("auth", "Other sign up options")
+  defp back_label(:login), do: dgettext("auth", "Other login options")
+  defp back_label(:signup), do: dgettext("auth", "Other sign up options")
 
   defp provider_name(provider) do
     provider
@@ -135,31 +134,31 @@ defmodule ZoonkWeb.AuthComponents do
     |> String.capitalize()
   end
 
-  defp get_icon(:apple), do: "tabler-brand-apple-filled"
-  defp get_icon(:github), do: "tabler-brand-github-filled"
-  defp get_icon(:google), do: "tabler-brand-google-filled"
-  defp get_icon(:email), do: "tabler-mail-filled"
+  defp auth_icon(:apple), do: "tabler-brand-apple-filled"
+  defp auth_icon(:github), do: "tabler-brand-github-filled"
+  defp auth_icon(:google), do: "tabler-brand-google-filled"
+  defp auth_icon(:email), do: "tabler-mail-filled"
 
   # We show the opposite action in the footer
   # If a user is in the login page, we show the signup link
   # If a user is in the signup page, we show the login link
   # So, we need to get the opposite action
-  defp get_footer_action(:login), do: :signup
-  defp get_footer_action(:signup), do: :login
+  defp footer_action(:login), do: :signup
+  defp footer_action(:signup), do: :login
 
-  defp get_footer_aria_title(:login), do: dgettext("auth", "Login to your account")
-  defp get_footer_aria_title(:signup), do: dgettext("auth", "Create an account")
+  defp footer_aria_title(:login), do: dgettext("auth", "Login to your account")
+  defp footer_aria_title(:signup), do: dgettext("auth", "Create an account")
 
-  defp get_footer_title(:login), do: dgettext("auth", "Already have an account?")
-  defp get_footer_title(:signup), do: dgettext("auth", "Don't have an account?")
+  defp footer_title(:login), do: dgettext("auth", "Already have an account?")
+  defp footer_title(:signup), do: dgettext("auth", "Don't have an account?")
 
-  defp get_footer_cta(:login), do: dgettext("auth", "Login")
-  defp get_footer_cta(:signup), do: dgettext("auth", "Sign up")
+  defp footer_cta(:login), do: dgettext("auth", "Login")
+  defp footer_cta(:signup), do: dgettext("auth", "Sign up")
 
-  defp get_terms_link(link, label) do
+  defp terms_link(link, label) do
     "<a href='#{link}' class=\"underline\">#{label}</a>"
   end
 
-  defp get_navigate_attr(action, :email), do: [navigate: get_auth_link(action, :email)]
-  defp get_navigate_attr(action, provider), do: [href: get_auth_link(action, provider)]
+  defp navigate_attr(action, :email), do: [navigate: auth_link_href(action, :email)]
+  defp navigate_attr(action, provider), do: [href: auth_link_href(action, provider)]
 end

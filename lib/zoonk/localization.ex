@@ -61,13 +61,13 @@ defmodule Zoonk.Localization do
 
   ## Example
 
-      iex> get_default_language(:atom)
+      iex> default_language(:atom)
       :en
 
-      iex> get_default_language(:string)
+      iex> default_language(:string)
       "en"
 
   """
-  def get_default_language(:atom), do: String.to_existing_atom(@default_language)
-  def get_default_language(:string), do: @default_language
+  def default_language(:atom), do: String.to_existing_atom(@default_language)
+  def default_language(:string), do: @default_language
 end

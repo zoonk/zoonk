@@ -79,7 +79,7 @@ defmodule ZoonkWeb.UserSubscriptionForm do
   defp price_value([], _plan, _interval), do: "$0"
 
   defp price_value([%Price{currency: currency} | _rest], :free, _interval) do
-    symbol = Locations.get_currency_symbol(currency) || "$"
+    symbol = Locations.currency_symbol(currency) || "$"
     "#{symbol}0"
   end
 

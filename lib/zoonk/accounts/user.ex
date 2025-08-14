@@ -39,7 +39,7 @@ defmodule Zoonk.Accounts.User do
 
     field :language, Ecto.Enum,
       values: Localization.list_languages(:atom),
-      default: Localization.get_default_language(:atom)
+      default: Localization.default_language(:atom)
 
     field :confirmed_at, :utc_datetime_usec
     field :authenticated_at, :utc_datetime_usec, virtual: true
@@ -139,7 +139,7 @@ defmodule Zoonk.Accounts.User do
 
   # some orgs require that only emails from a specific domain are allowed to sign up
   defp maybe_validate_email_domain(changeset, allowed_domains) do
-    domain = get_domain_from_email(get_field(changeset, :email))
+    domain = extract_domain_from_email(get_field(changeset, :email))
     allowed? = Enum.member?(allowed_domains, domain)
     maybe_validate_email_domain(changeset, domain, allowed?)
   end
@@ -158,7 +158,7 @@ defmodule Zoonk.Accounts.User do
     )
   end
 
-  defp get_domain_from_email(email) do
+  defp extract_domain_from_email(email) do
     email
     |> String.split("@")
     |> List.last()

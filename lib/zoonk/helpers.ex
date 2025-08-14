@@ -8,14 +8,14 @@ defmodule Zoonk.Helpers do
 
   ## Examples
 
-      iex> get_changeset_from_transaction({:ok, %{user: user}}, :user)
+      iex> changeset_from_transaction({:ok, %{user: user}}, :user)
       {:ok, %User{}}
 
-      iex> get_changeset_from_transaction({:error, :user, changeset, _}, :user)
+      iex> changeset_from_transaction({:error, :user, changeset, _}, :user)
       {:error, %Ecto.Changeset{}}
   """
-  def get_changeset_from_transaction({:ok, response}, key), do: {:ok, response[key]}
-  def get_changeset_from_transaction({:error, key, changeset, _error}, key), do: {:error, changeset}
+  def changeset_from_transaction({:ok, response}, key), do: {:ok, response[key]}
+  def changeset_from_transaction({:error, key, changeset, _error}, key), do: {:error, changeset}
 
   @doc """
   Remove accents from a string.

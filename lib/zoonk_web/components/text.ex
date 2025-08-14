@@ -42,12 +42,7 @@ defmodule ZoonkWeb.Components.Text do
     <label
       id={@id}
       for={@for}
-      class={[
-        get_size_class(@size),
-        get_variant_class(@variant),
-        get_weight_class(@weight, @size),
-        @class
-      ]}
+      class={[size_class(@size), variant_class(@variant), weight_class(@weight, @size), @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -60,12 +55,7 @@ defmodule ZoonkWeb.Components.Text do
     <.dynamic_tag
       tag_name={@tag}
       id={@id}
-      class={[
-        get_size_class(@size),
-        get_variant_class(@variant),
-        get_weight_class(@weight, @size),
-        @class
-      ]}
+      class={[size_class(@size), variant_class(@variant), weight_class(@weight, @size), @class]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -73,23 +63,23 @@ defmodule ZoonkWeb.Components.Text do
     """
   end
 
-  defp get_size_class(:xxl), do: "text-2xl font-semibold"
-  defp get_size_class(:xl), do: "text-xl font-medium"
-  defp get_size_class(:lg), do: "text-lg"
-  defp get_size_class(:md), do: "text-base"
-  defp get_size_class(:sm), do: "text-sm"
-  defp get_size_class(:xs), do: "text-xs"
+  defp size_class(:xxl), do: "text-2xl font-semibold"
+  defp size_class(:xl), do: "text-xl font-medium"
+  defp size_class(:lg), do: "text-lg"
+  defp size_class(:md), do: "text-base"
+  defp size_class(:sm), do: "text-sm"
+  defp size_class(:xs), do: "text-xs"
 
-  defp get_variant_class(:primary), do: "text-zk-foreground"
-  defp get_variant_class(:secondary), do: "text-zk-muted-foreground"
-  defp get_variant_class(:destructive), do: "text-zk-destructive"
-  defp get_variant_class(:custom), do: nil
+  defp variant_class(:primary), do: "text-zk-foreground"
+  defp variant_class(:secondary), do: "text-zk-muted-foreground"
+  defp variant_class(:destructive), do: "text-zk-destructive"
+  defp variant_class(:custom), do: nil
 
-  defp get_weight_class(:bold, _size), do: "font-bold"
-  defp get_weight_class(:semibold, _size), do: "font-semibold"
-  defp get_weight_class(:medium, _size), do: "font-medium"
-  defp get_weight_class(:normal, _size), do: "font-normal"
-  defp get_weight_class(nil, :xxl), do: "font-semibold"
-  defp get_weight_class(nil, :xl), do: "font-medium"
-  defp get_weight_class(nil, _size), do: "font-normal"
+  defp weight_class(:bold, _size), do: "font-bold"
+  defp weight_class(:semibold, _size), do: "font-semibold"
+  defp weight_class(:medium, _size), do: "font-medium"
+  defp weight_class(:normal, _size), do: "font-normal"
+  defp weight_class(nil, :xxl), do: "font-semibold"
+  defp weight_class(nil, :xl), do: "font-medium"
+  defp weight_class(nil, _size), do: "font-normal"
 end

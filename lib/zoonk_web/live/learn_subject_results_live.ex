@@ -86,7 +86,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
                 name={recommendation.icon}
                 default="tabler-book"
                 variant={:filled}
-                class={["size-8", get_color(index)]}
+                class={["size-8", icon_color(index)]}
               />
             </div>
           </a>
@@ -110,7 +110,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
     {:ok, socket}
   end
 
-  defp get_color(index) do
+  defp icon_color(index) do
     @colors
     |> Enum.shuffle()
     |> Enum.at(index)

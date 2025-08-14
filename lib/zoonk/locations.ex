@@ -42,17 +42,17 @@ defmodule Zoonk.Locations do
 
   ## Examples
 
-      iex> get_currency_symbol("USD")
+      iex> currency_symbol("USD")
       "$"
 
-      iex> get_currency_symbol("BRL")
+      iex> currency_symbol("BRL")
       "R$"
 
-      iex> get_currency_symbol("EUR")
+      iex> currency_symbol("EUR")
       "€"
 
-      iex> get_currency_symbol("XXX")
+      iex> currency_symbol("XXX")
       nil
   """
-  defdelegate get_currency_symbol(currency_code), to: CountryData
+  defdelegate currency_symbol(currency_code), to: CountryData
 end

@@ -16,7 +16,7 @@ defmodule Zoonk.AIFixtures do
   def openai_stub(data, opts \\ []) do
     error = Keyword.get(opts, :error, nil)
     refusal = Keyword.get(opts, :refusal, nil)
-    output = get_openai_output(data, refusal)
+    output = openai_output(data, refusal)
 
     Req.Test.stub(:openai_client, fn conn ->
       Req.Test.json(conn, %{
@@ -32,7 +32,7 @@ defmodule Zoonk.AIFixtures do
 
   def togetherai_stub(data, opts \\ []) do
     error = Keyword.get(opts, :error, nil)
-    output = get_togetherai_output(data)
+    output = togetherai_output(data)
 
     if error do
       Req.Test.stub(:togetherai_client, fn conn ->
@@ -54,7 +54,7 @@ defmodule Zoonk.AIFixtures do
 
   def gemini_stub(data, opts \\ []) do
     error = Keyword.get(opts, :error, nil)
-    output = get_gemini_output(data)
+    output = gemini_output(data)
 
     if error do
       Req.Test.stub(:gemini_client, fn conn ->
@@ -76,7 +76,7 @@ defmodule Zoonk.AIFixtures do
 
   def openrouter_stub(data, opts \\ []) do
     error = Keyword.get(opts, :error, nil)
-    output = get_openrouter_output(data)
+    output = openrouter_output(data)
 
     if error do
       Req.Test.stub(:openrouter_client, fn conn ->
@@ -108,21 +108,21 @@ defmodule Zoonk.AIFixtures do
     data
   end
 
-  defp get_openai_output(data, nil) do
+  defp openai_output(data, nil) do
     %{
       "type" => "output_text",
       "text" => JSON.encode!(data)
     }
   end
 
-  defp get_openai_output(_data, refusal) do
+  defp openai_output(_data, refusal) do
     %{
       "type" => "refusal",
       "refusal" => refusal
     }
   end
 
-  defp get_togetherai_output(data) do
+  defp togetherai_output(data) do
     %{
       "message" => %{
         "role" => "assistant",
@@ -131,7 +131,7 @@ defmodule Zoonk.AIFixtures do
     }
   end
 
-  defp get_gemini_output(data) do
+  defp gemini_output(data) do
     %{
       "content" => %{
         "parts" => [%{"text" => JSON.encode!(data)}]
@@ -139,7 +139,7 @@ defmodule Zoonk.AIFixtures do
     }
   end
 
-  defp get_openrouter_output(data) do
+  defp openrouter_output(data) do
     %{
       "message" => %{
         "role" => "assistant",

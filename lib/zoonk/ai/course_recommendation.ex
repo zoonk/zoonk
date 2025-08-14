@@ -27,7 +27,7 @@ defmodule Zoonk.AI.CourseRecommendation do
 
     field :language, Ecto.Enum,
       values: Localization.list_languages(:atom),
-      default: Localization.get_default_language(:atom)
+      default: Localization.default_language(:atom)
 
     embeds_many :courses, Course do
       field :title, :string

@@ -173,7 +173,7 @@ defmodule Zoonk.Accounts do
 
   """
   def signup_user(attrs, %Scope{} = scope) do
-    opts = [allowed_domains: get_allowed_domains(scope.org)]
+    opts = [allowed_domains: allowed_domains(scope.org)]
     changeset = User.signup_changeset(%User{}, attrs, opts)
 
     Ecto.Multi.new()
@@ -181,14 +181,14 @@ defmodule Zoonk.Accounts do
     |> Ecto.Multi.insert(:profile, &build_initial_user_profile/1)
     |> Ecto.Multi.insert(:org_member, &build_org_member_changeset(&1, scope.org))
     |> Repo.transact()
-    |> Helpers.get_changeset_from_transaction(:user)
+    |> Helpers.changeset_from_transaction(:user)
   end
 
   # `:app` and `:creator` orgs allow any domains to sign up
-  defp get_allowed_domains(%Org{kind: kind}) when kind in [:app, :creator], do: nil
+  defp allowed_domains(%Org{kind: kind}) when kind in [:app, :creator], do: nil
 
   # other orgs may require specific domains to sign up
-  defp get_allowed_domains(%Org{id: id}) do
+  defp allowed_domains(%Org{id: id}) do
     OrgSettings
     |> Repo.get_by!(org_id: id)
     |> Map.get(:allowed_domains)
@@ -433,20 +433,19 @@ defmodule Zoonk.Accounts do
   # If the user exists, then link the provider
   defp login_with_provider(auth, _scope, _lang, %User{} = user) do
     %{user: user}
-    |> user_provider_changeset(get_provider_attrs(auth))
+    |> user_provider_changeset(provider_attrs(auth))
     |> Repo.insert(on_conflict: :nothing)
   end
 
   # Create a new user and link the provider
   defp signup_user_with_provider(auth, %Scope{} = scope, language) do
     user_attrs = %{email: auth["email"], language: language}
-    provider_attrs = get_provider_attrs(auth)
+    provider_attrs = provider_attrs(auth)
     profile_opts = [display_name: auth["name"], picture_url: auth["picture"], username: auth["preferred_username"]]
-    allowed_domains = get_allowed_domains(scope.org)
 
     user_changeset =
       %User{}
-      |> User.signup_changeset(user_attrs, allowed_domains: allowed_domains)
+      |> User.signup_changeset(user_attrs, allowed_domains: allowed_domains(scope.org))
       |> User.confirm_changeset()
 
     Ecto.Multi.new()
@@ -455,14 +454,14 @@ defmodule Zoonk.Accounts do
     |> Ecto.Multi.insert(:provider, &user_provider_changeset(&1, provider_attrs))
     |> Ecto.Multi.insert(:org_member, &build_org_member_changeset(&1, scope.org))
     |> Repo.transact()
-    |> Helpers.get_changeset_from_transaction(:user)
+    |> Helpers.changeset_from_transaction(:user)
   end
 
   defp user_provider_changeset(%{user: %User{} = user}, provider_attrs) do
     UserProvider.changeset(%UserProvider{user_id: user.id}, provider_attrs)
   end
 
-  defp get_provider_attrs(auth) do
+  defp provider_attrs(auth) do
     %{provider: auth["provider"], provider_uid: to_string(auth["sub"])}
   end
 
@@ -470,12 +469,12 @@ defmodule Zoonk.Accounts do
     %UserProfile{
       display_name: opts[:display_name],
       picture_url: opts[:picture_url],
-      username: get_username_from_email(opts[:username] || email),
+      username: username_from_email(opts[:username] || email),
       user_id: user_id
     }
   end
 
-  defp get_username_from_email(email) do
+  defp username_from_email(email) do
     username =
       email
       |> String.split("@")

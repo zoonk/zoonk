@@ -75,7 +75,7 @@ defmodule ZoonkWeb.Language do
   defp get_browser_language(language, true), do: language
 
   # Fallback to the default language if the browser's preferred language is not supported.
-  defp get_browser_language(_lang, false), do: Localization.get_default_language(:string)
+  defp get_browser_language(_lang, false), do: Localization.default_language(:string)
 
   # Extract the primary language from the `accept-language` header.
   defp extract_primary_language(%Plug.Conn{} = conn) do
@@ -90,7 +90,7 @@ defmodule ZoonkWeb.Language do
   end
 
   # Fallback to the default language if the `accept-language` header is not present.
-  defp extract_primary_language([]), do: Localization.get_default_language(:string)
+  defp extract_primary_language([]), do: Localization.default_language(:string)
 
   defp primary_language_supported?(language) do
     :string

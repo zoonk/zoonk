@@ -59,7 +59,7 @@ defmodule Zoonk.Orgs do
     |> Multi.insert(:org, Org.changeset(%Org{kind: kind}, attrs))
     |> Multi.insert(:settings, fn %{org: org} -> change_org_settings(%OrgSettings{org_id: org.id}) end)
     |> Repo.transact()
-    |> Helpers.get_changeset_from_transaction(:org)
+    |> Helpers.changeset_from_transaction(:org)
   end
 
   @doc """

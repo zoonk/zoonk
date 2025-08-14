@@ -26,7 +26,7 @@ defmodule Zoonk.Catalog.ChapterTranslation do
   schema "chapter_translations" do
     field :language, Ecto.Enum,
       values: Localization.list_languages(:atom),
-      default: Localization.get_default_language(:atom)
+      default: Localization.default_language(:atom)
 
     field :title, :string
     field :description, :string
