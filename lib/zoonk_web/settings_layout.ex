@@ -78,6 +78,14 @@ defmodule ZoonkWeb.SettingsLayout do
               />
 
               <.settings_menu_item
+                icon="tabler-heart"
+                label={dgettext("menu", "Your interests")}
+                path={~p"/interests"}
+                current_page={@current_page}
+                page={:interests}
+              />
+
+              <.settings_menu_item
                 icon="tabler-diamond"
                 label={dgettext("menu", "Subscription")}
                 path={~p"/subscription"}

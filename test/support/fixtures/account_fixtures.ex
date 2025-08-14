@@ -8,6 +8,7 @@ defmodule Zoonk.AccountFixtures do
   import Zoonk.OrgFixtures
 
   alias Zoonk.Accounts
+  alias Zoonk.Accounts.UserInterests
   alias Zoonk.Accounts.UserProfile
   alias Zoonk.Accounts.UserToken
   alias Zoonk.Repo
@@ -29,6 +30,31 @@ defmodule Zoonk.AccountFixtures do
     attrs
     |> Map.delete(:user)
     |> Enum.into(%{username: unique_user_username(), user_id: user.id})
+  end
+
+  def valid_user_interests_attributes(attrs \\ %{}) do
+    Enum.into(attrs, %{
+      interests: "programming, music",
+      learning_struggles: "math, focus",
+      work_field: "software engineering",
+      location: "New York",
+      favorite_media: "Star Trek, The Office",
+      hobbies: "gaming, reading",
+      preferred_examples: "practical real-world applications"
+    })
+  end
+
+  def user_interests_fixture(attrs \\ %{}) do
+    user = Map.get_lazy(attrs, :user, fn -> user_fixture() end)
+
+    attrs =
+      attrs
+      |> Map.delete(:user)
+      |> valid_user_interests_attributes()
+
+    %UserInterests{user_id: user.id}
+    |> UserInterests.changeset(attrs)
+    |> Repo.insert!()
   end
 
   def unconfirmed_user_fixture(attrs \\ %{}) do

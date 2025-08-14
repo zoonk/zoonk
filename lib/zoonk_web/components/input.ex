@@ -198,7 +198,7 @@ defmodule ZoonkWeb.Components.Input do
       tag="label"
       size={:sm}
       for={@for}
-      class={["font-semibold leading-8", @hide_label && "sr-only"]}
+      class={["inline-block pb-2 font-semibold", @hide_label && "sr-only"]}
     >
       {render_slot(@inner_block)}
     </.text>

@@ -11,6 +11,7 @@ defmodule Zoonk.Accounts do
   import Ecto.Query, warn: false
 
   alias Zoonk.Accounts.User
+  alias Zoonk.Accounts.UserInterests
   alias Zoonk.Accounts.UserNotifier
   alias Zoonk.Accounts.UserProfile
   alias Zoonk.Accounts.UserProvider
@@ -86,6 +87,58 @@ defmodule Zoonk.Accounts do
     user
     |> change_user_settings(attrs)
     |> Repo.update()
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking a user's interests changes.
+
+  ## Examples
+
+      iex> change_user_interests(%UserInterests{}, %{interests: ["programming", "music"]})
+      %Ecto.Changeset{data: %UserInterests{}}
+  """
+  def change_user_interests(%UserInterests{} = user_interests, attrs \\ %{}) do
+    UserInterests.changeset(user_interests, attrs)
+  end
+
+  @doc """
+  Gets a user's interests record.
+
+  ## Examples
+
+      iex> get_user_interests(%Scope{user: %User{id: 1}})
+      %UserInterests{}
+
+      iex> get_user_interests(%Scope{user: %User{id: 999}})
+      nil
+  """
+  def get_user_interests(%Scope{user: user}) do
+    Repo.get_by(UserInterests, user_id: user.id)
+  end
+
+  @doc """
+  Creates or updates a user's interests.
+
+  ## Examples
+
+      iex> upsert_user_interests(%Scope{}, %{interests: ["programming"]})
+      {:ok, %UserInterests{}}
+
+      iex> upsert_user_interests(%Scope{}, %{interests: invalid_data})
+      {:error, %Ecto.Changeset{}}
+  """
+  def upsert_user_interests(%Scope{user: user}, attrs) do
+    case get_user_interests(%Scope{user: user}) do
+      nil ->
+        %UserInterests{user_id: user.id}
+        |> change_user_interests(attrs)
+        |> Repo.insert()
+
+      existing_interests ->
+        existing_interests
+        |> change_user_interests(attrs)
+        |> Repo.update()
+    end
   end
 
   @doc """

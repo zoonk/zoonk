@@ -26,6 +26,7 @@ defmodule Zoonk.Accounts.User do
 
   import Ecto.Changeset
 
+  alias Zoonk.Accounts.UserInterests
   alias Zoonk.Accounts.UserProfile
   alias Zoonk.Accounts.UserProvider
   alias Zoonk.Billing.BillingAccount
@@ -44,6 +45,7 @@ defmodule Zoonk.Accounts.User do
     field :authenticated_at, :utc_datetime_usec, virtual: true
 
     has_one :profile, UserProfile
+    has_one :interests, UserInterests
     has_one :billing_account, BillingAccount
     has_many :providers, UserProvider
 

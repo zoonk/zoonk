@@ -68,6 +68,7 @@ defmodule ZoonkWeb.Router do
       live "/language", UserLanguageLive
       live "/name", UserNameLive
       live "/email", UserEmailLive
+      live "/interests", UserInterestsLive
 
       live "/feedback", AppFeedbackLive
       live "/support", AppSupportLive
