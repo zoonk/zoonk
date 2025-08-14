@@ -42,18 +42,16 @@ defmodule Zoonk.AI.Tasks.SuggestCourses do
 
   @impl AITask
   def json_schema do
-    suggestions = %{
-      suggestions: [
-        %{
-          title: "string",
-          description: "string",
-          english_title: "string",
-          icon: "string"
-        }
-      ]
-    }
+    AISchema.add_field(%AISchema{name: "suggest_courses"}, %{suggestions: [suggestions_schema()]})
+  end
 
-    AISchema.add_field(%AISchema{name: "suggest_courses"}, suggestions)
+  defp suggestions_schema do
+    %{
+      title: "string",
+      description: "string",
+      english_title: "string",
+      icon: "string"
+    }
   end
 
   @impl AITask
