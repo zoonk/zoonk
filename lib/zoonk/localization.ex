@@ -5,7 +5,6 @@ defmodule Zoonk.Localization do
   This module centralizes all language-related settings used throughout
   the application, ensuring consistency and ease of maintenance.
   """
-
   @supported_languages [
     en: "English",
     ar: "العربية",
@@ -28,6 +27,10 @@ defmodule Zoonk.Localization do
     zh_Hans: "简体中文",
     zh_Hant: "繁體中文"
   ]
+
+  @languages_map Map.new(@supported_languages, fn {key, value} ->
+                   {String.upcase(Atom.to_string(key)), value}
+                 end)
 
   @default_language "en"
 
@@ -70,4 +73,29 @@ defmodule Zoonk.Localization do
   """
   def default_language(:atom), do: String.to_existing_atom(@default_language)
   def default_language(:string), do: @default_language
+
+  @doc """
+  Returns the name of a language given its code.
+
+  ## Example
+      iex> language_name(:en)
+      "English"
+
+      iex> language_name("es")
+      "Español"
+
+      iex> language_name("PT")
+      "Português"
+
+      iex> language_name("Unknown")
+      "Unknown Language"
+
+  """
+  def language_name(code) when is_binary(code) do
+    Map.get(@languages_map, String.upcase(code), "Unknown Language")
+  end
+
+  def language_name(code) when is_atom(code) do
+    language_name(Atom.to_string(code))
+  end
 end

@@ -38,4 +38,28 @@ defmodule Zoonk.LocalizationTest do
       assert Localization.default_language(:string) == "en"
     end
   end
+
+  describe "language_name/1" do
+    test "returns language name for atom code" do
+      assert Localization.language_name(:en) == "English"
+      assert Localization.language_name(:zh_Hans) == "简体中文"
+      assert Localization.language_name(:zh_Hant) == "繁體中文"
+    end
+
+    test "returns language name for string code (lowercase)" do
+      assert Localization.language_name("en") == "English"
+      assert Localization.language_name("zh_Hans") == "简体中文"
+      assert Localization.language_name("zh_Hant") == "繁體中文"
+    end
+
+    test "returns language name for string code (uppercase)" do
+      assert Localization.language_name("PT") == "Português"
+      assert Localization.language_name("ES") == "Español"
+    end
+
+    test "returns 'Unknown Language' for unknown atom or string code" do
+      assert Localization.language_name("unknown") == "Unknown Language"
+      assert Localization.language_name("ZZ") == "Unknown Language"
+    end
+  end
 end
