@@ -126,6 +126,27 @@ defmodule Zoonk.Helpers do
   def to_lowercase_existing_atom(non_binary), do: to_existing_atom(non_binary)
 
   @doc """
+  Converts a string to an uppercase existing atom.
+
+  Returns `nil` if the atom doesn't exist instead of raising an error.
+
+  ## Examples
+
+      iex> to_uppercase_existing_atom("catalog")
+      :CATALOG
+
+      iex> to_uppercase_existing_atom("non_existent_atom")
+      nil
+  """
+  def to_uppercase_existing_atom(string) when is_binary(string) do
+    string
+    |> String.upcase()
+    |> to_existing_atom()
+  end
+
+  def to_uppercase_existing_atom(non_binary), do: to_existing_atom(non_binary)
+
+  @doc """
   Conditionally puts a key-value pair into a map.
 
   Returns the map unchanged if the value is `nil` or an empty string.

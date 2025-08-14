@@ -182,4 +182,35 @@ defmodule Zoonk.HelpersTest do
       assert to_lowercase_existing_atom("AccOuNtS") == :accounts
     end
   end
+
+  describe "to_uppercase_existing_atom/1" do
+    test "converts lowercase string to existing atom" do
+      assert to_uppercase_existing_atom("catalog") == :CATALOG
+      assert to_uppercase_existing_atom("accounts") == :ACCOUNTS
+    end
+
+    test "converts uppercase string to existing atom" do
+      assert to_uppercase_existing_atom("CATALOG") == :CATALOG
+      assert to_uppercase_existing_atom("ACCOUNTS") == :ACCOUNTS
+    end
+
+    test "returns nil for non-existent atoms" do
+      assert to_uppercase_existing_atom("NON_EXISTENT_ATOM") == nil
+      assert to_uppercase_existing_atom("non_existent_atom") == nil
+    end
+
+    test "returns nil when the input is nil" do
+      assert to_uppercase_existing_atom(nil) == nil
+    end
+
+    test "returns the same atom when passing an atom" do
+      assert to_uppercase_existing_atom(:CATALOG) == :CATALOG
+      assert to_uppercase_existing_atom(:ACCOUNTS) == :ACCOUNTS
+    end
+
+    test "converts mixed-case string to existing atom" do
+      assert to_uppercase_existing_atom("CaTaLoG") == :CATALOG
+      assert to_uppercase_existing_atom("AccOuNtS") == :ACCOUNTS
+    end
+  end
 end
