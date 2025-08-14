@@ -15,7 +15,6 @@ defmodule Zoonk.Catalog.Category do
     :economics,
     :education,
     :engineering,
-    :exams,
     :geography,
     :health,
     :history,
