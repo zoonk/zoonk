@@ -105,6 +105,27 @@ defmodule Zoonk.Helpers do
   end
 
   @doc """
+  Converts a string to a lowercase existing atom.
+
+  Returns `nil` if the atom doesn't exist instead of raising an error.
+
+  ## Examples
+
+      iex> to_lowercase_existing_atom("CATALOG")
+      :catalog
+
+      iex> to_lowercase_existing_atom("non_existent_atom")
+      nil
+  """
+  def to_lowercase_existing_atom(string) when is_binary(string) do
+    string
+    |> String.downcase()
+    |> to_existing_atom()
+  end
+
+  def to_lowercase_existing_atom(non_binary), do: to_existing_atom(non_binary)
+
+  @doc """
   Conditionally puts a key-value pair into a map.
 
   Returns the map unchanged if the value is `nil` or an empty string.
