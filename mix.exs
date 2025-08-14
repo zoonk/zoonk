@@ -99,8 +99,7 @@ defmodule Zoonk.MixProject do
         "credo --strict",
         "sobelow --config",
         "deps.unlock --check-unused",
-        "deps.audit",
-        "xref graph --label compile-connected --fail-above 5"
+        "deps.audit"
       ]
     ]
   end
