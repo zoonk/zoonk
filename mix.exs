@@ -11,6 +11,7 @@ defmodule Zoonk.MixProject do
       aliases: aliases(),
       deps: deps(),
       preferred_cli_env: ["test.watch": :test],
+      compilers: [:phoenix_live_view] ++ Mix.compilers(),
 
       # Docs
       name: "Zoonk",
@@ -45,9 +46,10 @@ defmodule Zoonk.MixProject do
       {:ecto_sql, "~> 3.13"},
       {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
       {:ex_doc, "~> 0.37", only: :dev, runtime: false},
-      {:floki, ">= 0.37.1 and < 0.38.0", only: :test},
+      {:floki, "~> 0.38", only: :test},
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.2"},
+      {:lazy_html, ">= 0.1.0", only: :test},
       {:mix_audit, "~> 2.1", only: [:dev, :test], runtime: false},
       {:mix_test_watch, "~> 1.2", only: [:dev, :test], runtime: false},
       {:oban, "~> 2.19"},
@@ -55,13 +57,13 @@ defmodule Zoonk.MixProject do
       {:phoenix_html, "~> 4.1"},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
-      {:phoenix_live_view, "~> 1.0.0"},
-      {:phoenix_test, "~> 0.7.0", only: :test, runtime: false},
-      {:phoenix, "~> 1.7.19"},
+      {:phoenix_live_view, "~> 1.1.4"},
+      {:phoenix_test, "~> 0.7.1", only: :test, runtime: false},
+      {:phoenix, "~> 1.8.0"},
       {:postgrex, ">= 0.0.0"},
       {:req, "~> 0.5.0"},
       {:sobelow, "~> 0.13", only: [:dev, :test], runtime: false},
-      {:styler, "~> 1.6", only: [:dev, :test], runtime: false},
+      {:styler, "~> 1.7", only: [:dev, :test], runtime: false},
       {:swoosh, "~> 1.5"},
       # Using the main branch instead of tags because of the size. Using the tag had over 1gb. Using a branch has less than 60mb.
       {:tabler_icons,
@@ -70,7 +72,7 @@ defmodule Zoonk.MixProject do
       {:tailwind_formatter, "~> 0.4.2", only: [:dev, :test], runtime: false},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
-      {:tidewave, "~> 0.2", only: :dev}
+      {:tidewave, "~> 0.3", only: :dev}
     ]
   end
 

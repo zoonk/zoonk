@@ -19,6 +19,7 @@ config :esbuild,
       --external:/fonts/*
       --external:/images/*
       --external:/error/*
+      --alias:@=.
       ),
     cd: Path.expand("../assets", __DIR__),
     env: %{
