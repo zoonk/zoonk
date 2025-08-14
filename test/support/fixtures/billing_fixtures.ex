@@ -205,6 +205,22 @@ defmodule Zoonk.BillingFixtures do
             "usd" => %{"unit_amount" => 10_000},
             "brl" => %{"unit_amount" => 500_000}
           }
+        },
+        %{
+          "id" => "price_pro_monthly",
+          "lookup_key" => "pro_monthly",
+          "currency_options" => %{
+            "usd" => %{"unit_amount" => 2000},
+            "brl" => %{"unit_amount" => 10_000}
+          }
+        },
+        %{
+          "id" => "price_pro_yearly",
+          "lookup_key" => "pro_yearly",
+          "currency_options" => %{
+            "usd" => %{"unit_amount" => 20_000},
+            "brl" => %{"unit_amount" => 100_000}
+          }
         }
       ]
     }

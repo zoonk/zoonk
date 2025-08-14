@@ -32,7 +32,7 @@ defmodule ZoonkWeb.UserSubscriptionForm do
         value={price(@prices, @selected_plan, @interval).stripe_price_id}
       />
 
-      <div class="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+      <div class="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
         <.subscription_item
           :for={plan <- available_plans()}
           value={Atom.to_string(plan.key)}
@@ -93,17 +93,17 @@ defmodule ZoonkWeb.UserSubscriptionForm do
     dgettext("settings", "This is a limited plan. You will not be charged anything unless you upgrade to a paid plan.")
   end
 
-  defp disclaimer_text(:plus, interval, prices) do
+  defp disclaimer_text(plan, interval, prices) do
     prices
-    |> price_value(:plus, interval)
+    |> price_value(plan, interval)
     |> disclaimer_price_label(interval)
-    |> plus_disclaimer()
+    |> paid_disclaimer()
   end
 
   defp disclaimer_price_label(price, :monthly), do: dgettext("settings", "%{price}/month", price: price)
   defp disclaimer_price_label(price, :yearly), do: dgettext("settings", "%{price}/year", price: price)
 
-  defp plus_disclaimer(disclaimer_price_label) do
+  defp paid_disclaimer(disclaimer_price_label) do
     dgettext(
       "settings",
       "Your subscription will renew automatically at %{price}. You can cancel it at any time.",
@@ -112,7 +112,7 @@ defmodule ZoonkWeb.UserSubscriptionForm do
   end
 
   defp badge_label(plan, current_plan, _interval) when plan == current_plan, do: dgettext("settings", "Current Plan")
-  defp badge_label(:plus, _current_plan, :yearly), do: dgettext("settings", "2 Months Free")
+  defp badge_label(plan, _current_plan, :yearly) when plan in [:plus, :pro], do: dgettext("settings", "2 Months Free")
   defp badge_label(_plan, _current_plan, _interval), do: nil
 
   defp badge_color(plan, current_plan) when plan == current_plan, do: :secondary
@@ -137,23 +137,34 @@ defmodule ZoonkWeb.UserSubscriptionForm do
           %{icon: "tabler-headset", text: dgettext("settings", "Priority support")},
           %{icon: "tabler-plus", text: dgettext("settings", "Everything in Free")}
         ]
+      },
+      %{
+        key: :pro,
+        label: dgettext("settings", "Pro"),
+        features: [
+          %{icon: "tabler-brain", text: dgettext("settings", "Personalized exercises")},
+          %{icon: "tabler-user-star", text: dgettext("settings", "Personalized advice")},
+          %{icon: "tabler-plus", text: dgettext("settings", "Everything in Plus")}
+        ]
       }
     ]
   end
 
-  defp submit_label(:free, :plus), do: dgettext("settings", "Cancel Subscription")
-  defp submit_label(selected, current) when selected == current, do: dgettext("settings", "Manage Subscription")
-  defp submit_label(_selected, _current), do: dgettext("settings", "Subscribe")
+  defp submit_label(:free, current) when current != :free, do: dgettext("settings", "Cancel Subscription")
+  defp submit_label(_selected, :free), do: dgettext("settings", "Subscribe")
+  defp submit_label(:plus, :pro), do: dgettext("settings", "Downgrade")
+  defp submit_label(:pro, :plus), do: dgettext("settings", "Upgrade")
+  defp submit_label(_selected, _current), do: dgettext("settings", "Manage Subscription")
 
-  defp submit_variant(:free, :plus), do: :destructive
+  defp submit_variant(:free, current) when current != :free, do: :destructive
   defp submit_variant(_selected, _current), do: :primary
 
-  defp phx_submit_action(:free, :plus), do: "cancel"
+  defp phx_submit_action(:free, current) when current != :free, do: "cancel"
   defp phx_submit_action(_selected, _current), do: nil
 
-  defp form_action(:free, :plus), do: nil
-  defp form_action(:plus, :plus), do: ~p"/subscription/manage"
-  defp form_action(_selected, _current), do: ~p"/subscription/checkout"
+  defp form_action(:free, current) when current != :free, do: nil
+  defp form_action(_selected, :free), do: ~p"/subscription/checkout"
+  defp form_action(_selected, _current), do: ~p"/subscription/manage"
 
   defp price_label(:free, _interval), do: nil
   defp price_label(_plan, :monthly), do: dgettext("settings", "/month")

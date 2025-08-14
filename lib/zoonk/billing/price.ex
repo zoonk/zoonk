@@ -17,7 +17,7 @@ defmodule Zoonk.Billing.Price do
   @default_currency "usd"
   @default_value "$10"
 
-  @type plan :: :plus
+  @type plan :: :plus | :pro
   @type interval :: :monthly | :yearly
 
   @type t :: %__MODULE__{

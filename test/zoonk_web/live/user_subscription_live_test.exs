@@ -128,7 +128,7 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
 
       conn
       |> visit(~p"/subscription")
-      |> choose("Plus", exact: false)
+      |> choose("$10", exact: false)
       |> assert_has("input[checked]", name: "plan", value: "plus")
       |> refute_has("input[checked]", name: "plan", value: "free")
       |> assert_has("p", text: "Your subscription will renew automatically at $10/month")
@@ -142,7 +142,7 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       |> visit(~p"/subscription")
       |> choose("Yearly")
       |> assert_has("div", text: "$100 /year")
-      |> choose("Plus", exact: false)
+      |> choose("$100", exact: false)
       |> assert_has("p", text: "Your subscription will renew automatically at $100/year")
     end
 
@@ -152,7 +152,7 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
 
       conn
       |> visit(~p"/subscription")
-      |> assert_has("button[disabled]", text: "Manage Subscription")
+      |> assert_has("button[disabled]", text: "Subscribe")
     end
 
     test "submit form with selected plan and interval", %{conn: conn, scope: scope} do
@@ -162,7 +162,7 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       result =
         conn
         |> visit(~p"/subscription")
-        |> choose("Plus", exact: false)
+        |> choose("$10", exact: false)
         |> submit()
 
       path = request_url(result.conn)
@@ -194,7 +194,7 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
       |> refute_has("h3", text: "Plus Current Plan")
       |> assert_has("h3", text: "Free Current Plan")
       |> refute_has("button", text: "Cancel Subscription")
-      |> assert_has("button", text: "Manage Subscription")
+      |> assert_has("button", text: "Subscribe")
 
       assert Billing.get_user_subscription(scope).status == :canceled
     end
@@ -208,6 +208,44 @@ defmodule ZoonkWeb.SubscriptionLiveTest do
         conn
         |> visit(~p"/subscription")
         |> click_button("Manage Subscription")
+
+      path = request_url(result.conn)
+
+      assert String.starts_with?(path, "https://billing.stripe.com/p/session_")
+    end
+
+    test "redirects to the customer portal when trying to upgrade from plus to pro", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+      user_subscription_fixture(%{scope: scope, plan: :plus, status: :active})
+
+      result =
+        conn
+        |> visit(~p"/subscription")
+        |> choose("$20", exact: false)
+        |> assert_has("input[checked]", name: "plan", value: "pro")
+        |> refute_has("input[checked]", name: "plan", value: "plus")
+        |> assert_has("p", text: "Your subscription will renew automatically at $20/month")
+        |> click_button("Upgrade")
+
+      path = request_url(result.conn)
+
+      assert String.starts_with?(path, "https://billing.stripe.com/p/session_")
+    end
+
+    test "redirects to the customer portal when trying to downgrade from pro to plus", %{conn: conn, scope: scope} do
+      stripe_stub()
+      billing_account_fixture(%{"scope" => scope})
+      user_subscription_fixture(%{scope: scope, plan: :pro, status: :active})
+
+      result =
+        conn
+        |> visit(~p"/subscription")
+        |> choose("$10", exact: false)
+        |> assert_has("input[checked]", name: "plan", value: "plus")
+        |> refute_has("input[checked]", name: "plan", value: "pro")
+        |> assert_has("p", text: "Your subscription will renew automatically at $10/month")
+        |> click_button("Downgrade")
 
       path = request_url(result.conn)
 

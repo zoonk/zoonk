@@ -327,7 +327,10 @@ defmodule Zoonk.Billing do
   end
 
   defp stripe_lookup_keys do
-    ~w[plus_monthly plus_yearly]
+    ~w[
+      plus_monthly plus_yearly
+      pro_monthly pro_yearly
+    ]
   end
 
   @doc """
