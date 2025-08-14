@@ -101,6 +101,7 @@ defmodule ZoonkWeb do
       import ZoonkWeb.Components.Input
       import ZoonkWeb.Components.Loader
       import ZoonkWeb.Components.Navbar
+      import ZoonkWeb.Components.Pill
       import ZoonkWeb.Components.Text
       import ZoonkWeb.Components.Toggle
       import ZoonkWeb.Components.Utils

@@ -30,27 +30,15 @@ defmodule ZoonkDev.UIPreview.UIPreviewLayout do
 
       <nav class="bg-zk-background/70 sticky top-16 z-10 w-full backdrop-blur-md md:top-20">
         <ul class="scrollbar-none mx-auto flex items-center gap-2 overflow-x-auto p-4 md:p-6">
-          <li
+          <.pill
             :for={item <- menu_items()}
-            class={[
-              "shadow-xs rounded-lg px-2 py-1.5 leading-none tracking-tight",
-              @active_page == item.module && "bg-zk-primary shadow-zk-primary",
-              @active_page != item.module && "bg-zk-surface"
-            ]}
+            navigate={item.path}
+            icon={item.icon}
+            color={item.color}
+            active={@active_page == item.module}
           >
-            <.link
-              navigate={item.path}
-              class={[
-                "inline-flex items-center gap-1 align-middle",
-                @active_page == item.module && "text-zk-primary-foreground"
-              ]}
-            >
-              <.icon name={item.icon} class={["size-4", @active_page != item.module && item.color]} />
-              <span class={["text-xs", @active_page != item.module && "text-zk-surface-foreground"]}>
-                {item.label}
-              </span>
-            </.link>
-          </li>
+            {item.label}
+          </.pill>
         </ul>
       </nav>
 
@@ -88,6 +76,7 @@ defmodule ZoonkDev.UIPreview.UIPreviewLayout do
       %{icon: "tabler-forms", color: "text-purple-500", module: :form, label: "Form", path: "/ui/form"},
       %{icon: "tabler-cursor-text", color: "text-orange-500", module: :input, label: "Input", path: "/ui/input"},
       %{icon: "tabler-dots", color: "text-sky-500", module: :loader, label: "Loader", path: "/ui/loader"},
+      %{icon: "tabler-pill", color: "text-orange-500", module: :pill, label: "Pill", path: "/ui/pill"},
       %{icon: "tabler-typography", color: "text-teal-500", module: :text, label: "Text", path: "/ui/text"},
       %{icon: "tabler-toggle-left", color: "text-violet-500", module: :toggle, label: "Toggle", path: "/ui/toggle"}
     ]
