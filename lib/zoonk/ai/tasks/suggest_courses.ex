@@ -1,49 +1,49 @@
-defmodule Zoonk.AI.Tasks.RecommendCourses do
+defmodule Zoonk.AI.Tasks.SuggestCourses do
   @moduledoc false
   @behaviour Zoonk.AI.Tasks.AITask
 
   alias Zoonk.AI.AIClient
   alias Zoonk.AI.AIPayload
   alias Zoonk.AI.AISchema
-  alias Zoonk.AI.CourseRecommendation
+  alias Zoonk.AI.CourseSuggestion
   alias Zoonk.AI.Tasks.AITask
   alias Zoonk.Helpers
   alias Zoonk.Repo
 
-  def recommend_courses(input, language) do
+  def suggest_courses(input, language) do
     formatted_input = format_input(input)
 
-    CourseRecommendation
+    CourseSuggestion
     |> Repo.get_by(query: formatted_input, language: language)
-    |> recommend_courses(formatted_input, language)
+    |> suggest_courses(formatted_input, language)
   end
 
-  defp recommend_courses(%CourseRecommendation{} = recommendation, _input, _lang) do
-    {:ok, %{courses: recommendation.courses}}
+  defp suggest_courses(%CourseSuggestion{} = course_suggestion, _input, _lang) do
+    {:ok, %{suggestions: course_suggestion.suggestions}}
   end
 
-  defp recommend_courses(nil, input, language) do
+  defp suggest_courses(nil, input, language) do
     %{input: input, language: language}
     |> generate_object(model())
-    |> add_recommendation_to_db(input, language)
+    |> add_suggestion_to_db(input, language)
   end
 
-  defp add_recommendation_to_db({:ok, %{courses: courses} = response}, input, language) do
-    %CourseRecommendation{}
-    |> CourseRecommendation.changeset(%{query: input, language: language, courses: courses})
+  defp add_suggestion_to_db({:ok, %{suggestions: suggestions} = response}, input, language) do
+    %CourseSuggestion{}
+    |> CourseSuggestion.changeset(%{query: input, language: language, suggestions: suggestions})
     |> Repo.insert!()
 
     {:ok, response}
   end
 
-  defp add_recommendation_to_db({:error, error}, _input, _language) do
+  defp add_suggestion_to_db({:error, error}, _input, _language) do
     {:error, error}
   end
 
   @impl AITask
   def json_schema do
-    courses = %{
-      courses: [
+    suggestions = %{
+      suggestions: [
         %{
           title: "string",
           description: "string",
@@ -53,7 +53,7 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
       ]
     }
 
-    AISchema.add_field(%AISchema{name: "recommend_courses"}, courses)
+    AISchema.add_field(%AISchema{name: "suggest_courses"}, suggestions)
   end
 
   @impl AITask
@@ -151,6 +151,6 @@ defmodule Zoonk.AI.Tasks.RecommendCourses do
 
   @impl AITask
   def model do
-    Application.get_env(:zoonk, :ai_models)[:recommend_courses]
+    Application.get_env(:zoonk, :ai_models)[:suggest_courses]
   end
 end

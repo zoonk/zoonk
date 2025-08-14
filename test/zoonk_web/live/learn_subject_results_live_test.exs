@@ -38,7 +38,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLiveTest do
     setup :signup_and_login_user
 
     test "loads the data", %{conn: conn} do
-      data = course_recommendation_fixture()
+      data = course_suggestion_fixture()
 
       conn
       |> visit(~p"/learn/coding")

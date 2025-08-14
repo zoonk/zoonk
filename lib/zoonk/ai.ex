@@ -5,18 +5,18 @@ defmodule Zoonk.AI do
   This module provides a unified interface for generating
   AI content across various services.
   """
-  alias Zoonk.AI.Tasks.RecommendCourses
+  alias Zoonk.AI.Tasks.SuggestCourses
 
   @doc """
-  Recommend courses based on user input.
+  Suggest courses based on user input.
 
   ## Examples
 
-      iex> recommend_courses("I want to learn about data science", "en")
+      iex> suggest_courses("I want to learn about data science", "en")
       {:ok, [%{title: "Data Science", description: "A field that uses scientific methods..."}]}
 
-      iex> recommend_courses("forbidden input", "en")
+      iex> suggest_courses("forbidden input", "en")
       {:error, "This violates our content policy."}
   """
-  defdelegate recommend_courses(input, language), to: RecommendCourses
+  defdelegate suggest_courses(input, language), to: SuggestCourses
 end

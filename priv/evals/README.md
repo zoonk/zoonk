@@ -12,15 +12,15 @@ First, you need to run an evaluation. There are two evaluation types:
 For a `model` evaluation, run:
 
 ```elixir
-Zoonk.AI.Evals.evaluate_model(:recommend_courses, "openai/gpt-4.1")
+Zoonk.AI.Evals.evaluate_model(:suggest_courses, "openai/gpt-4.1")
 ```
 
 For a `prompt` evaluation, run:
 
 ```elixir
-Zoonk.AI.Evals.evaluate_prompt(:recommend_courses, "openai/gpt-4.1")
+Zoonk.AI.Evals.evaluate_prompt(:suggest_courses, "openai/gpt-4.1")
 ```
 
 ## Prompts
 
-- [Recommend Courses](recommend_courses.md): We ask users what they want to learn and recommend courses accordingly.
+- [Suggest Courses](suggest_courses.md): We ask users what they want to learn and suggest courses accordingly.

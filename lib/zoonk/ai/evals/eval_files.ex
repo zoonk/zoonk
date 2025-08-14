@@ -27,10 +27,10 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> store_results(:model, "openai/gpt-4.1-mini", :recommend_courses, "outputs", "test_1.json", %{})
+      iex> store_results(:model, "openai/gpt-4.1-mini", :suggest_courses, "outputs", "test_1.json", %{})
       :ok
 
-      iex> store_results(:prompt, "openai/gpt-4.1-mini", :recommend_courses, "scores", "test_1.json", %{})
+      iex> store_results(:prompt, "openai/gpt-4.1-mini", :suggest_courses, "scores", "test_1.json", %{})
       :ok
 
   """
@@ -51,10 +51,10 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> file_exists?(:model, "openai/gpt-4.1-mini", :recommend_courses, "outputs", "test_1.json")
+      iex> file_exists?(:model, "openai/gpt-4.1-mini", :suggest_courses, "outputs", "test_1.json")
       true
 
-      iex> file_exists?(:prompt, "openai/gpt-4.1-mini", :recommend_courses, "scores", "test_1.json")
+      iex> file_exists?(:prompt, "openai/gpt-4.1-mini", :suggest_courses, "scores", "test_1.json")
       false
   """
   @spec file_exists?(eval_type(), String.t(), atom(), String.t(), String.t()) :: boolean()
@@ -73,7 +73,7 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> load_prompt_outputs(:recommend_courses)
+      iex> load_prompt_outputs(:suggest_courses)
       [%{"usage" => %{...}, "steps" => [...]}, ...]
   """
   @spec load_prompt_outputs(atom() | String.t()) :: [map()]
@@ -91,7 +91,7 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> load_model_outputs(:recommend_courses, "deepseek-chat-v3-0324")
+      iex> load_model_outputs(:suggest_courses, "deepseek-chat-v3-0324")
       [%{"usage" => %{...}, "steps" => [...]}, ...]
   """
   @spec load_model_outputs(atom() | String.t(), String.t()) :: [map()]
@@ -133,7 +133,7 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> update_scores_markdown(:recommend_courses, %{average: 7.76, median: 9.0})
+      iex> update_scores_markdown(:suggest_courses, %{average: 7.76, median: 9.0})
       :ok
   """
   @spec update_scores_markdown(%{average: float(), median: float()}, atom() | String.t()) :: :ok
@@ -160,7 +160,7 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> update_leaderboard_markdown(%{"model1" => %{average: 8.0, median: 9.0}}, :recommend_courses)
+      iex> update_leaderboard_markdown(%{"model1" => %{average: 8.0, median: 9.0}}, :suggest_courses)
       :ok
   """
   @spec update_leaderboard_markdown(map(), atom() | String.t()) :: :ok
@@ -191,7 +191,7 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> update_leaderboard_json(%{average: 7.76, median: 9.0}, :recommend_courses, "deepseek-chat-v3-0324")
+      iex> update_leaderboard_json(%{average: 7.76, median: 9.0}, :suggest_courses, "deepseek-chat-v3-0324")
       %{"deepseek-chat-v3-0324" => %{average: 7.76, median: 9.0}}
   """
   @spec update_leaderboard_json(map(), atom() | String.t(), String.t()) :: map()

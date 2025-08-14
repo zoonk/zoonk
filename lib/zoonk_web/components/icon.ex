@@ -48,7 +48,7 @@ defmodule ZoonkWeb.Components.Icon do
   `<.icon />` only allows us to render icons at compile time.
 
   Sometimes we need to dynamically load icons based on
-  user input or other runtime data like AI's recommendations.
+  user input or other runtime data like AI's suggestions.
 
   We can use this component to load icons dynamically.
 

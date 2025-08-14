@@ -18,7 +18,7 @@ defmodule Zoonk.AI.Evals do
 
   ## Examples
 
-      iex> evaluate_model(:recommend_courses, "openai/gpt-4.1")
+      iex> evaluate_model(:suggest_courses, "openai/gpt-4.1")
       :ok
   """
   @spec evaluate_model(atom(), String.t()) :: :ok
@@ -35,7 +35,7 @@ defmodule Zoonk.AI.Evals do
 
   ## Examples
 
-      iex> evaluate_prompt(:recommend_courses, "openai/gpt-4.1")
+      iex> evaluate_prompt(:suggest_courses, "openai/gpt-4.1")
       :ok
   """
   @spec evaluate_prompt(atom(), String.t()) :: :ok
