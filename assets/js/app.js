@@ -23,7 +23,6 @@ import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
 import { DelayLoading } from "./hooks/delay_loading";
 import { DialogTrigger } from "./hooks/dialog_trigger";
-import { preserveAttrsFromElement } from "./dom/preserve_state";
 
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
@@ -50,11 +49,6 @@ const liveSocket = new LiveSocket("/live", Socket, {
   metadata: {
     keydown: (e, _el) => {
       return { key: e.key, metaKey: e.metaKey, ctrlKey: e.ctrlKey };
-    },
-  },
-  dom: {
-    onBeforeElUpdated: (fromEl, toEl) => {
-      preserveAttrsFromElement(fromEl, toEl);
     },
   },
 });

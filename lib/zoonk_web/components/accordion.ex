@@ -6,6 +6,8 @@ defmodule ZoonkWeb.Components.Accordion do
 
   import ZoonkWeb.Components.Icon
 
+  alias Phoenix.LiveView.JS
+
   @doc """
   Renders an accordion item using native HTML details/summary elements.
 
@@ -31,7 +33,12 @@ defmodule ZoonkWeb.Components.Accordion do
 
   def accordion(assigns) do
     ~H"""
-    <details class={["border-zk-border border-b py-4 last:border-b-0", @class]} open={@open} {@rest}>
+    <details
+      class={["border-zk-border border-b py-4 last:border-b-0", @class]}
+      phx-mounted={JS.ignore_attributes(["open"])}
+      open={@open}
+      {@rest}
+    >
       <summary class="text-zk-foreground flex cursor-pointer select-none items-center justify-between text-sm font-medium hover:underline :[&:-webkit-details-marker]:hidden :[&:marker]:content-['']">
         {@title}
 

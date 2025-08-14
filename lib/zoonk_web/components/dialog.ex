@@ -24,6 +24,7 @@ defmodule ZoonkWeb.Components.Dialog do
     ~H"""
     <dialog
       id={@id}
+      phx-mounted={JS.ignore_attributes(["open"])}
       class={[
         "max-h-[85vh] w-[90vw] overflow-hidden",
         "ring-zk-border/60 fixed z-50 rounded p-0 shadow-lg ring",
