@@ -96,6 +96,7 @@ defmodule Zoonk.Helpers do
   def to_existing_atom(value, default \\ nil)
 
   def to_existing_atom(nil, default), do: default
+  def to_existing_atom(atom, _default) when is_atom(atom), do: atom
 
   def to_existing_atom(string, default) when is_binary(string) do
     String.to_existing_atom(string)

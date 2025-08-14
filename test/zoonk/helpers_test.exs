@@ -105,6 +105,11 @@ defmodule Zoonk.HelpersTest do
       random_string = "random_#{System.unique_integer([:positive])}"
       assert to_existing_atom(random_string) == nil
     end
+
+    test "returns the same atom when passing an atom" do
+      assert to_existing_atom(:catalog) == :catalog
+      assert to_existing_atom(:accounts) == :accounts
+    end
   end
 
   describe "to_existing_atom/2" do
