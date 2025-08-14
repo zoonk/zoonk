@@ -1,4 +1,4 @@
-defmodule Zoonk.AI.Evals.RecommendCoursesEval do
+defmodule Zoonk.AI.Evals.SuggestCoursesEval do
   @moduledoc false
   @behaviour Zoonk.AI.Evals.EvalCase
 
