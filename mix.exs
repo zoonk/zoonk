@@ -12,6 +12,7 @@ defmodule Zoonk.MixProject do
       deps: deps(),
       preferred_cli_env: ["test.watch": :test],
       compilers: [:phoenix_live_view] ++ Mix.compilers(),
+      listeners: [Phoenix.CodeReloader],
 
       # Docs
       name: "Zoonk",
