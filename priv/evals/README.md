@@ -15,6 +15,12 @@ For a `model` evaluation, run:
 Zoonk.AI.Evals.evaluate_model(:suggest_courses, "openai/gpt-4.1")
 ```
 
+For evaluating all models, run:
+
+```elixir
+Zoonk.AI.Evals.evaluate_model(:suggest_courses)
+```
+
 For a `prompt` evaluation, run:
 
 ```elixir
