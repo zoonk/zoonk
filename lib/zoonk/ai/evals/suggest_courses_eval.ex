@@ -10,186 +10,82 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
   def model do
     [
       %{
-        language: "en",
-        input: "I want to learn programming",
-        expectations: ""
-      },
-      %{
-        language: "en",
-        input: "How to become a scientist?",
-        expectations: ""
-      },
-      %{
-        language: "en",
-        input: "TOEFL",
-        expectations:
-          "Set category as `language` for language courses or proficiency tests. If adding non `language` courses, then they should not have a `language` category."
-      },
-      %{
         language: "pt",
-        input: "Quero me tornar um advogado",
+        country: "BR",
+        input: "I want to code",
         expectations:
-          "User speaks Portuguese. Include courses like `Direito Brasileiro` and `Direito Português`. Don't show only `Direito` without specifying the region."
+          """
+          - titles should look like these: {"Programação","Ciência da Computação","Desenvolvimento Web","Engenharia de Software"}
+          - all titles in Portuguese
+          - `is_language_course` should be false
+          """ <> shared_expectations()
+      },
+      %{
+        language: "en",
+        country: "BR",
+        input: "quero aprender sobre buracos negros",
+        expectations:
+          """
+          - suggestions should include {"Black Holes"}
+          - suggestions may include broader topics like {"Astrophysics"}
+          - all titles in English
+          - `is_language_course` should be false
+          """ <> shared_expectations()
       },
       %{
         language: "es",
-        input: "Como ganar seguidores en redes sociales",
-        expectations: "User speaks Spanish"
+        country: "Mexico",
+        input: "Derecho Penal",
+        expectations:
+          """
+          - suggestions should include {"Derecho Penal Mexicano"}
+          - suggestions may include broader topics like {"Derecho Mexicano"}
+          - suggestions may include similar topics like {"Derecho Civil Mexicano", "Derecho Laboral Mexicano"}
+          - suggestions should NOT include titles without jurisdiction like {"Derecho Penal", "Derecho"}
+          - all titles in Spanish
+          - `is_language_course` should be false
+          """ <> shared_expectations()
+      },
+      %{
+        language: "en",
+        country: "",
+        input: "International Law",
+        expectations:
+          """
+          - suggestions should include {"International Law"}
+          - all titles in English
+          - `is_language_course` should be false
+          """ <> shared_expectations()
+      },
+      %{
+        language: "pt",
+        country: "BR",
+        input: "quero passar no toefl",
+        expectations:
+          """
+          - suggestions should include {"TOEFL"}
+          - suggestions may include {"Inglês"}
+          - all titles in Portuguese
+          - `is_language_course` should be true
+          - no extra titles like {"Preparatório para o TOEFL", "Redação Acadêmica", "Língua inglesa"}
+          """ <> shared_expectations()
       }
     ]
   end
 
   @impl EvalCase
   def prompt do
-    [
-      %{
-        language: "en",
-        input: "I'm curious about the universe",
-        expectations: ""
-      },
-      %{
-        language: "en",
-        input: "DNA and genetics",
-        expectations:
-          "This is a specific topic, so the top result should be a course directly related to DNA and genetics, not something broader like Biology or Life Sciences."
-      },
-      %{
-        language: "en",
-        input: "What is the periodic table?",
-        expectations:
-          "This is a specific chemistry topic, so the top result should be a course directly related to the periodic table, not something broader like Chemistry or Science."
-      },
-      %{
-        language: "pt",
-        input: "Quero me comunicar melhor",
-        expectations: "User speaks Portuguese"
-      },
-      %{
-        language: "pt",
-        input: "kpop",
-        expectations:
-          "User speaks Portuguese. Include something directly related to K-Pop as the top result since the user is specific about this interest. Broader topics like Korean Culture or Music can follow, but K-Pop should be prioritized."
-      },
-      %{
-        language: "en",
-        input: "Engineering",
-        expectations: ""
-      },
-      %{
-        language: "es",
-        input: "Quiero entender la Segunda Guerra Mundial",
-        expectations:
-          "User speaks Spanish. Include a course specifically about World War II as the top result since the user is specific about this interest. Broader history courses can follow, but World War II should be prioritized."
-      },
-      %{
-        language: "en",
-        input: "History",
-        expectations: ""
-      },
-      %{
-        language: "en",
-        input: "I want to learn about law",
-        expectations:
-          "Show courses like US Law and/or UK Law as top results. All courses should be specific to the user's region, except general law courses like International Law or Human Rights. Don't show a generic `Law` course without specifying the region."
-      },
-      %{
-        language: "pt",
-        input: "direito constitucional",
-        expectations:
-          "User speaks Portuguese. Show courses like Direito Constitucional Brasileiro and/or Direito Constitucional Português as top results. All courses should be specific to the user's region, except general law courses like Direitos Humanos or Direito Internacional. Don't show a generic `Direito Constitucional` course without specifying the region."
-      },
-      %{
-        language: "pt",
-        input: "direito brasileiro",
-        expectations:
-          "User speaks Portuguese. Show courses like Direito Brasileiro as top results. All courses should be specific to the user's region, except general law courses like Direitos Humanos or Direito Internacional. Don't show a generic `Direito` course without specifying the region."
-      },
-      %{
-        language: "es",
-        input: "derecho",
-        expectations:
-          "User speaks Spanish. Show courses like Derecho Español or similar as top results. Don't show a generic `Derecho` course without specifying the region, except for global topics like Derechos Humanos or Derecho Internacional."
-      },
-      %{
-        language: "en",
-        input: "i suck at math",
-        expectations: ""
-      },
-      %{
-        language: "en",
-        input: "Tech stuff",
-        expectations: ""
-      },
-      %{
-        language: "pt",
-        input: "quero ficar rico",
-        expectations: "User speaks Portuguese"
-      },
-      %{
-        language: "pt",
-        input: "Educação Financeira",
-        expectations:
-          "User speaks Portuguese. Make sure a course related to financial education is the top result since the user is specific about this interest."
-      },
-      %{
-        language: "pt",
-        input: "historia do brasil",
-        expectations:
-          "User speaks Portuguese. Include História do Brasil (exact match) as the top result since the user is specific about this interest. Broader Brazilian history or Latin American history courses can follow, but História do Brasil should be prioritized."
-      },
-      %{
-        language: "en",
-        input: "machne leanig",
-        expectations:
-          "Detect and correct typos from the input, show results in the correct language (English here), and prioritize Machine Learning (exact match) as the top result"
-      },
-      %{
-        language: "pt",
-        input: "coding",
-        expectations:
-          "Show courses in Portuguese since that's the user-defined language, even though the input is in English"
-      },
-      %{
-        language: "es",
-        input: "aprender inglés",
-        expectations:
-          "Show English-learning courses in Spanish and ensure all language-learning and language exam prep courses use category: `language`. It's okay to have non-language courses like Cultura Inglesa or Historia de Inglaterra but they must not be in the `language` category."
-      },
-      %{
-        language: "pt",
-        input: "quero falar coreano",
-        expectations:
-          "Show Korean-learning courses in Portuguese and ensure all language-learning and language exam prep courses use category: `language`. It's okay to have non-language courses like Cultura Coreana or História da Coreia, but they must not be in the `language` category."
-      },
-      %{
-        language: "en",
-        input: "frontend",
-        expectations: "It should have a frontend course as the top result since the user is specific about this interest"
-      },
-      %{
-        language: "pt",
-        input: "futebol",
-        expectations:
-          "User speaks Portuguese. It should include soccer related courses; ensure all englishTitle use Soccer (e.g., Soccer Tactics); list only soccer-related courses, not other sports or general sports courses"
-      },
-      %{
-        language: "en",
-        input: "dragon ball",
-        expectations:
-          "Dragon Ball should be the top result (exact match) since the user is specific about this interest. Broader anime or manga courses can follow, but Dragon Ball should be prioritized."
-      },
-      %{
-        language: "fr",
-        input: "harry potter",
-        expectations:
-          "User speaks French. Harry Potter should be the top result (exact match) since the user is specific about this interest. Broader fantasy or literature courses can follow, but Harry Potter should be prioritized."
-      },
-      %{
-        language: "en",
-        input: "black holes",
-        expectations:
-          "A suggestion about black holes should be the top result (exact match) since the user is specific about this interest. Broader astrophysics or space courses can follow, but Black Holes should be prioritized."
-      }
-    ]
+    []
+  end
+
+  defp shared_expectations do
+    """
+    - Focus evaluations scores on these fields: `title`, `english_title`, `is_language_course`
+    - `english_title` should be the most appropriate English translation of the `title`. For English suggestions, use the same title
+    - `description` and `icon` are for aesthetic purposes and should not be the primary focus. Do **NOT** decrease an output's score based on these fields
+    - no level/joiner words like "basic", "intermediate", "advanced", "fundamentals", etc
+    - <=5 words each title
+    - no words like "course", "program", etc in the title
+    """
   end
 end

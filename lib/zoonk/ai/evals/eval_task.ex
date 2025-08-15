@@ -34,13 +34,10 @@ defmodule Zoonk.AI.Evals.EvalTask do
     you'll be provided with the instructions template in the
     **Instructions** section.
 
-    Then, you'll be provided with an optional **Expectations**
-    section, which contains some comments on what might be
-    expected. If absent, you can assume what the user expects
-    according to their prompt. Treat expectations as guidelines
-    rather than strict rules. They're just a hint to help you
-    understand the user's intent better. Make your own judgment
-    based on all the information provided.
+    Then, you'll be provided with an **Expectations** section,
+    which contains some comments on what is expected. If
+    absent, you can assume what the user expects according
+    to their prompt.
 
     Finally, you'll be provided with the final response in the
     **Result** section. The final **Result** is the outcome of
