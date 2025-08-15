@@ -26,9 +26,5 @@
   "gpt-4.1": {
     "average": 9.49,
     "median": 9.3
-  },
-  "llama-4-maverick": {
-    "average": 8.59,
-    "median": 9.5
   }
 }
