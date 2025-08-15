@@ -61,4 +61,19 @@ defmodule Zoonk.AI.Evals do
     EvalRunner.generate_object(prompt, :prompt, model)
     ScoreEvals.calculate_score(prompt)
   end
+
+  @doc """
+  Updates leaderboard for all models.
+
+  ## Examples
+
+      iex> update_leaderboard(:suggest_courses)
+      :ok
+  """
+  @spec update_leaderboard(atom()) :: :ok
+  def update_leaderboard(prompt) do
+    Enum.each(EvalModels.list_models(), fn model ->
+      ScoreEvals.update_leaderboard(prompt, model.name)
+    end)
+  end
 end
