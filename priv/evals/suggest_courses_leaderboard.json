@@ -35,12 +35,24 @@
     "average": 8.22,
     "median": 8.5
   },
+  "gpt-5": {
+    "average": 9.56,
+    "median": 10.0
+  },
   "gpt-5-mini": {
     "average": 9.61,
     "median": 9.6
   },
   "gpt-5-nano": {
     "average": 8.86,
+    "median": 9.5
+  },
+  "grok-3-mini": {
+    "average": 8.89,
+    "median": 9.2
+  },
+  "grok-4": {
+    "average": 9.61,
     "median": 9.5
   },
   "llama-4-maverick": {
@@ -62,5 +74,13 @@
   "o3": {
     "average": 9.7,
     "median": 10.0
+  },
+  "o4-mini": {
+    "average": 9.67,
+    "median": 10.0
+  },
+  "qwen3-235b-a22b-07-25": {
+    "average": 7.35,
+    "median": 9.3
   }
 }

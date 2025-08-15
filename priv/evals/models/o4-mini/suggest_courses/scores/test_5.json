@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1813,
+    "output": 1607,
+    "total": 3420
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The response follows all key rules for language exams: exactly one suggestion titled \"TOEFL\", is_language_course=true, correct Portuguese description, includes english_title matching the title, and an icon with the tabler- prefix. No violations of title constraints (<=5 words, no joiners, no levels, no \"course\").",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. The output language is Portuguese, the structure matches expectations, and fields are correct. Title \"TOEFL\" is appropriate per the exam rule.",
+      "score": 10
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Very minor nit: an icon more semantically aligned with exams (e.g., tabler-certificate) could be slightly better, but current icon still satisfies requirements. Otherwise, it's optimal for the given constraints.",
+      "score": 9.5
+    }
+  ]
+}

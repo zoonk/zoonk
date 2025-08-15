@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1810,
+    "output": 2953,
+    "total": 4763
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None.",
+      "score": 10
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Optionally refine the description to European Portuguese phrasing (e.g., use “compreensão oral” instead of “escuta”). Everything else fully complies with the rules: exactly one suggestion for a language exam, title is “TOEFL” (≤5 words, no joiners/levels), english_title matches, is_language_course=true, icon has tabler- prefix, Portuguese description.",
+      "score": 9.6
+    }
+  ]
+}

@@ -10,7 +10,6 @@ defmodule Zoonk.AI.Evals.EvalModels do
     %{name: "google/gemini-2.5-flash-lite", input: 0.1, output: 0.4},
     %{name: "google/gemini-2.5-pro", input: 1.25, output: 10},
     %{name: "gpt-5", input: 1.25, output: 10},
-    %{name: "gpt-5-chat", input: 1.25, output: 10},
     %{name: "meta-llama/llama-4-maverick", input: 0.15, output: 0.6},
     %{name: "meta-llama/llama-4-scout", input: 0.08, output: 0.3},
     %{name: "mistralai/mistral-medium-3.1", input: 0.4, output: 2},
@@ -24,9 +23,7 @@ defmodule Zoonk.AI.Evals.EvalModels do
     %{name: "openai/gpt-5-mini", input: 0.25, output: 2},
     %{name: "openai/gpt-5-nano", input: 0.05, output: 0.4},
     %{name: "openai/o4-mini", input: 1.1, output: 4.4},
-    %{name: "openrouter/auto", input: 0, output: 0},
     %{name: "qwen/qwen3-235b-a22b-07-25", input: 0.12, output: 0.59},
-    %{name: "tngtech/deepseek-r1t2-chimera", input: 0.302, output: 0.302},
     %{name: "x-ai/grok-3-mini", input: 0.3, output: 0.5},
     %{name: "x-ai/grok-4", input: 3, output: 15}
   ]

@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1970,
+    "output": 1184,
+    "total": 3154
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The response adheres to all critical rules: correct output language (Portuguese), appropriate canonical course titles without levels or joiners, non-language courses, proper handling of vague input, inclusion of english_title, and tabler- prefixed icons.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None observed. Titles are <=5 words, single-topic, and descriptions are in Portuguese. english_title translations are accurate.",
+      "score": 10
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Optionally, include one or two additional relevant broad courses such as Desenvolvimento Mobile or Ciência de Dados, though the current set already matches canonical expectations and is sufficient.",
+      "score": 9.5
+    }
+  ]
+}

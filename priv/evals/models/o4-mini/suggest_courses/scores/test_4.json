@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1998,
+    "output": 2697,
+    "total": 4695
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The suggestions follow all key rules: English output, titles look like real courses, no level words, single-topic titles without joiners, <=5 words, correct inclusion of International Law, proper english_title mirroring titles, and is_language_course is false throughout. Law-specific rules are respected by keeping all courses in global international domains where jurisdiction is not required.",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None observed. Icons have the required tabler- prefix. Descriptions are in English. Titles avoid prohibited terms like course/program.",
+      "score": 10.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Optionally expand variety with additional global subfields such as Law of Treaties, International Dispute Settlement, or Law of the Sea. This could better cover the breadth of International Law while still respecting all constraints.",
+      "score": 9.0
+    }
+  ]
+}

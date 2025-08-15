@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1818,
+    "output": 2723,
+    "total": 4541
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The response follows the language exam rule with exactly one suggestion titled \"TOEFL\", sets is_language_course=true, includes an english_title matching the title, uses a tabler icon prefix, and provides a one-sentence description in Portuguese. No violations of title constraints (no levels, joiners, or banned words).",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "Very minor: The description uses Brazilian Portuguese style (\"você\"), while the user country is Portugal; still acceptable since the requirement is just Portuguese. Optionally, the top-level wrapper format looks like an Elixir-style map rather than strict JSON, but evaluation focuses on core fields and not container format.",
+      "score": 9
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Adjust the description to European Portuguese phrasing for regional consistency. Optionally choose a more specific icon like \"tabler-certificate\" to better represent an exam. Ensure the outer structure matches expected JSON if required by the system.",
+      "score": 9.5
+    }
+  ]
+}

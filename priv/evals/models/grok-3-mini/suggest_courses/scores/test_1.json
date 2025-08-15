@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1904,
+    "output": 2290,
+    "total": 4194
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. All rules are followed: output language is Portuguese, titles are single-topic, <=5 words, no level/joiner words, not a language course, and law/jurisdiction rules are not applicable. english_title mappings are correct and icons have the tabler- prefix.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None observed. Titles look like real courses and match the expected canonical set for a vague coding intent. Descriptions are in Portuguese.",
+      "score": 10
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Could include one more canonical option like \"Engenharia de Software\" to round out the broad pathways for a vague intent. Optionally consider \"Desenvolvimento Mobile\" as another relevant path, though not necessary.",
+      "score": 9.3
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1854,
+    "output": 2425,
+    "total": 4279
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The response follows all key rules: output language is English; includes the exact topic \"Black Holes\"; titles are single-topic, concise (<=5 words), and avoid joiners and level terms; english_title matches title; is_language_course is false; icons start with \"tabler-\".",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. Descriptions are in English and acceptable; no misuse of law or language-learning rules; formatting and fields are present as required.",
+      "score": 9.8
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Could add one or two more relevant single-topic suggestions such as \"General Relativity\", \"Cosmology\", or \"Gravitational Waves\" to broaden options while keeping titles within constraints.",
+      "score": 9.2
+    }
+  ]
+}

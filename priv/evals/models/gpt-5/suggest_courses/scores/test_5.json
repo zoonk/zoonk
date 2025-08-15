@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1825,
+    "output": 2023,
+    "total": 3848
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The response follows all critical rules: exactly one suggestion for a language exam (TOEFL), correct title \"TOEFL\", is_language_course=true, Portuguese description, english_title matches, icon has tabler- prefix, no extra suggestions.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. Title length is within 5 words, no joiners or level terms, output language is Portuguese, and fields align with expectations.",
+      "score": 10
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Minor optional polish: choose an icon more semantically tied to exams or language (e.g., tabler-language or tabler-book). Otherwise, it’s already fully compliant.",
+      "score": 9.5
+    }
+  ]
+}

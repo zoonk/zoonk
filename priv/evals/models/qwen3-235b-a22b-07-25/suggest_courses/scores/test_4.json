@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1762,
+    "output": 1735,
+    "total": 3497
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The suggestion follows all critical rules: correct language (English), includes the required 'International Law' topic, uses a single-topic title under 5 words without joiners or level terms, provides english_title matching the title, sets is_language_course to false, includes a tabler-prefixed icon, and provides an English one-sentence description. Jurisdiction rules are satisfied since International Law is a global course and requires no jurisdiction.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None observed. All specified fields meet formatting and content constraints.",
+      "score": 10
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Could include additional relevant global law suggestions (e.g., Human Rights Law, International Humanitarian Law, International Trade Law) since multiple suggestions are allowed and could add value, though not required. Icon choice could be more specific but is already compliant.",
+      "score": 8
+    }
+  ]
+}
