@@ -10,8 +10,8 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
   def model do
     [
       %{
-        language: "pt",
-        country: "BR",
+        language: "Português",
+        country: "Brasil",
         input: "I want to code",
         expectations:
           """
@@ -21,8 +21,8 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
           """ <> shared_expectations()
       },
       %{
-        language: "en",
-        country: "BR",
+        language: "English",
+        country: "Brasil",
         input: "quero aprender sobre buracos negros",
         expectations:
           """
@@ -33,7 +33,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
           """ <> shared_expectations()
       },
       %{
-        language: "es",
+        language: "Español",
         country: "Mexico",
         input: "Derecho Penal",
         expectations:
@@ -47,7 +47,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
           """ <> shared_expectations()
       },
       %{
-        language: "en",
+        language: "English",
         country: "",
         input: "International Law",
         expectations:
@@ -58,8 +58,8 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
           """ <> shared_expectations()
       },
       %{
-        language: "pt",
-        country: "BR",
+        language: "Português",
+        country: "Brasil",
         input: "quero passar no toefl",
         expectations:
           """
