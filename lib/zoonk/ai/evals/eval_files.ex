@@ -73,29 +73,29 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> load_prompt_outputs(:suggest_courses)
+      iex> load_prompt_scores(:suggest_courses)
       [%{"usage" => %{...}, "steps" => [...]}, ...]
   """
-  @spec load_prompt_outputs(atom() | String.t()) :: [map()]
-  def load_prompt_outputs(prompt) do
+  @spec load_prompt_scores(atom() | String.t()) :: [map()]
+  def load_prompt_scores(prompt) do
     prompt_name = prompt_name(prompt)
     scores_dir = Path.join(["priv", @evals_dir, @prompts_dir, prompt_name, @scores_dir])
     load_scores_from_dir(scores_dir, "prompt: #{prompt_name}")
   end
 
   @doc """
-  Loads all output files for a model and prompt.
+  Loads all score files for a model and prompt.
 
-  This function reads all JSON files from the outputs directory
+  This function reads all JSON files from the scores directory
   for a given model and prompt and returns their parsed content.
 
   ## Examples
 
-      iex> load_model_outputs(:suggest_courses, "deepseek-chat-v3-0324")
+      iex> load_model_scores(:suggest_courses, "deepseek-chat-v3-0324")
       [%{"usage" => %{...}, "steps" => [...]}, ...]
   """
-  @spec load_model_outputs(atom() | String.t(), String.t()) :: [map()]
-  def load_model_outputs(prompt, model) do
+  @spec load_model_scores(atom() | String.t(), String.t()) :: [map()]
+  def load_model_scores(prompt, model) do
     prompt_name = prompt_name(prompt)
     model_name = model_name(model)
     scores_dir = Path.join(["priv", @evals_dir, @models_dir, model_name, prompt_name, @scores_dir])

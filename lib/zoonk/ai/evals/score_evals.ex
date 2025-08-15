@@ -5,7 +5,7 @@ defmodule Zoonk.AI.Evals.ScoreEvals do
   @spec calculate_score(atom() | String.t()) :: :ok
   def calculate_score(prompt_name) do
     prompt_name
-    |> EvalFiles.load_prompt_outputs()
+    |> EvalFiles.load_prompt_scores()
     |> calculate_scores()
     |> EvalFiles.update_scores_markdown(prompt_name)
   end
@@ -13,7 +13,7 @@ defmodule Zoonk.AI.Evals.ScoreEvals do
   @spec update_leaderboard(atom() | String.t(), String.t()) :: :ok
   def update_leaderboard(prompt_name, model) do
     prompt_name
-    |> EvalFiles.load_model_outputs(model)
+    |> EvalFiles.load_model_scores(model)
     |> calculate_scores()
     |> EvalFiles.update_leaderboard_json(prompt_name, model)
     |> EvalFiles.update_leaderboard_markdown(prompt_name)
