@@ -5,7 +5,6 @@ defmodule Zoonk.AI.Evals.EvalModels do
 
   # styler:sort
   @models [
-    %{name: "deepseek/deepseek-chat-v3", input: 0.25, output: 0.85},
     %{name: "deepseek/deepseek-r1", input: 0.4, output: 2},
     %{name: "google/gemini-2.0-flash-lite-001", input: 0.075, output: 0.3},
     %{name: "google/gemini-2.5-flash", input: 0.3, output: 2.5},
