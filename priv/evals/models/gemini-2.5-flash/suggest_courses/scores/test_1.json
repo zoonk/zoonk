@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1963,
+    "output": 3229,
+    "total": 5192
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "score": 6.5,
+      "conclusion": "The title \"Lógica e Projeto de Algoritmos\" violates the rule \"Single-topic titles: no 'and', 'or', '&', '/', commas joining topics.\" It uses the conjunction \"e\" (Portuguese for \"and\") to join two topics, making it a multi-topic title."
+    },
+    {
+      "kind": "minor_errors",
+      "score": 8.0,
+      "conclusion": "- The set of suggestions for a vague input like \"I want to code\" omits some canonical options explicitly suggested in expectations (e.g., \"Programação\" and \"Ciência da Computação\").\n- One suggestion, \"Design de Experiência do Usuário\", while valid, is less aligned with the user's intent to code compared to more coding-centric options."
+    },
+    {
+      "kind": "potential_improvements",
+      "score": 8.5,
+      "conclusion": "- Replace \"Lógica e Projeto de Algoritmos\" with a single-topic title such as \"Algoritmos\" or \"Lógica de Programação\".\n- Include canonical broad courses suitable for a vague coding intent, such as \"Programação\" and/or \"Ciência da Computação\".\n- Optionally swap or add more coding-focused areas like \"Desenvolvimento Mobile\" to better match the user's desire to code."
+    }
+  ]
+}

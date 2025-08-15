@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2092,
+    "output": 3272,
+    "total": 5364
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "score": 3,
+      "conclusion": "- Missing required jurisdiction for multiple non-global law courses: \"Derecho Penal Informático\" and \"Teoría del Derecho Penal\" lack a jurisdiction, violating the rule to never suggest law courses without jurisdiction (except global ones).\n- Multi-topic title: \"Derechos Humanos y Derecho Penal\" uses a joiner (\"y\"), breaking the single-topic rule; it also includes a criminal law component without jurisdiction.\n- Did not include the expected suggestion \"Derecho Penal Mexicano\" despite APP_LANGUAGE being Spanish and USER_COUNTRY empty. Expectations explicitly require it.\n- The set of jurisdictions is too narrow; only Spain is offered, failing to suggest possible jurisdictions aligned with the language (e.g., Mexico)."
+    },
+    {
+      "kind": "minor_errors",
+      "score": 6.5,
+      "conclusion": "- While most english_title translations are appropriate, \"Derecho Penal Informático\" could more precisely be \"Computer Crime Law\"; however, this is minor.\n- Could have included additional Spanish-speaking jurisdictions beyond Spain for better coverage; not strictly required but expected given the context."
+    },
+    {
+      "kind": "potential_improvements",
+      "score": 8,
+      "conclusion": "- Add \"Derecho Penal Mexicano\" (with english_title \"Mexican Criminal Law\").\n- Provide other jurisdictional variants relevant to Spanish: e.g., \"Derecho Penal Argentino\", \"Derecho Penal Colombiano\".\n- Add jurisdiction to specialized courses: e.g., \"Derecho Penal Informático Mexicano\" (or Spanish/Argentine, etc.).\n- Replace the multi-topic course with single-topic options: e.g., separate \"Derechos Humanos\" (global) and a jurisdictional criminal law suggestion.\n- Optionally include a broader jurisdictional course like \"Derecho Mexicano\" to contextualize the system."
+    }
+  ]
+}

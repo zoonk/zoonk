@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1890,
+    "output": 2527,
+    "total": 4417
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "score": 10,
+      "conclusion": "None. The output follows APP_LANGUAGE=English, includes the exact topic Black Holes, uses single-topic titles without joiners or levels, keeps titles ≤5 words, sets is_language_course=false for all, and provides english_title matching the titles. Icons all start with tabler-."
+    },
+    {
+      "kind": "minor_errors",
+      "score": 9,
+      "conclusion": "Slight opportunity cost: broader alternatives chosen are very general (Physics, Astronomy) rather than more targeted ones like Astrophysics or Cosmology. Also, the presence of an extra 'usage' field may be extraneous to the requested suggestions, though not explicitly prohibited."
+    },
+    {
+      "kind": "potential_improvements",
+      "score": 8.8,
+      "conclusion": "Consider replacing or augmenting a broad item with 'Astrophysics' or 'Cosmology' for better relevance to black holes. 'General Relativity' could also be a strong targeted option. Optionally omit unrelated metadata like 'usage' to keep the payload minimal."
+    }
+  ]
+}

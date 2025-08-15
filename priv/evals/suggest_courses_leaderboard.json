@@ -7,6 +7,10 @@
     "average": 7.39,
     "median": 8.5
   },
+  "gemini-2.5-flash": {
+    "average": 6.81,
+    "median": 8.0
+  },
   "gpt-4.1": {
     "average": 9.49,
     "median": 9.3
