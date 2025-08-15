@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2015,
+    "output": 2546,
+    "total": 4561
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The response follows all critical rules: output in Portuguese, appropriate broad canonical titles for a vague input, titles are single-topic without joiners, <=5 words, no levels or course/program words, english_title translations are accurate, is_language_course is false for all, and icons start with 'tabler-'.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None observed. Descriptions are in Portuguese and one sentence each. Titles look like real courses and align with expectations.",
+      "score": 10
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Optionally add other relevant broad options like 'Ciência de Dados' or 'Desenvolvimento Mobile' to broaden pathways. Otherwise, the set already meets expectations very well.",
+      "score": 9.2
+    }
+  ]
+}

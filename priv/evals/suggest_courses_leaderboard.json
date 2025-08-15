@@ -24,7 +24,15 @@
     "median": 9.0
   },
   "mistral-medium-3.1": {
-    "median": 9.2,
-    "average": 9.46
+    "average": 9.46,
+    "median": 9.2
+  },
+  "mistral-small-3.2-24b-instruct": {
+    "average": 6.6,
+    "median": 8.2
+  },
+  "o3": {
+    "average": 9.7,
+    "median": 10.0
   }
 }

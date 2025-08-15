@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1803,
+    "output": 1478,
+    "total": 3281
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The output follows all critical rules: exactly one suggestion for a language exam, title is the exact exam name \"TOEFL\", is_language_course=true, titles and description in Portuguese, english_title matches the title, icon has tabler- prefix, no extra suggestions.",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None observed. Title is <=5 words, single-topic, no level/joiner words, no forbidden words like \"course\" in the title, and the description is in Portuguese.",
+      "score": 10.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Optionally specify the variant \"TOEFL iBT\" if intended, though the instructions explicitly expect \"TOEFL\" and the current output fully complies. The icon could be more language-exam specific, but this is non-essential.",
+      "score": 9.5
+    }
+  ]
+}

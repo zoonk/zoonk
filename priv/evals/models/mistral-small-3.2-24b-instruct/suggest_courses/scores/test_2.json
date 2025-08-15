@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1965,
+    "output": 2942,
+    "total": 4907
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "Titles are not in English despite APP_LANGUAGE=English and the expectation that all titles and descriptions be in English. This violates a core rule. The user-specific topic \"Black Holes\" is included exactly once, which is correct. All suggestions have is_language_course=false, which is correct.",
+      "score": 4.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "\"Cosmology in Pop Culture\" is somewhat tangential and may be considered less single-topic, though it does not use forbidden joiners and remains under five words. Icons are generic but acceptable since only the prefix constraint is enforced. Otherwise, constraints like <=5 words, no level/joiner words, and inclusion of english_title are met.",
+      "score": 5.5
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Provide English titles (e.g., \"Black Holes\", \"Astrophysics\", \"Theoretical Physics\", \"Cosmology in Pop Culture\"). Optionally replace the pop culture suggestion with a more directly relevant single-topic option like \"Cosmology\" or \"General Relativity\". Keep icons but consider more semantically aligned ones.",
+      "score": 7.0
+    }
+  ]
+}

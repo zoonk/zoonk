@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2009,
+    "output": 2666,
+    "total": 4675
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The suggestions include 'International Law', all titles are in English, <=5 words, no level/joiner words, no 'course/program' terms, english_title fields match titles, icons have 'tabler-' prefix, and is_language_course is false for all. Jurisdiction rules are respected because all law items are global domains (International Law, Human Rights Law, International Trade Law, International Arbitration).",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "Very minor ambiguity: 'International Trade Law' and 'International Arbitration' are treated as global law areas; while reasonable, the instructions only explicitly listed International Law and Human Rights as examples of global courses. This is a negligible issue, as both topics are commonly taught as transnational fields. Additionally, one suggestion ('International Relations') is not a law course; still relevant, but slightly less on-target than a law subfield.",
+      "score": 9
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "- Replace 'International Relations' with a more law-focused global subfield like 'International Humanitarian Law', 'Law of the Sea', or 'Refugee Law' to tighten topical relevance.\n- Optionally clarify global scope by choosing clearly global law subfields to avoid any jurisdiction ambiguity.\n- Maintain current strong compliance on titles, english_title, and is_language_course.",
+      "score": 9.2
+    }
+  ]
+}

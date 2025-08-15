@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2005,
+    "output": 2799,
+    "total": 4804
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. All constraints are followed: Portuguese output, titles ≤5 words without levels or joiners, appropriate english_title translations, is_language_course=false for all, and tabler- prefixed icons.",
+      "score": 9.6
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. Titles look like real single-topic courses; translations are accurate; descriptions are in Portuguese.",
+      "score": 9.4
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Could include an additional broad canonical option like \"Ciência da Computação\" or \"Engenharia de Software\" to round out foundations. Consider using a more generic icon (e.g., tabler-brackets) instead of a brand icon for \"Linguagens de Programação\" for consistency.",
+      "score": 9.2
+    }
+  ]
+}

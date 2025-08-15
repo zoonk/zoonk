@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2082,
+    "output": 2958,
+    "total": 5040
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. All law titles include the appropriate jurisdiction (Mexico) except the global course on International Human Rights, which appropriately omits jurisdiction. Titles are within 5 words, avoid level/joiner words, and contain no joining punctuation. Output language is Spanish, icons have tabler- prefix, english_title translations are accurate, and is_language_course is false for all.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None observed. The use of lowercase “mexicano” aligns with Spanish capitalization norms for adjectives. All constraints are satisfied.",
+      "score": 10
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Could broaden the set by adding other relevant Mexican law areas (e.g., “Derecho Mexicano”, “Derecho Civil mexicano”, “Derecho Laboral mexicano”) for wider exploration, though not required. Consider consistent stylistic capitalization across titles if desired for branding consistency.",
+      "score": 9.2
+    }
+  ]
+}

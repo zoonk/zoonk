@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1800,
+    "output": 2399,
+    "total": 4199
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The suggestion adheres to all key rules for language exams: exactly one suggestion, title is the exam name \"TOEFL\", is_language_course=true, and output language is Portuguese.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. Title length <= 5 words, no joiners or levels, no extraneous suggestions, english_title matches the title appropriately, icon has tabler- prefix, and description is in Portuguese.",
+      "score": 10
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "None. The response is minimal and fully compliant. One could optionally choose a more thematically precise icon, but this is not required.",
+      "score": 10
+    }
+  ]
+}
