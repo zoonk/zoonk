@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2054,
+    "output": 1991,
+    "total": 4045
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "The title \"Fundamentos da Programação\" uses a banned level word (\"Fundamentos\" = \"Fundamentals\"), violating the rule to avoid level words like basics/fundamentals/advanced. This is a direct breach of a key constraint for titles.",
+      "score": 6.3
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "The english_title for \"Programação para Ciência de Dados\" is given as \"Data Science Programming\"; a more accurate translation would be \"Programming for Data Science\". All other titles meet length and single-topic requirements, and icons start with \"tabler-\". Descriptions are in Portuguese as required.",
+      "score": 7.2
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "- Replace \"Fundamentos da Programação\" with \"Programação\" (english_title: \"Programming\") to comply with the no-level rule.\n- Adjust \"Programação para Ciência de Dados\" english_title to \"Programming for Data Science\" for proper translation.\n- Optionally add \"Ciência da Computação\" (english_title: \"Computer Science\") as another broad canonical option for a vague input like \"I want to code\".",
+      "score": 8.0
+    }
+  ]
+}

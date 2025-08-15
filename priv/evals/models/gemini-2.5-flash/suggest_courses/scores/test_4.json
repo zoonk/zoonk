@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2038,
+    "output": 2609,
+    "total": 4647
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None",
+      "score": 9.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "Does not include a suggestion titled exactly \"International Law\" as expected. While \"Public International Law\" is appropriate, the explicit expectation called for including the exact topic name. All other constraints (English language, <=5 words, no joiners, no level words, icons with tabler- prefix, english_title matching, is_language_course=false) are satisfied.",
+      "score": 8.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Include one suggestion titled \"International Law\" to mirror the user input and meet the expectation. Optionally add \"Private International Law\" to complement the focus on public international law and broaden coverage, while keeping titles concise and single-topic.",
+      "score": 8.5
+    }
+  ]
+}
