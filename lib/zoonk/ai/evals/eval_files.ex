@@ -330,6 +330,9 @@ defmodule Zoonk.AI.Evals.EvalFiles do
     """
     ## Model Leaderboard
 
+    - `Average` and `Median` values go from `0` to `10`, where `10` is the best.
+    - `Avg. Cost` is the average cost per 100 calls in USD.
+
     | Model                          | Average | Median | Avg. Cost |
     | ------------------------------ | ------- | ------ | --------- |
     #{leaderboard_rows(leaderboard)}
