@@ -12,7 +12,6 @@ defmodule Zoonk.AI.Evals.EvalModels do
     %{name: "google/gemini-2.5-flash", input: 0.3, output: 2.5},
     %{name: "google/gemini-2.5-flash-lite", input: 0.1, output: 0.4},
     %{name: "google/gemini-2.5-pro", input: 1.25, output: 10},
-    %{name: "meta-llama/llama-3.3-70b-instruct:free", input: 0.038, output: 0.12},
     %{name: "meta-llama/llama-4-maverick", input: 0.15, output: 0.6},
     %{name: "meta-llama/llama-4-scout", input: 0.08, output: 0.3},
     %{name: "mistralai/mistral-medium-3.1", input: 0.4, output: 2},
