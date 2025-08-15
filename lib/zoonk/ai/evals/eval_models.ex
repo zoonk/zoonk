@@ -14,7 +14,6 @@ defmodule Zoonk.AI.Evals.EvalModels do
     %{name: "mistralai/mistral-medium-3.1", input: 0.4, output: 2},
     %{name: "mistralai/mistral-small-3.2-24b-instruct", input: 0.05, output: 0.1},
     %{name: "o3", input: 2, output: 8},
-    %{name: "o3-pro", input: 20, output: 80},
     %{name: "openai/gpt-4.1", input: 2, output: 8},
     %{name: "openai/gpt-4.1-mini", input: 0.4, output: 1.6},
     %{name: "openai/gpt-4.1-nano", input: 0.1, output: 0.4},
