@@ -11,7 +11,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
     [
       %{
         language: "pt",
-        country: "BR",
+        country: "US",
         input: "I want to code",
         expectations:
           """
@@ -34,7 +34,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
       },
       %{
         language: "es",
-        country: "Mexico",
+        country: "MX",
         input: "Derecho Penal",
         expectations:
           """
@@ -59,7 +59,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
       },
       %{
         language: "pt",
-        country: "BR",
+        country: "PT",
         input: "quero passar no toefl",
         expectations:
           """
