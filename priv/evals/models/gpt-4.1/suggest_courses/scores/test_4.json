@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1747,
+    "output": 2161,
+    "total": 3908
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The suggestion adheres to all critical rules: correct language (English), includes the exact topic \"International Law\", single-topic title with ≤5 words, no level/joiner words, proper handling of law jurisdiction rule for a global law subject, and is_language_course is false.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. Title and english_title match, formatting is correct, and the icon prefix requirement is satisfied.",
+      "score": 9.8
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Provide additional relevant global law suggestions to enrich choice, such as \"Human Rights Law\", \"International Humanitarian Law\", \"International Trade Law\", or \"Law of the Sea\", all within the ≤5-word, single-topic constraint.",
+      "score": 9
+    }
+  ]
+}

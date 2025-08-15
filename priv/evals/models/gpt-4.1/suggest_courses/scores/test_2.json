@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1833,
+    "output": 2230,
+    "total": 4063
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The suggestions follow all core rules: English output, includes the exact topic \"Black Holes\", uses single-topic titles without joiners or levels, titles are <=5 words, no course/program words, is_language_course=false, and includes english_title, description, and tabler- prefixed icons.",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. Titles and english_title match appropriately, and the fields required are present.",
+      "score": 10.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Could add one or two additional relevant single-topic options such as \"Cosmology\" or \"General Relativity\" for broader or adjacent study paths. Optionally verify that chosen Tabler icon names exist in the set.",
+      "score": 9.0
+    }
+  ]
+}
