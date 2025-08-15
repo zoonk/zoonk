@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1965,
+    "output": 2562,
+    "total": 4527
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "score": 10,
+      "conclusion": "None. The output follows the language requirement (English), includes the exact specific topic \"Black Holes,\" uses single-topic titles without joiners or level words, sets is_language_course to false for all, and provides english_title for each suggestion. No law or language-learning edge cases were violated."
+    },
+    {
+      "kind": "minor_errors",
+      "score": 10,
+      "conclusion": "None. Titles are <= 5 words, look like plausible course titles, english_title matches title, and icons have the required tabler- prefix."
+    },
+    {
+      "kind": "potential_improvements",
+      "score": 9.3,
+      "conclusion": "Could include one or two additional adjacent single-topic options to broaden choice (e.g., Gravitational Waves, High-Energy Astrophysics, Observational Astronomy, Stellar Evolution) while keeping titles concise. Otherwise the set is strong and compliant."
+    }
+  ]
+}

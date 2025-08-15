@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1945,
+    "output": 2048,
+    "total": 3993
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "score": 10,
+      "conclusion": "None. The output follows APP_LANGUAGE (Portuguese), avoids levels/joiners, uses single-topic titles, includes english_title for each, sets is_language_course=false (not a language-learning case), and maps a vague input to canonical courses. No law or special-topic constraints violated."
+    },
+    {
+      "kind": "minor_errors",
+      "score": 10,
+      "conclusion": "None. Titles are ≤5 words, look like real courses, contain no words like “course/program,” and icons have the required 'tabler-' prefix. English translations are accurate."
+    },
+    {
+      "kind": "potential_improvements",
+      "score": 9.5,
+      "conclusion": "Optionally, include one or two additional canonical pathways such as \"Desenvolvimento Mobile\" or \"Banco de Dados\" if aiming for broader coverage; however, the current four perfectly match the provided expectation examples."
+    }
+  ]
+}

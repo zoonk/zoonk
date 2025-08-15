@@ -11,6 +11,10 @@
     "average": 6.81,
     "median": 8.0
   },
+  "gemini-2.5-pro": {
+    "average": 9.57,
+    "median": 9.5
+  },
   "gpt-4.1": {
     "average": 9.49,
     "median": 9.3

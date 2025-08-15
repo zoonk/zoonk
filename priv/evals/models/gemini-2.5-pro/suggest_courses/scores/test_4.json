@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1915,
+    "output": 2235,
+    "total": 4150
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "score": 10,
+      "conclusion": "None. The suggestions comply with key rules: includes International Law; all titles are in English, <=5 words, no levels or joiners; english_title matches title; is_language_course is false for all; icons start with \"tabler-\". Law-specific rule respected because only global law topics (International Law, Human Rights Law) are used, which do not require jurisdictions."
+    },
+    {
+      "kind": "minor_errors",
+      "score": 9.5,
+      "conclusion": "None identified. All required fields are present and correctly formatted per expectations."
+    },
+    {
+      "kind": "potential_improvements",
+      "score": 8.5,
+      "conclusion": "Could add one or two additional global law subfields relevant to the query for breadth, such as International Humanitarian Law or International Criminal Law, while keeping titles under five words. Otherwise strong."
+    }
+  ]
+}

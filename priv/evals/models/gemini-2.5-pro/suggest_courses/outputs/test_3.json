@@ -1,0 +1,58 @@
+{
+  "input": {
+    "input": "Derecho Penal",
+    "language": "es",
+    "user_prompt": "- APP_LANGUAGE: Español\n- USER_INPUT: Derecho Penal\n- USER_COUNTRY: \n",
+    "system_prompt": "You generate course suggestions from a user input.\n\n## Rules\n\n- Output language: Use the `APP_LANGUAGE` value set by the user.\n  No matter what's the language used in the `USER_INPUT`.\n- Titles must look like real courses; no levels: no \"Basics\",\n  \"Beginner\", \"Advanced\", \"Intro\", \"101\", \"Mastery\".\n- Single-topic titles: no \"and\", \"or\", \"&\", \"/\", commas joining topics.\n- For vague inputs, map to broad canonical courses (e.g., \"Programming\",\n  \"Computer Science\", \"Web Development\", \"Software Engineering\").\n- If the input targets a specific topic/IP (e.g., \"Black Holes\",\n  \"Periodic Table\", \"Dragon Ball\", \"Beatles\", \"Soccer\", \"Harry Potter\"),\n  include that exact topic as ONE suggestion. You may add other broader\n  alternatives when appropriate.\n- Law topics:\n  - Use a specific jurisdiction if provided; otherwise default to `USER_COUNTRY`.\n    E.g. \"Brazilian Labor Law\" for Brazil, \"US Constitutional Law\" for the US.\n  - For global law courses like International Law or Human Rights,\n    you don't need to set a jurisdiction. But, for other law courses,\n    always display the appropriate jurisdiction. **Never** suggest\n    a law course without a jurisdiction. For example:\n      - Instead of \"Labor Law\", use \"Brazilian Labor Law\", \"US Labor Law\",\n        \"UK Labor Law\", etc.\n      - Instead of \"Constitutional Law\", use \"Mexican Constitutional Law\",\n        \"Canadian Constitutional Law\", \"German Constitutional Law\", etc.\n      - Instead of \"Law\", use \"French Law\", \"Australian Law\", \"Italian Law\", etc.\n  - If the user left `USER_COUNTRY` empty, suggest possible\n    jurisdictions based on `APP_LANGUAGE`.\n- Language learning: if the goal is to learn a language, return EXACTLY ONE\n  suggestion with the language name, is_language_course=true.\n- Language exams (TOEFL, IELTS, HSK, etc.): return EXACTLY ONE suggestion\n  with the exam name, is_language_course=true.\n- Do not add extra suggestions for language learning/exams (no writing/culture add-ons).\n- Include an `english_title` for each suggestion.\n- Include an one-sentence description for each suggestion.\n  Highlights why it may be useful or relevant to the learner.\n- Add a tabler icon name to illustrate each suggestion.\n  Each icon must have a `tabler-` prefix (e.g. `tabler-code`).\n- Generate as many suggestions as you think are relevant, except for\n  language courses, which must suggest only the language they want to learn.\n",
+    "expectations": "- suggestions should include {\"Derecho Penal Mexicano\"}\n- suggestions may include broader topics like {\"Derecho Mexicano\"}\n- suggestions may include similar topics like {\"Derecho Civil Mexicano\", \"Derecho Laboral Mexicano\"}\n- suggestions should NOT include titles without jurisdiction like {\"Derecho Penal\", \"Derecho\"}\n- all titles in Spanish\n- `is_language_course` should be false\n- Focus evaluations scores on these fields: `title`, `english_title`, `is_language_course`\n- `english_title` should be the most appropriate English translation of the `title`. For English suggestions, use the same title\n- `icon` should start with `tabler`, don't worry if it's a valid icon or not\n- don't need to evaluate the `description` field\n- no level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n- <=5 words each title\n- no words like \"course\", \"program\", etc in the title\n",
+    "country": "Mexico"
+  },
+  "output": {
+    "usage": {
+      "input": 624,
+      "output": 1678,
+      "total": 2302
+    },
+    "suggestions": [
+      {
+        "description": "Estudia los delitos y las penas según el ordenamiento jurídico de España para entender su sistema de justicia.",
+        "title": "Derecho Penal Español",
+        "icon": "tabler-gavel",
+        "english_title": "Spanish Criminal Law",
+        "is_language_course": false
+      },
+      {
+        "description": "Analiza las normativas penales y los procesos judiciales que rigen en México para aplicarlas en la práctica legal.",
+        "title": "Derecho Penal Mexicano",
+        "icon": "tabler-gavel",
+        "english_title": "Mexican Criminal Law",
+        "is_language_course": false
+      },
+      {
+        "description": "Profundiza en el código penal y la jurisprudencia de Argentina para dominar la defensa o acusación en casos criminales.",
+        "title": "Derecho Penal Argentino",
+        "icon": "tabler-gavel",
+        "english_title": "Argentinian Criminal Law",
+        "is_language_course": false
+      },
+      {
+        "description": "Explora las causas y consecuencias del comportamiento delictivo desde una perspectiva social y psicológica.",
+        "title": "Criminología",
+        "icon": "tabler-user-search",
+        "english_title": "Criminology",
+        "is_language_course": false
+      },
+      {
+        "description": "Conoce los principios y tratados internacionales que protegen la dignidad humana a nivel global.",
+        "title": "Derechos Humanos",
+        "icon": "tabler-world",
+        "english_title": "Human Rights",
+        "is_language_course": false
+      }
+    ]
+  },
+  "cost_per_100_tasks": {
+    "input": 0.07800000000000001,
+    "output": 1.678
+  }
+}
