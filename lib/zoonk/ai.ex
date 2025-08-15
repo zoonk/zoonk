@@ -12,11 +12,11 @@ defmodule Zoonk.AI do
 
   ## Examples
 
-      iex> suggest_courses("I want to learn about data science", "en")
+      iex> suggest_courses("I want to learn about data science", "en", "US")
       {:ok, [%{title: "Data Science", description: "A field that uses scientific methods..."}]}
 
-      iex> suggest_courses("forbidden input", "en")
+      iex> suggest_courses("forbidden input", "en", "US")
       {:error, "This violates our content policy."}
   """
-  defdelegate suggest_courses(input, language), to: SuggestCourses
+  defdelegate suggest_courses(input, language, country), to: SuggestCourses
 end

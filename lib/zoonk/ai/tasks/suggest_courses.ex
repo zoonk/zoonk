@@ -11,20 +11,20 @@ defmodule Zoonk.AI.Tasks.SuggestCourses do
   alias Zoonk.Localization
   alias Zoonk.Repo
 
-  def suggest_courses(input, language) do
+  def suggest_courses(input, language, country) do
     formatted_input = format_input(input)
 
     CourseSuggestion
     |> Repo.get_by(query: formatted_input, language: language)
-    |> suggest_courses(formatted_input, language)
+    |> suggest_courses(formatted_input, language, country)
   end
 
-  defp suggest_courses(%CourseSuggestion{} = course_suggestion, _input, _lang) do
+  defp suggest_courses(%CourseSuggestion{} = course_suggestion, _input, _lang, _country) do
     {:ok, %{suggestions: course_suggestion.suggestions}}
   end
 
-  defp suggest_courses(nil, input, language) do
-    %{input: input, language: language}
+  defp suggest_courses(nil, input, language, country) do
+    %{input: input, language: language, country: country}
     |> generate_object(model())
     |> add_suggestion_to_db(input, language)
   end
@@ -62,12 +62,12 @@ defmodule Zoonk.AI.Tasks.SuggestCourses do
   end
 
   @impl AITask
-  def generate_object(%{input: input, language: language}, model) do
+  def generate_object(attrs, model) do
     %AIPayload{}
     |> AIPayload.set_model(model)
     |> AIPayload.set_schema(json_schema())
     |> AIPayload.add_instructions(system_prompt())
-    |> AIPayload.add_message(user_prompt(%{input: input, language: language}))
+    |> AIPayload.add_message(user_prompt(attrs))
     |> AIClient.generate_object()
   end
 
@@ -119,10 +119,11 @@ defmodule Zoonk.AI.Tasks.SuggestCourses do
   end
 
   @impl AITask
-  def user_prompt(%{input: input, language: language}) do
+  def user_prompt(%{input: input, language: language, country: country}) do
     """
     - APP_LANGUAGE: #{Localization.language_name(language)}
     - USER_INPUT: #{input}
+    - USER_COUNTRY: #{country}
     """
   end
 

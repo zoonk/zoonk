@@ -16,7 +16,7 @@ defmodule Zoonk.AITest do
 
       openai_stub(%{suggestions: [%{title: title, description: description, english_title: english_title}]})
 
-      assert {:ok, course_suggestions} = AI.suggest_courses(input, :en)
+      assert {:ok, course_suggestions} = AI.suggest_courses(input, :en, "US")
       suggestion = hd(course_suggestions.suggestions)
       assert suggestion.title == title
       assert suggestion.description == description
@@ -40,7 +40,7 @@ defmodule Zoonk.AITest do
         suggestions: suggestions
       })
 
-      assert {:ok, cached_suggestions} = AI.suggest_courses(query, :en)
+      assert {:ok, cached_suggestions} = AI.suggest_courses(query, :en, "US")
 
       cached_suggestion = hd(cached_suggestions.suggestions)
       assert cached_suggestion.title == suggestion.title
@@ -54,7 +54,7 @@ defmodule Zoonk.AITest do
 
       openai_stub(%{suggestions: [%{title: title, description: description, english_title: "Great Course"}]})
 
-      assert {:ok, _suggestions} = AI.suggest_courses(input, :en)
+      assert {:ok, _suggestions} = AI.suggest_courses(input, :en, "US")
 
       course_suggestion = Repo.get_by(CourseSuggestion, query: input, language: :en)
       suggestion = hd(course_suggestion.suggestions)

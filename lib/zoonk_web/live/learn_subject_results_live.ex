@@ -3,6 +3,9 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
   use ZoonkWeb, :live_view
 
   alias Zoonk.AI
+  alias Zoonk.Billing
+  alias Zoonk.Billing.BillingAccount
+  alias Zoonk.Scope
 
   on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
 
@@ -100,12 +103,13 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
   def mount(params, session, socket) do
     input = params["input"]
     language = session["language"]
+    country = user_country(socket.assigns.scope)
 
     socket =
       socket
       |> assign(:page_title, dgettext("page_title", "Suggestions for %{input}", input: input))
       |> assign(:input, input)
-      |> assign_async(:suggestions, fn -> assign_suggestions(input, language) end)
+      |> assign_async(:suggestions, fn -> assign_suggestions(input, language, country) end)
 
     {:ok, socket}
   end
@@ -116,10 +120,20 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
     |> Enum.at(index)
   end
 
-  defp assign_suggestions(input, language) do
-    case AI.suggest_courses(input, language) do
+  defp assign_suggestions(input, language, country) do
+    case AI.suggest_courses(input, language, country) do
       {:ok, %{suggestions: suggestions}} -> {:ok, %{suggestions: suggestions}}
       {:error, reason} -> {:error, reason}
+    end
+  end
+
+  defp user_country(%Scope{} = scope) do
+    case Billing.get_billing_account(scope) do
+      %BillingAccount{country_iso2: country_iso2} ->
+        country_iso2
+
+      nil ->
+        ""
     end
   end
 end
