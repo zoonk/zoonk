@@ -1517,6 +1517,15 @@ defmodule Zoonk.Locations.CountryData do
 
   def get_country(_invalid), do: nil
 
+  def country_name(iso2_code) when is_binary(iso2_code) do
+    case get_country(iso2_code) do
+      %Country{name: name} -> name
+      nil -> nil
+    end
+  end
+
+  def country_name(_invalid), do: nil
+
   @doc """
   Retrieves the symbol for a currency by its code.
 

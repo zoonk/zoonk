@@ -9,6 +9,7 @@ defmodule Zoonk.AI.Tasks.SuggestCourses do
   alias Zoonk.AI.Tasks.AITask
   alias Zoonk.Helpers
   alias Zoonk.Localization
+  alias Zoonk.Locations
   alias Zoonk.Repo
 
   def suggest_courses(input, language, country) do
@@ -123,7 +124,7 @@ defmodule Zoonk.AI.Tasks.SuggestCourses do
     """
     - APP_LANGUAGE: #{Localization.language_name(language)}
     - USER_INPUT: #{input}
-    - USER_COUNTRY: #{country}
+    - USER_COUNTRY: #{Locations.country_name(country)}
     """
   end
 

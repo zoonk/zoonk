@@ -36,6 +36,19 @@ defmodule Zoonk.Locations do
   defdelegate get_country(iso2_code), to: CountryData
 
   @doc """
+  Gets a country name by its ISO2 code.
+
+  ## Examples
+
+      iex> country_name("US")
+      "United States of America"
+
+      iex> ountry_name("XX")
+      nil
+  """
+  defdelegate country_name(iso2_code), to: CountryData
+
+  @doc """
   Retrieves the symbol for a currency by its code.
 
   Returns the currency symbol if found, or `nil` if not found.
