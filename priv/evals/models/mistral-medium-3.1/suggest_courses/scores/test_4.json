@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1898,
+    "output": 2817,
+    "total": 4715
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. All constraints are met: correct language, inclusion of the exact topic 'International Law', titles have no level/joiner words, each title has ≤5 words, single-topic titles, proper english_title mirroring title, is_language_course=false for all, and icons start with 'tabler-'. No jurisdiction omissions apply since all are global law subjects.",
+      "score": 9.2
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None observed. Titles and metadata conform precisely to the stated rules.",
+      "score": 9.2
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Could broaden coverage with additional relevant international law subfields (e.g., International Criminal Law, Law of the Sea, International Trade Law, International Environmental Law, International Arbitration) while keeping titles ≤5 words. This would provide more choice without violating rules.",
+      "score": 9.2
+    }
+  ]
+}

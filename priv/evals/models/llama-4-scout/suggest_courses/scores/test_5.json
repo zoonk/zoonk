@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1799,
+    "output": 1356,
+    "total": 3155
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The response follows all critical rules: single suggestion for a language exam, title is exactly 'TOEFL', is_language_course=true, english_title matches, icon starts with 'tabler-', Portuguese language is used, and title length/format constraints are met.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. The description is in Portuguese and concise; no disallowed words in the title; no extra suggestions.",
+      "score": 10
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Optionally add terminal punctuation to the description for polish.",
+      "score": 9.5
+    }
+  ]
+}

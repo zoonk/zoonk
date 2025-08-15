@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1807,
+    "output": 2657,
+    "total": 4464
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The suggestion follows the special rule for language exams: exactly one suggestion with the exam name, in Portuguese output context. Title is single-topic, <=5 words, no level/joiner words, no course/program terms in the title. is_language_course is true. english_title matches the title appropriately for an English exam. Icon has tabler- prefix. Description is in Portuguese.",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. The title “TOEFL” is acceptable per the exam rule. The description is one sentence in Portuguese. No extra suggestions were added. All required fields are present.",
+      "score": 10.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Minor polish only: the description could mention specific sections (Reading, Listening, Speaking, Writing) for extra clarity, though this is not required. Optionally choose a more obviously relevant icon name (e.g., tabler-certificate), but icon validity is not required.",
+      "score": 9.0
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1798,
+    "output": 2032,
+    "total": 3830
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The output follows all key rules: exactly one suggestion for a language exam, title is \"TOEFL\" (<=5 words, no joiners, no levels, no \"course\"), english_title matches, is_language_course=true, description in Portuguese, icon starts with \"tabler-\", output language Portuguese.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. Title appropriateness is acceptable for a course suggestion per instructions; no missing required fields.",
+      "score": 10
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Could optionally pick a more thematically specific icon (e.g., tabler-certificate) or make the description slightly more specific to Portugal context; however, these are not required.",
+      "score": 9.5
+    }
+  ]
+}

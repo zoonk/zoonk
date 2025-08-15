@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1990,
+    "output": 2226,
+    "total": 4216
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The response follows language, title length, single-topic, and icon prefix rules; includes \"International Law\"; sets is_language_course=false for all; and respects jurisdiction requirements for non-global law courses.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "- One suggestion, \"International Relations,\" is not a law course. While relevant, it slightly departs from the law-focused expectation implied by the input and rules.\n- Could have included more English-language jurisdictions (e.g., Canadian Law, Australian Law) given USER_COUNTRY is empty and APP_LANGUAGE is English, though this is optional.",
+      "score": 8.5
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "- Replace or complement \"International Relations\" with law-specific global topics such as \"International Criminal Law,\" \"International Humanitarian Law,\" or \"Law of Treaties.\"\n- Optionally add other English-speaking jurisdictions like \"Canadian Law\" or \"Australian Law\" to better satisfy the jurisdiction guidance when USER_COUNTRY is empty.\n- Keep current compliance on title constraints and icon prefixes.",
+      "score": 9
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1876,
+    "output": 3520,
+    "total": 5396
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. All key rules are followed: output language is English; includes the exact topic Black Holes once; titles are single-topic, <=5 words, and contain no level/joiner words or 'course/program'; english_title matches title; is_language_course is false for all; icons start with 'tabler-'.",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. Titles look like plausible course names; descriptions are one sentence and in English. No law or language-learning special-case rules were triggered.",
+      "score": 9.6
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Consider adding or substituting a more targeted broader option such as Astrophysics or Cosmology instead of the very broad Physics to better match the user's intent about black holes. Otherwise, the set is strong.",
+      "score": 9.2
+    }
+  ]
+}

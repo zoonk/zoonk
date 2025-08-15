@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1911,
+    "output": 2431,
+    "total": 4342
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "Titles are not in English despite APP_LANGUAGE=English and the expectation that all titles and descriptions be in English. This violates a primary rule and the evaluation focus on the title field. Additionally, the exact requested topic “Black Holes” does not appear in the title field (it appears as the Portuguese “Buracos Negros”), conflicting with the expectation to include that exact topic as one suggestion.",
+      "score": 3.5
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "While broader alternatives are acceptable, including “Astrophysics” might be a more targeted broader option than “Astronomy.” Otherwise fields like english_title, is_language_course, icon prefix, title length, and single-topic constraint are correct.",
+      "score": 7.5
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Make all titles English to match APP_LANGUAGE: use “Black Holes,” “Astronomy,” and “Cosmology” as the title fields (matching the english_title). Optionally add “Astrophysics” and “General Relativity” as additional single-topic suggestions. Ensure the exact string “Black Holes” appears as the title of one suggestion.",
+      "score": 8.0
+    }
+  ]
+}

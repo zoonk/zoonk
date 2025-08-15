@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1759,
+    "output": 1863,
+    "total": 3622
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The suggestion follows all critical rules: correct language (English), valid global law topic without jurisdiction needed, title is concise and realistic, single-topic, no level/joiner words, english_title matches, is_language_course is false, and icon has tabler- prefix.",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. Title length <=5 words, no prohibited words like 'course' or 'program', description is in English, and includes the required topic 'International Law'.",
+      "score": 10.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Could increase utility by adding a few additional relevant global law suggestions (still single-topic) such as Human Rights Law, International Humanitarian Law, International Trade Law, International Criminal Law, or Public International Law. This would provide more options while adhering to the rules.",
+      "score": 8.5
+    }
+  ]
+}

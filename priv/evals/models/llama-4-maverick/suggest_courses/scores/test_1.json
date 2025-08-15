@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1780,
+    "output": 2158,
+    "total": 3938
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The output follows language, title constraints, single-topic rule, and non-language-course requirement. No law or language learning special cases were mishandled.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "Only one suggestion provided for a vague input; more canonical options would improve usefulness. Otherwise compliant: title is concise and single-topic, english_title is accurate, is_language_course is false, icon has tabler- prefix, and Portuguese is used.",
+      "score": 8.5
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Add more broad, canonical suggestions like “Ciência da Computação”, “Desenvolvimento Web”, and “Engenharia de Software,” each with proper english_title and tabler icons to increase utility.",
+      "score": 9
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1981,
+    "output": 3415,
+    "total": 5396
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "The title \"Fundamentos de Programação\" violates the explicit rule forbidding level/joiner words like \"fundamentals\" in titles. This directly contradicts the instruction and the Expectations.",
+      "score": 6.5
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "1) \"Princípios de Ciência da Computação\" is not the canonical broad title suggested (\"Ciência da Computação\") and introduces a quasi-level word (\"Princípios\"), which may conflict with the spirit of the no-level/joiner rule. 2) english_title for that item mirrors the less-ideal Portuguese title (\"Computer Science Principles\") instead of the canonical \"Computer Science\". 3) Everything else (language, single-topic constraint, word count, icon prefix, is_language_course=false) looks correct.",
+      "score": 6.5
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "- Replace \"Fundamentos de Programação\" with \"Programação\" and set english_title to \"Programming\". - Replace \"Princípios de Ciência da Computação\" with \"Ciência da Computação\" and set english_title to \"Computer Science\". - Keep \"Desenvolvimento Web\" and \"Engenharia de Software\" as they are.",
+      "score": 6.5
+    }
+  ]
+}
