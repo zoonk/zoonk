@@ -12,7 +12,6 @@ defmodule Zoonk.AI.Evals.EvalModels do
     %{name: "meta-llama/llama-4-maverick", input: 0.15, output: 0.6},
     %{name: "meta-llama/llama-4-scout", input: 0.08, output: 0.3},
     %{name: "mistralai/mistral-medium-3.1", input: 0.4, output: 2},
-    %{name: "mistralai/mistral-nemo", input: 0.008, output: 0.05},
     %{name: "mistralai/mistral-small-3.2-24b-instruct", input: 0.05, output: 0.1},
     %{name: "o3", input: 2, output: 8},
     %{name: "o3-pro", input: 20, output: 80},
