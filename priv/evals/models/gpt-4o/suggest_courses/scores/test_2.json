@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1908,
+    "output": 2106,
+    "total": 4014
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The response follows all core rules: output in English, includes the exact topic 'Black Holes' as one suggestion, titles are single-topic without joiners or levels, <=5 words, includes english_title, is_language_course=false for all, and icons start with 'tabler-'.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None observed. Titles look like plausible course names; english_title matches titles; descriptions are one sentence and in English.",
+      "score": 10
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Could add one or two additional relevant single-topic options like 'General Relativity' or 'Gravitational Waves' to broaden choices, though the current three are sufficient. Optionally choose icons that more intuitively match topics (not required).",
+      "score": 9.0
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1902,
+    "output": 2925,
+    "total": 4827
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The response follows the language rule, includes the required International Law suggestion, uses proper English titles, keeps titles under five words, avoids level/joiner words, includes english_title and is_language_course=false for all items, and uses tabler- icons.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "Slight redundancy: “International Law” and “Public International Law” can be considered overlapping or synonymous in many curricula, reducing diversity of suggestions.",
+      "score": 8.5
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Increase variety by adding distinct international law subfields (e.g., International Humanitarian Law, International Criminal Law, International Trade Law) instead of overlapping titles; ensure each suggestion is clearly differentiated.",
+      "score": 9
+    }
+  ]
+}

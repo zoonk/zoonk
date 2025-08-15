@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1816,
+    "output": 2428,
+    "total": 4244
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The output follows all key rules for language exams: exactly one suggestion, title is the exam name (TOEFL), is_language_course=true, english_title provided and appropriate, no extra add-ons, icon has tabler- prefix, Portuguese description, title length <=5 words, no levels/joiners.",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. All required fields are correctly populated and meet formatting constraints.",
+      "score": 10.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Minor stylistic enhancement could be to use European Portuguese phrasing consistency (e.g., “exame” vs “teste”), but this is non-essential. Icon could be more semantically tied to language (e.g., tabler-language), though current one is acceptable.",
+      "score": 9.2
+    }
+  ]
+}

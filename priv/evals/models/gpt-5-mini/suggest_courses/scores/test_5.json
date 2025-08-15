@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1820,
+    "output": 2674,
+    "total": 4494
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The output follows the special rule for language exams: exactly one suggestion, title equals the exam name, is_language_course=true. Title length, formatting, language, and icon prefix all comply.",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "Very minor: The description mentions immigration, which is not a typical primary use case for TOEFL compared to academic admissions; however, description content is de-emphasized per expectations and it's still plausible in some contexts.",
+      "score": 9.5
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Optionally specify “TOEFL iBT” as the title for precision, keeping all other constraints intact. Consider aligning the description more strictly with academic admissions and score goals rather than immigration.",
+      "score": 9.5
+    }
+  ]
+}

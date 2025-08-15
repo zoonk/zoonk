@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1842,
+    "output": 2353,
+    "total": 4195
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The response follows all critical rules: output language is English, includes the exact topic \"Black Holes\" as one suggestion, titles are single-topic with <=5 words and no level/joiner words, english_title fields match titles, is_language_course is false, and icons have the tabler- prefix.",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. Titles look like real courses, descriptions are in English, and there are no prohibited terms in titles.",
+      "score": 10.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Could add one or two more relevant single-topic suggestions (e.g., \"Cosmology\", \"General Relativity\") to broaden options while keeping all constraints.",
+      "score": 8.5
+    }
+  ]
+}

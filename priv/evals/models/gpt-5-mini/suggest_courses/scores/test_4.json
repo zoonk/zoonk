@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2306,
+    "output": 2775,
+    "total": 5081
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The suggestions follow the rules: all titles are in English, <=5 words, single-topic without joiners, no level words or 'course/program' terms, icons start with 'tabler-', english_title matches title, and is_language_course is false for all. 'International Law' is included as required. For law topics, all proposed subjects are global international law fields, so jurisdictions are not required and the absence of jurisdiction is acceptable.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "Minor nuance: 'Private International Law' can be taught with jurisdictional perspectives; however, as a recognized global field it is acceptable without a jurisdiction here. No other issues found.",
+      "score": 9
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Could add other core international law staples such as 'International Humanitarian Law' or 'Refugee Law' or 'International Organizations' to broaden options. Otherwise solid.",
+      "score": 9.2
+    }
+  ]
+}

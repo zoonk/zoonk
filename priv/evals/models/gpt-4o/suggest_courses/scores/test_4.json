@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1769,
+    "output": 2159,
+    "total": 3928
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The suggestion follows all mandatory rules: correct language, includes International Law, proper title length, no joiners or level words, english_title matches, icon has tabler- prefix, is_language_course=false, and global law topic correctly without jurisdiction.",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None observed. All evaluated key fields (title, english_title, is_language_course) are correct.",
+      "score": 10.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Provide additional relevant global law suggestions to increase utility, such as Human Rights Law, International Humanitarian Law, International Trade Law, International Environmental Law, or International Criminal Law. All should keep titles ≤5 words and remain single-topic.",
+      "score": 8.5
+    }
+  ]
+}

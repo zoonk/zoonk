@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1962,
+    "output": 3271,
+    "total": 5233
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "The title 'Literatura y Filosofía Penal' violates the single-topic rule by joining topics with 'y' (and). This directly conflicts with the instruction to avoid joiners and single-topic only titles.",
+      "score": 4.5
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "The title 'Derecho Penal Comparado' lacks a jurisdiction. While comparative law can be cross-jurisdictional, the instructions emphasize that, except for global law areas like International Law or Human Rights, law courses should include a jurisdiction; thus this likely violates the jurisdiction requirement. Everything else (Spanish language, <=5 words titles, english_title translations, icons prefix, is_language_course=false) is correct.",
+      "score": 7.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "- Replace 'Literatura y Filosofía Penal' with a single-topic title, e.g., 'Filosofía del Derecho Penal' or 'Teoría del Derecho Penal' (and consider adding 'Mexicano' to comply with jurisdiction requirement if treated as a law course).\n- Replace or adjust 'Derecho Penal Comparado' to include a clear angle or jurisdiction, e.g., 'Derecho Penal Mexicano' (already present) or add broader, compliant alternatives like 'Derecho Mexicano', 'Derecho Civil Mexicano', 'Derecho Laboral Mexicano', 'Derecho Procesal Penal Mexicano'.\n- Ensure all additional suggestions maintain single-topic titles and include jurisdiction where applicable.",
+      "score": 7.8
+    }
+  ]
+}

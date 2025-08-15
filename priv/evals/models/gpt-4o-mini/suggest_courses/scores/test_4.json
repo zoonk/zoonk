@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1761,
+    "output": 1893,
+    "total": 3654
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The suggestion follows the law-specific rules for a global law topic (International Law) without needing a jurisdiction, uses English as required, and respects title constraints.",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. Title is <=5 words, single-topic, no level/joiner words, english_title matches, is_language_course is false, and icon starts with 'tabler-'.",
+      "score": 10.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Could include additional relevant global law suggestions (e.g., Human Rights Law, International Trade Law) while ensuring titles remain single-topic and under five words, though not strictly required.",
+      "score": 8.0
+    }
+  ]
+}

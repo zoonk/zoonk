@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1780,
+    "output": 2511,
+    "total": 4291
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The response follows all key rules: output in English despite Portuguese input, includes the specific topic \"Black Holes\" as one suggestion, single-topic title without joiners, <=5 words, no level words, no \"course\"/\"program\" terms, includes english_title matching the title, is_language_course=false, and an icon with a tabler- prefix.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. Title looks like a real course, fields are correctly named and set, and the description is a single English sentence.",
+      "score": 10
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Could add additional relevant single-topic suggestions to increase value (e.g., \"Astrophysics\", \"General Relativity\", \"Cosmology\") while keeping titles within 5 words and single-topic. The current single suggestion is valid but sparse given the allowance to include more.",
+      "score": 9
+    }
+  ]
+}

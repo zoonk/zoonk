@@ -15,6 +15,34 @@
     "average": 9.55,
     "median": 9.6
   },
+  "gpt-4.1": {
+    "average": 9.57,
+    "median": 10.0
+  },
+  "gpt-4.1-mini": {
+    "average": 9.21,
+    "median": 9.5
+  },
+  "gpt-4.1-nano": {
+    "average": 7.71,
+    "median": 9.0
+  },
+  "gpt-4o": {
+    "average": 9.55,
+    "median": 10.0
+  },
+  "gpt-4o-mini": {
+    "average": 8.22,
+    "median": 8.5
+  },
+  "gpt-5-mini": {
+    "average": 9.61,
+    "median": 9.6
+  },
+  "gpt-5-nano": {
+    "average": 8.86,
+    "median": 9.5
+  },
   "llama-4-maverick": {
     "average": 8.2,
     "median": 8.5

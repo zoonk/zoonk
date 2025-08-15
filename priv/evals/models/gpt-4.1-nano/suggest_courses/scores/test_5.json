@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1824,
+    "output": 3214,
+    "total": 5038
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "Title violates the language exam rule. For language exams, it must be EXACTLY the exam name; provided title is \"Preparação para o Exame TOEFL\", which is explicitly disallowed by expectations (no \"Preparatório/Preparação\" phrasing). English title should correspond to the correct title; it was given as \"TOEFL Test Preparation\" instead of the exam name. These break key constraints focused on title and english_title.",
+      "score": 3.5
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None beyond the major issues. is_language_course=true is correct; single suggestion only; icon prefix is correct; description is in Portuguese and acceptable; title length is within 5 words.",
+      "score": 3.5
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Set title to exactly \"TOEFL\". Set english_title to \"TOEFL\". Keep is_language_course=true, keep a Portuguese one-sentence description, and a tabler icon. Example: title: \"TOEFL\"; english_title: \"TOEFL\"; is_language_course: true; icon: \"tabler-file-text\"; description: a concise Portuguese sentence about preparing for the TOEFL.",
+      "score": 3.5
+    }
+  ]
+}

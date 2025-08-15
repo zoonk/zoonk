@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1984,
+    "output": 2196,
+    "total": 4180
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. All core rules are followed: Portuguese output, titles within 5 words, no level/joiner words, no law/language pitfalls, english_title correctly translated, is_language_course=false for all suggestions.",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "Slight thematic overlap between \"Desenvolvimento de Software\" and \"Engenharia de Software\" which could reduce diversity. The set omits the particularly canonical \"Programação\" example suggested in expectations, though this is not a strict requirement.",
+      "score": 9.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Consider replacing either \"Desenvolvimento de Software\" or \"Engenharia de Software\" with \"Programação\" to map even more directly to the vague input and reduce overlap. Ensure each suggestion covers a distinct angle (e.g., Programação, Ciência da Computação, Desenvolvimento Web, Engenharia de Software).",
+      "score": 9.2
+    }
+  ]
+}

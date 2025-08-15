@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1773,
+    "output": 2021,
+    "total": 3794
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "- Title is not in APP_LANGUAGE (English); it is in Portuguese (\"Buracos Negros\"), violating the output language rule and the expectation that all titles be in English.\n- The exact topic \"Black Holes\" should appear as one suggestion title; it appears only as english_title, not as the main title.\n- Missing required field is_language_course; expectations specify it should be present and false for non-language topics.",
+      "score": 3.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "- Only one suggestion provided; while acceptable, broader related options (e.g., \"Astrophysics\", \"General Relativity\", \"Cosmology\") could increase usefulness.\n- No other issues with icon prefix or title length; description language is correct.",
+      "score": 7.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "- Change the title to \"Black Holes\" to match APP_LANGUAGE and include the exact topic.\n- Add is_language_course: false to the suggestion.\n- Optionally add additional single-topic suggestions like \"Astrophysics\", \"General Relativity\", or \"Cosmology\" (<=5 words, no joiners/levels) with English titles and appropriate english_title, each with a tabler- icon.\n- Keep descriptions to one sentence in English.",
+      "score": 8.0
+    }
+  ]
+}
