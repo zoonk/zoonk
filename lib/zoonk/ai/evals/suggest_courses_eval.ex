@@ -82,7 +82,8 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
     """
     - Focus evaluations scores on these fields: `title`, `english_title`, `is_language_course`
     - `english_title` should be the most appropriate English translation of the `title`. For English suggestions, use the same title
-    - `description` and `icon` are for aesthetic purposes and should not be the primary focus. Do **NOT** decrease an output's score based on these fields
+    - `icon` should start with `tabler`, don't worry if it's a valid icon or not
+    - don't need to evaluate the `description` field
     - no level/joiner words like "basic", "intermediate", "advanced", "fundamentals", etc
     - <=5 words each title
     - no words like "course", "program", etc in the title
