@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2055,
+    "output": 3518,
+    "total": 5573
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. All titles adhere to constraints (<=5 words, no levels, no joiners, no 'course/program'), english_title matches title, is_language_course is false for all, and one suggestion includes the exact user topic 'International Law'. All suggestions are globally scoped areas of international law, so no jurisdiction is required per rules.",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. Language matches APP_LANGUAGE (English), icons start with 'tabler-', and descriptions are one sentence in English.",
+      "score": 10.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Could broaden coverage with additional globally scoped subfields such as International Criminal Law, Law of the Sea, International Trade Law, Refugee Law, or International Environmental Law. Otherwise, the set is strong and compliant.",
+      "score": 9.3
+    }
+  ]
+}

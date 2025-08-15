@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1818,
+    "output": 2750,
+    "total": 4568
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "Title violates the language exam rule and the explicit expectation: for language exams, the title must be exactly the exam name. Instead of \"TOEFL\", it uses \"Preparação para TOEFL\", which is akin to the disallowed phrasing \"Preparatório para o TOEFL\". Consequently, the english_title should also be \"TOEFL\" rather than \"TOEFL Preparation\". These errors affect the key fields being evaluated (title, english_title).",
+      "score": 3.5
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. Output language is Portuguese, only one suggestion is provided, is_language_course is true, title length is ≤5 words, icon starts with tabler-, and the description is in Portuguese.",
+      "score": 9.5
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "- Change title to \"TOEFL\".\n- Set english_title to \"TOEFL\".\n- Keep is_language_course as true and retain one suggestion only.\n- Optionally choose an icon more closely tied to exams (e.g., tabler-certificate), though current icon is acceptable.",
+      "score": 7.5
+    }
+  ]
+}

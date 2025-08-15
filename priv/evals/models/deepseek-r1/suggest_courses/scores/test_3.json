@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2119,
+    "output": 3126,
+    "total": 5245
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "One title violates key title rules: \"Derechos Humanos y Garantías en México\" uses a joiner (\"y\") joining two topics, breaking the single-topic rule, and exceeds the 5-word limit (it has 6 words). All other titles respect jurisdiction requirements and word limits.",
+      "score": 6.5
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "The English title for \"Derechos Humanos y Garantías en México\" is incomplete; it omits \"and Guarantees\" (should be closer to \"Human Rights and Guarantees in Mexico\"). \"Criminology in Mexican Context\" is grammatically awkward; \"Criminology in Mexico\" or \"Criminology in the Mexican Context\" would be better. Everything else (icons, Spanish descriptions, is_language_course=false) looks correct.",
+      "score": 7.8
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Revise the problematic title to be single-topic and ≤5 words, e.g., \"Derechos Humanos en México\" or create two separate options like \"Garantías Constitucionales Mexicanas\" (but keep one per suggestion). Align the English title accordingly. Optionally add related Mexican law suggestions (e.g., \"Derecho Civil Mexicano\", \"Derecho Laboral Mexicano\" or a broader \"Derecho Mexicano\") to cover adjacent interests. Polish English phrasing to \"Criminology in Mexico\".",
+      "score": 8.3
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 2238,
+    "output": 2796,
+    "total": 5034
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The suggestions follow the rules: Portuguese output, relevant canonical courses for a vague input, proper single-topic titles without joiners, <=5 words, no level terms, no law or language-learning edge cases triggered, icons use tabler- prefix, is_language_course=false for all.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "The english_title for the suggestion titled \"Python\" is \"Python Programming\"; the most appropriate English translation of the title \"Python\" is simply \"Python\". This is a small mismatch with the requirement that english_title be the most appropriate translation (and for English suggestions, use the same title).",
+      "score": 8.5
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "- Change the english_title for \"Python\" from \"Python Programming\" to \"Python\" to exactly match the title translation.\n- Optionally add another broadly relevant course such as \"Ciência de Dados\" (Data Science) or \"Desenvolvimento Backend\" (Backend Development), though current coverage is already strong.",
+      "score": 9
+    }
+  ]
+}
