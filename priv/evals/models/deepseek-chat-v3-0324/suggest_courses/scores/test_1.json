@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1879,
+    "output": 3156,
+    "total": 5035
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. Titles are in Portuguese, single-topic, ≤5 words, no level/joiner words. english_title translations are accurate. is_language_course is false for all. Icons have the required tabler- prefix. Output adheres to APP_LANGUAGE and maps a vague input to canonical computing courses.",
+      "score": 9.2
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "Slight opportunity missed: did not include \"Ciência da Computação,\" which is a common canonical option listed in expectations for vague coding intents. Not an error, just a minor omission.",
+      "score": 9.2
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Consider adding \"Ciência da Computação\" to round out the canonical set for a vague goal like \"I want to code.\" Optionally, include one or two more adjacent broad tracks (e.g., \"Desenvolvimento Mobile\") while keeping titles single-topic and ≤5 words.",
+      "score": 9.2
+    }
+  ]
+}

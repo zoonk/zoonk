@@ -1,6 +1,10 @@
 {
+  "deepseek-chat-v3-0324": {
+    "median": 9.2,
+    "average": 8.68
+  },
   "gpt-4.1": {
-    "median": 9.3,
-    "average": 9.49
+    "average": 9.49,
+    "median": 9.3
   }
 }
