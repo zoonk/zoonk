@@ -60,3 +60,7 @@ chatmodes
 
 # Kiro files
 .kiro
+
+# Evals
+/priv/evals/models/
+/priv/evals/*.json
