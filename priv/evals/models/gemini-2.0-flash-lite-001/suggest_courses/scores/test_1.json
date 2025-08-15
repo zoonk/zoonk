@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1767,
+    "output": 1420,
+    "total": 3187
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "score": 10,
+      "conclusion": "None. The output respects language (Portuguese), provides a valid single-topic title without levels/joiners, includes english_title, icon with tabler- prefix, and sets is_language_course to false."
+    },
+    {
+      "kind": "minor_errors",
+      "score": 8,
+      "conclusion": "Only one suggestion was provided despite a vague input where multiple canonical options would be appropriate. While allowed, the instructions encourage generating as many relevant suggestions as needed; including more (e.g., Ciência da Computação, Desenvolvimento Web, Engenharia de Software) would better meet expectations."
+    },
+    {
+      "kind": "potential_improvements",
+      "score": 8.5,
+      "conclusion": "- Add more broad canonical course suggestions for a vague intent (e.g., Ciência da Computação, Desenvolvimento Web, Engenharia de Software).\n- Vary icons to match each suggestion if more are added.\n- Keep titles concise and single-topic as already done."
+    }
+  ]
+}
