@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1928,
+    "output": 2224,
+    "total": 4152
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "- Missing required jurisdiction-specific suggestion: \"Derecho Penal Mexicano\" (explicitly expected).\n- Included a law title without jurisdiction: \"Derecho Penal\" (explicitly prohibited).\n- Used a regional label instead of a specific jurisdiction: \"Derecho Penal Latinoamericano\"; for non-global law topics, a concrete jurisdiction is required.\n- Did not adequately suggest possible jurisdictions based on APP_LANGUAGE (e.g., Mexico, Argentina, Colombia), despite USER_COUNTRY being empty.",
+      "score": 2.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "- None regarding language, title length, or icon prefix.\n- English titles are accurate translations for the provided Spanish titles.",
+      "score": 9.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "- Add \"Derecho Penal Mexicano\" and other Spanish-language jurisdictions (e.g., \"Derecho Penal Argentino\", \"Derecho Penal Colombiano\").\n- Optionally add broader related Mexican topics like \"Derecho Mexicano\", \"Derecho Civil Mexicano\", \"Derecho Laboral Mexicano\".\n- Remove the non-jurisdictional \"Derecho Penal\" and replace the regional \"Derecho Penal Latinoamericano\" with specific countries.\n- Keep titles within 5 words, single-topic, and in Spanish; ensure is_language_course=false for all.",
+      "score": 3.0
+    }
+  ]
+}

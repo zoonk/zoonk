@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1839,
+    "output": 3129,
+    "total": 4968
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The response follows the language requirement (English), includes the exact targeted topic \"Black Holes\" once, uses single-topic titles without joiners or levels, keeps titles under 5 words, sets is_language_course to false, and provides english_title correctly. Icons start with \"tabler-\".",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. No violations of the specified formatting or content rules were found.",
+      "score": 10.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Offer a few more relevant single-topic suggestions to broaden options, such as \"Cosmology\", \"General Relativity\", or \"Gravitational Waves\", still adhering to all constraints (<=5 words, no joiners, is_language_course=false).",
+      "score": 9.0
+    }
+  ]
+}
