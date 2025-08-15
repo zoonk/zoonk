@@ -3,6 +3,10 @@
     "average": 8.68,
     "median": 9.2
   },
+  "deepseek-r1": {
+    "average": 7.69,
+    "median": 8.5
+  },
   "gemini-2.0-flash-lite-001": {
     "average": 7.39,
     "median": 8.5

@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1960,
+    "output": 1804,
+    "total": 3764
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The output language is Portuguese, titles are single-topic without joiners or levels, <=5 words, no 'course/program' terms, english_title translations are appropriate, and is_language_course is false for all. Icons have the required 'tabler-' prefix.",
+      "score": 10
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "Slight mismatch between the title 'Engenharia de Software' and its description, which focuses mainly on automated testing and QA rather than the broader scope of software engineering. This does not impact the key evaluated fields but slightly reduces overall polish.",
+      "score": 9
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Align the 'Engenharia de Software' description to cover broader topics (design, architecture, processes) rather than primarily testing; optionally choose a more general icon than 'tabler-brand-javascript' for that title to avoid implying a specific language focus.",
+      "score": 9.5
+    }
+  ]
+}
