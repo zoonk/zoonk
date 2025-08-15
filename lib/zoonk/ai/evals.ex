@@ -7,6 +7,7 @@ defmodule Zoonk.AI.Evals do
   new models as they become available.
   """
 
+  alias Zoonk.AI.Evals.EvalModels
   alias Zoonk.AI.Evals.EvalRunner
   alias Zoonk.AI.Evals.ScoreEvals
 
@@ -25,6 +26,23 @@ defmodule Zoonk.AI.Evals do
   def evaluate_model(prompt, model) do
     EvalRunner.generate_object(prompt, :model, model)
     ScoreEvals.update_leaderboard(prompt, model)
+  end
+
+  @doc """
+  Evaluate all models for a specific prompt.
+
+  Iterates over all supported models and evaluates each one for the given prompt.
+
+  ## Examples
+
+      iex> evaluate_models(:suggest_courses)
+      :ok
+  """
+  @spec evaluate_models(atom()) :: :ok
+  def evaluate_models(prompt) do
+    Enum.each(EvalModels.list_models(), fn model ->
+      evaluate_model(prompt, model.name)
+    end)
   end
 
   @doc """
