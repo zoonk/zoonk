@@ -102,6 +102,25 @@ defmodule Zoonk.AI.Evals.EvalFiles do
     load_scores_from_dir(scores_dir, "model: #{model_name}, prompt: #{prompt_name}")
   end
 
+  @doc """
+  Loads all output files for a model and prompt.
+
+  This function reads all JSON files from the outputs directory
+  for a given model and prompt and returns their parsed content.
+
+  ## Examples
+
+      iex> load_model_outputs(:suggest_courses, "deepseek-chat-v3-0324")
+      [%{"input" => %{...}, "output" => %{...}, "cost_per_100_tasks" => %{...}}, ...]
+  """
+  @spec load_model_outputs(atom() | String.t(), String.t()) :: [map()]
+  def load_model_outputs(prompt, model) do
+    prompt_name = prompt_name(prompt)
+    model_name = model_name(model)
+    outputs_dir = Path.join(["priv", @evals_dir, @models_dir, model_name, prompt_name, "outputs"])
+    load_scores_from_dir(outputs_dir, "model: #{model_name}, prompt: #{prompt_name}")
+  end
+
   defp load_scores_from_dir(scores_dir, context) do
     case File.ls(scores_dir) do
       {:ok, files} ->
@@ -311,8 +330,8 @@ defmodule Zoonk.AI.Evals.EvalFiles do
     """
     ## Model Leaderboard
 
-    | Model                 | Average | Median |
-    | --------------------- | ------- | ------ |
+    | Model                          | Average | Median | Avg. Cost |
+    | ------------------------------ | ------- | ------ | --------- |
     #{leaderboard_rows(leaderboard)}
 
     """
@@ -338,7 +357,8 @@ defmodule Zoonk.AI.Evals.EvalFiles do
     %{
       model: model,
       average: get_score(scores, :average),
-      median: get_score(scores, :median)
+      median: get_score(scores, :median),
+      cost: get_score(scores, :cost)
     }
   end
 
@@ -346,7 +366,9 @@ defmodule Zoonk.AI.Evals.EvalFiles do
     Map.get(scores, key) || Map.get(scores, to_string(key), 0)
   end
 
-  defp format_row(%{model: model, average: avg, median: med}) do
-    "| #{String.pad_trailing(model, 21)} | #{String.pad_trailing(to_string(avg), 7)} | #{String.pad_trailing(to_string(med), 6)} |"
+  defp format_row(%{model: model, average: avg, median: med, cost: cost}) do
+    cost_str = if cost && cost > 0, do: "$#{Float.round(cost, 4)}", else: "N/A"
+
+    "| #{String.pad_trailing(model, 30)} | #{String.pad_trailing(to_string(avg), 7)} | #{String.pad_trailing(to_string(med), 6)} | #{String.pad_trailing(cost_str, 9)} |"
   end
 end
