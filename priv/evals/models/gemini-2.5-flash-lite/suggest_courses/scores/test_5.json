@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1805,
+    "output": 2420,
+    "total": 4225
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "The title violates the exam-specific rule: for language exams, the suggestion must use exactly the exam name. The provided title is \"Preparatório TOEFL\" instead of \"TOEFL\". This also conflicts with the expectation explicitly discouraging titles like \"Preparatório para o TOEFL\". Consequently, the english_title should also be \"TOEFL\" rather than \"TOEFL Preparation\" if the title were correct.",
+      "score": 5.5
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None. The output language is Portuguese, there is exactly one suggestion, is_language_course is true, the icon has a tabler- prefix, the title length is <= 5 words, and there are no joiners or level words.",
+      "score": 9.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "- Change title to \"TOEFL\" to follow the exam-name-only requirement.\n- Set english_title to \"TOEFL\" (same as the title) once corrected.\n- Keep is_language_course=true and the existing icon/description.",
+      "score": 8.5
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1948,
+    "output": 2589,
+    "total": 4537
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. All titles include a jurisdiction, are in Spanish, avoid level/joiner words, meet the <=5-word limit, and include english_title, icon with tabler- prefix, and is_language_course=false. The required suggestion “Derecho Penal Mexicano” is present.",
+      "score": 9.2
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "None substantive. One could argue for adding more Spanish-speaking jurisdictions or a broader “Derecho Mexicano,” but these are optional per expectations. Descriptions are fine and single-sentence.",
+      "score": 9.2
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "- Add additional Spanish-language jurisdictions (e.g., “Derecho Penal Colombiano,” “Derecho Penal Chileno”) to broaden options.\n- Optionally include a broader jurisdictional course like “Derecho Mexicano” as suggested by expectations.\n- Ensure icon choices are consistently legal-themed (they already are, but could standardize).",
+      "score": 9.2
+    }
+  ]
+}

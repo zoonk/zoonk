@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1918,
+    "output": 2396,
+    "total": 4314
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "None. The response follows the law-jurisdiction rule, includes the exact topic 'International Law', uses English, keeps titles under 5 words without joiners or levels, sets is_language_course=false for all, and provides english_title matching the title.",
+      "score": 10.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "Very minor: Could have diversified the jurisdictions further (e.g., Australian Law) given USER_COUNTRY is empty and APP_LANGUAGE is English, but this is optional. Icon duplication ('tabler-scale' used twice) is harmless and allowed.",
+      "score": 9.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "- Add one or two more English-speaking jurisdictions (e.g., Australian Law, New Zealand Law) to broaden options.\n- Consider a complementary global-law alternative closely related to the input only if appropriate (e.g., Human Rights Law), though not required.\n- Vary icons for visual differentiation (optional).",
+      "score": 9.2
+    }
+  ]
+}

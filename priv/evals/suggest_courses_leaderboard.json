@@ -15,6 +15,10 @@
     "average": 6.81,
     "median": 8.0
   },
+  "gemini-2.5-flash-lite": {
+    "average": 8.05,
+    "median": 9.0
+  },
   "gemini-2.5-pro": {
     "average": 9.57,
     "median": 9.5

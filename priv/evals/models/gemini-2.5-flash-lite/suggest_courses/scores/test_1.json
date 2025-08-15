@@ -1,0 +1,24 @@
+{
+  "usage": {
+    "input": 1941,
+    "output": 2801,
+    "total": 4742
+  },
+  "steps": [
+    {
+      "kind": "major_errors",
+      "conclusion": "One title violates the no-level/joiner rule: \"Fundamentos de Programação\" uses the banned term \"Fundamentos\" (fundamentals). Its english_title \"Programming Fundamentals\" also mirrors this banned level term. The canonical mapping for this vague input should include \"Programação\" rather than a fundamentals variant.",
+      "score": 7.0
+    },
+    {
+      "kind": "minor_errors",
+      "conclusion": "The icon \"tabler-بيوتر\" contains non-Latin characters; while it starts with \"tabler-\" as required, it may be unusual, though not disallowed. Everything else meets constraints: titles are in Portuguese, single-topic, <=5 words, proper english_title translations for the other items, is_language_course is false.",
+      "score": 7.0
+    },
+    {
+      "kind": "potential_improvements",
+      "conclusion": "Replace \"Fundamentos de Programação\" with \"Programação\" and set english_title to \"Programming\". Optionally consider adding another relevant single-topic suggestion like \"Desenvolvimento Mobile\" or \"Dados\" if more breadth is desired, but not necessary.",
+      "score": 7.0
+    }
+  ]
+}
