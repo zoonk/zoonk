@@ -16,7 +16,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
         expectations:
           """
           - titles should look like these: {"Programação","Ciência da Computação","Desenvolvimento Web","Engenharia de Software"}
-          - all titles in Portuguese
+          - all titles and descriptions in Portuguese
           - `is_language_course` should be false
           """ <> shared_expectations()
       },
@@ -28,7 +28,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
           """
           - suggestions should include {"Black Holes"}
           - suggestions may include broader topics like {"Astrophysics"}
-          - all titles in English
+          - all titles and descriptions in English
           - `is_language_course` should be false
           """ <> shared_expectations()
       },
@@ -42,7 +42,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
           - suggestions may include broader topics like {"Derecho Mexicano"}
           - suggestions may include similar topics like {"Derecho Civil Mexicano", "Derecho Laboral Mexicano"}
           - suggestions should NOT include titles without jurisdiction like {"Derecho Penal", "Derecho"}
-          - all titles in Spanish
+          - all titles and descriptions in Spanish
           - `is_language_course` should be false
           """ <> shared_expectations()
       },
@@ -53,7 +53,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
         expectations:
           """
           - suggestions should include {"International Law"}
-          - all titles in English
+          - all titles and descriptions in English
           - `is_language_course` should be false
           """ <> shared_expectations()
       },
@@ -65,7 +65,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
           """
           - suggestions should include {"TOEFL"}
           - suggestions may include {"Inglês"}
-          - all titles in Portuguese
+          - all titles and descriptions in Portuguese
           - `is_language_course` should be true
           - no extra titles like {"Preparatório para o TOEFL", "Redação Acadêmica", "Língua inglesa"}
           """ <> shared_expectations()
@@ -83,7 +83,6 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
     - Focus evaluations scores on these fields: `title`, `english_title`, `is_language_course`
     - `english_title` should be the most appropriate English translation of the `title`. For English suggestions, use the same title
     - `icon` should start with `tabler`, don't worry if it's a valid icon or not
-    - don't need to evaluate the `description` field
     - no level/joiner words like "basic", "intermediate", "advanced", "fundamentals", etc
     - <=5 words each title
     - no words like "course", "program", etc in the title
