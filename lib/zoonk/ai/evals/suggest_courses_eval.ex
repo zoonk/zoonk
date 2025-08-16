@@ -321,8 +321,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
     - `icon` should start with `tabler`, don't worry if it's a valid icon or not
     - don't need to evaluate the `description` field content, just check the language is correct
     - no level/joiner words like "basic", "intermediate", "advanced", "fundamentals", etc
-    - <=5 words each title
-    - no words like "course", "program", etc in the title
+    - no words like "course" in the title
     """
   end
 end

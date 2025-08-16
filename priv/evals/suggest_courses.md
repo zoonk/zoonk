@@ -1,3 +1,8 @@
+## Suggest Courses
+
+- **Average score**: 8.59
+- **Median score**: 9.0
+
 ## Model Leaderboard
 
 - `Average` and `Median` values go from `0` to `10`, where `10` is the best.
