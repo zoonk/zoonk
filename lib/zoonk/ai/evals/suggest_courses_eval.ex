@@ -310,6 +310,89 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
           - all titles and descriptions in English
           - `is_language_course` should be false
           """ <> shared_expectations()
+      },
+      %{
+        input: "direito do trabalho",
+        country: "",
+        language: "pt",
+        expectations:
+          """
+          - suggestions should include labor law courses with jurisdictions of Portuguese-speaking countries like "Direito do Trabalho Brasileiro", "Direito do Trabalho Português", etc.
+          - all titles and descriptions in Portuguese
+          - `is_language_course` should be false
+          """ <> shared_expectations()
+      },
+      %{
+        input: "literature",
+        country: "",
+        language: "en",
+        expectations:
+          """
+          - suggestions should include "Literature"
+          - may include other literature-related suggestions
+          - all titles and descriptions in English
+          - `is_language_course` should be false
+          """ <> shared_expectations()
+      },
+      %{
+        input: "grammar",
+        country: "",
+        language: "en",
+        expectations:
+          """
+          - suggestions should include "English Grammar"
+          - may include other grammar-related suggestions
+          - all titles and descriptions in English
+          - `is_language_course` should be true
+          """ <> shared_expectations()
+      },
+      %{
+        input: "harry potter",
+        country: "",
+        language: "en",
+        expectations:
+          """
+          - suggestions should include "Harry Potter"
+          - may include other literature-related suggestions
+          - all titles and descriptions in English
+          - `is_language_course` should be false
+          """ <> shared_expectations()
+      },
+      %{
+        input: "programming languages",
+        country: "",
+        language: "en",
+        expectations:
+          """
+          - suggestions should include "Programming Languages"
+          - may include other programming-related suggestions and/or specific programming languages
+          - all titles and descriptions in English
+          - `is_language_course` should be false
+          """ <> shared_expectations()
+      },
+      %{
+        input: "python",
+        country: "",
+        language: "en",
+        expectations:
+          """
+          - suggestions should include "Python"
+          - may include other Python-related suggestions
+          - all titles and descriptions in English
+          - `is_language_course` should be false
+          """ <> shared_expectations()
+      },
+      %{
+        input: "got",
+        country: "",
+        language: "en",
+        expectations:
+          """
+          - suggestions should include "Game of Thrones"
+          - may include other literature-related suggestions
+          - all titles and descriptions in English
+          - `is_language_course` should be false
+          """ <> shared_expectations()
       }
     ]
   end
