@@ -40,7 +40,7 @@ defmodule ZoonkWeb.LearnSubjectLiveTest do
     setup :signup_and_login_user
 
     test "allows authenticated user to see the page", %{conn: conn} do
-      data = course_recommendation_fixture()
+      data = course_suggestion_fixture()
 
       conn
       |> visit(~p"/learn")

@@ -7,8 +7,26 @@ defmodule Zoonk.AI.Evals do
   new models as they become available.
   """
 
+  alias Zoonk.AI.Evals.EvalModels
   alias Zoonk.AI.Evals.EvalRunner
   alias Zoonk.AI.Evals.ScoreEvals
+
+  @doc """
+  Evaluate all models for a specific prompt.
+
+  Iterates over all supported models and evaluates each one for the given prompt.
+
+  ## Examples
+
+      iex> evaluate_model(:suggest_courses)
+      :ok
+  """
+  @spec evaluate_model(atom()) :: :ok
+  def evaluate_model(prompt) do
+    Enum.each(EvalModels.list_models(), fn model ->
+      evaluate_model(prompt, model.name)
+    end)
+  end
 
   @doc """
   Evaluate a model for a specific prompt.
@@ -18,7 +36,7 @@ defmodule Zoonk.AI.Evals do
 
   ## Examples
 
-      iex> evaluate_model(:recommend_courses, "openai/gpt-4.1")
+      iex> evaluate_model(:suggest_courses, "openai/gpt-4.1")
       :ok
   """
   @spec evaluate_model(atom(), String.t()) :: :ok
@@ -35,12 +53,27 @@ defmodule Zoonk.AI.Evals do
 
   ## Examples
 
-      iex> evaluate_prompt(:recommend_courses, "openai/gpt-4.1")
+      iex> evaluate_prompt(:suggest_courses, "openai/gpt-4.1")
       :ok
   """
   @spec evaluate_prompt(atom(), String.t()) :: :ok
   def evaluate_prompt(prompt, model) do
     EvalRunner.generate_object(prompt, :prompt, model)
     ScoreEvals.calculate_score(prompt)
+  end
+
+  @doc """
+  Updates leaderboard for all models.
+
+  ## Examples
+
+      iex> update_leaderboard(:suggest_courses)
+      :ok
+  """
+  @spec update_leaderboard(atom()) :: :ok
+  def update_leaderboard(prompt) do
+    Enum.each(EvalModels.list_models(), fn model ->
+      ScoreEvals.update_leaderboard(prompt, model.name)
+    end)
   end
 end

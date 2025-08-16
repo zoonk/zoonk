@@ -3,6 +3,9 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
   use ZoonkWeb, :live_view
 
   alias Zoonk.AI
+  alias Zoonk.Billing
+  alias Zoonk.Billing.BillingAccount
+  alias Zoonk.Scope
 
   on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
 
@@ -24,15 +27,15 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
   def render(assigns) do
     ~H"""
     <.async_page
-      :let={courses}
+      :let={suggestions}
       flash={@flash}
       scope={@scope}
-      data={@courses}
-      loading_title={dgettext("goals", "We're finding courses to help you learn")}
+      data={@suggestions}
+      loading_title={dgettext("goals", "Finding course suggestions")}
       loading_subtitle={
         dgettext(
           "goals",
-          "This might take a moment as we prepare personalized recommendations for you."
+          "This might take a moment as we find out the best course suggestions to help you get started."
         )
       }
       loading_feature={@input}
@@ -42,7 +45,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
     >
       <header class="mx-auto py-8 text-center" aria-labelledby="page-header">
         <.text id="page-header" tag="h1" size={:xxl}>
-          {dgettext("goals", "Recommendations for you")}
+          {dgettext("goals", "Course suggestions")}
         </.text>
 
         <.text tag="h2" size={:lg} variant={:secondary}>
@@ -51,13 +54,13 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
       </header>
 
       <ul
-        :if={courses}
+        :if={suggestions}
         class="mx-auto max-w-xl"
         phx-window-keydown={JS.navigate(~p"/learn")}
         phx-key="escape"
-        aria-label={dgettext("goals", "List of recommended courses")}
+        aria-label={dgettext("goals", "List of suggested courses")}
       >
-        <li :for={{recommendation, index} <- Enum.with_index(courses)} class="group">
+        <li :for={{suggestion, index} <- Enum.with_index(suggestions)} class="group">
           <a
             href="#"
             class={[
@@ -66,15 +69,15 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
               "group-first:pt-0 group-last:border-b-0",
               "focus-visible:bg-zk-secondary/75 focus-visible:outline-0"
             ]}
-            aria-labelledby={"recommendation-#{index}"}
+            aria-labelledby={"suggestion-#{index}"}
           >
             <div class="flex flex-col gap-1">
-              <.text id={"recommendation-#{index}"} tag="h3" weight={:semibold}>
-                {recommendation.title}
+              <.text id={"suggestion-#{index}"} tag="h3" weight={:semibold}>
+                {suggestion.title}
               </.text>
 
               <.text size={:sm} variant={:secondary} class="line-clamp-2">
-                {recommendation.description}
+                {suggestion.description}
               </.text>
             </div>
 
@@ -83,7 +86,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
               class="size-17 bg-zk-secondary/75 flex shrink-0 flex-col items-center justify-center rounded-lg"
             >
               <.dynamic_icon
-                name={recommendation.icon}
+                name={suggestion.icon}
                 default="tabler-book"
                 variant={:filled}
                 class={["size-8", icon_color(index)]}
@@ -100,12 +103,13 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
   def mount(params, session, socket) do
     input = params["input"]
     language = session["language"]
+    country = user_country(socket.assigns.scope)
 
     socket =
       socket
-      |> assign(:page_title, dgettext("page_title", "Recommendations for %{input}", input: input))
+      |> assign(:page_title, dgettext("page_title", "Suggestions for %{input}", input: input))
       |> assign(:input, input)
-      |> assign_async(:courses, fn -> assign_courses(input, language) end)
+      |> assign_async(:suggestions, fn -> assign_suggestions(input, language, country) end)
 
     {:ok, socket}
   end
@@ -116,10 +120,20 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
     |> Enum.at(index)
   end
 
-  defp assign_courses(input, language) do
-    case AI.recommend_courses(input, language) do
-      {:ok, %{courses: courses}} -> {:ok, %{courses: courses}}
+  defp assign_suggestions(input, language, country) do
+    case AI.suggest_courses(input, language, country) do
+      {:ok, %{suggestions: suggestions}} -> {:ok, %{suggestions: suggestions}}
       {:error, reason} -> {:error, reason}
+    end
+  end
+
+  defp user_country(%Scope{} = scope) do
+    case Billing.get_billing_account(scope) do
+      %BillingAccount{country_iso2: country_iso2} ->
+        country_iso2
+
+      nil ->
+        ""
     end
   end
 end

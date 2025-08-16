@@ -62,7 +62,7 @@ config :zoonk, :ai,
 
 config :zoonk, :ai_models,
   eval: "o4-mini",
-  recommend_courses: "gpt-4.1-nano"
+  suggest_courses: "gpt-4.1-nano"
 
 # Disable Stripe calls for testing
 config :zoonk, :stripe,

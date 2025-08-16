@@ -13,7 +13,8 @@ defmodule Zoonk.AI.AIClient.ClientConfig do
       json: payload,
       receive_timeout: @timeout_ms,
       connect_options: [timeout: @timeout_ms],
-      retry: :transient
+      retry: :transient,
+      max_retries: 10
     ]
 
     Keyword.merge(req_opts, Application.get_env(:zoonk, :ai)[config_key] || [])

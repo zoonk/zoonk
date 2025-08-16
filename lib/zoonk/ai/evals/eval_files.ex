@@ -27,10 +27,10 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> store_results(:model, "openai/gpt-4.1-mini", :recommend_courses, "outputs", "test_1.json", %{})
+      iex> store_results(:model, "openai/gpt-4.1-mini", :suggest_courses, "outputs", "test_1.json", %{})
       :ok
 
-      iex> store_results(:prompt, "openai/gpt-4.1-mini", :recommend_courses, "scores", "test_1.json", %{})
+      iex> store_results(:prompt, "openai/gpt-4.1-mini", :suggest_courses, "scores", "test_1.json", %{})
       :ok
 
   """
@@ -51,10 +51,10 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> file_exists?(:model, "openai/gpt-4.1-mini", :recommend_courses, "outputs", "test_1.json")
+      iex> file_exists?(:model, "openai/gpt-4.1-mini", :suggest_courses, "outputs", "test_1.json")
       true
 
-      iex> file_exists?(:prompt, "openai/gpt-4.1-mini", :recommend_courses, "scores", "test_1.json")
+      iex> file_exists?(:prompt, "openai/gpt-4.1-mini", :suggest_courses, "scores", "test_1.json")
       false
   """
   @spec file_exists?(eval_type(), String.t(), atom(), String.t(), String.t()) :: boolean()
@@ -73,14 +73,33 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> load_prompt_outputs(:recommend_courses)
+      iex> load_prompt_scores(:suggest_courses)
       [%{"usage" => %{...}, "steps" => [...]}, ...]
   """
-  @spec load_prompt_outputs(atom() | String.t()) :: [map()]
-  def load_prompt_outputs(prompt) do
+  @spec load_prompt_scores(atom() | String.t()) :: [map()]
+  def load_prompt_scores(prompt) do
     prompt_name = prompt_name(prompt)
     scores_dir = Path.join(["priv", @evals_dir, @prompts_dir, prompt_name, @scores_dir])
     load_scores_from_dir(scores_dir, "prompt: #{prompt_name}")
+  end
+
+  @doc """
+  Loads all score files for a model and prompt.
+
+  This function reads all JSON files from the scores directory
+  for a given model and prompt and returns their parsed content.
+
+  ## Examples
+
+      iex> load_model_scores(:suggest_courses, "deepseek-chat-v3-0324")
+      [%{"usage" => %{...}, "steps" => [...]}, ...]
+  """
+  @spec load_model_scores(atom() | String.t(), String.t()) :: [map()]
+  def load_model_scores(prompt, model) do
+    prompt_name = prompt_name(prompt)
+    model_name = model_name(model)
+    scores_dir = Path.join(["priv", @evals_dir, @models_dir, model_name, prompt_name, @scores_dir])
+    load_scores_from_dir(scores_dir, "model: #{model_name}, prompt: #{prompt_name}")
   end
 
   @doc """
@@ -91,15 +110,15 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> load_model_outputs(:recommend_courses, "deepseek-chat-v3-0324")
-      [%{"usage" => %{...}, "steps" => [...]}, ...]
+      iex> load_model_outputs(:suggest_courses, "deepseek-chat-v3-0324")
+      [%{"input" => %{...}, "output" => %{...}, "cost_per_100_tasks" => %{...}}, ...]
   """
   @spec load_model_outputs(atom() | String.t(), String.t()) :: [map()]
   def load_model_outputs(prompt, model) do
     prompt_name = prompt_name(prompt)
     model_name = model_name(model)
-    scores_dir = Path.join(["priv", @evals_dir, @models_dir, model_name, prompt_name, @scores_dir])
-    load_scores_from_dir(scores_dir, "model: #{model_name}, prompt: #{prompt_name}")
+    outputs_dir = Path.join(["priv", @evals_dir, @models_dir, model_name, prompt_name, "outputs"])
+    load_scores_from_dir(outputs_dir, "model: #{model_name}, prompt: #{prompt_name}")
   end
 
   defp load_scores_from_dir(scores_dir, context) do
@@ -133,7 +152,7 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> update_scores_markdown(:recommend_courses, %{average: 7.76, median: 9.0})
+      iex> update_scores_markdown(:suggest_courses, %{average: 7.76, median: 9.0})
       :ok
   """
   @spec update_scores_markdown(%{average: float(), median: float()}, atom() | String.t()) :: :ok
@@ -160,7 +179,7 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> update_leaderboard_markdown(%{"model1" => %{average: 8.0, median: 9.0}}, :recommend_courses)
+      iex> update_leaderboard_markdown(%{"model1" => %{average: 8.0, median: 9.0}}, :suggest_courses)
       :ok
   """
   @spec update_leaderboard_markdown(map(), atom() | String.t()) :: :ok
@@ -191,7 +210,7 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> update_leaderboard_json(%{average: 7.76, median: 9.0}, :recommend_courses, "deepseek-chat-v3-0324")
+      iex> update_leaderboard_json(%{average: 7.76, median: 9.0}, :suggest_courses, "deepseek-chat-v3-0324")
       %{"deepseek-chat-v3-0324" => %{average: 7.76, median: 9.0}}
   """
   @spec update_leaderboard_json(map(), atom() | String.t(), String.t()) :: map()
@@ -311,8 +330,11 @@ defmodule Zoonk.AI.Evals.EvalFiles do
     """
     ## Model Leaderboard
 
-    | Model                 | Average | Median |
-    | --------------------- | ------- | ------ |
+    - `Average` and `Median` values go from `0` to `10`, where `10` is the best.
+    - `Avg. Cost` is the average cost per 100 calls in USD.
+
+    | Model                          | Average | Median | Avg. Cost |
+    | ------------------------------ | ------- | ------ | --------- |
     #{leaderboard_rows(leaderboard)}
 
     """
@@ -327,7 +349,7 @@ defmodule Zoonk.AI.Evals.EvalFiles do
   defp sort_leaderboard_entries(leaderboard) do
     leaderboard
     |> Enum.map(&normalize_scores/1)
-    |> Enum.sort_by(fn entry -> {entry.median, entry.average} end, :desc)
+    |> Enum.sort_by(fn entry -> {entry.average, entry.median} end, :desc)
   end
 
   defp format_leaderboard_rows(entries) do
@@ -338,7 +360,8 @@ defmodule Zoonk.AI.Evals.EvalFiles do
     %{
       model: model,
       average: get_score(scores, :average),
-      median: get_score(scores, :median)
+      median: get_score(scores, :median),
+      cost: get_score(scores, :cost)
     }
   end
 
@@ -346,7 +369,9 @@ defmodule Zoonk.AI.Evals.EvalFiles do
     Map.get(scores, key) || Map.get(scores, to_string(key), 0)
   end
 
-  defp format_row(%{model: model, average: avg, median: med}) do
-    "| #{String.pad_trailing(model, 21)} | #{String.pad_trailing(to_string(avg), 7)} | #{String.pad_trailing(to_string(med), 6)} |"
+  defp format_row(%{model: model, average: avg, median: med, cost: cost}) do
+    cost_str = if cost && cost > 0, do: "$#{Float.round(cost, 4)}", else: "N/A"
+
+    "| #{String.pad_trailing(model, 30)} | #{String.pad_trailing(to_string(avg), 7)} | #{String.pad_trailing(to_string(med), 6)} | #{String.pad_trailing(cost_str, 9)} |"
   end
 end
