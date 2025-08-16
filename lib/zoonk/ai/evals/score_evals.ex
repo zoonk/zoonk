@@ -2,14 +2,6 @@ defmodule Zoonk.AI.Evals.ScoreEvals do
   @moduledoc false
   alias Zoonk.AI.Evals.EvalFiles
 
-  @spec calculate_score(atom() | String.t()) :: :ok
-  def calculate_score(prompt_name) do
-    prompt_name
-    |> EvalFiles.load_prompt_scores()
-    |> calculate_scores()
-    |> EvalFiles.update_scores_markdown(prompt_name)
-  end
-
   @spec update_leaderboard(atom() | String.t(), String.t()) :: :ok
   def update_leaderboard(prompt_name, model) do
     scores =

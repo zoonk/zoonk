@@ -4,12 +4,7 @@ This directory contains the evaluation results for various AI models and prompts
 
 ## Running Evaluations
 
-First, you need to run an evaluation. There are two evaluation types:
-
-- `model`: Meant to test model capabilities for a specific prompt. This will usually test a small set of test cases (e.g. 3-5 cases).
-- `prompt`: Meant to test prompt performance across a larger set of test cases (e.g. 20-50 cases). This is useful for catching regressions and measuring improvements.
-
-For a `model` evaluation, run:
+For evaluating a specific model, run:
 
 ```elixir
 Zoonk.AI.Evals.evaluate_model(:suggest_courses, "openai/gpt-4.1")
@@ -18,13 +13,15 @@ Zoonk.AI.Evals.evaluate_model(:suggest_courses, "openai/gpt-4.1")
 For evaluating all models, run:
 
 ```elixir
-Zoonk.AI.Evals.evaluate_model(:suggest_courses)
+Zoonk.AI.Evals.evaluate_models(:suggest_courses)
 ```
 
-For a `prompt` evaluation, run:
+You can also pass an additional argument to evaluate only models from a specific pricing tier:
 
 ```elixir
-Zoonk.AI.Evals.evaluate_prompt(:suggest_courses, "openai/gpt-4.1")
+Zoonk.AI.Evals.evaluate_models(:suggest_courses, :cheap)
+Zoonk.AI.Evals.evaluate_models(:suggest_courses, :mid)
+Zoonk.AI.Evals.evaluate_models(:suggest_courses, :expensive)
 ```
 
 ## Prompts

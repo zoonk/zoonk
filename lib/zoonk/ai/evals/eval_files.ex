@@ -12,11 +12,8 @@ defmodule Zoonk.AI.Evals.EvalFiles do
   """
   require Logger
 
-  @type eval_type :: :model | :prompt
-
   @evals_dir "evals"
   @models_dir "models"
-  @prompts_dir "prompts"
   @scores_dir "scores"
 
   @doc """
@@ -27,19 +24,19 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> store_results(:model, "openai/gpt-4.1-mini", :suggest_courses, "outputs", "test_1.json", %{})
+      iex> store_results("openai/gpt-4.1-mini", :suggest_courses, "outputs", "test_1.json", %{})
       :ok
 
-      iex> store_results(:prompt, "openai/gpt-4.1-mini", :suggest_courses, "scores", "test_1.json", %{})
+      iex> store_results("openai/gpt-4.1-mini", :suggest_courses, "scores", "test_1.json", %{})
       :ok
 
   """
-  @spec store_results(eval_type(), String.t(), atom(), String.t(), String.t(), map()) :: :ok
-  def store_results(eval_type, model, prompt, results_dir, filename, data) do
-    Logger.info("Storing #{eval_type} results for #{model} in #{filename}")
+  @spec store_results(String.t(), atom(), String.t(), String.t(), map()) :: :ok
+  def store_results(model, prompt, results_dir, filename, data) do
+    Logger.info("Storing results for #{model} in #{filename}")
 
-    eval_type
-    |> results_dir!(model, prompt, results_dir)
+    model
+    |> results_dir!(prompt, results_dir)
     |> write_file!(filename, data)
   end
 
@@ -51,36 +48,18 @@ defmodule Zoonk.AI.Evals.EvalFiles do
 
   ## Examples
 
-      iex> file_exists?(:model, "openai/gpt-4.1-mini", :suggest_courses, "outputs", "test_1.json")
+      iex> file_exists?("openai/gpt-4.1-mini", :suggest_courses, "outputs", "test_1.json")
       true
 
-      iex> file_exists?(:prompt, "openai/gpt-4.1-mini", :suggest_courses, "scores", "test_1.json")
+      iex> file_exists?("openai/gpt-4.1-mini", :suggest_courses, "scores", "test_1.json")
       false
   """
-  @spec file_exists?(eval_type(), String.t(), atom(), String.t(), String.t()) :: boolean()
-  def file_exists?(eval_type, model, prompt, results_dir, filename) do
-    eval_type
-    |> results_dir!(model, prompt, results_dir)
+  @spec file_exists?(String.t(), atom(), String.t(), String.t()) :: boolean()
+  def file_exists?(model, prompt, results_dir, filename) do
+    model
+    |> results_dir!(prompt, results_dir)
     |> Path.join(filename)
     |> File.exists?()
-  end
-
-  @doc """
-  Loads all score files for a prompt.
-
-  This function reads all JSON files from the scores directory
-  for a given prompt and returns their parsed content.
-
-  ## Examples
-
-      iex> load_prompt_scores(:suggest_courses)
-      [%{"usage" => %{...}, "steps" => [...]}, ...]
-  """
-  @spec load_prompt_scores(atom() | String.t()) :: [map()]
-  def load_prompt_scores(prompt) do
-    prompt_name = prompt_name(prompt)
-    scores_dir = Path.join(["priv", @evals_dir, @prompts_dir, prompt_name, @scores_dir])
-    load_scores_from_dir(scores_dir, "prompt: #{prompt_name}")
   end
 
   @doc """
@@ -145,33 +124,6 @@ defmodule Zoonk.AI.Evals.EvalFiles do
   end
 
   @doc """
-  Updates the markdown file with the calculated scores for a prompt.
-
-  This function creates or updates a markdown file in `priv/evals/{prompt_name}.md`
-  with the average and median scores.
-
-  ## Examples
-
-      iex> update_scores_markdown(:suggest_courses, %{average: 7.76, median: 9.0})
-      :ok
-  """
-  @spec update_scores_markdown(%{average: float(), median: float()}, atom() | String.t()) :: :ok
-  def update_scores_markdown(%{average: average, median: median}, prompt_name) do
-    prompt_str = prompt_name(prompt_name)
-    file_path = Path.join(["priv", @evals_dir, "#{prompt_str}.md"])
-    title = score_file_title(prompt_str)
-
-    content = """
-    ## #{title}
-
-    - **Average score**: #{average}
-    - **Median score**: #{median}
-    """
-
-    update_markdown_section(file_path, title, content)
-  end
-
-  @doc """
   Updates the markdown file with the model leaderboard.
 
   This function creates or updates the leaderboard section in the markdown file
@@ -224,23 +176,11 @@ defmodule Zoonk.AI.Evals.EvalFiles do
     updated
   end
 
-  defp score_file_title(prompt_name) do
-    prompt_name
-    |> String.split("_")
-    |> Enum.map_join(" ", &String.capitalize/1)
-  end
-
-  defp results_dir!(:model, model, prompt, results_dir) do
+  defp results_dir!(model, prompt, results_dir) do
     model_name = model_name(model)
     prompt = prompt_name(prompt)
 
     Path.join(["priv", @evals_dir, @models_dir, model_name, prompt, results_dir])
-  end
-
-  defp results_dir!(:prompt, _model, prompt, results_dir) do
-    prompt = prompt_name(prompt)
-
-    Path.join(["priv", @evals_dir, @prompts_dir, prompt, results_dir])
   end
 
   defp maybe_create_dir(file_path) do

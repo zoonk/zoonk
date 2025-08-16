@@ -7,7 +7,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
   require Logger
 
   @impl EvalCase
-  def model do
+  def cases do
     [
       %{
         language: "pt",
@@ -69,13 +69,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
           - `is_language_course` should be true
           - no extra titles like {"Preparatório para o TOEFL", "Redação Acadêmica", "Língua inglesa"}
           """ <> shared_expectations()
-      }
-    ]
-  end
-
-  @impl EvalCase
-  def prompt do
-    [
+      },
       %{
         language: "pt",
         country: "",

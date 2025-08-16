@@ -18,12 +18,29 @@ defmodule Zoonk.AI.Evals do
 
   ## Examples
 
-      iex> evaluate_model(:suggest_courses)
+      iex> evaluate_models(:suggest_courses)
       :ok
   """
-  @spec evaluate_model(atom()) :: :ok
-  def evaluate_model(prompt) do
+  @spec evaluate_models(atom()) :: :ok
+  def evaluate_models(prompt) do
     Enum.each(EvalModels.list_models(), fn model ->
+      evaluate_model(prompt, model.name)
+    end)
+  end
+
+  @doc """
+  Evaluate all models from a specific pricing tier.
+
+  ## Examples
+
+      iex> evaluate_models(:suggest_courses, :cheap)
+      :ok
+  """
+  @spec evaluate_models(atom(), EvalModels.tier()) :: :ok
+  def evaluate_models(prompt, tier) do
+    models = EvalModels.list_models(tier)
+
+    Enum.each(models, fn model ->
       evaluate_model(prompt, model.name)
     end)
   end
@@ -41,25 +58,8 @@ defmodule Zoonk.AI.Evals do
   """
   @spec evaluate_model(atom(), String.t()) :: :ok
   def evaluate_model(prompt, model) do
-    EvalRunner.generate_object(prompt, :model, model)
+    EvalRunner.generate_object(prompt, model)
     ScoreEvals.update_leaderboard(prompt, model)
-  end
-
-  @doc """
-  Evaluate a prompt.
-
-  It's meant to test a prompt's performance across a larger
-  set of test cases (e.g. 20-50).
-
-  ## Examples
-
-      iex> evaluate_prompt(:suggest_courses, "openai/gpt-4.1")
-      :ok
-  """
-  @spec evaluate_prompt(atom(), String.t()) :: :ok
-  def evaluate_prompt(prompt, model) do
-    EvalRunner.generate_object(prompt, :prompt, model)
-    ScoreEvals.calculate_score(prompt)
   end
 
   @doc """

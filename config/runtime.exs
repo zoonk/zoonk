@@ -56,7 +56,7 @@ if config_env() in [:dev, :prod] do
 
   config :zoonk, :ai_models,
     eval: System.get_env("AI_MODEL_EVAL", "gpt-5"),
-    suggest_courses: System.get_env("AI_MODEL_SUGGEST_COURSES", "gpt-5-mini")
+    suggest_courses: System.get_env("AI_MODEL_SUGGEST_COURSES", "gpt-4.1")
 
   config :zoonk, :stripe,
     webhook_secret: System.get_env("STRIPE_WEBHOOK_SECRET"),
