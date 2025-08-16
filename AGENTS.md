@@ -54,17 +54,22 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
 
 ## Project Structure
 
+### Contexts
+
+- Always add the scope (`Zoonk.Scope`) as the first argument to functions to scope data to the correct `org.id` and `user.id`
+- Use the scope to check for permissions/roles using `org_member`
+
 ### Schemas
 
 - Use context-prefixed names: `Zoonk.Accounts.User`
-- Include `@moduledoc` with a field table for SCHEMA modules only:
+- Always include `@moduledoc` with a field table for SCHEMA modules (modules using `use Ecto.Schema`):
   ```
   Field Name | Type | Description
   ```
 - Use `List`, not `Array` when defining a type in docs
 - Default `array` fields to `[]`
 - Add `timestamps(type: :utc_datetime_usec)`
-- Generate migrations along with schema changes using `mix ecto.gen.migration`
+- Always generate migrations along with schema changes using `mix ecto.gen.migration`
 
 ### Controllers
 
@@ -146,8 +151,8 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
 
 - Be clear, concise, objective
 - Avoid vague terms like “secure” or “best practice”
-- Use `@moduledoc` for modules
-- Use `@doc` for functions, with examples
+- Always add `@moduledoc` for modules
+- Always add `@doc` for functions, with examples (see existing patterns)
 - Don’t prefix examples with `elixir`
 - Combine multiple `on_mount` docs into one `@doc`
 
