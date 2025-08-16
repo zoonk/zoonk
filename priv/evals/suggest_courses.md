@@ -1,7 +1,7 @@
 ## Suggest Courses
 
-- **Average score**: 8.55
-- **Median score**: 9.2
+- **Average score**: 9.24
+- **Median score**: 9.25
 
 ## Model Leaderboard
 

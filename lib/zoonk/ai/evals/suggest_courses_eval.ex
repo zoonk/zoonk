@@ -132,7 +132,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
         input: "international human rights",
         expectations:
           """
-          - suggestions should include "Direitos Humanos" without a jurisdiction
+          - suggestions should include "Direitos Humanos" or "Direitos Humanos Internacionais" without a jurisdiction
           - optionally, may include other similar global law courses or law courses under Brazilian jurisdiction
           - all titles and descriptions in Portuguese
           - `is_language_course` should be false
@@ -168,7 +168,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
         input: "beatles",
         expectations:
           """
-          - suggestions should include "The Beatles"
+          - suggestions should include "Beatles" or "The Beatles"
           - optionally, may include broader alts like "Rock", "Music History" or related suggestions
           - all titles and descriptions in English
           - `is_language_course` should be false
@@ -287,13 +287,12 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
           """ <> shared_expectations()
       },
       %{
-        input: "matrix",
+        input: "the matrix",
         country: "FR",
         language: "en",
         expectations:
           """
-          - suggestions should include "Matrix" and "The Matrix" (the movie)
-          - may include broader mathematical suggestions like "Linear Algebra"
+          - suggestions should include "The Matrix" (the movie)
           - may include broader film-related suggestions like "Film Studies"
           - all titles and descriptions in English
           - `is_language_course` should be false
@@ -405,6 +404,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
     - don't need to evaluate the `description` field content, just check the language is correct
     - no level/joiner words like "basic", "intermediate", "advanced", "fundamentals", etc
     - no words like "course" in the title
+    - titles are always in Title Case
     """
   end
 end

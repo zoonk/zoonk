@@ -79,43 +79,54 @@ defmodule Zoonk.AI.Tasks.SuggestCourses do
 
     ## Rules
 
-    - Output language: Use the `APP_LANGUAGE` value set by the user.
-      No matter what's the language used in the `USER_INPUT`.
+    - Output language: Use the `APP_LANGUAGE` value set by the user for
+      both `title` and `description`, no matter what's the language used
+      in `USER_INPUT`
+    - Always Title Case for `title` and `english_title`
     - Titles must look like real courses; no levels: no "Basics",
-      "Beginner", "Advanced", "Intro", "101", "Mastery".
-    - Single-topic titles: no "and", "or", "&", "/", commas joining topics.
-    - For vague inputs, map to broad canonical courses (e.g., "Programming",
-      "Computer Science", "Web Development", "Software Engineering").
+      "Beginner", "Advanced", "Intro", "101", "Mastery"
+    - No level/variant markers in titles (e.g., ‘101’, ‘Beginner’,
+      exam levels like `B1`, or variants like ‘Academic’)
+    - Single-topic titles: no "and", "or", "&", "/", commas joining topics
+    - For vague inputs, include the broad canonical title itself and related
+      courses (e.g., "Computer Science", "Software Engineering", "Web Development")
     - If the input targets a specific topic/IP (e.g., "Black Holes",
       "Periodic Table", "Dragon Ball", "Beatles", "Soccer", "Harry Potter"),
       include that exact topic as ONE suggestion. You may add other broader
-      alternatives when appropriate.
+      alternatives when appropriate
     - Law topics:
       - Use a specific jurisdiction if provided; otherwise default to `USER_COUNTRY`.
-        E.g. "Brazilian Labor Law" for Brazil, "US Constitutional Law" for the US.
+        E.g. "Brazilian Labor Law" for Brazil, "US Constitutional Law" for the US
       - For global law courses like International Law or Human Rights,
         you don't need to set a jurisdiction. But, for other law courses,
         always display the appropriate jurisdiction. **Never** suggest
         a law course without a jurisdiction. For example:
           - Instead of "Labor Law", use "Brazilian Labor Law", "US Labor Law",
-            "UK Labor Law", etc.
+            "UK Labor Law", etc
           - Instead of "Constitutional Law", use "Mexican Constitutional Law",
-            "Canadian Constitutional Law", "German Constitutional Law", etc.
+            "Canadian Constitutional Law", "German Constitutional Law", etc
           - Instead of "Law", use "French Law", "Australian Law", "Italian Law", etc.
-      - If the user left `USER_COUNTRY` empty, suggest possible
-        jurisdictions based on `APP_LANGUAGE`.
+      - Non-global law suggestions **must** include a jurisdiction:
+        use USER_COUNTRY if present; otherwise infer from APP_LANGUAGE
+        by offering several plausible jurisdictions for that language community
     - Language learning: if the goal is to learn a language, return EXACTLY ONE
-      suggestion with the language name, is_language_course=true.
+      suggestion with the language name, is_language_course=true
     - Language exams (TOEFL, IELTS, HSK, etc.): return EXACTLY ONE suggestion
-      with the exam name, is_language_course=true.
+      with the exam name, is_language_course=true
     - Do not add extra suggestions for language learning/exams (no writing/culture add-ons).
-    - Include an `english_title` for each suggestion.
-    - Include an one-sentence description for each suggestion.
-      Highlights why it may be useful or relevant to the learner.
+    - Exam titles: exam family name only; put level/variant details in the description
+    - Set is_language_course=true for language acquisition/assessment topics
+      (grammar, writing, pronunciation, vocabulary, proficiency exams).
+    - Include an `english_title` for each suggestion
+    - Standardize english_title to US English spelling
+    - Expand acronyms in `english_title` to canonical English where helpful
+      (e.g., convert well-known abbreviations to their full English form)
+    - `description` should be EXACTLY one sentence
+      Highlights why it may be useful or relevant to the learner
     - Add a tabler icon name to illustrate each suggestion.
-      Each icon must have a `tabler-` prefix (e.g. `tabler-code`).
+      Each icon must have a distinct `tabler-` prefix (e.g. `tabler-code`)
     - Generate as many suggestions as you think are relevant, except for
-      language courses, which must suggest only the language they want to learn.
+      language courses, which must suggest only the language they want to learn
     """
   end
 
