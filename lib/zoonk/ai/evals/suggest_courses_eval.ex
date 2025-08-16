@@ -266,7 +266,7 @@ defmodule Zoonk.AI.Evals.SuggestCoursesEval do
         language: "en",
         expectations:
           """
-          - suggestions should include "UK Constitutional Law"
+          - suggestions should include "UK Constitutional Law" or similar like "British Constitutional Law" or "United Kingdom Constitutional Law"
           - may include other law courses in the UK jurisdiction
           - should NOT include law courses without a jurisdiction
           - should NOT use the other "basics" or similar terms
