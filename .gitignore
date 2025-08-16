@@ -63,4 +63,5 @@ chatmodes
 
 # Evals
 /priv/evals/models/
+/priv/evals/prompts/
 /priv/evals/*.json
