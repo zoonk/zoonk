@@ -5,40 +5,40 @@ defmodule Zoonk.AI.Tasks.SuggestCourses do
   alias Zoonk.AI.AIClient
   alias Zoonk.AI.AIPayload
   alias Zoonk.AI.AISchema
-  alias Zoonk.AI.CourseSuggestion
   alias Zoonk.AI.Tasks.AITask
+  alias Zoonk.Catalog
+  alias Zoonk.Catalog.CourseSuggestion
   alias Zoonk.Helpers
   alias Zoonk.Localization
   alias Zoonk.Locations
   alias Zoonk.Repo
+  alias Zoonk.Scope
 
-  def suggest_courses(input, language, country) do
-    formatted_input = format_input(input)
+  def suggest_courses(%Scope{} = scope, attrs) do
+    formatted_input = format_input(attrs.input)
+    attrs = Map.put(attrs, :input, formatted_input)
 
     CourseSuggestion
-    |> Repo.get_by(query: formatted_input, language: language)
-    |> suggest_courses(formatted_input, language, country)
+    |> Repo.get_by(query: formatted_input, language: attrs.language)
+    |> suggest_courses(scope, attrs)
   end
 
-  defp suggest_courses(%CourseSuggestion{} = course_suggestion, _input, _lang, _country) do
+  defp suggest_courses(%CourseSuggestion{} = course_suggestion, _scope, _attrs) do
     {:ok, %{suggestions: course_suggestion.suggestions}}
   end
 
-  defp suggest_courses(nil, input, language, country) do
-    %{input: input, language: language, country: country}
+  defp suggest_courses(nil, scope, attrs) do
+    attrs
     |> generate_object(model())
-    |> add_suggestion_to_db(input, language)
+    |> add_suggestion_to_db(scope, attrs)
   end
 
-  defp add_suggestion_to_db({:ok, %{suggestions: suggestions} = response}, input, language) do
-    %CourseSuggestion{}
-    |> CourseSuggestion.changeset(%{query: input, language: language, suggestions: suggestions})
-    |> Repo.insert!()
-
+  defp add_suggestion_to_db({:ok, %{suggestions: suggestions} = response}, scope, attrs) do
+    Catalog.create_course_suggestion(scope, %{query: attrs.input, language: attrs.language, suggestions: suggestions})
     {:ok, response}
   end
 
-  defp add_suggestion_to_db({:error, error}, _input, _language) do
+  defp add_suggestion_to_db({:error, error}, _scope, _attrs) do
     {:error, error}
   end
 

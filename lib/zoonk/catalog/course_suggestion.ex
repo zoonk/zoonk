@@ -1,4 +1,4 @@
-defmodule Zoonk.AI.CourseSuggestion do
+defmodule Zoonk.Catalog.CourseSuggestion do
   @moduledoc """
   Schema for storing course suggestions.
 
@@ -10,18 +10,20 @@ defmodule Zoonk.AI.CourseSuggestion do
 
   ## Fields
 
-  | Field Name       | Type        | Description                                      |
-  |------------------|-------------|--------------------------------------------------|
-  | `query`          | `String`    | The user's input about what they want to learn.  |
-  | `language`       | `Ecto.Enum` | The language of the query and suggestions.       |
-  | `suggestions`    | `List`      | Collection of suggested courses.                 |
-  | `inserted_at`    | `DateTime`  | Timestamp when the suggestion was created.       |
-  | `updated_at`     | `DateTime`  | Timestamp when the suggestion was updated.       |
+  | Field Name       | Type        | Description                                        |
+  |------------------|-------------|--------------------------------------------------- |
+  | `content_id`     | `Integer`   | The ID of `Zoonk.Catalog.Content` being suggested. |
+  | `query`          | `String`    | The user's input about what they want to learn.    |
+  | `language`       | `Ecto.Enum` | The language of the query and suggestions.         |
+  | `suggestions`    | `List`      | Collection of suggested courses.                   |
+  | `inserted_at`    | `DateTime`  | Timestamp when the suggestion was created.         |
+  | `updated_at`     | `DateTime`  | Timestamp when the suggestion was updated.         |
   """
   use Ecto.Schema
 
   import Ecto.Changeset
 
+  alias Zoonk.Catalog.Content
   alias Zoonk.Localization
 
   schema "course_suggestions" do
@@ -30,6 +32,8 @@ defmodule Zoonk.AI.CourseSuggestion do
     field :language, Ecto.Enum,
       values: Localization.list_languages(:atom),
       default: Localization.default_language(:atom)
+
+    belongs_to :content, Content
 
     embeds_many :suggestions, Suggestion do
       field :title, :string

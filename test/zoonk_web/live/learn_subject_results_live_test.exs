@@ -1,7 +1,7 @@
 defmodule ZoonkWeb.LearnSubjectResultsLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
-  import Zoonk.AIFixtures
+  import Zoonk.CatalogFixtures
   import Zoonk.OrgFixtures
 
   describe "learn subject: results (unauthenticated)" do

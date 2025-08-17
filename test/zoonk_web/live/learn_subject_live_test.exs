@@ -1,7 +1,7 @@
 defmodule ZoonkWeb.LearnSubjectLiveTest do
   use ZoonkWeb.ConnCase, async: true
 
-  import Zoonk.AIFixtures
+  import Zoonk.CatalogFixtures
   import Zoonk.OrgFixtures
 
   @page_title "What do you want to learn?"

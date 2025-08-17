@@ -13,6 +13,7 @@ defmodule Zoonk.Catalog.Course do
   | Field Name       | Type       | Description                                   |
   |------------------|------------|-----------------------------------------------|
   | `org_id`         | `Integer`  | The ID of the org that owns this course.      |
+  | `content_id`     | `Integer`  | The content ID for this course.               |
   | `slug`           | `String`   | Unique identifier for the course.             |
   | `categories`     | `List`     | List of categories the course belongs to.     |
   | `thumb_url`      | `String`   | URL for the course thumbnail image.           |
@@ -27,6 +28,7 @@ defmodule Zoonk.Catalog.Course do
   import Ecto.Changeset
 
   alias Zoonk.Catalog.Category
+  alias Zoonk.Catalog.Content
   alias Zoonk.Catalog.CourseChapter
   alias Zoonk.Catalog.CourseTranslation
   alias Zoonk.Catalog.CourseUser
@@ -38,6 +40,7 @@ defmodule Zoonk.Catalog.Course do
     field :slug, :string
 
     belongs_to :org, Org
+    belongs_to :content, Content
 
     has_many :translations, CourseTranslation
     has_many :course_users, CourseUser

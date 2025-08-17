@@ -101,15 +101,17 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
 
   @impl Phoenix.LiveView
   def mount(params, session, socket) do
+    scope = socket.assigns.scope
     input = params["input"]
     language = session["language"]
-    country = user_country(socket.assigns.scope)
+    country = user_country(scope)
+    attrs = %{input: input, language: language, country: country}
 
     socket =
       socket
       |> assign(:page_title, dgettext("page_title", "Suggestions for %{input}", input: input))
       |> assign(:input, input)
-      |> assign_async(:suggestions, fn -> assign_suggestions(input, language, country) end)
+      |> assign_async(:suggestions, fn -> assign_suggestions(scope, attrs) end)
 
     {:ok, socket}
   end
@@ -120,8 +122,8 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
     |> Enum.at(index)
   end
 
-  defp assign_suggestions(input, language, country) do
-    case AI.suggest_courses(input, language, country) do
+  defp assign_suggestions(scope, attrs) do
+    case AI.suggest_courses(scope, attrs) do
       {:ok, %{suggestions: suggestions}} -> {:ok, %{suggestions: suggestions}}
       {:error, reason} -> {:error, reason}
     end

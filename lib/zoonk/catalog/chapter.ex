@@ -33,6 +33,7 @@ defmodule Zoonk.Catalog.Chapter do
   | Field Name         | Type       | Description                                       |
   |--------------------|------------|---------------------------------------------------|
   | `org_id`           | `Integer`  | ID of the organization that owns this chapter.    |
+  | `content_id`       | `Integer`  | The content ID for this chapter.                  |
   | `course_id`        | `Integer`  | Course that expands this chapter's content.       |
   | `slug`             | `String`   | Unique identifier for the chapter.                |
   | `thumb_url`        | `String`   | URL for the chapter thumbnail image.              |
@@ -44,6 +45,7 @@ defmodule Zoonk.Catalog.Chapter do
   import Ecto.Changeset
 
   alias Zoonk.Catalog.ChapterTranslation
+  alias Zoonk.Catalog.Content
   alias Zoonk.Catalog.Course
   alias Zoonk.Orgs.Org
 
@@ -52,6 +54,7 @@ defmodule Zoonk.Catalog.Chapter do
     field :thumb_url, :string
 
     belongs_to :org, Org
+    belongs_to :content, Content
     belongs_to :course, Course
 
     has_many :translations, ChapterTranslation

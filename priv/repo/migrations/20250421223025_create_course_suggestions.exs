@@ -3,6 +3,8 @@ defmodule Zoonk.Repo.Migrations.CreateCourseSuggestions do
 
   def change do
     create table(:course_suggestions) do
+      add :content_id, references(:contents, on_delete: :delete_all), null: false
+
       add :query, :citext, null: false
       add :language, :string, null: false
       add :suggestions, {:array, :map}, null: false, default: []

@@ -9,6 +9,7 @@ This guide defines the development and design standards used in Zoonk. It ensure
 - [About this app](#about-this-app)
 - [Principles](#principles)
 - [Project Structure](#project-structure)
+  - [Contexts](#contexts)
   - [Schemas](#schemas)
   - [Controllers](#controllers)
   - [LiveView Pages](#liveview-pages)
@@ -49,6 +50,7 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
   - Does it follow the principles outlined in this guide?
   - Is it the most performant solution?
 - If you answer "no" to any of these questions, consider refactoring or simplifying your code before submitting
+- Use meaningful variable names and avoid abbreviations. E.g. `course_suggestion` and `suggestion` are better than `cs` and `sugg`
 
 ---
 
@@ -172,6 +174,7 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
 - Run tests with `mix test`, not VSCode debugger
 - Run `mix format` before committing
 - Run `mix ci` after formatting to ensure code quality checks pass
+- When asserting changeset errors, use this format: `assert "can't be blank" in errors_on(changeset).query`
 
 ---
 
