@@ -9,6 +9,8 @@ defmodule Zoonk.Repo.Migrations.AddContentsTable do
       timestamps(type: :utc_datetime_usec)
     end
 
+    create unique_index(:contents, [:id, :org_id])
+
     create index(:contents, [:org_id])
     create index(:contents, [:org_id, :kind])
   end

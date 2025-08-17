@@ -6,27 +6,7 @@ defmodule Zoonk.Catalog.Chapter do
   belongs to an organization and can have multiple translations for
   different languages.
 
-  A chapter can be added to multiple courses. However, they
-  can also be expanded into a course with multiple chapters.
-
-  For example, we can have a basic "Frontend Development" chapter
-  in the "Web Development" curse. Later, we can expand this
-  chapter into its own course with multiple chapters like "HTML",
-  "CSS", "JavaScript", etc.
-
-  When we expand a chapter into a course, we add a new
-  `course_id` field to the chapter. This allows us to keep track
-  of the original chapter while also allowing it to be part of a larger
-  course.
-
-  Then, we can display a "Go Deeper" button on the chapter page
-  for learners who want to dig deeper into the topic.
-
-  If the `course_id` is `nil`, this means this chapter
-  hasn't been expanded into a course yet.
-
-  We only expand a chapter into a course when a learner
-   clicks on the "Go Deeper" button in the UI.
+  A chapter can be added to multiple courses.
 
   ## Fields
 
@@ -34,7 +14,6 @@ defmodule Zoonk.Catalog.Chapter do
   |--------------------|------------|---------------------------------------------------|
   | `org_id`           | `Integer`  | ID of the organization that owns this chapter.    |
   | `content_id`       | `Integer`  | The content ID for this chapter.                  |
-  | `course_id`        | `Integer`  | Course that expands this chapter's content.       |
   | `slug`             | `String`   | Unique identifier for the chapter.                |
   | `thumb_url`        | `String`   | URL for the chapter thumbnail image.              |
   | `inserted_at`      | `DateTime` | Timestamp when the chapter was created.           |
@@ -46,7 +25,6 @@ defmodule Zoonk.Catalog.Chapter do
 
   alias Zoonk.Catalog.ChapterTranslation
   alias Zoonk.Catalog.Content
-  alias Zoonk.Catalog.Course
   alias Zoonk.Orgs.Org
 
   schema "chapters" do
@@ -55,7 +33,6 @@ defmodule Zoonk.Catalog.Chapter do
 
     belongs_to :org, Org
     belongs_to :content, Content
-    belongs_to :course, Course
 
     has_many :translations, ChapterTranslation
 
@@ -67,6 +44,7 @@ defmodule Zoonk.Catalog.Chapter do
     chapter
     |> cast(attrs, [:slug, :thumb_url])
     |> validate_required([:slug])
-    |> unique_constraint([:slug])
+    |> unsafe_validate_unique([:org_id, :slug], Zoonk.Repo)
+    |> unique_constraint([:org_id, :slug])
   end
 end

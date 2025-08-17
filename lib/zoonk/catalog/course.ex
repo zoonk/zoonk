@@ -54,6 +54,7 @@ defmodule Zoonk.Catalog.Course do
     course
     |> cast(attrs, [:categories, :slug, :thumb_url])
     |> validate_required([:categories, :slug])
-    |> unique_constraint([:slug])
+    |> unsafe_validate_unique([:org_id, :slug], Zoonk.Repo)
+    |> unique_constraint([:org_id, :slug])
   end
 end

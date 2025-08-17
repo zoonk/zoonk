@@ -12,7 +12,7 @@ defmodule Zoonk.Repo.Migrations.CreateOrgMembersTable do
     end
 
     create unique_index(:org_members, [:org_id, :user_id])
-    create index(:org_members, [:org_id])
+
     create index(:org_members, [:user_id])
     create index(:org_members, [:org_id, :inserted_at])
     create index(:org_members, [:org_id, :role])

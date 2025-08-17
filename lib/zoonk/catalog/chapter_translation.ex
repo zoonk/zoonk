@@ -9,6 +9,7 @@ defmodule Zoonk.Catalog.ChapterTranslation do
 
   | Field Name   | Type        | Description                                              |
   |--------------|-------------|----------------------------------------------------------|
+  | `org_id`     | `Integer`   | The organization ID this translation belongs to.         |
   | `chapter_id` | `Integer`   | The ID of the chapter this translation belongs to.       |
   | `language`   | `Ecto.Enum` | The language of this translation.                        |
   | `title`      | `String`    | The title of the chapter in the specified language.      |
@@ -22,6 +23,7 @@ defmodule Zoonk.Catalog.ChapterTranslation do
 
   alias Zoonk.Catalog.Chapter
   alias Zoonk.Localization
+  alias Zoonk.Orgs.Org
 
   schema "chapter_translations" do
     field :language, Ecto.Enum,
@@ -31,6 +33,7 @@ defmodule Zoonk.Catalog.ChapterTranslation do
     field :title, :string
     field :description, :string
 
+    belongs_to :org, Org
     belongs_to :chapter, Chapter
 
     timestamps(type: :utc_datetime_usec)

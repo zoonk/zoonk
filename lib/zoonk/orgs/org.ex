@@ -63,6 +63,7 @@ defmodule Zoonk.Orgs.Org do
 
   schema "orgs" do
     field :kind, Ecto.Enum, values: [:app, :team, :creator, :school], default: :team
+    field :is_public, :boolean, default: false
     field :display_name, :string
     field :bio, :string
     field :public_email, :string
@@ -80,7 +81,7 @@ defmodule Zoonk.Orgs.Org do
   @doc false
   def changeset(org, attrs) do
     org
-    |> cast(attrs, [:bio, :custom_domain, :display_name, :icon_url, :logo_url, :public_email, :subdomain])
+    |> cast(attrs, [:bio, :custom_domain, :display_name, :icon_url, :logo_url, :public_email, :subdomain, :is_public])
     |> validate_required([:display_name, :subdomain])
     |> validate_length(:display_name, min: 1, max: 32)
     |> validate_length(:subdomain, min: 2, max: 32)

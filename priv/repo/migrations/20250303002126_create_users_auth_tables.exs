@@ -6,11 +6,8 @@ defmodule Zoonk.Repo.Migrations.CreateUsersAuthTables do
 
     create table(:users) do
       add :year_of_birth, :integer
-
       add :language, :string, null: false, default: "en"
-
       add :email, :citext
-
       add :confirmed_at, :utc_datetime_usec
 
       timestamps(type: :utc_datetime_usec)
@@ -22,7 +19,6 @@ defmodule Zoonk.Repo.Migrations.CreateUsersAuthTables do
       add :user_id, references(:users, on_delete: :delete_all), null: false
 
       add :token, :binary, null: false
-
       add :context, :string, null: false
       add :sent_to, :string
       add :authenticated_at, :utc_datetime_usec

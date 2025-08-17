@@ -12,6 +12,6 @@ defmodule Zoonk.Repo.Migrations.CreateUserProvidersTable do
     end
 
     create unique_index(:user_providers, [:user_id, :provider])
-    create index(:user_providers, [:user_id])
+    create unique_index(:user_providers, [:provider, :provider_uid])
   end
 end

@@ -10,7 +10,6 @@ defmodule Zoonk.Catalog.CourseChapter do
 
   | Field Name   | Type       | Description                                             |
   |--------------|------------|---------------------------------------------------------|
-  | `org_id`     | `Integer`  | The ID of the organization this data belongs to.        |
   | `course_id`  | `Integer`  | The ID of the course that contains the chapter.         |
   | `chapter_id` | `Integer`  | The ID of the chapter included in the course.           |
   | `position`   | `Integer`  | Chapter's position within the course, used for ordering.|
@@ -23,12 +22,10 @@ defmodule Zoonk.Catalog.CourseChapter do
 
   alias Zoonk.Catalog.Chapter
   alias Zoonk.Catalog.Course
-  alias Zoonk.Orgs.Org
 
   schema "course_chapters" do
     field :position, :integer
 
-    belongs_to :org, Org
     belongs_to :course, Course
     belongs_to :chapter, Chapter
 

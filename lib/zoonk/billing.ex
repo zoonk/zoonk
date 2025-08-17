@@ -84,7 +84,7 @@ defmodule Zoonk.Billing do
 
   defp find_active_subscription(user_id, org_id) do
     UserSubscription
-    |> where([s], s.user_id == ^user_id and s.org_id == ^org_id and s.status == :active)
+    |> where([s], s.org_id == ^org_id and s.user_id == ^user_id and s.status == :active)
     |> order_by([s], desc: s.expires_at)
     |> limit(1)
     |> Repo.one()
@@ -92,7 +92,7 @@ defmodule Zoonk.Billing do
 
   defp find_latest_subscription(user_id, org_id) do
     UserSubscription
-    |> where([s], s.user_id == ^user_id and s.org_id == ^org_id)
+    |> where([s], s.org_id == ^org_id and s.user_id == ^user_id)
     |> order_by([s], desc: s.expires_at)
     |> limit(1)
     |> Repo.one()

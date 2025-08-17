@@ -12,6 +12,7 @@ defmodule Zoonk.Repo.Migrations.CreateCourseSuggestions do
       timestamps(type: :utc_datetime_usec)
     end
 
+    create unique_index(:course_suggestions, [:content_id])
     create unique_index(:course_suggestions, [:query, :language])
   end
 end
