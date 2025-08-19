@@ -156,8 +156,8 @@ defmodule Zoonk.CatalogTest do
     test "filters by reaction type", %{scope: scope, content_id: content_id} do
       another_content = Repo.insert!(%Content{kind: :course, org_id: scope.org.id})
 
-      {:ok, _} = Catalog.create_content_reaction(scope, %{content_id: content_id, reaction: :thumbs_up})
-      {:ok, _} = Catalog.create_content_reaction(scope, %{content_id: another_content.id, reaction: :thumbs_down})
+      {:ok, _reaction} = Catalog.create_content_reaction(scope, %{content_id: content_id, reaction: :thumbs_up})
+      {:ok, _reaction} = Catalog.create_content_reaction(scope, %{content_id: another_content.id, reaction: :thumbs_down})
 
       thumbs_up_reactions = Catalog.list_content_reactions(scope, reaction: :thumbs_up)
       assert length(thumbs_up_reactions) == 1
