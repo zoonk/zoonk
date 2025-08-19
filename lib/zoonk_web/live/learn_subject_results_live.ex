@@ -2,9 +2,11 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
+  alias Phoenix.LiveView.AsyncResult
   alias Zoonk.AI
   alias Zoonk.Billing
   alias Zoonk.Billing.BillingAccount
+  alias Zoonk.Catalog
   alias Zoonk.Scope
 
   on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
@@ -111,9 +113,25 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
       socket
       |> assign(:page_title, dgettext("page_title", "Suggestions for %{input}", input: input))
       |> assign(:input, input)
-      |> assign_async(:suggestions, fn -> assign_suggestions(scope, attrs) end)
+      |> assign(:reaction, nil)
+      |> assign(:suggestions, AsyncResult.loading())
+      |> start_async(:fetch_suggestions, fn -> assign_suggestions(scope, attrs) end)
 
     {:ok, socket}
+  end
+
+  @impl Phoenix.LiveView
+  def handle_async(:fetch_suggestions, {:ok, %{content_id: content_id, suggestions: suggestions}}, socket) do
+    reaction = Catalog.get_content_reaction(socket.assigns.scope, content_id)
+
+    {:noreply,
+     socket
+     |> assign(:reaction, reaction)
+     |> assign(:suggestions, AsyncResult.ok(socket.assigns.suggestions, suggestions))}
+  end
+
+  def handle_async(:fetch_suggestions, {:exit, reason}, socket) do
+    {:noreply, assign(socket, :suggestions, AsyncResult.failed(socket.assigns.suggestions, reason))}
   end
 
   defp icon_color(index) do
@@ -124,8 +142,8 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
 
   defp assign_suggestions(scope, attrs) do
     case AI.suggest_courses(scope, attrs) do
-      {:ok, %{suggestions: suggestions}} -> {:ok, %{suggestions: suggestions}}
-      {:error, reason} -> {:error, reason}
+      {:ok, %{content_id: content_id, suggestions: suggestions}} -> %{content_id: content_id, suggestions: suggestions}
+      {:error, reason} -> reason
     end
   end
 
