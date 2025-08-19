@@ -277,8 +277,9 @@ defmodule ZoonkWeb.UserAuth do
     logged_in? = scope && scope.user
     path = current_path(conn)
     auth_page? = String.starts_with?(path, ["/login", "/signup", "/confirm"])
+    dev_page? = String.starts_with?(path, ["/dev"])
 
-    if logged_in? || auth_page? do
+    if logged_in? || auth_page? || dev_page? do
       conn
     else
       put_session(conn, :user_return_to, path)
