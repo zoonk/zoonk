@@ -99,7 +99,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
         </li>
       </ul>
 
-      <.content_reaction />
+      <.content_reaction reaction={@reaction} />
     </.async_page>
     """
   end

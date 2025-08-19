@@ -8,15 +8,33 @@ defmodule ZoonkWeb.Components.ContentReaction do
   It allows users to give us thumbs up or thumbs down feedback.
   """
   use Phoenix.Component
+  use Gettext, backend: Zoonk.Gettext
+
+  import ZoonkWeb.Components.Icon
+  import ZoonkWeb.Components.Text
 
   alias Phoenix.LiveView.AsyncResult
   alias Zoonk.Catalog
+  alias Zoonk.Catalog.ContentReaction
+
+  attr :reaction, ContentReaction, default: nil, doc: "The current content reaction"
 
   def content_reaction(assigns) do
     ~H"""
-    <div>
-      <button phx-click="react" phx-value="thumbs_up">👍</button>
-      <button phx-click="react" phx-value="thumbs_down">👎</button>
+    <div class="mx-auto flex w-full flex-col gap-1 pb-8 text-center">
+      <.text tag="h6" variant={:secondary} size={:sm}>
+        {gettext("Did you like this content?")}
+      </.text>
+
+      <div class="text-zk-muted-foreground flex items-center justify-center gap-4">
+        <button phx-click="react" phx-value-reaction="thumbs_up">
+          <.icon name={icon_name(:thumbs_up, @reaction)} label={gettext("Thumbs up")} />
+        </button>
+
+        <button phx-click="react" phx-value-reaction="thumbs_down">
+          <.icon name={icon_name(:thumbs_down, @reaction)} label={gettext("Thumbs down")} />
+        </button>
+      </div>
     </div>
     """
   end
@@ -36,7 +54,7 @@ defmodule ZoonkWeb.Components.ContentReaction do
 
   def event_hook("react", %{"reaction" => reaction}, socket) when is_nil(socket.assigns.reaction) do
     scope = socket.assigns.scope
-    content_id = socket.assigns.content.content_id
+    content_id = socket.assigns.content.result.content_id
 
     case Catalog.create_content_reaction(scope, %{content_id: content_id, reaction: reaction}) do
       {:ok, reaction} ->
@@ -58,4 +76,9 @@ defmodule ZoonkWeb.Components.ContentReaction do
         {:halt, assign(socket, :error, :unauthorized)}
     end
   end
+
+  defp icon_name(:thumbs_up, %ContentReaction{reaction: :thumbs_up}), do: "tabler-thumb-up-filled"
+  defp icon_name(:thumbs_down, %ContentReaction{reaction: :thumbs_down}), do: "tabler-thumb-down-filled"
+  defp icon_name(:thumbs_up, _reaction), do: "tabler-thumb-up"
+  defp icon_name(:thumbs_down, _reaction), do: "tabler-thumb-down"
 end
