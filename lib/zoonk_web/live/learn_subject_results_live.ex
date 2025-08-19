@@ -2,11 +2,12 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
+  import ZoonkWeb.Components.ContentReaction
+
   alias Phoenix.LiveView.AsyncResult
   alias Zoonk.AI
   alias Zoonk.Billing
   alias Zoonk.Billing.BillingAccount
-  alias Zoonk.Catalog
   alias Zoonk.Scope
 
   on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
@@ -29,10 +30,10 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
   def render(assigns) do
     ~H"""
     <.async_page
-      :let={suggestions}
+      :let={content}
       flash={@flash}
       scope={@scope}
-      data={@suggestions}
+      data={@content}
       loading_title={dgettext("goals", "Finding course suggestions")}
       loading_subtitle={
         dgettext(
@@ -56,13 +57,13 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
       </header>
 
       <ul
-        :if={suggestions}
+        :if={content}
         class="mx-auto max-w-xl"
         phx-window-keydown={JS.navigate(~p"/learn")}
         phx-key="escape"
         aria-label={dgettext("goals", "List of suggested courses")}
       >
-        <li :for={{suggestion, index} <- Enum.with_index(suggestions)} class="group">
+        <li :for={{suggestion, index} <- Enum.with_index(content.suggestions)} class="group">
           <a
             href="#"
             class={[
@@ -97,6 +98,8 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
           </a>
         </li>
       </ul>
+
+      <.content_reaction />
     </.async_page>
     """
   end
@@ -114,24 +117,12 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
       |> assign(:page_title, dgettext("page_title", "Suggestions for %{input}", input: input))
       |> assign(:input, input)
       |> assign(:reaction, nil)
-      |> assign(:suggestions, AsyncResult.loading())
-      |> start_async(:fetch_suggestions, fn -> assign_suggestions(scope, attrs) end)
+      |> assign(:content, AsyncResult.loading())
+      |> start_async(:fetch_content, fn -> assign_suggestions(scope, attrs) end)
+      |> attach_hook(:fetch_content, :handle_async, &async_hook/3)
+      |> attach_hook(:react, :handle_event, &event_hook/3)
 
     {:ok, socket}
-  end
-
-  @impl Phoenix.LiveView
-  def handle_async(:fetch_suggestions, {:ok, %{content_id: content_id, suggestions: suggestions}}, socket) do
-    reaction = Catalog.get_content_reaction(socket.assigns.scope, content_id)
-
-    {:noreply,
-     socket
-     |> assign(:reaction, reaction)
-     |> assign(:suggestions, AsyncResult.ok(socket.assigns.suggestions, suggestions))}
-  end
-
-  def handle_async(:fetch_suggestions, {:exit, reason}, socket) do
-    {:noreply, assign(socket, :suggestions, AsyncResult.failed(socket.assigns.suggestions, reason))}
   end
 
   defp icon_color(index) do
