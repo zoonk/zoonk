@@ -54,11 +54,13 @@ defmodule ZoonkWeb.Components.ContentReaction do
 
       <div class="text-zk-muted-foreground flex items-center justify-center gap-4">
         <button phx-click="react" phx-value-reaction="thumbs_up">
-          <.icon name={icon_name(:thumbs_up, @reaction)} label={gettext("Thumbs up")} />
+          <span class="sr-only">{gettext("Thumbs up")}</span>
+          <.icon name={icon_name(:thumbs_up, @reaction)} />
         </button>
 
         <button phx-click="react" phx-value-reaction="thumbs_down">
-          <.icon name={icon_name(:thumbs_down, @reaction)} label={gettext("Thumbs down")} />
+          <span class="sr-only">{gettext("Thumbs down")}</span>
+          <.icon name={icon_name(:thumbs_down, @reaction)} />
         </button>
       </div>
     </div>
