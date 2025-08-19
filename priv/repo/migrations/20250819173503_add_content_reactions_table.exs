@@ -3,8 +3,12 @@ defmodule Zoonk.Repo.Migrations.AddContentReactionsTable do
 
   def change do
     create table(:content_reactions) do
-      add :org_id, references(:orgs, on_delete: :delete_all), null: false
-      add :content_id, references(:contents, on_delete: :delete_all), null: false
+      add :org_id, :bigint, null: false
+
+      add :content_id,
+          references(:contents, on_delete: :delete_all, with: [org_id: :org_id], match: :full),
+          null: false
+
       add :user_id, references(:users, on_delete: :delete_all), null: false
 
       add :reaction, :string, null: false
