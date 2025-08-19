@@ -6,6 +6,25 @@ defmodule ZoonkWeb.Components.ContentReaction do
   feedback on our content.
 
   It allows users to give us thumbs up or thumbs down feedback.
+
+  ## Usage
+
+  You need to attach `handle_event` and `handle_async` hooks
+  to use this component:
+
+      import ZoonkWeb.Components.ContentReaction
+
+      def mount(params, session, socket) do
+        socket =
+          socket
+          |> assign(:reaction, nil)
+          |> assign(:content, Phoenix.LiveView.AsyncResult.loading())
+          |> start_async(:fetch_content, fn -> assign_content() end)
+          |> attach_hook(:fetch_content, :handle_async, &async_hook/3)
+          |> attach_hook(:react, :handle_event, &event_hook/3)
+
+        {:ok, socket}
+      end
   """
   use Phoenix.Component
   use Gettext, backend: Zoonk.Gettext
@@ -19,6 +38,13 @@ defmodule ZoonkWeb.Components.ContentReaction do
 
   attr :reaction, ContentReaction, default: nil, doc: "The current content reaction"
 
+  @doc """
+  Renders the content reaction component.
+
+  ## Examples
+
+      <.content_reaction reaction={%ContentReaction{}} />
+  """
   def content_reaction(assigns) do
     ~H"""
     <div class="mx-auto flex w-full flex-col gap-1 pb-8 text-center">
