@@ -2,6 +2,9 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
+  import ZoonkWeb.Components.ContentReaction
+
+  alias Phoenix.LiveView.AsyncResult
   alias Zoonk.AI
   alias Zoonk.Billing
   alias Zoonk.Billing.BillingAccount
@@ -27,10 +30,10 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
   def render(assigns) do
     ~H"""
     <.async_page
-      :let={suggestions}
+      :let={content}
       flash={@flash}
       scope={@scope}
-      data={@suggestions}
+      data={@content}
       loading_title={dgettext("goals", "Finding course suggestions")}
       loading_subtitle={
         dgettext(
@@ -54,13 +57,13 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
       </header>
 
       <ul
-        :if={suggestions}
+        :if={content}
         class="mx-auto max-w-xl"
         phx-window-keydown={JS.navigate(~p"/learn")}
         phx-key="escape"
         aria-label={dgettext("goals", "List of suggested courses")}
       >
-        <li :for={{suggestion, index} <- Enum.with_index(suggestions)} class="group">
+        <li :for={{suggestion, index} <- Enum.with_index(content.suggestions)} class="group">
           <a
             href="#"
             class={[
@@ -95,6 +98,8 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
           </a>
         </li>
       </ul>
+
+      <.content_reaction reaction={@reaction} />
     </.async_page>
     """
   end
@@ -111,7 +116,11 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
       socket
       |> assign(:page_title, dgettext("page_title", "Suggestions for %{input}", input: input))
       |> assign(:input, input)
-      |> assign_async(:suggestions, fn -> assign_suggestions(scope, attrs) end)
+      |> assign(:reaction, nil)
+      |> assign(:content, AsyncResult.loading())
+      |> start_async(:fetch_content, fn -> assign_suggestions(scope, attrs) end)
+      |> attach_hook(:fetch_content, :handle_async, &async_hook/3)
+      |> attach_hook(:react, :handle_event, &event_hook/3)
 
     {:ok, socket}
   end
@@ -124,8 +133,8 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
 
   defp assign_suggestions(scope, attrs) do
     case AI.suggest_courses(scope, attrs) do
-      {:ok, %{suggestions: suggestions}} -> {:ok, %{suggestions: suggestions}}
-      {:error, reason} -> {:error, reason}
+      {:ok, %{content_id: content_id, suggestions: suggestions}} -> %{content_id: content_id, suggestions: suggestions}
+      {:error, reason} -> reason
     end
   end
 

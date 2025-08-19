@@ -24,7 +24,7 @@ defmodule Zoonk.AI.Tasks.SuggestCourses do
   end
 
   defp suggest_courses(%CourseSuggestion{} = course_suggestion, _scope, _attrs) do
-    {:ok, %{suggestions: course_suggestion.suggestions}}
+    {:ok, course_suggestion}
   end
 
   defp suggest_courses(nil, scope, attrs) do
@@ -33,9 +33,8 @@ defmodule Zoonk.AI.Tasks.SuggestCourses do
     |> add_suggestion_to_db(scope, attrs)
   end
 
-  defp add_suggestion_to_db({:ok, %{suggestions: suggestions} = response}, scope, attrs) do
+  defp add_suggestion_to_db({:ok, %{suggestions: suggestions}}, scope, attrs) do
     Catalog.create_course_suggestion(scope, %{query: attrs.input, language: attrs.language, suggestions: suggestions})
-    {:ok, response}
   end
 
   defp add_suggestion_to_db({:error, error}, _scope, _attrs) do
