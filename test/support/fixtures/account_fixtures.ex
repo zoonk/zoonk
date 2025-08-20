@@ -1,9 +1,5 @@
 defmodule Zoonk.AccountFixtures do
-  @moduledoc """
-  This module defines test helpers for creating
-  entities via the `Zoonk.Accounts` context.
-  """
-
+  @moduledoc false
   import Ecto.Query
   import Zoonk.OrgFixtures
 

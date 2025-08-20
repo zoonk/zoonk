@@ -1,8 +1,5 @@
 defmodule Zoonk.OrgFixtures do
-  @moduledoc """
-  This module defines test helpers for creating
-  entities via the `Zoonk.Orgs` context.
-  """
+  @moduledoc false
   alias Zoonk.Orgs
   alias Zoonk.Orgs.Org
   alias Zoonk.Orgs.OrgMember
@@ -25,17 +22,6 @@ defmodule Zoonk.OrgFixtures do
     })
   end
 
-  @doc """
-  Creates an organization.
-
-  ## Examples
-
-      iex> org_fixture()
-      %Org{kind: :team}
-
-      iex> org_fixture(%{kind: :school})
-      %Org{kind: :school}
-  """
   def org_fixture(%{kind: :app}), do: app_org_fixture()
 
   def org_fixture(attrs) do
@@ -85,17 +71,6 @@ defmodule Zoonk.OrgFixtures do
     })
   end
 
-  @doc """
-  Creates an organization settings.
-
-  ## Examples
-
-      iex> org_settings_fixture()
-      %OrgSettings{}
-
-      iex> org_settings_fixture(%{subdomain: "mysubdomain"})
-      %OrgSettings{subdomain: "mysubdomain"}
-  """
   def org_settings_fixture(attrs \\ %{}) do
     org = Map.get_lazy(attrs, :org, fn -> org_fixture() end)
 
@@ -107,17 +82,6 @@ defmodule Zoonk.OrgFixtures do
     settings
   end
 
-  @doc """
-  Creates an organization member.
-
-  ## Examples
-
-      iex> org_member_fixture(%{org: %Org{}, user: %User{}})
-      %OrgMember{}
-
-      iex> org_member_fixture(%{role: :admin})
-      %OrgMember{role: :admin}
-  """
   def org_member_fixture(%{user: nil}), do: nil
 
   def org_member_fixture(attrs) do
