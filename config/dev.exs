@@ -1,7 +1,7 @@
 import Config
 
 # Do not include metadata nor timestamps in development logs
-config :logger, :console, format: "[$level] $message\n"
+config :logger, :default_formatter, format: "[$level] $message\n"
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
@@ -11,9 +11,10 @@ config :phoenix, :plug_init_mode, :runtime
 config :phoenix, :stacktrace_depth, 20
 
 config :phoenix_live_view,
-  debug_attributes: true,
-  # Include HEEx debug annotations as HTML comments in rendered markup
+  # Include debug annotations and locations in rendered markup.
+  # Changing this configuration will require mix clean and a full recompile.
   debug_heex_annotations: true,
+  debug_attributes: true,
   # Enable helpful, but potentially expensive runtime checks
   enable_expensive_runtime_checks: true
 
@@ -79,6 +80,7 @@ config :zoonk, ZoonkWeb.Endpoint,
 
 # Watch static and templates for browser reloading.
 config :zoonk, ZoonkWeb.Endpoint,
+  web_console_logger: true,
   live_reload: [
     notify: [
       live_view: [
@@ -88,7 +90,7 @@ config :zoonk, ZoonkWeb.Endpoint,
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/zoonk_web/(controllers|components)/.*(ex|heex)$",
+      ~r"lib/zoonk_web/(?:controllers|components|router)/?.*\.(ex|heex)$",
       ~r"lib/zoonk_dev/.*(ex|heex)$"
     ]
   ]
