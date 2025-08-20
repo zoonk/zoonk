@@ -40,7 +40,8 @@ defmodule ZoonkWeb.LearnSubjectLiveTest do
     setup :signup_and_login_user
 
     test "allows authenticated user to see the page", %{conn: conn} do
-      data = course_suggestion_fixture()
+      %{suggestions: suggestions} = course_suggestion_fixture()
+      suggestion = hd(suggestions)
 
       conn
       |> visit(~p"/learn")
@@ -51,7 +52,7 @@ defmodule ZoonkWeb.LearnSubjectLiveTest do
       |> fill_in("#learn-subject input", "What do you want to learn?", with: "programming")
       |> submit()
       |> assert_path(~p"/learn/programming")
-      |> assert_has("h3", text: data.title, timeout: 1)
+      |> assert_has("h3", text: suggestion.title, timeout: 1)
     end
   end
 end
