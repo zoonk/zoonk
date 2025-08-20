@@ -36,12 +36,11 @@ config :zoonk, Zoonk.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we can use it
 # to bundle .js and .css sources.
-# Binding to loopback ipv4 address prevents access from other machines.
 config :zoonk, ZoonkWeb.Endpoint,
-  http: [ip: {0, 0, 0, 0}, port: 4000],
+  http: [ip: {0, 0, 0, 0}, port: String.to_integer(System.get_env("PORT", "4000"))],
   https: [
     ip: {0, 0, 0, 0},
-    port: 4001,
+    port: String.to_integer(System.get_env("HTTPS_PORT", "4001")),
     cipher_suite: :strong,
     keyfile: "priv/cert/selfsigned_key.pem",
     certfile: "priv/cert/selfsigned.pem"
