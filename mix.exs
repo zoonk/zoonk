@@ -73,7 +73,7 @@ defmodule Zoonk.MixProject do
       {:tailwind_formatter, "~> 0.4.2", only: [:dev, :test], runtime: false},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
-      {:tidewave, "~> 0.3", only: :dev}
+      {:tidewave, "~> 0.4", only: :dev}
     ]
   end
 
