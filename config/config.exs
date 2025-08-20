@@ -15,7 +15,7 @@ config :esbuild,
       js/app.js
       --bundle
       --target=es2022
-      --outdir=../priv/static/assets
+      --outdir=../priv/static/assets/js
       --external:/fonts/*
       --external:/images/*
       --external:/error/*
@@ -28,7 +28,7 @@ config :esbuild,
   ]
 
 # Configures Elixir's Logger
-config :logger, :console,
+config :logger, :default_formatter,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
@@ -41,7 +41,7 @@ config :tailwind,
   zoonk: [
     args: ~w(
       --input=assets/css/app.css
-      --output=priv/static/assets/app.css
+      --output=priv/static/assets/css/app.css
     ),
     cd: Path.expand("..", __DIR__)
   ]
