@@ -52,13 +52,21 @@ defmodule ZoonkWeb.Components.ContentReaction do
         {gettext("Did you like this content?")}
       </.text>
 
-      <div class="text-zk-muted-foreground flex items-center justify-center gap-4">
-        <button phx-click="react" phx-value-reaction="thumbs_up">
+      <div class="text-zk-muted-foreground flex items-center justify-center">
+        <button
+          phx-click="react"
+          phx-value-reaction="thumbs_up"
+          class={button_class()}
+        >
           <span class="sr-only">{gettext("Thumbs up")}</span>
           <.icon name={icon_name(:thumbs_up, @reaction)} />
         </button>
 
-        <button phx-click="react" phx-value-reaction="thumbs_down">
+        <button
+          phx-click="react"
+          phx-value-reaction="thumbs_down"
+          class={button_class()}
+        >
           <span class="sr-only">{gettext("Thumbs down")}</span>
           <.icon name={icon_name(:thumbs_down, @reaction)} />
         </button>
@@ -109,4 +117,6 @@ defmodule ZoonkWeb.Components.ContentReaction do
   defp icon_name(:thumbs_down, %ContentReaction{reaction: :thumbs_down}), do: "tabler-thumb-down-filled"
   defp icon_name(:thumbs_up, _reaction), do: "tabler-thumb-up"
   defp icon_name(:thumbs_down, _reaction), do: "tabler-thumb-down"
+
+  defp button_class, do: "flex flex-col items-center justify-center rounded-full p-2 bg-transparent hover:bg-zk-secondary"
 end
