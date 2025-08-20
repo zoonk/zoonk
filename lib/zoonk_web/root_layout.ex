@@ -13,13 +13,13 @@ defmodule ZoonkWeb.RootLayout do
 
         <.live_title default="Zoonk">{assigns[:page_title]}</.live_title>
 
-        <link phx-track-static rel="stylesheet" href={~p"/assets/app.css"} />
+        <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
 
         <link rel="apple-touch-icon" sizes="180x180" href={~p"/images/favicon/180.png"} />
         <link rel="icon" type="image/png" sizes="32x32" href={~p"/images/favicon/32.png"} />
         <link rel="icon" type="image/png" sizes="16x16" href={~p"/images/favicon/16.png"} />
 
-        <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
+        <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
         </script>
       </head>
       <body class="bg-zk-background">
