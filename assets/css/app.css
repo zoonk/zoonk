@@ -90,8 +90,8 @@
     --surface: var(--color-neutral-900);
     --surface-foreground: var(--color-neutral-300);
 
-    --muted: var(--color-neutral-950);
-    --muted-foreground: var(--color-neutral-400);
+    --muted: var(--color-neutral-900);
+    --muted-foreground: var(--color-neutral-300);
 
     --success: var(--color-green-700);
     --success-foreground: var(--color-green-50);

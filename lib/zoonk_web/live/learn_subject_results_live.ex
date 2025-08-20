@@ -90,7 +90,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
 
             <div
               aria-hidden
-              class="size-17 bg-zk-secondary/75 flex shrink-0 flex-col items-center justify-center rounded-lg"
+              class="size-17 bg-zk-muted flex shrink-0 flex-col items-center justify-center rounded-lg"
             >
               <.dynamic_icon
                 name={suggestion.icon}
