@@ -9,7 +9,7 @@ import Config
 
 # Configure esbuild (the version is required)
 config :esbuild,
-  version: "0.25.5",
+  version: "0.25.9",
   zoonk: [
     args: ~w(
       js/app.js
@@ -37,7 +37,7 @@ config :phoenix, :json_library, Jason
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "4.1.10",
+  version: "4.1.12",
   zoonk: [
     args: ~w(
       --input=assets/css/app.css
