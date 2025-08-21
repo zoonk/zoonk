@@ -327,7 +327,7 @@
 }
 
 @utility zk-btn-outline {
-  @apply border border-zk-border bg-zk-background text-zk-foreground/70 shadow-xs
+  @apply border border-zk-border bg-zk-background text-zk-surface-foreground/90 shadow-xs
   hover:bg-zk-muted hover:text-zk-muted-foreground
   focus-visible:ring-zk-border;
 }
