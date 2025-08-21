@@ -31,7 +31,7 @@ defmodule ZoonkWeb.Components.Form do
       class={["bg-zk-surface flex w-full flex-1 flex-col gap-4", @class]}
       {@rest}
     >
-      <fieldset class="flex flex-col gap-4">
+      <fieldset class="flex flex-col gap-4 text-left">
         <.text tag="h3" size={:xxl} class="leading-none">{render_slot(@title)}</.text>
         <.text tag="h4" size={:md} variant={:secondary} class="-mt-2">{render_slot(@subtitle)}</.text>
 

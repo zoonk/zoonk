@@ -45,6 +45,7 @@
   --muted-foreground: var(--color-gray-500);
 
   --success: var(--color-green-700);
+  --success-text: var(--color-green-500);
   --success-foreground: var(--color-green-50);
 
   --success-subtle: var(--color-green-50);
@@ -95,6 +96,7 @@
     --muted-foreground: var(--color-neutral-300);
 
     --success: var(--color-green-700);
+    --success-text: var(--color-green-400);
     --success-foreground: var(--color-green-50);
 
     --success-subtle: var(--color-green-600);
@@ -146,6 +148,7 @@
     --muted-foreground: var(--color-black);
 
     --success: var(--color-green-800);
+    --success-text: var(--color-green-800);
     --success-foreground: var(--color-green-50);
 
     --success-subtle: var(--color-green-50);
@@ -197,6 +200,7 @@
     --muted-foreground: var(--color-white);
 
     --success: var(--color-green-800);
+    --success-text: var(--color-green-200);
     --success-foreground: var(--color-green-50);
 
     --success-subtle: var(--color-green-700);
@@ -247,6 +251,7 @@
   --color-zk-muted-foreground: var(--muted-foreground);
 
   --color-zk-success: var(--success);
+  --color-zk-success-text: var(--success-text);
   --color-zk-success-foreground: var(--success-foreground);
 
   --color-zk-success-subtle: var(--success-subtle);
@@ -322,7 +327,7 @@
 }
 
 @utility zk-btn-outline {
-  @apply border border-zk-border bg-zk-background text-zk-foreground/70 shadow-xs
+  @apply border border-zk-border bg-zk-background text-zk-surface-foreground/90 shadow-xs
   hover:bg-zk-muted hover:text-zk-muted-foreground
   focus-visible:ring-zk-border;
 }
