@@ -90,7 +90,7 @@ defmodule Zoonk.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],
-      "assets.build": ["tailwind zoonk", "esbuild zoonk"],
+      "assets.build": ["compile", "tailwind zoonk", "esbuild zoonk"],
       "assets.deploy": ["tailwind zoonk --minify", "esbuild zoonk --minify", "phx.digest"],
       locale: ["gettext.extract", "gettext.merge priv/gettext"],
       ci: [
