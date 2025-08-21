@@ -31,6 +31,7 @@ defmodule ZoonkWeb.Components.FeedbackFormDialog do
           id="feedback-form-live"
           module={ZoonkWeb.Components.FeedbackForm}
           user={@user}
+          show_submit?
         />
       </.dialog>
     </div>
