@@ -29,8 +29,9 @@ defmodule ZoonkWeb.Components.Pill do
   def pill(assigns) do
     ~H"""
     <li class={[
-      "rounded-full px-3 py-1.5 leading-none tracking-tight shadow-sm hover:bg-zk-muted/70",
+      "rounded-full px-3 py-1.5 leading-none tracking-tight shadow-sm",
       "focus-within:ring-zk-border focus-within:ring-2 focus-within:ring-offset-2",
+      "transition-transform hover:scale-105",
       @active && "bg-zk-primary shadow-zk-primary",
       !@active && "bg-zk-surface",
       @class
