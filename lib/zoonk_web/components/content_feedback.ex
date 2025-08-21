@@ -23,8 +23,8 @@ defmodule ZoonkWeb.Components.ContentFeedback do
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
-    <footer id={@id} class="mx-auto flex w-full flex-col gap-4 pb-8 text-center">
-      <div class="mx-auto flex w-full flex-col gap-1 text-center">
+    <footer id={@id} class="mx-auto flex w-full flex-col items-center gap-4 pb-8 text-center">
+      <div class="mx-auto flex w-full flex-col gap-1">
         <.text tag="h6" variant={:secondary} size={:sm}>
           {gettext("Did you like this content?")}
         </.text>
@@ -60,6 +60,7 @@ defmodule ZoonkWeb.Components.ContentFeedback do
         phx-hook="DialogTrigger"
         aria-haspopup="true"
         aria-controls="feedback-dialog"
+        class="w-max"
       >
         {dgettext("settings", "Send Feedback")}
       </.button>
