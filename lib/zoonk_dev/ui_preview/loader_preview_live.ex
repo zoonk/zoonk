@@ -8,10 +8,10 @@ defmodule ZoonkDev.UIPreview.LoaderPreviewLive do
     <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:loader} page_title="Loader">
       <.card>
         <.card_header>
-          <.text tag="h2" size={:lg}>Default Loader</.text>
-          <.text size={:sm} variant={:secondary}>
+          <.card_title>Default Loader</.card_title>
+          <.card_description>
             A minimalist pulsing dot loader for subtle loading states.
-          </.text>
+          </.card_description>
         </.card_header>
 
         <.card_content class="flex flex-col gap-8">
@@ -21,10 +21,8 @@ defmodule ZoonkDev.UIPreview.LoaderPreviewLive do
 
       <.card>
         <.card_header>
-          <.text tag="h2" size={:lg}>Loader Sizes</.text>
-          <.text size={:sm} variant={:secondary}>
-            You can have multiple sizes.
-          </.text>
+          <.card_title>Loader Sizes</.card_title>
+          <.card_description>You can have multiple sizes.</.card_description>
         </.card_header>
 
         <.card_content class="flex gap-8">
