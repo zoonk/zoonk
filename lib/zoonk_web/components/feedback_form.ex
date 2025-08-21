@@ -82,7 +82,7 @@ defmodule ZoonkWeb.Components.FeedbackForm do
         <div :if={@show_submit?} class="flex items-center gap-2">
           <.button type="submit" size={:sm}>{dgettext("settings", "Send feedback")}</.button>
 
-          <.text :if={@display_success?} tag="p" class="text-zk-success-subtle">
+          <.text :if={@display_success?} tag="p" class="text-zk-success-text">
             {dgettext("settings", "Done!")}
           </.text>
         </div>
