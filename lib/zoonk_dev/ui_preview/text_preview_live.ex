@@ -30,9 +30,17 @@ defmodule ZoonkDev.UIPreview.TextPreviewLive do
 
         <.card_content class="flex flex-col gap-4">
           <.text tag="p" size={:md} variant={:primary}>Primary Text - Main content text</.text>
+
           <.text tag="p" size={:md} variant={:secondary}>
             Secondary Text - Supporting content text
           </.text>
+
+          <.text tag="p" size={:md} variant={:muted}>Muted Text - Less emphasized text</.text>
+
+          <.text tag="p" size={:md} variant={:destructive} class="text-zk-destructive">
+            Destructive Text - For dangerous actions
+          </.text>
+
           <.text tag="p" size={:md} variant={:custom} class="text-zk-primary">
             Custom Text - With custom color
           </.text>

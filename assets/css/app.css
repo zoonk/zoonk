@@ -42,7 +42,7 @@
   --surface-foreground: var(--color-neutral-500);
 
   --muted: var(--color-neutral-50);
-  --muted-foreground: var(--color-gray-500);
+  --muted-foreground: var(--color-neutral-500);
 
   --success: var(--color-green-700);
   --success-text: var(--color-green-500);

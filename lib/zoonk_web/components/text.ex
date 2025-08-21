@@ -17,7 +17,7 @@ defmodule ZoonkWeb.Components.Text do
     doc: "Font weight of the text"
 
   attr :variant, :atom,
-    values: [:primary, :secondary, :destructive, :custom],
+    values: [:primary, :secondary, :muted, :destructive, :custom],
     default: :primary,
     doc: "Color variant of the text"
 
@@ -72,6 +72,7 @@ defmodule ZoonkWeb.Components.Text do
 
   defp variant_class(:primary), do: "text-zk-foreground"
   defp variant_class(:secondary), do: "text-zk-muted-foreground"
+  defp variant_class(:muted), do: "text-zk-muted-foreground"
   defp variant_class(:destructive), do: "text-zk-destructive"
   defp variant_class(:custom), do: nil
 
