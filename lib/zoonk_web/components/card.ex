@@ -64,14 +64,11 @@ defmodule ZoonkWeb.Components.Card do
   def card_header(assigns) do
     ~H"""
     <header
-      class={[
-        "bg-zk-secondary/70 flex w-full items-center justify-between gap-4 rounded-t p-6",
-        @class
-      ]}
+      class={["bg-zk-muted flex w-full items-center justify-between gap-4 rounded-t p-6", @class]}
       {@rest}
     >
       <div class="flex flex-col gap-1.5">{render_slot(@inner_block)}</div>
-      <.icon :if={@icon} size={:lg} class="text-zk-muted-foreground" name={@icon} />
+      <.icon :if={@icon} size={:lg} class="text-zk-secondary-foreground" name={@icon} />
     </header>
     """
   end
