@@ -187,8 +187,8 @@
     --primary-accent: var(--color-blue-950);
     --primary-accent-foreground: var(--color-white);
 
-    --secondary: var(--color-neutral-200);
-    --secondary-foreground: var(--color-black);
+    --secondary: var(--color-neutral-800);
+    --secondary-foreground: var(--color-white);
 
     --secondary-accent: var(--color-neutral-900);
     --secondary-accent-foreground: var(--color-neutral-100);
