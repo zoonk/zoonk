@@ -28,7 +28,7 @@ defmodule ZoonkWeb.Components.Form do
     <.form
       for={@for}
       as={@as}
-      class={["bg-zk-surface flex w-full flex-1 flex-col gap-4", @class]}
+      class={["bg-zk-background flex w-full flex-1 flex-col gap-4", @class]}
       {@rest}
     >
       <fieldset class="flex flex-col gap-4 text-left">

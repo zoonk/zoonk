@@ -221,7 +221,7 @@ defmodule ZoonkWeb.Components.Input do
   defp shared_class,
     do: [
       "block rounded",
-      "bg-zk-surface text-zk-foreground",
+      "bg-zk-background text-zk-foreground",
       "placeholder:text-zk-foreground/40",
       "focus-visible:outline-0",
       "sm:text-sm sm:leading-6",

@@ -59,8 +59,8 @@ defmodule ZoonkWeb.Components.Toggle do
       <span class={[
         "min-h-0 min-w-0 flex-1 px-2 py-1.5",
         "flex shrink-0 items-center justify-center gap-2",
-        "text-zk-surface-foreground text-sm font-medium capitalize",
-        "bg-zk-surface shadow-xs select-none",
+        "text-zk-foreground text-sm font-medium capitalize",
+        "bg-zk-background shadow-xs select-none",
         "border-zk-border border-l",
         "group-first:rounded-l-md group-first:border-l-0 group-last:rounded-r-md",
         "hover:bg-zk-muted",

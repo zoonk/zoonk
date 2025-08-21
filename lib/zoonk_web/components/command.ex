@@ -64,7 +64,7 @@ defmodule ZoonkWeb.Components.Command do
 
       <kbd
         aria-label={gettext("Shortcut:")}
-        class="bg-zk-surface border-zk-border text-2xs pointer-events-none hidden gap-1 rounded-sm border px-1.5 py-0.5 uppercase md:flex"
+        class="bg-zk-background border-zk-border text-2xs pointer-events-none hidden gap-1 rounded-sm border px-1.5 py-0.5 uppercase md:flex"
       >
         <kbd>⌘</kbd>
         <kbd>{@shortcut}</kbd>
@@ -113,14 +113,14 @@ defmodule ZoonkWeb.Components.Command do
   def command_input(assigns) do
     ~H"""
     <div class={["relative flex items-center gap-2", @class]}>
-      <.icon name={@icon} class="size-4 text-zk-surface-foreground/70 absolute left-3" />
+      <.icon name={@icon} class="size-4 text-zk-foreground/70 absolute left-3" />
 
       <input
         id={@id}
         type="text"
         name="query"
         class={[
-          "bg-zk-surface w-full rounded-t py-2.5 pr-4 pl-10",
+          "bg-zk-background w-full rounded-t py-2.5 pr-4 pl-10",
           "text-zk-muted-foreground text-base sm:text-sm",
           "border-zk-border border-0 border-b focus-visible:ring-0",
           "placeholder:text-zk-muted-foreground/70",

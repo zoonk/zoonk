@@ -38,9 +38,6 @@
   --secondary-accent: var(--color-neutral-200);
   --secondary-accent-foreground: var(--color-neutral-950);
 
-  --surface: var(--color-white);
-  --surface-foreground: var(--color-neutral-500);
-
   --muted: var(--color-neutral-50);
   --muted-foreground: var(--color-neutral-500);
 
@@ -88,9 +85,6 @@
 
     --secondary-accent: var(--color-neutral-700);
     --secondary-accent-foreground: var(--color-neutral-100);
-
-    --surface: var(--color-neutral-900);
-    --surface-foreground: var(--color-neutral-300);
 
     --muted: var(--color-neutral-900);
     --muted-foreground: var(--color-neutral-300);
@@ -141,9 +135,6 @@
     --secondary-accent: var(--color-neutral-300);
     --secondary-accent-foreground: var(--color-neutral-900);
 
-    --surface: var(--color-white);
-    --surface-foreground: var(--color-black);
-
     --muted: var(--color-neutral-50);
     --muted-foreground: var(--color-black);
 
@@ -193,9 +184,6 @@
     --secondary-accent: var(--color-neutral-900);
     --secondary-accent-foreground: var(--color-neutral-100);
 
-    --surface: var(--color-neutral-900);
-    --surface-foreground: var(--color-white);
-
     --muted: var(--color-neutral-950);
     --muted-foreground: var(--color-white);
 
@@ -243,9 +231,6 @@
 
   --color-zk-secondary-accent: var(--secondary-accent);
   --color-zk-secondary-accent-foreground: var(--secondary-accent-foreground);
-
-  --color-zk-surface: var(--surface);
-  --color-zk-surface-foreground: var(--surface-foreground);
 
   --color-zk-muted: var(--muted);
   --color-zk-muted-foreground: var(--muted-foreground);
@@ -327,7 +312,7 @@
 }
 
 @utility zk-btn-outline {
-  @apply border border-zk-border bg-zk-background text-zk-surface-foreground/90 shadow-xs
+  @apply border border-zk-border bg-zk-background text-zk-foreground/90 shadow-xs
   hover:bg-zk-muted hover:text-zk-muted-foreground
   focus-visible:ring-zk-border;
 }

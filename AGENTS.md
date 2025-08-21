@@ -118,7 +118,7 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
 ### CSS and Tailwind
 
 - Use **Tailwind v4**
-- Avoid default colors — use tokens like `bg-zk-surface`
+- Avoid default colors — use tokens like `bg-zk-background`
 - Use `zk-` prefix for custom utilities
 - Use `size-4` instead of `w-4 h-4`
 - Only create custom utilities when we're often using the same styles

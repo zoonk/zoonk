@@ -17,7 +17,7 @@ defmodule ZoonkWeb.SettingsLayout do
   def render(assigns) do
     ~H"""
     <div class="min-h-dvh flex flex-col">
-      <header class="border-zk-border bg-zk-surface/70 sticky top-0 z-50 flex items-center justify-between border-b p-4 backdrop-blur-md">
+      <header class="border-zk-border bg-zk-background/70 sticky top-0 z-50 flex items-center justify-between border-b p-4 backdrop-blur-md">
         <.a kind={:icon} icon="tabler-x" variant={:outline} navigate={~p"/"} size={:sm}>
           {dgettext("menu", "Close settings")}
         </.a>
@@ -50,7 +50,7 @@ defmodule ZoonkWeb.SettingsLayout do
       </header>
 
       <div class="flex flex-1">
-        <aside class="border-zk-border bg-zk-surface fixed top-16 bottom-0 left-0 z-40 overflow-y-auto border-r md:w-64">
+        <aside class="border-zk-border bg-zk-background fixed top-16 bottom-0 left-0 z-40 overflow-y-auto border-r md:w-64">
           <nav>
             <ul class="flex flex-col">
               <.settings_menu_item

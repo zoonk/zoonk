@@ -9,7 +9,7 @@ defmodule ZoonkDev.UIPreview.UIPreviewLayout do
   def render(assigns) do
     ~H"""
     <main aria-labelledby="page-title">
-      <div class="bg-zk-surface/70 border-zk-border sticky top-0 z-50 border-b backdrop-blur-md">
+      <div class="bg-zk-background/70 border-zk-border sticky top-0 z-50 border-b backdrop-blur-md">
         <header class="mx-auto flex items-center justify-between gap-4 p-4 md:p-6">
           <.a kind={:button} navigate={~p"/"} size={:sm} variant={:outline}>
             Back to app

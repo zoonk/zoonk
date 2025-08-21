@@ -34,7 +34,7 @@ defmodule ZoonkWeb.Components.Card do
     <.dynamic_tag
       tag_name={@tag}
       class={[
-        "bg-zk-surface border-zk-border rounded drop-shadow",
+        "bg-zk-background border-zk-border rounded drop-shadow",
         "has-[header]:border has-[header]:drop-shadow-none",
         @size == :full && "flex h-full w-full flex-col justify-between",
         @class

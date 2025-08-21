@@ -40,7 +40,7 @@ defmodule ZoonkWeb.Components.Divider do
       <div class="relative flex justify-center">
         <span class={[
           "text-zk-secondary-foreground/70 px-2 text-sm",
-          @background == :default && "bg-zk-surface",
+          @background == :default && "bg-zk-background",
           @background == :bg && "bg-zk-background"
         ]}>
           {@label}

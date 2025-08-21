@@ -41,7 +41,7 @@ defmodule ZoonkWeb.Components.Dropdown do
       phx-window-keydown={hide_dropdown()}
       phx-key="Escape"
       class={[
-        "bg-zk-surface ring-zk-border absolute z-50 mt-2 hidden w-48 rounded-md p-1 shadow-md ring-1 focus:outline-none",
+        "bg-zk-background ring-zk-border absolute z-50 mt-2 hidden w-48 rounded-md p-1 shadow-md ring-1 focus:outline-none",
         @position == :left && "left-0",
         @position == :right && "right-0"
       ]}
@@ -65,7 +65,7 @@ defmodule ZoonkWeb.Components.Dropdown do
         class={[
           "flex select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm",
           "hover:bg-zk-muted focus-visible:bg-zk-muted",
-          @variant == :default && "text-zk-surface-foreground",
+          @variant == :default && "text-zk-foreground",
           @variant == :destructive && "text-zk-destructive-text"
         ]}
         {@rest}

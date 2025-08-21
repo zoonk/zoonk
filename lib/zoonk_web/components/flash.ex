@@ -40,7 +40,7 @@ defmodule ZoonkWeb.Components.Flash do
         "z-50 flex items-center justify-between rounded border px-4 py-2 text-sm",
         "max-w-80 sm:max-w-96",
         "transition-all duration-300 ease-in-out",
-        @kind == :info && "bg-zk-surface text-zk-secondary-foreground border-zk-border",
+        @kind == :info && "bg-zk-background text-zk-secondary-foreground border-zk-border",
         @kind == :error &&
           "bg-zk-destructive-subtle text-zk-destructive-subtle-foreground border-zk-destructive-subtle-foreground"
       ]}
