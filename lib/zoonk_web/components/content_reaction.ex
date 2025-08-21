@@ -47,7 +47,7 @@ defmodule ZoonkWeb.Components.ContentReaction do
   """
   def content_reaction(assigns) do
     ~H"""
-    <div class="mx-auto flex w-full flex-col gap-1 pb-8 text-center">
+    <div class="mx-auto flex w-full flex-col gap-1 text-center">
       <.text tag="h6" variant={:secondary} size={:sm}>
         {gettext("Did you like this content?")}
       </.text>

@@ -20,7 +20,7 @@ defmodule ZoonkWeb.Components.FeedbackForm do
       end
 
   """
-  use Phoenix.Component
+  use ZoonkWeb, :live_component
   use Gettext, backend: Zoonk.Gettext
 
   import ZoonkWeb.Components.Button
@@ -30,73 +30,85 @@ defmodule ZoonkWeb.Components.FeedbackForm do
 
   alias Zoonk.Support
 
-  attr :feedback_form, :any, required: true, doc: "The feedback form struct"
-  attr :display_success?, :boolean, default: false, doc: "Show success message after submit"
-  attr :support_email, :string, default: Support.support_email(), doc: "Support email address"
-  attr :show_submit?, :boolean, default: true, doc: "Show submit button and success message below the form"
+  attr :id, :string, required: true, doc: "Unique identifier for the component"
+  attr :user, :any, required: true, doc: "The user providing feedback"
+  attr :show_submit?, :boolean, default: false, doc: "Show submit button and success message below the form"
 
-  @doc """
-  Renders the feedback form component.
-  """
-  def feedback_form(assigns) do
+  @impl Phoenix.LiveComponent
+  def render(assigns) do
     ~H"""
-    <.form_container
-      for={@feedback_form}
-      id="feedback_form"
-      phx-submit="submit_feedback"
-      phx-change="validate_feedback"
-    >
-      <:title>{dgettext("settings", "Send feedback")}</:title>
+    <section id={@id}>
+      <.form_container
+        for={@feedback_form}
+        phx-submit="submit_feedback"
+        phx-change="validate_feedback"
+        phx-target={@myself}
+      >
+        <:title>{dgettext("settings", "Send feedback")}</:title>
 
-      <:subtitle>
-        {dgettext(
-          "settings",
-          "Help us improve by sharing your thoughts, suggestions, or reporting issues. You can also reach out to us at %{email}",
-          email: @support_email
-        )}
-      </:subtitle>
-
-      <.input
-        id="feedback-email"
-        field={@feedback_form[:email]}
-        label={dgettext("settings", "Email address")}
-        type="email"
-        autocomplete="email"
-        required
-      />
-
-      <.input
-        id="feedback-message"
-        field={@feedback_form[:message]}
-        label={dgettext("settings", "Message")}
-        type="textarea"
-        placeholder={
-          dgettext(
+        <:subtitle>
+          {dgettext(
             "settings",
-            "Tell us what you think or report any issues you've encountered..."
-          )
-        }
-        rows={4}
-        required
-        class="w-full"
-      />
+            "Help us improve by sharing your thoughts, suggestions, or reporting issues. You can also reach out to us at %{email}",
+            email: Support.support_email()
+          )}
+        </:subtitle>
 
-      <div :if={@show_submit?} class="mt-4 flex items-center gap-2">
-        <.button type="submit" size={:sm}>{dgettext("settings", "Send feedback")}</.button>
+        <.input
+          id="feedback-email"
+          field={@feedback_form[:email]}
+          label={dgettext("settings", "Email address")}
+          type="email"
+          autocomplete="email"
+          required
+        />
 
-        <.text :if={@display_success?} tag="p" class="text-green-600">
-          {dgettext("settings", "Done!")}
-        </.text>
-      </div>
-    </.form_container>
+        <.input
+          id="feedback-message"
+          field={@feedback_form[:message]}
+          label={dgettext("settings", "Message")}
+          type="textarea"
+          placeholder={
+            dgettext(
+              "settings",
+              "Tell us what you think or report any issues you've encountered..."
+            )
+          }
+          rows={4}
+          required
+          class="w-full"
+        />
+
+        <div :if={@show_submit?} class="flex items-center gap-2">
+          <.button type="submit" size={:sm}>{dgettext("settings", "Send feedback")}</.button>
+
+          <.text :if={@display_success?} tag="p" class="text-zk-success-subtle">
+            {dgettext("settings", "Done!")}
+          </.text>
+        </div>
+      </.form_container>
+    </section>
     """
   end
 
-  @doc """
-  Handles feedback form events (validate and submit).
-  Attach this as a hook in your LiveView.
-  """
-  def event_hook("validate_feedback", %{"feedback" => feedback_params}, socket) do
+  @impl Phoenix.LiveComponent
+  def mount(socket) do
+    {:ok, assign(socket, display_success?: false)}
+  end
+
+  @impl Phoenix.LiveComponent
+  def update(assigns, socket) do
+    user_email = if assigns.user, do: assigns.user.email, else: ""
+    feedback_changeset = Support.change_feedback(%{email: user_email})
+
+    {:ok,
+     socket
+     |> assign(assigns)
+     |> assign(feedback_form: to_form(feedback_changeset, as: :feedback))}
+  end
+
+  @impl Phoenix.LiveComponent
+  def handle_event("validate_feedback", %{"feedback" => feedback_params}, socket) do
     feedback_form =
       feedback_params
       |> Support.change_feedback()
@@ -108,24 +120,24 @@ defmodule ZoonkWeb.Components.FeedbackForm do
       |> assign(:feedback_form, feedback_form)
       |> assign(:display_success?, false)
 
-    {:halt, socket}
+    {:noreply, socket}
   end
 
-  def event_hook("submit_feedback", %{"feedback" => feedback_params}, socket) do
+  def handle_event("submit_feedback", %{"feedback" => feedback_params}, socket) do
     case Support.send_feedback(feedback_params["email"], feedback_params["message"]) do
       {:ok, :sent} ->
-        user_email = if socket.assigns.scope.user, do: socket.assigns.scope.user.email, else: ""
+        user_email = if socket.assigns.user, do: socket.assigns.user.email, else: ""
         feedback_changeset = Support.change_feedback(%{email: user_email})
 
-        socket =
-          socket
-          |> assign(:feedback_form, to_form(feedback_changeset, as: :feedback))
-          |> assign(:display_success?, true)
+        send(self(), {__MODULE__, :display_success?, true})
 
-        {:halt, socket}
+        {:noreply,
+         socket
+         |> assign(:feedback_form, to_form(feedback_changeset, as: :feedback))
+         |> assign(:display_success?, true)}
 
       {:error, changeset} ->
-        {:halt, assign(socket, :feedback_form, to_form(changeset, as: :feedback, action: :insert))}
+        {:noreply, assign(socket, :feedback_form, to_form(changeset, as: :feedback, action: :insert))}
     end
   end
 end

@@ -103,7 +103,15 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
         </li>
       </ul>
 
-      <.content_reaction reaction={@reaction} />
+      <footer class="mx-auto flex w-full flex-col gap-4 pb-8 text-center">
+        <.content_reaction reaction={@reaction} />
+
+        <.live_component
+          id="feedback-dialog-live"
+          module={ZoonkWeb.Components.FeedbackFormDialog}
+          user={@scope.user}
+        />
+      </footer>
     </.async_page>
     """
   end
