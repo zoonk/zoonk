@@ -20,7 +20,7 @@ defmodule ZoonkWeb.AppFeedbackLive do
       <.live_component
         id="feedback-form-live"
         module={FeedbackForm}
-        user={@scope.user}
+        scope={@scope}
       />
     </ZoonkWeb.SettingsLayout.render>
     """

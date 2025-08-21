@@ -2,9 +2,6 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  import ZoonkWeb.Components.ContentReaction
-
-  alias Phoenix.LiveView.AsyncResult
   alias Zoonk.AI
   alias Zoonk.Billing
   alias Zoonk.Billing.BillingAccount
@@ -103,15 +100,13 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
         </li>
       </ul>
 
-      <footer class="mx-auto flex w-full flex-col gap-4 pb-8 text-center">
-        <.content_reaction reaction={@reaction} />
-
-        <.live_component
-          id="feedback-dialog-live"
-          module={ZoonkWeb.Components.FeedbackFormDialog}
-          user={@scope.user}
-        />
-      </footer>
+      <.live_component
+        :if={content}
+        id="content-feedback-live"
+        module={ZoonkWeb.Components.ContentFeedback}
+        scope={@scope}
+        content_id={content.content_id}
+      />
     </.async_page>
     """
   end
@@ -128,11 +123,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
       socket
       |> assign(:page_title, dgettext("page_title", "Suggestions for %{input}", input: input))
       |> assign(:input, input)
-      |> assign(:reaction, nil)
-      |> assign(:content, AsyncResult.loading())
-      |> start_async(:fetch_content, fn -> assign_suggestions(scope, attrs) end)
-      |> attach_hook(:fetch_content, :handle_async, &async_hook/3)
-      |> attach_hook(:react, :handle_event, &event_hook/3)
+      |> assign_async(:content, fn -> assign_suggestions(scope, attrs) end)
 
     {:ok, socket}
   end
@@ -153,8 +144,11 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
 
   defp assign_suggestions(scope, attrs) do
     case AI.suggest_courses(scope, attrs) do
-      {:ok, %{content_id: content_id, suggestions: suggestions}} -> %{content_id: content_id, suggestions: suggestions}
-      {:error, reason} -> reason
+      {:ok, course_suggestion} ->
+        {:ok, %{content: course_suggestion}}
+
+      {:error, reason} ->
+        reason
     end
   end
 

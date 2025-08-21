@@ -4,20 +4,11 @@ defmodule ZoonkWeb.Components.FeedbackForm do
 
   ## Usage
 
-      import ZoonkWeb.Components.FeedbackForm
-
-      def mount(params, session, socket) do
-        user_email = if socket.assigns.scope.user, do: socket.assigns.scope.user.email, else: ""
-        feedback_changeset = Support.change_feedback(%{email: user_email})
-
-        socket =
-          socket
-          |> assign(:feedback_form, to_form(feedback_changeset, as: :feedback))
-          |> assign(:display_success?, false)
-          |> attach_hook(:feedback_event, :handle_event, &event_hook/3)
-
-        {:ok, socket}
-      end
+      <.live_component
+        module={ZoonkWeb.Components.FeedbackForm}
+        id="feedback-form-live"
+        scope={@scope}
+      />
 
   """
   use ZoonkWeb, :live_component
@@ -31,7 +22,7 @@ defmodule ZoonkWeb.Components.FeedbackForm do
   alias Zoonk.Support
 
   attr :id, :string, required: true, doc: "Unique identifier for the component"
-  attr :user, :any, required: true, doc: "The user providing feedback"
+  attr :scope, :any, required: true, doc: "The scope from the user providing feedback"
   attr :show_submit?, :boolean, default: false, doc: "Show submit button and success message below the form"
 
   @impl Phoenix.LiveComponent
@@ -98,7 +89,7 @@ defmodule ZoonkWeb.Components.FeedbackForm do
 
   @impl Phoenix.LiveComponent
   def update(assigns, socket) do
-    user_email = if assigns.user, do: assigns.user.email, else: ""
+    user_email = if assigns.scope.user, do: assigns.scope.user.email, else: ""
     feedback_changeset = Support.change_feedback(%{email: user_email})
 
     {:ok,
@@ -126,15 +117,9 @@ defmodule ZoonkWeb.Components.FeedbackForm do
   def handle_event("submit_feedback", %{"feedback" => feedback_params}, socket) do
     case Support.send_feedback(feedback_params["email"], feedback_params["message"]) do
       {:ok, :sent} ->
-        user_email = if socket.assigns.user, do: socket.assigns.user.email, else: ""
-        feedback_changeset = Support.change_feedback(%{email: user_email})
-
         send(self(), {__MODULE__, :display_success?, true})
 
-        {:noreply,
-         socket
-         |> assign(:feedback_form, to_form(feedback_changeset, as: :feedback))
-         |> assign(:display_success?, true)}
+        {:noreply, assign(socket, :display_success?, true)}
 
       {:error, changeset} ->
         {:noreply, assign(socket, :feedback_form, to_form(changeset, as: :feedback, action: :insert))}
