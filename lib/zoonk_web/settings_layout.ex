@@ -26,8 +26,8 @@ defmodule ZoonkWeb.SettingsLayout do
           <.text
             :if={@display_success}
             size={:sm}
-            variant={:secondary}
-            class="text-zk-success"
+            variant={:custom}
+            class="text-zk-success-text"
             phx-mounted={JS.transition({"ease-in-out duration-300", "opacity-0", "opacity-100"})}
           >
             {dgettext("settings", "Done!")}
