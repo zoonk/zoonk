@@ -2,6 +2,8 @@ defmodule ZoonkWeb.AppFeedbackLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
+  import ZoonkWeb.Components.FeedbackForm
+
   alias Zoonk.Support
 
   @impl Phoenix.LiveView
@@ -16,47 +18,11 @@ defmodule ZoonkWeb.AppFeedbackLive do
       save_label={dgettext("settings", "Send feedback")}
       display_success={@display_success?}
     >
-      <.form_container
-        for={@feedback_form}
-        id="feedback_form"
-        phx-submit="submit"
-        phx-change="validate_feedback"
-      >
-        <:title>{dgettext("settings", "Send feedback")}</:title>
-
-        <:subtitle>
-          {dgettext(
-            "settings",
-            "Help us improve by sharing your thoughts, suggestions, or reporting issues. You can also reach out to us at %{email}",
-            email: Support.support_email()
-          )}
-        </:subtitle>
-
-        <.input
-          id="feedback-email"
-          field={@feedback_form[:email]}
-          label={dgettext("settings", "Email address")}
-          type="email"
-          autocomplete="email"
-          required
-        />
-
-        <.input
-          id="feedback-message"
-          field={@feedback_form[:message]}
-          label={dgettext("settings", "Message")}
-          type="textarea"
-          placeholder={
-            dgettext(
-              "settings",
-              "Tell us what you think or report any issues you've encountered..."
-            )
-          }
-          rows={4}
-          required
-          class="w-full"
-        />
-      </.form_container>
+      <.feedback_form
+        feedback_form={@feedback_form}
+        display_success?={@display_success?}
+        show_submit?={false}
+      />
     </ZoonkWeb.SettingsLayout.render>
     """
   end
@@ -71,42 +37,8 @@ defmodule ZoonkWeb.AppFeedbackLive do
       |> assign(:feedback_form, to_form(feedback_changeset, as: :feedback))
       |> assign(:display_success?, false)
       |> assign(:page_title, dgettext("page_title", "Send feedback"))
+      |> attach_hook(:feedback_event, :handle_event, &event_hook/3)
 
     {:ok, socket}
-  end
-
-  @impl Phoenix.LiveView
-  def handle_event("validate_feedback", %{"feedback" => feedback_params}, socket) do
-    feedback_form =
-      feedback_params
-      |> Support.change_feedback()
-      |> Map.put(:action, :validate)
-      |> to_form(as: :feedback)
-
-    socket =
-      socket
-      |> assign(:feedback_form, feedback_form)
-      |> assign(:display_success?, false)
-
-    {:noreply, socket}
-  end
-
-  def handle_event("submit", %{"feedback" => feedback_params}, socket) do
-    case Support.send_feedback(feedback_params["email"], feedback_params["message"]) do
-      {:ok, :sent} ->
-        # Clear the form and show success message
-        user_email = if socket.assigns.scope.user, do: socket.assigns.scope.user.email, else: ""
-        feedback_changeset = Support.change_feedback(%{email: user_email})
-
-        socket =
-          socket
-          |> assign(:feedback_form, to_form(feedback_changeset, as: :feedback))
-          |> assign(:display_success?, true)
-
-        {:noreply, socket}
-
-      {:error, changeset} ->
-        {:noreply, assign(socket, :feedback_form, to_form(changeset, as: :feedback, action: :insert))}
-    end
   end
 end
