@@ -91,22 +91,22 @@ defmodule ZoonkWeb.CommandPaletteConfig do
 
       support_items()
       # => [
-      #   %{icon: "tabler-message-circle", label: "Send feedback", navigate: "/feedback"},
+      #   %{icon: menu_item(:contact), label: "Contact us", navigate: "/contact"},
       #   ...
       # ]
   """
   def support_items do
     [
       %{
-        icon: menu_icon(:feedback),
+        icon: menu_icon(:contact),
         label: dgettext("menu", "Send feedback"),
-        navigate: ~p"/feedback",
+        navigate: ~p"/contact",
         visibility: :always
       },
       %{
-        icon: menu_icon(:support),
+        icon: menu_icon(:contact),
         label: dgettext("menu", "Support"),
-        navigate: ~p"/support",
+        navigate: ~p"/contact",
         visibility: :always
       },
       %{

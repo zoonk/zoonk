@@ -1,4 +1,4 @@
-defmodule ZoonkWeb.AppSupportLive do
+defmodule ZoonkWeb.AppContactLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
@@ -10,19 +10,19 @@ defmodule ZoonkWeb.AppSupportLive do
     <ZoonkWeb.SettingsLayout.render
       flash={@flash}
       scope={@scope}
-      current_page={:support}
+      current_page={:contact}
       has_form={true}
-      form_id="support_form"
+      form_id="contact_form"
       save_label={dgettext("settings", "Send message")}
       display_success={@display_success?}
     >
       <.form_container
-        for={@support_form}
-        id="support_form"
+        for={@contact_form}
+        id="contact_form"
         phx-submit="submit"
-        phx-change="validate_support"
+        phx-change="validate"
       >
-        <:title>{dgettext("settings", "Contact Support")}</:title>
+        <:title>{dgettext("settings", "Contact us")}</:title>
 
         <:subtitle>
           {dgettext(
@@ -34,8 +34,8 @@ defmodule ZoonkWeb.AppSupportLive do
         </:subtitle>
 
         <.input
-          id="support-email"
-          field={@support_form[:email]}
+          id="contact-email"
+          field={@contact_form[:email]}
           label={dgettext("settings", "Email address")}
           type="email"
           autocomplete="email"
@@ -43,8 +43,8 @@ defmodule ZoonkWeb.AppSupportLive do
         />
 
         <.input
-          id="support-message"
-          field={@support_form[:message]}
+          id="contact-message"
+          field={@contact_form[:message]}
           label={dgettext("settings", "Message")}
           type="textarea"
           placeholder={
@@ -74,49 +74,47 @@ defmodule ZoonkWeb.AppSupportLive do
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
     user_email = if socket.assigns.scope.user, do: socket.assigns.scope.user.email, else: ""
-    support_changeset = Support.change_support_request(%{email: user_email})
+    form_changeset = Support.change_support_request(%{email: user_email})
 
     socket =
       socket
-      |> assign(:support_form, to_form(support_changeset, as: :support))
+      |> assign(:contact_form, to_form(form_changeset, as: :form))
       |> assign(:display_success?, false)
-      |> assign(:page_title, dgettext("page_title", "Support"))
+      |> assign(:page_title, dgettext("page_title", "Contact us"))
 
     {:ok, socket}
   end
 
   @impl Phoenix.LiveView
-  def handle_event("validate_support", %{"support" => support_params}, socket) do
-    support_form =
-      support_params
+  def handle_event("validate", %{"form" => params}, socket) do
+    contact_form =
+      params
       |> Support.change_support_request()
       |> Map.put(:action, :validate)
-      |> to_form(as: :support)
+      |> to_form(as: :form)
 
-    socket =
-      socket
-      |> assign(:support_form, support_form)
-      |> assign(:display_success?, false)
-
-    {:noreply, socket}
+    {:noreply,
+     socket
+     |> assign(:contact_form, contact_form)
+     |> assign(:display_success?, false)}
   end
 
-  def handle_event("submit", %{"support" => support_params}, socket) do
-    case Support.send_support_request(support_params["email"], support_params["message"]) do
+  def handle_event("submit", %{"form" => params}, socket) do
+    case Support.send_support_request(params["email"], params["message"]) do
       {:ok, :sent} ->
         # Clear the form and show success message
         user_email = if socket.assigns.scope.user, do: socket.assigns.scope.user.email, else: ""
-        support_changeset = Support.change_support_request(%{email: user_email})
+        form_changeset = Support.change_support_request(%{email: user_email})
 
         socket =
           socket
-          |> assign(:support_form, to_form(support_changeset, as: :support))
+          |> assign(:contact_form, to_form(form_changeset, as: :form))
           |> assign(:display_success?, true)
 
         {:noreply, socket}
 
       {:error, changeset} ->
-        {:noreply, assign(socket, :support_form, to_form(changeset, as: :support, action: :insert))}
+        {:noreply, assign(socket, :contact_form, to_form(changeset, as: :form, action: :insert))}
     end
   end
 end

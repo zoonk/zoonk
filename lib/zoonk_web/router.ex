@@ -71,8 +71,7 @@ defmodule ZoonkWeb.Router do
       live "/email", UserEmailLive
       live "/interests", UserInterestsLive
 
-      live "/feedback", AppFeedbackLive
-      live "/support", AppSupportLive
+      live "/contact", AppContactLive
       live "/follow", AppFollowLive
 
       live "/confirm/email", AuthConfirmCodeLive, :email

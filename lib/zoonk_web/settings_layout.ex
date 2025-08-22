@@ -119,8 +119,7 @@ defmodule ZoonkWeb.SettingsLayout do
       %{icon: menu_icon(:display_name), label: dgettext("menu", "Display name"), path: ~p"/name", page: :name},
       %{icon: menu_icon(:language), label: dgettext("menu", "App language"), path: ~p"/language", page: :language},
       %{icon: menu_icon(:email), label: dgettext("menu", "Change email"), path: ~p"/email", page: :email},
-      %{icon: menu_icon(:feedback), label: dgettext("menu", "Send feedback"), path: ~p"/feedback", page: :feedback},
-      %{icon: menu_icon(:support), label: dgettext("menu", "Support"), path: ~p"/support", page: :support},
+      %{icon: menu_icon(:contact), label: dgettext("menu", "Contact us"), path: ~p"/contact", page: :contact},
       %{icon: menu_icon(:follow_us), label: dgettext("menu", "Follow us"), path: ~p"/follow", page: :follow}
     ]
   end

@@ -54,7 +54,7 @@ defmodule ZoonkWeb.Components.ContentFeedback do
 
       <.button
         id="feedback-dialog-trigger"
-        icon={menu_icon(:feedback)}
+        icon={menu_icon(:contact)}
         variant={:outline}
         data-dialog-id="feedback-dialog"
         phx-hook="DialogTrigger"

@@ -100,7 +100,7 @@ defmodule ZoonkWeb.Components.FeedbackForm do
   @impl Phoenix.LiveComponent
   def update(assigns, socket) do
     user_email = if assigns.scope.user, do: assigns.scope.user.email, else: ""
-    feedback_changeset = Support.change_feedback(%{email: user_email})
+    feedback_changeset = Support.change_support_request(%{email: user_email})
 
     {:ok,
      socket
@@ -112,7 +112,7 @@ defmodule ZoonkWeb.Components.FeedbackForm do
   def handle_event("validate_feedback", %{"feedback" => feedback_params}, socket) do
     feedback_form =
       feedback_params
-      |> Support.change_feedback()
+      |> Support.change_support_request()
       |> Map.put(:action, :validate)
       |> to_form(as: :feedback)
 
@@ -125,7 +125,7 @@ defmodule ZoonkWeb.Components.FeedbackForm do
   end
 
   def handle_event("submit_feedback", %{"feedback" => feedback_params}, socket) do
-    case Support.send_feedback(feedback_params["email"], feedback_params["message"]) do
+    case Support.send_support_request(feedback_params["email"], feedback_params["message"]) do
       {:ok, :sent} ->
         send(self(), {__MODULE__, :display_success?, true})
 

@@ -13,8 +13,7 @@ defmodule ZoonkWeb.PublicPagesPermissionTest do
           %{link: "/confirm/email"},
           %{link: "/terms"},
           %{link: "/privacy"},
-          %{link: "/feedback"},
-          %{link: "/support"},
+          %{link: "/contact"},
           %{link: "/follow"}
         ],
         do: %{page: page}

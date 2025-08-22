@@ -7,9 +7,9 @@ defmodule ZoonkWeb.MenuIcon do
 
   def menu_icon(:catalog), do: "tabler-layout-grid"
   def menu_icon(:close), do: "tabler-x"
+  def menu_icon(:contact), do: "tabler-message-circle"
   def menu_icon(:display_name), do: "tabler-id-badge"
   def menu_icon(:email), do: "tabler-mail"
-  def menu_icon(:feedback), do: "tabler-message-circle"
   def menu_icon(:follow_us), do: "tabler-ufo"
   def menu_icon(:home), do: "tabler-home"
   def menu_icon(:interests), do: "tabler-heart"
@@ -21,5 +21,4 @@ defmodule ZoonkWeb.MenuIcon do
   def menu_icon(:settings), do: "tabler-settings"
   def menu_icon(:signup), do: "tabler-user-plus"
   def menu_icon(:subscription), do: "tabler-diamond"
-  def menu_icon(:support), do: "tabler-lifebuoy"
 end

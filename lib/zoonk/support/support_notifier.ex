@@ -26,7 +26,7 @@ defmodule Zoonk.Support.SupportNotifier do
       dgettext(
         "emails",
         """
-        You have received a new support request from a user.
+        You have received a new message from a user.
 
         From: %{user_email}
 

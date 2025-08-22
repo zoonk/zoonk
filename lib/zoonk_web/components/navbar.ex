@@ -108,7 +108,7 @@ defmodule ZoonkWeb.Components.Navbar do
             {dgettext("menu", "Settings")}
           </.dropdown_item>
 
-          <.dropdown_item icon={menu_icon(:feedback)} navigate={~p"/support"}>
+          <.dropdown_item icon={menu_icon(:contact)} navigate={~p"/contact"}>
             {dgettext("menu", "Contact us")}
           </.dropdown_item>
 
