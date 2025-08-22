@@ -138,7 +138,7 @@ defmodule ZoonkWeb.Router do
     end
 
     # We have a playground for testing UI components in the dev environment.
-    scope "/ui", ZoonkDev.UIPreview do
+    scope "/ui", ZoonkWeb.UIPreview do
       pipe_through :browser
 
       live_session :ui_playground do

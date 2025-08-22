@@ -1,11 +1,11 @@
-defmodule ZoonkDev.UIPreview.FlashPreviewLive do
+defmodule ZoonkWeb.UIPreview.FlashPreviewLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:flash} page_title={@page_title}>
+    <ZoonkWeb.UIPreview.UIPreviewLayout.render active_page={:flash} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Flash Types</.card_title>
@@ -19,7 +19,7 @@ defmodule ZoonkDev.UIPreview.FlashPreviewLive do
           <.flash kind={:error}>This is an error message</.flash>
         </.card_content>
       </.card>
-    </ZoonkDev.UIPreview.UIPreviewLayout.render>
+    </ZoonkWeb.UIPreview.UIPreviewLayout.render>
     """
   end
 

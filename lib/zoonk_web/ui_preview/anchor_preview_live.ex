@@ -1,11 +1,11 @@
-defmodule ZoonkDev.UIPreview.AnchorPreviewLive do
+defmodule ZoonkWeb.UIPreview.AnchorPreviewLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:anchor} page_title={@page_title}>
+    <ZoonkWeb.UIPreview.UIPreviewLayout.render active_page={:anchor} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Link</.card_title>
@@ -119,7 +119,7 @@ defmodule ZoonkDev.UIPreview.AnchorPreviewLive do
           </.a>
         </.card_content>
       </.card>
-    </ZoonkDev.UIPreview.UIPreviewLayout.render>
+    </ZoonkWeb.UIPreview.UIPreviewLayout.render>
     """
   end
 

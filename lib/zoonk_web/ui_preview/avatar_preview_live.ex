@@ -1,11 +1,11 @@
-defmodule ZoonkDev.UIPreview.AvatarPreviewLive do
+defmodule ZoonkWeb.UIPreview.AvatarPreviewLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:avatar} page_title={@page_title}>
+    <ZoonkWeb.UIPreview.UIPreviewLayout.render active_page={:avatar} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Avatar Sizes</.card_title>
@@ -65,7 +65,7 @@ defmodule ZoonkDev.UIPreview.AvatarPreviewLive do
           </div>
         </.card_content>
       </.card>
-    </ZoonkDev.UIPreview.UIPreviewLayout.render>
+    </ZoonkWeb.UIPreview.UIPreviewLayout.render>
     """
   end
 

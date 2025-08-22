@@ -35,4 +35,4 @@ You can run this project locally or in a Docker container.
 
 ### UI Preview
 
-- You can have a preview of every UI component in the `/lib/zoonk_dev/ui_preview` folder. To do so, run `mix phx.server` and open your browser at http://localhost:4000/ui.
+- You can have a preview of every UI component in the `/lib/zoonk_web/ui_preview` folder. To do so, run `mix phx.server` and open your browser at http://localhost:4000/ui.

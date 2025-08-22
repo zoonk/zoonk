@@ -1,11 +1,11 @@
-defmodule ZoonkDev.UIPreview.UIPreviewHomeLive do
+defmodule ZoonkWeb.UIPreview.UIPreviewHomeLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:home} page_title={@page_title}>
+    <ZoonkWeb.UIPreview.UIPreviewLayout.render active_page={:home} page_title={@page_title}>
       <.card>
         <.card_header icon="tabler-palette-filled">
           <.card_title>UI Preview</.card_title>
@@ -18,7 +18,7 @@ defmodule ZoonkDev.UIPreview.UIPreviewHomeLive do
           </.text>
         </.card_content>
       </.card>
-    </ZoonkDev.UIPreview.UIPreviewLayout.render>
+    </ZoonkWeb.UIPreview.UIPreviewLayout.render>
     """
   end
 

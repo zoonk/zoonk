@@ -1,11 +1,11 @@
-defmodule ZoonkDev.UIPreview.TextPreviewLive do
+defmodule ZoonkWeb.UIPreview.TextPreviewLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:text} page_title={@page_title}>
+    <ZoonkWeb.UIPreview.UIPreviewLayout.render active_page={:text} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Text Sizes</.card_title>
@@ -98,7 +98,7 @@ defmodule ZoonkDev.UIPreview.TextPreviewLive do
           </.text>
         </.card_content>
       </.card>
-    </ZoonkDev.UIPreview.UIPreviewLayout.render>
+    </ZoonkWeb.UIPreview.UIPreviewLayout.render>
     """
   end
 

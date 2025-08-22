@@ -104,7 +104,7 @@ Zoonk is a learning app that uses AI to create courses with short, interactive e
 - Import via `html_helpers` in `zoonk_web.ex`
 - Use `Phoenix.Component.attr/3`
 - Add `@moduledoc` and `@doc` with usage examples
-- Add previews in `lib/zoonk_dev/ui_preview/`, register routes, and update `ui_preview_layout.ex`
+- Add previews in `lib/zoonk_web/ui_preview/`, register routes, and update `ui_preview_layout.ex`
 - Use `<.text>` for all textual content
 - Render slots via `{render_slot(@inner_block)}`
 - Pass styling through `class=` props, not wrappers

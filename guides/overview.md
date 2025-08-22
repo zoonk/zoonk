@@ -32,11 +32,11 @@ Zoonk is an open-source app for learning anything using AI. Check out our [long-
 - **`config`** – Configuration files for `dev`, `test`, `runtime`, and `prod` environments.
 - **`lib`** – Core application code, covering both business logic and the web interface.
   - **`zoonk`** – Business logic, schemas, and contexts.
-  - **`zoonk_dev`** – Development utilities like UI Preview.
   - **`zoonk_web`** – Web interface, including API and frontend.
     - **`components`** – LiveView (`Phoenix.LiveComponent`) and function components (`Phoenix.Component`).
     - **`controllers`** – API and web controllers.
     - **`live`** – Pages using `Phoenix.LiveView`.
+    - **`ui_preview`** – UI component previews.
 
 - **`priv`** – Static files, migrations, seeds, AI evals, and translations.
 - **`test`** – Application tests.

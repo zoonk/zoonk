@@ -1,11 +1,11 @@
-defmodule ZoonkDev.UIPreview.LoaderPreviewLive do
+defmodule ZoonkWeb.UIPreview.LoaderPreviewLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:loader} page_title="Loader">
+    <ZoonkWeb.UIPreview.UIPreviewLayout.render active_page={:loader} page_title="Loader">
       <.card>
         <.card_header>
           <.card_title>Default Loader</.card_title>
@@ -33,7 +33,7 @@ defmodule ZoonkDev.UIPreview.LoaderPreviewLive do
           <.loader size={:xl} />
         </.card_content>
       </.card>
-    </ZoonkDev.UIPreview.UIPreviewLayout.render>
+    </ZoonkWeb.UIPreview.UIPreviewLayout.render>
     """
   end
 

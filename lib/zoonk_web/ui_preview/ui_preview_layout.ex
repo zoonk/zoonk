@@ -1,4 +1,4 @@
-defmodule ZoonkDev.UIPreview.UIPreviewLayout do
+defmodule ZoonkWeb.UIPreview.UIPreviewLayout do
   @moduledoc false
   use ZoonkWeb, :html
 

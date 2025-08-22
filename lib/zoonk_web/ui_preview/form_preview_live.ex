@@ -1,11 +1,11 @@
-defmodule ZoonkDev.UIPreview.FormPreviewLive do
+defmodule ZoonkWeb.UIPreview.FormPreviewLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:form} page_title={@page_title}>
+    <ZoonkWeb.UIPreview.UIPreviewLayout.render active_page={:form} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Basic Form</.card_title>
@@ -59,7 +59,7 @@ defmodule ZoonkDev.UIPreview.FormPreviewLive do
           </.form_container>
         </.card_content>
       </.card>
-    </ZoonkDev.UIPreview.UIPreviewLayout.render>
+    </ZoonkWeb.UIPreview.UIPreviewLayout.render>
     """
   end
 

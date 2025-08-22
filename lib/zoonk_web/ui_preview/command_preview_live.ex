@@ -1,4 +1,4 @@
-defmodule ZoonkDev.UIPreview.CommandPreviewLive do
+defmodule ZoonkWeb.UIPreview.CommandPreviewLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
@@ -7,7 +7,7 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:command} page_title={@page_title}>
+    <ZoonkWeb.UIPreview.UIPreviewLayout.render active_page={:command} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Command Trigger</.card_title>
@@ -172,7 +172,7 @@ defmodule ZoonkDev.UIPreview.CommandPreviewLive do
           </.command_group>
         </.command_list>
       </.dialog>
-    </ZoonkDev.UIPreview.UIPreviewLayout.render>
+    </ZoonkWeb.UIPreview.UIPreviewLayout.render>
     """
   end
 

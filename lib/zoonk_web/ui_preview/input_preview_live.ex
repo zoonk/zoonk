@@ -1,11 +1,11 @@
-defmodule ZoonkDev.UIPreview.InputPreviewLive do
+defmodule ZoonkWeb.UIPreview.InputPreviewLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:input} page_title={@page_title}>
+    <ZoonkWeb.UIPreview.UIPreviewLayout.render active_page={:input} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Text Input</.card_title>
@@ -140,7 +140,7 @@ defmodule ZoonkDev.UIPreview.InputPreviewLive do
           />
         </.card_content>
       </.card>
-    </ZoonkDev.UIPreview.UIPreviewLayout.render>
+    </ZoonkWeb.UIPreview.UIPreviewLayout.render>
     """
   end
 

@@ -1,11 +1,11 @@
-defmodule ZoonkDev.UIPreview.ButtonPreviewLive do
+defmodule ZoonkWeb.UIPreview.ButtonPreviewLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <ZoonkDev.UIPreview.UIPreviewLayout.render active_page={:button} page_title={@page_title}>
+    <ZoonkWeb.UIPreview.UIPreviewLayout.render active_page={:button} page_title={@page_title}>
       <.card>
         <.card_header>
           <.card_title>Button Variants</.card_title>
@@ -109,7 +109,7 @@ defmodule ZoonkDev.UIPreview.ButtonPreviewLive do
           </.button>
         </.card_content>
       </.card>
-    </ZoonkDev.UIPreview.UIPreviewLayout.render>
+    </ZoonkWeb.UIPreview.UIPreviewLayout.render>
     """
   end
 
