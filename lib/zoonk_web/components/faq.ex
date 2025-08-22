@@ -26,7 +26,7 @@ defmodule ZoonkWeb.Components.FAQ do
 
   def faq_header(assigns) do
     ~H"""
-    <div class={["mb-8", @class]}>
+    <div class={["mb-4", @class]}>
       <.text tag="h2" size={:xl} weight={:semibold} class="mb-2">{@title}</.text>
       <.text variant={:secondary} size={:sm}>{@subtitle}</.text>
     </div>
@@ -68,7 +68,7 @@ defmodule ZoonkWeb.Components.FAQ do
   def faq_general(assigns) do
     ~H"""
     <div class={@class}>
-      <.text :if={@title} tag="h3" size={:lg} weight={:semibold} class="text-zk-foreground mb-4">
+      <.text :if={@title} tag="h3" size={:lg} weight={:semibold} class="text-zk-foreground">
         {@title}
       </.text>
 
@@ -114,7 +114,7 @@ defmodule ZoonkWeb.Components.FAQ do
   def faq_subscriptions(assigns) do
     ~H"""
     <div class={@class}>
-      <.text :if={@title} tag="h3" size={:lg} weight={:semibold} class="text-zk-foreground mb-4">
+      <.text :if={@title} tag="h3" size={:lg} weight={:semibold} class="text-zk-foreground">
         {@title}
       </.text>
 
@@ -170,7 +170,7 @@ defmodule ZoonkWeb.Components.FAQ do
   def faq_features(assigns) do
     ~H"""
     <div class={@class}>
-      <.text :if={@title} tag="h3" size={:lg} weight={:semibold} class="text-zk-foreground mb-4">
+      <.text :if={@title} tag="h3" size={:lg} weight={:semibold} class="text-zk-foreground">
         {@title}
       </.text>
       <.faq_item question={dgettext("faq", "What are personalized reviews?")}>
@@ -201,7 +201,7 @@ defmodule ZoonkWeb.Components.FAQ do
 
   def faq_all(assigns) do
     ~H"""
-    <div class={["flex flex-col gap-8", @class]}>
+    <div class={["flex flex-col gap-4", @class]}>
       <.faq_subscriptions title={dgettext("faq", "Subscriptions & Billing")} />
       <.faq_general title={dgettext("faq", "General")} />
     </div>

@@ -56,7 +56,7 @@ defmodule ZoonkWeb.UserSubscriptionLive do
           prices={@prices}
         />
 
-        <div class="mt-16 w-full">
+        <div class="mt-8 w-full">
           <.faq_header
             title={dgettext("faq", "Frequently Asked Questions")}
             subtitle={dgettext("faq", "Common questions and answers about using Zoonk")}
