@@ -104,36 +104,12 @@ defmodule ZoonkWeb.Components.Navbar do
             {dgettext("menu", "Subscription")}
           </.dropdown_item>
 
-          <.dropdown_separator />
-
           <.dropdown_item icon={menu_icon(:settings)} navigate={~p"/settings"}>
             {dgettext("menu", "Settings")}
           </.dropdown_item>
 
-          <.dropdown_item icon={menu_icon(:language)} navigate={~p"/language"}>
-            {dgettext("menu", "App language")}
-          </.dropdown_item>
-
-          <.dropdown_item icon={menu_icon(:display_name)} navigate={~p"/name"}>
-            {dgettext("menu", "Display name")}
-          </.dropdown_item>
-
-          <.dropdown_item icon={menu_icon(:email)} navigate={~p"/email"}>
-            {dgettext("menu", "Change email")}
-          </.dropdown_item>
-
-          <.dropdown_separator />
-
-          <.dropdown_item icon={menu_icon(:feedback)} navigate={~p"/feedback"}>
-            {dgettext("menu", "Send feedback")}
-          </.dropdown_item>
-
-          <.dropdown_item icon={menu_icon(:support)} navigate={~p"/support"}>
-            {dgettext("menu", "Support")}
-          </.dropdown_item>
-
-          <.dropdown_item icon={menu_icon(:follow_us)} navigate={~p"/follow"}>
-            {dgettext("menu", "Follow us")}
+          <.dropdown_item icon={menu_icon(:feedback)} navigate={~p"/support"}>
+            {dgettext("menu", "Contact us")}
           </.dropdown_item>
 
           <.dropdown_separator />

@@ -55,15 +55,6 @@ defmodule ZoonkWeb.CommandPaletteLive do
 
             <.command_separator />
 
-            <.command_group heading={dgettext("menu", "My Account")}>
-              <.command_item :for={item <- user_items()} {build_nav_attrs(item)}>
-                <.icon name={item.icon} class="size-4" />
-                {item.label}
-              </.command_item>
-            </.command_group>
-
-            <.command_separator />
-
             <.command_group heading={dgettext("menu", "Settings")}>
               <.command_item :for={item <- settings_items()} {build_nav_attrs(item)}>
                 <.icon name={item.icon} class="size-4" />

@@ -39,32 +39,6 @@ defmodule ZoonkWeb.CommandPaletteConfig do
   end
 
   @doc """
-  Returns the user account items for the command palette.
-
-  ## Examples
-
-      user_items()
-      # => [
-      #   %{icon: "tabler-layout-grid", label: "My courses", navigate: "/my-courses"},
-      #   ...
-      # ]
-  """
-  def user_items do
-    [
-      %{
-        icon: menu_icon(:my_courses),
-        label: dgettext("menu", "My courses"),
-        navigate: ~p"/my-courses"
-      },
-      %{
-        icon: menu_icon(:subscription),
-        label: dgettext("menu", "Subscription"),
-        navigate: ~p"/subscription"
-      }
-    ]
-  end
-
-  @doc """
   Returns the settings items for the command palette.
 
   ## Examples
@@ -81,6 +55,16 @@ defmodule ZoonkWeb.CommandPaletteConfig do
         icon: menu_icon(:settings),
         label: dgettext("menu", "Settings"),
         navigate: ~p"/settings"
+      },
+      %{
+        icon: menu_icon(:my_courses),
+        label: dgettext("menu", "My courses"),
+        navigate: ~p"/my-courses"
+      },
+      %{
+        icon: menu_icon(:subscription),
+        label: dgettext("menu", "Subscription"),
+        navigate: ~p"/subscription"
       },
       %{
         icon: menu_icon(:language),
@@ -162,6 +146,6 @@ defmodule ZoonkWeb.CommandPaletteConfig do
       # => [%{icon: "tabler-home", label: "Home page", navigate: "/"}, ...]
   """
   def all_items do
-    navigation_items() ++ user_items() ++ settings_items() ++ support_items()
+    navigation_items() ++ settings_items() ++ support_items()
   end
 end
