@@ -12,7 +12,6 @@ defmodule ZoonkWeb.UserInterestsLiveTest do
     test "updates interests successfully", %{conn: conn, user: user} do
       conn
       |> visit(~p"/interests")
-      |> fill_in("What are you interested in?", with: "programming, music, cooking")
       |> fill_in("Favorite books, movies, TV shows, or games", with: "Star Trek, The Office")
       |> fill_in("What are your hobbies?", with: "gaming, reading")
       |> fill_in("What field do you work in?", with: "software engineering")
@@ -25,13 +24,12 @@ defmodule ZoonkWeb.UserInterestsLiveTest do
       |> assert_has("p", text: "Done!")
 
       updated_interests = Repo.get_by!(UserInterests, user_id: user.id)
-      assert updated_interests.interests == "programming, music, cooking"
-      assert updated_interests.favorite_media == "Star Trek, The Office"
+      assert updated_interests.media == "Star Trek, The Office"
       assert updated_interests.hobbies == "gaming, reading"
       assert updated_interests.work_field == "software engineering"
       assert updated_interests.location == "New York"
-      assert updated_interests.learning_struggles == "math, focus"
-      assert updated_interests.preferred_examples == "practical examples"
+      assert updated_interests.struggles == "math, focus"
+      assert updated_interests.examples == "practical examples"
     end
 
     test "updates existing interests", %{conn: conn, user: user} do
@@ -39,7 +37,6 @@ defmodule ZoonkWeb.UserInterestsLiveTest do
 
       conn
       |> visit(~p"/interests")
-      |> fill_in("What are you interested in?", with: "new interest, updated interest")
       |> fill_in("What field do you work in?", with: "new job")
       |> fill_in("Where are you from?", with: "new location")
       |> submit()
@@ -47,22 +44,15 @@ defmodule ZoonkWeb.UserInterestsLiveTest do
       |> assert_has("p", text: "Done!")
 
       updated_interests = Repo.get_by!(UserInterests, user_id: user.id)
-      assert updated_interests.interests == "new interest, updated interest"
       assert updated_interests.work_field == "new job"
       assert updated_interests.location == "new location"
     end
 
     test "displays current interests in the form", %{conn: conn, user: user} do
-      user_interests_fixture(%{
-        user: user,
-        interests: "programming, music",
-        work_field: "engineering",
-        location: "San Francisco"
-      })
+      user_interests_fixture(%{user: user, work_field: "engineering", location: "San Francisco"})
 
       conn
       |> visit(~p"/interests")
-      |> assert_has("textarea", name: "user[interests]", text: "programming, music")
       |> assert_has("input", name: "user[work_field]", value: "engineering")
       |> assert_has("input", name: "user[location]", value: "San Francisco")
     end
@@ -71,10 +61,10 @@ defmodule ZoonkWeb.UserInterestsLiveTest do
       conn
       |> visit(~p"/interests")
       |> assert_has("textarea", name: "user[interests]", text: "")
-      |> assert_has("textarea", name: "user[favorite_media]", text: "")
+      |> assert_has("textarea", name: "user[media]", text: "")
       |> assert_has("textarea", name: "user[hobbies]", text: "")
-      |> assert_has("textarea", name: "user[learning_struggles]", text: "")
-      |> assert_has("textarea", name: "user[preferred_examples]", text: "")
+      |> assert_has("textarea", name: "user[struggles]", text: "")
+      |> assert_has("textarea", name: "user[examples]", text: "")
       |> assert_has("input", name: "user[work_field]", value: "")
       |> assert_has("input", name: "user[location]", value: "")
     end
@@ -84,7 +74,6 @@ defmodule ZoonkWeb.UserInterestsLiveTest do
 
       conn
       |> visit(~p"/interests")
-      |> fill_in("What are you interested in?", with: long_text)
       |> fill_in("What field do you work in?", with: long_text)
       |> fill_in("Where are you from?", with: long_text)
       |> submit()
@@ -92,7 +81,6 @@ defmodule ZoonkWeb.UserInterestsLiveTest do
       |> assert_has("p", text: "Done!")
 
       updated_interests = Repo.get_by!(UserInterests, user_id: user.id)
-      assert updated_interests.interests == long_text
       assert updated_interests.work_field == long_text
       assert updated_interests.location == long_text
     end
@@ -100,27 +88,25 @@ defmodule ZoonkWeb.UserInterestsLiveTest do
     test "allows empty interests", %{conn: conn, user: user} do
       conn
       |> visit(~p"/interests")
-      |> fill_in("What are you interested in?", with: "")
       |> fill_in("What are your hobbies?", with: "")
       |> submit()
       |> assert_path(~p"/interests")
       |> assert_has("p", text: "Done!")
 
       updated_interests = Repo.get_by!(UserInterests, user_id: user.id)
-      refute updated_interests.interests
       refute updated_interests.hobbies
     end
 
     test "trims whitespace from interests", %{conn: conn, user: user} do
       conn
       |> visit(~p"/interests")
-      |> fill_in("What are you interested in?", with: "  programming,  music  ,cooking,  ")
+      |> fill_in("What are your hobbies?", with: "  programming,  music  ,cooking,  ")
       |> submit()
       |> assert_path(~p"/interests")
       |> assert_has("p", text: "Done!")
 
       updated_interests = Repo.get_by!(UserInterests, user_id: user.id)
-      assert updated_interests.interests == "programming,  music  ,cooking,"
+      assert updated_interests.hobbies == "programming,  music  ,cooking,"
     end
 
     test "shows interests menu item as active", %{conn: conn} do

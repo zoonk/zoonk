@@ -140,13 +140,12 @@ defmodule Zoonk.AccountsTest do
   describe "change_user_interests/2" do
     test "allows valid interests" do
       valid_attrs = %{
-        interests: "programming, music",
-        learning_struggles: "math, focus",
+        struggles: "math, focus",
         work_field: "software engineering",
         location: "New York",
-        favorite_media: "Star Trek, The Office",
+        media: "Star Trek, The Office",
         hobbies: "gaming, reading",
-        preferred_examples: "practical real-world applications"
+        examples: "practical real-world applications"
       }
 
       assert %Ecto.Changeset{valid?: true} = UserInterests.changeset(%UserInterests{}, valid_attrs)
@@ -156,13 +155,12 @@ defmodule Zoonk.AccountsTest do
       long_text = String.duplicate("This is a very long text with lots of content that should be allowed. ", 500)
 
       valid_attrs = %{
-        interests: long_text,
-        learning_struggles: long_text,
+        struggles: long_text,
         work_field: long_text,
         location: long_text,
-        favorite_media: long_text,
+        media: long_text,
         hobbies: long_text,
-        preferred_examples: long_text
+        examples: long_text
       }
 
       assert %Ecto.Changeset{valid?: true} = UserInterests.changeset(%UserInterests{}, valid_attrs)
@@ -170,13 +168,12 @@ defmodule Zoonk.AccountsTest do
 
     test "allows empty strings and nil values" do
       valid_attrs = %{
-        interests: "",
-        learning_struggles: nil,
+        struggles: nil,
         work_field: nil,
         location: nil,
-        favorite_media: "",
+        media: "",
         hobbies: "",
-        preferred_examples: nil
+        examples: nil
       }
 
       assert %Ecto.Changeset{valid?: true} = UserInterests.changeset(%UserInterests{}, valid_attrs)
@@ -204,24 +201,22 @@ defmodule Zoonk.AccountsTest do
     test "creates new interests when none exist" do
       user = user_fixture()
       scope = %Scope{user: user}
-      interests_attrs = %{interests: "programming", work_field: "engineering"}
+      interests_attrs = %{work_field: "engineering"}
 
       assert {:ok, %UserInterests{} = interests} = Accounts.upsert_user_interests(scope, interests_attrs)
-      assert interests.interests == "programming"
       assert interests.work_field == "engineering"
       assert interests.user_id == user.id
     end
 
     test "updates existing interests" do
       user = user_fixture()
-      existing_interests = user_interests_fixture(%{user: user, interests: "music"})
+      existing_interests = user_interests_fixture(%{user: user})
       scope = %Scope{user: user}
 
-      update_attrs = %{interests: "programming, art", location: "San Francisco"}
+      update_attrs = %{location: "San Francisco"}
 
       assert {:ok, %UserInterests{} = updated} = Accounts.upsert_user_interests(scope, update_attrs)
       assert updated.id == existing_interests.id
-      assert updated.interests == "programming, art"
       assert updated.location == "San Francisco"
     end
   end

@@ -39,16 +39,7 @@ defmodule ZoonkWeb.UserInterestsLive do
           <!-- Interests & Media Section -->
           <div class="flex flex-col gap-6">
             <.input
-              field={@interests_form[:interests]}
-              label={dgettext("settings", "What are you interested in?")}
-              type="textarea"
-              placeholder={dgettext("settings", "e.g., movies, sports, music, reading, cooking...")}
-              rows="3"
-              class="w-full"
-            />
-
-            <.input
-              field={@interests_form[:favorite_media]}
+              field={@interests_form[:media]}
               label={dgettext("settings", "Favorite books, movies, TV shows, or games")}
               type="textarea"
               placeholder={
@@ -71,7 +62,7 @@ defmodule ZoonkWeb.UserInterestsLive do
     <!-- Learning Section -->
           <div class="flex flex-col gap-6">
             <.input
-              field={@interests_form[:learning_struggles]}
+              field={@interests_form[:struggles]}
               label={dgettext("settings", "What do you find challenging when learning?")}
               type="textarea"
               placeholder={
@@ -82,7 +73,7 @@ defmodule ZoonkWeb.UserInterestsLive do
             />
 
             <.input
-              field={@interests_form[:preferred_examples]}
+              field={@interests_form[:examples]}
               label={dgettext("settings", "What types of examples help you learn best?")}
               type="textarea"
               placeholder={

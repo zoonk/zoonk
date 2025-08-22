@@ -10,13 +10,12 @@ defmodule Zoonk.Accounts.UserInterests do
 
   | Field Name          | Type           | Description                                              |
   |---------------------|----------------|----------------------------------------------------------|
-  | `interests`         | `String`       | Topics the user is interested in (e.g., movies, sports)  |
-  | `learning_struggles`| `String`       | Areas where the user faces challenges                    |
+  | `struggles`         | `String`       | Areas where the user faces challenges                    |
   | `work_field`        | `String`       | User's profession or field of work                       |
   | `location`          | `String`       | User's general location (city, country)                  |
-  | `favorite_media`    | `String`       | Favorite books, movies, TV shows, games, etc.            |
+  | `media`             | `String`       | Favorite books, movies, TV shows, games, etc.            |
   | `hobbies`           | `String`       | User's hobbies and recreational activities               |
-  | `preferred_examples`| `String`       | Types of examples the user prefers in lessons            |
+  | `examples`          | `String`       | Types of examples the user prefers in lessons            |
   | `user_id`           | `Integer`      | The ID from `Zoonk.Accounts.User`.                       |
   | `inserted_at`       | `DateTime`     | Timestamp when the interests were created.               |
   | `updated_at`        | `DateTime`     | Timestamp when the interests were last updated.          |
@@ -28,13 +27,12 @@ defmodule Zoonk.Accounts.UserInterests do
   alias Zoonk.Accounts.User
 
   schema "user_interests" do
-    field :interests, :string
-    field :learning_struggles, :string
-    field :work_field, :string
-    field :location, :string
-    field :favorite_media, :string
+    field :examples, :string
     field :hobbies, :string
-    field :preferred_examples, :string
+    field :location, :string
+    field :media, :string
+    field :struggles, :string
+    field :work_field, :string
 
     belongs_to :user, User
 
@@ -44,21 +42,12 @@ defmodule Zoonk.Accounts.UserInterests do
   @doc false
   def changeset(user_interests, attrs) do
     user_interests
-    |> cast(attrs, [
-      :interests,
-      :learning_struggles,
-      :work_field,
-      :location,
-      :favorite_media,
-      :hobbies,
-      :preferred_examples
-    ])
-    |> update_change(:interests, &String.trim/1)
-    |> update_change(:learning_struggles, &String.trim/1)
-    |> update_change(:work_field, &String.trim/1)
-    |> update_change(:location, &String.trim/1)
-    |> update_change(:favorite_media, &String.trim/1)
+    |> cast(attrs, [:examples, :hobbies, :location, :media, :struggles, :work_field])
+    |> update_change(:examples, &String.trim/1)
     |> update_change(:hobbies, &String.trim/1)
-    |> update_change(:preferred_examples, &String.trim/1)
+    |> update_change(:location, &String.trim/1)
+    |> update_change(:media, &String.trim/1)
+    |> update_change(:struggles, &String.trim/1)
+    |> update_change(:work_field, &String.trim/1)
   end
 end

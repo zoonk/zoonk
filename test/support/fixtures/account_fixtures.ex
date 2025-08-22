@@ -30,13 +30,12 @@ defmodule Zoonk.AccountFixtures do
 
   def valid_user_interests_attributes(attrs \\ %{}) do
     Enum.into(attrs, %{
-      interests: "programming, music",
-      learning_struggles: "math, focus",
+      struggles: "math, focus",
       work_field: "software engineering",
       location: "New York",
-      favorite_media: "Star Trek, The Office",
+      media: "Star Trek, The Office",
       hobbies: "gaming, reading",
-      preferred_examples: "practical real-world applications"
+      examples: "practical real-world applications"
     })
   end
 
