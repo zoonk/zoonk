@@ -130,8 +130,6 @@ defmodule ZoonkWeb.UIPreview.CommandPreviewLive do
             </.command_item>
           </.command_group>
 
-          <.command_separator :if={@suggestions_results != [] and @groups_settings_results != []} />
-
           <.command_group :if={@groups_settings_results != []} heading="Settings">
             <.command_item :for={item <- @groups_settings_results}>
               <.icon name={item.icon} />
@@ -161,8 +159,6 @@ defmodule ZoonkWeb.UIPreview.CommandPreviewLive do
               </div>
             </.command_item>
           </.command_group>
-
-          <.command_separator :if={@instructors_results != [] and @courses_results != []} />
 
           <.command_group :if={@instructors_results != []} heading="Instructors">
             <.command_item :for={instructor <- @instructors_results}>

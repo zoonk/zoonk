@@ -265,38 +265,15 @@ defmodule ZoonkWeb.Components.Command do
 
   def command_group(assigns) do
     ~H"""
-    <div class={["text-zk-foreground select-none overflow-hidden p-1", @class]}>
+    <div class={[
+      "text-zk-foreground border-zk-border select-none overflow-hidden border-b p-1 last:border-b-0",
+      @class
+    ]}>
       <h6 :if={@heading} class="text-zk-muted-foreground px-2 py-1.5 text-xs font-medium">
         {@heading}
       </h6>
       {render_slot(@inner_block)}
     </div>
-    """
-  end
-
-  @doc """
-  Renders a separator between command groups or items.
-
-  This component provides a visual separator that can be used between
-  command groups or items.
-
-  ## Examples
-
-      <.command_group heading="Group 1">
-        <.command_item>Item 1</command_item>
-      </.command_group>
-
-      <.command_separator />
-
-      <.command_group heading="Group 2">
-        <.command_item>Item 2</command_item>
-      </.command_group>
-  """
-  attr :class, :string, default: nil, doc: "Additional CSS classes for the separator"
-
-  def command_separator(assigns) do
-    ~H"""
-    <div class={["bg-zk-border -mx-1 h-px", @class]} />
     """
   end
 
