@@ -9,6 +9,8 @@ defmodule ZoonkWeb.RootLayout do
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="oklch(14.5% 0 0)" media="(prefers-color-scheme: dark)" />
         <meta name="csrf-token" content={get_csrf_token()} />
 
         <.live_title default="Zoonk">{assigns[:page_title]}</.live_title>
