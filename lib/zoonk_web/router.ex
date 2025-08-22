@@ -65,6 +65,7 @@ defmodule ZoonkWeb.Router do
       live "/subscription", UserSubscriptionLive
       live "/tax-id", UserTaxIdLive
 
+      live "/settings", UserSettingsLive
       live "/language", UserLanguageLive
       live "/name", UserNameLive
       live "/email", UserEmailLive

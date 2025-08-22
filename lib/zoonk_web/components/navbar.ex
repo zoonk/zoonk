@@ -106,6 +106,10 @@ defmodule ZoonkWeb.Components.Navbar do
 
           <.dropdown_separator />
 
+          <.dropdown_item icon={menu_icon(:settings)} navigate={~p"/settings"}>
+            {dgettext("menu", "Settings")}
+          </.dropdown_item>
+
           <.dropdown_item icon={menu_icon(:language)} navigate={~p"/language"}>
             {dgettext("menu", "App language")}
           </.dropdown_item>

@@ -54,67 +54,20 @@ defmodule ZoonkWeb.SettingsLayout do
           <nav>
             <ul class="flex flex-col">
               <.settings_menu_item
-                icon={menu_icon(:language)}
-                label={dgettext("menu", "App language")}
-                path={~p"/language"}
+                icon={menu_icon(:settings)}
+                label={dgettext("menu", "Settings")}
+                path={~p"/settings"}
                 current_page={@current_page}
-                page={:language}
+                page={:settings}
               />
 
               <.settings_menu_item
-                icon={menu_icon(:display_name)}
-                label={dgettext("menu", "Display name")}
-                path={~p"/name"}
+                :for={item <- menu_items()}
+                icon={item.icon}
+                label={item.label}
+                path={item.path}
                 current_page={@current_page}
-                page={:name}
-              />
-
-              <.settings_menu_item
-                icon={menu_icon(:email)}
-                label={dgettext("menu", "Change email")}
-                path={~p"/email"}
-                current_page={@current_page}
-                page={:email}
-              />
-
-              <.settings_menu_item
-                icon={menu_icon(:interests)}
-                label={dgettext("menu", "Your interests")}
-                path={~p"/interests"}
-                current_page={@current_page}
-                page={:interests}
-              />
-
-              <.settings_menu_item
-                icon={menu_icon(:subscription)}
-                label={dgettext("menu", "Subscription")}
-                path={~p"/subscription"}
-                current_page={@current_page}
-                page={:subscription}
-              />
-
-              <.settings_menu_item
-                icon={menu_icon(:feedback)}
-                label={dgettext("menu", "Send feedback")}
-                path={~p"/feedback"}
-                current_page={@current_page}
-                page={:feedback}
-              />
-
-              <.settings_menu_item
-                icon={menu_icon(:support)}
-                label={dgettext("menu", "Support")}
-                path={~p"/support"}
-                current_page={@current_page}
-                page={:support}
-              />
-
-              <.settings_menu_item
-                icon={menu_icon(:follow_us)}
-                label={dgettext("menu", "Follow us")}
-                path={~p"/follow"}
-                current_page={@current_page}
-                page={:follow}
+                page={item.page}
               />
             </ul>
           </nav>
@@ -152,5 +105,23 @@ defmodule ZoonkWeb.SettingsLayout do
       </.link>
     </li>
     """
+  end
+
+  def menu_items do
+    [
+      %{icon: menu_icon(:interests), label: dgettext("menu", "Your interests"), path: ~p"/interests", page: :interests},
+      %{
+        icon: menu_icon(:subscription),
+        label: dgettext("menu", "Subscription"),
+        path: ~p"/subscription",
+        page: :subscription
+      },
+      %{icon: menu_icon(:display_name), label: dgettext("menu", "Display name"), path: ~p"/name", page: :name},
+      %{icon: menu_icon(:language), label: dgettext("menu", "App language"), path: ~p"/language", page: :language},
+      %{icon: menu_icon(:email), label: dgettext("menu", "Change email"), path: ~p"/email", page: :email},
+      %{icon: menu_icon(:feedback), label: dgettext("menu", "Send feedback"), path: ~p"/feedback", page: :feedback},
+      %{icon: menu_icon(:support), label: dgettext("menu", "Support"), path: ~p"/support", page: :support},
+      %{icon: menu_icon(:follow_us), label: dgettext("menu", "Follow us"), path: ~p"/follow", page: :follow}
+    ]
   end
 end

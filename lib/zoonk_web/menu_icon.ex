@@ -18,6 +18,7 @@ defmodule ZoonkWeb.MenuIcon do
   def menu_icon(:logout), do: "tabler-logout"
   def menu_icon(:my_courses), do: "tabler-layout-grid"
   def menu_icon(:new_course), do: "tabler-circle-plus"
+  def menu_icon(:settings), do: "tabler-settings"
   def menu_icon(:signup), do: "tabler-user-plus"
   def menu_icon(:subscription), do: "tabler-diamond"
   def menu_icon(:support), do: "tabler-lifebuoy"

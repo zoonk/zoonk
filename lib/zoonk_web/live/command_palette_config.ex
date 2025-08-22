@@ -78,6 +78,11 @@ defmodule ZoonkWeb.CommandPaletteConfig do
   def settings_items do
     [
       %{
+        icon: menu_icon(:settings),
+        label: dgettext("menu", "Settings"),
+        navigate: ~p"/settings"
+      },
+      %{
         icon: menu_icon(:language),
         label: dgettext("menu", "Change app language"),
         navigate: ~p"/language"
