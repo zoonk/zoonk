@@ -18,7 +18,7 @@ defmodule ZoonkWeb.SettingsLayout do
     ~H"""
     <div class="min-h-dvh flex flex-col">
       <header class="border-zk-border bg-zk-background/70 sticky top-0 z-50 flex items-center justify-between border-b p-4 backdrop-blur-md">
-        <.a kind={:icon} icon="tabler-x" variant={:outline} navigate={~p"/"} size={:sm}>
+        <.a kind={:icon} icon={menu_icon(:close)} variant={:outline} navigate={~p"/"} size={:sm}>
           {dgettext("menu", "Close settings")}
         </.a>
 
@@ -54,7 +54,7 @@ defmodule ZoonkWeb.SettingsLayout do
           <nav>
             <ul class="flex flex-col">
               <.settings_menu_item
-                icon="tabler-language"
+                icon={menu_icon(:language)}
                 label={dgettext("menu", "App language")}
                 path={~p"/language"}
                 current_page={@current_page}
@@ -62,7 +62,7 @@ defmodule ZoonkWeb.SettingsLayout do
               />
 
               <.settings_menu_item
-                icon="tabler-id-badge"
+                icon={menu_icon(:display_name)}
                 label={dgettext("menu", "Display name")}
                 path={~p"/name"}
                 current_page={@current_page}
@@ -70,7 +70,7 @@ defmodule ZoonkWeb.SettingsLayout do
               />
 
               <.settings_menu_item
-                icon="tabler-mail"
+                icon={menu_icon(:email)}
                 label={dgettext("menu", "Change email")}
                 path={~p"/email"}
                 current_page={@current_page}
@@ -78,7 +78,7 @@ defmodule ZoonkWeb.SettingsLayout do
               />
 
               <.settings_menu_item
-                icon="tabler-heart"
+                icon={menu_icon(:interests)}
                 label={dgettext("menu", "Your interests")}
                 path={~p"/interests"}
                 current_page={@current_page}
@@ -86,7 +86,7 @@ defmodule ZoonkWeb.SettingsLayout do
               />
 
               <.settings_menu_item
-                icon="tabler-diamond"
+                icon={menu_icon(:subscription)}
                 label={dgettext("menu", "Subscription")}
                 path={~p"/subscription"}
                 current_page={@current_page}
@@ -94,7 +94,7 @@ defmodule ZoonkWeb.SettingsLayout do
               />
 
               <.settings_menu_item
-                icon="tabler-message-circle"
+                icon={menu_icon(:feedback)}
                 label={dgettext("menu", "Send feedback")}
                 path={~p"/feedback"}
                 current_page={@current_page}
@@ -102,7 +102,7 @@ defmodule ZoonkWeb.SettingsLayout do
               />
 
               <.settings_menu_item
-                icon="tabler-lifebuoy"
+                icon={menu_icon(:support)}
                 label={dgettext("menu", "Support")}
                 path={~p"/support"}
                 current_page={@current_page}
@@ -110,7 +110,7 @@ defmodule ZoonkWeb.SettingsLayout do
               />
 
               <.settings_menu_item
-                icon="tabler-ufo"
+                icon={menu_icon(:follow_us)}
                 label={dgettext("menu", "Follow us")}
                 path={~p"/follow"}
                 current_page={@current_page}

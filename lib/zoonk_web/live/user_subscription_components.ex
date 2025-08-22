@@ -1,10 +1,6 @@
 defmodule ZoonkWeb.UserSubscriptionComponents do
   @moduledoc false
-  use Phoenix.Component
-
-  import ZoonkWeb.Components.Button
-  import ZoonkWeb.Components.Icon
-  import ZoonkWeb.Components.Text
+  use ZoonkWeb, :html
 
   @doc """
   Renders a subscription form with radio input groups for plan selection.
@@ -253,7 +249,7 @@ defmodule ZoonkWeb.UserSubscriptionComponents do
 
       <.button
         type="submit"
-        icon="tabler-diamond"
+        icon={menu_icon(:subscription)}
         phx-disable
         variant={@variant}
         size={:md}

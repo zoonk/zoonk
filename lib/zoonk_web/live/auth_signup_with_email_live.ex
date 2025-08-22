@@ -47,7 +47,7 @@ defmodule ZoonkWeb.AuthSignUpWithEmailLive do
         <.button
           type="submit"
           phx-disable-with={dgettext("auth", "Creating account...")}
-          icon="tabler-user-plus"
+          icon={menu_icon(:signup)}
           icon_align={:left}
           size={:md}
           class="w-full"

@@ -8,6 +8,7 @@ defmodule ZoonkWeb.Components.Navbar do
   import ZoonkWeb.Components.Anchor
   import ZoonkWeb.Components.Avatar
   import ZoonkWeb.Components.Dropdown
+  import ZoonkWeb.MenuIcon
 
   alias Zoonk.Accounts.User
 
@@ -34,7 +35,7 @@ defmodule ZoonkWeb.Components.Navbar do
       <.a
         :if={@user}
         kind={:icon}
-        icon="tabler-home"
+        icon={menu_icon(:home)}
         variant={variant(:home, @page)}
         navigate={~p"/"}
         size={:sm}
@@ -44,7 +45,7 @@ defmodule ZoonkWeb.Components.Navbar do
 
       <.a
         kind={:button}
-        icon="tabler-layout-grid"
+        icon={menu_icon(:catalog)}
         variant={variant(:catalog, @page)}
         navigate={~p"/catalog"}
         size={:adaptive}
@@ -61,7 +62,7 @@ defmodule ZoonkWeb.Components.Navbar do
       <.a
         :if={@user}
         kind={:button}
-        icon="tabler-circle-plus"
+        icon={menu_icon(:new_course)}
         variant={variant(:start_course, @page)}
         navigate={~p"/learn"}
         size={:adaptive}
@@ -93,47 +94,47 @@ defmodule ZoonkWeb.Components.Navbar do
         />
 
         <.dropdown_content>
-          <.dropdown_item icon="tabler-layout-grid" navigate={~p"/my-courses"}>
+          <.dropdown_item icon={menu_icon(:my_courses)} navigate={~p"/my-courses"}>
             {dgettext("menu", "My courses")}
           </.dropdown_item>
 
           <.dropdown_separator />
 
-          <.dropdown_item icon="tabler-diamond" navigate={~p"/subscription"}>
+          <.dropdown_item icon={menu_icon(:subscription)} navigate={~p"/subscription"}>
             {dgettext("menu", "Subscription")}
           </.dropdown_item>
 
           <.dropdown_separator />
 
-          <.dropdown_item icon="tabler-language" navigate={~p"/language"}>
+          <.dropdown_item icon={menu_icon(:language)} navigate={~p"/language"}>
             {dgettext("menu", "App language")}
           </.dropdown_item>
 
-          <.dropdown_item icon="tabler-id-badge" navigate={~p"/name"}>
+          <.dropdown_item icon={menu_icon(:display_name)} navigate={~p"/name"}>
             {dgettext("menu", "Display name")}
           </.dropdown_item>
 
-          <.dropdown_item icon="tabler-mail" navigate={~p"/email"}>
+          <.dropdown_item icon={menu_icon(:email)} navigate={~p"/email"}>
             {dgettext("menu", "Change email")}
           </.dropdown_item>
 
           <.dropdown_separator />
 
-          <.dropdown_item icon="tabler-message-circle" navigate={~p"/feedback"}>
+          <.dropdown_item icon={menu_icon(:feedback)} navigate={~p"/feedback"}>
             {dgettext("menu", "Send feedback")}
           </.dropdown_item>
 
-          <.dropdown_item icon="tabler-lifebuoy" navigate={~p"/support"}>
+          <.dropdown_item icon={menu_icon(:support)} navigate={~p"/support"}>
             {dgettext("menu", "Support")}
           </.dropdown_item>
 
-          <.dropdown_item icon="tabler-ufo" navigate={~p"/follow"}>
+          <.dropdown_item icon={menu_icon(:follow_us)} navigate={~p"/follow"}>
             {dgettext("menu", "Follow us")}
           </.dropdown_item>
 
           <.dropdown_separator />
 
-          <.dropdown_item icon="tabler-logout" method="delete" href={~p"/logout"}>
+          <.dropdown_item icon={menu_icon(:logout)} method="delete" href={~p"/logout"}>
             {dgettext("menu", "Logout")}
           </.dropdown_item>
         </.dropdown_content>

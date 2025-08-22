@@ -5,7 +5,7 @@ defmodule ZoonkWeb.CommandPaletteConfig do
   Centralizes all static menu items for the command palette component,
   including navigation links, user account actions, settings, and support options.
   """
-  use ZoonkWeb, :verified_routes
+  use ZoonkWeb, :html
 
   @doc """
   Returns the navigation items for the command palette.
@@ -21,17 +21,17 @@ defmodule ZoonkWeb.CommandPaletteConfig do
   def navigation_items do
     [
       %{
-        icon: "tabler-home",
+        icon: menu_icon(:home),
         label: dgettext("menu", "Home page"),
         navigate: ~p"/"
       },
       %{
-        icon: "tabler-layout-grid",
+        icon: menu_icon(:catalog),
         label: dgettext("menu", "Catalog"),
         navigate: ~p"/catalog"
       },
       %{
-        icon: "tabler-circle-plus",
+        icon: menu_icon(:new_course),
         label: dgettext("menu", "Start new course"),
         navigate: ~p"/learn"
       }
@@ -52,12 +52,12 @@ defmodule ZoonkWeb.CommandPaletteConfig do
   def user_items do
     [
       %{
-        icon: "tabler-layout-grid",
+        icon: menu_icon(:my_courses),
         label: dgettext("menu", "My courses"),
         navigate: ~p"/my-courses"
       },
       %{
-        icon: "tabler-diamond",
+        icon: menu_icon(:subscription),
         label: dgettext("menu", "Subscription"),
         navigate: ~p"/subscription"
       }
@@ -78,17 +78,17 @@ defmodule ZoonkWeb.CommandPaletteConfig do
   def settings_items do
     [
       %{
-        icon: "tabler-language",
+        icon: menu_icon(:language),
         label: dgettext("menu", "Change app language"),
         navigate: ~p"/language"
       },
       %{
-        icon: "tabler-id-badge",
+        icon: menu_icon(:display_name),
         label: dgettext("menu", "Change display name"),
         navigate: ~p"/name"
       },
       %{
-        icon: "tabler-mail",
+        icon: menu_icon(:email),
         label: dgettext("menu", "Change email address"),
         navigate: ~p"/email"
       }
@@ -109,38 +109,38 @@ defmodule ZoonkWeb.CommandPaletteConfig do
   def support_items do
     [
       %{
-        icon: "tabler-message-circle",
+        icon: menu_icon(:feedback),
         label: dgettext("menu", "Send feedback"),
         navigate: ~p"/feedback",
         visibility: :always
       },
       %{
-        icon: "tabler-lifebuoy",
+        icon: menu_icon(:support),
         label: dgettext("menu", "Support"),
         navigate: ~p"/support",
         visibility: :always
       },
       %{
-        icon: "tabler-ufo",
+        icon: menu_icon(:follow_us),
         label: dgettext("menu", "Follow us on social media"),
         navigate: ~p"/follow",
         visibility: :always
       },
       %{
-        icon: "tabler-logout",
+        icon: menu_icon(:logout),
         label: dgettext("menu", "Logout"),
         href: ~p"/logout",
         method: "delete",
         visibility: :authenticated
       },
       %{
-        icon: "tabler-user",
+        icon: menu_icon(:login),
         label: dgettext("menu", "Login"),
         navigate: ~p"/login",
         visibility: :unauthenticated
       },
       %{
-        icon: "tabler-user-plus",
+        icon: menu_icon(:signup),
         label: dgettext("menu", "Sign up"),
         navigate: ~p"/signup",
         visibility: :unauthenticated

@@ -83,6 +83,7 @@ defmodule ZoonkWeb do
 
       # HTML escaping functionality
       import Phoenix.HTML
+
       # Core UI components
       import ZoonkWeb.Components.Accordion
       import ZoonkWeb.Components.Anchor
@@ -105,6 +106,9 @@ defmodule ZoonkWeb do
       import ZoonkWeb.Components.Text
       import ZoonkWeb.Components.Toggle
       import ZoonkWeb.Components.Utils
+
+      # Config
+      import ZoonkWeb.MenuIcon
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
