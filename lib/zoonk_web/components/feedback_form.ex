@@ -19,6 +19,7 @@ defmodule ZoonkWeb.Components.FeedbackForm do
   import ZoonkWeb.Components.Input
   import ZoonkWeb.Components.Text
 
+  alias Phoenix.LiveView.JS
   alias Zoonk.Support
 
   attr :id, :string, required: true, doc: "Unique identifier for the component"
@@ -72,6 +73,15 @@ defmodule ZoonkWeb.Components.FeedbackForm do
 
         <div :if={@show_submit?} class="flex items-center gap-2">
           <.button type="submit" size={:sm}>{dgettext("settings", "Send feedback")}</.button>
+
+          <.button
+            type="button"
+            size={:sm}
+            variant={:outline}
+            phx-click={JS.dispatch("closeDialog")}
+          >
+            {dgettext("settings", "Cancel")}
+          </.button>
 
           <.text :if={@display_success?} tag="p" class="text-zk-success-text">
             {dgettext("settings", "Done!")}
