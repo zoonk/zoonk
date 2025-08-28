@@ -30,6 +30,7 @@ defmodule ZoonkWeb.Components.Icon do
     <span
       class={[
         @name,
+        "shrink-0",
         @size == :xs && "size-4",
         @size == :sm && "size-5",
         @size == :md && "size-6",
