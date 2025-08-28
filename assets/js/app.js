@@ -58,7 +58,7 @@ topbar.config({
   barColors: { 0: "#155dfc" },
   shadowColor: "rgba(0, 0, 0, .3)",
 });
-window.addEventListener("phx:page-loading-start", (_info) => topbar.show(1000));
+window.addEventListener("phx:page-loading-start", (_info) => topbar.show(2000));
 window.addEventListener("phx:page-loading-stop", (_info) => topbar.hide());
 
 // connect if there are any LiveViews on the page
