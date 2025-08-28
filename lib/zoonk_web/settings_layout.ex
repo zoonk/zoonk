@@ -16,67 +16,82 @@ defmodule ZoonkWeb.SettingsLayout do
 
   def render(assigns) do
     ~H"""
-    <div class="min-h-dvh flex flex-col">
-      <header class="border-zk-border bg-zk-background/70 sticky top-0 z-50 flex items-center justify-between border-b p-4 backdrop-blur-md">
-        <.a kind={:icon} icon={menu_icon(:close)} variant={:outline} navigate={~p"/"} size={:sm}>
-          {dgettext("menu", "Close settings")}
-        </.a>
+    <div class="h-dvh border-zk-border flex w-full border-t">
+      <aside class="h-dvh border-zk-border bg-zk-background sticky top-0 shrink-0 border-r md:w-56 lg:w-64">
+        <nav class="flex flex-col gap-1 p-2">
+          <div class="flex h-9 w-full flex-col items-center md:items-start">
+            <.live_component
+              module={ZoonkWeb.CommandPaletteLive}
+              authenticated={@scope.user != nil}
+              id="command-palette"
+              variant={:input}
+            />
+          </div>
 
-        <div class="flex items-center gap-3">
-          <.text
-            :if={@display_success}
-            size={:sm}
-            variant={:custom}
-            class="text-zk-success-text"
-            phx-mounted={JS.transition({"ease-in-out duration-300", "opacity-0", "opacity-100"})}
-          >
-            {dgettext("settings", "Done!")}
-          </.text>
+          <.settings_menu_item
+            icon={menu_icon(:home)}
+            label={dgettext("menu", "Home")}
+            path={~p"/"}
+            current_page={@current_page}
+            page={:home}
+          />
 
-          <.a
-            :if={is_nil(@scope.user)}
-            kind={:button}
-            variant={:outline}
-            navigate={~p"/login"}
-            size={:sm}
-          >
-            {dgettext("menu", "Login")}
-          </.a>
+          <.settings_menu_item
+            icon={menu_icon(:settings)}
+            label={dgettext("menu", "Settings")}
+            path={~p"/settings"}
+            current_page={@current_page}
+            page={:settings}
+          />
 
-          <.button :if={@has_form} type="submit" size={:sm} form={@form_id} phx-disable>
-            {@save_label || dgettext("settings", "Save")}
-          </.button>
-        </div>
-      </header>
+          <.settings_menu_item
+            :for={item <- menu_items()}
+            icon={item.icon}
+            label={item.label}
+            path={item.path}
+            current_page={@current_page}
+            page={item.page}
+          />
+        </nav>
+      </aside>
 
-      <div class="flex flex-1">
-        <aside class="border-zk-border bg-zk-background fixed top-16 bottom-0 left-0 z-40 overflow-y-auto border-r md:w-64">
-          <nav>
-            <ul class="flex flex-col">
-              <.settings_menu_item
-                icon={menu_icon(:settings)}
-                label={dgettext("menu", "Settings")}
-                path={~p"/settings"}
-                current_page={@current_page}
-                page={:settings}
-              />
+      <div class="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <header
+          :if={display_header?(assigns)}
+          class="bg-zk-background/70 border-zk-border sticky top-0 z-50 flex items-center justify-end border-b px-4 py-2 backdrop-blur-md"
+        >
+          <div class="flex items-center gap-3">
+            <.text
+              :if={@display_success}
+              size={:sm}
+              variant={:custom}
+              class="text-zk-success-text"
+              phx-mounted={JS.transition({"ease-in-out duration-300", "opacity-0", "opacity-100"})}
+            >
+              {dgettext("settings", "Done!")}
+            </.text>
 
-              <.settings_menu_item
-                :for={item <- menu_items()}
-                icon={item.icon}
-                label={item.label}
-                path={item.path}
-                current_page={@current_page}
-                page={item.page}
-              />
-            </ul>
-          </nav>
-        </aside>
+            <.a
+              :if={is_nil(@scope.user)}
+              kind={:button}
+              variant={:outline}
+              navigate={~p"/login"}
+              size={:sm}
+            >
+              {dgettext("menu", "Login")}
+            </.a>
 
-        <main class="ml-13 flex-1 p-4 md:ml-64">
+            <.button :if={@has_form} type="submit" size={:sm} form={@form_id} phx-disable>
+              {@save_label || dgettext("settings", "Save")}
+            </.button>
+          </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-4">
           {render_slot(@inner_block)}
-          <.flash_group flash={@flash} />
         </main>
+
+        <.flash_group flash={@flash} />
       </div>
     </div>
     """
@@ -90,20 +105,23 @@ defmodule ZoonkWeb.SettingsLayout do
 
   defp settings_menu_item(assigns) do
     ~H"""
-    <li>
-      <.link
-        navigate={@path}
-        class={[
-          "flex items-center gap-3 p-4 transition-colors",
-          "select-none hover:bg-zk-muted focus-visible:bg-zk-muted focus-visible:outline-0",
-          @current_page == @page && "bg-zk-muted text-zk-primary-text",
-          @current_page != @page && "text-zk-foreground/70"
-        ]}
-      >
-        <.icon name={@icon} size={:sm} />
-        <span class="sr-only md:not-sr-only">{@label}</span>
-      </.link>
-    </li>
+    <.link
+      navigate={@path}
+      aria-current={@current_page == @page && "page"}
+      class={[
+        "group relative flex h-9 select-none items-center gap-2 rounded-md px-3 text-sm outline-none ring-0 transition-colors",
+        "hover:bg-zk-muted focus-visible:bg-zk-muted focus-visible:ring-zk-ring focus-visible:ring-2",
+        @current_page == @page && "bg-zk-muted text-zk-primary-text",
+        @current_page != @page && "text-zk-foreground/70 hover:text-zk-foreground"
+      ]}
+    >
+      <.icon name={@icon} size={:sm} class="opacity-90 group-hover:opacity-100" />
+      <span class="sr-only md:not-sr-only md:truncate">{@label}</span>
+      <span class={[
+        "bg-zk-primary pointer-events-none absolute inset-y-1 left-0 w-0.5 rounded-full opacity-0 transition-opacity",
+        @current_page == @page && "opacity-100"
+      ]} />
+    </.link>
     """
   end
 
@@ -122,5 +140,9 @@ defmodule ZoonkWeb.SettingsLayout do
       %{icon: menu_icon(:contact), label: dgettext("menu", "Contact us"), path: ~p"/contact", page: :contact},
       %{icon: menu_icon(:follow_us), label: dgettext("menu", "Follow us"), path: ~p"/follow", page: :follow}
     ]
+  end
+
+  defp display_header?(assigns) do
+    assigns.has_form || is_nil(assigns.scope.user)
   end
 end

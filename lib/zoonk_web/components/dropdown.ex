@@ -17,7 +17,7 @@ defmodule ZoonkWeb.Components.Dropdown do
       role="menu"
       data-dropdown
       phx-click={toggle_dropdown()}
-      class="relative inline-block cursor-pointer"
+      class="relative inline-block shrink-0 cursor-pointer"
       phx-keydown={toggle_dropdown()}
       phx-key="Enter"
       aria-haspopup="true"
