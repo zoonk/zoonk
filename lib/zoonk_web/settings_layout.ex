@@ -16,7 +16,7 @@ defmodule ZoonkWeb.SettingsLayout do
 
   def render(assigns) do
     ~H"""
-    <div class="h-dvh flex w-full">
+    <div class="h-dvh border-zk-border flex w-full border-t">
       <aside class="h-dvh border-zk-border bg-zk-background sticky top-0 shrink-0 border-r md:w-56 lg:w-64">
         <nav class="flex flex-col gap-1 p-2">
           <.settings_menu_item
