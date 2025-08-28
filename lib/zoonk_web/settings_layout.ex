@@ -17,7 +17,7 @@ defmodule ZoonkWeb.SettingsLayout do
   def render(assigns) do
     ~H"""
     <div class="h-dvh flex w-full">
-      <aside class="h-dvh border-zk-border bg-zk-background sticky top-0 shrink-0 border-r md:w-64">
+      <aside class="h-dvh border-zk-border bg-zk-background sticky top-0 shrink-0 border-r md:w-56 lg:w-64">
         <nav class="flex flex-col gap-1 p-2">
           <.settings_menu_item
             icon={menu_icon(:home)}
