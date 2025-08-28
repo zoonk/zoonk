@@ -7,30 +7,16 @@ defmodule ZoonkWeb.LearnSubjectResultsLiveTest do
   alias Zoonk.Catalog
 
   describe "learn subject: results (unauthenticated)" do
-    test "redirects page for :app org" do
+    test "redirects page for system org" do
       build_conn()
-      |> Map.put(:host, app_org_fixture().custom_domain)
+      |> Map.put(:host, system_org_fixture().custom_domain)
       |> visit(~p"/learn/coding")
       |> assert_path(~p"/login")
     end
 
-    test "redirects page for :creator org" do
+    test "redirects page for external org" do
       build_conn()
-      |> Map.put(:host, org_fixture(%{kind: :creator}).custom_domain)
-      |> visit(~p"/learn")
-      |> assert_path(~p"/login")
-    end
-
-    test "redirects page for :team org" do
-      build_conn()
-      |> Map.put(:host, org_fixture(%{kind: :team}).custom_domain)
-      |> visit(~p"/learn")
-      |> assert_path(~p"/login")
-    end
-
-    test "redirects page for :school org" do
-      build_conn()
-      |> Map.put(:host, org_fixture(%{kind: :school}).custom_domain)
+      |> Map.put(:host, org_fixture(%{kind: :external}).custom_domain)
       |> visit(~p"/learn")
       |> assert_path(~p"/login")
     end

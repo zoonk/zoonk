@@ -47,7 +47,7 @@ defmodule ZoonkWeb.ConnCase do
   """
   def signup_and_login_user(%{conn: conn} = context) do
     user = Zoonk.AccountFixtures.user_fixture()
-    app_org = Zoonk.OrgFixtures.app_org_fixture()
+    app_org = Zoonk.OrgFixtures.system_org_fixture()
 
     opts =
       context
@@ -66,25 +66,12 @@ defmodule ZoonkWeb.ConnCase do
 
       setup :setup_app
 
-  It sets the app organization without a user.
+  It sets the system organization without a user.
   """
   def setup_app(%{conn: conn}) do
-    app_org = Zoonk.OrgFixtures.app_org_fixture()
+    app_org = Zoonk.OrgFixtures.system_org_fixture()
     conn = Map.put(conn, :host, app_org.custom_domain)
     %{conn: conn, org: app_org}
-  end
-
-  @doc """
-  Setup basic app for the API.
-
-      setup :setup_api_app
-  """
-  def setup_api_app(%{conn: conn}) do
-    app_org = Zoonk.OrgFixtures.app_org_fixture()
-
-    conn = Plug.Conn.put_req_header(conn, "x-org-domain", app_org.custom_domain)
-
-    %{conn: conn}
   end
 
   @doc """
@@ -106,12 +93,5 @@ defmodule ZoonkWeb.ConnCase do
 
   defp maybe_set_token_authenticated_at(token, authenticated_at) do
     Zoonk.AccountFixtures.override_token_authenticated_at(token, authenticated_at)
-  end
-
-  @doc """
-  Asserts a JSON error response that calls `ZoonkWeb.API.ErrorResponse.send_error/3`.
-  """
-  def assert_json_error(conn, status) do
-    assert %{"error" => %{"code" => ^status, "message" => _message}} = Phoenix.ConnTest.json_response(conn, status)
   end
 end

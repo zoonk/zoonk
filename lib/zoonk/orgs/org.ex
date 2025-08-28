@@ -3,7 +3,7 @@ defmodule Zoonk.Orgs.Org do
   Defines the `Org` schema.
 
   Every data on Zoonk is related to an organization.
-  An organization can be a business, a creator, or a school.
+  An organization can be a business, school, creator, etc.
 
   All organizations have a subdomain that can be used
   for their white-label page, e.g. `https://<subdomain>.zoonk.io`.
@@ -17,23 +17,18 @@ defmodule Zoonk.Orgs.Org do
 
   ## Organization Types
 
-  | Type      | Description                                                        |
-  |-----------|--------------------------------------------------------------------|
-  | `:app`    | The main organization that owns this entire app (e.g. Zoonk)       |
-  | `:team`   | Organizations using Zoonk for internal training.                   |
-  | `:creator`| Organizations selling content on Zoonk.                            |
-  | `:school` | Educational institutions using Zoonk with their existing students. |
+  | Type        | Description                         |
+  |-------------|-------------------------------------|
+  | `:system`   | Our own organization (i.e. Zoonk)   |
+  | `:external` | External organizations using Zoonk. |
 
-  ## Why the main app is an organization?
+  ## Why Zoonk is also an organization?
 
-  The main app is also an organization because it allows us to query everything
+  We're also an organization because it allows us to query everything
   using an `org_id`, ensuring users have access to the correct scope.
 
-  Without this, we would need to add a lot of `org_id` checks
-  everywhere in the codebase, which would be a nightmare to maintain.
-
-  Plus, we'd need to check for `is_nil(org_id)` everywhere when we need to
-  query data that is not related to main app only - and not to a specific organization.
+  Without this, we'd need to check for `is_nil(org_id)` everywhere when we need to
+  query data that is related to Zoonk only - and not to a specific organization.
 
   Having an `org_id` associated with every data makes it easier to
   manage permissions and access control.
@@ -62,7 +57,7 @@ defmodule Zoonk.Orgs.Org do
   alias Zoonk.Billing.BillingAccount
 
   schema "orgs" do
-    field :kind, Ecto.Enum, values: [:app, :team, :creator, :school], default: :team
+    field :kind, Ecto.Enum, values: [:system, :external], default: :external
     field :is_public, :boolean, default: false
     field :display_name, :string
     field :bio, :string

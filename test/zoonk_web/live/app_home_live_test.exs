@@ -4,30 +4,27 @@ defmodule ZoonkWeb.AppHomeLiveTest do
   import Zoonk.OrgFixtures
 
   describe "app home page (unauthenticated)" do
-    test "redirects to catalog for :app org" do
+    test "redirects to catalog for system org" do
       build_conn()
-      |> Map.put(:host, app_org_fixture().custom_domain)
+      |> Map.put(:host, system_org_fixture().custom_domain)
       |> visit(~p"/")
       |> assert_path(~p"/catalog")
     end
 
-    test "redirects to catalog for :creator org" do
+    test "redirects to catalog for public external org" do
+      org = org_fixture(%{kind: :external, is_public: true})
+
       build_conn()
-      |> Map.put(:host, org_fixture(%{kind: :creator}).custom_domain)
+      |> Map.put(:host, org.custom_domain)
       |> visit(~p"/")
       |> assert_path(~p"/catalog")
     end
 
-    test "redirects to login for :team org" do
-      build_conn()
-      |> Map.put(:host, org_fixture(%{kind: :team}).custom_domain)
-      |> visit(~p"/")
-      |> assert_path(~p"/login")
-    end
+    test "redirects to login for private external org" do
+      org = org_fixture(%{kind: :external, is_public: false})
 
-    test "redirects to login for :school org" do
       build_conn()
-      |> Map.put(:host, org_fixture(%{kind: :school}).custom_domain)
+      |> Map.put(:host, org.custom_domain)
       |> visit(~p"/")
       |> assert_path(~p"/login")
     end
