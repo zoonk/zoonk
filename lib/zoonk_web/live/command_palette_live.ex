@@ -15,20 +15,24 @@ defmodule ZoonkWeb.CommandPaletteLive do
 
   alias Zoonk.FuzzySearch
 
+  attr :id, :string, required: true, doc: "The unique identifier for the component instance"
+  attr :authenticated, :boolean, default: false, doc: "Indicates if the user is authenticated"
+  attr :variant, :atom, values: [:icon, :input], default: :icon, doc: "The variant of the command trigger"
+
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="w-full">
       <.command_trigger
-        variant={:icon}
-        label={dgettext("menu", "Open command palette")}
+        variant={@variant}
+        label={dgettext("menu", "Search...")}
         dialog_id={"command-palette-#{@id}"}
         phx-target={@myself}
       />
 
       <.dialog id={"command-palette-#{@id}"}>
         <form phx-change="search" phx-submit="search" phx-target={@myself}>
-          <.command_input placeholder={dgettext("menu", "Search commands...")} />
+          <.command_input placeholder={dgettext("menu", "Search pages...")} />
         </form>
 
         <.command_list>

@@ -19,6 +19,15 @@ defmodule ZoonkWeb.SettingsLayout do
     <div class="h-dvh border-zk-border flex w-full border-t">
       <aside class="h-dvh border-zk-border bg-zk-background sticky top-0 shrink-0 border-r md:w-56 lg:w-64">
         <nav class="flex flex-col gap-1 p-2">
+          <div class="flex h-9 w-full flex-col items-center md:items-start">
+            <.live_component
+              module={ZoonkWeb.CommandPaletteLive}
+              authenticated={@scope.user != nil}
+              id="command-palette"
+              variant={:input}
+            />
+          </div>
+
           <.settings_menu_item
             icon={menu_icon(:home)}
             label={dgettext("menu", "Home")}

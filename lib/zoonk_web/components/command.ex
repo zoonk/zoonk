@@ -49,8 +49,8 @@ defmodule ZoonkWeb.Components.Command do
       data-dialog-id={@dialog_id}
       data-shortcut={@shortcut}
       class={[
-        "bg-zk-muted text-zk-muted-foreground/70 flex w-full items-center justify-between gap-2",
-        "border-zk-border rounded border py-1.5 pr-1.5 pl-2 text-sm",
+        "bg-zk-muted text-zk-muted-foreground/70 flex w-full flex-col items-center gap-2 md:flex-row md:justify-between",
+        "border-zk-border rounded border py-1.5 text-sm md:pr-1.5 md:pl-2",
         "hover:bg-zk-secondary focus-visible:outline-none focus-visible:ring-2",
         "focus-visible:ring-zk-primary focus-visible:ring-offset-2",
         @class
@@ -59,7 +59,7 @@ defmodule ZoonkWeb.Components.Command do
     >
       <span class="inline-flex items-center gap-2">
         <.icon name="tabler-search" class="size-4" />
-        <span>{@label}</span>
+        <span class="hidden md:block">{@label}</span>
       </span>
 
       <kbd
