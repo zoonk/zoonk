@@ -70,5 +70,5 @@ defmodule ZoonkWeb.OrgNewLive do
     {:noreply, socket}
   end
 
-  defp total_steps, do: 4
+  defp total_steps, do: 5
 end
