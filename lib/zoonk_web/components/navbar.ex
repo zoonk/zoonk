@@ -56,7 +56,7 @@ defmodule ZoonkWeb.Components.Navbar do
 
       <.live_component
         module={ZoonkWeb.CommandPaletteLive}
-        authenticated={@scope.user != nil}
+        scope={@scope}
         id="command-palette"
       />
 

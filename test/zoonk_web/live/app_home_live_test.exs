@@ -37,6 +37,7 @@ defmodule ZoonkWeb.AppHomeLiveTest do
       conn
       |> visit(~p"/")
       |> assert_path(~p"/")
+      |> assert_has("a", text: "Start new course")
       |> assert_has(".zk-btn-active", text: "Home")
       |> refute_has(".zk-btn-active", text: "Catalog")
     end
@@ -49,6 +50,7 @@ defmodule ZoonkWeb.AppHomeLiveTest do
       conn
       |> visit(~p"/")
       |> refute_has("a", text: "Start course")
+      |> refute_has("a", text: "Start new course")
     end
   end
 end

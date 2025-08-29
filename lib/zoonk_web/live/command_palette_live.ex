@@ -13,10 +13,13 @@ defmodule ZoonkWeb.CommandPaletteLive do
   import ZoonkWeb.Components.Dialog
   import ZoonkWeb.Components.Icon
 
+  alias Zoonk.Accounts.User
   alias Zoonk.FuzzySearch
+  alias Zoonk.Orgs.Org
+  alias Zoonk.Scope
 
   attr :id, :string, required: true, doc: "The unique identifier for the component instance"
-  attr :authenticated, :boolean, default: false, doc: "Indicates if the user is authenticated"
+  attr :scope, Scope, required: true, doc: "Scope for the current user"
   attr :variant, :atom, values: [:icon, :input], default: :icon, doc: "The variant of the command trigger"
 
   @impl Phoenix.LiveComponent
@@ -44,7 +47,11 @@ defmodule ZoonkWeb.CommandPaletteLive do
             :if={navigation_results(@query) != []}
             heading={dgettext("menu", "Navigation")}
           >
-            <.command_item :for={item <- navigation_results(@query)} {build_nav_attrs(item)}>
+            <.command_item
+              :for={item <- navigation_results(@query)}
+              :if={visible?(item.visibility, @scope)}
+              {build_nav_attrs(item)}
+            >
               <.icon name={item.icon} class="size-4" />
               {item.label}
             </.command_item>
@@ -60,7 +67,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
           <.command_group :if={support_results(@query) != []} heading={dgettext("menu", "Support")}>
             <.command_item
               :for={item <- support_results(@query)}
-              :if={visible?(item.visibility, @authenticated)}
+              :if={visible?(item.visibility, @scope)}
               {build_nav_attrs(item)}
             >
               <.icon name={item.icon} class="size-4" />
@@ -93,10 +100,11 @@ defmodule ZoonkWeb.CommandPaletteLive do
   defp maybe_add_attr(attrs, _key, nil), do: attrs
   defp maybe_add_attr(attrs, key, value), do: [{key, value} | attrs]
 
-  defp visible?(:always, _status), do: true
-  defp visible?(:authenticated, true), do: true
-  defp visible?(:unauthenticated, false), do: true
-  defp visible?(_visibility, _status), do: false
+  defp visible?(:always, _scope), do: true
+  defp visible?(:authenticated, %Scope{user: %User{}}), do: true
+  defp visible?(:unauthenticated, %Scope{user: nil}), do: true
+  defp visible?(:catalog, %Scope{org: %Org{kind: :system}}), do: true
+  defp visible?(_visibility, _scope), do: false
 
   defp empty?(query) do
     query != "" && navigation_results(query) == [] && settings_results(query) == [] && support_results(query) == []
