@@ -272,6 +272,6 @@ defmodule ZoonkWeb.Components.Stepper do
   defp upcoming_or_current?(index, step), do: index >= step
   defp last?(index, steps), do: index == length(steps)
 
-  def next_label(assigns) when assigns.current_step == assigns.total_steps, do: assigns.submit_label
+  def next_label(assigns) when assigns.current_step == assigns.total_steps - 1, do: assigns.submit_label
   def next_label(assigns), do: assigns.next_label
 end
