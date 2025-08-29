@@ -5,34 +5,28 @@ defmodule ZoonkWeb.OrgNewLive do
   on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
   on_mount {ZoonkWeb.UserAuthorization, :ensure_system_org}
 
-  @total_steps 5
-
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
       <form
         phx-submit={next_action(@current_step)}
-        class="mx-auto mt-4 flex w-full max-w-xl flex-1 flex-col gap-8 lg:mt-8"
+        class="mx-auto mt-4 flex w-full max-w-4xl flex-1 flex-col gap-8 lg:mt-8"
       >
         <.stepper current_step={@current_step} total_steps={total_steps()}>
-          <:step title={dgettext("orgs", "Start")} />
-          <:step title={dgettext("orgs", "Name")} />
-          <:step title={dgettext("orgs", "Subdomain")} />
-          <:step title={dgettext("orgs", "Visibility")} />
-          <:step title={dgettext("orgs", "Done")} />
+          <:step :for={step <- steps()} title={step.title} />
         </.stepper>
 
-        <main :if={@current_step == 1} class="flex flex-col gap-1">
+        <div :if={@current_step == 1} class="flex flex-col gap-1">
           <.text tag="h1" size={:xxl}>{dgettext("orgs", "Set up your organization")}</.text>
 
           <.text tag="h2" size={:md} variant={:secondary}>
             {dgettext(
               "orgs",
-              "Once your organization is ready, you can start creating courses for your audience, team, or school."
+              "Once it’s ready, you can create your own courses or give your team and students access to our catalog."
             )}
           </.text>
-        </main>
+        </div>
 
         <.step_navigation
           current_step={@current_step}
@@ -71,8 +65,20 @@ defmodule ZoonkWeb.OrgNewLive do
     {:noreply, socket}
   end
 
-  defp total_steps, do: @total_steps
+  defp total_steps, do: length(steps())
 
-  defp next_action(current) when current == @total_steps, do: "submit"
-  defp next_action(_current), do: "next"
+  defp next_action(current) do
+    if current == total_steps(), do: "submit", else: "next"
+  end
+
+  defp steps do
+    [
+      %{title: dgettext("orgs", "Start")},
+      %{title: dgettext("orgs", "Name")},
+      %{title: dgettext("orgs", "Subdomain")},
+      %{title: dgettext("orgs", "Visibility")},
+      %{title: dgettext("orgs", "Mode")},
+      %{title: dgettext("orgs", "Done")}
+    ]
+  end
 end
