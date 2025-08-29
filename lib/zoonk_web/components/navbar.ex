@@ -11,6 +11,7 @@ defmodule ZoonkWeb.Components.Navbar do
   import ZoonkWeb.MenuIcon
 
   alias Zoonk.Accounts.User
+  alias Zoonk.Orgs.Org
   alias Zoonk.Scope
 
   attr :scope, Scope, doc: "The scope for current user"
@@ -115,6 +116,16 @@ defmodule ZoonkWeb.Components.Navbar do
 
           <.dropdown_separator />
 
+          <.dropdown_item
+            :if={system_org?(@scope)}
+            icon={menu_icon(:new_org)}
+            navigate={~p"/orgs/new"}
+          >
+            {dgettext("menu", "Create organization")}
+          </.dropdown_item>
+
+          <.dropdown_separator />
+
           <.dropdown_item icon={menu_icon(:logout)} method="delete" href={~p"/logout"}>
             {dgettext("menu", "Logout")}
           </.dropdown_item>
@@ -127,4 +138,7 @@ defmodule ZoonkWeb.Components.Navbar do
   defp variant(menu, page) when menu == page, do: :active
   defp variant(menu, _page) when menu == :start_course, do: :secondary
   defp variant(_menu, _page), do: :outline
+
+  defp system_org?(%Scope{org: %Org{kind: :system}}), do: true
+  defp system_org?(_scope), do: false
 end

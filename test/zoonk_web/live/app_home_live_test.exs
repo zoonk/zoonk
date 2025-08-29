@@ -38,6 +38,7 @@ defmodule ZoonkWeb.AppHomeLiveTest do
       |> visit(~p"/")
       |> assert_path(~p"/")
       |> assert_has("a", text: "Start new course")
+      |> assert_has("a", text: "Create organization")
       |> assert_has(".zk-btn-active", text: "Home")
       |> refute_has(".zk-btn-active", text: "Catalog")
     end
@@ -46,11 +47,24 @@ defmodule ZoonkWeb.AppHomeLiveTest do
   describe "app home page (authenticated to public external org)" do
     setup :signup_and_login_user_for_public_external_org
 
-    test "don't show start course menu", %{conn: conn} do
+    test "don't show restricted menus", %{conn: conn} do
       conn
       |> visit(~p"/")
       |> refute_has("a", text: "Start course")
       |> refute_has("a", text: "Start new course")
+      |> refute_has("a", text: "Create organization")
+    end
+  end
+
+  describe "app home page (authenticated to private external org)" do
+    setup :signup_and_login_user_for_private_external_org
+
+    test "don't show restricted menus", %{conn: conn} do
+      conn
+      |> visit(~p"/")
+      |> refute_has("a", text: "Start course")
+      |> refute_has("a", text: "Start new course")
+      |> refute_has("a", text: "Create organization")
     end
   end
 end
