@@ -30,7 +30,7 @@ defmodule ZoonkWeb.AppHomeLiveTest do
     end
   end
 
-  describe "app home page (authenticated)" do
+  describe "app home page (authenticated to system org)" do
     setup :signup_and_login_user
 
     test "selects the home page menu", %{conn: conn} do
@@ -39,6 +39,16 @@ defmodule ZoonkWeb.AppHomeLiveTest do
       |> assert_path(~p"/")
       |> assert_has(".zk-btn-active", text: "Home")
       |> refute_has(".zk-btn-active", text: "Catalog")
+    end
+  end
+
+  describe "app home page (authenticated to public external org)" do
+    setup :signup_and_login_user_for_public_external_org
+
+    test "don't show start course menu", %{conn: conn} do
+      conn
+      |> visit(~p"/")
+      |> refute_has("a", text: "Start course")
     end
   end
 end
