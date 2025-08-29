@@ -239,7 +239,7 @@ defmodule ZoonkWeb.Components.Stepper do
 
   def step_navigation(assigns) do
     ~H"""
-    <div class={["flex items-center justify-between gap-4", @class]} {@rest}>
+    <div class={["flex w-full items-center justify-between gap-4", @class]} {@rest}>
       <.button
         variant={:outline}
         phx-click={@on_previous}

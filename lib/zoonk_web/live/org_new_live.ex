@@ -9,8 +9,16 @@ defmodule ZoonkWeb.OrgNewLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <div class="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center gap-4 text-center">
-        <header class="flex flex-col items-center gap-1">
+      <div class="mx-auto mt-4 flex w-full max-w-xl flex-1 flex-col gap-8 lg:mt-8">
+        <.stepper current_step={@current_step} total_steps={total_steps()}>
+          <:step title={dgettext("orgs", "Start")} />
+          <:step title={dgettext("orgs", "Name")} />
+          <:step title={dgettext("orgs", "Subdomain")} />
+          <:step title={dgettext("orgs", "Visibility")} />
+          <:step title={dgettext("orgs", "Done")} />
+        </.stepper>
+
+        <main :if={@current_step == 1} class="flex flex-col gap-1">
           <.text tag="h1" size={:xxl}>{dgettext("orgs", "Set up your organization")}</.text>
 
           <.text tag="h2" size={:md} variant={:secondary}>
@@ -19,7 +27,17 @@ defmodule ZoonkWeb.OrgNewLive do
               "Once your organization is ready, you can start creating courses for your audience, team, or school."
             )}
           </.text>
-        </header>
+        </main>
+
+        <.step_navigation
+          current_step={@current_step}
+          total_steps={total_steps()}
+          on_previous="previous"
+          on_next="next"
+          on_submit="submit"
+          submit_label={dgettext("orgs", "Create organization")}
+          class="mt-auto"
+        />
       </div>
     </ZoonkWeb.AppLayout.render>
     """
@@ -27,6 +45,30 @@ defmodule ZoonkWeb.OrgNewLive do
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
-    {:ok, assign(socket, :page_title, dgettext("page_title", "Set up your organization"))}
+    {:ok,
+     socket
+     |> assign(:page_title, dgettext("page_title", "Set up your organization"))
+     |> assign(:current_step, 1)}
   end
+
+  @impl Phoenix.LiveView
+  def handle_event("previous", _params, socket) do
+    current_step = socket.assigns.current_step
+    new_step = max(current_step - 1, 1)
+
+    {:noreply, assign(socket, current_step: new_step)}
+  end
+
+  def handle_event("next", _params, socket) do
+    current_step = socket.assigns.current_step
+    new_step = min(current_step + 1, total_steps())
+
+    {:noreply, assign(socket, current_step: new_step)}
+  end
+
+  def handle_event("submit", _params, socket) do
+    {:noreply, socket}
+  end
+
+  defp total_steps, do: 4
 end
