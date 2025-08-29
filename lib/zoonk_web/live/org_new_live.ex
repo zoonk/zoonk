@@ -3,6 +3,7 @@ defmodule ZoonkWeb.OrgNewLive do
   use ZoonkWeb, :live_view
 
   on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
+  on_mount {ZoonkWeb.UserAuthorization, :ensure_system_org}
 
   @impl Phoenix.LiveView
   def render(assigns) do

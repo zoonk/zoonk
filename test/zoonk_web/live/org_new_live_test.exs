@@ -21,4 +21,17 @@ defmodule ZoonkWeb.OrgNewLiveTest do
       |> assert_has("h1", text: "Create a new organization")
     end
   end
+
+  describe "/orgs/new (authenticated for non-system org)" do
+    setup :signup_and_login_user_for_public_external_org
+
+    test "redirects to login page", %{conn: conn} do
+      error =
+        assert_raise ZoonkWeb.PermissionError, fn ->
+          visit(conn, ~p"/orgs/new")
+        end
+
+      assert error.message =~ "You don't have permission to access this page"
+    end
+  end
 end
