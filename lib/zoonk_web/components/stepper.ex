@@ -5,6 +5,7 @@ defmodule ZoonkWeb.Components.Stepper do
   use Phoenix.Component
   use Gettext, backend: Zoonk.Gettext
 
+  import ZoonkWeb.Components.Anchor
   import ZoonkWeb.Components.Button
   import ZoonkWeb.Components.Icon
   import ZoonkWeb.Components.Text
@@ -230,14 +231,15 @@ defmodule ZoonkWeb.Components.Stepper do
   attr :previous_label, :string, default: gettext("Previous"), doc: "Label for previous button"
   attr :next_label, :string, default: gettext("Next"), doc: "Label for next button"
   attr :submit_label, :string, default: gettext("Submit"), doc: "Label for submit button"
+  attr :done_label, :string, default: gettext("Done"), doc: "Label for done button"
   attr :previous_disabled, :boolean, default: false, doc: "Disable previous button"
   attr :next_disabled, :boolean, default: false, doc: "Disable next button"
   attr :class, :string, default: nil, doc: "Additional CSS classes"
-  attr :rest, :global, doc: "Additional HTML attributes"
+  attr :rest, :global, include: ~w(href method navigate patch), doc: "HTML attributes to apply to the done link"
 
   def step_navigation(assigns) do
     ~H"""
-    <div class={["mt-auto flex w-full items-center justify-between gap-4", @class]} {@rest}>
+    <div class={["mt-auto flex w-full items-center justify-between gap-4", @class]}>
       <.button
         variant={:outline}
         phx-click={@on_previous}
@@ -247,6 +249,7 @@ defmodule ZoonkWeb.Components.Stepper do
       </.button>
 
       <.button
+        :if={@current_step < @total_steps}
         type="submit"
         variant={:primary}
         disabled={@next_disabled}
@@ -254,6 +257,10 @@ defmodule ZoonkWeb.Components.Stepper do
       >
         {next_label(assigns)}
       </.button>
+
+      <.a :if={@current_step == @total_steps} kind={:button} variant={:primary} {@rest}>
+        {@done_label}
+      </.a>
     </div>
     """
   end

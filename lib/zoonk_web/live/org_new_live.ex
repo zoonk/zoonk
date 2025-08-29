@@ -32,6 +32,8 @@ defmodule ZoonkWeb.OrgNewLive do
           current_step={@current_step}
           total_steps={total_steps()}
           submit_label={dgettext("orgs", "Create organization")}
+          done_label={dgettext("orgs", "Go to your organization")}
+          navigate={~p"/"}
         />
       </form>
     </ZoonkWeb.AppLayout.render>
@@ -62,13 +64,16 @@ defmodule ZoonkWeb.OrgNewLive do
   end
 
   def handle_event("submit", _params, socket) do
-    {:noreply, socket}
+    current_step = socket.assigns.current_step
+    new_step = min(current_step + 1, total_steps())
+
+    {:noreply, assign(socket, current_step: new_step)}
   end
 
   defp total_steps, do: length(steps())
 
   defp next_action(current) do
-    if current == total_steps(), do: "submit", else: "next"
+    if current == total_steps() - 1, do: "submit", else: "next"
   end
 
   defp steps do
