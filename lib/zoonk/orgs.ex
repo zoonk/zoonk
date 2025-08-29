@@ -141,4 +141,23 @@ defmodule Zoonk.Orgs do
   end
 
   def get_org_settings(_scope), do: nil
+
+  @doc """
+  Create an org member.
+
+  ## Examples
+
+      iex> create_org_member(%Org{}, %User{})
+      {:ok, %OrgMember{}}
+
+      iex> create_org_member(%Org{}, nil)
+      {:error, %Ecto.Changeset{}}
+  """
+  def create_org_member(%Scope{} = scope, %User{} = user, attrs) when scope.org_member.role == :admin do
+    %OrgMember{org_id: scope.org.id, user_id: user.id}
+    |> OrgMember.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def create_org_member(_scope, _user, _attrs), do: {:error, :unauthorized}
 end

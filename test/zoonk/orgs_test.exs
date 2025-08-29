@@ -7,6 +7,7 @@ defmodule Zoonk.OrgsTest do
   alias Zoonk.Accounts.Subdomain
   alias Zoonk.Orgs
   alias Zoonk.Orgs.Org
+  alias Zoonk.Orgs.OrgMember
 
   describe "change_org/2" do
     test "allows valid subdomains" do
@@ -267,6 +268,36 @@ defmodule Zoonk.OrgsTest do
     test "returns nil for non-admins" do
       scope = scope_fixture(%{kind: :external, role: :member})
       refute Orgs.get_org_settings(scope)
+    end
+  end
+
+  describe "create_org_member/3" do
+    test "creates org member when user is admin" do
+      scope = scope_fixture(%{kind: :external, role: :admin})
+      user = user_fixture()
+
+      assert {:ok, %OrgMember{} = org_member} = Orgs.create_org_member(scope, user, %{role: :member})
+
+      assert org_member.org_id == scope.org.id
+      assert org_member.user_id == user.id
+      assert org_member.role == :member
+    end
+
+    test "allows admin to create other admins" do
+      scope = scope_fixture(%{kind: :external, role: :admin})
+      user = user_fixture()
+
+      assert {:ok, %OrgMember{} = org_member} = Orgs.create_org_member(scope, user, %{role: :admin})
+
+      assert org_member.org_id == scope.org.id
+      assert org_member.user_id == user.id
+      assert org_member.role == :admin
+    end
+
+    test "returns error when user is not admin" do
+      scope = scope_fixture(%{kind: :external, role: :member})
+      user = user_fixture()
+      assert Orgs.create_org_member(scope, user, %{role: :member}) == {:error, :unauthorized}
     end
   end
 end
