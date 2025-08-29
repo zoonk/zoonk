@@ -5,7 +5,6 @@ defmodule ZoonkWeb.RequireOrgMemberPermissionTest do
       for(
         kind <- [:system, :external],
         page <- [
-          %{link: "/learn", menu: "Get Started"},
           %{link: "/my-courses", menu: "My courses"},
           %{link: "/subscription", menu: "Subscription"},
           %{link: "/settings", menu: "Settings"},

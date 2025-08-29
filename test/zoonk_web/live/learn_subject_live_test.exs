@@ -24,7 +24,7 @@ defmodule ZoonkWeb.LearnSubjectLiveTest do
     end
   end
 
-  describe "learn subject" do
+  describe "learn subject (authenticated to system org)" do
     setup :signup_and_login_user
 
     test "allows authenticated user to see the page", %{conn: conn} do
@@ -41,6 +41,19 @@ defmodule ZoonkWeb.LearnSubjectLiveTest do
       |> submit()
       |> assert_path(~p"/learn/programming")
       |> assert_has("h3", text: suggestion.title, timeout: 1)
+    end
+  end
+
+  describe "learn subject (authenticated to public external org)" do
+    setup :signup_and_login_user_for_public_external_org
+
+    test "doesn't allow access for public external org", %{conn: conn} do
+      error =
+        assert_raise ZoonkWeb.PermissionError, fn ->
+          visit(conn, ~p"/learn")
+        end
+
+      assert error.message == "Your organization doesn't have access to this feature."
     end
   end
 end

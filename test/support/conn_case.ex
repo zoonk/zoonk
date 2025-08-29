@@ -45,20 +45,34 @@ defmodule ZoonkWeb.ConnCase do
   It stores an updated connection and a signed up user in the
   test context.
   """
-  def signup_and_login_user(%{conn: conn} = context) do
-    user = Zoonk.AccountFixtures.user_fixture()
+  def signup_and_login_user(context) do
     app_org = Zoonk.OrgFixtures.system_org_fixture()
+    context = Map.put(context, :org, app_org)
+    signup_and_login_user_for_org(context)
+  end
 
-    opts =
-      context
-      |> Map.take([:token_authenticated_at])
-      |> Enum.to_list()
+  @doc """
+  Sign up and login user for a public external org.
 
-    conn = Map.put(conn, :host, app_org.custom_domain)
+      setup :signup_and_login_user_for_public_external_org
 
-    scope = %Zoonk.Scope{user: user, org: app_org}
+  """
+  def signup_and_login_user_for_public_external_org(context) do
+    org = Zoonk.OrgFixtures.org_fixture(%{kind: :external, is_public: true})
+    context = Map.put(context, :org, org)
+    signup_and_login_user_for_org(context)
+  end
 
-    %{conn: login_user(conn, user, opts), user: user, scope: scope}
+  @doc """
+  Sign up and login user for a private external org.
+
+      setup :signup_and_login_user_for_private_external_org
+
+  """
+  def signup_and_login_user_for_private_external_org(context) do
+    org = Zoonk.OrgFixtures.org_fixture(%{kind: :external, is_public: false})
+    context = Map.put(context, :org, org)
+    signup_and_login_user_for_org(context)
   end
 
   @doc """
@@ -72,6 +86,28 @@ defmodule ZoonkWeb.ConnCase do
     app_org = Zoonk.OrgFixtures.system_org_fixture()
     conn = Map.put(conn, :host, app_org.custom_domain)
     %{conn: conn, org: app_org}
+  end
+
+  @doc """
+  Setup app for a public external org.
+
+      setup :setup_public_external_app
+
+  It sets the external organization without a user.
+  """
+  def setup_public_external_app(%{conn: conn}) do
+    setup_external_org(%{conn: conn, public?: true})
+  end
+
+  @doc """
+  Setup app for a private external org.
+
+      setup :setup_private_external_app
+
+  It sets the external organization without a user.
+  """
+  def setup_private_external_app(%{conn: conn}) do
+    setup_external_org(%{conn: conn, public?: false})
   end
 
   @doc """
@@ -93,5 +129,27 @@ defmodule ZoonkWeb.ConnCase do
 
   defp maybe_set_token_authenticated_at(token, authenticated_at) do
     Zoonk.AccountFixtures.override_token_authenticated_at(token, authenticated_at)
+  end
+
+  defp setup_external_org(%{conn: conn, public?: public?}) do
+    org = Zoonk.OrgFixtures.org_fixture(%{kind: :external, is_public: public?})
+    conn = Map.put(conn, :host, org.custom_domain)
+    %{conn: conn, org: org}
+  end
+
+  defp signup_and_login_user_for_org(%{conn: conn, org: org} = context) do
+    user = Zoonk.AccountFixtures.user_fixture()
+
+    opts =
+      context
+      |> Map.take([:token_authenticated_at])
+      |> Enum.to_list()
+
+    conn = Map.put(conn, :host, org.custom_domain)
+
+    scope = %Zoonk.Scope{user: user, org: org}
+    Zoonk.OrgFixtures.org_member_fixture(%{user: user, org: org})
+
+    %{conn: login_user(conn, user, opts), user: user, scope: scope}
   end
 end
