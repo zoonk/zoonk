@@ -21,6 +21,7 @@ alias Zoonk.Repo
 system_org =
   Repo.insert!(%Org{
     kind: :system,
+    is_public: true,
     display_name: "Zoonk",
     bio: "The main Zoonk application that serves as a platform for all other organizations.",
     public_email: "contact@zoonk.test",
