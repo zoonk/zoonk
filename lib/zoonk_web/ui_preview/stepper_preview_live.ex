@@ -123,9 +123,7 @@ defmodule ZoonkWeb.UIPreview.StepperPreviewLive do
             <.step_navigation
               current_step={1}
               total_steps={4}
-              on_next="next_step"
               on_previous="previous_step"
-              on_submit="submit_form"
             />
           </div>
 
@@ -135,8 +133,6 @@ defmodule ZoonkWeb.UIPreview.StepperPreviewLive do
               current_step={2}
               total_steps={4}
               on_previous="previous_step"
-              on_next="next_step"
-              on_submit="submit_form"
             />
           </div>
 
@@ -146,8 +142,6 @@ defmodule ZoonkWeb.UIPreview.StepperPreviewLive do
               current_step={4}
               total_steps={4}
               on_previous="previous_step"
-              on_next="next_step"
-              on_submit="submit_form"
               submit_label="Complete Setup"
             />
           </div>
@@ -158,8 +152,6 @@ defmodule ZoonkWeb.UIPreview.StepperPreviewLive do
               current_step={2}
               total_steps={3}
               on_previous="previous_step"
-              on_next="next_step"
-              on_submit="submit_form"
               previous_label="Go Back"
               next_label="Continue"
             />
@@ -183,14 +175,14 @@ defmodule ZoonkWeb.UIPreview.StepperPreviewLive do
             <:step title="Finish" description="Complete the process" />
           </.stepper>
 
-          <.step_navigation
-            current_step={@demo_step}
-            total_steps={4}
-            on_previous="demo_previous"
-            on_next="demo_next"
-            on_submit="demo_submit"
-            submit_label="Finish Demo"
-          />
+          <form phx-submit={if @demo_step == 4, do: "demo_submit", else: "demo_next"}>
+            <.step_navigation
+              current_step={@demo_step}
+              total_steps={4}
+              on_previous="demo_previous"
+              submit_label="Finish Demo"
+            />
+          </form>
 
           <.text size={:sm} variant={:secondary} class="text-center">
             Current step: {@demo_step} of 4

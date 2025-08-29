@@ -226,9 +226,7 @@ defmodule ZoonkWeb.Components.Stepper do
   """
   attr :current_step, :integer, required: true, doc: "Current step number (1-indexed)"
   attr :total_steps, :integer, required: true, doc: "Total number of steps"
-  attr :on_previous, :any, required: true, doc: "Event handler for previous button"
-  attr :on_next, :any, required: true, doc: "Event handler for next button"
-  attr :on_submit, :any, required: true, doc: "Event handler for final submit button"
+  attr :on_previous, :any, default: "previous", doc: "Event handler for previous button"
   attr :previous_label, :string, default: gettext("Previous"), doc: "Label for previous button"
   attr :next_label, :string, default: gettext("Next"), doc: "Label for next button"
   attr :submit_label, :string, default: gettext("Submit"), doc: "Label for submit button"
@@ -239,7 +237,7 @@ defmodule ZoonkWeb.Components.Stepper do
 
   def step_navigation(assigns) do
     ~H"""
-    <div class={["flex w-full items-center justify-between gap-4", @class]} {@rest}>
+    <div class={["mt-auto flex w-full items-center justify-between gap-4", @class]} {@rest}>
       <.button
         variant={:outline}
         phx-click={@on_previous}
@@ -249,9 +247,10 @@ defmodule ZoonkWeb.Components.Stepper do
       </.button>
 
       <.button
+        type="submit"
         variant={:primary}
-        phx-click={next_click(assigns)}
         disabled={@next_disabled}
+        phx-disable
       >
         {next_label(assigns)}
       </.button>
@@ -265,9 +264,6 @@ defmodule ZoonkWeb.Components.Stepper do
   defp completed_or_current?(index, step), do: index <= step
   defp upcoming_or_current?(index, step), do: index >= step
   defp last?(index, steps), do: index == length(steps)
-
-  def next_click(assigns) when assigns.current_step == assigns.total_steps, do: assigns.on_submit
-  def next_click(assigns), do: assigns.on_next
 
   def next_label(assigns) when assigns.current_step == assigns.total_steps, do: assigns.submit_label
   def next_label(assigns), do: assigns.next_label

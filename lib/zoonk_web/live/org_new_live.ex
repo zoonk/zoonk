@@ -5,11 +5,16 @@ defmodule ZoonkWeb.OrgNewLive do
   on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
   on_mount {ZoonkWeb.UserAuthorization, :ensure_system_org}
 
+  @total_steps 5
+
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <div class="mx-auto mt-4 flex w-full max-w-xl flex-1 flex-col gap-8 lg:mt-8">
+      <form
+        phx-submit={next_action(@current_step)}
+        class="mx-auto mt-4 flex w-full max-w-xl flex-1 flex-col gap-8 lg:mt-8"
+      >
         <.stepper current_step={@current_step} total_steps={total_steps()}>
           <:step title={dgettext("orgs", "Start")} />
           <:step title={dgettext("orgs", "Name")} />
@@ -32,13 +37,9 @@ defmodule ZoonkWeb.OrgNewLive do
         <.step_navigation
           current_step={@current_step}
           total_steps={total_steps()}
-          on_previous="previous"
-          on_next="next"
-          on_submit="submit"
           submit_label={dgettext("orgs", "Create organization")}
-          class="mt-auto"
         />
-      </div>
+      </form>
     </ZoonkWeb.AppLayout.render>
     """
   end
@@ -70,5 +71,8 @@ defmodule ZoonkWeb.OrgNewLive do
     {:noreply, socket}
   end
 
-  defp total_steps, do: 5
+  defp total_steps, do: @total_steps
+
+  defp next_action(current) when current == @total_steps, do: "submit"
+  defp next_action(_current), do: "next"
 end
