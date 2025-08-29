@@ -18,7 +18,7 @@ defmodule ZoonkWeb.OrgNewLiveTest do
     test "renders the page", %{conn: conn} do
       conn
       |> visit(~p"/orgs/new")
-      |> assert_has("h1", text: "Create a new organization")
+      |> assert_has("h1", text: "Set up your organization")
     end
   end
 
