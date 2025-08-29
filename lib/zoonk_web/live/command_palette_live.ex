@@ -104,6 +104,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
   defp visible?(:authenticated, %Scope{user: %User{}}), do: true
   defp visible?(:unauthenticated, %Scope{user: nil}), do: true
   defp visible?(:catalog, %Scope{org: %Org{kind: :system}}), do: true
+  defp visible?(:system, %Scope{org: %Org{kind: :system}}), do: true
   defp visible?(_visibility, _scope), do: false
 
   defp empty?(query) do

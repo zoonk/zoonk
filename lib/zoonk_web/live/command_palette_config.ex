@@ -37,6 +37,12 @@ defmodule ZoonkWeb.CommandPaletteConfig do
         label: dgettext("menu", "Start new course"),
         navigate: ~p"/learn",
         visibility: :catalog
+      },
+      %{
+        icon: menu_icon(:new_org),
+        label: dgettext("menu", "Create new organization"),
+        navigate: ~p"/orgs/new",
+        visibility: :system
       }
     ]
   end
