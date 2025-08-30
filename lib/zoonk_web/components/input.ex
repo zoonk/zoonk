@@ -37,6 +37,9 @@ defmodule ZoonkWeb.Components.Input do
       <.input name="my-input" errors={["oh no!"]} />
       <.input name="search" show_submit placeholder="Search..." />
       <.input name="search-custom" show_submit submit_icon="tabler-search" placeholder="Search..." />
+      <.input name="price" label="Price" suffix="USD" placeholder="0.00" />
+      <.input name="email" label="Email" suffix="@zoonk.com" placeholder="username" />
+      <.input name="location" label="Location" suffix="tabler-map-pin" placeholder="Enter location" />
   """
   attr :id, :any, default: nil
   attr :name, :any
@@ -62,6 +65,7 @@ defmodule ZoonkWeb.Components.Input do
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
 
   attr :submit_icon, :string, default: nil, doc: "The Tabler icon name to use for the submit button"
+  attr :suffix, :string, default: nil, doc: "Text or icon to display as a suffix in the input field"
 
   attr :rest, :global, include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
                 multiple pattern placeholder readonly required rows size step)
@@ -148,6 +152,8 @@ defmodule ZoonkWeb.Components.Input do
 
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
+    assigns = assign_new(assigns, :value, fn -> nil end)
+
     ~H"""
     <div class="text-left">
       <.label :if={@type != "hidden"} hide_label={@hide_label} for={@id}>{@label}</.label>
@@ -158,9 +164,36 @@ defmodule ZoonkWeb.Components.Input do
           name={@name}
           id={@id}
           value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-          class={["peer", shared_class(), border_class(@errors), @submit_icon && "pr-10", @class]}
+          class={[
+            "peer",
+            shared_class(),
+            border_class(@errors),
+            @submit_icon && "pr-10",
+            @suffix && "w-full pr-16",
+            @class
+          ]}
           {@rest}
         />
+
+        <span
+          :if={is_binary(@suffix) && !String.starts_with?(@suffix, "tabler-")}
+          class={[
+            "pointer-events-none absolute top-1/2 right-3 flex -translate-y-1/2 items-center",
+            "text-zk-foreground/60 select-none text-sm"
+          ]}
+        >
+          {@suffix}
+        </span>
+
+        <span
+          :if={is_binary(@suffix) && String.starts_with?(@suffix, "tabler-")}
+          class={[
+            "pointer-events-none absolute top-1/2 right-3 flex -translate-y-1/2 items-center",
+            "text-zk-foreground/60"
+          ]}
+        >
+          <.icon name={@suffix} size={:xs} />
+        </span>
 
         <button
           :if={is_binary(@submit_icon)}
