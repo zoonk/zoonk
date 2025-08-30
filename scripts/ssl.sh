@@ -9,11 +9,7 @@ fi
 mkcert -key-file priv/cert/selfsigned_key.pem \
        -cert-file priv/cert/selfsigned.pem \
        localhost \
-       zoonk.test "*.zoonk.test" \
-       team.test "*.team.test" \
-       school.test "*.school.test" \
-       store.test "*.store.test" \
-       creator.test "*.creator.test" \
+       zoonk.test "*.zoonk.test"
 
 # Install the certificate in the system trust store
 mkcert -install
@@ -30,21 +26,9 @@ echo "Setting up dnsmasq for .test domains..."
 mkdir -pv "$(brew --prefix)/etc/"
 echo 'address=/zoonk.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
 echo 'address=/.zoonk.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
-echo 'address=/team.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
-echo 'address=/.team.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
-echo 'address=/school.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
-echo 'address=/.school.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
-echo 'address=/store.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
-echo 'address=/.store.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
-echo 'address=/creator.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
-echo 'address=/.creator.test/127.0.0.1' >> "$(brew --prefix)/etc/dnsmasq.conf"
 
 sudo mkdir -v /etc/resolver
 sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/zoonk.test'
-sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/team.test'
-sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/school.test'
-sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/store.test'
-sudo bash -c 'echo "nameserver 127.0.0.1" > /etc/resolver/creator.test'
 
 echo "Restarting dnsmasq..."
 sudo brew services restart dnsmasq

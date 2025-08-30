@@ -23,17 +23,26 @@ defmodule ZoonkWeb.CommandPaletteConfig do
       %{
         icon: menu_icon(:home),
         label: dgettext("menu", "Home page"),
-        navigate: ~p"/"
+        navigate: ~p"/",
+        visibility: :always
       },
       %{
         icon: menu_icon(:catalog),
         label: dgettext("menu", "Catalog"),
-        navigate: ~p"/catalog"
+        navigate: ~p"/catalog",
+        visibility: :always
       },
       %{
         icon: menu_icon(:new_course),
         label: dgettext("menu", "Start new course"),
-        navigate: ~p"/learn"
+        navigate: ~p"/learn",
+        visibility: :catalog
+      },
+      %{
+        icon: menu_icon(:new_org),
+        label: dgettext("menu", "Create new organization"),
+        navigate: ~p"/orgs/new",
+        visibility: :system
       }
     ]
   end

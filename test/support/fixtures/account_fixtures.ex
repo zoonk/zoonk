@@ -77,7 +77,7 @@ defmodule Zoonk.AccountFixtures do
   end
 
   def scope_fixture(attrs \\ %{}) do
-    org_attrs = Enum.into(attrs, %{kind: :app})
+    org_attrs = Enum.into(attrs, %{kind: :system})
 
     org = Map.get_lazy(attrs, :org, fn -> org_fixture(org_attrs) end)
     user = Map.get_lazy(attrs, :user, fn -> user_fixture() end)

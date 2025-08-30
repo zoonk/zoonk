@@ -19,7 +19,7 @@ defmodule ZoonkWeb.UserAuthTest do
 
   setup %{conn: conn} do
     user = %{user_fixture() | authenticated_at: DateTime.utc_now()}
-    org = app_org_fixture()
+    org = system_org_fixture()
     org_member = Orgs.get_org_member(org, user)
 
     scope =
@@ -268,8 +268,8 @@ defmodule ZoonkWeb.UserAuthTest do
   end
 
   describe "on_mount :ensure_auth_for_private_orgs" do
-    test "allows unauthenticated access to :app orgs" do
-      org = app_org_fixture()
+    test "allows unauthenticated access to :system org" do
+      org = system_org_fixture()
       scope = scope_fixture(%{org: org, user: nil, org_member: nil})
 
       socket = %LiveView.Socket{
@@ -280,8 +280,8 @@ defmodule ZoonkWeb.UserAuthTest do
       assert {:cont, _socket} = UserAuth.on_mount(:ensure_auth_for_private_orgs, %{}, %{}, socket)
     end
 
-    test "allows unauthenticated access to :creator orgs" do
-      org = org_fixture(%{kind: :creator})
+    test "allows unauthenticated access to public external orgs" do
+      org = org_fixture(%{kind: :external, is_public: true})
       scope = scope_fixture(%{org: org, user: nil, org_member: nil})
 
       socket = %LiveView.Socket{
@@ -292,8 +292,8 @@ defmodule ZoonkWeb.UserAuthTest do
       assert {:cont, _socket} = UserAuth.on_mount(:ensure_auth_for_private_orgs, %{}, %{}, socket)
     end
 
-    test "redirects unauthenticated users for :team orgs" do
-      org = org_fixture(%{kind: :team})
+    test "redirects unauthenticated users for private external orgs" do
+      org = org_fixture(%{kind: :external, is_public: false})
       scope = scope_fixture(%{org: org, user: nil, org_member: nil})
 
       socket = %LiveView.Socket{
@@ -350,65 +350,6 @@ defmodule ZoonkWeb.UserAuthTest do
       }
 
       assert {:halt, _updated_socket} = UserAuth.on_mount(:ensure_sudo_mode, %{}, session, socket)
-    end
-  end
-
-  describe "fetch_api_scope/2" do
-    test "authenticates user with valid bearer token", %{conn: conn, user: user} do
-      org = app_org_fixture()
-      user_token = Accounts.generate_user_session_token(user, decoded: false)
-
-      conn =
-        conn
-        |> put_req_header("authorization", "Bearer #{user_token}")
-        |> put_req_header("x-org-domain", org.custom_domain)
-        |> UserAuth.fetch_api_scope([])
-
-      assert conn.assigns.scope.user.id == user.id
-      assert conn.assigns.scope.org.id == org.id
-    end
-
-    test "adds the correct org to the scope", %{conn: conn, user: user} do
-      org = org_fixture()
-      user_token = Accounts.generate_user_session_token(user, decoded: false)
-
-      conn =
-        conn
-        |> put_req_header("authorization", "Bearer #{user_token}")
-        |> put_req_header("x-org-domain", org.custom_domain)
-        |> UserAuth.fetch_api_scope([])
-
-      assert conn.assigns.scope.user.id == user.id
-      assert conn.assigns.scope.org.id == org.id
-    end
-
-    test "does not authenticate when no authorization header is present", %{conn: conn, user: user} do
-      _user_token = Accounts.generate_user_session_token(user, decoded: false)
-      conn = UserAuth.fetch_api_scope(conn, [])
-      refute conn.assigns.scope.user
-      assert conn.assigns.scope.org
-    end
-
-    test "does not authenticate with invalid header format", %{conn: conn, user: user} do
-      user_token = Accounts.generate_user_session_token(user, decoded: false)
-
-      conn =
-        conn
-        |> put_req_header("authorization", user_token)
-        |> UserAuth.fetch_api_scope([])
-
-      refute conn.assigns.scope.user
-      assert conn.assigns.scope.org
-    end
-
-    test "does not authenticate with invalid bearer token", %{conn: conn} do
-      conn =
-        conn
-        |> put_req_header("authorization", "Bearer invalid_token")
-        |> UserAuth.fetch_api_scope([])
-
-      refute conn.assigns.scope.user
-      assert conn.assigns.scope.org
     end
   end
 

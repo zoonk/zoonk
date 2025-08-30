@@ -126,7 +126,7 @@ defmodule Zoonk.CatalogTest do
       {:ok, _reaction} = Catalog.create_content_reaction(scope, %{content_id: content_id, reaction: :thumbs_up})
       {:ok, _reaction} = Catalog.create_content_reaction(scope, %{content_id: another_content.id, reaction: :thumbs_down})
 
-      another_scope = scope_fixture(%{kind: :team})
+      another_scope = scope_fixture(%{kind: :external})
       other_org_content = Repo.insert!(%Content{kind: :course, org_id: another_scope.org.id})
 
       {:ok, _reaction} =

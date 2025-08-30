@@ -19,6 +19,10 @@ defmodule ZoonkWeb.UserAuthorization do
 
     * `:ensure_org_member` - Verifies that the user is a confirmed member of the organization
       If not, raises a `PermissionError`.
+    * `:ensure_catalog_access` - Verifies that the organization has access to the catalog feature.
+      If not, raises a `PermissionError` with code `:feature_disabled`.
+    * `:ensure_system_org` - Verifies that the organization is a system organization.
+      If not, raises a `PermissionError`.
 
   ## Examples
 
@@ -35,6 +39,22 @@ defmodule ZoonkWeb.UserAuthorization do
     else
       raise PermissionError, code: :require_org_member
     end
+  end
+
+  def on_mount(:ensure_catalog_access, _params, _session, socket) when socket.assigns.scope.org.kind == :system do
+    {:cont, socket}
+  end
+
+  def on_mount(:ensure_catalog_access, _params, _session, _socket) do
+    raise PermissionError, code: :feature_disabled
+  end
+
+  def on_mount(:ensure_system_org, _params, _session, socket) when socket.assigns.scope.org.kind == :system do
+    {:cont, socket}
+  end
+
+  def on_mount(:ensure_system_org, _params, _session, _socket) do
+    raise PermissionError
   end
 
   defp org_member?(%Scope{user: %User{confirmed_at: nil}}), do: false

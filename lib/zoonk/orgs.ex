@@ -54,9 +54,9 @@ defmodule Zoonk.Orgs do
       iex> create_org(%{name: "My Org"})
       {:error, %Ecto.Changeset{}}
   """
-  def create_org(kind, attrs \\ %{}) do
+  def create_org(attrs \\ %{}) do
     Multi.new()
-    |> Multi.insert(:org, Org.changeset(%Org{kind: kind}, attrs))
+    |> Multi.insert(:org, Org.changeset(%Org{kind: :external}, attrs))
     |> Multi.insert(:settings, fn %{org: org} -> change_org_settings(%OrgSettings{org_id: org.id}) end)
     |> Repo.transact()
     |> Helpers.changeset_from_transaction(:org)
@@ -78,10 +78,10 @@ defmodule Zoonk.Orgs do
 
   """
   def get_org_by_host(host) when is_binary(host) do
-    get_org_by_custom_domain(host) || get_org_by_subdomain(host) || get_app_org()
+    get_org_by_custom_domain(host) || get_org_by_subdomain(host) || get_system_org()
   end
 
-  def get_org_by_host(_host), do: get_app_org()
+  def get_org_by_host(_host), do: get_system_org()
 
   defp get_org_by_custom_domain(host) do
     Repo.get_by(Org, custom_domain: host)
@@ -95,11 +95,11 @@ defmodule Zoonk.Orgs do
     end
   end
 
-  # Fallback if we couldn't find an org, then use the app org
+  # Fallback if we couldn't find an org, then use the system org
   # (which is the only one that can be used without a subdomain)
   # because everyone has access to the main app.
-  defp get_app_org do
-    Repo.get_by(Org, kind: :app)
+  defp get_system_org do
+    Repo.get_by(Org, kind: :system)
   end
 
   @doc """
@@ -141,4 +141,23 @@ defmodule Zoonk.Orgs do
   end
 
   def get_org_settings(_scope), do: nil
+
+  @doc """
+  Create an org member.
+
+  ## Examples
+
+      iex> create_org_member(%Org{}, %User{})
+      {:ok, %OrgMember{}}
+
+      iex> create_org_member(%Org{}, nil)
+      {:error, %Ecto.Changeset{}}
+  """
+  def create_org_member(%Scope{} = scope, %User{} = user, attrs) when scope.org_member.role == :admin do
+    %OrgMember{org_id: scope.org.id, user_id: user.id}
+    |> OrgMember.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def create_org_member(_scope, _user, _attrs), do: {:error, :unauthorized}
 end

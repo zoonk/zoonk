@@ -8,6 +8,7 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
   alias Zoonk.Scope
 
   on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
+  on_mount {ZoonkWeb.UserAuthorization, :ensure_catalog_access}
 
   @colors [
     "text-green-500",

@@ -2,6 +2,7 @@ defmodule Zoonk.AccountsTest do
   use Zoonk.DataCase, async: true
 
   import Zoonk.AccountFixtures
+  import Zoonk.OrgFixtures
 
   alias Zoonk.Accounts
   alias Zoonk.Accounts.Subdomain
@@ -281,9 +282,9 @@ defmodule Zoonk.AccountsTest do
       assert org_member.role == :member
     end
 
-    test "doesn't allow to signup to a team when sign up is not allowed" do
+    test "doesn't allow to signup to an org when sign up is not allowed" do
       # empty allowed_domains means no signup allowed
-      scope = scope_fixture(%{kind: :team, settings: %{allowed_domains: []}})
+      scope = scope_fixture(%{kind: :external, settings: %{allowed_domains: []}})
 
       {:error, changeset} =
         %{email: "user@zoonk.test"}
@@ -294,8 +295,8 @@ defmodule Zoonk.AccountsTest do
       assert_error(changeset, :email, "zoonk.test")
     end
 
-    test "doesn't allow to sign up to a team with a not allowed domain" do
-      scope = scope_fixture(%{kind: :team, settings: %{allowed_domains: ["allowed.com"]}})
+    test "doesn't allow to sign up to an org with a not allowed domain" do
+      scope = scope_fixture(%{kind: :external, settings: %{allowed_domains: ["allowed.com"]}})
 
       {:error, changeset} =
         %{email: "user@invalid.com"}
@@ -306,8 +307,8 @@ defmodule Zoonk.AccountsTest do
       assert_error(changeset, :email, "invalid.com")
     end
 
-    test "allows to sign up to a team with an allowed domain" do
-      scope = scope_fixture(%{kind: :team, settings: %{allowed_domains: ["allowed.com"]}})
+    test "allows to sign up to an org with an allowed domain" do
+      scope = scope_fixture(%{kind: :external, settings: %{allowed_domains: ["allowed.com"]}})
 
       {:ok, user} =
         %{email: "user@allowed.com"}
@@ -318,51 +319,14 @@ defmodule Zoonk.AccountsTest do
       assert Repo.get_by(UserProfile, user_id: user.id)
     end
 
-    test "doesn't allow to signup to a school when sign up is not allowed" do
-      # empty allowed_domains means no signup allowed
-      scope = scope_fixture(%{kind: :school, settings: %{allowed_domains: []}})
-
-      {:error, changeset} =
-        %{email: "user@zoonk.test"}
-        |> valid_user_attributes()
-        |> Accounts.signup_user(scope)
-
-      assert_error(changeset, :email, "You can't signup with this email address")
-      assert_error(changeset, :email, "zoonk.test")
-    end
-
-    test "doesn't allow to sign up to a school with a not allowed domain" do
-      scope = scope_fixture(%{kind: :school, settings: %{allowed_domains: ["allowed.com"]}})
-
-      {:error, changeset} =
-        %{email: "user@invalid.com"}
-        |> valid_user_attributes()
-        |> Accounts.signup_user(scope)
-
-      assert_error(changeset, :email, "You can't signup with this email address")
-      assert_error(changeset, :email, "invalid.com")
-    end
-
-    test "allows to sign up to a school with an allowed domain" do
-      scope = scope_fixture(%{kind: :school, settings: %{allowed_domains: ["allowed.com"]}})
-
-      {:ok, user} =
-        %{email: "user@allowed.com"}
-        |> valid_user_attributes()
-        |> Accounts.signup_user(scope)
-
-      assert user.email == "user@allowed.com"
-      assert Repo.get_by(UserProfile, user_id: user.id)
-    end
-
-    test "always allows to sign up to app orgs" do
-      scope = scope_fixture(%{kind: :app, settings: %{allowed_domains: []}})
+    test "always allows to sign up to system orgs" do
+      scope = scope_fixture(%{kind: :system, settings: %{allowed_domains: []}})
       {:ok, user} = Accounts.signup_user(valid_user_attributes(), scope)
       assert Repo.get_by(UserProfile, user_id: user.id)
     end
 
-    test "always allows to sign up to creator orgs" do
-      scope = scope_fixture(%{kind: :creator, settings: %{allowed_domains: []}})
+    test "always allows to sign up to public external orgs" do
+      scope = scope_fixture(%{kind: :external, is_public: true, settings: %{allowed_domains: []}})
       {:ok, user} = Accounts.signup_user(valid_user_attributes(), scope)
       assert Repo.get_by(UserProfile, user_id: user.id)
     end
@@ -599,13 +563,13 @@ defmodule Zoonk.AccountsTest do
   end
 
   describe "login_with_provider/2" do
-    test "creates a new user and links the provider for the :app org" do
+    test "creates a new user and links the provider for the :system org" do
       email = unique_user_email()
       picture = "https://zoonk.test/picture.png"
       uid = Ecto.UUID.generate()
 
       auth = oauth_fixture(%{uid: uid, email: email, picture: picture})
-      scope = scope_fixture(%{kind: :app, user: nil, settings: %{allowed_domains: []}})
+      scope = scope_fixture(%{kind: :system, user: nil, settings: %{allowed_domains: []}})
 
       {:ok, %User{} = user} = Accounts.login_with_provider(auth, scope, "en")
 
@@ -627,20 +591,21 @@ defmodule Zoonk.AccountsTest do
       assert org_member.role == :member
     end
 
-    test "creates a new user for :creator orgs" do
+    test "creates a new user for public orgs" do
       email = unique_user_email()
       uid = Ecto.UUID.generate()
 
       auth = oauth_fixture(%{uid: uid, email: email})
-      scope = scope_fixture(%{kind: :creator, user: nil})
+      org = org_fixture(%{is_public: true, kind: :external})
+      scope = scope_fixture(%{user: nil, org: org})
 
       assert {:ok, %User{} = user} = Accounts.login_with_provider(auth, scope, "en")
       assert user.email == email
     end
 
-    test "doesn't create user if :team doesn't allow sign up" do
+    test "doesn't create user if org doesn't allow sign up" do
       # empty allowed_domains means no signup allowed
-      scope = scope_fixture(%{kind: :team, settings: %{allowed_domains: []}})
+      scope = scope_fixture(%{kind: :external, settings: %{allowed_domains: []}})
 
       email = unique_user_email()
       uid = Ecto.UUID.generate()
@@ -650,9 +615,8 @@ defmodule Zoonk.AccountsTest do
       assert_error(changeset, :email, "You can't signup with this email address")
     end
 
-    test "doesn't create user if :school doesn't allow sign up" do
-      # empty allowed_domains means no signup allowed
-      scope = scope_fixture(%{kind: :school, settings: %{allowed_domains: []}})
+    test "doesn't create user if an org doesn't allow sign up with a not allowed domain" do
+      scope = scope_fixture(%{kind: :external, settings: %{allowed_domains: ["allowed.com"]}})
 
       email = unique_user_email()
       uid = Ecto.UUID.generate()
@@ -662,42 +626,8 @@ defmodule Zoonk.AccountsTest do
       assert_error(changeset, :email, "You can't signup with this email address")
     end
 
-    test "doesn't create user if :team doesn't allow sign up with a not allowed domain" do
-      scope = scope_fixture(%{kind: :team, settings: %{allowed_domains: ["allowed.com"]}})
-
-      email = unique_user_email()
-      uid = Ecto.UUID.generate()
-
-      auth = oauth_fixture(%{uid: uid, email: email})
-      assert {:error, changeset} = Accounts.login_with_provider(auth, scope, "en")
-      assert_error(changeset, :email, "You can't signup with this email address")
-    end
-
-    test "doesn't create user if :school doesn't allow sign up with a not allowed domain" do
-      scope = scope_fixture(%{kind: :school, settings: %{allowed_domains: ["allowed.com"]}})
-
-      email = unique_user_email()
-      uid = Ecto.UUID.generate()
-
-      auth = oauth_fixture(%{uid: uid, email: email})
-      assert {:error, changeset} = Accounts.login_with_provider(auth, scope, "en")
-      assert_error(changeset, :email, "You can't signup with this email address")
-    end
-
-    test "creates user if :team allows sign up with an allowed domain" do
-      scope = scope_fixture(%{kind: :team, settings: %{allowed_domains: ["allowed.com"]}})
-
-      email = "#{System.unique_integer()}@allowed.com"
-      uid = Ecto.UUID.generate()
-
-      auth = oauth_fixture(%{uid: uid, email: email})
-      {:ok, user} = Accounts.login_with_provider(auth, scope, "en")
-
-      assert user.email == email
-    end
-
-    test "creates user if :school allows sign up with an allowed domain" do
-      scope = scope_fixture(%{kind: :school, settings: %{allowed_domains: ["allowed.com"]}})
+    test "creates user if org allows sign up with an allowed domain" do
+      scope = scope_fixture(%{kind: :external, settings: %{allowed_domains: ["allowed.com"]}})
 
       email = "#{System.unique_integer()}@allowed.com"
       uid = Ecto.UUID.generate()

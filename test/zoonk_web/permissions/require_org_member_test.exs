@@ -3,9 +3,8 @@ defmodule ZoonkWeb.RequireOrgMemberPermissionTest do
     async: true,
     parameterize:
       for(
-        kind <- [:app, :creator, :team, :school],
+        kind <- [:system, :external],
         page <- [
-          %{link: "/learn", menu: "Get Started"},
           %{link: "/my-courses", menu: "My courses"},
           %{link: "/subscription", menu: "Subscription"},
           %{link: "/settings", menu: "Settings"},
@@ -57,7 +56,7 @@ defmodule ZoonkWeb.RequireOrgMemberPermissionTest do
     end
 
     test "raises error for non-members", %{conn: conn, page: page, kind: kind} do
-      if kind != :app do
+      if kind != :system do
         org = org_fixture(%{kind: kind})
         user = user_fixture()
 
@@ -70,9 +69,9 @@ defmodule ZoonkWeb.RequireOrgMemberPermissionTest do
       end
     end
 
-    test "allows access to app kind even if non-member", %{conn: conn, page: page, kind: kind} do
-      if kind == :app do
-        org = org_fixture(%{kind: :app})
+    test "allows access to system kind even if non-member", %{conn: conn, page: page, kind: kind} do
+      if kind == :system do
+        org = org_fixture(%{kind: :system})
         user = user_fixture()
 
         conn

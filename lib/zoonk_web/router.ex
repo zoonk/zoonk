@@ -83,6 +83,8 @@ defmodule ZoonkWeb.Router do
 
       live "/confirm/login", AuthConfirmCodeLive, :login
       live "/confirm/signup", AuthConfirmCodeLive, :signup
+
+      live "/orgs/new", OrgNewLive
     end
   end
 
@@ -156,6 +158,7 @@ defmodule ZoonkWeb.Router do
         live "/input", InputPreviewLive
         live "/loader", LoaderPreviewLive
         live "/pill", PillPreviewLive
+        live "/stepper", StepperPreviewLive
         live "/text", TextPreviewLive
         live "/toggle", TogglePreviewLive
       end

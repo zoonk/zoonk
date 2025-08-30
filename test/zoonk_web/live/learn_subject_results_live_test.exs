@@ -7,36 +7,22 @@ defmodule ZoonkWeb.LearnSubjectResultsLiveTest do
   alias Zoonk.Catalog
 
   describe "learn subject: results (unauthenticated)" do
-    test "redirects page for :app org" do
+    test "redirects page for system org" do
       build_conn()
-      |> Map.put(:host, app_org_fixture().custom_domain)
+      |> Map.put(:host, system_org_fixture().custom_domain)
       |> visit(~p"/learn/coding")
       |> assert_path(~p"/login")
     end
 
-    test "redirects page for :creator org" do
+    test "redirects page for external org" do
       build_conn()
-      |> Map.put(:host, org_fixture(%{kind: :creator}).custom_domain)
-      |> visit(~p"/learn")
-      |> assert_path(~p"/login")
-    end
-
-    test "redirects page for :team org" do
-      build_conn()
-      |> Map.put(:host, org_fixture(%{kind: :team}).custom_domain)
-      |> visit(~p"/learn")
-      |> assert_path(~p"/login")
-    end
-
-    test "redirects page for :school org" do
-      build_conn()
-      |> Map.put(:host, org_fixture(%{kind: :school}).custom_domain)
+      |> Map.put(:host, org_fixture(%{kind: :external}).custom_domain)
       |> visit(~p"/learn")
       |> assert_path(~p"/login")
     end
   end
 
-  describe "learn subject: results" do
+  describe "learn subject: results  (authenticated to system org)" do
     setup :signup_and_login_user
 
     test "loads the data", %{conn: conn} do
@@ -80,6 +66,19 @@ defmodule ZoonkWeb.LearnSubjectResultsLiveTest do
       |> assert_has(".tabler-thumb-down-filled")
 
       assert Catalog.get_content_reaction(scope, course_suggestion.content_id).reaction == :thumbs_down
+    end
+  end
+
+  describe "learn subject: results  (authenticated to public external org)" do
+    setup :signup_and_login_user_for_public_external_org
+
+    test "doesn't allow access for public external org", %{conn: conn} do
+      error =
+        assert_raise ZoonkWeb.PermissionError, fn ->
+          visit(conn, ~p"/learn/coding")
+        end
+
+      assert error.message == "Your organization doesn't have access to this feature."
     end
   end
 end

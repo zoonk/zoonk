@@ -73,7 +73,7 @@ defmodule ZoonkWeb.AppContactLiveTest do
 
   describe "contact form for unauthenticated users" do
     test "renders contact form with empty email field for unauthenticated users", %{conn: conn} do
-      org = Zoonk.OrgFixtures.org_fixture(%{kind: :app})
+      org = Zoonk.OrgFixtures.org_fixture(%{kind: :system})
 
       conn
       |> Map.put(:host, org.custom_domain)
@@ -84,7 +84,7 @@ defmodule ZoonkWeb.AppContactLiveTest do
     end
 
     test "allows unauthenticated users to contact us", %{conn: conn} do
-      org = Zoonk.OrgFixtures.org_fixture(%{kind: :app})
+      org = Zoonk.OrgFixtures.org_fixture(%{kind: :system})
       user_email = "anonymous@example.com"
       message = "I'm trying to create an account but the signup form is not working properly."
 

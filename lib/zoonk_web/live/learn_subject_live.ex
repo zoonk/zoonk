@@ -3,6 +3,7 @@ defmodule ZoonkWeb.LearnSubjectLive do
   use ZoonkWeb, :live_view
 
   on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
+  on_mount {ZoonkWeb.UserAuthorization, :ensure_catalog_access}
 
   @impl Phoenix.LiveView
   def render(assigns) do

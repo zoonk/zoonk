@@ -28,10 +28,10 @@ defmodule ZoonkWeb.AuthSignUpWithEmailLiveTest do
     end
   end
 
-  describe "signs up user (:app org)" do
+  describe "signs up user (:system org)" do
     setup do
-      app_org = app_org_fixture()
-      conn = Map.put(build_conn(), :host, app_org.custom_domain)
+      system_org = system_org_fixture()
+      conn = Map.put(build_conn(), :host, system_org.custom_domain)
 
       %{conn: conn}
     end

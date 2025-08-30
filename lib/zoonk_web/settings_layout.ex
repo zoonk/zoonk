@@ -22,7 +22,7 @@ defmodule ZoonkWeb.SettingsLayout do
           <div class="flex h-9 w-full flex-col items-center md:items-start">
             <.live_component
               module={ZoonkWeb.CommandPaletteLive}
-              authenticated={@scope.user != nil}
+              scope={@scope}
               id="command-palette"
               variant={:input}
             />
