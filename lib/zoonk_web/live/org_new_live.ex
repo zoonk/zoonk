@@ -12,59 +12,61 @@ defmodule ZoonkWeb.OrgNewLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <.form
+      <.multi_step_form
         for={@form}
-        phx-change="validate"
-        phx-submit={next_action(@current_step)}
-        class="mx-auto mt-4 flex w-full max-w-4xl flex-1 flex-col gap-8 lg:mt-8"
+        current_step={@current_step}
+        steps={steps()}
+        submit_label={dgettext("orgs", "Create organization")}
+        done_label={dgettext("orgs", "Go to your organization")}
+        navigate={~p"/"}
       >
-        <.stepper current_step={@current_step} total_steps={total_steps()}>
-          <:step :for={step <- steps()} title={step.title} />
-        </.stepper>
-
-        <div
+        <.multi_step_form_fieldset
           :if={@current_step == 1}
-          class="flex flex-col gap-1"
-          phx-window-keydown={next_action(@current_step)}
+          phx-window-keydown="next"
           phx-key="Enter"
-        >
-          <.text tag="h1" size={:xxl}>{dgettext("orgs", "Set up your organization")}</.text>
-
-          <.text tag="h2" size={:md} variant={:secondary}>
-            {dgettext(
+          title={dgettext("orgs", "Set up your organization")}
+          subtitle={
+            dgettext(
               "orgs",
               "Once it’s ready, you can create your own courses or give your team and students access to our catalog."
-            )}
-          </.text>
-        </div>
+            )
+          }
+        />
 
-        <.input
+        <.multi_step_form_fieldset
           :if={@current_step == 2}
-          field={@form[:display_name]}
-          label={dgettext("orgs", "Name")}
-          hide_label
-          phx-mounted={JS.focus()}
-          required
-        />
+          title={dgettext("orgs", "What's the name of your organization?")}
+          subtitle={dgettext("orgs", "This name will be visible to all users.")}
+        >
+          <.input
+            field={@form[:display_name]}
+            label={dgettext("orgs", "Name")}
+            hide_label
+            phx-mounted={JS.focus()}
+            required
+          />
+        </.multi_step_form_fieldset>
 
-        <.input
+        <.multi_step_form_fieldset
           :if={@current_step == 3}
-          field={@form[:subdomain]}
-          label={dgettext("orgs", "Subdomain")}
-          hide_label
-          phx-mounted={JS.focus()}
-          required
-        />
-
-        <.step_navigation
-          current_step={@current_step}
-          total_steps={total_steps()}
-          submit_label={dgettext("orgs", "Create organization")}
-          done_label={dgettext("orgs", "Go to your organization")}
-          navigate={~p"/"}
-          next_disabled={disabled?(@form, @current_step)}
-        />
-      </.form>
+          title={dgettext("orgs", "Choose your organization’s subdomain")}
+          subtitle={
+            dgettext(
+              "orgs",
+              "This is the address used to access your organization's page. E.g. <myorg>.zoonk.app"
+            )
+          }
+        >
+          <.input
+            :if={@current_step == 3}
+            field={@form[:subdomain]}
+            label={dgettext("orgs", "Subdomain")}
+            hide_label
+            phx-mounted={JS.focus()}
+            required
+          />
+        </.multi_step_form_fieldset>
+      </.multi_step_form>
     </ZoonkWeb.AppLayout.render>
     """
   end
@@ -121,26 +123,14 @@ defmodule ZoonkWeb.OrgNewLive do
 
   defp total_steps, do: length(steps())
 
-  defp next_action(current) do
-    if current == total_steps() - 1, do: "submit", else: "next"
-  end
-
   defp steps do
     [
-      %{title: dgettext("orgs", "Start")},
-      %{title: dgettext("orgs", "Name")},
-      %{title: dgettext("orgs", "Subdomain")},
-      %{title: dgettext("orgs", "Visibility")},
-      %{title: dgettext("orgs", "Mode")},
-      %{title: dgettext("orgs", "Done")}
+      %{label: dgettext("orgs", "Start"), field: nil},
+      %{label: dgettext("orgs", "Name"), field: :display_name},
+      %{label: dgettext("orgs", "Subdomain"), field: :subdomain},
+      %{label: dgettext("orgs", "Visibility"), field: :is_public},
+      %{label: dgettext("orgs", "Mode"), field: :mode},
+      %{label: dgettext("orgs", "Done"), field: :done}
     ]
   end
-
-  defp disabled?(%Phoenix.HTML.Form{errors: errors}, current_step) do
-    Enum.any?(errors, fn {err_field, _msg} -> err_field == field(current_step) end)
-  end
-
-  defp field(2), do: :display_name
-  defp field(3), do: :subdomain
-  defp field(_step), do: :other
 end
