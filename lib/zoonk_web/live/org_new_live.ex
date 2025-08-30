@@ -43,6 +43,7 @@ defmodule ZoonkWeb.OrgNewLive do
           field={@form[:display_name]}
           label={dgettext("orgs", "Name")}
           hide_label
+          phx-mounted={JS.focus()}
           required
         />
 
@@ -51,6 +52,7 @@ defmodule ZoonkWeb.OrgNewLive do
           field={@form[:subdomain]}
           label={dgettext("orgs", "Subdomain")}
           hide_label
+          phx-mounted={JS.focus()}
           required
         />
 
