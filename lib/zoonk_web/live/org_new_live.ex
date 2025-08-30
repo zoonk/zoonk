@@ -60,6 +60,7 @@ defmodule ZoonkWeb.OrgNewLive do
           submit_label={dgettext("orgs", "Create organization")}
           done_label={dgettext("orgs", "Go to your organization")}
           navigate={~p"/"}
+          next_disabled={disabled?(@form, @current_step)}
         />
       </.form>
     </ZoonkWeb.AppLayout.render>
@@ -132,4 +133,12 @@ defmodule ZoonkWeb.OrgNewLive do
       %{title: dgettext("orgs", "Done")}
     ]
   end
+
+  defp disabled?(%Phoenix.HTML.Form{errors: errors}, current_step) do
+    Enum.any?(errors, fn {err_field, _msg} -> err_field == field(current_step) end)
+  end
+
+  defp field(2), do: :display_name
+  defp field(3), do: :subdomain
+  defp field(_step), do: :other
 end
