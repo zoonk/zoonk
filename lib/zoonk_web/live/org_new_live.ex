@@ -50,17 +50,13 @@ defmodule ZoonkWeb.OrgNewLive do
         <.multi_step_form_fieldset
           :if={@current_step == 3}
           title={dgettext("orgs", "Choose your organization’s subdomain")}
-          subtitle={
-            dgettext(
-              "orgs",
-              "This is the address used to access your organization's page. E.g. <myorg>.zoonk.app"
-            )
-          }
+          subtitle={dgettext("orgs", "This is the address used to access your organization's page.")}
         >
           <.input
             :if={@current_step == 3}
             field={@form[:subdomain]}
             label={dgettext("orgs", "Subdomain")}
+            suffix=".zoonk.app"
             hide_label
             phx-mounted={JS.focus()}
             required
