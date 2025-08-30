@@ -22,7 +22,12 @@ defmodule ZoonkWeb.OrgNewLive do
           <:step :for={step <- steps()} title={step.title} />
         </.stepper>
 
-        <div :if={@current_step == 1} class="flex flex-col gap-1">
+        <div
+          :if={@current_step == 1}
+          class="flex flex-col gap-1"
+          phx-window-keydown={next_action(@current_step)}
+          phx-key="Enter"
+        >
           <.text tag="h1" size={:xxl}>{dgettext("orgs", "Set up your organization")}</.text>
 
           <.text tag="h2" size={:md} variant={:secondary}>
