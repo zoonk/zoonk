@@ -2,6 +2,9 @@ defmodule ZoonkWeb.OrgNewLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
+  alias Zoonk.Orgs
+  alias Zoonk.Orgs.Org
+
   on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
   on_mount {ZoonkWeb.UserAuthorization, :ensure_system_org}
 
@@ -9,7 +12,9 @@ defmodule ZoonkWeb.OrgNewLive do
   def render(assigns) do
     ~H"""
     <ZoonkWeb.AppLayout.render flash={@flash} scope={@scope}>
-      <form
+      <.form
+        for={@form}
+        phx-change="validate"
         phx-submit={next_action(@current_step)}
         class="mx-auto mt-4 flex w-full max-w-4xl flex-1 flex-col gap-8 lg:mt-8"
       >
@@ -28,6 +33,20 @@ defmodule ZoonkWeb.OrgNewLive do
           </.text>
         </div>
 
+        <.input
+          :if={@current_step == 2}
+          field={@form[:display_name]}
+          label={dgettext("orgs", "Name")}
+          hide_label
+        />
+
+        <.input
+          :if={@current_step == 3}
+          field={@form[:subdomain]}
+          label={dgettext("orgs", "Subdomain")}
+          hide_label
+        />
+
         <.step_navigation
           current_step={@current_step}
           total_steps={total_steps()}
@@ -35,20 +54,40 @@ defmodule ZoonkWeb.OrgNewLive do
           done_label={dgettext("orgs", "Go to your organization")}
           navigate={~p"/"}
         />
-      </form>
+      </.form>
     </ZoonkWeb.AppLayout.render>
     """
   end
 
   @impl Phoenix.LiveView
   def mount(_params, _session, socket) do
+    org_changeset = Orgs.change_org(%Org{})
+
     {:ok,
      socket
      |> assign(:page_title, dgettext("page_title", "Set up your organization"))
-     |> assign(:current_step, 1)}
+     |> assign(:current_step, 1)
+     |> assign(:org, %Org{})
+     |> assign(:form, to_form(org_changeset))}
   end
 
   @impl Phoenix.LiveView
+  def handle_event("validate", %{"org" => params}, socket) do
+    org = socket.assigns.org
+
+    changeset =
+      org
+      |> Orgs.change_org(params)
+      |> Map.put(:action, :validate)
+
+    updated_org = Map.merge(org, changeset.changes)
+
+    {:noreply,
+     socket
+     |> assign(:form, to_form(changeset))
+     |> assign(:org, updated_org)}
+  end
+
   def handle_event("previous", _params, socket) do
     current_step = socket.assigns.current_step
     new_step = max(current_step - 1, 1)
