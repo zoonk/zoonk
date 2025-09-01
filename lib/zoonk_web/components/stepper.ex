@@ -62,6 +62,7 @@ defmodule ZoonkWeb.Components.Stepper do
         ]}
         aria-label={step.title}
         title={step.title}
+        aria-current={current?(index, @current_step) && "step"}
       >
       </div>
     </nav>
@@ -78,6 +79,7 @@ defmodule ZoonkWeb.Components.Stepper do
       <div
         :for={{step, index} <- Enum.with_index(@step, 1)}
         class={["flex-1 text-center", index < length(@step) && "border-zk-border border-r"]}
+        aria-current={current?(index, @current_step) && "step"}
       >
         <div class={[
           "px-4 py-2 text-sm font-medium transition-colors duration-200",
@@ -99,6 +101,7 @@ defmodule ZoonkWeb.Components.Stepper do
         <li
           :for={{step, index} <- Enum.with_index(@step, 1)}
           class={["flex items-center", !last?(index, @step) && "flex-1"]}
+          aria-current={current?(index, @current_step) && "step"}
         >
           <!-- Step circle -->
           <div class="flex items-center">

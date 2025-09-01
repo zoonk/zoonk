@@ -74,6 +74,8 @@ defmodule ZoonkWeb.OrgNewLive do
           title={dgettext("orgs", "Choose your organization’s subdomain")}
           subtitle={dgettext("orgs", "This is the address used to access your organization's page.")}
         >
+          <.input type="hidden" field={@form[:display_name]} />
+
           <.input
             :if={@current_step == 3}
             field={@form[:subdomain]}
@@ -97,25 +99,17 @@ defmodule ZoonkWeb.OrgNewLive do
      socket
      |> assign(:page_title, dgettext("page_title", "Set up your organization"))
      |> assign(:current_step, 1)
-     |> assign(:org, %Org{})
      |> assign(:form, to_form(org_changeset))}
   end
 
   @impl Phoenix.LiveView
   def handle_event("validate", %{"org" => params}, socket) do
-    org = socket.assigns.org
-
     changeset =
-      org
+      %Org{}
       |> Orgs.change_org(params)
       |> Map.put(:action, :validate)
 
-    updated_org = Map.merge(org, changeset.changes)
-
-    {:noreply,
-     socket
-     |> assign(:form, to_form(changeset))
-     |> assign(:org, updated_org)}
+    {:noreply, assign(socket, :form, to_form(changeset))}
   end
 
   def handle_event("previous", _params, socket) do
@@ -125,11 +119,14 @@ defmodule ZoonkWeb.OrgNewLive do
     {:noreply, assign(socket, current_step: new_step)}
   end
 
-  def handle_event("next", _params, socket) do
+  def handle_event("next", params, socket) do
     current_step = socket.assigns.current_step
     new_step = min(current_step + 1, total_steps())
 
-    {:noreply, assign(socket, current_step: new_step)}
+    {:noreply,
+     socket
+     |> assign(current_step: new_step)
+     |> maybe_update_form(params)}
   end
 
   def handle_event("submit", _params, socket) do
@@ -138,4 +135,11 @@ defmodule ZoonkWeb.OrgNewLive do
 
     {:noreply, assign(socket, current_step: new_step)}
   end
+
+  defp maybe_update_form(socket, %{"orgs" => params}) do
+    changeset = Orgs.change_org(%Org{}, params)
+    assign(socket, :form, to_form(changeset))
+  end
+
+  defp maybe_update_form(socket, _params), do: socket
 end
