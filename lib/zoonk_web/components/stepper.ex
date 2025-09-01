@@ -225,6 +225,7 @@ defmodule ZoonkWeb.Components.Stepper do
         submit_label="Complete Setup"
       />
   """
+  attr :fixed, :boolean, default: false, doc: "Fix navigation to bottom of viewport"
   attr :current_step, :integer, required: true, doc: "Current step number (1-indexed)"
   attr :total_steps, :integer, required: true, doc: "Total number of steps"
   attr :on_previous, :any, default: "previous", doc: "Event handler for previous button"
@@ -239,7 +240,12 @@ defmodule ZoonkWeb.Components.Stepper do
 
   def step_navigation(assigns) do
     ~H"""
-    <div class={["mt-auto flex w-full items-center justify-between gap-4", @class]}>
+    <div class={[
+      "flex w-full items-center justify-between gap-4",
+      !@fixed && "mt-auto",
+      @fixed && "bg-zk-background border-zk-border fixed bottom-0 left-0 z-50 border-t px-4 py-3",
+      @class
+    ]}>
       <.button
         variant={:outline}
         phx-click={@on_previous}

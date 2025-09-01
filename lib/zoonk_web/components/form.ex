@@ -56,7 +56,7 @@ defmodule ZoonkWeb.Components.Form do
       for={@for}
       phx-change="validate"
       phx-submit={next_action(@current_step, @steps)}
-      class="mx-auto mt-4 flex w-full max-w-4xl flex-1 flex-col gap-8 lg:mt-8"
+      class="mx-auto mt-4 flex w-full max-w-4xl flex-1 flex-col gap-8 pb-16 lg:mt-8"
     >
       <.stepper current_step={@current_step} total_steps={length(@steps)}>
         <:step :for={step <- @steps} title={step.label} />
@@ -65,6 +65,7 @@ defmodule ZoonkWeb.Components.Form do
       {render_slot(@inner_block)}
 
       <.step_navigation
+        fixed
         current_step={@current_step}
         total_steps={length(@steps)}
         submit_label={@submit_label}
