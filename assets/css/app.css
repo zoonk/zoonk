@@ -72,8 +72,8 @@
 
     --primary: var(--color-blue-600);
     --primary-foreground: var(--color-blue-50);
-    --primary-text: var(--color-blue-400);
-    --primary-text-foreground: var(--color-blue-50);
+    --primary-text: var(--color-blue-300);
+    --primary-text-foreground: var(--color-blue-700);
 
     --primary-accent: var(--color-blue-700);
     --primary-accent-foreground: var(--color-blue-50);
@@ -173,7 +173,7 @@
     --primary: var(--color-blue-800);
     --primary-foreground: var(--color-white);
     --primary-text: var(--color-blue-200);
-    --primary-text-foreground: var(--color-blue-800);
+    --primary-text-foreground: var(--color-blue-900);
 
     --primary-subtle: var(--color-blue-700);
     --primary-subtle-foreground: var(--color-blue-50);
