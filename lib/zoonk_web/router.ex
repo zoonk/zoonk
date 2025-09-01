@@ -155,6 +155,7 @@ defmodule ZoonkWeb.Router do
         live "/dropdown", DropdownPreviewLive
         live "/flash", FlashPreviewLive
         live "/form", FormPreviewLive
+        live "/info", InfoPreviewLive
         live "/input", InputPreviewLive
         live "/loader", LoaderPreviewLive
         live "/pill", PillPreviewLive
