@@ -1,20 +1,9 @@
-defmodule ZoonkWeb.Components.Info do
+defmodule ZoonkWeb.Components.InfoCard do
   @moduledoc false
   use Phoenix.Component
 
   import ZoonkWeb.Components.Icon
   import ZoonkWeb.Components.Text
-
-  attr :class, :string, default: nil
-  slot :inner_block, required: true
-
-  def info(assigns) do
-    ~H"""
-    <section class={["flex flex-col gap-8", @class]}>
-      {render_slot(@inner_block)}
-    </section>
-    """
-  end
 
   attr :class, :string, default: nil
   slot :inner_block, required: true
@@ -34,7 +23,7 @@ defmodule ZoonkWeb.Components.Info do
   def info_header(assigns) do
     ~H"""
     <header class="flex items-center gap-2">
-      <div class="bg-zk-primary-foreground size-11 flex items-center justify-center rounded-full p-2">
+      <div class="bg-zk-primary-text-foreground size-11 flex items-center justify-center rounded-full p-2">
         <.icon name={@icon} class="text-zk-primary-text" />
       </div>
 

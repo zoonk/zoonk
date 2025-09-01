@@ -99,7 +99,7 @@ defmodule ZoonkWeb do
       import ZoonkWeb.Components.Flash
       import ZoonkWeb.Components.Form
       import ZoonkWeb.Components.Icon
-      import ZoonkWeb.Components.Info
+      import ZoonkWeb.Components.InfoCard
       import ZoonkWeb.Components.Input
       import ZoonkWeb.Components.Loader
       import ZoonkWeb.Components.Navbar
