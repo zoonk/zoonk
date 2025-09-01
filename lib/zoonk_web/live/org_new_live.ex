@@ -2,6 +2,8 @@ defmodule ZoonkWeb.OrgNewLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
+  import ZoonkWeb.OrgNewConfig
+
   alias Zoonk.Orgs
   alias Zoonk.Orgs.Org
 
@@ -28,10 +30,30 @@ defmodule ZoonkWeb.OrgNewLive do
           subtitle={
             dgettext(
               "orgs",
-              "Once it’s ready, you can create your own courses or give your team and students access to our catalog."
+              "These are some of the most common use cases for your organization:"
             )
           }
-        />
+        >
+          <section class="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
+            <.info_card :for={use_case <- use_cases()}>
+              <.info_header
+                icon={use_case.icon}
+                title={use_case.title}
+                subtitle={use_case.subtitle}
+              />
+
+              <.info_description>
+                {use_case.description}
+              </.info_description>
+
+              <.info_list>
+                <.info_list_item :for={benefit <- use_case.benefits} icon={benefit.icon}>
+                  {benefit.text}
+                </.info_list_item>
+              </.info_list>
+            </.info_card>
+          </section>
+        </.multi_step_form_fieldset>
 
         <.multi_step_form_fieldset
           :if={@current_step == 2}
@@ -115,18 +137,5 @@ defmodule ZoonkWeb.OrgNewLive do
     new_step = min(current_step + 1, total_steps())
 
     {:noreply, assign(socket, current_step: new_step)}
-  end
-
-  defp total_steps, do: length(steps())
-
-  defp steps do
-    [
-      %{label: dgettext("orgs", "Start"), field: nil},
-      %{label: dgettext("orgs", "Name"), field: :display_name},
-      %{label: dgettext("orgs", "Subdomain"), field: :subdomain},
-      %{label: dgettext("orgs", "Visibility"), field: :is_public},
-      %{label: dgettext("orgs", "Mode"), field: :mode},
-      %{label: dgettext("orgs", "Done"), field: :done}
-    ]
   end
 end
