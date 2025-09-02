@@ -1,7 +1,6 @@
 defmodule ZoonkWeb.UserSubscriptionForm do
   @moduledoc false
   use ZoonkWeb, :html
-  use Gettext, backend: Zoonk.Gettext
 
   import ZoonkWeb.UserSubscriptionComponents
 
@@ -33,32 +32,32 @@ defmodule ZoonkWeb.UserSubscriptionForm do
       />
 
       <div class="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
-        <.subscription_item
+        <.radio_input
           :for={plan <- available_plans()}
           value={Atom.to_string(plan.key)}
           name="plan"
           label={plan.label}
           checked={@selected_plan == plan.key}
         >
-          <.subscription_header>
-            <.subscription_title
+          <.radio_header>
+            <.radio_title
               badge_label={badge_label(plan.key, @current_plan, @interval)}
               badge_color={badge_color(plan.key, @current_plan)}
             >
               {plan.label}
-            </.subscription_title>
+            </.radio_title>
 
             <.subscription_price label={price_label(plan.key, @interval)}>
               {price_value(@prices, plan.key, @interval)}
             </.subscription_price>
-          </.subscription_header>
+          </.radio_header>
 
-          <.subscription_features :for={feature <- plan.features}>
-            <.subscription_feature icon={feature.icon}>
+          <.info_list :for={feature <- plan.features}>
+            <.info_list_item icon={feature.icon}>
               {feature.text}
-            </.subscription_feature>
-          </.subscription_features>
-        </.subscription_item>
+            </.info_list_item>
+          </.info_list>
+        </.radio_input>
       </div>
 
       <.subscription_submit
