@@ -140,6 +140,50 @@ defmodule ZoonkWeb.UIPreview.InputPreviewLive do
           />
         </.card_content>
       </.card>
+
+      <.card>
+        <.card_header>
+          <.card_title>Input with Suffix</.card_title>
+          <.card_description>Input fields with suffix text for additional context.</.card_description>
+        </.card_header>
+
+        <.card_content align={:center} class="space-y-4">
+          <.input
+            name="price"
+            label="Price"
+            placeholder="0.00"
+            suffix="USD"
+            type="number"
+            step="0.01"
+            value=""
+          />
+
+          <.input
+            name="username"
+            label="Email"
+            placeholder="username"
+            suffix="@zoonk.com"
+            value=""
+          />
+
+          <.input
+            name="weight"
+            label="Weight"
+            placeholder="0"
+            suffix="kg"
+            type="number"
+            value=""
+          />
+
+          <.input
+            name="search_location"
+            label="Location"
+            placeholder="Enter location"
+            suffix="tabler-map-pin"
+            value=""
+          />
+        </.card_content>
+      </.card>
     </ZoonkWeb.UIPreview.UIPreviewLayout.render>
     """
   end
