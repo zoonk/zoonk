@@ -85,7 +85,34 @@ defmodule ZoonkWeb.OrgNewLive do
           />
         </.multi_step_form_fieldset>
 
+        <.multi_step_form_fieldset
+          :if={@current_step == 4}
+          title={dgettext("orgs", "Should your organization be visible to everyone?")}
+          subtitle={dgettext("orgs", "Choose whether your organization is public or private.")}
+          content_class="grid grid-cols-1 gap-4 md:grid-cols-2"
+        >
+          <.radio_input
+            :for={option <- visibility_opts()}
+            value={option.value}
+            name="is_public"
+            label={option.label}
+          >
+            <.radio_header>
+              <.radio_title>{option.label}</.radio_title>
+            </.radio_header>
+
+            <.info_description>{option.description}</.info_description>
+
+            <.info_list>
+              <.info_list_item :for={use_case <- option.use_cases} icon={use_case.icon}>
+                {use_case.text}
+              </.info_list_item>
+            </.info_list>
+          </.radio_input>
+        </.multi_step_form_fieldset>
+
         <.input :if={@current_step > 2} type="hidden" field={@form[:display_name]} />
+        <.input :if={@current_step > 3} type="hidden" field={@form[:subdomain]} />
       </.multi_step_form>
     </ZoonkWeb.AppLayout.render>
     """

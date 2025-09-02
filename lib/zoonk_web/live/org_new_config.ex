@@ -79,4 +79,31 @@ defmodule ZoonkWeb.OrgNewConfig do
       }
     ]
   end
+
+  def visibility_opts do
+    [
+      %{
+        value: true,
+        label: dgettext("orgs", "Public"),
+        description:
+          dgettext("orgs", "Perfect for marketing, product tutorials, and educational content that anyone can access."),
+        use_cases: [
+          %{icon: "tabler-world", text: dgettext("orgs", "Anyone can discover and access your courses")},
+          %{icon: "tabler-users-group", text: dgettext("orgs", "Great for building an audience")},
+          %{icon: "tabler-lock-open", text: dgettext("orgs", "Free for learners to join")}
+        ]
+      },
+      %{
+        value: false,
+        label: dgettext("orgs", "Private"),
+        description:
+          dgettext("orgs", "Ideal for internal teams, schools, and exclusive content for your existing audience."),
+        use_cases: [
+          %{icon: "tabler-lock", text: dgettext("orgs", "Only invited members can access")},
+          %{icon: "tabler-users", text: dgettext("orgs", "Perfect for team training")},
+          %{icon: "tabler-shield-check", text: dgettext("orgs", "Full control over membership")}
+        ]
+      }
+    ]
+  end
 end
