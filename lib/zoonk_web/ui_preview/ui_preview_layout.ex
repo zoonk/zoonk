@@ -75,7 +75,7 @@ defmodule ZoonkWeb.UIPreview.UIPreviewLayout do
       },
       %{icon: "tabler-bell-filled", color: "text-pink-500", module: :flash, label: "Flash", path: "/ui/flash"},
       %{icon: "tabler-forms", color: "text-purple-500", module: :form, label: "Form", path: "/ui/form"},
-      %{icon: "tabler-info-circle", color: "text-blue-500", module: :info, label: "Info", path: "/ui/info"},
+      %{icon: "tabler-info-circle", color: "text-cyan-500", module: :info, label: "Info", path: "/ui/info"},
       %{icon: "tabler-cursor-text", color: "text-orange-500", module: :input, label: "Input", path: "/ui/input"},
       %{icon: "tabler-dots", color: "text-sky-500", module: :loader, label: "Loader", path: "/ui/loader"},
       %{icon: "tabler-pill", color: "text-orange-500", module: :pill, label: "Pill", path: "/ui/pill"},

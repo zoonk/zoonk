@@ -1,5 +1,30 @@
 defmodule ZoonkWeb.Components.InfoCard do
-  @moduledoc false
+  @moduledoc """
+  Components for displaying information cards.
+
+  This is useful for things like listing features,
+  benefits, and other important information.
+
+  ## Usage
+
+      <.info_card>
+        <.info_header icon="tabler-info-circle" title="Info Card" subtitle="This is an info card" />
+
+        <.info_description>
+          This is a description of the info card.
+        </.info_description>
+
+        <.info_list>
+          <.info_list_item icon="tabler-check">
+            Feature 1
+          </.info_list_item>
+
+          <.info_list_item icon="tabler-check">
+            Feature 2
+          </.info_list_item>
+        </.info_list>
+      </.info_card>
+  """
   use Phoenix.Component
 
   import ZoonkWeb.Components.Icon

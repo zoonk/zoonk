@@ -33,7 +33,7 @@ defmodule ZoonkWeb.Components.Pill do
       "focus-within:ring-zk-border focus-within:ring-2 focus-within:ring-offset-2",
       "transition-transform hover:scale-105",
       @active && "bg-zk-primary shadow-zk-primary",
-      !@active && "bg-zk-background",
+      !@active && "bg-zk-background shadow-zk-border",
       @class
     ]}>
       <.link

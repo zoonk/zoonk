@@ -88,7 +88,7 @@ defmodule ZoonkWeb.Components.Input do
       end)
 
     ~H"""
-    <div class="text-left">
+    <div class="w-full text-left">
       <label class="text-zk-foreground flex items-center gap-2 text-sm leading-6">
         <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
 
@@ -114,7 +114,7 @@ defmodule ZoonkWeb.Components.Input do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <div class="text-left">
+    <div class="w-full text-left">
       <.label hide_label={@hide_label} for={@id}>{@label}</.label>
 
       <select
@@ -135,7 +135,7 @@ defmodule ZoonkWeb.Components.Input do
 
   def input(%{type: "textarea"} = assigns) do
     ~H"""
-    <div class="text-left">
+    <div class="w-full text-left">
       <.label hide_label={@hide_label} for={@id}>{@label}</.label>
 
       <textarea
@@ -155,7 +155,7 @@ defmodule ZoonkWeb.Components.Input do
     assigns = assign_new(assigns, :value, fn -> nil end)
 
     ~H"""
-    <div class="text-left">
+    <div class="w-full text-left">
       <.label :if={@type != "hidden"} hide_label={@hide_label} for={@id}>{@label}</.label>
 
       <div class="relative">
@@ -169,7 +169,7 @@ defmodule ZoonkWeb.Components.Input do
             shared_class(),
             border_class(@errors),
             @submit_icon && "pr-10",
-            @suffix && "w-full pr-16",
+            @suffix && "pr-16",
             @class
           ]}
           {@rest}
@@ -253,7 +253,7 @@ defmodule ZoonkWeb.Components.Input do
 
   defp shared_class,
     do: [
-      "block rounded",
+      "block rounded w-full",
       "bg-zk-background text-zk-foreground",
       "placeholder:text-zk-foreground/40",
       "focus-visible:outline-0",

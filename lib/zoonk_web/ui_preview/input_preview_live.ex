@@ -156,7 +156,6 @@ defmodule ZoonkWeb.UIPreview.InputPreviewLive do
             type="number"
             step="0.01"
             value=""
-            class="w-full"
           />
 
           <.input
@@ -165,7 +164,6 @@ defmodule ZoonkWeb.UIPreview.InputPreviewLive do
             placeholder="username"
             suffix="@zoonk.com"
             value=""
-            class="w-full"
           />
 
           <.input
@@ -175,7 +173,6 @@ defmodule ZoonkWeb.UIPreview.InputPreviewLive do
             suffix="kg"
             type="number"
             value=""
-            class="w-full"
           />
 
           <.input
@@ -184,7 +181,6 @@ defmodule ZoonkWeb.UIPreview.InputPreviewLive do
             placeholder="Enter location"
             suffix="tabler-map-pin"
             value=""
-            class="w-full"
           />
         </.card_content>
       </.card>
