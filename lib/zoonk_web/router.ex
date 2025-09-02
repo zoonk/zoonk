@@ -159,6 +159,7 @@ defmodule ZoonkWeb.Router do
         live "/input", InputPreviewLive
         live "/loader", LoaderPreviewLive
         live "/pill", PillPreviewLive
+        live "/radio", RadioPreviewLive
         live "/stepper", StepperPreviewLive
         live "/text", TextPreviewLive
         live "/toggle", TogglePreviewLive
