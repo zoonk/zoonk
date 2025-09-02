@@ -49,22 +49,24 @@ defmodule ZoonkWeb.Components.Command do
       data-dialog-id={@dialog_id}
       data-shortcut={@shortcut}
       class={[
-        "bg-zk-muted text-zk-muted-foreground/70 flex w-full flex-col items-center gap-2 md:flex-row md:justify-between",
-        "border-zk-border rounded border py-1.5 text-sm md:pr-1.5 md:pl-2",
-        "hover:bg-zk-secondary focus-visible:outline-none focus-visible:ring-2",
+        "bg-zk-background text-zk-foreground/70 transition-all",
+        "flex w-full flex-col items-center justify-center gap-2",
+        "border-zk-border rounded-md border py-1.5 text-sm",
+        "hover:bg-zk-muted focus-visible:outline-none focus-visible:ring-2",
         "focus-visible:ring-zk-primary focus-visible:ring-offset-2",
+        "md:flex-row md:justify-between md:rounded-full md:pr-1.5 md:pl-2",
         @class
       ]}
       {@rest}
     >
       <span class="inline-flex items-center gap-2">
-        <.icon name="tabler-search" class="size-4" />
+        <.icon name="tabler-search" size={:xs} />
         <span class="hidden md:block">{@label}</span>
       </span>
 
       <kbd
         aria-label={gettext("Shortcut:")}
-        class="bg-zk-background border-zk-border text-2xs pointer-events-none hidden gap-1 rounded-sm border px-1.5 py-0.5 uppercase md:flex"
+        class="bg-zk-background border-zk-border text-2xs pointer-events-none hidden gap-1 rounded-full border px-1.5 py-0.5 uppercase md:flex"
       >
         <kbd>⌘</kbd>
         <kbd>{@shortcut}</kbd>
