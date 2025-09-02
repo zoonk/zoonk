@@ -84,13 +84,14 @@ config :zoonk, ZoonkWeb.Endpoint,
   live_reload: [
     notify: [
       live_view: [
-        ~r"lib/zoonk_web/(live)/.*(ex|heex)$"
+        ~r"lib/zoonk_web/(live|ui_preview)/.*(ex|heex)$"
       ]
     ],
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/zoonk_web/.*\.(ex|heex)$"
+      ~r"lib/zoonk_web/[^/]+\.ex$",
+      ~r"lib/zoonk_web/(components|controllers)/.*\.(ex|heex)$"
     ]
   ]
 
