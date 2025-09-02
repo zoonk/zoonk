@@ -74,8 +74,6 @@ defmodule ZoonkWeb.OrgNewLive do
           title={dgettext("orgs", "Choose your organization’s subdomain")}
           subtitle={dgettext("orgs", "This is the address used to access your organization's page.")}
         >
-          <.input type="hidden" field={@form[:display_name]} />
-
           <.input
             :if={@current_step == 3}
             field={@form[:subdomain]}
@@ -86,6 +84,8 @@ defmodule ZoonkWeb.OrgNewLive do
             required
           />
         </.multi_step_form_fieldset>
+
+        <.input :if={@current_step > 2} type="hidden" field={@form[:display_name]} />
       </.multi_step_form>
     </ZoonkWeb.AppLayout.render>
     """
