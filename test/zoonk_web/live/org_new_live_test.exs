@@ -36,6 +36,12 @@ defmodule ZoonkWeb.OrgNewLiveTest do
       |> submit()
       |> refute_has("label", text: "Subdomain")
       |> assert_has("li[aria-current='step']", text: "Visibility")
+      |> assert_has("input[checked]", value: "false")
+      |> choose("Public", exact: false)
+      |> assert_has("input[checked]", value: "true")
+      |> submit()
+      |> refute_has("input[checked]")
+      |> assert_has("li[aria-current='step']", text: "Mode")
     end
 
     test "keeps values when clicking on previous", %{conn: conn} do

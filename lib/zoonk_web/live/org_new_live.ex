@@ -93,8 +93,8 @@ defmodule ZoonkWeb.OrgNewLive do
         >
           <.radio_input
             :for={option <- visibility_opts()}
+            field={@form[:is_public]}
             value={option.value}
-            name="is_public"
             label={option.label}
           >
             <.radio_header>
