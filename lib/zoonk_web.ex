@@ -103,6 +103,7 @@ defmodule ZoonkWeb do
       import ZoonkWeb.Components.Loader
       import ZoonkWeb.Components.Navbar
       import ZoonkWeb.Components.Pill
+      import ZoonkWeb.Components.Stepper
       import ZoonkWeb.Components.Text
       import ZoonkWeb.Components.Toggle
       import ZoonkWeb.Components.Utils

@@ -4,6 +4,7 @@ defmodule ZoonkWeb.UIPreview.UIPreviewLayout do
 
   attr :page_title, :string, required: true
   attr :active_page, :atom, required: true
+  attr :grid, :string, default: "zk-grid"
   slot :inner_block, required: true
 
   def render(assigns) do
@@ -42,7 +43,7 @@ defmodule ZoonkWeb.UIPreview.UIPreviewLayout do
         </ul>
       </nav>
 
-      <article class="zk-grid mx-auto px-4 pb-4 md:px-6 md:pb-6">
+      <article class={["mx-auto px-4 pb-4 md:px-6 md:pb-6", @grid]}>
         {render_slot(@inner_block)}
       </article>
     </main>
@@ -77,6 +78,7 @@ defmodule ZoonkWeb.UIPreview.UIPreviewLayout do
       %{icon: "tabler-cursor-text", color: "text-orange-500", module: :input, label: "Input", path: "/ui/input"},
       %{icon: "tabler-dots", color: "text-sky-500", module: :loader, label: "Loader", path: "/ui/loader"},
       %{icon: "tabler-pill", color: "text-orange-500", module: :pill, label: "Pill", path: "/ui/pill"},
+      %{icon: "tabler-stairs-up", color: "text-cyan-500", module: :stepper, label: "Stepper", path: "/ui/stepper"},
       %{icon: "tabler-typography", color: "text-teal-500", module: :text, label: "Text", path: "/ui/text"},
       %{icon: "tabler-toggle-left", color: "text-violet-500", module: :toggle, label: "Toggle", path: "/ui/toggle"}
     ]
