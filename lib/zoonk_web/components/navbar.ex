@@ -114,7 +114,7 @@ defmodule ZoonkWeb.Components.Navbar do
             {dgettext("menu", "Contact us")}
           </.dropdown_item>
 
-          <.dropdown_separator />
+          <.dropdown_separator :if={system_org?(@scope)} />
 
           <.dropdown_item
             :if={system_org?(@scope)}
