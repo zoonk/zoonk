@@ -300,4 +300,19 @@ defmodule Zoonk.OrgsTest do
       assert Orgs.create_org_member(scope, user, %{role: :member}) == {:error, :unauthorized}
     end
   end
+
+  describe "org_url/2" do
+    test "generates correct URL for org with subdomain and default path" do
+      unique_subdomain = "org#{System.unique_integer([:positive])}"
+      org = org_fixture(%{subdomain: unique_subdomain})
+      assert Orgs.org_url(org) == "http://#{unique_subdomain}.localhost:4000/"
+    end
+
+    test "generates correct URL for org with subdomain and custom path" do
+      unique_subdomain = "org#{System.unique_integer([:positive])}"
+      org = org_fixture(%{subdomain: unique_subdomain})
+      Application.put_env(:zoonk, :external_org_url, "https://zoonk.app")
+      assert Orgs.org_url(org, "/dashboard") == "https://#{unique_subdomain}.zoonk.app/dashboard"
+    end
+  end
 end

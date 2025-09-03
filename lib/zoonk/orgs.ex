@@ -160,4 +160,33 @@ defmodule Zoonk.Orgs do
   end
 
   def create_org_member(_scope, _user, _attrs), do: {:error, :unauthorized}
+
+  @doc """
+  Generates the URL for an organization's app.
+
+  Orgs have their own app using our subdomain.
+  For example, in production this could be
+  `https://my-org.zoonk.app/` whereas in development
+  it could be `http://localhost:4000/`.
+
+  ## Examples
+
+      iex> org_url(%Org{subdomain: "my-org"})
+      "https://my-org.zoonk.app/"
+
+      iex> org_url(%Org{subdomain: "my-org"}, "/dashboard")
+      "https://my-org.zoonk.app/dashboard"
+  """
+  def org_url(%Org{} = org, path \\ "/") do
+    org
+    |> org_uri(path)
+    |> URI.to_string()
+  end
+
+  defp org_uri(%Org{subdomain: subdomain}, path) do
+    base = URI.parse(external_org_url())
+    %{base | host: "#{subdomain}.#{base.host}", path: path}
+  end
+
+  defp external_org_url, do: Application.get_env(:zoonk, :external_org_url)
 end
