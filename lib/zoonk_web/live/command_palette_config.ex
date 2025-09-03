@@ -63,32 +63,38 @@ defmodule ZoonkWeb.CommandPaletteConfig do
       %{
         icon: menu_icon(:settings),
         label: dgettext("menu", "Settings"),
-        navigate: ~p"/settings"
+        navigate: ~p"/settings",
+        visibility: :authenticated
       },
       %{
         icon: menu_icon(:my_courses),
         label: dgettext("menu", "My courses"),
-        navigate: ~p"/my-courses"
+        navigate: ~p"/my-courses",
+        visibility: :authenticated
       },
       %{
         icon: menu_icon(:subscription),
         label: dgettext("menu", "Subscription"),
-        navigate: ~p"/subscription"
+        navigate: ~p"/subscription",
+        visibility: :authenticated
       },
       %{
         icon: menu_icon(:language),
         label: dgettext("menu", "Change app language"),
-        navigate: ~p"/language"
+        navigate: ~p"/language",
+        visibility: :authenticated
       },
       %{
         icon: menu_icon(:display_name),
         label: dgettext("menu", "Change display name"),
-        navigate: ~p"/name"
+        navigate: ~p"/name",
+        visibility: :authenticated
       },
       %{
         icon: menu_icon(:email),
         label: dgettext("menu", "Change email address"),
-        navigate: ~p"/email"
+        navigate: ~p"/email",
+        visibility: :authenticated
       }
     ]
   end

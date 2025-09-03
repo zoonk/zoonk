@@ -40,15 +40,15 @@ defmodule ZoonkWeb.CommandPaletteLive do
 
         <.command_list>
           <.command_empty :if={empty?(@query, @scope)}>
-            {dgettext("menu", "No commands found.")}
+            {dgettext("menu", "No pages found.")}
           </.command_empty>
 
           <.command_group
-            :if={navigation_results(@query, @scope) != []}
+            :if={results(:navigation, @query, @scope) != []}
             heading={dgettext("menu", "Navigation")}
           >
             <.command_item
-              :for={item <- navigation_results(@query, @scope)}
+              :for={item <- results(:navigation, @query, @scope)}
               {build_nav_attrs(item)}
             >
               <.icon name={item.icon} class="size-4" />
@@ -56,19 +56,22 @@ defmodule ZoonkWeb.CommandPaletteLive do
             </.command_item>
           </.command_group>
 
-          <.command_group :if={settings_results(@query) != []} heading={dgettext("menu", "Settings")}>
-            <.command_item :for={item <- settings_results(@query)} {build_nav_attrs(item)}>
+          <.command_group
+            :if={results(:settings, @query, @scope) != []}
+            heading={dgettext("menu", "Settings")}
+          >
+            <.command_item :for={item <- results(:settings, @query, @scope)} {build_nav_attrs(item)}>
               <.icon name={item.icon} class="size-4" />
               {item.label}
             </.command_item>
           </.command_group>
 
           <.command_group
-            :if={support_results(@query, @scope) != []}
+            :if={results(:support, @query, @scope) != []}
             heading={dgettext("menu", "Support")}
           >
             <.command_item
-              :for={item <- support_results(@query, @scope)}
+              :for={item <- results(:support, @query, @scope)}
               {build_nav_attrs(item)}
             >
               <.icon name={item.icon} class="size-4" />
@@ -109,32 +112,38 @@ defmodule ZoonkWeb.CommandPaletteLive do
   defp visible?(_visibility, _scope), do: false
 
   defp empty?(query, scope) do
-    query != "" &&
-      navigation_results(query, scope) == [] &&
-      settings_results(query) == [] &&
-      support_results(query, scope) == []
+    started_typing?(query) and not results?(query, scope)
   end
 
-  defp navigation_results("", scope) do
-    Enum.filter(navigation_items(), &visible?(&1.visibility, scope))
+  defp started_typing?(query) do
+    query
+    |> String.trim()
+    |> Kernel.!=("")
   end
 
-  defp navigation_results(query, scope) do
-    ""
-    |> navigation_results(scope)
-    |> FuzzySearch.search(query, & &1.label)
+  defp results?(query, scope) do
+    Enum.any?(sections(), fn section ->
+      results(section, query, scope) != []
+    end)
   end
 
-  defp settings_results(""), do: settings_items()
-  defp settings_results(query), do: FuzzySearch.search(settings_items(), query, & &1.label)
+  defp results(:navigation), do: navigation_items()
+  defp results(:settings), do: settings_items()
+  defp results(:support), do: support_items()
 
-  defp support_results("", scope) do
-    Enum.filter(support_items(), &visible?(&1.visibility, scope))
+  defp results(section, query, scope) do
+    section
+    |> results()
+    |> maybe_search_results(query)
+    |> filter_results(scope)
   end
 
-  defp support_results(query, scope) do
-    ""
-    |> support_results(scope)
-    |> FuzzySearch.search(query, & &1.label)
+  defp maybe_search_results(items, ""), do: items
+  defp maybe_search_results(items, query), do: FuzzySearch.search(items, query, & &1.label)
+
+  defp filter_results(items, scope), do: Enum.filter(items, &visible?(&1.visibility, scope))
+
+  defp sections do
+    [:navigation, :settings, :support]
   end
 end
