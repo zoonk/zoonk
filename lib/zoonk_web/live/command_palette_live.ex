@@ -44,34 +44,12 @@ defmodule ZoonkWeb.CommandPaletteLive do
           </.command_empty>
 
           <.command_group
-            :if={results(:navigation, @query, @scope) != []}
-            heading={dgettext("menu", "Navigation")}
+            :for={section <- sections()}
+            :if={results(section.key, @query, @scope) != []}
+            heading={section.title}
           >
             <.command_item
-              :for={item <- results(:navigation, @query, @scope)}
-              {build_nav_attrs(item)}
-            >
-              <.icon name={item.icon} class="size-4" />
-              {item.label}
-            </.command_item>
-          </.command_group>
-
-          <.command_group
-            :if={results(:settings, @query, @scope) != []}
-            heading={dgettext("menu", "Settings")}
-          >
-            <.command_item :for={item <- results(:settings, @query, @scope)} {build_nav_attrs(item)}>
-              <.icon name={item.icon} class="size-4" />
-              {item.label}
-            </.command_item>
-          </.command_group>
-
-          <.command_group
-            :if={results(:support, @query, @scope) != []}
-            heading={dgettext("menu", "Support")}
-          >
-            <.command_item
-              :for={item <- results(:support, @query, @scope)}
+              :for={item <- results(section.key, @query, @scope)}
               {build_nav_attrs(item)}
             >
               <.icon name={item.icon} class="size-4" />
@@ -123,7 +101,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
 
   defp results?(query, scope) do
     Enum.any?(sections(), fn section ->
-      results(section, query, scope) != []
+      results(section.key, query, scope) != []
     end)
   end
 
@@ -144,6 +122,10 @@ defmodule ZoonkWeb.CommandPaletteLive do
   defp filter_results(items, scope), do: Enum.filter(items, &visible?(&1.visibility, scope))
 
   defp sections do
-    [:navigation, :settings, :support]
+    [
+      %{key: :navigation, title: dgettext("menu", "Navigation")},
+      %{key: :settings, title: dgettext("menu", "Settings")},
+      %{key: :support, title: dgettext("menu", "Support")}
+    ]
   end
 end
