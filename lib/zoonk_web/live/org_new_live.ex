@@ -19,7 +19,7 @@ defmodule ZoonkWeb.OrgNewLive do
         steps={OrgNewConfig.steps()}
         submit_label={dgettext("orgs", "Create organization")}
         done_label={dgettext("orgs", "Go to your organization")}
-        navigate={~p"/"}
+        href={@org_url}
       >
         <.multi_step_form_fieldset
           :if={@current_step == 1}
@@ -136,7 +136,8 @@ defmodule ZoonkWeb.OrgNewLive do
      socket
      |> assign(:page_title, dgettext("page_title", "Set up your organization"))
      |> assign(:current_step, 1)
-     |> assign(:form, to_form(org_changeset))}
+     |> assign(:form, to_form(org_changeset))
+     |> assign(:org_url, nil)}
   end
 
   @impl Phoenix.LiveView
@@ -168,10 +169,14 @@ defmodule ZoonkWeb.OrgNewLive do
 
   def handle_event("submit", %{"org" => params}, socket) do
     case Orgs.create_org(params) do
-      {:ok, _org} ->
+      {:ok, org} ->
         last_step = OrgNewConfig.total_steps()
+        org_url = Orgs.org_url(org)
 
-        {:noreply, assign(socket, current_step: last_step)}
+        {:noreply,
+         socket
+         |> assign(current_step: last_step)
+         |> assign(:org_url, org_url)}
 
       {:error, changeset} ->
         {:noreply,

@@ -313,6 +313,7 @@ defmodule Zoonk.OrgsTest do
       org = org_fixture(%{subdomain: unique_subdomain})
       Application.put_env(:zoonk, :external_org_url, "https://zoonk.app")
       assert Orgs.org_url(org, "/dashboard") == "https://#{unique_subdomain}.zoonk.app/dashboard"
+      Application.put_env(:zoonk, :external_org_url, "http://localhost:4000")
     end
   end
 end
