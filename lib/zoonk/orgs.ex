@@ -58,6 +58,7 @@ defmodule Zoonk.Orgs do
     Multi.new()
     |> Multi.insert(:org, Org.changeset(%Org{kind: :external, language: user.language}, attrs))
     |> Multi.insert(:settings, fn %{org: org} -> change_org_settings(%OrgSettings{org_id: org.id}) end)
+    |> Multi.insert(:member, fn %{org: org} -> %OrgMember{org_id: org.id, user_id: user.id, role: :admin} end)
     |> Repo.transact()
     |> Helpers.changeset_from_transaction(:org)
   end

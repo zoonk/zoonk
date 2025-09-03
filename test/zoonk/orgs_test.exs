@@ -166,6 +166,15 @@ defmodule Zoonk.OrgsTest do
       assert {:ok, %Org{} = org} = Orgs.create_org(scope, attrs)
       assert org.language == :pt
     end
+
+    test "adds current user as org admin" do
+      user = user_fixture()
+      scope = scope_fixture(%{user: user})
+      attrs = valid_org_attributes()
+
+      assert {:ok, %Org{} = org} = Orgs.create_org(scope, attrs)
+      assert Orgs.get_org_member(org, user).role == :admin
+    end
   end
 
   describe "get_org_by_host/1" do
