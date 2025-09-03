@@ -12,13 +12,13 @@ defmodule ZoonkWeb.CommandPaletteConfig do
 
   ## Examples
 
-      navigation_items()
+      section_items(:navigation)
       # => [
       #   %{icon: "tabler-home", label: "Home page", navigate: "/"},
       #   ...
       # ]
   """
-  def navigation_items do
+  def section_items(:navigation) do
     [
       %{
         icon: menu_icon(:home),
@@ -47,18 +47,7 @@ defmodule ZoonkWeb.CommandPaletteConfig do
     ]
   end
 
-  @doc """
-  Returns the settings items for the command palette.
-
-  ## Examples
-
-      settings_items()
-      # => [
-      #   %{icon: "tabler-language", label: "Change app language", navigate: "/language"},
-      #   ...
-      # ]
-  """
-  def settings_items do
+  def section_items(:settings) do
     [
       %{
         icon: menu_icon(:settings),
@@ -99,18 +88,7 @@ defmodule ZoonkWeb.CommandPaletteConfig do
     ]
   end
 
-  @doc """
-  Returns the support items for the command palette.
-
-  ## Examples
-
-      support_items()
-      # => [
-      #   %{icon: menu_item(:contact), label: "Contact us", navigate: "/contact"},
-      #   ...
-      # ]
-  """
-  def support_items do
+  def section_items(:support) do
     [
       %{
         icon: menu_icon(:contact),
@@ -150,17 +128,5 @@ defmodule ZoonkWeb.CommandPaletteConfig do
         visibility: :unauthenticated
       }
     ]
-  end
-
-  @doc """
-  Returns all command palette items as a flat list for search operations.
-
-  ## Examples
-
-      all_items()
-      # => [%{icon: "tabler-home", label: "Home page", navigate: "/"}, ...]
-  """
-  def all_items do
-    navigation_items() ++ settings_items() ++ support_items()
   end
 end

@@ -105,13 +105,9 @@ defmodule ZoonkWeb.CommandPaletteLive do
     end)
   end
 
-  defp results(:navigation), do: navigation_items()
-  defp results(:settings), do: settings_items()
-  defp results(:support), do: support_items()
-
   defp results(section, query, scope) do
     section
-    |> results()
+    |> section_items()
     |> maybe_search_results(query)
     |> filter_results(scope)
   end
