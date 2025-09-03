@@ -82,10 +82,6 @@ config :zoonk, ZoonkWeb.Endpoint,
   pubsub_server: Zoonk.PubSub,
   live_view: [signing_salt: "aQIHSki0"]
 
-# Configures the URL used for external orgs
-# E.g. `https://myorg.zoonk.app` would use `https://zoonk.app`
-config :zoonk, :external_org_url, System.get_env("EXTERNAL_ORG_URL", "http://localhost:4000")
-
 # Supported OAuth providers
 config :zoonk, :oauth_providers, [:apple, :github, :google]
 

@@ -19,3 +19,4 @@ Optionally, you can include the following environment variables:
 - `PORT`: The port on which your Zoonk application will run (e.g., `8080`).
 - `POOL_SIZE`: The number of database connections to keep in the pool. The default is `10`.
 - `DNS_CLUSTER_QUERY`: The DNS cluster query for your Zoonk application. See `DNSCluster` for more information.
+- `EXTERNAL_ORG_URL`: The base URL used for external organizations. For example, if your organizations are accessed via subdomains like `https://myorg.zoonk.app`, set this variable to `https://zoonk.app`. Default is `https://zoonk.app`.

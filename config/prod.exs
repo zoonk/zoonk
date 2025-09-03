@@ -16,5 +16,6 @@ config :swoosh, local: false
 # before starting your production server.
 config :zoonk, ZoonkWeb.Endpoint, cache_static_manifest: "priv/static/cache_manifest.json"
 
-# Runtime production configuration, including reading
-# of environment variables, is done on config/runtime.exs.
+# Configures the URL used for external orgs
+# E.g. `https://myorg.zoonk.app` should use `https://zoonk.app`
+config :zoonk, :external_org_url, System.get_env("EXTERNAL_ORG_URL", "https://zoonk.app")
