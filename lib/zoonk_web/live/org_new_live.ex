@@ -110,6 +110,17 @@ defmodule ZoonkWeb.OrgNewLive do
           </.radio_input>
         </.multi_step_form_fieldset>
 
+        <.multi_step_form_fieldset
+          :if={@current_step == 5}
+          title={dgettext("orgs", "Your organization is ready")}
+          subtitle={
+            dgettext(
+              "orgs",
+              "Go to your new organization to get started. Since it’s on a different app, you’ll need to sign in again when you get there."
+            )
+          }
+        />
+
         <.input :if={@current_step > 2} type="hidden" field={@form[:display_name]} />
         <.input :if={@current_step > 3} type="hidden" field={@form[:subdomain]} />
       </.multi_step_form>
