@@ -1,5 +1,7 @@
 defmodule Zoonk.OrgFixtures do
   @moduledoc false
+  import Zoonk.AccountFixtures
+
   alias Zoonk.Orgs
   alias Zoonk.Orgs.Org
   alias Zoonk.Orgs.OrgMember
@@ -25,10 +27,10 @@ defmodule Zoonk.OrgFixtures do
   def org_fixture(%{kind: :system}), do: system_org_fixture()
 
   def org_fixture(attrs) do
+    scope = Map.get_lazy(attrs, :scope, fn -> scope_fixture() end)
+
     {:ok, org} =
-      attrs
-      |> valid_org_attributes()
-      |> Orgs.create_org()
+      Orgs.create_org(scope, valid_org_attributes(attrs))
 
     maybe_update_settings(Map.get(attrs, :settings, nil), org)
     org

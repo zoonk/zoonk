@@ -168,7 +168,7 @@ defmodule ZoonkWeb.OrgNewLive do
   end
 
   def handle_event("submit", %{"org" => params}, socket) do
-    case Orgs.create_org(params) do
+    case Orgs.create_org(socket.assigns.scope, params) do
       {:ok, org} ->
         last_step = OrgNewConfig.total_steps()
         org_url = Orgs.org_url(org)

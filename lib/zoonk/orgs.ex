@@ -54,9 +54,9 @@ defmodule Zoonk.Orgs do
       iex> create_org(%{name: "My Org"})
       {:error, %Ecto.Changeset{}}
   """
-  def create_org(attrs \\ %{}) do
+  def create_org(%Scope{user: user}, attrs \\ %{}) do
     Multi.new()
-    |> Multi.insert(:org, Org.changeset(%Org{kind: :external}, attrs))
+    |> Multi.insert(:org, Org.changeset(%Org{kind: :external, language: user.language}, attrs))
     |> Multi.insert(:settings, fn %{org: org} -> change_org_settings(%OrgSettings{org_id: org.id}) end)
     |> Repo.transact()
     |> Helpers.changeset_from_transaction(:org)

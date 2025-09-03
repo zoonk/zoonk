@@ -50,17 +50,20 @@ defmodule Zoonk.OrgsTest do
     end
   end
 
-  describe "create_org/1" do
+  describe "create_org/2" do
     test "creates an organization with valid data" do
+      scope = scope_fixture()
       attrs = valid_org_attributes()
 
-      assert {:ok, %Org{} = org} = Orgs.create_org(attrs)
+      assert {:ok, %Org{} = org} = Orgs.create_org(scope, attrs)
       assert org.display_name == attrs.display_name
       assert org.subdomain == attrs.subdomain
       assert org.kind == :external
     end
 
     test "creates an organization with all optional fields" do
+      scope = scope_fixture()
+
       valid_attrs = %{
         display_name: "Complete Organization",
         subdomain: "complete-org",
@@ -73,7 +76,7 @@ defmodule Zoonk.OrgsTest do
         custom_domain: "example-org.com"
       }
 
-      assert {:ok, %Org{} = org} = Orgs.create_org(valid_attrs)
+      assert {:ok, %Org{} = org} = Orgs.create_org(scope, valid_attrs)
       assert org.display_name == "Complete Organization"
       assert org.subdomain == "complete-org"
       assert org.kind == :external
@@ -85,47 +88,54 @@ defmodule Zoonk.OrgsTest do
     end
 
     test "returns error changeset when display_name length is invalid" do
+      scope = scope_fixture()
+
       # Too short (empty)
       short_attrs = valid_org_attributes(%{display_name: ""})
-      assert {:error, changeset} = Orgs.create_org(short_attrs)
+      assert {:error, changeset} = Orgs.create_org(scope, short_attrs)
       assert %{display_name: ["can't be blank"]} = errors_on(changeset)
 
       # Too long (more than 32 chars)
       long_attrs = valid_org_attributes(%{display_name: String.duplicate("a", 33)})
-      assert {:error, changeset} = Orgs.create_org(long_attrs)
+      assert {:error, changeset} = Orgs.create_org(scope, long_attrs)
       assert %{display_name: ["should be at most 32 character(s)"]} = errors_on(changeset)
     end
 
     test "returns error changeset when subdomain length is invalid" do
+      scope = scope_fixture()
       # Too short (empty)
-      assert {:error, changeset} = Orgs.create_org(%{display_name: "Test Org", subdomain: ""})
+      assert {:error, changeset} = Orgs.create_org(scope, %{display_name: "Test Org", subdomain: ""})
       assert %{subdomain: ["can't be blank"]} = errors_on(changeset)
 
       # Too long (more than 32 chars)
-      assert {:error, changeset} = Orgs.create_org(%{display_name: "Test Org", subdomain: String.duplicate("a", 33)})
+      assert {:error, changeset} =
+               Orgs.create_org(scope, %{display_name: "Test Org", subdomain: String.duplicate("a", 33)})
+
       assert %{subdomain: ["should be at most 32 character(s)"]} = errors_on(changeset)
     end
 
     test "returns error changeset when subdomain is already taken" do
+      scope = scope_fixture()
       # Create an org first
       existing = valid_org_attributes()
-      assert {:ok, %Org{}} = Orgs.create_org(existing)
+      assert {:ok, %Org{}} = Orgs.create_org(scope, existing)
 
       # Try to create another org with the same subdomain
       attrs = %{display_name: "Another Org", subdomain: existing.subdomain}
-      assert {:error, changeset} = Orgs.create_org(attrs)
+      assert {:error, changeset} = Orgs.create_org(scope, attrs)
       assert %{subdomain: ["has already been taken"]} = errors_on(changeset)
     end
 
     test "returns error changeset when custom_domain is already taken" do
+      scope = scope_fixture()
       # Create an org first with a custom domain
       custom_domain = "example-#{System.unique_integer([:positive])}.com"
       attrs1 = %{display_name: "First Org", subdomain: "first-org", custom_domain: custom_domain}
-      assert {:ok, %Org{}} = Orgs.create_org(attrs1)
+      assert {:ok, %Org{}} = Orgs.create_org(scope, attrs1)
 
       # Try to create another org with the same custom domain
       attrs2 = %{display_name: "Second Org", subdomain: "second-org", custom_domain: custom_domain}
-      assert {:error, changeset} = Orgs.create_org(attrs2)
+      assert {:error, changeset} = Orgs.create_org(scope, attrs2)
       assert %{custom_domain: ["has already been taken"]} = errors_on(changeset)
     end
 
@@ -143,9 +153,18 @@ defmodule Zoonk.OrgsTest do
 
     test "adds default settings when creating an org" do
       attrs = valid_org_attributes()
-      assert {:ok, %Org{} = org} = Orgs.create_org(attrs)
+      assert {:ok, %Org{} = org} = Orgs.create_org(scope_fixture(), attrs)
       scope = scope_fixture(%{org: org, role: :admin})
       assert Orgs.get_org_settings(scope).org_id == org.id
+    end
+
+    test "adds the user language as the org preferred's language" do
+      user = user_fixture(%{language: :pt})
+      scope = scope_fixture(%{user: user})
+      attrs = valid_org_attributes()
+
+      assert {:ok, %Org{} = org} = Orgs.create_org(scope, attrs)
+      assert org.language == :pt
     end
   end
 

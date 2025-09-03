@@ -40,6 +40,7 @@ defmodule Zoonk.Orgs.Org do
   | `kind`         | `Ecto.Enum` | The type of organization.                     |
   | `is_public`    | `boolean`   | Whether the organization is public or private.|
   | `display_name` | `String`    | Public name of the organization               |
+  | `language`     | `Ecto.Enum` | The preferred language for the organization.  |
   | `bio`          | `String`    | A brief description of the organization.      |
   | `public_email` | `String`    | The public email address for the organization.|
   | `icon_url`     | `String`    | URL for the organization's icon.              |
@@ -56,9 +57,15 @@ defmodule Zoonk.Orgs.Org do
 
   alias Zoonk.Accounts.Subdomain
   alias Zoonk.Billing.BillingAccount
+  alias Zoonk.Localization
 
   schema "orgs" do
     field :kind, Ecto.Enum, values: [:system, :external], default: :external
+
+    field :language, Ecto.Enum,
+      values: Localization.list_languages(:atom),
+      default: Localization.default_language(:atom)
+
     field :is_public, :boolean, default: false
     field :display_name, :string
     field :bio, :string
@@ -77,7 +84,17 @@ defmodule Zoonk.Orgs.Org do
   @doc false
   def changeset(org, attrs) do
     org
-    |> cast(attrs, [:bio, :custom_domain, :display_name, :icon_url, :logo_url, :public_email, :subdomain, :is_public])
+    |> cast(attrs, [
+      :bio,
+      :custom_domain,
+      :display_name,
+      :icon_url,
+      :is_public,
+      :language,
+      :logo_url,
+      :public_email,
+      :subdomain
+    ])
     |> validate_required([:display_name, :subdomain])
     |> validate_length(:display_name, min: 1, max: 32)
     |> validate_length(:subdomain, min: 2, max: 32)
