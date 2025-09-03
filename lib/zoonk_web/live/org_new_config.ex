@@ -8,7 +8,6 @@ defmodule ZoonkWeb.OrgNewConfig do
       %{label: dgettext("orgs", "Name"), field: :display_name},
       %{label: dgettext("orgs", "Subdomain"), field: :subdomain},
       %{label: dgettext("orgs", "Visibility"), field: :is_public},
-      %{label: dgettext("orgs", "Mode"), field: :mode},
       %{label: dgettext("orgs", "Done"), field: :done}
     ]
   end
