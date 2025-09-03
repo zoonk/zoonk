@@ -25,7 +25,7 @@ defmodule ZoonkWeb.CommandPaletteLive do
   @impl Phoenix.LiveComponent
   def render(assigns) do
     ~H"""
-    <div class={[@variant == :input && "w-full"]}>
+    <div class={[@variant == :input && "w-full", "mr-auto"]}>
       <.command_trigger
         variant={@variant}
         label={dgettext("menu", "Search...")}
