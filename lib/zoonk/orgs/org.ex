@@ -38,6 +38,7 @@ defmodule Zoonk.Orgs.Org do
   | Field Name     | Type        | Description                                   |
   |----------------|-------------|-----------------------------------------------|
   | `kind`         | `Ecto.Enum` | The type of organization.                     |
+  | `is_public`    | `boolean`   | Whether the organization is public or private.|
   | `display_name` | `String`    | Public name of the organization               |
   | `bio`          | `String`    | A brief description of the organization.      |
   | `public_email` | `String`    | The public email address for the organization.|
