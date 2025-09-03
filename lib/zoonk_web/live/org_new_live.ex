@@ -2,10 +2,9 @@ defmodule ZoonkWeb.OrgNewLive do
   @moduledoc false
   use ZoonkWeb, :live_view
 
-  import ZoonkWeb.OrgNewConfig
-
   alias Zoonk.Orgs
   alias Zoonk.Orgs.Org
+  alias ZoonkWeb.OrgNewConfig
 
   on_mount {ZoonkWeb.UserAuthorization, :ensure_org_member}
   on_mount {ZoonkWeb.UserAuthorization, :ensure_system_org}
@@ -17,7 +16,7 @@ defmodule ZoonkWeb.OrgNewLive do
       <.multi_step_form
         for={@form}
         current_step={@current_step}
-        steps={steps()}
+        steps={OrgNewConfig.steps()}
         submit_label={dgettext("orgs", "Create organization")}
         done_label={dgettext("orgs", "Go to your organization")}
         navigate={~p"/"}
@@ -35,7 +34,7 @@ defmodule ZoonkWeb.OrgNewLive do
           }
         >
           <section class="grid w-full grid-cols-1 gap-4 md:grid-cols-2">
-            <.info_card :for={use_case <- use_cases()}>
+            <.info_card :for={use_case <- OrgNewConfig.use_cases()}>
               <.info_header
                 icon={use_case.icon}
                 title={use_case.title}
@@ -92,7 +91,7 @@ defmodule ZoonkWeb.OrgNewLive do
           content_class="grid grid-cols-1 gap-4 md:grid-cols-2"
         >
           <.radio_input
-            :for={option <- visibility_opts()}
+            :for={option <- OrgNewConfig.visibility_opts()}
             field={@form[:is_public]}
             value={option.value}
             label={option.label}
@@ -148,7 +147,7 @@ defmodule ZoonkWeb.OrgNewLive do
 
   def handle_event("next", params, socket) do
     current_step = socket.assigns.current_step
-    new_step = min(current_step + 1, total_steps())
+    new_step = min(current_step + 1, OrgNewConfig.total_steps())
 
     {:noreply,
      socket
@@ -158,7 +157,7 @@ defmodule ZoonkWeb.OrgNewLive do
 
   def handle_event("submit", _params, socket) do
     current_step = socket.assigns.current_step
-    new_step = min(current_step + 1, total_steps())
+    new_step = min(current_step + 1, OrgNewConfig.total_steps())
 
     {:noreply, assign(socket, current_step: new_step)}
   end
