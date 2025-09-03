@@ -37,7 +37,12 @@ defmodule ZoonkWeb.AppHomeLiveTest do
       conn
       |> visit(~p"/")
       |> assert_path(~p"/")
+      |> assert_has("h6", text: "Navigation")
+      |> assert_has("h6", text: "Settings")
+      |> assert_has("h6", text: "Support")
       |> assert_has("a", text: "Start new course")
+      |> assert_has("a", text: "Change display name")
+      |> assert_has("a", text: "Follow us on social media")
       |> assert_has("a", text: "Create organization")
       |> assert_has("a", text: "Create new organization")
       |> assert_has(".zk-btn-active", text: "Home")
