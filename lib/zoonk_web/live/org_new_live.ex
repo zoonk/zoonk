@@ -155,11 +155,20 @@ defmodule ZoonkWeb.OrgNewLive do
      |> maybe_update_form(params)}
   end
 
-  def handle_event("submit", _params, socket) do
-    current_step = socket.assigns.current_step
-    new_step = min(current_step + 1, OrgNewConfig.total_steps())
+  def handle_event("submit", %{"org" => params}, socket) do
+    case Orgs.create_org(params) do
+      {:ok, _org} ->
+        last_step = OrgNewConfig.total_steps()
 
-    {:noreply, assign(socket, current_step: new_step)}
+        {:noreply, assign(socket, current_step: last_step)}
+
+      {:error, changeset} ->
+        {:noreply,
+         socket
+         |> assign(form: to_form(changeset, action: :insert))
+         |> assign(current_step: 2)
+         |> put_flash(:error, dgettext("orgs", "Failed to create organization. Please try again or contact support."))}
+    end
   end
 
   defp maybe_update_form(socket, %{"orgs" => params}) do

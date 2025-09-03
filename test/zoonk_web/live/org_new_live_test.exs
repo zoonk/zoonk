@@ -3,6 +3,8 @@ defmodule ZoonkWeb.OrgNewLiveTest do
 
   import Zoonk.OrgFixtures
 
+  alias Zoonk.Orgs
+
   describe "/orgs/new (unauthenticated)" do
     test "redirects page for system org" do
       build_conn()
@@ -17,6 +19,7 @@ defmodule ZoonkWeb.OrgNewLiveTest do
 
     test "fills in all steps", %{conn: conn, scope: scope} do
       unique_subdomain = "my-org-#{System.unique_integer([:positive])}"
+      host = unique_subdomain <> ".zoonk.app"
 
       conn
       |> visit(~p"/orgs/new")
@@ -41,7 +44,13 @@ defmodule ZoonkWeb.OrgNewLiveTest do
       |> assert_has("input[checked]", value: "true")
       |> submit()
       |> refute_has("input[checked]")
-      |> assert_has("li[aria-current='step']", text: "Mode")
+      |> assert_has("li[aria-current='step']", text: "Done")
+      |> assert_has("a", text: "Go to your organization")
+
+      created_org = Orgs.get_org_by_host(host)
+      assert created_org.display_name == "My Organization"
+      assert created_org.subdomain == unique_subdomain
+      assert created_org.is_public
     end
 
     test "keeps values when clicking on previous", %{conn: conn} do
