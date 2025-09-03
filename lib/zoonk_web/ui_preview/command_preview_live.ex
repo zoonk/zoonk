@@ -86,7 +86,7 @@ defmodule ZoonkWeb.UIPreview.CommandPreviewLive do
 
       <.dialog id="search-dialog">
         <form phx-change="search-docs" phx-submit="search-docs">
-          <.command_input placeholder="Type to search..." />
+          <.command_input label="Type to search..." />
         </form>
 
         <.command_list>
@@ -100,7 +100,7 @@ defmodule ZoonkWeb.UIPreview.CommandPreviewLive do
 
       <.dialog id="settings-dialog">
         <form phx-change="search-settings" phx-submit="search-settings">
-          <.command_input placeholder="Search settings..." icon="tabler-settings" />
+          <.command_input label="Search settings..." icon="tabler-settings" />
         </form>
 
         <.command_list>
@@ -115,7 +115,7 @@ defmodule ZoonkWeb.UIPreview.CommandPreviewLive do
 
       <.dialog id="groups-dialog">
         <form phx-change="search-groups" phx-submit="search-groups">
-          <.command_input placeholder="Search commands..." />
+          <.command_input label="Search commands..." />
         </form>
 
         <.command_list>
@@ -142,7 +142,7 @@ defmodule ZoonkWeb.UIPreview.CommandPreviewLive do
 
       <.dialog id="courses-dialog">
         <form phx-change="search-courses" phx-submit="search-courses">
-          <.command_input placeholder="Search courses and instructors..." />
+          <.command_input label="Search courses and instructors..." />
         </form>
 
         <.command_list>

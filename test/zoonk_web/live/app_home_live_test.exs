@@ -68,6 +68,8 @@ defmodule ZoonkWeb.AppHomeLiveTest do
       |> refute_has("a", text: "Start new course")
       |> refute_has("a", text: "Create organization")
       |> refute_has("a", text: "Create new organization")
+      |> fill_in("Search pages...", with: "create")
+      |> refute_has("h6", text: "Navigation")
     end
   end
 end
