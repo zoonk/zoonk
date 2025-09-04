@@ -24,7 +24,7 @@ defmodule ZoonkWeb.RootLayout do
         <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
         </script>
       </head>
-      <body class="bg-zk-background">
+      <body class="bg-zk-background antialiased">
         {@inner_content}
       </body>
     </html>
