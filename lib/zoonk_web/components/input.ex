@@ -152,8 +152,6 @@ defmodule ZoonkWeb.Components.Input do
 
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
-    assigns = assign_new(assigns, :value, fn -> nil end)
-
     ~H"""
     <div class="w-full text-left">
       <.label :if={@type != "hidden"} hide_label={@hide_label} for={@id}>{@label}</.label>
