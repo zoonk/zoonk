@@ -1,8 +1,6 @@
 defmodule Zoonk.OrgFixtures do
   @moduledoc false
-  import Zoonk.AccountFixtures
 
-  alias Zoonk.Orgs
   alias Zoonk.Orgs.Org
   alias Zoonk.Orgs.OrgMember
   alias Zoonk.Orgs.OrgSettings
@@ -11,7 +9,7 @@ defmodule Zoonk.OrgFixtures do
   def valid_org_settings_attributes(attrs \\ %{}) do
     attrs
     |> Map.delete(:org)
-    |> Enum.into(%{currency: "USD"})
+    |> Enum.into(%{allowed_domains: []})
   end
 
   def valid_org_attributes(attrs \\ %{}) do
@@ -20,32 +18,35 @@ defmodule Zoonk.OrgFixtures do
     Enum.into(attrs, %{
       display_name: "Test Org #{unique_int}",
       custom_domain: "zoonk_#{unique_int}.test",
-      subdomain: "org#{unique_int}"
+      subdomain: "org#{unique_int}",
+      is_public: false
     })
   end
 
   def org_fixture(%{kind: :system}), do: system_org_fixture()
 
   def org_fixture(attrs) do
-    scope = Map.get_lazy(attrs, :scope, fn -> scope_fixture() end)
+    attrs = valid_org_attributes(attrs)
+    org_settings = valid_org_settings_attributes(Map.get(attrs, :settings, %{}))
 
-    {:ok, org} =
-      Orgs.create_org(scope, valid_org_attributes(attrs))
+    org =
+      Repo.insert!(%Org{
+        display_name: attrs.display_name,
+        custom_domain: attrs.custom_domain,
+        subdomain: attrs.subdomain,
+        kind: :external,
+        is_public: attrs.is_public
+      })
 
-    maybe_update_settings(Map.get(attrs, :settings, nil), org)
+    Repo.insert!(%OrgSettings{
+      org_id: org.id,
+      allowed_domains: org_settings.allowed_domains
+    })
+
     org
   end
 
   def org_fixture, do: org_fixture(%{})
-
-  defp maybe_update_settings(nil, _org), do: nil
-
-  defp maybe_update_settings(settings, org) do
-    OrgSettings
-    |> Repo.get_by!(org_id: org.id)
-    |> OrgSettings.changeset(settings)
-    |> Repo.update!()
-  end
 
   @doc """
   Creates the system organization.
