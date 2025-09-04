@@ -134,7 +134,7 @@ defmodule Zoonk.Accounts.User do
   def get_display_name(%UserProfile{display_name: nil} = profile), do: profile.username
   def get_display_name(%UserProfile{display_name: display_name}), do: display_name
 
-  # team and app orgs don't require domain validation, so we set it to nil and skip it
+  # public orgs don't require domain validation, so we set it to nil and skip it
   defp maybe_validate_email_domain(changeset, nil), do: changeset
 
   # some orgs require that only emails from a specific domain are allowed to sign up

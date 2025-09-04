@@ -3,7 +3,7 @@ defmodule ZoonkWeb.PublicForPublicOrgsPermissionTest do
     async: true,
     parameterize:
       for(
-        kind <- [:app, :creator, :team, :school],
+        kind <- [:system, :external],
         page <- [
           %{link: "/catalog"}
         ],
@@ -14,30 +14,18 @@ defmodule ZoonkWeb.PublicForPublicOrgsPermissionTest do
 
   describe "Public pages permissions" do
     test "allows unauthenticated users to access public pages from public orgs", %{conn: conn, page: page, kind: kind} do
-      if kind in [:app, :creator] do
-        org = org_fixture(%{kind: kind})
+      org = org_fixture(%{kind: kind, is_public: true})
 
-        conn
-        |> Map.put(:host, org.custom_domain)
-        |> visit(page.link)
-        |> assert_path(page.link)
-      end
-    end
-
-    test "display login button on header", %{conn: conn, page: page, kind: kind} do
-      if kind in [:app, :creator] do
-        org = org_fixture(%{kind: kind})
-
-        conn
-        |> Map.put(:host, org.custom_domain)
-        |> visit(page.link)
-        |> assert_has("a", text: "Login")
-      end
+      conn
+      |> Map.put(:host, org.custom_domain)
+      |> visit(page.link)
+      |> assert_path(page.link)
+      |> assert_has("a", text: "Login")
     end
 
     test "redirects unauthenticated users to login for private orgs", %{conn: conn, page: page, kind: kind} do
-      if kind in [:team, :school] do
-        org = org_fixture(%{kind: kind, public: false})
+      if kind == :external do
+        org = org_fixture(%{kind: kind, is_public: false})
 
         conn
         |> Map.put(:host, org.custom_domain)

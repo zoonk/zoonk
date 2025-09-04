@@ -1,6 +1,6 @@
 defmodule Zoonk.OrgFixtures do
   @moduledoc false
-  alias Zoonk.Orgs
+
   alias Zoonk.Orgs.Org
   alias Zoonk.Orgs.OrgMember
   alias Zoonk.Orgs.OrgSettings
@@ -9,7 +9,7 @@ defmodule Zoonk.OrgFixtures do
   def valid_org_settings_attributes(attrs \\ %{}) do
     attrs
     |> Map.delete(:org)
-    |> Enum.into(%{currency: "USD"})
+    |> Enum.into(%{allowed_domains: []})
   end
 
   def valid_org_attributes(attrs \\ %{}) do
@@ -18,56 +18,60 @@ defmodule Zoonk.OrgFixtures do
     Enum.into(attrs, %{
       display_name: "Test Org #{unique_int}",
       custom_domain: "zoonk_#{unique_int}.test",
-      subdomain: "org#{unique_int}"
+      subdomain: "org#{unique_int}",
+      is_public: false
     })
   end
 
-  def org_fixture(%{kind: :app}), do: app_org_fixture()
+  def org_fixture(%{kind: :system}), do: system_org_fixture()
 
   def org_fixture(attrs) do
-    {:ok, org} =
-      attrs
-      |> Map.get(:kind, :team)
-      |> Orgs.create_org(valid_org_attributes(attrs))
+    attrs = valid_org_attributes(attrs)
+    org_settings = valid_org_settings_attributes(Map.get(attrs, :settings, %{}))
 
-    maybe_update_settings(Map.get(attrs, :settings, nil), org)
+    org =
+      Repo.insert!(%Org{
+        display_name: attrs.display_name,
+        custom_domain: attrs.custom_domain,
+        subdomain: attrs.subdomain,
+        kind: :external,
+        is_public: attrs.is_public
+      })
+
+    Repo.insert!(%OrgSettings{
+      org_id: org.id,
+      allowed_domains: org_settings.allowed_domains
+    })
+
     org
   end
 
   def org_fixture, do: org_fixture(%{})
 
-  defp maybe_update_settings(nil, _org), do: nil
-
-  defp maybe_update_settings(settings, org) do
-    OrgSettings
-    |> Repo.get_by!(org_id: org.id)
-    |> OrgSettings.changeset(settings)
-    |> Repo.update!()
-  end
-
   @doc """
-  Creates the main app organization.
+  Creates the system organization.
 
-  We skip using changeset here because `:app` shouldn't be
+  We skip using changeset here because `:system` shouldn't be
   a valid value for `kind` in the changeset since only
-  one organization can be the app organization.
+  one organization can be the system organization.
   """
-  def app_org_fixture do
+  def system_org_fixture do
     Org
-    |> Repo.get_by(kind: :app)
-    |> app_org_fixture()
+    |> Repo.get_by(kind: :system)
+    |> system_org_fixture()
   end
 
-  # we can only have one app org, if it exists we return it
-  defp app_org_fixture(%Org{} = org), do: org
+  # we can only have one system org, if it exists we return it
+  defp system_org_fixture(%Org{} = org), do: org
 
   # otherwise we create a new one
-  defp app_org_fixture(nil) do
+  defp system_org_fixture(nil) do
     Repo.insert!(%Org{
-      display_name: "App Org",
+      display_name: "Zoonk",
       custom_domain: "zoonk.test",
-      subdomain: "zk_test",
-      kind: :app
+      subdomain: "zoonk",
+      kind: :system,
+      is_public: true
     })
   end
 

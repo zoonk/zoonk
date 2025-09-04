@@ -25,7 +25,7 @@ defmodule ZoonkWeb.AppFollowLiveTest do
 
   describe "follow page for unauthenticated users" do
     test "renders follow page with global links for unauthenticated users", %{conn: conn} do
-      org = Zoonk.OrgFixtures.org_fixture(%{kind: :app})
+      org = Zoonk.OrgFixtures.org_fixture(%{kind: :system})
 
       conn
       |> Map.put(:host, org.custom_domain)

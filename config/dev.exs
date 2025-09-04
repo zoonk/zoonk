@@ -95,5 +95,9 @@ config :zoonk, ZoonkWeb.Endpoint,
     ]
   ]
 
+# Configures the URL used for external orgs
+# E.g. `https://myorg.zoonk.app` should use `https://zoonk.app`
+config :zoonk, :external_org_url, System.get_env("EXTERNAL_ORG_URL", "http://localhost:4000")
+
 # Enable dev routes for dashboard and mailbox
 config :zoonk, dev_routes: true

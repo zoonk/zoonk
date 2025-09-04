@@ -11,8 +11,10 @@ defmodule ZoonkWeb.Components.Navbar do
   import ZoonkWeb.MenuIcon
 
   alias Zoonk.Accounts.User
+  alias Zoonk.Orgs.Org
+  alias Zoonk.Scope
 
-  attr :user, User, doc: "The user scope containing user information"
+  attr :scope, Scope, doc: "The scope for current user"
 
   attr :page, :atom,
     values: [:home, :catalog, :start_course, :other],
@@ -24,7 +26,7 @@ defmodule ZoonkWeb.Components.Navbar do
 
   ## Examples
 
-      <.navbar user={@user} />
+      <.navbar scope={@scope} page={:home} />
   """
   def navbar(assigns) do
     ~H"""
@@ -33,7 +35,7 @@ defmodule ZoonkWeb.Components.Navbar do
       aria-label={dgettext("menu", "Main navigation")}
     >
       <.a
-        :if={@user}
+        :if={@scope.user}
         kind={:icon}
         icon={menu_icon(:home)}
         variant={variant(:home, @page)}
@@ -55,12 +57,12 @@ defmodule ZoonkWeb.Components.Navbar do
 
       <.live_component
         module={ZoonkWeb.CommandPaletteLive}
-        authenticated={@user != nil}
+        scope={@scope}
         id="command-palette"
       />
 
       <.a
-        :if={@user}
+        :if={@scope.user && @scope.org.kind == :system}
         kind={:button}
         icon={menu_icon(:new_course)}
         variant={variant(:start_course, @page)}
@@ -72,7 +74,7 @@ defmodule ZoonkWeb.Components.Navbar do
       </.a>
 
       <.a
-        :if={is_nil(@user)}
+        :if={is_nil(@scope.user)}
         kind={:button}
         variant={:outline}
         navigate={~p"/login"}
@@ -82,15 +84,15 @@ defmodule ZoonkWeb.Components.Navbar do
         {dgettext("menu", "Login")}
       </.a>
 
-      <.a :if={is_nil(@user)} kind={:button} navigate={~p"/signup"} size={:sm}>
+      <.a :if={is_nil(@scope.user)} kind={:button} navigate={~p"/signup"} size={:sm}>
         {dgettext("menu", "Sign up")}
       </.a>
 
-      <.dropdown :if={@user} label={dgettext("menu", "Open settings menu")}>
+      <.dropdown :if={@scope.user} label={dgettext("menu", "Open settings menu")}>
         <.avatar
-          src={@user.profile.picture_url}
+          src={@scope.user.profile.picture_url}
           size={:sm}
-          alt={User.get_display_name(@user.profile)}
+          alt={User.get_display_name(@scope.user.profile)}
         />
 
         <.dropdown_content>
@@ -112,6 +114,16 @@ defmodule ZoonkWeb.Components.Navbar do
             {dgettext("menu", "Contact us")}
           </.dropdown_item>
 
+          <.dropdown_separator :if={system_org?(@scope)} />
+
+          <.dropdown_item
+            :if={system_org?(@scope)}
+            icon={menu_icon(:new_org)}
+            navigate={~p"/orgs/new"}
+          >
+            {dgettext("menu", "Create organization")}
+          </.dropdown_item>
+
           <.dropdown_separator />
 
           <.dropdown_item icon={menu_icon(:logout)} method="delete" href={~p"/logout"}>
@@ -126,4 +138,7 @@ defmodule ZoonkWeb.Components.Navbar do
   defp variant(menu, page) when menu == page, do: :active
   defp variant(menu, _page) when menu == :start_course, do: :secondary
   defp variant(_menu, _page), do: :outline
+
+  defp system_org?(%Scope{org: %Org{kind: :system}}), do: true
+  defp system_org?(_scope), do: false
 end

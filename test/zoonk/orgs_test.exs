@@ -7,6 +7,7 @@ defmodule Zoonk.OrgsTest do
   alias Zoonk.Accounts.Subdomain
   alias Zoonk.Orgs
   alias Zoonk.Orgs.Org
+  alias Zoonk.Orgs.OrgMember
 
   describe "change_org/2" do
     test "allows valid subdomains" do
@@ -49,22 +50,25 @@ defmodule Zoonk.OrgsTest do
     end
   end
 
-  describe "create_org/1" do
+  describe "create_org/2" do
     test "creates an organization with valid data" do
+      scope = scope_fixture()
       attrs = valid_org_attributes()
 
-      assert {:ok, %Org{} = org} = Orgs.create_org(:team, attrs)
+      assert {:ok, %Org{} = org} = Orgs.create_org(scope, attrs)
       assert org.display_name == attrs.display_name
       assert org.subdomain == attrs.subdomain
-      assert org.kind == :team
+      assert org.kind == :external
     end
 
     test "creates an organization with all optional fields" do
+      scope = scope_fixture()
+
       valid_attrs = %{
         display_name: "Complete Organization",
         subdomain: "complete-org",
         # Don't allow to override kind
-        kind: :team,
+        kind: :system,
         bio: "Organization description",
         public_email: "info@example.com",
         icon_url: "https://example.com/icon.png",
@@ -72,10 +76,10 @@ defmodule Zoonk.OrgsTest do
         custom_domain: "example-org.com"
       }
 
-      assert {:ok, %Org{} = org} = Orgs.create_org(:school, valid_attrs)
+      assert {:ok, %Org{} = org} = Orgs.create_org(scope, valid_attrs)
       assert org.display_name == "Complete Organization"
       assert org.subdomain == "complete-org"
-      assert org.kind == :school
+      assert org.kind == :external
       assert org.bio == "Organization description"
       assert org.public_email == "info@example.com"
       assert org.icon_url == "https://example.com/icon.png"
@@ -84,75 +88,92 @@ defmodule Zoonk.OrgsTest do
     end
 
     test "returns error changeset when display_name length is invalid" do
+      scope = scope_fixture()
+
       # Too short (empty)
       short_attrs = valid_org_attributes(%{display_name: ""})
-      assert {:error, changeset} = Orgs.create_org(:team, short_attrs)
+      assert {:error, changeset} = Orgs.create_org(scope, short_attrs)
       assert %{display_name: ["can't be blank"]} = errors_on(changeset)
 
       # Too long (more than 32 chars)
       long_attrs = valid_org_attributes(%{display_name: String.duplicate("a", 33)})
-      assert {:error, changeset} = Orgs.create_org(:team, long_attrs)
+      assert {:error, changeset} = Orgs.create_org(scope, long_attrs)
       assert %{display_name: ["should be at most 32 character(s)"]} = errors_on(changeset)
     end
 
     test "returns error changeset when subdomain length is invalid" do
+      scope = scope_fixture()
       # Too short (empty)
-      assert {:error, changeset} = Orgs.create_org(:team, %{display_name: "Test Org", subdomain: ""})
+      assert {:error, changeset} = Orgs.create_org(scope, %{display_name: "Test Org", subdomain: ""})
       assert %{subdomain: ["can't be blank"]} = errors_on(changeset)
 
       # Too long (more than 32 chars)
       assert {:error, changeset} =
-               Orgs.create_org(:team, %{display_name: "Test Org", subdomain: String.duplicate("a", 33)})
+               Orgs.create_org(scope, %{display_name: "Test Org", subdomain: String.duplicate("a", 33)})
 
       assert %{subdomain: ["should be at most 32 character(s)"]} = errors_on(changeset)
     end
 
     test "returns error changeset when subdomain is already taken" do
+      scope = scope_fixture()
       # Create an org first
       existing = valid_org_attributes()
-      assert {:ok, %Org{}} = Orgs.create_org(:team, existing)
+      assert {:ok, %Org{}} = Orgs.create_org(scope, existing)
 
       # Try to create another org with the same subdomain
-      attrs = %{display_name: "Another Org", subdomain: existing.subdomain, kind: :team}
-      assert {:error, changeset} = Orgs.create_org(:team, attrs)
+      attrs = %{display_name: "Another Org", subdomain: existing.subdomain}
+      assert {:error, changeset} = Orgs.create_org(scope, attrs)
       assert %{subdomain: ["has already been taken"]} = errors_on(changeset)
     end
 
     test "returns error changeset when custom_domain is already taken" do
+      scope = scope_fixture()
       # Create an org first with a custom domain
       custom_domain = "example-#{System.unique_integer([:positive])}.com"
-      attrs1 = %{display_name: "First Org", subdomain: "first-org", kind: :team, custom_domain: custom_domain}
-      assert {:ok, %Org{}} = Orgs.create_org(:team, attrs1)
+      attrs1 = %{display_name: "First Org", subdomain: "first-org", custom_domain: custom_domain}
+      assert {:ok, %Org{}} = Orgs.create_org(scope, attrs1)
 
       # Try to create another org with the same custom domain
-      attrs2 = %{display_name: "Second Org", subdomain: "second-org", kind: :team, custom_domain: custom_domain}
-      assert {:error, changeset} = Orgs.create_org(:team, attrs2)
+      attrs2 = %{display_name: "Second Org", subdomain: "second-org", custom_domain: custom_domain}
+      assert {:error, changeset} = Orgs.create_org(scope, attrs2)
       assert %{custom_domain: ["has already been taken"]} = errors_on(changeset)
     end
 
-    test "returns a ConstraintError when trying to create a second org with kind = :app" do
-      app_org_fixture()
+    test "returns a ConstraintError when trying to create a second org with kind = :system" do
+      system_org_fixture()
 
       assert_raise Ecto.ConstraintError, fn ->
-        Orgs.create_org(:app, valid_org_attributes())
-      end
-    end
-
-    test "creates organization with valid kinds" do
-      valid_kinds = [:team, :creator, :school]
-
-      for kind <- valid_kinds do
-        attrs = %{display_name: "#{kind} Org", subdomain: "#{kind}-#{System.unique_integer([:positive])}", kind: kind}
-        assert {:ok, %Org{} = org} = Orgs.create_org(kind, attrs)
-        assert org.kind == kind
+        Zoonk.Repo.insert!(%Org{
+          display_name: "Zoonk",
+          subdomain: "sub_#{System.unique_integer([:positive])}",
+          kind: :system
+        })
       end
     end
 
     test "adds default settings when creating an org" do
       attrs = valid_org_attributes()
-      assert {:ok, %Org{} = org} = Orgs.create_org(:team, attrs)
+      assert {:ok, %Org{} = org} = Orgs.create_org(scope_fixture(), attrs)
       scope = scope_fixture(%{org: org, role: :admin})
       assert Orgs.get_org_settings(scope).org_id == org.id
+    end
+
+    test "adds the user language as the org preferred's language" do
+      user = user_fixture(%{language: :pt})
+      scope = scope_fixture(%{user: user})
+      attrs = valid_org_attributes()
+
+      assert {:ok, %Org{} = org} = Orgs.create_org(scope, attrs)
+      assert org.language == :pt
+    end
+
+    test "adds current user as org admin" do
+      user = user_fixture()
+      scope = scope_fixture(%{user: user})
+      attrs = valid_org_attributes()
+
+      assert {:ok, %Org{} = org} = Orgs.create_org(scope, attrs)
+      assert Orgs.get_org_member(org, user).role == :admin
     end
   end
 
@@ -177,14 +198,14 @@ defmodule Zoonk.OrgsTest do
       assert Orgs.get_org_by_host("nonexistent.zoonk.com") == nil
     end
 
-    test "returns the app org when host is nil" do
-      app_org = app_org_fixture()
-      assert Orgs.get_org_by_host(nil) == app_org
+    test "returns the system org when host is nil" do
+      system_org = system_org_fixture()
+      assert Orgs.get_org_by_host(nil) == system_org
     end
 
-    test "returns the app org when host is empty string" do
-      app_org = app_org_fixture()
-      assert Orgs.get_org_by_host("") == app_org
+    test "returns the system org when host is empty string" do
+      system_org = system_org_fixture()
+      assert Orgs.get_org_by_host("") == system_org
     end
 
     test "returns nil when host has no subdomain part" do
@@ -230,14 +251,14 @@ defmodule Zoonk.OrgsTest do
       assert Orgs.get_org_by_host("alphanumeric123.zoonk.com") == org
     end
 
-    test "returns the app org if there's no match for either custom_domain or subdomain" do
-      app_org = app_org_fixture()
+    test "returns the system org if there's no match for either custom_domain or subdomain" do
+      system_org = system_org_fixture()
 
       # Create another org with a different subdomain and custom domain
       org_fixture(%{subdomain: "other-org", custom_domain: "other-org.com"})
 
       # Should return the main org
-      assert Orgs.get_org_by_host("main-org.zoonk.com") == app_org
+      assert Orgs.get_org_by_host("main-org.zoonk.com") == system_org
     end
   end
 
@@ -267,14 +288,60 @@ defmodule Zoonk.OrgsTest do
 
   describe "get_org_settings/1" do
     test "returns org settings for admins" do
-      scope = scope_fixture(%{kind: :team, role: :admin})
+      scope = scope_fixture(%{kind: :external, role: :admin})
       settings = Orgs.get_org_settings(scope)
       assert settings.org_id == scope.org.id
     end
 
     test "returns nil for non-admins" do
-      scope = scope_fixture(%{kind: :team, role: :member})
+      scope = scope_fixture(%{kind: :external, role: :member})
       refute Orgs.get_org_settings(scope)
+    end
+  end
+
+  describe "create_org_member/3" do
+    test "creates org member when user is admin" do
+      scope = scope_fixture(%{kind: :external, role: :admin})
+      user = user_fixture()
+
+      assert {:ok, %OrgMember{} = org_member} = Orgs.create_org_member(scope, user, %{role: :member})
+
+      assert org_member.org_id == scope.org.id
+      assert org_member.user_id == user.id
+      assert org_member.role == :member
+    end
+
+    test "allows admin to create other admins" do
+      scope = scope_fixture(%{kind: :external, role: :admin})
+      user = user_fixture()
+
+      assert {:ok, %OrgMember{} = org_member} = Orgs.create_org_member(scope, user, %{role: :admin})
+
+      assert org_member.org_id == scope.org.id
+      assert org_member.user_id == user.id
+      assert org_member.role == :admin
+    end
+
+    test "returns error when user is not admin" do
+      scope = scope_fixture(%{kind: :external, role: :member})
+      user = user_fixture()
+      assert Orgs.create_org_member(scope, user, %{role: :member}) == {:error, :unauthorized}
+    end
+  end
+
+  describe "org_url/2" do
+    test "generates correct URL for org with subdomain and default path" do
+      unique_subdomain = "org#{System.unique_integer([:positive])}"
+      org = org_fixture(%{subdomain: unique_subdomain})
+      assert Orgs.org_url(org) == "http://#{unique_subdomain}.localhost:4000/"
+    end
+
+    test "generates correct URL for org with subdomain and custom path" do
+      unique_subdomain = "org#{System.unique_integer([:positive])}"
+      org = org_fixture(%{subdomain: unique_subdomain})
+      Application.put_env(:zoonk, :external_org_url, "https://zoonk.app")
+      assert Orgs.org_url(org, "/dashboard") == "https://#{unique_subdomain}.zoonk.app/dashboard"
+      Application.put_env(:zoonk, :external_org_url, "http://localhost:4000")
     end
   end
 end

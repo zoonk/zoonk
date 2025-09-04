@@ -184,8 +184,7 @@ defmodule Zoonk.Accounts do
     |> Helpers.changeset_from_transaction(:user)
   end
 
-  # `:app` and `:creator` orgs allow any domains to sign up
-  defp allowed_domains(%Org{kind: kind}) when kind in [:app, :creator], do: nil
+  defp allowed_domains(%Org{is_public: true}), do: nil
 
   # other orgs may require specific domains to sign up
   defp allowed_domains(%Org{id: id}) do

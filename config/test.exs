@@ -64,6 +64,9 @@ config :zoonk, :ai_models,
   eval: "o4-mini",
   suggest_courses: "gpt-4.1-nano"
 
+# Configures the URL used for external orgs
+config :zoonk, :external_org_url, "http://localhost:4000"
+
 # Disable Stripe calls for testing
 config :zoonk, :stripe,
   webhook_secret: "whsec_test_secret_key_for_webhook_verification",

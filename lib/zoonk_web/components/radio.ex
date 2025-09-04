@@ -32,17 +32,35 @@ defmodule ZoonkWeb.Components.RadioInput do
   import ZoonkWeb.Components.Icon
   import ZoonkWeb.Components.Text
 
-  attr :value, :string, required: true
-  attr :name, :string, required: true
-  attr :checked, :boolean, default: false
+  alias Phoenix.HTML.FormField
+
+  attr :id, :string, default: nil
+  attr :field, FormField, doc: "a form field struct retrieved from the form, for example: @form[:email]"
+  attr :value, :any
+  attr :name, :any
+  attr :checked, :boolean
   attr :label, :string, required: true
   attr :class, :string, default: nil
   slot :inner_block, required: true
 
+  def radio_input(%{field: %FormField{} = field} = assigns) do
+    assigns
+    |> assign(field: nil, id: assigns.id || field.id)
+    |> assign_new(:name, fn -> field.name end)
+    |> assign_new(:checked, fn -> to_string(field.value) == to_string(assigns.value) end)
+    |> radio_input()
+  end
+
   def radio_input(assigns) do
     ~H"""
     <label class="group cursor-pointer select-none">
-      <input type="radio" name={@name} value={@value} checked={@checked} class="peer sr-only" />
+      <input
+        type="radio"
+        name={@name}
+        value={to_string(@value)}
+        checked={@checked}
+        class="peer sr-only"
+      />
 
       <div class={[
         "flex flex-col gap-4 overflow-hidden rounded-xl border p-4 transition-all",

@@ -12,90 +12,83 @@ defmodule ZoonkWeb.CommandPaletteConfig do
 
   ## Examples
 
-      navigation_items()
+      section_items(:navigation)
       # => [
       #   %{icon: "tabler-home", label: "Home page", navigate: "/"},
       #   ...
       # ]
   """
-  def navigation_items do
+  def section_items(:navigation) do
     [
       %{
         icon: menu_icon(:home),
         label: dgettext("menu", "Home page"),
-        navigate: ~p"/"
+        navigate: ~p"/",
+        visibility: :always
       },
       %{
         icon: menu_icon(:catalog),
         label: dgettext("menu", "Catalog"),
-        navigate: ~p"/catalog"
+        navigate: ~p"/catalog",
+        visibility: :always
       },
       %{
         icon: menu_icon(:new_course),
         label: dgettext("menu", "Start new course"),
-        navigate: ~p"/learn"
+        navigate: ~p"/learn",
+        visibility: :catalog
+      },
+      %{
+        icon: menu_icon(:new_org),
+        label: dgettext("menu", "Create new organization"),
+        navigate: ~p"/orgs/new",
+        visibility: :system
       }
     ]
   end
 
-  @doc """
-  Returns the settings items for the command palette.
-
-  ## Examples
-
-      settings_items()
-      # => [
-      #   %{icon: "tabler-language", label: "Change app language", navigate: "/language"},
-      #   ...
-      # ]
-  """
-  def settings_items do
+  def section_items(:settings) do
     [
       %{
         icon: menu_icon(:settings),
         label: dgettext("menu", "Settings"),
-        navigate: ~p"/settings"
+        navigate: ~p"/settings",
+        visibility: :authenticated
       },
       %{
         icon: menu_icon(:my_courses),
         label: dgettext("menu", "My courses"),
-        navigate: ~p"/my-courses"
+        navigate: ~p"/my-courses",
+        visibility: :authenticated
       },
       %{
         icon: menu_icon(:subscription),
         label: dgettext("menu", "Subscription"),
-        navigate: ~p"/subscription"
+        navigate: ~p"/subscription",
+        visibility: :authenticated
       },
       %{
         icon: menu_icon(:language),
         label: dgettext("menu", "Change app language"),
-        navigate: ~p"/language"
+        navigate: ~p"/language",
+        visibility: :authenticated
       },
       %{
         icon: menu_icon(:display_name),
         label: dgettext("menu", "Change display name"),
-        navigate: ~p"/name"
+        navigate: ~p"/name",
+        visibility: :authenticated
       },
       %{
         icon: menu_icon(:email),
         label: dgettext("menu", "Change email address"),
-        navigate: ~p"/email"
+        navigate: ~p"/email",
+        visibility: :authenticated
       }
     ]
   end
 
-  @doc """
-  Returns the support items for the command palette.
-
-  ## Examples
-
-      support_items()
-      # => [
-      #   %{icon: menu_item(:contact), label: "Contact us", navigate: "/contact"},
-      #   ...
-      # ]
-  """
-  def support_items do
+  def section_items(:support) do
     [
       %{
         icon: menu_icon(:contact),
@@ -135,17 +128,5 @@ defmodule ZoonkWeb.CommandPaletteConfig do
         visibility: :unauthenticated
       }
     ]
-  end
-
-  @doc """
-  Returns all command palette items as a flat list for search operations.
-
-  ## Examples
-
-      all_items()
-      # => [%{icon: "tabler-home", label: "Home page", navigate: "/"}, ...]
-  """
-  def all_items do
-    navigation_items() ++ settings_items() ++ support_items()
   end
 end

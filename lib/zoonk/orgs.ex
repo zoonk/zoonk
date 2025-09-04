@@ -54,10 +54,11 @@ defmodule Zoonk.Orgs do
       iex> create_org(%{name: "My Org"})
       {:error, %Ecto.Changeset{}}
   """
-  def create_org(kind, attrs \\ %{}) do
+  def create_org(%Scope{user: user}, attrs \\ %{}) do
     Multi.new()
-    |> Multi.insert(:org, Org.changeset(%Org{kind: kind}, attrs))
+    |> Multi.insert(:org, Org.changeset(%Org{kind: :external, language: user.language}, attrs))
     |> Multi.insert(:settings, fn %{org: org} -> change_org_settings(%OrgSettings{org_id: org.id}) end)
+    |> Multi.insert(:member, fn %{org: org} -> %OrgMember{org_id: org.id, user_id: user.id, role: :admin} end)
     |> Repo.transact()
     |> Helpers.changeset_from_transaction(:org)
   end
@@ -78,10 +79,10 @@ defmodule Zoonk.Orgs do
 
   """
   def get_org_by_host(host) when is_binary(host) do
-    get_org_by_custom_domain(host) || get_org_by_subdomain(host) || get_app_org()
+    get_org_by_custom_domain(host) || get_org_by_subdomain(host) || get_system_org()
   end
 
-  def get_org_by_host(_host), do: get_app_org()
+  def get_org_by_host(_host), do: get_system_org()
 
   defp get_org_by_custom_domain(host) do
     Repo.get_by(Org, custom_domain: host)
@@ -95,11 +96,11 @@ defmodule Zoonk.Orgs do
     end
   end
 
-  # Fallback if we couldn't find an org, then use the app org
+  # Fallback if we couldn't find an org, then use the system org
   # (which is the only one that can be used without a subdomain)
   # because everyone has access to the main app.
-  defp get_app_org do
-    Repo.get_by(Org, kind: :app)
+  defp get_system_org do
+    Repo.get_by(Org, kind: :system)
   end
 
   @doc """
@@ -141,4 +142,52 @@ defmodule Zoonk.Orgs do
   end
 
   def get_org_settings(_scope), do: nil
+
+  @doc """
+  Create an org member.
+
+  ## Examples
+
+      iex> create_org_member(%Org{}, %User{})
+      {:ok, %OrgMember{}}
+
+      iex> create_org_member(%Org{}, nil)
+      {:error, %Ecto.Changeset{}}
+  """
+  def create_org_member(%Scope{} = scope, %User{} = user, attrs) when scope.org_member.role == :admin do
+    %OrgMember{org_id: scope.org.id, user_id: user.id}
+    |> OrgMember.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def create_org_member(_scope, _user, _attrs), do: {:error, :unauthorized}
+
+  @doc """
+  Generates the URL for an organization's app.
+
+  Orgs have their own app using our subdomain.
+  For example, in production this could be
+  `https://my-org.zoonk.app/` whereas in development
+  it could be `http://localhost:4000/`.
+
+  ## Examples
+
+      iex> org_url(%Org{subdomain: "my-org"})
+      "https://my-org.zoonk.app/"
+
+      iex> org_url(%Org{subdomain: "my-org"}, "/dashboard")
+      "https://my-org.zoonk.app/dashboard"
+  """
+  def org_url(%Org{} = org, path \\ "/") do
+    org
+    |> org_uri(path)
+    |> URI.to_string()
+  end
+
+  defp org_uri(%Org{subdomain: subdomain}, path) do
+    base = URI.parse(external_org_url())
+    %{base | host: "#{subdomain}.#{base.host}", path: path}
+  end
+
+  defp external_org_url, do: Application.get_env(:zoonk, :external_org_url)
 end

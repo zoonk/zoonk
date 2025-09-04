@@ -80,6 +80,7 @@ defmodule ZoonkWeb.Components.Form do
   attr :title, :string, required: true, doc: "the title of the step"
   attr :subtitle, :string, required: true, doc: "the subtitle of the step"
   attr :rest, :global, doc: "the arbitrary HTML attributes to apply to the fieldset tag"
+  attr :content_class, :string, doc: "the CSS class to apply to the content div", default: "mt-4"
   slot :inner_block, doc: "the inner block for the fieldset"
 
   def multi_step_form_fieldset(assigns) do
@@ -88,7 +89,7 @@ defmodule ZoonkWeb.Components.Form do
       <.text tag="h1" size={:xxl} class="leading-none">{@title}</.text>
       <.text tag="h2" size={:md} variant={:secondary}>{@subtitle}</.text>
 
-      <div class="mt-4">
+      <div class={["mt-4", @content_class]}>
         {render_slot(@inner_block)}
       </div>
     </fieldset>

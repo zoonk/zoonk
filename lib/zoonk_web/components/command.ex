@@ -104,10 +104,11 @@ defmodule ZoonkWeb.Components.Command do
 
   ## Examples
 
-      <.command_input placeholder="Search..." />
-      <.command_input placeholder="Type to search..." icon="tabler-settings" />
+      <.command_input label="Search..." />
+      <.command_input label="Type to search..." icon="tabler-settings" />
   """
-  attr :id, :string, default: nil, doc: "The unique identifier for the input"
+  attr :id, :string, default: "command-input", doc: "The unique identifier for the input"
+  attr :label, :string, default: gettext("Search..."), doc: "Accessible label for the input"
   attr :icon, :string, default: "tabler-search", doc: "Icon to display on the left side of the input"
   attr :class, :string, default: nil, doc: "Additional CSS classes for the input wrapper"
   attr :rest, :global, doc: "Additional HTML attributes for the input element"
@@ -116,6 +117,8 @@ defmodule ZoonkWeb.Components.Command do
     ~H"""
     <div class={["relative flex items-center gap-2", @class]}>
       <.icon name={@icon} class="size-4 text-zk-foreground/70 absolute left-3" />
+
+      <label for={@id} class="sr-only">{@label}</label>
 
       <input
         id={@id}
@@ -129,6 +132,7 @@ defmodule ZoonkWeb.Components.Command do
           "disabled:cursor-not-allowed disabled:opacity-50"
         ]}
         phx-debounce
+        placeholder={@label}
         {@rest}
       />
     </div>

@@ -89,20 +89,6 @@ defmodule ZoonkWeb.UserAuth do
     end
   end
 
-  @doc """
-  Fetches the scope for API requests.
-  """
-  def fetch_api_scope(conn, _opts) do
-    org_domain = get_req_header(conn, "x-org-domain")
-
-    with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
-         {user, _token_inserted_at} <- Accounts.get_user_by_session_token(token) do
-      assign(conn, :scope, build_scope(user, org_domain))
-    else
-      _header -> assign(conn, :scope, build_scope(nil, org_domain))
-    end
-  end
-
   # Reissue the session token if it is older than the configured reissue age.
   defp maybe_reissue_user_session_token(conn, user, token_inserted_at) do
     token_age = DateTime.diff(DateTime.utc_now(), token_inserted_at, :day)
@@ -207,9 +193,8 @@ defmodule ZoonkWeb.UserAuth do
 
   def on_mount(:ensure_auth_for_private_orgs, _params, _session, socket) do
     scope = socket.assigns.scope
-    public_org? = scope.org.kind in [:app, :creator]
 
-    if public_org? do
+    if scope.org.is_public do
       {:cont, socket}
     else
       {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/login")}
