@@ -19,6 +19,8 @@ defmodule ZoonkWeb.Components.Command do
   import ZoonkWeb.Components.Loader
   import ZoonkWeb.Components.Text
 
+  alias Phoenix.LiveView.JS
+
   @doc """
   Renders a button that looks like a search input field.
 
@@ -165,16 +167,19 @@ defmodule ZoonkWeb.Components.Command do
     ~H"""
     <ul
       class={[
-        "group max-h-72 select-none overflow-y-auto overflow-x-hidden md:max-h-100 lg:max-h-124",
+        "group/list max-h-72 select-none overflow-y-auto overflow-x-hidden md:max-h-100 lg:max-h-124",
         @class
       ]}
       id={@id}
+      phx-hook="ClickFirstOption"
+      phx-window-keydown={JS.dispatch("clickFirstOption")}
+      phx-key="enter"
     >
-      <div class="hidden flex-col items-center justify-center py-8 group-[.phx-change-loading]:flex">
+      {render_slot(@inner_block)}
+
+      <div class="hidden flex-col items-center justify-center py-8 group-[.phx-change-loading]/list:flex">
         <.loader />
       </div>
-
-      {render_slot(@inner_block)}
     </ul>
     """
   end
@@ -206,7 +211,7 @@ defmodule ZoonkWeb.Components.Command do
 
   def command_item(assigns) do
     ~H"""
-    <li role="option" class="group-[.phx-change-loading]:hidden">
+    <li role="option" class="group/item group-[.phx-change-loading]/list:hidden">
       <.link
         tabindex="0"
         class={[
@@ -214,6 +219,7 @@ defmodule ZoonkWeb.Components.Command do
           "text-zk-secondary-foreground/70 text-sm outline-none",
           "hover:bg-zk-secondary",
           "focus-visible:bg-zk-secondary",
+          "group-first/cg:group-first-of-type/item:bg-zk-secondary",
           @selected && "bg-zk-secondary",
           @class
         ]}
@@ -272,7 +278,7 @@ defmodule ZoonkWeb.Components.Command do
   def command_group(assigns) do
     ~H"""
     <div class={[
-      "text-zk-foreground border-zk-border select-none overflow-hidden border-b p-1 last:border-b-0",
+      "group/cg text-zk-foreground border-zk-border select-none overflow-hidden border-b p-1 last:border-b-0",
       @class
     ]}>
       <h6 :if={@heading} class="text-zk-muted-foreground px-2 py-1.5 text-xs font-medium">
@@ -304,7 +310,7 @@ defmodule ZoonkWeb.Components.Command do
       variant={:secondary}
       tag="p"
       size={:sm}
-      class={["py-6 text-center group-[.phx-change-loading]:hidden", @class]}
+      class={["py-6 text-center group-[.phx-change-loading]/list:hidden", @class]}
       {@rest}
     >
       {render_slot(@inner_block)}

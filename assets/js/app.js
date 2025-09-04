@@ -21,6 +21,7 @@ import "phoenix_html";
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import topbar from "../vendor/topbar";
+import { ClickFirstOption } from "./hooks/click_first_option";
 import { DelayLoading } from "./hooks/delay_loading";
 import { DialogTrigger } from "./hooks/dialog_trigger";
 
@@ -42,7 +43,7 @@ const csrfToken = document
 const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
 const liveSocket = new LiveSocket("/live", Socket, {
-  hooks: { DelayLoading, DialogTrigger },
+  hooks: { ClickFirstOption, DelayLoading, DialogTrigger },
   longPollFallbackMs: 2500,
   disconnectedTimeout: 2000,
   params: { _csrf_token: csrfToken, timezone },
