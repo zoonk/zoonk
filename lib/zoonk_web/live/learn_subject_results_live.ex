@@ -61,8 +61,6 @@ defmodule ZoonkWeb.LearnSubjectResultsLive do
       <ul
         :if={content}
         class="mx-auto max-w-xl"
-        phx-window-keydown={JS.navigate(~p"/learn")}
-        phx-key="escape"
         aria-label={dgettext("goals", "List of suggested courses")}
       >
         <li :for={{suggestion, index} <- Enum.with_index(content.suggestions)} class="group">
