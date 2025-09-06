@@ -21,6 +21,8 @@ defmodule ZoonkWeb.Components.Text do
     default: :primary,
     doc: "Color variant of the text"
 
+  attr :wrap, :atom, values: [:balance, :pretty], default: :pretty, doc: "Text wrapping style"
+
   attr :for, :string, default: nil, doc: "The for attribute for labels"
   attr :class, :any, default: nil, doc: "CSS class to apply to the text element"
   attr :id, :string, default: nil, doc: "ID of the text element"
@@ -42,7 +44,13 @@ defmodule ZoonkWeb.Components.Text do
     <label
       id={@id}
       for={@for}
-      class={[size_class(@size), variant_class(@variant), weight_class(@weight, @size), @class]}
+      class={[
+        size_class(@size),
+        variant_class(@variant),
+        weight_class(@weight, @size),
+        wrap_class(@wrap),
+        @class
+      ]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -55,7 +63,13 @@ defmodule ZoonkWeb.Components.Text do
     <.dynamic_tag
       tag_name={@tag}
       id={@id}
-      class={[size_class(@size), variant_class(@variant), weight_class(@weight, @size), @class]}
+      class={[
+        size_class(@size),
+        variant_class(@variant),
+        weight_class(@weight, @size),
+        wrap_class(@wrap),
+        @class
+      ]}
       {@rest}
     >
       {render_slot(@inner_block)}
@@ -83,4 +97,7 @@ defmodule ZoonkWeb.Components.Text do
   defp weight_class(nil, :xxl), do: "font-semibold"
   defp weight_class(nil, :xl), do: "font-medium"
   defp weight_class(nil, _size), do: "font-normal"
+
+  defp wrap_class(:balance), do: "text-balance"
+  defp wrap_class(:pretty), do: "text-pretty"
 end
