@@ -24,6 +24,7 @@ defmodule ZoonkWeb.LearnSubjectLive do
             required
             submit_icon="tabler-arrow-up"
             placeholder={dgettext("goals", "e.g. computer science, astronomy, biology, ...")}
+            phx-mounted={JS.focus()}
           />
         </.form>
       </div>
