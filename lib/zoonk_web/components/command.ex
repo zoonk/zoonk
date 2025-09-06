@@ -16,10 +16,7 @@ defmodule ZoonkWeb.Components.Command do
 
   import ZoonkWeb.Components.Button
   import ZoonkWeb.Components.Icon
-  import ZoonkWeb.Components.Loader
   import ZoonkWeb.Components.Text
-
-  alias Phoenix.LiveView.JS
 
   @doc """
   Renders a button that looks like a search input field.
@@ -124,6 +121,7 @@ defmodule ZoonkWeb.Components.Command do
 
       <input
         id={@id}
+        phx-hook="CommandSearch"
         type="text"
         name="query"
         class={[
@@ -166,22 +164,16 @@ defmodule ZoonkWeb.Components.Command do
 
   def command_list(assigns) do
     ~H"""
-    <ul
+    <div
+      data-command-list
       class={[
         "group/list max-h-72 select-none overflow-y-auto overflow-x-hidden md:max-h-100 lg:max-h-124",
         @class
       ]}
       id={@id}
-      phx-hook="ClickFirstOption"
-      phx-window-keydown={JS.dispatch("clickFirstOption")}
-      phx-key="enter"
     >
       {render_slot(@inner_block)}
-
-      <div class="hidden flex-col items-center justify-center py-8 group-[.phx-change-loading]/list:flex">
-        <.loader />
-      </div>
-    </ul>
+    </div>
     """
   end
 
@@ -206,13 +198,14 @@ defmodule ZoonkWeb.Components.Command do
       </.command_item>
   """
   attr :class, :string, default: nil, doc: "Additional CSS classes for the item"
+  attr :label, :string, default: nil, doc: "The label for the item"
   attr :selected, :boolean, default: false, doc: "Whether the item is currently selected"
   attr :rest, :global, include: ~w(href method navigate patch), doc: "Additional HTML attributes"
   slot :inner_block, required: true, doc: "The content of the command item"
 
   def command_item(assigns) do
     ~H"""
-    <li role="option" class="group/item group-[.phx-change-loading]/list:hidden">
+    <li role="option" data-command-item data-label={@label} class="group/item">
       <.link
         tabindex="0"
         class={[
@@ -220,7 +213,7 @@ defmodule ZoonkWeb.Components.Command do
           "text-zk-secondary-foreground/70 text-sm outline-none",
           "hover:bg-zk-secondary",
           "focus-visible:bg-zk-secondary",
-          "group-first/cg:group-first-of-type/item:bg-zk-secondary",
+          "group-data-[active]/item:bg-zk-secondary",
           @selected && "bg-zk-secondary",
           @class
         ]}
@@ -272,20 +265,34 @@ defmodule ZoonkWeb.Components.Command do
         <.command_item>Profile</command_item>
       </.command_group>
   """
+  attr :id, :string, required: true, doc: "The unique identifier for the group"
   attr :heading, :string, default: nil, doc: "Optional heading text for the group"
   attr :class, :string, default: nil, doc: "Additional CSS classes for the group"
+  attr :kind, :atom, values: [:static, :dynamic], default: :static, doc: "Kind of the group, static or dynamic"
   slot :inner_block, required: true, doc: "The content of the group"
 
   def command_group(assigns) do
     ~H"""
-    <div class={[
-      "group/cg text-zk-foreground border-zk-border select-none overflow-hidden border-b p-1 last:border-b-0",
-      @class
-    ]}>
-      <h6 :if={@heading} class="text-zk-muted-foreground px-2 py-1.5 text-xs font-medium">
+    <div
+      id={@id}
+      class={[
+        "group/cg select-none overflow-hidden p-1",
+        "text-zk-foreground",
+        "border-zk-border border-b last:border-b-0",
+        "hidden has-[li:not(.hidden)]:block",
+        @class
+      ]}
+    >
+      <h6
+        :if={@heading}
+        class="text-zk-muted-foreground px-2 py-1.5 text-xs font-medium"
+      >
         {@heading}
       </h6>
-      {render_slot(@inner_block)}
+
+      <ul id={"#{@id}_list"} phx-update={@kind == :static && "ignore"} phx-hook="CommandGroupList">
+        {render_slot(@inner_block)}
+      </ul>
     </div>
     """
   end
@@ -311,7 +318,7 @@ defmodule ZoonkWeb.Components.Command do
       variant={:secondary}
       tag="p"
       size={:sm}
-      class={["py-6 text-center group-[.phx-change-loading]/list:hidden", @class]}
+      class={["block py-6 text-center", "group-has-[li:not(.hidden)]/list:hidden", @class]}
       {@rest}
     >
       {render_slot(@inner_block)}

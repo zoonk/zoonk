@@ -150,7 +150,6 @@ defmodule ZoonkWeb.Router do
         live "/avatar", AvatarPreviewLive
         live "/button", ButtonPreviewLive
         live "/card", CardPreviewLive
-        live "/command", CommandPreviewLive
         live "/divider", DividerPreviewLive
         live "/dropdown", DropdownPreviewLive
         live "/flash", FlashPreviewLive

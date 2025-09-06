@@ -39,17 +39,32 @@ defmodule ZoonkWeb.CommandPaletteLive do
         </form>
 
         <.command_list>
-          <.command_empty :if={empty?(@query, @scope)}>
+          <.command_empty>
             {dgettext("menu", "No pages found.")}
           </.command_empty>
 
           <.command_group
-            :for={section <- sections()}
-            :if={results(section.key, @query, @scope) != []}
-            heading={section.title}
+            heading={dgettext("menu", "Courses")}
+            kind={:dynamic}
+            id="command-group-courses"
           >
             <.command_item
-              :for={item <- results(section.key, @query, @scope)}
+              :for={item <- @courses}
+              label={item.label}
+              {build_nav_attrs(item)}
+            >
+              {item.label}
+            </.command_item>
+          </.command_group>
+
+          <.command_group
+            :for={section <- sections()}
+            heading={section.title}
+            id={"command-group-#{section.key}"}
+          >
+            <.command_item
+              :for={item <- menu_items(section.key, @scope)}
+              label={item.label}
               {build_nav_attrs(item)}
             >
               <.icon name={item.icon} class="size-4" />
@@ -64,12 +79,13 @@ defmodule ZoonkWeb.CommandPaletteLive do
 
   @impl Phoenix.LiveComponent
   def mount(socket) do
-    {:ok, assign(socket, query: "")}
+    {:ok, assign(socket, courses: [])}
   end
 
   @impl Phoenix.LiveComponent
   def handle_event("search", %{"query" => query}, socket) do
-    {:noreply, assign(socket, query: String.trim(query))}
+    query = String.trim(query)
+    {:noreply, assign(socket, courses: search_courses(query))}
   end
 
   defp build_nav_attrs(item) do
@@ -89,31 +105,11 @@ defmodule ZoonkWeb.CommandPaletteLive do
   defp visible?(:system, %Scope{org: %Org{kind: :system}}), do: true
   defp visible?(_visibility, _scope), do: false
 
-  defp empty?(query, scope) do
-    started_typing?(query) and not results?(query, scope)
-  end
-
-  defp started_typing?(query) do
-    query
-    |> String.trim()
-    |> Kernel.!=("")
-  end
-
-  defp results?(query, scope) do
-    Enum.any?(sections(), fn section ->
-      results(section.key, query, scope) != []
-    end)
-  end
-
-  defp results(section, query, scope) do
+  defp menu_items(section, scope) do
     section
     |> section_items()
-    |> maybe_search_results(query)
     |> filter_results(scope)
   end
-
-  defp maybe_search_results(items, ""), do: items
-  defp maybe_search_results(items, query), do: FuzzySearch.search(items, query, & &1.label)
 
   defp filter_results(items, scope), do: Enum.filter(items, &visible?(&1.visibility, scope))
 
@@ -123,5 +119,20 @@ defmodule ZoonkWeb.CommandPaletteLive do
       %{key: :settings, title: dgettext("menu", "Settings")},
       %{key: :support, title: dgettext("menu", "Support")}
     ]
+  end
+
+  defp courses do
+    [
+      %{label: "Elixir", navigate: ~p"/catalog?course=elixir"},
+      %{label: "Phoenix", navigate: ~p"/catalog?course=phoenix"},
+      %{label: "LiveView", navigate: ~p"/catalog?course=live_view"},
+      %{label: "JavaScript", navigate: ~p"/catalog?course=javascript"}
+    ]
+  end
+
+  defp search_courses(""), do: []
+
+  defp search_courses(query) do
+    FuzzySearch.search(courses(), query, & &1.label)
   end
 end
