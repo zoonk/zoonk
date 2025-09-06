@@ -82,16 +82,11 @@ config :zoonk, ZoonkWeb.Endpoint,
 config :zoonk, ZoonkWeb.Endpoint,
   web_console_logger: true,
   live_reload: [
-    notify: [
-      live_view: [
-        ~r"lib/zoonk_web/(live|ui_preview)/.*(ex|heex)$"
-      ]
-    ],
     patterns: [
       ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
       ~r"lib/zoonk_web/[^/]+\.ex$",
-      ~r"lib/zoonk_web/(components|controllers)/.*\.(ex|heex)$"
+      ~r"lib/zoonk_web/(components|controllers|live|ui_preview)/.*\.(ex|heex)$"
     ]
   ]
 
