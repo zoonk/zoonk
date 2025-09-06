@@ -24,7 +24,11 @@ function openDialog(dialog) {
  * If no shortcut is defined, it will default to `k`.
  */
 function handleShortcut(event, dialog) {
-  const shortcut = this.el.dataset.shortcut || "k";
+  const shortcut = this.el.dataset.shortcut;
+
+  if (!shortcut) {
+    return;
+  }
 
   if (event.key === shortcut && (event.metaKey || event.ctrlKey)) {
     event.preventDefault();
