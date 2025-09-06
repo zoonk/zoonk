@@ -134,6 +134,7 @@ defmodule ZoonkWeb.Components.Command do
           "disabled:cursor-not-allowed disabled:opacity-50"
         ]}
         phx-debounce
+        data-command-input
         placeholder={@label}
         {@rest}
       />

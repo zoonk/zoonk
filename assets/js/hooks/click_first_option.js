@@ -1,3 +1,13 @@
+function isCommandInputActive() {
+  const activeElement = document.activeElement;
+
+  return (
+    activeElement &&
+    activeElement.hasAttribute &&
+    activeElement.hasAttribute("data-command-input")
+  );
+}
+
 /**
  * Clicks the first option in a list when the event is triggered.
  *
@@ -16,6 +26,10 @@
 export const ClickFirstOption = {
   mounted() {
     this.clickFirstOptionHandler = () => {
+      if (!isCommandInputActive()) {
+        return;
+      }
+
       const first = this.el.querySelector('[role="option"] a');
       if (first) first.click();
     };
