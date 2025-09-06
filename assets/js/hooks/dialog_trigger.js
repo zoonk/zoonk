@@ -65,36 +65,24 @@ export const DialogTrigger = {
   mounted() {
     const dialog = getDialog(this.el.dataset.dialogId);
 
-    // Store event listeners for later cleanup
-    this.clickHandler = (event) => {
-      event.stopPropagation();
-      openDialog(dialog);
-    };
-
     this.keydownHandler = (event) => handleShortcut.call(this, event, dialog);
 
-    this.closeDialogHandler = () => {
-      dialog.close();
-    };
-
     // Open the dialog when the trigger is clicked
-    this.el.addEventListener("click", this.clickHandler);
+    this.el.addEventListener("click", (event) => {
+      event.stopPropagation();
+      openDialog(dialog);
+    });
 
     // Also open the dialog when the shortcut is pressed, e.g. "cmd+k"
     document.addEventListener("keydown", this.keydownHandler);
 
     // Close the dialog when receiving the "closeDialog" event
-    dialog.addEventListener("closeDialog", this.closeDialogHandler);
+    dialog.addEventListener("closeDialog", () => {
+      dialog.close();
+    });
   },
 
   destroyed() {
-    const dialog = getDialog(this.el.dataset.dialogId);
-
-    this.el.removeEventListener("click", this.clickHandler);
     document.removeEventListener("keydown", this.keydownHandler);
-
-    if (dialog) {
-      dialog.removeEventListener("closeDialog", this.closeDialogHandler);
-    }
   },
 };

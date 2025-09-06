@@ -1,11 +1,6 @@
 function isCommandInputActive() {
   const activeElement = document.activeElement;
-
-  return (
-    activeElement &&
-    activeElement.hasAttribute &&
-    activeElement.hasAttribute("data-command-input")
-  );
+  return activeElement && activeElement.hasAttribute("data-command-input");
 }
 
 /**
@@ -25,21 +20,13 @@ function isCommandInputActive() {
  */
 export const ClickFirstOption = {
   mounted() {
-    this.clickFirstOptionHandler = () => {
+    this.el.addEventListener("clickFirstOption", () => {
       if (!isCommandInputActive()) {
         return;
       }
 
       const first = this.el.querySelector('[role="option"] a');
       if (first) first.click();
-    };
-
-    this.el.addEventListener("clickFirstOption", this.clickFirstOptionHandler);
-  },
-  destroyed() {
-    this.el.removeEventListener(
-      "clickFirstOption",
-      this.clickFirstOptionHandler,
-    );
+    });
   },
 };
