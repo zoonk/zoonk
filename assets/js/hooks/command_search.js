@@ -9,6 +9,11 @@ function getCommandItems() {
   );
 }
 
+function isCommandInputActive() {
+  const activeElement = document.activeElement;
+  return activeElement && activeElement.hasAttribute("data-command-input");
+}
+
 function selectFirstCommandItem() {
   const currentActiveItem = document.querySelector(
     "[data-command-item][data-active]",
@@ -29,6 +34,12 @@ function selectFirstCommandItem() {
 
 function clickFirstCommandItemOnEnter(event) {
   if (event.key === "Enter") {
+    // Only click on item when the command input is the active element
+    /// Otherwise, this would run for every "Enter" key press on the page
+    if (!isCommandInputActive()) {
+      return;
+    }
+
     const currentActiveItem = document.querySelector(
       "[data-command-item][data-active] a",
     );
