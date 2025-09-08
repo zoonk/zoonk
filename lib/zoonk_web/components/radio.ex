@@ -52,6 +52,8 @@ defmodule ZoonkWeb.Components.RadioInput do
   end
 
   def radio_input(assigns) do
+    assigns = assign_new(assigns, :checked, fn -> false end)
+
     ~H"""
     <label class="group cursor-pointer select-none">
       <input
