@@ -9,10 +9,6 @@
   <br />
   <br />
   <a href="https://forms.gle/jHeTqPUkw1vA7wLh8">Waitlist</a>
-  .
-  <a href="https://github.com/orgs/zoonk/discussions/176">Long-term vision</a>
-  .
-  <a href="https://github.com/zoonk/zoonk/issues/52">v0.1 Checklist</a>
 </p>
 
 > [!CAUTION]
@@ -20,6 +16,8 @@
 > ## Early Development Notice
 >
 > This project is still in early development and **not ready for use**. We’re actively working to make it available as soon as possible.
+>
+> We’re currently rewriting the project in Next.js + TypeScript and will no longer use Elixir + Phoenix. This rewrite is happening in private, but we’ll merge it into this repository once it’s ready.
 >
 > As we progress, we’ll open it for testing and contributions. Star this repository or follow us on social media to stay updated.
 
@@ -29,17 +27,6 @@
 - [Bluesky](https://bsky.app/profile/zoonk.bsky.social)
 - [Threads](https://www.threads.net/@zoonkcom)
 - [LinkedIn](https://www.linkedin.com/company/zoonk)
-
-## Getting started
-
-You can read our full documentation at https://docs.zoonk.com or check the guides below:
-
-- [Overview](./guides/overview.md)
-- [Installation](./guides/installation.md)
-
-## Model Evaluations
-
-We evaluate various AI models on different prompts. You can find the results in the [priv/evals](./priv/evals/README.md) directory.
 
 ## Supporters
 
