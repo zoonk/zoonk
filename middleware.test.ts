@@ -21,6 +21,12 @@ test("doesn't match _next paths", () => {
   );
 });
 
+test("doesn't match _vercel paths", () => {
+  expect(doesMiddlewareMatch({ config, url: "/_vercel/insights/view" })).toBe(
+    false,
+  );
+});
+
 test("redirects home page to language-specific URL", () => {
   const request = new NextRequest("https://zoonk.com");
   request.cookies.set("NEXT_LOCALE", "pt");
