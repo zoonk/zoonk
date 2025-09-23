@@ -1,0 +1,29 @@
+{
+  "HomePage": {
+    "title": "Olá, mundo!"
+  },
+  "Auth": {
+    "pageTitle": "Login ou crie uma conta",
+    "pageDescription": "Login ou crie uma conta gratuita para começar a usar o Zoonk.",
+    "socialOr": "Ou",
+    "title": "Entrar ou criar uma conta",
+    "subtitle": "Continue com seu email ou uma conta social",
+    "terms": "Ao clicar em Continuar, você concorda com nossos <terms>Termos de Serviço</terms> e <privacy>Política de Privacidade</privacy>.",
+    "continueWithGoogle": "Continuar com Google",
+    "email": "Email",
+    "emailPlaceholder": "meuemail@gmail.com",
+    "submit": "Continuar",
+    "otpTitle": "Verifique seu email",
+    "otpSubtitle": "Digite o código que enviamos para {email}:",
+    "changeEmail": "Alterar email",
+    "emailError": "Falha ao enviar o código de verificação. Por favor, tente novamente ou entre em contato com hello@zoonk.com",
+    "otpError": "O código que você digitou está incorreto. Por favor, tente novamente ou entre em contato com hello@zoonk.com",
+    "errorSigningIn": "Houve um erro ao fazer login. Por favor, tente novamente ou entre em contato com hello@zoonk.com"
+  },
+  "OTP": {
+    "subject": "Seu código de login do Zoonk",
+    "intro": "Este é o seu código de uso único para fazer login no Zoonk:",
+    "expiry": "Este código expirará em 5 minutos.",
+    "ignore": "Se você não solicitou este código, pode ignorar este email."
+  }
+}

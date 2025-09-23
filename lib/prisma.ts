@@ -1,0 +1,25 @@
+import { PrismaPg } from "@prisma/adapter-pg";
+import { withAccelerate } from "@prisma/extension-accelerate";
+import { attachDatabasePool } from "@vercel/functions";
+import { Pool } from "pg";
+import { PrismaClient } from "@/generated/prisma/client";
+
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+
+attachDatabasePool(pool);
+
+const adapter = new PrismaPg(pool);
+
+const globalForPrisma = global as unknown as {
+  prisma: PrismaClient;
+};
+
+const prisma =
+  globalForPrisma.prisma ||
+  new PrismaClient({ adapter }).$extends(withAccelerate());
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+}
+
+export default prisma;

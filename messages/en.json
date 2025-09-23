@@ -1,0 +1,28 @@
+{
+  "HomePage": {
+    "title": "Hello world!"
+  },
+  "Auth": {
+    "pageTitle": "Login or create an account",
+    "pageDescription": "Login or create a free account to start using Zoonk.",
+    "socialOr": "Or",
+    "title": "Sign in or create an account",
+    "subtitle": "Continue with your email or a social account",
+    "terms": "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
+    "continueWithGoogle": "Continue with Google",
+    "email": "Email",
+    "emailPlaceholder": "myemail@gmail.com",
+    "submit": "Continue",
+    "otpTitle": "Check your email",
+    "otpSubtitle": "Enter the code we sent to {email}:",
+    "changeEmail": "Change email",
+    "otpError": "The code you entered is incorrect. Please try again or contact hello@zoonk.com",
+    "errorSigningIn": "There was an error signing you in. Please try again or contact hello@zoonk.com"
+  },
+  "OTP": {
+    "subject": "Your Zoonk sign-in code",
+    "intro": "This is your one-time passcode to sign in to Zoonk:",
+    "expiry": "This code will expire in 5 minutes.",
+    "ignore": "If you did not request this code, you can safely ignore this email."
+  }
+}

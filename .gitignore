@@ -1,67 +1,48 @@
-# The directory Mix will write compiled artifacts to.
-/_build/
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# If you run "mix test --cover", coverage assets end up here.
-/cover/
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
 
-# The directory Mix downloads your dependencies sources to.
-/deps/
+# testing
+/coverage
 
-# Where 3rd-party dependencies like ExDoc output generated docs.
-/doc/
+# next.js
+/.next/
+/out/
 
-# Ignore .fetch files in case you like to edit your project deps locally.
-/.fetch
+# production
+/build
 
-# If the VM crashes, it generates a dump, let's ignore it too.
-erl_crash.dump
-
-# Also ignore archive artifacts (built via "mix archive.build").
-*.ez
-
-# Temporary files, for example, from tests.
-/tmp/
+# misc
 .DS_Store
-.elixir_ls
+*.pem
 
-# Ignore package tarball (built via "mix hex.build").
-zoonk-*.tar
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
-# Ignore assets that are produced by build tools.
-/priv/static/assets/
-
-# Ignore digested assets cache.
-/priv/static/cache_manifest.json
-
-# In case you use Node.js/npm, you want to ignore these.
-npm-debug.log
-/assets/node_modules/
-
-# Private keys
-cert
-
-# Environment variables
-.env
-.env.*
+# env files (can opt-in for committing if needed)
+.env*
 !.env.example
-.envrc
 
-# Sobelow
-.sobelow
+# vercel
+.vercel
 
-# Dialyzer
-/priv/plts/*.plt
-/priv/plts/*.plt.hash
+# typescript
+*.tsbuildinfo
+next-env.d.ts
 
-# Library docs generated for LLMs
-llm_docs
-chatmodes
-.vscode/tasks.json
+# prisma
+/generated/prisma
 
-# Kiro files
-.kiro
-
-# Evals
-/priv/evals/models/
-/priv/evals/prompts/
-/priv/evals/*.json
+# next-intl
+messages/*.d.json.ts

@@ -1,28 +1,5 @@
 {
-  "github.copilot.chat.commitMessageGeneration.instructions": [
-    {
-      "file": ".github/copilot/commit.md"
-    }
-  ],
-  "github.copilot.chat.codeGeneration.instructions": [
-    {
-      "file": "AGENTS.md"
-    }
-  ],
-  "github.copilot.chat.testGeneration.instructions": [
-    {
-      "file": ".github/copilot/tests.md"
-    },
-    {
-      "file": ".github/copilot/llm_docs/phoenix_test.md"
-    }
-  ],
-  "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
-    {
-      "file": ".github/copilot/pull_request.md"
-    },
-    {
-      "file": ".github/copilot/commit.md"
-    }
-  ]
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "i18n-ally.localesPaths": ["./messages"],
+  "i18n-ally.keystyle": "nested"
 }

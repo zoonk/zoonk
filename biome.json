@@ -1,0 +1,164 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.2.4/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    "includes": [
+      "**",
+      "!node_modules",
+      "!.next",
+      "!dist",
+      "!build",
+      "!generated"
+    ]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "a11y": {
+        "noNoninteractiveElementInteractions": "error"
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "error",
+        "noExcessiveLinesPerFunction": "error",
+        "noForEach": "error",
+        "noImplicitCoercions": "error",
+        "noUselessStringConcat": "error",
+        "useSimplifiedLogicExpression": "error",
+        "useWhile": "error"
+      },
+      "correctness": {
+        "useImportExtensions": "off",
+        "useUniqueElementIds": "off",
+        "noGlobalDirnameFilename": "error",
+        "noPrivateImports": "error",
+        "noReactPropAssignments": "error",
+        "noRestrictedElements": "error",
+        "noUndeclaredVariables": "error"
+      },
+      "nursery": {
+        "noDuplicateDependencies": "error",
+        "noFloatingPromises": "error",
+        "noImportCycles": "error",
+        "noJsxLiterals": "error",
+        "noMisusedPromises": "error",
+        "noNonNullAssertedOptionalChain": "error",
+        "noSecrets": "off",
+        "noShadow": "error",
+        "noUnnecessaryConditions": "error",
+        "noUnresolvedImports": "off",
+        "noUselessCatchBinding": "error",
+        "noUselessUndefined": "error",
+        "useAnchorHref": "error",
+        "useConsistentArrowReturn": "error",
+        "useConsistentTypeDefinitions": "error",
+        "useExhaustiveSwitchCases": "error",
+        "useExplicitType": "off",
+        "useImageSize": "error",
+        "useMaxParams": "error",
+        "useReactFunctionComponents": "error",
+        "noNextAsyncClientComponent": "error"
+      },
+      "performance": {
+        "noAwaitInLoops": "error",
+        "noBarrelFile": "error",
+        "noDelete": "error",
+        "noNamespaceImport": "error",
+        "noReExportAll": "error",
+        "useTopLevelRegex": "error"
+      },
+      "style": {
+        "noCommonJs": "error",
+        "noDoneCallback": "error",
+        "noEnum": "error",
+        "noExportedImports": "error",
+        "noMagicNumbers": "error",
+        "noNamespace": "error",
+        "noNegationElse": "error",
+        "noNestedTernary": "error",
+        "noParameterAssign": "error",
+        "noParameterProperties": "error",
+        "noRestrictedGlobals": "error",
+        "noRestrictedImports": "error",
+        "noSubstr": "error",
+        "noUnusedTemplateLiteral": "error",
+        "noUselessElse": "error",
+        "noYodaExpression": "error",
+        "useAsConstAssertion": "error",
+        "useAtIndex": "error",
+        "useBlockStatements": "error",
+        "useCollapsedElseIf": "error",
+        "useCollapsedIf": "error",
+        "useConsistentArrayType": "error",
+        "useConsistentBuiltinInstantiation": "error",
+        "useConsistentCurlyBraces": "error",
+        "useConsistentMemberAccessibility": "error",
+        "useConsistentObjectDefinitions": "error",
+        "useDefaultParameterLast": "error",
+        "useDefaultSwitchClause": "error",
+        "useEnumInitializers": "error",
+        "useExplicitLengthCheck": "error",
+        "useExportsLast": "error",
+        "useFilenamingConvention": "error",
+        "useForOf": "error",
+        "useFragmentSyntax": "error",
+        "useGroupedAccessorPairs": "error",
+        "useNodeAssertStrict": "error",
+        "useNumberNamespace": "error",
+        "useNumericSeparators": "error",
+        "useObjectSpread": "error",
+        "useReadonlyClassProperties": "error",
+        "useSelfClosingElements": "error",
+        "useShorthandAssign": "error",
+        "useSingleVarDeclarator": "error",
+        "useSymbolDescription": "error",
+        "useThrowNewError": "error",
+        "useThrowOnlyError": "error",
+        "useTrimStartEnd": "error",
+        "useUnifiedTypeSignatures": "error",
+        "noValueAtRule": "error"
+      },
+      "suspicious": {
+        "noUnknownAtRules": "off",
+        "noAlert": "error",
+        "noBitwiseOperators": "error",
+        "noConstantBinaryExpressions": "error",
+        "noEmptyBlockStatements": "error",
+        "noEvolvingTypes": "error",
+        "noMisplacedAssertion": "error",
+        "noSkippedTests": "error",
+        "noUnassignedVariables": "error",
+        "noVar": "error",
+        "useAwait": "error",
+        "useErrorMessage": "error",
+        "useGuardForIn": "error",
+        "useNumberToFixedDigitsArgument": "error",
+        "useStaticResponseMethods": "error",
+        "useStrictMode": "error"
+      }
+    },
+    "domains": {
+      "next": "all",
+      "project": "all",
+      "react": "all",
+      "test": "all"
+    }
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  }
+}

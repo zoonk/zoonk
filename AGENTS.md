@@ -1,253 +1,258 @@
-# Zoonk Usage Guide for AI Agents
+# Zoonk Guidelines for AI Agents
 
-This guide defines the development and design standards used in Zoonk. It ensures consistency, clarity, and simplicity across all parts of the codebase. Follow these instructions strictly when building or updating any part of the app.
+Zoonk is a web app where users can learn anything using AI. This app uses AI to generate courses, chapters, lessons, and exercises. Our goal is to help anyone to easily learn anything, providing tools that make learning easier, faster, more practical, and more fun.
 
----
+For understanding the terminology used in this app, please refer to the [Glossary](./GLOSSARY.md).
 
 ## Table of Contents
 
-- [About this app](#about-this-app)
 - [Principles](#principles)
-- [Project Structure](#project-structure)
-  - [Contexts](#contexts)
-  - [Schemas](#schemas)
-  - [Controllers](#controllers)
-  - [LiveView Pages](#liveview-pages)
-  - [Components](#components)
-- [UI and Design Rules](#ui-and-design-rules)
-  - [CSS and Tailwind](#css-and-tailwind)
-  - [Icons](#icons)
-  - [Accessibility and Responsiveness](#accessibility-and-responsiveness)
-- [Routing and Text](#routing-and-text)
-- [Documentation Standards](#documentation-standards)
-- [Testing Guidelines](#testing-guidelines)
-- [Elixir Usage](#elixir-usage)
-- [OTP Usage](#otp-usage)
-- [Setup and References](#setup-and-references)
-
----
-
-## About this app
-
-Zoonk is a learning app that uses AI to create courses with short, interactive exercises that show how things work in real life.
-
----
+- [Tech stack](#tech-stack)
+- [Project structure](#project-structure)
+- [Tools](#tools)
+- [Conventions](#conventions)
+- [CSS](#css)
+- [Icons](#icons)
+- [Links](#links)
+- [Params](#params)
+- [Interactions](#interactions)
+- [Animation](#animation)
+- [Layout](#layout)
+- [Content & Accessibility](#content--accessibility)
+- [Performance](#performance)
+- [Design](#design)
 
 ## Principles
 
 - Always prefer the **simplest solution**. If something feels complex, refactor
 - Favor **clarity and minimalism** in both code and UI
-- Default to **Phoenix/LiveView** solutions. Use JavaScript only via `phx-hook` and only when unavoidable
-- Follow design inspirations from **Apple, Linear, Vercel**
-- Code must be **modular**, **tested**, and follow **SOLID** and **DRY** principles
-- Avoid nested conditionals and complex logic. Prefer short and composable functions, making good use of pipes, pattern matching, and guards
-- Prefer `:if` on elements instead of conditional blocks. E.g., <ul :if={@items}> instead of <%= if @items do %>
-- Use `@impl ModuleName`, not `@impl true`
-- **Never** nest multiple modules in the same file as it can cause cyclic dependencies
-- Before submitting code, make sure to review your approach and ask yourself:
-  - Is this the simplest and most readable solution?
-  - Is it clear and easy to understand?
-  - Does it follow the principles outlined in this guide?
-  - Is it the most performant solution?
-- If you answer "no" to any of these questions, consider refactoring or simplifying your code before submitting
-- Use meaningful variable names and avoid abbreviations. E.g. `course_suggestion` and `suggestion` are better than `cs` and `sugg`
+- Follow design inspirations from Apple, Linear, Vercel
+- Code must be modular, following SOLID and DRY principles
+- Avoid nested conditionals and complex logic. Prefer short and composable functions
+- Use meaningful variable names and avoid abbreviations
 
----
+## Tech stack
 
-## Project Structure
+- Next.js (App Router)
+- TypeScript
+- Tailwind
+- Prisma Postgres
+- shadcn/ui
+- Vercel AI SDK
+- Better Auth
 
-### Contexts
+## Project structure
 
-- Always add the scope (`Zoonk.Scope`) as the first argument to functions to scope data to the correct `org.id` and `user.id`
-- Use the scope to check for permissions/roles using `org_member`
+- `app/`: Next.js App Router routes
+- `components/`: Reusable React components
+- `i18n/`: Localization configuration using `next-intl`
+- `lib/`: Utility functions and libraries
+- `messages/`: Translation files
+- `prisma/`: Prisma schema and migrations
+- `public/`: Static assets
+- `test/`: Testing helpers and utilities
 
-### Schemas
+## Tools
 
-- Use context-prefixed names: `Zoonk.Accounts.User`
-- Always include `@moduledoc` with a field table for SCHEMA modules (modules using `use Ecto.Schema`):
-  ```
-  Field Name | Type | Description
-  ```
-- Use `List`, not `Array` when defining a type in docs
-- Default `array` fields to `[]`
-- Add `timestamps(type: :utc_datetime_usec)`
-- Always generate migrations along with schema changes using `mix ecto.gen.migration`
+- Use `pnpm` for package management
+- For AI features, use the [Vercel AI SDK](https://ai-sdk.dev) and the [Vercel AI Gateway](https://vercel.com/docs/ai-gateway). See docs for the AI SDK [here](https://ai-sdk.dev/llms.txt)
 
-### Controllers
+## Conventions
 
-- Located in `lib/zoonk_web/controllers/`
-- Use `use ZoonkWeb, :controller`
-- Match file/module names
-- Add `@moduledoc` and `@doc` for each action
+- Import `Link`, `redirect`, `usePathname`, `useRouter`, and `getPathname` from `@/i18n/navigation` since it handles localization
+- Run `pnpm format` to format the code after making changes, then `pnpm lint` to check for linting errors, and `pnpm type-check` to check for TypeScript errors
+- Don't run `pnpm build` or `pnpm dev`
+- Never hard-code strings. Use `next-intl` instead
+- Prefer to use server components than client components. Only use client components when absolutely necessary
+- Avoid `useEffect` and `useState` unless absolutely required
+- Fetch data on the server whenever possible and use `Suspense` with a fallback for loading states, [see docs](https://nextjs.org/docs/app/getting-started/fetching-data#streaming)
+- Keep comments minimal—explain **why**, not **what**
 
-### LiveView Pages
+## CSS
 
-- Located in `lib/zoonk_web/live/`
-- Add `@moduledoc false`
-- Place `render` at the top
-- Use `use ZoonkWeb, :live_view`
-- Use socket's `assign/3` only for dynamic data. For static data, define a function instead
-- **Avoid LiveComponent's** unless you have a strong, specific need for them
-- Remember anytime you use `phx-hook="MyHook"` and that js hook manages its own DOM, you **must** also set the `phx-update="ignore"` attribute
-- **Always** use LiveView streams for collections for assigning regular lists to avoid memory ballooning and runtime termination with the following operations:
-  - basic append of N items - `stream(socket, :messages, [new_msg])`
-  - resetting stream with new items - `stream(socket, :messages, [new_msg], reset: true)` (e.g. for filtering items)
-  - prepend to stream - `stream(socket, :messages, [new_msg], at: -1)`
-  - deleting items - `stream_delete(socket, :messages, msg)`
-- When using the `stream/3` interfaces in the LiveView, the LiveView template must 1) always set `phx-update="stream"` on the parent element, with a DOM id on the parent element like `id="messages"` and 2) consume the `@streams.stream_name` collection and use the id as the DOM id for each child
-- LiveView streams are _not_ enumerable, so you cannot use `Enum.filter/2` or `Enum.reject/2` on them. Instead, if you want to filter, prune, or refresh a list of items on the UI, you **must refetch the data and re-stream the entire stream collection, passing reset: true**
-- LiveView streams _do not support counting or empty states_. If you need to display a count, you must track it using a separate assign. For empty states, you can use Tailwind classes like `<div class="hidden only:block">No tasks yet</div>`
-
-### Components
-
-- Shared components go in `lib/zoonk_web/components/`
-- Import via `html_helpers` in `zoonk_web.ex`
-- Use `Phoenix.Component.attr/3`
-- Add `@moduledoc` and `@doc` with usage examples
-- Add previews in `lib/zoonk_web/ui_preview/`, register routes, and update `ui_preview_layout.ex`
-- Use `<.text>` for all textual content
-- Render slots via `{render_slot(@inner_block)}`
-- Pass styling through `class=` props, not wrappers
-- Don't write tests for UI/functional components
-- Keep CSS in the component file, not in `globals.css` (we only add utilities there for reusable/shared styles)
-
----
-
-## UI and Design Rules
-
-### CSS and Tailwind
-
-- Use **Tailwind v4**
-- Avoid default colors — use tokens like `bg-zk-background`
-- Use `zk-` prefix for custom utilities
-- Use `size-4` instead of `w-4 h-4`
+- Use Tailwind v4
+- Use variables defined in `app/globals.css`
+- Use `size-*` instead of `w-*` + `h-*`
 - Only create custom utilities when we're often using the same styles
 - Don't use `space-y-*` or `space-x-*` classes, instead use `gap-*`
 
-### Icons
+## Icons
 
-- Use Tabler icons: `<.icon name="tabler-icon-name" />`
+- We support both `lucide-react` and `@tabler/icons-react`
+- Prefer `lucide-react`, only use `@tabler/icons-react` when the icon is not available in `lucide-react`
 
-### Accessibility and Responsiveness
+## Links
 
-- Responsive on mobile, tablet, desktop
-- Follow accessibility best practices
-- Use Tailwind breakpoints: `sm:`, `md:`, `lg:`, `xl:`
-- Extend `globals.css`, don’t create new CSS files
-- Keep animations minimal and non-distracting
-- Prefer CSS/Tailwind for animations over JavaScript
+You can style links as buttons like this:
 
----
+You can use the buttonVariants helper to create a link that looks like a button.
 
-## Routing and Text
+```tsx
+import { buttonVariants } from "@/components/ui/button";
 
-- Use **Verified Routes** (`~p"/path"`), never use `Routes.page_path/2`
-- Use **Gettext** for all strings
-  - Do not hardcode text
-  - Do not generate new translation files
-  - Do not run `mix gettext.extract` (this will be done later)
+<Link className={buttonVariants({ variant: "outline" })}>Click here</Link>;
+```
 
----
+## Params
 
-## Documentation Standards
+In Next.js 15, `params` use Dynamic APIs. Dynamic APIs are: The `params` and `searchParams` props that get provided to pages, layouts, metadata APIs, and route handlers; `cookies()`, `draftMode()`, and `headers()` from `next/headers`. In Next 15, these APIs have been made asynchronous.
 
-- Be clear, concise, objective
-- Avoid vague terms like “secure” or “best practice”
-- Always add `@moduledoc` for modules
-- Always add `@doc` for functions, with examples (see existing patterns)
-- Don’t prefix examples with `elixir`
-- Combine multiple `on_mount` docs into one `@doc`
+For example, the following code will issue a warning:
 
----
+```ts
+function Page({ params }) {
+  // direct access of `params.id`.
+  return <p>ID: {params.id}</p>;
+}
+```
 
-## Testing Guidelines
+This also includes enumerating (e.g. {...params}, or Object.keys(params)) or iterating over the return value of these APIs (e.g. [...headers()] or for (const cookie of cookies()), or explicitly with cookies()[Symbol.iterator]()).
 
-- Test file: same name as module + `_test`
-- Use:
-  - `Zoonk.DataCase` for data
-  - `ZoonkWeb.ConnCase` for web
-- Fixtures in `test/support/fixtures/`
-- Avoid `setup` for fixtures; call fixtures directly on each test
-- Use `PhoenixTest` library - see [docs](./.github/copilot/llm_docs/phoenix_test.md)
-- Use `Phoenix.Flash.get/2` (not `get_flash/2`)
-- Don’t expose private functions for testing
-- Run tests with `mix test`, not VSCode debugger
-- Run `mix format` before committing
-- Run `mix ci` after formatting to ensure code quality checks pass
-- When asserting changeset errors, use this format: `assert "can't be blank" in errors_on(changeset).query`
+In the version of Next.js that issued this warning, access to these properties is still possible directly but will warn. In future versions, these APIs will be async and direct access will not work as expected.
 
----
+### How to fix
 
-## Elixir Usage
+If you're using a server (e.g. a route handler, or a Server Component), you must await the dynamic API to access its properties:
 
-### Pattern Matching
+```tsx
+async function Page({ params }: { params: Promise<{ id: string }> }) {
+  // asynchronous access of `params.id`.
+  const { id } = await params;
+  return <p>ID: {id}</p>;
+}
+```
 
-- Use function heads and guards over `if`, `case`, `cond`
-- Lists and enumerables cannot be indexed with brackets. Use pattern matching or Enum functions
+If you're using a synchronous component (e.g. a Client component), you must use React.use() to unwrap the Promise first:
 
-### Error Handling
+```tsx
+"use client";
+import { use } from "react";
 
-- Use `{:ok, result}` and `{:error, reason}`
-- Avoid raising for flow control
-- Use `with` for chaining
+function Page({ params }: { params: Promise<{ id: string }> }) {
+  // asynchronous access of `params.id`.
+  const { id } = use(params);
+  return <p>ID: {id}</p>;
+}
+```
 
-### Data and Function Design
+You can delay unwrapping the Promise (either with await or React.use) until you actually need to consume the value. This will allow Next.js to statically render more of your page.
 
-- Prefer `Stream` over `Enum` on large collections
-- Don’t use `String.to_atom/1` on user input
-- Prefer pattern matching, not indexing lists
-- Name unused variables as `_name`, not `_`
-- Use structs over maps for known shapes
-- Prefer keyword lists for options
-- Use descriptive function names
-- Use `Oban` for background jobs
-- Use **pipe-based query syntax** for clarity and composability
-- Don't need to write `@spec` for functions but use structs in function signatures
-- Elixir has everything necessary for date and time manipulation. Familiarize yourself with the common `Time`, `Date`, `DateTime`, and `Calendar` interfaces by accessing their documentation as necessary. **Never** install additional dependencies unless asked or for date/time parsing (which you can use the `date_time_parser` package)
-- Predicate function names should not start with `is_` and should end in a question mark. Names like `is_thing` should be reserved for guards
-- Use the already included and available `:req` (`Req`) library for HTTP requests, **avoid** `:httpoison`, `:tesla`, and `:httpc`. Req is included by default and is the preferred HTTP client for Phoenix apps
+## Interactions
 
-### Ecto
+- Keyboard
+  - MUST: Full keyboard support per [WAI-ARIA APG](https://wwww3org/WAI/ARIA/apg/patterns/)
+  - MUST: Visible focus rings (`:focus-visible`; group with `:focus-within`)
+  - MUST: Manage focus (trap, move, and return) per APG patterns
+- Targets & input
+  - MUST: Hit target ≥24px (mobile ≥44px) If visual <24px, expand hit area
+  - MUST: Mobile `<input>` font-size ≥16px or set:
+    ```html
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+    />
+    ```
+  - NEVER: Disable browser zoom
+  - MUST: `touch-action: manipulation` to prevent double-tap zoom; set `-webkit-tap-highlight-color` to match design
+- Inputs & forms (behavior)
+  - MUST: Hydration-safe inputs (no lost focus/value)
+  - NEVER: Block paste in `<input>/<textarea>`
+  - MUST: Loading buttons show spinner and keep original label
+  - MUST: Enter submits focused text input In `<textarea>`, ⌘/Ctrl+Enter submits; Enter adds newline
+  - MUST: Keep submit enabled until request starts; then disable, show spinner, use idempotency key
+  - MUST: Don’t block typing; accept free text and validate after
+  - MUST: Allow submitting incomplete forms to surface validation
+  - MUST: Errors inline next to fields; on submit, focus first error
+  - MUST: `autocomplete` + meaningful `name`; correct `type` and `inputmode`
+  - SHOULD: Disable spellcheck for emails/codes/usernames
+  - SHOULD: Placeholders end with ellipsis and show example pattern (eg, `+1 (123) 456-7890`, `sk-012345…`)
+  - MUST: Warn on unsaved changes before navigation
+  - MUST: Compatible with password managers & 2FA; allow pasting one-time codes
+  - MUST: Trim values to handle text expansion trailing spaces
+  - MUST: No dead zones on checkboxes/radios; label+control share one generous hit target
+- State & navigation
+  - MUST: URL reflects state (deep-link filters/tabs/pagination/expanded panels) Prefer libs like [nuqs](https://nuqs.dev)
+  - MUST: Back/Forward restores scroll
+  - MUST: Links are links—use `<a>/<Link>` for navigation (support Cmd/Ctrl/middle-click)
+- Feedback
+  - SHOULD: Optimistic UI; reconcile on response; on failure show error and rollback or offer Undo
+  - MUST: Confirm destructive actions or provide Undo window
+  - MUST: Use polite `aria-live` for toasts/inline validation
+  - SHOULD: Ellipsis (`…`) for options that open follow-ups (eg, “Rename…”)
+- Touch/drag/scroll
+  - MUST: Design forgiving interactions (generous targets, clear affordances; avoid finickiness)
+  - MUST: Delay first tooltip in a group; subsequent peers no delay
+  - MUST: Intentional `overscroll-behavior: contain` in modals/drawers
+  - MUST: During drag, disable text selection and set `inert` on dragged element/containers
+  - MUST: No “dead-looking” interactive zones—if it looks clickable, it is
+- Autofocus
+  - SHOULD: Autofocus on desktop when there’s a single primary input; rarely on mobile (to avoid layout shift)
 
-- **Always** preload Ecto associations in queries when they'll be accessed in templates, ie a message that needs to reference the `message.user.email`
-- `Ecto.Schema` fields always use the `:string` type, even for `:text`, columns, ie: `field :name, :string`
-- `Ecto.Changeset.validate_number/2` **DOES NOT SUPPORT the `:allow_nil` option**. By default, Ecto validations only run if a change for the given field exists and the change value is not nil, so such as option is never needed
-- You **must** use `Ecto.Changeset.get_field(changeset, :field)` to access changeset fields
-- Fields which are set programatically, such as `user_id`, must not be listed in `cast` calls or similar for security purposes. Instead they must be explicitly set when creating the struct (e.g. `%UserProfile{user_id: user_id}`)
+## Animation
 
-### Mix
+- MUST: Honor `prefers-reduced-motion` (provide reduced variant)
+- SHOULD: Prefer CSS > Web Animations API > JS libraries
+- MUST: Animate compositor-friendly props (`transform`, `opacity`); avoid layout/repaint props (`top/left/width/height`)
+- SHOULD: Animate only to clarify cause/effect or add deliberate delight
+- SHOULD: Choose easing to match the change (size/distance/trigger)
+- MUST: Animations are interruptible and input-driven (avoid autoplay)
+- MUST: Correct `transform-origin` (motion starts where it “physically” should)
 
-- Read the docs and options before using tasks (by using `mix help task_name`)
-- To debug test failures, run tests in a specific file with `mix test test/my_test.exs` or run all previously failed tests with `mix test --failed`
-- `mix deps.clean --all` is **almost never needed**. **Avoid** using it unless you have good reason
-- The server is already running, you never need to start it manually or restart it
+## Layout
 
----
+- SHOULD: Optical alignment; adjust by ±1px when perception beats geometry
+- MUST: Deliberate alignment to grid/baseline/edges/optical centers—no accidental placement
+- SHOULD: Balance icon/text lockups (stroke/weight/size/spacing/color)
+- MUST: Verify mobile, laptop, ultra-wide (simulate ultra-wide at 50% zoom)
+- MUST: Respect safe areas (use env(safe-area-inset-\*))
+- MUST: Avoid unwanted scrollbars; fix overflows
 
-## OTP Usage
+## Content & Accessibility
 
-### GenServer
+- SHOULD: Inline help first; tooltips last resort
+- MUST: Skeletons mirror final content to avoid layout shift
+- MUST: `<title>` matches current context
+- MUST: No dead ends; always offer next step/recovery
+- MUST: Design empty/sparse/dense/error states
+- SHOULD: Curly quotes (“ ”); avoid widows/orphans
+- MUST: Tabular numbers for comparisons (`font-variant-numeric: tabular-nums` or a mono like Geist Mono)
+- MUST: Redundant status cues (not color-only); icons have text labels
+- MUST: Don’t ship the schema—visuals may omit labels but accessible names still exist
+- MUST: Use the ellipsis character `…` (not ``)
+- MUST: `scroll-margin-top` on headings for anchored links; include a “Skip to content” link; hierarchical `<h1–h6>`
+- MUST: Resilient to user-generated content (short/avg/very long)
+- MUST: Locale-aware dates/times/numbers/currency
+- MUST: Accurate names (`aria-label`), decorative elements `aria-hidden`, verify in the Accessibility Tree
+- MUST: Icon-only buttons have descriptive `aria-label`
+- MUST: Prefer native semantics (`button`, `a`, `label`, `table`) before ARIA
+- SHOULD: Right-clicking the nav logo surfaces brand assets
+- MUST: Use non-breaking spaces to glue terms: `10&nbsp;MB`, `⌘&nbsp;+&nbsp;K`, `Vercel&nbsp;SDK`
 
-- Keep state serializable
-- Use `handle_continue/2` after init
-- Cleanup in `terminate/2`
-- Use `GenServer.call/3` with backpressure
-- Use `GenServer.cast/2` for fire-and-forget
+## Performance
 
-### Fault Tolerance
+- SHOULD: Test iOS Low Power Mode and macOS Safari
+- MUST: Measure reliably (disable extensions that skew runtime)
+- MUST: Track and minimize re-renders (React DevTools/React Scan)
+- MUST: Profile with CPU/network throttling
+- MUST: Batch layout reads/writes; avoid unnecessary reflows/repaints
+- MUST: Mutations (`POST/PATCH/DELETE`) target <500 ms
+- SHOULD: Prefer uncontrolled inputs; make controlled loops cheap (keystroke cost)
+- MUST: Virtualize large lists (eg, `virtua`)
+- MUST: Preload only above-the-fold images; lazy-load the rest
+- MUST: Prevent CLS from images (explicit dimensions or reserved space)
 
-- Use supervisors with limits: `:max_restarts`, `:max_seconds`
+## Design
 
-### Tasks
+- SHOULD: Layered shadows (ambient + direct)
+- SHOULD: Crisp edges via semi-transparent borders + shadows
+- SHOULD: Nested radii: child ≤ parent; concentric
+- SHOULD: Hue consistency: tint borders/shadows/text toward bg hue
+- MUST: Accessible charts (color-blind-friendly palettes)
+- MUST: Meet contrast—prefer [APCA](https://apcacontrastcom/) over WCAG 2
+- MUST: Increase contrast on `:hover/:active/:focus`
+- SHOULD: Match browser UI to bg
+- SHOULD: Avoid gradient banding (use masks when needed)
 
-- Use `Task.Supervisor`
-- Use `Task.yield/2` or `Task.shutdown/2` for failures
-- Use `Task.async_stream(collection, callback, options)` for concurrent enumeration with back-pressure. The majority of times you will want to pass `timeout: :infinity` as option
+## Updating this document
 
----
-
-## Setup and References
-
-- [Installation Guide](guides/installation.md)
-- [Glossary](guides/glossary.md)
-- [Directory Overview](guides/overview.md)
+AI agents should update this file whenever they learn something new about this project that future tasks might need to take into account. Keeping the guidelines current helps everyone work more effectively.

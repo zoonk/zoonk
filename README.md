@@ -17,9 +17,71 @@
 >
 > This project is still in early development and **not ready for use**. We’re actively working to make it available as soon as possible.
 >
-> We’re currently rewriting the project in Next.js + TypeScript and will no longer use Elixir + Phoenix. This rewrite is happening in private, but we’ll merge it into this repository once it’s ready.
->
 > As we progress, we’ll open it for testing and contributions. Star this repository or follow us on social media to stay updated.
+
+## Table of Contents
+
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [PostgreSQL Setup](#postgresql-setup)
+  - [Prisma Setup](#prisma-setup)
+  - [Local Development](#local-development)
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js v24 or higher
+- pnpm v10 or higher
+- PostgreSQL v17 or higher
+
+You can install multiple Node.js and pnpm versions using [mise](https://mise.jdx.dev/).
+
+### Installation
+
+- `pnpm install` to install dependencies
+- `cp .env.example .env` and fill in the required environment variables
+
+### PostgreSQL Setup
+
+For macOS users, you can install PostgreSQL using Homebrew:
+
+```bash
+brew install postgresql
+brew services start postgresql
+```
+
+Then, create a new database:
+
+```bash
+createdb zoonk
+```
+
+Update the `DATABASE_URL` in your `.env` file with your PostgreSQL credentials. It will look something like this:
+
+```bash
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/zoonk"
+```
+
+### Prisma Setup
+
+Run the following commands to set up Prisma:
+
+- `pnpm prisma generate` to generate Prisma client
+- `pnpm prisma migrate dev` to run migrations and set up the database
+
+### Local Development
+
+- `pnpm dev` to start the development server
+- `pnpm build` to create a production build
+- `pnpm start` to start the production server
+- `pnpm lint` to run linting
+- `pnpm format` to format the code according to our Biome configuration
+- `pnpm prisma studio` to open Prisma Studio and inspect your database
+- `pnpm type-check` to run TypeScript type checking
+- `pnpm test` to run tests with Vitest
+- `pnpm i18n` to check for missing or unused i18n keys
 
 ## Social Media
 
