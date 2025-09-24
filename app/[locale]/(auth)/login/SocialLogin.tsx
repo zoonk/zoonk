@@ -1,6 +1,9 @@
 "use client";
 
-import { IconBrandGoogleFilled } from "@tabler/icons-react";
+import {
+  IconBrandAppleFilled,
+  IconBrandGoogleFilled,
+} from "@tabler/icons-react";
 import { Loader2Icon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -8,14 +11,18 @@ import { Button } from "@/components/ui/button";
 import { InputError } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 
-type SocialState = "initial" | "loadingGoogle" | "error";
+type SocialState = "initial" | "loadingGoogle" | "loadingApple" | "error";
+
+function getLoadingState(provider: "google" | "apple"): SocialState {
+  return provider === "google" ? "loadingGoogle" : "loadingApple";
+}
 
 export function SocialLogin() {
   const [state, setState] = useState<SocialState>("initial");
   const t = useTranslations("Auth");
 
-  const signIn = async (provider: "google") => {
-    setState("loadingGoogle");
+  const signIn = async (provider: "google" | "apple") => {
+    setState(getLoadingState(provider));
 
     try {
       await authClient.signIn.social({ provider });
@@ -36,6 +43,18 @@ export function SocialLogin() {
         {state === "loadingGoogle" && <Loader2Icon className="animate-spin" />}
         <IconBrandGoogleFilled aria-hidden="true" />
         {t("continueWithGoogle")}
+      </Button>
+
+      <Button
+        variant="outline"
+        type="button"
+        className="w-full"
+        disabled={state === "loadingApple"}
+        onClick={() => signIn("apple")}
+      >
+        {state === "loadingApple" && <Loader2Icon className="animate-spin" />}
+        <IconBrandAppleFilled aria-hidden="true" />
+        {t("continueWithApple")}
       </Button>
 
       {state === "error" && <InputError>{t("errorSigningIn")}</InputError>}
