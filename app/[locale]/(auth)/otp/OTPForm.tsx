@@ -27,10 +27,10 @@ export function OTPForm({ email }: OTPFormProps) {
   const [state, formAction, _pending] = useActionState(emailOTP, initialState);
 
   return (
-    <div className="flex flex-col w-full gap-6 items-center text-center">
+    <div className="flex w-full flex-col items-center gap-6 text-center">
       <div className="flex flex-col items-center gap-2">
-        <h1 className="text-xl font-bold">{t("otpTitle")}</h1>
-        <p className="text-center text-sm text-balance">
+        <h1 className="font-bold text-xl">{t("otpTitle")}</h1>
+        <p className="text-balance text-center text-sm">
           {t("otpSubtitle", { email })}
         </p>
       </div>

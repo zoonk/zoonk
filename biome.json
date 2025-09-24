@@ -67,7 +67,14 @@
         "useImageSize": "error",
         "useMaxParams": "error",
         "useReactFunctionComponents": "error",
-        "noNextAsyncClientComponent": "error"
+        "noNextAsyncClientComponent": "error",
+        "useSortedClasses": {
+          "level": "error",
+          "fix": "safe",
+          "options": {
+            "functions": ["clsx", "cva", "tw", "tw.*", "cn"]
+          }
+        }
       },
       "performance": {
         "noAwaitInLoops": "error",
