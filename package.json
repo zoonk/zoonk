@@ -27,6 +27,7 @@
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "input-otp": "1.4.2",
+    "jose": "6.1.0",
     "lucide-react": "0.544.0",
     "negotiator": "1.0.0",
     "next": "15.5.3",
