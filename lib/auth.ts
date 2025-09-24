@@ -6,10 +6,11 @@ import { getAppleClientSecret } from "./auth/apple";
 import { sendVerificationOTP } from "./auth/otp";
 import prisma from "./prisma";
 
+const isProduction = process.env.NODE_ENV === "production";
+
 const SESSION_EXPIRES_IN_DAYS = 30;
 const COOKIE_CACHE_MINUTES = 60;
-
-const APPLE_CLIENT_SECRET = await getAppleClientSecret();
+const APPLE_CLIENT_SECRET = isProduction ? await getAppleClientSecret() : "";
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
