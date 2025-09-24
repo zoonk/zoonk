@@ -13,22 +13,6 @@ jobs:
       matrix:
         node-version: [22]
 
-    services:
-      db:
-        image: postgres:17
-        ports: ["5432:5432"]
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    env:
-      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/grading-app
-
     steps:
       - name: Check out code
         uses: actions/checkout@v5
