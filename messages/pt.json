@@ -1,7 +1,4 @@
 {
-  "HomePage": {
-    "title": "Olá, mundo!"
-  },
   "Auth": {
     "pageTitle": "Login ou crie uma conta",
     "pageDescription": "Login ou crie uma conta gratuita para começar a usar o Zoonk.",
@@ -26,5 +23,10 @@
     "intro": "Este é o seu código de uso único para fazer login no Zoonk:",
     "expiry": "Este código expirará em 5 minutos.",
     "ignore": "Se você não solicitou este código, pode ignorar este email."
+  },
+  "Navbar": {
+    "home": "Página inicial",
+    "courses": "Cursos",
+    "start": "Iniciar curso"
   }
 }

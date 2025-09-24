@@ -1,7 +1,4 @@
 {
-  "HomePage": {
-    "title": "Hello world!"
-  },
   "Auth": {
     "pageTitle": "Login or create an account",
     "pageDescription": "Login or create a free account to start using Zoonk.",
@@ -25,5 +22,10 @@
     "intro": "This is your one-time passcode to sign in to Zoonk:",
     "expiry": "This code will expire in 5 minutes.",
     "ignore": "If you did not request this code, you can safely ignore this email."
+  },
+  "Navbar": {
+    "home": "Home page",
+    "courses": "Courses",
+    "start": "Start course"
   }
 }
