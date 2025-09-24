@@ -32,7 +32,7 @@
 
 ### Prerequisites
 
-- Node.js v24 or higher
+- Node.js v22 or higher
 - pnpm v10 or higher
 - PostgreSQL v17 or higher
 
