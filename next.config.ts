@@ -1,14 +1,17 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
+const CACHE_IMAGE_DAYS = 365;
+
 const nextConfig: NextConfig = {
   images: {
-    minimumCacheTTL: 31_536_000, // 1 year
+    minimumCacheTTL: 60 * 60 * 24 * CACHE_IMAGE_DAYS,
   },
   typedRoutes: true,
   experimental: {
     typedEnv: true,
     useCache: true,
+    cacheComponents: true,
   },
 };
 

@@ -146,7 +146,6 @@
         "noSkippedTests": "error",
         "noUnassignedVariables": "error",
         "noVar": "error",
-        "useAwait": "error",
         "useErrorMessage": "error",
         "useGuardForIn": "error",
         "useNumberToFixedDigitsArgument": "error",
