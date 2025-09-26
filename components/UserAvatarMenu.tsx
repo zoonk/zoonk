@@ -1,7 +1,9 @@
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { getSession } from "@/lib/user";
-import { LoginButton } from "./LoginButton";
 import { UserAvatar } from "./UserAvatar";
 import { UserDropdownMenu } from "./UserDropdownMenu";
+import { buttonVariants } from "./ui/button";
 import { DropdownMenu, DropdownMenuTrigger } from "./ui/dropdown-menu";
 
 interface UserAvatarMenuProps {
@@ -10,10 +12,15 @@ interface UserAvatarMenuProps {
 
 export async function UserAvatarMenu({ params }: UserAvatarMenuProps) {
   const { locale } = await params;
+  const t = await getTranslations("Menu");
   const session = await getSession();
 
   if (!session) {
-    return <LoginButton locale={locale} />;
+    return (
+      <Link href="/login" className={buttonVariants()}>
+        {t("login")}
+      </Link>
+    );
   }
 
   return (
