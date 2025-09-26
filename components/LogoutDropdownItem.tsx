@@ -21,7 +21,7 @@ export function LogoutDropdownItem() {
   };
 
   return (
-    <DropdownMenuItem onClick={logout}>
+    <DropdownMenuItem onSelect={logout}>
       <LogOut aria-hidden="true" />
       {t("logout")}
     </DropdownMenuItem>
