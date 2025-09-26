@@ -23,9 +23,15 @@
     "expiry": "This code will expire in 5 minutes.",
     "ignore": "If you did not request this code, you can safely ignore this email."
   },
-  "Navbar": {
+  "Menu": {
     "home": "Home page",
     "courses": "Courses",
-    "start": "Start course"
+    "start": "Start course",
+    "login": "Login",
+    "myCourses": "My courses",
+    "subscription": "Subscription",
+    "settings": "Settings",
+    "feedback": "Feedback",
+    "logout": "Logout"
   }
 }

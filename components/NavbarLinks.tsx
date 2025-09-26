@@ -21,12 +21,12 @@ function getVariant(
   return "outline";
 }
 
-export function Navbar() {
+export function NavbarLinks() {
   const pathname = usePathname();
-  const t = useTranslations("Navbar");
+  const t = useTranslations("Menu");
 
   return (
-    <nav className="flex w-full items-center justify-between gap-2 p-4">
+    <>
       <Link
         href="/"
         className={buttonVariants({
@@ -60,6 +60,6 @@ export function Navbar() {
         <PlusCircle />
         <span className="hidden sm:inline">{t("start")}</span>
       </Link>
-    </nav>
+    </>
   );
 }
