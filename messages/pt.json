@@ -24,9 +24,15 @@
     "expiry": "Este código expirará em 5 minutos.",
     "ignore": "Se você não solicitou este código, pode ignorar este email."
   },
-  "Navbar": {
+  "Menu": {
     "home": "Página inicial",
     "courses": "Cursos",
-    "start": "Iniciar curso"
+    "start": "Iniciar curso",
+    "login": "Entrar",
+    "myCourses": "Meus cursos",
+    "subscription": "Assinatura",
+    "settings": "Configurações",
+    "feedback": "Fale conosco",
+    "logout": "Sair"
   }
 }
