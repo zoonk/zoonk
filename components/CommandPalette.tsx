@@ -40,7 +40,12 @@ export function CommandPalette() {
 
   return (
     <>
-      <Button variant="outline" size="icon" onClick={open}>
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={open}
+        aria-keyshortcuts="Meta+K, Control+K"
+      >
         <Search />
         <span className="sr-only">{t("search")}</span>
       </Button>
