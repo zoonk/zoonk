@@ -17,7 +17,7 @@ export async function UserAvatarMenu({ params }: UserAvatarMenuProps) {
 
   if (!session) {
     return (
-      <Link href="/login" className={buttonVariants()}>
+      <Link href="/login" className={buttonVariants({ variant: "outline" })}>
         {t("login")}
       </Link>
     );
