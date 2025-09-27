@@ -69,17 +69,17 @@ export function CommandPalette() {
           </CommandEmpty>
 
           <CommandGroup heading={t("getStarted")}>
-            <CommandItem value="/" onSelect={onSelectItem}>
+            <CommandItem onSelect={() => onSelectItem("/")}>
               {getMenuIcon("home")}
               {t("home")}
             </CommandItem>
 
-            <CommandItem value="/courses" onSelect={onSelectItem}>
+            <CommandItem onSelect={() => onSelectItem("/courses")}>
               {getMenuIcon("courses")}
               {t("allCourses")}
             </CommandItem>
 
-            <CommandItem value="/start" onSelect={onSelectItem}>
+            <CommandItem onSelect={() => onSelectItem("/start")}>
               {getMenuIcon("start")}
               {t("start")}
             </CommandItem>
@@ -87,7 +87,7 @@ export function CommandPalette() {
 
           <CommandGroup heading={t("myAccount")}>
             {!isLoggedIn && (
-              <CommandItem value="/login" onSelect={onSelectItem}>
+              <CommandItem onSelect={() => onSelectItem("/login")}>
                 {getMenuIcon("login")}
                 {t("logInToAccount")}
               </CommandItem>
@@ -95,17 +95,17 @@ export function CommandPalette() {
 
             {isLoggedIn && (
               <>
-                <CommandItem value="/my" onSelect={onSelectItem}>
+                <CommandItem onSelect={() => onSelectItem("/my")}>
                   {getMenuIcon("courses")}
                   {t("myCourses")}
                 </CommandItem>
 
-                <CommandItem value="/subscription" onSelect={onSelectItem}>
+                <CommandItem onSelect={() => onSelectItem("/subscription")}>
                   {getMenuIcon("subscription")}
                   {t("manageSubscription")}
                 </CommandItem>
 
-                <CommandItem value="/settings" onSelect={onSelectItem}>
+                <CommandItem onSelect={() => onSelectItem("/settings")}>
                   {getMenuIcon("settings")}
                   {t("changeSettings")}
                 </CommandItem>
@@ -119,7 +119,7 @@ export function CommandPalette() {
           </CommandGroup>
 
           <CommandGroup heading={t("help")}>
-            <CommandItem value="/feedback" onSelect={onSelectItem}>
+            <CommandItem onSelect={() => onSelectItem("/feedback")}>
               {getMenuIcon("feedback")}
               {t("contact")}
             </CommandItem>
