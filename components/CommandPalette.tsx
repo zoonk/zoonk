@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
 import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
 import { useLogout } from "@/hooks/useLogout";
-import { Link } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 import { getMenuIcon } from "./menuIcons";
 import { Button } from "./ui/button";
 import {
@@ -18,6 +18,7 @@ import {
 } from "./ui/command";
 
 export function CommandPalette() {
+  const { push } = useRouter();
   const { isLoggedIn, logout } = useLogout();
   const { isOpen, open, close } = useKeyboardShortcut("k");
   const [query, setQuery] = useState("");
@@ -28,6 +29,14 @@ export function CommandPalette() {
     close();
     setQuery("");
   }, [close]);
+
+  const onSelectItem = useCallback(
+    (item: string) => {
+      closePalette();
+      push(item);
+    },
+    [push, closePalette],
+  );
 
   return (
     <>
@@ -55,59 +64,45 @@ export function CommandPalette() {
           </CommandEmpty>
 
           <CommandGroup heading={t("getStarted")}>
-            <CommandItem asChild>
-              <Link href="/">
-                {getMenuIcon("home")}
-                {t("home")}
-              </Link>
+            <CommandItem value="/" onSelect={onSelectItem}>
+              {getMenuIcon("home")}
+              {t("home")}
             </CommandItem>
 
-            <CommandItem asChild>
-              <Link href="/courses">
-                {getMenuIcon("courses")}
-                {t("allCourses")}
-              </Link>
+            <CommandItem value="/courses" onSelect={onSelectItem}>
+              {getMenuIcon("courses")}
+              {t("allCourses")}
             </CommandItem>
 
-            <CommandItem asChild>
-              <Link href="/start">
-                {getMenuIcon("start")}
-                {t("start")}
-              </Link>
+            <CommandItem value="/start" onSelect={onSelectItem}>
+              {getMenuIcon("start")}
+              {t("start")}
             </CommandItem>
           </CommandGroup>
 
           <CommandGroup heading={t("myAccount")}>
             {!isLoggedIn && (
-              <CommandItem asChild>
-                <Link href="/login">
-                  {getMenuIcon("login")}
-                  {t("loginIntoAccount")}
-                </Link>
+              <CommandItem value="/login" onSelect={onSelectItem}>
+                {getMenuIcon("login")}
+                {t("loginIntoAccount")}
               </CommandItem>
             )}
 
             {isLoggedIn && (
               <>
-                <CommandItem asChild>
-                  <Link href="/my">
-                    {getMenuIcon("courses")}
-                    {t("myCourses")}
-                  </Link>
+                <CommandItem value="/my" onSelect={onSelectItem}>
+                  {getMenuIcon("courses")}
+                  {t("myCourses")}
                 </CommandItem>
 
-                <CommandItem asChild>
-                  <Link href="/subscription">
-                    {getMenuIcon("subscription")}
-                    {t("manageSubscription")}
-                  </Link>
+                <CommandItem value="/subscription" onSelect={onSelectItem}>
+                  {getMenuIcon("subscription")}
+                  {t("manageSubscription")}
                 </CommandItem>
 
-                <CommandItem asChild>
-                  <Link href="/settings">
-                    {getMenuIcon("settings")}
-                    {t("changeSettings")}
-                  </Link>
+                <CommandItem value="/settings" onSelect={onSelectItem}>
+                  {getMenuIcon("settings")}
+                  {t("changeSettings")}
                 </CommandItem>
 
                 <CommandItem onSelect={logout}>
@@ -119,11 +114,9 @@ export function CommandPalette() {
           </CommandGroup>
 
           <CommandGroup heading={t("help")}>
-            <CommandItem asChild>
-              <Link href="/feedback">
-                {getMenuIcon("feedback")}
-                {t("contact")}
-              </Link>
+            <CommandItem value="/feedback" onSelect={onSelectItem}>
+              {getMenuIcon("feedback")}
+              {t("contact")}
             </CommandItem>
           </CommandGroup>
         </CommandList>
