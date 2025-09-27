@@ -112,7 +112,7 @@ export function CommandPalette() {
 
                 <CommandItem onSelect={logout}>
                   {getMenuIcon("logout")}
-                  {t("logout")}
+                  {t("logoutFromAccount")}
                 </CommandItem>
               </>
             )}

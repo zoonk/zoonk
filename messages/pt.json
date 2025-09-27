@@ -1,7 +1,5 @@
 {
   "Auth": {
-    "pageTitle": "Login ou crie uma conta",
-    "pageDescription": "Login ou crie uma conta gratuita para começar a usar o Zoonk.",
     "socialOr": "Ou",
     "title": "Entrar ou criar uma conta",
     "subtitle": "Continue com seu email ou uma conta social",

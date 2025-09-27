@@ -12,7 +12,7 @@
     "format": "biome format --write",
     "type-check": "next typegen && tsc --noEmit",
     "test": "vitest",
-    "i18n": "pnpm dlx @lingual/i18n-check@latest -s en -l messages -u app lib -f next-intl"
+    "i18n": "pnpm dlx @lingual/i18n-check@latest -s en -l messages -u app lib components -f next-intl"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "0.6.1",
