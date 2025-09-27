@@ -84,7 +84,7 @@ export function CommandPalette() {
             {!isLoggedIn && (
               <CommandItem value="/login" onSelect={onSelectItem}>
                 {getMenuIcon("login")}
-                {t("loginIntoAccount")}
+                {t("logInToAccount")}
               </CommandItem>
             )}
 
@@ -107,7 +107,7 @@ export function CommandPalette() {
 
                 <CommandItem onSelect={logout}>
                   {getMenuIcon("logout")}
-                  {t("logoutFromAccount")}
+                  {t("logOutOfAccount")}
                 </CommandItem>
               </>
             )}

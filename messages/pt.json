@@ -43,7 +43,7 @@
     "changeSettings": "Alterar configurações",
     "help": "Ajuda",
     "contact": "Fale conosco",
-    "logoutFromAccount": "Sair da minha conta",
-    "loginIntoAccount": "Entrar na minha conta"
+    "logOutOfAccount": "Sair da minha conta",
+    "logInToAccount": "Entrar na minha conta"
   }
 }

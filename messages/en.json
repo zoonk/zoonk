@@ -42,7 +42,7 @@
     "changeSettings": "Change settings",
     "help": "Help",
     "contact": "Contact us",
-    "logoutFromAccount": "Logout from my account",
-    "loginIntoAccount": "Login into my account"
+    "logOutOfAccount": "Log out of my account",
+    "logInToAccount": "Log in to my account"
   }
 }
