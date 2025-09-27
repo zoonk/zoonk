@@ -32,6 +32,19 @@
     "subscription": "Subscription",
     "settings": "Settings",
     "feedback": "Feedback",
-    "logout": "Logout"
+    "logout": "Logout",
+    "search": "Search",
+    "paletteDescription": "Search courses or pages...",
+    "close": "Close",
+    "noResults": "No results found.",
+    "getStarted": "Get started",
+    "allCourses": "All courses",
+    "myAccount": "My account",
+    "manageSubscription": "Manage subscription",
+    "changeSettings": "Change settings",
+    "help": "Help",
+    "contact": "Contact us",
+    "logoutFromAccount": "Logout from my account",
+    "loginIntoAccount": "Login into my account"
   }
 }

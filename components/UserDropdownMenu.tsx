@@ -1,8 +1,8 @@
-import { Gem, LayoutGrid, MessageCircle, Settings } from "lucide-react";
 import { unstable_cacheLife as cacheLife } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { LogoutDropdownItem } from "./LogoutDropdownItem";
+import { getMenuIcon } from "./menuIcons";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
@@ -24,28 +24,28 @@ export async function UserDropdownMenu({ locale }: UserDropdownMenuProps) {
     <DropdownMenuContent align="end" className="w-56">
       <DropdownMenuItem asChild>
         <Link href="/my">
-          <LayoutGrid aria-hidden="true" />
+          {getMenuIcon("courses")}
           {t("myCourses")}
         </Link>
       </DropdownMenuItem>
 
       <DropdownMenuItem asChild>
         <Link href="/subscription">
-          <Gem aria-hidden="true" />
+          {getMenuIcon("subscription")}
           {t("subscription")}
         </Link>
       </DropdownMenuItem>
 
       <DropdownMenuItem asChild>
         <Link href="/settings">
-          <Settings aria-hidden="true" />
+          {getMenuIcon("settings")}
           {t("settings")}
         </Link>
       </DropdownMenuItem>
 
       <DropdownMenuItem asChild>
         <Link href="/feedback">
-          <MessageCircle aria-hidden="true" />
+          {getMenuIcon("feedback")}
           {t("feedback")}
         </Link>
       </DropdownMenuItem>

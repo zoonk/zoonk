@@ -1,9 +1,9 @@
 "use client";
 
-import { IconUfo } from "@tabler/icons-react";
-import { LayoutGrid, PlusCircle } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
+import { CommandPalette } from "./CommandPalette";
+import { getMenuIcon } from "./menuIcons";
 import { buttonVariants } from "./ui/button";
 
 function getVariant(
@@ -34,7 +34,7 @@ export function NavbarLinks() {
           size: "icon",
         })}
       >
-        <IconUfo />
+        {getMenuIcon("home")}
         <span className="sr-only">{t("home")}</span>
       </Link>
 
@@ -45,9 +45,11 @@ export function NavbarLinks() {
           size: "adaptive",
         })}
       >
-        <LayoutGrid />
+        {getMenuIcon("courses")}
         <span className="hidden sm:inline">{t("courses")}</span>
       </Link>
+
+      <CommandPalette />
 
       <Link
         href="/start"
@@ -57,7 +59,7 @@ export function NavbarLinks() {
           className: "ml-auto",
         })}
       >
-        <PlusCircle />
+        {getMenuIcon("start")}
         <span className="hidden sm:inline">{t("start")}</span>
       </Link>
     </>

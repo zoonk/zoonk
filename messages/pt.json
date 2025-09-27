@@ -33,6 +33,19 @@
     "subscription": "Assinatura",
     "settings": "Configurações",
     "feedback": "Fale conosco",
-    "logout": "Sair"
+    "logout": "Sair",
+    "search": "Pesquisar",
+    "paletteDescription": "Pesquisar cursos ou páginas...",
+    "close": "Fechar",
+    "noResults": "Nenhum resultado encontrado.",
+    "getStarted": "Começar",
+    "allCourses": "Todos os cursos",
+    "myAccount": "Minha conta",
+    "manageSubscription": "Gerenciar assinatura",
+    "changeSettings": "Alterar configurações",
+    "help": "Ajuda",
+    "contact": "Fale conosco",
+    "logoutFromAccount": "Sair da minha conta",
+    "loginIntoAccount": "Entrar na minha conta"
   }
 }
