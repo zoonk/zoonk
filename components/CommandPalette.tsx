@@ -44,7 +44,7 @@ export function CommandPalette() {
         variant="outline"
         size="icon"
         onClick={open}
-        aria-keyshortcuts="Meta+K, Control+K"
+        aria-keyshortcuts="Meta+K Control+K"
       >
         <Search />
         <span className="sr-only">{t("search")}</span>
