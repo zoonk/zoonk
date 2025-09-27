@@ -1,7 +1,5 @@
 {
   "Auth": {
-    "pageTitle": "Login ou crie uma conta",
-    "pageDescription": "Login ou crie uma conta gratuita para começar a usar o Zoonk.",
     "socialOr": "Ou",
     "title": "Entrar ou criar uma conta",
     "subtitle": "Continue com seu email ou uma conta social",
@@ -33,6 +31,19 @@
     "subscription": "Assinatura",
     "settings": "Configurações",
     "feedback": "Fale conosco",
-    "logout": "Sair"
+    "logout": "Sair",
+    "search": "Pesquisar",
+    "paletteDescription": "Pesquisar cursos ou páginas...",
+    "close": "Fechar",
+    "noResults": "Nenhum resultado encontrado.",
+    "getStarted": "Começar",
+    "allCourses": "Todos os cursos",
+    "myAccount": "Minha conta",
+    "manageSubscription": "Gerenciar assinatura",
+    "changeSettings": "Alterar configurações",
+    "help": "Ajuda",
+    "contact": "Fale conosco",
+    "logOutOfAccount": "Sair da minha conta",
+    "logInToAccount": "Entrar na minha conta"
   }
 }

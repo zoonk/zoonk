@@ -1,7 +1,5 @@
 {
   "Auth": {
-    "pageTitle": "Login or create an account",
-    "pageDescription": "Login or create a free account to start using Zoonk.",
     "socialOr": "Or",
     "title": "Sign in or create an account",
     "subtitle": "Continue with your email or a social account",
@@ -32,6 +30,19 @@
     "subscription": "Subscription",
     "settings": "Settings",
     "feedback": "Feedback",
-    "logout": "Logout"
+    "logout": "Logout",
+    "search": "Search",
+    "paletteDescription": "Search courses or pages...",
+    "close": "Close",
+    "noResults": "No results found.",
+    "getStarted": "Get started",
+    "allCourses": "All courses",
+    "myAccount": "My account",
+    "manageSubscription": "Manage subscription",
+    "changeSettings": "Change settings",
+    "help": "Help",
+    "contact": "Contact us",
+    "logOutOfAccount": "Log out of my account",
+    "logInToAccount": "Log in to my account"
   }
 }
