@@ -30,7 +30,7 @@
     "myCourses": "Meus cursos",
     "subscription": "Assinatura",
     "settings": "Configurações",
-    "feedback": "Fale conosco",
+    "feedback": "Feedback",
     "logout": "Sair",
     "search": "Pesquisar",
     "paletteDescription": "Pesquisar cursos ou páginas...",
@@ -42,8 +42,56 @@
     "manageSubscription": "Gerenciar assinatura",
     "changeSettings": "Alterar configurações",
     "help": "Ajuda",
-    "contact": "Fale conosco",
+    "sendFeedback": "Dê seu feedback",
     "logOutOfAccount": "Sair da minha conta",
-    "logInToAccount": "Entrar na minha conta"
+    "logInToAccount": "Entrar na minha conta",
+    "settingsSidebarTitle": "Barra lateral de configurações",
+    "settingsSidebarDescription": "Navegar para todas as configurações",
+    "toggleSidebar": "Alternar barra lateral",
+    "displayName": "Nome de exibição",
+    "language": "Idioma",
+    "follow": "Siga nas redes"
+  },
+  "Settings": {
+    "metaDescription": "Personalize sua experiência de aprendizado no Zoonk. Gerencie as configurações da conta, perfil e preferências para aproveitar ao máximo nossa plataforma educacional.",
+    "metaTitle": "Configurações do Zoonk",
+    "title": "Configurações",
+    "subtitle": "Gerencie as configurações da sua conta, perfil e preferências."
+  },
+  "Feedback": {
+    "metaTitle": "Enviar feedback para o Zoonk",
+    "metaDescription": "Compartilhe suas ideias e ajude a melhorar o Zoonk. Use a página de feedback para entrar em contato conosco com sugestões, perguntas ou problemas sobre nossa plataforma de aprendizado.",
+    "title": "Feedback",
+    "subtitle": "Envie feedback, perguntas ou sugestões para nós. Preencha o formulário abaixo ou entre em contato pelo email contato@zoonk.com."
+  },
+  "Follow": {
+    "metaTitle": "Siga o Zoonk nas Redes Sociais",
+    "metaDescription": "Conecte-se com o Zoonk nas redes sociais. Siga-nos no X, Bluesky, LinkedIn, YouTube e muito mais para ficar por dentro de novidades, dicas e conteúdos de aprendizado.",
+    "title": "Siga a gente",
+    "subtitle": "Encontre todos os nossos links de redes sociais e fique em contato conosco."
+  },
+  "Help": {
+    "metaTitle": "Ajuda - Suporte e FAQ do Zoonk",
+    "metaDescription": "Precisa de ajuda com o Zoonk? Fale com o nosso time de suporte ou confira as perguntas frequentes para achar respostas rápidas para as dúvidas mais comuns.",
+    "title": "Ajuda",
+    "subtitle": "Suporte e respostas. Preencha o formulário abaixo ou entre em contato pelo email contato@zoonk.com."
+  },
+  "Language": {
+    "metaTitle": "Mudar Idioma do Zoonk",
+    "metaDescription": "Altere o idioma do Zoonk para aprender em português, inglês, espanhol, francês ou outros idiomas disponíveis.",
+    "title": "Idioma",
+    "subtitle": "Escolha o idioma do app que você prefere neste dispositivo."
+  },
+  "Name": {
+    "metaTitle": "Atualizar Nome de Exibição no Zoonk",
+    "metaDescription": "Defina ou altere o nome de exibição no Zoonk. Esse nome pode ser visível para outras pessoas e será usado quando nos referirmos a você nas aulas e exercícios.",
+    "title": "Nome de exibição",
+    "subtitle": "Esse é o nome que outras pessoas podem ver e que usaremos para nos referir a você nos exercícios."
+  },
+  "Subscription": {
+    "metaTitle": "Gerenciar Assinatura - Zoonk",
+    "metaDescription": "Gerencie a sua assinatura do Zoonk. Veja o plano atual, mude ou cancele de plano e confira os benefícios disponíveis.",
+    "title": "Assinatura",
+    "subtitle": "Veja os detalhes do seu plano e gerencie a assinatura."
   }
 }

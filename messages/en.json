@@ -41,8 +41,56 @@
     "manageSubscription": "Manage subscription",
     "changeSettings": "Change settings",
     "help": "Help",
-    "contact": "Contact us",
+    "sendFeedback": "Send us feedback",
     "logOutOfAccount": "Log out of my account",
-    "logInToAccount": "Log in to my account"
+    "logInToAccount": "Log in to my account",
+    "settingsSidebarTitle": "Settings sidebar",
+    "settingsSidebarDescription": "Navigate to all settings",
+    "toggleSidebar": "Toggle sidebar",
+    "displayName": "Display name",
+    "language": "Language",
+    "follow": "Follow us"
+  },
+  "Settings": {
+    "metaTitle": "Settings - Zoonk",
+    "metaDescription": "Customize your Zoonk learning experience. Manage account settings, profile, and preferences to get the most out of our education platform.",
+    "title": "Settings",
+    "subtitle": "Manage your account settings, profile, and preferences."
+  },
+  "Feedback": {
+    "metaTitle": "Send feedback to Zoonk",
+    "metaDescription": "Share your thoughts and help improve Zoonk. Use the feedback page to contact us with suggestions, questions, or issues about our learning platform.",
+    "title": "Feedback",
+    "subtitle": "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
+  },
+  "Follow": {
+    "metaTitle": "Follow Zoonk on Social Media",
+    "metaDescription": "Connect with Zoonk across social media. Follow us on X, LinkedIn, YouTube, and more to stay updated on new features, tips, and learning content.",
+    "title": "Follow us",
+    "subtitle": "Find all our social media links and keep in touch with us."
+  },
+  "Help": {
+    "metaTitle": "Help - Zoonk Support & FAQ",
+    "metaDescription": "Need help with Zoonk? Contact our support or browse the FAQ to quickly find answers to common questions.",
+    "title": "Help",
+    "subtitle": "Get support and answers. Fill in the form below or email us directly at hello@zoonk.com."
+  },
+  "Language": {
+    "metaTitle": "Change Language - Zoonk",
+    "metaDescription": "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages.",
+    "title": "Language",
+    "subtitle": "Choose the app language you prefer for this device."
+  },
+  "Name": {
+    "metaTitle": "Update Display Name - Zoonk",
+    "metaDescription": "Set or update your Zoonk display name. This name may be visible to others and will be used when referring to you in lessons and exercises.",
+    "title": "Display name",
+    "subtitle": "This is the name others may see and the one we'll use to refer to you in exercises."
+  },
+  "Subscription": {
+    "metaTitle": "Manage Subscription - Zoonk",
+    "metaDescription": "Manage your Zoonk subscription. View your current plan, upgrade or downgrade, and see available benefits.",
+    "title": "Subscription",
+    "subtitle": "Check your plan details and manage your subscription."
   }
 }

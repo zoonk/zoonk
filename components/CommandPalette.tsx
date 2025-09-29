@@ -121,7 +121,7 @@ export function CommandPalette() {
           <CommandGroup heading={t("help")}>
             <CommandItem onSelect={() => onSelectItem("/feedback")}>
               {getMenuIcon("feedback")}
-              {t("contact")}
+              {t("sendFeedback")}
             </CommandItem>
           </CommandGroup>
         </CommandList>

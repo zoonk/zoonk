@@ -61,7 +61,6 @@
         "noUselessUndefined": "error",
         "useAnchorHref": "error",
         "useConsistentArrowReturn": "error",
-        "useConsistentTypeDefinitions": "error",
         "useExhaustiveSwitchCases": "error",
         "useExplicitType": "off",
         "useImageSize": "error",

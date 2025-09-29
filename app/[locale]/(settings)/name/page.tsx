@@ -10,9 +10,9 @@ import { PageTitle } from "@/components/PageTitle";
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/subscription">): Promise<Metadata> {
+}: PageProps<"/[locale]/name">): Promise<Metadata> {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "Subscription" });
+  const t = await getTranslations({ locale, namespace: "Name" });
 
   return {
     title: t("metaTitle"),
@@ -20,13 +20,11 @@ export async function generateMetadata({
   };
 }
 
-export default async function Subscription({
-  params,
-}: PageProps<"/[locale]/subscription">) {
+export default async function Name({ params }: PageProps<"/[locale]/name">) {
   cacheLife("max");
   const { locale } = await params;
   setRequestLocale(locale);
-  const t = await getTranslations("Subscription");
+  const t = await getTranslations("Name");
 
   return (
     <PageContainer>
