@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useLogout } from "@/hooks/useLogout";
-import { getMenu } from "./menu";
+import { getMenu } from "@/lib/menu";
 import { DropdownMenuItem } from "./ui/dropdown-menu";
 
 const logoutMenu = getMenu("logout");

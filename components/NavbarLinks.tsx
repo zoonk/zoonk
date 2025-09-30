@@ -2,8 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
+import { getMenu } from "@/lib/menu";
 import { CommandPalette } from "./CommandPalette";
-import { getMenu } from "./menu";
 import { buttonVariants } from "./ui/button";
 
 function getVariant(

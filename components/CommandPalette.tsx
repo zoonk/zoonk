@@ -6,7 +6,7 @@ import { useCallback, useState } from "react";
 import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
 import { useLogout } from "@/hooks/useLogout";
 import { useRouter } from "@/i18n/navigation";
-import { getMenu } from "./menu";
+import { getMenu } from "@/lib/menu";
 import { Button } from "./ui/button";
 import {
   CommandDialog,

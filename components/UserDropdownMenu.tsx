@@ -1,8 +1,8 @@
 import { unstable_cacheLife as cacheLife } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
+import { getMenu } from "@/lib/menu";
 import { LogoutDropdownItem } from "./LogoutDropdownItem";
-import { getMenu } from "./menu";
 import {
   DropdownMenuContent,
   DropdownMenuItem,

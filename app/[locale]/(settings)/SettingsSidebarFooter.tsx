@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { getMenu } from "@/components/menu";
 import {
   SidebarFooter,
   SidebarMenu,
@@ -10,6 +9,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useLogout } from "@/hooks/useLogout";
 import { Link, usePathname } from "@/i18n/navigation";
+import { getMenu } from "@/lib/menu";
 
 const logoutMenu = getMenu("logout");
 
