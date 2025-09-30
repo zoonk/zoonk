@@ -11,6 +11,7 @@ import { PageTitle } from "@/components/PageTitle";
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/name">): Promise<Metadata> {
+  cacheLife("max");
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Name" });
 
