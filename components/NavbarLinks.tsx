@@ -39,7 +39,7 @@ export function NavbarLinks() {
         })}
       >
         <homeMenu.icon aria-hidden="true" />
-        <span className="sr-only">{t(homeMenu.i18nKey)}</span>
+        <span className="sr-only">{t("home")}</span>
       </Link>
 
       <Link
@@ -50,7 +50,7 @@ export function NavbarLinks() {
         })}
       >
         <coursesMenu.icon aria-hidden="true" />
-        <span className="hidden sm:inline">{t(coursesMenu.i18nKey)}</span>
+        <span className="hidden sm:inline">{t("courses")}</span>
       </Link>
 
       <CommandPalette />
@@ -64,7 +64,7 @@ export function NavbarLinks() {
         })}
       >
         <startMenu.icon aria-hidden="true" />
-        <span className="hidden sm:inline">{t(startMenu.i18nKey)}</span>
+        <span className="hidden sm:inline">{t("start")}</span>
       </Link>
     </>
   );

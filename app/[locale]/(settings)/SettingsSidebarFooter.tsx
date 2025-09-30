@@ -11,18 +11,18 @@ import {
 import { useLogout } from "@/hooks/useLogout";
 import { Link, usePathname } from "@/i18n/navigation";
 
-const menuItems = [
-  { key: "feedback", ...getMenu("feedback") },
-  { key: "help", ...getMenu("help") },
-  { key: "follow", ...getMenu("follow") },
-];
-
 const logoutMenu = getMenu("logout");
 
 export function SettingsSidebarFooter() {
   const { isLoggedIn, logout } = useLogout();
   const pathname = usePathname();
   const t = useTranslations("Menu");
+
+  const menuItems = [
+    { key: t("feedback"), ...getMenu("feedback") },
+    { key: t("help"), ...getMenu("help") },
+    { key: t("follow"), ...getMenu("follow") },
+  ];
 
   return (
     <SidebarFooter>
@@ -32,7 +32,7 @@ export function SettingsSidebarFooter() {
             <SidebarMenuButton isActive={pathname === item.url} asChild>
               <Link href={item.url}>
                 <item.icon aria-hidden="true" />
-                <span>{t(item.i18nKey)}</span>
+                <span>{item.key}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -42,7 +42,7 @@ export function SettingsSidebarFooter() {
           <SidebarMenuItem>
             <SidebarMenuButton onClick={logout}>
               <logoutMenu.icon aria-hidden="true" />
-              <span>{t(logoutMenu.i18nKey)}</span>
+              <span>{t("logout")}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         )}

@@ -17,28 +17,6 @@ import {
   CommandList,
 } from "./ui/command";
 
-const getStarted = [
-  { key: "home", ...getMenu("home") },
-  { key: "courses", ...getMenu("courses") },
-  { key: "start", ...getMenu("start") },
-];
-
-const accountPublic = [{ key: "login", ...getMenu("login") }];
-
-const accountPrivate = [
-  { key: "courses", ...getMenu("myCourses") },
-  { key: "subscription", ...getMenu("subscription") },
-  { key: "settings", ...getMenu("settings") },
-  { key: "language", ...getMenu("language") },
-  { key: "displayName", ...getMenu("displayName") },
-];
-
-const contactUs = [
-  { key: "feedback", ...getMenu("feedback") },
-  { key: "help", ...getMenu("help") },
-  { key: "follow", ...getMenu("follow") },
-];
-
 const logoutMenu = getMenu("logout");
 
 export function CommandPalette() {
@@ -61,6 +39,28 @@ export function CommandPalette() {
     },
     [push, closePalette],
   );
+
+  const getStarted = [
+    { key: t("home"), ...getMenu("home") },
+    { key: t("courses"), ...getMenu("courses") },
+    { key: t("start"), ...getMenu("start") },
+  ];
+
+  const accountPublic = [{ key: t("login"), ...getMenu("login") }];
+
+  const accountPrivate = [
+    { key: t("courses"), ...getMenu("myCourses") },
+    { key: t("subscription"), ...getMenu("subscription") },
+    { key: t("settings"), ...getMenu("settings") },
+    { key: t("language"), ...getMenu("language") },
+    { key: t("displayName"), ...getMenu("displayName") },
+  ];
+
+  const contactUs = [
+    { key: t("feedback"), ...getMenu("feedback") },
+    { key: t("help"), ...getMenu("help") },
+    { key: t("follow"), ...getMenu("follow") },
+  ];
 
   return (
     <>
@@ -99,7 +99,7 @@ export function CommandPalette() {
                 onSelect={() => onSelectItem(item.url)}
               >
                 <item.icon aria-hidden="true" />
-                {t(item.i18nKey)}
+                {item.key}
               </CommandItem>
             ))}
           </CommandGroup>
@@ -112,7 +112,7 @@ export function CommandPalette() {
                   onSelect={() => onSelectItem(item.url)}
                 >
                   <item.icon aria-hidden="true" />
-                  {t(item.i18nKey)}
+                  {item.key}
                 </CommandItem>
               ))}
 
@@ -123,14 +123,14 @@ export function CommandPalette() {
                   onSelect={() => onSelectItem(item.url)}
                 >
                   <item.icon aria-hidden="true" />
-                  {t(item.i18nKey)}
+                  {item.key}
                 </CommandItem>
               ))}
 
             {isLoggedIn && (
               <CommandItem onSelect={logout}>
                 <logoutMenu.icon aria-hidden="true" />
-                {t(logoutMenu.i18nKey)}
+                {t("logout")}
               </CommandItem>
             )}
           </CommandGroup>
@@ -142,7 +142,7 @@ export function CommandPalette() {
                 onSelect={() => onSelectItem(item.url)}
               >
                 <item.icon aria-hidden="true" />
-                {t(item.i18nKey)}
+                {item.key}
               </CommandItem>
             ))}
           </CommandGroup>

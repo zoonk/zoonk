@@ -11,17 +11,17 @@ import {
 } from "@/components/ui/sidebar";
 import { Link, usePathname } from "@/i18n/navigation";
 
-const menuItems = [
-  { key: "home", ...getMenu("home") },
-  { key: "settings", ...getMenu("settings") },
-  { key: "subscription", ...getMenu("subscription") },
-  { key: "displayName", ...getMenu("displayName") },
-  { key: "language", ...getMenu("language") },
-];
-
 export function SettingsSidebarAccount() {
   const pathname = usePathname();
   const t = useTranslations("Menu");
+
+  const menuItems = [
+    { key: t("home"), ...getMenu("home") },
+    { key: t("settings"), ...getMenu("settings") },
+    { key: t("subscription"), ...getMenu("subscription") },
+    { key: t("displayName"), ...getMenu("displayName") },
+    { key: t("language"), ...getMenu("language") },
+  ];
 
   return (
     <SidebarGroup>
@@ -32,7 +32,7 @@ export function SettingsSidebarAccount() {
               <SidebarMenuButton isActive={pathname === item.url} asChild>
                 <Link href={item.url}>
                   <item.icon aria-hidden="true" />
-                  <span>{t(item.i18nKey)}</span>
+                  <span>{item.key}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

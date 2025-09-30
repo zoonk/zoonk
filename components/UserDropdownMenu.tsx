@@ -9,15 +9,6 @@ import {
   DropdownMenuSeparator,
 } from "./ui/dropdown-menu";
 
-const catalogMenu = [{ key: "myCourses", ...getMenu("myCourses") }];
-
-const accountMenu = [
-  { key: "subscription", ...getMenu("subscription") },
-  { key: "settings", ...getMenu("settings") },
-  { key: "feedback", ...getMenu("feedback") },
-  { key: "help", ...getMenu("help") },
-];
-
 interface UserDropdownMenuProps {
   locale: string;
 }
@@ -29,13 +20,22 @@ export async function UserDropdownMenu({ locale }: UserDropdownMenuProps) {
   setRequestLocale(locale);
   const t = await getTranslations("Menu");
 
+  const catalogMenu = [{ key: t("myCourses"), ...getMenu("myCourses") }];
+
+  const accountMenu = [
+    { key: t("subscription"), ...getMenu("subscription") },
+    { key: t("settings"), ...getMenu("settings") },
+    { key: t("feedback"), ...getMenu("feedback") },
+    { key: t("help"), ...getMenu("help") },
+  ];
+
   return (
     <DropdownMenuContent align="end" className="w-56">
       {catalogMenu.map((menu) => (
         <DropdownMenuItem key={menu.key} asChild>
           <Link href={menu.url}>
             <menu.icon aria-hidden="true" />
-            {t(menu.i18nKey)}
+            {menu.key}
           </Link>
         </DropdownMenuItem>
       ))}
@@ -46,7 +46,7 @@ export async function UserDropdownMenu({ locale }: UserDropdownMenuProps) {
         <DropdownMenuItem key={menu.key} asChild>
           <Link href={menu.url}>
             <menu.icon aria-hidden="true" />
-            {t(menu.i18nKey)}
+            {menu.key}
           </Link>
         </DropdownMenuItem>
       ))}

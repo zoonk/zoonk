@@ -12,8 +12,7 @@
     "format": "biome format --write",
     "type-check": "next typegen && tsc --noEmit",
     "test": "vitest",
-    "i18n": "i18n-check -s en -l messages",
-    "i18n:unused": "i18n-check -s en -l messages -u app lib components -f next-intl --only unused"
+    "i18n": "i18n-check -s en -l messages -u app lib components -f next-intl"
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "0.6.1",
