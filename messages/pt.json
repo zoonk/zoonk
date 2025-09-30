@@ -37,20 +37,16 @@
     "close": "Fechar",
     "noResults": "Nenhum resultado encontrado.",
     "getStarted": "Começar",
-    "allCourses": "Todos os cursos",
     "myAccount": "Minha conta",
     "manageSubscription": "Gerenciar assinatura",
-    "changeSettings": "Alterar configurações",
     "help": "Ajuda",
-    "sendFeedback": "Dê seu feedback",
-    "logOutOfAccount": "Sair da minha conta",
-    "logInToAccount": "Entrar na minha conta",
     "settingsSidebarTitle": "Barra lateral de configurações",
     "settingsSidebarDescription": "Navegar para todas as configurações",
     "toggleSidebar": "Alternar barra lateral",
     "displayName": "Nome de exibição",
     "language": "Idioma",
-    "follow": "Siga nas redes"
+    "follow": "Siga nas redes",
+    "contactUs": "Fale conosco"
   },
   "Settings": {
     "metaDescription": "Personalize sua experiência de aprendizado no Zoonk. Gerencie as configurações da conta, perfil e preferências para aproveitar ao máximo nossa plataforma educacional.",

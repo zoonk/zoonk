@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { getMenuIcon } from "@/components/menuIcons";
+import { getMenu } from "@/components/menu";
 import {
   SidebarFooter,
   SidebarMenu,
@@ -11,38 +11,28 @@ import {
 import { useLogout } from "@/hooks/useLogout";
 import { Link, usePathname } from "@/i18n/navigation";
 
+const menuItems = [
+  { key: "feedback", ...getMenu("feedback") },
+  { key: "help", ...getMenu("help") },
+  { key: "follow", ...getMenu("follow") },
+];
+
+const logoutMenu = getMenu("logout");
+
 export function SettingsSidebarFooter() {
   const { isLoggedIn, logout } = useLogout();
   const pathname = usePathname();
   const t = useTranslations("Menu");
 
-  const items = [
-    {
-      title: t("feedback"),
-      url: "/feedback",
-      icon: getMenuIcon("feedback"),
-    },
-    {
-      title: t("help"),
-      url: "/help",
-      icon: getMenuIcon("help"),
-    },
-    {
-      title: t("follow"),
-      url: "/follow",
-      icon: getMenuIcon("follow"),
-    },
-  ];
-
   return (
     <SidebarFooter>
       <SidebarMenu>
-        {items.map((item) => (
-          <SidebarMenuItem key={item.title}>
+        {menuItems.map((item) => (
+          <SidebarMenuItem key={item.key}>
             <SidebarMenuButton isActive={pathname === item.url} asChild>
               <Link href={item.url}>
-                {item.icon}
-                <span>{item.title}</span>
+                <item.icon aria-hidden="true" />
+                <span>{t(item.i18nKey)}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -51,8 +41,8 @@ export function SettingsSidebarFooter() {
         {isLoggedIn && (
           <SidebarMenuItem>
             <SidebarMenuButton onClick={logout}>
-              {getMenuIcon("logout")}
-              <span>{t("logout")}</span>
+              <logoutMenu.icon aria-hidden="true" />
+              <span>{t(logoutMenu.i18nKey)}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         )}

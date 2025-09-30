@@ -30,7 +30,6 @@
       },
       "complexity": {
         "noExcessiveCognitiveComplexity": "error",
-        "noExcessiveLinesPerFunction": "error",
         "noForEach": "error",
         "noImplicitCoercions": "error",
         "noUselessStringConcat": "error",

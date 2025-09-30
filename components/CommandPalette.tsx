@@ -6,7 +6,7 @@ import { useCallback, useState } from "react";
 import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
 import { useLogout } from "@/hooks/useLogout";
 import { useRouter } from "@/i18n/navigation";
-import { getMenuIcon } from "./menuIcons";
+import { getMenu } from "./menu";
 import { Button } from "./ui/button";
 import {
   CommandDialog,
@@ -16,6 +16,30 @@ import {
   CommandItem,
   CommandList,
 } from "./ui/command";
+
+const getStarted = [
+  { key: "home", ...getMenu("home") },
+  { key: "courses", ...getMenu("courses") },
+  { key: "start", ...getMenu("start") },
+];
+
+const accountPublic = [{ key: "login", ...getMenu("login") }];
+
+const accountPrivate = [
+  { key: "courses", ...getMenu("myCourses") },
+  { key: "subscription", ...getMenu("subscription") },
+  { key: "settings", ...getMenu("settings") },
+  { key: "language", ...getMenu("language") },
+  { key: "displayName", ...getMenu("displayName") },
+];
+
+const contactUs = [
+  { key: "feedback", ...getMenu("feedback") },
+  { key: "help", ...getMenu("help") },
+  { key: "follow", ...getMenu("follow") },
+];
+
+const logoutMenu = getMenu("logout");
 
 export function CommandPalette() {
   const { push } = useRouter();
@@ -69,60 +93,58 @@ export function CommandPalette() {
           </CommandEmpty>
 
           <CommandGroup heading={t("getStarted")}>
-            <CommandItem onSelect={() => onSelectItem("/")}>
-              {getMenuIcon("home")}
-              {t("home")}
-            </CommandItem>
-
-            <CommandItem onSelect={() => onSelectItem("/courses")}>
-              {getMenuIcon("courses")}
-              {t("allCourses")}
-            </CommandItem>
-
-            <CommandItem onSelect={() => onSelectItem("/start")}>
-              {getMenuIcon("start")}
-              {t("start")}
-            </CommandItem>
+            {getStarted.map((item) => (
+              <CommandItem
+                key={item.key}
+                onSelect={() => onSelectItem(item.url)}
+              >
+                <item.icon aria-hidden="true" />
+                {t(item.i18nKey)}
+              </CommandItem>
+            ))}
           </CommandGroup>
 
           <CommandGroup heading={t("myAccount")}>
-            {!isLoggedIn && (
-              <CommandItem onSelect={() => onSelectItem("/login")}>
-                {getMenuIcon("login")}
-                {t("logInToAccount")}
-              </CommandItem>
-            )}
+            {!isLoggedIn &&
+              accountPublic.map((item) => (
+                <CommandItem
+                  key={item.key}
+                  onSelect={() => onSelectItem(item.url)}
+                >
+                  <item.icon aria-hidden="true" />
+                  {t(item.i18nKey)}
+                </CommandItem>
+              ))}
+
+            {isLoggedIn &&
+              accountPrivate.map((item) => (
+                <CommandItem
+                  key={item.key}
+                  onSelect={() => onSelectItem(item.url)}
+                >
+                  <item.icon aria-hidden="true" />
+                  {t(item.i18nKey)}
+                </CommandItem>
+              ))}
 
             {isLoggedIn && (
-              <>
-                <CommandItem onSelect={() => onSelectItem("/my")}>
-                  {getMenuIcon("courses")}
-                  {t("myCourses")}
-                </CommandItem>
-
-                <CommandItem onSelect={() => onSelectItem("/subscription")}>
-                  {getMenuIcon("subscription")}
-                  {t("manageSubscription")}
-                </CommandItem>
-
-                <CommandItem onSelect={() => onSelectItem("/settings")}>
-                  {getMenuIcon("settings")}
-                  {t("changeSettings")}
-                </CommandItem>
-
-                <CommandItem onSelect={logout}>
-                  {getMenuIcon("logout")}
-                  {t("logOutOfAccount")}
-                </CommandItem>
-              </>
+              <CommandItem onSelect={logout}>
+                <logoutMenu.icon aria-hidden="true" />
+                {t(logoutMenu.i18nKey)}
+              </CommandItem>
             )}
           </CommandGroup>
 
-          <CommandGroup heading={t("help")}>
-            <CommandItem onSelect={() => onSelectItem("/feedback")}>
-              {getMenuIcon("feedback")}
-              {t("sendFeedback")}
-            </CommandItem>
+          <CommandGroup heading={t("contactUs")}>
+            {contactUs.map((item) => (
+              <CommandItem
+                key={item.key}
+                onSelect={() => onSelectItem(item.url)}
+              >
+                <item.icon aria-hidden="true" />
+                {t(item.i18nKey)}
+              </CommandItem>
+            ))}
           </CommandGroup>
         </CommandList>
       </CommandDialog>

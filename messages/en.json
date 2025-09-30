@@ -36,20 +36,15 @@
     "close": "Close",
     "noResults": "No results found.",
     "getStarted": "Get started",
-    "allCourses": "All courses",
     "myAccount": "My account",
-    "manageSubscription": "Manage subscription",
-    "changeSettings": "Change settings",
     "help": "Help",
-    "sendFeedback": "Send us feedback",
-    "logOutOfAccount": "Log out of my account",
-    "logInToAccount": "Log in to my account",
     "settingsSidebarTitle": "Settings sidebar",
     "settingsSidebarDescription": "Navigate to all settings",
     "toggleSidebar": "Toggle sidebar",
     "displayName": "Display name",
     "language": "Language",
-    "follow": "Follow us"
+    "follow": "Follow us",
+    "contactUs": "Contact us"
   },
   "Settings": {
     "metaTitle": "Settings - Zoonk",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { getMenuIcon } from "@/components/menuIcons";
+import { getMenu } from "@/components/menu";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -11,48 +11,28 @@ import {
 } from "@/components/ui/sidebar";
 import { Link, usePathname } from "@/i18n/navigation";
 
+const menuItems = [
+  { key: "home", ...getMenu("home") },
+  { key: "settings", ...getMenu("settings") },
+  { key: "subscription", ...getMenu("subscription") },
+  { key: "displayName", ...getMenu("displayName") },
+  { key: "language", ...getMenu("language") },
+];
+
 export function SettingsSidebarAccount() {
   const pathname = usePathname();
   const t = useTranslations("Menu");
-
-  const items = [
-    {
-      title: t("home"),
-      url: "/",
-      icon: getMenuIcon("home"),
-    },
-    {
-      title: t("settings"),
-      url: "/settings",
-      icon: getMenuIcon("settings"),
-    },
-    {
-      title: t("subscription"),
-      url: "/subscription",
-      icon: getMenuIcon("subscription"),
-    },
-    {
-      title: t("displayName"),
-      url: "/name",
-      icon: getMenuIcon("displayName"),
-    },
-    {
-      title: t("language"),
-      url: "/language",
-      icon: getMenuIcon("language"),
-    },
-  ];
 
   return (
     <SidebarGroup>
       <SidebarGroupContent>
         <SidebarMenu>
-          {items.map((item) => (
-            <SidebarMenuItem key={item.title}>
+          {menuItems.map((item) => (
+            <SidebarMenuItem key={item.key}>
               <SidebarMenuButton isActive={pathname === item.url} asChild>
                 <Link href={item.url}>
-                  {item.icon}
-                  <span>{item.title}</span>
+                  <item.icon aria-hidden="true" />
+                  <span>{t(item.i18nKey)}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

@@ -2,12 +2,21 @@ import { unstable_cacheLife as cacheLife } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { LogoutDropdownItem } from "./LogoutDropdownItem";
-import { getMenuIcon } from "./menuIcons";
+import { getMenu } from "./menu";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "./ui/dropdown-menu";
+
+const catalogMenu = [{ key: "myCourses", ...getMenu("myCourses") }];
+
+const accountMenu = [
+  { key: "subscription", ...getMenu("subscription") },
+  { key: "settings", ...getMenu("settings") },
+  { key: "feedback", ...getMenu("feedback") },
+  { key: "help", ...getMenu("help") },
+];
 
 interface UserDropdownMenuProps {
   locale: string;
@@ -22,33 +31,25 @@ export async function UserDropdownMenu({ locale }: UserDropdownMenuProps) {
 
   return (
     <DropdownMenuContent align="end" className="w-56">
-      <DropdownMenuItem asChild>
-        <Link href="/my">
-          {getMenuIcon("courses")}
-          {t("myCourses")}
-        </Link>
-      </DropdownMenuItem>
+      {catalogMenu.map((menu) => (
+        <DropdownMenuItem key={menu.key} asChild>
+          <Link href={menu.url}>
+            <menu.icon aria-hidden="true" />
+            {t(menu.i18nKey)}
+          </Link>
+        </DropdownMenuItem>
+      ))}
 
-      <DropdownMenuItem asChild>
-        <Link href="/subscription">
-          {getMenuIcon("subscription")}
-          {t("subscription")}
-        </Link>
-      </DropdownMenuItem>
+      <DropdownMenuSeparator />
 
-      <DropdownMenuItem asChild>
-        <Link href="/settings">
-          {getMenuIcon("settings")}
-          {t("settings")}
-        </Link>
-      </DropdownMenuItem>
-
-      <DropdownMenuItem asChild>
-        <Link href="/feedback">
-          {getMenuIcon("feedback")}
-          {t("feedback")}
-        </Link>
-      </DropdownMenuItem>
+      {accountMenu.map((menu) => (
+        <DropdownMenuItem key={menu.key} asChild>
+          <Link href={menu.url}>
+            <menu.icon aria-hidden="true" />
+            {t(menu.i18nKey)}
+          </Link>
+        </DropdownMenuItem>
+      ))}
 
       <DropdownMenuSeparator />
 

@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { CommandPalette } from "./CommandPalette";
-import { getMenuIcon } from "./menuIcons";
+import { getMenu } from "./menu";
 import { buttonVariants } from "./ui/button";
 
 function getVariant(
@@ -21,6 +21,10 @@ function getVariant(
   return "outline";
 }
 
+const homeMenu = getMenu("home");
+const coursesMenu = getMenu("courses");
+const startMenu = getMenu("start");
+
 export function NavbarLinks() {
   const pathname = usePathname();
   const t = useTranslations("Menu");
@@ -28,39 +32,39 @@ export function NavbarLinks() {
   return (
     <>
       <Link
-        href="/"
+        href={homeMenu.url}
         className={buttonVariants({
-          variant: getVariant("/", pathname),
+          variant: getVariant(homeMenu.url, pathname),
           size: "icon",
         })}
       >
-        {getMenuIcon("home")}
-        <span className="sr-only">{t("home")}</span>
+        <homeMenu.icon aria-hidden="true" />
+        <span className="sr-only">{t(homeMenu.i18nKey)}</span>
       </Link>
 
       <Link
-        href="/courses"
+        href={coursesMenu.url}
         className={buttonVariants({
-          variant: getVariant("/courses", pathname),
+          variant: getVariant(coursesMenu.url, pathname),
           size: "adaptive",
         })}
       >
-        {getMenuIcon("courses")}
-        <span className="hidden sm:inline">{t("courses")}</span>
+        <coursesMenu.icon aria-hidden="true" />
+        <span className="hidden sm:inline">{t(coursesMenu.i18nKey)}</span>
       </Link>
 
       <CommandPalette />
 
       <Link
-        href="/start"
+        href={startMenu.url}
         className={buttonVariants({
-          variant: getVariant("/start", pathname),
+          variant: getVariant(startMenu.url, pathname),
           size: "adaptive",
           className: "ml-auto",
         })}
       >
-        {getMenuIcon("start")}
-        <span className="hidden sm:inline">{t("start")}</span>
+        <startMenu.icon aria-hidden="true" />
+        <span className="hidden sm:inline">{t(startMenu.i18nKey)}</span>
       </Link>
     </>
   );

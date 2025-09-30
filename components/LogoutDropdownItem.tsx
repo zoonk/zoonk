@@ -2,8 +2,10 @@
 
 import { useTranslations } from "next-intl";
 import { useLogout } from "@/hooks/useLogout";
-import { getMenuIcon } from "./menuIcons";
+import { getMenu } from "./menu";
 import { DropdownMenuItem } from "./ui/dropdown-menu";
+
+const logoutMenu = getMenu("logout");
 
 export function LogoutDropdownItem() {
   const t = useTranslations("Menu");
@@ -11,8 +13,8 @@ export function LogoutDropdownItem() {
 
   return (
     <DropdownMenuItem onSelect={logout}>
-      {getMenuIcon("logout")}
-      {t("logout")}
+      <logoutMenu.icon aria-hidden="true" />
+      {t(logoutMenu.i18nKey)}
     </DropdownMenuItem>
   );
 }
