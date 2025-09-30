@@ -14,7 +14,7 @@ export function LogoutDropdownItem() {
   return (
     <DropdownMenuItem onSelect={logout}>
       <logoutMenu.icon aria-hidden="true" />
-      {t(logoutMenu.i18nKey)}
+      {t("logout")}
     </DropdownMenuItem>
   );
 }
