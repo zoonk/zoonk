@@ -11,7 +11,11 @@ import { routing } from "@/i18n/routing";
 import "../globals.css";
 
 export const metadata: Metadata = {
-  title: "Zoonk",
+  metadataBase: new URL("https://zoonk.com"),
+  title: {
+    template: "%s | Zoonk",
+    default: "",
+  },
 };
 
 export async function generateStaticParams() {

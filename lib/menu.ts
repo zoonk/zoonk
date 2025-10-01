@@ -27,7 +27,7 @@ const menu = {
   myCourses: { url: "/my", icon: LayoutGrid },
   search: { url: "/search", icon: Search },
   settings: { url: "/settings", icon: Settings },
-  start: { url: "/start", icon: PlusCircle },
+  start: { url: "/learn", icon: PlusCircle },
   subscription: { url: "/subscription", icon: Gem },
 } as const;
 

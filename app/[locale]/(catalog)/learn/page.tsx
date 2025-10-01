@@ -6,10 +6,10 @@ import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/my">): Promise<Metadata> {
+}: PageProps<"/[locale]/learn">): Promise<Metadata> {
   cacheLife("max");
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "MyCourses" });
+  const t = await getTranslations({ locale, namespace: "Learn" });
 
   return {
     title: t("metaTitle"),
@@ -17,7 +17,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function MyCourses() {
+export default async function Learn() {
   cacheLife("max");
   return <main>{}</main>;
 }

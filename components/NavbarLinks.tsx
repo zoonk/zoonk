@@ -14,7 +14,7 @@ function getVariant(
     return "default";
   }
 
-  if (href === "/start") {
+  if (href === "/learn") {
     return "secondary";
   }
 
