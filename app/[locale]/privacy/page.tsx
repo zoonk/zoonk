@@ -17,7 +17,16 @@ export async function generateMetadata({
   };
 }
 
-export default async function Privacy() {
+export default async function Privacy({
+  params,
+}: PageProps<"/[locale]/privacy">) {
   cacheLife("max");
-  return <main>{}</main>;
+  const { locale } = await params;
+  const { default: PrivacyPolicy } = await import(`./${locale}.mdx`);
+
+  return (
+    <main className="prose dark:prose-invert max-w-full p-4">
+      <PrivacyPolicy />
+    </main>
+  );
 }

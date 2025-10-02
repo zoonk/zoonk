@@ -17,7 +17,14 @@ export async function generateMetadata({
   };
 }
 
-export default async function Terms() {
+export default async function Terms({ params }: PageProps<"/[locale]/terms">) {
   cacheLife("max");
-  return <main>{}</main>;
+  const { locale } = await params;
+  const { default: TermsOfService } = await import(`./${locale}.mdx`);
+
+  return (
+    <main className="prose dark:prose-invert max-w-full p-4">
+      <TermsOfService />
+    </main>
+  );
 }
