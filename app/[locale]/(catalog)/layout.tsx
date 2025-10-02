@@ -1,20 +1,23 @@
-import { Suspense } from "react";
+"use cache";
+
+import { unstable_cacheLife as cacheLife } from "next/cache";
+import { setRequestLocale } from "next-intl/server";
 import { NavbarLinks } from "@/components/NavbarLinks";
-import { UserAvatarSkeleton } from "@/components/UserAvatar";
 import { UserAvatarMenu } from "@/components/UserAvatarMenu";
 
-export default function CatalogLayout({
+export default async function CatalogLayout({
   children,
   params,
 }: LayoutProps<"/[locale]">) {
+  cacheLife("max");
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   return (
     <>
       <nav className="flex w-full items-center justify-between gap-2 p-4">
         <NavbarLinks />
-
-        <Suspense fallback={<UserAvatarSkeleton />}>
-          <UserAvatarMenu params={params} />
-        </Suspense>
+        <UserAvatarMenu />
       </nav>
 
       {children}

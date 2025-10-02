@@ -45,4 +45,12 @@ function AvatarFallback({
   );
 }
 
-export { Avatar, AvatarImage, AvatarFallback };
+function AvatarSkeleton() {
+  return (
+    <Avatar>
+      <AvatarFallback />
+    </Avatar>
+  );
+}
+
+export { Avatar, AvatarImage, AvatarFallback, AvatarSkeleton };

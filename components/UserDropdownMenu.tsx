@@ -1,7 +1,6 @@
-import { unstable_cacheLife as cacheLife } from "next/cache";
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
+import { getTranslations } from "next-intl/server";
 import { getMenu } from "@/lib/menu";
+import { ClientLink } from "./ClientLink";
 import { LogoutDropdownItem } from "./LogoutDropdownItem";
 import {
   DropdownMenuContent,
@@ -9,15 +8,7 @@ import {
   DropdownMenuSeparator,
 } from "./ui/dropdown-menu";
 
-interface UserDropdownMenuProps {
-  locale: string;
-}
-
-export async function UserDropdownMenu({ locale }: UserDropdownMenuProps) {
-  "use cache";
-  cacheLife("max");
-
-  setRequestLocale(locale);
+export async function UserDropdownMenu() {
   const t = await getTranslations("Menu");
 
   const catalogMenu = [{ key: t("myCourses"), ...getMenu("myCourses") }];
@@ -33,10 +24,10 @@ export async function UserDropdownMenu({ locale }: UserDropdownMenuProps) {
     <DropdownMenuContent align="end" className="w-56">
       {catalogMenu.map((menu) => (
         <DropdownMenuItem key={menu.key} asChild>
-          <Link href={menu.url}>
+          <ClientLink href={menu.url}>
             <menu.icon aria-hidden="true" />
             {menu.key}
-          </Link>
+          </ClientLink>
         </DropdownMenuItem>
       ))}
 
@@ -44,10 +35,10 @@ export async function UserDropdownMenu({ locale }: UserDropdownMenuProps) {
 
       {accountMenu.map((menu) => (
         <DropdownMenuItem key={menu.key} asChild>
-          <Link href={menu.url}>
+          <ClientLink href={menu.url}>
             <menu.icon aria-hidden="true" />
             {menu.key}
-          </Link>
+          </ClientLink>
         </DropdownMenuItem>
       ))}
 
