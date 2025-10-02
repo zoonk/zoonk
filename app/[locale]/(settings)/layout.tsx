@@ -3,7 +3,7 @@
 import { unstable_cacheLife as cacheLife } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
 import { SettingsSidebar } from "@/app/[locale]/(settings)/SettingsSidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default async function Layout({
   children,
@@ -16,7 +16,7 @@ export default async function Layout({
   return (
     <SidebarProvider>
       <SettingsSidebar />
-      <main>{children}</main>
+      <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
   );
 }
