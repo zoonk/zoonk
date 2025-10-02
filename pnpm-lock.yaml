@@ -100,8 +100,8 @@ importers:
         specifier: 2.2.4
         version: 2.2.4
       '@lingual/i18n-check':
-        specifier: 0.8.7
-        version: 0.8.7
+        specifier: 0.8.9
+        version: 0.8.9
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.13
@@ -762,8 +762,8 @@ packages:
   '@levischuck/tiny-cbor@0.2.11':
     resolution: {integrity: sha512-llBRm4dT4Z89aRsm6u2oEZ8tfwL/2l6BwpZ7JcyieouniDECM5AqNgr/y08zalEIvW3RSK4upYyybDcmjXqAow==}
 
-  '@lingual/i18n-check@0.8.7':
-    resolution: {integrity: sha512-HO8ivoD2mfolHgO6SUZLIPp2APT+vQNQiOydn1VxaEr/zMAVER8T2Qeqlae1xOy9yBAfahlBc55o8pIcDJW/6A==}
+  '@lingual/i18n-check@0.8.9':
+    resolution: {integrity: sha512-yUCuhfTGXeEWu+0+YPuEI6IpeB2t6hxZGbp82fz3URys11gdkG1oEv5CVOvSd5znWBllrIMRTggfp9ffINI11g==}
     engines: {node: '>=20'}
     hasBin: true
 
@@ -3849,7 +3849,7 @@ snapshots:
 
   '@levischuck/tiny-cbor@0.2.11': {}
 
-  '@lingual/i18n-check@0.8.7':
+  '@lingual/i18n-check@0.8.9':
     dependencies:
       '@formatjs/cli-lib': 6.6.6
       '@formatjs/icu-messageformat-parser': 2.11.2
