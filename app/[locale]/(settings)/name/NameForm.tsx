@@ -36,6 +36,7 @@ export function NameForm() {
           name="name"
           type="text"
           required
+          key={currentName}
           defaultValue={currentName}
           disabled={isPending}
         />
