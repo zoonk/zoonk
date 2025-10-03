@@ -84,7 +84,11 @@
     "metaTitle": "Nome de Exibição",
     "metaDescription": "Defina ou altere o nome de exibição no Zoonk. Esse nome pode ser visível para outras pessoas e será usado quando nos referirmos a você nas aulas e exercícios.",
     "title": "Nome de exibição",
-    "subtitle": "Esse é o nome que outras pessoas podem ver e que usaremos para nos referir a você nos exercícios."
+    "subtitle": "Esse é o nome que outras pessoas podem ver e que usaremos para nos referir a você nos exercícios.",
+    "name": "Nome",
+    "submit": "Atualizar nome",
+    "success": "Seu nome foi atualizado com sucesso!",
+    "error": "Falha ao atualizar seu nome. Por favor, tente novamente ou entre em contato com contato@zoonk.com"
   },
   "Subscription": {
     "metaTitle": "Gerenciar Assinatura",

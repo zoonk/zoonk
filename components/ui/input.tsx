@@ -33,4 +33,23 @@ function InputError({ className, kind = "polite", ...props }: InputErrorProps) {
   );
 }
 
-export { Input, InputError };
+interface InputSuccessProps extends React.ComponentProps<"p"> {
+  kind?: "assertive" | "polite";
+}
+
+function InputSuccess({
+  className,
+  kind = "polite",
+  ...props
+}: InputSuccessProps) {
+  return (
+    <p
+      aria-live={kind}
+      aria-atomic={true}
+      className={cn("text-green-600 text-sm", className)}
+      {...props}
+    />
+  );
+}
+
+export { Input, InputError, InputSuccess };
