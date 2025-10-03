@@ -109,5 +109,14 @@
   "Terms": {
     "metaTitle": "Terms of Use",
     "metaDescription": "Read Zoonk's terms of use to understand the rules and conditions for using our platform and services."
+  },
+  "Contact": {
+    "email": "Email",
+    "emailPlaceholder": "your.email@example.com",
+    "message": "Message",
+    "messagePlaceholder": "How can we help you?",
+    "submit": "Send message",
+    "success": "Message sent successfully! We'll get back to you soon.",
+    "error": "Failed to send message. Please try again or email us directly at hello@zoonk.com"
   }
 }
