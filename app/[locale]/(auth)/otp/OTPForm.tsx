@@ -51,7 +51,7 @@ export function OTPForm({ email }: OTPFormProps) {
 
         <InputError>{state.error}</InputError>
 
-        <SubmitButton>{t("submit")}</SubmitButton>
+        <SubmitButton full>{t("submit")}</SubmitButton>
 
         <Link href="/login" className={buttonVariants({ variant: "link" })}>
           {t("changeEmail")}

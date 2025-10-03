@@ -8,6 +8,8 @@ import { PageHeader } from "@/components/PageHeader";
 import { PageSubtitle } from "@/components/PageSubtitle";
 import { PageTitle } from "@/components/PageTitle";
 
+import { NameForm } from "./NameForm";
+
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/name">): Promise<Metadata> {
@@ -33,6 +35,7 @@ export default async function Name({ params }: PageProps<"/[locale]/name">) {
         <PageTitle>{t("title")}</PageTitle>
         <PageSubtitle>{t("subtitle")}</PageSubtitle>
       </PageHeader>
+      <NameForm />
     </PageContainer>
   );
 }

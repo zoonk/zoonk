@@ -25,7 +25,7 @@ export default async function LoginForm() {
         />
       </div>
 
-      <SubmitButton>{t("submit")}</SubmitButton>
+      <SubmitButton full>{t("submit")}</SubmitButton>
     </Form>
   );
 }

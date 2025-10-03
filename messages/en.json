@@ -82,7 +82,11 @@
     "metaTitle": "Update Display Name",
     "metaDescription": "Set or update your Zoonk display name. This name may be visible to others and will be used when referring to you in lessons and exercises.",
     "title": "Display name",
-    "subtitle": "This is the name others may see and the one we'll use to refer to you in exercises."
+    "subtitle": "This is the name others may see and the one we'll use to refer to you in exercises.",
+    "name": "Name",
+    "submit": "Update name",
+    "success": "Your name has been updated successfully!",
+    "error": "Failed to update your name. Please try again or contact hello@zoonk.com"
   },
   "Subscription": {
     "metaTitle": "Manage Subscription",
