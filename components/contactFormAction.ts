@@ -6,8 +6,8 @@ export async function contactFormAction(
   _prevState: unknown,
   formData: FormData,
 ) {
-  const email = formData.get("email") as string;
-  const message = formData.get("message") as string;
+  const email = String(formData.get("email"));
+  const message = String(formData.get("message"));
 
   try {
     const res = await sendEmail({
