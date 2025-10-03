@@ -10,7 +10,7 @@ export async function contactFormAction(
   const message = formData.get("message") as string;
 
   try {
-    await sendEmail({
+    const res = await sendEmail({
       to: "hello@zoonk.com",
       subject: "Zoonk Request",
       text: `
@@ -19,6 +19,12 @@ export async function contactFormAction(
         <p>${message.replace(/\n/g, "<br>")}</p>
       `,
     });
+
+    if (!res.ok) {
+      console.error("Failed to send email", await res.text());
+      return { status: "error" };
+    }
+
     return { status: "success" };
   } catch {
     console.error("Failed to send email");

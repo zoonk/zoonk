@@ -8,18 +8,14 @@ interface EmailProps {
   text: string;
 }
 
-export async function sendEmail({
-  to,
-  subject,
-  text,
-}: EmailProps): Promise<void> {
+export async function sendEmail({ to, subject, text }: EmailProps) {
   if (sendEmailDisabled) {
     console.info("Email sending is disabled.");
     console.info({ to, subject, text });
-    return Promise.resolve();
+    return Promise.resolve(Response.json({ ok: true }));
   }
 
-  await fetch(apiUrl, {
+  return await fetch(apiUrl, {
     method: "POST",
     headers: {
       Accept: "application/json",
@@ -33,6 +29,4 @@ export async function sendEmail({
       htmlBody: text,
     }),
   });
-
-  return;
 }

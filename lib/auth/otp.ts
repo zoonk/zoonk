@@ -15,9 +15,11 @@ export const sendVerificationOTP: EmailOTPOptions["sendVerificationOTP"] =
       <p>${t("ignore")}</p>
     `;
 
-    return sendEmail({
+    await sendEmail({
       to: email,
       subject,
       text,
     });
+
+    return;
   };
