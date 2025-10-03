@@ -37,7 +37,7 @@ export default async function Follow({
         <PageSubtitle>{t("subtitle")}</PageSubtitle>
       </PageHeader>
 
-      <div className="mt-8 grid w-full gap-4 sm:grid-cols-2 md:grid-cols-3">
+      <div className="grid w-full gap-4 sm:grid-cols-2 md:grid-cols-3">
         {getSocialProfiles(locale).map((social) => (
           <a
             key={social.name}

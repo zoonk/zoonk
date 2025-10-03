@@ -118,5 +118,9 @@
     "submit": "Send message",
     "success": "Message sent successfully! We'll get back to you soon.",
     "error": "Failed to send message. Please try again or email us directly at hello@zoonk.com"
+  },
+  "LocaleSwitcher": {
+    "label": "Change language",
+    "locale": "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} other {Unknown}}"
   }
 }

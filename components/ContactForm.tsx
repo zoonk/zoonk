@@ -27,7 +27,7 @@ export function ContactForm() {
   );
 
   return (
-    <form action={formAction} className="mt-4 flex max-w-lg flex-col gap-4">
+    <form action={formAction} className="flex max-w-lg flex-col gap-4">
       <div className="flex flex-col gap-2">
         <Label htmlFor="email">{t("email")}</Label>
         <Input
