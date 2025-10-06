@@ -1,7 +1,9 @@
+import { stripe } from "@better-auth/stripe";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import { emailOTP } from "better-auth/plugins";
+import Stripe from "stripe";
 import { getAppleClientSecret } from "./auth/apple";
 import { sendVerificationOTP } from "./auth/otp";
 import prisma from "./prisma";
@@ -11,6 +13,13 @@ const isProduction = process.env.NODE_ENV === "production";
 const SESSION_EXPIRES_IN_DAYS = 30;
 const COOKIE_CACHE_MINUTES = 60;
 const APPLE_CLIENT_SECRET = isProduction ? await getAppleClientSecret() : "";
+
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || "";
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || "";
+
+const stripeClient = new Stripe(STRIPE_SECRET_KEY, {
+  apiVersion: "2025-08-27.basil",
+});
 
 export const auth = betterAuth({
   database: prismaAdapter(prisma, { provider: "postgresql" }),
@@ -48,6 +57,22 @@ export const auth = betterAuth({
       storeOTP: "hashed",
       overrideDefaultEmailVerification: true,
       sendVerificationOTP,
+    }),
+    stripe({
+      stripeClient,
+      stripeWebhookSecret: STRIPE_WEBHOOK_SECRET,
+      createCustomerOnSignUp: true,
+      subscription: {
+        enabled: true,
+        plans: [
+          {
+            name: "plus",
+            priceId: process.env.STRIPE_PLUS_MONTHLY_PRICE_ID || "",
+            annualDiscountPriceId:
+              process.env.STRIPE_PLUS_YEARLY_PRICE_ID || "",
+          },
+        ],
+      },
     }),
   ],
 });
