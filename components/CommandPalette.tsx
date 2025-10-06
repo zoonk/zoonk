@@ -80,6 +80,7 @@ export function CommandPalette() {
         title={t("search")}
         description={t("paletteDescription")}
         closeLabel={t("close")}
+        className="top-4 translate-y-0 lg:top-1/2 lg:translate-y-[-50%]"
       >
         <CommandInput
           placeholder={t("paletteDescription")}
