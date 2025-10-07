@@ -2,7 +2,8 @@
 
 import type { Metadata } from "next";
 import { unstable_cacheLife as cacheLife } from "next/cache";
-import { getTranslations } from "next-intl/server";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { StartCourseForm } from "./StartCourseForm";
 
 export async function generateMetadata({
   params,
@@ -17,7 +18,22 @@ export async function generateMetadata({
   };
 }
 
-export default async function Learn() {
+export default async function Learn({ params }: PageProps<"/[locale]/learn">) {
   cacheLife("max");
-  return <main>{}</main>;
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "Learn" });
+
+  return (
+    <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center gap-4 p-4">
+      <h1
+        id="learn-title"
+        className="-tracking-wide md:-tracking-wider pt-4 text-center font-semibold text-2xl text-foreground/90 md:pt-8 md:text-3xl md:tracking-tightest"
+      >
+        {t("title")}
+      </h1>
+
+      <StartCourseForm />
+    </main>
+  );
 }
