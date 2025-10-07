@@ -2,7 +2,7 @@ import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
-const CACHE_IMAGE_DAYS = 365;
+const CACHE_IMAGE_DAYS = 30;
 
 const nextConfig: NextConfig = {
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
