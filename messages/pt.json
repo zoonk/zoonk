@@ -104,7 +104,8 @@
       "title": "Você está no Zoonk Plus",
       "description": "Sem anúncios, exercícios ilimitados e acompanhamento completo do progresso.",
       "action": "Gerenciar assinatura"
-    }
+    },
+    "error": "Não foi possível alterar sua assinatura. Entre em contato conosco pelo email contato@zoonk.com"
   },
   "Courses": {
     "metaTitle": "Cursos Online usando IA",

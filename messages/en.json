@@ -102,7 +102,8 @@
       "title": "You’re on Zoonk Plus",
       "description": "No ads, unlimited exercises, and full progress tracking.",
       "action": "Manage subscription"
-    }
+    },
+    "error": "Unable to change your subscription. Contact us at hello@zoonk.com"
   },
   "Courses": {
     "metaTitle": "Online Courses using AI",

@@ -2,13 +2,14 @@
 
 import { Loader2Icon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useState } from "react";
+import { Activity, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Item,
   ItemActions,
   ItemContent,
   ItemDescription,
+  ItemFooter,
   ItemTitle,
 } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,6 +21,7 @@ export function SubscriptionPage() {
   const { subscription, isPending } = useSubscription();
   const t = useTranslations("Subscription");
   const isLoading = state === "loading";
+  const hasError = state === "error";
 
   const title = subscription ? t("plus.title") : t("free.title");
   const action = subscription ? t("plus.action") : t("free.action");
@@ -94,6 +96,10 @@ export function SubscriptionPage() {
           {action}
         </Button>
       </ItemActions>
+
+      <Activity mode={hasError ? "visible" : "hidden"}>
+        <ItemFooter className="text-destructive">{t("error")}</ItemFooter>
+      </Activity>
     </Item>
   );
 }
