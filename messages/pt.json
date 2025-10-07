@@ -128,5 +128,10 @@
   "LocaleSwitcher": {
     "label": "Alterar idioma",
     "locale": "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} other {Desconhecido}}"
+  },
+  "Protected": {
+    "checkingLogin": "Verificando se você está logado...",
+    "requiresLogin": "Você precisa estar logado para acessar esta página.",
+    "login": "Entrar"
   }
 }

@@ -7,7 +7,7 @@ import { PageContainer } from "@/components/PageContainer";
 import { PageHeader } from "@/components/PageHeader";
 import { PageSubtitle } from "@/components/PageSubtitle";
 import { PageTitle } from "@/components/PageTitle";
-
+import { ProtectedSection } from "@/components/ProtectedSection";
 import { NameForm } from "./NameForm";
 
 export async function generateMetadata({
@@ -35,7 +35,10 @@ export default async function Name({ params }: PageProps<"/[locale]/name">) {
         <PageTitle>{t("title")}</PageTitle>
         <PageSubtitle>{t("subtitle")}</PageSubtitle>
       </PageHeader>
-      <NameForm />
+
+      <ProtectedSection>
+        <NameForm />
+      </ProtectedSection>
     </PageContainer>
   );
 }
