@@ -12,9 +12,11 @@
     "format": "biome format --write",
     "type-check": "next typegen && tsc --noEmit",
     "test": "vitest",
-    "i18n": "i18n-check -s en -l messages -u app lib components -f next-intl"
+    "i18n": "i18n-check -s en -l messages -u app lib components -f next-intl",
+    "stripe:listen": "stripe listen --forward-to http://localhost:3000/api/auth/stripe/webhook"
   },
   "dependencies": {
+    "@better-auth/stripe": "1.3.26",
     "@formatjs/intl-localematcher": "0.6.1",
     "@prisma/adapter-pg": "6.16.2",
     "@prisma/client": "6.16.2",
@@ -30,7 +32,7 @@
     "@tabler/icons-react": "3.35.0",
     "@vercel/analytics": "1.5.0",
     "@vercel/functions": "3.1.0",
-    "better-auth": "1.3.11",
+    "better-auth": "1.3.26",
     "class-variance-authority": "0.7.1",
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
@@ -41,9 +43,10 @@
     "next": "canary",
     "next-intl": "4.3.9",
     "pg": "8.16.3",
-    "react": "19.1.0",
-    "react-dom": "19.1.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
     "server-only": "0.0.1",
+    "stripe": "18.5.0",
     "tailwind-merge": "3.3.1"
   },
   "devDependencies": {
@@ -60,8 +63,8 @@
     "@types/negotiator": "0.6.4",
     "@types/node": "^20",
     "@types/pg": "8.15.5",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
     "@vitejs/plugin-react": "5.0.3",
     "jsdom": "27.0.0",
     "prisma": "6.16.2",

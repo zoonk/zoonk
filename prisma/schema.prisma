@@ -26,6 +26,8 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  stripeCustomerId String?
+
   @@unique([email])
   @@index([email])
   @@map("user")
@@ -86,4 +88,22 @@ model RateLimit {
   lastRequest BigInt?
 
   @@map("rateLimit")
+}
+
+model Subscription {
+  id                   String    @id
+  plan                 String
+  referenceId          String
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  status               String?
+  periodStart          DateTime?
+  periodEnd            DateTime?
+  trialStart           DateTime?
+  trialEnd             DateTime?
+  cancelAtPeriodEnd    Boolean?  @default(false)
+  seats                Int?
+
+  @@index([referenceId])
+  @@map("subscription")
 }
