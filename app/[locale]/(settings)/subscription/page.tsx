@@ -8,6 +8,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { PageSubtitle } from "@/components/PageSubtitle";
 import { PageTitle } from "@/components/PageTitle";
 import { ProtectedSection } from "@/components/ProtectedSection";
+import { SubscriptionPage } from "./SubscriptionPage";
 
 export async function generateMetadata({
   params,
@@ -37,7 +38,9 @@ export default async function Subscription({
         <PageSubtitle>{t("subtitle")}</PageSubtitle>
       </PageHeader>
 
-      <ProtectedSection>{}</ProtectedSection>
+      <ProtectedSection>
+        <SubscriptionPage />
+      </ProtectedSection>
     </PageContainer>
   );
 }

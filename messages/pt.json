@@ -94,7 +94,17 @@
     "metaTitle": "Gerenciar Assinatura",
     "metaDescription": "Gerencie a sua assinatura do Zoonk. Veja o plano atual, mude ou cancele de plano e confira os benefícios disponíveis.",
     "title": "Assinatura",
-    "subtitle": "Veja os detalhes do seu plano e gerencie a assinatura."
+    "subtitle": "Veja os detalhes do seu plano e gerencie a assinatura.",
+    "free": {
+      "title": "Assine o Plus",
+      "description": "Remova os anúncios, tenha exercícios ilimitados e acompanhe seu progresso.",
+      "action": "Assinar"
+    },
+    "plus": {
+      "title": "Você está no Zoonk Plus",
+      "description": "Sem anúncios, exercícios ilimitados e acompanhamento completo do progresso.",
+      "action": "Gerenciar assinatura"
+    }
   },
   "Courses": {
     "metaTitle": "Cursos Online usando IA",

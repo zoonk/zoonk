@@ -92,7 +92,17 @@
     "metaTitle": "Manage Subscription",
     "metaDescription": "Manage your Zoonk subscription. View your current plan, upgrade or downgrade, and see available benefits.",
     "title": "Subscription",
-    "subtitle": "Check your plan details and manage your subscription."
+    "subtitle": "Check your plan details and manage your subscription.",
+    "free": {
+      "title": "Upgrade to Plus",
+      "description": "Remove ads, unlock unlimited exercises, and track your progress.",
+      "action": "Upgrade"
+    },
+    "plus": {
+      "title": "You’re on Zoonk Plus",
+      "description": "No ads, unlimited exercises, and full progress tracking.",
+      "action": "Manage subscription"
+    }
   },
   "Courses": {
     "metaTitle": "Online Courses using AI",
