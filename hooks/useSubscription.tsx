@@ -13,7 +13,11 @@ async function getActiveSubscription() {
 }
 
 export function useSubscription() {
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [subscription, setSubscription] = useState<
+    Subscription | null | undefined
+  >();
+
+  const isPending = subscription === undefined;
 
   useEffect(() => {
     getActiveSubscription()
@@ -21,5 +25,5 @@ export function useSubscription() {
       .catch(() => setSubscription(null));
   }, []);
 
-  return { subscription };
+  return { subscription, isPending };
 }

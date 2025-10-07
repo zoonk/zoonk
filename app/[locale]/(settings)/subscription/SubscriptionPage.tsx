@@ -11,12 +11,13 @@ import {
   ItemDescription,
   ItemTitle,
 } from "@/components/ui/item";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useSubscription } from "@/hooks/useSubscription";
 import { authClient } from "@/lib/auth-client";
 
 export function SubscriptionPage() {
   const [state, setState] = useState<"idle" | "loading" | "error">("idle");
-  const { subscription } = useSubscription();
+  const { subscription, isPending } = useSubscription();
   const t = useTranslations("Subscription");
   const isLoading = state === "loading";
 
@@ -64,6 +65,21 @@ export function SubscriptionPage() {
 
   const handleAction = () =>
     subscription ? manageSubscription() : subscribe();
+
+  if (isPending) {
+    return (
+      <Item variant="outline">
+        <ItemContent>
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-4 max-w-sm" />
+        </ItemContent>
+
+        <ItemActions>
+          <Skeleton className="h-8 w-24" />
+        </ItemActions>
+      </Item>
+    );
+  }
 
   return (
     <Item variant="outline">
