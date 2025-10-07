@@ -3,11 +3,13 @@
 import type { Metadata } from "next";
 import { unstable_cacheLife as cacheLife } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { PageContainer } from "@/components/PageContainer";
-import { PageHeader } from "@/components/PageHeader";
-import { PageSubtitle } from "@/components/PageSubtitle";
-import { PageTitle } from "@/components/PageTitle";
 import { ProtectedSection } from "@/components/ProtectedSection";
+import {
+  PageContainer,
+  PageHeader,
+  PageSubtitle,
+  PageTitle,
+} from "@/components/pages";
 import { NameForm } from "./NameForm";
 
 export async function generateMetadata({

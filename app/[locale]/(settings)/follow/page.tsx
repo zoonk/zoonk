@@ -3,10 +3,12 @@
 import type { Metadata } from "next";
 import { unstable_cacheLife as cacheLife } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { PageContainer } from "@/components/PageContainer";
-import { PageHeader } from "@/components/PageHeader";
-import { PageSubtitle } from "@/components/PageSubtitle";
-import { PageTitle } from "@/components/PageTitle";
+import {
+  PageContainer,
+  PageHeader,
+  PageSubtitle,
+  PageTitle,
+} from "@/components/pages";
 import { getSocialProfiles } from "@/lib/social";
 
 export async function generateMetadata({
