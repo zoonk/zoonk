@@ -4,8 +4,7 @@ import { Loader2Icon } from "lucide-react";
 import { useFormStatus } from "react-dom";
 import { Button } from "./ui/button";
 
-interface SubmitButtonProps {
-  children: React.ReactNode;
+interface SubmitButtonProps extends React.ComponentProps<"button"> {
   full?: boolean;
 }
 

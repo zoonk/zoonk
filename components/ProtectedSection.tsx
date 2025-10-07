@@ -10,11 +10,9 @@ import { buttonVariants } from "./ui/button";
 import { Item, ItemContent, ItemMedia, ItemTitle } from "./ui/item";
 import { Spinner } from "./ui/spinner";
 
-interface ProtectedSectionProps {
-  children?: React.ReactNode;
-}
-
-export function ProtectedSection({ children }: ProtectedSectionProps) {
+export function ProtectedSection({
+  children,
+}: React.ComponentProps<"section">) {
   const { data: session, isPending } = authClient.useSession();
   const t = useTranslations("Protected");
 
