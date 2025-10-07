@@ -107,6 +107,10 @@
     },
     "error": "Não foi possível alterar sua assinatura. Entre em contato conosco pelo email contato@zoonk.com"
   },
+  "Home": {
+    "metaTitle": "Zoonk: Aprenda com IA",
+    "metaDescription": "Zoonk te ajuda a aprender qualquer assunto com IA usando cursos, aulas e exercícios interativos."
+  },
   "Courses": {
     "metaTitle": "Cursos Online usando IA",
     "metaDescription": "Explore todos os cursos do Zoonk para aprender qualquer assunto com IA. Encontre aulas interativas, desafios e exercícios para aprender ciência, matemática, tecnologia e muito mais."

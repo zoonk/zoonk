@@ -105,6 +105,10 @@
     },
     "error": "Unable to change your subscription. Contact us at hello@zoonk.com"
   },
+  "Home": {
+    "metaTitle": "Zoonk: AI Learning Platform",
+    "metaDescription": "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and exercises."
+  },
   "Courses": {
     "metaTitle": "Online Courses using AI",
     "metaDescription": "Explore all Zoonk courses to learn anything using AI. Find interactive lessons, challenges, and exercises to learn subjects like science, math, technology, and more."
