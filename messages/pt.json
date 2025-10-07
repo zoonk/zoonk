@@ -123,7 +123,9 @@
     "metaTitle": "Aprenda Qualquer Coisa com IA",
     "metaDescription": "Diga ao Zoonk o que você quer aprender e receba na hora um curso gerado por IA. Comece a estudar qualquer assunto com aulas e exercícios interativos.",
     "title": "O que você quer aprender?",
-    "placeholder": "ex: ciência da computação, astronomia, biologia..."
+    "placeholder": "ex: ciência da computação, astronomia, biologia...",
+    "label": "Digite um assunto",
+    "submit": "Começar"
   },
   "Privacy": {
     "metaTitle": "Política de Privacidade",
