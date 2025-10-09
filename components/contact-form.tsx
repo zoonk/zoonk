@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useActionState } from "react";
+import { useActionState, useId } from "react";
 import SubmitButton from "@/components/submit-button";
 import { Input, InputError, InputSuccess } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,6 +20,8 @@ const initialState: ContactFormState = {
 export function ContactForm() {
   const { data: session, isPending } = authClient.useSession();
   const t = useTranslations("Contact");
+  const emailId = useId();
+  const messageId = useId();
 
   const [state, formAction, _pending] = useActionState(
     contactFormAction,
@@ -29,22 +31,23 @@ export function ContactForm() {
   return (
     <form action={formAction} className="flex max-w-lg flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <Label htmlFor="email">{t("email")}</Label>
+        <Label htmlFor={emailId}>{t("email")}</Label>
         <Input
-          id="email"
+          id={emailId}
           name="email"
           type="email"
           required
           placeholder={t("emailPlaceholder")}
           defaultValue={session?.user?.email ?? ""}
           disabled={isPending}
+          autoComplete="email"
         />
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label htmlFor="message">{t("message")}</Label>
+        <Label htmlFor={messageId}>{t("message")}</Label>
         <textarea
-          id="message"
+          id={messageId}
           name="message"
           required
           placeholder={t("messagePlaceholder")}
