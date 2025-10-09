@@ -60,7 +60,8 @@
     "metaTitle": "Enviar feedback",
     "metaDescription": "Compartilhe suas ideias e ajude a melhorar o Zoonk. Use a página de feedback para entrar em contato conosco com sugestões, perguntas ou problemas sobre nossa plataforma de aprendizado.",
     "title": "Feedback",
-    "subtitle": "Envie feedback, perguntas ou sugestões. Preencha o formulário abaixo ou entre em contato pelo email contato@zoonk.com."
+    "subtitle": "Envie feedback, perguntas ou sugestões. Preencha o formulário abaixo ou entre em contato pelo email contato@zoonk.com.",
+    "closeLabel": "Fechar formulário"
   },
   "Follow": {
     "metaTitle": "Siga nas redes",
@@ -166,6 +167,7 @@
   "ContentFeedback": {
     "title": "Você gostou deste conteúdo?",
     "upvote": "Gostei",
-    "downvote": "Não gostei"
+    "downvote": "Não gostei",
+    "sendFeedback": "Enviar feedback"
   }
 }

@@ -1,10 +1,11 @@
 "use client";
 
 import { track } from "@vercel/analytics";
-import { ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
+import { MessageSquareIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { FeedbackSheet } from "./feedback-sheet";
 import { Button } from "./ui/button";
 
 type ContentFeedbackProps = {
@@ -29,7 +30,9 @@ export function ContentFeedback({
   };
 
   return (
-    <footer className={cn("flex flex-col items-center text-center", className)}>
+    <footer
+      className={cn("flex flex-col items-center gap-1 text-center", className)}
+    >
       <h6 className="text-muted-foreground text-sm">{t("title")}</h6>
 
       <div className="flex gap-1">
@@ -59,6 +62,13 @@ export function ContentFeedback({
           <span className="sr-only">{t("downvote")}</span>
         </Button>
       </div>
+
+      <FeedbackSheet side="bottom">
+        <Button variant="ghost" size="sm" className="text-muted-foreground">
+          <MessageSquareIcon aria-hidden="true" />
+          {t("sendFeedback")}
+        </Button>
+      </FeedbackSheet>
     </footer>
   );
 }

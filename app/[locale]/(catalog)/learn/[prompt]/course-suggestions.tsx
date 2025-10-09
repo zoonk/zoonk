@@ -61,6 +61,7 @@ export async function CourseSuggestions({
       <ContentFeedback
         kind="courseSuggestions"
         contentId={`${locale}:${prompt}`}
+        className="py-4"
       />
     </PageContainer>
   );
