@@ -69,7 +69,9 @@ DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/zoonk"
 Run the following commands to set up Prisma:
 
 - `pnpm prisma generate` to generate Prisma client
-- `pnpm prisma migrate dev` to run migrations and set up the database
+- `pnpm db:migrate` to run migrations and set up the database
+- `pnpm db:reset` to reset the database (this will erase all data)
+- `pnpm prisma migrate dev --create-only` to create a new migration without applying it
 
 ### Local Development
 

@@ -127,6 +127,16 @@
     "label": "Digite um assunto",
     "submit": "Começar"
   },
+  "LearnResults": {
+    "metaTitle": "Aprenda {prompt} com IA",
+    "metaDescription": "Descubra cursos e recursos personalizados para aprender {prompt}. O Zoonk usa IA para criar aulas e exercícios interativos sob medida para você.",
+    "loadingTitle": "Preparando umas ideias de cursos",
+    "loadingSubtitle": "Estamos pensando em algumas sugestões de cursos para você. Isso pode levar alguns segundos.",
+    "loadingCancel": "Cancelar",
+    "title": "Ideias de cursos para {prompt}",
+    "changeAction": "Mudar de assunto",
+    "createCourse": "Criar curso"
+  },
   "Privacy": {
     "metaTitle": "Política de Privacidade",
     "metaDescription": "Leia a política de privacidade do Zoonk e entenda como coletamos, usamos e protegemos suas informações pessoais."

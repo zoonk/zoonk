@@ -104,6 +104,17 @@ model Subscription {
   cancelAtPeriodEnd    Boolean?  @default(false)
   seats                Int?
 
-  @@index([referenceId])
   @@map("subscription")
+}
+
+model CourseSuggestion {
+  id          Int      @id @default(autoincrement())
+  locale      String   @db.VarChar(10)
+  prompt      String   @db.Citext
+  suggestions Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+
+  @@unique([locale, prompt])
+  @@map("courseSuggestions")
 }
