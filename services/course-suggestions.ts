@@ -24,10 +24,10 @@ export async function fetchCourseSuggestions({
   const record = await getCourseSuggestion({ locale, prompt });
 
   if (!record) {
-    const suggestions = await generateCourseSuggestions({ locale, prompt });
-    await addCourseSuggestion({ locale, prompt, suggestions });
+    const { courses } = await generateCourseSuggestions({ locale, prompt });
+    await addCourseSuggestion({ locale, prompt, suggestions: courses });
 
-    return suggestions;
+    return courses;
   }
 
   return record.suggestions as Suggestion[];

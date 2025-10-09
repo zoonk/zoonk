@@ -1,4 +1,5 @@
 import "server-only";
+import type { LanguageModelUsage } from "ai";
 import { generateObject } from "ai";
 import { z } from "zod";
 import { repairAIText } from "@/lib/utils";
@@ -15,20 +16,32 @@ const schema = z.object({
   ),
 });
 
+export interface CourseSuggestion {
+  title: string;
+  description: string;
+}
+
+export interface CourseSuggestionsResult {
+  courses: CourseSuggestion[];
+  usage: LanguageModelUsage;
+}
+
 export async function generateCourseSuggestions({
   locale,
   prompt,
+  modelOverride,
 }: {
   locale: string;
   prompt: string;
-}) {
+  modelOverride?: string;
+}): Promise<CourseSuggestionsResult> {
   const userPrompt = `
     APP_LANGUAGE: ${locale}
     USER_INPUT: ${prompt}
   `;
 
-  const { object } = await generateObject({
-    model,
+  const { object, usage } = await generateObject({
+    model: modelOverride || model,
     schema,
     prompt: [
       { role: "system", content: systemPrompt },
@@ -42,5 +55,5 @@ export async function generateCourseSuggestions({
       }),
   });
 
-  return object.courses;
+  return { courses: object.courses, usage };
 }
