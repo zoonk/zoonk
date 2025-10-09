@@ -1,6 +1,9 @@
 "use cache";
 
-import { unstable_cacheLife as cacheLife } from "next/cache";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from "next/cache";
 import { setRequestLocale } from "next-intl/server";
 import { SettingsSidebar } from "@/app/[locale]/(settings)/settings-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -10,6 +13,7 @@ export default async function Layout({
   params,
 }: LayoutProps<"/[locale]">) {
   cacheLife("max");
+  cacheTag("settings-layout");
   const { locale } = await params;
   setRequestLocale(locale);
 

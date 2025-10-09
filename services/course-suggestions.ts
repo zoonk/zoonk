@@ -1,5 +1,8 @@
 import "server-only";
-import { unstable_cacheLife as cacheLife } from "next/cache";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from "next/cache";
 import { generateCourseSuggestions } from "@/ai/course-suggestions";
 import {
   addCourseSuggestion,
@@ -16,6 +19,7 @@ export async function fetchCourseSuggestions({
 }): Promise<Suggestion[]> {
   "use cache";
   cacheLife("max");
+  cacheTag(locale, prompt);
 
   const record = await getCourseSuggestion({ locale, prompt });
 

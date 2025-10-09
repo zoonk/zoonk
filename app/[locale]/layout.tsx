@@ -2,7 +2,10 @@
 
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
-import { unstable_cacheLife as cacheLife } from "next/cache";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from "next/cache";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
@@ -27,6 +30,7 @@ export default async function RootLayout({
   params,
 }: LayoutProps<"/[locale]">) {
   cacheLife("max");
+  cacheTag("root-layout");
 
   const { locale } = await params;
 

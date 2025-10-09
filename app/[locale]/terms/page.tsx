@@ -1,13 +1,17 @@
 "use cache";
 
 import type { Metadata } from "next";
-import { unstable_cacheLife as cacheLife } from "next/cache";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from "next/cache";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/terms">): Promise<Metadata> {
   cacheLife("max");
+  cacheTag("terms-page");
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Terms" });
 
@@ -19,6 +23,7 @@ export async function generateMetadata({
 
 export default async function Terms({ params }: PageProps<"/[locale]/terms">) {
   cacheLife("max");
+  cacheTag("terms-page");
   const { locale } = await params;
   const { default: TermsOfService } = await import(`./${locale}.mdx`);
 

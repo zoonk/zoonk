@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
-import { unstable_cacheLife as cacheLife } from "next/cache";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 import { getSession } from "@/lib/user";
@@ -10,6 +13,7 @@ export async function generateMetadata({
 }: PageProps<"/[locale]/login">): Promise<Metadata> {
   "use cache";
   cacheLife("max");
+  cacheTag("login-page");
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Auth" });
 

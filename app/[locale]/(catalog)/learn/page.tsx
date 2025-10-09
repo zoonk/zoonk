@@ -1,7 +1,10 @@
 "use cache";
 
 import type { Metadata } from "next";
-import { unstable_cacheLife as cacheLife } from "next/cache";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { StartCourseForm } from "./start-course-form";
 
@@ -9,6 +12,7 @@ export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/learn">): Promise<Metadata> {
   cacheLife("max");
+  cacheTag("learn-page");
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Learn" });
 
@@ -20,6 +24,7 @@ export async function generateMetadata({
 
 export default async function Learn({ params }: PageProps<"/[locale]/learn">) {
   cacheLife("max");
+  cacheTag("learn-page");
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getTranslations({ locale, namespace: "Learn" });

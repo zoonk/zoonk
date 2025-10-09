@@ -1,6 +1,9 @@
 "use cache";
 
-import { unstable_cacheLife as cacheLife } from "next/cache";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from "next/cache";
 import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { NavbarLinks } from "@/components/navbar-links";
@@ -11,6 +14,7 @@ export default async function CatalogLayout({
   params,
 }: LayoutProps<"/[locale]">) {
   cacheLife("max");
+  cacheTag("catalog-layout");
   const { locale } = await params;
   setRequestLocale(locale);
 
