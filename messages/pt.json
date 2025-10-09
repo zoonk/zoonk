@@ -162,5 +162,10 @@
     "checkingLogin": "Verificando se você está logado...",
     "requiresLogin": "Você precisa estar logado para acessar esta página.",
     "login": "Entrar"
+  },
+  "ContentFeedback": {
+    "title": "Você gostou deste conteúdo?",
+    "upvote": "Gostei",
+    "downvote": "Não gostei"
   }
 }

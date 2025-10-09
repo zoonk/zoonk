@@ -160,5 +160,10 @@
     "checkingLogin": "Checking if you're logged in...",
     "requiresLogin": "You need to be logged in to access this page.",
     "login": "Login"
+  },
+  "ContentFeedback": {
+    "title": "Did you like this content?",
+    "upvote": "I liked it",
+    "downvote": "I didn't like it"
   }
 }
