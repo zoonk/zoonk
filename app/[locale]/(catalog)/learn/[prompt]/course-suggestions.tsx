@@ -1,5 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Fragment } from "react/jsx-runtime";
+import { ContentFeedback } from "@/components/content-feedback";
 import { PageContainer, PageHeader, PageTitle } from "@/components/pages";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -56,6 +57,11 @@ export async function CourseSuggestions({
           </Fragment>
         ))}
       </ItemGroup>
+
+      <ContentFeedback
+        kind="courseSuggestions"
+        contentId={`${locale}:${prompt}`}
+      />
     </PageContainer>
   );
 }
