@@ -1,5 +1,6 @@
 import "server-only";
 import { unstable_cacheLife as cacheLife } from "next/cache";
+import { generateCourseSuggestions } from "@/ai/course-suggestions";
 import { getCourseSuggestion, type Suggestion } from "@/db/course-suggestions";
 
 export async function fetchCourseSuggestions({
@@ -15,7 +16,7 @@ export async function fetchCourseSuggestions({
   const record = await getCourseSuggestion({ locale, prompt });
 
   if (!record) {
-    return [];
+    return generateCourseSuggestions({ locale, prompt });
   }
 
   return record.suggestions as Suggestion[];
