@@ -3,8 +3,8 @@
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
-import { useKeyboardShortcut } from "@/hooks/useKeyboardShortcut";
-import { useLogout } from "@/hooks/useLogout";
+import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
+import { useLogout } from "@/hooks/use-logout";
 import { useRouter } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { Button } from "./ui/button";

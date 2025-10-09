@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { SocialLogin } from "./SocialLogin";
+import { SocialLogin } from "./social-login";
 
 export default async function LoginHeader() {
   const t = await getTranslations("Auth");

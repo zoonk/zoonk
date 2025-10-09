@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { OTPForm } from "./OTPForm";
+import { OTPForm } from "./otp-form";
 
 export const metadata: Metadata = {
   robots: {

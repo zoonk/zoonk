@@ -3,14 +3,14 @@
 import type { Metadata } from "next";
 import { unstable_cacheLife as cacheLife } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ProtectedSection } from "@/components/ProtectedSection";
 import {
   PageContainer,
   PageHeader,
   PageSubtitle,
   PageTitle,
 } from "@/components/pages";
-import { NameForm } from "./NameForm";
+import { ProtectedSection } from "@/components/protected-section";
+import { NameForm } from "./name-form";
 
 export async function generateMetadata({
   params,

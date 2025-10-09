@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
-import SubmitButton from "@/components/SubmitButton";
+import SubmitButton from "@/components/submit-button";
 import { Input, InputError, InputSuccess } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";

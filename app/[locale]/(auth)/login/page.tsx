@@ -3,7 +3,7 @@ import { unstable_cacheLife as cacheLife } from "next/cache";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 import { getSession } from "@/lib/user";
-import LoginPage from "./LoginPage";
+import LoginPage from "./login-page";
 
 export async function generateMetadata({
   params,

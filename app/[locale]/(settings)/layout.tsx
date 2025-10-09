@@ -2,7 +2,7 @@
 
 import { unstable_cacheLife as cacheLife } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
-import { SettingsSidebar } from "@/app/[locale]/(settings)/SettingsSidebar";
+import { SettingsSidebar } from "@/app/[locale]/(settings)/settings-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default async function Layout({

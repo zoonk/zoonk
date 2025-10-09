@@ -7,7 +7,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useLogout } from "@/hooks/useLogout";
+import { useLogout } from "@/hooks/use-logout";
 import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 

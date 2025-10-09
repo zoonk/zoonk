@@ -1,8 +1,8 @@
 import { getTranslations } from "next-intl/server";
 import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
-import { SettingsSidebarAccount } from "./SettingsSidebarAccount";
-import { SettingsSidebarFooter } from "./SettingsSidebarFooter";
-import { SettingsSidebarHeader } from "./SettingsSidebarHeader";
+import { SettingsSidebarAccount } from "./settings-sidebar-account";
+import { SettingsSidebarFooter } from "./settings-sidebar-footer";
+import { SettingsSidebarHeader } from "./settings-sidebar-header";
 
 export async function SettingsSidebar() {
   const t = await getTranslations("Menu");

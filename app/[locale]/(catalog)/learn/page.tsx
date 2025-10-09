@@ -3,7 +3,7 @@
 import type { Metadata } from "next";
 import { unstable_cacheLife as cacheLife } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { StartCourseForm } from "./StartCourseForm";
+import { StartCourseForm } from "./start-course-form";
 
 export async function generateMetadata({
   params,

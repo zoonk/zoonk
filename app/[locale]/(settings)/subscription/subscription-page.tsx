@@ -13,7 +13,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useSubscription } from "@/hooks/useSubscription";
+import { useSubscription } from "@/hooks/use-subscription";
 import { authClient } from "@/lib/auth-client";
 
 export function SubscriptionPage() {

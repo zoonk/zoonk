@@ -1,6 +1,6 @@
 import Form from "next/form";
 import { getTranslations } from "next-intl/server";
-import SubmitButton from "@/components/SubmitButton";
+import SubmitButton from "@/components/submit-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { sendVerificationOTPAction } from "./actions";

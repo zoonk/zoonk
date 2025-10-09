@@ -1,6 +1,6 @@
-import { UserAvatar } from "./UserAvatar";
-import { UserDropdownMenu } from "./UserDropdownMenu";
 import { DropdownMenu, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import { UserAvatar } from "./user-avatar";
+import { UserDropdownMenu } from "./user-dropdown-menu";
 
 export async function UserAvatarMenu() {
   return (

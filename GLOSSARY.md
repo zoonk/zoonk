@@ -8,10 +8,12 @@
   - **Explanation**: Covers the key theoretical concepts so the topic is clearly understood. The “what” of a concept.
   - **Mechanics**: Breaks down the processes or systems that make the topic work under the hood. The “how” of a concept.
   - **Examples**: Shows practical, real-world uses or appearances of the topic. The “where” of a concept.
-  - **Connections**: Relates the topic to the learner’s personal interests and daily life using AI.
   - **Story**: Puts the learner in an interactive story to experience practical situations tied to the topic.
-  - **Logic**: Challenges the learner to use reasoning and critical thinking to solve a problem.
-  - **Simulation**: Lets learners manipulate variables to see how actions change a system’s state over time.
-  - **Challenge**: Presents complex, decision-based problems where choices affect resources and outcomes.
 
 Most static exercises also have an interactive counterpart to enhance understanding. It works like a quiz where learners can test their knowledge and receive immediate feedback.
+
+Language courses have a different set of exercises:
+
+  - **Vocabulary**: Introduces new words or phrases relevant to the lesson topic.
+  - **Grammar**: Explains grammatical rules and structures associated with the lesson topic.
+  - **Quiz**: Tests the learner's understanding of vocabulary and grammar through various question formats.

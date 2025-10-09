@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { getMenu } from "@/lib/menu";
-import { ClientLink } from "./ClientLink";
-import { LogoutDropdownItem } from "./LogoutDropdownItem";
+import { ClientLink } from "./client-link";
+import { LogoutDropdownItem } from "./logout-dropdown-item";
 import {
   DropdownMenuContent,
   DropdownMenuItem,

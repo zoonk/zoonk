@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
-import SubmitButton from "@/components/SubmitButton";
+import SubmitButton from "@/components/submit-button";
 import { buttonVariants } from "@/components/ui/button";
 import { InputError } from "@/components/ui/input";
 import {

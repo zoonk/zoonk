@@ -114,7 +114,10 @@
         "useEnumInitializers": "error",
         "useExplicitLengthCheck": "error",
         "useExportsLast": "error",
-        "useFilenamingConvention": "error",
+        "useFilenamingConvention": {
+          "level": "error",
+          "options": { "filenameCases": ["kebab-case"] }
+        },
         "useForOf": "error",
         "useFragmentSyntax": "error",
         "useGroupedAccessorPairs": "error",

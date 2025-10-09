@@ -43,13 +43,17 @@ For understanding the terminology used in this app, please refer to the [Glossar
 
 ## Project structure
 
+- `ai/`: AI-related code (e.g., prompts, content generation)
 - `app/`: Next.js App Router routes
 - `components/`: Reusable React components
+- `db/`: Database queries
+- `hooks/`: Custom React hooks
 - `i18n/`: Localization configuration using `next-intl`
 - `lib/`: Utility functions and libraries
 - `messages/`: Translation files
 - `prisma/`: Prisma schema and migrations
 - `public/`: Static assets
+- `services/`: Business logic calling `db`, `ai`, and other APIs
 - `test/`: Testing helpers and utilities
 
 ## Tools

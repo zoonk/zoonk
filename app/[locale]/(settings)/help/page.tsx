@@ -3,7 +3,7 @@
 import type { Metadata } from "next";
 import { unstable_cacheLife as cacheLife } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ContactForm } from "@/components/ContactForm";
+import { ContactForm } from "@/components/contact-form";
 import {
   PageContainer,
   PageHeader,

@@ -1,8 +1,8 @@
 import { unstable_cacheLife as cacheLife } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
-import LoginFooter from "./LoginFooter";
-import LoginForm from "./LoginForm";
-import LoginHeader from "./LoginHeader";
+import LoginFooter from "./login-footer";
+import LoginForm from "./login-form";
+import LoginHeader from "./login-header";
 
 interface LoginPageProps {
   params: PageProps<"/[locale]/login">["params"];

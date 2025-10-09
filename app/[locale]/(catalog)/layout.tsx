@@ -2,8 +2,8 @@
 
 import { unstable_cacheLife as cacheLife } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
-import { NavbarLinks } from "@/components/NavbarLinks";
-import { UserAvatarMenu } from "@/components/UserAvatarMenu";
+import { NavbarLinks } from "@/components/navbar-links";
+import { UserAvatarMenu } from "@/components/user-avatar-menu";
 
 export default async function CatalogLayout({
   children,
