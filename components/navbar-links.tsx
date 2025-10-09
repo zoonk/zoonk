@@ -14,6 +14,10 @@ function getVariant(
     return "default";
   }
 
+  if (pathname !== "/" && href !== "/" && pathname.startsWith(href)) {
+    return "default";
+  }
+
   if (href === "/learn") {
     return "secondary";
   }

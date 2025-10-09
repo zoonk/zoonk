@@ -15,6 +15,14 @@ const nextConfig: NextConfig = {
     useCache: true,
     cacheComponents: true,
   },
+  turbopack: {
+    rules: {
+      "*.md": {
+        loaders: ["raw-loader"],
+        as: "*.js",
+      },
+    },
+  },
 };
 
 const withMDX = createMDX();

@@ -1,21 +1,48 @@
-export function PageContainer({ children }: React.ComponentProps<"main">) {
-  return <main className="flex flex-col gap-4 p-4">{children}</main>;
-}
+import { cn } from "@/lib/utils";
 
-export function PageHeader({ children }: React.ComponentProps<"header">) {
-  return <header className="flex flex-col gap-0.5">{children}</header>;
-}
-
-export function PageTitle({ children }: React.ComponentProps<"h1">) {
+export function PageContainer({
+  children,
+  className,
+}: React.ComponentProps<"main">) {
   return (
-    <h1 className="scroll-m-20 text-balance font-semibold text-foreground/90 text-xl leading-none tracking-tight">
+    <main className={cn("flex flex-col gap-4 p-4", className)}>{children}</main>
+  );
+}
+
+export function PageHeader({
+  children,
+  className,
+}: React.ComponentProps<"header">) {
+  return (
+    <header className={cn("flex flex-col gap-0.5", className)}>
+      {children}
+    </header>
+  );
+}
+
+export function PageTitle({ children, className }: React.ComponentProps<"h1">) {
+  return (
+    <h1
+      className={cn(
+        "scroll-m-20 text-balance font-semibold text-foreground/90 text-xl leading-none tracking-tight",
+        className,
+      )}
+    >
       {children}
     </h1>
   );
 }
 
-export const PageSubtitle = ({ children }: React.ComponentProps<"h2">) => (
-  <h2 className="text-balance text-muted-foreground tracking-tight">
+export const PageSubtitle = ({
+  children,
+  className,
+}: React.ComponentProps<"h2">) => (
+  <h2
+    className={cn(
+      "text-balance text-muted-foreground tracking-tight",
+      className,
+    )}
+  >
     {children}
   </h2>
 );

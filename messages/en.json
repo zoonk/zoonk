@@ -125,6 +125,16 @@
     "label": "Enter a subject",
     "submit": "Start"
   },
+  "LearnResults": {
+    "metaTitle": "Learn {prompt} with AI",
+    "metaDescription": "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to generate interactive lessons and exercises tailored to you.",
+    "loadingTitle": "Cooking up some course ideas",
+    "loadingSubtitle": "We're putting together a few course suggestions for you. This may take a few seconds.",
+    "loadingCancel": "Cancel",
+    "title": "Course ideas for {prompt}",
+    "changeAction": "Change subject",
+    "createCourse": "Create course"
+  },
   "Privacy": {
     "metaTitle": "Privacy Policy",
     "metaDescription": "Read Zoonk's privacy policy to understand how we collect, use, and protect your personal information."
