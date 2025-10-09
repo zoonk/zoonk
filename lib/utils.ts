@@ -16,3 +16,23 @@ export function normalizeString(str: string): string {
 export function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
+
+export async function repairAIText({
+  text,
+  error,
+  context,
+}: {
+  text: string;
+  error: unknown;
+  context?: string;
+}): Promise<string> {
+  const { jsonrepair } = await import("jsonrepair");
+
+  if (context) {
+    console.error(`[AI Text Repair] ${context}:`, error);
+  } else {
+    console.error("[AI Text Repair]:", error);
+  }
+
+  return jsonrepair(text);
+}
