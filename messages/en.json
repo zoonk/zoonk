@@ -58,7 +58,8 @@
     "metaTitle": "Send feedback",
     "metaDescription": "Share your thoughts and help improve Zoonk. Use the feedback page to contact us with suggestions, questions, or issues about our learning platform.",
     "title": "Feedback",
-    "subtitle": "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
+    "subtitle": "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com.",
+    "closeLabel": "Close form"
   },
   "Follow": {
     "metaTitle": "Follow us on social media",
@@ -164,6 +165,7 @@
   "ContentFeedback": {
     "title": "Did you like this content?",
     "upvote": "I liked it",
-    "downvote": "I didn't like it"
+    "downvote": "I didn't like it",
+    "sendFeedback": "Send feedback"
   }
 }
