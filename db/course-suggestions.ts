@@ -6,7 +6,6 @@ import { normalizeString } from "@/lib/utils";
 export type Suggestion = {
   title: string;
   description: string;
-  englishTitle: string;
 };
 
 export async function addCourseSuggestion(input: {
