@@ -16,7 +16,8 @@
     "stripe:listen": "stripe listen --forward-to http://localhost:3000/api/auth/stripe/webhook",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
-    "db:reset": "prisma migrate reset"
+    "db:reset": "prisma migrate reset",
+    "eval:course-suggestions": "tsx ai/evals/run-eval.ts"
   },
   "dependencies": {
     "@better-auth/stripe": "1.3.26",
@@ -72,6 +73,7 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.1",
     "@vitejs/plugin-react": "5.0.3",
+    "dotenv": "17.2.3",
     "jsdom": "27.0.0",
     "prisma": "6.17.0",
     "raw-loader": "4.0.2",
