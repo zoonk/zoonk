@@ -21,8 +21,11 @@ export function ContentFeedback({
   const [feedback, setFeedback] = useState<"upvote" | "downvote" | null>(null);
 
   const handleFeedback = (value: "upvote" | "downvote") => {
-    setFeedback(value);
-    track("Feedback", { kind, contentId, feedback: value });
+    // Only track analytics if the feedback value is actually changing
+    if (feedback !== value) {
+      setFeedback(value);
+      track("Feedback", { kind, contentId, feedback: value });
+    }
   };
 
   return (
