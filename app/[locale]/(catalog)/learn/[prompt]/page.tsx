@@ -11,8 +11,9 @@ export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/learn/[prompt]">): Promise<Metadata> {
   cacheLife("max");
-  const { locale, prompt } = await params;
+  const { locale, prompt: rawPrompt } = await params;
   const t = await getTranslations({ locale, namespace: "LearnResults" });
+  const prompt = decodeURIComponent(rawPrompt);
 
   return {
     title: t("metaTitle", { prompt }),
@@ -29,7 +30,7 @@ export default async function Learn({
 
   return (
     <Suspense fallback={<CourseSuggestionsFallback />}>
-      <CourseSuggestions prompt={prompt} locale={locale} />
+      <CourseSuggestions prompt={decodeURIComponent(prompt)} locale={locale} />
     </Suspense>
   );
 }
