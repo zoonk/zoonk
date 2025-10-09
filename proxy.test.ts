@@ -5,7 +5,7 @@ import {
 import { NextRequest } from "next/server";
 import { expect, test } from "vitest";
 
-import { config, middleware } from "@/middleware";
+import { config, proxy } from "@/proxy";
 
 test("doesn't match API routes", () => {
   expect(doesMiddlewareMatch({ config, url: "/api/hello" })).toBe(false);
@@ -30,7 +30,7 @@ test("doesn't match _vercel paths", () => {
 test("redirects home page to language-specific URL", () => {
   const request = new NextRequest("https://zoonk.com");
   request.cookies.set("NEXT_LOCALE", "pt");
-  const response = middleware(request);
+  const response = proxy(request);
 
   expect(getRedirectUrl(response)).toBe("https://zoonk.com/pt");
 });
@@ -38,7 +38,7 @@ test("redirects home page to language-specific URL", () => {
 test("redirects nested page to language-specific URL", () => {
   const request = new NextRequest("https://zoonk.com/some/page");
   request.cookies.set("NEXT_LOCALE", "pt");
-  const response = middleware(request);
+  const response = proxy(request);
 
   expect(getRedirectUrl(response)).toBe("https://zoonk.com/pt/some/page");
 });
@@ -46,7 +46,7 @@ test("redirects nested page to language-specific URL", () => {
 test("don't redirect home page if using default locale", () => {
   const request = new NextRequest("https://zoonk.com");
   request.cookies.set("NEXT_LOCALE", "en");
-  const response = middleware(request);
+  const response = proxy(request);
 
   expect(getRedirectUrl(response)).toBeFalsy();
 });
@@ -54,14 +54,14 @@ test("don't redirect home page if using default locale", () => {
 test("don't redirect nested page if using default locale", () => {
   const request = new NextRequest("https://zoonk.com/some/page");
   request.cookies.set("NEXT_LOCALE", "en");
-  const response = middleware(request);
+  const response = proxy(request);
 
   expect(getRedirectUrl(response)).toBeFalsy();
 });
 
 test("remove default locale from URL", () => {
   const request = new NextRequest("https://zoonk.com/en/some/page");
-  const response = middleware(request);
+  const response = proxy(request);
 
   expect(getRedirectUrl(response)).toBe("https://zoonk.com/some/page");
 });

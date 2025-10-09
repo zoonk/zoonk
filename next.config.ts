@@ -14,7 +14,6 @@ const nextConfig: NextConfig = {
     typedEnv: true,
     useCache: true,
     cacheComponents: true,
-    isolatedDevBuild: true,
   },
 };
 
