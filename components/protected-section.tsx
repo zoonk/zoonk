@@ -32,7 +32,7 @@ export function ProtectedSection({
   if (!session) {
     return (
       <section className="flex max-w-md flex-col gap-4">
-        <Alert className="w-max">
+        <Alert className="max-w-max">
           <LockIcon />
           <AlertTitle>{t("requiresLogin")}</AlertTitle>
         </Alert>
