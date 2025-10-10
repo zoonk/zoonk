@@ -17,9 +17,11 @@ const schema = z.object({
 export async function generateCourseSuggestions({
   locale,
   prompt,
+  modelOverride,
 }: {
   locale: string;
   prompt: string;
+  modelOverride?: string;
 }) {
   const userPrompt = `
     APP_LANGUAGE: ${locale}
@@ -27,7 +29,7 @@ export async function generateCourseSuggestions({
   `;
 
   const { object, usage } = await generateObject({
-    model,
+    model: modelOverride || model,
     schema,
     prompt: [
       { role: "system", content: systemPrompt },
