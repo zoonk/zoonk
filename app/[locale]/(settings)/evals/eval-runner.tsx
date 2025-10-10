@@ -12,22 +12,27 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
-import { getAvailableModels, runEval } from "./actions";
+import { runEval } from "./actions";
 
 const TWO_DECIMALS = 2;
 const TITLE = "Run Evaluation";
 const LABEL_SELECT_MODEL = "Select Model";
 const PLACEHOLDER_CHOOSE = "Choose a model";
-const BTN_RUNNING = "Running";
+const BTN_RUNNING = "Running...";
 const BTN_RUN = "Run Eval";
 const LABEL_RESULTS = "Results for";
 const LABEL_AVG_SCORE = "Average Score:";
 const LABEL_MEDIAN_SCORE = "Median Score:";
 const LABEL_AVG_COST = "Avg. Cost per 100 calls: $";
 
-export function EvalRunner() {
+interface EvalRunnerProps {
+  models: ModelConfig[];
+}
+
+export function EvalRunner({ models }: EvalRunnerProps) {
   const [selectedModel, setSelectedModel] = useState<string>("");
   const [isRunning, setIsRunning] = useState(false);
+  const [progress, setProgress] = useState<string>("");
   const [result, setResult] = useState<{
     success: boolean;
     modelName: string;
@@ -35,12 +40,6 @@ export function EvalRunner() {
     medianScore: number;
     avgCostPer100: number;
   } | null>(null);
-  const [models, setModels] = useState<ModelConfig[]>([]);
-
-  const loadModels = async () => {
-    const availableModels = await getAvailableModels();
-    setModels(availableModels);
-  };
 
   const handleRunEval = async () => {
     if (!selectedModel) {
@@ -49,21 +48,21 @@ export function EvalRunner() {
 
     setIsRunning(true);
     setResult(null);
+    setProgress("Starting evaluation...");
 
     try {
       const evalResult = await runEval(selectedModel);
       setResult(evalResult);
+      setProgress("");
     } catch (error) {
       console.error("Failed to run eval:", error);
+      setProgress(
+        `Error: ${error instanceof Error ? error.message : "Unknown error"}`,
+      );
     } finally {
       setIsRunning(false);
     }
   };
-
-  // Load models on mount
-  if (models.length === 0) {
-    void loadModels();
-  }
 
   return (
     <div className="rounded-lg border p-6">
@@ -101,6 +100,12 @@ export function EvalRunner() {
             BTN_RUN
           )}
         </Button>
+
+        {progress ? (
+          <div className="mt-4 rounded-md bg-muted p-4">
+            <p className="font-mono text-sm">{progress}</p>
+          </div>
+        ) : null}
 
         {result ? (
           <div className="mt-4 rounded-md bg-muted p-4">

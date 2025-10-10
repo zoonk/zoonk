@@ -1,5 +1,5 @@
 import "server-only";
-import type { LanguageModelUsage } from "ai";
+import type { LanguageModelV2Usage } from "@ai-sdk/provider";
 import { generateObject } from "ai";
 import { z } from "zod";
 import { repairAIText } from "@/lib/utils";
@@ -118,7 +118,7 @@ export function calculateMedian(numbers: number[]): number {
  * Calculate cost per 100 calls.
  */
 export function calculateCostPer100Calls(
-  usages: LanguageModelUsage[],
+  usages: LanguageModelV2Usage[],
   model: ModelConfig,
 ): number {
   const avgCost =

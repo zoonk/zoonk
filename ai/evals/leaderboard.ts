@@ -3,7 +3,12 @@ import { join } from "node:path";
 import type { ModelEvalResult } from "./course-suggestions-eval";
 import { getModelDisplayName } from "./models";
 
-const EVALS_FILE = join(process.cwd(), "ai", "course-suggestions-evals.md");
+const EVALS_FILE = join(
+  process.cwd(),
+  "ai",
+  "evals",
+  "course-suggestions-evals.mdx",
+);
 const TWO_DECIMALS = 2;
 const MIN_TABLE_COLUMNS = 4;
 
