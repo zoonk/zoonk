@@ -26,7 +26,7 @@ export async function generateCourseSuggestions({
     USER_INPUT: ${prompt}
   `;
 
-  const { object } = await generateObject({
+  const { object, usage } = await generateObject({
     model,
     schema,
     prompt: [
@@ -35,5 +35,5 @@ export async function generateCourseSuggestions({
     ],
   });
 
-  return object.courses;
+  return { suggestions: object.courses, usage };
 }
