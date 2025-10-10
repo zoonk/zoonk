@@ -1,7 +1,6 @@
 import "server-only";
 import { generateObject } from "ai";
 import { z } from "zod";
-import { repairAIText } from "@/lib/utils";
 import systemPrompt from "./course-suggestions.md";
 
 const model = process.env.AI_MODEL_COURSE_SUGGESTIONS || "openai/gpt-4.1";
@@ -34,12 +33,6 @@ export async function generateCourseSuggestions({
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
     ],
-    experimental_repairText: async ({ text, error }) =>
-      repairAIText({
-        text,
-        error,
-        context: `[courseSuggestion] [${locale}] "${prompt}"`,
-      }),
   });
 
   return object.courses;

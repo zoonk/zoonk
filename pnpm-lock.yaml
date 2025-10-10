@@ -77,9 +77,6 @@ importers:
       jose:
         specifier: 6.1.0
         version: 6.1.0
-      jsonrepair:
-        specifier: 3.13.1
-        version: 3.13.1
       lucide-react:
         specifier: 0.544.0
         version: 0.544.0(react@19.2.0)
@@ -2796,10 +2793,6 @@ packages:
 
   jsonify@0.0.1:
     resolution: {integrity: sha512-2/Ki0GcmuqSrgFyelQq9M05y7PS0mEwuIzrf3f1fPqkVDVRvZrPZtVSMHxdgo8Aq0sxAOb/cr2aqqA3LeWHVPg==}
-
-  jsonrepair@3.13.1:
-    resolution: {integrity: sha512-WJeiE0jGfxYmtLwBTEk8+y/mYcaleyLXWaqp5bJu0/ZTSeG0KQq/wWQ8pmnkKenEdN6pdnn6QtcoSUkbqDHWNw==}
-    hasBin: true
 
   kysely@0.28.7:
     resolution: {integrity: sha512-u/cAuTL4DRIiO2/g4vNGRgklEKNIj5Q3CG7RoUB5DV5SfEC2hMvPxKi0GWPmnzwL2ryIeud2VTcEEmqzTzEPNw==}
@@ -6790,8 +6783,6 @@ snapshots:
       graceful-fs: 4.2.11
 
   jsonify@0.0.1: {}
-
-  jsonrepair@3.13.1: {}
 
   kysely@0.28.7: {}
 
