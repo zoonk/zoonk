@@ -5,7 +5,7 @@
 </picture>
 
 <p align="center">
-  Web app for creating interactive courses using AI.
+  Web app for learning anything using AI.
   <br />
   <br />
   <a href="https://forms.gle/jHeTqPUkw1vA7wLh8">Waitlist</a>
