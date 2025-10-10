@@ -1,7 +1,7 @@
 import "server-only";
 import { generateObject } from "ai";
 import { z } from "zod";
-import systemPrompt from "./course-suggestions.md";
+import systemPrompt from "./course-suggestions-prompt.md";
 
 const model = process.env.AI_MODEL_COURSE_SUGGESTIONS || "openai/gpt-4.1";
 

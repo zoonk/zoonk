@@ -3,7 +3,7 @@ import {
   unstable_cacheLife as cacheLife,
   unstable_cacheTag as cacheTag,
 } from "next/cache";
-import { generateCourseSuggestions } from "@/ai/course-suggestions";
+import { generateCourseSuggestions } from "@/ai/course-suggestions/generate";
 import {
   addCourseSuggestion,
   getCourseSuggestion,
