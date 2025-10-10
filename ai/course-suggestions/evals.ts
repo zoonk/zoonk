@@ -2,13 +2,8 @@ import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { generateObject } from "ai";
-import { getModelDisplayName, type ModelConfig } from "../evals/models";
-import {
-  calculateAverage,
-  calculateMedian,
-  calculateUsageCost,
-  generateScore,
-} from "../evals/score";
+import type { ModelConfig } from "../evals/models";
+import { generateScore } from "../evals/score";
 import { courseSuggestionsSchema, getUserPrompt } from "./generate";
 import { TEST_CASES, type TestCase } from "./test-cases";
 
@@ -51,10 +46,9 @@ async function runTestCase(params: {
     testCase,
   });
 
-  console.log(`\n${evalName} ${suggestions.length} suggestions`);
-  console.log(`\n${evalName} Usage:`, usage);
-
-  console.log(`\n${evalName} Scoring AI output...`);
+  console.log(`${evalName} ${suggestions.length} suggestions`);
+  console.log(`${evalName} Usage:`, usage);
+  console.log(`${evalName} Scoring AI output...`);
 
   const output = JSON.stringify(suggestions, null, 2);
 
@@ -65,36 +59,15 @@ async function runTestCase(params: {
     output,
   });
 
-  console.log(`\n${evalName} Score:`, evalScore.score.toFixed(2));
+  console.log(`${evalName} Score:`, evalScore.score.toFixed(2));
 
   return { ...testCase, index, output, evalScore, usage };
 }
 
-function runAllTestCases(model: ModelConfig) {
+export function courseSuggestionsEval(model: ModelConfig) {
   const results = TEST_CASES.map((testCase, index) =>
     runTestCase({ testCase, index, model }),
   );
 
   return Promise.all(results);
-}
-
-export async function runEvals(model: ModelConfig) {
-  console.log(`[Eval] Starting eval for ${getModelDisplayName(model)}`);
-
-  const results = await runAllTestCases(model);
-
-  console.log("[Eval] Calculating metrics...");
-
-  const scores = results.map((result) => result.evalScore.score);
-  const usages = results.map((result) => result.usage);
-
-  const averageScore = calculateAverage(scores);
-  const medianScore = calculateMedian(scores);
-  const usageCost = calculateUsageCost(usages, model);
-
-  console.log(`[Eval] Average score: ${averageScore.toFixed(2)}`);
-  console.log(`[Eval] Median score: ${medianScore.toFixed(2)}`);
-  console.log(`[Eval] Usage cost: $${usageCost.toFixed(2)}`);
-
-  return { results, averageScore, medianScore, usageCost };
 }

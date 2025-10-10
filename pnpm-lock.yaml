@@ -123,6 +123,9 @@ importers:
       '@mdx-js/react':
         specifier: 3.1.1
         version: 3.1.1(@types/react@19.2.2)(react@19.2.0)
+      '@next/env':
+        specifier: 15.5.4
+        version: 15.5.4
       '@next/mdx':
         specifier: canary
         version: 15.6.0-canary.54(@mdx-js/loader@3.1.1(webpack@5.102.1))(@mdx-js/react@3.1.1(@types/react@19.2.2)(react@19.2.0))
@@ -844,6 +847,9 @@ packages:
     peerDependencies:
       '@types/react': '>=16'
       react: '>=16'
+
+  '@next/env@15.5.4':
+    resolution: {integrity: sha512-27SQhYp5QryzIT5uO8hq99C69eLQ7qkzkDPsk3N+GuS2XgOgoYEeOav7Pf8Tn4drECOVDsDg8oj+/DVy8qQL2A==}
 
   '@next/env@15.6.0-canary.54':
     resolution: {integrity: sha512-JgxtLpWVwu7iAC2oKmXSEZlAn7ogsPVWqBVGftwj9QpP0ufHASbt3UTHBXo2Fc4/Msl8PYeL19DlahcRfUDwaQ==}
@@ -4728,6 +4734,8 @@ snapshots:
       '@types/mdx': 2.0.13
       '@types/react': 19.2.2
       react: 19.2.0
+
+  '@next/env@15.5.4': {}
 
   '@next/env@15.6.0-canary.54': {}
 

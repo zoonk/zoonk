@@ -35,3 +35,7 @@ export function getModelDisplayName(model: ModelConfig): string {
 
   return model.name;
 }
+
+export function getModelById(modelId: string): ModelConfig | undefined {
+  return EVAL_MODELS.find((model) => model.id === modelId);
+}
