@@ -5,7 +5,13 @@ const SHARED_EXPECTATIONS = `
   - Titles are always in Title Case
 `;
 
-export const TEST_CASES = [
+export type TestCase = {
+  locale: string;
+  prompt: string;
+  expectations: string;
+};
+
+export const TEST_CASES: TestCase[] = [
   {
     locale: "pt",
     prompt: "I want to code",

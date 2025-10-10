@@ -1,11 +1,16 @@
 import "server-only";
 import { generateObject } from "ai";
 import { z } from "zod";
-import systemPrompt from "./course-suggestions-prompt.md";
+import system from "./course-suggestions-prompt.md";
 
 const model = process.env.AI_MODEL_COURSE_SUGGESTIONS || "openai/gpt-4.1";
 
-const schema = z.object({
+export type CourseSuggestionParams = {
+  locale: string;
+  prompt: string;
+};
+
+export const courseSuggestionsSchema = z.object({
   courses: z.array(
     z.object({
       title: z.string(),
@@ -14,28 +19,22 @@ const schema = z.object({
   ),
 });
 
-export async function generateCourseSuggestions({
-  locale,
-  prompt,
-  modelOverride,
-}: {
-  locale: string;
-  prompt: string;
-  modelOverride?: string;
-}) {
-  const userPrompt = `
-    APP_LANGUAGE: ${locale}
-    USER_INPUT: ${prompt}
-  `;
+export function getUserPrompt(params: CourseSuggestionParams) {
+  return `
+    APP_LANGUAGE: ${params.locale}
+    USER_INPUT: ${params.prompt}
+  `.trim();
+}
 
-  const { object, usage } = await generateObject({
-    model: modelOverride || model,
-    schema,
-    prompt: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: userPrompt },
-    ],
+export async function generateCourseSuggestions(
+  params: CourseSuggestionParams,
+) {
+  const { object } = await generateObject({
+    model,
+    schema: courseSuggestionsSchema,
+    system,
+    prompt: getUserPrompt(params),
   });
 
-  return { suggestions: object.courses, usage };
+  return object.courses;
 }
