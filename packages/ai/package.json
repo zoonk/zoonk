@@ -2,6 +2,9 @@
   "name": "@zoonk/ai",
   "type": "module",
   "private": true,
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
   "exports": {
     "./*": "./src/*.ts"
   },
@@ -11,6 +14,7 @@
     "zod": "4.1.12"
   },
   "devDependencies": {
-    "@zoonk/tsconfig": "workspace:*"
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "^5"
   }
 }
