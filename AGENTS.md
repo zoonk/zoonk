@@ -90,7 +90,7 @@ You can style links as buttons like this:
 You can use the buttonVariants helper to create a link that looks like a button.
 
 ```tsx
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@zoonk/ui/components/button";
 
 <Link className={buttonVariants({ variant: "outline" })}>Click here</Link>;
 ```

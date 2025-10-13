@@ -32,55 +32,57 @@
 
 ### Prerequisites
 
-- Node.js v22
-- pnpm v10
-- PostgreSQL v17
+- Node.js v22 or higher
+- pnpm v10 or higher
+- PostgreSQL v17 or higher
 
-We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm versions.
-
-### Turborepo
-
-We're using [Turborepo](https://turborepo.com) as our monorepo tool to manage multiple packages and applications within a single repository. If you haven't already, please install Turborepo globally:
-
-```sh
-pnpm add turbo --global
-```
-
-#### Remote Caching
-
-We're using [Vercel's Remote Caching](https://vercel.com/docs/monorepos/remote-caching) to speed up our Turborepo tasks. To enable remote caching, authenticate the Turborepo CLI with your Vercel account:
-
-```sh
-turbo login
-```
-
-Then, link to the remote cache:
-
-```sh
-turbo link
-```
+You can install multiple Node.js and pnpm versions using [mise](https://mise.jdx.dev/).
 
 ### Installation
 
-- `pnpm install` to install dependencies for all apps and packages
+- `pnpm install` to install dependencies
+- `cp .env.example .env` and fill in the required environment variables
 
-### Installing dependencies
+### PostgreSQL Setup
 
-Check the Turborepo guide for [managing dependencies](https://turborepo.com/docs/crafting-your-repository/managing-dependencies).
+For macOS users, you can install PostgreSQL using Homebrew:
 
-You can add a dependency to a specific package or app by running:
-
-```sh
-pnpm add <package-name> -r --filter=@zoonk/ui --filter=main-site
+```bash
+brew install postgresql
+brew services start postgresql
 ```
+
+Then, create a new database:
+
+```bash
+createdb zoonk
+```
+
+Update the `DATABASE_URL` in your `.env` file with your PostgreSQL credentials. It will look something like this:
+
+```bash
+DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/zoonk"
+```
+
+### Prisma Setup
+
+Run the following commands to set up Prisma:
+
+- `pnpm prisma generate` to generate Prisma client
+- `pnpm db:migrate` to run migrations and set up the database
+- `pnpm db:reset` to reset the database (this will erase all data)
+- `pnpm prisma migrate dev --create-only` to create a new migration without applying it
 
 ### Local Development
 
-- `turbo dev` to start the development server
-- `turbo build` to create a production build
-- `turbo lint` to run linting
-- `turbo type-check` to run TypeScript type checking
-- `turbo test` to run tests with Vitest
+- `pnpm dev` to start the development server
+- `pnpm build` to create a production build
+- `pnpm start` to start the production server
+- `pnpm lint` to run linting
+- `pnpm prisma studio` to open Prisma Studio and inspect your database
+- `pnpm type-check` to run TypeScript type checking
+- `pnpm test` to run tests with Vitest
+- `pnpm i18n` to check for missing or unused i18n keys
 
 ## Social Media
 

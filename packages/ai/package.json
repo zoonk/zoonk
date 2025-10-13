@@ -1,0 +1,16 @@
+{
+  "name": "@zoonk/ai",
+  "type": "module",
+  "private": true,
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "dependencies": {
+    "ai": "5.0.62",
+    "server-only": "0.0.1",
+    "zod": "4.1.12"
+  },
+  "devDependencies": {
+    "@zoonk/tsconfig": "workspace:*"
+  }
+}
