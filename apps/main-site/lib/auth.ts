@@ -1,4 +1,5 @@
 import { stripe } from "@better-auth/stripe";
+import { prisma } from "@zoonk/db";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
@@ -6,7 +7,6 @@ import { emailOTP } from "better-auth/plugins";
 import Stripe from "stripe";
 import { getAppleClientSecret } from "./auth/apple";
 import { sendVerificationOTP } from "./auth/otp";
-import prisma from "./prisma";
 
 const isProduction = process.env.NODE_ENV === "production";
 

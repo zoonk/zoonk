@@ -22,7 +22,7 @@
     "//#lint": {},
     "//#format": { "cache": false },
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "^db:deploy"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
@@ -41,7 +41,18 @@
       "cache": false
     },
     "dev": {
+      "dependsOn": ["^db:generate"],
       "persistent": true,
+      "cache": false
+    },
+    "db:generate": {
+      "cache": false
+    },
+    "db:migrate": {
+      "cache": false,
+      "persistent": true
+    },
+    "db:deploy": {
       "cache": false
     }
   }

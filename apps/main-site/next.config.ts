@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
     useCache: true,
     cacheComponents: true,
   },
-  transpilePackages: ["@zoonk/ai", "@zoonk/ui"],
+  transpilePackages: ["@zoonk/ai", "@zoonk/db", "@zoonk/ui", "@zoonk/utils"],
   turbopack: {
     root: path.resolve(__dirname, "../.."),
     rules: {

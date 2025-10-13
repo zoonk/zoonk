@@ -1,0 +1,32 @@
+{
+  "name": "@zoonk/db",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "db:reset": "prisma migrate reset",
+    "type-check": "tsc --noEmit"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./queries/*": "./src/queries/*.ts"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "6.17.0",
+    "@prisma/client": "6.17.0",
+    "@prisma/extension-accelerate": "2.0.2",
+    "@vercel/functions": "3.1.0",
+    "@zoonk/utils": "workspace:*",
+    "pg": "8.16.3",
+    "server-only": "0.0.1"
+  },
+  "devDependencies": {
+    "@types/pg": "8.15.5",
+    "@zoonk/tsconfig": "workspace:*",
+    "prisma": "6.17.0",
+    "typescript": "^5"
+  }
+}

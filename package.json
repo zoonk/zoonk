@@ -2,6 +2,7 @@
   "name": "zoonk",
   "private": true,
   "scripts": {
+    "postinstall": "turbo db:generate",
     "lint": "biome check",
     "format": "biome format --write",
     "build": "turbo build",
@@ -9,7 +10,10 @@
     "dev": "turbo dev",
     "test": "turbo test",
     "test:watch": "turbo test:watch",
-    "type-check": "turbo type-check"
+    "type-check": "turbo type-check",
+    "db:generate": "turbo db:generate",
+    "db:migrate": "turbo db:migrate",
+    "db:deploy": "turbo db:deploy"
   },
   "engines": {
     "node": "^22"

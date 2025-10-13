@@ -1,14 +1,15 @@
 import "server-only";
+
 import { generateCourseSuggestions } from "@zoonk/ai/course-suggestions";
-import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
-} from "next/cache";
 import {
   addCourseSuggestion,
   getCourseSuggestion,
   type Suggestion,
-} from "@/db/course-suggestions";
+} from "@zoonk/db/queries/course-suggestions";
+import {
+  unstable_cacheLife as cacheLife,
+  unstable_cacheTag as cacheTag,
+} from "next/cache";
 
 const model = process.env.AI_MODEL_COURSE_SUGGESTIONS || "openai/gpt-4.1";
 

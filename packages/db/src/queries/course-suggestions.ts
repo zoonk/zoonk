@@ -1,7 +1,7 @@
 import "server-only";
 
 import { normalizeString } from "@zoonk/utils/string";
-import prisma from "@/lib/prisma";
+import { prisma } from "../index";
 
 export type Suggestion = {
   title: string;
