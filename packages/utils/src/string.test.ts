@@ -1,5 +1,33 @@
 import { describe, expect, test } from "vitest";
-import { normalizeString } from "./utils";
+
+import { normalizeString, removeAccents } from "./string";
+
+describe("removeAccents", () => {
+  test("removes diacritics from string", () => {
+    expect(removeAccents("café")).toBe("cafe");
+    expect(removeAccents("naïve")).toBe("naive");
+    expect(removeAccents("São Paulo")).toBe("Sao Paulo");
+    expect(removeAccents("Zürich")).toBe("Zurich");
+    expect(removeAccents("José")).toBe("Jose");
+  });
+
+  test("preserves strings without accents", () => {
+    expect(removeAccents("hello")).toBe("hello");
+    expect(removeAccents("world")).toBe("world");
+    expect(removeAccents("123")).toBe("123");
+  });
+
+  test("handles empty string", () => {
+    expect(removeAccents("")).toBe("");
+  });
+
+  test("handles mixed characters", () => {
+    expect(removeAccents("Olá, tudo bem?")).toBe("Ola, tudo bem?");
+    expect(removeAccents("Français, Español, Português")).toBe(
+      "Francais, Espanol, Portugues",
+    );
+  });
+});
 
 describe("normalizeString", () => {
   test("removes accents and converts to lowercase", () => {

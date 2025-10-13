@@ -44,6 +44,9 @@ importers:
       '@zoonk/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@zoonk/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       ai:
         specifier: 5.0.62
         version: 5.0.62(zod@4.1.12)
@@ -189,6 +192,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: 1.2.8
         version: 1.2.8(@types/react-dom@19.2.1(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@zoonk/utils':
+        specifier: workspace:*
+        version: link:../utils
       class-variance-authority:
         specifier: 0.7.1
         version: 0.7.1
@@ -241,6 +247,21 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.3
+
+  packages/utils:
+    devDependencies:
+      '@zoonk/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+      vite-tsconfig-paths:
+        specifier: 5.1.4
+        version: 5.1.4(typescript@5.9.3)(vite@7.1.9(@types/node@22.18.10)(jiti@2.6.1)(lightningcss@1.30.1)(terser@5.44.0)(tsx@4.20.5))
+      vitest:
+        specifier: 3.2.4
+        version: 3.2.4(@types/debug@4.1.12)(@types/node@22.18.10)(jiti@2.6.1)(jsdom@27.0.0(postcss@8.5.6))(lightningcss@1.30.1)(terser@5.44.0)(tsx@4.20.5)
 
 packages:
 

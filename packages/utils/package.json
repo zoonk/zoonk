@@ -1,0 +1,19 @@
+{
+  "name": "@zoonk/utils",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "devDependencies": {
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "^5",
+    "vite-tsconfig-paths": "5.1.4",
+    "vitest": "3.2.4"
+  }
+}

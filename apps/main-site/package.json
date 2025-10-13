@@ -27,6 +27,7 @@
     "@vercel/functions": "3.1.0",
     "@zoonk/ai": "workspace:*",
     "@zoonk/ui": "workspace:*",
+    "@zoonk/utils": "workspace:*",
     "ai": "5.0.62",
     "better-auth": "1.3.26",
     "jose": "6.1.0",

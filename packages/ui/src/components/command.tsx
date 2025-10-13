@@ -1,6 +1,7 @@
 "use client";
 
-import { cn, removeAccents } from "@zoonk/ui/lib/utils";
+import { cn } from "@zoonk/ui/lib/utils";
+import { removeAccents } from "@zoonk/utils/string";
 import { Command as CommandPrimitive, defaultFilter } from "cmdk";
 import { SearchIcon } from "lucide-react";
 import type * as React from "react";
