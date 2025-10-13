@@ -4,8 +4,7 @@ import {
 } from "next/experimental/testing/server";
 import { NextRequest } from "next/server";
 import { expect, test } from "vitest";
-
-import { config, proxy } from "@/proxy";
+import { config, proxy } from "./proxy";
 
 test("doesn't match API routes", () => {
   expect(doesMiddlewareMatch({ config, url: "/api/hello" })).toBe(false);
