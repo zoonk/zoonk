@@ -1,6 +1,23 @@
 {
   "$schema": "./node_modules/turbo/schema.json",
   "ui": "tui",
+  "globalEnv": [
+    "BETTER_AUTH_SECRET",
+    "DATABASE_URL",
+    "MAILER_API_KEY",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "STRIPE_PLUS_MONTHLY_PRICE_ID",
+    "STRIPE_PLUS_YEARLY_PRICE_ID",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "APPLE_TEAM_ID",
+    "APPLE_CLIENT_ID",
+    "APPLE_KEY_ID",
+    "APPLE_PRIVATE_KEY",
+    "AI_GATEWAY_API_KEY",
+    "AI_MODEL_COURSE_SUGGESTIONS"
+  ],
   "tasks": {
     "//#lint": {},
     "//#format": { "cache": false },
