@@ -9,7 +9,7 @@
     "type-check": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "i18n": "i18n-check -s en -l messages -u app lib components -f next-intl",
+    "i18n": "i18n-check -s en -l messages -u src -f next-intl",
     "stripe:listen": "stripe listen --forward-to http://localhost:3000/api/auth/stripe/webhook"
   },
   "dependencies": {

@@ -54,6 +54,9 @@
     },
     "db:deploy": {
       "cache": false
+    },
+    "i18n": {
+      "dependsOn": ["^i18n"]
     }
   }
 }
