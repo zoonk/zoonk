@@ -27,6 +27,7 @@
   "devDependencies": {
     "@types/pg": "8.15.5",
     "@zoonk/tsconfig": "workspace:*",
+    "dotenv": "17.2.3",
     "prisma": "6.17.0",
     "typescript": "^5"
   }
