@@ -1,6 +1,6 @@
 # Zoonk Guidelines for AI Agents
 
-Zoonk is a web app where users can learn anything using AI. This app uses AI to generate courses, chapters, lessons, and exercises. Our goal is to help anyone to easily learn anything, providing tools that make learning easier, faster, more practical, and more fun.
+Zoonk is a web app where users can learn anything using AI. This app uses AI to generate courses, chapters, lessons, and activities. Our goal is to help anyone to easily learn anything, providing tools that make learning easier, faster, more practical, and more fun.
 
 ## Table of Contents
 
