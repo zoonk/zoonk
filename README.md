@@ -71,7 +71,11 @@ Check the Turborepo guide for [managing dependencies](https://turborepo.com/docs
 You can add a dependency to a specific package or app by running:
 
 ```sh
-pnpm add <package-name> -r --filter=@zoonk/ui --filter=main-site
+# package
+pnpm add <package-name> --filter=@zoonk/ui
+
+# app
+pnpm add <package-name> --filter=main
 ```
 
 ### Local Development
