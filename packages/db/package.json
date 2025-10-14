@@ -3,6 +3,7 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "postinstall": "pnpm db:generate",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",

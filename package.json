@@ -2,7 +2,6 @@
   "name": "zoonk",
   "private": true,
   "scripts": {
-    "postinstall": "turbo db:generate",
     "lint": "biome check",
     "format": "biome format --write",
     "build": "turbo build",
