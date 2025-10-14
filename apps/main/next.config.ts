@@ -13,8 +13,8 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   experimental: {
     typedEnv: true,
-    useCache: true,
     cacheComponents: true,
+    turbopackFileSystemCacheForDev: true,
   },
   transpilePackages: [
     "@zoonk/ai",
