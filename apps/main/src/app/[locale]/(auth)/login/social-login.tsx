@@ -9,7 +9,7 @@ import { InputError } from "@zoonk/ui/components/input";
 import { Loader2Icon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/client";
 
 type SocialState = "initial" | "loadingGoogle" | "loadingApple" | "error";
 

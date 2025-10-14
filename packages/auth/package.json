@@ -1,0 +1,30 @@
+{
+  "name": "@zoonk/auth",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "exports": {
+    ".": "./src/auth.ts",
+    "./client": "./src/client.ts",
+    "./next": "./src/next.ts",
+    "./hooks/*": "./src/hooks/*.ts"
+  },
+  "dependencies": {
+    "@better-auth/stripe": "1.3.27",
+    "@zoonk/db": "workspace:*",
+    "better-auth": "1.3.27",
+    "jose": "6.1.0",
+    "stripe": "18.5.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "^5"
+  },
+  "peerDependencies": {
+    "react": ">=19.0.0",
+    "@types/react": ">=19.0.0"
+  }
+}

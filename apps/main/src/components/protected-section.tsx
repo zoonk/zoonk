@@ -13,7 +13,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { LockIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/client";
 
 export function ProtectedSection({
   children,

@@ -18,6 +18,7 @@ const nextConfig: NextConfig = {
   },
   transpilePackages: [
     "@zoonk/ai",
+    "@zoonk/auth",
     "@zoonk/db",
     "@zoonk/mailer",
     "@zoonk/ui",

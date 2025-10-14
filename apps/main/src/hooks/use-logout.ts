@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/client";
 
 export function useLogout() {
   const { data: session } = authClient.useSession();

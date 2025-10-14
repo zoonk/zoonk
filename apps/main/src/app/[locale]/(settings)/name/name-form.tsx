@@ -5,7 +5,7 @@ import { Label } from "@zoonk/ui/components/label";
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 import SubmitButton from "@/components/submit-button";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/client";
 
 import { nameFormAction } from "./actions";
 
