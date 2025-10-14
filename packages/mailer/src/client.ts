@@ -8,7 +8,11 @@ interface EmailProps {
   text: string;
 }
 
-export async function sendEmail({ to, subject, text }: EmailProps) {
+export async function sendEmail({
+  to,
+  subject,
+  text,
+}: EmailProps): Promise<Response> {
   if (sendEmailDisabled) {
     console.info("Email sending is disabled.");
     console.info({ to, subject, text });

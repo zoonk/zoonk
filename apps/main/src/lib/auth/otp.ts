@@ -1,6 +1,6 @@
+import { sendEmail } from "@zoonk/mailer";
 import type { EmailOTPOptions } from "better-auth/plugins";
 import { getTranslations } from "next-intl/server";
-import { sendEmail } from "../email-client";
 
 export const sendVerificationOTP: EmailOTPOptions["sendVerificationOTP"] =
   async ({ email, otp }, _request) => {

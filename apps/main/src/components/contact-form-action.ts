@@ -1,6 +1,6 @@
 "use server";
 
-import { sendEmail } from "@/lib/email-client";
+import { sendEmail } from "@zoonk/mailer";
 
 export async function contactFormAction(
   _prevState: unknown,

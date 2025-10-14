@@ -1,0 +1,17 @@
+{
+  "name": "@zoonk/mailer",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "type-check": "tsc --noEmit"
+  },
+  "exports": {
+    ".": "./src/client.ts"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@types/node": "^22",
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "^5"
+  }
+}

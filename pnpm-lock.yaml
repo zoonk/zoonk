@@ -35,6 +35,9 @@ importers:
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@zoonk/mailer':
+        specifier: workspace:*
+        version: link:../../packages/mailer
       '@zoonk/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -179,6 +182,18 @@ importers:
       prisma:
         specifier: 6.17.0
         version: 6.17.0(typescript@5.9.3)
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  packages/mailer:
+    devDependencies:
+      '@types/node':
+        specifier: ^22
+        version: 22.18.10
+      '@zoonk/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
       typescript:
         specifier: ^5
         version: 5.9.3
