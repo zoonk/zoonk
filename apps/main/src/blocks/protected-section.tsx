@@ -1,53 +1,30 @@
 "use client";
 
-import { Alert, AlertTitle } from "@zoonk/ui/components/alert";
+import { useAuthState } from "@zoonk/auth/hooks/state";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import {
-  Item,
-  ItemContent,
-  ItemMedia,
-  ItemTitle,
-} from "@zoonk/ui/components/item";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
-import { LockIcon } from "lucide-react";
+import { ProtectedSection as ProtectedSectionPattern } from "@zoonk/ui/patterns/auth/protected-section";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { authClient } from "@/lib/auth/client";
 
 export function ProtectedSection({
   children,
 }: React.ComponentProps<"section">) {
-  const { data: session, isPending } = authClient.useSession();
+  const authState = useAuthState();
   const t = useTranslations("Protected");
 
-  if (isPending) {
-    return (
-      <Item variant="muted" className="max-w-xs">
-        <ItemMedia>
-          <Spinner />
-        </ItemMedia>
-        <ItemContent>
-          <ItemTitle>{t("checkingLogin")}</ItemTitle>
-        </ItemContent>
-      </Item>
-    );
-  }
-
-  if (!session) {
-    return (
-      <section className="flex max-w-md flex-col gap-4">
-        <Alert className="max-w-max">
-          <LockIcon />
-          <AlertTitle>{t("requiresLogin")}</AlertTitle>
-        </Alert>
-
+  return (
+    <ProtectedSectionPattern
+      state={authState}
+      pendingTitle={t("checkingLogin")}
+      alertTitle={t("requiresLogin")}
+      actions={
         <Link href="/login" className={cn(buttonVariants(), "w-max")}>
           {t("login")}
         </Link>
-      </section>
-    );
-  }
-
-  return children;
+      }
+    >
+      {children}
+    </ProtectedSectionPattern>
+  );
 }

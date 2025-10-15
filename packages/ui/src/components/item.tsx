@@ -51,14 +51,16 @@ const itemVariants = cva(
   },
 );
 
+type ItemProps = React.ComponentProps<"div"> &
+  VariantProps<typeof itemVariants> & { asChild?: boolean };
+
 function Item({
   className,
   variant = "default",
   size = "default",
   asChild = false,
   ...props
-}: React.ComponentProps<"div"> &
-  VariantProps<typeof itemVariants> & { asChild?: boolean }) {
+}: ItemProps) {
   const Comp = asChild ? Slot : "div";
   return (
     <Comp
@@ -88,11 +90,14 @@ const itemMediaVariants = cva(
   },
 );
 
+type ItemMediaProps = React.ComponentProps<"div"> &
+  VariantProps<typeof itemMediaVariants>;
+
 function ItemMedia({
   className,
   variant = "default",
   ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof itemMediaVariants>) {
+}: ItemMediaProps) {
   return (
     <div
       data-slot="item-media"
@@ -181,7 +186,9 @@ function ItemFooter({ className, ...props }: React.ComponentProps<"div">) {
 
 export {
   Item,
+  type ItemProps,
   ItemMedia,
+  type ItemMediaProps,
   ItemContent,
   ItemActions,
   ItemGroup,
