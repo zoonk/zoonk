@@ -12,10 +12,11 @@ export default async function Layout({
   children,
   params,
 }: LayoutProps<"/[locale]">) {
-  cacheLife("max");
-  cacheTag("settings-layout");
   const { locale } = await params;
   setRequestLocale(locale);
+
+  cacheLife("max");
+  cacheTag(locale, "settings");
 
   return (
     <SidebarProvider>

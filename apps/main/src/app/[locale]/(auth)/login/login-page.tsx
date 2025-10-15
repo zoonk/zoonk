@@ -13,11 +13,12 @@ interface LoginPageProps {
 
 export default async function LoginPage({ params }: LoginPageProps) {
   "use cache";
-  cacheLife("max");
-  cacheTag("login-page");
 
   const { locale } = await params;
   setRequestLocale(locale);
+
+  cacheLife("max");
+  cacheTag(locale, "login");
 
   return (
     <div className="flex flex-col gap-6">

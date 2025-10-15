@@ -11,9 +11,11 @@ import { StartCourseForm } from "./start-course-form";
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/learn">): Promise<Metadata> {
-  cacheLife("max");
-  cacheTag("learn-page");
   const { locale } = await params;
+
+  cacheLife("max");
+  cacheTag(locale, "learn");
+
   const t = await getTranslations({ locale, namespace: "Learn" });
 
   return {
@@ -23,10 +25,12 @@ export async function generateMetadata({
 }
 
 export default async function Learn({ params }: PageProps<"/[locale]/learn">) {
-  cacheLife("max");
-  cacheTag("learn-page");
   const { locale } = await params;
   setRequestLocale(locale);
+
+  cacheLife("max");
+  cacheTag(locale, "learn");
+
   const t = await getTranslations({ locale, namespace: "Learn" });
 
   return (

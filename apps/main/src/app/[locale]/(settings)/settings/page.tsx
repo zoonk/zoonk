@@ -16,9 +16,11 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/settings">): Promise<Metadata> {
-  cacheLife("max");
-  cacheTag("settings-page");
   const { locale } = await params;
+
+  cacheLife("max");
+  cacheTag(locale, "settings");
+
   const t = await getTranslations({ locale, namespace: "Settings" });
 
   return {
@@ -30,10 +32,12 @@ export async function generateMetadata({
 export default async function Settings({
   params,
 }: PageProps<"/[locale]/settings">) {
-  cacheLife("max");
-  cacheTag("settings-page");
   const { locale } = await params;
   setRequestLocale(locale);
+
+  cacheLife("max");
+  cacheTag(locale, "settings");
+
   const t = await getTranslations("Settings");
 
   return (

@@ -18,9 +18,11 @@ import { NameForm } from "./name-form";
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/name">): Promise<Metadata> {
-  cacheLife("max");
-  cacheTag("name-page");
   const { locale } = await params;
+
+  cacheLife("max");
+  cacheTag(locale, "name");
+
   const t = await getTranslations({ locale, namespace: "Name" });
 
   return {
@@ -30,10 +32,12 @@ export async function generateMetadata({
 }
 
 export default async function Name({ params }: PageProps<"/[locale]/name">) {
-  cacheLife("max");
-  cacheTag("name-page");
   const { locale } = await params;
   setRequestLocale(locale);
+
+  cacheLife("max");
+  cacheTag(locale, "name");
+
   const t = await getTranslations("Name");
 
   return (

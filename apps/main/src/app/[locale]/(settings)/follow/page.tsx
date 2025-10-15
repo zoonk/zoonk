@@ -17,9 +17,11 @@ import { getSocialProfiles } from "@/lib/social";
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/follow">): Promise<Metadata> {
-  cacheLife("max");
-  cacheTag("follow-page");
   const { locale } = await params;
+
+  cacheLife("max");
+  cacheTag(locale, "follow");
+
   const t = await getTranslations({ locale, namespace: "Follow" });
 
   return {
@@ -31,10 +33,12 @@ export async function generateMetadata({
 export default async function Follow({
   params,
 }: PageProps<"/[locale]/follow">) {
-  cacheLife("max");
-  cacheTag("follow-page");
   const { locale } = await params;
   setRequestLocale(locale);
+
+  cacheLife("max");
+  cacheTag(locale, "follow");
+
   const t = await getTranslations("Follow");
 
   return (

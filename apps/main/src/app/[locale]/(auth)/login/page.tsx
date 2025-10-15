@@ -12,9 +12,12 @@ export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/login">): Promise<Metadata> {
   "use cache";
-  cacheLife("max");
-  cacheTag("login-page");
+
   const { locale } = await params;
+
+  cacheLife("max");
+  cacheTag(locale, "login");
+
   const t = await getTranslations({ locale, namespace: "Auth" });
 
   return {

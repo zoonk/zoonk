@@ -18,9 +18,11 @@ import { SubscriptionPage } from "./subscription-page";
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/subscription">): Promise<Metadata> {
-  cacheLife("max");
-  cacheTag("subscription-page");
   const { locale } = await params;
+
+  cacheLife("max");
+  cacheTag(locale, "subscription");
+
   const t = await getTranslations({ locale, namespace: "Subscription" });
 
   return {
@@ -32,10 +34,12 @@ export async function generateMetadata({
 export default async function Subscription({
   params,
 }: PageProps<"/[locale]/subscription">) {
-  cacheLife("max");
-  cacheTag("subscription-page");
   const { locale } = await params;
   setRequestLocale(locale);
+
+  cacheLife("max");
+  cacheTag(locale, "subscription");
+
   const t = await getTranslations("Subscription");
 
   return (

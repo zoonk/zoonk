@@ -10,9 +10,11 @@ import { getTranslations } from "next-intl/server";
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/privacy">): Promise<Metadata> {
-  cacheLife("max");
-  cacheTag("privacy-page");
   const { locale } = await params;
+
+  cacheLife("max");
+  cacheTag(locale, "privacy");
+
   const t = await getTranslations({ locale, namespace: "Privacy" });
 
   return {
@@ -24,9 +26,11 @@ export async function generateMetadata({
 export default async function Privacy({
   params,
 }: PageProps<"/[locale]/privacy">) {
-  cacheLife("max");
-  cacheTag("privacy-page");
   const { locale } = await params;
+
+  cacheLife("max");
+  cacheTag(locale, "privacy");
+
   const { default: PrivacyPolicy } = await import(`./${locale}.mdx`);
 
   return (

@@ -13,10 +13,11 @@ export default async function CatalogLayout({
   children,
   params,
 }: LayoutProps<"/[locale]">) {
-  cacheLife("max");
-  cacheTag("catalog-layout");
   const { locale } = await params;
   setRequestLocale(locale);
+
+  cacheLife("max");
+  cacheTag(locale, "catalog");
 
   return (
     <Suspense>

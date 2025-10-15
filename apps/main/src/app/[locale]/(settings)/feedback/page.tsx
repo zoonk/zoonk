@@ -17,9 +17,11 @@ import { ContactForm } from "@/blocks/contact-form";
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/feedback">): Promise<Metadata> {
-  cacheLife("max");
-  cacheTag("feedback-page");
   const { locale } = await params;
+
+  cacheLife("max");
+  cacheTag(locale, "feedback");
+
   const t = await getTranslations({ locale, namespace: "Feedback" });
 
   return {
@@ -31,10 +33,12 @@ export async function generateMetadata({
 export default async function Feedback({
   params,
 }: PageProps<"/[locale]/feedback">) {
-  cacheLife("max");
-  cacheTag("feedback-page");
   const { locale } = await params;
   setRequestLocale(locale);
+
+  cacheLife("max");
+  cacheTag(locale, "feedback");
+
   const t = await getTranslations("Feedback");
 
   return (

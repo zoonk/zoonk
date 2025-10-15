@@ -17,9 +17,11 @@ import LocaleSwitcher from "@/blocks/locale-switcher";
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/language">): Promise<Metadata> {
-  cacheLife("max");
-  cacheTag("language-page");
   const { locale } = await params;
+
+  cacheLife("max");
+  cacheTag(locale, "language");
+
   const t = await getTranslations({ locale, namespace: "Language" });
 
   return {
@@ -31,10 +33,12 @@ export async function generateMetadata({
 export default async function Language({
   params,
 }: PageProps<"/[locale]/language">) {
-  cacheLife("max");
-  cacheTag("language-page");
   const { locale } = await params;
   setRequestLocale(locale);
+
+  cacheLife("max");
+  cacheTag(locale, "language");
+
   const t = await getTranslations("Language");
 
   return (

@@ -29,10 +29,10 @@ export default async function RootLayout({
   children,
   params,
 }: LayoutProps<"/[locale]">) {
-  cacheLife("max");
-  cacheTag("root-layout");
-
   const { locale } = await params;
+
+  cacheLife("max");
+  cacheTag(locale, "root-layout");
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();
