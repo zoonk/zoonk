@@ -1,5 +1,5 @@
 {
-  "name": "@zoonk/ai",
+  "name": "@zoonk/api",
   "type": "module",
   "private": true,
   "scripts": {
@@ -9,11 +9,12 @@
     "./*": "./src/*.ts"
   },
   "dependencies": {
-    "ai": "5.0.62"
+    "@zoonk/ai": "workspace:*",
+    "@zoonk/db": "workspace:*"
   },
   "peerDependencies": {
-    "server-only": ">=0.0.1",
-    "zod": ">=4.0.0"
+    "next": ">=16.0.0-canary.4",
+    "server-only": ">=0.0.1"
   },
   "devDependencies": {
     "@zoonk/tsconfig": "workspace:*",

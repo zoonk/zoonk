@@ -1,4 +1,10 @@
+import { fetchCourseSuggestions } from "@zoonk/api/course-suggestions";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import {
+  Container,
+  ContainerHeader,
+  ContainerTitle,
+} from "@zoonk/ui/components/container";
 import {
   Item,
   ItemActions,
@@ -10,10 +16,8 @@ import {
 } from "@zoonk/ui/components/item";
 import { getTranslations } from "next-intl/server";
 import { Fragment } from "react/jsx-runtime";
-import { ContentFeedback } from "@/components/content-feedback";
-import { PageContainer, PageHeader, PageTitle } from "@/components/pages";
+import { ContentFeedback } from "@/blocks/content-feedback";
 import { Link } from "@/i18n/navigation";
-import { fetchCourseSuggestions } from "@/services/course-suggestions";
 
 interface CourseSuggestionsProps {
   locale: string;
@@ -28,14 +32,14 @@ export async function CourseSuggestions({
   const suggestions = await fetchCourseSuggestions({ locale, prompt });
 
   return (
-    <PageContainer className="mx-auto w-full max-w-2xl">
-      <PageHeader className="text-center">
-        <PageTitle>{t("title", { prompt })}</PageTitle>
+    <Container className="mx-auto w-full max-w-2xl">
+      <ContainerHeader className="text-center">
+        <ContainerTitle>{t("title", { prompt })}</ContainerTitle>
 
         <Link href="/learn" className={buttonVariants({ variant: "link" })}>
           {t("changeAction")}
         </Link>
-      </PageHeader>
+      </ContainerHeader>
 
       <ItemGroup>
         {suggestions.map((course, index) => (
@@ -63,6 +67,6 @@ export async function CourseSuggestions({
         contentId={`${locale}:${prompt}`}
         className="py-4"
       />
-    </PageContainer>
+    </Container>
   );
 }

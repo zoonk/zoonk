@@ -1,11 +1,8 @@
 {
   "extends": "@zoonk/tsconfig/base.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@zoonk/utils/*": ["./src/*"]
-    }
+    "baseUrl": "."
   },
-  "include": ["."],
+  "include": ["src", "vitest.config.mts"],
   "exclude": ["node_modules", "dist"]
 }

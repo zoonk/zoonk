@@ -1,18 +1,18 @@
 "use cache";
 
+import {
+  Container,
+  ContainerDescription,
+  ContainerHeader,
+  ContainerTitle,
+} from "@zoonk/ui/components/container";
 import type { Metadata } from "next";
 import {
   unstable_cacheLife as cacheLife,
   unstable_cacheTag as cacheTag,
 } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import {
-  PageContainer,
-  PageHeader,
-  PageSubtitle,
-  PageTitle,
-} from "@/components/pages";
-import { ProtectedSection } from "@/components/protected-section";
+import { ProtectedSection } from "@/blocks/protected-section";
 import { NameForm } from "./name-form";
 
 export async function generateMetadata({
@@ -37,15 +37,15 @@ export default async function Name({ params }: PageProps<"/[locale]/name">) {
   const t = await getTranslations("Name");
 
   return (
-    <PageContainer>
-      <PageHeader>
-        <PageTitle>{t("title")}</PageTitle>
-        <PageSubtitle>{t("subtitle")}</PageSubtitle>
-      </PageHeader>
+    <Container>
+      <ContainerHeader>
+        <ContainerTitle>{t("title")}</ContainerTitle>
+        <ContainerDescription>{t("subtitle")}</ContainerDescription>
+      </ContainerHeader>
 
       <ProtectedSection>
         <NameForm />
       </ProtectedSection>
-    </PageContainer>
+    </Container>
   );
 }

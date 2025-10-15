@@ -10,7 +10,7 @@ import { Label } from "@zoonk/ui/components/label";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { ArrowUp } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Activity, type FormEvent, useId, useState } from "react";
+import { type FormEvent, useId, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 
 export function StartCourseForm() {
@@ -58,9 +58,7 @@ export function StartCourseForm() {
           align="inline-end"
           className="opacity-0 transition-all duration-200 ease-in-out peer-[&:not(:placeholder-shown)]:opacity-100"
         >
-          <Activity mode={isLoading ? "visible" : "hidden"}>
-            <Spinner />
-          </Activity>
+          {isLoading && <Spinner />}
 
           <InputGroupButton
             type="submit"

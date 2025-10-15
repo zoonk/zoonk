@@ -27,32 +27,34 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - Follow design inspirations from Apple, Linear, Vercel
 - Code must be modular, following SOLID and DRY principles
 - Avoid nested conditionals and complex logic. Prefer short and composable functions
+- Prefer functional programming over OOP
 - Use meaningful variable names and avoid abbreviations
 
 ## Tech stack
 
-- Next.js (App Router)
+- Monorepo using [Turborepo](https://turborepo.com/docs)
+- [Next.js (App Router)](https://nextjs.org/docs)
 - TypeScript
-- Tailwind
-- Prisma Postgres
-- shadcn/ui
-- Vercel AI SDK
-- Better Auth
+- Tailwind CSS
+- [Prisma Postgres](https://www.prisma.io/postgres)
+- [Prisma ORM](https://www.prisma.io/docs/orm)
+- [shadcn/ui](https://ui.shadcn.com/) and [Kibo UI](https://www.kibo-ui.com/)
+- [Vercel AI SDK](https://ai-sdk.dev/llms.txt)
+- [Better Auth](https://www.better-auth.com/llms.txt)
 
 ## Project structure
 
-- `ai/`: AI-related code (e.g., prompts, content generation)
-- `app/`: Next.js App Router routes
-- `components/`: Reusable React components
-- `db/`: Database queries
-- `hooks/`: Custom React hooks
-- `i18n/`: Localization configuration using `next-intl`
-- `lib/`: Utility functions and libraries
-- `messages/`: Translation files
-- `prisma/`: Prisma schema and migrations
-- `public/`: Static assets
-- `services/`: Business logic calling `db`, `ai`, and other APIs
-- `test/`: Testing helpers and utilities
+- `apps/main`: Our main Next.js app, powering zoonk.com
+- `packages/ai`: Functions for AI interactions. Anything that calls the AI SDK should be here
+- `packages/api`: Functions connecting services and queries. Anything calling `@zoonk/ai` or `@zoonk/db` should be here
+- `packages/auth`: Authentication logic and clients using Better Auth
+- `packages/db`: Database client and queries. All queries should be defined here
+- `packages/mailer`: Client for sending emails
+- `packages/tsconfig`: Shared TypeScript configuration
+- `packages/ui`: Shared UI components, hooks, and patterns for all apps
+- `packages/utils`: Shared utility and helper functions
+
+Read each folder's README file for more details
 
 ## Tools
 
@@ -61,19 +63,17 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 
 ## Conventions
 
-- Import `Link`, `redirect`, `usePathname`, `useRouter`, and `getPathname` from `@/i18n/navigation` since it handles localization
 - Run `pnpm format` to format the code after making changes, then `pnpm lint` to check for linting errors, and `pnpm type-check` to check for TypeScript errors
-- Don't run `pnpm build` or `pnpm dev`
-- Never hard-code strings. Use `next-intl` instead
+- Don't run `pnpm dev` since we already have a dev server running
 - Prefer to use server components than client components. Only use client components when absolutely necessary
 - Avoid `useEffect` and `useState` unless absolutely required
-- Fetch data on the server whenever possible and use `Suspense` with a fallback for loading states, [see docs](https://nextjs.org/docs/app/getting-started/fetching-data#streaming)
+- Fetch data on the server whenever possible and use `Suspense` with a fallback for loading states, [see docs for streaming data](https://nextjs.org/docs/app/getting-started/fetching-data#streaming)
 - Keep comments minimal—explain **why**, not **what**
 
 ## CSS
 
 - Use Tailwind v4
-- Use variables defined in `app/globals.css`
+- Use variables defined in `packages/ui/src/styles/globals.css`
 - Use `size-*` instead of `w-*` + `h-*`
 - Only create custom utilities when we're often using the same styles
 - Don't use `space-y-*` or `space-x-*` classes, instead use `gap-*`

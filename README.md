@@ -23,10 +23,14 @@
 
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
+  - [Turborepo](#turborepo)
+    - [Remote Caching](#remote-caching)
   - [Installation](#installation)
-  - [PostgreSQL Setup](#postgresql-setup)
-  - [Prisma Setup](#prisma-setup)
   - [Local Development](#local-development)
+    - [Adding dependencies](#adding-dependencies)
+    - [Adding shadcn components](#adding-shadcn-components)
+- [Social Media](#social-media)
+- [Supporters](#supporters)
 
 ## Getting Started
 
@@ -63,8 +67,17 @@ turbo link
 ### Installation
 
 - `pnpm install` to install dependencies for all apps and packages
+- Check out the [@zoonk/db package README](./packages/db/README.md) for database setup instructions
 
-### Installing dependencies
+### Local Development
+
+- `turbo dev` to start the development server
+- `turbo build` to create a production build
+- `turbo lint` to run linting
+- `turbo type-check` to run TypeScript type checking
+- `turbo test` to run tests with Vitest
+
+#### Adding dependencies
 
 Check the Turborepo guide for [managing dependencies](https://turborepo.com/docs/crafting-your-repository/managing-dependencies).
 
@@ -78,13 +91,14 @@ pnpm add <package-name> --filter=@zoonk/ui
 pnpm add <package-name> --filter=main
 ```
 
-### Local Development
+#### Adding shadcn components
 
-- `turbo dev` to start the development server
-- `turbo build` to create a production build
-- `turbo lint` to run linting
-- `turbo type-check` to run TypeScript type checking
-- `turbo test` to run tests with Vitest
+To add components, run the add command in the path of our app:
+
+```sh
+cd apps/main
+pnpm dlx shadcn@canary add [COMPONENT]
+```
 
 ## Social Media
 

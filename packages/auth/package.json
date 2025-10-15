@@ -20,11 +20,11 @@
   },
   "devDependencies": {
     "@types/node": "^22",
+    "@types/react": ">=19.0.0",
     "@zoonk/tsconfig": "workspace:*",
     "typescript": "^5"
   },
   "peerDependencies": {
-    "react": ">=19.0.0",
-    "@types/react": ">=19.0.0"
+    "react": ">=19.0.0"
   }
 }

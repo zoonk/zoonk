@@ -2,9 +2,9 @@
 
 import { Input, InputError, InputSuccess } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
+import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
-import SubmitButton from "@/components/submit-button";
 import { authClient } from "@/lib/auth/client";
 
 import { nameFormAction } from "./actions";

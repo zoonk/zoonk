@@ -9,11 +9,11 @@ import {
   CommandItem,
   CommandList,
 } from "@zoonk/ui/components/command";
+import { useKeyboardShortcut } from "@zoonk/ui/hooks/use-keyboard-shortcut";
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
-import { useKeyboardShortcut } from "@/hooks/use-keyboard-shortcut";
-import { useLogout } from "@/hooks/use-logout";
+import { usei18nLogout } from "@/hooks/use-logout";
 import { useRouter } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 
@@ -21,7 +21,7 @@ const logoutMenu = getMenu("logout");
 
 export function CommandPalette() {
   const { push } = useRouter();
-  const { isLoggedIn, logout } = useLogout();
+  const { isLoggedIn, logout } = usei18nLogout();
   const { isOpen, open, close } = useKeyboardShortcut("k");
   const [query, setQuery] = useState("");
 

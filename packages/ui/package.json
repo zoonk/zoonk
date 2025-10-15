@@ -11,7 +11,8 @@
     "./postcss.config": "./postcss.config.mjs",
     "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",
-    "./hooks/*": "./src/hooks/*.ts"
+    "./hooks/*": "./src/hooks/*.ts",
+    "./patterns/*": "./src/patterns/*.tsx"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "1.1.10",
@@ -27,10 +28,12 @@
     "clsx": "2.1.1",
     "cmdk": "1.1.1",
     "input-otp": "1.4.2",
-    "lucide-react": "0.544.0",
-    "react": "19.2.0",
-    "react-dom": "19.2.0",
     "tailwind-merge": "3.3.1"
+  },
+  "peerDependencies": {
+    "lucide-react": ">=0.544.0",
+    "react": ">=19.2.0",
+    "react-dom": ">=19.2.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.14",

@@ -1,6 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
-export function PageContainer({
+export function Container({
   children,
   className,
 }: React.ComponentProps<"main">) {
@@ -9,7 +9,7 @@ export function PageContainer({
   );
 }
 
-export function PageHeader({
+export function ContainerHeader({
   children,
   className,
 }: React.ComponentProps<"header">) {
@@ -20,7 +20,10 @@ export function PageHeader({
   );
 }
 
-export function PageTitle({ children, className }: React.ComponentProps<"h1">) {
+export function ContainerTitle({
+  children,
+  className,
+}: React.ComponentProps<"h1">) {
   return (
     <h1
       className={cn(
@@ -33,7 +36,7 @@ export function PageTitle({ children, className }: React.ComponentProps<"h1">) {
   );
 }
 
-export const PageSubtitle = ({
+export const ContainerDescription = ({
   children,
   className,
 }: React.ComponentProps<"h2">) => (

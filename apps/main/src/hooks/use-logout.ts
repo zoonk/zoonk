@@ -1,22 +1,13 @@
+import { useLogout } from "@zoonk/auth/hooks/logout";
 import { useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { authClient } from "@/lib/auth/client";
 
-export function useLogout() {
-  const { data: session } = authClient.useSession();
+export function usei18nLogout() {
   const { push } = useRouter();
 
-  const isLoggedIn = Boolean(session);
-
-  const logout = useCallback(async () => {
-    await authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          push("/login");
-        },
-      },
-    });
+  const onSuccess = useCallback(() => {
+    push("/login");
   }, [push]);
 
-  return { isLoggedIn, logout };
+  return useLogout({ onSuccess });
 }

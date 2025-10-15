@@ -7,9 +7,9 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@zoonk/ui/components/input-otp";
+import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
-import SubmitButton from "@/components/submit-button";
 import { Link } from "@/i18n/navigation";
 import { emailOTP } from "./actions";
 

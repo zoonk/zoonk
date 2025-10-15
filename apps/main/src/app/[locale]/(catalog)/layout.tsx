@@ -6,8 +6,8 @@ import {
 } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
-import { NavbarLinks } from "@/components/navbar-links";
-import { UserAvatarMenu } from "@/components/user-avatar-menu";
+import { NavbarLinks } from "@/blocks/navbar-links";
+import { UserAvatarMenu } from "@/blocks/user-avatar-menu";
 
 export default async function CatalogLayout({
   children,

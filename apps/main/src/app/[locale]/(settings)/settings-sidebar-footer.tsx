@@ -7,14 +7,14 @@ import {
   SidebarMenuItem,
 } from "@zoonk/ui/components/sidebar";
 import { useTranslations } from "next-intl";
-import { useLogout } from "@/hooks/use-logout";
+import { usei18nLogout } from "@/hooks/use-logout";
 import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 
 const logoutMenu = getMenu("logout");
 
 export function SettingsSidebarFooter() {
-  const { isLoggedIn, logout } = useLogout();
+  const { isLoggedIn, logout } = usei18nLogout();
   const pathname = usePathname();
   const t = useTranslations("Menu");
 

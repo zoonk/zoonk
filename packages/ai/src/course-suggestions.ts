@@ -1,4 +1,5 @@
 import "server-only";
+
 import { generateObject } from "ai";
 import { z } from "zod";
 import systemPrompt from "./course-suggestions.md";
@@ -12,15 +13,17 @@ const schema = z.object({
   ),
 });
 
+export type CourseSuggestionsParams = {
+  locale: string;
+  prompt: string;
+  model: string;
+};
+
 export async function generateCourseSuggestions({
   locale,
   prompt,
   model,
-}: {
-  locale: string;
-  prompt: string;
-  model: string;
-}) {
+}: CourseSuggestionsParams) {
   const userPrompt = `
     APP_LANGUAGE: ${locale}
     USER_INPUT: ${prompt}

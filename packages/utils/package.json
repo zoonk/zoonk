@@ -8,7 +8,7 @@
     "test:watch": "vitest"
   },
   "exports": {
-    "./*": "./src/*.ts"
+    "./string": "./src/string.ts"
   },
   "devDependencies": {
     "@zoonk/tsconfig": "workspace:*",

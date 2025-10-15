@@ -5,7 +5,7 @@ import {
 } from "@zoonk/ui/components/dropdown-menu";
 import { getTranslations } from "next-intl/server";
 import { getMenu } from "@/lib/menu";
-import { ClientLink } from "./client-link";
+import { ClientLink } from "../i18n/client-link";
 import { LogoutDropdownItem } from "./logout-dropdown-item";
 
 export async function UserDropdownMenu() {

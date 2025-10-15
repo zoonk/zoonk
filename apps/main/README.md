@@ -1,102 +1,28 @@
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/345ed7d9-40a8-4ebb-adf1-8f22cafa492d">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/8d018809-14b9-435b-9409-d515c599335d">
-  <img alt="Zoonk logo (a smiley brain) on the first line. Below it says 'learn anything with interactive courses'" src="https://github.com/user-attachments/assets/8d018809-14b9-435b-9409-d515c599335d">
-</picture>
+# Main App
 
-<p align="center">
-  Web app for learning anything using AI.
-  <br />
-  <br />
-  <a href="https://forms.gle/jHeTqPUkw1vA7wLh8">Waitlist</a>
-</p>
+This is our main app available at [zoonk.com](https://www.zoonk.com). It allows anyone to learn anything using AI.
 
-> [!CAUTION]
->
-> ## Early Development Notice
->
-> This project is still in early development and **not ready for use**. We’re actively working to make it available as soon as possible.
->
-> As we progress, we’ll open it for testing and contributions. Star this repository or follow us on social media to stay updated.
+Check our [repo's README](../../README.md) for setup instructions.
 
-## Table of Contents
+## Environment Variables
 
-- [Getting Started](#getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Installation](#installation)
-  - [PostgreSQL Setup](#postgresql-setup)
-  - [Prisma Setup](#prisma-setup)
-  - [Local Development](#local-development)
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js v22 or higher
-- pnpm v10 or higher
-- PostgreSQL v17 or higher
-
-You can install multiple Node.js and pnpm versions using [mise](https://mise.jdx.dev/).
-
-### Installation
-
-- `pnpm install` to install dependencies
-- `cp .env.example .env` and fill in the required environment variables
-
-### PostgreSQL Setup
-
-For macOS users, you can install PostgreSQL using Homebrew:
+Copy the `.env.example` file to `.env` and fill in the required environment variables:
 
 ```bash
-brew install postgresql
-brew services start postgresql
+cp .env.example .env
 ```
 
-Then, create a new database:
+## File Structure
 
-```bash
-createdb zoonk
-```
-
-Update the `DATABASE_URL` in your `.env` file with your PostgreSQL credentials. It will look something like this:
-
-```bash
-DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/zoonk"
-```
-
-### Prisma Setup
-
-Run the following commands to set up Prisma:
-
-- `pnpm prisma generate` to generate Prisma client
-- `pnpm db:migrate` to run migrations and set up the database
-- `pnpm db:reset` to reset the database (this will erase all data)
-- `pnpm prisma migrate dev --create-only` to create a new migration without applying it
-
-### Local Development
-
-- `pnpm dev` to start the development server
-- `pnpm build` to create a production build
-- `pnpm start` to start the production server
-- `pnpm lint` to run linting
-- `pnpm prisma studio` to open Prisma Studio and inspect your database
-- `pnpm type-check` to run TypeScript type checking
-- `pnpm test` to run tests with Vitest
-- `pnpm i18n` to check for missing or unused i18n keys
-
-## Social Media
-
-- [X](https://x.com/zoonkcom)
-- [Bluesky](https://bsky.app/profile/zoonk.bsky.social)
-- [Threads](https://www.threads.net/@zoonkcom)
-- [LinkedIn](https://www.linkedin.com/company/zoonk)
-
-## Supporters
-
-People who supported this project:
-
-- [Sephora Lillian](https://github.com/sephoralillian)
-- [Ben Biran](https://github.com/benbiran)
-- [David Szabo-Stuban](https://github.com/ssdavidai)
-- [Gustavo A. Castillo](https://github.com/guscastilloa)
-- [Greg Lind](https://github.com/glind)
+- `messages/`: i18n translation files
+- `public/`: Static assets
+- `src/`: Source code
+  - `app`: Next.js routes
+  - `blocks`: UI blocks
+  - `hooks`: Reusable React hooks
+  - `i18n`: Internationalization setup
+  - `lib`: Constants, utilities, and helper functions
+  - `proxy.ts`: Next.js Proxy setup
+- `test/`: Test utilities and mocks
+- `components.json`: shadcn configuration
+- `mdx-components.tsx`: MDX components mapping, see the [Next.js MDX docs](https://nextjs.org/docs/app/guides/mdx) for more info

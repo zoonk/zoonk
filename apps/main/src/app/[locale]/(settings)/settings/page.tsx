@@ -1,17 +1,17 @@
 "use cache";
 
+import {
+  Container,
+  ContainerDescription,
+  ContainerHeader,
+  ContainerTitle,
+} from "@zoonk/ui/components/container";
 import type { Metadata } from "next";
 import {
   unstable_cacheLife as cacheLife,
   unstable_cacheTag as cacheTag,
 } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import {
-  PageContainer,
-  PageHeader,
-  PageSubtitle,
-  PageTitle,
-} from "@/components/pages";
 
 export async function generateMetadata({
   params,
@@ -37,11 +37,11 @@ export default async function Settings({
   const t = await getTranslations("Settings");
 
   return (
-    <PageContainer>
-      <PageHeader>
-        <PageTitle>{t("title")}</PageTitle>
-        <PageSubtitle>{t("subtitle")}</PageSubtitle>
-      </PageHeader>
-    </PageContainer>
+    <Container>
+      <ContainerHeader>
+        <ContainerTitle>{t("title")}</ContainerTitle>
+        <ContainerDescription>{t("subtitle")}</ContainerDescription>
+      </ContainerHeader>
+    </Container>
   );
 }

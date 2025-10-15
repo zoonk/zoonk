@@ -8,7 +8,7 @@ interface SubmitButtonProps extends React.ComponentProps<"button"> {
   full?: boolean;
 }
 
-export default function SubmitButton({ children, full }: SubmitButtonProps) {
+export function SubmitButton({ children, full }: SubmitButtonProps) {
   const status = useFormStatus();
 
   return (

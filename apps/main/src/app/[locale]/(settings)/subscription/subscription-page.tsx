@@ -13,7 +13,7 @@ import {
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Loader2Icon } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Activity, useState } from "react";
+import { useState } from "react";
 import { authClient } from "@/lib/auth/client";
 
 export function SubscriptionPage() {
@@ -97,9 +97,9 @@ export function SubscriptionPage() {
         </Button>
       </ItemActions>
 
-      <Activity mode={hasError ? "visible" : "hidden"}>
+      {hasError && (
         <ItemFooter className="text-destructive">{t("error")}</ItemFooter>
-      </Activity>
+      )}
     </Item>
   );
 }

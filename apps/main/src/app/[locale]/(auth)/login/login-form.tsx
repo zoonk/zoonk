@@ -1,8 +1,8 @@
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
+import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import Form from "next/form";
 import { getTranslations } from "next-intl/server";
-import SubmitButton from "@/components/submit-button";
 import { sendVerificationOTPAction } from "./actions";
 
 export default async function LoginForm() {
