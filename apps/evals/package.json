@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "evals:dev": "next dev -p 3001",
-    "build-and-start": "next build && next start",
+    "build-and-start": "next build && next start -p 3001",
     "type-check": "next typegen && tsc --noEmit"
   },
   "dependencies": {

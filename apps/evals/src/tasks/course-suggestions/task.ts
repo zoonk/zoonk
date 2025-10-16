@@ -1,5 +1,5 @@
 import { generateCourseSuggestions } from "@zoonk/ai/course-suggestions";
-import type { Task } from "../../lib/types";
+import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
 
 interface CourseSuggestion {
@@ -21,7 +21,6 @@ export const courseSuggestionsTask: Task<
   name: "Course Suggestions",
   description: "Generate course suggestions from user input",
   testCases: TEST_CASES,
-  generate: async ({ locale, prompt, model }) =>
-    await generateCourseSuggestions({ locale, prompt, model }),
+  generate: generateCourseSuggestions,
   formatOutput: (output) => JSON.stringify(output, null, 2),
 };
