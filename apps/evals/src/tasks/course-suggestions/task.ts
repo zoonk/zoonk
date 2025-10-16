@@ -15,5 +15,4 @@ export const courseSuggestionsTask: Task<
   description: "Generate course suggestions from user input",
   testCases: TEST_CASES,
   generate: generateCourseSuggestions,
-  formatOutput: (output) => JSON.stringify(output, null, 2),
 };

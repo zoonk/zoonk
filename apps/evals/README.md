@@ -58,7 +58,6 @@ export const yourTask: Task<YourInput, YourOutput> = {
   description: "Brief description",
   testCases: TEST_CASES,
   generate: generateYourFunction,
-  formatOutput: (output) => JSON.stringify(output, null, 2),
 };
 ```
 

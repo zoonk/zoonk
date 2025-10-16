@@ -55,14 +55,15 @@ async function runTestCase(
   const inputSummary = Object.entries(testCase.userInput)
     .map(([key, value]) => `${key}=${value}`)
     .join(", ");
+
   console.log(`Running test case: ${inputSummary}`);
 
-  // biome-ignore lint/suspicious/noExplicitAny: testCase contains task-specific params
-  const result = await (task.generate as any)({
+  const result = await task.generate({
     ...testCase.userInput,
     model: modelId,
   });
-  const output = task.formatOutput(result.data);
+
+  const output = JSON.stringify(result.data, null, 2);
 
   console.log("Generated output for test case, scoring...");
 

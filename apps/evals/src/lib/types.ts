@@ -37,5 +37,4 @@ export interface Task<TInput = unknown, TOutput = unknown> {
   description: string;
   testCases: TestCase[];
   generate: (input: TInput & { model: string }) => Promise<TaskResult<TOutput>>;
-  formatOutput: (output: TOutput) => string;
 }
