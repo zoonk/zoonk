@@ -51,7 +51,7 @@ export function EvalResults({ results }: EvalResultsProps) {
             <div>
               <p className="text-muted-foreground text-sm">Cost (100 runs)</p>
               <p className="font-bold text-2xl">
-                ${results.totalCost.toFixed(DECIMAL_PLACES)} (
+                ${results.totalCost.toFixed(DECIMAL_PLACES)}
               </p>
             </div>
           </div>
@@ -71,20 +71,32 @@ export function EvalResults({ results }: EvalResultsProps) {
               <CardContent className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
-                    <p className="text-muted-foreground text-sm">Locale</p>
-                    <p className="font-medium">{result.testCase.locale}</p>
+                    <p className="text-muted-foreground text-sm">User Input</p>
+                    <div className="space-y-1">
+                      {result.testCase.userInput ? (
+                        Object.entries(result.testCase.userInput).map(
+                          ([key, value]) => (
+                            <p key={key} className="font-medium text-sm">
+                              <span className="text-muted-foreground">
+                                {key}:
+                              </span>{" "}
+                              {value}
+                            </p>
+                          ),
+                        )
+                      ) : (
+                        <p className="font-medium text-muted-foreground text-sm">
+                          Legacy test case format - delete eval results and
+                          re-run
+                        </p>
+                      )}
+                    </div>
                   </div>
                   <div>
                     <p className="text-muted-foreground text-sm">Score</p>
                     <p className="font-medium">{result.score.toFixed(2)}</p>
                   </div>
-                </div>
-
-                <div>
-                  <p className="text-muted-foreground text-sm">Prompt</p>
-                  <p className="font-medium">{result.testCase.prompt}</p>
-                </div>
-
+                </div>{" "}
                 <div className="grid gap-4 md:grid-cols-2">
                   <div>
                     <p className="text-muted-foreground text-sm">
@@ -99,14 +111,12 @@ export function EvalResults({ results }: EvalResultsProps) {
                     <p className="font-medium">{result.outputTokens}</p>
                   </div>
                 </div>
-
                 <div>
                   <p className="mb-2 text-muted-foreground text-sm">Output</p>
                   <pre className="overflow-x-auto rounded-lg bg-muted p-4 text-sm">
                     {result.output}
                   </pre>
                 </div>
-
                 <div>
                   <p className="mb-2 text-muted-foreground text-sm">
                     Evaluation Steps

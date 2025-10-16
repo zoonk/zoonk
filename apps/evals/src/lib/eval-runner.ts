@@ -78,14 +78,14 @@ async function runTestCase(
   testCase: TestCase,
   modelId: string,
 ): Promise<EvalResult> {
-  console.log(
-    `Running test case: locale=${testCase.locale}, prompt="${testCase.prompt}"`,
-  );
+  const inputSummary = Object.entries(testCase.userInput)
+    .map(([key, value]) => `${key}=${value}`)
+    .join(", ");
+  console.log(`Running test case: ${inputSummary}`);
 
   // biome-ignore lint/suspicious/noExplicitAny: testCase contains task-specific params
   const result = await (task.generate as any)({
-    locale: testCase.locale,
-    prompt: testCase.prompt,
+    ...testCase.userInput,
     model: modelId,
   });
   const output = task.formatOutput(result.data);
@@ -110,16 +110,16 @@ async function runTestCase(
     outputTokens: result.usage.outputTokens ?? 0,
   };
 }
-
 function shouldSkipTestCase(
   existing: EvalResult[],
   testCase: TestCase,
 ): boolean {
-  return existing.some(
-    (r) =>
-      r.testCase.locale === testCase.locale &&
-      r.testCase.prompt === testCase.prompt,
-  );
+  return existing.some((r) => {
+    // Compare userInput objects for equality
+    const existingInput = JSON.stringify(r.testCase.userInput);
+    const newInput = JSON.stringify(testCase.userInput);
+    return existingInput === newInput;
+  });
 }
 
 export async function runEval(

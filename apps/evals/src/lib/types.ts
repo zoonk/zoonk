@@ -1,11 +1,9 @@
 import type { LanguageModelUsage } from "ai";
 
 export interface TestCase {
-  locale: string;
-  prompt: string;
+  userInput: Record<string, string>;
   expectations: string;
 }
-
 export interface TaskResult<T = unknown> {
   data: T;
   usage: LanguageModelUsage;
