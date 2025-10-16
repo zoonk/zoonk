@@ -98,7 +98,9 @@ export async function runEval(
 ): Promise<TaskEvalResults> {
   // Sanitize modelId before logging to prevent log injection
   const safeModelId = String(modelId).replace(/[\r\n]/g, "");
-  console.log(`\nStarting eval for task: ${task.name}, model: [${safeModelId}]`);
+  console.log(
+    `\nStarting eval for task: ${task.name}, model: [${safeModelId}]`,
+  );
   console.log(`Total test cases: ${task.testCases.length}`);
 
   const existingResults = await loadExistingResults(task.id, modelId);
