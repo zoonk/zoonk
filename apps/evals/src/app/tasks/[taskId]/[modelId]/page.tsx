@@ -17,8 +17,8 @@ import { notFound, redirect } from "next/navigation";
 import { getTaskResults } from "@/lib/eval-runner";
 import { EVAL_MODELS } from "@/lib/models";
 import { TASKS } from "@/tasks";
-import { runEvalAction } from "../actions";
-import { EvalResults } from "../eval-results";
+import { runEvalAction } from "./actions";
+import { EvalResults } from "./eval-results";
 
 export default async function TaskModelPage({
   params,
