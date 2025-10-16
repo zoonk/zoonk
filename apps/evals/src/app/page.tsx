@@ -1,41 +1,49 @@
-import "@zoonk/ui/globals.css";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@zoonk/ui/components/card";
+  ContainerDescription,
+  ContainerHeader,
+  ContainerTitle,
+} from "@zoonk/ui/components/container";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
+} from "@zoonk/ui/components/item";
 import Link from "next/link";
 import { TASKS } from "@/tasks";
+import "@zoonk/ui/globals.css";
+import { buttonVariants } from "@zoonk/ui/components/button";
 
 export default function Home() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-bold text-3xl">Evals Dashboard</h1>
-        <p className="mt-2 text-muted-foreground">
+    <main className="flex flex-col gap-4">
+      <ContainerHeader>
+        <ContainerTitle>Evals Dashboard</ContainerTitle>
+        <ContainerDescription>
           Run and monitor evaluations for AI tasks
-        </p>
-      </div>
+        </ContainerDescription>
+      </ContainerHeader>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {TASKS.map((task) => (
-          <Link key={task.id} href={`/tasks/${task.id}` as `/tasks/${string}`}>
-            <Card className="h-full transition-colors hover:bg-muted/50">
-              <CardHeader>
-                <CardTitle>{task.name}</CardTitle>
-                <CardDescription>{task.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground text-sm">
-                  {task.testCases.length} test cases
-                </p>
-              </CardContent>
-            </Card>
-          </Link>
+          <Item key={task.id} variant="outline">
+            <ItemContent>
+              <ItemTitle>{task.name}</ItemTitle>
+              <ItemDescription>{task.description}</ItemDescription>
+            </ItemContent>
+
+            <ItemActions>
+              <Link
+                href={`/tasks/${task.id}`}
+                className={buttonVariants({ variant: "outline" })}
+              >
+                View Task
+              </Link>
+            </ItemActions>
+          </Item>
         ))}
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
