@@ -38,5 +38,5 @@ export async function generateCourseSuggestions({
     ],
   });
 
-  return { suggestions: object.courses, usage };
+  return { suggestions: object.courses, usage, userPrompt, systemPrompt };
 }

@@ -10,10 +10,12 @@
     "@zoonk/ai": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
+    "ai": "5.0.62",
     "lucide-react": "0.544.0",
     "next": "canary",
     "react": "19.2.0",
-    "react-dom": "19.2.0"
+    "react-dom": "19.2.0",
+    "zod": "4.1.12"
   },
   "devDependencies": {
     "@types/node": "^22",
