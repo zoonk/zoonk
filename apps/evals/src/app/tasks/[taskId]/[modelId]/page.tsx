@@ -1,36 +1,83 @@
+import { Button } from "@zoonk/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@zoonk/ui/components/card";
+import {
+  ContainerDescription,
+  ContainerHeader,
+  ContainerTitle,
+} from "@zoonk/ui/components/container";
+import { PlayIcon } from "lucide-react";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { getTaskResults } from "@/lib/eval-runner";
 import { EVAL_MODELS } from "@/lib/models";
 import { TASKS } from "@/tasks";
-import { TaskPageWithModel } from "./task-page-with-model";
+import { runEvalAction } from "../actions";
+import { EvalResults } from "../eval-results";
 
-interface TaskModelPageProps {
-  params: Promise<{ taskId: string; modelId: string }>;
-}
-
-export default async function TaskModelPage({ params }: TaskModelPageProps) {
-  const { taskId, modelId } = await params;
+export default async function TaskModelPage({
+  params,
+}: PageProps<"/tasks/[taskId]/[modelId]">) {
+  const { taskId, modelId: rawModelId } = await params;
   const task = TASKS.find((t) => t.id === taskId);
 
   if (!task) {
     notFound();
   }
 
-  // Decode the modelId (it comes URL-encoded)
-  const decodedModelId = decodeURIComponent(modelId);
-
-  // Validate model exists
-  const model = EVAL_MODELS.find((m) => m.id === decodedModelId);
+  const modelId = decodeURIComponent(rawModelId);
+  const model = EVAL_MODELS.find((m) => m.id === modelId);
 
   if (!model) {
-    // Redirect to task page without model
     redirect(`/tasks/${taskId}`);
   }
 
+  const results = await getTaskResults(taskId, modelId);
+
   return (
-    <TaskPageWithModel
-      taskId={task.id}
-      taskName={task.name}
-      modelId={decodedModelId}
-    />
+    <main className="flex flex-col gap-6">
+      <ContainerHeader>
+        <ContainerTitle>{task.name}</ContainerTitle>
+        <ContainerDescription>
+          Run evals and view results for this task
+        </ContainerDescription>
+      </ContainerHeader>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Run Eval</CardTitle>
+          <CardDescription>
+            Evaluating with {model?.name || modelId}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <form
+            action={async () => {
+              "use server";
+              await runEvalAction(taskId, modelId);
+            }}
+          >
+            <div className="flex items-center gap-4">
+              <Button type="submit" className="w-full sm:w-auto">
+                <PlayIcon className="size-4" />
+                Run Eval
+              </Button>
+              <Link href={`/tasks/${taskId}`}>
+                <Button type="button" variant="outline">
+                  Change Model
+                </Button>
+              </Link>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+
+      {results && <EvalResults results={results} />}
+    </main>
   );
 }
