@@ -8,7 +8,7 @@ An internal evaluation system for testing and monitoring AI-generated content qu
 - **Model Comparison**: Compare performance and cost across supported models
 - **Automatic Scoring**: AI-powered scoring system evaluates outputs against expectations
 - **Result Persistence**: Results are cached locally to avoid redundant AI calls
-- **Cost Analysis**: Calculate estimated costs for 100 runs of each task
+- **Cost Analysis**: Calculate estimated costs for 1000 runs of each task
 
 ## Running the App
 
@@ -112,8 +112,8 @@ Models are configured in `src/lib/models.ts`. Each model includes:
 3. **Result Storage**: Results are saved to `eval-results/[task-id]-[model-id].json` including:
 
    - Individual test case results with scores and token usage
-   - Average metrics across all test cases
-   - Estimated cost for 100 runs
+   - Task ID and model ID for reference
+   - Note: Average metrics (score, tokens) and cost are calculated dynamically in the UI, not stored in the file
 
 4. **Caching & Deduplication**: Results are cached by test case ID and model. If a result already exists for a specific test case ID + model combination, it's skipped to avoid redundant API calls. This means you can safely re-run evals after partial failures, and only the missing test cases will be executed.
 
@@ -135,7 +135,7 @@ The dashboard provides:
 - **Model Selection**: Choose a model to evaluate
 - **Run Evals**: Execute evaluations for selected task + model
 - **Results Display**:
-  - Summary with average score, tokens, and cost
+  - Summary with average score, tokens, and cost (calculated dynamically)
   - Individual test case breakdowns
   - Detailed evaluation steps and reasoning
   - Raw output inspection
@@ -145,23 +145,24 @@ The dashboard provides:
 ```
 src/
 ├── app/
-│   ├── api/
-│   │   ├── eval/route.ts      # Run eval endpoint
-│   │   └── results/route.ts   # Get results endpoint
 │   ├── tasks/[taskId]/
-│   │   ├── page.tsx           # Task detail page
-│   │   ├── task-page-client.tsx
-│   │   └── eval-results.tsx
+│   │   ├── [modelId]/
+│   │   │   ├── page.tsx              # Task + model results page
+│   │   │   └── task-page-with-model.tsx
+│   │   ├── actions.ts                # Server actions for running evals
+│   │   ├── page.tsx                  # Model selection page
+│   │   └── eval-results.tsx          # Results display component
 │   ├── layout.tsx
-│   └── page.tsx               # Dashboard home
+│   └── page.tsx                      # Dashboard home
 ├── lib/
-│   ├── eval-runner.ts         # Core eval execution logic
-│   ├── models.ts              # Model configurations
-│   ├── score.ts               # Scoring system
-│   ├── types.ts               # TypeScript types
-│   └── system-prompt.md       # Evaluation prompt
+│   ├── eval-runner.ts                # Core eval execution logic
+│   ├── models.ts                     # Model configurations
+│   ├── score.ts                      # Scoring system
+│   ├── stats.ts                      # Statistics calculation utilities
+│   ├── types.ts                      # TypeScript types
+│   └── system-prompt.md              # Evaluation prompt
 └── tasks/
-    ├── index.ts               # Task registry
+    ├── index.ts                      # Task registry
     └── course-suggestions/
         ├── task.ts
         └── test-cases.ts

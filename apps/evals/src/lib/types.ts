@@ -29,10 +29,6 @@ export interface TaskEvalResults {
   taskId: string;
   modelId: string;
   results: EvalResult[];
-  averageScore: number;
-  averageInputTokens: number;
-  averageOutputTokens: number;
-  totalCost: number;
 }
 
 export interface Task<TInput = unknown, TOutput = unknown> {

@@ -5,9 +5,8 @@ import {
   CardTitle,
 } from "@zoonk/ui/components/card";
 import { getModelById } from "@/lib/models";
+import { getStatsFromResults } from "@/lib/stats";
 import type { TaskEvalResults } from "@/lib/types";
-
-const DECIMAL_PLACES = 4;
 
 interface EvalResultsProps {
   results: TaskEvalResults;
@@ -15,6 +14,7 @@ interface EvalResultsProps {
 
 export function EvalResults({ results }: EvalResultsProps) {
   const model = getModelById(results.modelId);
+  const stats = getStatsFromResults(results);
 
   if (!model) {
     return null;
@@ -31,25 +31,25 @@ export function EvalResults({ results }: EvalResultsProps) {
             <div>
               <p className="text-muted-foreground text-sm">Average Score</p>
               <p className="font-bold text-2xl">
-                {results.averageScore.toFixed(2)}
+                {stats.averageScore.toFixed(2)}
               </p>
             </div>
             <div>
               <p className="text-muted-foreground text-sm">Avg Input Tokens</p>
               <p className="font-bold text-2xl">
-                {Math.round(results.averageInputTokens)}
+                {Math.round(stats.averageInputTokens)}
               </p>
             </div>
             <div>
               <p className="text-muted-foreground text-sm">Avg Output Tokens</p>
               <p className="font-bold text-2xl">
-                {Math.round(results.averageOutputTokens)}
+                {Math.round(stats.averageOutputTokens)}
               </p>
             </div>
             <div>
-              <p className="text-muted-foreground text-sm">Cost (100 runs)</p>
+              <p className="text-muted-foreground text-sm">Cost (1000 runs)</p>
               <p className="font-bold text-2xl">
-                ${results.totalCost.toFixed(DECIMAL_PLACES)}
+                ${stats.totalCost.toFixed(2)}
               </p>
             </div>
           </div>

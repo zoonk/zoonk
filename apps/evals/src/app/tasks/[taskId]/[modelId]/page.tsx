@@ -1,5 +1,3 @@
-"use cache";
-
 import { notFound, redirect } from "next/navigation";
 import { EVAL_MODELS } from "@/lib/models";
 import { TASKS } from "@/tasks";

@@ -16,7 +16,7 @@ export const EVAL_MODELS: ModelConfig[] = [
   {
     id: "openai/gpt-4.1-nano",
     name: "gpt-4.1-nano",
-    inputCost: 0.05,
+    inputCost: 0.1,
     outputCost: 0.4,
   },
   {

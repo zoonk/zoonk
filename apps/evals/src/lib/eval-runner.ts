@@ -1,6 +1,5 @@
 import fs from "node:fs/promises";
 import path from "node:path";
-import { getModelById } from "./models";
 import { generateScore } from "./score";
 import type { EvalResult, Task, TaskEvalResults, TestCase } from "./types";
 
@@ -38,35 +37,10 @@ async function saveResults(
 ) {
   await ensureResultsDir();
 
-  const model = getModelById(modelId);
-  if (!model) {
-    throw new Error(`Model ${modelId} not found`);
-  }
-
-  const averageScore =
-    results.reduce((sum, r) => sum + r.score, 0) / results.length;
-  const averageInputTokens =
-    results.reduce((sum, r) => sum + r.inputTokens, 0) / results.length;
-  const averageOutputTokens =
-    results.reduce((sum, r) => sum + r.outputTokens, 0) / results.length;
-
-  const TOKENS_PER_MILLION = 1_000_000;
-  const COST_MULTIPLIER = 100;
-
-  // Calculate cost for 100 runs
-  const costPer100Runs =
-    ((averageInputTokens * model.inputCost) / TOKENS_PER_MILLION +
-      (averageOutputTokens * model.outputCost) / TOKENS_PER_MILLION) *
-    COST_MULTIPLIER;
-
   const taskResults: TaskEvalResults = {
     taskId,
     modelId,
     results,
-    averageScore,
-    averageInputTokens,
-    averageOutputTokens,
-    totalCost: costPer100Runs,
   };
 
   const filePath = getResultsFilePath(taskId, modelId);
