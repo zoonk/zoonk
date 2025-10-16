@@ -13,7 +13,7 @@ interface TaskStats {
 
 function calculateAverage(
   results: EvalResult[],
-  key: keyof EvalResult,
+  key: "score" | "inputTokens" | "outputTokens",
 ): number {
   if (results.length === 0) {
     return 0;
@@ -24,7 +24,7 @@ function calculateAverage(
   return total / results.length;
 }
 
-function calculateCost(tokens, cost): number {
+function calculateCost(tokens: number, cost: number): number {
   return (tokens / TOKENS_PER_MILLION) * cost * COST_MULTIPLIER;
 }
 
