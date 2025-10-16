@@ -1,6 +1,7 @@
 import type { LanguageModelUsage } from "ai";
 
 export interface TestCase {
+  id: string;
   userInput: Record<string, string>;
   expectations: string;
 }

@@ -1,5 +1,3 @@
-// biome-ignore-all lint/suspicious/noArrayIndexKey: we don't have stable IDs
-
 import {
   Card,
   CardContent,
@@ -62,10 +60,10 @@ export function EvalResults({ results }: EvalResultsProps) {
         <h2 className="mb-4 font-semibold text-xl">Test Cases</h2>
         <div className="space-y-4">
           {results.results.map((result, index) => (
-            <Card key={index}>
+            <Card key={result.testCase.id || index}>
               <CardHeader>
                 <CardTitle className="text-base">
-                  Test Case {index + 1}
+                  {result.testCase.id || `Test Case ${index + 1}`}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -122,8 +120,8 @@ export function EvalResults({ results }: EvalResultsProps) {
                     Evaluation Steps
                   </p>
                   <div className="space-y-2">
-                    {result.steps.map((step, stepIndex) => (
-                      <div key={stepIndex} className="rounded-lg border p-3">
+                    {result.steps.map((step) => (
+                      <div key={step.kind} className="rounded-lg border p-3">
                         <p className="mb-1 font-medium text-sm capitalize">
                           {step.kind.replace(/_/g, " ")}
                         </p>

@@ -114,12 +114,8 @@ function shouldSkipTestCase(
   existing: EvalResult[],
   testCase: TestCase,
 ): boolean {
-  return existing.some((r) => {
-    // Compare userInput objects for equality
-    const existingInput = JSON.stringify(r.testCase.userInput);
-    const newInput = JSON.stringify(testCase.userInput);
-    return existingInput === newInput;
-  });
+  // Check if we already have a result for this test case ID
+  return existing.some((r) => r.testCase.id === testCase.id);
 }
 
 export async function runEval(

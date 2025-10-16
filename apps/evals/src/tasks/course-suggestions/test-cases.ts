@@ -7,6 +7,7 @@ const SHARED_EXPECTATIONS = `
 
 export const TEST_CASES = [
   {
+    id: "pt-want-to-code",
     userInput: {
       locale: "pt",
       prompt: "I want to code",
@@ -19,6 +20,7 @@ export const TEST_CASES = [
     `,
   },
   {
+    id: "en-black-holes",
     userInput: {
       locale: "en",
       prompt: "quero aprender sobre buracos negros",

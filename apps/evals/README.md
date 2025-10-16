@@ -31,8 +31,13 @@ Adding a new task to the eval system requires no changes to the core evaluation 
 ```typescript
 export const TEST_CASES = [
   {
-    locale: "en",
-    prompt: "your test input",
+    id: "unique-test-case-id", // Unique ID for deduplication
+    userInput: {
+      // Any key-value pairs your task needs
+      locale: "en",
+      prompt: "your test input",
+      // Add more fields as needed
+    },
     expectations: `
       - expected behavior 1
       - expected behavior 2
@@ -41,6 +46,8 @@ export const TEST_CASES = [
   // Add more test cases...
 ];
 ```
+
+**Important**: Each test case must have a unique `id`. This ensures that when re-running evals after a partial failure, only the missing test cases are executed, preventing duplicates.
 
 2. **Create a task definition** in `src/tasks/[task-name]/task.ts`:
 
@@ -54,8 +61,11 @@ export const yourTask: Task<YourInput, YourOutput> = {
   name: "Your Task Name",
   description: "Brief description",
   testCases: TEST_CASES,
-  generate: async ({ locale, prompt, model }) =>
-    await generateYourFunction({ locale, prompt, model }),
+  generate: async (input) => {
+    // The input will contain all fields from testCase.userInput plus { model }
+    // For example: { locale, prompt, customField, model }
+    return await generateYourFunction(input);
+  },
   formatOutput: (output) => JSON.stringify(output, null, 2),
 };
 ```
@@ -105,7 +115,7 @@ Models are configured in `src/lib/models.ts`. Each model includes:
    - Average metrics across all test cases
    - Estimated cost for 100 runs
 
-4. **Caching**: If a result already exists for a test case + model combination, it's skipped to avoid redundant API calls.
+4. **Caching & Deduplication**: Results are cached by test case ID and model. If a result already exists for a specific test case ID + model combination, it's skipped to avoid redundant API calls. This means you can safely re-run evals after partial failures, and only the missing test cases will be executed.
 
 ### Scoring System
 
