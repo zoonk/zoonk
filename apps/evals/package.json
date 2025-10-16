@@ -1,0 +1,26 @@
+{
+  "name": "evals",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build-and-start": "next build && next start",
+    "type-check": "next typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "@zoonk/ai": "workspace:*",
+    "@zoonk/ui": "workspace:*",
+    "@zoonk/utils": "workspace:*",
+    "lucide-react": "0.544.0",
+    "next": "canary",
+    "react": "19.2.0",
+    "react-dom": "19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.1",
+    "@zoonk/tsconfig": "workspace:*",
+    "raw-loader": "4.0.2",
+    "typescript": "^5"
+  }
+}

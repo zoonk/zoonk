@@ -13,7 +13,8 @@
     "i18n": "turbo i18n",
     "db:generate": "turbo db:generate",
     "db:migrate": "turbo db:migrate",
-    "db:deploy": "turbo db:deploy"
+    "db:deploy": "turbo db:deploy",
+    "evals": "cd apps/evals && pnpm build-and-start"
   },
   "engines": {
     "node": "^22"
