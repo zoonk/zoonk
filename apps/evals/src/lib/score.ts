@@ -1,6 +1,10 @@
+import { cn } from "@zoonk/ui/lib/utils";
 import { generateObject } from "ai";
 import systemPrompt from "./system-prompt.md";
 import { type ScoreStep, scoreSchema } from "./types";
+
+const BAD_SCORE = 7;
+const GOOD_SCORE = 9;
 
 // Gets the average score from all steps
 function calculateScore(steps: ScoreStep[]) {
@@ -49,3 +53,15 @@ export async function generateScore(params: {
     score: calculateScore(object.steps),
   };
 }
+
+export const getScoreClassName = (score: number) => {
+  const isBadScore = score < BAD_SCORE;
+  const isAverageScore = score >= BAD_SCORE && score < GOOD_SCORE;
+  const isGoodScore = score >= GOOD_SCORE;
+
+  return cn({
+    "text-destructive": isBadScore,
+    "text-warning": isAverageScore,
+    "text-success": isGoodScore,
+  });
+};
