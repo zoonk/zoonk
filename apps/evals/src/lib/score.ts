@@ -1,21 +1,9 @@
 import { generateObject } from "ai";
-import z from "zod";
 import systemPrompt from "./system-prompt.md";
-
-const stepSchema = z.object({
-  kind: z.enum(["major_errors", "minor_errors", "potential_improvements"]),
-  conclusion: z.string(),
-  score: z.number().min(1).max(10),
-});
-
-const schema = z.object({
-  steps: z.array(stepSchema),
-});
-
-type Step = z.infer<typeof stepSchema>;
+import { type ScoreStep, scoreSchema } from "./types";
 
 // Gets the average score from all steps
-function calculateScore(steps: Step[]) {
+function calculateScore(steps: ScoreStep[]) {
   const total = steps.reduce((acc, step) => acc + step.score, 0);
   return total / steps.length;
 }
@@ -51,7 +39,7 @@ export async function generateScore(params: {
 
   const { object } = await generateObject({
     model: "openai/gpt-5",
-    schema,
+    schema: scoreSchema,
     system: systemPrompt,
     prompt: evalPrompt,
   });

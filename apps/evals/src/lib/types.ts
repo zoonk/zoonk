@@ -1,4 +1,18 @@
 import type { LanguageModelUsage } from "ai";
+import z from "zod";
+
+const stepSchema = z.object({
+  kind: z.enum(["major_errors", "minor_errors", "potential_improvements"]),
+  conclusion: z.string(),
+  score: z.number().min(1).max(10),
+});
+
+export const scoreSchema = z.object({
+  steps: z.array(stepSchema),
+});
+
+export type Score = z.infer<typeof scoreSchema>;
+export type ScoreStep = z.infer<typeof stepSchema>;
 
 export interface TestCase {
   id: string;
@@ -16,11 +30,7 @@ export interface EvalResult {
   testCase: TestCase;
   output: string;
   score: number;
-  steps: Array<{
-    kind: "major_errors" | "minor_errors" | "potential_improvements";
-    conclusion: string;
-    score: number;
-  }>;
+  steps: Score["steps"];
   inputTokens: number;
   outputTokens: number;
 }
