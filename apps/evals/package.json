@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "evals:dev": "next dev -p 3001",
     "build-and-start": "next build && next start",
     "type-check": "next typegen && tsc --noEmit"
   },

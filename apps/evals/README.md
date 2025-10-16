@@ -1,6 +1,14 @@
 # Zoonk Evals
 
-This is an internal app for running evals on LLMs. It is not intended for public use.
+An internal evaluation system for testing and monitoring AI-generated content quality across all Zoonk AI tasks.
+
+## Features
+
+- **Task Evaluation**: Run evaluations on AI tasks using different models
+- **Model Comparison**: Compare performance and cost across supported models
+- **Automatic Scoring**: AI-powered scoring system evaluates outputs against expectations
+- **Result Persistence**: Results are cached locally to avoid redundant AI calls
+- **Cost Analysis**: Calculate estimated costs for 100 runs of each task
 
 ## Running the App
 
@@ -13,3 +21,138 @@ pnpm evals
 This will build the evals app and start the server. You can then access the app at `http://localhost:3000`.
 
 From there, you'll have a UI to run evals for different models and tasks.
+
+## Adding a New Task
+
+Adding a new task to the eval system requires no changes to the core evaluation code. Simply:
+
+1. **Create a test cases file** in `src/tasks/[task-name]/test-cases.ts`:
+
+```typescript
+export const TEST_CASES = [
+  {
+    locale: "en",
+    prompt: "your test input",
+    expectations: `
+      - expected behavior 1
+      - expected behavior 2
+    `,
+  },
+  // Add more test cases...
+];
+```
+
+2. **Create a task definition** in `src/tasks/[task-name]/task.ts`:
+
+```typescript
+import { generateYourFunction } from "@zoonk/ai/your-function";
+import type { Task } from "../../lib/types";
+import { TEST_CASES } from "./test-cases";
+
+export const yourTask: Task<YourInput, YourOutput> = {
+  id: "your-task-id",
+  name: "Your Task Name",
+  description: "Brief description",
+  testCases: TEST_CASES,
+  generate: async ({ locale, prompt, model }) =>
+    await generateYourFunction({ locale, prompt, model }),
+  formatOutput: (output) => JSON.stringify(output, null, 2),
+};
+```
+
+3. **Register the task** in `src/tasks/index.ts`:
+
+```typescript
+import { yourTask } from "./your-task/task";
+
+export const TASKS = [
+  courseSuggestionsTask,
+  yourTask, // Add your task here
+];
+```
+
+That's it! Your task will automatically appear in the dashboard.
+
+## Supported Models
+
+Models are configured in `src/lib/models.ts`. Each model includes:
+
+- **ID**: The model identifier for the AI SDK
+- **Name**: Display name
+- **Input Cost**: Cost per million input tokens (in USD)
+- **Output Cost**: Cost per million output tokens (in USD)
+- **Reasoning Effort**: Optional setting for reasoning models
+
+## How It Works
+
+### Evaluation Flow
+
+1. **Test Case Execution**: For each test case, the system:
+
+   - Calls the task's generate function with the test input
+   - Captures the output, system prompt, and token usage
+
+2. **Scoring**: The output is scored using GPT-5 with a specialized evaluation prompt that:
+
+   - Checks for major errors
+   - Identifies minor errors
+   - Suggests potential improvements
+   - Assigns a score from 1-10
+
+3. **Result Storage**: Results are saved to `eval-results/[task-id]-[model-id].json` including:
+
+   - Individual test case results with scores and token usage
+   - Average metrics across all test cases
+   - Estimated cost for 100 runs
+
+4. **Caching**: If a result already exists for a test case + model combination, it's skipped to avoid redundant API calls.
+
+### Scoring System
+
+The scoring system uses a multi-step evaluation:
+
+- **Major Errors**: Critical issues that significantly impact quality
+- **Minor Errors**: Small issues that reduce utility slightly
+- **Potential Improvements**: Suggestions for enhancement
+
+The final score is the average of all step scores, providing a comprehensive quality metric.
+
+## Dashboard
+
+The dashboard provides:
+
+- **Task Overview**: Lists all available tasks with test case counts
+- **Model Selection**: Choose a model to evaluate
+- **Run Evals**: Execute evaluations for selected task + model
+- **Results Display**:
+  - Summary with average score, tokens, and cost
+  - Individual test case breakdowns
+  - Detailed evaluation steps and reasoning
+  - Raw output inspection
+
+## File Structure
+
+```
+src/
+├── app/
+│   ├── api/
+│   │   ├── eval/route.ts      # Run eval endpoint
+│   │   └── results/route.ts   # Get results endpoint
+│   ├── tasks/[taskId]/
+│   │   ├── page.tsx           # Task detail page
+│   │   ├── task-page-client.tsx
+│   │   └── eval-results.tsx
+│   ├── layout.tsx
+│   └── page.tsx               # Dashboard home
+├── lib/
+│   ├── eval-runner.ts         # Core eval execution logic
+│   ├── models.ts              # Model configurations
+│   ├── score.ts               # Scoring system
+│   ├── types.ts               # TypeScript types
+│   └── system-prompt.md       # Evaluation prompt
+└── tasks/
+    ├── index.ts               # Task registry
+    └── course-suggestions/
+        ├── task.ts
+        └── test-cases.ts
+```

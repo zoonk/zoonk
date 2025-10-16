@@ -46,3 +46,6 @@ next-env.d.ts
 
 # next-intl
 messages/*.d.json.ts
+
+# eval results
+eval-results/
