@@ -4,7 +4,10 @@ import { revalidatePath } from "next/cache";
 import { runEval } from "@/lib/eval-runner";
 import { TASKS } from "@/tasks";
 
-export async function runEvalAction(taskId: string, modelId: string) {
+export async function runEvalAction(formData: FormData) {
+  const taskId = String(formData.get("taskId") || "").trim();
+  const modelId = String(formData.get("modelId") || "").trim();
+
   const task = TASKS.find((t) => t.id === taskId);
 
   if (!task) {
@@ -12,15 +15,9 @@ export async function runEvalAction(taskId: string, modelId: string) {
   }
 
   try {
-    // biome-ignore lint/suspicious/noExplicitAny: task can be of any type
-    const results = await runEval(task as any, modelId);
+    await runEval(task, modelId);
     revalidatePath(`/tasks/${taskId}/${modelId}`);
-    return { success: true, results };
   } catch (error) {
     console.error("Error running eval:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Failed to run eval",
-    };
   }
 }

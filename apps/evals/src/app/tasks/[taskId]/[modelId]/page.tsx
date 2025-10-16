@@ -56,12 +56,9 @@ export default async function TaskModelPage({
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <form
-            action={async () => {
-              "use server";
-              await runEvalAction(taskId, modelId);
-            }}
-          >
+          <form action={runEvalAction}>
+            <input type="hidden" name="taskId" value={taskId} />
+            <input type="hidden" name="modelId" value={modelId} />
             <div className="flex items-center gap-4">
               <Button type="submit" className="w-full sm:w-auto">
                 <PlayIcon className="size-4" />
