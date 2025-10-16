@@ -1,21 +1,14 @@
-import { generateCourseSuggestions } from "@zoonk/ai/course-suggestions";
+import {
+  type CourseSuggestionSchema,
+  type CourseSuggestionsParams,
+  generateCourseSuggestions,
+} from "@zoonk/ai/course-suggestions";
 import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
 
-interface CourseSuggestion {
-  title: string;
-  description: string;
-}
-
-interface CourseSuggestionsInput {
-  locale: string;
-  prompt: string;
-  model: string;
-}
-
 export const courseSuggestionsTask: Task<
-  CourseSuggestionsInput,
-  CourseSuggestion[]
+  CourseSuggestionsParams,
+  CourseSuggestionSchema["courses"]
 > = {
   id: "course-suggestions",
   name: "Course Suggestions",
