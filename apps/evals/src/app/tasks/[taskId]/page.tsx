@@ -1,10 +1,16 @@
+import { buttonVariants } from "@zoonk/ui/components/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@zoonk/ui/components/card";
+  ContainerDescription,
+  ContainerHeader,
+  ContainerTitle,
+} from "@zoonk/ui/components/container";
+import {
+  Item,
+  ItemActions,
+  ItemContent,
+  ItemDescription,
+  ItemTitle,
+} from "@zoonk/ui/components/item";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { EVAL_MODELS, getModelDisplayName } from "@/lib/models";
@@ -23,52 +29,36 @@ export default async function TaskPage({ params }: TaskPageProps) {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="font-bold text-3xl">{task.name}</h1>
-        <p className="mt-2 text-muted-foreground">{task.description}</p>
-      </div>
+    <main className="flex flex-col gap-4">
+      <ContainerHeader>
+        <ContainerTitle>{task.name}</ContainerTitle>
+        <ContainerDescription>
+          Choose a model to run evaluations on {task.testCases.length} test
+          cases
+        </ContainerDescription>
+      </ContainerHeader>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Select Model</CardTitle>
-          <CardDescription>
-            Choose a model to run evaluations on {task.testCases.length} test
-            cases
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-3 md:grid-cols-2">
-            {EVAL_MODELS.map((model) => {
-              const encodedModelId = encodeURIComponent(model.id);
-              const href = `/tasks/${taskId}/${encodedModelId}`;
-              return (
-                <Link
-                  key={model.id}
-                  // biome-ignore lint/suspicious/noExplicitAny: next.js typed routes issue
-                  href={href as any}
-                >
-                  <Card className="h-full transition-colors hover:bg-muted/50">
-                    <CardHeader>
-                      <CardTitle className="text-base">
-                        {getModelDisplayName(model)}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground text-sm">
-                        ${model.inputCost}/M input tokens
-                      </p>
-                      <p className="text-muted-foreground text-sm">
-                        ${model.outputCost}/M output tokens
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+      <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {EVAL_MODELS.map((model) => (
+          <Item key={model.id} variant="outline">
+            <ItemContent>
+              <ItemTitle>{getModelDisplayName(model)}</ItemTitle>
+              <ItemDescription>
+                ${model.inputCost}/M input · ${model.outputCost}/M output
+              </ItemDescription>
+            </ItemContent>
+
+            <ItemActions>
+              <Link
+                href={`/tasks/${taskId}/${encodeURIComponent(model.id)}`}
+                className={buttonVariants({ variant: "outline" })}
+              >
+                Run Eval
+              </Link>
+            </ItemActions>
+          </Item>
+        ))}
+      </section>
+    </main>
   );
 }
