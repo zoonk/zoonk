@@ -119,9 +119,24 @@ export async function runEval<TInput = unknown, TOutput = unknown>(
     return JSON.parse(data) as TaskEvalResults;
   }
 
-  const newResults = await Promise.all(
+  const results = await Promise.allSettled(
     testCasesToRun.map((tc) => runTestCase(task, tc, modelId)),
   );
+
+  // Filter out the rejected promises and extract values from fulfilled ones
+  const newResults: EvalResult[] = results
+    .map((result) => {
+      if (result.status === "fulfilled") {
+        return result.value;
+      }
+
+      console.error(
+        `Error running test case: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
+      );
+
+      return null;
+    })
+    .filter((res): res is EvalResult => res !== null);
 
   const allResults = [...existingResults, ...newResults];
 
