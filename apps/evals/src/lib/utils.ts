@@ -24,7 +24,7 @@ export async function getModelStatus(
   return "notStarted";
 }
 
-// Fetch model statuses and sort: notStarted -> incomplete -> completed
+// Fetch model statuses and sort: notStarted -> incomplete (filter out completed)
 export async function getSortedModels(taskId: string) {
   const modelWithStatus = await Promise.all(
     EVAL_MODELS.map(async (model) => ({
@@ -33,14 +33,19 @@ export async function getSortedModels(taskId: string) {
     })),
   );
 
-  const order: Record<"notStarted" | "incomplete" | "completed", number> = {
+  const order: Record<ModelStatus, number> = {
     notStarted: 0,
     incomplete: 1,
     completed: 2,
   };
 
   const sortedModels = modelWithStatus
-    .sort((a, b) => order[a.status] - order[b.status])
+    .filter((x) => x.status !== "completed")
+    .sort((a, b) => {
+      const aStatus = a.status as ModelStatus;
+      const bStatus = b.status as ModelStatus;
+      return order[aStatus] - order[bStatus];
+    })
     .map((x) => x.model);
 
   return sortedModels;
