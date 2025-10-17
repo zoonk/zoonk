@@ -3,7 +3,7 @@
 
 @plugin "@tailwindcss/typography";
 
-@source "../../../apps/**/*.{ts,tsx}";
+@source "../../../apps/**/src/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
 
 @theme inline {
