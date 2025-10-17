@@ -24,7 +24,7 @@ const variantMap: Record<
   notStarted: "outline",
 };
 
-async function getModelStatus(
+export async function getModelStatus(
   taskId: string,
   modelId: string,
 ): Promise<ModelStatus> {

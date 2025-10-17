@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { cache } from "react";
 import { generateScore } from "./score";
 import type { EvalResult, Task, TaskEvalResults, TestCase } from "./types";
 
@@ -132,15 +133,14 @@ export async function runEval<TInput = unknown, TOutput = unknown>(
   return JSON.parse(data) as TaskEvalResults;
 }
 
-export async function getTaskResults(
-  taskId: string,
-  modelId: string,
-): Promise<TaskEvalResults | null> {
-  const filePath = getResultsFilePath(taskId, modelId);
-  try {
-    const data = await fs.readFile(filePath, "utf-8");
-    return JSON.parse(data) as TaskEvalResults;
-  } catch {
-    return null;
-  }
-}
+export const getTaskResults = cache(
+  async (taskId: string, modelId: string): Promise<TaskEvalResults | null> => {
+    const filePath = getResultsFilePath(taskId, modelId);
+    try {
+      const data = await fs.readFile(filePath, "utf-8");
+      return JSON.parse(data) as TaskEvalResults;
+    } catch {
+      return null;
+    }
+  },
+);
