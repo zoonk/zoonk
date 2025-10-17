@@ -91,7 +91,7 @@ export function SubscriptionPage() {
       </ItemContent>
 
       <ItemActions>
-        <Button variant="outline" disabled={isLoading} onClick={handleAction}>
+        <Button disabled={isLoading} onClick={handleAction}>
           {isLoading && <Loader2Icon className="animate-spin" />}
           {action}
         </Button>
