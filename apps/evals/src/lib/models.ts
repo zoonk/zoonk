@@ -15,6 +15,20 @@ export const EVAL_MODELS: ModelConfig[] = [
     reasoningEffort: "auto",
   },
   {
+    id: "openai/gpt-5-mini",
+    name: "gpt-5-mini",
+    inputCost: 0.25,
+    outputCost: 2,
+    reasoningEffort: "auto",
+  },
+  {
+    id: "openai/gpt-5-nano",
+    name: "gpt-5-nano",
+    inputCost: 0.05,
+    outputCost: 0.4,
+    reasoningEffort: "auto",
+  },
+  {
     id: "openai/gpt-4.1",
     name: "gpt-4.1",
     inputCost: 2,
