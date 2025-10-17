@@ -76,6 +76,25 @@ export const EVAL_MODELS: ModelConfig[] = [
     inputCost: 0.1,
     outputCost: 0.4,
   },
+  {
+    id: "xai/grok-4",
+    name: "grok-4",
+    inputCost: 3,
+    outputCost: 15,
+  },
+  {
+    id: "xai/grok-4-fast-reasoning",
+    name: "grok-4-fast-reasoning",
+    inputCost: 0.2,
+    outputCost: 0.5,
+    reasoningEffort: "auto",
+  },
+  {
+    id: "xai/grok-4-fast-non-reasoning",
+    name: "grok-4-fast-non-reasoning",
+    inputCost: 0.2,
+    outputCost: 0.5,
+  },
 ];
 
 export function getModelDisplayName(model: ModelConfig): string {
