@@ -42,27 +42,27 @@
         },
         "expectations": "\n      - suggestions should include \"Black Holes\"\n      - suggestions may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
       },
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the fascinating properties and mysteries of black holes to understand their impact on space and time.\"\n  },\n  {\n    \"title\": \"Astronomy\",\n    \"description\": \"Study celestial objects and phenomena to gain a comprehensive understanding of the universe.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Delve into the physical principles governing stars, galaxies, and black holes to comprehend the cosmos.\"\n  }\n]",
-      "score": 8.8,
+      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the fascinating properties and phenomena associated with black holes to understand their impact on the universe.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Learn about the physical properties of celestial bodies and the cosmic processes shaping our universe.\"\n  },\n  {\n    \"title\": \"Cosmology\",\n    \"description\": \"Study the origin, evolution, and eventual fate of the universe to grasp the large-scale structure of cosmos.\"\n  }\n]",
+      "score": 9.266666666666667,
       "steps": [
         {
           "kind": "major_errors",
-          "conclusion": "None. The output meets the constraints: English language per APP_LANGUAGE, includes the exact topic \"Black Holes,\" titles in Title Case without levels or joiners, single-sentence descriptions, and appropriate broader topics like Astronomy and Astrophysics.",
-          "score": 8.8
+          "conclusion": "None. The suggestions follow the rules: English titles in Title Case, include the exact topic 'Black Holes', add broader topics, and each description is one sentence; no disallowed level/joiner words or variant markers.",
+          "score": 10
         },
         {
           "kind": "minor_errors",
-          "conclusion": "None. Formatting, tone, and content all align with the specified rules, and there are no factual or stylistic violations.",
-          "score": 8.8
+          "conclusion": "Minor grammar issue in the 'Cosmology' description: 'the large-scale structure of cosmos' should read 'the large-scale structure of the cosmos'.",
+          "score": 9
         },
         {
           "kind": "potential_improvements",
-          "conclusion": "Consider adding more relevant suggestions to increase coverage, such as \"General Relativity,\" \"Cosmology,\" \"Gravitational Waves,\" \"Relativity,\" \"High-Energy Astrophysics,\" or \"Observational Astronomy\"; optionally make descriptions slightly more outcome-focused (e.g., skills or applications).",
+          "conclusion": "Could include a few more relevant suggestions (e.g., 'General Relativity', 'Gravitational Waves', 'Observational Astronomy') and polish the 'Cosmology' description grammar.",
           "score": 8.8
         }
       ],
       "inputTokens": 500,
-      "outputTokens": 83
+      "outputTokens": 88
     }
   ]
 }

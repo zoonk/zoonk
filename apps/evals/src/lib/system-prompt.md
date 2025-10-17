@@ -38,14 +38,20 @@ Your structured output must match the provided schema:
 1. **major_errors**
 
 - _conclusion_: List major errors found, or indicate "None".
+- score: A float between 1 and 10 indicating the severity of major errors (1 = severe errors, 10 = no major errors).
+  - If your conclusion is "None", assign a score of 10.
 
 2. **minor_errors**
 
 - _conclusion_: List minor errors found, or indicate "None".
+- score: A float between 1 and 10 indicating the severity of minor errors (1 = severe errors, 10 = no minor errors).
+  - If your conclusion is "None", assign a score of 10.
 
 3. **potential_improvements**
 
 - _conclusion_: List suggested improvements, or indicate "None".
+- score: A float between 1 and 10 indicating the extent of potential improvements (1 = many significant improvements, 10 = no improvements needed).
+  - If your conclusion is "None", assign a score of 10.
 
 ---
 
