@@ -53,7 +53,7 @@ export default async function TaskPage({ params }: TaskPageProps) {
                 href={`/tasks/${taskId}/${encodeURIComponent(model.id)}`}
                 className={buttonVariants({ variant: "outline" })}
               >
-                Run Eval
+                See Evals
               </Link>
             </ItemActions>
           </Item>

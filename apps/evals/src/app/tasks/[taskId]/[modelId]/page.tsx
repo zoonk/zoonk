@@ -11,6 +11,7 @@ import {
   ContainerHeader,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
+import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { PlayIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -55,15 +56,15 @@ export default async function TaskModelPage({
             Evaluating with {model?.name || modelId}
           </CardDescription>
         </CardHeader>
+
         <CardContent className="space-y-4">
           <form action={runEvalAction}>
             <input type="hidden" name="taskId" value={taskId} />
             <input type="hidden" name="modelId" value={modelId} />
+
             <div className="flex items-center gap-4">
-              <Button type="submit" className="w-full sm:w-auto">
-                <PlayIcon className="size-4" />
-                Run Eval
-              </Button>
+              <SubmitButton icon={<PlayIcon />}>Run Eval</SubmitButton>
+
               <Link href={`/tasks/${taskId}`}>
                 <Button type="button" variant="outline">
                   Change Model
