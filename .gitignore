@@ -37,3 +37,6 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+# VSCode
+tasks.json

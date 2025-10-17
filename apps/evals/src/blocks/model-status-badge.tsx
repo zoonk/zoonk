@@ -1,8 +1,5 @@
 import { Badge } from "@zoonk/ui/components/badge";
-import { getTaskResults } from "@/lib/eval-runner";
-import { getTotalTestCases } from "@/tasks";
-
-type ModelStatus = "completed" | "incomplete" | "notStarted";
+import { getModelStatus, type ModelStatus } from "@/lib/utils";
 
 interface ModelStatusBadgeProps {
   taskId: string;
@@ -23,25 +20,6 @@ const variantMap: Record<
   incomplete: "secondary",
   notStarted: "outline",
 };
-
-export async function getModelStatus(
-  taskId: string,
-  modelId: string,
-): Promise<ModelStatus> {
-  const results = await getTaskResults(taskId, modelId);
-  const resultsCount = results?.results.length ?? 0;
-  const totalTestCases = getTotalTestCases(taskId);
-
-  if (resultsCount >= totalTestCases && totalTestCases > 0) {
-    return "completed";
-  }
-
-  if (resultsCount > 0 && resultsCount < totalTestCases) {
-    return "incomplete";
-  }
-
-  return "notStarted";
-}
 
 export async function ModelStatusBadge({
   taskId,

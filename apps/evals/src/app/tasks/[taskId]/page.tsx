@@ -14,39 +14,19 @@ import {
 } from "@zoonk/ui/components/item";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getModelStatus, ModelStatusBadge } from "@/blocks/model-status-badge";
-import { EVAL_MODELS, getModelDisplayName } from "@/lib/models";
+import { ModelStatusBadge } from "@/blocks/model-status-badge";
+import { getModelDisplayName } from "@/lib/models";
+import { getModelsWithResults, getSortedModels } from "@/lib/utils";
 import {
   AppBreadcrumb,
   HomeLinkBreadcrumb,
   TaskPageBreadcrumb,
 } from "@/patterns/breadcrumb";
 import { getTaskById } from "@/tasks";
+import { Leaderboard } from "./leaderboard";
 
 interface TaskPageProps {
   params: Promise<{ taskId: string }>;
-}
-
-// Fetch model statuses and sort: notStarted -> incomplete -> completed
-async function getSortedModels(taskId: string) {
-  const modelWithStatus = await Promise.all(
-    EVAL_MODELS.map(async (model) => ({
-      model,
-      status: await getModelStatus(taskId, model.id),
-    })),
-  );
-
-  const order: Record<"notStarted" | "incomplete" | "completed", number> = {
-    notStarted: 0,
-    incomplete: 1,
-    completed: 2,
-  };
-
-  const sortedModels = modelWithStatus
-    .sort((a, b) => order[a.status] - order[b.status])
-    .map((x) => x.model);
-
-  return sortedModels;
 }
 
 export default async function TaskPage({ params }: TaskPageProps) {
@@ -58,9 +38,10 @@ export default async function TaskPage({ params }: TaskPageProps) {
   }
 
   const sortedModels = await getSortedModels(taskId);
+  const modelsWithResults = await getModelsWithResults(taskId);
 
   return (
-    <main className="flex flex-col gap-4">
+    <main className="flex flex-col gap-8">
       <AppBreadcrumb>
         <HomeLinkBreadcrumb />
         <BreadcrumbSeparator />
@@ -74,6 +55,8 @@ export default async function TaskPage({ params }: TaskPageProps) {
           cases
         </ContainerDescription>
       </ContainerHeader>
+
+      <Leaderboard results={modelsWithResults} />
 
       <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {sortedModels.map((model) => (
