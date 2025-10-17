@@ -8,6 +8,18 @@ export interface ModelConfig {
 
 export const EVAL_MODELS: ModelConfig[] = [
   {
+    id: "anthropic/claude-sonnet-4.5",
+    name: "claude-sonnet-4.5",
+    inputCost: 3,
+    outputCost: 15,
+  },
+  {
+    id: "anthropic/claude-haiku-4.5",
+    name: "claude-haiku-4.5",
+    inputCost: 1,
+    outputCost: 5,
+  },
+  {
     id: "google/gemini-2.5-pro",
     name: "gemini-2.5-pro",
     inputCost: 2.5,
