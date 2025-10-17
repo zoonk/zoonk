@@ -8,6 +8,24 @@ export interface ModelConfig {
 
 export const EVAL_MODELS: ModelConfig[] = [
   {
+    id: "google/gemini-2.5-pro",
+    name: "gemini-2.5-pro",
+    inputCost: 2.5,
+    outputCost: 10,
+  },
+  {
+    id: "google/gemini-2.5-flash",
+    name: "gemini-2.5-flash",
+    inputCost: 0.3,
+    outputCost: 2.5,
+  },
+  {
+    id: "google/gemini-2.5-flash-lite",
+    name: "gemini-2.5-flash-lite",
+    inputCost: 0.1,
+    outputCost: 0.4,
+  },
+  {
     id: "openai/gpt-5",
     name: "gpt-5",
     inputCost: 1.25,
