@@ -2,6 +2,10 @@ import { getModelById, getModelDisplayName } from "@/lib/models";
 import { getStatsFromResults } from "@/lib/stats";
 import type { TaskEvalResults } from "@/lib/types";
 
+function roundScoreToFixed(score: number): number {
+  return Number(score.toFixed(2));
+}
+
 export interface LeaderboardEntry {
   modelId: string;
   modelName: string;
@@ -56,12 +60,15 @@ export function compareEntries(
   key: SortKey,
 ): number {
   if (key === "averageScore") {
-    const byScore = a.averageScore - b.averageScore; // ascending by score
+    const aRounded = roundScoreToFixed(a.averageScore);
+    const bRounded = roundScoreToFixed(b.averageScore);
+    const byScore = aRounded - bRounded;
+
     if (byScore !== 0) {
       return byScore;
     }
     // tie-breaker: lower total cost first
-    return a.totalCost - b.totalCost;
+    return b.totalCost - a.totalCost;
   }
 
   if (key === "totalCost") {
