@@ -38,6 +38,18 @@ export const EVAL_MODELS: ModelConfig[] = [
     outputCost: 0.4,
   },
   {
+    id: "meta/llama-4-maverick",
+    name: "llama-4-maverick",
+    inputCost: 0.15,
+    outputCost: 0.6,
+  },
+  {
+    id: "meta/llama-4-scout",
+    name: "llama-4-scout",
+    inputCost: 0.08,
+    outputCost: 0.3,
+  },
+  {
     id: "openai/gpt-5",
     name: "gpt-5",
     inputCost: 1.25,
