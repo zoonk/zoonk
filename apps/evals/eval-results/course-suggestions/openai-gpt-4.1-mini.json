@@ -1,0 +1,68 @@
+{
+  "taskId": "course-suggestions",
+  "modelId": "openai/gpt-4.1-mini",
+  "results": [
+    {
+      "testCase": {
+        "id": "pt-want-to-code",
+        "userInput": {
+          "locale": "pt",
+          "prompt": "I want to code"
+        },
+        "expectations": "\n      - titles should look like these: \"Programação\",\"Ciência da Computação\",\"Desenvolvimento Web\",\"Engenharia de Software\"\n      - all titles and descriptions in Brazilian Portuguese\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
+      },
+      "output": "[\n  {\n    \"title\": \"Desenvolvimento de Software\",\n    \"description\": \"Aprenda as habilidades essenciais para criar e manter aplicações de software eficazes.\"\n  },\n  {\n    \"title\": \"Programação Web\",\n    \"description\": \"Explore como construir sites dinâmicos e interativos usando tecnologias modernas da web.\"\n  },\n  {\n    \"title\": \"Ciência da Computação\",\n    \"description\": \"Entenda os fundamentos teóricos e práticos que suportam a programação e algoritmos.\"\n  }\n]",
+      "score": 8.799999999999999,
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None.",
+          "score": 9
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "Does not include the broad canonical title \"Programação\" despite a vague intent; one title uses \"Programação Web\" instead of the more standard \"Desenvolvimento Web\"; descriptions are acceptable but one has slightly awkward phrasing (\"que suportam a programação e algoritmos\").",
+          "score": 8.8
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "Add the canonical \"Programação\" title; consider additional relevant suggestions like \"Desenvolvimento Web\", \"Engenharia de Software\", \"Algoritmos\", \"Estruturas de Dados\", or \"Desenvolvimento Mobile\"; refine Portuguese phrasing for clarity and naturalness in descriptions.",
+          "score": 8.6
+        }
+      ],
+      "inputTokens": 498,
+      "outputTokens": 86
+    },
+    {
+      "testCase": {
+        "id": "en-black-holes",
+        "userInput": {
+          "locale": "en",
+          "prompt": "quero aprender sobre buracos negros"
+        },
+        "expectations": "\n      - suggestions should include \"Black Holes\"\n      - suggestions may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
+      },
+      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the fascinating properties and mysteries of black holes to understand their impact on space and time.\"\n  },\n  {\n    \"title\": \"Astronomy\",\n    \"description\": \"Study celestial objects and phenomena to gain a comprehensive understanding of the universe.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Delve into the physical principles governing stars, galaxies, and black holes to comprehend the cosmos.\"\n  }\n]",
+      "score": 8.8,
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None. The output meets the constraints: English language per APP_LANGUAGE, includes the exact topic \"Black Holes,\" titles in Title Case without levels or joiners, single-sentence descriptions, and appropriate broader topics like Astronomy and Astrophysics.",
+          "score": 8.8
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None. Formatting, tone, and content all align with the specified rules, and there are no factual or stylistic violations.",
+          "score": 8.8
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "Consider adding more relevant suggestions to increase coverage, such as \"General Relativity,\" \"Cosmology,\" \"Gravitational Waves,\" \"Relativity,\" \"High-Energy Astrophysics,\" or \"Observational Astronomy\"; optionally make descriptions slightly more outcome-focused (e.g., skills or applications).",
+          "score": 8.8
+        }
+      ],
+      "inputTokens": 500,
+      "outputTokens": 83
+    }
+  ]
+}
