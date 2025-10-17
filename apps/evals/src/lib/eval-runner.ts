@@ -5,15 +5,14 @@ import type { EvalResult, Task, TaskEvalResults, TestCase } from "./types";
 
 const RESULTS_DIR = path.join(process.cwd(), "eval-results");
 
-async function ensureResultsDir() {
-  await fs.mkdir(RESULTS_DIR, { recursive: true });
+async function ensureResultsDir(taskId: string) {
+  const taskDir = path.join(RESULTS_DIR, taskId);
+  await fs.mkdir(taskDir, { recursive: true });
 }
 
 function getResultsFilePath(taskId: string, modelId: string): string {
-  return path.join(
-    RESULTS_DIR,
-    `${taskId}-${modelId.replace(/\//g, "-")}.json`,
-  );
+  const modelPath = modelId.replace(/\//g, "-");
+  return path.join(RESULTS_DIR, taskId, `${modelPath}.json`);
 }
 
 async function loadExistingResults(
@@ -35,7 +34,7 @@ async function saveResults(
   modelId: string,
   results: EvalResult[],
 ) {
-  await ensureResultsDir();
+  await ensureResultsDir(taskId);
 
   const taskResults: TaskEvalResults = {
     taskId,
