@@ -8,6 +8,7 @@
     "type-check": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@ai-sdk/gateway": "2.0.0",
     "@zoonk/ai": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",

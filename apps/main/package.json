@@ -13,6 +13,7 @@
     "stripe:listen": "stripe listen --forward-to http://localhost:3000/api/auth/stripe/webhook"
   },
   "dependencies": {
+    "@ai-sdk/gateway": "2.0.0",
     "@prisma/client": "6.17.0",
     "@tabler/icons-react": "3.35.0",
     "@vercel/analytics": "1.5.0",
