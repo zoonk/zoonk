@@ -1,10 +1,7 @@
 "use cache";
 
 import { SidebarInset, SidebarProvider } from "@zoonk/ui/components/sidebar";
-import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
-} from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
 import { SettingsSidebar } from "@/app/[locale]/(settings)/settings-sidebar";
 

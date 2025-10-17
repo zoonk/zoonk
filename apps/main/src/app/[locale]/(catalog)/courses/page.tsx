@@ -1,10 +1,7 @@
 "use cache";
 
 import type { Metadata } from "next";
-import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
-} from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata({

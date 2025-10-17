@@ -1,7 +1,4 @@
-import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
-} from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
 import LoginFooter from "./login-footer";
 import LoginForm from "./login-form";

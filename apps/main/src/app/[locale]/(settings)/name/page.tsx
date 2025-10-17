@@ -7,10 +7,7 @@ import {
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import type { Metadata } from "next";
-import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
-} from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { ProtectedSection } from "@/blocks/protected-section";
 import { NameForm } from "./name-form";
