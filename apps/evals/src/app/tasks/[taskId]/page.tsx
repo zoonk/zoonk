@@ -14,13 +14,14 @@ import {
 } from "@zoonk/ui/components/item";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ModelStatusBadge } from "@/blocks/model-status-badge";
 import { EVAL_MODELS, getModelDisplayName } from "@/lib/models";
 import {
   AppBreadcrumb,
   HomeLinkBreadcrumb,
   TaskPageBreadcrumb,
 } from "@/patterns/breadcrumb";
-import { TASKS } from "@/tasks";
+import { getTaskById } from "@/tasks";
 
 interface TaskPageProps {
   params: Promise<{ taskId: string }>;
@@ -28,7 +29,7 @@ interface TaskPageProps {
 
 export default async function TaskPage({ params }: TaskPageProps) {
   const { taskId } = await params;
-  const task = TASKS.find((t) => t.id === taskId);
+  const task = getTaskById(taskId);
 
   if (!task) {
     notFound();
@@ -54,7 +55,10 @@ export default async function TaskPage({ params }: TaskPageProps) {
         {EVAL_MODELS.map((model) => (
           <Item key={model.id} variant="outline">
             <ItemContent>
-              <ItemTitle>{getModelDisplayName(model)}</ItemTitle>
+              <ItemTitle>
+                {getModelDisplayName(model)}
+                <ModelStatusBadge taskId={taskId} modelId={model.id} />
+              </ItemTitle>
               <ItemDescription>
                 ${model.inputCost}/M input · ${model.outputCost}/M output
               </ItemDescription>

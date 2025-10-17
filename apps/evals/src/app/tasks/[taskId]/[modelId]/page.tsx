@@ -16,6 +16,7 @@ import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { PlayIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { ModelStatusBadge } from "@/blocks/model-status-badge";
 import { getTaskResults } from "@/lib/eval-runner";
 import { EVAL_MODELS, getModelDisplayName } from "@/lib/models";
 import {
@@ -66,7 +67,10 @@ export default async function TaskModelPage({
 
       <Card>
         <CardHeader>
-          <CardTitle>Run Eval</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            Run Eval
+            <ModelStatusBadge taskId={taskId} modelId={modelId} />
+          </CardTitle>
           <CardDescription>
             Evaluating with {model?.name || modelId}
           </CardDescription>
