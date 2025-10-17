@@ -13,7 +13,7 @@
     "@zoonk/db": "workspace:*"
   },
   "peerDependencies": {
-    "next": ">=16.0.0-canary.4",
+    "next": ">=16.0.0-canary.10",
     "server-only": ">=0.0.1"
   },
   "devDependencies": {

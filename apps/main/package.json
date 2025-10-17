@@ -24,7 +24,7 @@
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "lucide-react": "0.544.0",
-    "next": "canary",
+    "next": "16.0.0-canary.10",
     "next-intl": "4.3.9",
     "pg": "8.16.3",
     "react": "19.2.0",

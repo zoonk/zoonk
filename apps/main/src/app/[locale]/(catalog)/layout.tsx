@@ -1,9 +1,6 @@
 "use cache";
 
-import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
-} from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { NavbarLinks } from "@/blocks/navbar-links";

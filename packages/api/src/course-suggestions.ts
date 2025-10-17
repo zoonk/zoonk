@@ -6,10 +6,7 @@ import {
   getCourseSuggestion,
   type Suggestion,
 } from "@zoonk/db/queries/course-suggestions";
-import {
-  unstable_cacheLife as cacheLife,
-  unstable_cacheTag as cacheTag,
-} from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 
 const model = process.env.AI_MODEL_COURSE_SUGGESTIONS || "openai/gpt-4.1";
 
