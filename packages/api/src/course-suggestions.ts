@@ -24,15 +24,15 @@ export async function fetchCourseSuggestions({
   const record = await getCourseSuggestion({ locale, prompt });
 
   if (!record) {
-    const { suggestions } = await generateCourseSuggestions({
+    const { data } = await generateCourseSuggestions({
       locale,
       prompt,
       model,
     });
 
-    await addCourseSuggestion({ locale, prompt, suggestions });
+    await addCourseSuggestion({ locale, prompt, suggestions: data });
 
-    return suggestions;
+    return data;
   }
 
   return record.suggestions as Suggestion[];

@@ -1,6 +1,7 @@
 {
   "folders": [
     { "path": "." },
+    { "path": "./apps/evals" },
     { "path": "./apps/main" },
     { "path": "./packages/ai" },
     { "path": "./packages/api" },

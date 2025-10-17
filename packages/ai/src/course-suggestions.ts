@@ -13,6 +13,8 @@ const schema = z.object({
   ),
 });
 
+export type CourseSuggestionSchema = z.infer<typeof schema>;
+
 export type CourseSuggestionsParams = {
   locale: string;
   prompt: string;
@@ -38,5 +40,5 @@ export async function generateCourseSuggestions({
     ],
   });
 
-  return { suggestions: object.courses, usage };
+  return { data: object.courses, usage, userPrompt, systemPrompt };
 }
