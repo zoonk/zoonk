@@ -93,7 +93,7 @@ pnpm add <package-name> --filter=main
 
 #### Adding shadcn components
 
-To add components, run the add command in the path of our app:
+To add components, run the add command in the path of our app or package:
 
 ```sh
 cd apps/main
