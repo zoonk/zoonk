@@ -14,10 +14,15 @@ import Link from "next/link";
 import { TASKS } from "@/tasks";
 import "@zoonk/ui/globals.css";
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { AppBreadcrumb, HomePageBreadcrumb } from "@/patterns/breadcrumb";
 
 export default function Home() {
   return (
     <main className="flex flex-col gap-4">
+      <AppBreadcrumb>
+        <HomePageBreadcrumb />
+      </AppBreadcrumb>
+
       <ContainerHeader>
         <ContainerTitle>Evals Dashboard</ContainerTitle>
         <ContainerDescription>

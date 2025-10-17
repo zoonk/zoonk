@@ -1,3 +1,4 @@
+import { BreadcrumbSeparator } from "@zoonk/ui/components/breadcrumb";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Card,
@@ -16,7 +17,13 @@ import { PlayIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getTaskResults } from "@/lib/eval-runner";
-import { EVAL_MODELS } from "@/lib/models";
+import { EVAL_MODELS, getModelDisplayName } from "@/lib/models";
+import {
+  AppBreadcrumb,
+  HomeLinkBreadcrumb,
+  ModelPageBreadcrumb,
+  TaskLinkBreadcrumb,
+} from "@/patterns/breadcrumb";
 import { TASKS } from "@/tasks";
 import { runEvalAction } from "./actions";
 import { EvalResults } from "./eval-results";
@@ -42,6 +49,14 @@ export default async function TaskModelPage({
 
   return (
     <main className="flex flex-col gap-6">
+      <AppBreadcrumb>
+        <HomeLinkBreadcrumb />
+        <BreadcrumbSeparator />
+        <TaskLinkBreadcrumb taskId={task.id} taskName={task.name} />
+        <BreadcrumbSeparator />
+        <ModelPageBreadcrumb modelName={getModelDisplayName(model)} />
+      </AppBreadcrumb>
+
       <ContainerHeader>
         <ContainerTitle>{task.name}</ContainerTitle>
         <ContainerDescription>
