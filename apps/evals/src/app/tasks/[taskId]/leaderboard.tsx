@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import {
   getDefaultSortDirection,
@@ -20,10 +21,11 @@ import {
 import type { TaskEvalResults } from "@/lib/types";
 
 interface LeaderboardProps {
+  taskId: string;
   results: TaskEvalResults[];
 }
 
-export function Leaderboard({ results }: LeaderboardProps) {
+export function Leaderboard({ taskId, results }: LeaderboardProps) {
   const entries: LeaderboardEntry[] = useMemo(
     () => getLeaderboardEntries(results),
     [results],
@@ -96,7 +98,13 @@ export function Leaderboard({ results }: LeaderboardProps) {
         <TableBody>
           {sortedEntries.map((entry) => (
             <TableRow key={entry.modelId}>
-              <TableCell>{entry.modelName}</TableCell>
+              <TableCell>
+                <Link
+                  href={`/tasks/${taskId}/${encodeURIComponent(entry.modelId)}`}
+                >
+                  {entry.modelName}
+                </Link>
+              </TableCell>
               <TableCell>{entry.provider}</TableCell>
               <TableCell>{entry.averageScore.toFixed(2)}</TableCell>
               <TableCell>${entry.totalCost.toFixed(2)}</TableCell>
