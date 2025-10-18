@@ -47,8 +47,8 @@ async function saveResults(
   await fs.writeFile(filePath, JSON.stringify(taskResults, null, 2));
 }
 
-async function runTestCase<TInput = unknown, TOutput = unknown>(
-  task: Task<TInput, TOutput>,
+async function runTestCase(
+  task: Task,
   testCase: TestCase,
   modelId: string,
 ): Promise<EvalResult> {
@@ -61,7 +61,7 @@ async function runTestCase<TInput = unknown, TOutput = unknown>(
   const result = await task.generate({
     ...testCase.userInput,
     model: modelId,
-  } as TInput & { model: string });
+  });
 
   const output = JSON.stringify(result.data, null, 2);
 
@@ -92,8 +92,8 @@ function shouldSkipTestCase(
   return existing.some((r) => r.testCase.id === testCase.id);
 }
 
-export async function runEval<TInput = unknown, TOutput = unknown>(
-  task: Task<TInput, TOutput>,
+export async function runEval(
+  task: Task,
   modelId: string,
 ): Promise<TaskEvalResults> {
   // Sanitize modelId before logging to prevent log injection

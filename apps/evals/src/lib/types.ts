@@ -47,5 +47,7 @@ export interface Task<TInput = unknown, TOutput = unknown> {
   name: string;
   description: string;
   testCases: TestCase[];
-  generate: (input: TInput & { model: string }) => Promise<TaskResult<TOutput>>;
+  // Using method signature instead of property signature makes this bivariant,
+  // allowing Task<SpecificInput> to be assignable to Task<unknown>
+  generate(input: TInput & { model: string }): Promise<TaskResult<TOutput>>;
 }

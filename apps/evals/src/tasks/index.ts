@@ -1,8 +1,13 @@
+import type { Task } from "@/lib/types";
+import { alternativeTitlesTask } from "./alternative-titles/task";
 import { courseSuggestionsTask } from "./course-suggestions/task";
 
-export const TASKS = [courseSuggestionsTask];
+export const TASKS: readonly Task[] = [
+  courseSuggestionsTask,
+  alternativeTitlesTask,
+];
 
-export function getTaskById(taskId: string) {
+export function getTaskById(taskId: string): Task | undefined {
   return TASKS.find((t) => t.id === taskId);
 }
 
