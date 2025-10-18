@@ -35,37 +35,6 @@
     },
     {
       "testCase": {
-        "id": "en-black-holes",
-        "userInput": {
-          "locale": "en",
-          "prompt": "quero aprender sobre buracos negros"
-        },
-        "expectations": "\n      - should include \"Black Holes\"\n      - may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Study the physics, observations, and astrophysical roles of black holes to understand their formation, growth, and cosmic impact.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Build a rigorous foundation in the physics of celestial phenomena to analyze black hole behavior and evidence.\"\n  },\n  {\n    \"title\": \"Cosmology\",\n    \"description\": \"Explore the evolution and structure of the universe to place black holes in their large-scale context.\"\n  },\n  {\n    \"title\": \"General Relativity\",\n    \"description\": \"Learn the geometry of spacetime and gravitational dynamics that predict and describe black holes.\"\n  },\n  {\n    \"title\": \"Stellar Evolution\",\n    \"description\": \"Trace the life cycles of massive stars to see how supernovae and collapse create black holes.\"\n  },\n  {\n    \"title\": \"Gravitational Waves\",\n    \"description\": \"Understand detection and interpretation of spacetime signals from black hole mergers.\"\n  },\n  {\n    \"title\": \"High-Energy Astrophysics\",\n    \"description\": \"Investigate extreme radiation processes that reveal matter near black holes.\"\n  },\n  {\n    \"title\": \"Observational Astronomy\",\n    \"description\": \"Practice data analysis and instrumentation techniques used to identify and characterize black hole candidates.\"\n  },\n  {\n    \"title\": \"Accretion Disks\",\n    \"description\": \"Examine disk physics and radiative signatures to interpret accretion onto black holes.\"\n  },\n  {\n    \"title\": \"Relativistic Jets\",\n    \"description\": \"Analyze jet launching and propagation to connect black holes with feedback in galaxies.\"\n  },\n  {\n    \"title\": \"Computational Astrophysics\",\n    \"description\": \"Use simulations and numerical methods to model black hole environments and dynamics.\"\n  },\n  {\n    \"title\": \"Quantum Gravity\",\n    \"description\": \"Explore theoretical approaches that seek to reconcile black holes with quantum mechanics.\"\n  }\n]",
-      "score": 9.766666666666667,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. The output follows all key rules: includes the exact topic \"Black Holes\", uses US English, Title Case, single-topic titles without joiners, and one-sentence descriptions. JSON structure is valid and relevant to the user intent.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "None observed. Titles look like real courses, no prohibited words or levels, and descriptions are grammatically sound and concise.",
-          "score": 10
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Could optionally include a few additional closely related single-topic titles such as \"Radio Astronomy\" or \"X-Ray Astronomy\" to broaden observational angles, but the current set is already comprehensive and well targeted.",
-          "score": 9.3
-        }
-      ],
-      "inputTokens": 548,
-      "outputTokens": 1986
-    },
-    {
-      "testCase": {
         "id": "es-derecho-penal",
         "userInput": {
           "locale": "es",
@@ -94,37 +63,6 @@
       ],
       "inputTokens": 544,
       "outputTokens": 2886
-    },
-    {
-      "testCase": {
-        "id": "es-derecho-chileno",
-        "userInput": {
-          "locale": "es",
-          "prompt": "derecho chileno"
-        },
-        "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - may include similar topics like \"Derecho Constitucional Chileno\" or \"Derecho Penal Chileno\"\n      - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for \"es\" locale\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Comprende el sistema jurídico de Chile para interpretar normas y resolver casos con seguridad jurídica.\"\n  },\n  {\n    \"title\": \"Derecho Constitucional Chileno\",\n    \"description\": \"Domina la Constitución y el control de constitucionalidad para actuar con rigor en materias públicas.\"\n  },\n  {\n    \"title\": \"Derecho Civil Chileno\",\n    \"description\": \"Aprende las instituciones civiles chilenas para redactar contratos y enfrentar disputas patrimoniales.\"\n  },\n  {\n    \"title\": \"Derecho Penal Chileno\",\n    \"description\": \"Conoce los delitos y las penas en Chile para evaluar riesgos y estrategias de defensa.\"\n  },\n  {\n    \"title\": \"Derecho Procesal Civil Chileno\",\n    \"description\": \"Maneja las etapas del juicio civil chileno para litigar con eficacia en tribunales.\"\n  },\n  {\n    \"title\": \"Derecho Procesal Penal Chileno\",\n    \"description\": \"Aplica las reglas del proceso penal chileno para planificar investigaciones y audiencias.\"\n  },\n  {\n    \"title\": \"Derecho Laboral Chileno\",\n    \"description\": \"Entiende las relaciones laborales en Chile para gestionar cumplimiento y conflictos laborales.\"\n  },\n  {\n    \"title\": \"Derecho Tributario Chileno\",\n    \"description\": \"Estudia los impuestos chilenos para optimizar cargas fiscales y evitar contingencias.\"\n  },\n  {\n    \"title\": \"Derecho Administrativo Chileno\",\n    \"description\": \"Aprende la actuación de la Administración chilena para impugnar actos y obtener permisos.\"\n  },\n  {\n    \"title\": \"Derecho Ambiental Chileno\",\n    \"description\": \"Conoce la normativa ambiental chilena para evaluar proyectos y mitigar riesgos regulatorios.\"\n  },\n  {\n    \"title\": \"Derecho Comercial Chileno\",\n    \"description\": \"Domina las operaciones mercantiles en Chile para estructurar negocios con solidez legal.\"\n  },\n  {\n    \"title\": \"Libre Competencia Chilena\",\n    \"description\": \"Analiza prácticas de mercado y concentraciones en Chile para prevenir sanciones y diseñar estrategias.\"\n  },\n  {\n    \"title\": \"Contratación Pública Chilena\",\n    \"description\": \"Gestiona licitaciones y contratos del Estado chileno para competir y cumplir sin riesgos.\"\n  },\n  {\n    \"title\": \"Propiedad Intelectual Chilena\",\n    \"description\": \"Protege marcas, patentes y derechos de autor en Chile para resguardar activos intangibles.\"\n  },\n  {\n    \"title\": \"Protección De Datos Personales En Chile\",\n    \"description\": \"Aplica la normativa chilena de datos personales para asegurar cumplimiento y confianza.\"\n  },\n  {\n    \"title\": \"Litigación Oral En Chile\",\n    \"description\": \"Perfecciona habilidades de audiencia y argumentación en el sistema chileno para ganar eficacia procesal.\"\n  },\n  {\n    \"title\": \"Redacción De Contratos En Chile\",\n    \"description\": \"Desarrolla cláusulas y estructuras contractuales adaptadas al derecho chileno para reducir riesgos.\"\n  },\n  {\n    \"title\": \"Cumplimiento Normativo En Chile\",\n    \"description\": \"Implementa programas de compliance en Chile para prevenir delitos corporativos y sanciones.\"\n  }\n]",
-      "score": 9.666666666666666,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. The suggestions follow the rules: include the exact topic 'Derecho Chileno', provide multiple relevant Chile-specific legal subfields, maintain one-sentence descriptions, avoid levels/joiners, and keep everything in Spanish as required.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "None that impact correctness or rules compliance. All titles look like plausible courses, capitalization follows the requested Title Case, and descriptions are single sentences.",
-          "score": 10
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Minor stylistic refinements toward Spain Spanish could improve polish: replace some Latin American preferences (e.g., 'enfrentar' -> 'afrontar', 'audiencias' -> 'vistas', 'maneja' -> 'domina/gestiona', 'compliance' -> 'cumplimiento'); adjust a couple of titles for naturalness in Spain Spanish (e.g., 'Libre Competencia Chilena' -> 'Derecho De La Competencia En Chile'); optionally add niche Chile-specific areas like 'Derecho De Aguas Chileno', 'Derecho Minero Chileno' or 'Mercado De Valores Chileno'.",
-          "score": 9
-        }
-      ],
-      "inputTokens": 545,
-      "outputTokens": 3299
     },
     {
       "testCase": {

@@ -35,37 +35,6 @@
     },
     {
       "testCase": {
-        "id": "en-black-holes",
-        "userInput": {
-          "locale": "en",
-          "prompt": "quero aprender sobre buracos negros"
-        },
-        "expectations": "\n      - should include \"Black Holes\"\n      - may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the extreme gravitational phenomena at the heart of black holes, understanding their formation and impact on spacetime.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Gain comprehensive knowledge of the physical processes governing celestial bodies and phenomena, expanding your grasp of the universe.\"\n  },\n  {\n    \"title\": \"Relativity\",\n    \"description\": \"Study Einstein’s theories of special and general relativity to understand the fundamental principles of space, time, and gravity.\"\n  }\n]",
-      "score": 9.6,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. The suggestions follow all key rules: titles in Title Case, no levels or joiners, exact inclusion of the specific topic \"Black Holes,\" US English throughout, and single-sentence descriptions that explain relevance.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "None noticeable. Titles are plausible and singular-topic, descriptions are concise and relevant, and formatting aligns with requirements.",
-          "score": 10
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Could include a few more relevant options to broaden choice, such as \"General Relativity,\" \"Cosmology,\" or \"Gravitational Waves.\" The \"Relativity\" title could be made more specific as \"General Relativity\" to align even more closely with black hole physics, though this is optional.",
-          "score": 8.8
-        }
-      ],
-      "inputTokens": 629,
-      "outputTokens": 461
-    },
-    {
-      "testCase": {
         "id": "es-derecho-penal",
         "userInput": {
           "locale": "es",
@@ -94,37 +63,6 @@
       ],
       "inputTokens": 625,
       "outputTokens": 778
-    },
-    {
-      "testCase": {
-        "id": "es-derecho-chileno",
-        "userInput": {
-          "locale": "es",
-          "prompt": "derecho chileno"
-        },
-        "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - may include similar topics like \"Derecho Constitucional Chileno\" or \"Derecho Penal Chileno\"\n      - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for \"es\" locale\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Una mirada profunda a las normativas, principios y prácticas del sistema jurídico chileno.\"\n  },\n  {\n    \"title\": \"Derecho Comercial Chileno\",\n    \"description\": \"Conoce las leyes que rigen las transacciones comerciales y la corporación en Chile.\"\n  },\n  {\n    \"title\": \"Derecho Laboral Chileno\",\n    \"description\": \"Explora la legislación laboral chilena y los derechos y obligaciones de empleadores y empleados.\"\n  }\n]",
-      "score": 8.666666666666666,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. The suggestions follow the rules, include the exact topic \"Derecho Chileno\", respect title casing and single-topic constraints, and provide one-sentence descriptions in Spanish.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "Minor phrasing issues in Spain Spanish: in the second description, \"la corporación\" in singular is unnatural and likely incorrect; better would be \"las sociedades\", \"las personas jurídicas\" or \"las empresas\". Also, \"empleadores\" is understandable in Spain but is more Latin American; \"empresarios\" o \"empleadores y trabajadores\" might read more naturally for Spain Spanish. These are stylistic/word-choice issues, not correctness errors.",
-          "score": 8.5
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Could include more relevant Chilean law subfields (e.g., \"Derecho Constitucional Chileno\", \"Derecho Penal Chileno\", \"Derecho Administrativo Chileno\", \"Derecho Tributario Chileno\", \"Derecho Civil Chileno\", \"Derecho Procesal Chileno\", \"Derecho De Familia Chileno\") to broaden coverage. Refine the second description to Spain Spanish and accurate terminology (e.g., \"Conoce las leyes que regulan las transacciones comerciales y las sociedades en Chile\").",
-          "score": 7.5
-        }
-      ],
-      "inputTokens": 626,
-      "outputTokens": 474
     },
     {
       "testCase": {

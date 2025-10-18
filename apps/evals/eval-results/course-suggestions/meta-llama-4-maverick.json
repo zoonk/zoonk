@@ -35,37 +35,6 @@
     },
     {
       "testCase": {
-        "id": "en-black-holes",
-        "userInput": {
-          "locale": "en",
-          "prompt": "quero aprender sobre buracos negros"
-        },
-        "expectations": "\n      - should include \"Black Holes\"\n      - may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Gain a deeper understanding of the universe by studying the mysterious and fascinating phenomenon of black holes.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Explore the fundamental laws and principles that govern the behavior of the universe, including black holes.\"\n  }\n]",
-      "score": 9.666666666666666,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. The suggestions follow language, title, and description rules; include the exact topic \"Black Holes\" and an appropriate broader topic; and keep descriptions to one sentence in US English.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "None. Titles are in Title Case, single-topic, and avoid prohibited joiners and level markers; descriptions are grammatically correct and relevant.",
-          "score": 10
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Could add a few more relevant suggestions (e.g., Cosmology, General Relativity, Relativity, High-Energy Astrophysics) to broaden options, though not required.",
-          "score": 9
-        }
-      ],
-      "inputTokens": 542,
-      "outputTokens": 81
-    },
-    {
-      "testCase": {
         "id": "es-derecho-penal",
         "userInput": {
           "locale": "es",
@@ -94,37 +63,6 @@
       ],
       "inputTokens": 538,
       "outputTokens": 116
-    },
-    {
-      "testCase": {
-        "id": "es-derecho-chileno",
-        "userInput": {
-          "locale": "es",
-          "prompt": "derecho chileno"
-        },
-        "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - may include similar topics like \"Derecho Constitucional Chileno\" or \"Derecho Penal Chileno\"\n      - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for \"es\" locale\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Este curso proporciona una comprensión profunda del sistema legal y las leyes de Chile.\"\n  },\n  {\n    \"title\": \"Introducción Al Derecho\",\n    \"description\": \"Este curso cubre los principios fundamentales y las áreas clave del derecho.\"\n  }\n]",
-      "score": 6.666666666666667,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "The title 'Introducción Al Derecho' violates the no-levels rule because it uses a level indicator equivalent to 'Intro'; also, the second suggestion is generic rather than Chile-specific, which doesn't meet the strong expectation of Chile-focused topics.",
-          "score": 6.5
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "Minor coverage misalignment: only two suggestions were provided and the second is not Chile-specific; otherwise language, Title Case, and one-sentence descriptions are correct.",
-          "score": 8.5
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Replace the level-based title with compliant, Chile-focused options and expand coverage, e.g., 'Derecho Constitucional Chileno', 'Derecho Penal Chileno', 'Derecho Civil Chileno', 'Derecho Administrativo Chileno', 'Derecho Laboral Chileno', 'Derecho Tributario Chileno', 'Derecho Procesal Chileno', each with one-sentence Spain Spanish descriptions highlighting relevance.",
-          "score": 5
-        }
-      ],
-      "inputTokens": 539,
-      "outputTokens": 77
     },
     {
       "testCase": {

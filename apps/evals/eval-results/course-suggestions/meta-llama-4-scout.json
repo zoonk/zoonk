@@ -35,37 +35,6 @@
     },
     {
       "testCase": {
-        "id": "en-black-holes",
-        "userInput": {
-          "locale": "en",
-          "prompt": "quero aprender sobre buracos negros"
-        },
-        "expectations": "\n      - should include \"Black Holes\"\n      - may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Gain a deeper understanding of the universe's most mysterious phenomena and their role in modern astrophysics.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Explore the study of the universe, including its origin, evolution, and the physical laws that govern it.\"\n  },\n  {\n    \"title\": \"Astronomy\",\n    \"description\": \"Learn about the structure, behavior, and evolution of stars, galaxies, and other celestial objects.\"\n  },\n  {\n    \"title\": \"Physics\",\n    \"description\": \"Discover the principles and laws that govern the behavior of energy, matter, and the fundamental forces of nature.\"\n  },\n  {\n    \"title\": \"Cosmology\",\n    \"description\": \"Explore the study of the origin, evolution, and fate of the universe, including the Big Bang theory and dark matter.\"\n  }\n]",
-      "score": 9.666666666666666,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "None",
-          "score": 10
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Could include a few additional closely related titles to enrich options, such as General Relativity, Gravitational Waves, High-Energy Astrophysics, Relativity, or Observational Astronomy; otherwise it fully follows the rules with proper Title Case, single-sentence US English descriptions, and includes the exact topic Black Holes alongside broader fields.",
-          "score": 9
-        }
-      ],
-      "inputTokens": 542,
-      "outputTokens": 200
-    },
-    {
-      "testCase": {
         "id": "es-derecho-penal",
         "userInput": {
           "locale": "es",
@@ -94,37 +63,6 @@
       ],
       "inputTokens": 538,
       "outputTokens": 220
-    },
-    {
-      "testCase": {
-        "id": "es-derecho-chileno",
-        "userInput": {
-          "locale": "es",
-          "prompt": "derecho chileno"
-        },
-        "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - may include similar topics like \"Derecho Constitucional Chileno\" or \"Derecho Penal Chileno\"\n      - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for \"es\" locale\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Este curso te permitirá comprender y aplicar los principios fundamentales del derecho chileno en diversos contextos legales y profesionales.\"\n  },\n  {\n    \"title\": \"Derecho en Chile\",\n    \"description\": \"Aprende sobre el marco legal y las normativas que rigen en Chile, comprendiendo su aplicación en la práctica jurídica.\"\n  },\n  {\n    \"title\": \"Sistema Jurídico Chileno\",\n    \"description\": \"Explora los conceptos básicos y avanzados del sistema jurídico chileno, desde la constitución hasta las leyes más recientes.\"\n  }\n]",
-      "score": 8.666666666666666,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. The output follows the language rule (Spain Spanish), includes the exact topic “Derecho Chileno,” uses Title Case in titles, and keeps each description to exactly one sentence.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "Some redundancy between “Derecho Chileno” and “Derecho en Chile”; missed easy, clearly relevant subtopics (e.g., “Derecho Constitucional Chileno,” “Derecho Penal Chileno”) suggested in expectations; minor style nit: “constitución” in the third description could be capitalized as “Constitución” when referring to the Chilean Constitution.",
-          "score": 8.5
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Add more targeted Chile-specific legal areas such as “Derecho Constitucional Chileno,” “Derecho Penal Chileno,” “Derecho Civil Chileno,” “Derecho Administrativo Chileno,” “Derecho Laboral Chileno,” and “Derecho Tributario Chileno”; replace the somewhat generic “Derecho en Chile” with a more precise single-topic title; optionally tighten descriptions to emphasize specific learner benefits without broad claims.",
-          "score": 7.5
-        }
-      ],
-      "inputTokens": 539,
-      "outputTokens": 137
     },
     {
       "testCase": {

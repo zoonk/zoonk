@@ -35,37 +35,6 @@
     },
     {
       "testCase": {
-        "id": "en-black-holes",
-        "userInput": {
-          "locale": "en",
-          "prompt": "quero aprender sobre buracos negros"
-        },
-        "expectations": "\n      - should include \"Black Holes\"\n      - may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the mysteries of black holes to understand their formation, properties, and role in the universe, providing insights into extreme physics and cosmic phenomena.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Delve into astrophysics to grasp the fundamental principles governing stars, galaxies, and cosmic events, which can enhance your comprehension of phenomena like black holes.\"\n  },\n  {\n    \"title\": \"Astronomy\",\n    \"description\": \"Study astronomy to learn about celestial objects and the universe's structure, offering a foundational knowledge that includes topics like black holes and their discovery.\"\n  },\n  {\n    \"title\": \"Cosmology\",\n    \"description\": \"Investigate cosmology to understand the origin, evolution, and fate of the universe, where black holes play a crucial role in theories of galactic formation and dark matter.\"\n  },\n  {\n    \"title\": \"General Relativity\",\n    \"description\": \"Master general relativity to comprehend the theory of gravity that predicts the existence of black holes, enabling a deeper appreciation of spacetime curvature and gravitational waves.\"\n  }\n]",
-      "score": 9,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "The Cosmology description implies that black holes play a crucial role in theories of dark matter, which is misleading since mainstream cosmology does not consider black holes central to dark matter; otherwise, titles follow Title Case, include the specific topic \"Black Holes,\" use US English, avoid joiners and levels, and descriptions are exactly one sentence.",
-          "score": 8.5
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Revise the Cosmology description to avoid linking black holes as crucial to dark matter theories (e.g., emphasize galaxy evolution, expansion, and large-scale structure). Optionally add more relevant suggestions such as Gravitational Waves, Stellar Evolution, Accretion Disks, or Observational Astronomy. Consider softening \"Master\" in the General Relativity description to maintain a neutral tone.",
-          "score": 8.5
-        }
-      ],
-      "inputTokens": 1284,
-      "outputTokens": 190
-    },
-    {
-      "testCase": {
         "id": "es-derecho-penal",
         "userInput": {
           "locale": "es",
@@ -94,37 +63,6 @@
       ],
       "inputTokens": 1280,
       "outputTokens": 194
-    },
-    {
-      "testCase": {
-        "id": "es-derecho-chileno",
-        "userInput": {
-          "locale": "es",
-          "prompt": "derecho chileno"
-        },
-        "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - may include similar topics like \"Derecho Constitucional Chileno\" or \"Derecho Penal Chileno\"\n      - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for \"es\" locale\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Este curso explora las bases y principios del sistema jurídico de Chile, lo que es esencial para entender las leyes y regulaciones aplicables en el país.\"\n  },\n  {\n    \"title\": \"Derecho Constitucional Chileno\",\n    \"description\": \"Profundiza en la Constitución de Chile y sus implicaciones, ayudando a comprender los derechos fundamentales y la estructura gubernamental.\"\n  },\n  {\n    \"title\": \"Derecho Penal Chileno\",\n    \"description\": \"Analiza el Código Penal de Chile y los procedimientos judiciales, útil para profesionales del derecho y estudiantes interesados en la justicia criminal.\"\n  },\n  {\n    \"title\": \"Derecho Civil Chileno\",\n    \"description\": \"Examina las normas del Código Civil chileno, proporcionando conocimientos clave para transacciones comerciales y relaciones personales.\"\n  },\n  {\n    \"title\": \"Derecho Administrativo Chileno\",\n    \"description\": \"Estudia la regulación de la administración pública en Chile, relevante para quienes trabajan en el sector público o interactúan con entidades gubernamentales.\"\n  },\n  {\n    \"title\": \"Derecho Laboral Chileno\",\n    \"description\": \"Cubre las leyes laborales en Chile, incluyendo derechos de los trabajadores y obligaciones empresariales, ideal para recursos humanos y sindicatos.\"\n  }\n]",
-      "score": 9.266666666666667,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "Minor stylistic issue: in Spain Spanish, \"justicia penal\" is more idiomatic than \"justicia criminal\"; some descriptions slightly blur subfield scopes (e.g., penal mentioning \"procedimientos judiciales\" which leans toward procesal), but all remain one sentence and in correct Spanish.",
-          "score": 9.1
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Add more relevant subfields to broaden coverage, such as \"Derecho Tributario Chileno\", \"Derecho Procesal Chileno\", \"Derecho Comercial Chileno\", \"Derecho Ambiental Chileno\" and potentially \"Derecho Minero Chileno\" o \"Derecho De Aguas Chileno\"; tweak wording to Spain Spanish preferences (e.g., \"justicia penal\"); optionally make descriptions slightly more outcome-oriented while keeping one sentence.",
-          "score": 8.7
-        }
-      ],
-      "inputTokens": 1281,
-      "outputTokens": 228
     },
     {
       "testCase": {

@@ -35,37 +35,6 @@
     },
     {
       "testCase": {
-        "id": "en-black-holes",
-        "userInput": {
-          "locale": "en",
-          "prompt": "quero aprender sobre buracos negros"
-        },
-        "expectations": "\n      - should include \"Black Holes\"\n      - may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the nature, formation, and scientific significance of black holes in the universe.\"\n  },\n  {\n    \"title\": \"Astronomy\",\n    \"description\": \"Gain a comprehensive understanding of celestial objects and phenomena across the cosmos.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Study the physical principles governing stars, galaxies, and the universe.\"\n  }\n]",
-      "score": 9.666666666666666,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "None",
-          "score": 10
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Add a few more closely related suggestions to broaden options (e.g., Cosmology, General Relativity, Gravitational Waves) and make descriptions slightly more learner-oriented (e.g., highlighting skills or applications).",
-          "score": 9
-        }
-      ],
-      "inputTokens": 673,
-      "outputTokens": 325
-    },
-    {
-      "testCase": {
         "id": "es-derecho-penal",
         "userInput": {
           "locale": "es",
@@ -94,37 +63,6 @@
       ],
       "inputTokens": 669,
       "outputTokens": 346
-    },
-    {
-      "testCase": {
-        "id": "es-derecho-chileno",
-        "userInput": {
-          "locale": "es",
-          "prompt": "derecho chileno"
-        },
-        "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - may include similar topics like \"Derecho Constitucional Chileno\" or \"Derecho Penal Chileno\"\n      - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for \"es\" locale\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Aprende los fundamentos y la estructura del ordenamiento jurídico de Chile para comprender su aplicación práctica.\"\n  },\n  {\n    \"title\": \"Derecho Constitucional Chileno\",\n    \"description\": \"Explora la Constitución chilena y sus principios básicos para entender la organización del Estado y los derechos fundamentales.\"\n  },\n  {\n    \"title\": \"Derecho Civil Chileno\",\n    \"description\": \"Conoce las normas que regulan las relaciones privadas, como contratos, propiedad y familia, dentro del marco chileno.\"\n  },\n  {\n    \"title\": \"Derecho Penal Chileno\",\n    \"description\": \"Estudia los delitos, penas y procedimientos penales vigentes en Chile para interpretar y aplicar la legislación criminal.\"\n  },\n  {\n    \"title\": \"Derecho Laboral Chileno\",\n    \"description\": \"Analiza la normativa que rige las relaciones de trabajo, los derechos de los empleados y las obligaciones de los empleadores en Chile.\"\n  },\n  {\n    \"title\": \"Derecho Tributario Chileno\",\n    \"description\": \"Familiarízate con el sistema fiscal chileno, incluyendo impuestos directos e indirectos y sus procedimientos de cumplimiento.\"\n  },\n  {\n    \"title\": \"Sistema Judicial Chileno\",\n    \"description\": \"Descubre la organización, competencias y funcionamiento de los tribunales y órganos jurisdiccionales en Chile.\"\n  }\n]",
-      "score": 9.6,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. All constraints are followed: titles in Title Case, Spain Spanish used, includes “Derecho Chileno”, single-sentence descriptions, no levels or joiners in titles, and relevant Chilean law subfields provided.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "None. Wording and accents are correct, descriptions are exactly one sentence each, and all titles look like plausible course names.",
-          "score": 10
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Could broaden coverage with additional relevant titles such as “Derecho Administrativo Chileno”, “Derecho Comercial Chileno”, “Derecho Procesal Chileno”, “Derecho Ambiental Chileno”, or “Contratación Pública Chilena” to offer a more comprehensive catalog.",
-          "score": 8.8
-        }
-      ],
-      "inputTokens": 670,
-      "outputTokens": 638
     },
     {
       "testCase": {

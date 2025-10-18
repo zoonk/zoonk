@@ -35,37 +35,6 @@
     },
     {
       "testCase": {
-        "id": "en-black-holes",
-        "userInput": {
-          "locale": "en",
-          "prompt": "quero aprender sobre buracos negros"
-        },
-        "expectations": "\n      - should include \"Black Holes\"\n      - may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the fascinating physics and astronomical observations of black holes.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Understand the fundamental principles governing celestial objects and phenomena in the universe.\"\n  },\n  {\n    \"title\": \"Cosmology\",\n    \"description\": \"Study the origin, evolution, and large-scale structure of the universe.\"\n  }\n]",
-      "score": 9.666666666666666,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. The response follows all key rules: uses US English despite Portuguese input, includes the exact topic \"Black Holes\" as one suggestion, adds broader relevant topics, maintains Title Case without levels or joiners, and provides one-sentence descriptions.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "None. Titles look like real courses, no prohibited words in titles, and descriptions are concise and relevant.",
-          "score": 10
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Could offer a few more relevant alternatives to broaden choice, such as \"General Relativity\", \"Gravitational Waves\", or \"Observational Astronomy\"; optionally make descriptions slightly more learner-outcome oriented, though current ones are acceptable.",
-          "score": 9
-        }
-      ],
-      "inputTokens": 534,
-      "outputTokens": 114
-    },
-    {
-      "testCase": {
         "id": "es-derecho-penal",
         "userInput": {
           "locale": "es",
@@ -94,37 +63,6 @@
       ],
       "inputTokens": 529,
       "outputTokens": 149
-    },
-    {
-      "testCase": {
-        "id": "es-derecho-chileno",
-        "userInput": {
-          "locale": "es",
-          "prompt": "derecho chileno"
-        },
-        "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - may include similar topics like \"Derecho Constitucional Chileno\" or \"Derecho Penal Chileno\"\n      - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for \"es\" locale\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Profundiza en los principios y normativas del sistema legal chileno para comprender su aplicación práctica.\"\n  },\n  {\n    \"title\": \"Derecho Civil\",\n    \"description\": \"Explora las bases del derecho civil para entender las relaciones jurídicas entre particulares.\"\n  },\n  {\n    \"title\": \"Derecho Penal\",\n    \"description\": \"Analiza las leyes que rigen las conductas delictivas y sus consecuencias en la sociedad.\"\n  },\n  {\n    \"title\": \"Derecho Constitucional\",\n    \"description\": \"Estudia la estructura del Estado, los derechos fundamentales y las garantías constitucionales en Chile.\"\n  },\n  {\n    \"title\": \"Derecho Administrativo\",\n    \"description\": \"Comprende el funcionamiento de la administración pública y su relación con los ciudadanos.\"\n  }\n]",
-      "score": 8.666666666666666,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "Some titles are generic rather than Chile-specific despite the user focusing on Chilean law; only one title explicitly includes “Chileno,” and two descriptions do not mention Chile, slightly reducing alignment with the user’s intent and expectations.",
-          "score": 8.5
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Prefer Chile-specific titles such as “Derecho Constitucional Chileno,” “Derecho Penal Chileno,” “Derecho Civil Chileno,” and “Derecho Administrativo Chileno”; ensure all descriptions reference Chile; consider adding more relevant Chile-focused areas like “Derecho Tributario Chileno,” “Derecho Laboral Chileno,” or “Derecho Procesal Chileno,” keeping titles single-topic and in Title Case.",
-          "score": 7.5
-        }
-      ],
-      "inputTokens": 529,
-      "outputTokens": 205
     },
     {
       "testCase": {

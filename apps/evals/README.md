@@ -74,3 +74,10 @@ That's it! Your task will automatically appear in the dashboard.
 ## Supported Models
 
 Models are configured in [src/lib/models.ts](./src/lib/models.ts).
+
+## Removing Test Cases
+
+You can remove specific test cases from all task results using by calling `pnpm evals:remove taskId id1 [id2 ...]`. This is useful if you want to run new evals for those test cases.
+
+> [!TIP]
+> You need to call it from the root of the repository.

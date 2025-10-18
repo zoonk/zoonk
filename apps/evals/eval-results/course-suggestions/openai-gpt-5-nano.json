@@ -35,37 +35,6 @@
     },
     {
       "testCase": {
-        "id": "en-black-holes",
-        "userInput": {
-          "locale": "en",
-          "prompt": "quero aprender sobre buracos negros"
-        },
-        "expectations": "\n      - should include \"Black Holes\"\n      - may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the formation, properties, and observational evidence of black holes and how they illuminate the behavior of gravity and quantum physics.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Gain a broad foundation in the forces, processes, and observations that shape the cosmos and enable studying exotic objects like black holes.\"\n  },\n  {\n    \"title\": \"General Relativity\",\n    \"description\": \"Learn the geometric theory of gravity that describes spacetime around massive objects and underpins black hole physics and gravitational phenomena.\"\n  },\n  {\n    \"title\": \"Cosmology\",\n    \"description\": \"Study the origin, evolution, and large-scale structure of the universe to place black holes within the cosmic context.\"\n  },\n  {\n    \"title\": \"Gravitational Waves\",\n    \"description\": \"Understand the ripples in spacetime produced by massive accelerating objects and how black holes generate and are detected by interferometers.\"\n  },\n  {\n    \"title\": \"Observational Astronomy\",\n    \"description\": \"Develop skills to interpret astronomical data and observations that reveal black holes and their environments.\"\n  }\n]",
-      "score": 9.533333333333333,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. The suggestions follow all core rules: includes the exact topic \"Black Holes,\" uses US English, Title Case, single-topic titles without joiners or levels, and each description is exactly one sentence.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "Very small style/clarity issue: the \"Gravitational Waves\" description could be read as black holes themselves being detected by interferometers rather than their waves; wording is slightly ambiguous but not incorrect. Everything else is clean.",
-          "score": 9.6
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Could broaden the set with closely related options like \"High-Energy Astrophysics,\" \"Relativistic Astrophysics,\" \"X-Ray Astronomy,\" or \"Accretion Disks\" to give more pathways; optionally refine the \"Gravitational Waves\" sentence to clarify that waves (not black holes) are detected.",
-          "score": 9
-        }
-      ],
-      "inputTokens": 548,
-      "outputTokens": 2379
-    },
-    {
-      "testCase": {
         "id": "es-derecho-penal",
         "userInput": {
           "locale": "es",
@@ -94,37 +63,6 @@
       ],
       "inputTokens": 544,
       "outputTokens": 2748
-    },
-    {
-      "testCase": {
-        "id": "es-derecho-chileno",
-        "userInput": {
-          "locale": "es",
-          "prompt": "derecho chileno"
-        },
-        "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - may include similar topics like \"Derecho Constitucional Chileno\" or \"Derecho Penal Chileno\"\n      - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for \"es\" locale\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Obtén una visión general del marco legal chileno y de cómo interactúan sus ramas.\"\n  },\n  {\n    \"title\": \"Constitución De Chile\",\n    \"description\": \"Analiza la estructura y principios fundamentales de la Constitución de Chile y su relevancia práctica.\"\n  },\n  {\n    \"title\": \"Derecho Constitucional Chileno\",\n    \"description\": \"Profundiza en el derecho constitucional y en el control de constitucionalidad en Chile.\"\n  },\n  {\n    \"title\": \"Derecho Civil Chileno\",\n    \"description\": \"Explora las normas civiles de Chile relacionadas con la persona, el matrimonio, los contratos y la propiedad.\"\n  },\n  {\n    \"title\": \"Derecho Penal Chileno\",\n    \"description\": \"Conoce los principios del derecho penal, el proceso penal y las reformas relevantes en Chile.\"\n  },\n  {\n    \"title\": \"Derecho Administrativo Chileno\",\n    \"description\": \"Examina la regulación de la actividad pública y la interacción entre autoridades y ciudadanos en Chile.\"\n  },\n  {\n    \"title\": \"Derecho Laboral Chileno\",\n    \"description\": \"Aprende sobre relaciones laborales, contratos de trabajo y seguridad social en Chile.\"\n  },\n  {\n    \"title\": \"Derecho Tributario Chileno\",\n    \"description\": \"Descubre el sistema fiscal, impuestos y obligaciones tributarias en Chile.\"\n  }\n]",
-      "score": 9.433333333333334,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "Slight redundancy between \"Constitución De Chile\" and \"Derecho Constitucional Chileno\", which largely overlap in scope.",
-          "score": 9.5
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Reduce overlap by keeping only one of the constitutional options; consider adding other key Chilean law areas such as Derecho Procesal Civil Chileno, Derecho Comercial Chileno, Derecho Ambiental Chileno, Derecho Minero Chileno, Derecho De Familia Chileno, or Litigación Oral Chilena to broaden coverage; optionally refine the constitutional title to sound more like a course title (e.g., \"Constitución Chilena\").",
-          "score": 8.8
-        }
-      ],
-      "inputTokens": 545,
-      "outputTokens": 3634
     },
     {
       "testCase": {

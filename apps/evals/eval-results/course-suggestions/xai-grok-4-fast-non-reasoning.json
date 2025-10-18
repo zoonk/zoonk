@@ -35,37 +35,6 @@
     },
     {
       "testCase": {
-        "id": "en-black-holes",
-        "userInput": {
-          "locale": "en",
-          "prompt": "quero aprender sobre buracos negros"
-        },
-        "expectations": "\n      - should include \"Black Holes\"\n      - may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the fascinating physics of black holes, from their formation in stellar collapses to their role in understanding the universe's most extreme gravitational phenomena.\"\n  },\n  {\n    \"title\": \"General Relativity\",\n    \"description\": \"Delve into Einstein's theory of general relativity, which provides the foundational framework for comprehending black holes and spacetime curvature.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Gain insights into the broader field of astrophysics, including how black holes influence galactic dynamics and cosmic evolution.\"\n  },\n  {\n    \"title\": \"Cosmology\",\n    \"description\": \"Understand the place of black holes within the evolving universe, from the Big Bang to the potential role of supermassive black holes in galaxy formation.\"\n  }\n]",
-      "score": 9.666666666666666,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "None",
-          "score": 10
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Could add a couple more relevant suggestions (e.g., Astronomy, Stellar Evolution, Gravitational Waves) to broaden choices, though the current set fully meets the requirements.",
-          "score": 9
-        }
-      ],
-      "inputTokens": 767,
-      "outputTokens": 138
-    },
-    {
-      "testCase": {
         "id": "es-derecho-penal",
         "userInput": {
           "locale": "es",
@@ -94,37 +63,6 @@
       ],
       "inputTokens": 763,
       "outputTokens": 124
-    },
-    {
-      "testCase": {
-        "id": "es-derecho-chileno",
-        "userInput": {
-          "locale": "es",
-          "prompt": "derecho chileno"
-        },
-        "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - may include similar topics like \"Derecho Constitucional Chileno\" or \"Derecho Penal Chileno\"\n      - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for \"es\" locale\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Este curso proporciona un conocimiento profundo del sistema jurídico de Chile, esencial para entender las leyes, regulaciones y principios que rigen el país.\"\n  },\n  {\n    \"title\": \"Derecho Constitucional Chileno\",\n    \"description\": \"Explora la Constitución de Chile y sus implicaciones en el gobierno y los derechos fundamentales, útil para estudiantes de derecho o profesionales interesados en el marco legal nacional.\"\n  },\n  {\n    \"title\": \"Derecho Civil Chileno\",\n    \"description\": \"Analiza las normas del Código Civil chileno, ayudando a comprender contratos, propiedad y obligaciones en el contexto jurídico local.\"\n  },\n  {\n    \"title\": \"Derecho Penal Chileno\",\n    \"description\": \"Estudia el Código Penal de Chile y los procesos penales, relevante para quienes buscan especializarse en crímenes y justicia en el sistema chileno.\"\n  }\n]",
-      "score": 9.166666666666666,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. The output follows the instructions: titles are in Title Case, in Spain Spanish, single-topic without joiners, no levels, and include the specific topic \"Derecho Chileno\" with related Chile-specific areas. Descriptions are exactly one sentence.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "Minor stylistic/terminology issues for Spain Spanish: using \"regulaciones\" is more Latin American than \"normativas\" or \"reglamentos\"; in legal context \"delitos\" is generally more precise than \"crímenes\". These do not materially harm usefulness.",
-          "score": 9
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Could broaden coverage with additional relevant Chile-focused titles (e.g., Derecho Administrativo Chileno, Derecho Laboral Chileno, Derecho Tributario Chileno, Derecho Procesal Penal Chileno). Descriptions could use more Spain Spanish legal terminology (e.g., \"normativas\", \"delitos\", \"procedimiento penal\").",
-          "score": 8.5
-        }
-      ],
-      "inputTokens": 764,
-      "outputTokens": 161
     },
     {
       "testCase": {

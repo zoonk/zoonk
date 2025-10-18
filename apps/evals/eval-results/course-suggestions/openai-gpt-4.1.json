@@ -35,37 +35,6 @@
     },
     {
       "testCase": {
-        "id": "en-black-holes",
-        "userInput": {
-          "locale": "en",
-          "prompt": "quero aprender sobre buracos negros"
-        },
-        "expectations": "\n      - should include \"Black Holes\"\n      - may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the fascinating mysteries and science behind black holes and their role in the universe.\"\n  }\n]",
-      "score": 9.166666666666666,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. The suggestion includes the exact requested topic \"Black Holes,\" uses US English as required, follows Title Case, avoids level/joiner words in the title, and provides a one-sentence description.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "None. Title looks like a real course, the description is exactly one sentence and relevant, and there are no prohibited elements.",
-          "score": 10
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Could add additional relevant suggestions to increase value, such as \"Astrophysics,\" \"Cosmology,\" \"General Relativity,\" or \"Gravitational Waves,\" each with a concise one-sentence benefit-focused description.",
-          "score": 7.5
-        }
-      ],
-      "inputTokens": 550,
-      "outputTokens": 31
-    },
-    {
-      "testCase": {
         "id": "es-derecho-penal",
         "userInput": {
           "locale": "es",
@@ -94,37 +63,6 @@
       ],
       "inputTokens": 546,
       "outputTokens": 84
-    },
-    {
-      "testCase": {
-        "id": "es-derecho-chileno",
-        "userInput": {
-          "locale": "es",
-          "prompt": "derecho chileno"
-        },
-        "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - may include similar topics like \"Derecho Constitucional Chileno\" or \"Derecho Penal Chileno\"\n      - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for \"es\" locale\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Este curso proporciona un conocimiento profundo de las leyes y el sistema jurídico de Chile.\"\n  },\n  {\n    \"title\": \"Derecho\",\n    \"description\": \"Un curso fundamental para comprender las bases y principios del sistema legal y sus aplicaciones prácticas.\"\n  }\n]",
-      "score": 8.5,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "The number of suggestions is limited given the specificity of the query; the second title \"Derecho\" is very broad and not clearly tied to Chile, which slightly reduces relevance; titles could better reflect Chile-specific subfields to align with expectations.",
-          "score": 8.5
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Add more Chile-focused titles such as \"Derecho Constitucional Chileno\", \"Derecho Penal Chileno\", \"Derecho Civil Chileno\", \"Derecho Administrativo Chileno\", \"Derecho Laboral Chileno\", \"Derecho Tributario Chileno\"; consider replacing the generic \"Derecho\" with a Chile-specific alternative; keep one-sentence descriptions highlighting practical relevance in Spain Spanish.",
-          "score": 7
-        }
-      ],
-      "inputTokens": 547,
-      "outputTokens": 57
     },
     {
       "testCase": {

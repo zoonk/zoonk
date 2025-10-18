@@ -35,37 +35,6 @@
     },
     {
       "testCase": {
-        "id": "es-derecho-chileno",
-        "userInput": {
-          "locale": "es",
-          "prompt": "derecho chileno"
-        },
-        "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - may include similar topics like \"Derecho Constitucional Chileno\" or \"Derecho Penal Chileno\"\n      - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for \"es\" locale\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Un curso que explora las leyes y regulaciones fundamentales en Chile para comprender mejor el sistema jurídico del país.\"\n  }\n]",
-      "score": 8.333333333333334,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. The output follows the key rules: correct language (Spanish), includes the required specific title \"Derecho Chileno\", Title Case, no forbidden joiners or levels, and a single-sentence description.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "- Provided only one suggestion despite the prompt allowing and implicitly encouraging multiple relevant suggestions for a non-language topic.\n- The Spanish is acceptable but could better reflect Spain Spanish lexicon (e.g., \"normativas\"/\"reglamentos\" or \"ordenamiento jurídico\" instead of \"regulaciones\").",
-          "score": 8.5
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "- Add several relevant course suggestions such as \"Derecho Constitucional Chileno\", \"Derecho Penal Chileno\", \"Derecho Administrativo Chileno\", \"Derecho Laboral Chileno\", \"Derecho Tributario Chileno\", \"Procedimiento Civil Chileno\", and \"Derecho Ambiental Chileno\".\n- Slightly adjust wording to Spain Spanish (e.g., \"normativas\"/\"reglamentos\", \"ordenamiento jurídico\").\n- Make the description more benefit-focused without mentioning \"curso\" (optional), e.g., emphasize practical applicability or comprehension of the Chilean legal framework.",
-          "score": 6.5
-        }
-      ],
-      "inputTokens": 547,
-      "outputTokens": 38
-    },
-    {
-      "testCase": {
         "id": "pt-dragon-ball",
         "userInput": {
           "locale": "pt",
@@ -373,37 +342,6 @@
       ],
       "inputTokens": 549,
       "outputTokens": 69
-    },
-    {
-      "testCase": {
-        "id": "en-black-holes",
-        "userInput": {
-          "locale": "en",
-          "prompt": "quero aprender sobre buracos negros"
-        },
-        "expectations": "\n      - should include \"Black Holes\"\n      - may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"This course offers an in-depth understanding of black holes, exploring their formation, properties, and significance in astrophysics.\"\n  }\n]",
-      "score": 8,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "Provided only one suggestion despite instructions to generate as many relevant suggestions as appropriate for non-language topics; otherwise complies with language, title case, single-topic title, and one-sentence description requirements.",
-          "score": 7.5
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Include additional relevant suggestions such as Astrophysics, Cosmology, General Relativity, Gravitational Waves, Stellar Evolution, and Observational Astronomy, keeping titles in Title Case and single-topic with one-sentence US English descriptions that explain utility.",
-          "score": 6.5
-        }
-      ],
-      "inputTokens": 550,
-      "outputTokens": 38
     },
     {
       "testCase": {

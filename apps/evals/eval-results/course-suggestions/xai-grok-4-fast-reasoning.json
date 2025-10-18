@@ -35,37 +35,6 @@
     },
     {
       "testCase": {
-        "id": "en-black-holes",
-        "userInput": {
-          "locale": "en",
-          "prompt": "quero aprender sobre buracos negros"
-        },
-        "expectations": "\n      - should include \"Black Holes\"\n      - may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Discover the enigmatic nature of black holes, their formation, and their profound impact on our understanding of the universe.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Build a comprehensive knowledge of celestial objects and phenomena, including the study of black holes and stellar evolution.\"\n  },\n  {\n    \"title\": \"General Relativity\",\n    \"description\": \"Understand Einstein's groundbreaking theory of gravity, which underpins the physics of black holes and spacetime curvature.\"\n  },\n  {\n    \"title\": \"Cosmology\",\n    \"description\": \"Explore the origin, structure, and evolution of the universe, with insights into extreme phenomena like black holes.\"\n  }\n]",
-      "score": 9.266666666666667,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. The output follows language rules (US English), includes the exact topic \"Black Holes,\" adds appropriate broader topics, uses Title Case, avoids joiners and levels, and each description is exactly one sentence.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "Slight grammatical awkwardness in the second description: \"Build a comprehensive knowledge\" would read better as \"Build comprehensive knowledge\" or \"Build a comprehensive understanding.\"",
-          "score": 9
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Could add a few more relevant suggestions such as \"High-Energy Astrophysics,\" \"Gravitational Waves,\" or \"Observational Astronomy,\" and refine the second description’s wording for polish.",
-          "score": 8.8
-        }
-      ],
-      "inputTokens": 755,
-      "outputTokens": 120
-    },
-    {
-      "testCase": {
         "id": "es-derecho-penal",
         "userInput": {
           "locale": "es",
@@ -94,37 +63,6 @@
       ],
       "inputTokens": 751,
       "outputTokens": 159
-    },
-    {
-      "testCase": {
-        "id": "es-derecho-chileno",
-        "userInput": {
-          "locale": "es",
-          "prompt": "derecho chileno"
-        },
-        "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - may include similar topics like \"Derecho Constitucional Chileno\" or \"Derecho Penal Chileno\"\n      - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for \"es\" locale\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Este curso proporciona una visión integral de las normas y principios legales específicos de Chile, esencial para entender el sistema jurídico del país.\"\n  },\n  {\n    \"title\": \"Derecho Constitucional Chileno\",\n    \"description\": \"Explora la estructura y evolución de la Constitución chilena, útil para analizar el marco de gobierno y derechos fundamentales en Chile.\"\n  },\n  {\n    \"title\": \"Historia del Derecho en Chile\",\n    \"description\": \"Repasa el desarrollo histórico del sistema legal chileno desde la colonia hasta la actualidad, ideal para contextualizar las leyes modernas.\"\n  },\n  {\n    \"title\": \"Derecho Penal Chileno\",\n    \"description\": \"Analiza los códigos penales y procedimientos judiciales en Chile, relevante para profesionales interesados en el ámbito criminal.\"\n  },\n  {\n    \"title\": \"Derecho Civil Chileno\",\n    \"description\": \"Cubre las regulaciones sobre contratos, propiedad y familia en el derecho civil chileno, fundamental para prácticas legales cotidianas.\"\n  }\n]",
-      "score": 9.166666666666666,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. The output follows the instructions: uses Spain Spanish, includes “Derecho Chileno,” provides multiple relevant course-like titles without levels or joiners, and each description is exactly one sentence.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "Very minor phrasing issues: in Spain Spanish and legal context, “ámbito penal” is more standard than “ámbito criminal”; “códigos penales y procedimientos judiciales” could be refined to “Código Penal y proceso penal” or “normativa penal y proceso penal” for precision; otherwise formatting and capitalization are consistent with Title Case expectations.",
-          "score": 9
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Could broaden coverage with additional relevant Chile-specific areas (e.g., Derecho Administrativo Chileno, Derecho Laboral Chileno, Derecho Tributario Chileno, Derecho Comercial Chileno, Derecho Procesal Civil Chileno, Derecho Procesal Penal Chileno, Derecho Ambiental Chileno). Descriptions could be slightly more outcome-oriented and use more precise Spain Spanish legal terms.",
-          "score": 8.5
-        }
-      ],
-      "inputTokens": 752,
-      "outputTokens": 179
     },
     {
       "testCase": {

@@ -35,37 +35,6 @@
     },
     {
       "testCase": {
-        "id": "en-black-holes",
-        "userInput": {
-          "locale": "en",
-          "prompt": "quero aprender sobre buracos negros"
-        },
-        "expectations": "\n      - should include \"Black Holes\"\n      - may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the mysterious cosmic objects with gravity so strong that nothing, not even light, can escape.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Understand the physical properties and behavior of celestial objects and phenomena in the universe.\"\n  },\n  {\n    \"title\": \"General Relativity\",\n    \"description\": \"Learn Einstein's theory of gravity that explains how massive objects warp spacetime and create black holes.\"\n  },\n  {\n    \"title\": \"Cosmology\",\n    \"description\": \"Study the origin, evolution, and structure of the universe, including extreme phenomena like black holes.\"\n  }\n]",
-      "score": 9.166666666666666,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. The output follows APP_LANGUAGE (US English), includes the exact specific topic \"Black Holes,\" adds appropriate broader topics (Astrophysics, General Relativity, Cosmology), uses Title Case without levels or joiners, and provides exactly one-sentence descriptions. JSON structure is valid.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "Slight phrasing issue: the General Relativity description says it \"create[s] black holes,\" which could be more precisely stated as predicting/describing conditions for black hole formation; otherwise, no factual or formatting errors detected.",
-          "score": 9
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Could include a few more relevant suggestions (e.g., Astronomy, Stellar Evolution, Gravitational Waves, High-Energy Astrophysics, Observational Astronomy) and refine the GR description to \"predicts\" rather than \"creates\" for precision; descriptions could be slightly more learner-outcome oriented while remaining one sentence.",
-          "score": 8.5
-        }
-      ],
-      "inputTokens": 1287,
-      "outputTokens": 193
-    },
-    {
-      "testCase": {
         "id": "es-derecho-penal",
         "userInput": {
           "locale": "es",
@@ -94,37 +63,6 @@
       ],
       "inputTokens": 1281,
       "outputTokens": 287
-    },
-    {
-      "testCase": {
-        "id": "es-derecho-chileno",
-        "userInput": {
-          "locale": "es",
-          "prompt": "derecho chileno"
-        },
-        "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - may include similar topics like \"Derecho Constitucional Chileno\" or \"Derecho Penal Chileno\"\n      - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for \"es\" locale\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Aprende los fundamentos del sistema legal chileno, su estructura y aplicaciones en la práctica jurídica.\"\n  },\n  {\n    \"title\": \"Derecho Constitucional\",\n    \"description\": \"Comprende los principios fundamentales de la Constitución y el funcionamiento del Estado de derecho.\"\n  },\n  {\n    \"title\": \"Derecho Civil\",\n    \"description\": \"Domina las normas que regulan las relaciones entre personas, contratos, propiedad y obligaciones.\"\n  },\n  {\n    \"title\": \"Derecho Penal\",\n    \"description\": \"Estudia los delitos, las penas y el sistema de justicia criminal en el ordenamiento jurídico.\"\n  },\n  {\n    \"title\": \"Derecho Laboral\",\n    \"description\": \"Conoce las normativas que regulan las relaciones entre empleadores y trabajadores en el ámbito laboral.\"\n  }\n]",
-      "score": 8.666666666666666,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "The additional suggestions are generic to law rather than tailored to Chile, missing opportunities like “Derecho Constitucional Chileno” or “Derecho Penal Chileno”; some descriptions feel general (e.g., referring to “la Constitución” without specifying Chile); wording such as “justicia criminal” is acceptable but less typical than “justicia penal” in Spain Spanish.",
-          "score": 8.5
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Prefer Chile-specific subfields for greater relevance (e.g., Derecho Constitucional Chileno, Derecho Penal Chileno, Derecho Civil Chileno, Derecho Laboral Chileno); consider adding other pertinent Chile-focused areas (e.g., Derecho Administrativo Chileno, Derecho Tributario Chileno, Procedimiento Civil Chileno, Procedimiento Penal Chileno); tweak descriptions to explicitly reference Chile where appropriate and use Spain Spanish phrasing (e.g., “justicia penal”).",
-          "score": 7.5
-        }
-      ],
-      "inputTokens": 1281,
-      "outputTokens": 274
     },
     {
       "testCase": {

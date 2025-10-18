@@ -27,7 +27,7 @@ export const TEST_CASES = [
     },
     expectations: `
       - should include "Black Holes"
-      - may include broader topics like "Astrophysics"
+      - should include broader topics like "Astrophysics"
       - all titles and descriptions in US English
 
       ${SHARED_EXPECTATIONS}
@@ -56,6 +56,7 @@ export const TEST_CASES = [
     expectations: `
       - should include "Derecho Chileno" since the user is specifically asking for Chilean law
       - may include similar topics like "Derecho Constitucional Chileno" or "Derecho Penal Chileno"
+      - suggestions should be specific to Chilean law, not general Spanish law
       - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for "es" locale
 
       ${SHARED_EXPECTATIONS}
@@ -215,6 +216,20 @@ export const TEST_CASES = [
       - should include "The Matrix" (the movie)
       - may include other sci-fi related topics and broad suggestions
       - may include broader film-related suggestions
+      - all titles and descriptions in US English
+
+      ${SHARED_EXPECTATIONS}
+    `,
+  },
+  {
+    id: "en-wealth-of-nations",
+    userInput: {
+      locale: "en",
+      prompt: "wealth of nations",
+    },
+    expectations: `
+      - should include "The Wealth of Nations" since the user is specifically asking for this book
+      - should include broader or similar topics
       - all titles and descriptions in US English
 
       ${SHARED_EXPECTATIONS}

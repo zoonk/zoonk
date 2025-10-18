@@ -35,37 +35,6 @@
     },
     {
       "testCase": {
-        "id": "en-black-holes",
-        "userInput": {
-          "locale": "en",
-          "prompt": "quero aprender sobre buracos negros"
-        },
-        "expectations": "\n      - should include \"Black Holes\"\n      - may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explores the physics, formation, and observational signatures of black holes to understand their role in the universe.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Covers the physical principles governing celestial objects to build a foundation for studying phenomena like black holes.\"\n  },\n  {\n    \"title\": \"General Relativity\",\n    \"description\": \"Introduces the theory of gravity that predicts black holes and explains spacetime curvature and geodesics.\"\n  },\n  {\n    \"title\": \"Cosmology\",\n    \"description\": \"Examines the large-scale structure and evolution of the universe to place black holes in a cosmological context.\"\n  },\n  {\n    \"title\": \"Stellar Evolution\",\n    \"description\": \"Details the life cycles of stars to explain the formation pathways of black holes from stellar collapse.\"\n  },\n  {\n    \"title\": \"Gravitational Waves\",\n    \"description\": \"Focuses on the detection and interpretation of spacetime ripples produced by black hole mergers and other energetic events.\"\n  },\n  {\n    \"title\": \"Observational Astronomy\",\n    \"description\": \"Teaches observational techniques and instrumentation used to detect and study black holes across the electromagnetic spectrum.\"\n  },\n  {\n    \"title\": \"Computational Astrophysics\",\n    \"description\": \"Introduces numerical methods and simulations for modeling black hole dynamics and astrophysical environments.\"\n  },\n  {\n    \"title\": \"High Energy Astrophysics\",\n    \"description\": \"Explores energetic processes and emissions around black holes, including accretion disks and relativistic jets.\"\n  },\n  {\n    \"title\": \"Quantum Gravity\",\n    \"description\": \"Surveys approaches to unifying quantum mechanics and gravity to understand black hole singularities and information paradoxes.\"\n  }\n]",
-      "score": 9.833333333333334,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. The output follows all key rules: US English, includes the exact topic \"Black Holes,\" uses Title Case, avoids levels and joiners, and provides single-sentence descriptions.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "None observed. Descriptions are concise, accurate, and relevant; titles look like real courses and remain single-topic.",
-          "score": 10
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Could optionally add a few adjacent single-topic options like Relativistic Astrophysics or Radio Astronomy, but the current set is already comprehensive and well-targeted.",
-          "score": 9.5
-        }
-      ],
-      "inputTokens": 548,
-      "outputTokens": 1072
-    },
-    {
-      "testCase": {
         "id": "es-derecho-penal",
         "userInput": {
           "locale": "es",
@@ -94,37 +63,6 @@
       ],
       "inputTokens": 544,
       "outputTokens": 2000
-    },
-    {
-      "testCase": {
-        "id": "es-derecho-chileno",
-        "userInput": {
-          "locale": "es",
-          "prompt": "derecho chileno"
-        },
-        "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - may include similar topics like \"Derecho Constitucional Chileno\" or \"Derecho Penal Chileno\"\n      - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for \"es\" locale\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
-      },
-      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Estudia el ordenamiento jurídico de Chile para comprender las normas, instituciones y fuentes que regulan la vida social y económica del país.\"\n  },\n  {\n    \"title\": \"Derecho Constitucional\",\n    \"description\": \"Analiza la estructura del Estado, los derechos fundamentales y el funcionamiento de los poderes públicos para defender el marco democrático.\"\n  },\n  {\n    \"title\": \"Derecho Civil\",\n    \"description\": \"Aborda las normas sobre personas, bienes, obligaciones y contratos para regular relaciones privadas cotidianas y patrimoniales.\"\n  },\n  {\n    \"title\": \"Derecho Penal\",\n    \"description\": \"Examina los delitos, las penas y las garantías procesales para comprender la respuesta punitiva del Estado frente a conductas ilícitas.\"\n  },\n  {\n    \"title\": \"Derecho Administrativo\",\n    \"description\": \"Estudia la organización y funcionamiento de la administración pública y los mecanismos de control sobre la actuación estatal.\"\n  },\n  {\n    \"title\": \"Derecho Procesal\",\n    \"description\": \"Se centra en los procedimientos y reglas que regulan la tramitación de conflictos ante los tribunales para asegurar el acceso a la justicia.\"\n  },\n  {\n    \"title\": \"Derecho Laboral\",\n    \"description\": \"Analiza la regulación de las relaciones de trabajo, derechos laborales y seguridad social para proteger a trabajadores y empleadores.\"\n  },\n  {\n    \"title\": \"Derecho Tributario\",\n    \"description\": \"Aborda la normativa fiscal, la obligación tributaria y la administración de impuestos para gestionar responsabilidades públicas y privadas.\"\n  },\n  {\n    \"title\": \"Derecho Comercial\",\n    \"description\": \"Estudia las normas que rigen las actividades empresariales, sociedades y contratos mercantiles para facilitar la actividad económica.\"\n  },\n  {\n    \"title\": \"Derecho Internacional Público\",\n    \"description\": \"Explora los principios y normas que regulan las relaciones entre Estados y organismos internacionales relevantes para la política exterior.\"\n  },\n  {\n    \"title\": \"Métodos De Investigación Jurídica\",\n    \"description\": \"Enseña técnicas de investigación, interpretación y argumentación jurídica para mejorar la práctica académica y profesional del derecho.\"\n  },\n  {\n    \"title\": \"Ética Jurídica\",\n    \"description\": \"Reflexiona sobre valores, responsabilidad profesional y deontología para promover una práctica legal íntegra y socialmente responsable.\"\n  }\n]",
-      "score": 9.166666666666666,
-      "steps": [
-        {
-          "kind": "major_errors",
-          "conclusion": "None. The response follows the rules: titles are in Title Case, in Spanish, single-topic without joiners, descriptions are exactly one sentence, and it includes the specific topic “Derecho Chileno.” No safety or factual issues identified.",
-          "score": 10
-        },
-        {
-          "kind": "minor_errors",
-          "conclusion": "Minor stylistic and locale issues: given the es-ES requirement, “Derecho Comercial” would more naturally be “Derecho Mercantil”; some related titles are generic rather than Chile-specific (e.g., “Derecho Constitucional” instead of “Derecho Constitucional Chileno”), though this was optional. Otherwise formatting and constraints are met.",
-          "score": 9
-        },
-        {
-          "kind": "potential_improvements",
-          "conclusion": "Enhance Spain Spanish alignment by renaming “Derecho Comercial” to “Derecho Mercantil.” Add more Chile-focused variants like “Derecho Constitucional Chileno,” “Derecho Penal Chileno,” or domain-specific areas such as “Derecho Ambiental Chileno” or “Derecho Minero Chileno.” Optionally adjust some titles to common academic phrasing in Spain (e.g., “Metodología De La Investigación Jurídica”).",
-          "score": 8.5
-        }
-      ],
-      "inputTokens": 545,
-      "outputTokens": 1123
     },
     {
       "testCase": {
