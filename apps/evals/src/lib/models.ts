@@ -95,12 +95,6 @@ export const EVAL_MODELS: ModelConfig[] = [
     outputCost: 0.5,
   },
   {
-    id: "openai/gpt-oss-20b",
-    name: "gpt-oss-20b",
-    inputCost: 0.07,
-    outputCost: 0.3,
-  },
-  {
     id: "xai/grok-4",
     name: "grok-4",
     inputCost: 3,

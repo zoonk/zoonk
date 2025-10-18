@@ -8,7 +8,8 @@ import {
 } from "@zoonk/db/queries/course-suggestions";
 import { cacheLife, cacheTag } from "next/cache";
 
-const model = process.env.AI_MODEL_COURSE_SUGGESTIONS || "openai/gpt-4.1";
+const model =
+  process.env.AI_MODEL_COURSE_SUGGESTIONS || "google/gemini-2.5-flash";
 
 export async function fetchCourseSuggestions({
   locale,

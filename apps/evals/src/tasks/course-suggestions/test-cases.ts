@@ -1,8 +1,11 @@
 const SHARED_EXPECTATIONS = `
-  - The main focus is the \`title\` field, no need to pay much attention to the \`description\` field
-  - No level/joiner words like "basic", "intermediate", "advanced", "fundamentals", etc
-  - No words like "course" in the title
-  - Titles are always in Title Case
+  - Focus only on title field, no need to pay attention to the description
+  - It's okay for description to have issues, focus on the title
+  - The description should NOT have an impact on scoring unless it's written in the wrong language
+  - Title should NOT have level/joiner words like "basic", "intermediate", "advanced", "fundamentals", etc
+  - Title should NOT have words like "course" in the title
+  - Titles are in Title Case
+  - Not following title guidelines is a major error
 `;
 
 export const TEST_CASES = [
@@ -13,7 +16,8 @@ export const TEST_CASES = [
       prompt: "I want to code",
     },
     expectations: `
-      - titles should look like these: "Programação","Ciência da Computação","Desenvolvimento Web","Engenharia de Software"
+      - titles should include broad topics like "Ciência da Computação", "Programação", "Desenvolvimento de Software"
+      - may include other related topics to coding and programming
       - all titles and descriptions in Brazilian Portuguese
 
       ${SHARED_EXPECTATIONS}
@@ -26,8 +30,8 @@ export const TEST_CASES = [
       prompt: "quero aprender sobre buracos negros",
     },
     expectations: `
-      - should include "Black Holes"
-      - may include broader topics like "Astrophysics"
+      - should include "Black Holes" in the first result
+      - should include broader topics like "Astrophysics"
       - all titles and descriptions in US English
 
       ${SHARED_EXPECTATIONS}
@@ -41,7 +45,7 @@ export const TEST_CASES = [
     },
     expectations: `
       - should include "Derecho Penal"
-      - may include broader topics like "Derecho" or "Criminología"
+      - may include broader or similar topics
       - all titles and descriptions in Spain Spanish
 
       ${SHARED_EXPECTATIONS}
@@ -55,7 +59,7 @@ export const TEST_CASES = [
     },
     expectations: `
       - should include "Derecho Chileno" since the user is specifically asking for Chilean law
-      - may include similar topics like "Derecho Constitucional Chileno" or "Derecho Penal Chileno"
+      - if including related topics, they should be specific to Chilean law, not general Spanish law
       - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for "es" locale
 
       ${SHARED_EXPECTATIONS}
@@ -97,8 +101,8 @@ export const TEST_CASES = [
       prompt: "i want an intro to chemistry",
     },
     expectations: `
-      - should include "Chemistry" (without "Intro" or "Introduction")
-      - do NOT include "Intro to Chemistry"
+      - should include "Chemistry" (this is very important, not including it is a major error)
+      - do NOT include "Intro to Chemistry" or "Introduction to Chemistry"
       - may include broader or similar topics but it's not required
       - all titles and descriptions in US English
 
@@ -109,10 +113,10 @@ export const TEST_CASES = [
     id: "pt-dragon-ball",
     userInput: {
       locale: "pt",
-      prompt: "dragon ball",
+      prompt: "dragon bals",
     },
     expectations: `
-      - should include "Dragon Ball"
+      - should include "Dragon Ball", fixing the typo in the input
       - optionally, may include broader alts like "Animação", "Cultura Pop" or related suggestions
       - all titles and descriptions in Brazilian Portuguese
 
@@ -155,7 +159,7 @@ export const TEST_CASES = [
     },
     expectations: `
       - should include "JLPT" without the "N2" level suffix
-      - should include "Japanese"
+      - should include "Japanese", not "Japanese Language" (adding a "language" suffix is a major error)
       - all titles and descriptions in US English
       - no extra titles like "Japanese Language Proficiency Test", "JLPT N2 Preparation", etc
       - should NOT include any other suggestions
@@ -185,7 +189,8 @@ export const TEST_CASES = [
       prompt: "how do computers work",
     },
     expectations: `
-      - should include broad caninocals like (but not limited to) "Computer Science", "Computer Architecture", "Operating Systems", etc
+      - should include broad courses like "Computer Science", "Computer Architecture", etc
+      - extra related topics are fine but their absence is also fine
       - all titles and descriptions in US English
 
       ${SHARED_EXPECTATIONS}
@@ -212,9 +217,37 @@ export const TEST_CASES = [
       prompt: "matrix movie",
     },
     expectations: `
-      - should include "The Matrix" (the movie)
+      - first result should be the exact movie title: "The Matrix"
       - may include other sci-fi related topics and broad suggestions
       - may include broader film-related suggestions
+      - all titles and descriptions in US English
+
+      ${SHARED_EXPECTATIONS}
+    `,
+  },
+  {
+    id: "en-ai",
+    userInput: {
+      locale: "en",
+      prompt: "ai",
+    },
+    expectations: `
+      - should include "Artificial Intelligence" (not "AI" abbreviation in the title)
+      - may include other AI-related topics and broad suggestions
+      - all titles and descriptions in US English
+
+      ${SHARED_EXPECTATIONS}
+    `,
+  },
+  {
+    id: "en-wealth-of-nations",
+    userInput: {
+      locale: "en",
+      prompt: "wealth of nations",
+    },
+    expectations: `
+      - should include the exact book title ("The Wealth of Nations") since the user is specifically asking for this book
+      - should include broader or similar topics
       - all titles and descriptions in US English
 
       ${SHARED_EXPECTATIONS}

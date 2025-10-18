@@ -3,8 +3,8 @@ import { generateObject } from "ai";
 import systemPrompt from "./system-prompt.md";
 import { type ScoreStep, scoreSchema } from "./types";
 
-const BAD_SCORE = 7;
-const GOOD_SCORE = 9;
+const BAD_SCORE = 8;
+const GOOD_SCORE = 9.2;
 
 // Weight configuration for different step types
 const STEP_WEIGHTS = {

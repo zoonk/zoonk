@@ -1,10 +1,12 @@
 import type { LanguageModelUsage } from "ai";
 import z from "zod";
 
+const MIN_SCORE = 6;
+
 const stepSchema = z.object({
   kind: z.enum(["major_errors", "minor_errors", "potential_improvements"]),
   conclusion: z.string(),
-  score: z.number().min(1).max(10),
+  score: z.number().min(MIN_SCORE).max(10),
 });
 
 export const scoreSchema = z.object({
