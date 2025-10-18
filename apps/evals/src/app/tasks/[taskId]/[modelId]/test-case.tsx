@@ -1,5 +1,4 @@
 import {
-  Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
@@ -113,30 +112,28 @@ export function TestCase({ result, index }: TestCaseCardProps) {
   const scoreDisplay = score.toFixed(2);
 
   return (
-    <Accordion type="single" collapsible className="w-full">
-      <AccordionItem value={`test-case-${index}`}>
-        <AccordionTrigger className="flex w-full items-center justify-between pr-4 hover:no-underline">
-          <span className="font-medium text-base">
-            {testCaseTitle}:{" "}
-            <span className={getScoreClassName(score)}>{scoreDisplay}</span>
-          </span>
-        </AccordionTrigger>
+    <AccordionItem value={`test-case-${index}`}>
+      <AccordionTrigger className="flex w-full items-center justify-between pr-4 hover:no-underline">
+        <span className="font-medium text-base">
+          {testCaseTitle}:{" "}
+          <span className={getScoreClassName(score)}>{scoreDisplay}</span>
+        </span>
+      </AccordionTrigger>
 
-        <AccordionContent className="flex flex-col gap-4 pt-4">
-          <UserInputSection userInput={result.testCase.userInput} />
+      <AccordionContent className="flex flex-col gap-4 pt-4">
+        <UserInputSection userInput={result.testCase.userInput} />
 
-          <ScoreSection score={score} />
+        <ScoreSection score={score} />
 
-          <TokensSection
-            inputTokens={result.inputTokens}
-            outputTokens={result.outputTokens}
-          />
+        <TokensSection
+          inputTokens={result.inputTokens}
+          outputTokens={result.outputTokens}
+        />
 
-          <OutputSection output={result.output} />
+        <OutputSection output={result.output} />
 
-          <EvaluationStepsSection steps={result.steps} />
-        </AccordionContent>
-      </AccordionItem>
-    </Accordion>
+        <EvaluationStepsSection steps={result.steps} />
+      </AccordionContent>
+    </AccordionItem>
   );
 }

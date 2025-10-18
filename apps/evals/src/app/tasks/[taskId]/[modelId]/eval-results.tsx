@@ -1,3 +1,4 @@
+import { Accordion } from "@zoonk/ui/components/accordion";
 import { ContainerTitle } from "@zoonk/ui/components/container";
 import { calculateAverageScore } from "@/lib/leaderboard";
 import { getModelById } from "@/lib/models";
@@ -31,7 +32,7 @@ export function EvalResults({ results }: EvalResultsProps) {
       <div className="flex flex-col gap-4">
         <ContainerTitle>Test Cases</ContainerTitle>
 
-        <div className="flex flex-col gap-4">
+        <Accordion type="single" collapsible className="w-full">
           {results.results.map((result, index) => (
             <TestCase
               key={result.testCase.id || index}
@@ -39,7 +40,7 @@ export function EvalResults({ results }: EvalResultsProps) {
               index={index}
             />
           ))}
-        </div>
+        </Accordion>
       </div>
     </div>
   );
