@@ -22,7 +22,7 @@ import {
   HomeLinkBreadcrumb,
   TaskPageBreadcrumb,
 } from "@/patterns/breadcrumb";
-import { getTaskById } from "@/tasks";
+import { getTaskById, RUNS_PER_TEST_CASE } from "@/tasks";
 import { Leaderboard } from "./leaderboard";
 
 interface TaskPageProps {
@@ -52,7 +52,7 @@ export default async function TaskPage({ params }: TaskPageProps) {
         <ContainerTitle>{task.name}</ContainerTitle>
         <ContainerDescription>
           Choose a model to run evaluations on {task.testCases.length} test
-          cases
+          cases ({RUNS_PER_TEST_CASE} runs each)
         </ContainerDescription>
       </ContainerHeader>
 

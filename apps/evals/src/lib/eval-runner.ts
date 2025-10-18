@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { cache } from "react";
+import { RUNS_PER_TEST_CASE } from "@/tasks";
 import { generateScore } from "./score";
 import type { EvalResult, Task, TaskEvalResults, TestCase } from "./types";
 
@@ -51,12 +52,13 @@ async function runTestCase(
   task: Task,
   testCase: TestCase,
   modelId: string,
+  runNumber: number,
 ): Promise<EvalResult> {
   const inputSummary = Object.entries(testCase.userInput)
     .map(([key, value]) => `${key}=${value}`)
     .join(", ");
 
-  console.log(`Running test case: ${inputSummary}`);
+  console.log(`Running test case: ${inputSummary} (run ${runNumber})`);
 
   const startTime = performance.now();
   const result = await task.generate({
@@ -79,8 +81,14 @@ async function runTestCase(
 
   console.log(`Score: ${scoreResult.score}`);
 
+  // Create a test case with the run number appended to the ID
+  const testCaseWithRun: TestCase = {
+    ...testCase,
+    id: `${testCase.id}-${runNumber}`,
+  };
+
   return {
-    testCase,
+    testCase: testCaseWithRun,
     output,
     steps: scoreResult.steps,
     inputTokens: result.usage.inputTokens ?? 0,
@@ -88,12 +96,15 @@ async function runTestCase(
     duration,
   };
 }
+
 function shouldSkipTestCase(
   existing: EvalResult[],
-  testCase: TestCase,
+  baseTestCaseId: string,
+  runNumber: number,
 ): boolean {
-  // Check if we already have a result for this test case ID
-  return existing.some((r) => r.testCase.id === testCase.id);
+  // Check if we already have a result for this specific test case run
+  const runId = `${baseTestCaseId}-${runNumber}`;
+  return existing.some((r) => r.testCase.id === runId);
 }
 
 export async function runEval(
@@ -102,20 +113,36 @@ export async function runEval(
 ): Promise<TaskEvalResults> {
   // Sanitize modelId before logging to prevent log injection
   const safeModelId = String(modelId).replace(/[\r\n]/g, "");
+  const totalRuns = task.testCases.length * RUNS_PER_TEST_CASE;
+
   console.log(
     `\nStarting eval for task: ${task.name}, model: [${safeModelId}]`,
   );
-  console.log(`Total test cases: ${task.testCases.length}`);
+
+  console.log(
+    `Total test cases: ${task.testCases.length} (${totalRuns} runs with ${RUNS_PER_TEST_CASE} iterations each)`,
+  );
 
   const existingResults = await loadExistingResults(task.id, modelId);
   console.log(`Found ${existingResults.length} existing results`);
 
-  const testCasesToRun = task.testCases.filter(
-    (tc) => !shouldSkipTestCase(existingResults, tc),
-  );
-  console.log(`Running ${testCasesToRun.length} new test cases`);
+  // Generate all test case runs that need to be executed
+  const testCaseRunsToExecute: Array<{
+    testCase: TestCase;
+    runNumber: number;
+  }> = [];
 
-  if (testCasesToRun.length === 0) {
+  for (const testCase of task.testCases) {
+    for (let runNumber = 1; runNumber <= RUNS_PER_TEST_CASE; runNumber++) {
+      if (!shouldSkipTestCase(existingResults, testCase.id, runNumber)) {
+        testCaseRunsToExecute.push({ testCase, runNumber });
+      }
+    }
+  }
+
+  console.log(`Running ${testCaseRunsToExecute.length} new test case runs`);
+
+  if (testCaseRunsToExecute.length === 0) {
     console.log("All test cases already completed, loading existing results");
     const filePath = getResultsFilePath(task.id, modelId);
     const data = await fs.readFile(filePath, "utf-8");
@@ -123,7 +150,9 @@ export async function runEval(
   }
 
   const results = await Promise.allSettled(
-    testCasesToRun.map((tc) => runTestCase(task, tc, modelId)),
+    testCaseRunsToExecute.map(({ testCase, runNumber }) =>
+      runTestCase(task, testCase, modelId, runNumber),
+    ),
   );
 
   // Filter out the rejected promises and extract values from fulfilled ones
