@@ -5,7 +5,6 @@ const TOKENS_PER_MILLION = 1_000_000;
 const COST_MULTIPLIER = 1000;
 
 interface TaskStats {
-  averageScore: number;
   averageInputTokens: number;
   averageOutputTokens: number;
   totalCost: number;
@@ -13,7 +12,7 @@ interface TaskStats {
 
 function calculateAverage(
   results: EvalResult[],
-  key: "score" | "inputTokens" | "outputTokens",
+  key: "inputTokens" | "outputTokens",
 ): number {
   if (results.length === 0) {
     return 0;
@@ -48,7 +47,6 @@ function calculateStats(results: EvalResult[], modelId: string): TaskStats {
     throw new Error(`Model ${modelId} not found`);
   }
 
-  const averageScore = calculateAverage(results, "score");
   const averageInputTokens = calculateAverage(results, "inputTokens");
   const averageOutputTokens = calculateAverage(results, "outputTokens");
 
@@ -59,7 +57,6 @@ function calculateStats(results: EvalResult[], modelId: string): TaskStats {
   );
 
   return {
-    averageScore,
     averageInputTokens,
     averageOutputTokens,
     totalCost,

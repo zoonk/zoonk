@@ -29,7 +29,6 @@ export interface TaskResult<T = unknown> {
 export interface EvalResult {
   testCase: TestCase;
   output: string;
-  score: number;
   steps: Score["steps"];
   inputTokens: number;
   outputTokens: number;

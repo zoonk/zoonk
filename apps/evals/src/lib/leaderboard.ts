@@ -1,9 +1,27 @@
 import { getModelById, getModelDisplayName } from "@/lib/models";
+import { calculateScore } from "@/lib/score";
 import { getStatsFromResults } from "@/lib/stats";
 import type { TaskEvalResults } from "@/lib/types";
 
 function roundScoreToFixed(score: number): number {
   return Number(score.toFixed(2));
+}
+
+/**
+ * Calculates the average score for a task's eval results.
+ * Computes the weighted score for each result and returns the mean.
+ */
+export function calculateAverageScore(results: TaskEvalResults): number {
+  if (results.results.length === 0) {
+    return 0;
+  }
+
+  const totalScore = results.results.reduce(
+    (acc, result) => acc + calculateScore(result.steps),
+    0,
+  );
+
+  return totalScore / results.results.length;
 }
 
 export interface LeaderboardEntry {
@@ -38,7 +56,7 @@ export function getLeaderboardEntries(
         modelId: result.modelId,
         modelName: getModelDisplayName(model),
         provider: result.modelId.split("/")[0],
-        averageScore: stats.averageScore,
+        averageScore: calculateAverageScore(result),
         totalCost: stats.totalCost,
       } satisfies LeaderboardEntry;
     })

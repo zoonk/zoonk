@@ -79,7 +79,6 @@ async function runTestCase<TInput = unknown, TOutput = unknown>(
   return {
     testCase,
     output,
-    score: scoreResult.score,
     steps: scoreResult.steps,
     inputTokens: result.usage.inputTokens ?? 0,
     outputTokens: result.usage.outputTokens ?? 0,

@@ -12,7 +12,6 @@
         "expectations": "\n      - titles should look like these: \"Programação\",\"Ciência da Computação\",\"Desenvolvimento Web\",\"Engenharia de Software\"\n      - all titles and descriptions in Brazilian Portuguese\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
       },
       "output": "[\n  {\n    \"title\": \"Programação\",\n    \"description\": \"Aprenda a pensar como um computador e a construir soluções lógicas.\"\n  },\n  {\n    \"title\": \"Desenvolvimento de Software\",\n    \"description\": \"Crie sistemas e aplicativos que resolvam problemas complexos do mundo real.\"\n  },\n  {\n    \"title\": \"Desenvolvimento Web\",\n    \"description\": \"Construa sites e aplicações interativas que rodam na internet.\"\n  },\n  {\n    \"title\": \"Ciência de Dados\",\n    \"description\": \"Descubra padrões e insights significativos a partir de grandes volumes de dados.\"\n  },\n  {\n    \"title\": \"Desenvolvimento Mobile\",\n    \"description\": \"Desenvolva aplicativos inovadores para smartphones e tablets.\"\n  }\n]",
-      "score": 9.666666666666666,
       "steps": [
         {
           "kind": "major_errors",
@@ -35,6 +34,36 @@
     },
     {
       "testCase": {
+        "id": "en-black-holes",
+        "userInput": {
+          "locale": "en",
+          "prompt": "quero aprender sobre buracos negros"
+        },
+        "expectations": "\n      - should include \"Black Holes\"\n      - may include broader topics like \"Astrophysics\"\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
+      },
+      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the fascinating physics and properties of these mysterious cosmic objects.\"\n  }\n]",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "Only a single suggestion was provided even though more relevant suggestions could be added; otherwise it follows language, title formatting, single-topic constraint, and one-sentence description requirements.",
+          "score": 9
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "Add more relevant single-topic suggestions such as Astrophysics, General Relativity, Cosmology, Stellar Evolution, or Gravitational Waves, each with a one-sentence US English description; this would increase utility without violating constraints.",
+          "score": 8
+        }
+      ],
+      "inputTokens": 534,
+      "outputTokens": 29
+    },
+    {
+      "testCase": {
         "id": "es-derecho-penal",
         "userInput": {
           "locale": "es",
@@ -43,7 +72,6 @@
         "expectations": "\n      - should include \"Derecho Penal\"\n      - may include broader topics like \"Derecho\" or \"Criminología\"\n      - all titles and descriptions in Spain Spanish\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
       },
       "output": "[\n  {\n    \"title\": \"Derecho Penal\",\n    \"description\": \"Este curso cubre los principios fundamentales y la aplicación de la ley penal en la sociedad.\"\n  },\n  {\n    \"title\": \"Criminología\",\n    \"description\": \"Este curso explora las causas del crimen, el comportamiento delictivo y las respuestas sociales a la delincuencia.\"\n  },\n  {\n    \"title\": \"Proceso Penal\",\n    \"description\": \"Este curso se enfoca en los procedimientos legales que rigen la investigación y el enjuiciamiento de delitos.\"\n  },\n  {\n    \"title\": \"Teoría del Delito\",\n    \"description\": \"Este curso examina los elementos esenciales que deben concurrir para que una conducta sea considerada delito.\"\n  }\n]",
-      "score": 9.166666666666666,
       "steps": [
         {
           "kind": "major_errors",
@@ -66,6 +94,36 @@
     },
     {
       "testCase": {
+        "id": "es-derecho-chileno",
+        "userInput": {
+          "locale": "es",
+          "prompt": "derecho chileno"
+        },
+        "expectations": "\n      - should include \"Derecho Chileno\" since the user is specifically asking for Chilean law\n      - may include similar topics like \"Derecho Constitucional Chileno\" or \"Derecho Penal Chileno\"\n      - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for \"es\" locale\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
+      },
+      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Este curso te familiarizará con el marco legal y las regulaciones específicas de Chile.\"\n  },\n  {\n    \"title\": \"Derecho Constitucional\",\n    \"description\": \"Este curso explora los principios fundamentales que rigen la estructura del Estado y los derechos de los ciudadanos.\"\n  },\n  {\n    \"title\": \"Derecho Civil\",\n    \"description\": \"Este curso cubre las normativas que regulan las relaciones personales y patrimoniales entre individuos.\"\n  },\n  {\n    \"title\": \"Derecho Penal\",\n    \"description\": \"Este curso examina las leyes y procedimientos relacionados con los delitos y sus sanciones.\"\n  },\n  {\n    \"title\": \"Derecho Administrativo\",\n    \"description\": \"Este curso se centra en las normas que regulan la organización y actividad de la Administración Pública y sus relaciones con los ciudadanos.\"\n  }\n]",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None. The output follows language, title case, single-topic, and one-sentence description rules, and includes the required \"Derecho Chileno\" entry.",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "Several titles for subfields are generic rather than Chile-specific (e.g., \"Derecho Constitucional\" instead of \"Derecho Constitucional Chileno\"), slightly reducing relevance given the user’s explicit interest in Chilean law; most descriptions are generic and do not reference Chile except the first.",
+          "score": 8.8
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "Make subfield titles Chile-specific (e.g., \"Derecho Constitucional Chileno\", \"Derecho Penal Chileno\", \"Derecho Civil Chileno\", \"Derecho Administrativo Chileno\"); tailor descriptions to Chile; consider adding other highly relevant Chile-focused areas like \"Derecho Laboral Chileno\", \"Derecho Tributario Chileno\", \"Procedimiento Civil Chileno\", or \"Derecho Comercial Chileno\" while keeping one-sentence descriptions.",
+          "score": 8
+        }
+      ],
+      "inputTokens": 529,
+      "outputTokens": 166
+    },
+    {
+      "testCase": {
         "id": "pt-toefl",
         "userInput": {
           "locale": "pt",
@@ -74,7 +132,6 @@
         "expectations": "\n      - should ONLY include \"TOEFL\" and \"Inglês\"\n      - all titles and descriptions in Brazilian Portuguese\n      - no extra titles like \"Testes de Proficiência em Inglês\", \"Preparatório para o TOEFL\", etc\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
       },
       "output": "[\n  {\n    \"title\": \"TOEFL\",\n    \"description\": \"Prepare-se para o exame TOEFL e certifique sua proficiência em inglês.\"\n  },\n  {\n    \"title\": \"Inglês\",\n    \"description\": \"Aprenda a língua inglesa para comunicação global e oportunidades educacionais.\"\n  }\n]",
-      "score": 9.833333333333334,
       "steps": [
         {
           "kind": "major_errors",
@@ -105,7 +162,6 @@
         "expectations": "\n      - should include both \"Física\" and \"Química\"\n      - should NOT include \"Física e Química\" as a single title\n      - may include broader or similar topics but it's not required\n      - all titles and descriptions in Brazilian Portuguese\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
       },
       "output": "[\n  {\n    \"title\": \"Física\",\n    \"description\": \"Explora as leis fundamentais que regem o universo e a matéria.\"\n  },\n  {\n    \"title\": \"Química\",\n    \"description\": \"Estuda a composição, estrutura e propriedades da matéria, bem como suas transformações.\"\n  }\n]",
-      "score": 9.666666666666666,
       "steps": [
         {
           "kind": "major_errors",
@@ -136,7 +192,6 @@
         "expectations": "\n      - should include \"Chemistry\" (without \"Intro\" or \"Introduction\")\n      - do NOT include \"Intro to Chemistry\"\n      - may include broader or similar topics but it's not required\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
       },
       "output": "[\n  {\n    \"title\": \"Chemistry\",\n    \"description\": \"This course explores the fundamental principles governing matter and its transformations, providing a basis for understanding the world around us.\"\n  },\n  {\n    \"title\": \"Organic Chemistry\",\n    \"description\": \"This course focuses on carbon-containing compounds, which are essential for understanding life and many industrial processes.\"\n  },\n  {\n    \"title\": \"Inorganic Chemistry\",\n    \"description\": \"This course examines compounds that do not primarily contain carbon-hydrogen bonds, crucial for materials science and catalysis.\"\n  },\n  {\n    \"title\": \"Physical Chemistry\",\n    \"description\": \"This course applies physics principles to chemical systems, providing a deeper understanding of chemical reactions and properties.\"\n  }\n]",
-      "score": 9.666666666666666,
       "steps": [
         {
           "kind": "major_errors",
@@ -167,7 +222,6 @@
         "expectations": "\n      - should include \"Dragon Ball\"\n      - optionally, may include broader alts like \"Animação\", \"Cultura Pop\" or related suggestions\n      - all titles and descriptions in Brazilian Portuguese\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
       },
       "output": "[\n  {\n    \"title\": \"Dragon Ball\",\n    \"description\": \"Explore o universo, personagens e histórias por trás da icônica franquia Dragon Ball.\"\n  },\n  {\n    \"title\": \"Cultura Japonesa\",\n    \"description\": \"Descubra as tradições, costumes e a rica história do Japão.\"\n  },\n  {\n    \"title\": \"Animação Japonesa\",\n    \"description\": \"Aprenda sobre a história, estilos e técnicas por trás das produções de animação do Japão.\"\n  }\n]",
-      "score": 9.666666666666666,
       "steps": [
         {
           "kind": "major_errors",
@@ -198,7 +252,6 @@
         "expectations": "\n      - should include \"Beatles\" or \"The Beatles\"\n      - optionally, may include broader alts like \"Rock\", \"Music History\" or related suggestions\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
       },
       "output": "[\n  {\n    \"title\": \"The Beatles\",\n    \"description\": \"Learn about the history, music, and cultural impact of the legendary band.\"\n  },\n  {\n    \"title\": \"History of Rock Music\",\n    \"description\": \"Explore the evolution and cultural significance of rock music from its origins.\"\n  },\n  {\n    \"title\": \"British Music History\",\n    \"description\": \"Discover the key artists, genres, and movements that shaped British music.\"\n  }\n]",
-      "score": 9.666666666666666,
       "steps": [
         {
           "kind": "major_errors",
@@ -229,7 +282,6 @@
         "expectations": "\n      - should include \"Formule 1\" or \"F1\"\n      - optionally, may include broader alts like \"Sport Automobile\", \"Courses de Voitures\" or related suggestions\n      - all titles and descriptions in France French\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
       },
       "output": "[\n  {\n    \"title\": \"Formule 1\",\n    \"description\": \"Ce cours explore l'histoire, la technologie et la stratégie de la course automobile la plus prestigieuse.\"\n  },\n  {\n    \"title\": \"Ingénierie Automobile\",\n    \"description\": \"Ce cours fournit une compréhension approfondie de la conception et du fonctionnement des véhicules modernes.\"\n  },\n  {\n    \"title\": \"Aérodynamisme Appliqué\",\n    \"description\": \"Ce cours examine les principes de l'aérodynamisme et leur application dans les véhicules de course et l'ingénierie.\"\n  },\n  {\n    \"title\": \"Gestion du Sport Automobile\",\n    \"description\": \"Ce cours couvre les aspects commerciaux, marketing et organisationnels de l'industrie du sport automobile.\"\n  }\n]",
-      "score": 9.333333333333334,
       "steps": [
         {
           "kind": "major_errors",
@@ -260,7 +312,6 @@
         "expectations": "\n      - should include \"JLPT\" without the \"N2\" level suffix\n      - should include \"Japanese\"\n      - all titles and descriptions in US English\n      - no extra titles like \"Japanese Language Proficiency Test\", \"JLPT N2 Preparation\", etc\n      - should NOT include any other suggestions\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
       },
       "output": "[\n  {\n    \"title\": \"JLPT\",\n    \"description\": \"This course helps you prepare for the Japanese Language Proficiency Test.\"\n  },\n  {\n    \"title\": \"Japanese\",\n    \"description\": \"This course provides comprehensive learning of the Japanese language.\"\n  }\n]",
-      "score": 9.833333333333334,
       "steps": [
         {
           "kind": "major_errors",
@@ -291,7 +342,6 @@
         "expectations": "\n      - should ONLY include \"IELTS\" and \"Inglês\", strip \"Academic\" suffix\n      - all titles and descriptions in Brazilian Portuguese\n      - no extra titles like \"Testes de Proficiência em Inglês\", \"Preparatório para o IELTS\", etc\n      - should NOT include any other suggestions\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
       },
       "output": "[\n  {\n    \"title\": \"IELTS\",\n    \"description\": \"Este curso prepara você para o exame IELTS, abrindo portas para oportunidades acadêmicas e profissionais globalmente.\"\n  },\n  {\n    \"title\": \"Inglês\",\n    \"description\": \"Este curso fortalece suas habilidades no idioma inglês, essencial para a comunicação global e sucesso em exames como o IELTS.\"\n  }\n]",
-      "score": 9.866666666666667,
       "steps": [
         {
           "kind": "major_errors",
@@ -322,7 +372,6 @@
         "expectations": "\n      - should include broad caninocals like (but not limited to) \"Computer Science\", \"Computer Architecture\", \"Operating Systems\", etc\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
       },
       "output": "[\n  {\n    \"title\": \"Computer Science\",\n    \"description\": \"This course explores the fundamental principles and theories behind computation and information processing.\"\n  },\n  {\n    \"title\": \"Computer Architecture\",\n    \"description\": \"This course examines the design and organization of computer systems, from processors to memory.\"\n  },\n  {\n    \"title\": \"Operating Systems\",\n    \"description\": \"This course covers the core concepts and functionalities of operating systems, managing computer hardware and software resources.\"\n  }\n]",
-      "score": 9.5,
       "steps": [
         {
           "kind": "major_errors",
@@ -353,7 +402,6 @@
         "expectations": "\n      - should include \"Tabela Periódica\"\n      - may include other chemistry-related topics and broad suggestions like \"Química\"\n      - all titles and descriptions in Brazilian Portuguese\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
       },
       "output": "[\n  {\n    \"title\": \"Tabela Periódica\",\n    \"description\": \"Este curso explora a organização e as tendências dos elementos químicos.\"\n  },\n  {\n    \"title\": \"Química Geral\",\n    \"description\": \"Este curso cobre os princípios fundamentais da química e suas aplicações.\"\n  },\n  {\n    \"title\": \"Propriedades dos Elementos\",\n    \"description\": \"Este curso detalha as características e comportamentos dos diversos elementos químicos.\"\n  }\n]",
-      "score": 9.5,
       "steps": [
         {
           "kind": "major_errors",
@@ -384,7 +432,6 @@
         "expectations": "\n      - should include \"The Matrix\" (the movie)\n      - may include other sci-fi related topics and broad suggestions\n      - may include broader film-related suggestions\n      - all titles and descriptions in US English\n\n      \n  - The main focus is the `title` field, no need to pay much attention to the `description` field\n  - No level/joiner words like \"basic\", \"intermediate\", \"advanced\", \"fundamentals\", etc\n  - No words like \"course\" in the title\n  - Titles are always in Title Case\n\n    "
       },
       "output": "[\n  {\n    \"title\": \"The Matrix Film Analysis\",\n    \"description\": \"Explore the philosophical and cinematic depth of The Matrix film series.\"\n  },\n  {\n    \"title\": \"Philosophy of Mind\",\n    \"description\": \"Investigate the nature of consciousness, perception, and the relationship between mind and body.\"\n  },\n  {\n    \"title\": \"Artificial Intelligence\",\n    \"description\": \"Understand the foundational theories and applications of intelligent systems.\"\n  },\n  {\n    \"title\": \"Science Fiction Cinema\",\n    \"description\": \"Study the history, themes, and techniques of science fiction films.\"\n  },\n  {\n    \"title\": \"Digital Ethics\",\n    \"description\": \"Examine the moral questions and societal impacts arising from digital technologies and virtual environments.\"\n  }\n]",
-      "score": 9.166666666666666,
       "steps": [
         {
           "kind": "major_errors",

@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@zoonk/ui/components/accordion";
-import { getScoreClassName } from "@/lib/score";
+import { calculateScore, getScoreClassName } from "@/lib/score";
 import type { EvalResult, ScoreStep } from "@/lib/types";
 
 interface TestCaseCardProps {
@@ -109,7 +109,8 @@ function EvaluationStepsSection({ steps }: EvaluationStepsSectionProps) {
 
 export function TestCase({ result, index }: TestCaseCardProps) {
   const testCaseTitle = result.testCase.id || `Test Case ${index + 1}`;
-  const scoreDisplay = result.score.toFixed(2);
+  const score = calculateScore(result.steps);
+  const scoreDisplay = score.toFixed(2);
 
   return (
     <Accordion type="single" collapsible className="w-full">
@@ -117,16 +118,14 @@ export function TestCase({ result, index }: TestCaseCardProps) {
         <AccordionTrigger className="flex w-full items-center justify-between pr-4 hover:no-underline">
           <span className="font-medium text-base">
             {testCaseTitle}:{" "}
-            <span className={getScoreClassName(result.score)}>
-              {scoreDisplay}
-            </span>
+            <span className={getScoreClassName(score)}>{scoreDisplay}</span>
           </span>
         </AccordionTrigger>
 
         <AccordionContent className="flex flex-col gap-4 pt-4">
           <UserInputSection userInput={result.testCase.userInput} />
 
-          <ScoreSection score={result.score} />
+          <ScoreSection score={score} />
 
           <TokensSection
             inputTokens={result.inputTokens}

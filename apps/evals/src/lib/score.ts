@@ -6,10 +6,29 @@ import { type ScoreStep, scoreSchema } from "./types";
 const BAD_SCORE = 7;
 const GOOD_SCORE = 9;
 
-// Gets the average score from all steps
-function calculateScore(steps: ScoreStep[]) {
-  const total = steps.reduce((acc, step) => acc + step.score, 0);
-  return total / steps.length;
+// Weight configuration for different step types
+const STEP_WEIGHTS = {
+  major_errors: 3,
+  minor_errors: 2,
+  potential_improvements: 1,
+} as const;
+
+/**
+ * Calculates a weighted average score from evaluation steps.
+ * Major errors have 3x weight, minor errors 2x, and potential improvements 1x.
+ */
+export function calculateScore(steps: ScoreStep[]): number {
+  const weightedTotal = steps.reduce(
+    (acc, step) => acc + step.score * STEP_WEIGHTS[step.kind],
+    0,
+  );
+
+  const totalWeight = steps.reduce(
+    (acc, step) => acc + STEP_WEIGHTS[step.kind],
+    0,
+  );
+
+  return weightedTotal / totalWeight;
 }
 
 /**

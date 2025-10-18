@@ -1,4 +1,5 @@
 import { ContainerTitle } from "@zoonk/ui/components/container";
+import { calculateAverageScore } from "@/lib/leaderboard";
 import { getModelById } from "@/lib/models";
 import { getStatsFromResults } from "@/lib/stats";
 import type { TaskEvalResults } from "@/lib/types";
@@ -12,6 +13,7 @@ interface EvalResultsProps {
 export function EvalResults({ results }: EvalResultsProps) {
   const model = getModelById(results.modelId);
   const stats = getStatsFromResults(results);
+  const averageScore = calculateAverageScore(results);
 
   if (!model) {
     return null;
@@ -20,7 +22,7 @@ export function EvalResults({ results }: EvalResultsProps) {
   return (
     <div className="flex flex-col gap-8">
       <SummaryCard
-        averageScore={stats.averageScore}
+        averageScore={averageScore}
         averageInputTokens={stats.averageInputTokens}
         averageOutputTokens={stats.averageOutputTokens}
         totalCost={stats.totalCost}
