@@ -50,6 +50,12 @@ export const EVAL_MODELS: ModelConfig[] = [
     outputCost: 0.3,
   },
   {
+    id: "moonshotai/kimi-k2-0905",
+    name: "kimi-k2-0905",
+    inputCost: 0.6,
+    outputCost: 2.5,
+  },
+  {
     id: "openai/gpt-5",
     name: "gpt-5",
     inputCost: 1.25,
