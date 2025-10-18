@@ -91,6 +91,15 @@ export function Leaderboard({ taskId, results }: LeaderboardProps) {
 
             <TableHead
               className="cursor-pointer"
+              onClick={() => handleSort("averageDuration")}
+            >
+              Avg Duration{" "}
+              {sortKey === "averageDuration" &&
+                (sortDirection === "asc" ? "↑" : "↓")}
+            </TableHead>
+
+            <TableHead
+              className="cursor-pointer"
               onClick={() => handleSort("totalCost")}
             >
               Cost{" "}
@@ -111,6 +120,7 @@ export function Leaderboard({ taskId, results }: LeaderboardProps) {
               </TableCell>
               <TableCell>{entry.provider}</TableCell>
               <TableCell>{entry.averageScore.toFixed(2)}</TableCell>
+              <TableCell>{entry.averageDuration.toFixed(2)}s</TableCell>
               <TableCell>${entry.totalCost.toFixed(2)}</TableCell>
             </TableRow>
           ))}

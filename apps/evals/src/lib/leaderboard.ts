@@ -29,10 +29,16 @@ export interface LeaderboardEntry {
   modelName: string;
   provider: string;
   averageScore: number;
+  averageDuration: number;
   totalCost: number;
 }
 
-export type SortKey = "modelName" | "provider" | "averageScore" | "totalCost";
+export type SortKey =
+  | "modelName"
+  | "provider"
+  | "averageScore"
+  | "averageDuration"
+  | "totalCost";
 export type SortDirection = "asc" | "desc";
 
 /**
@@ -57,6 +63,7 @@ export function getLeaderboardEntries(
         modelName: getModelDisplayName(model),
         provider: result.modelId.split("/")[0],
         averageScore: calculateAverageScore(result),
+        averageDuration: stats.averageDuration,
         totalCost: stats.totalCost,
       } satisfies LeaderboardEntry;
     })
@@ -64,7 +71,11 @@ export function getLeaderboardEntries(
 }
 
 export function getDefaultSortDirection(key: SortKey): SortDirection {
-  return key === "averageScore" ? "desc" : "asc";
+  return key === "averageScore" ||
+    key === "totalCost" ||
+    key === "averageDuration"
+    ? "desc"
+    : "asc";
 }
 
 /**
@@ -89,8 +100,8 @@ export function compareEntries(
     return b.totalCost - a.totalCost;
   }
 
-  if (key === "totalCost") {
-    return a.totalCost - b.totalCost;
+  if (key === "totalCost" || key === "averageDuration") {
+    return a[key] - b[key];
   }
 
   // localeCompare for string fields

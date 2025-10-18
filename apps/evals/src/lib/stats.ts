@@ -3,16 +3,18 @@ import type { EvalResult, TaskEvalResults } from "./types";
 
 const TOKENS_PER_MILLION = 1_000_000;
 const COST_MULTIPLIER = 1000;
+const MS_TO_SECONDS = 1000;
 
 interface TaskStats {
   averageInputTokens: number;
   averageOutputTokens: number;
+  averageDuration: number;
   totalCost: number;
 }
 
 function calculateAverage(
   results: EvalResult[],
-  key: "inputTokens" | "outputTokens",
+  key: "inputTokens" | "outputTokens" | "duration",
 ): number {
   if (results.length === 0) {
     return 0;
@@ -49,6 +51,8 @@ function calculateStats(results: EvalResult[], modelId: string): TaskStats {
 
   const averageInputTokens = calculateAverage(results, "inputTokens");
   const averageOutputTokens = calculateAverage(results, "outputTokens");
+  const averageDurationMs = calculateAverage(results, "duration");
+  const averageDuration = averageDurationMs / MS_TO_SECONDS;
 
   const totalCost = calculateTotalCost(
     averageInputTokens,
@@ -59,6 +63,7 @@ function calculateStats(results: EvalResult[], modelId: string): TaskStats {
   return {
     averageInputTokens,
     averageOutputTokens,
+    averageDuration,
     totalCost,
   };
 }

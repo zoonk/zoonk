@@ -34,6 +34,7 @@ export interface EvalResult {
   steps: Score["steps"];
   inputTokens: number;
   outputTokens: number;
+  duration: number;
 }
 
 export interface TaskEvalResults {

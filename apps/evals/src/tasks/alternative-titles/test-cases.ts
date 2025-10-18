@@ -11,6 +11,7 @@ const SHARED_EXPECTATIONS = `
   - It's fine to include levels like "Beginner", "Advanced", "Calculus 1", "101" etc., if they refer to the same subject
   - It's fine if it doesn't include variants with spacing, hyphenation, or accents since those will be serialized
   - Don't worry about awkward or redundant phrasings, that's acceptable
+  - Don't worry about casing issues (e.g., "javascript" vs "JavaScript")
 `;
 
 export const TEST_CASES = [

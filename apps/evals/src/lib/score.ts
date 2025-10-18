@@ -61,7 +61,7 @@ export async function generateScore(params: {
   `;
 
   const { object } = await generateObject({
-    model: "openai/gpt-5",
+    model: "google/gemini-2.5-pro",
     schema: scoreSchema,
     system: systemPrompt,
     prompt: evalPrompt,

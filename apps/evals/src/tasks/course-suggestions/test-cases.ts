@@ -4,7 +4,7 @@ const SHARED_EXPECTATIONS = `
   - The description should NOT have an impact on scoring unless it's written in the wrong language
   - Title should NOT have level/joiner words like "basic", "intermediate", "advanced", "fundamentals", etc
   - Title should NOT have words like "course" in the title
-  - Titles are in Title Case
+  - Title cases are not important (e.g., both "física" and "Física" are acceptable)
   - Not following title guidelines is a major error
 `;
 
@@ -204,6 +204,7 @@ export const TEST_CASES = [
     },
     expectations: `
       - should include "Tabela Periódica"
+      - should NOT include an article title like "A Tabela Periódica"
       - may include other chemistry-related topics and broad suggestions like "Química"
       - all titles and descriptions in Brazilian Portuguese
 

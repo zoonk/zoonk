@@ -58,10 +58,13 @@ async function runTestCase(
 
   console.log(`Running test case: ${inputSummary}`);
 
+  const startTime = performance.now();
   const result = await task.generate({
     ...testCase.userInput,
     model: modelId,
   });
+  const endTime = performance.now();
+  const duration = endTime - startTime;
 
   const output = JSON.stringify(result.data, null, 2);
 
@@ -82,6 +85,7 @@ async function runTestCase(
     steps: scoreResult.steps,
     inputTokens: result.usage.inputTokens ?? 0,
     outputTokens: result.usage.outputTokens ?? 0,
+    duration,
   };
 }
 function shouldSkipTestCase(

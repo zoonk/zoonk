@@ -9,6 +9,7 @@ interface SummaryCardProps {
   averageScore: number;
   averageInputTokens: number;
   averageOutputTokens: number;
+  averageDuration: number;
   totalCost: number;
 }
 
@@ -30,6 +31,7 @@ export function SummaryCard({
   averageScore,
   averageInputTokens,
   averageOutputTokens,
+  averageDuration,
   totalCost,
 }: SummaryCardProps) {
   return (
@@ -38,7 +40,7 @@ export function SummaryCard({
         <CardTitle>Summary</CardTitle>
       </CardHeader>
 
-      <CardContent className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <CardContent className="grid grid-cols-2 gap-4 md:grid-cols-5">
         <StatItem label="Average Score" value={averageScore.toFixed(2)} />
 
         <StatItem
@@ -49,6 +51,11 @@ export function SummaryCard({
         <StatItem
           label="Avg Output Tokens"
           value={Math.round(averageOutputTokens)}
+        />
+
+        <StatItem
+          label="Avg Duration"
+          value={`${averageDuration.toFixed(2)}s`}
         />
 
         <StatItem label="Cost (1000 runs)" value={`$${totalCost.toFixed(2)}`} />

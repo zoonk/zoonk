@@ -20,18 +20,18 @@ export function LeaderboardExport({ taskId, entries }: LeaderboardExportProps) {
     let markdown = "";
 
     if (anonymous) {
-      // Export with position, average score, and cost only
-      markdown = "| Position | Avg Score | Cost |\n";
-      markdown += "|----------|-----------|------|\n";
+      // Export with position, average score, duration, and cost only
+      markdown = "| Position | Avg Score | Avg Duration | Cost |\n";
+      markdown += "|----------|-----------|--------------|------|\n";
       for (const [index, entry] of entries.entries()) {
-        markdown += `| ${index + 1} | ${entry.averageScore.toFixed(2)} | $${entry.totalCost.toFixed(2)} |\n`;
+        markdown += `| ${index + 1} | ${entry.averageScore.toFixed(2)} | ${entry.averageDuration.toFixed(2)}s | $${entry.totalCost.toFixed(2)} |\n`;
       }
     } else {
       // Export all data
-      markdown = "| Model | Provider | Avg Score | Cost |\n";
-      markdown += "|-------|----------|-----------|------|\n";
+      markdown = "| Model | Provider | Avg Score | Avg Duration | Cost |\n";
+      markdown += "|-------|----------|-----------|--------------|------|\n";
       for (const entry of entries) {
-        markdown += `| ${entry.modelName} | ${entry.provider} | ${entry.averageScore.toFixed(2)} | $${entry.totalCost.toFixed(2)} |\n`;
+        markdown += `| ${entry.modelName} | ${entry.provider} | ${entry.averageScore.toFixed(2)} | ${entry.averageDuration.toFixed(2)}s | $${entry.totalCost.toFixed(2)} |\n`;
       }
     }
 

@@ -26,6 +26,7 @@ export function EvalResults({ results }: EvalResultsProps) {
         averageScore={averageScore}
         averageInputTokens={stats.averageInputTokens}
         averageOutputTokens={stats.averageOutputTokens}
+        averageDuration={stats.averageDuration}
         totalCost={stats.totalCost}
       />
 

@@ -13,8 +13,6 @@ You generate course suggestions from a user input.
 
 ### Title
 
-- Use Title Case (e.g. "Data Science", not "data science" or "Data science")
-- Keep prepositions, conjunctions, and small connectors in lowercase unless they are the first word (e.g. "History of Art", not "History Of Art")
 - Titles must look like real courses
 - NEVER use levels such as (but not limited to) "Basics", "Beginner", "Advanced", "Intro", "Introduction", "101", "Mastery", "Fundamentals", etc.
 - Don't use variant markers in titles (e.g., ‘101’, ‘Beginner’, exam levels like `B1`, or variants like ‘Academic’)
