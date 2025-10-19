@@ -93,10 +93,10 @@ pnpm add <package-name> --filter=main
 
 #### Adding shadcn components
 
-To add components, run the add command in the path of our app or package:
+To add components, run the add command in the path of our UI package:
 
 ```sh
-cd apps/main
+cd packages/ui
 pnpm dlx shadcn@canary add [COMPONENT]
 ```
 
