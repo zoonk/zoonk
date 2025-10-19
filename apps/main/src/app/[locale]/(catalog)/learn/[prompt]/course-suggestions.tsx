@@ -16,7 +16,7 @@ import {
 } from "@zoonk/ui/components/item";
 import { getTranslations } from "next-intl/server";
 import { Fragment } from "react/jsx-runtime";
-import { ContentFeedback } from "@/blocks/content-feedback";
+import { ContentFeedback } from "@/components/content-feedback";
 import { Link } from "@/i18n/navigation";
 
 interface CourseSuggestionsProps {

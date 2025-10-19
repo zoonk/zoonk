@@ -9,7 +9,7 @@ import {
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ContactForm } from "@/blocks/contact-form";
+import { ContactForm } from "@/components/contact-form";
 
 export async function generateMetadata({
   params,

@@ -9,7 +9,7 @@ import {
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import LocaleSwitcher from "@/blocks/locale-switcher";
+import LocaleSwitcher from "@/components/locale-switcher";
 
 export async function generateMetadata({
   params,

@@ -6,10 +6,6 @@ We're following the [components.build](https://www.components.build/definitions#
 >
 > Components are still relatively low-level but include styling, making them immediately usable in applications. They typically wrap unstyled primitives with default visual design while remaining customizable.
 
-When using multiple components together to build a functionality, we refer to that as [blocks](../../../../apps/main/src/blocks/README.md) or [patterns](../patterns/README.md).
-
-Blocks are usually placed on the app they belong to, while patterns are reusable across multiple apps.
-
 ## Usage
 
 ```tsx

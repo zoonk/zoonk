@@ -9,7 +9,7 @@ import {
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
-import { ProtectedSection } from "@/blocks/protected-section";
+import { ProtectedSection } from "@/components/protected-section";
 import { NameForm } from "./name-form";
 
 export async function generateMetadata({

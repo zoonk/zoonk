@@ -18,7 +18,7 @@ cp .env.example .env
 - `public/`: Static assets
 - `src/`: Source code
   - `app`: Next.js routes
-  - `blocks`: UI blocks
+  - `components`: React components
   - `hooks`: Reusable React hooks
   - `i18n`: Internationalization setup
   - `lib`: Constants, utilities, and helper functions

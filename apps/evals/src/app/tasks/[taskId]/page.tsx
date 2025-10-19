@@ -14,7 +14,7 @@ import {
 } from "@zoonk/ui/components/item";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ModelStatusBadge } from "@/blocks/model-status-badge";
+import { ModelStatusBadge } from "@/components/model-status-badge";
 import { getModelDisplayName } from "@/lib/models";
 import { getModelsWithResults, getSortedModels } from "@/lib/utils";
 import {
