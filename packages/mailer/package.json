@@ -3,7 +3,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "type-check": "tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "exports": {
     ".": "./src/client.ts"

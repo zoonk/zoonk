@@ -74,7 +74,7 @@ turbo link
 - `turbo dev` to start the development server
 - `turbo build` to create a production build
 - `turbo lint` to run linting
-- `turbo type-check` to run TypeScript type checking
+- `turbo typecheck` to run TypeScript type checking
 - `turbo test` to run tests with Vitest
 
 #### Adding dependencies

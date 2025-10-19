@@ -5,7 +5,7 @@
   "scripts": {
     "evals:dev": "next dev -p 3001",
     "build-and-start": "next build && next start -p 3001",
-    "type-check": "next typegen && tsc --noEmit"
+    "typecheck": "next typegen && tsc --noEmit"
   },
   "dependencies": {
     "@ai-sdk/gateway": "2.0.0",

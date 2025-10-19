@@ -9,7 +9,7 @@
     "dev": "turbo dev",
     "test": "turbo test",
     "test:watch": "turbo test:watch",
-    "type-check": "turbo type-check",
+    "typecheck": "turbo typecheck",
     "i18n": "turbo i18n",
     "db:generate": "turbo db:generate",
     "db:migrate": "turbo db:migrate",

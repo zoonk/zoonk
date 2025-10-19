@@ -31,7 +31,7 @@
       "cache": false,
       "persistent": true
     },
-    "type-check": {},
+    "typecheck": {},
     "test": {},
     "test:watch": {
       "persistent": true,

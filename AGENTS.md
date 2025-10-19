@@ -63,7 +63,7 @@ Read each folder's README file for more details
 
 ## Conventions
 
-- Run `pnpm format` to format the code after making changes, then `pnpm lint` to check for linting errors, and `pnpm type-check` to check for TypeScript errors
+- Run `pnpm format` to format the code after making changes, then `pnpm lint` to check for linting errors, and `pnpm typecheck` to check for TypeScript errors
 - Don't run `pnpm dev` since we already have a dev server running
 - Prefer to use server components than client components. Only use client components when absolutely necessary
 - Avoid `useEffect` and `useState` unless absolutely required

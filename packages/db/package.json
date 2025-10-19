@@ -9,7 +9,7 @@
     "db:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset",
-    "type-check": "tsc --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "exports": {
     ".": "./src/index.ts",
