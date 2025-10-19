@@ -9,7 +9,10 @@
     "./*": "./src/*.ts"
   },
   "dependencies": {
-    "ai": "5.0.62"
+    "@ai-sdk/openai": "2.0.52",
+    "@vercel/blob": "2.0.0",
+    "ai": "5.0.62",
+    "slugify": "1.6.6"
   },
   "peerDependencies": {
     "server-only": ">=0.0.1",

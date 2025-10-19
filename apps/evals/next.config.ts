@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
     typedEnv: true,
     turbopackFileSystemCacheForDev: true,
   },
+  images: {
+    remotePatterns: [
+      new URL("https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/**"),
+    ],
+  },
   // we use next.js compiler to transpile our internal packages
   transpilePackages: ["@zoonk/ai", "@zoonk/ui", "@zoonk/utils"],
   turbopack: {

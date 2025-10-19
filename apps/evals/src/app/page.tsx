@@ -31,6 +31,24 @@ export default function Home() {
       </ContainerHeader>
 
       <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <Item variant="outline">
+          <ItemContent>
+            <ItemTitle>Image Test</ItemTitle>
+            <ItemDescription>
+              Test AI-generated course thumbnails
+            </ItemDescription>
+          </ItemContent>
+
+          <ItemActions>
+            <Link
+              href="/image-test"
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Test Images
+            </Link>
+          </ItemActions>
+        </Item>
+
         {TASKS.map((task) => (
           <Item key={task.id} variant="outline">
             <ItemContent>
