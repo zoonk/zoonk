@@ -11,9 +11,9 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60 * 60 * 24 * CACHE_IMAGE_DAYS,
   },
   typedRoutes: true,
+  cacheComponents: true,
   experimental: {
     typedEnv: true,
-    cacheComponents: true,
     turbopackFileSystemCacheForDev: true,
   },
   // we use next.js compiler to transpile our internal packages

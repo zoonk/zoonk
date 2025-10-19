@@ -4,9 +4,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   pageExtensions: ["ts", "tsx"],
   typedRoutes: true,
+  cacheComponents: true,
   experimental: {
     typedEnv: true,
-    cacheComponents: true,
     turbopackFileSystemCacheForDev: true,
   },
   // we use next.js compiler to transpile our internal packages
