@@ -1,17 +1,30 @@
 const SHARED_EXPECTATIONS = `
-  - Should only include titles with the same meaning as the base title
-  - It's fine to include slight variations if they intent/meaning is the same.
-    For example, "F1 Racing" is acceptable because it clearly refers to "Formula 1", not the broader "Racing" topic;
-    "Client Side Web Development" is acceptable as it clearly refers to "Frontend Development";
-    "UX Design Principles" is acceptable as it clearly refers to "UX Design", it's not a narrower topic.
-    Try to capture the meaning/intent rather than just exact wording
-  - Should NOT include broader or narrower topics
-  - Should include different locale spellings when applicable (e.g., "Optimization" and "Optimisation")
-  - Should include abbreviations if they mean the same thing
-  - It's fine to include levels like "Beginner", "Advanced", "Calculus 1", "101" etc., if they refer to the same subject
-  - It's fine if it doesn't include variants with spacing, hyphenation, or accents since those will be serialized
-  - Don't worry about awkward or redundant phrasings, that's acceptable
-  - Don't worry about casing issues (e.g., "javascript" vs "JavaScript")
+  - Only include titles that are **equivalent** to the base title — i.e., they refer to the **same course** a user would expect to find under that subject.
+  - **Same‑course test** (use all of these):
+    1) Would we merge both titles into one course page? If yes, they are equivalent.
+    2) Would teaching goals, syllabus scope, and prerequisites remain the same? If yes, they are equivalent.
+    3) Is the difference only wording, dialect/variant, audience, abbreviation, or light framing? If yes, they are equivalent.
+  - **Broader/narrower rule**:
+    - **Broader** expands scope beyond the subject’s core boundaries → exclude. Example: "Web Development" is broader than "Frontend Development".
+    - **Narrower** is a proper subset that we’d plausibly ship as a separate course (different scope/learning goals) → exclude. Example: "React" is narrower than "JavaScript"; "Deep Learning" is narrower than "Machine Learning".
+  - **Not narrower (allowed)** when it is still the same course subject:
+    - **Dialect/variant** names (e.g., "Inglês Americano", "Inglês Britânico", "French Grammar", "Optimisation" vs "Optimization"). Dialects are surface variants of the same language course.
+    - **Audience qualifiers** (e.g., "IA para Desenvolvedores", "UX for Healthcare"). Audience framing ≠ topic narrowing if the core subject stays the same.
+    - **Series/labeling of the same entity** (e.g., "Formula One", "F1", "Formula One Championship", "F1 Series") — these all clearly denote the same sport/competition brand.
+    - **Light framing words** like "principles", "fundamentals", "basics", "overview", or "for beginners" when the core topic remains unchanged.
+  - **Decision checklist for each candidate title** (answer all):
+    - Does it introduce a different subfield or tool? If yes → narrower → exclude.
+    - Does it expand to an umbrella domain? If yes → broader → exclude.
+    - If we offered both titles simultaneously, would users be confused by two separate courses? If yes → they are equivalent and, therefore, can be included as an alternative title.
+  - **Concrete examples**:
+    - **Include**: "Client‑Side Web Development" ↔ "Frontend Development"; "IA" / "Inteligência Artificial" / "IA para Desenvolvedores"; "Inglês" ↔ "Inglês Americano" / "Inglês Britânico" / "Inglês Britânico e Americano"; "Formula 1" ↔ "Formula One" / "F1" / "Formula One Championship" / "F1 Series"; "UX Design" ↔ "UX Design Principles"; "World War II" ↔ "WWII" / "Second World War"; "Data Science" ↔ "Data Science Fundamentals".
+    - **Exclude**: "Web Development" (broader than "Frontend Development"); "Aprendizado de Máquina" (narrower than "Inteligência Artificial"); "React" (narrower than "JavaScript"); "Deep Learning" (narrower than "Machine Learning"); "Motorsport" (broader than "Formula 1"); "Differential Calculus" (narrower than "Calculus").
+  - Include different locale spellings when applicable (e.g., "Optimization" and "Optimisation").
+  - Include abbreviations if they mean the same thing (e.g., "AI"/"IA", "ML" when base is "Machine Learning").
+  - Levels like "Beginner", "Advanced", "Calculus 1", "101", etc., are acceptable if they keep the same subject.
+  - It’s fine to skip spacing/hyphenation/accents variants — serialization will handle those.
+  - Awkward or redundant phrasings are acceptable.
+  - Ignore casing issues (e.g., "javascript" vs "JavaScript").
 `;
 
 export const TEST_CASES = [
@@ -36,7 +49,8 @@ export const TEST_CASES = [
     expectations: `
       - Should include items like "Formula One", "F1"
       - Should NOT include "Motorsport", "Racing", etc.
-      - "F1 Racing" is fine because it clearly refers to Formula 1
+      - Items like "F1 Racing", "Formula One Championship", "F1 Series", etc. are fine because they clearly refer to Formula 1
+      - A narrower topic in this context would be something like "F1 Engineering" because it focuses is on engineering aspects
       - Results should be in English
 
       ${SHARED_EXPECTATIONS}
@@ -51,6 +65,7 @@ export const TEST_CASES = [
       - Should include "User Experience Design"
       - Should NOT include "UI Design", "Web Design", etc
       - Items such as "UX Design Principles" are fine since they have the same meaning: a UX course
+      - Similarly, anything that uses "UX for X" is also acceptable since it involves the same UX course
       - Results should be in English
 
       ${SHARED_EXPECTATIONS}
@@ -63,7 +78,11 @@ export const TEST_CASES = [
     },
     expectations: `
       - Should include "Língua Inglesa", "A Língua Inglesa"
+      - Variants like "Inglês Americano", "Inglês Britânico" are acceptable since they refer to the same language
+      - Terms like "Inglês Moderno" and "Inglês Contemporâneo" are acceptable since they refer to the same language
+      - Anything that refers to learning English is acceptable
       - Should NOT include "Cultura Inglesa", "Gramática Inglesa", "Spanish", etc
+      - Should NOT include exams like "TOEFL", "IELTS", etc., since they are different topics
       - Should be in Portuguese
 
       ${SHARED_EXPECTATIONS}
@@ -77,6 +96,7 @@ export const TEST_CASES = [
     expectations: `
       - Should include "IA"
       - Should NOT include "Aprendizado de Máquina", "Inteligência Humana", etc
+      - Items like "IA para X" are also acceptable since they refer to the same core subject.
       - All alternatives should be in Brazilian Portuguese
       - Should be in Portuguese
 
