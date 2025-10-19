@@ -17,5 +17,8 @@
     "lib": "@/lib",
     "utils": "@zoonk/ui/lib/utils",
     "ui": "@zoonk/ui/components"
+  },
+  "registries": {
+    "@kibo-ui": "https://www.kibo-ui.com/r/{name}.json"
   }
 }
