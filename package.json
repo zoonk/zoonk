@@ -16,7 +16,8 @@
     "db:deploy": "turbo db:deploy",
     "evals": "cd apps/evals && pnpm build-and-start",
     "evals:dev": "cd apps/evals && pnpm evals:dev",
-    "evals:remove": "./apps/evals/scripts/remove-test-cases.sh"
+    "evals:remove": "./apps/evals/scripts/remove-test-cases.sh",
+    "evals:export": "./apps/evals/scripts/export-test-case.sh"
   },
   "engines": {
     "node": "^22"

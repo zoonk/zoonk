@@ -81,3 +81,23 @@ You can remove specific test cases from all task results using by calling `pnpm 
 
 > [!TIP]
 > You need to call it from the root of the repository.
+
+## Exporting Test Case Comparisons
+
+You can export answers from all models for a specific test case to compare responses side-by-side:
+
+```bash
+pnpm evals:export taskId testCaseId
+```
+
+**Example:**
+
+```bash
+pnpm evals:export course-suggestions en-black-holes-1
+```
+
+This will create a JSON file in `apps/evals/eval-results/[taskId]/comparisons/[testCaseId].json` with:
+
+- All model responses for that specific test case
+- Anonymous model IDs (Model 1, Model 2, etc.) to enable blind comparison
+- Only the output field for easier comparison
