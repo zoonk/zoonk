@@ -1,0 +1,936 @@
+{
+  "taskId": "course-chapters",
+  "modelId": "openai/gpt-4.1-nano",
+  "results": [
+    {
+      "testCase": {
+        "id": "en-machine-learning-1",
+        "userInput": {
+          "courseTitle": "Machine Learning",
+          "locale": "en"
+        },
+        "expectations": "\n      - Content in US English\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn the fundamental concepts, algorithms, and techniques of machine learning, enabling you to develop models that can make predictions and decisions based on data. This knowledge is essential for careers in data science, artificial intelligence, and automation.\",\n  \"chapters\": [\n    \"Introduction to Machine Learning\",\n    \"Types of Machine Learning: Supervised, Unsupervised, and Reinforcement Learning\",\n    \"Data Preprocessing and Cleaning\",\n    \"Feature Selection and Engineering\",\n    \"Supervised Learning Algorithms: Linear Regression, Logistic Regression, Decision Trees, and Support Vector Machines\",\n    \"Unsupervised Learning Algorithms: Clustering, Dimensionality Reduction, and Anomaly Detection\",\n    \"Model Evaluation and Validation Techniques\",\n    \"Ensemble Methods: Random Forests and Boosting\",\n    \"Deep Learning Basics and Neural Networks\",\n    \"Working with Large Datasets and Scalability\",\n    \"Deploying Machine Learning Models in Real-world Applications\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The response fails to follow a key instruction: \"Don’t cover too much in a single chapter. Instead, split it into multiple smaller chapters, creating an extensive list of chapters\". Several chapters are overly broad and combine multiple distinct, complex topics. For example, 'Supervised Learning Algorithms: Linear Regression, Logistic Regression, Decision Trees, and Support Vector Machines' should have been broken down into several individual chapters. The same applies to 'Unsupervised Learning Algorithms' and 'Types of Machine Learning'. This directly contradicts the user's request for an \"extensive list of chapters\" and a granular learning path.",
+          "score": 6.5
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline could be significantly improved by breaking down the complex chapters into smaller, more focused ones. For instance, the supervised and unsupervised learning chapters should each be split into multiple chapters, one for each algorithm or algorithm family (e.g., 'Linear Regression', 'Logistic Regression', 'Introduction to Clustering', 'Dimensionality Reduction with PCA'). This would create the \"extensive list\" the user requested and provide a much better, more manageable learning path for a student going from beginner to expert.",
+          "score": 7
+        }
+      ],
+      "inputTokens": 493,
+      "outputTokens": 168,
+      "duration": 3906.0121250000084
+    },
+    {
+      "testCase": {
+        "id": "en-machine-learning-2",
+        "userInput": {
+          "courseTitle": "Machine Learning",
+          "locale": "en"
+        },
+        "expectations": "\n      - Content in US English\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn how to design and implement machine learning algorithms, enabling you to develop models that can analyze data and make predictions. This knowledge is crucial for careers in data science, AI, and automation.\",\n  \"chapters\": [\n    \"Introduction to Machine Learning\",\n    \"Types of Machine Learning Algorithms\",\n    \"Data Preparation and Feature Engineering\",\n    \"Supervised Learning Techniques\",\n    \"Unsupervised Learning Techniques\",\n    \"Model Evaluation and Validation\",\n    \"Deep Learning and Neural Networks\",\n    \"Reinforcement Learning\",\n    \"Machine Learning Tools and Frameworks\",\n    \"Real-world Applications of Machine Learning\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The response fails to follow the core instruction to create an extensive list of chapters by splitting broad topics into smaller ones. The prompt explicitly states: \"Don’t cover too much in a single chapter. Instead, split it into multiple smaller chapters, creating an extensive list of chapters.\" The generated list contains only 10 very broad chapters (e.g., \"Supervised Learning Techniques\", \"Unsupervised Learning Techniques\"), each of which covers a vast field that should be broken down into many smaller, more focused chapters to guide a learner from beginner to expert. This fundamentally misunderstands the goal of creating a detailed, granular learning path.",
+          "score": 6.5
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The entire chapter list needs to be significantly expanded. For example, 'Supervised Learning Techniques' should be broken down into individual chapters like 'Linear Regression', 'Logistic Regression', 'Support Vector Machines', 'Decision Trees', and 'Ensemble Methods'. Similarly, 'Deep Learning and Neural Networks' should be split into 'Introduction to Perceptrons', 'Building a Neural Network', 'Convolutional Neural Networks (CNNs)', 'Recurrent Neural Networks (RNNs)', etc. This granularity is essential to fulfill the prompt's requirement of creating a path from zero knowledge to mastery.",
+          "score": 6.5
+        }
+      ],
+      "inputTokens": 493,
+      "outputTokens": 106,
+      "duration": 2724.080666999973
+    },
+    {
+      "testCase": {
+        "id": "en-machine-learning-3",
+        "userInput": {
+          "courseTitle": "Machine Learning",
+          "locale": "en"
+        },
+        "expectations": "\n      - Content in US English\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn the fundamental concepts and techniques in machine learning, enabling you to create models that can make data-driven decisions. This knowledge is useful for developing AI applications, improving business processes, and advancing your career in data science.\",\n  \"chapters\": [\n    \"Introduction to Machine Learning\",\n    \"Types of Machine Learning: Supervised, Unsupervised, and Reinforcement Learning\",\n    \"Data Preprocessing and Cleaning\",\n    \"Feature Selection and Engineering\",\n    \"Regression Techniques\",\n    \"Classification Algorithms\",\n    \"Clustering Methods\",\n    \"Dimensionality Reduction Techniques\",\n    \"Model Evaluation and Validation\",\n    \"Overfitting and Underfitting\",\n    \"Ensemble Methods and Boosting\",\n    \"Neural Networks and Deep Learning\",\n    \"Natural Language Processing with Machine Learning\",\n    \"Reinforcement Learning and Applications\",\n    \"Deploying Machine Learning Models\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The response provided a logical and well-structured high-level outline. However, it did not follow the specific instruction to 'split it into multiple smaller chapters, creating an extensive list of chapters'. Several chapters are very broad categories (e.g., 'Regression Techniques', 'Classification Algorithms', 'Clustering Methods') rather than specific, focused chapters. For example, 'Classification Algorithms' could have been broken down into separate chapters for 'Logistic Regression', 'K-Nearest Neighbors', 'Support Vector Machines', and 'Decision Trees'. This would have better fulfilled the user's request for a detailed course structure that takes a student from beginner to expert.",
+          "score": 7.5
+        }
+      ],
+      "inputTokens": 493,
+      "outputTokens": 149,
+      "duration": 3107.2502499999828
+    },
+    {
+      "testCase": {
+        "id": "pt-fisica-quantica-1",
+        "userInput": {
+          "courseTitle": "Física Quântica",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá os conceitos fundamentais da física quântica e sua importância na tecnologia moderna, permitindo compreender fenômenos microscópicos e suas aplicações práticas.\",\n  \"chapters\": [\n    \"Introdução à Física Quântica\",\n    \"Histórico e evolução da física quântica\",\n    \"Princípios básicos da mecânica quântica\",\n    \"A dualidade onda-partícula\",\n    \"Princípio da incerteza de Heisenberg\",\n    \"A função de onda e a equação de Schrödinger\",\n    \"Spin e partículas fundamentais\",\n    \"Entanglement quântico e suas implicações\",\n    \"Aplicações da física quântica na tecnologia moderna\",\n    \"Computação quântica e criptografia quântica\",\n    \"Futuro da física quântica e pesquisas atuais\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The instructions requested an \"extensive list of chapters\" and encouraged splitting topics into smaller chapters. The provided list of 11 chapters is more of a high-level overview of course modules rather than a detailed, granular chapter list. Several topics are too broad for a single chapter, such as \"Princípios básicos da mecânica quântica\" and \"Aplicações da física quântica na tecnologia moderna\".",
+          "score": 8
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline could be significantly improved by breaking down the existing broad chapters into more specific, focused ones. For example, 'Aplicações da física quântica na tecnologia moderna' could be split into 'Lasers e sua Física', 'Semicondutores e Transistores', and 'Aplicações Médicas: Ressonância Magnética'. Similarly, 'Computação quântica e criptografia quântica' should be two separate chapters. This would create the extensive, progressive learning path from beginner to expert that the prompt requested.",
+          "score": 7.5
+        }
+      ],
+      "inputTokens": 495,
+      "outputTokens": 149,
+      "duration": 3339.3363750000135
+    },
+    {
+      "testCase": {
+        "id": "pt-fisica-quantica-2",
+        "userInput": {
+          "courseTitle": "Física Quântica",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá os fundamentos da física quântica e como ela explica fenômenos que não podem ser explicados pela física clássica. Isso é útil para compreender melhor o funcionamento do universo a nível microscópico e potencialmente aplicar esse conhecimento em tecnologias futuras.\",\n  \"chapters\": [\n    \"Introdução à Física Quântica\",\n    \"Histórico e Evolução da Física Quântica\",\n    \"Princípios Básicos da Mecânica Quântica\",\n    \"Wave-Particle Duality\",\n    \"Situação de Superposição\",\n    \"Princípio da Incerteza de Heisenberg\",\n    \"Álgebra Quântica e Estados\",\n    \"Equta de Schrödinger e suas Aplicações\",\n    \"Spin e Partículas Fundamentais\",\n    \"Entanglement Quântico\",\n    \"Decoerência e Problemas na Medição Quântica\",\n    \"Tecnologias Baseadas em Física Quântica\",\n    \"Futuro da Física Quântica e Suas Implicações\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The response fails to fully adhere to the language requirement. The user specified `APP_LANGUAGE: pt` (Portuguese), but two of the chapter titles, 'Wave-Particle Duality' and 'Entanglement Quântico', are in English instead of their Portuguese equivalents ('Dualidade Onda-Partícula' and 'Emaranhamento Quântico'). This is a direct violation of a core instruction.",
+          "score": 7.5
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The response contains a typo in one of the chapter titles: 'Equta de Schrödinger' should be 'Equação de Schrödinger'. Additionally, some chapter titles could be worded more precisely, for example, 'Situação de Superposição' would be better as 'Estado de Superposição' or simply 'Superposição Quântica'.",
+          "score": 8.5
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The list of chapters could be more extensive to better fulfill the instruction to create a path from 'beginner to expert' by splitting topics into 'multiple smaller chapters'. For a subject as complex as Quantum Physics, topics like 'Princípios Básicos da Mecânica Quântica' and 'Tecnologias Baseadas em Física Quântica' could each be broken down into several more specific chapters to create a more granular and comprehensive learning journey.",
+          "score": 8
+        }
+      ],
+      "inputTokens": 495,
+      "outputTokens": 187,
+      "duration": 3076.681749999989
+    },
+    {
+      "testCase": {
+        "id": "pt-fisica-quantica-3",
+        "userInput": {
+          "courseTitle": "Física Quântica",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá os fundamentos da física quântica, compreendendo conceitos essenciais e aplicações práticas, o que é útil para avançar em carreiras científicas e tecnológicas.\",\n  \"chapters\": [\n    \"Introdução à física quântica\",\n    \"Histórico e desenvolvimento da física quântica\",\n    \"Princípios fundamentais da física quântica\",\n    \"Matéria e partículas: dualidade onda-partícula\",\n    \"Princípio da incerteza de Heisenberg\",\n    \"Estados quânticos e superposição\",\n    \"Oscilações e interferência quântica\",\n    \"Átomo de Hidrogênio e modelos atômicos\",\n    \"Entanglement quântico e não-localidade\",\n    \"Medidas e colapsos de função de onda\",\n    \"Aplicações da física quântica na tecnologia moderna\",\n    \"Futuro da física quântica e áreas emergentes\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The prompt asks for an \"extensive list of chapters\" and to \"split it into multiple smaller chapters\" to lead a student from beginner to expert. The provided list of 12 chapters is too short and superficial for a course on Quantum Physics aiming for mastery. Several chapters are excessively broad, such as \"Princípios fundamentais da física quântica\", \"Aplicações da física quântica na tecnologia moderna\", and \"Futuro da física quântica e áreas emergentes\". Each of these could be broken down into numerous, more specific chapters, which was a key instruction.",
+          "score": 7
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline could be significantly improved by increasing its granularity and depth. It should start with the historical context (e.g., black-body radiation, photoelectric effect), then introduce foundational mathematical tools. Key concepts like the Schrödinger equation, wave function, and quantum operators deserve their own chapters. The applications section should be expanded into separate chapters for topics like lasers, semiconductors, quantum computing, and quantum cryptography to provide a comprehensive learning path.",
+          "score": 7
+        }
+      ],
+      "inputTokens": 495,
+      "outputTokens": 171,
+      "duration": 3990.505332999979
+    },
+    {
+      "testCase": {
+        "id": "es-historia-espana-1",
+        "userInput": {
+          "courseTitle": "Historia de España",
+          "locale": "es"
+        },
+        "expectations": "\n      - Should follow chronological progression\n      - Content in Spain Spanish\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Aprenderás sobre los eventos clave, personajes importantes y periodos históricos que han dado forma a España. Esto te ayudará a comprender mejor la cultura, tradiciones y la importancia histórica del país en el mundo.\",\n  \"chapters\": [\n    \"Prehistoria y la Edad Antigua en la península ibérica\",\n    \"La romanización y el dominio romano en Hispania\",\n    \"La Hispania visigoda y su evolución\",\n    \"La conquista musulmana y el Emirato de Córdoba\",\n    \"El Reino de León y Castilla en la Reconquista\",\n    \"La unificación de España bajo los Reyes Católicos\",\n    \"El Siglo de Oro español: cultura, arte y exploración\",\n    \"El Imperio español en los siglos XVI y XVII\",\n    \"La crisis del siglo XVII y el declive del imperio\",\n    \"La Guerra de Independencia y la formación de una España moderna\",\n    \"La dictadura de Franco y la transición a la democracia\",\n    \"España en la Unión Europea y su papel actual\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The list of chapters is not \"extensive\" as requested in the prompt. More importantly, it has very significant historical gaps. For instance, it completely omits the Spanish Civil War, which is a pivotal event in modern Spanish history. It also skips almost the entire 19th century, jumping from the War of Independence (early 1800s) to Franco's dictatorship (starts 1939), missing events like the Carlist Wars, the First Spanish Republic, and the Bourbon Restoration. Furthermore, complex periods are oversimplified into single chapters (e.g., \"La dictadura de Franco y la transición a la democracia\"), which fails the instruction \"Don’t cover too much in a single chapter.\" These omissions and oversimplifications mean the course fails to provide a path from \"no knowledge to mastering the subject.\"",
+          "score": 6.5
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course structure needs a complete overhaul to meet the prompt's requirements. The chapter list should be significantly expanded to provide a detailed and comprehensive learning path. Key improvements would include:\n1. Adding chapters for the missing historical periods, such as the Second Spanish Republic and the Spanish Civil War.\n2. Dedicating multiple chapters to the 19th century to cover its political turmoil and societal changes.\n3. Breaking down broad topics like \"La Reconquista,\" \"El Imperio español,\" and \"La dictadura de Franco y la transición a la democracia\" into smaller, more focused chapters to allow for a deeper understanding of each sub-topic.",
+          "score": 6
+        }
+      ],
+      "inputTokens": 494,
+      "outputTokens": 192,
+      "duration": 4081.3207920000423
+    },
+    {
+      "testCase": {
+        "id": "es-historia-espana-2",
+        "userInput": {
+          "courseTitle": "Historia de España",
+          "locale": "es"
+        },
+        "expectations": "\n      - Should follow chronological progression\n      - Content in Spain Spanish\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Aprenderás sobre los eventos clave, personajes importantes y épocas significativas que han formado la historia de España, ayudándote a comprender mejor su cultura y sociedad actuales.\",\n  \"chapters\": [\n    \"Introducción a la historia de España\",\n    \"Prehistoria y culturas antiguas en la península ibérica\",\n    \"La Hispania romana y su legado\",\n    \"La Edad Media en España: visigodos y musulmanes\",\n    \"La Reconquista y la formación de la España cristiana\",\n    \"El Siglo de Oro español: cultura, exploraciones y poderes\",\n    \"La monarquía en la Edad Moderna\",\n    \"La España contemporánea: guerras, cambios sociales y políticos\",\n    \"España en el siglo XX: guerra civil y dictadura\",\n    \"España en el siglo XXI: democracia, economía y desafíos actuales\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The main instruction was to create a progressive learning path with an 'extensive list of chapters', splitting broad topics into smaller ones. The model failed to do this, providing only 10 very high-level chapters. For example, 'La Edad Media en España: visigodos y musulmanes' covers nearly 1000 years of complex history in a single chapter. This goes directly against the core requirement of creating a granular, detailed course structure that can take a learner from beginner to expert.",
+          "score": 7
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The title of the final chapter, 'España en el siglo XXI: democracia, economía y desafíos actuales', is slightly misleading. The transition to democracy in Spain began in the late 1970s (20th century), not the 21st century.",
+          "score": 9.5
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline could be vastly improved by breaking down each of the broad historical periods into multiple, more specific chapters. For instance, the 'Edad Media' could be split into chapters on the Visigothic Kingdom, the Emirate and Caliphate of Córdoba, the Taifa Kingdoms, and the progression of the Reconquista. Similarly, the 'Edad Moderna' should have separate chapters for the Habsburg and Bourbon dynasties. This would fulfill the user's request for an 'extensive' and detailed learning path.",
+          "score": 6.5
+        }
+      ],
+      "inputTokens": 494,
+      "outputTokens": 157,
+      "duration": 3843.451624999987
+    },
+    {
+      "testCase": {
+        "id": "es-historia-espana-3",
+        "userInput": {
+          "courseTitle": "Historia de España",
+          "locale": "es"
+        },
+        "expectations": "\n      - Should follow chronological progression\n      - Content in Spain Spanish\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Aprenderás sobre la historia de España, desde sus orígenes hasta la actualidad, comprendiendo los eventos clave y su impacto en la cultura y sociedad españolas. Esto es útil para entender mejor la identidad del país y su papel en el mundo.\",\n  \"chapters\": [\n    \"Introducción a la historia de España\",\n    \"La prehistoria y los íberos\",\n    \"La colonización romana y su legado\",\n    \"La Edad Media en España: visigodos y musulmanes\",\n    \"La Reconquista y la formación de Castilla y Aragón\",\n    \"El Siglo de Oro español: cultura y exploraciones\",\n    \"La monarquía en la Edad Moderna\",\n    \"La Guerra de Independencia y el siglo XIX\",\n    \"La dictadura de Franco y la transición a la democracia\",\n    \"España en la actualidad: desafíos y avances\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The primary instruction to create an \"extensive list of chapters\" by splitting broad topics was not followed. The provided 10 chapters are extremely high-level, with single chapters covering entire centuries of complex history (e.g., \"La Guerra de Independencia y el siglo XIX\"). This fails to create a learning path from \"beginner to expert\" and instead offers only a very basic overview. Key historical periods like the Second Republic and the Spanish Civil War are also omitted entirely.",
+          "score": 6.5
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline needs to be significantly expanded. Each current chapter should be broken down into multiple, more specific chapters. For instance, the chapter on the 19th century could be divided into the Peninsular War, the reign of Ferdinand VII, the Carlist Wars, the reign of Isabella II, the Glorious Revolution and First Republic, and the Restoration. Similarly, the 20th-century section should explicitly include the Second Republic and the Spanish Civil War as separate, crucial topics before discussing Franco's dictatorship. This granularity is essential to fulfill the prompt's requirement for a comprehensive, mastery-level course.",
+          "score": 6.5
+        }
+      ],
+      "inputTokens": 494,
+      "outputTokens": 159,
+      "duration": 3237.502749999985
+    },
+    {
+      "testCase": {
+        "id": "fr-cuisine-francaise-1",
+        "userInput": {
+          "courseTitle": "Cuisine Française",
+          "locale": "fr"
+        },
+        "expectations": "\n      - Content in French\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Vous apprendrez à préparer des plats français classiques, en maîtrisant les techniques essentielles et en utilisant des ingrédients authentiques. Cela vous permettra de créer des repas délicieux et impressionner vos proches.\",\n  \"chapters\": [\n    \"Introduction à la cuisine française\",\n    \"Les ingrédients fondamentaux de la cuisine française\",\n    \"Techniques de base en cuisine française\",\n    \"Les sauces françaises emblématiques\",\n    \"Les entrées et hors-d'œuvre traditionnels\",\n    \"Les plats principaux emblématiques\",\n    \"Les desserts et pâtisseries françaises\",\n    \"Menu complet : préparer un repas français traditionnel\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The instructions explicitly asked to \"create an extensive list of chapters\" and to \"split it into multiple smaller chapters\". The generated course outline only contains 8 chapters, which are very broad topics. For example, \"Les plats principaux emblématiques\" (Iconic main dishes) or \"Les desserts et pâtisseries françaises\" (French desserts and pastries) could each be broken down into many more specific chapters to create the detailed, beginner-to-expert path requested. The current list is too high-level and does not feel extensive.",
+          "score": 7
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline could be significantly improved by breaking down each of the broad chapters into more granular, specific topics. For example, 'Les sauces françaises emblématiques' could be split into chapters for each of the five mother sauces. 'Les plats principaux' could be split by region or by protein. This would create the extensive, progressive learning path from beginner to expert that the prompt described.",
+          "score": 7.5
+        }
+      ],
+      "inputTokens": 493,
+      "outputTokens": 109,
+      "duration": 2753.694458999962
+    },
+    {
+      "testCase": {
+        "id": "fr-cuisine-francaise-2",
+        "userInput": {
+          "courseTitle": "Cuisine Française",
+          "locale": "fr"
+        },
+        "expectations": "\n      - Content in French\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Vous apprendrez à préparer des plats traditionnels de la cuisine française, ce qui vous permettra d'impressionner vos proches et d'apporter une touche authentique à vos repas quotidiens.\",\n  \"chapters\": [\n    \"Introduction à la cuisine française\",\n    \"Les techniques de bases en cuisine française\",\n    \"Les sauces classiques et leur préparation\",\n    \"Les entrées françaises populaires\",\n    \"Les plats principaux emblématiques\",\n    \"Les fromages et leur utilisation en cuisine\",\n    \"Les desserts français incontournables\",\n    \"Présentation et dressage de plats français\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The response fails to follow the key instruction to create an \"extensive list of chapters\" and to \"split it into multiple smaller chapters.\" The provided list of 8 chapters is very high-level and covers extremely broad topics (e.g., \"Les plats principaux emblématiques\", \"Les desserts français incontournables\"). This violates the instruction \"Don’t cover too much in a single chapter\" and does not provide the detailed, granular course structure requested to take a student from beginner to expert.",
+          "score": 7
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The chapter list should be significantly expanded. Each broad topic should be broken down into multiple, more specific chapters. For example, 'Les plats principaux' could be split into chapters on poultry, red meat, fish, and classic stews. 'Les desserts' could be divided into pastries, creams, tarts, and soufflés. Adding chapters on regional cuisines, bread-making (boulangerie), and wine pairing would also create a more comprehensive path from beginner to expert.",
+          "score": 6.5
+        }
+      ],
+      "inputTokens": 493,
+      "outputTokens": 102,
+      "duration": 2831.972624999995
+    },
+    {
+      "testCase": {
+        "id": "fr-cuisine-francaise-3",
+        "userInput": {
+          "courseTitle": "Cuisine Française",
+          "locale": "fr"
+        },
+        "expectations": "\n      - Content in French\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Vous apprendrez à préparer une variété de plats français classiques, en maîtrisant les techniques de cuisine essentielles. Cela est utile pour enrichir vos compétences culinaires et impressionner lors de dîners ou événements spéciaux.\",\n  \"chapters\": [\n    \"Introduction à la cuisine française\",\n    \"Les bases de la cuisine française : techniques et outils\",\n    \"Les spécialités régionales françaises\",\n    \"Les sauces classiques françaises\",\n    \"Les techniques de cuisson françaises\",\n    \"Les produits et ingrédients typiques français\",\n    \"Les pâtisseries françaises traditionnelles\",\n    \"Création de menus français pour différentes occasions\",\n    \"Organisation et présentation des plats français\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The main issue with the response is that it fails to follow the instruction to create an \"extensive list of chapters\" and to \"split it into multiple smaller chapters\". The result is a list of only 9 high-level topics (e.g., \"Les spécialités régionales françaises\", \"Les pâtisseries françaises traditionnelles\"). These are entire categories of study, not individual chapters for a course designed to take a student from beginner to expert. Each of these could easily be broken down into 5-10 more specific chapters, which was the user's explicit request.",
+          "score": 7.5
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The chapter list should be significantly expanded and made more granular. For example, 'Les sauces classiques françaises' could be split into 'Les sauces mères: Béchamel et Velouté', 'Les sauces mères: Espagnole et Tomate', 'La sauce Hollandaise et ses dérivés'. Similarly, 'Les pâtisseries françaises traditionnelles' is far too broad and should be divided into numerous chapters like 'Les pâtes de base (brisée, sablée)', 'La pâte feuilletée et ses applications', 'Les crèmes et ganaches', 'Introduction aux viennoiseries: Croissants et Pains au chocolat', 'Les macarons', etc. Applying this principle to all the broad topics would create the extensive, mastery-focused course outline the user requested.",
+          "score": 7
+        }
+      ],
+      "inputTokens": 493,
+      "outputTokens": 119,
+      "duration": 2568.360249999969
+    },
+    {
+      "testCase": {
+        "id": "pt-marketing-digital-1",
+        "userInput": {
+          "courseTitle": "Marketing Digital",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá as estratégias essenciais de marketing digital, como criar campanhas eficazes e analisar resultados. Isso é útil para aumentar a visibilidade de marcas, produtos ou serviços no ambiente online.\",\n  \"chapters\": [\n    \"Fundamentos de Marketing Digital\",\n    \"Construção de Presença Online\",\n    \"Marketing de Conteúdo\",\n    \"Redes Sociais e Engajamento\",\n    \"SEO e Otimização para Motores de Busca\",\n    \"Publicidade Digital e Google Ads\",\n    \"Email Marketing e Automação\",\n    \"Análise de Dados e Métricas\",\n    \"Estratégias Avançadas de Marketing Digital\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The list of chapters is not 'extensive' as requested in the instructions. The prompt explicitly asks to 'split it into multiple smaller chapters, creating an extensive list of chapters' and to 'Don’t cover too much in a single chapter'. The provided 9 chapters are very broad (e.g., 'Marketing de Conteúdo', 'SEO e Otimização para Motores de Busca') and could each be broken down into several more specific chapters to create a more granular and progressive learning path. This goes against a key instruction.",
+          "score": 7
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline could be significantly improved by breaking down each broad chapter into multiple, more focused chapters. For example, 'SEO e Otimização para Motores de Busca' could be divided into 'Pesquisa de Palavras-Chave', 'SEO On-Page', 'SEO Off-Page', and 'SEO Técnico'. Similarly, 'Redes Sociais e Engajamento' could be split into chapters for major platforms like Instagram, Facebook, and LinkedIn. This would create the 'extensive list' requested and provide a more detailed, step-by-step learning journey.",
+          "score": 7
+        }
+      ],
+      "inputTokens": 493,
+      "outputTokens": 114,
+      "duration": 3088.34395900002
+    },
+    {
+      "testCase": {
+        "id": "pt-marketing-digital-2",
+        "userInput": {
+          "courseTitle": "Marketing Digital",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá as estratégias essenciais do marketing digital para promover marcas online, aumentar o alcance e gerar mais vendas. Este curso é útil para quem deseja atuar no mercado digital ou impulsionar negócios próprios.\",\n  \"chapters\": [\n    \"Introdução ao Marketing Digital\",\n    \"Configuração de Presença Online\",\n    \"Fundamentos de Marketing de Conteúdo\",\n    \"SEO e Otimização de Sites\",\n    \"Publicidade Digital e Google Ads\",\n    \"Redes Sociais para Negócios\",\n    \"Email Marketing e Automação\",\n    \"Análise de Dados e Métricas de Desempenho\",\n    \"Estratégias Avançadas de Marketing Digital\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The response failed to adhere to the core instruction: \"Don’t cover too much in a single chapter. Instead, split it into multiple smaller chapters, creating an extensive list of chapters\". The generated list of 9 chapters is very high-level and covers vast topics within each chapter (e.g., \"SEO e Otimização de Sites\"). This does not fulfill the requirement of creating a detailed, granular learning path that takes a student from beginner to expert.",
+          "score": 6.5
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The entire list of chapters should be significantly expanded. Each current chapter title represents a module that should be broken down into multiple, more specific chapters. For example, \"Redes Sociais para Negócios\" could be split into \"Estratégia de Mídias Sociais\", \"Marketing no Instagram\", \"Marketing no Facebook\", \"Gerenciamento de Comunidade\", \"Análise de Métricas Sociais\", etc. This would create the requested \"extensive list\" and a more practical learning path.",
+          "score": 6
+        }
+      ],
+      "inputTokens": 493,
+      "outputTokens": 121,
+      "duration": 3135.3612079999875
+    },
+    {
+      "testCase": {
+        "id": "pt-marketing-digital-3",
+        "userInput": {
+          "courseTitle": "Marketing Digital",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá estratégias e ferramentas essenciais de marketing digital para promover negócios online de forma eficaz. Isso é útil para aumentar a visibilidade, atrair clientes e impulsionar vendas no ambiente digital.\",\n  \"chapters\": [\n    \"Introdução ao Marketing Digital\",\n    \"Configuração de Presença Online\",\n    \"Marketing de Conteúdo e Blogging\",\n    \"Redes Sociais e Gestão de Comunidades\",\n    \"SEO: Otimização para Motores de Busca\",\n    \"Publicidade Online e Google Ads\",\n    \"Email Marketing e Automação\",\n    \"Análise de Dados e Métricas de Desempenho\",\n    \"Estratégias de Funil de Vendas e Conversion Optimization\",\n    \"Tendências e Futuro do Marketing Digital\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The main issue is that the list of chapters is not extensive as requested by the instructions. The prompt explicitly asks to \"split it into multiple smaller chapters, creating an extensive list of chapters\" and warns \"Don’t cover too much in a single chapter.\" The provided 10 chapters are very broad (e.g., \"SEO: Otimização para Motores de Busca\", \"Publicidade Online e Google Ads\"). Each of these topics is vast and could easily be broken down into 5-10 more specific chapters to truly guide a learner from beginner to expert.",
+          "score": 7
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline could be significantly improved by breaking down each broad chapter into a more granular, progressive series of smaller chapters. For example, 'SEO' could be divided into 'Fundamentos de SEO', 'Pesquisa de Palavras-Chave', 'SEO On-Page', 'SEO Off-Page', and 'SEO Técnico'. Similarly, 'Redes Sociais' could be split by platform (Instagram, Facebook, LinkedIn) or by function (Estratégia, Criação de Conteúdo, Análise). This would better fulfill the instruction to create a comprehensive path from beginner to expert.",
+          "score": 7.5
+        }
+      ],
+      "inputTokens": 493,
+      "outputTokens": 136,
+      "duration": 3324.226250000007
+    },
+    {
+      "testCase": {
+        "id": "en-the-matrix-1",
+        "userInput": {
+          "courseTitle": "The Matrix",
+          "locale": "en"
+        },
+        "expectations": "\n      - Should be specific to The Matrix film/trilogy, not confused with Matrix as a mathematical concept\n      - Content in US English\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn the fundamental concepts and visual effects behind the iconic film 'The Matrix'. This knowledge is useful for aspiring filmmakers, visual effects artists, and fans interested in film analysis and production.\",\n  \"chapters\": [\n    \"Introduction to 'The Matrix' and its cultural impact\",\n    \"Overview of the film's plot and themes\",\n    \"The science fiction concepts in 'The Matrix'\",\n    \"Analyzing the film's cinematography and visual style\",\n    \"Special effects techniques used in 'The Matrix'\",\n    \"The fight choreography and stunt work\",\n    \"The philosophical questions raised by the film\",\n    \"The influence of 'The Matrix' on modern cinema and technology\",\n    \"Creating your own 'Matrix'-style visual effects\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The response fails to adhere to the instruction to create an \"extensive list of chapters\" and to \"split it into multiple smaller chapters\". The resulting list of 9 chapters is too high-level and does not represent a learning path from beginner to expert. For example, \"Special effects techniques used in 'The Matrix'\" is a very broad topic that, according to the instructions, should have been split into several more specific chapters.",
+          "score": 7.5
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline could be significantly improved by expanding the chapter list to create a more granular and progressive learning path. Each of the current chapters could serve as a module title, with several smaller, more focused chapters within it. For instance, the chapter on philosophical questions could be broken down into individual chapters on Gnosticism, Simulacra and Simulation, and questions of free will. A practical chapter on creating effects could be split into tutorials for specific software or techniques inspired by the film.",
+          "score": 7.5
+        }
+      ],
+      "inputTokens": 493,
+      "outputTokens": 135,
+      "duration": 3272.587999999989
+    },
+    {
+      "testCase": {
+        "id": "en-the-matrix-2",
+        "userInput": {
+          "courseTitle": "The Matrix",
+          "locale": "en"
+        },
+        "expectations": "\n      - Should be specific to The Matrix film/trilogy, not confused with Matrix as a mathematical concept\n      - Content in US English\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will explore the themes, symbolism, and cultural impact of The Matrix film series. This knowledge enhances your understanding of cyberpunk aesthetics, philosophical questions about reality, and cinematic techniques.\",\n  \"chapters\": [\n    \"Introduction to The Matrix: Overview and Background\",\n    \"Themes and Symbols in The Matrix\",\n    \"The Philosophy Behind The Matrix: Reality, Illusion, and Perception\",\n    \"Cinematic Techniques and Visual Effects in The Matrix\",\n    \"The Impact of The Matrix on Popular Culture\",\n    \"Analyzing Characters and Storytelling in The Matrix\",\n    \"The Influence of The Matrix on Technology and Society\",\n    \"The Future of The Matrix Franchise\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The main issue with the response is that it fails to follow the instruction to create an \"extensive list of chapters\" and to \"split it into multiple smaller chapters\". It provides only 8 high-level chapters, which is insufficient for a course designed to take a learner from a beginner to an expert level. This is more of a broad overview than a detailed course outline as requested.",
+          "score": 7
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The response could be significantly improved by breaking down each of the 8 general topics into multiple, more specific chapters. For example, \"Themes and Symbols in The Matrix\" could be split into separate chapters on Gnosticism, the theme of choice, and messianic allegories. Similarly, \"Cinematic Techniques\" could be divided into chapters on \"bullet time,\" color theory, and fight choreography. This would create the extensive, progressive learning path that the prompt asked for.",
+          "score": 7
+        }
+      ],
+      "inputTokens": 493,
+      "outputTokens": 121,
+      "duration": 2551.449332999997
+    },
+    {
+      "testCase": {
+        "id": "en-the-matrix-3",
+        "userInput": {
+          "courseTitle": "The Matrix",
+          "locale": "en"
+        },
+        "expectations": "\n      - Should be specific to The Matrix film/trilogy, not confused with Matrix as a mathematical concept\n      - Content in US English\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will explore the complex themes and innovative storytelling of The Matrix, understanding its impact on science fiction and popular culture. This knowledge is useful for appreciating cinematic techniques and the philosophical questions raised by the film.\",\n  \"chapters\": [\n    \"Introduction to The Matrix and its Cultural Impact\",\n    \"Understanding the Plot and Main Themes\",\n    \"Analyzing the Characters and Their Development\",\n    \"Exploring the Philosophical Concepts: Reality and Simulacra\",\n    \"Visual Effects and Cinematic Techniques in The Matrix\",\n    \"The Matrix and Its Influence on Cinema and Technology\",\n    \"Critical Reception and Cultural Legacy of The Matrix\",\n    \"Advanced Themes and Interpretations in The Matrix\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The main instruction that was not followed was to create an extensive list of chapters and to avoid covering too much in a single chapter. The 8 chapters provided are very high-level and each covers a broad topic. For example, \"Understanding the Plot and Main Themes\" could easily be several chapters covering the plot of each film and then individual chapters for each major theme (e.g., free will, reality vs. illusion). Similarly, \"Analyzing the Characters and Their Development\" could be broken down into separate chapters for Neo, Trinity, Morpheus, and Agent Smith.",
+          "score": 7.5
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline could be significantly improved by breaking down the broad chapters into a more granular, extensive list as instructed. A better structure would be to have specific chapters for each film's plot, each major character, each key philosophical concept (Plato's Cave, Baudrillard's Simulacra), specific cinematic techniques (Bullet Time, Wire-Fu), and the influence on different areas (fashion, other films, technology). This would create the detailed, progressive learning path from beginner to expert that the prompt requested, rather than a high-level overview.",
+          "score": 7
+        }
+      ],
+      "inputTokens": 493,
+      "outputTokens": 124,
+      "duration": 2708.369583999971
+    },
+    {
+      "testCase": {
+        "id": "pt-direito-1",
+        "userInput": {
+          "courseTitle": "Direito",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Covers Brazilian law system\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá os fundamentos do direito, suas principais áreas e como aplicá-las na prática jurídica ou na vida diária. Este conhecimento é essencial para entender seus direitos e responsabilidades na sociedade.\",\n  \"chapters\": [\n    \"Introdução ao Direito\",\n    \"História e Evolução do Direito\",\n    \"Estrutura do Sistema Jurídico\",\n    \"Direitos Fundamentais\",\n    \"Direito Civil: Conceitos e Aplicações\",\n    \"Direito Penal: Princípios e Práticas\",\n    \"Direito Administrativo\",\n    \"Direito Constitucional\",\n    \"Direito do Trabalho\",\n    \"Direito Tributário\",\n    \"Direito Ambiental\",\n    \"Práticas Jurídicas e Ética Profissional\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The response fails to adhere to a core instruction: \"Don’t cover too much in a single chapter. Instead, split it into multiple smaller chapters, creating an extensive list of chapters\". The generated chapters are extremely broad (e.g., \"Direito Civil: Conceitos e Aplicações\", \"Direito Penal: Princípios e Práticas\"). Each of these is a massive field of law that would itself comprise dozens of chapters in a course designed to take a learner \"from no knowledge to mastering the subject\". The list is a high-level overview of legal disciplines, not the detailed, granular curriculum that was requested.",
+          "score": 6
+        }
+      ],
+      "inputTokens": 492,
+      "outputTokens": 134,
+      "duration": 3824.2142079999903
+    },
+    {
+      "testCase": {
+        "id": "pt-direito-2",
+        "userInput": {
+          "courseTitle": "Direito",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Covers Brazilian law system\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá os fundamentos do direito, compreendendo suas principais áreas e sua aplicação prática na resolução de conflitos e na garantia de direitos. Isso é útil para quem deseja atuar na área jurídica ou entender seus direitos e deveres na sociedade.\",\n  \"chapters\": [\n    \"Introdução ao Direito: Conceitos e História\",\n    \"Direito Constitucional: Organização do Estado e Direitos Fundamentais\",\n    \"Direito Civil: Pessoas, Bens e Obrigações\",\n    \"Direito Penal: Crimes e Penas\",\n    \"Direito Administrativo: Administração Pública e Responsabilidade\",\n    \"Direito do Trabalho: Relações Trabalhistas e Direitos do Trabalhador\",\n    \"Direito Tributário: Impostos, Taxas e Contribuições\",\n    \"Direito Processual Civil e Penal: Processo e Procedimentos Jurídicos\",\n    \"Ética Profissional: Código de Conduta na Prática Jurídica\",\n    \"Direito Ambiental: Sustentabilidade e Legislação Ambiental\",\n    \"Direito Internacional: Relações Globais e Convenções\",\n    \"Atuação Jurídica: Carreiras, Ética e Mercado de Trabalho\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The response fails to follow the key instruction to create an \"extensive list of chapters\" and to \"split it into multiple smaller chapters.\" The prompt explicitly states, \"Don’t cover too much in a single chapter.\" However, the response provides a list of only 12 chapters, which are extremely broad. For example, \"Direito Civil: Pessoas, Bens e Obrigações\" and \"Direito Processual Civil e Penal: Processo e Procedimentos Jurídicos\" are vast fields of law, each typically comprising multiple years of study in law school. Condensing them into single chapters goes directly against the instructions and fails to create a learning path that could take a student from beginner to expert level.",
+          "score": 6.5
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The main improvement would be to drastically expand the chapter list by breaking down each broad topic into smaller, more focused chapters. For example, \"Direito Civil\" should be divided into its core components like \"Parte Geral,\" \"Direito das Obrigações,\" \"Direito dos Contratos,\" \"Direitos Reais,\" \"Direito de Família,\" and \"Direito das Sucessões.\" Similarly, \"Direito Processual\" should be split into \"Teoria Geral do Processo,\" \"Processo Civil,\" and \"Processo Penal,\" with each of these being further subdivided into topics like procedures, appeals, and enforcement. The final list should contain dozens of chapters to truly reflect a path from beginner to mastery.",
+          "score": 6
+        }
+      ],
+      "inputTokens": 492,
+      "outputTokens": 210,
+      "duration": 3435.9482499999576
+    },
+    {
+      "testCase": {
+        "id": "pt-direito-3",
+        "userInput": {
+          "courseTitle": "Direito",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Covers Brazilian law system\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá os princípios fundamentais do Direito e como eles se aplicam na vida real, ajudando na resolução de problemas jurídicos e na compreensão do sistema legal.\",\n  \"chapters\": [\n    \"Introdução ao Direito: Conceitos e Funções\",\n    \"História do Direito: Evolução e Contexto\",\n    \"Direitos e Deveres: Fundamentos e Aplicações\",\n    \"Sistema Jurídico Brasileiro: Estrutura e Organização\",\n    \"Direitos Humanos e Justiça Social\",\n    \"Direitos Civis e Políticos\",\n    \"Direitos Econômicos e Sociais\",\n    \"Direito Constitucional: Princípios e Normas\",\n    \"Direito Administrativo: Administração Pública e Serviços\",\n    \"Direito Penal: Crimes e Penas\",\n    \"Direito Processual Penitenciário: Procedimentos e Recursos\",\n    \"Direito Tributário: Impostos e Obrigações Fiscais\",\n    \"Direito Empresarial: Empresas, Contratos e Comércio\",\n    \"Direito do Trabalho: Relações Laborais e Direitos dos Trabalhadores\",\n    \"Direito Ambiental: Proteção ao Meio Ambiente e Sustentabilidade\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The instructions explicitly asked to create an 'extensive list of chapters' and to 'not cover too much in a single chapter'. The generated list of 15 chapters is too high-level. Each chapter, such as 'Direito Penal: Crimes e Penas' or 'Direito Constitucional: Princípios e Normas', represents an entire field of law. These should have been broken down into many smaller chapters to truly guide a student from a beginner level to mastery, as requested by the prompt.",
+          "score": 7
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline could be vastly improved by breaking down the broad chapter topics into more specific and granular chapters. For instance, 'Direito Penal' could be subdivided into 'Teoria do Crime', 'Teoria da Pena', 'Crimes Contra a Pessoa', 'Crimes Contra o Patrimônio', etc. This approach would align better with the instruction to create an extensive, progressive learning path that facilitates mastery of the subject, rather than just providing a general overview.",
+          "score": 7
+        }
+      ],
+      "inputTokens": 492,
+      "outputTokens": 208,
+      "duration": 4924.09041600005
+    },
+    {
+      "testCase": {
+        "id": "es-derecho-mexicano-1",
+        "userInput": {
+          "courseTitle": "Derecho Mexicano",
+          "locale": "es"
+        },
+        "expectations": "\n      - Covers Mexican law system\n      - Content in Mexican Spanish\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Aprenderás los aspectos fundamentales del derecho mexicano y cómo aplicar sus principios en situaciones reales, lo que te será útil en carreras relacionadas con la ley, la ciudadanía o los negocios en México.\",\n  \"chapters\": [\n    \"Introducción al derecho mexicano\",\n    \"Historia y evolución del derecho en México\",\n    \"Fuentes del derecho mexicano\",\n    \"Sistema jurídico mexicano\",\n    \"Derechos y obligaciones fundamentales\",\n    \"Derecho constitucional mexicano\",\n    \"Derecho Civil en México\",\n    \"Derecho Penal en México\",\n    \"Derecho Administrativo y Laboral en México\",\n    \"Procedimientos judiciales y proceso legal en México\",\n    \"Derecho de familia y herencias en México\",\n    \"La Constitución Mexicana y su impacto en la ley\",\n    \"Casos prácticos y análisis de jurisprudencia mexicana\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The response fails to follow the key instruction to \"split it into multiple smaller chapters, creating an extensive list of chapters\". The subject \"Derecho Mexicano\" (Mexican Law) is vast, and the 13 chapters provided are a very high-level overview, not a path to mastery. A major error is combining \"Derecho Administrativo y Laboral\" (Administrative and Labor Law) into a single chapter; these are two large, distinct fields of law. Similarly, key areas are missing entirely, such as Derecho Mercantil (Commercial Law), Derecho Fiscal (Tax Law), and the Juicio de Amparo (a fundamental legal proceeding for constitutional rights protection in Mexico). The chapter \"La Constitución Mexicana y su impacto en la ley\" is largely redundant with the earlier \"Derecho constitucional mexicano\". These issues mean the outline does not create a progressive path from beginner to expert.",
+          "score": 7
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The chapter \"Procedimientos judiciales y proceso legal en México\" (Judicial Procedures and Legal Process in Mexico) is too broad. Procedural law is itself a major area with distinct branches (civil procedure, criminal procedure, etc.) that should be separate chapters in a comprehensive course. The placement of \"Derecho de familia y herencias en México\" (Family and Inheritance Law) is slightly out of sequence, as it is a subset of Civil Law and would be more logically placed after that chapter.",
+          "score": 8
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline could be significantly improved by greatly expanding the number of chapters. It should split the combined chapters (Administrative/Labor) and add new chapters for the many missing legal domains (Commercial, Tax, Agrarian, International, etc.). A dedicated and detailed section on the Juicio de Amparo is essential for any course on Mexican law. Breaking down the broad topics like \"Procedural Law\" into their specific branches would also align better with the user's request for a detailed, progressive learning path.",
+          "score": 7
+        }
+      ],
+      "inputTokens": 494,
+      "outputTokens": 144,
+      "duration": 2786.582541999989
+    },
+    {
+      "testCase": {
+        "id": "es-derecho-mexicano-2",
+        "userInput": {
+          "courseTitle": "Derecho Mexicano",
+          "locale": "es"
+        },
+        "expectations": "\n      - Covers Mexican law system\n      - Content in Mexican Spanish\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Aprenderás los aspectos fundamentales del derecho mexicano, incluyendo su estructura, principales leyes y cómo se aplica en diferentes situaciones. Esto es útil para quienes deseen entender el marco legal en México o acercarse a la carrera jurídica.\",\n  \"chapters\": [\n    \"Introducción al derecho mexicano\",\n    \"Historia del derecho en México\",\n    \"Fuentes del derecho mexicano\",\n    \"La Constitución Política de los Estados Unidos Mexicanos\",\n    \"Derecho civil en México\",\n    \"Derecho penal en México\",\n    \"Derecho laboral y de seguridad social\",\n    \"Derecho mercantil y sociedades comerciales\",\n    \"El sistema judicial mexicano\",\n    \"Procedimientos y recursos judiciales en México\",\n    \"Derecho ambiental en México\",\n    \"Derecho de familia y derechos humanos en México\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The response fails to follow the core instruction to \"create an extensive list of chapters\" that would allow a student to go from \"beginner to expert level\". The provided list of 12 chapters is a very high-level overview, with each chapter representing a subject that would require its own multi-chapter course (e.g., \"Derecho civil en México\"). This directly contradicts the instruction: \"Don’t cover too much in a single chapter. Instead, split it into multiple smaller chapters\". Additionally, the final chapter incorrectly combines two vast and disparate topics, \"Derecho de familia\" (Family Law) and \"derechos humanos\" (Human Rights), which demonstrates a poor structural understanding of the subject.",
+          "score": 6.5
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The logical progression of the chapters could be improved. The chapter on the judicial system (\"El sistema judicial mexicano\") is placed late in the course, after the chapters on specific areas of substantive law (civil, criminal, labor). It would be more logical to introduce the structure of the courts earlier, likely after the chapter on the Constitution, to provide context on how laws are interpreted and enforced.",
+          "score": 8.5
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The outline is far too superficial for a course aiming for mastery. It requires significant expansion by breaking down each broad topic into a series of more focused chapters. For example, \"Derecho Civil\" should be divided into chapters on Persons, Property, Obligations, Contracts, and Successions. The course is also missing several essential areas of Mexican law, most notably Tax Law (\"Derecho Fiscal\") and Agrarian Law (\"Derecho Agrario\").",
+          "score": 6
+        }
+      ],
+      "inputTokens": 494,
+      "outputTokens": 139,
+      "duration": 3109.936791999964
+    },
+    {
+      "testCase": {
+        "id": "es-derecho-mexicano-3",
+        "userInput": {
+          "courseTitle": "Derecho Mexicano",
+          "locale": "es"
+        },
+        "expectations": "\n      - Covers Mexican law system\n      - Content in Mexican Spanish\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Aprenderás los fundamentos y las aplicaciones prácticas del derecho mexicano, lo cual es esencial para quienes buscan entender el marco legal en México y cómo navegar en sus sistemas jurídicos para fines profesionales o personales.\",\n  \"chapters\": [\n    \"Introducción al derecho mexicano\",\n    \"Historia y evolución del sistema legal mexicano\",\n    \"Fuentes del derecho mexicano\",\n    \"Organización del poder judicial en México\",\n    \"Derechos y garantías constitucionales\",\n    \"Derecho civil mexicano: personas, bienes y derechos\",\n    \"Derecho penal mexicano: delitos y sanciones\",\n    \"Derecho laboral y de seguridad social en México\",\n    \"Derecho mercantil y empresarial mexicano\",\n    \"Procedimientos judiciales en México\",\n    \"Derecho ambiental mexicano\",\n    \"Derecho de familia y sucesiones en México\",\n    \"Desafíos actuales y reformas en el derecho mexicano\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The response fails to adhere to the instruction to create an 'extensive list of chapters' by splitting broad topics. Chapters like 'Derecho civil mexicano: personas, bienes y derechos', 'Derecho penal mexicano: delitos y sanciones', and 'Procedimientos judiciales en México' are extremely broad and cover vast areas of law. They should have been broken down into multiple, more focused chapters to fulfill the requirement of creating a detailed learning path from beginner to expert. The current list provides only a high-level, introductory overview, not a path to mastery.",
+          "score": 7
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline could be vastly improved by expanding the chapter list significantly. Each of the broad chapters covering a specific area of law (Civil, Penal, Mercantil, etc.) should be broken down into multiple smaller chapters. For instance, 'Procedimientos judiciales en México' should be split into separate chapters for 'Proceso Civil', 'Proceso Penal Acusatorio', 'Juicio de Amparo', and 'Proceso Administrativo', as these are distinct and complex topics in themselves.",
+          "score": 6.5
+        }
+      ],
+      "inputTokens": 494,
+      "outputTokens": 155,
+      "duration": 3451.321291
+    },
+    {
+      "testCase": {
+        "id": "en-java-1",
+        "userInput": {
+          "courseTitle": "Java",
+          "locale": "en"
+        },
+        "expectations": "\n    - Must not confuse with JavaScript\n    - Content in US English\n\n    \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n  "
+      },
+      "output": "{\n  \"description\": \"You will learn the fundamentals of Java programming, including syntax, data types, control structures, and object-oriented concepts. This knowledge is useful for developing applications, pursuing a career in software development, or enhancing your programming skills.\",\n  \"chapters\": [\n    \"Introduction to Java and Setting Up the Environment\",\n    \"Basic Java Syntax and Data Types\",\n    \"Variables, Constants, and Operators\",\n    \"Control Flow Statements: if, else, switch\",\n    \"Loops in Java: for, while, do-while\",\n    \"Arrays and Strings in Java\",\n    \"Methods and Functions in Java\",\n    \"Object-Oriented Programming Concepts: Classes and Objects\",\n    \"Inheritance and Polymorphism in Java\",\n    \"Interfaces and Abstract Classes\",\n    \"Exception Handling and Error Management\",\n    \"Java Collections Framework: Lists, Sets, and Maps\",\n    \"File I/O and Serialization in Java\",\n    \"Multithreading and Concurrency\",\n    \"Advanced Java Features: Annotations, Generics\",\n    \"Building and Running Java Applications\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The main area for improvement is in the granularity and completeness of the chapter list. The instructions specifically requested to \"split it into multiple smaller chapters, creating an extensive list\" and to create a path to \"mastering the subject\".\n\n1.  **Granularity**: The current list of 16 chapters is a good overview, but many chapters cover very broad topics that should have been split. For example, \"Object-Oriented Programming Concepts: Classes and Objects\" and \"Java Collections Framework: Lists, Sets, and Maps\" could each be broken down into 3-4 more focused chapters.\n\n2.  **Completeness for 'Mastery'**: The outline is solid for a beginner-to-intermediate course, but it's missing several key topics required for mastery in modern Java development. These include:\n    *   Lambda Expressions and the Stream API (a fundamental part of Java since version 8).\n    *   Database Connectivity (JDBC).\n    *   Build and dependency management tools (Maven/Gradle).\n    *   Unit testing (JUnit).\n    *   An introduction to common frameworks (e.g., Spring/Spring Boot).",
+          "score": 8
+        }
+      ],
+      "inputTokens": 492,
+      "outputTokens": 180,
+      "duration": 3802.468541999988
+    },
+    {
+      "testCase": {
+        "id": "en-java-2",
+        "userInput": {
+          "courseTitle": "Java",
+          "locale": "en"
+        },
+        "expectations": "\n    - Must not confuse with JavaScript\n    - Content in US English\n\n    \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n  "
+      },
+      "output": "{\n  \"description\": \"You will learn how to program in Java, which is useful for developing applications, websites, and Android mobile apps. This knowledge is essential for a career in software development or enhancing your technical skills.\",\n  \"chapters\": [\n    \"Introduction to Java and Programming Basics\",\n    \"Java Data Types and Variables\",\n    \"Control Structures in Java\",\n    \"Object-Oriented Programming with Java\",\n    \"Handling Exceptions and Errors in Java\",\n    \"Working with Java Collections and Generics\",\n    \"File Input and Output in Java\",\n    \"Multithreading and Concurrency in Java\",\n    \"Building Graphical User Interfaces with Java\",\n    \"Java Network Programming\",\n    \"Developing Real-World Java Applications\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The response fails to follow a key instruction to \"split it into multiple smaller chapters, creating an extensive list of chapters.\" The provided list of 11 chapters is far too high-level for a course that aims to take a student from beginner to expert. For example, \"Object-Oriented Programming with Java\" and \"Building Graphical User Interfaces with Java\" are massive topics that should each be broken down into multiple, more focused chapters. This failure to provide the requested granularity is a major issue.",
+          "score": 7
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline could be significantly improved by breaking down each broad chapter into smaller, more digestible units. Additionally, to truly cover a path to mastery, it should include chapters on essential modern topics such as build tools (Maven/Gradle), unit testing (JUnit), database connectivity (JDBC, JPA/Hibernate), and popular frameworks like Spring/Spring Boot. The current outline only provides a foundation and misses the advanced topics needed for professional expertise.",
+          "score": 6.5
+        }
+      ],
+      "inputTokens": 492,
+      "outputTokens": 123,
+      "duration": 2702.8798750000424
+    },
+    {
+      "testCase": {
+        "id": "en-java-3",
+        "userInput": {
+          "courseTitle": "Java",
+          "locale": "en"
+        },
+        "expectations": "\n    - Must not confuse with JavaScript\n    - Content in US English\n\n    \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n  "
+      },
+      "output": "{\n  \"description\": \"You will learn the fundamentals of Java programming, including syntax, object-oriented principles, and core libraries. This knowledge is useful for developing a wide variety of applications, from desktop to mobile and web.\",\n  \"chapters\": [\n    \"Introduction to Java and Setting Up Development Environment\",\n    \"Java Syntax and Basic Programming Concepts\",\n    \"Variables, Data Types, and Operators\",\n    \"Control Structures: Loops and Conditionals\",\n    \"Methods and Functions in Java\",\n    \"Object-Oriented Programming Principles\",\n    \"Classes and Objects in Java\",\n    \"Inheritance and Polymorphism\",\n    \"Interfaces and Abstract Classes\",\n    \"Handling Exceptions and Error Management\",\n    \"Working with Collections and Generics\",\n    \"File I/O and Data Persistence\",\n    \"Multithreading and Concurrency in Java\",\n    \"Java Development Best Practices and Tools\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The instructions ask for an \"extensive list of chapters\" to lead a student \"from no knowledge to mastering the subject.\" The generated list of 14 chapters provides a solid foundation but is not extensive enough to achieve mastery. It omits numerous essential topics for modern, professional Java development, such as Java 8+ features (Streams, Lambdas, Optional), build and dependency management tools (Maven, Gradle), unit testing frameworks (JUnit), database connectivity (JDBC), and web application frameworks (like Spring/Spring Boot).",
+          "score": 7.5
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline could be significantly expanded to truly cover the path to mastery. Key additions would include chapters on:\n- Modern Java Features: Lambda Expressions, The Stream API, Optional Class.\n- Development Ecosystem: Build Automation with Maven/Gradle, Unit Testing with JUnit.\n- Advanced Topics: Java Memory Model, Garbage Collection.\n- Real-world Applications: Database Connectivity with JDBC, Introduction to Web Development with Spring Boot.",
+          "score": 7
+        }
+      ],
+      "inputTokens": 492,
+      "outputTokens": 145,
+      "duration": 3027.696916999994
+    },
+    {
+      "testCase": {
+        "id": "en-python-1",
+        "userInput": {
+          "courseTitle": "Python",
+          "locale": "en"
+        },
+        "expectations": "\n    - Must focus on Python programming language, not the snake\n    - Content in US English\n\n    \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n  "
+      },
+      "output": "{\n  \"description\": \"You will learn the fundamentals of Python programming, enabling you to write your own scripts and automate tasks. This is useful for advancing your career in tech, data analysis, or software development.\",\n  \"chapters\": [\n    \"Introduction to Python and setting up the environment\",\n    \"Basic syntax and data types in Python\",\n    \"Control structures: Conditionals and loops\",\n    \"Functions and modules in Python\",\n    \"Working with data structures: Lists, tuples, and dictionaries\",\n    \"File handling and data input/output\",\n    \"Error handling and debugging techniques\",\n    \"Object-oriented programming in Python\",\n    \"Working with libraries and packages\",\n    \"Building practical projects with Python\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The response fails to follow the explicit instruction to create an \"extensive list of chapters\" and to \"split it into multiple smaller chapters\". The provided list of 10 chapters is a very high-level summary, with each chapter covering a very broad topic that could be broken down significantly. For example, \"Working with data structures: Lists, tuples, and dictionaries\" could easily be three or more separate chapters. This is a major failure as it misses a core requirement of the prompt regarding the detail and structure of the course.",
+          "score": 6.5
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The primary improvement is to vastly expand the chapter list by breaking down each of the current topics into smaller, more focused chapters. The goal should be to create a granular learning path that takes a student from zero knowledge to a high level of proficiency. This would involve creating distinct chapters for individual data structures (lists, tuples, dictionaries, sets), different types of loops, different aspects of functions, various concepts within OOP, and introducing specific popular libraries rather than a generic chapter.",
+          "score": 6
+        }
+      ],
+      "inputTokens": 492,
+      "outputTokens": 119,
+      "duration": 2862.2518329999875
+    },
+    {
+      "testCase": {
+        "id": "en-python-2",
+        "userInput": {
+          "courseTitle": "Python",
+          "locale": "en"
+        },
+        "expectations": "\n    - Must focus on Python programming language, not the snake\n    - Content in US English\n\n    \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n  "
+      },
+      "output": "{\n  \"description\": \"You will learn how to write and understand Python code, which is useful for automating tasks, developing applications, and analyzing data efficiently.\",\n  \"chapters\": [\n    \"Introduction to Programming and Python\",\n    \"Setting Up Python Environment\",\n    \"Basic Syntax and Data Types\",\n    \"Control Structures and Loops\",\n    \"Functions and Modules\",\n    \"Working with Collections: Lists, Tuples, and Dictionaries\",\n    \"File Input and Output\",\n    \"Error Handling and Exceptions\",\n    \"Object-Oriented Programming in Python\",\n    \"Using Libraries and Packages\",\n    \"Working with Data and Libraries like Pandas and NumPy\",\n    \"Building GUIs with Python\",\n    \"Web Development with Python Frameworks\",\n    \"Testing and Debugging Python Code\",\n    \"Deploying Python Applications\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The instructions explicitly ask to \"Don’t cover too much in a single chapter. Instead, split it into multiple smaller chapters, creating an extensive list of chapters.\" The generated list of 15 chapters is a good start, but several chapters are too broad and combine distinct topics. For example:\n\n- \"Working with Collections: Lists, Tuples, and Dictionaries\" could be broken down into individual chapters for each data structure.\n- \"Working with Data and Libraries like Pandas and NumPy\" should be at least two separate chapters, one for each library.\n- \"Web Development with Python Frameworks\" is very high-level and could be split into an introduction and then specific chapters for major frameworks like Flask or Django.",
+          "score": 8
+        }
+      ],
+      "inputTokens": 492,
+      "outputTokens": 133,
+      "duration": 2404.560666000005
+    },
+    {
+      "testCase": {
+        "id": "en-python-3",
+        "userInput": {
+          "courseTitle": "Python",
+          "locale": "en"
+        },
+        "expectations": "\n    - Must focus on Python programming language, not the snake\n    - Content in US English\n\n    \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n  "
+      },
+      "output": "{\n  \"description\": \"This course will teach you how to program in Python, a versatile language used in web development, data analysis, artificial intelligence, and more. Learning Python will expand your career opportunities and enhance your problem-solving skills.\",\n  \"chapters\": [\n    \"Introduction to Python and setting up your environment\",\n    \"Python syntax and basic programming constructs\",\n    \"Data types, variables, and expressions\",\n    \"Control flow: if statements, loops, and decision making\",\n    \"Functions and modular programming\",\n    \"Working with data collections: lists, tuples, sets, and dictionaries\",\n    \"File handling and input/output operations\",\n    \"Error handling and debugging techniques\",\n    \"Object-oriented programming in Python\",\n    \"Working with modules and libraries\",\n    \"Introduction to Python frameworks and tools\",\n    \"Data analysis and visualization with Python\",\n    \"Building web applications with Python\",\n    \"Connecting Python with databases\",\n    \"Advanced Python topics: decorators, generators, and context managers\",\n    \"Testing, deploying, and maintaining Python applications\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The response fails to adhere to the instruction: \"Don’t cover too much in a single chapter. Instead, split it into multiple smaller chapters, creating an extensive list of chapters\". Many of the provided chapters are extremely broad and could easily be split into multiple, more focused chapters. For example:\n- \"Data analysis and visualization with Python\" could be split into separate chapters on NumPy, Pandas, Matplotlib, and Seaborn.\n- \"Building web applications with Python\" is too generic and could be broken down by framework (e.g., Flask, Django) and concepts (e.g., Routing, Templates, ORM).\n- \"Advanced Python topics: decorators, generators, and context managers\" combines three distinct advanced topics that should each be their own chapter.\nThis failure to provide a granular, extensive list of chapters goes against a key requirement of the prompt.",
+          "score": 7
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The main improvement would be to significantly expand the chapter list by breaking down the existing broad topics into smaller, more digestible chapters. This would better align with the prompt's goal of creating an extensive, detailed learning path that takes a student from beginner to expert. The current list reads more like a high-level syllabus than a detailed course outline.",
+          "score": 7
+        }
+      ],
+      "inputTokens": 492,
+      "outputTokens": 176,
+      "duration": 3400.8215419999906
+    }
+  ]
+}

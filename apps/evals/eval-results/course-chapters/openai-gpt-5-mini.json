@@ -1,0 +1,936 @@
+{
+  "taskId": "course-chapters",
+  "modelId": "openai/gpt-5-mini",
+  "results": [
+    {
+      "testCase": {
+        "id": "en-machine-learning-1",
+        "userInput": {
+          "courseTitle": "Machine Learning",
+          "locale": "en"
+        },
+        "expectations": "\n      - Content in US English\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn fundamental theory, practical tools, and engineering practices to build, evaluate, and deploy machine learning models using Python. These skills are useful for roles in data science and ML engineering and for applying predictive models to solve real-world business and research problems.\",\n  \"chapters\": [\n    \"Introduction to Machine Learning (types, workflow, use cases)\",\n    \"Python for Machine Learning (environment, NumPy, pandas, scikit-learn)\",\n    \"Linear Algebra for ML (vectors, matrices, eigenvalues)\",\n    \"Calculus and Optimization Basics (derivatives, gradients, convexity)\",\n    \"Probability and Statistics for ML (distributions, expectation, hypothesis testing)\",\n    \"Data Wrangling with pandas (cleaning, reshaping, merging)\",\n    \"Exploratory Data Analysis and Visualization (EDA, plotting, insights)\",\n    \"Feature Engineering and Selection (encoding, scaling, interaction features)\",\n    \"Data Preprocessing and Pipelines (imputation, transformations, sklearn pipelines)\",\n    \"Supervised Learning: Linear Models (ordinary least squares, regularized regression)\",\n    \"Supervised Learning: Classification Basics (logistic regression, evaluation metrics)\",\n    \"Model Evaluation and Validation (train/test split, cross-validation, learning curves)\",\n    \"Regularization and Model Complexity (bias-variance tradeoff, ridge, lasso)\",\n    \"Decision Trees and Rule-Based Models (CART, pruning, interpretation)\",\n    \"Ensemble Methods: Bagging and Boosting (random forest, gradient boosting, XGBoost/LightGBM)\",\n    \"Support Vector Machines and k-Nearest Neighbors\",\n    \"Probabilistic Models and Naive Bayes\",\n    \"Unsupervised Learning: Clustering (k-means, hierarchical, DBSCAN)\",\n    \"Dimensionality Reduction: PCA and Manifold Learning (t-SNE, UMAP)\",\n    \"Neural Networks Fundamentals (perceptron, backpropagation, activation functions)\",\n    \"Deep Learning: Convolutional Neural Networks for Images\",\n    \"Deep Learning: Sequence Models and Transformers (RNNs, LSTM, attention, BERT)\",\n    \"Reinforcement Learning Basics (MDPs, Q-learning, policy gradients)\",\n    \"Natural Language Processing Practical Techniques (tokenization, embeddings, transfer learning)\",\n    \"Time Series Forecasting (trend/seasonality, ARIMA, Prophet, RNN approaches)\",\n    \"Model Interpretability and Explainability (feature importance, SHAP, LIME)\",\n    \"Model Deployment and MLOps (APIs, containerization, CI/CD, monitoring)\",\n    \"Scaling and Engineering for Production (distributed training, GPUs, inference optimization)\",\n    \"Ethics, Privacy, and Fairness in Machine Learning\",\n    \"Capstone Project and Portfolio Development (end-to-end project, presentation, resume)\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "A few chapters combine multiple large topics that could have been split to better follow the instructions. For example, \"Support Vector Machines and k-Nearest Neighbors\" are two distinct model types. More significantly, \"Deep Learning: Sequence Models and Transformers (RNNs, LSTM, attention, BERT)\" bundles several massive, distinct topics (RNNs, Attention/Transformers, and specific models like BERT) into one chapter, which goes against the instruction to \"Don’t cover too much in a single chapter.\"",
+          "score": 8.5
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The outline would be even better if it split the overly broad chapters. For instance, creating separate chapters for \"Recurrent Neural Networks (RNNs & LSTMs)\" and \"Attention Mechanisms and Transformers\" would provide a more focused and digestible learning path for these complex, advanced topics.",
+          "score": 8.5
+        }
+      ],
+      "inputTokens": 491,
+      "outputTokens": 1376,
+      "duration": 19994.121042000013
+    },
+    {
+      "testCase": {
+        "id": "en-machine-learning-2",
+        "userInput": {
+          "courseTitle": "Machine Learning",
+          "locale": "en"
+        },
+        "expectations": "\n      - Content in US English\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn how to prepare data, build, evaluate, and deploy machine learning models using Python and modern tools, progressing from foundational math to state-of-the-art deep learning and production practices. This knowledge is useful for roles like data scientist or ML engineer and for applying ML to real-world problems to automate decisions, improve products, and extract insights from data.\",\n  \"chapters\": [\n    \"Introduction to Machine Learning\",\n    \"Python and Tools for Machine Learning (NumPy, pandas, scikit-learn, Jupyter)\",\n    \"Software Practices: Version Control, Testing, and Reproducibility\",\n    \"Math for Machine Learning: Linear Algebra Essentials\",\n    \"Math for Machine Learning: Probability and Statistics\",\n    \"Math for Machine Learning: Multivariable Calculus and Optimization\",\n    \"Data Collection and Storage: Databases, APIs, and Data Formats\",\n    \"Data Cleaning and Preprocessing\",\n    \"Exploratory Data Analysis and Visualization\",\n    \"Feature Engineering and Feature Selection\",\n    \"Handling Imbalanced, Time Series, and Text Data\",\n    \"Supervised Learning: Linear and Logistic Regression\",\n    \"Model Evaluation: Metrics, Cross-Validation, and Holdout Strategies\",\n    \"Regularization, Bias-Variance Tradeoff, and Model Selection\",\n    \"Decision Trees and Rule-Based Models\",\n    \"Ensemble Methods: Bagging, Random Forests, and Boosting\",\n    \"Support Vector Machines and Kernel Methods\",\n    \"Unsupervised Learning: Clustering Techniques\",\n    \"Dimensionality Reduction: PCA, t-SNE, and UMAP\",\n    \"Introduction to Neural Networks and Backpropagation\",\n    \"Deep Learning Architectures: CNNs for Images\",\n    \"Sequential Models: RNNs, LSTMs, and Attention\",\n    \"Transformers and Modern NLP Techniques\",\n    \"Model Training at Scale: GPUs, Batch Strategies, and Distributed Training\",\n    \"Hyperparameter Tuning and Automated Machine Learning (AutoML)\",\n    \"Model Interpretability, Explainability, and Fairness\",\n    \"MLOps and Production: Model Serving, APIs, and CI/CD\",\n    \"Monitoring, Logging, and Model Retraining in Production\",\n    \"Security, Privacy, and Ethical Considerations in ML\",\n    \"Capstone Project: End-to-End ML Solution from Data to Deployment\",\n    \"Career Pathways and Next Steps: Portfolios, Interviews, and Continuing Education\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The response is excellent, but it could adhere even more strictly to the instruction to \"split it into multiple smaller chapters, creating an extensive list of chapters\". Several chapters combine multiple distinct, large topics that could each be their own chapter. For example:\n- \"Handling Imbalanced, Time Series, and Text Data\" could be split into three separate chapters.\n- \"Ensemble Methods: Bagging, Random Forests, and Boosting\" could be split into at least two chapters (e.g., one for Bagging/Random Forests, another for Boosting methods).\n- \"Supervised Learning: Linear and Logistic Regression\" could be two separate chapters.\n- \"Unsupervised Learning: Clustering Techniques\" could be broken down into chapters for specific algorithms like K-Means, DBSCAN, and Hierarchical Clustering.",
+          "score": 8.5
+        }
+      ],
+      "inputTokens": 491,
+      "outputTokens": 949,
+      "duration": 15935.276333000045
+    },
+    {
+      "testCase": {
+        "id": "en-machine-learning-3",
+        "userInput": {
+          "courseTitle": "Machine Learning",
+          "locale": "en"
+        },
+        "expectations": "\n      - Content in US English\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn core machine learning concepts, practical modeling techniques, and the engineering skills needed to build, evaluate, and deploy ML systems. This knowledge is useful for building data-driven products, improving decision-making, and pursuing roles in data science or ML engineering.\",\n  \"chapters\": [\n    \"Introduction to Machine Learning\",\n    \"Python for Machine Learning\",\n    \"Math Foundations: Linear Algebra\",\n    \"Math Foundations: Calculus for ML\",\n    \"Probability and Statistics for ML\",\n    \"Data Collection and Exploratory Data Analysis\",\n    \"Data Cleaning and Preprocessing\",\n    \"Feature Engineering and Feature Selection\",\n    \"Model Evaluation and Validation\",\n    \"Supervised Learning: Linear and Logistic Regression\",\n    \"Supervised Learning: Decision Trees and Random Forests\",\n    \"Gradient Boosting Machines (XGBoost, LightGBM, CatBoost)\",\n    \"Support Vector Machines and Kernel Methods\",\n    \"Unsupervised Learning: Clustering Techniques\",\n    \"Dimensionality Reduction: PCA, t-SNE, UMAP\",\n    \"Probabilistic Models and Bayesian Methods\",\n    \"Model Selection, Cross-Validation, and Hyperparameter Tuning\",\n    \"Optimization and Gradient-Based Methods\",\n    \"Regularization, Bias-Variance Tradeoff, and Model Generalization\",\n    \"Neural Network Fundamentals\",\n    \"Deep Learning: Convolutional Neural Networks\",\n    \"Deep Learning: Sequence Models and RNNs\",\n    \"Transformers and Attention Mechanisms\",\n    \"Generative Models: VAEs and GANs\",\n    \"Representation Learning and Transfer Learning\",\n    \"Time Series Forecasting and Models\",\n    \"Recommendation Systems and Collaborative Filtering\",\n    \"Reinforcement Learning Basics\",\n    \"Model Interpretability and Explainability\",\n    \"Ethics, Fairness, and Responsible AI\",\n    \"MLOps: Model Deployment and Serving\",\n    \"Production Monitoring, Scaling, and CI/CD for ML\",\n    \"Capstone Projects, Case Studies, and Portfolio Development\",\n    \"Career Preparation: Interviews, Resumes, and Continuing Learning\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The ordering of some chapters is not optimal for a progressive learning path. Fundamental concepts that apply to most models are introduced too late. For example, 'Model Selection, Cross-Validation, and Hyperparameter Tuning' (Chapter 17), 'Optimization and Gradient-Based Methods' (Chapter 18), and 'Regularization, Bias-Variance Tradeoff, and Model Generalization' (Chapter 19) are introduced after several complex models like Gradient Boosting Machines. These foundational topics should be taught much earlier, alongside the first supervised learning models, to ensure a logical and effective learning progression.",
+          "score": 8
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline could be improved by reordering the chapters to introduce foundational concepts earlier. Specifically:\n1. Move 'Regularization, Bias-Variance Tradeoff, and Model Generalization' to be introduced with or immediately after 'Supervised Learning: Linear and Logistic Regression'.\n2. Move 'Model Selection, Cross-Validation, and Hyperparameter Tuning' to come directly after 'Model Evaluation and Validation'.\n3. Introduce 'Optimization and Gradient-Based Methods' before the models that heavily rely on it, such as logistic regression and neural networks.\nThis would create a more logical and pedagogically sound learning path.",
+          "score": 8.5
+        }
+      ],
+      "inputTokens": 491,
+      "outputTokens": 676,
+      "duration": 10960.709333000006
+    },
+    {
+      "testCase": {
+        "id": "pt-fisica-quantica-1",
+        "userInput": {
+          "courseTitle": "Física Quântica",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá os conceitos e ferramentas fundamentais da física quântica, desde a matemática necessária até aplicações práticas como computação quântica, sensores e espectroscopia. Esse conhecimento é útil para carreiras em pesquisa, engenharia de semicondutores, tecnologia quântica e para desenvolver habilidades em modelagem e experimentação científica.\",\n  \"chapters\": [\n    \"Introdução à Física Quântica: histórico e motivação\",\n    \"Matemática essencial I: álgebra linear para mecânica quântica\",\n    \"Matemática essencial II: cálculo, transformadas e probabilidade\",\n    \"Experimentos fundadores: efeito fotoelétrico, dupla fenda e fótons\",\n    \"Quantização e partículas: modelos e o oscilador harmônico quântico\",\n    \"Função de onda, amplitudes e probabilidade\",\n    \"Operadores, autovalores e observáveis\",\n    \"Postulados da mecânica quântica e evolução temporal (equação de Schrödinger)\",\n    \"Partículas em potenciais: poço infinito, barreira e tunelamento\",\n    \"Spin e momento angular: propriedades e álgebra de spin\",\n    \"Estatística quântica: férmions, bósons e princípio de exclusão\",\n    \"Teoria de perturbação e métodos aproximados\",\n    \"Sistemas de muitos corpos e modelos simples (Ising, Hubbard)\",\n    \"Física atômica e molecular: níveis, transições e espectroscopia\",\n    \"Emaranhamento, correlações e desigualdades de Bell\",\n    \"Medição, decoerência e interpretações da mecânica quântica\",\n    \"Ferramentas computacionais: simulações numéricas com Python e Qiskit\",\n    \"Técnicas experimentais em laboratório: lasers, óptica quântica e circuitos supercondutores\",\n    \"Aplicações tecnológicas: semicondutores, sensores quânticos, criptografia e computação\",\n    \"Projetos práticos e carreira: experimentos guiados, projetos capstone e caminhos profissionais\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline is excellent and very comprehensive. A minor potential improvement could be to split the chapter \"Aplicações tecnológicas: semicondutores, sensores quânticos, criptografia e computação\" into separate chapters for each major application (e.g., one for quantum computing and another for sensors/semiconductors) to maintain the high level of granularity seen in earlier chapters. However, this is a very minor point, and the current structure is already outstanding.",
+          "score": 9.5
+        }
+      ],
+      "inputTokens": 493,
+      "outputTokens": 849,
+      "duration": 12776.015124999976
+    },
+    {
+      "testCase": {
+        "id": "pt-fisica-quantica-2",
+        "userInput": {
+          "courseTitle": "Física Quântica",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá os fundamentos matemáticos e físicos da mecânica quântica, as técnicas de solução e ferramentas práticas para modelar e interpretar sistemas quânticos. Isso é útil para carreiras em pesquisa, desenvolvimento de tecnologias quânticas, ciência dos materiais, instrumentação e para aplicar conceitos em computação quântica e espectroscopia.\",\n  \"chapters\": [\n    \"Panorama histórico e motivação da física quântica\",\n    \"Matemática essencial: números complexos e álgebra linear\",\n    \"Funções, transformadas e equações diferenciais para física\",\n    \"Princípios da mecânica clássica e a necessidade da teoria quântica\",\n    \"Experimentos fundadores: fenda dupla, efeito fotoelétrico e espectroscopia\",\n    \"Postulados da mecânica quântica\",\n    \"Função de onda e interpretação probabilística\",\n    \"Operadores, observáveis e propriedades de operadores auto-adjuntos\",\n    \"Equação de Schrödinger dependente e independente do tempo\",\n    \"Partículas em potenciais simples: poço, barreira e oscilador harmônico\",\n    \"Spin e teoria do momento angular\",\n    \"Sistemas de muitos corpos e estatística quântica (férmions e fótons)\",\n    \"Átomo de hidrogênio e modelos para átomos multieletrônicos\",\n    \"Métodos aproximados I: teoria de perturbação e método variacional\",\n    \"Métodos aproximados II: WKB, aproximações semi-clássicas e modelos efetivos\",\n    \"Teoria de espalhamento e seções de choque\",\n    \"Espaço de Hilbert, bases, representações e transformações unitárias\",\n    \"Medição quântica, colapso, decoerência e interpretação operacional\",\n    \"Matriz densidade e estados mistos\",\n    \"Entrelaçamento quântico, medidas de correlação e desigualdades de Bell\",\n    \"Introdução à informação quântica: qubits, portas lógicas e algoritmos básicos\",\n    \"Implementações experimentais: óptica quântica, armadilhas atômicas e qubits supercondutores\",\n    \"Sistemas abertos e dinâmica dissipativa (equação mestre de Lindblad)\",\n    \"Relatividade e mecânica quântica: equações de Klein–Gordon e Dirac\",\n    \"Introdução à teoria quântica de campos e noções de partículas e campos\",\n    \"Aplicações modernas: materiais quânticos, sensores quânticos e tecnologia de informação quântica\",\n    \"Ferramentas computacionais e práticas: simulações numéricas, Qiskit e projetos finais\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "None. The response is excellent. It provides a comprehensive, well-structured, and logical course outline that perfectly aligns with a university-level progression from introductory to advanced quantum physics. The inclusion of mathematical prerequisites, foundational experiments, advanced theoretical topics (like QFT and open systems), and modern applications (like quantum computing and sensors) is outstanding. The chapter breakdown is granular and follows a clear learning path.",
+          "score": 10
+        }
+      ],
+      "inputTokens": 493,
+      "outputTokens": 1412,
+      "duration": 19370.014375000028
+    },
+    {
+      "testCase": {
+        "id": "pt-fisica-quantica-3",
+        "userInput": {
+          "courseTitle": "Física Quântica",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá os princípios e as ferramentas da mecânica quântica — desde a formulação matemática e os postulados até técnicas de aproximação, spin, átomo de hidrogênio, teoria de perturbações e aplicações práticas. Esse conhecimento é útil para carreiras em física, engenharia, computação quântica, nanotecnologia e para entender tecnologias como lasers, semicondutores e ressonância magnética.\",\n  \"chapters\": [\n    \"Fundamentos e motivação histórica da Física Quântica\",\n    \"Pré-requisitos matemáticos: álgebra linear e números complexos\",\n    \"Pré-requisitos matemáticos: cálculo, séries e equações diferenciais\",\n    \"Princípios da Física Clássica relevantes: ondas, energia e Hamiltonianos\",\n    \"Postulados da mecânica quântica e estrutura conceitual\",\n    \"Função de onda, probabilidade e densidade de probabilidade\",\n    \"Operadores, espaços de Hilbert e decomposição espectral\",\n    \"Equação de Schrödinger dependente do tempo e evolução temporal\",\n    \"Equação de Schrödinger independente do tempo e estados estacionários\",\n    \"Partícula em potenciais simples: poço infinito, barreira e tunelamento\",\n    \"Oscilador harmônico quântico e bases de Fock\",\n    \"Operadores de posição, momento e relações de comutação\",\n    \"Momento angular orbital e quantização\",\n    \"Spin, momentos intrínsecos e representações de Pauli\",\n    \"Átomo de Hidrogênio: solução exata e números quânticos\",\n    \"Átomos multieletrônicos e modelos aproximados\",\n    \"Teoria da perturbação dependente e independente do tempo\",\n    \"Métodos variacional, WKB e outras aproximações semiclássicas\",\n    \"Estatística quântica: bósons, férmions e princípio de exclusão\",\n    \"Sistemas de muitos corpos e modelos simples (Heisenberg, Hubbard)\",\n    \"Teoria do espalhamento e seções eficazes\",\n    \"Decoerência, teoria da medição e interpretações da mecânica quântica\",\n    \"Introdução à informação e computação quântica: qubits e portas\",\n    \"Técnicas experimentais e instrumentação em física quântica\",\n    \"Métodos numéricos e simulações (Python/Matlab) para problemas quânticos\",\n    \"Tópicos avançados: introdução à teoria quântica de campos e aplicações modernas\",\n    \"Projetos práticos, estudos de caso e caminhos para pesquisa e carreira\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "None. The course outline is exceptionally well-structured. It provides a comprehensive and logical learning path, starting from the necessary mathematical and classical physics prerequisites, moving through the core principles of quantum mechanics, and culminating in advanced topics, modern applications (like quantum computing), and practical skills (like numerical simulations and experimental techniques). The chapter breakdown is granular and logical, perfectly aligning with the instructions to create an extensive list for a beginner-to-expert journey. The description is also concise and effective.",
+          "score": 10
+        }
+      ],
+      "inputTokens": 493,
+      "outputTokens": 1208,
+      "duration": 26241.886583000014
+    },
+    {
+      "testCase": {
+        "id": "es-historia-espana-1",
+        "userInput": {
+          "courseTitle": "Historia de España",
+          "locale": "es"
+        },
+        "expectations": "\n      - Should follow chronological progression\n      - Content in Spain Spanish\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Aprenderás la evolución política, social y cultural de España desde la Prehistoria hasta la actualidad, además de técnicas para analizar fuentes históricas y comunicar conclusiones. Esto te será útil para trabajar en docencia, patrimonio, turismo cultural, investigación o para comprender mejor la sociedad española contemporánea.\",\n  \"chapters\": [\n    \"Paleolítico y Neolítico en la Península Ibérica\",\n    \"Edad del Bronce y sociedades prerromanas\",\n    \"Hispania romana: conquista y romanización\",\n    \"Economía, sociedad y urbanismo romano\",\n    \"Los visigodos y la transición al periodo medieval\",\n    \"Al-Ándalus: emirato, califato y reinos de taifas\",\n    \"Reinos cristianos y procesos de repoblación\",\n    \"La Reconquista y la formación de las fronteras medievales\",\n    \"Los Reyes Católicos: centralización y cambios institucionales\",\n    \"España imperial de los Habsburgo\",\n    \"Economía, sociedad y crisis del siglo XVII\",\n    \"Borbones, reformas ilustradas y nueva monarquía\",\n    \"Guerra de la Independencia y la Constitución de 1812\",\n    \"Siglo XIX: liberalismo, absolutismo y guerras carlistas\",\n    \"La pérdida colonial, regeneracionismo y debate nacional\",\n    \"Industrialización, urbanización y transformaciones sociales\",\n    \"La Segunda República: reformas y polarización\",\n    \"Guerra Civil Española: causas, desarrollo y consecuencias\",\n    \"Franquismo: régimen, sociedad y memoria\",\n    \"Transición democrática y Constitución de 1978\",\n    \"España contemporánea: democracia, economía y sociedad\",\n    \"Nacionalismos, autonomías y la cuestión territorial\",\n    \"Cultura, arte y vida cotidiana a través de la historia\",\n    \"Fuentes históricas, metodologías y trabajo con archivos\",\n    \"Comunicación histórica: escribir, enseñar y divulgar\",\n    \"Salidas profesionales: patrimonio, investigación, docencia y turismo\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "None",
+          "score": 10
+        }
+      ],
+      "inputTokens": 492,
+      "outputTokens": 1017,
+      "duration": 15561.565167000052
+    },
+    {
+      "testCase": {
+        "id": "es-historia-espana-2",
+        "userInput": {
+          "courseTitle": "Historia de España",
+          "locale": "es"
+        },
+        "expectations": "\n      - Should follow chronological progression\n      - Content in Spain Spanish\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Aprenderás la evolución política, social, económica y cultural de la Península Ibérica desde la Prehistoria hasta la España contemporánea. Estas competencias te permitirán contextualizar debates actuales, analizar políticas públicas, conservar patrimonio y desarrollar investigaciones o recursos educativos sobre el pasado español.\",\n  \"chapters\": [\n    \"Introducción a la historia de España: enfoques y periodización\",\n    \"Geografía, pueblos prerromanos y fuentes históricas\",\n    \"Hispania romana: administración, sociedad y romanización\",\n    \"Los visigodos y la formación de reinos germánicos\",\n    \"Al-Ándalus: emiratos, califato y cultura islámica\",\n    \"Reinos cristianos y la Reconquista: procesos políticos y sociales\",\n    \"Las coronas de Castilla y Aragón: estructuras institucionales\",\n    \"Los Reyes Católicos: centralización, diplomacia y política religiosa\",\n    \"El Imperio español: expansión ultramarina y administración colonial\",\n    \"España de los Austrias: poder, economía y crisis\",\n    \"Cultura, arte y pensamiento en la Edad Moderna\",\n    \"Los Borbones y las reformas ilustradas\",\n    \"Siglo XIX I: Guerra de Independencia, 1812 y los inicios del liberalismo\",\n    \"Siglo XIX II: industrialización, sociedad y movimientos sociales\",\n    \"1898 y la crisis de fin de siglo: repercusiones políticas y culturales\",\n    \"Primeras décadas del siglo XX: monarquía, partidos y la dictadura de Primo de Rivera\",\n    \"Segunda República: reformas, polarización y conflicto\",\n    \"Guerra Civil (1936–1939): causas, desarrollo y consecuencias\",\n    \"Franquismo (1939–1975): régimen, economía y sociedad\",\n    \"Transición a la democracia: pacto político, Constitución y consolidación democrática\",\n    \"España contemporánea: integración europea, economía y retos sociales\",\n    \"Cultura, identidad y memoria histórica: debates actuales y políticas de memoria\",\n    \"Historia regional y local: diversidad territorial y estudios de caso\",\n    \"Metodología e investigación histórica: fuentes, archivos y proyectos\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline is excellent and very comprehensive. A minor potential improvement would be to subdivide some of the broader chapters for even greater granularity. For instance, 'España de los Austrias: poder, economía y crisis' could be split into two chapters covering the 16th century (rise) and 17th century (decline). Similarly, 'Cultura, arte y pensamiento en la Edad Moderna' covers a vast period and could be broken down. However, at 24 chapters, the current list is already extensive and fulfills the user's request very well.",
+          "score": 9.5
+        }
+      ],
+      "inputTokens": 492,
+      "outputTokens": 1495,
+      "duration": 22558.404500000004
+    },
+    {
+      "testCase": {
+        "id": "es-historia-espana-3",
+        "userInput": {
+          "courseTitle": "Historia de España",
+          "locale": "es"
+        },
+        "expectations": "\n      - Should follow chronological progression\n      - Content in Spain Spanish\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Aprenderás la evolución política, social, económica y cultural de la Península Ibérica desde la Prehistoria hasta la España contemporánea, y cómo esos procesos explican los debates y realidades actuales. Estas competencias son útiles para labores en enseñanza, investigación, patrimonio cultural, comunicación y análisis de políticas públicas.\",\n  \"chapters\": [\n    \"Panorama general de la Historia de España: periodización y grandes debates\",\n    \"Prehistoria de la Península Ibérica: paleolítico, neolítico y metalurgias\",\n    \"Poblaciones prerromanas y colonizaciones mediterráneas: fenicios, griegos y cartagineses\",\n    \"Hispania romana: conquista, administración y romanización\",\n    \"Hispania tardorromana y la crisis del Imperio\",\n    \"Reino visigodo y procesos de cristianización\",\n    \"Al-Ándalus: conquista, emiratos y califato\",\n    \"Sociedad, economía y cultura en Al-Ándalus\",\n    \"Los reinos cristianos y las primeras fases de la Reconquista\",\n    \"Repoblación, señores y estructuras sociales en la Edad Media\",\n    \"Corona de Castilla y Corona de Aragón: organización política y económica\",\n    \"Los Reyes Católicos: diplomacia, reforma institucional y 1492\",\n    \"Expansión ultramarina y formación del Imperio español\",\n    \"Habsburgo y el Siglo de Oro: política, economía y cultura\",\n    \"Crisis del siglo XVII: guerras, crisis demográfica y respuesta económica\",\n    \"Borbones, reformas y la Ilustración en España\",\n    \"Guerra de la Independencia y Constitución de 1812: ruptura y legado\",\n    \"Siglo XIX: liberalismo, absolutismo, movimientos sociales y nuevos actores políticos\",\n    \"Pérdida del imperio, 1898 y las respuestas intelectuales y políticas\",\n    \"La Segunda República: reformas, tensiones y polarización\",\n    \"Guerra Civil: causas, desarrollo y consecuencias sociales\",\n    \"Dictadura franquista: represión, orden social y cambios económicos (1939–1975)\",\n    \"Transición democrática: consenso, constitución de 1978 y consolidación política\",\n    \"España contemporánea: integración europea, economía y retos globales (1978–presente)\",\n    \"Movimientos regionales y nacionalismos contemporáneos: Cataluña, País Vasco y Galicia\",\n    \"Historia cultural: arte, literatura, memoria y patrimonio\",\n    \"Métodos y fuentes en Historia de España: crítica documental y enfoques teóricos\",\n    \"Archivos, fuentes primarias y trabajo de campo: prácticas y recursos\",\n    \"Historia pública, museos y comunicación: divulgación y políticas de memoria\",\n    \"Proyecto aplicado: diseño y ejecución de una investigación o intervención divulgativa sobre un tema de la Historia de España\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline is excellent and very comprehensive. A minor improvement could be to split the chapter on the 19th century ('Siglo XIX: liberalismo, absolutismo, movimientos sociales y nuevos actores políticos'), as it covers a very long and complex period. It could be divided into smaller, more focused chapters to give more detail on topics like the Carlist Wars, the reign of Isabel II, the Sexenio Democrático, and the Restoration.",
+          "score": 9
+        }
+      ],
+      "inputTokens": 492,
+      "outputTokens": 1448,
+      "duration": 21543.075957999972
+    },
+    {
+      "testCase": {
+        "id": "fr-cuisine-francaise-1",
+        "userInput": {
+          "courseTitle": "Cuisine Française",
+          "locale": "fr"
+        },
+        "expectations": "\n      - Content in French\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Vous apprendrez les techniques essentielles de la cuisine française — préparation des ingrédients, fonds et sauces, méthodes de cuisson et pâtisserie — et comment les appliquer pour préparer des plats équilibrés et savoureux. Ces compétences sont utiles pour cuisiner mieux chez vous, travailler en cuisine professionnelle ou concevoir des menus pour un service.\",\n  \"chapters\": [\n    \"Bases : ustensiles, ingrédients et organisation de la cuisine\",\n    \"Sécurité alimentaire, hygiène et stockage des denrées\",\n    \"Techniques de couteau : découpe, éminçage et morceaux de base\",\n    \"Bases de préparation : mirepoix, bouquet garni et aromates\",\n    \"Fonds et bouillons : veau, volaille, poisson et légumes\",\n    \"Les cinq sauces mères : béchamel, velouté, espagnole, hollandaise et tomate\",\n    \"Sauces dérivées : réductions, émulsions et montages au beurre\",\n    \"Cuissons sèches : saisir, rôtir et griller\",\n    \"Cuissons humides : braiser, mijoter et pocher\",\n    \"Cuisson à la vapeur et cuisson douce (low-temp)\",\n    \"Sautés, fonds de poêle et déglacage\",\n    \"Techniques modernes : sous-vide et cuisson basse température\",\n    \"Poissons et fruits de mer : préparation, cuisson et sauces d’accompagnement\",\n    \"Viandes : choix des pièces, maturation, cuisson et jus\",\n    \"Légumes et accompagnements : blanchir, glacage et textures\",\n    \"Charcuterie et conserves maison : terrines, confits et rillettes\",\n    \"Pain et viennoiserie : fondamentaux de la fermentation et cuisson\",\n    \"Pâtisserie française : tartes, choux, crèmes et glaçages\",\n    \"Desserts classiques : soufflés, îles flottantes et entremets\",\n    \"Fromages et accords : sélection, affinage et présentation\",\n    \"Accords mets et vins : principes et exemples pratiques\",\n    \"Dressage et service : présentation, portionnement et timing en salle\",\n    \"Planification de menus : saisonnalité, coûts et équilibre nutritionnel\",\n    \"Gestion d’une cuisine : organisation, hygiène, sécurité et coûts\",\n    \"Projet final : concevoir, exécuter et servir un menu complet\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "There is some minor content overlap between a few chapters. Chapter 12, \"Techniques modernes : sous-vide et cuisson basse température,\" repeats the concept of low-temperature cooking already mentioned in chapter 10, \"Cuisson à la vapeur et cuisson douce (low-temp).\" Also, chapter 24, \"Gestion d’une cuisine,\" reiterates topics like hygiene and costs, which were already covered in chapters 2 and 23.",
+          "score": 9
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "To better adhere to the instruction to create smaller, focused chapters, some of the broader topics could be broken down further. For example, chapter 18, \"Pâtisserie française,\" is a very extensive subject that could be split into several chapters, such as one for basic doughs (pâtes), one for creams and fillings (crèmes), and another for specific pastry types like choux or tarts.",
+          "score": 8.5
+        }
+      ],
+      "inputTokens": 491,
+      "outputTokens": 1031,
+      "duration": 14459.841249999998
+    },
+    {
+      "testCase": {
+        "id": "fr-cuisine-francaise-2",
+        "userInput": {
+          "courseTitle": "Cuisine Française",
+          "locale": "fr"
+        },
+        "expectations": "\n      - Content in French\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Vous apprendrez les techniques, recettes et savoir-faire essentiels de la cuisine française — des bases (mise en place, couteaux, fonds et sauces mères) aux plats classiques, pâtisserie et accords mets-vins — pour cuisiner avec confiance à la maison ou travailler en cuisine professionnelle.\",\n  \"chapters\": [\n    \"Histoire et principes de la cuisine française\",\n    \"Ingrédients essentiels et saisonnalité\",\n    \"Ustensiles, équipement et organisation de la cuisine\",\n    \"Mise en place et lecture de recettes\",\n    \"Techniques de couteau et sécurité\",\n    \"Fonds et bouillons (fumet, fond blanc, fond brun)\",\n    \"Les cinq sauces mères et leurs dérivées\",\n    \"Techniques de cuisson de base : sauter, poêler, braiser, rôtir\",\n    \"Cuissons à l’étouffée, vapeur et pochage\",\n    \"Légumes, garnitures et légumes braisés\",\n    \"Oeufs et préparations rapides (omelette, œufs en cocotte, œufs mollets)\",\n    \"Poissons et fruits de mer : filetage, cuisson et sauces d’accompagnement\",\n    \"Volailles : désossage, rôtissage et farces\",\n    \"Viandes rouges et ragoûts (bœuf bourguignon, daube)\",\n    \"Charcuterie, conserves et techniques de salaison\",\n    \"Soupe, potage et gratins classiques\",\n    \"Pains et viennoiseries : pâtes, détrempes et fermentation\",\n    \"Pâtisserie française de base : tartes, mousses et crèmes\",\n    \"Desserts emblématiques : soufflé, crème brûlée, tarte Tatin\",\n    \"Sauces, condiments et réductions avancées\",\n    \"Présentation, dressage et photographies culinaires\",\n    \"Accords mets et vins pour menus français\",\n    \"Hygiène, sécurité alimentaire et gestion des risques\",\n    \"Approvisionnement, sélection de produits et relations avec les fournisseurs\",\n    \"Planification de menus, coût de revient et standardisation des recettes\",\n    \"Gestion d’une cuisine professionnelle et service en salle\",\n    \"Techniques modernes et adaptation des classiques\",\n    \"Projets pratiques : créer un menu complet et portfolio culinaire\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The response is excellent and fully meets all instructions. The chapter progression is logical, starting from fundamentals and moving to advanced professional skills. While one could argue for minor reordering of chapters (e.g., moving the 'Hygiene and Safety' chapter earlier), the current structure, which groups all professional management topics together, is equally valid and logical. No significant improvements are needed.",
+          "score": 9.5
+        }
+      ],
+      "inputTokens": 491,
+      "outputTokens": 1013,
+      "duration": 15260.794999999984
+    },
+    {
+      "testCase": {
+        "id": "fr-cuisine-francaise-3",
+        "userInput": {
+          "courseTitle": "Cuisine Française",
+          "locale": "fr"
+        },
+        "expectations": "\n      - Content in French\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Vous apprendrez les techniques culinaires françaises essentielles — des techniques de coupe et des fonds aux sauces, cuissons, pâtisserie et dressage — et vous saurez concevoir et réaliser des menus complets. Ces compétences vous permettront de cuisiner au quotidien, d’évoluer en restauration ou de créer des plats professionnels authentiques.\",\n  \"chapters\": [\n    \"Introduction à la cuisine française\",\n    \"Hygiène, sécurité et organisation du poste\",\n    \"Équipement, ustensiles et entretien\",\n    \"Matières premières : identification et qualité\",\n    \"Techniques de coupe et maniement du couteau\",\n    \"Fonds, bouillons et fumets\",\n    \"Les cinq sauces mères et leurs dérivés\",\n    \"Techniques de cuisson fondamentales (sauter, rôtir, braiser, mijoter)\",\n    \"Poisson et fruits de mer : préparation et cuisson\",\n    \"Viandes et volailles : découpe et cuisson adaptées\",\n    \"Légumes, garnitures et techniques de cuisson des végétaux\",\n    \"Pains de base et viennoiseries incontournables\",\n    \"Pâtisserie de base : pâtes, crèmes et biscuits\",\n    \"Plats classiques français et leurs variations (ex. : boeuf bourguignon, sole meunière)\",\n    \"Sauces avancées, réductions et montages\",\n    \"Charcuterie, terrines et confits maison\",\n    \"Fromages français : affinage, service et accords\",\n    \"Techniques modernes en cuisine française (sous‑vide, émulsions, siphon)\",\n    \"Dressage, esthétique et photographie culinaire\",\n    \"Élaboration de menus et mise en place (mise en place & timing)\",\n    \"Accords mets et vins\",\n    \"Gestion d'une cuisine professionnelle : coûts, stockage et HACCP\",\n    \"Approvisionnement local, saisonnalité et cuisine durable\",\n    \"Réchauffage, conservation et gestion des restes\",\n    \"Entraînement pratique : exécution de recettes de chef\",\n    \"Projet final : création et exécution d'un menu complet\",\n    \"Préparation à l'emploi en restauration : CV, entretien et stages\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "None",
+          "score": 10
+        }
+      ],
+      "inputTokens": 491,
+      "outputTokens": 1695,
+      "duration": 27599.158291
+    },
+    {
+      "testCase": {
+        "id": "pt-marketing-digital-1",
+        "userInput": {
+          "courseTitle": "Marketing Digital",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá a criar, executar e medir estratégias de marketing digital para atrair tráfego, gerar leads e aumentar vendas em canais online. Esse conhecimento é útil para profissionais, empreendedores e freelancers que querem construir presença digital eficaz e tomar decisões baseadas em dados.\",\n  \"chapters\": [\n    \"Introdução ao Marketing Digital\",\n    \"Fundamentos do comportamento do consumidor online\",\n    \"Pesquisa de mercado e definição de público-alvo\",\n    \"Criação de personas e jornada do cliente\",\n    \"Estratégia e planejamento de canais\",\n    \"Branding e posicionamento digital\",\n    \"Copywriting para web e anúncios\",\n    \"Conteúdo e marketing de conteúdo (blogs e newsletters)\",\n    \"SEO técnico e otimização on-page\",\n    \"SEO off-page e link building\",\n    \"Marketing de busca paga (Google Ads)\",\n    \"Social media: estratégia e gestão de canais\",\n    \"Facebook e Instagram Ads\",\n    \"LinkedIn e estratégias B2B\",\n    \"Marketing de influenciadores e parcerias\",\n    \"Email marketing e automação de nutrição\",\n    \"Ferramentas de automação e integração com CRM\",\n    \"Marketing de afiliados e parcerias de performance\",\n    \"Vídeo marketing e YouTube\",\n    \"Design e experiência do usuário focados em conversão\",\n    \"Landing pages, funis de conversão e CRO\",\n    \"Análise de dados, Google Analytics e métricas essenciais\",\n    \"Testes A/B e otimização contínua\",\n    \"E-commerce, marketplaces e gestão de catálogos\",\n    \"Mobile marketing e estratégias omnichannel\",\n    \"Aspectos legais: LGPD, privacidade e conformidade\",\n    \"Orçamento, definição de KPIs e apresentação de resultados\",\n    \"Montando um plano de marketing digital passo a passo\",\n    \"Estudos de caso e boas práticas do mercado brasileiro\",\n    \"Carreira, freelancing e escala de operações\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "None. The response is excellent and fully adheres to all instructions. The course structure is comprehensive, logical, and provides a clear learning path from beginner to advanced. The number of chapters is extensive, and the topics are well-divided, demonstrating a strong understanding of the subject and the user's requirements.",
+          "score": 10
+        }
+      ],
+      "inputTokens": 491,
+      "outputTokens": 1180,
+      "duration": 17236.44645799999
+    },
+    {
+      "testCase": {
+        "id": "pt-marketing-digital-2",
+        "userInput": {
+          "courseTitle": "Marketing Digital",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá princípios e técnicas práticas do marketing digital — desde pesquisa de público, SEO, anúncios pagos e redes sociais até análise de dados e otimização de conversões. Essas habilidades ajudam a atrair tráfego qualificado, gerar leads e medir resultados para crescer um negócio ou liderar estratégias de marketing em empresas.\",\n  \"chapters\": [\n    \"Fundamentos do marketing digital\",\n    \"Jornada do cliente e funil de vendas\",\n    \"Pesquisa de mercado e definição de personas\",\n    \"Posicionamento e branding online\",\n    \"Planejamento de estratégia de marketing digital\",\n    \"Conteúdo e calendário editorial\",\n    \"Copywriting persuasivo para a web\",\n    \"SEO técnico e otimização on-page\",\n    \"SEO off-page e link building\",\n    \"Pesquisa de palavras-chave e intenção de busca\",\n    \"Marketing de conteúdo: blogs, vídeo e podcast\",\n    \"Redes sociais orgânicas e engajamento\",\n    \"Publicidade paga: introdução ao PPC\",\n    \"Google Ads: campanhas de pesquisa e display\",\n    \"Facebook e Instagram Ads: segmentação e criativos\",\n    \"LinkedIn Ads e publicidade B2B\",\n    \"Email marketing e criação de newsletters\",\n    \"Automação de marketing e nutrição de leads\",\n    \"Landing pages e otimização de conversão (CRO)\",\n    \"Testes A/B e cultura de experimentação\",\n    \"Métricas e KPIs essenciais para marketing\",\n    \"Google Analytics 4 e análise de dados\",\n    \"Ferramentas, integrações e tech stack de marketing\",\n    \"E‑commerce: aquisição, retenção e otimização\",\n    \"Growth hacking e estratégias de aquisições escaláveis\",\n    \"Influencer marketing e programas de afiliados\",\n    \"Privacidade, compliance e LGPD no marketing digital\",\n    \"Medindo ROI, atribuição e otimização de orçamento\",\n    \"Montando time, carreira freelance e operação de agência\",\n    \"Estudos de caso reais e projeto prático final\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "None",
+          "score": 10
+        }
+      ],
+      "inputTokens": 491,
+      "outputTokens": 1132,
+      "duration": 16739.728500000027
+    },
+    {
+      "testCase": {
+        "id": "pt-marketing-digital-3",
+        "userInput": {
+          "courseTitle": "Marketing Digital",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você vai aprender a planejar, executar e medir campanhas em canais digitais — incluindo SEO, anúncios pagos, redes sociais, e-mail e automação — para gerar tráfego, leads e vendas. Essas habilidades ajudam a aumentar faturamento, otimizar investimento em mídia e impulsionar sua carreira em marketing ou crescimento de negócios.\",\n  \"chapters\": [\n    \"Fundamentos do Marketing Digital\",\n    \"Pesquisa de mercado e definição de personas\",\n    \"Jornada do cliente e funil de vendas\",\n    \"Posicionamento de marca e proposta de valor\",\n    \"Planejamento estratégico e objetivos de marketing\",\n    \"Estratégia de conteúdo\",\n    \"Copywriting para web e anúncios\",\n    \"Criação e produção de conteúdo visual e vídeo\",\n    \"SEO: conceitos e palavras-chave\",\n    \"SEO técnico\",\n    \"SEO on-page e off-page\",\n    \"Marketing de busca pago (Google Ads)\",\n    \"Social media orgânico\",\n    \"Social media pago (Meta Ads, Instagram, LinkedIn Ads)\",\n    \"Marketing de conteúdo avançado (blogs, vídeo, podcast)\",\n    \"Email marketing e automação de fluxo\",\n    \"Construção de funis e landing pages de conversão\",\n    \"CRO: testes A/B e otimização de conversão\",\n    \"Métricas essenciais e analytics (Google Analytics 4)\",\n    \"Tag Manager, pixels e rastreamento de eventos\",\n    \"Performance marketing e gestão de campanhas\",\n    \"E-commerce, marketplaces e estratégias de vendas online\",\n    \"Geração de leads e estratégias B2B\",\n    \"Growth hacking e experimentação rápida\",\n    \"Influenciadores e parcerias estratégicas\",\n    \"Ferramentas e tech stack essenciais (SEO, Ads, CRM, automação)\",\n    \"LGPD e práticas de privacidade e compliance\",\n    \"Orçamento, atribuição e otimização de mídia\",\n    \"Relatórios, dashboards e tomada de decisão baseada em dados\",\n    \"Estudos de caso reais e análise de campanhas\",\n    \"Projeto final: planejar, executar e analisar uma campanha completa\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "None",
+          "score": 10
+        }
+      ],
+      "inputTokens": 491,
+      "outputTokens": 1145,
+      "duration": 19334.742541999964
+    },
+    {
+      "testCase": {
+        "id": "en-the-matrix-1",
+        "userInput": {
+          "courseTitle": "The Matrix",
+          "locale": "en"
+        },
+        "expectations": "\n      - Should be specific to The Matrix film/trilogy, not confused with Matrix as a mathematical concept\n      - Content in US English\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Do you mean one of these subjects for “The Matrix”? Reply with the number or specify which you want so I can create a tailored course outline: 1) Matrices in linear algebra (math/engineering), 2) The Matrix film series (film analysis, themes, and cultural impact), 3) Matrix protocol (decentralized real-time communication), 4) Matrix operations for machine learning and programming (practical computing).\",\n  \"chapters\": []\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The model completely failed to follow the instructions. Instead of creating a course outline for 'The Matrix' film as specified in the expectations, it asked a clarifying question in the 'description' field and provided an empty 'chapters' array. The core task was to generate a detailed course structure, which was not done at all.",
+          "score": 6
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The model should have followed the instructions and the user expectations to generate a course outline about 'The Matrix' film series. It should have interpreted the prompt correctly based on the provided expectations and generated the description and a progressive list of chapters, starting from an introduction to the first movie and moving towards deeper themes, philosophical concepts, and the cultural impact of the entire trilogy.",
+          "score": 6
+        }
+      ],
+      "inputTokens": 491,
+      "outputTokens": 745,
+      "duration": 11303.474416000012
+    },
+    {
+      "testCase": {
+        "id": "en-the-matrix-2",
+        "userInput": {
+          "courseTitle": "The Matrix",
+          "locale": "en"
+        },
+        "expectations": "\n      - Should be specific to The Matrix film/trilogy, not confused with Matrix as a mathematical concept\n      - Content in US English\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn to analyze The Matrix as a film — its story, themes, visual style, production techniques, and cultural impact — and apply those insights to filmmaking, screenwriting, VFX, or film criticism. This course teaches practical scene analysis, production methods (stunts, cinematography, effects), and a hands-on project to create a Matrix-inspired short for a portfolio.\",\n  \"chapters\": [\n    \"Introduction to The Matrix — film overview and cultural context\",\n    \"The Wachowskis and the 1990s sci‑fi landscape\",\n    \"Plot structure and world‑building\",\n    \"Character study: Neo, Trinity, Morpheus, and Agent Smith\",\n    \"Themes and motifs: reality, choice, identity, and control\",\n    \"Philosophical influences: Plato, Descartes, Buddhism, and simulation theory\",\n    \"Screenwriting techniques used in The Matrix — exposition, pacing, and dialogue\",\n    \"Visual design and production design — color, costume, and mise‑en‑scène\",\n    \"Cinematography and visual language — framing, lenses, and camera movement\",\n    \"Lighting and color grading — the green tint and mood control\",\n    \"Stunt work and fight choreography — wirework, martial arts, and safety\",\n    \"Special effects and bullet time — on‑set methods and VFX pipeline\",\n    \"CGI, compositing, and postproduction workflows\",\n    \"Sound design and score — Don Davis, soundscape, and mixing for impact\",\n    \"Editing and rhythm — cutting for clarity in action and exposition\",\n    \"The Matrix sequels and the Animatrix — continuity, expansion, and criticism\",\n    \"Production management and budgeting a mid‑budget sci‑fi film\",\n    \"Marketing, release strategy, and audience reception\",\n    \"Cultural legacy — influence on cinema, videogames, fashion, and internet culture\",\n    \"Transmedia storytelling — games, comics, and adaptations\",\n    \"Scene analysis workshop — breakdown of the lobby, bullet time, and red‑pill scenes\",\n    \"Practical project: plan, shoot, and postproduce a Matrix‑inspired short\",\n    \"Building a portfolio and career paths in directing, VFX, and film criticism\",\n    \"Final review: synthesizing thematic analysis with practical filmmaking skills\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "None. The response is exceptionally well-crafted. It provides a comprehensive, logically structured, and practical course outline that perfectly aligns with the user's instructions and expectations. The chapters progress from foundational analysis to advanced practical application, including career-focused modules, which adds significant value. It's difficult to see how this could be meaningfully improved.",
+          "score": 10
+        }
+      ],
+      "inputTokens": 491,
+      "outputTokens": 1200,
+      "duration": 36359.041874999995
+    },
+    {
+      "testCase": {
+        "id": "en-the-matrix-3",
+        "userInput": {
+          "courseTitle": "The Matrix",
+          "locale": "en"
+        },
+        "expectations": "\n      - Should be specific to The Matrix film/trilogy, not confused with Matrix as a mathematical concept\n      - Content in US English\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Which meaning of “The Matrix” would you like a course about? Options: (A) the 1999 film (cinema, storytelling, philosophy), (B) the Matrix film series (franchise, transmedia), (C) mathematical matrices and linear algebra (theory and applications), or (D) matrices in programming and machine learning (NumPy, linear algebra for ML). Reply with A, B, C, or D (or give your own), and I’ll create a full course outline tailored to that choice.\",\n  \"chapters\": [\n    \"Please specify which meaning you want (A, B, C, or D) so I can prepare the appropriate course outline.\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The model completely failed to generate the requested course outline. Instead of creating a course on \"The Matrix\" film, as was the clear intention, it asked for clarification on the topic. This is a fundamental failure to follow instructions and provide the requested output.",
+          "score": 6
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The model should have correctly inferred that a course titled \"The Matrix\" refers to the popular film franchise. It should have proceeded to create a detailed course outline based on this understanding, covering topics from the plot, characters, philosophy, and cultural impact of the films, as per the instructions.",
+          "score": 6
+        }
+      ],
+      "inputTokens": 491,
+      "outputTokens": 1046,
+      "duration": 15429.91537500004
+    },
+    {
+      "testCase": {
+        "id": "pt-direito-1",
+        "userInput": {
+          "courseTitle": "Direito",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Covers Brazilian law system\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá os princípios essenciais do direito, como interpretar normas, elaborar peças processuais e aplicar regras em casos concretos, preparando-se para atuação como advogado, consultor jurídico ou carreira pública. Essas competências são úteis para resolver conflitos legais, garantir compliance e orientar decisões em empresas e órgãos públicos.\",\n  \"chapters\": [\n    \"Fundamentos do Direito e conceitos básicos\",\n    \"Sistemas jurídicos e fontes do direito\",\n    \"Teoria geral do Estado e separação de poderes\",\n    \"Direito Constitucional: direitos e garantias fundamentais\",\n    \"Direito Administrativo: organização e atos administrativos\",\n    \"Direito Civil: parte geral e personalidade jurídica\",\n    \"Direito Civil: obrigações e contratos\",\n    \"Direito Civil: responsabilidade civil e danos\",\n    \"Direito das Coisas e direito de família\",\n    \"Direito Empresarial (Sociedades, títulos e falência)\",\n    \"Direito Tributário: princípios e tributos\",\n    \"Direito do Trabalho: relações individuais e coletivas\",\n    \"Direito Penal: princípios e parte geral\",\n    \"Direito Penal: crimes comuns e qualificadores\",\n    \"Processo Civil: procedimento e recursos\",\n    \"Processo Penal: investigação, ação penal e recursos\",\n    \"Direito Internacional Público e privado\",\n    \"Direitos Humanos e controle jurisdicional\",\n    \"Meios alternativos de resolução de conflitos (mediação, arbitragem)\",\n    \"Direito Ambiental e responsabilidade socioambiental\",\n    \"Propriedade intelectual e proteção de ativos intangíveis\",\n    \"Pesquisa jurídica e técnicas de redação de peças\",\n    \"Interpretação normativa e métodos de hermenêutica jurídica\",\n    \"Provas, perícias e produção probatória\",\n    \"Ética profissional e responsabilidade do advogado\",\n    \"Compliance, governança corporativa e prevenção de riscos\",\n    \"Prática forense: diligências, peticionamento eletrônico e audiências\",\n    \"Oratória jurídica, sustentação oral e negociação\",\n    \"Preparação para o exame da OAB e concursos jurídicos\",\n    \"Carreiras no direito, networking e desenvolvimento contínuo\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The response violates the instruction \"Don’t cover too much in a single chapter. Instead, split it into multiple smaller chapters\". It combines several vast and distinct legal fields into single chapters. For example:\n1. \"Direito das Coisas e direito de família\" (Property Law and Family Law) are two enormous and separate areas of Civil Law, each typically warranting multiple courses in a law degree.\n2. \"Direito Internacional Público e privado\" (Public and Private International Law) are also two distinct fields with different sources, principles, and applications.\n3. \"Direito Empresarial (Sociedades, títulos e falência)\" (Business Law: Corporations, credit instruments, and bankruptcy) covers a massive scope that should be broken down into several chapters.",
+          "score": 7
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The placement of the chapter \"Interpretação normativa e métodos de hermenêutica jurídica\" (Legal Interpretation and Hermeneutics Methods) is late in the curriculum (chapter 23). This is a foundational topic that is usually introduced at the very beginning of legal studies, alongside \"Fundamentos do Direito\". While not a critical error, it disrupts the logical pedagogical flow.",
+          "score": 8.5
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline is missing a dedicated chapter on a crucial and practical area of Brazilian law: \"Direito do Consumidor\" (Consumer Law). For a course aiming to take a student from beginner to expert, this is a significant omission. Additionally, as noted in the errors, splitting the overly broad chapters would be the primary improvement needed to align with the prompt's instructions.",
+          "score": 8
+        }
+      ],
+      "inputTokens": 490,
+      "outputTokens": 1092,
+      "duration": 16405.415749999986
+    },
+    {
+      "testCase": {
+        "id": "pt-direito-2",
+        "userInput": {
+          "courseTitle": "Direito",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Covers Brazilian law system\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá os fundamentos do Direito brasileiro, como interpretar normas, construir argumentos jurídicos e elaborar peças processuais, além de aplicar conceitos em áreas práticas como contratos, responsabilidade civil, direito penal e administrativo. Essas habilidades são úteis para atuar em escritórios, empresas, órgãos públicos, compliance ou seguir carreira acadêmica e concursística.\",\n  \"chapters\": [\n    \"Introdução ao Direito: conceitos, finalidades e organização do sistema jurídico\",\n    \"Fontes do Direito e a hierarquia das normas\",\n    \"Ramos do Direito: visão geral (civil, penal, constitucional, administrativo, trabalhista, tributário, empresarial)\",\n    \"Metodologia jurídica e raciocínio jurídico: lógica, argumentação e precedentes\",\n    \"Interpretação jurídica: técnicas, hermenêutica e integração normativa\",\n    \"Sistema Constitucional Brasileiro: estrutura, poderes e funcionamento do Estado\",\n    \"Direitos e garantias fundamentais: proteção e limites\",\n    \"Direito Administrativo: poderes, atos administrativos e responsabilidade do Estado\",\n    \"Processo Administrativo e controle judicial da Administração\",\n    \"Direito Civil — Parte Geral: personalidade, capacidade e bens\",\n    \"Obrigações e contratos: formação, execução, vícios e extinção contratual\",\n    \"Responsabilidade Civil: danos, culpa, teorias e reparação\",\n    \"Direito das Coisas: posse, propriedade e direitos reais\",\n    \"Direito de Família: casamento, união estável, guarda e medidas patrimoniais\",\n    \"Sucessões: testamento, inventário e partilha\",\n    \"Direito Empresarial e Societário: tipos societários, contratos empresariais e falência\",\n    \"Direito Tributário: princípios, tributos e contencioso fiscal\",\n    \"Direito do Trabalho: relação de trabalho, direitos do trabalhador e negociação coletiva\",\n    \"Direito Penal — fundamentos e teoria do crime\",\n    \"Processo Penal: investigação, ação penal, medidas cautelares e julgamento\",\n    \"Processo Civil: princípios, procedimento, petições iniciais e recursos\",\n    \"Provas no processo civil e penal: produção, exame e cadeia de custódia\",\n    \"Meios alternativos de resolução de conflitos: mediação, conciliação e arbitragem\",\n    \"Direitos Humanos e direito internacional público: tratados e aplicação interna\",\n    \"Direito Ambiental e regulação: responsabilidade, licenciamento e políticas públicas\",\n    \"Propriedade Intelectual e tecnologia: direitos autorais, marcas e proteção de software\",\n    \"Ética profissional, deontologia e responsabilidades do advogado\",\n    \"Compliance e governança corporativa: programas, investigação interna e prevenção de riscos\",\n    \"Pesquisa jurídica, redação e técnicas de elaboração de peças e contratos\",\n    \"Prática forense: audiências, sustentação oral e gestão de casos\",\n    \"Carreiras jurídicas: mercado, estágio, concursos públicos e estratégias de desenvolvimento profissional\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "None",
+          "score": 10
+        }
+      ],
+      "inputTokens": 490,
+      "outputTokens": 1193,
+      "duration": 17627.03604200005
+    },
+    {
+      "testCase": {
+        "id": "pt-direito-3",
+        "userInput": {
+          "courseTitle": "Direito",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Covers Brazilian law system\n      - Content in Brazilian Portuguese\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá os fundamentos e a prática do Direito, incluindo interpretação de normas, análise de casos, elaboração de peças processuais e estratégias de atuação em diferentes ramos. Essas competências são úteis para trabalhar como advogado, consultor jurídico, especialista em compliance, ou em cargos públicos e empresariais.\",\n  \"chapters\": [\n    \"Introdução ao Direito: conceitos e funções\",\n    \"Sistemas jurídicos e fontes do Direito\",\n    \"Hierarquia normativa e interpretação das normas\",\n    \"Método jurídico e argumentação\",\n    \"Teoria do Direito e filosofia jurídica\",\n    \"Direito Constitucional: princípios e organização do Estado\",\n    \"Controle de constitucionalidade e Direitos fundamentais\",\n    \"Direito Administrativo: poderes, atos e responsabilidade da Administração\",\n    \"Direito Tributário: princípios, tributos e contencioso fiscal\",\n    \"Direito Civil — Parte Geral: personalidade, atos jurídicos e capacidade\",\n    \"Direito das Obrigações e Contratos\",\n    \"Responsabilidade Civil (danos e reparação)\",\n    \"Direito das Coisas e Direito Registral (propriedade, posse, direitos reais)\",\n    \"Direito de Família e Sucessões\",\n    \"Direito Empresarial: empresários, estabelecimento e títulos de crédito\",\n    \"Sociedades empresariais e governança corporativa\",\n    \"Direito do Trabalho: fundamentos, contrato e direitos trabalhistas\",\n    \"Direito Penal: teoria do crime e penas\",\n    \"Processo Penal: investigação, ação penal e recursos\",\n    \"Processo Civil: procedimento, recursos e execução\",\n    \"Provas no processo e evidências digitais\",\n    \"Direito Internacional e direito internacional dos direitos humanos\",\n    \"Direito Ambiental e regulação socioambiental\",\n    \"Compliance, ética profissional e anticorrupção\",\n    \"Meios alternativos de solução de conflitos (mediação, conciliação, arbitragem)\",\n    \"Prática jurídica: redação de peças, petições e controle de prazos\",\n    \"Pesquisa jurídica, jurisprudência e escrita técnica\",\n    \"Legaltech e inovação no exercício do Direito\",\n    \"Preparação para a prática profissional: OAB, concursos e carreira jurídica\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline is excellent, comprehensive, and follows a logical progression from foundational concepts to specific branches of law and practical applications. A minor improvement could be the inclusion of a dedicated chapter on Consumer Law ('Direito do Consumidor'), which is a very relevant field in Brazil.",
+          "score": 9
+        }
+      ],
+      "inputTokens": 490,
+      "outputTokens": 979,
+      "duration": 17100.728000000003
+    },
+    {
+      "testCase": {
+        "id": "es-derecho-mexicano-1",
+        "userInput": {
+          "courseTitle": "Derecho Mexicano",
+          "locale": "es"
+        },
+        "expectations": "\n      - Covers Mexican law system\n      - Content in Mexican Spanish\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Aprenderás cómo funciona el sistema jurídico mexicano: sus fuentes, instituciones, principales ramas del Derecho y herramientas procesales como el juicio de amparo. Estas competencias son útiles para ejercer la abogacía, asesorar empresas o comprender y aplicar normas en cargos públicos y privados en México.\",\n  \"chapters\": [\n    \"Fundamentos del sistema jurídico mexicano\",\n    \"Fuentes del Derecho en México: Constitución, leyes, costumbre y jurisprudencia\",\n    \"La Constitución Política de los Estados Unidos Mexicanos: estructura y principios\",\n    \"Organización del Estado y distribución de competencias (federación, estados y municipios)\",\n    \"Poderes públicos: Ejecutivo, Legislativo y Judicial\",\n    \"El proceso legislativo y el control de constitucionalidad\",\n    \"Derecho Constitucional práctico: derechos humanos y garantías\",\n    \"La Suprema Corte de Justicia de la Nación y la formación de precedentes\",\n    \"El juicio de amparo: conceptos, procedimientos y efectos\",\n    \"Derecho Administrativo: principios y responsabilidad del Estado\",\n    \"Contratación pública y régimen de adquisiciones\",\n    \"Derecho Penal: principios, tipicidad y proceso penal acusatorio\",\n    \"Procedimiento penal y derechos del imputado\",\n    \"Derecho Civil: personas, bienes y obligaciones\",\n    \"Contratos civiles y su ejecución (contratos comunes en México)\",\n    \"Derecho Familiar: matrimonio, divorcio, filiación y patria potestad\",\n    \"Derecho Mercantil: sociedades, títulos de crédito y competencia comercial\",\n    \"Derecho Laboral: relaciones de trabajo, contratos y seguridad social\",\n    \"Derecho Fiscal: impuestos federales, locales y cumplimiento tributario\",\n    \"Derecho Registral y notarial: formalidades, registros públicos y seguridad jurídica\",\n    \"Protección de datos, comercio electrónico y delitos informáticos\",\n    \"Propiedad intelectual: marcas, patentes y derechos de autor en México\",\n    \"Derecho Ambiental y regulación para proyectos y responsabilidad ambiental\",\n    \"Derechos de pueblos indígenas y mecanismos de consulta\",\n    \"Mecanismos alternativos de resolución de conflictos: mediación y arbitraje\",\n    \"Práctica procesal civil: demandas, pruebas y recursos\",\n    \"Técnicas de litigación y audiencia oral (estrategia y redacción de escritos)\",\n    \"Investigación jurídica y elaboración de contratos y opiniones legales\",\n    \"Ética profesional y responsabilidad del abogado\",\n    \"Cumplimiento normativo (compliance), prevención de lavado de dinero y gobierno corporativo\",\n    \"Tratados internacionales y su impacto en el derecho interno mexicano\",\n    \"Casos prácticos: análisis jurisprudencial y resolución de problemas reales\",\n    \"Simulacro de juicio y proyecto final aplicado (asesoría, litigio o cumplimiento)\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None. The model produced a high-quality, accurate, and comprehensive course outline that perfectly aligns with the user's request and expectations. It correctly identified that the topic 'Mexican Law' requires Mexican Spanish and specific Mexican legal concepts, which is more appropriate than the generic instruction to use Spain Spanish for the 'es' language code. This demonstrates a sophisticated understanding of context.",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None. The course description is excellent, and the chapter structure demonstrates a logical and comprehensive progression from foundational topics to specialized areas and practical skills. The chapter titles are specific, concise, and well-organized.",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The generated course is exceptionally comprehensive and well-structured. A very minor suggestion could be to introduce a chapter on 'International Public and Private Law' to complement the existing chapter on 'Tratados internacionales y su impacto en el derecho interno mexicano'. However, the current outline is already outstanding and covers the core aspects of the Mexican legal system effectively from a beginner to expert level.",
+          "score": 9.5
+        }
+      ],
+      "inputTokens": 492,
+      "outputTokens": 1094,
+      "duration": 16715.047207999974
+    },
+    {
+      "testCase": {
+        "id": "es-derecho-mexicano-2",
+        "userInput": {
+          "courseTitle": "Derecho Mexicano",
+          "locale": "es"
+        },
+        "expectations": "\n      - Covers Mexican law system\n      - Content in Mexican Spanish\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Aprenderás los principios y la práctica del Derecho mexicano, desde la Constitución y las fuentes del derecho hasta el amparo, el litigio y las áreas especializadas (civil, penal, administrativo, laboral, mercantil y fiscal). Esta formación te permitirá ejercer como abogado o asesor jurídico, redactar actos procesales, interpretar jurisprudencia y diseñar programas de cumplimiento en empresas y entidades públicas.\",\n  \"chapters\": [\n    \"Fundamentos del Derecho mexicano\",\n    \"Fuentes del Derecho y jerarquía normativa\",\n    \"Constitución y organización del Estado\",\n    \"Derechos humanos y obligaciones internacionales\",\n    \"Sistema federal y distribución de competencias (Federación, estados y municipios)\",\n    \"Derecho administrativo y responsabilidad del Estado\",\n    \"Control constitucional: mecanismos y límites al poder\",\n    \"Amparo: teoría, procedencia y trámite\",\n    \"Derecho civil: personas, bienes, obligaciones y contratos\",\n    \"Derecho de familia y sucesiones\",\n    \"Derecho mercantil: sociedades, contratos mercantiles y títulos de crédito\",\n    \"Derecho penal: tipicidad, antijuridicidad y penas\",\n    \"Proceso penal: investigación, juicio y recursos\",\n    \"Derecho laboral: relaciones individuales y colectivas, seguridad social\",\n    \"Derecho fiscal: obligaciones tributarias y controversias fiscales\",\n    \"Proceso civil: demanda, pruebas, medidas cautelares y ejecución\",\n    \"Derecho internacional público y comercio exterior en México\",\n    \"Jurisprudencia, tesis y precedentes: sistematización y aplicación práctica\",\n    \"Investigación y redacción jurídica: escritos, contratos y opiniones\",\n    \"Técnicas de litigio y oralidad en audiencias y juicios\",\n    \"Compliance, ética profesional y responsabilidad administrativa\",\n    \"Tecnologías y derecho: protección de datos, firma electrónica y e-justicia\",\n    \"Reformas recientes y tendencias legislativas\",\n    \"Casos prácticos: resolución de expedientes reales y simulaciones\",\n    \"Preparación para el ejercicio profesional: exámenes, prácticas y salidas laborales\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The instructions state that for the `es` language code, the output should default to Spain Spanish. However, the user's expectations specifically request Mexican Spanish, as the topic is Mexican Law. The model correctly prioritized the user's explicit expectation over the general rule, producing content in appropriate Mexican Spanish. This is not an error but rather a correct handling of a conflicting instruction.",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The chapter list is comprehensive and well-structured. However, to better adhere to the instruction \"Don’t cover too much in a single chapter,\" some of the broader chapters could be split. For instance, 'Derecho civil: personas, bienes, obligaciones y contratos' and 'Derecho mercantil: sociedades, contratos mercantiles y títulos de crédito' each cover several major legal areas that are often taught as separate subjects. Splitting them would create an even more granular and progressive learning path.",
+          "score": 8.5
+        }
+      ],
+      "inputTokens": 492,
+      "outputTokens": 1475,
+      "duration": 21084.77012500004
+    },
+    {
+      "testCase": {
+        "id": "es-derecho-mexicano-3",
+        "userInput": {
+          "courseTitle": "Derecho Mexicano",
+          "locale": "es"
+        },
+        "expectations": "\n      - Covers Mexican law system\n      - Content in Mexican Spanish\n\n      \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n    "
+      },
+      "output": "{\n  \"description\": \"Aprenderás los principios y normas del sistema jurídico mexicano, cómo interpretar y aplicar la Constitución, leyes y jurisprudencia, y cómo resolver asuntos prácticos en materia civil, penal, administrativa, laboral, fiscal y mercantil. Estas competencias son útiles para ejercer como abogado, asesor legal, gestor empresarial o para participar con eficacia en procesos judiciales y administrativos.\",\n  \"chapters\": [\n    \"Fundamentos del Derecho Mexicano\",\n    \"Fuentes del Derecho y jerarquía normativa\",\n    \"Constitución Política de los Estados Unidos Mexicanos\",\n    \"Juicio de Amparo y control constitucional\",\n    \"Organización del Estado y poderes públicos\",\n    \"Federalismo y competencias entre órdenes de gobierno\",\n    \"Derechos Humanos y protección constitucional\",\n    \"Interpretación jurídica y técnicas de hermenéutica\",\n    \"Investigación jurídica, búsqueda de jurisprudencia y precedentes\",\n    \"Derecho Civil: personas y derecho de familia\",\n    \"Derecho Civil: bienes, propiedad y posesión\",\n    \"Derecho Civil: obligaciones, contratos y responsabilidad civil\",\n    \"Derecho Civil: sucesiones y patrimonios\",\n    \"Derecho Mercantil: sociedades, empresa y actos de comercio\",\n    \"Derecho Mercantil: contratos mercantiles y títulos de crédito\",\n    \"Derecho Penal: principios, tipos penales y responsabilidad\",\n    \"Proceso Penal: investigación, control judicial y juicio oral\",\n    \"Derecho Procesal Civil: demandas, incidentes y ejecución\",\n    \"Prueba, peritajes y medios de impugnación procesal\",\n    \"Derecho Administrativo: actos, procedimientos y responsabilidad administrativa\",\n    \"Control y fiscalización: procedimiento administrativo sancionador y recursos\",\n    \"Derecho Laboral: relaciones individuales y colectivas de trabajo\",\n    \"Derecho Fiscal: obligaciones tributarias y procedimiento administrativo fiscal\",\n    \"Contratación pública y régimen de adquisiciones\",\n    \"Resolución Alternativa de Conflictos: mediación, conciliación y arbitraje\",\n    \"Derecho Internacional y tratados en el orden jurídico mexicano\",\n    \"Ética profesional, responsabilidad civil y penal del abogado\",\n    \"Redacción jurídica: escritos, demandas, contratos y opiniones\",\n    \"Litigio práctico: estrategia, audiencias y gestión de expedientes\",\n    \"Legal Tech, cumplimiento normativo y gestión de despacho\",\n    \"Preparación profesional: prácticas, simulaciones y examen de titulación\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None. The model correctly prioritized the user's specific expectations and the course topic ('Derecho Mexicano') over a conflicting general instruction to use Spain Spanish for the 'es' language code. This decision resulted in a much more accurate and contextually appropriate response, using terminology specific to Mexican law (e.g., 'Juicio de Amparo').",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline is extremely comprehensive and well-structured, progressing logically from foundational concepts to practical application. While other specialized areas of Mexican law (such as Agrarian Law or Environmental Law) could potentially be added as separate chapters, the current 31-chapter list is already very extensive and provides a solid path from beginner to expert.",
+          "score": 9.5
+        }
+      ],
+      "inputTokens": 492,
+      "outputTokens": 1658,
+      "duration": 23007.997208000044
+    },
+    {
+      "testCase": {
+        "id": "en-java-1",
+        "userInput": {
+          "courseTitle": "Java",
+          "locale": "en"
+        },
+        "expectations": "\n    - Must not confuse with JavaScript\n    - Content in US English\n\n    \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n  "
+      },
+      "output": "{\n  \"description\": \"You will learn Java programming from fundamentals to advanced topics, including building, testing, optimizing, and deploying production-ready applications. This knowledge is useful for backend development, microservices, performance tuning, and advancing your career as a Java developer.\",\n  \"chapters\": [\n    \"Java setup and tooling\",\n    \"Java syntax and primitive types\",\n    \"Control flow and exception handling\",\n    \"Object-oriented programming in Java\",\n    \"Classes, objects and encapsulation\",\n    \"Inheritance, polymorphism and interfaces\",\n    \"Generics and the type system\",\n    \"Collections framework and common data structures\",\n    \"Functional programming and the Streams API\",\n    \"I/O, serialization and file handling\",\n    \"Concurrency and multithreading\",\n    \"Java Memory Model and JVM internals\",\n    \"Performance optimization and profiling\",\n    \"Build tools: Maven and Gradle\",\n    \"Unit testing and Test-Driven Development (JUnit, Mockito)\",\n    \"Logging, debugging and exception design\",\n    \"JDBC and relational databases\",\n    \"JPA and Hibernate\",\n    \"RESTful services with Spring Boot\",\n    \"Security: authentication, authorization and secure coding\",\n    \"Reactive programming with Project Reactor\",\n    \"Microservices architecture and integration patterns\",\n    \"Containerization and Docker for Java applications\",\n    \"CI/CD pipelines and deployment strategies\",\n    \"Observability: monitoring, logging and distributed tracing\",\n    \"Design patterns and clean code practices\",\n    \"Advanced JVM topics: GC tuning and native images (GraalVM)\",\n    \"Migrating and upgrading Java versions and compatibility\",\n    \"Real-world project: end-to-end Java application\",\n    \"Career growth: interview prep, portfolio and best practices\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The chapter titled \"Object-oriented programming in Java\" is slightly generic and seems to serve as an introduction to the next two chapters (\"Classes, objects and encapsulation\" and \"Inheritance, polymorphism and interfaces\"). It could be renamed to \"Introduction to OOP Concepts\" for better clarity or its content could be merged into the following chapters. This is a very minor refinement on an otherwise excellent structure.",
+          "score": 9.5
+        }
+      ],
+      "inputTokens": 490,
+      "outputTokens": 1189,
+      "duration": 22097.66062499996
+    },
+    {
+      "testCase": {
+        "id": "en-java-2",
+        "userInput": {
+          "courseTitle": "Java",
+          "locale": "en"
+        },
+        "expectations": "\n    - Must not confuse with JavaScript\n    - Content in US English\n\n    \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n  "
+      },
+      "output": "{\n  \"description\": \"You will learn Java programming from core syntax and object-oriented principles to building, testing, and deploying production-ready applications using modern tools and frameworks. These skills are directly applicable to backend and full‑stack development, enterprise systems, microservices, and improving software performance and reliability.\",\n  \"chapters\": [\n    \"Java Syntax and Basic Types\",\n    \"Control Flow, Operators, and Exception Handling\",\n    \"Object-Oriented Programming in Java (Classes, Objects, Inheritance, Polymorphism)\",\n    \"Encapsulation, Interfaces, and Abstract Classes\",\n    \"Generics and Type Safety\",\n    \"Collections Framework (List, Set, Map) and Iteration Patterns\",\n    \"Strings, Dates, and Common Utility Classes\",\n    \"I/O: java.io and java.nio (Files, Streams, Channels)\",\n    \"Java Concurrency Basics (Threads, Runnable, Callable)\",\n    \"Advanced Concurrency (Executors, Synchronizers, Locks, Atomics)\",\n    \"Memory Model and Thread Safety (volatile, happens-before, immutable objects)\",\n    \"Java Memory Management and Garbage Collection\",\n    \"JVM Internals: Class Loading, JIT, and Runtime Performance\",\n    \"Exception Design and Robust Error Handling\",\n    \"Functional Java: Lambdas, Method References, and Functional Interfaces\",\n    \"Streams API and Parallel Streams\",\n    \"Modules and Modularity (JPMS)\",\n    \"Reflection, Annotations, and Dynamic Proxies\",\n    \"Serialization, JSON (Jackson/Gson), and Data Binding\",\n    \"Database Access: JDBC, Connection Pooling, and Transactions\",\n    \"ORM with JPA/Hibernate and Mapping Strategies\",\n    \"Building RESTful APIs with Spring Boot\",\n    \"Spring Core: Dependency Injection, Bean Lifecycle, and Configuration\",\n    \"Testing and Quality: JUnit, Mockito, Integration Testing, and Test Strategies\",\n    \"Build Tools: Maven and Gradle, Dependency Management\",\n    \"Logging, Monitoring, and Observability (SLF4J, Logback, Micrometer)\",\n    \"Reactive Programming with Reactor and Spring WebFlux\",\n    \"Microservices Architecture: Patterns, Inter-service Communication, and Resilience\",\n    \"Messaging and Event-driven Systems (Kafka, RabbitMQ)\",\n    \"Security Essentials: Authentication, Authorization, and Spring Security\",\n    \"Performance Tuning and Profiling (JVM Tools, Flame Graphs)\",\n    \"Containerization and Deployment: Docker, Kubernetes, and Cloud Basics\",\n    \"CI/CD for Java Projects (GitHub Actions, Jenkins, GitLab CI)\",\n    \"Code Quality, Clean Code Principles, and Common Design Patterns in Java\",\n    \"Advanced Topics: GraalVM Native Image, JNI, and Interoperability\",\n    \"Real-world Project: Design, Implement, Test, and Deploy a Complete Java Application\",\n    \"Interview Preparation, Career Paths, and Next Steps in Java Ecosystem\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "A few chapters combine multiple distinct topics, which could be further broken down to adhere even more strictly to the instruction \"Don’t cover too much in a single chapter.\" For example:\n- \"Control Flow, Operators, and Exception Handling\" could be split into separate chapters for each topic.\n- \"Object-Oriented Programming in Java (Classes, Objects, Inheritance, Polymorphism)\" could be split into at least two chapters (e.g., one on Classes and Objects, another on Inheritance and Polymorphism).\n- \"Code Quality, Clean Code Principles, and Common Design Patterns in Java\" could be separated, as Design Patterns is a large topic on its own. \n\nHowever, the overall outline is already very extensive and well-structured, so this is a minor suggestion for further refinement rather than a significant flaw.",
+          "score": 9
+        }
+      ],
+      "inputTokens": 490,
+      "outputTokens": 1098,
+      "duration": 17761.157957999967
+    },
+    {
+      "testCase": {
+        "id": "en-java-3",
+        "userInput": {
+          "courseTitle": "Java",
+          "locale": "en"
+        },
+        "expectations": "\n    - Must not confuse with JavaScript\n    - Content in US English\n\n    \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n  "
+      },
+      "output": "{\n  \"description\": \"You will learn Java from the ground up: core syntax, object-oriented and functional features, concurrency, JVM internals, and modern ecosystem tools like Spring, testing, and build systems. These skills prepare you to build, optimize, secure, and deploy production-quality server-side and desktop applications and advance your professional software development career.\",\n  \"chapters\": [\n    \"Java Syntax and Data Types\",\n    \"Control Flow and Error Handling\",\n    \"Object-Oriented Programming in Java\",\n    \"Classes, Objects and Memory Management\",\n    \"Inheritance, Interfaces and Polymorphism\",\n    \"Enums, Annotations and Records\",\n    \"Generics and Type Safety\",\n    \"Collections Framework\",\n    \"Java I/O and NIO (Files, Streams, Channels)\",\n    \"Concurrency Basics: Threads and Executors\",\n    \"Concurrent Utilities, Synchronization and Locking\",\n    \"Java Memory Model and Thread Safety\",\n    \"Functional Programming with Lambdas and Streams\",\n    \"Modules and Project Organization (JPMS)\",\n    \"Exception Handling and Practical Debugging Techniques\",\n    \"Unit Testing and TDD with JUnit and Mockito\",\n    \"Build Tools: Maven and Gradle\",\n    \"Logging, Metrics and Application Monitoring\",\n    \"JDBC and Relational Database Access\",\n    \"Object-Relational Mapping with JPA and Hibernate\",\n    \"Web Development Fundamentals: Servlets and HTTP\",\n    \"Spring Framework Core Concepts (DI, Beans, Context)\",\n    \"Spring Boot: Building and Documenting RESTful APIs\",\n    \"Security in Java Applications (Spring Security, OWASP basics)\",\n    \"Reactive Programming with Project Reactor and Spring WebFlux\",\n    \"Microservices Architecture, Service Discovery and Integration (Spring Cloud)\",\n    \"JVM Internals: Class Loading, Memory Layout and Garbage Collection\",\n    \"Profiling, Troubleshooting and Performance Optimization\",\n    \"Deployment, Containers (Docker) and CI/CD for Java Apps\",\n    \"Advanced Topics: GraalVM, Native Images and Native Interoperability\",\n    \"Design Patterns and Architectural Best Practices for Java Systems\",\n    \"Preparing for Java Jobs, Interviews and Professional Certifications\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The chapter progression has a minor flaw. The chapter \"Exception Handling and Practical Debugging Techniques\" is placed at number 15. These are fundamental concepts in Java programming that a student should learn much earlier, arguably right after control flow and basic OOP concepts are introduced (around chapters 3-5). Waiting until after topics like Concurrency and the Collections Framework to formally teach exception handling and debugging is not a logical or practical learning path.",
+          "score": 8
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline would be significantly improved by reordering the chapters. The chapter \"Exception Handling and Practical Debugging Techniques\" should be moved much earlier in the sequence, for example, to follow \"Control Flow and Error Handling\" or \"Classes, Objects and Memory Management\". This would provide students with essential error management skills before they tackle more complex topics.",
+          "score": 8.5
+        }
+      ],
+      "inputTokens": 490,
+      "outputTokens": 1337,
+      "duration": 21966.470458000025
+    },
+    {
+      "testCase": {
+        "id": "en-python-1",
+        "userInput": {
+          "courseTitle": "Python",
+          "locale": "en"
+        },
+        "expectations": "\n    - Must focus on Python programming language, not the snake\n    - Content in US English\n\n    \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n  "
+      },
+      "output": "{\n  \"description\": \"You will learn Python programming from installation and basic syntax to advanced topics like asynchronous programming, testing, and deployment. These skills let you build scripts, data analyses, web services, and production-ready applications useful in software development, data science, automation, and engineering roles.\",\n  \"chapters\": [\n    \"Getting started with Python: installation, interpreters, and REPL\",\n    \"Python syntax and basic expressions\",\n    \"Variables, types, and type hints\",\n    \"Control flow: conditionals and loops\",\n    \"Lists and tuples: sequence operations and slicing\",\n    \"Dictionaries and sets: mapping and unique collections\",\n    \"Strings and text processing\",\n    \"Functions, scope, and argument handling\",\n    \"Higher-order functions, lambdas, and closures\",\n    \"List, dict, and set comprehensions\",\n    \"Iterators, generators, and lazy evaluation\",\n    \"Context managers and the with statement\",\n    \"Modules, packages, and import system\",\n    \"Virtual environments and dependency management (venv, pip, poetry)\",\n    \"File I/O and data serialization (JSON, CSV, pickle)\",\n    \"Error handling and logging\",\n    \"Object-oriented programming in Python\",\n    \"Functional programming patterns (map/filter/reduce, immutability)\",\n    \"Concurrency with threading and multiprocessing\",\n    \"Asynchronous programming with asyncio\",\n    \"Working with databases (SQLite, SQLAlchemy basics)\",\n    \"Consuming and building web APIs (requests, REST principles)\",\n    \"Web scraping and HTML parsing (BeautifulSoup, scraping ethics)\",\n    \"Web development with Flask: routes, templates, and forms\",\n    \"Building APIs with FastAPI and Pydantic\",\n    \"Data analysis with NumPy and pandas\",\n    \"Data visualization with Matplotlib and Seaborn\",\n    \"Testing and debugging with unittest and pytest\",\n    \"Profiling and performance optimization\",\n    \"Packaging, distribution, and deployment (wheel, Docker, CI)\",\n    \"Security best practices and common pitfalls\",\n    \"Metaprogramming, decorators, and advanced Python features\",\n    \"Capstone project: design, implement, test, and deploy a complete Python application\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "None",
+          "score": 10
+        }
+      ],
+      "inputTokens": 490,
+      "outputTokens": 1026,
+      "duration": 17667.448417000007
+    },
+    {
+      "testCase": {
+        "id": "en-python-2",
+        "userInput": {
+          "courseTitle": "Python",
+          "locale": "en"
+        },
+        "expectations": "\n    - Must focus on Python programming language, not the snake\n    - Content in US English\n\n    \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n  "
+      },
+      "output": "{\n  \"description\": \"You will learn Python programming from the basics through advanced topics, covering core language features, testing, concurrency, web development, data analysis, and deployment. This knowledge enables you to build real applications, automate workflows, analyze data, and prepare for developer roles or technical interviews.\",\n  \"chapters\": [\n    \"Introduction to Python\",\n    \"Setting up Python and development environment\",\n    \"Python REPL and basic syntax\",\n    \"Variables and built-in data types\",\n    \"Control flow: conditionals and loops\",\n    \"Functions, scope, and namespaces\",\n    \"Modules, packages, and the standard library\",\n    \"Lists and tuples\",\n    \"Dictionaries and sets\",\n    \"String handling and text processing\",\n    \"File I/O and working with the filesystem\",\n    \"Error handling and exceptions\",\n    \"List, dict, and set comprehensions\",\n    \"Iterators and generator functions\",\n    \"Functional tools: map, filter, lambda, functools\",\n    \"Object-oriented programming basics\",\n    \"Advanced OOP: inheritance, magic methods, properties\",\n    \"Decorators and metaprogramming\",\n    \"Type hints and static typing\",\n    \"Testing and debugging with unittest and pytest\",\n    \"Logging and application observability\",\n    \"Concurrency with threading and multiprocessing\",\n    \"Asynchronous programming with async/await\",\n    \"Working with databases and ORMs\",\n    \"HTTP, REST APIs, and consuming web services\",\n    \"Web development with Flask (building REST APIs and web apps)\",\n    \"Data manipulation with NumPy and pandas\",\n    \"Introduction to machine learning with scikit-learn\",\n    \"Packaging, virtual environments, and distribution (pip, setuptools, wheel)\",\n    \"Performance optimization and profiling\",\n    \"Security best practices and secure coding\",\n    \"Deployment, Docker, and CI/CD workflows\",\n    \"Building real projects and capstone ideas\",\n    \"Open source, career guidance, and interview preparation\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline is exceptionally well-structured and comprehensive. A potential minor improvement could be to explicitly mention 'Regular Expressions' as a chapter, though it is likely covered under 'String handling and text processing'. However, this is a very minor point, and the current structure is excellent and does not require changes.",
+          "score": 9.5
+        }
+      ],
+      "inputTokens": 490,
+      "outputTokens": 1166,
+      "duration": 18284.534166999976
+    },
+    {
+      "testCase": {
+        "id": "en-python-3",
+        "userInput": {
+          "courseTitle": "Python",
+          "locale": "en"
+        },
+        "expectations": "\n    - Must focus on Python programming language, not the snake\n    - Content in US English\n\n    \n  - Extensive list of chapters\n  - It allows learners to go from no knowledge to mastery of the subject\n  - Starts with foundational topics and progresses to advanced topics\n\n  "
+      },
+      "output": "{\n  \"description\": \"You will learn Python programming from the basics to advanced topics, including writing scripts, building web APIs, performing data analysis, and deploying applications. This knowledge will help you automate tasks, create production-ready software, analyze and visualize data, and advance your career as a developer or data scientist.\",\n  \"chapters\": [\n    \"Introduction to Python\",\n    \"Installing Python and Setting up Your Environment\",\n    \"Python Syntax and Basic Statements\",\n    \"Built-in Data Types and Data Structures\",\n    \"Strings and Text Processing\",\n    \"Numbers, Math, and Formatting\",\n    \"Control Flow: Conditionals and Loops\",\n    \"Functions and Scope\",\n    \"Modules, Packages, and the Standard Library\",\n    \"Virtual Environments and Package Management (venv, pip)\",\n    \"File I/O and Working with Files\",\n    \"Error Handling and Exceptions\",\n    \"Iterators, Generators, and Lazy Evaluation\",\n    \"Comprehensions and Functional Tools (map, filter, reduce)\",\n    \"Decorators and Context Managers\",\n    \"Object-Oriented Programming in Python\",\n    \"Advanced OOP: Inheritance, Mixins, and Metaclasses\",\n    \"Type Hints and Static Typing (mypy)\",\n    \"Testing and Test-Driven Development (unittest, pytest)\",\n    \"Debugging, Logging, and Diagnostics\",\n    \"Concurrency: Threading and Multiprocessing\",\n    \"Asynchronous Programming with asyncio\",\n    \"Networking and HTTP Clients\",\n    \"Working with Databases (SQL and ORMs)\",\n    \"Building REST APIs (Flask, FastAPI)\",\n    \"Web Development Foundations (Django basics)\",\n    \"Web Scraping and Automation\",\n    \"Command-Line Tools and Scripting\",\n    \"Data Analysis with NumPy and Pandas\",\n    \"Data Visualization (Matplotlib, Seaborn, Plotly)\",\n    \"Introduction to Machine Learning with scikit-learn\",\n    \"Deep Learning Fundamentals (PyTorch or TensorFlow)\",\n    \"Performance Optimization and Profiling\",\n    \"Packaging, Distribution, and Publishing (setuptools, wheel)\",\n    \"Deploying Python Applications (containers, cloud)\",\n    \"Security, Best Practices, and Code Quality\",\n    \"Advanced Topics and Interfacing with C (Cython, ctypes)\",\n    \"Design Patterns and Architectural Principles\",\n    \"Building Real-World Projects and Portfolio\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The generated course outline is exceptionally comprehensive and well-structured, covering the subject from fundamental concepts to advanced, real-world applications like deployment and machine learning. The progression is logical, and the chapter titles are concise and descriptive. It fully adheres to all instructions and expectations. It is difficult to identify any meaningful improvements.",
+          "score": 9.5
+        }
+      ],
+      "inputTokens": 490,
+      "outputTokens": 1441,
+      "duration": 20786.00987499999
+    }
+  ]
+}
