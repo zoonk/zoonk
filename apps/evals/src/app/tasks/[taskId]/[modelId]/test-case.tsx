@@ -4,7 +4,7 @@ import {
   AccordionTrigger,
 } from "@zoonk/ui/components/accordion";
 import { calculateScore, getScoreClassName } from "@/lib/score";
-import type { EvalResult, ScoreStep } from "@/lib/types";
+import type { EvalResult, ScoreStep, TestCase } from "@/lib/types";
 
 interface TestCaseCardProps {
   result: EvalResult;
@@ -12,7 +12,7 @@ interface TestCaseCardProps {
 }
 
 interface UserInputSectionProps {
-  userInput: Record<string, string>;
+  userInput: TestCase["userInput"];
 }
 
 interface ScoreSectionProps {
@@ -106,7 +106,7 @@ function EvaluationStepsSection({ steps }: EvaluationStepsSectionProps) {
   );
 }
 
-export function TestCase({ result, index }: TestCaseCardProps) {
+export function TestCaseCard({ result, index }: TestCaseCardProps) {
   const testCaseTitle = result.testCase.id || `Test Case ${index + 1}`;
   const score = calculateScore(result.steps);
   const scoreDisplay = score.toFixed(2);

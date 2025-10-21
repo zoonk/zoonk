@@ -13,18 +13,24 @@ export type CourseChaptersSchema = z.infer<typeof schema>;
 
 export type CourseChaptersParams = {
   courseTitle: string;
+  level: "basic" | "intermediate" | "advanced";
   locale: string;
+  previousChapters: string[];
   model: string;
 };
 
 export async function generateCourseChapters({
   courseTitle,
+  level,
   locale,
   model,
+  previousChapters,
 }: CourseChaptersParams) {
   const userPrompt = `
     APP_LANGUAGE: ${locale}
     COURSE_TITLE: ${courseTitle}
+    COURSE_LEVEL: ${level}
+    PREVIOUS_CHAPTERS: ${JSON.stringify(previousChapters)}
   `;
 
   const { object, usage } = await generateObject({

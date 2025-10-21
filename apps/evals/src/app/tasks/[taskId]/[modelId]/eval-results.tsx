@@ -5,7 +5,7 @@ import { getModelById } from "@/lib/models";
 import { getStatsFromResults } from "@/lib/stats";
 import type { TaskEvalResults } from "@/lib/types";
 import { SummaryCard } from "./summary-card";
-import { TestCase } from "./test-case";
+import { TestCaseCard } from "./test-case";
 
 interface EvalResultsProps {
   results: TaskEvalResults;
@@ -35,7 +35,7 @@ export function EvalResults({ results }: EvalResultsProps) {
 
         <Accordion type="single" collapsible className="w-full">
           {results.results.map((result, index) => (
-            <TestCase
+            <TestCaseCard
               key={result.testCase.id || index}
               result={result}
               index={index}
