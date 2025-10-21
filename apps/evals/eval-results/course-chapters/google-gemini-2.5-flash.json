@@ -1,0 +1,1007 @@
+{
+  "taskId": "course-chapters",
+  "modelId": "google/gemini-2.5-flash",
+  "results": [
+    {
+      "testCase": {
+        "id": "pt-metodologias-ageis-basic-1",
+        "userInput": {
+          "courseTitle": "Metodologias Ágeis",
+          "locale": "pt",
+          "level": "basic",
+          "previousChapters": []
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n      - Teach the Agile mindset, core principles, and terminology\n      - How to apply Agile methodologies in real-world projects\n      - Prepare students for working in Agile teams\n      - Be up-to-date with the latest Agile practices and tools\n      - Avoid overly technical jargon\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Should be suitable for beginners with no prior knowledge\n  - Allow them to get an entry-level job in the field\n  - Prepare them for real-world scenarios and challenges\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá os fundamentos das metodologias ágeis, incluindo Scrum e Kanban, e como elas são usadas para gerenciar projetos de forma flexível e eficiente. Este conhecimento é essencial para qualquer profissional que busca otimizar a entrega de valor e colaborar melhor em equipes de desenvolvimento de produtos ou serviços.\",\n  \"chapters\": [\n    \"Introdução às Metodologias Ágeis\",\n    \"O Manifesto Ágil e Seus Princípios\",\n    \"Valores e Conceitos Fundamentais do Agile\",\n    \"Entendendo o Ciclo de Vida de Projetos Ágeis\",\n    \"Introdução ao Scrum: Um Panorama Geral\",\n    \"Papéis no Scrum: Product Owner, Scrum Master e Time de Desenvolvimento\",\n    \"Eventos do Scrum: Sprint Planning, Daily Scrum e Sprint Review\",\n    \"Eventos do Scrum: Sprint Retrospective\",\n    \"Artefatos do Scrum: Product Backlog, Sprint Backlog e Incremento\",\n    \"Métricas Essenciais no Scrum: Velocidade e Burndown Chart\",\n    \"Introdução ao Kanban: Princípios e Práticas\",\n    \"Mapeamento de Fluxo de Valor com Kanban\",\n    \"Limitação do Trabalho em Andamento (WIP) no Kanban\",\n    \"Métricas Essenciais no Kanban: Lead Time e Cycle Time\",\n    \"Comparando Scrum e Kanban: Quando Usar Cada Um\",\n    \"Outras Metodologias Ágeis: Lean e XP (eXtreme Programming)\",\n    \"Ferramentas Comuns para Gestão Ágil de Projetos\",\n    \"Cultura Ágil e Mentalidade de Melhoria Contínua\",\n    \"Benefícios da Implementação Ágil em Organizações\",\n    \"Primeiros Passos para Adotar Metodologias Ágeis\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The course outline is very good, but it omits a few fundamental topics that are crucial for a beginner hoping to work in an Agile team. Specifically, there are no chapters dedicated to \"User Stories\" (how to write them, the INVEST criteria, etc.) or \"Agile Estimation Techniques\" (like Story Points and Planning Poker). These are core, practical skills needed for daily work in Scrum and are a significant omission for a course intended to prepare someone for an entry-level job.",
+          "score": 8
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "To enhance the practical value of the course, the following chapters should be added:\n1. A dedicated chapter on \"User Stories e Backlog Refinement\" to cover the creation and management of backlog items.\n2. A chapter on \"Técnicas de Estimativa Ágil\" to introduce concepts like Story Points and Planning Poker.\n\nAdditionally, the chapter \"Outras Metodologias Ágeis: Lean e XP (eXtreme Programming)\" could be split into two separate chapters to give each methodology a more focused introduction, adhering more closely to the instruction of not covering too much in a single chapter.",
+          "score": 8.5
+        }
+      ],
+      "inputTokens": 855,
+      "outputTokens": 391,
+      "duration": 6093.802415999991
+    },
+    {
+      "testCase": {
+        "id": "pt-metodologias-ageis-intermediate-1",
+        "userInput": {
+          "courseTitle": "Metodologias Ágeis",
+          "locale": "pt",
+          "level": "intermediate",
+          "previousChapters": [
+            "O que é Agilidade e por que usar",
+            "Manifesto Ágil: valores e princípios",
+            "Lean Thinking e fluxo de valor",
+            "Modelos tradicionais vs. Ágil: quando cada um faz sentido",
+            "Papéis em times ágeis: Product Owner, Scrum Master e Time",
+            "Scrum: visão geral e fundamentos",
+            "Scrum: eventos (Planning, Daily, Review, Retrospective)",
+            "Scrum: artefatos e transparência (Product Backlog, Sprint Backlog, Incremento)",
+            "Kanban: visão geral e princípios",
+            "Kanban na prática: quadros, políticas explícitas e limites de WIP",
+            "Extreme Programming (XP): práticas essenciais de engenharia",
+            "User Stories de qualidade: INVEST e critérios de aceite",
+            "Backlog de Produto: criação, organização e refinamento",
+            "Priorização de backlog: valor, risco e técnicas (MoSCoW, WSJF)",
+            "Estimativa ágil: story points, Planning Poker e no-estimates (visão inicial)",
+            "Planejamento ágil: roadmaps, releases e sprints",
+            "Métricas básicas: velocidade, burndown, lead time e CFD",
+            "Qualidade e DevOps: testes, CI/CD e automação (noções básicas)",
+            "Comunicação e colaboração: cerimônias eficazes e segurança psicológica",
+            "Retrospectivas que geram ação e melhoria contínua",
+            "Alinhamento com objetivos: OKRs e metas de produto",
+            "Gestão de stakeholders e expectativas",
+            "Trabalho remoto e times distribuídos em ambientes ágeis",
+            "Antipadrões e armadilhas comuns em Scrum e Kanban",
+            "Introdução ao escalado: Scrum@Scale, LeSS e SAFe (quando considerar)",
+            "Compliance, risco e governança em contextos ágeis",
+            "Descoberta de produto: MVP, hipóteses e Dual-Track",
+            "Tendências atuais: dados e IA para informar decisões e cadência",
+            "Ferramentas do dia a dia: Jira, Trello, Azure Boards e GitHub Projects",
+            "Caminhos de carreira e certificações iniciais (PSM I, CSPO, KMP)"
+          ]
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n      - Deepen understanding of Agile frameworks\n      - How to lead Agile teams and manage Agile projects\n      - Prepare students for senior roles in Agile environments\n      - Include case studies and real-world applications of Agile methodologies\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Should build upon previous chapters\n  - Allow them to tackle complex tasks and projects\n  - Prepare them for senior job roles in the field\n\n    "
+      },
+      "output": "{\n  \"description\": \"Neste curso, você aprofundará seus conhecimentos em metodologias ágeis como Scrum e Kanban, aprendendo técnicas avançadas de facilitação, engenharia e gestão de produtos. Você estará apto a otimizar processos, liderar times de alta performance e escalar a agilidade em contextos complexos, preparando-se para atuar em papéis de liderança técnica e de produto.\",\n  \"chapters\": [\n    \"Scrum Master: Coaching e Mentoria de Times\",\n    \"Product Owner: Estratégia de Produto e Alinhamento com o Negócio\",\n    \"Desenvolvimento de Times Scrum de Alta Performance\",\n    \"Facilitação Avançada para Eventos Scrum\",\n    \"Resolução de Impedimentos e Desafios Complexos no Scrum\",\n    \"Design de Sistemas Kanban Eficazes\",\n    \"Gerenciamento de Fluxo e Gargalos em Kanban\",\n    \"Estratégias de Pull e Replenishment para Kanban\",\n    \"Métricas de Fluxo Avançadas: Cycle Time, Lead Time e Throughput\",\n    \"Previsibilidade e Forecasting em Contextos Ágeis\",\n    \"Métricas de Valor: Medindo o Impacto de Negócio e ROI\",\n    \"Análise de Dados para Melhoria Contínua do Processo Ágil\",\n    \"Test-Driven Development (TDD) e Behavior-Driven Development (BDD)\",\n    \"Refactoring Contínuo e Princípios de Clean Code\",\n    \"Integração Contínua (CI) e Entrega Contínua (CD) Aprofundadas\",\n    \"Estratégias de Automação de Testes e Pirâmide de Testes\",\n    \"Discovery Contínuo: Validação de Problemas e Soluções\",\n    \"Design Thinking e User Research Aplicados ao Produto\",\n    \"Modelagem de Negócios e Geração de Valor em Produtos\",\n    \"Roadmapping Ágil e Gestão de Portfólio de Produto\",\n    \"Scrum@Scale: Estrutura, Papéis e Eventos Detalhados\",\n    \"LeSS (Large-Scale Scrum): Princípios e Configurações\",\n    \"SAFe (Scaled Agile Framework): Visão Aprofundada e Implementação\",\n    \"Desafios Comuns e Melhores Práticas na Escalada Ágil\",\n    \"Liderança Servidora e o Papel do Líder Ágil\",\n    \"Cultura de Feedback, Confiança e Segurança Psicológica no Time\",\n    \"Gerenciamento da Mudança Organizacional com Agilidade\",\n    \"Coaching Ágil: Técnicas e Abordagens\",\n    \"Otimizando o Uso de Ferramentas Ágeis\",\n    \"Integrações e Automações no Ecossistema de Ferramentas Ágeis\",\n    \"Relatórios e Dashboards Avançados para Visibilidade Ágil\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "None",
+          "score": 10
+        }
+      ],
+      "inputTokens": 1276,
+      "outputTokens": 629,
+      "duration": 16347.587374999988
+    },
+    {
+      "testCase": {
+        "id": "pt-metodologias-ageis-advanced-1",
+        "userInput": {
+          "courseTitle": "Metodologias Ágeis",
+          "locale": "pt",
+          "level": "advanced",
+          "previousChapters": [
+            "O que é Agilidade e por que usar",
+            "Manifesto Ágil: valores e princípios",
+            "Lean Thinking e fluxo de valor",
+            "Modelos tradicionais vs. Ágil: quando cada um faz sentido",
+            "Papéis em times ágeis: Product Owner, Scrum Master e Time",
+            "Scrum: visão geral e fundamentos",
+            "Scrum: eventos (Planning, Daily, Review, Retrospective)",
+            "Scrum: artefatos e transparência (Product Backlog, Sprint Backlog, Incremento)",
+            "Kanban: visão geral e princípios",
+            "Kanban na prática: quadros, políticas explícitas e limites de WIP",
+            "Extreme Programming (XP): práticas essenciais de engenharia",
+            "User Stories de qualidade: INVEST e critérios de aceite",
+            "Backlog de Produto: criação, organização e refinamento",
+            "Priorização de backlog: valor, risco e técnicas (MoSCoW, WSJF)",
+            "Estimativa ágil: story points, Planning Poker e no-estimates (visão inicial)",
+            "Planejamento ágil: roadmaps, releases e sprints",
+            "Métricas básicas: velocidade, burndown, lead time e CFD",
+            "Qualidade e DevOps: testes, CI/CD e automação (noções básicas)",
+            "Comunicação e colaboração: cerimônias eficazes e segurança psicológica",
+            "Retrospectivas que geram ação e melhoria contínua",
+            "Alinhamento com objetivos: OKRs e metas de produto",
+            "Gestão de stakeholders e expectativas",
+            "Trabalho remoto e times distribuídos em ambientes ágeis",
+            "Antipadrões e armadilhas comuns em Scrum e Kanban",
+            "Introdução ao escalado: Scrum@Scale, LeSS e SAFe (quando considerar)",
+            "Compliance, risco e governança em contextos ágeis",
+            "Descoberta de produto: MVP, hipóteses e Dual-Track",
+            "Tendências atuais: dados e IA para informar decisões e cadência",
+            "Ferramentas do dia a dia: Jira, Trello, Azure Boards e GitHub Projects",
+            "Caminhos de carreira e certificações iniciais (PSM I, CSPO, KMP)",
+            "Maturidade ágil e diagnóstico de contexto",
+            "Teoria das filas e fluxo de trabalho",
+            "Métricas de fluxo avançadas: cycle time por percentil, aging WIP e flow efficiency",
+            "Previsões com dados do fluxo: simulações de Monte Carlo para prazo e capacidade",
+            "Planejamento orientado a risco e variabilidade",
+            "Backlog orientado a outcomes: de outputs para impacto",
+            "Descoberta contínua: Opportunity Solution Tree na prática",
+            "Jobs to Be Done: entrevistas e mapeamento de necessidades",
+            "Story Mapping: sequenciamento e releases úteis",
+            "Priorização com Cost of Delay e slicing orientado a valor",
+            "Roadmaps orientados a resultados e apostas estratégicas",
+            "Estimativa e no-estimates avançado: ranges, confiança e cadência",
+            "Kanban avançado: classes de serviço, SLE e políticas evolutivas",
+            "Scrum em ambientes complexos: adaptações sem perder empirismo",
+            "Gestão de dependências entre times e sincronização de cadências",
+            "Value Stream Management: mapeamento, gargalos e melhoria contínua",
+            "Engenharia para fluxo contínuo: trunk-based, feature flags e estratégias de branch",
+            "Qualidade e testes avançados: TDD/BDD, contract testing e test data management",
+            "Entrega contínua e métricas DORA: pipelines avançados, blue/green e canary",
+            "Observabilidade, SRE e confiabilidade aplicadas a times ágeis",
+            "Métricas de produto: North Star, OMTM e experimentação A/B",
+            "OKRs avançados: alinhamento, apostas e ciclos de revisão eficazes",
+            "Governança e compliance contínuos: trilhas de auditoria, segregação de funções e risco",
+            "Lean Portfolio Management: funding por value streams e guardrails",
+            "Orçamento e finanças ágeis: Beyond Budgeting e métricas financeiras",
+            "Contratos e fornecedores em contextos ágeis: fixo, T&M e orientado a valor",
+            "Facilitação avançada: Liberating Structures, decisões por consentimento e gestão de conflitos",
+            "Cultura, liderança servidora e coaching de times de alta performance",
+            "Colaboração assíncrona e documentação enxuta: ADRs, decision logs e handoffs",
+            "Agilidade em dados e IA: MLOps, experimentos e ética",
+            "Escalado na prática: padrões de coordenação e trade-offs entre SAFe, LeSS e Scrum@Scale",
+            "Ferramentas avançadas: automações, integrações e dashboards de fluxo e produto",
+            "Antipadrões avançados e correções guiadas por dados do fluxo",
+            "Roteiro de evolução organizacional: do time ao portfólio",
+            "Carreira e certificações intermediárias/avançadas (PSM II, A-CSPO, KMM, SAFe)"
+          ]
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n      - Explore advanced Agile concepts and techniques\n      - How to implement Agile at an organizational level\n      - Prepare students for leadership roles in Agile transformations\n      - Discuss emerging trends and future directions in Agile methodologies\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Build upon previous chapters\n  - Cover specialized topics and advanced techniques\n  - Allow them to lead complex projects and mentor others\n  - Prepare them for certifications or advanced studies in the subject\n  - Prepare them to be at the forefront of the field\n\n    "
+      },
+      "output": "{\n  \"description\": \"Este curso aprofundará as metodologias ágeis, focando em liderança transformacional, otimização estratégica de portfólios e sustentação de culturas de alta performance. Você aprenderá a arquitetar a agilidade em escala, navegar na complexidade organizacional e impulsionar a inovação contínua, preparando-se para atuar como um agente de mudança e líder visionário em qualquer organização.\",\n  \"chapters\": [\n    \"Liderança transformacional e visão estratégica\",\n    \"Coaching executivo para líderes ágeis\",\n    \"Desenvolvimento de líderes de produto e tecnologia\",\n    \"Modelos de design organizacional: sociocracia, holacracia e organizações líquidas\",\n    \"Estratégias de descentralização e empoderamento em escala\",\n    \"Arquitetura de times e seus interrelacionamentos complexos\",\n    \"Modelos de gestão da mudança em larga escala (Kotter, ADKAR)\",\n    \"Navegando a resistência e construindo o engajamento organizacional\",\n    \"Criando uma cultura de experimentação e aprendizado contínuo\",\n    \"Conectando estratégia empresarial a resultados ágeis de portfólio\",\n    \"Otimização de investimento em portfólios ágeis e ROI\",\n    \"Gestão de riscos estratégicos em ambientes ágeis\",\n    \"Modelos de inovação contínua e corporate venturing\",\n    \"Estratégias de incubação e aceleração ágil de produtos\",\n    \"Explorando novos modelos de negócio e tecnologias disruptivas\",\n    \"Teoria dos Sistemas Adaptativos Complexos (CAS) aplicada à agilidade organizacional\",\n    \"Framework Cynefin: entendendo e respondendo à complexidade\",\n    \"Tomada de decisão em cenários de alta incerteza e ambiguidade\",\n    \"Desenvolvimento de capital social e confiança inter-organizacional\",\n    \"Promovendo a segurança psicológica para inovação e falha construtiva\",\n    \"Engajando a organização em diálogos difíceis e feedback radical\",\n    \"Definição e rastreamento de métricas de sucesso de negócio a longo prazo\",\n    \"Análise de ROI ágil e impacto financeiro de iniciativas estratégicas\",\n    \"Storytelling com dados para influenciar decisões executivas\",\n    \"Desenvolvimento de contratos e políticas \\\"ágil-friendly\\\"\",\n    \"Governança ágil para auditoria, regulamentação e responsabilidade contínua\",\n    \"Sustentabilidade e ética no desenvolvimento de produtos e processos ágeis\",\n    \"Programas de mentoria e coaching para futuras lideranças ágeis\",\n    \"Estratégias de desenvolvimento de carreira e sucessão em agilidade\",\n    \"Construindo comunidades de prática e centros de excelência ágil\",\n    \"Aplicação da agilidade além de TI: marketing, RH, operações e legal\",\n    \"Estratégias de integração de métodos ágeis com abordagens tradicionais\",\n    \"Gerenciamento de programas e projetos híbridos em larga escala\",\n    \"O futuro da agilidade: Web3, IA generativa, DAOs e organizações mesh\",\n    \"Inovação em frameworks e práticas ágeis globais\",\n    \"Contribuição para o campo da agilidade e pensamento original\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The response is of exceptionally high quality. It correctly identifies the need for topics beyond the already extensive list of 64 previous chapters, focusing on organizational strategy, leadership, complex systems theory, and future trends. This perfectly aligns with the 'advanced' level, aiming to create leaders and visionaries in the field. The chapter structure is logical, and the content is modern and highly relevant. There are no meaningful improvements to suggest.",
+          "score": 10
+        }
+      ],
+      "inputTokens": 1842,
+      "outputTokens": 712,
+      "duration": 17092.725000000006
+    },
+    {
+      "testCase": {
+        "id": "en-frontend-development-basic-1",
+        "userInput": {
+          "courseTitle": "Frontend Development",
+          "locale": "en",
+          "level": "basic",
+          "previousChapters": []
+        },
+        "expectations": "\n      - Content in English\n      - Teach the fundamentals of frontend development\n      - Cover HTML, CSS, and JavaScript basics\n      - Cover frontend frameworks\n      - Prepare students for entry-level frontend developer roles\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Should be suitable for beginners with no prior knowledge\n  - Allow them to get an entry-level job in the field\n  - Prepare them for real-world scenarios and challenges\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn the foundational languages and tools for building interactive and visually appealing web interfaces: HTML, CSS, and JavaScript. This knowledge is essential for anyone looking to start a career as a web developer or create their own websites and web applications.\",\n  \"chapters\": [\n    \"Introduction to Web Development and Frontend Fundamentals\",\n    \"Understanding HTML: Structuring Web Content\",\n    \"HTML Elements for Text, Links, and Lists\",\n    \"Embedding Images and Multimedia with HTML\",\n    \"Creating Tables and Forms in HTML\",\n    \"Introduction to CSS: Styling Web Pages\",\n    \"CSS Selectors and Basic Styling Properties\",\n    \"The CSS Box Model: Margin, Padding, and Border\",\n    \"Introduction to Flexbox for Layout Design\",\n    \"Introduction to CSS Grid for Complex Layouts\",\n    \"Fundamentals of Responsive Web Design with Media Queries\",\n    \"Introduction to JavaScript: Adding Interactivity\",\n    \"JavaScript Variables, Data Types, and Operators\",\n    \"JavaScript Control Flow: Conditionals and Loops\",\n    \"Understanding Functions in JavaScript\",\n    \"Manipulating the Document Object Model (DOM) with JavaScript\",\n    \"Handling User Events with JavaScript\",\n    \"Essential Developer Tools: Browser DevTools and Code Editors\",\n    \"Introduction to Version Control with Git\",\n    \"Basic Web Accessibility Principles\",\n    \"Deploying Your First Website\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The response fails to meet a key expectation, which was to \"Cover frontend frameworks\". Modern frontend development heavily relies on frameworks like React, Vue, or Angular. A basic course designed to prepare someone for an entry-level job should, at the very least, introduce the concept of frameworks and perhaps provide a brief overview of one. The generated outline completely omits this topic, which is a significant gap in the curriculum.",
+          "score": 7.5
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline could be significantly improved by adding chapters on JavaScript frameworks, as mentioned in the major errors. Additionally, a chapter on interacting with APIs (e.g., using the Fetch API) would be highly beneficial, as this is a fundamental skill for building dynamic web applications and a common requirement for entry-level positions.",
+          "score": 8
+        }
+      ],
+      "inputTokens": 851,
+      "outputTokens": 301,
+      "duration": 6882.250583000001
+    },
+    {
+      "testCase": {
+        "id": "en-frontend-development-intermediate-1",
+        "userInput": {
+          "courseTitle": "Frontend Development",
+          "locale": "en",
+          "level": "intermediate",
+          "previousChapters": [
+            "The Web Platform and How Browsers Work",
+            "Developer Environment Setup",
+            "Git and GitHub Basics",
+            "HTML Fundamentals and Semantics",
+            "Forms and Client-Side Validation",
+            "Accessible HTML and ARIA Basics",
+            "CSS Fundamentals: Selectors and Specificity",
+            "Box Model, Display, and Positioning",
+            "Flexbox Layout",
+            "Grid Layout",
+            "Responsive Design and Media Queries",
+            "Modern CSS: Variables and Functions",
+            "CSS Architecture: BEM and Component Styles",
+            "Images, Icons, and Web Fonts",
+            "JavaScript Essentials: Syntax and Data Types",
+            "Control Flow, Functions, and Arrays",
+            "The DOM, Events, and Manipulation",
+            "Async JavaScript: Promises, fetch, and async/await",
+            "Modules and Build Tools: npm and Vite",
+            "Working with APIs and JSON",
+            "Browser Storage and Cookies",
+            "Component-Based UI Principles",
+            "React Fundamentals: Components, Props, and State",
+            "TypeScript Basics for Frontend",
+            "Accessibility in Practice: WCAG and Testing Tools",
+            "Web Performance and Core Web Vitals",
+            "Debugging and Testing: DevTools, Jest, and Cypress",
+            "Cross-Browser Compatibility and Responsive Testing",
+            "Build and Deploy: Environments, CI/CD, and Hosting",
+            "Design Handoff and Collaboration with Figma",
+            "SEO and Metadata Basics",
+            "Career and Portfolio Essentials"
+          ]
+        },
+        "expectations": "\n      - Content in English\n      - Deepen understanding of frontend development concepts\n      - Cover advanced JavaScript, frontend frameworks, and performance optimization\n      - Prepare for senior frontend developer roles\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Should build upon previous chapters\n  - Allow them to tackle complex tasks and projects\n  - Prepare them for senior job roles in the field\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn to build complex and robust frontend applications using advanced React techniques, modern state management, and efficient data handling. This knowledge is crucial for developing high-performance, scalable, and secure web experiences that meet professional standards.\",\n  \"chapters\": [\n    \"React Hooks: State, Effects, and Context\",\n    \"Custom React Hooks for Reusability\",\n    \"Client-Side Routing with React Router\",\n    \"React Forms with Libraries: React Hook Form\",\n    \"Advanced React Component Patterns\",\n    \"React Performance Optimization Techniques\",\n    \"Unit Testing React Components with React Testing Library\",\n    \"Introduction to Global State Management\",\n    \"Redux Toolkit Fundamentals: Slices and Actions\",\n    \"Asynchronous Logic with Redux Toolkit Query (RTK Query)\",\n    \"Modern JavaScript: Advanced Features and Patterns\",\n    \"Event Handling Optimizations: Debouncing and Throttling\",\n    \"Styling with CSS-in-JS Libraries\",\n    \"Utility-First CSS Frameworks: Tailwind CSS\",\n    \"Advanced CSS Animations and Interactions\",\n    \"Authentication and Authorization in Frontend Applications\",\n    \"Data Fetching Strategies: React Query and SWR\",\n    \"GraphQL Integration: Queries and Mutations\",\n    \"Optimistic UI Updates and Error Handling\",\n    \"Frontend Security Best Practices\",\n    \"Internationalization and Localization (i18n, l10n)\",\n    \"Code Quality with ESLint and Prettier\",\n    \"Advanced Vite Configuration and Optimizations\",\n    \"Progressive Web Apps: Service Workers and Manifests\",\n    \"Web Push Notifications\",\n    \"Introduction to Server-Side Rendering (SSR) and Static Site Generation (SSG)\",\n    \"Next.js Fundamentals: Pages, API Routes, and Data Fetching\",\n    \"Advanced Deployment Strategies and CI/CD Pipelines\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The chapter order is very logical, but could be slightly refined for an even better flow. For instance, all data fetching chapters (RTK Query, React Query/SWR, GraphQL) could be grouped together to form a dedicated module on the topic. This is a very minor suggestion, as the current progressive path is also excellent.",
+          "score": 9.5
+        }
+      ],
+      "inputTokens": 1087,
+      "outputTokens": 396,
+      "duration": 17844.387166
+    },
+    {
+      "testCase": {
+        "id": "en-frontend-development-advanced-1",
+        "userInput": {
+          "courseTitle": "Frontend Development",
+          "locale": "en",
+          "level": "advanced",
+          "previousChapters": [
+            "The Web Platform and How Browsers Work",
+            "Developer Environment Setup",
+            "Git and GitHub Basics",
+            "HTML Fundamentals and Semantics",
+            "Forms and Client-Side Validation",
+            "Accessible HTML and ARIA Basics",
+            "CSS Fundamentals: Selectors and Specificity",
+            "Box Model, Display, and Positioning",
+            "Flexbox Layout",
+            "Grid Layout",
+            "Responsive Design and Media Queries",
+            "Modern CSS: Variables and Functions",
+            "CSS Architecture: BEM and Component Styles",
+            "Images, Icons, and Web Fonts",
+            "JavaScript Essentials: Syntax and Data Types",
+            "Control Flow, Functions, and Arrays",
+            "The DOM, Events, and Manipulation",
+            "Async JavaScript: Promises, fetch, and async/await",
+            "Modules and Build Tools: npm and Vite",
+            "Working with APIs and JSON",
+            "Browser Storage and Cookies",
+            "Component-Based UI Principles",
+            "React Fundamentals: Components, Props, and State",
+            "TypeScript Basics for Frontend",
+            "Accessibility in Practice: WCAG and Testing Tools",
+            "Web Performance and Core Web Vitals",
+            "Debugging and Testing: DevTools, Jest, and Cypress",
+            "Cross-Browser Compatibility and Responsive Testing",
+            "Build and Deploy: Environments, CI/CD, and Hosting",
+            "Design Handoff and Collaboration with Figma",
+            "SEO and Metadata Basics",
+            "Career and Portfolio Essentials",
+            "React Router and SPA Routing",
+            "State Management with Context and Reducers",
+            "Scalable State Management with Redux Toolkit",
+            "Data Fetching and Caching with TanStack Query",
+            "Forms and Validation in React with React Hook Form and Zod",
+            "Styling Approaches: CSS Modules, Styled Components, and Tailwind CSS",
+            "UI Libraries and Theming with Material UI or Chakra UI",
+            "Design Tokens and Design Systems Foundations",
+            "Reusable Component Patterns and Custom Hooks",
+            "React 18: Suspense and Concurrent Features",
+            "Performance Optimization in React: Memoization and Rerendering",
+            "Accessibility in React: Focus Management and Live Regions",
+            "Authentication and Authorization in the Frontend",
+            "Route Protection and Role-Based Access Control",
+            "Frontend Security: XSS, CSRF, CSP, and Sanitization",
+            "Internationalization and Localization with i18next",
+            "Real-Time Data with WebSockets and Server-Sent Events",
+            "GraphQL on the Frontend with Apollo or urql",
+            "Progressive Web Apps: Service Workers and Offline Caching",
+            "Push Notifications and Background Sync",
+            "Animations and Microinteractions with CSS and Framer Motion",
+            "Next.js Fundamentals: App Router and File-Based Routing",
+            "Next.js Rendering: SSR, SSG, ISR, and Server Components",
+            "Data Fetching and Caching in Next.js",
+            "SEO in Next.js: Metadata, Open Graph, and Sitemaps",
+            "API Contracts and Mocking with OpenAPI and MSW",
+            "Component Documentation with Storybook",
+            "Testing React Applications with Testing Library and MSW",
+            "Error Monitoring and Observability with Sentry",
+            "Frontend Architecture for Scale: Modules and Boundaries",
+            "TypeScript for React: Props, Generics, and Utility Types",
+            "Feature Flags and Experimentation",
+            "Analytics and Event Tracking for Product Insights"
+          ]
+        },
+        "expectations": "\n      - Content in English\n      - Explore advanced frontend development topics\n      - Cover topics like architecture, scalability, and cutting-edge technologies\n      - Prepare for leadership roles in frontend development\n      - Prepare to be at the forefront of frontend development\n      - At the end of this course, they should be able to take roles at top tech companies\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Build upon previous chapters\n  - Cover specialized topics and advanced techniques\n  - Allow them to lead complex projects and mentor others\n  - Prepare them for certifications or advanced studies in the subject\n  - Prepare them to be at the forefront of the field\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn to architect, build, and optimize highly scalable, performant, and secure frontend applications. This knowledge will equip you to lead complex projects, make critical architectural decisions, and drive innovation in modern web development teams.\",\n  \"chapters\": [\n    \"Micro-Frontends: Architecture, Patterns, and Implementation\",\n    \"Monorepo Management for Large-Scale Frontend Projects\",\n    \"Design System Governance and Evolution\",\n    \"Critical Rendering Path and Advanced Web Performance Techniques\",\n    \"Web Workers, Service Workers, and Off-Main-Thread Architectures\",\n    \"Advanced Bundle Optimization and Performance Budgeting\",\n    \"Frontend CI/CD: Advanced Deployment Strategies (Blue/Green, Canary)\",\n    \"Edge Computing and Serverless Functions for Frontend Applications\",\n    \"A/B Testing, Feature Flags, and Progressive Delivery\",\n    \"End-to-End Testing with Playwright and Test Orchestration\",\n    \"Visual Regression Testing and UI Snapshotting\",\n    \"Automated Performance and Accessibility Auditing\",\n    \"Advanced Frontend Security: CSP, Trusted Types, and Secure Storage\",\n    \"Web Cryptography API and Secure Credential Management\",\n    \"OAuth 2.0 and OpenID Connect Deep Dive for Frontend\",\n    \"Introduction to WebAssembly (Wasm) and its Use Cases\",\n    \"WebGL, WebGPU, and High-Performance 3D Graphics\",\n    \"Generative AI in Frontend: Development Workflow Enhancements\",\n    \"Decentralized Web (Web3) Frontend Integration\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The generated list of chapters is excellent and covers a wide range of advanced topics. A potential improvement could be to include a chapter specifically on state management strategies within a micro-frontend architecture, as this is a common and complex challenge that builds directly on previous chapters about state management and the new chapter on micro-frontends.",
+          "score": 9.5
+        }
+      ],
+      "inputTokens": 1420,
+      "outputTokens": 330,
+      "duration": 13206.32766699999
+    },
+    {
+      "testCase": {
+        "id": "en-biology-basic-1",
+        "userInput": {
+          "courseTitle": "Biology",
+          "locale": "en",
+          "level": "basic",
+          "previousChapters": []
+        },
+        "expectations": "\n      - Content in English\n      - Should cover fundamental biology topics such as cell structure, genetics, evolution, and ecology\n      - Prepare students for further studies in biology or related fields\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Should be suitable for beginners with no prior knowledge\n  - Allow them to get an entry-level job in the field\n  - Prepare them for real-world scenarios and challenges\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn the fundamental principles that govern living organisms, from the smallest cells to complex ecosystems. This knowledge is crucial for understanding how life works, making informed decisions about health and the environment, and pursuing entry-level careers in science or healthcare.\",\n  \"chapters\": [\n    \"What is Biology? An Introduction\",\n    \"The Characteristics of Life\",\n    \"The Chemical Foundations of Life\",\n    \"Water: The Solvent of Life\",\n    \"Biological Macromolecules: Carbohydrates and Lipids\",\n    \"Biological Macromolecules: Proteins and Nucleic Acids\",\n    \"Cell Theory and Cell Types\",\n    \"Prokaryotic Cells: Structure and Function\",\n    \"Eukaryotic Cell Structure and Organelles\",\n    \"The Cell Membrane and Transport Mechanisms\",\n    \"Introduction to Cellular Metabolism: Photosynthesis\",\n    \"Introduction to Cellular Metabolism: Cellular Respiration\",\n    \"DNA, RNA, and the Flow of Genetic Information\",\n    \"Genes, Chromosomes, and Heredity\",\n    \"Mendelian Genetics: Basic Principles\",\n    \"Introduction to Evolution and Natural Selection\",\n    \"Evidence for Evolution\",\n    \"Classifying Life: Domains and Kingdoms\",\n    \"An Overview of Bacteria and Archaea\",\n    \"An Overview of Protists and Fungi\",\n    \"An Overview of Plants\",\n    \"An Overview of Animals\",\n    \"Principles of Ecology: Organisms and Their Environment\",\n    \"Ecosystems and Energy Flow\",\n    \"Biogeochemical Cycles\",\n    \"Introduction to Human Body Systems\",\n    \"The Human Circulatory and Respiratory Systems\",\n    \"The Human Digestive and Excretory Systems\",\n    \"The Human Nervous System and Endocrine System\",\n    \"The Human Skeletal and Muscular Systems\",\n    \"Human Impact on Ecosystems and Biodiversity\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The response violates the instruction 'Don’t cover too much in a single chapter. Instead, split it into multiple smaller chapters'. Several chapters combine two distinct and large human body systems: 'The Human Circulatory and Respiratory Systems', 'The Human Digestive and Excretory Systems', 'The Human Nervous System and Endocrine System', and 'The Human Skeletal and Muscular Systems'. Each of these systems is complex enough to warrant its own chapter in a basic course.",
+          "score": 8
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course could be improved by splitting the chapters on human body systems into individual chapters for each system (e.g., one for the Circulatory System, one for the Respiratory System, etc.) to better adhere to the instruction to not cover too much in a single chapter. Additionally, a chapter on 'The Scientific Method' could be added near the beginning to provide foundational context on how biological science is conducted.",
+          "score": 8.5
+        }
+      ],
+      "inputTokens": 850,
+      "outputTokens": 387,
+      "duration": 7081.056249999994
+    },
+    {
+      "testCase": {
+        "id": "en-biology-intermediate-1",
+        "userInput": {
+          "courseTitle": "Biology",
+          "locale": "en",
+          "level": "intermediate",
+          "previousChapters": [
+            "Biology in Everyday Life and the Scientific Method",
+            "Chemistry of Life: Water and Macromolecules",
+            "Cells: Structure, Organelles, and Function",
+            "Biological Membranes and Transport",
+            "Enzymes and Cellular Metabolism",
+            "Cellular Respiration and ATP",
+            "Photosynthesis: Light Reactions and Calvin Cycle",
+            "DNA: Structure, Replication, and Repair",
+            "Gene Expression: Transcription and Translation",
+            "Inheritance: Mendelian and Beyond",
+            "Genetic Variation and Mutations",
+            "Core Lab Techniques: Pipetting, PCR, and Gels",
+            "Gene Editing Basics: CRISPR and Ethics",
+            "Evolution and Natural Selection",
+            "Speciation, Phylogeny, and the Tree of Life",
+            "Microbiology: Bacteria, Archaea, and Viruses",
+            "The Human Microbiome and Health",
+            "Plant Biology: Structure, Transport, and Reproduction",
+            "Animal Form and Function: Tissues and Organ Systems",
+            "Human Physiology Overview: Homeostasis and Major Systems",
+            "Immunology Basics: Innate and Adaptive Defense",
+            "Developmental Biology: From Zygote to Organism",
+            "Nervous System and Behavior Fundamentals",
+            "Ecology: Populations and Communities",
+            "Ecosystems, Biomes, and Biogeochemical Cycles",
+            "Biodiversity and Conservation Biology",
+            "Climate Change Biology and One Health",
+            "Lab Safety, Documentation, and Good Laboratory Practice",
+            "Microscopy and Biological Imaging",
+            "Field Methods and Sampling Techniques",
+            "Experimental Design and Basic Biostatistics",
+            "Data Analysis and Visualization for Biology",
+            "Bioinformatics Basics: Sequences, Databases, and BLAST",
+            "Biotechnology in Medicine, Agriculture, and Industry",
+            "Ethics, Biosafety, and Responsible Conduct of Research",
+            "Scientific Communication, Reading Papers, and Career Paths"
+          ]
+        },
+        "expectations": "\n      - Content in English\n      - Cover more complex topics such as molecular biology, physiology, and biodiversity\n      - Prepare students for advanced studies, research or a career in biology\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Should build upon previous chapters\n  - Allow them to tackle complex tasks and projects\n  - Prepare them for senior job roles in the field\n\n    "
+      },
+      "output": "{\n  \"description\": \"This course will deepen your understanding of the intricate mechanisms governing biological systems, from cellular regulation to ecosystem dynamics. You will learn to analyze complex biological processes and data, preparing you for advanced research, specialized biological careers, or further academic pursuits.\",\n  \"chapters\": [\n    \"Cellular Communication: Signaling Pathways\",\n    \"Cell Cycle Regulation and Checkpoints\",\n    \"Programmed Cell Death: Apoptosis and Necrosis\",\n    \"Cytoskeleton Dynamics and Cellular Movement\",\n    \"Protein Folding, Modification, and Degradation\",\n    \"Membrane Trafficking and Organelle Biogenesis\",\n    \"Epigenetics: DNA Methylation and Histone Modifications\",\n    \"Gene Regulation in Prokaryotes: Operon Models\",\n    \"Eukaryotic Gene Regulation: Transcription Factors and Enhancers\",\n    \"RNA Biology: Non-coding RNAs and RNA Interference\",\n    \"Advanced Genomics: Sequencing Technologies and Genome Assembly\",\n    \"Transcriptomics: RNA Sequencing and Gene Expression Profiling\",\n    \"Proteomics: Protein Identification and Quantification Techniques\",\n    \"Neurobiology: Synaptic Transmission and Plasticity\",\n    \"Endocrine System: Hormonal Regulation and Feedback Loops\",\n    \"Advanced Immunology: T and B Cell Development and Activation\",\n    \"Cardiovascular Physiology: Blood Flow and Pressure Regulation\",\n    \"Respiratory Physiology: Gas Exchange Mechanisms and Control\",\n    \"Renal Physiology: Kidney Function and Fluid-Electrolyte Balance\",\n    \"Digestive System Physiology: Nutrient Absorption and Metabolism\",\n    \"Musculoskeletal System: Muscle Contraction and Bone Dynamics\",\n    \"Comparative Physiology: Adaptations Across Diverse Organisms\",\n    \"Population Dynamics Models: Growth, Regulation, and Interactions\",\n    \"Community Ecology: Species Interactions and Succession\",\n    \"Ecosystem Structure and Function: Energy Flow and Nutrient Cycling\",\n    \"Behavioral Ecology: Animal Behavior and Evolution\",\n    \"Phylogenomics and Molecular Clocks\",\n    \"Macroevolutionary Patterns and Diversification\",\n    \"Recombinant DNA Technology and Advanced Gene Cloning\",\n    \"Protein Engineering and Directed Evolution\",\n    \"Synthetic Biology: Principles and Applications\",\n    \"Drug Discovery and Development Processes\",\n    \"Bioremediation and Industrial Biotechnology\",\n    \"Personalized Medicine and Pharmacogenomics\",\n    \"Advanced Microscopy Techniques: Confocal and Electron Microscopy\",\n    \"Flow Cytometry and Cell Sorting Applications\",\n    \"Mass Spectrometry in Biological Research\",\n    \"Omics Data Analysis: From Raw Data to Biological Insights\",\n    \"Advanced Experimental Design and Statistical Considerations\",\n    \"Ethical Considerations in Omics and Genetic Research\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "None",
+          "score": 10
+        }
+      ],
+      "inputTokens": 1151,
+      "outputTokens": 546,
+      "duration": 14910.701583000002
+    },
+    {
+      "testCase": {
+        "id": "en-biology-advanced-1",
+        "userInput": {
+          "courseTitle": "Biology",
+          "locale": "en",
+          "level": "advanced",
+          "previousChapters": [
+            "Biology in Everyday Life and the Scientific Method",
+            "Chemistry of Life: Water and Macromolecules",
+            "Cells: Structure, Organelles, and Function",
+            "Biological Membranes and Transport",
+            "Enzymes and Cellular Metabolism",
+            "Cellular Respiration and ATP",
+            "Photosynthesis: Light Reactions and Calvin Cycle",
+            "DNA: Structure, Replication, and Repair",
+            "Gene Expression: Transcription and Translation",
+            "Inheritance: Mendelian and Beyond",
+            "Genetic Variation and Mutations",
+            "Core Lab Techniques: Pipetting, PCR, and Gels",
+            "Gene Editing Basics: CRISPR and Ethics",
+            "Evolution and Natural Selection",
+            "Speciation, Phylogeny, and the Tree of Life",
+            "Microbiology: Bacteria, Archaea, and Viruses",
+            "The Human Microbiome and Health",
+            "Plant Biology: Structure, Transport, and Reproduction",
+            "Animal Form and Function: Tissues and Organ Systems",
+            "Human Physiology Overview: Homeostasis and Major Systems",
+            "Immunology Basics: Innate and Adaptive Defense",
+            "Developmental Biology: From Zygote to Organism",
+            "Nervous System and Behavior Fundamentals",
+            "Ecology: Populations and Communities",
+            "Ecosystems, Biomes, and Biogeochemical Cycles",
+            "Biodiversity and Conservation Biology",
+            "Climate Change Biology and One Health",
+            "Lab Safety, Documentation, and Good Laboratory Practice",
+            "Microscopy and Biological Imaging",
+            "Field Methods and Sampling Techniques",
+            "Experimental Design and Basic Biostatistics",
+            "Data Analysis and Visualization for Biology",
+            "Bioinformatics Basics: Sequences, Databases, and BLAST",
+            "Biotechnology in Medicine, Agriculture, and Industry",
+            "Ethics, Biosafety, and Responsible Conduct of Research",
+            "Scientific Communication, Reading Papers, and Career Paths",
+            "Chromatin and Epigenetic Regulation",
+            "Noncoding RNAs and Post-Transcriptional Control",
+            "Signal Transduction: GPCRs, RTKs, and Second Messengers",
+            "Cell Cycle, Checkpoints, and Programmed Cell Death",
+            "Cancer Biology: Oncogenes, Tumor Suppressors, and Hallmarks",
+            "Stem Cells and Regenerative Medicine",
+            "Flow Cytometry, FACS, and Single-Cell Analysis",
+            "Next-Generation Sequencing: Library Prep and Platforms",
+            "RNA-Seq and Differential Expression Analysis",
+            "Variant Calling, Annotation, and Functional Interpretation",
+            "Population Genetics: Drift, Selection, and Gene Flow",
+            "Genotype–Phenotype Mapping: GWAS and Polygenic Scores",
+            "Metagenomics and Microbiome Data Analysis",
+            "Proteomics: Mass Spectrometry and Protein Quantification",
+            "Metabolomics and Flux Analysis",
+            "Structural Biology: X-ray, NMR, and Cryo-EM",
+            "Protein Engineering and Directed Evolution",
+            "Synthetic Biology: Genetic Circuits, CRISPRi/a, and Biosensors",
+            "Metabolic Engineering and Pathway Optimization",
+            "Systems Biology: Network Inference and Dynamic Models",
+            "Quantitative Modeling in Biology: ODEs and Stochastic Processes",
+            "Biostatistics II: Linear Models, GLMs, and Mixed Effects",
+            "Machine Learning for Biological Data: Classification and Clustering",
+            "Reproducible Research: Command Line, Git, and Workflow Automation",
+            "Immunology II: Antigen Presentation, V(D)J Recombination, and T/B Cell Activation",
+            "Vaccinology and Immune Therapies: mRNA, Monoclonals, and Checkpoint Inhibitors",
+            "Host–Pathogen Interactions and Virulence Factors",
+            "Virology II: Emerging Viruses, Zoonoses, and Pandemic Preparedness",
+            "Neuroscience II: Synaptic Transmission and Plasticity",
+            "Neural Circuits, Sensory Systems, and Motor Control",
+            "Endocrine Signaling and Metabolic Regulation",
+            "Cardiovascular Physiology: Hemodynamics and Control",
+            "Respiratory and Renal Physiology: Gas Exchange and Homeostasis",
+            "Plant Hormones and Signal Transduction",
+            "Plant Stress Physiology and Defense Mechanisms",
+            "Plant–Microbe Interactions and Rhizosphere Ecology",
+            "Developmental Patterning: Morphogens and Gene Regulatory Networks",
+            "Evolutionary Developmental Biology (Evo-Devo)",
+            "Population Ecology: Demographic Models and Life Histories",
+            "Species Distribution Modeling and GIS for Ecology",
+            "Food Webs and Ecosystem Network Analysis",
+            "Conservation Genetics and Population Viability Analysis",
+            "Epidemiology and Infectious Disease Modeling",
+            "Environmental DNA (eDNA) for Biodiversity Monitoring",
+            "Regulatory Affairs and Quality Systems in Biotech"
+          ]
+        },
+        "expectations": "\n      - Content in English\n      - Explore advanced biology topics such as genomics, biotechnology, and ecological conservation\n      - Prepare students for leadership roles in biological research or industry\n      - Prepare them to be at the forefront of biological sciences\n      - At the end of this course, they should be able to take roles at top research institutions or biotech companies\n      - They should be ready to do a Master's or PhD in Biology or related fields\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Build upon previous chapters\n  - Cover specialized topics and advanced techniques\n  - Allow them to lead complex projects and mentor others\n  - Prepare them for certifications or advanced studies in the subject\n  - Prepare them to be at the forefront of the field\n\n    "
+      },
+      "output": "{\n  \"description\": \"This advanced course explores the frontiers of biological research, integrating complex multi-omics data, advanced computational methods, and innovative synthetic biology approaches. You will gain expertise in leading-edge experimental design, data interpretation, and the application of biological principles to tackle grand challenges in medicine, agriculture, and environmental science.\",\n  \"chapters\": [\n    \"Integrated Multi-Omics Data Analysis\",\n    \"Single-Cell and Spatial Multi-Omics Technologies\",\n    \"Deep Learning for Biological Discovery: Genomics, Proteomics, and Image Analysis\",\n    \"Advanced Network Biology and Systems Pharmacology\",\n    \"Synthetic Biology III: Design Principles for Complex Biological Systems\",\n    \"Mammalian Synthetic Biology and Biomedical Applications\",\n    \"CRISPR Engineering Beyond Gene Editing: Epigenome and Transcriptome Modulation\",\n    \"Structure-Based Drug Design and Therapeutic Biologics\",\n    \"Gene and Cell Therapy: Advanced Delivery Systems and Clinical Translation\",\n    \"Precision Medicine: Biomarker Discovery and Patient Stratification\",\n    \"Computational Neuroscience: Modeling Neural Circuits and Behavior\",\n    \"Brain-Computer Interfaces and Neuroprosthetics\",\n    \"Organoids, Spheroids, and Microphysiological Systems\",\n    \"Evolutionary Genomics: Adaptation, Speciation, and Ancient DNA\",\n    \"Ecological Forecasting and Predictive Models for Global Change\",\n    \"Global Health Challenges: Infectious Diseases and Emerging Threats\",\n    \"Bioethics of Human Germline Editing and Enhancement\",\n    \"Biotechnology Intellectual Property, Regulations, and Commercialization\",\n    \"Emerging Technologies and Future Directions in Biology\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "None",
+          "score": 10
+        }
+      ],
+      "inputTokens": 1625,
+      "outputTokens": 337,
+      "duration": 16000.531791999994
+    },
+    {
+      "testCase": {
+        "id": "pt-law-basic-1",
+        "userInput": {
+          "courseTitle": "Direito",
+          "locale": "pt",
+          "level": "basic",
+          "previousChapters": []
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n      - Should cover fundamental law topics such as constitutional law, civil law, criminal law, and administrative law\n      - Prepare students for further studies in law or related fields\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Should be suitable for beginners with no prior knowledge\n  - Allow them to get an entry-level job in the field\n  - Prepare them for real-world scenarios and challenges\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá os princípios fundamentais e a estrutura do sistema jurídico brasileiro, abrangendo áreas como direito constitucional, civil e penal. Este conhecimento é essencial para compreender seus direitos e deveres como cidadão e para iniciar uma carreira em áreas de apoio jurídico ou serviço público.\",\n  \"chapters\": [\n    \"O que é Direito e Para que Serve\",\n    \"Divisões e Conceitos Fundamentais do Direito\",\n    \"As Fontes do Direito: Lei, Costume, Jurisprudência e Doutrina\",\n    \"Introdução ao Direito Constitucional: A Constituição Federal\",\n    \"Direitos e Garantias Fundamentais\",\n    \"Organização dos Poderes: Legislativo, Executivo e Judiciário\",\n    \"Noções Gerais de Direito Civil: Pessoa Natural e Jurídica\",\n    \"Bens Jurídicos e Sua Classificação\",\n    \"Fatos Jurídicos e Atos Jurídicos\",\n    \"Introdução ao Direito das Obrigações\",\n    \"Noções Básicas de Contratos\",\n    \"Responsabilidade Civil (Básico)\",\n    \"Introdução ao Direito de Família\",\n    \"Noções Básicas de Sucessões\",\n    \"Introdução ao Direito Penal: Crime e Pena\",\n    \"Princípios do Direito Penal\",\n    \"Noções Básicas de Direito Processual Civil\",\n    \"Noções Básicas de Direito Processual Penal\",\n    \"Introdução ao Direito do Trabalho\",\n    \"Direitos e Deveres do Empregado e Empregador\",\n    \"Noções de Direito do Consumidor\",\n    \"Direitos Básicos do Consumidor\",\n    \"Administração Pública e o Papel do Estado\",\n    \"Noções de Direito Administrativo\",\n    \"Ética e Deontologia Jurídica\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline is very comprehensive and well-structured for a basic level. A potential improvement could be to add a chapter on the basics of Tax Law ('Noções de Direito Tributário'), as it is a fundamental area of public law. Additionally, the chapters 'Administração Pública e o Papel do Estado' and 'Noções de Direito Administrativo' could be combined or re-ordered for better flow, for example, starting with 'Introdução ao Direito Administrativo' and then delving into specific topics. However, these are minor suggestions, and the current structure is excellent.",
+          "score": 9
+        }
+      ],
+      "inputTokens": 850,
+      "outputTokens": 392,
+      "duration": 5947.174291999996
+    },
+    {
+      "testCase": {
+        "id": "pt-law-intermediate-1",
+        "userInput": {
+          "courseTitle": "Direito",
+          "locale": "pt",
+          "level": "intermediate",
+          "previousChapters": [
+            "Sistema jurídico brasileiro",
+            "Fontes do Direito e interpretação",
+            "Estrutura do Estado e separação de poderes",
+            "Organização do Poder Judiciário e Ministério Público",
+            "Processo legislativo e produção normativa",
+            "Constituição: direitos e garantias fundamentais",
+            "Direitos Humanos e Direito Internacional: noções",
+            "Direito Civil: pessoas e bens",
+            "Obrigações e contratos: fundamentos",
+            "Responsabilidade civil",
+            "Direitos reais e propriedade",
+            "Família e sucessões: noções",
+            "Direito do Consumidor",
+            "Direito Empresarial: empresas e sociedades",
+            "Direito do Trabalho: princípios e direitos",
+            "Direito Penal: princípios e tipos penais básicos",
+            "Processo Penal: procedimentos essenciais",
+            "Processo Civil: competência, petição inicial e fases",
+            "Juizados Especiais Cíveis e Criminais",
+            "Direito Administrativo: atos, licitações e contratos públicos",
+            "Direito Tributário: sistema e espécies tributárias",
+            "Direito Ambiental e ESG",
+            "Agências reguladoras e regulação setorial",
+            "Compliance e LGPD",
+            "Métodos consensuais de resolução de conflitos",
+            "Pesquisa jurídica: legislação, doutrina e jurisprudência",
+            "Precedentes obrigatórios e súmulas vinculantes",
+            "Redação jurídica: contratos e peças básicas",
+            "Registros públicos e prática cartorária",
+            "Prática forense digital: PJe, e-SAJ e prazos",
+            "Tecnologia no Direito: IA, automação e ODR",
+            "Ética, sigilo e responsabilidade profissional",
+            "Carreiras de entrada no mercado jurídico"
+          ]
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n      - Cover more complex topics such as international law, labor law, and environmental law\n      - Prepare students for advanced studies, research or a career in law\n      - They should be able to get enough knowledge to get a job at a law firm\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Should build upon previous chapters\n  - Allow them to tackle complex tasks and projects\n  - Prepare them for senior job roles in the field\n\n    "
+      },
+      "output": "{\n  \"description\": \"Neste curso, você aprofundará os fundamentos do Direito, explorando conceitos e aplicações mais complexas em diversas áreas jurídicas como Civil, Processual, Penal e Administrativo. Isso o capacitará a lidar com casos mais desafiadores e a atuar com maior autonomia no mercado de trabalho, preparando-o para posições mais estratégicas.\",\n  \"chapters\": [\n    \"Direito Constitucional: Controle de Constitucionalidade\",\n    \"Ações de Controle Concentrado: ADI, ADC, ADPF e ADO\",\n    \"Remédios Constitucionais: Análise aprofundada de Mandado de Segurança, Habeas Corpus e Habeas Data\",\n    \"Ação Popular e Ação Civil Pública: Instrumentos de Defesa Coletiva\",\n    \"Direito Administrativo: Poderes e Controle\",\n    \"Princípios Fundamentais do Direito Administrativo em Detalhe\",\n    \"Poderes Administrativos: Vínculado, Discricionário, Hierárquico, Disciplinar, Regulamentar e de Polícia\",\n    \"Controle da Administração Pública: Interno, Legislativo e Judicial\",\n    \"Processo Administrativo Disciplinar (PAD) e Sindicância\",\n    \"Contratos Civis em Detalhe\",\n    \"Formação, Validade e Interpretação dos Contratos\",\n    \"Cláusulas Especiais em Contratos Civis\",\n    \"Classificação dos Contratos Civis: Análise aprofundada\",\n    \"Extinção dos Contratos: Resolução, Resilição e Rescisão\",\n    \"Contratos Típicos e Atípicos: Análise de Casos Comuns\",\n    \"Responsabilidade Civil: Espécies e Excludentes\",\n    \"Dano, Nexo Causal e Culpa: Elementos Essenciais\",\n    \"Responsabilidade Objetiva e Subjetiva: Distinções e Aplicações\",\n    \"Excludentes de Responsabilidade Civil: Legítima Defesa, Estado de Necessidade, Caso Fortuito e Força Maior\",\n    \"Responsabilidade Civil por Dano Moral e Dano Estético\",\n    \"Responsabilidade Civil em Relações Específicas: Consumo, Médico-Hospitalar e Profissional\",\n    \"Direitos Reais: Posse, Propriedade e Aquisição\",\n    \"Teoria da Posse: Conceitos, Classificação e Efeitos\",\n    \"Aquisição e Perda da Propriedade Imóvel e Móvel\",\n    \"Usucapião: Requisitos e Modalidades\",\n    \"Condomínio Geral e Edilício: Direitos e Deveres\",\n    \"Direitos Reais de Gozo ou Fruição: Usufruto, Servidão e Superfície\",\n    \"Família e Sucessões: Aspectos Patrimoniais e Pessoais\",\n    \"Regimes de Bens no Casamento e União Estável\",\n    \"Dissolução da Sociedade Conjugal: Separação e Divórcio\",\n    \"Alimentos: Fixação, Revisão, Exoneração e Execução\",\n    \"Guarda e Convivência Familiar: Critérios e Modalidades\",\n    \"Sucessão Legítima e Testamentária: Ordens de Vocação e Disposições de Última Vontade\",\n    \"Processo de Inventário e Partilha\",\n    \"Direito Processual Civil: Teoria da Prova e Decisão\",\n    \"Tutelas Provisórias: Urgência e Evidência\",\n    \"Meios de Prova: Documental, Testemunhal, Pericial, Inspeção Judicial e Depoimento Pessoal\",\n    \"Teoria da Distribuição do Ônus da Prova\",\n    \"Saneamento e Organização do Processo\",\n    \"Sentença: Requisitos Essenciais, Classificação e Efeitos\",\n    \"Direito Processual Civil: Recursos e Cumprimento\",\n    \"Teoria Geral dos Recursos: Princípios e Pressupostos de Admissibilidade\",\n    \"Recursos em Espécie: Apelação, Agravo de Instrumento e Agravo Interno\",\n    \"Recursos de Caráter Excepcional: Recurso Especial e Recurso Extraordinário\",\n    \"Embargos de Declaração e Ação Rescisória\",\n    \"Cumprimento de Sentença e Processo de Execução\",\n    \"Direito Penal: Teoria do Crime Detalhada\",\n    \"Teoria Analítica do Crime: Fato Típico, Ilicitude e Culpabilidade\",\n    \"Dolo e Culpa: Elementos e Distinções\",\n    \"Erro de Tipo e Erro de Proibição\",\n    \"Iter Criminis: Cogitação, Atos Preparatórios, Execução e Consumação\",\n    \"Desistência Voluntária, Arrependimento Eficaz e Arrependimento Posterior\",\n    \"Concurso de Pessoas: Autoria e Participação\",\n    \"Excludentes de Ilicitude e Culpabilidade\",\n    \"Direito Penal: Penas e Extinção da Punibilidade\",\n    \"Espécies de Penas: Privativas de Liberdade, Restritivas de Direitos e Multa\",\n    \"Aplicação e Individualização da Pena\",\n    \"Regimes de Cumprimento da Pena e Progressão de Regime\",\n    \"Causas de Extinção da Punibilidade\",\n    \"Suspensão Condicional da Pena e Livramento Condicional\",\n    \"Direito Processual Penal: Investigação e Ação Penal\",\n    \"Inquérito Policial: Fases, Atribuições e Arquivamento\",\n    \"Ação Penal Pública e Privada: Condições de Propositura e Peculiaridades\",\n    \"Prisão em Flagrante, Prisão Temporária e Prisão Preventiva: Requisitos e Cabimento\",\n    \"Liberdade Provisória e Medidas Cautelares Diversas da Prisão\",\n    \"Provas no Processo Penal: Obtenção e Valoração\",\n    \"Direito do Trabalho: Contrato, Jornada e Remuneração\",\n    \"Contrato Individual de Trabalho: Formação, Tipos e Alterações\",\n    \"Jornada de Trabalho, Horas Extras, Adicionais e Intervalos\",\n    \"Remuneração e Salário: Conceitos e Natureza Jurídica\",\n    \"Dispensa por Justa Causa e Sem Justa Causa: Requisitos e Efeitos\",\n    \"Rescisão Indireta e Culpa Recíproca\",\n    \"Direito Empresarial: Títulos de Crédito e Crise Empresarial\",\n    \"Títulos de Crédito: Teoria Geral e Análise de Cheque, Nota Promissória, Letra de Câmbio e Duplicata\",\n    \"Recuperação Judicial: Requisitos, Plano e Efeitos\",\n    \"Falência: Declaração, Procedimento e Efeitos\",\n    \"Crimes Falimentares\",\n    \"Propriedade Industrial: Marcas, Patentes e Desenho Industrial\",\n    \"Direito Tributário: Crédito, Cobrança e Contencioso\",\n    \"Lançamento Tributário: Modalidades e Revisão\",\n    \"Crédito Tributário: Suspensão, Extinção e Exclusão\",\n    \"Impostos em Espécie: Federal, Estadual e Municipal (mais comuns)\",\n    \"Contencioso Administrativo e Judicial Tributário\",\n    \"Execução Fiscal\",\n    \"Métodos Consensuais de Resolução de Conflitos: Mediação e Arbitragem\",\n    \"Negociação: Estratégias e Táticas\",\n    \"Mediação: Papel do Mediador, Etapas e Técnicas\",\n    \"Arbitragem: Lei, Convenção Arbitral, Procedimento e Sentença Arbitral\",\n    \"Juízo Arbitral: Vantagens e Desafios\",\n    \"Redação e Pesquisa Jurídica Avançada\",\n    \"Estrutura e Elaboração de Pareceres Jurídicos\",\n    \"Redação de Contratos Complexos e Cláusulas Específicas\",\n    \"Elaboração de Peças Processuais Avançadas: Contestações, Recursos e Petições Iniciais mais intrincadas\",\n    \"Análise Crítica de Doutrina e Jurisprudência para Argumentação Jurídica\",\n    \"Utilização de Bases de Dados Jurídicas e Ferramentas de Pesquisa\",\n    \"Ética, Prática e Gestão na Advocacia\",\n    \"Estatuto da Advocacia e Código de Ética e Disciplina da OAB: Análise aprofundada\",\n    \"Publicidade na Advocacia e Honorários Profissionais\",\n    \"Gestão de Escritórios e Departamentos Jurídicos: Planejamento e Organização\",\n    \"Ferramentas Tecnológicas para Gestão Legal (Legal Tech)\",\n    \"Inteligência Artificial e Futuro da Advocacia\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The generated course outline is exceptionally well-structured and comprehensive for an intermediate level. It logically builds upon the foundational topics provided in the previous chapters, delving into more complex and practical aspects of each legal area. The chapter breakdown is granular and progressive, effectively preparing a student for more autonomous and senior roles as per the instructions. The inclusion of modern topics like AI in law is also a commendable touch. There are no significant improvements to suggest as the response perfectly fulfills the prompt's requirements.",
+          "score": 9.5
+        }
+      ],
+      "inputTokens": 1152,
+      "outputTokens": 1907,
+      "duration": 38288.47900000001
+    },
+    {
+      "testCase": {
+        "id": "pt-law-advanced-1",
+        "userInput": {
+          "courseTitle": "Direito",
+          "locale": "pt",
+          "level": "advanced",
+          "previousChapters": [
+            "Sistema jurídico brasileiro",
+            "Fontes do Direito e interpretação",
+            "Estrutura do Estado e separação de poderes",
+            "Organização do Poder Judiciário e Ministério Público",
+            "Processo legislativo e produção normativa",
+            "Constituição: direitos e garantias fundamentais",
+            "Direitos Humanos e Direito Internacional: noções",
+            "Direito Civil: pessoas e bens",
+            "Obrigações e contratos: fundamentos",
+            "Responsabilidade civil",
+            "Direitos reais e propriedade",
+            "Família e sucessões: noções",
+            "Direito do Consumidor",
+            "Direito Empresarial: empresas e sociedades",
+            "Direito do Trabalho: princípios e direitos",
+            "Direito Penal: princípios e tipos penais básicos",
+            "Processo Penal: procedimentos essenciais",
+            "Processo Civil: competência, petição inicial e fases",
+            "Juizados Especiais Cíveis e Criminais",
+            "Direito Administrativo: atos, licitações e contratos públicos",
+            "Direito Tributário: sistema e espécies tributárias",
+            "Direito Ambiental e ESG",
+            "Agências reguladoras e regulação setorial",
+            "Compliance e LGPD",
+            "Métodos consensuais de resolução de conflitos",
+            "Pesquisa jurídica: legislação, doutrina e jurisprudência",
+            "Precedentes obrigatórios e súmulas vinculantes",
+            "Redação jurídica: contratos e peças básicas",
+            "Registros públicos e prática cartorária",
+            "Prática forense digital: PJe, e-SAJ e prazos",
+            "Tecnologia no Direito: IA, automação e ODR",
+            "Ética, sigilo e responsabilidade profissional",
+            "Carreiras de entrada no mercado jurídico",
+            "Teoria geral da prova",
+            "Prova no processo civil: produção, ônus e impugnação",
+            "Prova no processo penal e cadeia de custódia",
+            "Tutelas de urgência e de evidência no processo civil",
+            "Cumprimento de sentença e execução civil",
+            "Recursos cíveis e técnicas de uniformização (IRDR, IAC e repetitivos)",
+            "Justiça penal negocial: ANPP, colaboração premiada e acordos",
+            "Controle de constitucionalidade e ações constitucionais",
+            "Licitações e contratos públicos: Lei 14.133/2021 em profundidade",
+            "Parcerias público-privadas e concessões",
+            "Improbidade administrativa e defesa de agentes públicos",
+            "Governança corporativa e societário avançado",
+            "Contratos empresariais avançados (distribuição, franquia, joint venture, SaaS)",
+            "M&A: due diligence, estruturação e contratos",
+            "Recuperação judicial, extrajudicial e falência",
+            "Propriedade intelectual aplicada a negócios",
+            "Reforma Tributária (EC 132/2023): IBS, CBS e Imposto Seletivo",
+            "Planejamento tributário lícito e propósito negocial",
+            "Contencioso tributário: CARF, judicial e execuções fiscais",
+            "Tributação em reorganizações societárias e M&A",
+            "Contencioso trabalhista e gestão de passivos",
+            "Negociação coletiva e compliance trabalhista",
+            "Litígios de massa e gestão de carteira",
+            "Direito concorrencial: práticas anticompetitivas e atos de concentração",
+            "Regulação financeira e criptoativos",
+            "Saúde e dados sensíveis: regulação setorial e LGPD",
+            "Energia e infraestrutura: regulação e contratos",
+            "Licenciamento ambiental, due diligence ESG e créditos de carbono",
+            "LGPD avançada: DPIA, transferências internacionais e resposta a incidentes",
+            "Contratos de tecnologia, cloud, IA e proteção de dados",
+            "Arbitragem e mediação em disputas complexas",
+            "Investigações internas, anticorrupção e leniência",
+            "Direito imobiliário: incorporação, loteamentos e due diligence",
+            "Contratos internacionais, choice of law e arbitragem internacional",
+            "Estratégia processual, redação avançada e sustentações orais",
+            "Legal operations: gestão, KPIs, tecnologia e precificação",
+            "Ética profissional avançada e segurança da informação"
+          ]
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n      - Explore advanced law topics such as corporate law, intellectual property, and human rights law\n      - Prepare students for leadership roles in legal practice or academia\n      - Prepare them to be at the forefront of legal developments\n      - At the end of this course, they should be able to take roles at top law firms or pursue advanced degrees in law\n      - They should be ready to pass the OAB (Brazilian Bar Examination)\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Build upon previous chapters\n  - Cover specialized topics and advanced techniques\n  - Allow them to lead complex projects and mentor others\n  - Prepare them for certifications or advanced studies in the subject\n  - Prepare them to be at the forefront of the field\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá a analisar e resolver problemas jurídicos altamente complexos em cenários globais e de alta tecnologia, aplicando conhecimento em áreas regulatórias, transacionais e contenciosas. Isso é essencial para liderar equipes, definir estratégias legais inovadoras e consolidar sua posição como um especialista de referência no mercado jurídico.\",\n  \"chapters\": [\n    \"Direito do Mercado de Capitais: Operações Estruturadas e Financiamento Internacional\",\n    \"Fusões e Aquisições Transnacionais e Reestruturações Societárias Complexas\",\n    \"Contencioso de Alta Complexidade: Gestão Estratégica e Disputas Multi-jurisdicionais\",\n    \"Arbitragem Comercial Internacional e Resolução de Disputas em Investimentos\",\n    \"Direito Antitruste Avançado: Cartéis, Abuso de Posição Dominante e Acordos Globais\",\n    \"Direito Tributário Internacional e Planejamento Fiscal Global\",\n    \"Regulação de Tecnologias Emergentes: IA, Blockchain e Biotecnologia\",\n    \"Direito Ambiental e Energia: Transição Energética e Finanças Verdes\",\n    \"Direito da Saúde e Farmacêutico: Regulação, Litígios e Compliance\",\n    \"Governança Pública e Anticorrupção: Aspectos Internacionais e Melhores Práticas\",\n    \"Legal Analytics e Tomada de Decisão Baseada em Dados\",\n    \"Inovação e Empreendedorismo no Setor Jurídico (Legal Tech Leadership)\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The list of chapters is excellent and covers highly specialized, modern topics. To make it even more comprehensive and aligned with the demands of top-tier legal practice, a few more chapters could be added. For example, a dedicated chapter on 'Private Equity & Venture Capital: Structuring Deals and Fund Formation' could be included, as it's a distinct and complex area. Another addition could be 'Cross-Border White-Collar Investigations and Corporate Defense', which is a critical topic for global firms. However, the existing list is already very strong and covers the expected level of advancement well.",
+          "score": 9
+        }
+      ],
+      "inputTokens": 1632,
+      "outputTokens": 336,
+      "duration": 18240.554292
+    },
+    {
+      "testCase": {
+        "id": "en-quantum-physics-basic-1",
+        "userInput": {
+          "courseTitle": "Quantum Physics",
+          "locale": "en",
+          "level": "basic",
+          "previousChapters": []
+        },
+        "expectations": "\n      - Content in English\n      - Should cover fundamental quantum physics topics such as wave-particle duality, quantum mechanics principles, and applications\n      - Prepare students for further studies in physics or related fields\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Should be suitable for beginners with no prior knowledge\n  - Allow them to get an entry-level job in the field\n  - Prepare them for real-world scenarios and challenges\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn the fundamental principles that govern the universe at its smallest scales, including quantum phenomena like wave-particle duality and quantization. This knowledge is essential for understanding modern technologies like lasers, transistors, and medical imaging, providing a foundational insight into the workings of the physical world.\",\n  \"chapters\": [\n    \"The Limits of Classical Physics: Introduction to Microscopic Phenomena\",\n    \"Blackbody Radiation and the Birth of Quantization\",\n    \"The Photoelectric Effect and Light as Particles\",\n    \"Atomic Spectra and Bohr's Model of the Atom\",\n    \"Wave-Particle Duality: De Broglie Hypothesis\",\n    \"The Uncertainty Principle: Limits of Measurement\",\n    \"Introduction to Quantum Mechanics: The Wave Function\",\n    \"The Schrödinger Equation: A Conceptual Overview\",\n    \"Quantum Numbers and Atomic Orbitals\",\n    \"Electron Spin and the Pauli Exclusion Principle\",\n    \"Quantum Tunneling: A Peculiar Phenomenon\",\n    \"Introduction to Quantum Superposition and Entanglement\",\n    \"Early Applications of Quantum Physics: Lasers and Transistors\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline is very solid and follows a logical progression appropriate for a basic level. However, to better address the instruction to \"cover the latest trends\", a concluding chapter that briefly introduces modern applications like quantum computing, quantum sensing, or cryptography could be added. Additionally, the chapter \"Introduction to Quantum Superposition and Entanglement\" could be split into two separate chapters to give each of these complex topics more focus, even at an introductory level.",
+          "score": 8.5
+        }
+      ],
+      "inputTokens": 851,
+      "outputTokens": 236,
+      "duration": 3530.4057500000054
+    },
+    {
+      "testCase": {
+        "id": "en-quantum-physics-intermediate-1",
+        "userInput": {
+          "courseTitle": "Quantum Physics",
+          "locale": "en",
+          "level": "intermediate",
+          "previousChapters": [
+            "Quantum physics and everyday technology",
+            "Math toolkit I: complex numbers and vectors",
+            "Math toolkit II: linear algebra and bra–ket notation",
+            "Probability in quantum mechanics",
+            "Key experiments: blackbody, photoelectric, Compton",
+            "Interference and the double-slit experiment",
+            "Quantum states and superposition",
+            "Observables, operators, and eigenvalues",
+            "Measurement and the Born rule",
+            "The uncertainty principle and commutators",
+            "Time evolution and the Schrödinger equation",
+            "Bound states: particle in a box",
+            "Quantum tunneling and barriers",
+            "The quantum harmonic oscillator",
+            "Angular momentum and spin-1/2",
+            "Many-particle systems and quantum statistics",
+            "Entanglement and Bell inequalities",
+            "Mixed states and density matrices",
+            "Decoherence and open quantum systems",
+            "Atomic structure and spectra",
+            "Quantum phenomena in solids and semiconductors",
+            "Qubits and basic quantum gates",
+            "Noise, errors, and NISQ hardware",
+            "Quantum technologies: cryptography, sensing, and communication",
+            "Experimental tools: lasers, interferometers, and detectors",
+            "Numerical and simulation tools for quantum systems",
+            "Problem-solving strategies and common pitfalls",
+            "Career paths and next steps"
+          ]
+        },
+        "expectations": "\n      - Content in English\n      - Cover more complex topics such as quantum field theory, quantum computing, and advanced applications\n      - Prepare students for advanced studies, research or a career in physics\n      - They should be able to get enough knowledge to get a job as a research assistant, a lab technician or at a startup\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Should build upon previous chapters\n  - Allow them to tackle complex tasks and projects\n  - Prepare them for senior job roles in the field\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn advanced approximation techniques, scattering theory, and the fundamentals of relativistic quantum mechanics and quantum field theory. This knowledge is crucial for tackling complex problems in research and development across quantum computing, condensed matter physics, and high-energy physics.\",\n  \"chapters\": [\n    \"Time-Independent Perturbation Theory: Non-Degenerate Case\",\n    \"Time-Independent Perturbation Theory: Degenerate Case\",\n    \"Variational Method and its Applications\",\n    \"WKB Approximation and Tunneling Revisited\",\n    \"Time-Dependent Perturbation Theory: Transitions and Fermi's Golden Rule\",\n    \"Adiabatic Approximation and Berry Phase\",\n    \"Fundamentals of Scattering Theory and Cross-Sections\",\n    \"Partial Wave Analysis for Scattering\",\n    \"Born Approximation and its Validity\",\n    \"Identical Particles: Permutation Symmetry and Exchange Interaction\",\n    \"Second Quantization: Creation and Annihilation Operators\",\n    \"The Klein-Gordon Equation and its Interpretation\",\n    \"The Dirac Equation: Spin and Relativistic Effects\",\n    \"Canonical Quantization of Scalar Fields\",\n    \"Quantization of the Electromagnetic Field: Photons\",\n    \"Quantum Algorithms: Beyond Basic Gates (Deutsch-Jozsa, Grover, Shor)\",\n    \"Quantum Error Correction: Basic Principles and Examples\",\n    \"Quantum Simulation and its Applications\",\n    \"Band Theory and Electronic Properties of Solids\",\n    \"Superconductivity: BCS Theory and Phenomena\",\n    \"Quantum Optics: Coherence and Non-Classical Light\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "None",
+          "score": 10
+        }
+      ],
+      "inputTokens": 1064,
+      "outputTokens": 328,
+      "duration": 18380.551792
+    },
+    {
+      "testCase": {
+        "id": "en-quantum-physics-advanced-1",
+        "userInput": {
+          "courseTitle": "Quantum Physics",
+          "locale": "en",
+          "level": "advanced",
+          "previousChapters": [
+            "Quantum physics and everyday technology",
+            "Math toolkit I: complex numbers and vectors",
+            "Math toolkit II: linear algebra and bra–ket notation",
+            "Probability in quantum mechanics",
+            "Key experiments: blackbody, photoelectric, Compton",
+            "Interference and the double-slit experiment",
+            "Quantum states and superposition",
+            "Observables, operators, and eigenvalues",
+            "Measurement and the Born rule",
+            "The uncertainty principle and commutators",
+            "Time evolution and the Schrödinger equation",
+            "Bound states: particle in a box",
+            "Quantum tunneling and barriers",
+            "The quantum harmonic oscillator",
+            "Angular momentum and spin-1/2",
+            "Many-particle systems and quantum statistics",
+            "Entanglement and Bell inequalities",
+            "Mixed states and density matrices",
+            "Decoherence and open quantum systems",
+            "Atomic structure and spectra",
+            "Quantum phenomena in solids and semiconductors",
+            "Qubits and basic quantum gates",
+            "Noise, errors, and NISQ hardware",
+            "Quantum technologies: cryptography, sensing, and communication",
+            "Experimental tools: lasers, interferometers, and detectors",
+            "Numerical and simulation tools for quantum systems",
+            "Problem-solving strategies and common pitfalls",
+            "Career paths and next steps",
+            "Symmetries and conservation laws",
+            "Addition of angular momentum",
+            "Variational method",
+            "Time-independent perturbation theory: non-degenerate",
+            "Time-independent perturbation theory: degenerate",
+            "Fine and hyperfine structure; Zeeman and Stark effects",
+            "Time-dependent perturbation theory and Fermi’s golden rule",
+            "Selection rules and dipole transitions",
+            "Semiclassical approximation and WKB method",
+            "Scattering in one dimension and resonances",
+            "Scattering in three dimensions: partial waves and phase shifts",
+            "Born approximation and cross sections",
+            "Molecular bonding and electronic structure",
+            "Molecular rotations, vibrations, and spectra",
+            "Light–matter interaction and two-level systems",
+            "Cavity and circuit QED fundamentals",
+            "Master equations and Lindblad dynamics",
+            "Quantum trajectories and continuous measurement",
+            "Path integrals in quantum mechanics",
+            "Relativistic quantum mechanics: Klein–Gordon and Dirac",
+            "Second quantization and creation–annihilation operators",
+            "Many-body methods: mean-field and Hartree–Fock",
+            "Quantum transport and mesoscopic systems",
+            "Berry phase and topological effects",
+            "Quantum metrology and sensing limits",
+            "Quantum algorithms: phase estimation and amplitude amplification",
+            "Variational quantum algorithms: VQE and QAOA",
+            "Characterization and verification: tomography and randomized benchmarking"
+          ]
+        },
+        "expectations": "\n      - Content in English\n      - Explore advanced quantum physics topics such as quantum entanglement, quantum cryptography, and cutting-edge research\n      - Prepare students for leadership roles in physics research or industry\n      - Prepare them to be at the forefront of quantum physics\n      - At the end of this course, they should be able to take roles at top research institutions or tech companies working on quantum technologies\n      - They should be ready to do a Master's or PhD in Quantum Physics or related fields\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Build upon previous chapters\n  - Cover specialized topics and advanced techniques\n  - Allow them to lead complex projects and mentor others\n  - Prepare them for certifications or advanced studies in the subject\n  - Prepare them to be at the forefront of the field\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn the theoretical frameworks of quantum field theory, advanced many-body physics, and cutting-edge quantum information science. This is useful for conducting theoretical and experimental research, developing novel quantum technologies, and leading innovation in fields like high-energy physics, condensed matter physics, and quantum computing.\",\n  \"chapters\": [\n    \"Quantum Field Theory: Canonical Quantization Principles\",\n    \"Quantization of the Real Scalar Field\",\n    \"Quantization of the Complex Scalar Field\",\n    \"Quantization of the Dirac Field and Spinors\",\n    \"Quantization of the Electromagnetic Field and Photons\",\n    \"Interactions and the Interaction Picture in QFT\",\n    \"Feynman Diagrams and Perturbative Expansion in QFT\",\n    \"Scattering Amplitudes and Cross Sections in QFT\",\n    \"Renormalization Group: Conceptual Foundations\",\n    \"Effective Field Theories and Scale Dependence\",\n    \"Symmetries and Conservation Laws in Quantum Field Theory\",\n    \"Gauge Theories and Local Symmetries\",\n    \"Introduction to Quantum Chromodynamics (QCD)\",\n    \"Electroweak Theory and the Standard Model Overview\",\n    \"Path Integral Formulation in Quantum Field Theory\",\n    \"Advanced Many-Body Green's Functions: Formalism\",\n    \"Applications of Green's Functions in Condensed Matter Physics\",\n    \"Kubo Formula and Linear Response Theory\",\n    \"BCS Theory of Superconductivity: Microscopic Details\",\n    \"High-Temperature Superconductivity: Phenomenological Models\",\n    \"Quantum Phase Transitions: Theoretical Frameworks\",\n    \"Critical Phenomena and Scaling in Quantum Systems\",\n    \"Topological Phases of Matter: Beyond Berry Phase\",\n    \"Fractional Quantum Hall Effect: Theory and Edge Modes\",\n    \"Topological Insulators and Superconductors: Classification and Properties\",\n    \"Quantum Error Correction Codes: Stabilizer Formalism\",\n    \"Fault-Tolerant Quantum Computing Architectures\",\n    \"Quantum Machine Learning: Advanced Algorithms and Models\",\n    \"Quantum Reinforcement Learning Principles\",\n    \"Quantum Thermodynamics: Work, Heat, and Engines\",\n    \"Quantum Control and Optimal Control Theory\",\n    \"Quantum Chaos and Random Matrix Theory\",\n    \"Foundations of Quantum Mechanics: Non-Locality and Contextuality\",\n    \"Interpretations of Quantum Mechanics: Advanced Discussions\",\n    \"Quantum Gravity: Conceptual Approaches and Challenges\",\n    \"Quantum Metrology with Entangled and Squeezed States\",\n    \"Advanced Quantum Communication Protocols and Networks\",\n    \"Relativistic Quantum Information Theory\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The response is excellent and the proposed chapter list is highly comprehensive, representing a graduate or PhD-level curriculum, which is appropriate given the extensive list of previous chapters. A minor potential improvement would be to add a dedicated chapter on 'Conformal Field Theory (CFT)', as it is a cornerstone of modern theoretical physics and a natural extension of the Quantum Field Theory section. However, its absence is a very minor omission in an otherwise outstanding course outline.",
+          "score": 9.5
+        }
+      ],
+      "inputTokens": 1299,
+      "outputTokens": 538,
+      "duration": 20729.350250000003
+    }
+  ]
+}
