@@ -1,0 +1,230 @@
+{
+  "taskId": "chapter-lessons",
+  "modelId": "google/gemini-2.5-flash",
+  "results": [
+    {
+      "testCase": {
+        "id": "en-ml-supervised-regression-1",
+        "userInput": {
+          "courseTitle": "Machine Learning",
+          "chapterTitle": "Supervised Learning: Linear Regression",
+          "locale": "en"
+        },
+        "expectations": "\n      - Content in US English\n      - Should NOT include broad introductory lessons like \"What is Supervised Learning?\" (belongs in earlier chapter)\n      - Should focus specifically on Linear Regression concepts\n      - Should break down complex topics (e.g., separate lessons for cost function, gradient descent steps)\n\n      \n  - Lessons are bite-sized and focused on single concepts that could be learned in 2-3 minutes each\n  - Do not add lessons that may have been covered in other chapters\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn how to build and interpret linear regression models to predict continuous outcomes from data. This knowledge is crucial for making data-driven predictions and understanding relationships between variables in various business and scientific applications.\",\n  \"lessons\": [\n    \"What is Linear Regression?\",\n    \"Predicting Continuous Values\",\n    \"Independent and Dependent Variables\",\n    \"The Equation of a Line: y = mx + b\",\n    \"Understanding Model Parameters: Slope and Intercept\",\n    \"What are Residuals (Errors)?\",\n    \"Measuring Model Error: Mean Squared Error (MSE)\",\n    \"The Goal: Minimizing the Cost Function\",\n    \"Introduction to Gradient Descent\",\n    \"When to Use the Normal Equation\",\n    \"Simple Linear Regression\",\n    \"Multiple Linear Regression\",\n    \"Interpreting Model Coefficients\",\n    \"R-squared: Explaining Variance\",\n    \"Root Mean Squared Error (RMSE)\",\n    \"Key Assumptions of Linear Regression\",\n    \"Identifying and Handling Outliers\",\n    \"Feature Scaling for Linear Models\",\n    \"Handling Categorical Features\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The response is very strong, but a few topics could be broken down even further to perfectly match the 'bite-sized' instruction. For example, 'Introduction to Gradient Descent' is a large topic, even for an introduction, and could be split into 'The Goal of Gradient Descent', 'What is a Learning Rate?', and 'How Gradient Descent Finds a Minimum'. Similarly, 'Key Assumptions of Linear Regression' could be broken down into a separate lesson for each major assumption (e.g., 'The Linearity Assumption', 'Homoscedasticity: Constant Error Variance').",
+          "score": 8.5
+        }
+      ],
+      "inputTokens": 663,
+      "outputTokens": 240,
+      "duration": 8634.486334000001
+    },
+    {
+      "testCase": {
+        "id": "pt-fisica-mecanica-newtoniana-1",
+        "userInput": {
+          "courseTitle": "Física Quântica",
+          "chapterTitle": "Fundamentos: Mecânica Newtoniana",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n      - Should focus on Newtonian mechanics foundations\n      - Should NOT include quantum mechanics concepts (those belong in later chapters)\n\n      \n  - Lessons are bite-sized and focused on single concepts that could be learned in 2-3 minutes each\n  - Do not add lessons that may have been covered in other chapters\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá os princípios fundamentais que regem o movimento de objetos no nosso cotidiano, como força, massa e energia. Esse conhecimento é essencial para entender a descrição clássica do universo, estabelecendo a base para compreender as distinções e complexidades do mundo quântico.\",\n  \"lessons\": [\n    \"O Que é Mecânica Newtoniana?\",\n    \"Conceito de Referencial Inercial\",\n    \"Massa e Inércia: Primeira Lei de Newton\",\n    \"Força: A Causadora da Aceleração\",\n    \"A Segunda Lei de Newton: F=ma\",\n    \"Resultante de Forças: Adição Vetorial\",\n    \"A Terceira Lei de Newton: Ação e Reação\",\n    \"O Conceito de Momento Linear\",\n    \"Princípio da Conservação do Momento Linear\",\n    \"Trabalho e Energia Cinética\",\n    \"Energia Potencial Gravitacional\",\n    \"Conservação da Energia Mecânica\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The instructions explicitly state: \"If you find yourself using 'AND', 'OR', or 'VS' in a title, you should split it into separate lessons\". The response includes two lesson titles that violate this rule:\n\n1. \"Massa e Inércia: Primeira Lei de Newton\" (Mass and Inertia: Newton's First Law)\n2. \"Trabalho e Energia Cinética\" (Work and Kinetic Energy)\n\nThese combine concepts that could have been split into more focused, bite-sized lessons as requested by the prompt's philosophy.",
+          "score": 8.5
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "To better adhere to the instructions, the lessons that combine concepts should be split. For example:\n- \"Massa e Inércia: Primeira Lei de Newton\" could be broken down into \"O Conceito de Inércia\" and \"A Primeira Lei de Newton\".\n- \"Trabalho e Energia Cinética\" could be split into \"Definindo Trabalho Físico\", \"O que é Energia Cinética?\", and \"O Teorema Trabalho-Energia\".\nThis would make each lesson even more focused on a single concept, which was a core requirement.",
+          "score": 8.5
+        }
+      ],
+      "inputTokens": 665,
+      "outputTokens": 226,
+      "duration": 8091.495457999998
+    },
+    {
+      "testCase": {
+        "id": "es-historia-reconquista-1",
+        "userInput": {
+          "courseTitle": "Historia de España",
+          "chapterTitle": "La Reconquista (711-1492)",
+          "locale": "es"
+        },
+        "expectations": "\n      - Content in Spain Spanish\n      - Should focus on events within the Reconquista period\n      - Should NOT include lessons about earlier Visigothic period or later Colonial era\n      - Should break down into specific battles, kingdoms, and key moments\n\n      \n  - Lessons are bite-sized and focused on single concepts that could be learned in 2-3 minutes each\n  - Do not add lessons that may have been covered in other chapters\n\n    "
+      },
+      "output": "{\n  \"description\": \"Explorarás el proceso histórico de la Reconquista en la Península Ibérica, desde la llegada musulmana hasta la caída de Granada. Este conocimiento te permitirá comprender la formación de la España moderna y sus profundas raíces culturales.\",\n  \"lessons\": [\n    \"La Conquista Musulmana de Hispania (711-718)\",\n    \"Los Orígenes del Reino de Asturias\",\n    \"La Batalla de Covadonga (722)\",\n    \"El Emirato de Córdoba (756-929)\",\n    \"El Califato de Córdoba (929-1031)\",\n    \"La Marca Hispánica y el Imperio Carolingio\",\n    \"El Nacimiento de los Condados Catalanes\",\n    \"Los Reinos Taifas: Fragmentación Musulmana\",\n    \"El Cid Campeador: Figura y Legado\",\n    \"La Llegada de los Almorávides\",\n    \"La Batalla de Sagrajas (1086)\",\n    \"La Llegada de los Almohades\",\n    \"La Batalla de Alarcos (1195)\",\n    \"La Batalla de Las Navas de Tolosa (1212)\",\n    \"La Gran Expansión Castellana en el Siglo XIII\",\n    \"La Expansión de la Corona de Aragón en el Siglo XIII\",\n    \"La Repoblación de los Territorios Conquistados\",\n    \"Las Órdenes Militares en la Reconquista\",\n    \"El Reino Nazarí de Granada: Último Baluarte\",\n    \"Crisis y Consolidación Monárquica (Siglos XIV-XV)\",\n    \"Los Reyes Católicos: La Unión Dinástica\",\n    \"La Campaña y Asedio de Granada (1482-1492)\",\n    \"Las Capitulaciones de Granada (1492)\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "Several lesson titles are too broad and/or violate the instruction to not use 'and' ('y' in Spanish), which suggests a lesson should be split. \n\n1. 'La Gran Expansión Castellana en el Siglo XIII': This is a very broad topic covering decades of conquests under multiple rulers. It could be broken down into more specific events.\n2. 'La Expansión de la Corona de Aragón en el Siglo XIII': Similar to the above, this is a broad topic covering the conquests of the Balearic Islands and Valencia.\n3. 'Crisis y Consolidación Monárquica (Siglos XIV-XV)': This title explicitly uses 'y' ('and') to combine two massive and distinct topics (the late medieval crisis and the rise of stronger monarchies). This directly violates a key instruction.\n4. 'La Campaña y Asedio de Granada (1482-1492)': This title also uses 'y' to combine the decade-long war with the final siege, which could have been separate lessons.",
+          "score": 8
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "To better adhere to the 'bite-sized' lesson philosophy, the broader lessons should be broken down. For example, 'Crisis y Consolidación Monárquica' could be split into 'La Crisis del Siglo XIV' and 'El Fortalecimiento del Poder Real en el Siglo XV'. Similarly, the 13th-century expansion lessons could be broken down by specific campaigns, such as 'La Conquista del Valle del Guadalquivir' and 'La Conquista de Valencia por Jaime I'. This would make each lesson more focused on a single concept that can be learned in 2-3 minutes.",
+          "score": 8.5
+        }
+      ],
+      "inputTokens": 671,
+      "outputTokens": 418,
+      "duration": 17511.524125
+    },
+    {
+      "testCase": {
+        "id": "en-matrix-neo-journey-1",
+        "userInput": {
+          "courseTitle": "The Matrix",
+          "chapterTitle": "Neo's Journey: From Thomas Anderson to The One",
+          "locale": "en"
+        },
+        "expectations": "\n      - Content in US English\n      - Should focus on Neo's character arc\n      - Should NOT include lessons about other characters' journeys (Trinity, Morpheus)\n      - Should NOT include general Matrix world-building (that belongs in other chapters)\n\n      \n  - Lessons are bite-sized and focused on single concepts that could be learned in 2-3 minutes each\n  - Do not add lessons that may have been covered in other chapters\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will trace Neo's transformative journey from a disillusioned programmer named Thomas Anderson to the prophesied savior, 'The One.' This understanding provides insight into character evolution, narrative arcs, and the hero's journey within complex story worlds.\",\n  \"lessons\": [\n    \"Thomas Anderson: The Mundane Programmer\",\n    \"Neo: The Hacker's Double Life\",\n    \"The Digital Rabbit Hole Begins\",\n    \"Meeting Trinity: The First Contact\",\n    \"Morpheus's Offer: Red Pill or Blue Pill?\",\n    \"Waking Up: The Real World Revealed\",\n    \"Understanding the Matrix's Nature\",\n    \"Training in the Construct: Basic Skills\",\n    \"Jumping and Physical Limitations\",\n    \"The Oracle's Prophecy\",\n    \"First Encounter with Agents\",\n    \"Neo's Sacrifice and Rebirth\",\n    \"Awakening as The One\",\n    \"Stopping Bullets: Newfound Powers\",\n    \"Seeing the Code: Mastering the Matrix\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The lesson title \"Neo's Sacrifice and Rebirth\" combines two distinct, albeit connected, events. The instructions emphasize breaking topics into the smallest possible units and avoiding concepts that might be combined with \"and\". This could have been split into two lessons, such as \"Neo's Death in the Hallway\" and \"Awakening as The One\" (which is already a separate lesson, making this one slightly redundant or poorly named). Similarly, \"Training in the Construct: Basic Skills\" is a bit broad and could have been broken down further (e.g., \"The Sparring Program\", \"The Jump Program\").",
+          "score": 8.5
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "To be even more aligned with the bite-sized philosophy, some lessons could be made more granular. For example, splitting \"Training in the Construct: Basic Skills\" into separate lessons for each specific skill taught (e.g., \"Learning via Uploads,\" \"The Sparring Program\"). The title \"The Digital Rabbit Hole Begins\" is a bit vague and could be more specific, like \"Following the White Rabbit\".",
+          "score": 9
+        }
+      ],
+      "inputTokens": 668,
+      "outputTokens": 221,
+      "duration": 7342.450290999997
+    },
+    {
+      "testCase": {
+        "id": "pt-direito-constitucional-fundamentais-1",
+        "userInput": {
+          "courseTitle": "Direito",
+          "chapterTitle": "Direito Constitucional: Direitos Fundamentais",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n      - Should focus on fundamental rights in Brazilian Constitution\n      - Should NOT include lessons about constitutional structure or powers (different chapter)\n      - Should break down each category of fundamental rights separately\n\n      \n  - Lessons are bite-sized and focused on single concepts that could be learned in 2-3 minutes each\n  - Do not add lessons that may have been covered in other chapters\n\n    "
+      },
+      "output": "{\n  \"description\": \"Neste capítulo, você aprenderá sobre os Direitos Fundamentais na Constituição Brasileira, compreendendo sua origem, características e aplicabilidade. Este conhecimento é essencial para entender a proteção da dignidade humana e a estrutura da justiça em um estado democrático de direito.\",\n  \"lessons\": [\n    \"O Que São Direitos Fundamentais\",\n    \"Importância dos Direitos Fundamentais\",\n    \"Fundamentos dos Direitos Fundamentais\",\n    \"Gerações de Direitos Fundamentais: Primeira Dimensão\",\n    \"Gerações de Direitos Fundamentais: Segunda Dimensão\",\n    \"Gerações de Direitos Fundamentais: Terceira Dimensão\",\n    \"Características: Universalidade dos Direitos Fundamentais\",\n    \"Características: Historicidade dos Direitos Fundamentais\",\n    \"Características: Inalienabilidade dos Direitos Fundamentais\",\n    \"Características: Irrenunciabilidade dos Direitos Fundamentais\",\n    \"Características: Imprescritibilidade dos Direitos Fundamentais\",\n    \"Características: Relatividade dos Direitos Fundamentais\",\n    \"Características: Aplicabilidade Imediata dos Direitos Fundamentais\",\n    \"Direitos Individuais: Liberdade de Expressão\",\n    \"Direitos Individuais: Inviolabilidade da Vida Privada\",\n    \"Direitos Individuais: Propriedade\",\n    \"Direitos Coletivos: Associações\",\n    \"Direitos Sociais: Educação\",\n    \"Direitos Sociais: Saúde\",\n    \"Direitos Sociais: Previdência Social\",\n    \"Direitos Políticos: Voto\",\n    \"Direitos Políticos: Elegibilidade\",\n    \"Nacionalidade: Brasieiro Nato\",\n    \"Nacionalidade: Brasileiro Naturalizado\",\n    \"Titulares dos Direitos Fundamentais\",\n    \"Eficácia das Normas: Plena\",\n    \"Eficácia das Normas: Contida\",\n    \"Eficácia das Normas: Limitada\",\n    \"Limites e Restrições aos Direitos Fundamentais\",\n    \"Colisão entre Direitos Fundamentais\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The response fails to 'completely cover the subject' as requested in the instructions. It completely omits the topic of 'Remédios Constitucionais' (Constitutional Remedies), which includes fundamental legal instruments like Habeas Corpus, Mandado de Segurança, Habeas Data, Mandado de Injunção, and Ação Popular. These remedies are a core and indispensable part of the study of Fundamental Rights in the Brazilian Constitution, as they are the primary mechanisms for enforcing these rights.",
+          "score": 7
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The list of specific individual rights provided (Freedom of Expression, Privacy, Property) is very limited, considering the extensive list in the Brazilian Constitution's Article 5. While the goal is granularity, the coverage feels sparse. Additionally, the topic of 'Deveres Fundamentais' (Fundamental Duties), which are the counterpart to rights, is also missing.",
+          "score": 8.5
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The lesson plan would be significantly more complete and aligned with the prompt's requirement to 'completely cover the subject' by adding a series of lessons dedicated to the Constitutional Remedies, with a separate lesson for each one. Adding more examples of individual rights and a lesson on fundamental duties would also enhance the chapter's comprehensiveness.",
+          "score": 7.5
+        }
+      ],
+      "inputTokens": 664,
+      "outputTokens": 479,
+      "duration": 9363.037708000003
+    },
+    {
+      "testCase": {
+        "id": "en-java-oop-inheritance-1",
+        "userInput": {
+          "courseTitle": "Java",
+          "chapterTitle": "Object-Oriented Programming: Inheritance",
+          "locale": "en"
+        },
+        "expectations": "\n      - Content in US English\n      - Should focus specifically on inheritance concepts\n      - Should NOT include polymorphism or encapsulation (those are separate chapters)\n      - Should NOT include \"What is OOP?\" or similar lessons (they belong in earlier chapter)\n      - Should break down super keyword, method overriding, abstract classes separately\n\n      \n  - Lessons are bite-sized and focused on single concepts that could be learned in 2-3 minutes each\n  - Do not add lessons that may have been covered in other chapters\n\n    "
+      },
+      "output": "{\n  \"description\": \"You will learn how to create a hierarchy of related classes using inheritance in Java. This knowledge is crucial for writing efficient, reusable, and maintainable code, which is a cornerstone of modern software development.\",\n  \"lessons\": [\n    \"What is Inheritance?\",\n    \"Why Use Inheritance?\",\n    \"Parent and Child Classes\",\n    \"The 'extends' Keyword\",\n    \"The 'Object' Class as Root\",\n    \"Inheriting Fields from a Superclass\",\n    \"Inheriting Methods from a Superclass\",\n    \"Method Overriding Explained\",\n    \"Using the '@Override' Annotation\",\n    \"Calling Superclass Constructors with 'super()'\",\n    \"Accessing Superclass Members with 'super'\",\n    \"The 'protected' Access Modifier\",\n    \"Preventing Inheritance with 'final' Classes\",\n    \"Preventing Method Overriding with 'final' Methods\",\n    \"Single Inheritance in Java\",\n    \"Upcasting to a Superclass Type\",\n    \"Downcasting to a Subclass Type\",\n    \"Using the 'instanceof' Operator\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The response failed to follow two key instructions in the user's expectations. First, it completely omitted the topic of abstract classes and methods, even though the expectation was to \"break down ... abstract classes separately\". Abstract classes are a crucial concept within Java inheritance. Second, it included lessons on \"Upcasting\", \"Downcasting\", and \"instanceof\", which are foundational concepts for Polymorphism. The user explicitly stated, \"Should NOT include polymorphism or encapsulation (those are separate chapters)\". These inclusions and omissions represent a significant failure to adhere to the provided constraints.",
+          "score": 6.5
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The lesson list should be revised to meet the user's expectations. The lessons on \"Upcasting to a Superclass Type\", \"Downcasting to a Subclass Type\", and \"Using the 'instanceof' Operator\" should be removed as they belong in a chapter on Polymorphism. A new set of lessons on abstract classes and methods should be added, such as: \"What is an Abstract Class?\", \"What is an Abstract Method?\", and \"Implementing Abstract Classes\".",
+          "score": 7
+        }
+      ],
+      "inputTokens": 662,
+      "outputTokens": 240,
+      "duration": 9035.885374999998
+    },
+    {
+      "testCase": {
+        "id": "pt-marketing-seo-onpage-1",
+        "userInput": {
+          "courseTitle": "Marketing Digital",
+          "chapterTitle": "SEO: Otimização On-Page",
+          "locale": "pt"
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n      - Should focus specifically on on-page SEO techniques\n      - Should NOT include \"O que é SEO?\" (belongs in earlier chapter)\n      - Should NOT include off-page SEO, technical SEO, or link building (different chapters)\n      - Should break down each on-page element (title tags, meta descriptions, headers) into separate lessons\n\n      \n  - Lessons are bite-sized and focused on single concepts that could be learned in 2-3 minutes each\n  - Do not add lessons that may have been covered in other chapters\n\n    "
+      },
+      "output": "{\n  \"description\": \"Neste capítulo, você aprenderá a otimizar diretamente os elementos de uma página da web para melhorar sua visibilidade e classificação nos motores de busca. Este conhecimento é essencial para atrair mais tráfego orgânico e impulsionar o sucesso online de qualquer negócio ou projeto.\",\n  \"lessons\": [\n    \"O Que é Otimização On-Page\",\n    \"A Importância das Palavras-chave no On-Page\",\n    \"Pesquisa de Palavras-chave para Páginas Específicas\",\n    \"Otimização da Tag de Título (Title Tag)\",\n    \"Criação de Meta Descrições Atraentes\",\n    \"Uso Estratégico de Cabeçalhos (H1, H2, H3)\",\n    \"Otimização do Conteúdo da Página\",\n    \"Densidade e Posicionamento de Palavras-chave\",\n    \"Criação de URLs Amigáveis para SEO\",\n    \"Otimização de Imagens (Alt Text e Tamanho)\",\n    \"Construção de Links Internos Eficazes\",\n    \"Velocidade da Página e SEO On-Page\",\n    \"Responsividade Móvel para Otimização On-Page\",\n    \"Experiência do Usuário (UX) e SEO\",\n    \"Estrutura de Dados (Schema Markup) Básica\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "The response violates the instruction to break down topics into the smallest possible units and to avoid using 'and' in titles. Specifically:\n1. 'Otimização de Imagens (Alt Text e Tamanho)' combines two distinct topics: writing alt text and optimizing image file size. This directly violates the 'no AND' rule.\n2. 'Otimização do Conteúdo da Página' is too broad. Content optimization involves many sub-topics like readability, keyword integration, content structure, etc., which could each be a separate lesson.\n3. 'Experiência do Usuário (UX) e SEO' is also very broad. UX is a massive field, and this lesson could be broken down into more specific, actionable topics relevant to on-page SEO, such as page load time, interactivity, or reducing bounce rate.",
+          "score": 8
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The lesson list could be improved by breaking down the broader topics into more focused, bite-sized lessons as instructed. For example:\n- Split 'Otimização de Imagens (Alt Text e Tamanho)' into 'Otimizando o Texto Alternativo (Alt Text)' and 'Otimizando o Tamanho e Formato de Imagens'.\n- Replace 'Otimização do Conteúdo da Página' with more specific lessons like 'Escrevendo para a Web: Legibilidade e SEO' and 'Estruturando o Conteúdo para Intenção de Busca'.\n- Break down 'Experiência do Usuário (UX) e SEO' into lessons like 'O Impacto dos Core Web Vitals no SEO' and 'Estratégias para Aumentar o Tempo na Página'.",
+          "score": 8.5
+        }
+      ],
+      "inputTokens": 665,
+      "outputTokens": 293,
+      "duration": 6751.555082999999
+    }
+  ]
+}
