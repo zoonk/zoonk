@@ -903,6 +903,105 @@
       "inputTokens": 1403,
       "outputTokens": 751,
       "duration": 5259.594167000003
+    },
+    {
+      "testCase": {
+        "id": "pt-metodologias-ageis-advanced-1",
+        "userInput": {
+          "courseTitle": "Metodologias Ágeis",
+          "locale": "pt",
+          "level": "advanced",
+          "previousChapters": [
+            "O que é Agilidade e por que usar",
+            "Manifesto Ágil: valores e princípios",
+            "Lean Thinking e fluxo de valor",
+            "Modelos tradicionais vs. Ágil: quando cada um faz sentido",
+            "Papéis em times ágeis: Product Owner, Scrum Master e Time",
+            "Scrum: visão geral e fundamentos",
+            "Scrum: eventos (Planning, Daily, Review, Retrospective)",
+            "Scrum: artefatos e transparência (Product Backlog, Sprint Backlog, Incremento)",
+            "Kanban: visão geral e princípios",
+            "Kanban na prática: quadros, políticas explícitas e limites de WIP",
+            "Extreme Programming (XP): práticas essenciais de engenharia",
+            "User Stories de qualidade: INVEST e critérios de aceite",
+            "Backlog de Produto: criação, organização e refinamento",
+            "Priorização de backlog: valor, risco e técnicas (MoSCoW, WSJF)",
+            "Estimativa ágil: story points, Planning Poker e no-estimates (visão inicial)",
+            "Planejamento ágil: roadmaps, releases e sprints",
+            "Métricas básicas: velocidade, burndown, lead time e CFD",
+            "Qualidade e DevOps: testes, CI/CD e automação (noções básicas)",
+            "Comunicação e colaboração: cerimônias eficazes e segurança psicológica",
+            "Retrospectivas que geram ação e melhoria contínua",
+            "Alinhamento com objetivos: OKRs e metas de produto",
+            "Gestão de stakeholders e expectativas",
+            "Trabalho remoto e times distribuídos em ambientes ágeis",
+            "Antipadrões e armadilhas comuns em Scrum e Kanban",
+            "Introdução ao escalado: Scrum@Scale, LeSS e SAFe (quando considerar)",
+            "Compliance, risco e governança em contextos ágeis",
+            "Descoberta de produto: MVP, hipóteses e Dual-Track",
+            "Tendências atuais: dados e IA para informar decisões e cadência",
+            "Ferramentas do dia a dia: Jira, Trello, Azure Boards e GitHub Projects",
+            "Caminhos de carreira e certificações iniciais (PSM I, CSPO, KMP)",
+            "Maturidade ágil e diagnóstico de contexto",
+            "Teoria das filas e fluxo de trabalho",
+            "Métricas de fluxo avançadas: cycle time por percentil, aging WIP e flow efficiency",
+            "Previsões com dados do fluxo: simulações de Monte Carlo para prazo e capacidade",
+            "Planejamento orientado a risco e variabilidade",
+            "Backlog orientado a outcomes: de outputs para impacto",
+            "Descoberta contínua: Opportunity Solution Tree na prática",
+            "Jobs to Be Done: entrevistas e mapeamento de necessidades",
+            "Story Mapping: sequenciamento e releases úteis",
+            "Priorização com Cost of Delay e slicing orientado a valor",
+            "Roadmaps orientados a resultados e apostas estratégicas",
+            "Estimativa e no-estimates avançado: ranges, confiança e cadência",
+            "Kanban avançado: classes de serviço, SLE e políticas evolutivas",
+            "Scrum em ambientes complexos: adaptações sem perder empirismo",
+            "Gestão de dependências entre times e sincronização de cadências",
+            "Value Stream Management: mapeamento, gargalos e melhoria contínua",
+            "Engenharia para fluxo contínuo: trunk-based, feature flags e estratégias de branch",
+            "Qualidade e testes avançados: TDD/BDD, contract testing e test data management",
+            "Entrega contínua e métricas DORA: pipelines avançados, blue/green e canary",
+            "Observabilidade, SRE e confiabilidade aplicadas a times ágeis",
+            "Métricas de produto: North Star, OMTM e experimentação A/B",
+            "OKRs avançados: alinhamento, apostas e ciclos de revisão eficazes",
+            "Governança e compliance contínuos: trilhas de auditoria, segregação de funções e risco",
+            "Lean Portfolio Management: funding por value streams e guardrails",
+            "Orçamento e finanças ágeis: Beyond Budgeting e métricas financeiras",
+            "Contratos e fornecedores em contextos ágeis: fixo, T&M e orientado a valor",
+            "Facilitação avançada: Liberating Structures, decisões por consentimento e gestão de conflitos",
+            "Cultura, liderança servidora e coaching de times de alta performance",
+            "Colaboração assíncrona e documentação enxuta: ADRs, decision logs e handoffs",
+            "Agilidade em dados e IA: MLOps, experimentos e ética",
+            "Escalado na prática: padrões de coordenação e trade-offs entre SAFe, LeSS e Scrum@Scale",
+            "Ferramentas avançadas: automações, integrações e dashboards de fluxo e produto",
+            "Antipadrões avançados e correções guiadas por dados do fluxo",
+            "Roteiro de evolução organizacional: do time ao portfólio",
+            "Carreira e certificações intermediárias/avançadas (PSM II, A-CSPO, KMM, SAFe)"
+          ]
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n      - Explore advanced Agile concepts and techniques\n      - How to implement Agile at an organizational level\n      - Prepare students for leadership roles in Agile transformations\n      - Discuss emerging trends and future directions in Agile methodologies\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Build upon previous chapters\n  - Cover specialized topics and advanced techniques\n  - Allow them to lead complex projects and mentor others\n  - Prepare them for certifications or advanced studies in the subject\n  - Prepare them to be at the forefront of the field\n\n    "
+      },
+      "output": "{\n  \"description\": \"Neste curso avançado você aprofundará as práticas e estratégias de agilidade em escala empresarial, aprendendo a conduzir transformações organizacionais, integrar engenharia de IA/ML, otimizar governança, finanças e cultura para criar fluxos de valor de alta performance.\",\n  \"chapters\": [\n    \"Transformação organizacional ágil: roadmap, papéis de Agile Coach e Office de Agilidade\",\n    \"Governança ágil em nível corporativo: políticas, auditorias contínuas e conformidade regulatória (GDPR, ISO, SOC2)\",\n    \"Finanças ágil avançada: Beyond Budgeting, Funding por Value Streams e métricas de retorno de investimento\",\n    \"Contratos e parcerias ágeis: acordos baseados em valor, T&M, contratos híbridos e gestão de fornecedores\",\n    \"Agile para produtos de IA/ML: MLOps, experimentação contínua, ética de IA e integração com fluxos ágeis\",\n    \"Engenharia de hardware e sistemas críticos com práticas ágeis: SAFe for hardware, model-based development e segurança\",\n    \"DevSecOps avançado: segurança integrada ao pipeline, automação de testes de segurança e políticas de compliance\",\n    \"Observabilidade avançada e SRE para ambientes ágeis: métricas DORA avançadas, caos engineering e resilência\",\n    \"Cultura de alta performance: liderança servidora, coaching de escala, Liberating Structures avançadas e gestão de conflitos estratégicos\",\n    \"Coordenação de ecossistemas e parcerias: alianças estratégicas, open innovation e inner source em ambientes ágeis\",\n    \"Métricas de impacto de negócio: OKRs avançados, North Star, OMTM, experimentos A/B e análise de dados para decisões de produto\",\n    \"Estratégias de melhoria contínua em portfólio: Value Stream Management avançado, simulação de Monte Carlo em nível de portfólio e otimização de fluxo de valor\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "The response includes several chapters that are highly redundant or near-direct repetitions of topics listed in the `PREVIOUS_CHAPTERS` variable. This violates the explicit instruction \"Don't include previous chapters in the output, just the new ones\". Specifically:\n- Chapter 11 (\"Métricas de impacto de negócio\") is a direct combination of two previous chapters: \"Métricas de produto: North Star, OMTM e experimentação A/B\" and \"OKRs avançados: alinhamento, apostas e ciclos de revisão eficazes\".\n- Chapter 5 (\"Agile para produtos de IA/ML\") is almost identical in scope to the previous chapter \"Agilidade em dados e IA: MLOps, experimentos e ética\".\n- Chapter 3 (\"Finanças ágil avançada\") re-uses key concepts like \"Beyond Budgeting\" and \"Funding por Value Streams\" which were already listed in separate previous chapters.\nThis is a major failure to follow instructions, as it presents old content as new, diminishing the value of the course outline.",
+          "score": 7
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "Beyond the major repetitions, some other chapters are very similar to previous ones and represent only a minor incremental step, rather than a truly advanced new topic. For instance, Chapter 4 (\"Contratos e parcerias ágeis\") is very close in substance to the existing chapter on agile contracts. This suggests a difficulty in generating genuinely new and distinct advanced content.",
+          "score": 8
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The main improvement would be to replace the redundant chapters with new, genuinely advanced topics that are not on the previous chapters list. The course could also be made more 'extensive' as requested by adding more chapters. Examples of new advanced topics could include: applying Flight Levels for strategic alignment, advanced use of the Cynefin framework for complex decision-making, exploring sociocratic and self-management models, or focusing on executive coaching for agile leadership. This would create a true continuation of the learning path instead of a partial review.",
+          "score": 7.5
+        }
+      ],
+      "inputTokens": 1930,
+      "outputTokens": 750,
+      "duration": 5430.630666999961
     }
   ]
 }

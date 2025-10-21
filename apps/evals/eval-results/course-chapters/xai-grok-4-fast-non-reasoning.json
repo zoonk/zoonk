@@ -879,6 +879,129 @@
       "inputTokens": 1271,
       "outputTokens": 367,
       "duration": 11575.286666
+    },
+    {
+      "testCase": {
+        "id": "pt-law-basic-1",
+        "userInput": {
+          "courseTitle": "Direito",
+          "locale": "pt",
+          "level": "basic",
+          "previousChapters": []
+        },
+        "expectations": "\n      - Content in Brazilian Portuguese\n      - Should cover fundamental law topics such as constitutional law, civil law, criminal law, and administrative law\n      - Prepare students for further studies in law or related fields\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Should be suitable for beginners with no prior knowledge\n  - Allow them to get an entry-level job in the field\n  - Prepare them for real-world scenarios and challenges\n\n    "
+      },
+      "output": "{\n  \"description\": \"Você aprenderá os conceitos fundamentais do direito, incluindo o sistema jurídico brasileiro, direitos e deveres básicos, e como o direito influencia a vida cotidiana. Isso será útil para compreender seus direitos como cidadão, tomar decisões informadas em situações pessoais ou profissionais, e se preparar para papéis iniciais em áreas jurídicas ou administrativas.\",\n  \"chapters\": [\n    \"O que é Direito: Conceitos Básicos\",\n    \"Fontes do Direito no Brasil\",\n    \"O Sistema Jurídico Brasileiro\",\n    \"Princípios Fundamentais do Direito\",\n    \"Direito Constitucional: Direitos e Garantias Individuais\",\n    \"Estrutura do Estado Brasileiro\",\n    \"Poderes da União, Estados e Municípios\",\n    \"Direito Civil: Pessoas Naturais e Jurídicas\",\n    \"Direito Civil: Bens e Propriedade\",\n    \"Contratos no Direito Civil\",\n    \"Responsabilidade Civil e Danos\",\n    \"Direito de Família: Casamento e União Estável\",\n    \"Direito de Família: Filiação e Guarda\",\n    \"Direito de Família: Sucessões e Herança\",\n    \"Direito Penal: Crime e Pena\",\n    \"Princípios do Direito Penal\",\n    \"Crimes Contra a Pessoa\",\n    \"Crimes Contra o Patrimônio\",\n    \"Direito Processual Penal: Inquérito e Processo\",\n    \"Direito do Trabalho: Relação de Emprego\",\n    \"Direitos e Deveres do Trabalhador\",\n    \"Direito do Trabalho: Jornada e Remuneração\",\n    \"Direito Administrativo: Administração Pública\",\n    \"Atos Administrativos e Licitações\",\n    \"Direitos do Consumidor: Proteção Básica\",\n    \"Contratos de Consumo e Publicidade\",\n    \"Aplicações Práticas do Direito na Vida Cotidiana\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The course outline is very good and covers the classical, fundamental areas of law. However, to provide a more comprehensive and modern overview for a basic level, it could benefit from including introductory chapters on other highly relevant fields. Suggested additions include:\n- An introduction to Tax Law (Direito Tributário).\n- An introduction to Environmental Law (Direito Ambiental).\n- An introduction to Digital Law (Direito Digital), covering topics like data privacy and cybercrime.\nThese additions would make the course more current and better prepare learners for the wide range of legal issues in the modern world.",
+          "score": 8.5
+        }
+      ],
+      "inputTokens": 1061,
+      "outputTokens": 383,
+      "duration": 3275.642792000086
+    },
+    {
+      "testCase": {
+        "id": "en-quantum-physics-advanced-1",
+        "userInput": {
+          "courseTitle": "Quantum Physics",
+          "locale": "en",
+          "level": "advanced",
+          "previousChapters": [
+            "Quantum physics and everyday technology",
+            "Math toolkit I: complex numbers and vectors",
+            "Math toolkit II: linear algebra and bra–ket notation",
+            "Probability in quantum mechanics",
+            "Key experiments: blackbody, photoelectric, Compton",
+            "Interference and the double-slit experiment",
+            "Quantum states and superposition",
+            "Observables, operators, and eigenvalues",
+            "Measurement and the Born rule",
+            "The uncertainty principle and commutators",
+            "Time evolution and the Schrödinger equation",
+            "Bound states: particle in a box",
+            "Quantum tunneling and barriers",
+            "The quantum harmonic oscillator",
+            "Angular momentum and spin-1/2",
+            "Many-particle systems and quantum statistics",
+            "Entanglement and Bell inequalities",
+            "Mixed states and density matrices",
+            "Decoherence and open quantum systems",
+            "Atomic structure and spectra",
+            "Quantum phenomena in solids and semiconductors",
+            "Qubits and basic quantum gates",
+            "Noise, errors, and NISQ hardware",
+            "Quantum technologies: cryptography, sensing, and communication",
+            "Experimental tools: lasers, interferometers, and detectors",
+            "Numerical and simulation tools for quantum systems",
+            "Problem-solving strategies and common pitfalls",
+            "Career paths and next steps",
+            "Symmetries and conservation laws",
+            "Addition of angular momentum",
+            "Variational method",
+            "Time-independent perturbation theory: non-degenerate",
+            "Time-independent perturbation theory: degenerate",
+            "Fine and hyperfine structure; Zeeman and Stark effects",
+            "Time-dependent perturbation theory and Fermi’s golden rule",
+            "Selection rules and dipole transitions",
+            "Semiclassical approximation and WKB method",
+            "Scattering in one dimension and resonances",
+            "Scattering in three dimensions: partial waves and phase shifts",
+            "Born approximation and cross sections",
+            "Molecular bonding and electronic structure",
+            "Molecular rotations, vibrations, and spectra",
+            "Light–matter interaction and two-level systems",
+            "Cavity and circuit QED fundamentals",
+            "Master equations and Lindblad dynamics",
+            "Quantum trajectories and continuous measurement",
+            "Path integrals in quantum mechanics",
+            "Relativistic quantum mechanics: Klein–Gordon and Dirac",
+            "Second quantization and creation–annihilation operators",
+            "Many-body methods: mean-field and Hartree–Fock",
+            "Quantum transport and mesoscopic systems",
+            "Berry phase and topological effects",
+            "Quantum metrology and sensing limits",
+            "Quantum algorithms: phase estimation and amplitude amplification",
+            "Variational quantum algorithms: VQE and QAOA",
+            "Characterization and verification: tomography and randomized benchmarking"
+          ]
+        },
+        "expectations": "\n      - Content in English\n      - Explore advanced quantum physics topics such as quantum entanglement, quantum cryptography, and cutting-edge research\n      - Prepare students for leadership roles in physics research or industry\n      - Prepare them to be at the forefront of quantum physics\n      - At the end of this course, they should be able to take roles at top research institutions or tech companies working on quantum technologies\n      - They should be ready to do a Master's or PhD in Quantum Physics or related fields\n\n      \n  - Extensive list of chapters\n  - Progressive learning path, build upon previous chapters\n  - Modern terminology\n  - Avoid covering too much in a single chapter\n  - Current, relevant to current trends\n  - Never use things like \"Final Project\", \"Course Conclusion\" or anything that implies interaction with students (1-on-1, assignments, etc.)\n  - Should not include previous chapters in the output, just the new ones\n\n      \n  - Build upon previous chapters\n  - Cover specialized topics and advanced techniques\n  - Allow them to lead complex projects and mentor others\n  - Prepare them for certifications or advanced studies in the subject\n  - Prepare them to be at the forefront of the field\n\n    "
+      },
+      "output": "{\n  \"description\": \"This advanced course builds on foundational quantum mechanics to equip you with expertise in cutting-edge theoretical frameworks, computational methods, and experimental techniques, enabling you to lead research projects, develop novel quantum technologies, and mentor others in the field. You will gain the skills to tackle complex problems in quantum information, many-body physics, and quantum field theory, preparing you for top-tier roles in academia, industry, or advanced certifications like PhD programs.\",\n  \"chapters\": [\n    \"Quantum error correction codes\",\n    \"Fault-tolerant quantum computing\",\n    \"Quantum simulation of physical systems\",\n    \"Tensor networks and matrix product states\",\n    \"Density matrix renormalization group (DMRG)\",\n    \"Quantum Monte Carlo methods\",\n    \"Field-theoretic methods in many-body systems\",\n    \"Introduction to quantum field theory: free fields\",\n    \"Second quantization in quantum field theory\",\n    \"Path integrals for field theories\",\n    \"Gauge theories and symmetries in QFT\",\n    \"Renormalization and regularization techniques\",\n    \"Non-perturbative methods in QFT\",\n    \"Lattice quantum field theory\",\n    \"Topological quantum field theories\",\n    \"Quantum gravity and semiclassical approximations\",\n    \"AdS/CFT correspondence basics\",\n    \"Quantum information theory: entropy and channels\",\n    \"Quantum data structures and compression\",\n    \"Quantum cryptography: protocols and security proofs\",\n    \"Quantum key distribution implementations\",\n    \"Quantum networks and repeaters\",\n    \"Hybrid quantum-classical algorithms\",\n    \"Quantum machine learning foundations\",\n    \"Optimizing quantum circuits and compilation\",\n    \"Quantum hardware scaling and architectures\",\n    \"Superconducting qubits: design and control\",\n    \"Trapped-ion quantum computing\",\n    \"Photonic quantum computing\",\n    \"Neutral atom and Rydberg systems\",\n    \"Majorana fermions and topological qubits\",\n    \"Quantum phase estimation in practice\",\n    \"Shor's algorithm and factoring\",\n    \"Grover's search and optimization\",\n    \"Quantum annealing and adiabatic computing\",\n    \"Measurement-based quantum computing\",\n    \"Cluster states and graph states\",\n    \"Quantum walks and spatial search\",\n    \"Open quantum systems: collision models\",\n    \"Non-Markovian dynamics\",\n    \"Quantum thermodynamics and fluctuation theorems\",\n    \"Quantum batteries and energy storage\",\n    \"Relativistic effects in quantum information\",\n    \"Quantum optics: squeezed states and non-classical light\",\n    \"Jaynes-Cummings model extensions\",\n    \"Quantum feedback and control theory\",\n    \"Optimal quantum control: GRAPE and CRAB\",\n    \"Adaptive quantum measurements\",\n    \"Quantum sensing with NV centers\",\n    \"Precision measurements and atomic clocks\",\n    \"Quantum imaging and microscopy\",\n    \"Ultracold atoms and Bose-Einstein condensates\",\n    \"Fermionic cold atoms and Hubbard models\",\n    \"Quantum gases in optical lattices\",\n    \"Anyons and fractional quantum Hall effect\",\n    \"Topological insulators and superconductors\",\n    \"Kitaev honeycomb model\",\n    \"Floquet engineering in quantum systems\",\n    \"Driven-dissipative quantum matter\",\n    \"Quantum criticality and phase transitions\",\n    \"Holographic duality applications\",\n    \"String theory basics for quantum physicists\",\n    \"Experimental tests of quantum foundations\",\n    \"Interpretations of quantum mechanics\",\n    \"Decoherence in quantum computing\",\n    \"Quantum Darwinism and objectivity\",\n    \"Everett's many-worlds formalism\",\n    \"Bohmian mechanics and pilot waves\",\n    \"Quantum Bayesianism (QBism)\"\n  ]\n}",
+      "steps": [
+        {
+          "kind": "major_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "minor_errors",
+          "conclusion": "None",
+          "score": 10
+        },
+        {
+          "kind": "potential_improvements",
+          "conclusion": "The generated list of chapters is exceptionally comprehensive and well-structured for an advanced course. The flow is largely logical, grouping topics into thematic blocks (e.g., quantum computing methods, QFT, hardware, condensed matter). A very minor potential improvement could be to slightly re-order a few chapters for an even smoother narrative transition. For instance, the section on interpretations of quantum mechanics is placed at the very end, which is a common and valid pedagogical choice, but could alternatively be introduced earlier. However, this is a matter of stylistic preference rather than an error, and the current structure is excellent.",
+          "score": 9.5
+        }
+      ],
+      "inputTokens": 1499,
+      "outputTokens": 555,
+      "duration": 3994.471583000035
     }
   ]
 }
