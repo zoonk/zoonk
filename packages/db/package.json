@@ -17,13 +17,13 @@
     "./queries/*": "./src/queries/*.ts"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "6.17.0",
+    "@prisma/adapter-pg": "6.17.1",
     "@prisma/extension-accelerate": "2.0.2",
     "@vercel/functions": "3.1.0",
     "@zoonk/utils": "workspace:*"
   },
   "peerDependencies": {
-    "@prisma/client": ">=6.17.0",
+    "@prisma/client": ">=6.17.1",
     "pg": ">=8.16.0",
     "server-only": ">=0.0.1"
   },
@@ -31,7 +31,7 @@
     "@types/pg": "8.15.5",
     "@zoonk/tsconfig": "workspace:*",
     "dotenv": "17.2.3",
-    "prisma": "6.17.0",
+    "prisma": "6.17.1",
     "typescript": "^5"
   }
 }
