@@ -17,7 +17,7 @@ const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || "";
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || "";
 
 const stripeClient = new Stripe(STRIPE_SECRET_KEY, {
-  apiVersion: "2025-08-27.basil",
+  apiVersion: "2025-09-30.clover",
 });
 
 export type SendVerificationOTP = EmailOTPOptions["sendVerificationOTP"];
