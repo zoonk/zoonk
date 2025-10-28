@@ -162,6 +162,12 @@
       "suspicious": {
         "noAlert": "error",
         "noBitwiseOperators": "error",
+        "noConsole": {
+          "level": "error",
+          "options": {
+            "allow": ["error", "info", "warn"]
+          }
+        },
         "noConstantBinaryExpressions": "error",
         "noEmptyBlockStatements": "error",
         "noEvolvingTypes": "error",

@@ -58,7 +58,7 @@ async function runTestCase(
     .map(([key, value]) => `${key}=${value}`)
     .join(", ");
 
-  console.log(`Running test case: ${inputSummary} (run ${runNumber})`);
+  console.info(`Running test case: ${inputSummary} (run ${runNumber})`);
 
   const startTime = performance.now();
   const result = await task.generate({
@@ -70,7 +70,7 @@ async function runTestCase(
 
   const output = JSON.stringify(result.data, null, 2);
 
-  console.log("Generated output for test case, scoring...");
+  console.info("Generated output for test case, scoring...");
 
   const scoreResult = await generateScore({
     expectations: testCase.expectations,
@@ -79,7 +79,7 @@ async function runTestCase(
     system: result.systemPrompt,
   });
 
-  console.log(`Score: ${scoreResult.score}`);
+  console.info(`Score: ${scoreResult.score}`);
 
   // Create a test case with the run number appended to the ID
   const testCaseWithRun: TestCase = {
@@ -115,16 +115,16 @@ export async function runEval(
   const safeModelId = String(modelId).replace(/[\r\n]/g, "");
   const totalRuns = task.testCases.length * RUNS_PER_TEST_CASE;
 
-  console.log(
+  console.info(
     `\nStarting eval for task: ${task.name}, model: [${safeModelId}]`,
   );
 
-  console.log(
+  console.info(
     `Total test cases: ${task.testCases.length} (${totalRuns} runs with ${RUNS_PER_TEST_CASE} iterations each)`,
   );
 
   const existingResults = await loadExistingResults(task.id, modelId);
-  console.log(`Found ${existingResults.length} existing results`);
+  console.info(`Found ${existingResults.length} existing results`);
 
   // Generate all test case runs that need to be executed
   const testCaseRunsToExecute: Array<{
@@ -140,10 +140,10 @@ export async function runEval(
     }
   }
 
-  console.log(`Running ${testCaseRunsToExecute.length} new test case runs`);
+  console.info(`Running ${testCaseRunsToExecute.length} new test case runs`);
 
   if (testCaseRunsToExecute.length === 0) {
-    console.log("All test cases already completed, loading existing results");
+    console.info("All test cases already completed, loading existing results");
     const filePath = getResultsFilePath(task.id, modelId);
     const data = await fs.readFile(filePath, "utf-8");
     return JSON.parse(data) as TaskEvalResults;
@@ -173,7 +173,7 @@ export async function runEval(
   const allResults = [...existingResults, ...newResults];
 
   await saveResults(task.id, modelId, allResults);
-  console.log(`Saved ${allResults.length} total results`);
+  console.info(`Saved ${allResults.length} total results`);
 
   const filePath = getResultsFilePath(task.id, modelId);
   const data = await fs.readFile(filePath, "utf-8");
