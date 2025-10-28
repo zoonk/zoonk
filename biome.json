@@ -68,7 +68,6 @@
         "noUselessCatchBinding": "error",
         "noUselessUndefined": "error",
         "useConsistentArrowReturn": "error",
-        "useExplicitType": "off",
         "useMaxParams": "error",
         "useSortedClasses": {
           "fix": "safe",
