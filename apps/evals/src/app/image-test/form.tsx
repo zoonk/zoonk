@@ -34,16 +34,16 @@ export function ImageTestForm() {
         <div className="flex flex-col gap-2">
           <Label htmlFor="title">Course Title</Label>
           <Input
+            disabled={isPending}
             id="title"
             name="title"
-            type="text"
             placeholder="Enter a course title…"
             required
-            disabled={isPending}
+            type="text"
           />
         </div>
 
-        <Button type="submit" disabled={isPending} className="self-start">
+        <Button className="self-start" disabled={isPending} type="submit">
           {isPending && <Loader2 className="animate-spin" />}
           Generate Thumbnail
         </Button>
@@ -61,20 +61,20 @@ export function ImageTestForm() {
           <div className="flex flex-col gap-2">
             <p className="font-medium">Generated Thumbnail</p>
             <Image
-              src={result.imageUrl}
               alt="Generated course thumbnail"
-              width={1024}
-              height={1024}
               className="max-w-md rounded-lg border"
+              height={1024}
+              src={result.imageUrl}
+              width={1024}
             />
           </div>
           <div className="flex flex-col gap-2">
             <Label htmlFor="imageUrl">Image URL</Label>
             <Input
-              id="imageUrl"
-              value={result.imageUrl}
-              readOnly
               className="font-mono text-sm"
+              id="imageUrl"
+              readOnly
+              value={result.imageUrl}
             />
           </div>
         </div>

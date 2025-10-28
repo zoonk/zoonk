@@ -25,7 +25,7 @@ export function ContentFeedback({
     // Only track analytics if the feedback value is actually changing
     if (feedback !== value) {
       setFeedback(value);
-      track("Feedback", { kind, contentId, feedback: value });
+      track("Feedback", { contentId, feedback: value, kind });
     }
   };
 
@@ -37,26 +37,26 @@ export function ContentFeedback({
 
       <div className="flex gap-1">
         <Button
-          size="icon"
-          variant="ghost"
-          onClick={() => handleFeedback("upvote")}
           className={cn(
             "size-8 hover:bg-green-50 hover:text-green-600",
             feedback === "upvote" && "bg-green-50 text-green-600",
           )}
+          onClick={() => handleFeedback("upvote")}
+          size="icon"
+          variant="ghost"
         >
           <ThumbsUpIcon aria-hidden="true" />
           <span className="sr-only">{t("upvote")}</span>
         </Button>
 
         <Button
-          size="icon"
-          variant="ghost"
-          onClick={() => handleFeedback("downvote")}
           className={cn(
             "size-8 hover:bg-red-50 hover:text-red-600",
             feedback === "downvote" && "bg-red-50 text-red-600",
           )}
+          onClick={() => handleFeedback("downvote")}
+          size="icon"
+          variant="ghost"
         >
           <ThumbsDownIcon aria-hidden="true" />
           <span className="sr-only">{t("downvote")}</span>
@@ -64,7 +64,7 @@ export function ContentFeedback({
       </div>
 
       <FeedbackSheet side="bottom">
-        <Button variant="ghost" size="sm" className="text-muted-foreground">
+        <Button className="text-muted-foreground" size="sm" variant="ghost">
           <MessageSquareIcon aria-hidden="true" />
           {t("sendFeedback")}
         </Button>

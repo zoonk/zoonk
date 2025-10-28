@@ -34,11 +34,11 @@ export function SocialLogin() {
   return (
     <div className="flex flex-col gap-2">
       <Button
-        variant="outline"
-        type="button"
         className="w-full"
         disabled={state === "loadingGoogle"}
         onClick={() => signIn("google")}
+        type="button"
+        variant="outline"
       >
         {state === "loadingGoogle" && <Loader2Icon className="animate-spin" />}
         <IconBrandGoogleFilled aria-hidden="true" />
@@ -46,11 +46,11 @@ export function SocialLogin() {
       </Button>
 
       <Button
-        variant="outline"
-        type="button"
         className="w-full"
         disabled={state === "loadingApple"}
         onClick={() => signIn("apple")}
+        type="button"
+        variant="outline"
       >
         {state === "loadingApple" && <Loader2Icon className="animate-spin" />}
         <IconBrandAppleFilled aria-hidden="true" />

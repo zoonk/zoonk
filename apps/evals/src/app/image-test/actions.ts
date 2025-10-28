@@ -8,7 +8,7 @@ export async function generateThumbnailAction(formData: FormData) {
   try {
     const imageUrl = await generateCourseThumbnail({ title });
 
-    return { success: true, imageUrl };
+    return { imageUrl, success: true };
   } catch (error) {
     console.error("Error generating thumbnail:", error);
     return {

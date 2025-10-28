@@ -24,5 +24,5 @@ export function useKeyboardShortcut(key: string) {
   const open = useCallback(() => setIsOpen(true), []);
   const close = useCallback(() => setIsOpen(false), []);
 
-  return { isOpen, open, close };
+  return { close, isOpen, open };
 }

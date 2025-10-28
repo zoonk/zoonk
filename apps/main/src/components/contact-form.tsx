@@ -32,25 +32,25 @@ export function ContactForm() {
       <div className="flex flex-col gap-2">
         <Label htmlFor={emailId}>{t("email")}</Label>
         <Input
-          id={emailId}
-          name="email"
-          type="email"
-          required
-          placeholder={t("emailPlaceholder")}
+          autoComplete="email"
           defaultValue={session?.user?.email ?? ""}
           disabled={isPending}
-          autoComplete="email"
+          id={emailId}
+          name="email"
+          placeholder={t("emailPlaceholder")}
+          required
+          type="email"
         />
       </div>
 
       <div className="flex flex-col gap-2">
         <Label htmlFor={messageId}>{t("message")}</Label>
         <textarea
+          className="min-h-32 resize-y rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
           id={messageId}
           name="message"
-          required
           placeholder={t("messagePlaceholder")}
-          className="min-h-32 resize-y rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+          required
         />
       </div>
 

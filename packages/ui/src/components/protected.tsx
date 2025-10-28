@@ -43,8 +43,8 @@ function ProtectedAlert({
 }: React.ComponentProps<"section">) {
   return (
     <section
-      data-slot="protected-alert"
       className={cn("flex max-w-md flex-col gap-4", className)}
+      data-slot="protected-alert"
       {...props}
     >
       {children}

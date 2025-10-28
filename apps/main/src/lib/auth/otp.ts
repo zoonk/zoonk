@@ -18,9 +18,9 @@ export const sendVerificationOTP: SendVerificationOTP = async (
     `;
 
   await sendEmail({
-    to: email,
     subject,
     text,
+    to: email,
   });
 
   return;

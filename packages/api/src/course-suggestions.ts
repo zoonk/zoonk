@@ -27,8 +27,8 @@ export async function fetchCourseSuggestions({
   if (!record) {
     const { data } = await generateCourseSuggestions({
       locale,
-      prompt,
       model,
+      prompt,
     });
 
     await addCourseSuggestion({ locale, prompt, suggestions: data });

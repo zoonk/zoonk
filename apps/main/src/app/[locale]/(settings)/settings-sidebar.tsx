@@ -9,10 +9,10 @@ export async function SettingsSidebar() {
 
   return (
     <Sidebar
-      collapsible="icon"
-      title={t("settingsSidebarTitle")}
-      description={t("settingsSidebarDescription")}
       closeLabel={t("close")}
+      collapsible="icon"
+      description={t("settingsSidebarDescription")}
+      title={t("settingsSidebarTitle")}
     >
       <SettingsSidebarHeader />
 

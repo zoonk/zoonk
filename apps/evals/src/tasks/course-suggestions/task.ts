@@ -10,9 +10,9 @@ export const courseSuggestionsTask: Task<
   CourseSuggestionsParams,
   CourseSuggestionSchema["courses"]
 > = {
+  description: "Generate course suggestions from user input",
+  generate: generateCourseSuggestions,
   id: "course-suggestions",
   name: "Course Suggestions",
-  description: "Generate course suggestions from user input",
   testCases: TEST_CASES,
-  generate: generateCourseSuggestions,
 };

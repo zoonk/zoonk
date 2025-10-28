@@ -30,7 +30,7 @@ export function CourseSuggestionsFallback() {
 
       <EmptyContent>
         <Link
-          className={buttonVariants({ variant: "outline", size: "sm" })}
+          className={buttonVariants({ size: "sm", variant: "outline" })}
           href="/learn"
         >
           {t("loadingCancel")}

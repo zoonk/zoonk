@@ -1,17 +1,4 @@
 {
-  "name": "main",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "typecheck": "next typegen && tsc --noEmit",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "i18n": "i18n-check -s en -l messages -u src -f next-intl",
-    "stripe:listen": "stripe listen --forward-to http://localhost:3000/api/auth/stripe/webhook"
-  },
   "dependencies": {
     "@ai-sdk/gateway": "2.0.0",
     "@prisma/client": "6.17.1",
@@ -52,5 +39,18 @@
     "typescript": "^5",
     "vite-tsconfig-paths": "5.1.4",
     "vitest": "3.2.4"
-  }
+  },
+  "name": "main",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev",
+    "i18n": "i18n-check -s en -l messages -u src -f next-intl",
+    "start": "next start",
+    "stripe:listen": "stripe listen --forward-to http://localhost:3000/api/auth/stripe/webhook",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "next typegen && tsc --noEmit"
+  },
+  "type": "module"
 }

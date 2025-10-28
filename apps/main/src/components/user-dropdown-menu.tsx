@@ -23,7 +23,7 @@ export async function UserDropdownMenu() {
   return (
     <DropdownMenuContent align="end" className="w-56">
       {catalogMenu.map((menu) => (
-        <DropdownMenuItem key={menu.key} asChild>
+        <DropdownMenuItem asChild key={menu.key}>
           <ClientLink href={menu.url}>
             <menu.icon aria-hidden="true" />
             {menu.key}
@@ -34,7 +34,7 @@ export async function UserDropdownMenu() {
       <DropdownMenuSeparator />
 
       {accountMenu.map((menu) => (
-        <DropdownMenuItem key={menu.key} asChild>
+        <DropdownMenuItem asChild key={menu.key}>
           <ClientLink href={menu.url}>
             <menu.icon aria-hidden="true" />
             {menu.key}

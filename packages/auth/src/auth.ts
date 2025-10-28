@@ -28,58 +28,58 @@ export type AuthSetup = {
 
 export function zoonkAuth({ sendVerificationOTP }: AuthSetup) {
   return betterAuth({
-    database: prismaAdapter(prisma, { provider: "postgresql" }),
-    rateLimit: {
-      enabled: true,
-      storage: "database",
-    },
-    session: {
-      expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
-      cookieCache: {
-        enabled: true,
-        maxAge: 60 * COOKIE_CACHE_MINUTES,
-      },
-    },
-    socialProviders: {
-      google: {
-        prompt: "select_account",
-        clientId: process.env.GOOGLE_CLIENT_ID as string,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-      },
-      apple: {
-        clientId: process.env.APPLE_CLIENT_ID as string,
-        clientSecret: APPLE_CLIENT_SECRET,
-      },
-    },
-    trustedOrigins: ["https://appleid.apple.com"],
     account: {
       accountLinking: {
         enabled: true,
       },
     },
+    database: prismaAdapter(prisma, { provider: "postgresql" }),
     plugins: [
       nextCookies(),
       emailOTP({
-        storeOTP: "hashed",
         overrideDefaultEmailVerification: true,
         sendVerificationOTP,
+        storeOTP: "hashed",
       }),
       stripe({
+        createCustomerOnSignUp: true,
         stripeClient,
         stripeWebhookSecret: STRIPE_WEBHOOK_SECRET,
-        createCustomerOnSignUp: true,
         subscription: {
           enabled: true,
           plans: [
             {
-              name: "plus",
-              priceId: process.env.STRIPE_PLUS_MONTHLY_PRICE_ID || "",
               annualDiscountPriceId:
                 process.env.STRIPE_PLUS_YEARLY_PRICE_ID || "",
+              name: "plus",
+              priceId: process.env.STRIPE_PLUS_MONTHLY_PRICE_ID || "",
             },
           ],
         },
       }),
     ],
+    rateLimit: {
+      enabled: true,
+      storage: "database",
+    },
+    session: {
+      cookieCache: {
+        enabled: true,
+        maxAge: 60 * COOKIE_CACHE_MINUTES,
+      },
+      expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
+    },
+    socialProviders: {
+      apple: {
+        clientId: process.env.APPLE_CLIENT_ID as string,
+        clientSecret: APPLE_CLIENT_SECRET,
+      },
+      google: {
+        clientId: process.env.GOOGLE_CLIENT_ID as string,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+        prompt: "select_account",
+      },
+    },
+    trustedOrigins: ["https://appleid.apple.com"],
   });
 }

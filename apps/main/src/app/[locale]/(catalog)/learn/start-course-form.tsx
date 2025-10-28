@@ -35,23 +35,23 @@ export function StartCourseForm() {
 
   return (
     <form
-      onSubmit={submitForm}
-      className="w-full"
       aria-labelledby="learn-title"
+      className="w-full"
+      onSubmit={submitForm}
     >
-      <Label htmlFor={queryId} className="sr-only">
+      <Label className="sr-only" htmlFor={queryId}>
         {t("label")}
       </Label>
 
       <InputGroup className="h-12">
         <InputGroupInput
-          name="query"
-          id={queryId}
           autoFocus
-          placeholder={t("placeholder")}
-          required
           className="peer"
           disabled={isLoading}
+          id={queryId}
+          name="query"
+          placeholder={t("placeholder")}
+          required
         />
 
         <InputGroupAddon
@@ -61,12 +61,12 @@ export function StartCourseForm() {
           {isLoading && <Spinner />}
 
           <InputGroupButton
+            aria-label={t("submit")}
+            className="rounded-full"
+            disabled={isLoading}
+            size="icon-xs"
             type="submit"
             variant="default"
-            size="icon-xs"
-            className="rounded-full"
-            aria-label={t("submit")}
-            disabled={isLoading}
           >
             <ArrowUp aria-hidden="true" />
           </InputGroupButton>

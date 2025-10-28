@@ -22,8 +22,8 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "Follow" });
 
   return {
-    title: t("metaTitle"),
     description: t("metaDescription"),
+    title: t("metaTitle"),
   };
 }
 
@@ -48,13 +48,13 @@ export default async function Follow({
       <div className="grid w-full gap-4 sm:grid-cols-2 md:grid-cols-3">
         {getSocialProfiles(locale).map((social) => (
           <a
-            key={social.name}
-            href={social.url}
-            target="_blank"
-            rel="noopener noreferrer"
             className="flex items-center gap-3 rounded-lg border p-4 text-secondary-foreground/85 transition-colors hover:bg-accent"
+            href={social.url}
+            key={social.name}
+            rel="noopener noreferrer"
+            target="_blank"
           >
-            <social.icon size={32} aria-hidden="true" />
+            <social.icon aria-hidden="true" size={32} />
 
             <div>
               <div className="font-semibold">{social.name}</div>

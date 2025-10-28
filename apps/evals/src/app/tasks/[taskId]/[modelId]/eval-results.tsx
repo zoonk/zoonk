@@ -23,22 +23,22 @@ export function EvalResults({ results }: EvalResultsProps) {
   return (
     <div className="flex flex-col gap-8">
       <SummaryCard
-        averageScore={averageScore}
+        averageDuration={stats.averageDuration}
         averageInputTokens={stats.averageInputTokens}
         averageOutputTokens={stats.averageOutputTokens}
-        averageDuration={stats.averageDuration}
+        averageScore={averageScore}
         totalCost={stats.totalCost}
       />
 
       <div className="flex flex-col gap-4">
         <ContainerTitle>Test Cases</ContainerTitle>
 
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion className="w-full" collapsible type="single">
           {results.results.map((result, index) => (
             <TestCase
+              index={index}
               key={result.testCase.id || index}
               result={result}
-              index={index}
             />
           ))}
         </Accordion>

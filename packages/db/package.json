@@ -1,31 +1,9 @@
 {
-  "name": "@zoonk/db",
-  "type": "module",
-  "private": true,
-  "scripts": {
-    "postinstall": "pnpm db:generate",
-    "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate dev",
-    "db:deploy": "prisma migrate deploy",
-    "db:studio": "prisma studio",
-    "db:reset": "prisma migrate reset",
-    "typecheck": "tsc --noEmit"
-  },
-  "exports": {
-    ".": "./src/index.ts",
-    "./models": "./src/models.ts",
-    "./queries/*": "./src/queries/*.ts"
-  },
   "dependencies": {
     "@prisma/adapter-pg": "6.17.1",
     "@prisma/extension-accelerate": "2.0.2",
     "@vercel/functions": "3.1.0",
     "@zoonk/utils": "workspace:*"
-  },
-  "peerDependencies": {
-    "@prisma/client": ">=6.17.1",
-    "pg": ">=8.16.0",
-    "server-only": ">=0.0.1"
   },
   "devDependencies": {
     "@types/pg": "8.15.5",
@@ -33,5 +11,27 @@
     "dotenv": "17.2.3",
     "prisma": "6.17.1",
     "typescript": "^5"
-  }
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./models": "./src/models.ts",
+    "./queries/*": "./src/queries/*.ts"
+  },
+  "name": "@zoonk/db",
+  "peerDependencies": {
+    "@prisma/client": ">=6.17.1",
+    "pg": ">=8.16.0",
+    "server-only": ">=0.0.1"
+  },
+  "private": true,
+  "scripts": {
+    "db:deploy": "prisma migrate deploy",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:reset": "prisma migrate reset",
+    "db:studio": "prisma studio",
+    "postinstall": "pnpm db:generate",
+    "typecheck": "tsc --noEmit"
+  },
+  "type": "module"
 }

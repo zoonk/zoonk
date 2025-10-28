@@ -38,7 +38,7 @@ export async function getAppleClientSecret(): Promise<string> {
     .setExpirationTime(now + ttlSec)
     .sign(key);
 
-  cached = { token, exp: now + ttlSec };
+  cached = { exp: now + ttlSec, token };
 
   return token;
 }

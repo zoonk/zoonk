@@ -10,9 +10,9 @@ export const alternativeTitlesTask: Task<
   AlternativeTitlesParams,
   AlternativeTitlesSchema
 > = {
+  description: "Generate alternative course titles with the same meaning",
+  generate: generateAlternativeTitles,
   id: "alternative-titles",
   name: "Alternative Titles",
-  description: "Generate alternative course titles with the same meaning",
   testCases: TEST_CASES,
-  generate: generateAlternativeTitles,
 };

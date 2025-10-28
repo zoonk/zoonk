@@ -13,8 +13,8 @@ import "@zoonk/ui/globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://zoonk.com"),
   title: {
-    template: "%s | Zoonk",
     default: "",
+    template: "%s | Zoonk",
   },
 };
 

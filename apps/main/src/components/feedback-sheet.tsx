@@ -23,9 +23,9 @@ export function FeedbackSheet({ children, side }: FeedbackSheetProps) {
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent
-        side={side}
-        closeLabel={t("closeLabel")}
         className="mx-auto max-w-lg"
+        closeLabel={t("closeLabel")}
+        side={side}
       >
         <SheetHeader>
           <SheetTitle>{t("title")}</SheetTitle>

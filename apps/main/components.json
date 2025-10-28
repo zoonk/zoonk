@@ -1,24 +1,24 @@
 {
   "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "new-york",
-  "rsc": true,
-  "tsx": true,
-  "tailwind": {
-    "config": "",
-    "css": "../../packages/ui/src/styles/globals.css",
-    "baseColor": "neutral",
-    "cssVariables": true,
-    "prefix": ""
-  },
-  "iconLibrary": "lucide",
   "aliases": {
     "components": "@/components",
     "hooks": "@/hooks",
     "lib": "@/lib",
-    "utils": "@zoonk/ui/lib/utils",
-    "ui": "@zoonk/ui/components"
+    "ui": "@zoonk/ui/components",
+    "utils": "@zoonk/ui/lib/utils"
   },
+  "iconLibrary": "lucide",
   "registries": {
     "@kibo-ui": "https://www.kibo-ui.com/r/{name}.json"
-  }
+  },
+  "rsc": true,
+  "style": "new-york",
+  "tailwind": {
+    "baseColor": "neutral",
+    "config": "",
+    "css": "../../packages/ui/src/styles/globals.css",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "tsx": true
 }

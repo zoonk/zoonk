@@ -36,7 +36,7 @@ export function OTPForm({ email }: OTPFormProps) {
       </div>
 
       <form action={formAction} className="flex flex-col items-center gap-4">
-        <InputOTP name="otp" maxLength={6} required pattern="[0-9]*">
+        <InputOTP maxLength={6} name="otp" pattern="[0-9]*" required>
           <InputOTPGroup>
             <InputOTPSlot index={0} />
             <InputOTPSlot index={1} />
@@ -47,13 +47,13 @@ export function OTPForm({ email }: OTPFormProps) {
           </InputOTPGroup>
         </InputOTP>
 
-        <input type="hidden" name="email" value={email} />
+        <input name="email" type="hidden" value={email} />
 
         <InputError>{state.error}</InputError>
 
         <SubmitButton full>{t("submit")}</SubmitButton>
 
-        <Link href="/login" className={buttonVariants({ variant: "link" })}>
+        <Link className={buttonVariants({ variant: "link" })} href="/login">
           {t("changeEmail")}
         </Link>
       </form>

@@ -39,7 +39,7 @@ function UserInputSection({ userInput }: UserInputSectionProps) {
 
       <div className="flex flex-col gap-1">
         {Object.entries(userInput).map(([key, value]) => (
-          <p key={key} className="font-medium text-sm">
+          <p className="font-medium text-sm" key={key}>
             <span className="text-muted-foreground">{key}:</span> {value}
           </p>
         ))}
@@ -91,7 +91,7 @@ function EvaluationStepsSection({ steps }: EvaluationStepsSectionProps) {
       <p className="mb-2 text-muted-foreground text-sm">Evaluation Steps</p>
       <div className="flex flex-col gap-2">
         {steps.map((step) => (
-          <div key={step.kind} className="rounded-lg border p-3">
+          <div className="rounded-lg border p-3" key={step.kind}>
             <p className="mb-1 font-medium text-sm capitalize">
               {step.kind.replace(/_/g, " ")}
             </p>

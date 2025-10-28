@@ -1,25 +1,25 @@
 {
-  "name": "@zoonk/ai",
-  "type": "module",
-  "private": true,
-  "scripts": {
-    "typecheck": "tsc --noEmit"
-  },
-  "exports": {
-    "./*": "./src/*.ts"
-  },
   "dependencies": {
     "@ai-sdk/openai": "2.0.52",
     "@vercel/blob": "2.0.0",
     "ai": "5.0.62",
     "slugify": "1.6.6"
   },
+  "devDependencies": {
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "^5"
+  },
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "name": "@zoonk/ai",
   "peerDependencies": {
     "server-only": ">=0.0.1",
     "zod": ">=4.0.0"
   },
-  "devDependencies": {
-    "@zoonk/tsconfig": "workspace:*",
-    "typescript": "^5"
-  }
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "type": "module"
 }

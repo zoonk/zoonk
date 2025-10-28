@@ -1,24 +1,24 @@
 {
   "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "new-york",
+  "aliases": {
+    "components": "@zoonk/ui/components",
+    "hooks": "@zoonk/ui/hooks",
+    "lib": "@zoonk/ui/lib",
+    "ui": "@zoonk/ui/components",
+    "utils": "@zoonk/ui/lib/utils"
+  },
+  "iconLibrary": "lucide",
+  "registries": {
+    "@kibo-ui": "https://www.kibo-ui.com/r/{name}.json"
+  },
   "rsc": true,
-  "tsx": true,
+  "style": "new-york",
   "tailwind": {
+    "baseColor": "neutral",
     "config": "",
     "css": "src/styles/globals.css",
-    "baseColor": "neutral",
     "cssVariables": true,
     "prefix": ""
   },
-  "iconLibrary": "lucide",
-  "aliases": {
-    "components": "@zoonk/ui/components",
-    "utils": "@zoonk/ui/lib/utils",
-    "hooks": "@zoonk/ui/hooks",
-    "lib": "@zoonk/ui/lib",
-    "ui": "@zoonk/ui/components"
-  },
-  "registries": {
-    "@kibo-ui": "https://www.kibo-ui.com/r/{name}.json"
-  }
+  "tsx": true
 }

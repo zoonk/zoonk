@@ -29,7 +29,7 @@ export function SettingsSidebarAccount() {
         <SidebarMenu>
           {menuItems.map((item) => (
             <SidebarMenuItem key={item.key}>
-              <SidebarMenuButton isActive={pathname === item.url} asChild>
+              <SidebarMenuButton asChild isActive={pathname === item.url}>
                 <Link href={item.url}>
                   <item.icon aria-hidden="true" />
                   <span>{item.key}</span>

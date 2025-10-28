@@ -1,4 +1,4 @@
 {
-  "typescript.tsdk": "node_modules/typescript/lib",
-  "i18n-ally.localesPaths": ["./messages"]
+  "i18n-ally.localesPaths": ["./messages"],
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

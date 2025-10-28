@@ -41,8 +41,8 @@ export default function Home() {
 
           <ItemActions>
             <Link
-              href="/image-test"
               className={buttonVariants({ variant: "outline" })}
+              href="/image-test"
             >
               Test Images
             </Link>
@@ -58,8 +58,8 @@ export default function Home() {
 
             <ItemActions>
               <Link
-                href={`/tasks/${task.id}`}
                 className={buttonVariants({ variant: "outline" })}
+                href={`/tasks/${task.id}`}
               >
                 View Task
               </Link>

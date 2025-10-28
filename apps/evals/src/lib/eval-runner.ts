@@ -39,9 +39,9 @@ async function saveResults(
   await ensureResultsDir(taskId);
 
   const taskResults: TaskEvalResults = {
-    taskId,
     modelId,
     results,
+    taskId,
   };
 
   const filePath = getResultsFilePath(taskId, modelId);
@@ -73,10 +73,10 @@ async function runTestCase(
   console.log("Generated output for test case, scoring...");
 
   const scoreResult = await generateScore({
-    system: result.systemPrompt,
-    prompt: result.userPrompt,
     expectations: testCase.expectations,
     output,
+    prompt: result.userPrompt,
+    system: result.systemPrompt,
   });
 
   console.log(`Score: ${scoreResult.score}`);
@@ -88,12 +88,12 @@ async function runTestCase(
   };
 
   return {
-    testCase: testCaseWithRun,
-    output,
-    steps: scoreResult.steps,
-    inputTokens: result.usage.inputTokens ?? 0,
-    outputTokens: result.usage.outputTokens ?? 0,
     duration,
+    inputTokens: result.usage.inputTokens ?? 0,
+    output,
+    outputTokens: result.usage.outputTokens ?? 0,
+    steps: scoreResult.steps,
+    testCase: testCaseWithRun,
   };
 }
 
@@ -135,7 +135,7 @@ export async function runEval(
   for (const testCase of task.testCases) {
     for (let runNumber = 1; runNumber <= RUNS_PER_TEST_CASE; runNumber++) {
       if (!shouldSkipTestCase(existingResults, testCase.id, runNumber)) {
-        testCaseRunsToExecute.push({ testCase, runNumber });
+        testCaseRunsToExecute.push({ runNumber, testCase });
       }
     }
   }

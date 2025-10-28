@@ -5,8 +5,12 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [tsconfigPaths(), react()],
+  resolve: {
+    alias: {
+      "server-only": path.resolve(__dirname, "test/mocks/server-only.ts"),
+    },
+  },
   test: {
-    environment: "jsdom",
     deps: {
       optimizer: {
         ssr: {
@@ -14,16 +18,12 @@ export default defineConfig({
         },
       },
     },
+    environment: "jsdom",
     server: {
       deps: {
         // https://github.com/vercel/next.js/issues/77200
         inline: ["next-intl"],
       },
-    },
-  },
-  resolve: {
-    alias: {
-      "server-only": path.resolve(__dirname, "test/mocks/server-only.ts"),
     },
   },
 });

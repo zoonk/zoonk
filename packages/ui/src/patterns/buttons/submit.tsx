@@ -21,13 +21,13 @@ export function SubmitButton({
 
   return (
     <Button
-      type="submit"
-      disabled={status.pending}
       className={cn({
+        className,
         "w-full": full,
         "w-max": !full,
-        className,
       })}
+      disabled={status.pending}
+      type="submit"
       {...props}
     >
       {!status.pending && icon}

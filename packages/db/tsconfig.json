@@ -1,8 +1,8 @@
 {
-  "extends": "@zoonk/tsconfig/base.json",
   "compilerOptions": {
     "baseUrl": "."
   },
-  "include": ["src", "prisma.config.ts"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist"],
+  "extends": "@zoonk/tsconfig/base.json",
+  "include": ["src", "prisma.config.ts"]
 }

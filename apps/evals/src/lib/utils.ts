@@ -34,9 +34,9 @@ export async function getSortedModels(taskId: string) {
   );
 
   const order: Record<ModelStatus, number> = {
-    notStarted: 0,
-    incomplete: 1,
     completed: 2,
+    incomplete: 1,
+    notStarted: 0,
   };
 
   const sortedModels = modelWithStatus

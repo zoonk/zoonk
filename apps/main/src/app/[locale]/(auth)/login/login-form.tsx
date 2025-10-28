@@ -14,14 +14,14 @@ export default async function LoginForm() {
         <Label htmlFor="email">{t("email")}</Label>
 
         <Input
-          id="email"
-          type="email"
-          name="email"
-          autoComplete="email"
-          placeholder={t("emailPlaceholder")}
-          spellCheck={false}
           autoCapitalize="none"
+          autoComplete="email"
+          id="email"
+          name="email"
+          placeholder={t("emailPlaceholder")}
           required
+          spellCheck={false}
+          type="email"
         />
       </div>
 

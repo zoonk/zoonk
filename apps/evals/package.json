@@ -1,12 +1,4 @@
 {
-  "name": "evals",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "evals:dev": "next dev -p 3001",
-    "build-and-start": "next build && next start -p 3001",
-    "typecheck": "next typegen && tsc --noEmit"
-  },
   "dependencies": {
     "@ai-sdk/gateway": "2.0.0",
     "@zoonk/ai": "workspace:*",
@@ -26,5 +18,13 @@
     "@zoonk/tsconfig": "workspace:*",
     "raw-loader": "4.0.2",
     "typescript": "^5"
-  }
+  },
+  "name": "evals",
+  "private": true,
+  "scripts": {
+    "build-and-start": "next build && next start -p 3001",
+    "evals:dev": "next dev -p 3001",
+    "typecheck": "next typegen && tsc --noEmit"
+  },
+  "type": "module"
 }

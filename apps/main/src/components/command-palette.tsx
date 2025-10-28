@@ -65,27 +65,27 @@ export function CommandPalette() {
   return (
     <>
       <Button
-        variant="outline"
-        size="icon"
-        onClick={open}
         aria-keyshortcuts="Meta+K Control+K"
+        onClick={open}
+        size="icon"
+        variant="outline"
       >
         <Search />
         <span className="sr-only">{t("search")}</span>
       </Button>
 
       <CommandDialog
-        open={isOpen}
-        onOpenChange={closePalette}
-        title={t("search")}
-        description={t("paletteDescription")}
-        closeLabel={t("close")}
         className="top-4 translate-y-0 lg:top-1/2 lg:translate-y-[-50%]"
+        closeLabel={t("close")}
+        description={t("paletteDescription")}
+        onOpenChange={closePalette}
+        open={isOpen}
+        title={t("search")}
       >
         <CommandInput
+          onValueChange={setQuery}
           placeholder={t("paletteDescription")}
           value={query}
-          onValueChange={setQuery}
         />
 
         <CommandList>

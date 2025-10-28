@@ -34,9 +34,9 @@ export function SubscriptionPage() {
 
     try {
       const { error } = await authClient.subscription.upgrade({
+        cancelUrl: "/subscription",
         plan: "plus",
         successUrl: "/subscription",
-        cancelUrl: "/subscription",
       });
 
       if (error) {

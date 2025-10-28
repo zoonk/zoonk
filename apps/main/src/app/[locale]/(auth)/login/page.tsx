@@ -18,8 +18,8 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "Auth" });
 
   return {
-    title: t("metaTitle"),
     description: t("metaDescription"),
+    title: t("metaTitle"),
   };
 }
 

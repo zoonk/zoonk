@@ -15,20 +15,20 @@ import {
 } from "lucide-react";
 
 const menu = {
-  courses: { url: "/courses", icon: LayoutGrid },
-  displayName: { url: "/name", icon: IdCardLanyard },
-  feedback: { url: "/feedback", icon: MessageCircle },
-  follow: { url: "/follow", icon: Megaphone },
-  help: { url: "/help", icon: LifeBuoy },
-  home: { url: "/", icon: IconUfo },
-  language: { url: "/language", icon: Languages },
-  login: { url: "/login", icon: LogIn },
-  logout: { url: "/logout", icon: LogOut },
-  myCourses: { url: "/my", icon: LayoutGrid },
-  search: { url: "/search", icon: Search },
-  settings: { url: "/settings", icon: Settings },
-  start: { url: "/learn", icon: PlusCircle },
-  subscription: { url: "/subscription", icon: Gem },
+  courses: { icon: LayoutGrid, url: "/courses" },
+  displayName: { icon: IdCardLanyard, url: "/name" },
+  feedback: { icon: MessageCircle, url: "/feedback" },
+  follow: { icon: Megaphone, url: "/follow" },
+  help: { icon: LifeBuoy, url: "/help" },
+  home: { icon: IconUfo, url: "/" },
+  language: { icon: Languages, url: "/language" },
+  login: { icon: LogIn, url: "/login" },
+  logout: { icon: LogOut, url: "/logout" },
+  myCourses: { icon: LayoutGrid, url: "/my" },
+  search: { icon: Search, url: "/search" },
+  settings: { icon: Settings, url: "/settings" },
+  start: { icon: PlusCircle, url: "/learn" },
+  subscription: { icon: Gem, url: "/subscription" },
 } as const;
 
 type MenuKey = keyof typeof menu;

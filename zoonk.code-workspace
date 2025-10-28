@@ -1,4 +1,14 @@
 {
+  "extensions": {
+    "recommendations": [
+      "biomejs.biome",
+      "bradlc.vscode-tailwindcss",
+      "lokalise.i18n-ally",
+      "prisma.prisma",
+      "unifiedjs.vscode-mdx",
+      "vercel.turbo-vsc"
+    ]
+  },
   "folders": [
     { "path": "." },
     { "path": "./apps/evals" },
@@ -13,31 +23,21 @@
     { "path": "./packages/utils" }
   ],
   "settings": {
-    "typescript.tsdk": "./apps/main/node_modules/typescript/lib",
-    "i18n-ally.localesPaths": ["./apps/main/messages"],
-    "i18n-ally.keystyle": "nested",
-    "search.useIgnoreFiles": true,
-    "search.exclude": {
-      "*.tsbuildinfo": true,
-      "**/.turbo": true,
-      "**/.next": true,
-      "**/.vercel": true
-    },
     "[css]": { "editor.defaultFormatter": "biomejs.biome" },
     "[javascript]": { "editor.defaultFormatter": "biomejs.biome" },
+    "[json]": { "editor.defaultFormatter": "biomejs.biome" },
+    "[jsonc]": { "editor.defaultFormatter": "biomejs.biome" },
     "[typescript]": { "editor.defaultFormatter": "biomejs.biome" },
     "[typescriptreact]": { "editor.defaultFormatter": "biomejs.biome" },
-    "[json]": { "editor.defaultFormatter": "biomejs.biome" },
-    "[jsonc]": { "editor.defaultFormatter": "biomejs.biome" }
-  },
-  "extensions": {
-    "recommendations": [
-      "biomejs.biome",
-      "bradlc.vscode-tailwindcss",
-      "lokalise.i18n-ally",
-      "prisma.prisma",
-      "unifiedjs.vscode-mdx",
-      "vercel.turbo-vsc"
-    ]
+    "i18n-ally.keystyle": "nested",
+    "i18n-ally.localesPaths": ["./apps/main/messages"],
+    "search.exclude": {
+      "*.tsbuildinfo": true,
+      "**/.next": true,
+      "**/.turbo": true,
+      "**/.vercel": true
+    },
+    "search.useIgnoreFiles": true,
+    "typescript.tsdk": "./apps/main/node_modules/typescript/lib"
   }
 }

@@ -19,8 +19,8 @@ export async function generateMetadata({
   cacheTag(locale, prompt);
 
   return {
-    title: t("metaTitle", { prompt }),
     description: t("metaDescription", { prompt }),
+    title: t("metaTitle", { prompt }),
   };
 }
 
@@ -36,7 +36,7 @@ export default async function Learn({
 
   return (
     <Suspense fallback={<CourseSuggestionsFallback />}>
-      <CourseSuggestions prompt={prompt} locale={locale} />
+      <CourseSuggestions locale={locale} prompt={prompt} />
     </Suspense>
   );
 }

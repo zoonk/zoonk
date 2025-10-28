@@ -8,7 +8,7 @@ export async function nameFormAction(_prevState: unknown, formData: FormData) {
 
   try {
     if (!name) {
-      return { status: "error", name };
+      return { name, status: "error" };
     }
 
     const res = await auth.api.updateUser({
@@ -18,8 +18,8 @@ export async function nameFormAction(_prevState: unknown, formData: FormData) {
 
     const status = res.status ? "success" : "error";
 
-    return { status, name };
+    return { name, status };
   } catch {
-    return { status: "error", name };
+    return { name, status: "error" };
   }
 }

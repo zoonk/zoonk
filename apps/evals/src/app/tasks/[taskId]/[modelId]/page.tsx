@@ -69,7 +69,7 @@ export default async function TaskModelPage({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             Run Eval
-            <ModelStatusBadge taskId={taskId} modelId={modelId} />
+            <ModelStatusBadge modelId={modelId} taskId={taskId} />
           </CardTitle>
           <CardDescription>
             Evaluating with {model?.name || modelId}
@@ -78,8 +78,8 @@ export default async function TaskModelPage({
 
         <CardContent className="space-y-4">
           <form action={runEvalAction}>
-            <input type="hidden" name="taskId" value={taskId} />
-            <input type="hidden" name="modelId" value={modelId} />
+            <input name="taskId" type="hidden" value={taskId} />
+            <input name="modelId" type="hidden" value={modelId} />
 
             <div className="flex items-center gap-4">
               <SubmitButton icon={<PlayIcon />}>Run Eval</SubmitButton>

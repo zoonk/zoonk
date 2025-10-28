@@ -4,8 +4,8 @@ import z from "zod";
 const MIN_SCORE = 6;
 
 const stepSchema = z.object({
-  kind: z.enum(["major_errors", "minor_errors", "potential_improvements"]),
   conclusion: z.string(),
+  kind: z.enum(["major_errors", "minor_errors", "potential_improvements"]),
   score: z.number().min(MIN_SCORE).max(10),
 });
 

@@ -62,14 +62,14 @@ export async function generateScore(params: {
 
   const { object } = await generateObject({
     model: "google/gemini-2.5-pro",
+    prompt: evalPrompt,
     schema: scoreSchema,
     system: systemPrompt,
-    prompt: evalPrompt,
   });
 
   return {
-    steps: object.steps,
     score: calculateScore(object.steps),
+    steps: object.steps,
   };
 }
 
@@ -80,7 +80,7 @@ export const getScoreClassName = (score: number) => {
 
   return cn({
     "text-destructive": isBadScore,
-    "text-warning": isAverageScore,
     "text-success": isGoodScore,
+    "text-warning": isAverageScore,
   });
 };

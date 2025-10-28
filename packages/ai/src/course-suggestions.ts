@@ -7,8 +7,8 @@ import systemPrompt from "./course-suggestions.md";
 const schema = z.object({
   courses: z.array(
     z.object({
-      title: z.string(),
       description: z.string(),
+      title: z.string(),
     }),
   ),
 });
@@ -33,12 +33,12 @@ export async function generateCourseSuggestions({
 
   const { object, usage } = await generateObject({
     model,
-    schema,
     prompt: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: userPrompt },
+      { content: systemPrompt, role: "system" },
+      { content: userPrompt, role: "user" },
     ],
+    schema,
   });
 
-  return { data: object.courses, usage, userPrompt, systemPrompt };
+  return { data: object.courses, systemPrompt, usage, userPrompt };
 }

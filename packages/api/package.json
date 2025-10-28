@@ -1,23 +1,23 @@
 {
-  "name": "@zoonk/api",
-  "type": "module",
-  "private": true,
-  "scripts": {
-    "typecheck": "tsc --noEmit"
-  },
-  "exports": {
-    "./*": "./src/*.ts"
-  },
   "dependencies": {
     "@zoonk/ai": "workspace:*",
     "@zoonk/db": "workspace:*"
   },
+  "devDependencies": {
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "^5"
+  },
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "name": "@zoonk/api",
   "peerDependencies": {
     "next": ">=16.0.0",
     "server-only": ">=0.0.1"
   },
-  "devDependencies": {
-    "@zoonk/tsconfig": "workspace:*",
-    "typescript": "^5"
-  }
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "type": "module"
 }

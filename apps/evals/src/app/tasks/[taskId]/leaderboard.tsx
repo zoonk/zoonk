@@ -58,7 +58,7 @@ export function Leaderboard({ taskId, results }: LeaderboardProps) {
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
         <h2 className="font-semibold text-lg">Leaderboard</h2>
-        <LeaderboardExport taskId={taskId} entries={sortedEntries} />
+        <LeaderboardExport entries={sortedEntries} taskId={taskId} />
       </div>
 
       <Table>

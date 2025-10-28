@@ -6,19 +6,18 @@ import createNextIntlPlugin from "next-intl/plugin";
 const CACHE_IMAGE_DAYS = 30;
 
 const nextConfig: NextConfig = {
-  pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
+  cacheComponents: true,
+  experimental: {
+    turbopackFileSystemCacheForDev: true,
+    typedEnv: true,
+  },
   images: {
     minimumCacheTTL: 60 * 60 * 24 * CACHE_IMAGE_DAYS,
     remotePatterns: [
       new URL("https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/**"),
     ],
   },
-  typedRoutes: true,
-  cacheComponents: true,
-  experimental: {
-    typedEnv: true,
-    turbopackFileSystemCacheForDev: true,
-  },
+  pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   // we use next.js compiler to transpile our internal packages
   transpilePackages: [
     "@zoonk/ai",
@@ -34,11 +33,12 @@ const nextConfig: NextConfig = {
     rules: {
       // Allow to import MDX files used for AI prompts
       "*.md": {
-        loaders: ["raw-loader"],
         as: "*.js",
+        loaders: ["raw-loader"],
       },
     },
   },
+  typedRoutes: true,
 };
 
 const withMDX = createMDX();

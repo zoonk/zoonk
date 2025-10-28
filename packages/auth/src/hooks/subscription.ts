@@ -25,5 +25,5 @@ export function useSubscription() {
       .catch(() => setSubscription(null));
   }, []);
 
-  return { subscription, isPending };
+  return { isPending, subscription };
 }

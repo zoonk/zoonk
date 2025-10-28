@@ -15,14 +15,14 @@ export function ProtectedSection({
 
   return (
     <ProtectedSectionPattern
-      state={authState}
-      pendingTitle={t("checkingLogin")}
-      alertTitle={t("requiresLogin")}
       actions={
-        <Link href="/login" className={cn(buttonVariants(), "w-max")}>
+        <Link className={cn(buttonVariants(), "w-max")} href="/login">
           {t("login")}
         </Link>
       }
+      alertTitle={t("requiresLogin")}
+      pendingTitle={t("checkingLogin")}
+      state={authState}
     >
       {children}
     </ProtectedSectionPattern>

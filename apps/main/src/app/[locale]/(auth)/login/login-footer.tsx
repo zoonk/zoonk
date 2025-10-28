@@ -8,8 +8,8 @@ export default async function LoginFooter() {
   return (
     <footer className="text-balance text-center text-muted-foreground text-xs *:[a]:underline *:[a]:underline-offset-4 *:[a]:hover:text-primary">
       {t.rich("terms", {
-        terms: (children) => <Link href="/terms">{children}</Link>,
         privacy: (children) => <Link href="/privacy">{children}</Link>,
+        terms: (children) => <Link href="/terms">{children}</Link>,
       })}
     </footer>
   );

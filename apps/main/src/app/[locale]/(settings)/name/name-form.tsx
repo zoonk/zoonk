@@ -15,8 +15,8 @@ type NameFormState = {
 };
 
 const initialState: NameFormState = {
-  status: "idle",
   name: "",
+  status: "idle",
 };
 
 export function NameForm() {
@@ -32,13 +32,13 @@ export function NameForm() {
       <div className="flex max-w-md flex-col gap-2">
         <Label htmlFor="name">{t("name")}</Label>
         <Input
-          id="name"
-          name="name"
-          type="text"
-          required
-          key={currentName}
           defaultValue={currentName}
           disabled={isPending}
+          id="name"
+          key={currentName}
+          name="name"
+          required
+          type="text"
         />
       </div>
 

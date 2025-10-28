@@ -7,11 +7,11 @@ import type * as React from "react";
 function Avatar({ className, ...props }: React.ComponentProps<typeof Root>) {
   return (
     <Root
-      data-slot="avatar"
       className={cn(
         "relative flex size-9 shrink-0 overflow-hidden rounded-full",
         className,
       )}
+      data-slot="avatar"
       {...props}
     />
   );
@@ -23,8 +23,8 @@ function AvatarImage({
 }: React.ComponentProps<typeof Image>) {
   return (
     <Image
-      data-slot="avatar-image"
       className={cn("aspect-square size-full", className)}
+      data-slot="avatar-image"
       {...props}
     />
   );
@@ -36,11 +36,11 @@ function AvatarFallback({
 }: React.ComponentProps<typeof Fallback>) {
   return (
     <Fallback
-      data-slot="avatar-fallback"
       className={cn(
         "flex size-full items-center justify-center rounded-full bg-muted font-bold uppercase",
         className,
       )}
+      data-slot="avatar-fallback"
       {...props}
     />
   );

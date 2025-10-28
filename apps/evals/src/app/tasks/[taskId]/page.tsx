@@ -56,7 +56,7 @@ export default async function TaskPage({ params }: TaskPageProps) {
         </ContainerDescription>
       </ContainerHeader>
 
-      <Leaderboard taskId={taskId} results={modelsWithResults} />
+      <Leaderboard results={modelsWithResults} taskId={taskId} />
 
       <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {sortedModels.map((model) => (
@@ -64,7 +64,7 @@ export default async function TaskPage({ params }: TaskPageProps) {
             <ItemContent>
               <ItemTitle>
                 {getModelDisplayName(model)}
-                <ModelStatusBadge taskId={taskId} modelId={model.id} />
+                <ModelStatusBadge modelId={model.id} taskId={taskId} />
               </ItemTitle>
               <ItemDescription>
                 ${model.inputCost}/M input · ${model.outputCost}/M output
@@ -73,8 +73,8 @@ export default async function TaskPage({ params }: TaskPageProps) {
 
             <ItemActions>
               <Link
-                href={`/tasks/${taskId}/${encodeURIComponent(model.id)}`}
                 className={buttonVariants({ variant: "outline" })}
+                href={`/tasks/${taskId}/${encodeURIComponent(model.id)}`}
               >
                 See Evals
               </Link>

@@ -29,10 +29,6 @@ const SHARED_EXPECTATIONS = `
 
 export const TEST_CASES = [
   {
-    id: "en-frontend-development",
-    userInput: {
-      title: "Frontend Development",
-    },
     expectations: `
       - Should include "Frontend Engineering"
       - Should NOT include topics like "Web Development" and "JavaScript Development" since those are separate courses
@@ -40,12 +36,12 @@ export const TEST_CASES = [
 
       ${SHARED_EXPECTATIONS}
     `,
+    id: "en-frontend-development",
+    userInput: {
+      title: "Frontend Development",
+    },
   },
   {
-    id: "en-formula-1",
-    userInput: {
-      title: "Formula 1",
-    },
     expectations: `
       - Should include items like "Formula One", "F1"
       - Should NOT include "Motorsport", "Racing", etc.
@@ -55,12 +51,12 @@ export const TEST_CASES = [
 
       ${SHARED_EXPECTATIONS}
     `,
+    id: "en-formula-1",
+    userInput: {
+      title: "Formula 1",
+    },
   },
   {
-    id: "en-ux-design",
-    userInput: {
-      title: "UX Design",
-    },
     expectations: `
       - Should include "User Experience Design"
       - Should NOT include "UI Design", "Web Design", etc
@@ -70,12 +66,12 @@ export const TEST_CASES = [
 
       ${SHARED_EXPECTATIONS}
     `,
+    id: "en-ux-design",
+    userInput: {
+      title: "UX Design",
+    },
   },
   {
-    id: "pt-ingles",
-    userInput: {
-      title: "Inglês",
-    },
     expectations: `
       - Should include "Língua Inglesa", "A Língua Inglesa"
       - Variants like "Inglês Americano", "Inglês Britânico" are acceptable since they refer to the same language
@@ -87,12 +83,12 @@ export const TEST_CASES = [
 
       ${SHARED_EXPECTATIONS}
     `,
+    id: "pt-ingles",
+    userInput: {
+      title: "Inglês",
+    },
   },
   {
-    id: "pt-inteligencia-artificial",
-    userInput: {
-      title: "Inteligência Artificial",
-    },
     expectations: `
       - Should include "IA"
       - Should NOT include "Aprendizado de Máquina", "Inteligência Humana", etc
@@ -102,12 +98,12 @@ export const TEST_CASES = [
 
       ${SHARED_EXPECTATIONS}
     `,
+    id: "pt-inteligencia-artificial",
+    userInput: {
+      title: "Inteligência Artificial",
+    },
   },
   {
-    id: "en-machine-learning",
-    userInput: {
-      title: "Machine Learning",
-    },
     expectations: `
       - Should include "ML"
       - Should NOT include "AI", "Deep Learning", etc
@@ -115,12 +111,12 @@ export const TEST_CASES = [
 
       ${SHARED_EXPECTATIONS}
     `,
+    id: "en-machine-learning",
+    userInput: {
+      title: "Machine Learning",
+    },
   },
   {
-    id: "en-javascript",
-    userInput: {
-      title: "JavaScript",
-    },
     expectations: `
       - Should include "JS", "JavaScript Programming", "JavaScript Language", etc
       - Should NOT include "Web Development", "React" since they're different courses
@@ -128,12 +124,12 @@ export const TEST_CASES = [
 
       ${SHARED_EXPECTATIONS}
     `,
+    id: "en-javascript",
+    userInput: {
+      title: "JavaScript",
+    },
   },
   {
-    id: "en-python",
-    userInput: {
-      title: "Python",
-    },
     expectations: `
       - Should include "Python Programming", "Python Language", "Python for Beginners"
       - Should NOT include "Programming", "Data Science", etc
@@ -141,36 +137,36 @@ export const TEST_CASES = [
 
       ${SHARED_EXPECTATIONS}
     `,
+    id: "en-python",
+    userInput: {
+      title: "Python",
+    },
   },
   {
-    id: "es-desarrollo-web",
-    userInput: {
-      title: "Desarrollo Web",
-    },
     expectations: `
       - Should include "Desarrollo de Sitios Web", "Programación Web", etc
       - All alternatives should be in Spanish
 
       ${SHARED_EXPECTATIONS}
     `,
+    id: "es-desarrollo-web",
+    userInput: {
+      title: "Desarrollo Web",
+    },
   },
   {
-    id: "en-data-science",
-    userInput: {
-      title: "Data Science",
-    },
     expectations: `
       - Should NOT include "Machine Learning", "Statistics", "Big Data", etc
       - Results should be in English
 
       ${SHARED_EXPECTATIONS}
     `,
+    id: "en-data-science",
+    userInput: {
+      title: "Data Science",
+    },
   },
   {
-    id: "en-the-matrix",
-    userInput: {
-      title: "The Matrix",
-    },
     expectations: `
       - Should include "Matrix Movie" (without "The")
       - May include "The Matrix Trilogy" and similar variations since it refers to the same film series
@@ -180,12 +176,12 @@ export const TEST_CASES = [
 
       ${SHARED_EXPECTATIONS}
     `,
+    id: "en-the-matrix",
+    userInput: {
+      title: "The Matrix",
+    },
   },
   {
-    id: "en-calculus",
-    userInput: {
-      title: "Calculus",
-    },
     expectations: `
       - Should NOT include "Mathematics", "Differential Calculus", etc
       - Levels like Calculus I, II, III are acceptable since they refer to the same subject
@@ -193,12 +189,12 @@ export const TEST_CASES = [
 
       ${SHARED_EXPECTATIONS}
     `,
+    id: "en-calculus",
+    userInput: {
+      title: "Calculus",
+    },
   },
   {
-    id: "en-world-war-2",
-    userInput: {
-      title: "World War II",
-    },
     expectations: `
       - Should include "World War 2", "Second World War", "WWII", "WW2"
       - Should NOT include just "World War" or "World War I"
@@ -206,5 +202,9 @@ export const TEST_CASES = [
 
       ${SHARED_EXPECTATIONS}
     `,
+    id: "en-world-war-2",
+    userInput: {
+      title: "World War II",
+    },
   },
 ];

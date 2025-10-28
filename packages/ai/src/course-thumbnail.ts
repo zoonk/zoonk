@@ -32,13 +32,13 @@ export async function generateCourseThumbnail({
   quality = DEFAULT_QUALITY,
 }: CourseThumbnailParams): Promise<string> {
   const { image } = await generateImage({
+    maxImagesPerCall: 1,
     model,
     prompt: getCourseThumbnailPrompt(title),
-    maxImagesPerCall: 1,
-    size: "1024x1024",
     providerOptions: {
-      openai: { quality, output_format: "webp" },
+      openai: { output_format: "webp", quality },
     },
+    size: "1024x1024",
   });
 
   const slug = slugify(title, { lower: true, strict: true });

@@ -36,22 +36,22 @@ export function NavbarLinks() {
   return (
     <>
       <Link
-        href={homeMenu.url}
         className={buttonVariants({
-          variant: getVariant(homeMenu.url, pathname),
           size: "icon",
+          variant: getVariant(homeMenu.url, pathname),
         })}
+        href={homeMenu.url}
       >
         <homeMenu.icon aria-hidden="true" />
         <span className="sr-only">{t("home")}</span>
       </Link>
 
       <Link
-        href={coursesMenu.url}
         className={buttonVariants({
-          variant: getVariant(coursesMenu.url, pathname),
           size: "adaptive",
+          variant: getVariant(coursesMenu.url, pathname),
         })}
+        href={coursesMenu.url}
       >
         <coursesMenu.icon aria-hidden="true" />
         <span className="hidden sm:inline">{t("courses")}</span>
@@ -60,12 +60,12 @@ export function NavbarLinks() {
       <CommandPalette />
 
       <Link
-        href={startMenu.url}
         className={buttonVariants({
-          variant: getVariant(startMenu.url, pathname),
-          size: "adaptive",
           className: "ml-auto",
+          size: "adaptive",
+          variant: getVariant(startMenu.url, pathname),
         })}
+        href={startMenu.url}
       >
         <startMenu.icon aria-hidden="true" />
         <span className="hidden sm:inline">{t("start")}</span>

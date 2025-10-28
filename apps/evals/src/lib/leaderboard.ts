@@ -59,11 +59,11 @@ export function getLeaderboardEntries(
       const stats = getStatsFromResults(result);
 
       return {
+        averageDuration: stats.averageDuration,
+        averageScore: calculateAverageScore(result),
         modelId: result.modelId,
         modelName: getModelDisplayName(model),
         provider: result.modelId.split("/")[0],
-        averageScore: calculateAverageScore(result),
-        averageDuration: stats.averageDuration,
         totalCost: stats.totalCost,
       } satisfies LeaderboardEntry;
     })

@@ -23,12 +23,12 @@ export async function generateAlternativeTitles({
 
   const { object, usage } = await generateObject({
     model,
-    schema,
     prompt: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: userPrompt },
+      { content: systemPrompt, role: "system" },
+      { content: userPrompt, role: "user" },
     ],
+    schema,
   });
 
-  return { data: object, usage, userPrompt, systemPrompt };
+  return { data: object, systemPrompt, usage, userPrompt };
 }

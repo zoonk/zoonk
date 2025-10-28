@@ -11,13 +11,13 @@ export async function contactFormAction(
 
   try {
     const res = await sendEmail({
-      to: "hello@zoonk.com",
       subject: "Zoonk Request",
       text: `
         <p><strong>From:</strong> ${email}</p>
         <p><strong>Message:</strong></p>
         <p>${message.replace(/\n/g, "<br>")}</p>
       `,
+      to: "hello@zoonk.com",
     });
 
     if (!res.ok) {

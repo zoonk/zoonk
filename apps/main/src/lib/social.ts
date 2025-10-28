@@ -12,56 +12,56 @@ import {
 import { routing } from "@/i18n/routing";
 
 const PROFILES = {
-  Instagram: {
-    icon: IconBrandInstagram,
-    en: { handle: "@zoonkcom", url: "https://www.instagram.com/zoonkcom" },
-    pt: { handle: "@zoonkbr", url: "https://www.instagram.com/zoonkbr" },
-  },
-  X: {
-    icon: IconBrandX,
-    en: { handle: "@zoonkcom", url: "https://x.com/zoonkcom" },
-    pt: { handle: "@zoonkbr", url: "https://x.com/zoonkbr" },
-  },
-  Threads: {
-    icon: IconBrandThreads,
-    en: { handle: "@zoonkcom", url: "https://www.threads.net/@zoonkcom" },
-    pt: { handle: "@zoonkbr", url: "https://www.threads.net/@zoonkbr" },
-  },
-  YouTube: {
-    icon: IconBrandYoutube,
-    en: { handle: "@zoonkcom", url: "https://www.youtube.com/@zoonkcom" },
-    pt: { handle: "@zoonkbr", url: "https://www.youtube.com/@zoonkbr" },
-  },
-  TikTok: {
-    icon: IconBrandTiktok,
-    en: { handle: "@zoonkcom", url: "https://www.tiktok.com/@zoonkcom" },
-    pt: { handle: "@zoonkbr", url: "https://www.tiktok.com/@zoonkbr" },
-  },
-  LinkedIn: {
-    icon: IconBrandLinkedin,
-    en: { handle: "@zoonk", url: "https://www.linkedin.com/company/zoonk" },
-    pt: { handle: "@zoonk", url: "https://www.linkedin.com/company/zoonk" },
+  Bluesky: {
+    en: { handle: "@zoonk", url: "https://bsky.app/profile/zoonk.bsky.social" },
+    icon: IconBrandBluesky,
+    pt: {
+      handle: "@zoonkbr",
+      url: "https://bsky.app/profile/zoonkbr.bsky.social",
+    },
   },
   Facebook: {
-    icon: IconBrandFacebook,
     en: { handle: "@zoonkcom", url: "https://www.facebook.com/zoonkcom" },
+    icon: IconBrandFacebook,
     pt: { handle: "@zoonkbr", url: "https://www.facebook.com/zoonkbr" },
   },
+  Instagram: {
+    en: { handle: "@zoonkcom", url: "https://www.instagram.com/zoonkcom" },
+    icon: IconBrandInstagram,
+    pt: { handle: "@zoonkbr", url: "https://www.instagram.com/zoonkbr" },
+  },
+  LinkedIn: {
+    en: { handle: "@zoonk", url: "https://www.linkedin.com/company/zoonk" },
+    icon: IconBrandLinkedin,
+    pt: { handle: "@zoonk", url: "https://www.linkedin.com/company/zoonk" },
+  },
   Reddit: {
-    icon: IconBrandReddit,
     en: { handle: "r/zoonk", url: "https://www.reddit.com/r/zoonk" },
+    icon: IconBrandReddit,
     pt: {
       handle: "r/ZoonkBrasil",
       url: "https://www.reddit.com/r/ZoonkBrasil",
     },
   },
-  Bluesky: {
-    icon: IconBrandBluesky,
-    en: { handle: "@zoonk", url: "https://bsky.app/profile/zoonk.bsky.social" },
-    pt: {
-      handle: "@zoonkbr",
-      url: "https://bsky.app/profile/zoonkbr.bsky.social",
-    },
+  Threads: {
+    en: { handle: "@zoonkcom", url: "https://www.threads.net/@zoonkcom" },
+    icon: IconBrandThreads,
+    pt: { handle: "@zoonkbr", url: "https://www.threads.net/@zoonkbr" },
+  },
+  TikTok: {
+    en: { handle: "@zoonkcom", url: "https://www.tiktok.com/@zoonkcom" },
+    icon: IconBrandTiktok,
+    pt: { handle: "@zoonkbr", url: "https://www.tiktok.com/@zoonkbr" },
+  },
+  X: {
+    en: { handle: "@zoonkcom", url: "https://x.com/zoonkcom" },
+    icon: IconBrandX,
+    pt: { handle: "@zoonkbr", url: "https://x.com/zoonkbr" },
+  },
+  YouTube: {
+    en: { handle: "@zoonkcom", url: "https://www.youtube.com/@zoonkcom" },
+    icon: IconBrandYoutube,
+    pt: { handle: "@zoonkbr", url: "https://www.youtube.com/@zoonkbr" },
   },
 } as const;
 
@@ -79,8 +79,8 @@ function isLocale(locale: string): locale is Locale {
 
 export function getSocialProfiles(locale: string) {
   return Object.entries(PROFILES).map(([name, data]) => ({
-    name,
     icon: data.icon,
+    name,
     ...getSocialProfile(name as ProfileName, locale),
   }));
 }

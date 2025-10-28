@@ -17,9 +17,9 @@ export async function addCourseSuggestion(input: {
   const prompt = normalizeString(rawPrompt);
 
   return prisma.courseSuggestion.upsert({
-    where: { locale_prompt: { locale, prompt } },
-    update: { suggestions },
     create: { locale, prompt, suggestions },
+    update: { suggestions },
+    where: { locale_prompt: { locale, prompt } },
   });
 }
 

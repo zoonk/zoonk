@@ -61,9 +61,9 @@ function calculateStats(results: EvalResult[], modelId: string): TaskStats {
   );
 
   return {
+    averageDuration,
     averageInputTokens,
     averageOutputTokens,
-    averageDuration,
     totalCost,
   };
 }

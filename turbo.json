@@ -1,6 +1,5 @@
 {
   "$schema": "./node_modules/turbo/schema.json",
-  "ui": "tui",
   "globalEnv": [
     "BETTER_AUTH_SECRET",
     "DATABASE_URL",
@@ -19,27 +18,15 @@
     "AI_MODEL_COURSE_SUGGESTIONS"
   ],
   "tasks": {
-    "//#lint": {},
     "//#format": { "cache": false },
+    "//#lint": {},
     "build": {
       "cache": false,
       "dependsOn": ["^build", "^db:deploy"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
-    "start": {
-      "cache": false,
-      "persistent": true
-    },
-    "typecheck": {},
-    "test": {},
-    "test:watch": {
-      "persistent": true,
-      "cache": false
-    },
-    "dev": {
-      "dependsOn": ["^db:generate"],
-      "persistent": true,
+    "db:deploy": {
       "cache": false
     },
     "db:generate": {
@@ -49,9 +36,22 @@
       "cache": false,
       "persistent": true
     },
-    "db:deploy": {
-      "cache": false
+    "dev": {
+      "cache": false,
+      "dependsOn": ["^db:generate"],
+      "persistent": true
     },
-    "i18n": {}
-  }
+    "i18n": {},
+    "start": {
+      "cache": false,
+      "persistent": true
+    },
+    "test": {},
+    "test:watch": {
+      "cache": false,
+      "persistent": true
+    },
+    "typecheck": {}
+  },
+  "ui": "tui"
 }

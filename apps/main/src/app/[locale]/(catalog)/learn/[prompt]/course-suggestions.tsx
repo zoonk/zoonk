@@ -36,7 +36,7 @@ export async function CourseSuggestions({
       <ContainerHeader className="text-center">
         <ContainerTitle>{t("title", { prompt })}</ContainerTitle>
 
-        <Link href="/learn" className={buttonVariants({ variant: "link" })}>
+        <Link className={buttonVariants({ variant: "link" })} href="/learn">
           {t("changeAction")}
         </Link>
       </ContainerHeader>
@@ -51,7 +51,7 @@ export async function CourseSuggestions({
               </ItemContent>
 
               <ItemActions>
-                <Button variant="outline" size="sm">
+                <Button size="sm" variant="outline">
                   {t("createCourse")}
                 </Button>
               </ItemActions>
@@ -63,9 +63,9 @@ export async function CourseSuggestions({
       </ItemGroup>
 
       <ContentFeedback
-        kind="courseSuggestions"
-        contentId={`${locale}:${prompt}`}
         className="py-4"
+        contentId={`${locale}:${prompt}`}
+        kind="courseSuggestions"
       />
     </Container>
   );
