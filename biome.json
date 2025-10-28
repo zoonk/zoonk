@@ -63,12 +63,21 @@
         "useUniqueElementIds": "off"
       },
       "nursery": {
+        "noDeprecatedImports": "error",
         "noDuplicateDependencies": "error",
+        "noEmptySource": "error",
+        "noFloatingPromises": "error",
+        "noImportCycles": "error",
+        "noMisusedPromises": "error",
         "noNextAsyncClientComponent": "error",
+        "noReactForwardRef": "error",
         "noShadow": "error",
+        "noUnnecessaryConditions": "error",
+        "noUnusedExpressions": "error",
         "noUselessCatchBinding": "error",
         "noUselessUndefined": "error",
         "useConsistentArrowReturn": "error",
+        "useExhaustiveSwitchCases": "error",
         "useMaxParams": "error",
         "useSortedClasses": {
           "fix": "safe",
