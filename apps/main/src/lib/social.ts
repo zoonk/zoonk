@@ -12,7 +12,7 @@ import {
 import { routing } from "@/i18n/routing";
 
 const PROFILES = {
-  Bluesky: {
+  bluesky: {
     en: { handle: "@zoonk", url: "https://bsky.app/profile/zoonk.bsky.social" },
     icon: IconBrandBluesky,
     pt: {
@@ -20,22 +20,22 @@ const PROFILES = {
       url: "https://bsky.app/profile/zoonkbr.bsky.social",
     },
   },
-  Facebook: {
+  facebook: {
     en: { handle: "@zoonkcom", url: "https://www.facebook.com/zoonkcom" },
     icon: IconBrandFacebook,
     pt: { handle: "@zoonkbr", url: "https://www.facebook.com/zoonkbr" },
   },
-  Instagram: {
+  instagram: {
     en: { handle: "@zoonkcom", url: "https://www.instagram.com/zoonkcom" },
     icon: IconBrandInstagram,
     pt: { handle: "@zoonkbr", url: "https://www.instagram.com/zoonkbr" },
   },
-  LinkedIn: {
+  linkedin: {
     en: { handle: "@zoonk", url: "https://www.linkedin.com/company/zoonk" },
     icon: IconBrandLinkedin,
     pt: { handle: "@zoonk", url: "https://www.linkedin.com/company/zoonk" },
   },
-  Reddit: {
+  reddit: {
     en: { handle: "r/zoonk", url: "https://www.reddit.com/r/zoonk" },
     icon: IconBrandReddit,
     pt: {
@@ -43,22 +43,22 @@ const PROFILES = {
       url: "https://www.reddit.com/r/ZoonkBrasil",
     },
   },
-  Threads: {
+  threads: {
     en: { handle: "@zoonkcom", url: "https://www.threads.net/@zoonkcom" },
     icon: IconBrandThreads,
     pt: { handle: "@zoonkbr", url: "https://www.threads.net/@zoonkbr" },
   },
-  TikTok: {
+  tiktok: {
     en: { handle: "@zoonkcom", url: "https://www.tiktok.com/@zoonkcom" },
     icon: IconBrandTiktok,
     pt: { handle: "@zoonkbr", url: "https://www.tiktok.com/@zoonkbr" },
   },
-  X: {
+  x: {
     en: { handle: "@zoonkcom", url: "https://x.com/zoonkcom" },
     icon: IconBrandX,
     pt: { handle: "@zoonkbr", url: "https://x.com/zoonkbr" },
   },
-  YouTube: {
+  youtube: {
     en: { handle: "@zoonkcom", url: "https://www.youtube.com/@zoonkcom" },
     icon: IconBrandYoutube,
     pt: { handle: "@zoonkbr", url: "https://www.youtube.com/@zoonkbr" },

@@ -19,7 +19,7 @@ export async function addCourseSuggestion(input: {
   return prisma.courseSuggestion.upsert({
     create: { locale, prompt, suggestions },
     update: { suggestions },
-    where: { locale_prompt: { locale, prompt } },
+    where: { localePrompt: { locale, prompt } },
   });
 }
 
@@ -31,6 +31,6 @@ export async function getCourseSuggestion(params: {
   const prompt = normalizeString(rawPrompt);
 
   return prisma.courseSuggestion.findUnique({
-    where: { locale_prompt: { locale, prompt } },
+    where: { localePrompt: { locale, prompt } },
   });
 }

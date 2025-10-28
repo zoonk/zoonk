@@ -8,9 +8,9 @@ const GOOD_SCORE = 9.2;
 
 // Weight configuration for different step types
 const STEP_WEIGHTS = {
-  major_errors: 3,
-  minor_errors: 2,
-  potential_improvements: 1,
+  majorErrors: 3,
+  minorErrors: 2,
+  potentialImprovements: 1,
 } as const;
 
 /**

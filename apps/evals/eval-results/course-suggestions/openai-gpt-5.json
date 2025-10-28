@@ -9,17 +9,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The list of suggestions is excellent and very comprehensive. However, for a very broad input like \"I want to code,\" it could have been even more exhaustive by including other major programming fields such as 'Desenvolvimento de Jogos' (Game Development), 'Desenvolvimento de Aplicativos Móveis' (Mobile App Development), 'Ciência de Dados' (Data Science), and 'Machine Learning'.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9
         }
       ],
@@ -40,17 +40,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -71,17 +71,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -102,17 +102,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -133,17 +133,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -164,17 +164,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -195,17 +195,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -226,17 +226,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is excellent, providing a comprehensive and highly relevant list of 20 course suggestions related to criminal law. All titles are well-formed and adhere to the specified rules. It could have potentially included a suggestion for \"Derecho Penal Internacional\" (International Criminal Law), but its absence does not detract from the overall outstanding quality of the response.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -257,17 +257,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -288,17 +288,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response is excellent. It correctly identifies the user's specific request for \"Derecho chileno\" and makes it the first suggestion. All subsequent suggestions are highly relevant sub-topics of Chilean law, correctly maintaining the jurisdiction as instructed. The titles are well-formed, avoiding levels or joiner words. The descriptions are concise and in the correct language. The list of suggestions is comprehensive and very useful.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -319,17 +319,17 @@
       "steps": [
         {
           "conclusion": "None. The model correctly identified that the user's input included a jurisdiction (\"chileno\") and correctly applied it to all generated course titles. The first result is an exact match of the user's input. The titles do not contain any forbidden level indicators or joiner words.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response is excellent and provides a comprehensive list of relevant courses within the specified jurisdiction.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response is exhaustive and accurate, covering a wide range of specializations within Chilean law. It is difficult to suggest any improvements.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -350,17 +350,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -381,17 +381,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -412,17 +412,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -443,17 +443,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -474,17 +474,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -505,17 +505,17 @@
       "steps": [
         {
           "conclusion": "None. The model correctly separated the user's input of 'physics and chemistry' into individual course suggestions ('Física' and 'Química'). It correctly avoided creating a single title with 'and' or '&'. All titles are in the correct language (Brazilian Portuguese) and do not contain any forbidden level indicators like 'Basics' or 'Introduction'. The response fully adheres to all critical instructions.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The list of suggested courses is highly relevant, covering the main topics requested as well as numerous related sub-disciplines. The descriptions are all single sentences and adhere to the specified format. There are no factual or formatting errors.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response is exemplary. It provides a comprehensive and diverse list of relevant courses, demonstrating a strong understanding of the subject matter. The quality and quantity of suggestions are excellent and cannot be meaningfully improved.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -536,17 +536,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is excellent and very comprehensive. A minor potential improvement would be to add a course for \"Métodos Experimentais em Química\" to create symmetry with the provided \"Métodos Experimentais em Física\". However, this is a very minor point and the current list is already outstanding.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -567,17 +567,17 @@
       "steps": [
         {
           "conclusion": "None. The model correctly followed all the negative constraints in the prompt, such as not using level words like 'Intro' in the title. It also correctly included 'Chemistry' as a suggestion, which was a key requirement.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response provides a comprehensive list of relevant courses related to Chemistry, covering the main topic and its various branches. This is an excellent output for a user asking for an introduction to the subject.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -598,17 +598,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response is excellent. It correctly interprets the user's request for an introduction to chemistry, providing a list of courses that starts with the broad topic \"Chemistry\" and then delves into more specific sub-disciplines. Crucially, it adheres to the negative constraint of not using words like \"Intro\" or \"Introduction\" in the titles. The list of suggestions is comprehensive and relevant.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -629,17 +629,17 @@
       "steps": [
         {
           "conclusion": "None. The model correctly identified the main topic as \"Chemistry\" and, crucially, avoided using forbidden words like \"Intro\" or \"Introduction\" in the title, which was a specific negative constraint in the instructions and expectations.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response followed all formatting and content rules for both titles and descriptions. The language is correct, and the suggestions are relevant.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response is excellent. It provides the main course title \"Chemistry\" as requested and then breaks down the subject into its core components, which is a perfect way to handle an introductory request without using the word \"Introduction\".",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -660,17 +660,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -691,17 +691,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -722,17 +722,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -753,17 +753,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is excellent. It correctly identifies the intellectual property (\"The Beatles\") and provides a wide range of highly relevant and specific related courses, from their albums and songwriting techniques to their historical context. All titles adhere to the provided formatting rules.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -784,17 +784,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is excellent. It provides a comprehensive and creative list of course suggestions related to The Beatles, covering music theory, history, production, business, and cultural impact. The titles and descriptions adhere perfectly to all formatting and content rules. There are no obvious omissions or areas for improvement.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -815,17 +815,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is excellent. It provides a wide range of highly relevant and creative course suggestions related to The Beatles, covering their music, history, production techniques, cultural impact, and specific works. All titles adhere strictly to the formatting rules provided in the instructions. It's a comprehensive and high-quality output.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -846,17 +846,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is excellent and provides a comprehensive list of highly relevant courses related to Formula 1. However, it could be slightly improved by also including broader, related topics as mentioned in the expectations, such as \"Sport Automobile\" (Motorsport) or \"Courses de Voitures\" (Car Racing), to give the user options outside the very specific F1 niche.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -877,17 +877,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -908,17 +908,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is excellent and provides a comprehensive list of specific courses related to Formula 1. A potential improvement could be to also include a broader, more general course title such as \"Motorsport\" or \"Car Racing\" as one of the suggestions, as mentioned in the expectations. However, given the specificity of the user's input (\"f1\"), the provided list is highly relevant and detailed, so this is a very minor point.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -939,17 +939,17 @@
       "steps": [
         {
           "conclusion": "None. The model correctly identified the user's input as a language exam request. As per the instructions, it returned exactly two suggestions: one for the exam name (\"JLPT\") and one for the language name (\"Japanese\"). It correctly removed the level suffix (\"N2\") from the exam title and did not add the \"language\" suffix to the language name. No extra suggestions were provided.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The output fully adheres to all instructions and expectations.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response is perfect and cannot be improved. It correctly follows the specific rules for language exam inputs.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -970,17 +970,17 @@
       "steps": [
         {
           "conclusion": "None. The model correctly identified that the user wants to prepare for a language exam (JLPT N2). It followed the specific instructions for this case by returning exactly two suggestions: one for the exam family name (\"JLPT\") and one for the language (\"Japanese\"). It correctly omitted the level (\"N2\") from the title and did not add the forbidden \"Language\" suffix to \"Japanese\".",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response is perfect and follows all instructions, including the specific edge case for language exams.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1001,17 +1001,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1032,17 +1032,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1063,17 +1063,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1094,17 +1094,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1125,17 +1125,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1156,17 +1156,17 @@
       "steps": [
         {
           "conclusion": "None. The response followed all instructions regarding the formatting and content of the titles. No forbidden words like 'Basics', 'Fundamentals', or joiners like 'and' were used. The titles are appropriate for a course catalog.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The list of suggestions is highly relevant to the user's query and provides a comprehensive overview of topics related to how computers work, from hardware to systems software. The response includes broad, expected titles like 'Computer Science'.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The generated list of courses is excellent. It is thematically coherent, covering the topic from multiple angles and layers of abstraction. The quality and relevance of the suggestions are very high, and it's difficult to see how it could be meaningfully improved.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1187,17 +1187,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1218,17 +1218,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is excellent and provides a comprehensive list of relevant courses. The only minor potential improvement would have been to also include the broader course \"Química\" as suggested in the expectations, in addition to \"Química Inorgânica\". However, this is a very minor point and the current list is already very strong.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -1249,17 +1249,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1280,17 +1280,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1311,17 +1311,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1342,17 +1342,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1373,17 +1373,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1404,17 +1404,17 @@
       "steps": [
         {
           "conclusion": "None. The model correctly followed all the instructions. It expanded the abbreviation \"ai\" to \"Artificial Intelligence\" and placed it first. It did not use any forbidden level indicators (like 'Beginner', 'Intro') or joiners (like 'and', '&') in the titles. The response is perfectly aligned with the major rules.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The list of suggested courses is comprehensive and highly relevant to the field of Artificial Intelligence. The titles are professional and accurate. The descriptions also follow the provided rules perfectly.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response is excellent and cannot be improved in any meaningful way. It provides a wide variety of relevant course suggestions, from foundational topics to very specific and modern sub-fields like \"Prompt Engineering\" and \"Reinforcement Learning from Human Feedback\".",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1435,17 +1435,17 @@
       "steps": [
         {
           "conclusion": "The response violates the abbreviation rule in three of its generated titles. The instructions and expectations clearly state not to use the abbreviation \"AI\" in titles, and instead use the full term \"Artificial Intelligence\". However, the model generated the titles \"AI Ethics\", \"AI Safety\", and \"AI Security\". The instructions explicitly state that not following title guidelines is a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The titles that use the \"AI\" abbreviation should be corrected to use the full form, for example: \"Ethics in Artificial Intelligence\", \"Artificial Intelligence Safety\", and \"Artificial Intelligence Security\". Otherwise, the response is excellent, providing a comprehensive and highly relevant list of course suggestions.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -1466,17 +1466,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1497,17 +1497,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response is excellent. It correctly identifies the user's input as a specific book, places that title first, and generates a comprehensive and highly relevant list of related courses, from the author to the historical context and key economic concepts. All titles adhere to the formatting rules provided in the instructions.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1528,17 +1528,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1559,17 +1559,17 @@
       "steps": [
         {
           "conclusion": "None. The model correctly identified the specific book from the user input, used the official title \"The Wealth of Nations\" as the first suggestion, and did not include any forbidden level-indicator words (like 'Basics', 'Fundamentals') or joiner words ('and', '&') in any of the titles. All critical instructions were followed.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The descriptions are all a single sentence and are relevant to their titles. The language used is the requested US English. There are no noticeable minor errors.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The list of suggested courses is comprehensive and highly relevant. It includes the book itself, its author, related economic theories (Classical Economics, Free Market Theory), core concepts from the book (Division of Labor), the historical context (Scottish Enlightenment), and related works (The Theory of Moral Sentiments). The selection is excellent and does not need improvement.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],

@@ -9,17 +9,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is excellent and provides a relevant list of courses. A potential improvement would be to also include \"Ciência da Computação\" (Computer Science) as a suggestion, as it's a broad, canonical title that fits the vague user input and was listed in the expectations. However, the existing suggestions are highly relevant and well-chosen, making this a very minor point.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -40,17 +40,17 @@
       "steps": [
         {
           "conclusion": "The title \"Algoritmos e Estruturas de Dados\" violates the rule \"Single-topic titles: NEVER use 'and', 'or', '&', '/' and commas joining topics\". The Portuguese word 'e' translates to 'and'. The instructions state that not following title guidelines is a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response could have provided separate suggestions for \"Algoritmos\" and \"Estruturas de Dados\" to avoid violating the rule against using joiner words like 'and'. Additionally, more diverse and relevant suggestions could have been included, such as \"Desenvolvimento Mobile\" (Mobile Development) or \"Segurança da Informação\" (Information Security).",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -71,17 +71,17 @@
       "steps": [
         {
           "conclusion": "None.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -102,17 +102,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -133,17 +133,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -164,17 +164,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -195,17 +195,17 @@
       "steps": [
         {
           "conclusion": "The title 'Derechos Humanos y Justicia Criminal' violates the rule against using joiner words like 'y' ('and'). The instructions state: 'Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics'. As per the provided expectations, this is a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The course 'Derechos Humanos y Justicia Criminal' should be split into two separate suggestions, or rephrased to avoid the conjunction 'y'. For example, two courses could be 'Derechos Humanos' and 'Justicia Criminal'.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -226,17 +226,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -257,17 +257,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -288,17 +288,17 @@
       "steps": [
         {
           "conclusion": "None. The model correctly identified that the user's input included a jurisdiction (\"chileno\") and ensured all suggestions included that jurisdiction. It also correctly included the specific input as the first suggestion. The titles are well-formed and do not contain any forbidden level indicators or joiners.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response adheres to all instructions, including the language and format for both titles and descriptions.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The generated courses are highly relevant and provide a logical breakdown of the main areas of law within the specified jurisdiction. The response is perfect as is.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -319,17 +319,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -350,17 +350,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -381,17 +381,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -412,17 +412,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -443,17 +443,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -474,17 +474,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -505,17 +505,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -536,17 +536,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -567,17 +567,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -598,17 +598,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -629,17 +629,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -660,17 +660,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -691,17 +691,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -722,17 +722,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -753,17 +753,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -784,17 +784,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -815,17 +815,17 @@
       "steps": [
         {
           "conclusion": "The title \"Rock and Roll History\" violates the rule: \"Single-topic titles: NEVER use 'and', 'or', '&', '/' and commas joining topics\". The instructions explicitly state that not following title guidelines is a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7.5
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The title \"Rock and Roll History\" should be rephrased to avoid using the word \"and\", for example, as \"History of Rock Music\". While \"Rock and Roll\" is a very common term for a single genre, the instruction is absolute and must be followed.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -846,17 +846,17 @@
       "steps": [
         {
           "conclusion": "The title 'Réglementation et Sécurité en Formule 1' uses the joiner word 'et' ('and'). The instructions state: \"Single-topic titles: NEVER use 'and', 'or', '&', '/' and commas joining topics\". This is a direct violation of a core instruction, and the expectations explicitly state that not following title guidelines is a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "To comply with the instructions, the final course suggestion could have been split into two separate courses: 'Réglementation en Formule 1' and 'Sécurité en Formule 1'.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -877,17 +877,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -908,17 +908,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -939,17 +939,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -970,17 +970,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1001,17 +1001,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1032,17 +1032,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1063,17 +1063,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1094,17 +1094,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1125,17 +1125,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1156,17 +1156,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The suggestions are all highly relevant and cover the topic from different angles (hardware, software, architecture, fundamentals). The titles and descriptions perfectly follow all instructions.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1187,17 +1187,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1218,17 +1218,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1249,17 +1249,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1280,17 +1280,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1311,17 +1311,17 @@
       "steps": [
         {
           "conclusion": "The title \"Cinematography and Special Effects\" violates the rule: \"Single-topic titles: NEVER use 'and', 'or', '&', '/' and commas joining topics\". The user's expectations state that not following title guidelines is a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The title \"Cinematography and Special Effects\" should be split into two separate course suggestions: \"Cinematography\" and \"Special Effects\". This would adhere to the instructions and provide more granular options for the user.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -1342,17 +1342,17 @@
       "steps": [
         {
           "conclusion": "None.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response correctly identified the specific movie from the user's input and provided its official title, 'The Matrix', as the first suggestion, which aligns perfectly with the instructions for intellectual property. The subsequent suggestions ('Artificial Intelligence', 'Virtual Reality', 'Cyberpunk Narratives', 'Philosophy of Mind') are all highly relevant to the film's themes and genre. The titles and descriptions adhere to all formatting rules.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1373,17 +1373,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1404,17 +1404,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1435,17 +1435,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is excellent and provides a comprehensive list of suggestions related to the user's input. A minor improvement could be the inclusion of the broader field of \"Computer Science\", as the prompt suggests including broad canonical titles for vague inputs.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -1466,17 +1466,17 @@
       "steps": [
         {
           "conclusion": "None. The response correctly followed all instructions. It correctly identified that \"ai\" is an abbreviation and expanded it to \"Artificial Intelligence\" in the first title, as per the instructions and expectations. All titles are single-topic and do not contain any forbidden words like levels or joiners.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response is free of any minor errors. The suggestions are all highly relevant to the user's input.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response is excellent. It provides the main topic requested and a comprehensive list of relevant sub-fields within Artificial Intelligence. The formatting of both titles and descriptions perfectly matches the prompt's requirements.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1497,17 +1497,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1528,17 +1528,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1559,17 +1559,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],

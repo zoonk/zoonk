@@ -9,17 +9,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -39,17 +39,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is very good and includes all the key synonyms and variations mentioned in the user's specific expectations for \"Formula 1\". However, the prompt asks for an \"extensive list\", and the general instructions allow for level variations (e.g., \"for Beginners\") and audience framing. The list could be made more comprehensive by including titles like \"Introduction to Formula 1\", \"Formula 1 for Beginners\", or the full official name \"FIA Formula One World Championship\".",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9
         }
       ],
@@ -69,17 +69,17 @@
       "steps": [
         {
           "conclusion": "None. The model correctly identified alternative titles that have the same meaning as 'UX Design'. It included the full phrase 'User Experience Design' and variations with level specifiers ('Beginner', 'Advanced') and framing words ('Principles', 'Fundamentals'). Crucially, it did not include related but distinct fields like 'UI Design' or broader topics like 'Product Design', which would have been a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None. All the generated titles are appropriate and adhere to the user's instructions. Terms like 'Experience Design' and 'User-Centered Design' are widely used as synonyms or near-synonyms for UX Design, especially in the context of a course title, making them valid inclusions.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The list is extensive and high-quality. A small improvement could be to include audience-specific variations, which were explicitly allowed in the prompt examples (e.g., 'UX for Healthcare', 'UX for Mobile Apps'). However, the absence of these does not detract significantly from the quality of the response.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9
         }
       ],
@@ -99,17 +99,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The prompt asks for an \"extensive list\", and while the generated list is correct, it could be more comprehensive. The expectations specifically mention that variants like \"Inglês Americano\" and \"Inglês Britânico\" are acceptable, but the model did not include these dialect-specific titles. Adding these and other variations like \"Inglês para Negócios\" (Business English) or \"Inglês para Viagens\" (English for Travel) would have made the list more extensive as requested.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -129,17 +129,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response successfully generated a list of synonyms and level variations. However, it failed to include audience-specific variations, such as \"IA para Desenvolvedores\" (AI for Developers), which were explicitly mentioned as acceptable in the instructions. Adding these types of titles would have made the list more comprehensive and aligned with the full scope of the prompt.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -159,17 +159,17 @@
       "steps": [
         {
           "conclusion": "None. The response correctly avoids including broader topics like \"Artificial Intelligence\" or narrower topics like \"Deep Learning\", which was a key requirement mentioned in the expectations.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response adheres to all instructions. It includes the required abbreviation \"ML\" and provides a good list of level variations (e.g., \"Introduction to...\", \"Advanced...\"), which are explicitly permitted.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The list is very good and adheres strictly to the rules. It could potentially be more exhaustive by including terms like \"Applied Machine Learning\" or \"Practical Machine Learning\", which would likely be considered equivalent by most users. However, their exclusion is understandable given the very strict instruction to only include titles with \"exactly the same meaning,\" as one could argue the scope is slightly different (application vs. theory). The generated list is safe and high-quality.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -189,17 +189,17 @@
       "steps": [
         {
           "conclusion": "None. All the provided alternative titles are valid synonyms or variations of the base title \"JavaScript\". They correctly include abbreviations (\"JS\"), rephrasings (\"Programming in JavaScript\"), and level/framing variations (\"JavaScript for Beginners\", \"Advanced JavaScript\", \"JavaScript Fundamentals\"), all of which are explicitly allowed by the instructions.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The list is accurate and adheres strictly to the rules. It successfully avoids broader topics (like \"Web Development\") and narrower topics (like \"React\"), which was a key constraint.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The generated list is comprehensive and accurate, fulfilling all requirements specified in the prompt. It's a high-quality response that cannot be meaningfully improved.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -219,17 +219,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The list is excellent and follows all instructions. It's comprehensive and doesn't include any incorrect titles. A very minor potential improvement could be to include numerical level indicators like \"Python 101\", but this is a negligible omission.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -249,17 +249,17 @@
       "steps": [
         {
           "conclusion": "The model included three titles that are narrower sub-disciplines of 'Web Development': 'Desarrollo Web Full Stack', 'Desarrollo Web Frontend', and 'Desarrollo Web Backend'. The instructions explicitly state to 'Exclude broader or narrower topics' and even use the relationship between 'Web Development' and 'Frontend Development' as an example of what to avoid. This is a major failure to follow a core negative constraint, as these sub-disciplines are often taught as distinct courses from a general 'Web Development' overview.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 6
         },
         {
           "conclusion": "The model included 'Creación Web' (Web Creation) and 'Construcción Web' (Web Construction). These terms are ambiguous as they could refer to creating websites with no-code tools (like Wix or Squarespace) rather than programming, which is central to 'Desarrollo Web' (Web Development). This could lead to incorrect course mapping.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 8
         },
         {
           "conclusion": "The list would be significantly improved by removing the narrower topics (Full Stack, Frontend, Backend) and the ambiguous terms (Creación Web, Construcción Web). The model should adhere strictly to the 'same-course test' from the instructions and avoid including sub-fields that would likely be taught as separate, more focused courses.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 7
         }
       ],
@@ -279,17 +279,17 @@
       "steps": [
         {
           "conclusion": "None. The model correctly followed the instructions, avoiding broader or narrower topics like 'Machine Learning', 'Statistics', or 'Big Data'. All the provided alternatives are semantically equivalent to 'Data Science' within the context of a course title.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "The list is correct and follows all rules, but it is not very 'extensive' as requested in the prompt. All suggestions are simple variations that add a framing word (like 'Fundamentals', 'Introduction', 'Basics') to the original title. It lacks more creative or diverse alternatives that would be expected for such a broad topic.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 8.5
         },
         {
           "conclusion": "The list could be expanded significantly. It could include audience-specific variations, which are explicitly allowed by the instructions (e.g., 'Data Science for Developers', 'Data Science for Business'). It could also include alternative phrasings that are common in the industry but were missed. The current list feels a bit repetitive and is based on a single pattern.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -309,17 +309,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is good and follows the main instructions, but it's not as \"extensive\" as the prompt requested. It misses some valid and expected alternative titles. For example, it does not include variations referring to the film series, like \"The Matrix Trilogy,\" which would be considered equivalent for a course topic. It also missed the specific variation \"Matrix Movie\" (without the leading \"The\"), which was noted in the expectations.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 8.5
         },
         {
           "conclusion": "The list of alternatives could be made more comprehensive by including variations that cover the entire film series (e.g., \"The Matrix Trilogy,\" \"The Matrix Film Series\") and variations that omit the definite article \"The\" (e.g., \"Matrix Movie\"). Adding these would make the list more extensive and better fulfill the prompt's requirements.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -339,17 +339,17 @@
       "steps": [
         {
           "conclusion": "The response includes \"Single Variable Calculus\". This is a narrower topic than \"Calculus\", which is explicitly forbidden by the instructions (\"Exclude broader or narrower topics\"). The general field of Calculus includes both single and multivariable calculus. By specifying \"Single Variable\", this title excludes other parts of the subject, failing the \"exactly the same meaning\" test. This is analogous to the negative example provided in the instructions: \"Differential Calculus (narrower than 'Calculus')\".",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 8
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The primary improvement would be to remove the incorrect entry \"Single Variable Calculus\". Additionally, while the list is extensive, it could be expanded to include other valid alternatives that were explicitly permitted, such as \"Calculus II\" and \"Calculus III\". The common abbreviation \"Calc\" could also have been included.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -369,17 +369,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -399,17 +399,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -429,17 +429,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -459,17 +459,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The generated list is excellent and comprehensive. A minor improvement could be to include even more variations, such as \"F1 World Championship\" or \"Formula One World Championship\", as these are also common ways to refer to the sport's main competition.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -489,17 +489,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is good and provides a solid list of alternatives. However, the expectations explicitly mentioned that titles like \"Formula One Championship\" and \"F1 Series\" are good examples of equivalent titles. The model failed to include these or similar variations (e.g., \"F1 Championship\", \"Formula 1 Series\"), which would have made the list more comprehensive and aligned with the examples provided.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -519,17 +519,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "The instructions ask for an \"extensive list\". While the provided list is accurate and all entries are correct synonyms or variations, it is missing categories of titles that were explicitly mentioned as acceptable in the user's expectations. Specifically, it omits titles with light framing like \"UX Design Principles\" and audience-specific titles like \"UX for [Audience]\". This makes the list less comprehensive than it could have been.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 9
         },
         {
           "conclusion": "The list could be made more extensive by including titles that use framing words like \"Principles\" or \"Fundamentals\" (e.g., \"UX Design Principles,\" \"User Experience Design Fundamentals\"). Additionally, it could include audience-specific variations, which were noted as acceptable (e.g., \"UX for Developers,\" \"UX for Mobile Apps\").",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -549,17 +549,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is very good and follows the main instructions. However, the expectations section explicitly mentions that titles like 'UX for X' (e.g., 'UX for Healthcare') are acceptable. The model did not generate any of these types of titles, which makes the list less comprehensive than it could have been. It also missed the common abbreviation 'UXD'.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -579,17 +579,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response provided a good list of alternatives, focusing on different proficiency levels and general learning intents (e.g., 'Aprender Inglês', 'Curso de Inglês'). However, it failed to include other valid categories of alternatives that were explicitly mentioned as acceptable in the instructions, such as different dialects ('Inglês Americano', 'Inglês Britânico') or historical variations ('Inglês Moderno'). Including these would have made the list more 'extensive' as requested.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -609,17 +609,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The instructions asked for an \"extensive list\" of alternatives. While the generated list is correct and all items are valid alternatives, it is not very extensive. It missed several categories of valid alternatives, such as dialect variations (e.g., \"Inglês Americano\", \"Inglês Britânico\"), which were explicitly mentioned as acceptable in the user's expectations. Other possible additions could include \"Aprender Inglês\", \"Inglês para Viagens\", \"Inglês para Negócios\", etc.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -639,17 +639,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The generated list is correct and follows all the rules. However, the prompt asks for an \"extensive list\". The current list could be more comprehensive by including audience-specific variations, which are explicitly allowed in the instructions. Examples include \"IA para Desenvolvedores\" (AI for Developers) or \"Inteligência Artificial para Negócios\" (AI for Business).",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9
         }
       ],
@@ -669,17 +669,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is good and follows all the rules. However, the instructions ask for an \"extensive list\". The generated list only includes level variations (e.g., beginner, advanced) but omits audience-specific variations (e.g., \"IA para Desenvolvedores\", \"Inteligência Artificial para Negócios\"), which are explicitly allowed in the instructions and expectations. Adding these would make the list more comprehensive and better fulfill the request.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -699,17 +699,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -729,17 +729,17 @@
       "steps": [
         {
           "conclusion": "None. The model correctly adhered to all the main instructions. It correctly excluded broader topics (like AI or Data Science) and narrower sub-topics (like Deep Learning or Reinforcement Learning). All the provided alternatives are valid variations of the original title.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The list is accurate, and every item is a valid alternative to \"Machine Learning\" under the provided rules. The expected abbreviation \"ML\" was included, and the level variations are appropriate.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The generated list is very good, but it could have been slightly more extensive to fully satisfy the prompt's request for an \"extensive list\". For example, it could have included variations like \"Machine Learning Principles\", \"Principles of Machine Learning\", or \"Machine Learning 101\".",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9
         }
       ],
@@ -759,17 +759,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "The list includes \"Client-Side JavaScript\". While JavaScript is heavily used on the client side, it is not limited to it (e.g., Node.js for server-side). A general \"JavaScript\" course would likely cover the language fundamentals applicable to any environment, while a \"Client-Side JavaScript\" course would have a narrower scope, focusing specifically on browser APIs and the DOM. Therefore, it should be considered a narrower topic and excluded according to the instructions.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 8.5
         },
         {
           "conclusion": "The list is very comprehensive and follows the instructions well, with the minor exception noted above. Removing \"Client-Side JavaScript\" would make it perfect.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -789,17 +789,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The list is excellent and follows all rules. To be even more comprehensive, it could have included other common synonyms like \"ECMAScript\" (the official standard name for the language) and \"Vanilla JS\" (a term used to distinguish plain JavaScript from frameworks).",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9
         }
       ],
@@ -819,17 +819,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "The list includes a duplicate entry: \"Python for Beginners\" is listed twice.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 8.5
         },
         {
           "conclusion": "The list could be improved by removing the duplicate entry. Additionally, it could be made more comprehensive by including variations for advanced levels (e.g., \"Advanced Python\") or different course formats (e.g., \"Python Bootcamp\").",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -849,17 +849,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The generated list is excellent and comprehensive. It follows all instructions and includes a good variety of semantically equivalent titles. A potential minor improvement could be the inclusion of terms like \"Python Scripting\" or \"Scripting with Python,\" as these are also common ways to refer to a course on the Python language itself. However, their absence is a very minor omission and does not significantly impact the overall high quality of the response.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -879,17 +879,17 @@
       "steps": [
         {
           "conclusion": "The response includes two titles that violate the core instruction to only include titles that mean the exact same course and to exclude narrower topics.\n1. 'Desarrollo Web Full Stack' (Full Stack Web Development): This is a narrower specialization within the broader field of Web Development. A general 'Web Development' course might only cover the front-end or be a basic introduction, whereas a 'Full Stack' course has a different, more extensive syllabus covering both front-end and back-end technologies. They would not be merged into a single course.\n2. 'Ingeniería Web' (Web Engineering): This is a related but distinct discipline. Web Engineering applies systematic, disciplined, and quantifiable approaches (software engineering principles) to the development of web applications. It often has a different focus (e.g., on architecture, process, scalability, maintenance) than a typical 'Web Development' course, which is more focused on the practical implementation skills. The learning goals and scope are different.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 6.5
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The model should have more strictly adhered to the 'same course' test described in the instructions. It should have excluded specializations like 'Full Stack' and related but distinct disciplines like 'Web Engineering'. The generated list would be much more useful if it were filtered to contain only true synonyms ('Programación Web', 'Desarrollo de Sitios Web') and allowed level variations ('Desarrollo Web para Principiantes').",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 7.5
         }
       ],
@@ -909,17 +909,17 @@
       "steps": [
         {
           "conclusion": "The model included several alternative titles that are narrower in scope than the original title, which directly violates the instructions. Specifically, \"Desarrollo Web Front-End\", \"Desarrollo Web Back-End\", and \"Desarrollo Web Full Stack\" are sub-disciplines of \"Desarrollo Web\", not synonyms. The instructions explicitly state to \"Exclude broader or narrower topics\" and even use \"Frontend Development\" as an example of a narrower topic for \"Web Development\". This is a significant error as it fails to adhere to a core negative constraint.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The model should be improved to better distinguish between synonymous terms and sub-topics. It should pay closer attention to the examples provided in the instructions, as the error it made was explicitly warned against in the prompt's examples.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -939,17 +939,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is good and follows all instructions, but it is not as 'extensive' as requested in the prompt. All suggestions are simple variations following the pattern '[Qualifier] Data Science'. The list could have been made more comprehensive by including audience-specific titles (e.g., 'Data Science for Business'), which were explicitly allowed in the instructions, or alternative phrasings like 'Applied Data Science' or 'The Science of Data'.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -969,17 +969,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The generated list is good and follows the rules, but it is not as \"extensive\" as it could be. All the suggestions follow a very similar pattern (level/framing qualifiers like 'Introduction', 'Fundamentals', 'Beginner', etc.). The instructions explicitly allow for \"Audience qualifiers\" (e.g., \"UX for Healthcare\"). The model could have included variations like \"Data Science for Business,\" \"Data Science for Marketing,\" or \"Applied Data Science\" to create a more comprehensive list.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -999,17 +999,17 @@
       "steps": [
         {
           "conclusion": "The response includes the title \"Matrix\", which is ambiguous and explicitly forbidden by the instructions. The instructions state, \"NEVER include ambiguous titles that could refer to multiple topics,\" and provide examples like \"Mercury\" or \"Go.\" The term \"Matrix\" could refer to the mathematical concept, a type of organizational structure, or the film, making its inclusion a major error against a core rule.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 6.5
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The list could have been more comprehensive by including variations that refer to the entire film series, as mentioned in the expectations (e.g., \"The Matrix Trilogy\", \"The Matrix Franchise\", \"The Matrix Film Series\").",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -1029,17 +1029,17 @@
       "steps": [
         {
           "conclusion": "The model included the title \"Matrix\", which is ambiguous and could refer to several topics (e.g., mathematics, biology, the film). The instructions explicitly state \"NEVER include ambiguous titles that could refer to multiple topics\", and the expectations for this specific input also note \"Should NOT include just 'Matrix' (ambiguous)\". This is a direct violation of a critical instruction.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 6.5
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The instructions ask for an \"extensive list\", but the generated list is quite short. It missed several good alternatives that refer to the same film series, such as \"The Matrix Trilogy\", \"The Matrix Saga\", \"The Matrix Franchise\", or \"The Matrix Film Series\". The expectations specifically mentioned that variations like \"The Matrix Trilogy\" would be acceptable.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -1059,17 +1059,17 @@
       "steps": [
         {
           "conclusion": "The list includes titles that are narrower in scope than \"Calculus\", which violates a core instruction. Specifically:\n1. \"Single Variable Calculus\": This is a specific subfield of Calculus. A full Calculus curriculum often includes both single-variable and multivariable calculus. Therefore, this is a narrower topic, not just a level variation.\n2. \"Differential and Integral Calculus\": This refers to the core components of introductory calculus (often Calculus I and II) but excludes other topics that can fall under a general \"Calculus\" umbrella, such as multivariable or vector calculus. The expectations explicitly state to exclude \"Differential Calculus,\" and this entry is similar in that it specifies sub-topics, making it narrower than the general term.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The model should remove the titles that refer to narrower sub-topics of Calculus, such as \"Single Variable Calculus\" and \"Differential and Integral Calculus\", as these are not equivalent to a general \"Calculus\" course.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 7
         }
       ],
@@ -1089,17 +1089,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "The list includes \"Differential and Integral Calculus\". While a standard calculus curriculum covers both topics, they are often split into separate courses (Calculus I and Calculus II). A course titled \"Calculus\" often refers to the first part (Calculus I). A course titled \"Differential and Integral Calculus\" implies it covers the material of both, making its scope different from a standard introductory \"Calculus\" course. The user expectations also explicitly state to NOT include \"Differential Calculus\", which reinforces the idea that this level of specificity is considered a narrower topic and should be excluded.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 8
         },
         {
           "conclusion": "The response could be improved by removing \"Differential and Integral Calculus\" to adhere more strictly to the 'same-course' rule. The title \"Mathematical Calculus\" is also slightly redundant and could be removed, although it's not a significant error.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -1119,17 +1119,17 @@
       "steps": [
         {
           "conclusion": "None. The model correctly identified synonyms, abbreviations, and acceptable variations for the title \"World War II\". It did not include broader topics (e.g., \"20th Century History\") or narrower topics (e.g., \"The Battle of Britain\"), adhering strictly to the instructions.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The list is comprehensive and accurate, covering common abbreviations (WWII, WW2), alternative names (Second World War), and acceptable qualifiers like \"History\" and level variations (\"for Beginners\", \"Advanced\"), which align perfectly with the instructions and examples provided.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1149,17 +1149,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],

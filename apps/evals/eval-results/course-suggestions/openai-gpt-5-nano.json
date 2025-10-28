@@ -9,17 +9,17 @@
       "steps": [
         {
           "conclusion": "The AI failed to follow the instruction for handling vague inputs. The user's input 'I want to code' is vague, and for such cases, the instructions state to 'include the broad canonical title itself and related courses (e.g., \"Computer Science\", \"Software Engineering\", \"Web Development\")'. The expectations reinforced this by asking for 'Ciência da Computação', 'Programação', and 'Desenvolvimento de Software'. The response only provided specific courses tied to a technology (e.g., 'Programação com Python') and completely omitted broad, standalone titles like 'Ciência da Computação' or 'Programação'.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response should be improved by adding the broad, canonical course titles that were missed. For a user with a vague goal like 'I want to code', suggestions like 'Programação', 'Ciência da Computação', and 'Desenvolvimento de Software' would be essential starting points before diving into language-specific courses.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -40,17 +40,17 @@
       "steps": [
         {
           "conclusion": "The response fails to include the broad canonical title 'Ciência da Computação' (Computer Science). The instructions specify that for vague inputs, broad canonical titles should be included, and the expectations explicitly listed 'Ciência da Computação' as a required suggestion. This omission is a failure to adhere to a core instruction.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "The title 'Programação com Python' uses the word 'com' (with), which functions as a joiner. The instructions direct to avoid joiner words in single-topic titles. This makes the title inconsistent with other technology-specific titles like 'JavaScript' and 'SQL' that correctly follow the rule.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 8.5
         },
         {
           "conclusion": "The response should include the mandatory canonical title 'Ciência da Computação'. Additionally, the title 'Programação com Python' should be simplified to 'Python' to be consistent with other titles in the list. A general course on 'Programação' (Programming) could also be added, as it was mentioned in the expectations.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 7.5
         }
       ],
@@ -71,17 +71,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The suggestions provided are all highly specific sub-topics related to black holes. While relevant and interesting, the response could be improved by including broader, foundational courses that provide context, such as \"Astrophysics\", \"General Relativity\", or \"Cosmology\". This would offer a more complete learning path for a user starting with a general interest in the topic.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -102,17 +102,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is excellent. It correctly identifies the topic from a different language, translates it, and provides a list of highly relevant and well-formatted course suggestions. One could argue for including a broader parent topic like \"Astrophysics\" or \"General Relativity\" as a suggestion, but the provided specific topics are more directly related to the user's query and are arguably more useful. This is a very minor point and doesn't detract from the overall quality.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -133,17 +133,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response failed to include broader, related topics as specified in the expectations. The prompt explicitly mentioned that for vague inputs (and this could be considered one from a curriculum perspective), broader topics should be suggested. The expectations specifically requested \"Astrophysics\". The generated list is good and very specific to Black Holes, but it misses the opportunity to suggest related parent courses like \"Astrophysics\", \"Cosmology\", or \"General Relativity\".",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 7.5
         }
       ],
@@ -164,17 +164,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -195,17 +195,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -226,17 +226,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is excellent and provides a comprehensive list of relevant courses. To make it even more exhaustive, it could have included topics like 'Teoría del Delito' (Theory of Crime) or 'Derecho Penitenciario' (Penitentiary Law), but their absence does not detract from the high quality of the current suggestions.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -257,17 +257,17 @@
       "steps": [
         {
           "conclusion": "None. The model correctly identified the jurisdiction from the user input (\"chileno\") and applied it to all of the course suggestions. The first suggestion matches the user input exactly, as per the instructions. The titles do not contain any forbidden level or joiner words. All instructions were followed.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The list of suggested courses is excellent and comprehensive. It could have potentially been improved by including a few other major branches of law, such as \"Derecho de Familia Chileno\" or \"Derecho Procesal Chileno\". However, the provided list is already very strong and this is a very minor suggestion.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -288,17 +288,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -319,17 +319,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -350,17 +350,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -381,17 +381,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -412,17 +412,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -443,17 +443,17 @@
       "steps": [
         {
           "conclusion": "The response includes two titles that violate the prompt's strict naming rules. \"Química Geral\" uses the word \"Geral\" (General), which can be interpreted as a level indicator like \"Fundamentals,\" explicitly forbidden by the instructions (\"NEVER use levels such as...\"). Additionally, the title \"Química Fisicoquímica\" is redundant and improperly named; the correct term is simply \"Fisicoquímica\" (Physical Chemistry). The instructions state that violating title guidelines constitutes a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "The response failed to include the broad, canonical titles \"Física\" and \"Química\" as suggestions. The expectations specifically stated that the output \"should include both 'Física' and 'Química'\". The instructions also state to include the broad canonical title for vague inputs. While the sub-topics provided are relevant, omitting the main subjects is a failure to meet a specific requirement.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 8
         },
         {
           "conclusion": "The response could be improved by adding \"Física\" and \"Química\" as the first suggestions to directly address the user's input. Furthermore, the incorrect titles should be fixed: \"Química Geral\" should be replaced with a title without a level indicator, and \"Química Fisicoquímica\" should be corrected to \"Fisicoquímica\".",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 7.5
         }
       ],
@@ -474,17 +474,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "The title \"Química Fisicoquímica\" is redundant and not a standard term. The correct name for this field in Portuguese is \"Físico-química\". This is a minor error as it makes the title sound unnatural.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 8.5
         },
         {
           "conclusion": "The title \"Química Fisicoquímica\" should be corrected to \"Físico-química\". Additionally, the response could have included more suggestions for sub-fields of physics to create a more balanced list, as there are more chemistry-related suggestions than physics-related ones.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -505,17 +505,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response perfectly follows all instructions. It correctly identifies the two main topics from the user input and creates separate course suggestions for them. It also provides several relevant, more specific sub-topics. To be even better, it could have included a more balanced list of suggestions between physics and chemistry (e.g., adding 'Astrophysics' or 'Quantum Mechanics'), but this is a very minor point.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -536,17 +536,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -567,17 +567,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -598,17 +598,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -629,17 +629,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -660,17 +660,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "The title 'Filosofia e Temas de Dragon Ball' uses 'e' ('and'), which violates the instruction 'Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics'. While the topics of philosophy and themes are closely related, they are still two distinct concepts joined by 'and'. A title such as 'Temas Filosóficos em Dragon Ball' would have been more compliant.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 9
         },
         {
           "conclusion": "The suggestions provided are all very specific to the 'Dragon Ball' franchise. While these are excellent and relevant, the response could have been improved by including one or two broader but related topics, such as 'Animação' (Animation) or 'Cultura Pop Japonesa' (Japanese Pop Culture), which would offer the user more diverse learning paths connected to their original interest.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9
         }
       ],
@@ -691,17 +691,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -722,17 +722,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "The title \"The Beatles Songwriting and Harmonies\" violates the rule: \"Single-topic titles: NEVER use 'and', 'or', '&', '/' and commas joining topics\". While songwriting and harmonies are related, they are distinct topics and should have been in separate course suggestions or phrased as a single topic without a conjunction. Additionally, there is some overlap between \"The Beatles Recording Techniques\" and \"Beatles Studio Innovations\", which could be seen as slightly redundant.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 8.5
         },
         {
           "conclusion": "The response could be improved by adhering strictly to the 'no joiner words' rule. For example, splitting \"The Beatles Songwriting and Harmonies\" into two separate courses: \"Beatles Songwriting\" and \"Beatles Vocal Harmonies\". Also, the suggestions for \"Recording Techniques\" and \"Studio Innovations\" could be combined or differentiated more clearly to avoid redundancy.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -753,17 +753,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -784,17 +784,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The suggestions are all excellent and highly relevant sub-topics of The Beatles. To further improve, the response could have included slightly broader but related topics, such as 'History of Rock Music' or 'British Invasion Music', as a user interested in The Beatles might also find those courses relevant.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9
         }
       ],
@@ -815,17 +815,17 @@
       "steps": [
         {
           "conclusion": "The response is completely irrelevant to the user's input. The user entered \"f1\", which is the common abbreviation for Formula 1 racing. The AI generated a list of courses related to computer science (\"Informatique\", \"Ingénierie Logicielle\", etc.). This indicates a fundamental failure to understand the user's intent, rendering the entire response useless.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 6
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The model needs to be able to correctly interpret common abbreviations like \"F1\". The response should have included suggestions relevant to Formula 1, such as \"Formule 1\", \"Sport Automobile\" (Motorsport), \"Ingénierie aérospatiale\" (Aerospace Engineering), or \"Stratégie de course\" (Race Strategy).",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 6
         }
       ],
@@ -846,17 +846,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -877,17 +877,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -908,17 +908,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -939,17 +939,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -970,17 +970,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1001,17 +1001,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1032,17 +1032,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1063,17 +1063,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1094,17 +1094,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1125,17 +1125,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1156,17 +1156,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1187,17 +1187,17 @@
       "steps": [
         {
           "conclusion": "The instructions state: \"If a user's input is very specific (e.g. 'Quantum Field Theory', 'Renaissance Art in Florence', 'German Law', etc), include that title as the first suggestion\". The user input was \"tabela periódica\", which is a specific topic. The model failed to include \"Tabela Periódica\" as a course suggestion, which was a direct violation of the instructions and the provided expectations.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 6
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response should have included a course titled \"Tabela Periódica\" as the first suggestion, as per the instructions for specific topics. The other suggestions are relevant and well-formed, but this omission is a key failure.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 7
         }
       ],
@@ -1218,17 +1218,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1249,17 +1249,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1280,17 +1280,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1311,17 +1311,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "The title for the final suggestion, \"Matrix Impact on Popular Culture\", omits the definite article \"The\" from the official name of the intellectual property, \"The Matrix\". The instructions state to use the official name when referencing IP. The phrasing is also slightly informal for a course title.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 9
         },
         {
           "conclusion": "The title \"Matrix Impact on Popular Culture\" could be improved to better adhere to the guidelines. A more formal and accurate title would be \"Impact of The Matrix on Popular Culture\" or \"The Matrix's Impact on Popular Culture\".",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9
         }
       ],
@@ -1342,17 +1342,17 @@
       "steps": [
         {
           "conclusion": "None. The model correctly identified the intellectual property from the user's input, used the official title \"The Matrix\" as the first suggestion, and provided a list of other relevant courses. All titles adhere to the specified formatting rules (no level words, no joiners, etc.).",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The suggestions are all highly relevant to the movie \"The Matrix,\" covering its themes (philosophy), technical aspects (visual effects), genre (cyberpunk, science fiction), and related creative skills (screenwriting, worldbuilding). The response is excellent.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response is comprehensive and fully meets the user's request and all explicit instructions. The course suggestions are well-chosen and diverse, providing a high-quality result.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1373,17 +1373,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "One of the suggested course titles, \"AI for Business Transformation\", uses the abbreviation \"AI\". The instructions specify that abbreviations should generally be avoided unless universally recognized and specifically state that \"Artificial Intelligence\" should be used instead of \"AI\". The model correctly applied this rule to the main suggestion but failed to apply it consistently across all suggestions.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 8.5
         },
         {
           "conclusion": "To ensure consistency and strictly adhere to the provided guidelines, the title \"AI for Business Transformation\" should be changed to \"Artificial Intelligence for Business Transformation\".",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -1404,17 +1404,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1435,17 +1435,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1466,17 +1466,17 @@
       "steps": [
         {
           "conclusion": "The response failed to follow the instruction for handling intellectual property correctly. The user's input was \"wealth of nations\", which refers to the famous book by Adam Smith. The instructions state: \"For books/movies/IP, use the official name (e.g., 'The Great Gatsby', not 'Great Gatsby' or 'Gatsby')\" and \"If the input targets a specific book/topic/IP include that exact topic as the first suggestion.\" The model's first suggestion was \"Wealth of Nations\", omitting the definite article \"The\" from the official and commonly known title, \"The Wealth of Nations\". This is a direct violation of a key instruction.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 6.5
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The primary improvement would be to correct the title of the first suggestion to \"The Wealth of Nations\" to adhere to the instruction about using official names for intellectual property.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -1497,17 +1497,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1528,17 +1528,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1559,17 +1559,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response is excellent and provides a comprehensive list of foundational and specialized topics for someone wanting to learn to code. It correctly includes the broad topics mentioned in the expectations ('Ciência da Computação', 'Engenharia de Software', 'Desenvolvimento Web'). A potential addition could be a course on 'Bancos de Dados' (Databases), as this is another fundamental area in software development, but its absence does not diminish the high quality of the current suggestions.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],

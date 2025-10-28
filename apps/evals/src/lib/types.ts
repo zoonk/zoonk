@@ -5,7 +5,7 @@ const MIN_SCORE = 6;
 
 const stepSchema = z.object({
   conclusion: z.string(),
-  kind: z.enum(["major_errors", "minor_errors", "potential_improvements"]),
+  kind: z.enum(["majorErrors", "minorErrors", "potentialImprovements"]),
   score: z.number().min(MIN_SCORE).max(10),
 });
 

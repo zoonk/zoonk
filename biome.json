@@ -128,6 +128,22 @@
         "useForOf": "error",
         "useFragmentSyntax": "error",
         "useGroupedAccessorPairs": "error",
+        "useNamingConvention": {
+          "level": "error",
+          "options": {
+            "conventions": [
+              {
+                "match": "output_format|(.*)",
+                "selector": { "kind": "objectLiteralProperty" }
+              },
+              {
+                "formats": ["camelCase"],
+                "selector": { "kind": "objectLiteralProperty" }
+              }
+            ],
+            "strictCase": false
+          }
+        },
         "useNodeAssertStrict": "error",
         "useNumberNamespace": "error",
         "useNumericSeparators": "error",

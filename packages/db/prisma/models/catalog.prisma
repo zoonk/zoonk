@@ -6,6 +6,6 @@ model CourseSuggestion {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
 
-  @@unique([locale, prompt])
+  @@unique([locale, prompt], name: "localePrompt")
   @@map("courseSuggestions")
 }

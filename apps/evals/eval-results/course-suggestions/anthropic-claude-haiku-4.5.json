@@ -9,17 +9,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The instructions for vague inputs mention suggesting broad canonical titles like \"Computer Science\" and \"Software Engineering\". While the response provided good broad titles like \"Programação\" and \"Desenvolvimento Web\", adding \"Ciência da Computação\" and \"Engenharia de Software\" would have made it more comprehensive and fully aligned with the examples.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -40,17 +40,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response successfully followed all the negative constraints for titles (no levels, no specific joiners). However, for a vague input like \"I want to code\", the instructions and expectations specifically mention including broad canonical titles like \"Computer Science\" and \"Software Engineering\". The model provided good related topics but missed these foundational ones, which would have been a better starting point for the user. The suggestions could be improved by including \"Ciência da Computação\" and \"Desenvolvimento de Software\" in the list.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -71,17 +71,17 @@
       "steps": [
         {
           "conclusion": "The response failed to follow a key instruction for vague user inputs. The instructions state: \"For vague inputs, include the broad canonical title itself and related courses (e.g., 'Computer Science', 'Software Engineering', 'Web Development')\". The expectations further specify this should include 'Ciência da Computação' and 'Engenharia de Software'. The model failed to include these two very important and broad canonical titles, which is a major omission for an input like \"I want to code\".",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response should be improved by including the broad canonical titles mentioned in the instructions, such as \"Ciência da Computação\" (Computer Science), \"Engenharia de Software\" (Software Engineering), and a general \"Programação\" (Programming) course instead of only a language-specific one.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 7.5
         }
       ],
@@ -102,17 +102,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -133,17 +133,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -164,17 +164,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -195,17 +195,17 @@
       "steps": [
         {
           "conclusion": "The title \"Derecho Constitucional y Garantías Penales\" violates the rule that single-topic titles must never use joiner words like \"and\", \"or\", \"&\", or \"/\". In this case, the title uses \"y\" (\"and\"). The instructions and expectations clearly state that this is a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7.5
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The course suggestion \"Derecho Constitucional y Garantías Penales\" should have been split into two separate courses, \"Derecho Constitucional\" and \"Garantías Penales\", to adhere to the rule against using joiner words in titles.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -226,17 +226,17 @@
       "steps": [
         {
           "conclusion": "The response violates the negative constraint for titles. The instructions state: \"Single-topic titles: NEVER use 'and', 'or', '&', '/' and commas joining topics\". The response includes two titles that violate this rule:\n- \"Criminología y Justicia Penal\"\n- \"Derechos Humanos y Derecho Penal\"\nAccording to the expectations, \"Not following title guidelines is a major error.\"",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The model should not have used the word 'y' (and) to join topics in the titles. Instead of generating \"Criminología y Justicia Penal\", it could have generated two separate suggestions: \"Criminología\" and \"Justicia Penal\". Similarly, \"Derechos Humanos y Derecho Penal\" could have been split or replaced.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 7.5
         }
       ],
@@ -257,17 +257,17 @@
       "steps": [
         {
           "conclusion": "The response violates a key instruction regarding titles. The rule states: \"Single-topic titles: NEVER use 'and', 'or', '&', '/' and commas joining topics\". Two of the generated titles use 'y' (and): 'Criminalística y Técnicas de Investigación' and 'Penología y Sistema Penitenciario'. According to the provided expectations, not following title guidelines constitutes a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 6
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The titles that use 'y' as a joiner should be split into separate, single-topic courses to adhere to the instructions. For instance, the model could have suggested 'Criminalística' and 'Técnicas de Investigación' as two distinct courses, and likewise for 'Penología' and 'Sistemas Penitenciarios'.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 7
         }
       ],
@@ -288,17 +288,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -319,17 +319,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -350,17 +350,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -381,17 +381,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -412,17 +412,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -443,17 +443,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -474,17 +474,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -505,17 +505,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -536,17 +536,17 @@
       "steps": [
         {
           "conclusion": "The title \"Óptica e Ondas\" violates the rule that states titles should not use joiner words. The word \"e\" is Portuguese for \"and\", which is explicitly forbidden by the instructions. The expectations state that not following title guidelines is a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7.5
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The suggestion \"Óptica e Ondas\" should be split into two separate course suggestions: \"Óptica\" and \"Ondas\", to adhere to the rule against using joiner words in titles.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -567,17 +567,17 @@
       "steps": [
         {
           "conclusion": "The title \"Chemical Reactions and Equations\" violates the strict guideline: \"Single-topic titles: NEVER use 'and', 'or', '&', '/' and commas joining topics\". The provided expectations state that not following title guidelines constitutes a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "The suggestion \"General Chemistry\" is redundant because \"Chemistry\" is already included as the first suggestion. In most academic contexts, these terms refer to the same foundational introductory course.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 8.5
         },
         {
           "conclusion": "The list of suggestions could be improved by changing the title \"Chemical Reactions and Equations\" to simply \"Chemical Reactions\" to comply with the rule against using conjunctions. Additionally, removing the redundant \"General Chemistry\" would make the list of related courses more distinct and valuable.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -598,17 +598,17 @@
       "steps": [
         {
           "conclusion": "The response contains two major errors according to the instructions and expectations:\n1. It fails to include a course titled simply \"Chemistry\". The expectations state, \"should include 'Chemistry' (this is very important, not including it is a major error)\". For a general input like \"intro to chemistry\", the broad canonical title is expected.\n2. The first title, \"Chemistry Essentials\", violates the rule against using level indicators. The instructions state: 'NEVER use levels such as (but not limited to) \"Basics\", \"Beginner\", \"Advanced\", \"Intro\", \"Introduction\", \"101\", \"Mastery\", \"Fundamentals\", etc.'. \"Essentials\" falls into this category as a synonym for fundamentals or basics. The expectations specify that not following title guidelines is a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 6
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response should have included \"Chemistry\" as the first suggestion. Additionally, the title \"Chemistry Essentials\" should be removed as it violates the rule against using level indicators.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 6.5
         }
       ],
@@ -629,17 +629,17 @@
       "steps": [
         {
           "conclusion": "The response includes two titles that violate the prompt's rules. The title \"General Chemistry\" uses the word \"General,\" which functions as a level indicator similar to the forbidden terms \"Intro\" or \"Fundamentals.\" The title \"Laboratory Safety and Technique\" uses the word \"and,\" which is explicitly forbidden for joining topics in a single title. The instructions state that not following title guidelines is a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The response could be improved by removing the titles that violate the rules. \"General Chemistry\" should be removed as \"General\" acts as a level descriptor. \"Laboratory Safety and Technique\" should be removed or split into two separate suggestions (\"Laboratory Safety\" and \"Laboratory Technique\") to avoid using the forbidden conjunction \"and\".",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -660,17 +660,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "The title \"Criação de Mangá e Anime\" violates the rule \"Single-topic titles: NEVER use 'and', 'or', '&', '/' and commas joining topics\". It uses 'e' (and) to join two topics, even if they are closely related.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 8.5
         },
         {
           "conclusion": "The title \"Criação de Mangá e Anime\" should be split into two separate suggestions to adhere to the rules: \"Criação de Mangá\" and \"Criação de Anime\".",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9
         }
       ],
@@ -691,17 +691,17 @@
       "steps": [
         {
           "conclusion": "The instructions state 'Single-topic titles: NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics'. However, three of the five generated titles violate this rule by using 'e' (the Portuguese word for 'and'):\n- \"Narrativa e Storytelling em Anime\"\n- \"Arte e Animação Japonesa\"\n- \"Cultura Japonesa e Anime\"\nThe user's expectations specifically state that not following title guidelines is a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The titles containing 'e' ('and') should be rephrased to comply with the instructions. For example, 'Narrativa e Storytelling em Anime' could be 'Storytelling em Anime', and 'Arte e Animação Japonesa' could be 'Animação Japonesa'. This would make the response fully compliant with the prompt's rules.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -722,17 +722,17 @@
       "steps": [
         {
           "conclusion": "The title \"Anime e Sua Influência Global\" violates the rule: \"Single-topic titles: NEVER use 'and', 'or', '&', '/' and commas joining topics\". The word 'e' is Portuguese for 'and'. This is a violation of a core instruction, which the user expectations specify as a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The title \"Anime e Sua Influência Global\" should be rephrased to comply with the rules, for example as \"A Influência Global do Anime\" (The Global Influence of Anime).",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -753,17 +753,17 @@
       "steps": [
         {
           "conclusion": "The instructions state: \"Single-topic titles: NEVER use 'and', 'or', '&', '/' and commas joining topics\". The expectations also note that not following title guidelines is a major error. Two of the generated titles violate this rule:\n- \"Music Production and Recording\"\n- \"Songwriting and Composition\"",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The titles that use \"and\" should be rephrased to comply with the instructions. For example, they could be split into separate courses:\n- \"Music Production\" and \"Audio Recording\"\n- \"Songwriting\" and \"Music Composition\"",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -784,17 +784,17 @@
       "steps": [
         {
           "conclusion": "The response contains two titles that violate the instruction \"NEVER use 'and', 'or', '&', '/' and commas joining topics\". The titles in question are \"Music Production and Recording\" and \"Songwriting and Composition\". The user's expectations explicitly state that \"Not following title guidelines is a major error.\"",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7.5
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "To adhere to the instructions, the model should have offered separate courses instead of joining topics with \"and\". For instance, it could have suggested \"Music Production\" and \"Audio Recording\" as two distinct courses, and similarly \"Songwriting\" and \"Music Composition\" as separate suggestions.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -815,17 +815,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -846,17 +846,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "The suggestions are all sub-topics of Formula 1. The expectations mentioned that the model could optionally include broader alternatives like \"Sport Automobile\" or \"Courses de Voitures\". While the generated suggestions are relevant, including these broader topics would have provided more variety for the user.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 9
         },
         {
           "conclusion": "The response could be improved by including suggestions for related but broader topics, such as \"Sport Automobile\" (Motorsport) or \"Ingénierie automobile\" (Automotive Engineering), alongside the very specific F1 sub-topics.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -877,17 +877,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "The title \"Stratégie et tactiques en Formule 1\" uses the word \"et\" (and), which technically violates the rule \"Single-topic titles: NEVER use 'and', 'or', '&', '/' and commas joining topics\". However, \"strategy and tactics\" is a very common pairing and can be considered a single conceptual topic, making this a very minor issue.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 9
         },
         {
           "conclusion": "The title \"Stratégie et tactiques en Formule 1\" could be rephrased to avoid the word \"et\", for instance, as \"Stratégies de course en Formule 1\". However, the current set of suggestions is excellent, relevant, and well-structured.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -908,17 +908,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -939,17 +939,17 @@
       "steps": [
         {
           "conclusion": "The response includes the level 'N2' in the title of the first suggestion, 'JLPT N2'. The instructions explicitly state: \"Exam titles: exam family name only; don't add levels or variants (e.g., 'IELTS', not 'IELTS Academic' or 'IELTS General Training')\". The expectations also specify that the title should be 'JLPT' without the 'N2' suffix and that not following title guidelines is a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The title of the first course suggestion should be 'JLPT' instead of 'JLPT N2' to correctly follow the instructions regarding exam levels.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -970,17 +970,17 @@
       "steps": [
         {
           "conclusion": "The first title is \"JLPT N2\". The instructions explicitly state: \"Exam titles: exam family name only; don't add levels or variants (e.g., 'IELTS', not 'IELTS Academic' or 'IELTS General Training')\". Therefore, the title should have been \"JLPT\", without the \"N2\" level.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 6.5
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The title \"JLPT N2\" should be corrected to \"JLPT\" to adhere to the instructions about not including levels or variants in exam titles.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -1001,17 +1001,17 @@
       "steps": [
         {
           "conclusion": "The title of the first course, \"JLPT N2\", includes the level \"N2\". The instructions explicitly state not to include levels or variants in exam titles, giving the example \"'IELTS', not 'IELTS Academic'\". The title should have been \"JLPT\". This is a major error according to the provided instructions and expectations.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 6.5
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The title of the first course suggestion should be corrected from \"JLPT N2\" to \"JLPT\" to align with the rule of using only the exam family name without any levels.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 7
         }
       ],
@@ -1032,17 +1032,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1063,17 +1063,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1094,17 +1094,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1125,17 +1125,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1156,17 +1156,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1187,17 +1187,17 @@
       "steps": [
         {
           "conclusion": "None. The model followed all instructions, including the strict rules for titles (no levels, no joiners). The generated courses are highly relevant to the user's query.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The selection of courses is excellent and directly addresses the user's question by breaking down the topic into key areas of study.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response is comprehensive and adheres to all formatting and content rules. It provides a perfect set of suggestions for someone asking how computers work.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1218,17 +1218,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The generated list of courses is highly relevant to the user's input. A potential improvement could be to also include a broader course suggestion like \"Química\" (Chemistry), as mentioned in the expectations, to cater to users who might be starting from a more basic level.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 9.5
         }
       ],
@@ -1249,17 +1249,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1280,17 +1280,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1311,17 +1311,17 @@
       "steps": [
         {
           "conclusion": "The instructions state 'Not following title guidelines is a major error.' and also 'NEVER use \"and\", \"or\", \"&\", \"/\" and commas joining topics' in titles. The title 'Cinematography and Visual Effects' violates this rule by using the word 'and'.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 8
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The title 'Cinematography and Visual Effects' should be rewritten to comply with the instructions. For example, it could be split into two separate course suggestions: 'Cinematography' and 'Visual Effects'.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8.5
         }
       ],
@@ -1342,17 +1342,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1373,17 +1373,17 @@
       "steps": [
         {
           "conclusion": "None. The response correctly identified the specific intellectual property from the user's input (\"The Matrix\") and listed it as the first suggestion, as per the instructions. All titles adhere to the specified formatting rules, containing no level indicators or prohibited conjunctions.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The course suggestions are highly relevant to the input, branching from the specific movie to related genres (Science Fiction, Cyberpunk) and relevant topics (Visual Effects, Philosophy). All content is in the correct language.",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None. The response is excellent and fully meets all instructions and expectations. The selection and structure of the course suggestions are ideal for the user's query.",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1404,17 +1404,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1435,17 +1435,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1466,17 +1466,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1497,17 +1497,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],
@@ -1528,17 +1528,17 @@
       "steps": [
         {
           "conclusion": "The title \"Capitalism and Markets\" violates the instruction: \"Single-topic titles: NEVER use 'and', 'or', '&', '/' and commas joining topics\". The user's expectations explicitly state that not following title guidelines is a major error.",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 7
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "The title \"Capitalism and Markets\" should be changed to avoid using the word \"and\". For example, it could be split into two separate course suggestions like \"Capitalism\" and \"Market Economies\", or rephrased as a single course like \"The Study of Capitalism\".",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 8
         }
       ],
@@ -1559,17 +1559,17 @@
       "steps": [
         {
           "conclusion": "None",
-          "kind": "major_errors",
+          "kind": "majorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "minor_errors",
+          "kind": "minorErrors",
           "score": 10
         },
         {
           "conclusion": "None",
-          "kind": "potential_improvements",
+          "kind": "potentialImprovements",
           "score": 10
         }
       ],

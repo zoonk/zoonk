@@ -35,19 +35,19 @@ Your structured output must match the provided schema:
 
 ### Steps to Predict (in order):
 
-6. **major_errors**
+6. **majorErrors**
 
 - _conclusion_: List major errors found, or indicate "None".
 - score: A float between 6 and 10 indicating the severity of major errors (6 = severe errors, 10 = no major errors).
   - If your conclusion is "None", assign a score of 10.
 
-2. **minor_errors**
+2. **minorErrors**
 
 - _conclusion_: List minor errors found, or indicate "None".
 - score: A float between 6 and 10 indicating the severity of minor errors (6 = severe errors, 10 = no minor errors).
   - If your conclusion is "None", assign a score of 10.
 
-3. **potential_improvements**
+3. **potentialImprovements**
 
 - _conclusion_: List suggested improvements, or indicate "None".
 - score: A float between 6 and 10 indicating the extent of potential improvements (6 = many significant improvements, 10 = no improvements needed).
@@ -62,7 +62,7 @@ Once you predicted all the above fields you need to assign a float between 6 and
 Your response should be a valid JSON that contains:
 
 - steps: An array of objects representing your reasoning steps. Each step includes:
-  - kind (string): The type of step, e.g., "major_errors", "minor_errors", "potential_improvements".
+  - kind (string): The type of step, e.g., "majorErrors", "minorErrors", "potentialImprovements".
   - conclusion (string): Detailed reasoning for this step, e.g., "None" or a list of errors/improvements. Always write this in English, no matter the language of the original response.
   - score (float): A numeric quality score, in the inclusive range [6,10].
 
