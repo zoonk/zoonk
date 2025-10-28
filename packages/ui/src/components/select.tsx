@@ -17,6 +17,7 @@ import {
   Value,
   Viewport,
 } from "@radix-ui/react-select";
+import { useRemovePortal } from "@zoonk/ui/hooks/use-remove-portal";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import type * as React from "react";
@@ -65,6 +66,8 @@ function SelectContent({
   position = "popper",
   ...props
 }: React.ComponentProps<typeof Content>) {
+  useRemovePortal("[data-radix-select-viewport]");
+
   return (
     <Portal>
       <Content

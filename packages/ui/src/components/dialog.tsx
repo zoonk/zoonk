@@ -10,6 +10,7 @@ import {
   Title,
   Trigger,
 } from "@radix-ui/react-dialog";
+import { useRemovePortal } from "@zoonk/ui/hooks/use-remove-portal";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import type * as React from "react";
@@ -23,6 +24,8 @@ function DialogTrigger({ ...props }: React.ComponentProps<typeof Trigger>) {
 }
 
 function DialogPortal({ ...props }: React.ComponentProps<typeof Portal>) {
+  useRemovePortal();
+  useRemovePortal("[data-slot='dialog-overlay']");
   return <Portal data-slot="dialog-portal" {...props} />;
 }
 
