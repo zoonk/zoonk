@@ -21,10 +21,10 @@ import {
 import type { TaskEvalResults } from "@/lib/types";
 import { LeaderboardExport } from "./leaderboard-export";
 
-interface LeaderboardProps {
+type LeaderboardProps = {
   taskId: string;
   results: TaskEvalResults[];
-}
+};
 
 export function Leaderboard({ taskId, results }: LeaderboardProps) {
   const entries: LeaderboardEntry[] = useMemo(

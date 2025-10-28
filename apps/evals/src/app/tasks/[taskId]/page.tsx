@@ -25,9 +25,9 @@ import {
 import { getTaskById, RUNS_PER_TEST_CASE } from "@/tasks";
 import { Leaderboard } from "./leaderboard";
 
-interface TaskPageProps {
+type TaskPageProps = {
   params: Promise<{ taskId: string }>;
-}
+};
 
 export default async function TaskPage({ params }: TaskPageProps) {
   const { taskId } = await params;

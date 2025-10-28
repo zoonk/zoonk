@@ -101,6 +101,7 @@
         "noDoneCallback": "error",
         "noEnum": "error",
         "noExportedImports": "error",
+        "noInferrableTypes": "error",
         "noMagicNumbers": "error",
         "noNamespace": "error",
         "noNegationElse": "error",
@@ -109,6 +110,7 @@
         "noParameterProperties": "error",
         "noRestrictedGlobals": "error",
         "noRestrictedImports": "error",
+        "noShoutyConstants": "error",
         "noSubstr": "error",
         "noUnusedTemplateLiteral": "error",
         "noUselessElse": "error",
@@ -125,6 +127,10 @@
         "useConsistentCurlyBraces": "error",
         "useConsistentMemberAccessibility": "error",
         "useConsistentObjectDefinitions": "error",
+        "useConsistentTypeDefinitions": {
+          "level": "error",
+          "options": { "style": "type" }
+        },
         "useDefaultParameterLast": "error",
         "useDefaultSwitchClause": "error",
         "useEnumInitializers": "error",

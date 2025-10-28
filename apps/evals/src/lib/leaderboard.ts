@@ -24,14 +24,14 @@ export function calculateAverageScore(results: TaskEvalResults): number {
   return totalScore / results.results.length;
 }
 
-export interface LeaderboardEntry {
+export type LeaderboardEntry = {
   modelId: string;
   modelName: string;
   provider: string;
   averageScore: number;
   averageDuration: number;
   totalCost: number;
-}
+};
 
 export type SortKey =
   | "modelName"

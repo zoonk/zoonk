@@ -1,10 +1,10 @@
-export interface ModelConfig {
+export type ModelConfig = {
   id: string;
   name: string;
   inputCost: number;
   outputCost: number;
   reasoningEffort?: "auto" | "low" | "medium" | "high";
-}
+};
 
 export const EVAL_MODELS: ModelConfig[] = [
   {

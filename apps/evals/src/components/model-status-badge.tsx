@@ -1,10 +1,10 @@
 import { Badge } from "@zoonk/ui/components/badge";
 import { getModelStatus, type ModelStatus } from "@/lib/utils";
 
-interface ModelStatusBadgeProps {
+type ModelStatusBadgeProps = {
   taskId: string;
   modelId: string;
-}
+};
 
 const labelMap: Record<ModelStatus, string> = {
   completed: "Completed",

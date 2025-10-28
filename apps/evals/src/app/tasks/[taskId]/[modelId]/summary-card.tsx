@@ -5,18 +5,18 @@ import {
   CardTitle,
 } from "@zoonk/ui/components/card";
 
-interface SummaryCardProps {
+type SummaryCardProps = {
   averageScore: number;
   averageInputTokens: number;
   averageOutputTokens: number;
   averageDuration: number;
   totalCost: number;
-}
+};
 
-interface StatItemProps {
+type StatItemProps = {
   label: string;
   value: string | number;
-}
+};
 
 function StatItem({ label, value }: StatItemProps) {
   return (

@@ -10,10 +10,10 @@ import {
 import { Download } from "lucide-react";
 import type { LeaderboardEntry } from "@/lib/leaderboard";
 
-interface LeaderboardExportProps {
+type LeaderboardExportProps = {
   taskId: string;
   entries: LeaderboardEntry[];
-}
+};
 
 export function LeaderboardExport({ taskId, entries }: LeaderboardExportProps) {
   function exportAsMarkdown(anonymous: boolean) {

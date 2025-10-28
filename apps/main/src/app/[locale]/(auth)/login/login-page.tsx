@@ -4,9 +4,9 @@ import LoginFooter from "./login-footer";
 import LoginForm from "./login-form";
 import LoginHeader from "./login-header";
 
-interface LoginPageProps {
+type LoginPageProps = {
   params: PageProps<"/[locale]/login">["params"];
-}
+};
 
 export default async function LoginPage({ params }: LoginPageProps) {
   "use cache";

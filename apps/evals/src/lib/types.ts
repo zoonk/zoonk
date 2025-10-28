@@ -16,34 +16,34 @@ export const scoreSchema = z.object({
 export type Score = z.infer<typeof scoreSchema>;
 export type ScoreStep = z.infer<typeof stepSchema>;
 
-export interface TestCase {
+export type TestCase = {
   id: string;
   userInput: Record<string, string>;
   expectations: string;
-}
-export interface TaskResult<T = unknown> {
+};
+export type TaskResult<T = unknown> = {
   data: T;
   usage: LanguageModelUsage;
   userPrompt: string;
   systemPrompt: string;
-}
+};
 
-export interface EvalResult {
+export type EvalResult = {
   testCase: TestCase;
   output: string;
   steps: Score["steps"];
   inputTokens: number;
   outputTokens: number;
   duration: number;
-}
+};
 
-export interface TaskEvalResults {
+export type TaskEvalResults = {
   taskId: string;
   modelId: string;
   results: EvalResult[];
-}
+};
 
-export interface Task<TInput = unknown, TOutput = unknown> {
+export type Task<TInput = unknown, TOutput = unknown> = {
   id: string;
   name: string;
   description: string;
@@ -51,4 +51,4 @@ export interface Task<TInput = unknown, TOutput = unknown> {
   // Using method signature instead of property signature makes this bivariant,
   // allowing Task<SpecificInput> to be assignable to Task<unknown>
   generate(input: TInput & { model: string }): Promise<TaskResult<TOutput>>;
-}
+};

@@ -6,31 +6,31 @@ import {
 import { calculateScore, getScoreClassName } from "@/lib/score";
 import type { EvalResult, ScoreStep } from "@/lib/types";
 
-interface TestCaseCardProps {
+type TestCaseCardProps = {
   result: EvalResult;
   index: number;
-}
+};
 
-interface UserInputSectionProps {
+type UserInputSectionProps = {
   userInput: Record<string, string>;
-}
+};
 
-interface ScoreSectionProps {
+type ScoreSectionProps = {
   score: number;
-}
+};
 
-interface TokensSectionProps {
+type TokensSectionProps = {
   inputTokens: number;
   outputTokens: number;
-}
+};
 
-interface OutputSectionProps {
+type OutputSectionProps = {
   output: string;
-}
+};
 
-interface EvaluationStepsSectionProps {
+type EvaluationStepsSectionProps = {
   steps: ScoreStep[];
-}
+};
 
 function UserInputSection({ userInput }: UserInputSectionProps) {
   return (

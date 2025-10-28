@@ -17,9 +17,9 @@ const initialState = {
   error: "",
 };
 
-interface OTPFormProps {
+type OTPFormProps = {
   email: string;
-}
+};
 
 export function OTPForm({ email }: OTPFormProps) {
   const t = useTranslations("Auth");

@@ -5,12 +5,12 @@ const TOKENS_PER_MILLION = 1_000_000;
 const COST_MULTIPLIER = 1000;
 const MS_TO_SECONDS = 1000;
 
-interface TaskStats {
+type TaskStats = {
   averageInputTokens: number;
   averageOutputTokens: number;
   averageDuration: number;
   totalCost: number;
-}
+};
 
 function calculateAverage(
   results: EvalResult[],

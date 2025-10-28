@@ -4,11 +4,11 @@ const apiUrl = "https://api.zeptomail.com/v1.1/email";
 const apiKey = process.env.MAILER_API_KEY;
 const sendEmailDisabled = !apiKey;
 
-interface EmailProps {
+type EmailProps = {
   to: string;
   subject: string;
   text: string;
-}
+};
 
 export async function sendEmail({
   to,

@@ -7,9 +7,9 @@ import type { TaskEvalResults } from "@/lib/types";
 import { SummaryCard } from "./summary-card";
 import { TestCase } from "./test-case";
 
-interface EvalResultsProps {
+type EvalResultsProps = {
   results: TaskEvalResults;
-}
+};
 
 export function EvalResults({ results }: EvalResultsProps) {
   const model = getModelById(results.modelId);

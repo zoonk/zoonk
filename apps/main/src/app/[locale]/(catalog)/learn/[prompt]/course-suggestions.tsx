@@ -19,10 +19,10 @@ import { Fragment } from "react/jsx-runtime";
 import { ContentFeedback } from "@/components/content-feedback";
 import { Link } from "@/i18n/navigation";
 
-interface CourseSuggestionsProps {
+type CourseSuggestionsProps = {
   locale: string;
   prompt: string;
-}
+};
 
 export async function CourseSuggestions({
   locale,

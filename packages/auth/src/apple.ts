@@ -1,9 +1,9 @@
 import { importPKCS8, SignJWT } from "jose";
 
-interface CachedToken {
+type CachedToken = {
   token: string;
   exp: number;
-}
+};
 
 const MS_IN_SECOND = 1000;
 
