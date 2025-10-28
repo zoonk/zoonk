@@ -46,6 +46,7 @@
       },
       "complexity": {
         "noExcessiveCognitiveComplexity": "error",
+        "noExcessiveNestedTestSuites": "error",
         "noForEach": "error",
         "noImplicitCoercions": "error",
         "noUselessStringConcat": "error",
