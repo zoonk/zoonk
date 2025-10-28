@@ -5,7 +5,8 @@
       "source": {
         "recommended": true,
         "useSortedAttributes": "on",
-        "useSortedKeys": "on"
+        "useSortedKeys": "on",
+        "useSortedProperties": "on"
       }
     }
   },
