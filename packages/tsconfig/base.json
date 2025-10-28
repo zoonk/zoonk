@@ -13,6 +13,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "incremental": true,
-    "allowArbitraryExtensions": true
+    "allowArbitraryExtensions": true,
+    "strictNullChecks": true
   }
 }
