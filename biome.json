@@ -5,6 +5,11 @@
     "clientKind": "git",
     "useIgnoreFile": true
   },
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "files": {
     "ignoreUnknown": true,
     "includes": [
@@ -38,6 +43,7 @@
         "useWhile": "error"
       },
       "correctness": {
+        "useImageSize": "error",
         "useImportExtensions": "off",
         "useUniqueElementIds": "off",
         "noGlobalDirnameFilename": "error",
@@ -52,20 +58,15 @@
         "noImportCycles": "error",
         "noJsxLiterals": "error",
         "noMisusedPromises": "error",
-        "noNonNullAssertedOptionalChain": "error",
-        "noSecrets": "off",
         "noShadow": "error",
         "noUnnecessaryConditions": "error",
         "noUnresolvedImports": "off",
         "noUselessCatchBinding": "error",
         "noUselessUndefined": "error",
-        "useAnchorHref": "error",
         "useConsistentArrowReturn": "error",
         "useExhaustiveSwitchCases": "error",
         "useExplicitType": "off",
-        "useImageSize": "error",
         "useMaxParams": "error",
-        "useReactFunctionComponents": "error",
         "noNextAsyncClientComponent": "error",
         "useSortedClasses": {
           "level": "error",
@@ -105,6 +106,7 @@
         "useBlockStatements": "error",
         "useCollapsedElseIf": "error",
         "useCollapsedIf": "error",
+        "useComponentExportOnlyModules": "off",
         "useConsistentArrayType": "error",
         "useConsistentBuiltinInstantiation": "error",
         "useConsistentCurlyBraces": "error",
@@ -126,6 +128,7 @@
         "useNumberNamespace": "error",
         "useNumericSeparators": "error",
         "useObjectSpread": "error",
+        "useReactFunctionComponents": "error",
         "useReadonlyClassProperties": "error",
         "useSelfClosingElements": "error",
         "useShorthandAssign": "error",
@@ -145,6 +148,7 @@
         "noEmptyBlockStatements": "error",
         "noEvolvingTypes": "error",
         "noMisplacedAssertion": "error",
+        "noNonNullAssertedOptionalChain": "error",
         "noSkippedTests": "error",
         "noUnassignedVariables": "error",
         "noVar": "error",
