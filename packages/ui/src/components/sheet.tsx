@@ -13,6 +13,7 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import type * as React from "react";
+import { useRemovePortal } from "../hooks/use-remove-portal";
 
 function Sheet({ ...props }: React.ComponentProps<typeof Root>) {
   return <Root data-slot="sheet" {...props} />;
@@ -27,6 +28,8 @@ function SheetClose({ ...props }: React.ComponentProps<typeof Close>) {
 }
 
 function SheetPortal({ ...props }: React.ComponentProps<typeof Portal>) {
+  useRemovePortal();
+  useRemovePortal("[data-slot='sheet-overlay']");
   return <Portal data-slot="sheet-portal" {...props} />;
 }
 
