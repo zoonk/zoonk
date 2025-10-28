@@ -29,7 +29,9 @@ export function StartCourseForm() {
 
     if (query) {
       const encodedQuery = encodeURIComponent(query);
+      setIsLoading(false);
       push(`/learn/${encodedQuery}`);
+      form.reset();
     }
   };
 
