@@ -33,5 +33,9 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
-  "emmet.showExpandedAbbreviation": "never"
+  "emmet.showExpandedAbbreviation": "never",
+  "search.exclude": {
+    "**/eval-results/**": true,
+    "pnpm-lock.yaml": true
+  }
 }
