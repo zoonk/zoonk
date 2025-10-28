@@ -19,12 +19,12 @@
     "ignoreUnknown": true,
     "includes": [
       "**",
-      "!node_modules",
-      "!.next",
-      "!dist",
-      "!build",
-      "!generated",
-      "!.turbo"
+      "!!node_modules",
+      "!!.next",
+      "!!dist",
+      "!!build",
+      "!!generated",
+      "!!.turbo"
     ]
   },
   "formatter": {
