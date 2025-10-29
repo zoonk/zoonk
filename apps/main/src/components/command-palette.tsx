@@ -49,7 +49,7 @@ export function CommandPalette() {
   const accountPublic = [{ key: t("login"), ...getMenu("login") }];
 
   const accountPrivate = [
-    { key: t("courses"), ...getMenu("myCourses") },
+    { key: t("myCourses"), ...getMenu("myCourses") },
     { key: t("subscription"), ...getMenu("subscription") },
     { key: t("settings"), ...getMenu("settings") },
     { key: t("language"), ...getMenu("language") },
