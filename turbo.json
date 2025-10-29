@@ -27,31 +27,42 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "db:deploy": {
-      "cache": false
+      "cache": false,
+      "dependsOn": ["^db:deploy"]
     },
     "db:generate": {
-      "cache": false
+      "cache": false,
+      "dependsOn": ["^db:generate"]
     },
     "db:migrate": {
       "cache": false,
+      "dependsOn": ["^db:migrate"],
       "persistent": true
     },
     "dev": {
       "cache": false,
-      "dependsOn": ["^db:generate"],
+      "dependsOn": ["^db:generate", "^dev"],
       "persistent": true
     },
-    "i18n": {},
+    "i18n": {
+      "dependsOn": ["^i18n"]
+    },
     "start": {
       "cache": false,
+      "dependsOn": ["^start"],
       "persistent": true
     },
-    "test": {},
+    "test": {
+      "dependsOn": ["^test"]
+    },
     "test:watch": {
       "cache": false,
+      "dependsOn": ["^test:watch"],
       "persistent": true
     },
-    "typecheck": {}
+    "typecheck": {
+      "dependsOn": ["^typecheck"]
+    }
   },
   "ui": "tui"
 }
