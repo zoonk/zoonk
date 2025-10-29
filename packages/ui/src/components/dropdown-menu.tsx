@@ -27,7 +27,6 @@ function DropdownMenu({ ...props }: React.ComponentProps<typeof Root>) {
 }
 
 function DropdownMenuPortal({ ...props }: React.ComponentProps<typeof Portal>) {
-  useRemovePortal("[data-radix-popper-content-wrapper]");
   return <Portal data-slot="dropdown-menu-portal" {...props} />;
 }
 
@@ -42,6 +41,8 @@ function DropdownMenuContent({
   sideOffset = 4,
   ...props
 }: React.ComponentProps<typeof Content>) {
+  const ref = useRemovePortal();
+
   return (
     <DropdownMenuPortal>
       <Content
@@ -50,6 +51,7 @@ function DropdownMenuContent({
           className,
         )}
         data-slot="dropdown-menu-content"
+        ref={ref}
         sideOffset={sideOffset}
         {...props}
       />

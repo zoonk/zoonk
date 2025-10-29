@@ -27,10 +27,17 @@ function SheetClose({ ...props }: React.ComponentProps<typeof Close>) {
   return <Close data-slot="sheet-close" {...props} />;
 }
 
-function SheetPortal({ ...props }: React.ComponentProps<typeof Portal>) {
-  useRemovePortal();
-  useRemovePortal("[data-slot='sheet-overlay']");
-  return <Portal data-slot="sheet-portal" {...props} />;
+function SheetPortal({
+  children,
+  ...props
+}: React.ComponentProps<typeof Portal>) {
+  const ref = useRemovePortal();
+
+  return (
+    <Portal data-slot="sheet-portal" {...props}>
+      <div ref={ref}>{children}</div>
+    </Portal>
+  );
 }
 
 function SheetOverlay({

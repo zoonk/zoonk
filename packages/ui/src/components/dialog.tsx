@@ -23,10 +23,16 @@ function DialogTrigger({ ...props }: React.ComponentProps<typeof Trigger>) {
   return <Trigger data-slot="dialog-trigger" {...props} />;
 }
 
-function DialogPortal({ ...props }: React.ComponentProps<typeof Portal>) {
-  useRemovePortal();
-  useRemovePortal("[data-slot='dialog-overlay']");
-  return <Portal data-slot="dialog-portal" {...props} />;
+function DialogPortal({
+  children,
+  ...props
+}: React.ComponentProps<typeof Portal>) {
+  const ref = useRemovePortal();
+  return (
+    <Portal data-slot="dialog-portal" {...props}>
+      <div ref={ref}>{children}</div>
+    </Portal>
+  );
 }
 
 function DialogClose({ ...props }: React.ComponentProps<typeof Close>) {

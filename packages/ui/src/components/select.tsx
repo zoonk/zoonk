@@ -66,7 +66,7 @@ function SelectContent({
   position = "popper",
   ...props
 }: React.ComponentProps<typeof Content>) {
-  useRemovePortal("[data-radix-select-viewport]");
+  const ref = useRemovePortal();
 
   return (
     <Portal>
@@ -79,6 +79,7 @@ function SelectContent({
         )}
         data-slot="select-content"
         position={position}
+        ref={ref}
         {...props}
       >
         <SelectScrollUpButton />

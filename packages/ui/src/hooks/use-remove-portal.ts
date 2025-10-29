@@ -1,4 +1,4 @@
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useRef } from "react";
 
 /**
  * This is a workaround for this issue:
@@ -16,15 +16,17 @@ import { useLayoutEffect } from "react";
  * flag for routing caching. Right now, we can't disable it without also disabling
  * `cacheComponents`.
  */
-export function useRemovePortal(selector = "[role='dialog']") {
+export function useRemovePortal() {
+  const ref = useRef<HTMLDivElement | null>(null);
+
   useLayoutEffect(
     () => () => {
-      const el = document.querySelector(selector);
-
-      if (el) {
-        el.classList.add("hidden");
+      if (ref.current) {
+        ref.current.style.display = "none";
       }
     },
-    [selector],
+    [],
   );
+
+  return ref;
 }
