@@ -9,6 +9,7 @@ import {
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { SettingsList } from "./settings-list";
 
 export async function generateMetadata({
   params,
@@ -38,11 +39,13 @@ export default async function Settings({
   const t = await getTranslations("Settings");
 
   return (
-    <Container>
-      <ContainerHeader>
+    <Container className="p-0">
+      <ContainerHeader className="px-4 pt-4">
         <ContainerTitle>{t("title")}</ContainerTitle>
         <ContainerDescription>{t("subtitle")}</ContainerDescription>
       </ContainerHeader>
+
+      <SettingsList />
     </Container>
   );
 }
