@@ -46,7 +46,10 @@ export function CommandPalette() {
     { key: t("start"), ...getMenu("start") },
   ];
 
-  const accountPublic = [{ key: t("login"), ...getMenu("login") }];
+  const accountPublic = [
+    { key: t("login"), ...getMenu("login") },
+    { key: t("language"), ...getMenu("language") },
+  ];
 
   const accountPrivate = [
     { key: t("myCourses"), ...getMenu("myCourses") },
