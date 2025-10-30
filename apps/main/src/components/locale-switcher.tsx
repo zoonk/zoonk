@@ -1,12 +1,9 @@
 "use client";
 
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@zoonk/ui/components/select";
+  NativeSelect,
+  NativeSelectOption,
+} from "@zoonk/ui/components/native-select";
 import { useParams } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useTransition } from "react";
@@ -21,7 +18,9 @@ export default function LocaleSwitcher() {
   const pathname = usePathname();
   const params = useParams();
 
-  function onSelectChange(nextLocale: string) {
+  function onSelectChange(event: React.ChangeEvent<HTMLSelectElement>) {
+    const nextLocale = event.target.value;
+
     startTransition(() => {
       router.replace(
         // @ts-expect-error -- TypeScript will validate that only known `params`
@@ -34,22 +33,18 @@ export default function LocaleSwitcher() {
   }
 
   return (
-    <Select
+    <NativeSelect
+      aria-label={t("label")}
+      className="w-[180px]"
       defaultValue={locale}
       disabled={isPending}
-      onValueChange={onSelectChange}
+      onChange={onSelectChange}
     >
-      <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder={t("label")} />
-      </SelectTrigger>
-
-      <SelectContent>
-        {routing.locales.map((lang) => (
-          <SelectItem key={lang} value={lang}>
-            {t("locale", { locale: lang })}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+      {routing.locales.map((lang) => (
+        <NativeSelectOption key={lang} value={lang}>
+          {t("locale", { locale: lang })}
+        </NativeSelectOption>
+      ))}
+    </NativeSelect>
   );
 }
