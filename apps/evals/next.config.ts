@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
     ],
   },
   pageExtensions: ["ts", "tsx"],
+  reactCompiler: true,
   // we use next.js compiler to transpile our internal packages
   transpilePackages: ["@zoonk/ai", "@zoonk/ui", "@zoonk/utils"],
   turbopack: {

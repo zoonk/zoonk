@@ -16,6 +16,7 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.1",
     "@zoonk/tsconfig": "workspace:*",
+    "babel-plugin-react-compiler": "1.0.0",
     "raw-loader": "4.0.2",
     "typescript": "^5"
   },

@@ -33,6 +33,7 @@
     "@types/react-dom": "^19.2.1",
     "@vitejs/plugin-react": "5.1.0",
     "@zoonk/tsconfig": "workspace:*",
+    "babel-plugin-react-compiler": "1.0.0",
     "jsdom": "27.0.0",
     "raw-loader": "4.0.2",
     "tsx": "4.20.5",

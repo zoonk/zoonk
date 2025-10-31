@@ -1,5 +1,6 @@
 "use client";
 
+import { useLogout } from "@zoonk/auth/hooks/logout";
 import {
   SidebarFooter,
   SidebarMenu,
@@ -7,16 +8,16 @@ import {
   SidebarMenuItem,
 } from "@zoonk/ui/components/sidebar";
 import { useTranslations } from "next-intl";
-import { usei18nLogout } from "@/hooks/use-logout";
-import { Link, usePathname } from "@/i18n/navigation";
+import { Link, usePathname, useRouter } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 
 const logoutMenu = getMenu("logout");
 
 export function SettingsSidebarFooter() {
-  const { isLoggedIn, logout } = usei18nLogout();
-  const pathname = usePathname();
+  const { push } = useRouter();
   const t = useTranslations("Menu");
+  const pathname = usePathname();
+  const { isLoggedIn, logout } = useLogout({ onSuccess: () => push("/login") });
 
   const menuItems = [
     { key: t("feedback"), ...getMenu("feedback") },

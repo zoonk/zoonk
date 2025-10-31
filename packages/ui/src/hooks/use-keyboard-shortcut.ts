@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * A custom hook that listens for a keyboard shortcut and opens a dialog.
@@ -21,8 +21,8 @@ export function useKeyboardShortcut(key: string) {
     return () => document.removeEventListener("keydown", down);
   }, [key]);
 
-  const open = useCallback(() => setIsOpen(true), []);
-  const close = useCallback(() => setIsOpen(false), []);
+  const open = () => setIsOpen(true);
+  const close = () => setIsOpen(false);
 
   return { close, isOpen, open };
 }

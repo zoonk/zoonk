@@ -1,5 +1,6 @@
 "use client";
 
+import { useLogout } from "@zoonk/auth/hooks/logout";
 import { Button } from "@zoonk/ui/components/button";
 import {
   CommandDialog,
@@ -12,8 +13,7 @@ import {
 import { useKeyboardShortcut } from "@zoonk/ui/hooks/use-keyboard-shortcut";
 import { Search } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useCallback, useState } from "react";
-import { usei18nLogout } from "@/hooks/use-logout";
+import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 
@@ -21,24 +21,20 @@ const logoutMenu = getMenu("logout");
 
 export function CommandPalette() {
   const { push } = useRouter();
-  const { isLoggedIn, logout } = usei18nLogout();
-  const { isOpen, open, close } = useKeyboardShortcut("k");
-  const [query, setQuery] = useState("");
-
   const t = useTranslations("Menu");
+  const [query, setQuery] = useState("");
+  const { isOpen, open, close } = useKeyboardShortcut("k");
+  const { isLoggedIn, logout } = useLogout({ onSuccess: () => push("/login") });
 
-  const closePalette = useCallback(() => {
+  const closePalette = () => {
     close();
     setQuery("");
-  }, [close]);
+  };
 
-  const onSelectItem = useCallback(
-    (item: string) => {
-      closePalette();
-      push(item);
-    },
-    [push, closePalette],
-  );
+  const onSelectItem = (item: string) => {
+    closePalette();
+    push(item);
+  };
 
   const getStarted = [
     { key: t("home"), ...getMenu("home") },

@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@zoonk/ui/components/table";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import {
   getDefaultSortDirection,
   getLeaderboardEntries,
@@ -27,18 +27,11 @@ type LeaderboardProps = {
 };
 
 export function Leaderboard({ taskId, results }: LeaderboardProps) {
-  const entries: LeaderboardEntry[] = useMemo(
-    () => getLeaderboardEntries(results),
-    [results],
-  );
-
   const [sortKey, setSortKey] = useState<SortKey>("averageScore");
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
-  const sortedEntries = useMemo(
-    () => sortLeaderboardEntries(entries, sortKey, sortDirection),
-    [entries, sortKey, sortDirection],
-  );
+  const entries: LeaderboardEntry[] = getLeaderboardEntries(results);
+  const sortedEntries = sortLeaderboardEntries(entries, sortKey, sortDirection);
 
   function handleSort(key: SortKey) {
     if (sortKey === key) {

@@ -15,7 +15,6 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useState,
 } from "react";
 import { Button } from "./button";
@@ -133,18 +132,15 @@ function SidebarProvider({
   // This makes it easier to style the sidebar with Tailwind classes.
   const state = open ? "expanded" : "collapsed";
 
-  const contextValue = useMemo<SidebarContextProps>(
-    () => ({
-      isMobile,
-      open,
-      openMobile,
-      setOpen,
-      setOpenMobile,
-      state,
-      toggleSidebar,
-    }),
-    [state, open, setOpen, isMobile, openMobile, toggleSidebar],
-  );
+  const contextValue: SidebarContextProps = {
+    isMobile,
+    open,
+    openMobile,
+    setOpen,
+    setOpenMobile,
+    state,
+    toggleSidebar,
+  };
 
   return (
     <SidebarContext.Provider value={contextValue}>
@@ -644,7 +640,7 @@ function SidebarMenuSkeleton({
 }) {
   // Random width between 50 to 90%.
   // biome-ignore lint/style/noMagicNumbers: this is fine since it's just a random width for the skeleton.
-  const width = useMemo(() => `${Math.floor(Math.random() * 40) + 50}%`, []);
+  const width = `${Math.floor(Math.random() * 40) + 50}%`;
 
   return (
     <div
