@@ -66,14 +66,13 @@ const PROFILES = {
 } as const;
 
 type ProfileName = keyof typeof PROFILES;
-type Locale = (typeof routing.locales)[number];
 
 function getSocialProfile(name: ProfileName, locale: string) {
   const profile = PROFILES[name];
   return profile[isLocale(locale) ? locale : "en"];
 }
 
-function isLocale(locale: string): locale is Locale {
+function isLocale(locale: string): locale is "en" | "pt" {
   return (routing.locales as readonly string[]).includes(locale);
 }
 

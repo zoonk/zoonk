@@ -4,12 +4,12 @@
     "continueWithApple": "Continuar com Apple",
     "continueWithGoogle": "Continuar com Google",
     "email": "Email",
-    "emailError": "Falha ao enviar o código de verificação. Por favor, tente novamente ou entre em contato com hello@zoonk.com",
+    "emailError": "Falha ao enviar o código de verificação. Por favor, tente novamente ou entre em contato com contato@zoonk.com",
     "emailPlaceholder": "meuemail@gmail.com",
-    "errorSigningIn": "Houve um erro ao fazer login. Por favor, tente novamente ou entre em contato com hello@zoonk.com",
+    "errorSigningIn": "Houve um erro ao fazer login. Por favor, tente novamente ou entre em contato com contato@zoonk.com",
     "metaDescription": "Faça login na sua conta ou crie uma nova para começar a usar o Zoonk.",
     "metaTitle": "Entrar ou Criar Conta",
-    "otpError": "O código que você digitou está incorreto. Por favor, tente novamente ou entre em contato com hello@zoonk.com",
+    "otpError": "O código que você digitou está incorreto. Por favor, tente novamente ou entre em contato com contato@zoonk.com",
     "otpSubtitle": "Digite o código que enviamos para {email}:",
     "otpTitle": "Verifique seu email",
     "socialOr": "Ou",
@@ -21,7 +21,7 @@
   "Contact": {
     "email": "Email",
     "emailPlaceholder": "seu.email@exemplo.com",
-    "error": "Falha ao enviar mensagem. Por favor, tente novamente ou entre em contato diretamente pelo email hello@zoonk.com",
+    "error": "Falha ao enviar mensagem. Por favor, tente novamente ou entre em contato diretamente pelo email contato@zoonk.com",
     "message": "Mensagem",
     "messagePlaceholder": "Como podemos ajudar?",
     "submit": "Enviar mensagem",
@@ -86,7 +86,7 @@
   },
   "LocaleSwitcher": {
     "label": "Alterar idioma",
-    "locale": "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} other {Desconhecido}}"
+    "locale": "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} es {🇪🇸 Español} other {Desconhecido}}"
   },
   "Menu": {
     "close": "Fechar",
