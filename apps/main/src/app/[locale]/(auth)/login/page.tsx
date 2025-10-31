@@ -1,9 +1,12 @@
+"use cache";
+
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getTranslations } from "next-intl/server";
-import { redirect } from "@/i18n/navigation";
-import { getSession } from "@/lib/user";
-import LoginPage from "./login-page";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import LoginContainer from "./login-container";
+import LoginFooter from "./login-footer";
+import LoginForm from "./login-form";
+import LoginHeader from "./login-header";
 
 export async function generateMetadata({
   params,
@@ -25,12 +28,16 @@ export async function generateMetadata({
 
 export default async function Login({ params }: PageProps<"/[locale]/login">) {
   const { locale } = await params;
+  setRequestLocale(locale);
 
-  const session = await getSession();
+  cacheLife("max");
+  cacheTag(locale, "login");
 
-  if (session) {
-    return redirect({ href: "/", locale });
-  }
-
-  return <LoginPage params={params} />;
+  return (
+    <LoginContainer>
+      <LoginHeader />
+      <LoginForm />
+      <LoginFooter />
+    </LoginContainer>
+  );
 }

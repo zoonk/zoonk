@@ -1,8 +1,5 @@
-"use cache";
-
 import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
-import { cacheLife, cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
@@ -27,9 +24,6 @@ export default async function RootLayout({
   params,
 }: LayoutProps<"/[locale]">) {
   const { locale } = await params;
-
-  cacheLife("max");
-  cacheTag(locale, "root-layout");
 
   if (!hasLocale(routing.locales, locale)) {
     notFound();
