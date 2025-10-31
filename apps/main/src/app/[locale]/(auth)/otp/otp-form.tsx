@@ -1,30 +1,42 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { InputError } from "@zoonk/ui/components/input";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@zoonk/ui/components/input-otp";
-import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
+import { Spinner } from "@zoonk/ui/components/spinner";
 import { useTranslations } from "next-intl";
-import { useActionState } from "react";
-import { Link } from "@/i18n/navigation";
-import { emailOTP } from "./actions";
+import { useState } from "react";
+import { Link, useRouter } from "@/i18n/navigation";
+import { authClient } from "@/lib/auth/client";
 
-const initialState = {
-  error: "",
-};
+type FormState = "idle" | "pending" | "error";
 
 type OTPFormProps = {
   email: string;
 };
 
 export function OTPForm({ email }: OTPFormProps) {
+  const { push } = useRouter();
   const t = useTranslations("Auth");
+  const [state, setState] = useState<FormState>("idle");
 
-  const [state, formAction, _pending] = useActionState(emailOTP, initialState);
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const otp = String(formData.get("otp"));
+
+    const { data, error } = await authClient.signIn.emailOtp({ email, otp });
+
+    setState(error ? "error" : "idle");
+
+    if (data) {
+      push("/");
+    }
+  };
 
   return (
     <div className="flex w-full flex-col items-center gap-6 text-center">
@@ -35,7 +47,10 @@ export function OTPForm({ email }: OTPFormProps) {
         </p>
       </div>
 
-      <form action={formAction} className="flex flex-col items-center gap-4">
+      <form
+        className="flex flex-col items-center gap-4"
+        onSubmit={handleSubmit}
+      >
         <InputOTP maxLength={6} name="otp" pattern="[0-9]*" required>
           <InputOTPGroup>
             <InputOTPSlot index={0} />
@@ -47,11 +62,12 @@ export function OTPForm({ email }: OTPFormProps) {
           </InputOTPGroup>
         </InputOTP>
 
-        <input name="email" type="hidden" value={email} />
+        {state === "error" && <InputError>{t("otpError")}</InputError>}
 
-        <InputError>{state.error}</InputError>
-
-        <SubmitButton full>{t("submit")}</SubmitButton>
+        <Button disabled={state === "pending"} type="submit">
+          {state === "pending" && <Spinner />}
+          {t("submit")}
+        </Button>
 
         <Link className={buttonVariants({ variant: "link" })} href="/login">
           {t("changeEmail")}
