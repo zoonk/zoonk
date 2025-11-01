@@ -17,15 +17,16 @@ export default async function CatalogLayout({
   cacheTag(locale, "catalog");
 
   return (
-    <Suspense>
-      <div className="flex min-h-dvh flex-col">
-        <nav className="flex w-full items-center justify-between gap-2 p-4">
+    <div className="flex min-h-dvh flex-col">
+      <nav className="flex w-full items-center justify-between gap-2 p-4">
+        <Suspense>
           <NavbarLinks />
-          <UserAvatarMenu />
-        </nav>
+        </Suspense>
 
-        {children}
-      </div>
-    </Suspense>
+        <UserAvatarMenu />
+      </nav>
+
+      {children}
+    </div>
   );
 }
