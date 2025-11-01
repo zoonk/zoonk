@@ -1,6 +1,6 @@
 "use server";
 
-import { generateCourseThumbnail } from "@zoonk/ai/tasks/course-thumbnail";
+import { generateCourseThumbnail } from "@zoonk/ai/course-thumbnail";
 
 export async function generateThumbnailAction(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();

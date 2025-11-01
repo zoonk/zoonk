@@ -48,7 +48,7 @@ export const TEST_CASES = [
 2. **Create a task definition** in `src/tasks/[task-name]/task.ts`:
 
 ```typescript
-import { generateYourFunction } from "@zoonk/ai/tasks/your-task";
+import { generateYourFunction } from "@zoonk/ai/your-task";
 import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
 

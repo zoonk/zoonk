@@ -1,6 +1,6 @@
 import "server-only";
 
-import { generateCourseSuggestions } from "@zoonk/ai/tasks/course-suggestions";
+import { generateCourseSuggestions } from "@zoonk/ai/course-suggestions";
 import {
   addCourseSuggestion,
   getCourseSuggestion,

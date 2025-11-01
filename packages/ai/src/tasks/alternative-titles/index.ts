@@ -2,7 +2,7 @@ import "server-only";
 
 import { generateObject } from "ai";
 import { z } from "zod";
-import systemPrompt from "./alternative-titles.md";
+import systemPrompt from "./prompt.md";
 
 const schema = z.object({
   alternatives: z.array(z.string()),

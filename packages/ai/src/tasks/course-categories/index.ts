@@ -2,7 +2,7 @@ import "server-only";
 
 import { generateObject } from "ai";
 import { z } from "zod";
-import systemPrompt from "./course-categories.md";
+import systemPrompt from "./prompt.md";
 
 const ALLOWED_CATEGORIES = [
   "arts",

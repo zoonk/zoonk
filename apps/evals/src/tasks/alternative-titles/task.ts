@@ -2,7 +2,7 @@ import {
   type AlternativeTitlesParams,
   type AlternativeTitlesSchema,
   generateAlternativeTitles,
-} from "@zoonk/ai/tasks/alternative-titles";
+} from "@zoonk/ai/alternative-titles";
 import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
 
