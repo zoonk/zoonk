@@ -10,7 +10,7 @@
     "typescript": "^5"
   },
   "exports": {
-    "./*": "./src/*.ts"
+    "./tasks/*": "./src/tasks/*.ts"
   },
   "name": "@zoonk/ai",
   "peerDependencies": {
