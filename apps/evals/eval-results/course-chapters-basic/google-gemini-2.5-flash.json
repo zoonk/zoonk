@@ -1,0 +1,254 @@
+{
+  "modelId": "google/gemini-2.5-flash",
+  "results": [
+    {
+      "duration": 15869.783167000001,
+      "inputTokens": 457,
+      "output": "{\n  \"chapters\": [\n    \"Fundamentos de Python e Configuração\",\n    \"Variáveis e Tipos de Dados\",\n    \"Operadores Lógicos e Aritméticos\",\n    \"Estruturas de Controle de Fluxo\",\n    \"Laços de Repetição Essenciais\",\n    \"Listas e Tuplas em Python\",\n    \"Dicionários e Conjuntos Básicos\",\n    \"Funções: Definição e Uso\",\n    \"Módulos e Pacotes Básico\",\n    \"Manipulação de Arquivos (I/O)\",\n    \"Tratamento de Erros e Exceções\",\n    \"Introdução à Programação Orientada Objetos\",\n    \"Ambientes Virtuais e Gerenciamento de Dependências\",\n    \"Explorando a Biblioteca Padrão\",\n    \"Boas Práticas e Estilo (PEP8)\",\n    \"Introdução ao Git e Versionamento\",\n    \"Testes Unitários: Fundamentos\",\n    \"Depuração de Código em Python\",\n    \"Compreensões de Listas e Dicionários\",\n    \"Resolução de Problemas com Algoritmos\",\n    \"Consumo de APIs RESTful\",\n    \"Interação com Bancos de Dados\",\n    \"Fundamentos de Web Scraping\",\n    \"Ética e Segurança de Dados\",\n    \"Colaboração e Documentação de Código\",\n    \"Otimização Básica de Performance\",\n    \"Construindo Ferramentas de Linha Comando\",\n    \"Introdução aos Frameworks Web\",\n    \"Fluxo de Trabalho de Projeto\",\n    \"Carreiras e Recursos Python\"\n  ]\n}",
+      "outputTokens": 350,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The generated chapter list is excellent, comprehensive, and follows a logical progression. It correctly includes topics essential for job readiness, such as version control (Git), testing, ethics, and project workflows. However, to be even more complete for a beginner aiming for a job, a dedicated chapter on Regular Expressions (regex) could be added, as it's a fundamental and widely used tool for text processing in Python. Additionally, while 'Introdução aos Frameworks Web' is good, specifying the most common ones like Django and Flask within that chapter's scope would be beneficial.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Prepare students for entry-level Python roles\n      - MUST be in Brazilian Portuguese\n\n      \n  - Chapters should be 3-7 words long\n  - Should create a progressive learning path from fundamentals to practical applications\n  - Should cover enough content to prepare learners for entry-level positions. After finishing this course, they should be able to get a job in the field\n  - Should introduce basic resources and career options in the field\n  - Should strongly cover fundamentals but also prepare them for practical applications in real-world scenarios\n  - Should NOT include personalized content like \"Build Your Own X\", \"Final Project\", or \"Your First X\"\n  - Should use modern terminology and everyday language, avoiding overly technical jargon\n  - Should be split into granular topics (many smaller chapters rather than few large ones)\n  - Should follow the language specified by locale parameter\n\n    ",
+        "id": "pt-python-1",
+        "userInput": {
+          "courseTitle": "Python",
+          "locale": "pt"
+        }
+      }
+    },
+    {
+      "duration": 9240.552708,
+      "inputTokens": 458,
+      "output": "{\n  \"chapters\": [\n    \"Internet and Web Fundamentals\",\n    \"HTML Document Structure\",\n    \"Semantic HTML Best Practices\",\n    \"CSS Styling Fundamentals\",\n    \"CSS Box Model and Layout\",\n    \"Responsive Design with CSS\",\n    \"JavaScript Core Language\",\n    \"Working with Variables and Data\",\n    \"Control Flow and Functions\",\n    \"DOM Manipulation with JavaScript\",\n    \"Event Handling in JavaScript\",\n    \"Developer Tools for Browsers\",\n    \"Version Control with Git\",\n    \"Command Line Interface Basics\",\n    \"Package Managers NPM and Yarn\",\n    \"Building Static Web Pages\",\n    \"Forms and Input Validation\",\n    \"Consuming RESTful APIs\",\n    \"Web Accessibility (A11y) Basics\",\n    \"Web Performance Fundamentals\",\n    \"Introduction to Web Security\",\n    \"Deploying Your First Website\",\n    \"Collaboration in Web Development\",\n    \"Ethics and Privacy on Web\",\n    \"Web Development Career Resources\"\n  ]\n}",
+      "outputTokens": 220,
+      "steps": [
+        {
+          "conclusion": "The generated list of chapters is incomplete for achieving the specified goal of making a learner job-ready. The prompt explicitly states to \"cover EVERYTHING to allow this learner to get a job in this field!\". However, the curriculum completely omits several topics that are essential for most entry-level web developer positions today. These missing topics include:\n\n- JavaScript frameworks/libraries (e.g., React, Vue, Angular)\n- Testing methodologies and tools (e.g., Jest, Cypress)\n- Modern build tools (e.g., Vite, Webpack)\n- CSS preprocessors or utility-first frameworks (e.g., SASS, Tailwind CSS)\n\nWithout at least an introduction to these concepts, a learner completing this course would be at a significant disadvantage in the job market. This is a major failure to meet a core requirement of the prompt.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The chapter titled \"Deploying Your First Website\" violates the negative constraint: \"No personalized deliverables (no 'your project', 'build X', 'final project', mentorship)\". The phrase \"Your First\" falls into this category of personalization. This could be easily corrected to something like \"Introduction to Website Deployment\".",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "The course outline could be significantly improved by adding chapters on topics crucial for job-readiness in modern web development. To better prepare students for entry-level roles, the curriculum should include introductory chapters on: a popular JavaScript framework (like React), frontend testing principles, modern build tools (like Vite), and advanced CSS tooling (like SASS or Tailwind). Adding these would bridge the gap between the provided fundamentals and the practical skills employers expect.",
+          "kind": "potentialImprovements",
+          "score": 7.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Prepare students for entry-level web developer roles\n      - MUST be in US English\n\n      \n  - Chapters should be 3-7 words long\n  - Should create a progressive learning path from fundamentals to practical applications\n  - Should cover enough content to prepare learners for entry-level positions. After finishing this course, they should be able to get a job in the field\n  - Should introduce basic resources and career options in the field\n  - Should strongly cover fundamentals but also prepare them for practical applications in real-world scenarios\n  - Should NOT include personalized content like \"Build Your Own X\", \"Final Project\", or \"Your First X\"\n  - Should use modern terminology and everyday language, avoiding overly technical jargon\n  - Should be split into granular topics (many smaller chapters rather than few large ones)\n  - Should follow the language specified by locale parameter\n\n    ",
+        "id": "en-web-development-1",
+        "userInput": {
+          "courseTitle": "Web Development",
+          "locale": "en"
+        }
+      }
+    },
+    {
+      "duration": 12908.785708,
+      "inputTokens": 462,
+      "output": "{\n  \"chapters\": [\n    \"Introdução ao Mundo Ágil\",\n    \"O Manifesto Ágil e Princípios\",\n    \"Mentalidade Ágil vs. Tradicional\",\n    \"Scrum: Uma Visão Geral\",\n    \"Papéis Fundamentais na Equipe Scrum\",\n    \"Artefatos Scrum Essenciais: Backlog\",\n    \"Ciclo de Vida de uma Sprint\",\n    \"Planejamento da Sprint e Estimativa\",\n    \"Daily Scrum para Sincronização Diária\",\n    \"Revisão e Retrospectiva da Sprint\",\n    \"Kanban: Fluxo Contínuo e Visualização\",\n    \"Princípios e Práticas Essenciais Kanban\",\n    \"User Stories e Critérios de Aceitação\",\n    \"Definição de Pronto (Definition of Done)\",\n    \"Métricas Ágeis Básicas e Monitoramento\",\n    \"Ferramentas Comuns para Gestão Ágil\",\n    \"Colaboração e Comunicação em Equipes\",\n    \"Feedback Contínuo e Melhoria Processos\",\n    \"Adaptação Ágil em Diversos Contextos\",\n    \"Cultura Organizacional e Valores Ágeis\",\n    \"Carreiras Ágeis e Próximos Passos\"\n  ]\n}",
+      "outputTokens": 277,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The generated chapter list is very good and follows all the main instructions. However, to better meet the high bar of being comprehensive enough for a learner to \"get a job in this field\", it could be improved. Potential additions include: a chapter briefly introducing other frameworks like Lean and XP, a more detailed chapter on specific roles (Product Owner, Scrum Master), a chapter on common agile anti-patterns, and a more explicit chapter on stakeholder management.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Cover how to apply agile methodologies not only in software but in various project types\n      - MUST be in Brazilian Portuguese\n\n      \n  - Chapters should be 3-7 words long\n  - Should create a progressive learning path from fundamentals to practical applications\n  - Should cover enough content to prepare learners for entry-level positions. After finishing this course, they should be able to get a job in the field\n  - Should introduce basic resources and career options in the field\n  - Should strongly cover fundamentals but also prepare them for practical applications in real-world scenarios\n  - Should NOT include personalized content like \"Build Your Own X\", \"Final Project\", or \"Your First X\"\n  - Should use modern terminology and everyday language, avoiding overly technical jargon\n  - Should be split into granular topics (many smaller chapters rather than few large ones)\n  - Should follow the language specified by locale parameter\n\n    ",
+        "id": "pt-metodologias-ageis-1",
+        "userInput": {
+          "courseTitle": "Metodologias Ágeis",
+          "locale": "pt"
+        }
+      }
+    },
+    {
+      "duration": 8438.443875,
+      "inputTokens": 457,
+      "output": "{\n  \"chapters\": [\n    \"Introducción a la Química: Fundamentos y Relevancia\",\n    \"Materia y sus Propiedades: Estados y Cambios\",\n    \"Estructura Atómica Fundamental: Partículas y Modelos\",\n    \"La Tabla Periódica: Organización y Tendencias\",\n    \"Enlaces Químicos Básicos: Tipos e Interacciones\",\n    \"Reacciones Químicas Esenciales: Tipos y Ecuaciones\",\n    \"Estequiometría: Cálculos Químicos de Cantidad\",\n    \"Disoluciones y Concentración: Propiedades y Preparación\",\n    \"Ácidos y Bases: Conceptos Fundamentales\",\n    \"Nomenclatura Química Inorgánica: Compuestos Comunes\",\n    \"Nomenclatura Química Orgánica: Hidrocarburos y Grupos\",\n    \"Seguridad en el Laboratorio: Prácticas Esenciales\",\n    \"Instrumentación Básica de Laboratorio: Equipos y Uso\",\n    \"Recolección y Análisis de Datos: Interpretación Química\",\n    \"Química en la Vida Cotidiana: Aplicaciones Prácticas\",\n    \"Sostenibilidad y Ética Química: Impacto y Regulación\",\n    \"Carreras y Recursos en Química: Oportunidades Profesionales\"\n  ]\n}",
+      "outputTokens": 273,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The course outline, while well-structured, is missing several fundamental topics that are typically considered essential for a comprehensive, job-ready chemistry foundation. Key omissions include: \n1. Chemical Thermodynamics (energy in reactions)\n2. Chemical Kinetics (reaction rates)\n3. Chemical Equilibrium\n\nThese topics are foundational in any post-secondary general chemistry course and would be expected knowledge for an entry-level job in the field. Their absence means the course is not as 'comprehensive' or 'job-ready' as instructed.",
+          "kind": "minorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "To better align with the 'job-ready' objective, the curriculum could be substantially improved. The following chapters should be added:\n\n- A chapter on Chemical Thermodynamics, covering enthalpy, entropy, and Gibbs free energy.\n- A chapter on Chemical Kinetics, discussing reaction rates and factors that influence them.\n- A chapter on Chemical Equilibrium, including Le Châtelier's principle.\n- A more specific chapter on 'Modern Analytical Techniques' beyond basic instrumentation, introducing concepts like spectroscopy and chromatography.\n- A chapter on 'Quality Assurance and Quality Control (QA/QC)' which is crucial for any lab-based job.\n- A chapter on 'Scientific Communication and Reporting' to cover data presentation and lab reports.",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Spanish\n\n      \n  - Chapters should be 3-7 words long\n  - Should create a progressive learning path from fundamentals to practical applications\n  - Should cover enough content to prepare learners for entry-level positions. After finishing this course, they should be able to get a job in the field\n  - Should introduce basic resources and career options in the field\n  - Should strongly cover fundamentals but also prepare them for practical applications in real-world scenarios\n  - Should NOT include personalized content like \"Build Your Own X\", \"Final Project\", or \"Your First X\"\n  - Should use modern terminology and everyday language, avoiding overly technical jargon\n  - Should be split into granular topics (many smaller chapters rather than few large ones)\n  - Should follow the language specified by locale parameter\n\n    ",
+        "id": "es-quimica-1",
+        "userInput": {
+          "courseTitle": "Química",
+          "locale": "es"
+        }
+      }
+    },
+    {
+      "duration": 8630.495875,
+      "inputTokens": 457,
+      "output": "{\n  \"chapters\": [\n    \"Introduction to Economic Scarcity and Choice\",\n    \"Economic Systems and Basic Models\",\n    \"Demand: Consumer Behavior and Theory\",\n    \"Supply: Producer Behavior and Costs\",\n    \"Market Equilibrium and Price Determination\",\n    \"Elasticity: Responsiveness in Markets\",\n    \"Government Intervention and Market Outcomes\",\n    \"Market Structures: Competition and Power\",\n    \"Introduction to Macroeconomic Principles\",\n    \"Measuring National Income: GDP\",\n    \"Inflation: Causes and Consequences\",\n    \"Unemployment: Measurement and Types\",\n    \"Aggregate Demand and Supply Model\",\n    \"Fiscal Policy: Government's Economic Role\",\n    \"Money, Banking, and Financial Markets\",\n    \"Monetary Policy: Central Bank Tools\",\n    \"International Trade and Global Economy\",\n    \"Basic Economic Data Analysis\",\n    \"Ethical Principles in Economic Decision-making\",\n    \"Economics Careers and Further Resources\"\n  ]\n}",
+      "outputTokens": 207,
+      "steps": [
+        {
+          "conclusion": "The response fails to fully adhere to the \"Domain-Agnostic Job-Ready Coverage\" instruction. The prompt explicitly asks for a course that covers \"EVERYTHING to allow this learner to get a job in this field!\" The generated list of chapters represents a standard, high-quality introductory academic economics course (equivalent to Microeconomics 101 and Macroeconomics 101). However, it omits several crucial chapters on the practical skills and tools required for an entry-level economics-related job. Specifically, it is missing content on:\n- Essential software and tools (e.g., Excel, R, Stata, Python).\n- Professional workflows (how to conduct an economic analysis project).\n- Communication skills (presenting findings to stakeholders, writing policy briefs).\n- Finding and using key data sources (e.g., FRED, World Bank, BLS). \nThis omission constitutes a failure to meet a core requirement of the prompt.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None. The response correctly follows all the stylistic and formatting rules, including chapter title length, language, and the exclusion of personalized projects. The progression from micro to macro to applied topics is logical.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "To meet the 'job-ready' requirement, the course outline needs significant additions focused on practical application. Suggested improvements include adding distinct chapters on:\n1.  **Tools for Economic Analysis:** Covering software like Excel, and introducing statistical packages like R or Stata.\n2.  **Finding and Using Economic Data:** Focusing on navigating and sourcing data from institutions like the FRED, World Bank, IMF, and national statistical agencies.\n3.  **Communicating Economic Insights:** Teaching how to write a policy brief, create data visualizations, and present findings to non-expert audiences.\n4.  **Introduction to Econometrics:** A basic chapter on regression analysis to bridge the gap between theory and empirical work.",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in English\n\n      \n  - Chapters should be 3-7 words long\n  - Should create a progressive learning path from fundamentals to practical applications\n  - Should cover enough content to prepare learners for entry-level positions. After finishing this course, they should be able to get a job in the field\n  - Should introduce basic resources and career options in the field\n  - Should strongly cover fundamentals but also prepare them for practical applications in real-world scenarios\n  - Should NOT include personalized content like \"Build Your Own X\", \"Final Project\", or \"Your First X\"\n  - Should use modern terminology and everyday language, avoiding overly technical jargon\n  - Should be split into granular topics (many smaller chapters rather than few large ones)\n  - Should follow the language specified by locale parameter\n\n    ",
+        "id": "en-economics-1",
+        "userInput": {
+          "courseTitle": "Economics",
+          "locale": "en"
+        }
+      }
+    },
+    {
+      "duration": 12613.604083000002,
+      "inputTokens": 459,
+      "output": "{\n  \"chapters\": [\n    \"Fundamentos da Neurociência: Introdução Histórica\",\n    \"Organização Geral do Sistema Nervoso\",\n    \"Células Neurais: Neurônios e Glia\",\n    \"Sinalização Neuronal: Potenciais e Transmissão\",\n    \"Neurotransmissores e Receptores: Funções Químicas\",\n    \"Anatomia Macroscópica do Encéfalo Humano\",\n    \"Divisões Funcionais do Sistema Nervoso\",\n    \"Circuitos Sensoriais: Visão, Audição, Tato\",\n    \"Sistemas Motores: Planejamento e Execução\",\n    \"Controle Homeostático e Sistema Autonômico\",\n    \"Bases Neurais da Memória e Aprendizagem\",\n    \"Neurociência das Emoções e Motivação\",\n    \"Atenção e Funções Executivas Corticais\",\n    \"Introdução aos Métodos de Pesquisa Neural\",\n    \"Técnicas de Neuroimagem: EEG e fMRI\",\n    \"Eletrofisiologia: Registrando Atividade Neuronal\",\n    \"Princípios de Farmacologia no Cérebro\",\n    \"Modelos Animais e Culturas Celulares\",\n    \"Análise de Dados em Neurociência Básica\",\n    \"Ética em Pesquisa: Humanos e Animais\",\n    \"Leitura Crítica de Artigos Científicos\",\n    \"Distúrbios Neurológicos e Psiquiátricos Comuns\",\n    \"Aplicações Práticas da Neurociência: Introdução\",\n    \"Neurociência e Carreiras: Oportunidades Futuras\"\n  ]\n}",
+      "outputTokens": 363,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The generated list of chapters is very comprehensive and well-structured. However, to better align with the goal of preparing the learner for a job, a few additions could be made. For instance, including chapters on 'Introdução à Neurociência Computacional' (Introduction to Computational Neuroscience), 'Desenvolvimento do Sistema Nervoso' (Nervous System Development), and 'Comunicação e Divulgação Científica' (Scientific Communication and Outreach) would provide a more complete skill set for an entry-level position in the field, which is often in research.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Portuguese (Brazil)\n\n      \n  - Chapters should be 3-7 words long\n  - Should create a progressive learning path from fundamentals to practical applications\n  - Should cover enough content to prepare learners for entry-level positions. After finishing this course, they should be able to get a job in the field\n  - Should introduce basic resources and career options in the field\n  - Should strongly cover fundamentals but also prepare them for practical applications in real-world scenarios\n  - Should NOT include personalized content like \"Build Your Own X\", \"Final Project\", or \"Your First X\"\n  - Should use modern terminology and everyday language, avoiding overly technical jargon\n  - Should be split into granular topics (many smaller chapters rather than few large ones)\n  - Should follow the language specified by locale parameter\n\n    ",
+        "id": "pt-neurociencia-1",
+        "userInput": {
+          "courseTitle": "Neurociência",
+          "locale": "pt"
+        }
+      }
+    },
+    {
+      "duration": 10977.139499999997,
+      "inputTokens": 457,
+      "output": "{\n  \"chapters\": [\n    \"Welcome to Spanish: Language Learning Foundations\",\n    \"The Spanish Alphabet and Pronunciation\",\n    \"Basic Greetings, Farewells, and Introductions\",\n    \"Numbers, Colors, and Simple Adjectives\",\n    \"Nouns: Gender and Number Rules\",\n    \"Subject Pronouns and Verb Conjugation\",\n    \"The Verb Ser: Identity and Origin\",\n    \"The Verb Estar: Location and State\",\n    \"The Verb Tener: Possession and Age\",\n    \"Forming Basic Questions and Sentences\",\n    \"Regular -AR Verbs in Present Tense\",\n    \"Regular -ER Verbs in Present Tense\",\n    \"Regular -IR Verbs in Present Tense\",\n    \"Days of the Week, Months, Seasons\",\n    \"Telling Time and Daily Schedule\",\n    \"Describing People and Personal Traits\",\n    \"Describing Places and Environments\",\n    \"Family, Friends, and Relationships\",\n    \"Food, Drink, and Restaurant Vocabulary\",\n    \"Shopping, Prices, and Currency Exchange\",\n    \"Asking For and Giving Directions\",\n    \"Transportation and Travel Phrases\",\n    \"Expressing Likes, Dislikes, and Opinions\",\n    \"Daily Routines and Leisure Activities\",\n    \"Basic Health and Emergency Phrases\",\n    \"Cultural Etiquette and Social Norms\",\n    \"Simple Conversational Strategies and Practice\",\n    \"Workplace Spanish: Basic Interactions\",\n    \"Continuing Your Learning and Career Resources\"\n  ]\n}",
+      "outputTokens": 316,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The generated course outline is very good for a basic A1/A2 level, but it doesn't fully meet the ambitious instruction to cover \"EVERYTHING to allow this learner to get a job in this field!\". While it includes a chapter on workplace Spanish, the content is strictly foundational (present tense, regular verbs, and only a few key irregulars). A truly \"job-ready\" course, even at a basic level, would need to introduce at least one past tense (like the preterite) and cover a wider range of common irregular verbs (e.g., ir, poder, querer). Additionally, there is no explicit chapter on definite and indefinite articles (el/la, un/una), which are fundamental.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The course could be significantly improved by adding more essential grammar chapters. Specifically, it should include chapters on:\n1. Definite and Indefinite Articles.\n2. Common Irregular Verbs (beyond just Ser, Estar, Tener), such as 'ir', 'poder', 'hacer', 'querer'.\n3. An introduction to a past tense, most likely the Preterite Tense, which is crucial for describing completed actions and necessary for even basic job-related communication.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST cover grammar basics: articles, gender, verb conjugations\n      - MUST introduce pronunciation and phonetics\n      - SHOULD include chapters on common phrases and vocabulary themes\n      - SHOULD cover cultural context for language learning\n      - SHOULD cover everyday communication scenarios\n      - MUST be in English (teaching Spanish)\n      - Should prepare students for basic conversations and A1/A2 proficiency\n\n      \n  - Chapters should be 3-7 words long\n  - Should create a progressive learning path from fundamentals to practical applications\n  - Should cover enough content to prepare learners for entry-level positions. After finishing this course, they should be able to get a job in the field\n  - Should introduce basic resources and career options in the field\n  - Should strongly cover fundamentals but also prepare them for practical applications in real-world scenarios\n  - Should NOT include personalized content like \"Build Your Own X\", \"Final Project\", or \"Your First X\"\n  - Should use modern terminology and everyday language, avoiding overly technical jargon\n  - Should be split into granular topics (many smaller chapters rather than few large ones)\n  - Should follow the language specified by locale parameter\n\n    ",
+        "id": "en-spanish-1",
+        "userInput": {
+          "courseTitle": "Spanish",
+          "locale": "en"
+        }
+      }
+    },
+    {
+      "duration": 11489.104374999999,
+      "inputTokens": 457,
+      "output": "{\n  \"chapters\": [\n    \"Introdução ao Estudo do Direito\",\n    \"Fontes, Ramos e Classificações do Direito\",\n    \"Princípios Fundamentais do Sistema Jurídico\",\n    \"Norma Jurídica: Criação e Aplicação\",\n    \"Pessoas Físicas e Pessoas Jurídicas\",\n    \"Direitos e Garantias Fundamentais\",\n    \"Organização do Poder Judiciário Brasileiro\",\n    \"Pesquisa e Análise de Jurisprudência\",\n    \"Interpretação e Hermenêutica Legal\",\n    \"Linguagem e Redação Jurídica\",\n    \"Argumentação Jurídica e Raciocínio Lógico\",\n    \"Ética e Deontologia Profissional\",\n    \"Solução de Conflitos e Ações Judiciais\",\n    \"Processo Judicial Eletrônico e Ferramentas\",\n    \"O Advogado e Seus Clientes\",\n    \"Atuação do Jurista em Diversas Áreas\",\n    \"Compliance e Integridade Corporativa\",\n    \"Carreiras Jurídicas e Mercado de Trabalho\",\n    \"Recursos Digitais e Aprendizagem Contínua\"\n  ]\n}",
+      "outputTokens": 253,
+      "steps": [
+        {
+          "conclusion": "The response fails to deliver on a key instruction: to create a course that would allow a learner to get a job in the field. While the generated chapter list is excellent as a 'general introduction to law', it almost completely omits chapters on the main branches of substantive law (e.g., Civil Law, Criminal Law, Labor Law, Administrative Law). A learner completing this course would know about the legal system and legal practice, but would not know the actual substance of the law required for any entry-level legal position, such as a paralegal. This is a major omission that makes the course fall short of its stated 'job-ready' goal.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "None. The response correctly adheres to all formatting and stylistic constraints. The chapter titles are all in Portuguese, they respect the 3-7 word count limit, and the list does not contain any personalized deliverables.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The course is missing the most critical content. To be even remotely 'job-ready', a learner needs at least a basic introduction to the core areas of substantive law. The list should be significantly expanded to include chapters such as: 'Fundamentos do Direito Civil', 'Introdução ao Direito Penal', 'Princípios do Direito do Trabalho', 'Bases do Direito Administrativo', and 'Direitos do Consumidor na Prática'. Without these, the course is purely theoretical and procedural, lacking the practical legal knowledge needed for employment.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Portuguese (Brazil)\n      - Should cover Brazilian Law\n      \n      \n  - Chapters should be 3-7 words long\n  - Should create a progressive learning path from fundamentals to practical applications\n  - Should cover enough content to prepare learners for entry-level positions. After finishing this course, they should be able to get a job in the field\n  - Should introduce basic resources and career options in the field\n  - Should strongly cover fundamentals but also prepare them for practical applications in real-world scenarios\n  - Should NOT include personalized content like \"Build Your Own X\", \"Final Project\", or \"Your First X\"\n  - Should use modern terminology and everyday language, avoiding overly technical jargon\n  - Should be split into granular topics (many smaller chapters rather than few large ones)\n  - Should follow the language specified by locale parameter\n\n    ",
+        "id": "pt-direito-1",
+        "userInput": {
+          "courseTitle": "Direito",
+          "locale": "pt"
+        }
+      }
+    }
+  ],
+  "taskId": "course-chapters-basic"
+}

@@ -14,3 +14,4 @@ Create a course outline suitable for learners who have completed the Intermediat
 - After finishing this course, learners should be able to lead projects and mentor others in this field
 - Additionally, they would be prepared for certifications or advanced studies in this subject like a master's degree or PhD
 - This will prepare them to be at the top of their field
+- When building this curriculum, ask yourself: "Would I hire this person for a lead or expert position in this field after completing this course? Would this person be considered a top expert in this field?"

@@ -13,3 +13,4 @@ Create a course outline suitable for learners with some prior knowledge of the s
 - This should include practical applications and real-world examples
 - After finishing this course, learners should be able to work on more complex projects and tasks in this field without supervision
 - They should be ready to apply for senior job roles in this field
+- When building this curriculum, ask yourself: "Would I hire this person for a senior position in this field after completing this course?"
