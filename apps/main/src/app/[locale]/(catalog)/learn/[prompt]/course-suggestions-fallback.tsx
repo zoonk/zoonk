@@ -1,5 +1,3 @@
-"use client";
-
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Empty,
@@ -10,11 +8,11 @@ import {
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
-export function CourseSuggestionsFallback() {
-  const t = useTranslations("LearnResults");
+export async function CourseSuggestionsFallback() {
+  const t = await getTranslations("LearnResults");
 
   return (
     <Empty className="w-full">
