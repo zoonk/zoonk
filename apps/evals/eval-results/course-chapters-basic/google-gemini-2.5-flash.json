@@ -2,25 +2,25 @@
   "modelId": "google/gemini-2.5-flash",
   "results": [
     {
-      "duration": 15869.783167000001,
-      "inputTokens": 457,
-      "output": "{\n  \"chapters\": [\n    \"Fundamentos de Python e Configuração\",\n    \"Variáveis e Tipos de Dados\",\n    \"Operadores Lógicos e Aritméticos\",\n    \"Estruturas de Controle de Fluxo\",\n    \"Laços de Repetição Essenciais\",\n    \"Listas e Tuplas em Python\",\n    \"Dicionários e Conjuntos Básicos\",\n    \"Funções: Definição e Uso\",\n    \"Módulos e Pacotes Básico\",\n    \"Manipulação de Arquivos (I/O)\",\n    \"Tratamento de Erros e Exceções\",\n    \"Introdução à Programação Orientada Objetos\",\n    \"Ambientes Virtuais e Gerenciamento de Dependências\",\n    \"Explorando a Biblioteca Padrão\",\n    \"Boas Práticas e Estilo (PEP8)\",\n    \"Introdução ao Git e Versionamento\",\n    \"Testes Unitários: Fundamentos\",\n    \"Depuração de Código em Python\",\n    \"Compreensões de Listas e Dicionários\",\n    \"Resolução de Problemas com Algoritmos\",\n    \"Consumo de APIs RESTful\",\n    \"Interação com Bancos de Dados\",\n    \"Fundamentos de Web Scraping\",\n    \"Ética e Segurança de Dados\",\n    \"Colaboração e Documentação de Código\",\n    \"Otimização Básica de Performance\",\n    \"Construindo Ferramentas de Linha Comando\",\n    \"Introdução aos Frameworks Web\",\n    \"Fluxo de Trabalho de Projeto\",\n    \"Carreiras e Recursos Python\"\n  ]\n}",
-      "outputTokens": 350,
+      "duration": 16779.497583999997,
+      "inputTokens": 563,
+      "output": "{\n  \"chapters\": [\n    \"Introdução à Linguagem Python\",\n    \"Configuração do Ambiente de Desenvolvimento\",\n    \"Variáveis e Tipos de Dados\",\n    \"Operadores e Expressões Básicas\",\n    \"Fluxo de Controle: Condicionais\",\n    \"Fluxo de Controle: Laços de Repetição\",\n    \"Funções: Definição e Chamada\",\n    \"Strings: Manipulação e Formatação\",\n    \"Listas: Sequências e Operações\",\n    \"Tuplas: Coleções Imutáveis\",\n    \"Dicionários: Pares Chave-Valor\",\n    \"Conjuntos (Sets): Coleções Únicas\",\n    \"Manipulação Básica de Arquivos\",\n    \"Tratamento de Erros: try-except\",\n    \"Módulos e Pacotes Python\",\n    \"Programação Orientada a Objetos: Classes\",\n    \"Herança e Polimorfismo em OOP\",\n    \"Iteradores e Geradores Python\",\n    \"Decoradores: Estendendo Funcionalidades\",\n    \"Gerenciadores de Contexto: `with`\",\n    \"Funções Avançadas: lambda e map\",\n    \"Ambientes Virtuais e `pip`\",\n    \"Testes de Unidade: `unittest`\",\n    \"Depuração de Código Python\",\n    \"Trabalhando com Dados CSV e JSON\",\n    \"Consumo de APIs REST (requests)\",\n    \"Introdução a Bancos de Dados\",\n    \"Raspagem de Dados Web (BeautifulSoup)\",\n    \"Análise de Dados com Pandas\",\n    \"Visualização de Dados com Matplotlib\",\n    \"Guia de Estilo PEP 8\",\n    \"Controle de Versão com Git\",\n    \"Estrutura e Organização de Projetos\",\n    \"Registro de Eventos (Logging)\",\n    \"Concorrência e Paralelismo Básico\",\n    \"Programação Assíncrona com `asyncio`\",\n    \"Introdução ao Desenvolvimento Web (Flask)\",\n    \"Criação de Ferramentas de Linha\",\n    \"Automação de Tarefas com Python\",\n    \"Noções de Implantação de Aplicações\",\n    \"Carreiras no Ecossistema Python\"\n  ]\n}",
+      "outputTokens": 491,
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "None. The response followed all major instructions, including language, format, and overall structure.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The prompt asks to \"Ensure the outline includes distinct chapters that cover...\" a list of job-ready topics. The generated list fails to explicitly cover two of these points:\n- **Communication**: While PEP 8 is included, there is no chapter on documenting code (e.g., using docstrings) or reporting findings, which are key communication skills.\n- **Ethics/safety/compliance**: There is no chapter dedicated to ethics, data privacy, or safety, which is particularly relevant for the included topics of web scraping and data handling.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "The generated chapter list is excellent, comprehensive, and follows a logical progression. It correctly includes topics essential for job readiness, such as version control (Git), testing, ethics, and project workflows. However, to be even more complete for a beginner aiming for a job, a dedicated chapter on Regular Expressions (regex) could be added, as it's a fundamental and widely used tool for text processing in Python. Additionally, while 'Introdução aos Frameworks Web' is good, specifying the most common ones like Django and Flask within that chapter's scope would be beneficial.",
+          "conclusion": "To be truly comprehensive and job-ready as requested, the outline could be improved by adding chapters on:\n- Regular expressions (e.g., \"Expressões Regulares com o Módulo re\").\n- Code documentation (e.g., \"Documentando Código com Docstrings\").\n- Ethics in data handling (e.g., \"Ética e Privacidade em Coleta de Dados\").\n- A more specific chapter on interacting with SQL databases, as \"Introdução a Bancos de Dados\" is quite general.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 8
         }
       ],
       "testCase": {
@@ -33,25 +33,25 @@
       }
     },
     {
-      "duration": 9240.552708,
-      "inputTokens": 458,
-      "output": "{\n  \"chapters\": [\n    \"Internet and Web Fundamentals\",\n    \"HTML Document Structure\",\n    \"Semantic HTML Best Practices\",\n    \"CSS Styling Fundamentals\",\n    \"CSS Box Model and Layout\",\n    \"Responsive Design with CSS\",\n    \"JavaScript Core Language\",\n    \"Working with Variables and Data\",\n    \"Control Flow and Functions\",\n    \"DOM Manipulation with JavaScript\",\n    \"Event Handling in JavaScript\",\n    \"Developer Tools for Browsers\",\n    \"Version Control with Git\",\n    \"Command Line Interface Basics\",\n    \"Package Managers NPM and Yarn\",\n    \"Building Static Web Pages\",\n    \"Forms and Input Validation\",\n    \"Consuming RESTful APIs\",\n    \"Web Accessibility (A11y) Basics\",\n    \"Web Performance Fundamentals\",\n    \"Introduction to Web Security\",\n    \"Deploying Your First Website\",\n    \"Collaboration in Web Development\",\n    \"Ethics and Privacy on Web\",\n    \"Web Development Career Resources\"\n  ]\n}",
-      "outputTokens": 220,
+      "duration": 18001.525707999997,
+      "inputTokens": 564,
+      "output": "{\n  \"chapters\": [\n    \"Web Development Core Concepts\",\n    \"How the Internet Works\",\n    \"Setting Up Your Environment\",\n    \"Browser Developer Tools Mastery\",\n    \"HTML Document Structure Basics\",\n    \"Semantic HTML Accessibility Best Practices\",\n    \"HTML Forms Input Elements\",\n    \"CSS Fundamentals Styling Webpages\",\n    \"CSS Selectors Properties Values\",\n    \"Box Model Layout Fundamentals\",\n    \"Flexbox for Responsive Layouts\",\n    \"CSS Grid for Two-Dimensional Design\",\n    \"Responsive Web Design Principles\",\n    \"JavaScript Programming Fundamentals\",\n    \"Controlling Flow Functions Data\",\n    \"DOM Manipulation Interactive Pages\",\n    \"Event Handling User Interactions\",\n    \"Asynchronous JavaScript Promises Fetch\",\n    \"Working with Web APIs JSON\",\n    \"Introduction to Version Control Git\",\n    \"Collaborating with GitHub Repositories\",\n    \"Deploying Static Websites Online\",\n    \"Web Performance Optimization Basics\",\n    \"Website Accessibility WCAG Standards\",\n    \"Introduction to Web Security Threats\",\n    \"Understanding User Experience UX\",\n    \"Building a Portfolio Project\",\n    \"Debugging and Troubleshooting Techniques\",\n    \"Next Steps Professional Development\"\n  ]\n}",
+      "outputTokens": 259,
       "steps": [
         {
-          "conclusion": "The generated list of chapters is incomplete for achieving the specified goal of making a learner job-ready. The prompt explicitly states to \"cover EVERYTHING to allow this learner to get a job in this field!\". However, the curriculum completely omits several topics that are essential for most entry-level web developer positions today. These missing topics include:\n\n- JavaScript frameworks/libraries (e.g., React, Vue, Angular)\n- Testing methodologies and tools (e.g., Jest, Cypress)\n- Modern build tools (e.g., Vite, Webpack)\n- CSS preprocessors or utility-first frameworks (e.g., SASS, Tailwind CSS)\n\nWithout at least an introduction to these concepts, a learner completing this course would be at a significant disadvantage in the job market. This is a major failure to meet a core requirement of the prompt.",
+          "conclusion": "The course outline is critically incomplete for its stated goal of making a learner \"job-ready.\" The instruction to \"make sure you cover EVERYTHING to allow this learner to get a job in this field!\" was the most important requirement, and the response failed to meet it. The outline completely omits several topics that are essential for modern entry-level web development roles:\n\n1.  **JavaScript Frameworks/Libraries:** There is no mention of React, Vue, or Angular. It is nearly impossible to get a web development job today without knowledge of at least one of these.\n2.  **Testing:** The outline lacks any chapters on software testing (unit, integration, end-to-end) or related tools (e.g., Jest, Cypress), which are a core competency for professional developers.\n3.  **Build Tools & Package Management:** There is no mention of fundamental workflow tools like npm/yarn, Vite, or Webpack.\n\nAdditionally, the chapter \"Building a Portfolio Project\" violates the explicit instruction to avoid personalized or project-based titles like \"final project.\"",
           "kind": "majorErrors",
-          "score": 7
+          "score": 6
         },
         {
-          "conclusion": "The chapter titled \"Deploying Your First Website\" violates the negative constraint: \"No personalized deliverables (no 'your project', 'build X', 'final project', mentorship)\". The phrase \"Your First\" falls into this category of personalization. This could be easily corrected to something like \"Introduction to Website Deployment\".",
+          "conclusion": "The outline is missing other important, commonly used technologies that would be expected in a comprehensive, job-ready course, such as TypeScript and CSS pre-processors (e.g., SASS/SCSS). Some chapter titles, such as \"Controlling Flow Functions Data\" and \"CSS Selectors Properties Values,\" are awkwardly phrased and bundle multiple distinct concepts that could have been split for better atomization.",
           "kind": "minorErrors",
-          "score": 9
+          "score": 7.5
         },
         {
-          "conclusion": "The course outline could be significantly improved by adding chapters on topics crucial for job-readiness in modern web development. To better prepare students for entry-level roles, the curriculum should include introductory chapters on: a popular JavaScript framework (like React), frontend testing principles, modern build tools (like Vite), and advanced CSS tooling (like SASS or Tailwind). Adding these would bridge the gap between the provided fundamentals and the practical skills employers expect.",
+          "conclusion": "The outline requires a major overhaul to meet the user's core requirement. It should be significantly expanded to include the missing job-ready topics. A large section should be added after the JavaScript fundamentals to cover a popular framework like React in-depth (e.g., components, state management, routing). New chapters must be added for package management, build tools, TypeScript, and a comprehensive testing suite. Finally, the project-based chapter title should be removed, and other awkward titles should be rephrased for clarity.",
           "kind": "potentialImprovements",
-          "score": 7.5
+          "score": 6
         }
       ],
       "testCase": {
@@ -64,10 +64,10 @@
       }
     },
     {
-      "duration": 12908.785708,
-      "inputTokens": 462,
-      "output": "{\n  \"chapters\": [\n    \"Introdução ao Mundo Ágil\",\n    \"O Manifesto Ágil e Princípios\",\n    \"Mentalidade Ágil vs. Tradicional\",\n    \"Scrum: Uma Visão Geral\",\n    \"Papéis Fundamentais na Equipe Scrum\",\n    \"Artefatos Scrum Essenciais: Backlog\",\n    \"Ciclo de Vida de uma Sprint\",\n    \"Planejamento da Sprint e Estimativa\",\n    \"Daily Scrum para Sincronização Diária\",\n    \"Revisão e Retrospectiva da Sprint\",\n    \"Kanban: Fluxo Contínuo e Visualização\",\n    \"Princípios e Práticas Essenciais Kanban\",\n    \"User Stories e Critérios de Aceitação\",\n    \"Definição de Pronto (Definition of Done)\",\n    \"Métricas Ágeis Básicas e Monitoramento\",\n    \"Ferramentas Comuns para Gestão Ágil\",\n    \"Colaboração e Comunicação em Equipes\",\n    \"Feedback Contínuo e Melhoria Processos\",\n    \"Adaptação Ágil em Diversos Contextos\",\n    \"Cultura Organizacional e Valores Ágeis\",\n    \"Carreiras Ágeis e Próximos Passos\"\n  ]\n}",
-      "outputTokens": 277,
+      "duration": 14972.567334,
+      "inputTokens": 568,
+      "output": "{\n  \"chapters\": [\n    \"Introdução às Metodologias Ágeis\",\n    \"Manifesto Ágil: Valores e Princípios\",\n    \"Desenvolvimento Iterativo e Incremental\",\n    \"Mentalidade Lean e Entrega de Valor\",\n    \"Fundamentos do Framework Scrum\",\n    \"Papéis Essenciais do Time Scrum\",\n    \"Eventos Scrum Cruciais\",\n    \"Artefatos Scrum: Backlog e Incremento\",\n    \"Planejamento de Sprint Detalhado\",\n    \"Daily Scrum para Sincronização Diária\",\n    \"Revisão de Sprint e Feedback\",\n    \"Retrospectiva para Melhoria Contínua\",\n    \"Kanban: Princípios e Práticas\",\n    \"Visualização do Fluxo de Trabalho Kanban\",\n    \"Limites WIP e Gestão Ativa\",\n    \"User Stories e Critérios de Aceitação\",\n    \"Estimativas Ágeis: Story Points\",\n    \"Definição de Pronto (Definition of Done)\",\n    \"Qualidade no Desenvolvimento Ágil\",\n    \"Test-Driven Development (TDD) Prático\",\n    \"Integração Contínua e Automação\",\n    \"Entrega Contínua e Implantação\",\n    \"Ferramentas de Gestão Ágil\",\n    \"Colaboração e Comunicação em Equipes\",\n    \"Versionamento e Controle de Código\",\n    \"Métricas Ágeis de Desempenho\",\n    \"Fontes de Requisitos e Feedback\",\n    \"Gestão do Backlog do Produto Eficaz\",\n    \"Priorização de Itens do Backlog\",\n    \"Escalando Metodologias Ágeis\",\n    \"Agile Fora do Desenvolvimento Software\",\n    \"Cultura Organizacional e Liderança Ágil\",\n    \"Desafios e Anti-Padrões Comuns\",\n    \"Ética e Conformidade em Projetos\",\n    \"Segurança e Privacidade no Produto\"\n  ]\n}",
+      "outputTokens": 426,
       "steps": [
         {
           "conclusion": "None",
@@ -80,9 +80,9 @@
           "score": 10
         },
         {
-          "conclusion": "The generated chapter list is very good and follows all the main instructions. However, to better meet the high bar of being comprehensive enough for a learner to \"get a job in this field\", it could be improved. Potential additions include: a chapter briefly introducing other frameworks like Lean and XP, a more detailed chapter on specific roles (Product Owner, Scrum Master), a chapter on common agile anti-patterns, and a more explicit chapter on stakeholder management.",
+          "conclusion": "The generated course outline is excellent, comprehensive, and follows a logical progression. It successfully covers all the required points from the 'Job-Ready Coverage' section. However, to better align with the goal of preparing a learner to get a job, a chapter on career paths and further learning could be added. For example, a chapter like 'Carreiras em Agile e Certificações' (Agile Careers and Certifications) would provide valuable guidance on next steps, common roles (Scrum Master, Product Owner), and popular certifications (CSM, PSM, etc.).",
           "kind": "potentialImprovements",
-          "score": 8.5
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -95,25 +95,25 @@
       }
     },
     {
-      "duration": 8438.443875,
-      "inputTokens": 457,
-      "output": "{\n  \"chapters\": [\n    \"Introducción a la Química: Fundamentos y Relevancia\",\n    \"Materia y sus Propiedades: Estados y Cambios\",\n    \"Estructura Atómica Fundamental: Partículas y Modelos\",\n    \"La Tabla Periódica: Organización y Tendencias\",\n    \"Enlaces Químicos Básicos: Tipos e Interacciones\",\n    \"Reacciones Químicas Esenciales: Tipos y Ecuaciones\",\n    \"Estequiometría: Cálculos Químicos de Cantidad\",\n    \"Disoluciones y Concentración: Propiedades y Preparación\",\n    \"Ácidos y Bases: Conceptos Fundamentales\",\n    \"Nomenclatura Química Inorgánica: Compuestos Comunes\",\n    \"Nomenclatura Química Orgánica: Hidrocarburos y Grupos\",\n    \"Seguridad en el Laboratorio: Prácticas Esenciales\",\n    \"Instrumentación Básica de Laboratorio: Equipos y Uso\",\n    \"Recolección y Análisis de Datos: Interpretación Química\",\n    \"Química en la Vida Cotidiana: Aplicaciones Prácticas\",\n    \"Sostenibilidad y Ética Química: Impacto y Regulación\",\n    \"Carreras y Recursos en Química: Oportunidades Profesionales\"\n  ]\n}",
-      "outputTokens": 273,
+      "duration": 24963.369250000003,
+      "inputTokens": 563,
+      "output": "{\n  \"chapters\": [\n    \"Introducción a la Química General\",\n    \"Materia: Propiedades y Clasificación\",\n    \"Átomos, Elementos y Tabla Periódica\",\n    \"Enlaces Químicos y Geometría Molecular\",\n    \"Nomenclatura de Compuestos Inorgánicos\",\n    \"Reacciones Químicas y Ecuaciones Balanceadas\",\n    \"Estequiometría: Cálculos Cuantitativos en Reacciones\",\n    \"Estado Gaseoso y sus Leyes Fundamentales\",\n    \"Líquidos, Sólidos y Fuerzas Intermoleculares\",\n    \"Disoluciones: Propiedades y Unidades de Concentración\",\n    \"Ácidos, Bases y Escala de pH\",\n    \"Termodinámica Química: Energía en Sistemas\",\n    \"Cinética Química: Velocidad de Reacción\",\n    \"Equilibrio Químico y Principio de Le Chatelier\",\n    \"Reacciones Redox y Electroquímica Básica\",\n    \"Introducción a la Química Orgánica\",\n    \"Seguridad y Buenas Prácticas de Laboratorio\",\n    \"Materiales y Equipos Básicos de Laboratorio\",\n    \"Mediciones: Masa, Volumen y Temperatura\",\n    \"Manejo Seguro de Sustancias y Reactivos\",\n    \"Técnicas de Separación: Filtración y Destilación\",\n    \"Cromatografía: Fundamentos y Aplicaciones Analíticas\",\n    \"Valoraciones: Análisis Volumétrico Cuantitativo\",\n    \"Análisis Gravimétrico: Métodos Basados en Masa\",\n    \"Espectroscopia Molecular: Principios y Uso\",\n    \"Precisión, Exactitud y Errores Analíticos\",\n    \"Cifras Significativas y Propagación de Error\",\n    \"Estadística Básica para Datos Químicos\",\n    \"Diseño Experimental y Control de Calidad\",\n    \"Cuaderno de Laboratorio y Registro Sistemático\",\n    \"Fichas de Datos de Seguridad (SDS)\",\n    \"Búsqueda y Uso de Información Química\",\n    \"Gestión de Residuos Químicos y Normativas\",\n    \"Elaboración de Informes de Laboratorio\",\n    \"Presentación Oral de Resultados Químicos\",\n    \"Aplicaciones Industriales de la Química\",\n    \"Química Ambiental y Sostenibilidad\",\n    \"Principios de la Química Orgánica Aplicada\",\n    \"Química Bioquímica: Fundamentos y Funciones\",\n    \"Química Analítica Avanzada: Instrumentación\",\n    \"Calibración y Mantenimiento de Instrumentos\",\n    \"Ética Profesional en la Química\",\n    \"Desarrollo de Soluciones Químicas Innovadoras\",\n    \"Perspectivas Laborales en el Campo Químico\"\n  ]\n}",
+      "outputTokens": 588,
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "None. The response perfectly adheres to all core instructions. It provides a comprehensive, well-structured, and appropriately detailed list of chapters in the correct language. The content is sufficient to prepare a learner for an entry-level job, fulfilling the main objective.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "The course outline, while well-structured, is missing several fundamental topics that are typically considered essential for a comprehensive, job-ready chemistry foundation. Key omissions include: \n1. Chemical Thermodynamics (energy in reactions)\n2. Chemical Kinetics (reaction rates)\n3. Chemical Equilibrium\n\nThese topics are foundational in any post-secondary general chemistry course and would be expected knowledge for an entry-level job in the field. Their absence means the course is not as 'comprehensive' or 'job-ready' as instructed.",
+          "conclusion": "None. The response is exceptionally well-crafted. All chapter titles adhere to the 3-7 word length constraint. The progression from fundamentals to applied topics is logical. There is no personalization. The atomization of topics is excellent, creating a granular and focused learning path. No minor errors were found.",
           "kind": "minorErrors",
-          "score": 7.5
+          "score": 10
         },
         {
-          "conclusion": "To better align with the 'job-ready' objective, the curriculum could be substantially improved. The following chapters should be added:\n\n- A chapter on Chemical Thermodynamics, covering enthalpy, entropy, and Gibbs free energy.\n- A chapter on Chemical Kinetics, discussing reaction rates and factors that influence them.\n- A chapter on Chemical Equilibrium, including Le Châtelier's principle.\n- A more specific chapter on 'Modern Analytical Techniques' beyond basic instrumentation, introducing concepts like spectroscopy and chromatography.\n- A chapter on 'Quality Assurance and Quality Control (QA/QC)' which is crucial for any lab-based job.\n- A chapter on 'Scientific Communication and Reporting' to cover data presentation and lab reports.",
+          "conclusion": "The response is nearly perfect. A few minor additions could enhance its coverage of modern, job-relevant topics. For instance, a chapter on computational chemistry and molecular modeling (e.g., \"Introducción al Modelado Molecular y Química Computacional\") or a specific introduction to polymer and materials science (e.g., \"Fundamentos de la Química de Polímeros y Materiales\") would make the curriculum even more comprehensive and aligned with current industry practices.",
           "kind": "potentialImprovements",
-          "score": 7
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -126,25 +126,25 @@
       }
     },
     {
-      "duration": 8630.495875,
-      "inputTokens": 457,
-      "output": "{\n  \"chapters\": [\n    \"Introduction to Economic Scarcity and Choice\",\n    \"Economic Systems and Basic Models\",\n    \"Demand: Consumer Behavior and Theory\",\n    \"Supply: Producer Behavior and Costs\",\n    \"Market Equilibrium and Price Determination\",\n    \"Elasticity: Responsiveness in Markets\",\n    \"Government Intervention and Market Outcomes\",\n    \"Market Structures: Competition and Power\",\n    \"Introduction to Macroeconomic Principles\",\n    \"Measuring National Income: GDP\",\n    \"Inflation: Causes and Consequences\",\n    \"Unemployment: Measurement and Types\",\n    \"Aggregate Demand and Supply Model\",\n    \"Fiscal Policy: Government's Economic Role\",\n    \"Money, Banking, and Financial Markets\",\n    \"Monetary Policy: Central Bank Tools\",\n    \"International Trade and Global Economy\",\n    \"Basic Economic Data Analysis\",\n    \"Ethical Principles in Economic Decision-making\",\n    \"Economics Careers and Further Resources\"\n  ]\n}",
-      "outputTokens": 207,
+      "duration": 19030.673125,
+      "inputTokens": 563,
+      "output": "{\n  \"chapters\": [\n    \"Introduction to Economics\",\n    \"Scarcity, Choice, Opportunity Cost\",\n    \"Economic Systems and Organization\",\n    \"Rationality and Incentives\",\n    \"Positive versus Normative Economics\",\n    \"Modeling Economic Phenomena\",\n    \"Supply, Demand, Market Equilibrium\",\n    \"Elasticity and Its Applications\",\n    \"Consumer Behavior and Utility\",\n    \"Producer Behavior and Costs\",\n    \"Perfect Competition and Monopoly\",\n    \"Oligopoly and Monopolistic Competition\",\n    \"Market Failures and Externalities\",\n    \"Public Goods and Asymmetric Information\",\n    \"Government Intervention and Welfare\",\n    \"Measuring National Income: GDP\",\n    \"Inflation: Causes and Consequences\",\n    \"Unemployment: Types and Measures\",\n    \"Aggregate Demand and Aggregate Supply\",\n    \"Fiscal Policy: Government Spending, Taxation\",\n    \"Monetary Policy: Central Banks, Money\",\n    \"Economic Growth and Development\",\n    \"International Trade and Finance\",\n    \"Introduction to Economic Data\",\n    \"Data Sources and Collection\",\n    \"Descriptive Statistics for Economists\",\n    \"Probability and Hypothesis Testing\",\n    \"Introduction to Regression Analysis\",\n    \"Causal Inference Fundamentals\",\n    \"Interpreting Econometric Results\",\n    \"Economic Modeling and Simulation\",\n    \"Econometric Software Introduction\",\n    \"Data Visualization in Economics\",\n    \"Working with Large Economic Datasets\",\n    \"Accessing Public Economic Databases\",\n    \"Cost-Benefit Analysis Applications\",\n    \"Public Policy Evaluation\",\n    \"Labor Economics: Wages and Employment\",\n    \"Environmental Economics: Policy Tools\",\n    \"Financial Economics: Markets, Instruments\",\n    \"Development Economics: Poverty, Growth\",\n    \"Behavioral Economics Insights\",\n    \"Economic Research Design\",\n    \"Data Quality and Validation\",\n    \"Ethical Conduct in Economics\",\n    \"Communicating Economic Analysis\",\n    \"Writing Economic Reports and Briefs\",\n    \"Presenting Economic Findings\",\n    \"Peer Review in Economic Research\",\n    \"Professional Vocabulary and Notation\"\n  ]\n}",
+      "outputTokens": 442,
       "steps": [
         {
-          "conclusion": "The response fails to fully adhere to the \"Domain-Agnostic Job-Ready Coverage\" instruction. The prompt explicitly asks for a course that covers \"EVERYTHING to allow this learner to get a job in this field!\" The generated list of chapters represents a standard, high-quality introductory academic economics course (equivalent to Microeconomics 101 and Macroeconomics 101). However, it omits several crucial chapters on the practical skills and tools required for an entry-level economics-related job. Specifically, it is missing content on:\n- Essential software and tools (e.g., Excel, R, Stata, Python).\n- Professional workflows (how to conduct an economic analysis project).\n- Communication skills (presenting findings to stakeholders, writing policy briefs).\n- Finding and using key data sources (e.g., FRED, World Bank, BLS). \nThis omission constitutes a failure to meet a core requirement of the prompt.",
+          "conclusion": "None. The response provides an exceptionally comprehensive and well-structured course outline for Economics. It successfully follows all constraints, including the 'fundamentals -> methods -> applied' progression, atomization of topics, and inclusion of all 'Job-Ready Coverage' points specified in the prompt. The outline is robust enough to prepare a learner for an entry-level position.",
           "kind": "majorErrors",
-          "score": 7
+          "score": 10
         },
         {
-          "conclusion": "None. The response correctly follows all the stylistic and formatting rules, including chapter title length, language, and the exclusion of personalized projects. The progression from micro to macro to applied topics is logical.",
+          "conclusion": "None. All chapter titles adhere to the 3-7 word length constraint. There is no personalization in the titles. The terminology is modern and appropriate for the subject matter. The structure and flow are logical and clear. There are no discernible minor errors.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "To meet the 'job-ready' requirement, the course outline needs significant additions focused on practical application. Suggested improvements include adding distinct chapters on:\n1.  **Tools for Economic Analysis:** Covering software like Excel, and introducing statistical packages like R or Stata.\n2.  **Finding and Using Economic Data:** Focusing on navigating and sourcing data from institutions like the FRED, World Bank, IMF, and national statistical agencies.\n3.  **Communicating Economic Insights:** Teaching how to write a policy brief, create data visualizations, and present findings to non-expert audiences.\n4.  **Introduction to Econometrics:** A basic chapter on regression analysis to bridge the gap between theory and empirical work.",
+          "conclusion": "The outline is nearly perfect for the prompt's requirements. A very minor potential addition could be a chapter on the 'History of Economic Thought' to provide more context or a chapter on 'Career Paths in Economics' to directly address job opportunities. However, the absence of these does not significantly detract from the quality, as the provided outline is already extremely thorough and job-oriented.",
           "kind": "potentialImprovements",
-          "score": 7
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -157,23 +157,23 @@
       }
     },
     {
-      "duration": 12613.604083000002,
-      "inputTokens": 459,
-      "output": "{\n  \"chapters\": [\n    \"Fundamentos da Neurociência: Introdução Histórica\",\n    \"Organização Geral do Sistema Nervoso\",\n    \"Células Neurais: Neurônios e Glia\",\n    \"Sinalização Neuronal: Potenciais e Transmissão\",\n    \"Neurotransmissores e Receptores: Funções Químicas\",\n    \"Anatomia Macroscópica do Encéfalo Humano\",\n    \"Divisões Funcionais do Sistema Nervoso\",\n    \"Circuitos Sensoriais: Visão, Audição, Tato\",\n    \"Sistemas Motores: Planejamento e Execução\",\n    \"Controle Homeostático e Sistema Autonômico\",\n    \"Bases Neurais da Memória e Aprendizagem\",\n    \"Neurociência das Emoções e Motivação\",\n    \"Atenção e Funções Executivas Corticais\",\n    \"Introdução aos Métodos de Pesquisa Neural\",\n    \"Técnicas de Neuroimagem: EEG e fMRI\",\n    \"Eletrofisiologia: Registrando Atividade Neuronal\",\n    \"Princípios de Farmacologia no Cérebro\",\n    \"Modelos Animais e Culturas Celulares\",\n    \"Análise de Dados em Neurociência Básica\",\n    \"Ética em Pesquisa: Humanos e Animais\",\n    \"Leitura Crítica de Artigos Científicos\",\n    \"Distúrbios Neurológicos e Psiquiátricos Comuns\",\n    \"Aplicações Práticas da Neurociência: Introdução\",\n    \"Neurociência e Carreiras: Oportunidades Futuras\"\n  ]\n}",
-      "outputTokens": 363,
+      "duration": 21586.477,
+      "inputTokens": 565,
+      "output": "{\n  \"chapters\": [\n    \"Introdução à Neurociência Contemporânea\",\n    \"História e Paradigmas da Neurociência\",\n    \"Células Neuronais: Estrutura e Função\",\n    \"Células da Glia: Tipos e Suporte\",\n    \"Membrana Neuronal e Potencial Repouso\",\n    \"Potencial de Ação: Geração e Condução\",\n    \"Sinapses Químicas e Elétricas\",\n    \"Neurotransmissores e Receptores Neurais\",\n    \"Princípios Fundamentais da Neurofarmacologia\",\n    \"Neuroanatomia Macroscópica do Encéfalo\",\n    \"Organização do Sistema Nervoso Periférico\",\n    \"Neuroanatomia Microscópica e Conectividade\",\n    \"Desenvolvimento do Sistema Nervoso\",\n    \"Neurobiologia da Sensação e Percepção\",\n    \"Processamento Visual no Sistema Nervoso\",\n    \"Audição, Equilíbrio e Olfato\",\n    \"Gustação, Tato e Sistema Somatossensorial\",\n    \"Controle Motor: Vias e Circuitos\",\n    \"Gânglios da Base e Cerebelo Motor\",\n    \"Regulação Homeostática: Hipotálamo e Autônomo\",\n    \"Neurocircuitos da Emoção e Afeto\",\n    \"Mecanismos Neurais da Motivação\",\n    \"Memória: Formação, Consolidação e Tipos\",\n    \"Linguagem: Produção, Compreensão e Disfunções\",\n    \"Atenção e Funções Executivas Cerebrais\",\n    \"Bases Neurais da Consciência\",\n    \"Ética na Pesquisa com Humanos e Animais\",\n    \"Modelos Animais para Estudo Neural\",\n    \"Eletrofisiologia: EEG, Potenciais Evocados\",\n    \"Eletrofisiologia: Registro Unicelular e de Campo\",\n    \"Ressonância Magnética Estrutural e Funcional\",\n    \"Tomografia por Emissão de Pósitrons (PET)\",\n    \"Técnicas de Neuromodulação: TMS e tDCS\",\n    \"Optogenética e Quimiogenética Aplicada\",\n    \"Métodos Comportamentais em Neurociência\",\n    \"Técnicas de Biologia Molecular Neural\",\n    \"Histologia e Imunohistoquímica Cerebral\",\n    \"Neuroimagem Avançada: DTI e Conectividade\",\n    \"Desenho Experimental em Neurociência\",\n    \"Aquisição e Pré-processamento de Dados\",\n    \"Análise Estatística para Dados Neurais\",\n    \"Ferramentas Computacionais para Neurociência\",\n    \"Modelagem Computacional de Redes Neurais\",\n    \"Big Data e Neuroinformática Aplicada\",\n    \"Fontes de Dados e Revisão da Literatura\",\n    \"Gestão, Compartilhamento e Reprodutibilidade\",\n    \"Validação e Interpretação de Resultados\",\n    \"Comunicação Científica em Neurociência\",\n    \"Neurobiologia dos Transtornos de Humor\",\n    \"Neurobiologia dos Transtornos de Ansiedade\",\n    \"Esquizofrenia e Transtornos Psicóticos\",\n    \"Doenças Neurodegenerativas: Alzheimer, Parkinson\",\n    \"Transtornos do Neurodesenvolvimento\",\n    \"Dor Crônica e Suas Bases Neurais\",\n    \"Neurofarmacologia Clínica e Terapias\",\n    \"Neurociência da Reabilitação Cognitiva\",\n    \"Interfaces Cérebro-Máquina e Neuropróteses\",\n    \"Neurociência Cognitiva Social\",\n    \"Neuroplasticidade e Aprendizagem Adaptativa\",\n    \"Tópicos Avançados em Neurociência\"\n  ]\n}",
+      "outputTokens": 833,
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "None. The response is a comprehensive and well-structured course outline that accurately covers the field of neuroscience. It follows the requested 'fundamentals -> methods -> applied' progression and correctly identifies and includes key topics, from cellular biology to advanced neuroimaging techniques and clinical applications. There are no factual errors or significant omissions in the core content.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The outline is almost perfect, but it misses one specific expectation from the user: a chapter dedicated to career options. The user expectations state the course should 'introduce basic resources and career options in the field.' While the comprehensive nature of the course implies various career paths, an explicit chapter on this topic is absent. Additionally, the final chapter, 'Tópicos Avançados em Neurociência,' is slightly generic compared to the high specificity of the other chapters.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 9
         },
         {
-          "conclusion": "The generated list of chapters is very comprehensive and well-structured. However, to better align with the goal of preparing the learner for a job, a few additions could be made. For instance, including chapters on 'Introdução à Neurociência Computacional' (Introduction to Computational Neuroscience), 'Desenvolvimento do Sistema Nervoso' (Nervous System Development), and 'Comunicação e Divulgação Científica' (Scientific Communication and Outreach) would provide a more complete skill set for an entry-level position in the field, which is often in research.",
+          "conclusion": "To be perfect, the outline could add a chapter specifically about career paths, such as 'Carreiras em Neurociência e Desenvolvimento Profissional' (Careers in Neuroscience and Professional Development). This would directly fulfill the user's expectation of making the learner 'job-ready'. This new chapter could replace the current generic final chapter, 'Tópicos Avançados em Neurociência', to provide a more actionable and conclusive end to the course.",
           "kind": "potentialImprovements",
           "score": 9
         }
@@ -188,10 +188,10 @@
       }
     },
     {
-      "duration": 10977.139499999997,
-      "inputTokens": 457,
-      "output": "{\n  \"chapters\": [\n    \"Welcome to Spanish: Language Learning Foundations\",\n    \"The Spanish Alphabet and Pronunciation\",\n    \"Basic Greetings, Farewells, and Introductions\",\n    \"Numbers, Colors, and Simple Adjectives\",\n    \"Nouns: Gender and Number Rules\",\n    \"Subject Pronouns and Verb Conjugation\",\n    \"The Verb Ser: Identity and Origin\",\n    \"The Verb Estar: Location and State\",\n    \"The Verb Tener: Possession and Age\",\n    \"Forming Basic Questions and Sentences\",\n    \"Regular -AR Verbs in Present Tense\",\n    \"Regular -ER Verbs in Present Tense\",\n    \"Regular -IR Verbs in Present Tense\",\n    \"Days of the Week, Months, Seasons\",\n    \"Telling Time and Daily Schedule\",\n    \"Describing People and Personal Traits\",\n    \"Describing Places and Environments\",\n    \"Family, Friends, and Relationships\",\n    \"Food, Drink, and Restaurant Vocabulary\",\n    \"Shopping, Prices, and Currency Exchange\",\n    \"Asking For and Giving Directions\",\n    \"Transportation and Travel Phrases\",\n    \"Expressing Likes, Dislikes, and Opinions\",\n    \"Daily Routines and Leisure Activities\",\n    \"Basic Health and Emergency Phrases\",\n    \"Cultural Etiquette and Social Norms\",\n    \"Simple Conversational Strategies and Practice\",\n    \"Workplace Spanish: Basic Interactions\",\n    \"Continuing Your Learning and Career Resources\"\n  ]\n}",
-      "outputTokens": 316,
+      "duration": 15337.726208,
+      "inputTokens": 563,
+      "output": "{\n  \"chapters\": [\n    \"The Spanish Alphabet and Sounds\",\n    \"Mastering Vowel Pronunciation\",\n    \"Consonants: Sounds and Spelling\",\n    \"Basic Greetings and Farewells\",\n    \"Introducing Yourself and Others\",\n    \"Numbers, Dates, and Time\",\n    \"Nouns: Gender and Number\",\n    \"Articles: Definite and Indefinite\",\n    \"Basic Adjectives and Agreement\",\n    \"Forming Simple Spanish Sentences\",\n    \"Ser and Estar: Essential Usage\",\n    \"Regular -AR Verbs Present Tense\",\n    \"Regular -ER and -IR Verbs\",\n    \"Common Irregular Verbs Patterns\",\n    \"Asking Questions and Negation\",\n    \"Essential Vocabulary: Family and Friends\",\n    \"Essential Vocabulary: Food and Drinks\",\n    \"Essential Vocabulary: Daily Activities\",\n    \"Essential Vocabulary: Places, Directions\",\n    \"Prepositions of Place and Movement\",\n    \"Demonstrative Adjectives and Pronouns\",\n    \"Possessive Adjectives and Pronouns\",\n    \"Listening Comprehension Strategies\",\n    \"Basic Conversational Practice\",\n    \"Reading Simple Spanish Texts\",\n    \"Writing Short Descriptive Paragraphs\",\n    \"Ordering Food and Drinks\",\n    \"Shopping and Expressing Needs\",\n    \"Discussing Hobbies and Interests\",\n    \"Expressing Opinions and Preferences\",\n    \"Talking About Past: Preterite\",\n    \"Describing Past Actions: Imperfect\",\n    \"Comparing Preterite and Imperfect Usage\",\n    \"Commands and Requests: Imperative Mood\",\n    \"Future Tense: Planning Ahead\",\n    \"Conditional Tense: Hypothetical Situations\",\n    \"Reflexive Verbs and Pronouns\",\n    \"Direct and Indirect Object Pronouns\",\n    \"Introduction to the Subjunctive Mood\",\n    \"Subjunctive for Wishes and Emotions\",\n    \"Subjunctive for Doubts, Uncertainty\",\n    \"Relative Pronouns: Connecting Ideas\",\n    \"Adverbs: Modifying Verbs, Adjectives\",\n    \"Understanding Spanish Cultural Nuances\",\n    \"Formal and Informal Speech Registers\",\n    \"Regional Accents and Dialects\",\n    \"Navigating Social Situations, Etiquette\",\n    \"Spanish for Travel and Tourism\",\n    \"Spanish for Business and Workplace\",\n    \"Interviewing in Spanish: Key Phrases\",\n    \"Writing Professional Emails in Spanish\",\n    \"Interpreting Spanish Media and News\",\n    \"Exploring Spanish Literature and Art\",\n    \"Effective Vocabulary Acquisition Techniques\",\n    \"Utilizing Online Spanish Resources\",\n    \"Immersion Strategies for Learners\",\n    \"Self-Assessment and Progress Tracking\",\n    \"Seeking Feedback from Native Speakers\",\n    \"Building a Personalized Practice Routine\",\n    \"Maintaining Fluency Beyond Course\",\n    \"Understanding Spanish Certification Exams\",\n    \"Leveraging Technology for Language Learning\",\n    \"Real-World Application: Case Studies\"\n  ]\n}",
+      "outputTokens": 622,
       "steps": [
         {
           "conclusion": "None",
@@ -199,14 +199,14 @@
           "score": 10
         },
         {
-          "conclusion": "The generated course outline is very good for a basic A1/A2 level, but it doesn't fully meet the ambitious instruction to cover \"EVERYTHING to allow this learner to get a job in this field!\". While it includes a chapter on workplace Spanish, the content is strictly foundational (present tense, regular verbs, and only a few key irregulars). A truly \"job-ready\" course, even at a basic level, would need to introduce at least one past tense (like the preterite) and cover a wider range of common irregular verbs (e.g., ir, poder, querer). Additionally, there is no explicit chapter on definite and indefinite articles (el/la, un/una), which are fundamental.",
+          "conclusion": "The chapter title \"Building a Personalized Practice Routine\" violates the negative constraint \"No personalization words in titles: avoid 'you/your/my/first/final project'\". The word 'Personalized' falls into this category. It should have been rephrased, for example, as \"Building an Effective Practice Routine\".",
           "kind": "minorErrors",
-          "score": 8
+          "score": 8.5
         },
         {
-          "conclusion": "The course could be significantly improved by adding more essential grammar chapters. Specifically, it should include chapters on:\n1. Definite and Indefinite Articles.\n2. Common Irregular Verbs (beyond just Ser, Estar, Tener), such as 'ir', 'poder', 'hacer', 'querer'.\n3. An introduction to a past tense, most likely the Preterite Tense, which is crucial for describing completed actions and necessary for even basic job-related communication.",
+          "conclusion": "The generated list of chapters is very comprehensive and well-structured. However, to better meet the \"job-ready\" requirement, it could be improved by adding more depth to advanced topics. For instance, the subjunctive mood could be expanded with more chapters covering its various uses (e.g., 'Subjunctive with Conjunctions', 'Subjunctive in Adjective Clauses'). Additionally, a chapter dedicated to common idioms and colloquial expressions would be highly beneficial for achieving a more natural, professional level of fluency.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 8.5
         }
       ],
       "testCase": {
@@ -219,25 +219,25 @@
       }
     },
     {
-      "duration": 11489.104374999999,
-      "inputTokens": 457,
-      "output": "{\n  \"chapters\": [\n    \"Introdução ao Estudo do Direito\",\n    \"Fontes, Ramos e Classificações do Direito\",\n    \"Princípios Fundamentais do Sistema Jurídico\",\n    \"Norma Jurídica: Criação e Aplicação\",\n    \"Pessoas Físicas e Pessoas Jurídicas\",\n    \"Direitos e Garantias Fundamentais\",\n    \"Organização do Poder Judiciário Brasileiro\",\n    \"Pesquisa e Análise de Jurisprudência\",\n    \"Interpretação e Hermenêutica Legal\",\n    \"Linguagem e Redação Jurídica\",\n    \"Argumentação Jurídica e Raciocínio Lógico\",\n    \"Ética e Deontologia Profissional\",\n    \"Solução de Conflitos e Ações Judiciais\",\n    \"Processo Judicial Eletrônico e Ferramentas\",\n    \"O Advogado e Seus Clientes\",\n    \"Atuação do Jurista em Diversas Áreas\",\n    \"Compliance e Integridade Corporativa\",\n    \"Carreiras Jurídicas e Mercado de Trabalho\",\n    \"Recursos Digitais e Aprendizagem Contínua\"\n  ]\n}",
-      "outputTokens": 253,
+      "duration": 25459.430791,
+      "inputTokens": 563,
+      "output": "{\n  \"chapters\": [\n    \"O Direito: Conceito, Função e Evolução\",\n    \"Fontes do Direito: Lei, Costumes, Princípios\",\n    \"Norma Jurídica: Estrutura, Vigência e Aplicação\",\n    \"Teoria Geral do Estado e Constituição\",\n    \"Ramos do Direito: Público, Privado e Difuso\",\n    \"Direitos Fundamentais: Conceitos e Proteção\",\n    \"Pessoas, Bens e Fatos Jurídicos\",\n    \"Interpretação e Hermenêutica Jurídica\",\n    \"Antinomias e Lacunas no Ordenamento\",\n    \"Hierarquia das Normas Jurídicas\",\n    \"Pesquisa Jurídica: Fontes e Estratégias\",\n    \"Leitura e Análise de Legislação\",\n    \"Análise de Jurisprudência e Súmulas\",\n    \"Argumentação Jurídica: Lógica e Retórica\",\n    \"Resolução de Casos Concretos: Metodologia\",\n    \"Teoria da Prova: Ônus e Meios Probatórios\",\n    \"Precedentes Judiciais: Formação e Aplicação\",\n    \"Elaboração de Textos Jurídicos Básicos\",\n    \"Direito Constitucional: Princípios Fundamentais\",\n    \"Direitos Humanos e Cidadania\",\n    \"Controle de Constitucionalidade: Noções Gerais\",\n    \"Direito Administrativo: Poderes e Atos\",\n    \"Licitação e Contratos Administrativos\",\n    \"Direito Penal: Conceito de Crime\",\n    \"Teoria da Pena: Fundamentos e Espécies\",\n    \"Direito Processual Penal: Fases Iniciais\",\n    \"Direito Civil: Pessoas e Capacidade\",\n    \"Bens e Propriedade no Direito Civil\",\n    \"Obrigações e Contratos Civis\",\n    \"Responsabilidade Civil: Dano e Reparação\",\n    \"Direito de Família e Sucessões\",\n    \"Direito Processual Civil: Princípios Fundamentais\",\n    \"Atos Processuais e Provas no Processo\",\n    \"Direito do Trabalho: Relação de Emprego\",\n    \"Contrato de Trabalho: Direitos e Deveres\",\n    \"Direito Empresarial: Empresa e Sociedades\",\n    \"Títulos de Crédito: Noções Essenciais\",\n    \"Direito Tributário: Sistema e Tributos\",\n    \"Direito Ambiental: Proteção e Sustentabilidade\",\n    \"Direito do Consumidor: Relação de Consumo\",\n    \"Redação de Petições Iniciais\",\n    \"Elaboração de Contestações e Recursos\",\n    \"Pareceres Jurídicos: Estrutura e Conteúdo\",\n    \"Ética e Deontologia da Advocacia\",\n    \"Sigilo Profissional e Conflito de Interesses\",\n    \"Mediação e Arbitragem: Solução de Conflitos\",\n    \"Ferramentas Tecnológicas para Profissionais\",\n    \"OAB: Exame de Ordem e Registro\",\n    \"Carreira Jurídica: Áreas de Atuação\",\n    \"Acesso à Justiça e Assistência Jurídica\"\n  ]\n}",
+      "outputTokens": 691,
       "steps": [
         {
-          "conclusion": "The response fails to deliver on a key instruction: to create a course that would allow a learner to get a job in the field. While the generated chapter list is excellent as a 'general introduction to law', it almost completely omits chapters on the main branches of substantive law (e.g., Civil Law, Criminal Law, Labor Law, Administrative Law). A learner completing this course would know about the legal system and legal practice, but would not know the actual substance of the law required for any entry-level legal position, such as a paralegal. This is a major omission that makes the course fall short of its stated 'job-ready' goal.",
+          "conclusion": "None",
           "kind": "majorErrors",
-          "score": 6.5
-        },
-        {
-          "conclusion": "None. The response correctly adheres to all formatting and stylistic constraints. The chapter titles are all in Portuguese, they respect the 3-7 word count limit, and the list does not contain any personalized deliverables.",
-          "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "The course is missing the most critical content. To be even remotely 'job-ready', a learner needs at least a basic introduction to the core areas of substantive law. The list should be significantly expanded to include chapters such as: 'Fundamentos do Direito Civil', 'Introdução ao Direito Penal', 'Princípios do Direito do Trabalho', 'Bases do Direito Administrativo', and 'Direitos do Consumidor na Prática'. Without these, the course is purely theoretical and procedural, lacking the practical legal knowledge needed for employment.",
+          "conclusion": "The course outline is very comprehensive, but it omits a few significant areas of legal practice in Brazil, which slightly undermines the instruction to cover \"EVERYTHING to allow this learner to get a job in this field!\". Key areas missing include Social Security Law (Direito Previdenciário), which is a very large field for practitioners, Electoral Law (Direito Eleitoral), and a more distinct treatment of International Law (Public and Private). While the list is extensive, these omissions prevent it from being completely exhaustive for job-readiness.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The list is excellent but could be made even more robust for a \"job-ready\" course. I suggest the following improvements:\n1.  Add chapters on the missing legal areas: Social Security Law (Direito Previdenciário), Electoral Law (Direito Eleitoral), and Public/Private International Law.\n2.  Create a dedicated chapter for Small Claims Courts (\"Juizados Especiais Cíveis e Criminais\"), as this is a very common entry point for legal practice.\n3.  Expand on the topic of appeals (\"Recursos\"), which is currently bundled with \"Contestações\". It deserves its own chapter detailing the general theory and specific types of appeals.\n4.  Add a chapter on practical oratory skills, such as \"Oratória e Sustentação Oral\" (Public Speaking and Oral Arguments).\n5.  Make the chapter on tools more specific by mentioning the electronic court systems used in Brazil (e.g., PJe, e-SAJ).",
           "kind": "potentialImprovements",
-          "score": 6
+          "score": 8
         }
       ],
       "testCase": {
