@@ -13,24 +13,11 @@ type CourseChaptersParams = {
   courseTitle: string;
 };
 
-const basicSchema = z.object({
-  chapters: z.array(z.string()),
-  courseDescription: z.string(),
-});
-
-const intermediateSchema = z.object({
+const schema = z.object({
   chapters: z.array(z.string()),
 });
 
-const advancedSchema = intermediateSchema;
-
-export type CourseChaptersBasicSchema = z.infer<typeof basicSchema>;
-
-export type CourseChaptersIntermediateSchema = z.infer<
-  typeof intermediateSchema
->;
-
-export type CourseChaptersAdvancedSchema = z.infer<typeof advancedSchema>;
+export type CourseChaptersSchema = z.infer<typeof schema>;
 
 export type CourseChapterBasicParams = CourseChaptersParams;
 
@@ -55,7 +42,7 @@ export async function generateBasicCourseChapters({
   const { object, usage } = await generateObject({
     model,
     prompt: userPrompt,
-    schema: basicSchema,
+    schema,
     system: systemPrompt,
   });
 
@@ -79,7 +66,7 @@ export async function generateIntermediateCourseChapters({
   const { object, usage } = await generateObject({
     model,
     prompt: userPrompt,
-    schema: intermediateSchema,
+    schema,
     system: systemPrompt,
   });
 
@@ -103,7 +90,7 @@ export async function generateAdvancedCourseChapters({
   const { object, usage } = await generateObject({
     model,
     prompt: userPrompt,
-    schema: advancedSchema,
+    schema,
     system: systemPrompt,
   });
 

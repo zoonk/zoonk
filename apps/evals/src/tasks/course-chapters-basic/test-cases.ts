@@ -8,15 +8,13 @@ const SHARED_EXPECTATIONS = `
   - Should use modern terminology and everyday language, avoiding overly technical jargon
   - Should be split into granular topics (many smaller chapters rather than few large ones)
   - Should follow the language specified by locale parameter
-  - Course description should NOT mention levels since it will be used for all levels, not only this basic level
-  - Description should NOT have fluff words like "comprehensive" or "detailed"
 `;
 
 export const TEST_CASES = [
   {
     expectations: `
       - Prepare students for entry-level Python roles
-      - Both course description and chapters MUST be in Brazilian Portuguese
+      - MUST be in Brazilian Portuguese
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -26,7 +24,7 @@ export const TEST_CASES = [
   {
     expectations: `
       - Prepare students for entry-level web developer roles
-      - Both course description and chapters MUST be in US English
+      - MUST be in US English
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -36,7 +34,7 @@ export const TEST_CASES = [
   {
     expectations: `
       - Cover how to apply agile methodologies not only in software but in various project types
-      - Both course description and chapters MUST be in Brazilian Portuguese
+      - MUST be in Brazilian Portuguese
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -45,7 +43,7 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - Both course description and chapters MUST be in Spanish
+      - MUST be in Spanish
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -54,7 +52,7 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - Both course description and chapters MUST be in English
+      - MUST be in English
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -63,7 +61,7 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - Both course description and chapters MUST be in Portuguese (Brazil)
+      - MUST be in Portuguese (Brazil)
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -87,7 +85,7 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - Both course description and chapters MUST be in Portuguese (Brazil)
+      - MUST be in Portuguese (Brazil)
       - Should cover Brazilian Law
       
       ${SHARED_EXPECTATIONS}

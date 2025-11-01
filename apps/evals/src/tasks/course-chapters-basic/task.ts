@@ -1,6 +1,6 @@
 import {
   type CourseChapterBasicParams,
-  type CourseChaptersBasicSchema,
+  type CourseChaptersSchema,
   generateBasicCourseChapters,
 } from "@zoonk/ai/course-chapters";
 import type { Task } from "@/lib/types";
@@ -8,7 +8,7 @@ import { TEST_CASES } from "./test-cases";
 
 export const courseChaptersBasicTask: Task<
   CourseChapterBasicParams,
-  CourseChaptersBasicSchema
+  CourseChaptersSchema
 > = {
   description:
     "Generate course description and chapter outline for basic/beginner level courses",

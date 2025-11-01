@@ -1,6 +1,6 @@
 import {
   type CourseChapterAdvancedParams,
-  type CourseChaptersAdvancedSchema,
+  type CourseChaptersSchema,
   generateAdvancedCourseChapters,
 } from "@zoonk/ai/course-chapters";
 import type { Task } from "@/lib/types";
@@ -8,7 +8,7 @@ import { TEST_CASES } from "./test-cases";
 
 export const courseChaptersAdvancedTask: Task<
   CourseChapterAdvancedParams,
-  CourseChaptersAdvancedSchema
+  CourseChaptersSchema
 > = {
   description:
     "Generate chapter outline for advanced level courses, building upon intermediate knowledge to prepare learners for expert-level roles",

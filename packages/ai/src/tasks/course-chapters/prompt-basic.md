@@ -1,12 +1,3 @@
-## Course Description
-
-Write a short description (1-2 sentences) explaining in practical terms what students will learn and how this knowledge will be useful in their lives or careers.
-
-- Highlights what they will learn and why it's useful/relevant in the real world
-  - For example: "You will learn [...]. This is useful for [...]."
-- No need to use words like "comprehensive", "detailed", "in-depth", "step-by-step", etc. Just focus on the practical value of the course
-- This description will be displayed for all levels (Beginner, Intermediate, Advanced), so keep it general and applicable to all learners and levels
-
 ## Basic Level
 
 Now create a course outline suitable for beginners. This will be their first exposure to the subject matter
