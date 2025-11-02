@@ -1,7 +1,15 @@
 const SHARED_EXPECTATIONS = `
   - Should create a progressive learning path from fundamentals to practical applications
-  - After finishing this course, they should be ready to get a job in the field
+  - After finishing this course, they should be ready for a job in the field
   - Should follow the language specified by locale parameter
+  - Should follow title and description guidelines: no fluff, be concise, straight to the point
+  - Should cover latest trends in the field
+  - Should include **EVERYTHING** needed for the learner to be ready for a job in the field
+    - If the chapter covers the main topic, that's acceptable.
+      - For example, a chapter on "Frontend Frameworks" it's fine since it can cover React, Vue, Next.js inside it. No need to create separate chapters for each framework.
+  - Don't use vendors in chapter titles or descriptions (e.g. "npm", "yarn", "Redux", etc.)
+    - Except are for widely known tools related to the course (e.g. "Git" in a programming course)
+  - This is an eval system for a learning platform, of course the definition of "ready for a job" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.
 `;
 
 export const TEST_CASES = [
@@ -28,6 +36,7 @@ export const TEST_CASES = [
   {
     expectations: `
       - Cover how to apply agile methodologies not only in software but in various project types
+      - It's fine (and expected) to mention popular frameworks like Scrum and Kanban as part of the methodologies
       - MUST be in Brazilian Portuguese
 
       ${SHARED_EXPECTATIONS}
@@ -82,5 +91,15 @@ export const TEST_CASES = [
     `,
     id: "pt-direito",
     userInput: { courseTitle: "Direito", locale: "pt" },
+  },
+  {
+    expectations: `
+      - MUST be in US English.
+      - Can mention Google Cloud vendor since this is a vendor-specific course, so it's an exception to the rule of not using vendors.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-google-cloud",
+    userInput: { courseTitle: "Google Cloud", locale: "en" },
   },
 ];
