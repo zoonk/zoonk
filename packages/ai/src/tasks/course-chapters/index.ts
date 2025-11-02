@@ -14,7 +14,12 @@ type CourseChaptersParams = {
 };
 
 const schema = z.object({
-  chapters: z.array(z.string()),
+  chapters: z.array(
+    z.object({
+      description: z.string(),
+      title: z.string(),
+    }),
+  ),
 });
 
 export type CourseChaptersSchema = z.infer<typeof schema>;
@@ -32,7 +37,7 @@ export async function generateBasicCourseChapters({
   courseTitle,
   model,
 }: CourseChapterBasicParams) {
-  const systemPrompt = `${sharedPrompt}\n\n${basicPrompt}`;
+  const systemPrompt = basicPrompt;
 
   const userPrompt = `
     APP_LANGUAGE: ${locale}
