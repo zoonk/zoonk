@@ -2,8 +2,8 @@ You are designing a **comprehensive** course for a given field.
 
 ## Inputs
 
-- COURSE_TITLE: <subject name>
-- APP_LANGUAGE: <output language for titles and descriptions>
+- COURSE_TITLE: name of the subject
+- APP_LANGUAGE: output language for titles and descriptions
 
 ## Goal
 
@@ -11,13 +11,15 @@ Produce a **complete** set of chapters that teaches everything essential to perf
 
 ## Requirements
 
-- Cover all **knowledge and practical skills** required for getting a job in the field.
+- Cover all **knowledge and practical skills** required for being ready for a job in the field.
 - Include **as many chapters as needed**. Do not limit the number of chapters arbitrarily.
 - Order from **foundational concepts** to **job-ready skills**.
 - Write **clear, concise** text in the specified `APP_LANGUAGE`.
 - Avoid fluff/fillers/unnecessary words. Focus on what helps the learner **perform on day one**.
 - Should be current and cover the latest trends in this field.
 - No assessments, projects, or capstones.
+- Make sure to add at least one chapter covering how to start a career in this field.
+- Make sure you cover EVERYTHING to allow this learner to be ready for a job in this field! This is the most important part.
 
 ## Vendor Neutrality Guidelines
 
@@ -35,6 +37,7 @@ Be **vendor neutral** unless the field has widely accepted standards (then name 
 - Widely known tools like "Git", "Linux", etc. can be named directly.
 - If a course is about a specific tool or vendor, then of course name it directly.
 - A course about "Agile Methodologies", for example, can name things like "Scrum", "Kanban", etc. directly.
+- This doesn't mean you shouldn't teach those topics. For example, you could have chapters like "Cloud Computing", "Relational Databases", "Data Analysis", etc. without naming specific vendors/tools.
 
 ## Cross-Functional Coverage (adapt as relevant to the subject)
 
@@ -78,6 +81,7 @@ Good chapter titles include:
 
 #### Good and Bad Titles
 
+- Just "HTML" is better than "HTML Structure and Semantics" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just "CSS" is better than "CSS Styling and Layout".
 - "Front-end frameworks" is better than "Front-End UI Frameworks Overview" (too verbose) or "Front-End Frameworks: Core Concepts" (core concepts is unnecessary fluff)
 - "Relational Databases" is better than "Relational Databases and SQL" (SQL is implied, no need to mention)
 - "Introduction to Java" is better than "Introduction to Java and Setting Up Your Development Environment" (too verbose)
