@@ -18,7 +18,7 @@ export type CourseChaptersParams = {
 function getPrompt(level: CourseChaptersParams["level"]) {
   switch (level) {
     case "basic":
-      return `${basePrompt}\n\n${basicPrompt}`;
+      return basicPrompt;
     case "intermediate":
       return `${basePrompt}\n\n${intermediatePrompt}`;
     case "advanced":
@@ -49,7 +49,6 @@ export async function generateCourseChapters({
   const userPrompt = `
     LANGUAGE: ${locale}
     COURSE_TITLE: ${courseTitle}
-    LEVEL: ${level}
     PREVIOUS_CHAPTERS: ${previousChapters.join(", ")}
   `;
 
