@@ -43,16 +43,6 @@ Be **vendor neutral** unless the field has widely accepted standards (then name 
 - A course about "Agile Methodologies", for example, can name things like "Scrum", "Kanban", etc. directly.
 - This doesn't mean you shouldn't teach those topics. For example, you could have chapters like "Cloud Computing", "Relational Databases", "Data Analysis", etc. without naming specific vendors/tools.
 
-## Cross-Functional Coverage (adapt as relevant to the subject)
-
-- Collaboration and communication in real workflows.
-- Ethics, safety, and legal/compliance basics.
-- Quality, testing/validation, and continuous improvement.
-- Common tools, file formats, and day-to-day workflows used in the job.
-- Data literacy for the field (basic measurement, metrics, and reporting where applicable).
-- Accessibility and inclusion where relevant.
-- Internationalization/localization if the field commonly requires it.
-
 ## Scope & Granularity Guidelines
 
 - Prefer **practical, job-linked** chapter scopes (e.g., “Forms & Validation” rather than “Advanced Miscellaneous”).
