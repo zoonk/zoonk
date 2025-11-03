@@ -1,16 +1,19 @@
 const SHARED_EXPECTATIONS = `
-  - Should create a progressive learning path from fundamentals to practical applications
-  - After finishing this course, they should be ready for a job in the field
+  - Should create a progressive learning path building upon previous chapters
+  - After finishing this course, they should be ready for an entry-level job in the field
   - Should follow the language specified by locale parameter
   - Should follow title and description guidelines: no fluff, be concise, straight to the point
   - Should cover latest trends in the field
-  - Should include **EVERYTHING** needed for the learner to be ready for a job in the field
+  - Should include **EVERYTHING** needed for the learner to be ready for an entry-level job in the field
     - If the chapter covers the main topic, that's acceptable.
       - For example, a chapter on "Frontend Frameworks" it's fine since it can cover React, Vue, Next.js inside it. No need to create separate chapters for each framework.
+  - Should **NOT** include topics that are tailored towards intermediate or expert learners; focus on basic level content only
   - Don't use vendors in chapter titles or descriptions (e.g. "npm", "yarn", "Redux", etc.)
     - Except are for widely known tools related to the course (e.g. "Git" in a programming course)
   - This is an eval system for a learning platform, of course the definition of "ready for a job" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.
 `;
+
+const SHARED_INPUT = { level: "basic", previousChapters: [] };
 
 export const TEST_CASES = [
   {
@@ -21,7 +24,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-python",
-    userInput: { courseTitle: "Python", locale: "pt" },
+    userInput: { ...SHARED_INPUT, courseTitle: "Python", locale: "pt" },
   },
   {
     expectations: `
@@ -31,18 +34,25 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-web-development",
-    userInput: { courseTitle: "Web Development", locale: "en" },
+    userInput: {
+      ...SHARED_INPUT,
+      courseTitle: "Web Development",
+      locale: "en",
+    },
   },
   {
     expectations: `
-      - Cover how to apply agile methodologies not only in software but in various project types
       - It's fine (and expected) to mention popular frameworks like Scrum and Kanban as part of the methodologies
       - MUST be in Brazilian Portuguese
 
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-metodologias-ageis",
-    userInput: { courseTitle: "Metodologias Ágeis", locale: "pt" },
+    userInput: {
+      ...SHARED_INPUT,
+      courseTitle: "Metodologias Ágeis",
+      locale: "pt",
+    },
   },
   {
     expectations: `
@@ -51,7 +61,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "es-quimica",
-    userInput: { courseTitle: "Química", locale: "es" },
+    userInput: { ...SHARED_INPUT, courseTitle: "Química", locale: "es" },
   },
   {
     expectations: `
@@ -60,7 +70,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-economics",
-    userInput: { courseTitle: "Economics", locale: "en" },
+    userInput: { ...SHARED_INPUT, courseTitle: "Economics", locale: "en" },
   },
   {
     expectations: `
@@ -69,7 +79,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-neurociencia",
-    userInput: { courseTitle: "Neurociência", locale: "pt" },
+    userInput: { ...SHARED_INPUT, courseTitle: "Neurociência", locale: "pt" },
   },
   {
     expectations: `
@@ -80,7 +90,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-spanish",
-    userInput: { courseTitle: "Spanish", locale: "en" },
+    userInput: { ...SHARED_INPUT, courseTitle: "Spanish", locale: "en" },
   },
   {
     expectations: `
@@ -90,7 +100,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-direito",
-    userInput: { courseTitle: "Direito", locale: "pt" },
+    userInput: { ...SHARED_INPUT, courseTitle: "Direito", locale: "pt" },
   },
   {
     expectations: `
@@ -100,6 +110,6 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-google-cloud",
-    userInput: { courseTitle: "Google Cloud", locale: "en" },
+    userInput: { ...SHARED_INPUT, courseTitle: "Google Cloud", locale: "en" },
   },
 ];

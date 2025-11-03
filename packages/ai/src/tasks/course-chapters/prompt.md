@@ -1,25 +1,48 @@
-You are designing a **comprehensive** course for a given field.
+You are designing a **comprehensive** course for a given field and level.
 
 ## Inputs
 
-- COURSE_TITLE: name of the subject
-- APP_LANGUAGE: output language for titles and descriptions
+- `COURSE_TITLE`: name of the subject
+- `LANGUAGE`: output language for titles and descriptions
+- `LEVEL`: target proficiency level (beginner, intermediate, advanced)
+- `PREVIOUS_CHAPTERS`: list of chapters covered in previous levels (will be empty for beginner level)
 
 ## Goal
 
-Produce a **complete** set of chapters that teaches everything essential to perform real work in the field after finishing the course.
+Produce a **complete** set of chapters that teaches everything essential for the given level. Goals for each level:
+
+- **Beginner**: cover **everything** to allow learners to get an entry-level job in the field.
+- **Intermediate**: cover **everything** to allow learners to perform well in a senior role in the field.
+- **Advanced**: cover **everything** to allow learners to perform well in a lead/principal role in the field. They should be at the **top 1%** of professionals in this field by the end of this level.
 
 ## Requirements
 
 - Cover all **knowledge and practical skills** required for being ready for a job in the field.
 - Include **as many chapters as needed**. Do not limit the number of chapters arbitrarily.
-- Order from **foundational concepts** to **job-ready skills**.
-- Write **clear, concise** text in the specified `APP_LANGUAGE`.
+- Order from **foundational concepts** to **job-ready skills**, following a logical progression building upon previous chapters.
+- Write **clear, concise** text in the specified `LANGUAGE` input.
 - Avoid fluff/fillers/unnecessary words. Focus on what helps the learner **perform on day one**.
-- Should be current and cover the latest trends in this field.
+- Should be up-to-date and cover the latest trends in this field.
 - No assessments, projects, or capstones.
-- Make sure to add at least one chapter covering how to start a career in this field.
-- Make sure you cover EVERYTHING to allow this learner to be ready for a job in this field! This is the most important part.
+- Include chapters that build upon the `PREVIOUS_CHAPTERS` input.
+- Do **not** include previous chapters in your output.
+
+### Beginner Level Requirements
+
+- Add at least one chapter covering how to start a career in this field.
+- Don't cover topics that are more appropriate for intermediate or advanced levels.
+- They should be ready to perform extremely well in an entry-level job by the end of this level.
+
+### Intermediate Level Requirements
+
+- Don't cover topics that are more appropriate for advanced levels.
+- They should be ready to perform extremely well in a senior role by the end of this level.
+
+### Advanced Level Requirements
+
+- Prepare learners to lead projects and mentor others in this field.
+- Cover everything missing from previous levels to reach expert proficiency.
+- They should be at the **top 1%** of professionals in this field by the end of this level.
 
 ## Vendor Neutrality Guidelines
 
@@ -67,7 +90,7 @@ Each chapter must include **exactly two fields**:
 
 First, silently plan comprehensive coverage for the job. Then output all necessary chapters in the required format.
 
-Before finalizing, ask yourself: "Would I hire someone who completed this course to do real work in this field?" If the answer is "no", revise the chapters until the answer is "yes".
+Before finalizing, ask yourself: "Would I hire someone who completed this course to do real work in this field at the specified level?" If the answer is "no", revise the chapters until the answer is "yes".
 
 ## Examples
 

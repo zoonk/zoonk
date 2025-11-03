@@ -1,18 +1,18 @@
 import {
-  type CourseChapterIntermediateParams,
+  type CourseChaptersParams,
   type CourseChaptersSchema,
-  generateIntermediateCourseChapters,
+  generateCourseChapters,
 } from "@zoonk/ai/course-chapters";
 import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
 
 export const courseChaptersIntermediateTask: Task<
-  CourseChapterIntermediateParams,
+  CourseChaptersParams,
   CourseChaptersSchema
 > = {
   description:
     "Generate chapter outline for intermediate level courses, building upon basic knowledge",
-  generate: generateIntermediateCourseChapters,
+  generate: generateCourseChapters,
   id: "course-chapters-intermediate",
   name: "Course Chapters - Intermediate Level",
   testCases: TEST_CASES,
