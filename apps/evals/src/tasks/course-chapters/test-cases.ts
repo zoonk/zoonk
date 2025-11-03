@@ -1,10 +1,12 @@
 const SHARED_EXPECTATIONS = `
-  - Should create a progressive learning path building upon previous chapters
-  - After finishing this course, they should be ready for a mid-level job in the field
+  - It should assume learners start with no prior knowledge of the subject
+  - Should create a progressive learning path going from basic/beginner to mastery of the subject
+  - By the end of this course, they should be able to lead very complex projects and tasks in this field
+  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD
+  - Should include **EVERYTHING** a student needs to be at the top 1% of the field
   - Should follow the language specified by locale parameter
   - Should follow title and description guidelines: no fluff, be concise, straight to the point
   - Should cover latest trends in the field
-  - Should **NOT** include topics that are tailored towards intermediate or expert learners but it should include **EVERYTHING** needed for the learner to perform extremely well for a mid-level job in the field
   - Don't use vendors in chapter titles or descriptions (e.g. "npm", "yarn", "Redux", etc.)
     - Except are for widely known tools related to the course (e.g. "Git" in a programming course)
   - This is an eval system for a learning platform, of course the definition of "ready for a job" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.
@@ -19,9 +21,8 @@ const SHARED_EXPECTATIONS = `
   - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:
     - "Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles." is better than "Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles." - "Master" is fluff, and so are words like "learn", "understand", "explore", etc.
     - "Properties of matter, states, and phase transitions." is better than "Explore the definition of Chemistry, properties of matter, states, and phase transitions." - "Explore the definition of Chemistry" are filler/unnecessary words.
+  - Don't add capstone/final projects, assessments, or exercises.
 `;
-
-const SHARED_INPUT = { level: "basic", previousChapters: [] };
 
 export const TEST_CASES = [
   {
@@ -32,7 +33,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-python",
-    userInput: { ...SHARED_INPUT, courseTitle: "Python", locale: "pt" },
+    userInput: { courseTitle: "Python", locale: "pt" },
   },
   {
     expectations: `
@@ -42,11 +43,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-web-development",
-    userInput: {
-      ...SHARED_INPUT,
-      courseTitle: "Web Development",
-      locale: "en",
-    },
+    userInput: { courseTitle: "Web Development", locale: "en" },
   },
   {
     expectations: `
@@ -56,11 +53,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-metodologias-ageis",
-    userInput: {
-      ...SHARED_INPUT,
-      courseTitle: "Metodologias Ágeis",
-      locale: "pt",
-    },
+    userInput: { courseTitle: "Metodologias Ágeis", locale: "pt" },
   },
   {
     expectations: `
@@ -69,7 +62,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "es-quimica",
-    userInput: { ...SHARED_INPUT, courseTitle: "Química", locale: "es" },
+    userInput: { courseTitle: "Química", locale: "es" },
   },
   {
     expectations: `
@@ -78,7 +71,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-economics",
-    userInput: { ...SHARED_INPUT, courseTitle: "Economics", locale: "en" },
+    userInput: { courseTitle: "Economics", locale: "en" },
   },
   {
     expectations: `
@@ -87,7 +80,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-neurociencia",
-    userInput: { ...SHARED_INPUT, courseTitle: "Neurociência", locale: "pt" },
+    userInput: { courseTitle: "Neurociência", locale: "pt" },
   },
   {
     expectations: `
@@ -101,7 +94,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-spanish",
-    userInput: { ...SHARED_INPUT, courseTitle: "Spanish", locale: "en" },
+    userInput: { courseTitle: "Spanish", locale: "en" },
   },
   {
     expectations: `
@@ -111,7 +104,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-direito",
-    userInput: { ...SHARED_INPUT, courseTitle: "Direito", locale: "pt" },
+    userInput: { courseTitle: "Direito", locale: "pt" },
   },
   {
     expectations: `
@@ -121,7 +114,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-google-cloud",
-    userInput: { ...SHARED_INPUT, courseTitle: "Google Cloud", locale: "en" },
+    userInput: { courseTitle: "Google Cloud", locale: "en" },
   },
   {
     expectations: `
@@ -131,7 +124,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-uk-law",
-    userInput: { ...SHARED_INPUT, courseTitle: "UK Law", locale: "en" },
+    userInput: { courseTitle: "UK Law", locale: "en" },
   },
   {
     expectations: `
@@ -140,11 +133,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-brazilian-history",
-    userInput: {
-      ...SHARED_INPUT,
-      courseTitle: "Brazilian History",
-      locale: "en",
-    },
+    userInput: { courseTitle: "Brazilian History", locale: "en" },
   },
   {
     expectations: `
@@ -154,6 +143,6 @@ export const TEST_CASES = [
         ${SHARED_EXPECTATIONS}
       `,
     id: "en-harry-potter",
-    userInput: { ...SHARED_INPUT, courseTitle: "Harry Potter", locale: "en" },
+    userInput: { courseTitle: "Harry Potter", locale: "en" },
   },
 ];

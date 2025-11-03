@@ -6,14 +6,13 @@ import {
 import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
 
-export const courseChaptersAdvancedTask: Task<
+export const courseChaptersTask: Task<
   CourseChaptersParams,
   CourseChaptersSchema
 > = {
-  description:
-    "Generate chapter outline for advanced level courses, building upon intermediate knowledge to prepare learners for expert-level roles",
+  description: "Generate course description and chapter outline for a course",
   generate: generateCourseChapters,
-  id: "course-chapters-advanced",
-  name: "Course Chapters - Advanced Level",
+  id: "course-chapters",
+  name: "Course Chapters",
   testCases: TEST_CASES,
 };
