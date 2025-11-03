@@ -34,11 +34,7 @@ Produce a **complete** set of chapters that teaches everything essential for the
 Be **vendor neutral** unless the field has widely accepted standards (then name them). The main idea behind this rule is that, if a tool change, we shouldn't need to change the chapter title or description. For example:
 
 - "package managers" is better than "npm"/"yarn"/"pnpm".
-- "build tools" is better than "Webpack"/"Vite".
-- "cloud providers" is better than "AWS"/"Azure"/"GCP".
 - "relational databases" is better than "MySQL"/"PostgreSQL".
-- "containers" is better than "Docker"/"Podman".
-- "orchestration tools" is better than "Kubernetes"/"Docker Swarm".
 
 ### Exceptions
 
@@ -77,16 +73,8 @@ Each chapter must include **exactly two fields**:
 
 Good chapter titles include:
 
-- A "Web Development" course could have chapters like these: "How the web works", "HTML", "CSS", "Responsive Design", "JavaScript", etc.
-- An "Astronomy" course could have chapters like these: "Astronomy Foundations", "Math & Physics for Astronomy", "The Celestial Sphere", "Orbital Mechanics", etc.
-- A "Digital Marketing" course could have chapters like these: "Consumer Psychology", "Market Research", "Positioning & Brand Strategy", "Goals, KPIs, and North Stars", "Analytics Fundamentals", etc.
-
-#### Good and Bad Titles
-
-- Just "HTML" is better than "HTML Structure and Semantics" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just "CSS" is better than "CSS Styling and Layout".
-- "Front-end frameworks" is better than "Front-End UI Frameworks Overview" (too verbose) or "Front-End Frameworks: Core Concepts" (core concepts is unnecessary fluff)
-- "Relational Databases" is better than "Relational Databases and SQL" (SQL is implied, no need to mention)
-- "Introduction to Java" is better than "Introduction to Java and Setting Up Your Development Environment" (too verbose)
+- "How the web works", "HTML", "CSS", "Responsive Design", "JavaScript", etc.
+- Just "HTML" is better than "HTML Structure and Semantics" (structure and semantics are implied if this is the only HTML chapter).
 - "Lean Startup" is better than "The Lean Startup Methodology: An Overview" (too verbose)
 
 **TIP:** Go straight to the point. Avoid verbose titles. If necessary, add details in the description instead.
@@ -95,13 +83,8 @@ Good chapter titles include:
 
 - NEVER use fluff/fillers/unnecessary words like "learn", "understand", "explore", "introduction to", "basics of", "comprehensive guide to", etc.
 
-Good chapter descriptions include:
+Good chapter descriptions:
 
-- A "HTML" chapter description could be: "Structure and semantics of web content using HTML: Elements, attributes, forms, multimedia, and accessibility."
-- A "Telescopes & Optics" chapter description could be: "Types of telescopes and optical systems: Refractors, reflectors, and advanced designs like adaptive optics."
-- A "Market Research" chapter description could be: "Methods and tools for gathering and analyzing market data: Surveys, focus groups, and competitive analysis."
-
-#### Good and Bad Descriptions
-
-- "Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles." is better than "Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles." - "Master" is fluff, and so are words like "learn", "understand", "explore", etc.
+- "Structure and semantics of web content using HTML: Elements, attributes, forms, multimedia, and accessibility."
+- "Types of telescopes and optical systems: Refractors, reflectors, and advanced designs like adaptive optics."
 - "Properties of matter, states, and phase transitions." is better than "Explore the definition of Chemistry, properties of matter, states, and phase transitions." - "Explore the definition of Chemistry" are filler/unnecessary words.
