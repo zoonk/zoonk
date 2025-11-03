@@ -1,10 +1,10 @@
 const SHARED_EXPECTATIONS = `
   - Should create a progressive learning path building upon previous chapters
-  - After finishing this course, they should be ready for an entry-level job in the field
+  - After finishing this course, they should be ready for a mid-level job in the field
   - Should follow the language specified by locale parameter
   - Should follow title and description guidelines: no fluff, be concise, straight to the point
   - Should cover latest trends in the field
-  - Should **NOT** include topics that are tailored towards intermediate or expert learners but it should include **EVERYTHING** needed for the learner to perform extremely well for an entry-level job in the field
+  - Should **NOT** include topics that are tailored towards intermediate or expert learners but it should include **EVERYTHING** needed for the learner to perform extremely well for a mid-level job in the field
   - Don't use vendors in chapter titles or descriptions (e.g. "npm", "yarn", "Redux", etc.)
     - Except are for widely known tools related to the course (e.g. "Git" in a programming course)
   - This is an eval system for a learning platform, of course the definition of "ready for a job" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.

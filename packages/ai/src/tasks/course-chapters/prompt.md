@@ -18,7 +18,7 @@ Produce a **complete** set of chapters that teaches everything essential for the
 - Order from **foundational concepts** to **job-ready skills**, following a logical progression building upon previous chapters.
 - Write **clear, concise** text in the specified `LANGUAGE` input.
 - Avoid fluff/fillers/unnecessary words. Focus on what helps the learner **perform on day one**.
-- Should be up-to-date and cover the latest trends in this field.
+- Should be **up-to-date**, **modern**, and cover the **latest trends** in this field.
 - No assessments, projects, or capstones.
 - Include chapters that build upon the `PREVIOUS_CHAPTERS` input.
 - Do **not** include previous chapters in your output.
