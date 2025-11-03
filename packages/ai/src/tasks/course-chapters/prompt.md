@@ -27,6 +27,7 @@ Produce a **complete** set of chapters that teaches everything essential for the
 - No assessments, projects, or capstones.
 - Include chapters that build upon the `PREVIOUS_CHAPTERS` input.
 - Do **not** include previous chapters in your output.
+- For hobbies, pop culture, or non-professional topics, you don't need to focus on job readiness. Instead, focus on comprehensive coverage of the topic.
 
 ## Vendor Neutrality Guidelines
 

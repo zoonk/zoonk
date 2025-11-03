@@ -93,6 +93,9 @@ export const TEST_CASES = [
       - SHOULD cover everyday communication scenarios
       - MUST be in English (teaching Spanish)
       - Should prepare students for basic conversations and A1/A2 proficiency
+      - Don't add culture-specific chapters, just focus on language learning
+      - Don't add proeficiency exam preparation chapters, just focus on language learning skills
+      - Don't add career chapter since this is an exception to the career-related rule. Main focus here is language learning
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -141,5 +144,15 @@ export const TEST_CASES = [
       courseTitle: "Brazilian History",
       locale: "en",
     },
+  },
+  {
+    expectations: `
+        - MUST be in US English
+        - Should not cover career-related chapters since this is a pop culture topic
+
+        ${SHARED_EXPECTATIONS}
+      `,
+    id: "en-harry-potter",
+    userInput: { ...SHARED_INPUT, courseTitle: "Harry Potter", locale: "en" },
   },
 ];
