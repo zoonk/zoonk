@@ -9,6 +9,11 @@ Cover **everything** to allow learners to **perform extremely well** in a **mid-
 
 Focus on excellence ensuring our curriculum should prepare learners to perform at the **top for their level**. Build a curriculum that would make hiring managers excited to hire someone who completed it.
 
+### Basic Level for Language Learning
+
+- Cover **everything** for A1-A2 levels (CEFR).
+- E.g. It's important to cover things like irregular verbs, near future tense, adjectives, pronouns, formal/informal commands, etc. Make sure to include all essentials for learners to reach A2 level.
+
 ## Last Check
 
 - Before finishing this level, review the entire content and ask yourself: "Does this content enable a learner to perform **extremely well** in a **mid-level job** in this field?" If the answer is "no," identify the gaps and add the necessary content to fill them.

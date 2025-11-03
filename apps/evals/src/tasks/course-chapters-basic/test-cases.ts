@@ -15,6 +15,7 @@ const SHARED_EXPECTATIONS = `
     - "Relational Databases" is better than "Relational Databases and SQL" (SQL is implied, no need to mention)
     - "Introduction to Java" is better than "Introduction to Java and Setting Up Your Development Environment" (too verbose)
     - "Lean Startup" is better than "The Lean Startup Methodology: An Overview" (too verbose)
+    - "Introduction to X" is valid for titles of introductory chapters but we should avoid those words in descriptions
   - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:
     - "Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles." is better than "Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles." - "Master" is fluff, and so are words like "learn", "understand", "explore", etc.
     - "Properties of matter, states, and phase transitions." is better than "Explore the definition of Chemistry, properties of matter, states, and phase transitions." - "Explore the definition of Chemistry" are filler/unnecessary words.
@@ -92,9 +93,9 @@ export const TEST_CASES = [
     expectations: `
       - SHOULD cover everyday communication scenarios
       - MUST be in English (teaching Spanish)
-      - Should prepare students for basic conversations and A1/A2 proficiency
+      - Should reach at least A2 proficiency
       - Don't add culture-specific chapters, just focus on language learning
-      - Don't add proeficiency exam preparation chapters, just focus on language learning skills
+      - Don't add proficiency exam preparation chapters, just focus on language learning skills
       - Don't add career chapter since this is an exception to the career-related rule. Main focus here is language learning
 
       ${SHARED_EXPECTATIONS}
