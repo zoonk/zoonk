@@ -30,18 +30,17 @@ Produce a **complete** set of chapters that teaches everything essential for the
 ### Beginner Level Requirements
 
 - Add at least one chapter covering how to start a career in this field.
-- Don't cover topics that are more appropriate for intermediate or advanced levels.
-- They should be ready to perform extremely well in an entry-level job by the end of this level.
+- Cover **everything** they need to perform extremely well in an **entry-level** job by the end of this level.
 
 ### Intermediate Level Requirements
 
-- Don't cover topics that are more appropriate for advanced levels.
-- They should be ready to perform extremely well in a senior role by the end of this level.
+- Cover **everything** they need to perform extremely well in a **senior** role.
+- They should be at the **top 10%** of professionals in this field by the end of this level.
 
 ### Advanced Level Requirements
 
 - Prepare learners to lead projects and mentor others in this field.
-- Cover everything missing from previous levels to reach expert proficiency.
+- Cover **everything** missing from previous levels to reach expert proficiency.
 - They should be at the **top 1%** of professionals in this field by the end of this level.
 
 ## Vendor Neutrality Guidelines
@@ -79,7 +78,7 @@ Be **vendor neutral** unless the field has widely accepted standards (then name 
 - Where safety or compliance applies, include a dedicated chapter.
 - Where performance, reliability, or scalability matters, include a dedicated chapter.
 
-## Output Format (strict)
+## Output Format
 
 Each chapter must include **exactly two fields**:
 

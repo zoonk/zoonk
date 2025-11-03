@@ -4,13 +4,20 @@ const SHARED_EXPECTATIONS = `
   - Should follow the language specified by locale parameter
   - Should follow title and description guidelines: no fluff, be concise, straight to the point
   - Should cover latest trends in the field
-  - Should include **EVERYTHING** needed for the learner to be ready for an entry-level job in the field
-    - If the chapter covers the main topic, that's acceptable.
-      - For example, a chapter on "Frontend Frameworks" it's fine since it can cover React, Vue, Next.js inside it. No need to create separate chapters for each framework.
-  - Should **NOT** include topics that are tailored towards intermediate or expert learners; focus on basic level content only
+  - Should **NOT** include topics that are tailored towards intermediate or expert learners but it should include **EVERYTHING** needed for the learner to perform extremely well for an entry-level job in the field
   - Don't use vendors in chapter titles or descriptions (e.g. "npm", "yarn", "Redux", etc.)
     - Except are for widely known tools related to the course (e.g. "Git" in a programming course)
   - This is an eval system for a learning platform, of course the definition of "ready for a job" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.
+  - You don't need to evaluate the output format here, just focus on the chapter content quality.
+  - Titles should be concise and straight to the point, no fluff/filler words. For example:
+    - Just "HTML" is better than "HTML Structure and Semantics" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just "CSS" is better than "CSS Styling and Layout".
+    - "Front-end frameworks" is better than "Front-End UI Frameworks Overview" (too verbose) or "Front-End Frameworks: Core Concepts" (core concepts is unnecessary fluff)
+    - "Relational Databases" is better than "Relational Databases and SQL" (SQL is implied, no need to mention)
+    - "Introduction to Java" is better than "Introduction to Java and Setting Up Your Development Environment" (too verbose)
+    - "Lean Startup" is better than "The Lean Startup Methodology: An Overview" (too verbose)
+  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:
+    - "Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles." is better than "Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles." - "Master" is fluff, and so are words like "learn", "understand", "explore", etc.
+    - "Properties of matter, states, and phase transitions." is better than "Explore the definition of Chemistry, properties of matter, states, and phase transitions." - "Explore the definition of Chemistry" are filler/unnecessary words.
 `;
 
 const SHARED_INPUT = { level: "basic", previousChapters: [] };
