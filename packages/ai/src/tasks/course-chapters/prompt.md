@@ -30,7 +30,12 @@ Produce a **complete** set of chapters that teaches everything essential for the
 ### Beginner Level Requirements
 
 - Add at least one chapter covering how to start a career in this field.
-- Cover **everything** they need to perform extremely well in an **entry-level** job by the end of this level.
+- Cover **everything** they need to perform extremely well in an **entry-level** job by the end of this level. For example:
+  - A programming course should cover basic data structures and algorithms, version control, debugging, testing, linting, etc.
+  - A JavaScript course should cover some necessary topics like async operations, js frameworks, testing, etc.
+  - An Agile course should cover topics like user stories, backlog management, estimation techniques, sprint planning, retrospectives, etc.
+  - A language course should cover everything needed to reach A2 level.
+  - A law course should cover fundamental areas for the specified jurisdiction.
 
 ### Intermediate Level Requirements
 
@@ -112,6 +117,8 @@ Good chapter titles include:
 **TIP:** Go straight to the point. Avoid verbose titles. If necessary, add details in the description instead.
 
 ### Description
+
+- NEVER use fluff/fillers/unnecessary words like "learn", "understand", "explore", "introduction to", "basics of", "comprehensive guide to", etc.
 
 Good chapter descriptions include:
 
