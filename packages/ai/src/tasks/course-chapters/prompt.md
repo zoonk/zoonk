@@ -4,8 +4,13 @@ You are designing a **comprehensive** course for a given field and level.
 
 - `COURSE_TITLE`: name of the subject
 - `LANGUAGE`: output language for titles and descriptions
-- `LEVEL`: target proficiency level (beginner, intermediate, advanced)
-- `PREVIOUS_CHAPTERS`: list of chapters covered in previous levels (will be empty for beginner level)
+- `LEVEL`: target proficiency level (basic, intermediate, advanced)
+- `PREVIOUS_CHAPTERS`: list of chapters covered in previous levels (will be empty for basic level)
+
+### Language
+
+- `en`: Use US region unless the content is about a different region.
+- `pt`: Use Brazilian Portuguese unless the content is about a different region.
 
 ## Goal
 

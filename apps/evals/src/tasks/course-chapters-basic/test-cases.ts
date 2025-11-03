@@ -72,7 +72,7 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - MUST be in English
+      - MUST be in US English
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -81,7 +81,7 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - MUST be in Portuguese (Brazil)
+      - MUST be in Brazilian Portuguese
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -101,7 +101,7 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - MUST be in Portuguese (Brazil)
+      - MUST be in Brazilian Portuguese
       - Should cover Brazilian Law
       
       ${SHARED_EXPECTATIONS}
@@ -111,12 +111,35 @@ export const TEST_CASES = [
   },
   {
     expectations: `
-      - MUST be in US English.
+      - MUST be in US English
       - Can mention Google Cloud vendor since this is a vendor-specific course, so it's an exception to the rule of not using vendors.
 
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-google-cloud",
     userInput: { ...SHARED_INPUT, courseTitle: "Google Cloud", locale: "en" },
+  },
+  {
+    expectations: `
+      - MUST be in UK English
+      - Should cover British Law
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-uk-law",
+    userInput: { ...SHARED_INPUT, courseTitle: "UK Law", locale: "en" },
+  },
+  {
+    expectations: `
+      - MUST be in US English
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-brazilian-history",
+    userInput: {
+      ...SHARED_INPUT,
+      courseTitle: "Brazilian History",
+      locale: "en",
+    },
   },
 ];
