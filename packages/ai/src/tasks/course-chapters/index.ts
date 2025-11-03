@@ -2,7 +2,29 @@ import "server-only";
 
 import { generateObject } from "ai";
 import { z } from "zod";
-import systemPrompt from "./prompt.md";
+import basePrompt from "./prompt.md";
+import advancedPrompt from "./prompt-advanced.md";
+import basicPrompt from "./prompt-basic.md";
+import intermediatePrompt from "./prompt-intermediate.md";
+
+export type CourseChaptersParams = {
+  locale: string;
+  model: string;
+  courseTitle: string;
+  level: "basic" | "intermediate" | "advanced";
+  previousChapters: string[];
+};
+
+function getPrompt(level: CourseChaptersParams["level"]) {
+  switch (level) {
+    case "basic":
+      return `${basePrompt}\n\n${basicPrompt}`;
+    case "intermediate":
+      return `${basePrompt}\n\n${intermediatePrompt}`;
+    case "advanced":
+      return `${basePrompt}\n\n${advancedPrompt}`;
+  }
+}
 
 const schema = z.object({
   chapters: z.array(
@@ -15,14 +37,6 @@ const schema = z.object({
 
 export type CourseChaptersSchema = z.infer<typeof schema>;
 
-export type CourseChaptersParams = {
-  locale: string;
-  model: string;
-  courseTitle: string;
-  level: "basic" | "intermediate" | "advanced";
-  previousChapters: string[];
-};
-
 export async function generateCourseChapters({
   locale,
   courseTitle,
@@ -30,6 +44,8 @@ export async function generateCourseChapters({
   level,
   previousChapters,
 }: CourseChaptersParams) {
+  const systemPrompt = getPrompt(level);
+
   const userPrompt = `
     LANGUAGE: ${locale}
     COURSE_TITLE: ${courseTitle}

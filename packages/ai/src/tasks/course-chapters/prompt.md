@@ -9,11 +9,7 @@ You are designing a **comprehensive** course for a given field and level.
 
 ## Goal
 
-Produce a **complete** set of chapters that teaches everything essential for the given level. Goals for each level:
-
-- **Beginner**: cover **everything** to allow learners to get an entry-level job in the field.
-- **Intermediate**: cover **everything** to allow learners to perform well in a senior role in the field.
-- **Advanced**: cover **everything** to allow learners to perform well in a lead/principal role in the field. They should be at the **top 1%** of professionals in this field by the end of this level.
+Produce a **complete** set of chapters that teaches everything essential for the given level (see level goal section)
 
 ## Requirements
 
@@ -26,27 +22,6 @@ Produce a **complete** set of chapters that teaches everything essential for the
 - No assessments, projects, or capstones.
 - Include chapters that build upon the `PREVIOUS_CHAPTERS` input.
 - Do **not** include previous chapters in your output.
-
-### Beginner Level Requirements
-
-- Add at least one chapter covering how to start a career in this field.
-- Cover **everything** they need to perform extremely well in an **entry-level** job by the end of this level. For example:
-  - A programming course should cover basic data structures and algorithms, version control, debugging, testing, linting, etc.
-  - A JavaScript course should cover some necessary topics like async operations, js frameworks, testing, etc.
-  - An Agile course should cover topics like user stories, backlog management, estimation techniques, sprint planning, retrospectives, etc.
-  - A language course should cover everything needed to reach A2 level.
-  - A law course should cover fundamental areas for the specified jurisdiction.
-
-### Intermediate Level Requirements
-
-- Cover **everything** they need to perform extremely well in a **senior** role.
-- They should be at the **top 10%** of professionals in this field by the end of this level.
-
-### Advanced Level Requirements
-
-- Prepare learners to lead projects and mentor others in this field.
-- Cover **everything** missing from previous levels to reach expert proficiency.
-- They should be at the **top 1%** of professionals in this field by the end of this level.
 
 ## Vendor Neutrality Guidelines
 
@@ -89,12 +64,6 @@ Each chapter must include **exactly two fields**:
 
 - **Title** — short, specific, and professional (see "Examples" section).
 - **Description** — 1–2 sentences describing what topics the chapter will cover. Go straight to the point (see "Examples" section).
-
-## Thought Process
-
-First, silently plan comprehensive coverage for the job. Then output all necessary chapters in the required format.
-
-Before finalizing, ask yourself: "Would I hire someone who completed this course to do real work in this field at the specified level?" If the answer is "no", revise the chapters until the answer is "yes".
 
 ## Examples
 
