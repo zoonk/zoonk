@@ -50,6 +50,12 @@ export const EVAL_MODELS: ModelConfig[] = [
     outputCost: 0.3,
   },
   {
+    id: "minimax/minimax-m2",
+    inputCost: 0.15,
+    name: "minimax-m2",
+    outputCost: 0.45,
+  },
+  {
     id: "moonshotai/kimi-k2-0905",
     inputCost: 0.6,
     name: "kimi-k2-0905",

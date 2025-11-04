@@ -132,10 +132,8 @@
           "options": { "style": "type" }
         },
         "useDefaultParameterLast": "error",
-        "useDefaultSwitchClause": "error",
         "useEnumInitializers": "error",
         "useExplicitLengthCheck": "error",
-        "useExportsLast": "error",
         "useFilenamingConvention": {
           "level": "error",
           "options": { "filenameCases": ["kebab-case"] }

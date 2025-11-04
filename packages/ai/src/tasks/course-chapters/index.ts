@@ -5,7 +5,7 @@ import { z } from "zod";
 import systemPrompt from "./prompt.md";
 
 const schema = z.object({
-  courses: z.array(
+  chapters: z.array(
     z.object({
       description: z.string(),
       title: z.string(),
@@ -13,22 +13,22 @@ const schema = z.object({
   ),
 });
 
-export type CourseSuggestionSchema = z.infer<typeof schema>;
+export type CourseChaptersSchema = z.infer<typeof schema>;
 
-export type CourseSuggestionsParams = {
+export type CourseChaptersParams = {
   locale: string;
-  prompt: string;
   model: string;
+  courseTitle: string;
 };
 
-export async function generateCourseSuggestions({
+export async function generateCourseChapters({
   locale,
-  prompt,
+  courseTitle,
   model,
-}: CourseSuggestionsParams) {
+}: CourseChaptersParams) {
   const userPrompt = `
-    APP_LANGUAGE: ${locale}
-    USER_INPUT: ${prompt}
+    LANGUAGE: ${locale}
+    COURSE_TITLE: ${courseTitle}
   `;
 
   const { object, usage } = await generateObject({
@@ -38,5 +38,5 @@ export async function generateCourseSuggestions({
     system: systemPrompt,
   });
 
-  return { data: object.courses, systemPrompt, usage, userPrompt };
+  return { data: object, systemPrompt, usage, userPrompt };
 }

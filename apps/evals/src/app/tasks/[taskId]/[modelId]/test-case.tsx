@@ -12,7 +12,7 @@ type TestCaseCardProps = {
 };
 
 type UserInputSectionProps = {
-  userInput: Record<string, string>;
+  userInput: Record<string, string | string[]>;
 };
 
 type ScoreSectionProps = {
