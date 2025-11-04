@@ -37,6 +37,7 @@ It should cover everything needed to land a job at top firms in this field.
 - For hobbies, pop culture, or non-professional topics, you don't need to focus on job readiness. Instead, focus on comprehensive coverage of the topic.
 - Add at least one chapter covering how to start a career in this field, except for courses where this is not applicable (e.g., languages, hobbies, pop culture, non-professional topics, etc.).
 - Cover **everything** they need to be at the top 1% in this field. This is very important.
+- Don't mention prompt instructions (like "top 1%") in the chapter titles or descriptions.
 
 Build a curriculum that would make hiring managers excited to hire someone who completed it. A person completing this course should have all knowledge to be the "Einstein" of this field.
 
@@ -46,6 +47,17 @@ Language learning is a special case where most of the other rules don't apply. F
 
 - Cover **everything** to go from A1 to C2 (CEFR).
 - Don't add culture, proficiency exam preparation, and career chapters unless `COURSE_TITLE` is about that. Just focus on being a traditional language learning course.
+
+## Hobbies, Pop Culture, Non-Professional Topics
+
+For hobbies, pop culture, or non-professional topics, follow these specific guidelines:
+
+- Focus on **comprehensive coverage** of the topic.
+- Don't focus on job readiness.
+- Don't need to add career chapters or chapters about professional skills.
+- Focus on covering the topic only.
+
+This rule applies to things like movies, books, sports, games, etc.
 
 # Vendor Neutrality Guidelines
 
@@ -99,6 +111,11 @@ Good chapter descriptions:
 
 # Last Check
 
-Before finishing this course, review the entire content and ask yourself: "Does this curriculum enable a learner to be at the **top 1%** in this field?" If the answer is "no," identify the gaps and add the necessary content to fill them.
+Before finishing this course, review the entire content and ask yourself:
+
+- "Does this curriculum enable a learner to be at the **top 1%** in this field?" If the answer is "no," identify the gaps and add the necessary content to fill them.
+- "Am I missing any important chapters or topics?" If the answer is "yes," add them.
 
 Make sure this is the **BEST** possible curriculum for this subject. No other curriculum should be able to surpass this one.
+
+It should be the most **complete**, **extensive**, and **comprehensive** curriculum available for this subject in the world, covering **EVERYTHING** needed to be at the top 1% in this field.

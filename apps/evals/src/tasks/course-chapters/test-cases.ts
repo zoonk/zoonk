@@ -21,7 +21,8 @@ const SHARED_EXPECTATIONS = `
   - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:
     - "Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles." is better than "Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles." - "Master" is fluff, and so are words like "learn", "understand", "explore", etc.
     - "Properties of matter, states, and phase transitions." is better than "Explore the definition of Chemistry, properties of matter, states, and phase transitions." - "Explore the definition of Chemistry" are filler/unnecessary words.
-  - Don't add capstone/final projects, assessments, or exercises.
+  - Don't add capstone/final projects, assessments, or exercises
+  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%
 `;
 
 export const TEST_CASES = [
