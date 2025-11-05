@@ -38,6 +38,7 @@ export const TEST_CASES = [
     `,
     id: "en-frontend-development",
     userInput: {
+      locale: "en",
       title: "Frontend Development",
     },
   },
@@ -53,6 +54,7 @@ export const TEST_CASES = [
     `,
     id: "en-formula-1",
     userInput: {
+      locale: "en",
       title: "Formula 1",
     },
   },
@@ -68,6 +70,7 @@ export const TEST_CASES = [
     `,
     id: "en-ux-design",
     userInput: {
+      locale: "en",
       title: "UX Design",
     },
   },
@@ -85,6 +88,7 @@ export const TEST_CASES = [
     `,
     id: "pt-ingles",
     userInput: {
+      locale: "pt",
       title: "Inglês",
     },
   },
@@ -100,6 +104,7 @@ export const TEST_CASES = [
     `,
     id: "pt-inteligencia-artificial",
     userInput: {
+      locale: "pt",
       title: "Inteligência Artificial",
     },
   },
@@ -113,6 +118,7 @@ export const TEST_CASES = [
     `,
     id: "en-machine-learning",
     userInput: {
+      locale: "en",
       title: "Machine Learning",
     },
   },
@@ -126,6 +132,7 @@ export const TEST_CASES = [
     `,
     id: "en-javascript",
     userInput: {
+      locale: "en",
       title: "JavaScript",
     },
   },
@@ -139,6 +146,7 @@ export const TEST_CASES = [
     `,
     id: "en-python",
     userInput: {
+      locale: "en",
       title: "Python",
     },
   },
@@ -151,6 +159,7 @@ export const TEST_CASES = [
     `,
     id: "es-desarrollo-web",
     userInput: {
+      locale: "es",
       title: "Desarrollo Web",
     },
   },
@@ -163,6 +172,7 @@ export const TEST_CASES = [
     `,
     id: "en-data-science",
     userInput: {
+      locale: "en",
       title: "Data Science",
     },
   },
@@ -178,6 +188,7 @@ export const TEST_CASES = [
     `,
     id: "en-the-matrix",
     userInput: {
+      locale: "en",
       title: "The Matrix",
     },
   },
@@ -191,6 +202,7 @@ export const TEST_CASES = [
     `,
     id: "en-calculus",
     userInput: {
+      locale: "en",
       title: "Calculus",
     },
   },
@@ -204,6 +216,7 @@ export const TEST_CASES = [
     `,
     id: "en-world-war-2",
     userInput: {
+      locale: "en",
       title: "World War II",
     },
   },

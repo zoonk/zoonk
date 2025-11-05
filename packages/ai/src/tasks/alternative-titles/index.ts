@@ -12,14 +12,19 @@ export type AlternativeTitlesSchema = z.infer<typeof schema>;
 
 export type AlternativeTitlesParams = {
   title: string;
+  locale: string;
   model: string;
 };
 
 export async function generateAlternativeTitles({
   title,
+  locale,
   model,
 }: AlternativeTitlesParams) {
-  const userPrompt = `TITLE: ${title}`;
+  const userPrompt = `
+    TITLE: ${title}
+    LANGUAGE: ${locale}
+  `;
 
   const { object, usage } = await generateObject({
     model,

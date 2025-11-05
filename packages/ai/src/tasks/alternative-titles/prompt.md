@@ -5,6 +5,7 @@ This will be used by us to check if a course title is already covered by an exis
 ## Inputs
 
 - **TITLE:** The base course title
+- **LANGUAGE**: The language of the base course title
 
 ## Rules
 
@@ -42,4 +43,4 @@ This will be used by us to check if a course title is already covered by an exis
 
 ## Language
 
-Important: Use the same language as the user's input `TITLE`. If the input is in Spanish, provide the alternative titles in Spanish as well.
+Important: Use the language set by the `LANGUAGE` input for all alternative titles.
