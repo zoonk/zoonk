@@ -41,7 +41,7 @@ export const TEST_CASES = [
     expectations: `
       - should include "Derecho Penal"
       - may include broader or similar topics
-      - all titles and descriptions in Spain Spanish
+      - all titles and descriptions in Latin American Spanish
 
       ${SHARED_EXPECTATIONS}
     `,
@@ -55,7 +55,7 @@ export const TEST_CASES = [
     expectations: `
       - should include "Derecho Chileno" since the user is specifically asking for Chilean law
       - if including related topics, they should be specific to Chilean law, not general Spanish law
-      - all titles and descriptions in Spain Spanish (not Chilean Spanish) since that's the default for "es" locale
+      - all titles and descriptions in Chilean Spanish since this courses is specific to Chile
 
       ${SHARED_EXPECTATIONS}
     `,
