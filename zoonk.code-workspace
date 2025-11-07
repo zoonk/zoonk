@@ -3,7 +3,7 @@
     "recommendations": [
       "biomejs.biome",
       "bradlc.vscode-tailwindcss",
-      "lokalise.i18n-ally",
+      "mrorz.language-gettext",
       "prisma.prisma",
       "unifiedjs.vscode-mdx",
       "vercel.turbo-vsc"
@@ -29,8 +29,6 @@
     "[jsonc]": { "editor.defaultFormatter": "biomejs.biome" },
     "[typescript]": { "editor.defaultFormatter": "biomejs.biome" },
     "[typescriptreact]": { "editor.defaultFormatter": "biomejs.biome" },
-    "i18n-ally.keystyle": "nested",
-    "i18n-ally.localesPaths": ["./apps/main/messages"],
     "search.exclude": {
       "*.tsbuildinfo": true,
       "**/.next": true,

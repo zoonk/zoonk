@@ -63,6 +63,3 @@ jobs:
 
       - name: Run tests
         run: pnpm test
-
-      - name: Run i18n checks
-        run: pnpm i18n

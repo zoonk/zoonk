@@ -20,7 +20,6 @@
     "evals:export": "./apps/evals/scripts/export-test-case.sh",
     "evals:remove": "./apps/evals/scripts/remove-test-cases.sh",
     "format": "biome format --write",
-    "i18n": "turbo i18n",
     "lint": "biome check",
     "start": "turbo start",
     "test": "turbo test",
