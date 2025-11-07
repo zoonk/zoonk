@@ -3,7 +3,7 @@
 import { cacheTagCourseSuggestions } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { CourseSuggestions } from "./course-suggestions";
 import { CourseSuggestionsFallback } from "./course-suggestions-fallback";
@@ -14,14 +14,17 @@ export async function generateMetadata({
   cacheLife("max");
 
   const { locale, prompt: rawPrompt } = await params;
-  const t = await getTranslations({ locale, namespace: "LearnResults" });
+  const t = await getExtracted({ locale });
   const prompt = decodeURIComponent(rawPrompt);
 
   cacheTag(locale, cacheTagCourseSuggestions({ prompt }));
 
   return {
-    description: t("metaDescription", { prompt }),
-    title: t("metaTitle", { prompt }),
+    description: t(
+      "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to generate interactive lessons and activities tailored to you.",
+      { prompt },
+    ),
+    title: t("Learn {prompt} with AI", { prompt }),
   };
 }
 

@@ -3,7 +3,7 @@
 import { cacheTagLogin } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getExtracted, setRequestLocale } from "next-intl/server";
 import LoginContainer from "./login-container";
 import LoginFooter from "./login-footer";
 import LoginForm from "./login-form";
@@ -19,11 +19,13 @@ export async function generateMetadata({
   cacheLife("max");
   cacheTag(locale, cacheTagLogin());
 
-  const t = await getTranslations({ locale, namespace: "Auth" });
+  const t = await getExtracted({ locale });
 
   return {
-    description: t("metaDescription"),
-    title: t("metaTitle"),
+    description: t(
+      "Login to your account or create a new one to start using Zoonk.",
+    ),
+    title: t("Login or Sign Up"),
   };
 }
 

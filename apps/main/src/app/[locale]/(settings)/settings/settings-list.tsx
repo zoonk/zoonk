@@ -6,47 +6,42 @@ import {
   ItemTitle,
 } from "@zoonk/ui/components/item";
 import { ChevronRight } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 
-const settingsPages = [
-  "subscription",
-  "displayName",
-  "language",
-  "feedback",
-  "help",
-  "follow",
-] as const;
-
 export async function SettingsList() {
-  const t = await getTranslations("Menu");
+  const t = await getExtracted();
+
+  const settingsPages = [
+    { label: t("Subscription"), ...getMenu("subscription") },
+    { label: t("Display Name"), ...getMenu("displayName") },
+    { label: t("Language"), ...getMenu("language") },
+    { label: t("Feedback"), ...getMenu("feedback") },
+    { label: t("Help"), ...getMenu("help") },
+    { label: t("Follow"), ...getMenu("follow") },
+  ];
 
   return (
     <ItemGroup>
-      {settingsPages.map((page) => {
-        const menuItem = getMenu(page);
-        const label = t(page);
+      {settingsPages.map((page) => (
+        <Item asChild key={page.label}>
+          <Link href={page.url}>
+            <ItemMedia variant="icon">
+              <page.icon aria-hidden="true" />
+            </ItemMedia>
 
-        return (
-          <Item asChild key={page}>
-            <Link href={menuItem.url}>
-              <ItemMedia variant="icon">
-                <menuItem.icon aria-hidden="true" />
-              </ItemMedia>
+            <ItemContent>
+              <ItemTitle>{page.label}</ItemTitle>
+            </ItemContent>
 
-              <ItemContent>
-                <ItemTitle>{label}</ItemTitle>
-              </ItemContent>
-
-              <ChevronRight
-                aria-hidden="true"
-                className="size-4 text-muted-foreground"
-              />
-            </Link>
-          </Item>
-        );
-      })}
+            <ChevronRight
+              aria-hidden="true"
+              className="size-4 text-muted-foreground"
+            />
+          </Link>
+        </Item>
+      ))}
     </ItemGroup>
   );
 }

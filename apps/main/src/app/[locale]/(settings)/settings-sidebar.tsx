@@ -1,18 +1,18 @@
 import { Sidebar, SidebarContent } from "@zoonk/ui/components/sidebar";
-import { getTranslations } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { SettingsSidebarAccount } from "./settings-sidebar-account";
 import { SettingsSidebarFooter } from "./settings-sidebar-footer";
 import { SettingsSidebarHeader } from "./settings-sidebar-header";
 
 export async function SettingsSidebar() {
-  const t = await getTranslations("Menu");
+  const t = await getExtracted();
 
   return (
     <Sidebar
-      closeLabel={t("close")}
+      closeLabel={t("Close")}
       collapsible="icon"
-      description={t("settingsSidebarDescription")}
-      title={t("settingsSidebarTitle")}
+      description={t("Navigate to all settings")}
+      title={t("Settings sidebar")}
     >
       <SettingsSidebarHeader />
 

@@ -8,11 +8,11 @@ import {
   EmptyTitle,
 } from "@zoonk/ui/components/empty";
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { getTranslations } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
 export async function CourseSuggestionsFallback() {
-  const t = await getTranslations("LearnResults");
+  const t = await getExtracted();
 
   return (
     <Empty className="w-full">
@@ -21,9 +21,13 @@ export async function CourseSuggestionsFallback() {
           <Spinner />
         </EmptyMedia>
 
-        <EmptyTitle>{t("loadingTitle")}</EmptyTitle>
+        <EmptyTitle>{t("Cooking up some course ideas")}</EmptyTitle>
 
-        <EmptyDescription>{t("loadingSubtitle")}</EmptyDescription>
+        <EmptyDescription>
+          {t(
+            "We're putting together a few course suggestions for you. This may take a few seconds.",
+          )}
+        </EmptyDescription>
       </EmptyHeader>
 
       <EmptyContent>
@@ -31,7 +35,7 @@ export async function CourseSuggestionsFallback() {
           className={buttonVariants({ size: "sm", variant: "outline" })}
           href="/learn"
         >
-          {t("loadingCancel")}
+          {t("Cancel")}
         </Link>
       </EmptyContent>
     </Empty>

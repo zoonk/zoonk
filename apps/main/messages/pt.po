@@ -1,0 +1,514 @@
+msgid ""
+msgstr ""
+"Language: pt\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: next-intl\n"
+"X-Crowdin-SourceKey: msgstr\n"
+
+#: src/app/[locale]/(auth)/layout.tsx
+#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
+#: src/components/command-palette.tsx
+#: src/components/navbar-links.tsx
+msgid "U3l+Q9"
+msgstr ""
+
+#: src/app/[locale]/(auth)/login/login-footer.tsx
+msgid "Ju9oB+"
+msgstr ""
+
+#: src/app/[locale]/(auth)/login/login-form.tsx
+msgid "sy+pv5"
+msgstr ""
+
+#: src/app/[locale]/(auth)/login/login-form.tsx
+#: src/components/contact-form.tsx
+msgid "OiSL94"
+msgstr ""
+
+#: src/app/[locale]/(auth)/login/login-form.tsx
+#: src/app/[locale]/(auth)/otp/otp-form.tsx
+msgid "acrOoz"
+msgstr ""
+
+#: src/app/[locale]/(auth)/login/login-header.tsx
+msgid "eN8MTJ"
+msgstr ""
+
+#: src/app/[locale]/(auth)/login/login-header.tsx
+msgid "CoMQ1+"
+msgstr ""
+
+#: src/app/[locale]/(auth)/login/login-header.tsx
+msgid "4wpUNc"
+msgstr ""
+
+#: src/app/[locale]/(auth)/login/page.tsx
+msgid "BQ8wka"
+msgstr ""
+
+#: src/app/[locale]/(auth)/login/page.tsx
+msgid "od4A2z"
+msgstr ""
+
+#: src/app/[locale]/(auth)/login/social-login.tsx
+msgid "FJ6r9E"
+msgstr ""
+
+#: src/app/[locale]/(auth)/login/social-login.tsx
+msgid "BmecBA"
+msgstr ""
+
+#: src/app/[locale]/(auth)/login/social-login.tsx
+msgid "pN2p0t"
+msgstr ""
+
+#: src/app/[locale]/(auth)/otp/otp-form.tsx
+msgid "zx7CKB"
+msgstr ""
+
+#: src/app/[locale]/(auth)/otp/otp-form.tsx
+msgid "LZHcmZ"
+msgstr ""
+
+#: src/app/[locale]/(auth)/otp/otp-form.tsx
+msgid "HkHvQv"
+msgstr ""
+
+#: src/app/[locale]/(auth)/otp/otp-form.tsx
+msgid "ChATeO"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/courses/page.tsx
+msgid "z6saPZ"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/courses/page.tsx
+msgid "P5jxUC"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
+msgid "TUuPG9"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
+msgid "uQHhkm"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
+msgid "47FYwb"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx
+msgid "7x4411"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx
+msgid "RbslnC"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx
+msgid "dCKXDB"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/learn/[prompt]/page.tsx
+msgid "A63MWw"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/learn/[prompt]/page.tsx
+msgid "X2b6pH"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/learn/page.tsx
+msgid "3NEMCK"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/learn/page.tsx
+msgid "Zs1QEq"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/learn/page.tsx
+msgid "9zLpJ/"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/learn/start-course-form.tsx
+msgid "uCb1nG"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/learn/start-course-form.tsx
+msgid "LDMSuO"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/learn/start-course-form.tsx
+msgid "mOFG3K"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/my/page.tsx
+msgid "wfuVYZ"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/my/page.tsx
+msgid "eeNr/Y"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/page.tsx
+msgid "ZgSctJ"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/page.tsx
+msgid "qsfeMJ"
+msgstr ""
+
+#: src/app/[locale]/(settings)/feedback/page.tsx
+msgid "KZv6Ml"
+msgstr ""
+
+#: src/app/[locale]/(settings)/feedback/page.tsx
+#: src/components/command-palette.tsx
+#: src/components/content-feedback.tsx
+msgid "G5YSJR"
+msgstr ""
+
+#: src/app/[locale]/(settings)/feedback/page.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
+#: src/components/feedback-sheet.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "Ejhdi4"
+msgstr ""
+
+#: src/app/[locale]/(settings)/feedback/page.tsx
+#: src/components/feedback-sheet.tsx
+msgid "eUzs3M"
+msgstr ""
+
+#: src/app/[locale]/(settings)/follow/page.tsx
+msgid "YmFPw3"
+msgstr ""
+
+#: src/app/[locale]/(settings)/follow/page.tsx
+#: src/components/command-palette.tsx
+msgid "VfU4TH"
+msgstr ""
+
+#: src/app/[locale]/(settings)/follow/page.tsx
+#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
+msgid "l1XTI5"
+msgstr ""
+
+#: src/app/[locale]/(settings)/follow/page.tsx
+msgid "Qeoeg9"
+msgstr ""
+
+#: src/app/[locale]/(settings)/help/page.tsx
+msgid "V+glDo"
+msgstr ""
+
+#: src/app/[locale]/(settings)/help/page.tsx
+msgid "Uf3+S6"
+msgstr ""
+
+#: src/app/[locale]/(settings)/help/page.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "SENRqu"
+msgstr ""
+
+#: src/app/[locale]/(settings)/help/page.tsx
+msgid "BIAaC9"
+msgstr ""
+
+#: src/app/[locale]/(settings)/language/page.tsx
+msgid "gr4VpD"
+msgstr ""
+
+#: src/app/[locale]/(settings)/language/page.tsx
+msgid "3KdX2W"
+msgstr ""
+
+#: src/app/[locale]/(settings)/language/page.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
+#: src/components/command-palette.tsx
+msgid "y1Z3or"
+msgstr ""
+
+#: src/app/[locale]/(settings)/language/page.tsx
+msgid "aNLa1G"
+msgstr ""
+
+#: src/app/[locale]/(settings)/name/name-form.tsx
+msgid "HAlOn1"
+msgstr ""
+
+#: src/app/[locale]/(settings)/name/name-form.tsx
+msgid "Gr/Ipw"
+msgstr ""
+
+#: src/app/[locale]/(settings)/name/name-form.tsx
+msgid "7jmSf7"
+msgstr ""
+
+#: src/app/[locale]/(settings)/name/name-form.tsx
+msgid "eLjVDg"
+msgstr ""
+
+#: src/app/[locale]/(settings)/name/page.tsx
+msgid "+ceM20"
+msgstr ""
+
+#: src/app/[locale]/(settings)/name/page.tsx
+msgid "9NBNq2"
+msgstr ""
+
+#: src/app/[locale]/(settings)/name/page.tsx
+#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
+msgid "dOQCL8"
+msgstr ""
+
+#: src/app/[locale]/(settings)/name/page.tsx
+msgid "Pj/oEx"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
+#: src/components/command-palette.tsx
+#: src/components/logout-dropdown-item.tsx
+msgid "C81/uG"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings-sidebar-header.tsx
+msgid "6D4Ghb"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings-sidebar.tsx
+#: src/components/feedback-sheet.tsx
+msgid "rbrahO"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings-sidebar.tsx
+msgid "91zLBH"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings-sidebar.tsx
+msgid "oovqxW"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings/page.tsx
+msgid "FMLZiG"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings/page.tsx
+#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "D3idYv"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings/page.tsx
+msgid "v9T5Oi"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
+#: src/app/[locale]/(settings)/subscription/page.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "R/6nsx"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+msgid "pwlQEY"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+msgid "ieGrWo"
+msgstr ""
+
+#: src/app/[locale]/(settings)/subscription/page.tsx
+msgid "GjSDly"
+msgstr ""
+
+#: src/app/[locale]/(settings)/subscription/page.tsx
+msgid "9vk07U"
+msgstr ""
+
+#: src/app/[locale]/(settings)/subscription/page.tsx
+msgid "qux0WX"
+msgstr ""
+
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
+msgid "iMhTwm"
+msgstr ""
+
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
+msgid "igjTln"
+msgstr ""
+
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
+#: src/components/command-palette.tsx
+msgid "Oj9Phc"
+msgstr ""
+
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
+msgid "0h/lPM"
+msgstr ""
+
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
+msgid "bqJOI8"
+msgstr ""
+
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
+msgid "ES/etj"
+msgstr ""
+
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
+msgid "NiVbmQ"
+msgstr ""
+
+#: src/app/[locale]/privacy/page.tsx
+msgid "iql85X"
+msgstr ""
+
+#: src/app/[locale]/privacy/page.tsx
+msgid "vx0nkZ"
+msgstr ""
+
+#: src/app/[locale]/terms/page.tsx
+msgid "DaGtoz"
+msgstr ""
+
+#: src/app/[locale]/terms/page.tsx
+msgid "UhkSyx"
+msgstr ""
+
+#: src/components/command-palette.tsx
+#: src/components/navbar-links.tsx
+msgid "R85gsW"
+msgstr ""
+
+#: src/components/command-palette.tsx
+#: src/components/navbar-links.tsx
+msgid "qOX/mN"
+msgstr ""
+
+#: src/components/command-palette.tsx
+#: src/components/logout-dropdown-item.tsx
+#: src/components/protected-section.tsx
+msgid "AyGauy"
+msgstr ""
+
+#: src/components/command-palette.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "I+38K2"
+msgstr ""
+
+#: src/components/command-palette.tsx
+msgid "KwsmcD"
+msgstr ""
+
+#: src/components/command-palette.tsx
+msgid "OhXwmw"
+msgstr ""
+
+#: src/components/command-palette.tsx
+msgid "gvd2HB"
+msgstr ""
+
+#: src/components/command-palette.tsx
+msgid "h7uoBs"
+msgstr ""
+
+#: src/components/command-palette.tsx
+msgid "xmcVZ0"
+msgstr ""
+
+#: src/components/command-palette.tsx
+msgid "NjD8y3"
+msgstr ""
+
+#: src/components/command-palette.tsx
+msgid "HC7Mi4"
+msgstr ""
+
+#: src/components/command-palette.tsx
+msgid "hX5PAb"
+msgstr ""
+
+#: src/components/command-palette.tsx
+msgid "/aBLH2"
+msgstr ""
+
+#: src/components/command-palette.tsx
+msgid "dXSivY"
+msgstr ""
+
+#: src/components/command-palette.tsx
+msgid "WnQ/AZ"
+msgstr ""
+
+#: src/components/contact-form.tsx
+msgid "hJZwTS"
+msgstr ""
+
+#: src/components/contact-form.tsx
+msgid "T7Ry38"
+msgstr ""
+
+#: src/components/contact-form.tsx
+msgid "M6PcEI"
+msgstr ""
+
+#: src/components/contact-form.tsx
+msgid "1WHPmV"
+msgstr ""
+
+#: src/components/contact-form.tsx
+msgid "vD72E5"
+msgstr ""
+
+#: src/components/contact-form.tsx
+msgid "Xx0WZV"
+msgstr ""
+
+#: src/components/content-feedback.tsx
+msgid "BlI1/9"
+msgstr ""
+
+#: src/components/content-feedback.tsx
+msgid "rTFrsw"
+msgstr ""
+
+#: src/components/content-feedback.tsx
+msgid "Hqn5Uo"
+msgstr ""
+
+#: src/components/locale-switcher.tsx
+msgid "jOuyTp"
+msgstr ""
+
+#: src/components/locale-switcher.tsx
+msgid "GmcCqz"
+msgstr ""
+
+#: src/components/protected-section.tsx
+msgid "yOFm9C"
+msgstr ""
+
+#: src/components/protected-section.tsx
+msgid "2jC0rX"
+msgstr ""
+
+#: src/lib/auth/otp.ts
+msgid "xV5wA4"
+msgstr ""
+
+#: src/lib/auth/otp.ts
+msgid "Wrdoaw"
+msgstr ""
+
+#: src/lib/auth/otp.ts
+msgid "gqQT1x"
+msgstr ""
+
+#: src/lib/auth/otp.ts
+msgid "H6FKgo"
+msgstr ""

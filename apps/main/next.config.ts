@@ -46,8 +46,15 @@ const withMDX = createMDX();
 
 const withNextIntl = createNextIntlPlugin({
   experimental: {
-    // this is useful for type-checking keys
-    createMessagesDeclaration: "./messages/en.json",
+    extract: {
+      sourceLocale: "en",
+    },
+    messages: {
+      format: "po",
+      locales: "infer",
+      path: "./messages",
+    },
+    srcPath: "./src",
   },
 });
 

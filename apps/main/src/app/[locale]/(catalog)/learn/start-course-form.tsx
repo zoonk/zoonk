@@ -9,13 +9,13 @@ import {
 import { Label } from "@zoonk/ui/components/label";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { ArrowUp } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { type FormEvent, useId, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 
 export function StartCourseForm() {
   const [isLoading, setIsLoading] = useState(false);
-  const t = useTranslations("Learn");
+  const t = useExtracted();
   const { push } = useRouter();
   const queryId = useId();
 
@@ -42,7 +42,7 @@ export function StartCourseForm() {
       onSubmit={submitForm}
     >
       <Label className="sr-only" htmlFor={queryId}>
-        {t("label")}
+        {t("Enter a subject")}
       </Label>
 
       <InputGroup className="h-12">
@@ -52,18 +52,18 @@ export function StartCourseForm() {
           disabled={isLoading}
           id={queryId}
           name="query"
-          placeholder={t("placeholder")}
+          placeholder={t("e.g., computer science, astronomy, biology, ...")}
           required
         />
 
         <InputGroupAddon
           align="inline-end"
-          className="opacity-0 transition-all duration-200 ease-in-out peer-[&:not(:placeholder-shown)]:opacity-100"
+          className="opacity-0 transition-all duration-200 ease-in-out peer-not-placeholder-shown:opacity-100"
         >
           {isLoading && <Spinner />}
 
           <InputGroupButton
-            aria-label={t("submit")}
+            aria-label={t("Start")}
             className="rounded-full"
             disabled={isLoading}
             size="icon-xs"

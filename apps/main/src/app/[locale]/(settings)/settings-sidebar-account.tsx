@@ -7,20 +7,20 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@zoonk/ui/components/sidebar";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 
 export function SettingsSidebarAccount() {
   const pathname = usePathname();
-  const t = useTranslations("Menu");
+  const t = useExtracted();
 
   const menuItems = [
-    { key: t("home"), ...getMenu("home") },
-    { key: t("settings"), ...getMenu("settings") },
-    { key: t("subscription"), ...getMenu("subscription") },
-    { key: t("displayName"), ...getMenu("displayName") },
-    { key: t("language"), ...getMenu("language") },
+    { key: t("Home page"), ...getMenu("home") },
+    { key: t("Settings"), ...getMenu("settings") },
+    { key: t("Subscription"), ...getMenu("subscription") },
+    { key: t("Display name"), ...getMenu("displayName") },
+    { key: t("Language"), ...getMenu("language") },
   ];
 
   return (

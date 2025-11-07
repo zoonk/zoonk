@@ -3,7 +3,7 @@
 import { cacheTagCourses } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getTranslations } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 
 export async function generateMetadata({
   params,
@@ -13,11 +13,13 @@ export async function generateMetadata({
   cacheLife("max");
   cacheTag(locale, cacheTagCourses());
 
-  const t = await getTranslations({ locale, namespace: "Courses" });
+  const t = await getExtracted({ locale });
 
   return {
-    description: t("metaDescription"),
-    title: t("metaTitle"),
+    description: t(
+      "Explore all Zoonk courses to learn anything using AI. Find interactive lessons, challenges, and activities to learn subjects like science, math, technology, and more.",
+    ),
+    title: t("Online Courses using AI"),
   };
 }
 

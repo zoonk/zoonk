@@ -7,7 +7,7 @@ import {
 import { Button } from "@zoonk/ui/components/button";
 import { InputError } from "@zoonk/ui/components/input";
 import { Loader2Icon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { authClient } from "@/lib/auth/client";
 
@@ -19,7 +19,7 @@ function getLoadingState(provider: "google" | "apple"): SocialState {
 
 export function SocialLogin() {
   const [state, setState] = useState<SocialState>("initial");
-  const t = useTranslations("Auth");
+  const t = useExtracted();
 
   const signIn = async (provider: "google" | "apple") => {
     setState(getLoadingState(provider));
@@ -42,7 +42,7 @@ export function SocialLogin() {
       >
         {state === "loadingGoogle" && <Loader2Icon className="animate-spin" />}
         <IconBrandGoogleFilled aria-hidden="true" />
-        {t("continueWithGoogle")}
+        {t("Continue with Google")}
       </Button>
 
       <Button
@@ -54,10 +54,16 @@ export function SocialLogin() {
       >
         {state === "loadingApple" && <Loader2Icon className="animate-spin" />}
         <IconBrandAppleFilled aria-hidden="true" />
-        {t("continueWithApple")}
+        {t("Continue with Apple")}
       </Button>
 
-      {state === "error" && <InputError>{t("errorSigningIn")}</InputError>}
+      {state === "error" && (
+        <InputError>
+          {t(
+            "There was an error signing you in. Please try again or contact hello@zoonk.com",
+          )}
+        </InputError>
+      )}
     </div>
   );
 }

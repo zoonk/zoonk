@@ -12,22 +12,22 @@ import {
 } from "@zoonk/ui/components/item";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Loader2Icon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { authClient } from "@/lib/auth/client";
 
 export function SubscriptionPage() {
   const [state, setState] = useState<"idle" | "loading" | "error">("idle");
   const { subscription, isPending } = useSubscription();
-  const t = useTranslations("Subscription");
+  const t = useExtracted();
   const isLoading = state === "loading";
   const hasError = state === "error";
 
-  const title = subscription ? t("plus.title") : t("free.title");
-  const action = subscription ? t("plus.action") : t("free.action");
+  const title = subscription ? t("You’re on Zoonk Plus") : t("Upgrade to Plus");
+  const action = subscription ? t("Manage subscription") : t("Upgrade");
   const description = subscription
-    ? t("plus.description")
-    : t("free.description");
+    ? t("No ads, unlimited lessons, and full progress tracking.")
+    : t("Remove ads, unlock unlimited lessons, and track your progress.");
 
   const subscribe = async () => {
     setState("loading");
@@ -98,7 +98,11 @@ export function SubscriptionPage() {
       </ItemActions>
 
       {hasError && (
-        <ItemFooter className="text-destructive">{t("error")}</ItemFooter>
+        <ItemFooter className="text-destructive">
+          {t(
+            "Unable to change your subscription. Contact us at hello@zoonk.com",
+          )}
+        </ItemFooter>
       )}
     </Item>
   );

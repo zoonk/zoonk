@@ -3,7 +3,7 @@
 import { cacheTagHome } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getTranslations } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 
 export async function generateMetadata({
   params,
@@ -13,11 +13,13 @@ export async function generateMetadata({
   cacheLife("max");
   cacheTag(locale, cacheTagHome());
 
-  const t = await getTranslations({ locale, namespace: "Home" });
+  const t = await getExtracted({ locale });
 
   return {
-    description: t("metaDescription"),
-    title: { absolute: t("metaTitle") },
+    description: t(
+      "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and activities.",
+    ),
+    title: { absolute: t("Zoonk: AI Learning Platform") },
   };
 }
 

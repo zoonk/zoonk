@@ -3,7 +3,7 @@
 import { Input, InputError, InputSuccess } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useActionState } from "react";
 import { authClient } from "@/lib/auth/client";
 
@@ -21,7 +21,7 @@ const initialState: NameFormState = {
 
 export function NameForm() {
   const { data: session, isPending } = authClient.useSession();
-  const t = useTranslations("Name");
+  const t = useExtracted();
 
   const [state, formAction] = useActionState(nameFormAction, initialState);
 
@@ -30,7 +30,7 @@ export function NameForm() {
   return (
     <form action={formAction} className="flex max-w-lg flex-col gap-4">
       <div className="flex max-w-md flex-col gap-2">
-        <Label htmlFor="name">{t("name")}</Label>
+        <Label htmlFor="name">{t("Name")}</Label>
         <Input
           defaultValue={currentName}
           disabled={isPending}
@@ -42,13 +42,21 @@ export function NameForm() {
         />
       </div>
 
-      {state.status === "error" && <InputError>{t("error")}</InputError>}
-
-      {state.status === "success" && (
-        <InputSuccess>{t("success")}</InputSuccess>
+      {state.status === "error" && (
+        <InputError>
+          {t(
+            "Failed to update your name. Please try again or contact hello@zoonk.com",
+          )}
+        </InputError>
       )}
 
-      <SubmitButton>{t("submit")}</SubmitButton>
+      {state.status === "success" && (
+        <InputSuccess>
+          {t("Your name has been updated successfully!")}
+        </InputSuccess>
+      )}
+
+      <SubmitButton>{t("Update name")}</SubmitButton>
     </form>
   );
 }

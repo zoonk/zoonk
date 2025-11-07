@@ -9,7 +9,7 @@ import {
 import { cacheTagDisplayName } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getExtracted, setRequestLocale } from "next-intl/server";
 import { ProtectedSection } from "@/components/protected-section";
 import { NameForm } from "./name-form";
 
@@ -21,11 +21,13 @@ export async function generateMetadata({
   cacheLife("max");
   cacheTag(locale, cacheTagDisplayName());
 
-  const t = await getTranslations({ locale, namespace: "Name" });
+  const t = await getExtracted({ locale });
 
   return {
-    description: t("metaDescription"),
-    title: t("metaTitle"),
+    description: t(
+      "Set or update your Zoonk display name. This name may be visible to others and will be used when referring to you in lessons and activities.",
+    ),
+    title: t("Update Display Name"),
   };
 }
 
@@ -36,13 +38,17 @@ export default async function Name({ params }: PageProps<"/[locale]/name">) {
   cacheLife("max");
   cacheTag(locale, cacheTagDisplayName());
 
-  const t = await getTranslations("Name");
+  const t = await getExtracted();
 
   return (
     <Container>
       <ContainerHeader>
-        <ContainerTitle>{t("title")}</ContainerTitle>
-        <ContainerDescription>{t("subtitle")}</ContainerDescription>
+        <ContainerTitle>{t("Display name")}</ContainerTitle>
+        <ContainerDescription>
+          {t(
+            "This is the name others may see and the one we'll use to refer to you in activities.",
+          )}
+        </ContainerDescription>
       </ContainerHeader>
 
       <ProtectedSection>

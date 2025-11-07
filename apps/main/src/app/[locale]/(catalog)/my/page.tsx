@@ -3,7 +3,7 @@
 import { cacheTagMyCourses } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getTranslations } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 
 export async function generateMetadata({
   params,
@@ -13,11 +13,13 @@ export async function generateMetadata({
   cacheLife("max");
   cacheTag(locale, cacheTagMyCourses());
 
-  const t = await getTranslations({ locale, namespace: "MyCourses" });
+  const t = await getExtracted({ locale });
 
   return {
-    description: t("metaDescription"),
-    title: t("metaTitle"),
+    description: t(
+      "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons and activities.",
+    ),
+    title: t("My Courses"),
   };
 }
 

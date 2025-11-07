@@ -9,7 +9,7 @@ import {
 import { cacheTagFollow } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getExtracted, setRequestLocale } from "next-intl/server";
 import { getSocialProfiles } from "@/lib/social";
 
 export async function generateMetadata({
@@ -20,11 +20,13 @@ export async function generateMetadata({
   cacheLife("max");
   cacheTag(locale, cacheTagFollow());
 
-  const t = await getTranslations({ locale, namespace: "Follow" });
+  const t = await getExtracted({ locale });
 
   return {
-    description: t("metaDescription"),
-    title: t("metaTitle"),
+    description: t(
+      "Connect with Zoonk across social media. Follow us on X, LinkedIn, YouTube, and more to stay updated on new features, tips, and learning content.",
+    ),
+    title: t("Follow us on social media"),
   };
 }
 
@@ -37,13 +39,15 @@ export default async function Follow({
   cacheLife("max");
   cacheTag(locale, cacheTagFollow());
 
-  const t = await getTranslations("Follow");
+  const t = await getExtracted();
 
   return (
     <Container>
       <ContainerHeader>
-        <ContainerTitle>{t("title")}</ContainerTitle>
-        <ContainerDescription>{t("subtitle")}</ContainerDescription>
+        <ContainerTitle>{t("Follow us")}</ContainerTitle>
+        <ContainerDescription>
+          {t("Find all our social media links and keep in touch with us.")}
+        </ContainerDescription>
       </ContainerHeader>
 
       <div className="grid w-full gap-4 sm:grid-cols-2 md:grid-cols-3">
