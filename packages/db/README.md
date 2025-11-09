@@ -17,6 +17,14 @@ Then, create a new database:
 createdb zoonk
 ```
 
+#### Testing
+
+Create a separate database for testing:
+
+```bash
+createdb zoonk_test
+```
+
 #### Environment Variables
 
 Prisma generates a client that we use to interact with our database. We generate this client when running `pnpm install` and `pnpm dev` in the root of the monorepo.
