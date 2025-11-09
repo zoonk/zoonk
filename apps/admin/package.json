@@ -1,15 +1,15 @@
 {
   "dependencies": {
-    "@ai-sdk/gateway": "2.0.0",
-    "@zoonk/ai": "workspace:*",
+    "@prisma/client": "6.17.1",
+    "@zoonk/auth": "workspace:*",
+    "@zoonk/db": "workspace:*",
     "@zoonk/ui": "workspace:*",
-    "@zoonk/utils": "workspace:*",
-    "ai": "5.0.62",
     "lucide-react": "0.553.0",
     "next": "16.0.1",
+    "pg": "8.16.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "zod": "4.1.12"
+    "server-only": "0.0.1"
   },
   "devDependencies": {
     "@types/node": "^22",
@@ -17,17 +17,15 @@
     "@types/react-dom": "^19",
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
-    "raw-loader": "4.0.2",
     "typescript": "^5"
   },
-  "name": "evals",
+  "name": "admin",
   "private": true,
   "scripts": {
     "build": "next build",
-    "build-and-start": "pnpm build && pnpm start",
-    "dev": "next dev -p 3002",
-    "start": "next start -p 3002",
+    "dev": "next dev -p 3001",
+    "start": "next start -p 3001",
     "typecheck": "next typegen && tsc --noEmit"
   },
-  "type": "module"
+  "version": "0.1.0"
 }
