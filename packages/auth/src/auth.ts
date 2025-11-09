@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
-import { type EmailOTPOptions, emailOTP } from "better-auth/plugins";
+import { admin, type EmailOTPOptions, emailOTP } from "better-auth/plugins";
 import Stripe from "stripe";
 import { getAppleClientSecret } from "./apple";
 
@@ -36,6 +36,7 @@ export function zoonkAuth({ sendVerificationOTP }: AuthSetup) {
     database: prismaAdapter(prisma, { provider: "postgresql" }),
     plugins: [
       nextCookies(),
+      admin(),
       emailOTP({
         overrideDefaultEmailVerification: true,
         sendVerificationOTP,
