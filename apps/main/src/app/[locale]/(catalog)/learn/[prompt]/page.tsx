@@ -1,5 +1,6 @@
 "use cache";
 
+import { cacheTagCourseSuggestions } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -16,7 +17,7 @@ export async function generateMetadata({
   const t = await getTranslations({ locale, namespace: "LearnResults" });
   const prompt = decodeURIComponent(rawPrompt);
 
-  cacheTag(locale, prompt);
+  cacheTag(locale, cacheTagCourseSuggestions({ prompt }));
 
   return {
     description: t("metaDescription", { prompt }),
@@ -32,7 +33,7 @@ export default async function Learn({
   setRequestLocale(locale);
 
   const prompt = decodeURIComponent(rawPrompt);
-  cacheTag(locale, prompt);
+  cacheTag(locale, cacheTagCourseSuggestions({ prompt }));
 
   return (
     <Suspense fallback={<CourseSuggestionsFallback />}>

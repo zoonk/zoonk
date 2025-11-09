@@ -6,6 +6,7 @@ import {
   getCourseSuggestion,
   type Suggestion,
 } from "@zoonk/db/queries/course-suggestions";
+import { cacheTagCourseSuggestions } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 
 const model =
@@ -20,7 +21,7 @@ export async function fetchCourseSuggestions({
 }): Promise<Suggestion[]> {
   "use cache";
   cacheLife("max");
-  cacheTag(locale, prompt);
+  cacheTag(locale, cacheTagCourseSuggestions({ prompt }));
 
   const record = await getCourseSuggestion({ locale, prompt });
 

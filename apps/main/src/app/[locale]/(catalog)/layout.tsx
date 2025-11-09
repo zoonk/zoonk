@@ -1,5 +1,6 @@
 "use cache";
 
+import { cacheTagCatalog } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
@@ -14,7 +15,7 @@ export default async function CatalogLayout({
   setRequestLocale(locale);
 
   cacheLife("max");
-  cacheTag(locale, "catalog");
+  cacheTag(locale, cacheTagCatalog());
 
   return (
     <div className="flex min-h-dvh flex-col">

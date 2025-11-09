@@ -1,5 +1,6 @@
 "use cache";
 
+import { cacheTagMyCourses } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getTranslations } from "next-intl/server";
@@ -10,7 +11,7 @@ export async function generateMetadata({
   const { locale } = await params;
 
   cacheLife("max");
-  cacheTag(locale, "my-courses");
+  cacheTag(locale, cacheTagMyCourses());
 
   const t = await getTranslations({ locale, namespace: "MyCourses" });
 
@@ -22,6 +23,6 @@ export async function generateMetadata({
 
 export default async function MyCourses() {
   cacheLife("max");
-  cacheTag("my-courses");
+  cacheTag(cacheTagMyCourses());
   return <main>{}</main>;
 }

@@ -1,5 +1,6 @@
 "use cache";
 
+import { cacheTagTerms } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getTranslations } from "next-intl/server";
@@ -10,7 +11,7 @@ export async function generateMetadata({
   const { locale } = await params;
 
   cacheLife("max");
-  cacheTag(locale, "terms");
+  cacheTag(locale, cacheTagTerms());
 
   const t = await getTranslations({ locale, namespace: "Terms" });
 
@@ -24,7 +25,7 @@ export default async function Terms({ params }: PageProps<"/[locale]/terms">) {
   const { locale } = await params;
 
   cacheLife("max");
-  cacheTag(locale, "terms");
+  cacheTag(locale, cacheTagTerms());
 
   const { default: TermsOfService } = await import(`./${locale}.mdx`);
 

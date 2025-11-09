@@ -6,6 +6,7 @@ import {
   ContainerHeader,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
+import { cacheTagFeedback } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -17,7 +18,7 @@ export async function generateMetadata({
   const { locale } = await params;
 
   cacheLife("max");
-  cacheTag(locale, "feedback");
+  cacheTag(locale, cacheTagFeedback());
 
   const t = await getTranslations({ locale, namespace: "Feedback" });
 
@@ -34,7 +35,7 @@ export default async function Feedback({
   setRequestLocale(locale);
 
   cacheLife("max");
-  cacheTag(locale, "feedback");
+  cacheTag(locale, cacheTagFeedback());
 
   const t = await getTranslations("Feedback");
 

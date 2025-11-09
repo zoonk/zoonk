@@ -6,6 +6,7 @@ import {
   ContainerHeader,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
+import { cacheTagHelp } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -17,7 +18,7 @@ export async function generateMetadata({
   const { locale } = await params;
 
   cacheLife("max");
-  cacheTag(locale, "help");
+  cacheTag(locale, cacheTagHelp());
 
   const t = await getTranslations({ locale, namespace: "Help" });
 
@@ -32,7 +33,7 @@ export default async function Help({ params }: PageProps<"/[locale]/help">) {
   setRequestLocale(locale);
 
   cacheLife("max");
-  cacheTag(locale, "help");
+  cacheTag(locale, cacheTagHelp());
 
   const t = await getTranslations("Help");
 

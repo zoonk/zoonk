@@ -1,6 +1,7 @@
 "use cache";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { cacheTagLogin } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -16,7 +17,7 @@ export default async function AuthLayout({
   setRequestLocale(locale);
 
   cacheLife("max");
-  cacheTag(locale, "login");
+  cacheTag(locale, cacheTagLogin());
 
   const t = await getTranslations("Menu");
 

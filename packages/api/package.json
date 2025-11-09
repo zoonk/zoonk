@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "@zoonk/ai": "workspace:*",
-    "@zoonk/db": "workspace:*"
+    "@zoonk/db": "workspace:*",
+    "@zoonk/utils": "workspace:*"
   },
   "devDependencies": {
     "@zoonk/tsconfig": "workspace:*",

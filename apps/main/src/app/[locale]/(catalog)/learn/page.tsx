@@ -1,5 +1,6 @@
 "use cache";
 
+import { cacheTagLearn } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -11,7 +12,7 @@ export async function generateMetadata({
   const { locale } = await params;
 
   cacheLife("max");
-  cacheTag(locale, "learn");
+  cacheTag(locale, cacheTagLearn());
 
   const t = await getTranslations({ locale, namespace: "Learn" });
 
@@ -26,7 +27,7 @@ export default async function Learn({ params }: PageProps<"/[locale]/learn">) {
   setRequestLocale(locale);
 
   cacheLife("max");
-  cacheTag(locale, "learn");
+  cacheTag(locale, cacheTagLearn());
 
   const t = await getTranslations({ locale, namespace: "Learn" });
 

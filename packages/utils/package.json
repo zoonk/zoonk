@@ -6,7 +6,7 @@
     "vitest": "4.0.5"
   },
   "exports": {
-    "./string": "./src/string.ts"
+    "./*": "./src/*.ts"
   },
   "name": "@zoonk/utils",
   "private": true,

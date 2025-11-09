@@ -1,5 +1,6 @@
 "use cache";
 
+import { cacheTagLogin } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -16,7 +17,7 @@ export async function generateMetadata({
   const { locale } = await params;
 
   cacheLife("max");
-  cacheTag(locale, "login");
+  cacheTag(locale, cacheTagLogin());
 
   const t = await getTranslations({ locale, namespace: "Auth" });
 
@@ -31,7 +32,7 @@ export default async function Login({ params }: PageProps<"/[locale]/login">) {
   setRequestLocale(locale);
 
   cacheLife("max");
-  cacheTag(locale, "login");
+  cacheTag(locale, cacheTagLogin());
 
   return (
     <LoginContainer>

@@ -6,6 +6,7 @@ import {
   ContainerHeader,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
+import { cacheTagSubscription } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -18,7 +19,7 @@ export async function generateMetadata({
   const { locale } = await params;
 
   cacheLife("max");
-  cacheTag(locale, "subscription");
+  cacheTag(locale, cacheTagSubscription());
 
   const t = await getTranslations({ locale, namespace: "Subscription" });
 
@@ -35,7 +36,7 @@ export default async function Subscription({
   setRequestLocale(locale);
 
   cacheLife("max");
-  cacheTag(locale, "subscription");
+  cacheTag(locale, cacheTagSubscription());
 
   const t = await getTranslations("Subscription");
 
