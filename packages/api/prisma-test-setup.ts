@@ -13,6 +13,10 @@ async function truncateAllTables() {
       .map((name) => `"public"."${name}"`)
       .join(", ");
 
+    if (!tables) {
+      return;
+    }
+
     await prisma.$executeRawUnsafe(`TRUNCATE TABLE ${tables} CASCADE;`);
   } catch (error) {
     console.error({ error });
