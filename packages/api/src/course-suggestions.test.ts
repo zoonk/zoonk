@@ -3,8 +3,6 @@ import { addCourseSuggestion } from "@zoonk/db/queries/course-suggestions";
 import { describe, expect, test, vi } from "vitest";
 import { fetchCourseSuggestions } from "./course-suggestions";
 
-vi.mock("@zoonk/ai/course-suggestions", { spy: true });
-
 describe("fetchCourseSuggestions()", () => {
   test("get an existing item", async () => {
     const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
