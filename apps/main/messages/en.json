@@ -98,6 +98,7 @@
     "help": "Help",
     "home": "Home page",
     "language": "Language",
+    "learn": "Learn",
     "login": "Login",
     "logout": "Logout",
     "myAccount": "My account",
@@ -108,7 +109,6 @@
     "settings": "Settings",
     "settingsSidebarDescription": "Navigate to all settings",
     "settingsSidebarTitle": "Settings sidebar",
-    "start": "Start course",
     "subscription": "Subscription",
     "toggleSidebar": "Toggle sidebar"
   },

@@ -1,5 +1,6 @@
 import { IconUfo } from "@tabler/icons-react";
 import {
+  Brain,
   Gem,
   IdCardLanyard,
   Languages,
@@ -9,7 +10,6 @@ import {
   LogOut,
   Megaphone,
   MessageCircle,
-  PlusCircle,
   Search,
   Settings,
 } from "lucide-react";
@@ -22,12 +22,12 @@ const menu = {
   help: { icon: LifeBuoy, url: "/help" },
   home: { icon: IconUfo, url: "/" },
   language: { icon: Languages, url: "/language" },
+  learn: { icon: Brain, url: "/learn" },
   login: { icon: LogIn, url: "/login" },
   logout: { icon: LogOut, url: "/logout" },
   myCourses: { icon: LayoutGrid, url: "/my" },
   search: { icon: Search, url: "/search" },
   settings: { icon: Settings, url: "/settings" },
-  start: { icon: PlusCircle, url: "/learn" },
   subscription: { icon: Gem, url: "/subscription" },
 } as const;
 

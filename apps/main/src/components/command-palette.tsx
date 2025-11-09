@@ -39,7 +39,7 @@ export function CommandPalette() {
   const getStarted = [
     { key: t("home"), ...getMenu("home") },
     { key: t("courses"), ...getMenu("courses") },
-    { key: t("start"), ...getMenu("start") },
+    { key: t("learn"), ...getMenu("learn") },
   ];
 
   const accountPublic = [

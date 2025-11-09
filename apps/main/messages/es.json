@@ -99,6 +99,7 @@
     "help": "Ayuda",
     "home": "Página de inicio",
     "language": "Idioma",
+    "learn": "Aprender",
     "login": "Iniciar sesión",
     "logout": "Cerrar sesión",
     "manageSubscription": "Gestionar suscripción",
@@ -110,7 +111,6 @@
     "settings": "Configuración",
     "settingsSidebarDescription": "Navegar a toda la configuración",
     "settingsSidebarTitle": "Barra lateral de configuración",
-    "start": "Iniciar curso",
     "subscription": "Suscripción",
     "toggleSidebar": "Alternar barra lateral"
   },

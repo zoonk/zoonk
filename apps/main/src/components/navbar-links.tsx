@@ -27,7 +27,7 @@ function getVariant(
 
 const homeMenu = getMenu("home");
 const coursesMenu = getMenu("courses");
-const startMenu = getMenu("start");
+const learnMenu = getMenu("learn");
 
 export function NavbarLinks() {
   const pathname = usePathname();
@@ -63,12 +63,12 @@ export function NavbarLinks() {
         className={buttonVariants({
           className: "ml-auto",
           size: "adaptive",
-          variant: getVariant(startMenu.url, pathname),
+          variant: getVariant(learnMenu.url, pathname),
         })}
-        href={startMenu.url}
+        href={learnMenu.url}
       >
-        <startMenu.icon aria-hidden="true" />
-        <span className="hidden sm:inline">{t("start")}</span>
+        <learnMenu.icon aria-hidden="true" />
+        <span className="hidden sm:inline">{t("learn")}</span>
       </Link>
     </>
   );
