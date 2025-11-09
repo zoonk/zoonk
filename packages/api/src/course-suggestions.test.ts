@@ -21,4 +21,27 @@ describe("fetchCourseSuggestions()", () => {
     expect(result).toEqual(suggestions);
     expect(spy).not.toHaveBeenCalled();
   });
+
+  test("generates a new item", async () => {
+    const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
+
+    const locale = "en";
+    const prompt = `vitest-${Date.now()}`;
+
+    const generatedSuggestions = [
+      { description: "A course on Vitest basics.", title: "Vitest" },
+    ];
+
+    spy.mockResolvedValueOnce({ data: generatedSuggestions } as any);
+
+    const result = await fetchCourseSuggestions({ locale, prompt });
+
+    expect(result).toEqual(generatedSuggestions);
+    expect(spy).toHaveBeenCalledOnce();
+
+    // check if the record was added to the database
+    const record = await fetchCourseSuggestions({ locale, prompt });
+    expect(record).toEqual(generatedSuggestions);
+    expect(spy).toHaveBeenCalledOnce();
+  });
 });

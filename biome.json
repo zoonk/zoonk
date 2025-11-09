@@ -205,6 +205,9 @@
         "rules": {
           "performance": {
             "noNamespaceImport": "off"
+          },
+          "suspicious": {
+            "noExplicitAny": "off"
           }
         }
       }
