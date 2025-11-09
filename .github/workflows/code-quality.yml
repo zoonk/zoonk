@@ -6,15 +6,27 @@ permissions:
   contents: read
   security-events: write
 
+env:
+  NODE_VERSION: 22
+
 jobs:
   code-quality:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [22]
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
+    services:
+      db:
+        image: postgres:17-alpine
+        ports: ["5432:5432"]
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 1s
+          --health-timeout 5s
+          --health-retries 10
 
     steps:
       - name: Check out code
@@ -33,10 +45,10 @@ jobs:
         with:
           version: 10.20.0
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v5
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
 
       - name: Install dependencies

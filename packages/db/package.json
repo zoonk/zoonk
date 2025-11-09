@@ -30,6 +30,7 @@
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
     "db:studio": "prisma studio",
+    "db:test:setup": "env $(cat .env.test | xargs) prisma migrate deploy",
     "postinstall": "pnpm db:generate",
     "typecheck": "tsc --noEmit"
   },

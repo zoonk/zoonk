@@ -41,6 +41,10 @@
       "dependsOn": ["^db:migrate"],
       "persistent": true
     },
+    "db:test:setup": {
+      "cache": false,
+      "dependsOn": ["^db:test:setup"]
+    },
     "dev": {
       "cache": false,
       "dependsOn": ["^db:generate", "^dev"],
@@ -55,7 +59,7 @@
       "persistent": true
     },
     "test": {
-      "dependsOn": ["^test"]
+      "dependsOn": ["^db:test:setup", "^test"]
     },
     "test:watch": {
       "cache": false,
