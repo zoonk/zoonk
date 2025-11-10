@@ -13,7 +13,7 @@ model User {
   stripeCustomerId String?
 
   // better-auth admin plugin
-  role       String?
+  role       String    @default("user")
   banned     Boolean   @default(false)
   banReason  String?
   banExpires DateTime?

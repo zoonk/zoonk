@@ -40,6 +40,10 @@
       "cache": false,
       "dependsOn": ["^db:migrate"]
     },
+    "db:studio": {
+      "cache": false,
+      "dependsOn": ["^db:studio"]
+    },
     "db:test:setup": {
       "cache": false,
       "dependsOn": ["^db:test:setup"]

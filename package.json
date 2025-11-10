@@ -14,6 +14,7 @@
     "db:deploy": "turbo db:deploy",
     "db:generate": "turbo db:generate",
     "db:migrate": "turbo db:migrate",
+    "db:studio": "turbo db:studio",
     "dev": "turbo dev",
     "evals": "cd apps/evals && pnpm build-and-start",
     "evals:export": "./apps/evals/scripts/export-test-case.sh",
