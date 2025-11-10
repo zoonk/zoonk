@@ -1,5 +1,5 @@
-import "@zoonk/ui/globals.css";
 import type { Metadata } from "next";
+import "@zoonk/ui/globals.css";
 
 export const metadata: Metadata = {
   title: {
