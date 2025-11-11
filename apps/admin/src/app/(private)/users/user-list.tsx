@@ -1,13 +1,4 @@
 import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@zoonk/ui/components/pagination";
-import {
   Table,
   TableBody,
   TableCell,
@@ -18,6 +9,7 @@ import {
 import { cacheLife } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import { UserPagination } from "./user-pagination";
 
 const DEFAULT_PAGE_SIZE = 50;
 
@@ -99,86 +91,7 @@ export default async function UserList({ searchParams }: UserListProps) {
         </Table>
       </div>
 
-      {totalPages > 1 && (
-        <Pagination className="mt-6">
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                aria-disabled={page <= 1}
-                className={page <= 1 ? "pointer-events-none opacity-50" : ""}
-                href={page > 1 ? `/users?page=${page - 1}&limit=${limit}` : "#"}
-              />
-            </PaginationItem>
-
-            {page > 2 && (
-              <PaginationItem>
-                <PaginationLink href={`/users?page=1&limit=${limit}`}>
-                  1
-                </PaginationLink>
-              </PaginationItem>
-            )}
-
-            {/* biome-ignore lint/style/noMagicNumbers: off */}
-            {page > 3 && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {page > 1 && (
-              <PaginationItem>
-                <PaginationLink href={`/users?page=${page - 1}&limit=${limit}`}>
-                  {page - 1}
-                </PaginationLink>
-              </PaginationItem>
-            )}
-
-            <PaginationItem>
-              <PaginationLink href="#" isActive>
-                {page}
-              </PaginationLink>
-            </PaginationItem>
-
-            {page < totalPages && (
-              <PaginationItem>
-                <PaginationLink href={`/users?page=${page + 1}&limit=${limit}`}>
-                  {page + 1}
-                </PaginationLink>
-              </PaginationItem>
-            )}
-
-            {page < totalPages - 2 && (
-              <PaginationItem>
-                <PaginationEllipsis />
-              </PaginationItem>
-            )}
-
-            {page < totalPages - 1 && (
-              <PaginationItem>
-                <PaginationLink
-                  href={`/users?page=${totalPages}&limit=${limit}`}
-                >
-                  {totalPages}
-                </PaginationLink>
-              </PaginationItem>
-            )}
-
-            <PaginationItem>
-              <PaginationNext
-                aria-disabled={page >= totalPages}
-                className={
-                  page >= totalPages ? "pointer-events-none opacity-50" : ""
-                }
-                href={
-                  page < totalPages
-                    ? `/users?page=${page + 1}&limit=${limit}`
-                    : "#"
-                }
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )}
+      <UserPagination limit={limit} page={page} totalPages={totalPages} />
     </>
   );
 }
