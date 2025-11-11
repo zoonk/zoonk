@@ -7,7 +7,7 @@ type UserRowProps = {
 
 export function UserRow({ user }: UserRowProps) {
   return (
-    <TableRow key={user.id}>
+    <TableRow>
       <TableCell className="font-medium">{user.name || "—"}</TableCell>
       <TableCell>{user.email}</TableCell>
       <TableCell className="capitalize">{user.role || "user"}</TableCell>
