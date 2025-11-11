@@ -12,10 +12,23 @@ type UserPaginationProps = {
   page: number;
   limit: number;
   totalPages: number;
+  search?: string;
 };
 
-function buildUserPageUrl(pageNumber: number, limit: number): string {
-  return `/users?page=${pageNumber}&limit=${limit}`;
+function buildUserPageUrl(
+  pageNumber: number,
+  limit: number,
+  search?: string,
+): string {
+  const params = new URLSearchParams();
+  params.set("page", pageNumber.toString());
+  params.set("limit", limit.toString());
+
+  if (search) {
+    params.set("search", search);
+  }
+
+  return `/users?${params.toString()}`;
 }
 
 function getVisiblePageNumbers(
@@ -42,6 +55,7 @@ export function UserPagination({
   page,
   limit,
   totalPages,
+  search,
 }: UserPaginationProps) {
   if (totalPages <= 1) {
     return null;
@@ -59,7 +73,7 @@ export function UserPagination({
           <PaginationPrevious
             aria-disabled={isFirstPage}
             className={isFirstPage ? "pointer-events-none opacity-50" : ""}
-            href={isFirstPage ? "#" : buildUserPageUrl(page - 1, limit)}
+            href={isFirstPage ? "#" : buildUserPageUrl(page - 1, limit, search)}
           />
         </PaginationItem>
 
@@ -72,7 +86,7 @@ export function UserPagination({
                 href={
                   pageOrEllipsis === page
                     ? "#"
-                    : buildUserPageUrl(pageOrEllipsis, limit)
+                    : buildUserPageUrl(pageOrEllipsis, limit, search)
                 }
                 isActive={pageOrEllipsis === page}
               >
@@ -86,7 +100,7 @@ export function UserPagination({
           <PaginationNext
             aria-disabled={isLastPage}
             className={isLastPage ? "pointer-events-none opacity-50" : ""}
-            href={isLastPage ? "#" : buildUserPageUrl(page + 1, limit)}
+            href={isLastPage ? "#" : buildUserPageUrl(page + 1, limit, search)}
           />
         </PaginationItem>
       </PaginationContent>

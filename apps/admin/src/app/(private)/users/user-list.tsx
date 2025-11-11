@@ -26,6 +26,10 @@ export default async function UserList({ searchParams }: UserListProps) {
   const limit = Number(params.limit) || DEFAULT_PAGE_SIZE;
   const offset = (page - 1) * limit;
 
+  const search = Array.isArray(params.search)
+    ? params.search[0]
+    : params.search;
+
   const result = await auth.api.listUsers({
     headers: await headers(),
     query: {
@@ -33,6 +37,11 @@ export default async function UserList({ searchParams }: UserListProps) {
       offset,
       sortBy: "createdAt",
       sortDirection: "desc",
+      ...(search && {
+        searchField: "email",
+        searchOperator: "contains",
+        searchValue: search,
+      }),
     },
   });
 
@@ -61,7 +70,12 @@ export default async function UserList({ searchParams }: UserListProps) {
         </Table>
       </div>
 
-      <UserPagination limit={limit} page={page} totalPages={totalPages} />
+      <UserPagination
+        limit={limit}
+        page={page}
+        search={search}
+        totalPages={totalPages}
+      />
     </>
   );
 }

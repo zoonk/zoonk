@@ -7,6 +7,7 @@ import {
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import UserList from "./user-list";
+import { UserSearch } from "./user-search";
 
 export const metadata: Metadata = {
   title: "Users",
@@ -21,6 +22,12 @@ export default function UsersPage({ searchParams }: PageProps<"/users">) {
           Manage all users in the system.
         </ContainerDescription>
       </ContainerHeader>
+
+      <div className="mb-4">
+        <Suspense fallback={<div className="h-10" />}>
+          <UserSearch />
+        </Suspense>
+      </div>
 
       <Suspense>
         <UserList searchParams={searchParams} />
