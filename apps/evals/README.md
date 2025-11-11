@@ -16,7 +16,7 @@ From the root directory of the repository, run:
 pnpm evals
 ```
 
-This will build the evals app and start the server. You can then access the app at `http://localhost:3001`.
+This will build the evals app and start the server. You can then access the app at `http://localhost:3002`.
 
 From there, you'll have a UI to run evals for different models and tasks.
 

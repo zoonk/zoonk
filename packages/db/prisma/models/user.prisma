@@ -9,7 +9,14 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  // better-auth stripe plugin
   stripeCustomerId String?
+
+  // better-auth admin plugin
+  role       String    @default("user")
+  banned     Boolean   @default(false)
+  banReason  String?
+  banExpires DateTime?
 
   @@unique([email])
   @@index([email])
@@ -26,6 +33,9 @@ model Session {
   userAgent String?
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // better-auth admin plugin
+  impersonatedBy String?
 
   @@unique([token])
   @@index([userId, token])

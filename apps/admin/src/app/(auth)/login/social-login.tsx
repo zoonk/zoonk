@@ -1,0 +1,42 @@
+"use client";
+
+import { IconBrandGoogleFilled } from "@tabler/icons-react";
+import { Button } from "@zoonk/ui/components/button";
+import { InputError } from "@zoonk/ui/components/input";
+import { Loader2Icon } from "lucide-react";
+import { useState } from "react";
+import { authClient } from "@/lib/auth/client";
+
+type SocialState = "initial" | "loading" | "error";
+
+export function SocialLogin() {
+  const [state, setState] = useState<SocialState>("initial");
+
+  const signIn = async () => {
+    setState("loading");
+
+    try {
+      await authClient.signIn.social({ provider: "google" });
+    } catch {
+      setState("error");
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-2">
+      <Button
+        className="w-full"
+        disabled={state === "loading"}
+        onClick={signIn}
+        type="button"
+        variant="outline"
+      >
+        {state === "loading" && <Loader2Icon className="animate-spin" />}
+        <IconBrandGoogleFilled aria-hidden="true" />
+        Continue with Google
+      </Button>
+
+      {state === "error" && <InputError>Login failed. Try again.</InputError>}
+    </div>
+  );
+}

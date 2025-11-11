@@ -63,3 +63,7 @@ export function cacheTagSubscription() {
 export function cacheTagTerms() {
   return "terms";
 }
+
+export function cacheTagUsers() {
+  return "users";
+}

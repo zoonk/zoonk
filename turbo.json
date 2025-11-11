@@ -38,8 +38,11 @@
     },
     "db:migrate": {
       "cache": false,
-      "dependsOn": ["^db:migrate"],
-      "persistent": true
+      "dependsOn": ["^db:migrate"]
+    },
+    "db:studio": {
+      "cache": false,
+      "dependsOn": ["^db:studio"]
     },
     "db:test:setup": {
       "cache": false,
