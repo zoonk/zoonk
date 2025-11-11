@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: "Users",
 };
 
-export default async function UsersPage({ searchParams }: PageProps<"/users">) {
+export default function UsersPage({ searchParams }: PageProps<"/users">) {
   return (
     <Container>
       <ContainerHeader>
