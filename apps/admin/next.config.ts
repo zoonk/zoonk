@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
     typedEnv: true,
   },
   reactCompiler: true,
-  transpilePackages: ["@zoonk/db", "@zoonk/ui"],
+  transpilePackages: ["@zoonk/api", "@zoonk/db", "@zoonk/ui"],
   typedRoutes: true,
 };
 

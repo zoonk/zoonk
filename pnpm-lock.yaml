@@ -23,6 +23,9 @@ importers:
       '@tabler/icons-react':
         specifier: 3.35.0
         version: 3.35.0(react@19.2.0)
+      '@zoonk/api':
+        specifier: workspace:*
+        version: link:../../packages/api
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
