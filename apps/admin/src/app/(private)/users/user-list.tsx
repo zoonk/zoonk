@@ -1,4 +1,13 @@
 import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@zoonk/ui/components/pagination";
+import {
   Table,
   TableBody,
   TableCell,
@@ -51,30 +60,36 @@ export default async function UserList({ searchParams }: UserListProps) {
               <TableHead>Created At</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {result.users.map((user) => (
               <TableRow key={user.id}>
                 <TableCell className="font-medium">
                   {user.name || "—"}
                 </TableCell>
+
                 <TableCell>{user.email}</TableCell>
+
                 <TableCell className="capitalize">
                   {user.role || "user"}
                 </TableCell>
+
                 <TableCell>
                   {user.emailVerified ? (
-                    <span className="text-green-600">✓</span>
+                    <span className="text-success">✓</span>
                   ) : (
                     <span className="text-muted-foreground">—</span>
                   )}
                 </TableCell>
+
                 <TableCell>
                   {user.banned ? (
-                    <span className="text-red-600">Yes</span>
+                    <span className="text-destructive">Yes</span>
                   ) : (
                     <span className="text-muted-foreground">—</span>
                   )}
                 </TableCell>
+
                 <TableCell className="text-muted-foreground">
                   {new Date(user.createdAt).toLocaleDateString()}
                 </TableCell>
@@ -85,29 +100,84 @@ export default async function UserList({ searchParams }: UserListProps) {
       </div>
 
       {totalPages > 1 && (
-        <div className="mt-6 flex items-center justify-between">
-          <p className="text-muted-foreground text-sm">
-            Page {page} of {totalPages}
-          </p>
-          <div className="flex gap-2">
+        <Pagination className="mt-6">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                aria-disabled={page <= 1}
+                className={page <= 1 ? "pointer-events-none opacity-50" : ""}
+                href={page > 1 ? `/users?page=${page - 1}&limit=${limit}` : "#"}
+              />
+            </PaginationItem>
+
+            {page > 2 && (
+              <PaginationItem>
+                <PaginationLink href={`/users?page=1&limit=${limit}`}>
+                  1
+                </PaginationLink>
+              </PaginationItem>
+            )}
+
+            {/* biome-ignore lint/style/noMagicNumbers: off */}
+            {page > 3 && (
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+            )}
+
             {page > 1 && (
-              <a
-                className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
-                href={`/users?page=${page - 1}&limit=${limit}`}
-              >
-                Previous
-              </a>
+              <PaginationItem>
+                <PaginationLink href={`/users?page=${page - 1}&limit=${limit}`}>
+                  {page - 1}
+                </PaginationLink>
+              </PaginationItem>
             )}
+
+            <PaginationItem>
+              <PaginationLink href="#" isActive>
+                {page}
+              </PaginationLink>
+            </PaginationItem>
+
             {page < totalPages && (
-              <a
-                className="rounded-md border px-4 py-2 text-sm hover:bg-muted"
-                href={`/users?page=${page + 1}&limit=${limit}`}
-              >
-                Next
-              </a>
+              <PaginationItem>
+                <PaginationLink href={`/users?page=${page + 1}&limit=${limit}`}>
+                  {page + 1}
+                </PaginationLink>
+              </PaginationItem>
             )}
-          </div>
-        </div>
+
+            {page < totalPages - 2 && (
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+            )}
+
+            {page < totalPages - 1 && (
+              <PaginationItem>
+                <PaginationLink
+                  href={`/users?page=${totalPages}&limit=${limit}`}
+                >
+                  {totalPages}
+                </PaginationLink>
+              </PaginationItem>
+            )}
+
+            <PaginationItem>
+              <PaginationNext
+                aria-disabled={page >= totalPages}
+                className={
+                  page >= totalPages ? "pointer-events-none opacity-50" : ""
+                }
+                href={
+                  page < totalPages
+                    ? `/users?page=${page + 1}&limit=${limit}`
+                    : "#"
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       )}
     </>
   );
