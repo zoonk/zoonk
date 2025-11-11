@@ -14,7 +14,6 @@ import {
 } from "@zoonk/ui/components/table";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { PageBreadcrumb } from "@/components/page-breadcrumb";
 import { auth } from "@/lib/auth";
 
 export const metadata: Metadata = {
@@ -42,7 +41,6 @@ export default async function UsersPage({ searchParams }: PageProps<"/users">) {
   if (!result || result.users.length === 0) {
     return (
       <Container>
-        <PageBreadcrumb currentPage="Users" />
         <ContainerHeader className="mb-6">
           <ContainerTitle>Users</ContainerTitle>
           <ContainerDescription>
@@ -57,7 +55,6 @@ export default async function UsersPage({ searchParams }: PageProps<"/users">) {
 
   return (
     <Container>
-      <PageBreadcrumb currentPage="Users" />
       <ContainerHeader className="mb-6">
         <ContainerTitle>Users</ContainerTitle>
         <ContainerDescription>
