@@ -38,24 +38,11 @@ export default async function UsersPage({ searchParams }: PageProps<"/users">) {
     },
   });
 
-  if (!result || result.users.length === 0) {
-    return (
-      <Container>
-        <ContainerHeader className="mb-6">
-          <ContainerTitle>Users</ContainerTitle>
-          <ContainerDescription>
-            No users found in the system.
-          </ContainerDescription>
-        </ContainerHeader>
-      </Container>
-    );
-  }
-
   const totalPages = Math.ceil(result.total / limit);
 
   return (
     <Container>
-      <ContainerHeader className="mb-6">
+      <ContainerHeader>
         <ContainerTitle>Users</ContainerTitle>
         <ContainerDescription>
           Manage all users in the system. Total users: {result.total}
