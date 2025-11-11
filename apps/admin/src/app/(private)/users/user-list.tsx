@@ -1,7 +1,6 @@
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
@@ -10,6 +9,7 @@ import { cacheLife } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { UserPagination } from "./user-pagination";
+import { UserRow } from "./user-row";
 
 const DEFAULT_PAGE_SIZE = 50;
 
@@ -55,37 +55,7 @@ export default async function UserList({ searchParams }: UserListProps) {
 
           <TableBody>
             {result.users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="font-medium">
-                  {user.name || "—"}
-                </TableCell>
-
-                <TableCell>{user.email}</TableCell>
-
-                <TableCell className="capitalize">
-                  {user.role || "user"}
-                </TableCell>
-
-                <TableCell>
-                  {user.emailVerified ? (
-                    <span className="text-success">✓</span>
-                  ) : (
-                    <span className="text-muted-foreground">—</span>
-                  )}
-                </TableCell>
-
-                <TableCell>
-                  {user.banned ? (
-                    <span className="text-destructive">Yes</span>
-                  ) : (
-                    <span className="text-muted-foreground">—</span>
-                  )}
-                </TableCell>
-
-                <TableCell className="text-muted-foreground">
-                  {new Date(user.createdAt).toLocaleDateString()}
-                </TableCell>
-              </TableRow>
+              <UserRow key={user.id} user={user} />
             ))}
           </TableBody>
         </Table>
