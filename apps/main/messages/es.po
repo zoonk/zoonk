@@ -8,8 +8,8 @@ msgstr ""
 
 #: src/app/[locale]/(auth)/layout.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-account.tsx
-#: src/components/navbar-links.tsx
 #: src/components/command-palette.tsx
+#: src/components/navbar-links.tsx
 msgid "U3l+Q9"
 msgstr ""
 
@@ -24,6 +24,11 @@ msgstr ""
 #: src/app/[locale]/(auth)/login/login-form.tsx
 #: src/components/contact-form.tsx
 msgid "OiSL94"
+msgstr ""
+
+#: src/app/[locale]/(auth)/login/login-form.tsx
+#: src/app/[locale]/(auth)/otp/otp-form.tsx
+msgid "acrOoz"
 msgstr ""
 
 #: src/app/[locale]/(auth)/login/login-header.tsx
@@ -68,11 +73,6 @@ msgstr ""
 
 #: src/app/[locale]/(auth)/otp/otp-form.tsx
 msgid "HkHvQv"
-msgstr ""
-
-#: src/app/[locale]/(auth)/otp/otp-form.tsx
-#: src/app/[locale]/(auth)/login/login-form.tsx
-msgid "acrOoz"
 msgstr ""
 
 #: src/app/[locale]/(auth)/otp/otp-form.tsx
@@ -164,14 +164,14 @@ msgid "KZv6Ml"
 msgstr ""
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
-#: src/components/content-feedback.tsx
 #: src/components/command-palette.tsx
+#: src/components/content-feedback.tsx
 msgid "G5YSJR"
 msgstr ""
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/feedback-sheet.tsx
 #: src/components/user-dropdown-menu.tsx
 msgid "Ejhdi4"
@@ -201,18 +201,18 @@ msgid "Qeoeg9"
 msgstr ""
 
 #: src/app/[locale]/(settings)/help/page.tsx
+#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "SENRqu"
+msgstr ""
+
+#: src/app/[locale]/(settings)/help/page.tsx
 msgid "V+glDo"
 msgstr ""
 
 #: src/app/[locale]/(settings)/help/page.tsx
 msgid "Uf3+S6"
-msgstr ""
-
-#: src/app/[locale]/(settings)/help/page.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
-#: src/components/user-dropdown-menu.tsx
-msgid "SENRqu"
 msgstr ""
 
 #: src/app/[locale]/(settings)/help/page.tsx
@@ -228,8 +228,8 @@ msgid "3KdX2W"
 msgstr ""
 
 #: src/app/[locale]/(settings)/language/page.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-account.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/command-palette.tsx
 msgid "y1Z3or"
 msgstr ""
@@ -271,9 +271,22 @@ msgstr ""
 msgid "Pj/oEx"
 msgstr ""
 
+#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
+#: src/app/[locale]/(settings)/settings/page.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "D3idYv"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/subscription/page.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "R/6nsx"
+msgstr ""
+
 #: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
-#: src/components/logout-dropdown-item.tsx
 #: src/components/command-palette.tsx
+#: src/components/logout-dropdown-item.tsx
 msgid "C81/uG"
 msgstr ""
 
@@ -299,20 +312,7 @@ msgid "FMLZiG"
 msgstr ""
 
 #: src/app/[locale]/(settings)/settings/page.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
-#: src/components/user-dropdown-menu.tsx
-msgid "D3idYv"
-msgstr ""
-
-#: src/app/[locale]/(settings)/settings/page.tsx
 msgid "v9T5Oi"
-msgstr ""
-
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
-#: src/app/[locale]/(settings)/subscription/page.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
-#: src/components/user-dropdown-menu.tsx
-msgid "R/6nsx"
 msgstr ""
 
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
@@ -378,6 +378,27 @@ msgstr ""
 
 #: src/app/[locale]/terms/page.tsx
 msgid "UhkSyx"
+msgstr ""
+
+#: src/components/command-palette.tsx
+#: src/components/logout-dropdown-item.tsx
+#: src/components/protected-section.tsx
+msgid "AyGauy"
+msgstr ""
+
+#: src/components/command-palette.tsx
+#: src/components/navbar-links.tsx
+msgid "R85gsW"
+msgstr ""
+
+#: src/components/command-palette.tsx
+#: src/components/navbar-links.tsx
+msgid "qOX/mN"
+msgstr ""
+
+#: src/components/command-palette.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "I+38K2"
 msgstr ""
 
 #: src/components/command-palette.tsx
@@ -468,33 +489,12 @@ msgstr ""
 msgid "GmcCqz"
 msgstr ""
 
-#: src/components/navbar-links.tsx
-#: src/components/command-palette.tsx
-msgid "R85gsW"
-msgstr ""
-
-#: src/components/navbar-links.tsx
-#: src/components/command-palette.tsx
-msgid "qOX/mN"
-msgstr ""
-
-#: src/components/protected-section.tsx
-#: src/components/logout-dropdown-item.tsx
-#: src/components/command-palette.tsx
-msgid "AyGauy"
-msgstr ""
-
 #: src/components/protected-section.tsx
 msgid "yOFm9C"
 msgstr ""
 
 #: src/components/protected-section.tsx
 msgid "2jC0rX"
-msgstr ""
-
-#: src/components/user-dropdown-menu.tsx
-#: src/components/command-palette.tsx
-msgid "I+38K2"
 msgstr ""
 
 #: src/lib/auth/otp.ts

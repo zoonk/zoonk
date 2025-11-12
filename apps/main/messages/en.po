@@ -8,14 +8,19 @@ msgstr ""
 
 #: src/app/[locale]/(auth)/layout.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-account.tsx
-#: src/components/navbar-links.tsx
 #: src/components/command-palette.tsx
+#: src/components/navbar-links.tsx
 msgid "U3l+Q9"
 msgstr "Home page"
 
 #: src/app/[locale]/(auth)/login/login-footer.tsx
 msgid "Ju9oB+"
 msgstr "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+
+#: src/app/[locale]/(auth)/login/login-form.tsx
+#: src/app/[locale]/(auth)/otp/otp-form.tsx
+msgid "acrOoz"
+msgstr "Continue"
 
 #: src/app/[locale]/(auth)/login/login-form.tsx
 msgid "sy+pv5"
@@ -65,11 +70,6 @@ msgstr "Change email"
 #: src/app/[locale]/(auth)/otp/otp-form.tsx
 msgid "zx7CKB"
 msgstr "Check your email"
-
-#: src/app/[locale]/(auth)/otp/otp-form.tsx
-#: src/app/[locale]/(auth)/login/login-form.tsx
-msgid "acrOoz"
-msgstr "Continue"
 
 #: src/app/[locale]/(auth)/otp/otp-form.tsx
 msgid "LZHcmZ"
@@ -160,16 +160,16 @@ msgid "qsfeMJ"
 msgstr "Zoonk: AI Learning Platform"
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/feedback-sheet.tsx
 #: src/components/user-dropdown-menu.tsx
 msgid "Ejhdi4"
 msgstr "Feedback"
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
-#: src/components/content-feedback.tsx
 #: src/components/command-palette.tsx
+#: src/components/content-feedback.tsx
 msgid "G5YSJR"
 msgstr "Send feedback"
 
@@ -205,8 +205,8 @@ msgid "BIAaC9"
 msgstr "Get support and answers. Fill in the form below or email us directly at hello@zoonk.com."
 
 #: src/app/[locale]/(settings)/help/page.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/user-dropdown-menu.tsx
 msgid "SENRqu"
 msgstr "Help"
@@ -228,8 +228,8 @@ msgid "aNLa1G"
 msgstr "Choose the app language you prefer for this device."
 
 #: src/app/[locale]/(settings)/language/page.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-account.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/command-palette.tsx
 msgid "y1Z3or"
 msgstr "Language"
@@ -271,9 +271,22 @@ msgstr "This is the name others may see and the one we'll use to refer to you in
 msgid "9NBNq2"
 msgstr "Update Display Name"
 
+#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
+#: src/app/[locale]/(settings)/settings/page.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "D3idYv"
+msgstr "Settings"
+
+#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/subscription/page.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "R/6nsx"
+msgstr "Subscription"
+
 #: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
-#: src/components/logout-dropdown-item.tsx
 #: src/components/command-palette.tsx
+#: src/components/logout-dropdown-item.tsx
 msgid "C81/uG"
 msgstr "Logout"
 
@@ -302,12 +315,6 @@ msgstr "Customize your Zoonk learning experience. Manage account settings, profi
 msgid "v9T5Oi"
 msgstr "Manage your account settings, profile, and preferences."
 
-#: src/app/[locale]/(settings)/settings/page.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
-#: src/components/user-dropdown-menu.tsx
-msgid "D3idYv"
-msgstr "Settings"
-
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 msgid "pwlQEY"
 msgstr "Display Name"
@@ -315,13 +322,6 @@ msgstr "Display Name"
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 msgid "ieGrWo"
 msgstr "Follow"
-
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
-#: src/app/[locale]/(settings)/subscription/page.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
-#: src/components/user-dropdown-menu.tsx
-msgid "R/6nsx"
-msgstr "Subscription"
 
 #: src/app/[locale]/(settings)/subscription/page.tsx
 msgid "qux0WX"
@@ -389,6 +389,11 @@ msgid "WnQ/AZ"
 msgstr "Contact us"
 
 #: src/components/command-palette.tsx
+#: src/components/navbar-links.tsx
+msgid "R85gsW"
+msgstr "Courses"
+
+#: src/components/command-palette.tsx
 msgid "/aBLH2"
 msgstr "Get started"
 
@@ -397,12 +402,23 @@ msgid "h7uoBs"
 msgstr "Help and support"
 
 #: src/components/command-palette.tsx
+#: src/components/logout-dropdown-item.tsx
+#: src/components/protected-section.tsx
+msgid "AyGauy"
+msgstr "Login"
+
+#: src/components/command-palette.tsx
 msgid "KwsmcD"
 msgstr "Manage settings"
 
 #: src/components/command-palette.tsx
 msgid "dXSivY"
 msgstr "My account"
+
+#: src/components/command-palette.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "I+38K2"
+msgstr "My courses"
 
 #: src/components/command-palette.tsx
 msgid "hX5PAb"
@@ -415,6 +431,11 @@ msgstr "Search"
 #: src/components/command-palette.tsx
 msgid "HC7Mi4"
 msgstr "Search courses or pages..."
+
+#: src/components/command-palette.tsx
+#: src/components/navbar-links.tsx
+msgid "qOX/mN"
+msgstr "Start course"
 
 #: src/components/command-palette.tsx
 msgid "gvd2HB"
@@ -468,34 +489,13 @@ msgstr "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} es {🇪
 msgid "jOuyTp"
 msgstr "Change language"
 
-#: src/components/navbar-links.tsx
-#: src/components/command-palette.tsx
-msgid "R85gsW"
-msgstr "Courses"
-
-#: src/components/navbar-links.tsx
-#: src/components/command-palette.tsx
-msgid "qOX/mN"
-msgstr "Start course"
-
 #: src/components/protected-section.tsx
 msgid "2jC0rX"
 msgstr "Checking if you're logged in..."
 
 #: src/components/protected-section.tsx
-#: src/components/logout-dropdown-item.tsx
-#: src/components/command-palette.tsx
-msgid "AyGauy"
-msgstr "Login"
-
-#: src/components/protected-section.tsx
 msgid "yOFm9C"
 msgstr "You need to be logged in to access this page."
-
-#: src/components/user-dropdown-menu.tsx
-#: src/components/command-palette.tsx
-msgid "I+38K2"
-msgstr "My courses"
 
 #: src/lib/auth/otp.ts
 msgid "H6FKgo"
