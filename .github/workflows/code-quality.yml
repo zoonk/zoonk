@@ -13,6 +13,7 @@ jobs:
   code-quality:
     runs-on: ubuntu-latest
     env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 

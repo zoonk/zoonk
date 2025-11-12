@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@prisma/client": "6.17.1",
+    "@prisma/client": "6.19.0",
     "@tabler/icons-react": "3.35.0",
     "@zoonk/api": "workspace:*",
     "@zoonk/db": "workspace:*",
