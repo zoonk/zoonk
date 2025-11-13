@@ -146,7 +146,7 @@
           "options": {
             "conventions": [
               {
-                "match": "output_format|allow_promotion_codes|billing_address_collection|tax_id_collection|(.*)",
+                "match": "output_format|(.*)",
                 "selector": { "kind": "objectLiteralProperty" }
               },
               {
