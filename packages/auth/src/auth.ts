@@ -48,6 +48,13 @@ export function zoonkAuth({ sendVerificationOTP }: AuthSetup) {
         stripeWebhookSecret: STRIPE_WEBHOOK_SECRET,
         subscription: {
           enabled: true,
+          getCheckoutSessionParams: async () => ({
+            params: {
+              allow_promotion_codes: true,
+              billing_address_collection: "required",
+              tax_id_collection: { enabled: true },
+            },
+          }),
           plans: [
             {
               annualDiscountLookupKey: "plus_yearly",
