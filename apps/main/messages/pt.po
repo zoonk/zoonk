@@ -119,6 +119,18 @@ msgstr "Descubra cursos e recursos personalizados para aprender {prompt}. O Zoon
 msgid "X2b6pH"
 msgstr "Aprenda {prompt} com IA"
 
+#: src/app/[locale]/(catalog)/learn/learn-form.tsx
+msgid "LDMSuO"
+msgstr "ex: ciência da computação, astronomia, biologia, ..."
+
+#: src/app/[locale]/(catalog)/learn/learn-form.tsx
+msgid "mOFG3K"
+msgstr "Começar"
+
+#: src/app/[locale]/(catalog)/learn/learn-form.tsx
+msgid "uCb1nG"
+msgstr "Digite um assunto"
+
 #: src/app/[locale]/(catalog)/learn/page.tsx
 msgid "3NEMCK"
 msgstr "Diga ao Zoonk o que você quer aprender e receba um curso gerado por IA. Comece a aprender qualquer assunto com lições e atividades interativas."
@@ -130,18 +142,6 @@ msgstr "O que você quer aprender?"
 #: src/app/[locale]/(catalog)/learn/page.tsx
 msgid "Zs1QEq"
 msgstr "Aprenda qualquer coisa com IA"
-
-#: src/app/[locale]/(catalog)/learn/start-course-form.tsx
-msgid "LDMSuO"
-msgstr "ex: ciência da computação, astronomia, biologia, ..."
-
-#: src/app/[locale]/(catalog)/learn/start-course-form.tsx
-msgid "mOFG3K"
-msgstr "Começar"
-
-#: src/app/[locale]/(catalog)/learn/start-course-form.tsx
-msgid "uCb1nG"
-msgstr "Digite um assunto"
 
 #: src/app/[locale]/(catalog)/my/page.tsx
 msgid "eeNr/Y"

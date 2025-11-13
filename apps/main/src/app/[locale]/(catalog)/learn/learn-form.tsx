@@ -13,7 +13,9 @@ import { useExtracted } from "next-intl";
 import { type FormEvent, useId, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 
-export function StartCourseForm() {
+const PROMPT_MAX_LENGTH = 128;
+
+export function LearnForm() {
   const [isLoading, setIsLoading] = useState(false);
   const t = useExtracted();
   const { push } = useRouter();
@@ -51,6 +53,7 @@ export function StartCourseForm() {
           className="peer"
           disabled={isLoading}
           id={queryId}
+          maxLength={PROMPT_MAX_LENGTH}
           name="query"
           placeholder={t("e.g., computer science, astronomy, biology, ...")}
           required

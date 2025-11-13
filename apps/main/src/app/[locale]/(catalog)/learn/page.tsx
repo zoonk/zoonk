@@ -4,7 +4,7 @@ import { cacheTagLearn } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getExtracted, setRequestLocale } from "next-intl/server";
-import { StartCourseForm } from "./start-course-form";
+import { LearnForm } from "./learn-form";
 
 export async function generateMetadata({
   params,
@@ -42,7 +42,7 @@ export default async function Learn({ params }: PageProps<"/[locale]/learn">) {
         {t("What do you want to learn?")}
       </h1>
 
-      <StartCourseForm />
+      <LearnForm />
     </main>
   );
 }
