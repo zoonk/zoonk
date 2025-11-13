@@ -6,7 +6,7 @@
     "@zoonk/utils": "workspace:*",
     "ai": "5.0.62",
     "lucide-react": "0.553.0",
-    "next": "16.0.1",
+    "next": "16.0.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "zod": "4.1.12"

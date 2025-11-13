@@ -17,7 +17,6 @@ import {
   SubTrigger,
   Trigger,
 } from "@radix-ui/react-dropdown-menu";
-import { useRemovePortal } from "@zoonk/ui/hooks/use-remove-portal";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, ChevronRightIcon, CircleIcon } from "lucide-react";
 import type * as React from "react";
@@ -41,8 +40,6 @@ function DropdownMenuContent({
   sideOffset = 4,
   ...props
 }: React.ComponentProps<typeof Content>) {
-  const ref = useRemovePortal();
-
   return (
     <DropdownMenuPortal>
       <Content
@@ -51,7 +48,6 @@ function DropdownMenuContent({
           className,
         )}
         data-slot="dropdown-menu-content"
-        ref={ref}
         sideOffset={sideOffset}
         {...props}
       />

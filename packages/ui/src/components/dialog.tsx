@@ -10,7 +10,6 @@ import {
   Title,
   Trigger,
 } from "@radix-ui/react-dialog";
-import { useRemovePortal } from "@zoonk/ui/hooks/use-remove-portal";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
 import type * as React from "react";
@@ -27,10 +26,9 @@ function DialogPortal({
   children,
   ...props
 }: React.ComponentProps<typeof Portal>) {
-  const ref = useRemovePortal();
   return (
     <Portal data-slot="dialog-portal" {...props}>
-      <div ref={ref}>{children}</div>
+      {children}
     </Portal>
   );
 }

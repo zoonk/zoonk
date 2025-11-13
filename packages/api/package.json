@@ -16,7 +16,7 @@
   },
   "name": "@zoonk/api",
   "peerDependencies": {
-    "next": ">=16.0.1",
+    "next": ">=16.0.3",
     "server-only": ">=0.0.1"
   },
   "private": true,
