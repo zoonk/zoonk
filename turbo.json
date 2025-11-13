@@ -1,23 +1,27 @@
 {
   "$schema": "./node_modules/turbo/schema.json",
   "globalEnv": [
-    "BETTER_AUTH_SECRET",
-    "DATABASE_URL",
-    "MAILER_API_KEY",
-    "STRIPE_SECRET_KEY",
-    "STRIPE_WEBHOOK_SECRET",
-    "STRIPE_PLUS_MONTHLY_PRICE_ID",
-    "STRIPE_PLUS_YEARLY_PRICE_ID",
-    "GOOGLE_CLIENT_ID",
-    "GOOGLE_CLIENT_SECRET",
-    "APPLE_TEAM_ID",
+    "AI_GATEWAY_API_KEY",
+    "AI_MODEL_ALTERNATIVE_TITLES",
+    "AI_MODEL_CHAPTER_LESSONS",
+    "AI_MODEL_COURSE_CATEGORIES",
+    "AI_MODEL_COURSE_CHAPTERS",
+    "AI_MODEL_COURSE_DESCRIPTION",
+    "AI_MODEL_COURSE_SUGGESTIONS",
     "APPLE_CLIENT_ID",
     "APPLE_KEY_ID",
     "APPLE_PRIVATE_KEY",
-    "AI_GATEWAY_API_KEY",
-    "AI_MODEL_ALTERNATIVE_TITLES",
-    "AI_MODEL_COURSE_CATEGORIES",
-    "AI_MODEL_COURSE_SUGGESTIONS"
+    "APPLE_TEAM_ID",
+    "BETTER_AUTH_SECRET",
+    "BLOB_READ_WRITE_TOKEN",
+    "DATABASE_URL",
+    "GOOGLE_CLIENT_ID",
+    "GOOGLE_CLIENT_SECRET",
+    "MAILER_API_KEY",
+    "STRIPE_PLUS_MONTHLY_PRICE_ID",
+    "STRIPE_PLUS_YEARLY_PRICE_ID",
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET"
   ],
   "tasks": {
     "//#format": { "cache": false },
@@ -32,8 +36,8 @@
       "dependsOn": ["^db:deploy"]
     },
     "db:generate": {
-      "cache": false,
-      "dependsOn": ["^db:generate"]
+      "dependsOn": ["^db:generate"],
+      "outputs": ["generated/**"]
     },
     "db:migrate": {
       "cache": false,
