@@ -1,20 +1,20 @@
 import type { SendVerificationOTP } from "@zoonk/auth";
 import { sendEmail } from "@zoonk/mailer";
-import { getTranslations } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 
 export const sendVerificationOTP: SendVerificationOTP = async (
   { email, otp },
   _request,
 ) => {
-  const t = await getTranslations("OTP");
+  const t = await getExtracted();
 
-  const subject = t("subject");
+  const subject = t("Your Zoonk sign-in code");
 
   const text = `
-      <p>${t("intro")}</p>
+      <p>${t("This is your one-time passcode to sign in to Zoonk:")}</p>
       <h2>${otp}</h2>
-      <p>${t("expiry")}</p>
-      <p>${t("ignore")}</p>
+      <p>${t("This code will expire in 5 minutes.")}</p>
+      <p>${t("If you did not request this code, you can safely ignore this email.")}</p>
     `;
 
   await sendEmail({

@@ -13,7 +13,7 @@
     "@zoonk/utils": "workspace:*",
     "lucide-react": "0.553.0",
     "next": "16.0.1",
-    "next-intl": "4.4.0",
+    "next-intl": "4.5.2",
     "pg": "8.16.3",
     "react": "19.2.0",
     "react-dom": "19.2.0",
@@ -21,10 +21,10 @@
     "stripe": "18.5.0"
   },
   "devDependencies": {
-    "@lingual/i18n-check": "0.8.9",
     "@mdx-js/loader": "3.1.1",
     "@mdx-js/react": "3.1.1",
     "@next/mdx": "16.0.1",
+    "@tailwindcss/postcss": "4.1.17",
     "@testing-library/dom": "10.4.1",
     "@testing-library/react": "16.3.0",
     "@types/mdx": "2.0.13",
@@ -46,7 +46,6 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "i18n": "i18n-check -s en -l messages -u src -f next-intl",
     "start": "next start",
     "stripe:listen": "stripe listen --forward-to http://localhost:3000/api/auth/stripe/webhook",
     "test": "vitest run",

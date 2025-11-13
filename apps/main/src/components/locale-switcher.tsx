@@ -5,13 +5,13 @@ import {
   NativeSelectOption,
 } from "@zoonk/ui/components/native-select";
 import { useParams } from "next/navigation";
-import { useLocale, useTranslations } from "next-intl";
+import { useExtracted, useLocale } from "next-intl";
 import { useTransition } from "react";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing } from "@/i18n/routing";
 
 export default function LocaleSwitcher() {
-  const t = useTranslations("LocaleSwitcher");
+  const t = useExtracted();
   const locale = useLocale();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -34,7 +34,7 @@ export default function LocaleSwitcher() {
 
   return (
     <NativeSelect
-      aria-label={t("label")}
+      aria-label={t("Change language")}
       className="w-[180px]"
       defaultValue={locale}
       disabled={isPending}
@@ -42,7 +42,10 @@ export default function LocaleSwitcher() {
     >
       {routing.locales.map((lang) => (
         <NativeSelectOption key={lang} value={lang}>
-          {t("locale", { locale: lang })}
+          {t(
+            "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} es {🇪🇸 Español} other {Unknown}}",
+            { locale: lang },
+          )}
         </NativeSelectOption>
       ))}
     </NativeSelect>

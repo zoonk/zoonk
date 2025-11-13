@@ -3,7 +3,7 @@
 import { cacheTagTerms } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getTranslations } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 
 export async function generateMetadata({
   params,
@@ -13,11 +13,13 @@ export async function generateMetadata({
   cacheLife("max");
   cacheTag(locale, cacheTagTerms());
 
-  const t = await getTranslations({ locale, namespace: "Terms" });
+  const t = await getExtracted({ locale });
 
   return {
-    description: t("metaDescription"),
-    title: t("metaTitle"),
+    description: t(
+      "Read Zoonk's terms of use to understand the rules and conditions for using our platform and services",
+    ),
+    title: t("Terms of Use"),
   };
 }
 

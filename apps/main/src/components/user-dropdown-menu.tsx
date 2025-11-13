@@ -3,21 +3,21 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@zoonk/ui/components/dropdown-menu";
-import { getTranslations } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { getMenu } from "@/lib/menu";
 import { ClientLink } from "../i18n/client-link";
 import { LogoutDropdownItem } from "./logout-dropdown-item";
 
 export async function UserDropdownMenu() {
-  const t = await getTranslations("Menu");
+  const t = await getExtracted();
 
-  const catalogMenu = [{ key: t("myCourses"), ...getMenu("myCourses") }];
+  const catalogMenu = [{ key: t("My courses"), ...getMenu("myCourses") }];
 
   const accountMenu = [
-    { key: t("subscription"), ...getMenu("subscription") },
-    { key: t("settings"), ...getMenu("settings") },
-    { key: t("feedback"), ...getMenu("feedback") },
-    { key: t("help"), ...getMenu("help") },
+    { key: t("Subscription"), ...getMenu("subscription") },
+    { key: t("Settings"), ...getMenu("settings") },
+    { key: t("Feedback"), ...getMenu("feedback") },
+    { key: t("Help"), ...getMenu("help") },
   ];
 
   return (

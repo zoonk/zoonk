@@ -14,7 +14,7 @@ import {
   ItemSeparator,
   ItemTitle,
 } from "@zoonk/ui/components/item";
-import { getTranslations } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { Fragment } from "react/jsx-runtime";
 import { ContentFeedback } from "@/components/content-feedback";
 import { Link } from "@/i18n/navigation";
@@ -28,16 +28,18 @@ export async function CourseSuggestions({
   locale,
   prompt,
 }: CourseSuggestionsProps) {
-  const t = await getTranslations("LearnResults");
+  const t = await getExtracted();
   const suggestions = await fetchCourseSuggestions({ locale, prompt });
 
   return (
     <Container className="mx-auto w-full max-w-2xl">
       <ContainerHeader className="text-center">
-        <ContainerTitle>{t("title", { prompt })}</ContainerTitle>
+        <ContainerTitle>
+          {t("Course ideas for {prompt}", { prompt })}
+        </ContainerTitle>
 
         <Link className={buttonVariants({ variant: "link" })} href="/learn">
-          {t("changeAction")}
+          {t("Change subject")}
         </Link>
       </ContainerHeader>
 
@@ -52,7 +54,7 @@ export async function CourseSuggestions({
 
               <ItemActions>
                 <Button size="sm" variant="outline">
-                  {t("createCourse")}
+                  {t("Create course")}
                 </Button>
               </ItemActions>
             </Item>

@@ -9,7 +9,7 @@ import {
 import { cacheTagSubscription } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getExtracted, setRequestLocale } from "next-intl/server";
 import { ProtectedSection } from "@/components/protected-section";
 import { SubscriptionPage } from "./subscription-page";
 
@@ -21,11 +21,13 @@ export async function generateMetadata({
   cacheLife("max");
   cacheTag(locale, cacheTagSubscription());
 
-  const t = await getTranslations({ locale, namespace: "Subscription" });
+  const t = await getExtracted({ locale });
 
   return {
-    description: t("metaDescription"),
-    title: t("metaTitle"),
+    description: t(
+      "Manage your Zoonk subscription. View your current plan, upgrade or downgrade, and see available benefits.",
+    ),
+    title: t("Manage Subscription"),
   };
 }
 
@@ -38,13 +40,15 @@ export default async function Subscription({
   cacheLife("max");
   cacheTag(locale, cacheTagSubscription());
 
-  const t = await getTranslations("Subscription");
+  const t = await getExtracted();
 
   return (
     <Container>
       <ContainerHeader>
-        <ContainerTitle>{t("title")}</ContainerTitle>
-        <ContainerDescription>{t("subtitle")}</ContainerDescription>
+        <ContainerTitle>{t("Subscription")}</ContainerTitle>
+        <ContainerDescription>
+          {t("Check your plan details and manage your subscription.")}
+        </ContainerDescription>
       </ContainerHeader>
 
       <ProtectedSection>

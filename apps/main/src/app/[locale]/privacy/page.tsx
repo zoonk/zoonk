@@ -3,7 +3,7 @@
 import { cacheTagPrivacy } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getTranslations } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 
 export async function generateMetadata({
   params,
@@ -13,11 +13,13 @@ export async function generateMetadata({
   cacheLife("max");
   cacheTag(locale, cacheTagPrivacy());
 
-  const t = await getTranslations({ locale, namespace: "Privacy" });
+  const t = await getExtracted({ locale });
 
   return {
-    description: t("metaDescription"),
-    title: t("metaTitle"),
+    description: t(
+      "Read Zoonk's privacy policy to understand how we collect, use, and protect your personal information.",
+    ),
+    title: t("Privacy Policy"),
   };
 }
 

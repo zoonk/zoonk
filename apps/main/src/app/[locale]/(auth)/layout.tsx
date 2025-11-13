@@ -3,7 +3,7 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cacheTagLogin } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 
@@ -19,7 +19,7 @@ export default async function AuthLayout({
   cacheLife("max");
   cacheTag(locale, cacheTagLogin());
 
-  const t = await getTranslations("Menu");
+  const t = await getExtracted();
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
@@ -29,7 +29,7 @@ export default async function AuthLayout({
           href={homeMenu.url}
         >
           <homeMenu.icon aria-hidden="true" />
-          <span className="sr-only">{t("home")}</span>
+          <span className="sr-only">{t("Home page")}</span>
         </Link>
       </nav>
 

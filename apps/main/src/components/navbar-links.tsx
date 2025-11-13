@@ -1,7 +1,7 @@
 "use client";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { CommandPalette } from "./command-palette";
@@ -31,7 +31,7 @@ const learnMenu = getMenu("learn");
 
 export function NavbarLinks() {
   const pathname = usePathname();
-  const t = useTranslations("Menu");
+  const t = useExtracted();
 
   return (
     <>
@@ -43,7 +43,7 @@ export function NavbarLinks() {
         href={homeMenu.url}
       >
         <homeMenu.icon aria-hidden="true" />
-        <span className="sr-only">{t("home")}</span>
+        <span className="sr-only">{t("Home page")}</span>
       </Link>
 
       <Link
@@ -54,7 +54,7 @@ export function NavbarLinks() {
         href={coursesMenu.url}
       >
         <coursesMenu.icon aria-hidden="true" />
-        <span className="hidden sm:inline">{t("courses")}</span>
+        <span className="hidden sm:inline">{t("Courses")}</span>
       </Link>
 
       <CommandPalette />
@@ -68,7 +68,7 @@ export function NavbarLinks() {
         href={learnMenu.url}
       >
         <learnMenu.icon aria-hidden="true" />
-        <span className="hidden sm:inline">{t("learn")}</span>
+        <span className="hidden sm:inline">{t("Learn")}</span>
       </Link>
     </>
   );

@@ -9,7 +9,7 @@ import {
 import { cacheTagLanguage } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getExtracted, setRequestLocale } from "next-intl/server";
 import LocaleSwitcher from "@/components/locale-switcher";
 
 export async function generateMetadata({
@@ -20,11 +20,13 @@ export async function generateMetadata({
   cacheLife("max");
   cacheTag(locale, cacheTagLanguage());
 
-  const t = await getTranslations({ locale, namespace: "Language" });
+  const t = await getExtracted({ locale });
 
   return {
-    description: t("metaDescription"),
-    title: t("metaTitle"),
+    description: t(
+      "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages.",
+    ),
+    title: t("Change Language"),
   };
 }
 
@@ -37,13 +39,15 @@ export default async function Language({
   cacheLife("max");
   cacheTag(locale, cacheTagLanguage());
 
-  const t = await getTranslations("Language");
+  const t = await getExtracted();
 
   return (
     <Container>
       <ContainerHeader>
-        <ContainerTitle>{t("title")}</ContainerTitle>
-        <ContainerDescription>{t("subtitle")}</ContainerDescription>
+        <ContainerTitle>{t("Language")}</ContainerTitle>
+        <ContainerDescription>
+          {t("Choose the app language you prefer for this device.")}
+        </ContainerDescription>
       </ContainerHeader>
 
       <LocaleSwitcher />

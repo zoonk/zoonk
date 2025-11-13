@@ -12,7 +12,7 @@ import {
 } from "@zoonk/ui/components/command";
 import { useKeyboardShortcut } from "@zoonk/ui/hooks/use-keyboard-shortcut";
 import { Search } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
@@ -21,7 +21,7 @@ const logoutMenu = getMenu("logout");
 
 export function CommandPalette() {
   const { push } = useRouter();
-  const t = useTranslations("Menu");
+  const t = useExtracted();
   const [query, setQuery] = useState("");
   const { isOpen, open, close } = useKeyboardShortcut("k");
   const { isLoggedIn, logout } = useLogout({ onSuccess: () => push("/login") });
@@ -37,28 +37,28 @@ export function CommandPalette() {
   };
 
   const getStarted = [
-    { key: t("home"), ...getMenu("home") },
-    { key: t("courses"), ...getMenu("courses") },
-    { key: t("learn"), ...getMenu("learn") },
+    { key: t("Home page"), ...getMenu("home") },
+    { key: t("Courses"), ...getMenu("courses") },
+    { key: t("Learn something"), ...getMenu("learn") },
   ];
 
   const accountPublic = [
-    { key: t("login"), ...getMenu("login") },
-    { key: t("language"), ...getMenu("language") },
+    { key: t("Login"), ...getMenu("login") },
+    { key: t("Language"), ...getMenu("language") },
   ];
 
   const accountPrivate = [
-    { key: t("myCourses"), ...getMenu("myCourses") },
-    { key: t("subscription"), ...getMenu("subscription") },
-    { key: t("settings"), ...getMenu("settings") },
-    { key: t("language"), ...getMenu("language") },
-    { key: t("displayName"), ...getMenu("displayName") },
+    { key: t("My courses"), ...getMenu("myCourses") },
+    { key: t("Manage subscription"), ...getMenu("subscription") },
+    { key: t("Manage settings"), ...getMenu("settings") },
+    { key: t("Update language"), ...getMenu("language") },
+    { key: t("Update display name"), ...getMenu("displayName") },
   ];
 
   const contactUs = [
-    { key: t("feedback"), ...getMenu("feedback") },
-    { key: t("help"), ...getMenu("help") },
-    { key: t("follow"), ...getMenu("follow") },
+    { key: t("Send feedback"), ...getMenu("feedback") },
+    { key: t("Help and support"), ...getMenu("help") },
+    { key: t("Follow us on social media"), ...getMenu("follow") },
   ];
 
   return (
@@ -70,29 +70,29 @@ export function CommandPalette() {
         variant="outline"
       >
         <Search />
-        <span className="sr-only">{t("search")}</span>
+        <span className="sr-only">{t("Search")}</span>
       </Button>
 
       <CommandDialog
         className="top-4 translate-y-0 lg:top-1/2 lg:translate-y-[-50%]"
-        closeLabel={t("close")}
-        description={t("paletteDescription")}
+        closeLabel={t("Close search")}
+        description={t("Search courses or pages...")}
         onOpenChange={closePalette}
         open={isOpen}
-        title={t("search")}
+        title={t("Search")}
       >
         <CommandInput
           onValueChange={setQuery}
-          placeholder={t("paletteDescription")}
+          placeholder={t("Search courses or pages...")}
           value={query}
         />
 
         <CommandList>
           <CommandEmpty>
-            <p>{t("noResults")}</p>
+            <p>{t("No results found")}</p>
           </CommandEmpty>
 
-          <CommandGroup heading={t("getStarted")}>
+          <CommandGroup heading={t("Get started")}>
             {getStarted.map((item) => (
               <CommandItem
                 key={item.key}
@@ -104,7 +104,7 @@ export function CommandPalette() {
             ))}
           </CommandGroup>
 
-          <CommandGroup heading={t("myAccount")}>
+          <CommandGroup heading={t("My account")}>
             {!isLoggedIn &&
               accountPublic.map((item) => (
                 <CommandItem
@@ -130,12 +130,12 @@ export function CommandPalette() {
             {isLoggedIn && (
               <CommandItem onSelect={logout}>
                 <logoutMenu.icon aria-hidden="true" />
-                {t("logout")}
+                {t("Logout")}
               </CommandItem>
             )}
           </CommandGroup>
 
-          <CommandGroup heading={t("contactUs")}>
+          <CommandGroup heading={t("Contact us")}>
             {contactUs.map((item) => (
               <CommandItem
                 key={item.key}

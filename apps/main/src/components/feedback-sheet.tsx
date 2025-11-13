@@ -9,7 +9,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@zoonk/ui/components/sheet";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { ContactForm } from "./contact-form";
 
 interface FeedbackSheetProps extends React.ComponentProps<"div"> {
@@ -17,19 +17,23 @@ interface FeedbackSheetProps extends React.ComponentProps<"div"> {
 }
 
 export function FeedbackSheet({ children, side }: FeedbackSheetProps) {
-  const t = useTranslations("Feedback");
+  const t = useExtracted();
 
   return (
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent
         className="mx-auto max-w-lg"
-        closeLabel={t("closeLabel")}
+        closeLabel={t("Close")}
         side={side}
       >
         <SheetHeader>
-          <SheetTitle>{t("title")}</SheetTitle>
-          <SheetDescription>{t("subtitle")}</SheetDescription>
+          <SheetTitle>{t("Feedback")}</SheetTitle>
+          <SheetDescription>
+            {t(
+              "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com.",
+            )}
+          </SheetDescription>
         </SheetHeader>
 
         <SheetFooter className="pt-0">

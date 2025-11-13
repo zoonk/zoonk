@@ -1,4 +1,3 @@
 {
-  "i18n-ally.localesPaths": ["./messages"],
   "typescript.tsdk": "node_modules/typescript/lib"
 }

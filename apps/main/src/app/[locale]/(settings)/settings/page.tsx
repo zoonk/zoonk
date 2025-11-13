@@ -9,7 +9,7 @@ import {
 import { cacheTagSettings } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getExtracted, setRequestLocale } from "next-intl/server";
 import { SettingsList } from "./settings-list";
 
 export async function generateMetadata({
@@ -20,11 +20,13 @@ export async function generateMetadata({
   cacheLife("max");
   cacheTag(locale, cacheTagSettings());
 
-  const t = await getTranslations({ locale, namespace: "Settings" });
+  const t = await getExtracted({ locale });
 
   return {
-    description: t("metaDescription"),
-    title: t("metaTitle"),
+    description: t(
+      "Customize your Zoonk learning experience. Manage account settings, profile, and preferences to get the most out of our education platform.",
+    ),
+    title: t("Settings"),
   };
 }
 
@@ -37,13 +39,15 @@ export default async function Settings({
   cacheLife("max");
   cacheTag(locale, cacheTagSettings());
 
-  const t = await getTranslations("Settings");
+  const t = await getExtracted();
 
   return (
     <Container className="p-0">
       <ContainerHeader className="px-4 pt-4">
-        <ContainerTitle>{t("title")}</ContainerTitle>
-        <ContainerDescription>{t("subtitle")}</ContainerDescription>
+        <ContainerTitle>{t("Settings")}</ContainerTitle>
+        <ContainerDescription>
+          {t("Manage your account settings, profile, and preferences.")}
+        </ContainerDescription>
       </ContainerHeader>
 
       <SettingsList />

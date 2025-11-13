@@ -9,7 +9,7 @@ import {
 import { cacheTagHelp } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getExtracted, setRequestLocale } from "next-intl/server";
 import { ContactForm } from "@/components/contact-form";
 
 export async function generateMetadata({
@@ -20,11 +20,13 @@ export async function generateMetadata({
   cacheLife("max");
   cacheTag(locale, cacheTagHelp());
 
-  const t = await getTranslations({ locale, namespace: "Help" });
+  const t = await getExtracted({ locale });
 
   return {
-    description: t("metaDescription"),
-    title: t("metaTitle"),
+    description: t(
+      "Need help with Zoonk? Contact our support or browse the FAQ to quickly find answers to common questions.",
+    ),
+    title: t("Help & Support"),
   };
 }
 
@@ -35,13 +37,18 @@ export default async function Help({ params }: PageProps<"/[locale]/help">) {
   cacheLife("max");
   cacheTag(locale, cacheTagHelp());
 
-  const t = await getTranslations("Help");
+  const t = await getExtracted();
 
   return (
     <Container>
       <ContainerHeader>
-        <ContainerTitle>{t("title")}</ContainerTitle>
-        <ContainerDescription>{t("subtitle")}</ContainerDescription>
+        <ContainerTitle>{t("Help")}</ContainerTitle>
+
+        <ContainerDescription>
+          {t(
+            "Get support and answers. Fill in the form below or email us directly at hello@zoonk.com.",
+          )}
+        </ContainerDescription>
       </ContainerHeader>
 
       <ContactForm />

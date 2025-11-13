@@ -4,7 +4,7 @@ import { track } from "@vercel/analytics";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { MessageSquareIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { FeedbackSheet } from "./feedback-sheet";
 
@@ -18,7 +18,7 @@ export function ContentFeedback({
   contentId,
   className,
 }: ContentFeedbackProps) {
-  const t = useTranslations("ContentFeedback");
+  const t = useExtracted();
   const [feedback, setFeedback] = useState<"upvote" | "downvote" | null>(null);
 
   const handleFeedback = (value: "upvote" | "downvote") => {
@@ -33,7 +33,9 @@ export function ContentFeedback({
     <footer
       className={cn("flex flex-col items-center gap-1 text-center", className)}
     >
-      <h6 className="text-muted-foreground text-sm">{t("title")}</h6>
+      <h6 className="text-muted-foreground text-sm">
+        {t("Did you like this content?")}
+      </h6>
 
       <div className="flex gap-1">
         <Button
@@ -46,7 +48,7 @@ export function ContentFeedback({
           variant="ghost"
         >
           <ThumbsUpIcon aria-hidden="true" />
-          <span className="sr-only">{t("upvote")}</span>
+          <span className="sr-only">{t("I liked it")}</span>
         </Button>
 
         <Button
@@ -59,14 +61,14 @@ export function ContentFeedback({
           variant="ghost"
         >
           <ThumbsDownIcon aria-hidden="true" />
-          <span className="sr-only">{t("downvote")}</span>
+          <span className="sr-only">{t("I didn't like it")}</span>
         </Button>
       </div>
 
       <FeedbackSheet side="bottom">
         <Button className="text-muted-foreground" size="sm" variant="ghost">
           <MessageSquareIcon aria-hidden="true" />
-          {t("sendFeedback")}
+          {t("Send feedback")}
         </Button>
       </FeedbackSheet>
     </footer>
