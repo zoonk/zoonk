@@ -6,12 +6,10 @@ import {
   AccordionTrigger,
 } from "@zoonk/ui/components/accordion";
 import { Button } from "@zoonk/ui/components/button";
+import { useClipboard } from "@zoonk/ui/hooks/use-clipboard";
 import { Check, Copy } from "lucide-react";
-import { useState } from "react";
 import { calculateScore, getScoreClassName } from "@/lib/score";
 import type { EvalResult, ScoreStep } from "@/lib/types";
-
-const COPIED_TIMEOUT_MS = 2000;
 
 type TestCaseCardProps = {
   result: EvalResult;
@@ -81,13 +79,7 @@ function TokensSection({ inputTokens, outputTokens }: TokensSectionProps) {
 }
 
 function OutputSection({ output }: OutputSectionProps) {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(output);
-    setCopied(true);
-    setTimeout(() => setCopied(false), COPIED_TIMEOUT_MS);
-  };
+  const { isCopied, copy } = useClipboard();
 
   return (
     <div>
@@ -95,11 +87,11 @@ function OutputSection({ output }: OutputSectionProps) {
         <p className="text-muted-foreground text-sm">Output</p>
         <Button
           className="gap-2"
-          onClick={handleCopy}
+          onClick={() => copy(output)}
           size="sm"
           variant="ghost"
         >
-          {copied ? (
+          {isCopied ? (
             <>
               <Check className="size-4" />
               Copied
