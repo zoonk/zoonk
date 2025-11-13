@@ -4,6 +4,17 @@ import { generateObject } from "ai";
 import { z } from "zod";
 import systemPrompt from "./prompt.md";
 
+const DEFAULT_MODEL =
+  process.env.AI_MODEL_CHAPTER_LESSONS ?? "google/gemini-2.5-flash";
+
+const FALLBACK_MODELS = [
+  "openai/gpt-5-mini",
+  "google/gemini-2.5-pro",
+  "xai/grok-4",
+  "openai/gpt-5",
+  "anthropic/claude-sonnet-4.5",
+];
+
 const schema = z.object({
   lessons: z.array(
     z.object({
@@ -20,7 +31,8 @@ export type ChapterLessonsParams = {
   chapterTitle: string;
   courseTitle: string;
   locale: string;
-  model: string;
+  model?: string;
+  useFallback?: boolean;
 };
 
 export async function generateChapterLessons({
@@ -28,7 +40,8 @@ export async function generateChapterLessons({
   chapterTitle,
   courseTitle,
   locale,
-  model,
+  model = DEFAULT_MODEL,
+  useFallback = true,
 }: ChapterLessonsParams) {
   const userPrompt = `
     LANGUAGE: ${locale}
@@ -40,6 +53,9 @@ export async function generateChapterLessons({
   const { object, usage } = await generateObject({
     model,
     prompt: userPrompt,
+    providerOptions: {
+      gateway: { models: useFallback ? FALLBACK_MODELS : [] },
+    },
     schema,
     system: systemPrompt,
   });

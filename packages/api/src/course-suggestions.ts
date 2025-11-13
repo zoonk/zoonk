@@ -9,9 +9,6 @@ import {
 import { cacheTagCourseSuggestions } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 
-const model =
-  process.env.AI_MODEL_COURSE_SUGGESTIONS || "google/gemini-2.5-flash";
-
 export async function fetchCourseSuggestions({
   locale,
   prompt,
@@ -26,11 +23,7 @@ export async function fetchCourseSuggestions({
   const record = await getCourseSuggestion({ locale, prompt });
 
   if (!record) {
-    const { data } = await generateCourseSuggestions({
-      locale,
-      model,
-      prompt,
-    });
+    const { data } = await generateCourseSuggestions({ locale, prompt });
 
     await addCourseSuggestion({ locale, prompt, suggestions: data });
 

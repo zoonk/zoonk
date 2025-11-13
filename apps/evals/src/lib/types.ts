@@ -50,5 +50,7 @@ export type Task<TInput = unknown, TOutput = unknown> = {
   testCases: TestCase[];
   // Using method signature instead of property signature makes this bivariant,
   // allowing Task<SpecificInput> to be assignable to Task<unknown>
-  generate(input: TInput & { model: string }): Promise<TaskResult<TOutput>>;
+  generate(
+    input: TInput & { model: string; useFallback?: boolean },
+  ): Promise<TaskResult<TOutput>>;
 };

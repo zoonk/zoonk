@@ -64,6 +64,8 @@ async function runTestCase(
   const result = await task.generate({
     ...testCase.userInput,
     model: modelId,
+    // We don't want to use fallback models during evals to ensure we're evaluating the correct model
+    useFallback: false,
   });
   const endTime = performance.now();
   const duration = endTime - startTime;
