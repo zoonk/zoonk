@@ -50,10 +50,9 @@ export function zoonkAuth({ sendVerificationOTP }: AuthSetup) {
           enabled: true,
           plans: [
             {
-              annualDiscountPriceId:
-                process.env.STRIPE_PLUS_YEARLY_PRICE_ID || "",
+              annualDiscountLookupKey: "plus_yearly",
+              lookupKey: "plus_monthly",
               name: "plus",
-              priceId: process.env.STRIPE_PLUS_MONTHLY_PRICE_ID || "",
             },
           ],
         },
