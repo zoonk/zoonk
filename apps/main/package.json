@@ -11,6 +11,7 @@
     "@zoonk/mailer": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
+    "botid": "1.5.10",
     "lucide-react": "0.553.0",
     "next": "16.0.3",
     "next-intl": "4.5.3",

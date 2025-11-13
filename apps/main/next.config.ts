@@ -1,5 +1,6 @@
 import path from "node:path";
 import createMDX from "@next/mdx";
+import { withBotId } from "botid/next/config";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
@@ -58,4 +59,4 @@ const withNextIntl = createNextIntlPlugin({
   },
 });
 
-export default withNextIntl(withMDX(nextConfig));
+export default withBotId(withNextIntl(withMDX(nextConfig)));
