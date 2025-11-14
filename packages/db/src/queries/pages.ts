@@ -44,8 +44,8 @@ export async function createPage(input: CreatePageInput) {
       ...pageData,
       members: {
         create: {
-          userId,
           role: "admin",
+          userId,
         },
       },
     },
@@ -57,21 +57,21 @@ export async function createPage(input: CreatePageInput) {
 
 export async function findPageBySlug(slug: string) {
   return prisma.page.findUnique({
-    where: { slug },
     include: {
       members: {
         include: {
           user: {
             select: {
-              id: true,
-              name: true,
               email: true,
+              id: true,
               image: true,
+              name: true,
             },
           },
         },
       },
     },
+    where: { slug },
   });
 }
 
@@ -79,11 +79,11 @@ export async function updatePage(input: UpdatePageInput) {
   const { slug, newSlug, ...updateData } = input;
 
   return prisma.page.update({
-    where: { slug },
     data: {
       ...updateData,
       ...(newSlug ? { slug: newSlug } : {}),
     },
+    where: { slug },
   });
 }
 
@@ -118,13 +118,13 @@ export async function checkPageMemberRole(params: {
 }
 
 export async function isPageAdmin(pageId: string, userId: string) {
-  return checkPageMemberRole({ pageId, userId, role: "admin" });
+  return checkPageMemberRole({ pageId, role: "admin", userId });
 }
 
 export async function checkSlugAvailability(slug: string) {
   const existing = await prisma.page.findUnique({
-    where: { slug },
     select: { id: true },
+    where: { slug },
   });
 
   return !existing;

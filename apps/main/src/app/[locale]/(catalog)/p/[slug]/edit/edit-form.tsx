@@ -1,5 +1,6 @@
 "use client";
 
+import { IconX } from "@tabler/icons-react";
 import { Button } from "@zoonk/ui/components/button";
 import { Input, InputError, InputSuccess } from "@zoonk/ui/components/input";
 import {
@@ -12,12 +13,11 @@ import { Label } from "@zoonk/ui/components/label";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { toSlug } from "@zoonk/utils/validation";
-import { IconX } from "@tabler/icons-react";
-import { useExtracted } from "next-intl";
 import Image from "next/image";
+import { useExtracted } from "next-intl";
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { updatePageAction, type UpdatePageState } from "./actions";
+import { type UpdatePageState, updatePageAction } from "./actions";
 
 type EditFormProps = {
   slug: string;
@@ -82,9 +82,9 @@ export function EditForm(props: EditFormProps) {
 
   return (
     <form action={formAction} className="flex max-w-2xl flex-col gap-6">
-      <input type="hidden" name="slug" value={props.slug} />
-      <input type="hidden" name="currentImage" value={props.image || ""} />
-      <input type="hidden" name="removeImage" value={String(removeImage)} />
+      <input name="slug" type="hidden" value={props.slug} />
+      <input name="currentImage" type="hidden" value={props.image || ""} />
+      <input name="removeImage" type="hidden" value={String(removeImage)} />
 
       {/* Basic Info */}
       <div className="flex flex-col gap-6">
@@ -93,11 +93,11 @@ export function EditForm(props: EditFormProps) {
         <div className="flex flex-col gap-2">
           <Label htmlFor="name">{t("Page name")}</Label>
           <Input
+            defaultValue={props.name}
             id="name"
             name="name"
             required
             type="text"
-            defaultValue={props.name}
           />
         </div>
 
@@ -110,10 +110,10 @@ export function EditForm(props: EditFormProps) {
             <InputGroupInput
               id="newSlug"
               name="newSlug"
+              onChange={handleSlugChange}
               required
               type="text"
               value={newSlug}
-              onChange={handleSlugChange}
             />
           </InputGroup>
           <p className="text-muted-foreground text-sm">
@@ -124,13 +124,13 @@ export function EditForm(props: EditFormProps) {
         <div className="flex flex-col gap-2">
           <Label htmlFor="description">{t("Description")}</Label>
           <Textarea
+            defaultValue={props.description || ""}
             id="description"
             name="description"
-            rows={4}
-            defaultValue={props.description || ""}
             placeholder={t(
               "Tell people about your business or organization...",
             )}
+            rows={4}
           />
         </div>
       </div>
@@ -142,17 +142,17 @@ export function EditForm(props: EditFormProps) {
         {imagePreview && !removeImage && (
           <div className="relative size-32">
             <Image
-              src={imagePreview}
               alt={t("Page image")}
-              fill
               className="rounded-lg object-cover"
+              fill
+              src={imagePreview}
             />
             <Button
+              className="-right-2 -top-2 absolute size-8"
+              onClick={handleRemoveImage}
+              size="icon"
               type="button"
               variant="destructive"
-              size="icon"
-              className="absolute -right-2 -top-2 size-8"
-              onClick={handleRemoveImage}
             >
               <IconX className="size-4" />
             </Button>
@@ -162,11 +162,11 @@ export function EditForm(props: EditFormProps) {
         <div className="flex flex-col gap-2">
           <Label htmlFor="image">{t("Upload new image")}</Label>
           <Input
+            accept="image/*"
             id="image"
             name="image"
-            type="file"
-            accept="image/*"
             onChange={handleImageChange}
+            type="file"
           />
         </div>
       </div>
@@ -178,11 +178,11 @@ export function EditForm(props: EditFormProps) {
         <div className="flex flex-col gap-2">
           <Label htmlFor="website">{t("Website")}</Label>
           <Input
+            defaultValue={props.website || ""}
             id="website"
             name="website"
-            type="url"
-            defaultValue={props.website || ""}
             placeholder="https://example.com"
+            type="url"
           />
         </div>
 
@@ -190,77 +190,77 @@ export function EditForm(props: EditFormProps) {
           <div className="flex flex-col gap-2">
             <Label htmlFor="xUrl">X</Label>
             <Input
+              defaultValue={props.xUrl || ""}
               id="xUrl"
               name="xUrl"
-              type="url"
-              defaultValue={props.xUrl || ""}
               placeholder="https://x.com/username"
+              type="url"
             />
           </div>
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="instagramUrl">Instagram</Label>
             <Input
+              defaultValue={props.instagramUrl || ""}
               id="instagramUrl"
               name="instagramUrl"
-              type="url"
-              defaultValue={props.instagramUrl || ""}
               placeholder="https://instagram.com/username"
+              type="url"
             />
           </div>
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="linkedinUrl">LinkedIn</Label>
             <Input
+              defaultValue={props.linkedinUrl || ""}
               id="linkedinUrl"
               name="linkedinUrl"
-              type="url"
-              defaultValue={props.linkedinUrl || ""}
               placeholder="https://linkedin.com/company/name"
+              type="url"
             />
           </div>
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="threadsUrl">Threads</Label>
             <Input
+              defaultValue={props.threadsUrl || ""}
               id="threadsUrl"
               name="threadsUrl"
-              type="url"
-              defaultValue={props.threadsUrl || ""}
               placeholder="https://threads.net/@username"
+              type="url"
             />
           </div>
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="youtubeUrl">YouTube</Label>
             <Input
+              defaultValue={props.youtubeUrl || ""}
               id="youtubeUrl"
               name="youtubeUrl"
-              type="url"
-              defaultValue={props.youtubeUrl || ""}
               placeholder="https://youtube.com/@channel"
+              type="url"
             />
           </div>
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="tiktokUrl">TikTok</Label>
             <Input
+              defaultValue={props.tiktokUrl || ""}
               id="tiktokUrl"
               name="tiktokUrl"
-              type="url"
-              defaultValue={props.tiktokUrl || ""}
               placeholder="https://tiktok.com/@username"
+              type="url"
             />
           </div>
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="githubUrl">GitHub</Label>
             <Input
+              defaultValue={props.githubUrl || ""}
               id="githubUrl"
               name="githubUrl"
-              type="url"
-              defaultValue={props.githubUrl || ""}
               placeholder="https://github.com/username"
+              type="url"
             />
           </div>
         </div>
@@ -277,9 +277,9 @@ export function EditForm(props: EditFormProps) {
       <div className="flex gap-4">
         <SubmitButton>{t("Save changes")}</SubmitButton>
         <Button
+          onClick={() => router.push(`/p/${props.slug}`)}
           type="button"
           variant="ghost"
-          onClick={() => router.push(`/p/${props.slug}`)}
         >
           {t("Cancel")}
         </Button>

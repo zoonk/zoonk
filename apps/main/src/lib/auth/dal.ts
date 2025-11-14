@@ -1,7 +1,7 @@
 import "server-only";
 
-import { cache } from "react";
 import { headers } from "next/headers";
+import { cache } from "react";
 import { auth } from "./index";
 
 export const verifySession = cache(async () => {
@@ -10,8 +10,8 @@ export const verifySession = cache(async () => {
   });
 
   if (!session?.user) {
-    return { isAuth: false, userId: null, user: null };
+    return { isAuth: false, user: null, userId: null };
   }
 
-  return { isAuth: true, userId: session.user.id, user: session.user };
+  return { isAuth: true, user: session.user, userId: session.user.id };
 });

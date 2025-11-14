@@ -13,7 +13,7 @@ import { toSlug } from "@zoonk/utils/validation";
 import { useExtracted } from "next-intl";
 import { useActionState, useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { createPageAction, type CreatePageState } from "./actions";
+import { type CreatePageState, createPageAction } from "./actions";
 
 const initialState: CreatePageState = {
   status: "idle",
@@ -55,11 +55,11 @@ export function PageForm() {
           <InputGroupInput
             id="name"
             name="name"
+            onChange={handleNameChange}
+            placeholder={t("My Company")}
             required
             type="text"
             value={name}
-            onChange={handleNameChange}
-            placeholder={t("My Company")}
           />
         </InputGroup>
         <p className="text-muted-foreground text-sm">
@@ -76,11 +76,11 @@ export function PageForm() {
           <InputGroupInput
             id="slug"
             name="slug"
+            onChange={handleSlugChange}
+            placeholder={t("my-company")}
             required
             type="text"
             value={slug}
-            onChange={handleSlugChange}
-            placeholder={t("my-company")}
           />
         </InputGroup>
         <p className="text-muted-foreground text-sm">

@@ -88,6 +88,7 @@ msgid "z6saPZ"
 msgstr "Explore all Zoonk courses to learn anything using AI. Find interactive lessons, challenges, and activities to learn subjects like science, math, technology, and more."
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
 msgid "47FYwb"
 msgstr "Cancel"
 
@@ -151,6 +152,92 @@ msgstr "My Courses"
 msgid "wfuVYZ"
 msgstr "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons and activities."
 
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+#: src/app/[locale]/(catalog)/pages/new/page-form.tsx
+msgid "03Mg3G"
+msgstr "Page URL"
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+#: src/app/[locale]/(catalog)/pages/new/page-form.tsx
+msgid "AjBEeD"
+msgstr "Page name"
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "evXygT"
+msgstr "Logo / Image"
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "FbealP"
+msgstr "Tell people about your business or organization..."
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "fm99Vy"
+msgstr "Basic Information"
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+#: src/app/[locale]/(catalog)/pages/new/page-form.tsx
+msgid "g9dGVL"
+msgstr "This will appear in the link:"
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "JkLHGw"
+msgstr "Website"
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "Q8Qw5B"
+msgstr "Description"
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "qCcwo3"
+msgstr "Links"
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "rVPFKu"
+msgstr "Page updated successfully!"
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "v4BgXt"
+msgstr "Upload new image"
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "X0ha1a"
+msgstr "Save changes"
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "yb0olw"
+msgstr "Page image"
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/page.tsx
+#: src/app/[locale]/(catalog)/p/[slug]/page.tsx
+msgid "33JnOM"
+msgstr "Edit page"
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/page.tsx
+msgid "By/tkA"
+msgstr "Edit page settings and information"
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/page.tsx
+msgid "CKxUO5"
+msgstr "Update your page information and settings"
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/page.tsx
+msgid "QRccCM"
+msgstr "Page not found"
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/page.tsx
+msgid "t4Po/D"
+msgstr "Edit {pageName}"
+
+#: src/app/[locale]/(catalog)/p/[slug]/page.tsx
+msgid "r46LDC"
+msgstr "Courses created by this page will appear here."
+
+#: src/app/[locale]/(catalog)/p/[slug]/page.tsx
+#: src/components/command-palette.tsx
+#: src/components/navbar-links.tsx
+msgid "R85gsW"
+msgstr "Courses"
+
 #: src/app/[locale]/(catalog)/page.tsx
 msgid "qsfeMJ"
 msgstr "Zoonk: AI Learning Platform"
@@ -158,6 +245,38 @@ msgstr "Zoonk: AI Learning Platform"
 #: src/app/[locale]/(catalog)/page.tsx
 msgid "ZgSctJ"
 msgstr "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and activities."
+
+#: src/app/[locale]/(catalog)/pages/new/page-form.tsx
+msgid "5oh047"
+msgstr "My Company"
+
+#: src/app/[locale]/(catalog)/pages/new/page-form.tsx
+msgid "9ShuYe"
+msgstr "my-company"
+
+#: src/app/[locale]/(catalog)/pages/new/page-form.tsx
+msgid "BCT58h"
+msgstr "Create page"
+
+#: src/app/[locale]/(catalog)/pages/new/page-form.tsx
+msgid "m4w7pS"
+msgstr "The name of your business or organization"
+
+#: src/app/[locale]/(catalog)/pages/new/page.tsx
+msgid "kknXcT"
+msgstr "Create a page for your business or organization on Zoonk. Share courses and content with your audience."
+
+#: src/app/[locale]/(catalog)/pages/new/page.tsx
+msgid "MH3ZTO"
+msgstr "Create a page for your business or organization. You'll be able to add courses and content later."
+
+#: src/app/[locale]/(catalog)/pages/new/page.tsx
+msgid "vtGXNm"
+msgstr "Create a new page"
+
+#: src/app/[locale]/(catalog)/pages/new/page.tsx
+msgid "XGRBwY"
+msgstr "Create Page"
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
@@ -430,11 +549,6 @@ msgstr "Close search"
 #: src/components/command-palette.tsx
 msgid "OhXwmw"
 msgstr "Update language"
-
-#: src/components/command-palette.tsx
-#: src/components/navbar-links.tsx
-msgid "R85gsW"
-msgstr "Courses"
 
 #: src/components/command-palette.tsx
 msgid "WnQ/AZ"

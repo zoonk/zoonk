@@ -50,7 +50,7 @@ export default async function EditPage({ params }: EditPageProps) {
 
   // Check authentication
   const session = await verifySession();
-  if (!session.isAuth || !session.userId) {
+  if (!(session.isAuth && session.userId)) {
     unauthorized();
   }
 
@@ -76,18 +76,18 @@ export default async function EditPage({ params }: EditPageProps) {
       </ContainerHeader>
 
       <EditForm
-        slug={page.slug}
-        name={page.name}
         description={page.description}
-        website={page.website}
+        githubUrl={page.githubUrl}
         image={page.image}
-        xUrl={page.xUrl}
         instagramUrl={page.instagramUrl}
         linkedinUrl={page.linkedinUrl}
+        name={page.name}
+        slug={page.slug}
         threadsUrl={page.threadsUrl}
-        youtubeUrl={page.youtubeUrl}
         tiktokUrl={page.tiktokUrl}
-        githubUrl={page.githubUrl}
+        website={page.website}
+        xUrl={page.xUrl}
+        youtubeUrl={page.youtubeUrl}
       />
     </Container>
   );

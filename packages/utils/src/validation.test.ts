@@ -23,8 +23,8 @@ describe("isValidSlug", () => {
   });
 
   it("should return false for very long slugs", () => {
-    const LONG_LENGTH = 64;
-    const longSlug = "a".repeat(LONG_LENGTH);
+    const LongLength = 64;
+    const longSlug = "a".repeat(LongLength);
     expect(isValidSlug(longSlug)).toBe(false);
   });
 });

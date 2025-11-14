@@ -2,12 +2,12 @@ import "server-only";
 
 import {
   type CreatePageInput,
-  type UpdatePageInput,
   checkSlugAvailability,
   createPage,
   deletePage,
   findPageBySlug,
   isPageAdmin,
+  type UpdatePageInput,
   updatePage,
 } from "@zoonk/db";
 import { isValidSlug } from "@zoonk/utils/validation";

@@ -20,25 +20,25 @@ export async function createPageAction(
   try {
     // Verify session
     const session = await verifySession();
-    if (!session.isAuth || !session.userId) {
+    if (!(session.isAuth && session.userId)) {
       return {
-        status: "error",
         message: "You must be logged in to create a page",
+        status: "error",
       };
     }
 
     // Validate inputs
     if (!name) {
       return {
-        status: "error",
         message: "Page name is required",
+        status: "error",
       };
     }
 
     if (!slug) {
       return {
-        status: "error",
         message: "Page URL is required",
+        status: "error",
       };
     }
 
@@ -54,8 +54,8 @@ export async function createPageAction(
     revalidateTag(`page-${page.slug}`, "max");
 
     return {
-      status: "success",
       slug: page.slug,
+      status: "success",
     };
   } catch (error) {
     const message =
@@ -64,8 +64,8 @@ export async function createPageAction(
         : "Failed to create page. Please try again.";
 
     return {
-      status: "error",
       message,
+      status: "error",
     };
   }
 }

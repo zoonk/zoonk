@@ -1,9 +1,5 @@
 "use cache";
 
-import { getPageBySlug } from "@zoonk/api/pages";
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { Container } from "@zoonk/ui/components/container";
-import { cn } from "@zoonk/ui/lib/utils";
 import {
   IconBrandGithub,
   IconBrandInstagram,
@@ -14,11 +10,15 @@ import {
   IconBrandYoutube,
   IconWorld,
 } from "@tabler/icons-react";
+import { getPageBySlug } from "@zoonk/api/pages";
+import { buttonVariants } from "@zoonk/ui/components/button";
+import { Container } from "@zoonk/ui/components/container";
+import { cn } from "@zoonk/ui/lib/utils";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { getExtracted, setRequestLocale } from "next-intl/server";
-import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { verifySession } from "@/lib/auth/dal";
 
@@ -66,14 +66,14 @@ export default async function PageView({ params }: PageViewProps) {
     page.members.some((m) => m.userId === session.userId && m.role === "admin");
 
   const socialLinks = [
-    { url: page.website, icon: IconWorld, label: "Website" },
-    { url: page.xUrl, icon: IconBrandX, label: "X" },
-    { url: page.instagramUrl, icon: IconBrandInstagram, label: "Instagram" },
-    { url: page.linkedinUrl, icon: IconBrandLinkedin, label: "LinkedIn" },
-    { url: page.threadsUrl, icon: IconBrandThreads, label: "Threads" },
-    { url: page.youtubeUrl, icon: IconBrandYoutube, label: "YouTube" },
-    { url: page.tiktokUrl, icon: IconBrandTiktok, label: "TikTok" },
-    { url: page.githubUrl, icon: IconBrandGithub, label: "GitHub" },
+    { icon: IconWorld, label: "Website", url: page.website },
+    { icon: IconBrandX, label: "X", url: page.xUrl },
+    { icon: IconBrandInstagram, label: "Instagram", url: page.instagramUrl },
+    { icon: IconBrandLinkedin, label: "LinkedIn", url: page.linkedinUrl },
+    { icon: IconBrandThreads, label: "Threads", url: page.threadsUrl },
+    { icon: IconBrandYoutube, label: "YouTube", url: page.youtubeUrl },
+    { icon: IconBrandTiktok, label: "TikTok", url: page.tiktokUrl },
+    { icon: IconBrandGithub, label: "GitHub", url: page.githubUrl },
   ].filter((link) => link.url) as Array<{
     url: string;
     icon: typeof IconWorld;
@@ -89,10 +89,10 @@ export default async function PageView({ params }: PageViewProps) {
             {page.image && (
               <div className="relative size-24 shrink-0 overflow-hidden rounded-lg">
                 <Image
-                  src={page.image}
                   alt={page.name}
-                  fill
                   className="object-cover"
+                  fill
+                  src={page.image}
                 />
               </div>
             )}
@@ -104,12 +104,12 @@ export default async function PageView({ params }: PageViewProps) {
                     const Icon = link.icon;
                     return (
                       <a
-                        key={link.url}
-                        href={link.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-muted-foreground transition-colors hover:text-foreground"
                         aria-label={link.label}
+                        className="text-muted-foreground transition-colors hover:text-foreground"
+                        href={link.url}
+                        key={link.url}
+                        rel="noopener noreferrer"
+                        target="_blank"
                       >
                         <Icon className="size-5" />
                       </a>
@@ -122,8 +122,8 @@ export default async function PageView({ params }: PageViewProps) {
 
           {isAdmin && (
             <Link
-              href={`/p/${slug}/edit`}
               className={cn(buttonVariants({ variant: "outline" }), "w-max")}
+              href={`/p/${slug}/edit`}
             >
               {t("Edit page")}
             </Link>
@@ -132,7 +132,7 @@ export default async function PageView({ params }: PageViewProps) {
 
         {/* Description */}
         {page.description && (
-          <div className="prose prose-neutral max-w-none dark:prose-invert">
+          <div className="prose prose-neutral dark:prose-invert max-w-none">
             <p className="text-muted-foreground">{page.description}</p>
           </div>
         )}

@@ -1,8 +1,8 @@
 "use server";
 
 import { del, put } from "@vercel/blob";
-import { revalidatePath, revalidateTag } from "next/cache";
 import { updatePageApi } from "@zoonk/api/pages";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { verifySession } from "@/lib/auth/dal";
 
 export type UpdatePageState = {
@@ -17,7 +17,7 @@ async function handleImageUpload(
   removeImage: boolean,
   slug: string,
 ): Promise<string | null> {
-  let imageUrl = currentImage;
+  const imageUrl = currentImage;
 
   // Handle new image upload
   if (imageFile && imageFile.size > 0) {
@@ -74,25 +74,25 @@ export async function updatePageAction(
   try {
     // Verify session
     const session = await verifySession();
-    if (!session.isAuth || !session.userId) {
+    if (!(session.isAuth && session.userId)) {
       return {
-        status: "error",
         message: "You must be logged in to edit a page",
+        status: "error",
       };
     }
 
     // Validate inputs
     if (!name) {
       return {
-        status: "error",
         message: "Page name is required",
+        status: "error",
       };
     }
 
     if (!slug) {
       return {
-        status: "error",
         message: "Original slug is required",
+        status: "error",
       };
     }
 
@@ -109,19 +109,19 @@ export async function updatePageAction(
     // Update page
     const updatedPage = await updatePageApi(
       {
-        slug,
-        name,
-        newSlug: newSlug || undefined,
         description,
-        website,
+        githubUrl,
         image: imageUrl,
-        xUrl,
         instagramUrl,
         linkedinUrl,
+        name,
+        newSlug: newSlug || undefined,
+        slug,
         threadsUrl,
-        youtubeUrl,
         tiktokUrl,
-        githubUrl,
+        website,
+        xUrl,
+        youtubeUrl,
       },
       session.userId,
     );
@@ -134,8 +134,8 @@ export async function updatePageAction(
     revalidateTag(`page-${finalSlug}`, "max");
 
     return {
-      status: "success",
       newSlug: updatedPage.slug !== slug ? updatedPage.slug : undefined,
+      status: "success",
     };
   } catch (error) {
     const message =
@@ -144,8 +144,8 @@ export async function updatePageAction(
         : "Failed to update page. Please try again.";
 
     return {
-      status: "error",
       message,
+      status: "error",
     };
   }
 }

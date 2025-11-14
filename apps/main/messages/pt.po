@@ -88,6 +88,7 @@ msgid "z6saPZ"
 msgstr "Explore todos os cursos do Zoonk para aprender qualquer coisa usando IA. Encontre lições interativas, desafios e atividades para aprender matérias como ciência, matemática, tecnologia e mais."
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
 msgid "47FYwb"
 msgstr "Cancelar"
 
@@ -151,6 +152,92 @@ msgstr "Meus cursos"
 msgid "wfuVYZ"
 msgstr "Veja todos os cursos que você começou no Zoonk. Continue de onde parou e acompanhe seu progresso em lições e atividades interativas."
 
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+#: src/app/[locale]/(catalog)/pages/new/page-form.tsx
+msgid "03Mg3G"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+#: src/app/[locale]/(catalog)/pages/new/page-form.tsx
+msgid "AjBEeD"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "evXygT"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "FbealP"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "fm99Vy"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+#: src/app/[locale]/(catalog)/pages/new/page-form.tsx
+msgid "g9dGVL"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "JkLHGw"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "Q8Qw5B"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "qCcwo3"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "rVPFKu"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "v4BgXt"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "X0ha1a"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/edit-form.tsx
+msgid "yb0olw"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/page.tsx
+#: src/app/[locale]/(catalog)/p/[slug]/page.tsx
+msgid "33JnOM"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/page.tsx
+msgid "By/tkA"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/page.tsx
+msgid "CKxUO5"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/page.tsx
+msgid "QRccCM"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/edit/page.tsx
+msgid "t4Po/D"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/page.tsx
+msgid "r46LDC"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/p/[slug]/page.tsx
+#: src/components/command-palette.tsx
+#: src/components/navbar-links.tsx
+msgid "R85gsW"
+msgstr "Cursos"
+
 #: src/app/[locale]/(catalog)/page.tsx
 msgid "qsfeMJ"
 msgstr "Zoonk: Plataforma de Aprendizagem com IA"
@@ -158,6 +245,38 @@ msgstr "Zoonk: Plataforma de Aprendizagem com IA"
 #: src/app/[locale]/(catalog)/page.tsx
 msgid "ZgSctJ"
 msgstr "O Zoonk é uma plataforma de aprendizagem com IA onde você pode aprender qualquer coisa por meio de cursos, lições e atividades interativas."
+
+#: src/app/[locale]/(catalog)/pages/new/page-form.tsx
+msgid "5oh047"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/pages/new/page-form.tsx
+msgid "9ShuYe"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/pages/new/page-form.tsx
+msgid "BCT58h"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/pages/new/page-form.tsx
+msgid "m4w7pS"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/pages/new/page.tsx
+msgid "kknXcT"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/pages/new/page.tsx
+msgid "MH3ZTO"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/pages/new/page.tsx
+msgid "vtGXNm"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/pages/new/page.tsx
+msgid "XGRBwY"
+msgstr ""
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
@@ -430,11 +549,6 @@ msgstr "Fechar busca"
 #: src/components/command-palette.tsx
 msgid "OhXwmw"
 msgstr "Atualizar idioma"
-
-#: src/components/command-palette.tsx
-#: src/components/navbar-links.tsx
-msgid "R85gsW"
-msgstr "Cursos"
 
 #: src/components/command-palette.tsx
 msgid "WnQ/AZ"
