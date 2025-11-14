@@ -1,0 +1,37 @@
+model Page {
+  id          String       @id @default(cuid())
+  name        String
+  slug        String       @unique
+  description String?
+  website     String?
+  image       String?
+  xUrl        String?      @map("x_url")
+  instagramUrl String?     @map("instagram_url")
+  linkedinUrl String?      @map("linkedin_url")
+  threadsUrl  String?      @map("threads_url")
+  youtubeUrl  String?      @map("youtube_url")
+  tiktokUrl   String?      @map("tiktok_url")
+  githubUrl   String?      @map("github_url")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now()) @updatedAt
+  members     PageMember[]
+
+  @@index([slug])
+  @@map("page")
+}
+
+model PageMember {
+  id        String   @id @default(cuid())
+  pageId    String   @map("page_id")
+  userId    String   @map("user_id")
+  role      String   // "admin" or "editor"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  page      Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([pageId, userId])
+  @@index([userId])
+  @@index([pageId, role])
+  @@map("page_member")
+}

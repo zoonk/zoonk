@@ -16,3 +16,5 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 export { prisma };
+export * from "./queries/course-suggestions";
+export * from "./queries/pages";
