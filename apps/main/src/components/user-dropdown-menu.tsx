@@ -11,7 +11,10 @@ import { LogoutDropdownItem } from "./logout-dropdown-item";
 export async function UserDropdownMenu() {
   const t = await getExtracted();
 
-  const catalogMenu = [{ key: t("My courses"), ...getMenu("myCourses") }];
+  const catalogMenu = [
+    { key: t("My courses"), ...getMenu("myCourses") },
+    { key: t("Create page"), ...getMenu("createPage") },
+  ];
 
   const accountMenu = [
     { key: t("Subscription"), ...getMenu("subscription") },

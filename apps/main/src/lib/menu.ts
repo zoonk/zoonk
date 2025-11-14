@@ -10,12 +10,14 @@ import {
   LogOut,
   Megaphone,
   MessageCircle,
+  Plus,
   Search,
   Settings,
 } from "lucide-react";
 
 const menu = {
   courses: { icon: LayoutGrid, url: "/courses" },
+  createPage: { icon: Plus, url: "/pages/new" },
   displayName: { icon: IdCardLanyard, url: "/name" },
   feedback: { icon: MessageCircle, url: "/feedback" },
   follow: { icon: Megaphone, url: "/follow" },
