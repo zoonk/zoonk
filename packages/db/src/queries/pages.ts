@@ -9,7 +9,7 @@ export async function findPage(slug: string) {
   });
 }
 
-export async function createPage(params: Page) {
+export async function createPage(params: { slug: string; name: string }) {
   return prisma.page.create({
     data: params,
   });
