@@ -18,6 +18,9 @@ model User {
   banReason  String?
   banExpires DateTime?
 
+  // relations
+  pageMemberships PageMember[]
+
   @@unique([email])
   @@index([email])
   @@map("user")

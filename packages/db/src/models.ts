@@ -1,6 +1,9 @@
 export type {
   Account,
   CourseSuggestion,
+  Page,
+  PageMember,
+  PageMemberRole,
   RateLimit,
   Session,
   Subscription,

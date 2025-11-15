@@ -1,0 +1,50 @@
+enum PageMemberRole {
+  admin
+  editor
+}
+
+model Page {
+  id          Int     @id @default(autoincrement())
+  name        String
+  slug        String
+  description String?
+  website     String?
+  imageUrl    String?
+
+  // social links
+  xUrl         String?
+  instagramUrl String?
+  threadsUrl   String?
+  linkedInUrl  String?
+  youtubeUrl   String?
+  githubUrl    String?
+  tiktokUrl    String?
+
+  // relations
+  members PageMember[]
+
+  // metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([slug])
+  @@index([slug])
+  @@index([name])
+}
+
+model PageMember {
+  pageId Int
+  userId String
+  role   PageMemberRole @default(editor)
+
+  // relations
+  page Page @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@id([pageId, userId], name: "pageUser")
+  @@index([userId])
+}
