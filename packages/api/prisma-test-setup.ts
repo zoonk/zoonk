@@ -5,7 +5,7 @@ async function truncateAllTables() {
   try {
     const tablenames = await prisma.$queryRaw<
       Array<{ tablename: string }>
-    >`SELECT tablename FROM pg_tables WHERE schemaname='public'`;
+    >`SELECT tablename::text FROM pg_tables WHERE schemaname='public'`;
 
     const tables = tablenames
       .map(({ tablename }) => tablename)
