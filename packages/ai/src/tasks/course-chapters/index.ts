@@ -5,10 +5,10 @@ import { z } from "zod";
 import systemPrompt from "./prompt.md";
 
 const DEFAULT_MODEL =
-  process.env.AI_MODEL_COURSE_CHAPTERS ?? "openai/gpt-5-mini";
+  process.env.AI_MODEL_COURSE_CHAPTERS ?? "openai/gpt-5.1-instant";
 
 const FALLBACK_MODELS = [
-  "openai/gpt-5",
+  "openai/gpt-5.1-thinking",
   "google/gemini-2.5-pro",
   "anthropic/claude-sonnet-4.5",
   "xai/grok-4-fast-reasoning",

@@ -5,13 +5,14 @@ import { z } from "zod";
 import systemPrompt from "./prompt.md";
 
 const DEFAULT_MODEL =
-  process.env.AI_MODEL_CHAPTER_LESSONS ?? "google/gemini-2.5-flash";
+  process.env.AI_MODEL_CHAPTER_LESSONS ?? "openai/gpt-5.1-instant";
 
 const FALLBACK_MODELS = [
+  "google/gemini-2.5-flash",
   "openai/gpt-5-mini",
   "google/gemini-2.5-pro",
   "xai/grok-4",
-  "openai/gpt-5",
+  "openai/gpt-5.1-thinking",
   "anthropic/claude-sonnet-4.5",
 ];
 
