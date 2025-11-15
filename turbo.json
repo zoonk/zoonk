@@ -64,7 +64,6 @@
     },
     "test:watch": {
       "cache": false,
-      "dependsOn": ["^test:watch"],
       "persistent": true
     },
     "typecheck": {

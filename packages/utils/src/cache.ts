@@ -48,6 +48,10 @@ export function cacheTagMyCourses() {
   return "my-courses";
 }
 
+export function cacheTagPage(slug: string) {
+  return `page:${slug}`.slice(0, CACHE_TAG_LIMIT);
+}
+
 export function cacheTagPrivacy() {
   return "privacy";
 }

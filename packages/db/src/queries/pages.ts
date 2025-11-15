@@ -3,9 +3,7 @@ import "server-only";
 import { prisma } from "../index";
 import type { Page, PageMember } from "../models";
 
-export async function getPage(params: { slug: string }) {
-  const { slug } = params;
-
+export async function findPage(slug: string) {
   return prisma.page.findUnique({
     where: { slug },
   });
@@ -30,7 +28,7 @@ export async function deletePage(slug: string) {
   });
 }
 
-export async function getPageMember(params: {
+export async function findPageMember(params: {
   pageId: number;
   userId: string;
 }) {
@@ -43,7 +41,7 @@ export async function getPageMember(params: {
   });
 }
 
-export async function listPageMembers(pageId: number) {
+export async function findPageMembers(pageId: number) {
   return prisma.pageMember.findMany({
     where: { pageId },
   });
