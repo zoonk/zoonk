@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@zoonk/auth/client";
 import {
   Avatar,
   AvatarFallback,
@@ -7,7 +8,6 @@ import {
   AvatarSkeleton,
 } from "@zoonk/ui/components/avatar";
 import { User } from "lucide-react";
-import { authClient } from "@/lib/auth/client";
 
 export function UserAvatar() {
   const { isPending, data: session } = authClient.useSession();

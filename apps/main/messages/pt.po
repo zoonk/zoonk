@@ -499,19 +499,3 @@ msgstr "Verificando se você está logado..."
 #: src/components/protected-section.tsx
 msgid "yOFm9C"
 msgstr "Você precisa estar logado para acessar esta página."
-
-#: src/lib/auth/otp.ts
-msgid "gqQT1x"
-msgstr "Este código expirará em 5 minutos."
-
-#: src/lib/auth/otp.ts
-msgid "H6FKgo"
-msgstr "Se você não solicitou este código, pode ignorar este e-mail com segurança."
-
-#: src/lib/auth/otp.ts
-msgid "Wrdoaw"
-msgstr "Este é seu código de acesso único para entrar no Zoonk:"
-
-#: src/lib/auth/otp.ts
-msgid "xV5wA4"
-msgstr "Seu código de acesso ao Zoonk"

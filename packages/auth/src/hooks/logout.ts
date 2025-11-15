@@ -1,4 +1,4 @@
-import { zoonkAuthClient } from "../client";
+import { authClient } from "../client";
 
 type UseLogoutArgs = {
   onError?: () => void;
@@ -6,12 +6,12 @@ type UseLogoutArgs = {
 };
 
 export function useLogout({ onSuccess, onError }: UseLogoutArgs = {}) {
-  const { data: session } = zoonkAuthClient.useSession();
+  const { data: session } = authClient.useSession();
 
   const isLoggedIn = Boolean(session);
 
   const logout = async () => {
-    await zoonkAuthClient.signOut({
+    await authClient.signOut({
       fetchOptions: { onError, onSuccess },
     });
   };

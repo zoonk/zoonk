@@ -1,3 +1,4 @@
+import { auth } from "@zoonk/auth";
 import {
   Table,
   TableBody,
@@ -7,7 +8,6 @@ import {
 } from "@zoonk/ui/components/table";
 import { cacheLife } from "next/cache";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
 import { UserPagination } from "./user-pagination";
 import { UserRow } from "./user-row";
 

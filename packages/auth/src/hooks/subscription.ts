@@ -1,9 +1,9 @@
 import type { Subscription } from "@better-auth/stripe";
 import { useEffect, useState } from "react";
-import { zoonkAuthClient } from "../client";
+import { authClient } from "../client";
 
 async function getActiveSubscription() {
-  const { data: subscription } = await zoonkAuthClient.subscription.list();
+  const { data: subscription } = await authClient.subscription.list();
 
   const activeSubscription = subscription?.find(
     (sub) => sub.status === "active" || sub.status === "trialing",

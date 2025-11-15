@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@zoonk/auth/client";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { InputError } from "@zoonk/ui/components/input";
 import {
@@ -11,7 +12,6 @@ import { Spinner } from "@zoonk/ui/components/spinner";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
-import { authClient } from "@/lib/auth/client";
 
 type FormState = "idle" | "pending" | "error";
 

@@ -1,7 +1,7 @@
 "use server";
 
+import { auth } from "@zoonk/auth";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
 
 export async function nameFormAction(_prevState: unknown, formData: FormData) {
   const name = String(formData.get("name") || "").trim();

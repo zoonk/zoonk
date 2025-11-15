@@ -1,8 +1,8 @@
 "use client";
 
+import { authClient } from "@zoonk/auth/client";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { useRouter } from "@/i18n/navigation";
-import { authClient } from "@/lib/auth/client";
 
 export default function LoginContainer({ children }: React.PropsWithChildren) {
   const { push } = useRouter();

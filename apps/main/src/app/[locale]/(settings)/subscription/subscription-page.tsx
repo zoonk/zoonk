@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@zoonk/auth/client";
 import { useSubscription } from "@zoonk/auth/hooks/subscription";
 import { Button } from "@zoonk/ui/components/button";
 import {
@@ -14,7 +15,6 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Loader2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { authClient } from "@/lib/auth/client";
 
 export function SubscriptionPage() {
   const [state, setState] = useState<"idle" | "loading" | "error">("idle");

@@ -1,7 +1,7 @@
-import { zoonkAuthClient } from "../client";
+import { authClient } from "../client";
 
 export function useAuthState() {
-  const { data, isPending } = zoonkAuthClient.useSession();
+  const { data, isPending } = authClient.useSession();
 
   if (isPending) {
     return "pending";

@@ -2,13 +2,14 @@
   "dependencies": {
     "@better-auth/stripe": "1.3.34",
     "@zoonk/db": "workspace:*",
+    "@zoonk/mailer": "workspace:*",
     "better-auth": "1.3.34",
     "jose": "6.1.0",
     "stripe": "19.1.0"
   },
   "devDependencies": {
     "@types/node": "^22",
-    "@types/react": ">=19.0.0",
+    "@types/react": ">=19.2.0",
     "@zoonk/tsconfig": "workspace:*",
     "typescript": "^5"
   },
@@ -20,7 +21,8 @@
   },
   "name": "@zoonk/auth",
   "peerDependencies": {
-    "react": ">=19.0.0"
+    "next": ">=16.0.3",
+    "react": ">=19.2.0"
   },
   "private": true,
   "scripts": {

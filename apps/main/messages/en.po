@@ -499,19 +499,3 @@ msgstr "Checking if you're logged in..."
 #: src/components/protected-section.tsx
 msgid "yOFm9C"
 msgstr "You need to be logged in to access this page."
-
-#: src/lib/auth/otp.ts
-msgid "gqQT1x"
-msgstr "This code will expire in 5 minutes."
-
-#: src/lib/auth/otp.ts
-msgid "H6FKgo"
-msgstr "If you did not request this code, you can safely ignore this email."
-
-#: src/lib/auth/otp.ts
-msgid "Wrdoaw"
-msgstr "This is your one-time passcode to sign in to Zoonk:"
-
-#: src/lib/auth/otp.ts
-msgid "xV5wA4"
-msgstr "Your Zoonk sign-in code"

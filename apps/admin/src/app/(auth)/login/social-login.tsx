@@ -1,11 +1,11 @@
 "use client";
 
 import { IconBrandGoogleFilled } from "@tabler/icons-react";
+import { authClient } from "@zoonk/auth/client";
 import { Button } from "@zoonk/ui/components/button";
 import { InputError } from "@zoonk/ui/components/input";
 import { Loader2Icon } from "lucide-react";
 import { useState } from "react";
-import { authClient } from "@/lib/auth/client";
 
 type SocialState = "initial" | "loading" | "error";
 

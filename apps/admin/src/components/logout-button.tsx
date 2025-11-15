@@ -1,9 +1,9 @@
 "use client";
 
+import { authClient } from "@zoonk/auth/client";
 import { Button } from "@zoonk/ui/components/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { authClient } from "@/lib/auth/client";
 
 type LogoutState = "idle" | "loading" | "error";
 

@@ -1,11 +1,11 @@
 "use client";
 
+import { authClient } from "@zoonk/auth/client";
 import { Input, InputError, InputSuccess } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { useExtracted } from "next-intl";
 import { useActionState, useId } from "react";
-import { authClient } from "@/lib/auth/client";
 import { contactFormAction } from "./contact-form-action";
 
 type ContactFormState = {

@@ -499,19 +499,3 @@ msgstr "Verificando si has iniciado sesión..."
 #: src/components/protected-section.tsx
 msgid "yOFm9C"
 msgstr "Necesitas iniciar sesión para acceder a esta página."
-
-#: src/lib/auth/otp.ts
-msgid "gqQT1x"
-msgstr "Este código expirará en 5 minutos."
-
-#: src/lib/auth/otp.ts
-msgid "H6FKgo"
-msgstr "Si no solicitaste este código, puedes ignorar este correo de forma segura."
-
-#: src/lib/auth/otp.ts
-msgid "Wrdoaw"
-msgstr "Este es tu código de acceso único para iniciar sesión en Zoonk:"
-
-#: src/lib/auth/otp.ts
-msgid "xV5wA4"
-msgstr "Tu código de acceso a Zoonk"
