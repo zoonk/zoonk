@@ -1,5 +1,9 @@
-import { vi } from "vitest";
+import { beforeEach, vi } from "vitest";
 
 vi.mock("next/cache");
 vi.mock("server-only");
 vi.mock("@zoonk/ai/course-suggestions", { spy: true });
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
