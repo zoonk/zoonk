@@ -43,6 +43,12 @@ export async function getPageMember(params: {
   });
 }
 
+export async function listPageMembers(pageId: number) {
+  return prisma.pageMember.findMany({
+    where: { pageId },
+  });
+}
+
 export async function createPageMember(params: PageMember) {
   return prisma.pageMember.create({
     data: params,
