@@ -1,6 +1,6 @@
 import { createPage } from "@zoonk/db/queries/pages";
 import { describe, expect, test, vi } from "vitest";
-import { canAddPage, getPage } from "./pages";
+import { canAddPage, canEditPage, getPage } from "./pages";
 import * as users from "./users";
 
 describe("getPage()", () => {
@@ -28,9 +28,25 @@ describe("canAddPage()", () => {
   });
 
   test("returns true when there is a session", async () => {
-    vi.spyOn(users, "getSession").mockResolvedValueOnce({ userId: 1 } as any);
+    vi.spyOn(users, "getSession").mockResolvedValueOnce({} as any);
 
     const canAdd = await canAddPage();
     expect(canAdd).toBe(true);
+  });
+});
+
+describe("canEditPage()", () => {
+  test("returns false when there is no session", async () => {
+    vi.spyOn(users, "getSession").mockResolvedValueOnce(null);
+
+    const params = {
+      name: "Test Page",
+      slug: `test-page-${Date.now()}`,
+    };
+
+    await createPage(params);
+
+    const canEdit = await canEditPage(params.slug);
+    expect(canEdit).toBe(false);
   });
 });

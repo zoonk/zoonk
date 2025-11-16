@@ -48,8 +48,18 @@ export function cacheTagMyCourses() {
   return "my-courses";
 }
 
-export function cacheTagPage(slug: string) {
+export function cacheTagPage({ slug }: { slug: string }) {
   return `page:${slug}`.slice(0, CACHE_TAG_LIMIT);
+}
+
+export function cacheTagPageMember(params: {
+  pageSlug: string;
+  userId: string;
+}) {
+  return `page-member:${params.pageSlug}:${params.userId}`.slice(
+    0,
+    CACHE_TAG_LIMIT,
+  );
 }
 
 export function cacheTagPrivacy() {

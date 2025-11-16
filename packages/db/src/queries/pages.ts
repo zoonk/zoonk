@@ -29,14 +29,15 @@ export async function deletePage(slug: string) {
 }
 
 export async function findPageMember(params: {
-  pageId: number;
+  pageSlug: string;
   userId: string;
 }) {
-  const { pageId, userId } = params;
+  const { pageSlug, userId } = params;
 
-  return prisma.pageMember.findUnique({
+  return prisma.pageMember.findFirst({
     where: {
-      pageUser: { pageId, userId },
+      page: { slug: pageSlug },
+      userId,
     },
   });
 }
