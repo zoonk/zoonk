@@ -26,7 +26,7 @@ export const auth = betterAuth({
       sendVerificationOTP,
       storeOTP: "hashed",
     }),
-    stripePlugin(),
+    ...stripePlugin(),
   ],
   rateLimit: {
     enabled: true,

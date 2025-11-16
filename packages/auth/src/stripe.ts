@@ -1,12 +1,12 @@
 import { stripe } from "@better-auth/stripe";
 import Stripe from "stripe";
 
-const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || "";
-const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || "";
+const secretKey = process.env.STRIPE_SECRET_KEY as string;
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
 
-const stripeClient = new Stripe(STRIPE_SECRET_KEY, {
-  apiVersion: "2025-09-30.clover",
-});
+export function isStripeEnabled() {
+  return Boolean(secretKey && webhookSecret);
+}
 
 type GetCheckoutSessionParamsFn = NonNullable<
   Parameters<typeof stripe>[0]["subscription"]
@@ -22,11 +22,11 @@ const getCheckoutSessionParams: GetCheckoutSessionParamsFn = async () => ({
   // biome-ignore-end lint/style/useNamingConvention: stripe api
 });
 
-export function stripePlugin() {
+function stripeInstance() {
   return stripe({
     createCustomerOnSignUp: true,
-    stripeClient,
-    stripeWebhookSecret: STRIPE_WEBHOOK_SECRET,
+    stripeClient: new Stripe(secretKey, { apiVersion: "2025-09-30.clover" }),
+    stripeWebhookSecret: webhookSecret,
     subscription: {
       enabled: true,
       getCheckoutSessionParams,
@@ -39,4 +39,12 @@ export function stripePlugin() {
       ],
     },
   });
+}
+
+export function stripePlugin() {
+  if (isStripeEnabled()) {
+    return [stripeInstance()];
+  }
+
+  return [];
 }
