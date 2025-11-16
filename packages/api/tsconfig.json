@@ -1,6 +1,9 @@
 {
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@/fixtures/*": ["./test/fixtures/*"]
+    }
   },
   "exclude": ["node_modules", "dist"],
   "extends": "@zoonk/tsconfig/base.json",
