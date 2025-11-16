@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { afterEach } from "vitest";
+import { beforeAll } from "vitest";
 
 async function truncateAllTables() {
   try {
@@ -23,6 +23,6 @@ async function truncateAllTables() {
   }
 }
 
-afterEach(async () => {
+beforeAll(async () => {
   await truncateAllTables();
 });
