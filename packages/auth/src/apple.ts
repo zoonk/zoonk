@@ -9,7 +9,20 @@ const MS_IN_SECOND = 1000;
 
 let cached: CachedToken | null = null;
 
-export async function getAppleClientSecret(): Promise<string> {
+const teamId = process.env.APPLE_TEAM_ID as string;
+const clientId = process.env.APPLE_CLIENT_ID as string;
+const keyId = process.env.APPLE_KEY_ID as string;
+
+function isAppleEnabled() {
+  return (
+    Boolean(teamId) &&
+    Boolean(clientId) &&
+    Boolean(keyId) &&
+    Boolean(process.env.APPLE_PRIVATE_KEY)
+  );
+}
+
+async function getAppleClientSecret(): Promise<string> {
   const now = Math.floor(Date.now() / MS_IN_SECOND);
   const isTokenValid = cached && cached.exp - 60 > now;
 
@@ -17,9 +30,6 @@ export async function getAppleClientSecret(): Promise<string> {
     return cached.token;
   }
 
-  const teamId = process.env.APPLE_TEAM_ID as string;
-  const clientId = process.env.APPLE_CLIENT_ID as string;
-  const keyId = process.env.APPLE_KEY_ID as string;
   const ttlSec = 2_592_000; // 1 month
 
   const privateKeyPEM = (process.env.APPLE_PRIVATE_KEY as string).replace(
@@ -42,3 +52,11 @@ export async function getAppleClientSecret(): Promise<string> {
 
   return token;
 }
+
+const APPLE_CLIENT_SECRET = isAppleEnabled()
+  ? await getAppleClientSecret()
+  : "";
+
+export const appleProvider = isAppleEnabled()
+  ? { apple: { clientId, clientSecret: APPLE_CLIENT_SECRET } }
+  : {};
