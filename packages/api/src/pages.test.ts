@@ -1,5 +1,6 @@
 import { describe, expect, test, vi } from "vitest";
-import { pageFixture } from "@/fixtures/pages";
+import { pageFixture, pageMemberFixture } from "@/fixtures/pages";
+import { userFixture } from "@/fixtures/users";
 import { canAddPage, canEditPage, getPage } from "./pages";
 import * as users from "./users";
 
@@ -34,5 +35,37 @@ describe("canEditPage()", () => {
     const canEdit = await canEditPage(params.slug);
 
     expect(canEdit).toBe(false);
+  });
+
+  test("returns false for editors", async () => {
+    const [user, page] = await Promise.all([userFixture(), pageFixture()]);
+
+    vi.spyOn(users, "getSession").mockResolvedValueOnce({ user } as any);
+
+    await pageMemberFixture({
+      pageId: page.id,
+      role: "editor",
+      userId: user.id,
+    });
+
+    const canEdit = await canEditPage(page.slug);
+
+    expect(canEdit).toBe(false);
+  });
+
+  test("returns true for admins", async () => {
+    const [user, page] = await Promise.all([userFixture(), pageFixture()]);
+
+    vi.spyOn(users, "getSession").mockResolvedValueOnce({ user } as any);
+
+    await pageMemberFixture({
+      pageId: page.id,
+      role: "admin",
+      userId: user.id,
+    });
+
+    const canEdit = await canEditPage(page.slug);
+
+    expect(canEdit).toBe(true);
   });
 });

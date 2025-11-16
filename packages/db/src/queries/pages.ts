@@ -1,7 +1,7 @@
 import "server-only";
 
 import { prisma } from "../index";
-import type { Page, PageMember } from "../models";
+import type { Page, PageMember, PageMemberRole } from "../models";
 
 export async function findPage(slug: string) {
   return prisma.page.findUnique({
@@ -48,7 +48,11 @@ export async function findPageMembers(pageId: number) {
   });
 }
 
-export async function createPageMember(params: PageMember) {
+export async function createPageMember(params: {
+  pageId: number;
+  userId: string;
+  role: PageMemberRole;
+}) {
   return prisma.pageMember.create({
     data: params,
   });

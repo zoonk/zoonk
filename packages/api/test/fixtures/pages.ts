@@ -1,5 +1,5 @@
-import type { Page } from "@zoonk/db/models";
-import { createPage } from "@zoonk/db/queries/pages";
+import type { Page, PageMemberRole } from "@zoonk/db/models";
+import { createPage, createPageMember } from "@zoonk/db/queries/pages";
 
 export function pageAttrs(attrs?: Partial<Page>) {
   return {
@@ -12,4 +12,16 @@ export function pageAttrs(attrs?: Partial<Page>) {
 export async function pageFixture(attrs?: Partial<Page>) {
   const params = pageAttrs(attrs);
   return createPage(params);
+}
+
+export async function pageMemberFixture(attrs: {
+  pageId: number;
+  userId: string;
+  role?: PageMemberRole;
+}) {
+  return createPageMember({
+    pageId: attrs.pageId,
+    role: attrs.role || "editor",
+    userId: attrs.userId,
+  });
 }
