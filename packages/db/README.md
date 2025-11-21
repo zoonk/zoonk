@@ -43,6 +43,9 @@ Run the following commands to set up Prisma:
 
 - `pnpm db:generate` to generate Prisma client
 - `pnpm db:migrate` to run migrations and set up the database
+
+#### Useful Commands
+
 - `pnpm db:reset` to reset the database (this will erase all data)
 - `pnpm db:studio` to open Prisma Studio
 - `pnpm prisma migrate dev --create-only` to create a new migration without applying it

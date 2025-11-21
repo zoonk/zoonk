@@ -23,12 +23,9 @@
 
 - [Getting Started](#getting-started)
   - [Prerequisites](#prerequisites)
-  - [Turborepo](#turborepo)
-    - [Remote Caching](#remote-caching)
   - [Installation](#installation)
   - [Local Development](#local-development)
-    - [Adding dependencies](#adding-dependencies)
-    - [Adding shadcn components](#adding-shadcn-components)
+- [Remote Caching](#remote-caching)
 - [Social Media](#social-media)
 - [Supporters](#supporters)
 
@@ -42,62 +39,32 @@
 
 We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm versions.
 
-### Turborepo
+### Installation
 
-We're using [Turborepo](https://turborepo.com) as our monorepo tool to manage multiple packages and applications within a single repository. If you haven't already, please install Turborepo globally:
+- `pnpm install` to install dependencies for all apps and packages
+- Check out the [@zoonk/db package README](./packages/db/README.md) for database setup instructions
+- Check out the [main app README](./apps/main/README.md) for app-specific setup instructions
 
-```sh
-pnpm add turbo --global
-```
+### Local Development
 
-#### Remote Caching
+- `pnpm dev` to start the development server
+- `pnpm build` to create a production build
+- `pnpm lint` to run linting
+- `pnpm typecheck` to run TypeScript type checking
+- `pnpm test` to run tests with Vitest
+
+## Remote Caching
 
 We're using [Vercel's Remote Caching](https://vercel.com/docs/monorepos/remote-caching) to speed up our Turborepo tasks. To enable remote caching, authenticate the Turborepo CLI with your Vercel account:
 
 ```sh
-turbo login
+pnpm turbo login
 ```
 
 Then, link to the remote cache:
 
 ```sh
-turbo link
-```
-
-### Installation
-
-- `pnpm install` to install dependencies for all apps and packages
-- Check out the [@zoonk/db package README](./packages/db/README.md) for database setup instructions
-
-### Local Development
-
-- `turbo dev` to start the development server
-- `turbo build` to create a production build
-- `turbo lint` to run linting
-- `turbo typecheck` to run TypeScript type checking
-- `turbo test` to run tests with Vitest
-
-#### Adding dependencies
-
-Check the Turborepo guide for [managing dependencies](https://turborepo.com/docs/crafting-your-repository/managing-dependencies).
-
-You can add a dependency to a specific package or app by running:
-
-```sh
-# package
-pnpm add <package-name> --filter=@zoonk/ui
-
-# app
-pnpm add <package-name> --filter=main
-```
-
-#### Adding shadcn components
-
-To add components, run the add command in the path of our UI package:
-
-```sh
-cd packages/ui
-pnpm dlx shadcn@canary add [COMPONENT]
+pnpm turbo link
 ```
 
 ## Social Media
