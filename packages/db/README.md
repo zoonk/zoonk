@@ -25,6 +25,18 @@ Create a separate database for testing:
 createdb zoonk_test
 ```
 
+Our testing setup expects a `postgres` user with a `postgres` password. If you haven't set this up yet, you can do so by running:
+
+```bash
+psql postgres
+```
+
+Then, in the PostgreSQL prompt, run:
+
+```sql
+CREATE ROLE postgres WITH LOGIN SUPERUSER PASSWORD 'postgres';
+```
+
 #### Environment Variables
 
 Prisma generates a client that we use to interact with our database. We generate this client when running `pnpm install` and `pnpm dev` in the root of the monorepo.
