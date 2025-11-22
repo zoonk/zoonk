@@ -8,9 +8,14 @@ export function isStripeEnabled() {
   return Boolean(secretKey && webhookSecret);
 }
 
+type SubscriptionConfig = Extract<
+  NonNullable<Parameters<typeof stripe>[0]["subscription"]>,
+  { enabled: true }
+>;
+
 type GetCheckoutSessionParamsFn = NonNullable<
-  Parameters<typeof stripe>[0]["subscription"]
->["getCheckoutSessionParams"];
+  SubscriptionConfig["getCheckoutSessionParams"]
+>;
 
 const getCheckoutSessionParams: GetCheckoutSessionParamsFn = async () => ({
   // biome-ignore-start lint/style/useNamingConvention: stripe api

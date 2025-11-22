@@ -19,7 +19,6 @@ model User {
   banExpires DateTime?
 
   @@unique([email])
-  @@index([email])
   @@map("user")
 }
 
@@ -38,7 +37,7 @@ model Session {
   impersonatedBy String?
 
   @@unique([token])
-  @@index([userId, token])
+  @@index([userId])
   @@map("session")
 }
 
