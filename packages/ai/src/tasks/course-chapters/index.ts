@@ -11,7 +11,7 @@ const FALLBACK_MODELS = [
   "openai/gpt-5.1-thinking",
   "google/gemini-2.5-pro",
   "anthropic/claude-sonnet-4.5",
-  "xai/grok-4-fast-reasoning",
+  "xai/grok-4.1-fast-reasoning",
 ];
 
 const schema = z.object({
