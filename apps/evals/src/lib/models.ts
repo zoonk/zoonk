@@ -20,6 +20,12 @@ export const EVAL_MODELS: ModelConfig[] = [
     outputCost: 5,
   },
   {
+    id: "google/gemini-3-pro-preview",
+    inputCost: 2,
+    name: "gemini-3-pro",
+    outputCost: 12,
+  },
+  {
     id: "google/gemini-2.5-pro",
     inputCost: 2.5,
     name: "gemini-2.5-pro",
