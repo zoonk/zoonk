@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "@biomejs/biome": "2.3.1",
+    "@biomejs/biome": "2.3.7",
     "turbo": "2.6.0"
   },
   "engines": {

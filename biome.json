@@ -67,17 +67,20 @@
         "noDuplicateDependencies": "error",
         "noEmptySource": "error",
         "noFloatingPromises": "error",
+        "noForIn": "error",
         "noImportCycles": "error",
         "noMisusedPromises": "error",
         "noNextAsyncClientComponent": "error",
         "noReactForwardRef": "error",
         "noShadow": "error",
+        "noSyncScripts": "error",
         "noUnnecessaryConditions": "error",
         "noUnusedExpressions": "error",
         "noUselessCatchBinding": "error",
         "noUselessUndefined": "error",
         "useConsistentArrowReturn": "error",
         "useExhaustiveSwitchCases": "error",
+        "useFind": "error",
         "useMaxParams": "error",
         "useSortedClasses": {
           "fix": "safe",
@@ -85,7 +88,8 @@
           "options": {
             "functions": ["clsx", "cva", "tw", "tw.*", "cn"]
           }
-        }
+        },
+        "useSpread": "error"
       },
       "performance": {
         "noAwaitInLoops": "error",
