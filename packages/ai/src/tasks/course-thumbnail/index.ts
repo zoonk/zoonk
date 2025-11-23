@@ -1,5 +1,6 @@
 import { openai } from "@ai-sdk/openai";
 import { put } from "@vercel/blob";
+import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import {
   experimental_generateImage as generateImage,
   type ImageModel,
@@ -30,24 +31,39 @@ export async function generateCourseThumbnail({
   title,
   model = DEFAULT_MODEL,
   quality = DEFAULT_QUALITY,
-}: CourseThumbnailParams): Promise<string> {
-  const { image } = await generateImage({
-    maxImagesPerCall: 1,
-    model,
-    prompt: getCourseThumbnailPrompt(title),
-    providerOptions: {
-      openai: { output_format: "webp", quality },
-    },
-    size: "1024x1024",
-  });
+}: CourseThumbnailParams): Promise<SafeReturn<string>> {
+  const { data: generatedImage, error: imageError } = await safeAsync(() =>
+    generateImage({
+      maxImagesPerCall: 1,
+      model,
+      prompt: getCourseThumbnailPrompt(title),
+      providerOptions: {
+        openai: { output_format: "webp", quality },
+      },
+      size: "1024x1024",
+    }),
+  );
 
+  if (imageError) {
+    console.error("Error generating course thumbnail:", imageError);
+    return { data: null, error: imageError };
+  }
+
+  const { image } = generatedImage;
   const slug = slugify(title, { lower: true, strict: true });
   const fileName = `courses/${slug}.webp`;
 
-  const blob = await put(fileName, Buffer.from(image.uint8Array), {
-    access: "public",
-    addRandomSuffix: true,
-  });
+  const { data: blob, error: blobError } = await safeAsync(() =>
+    put(fileName, Buffer.from(image.uint8Array), {
+      access: "public",
+      addRandomSuffix: true,
+    }),
+  );
 
-  return blob.url;
+  if (blobError) {
+    console.error("Error uploading course thumbnail:", blobError);
+    return { data: null, error: blobError };
+  }
+
+  return { data: blob.url, error: null };
 }

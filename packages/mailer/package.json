@@ -1,5 +1,7 @@
 {
-  "dependencies": {},
+  "dependencies": {
+    "@zoonk/utils": "workspace:*"
+  },
   "devDependencies": {
     "@types/node": "^22",
     "@zoonk/tsconfig": "workspace:*",

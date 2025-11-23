@@ -5,15 +5,12 @@ import { generateCourseThumbnail } from "@zoonk/ai/course-thumbnail";
 export async function generateThumbnailAction(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
 
-  try {
-    const imageUrl = await generateCourseThumbnail({ title });
+  const { data: imageUrl, error } = await generateCourseThumbnail({ title });
 
-    return { imageUrl, success: true };
-  } catch (error) {
+  if (error) {
     console.error("Error generating thumbnail:", error);
-    return {
-      error:
-        error instanceof Error ? error.message : "Failed to generate thumbnail",
-    };
+    return { error: error.message };
   }
+
+  return { imageUrl, success: true };
 }

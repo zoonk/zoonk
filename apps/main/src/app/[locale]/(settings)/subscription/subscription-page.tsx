@@ -32,18 +32,14 @@ export function SubscriptionPage() {
   const subscribe = async () => {
     setState("loading");
 
-    try {
-      const { error } = await authClient.subscription.upgrade({
-        cancelUrl: "/subscription",
-        plan: "plus",
-        successUrl: "/subscription",
-      });
+    const { error } = await authClient.subscription.upgrade({
+      cancelUrl: "/subscription",
+      plan: "plus",
+      successUrl: "/subscription",
+    });
 
-      if (error) {
-        setState("error");
-        return;
-      }
-    } catch {
+    if (error) {
+      console.error("Error upgrading subscription:", error);
       setState("error");
     }
   };
@@ -51,16 +47,12 @@ export function SubscriptionPage() {
   const manageSubscription = async () => {
     setState("loading");
 
-    try {
-      const { error } = await authClient.subscription.billingPortal({
-        returnUrl: "/subscription",
-      });
+    const { error } = await authClient.subscription.billingPortal({
+      returnUrl: "/subscription",
+    });
 
-      if (error) {
-        setState("error");
-        return;
-      }
-    } catch {
+    if (error) {
+      console.error("Error accessing billing portal:", error);
       setState("error");
     }
   };

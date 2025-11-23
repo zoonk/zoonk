@@ -15,9 +15,10 @@ export function SocialLogin() {
   const signIn = async () => {
     setState("loading");
 
-    try {
-      await authClient.signIn.social({ provider: "google" });
-    } catch {
+    const { error } = await authClient.signIn.social({ provider: "google" });
+
+    if (error) {
+      console.error("Social login error:", error);
       setState("error");
     }
   };

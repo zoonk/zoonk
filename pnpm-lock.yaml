@@ -263,6 +263,9 @@ importers:
       '@vercel/blob':
         specifier: 2.0.0
         version: 2.0.0
+      '@zoonk/utils':
+        specifier: workspace:*
+        version: link:../utils
       ai:
         specifier: 5.0.93
         version: 5.0.93(zod@4.1.12)
@@ -407,6 +410,10 @@ importers:
         version: 5.9.3
 
   packages/mailer:
+    dependencies:
+      '@zoonk/utils':
+        specifier: workspace:*
+        version: link:../utils
     devDependencies:
       '@types/node':
         specifier: ^22

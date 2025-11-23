@@ -2,6 +2,7 @@
   "dependencies": {
     "@ai-sdk/openai": "2.0.65",
     "@vercel/blob": "2.0.0",
+    "@zoonk/utils": "workspace:*",
     "ai": "5.0.93",
     "slugify": "1.6.6"
   },
