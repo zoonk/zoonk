@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
-import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { betterAuth } from "better-auth/minimal";
 import { nextCookies } from "better-auth/next-js";
 import { admin, emailOTP } from "better-auth/plugins";
 import { appleProvider } from "./apple";
@@ -29,7 +29,7 @@ export const auth = betterAuth({
       sendVerificationOTP,
       storeOTP: "hashed",
     }),
-    ...stripePlugin(),
+    stripePlugin(),
   ],
   rateLimit: {
     enabled: true,

@@ -1,40 +1,25 @@
 import { stripe } from "@better-auth/stripe";
 import Stripe from "stripe";
 
-const secretKey = process.env.STRIPE_SECRET_KEY as string;
+const secretKey = process.env.STRIPE_SECRET_KEY || "sk_test_dummykey1234567890";
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
 
-export function isStripeEnabled() {
-  return Boolean(secretKey && webhookSecret);
-}
-
-type SubscriptionConfig = Extract<
-  NonNullable<Parameters<typeof stripe>[0]["subscription"]>,
-  { enabled: true }
->;
-
-type GetCheckoutSessionParamsFn = NonNullable<
-  SubscriptionConfig["getCheckoutSessionParams"]
->;
-
-const getCheckoutSessionParams: GetCheckoutSessionParamsFn = async () => ({
-  // biome-ignore-start lint/style/useNamingConvention: stripe api
-  params: {
-    allow_promotion_codes: true,
-    billing_address_collection: "required",
-    tax_id_collection: { enabled: true },
-  },
-  // biome-ignore-end lint/style/useNamingConvention: stripe api
-});
-
-function stripeInstance() {
+export function stripePlugin() {
   return stripe({
     createCustomerOnSignUp: true,
     stripeClient: new Stripe(secretKey, { apiVersion: "2025-09-30.clover" }),
     stripeWebhookSecret: webhookSecret,
     subscription: {
       enabled: true,
-      getCheckoutSessionParams,
+      getCheckoutSessionParams: () => ({
+        // biome-ignore-start lint/style/useNamingConvention: stripe api
+        params: {
+          allow_promotion_codes: true,
+          billing_address_collection: "required",
+          tax_id_collection: { enabled: true },
+        },
+        // biome-ignore-end lint/style/useNamingConvention: stripe api
+      }),
       plans: [
         {
           annualDiscountLookupKey: "plus_yearly",
@@ -44,12 +29,4 @@ function stripeInstance() {
       ],
     },
   });
-}
-
-export function stripePlugin() {
-  if (isStripeEnabled()) {
-    return [stripeInstance()];
-  }
-
-  return [];
 }

@@ -7,4 +7,5 @@ model CourseSuggestion {
   updatedAt   DateTime @default(now()) @updatedAt
 
   @@unique([locale, prompt], name: "localePrompt")
+  @@map("courseSuggestion")
 }
