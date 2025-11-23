@@ -26,6 +26,11 @@ test("doesn't match _vercel paths", () => {
   );
 });
 
+test("doesn't match paths starting with 149e (BotID paths)", () => {
+  // https://x.com/andrewqu/status/1988640986520842672?s=20
+  expect(doesMiddlewareMatch({ config, url: "/149eabcd" })).toBe(false);
+});
+
 test("redirects home page to language-specific URL", () => {
   const request = new NextRequest("https://zoonk.com");
   request.cookies.set("NEXT_LOCALE", "pt");
