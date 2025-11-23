@@ -1,7 +1,7 @@
+import { getSession } from "@zoonk/api/users";
 import { SidebarInset, SidebarProvider } from "@zoonk/ui/components/sidebar";
 import { redirect, unauthorized } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { getSession } from "@/lib/user";
 import { AppSidebar } from "./app-sidebar";
 
 export default async function PrivateLayout({ children }: LayoutProps<"/">) {

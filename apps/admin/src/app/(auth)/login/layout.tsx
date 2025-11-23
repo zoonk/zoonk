@@ -1,5 +1,5 @@
+import { getSession } from "@zoonk/api/users";
 import { redirect } from "next/navigation";
-import { getSession } from "@/lib/user";
 
 export default async function AuthLayout({ children }: LayoutProps<"/login">) {
   const session = await getSession();
