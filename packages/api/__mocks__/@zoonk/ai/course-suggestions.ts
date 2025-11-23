@@ -1,3 +1,3 @@
 import { vi } from "vitest";
 
-export const fetchCourseSuggestions = vi.fn();
+export const generateCourseSuggestions = vi.fn();

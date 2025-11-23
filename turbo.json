@@ -64,7 +64,7 @@
     },
     "test:watch": {
       "cache": false,
-      "dependsOn": ["^test:watch"],
+      "dependsOn": ["^db:test:setup"],
       "persistent": true
     },
     "typecheck": {
