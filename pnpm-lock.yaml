@@ -87,6 +87,9 @@ importers:
       '@zoonk/ai':
         specifier: workspace:*
         version: link:../../packages/ai
+      '@zoonk/api':
+        specifier: workspace:*
+        version: link:../../packages/api
       '@zoonk/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -260,9 +263,6 @@ importers:
       '@ai-sdk/openai':
         specifier: 2.0.65
         version: 2.0.65(zod@4.1.12)
-      '@vercel/blob':
-        specifier: 2.0.0
-        version: 2.0.0
       '@zoonk/utils':
         specifier: workspace:*
         version: link:../utils
@@ -272,13 +272,13 @@ importers:
       server-only:
         specifier: '>=0.0.1'
         version: 0.0.1
-      slugify:
-        specifier: 1.6.6
-        version: 1.6.6
       zod:
         specifier: '>=4.0.0'
         version: 4.1.12
     devDependencies:
+      '@types/node':
+        specifier: ^22
+        version: 22.18.13
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
@@ -288,6 +288,9 @@ importers:
 
   packages/api:
     dependencies:
+      '@vercel/blob':
+        specifier: 2.0.0
+        version: 2.0.0
       '@zoonk/ai':
         specifier: workspace:*
         version: link:../ai
@@ -309,6 +312,9 @@ importers:
       server-only:
         specifier: '>=0.0.1'
         version: 0.0.1
+      slugify:
+        specifier: 1.6.6
+        version: 1.6.6
     devDependencies:
       '@types/react':
         specifier: ^19

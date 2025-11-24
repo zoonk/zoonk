@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
   pageExtensions: ["ts", "tsx"],
   reactCompiler: true,
   // we use next.js compiler to transpile our internal packages
-  transpilePackages: ["@zoonk/ai", "@zoonk/ui", "@zoonk/utils"],
+  transpilePackages: ["@zoonk/ai", "@zoonk/api", "@zoonk/ui", "@zoonk/utils"],
   turbopack: {
     root: path.resolve(__dirname, "../.."),
     rules: {

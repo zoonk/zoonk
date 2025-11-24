@@ -1,11 +1,11 @@
 "use server";
 
-import { generateCourseThumbnail } from "@zoonk/ai/course-thumbnail";
+import { createCourseThumbnail } from "@zoonk/api/course-thumbnail";
 
 export async function generateThumbnailAction(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
 
-  const { data: imageUrl, error } = await generateCourseThumbnail({ title });
+  const { data: imageUrl, error } = await createCourseThumbnail({ title });
 
   if (error) {
     console.error("Error generating thumbnail:", error);

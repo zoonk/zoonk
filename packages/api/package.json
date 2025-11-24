@@ -1,9 +1,11 @@
 {
   "dependencies": {
+    "@vercel/blob": "2.0.0",
     "@zoonk/ai": "workspace:*",
     "@zoonk/auth": "workspace:*",
     "@zoonk/db": "workspace:*",
-    "@zoonk/utils": "workspace:*"
+    "@zoonk/utils": "workspace:*",
+    "slugify": "1.6.6"
   },
   "devDependencies": {
     "@types/react": "^19",
