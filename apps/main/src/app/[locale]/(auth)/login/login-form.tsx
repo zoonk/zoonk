@@ -1,7 +1,6 @@
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
-import Form from "next/form";
 import { getExtracted } from "next-intl/server";
 import { sendVerificationOTPAction } from "./actions";
 
@@ -9,7 +8,7 @@ export default async function LoginForm() {
   const t = await getExtracted();
 
   return (
-    <Form action={sendVerificationOTPAction} className="flex flex-col gap-6">
+    <form action={sendVerificationOTPAction} className="flex flex-col gap-6">
       <div className="grid gap-3">
         <Label htmlFor="email">{t("Email")}</Label>
 
@@ -26,6 +25,6 @@ export default async function LoginForm() {
       </div>
 
       <SubmitButton full>{t("Continue")}</SubmitButton>
-    </Form>
+    </form>
   );
 }
