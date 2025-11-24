@@ -19,6 +19,7 @@
     "react": "19.2.0",
     "react-dom": "19.2.0",
     "server-only": "0.0.1",
+    "sharp": "0.34.4",
     "stripe": "18.5.0"
   },
   "devDependencies": {

@@ -22,7 +22,8 @@
   "peerDependencies": {
     "next": ">=16.0.3",
     "react": ">=19.2.0",
-    "server-only": ">=0.0.1"
+    "server-only": ">=0.0.1",
+    "sharp": "0.34.4"
   },
   "private": true,
   "scripts": {
