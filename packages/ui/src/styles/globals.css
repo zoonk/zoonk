@@ -55,8 +55,8 @@
   --card-foreground: var(--color-neutral-950);
   --popover: var(--color-white);
   --popover-foreground: var(--color-neutral-950);
-  --primary: var(--color-blue-500);
-  --primary-foreground: var(--color-blue-50);
+  --primary: var(--color-blue-100);
+  --primary-foreground: var(--color-blue-600);
   --secondary: var(--color-neutral-100);
   --secondary-foreground: var(--color-neutral-900);
   --muted: var(--color-neutral-100);
@@ -94,8 +94,8 @@
     --card-foreground: var(--color-black);
     --popover: var(--color-white);
     --popover-foreground: var(--color-black);
-    --primary: var(--color-blue-600);
-    --primary-foreground: var(--color-white);
+    --primary: var(--color-blue-50);
+    --primary-foreground: var(--color-blue-950);
     --secondary: var(--color-neutral-200);
     --secondary-foreground: var(--color-black);
     --muted: var(--color-neutral-200);
