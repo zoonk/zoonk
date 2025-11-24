@@ -8,7 +8,7 @@ import { UserDropdownMenu } from "./user-dropdown-menu";
 export async function UserAvatarMenu() {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger className="rounded-full focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50">
         <UserAvatar />
       </DropdownMenuTrigger>
 
