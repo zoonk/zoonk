@@ -1,0 +1,18 @@
+name: Check Translations
+
+permissions:
+  contents: read
+
+on: push
+
+jobs:
+  i18n-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install gettext utilities
+        run: sudo apt-get update && sudo apt-get install -y gettext
+
+      - name: Check for untranslated entries
+        run: ./scripts/i18n.sh
