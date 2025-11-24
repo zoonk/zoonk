@@ -7,7 +7,6 @@ msgstr ""
 "X-Crowdin-SourceKey: msgstr\n"
 
 #: src/app/[locale]/(auth)/layout.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
 #: src/components/command-palette.tsx
 #: src/components/navbar-links.tsx
 msgid "U3l+Q9"
@@ -162,7 +161,6 @@ msgstr "O Zoonk é uma plataforma de aprendizagem com IA onde você pode aprende
 #: src/app/[locale]/(settings)/feedback/page.tsx
 #: src/app/[locale]/(settings)/settings-navbar.tsx
 #: src/app/[locale]/(settings)/settings-navigation.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/feedback-sheet.tsx
 #: src/components/user-dropdown-menu.tsx
@@ -186,7 +184,6 @@ msgstr "Compartilhe suas ideias e ajude a melhorar o Zoonk. Use a página de fee
 
 #: src/app/[locale]/(settings)/follow/page.tsx
 #: src/app/[locale]/(settings)/settings-navigation.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
 msgid "l1XTI5"
 msgstr "Nos siga"
 
@@ -209,7 +206,6 @@ msgstr "Obtenha suporte e respostas. Preencha o formulário abaixo ou nos envie 
 
 #: src/app/[locale]/(settings)/help/page.tsx
 #: src/app/[locale]/(settings)/settings-navigation.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/user-dropdown-menu.tsx
 msgid "SENRqu"
@@ -237,7 +233,6 @@ msgstr "Atualize o idioma do seu app Zoonk para aprender em inglês, português,
 
 #: src/app/[locale]/(settings)/language/page.tsx
 #: src/app/[locale]/(settings)/settings-navigation.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/command-palette.tsx
 #: src/components/locale-switcher.tsx
@@ -262,7 +257,7 @@ msgstr "Nome"
 
 #: src/app/[locale]/(settings)/name/name-form.tsx
 msgid "VT+G/7"
-msgstr ""
+msgstr "Este nome ficará visível para outras pessoas."
 
 #: src/app/[locale]/(settings)/name/page.tsx
 msgid "+ceM20"
@@ -274,7 +269,6 @@ msgstr "Atualizar nome de exibição"
 
 #: src/app/[locale]/(settings)/name/page.tsx
 #: src/app/[locale]/(settings)/settings-navigation.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
 msgid "dOQCL8"
 msgstr "Nome de exibição"
 
@@ -284,17 +278,15 @@ msgstr "Este é o nome que outros podem ver e o que usaremos para nos referir a 
 
 #: src/app/[locale]/(settings)/settings-navbar.tsx
 msgid "4dLJ2n"
-msgstr ""
+msgstr "Fechar configurações"
 
 #: src/app/[locale]/(settings)/settings-navbar.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
 #: src/components/command-palette.tsx
 #: src/components/logout-dropdown-item.tsx
 msgid "C81/uG"
 msgstr "Sair"
 
 #: src/app/[locale]/(settings)/settings-navigation.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
 #: src/app/[locale]/(settings)/settings/page.tsx
 #: src/components/user-dropdown-menu.tsx
 msgid "D3idYv"
@@ -302,32 +294,14 @@ msgstr "Configurações"
 
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 msgid "iZeMgn"
-msgstr ""
+msgstr "Ver configurações"
 
 #: src/app/[locale]/(settings)/settings-navigation.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/subscription/page.tsx
 #: src/components/user-dropdown-menu.tsx
 msgid "R/6nsx"
 msgstr "Assinatura"
-
-#: src/app/[locale]/(settings)/settings-sidebar-header.tsx
-msgid "6D4Ghb"
-msgstr "Alternar barra lateral"
-
-#: src/app/[locale]/(settings)/settings-sidebar.tsx
-msgid "91zLBH"
-msgstr "Navegue por todas as configurações"
-
-#: src/app/[locale]/(settings)/settings-sidebar.tsx
-msgid "oovqxW"
-msgstr "Barra lateral de configurações"
-
-#: src/app/[locale]/(settings)/settings-sidebar.tsx
-#: src/components/feedback-sheet.tsx
-msgid "rbrahO"
-msgstr "Fechar"
 
 #: src/app/[locale]/(settings)/settings/page.tsx
 msgid "FMLZiG"
@@ -468,7 +442,7 @@ msgstr "Buscar"
 
 #: src/components/contact-form.tsx
 msgid "+5vOOu"
-msgstr ""
+msgstr "Forneça o maior número de detalhes possível."
 
 #: src/components/contact-form.tsx
 msgid "1WHPmV"
@@ -492,7 +466,7 @@ msgstr "Mensagem enviada com sucesso! Em breve entraremos em contato."
 
 #: src/components/contact-form.tsx
 msgid "WzCvaN"
-msgstr ""
+msgstr "Vamos entrar em contato por este e-mail."
 
 #: src/components/contact-form.tsx
 msgid "Xx0WZV"
@@ -509,6 +483,10 @@ msgstr "Eu não gostei"
 #: src/components/content-feedback.tsx
 msgid "rTFrsw"
 msgstr "Eu gostei"
+
+#: src/components/feedback-sheet.tsx
+msgid "rbrahO"
+msgstr "Fechar"
 
 #: src/components/locale-switcher.tsx
 msgid "GmcCqz"
