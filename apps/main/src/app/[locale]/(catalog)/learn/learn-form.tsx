@@ -16,8 +16,32 @@ import { learnFormAction } from "./actions";
 
 const PROMPT_MAX_LENGTH = 128;
 
-export function LearnForm() {
+function SubmitForm() {
   const { pending } = useFormStatus();
+  const t = useExtracted();
+
+  return (
+    <InputGroupAddon
+      align="inline-end"
+      className="opacity-0 transition-all duration-200 ease-in-out peer-not-placeholder-shown:opacity-100"
+    >
+      {pending && <Spinner />}
+
+      <InputGroupButton
+        aria-label={t("Start")}
+        className="rounded-full"
+        disabled={pending}
+        size="icon-xs"
+        type="submit"
+        variant="default"
+      >
+        <ArrowUp aria-hidden="true" />
+      </InputGroupButton>
+    </InputGroupAddon>
+  );
+}
+
+export function LearnForm() {
   const t = useExtracted();
   const queryId = useId();
 
@@ -42,23 +66,7 @@ export function LearnForm() {
           required
         />
 
-        <InputGroupAddon
-          align="inline-end"
-          className="opacity-0 transition-all duration-200 ease-in-out peer-not-placeholder-shown:opacity-100"
-        >
-          {pending && <Spinner />}
-
-          <InputGroupButton
-            aria-label={t("Start")}
-            className="rounded-full"
-            disabled={pending}
-            size="icon-xs"
-            type="submit"
-            variant="default"
-          >
-            <ArrowUp aria-hidden="true" />
-          </InputGroupButton>
-        </InputGroupAddon>
+        <SubmitForm />
       </InputGroup>
     </form>
   );
