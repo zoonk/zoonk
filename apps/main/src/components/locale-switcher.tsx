@@ -1,5 +1,6 @@
 "use client";
 
+import { Field, FieldContent, FieldLabel } from "@zoonk/ui/components/field";
 import {
   NativeSelect,
   NativeSelectOption,
@@ -33,21 +34,27 @@ export default function LocaleSwitcher() {
   }
 
   return (
-    <NativeSelect
-      aria-label={t("Change language")}
-      className="w-[180px]"
-      defaultValue={locale}
-      disabled={isPending}
-      onChange={onSelectChange}
-    >
-      {routing.locales.map((lang) => (
-        <NativeSelectOption key={lang} value={lang}>
-          {t(
-            "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} es {🇪🇸 Español} other {Unknown}}",
-            { locale: lang },
-          )}
-        </NativeSelectOption>
-      ))}
-    </NativeSelect>
+    <Field>
+      <FieldContent>
+        <FieldLabel htmlFor="language">{t("Language")}</FieldLabel>
+        <NativeSelect
+          aria-label={t("Change language")}
+          className="w-full sm:w-[280px]"
+          defaultValue={locale}
+          disabled={isPending}
+          id="language"
+          onChange={onSelectChange}
+        >
+          {routing.locales.map((lang) => (
+            <NativeSelectOption key={lang} value={lang}>
+              {t(
+                "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} es {🇪🇸 Español} other {Unknown}}",
+                { locale: lang },
+              )}
+            </NativeSelectOption>
+          ))}
+        </NativeSelect>
+      </FieldContent>
+    </Field>
   );
 }

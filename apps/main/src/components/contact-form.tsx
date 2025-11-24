@@ -1,8 +1,16 @@
 "use client";
 
 import { authClient } from "@zoonk/auth/client";
-import { Input, InputError, InputSuccess } from "@zoonk/ui/components/input";
-import { Label } from "@zoonk/ui/components/label";
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldDynamicDescription,
+  FieldError,
+  FieldLabel,
+} from "@zoonk/ui/components/field";
+import { Input } from "@zoonk/ui/components/input";
+import { Textarea } from "@zoonk/ui/components/textarea";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { useExtracted } from "next-intl";
 import { useActionState, useId } from "react";
@@ -22,51 +30,60 @@ export function ContactForm() {
   const emailId = useId();
   const messageId = useId();
 
-  const [state, formAction, _pending] = useActionState(
-    contactFormAction,
-    initialState,
-  );
+  const [state, formAction] = useActionState(contactFormAction, initialState);
+
+  const hasError = state.status === "error";
 
   return (
-    <form action={formAction} className="flex max-w-lg flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <Label htmlFor={emailId}>{t("Email address")}</Label>
-        <Input
-          autoComplete="email"
-          defaultValue={session?.user?.email ?? ""}
-          disabled={isPending}
-          id={emailId}
-          name="email"
-          placeholder={t("myemail@gmail.com")}
-          required
-          type="email"
-        />
-      </div>
+    <form action={formAction} className="flex flex-col gap-6">
+      <Field>
+        <FieldContent>
+          <FieldLabel htmlFor={emailId}>{t("Email address")}</FieldLabel>
+          <Input
+            autoComplete="email"
+            defaultValue={session?.user?.email ?? ""}
+            disabled={isPending}
+            id={emailId}
+            name="email"
+            placeholder={t("myemail@gmail.com")}
+            required
+            type="email"
+          />
+          <FieldDescription>
+            {t("We'll use this email to contact you.")}
+          </FieldDescription>
+        </FieldContent>
+      </Field>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor={messageId}>{t("Message")}</Label>
-        <textarea
-          className="min-h-32 resize-y rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-          id={messageId}
-          name="message"
-          placeholder={t("How can we help you?")}
-          required
-        />
-      </div>
+      <Field>
+        <FieldContent>
+          <FieldLabel htmlFor={messageId}>{t("Message")}</FieldLabel>
+          <Textarea
+            disabled={isPending}
+            id={messageId}
+            name="message"
+            placeholder={t("How can we help you?")}
+            required
+          />
+          <FieldDynamicDescription
+            successMessage={
+              state.status === "success"
+                ? t("Message sent successfully! We'll get back to you soon.")
+                : null
+            }
+          >
+            {t("Please provide as much detail as possible.")}
+          </FieldDynamicDescription>
 
-      {state.status === "error" && (
-        <InputError>
-          {t(
-            "Failed to send message. Please try again or email us directly at hello@zoonk.com",
+          {hasError && (
+            <FieldError>
+              {t(
+                "Failed to send message. Please try again or email us directly at hello@zoonk.com",
+              )}
+            </FieldError>
           )}
-        </InputError>
-      )}
-
-      {state.status === "success" && (
-        <InputSuccess>
-          {t("Message sent successfully! We'll get back to you soon.")}
-        </InputSuccess>
-      )}
+        </FieldContent>
+      </Field>
 
       <SubmitButton>{t("Send message")}</SubmitButton>
     </form>

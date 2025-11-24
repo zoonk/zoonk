@@ -160,6 +160,8 @@ msgid "ZgSctJ"
 msgstr ""
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
+#: src/app/[locale]/(settings)/settings-navbar.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/feedback-sheet.tsx
@@ -183,6 +185,7 @@ msgid "KZv6Ml"
 msgstr ""
 
 #: src/app/[locale]/(settings)/follow/page.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
 msgid "l1XTI5"
 msgstr ""
@@ -205,6 +208,7 @@ msgid "BIAaC9"
 msgstr ""
 
 #: src/app/[locale]/(settings)/help/page.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/user-dropdown-menu.tsx
@@ -232,9 +236,11 @@ msgid "gr4VpD"
 msgstr ""
 
 #: src/app/[locale]/(settings)/language/page.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-account.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/command-palette.tsx
+#: src/components/locale-switcher.tsx
 msgid "y1Z3or"
 msgstr ""
 
@@ -254,6 +260,10 @@ msgstr ""
 msgid "HAlOn1"
 msgstr ""
 
+#: src/app/[locale]/(settings)/name/name-form.tsx
+msgid "VT+G/7"
+msgstr ""
+
 #: src/app/[locale]/(settings)/name/page.tsx
 msgid "+ceM20"
 msgstr ""
@@ -263,6 +273,7 @@ msgid "9NBNq2"
 msgstr ""
 
 #: src/app/[locale]/(settings)/name/page.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-account.tsx
 msgid "dOQCL8"
 msgstr ""
@@ -271,23 +282,34 @@ msgstr ""
 msgid "Pj/oEx"
 msgstr ""
 
+#: src/app/[locale]/(settings)/settings-navbar.tsx
+msgid "4dLJ2n"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings-navbar.tsx
+#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
+#: src/components/command-palette.tsx
+#: src/components/logout-dropdown-item.tsx
+msgid "C81/uG"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-account.tsx
 #: src/app/[locale]/(settings)/settings/page.tsx
 #: src/components/user-dropdown-menu.tsx
 msgid "D3idYv"
 msgstr ""
 
+#: src/app/[locale]/(settings)/settings-navigation.tsx
+msgid "iZeMgn"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-account.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/subscription/page.tsx
 #: src/components/user-dropdown-menu.tsx
 msgid "R/6nsx"
-msgstr ""
-
-#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
-#: src/components/command-palette.tsx
-#: src/components/logout-dropdown-item.tsx
-msgid "C81/uG"
 msgstr ""
 
 #: src/app/[locale]/(settings)/settings-sidebar-header.tsx
@@ -445,6 +467,10 @@ msgid "xmcVZ0"
 msgstr ""
 
 #: src/components/contact-form.tsx
+msgid "+5vOOu"
+msgstr ""
+
+#: src/components/contact-form.tsx
 msgid "1WHPmV"
 msgstr ""
 
@@ -462,6 +488,10 @@ msgstr ""
 
 #: src/components/contact-form.tsx
 msgid "vD72E5"
+msgstr ""
+
+#: src/components/contact-form.tsx
+msgid "WzCvaN"
 msgstr ""
 
 #: src/components/contact-form.tsx

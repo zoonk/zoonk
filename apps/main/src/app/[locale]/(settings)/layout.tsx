@@ -1,10 +1,9 @@
 "use cache";
 
-import { SidebarInset, SidebarProvider } from "@zoonk/ui/components/sidebar";
 import { cacheTagSettings } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
-import { SettingsSidebar } from "@/app/[locale]/(settings)/settings-sidebar";
+import { SettingsNavbar } from "@/app/[locale]/(settings)/settings-navbar";
 
 export default async function Layout({
   children,
@@ -17,9 +16,9 @@ export default async function Layout({
   cacheTag(locale, cacheTagSettings());
 
   return (
-    <SidebarProvider>
-      <SettingsSidebar />
-      <SidebarInset>{children}</SidebarInset>
-    </SidebarProvider>
+    <div className="flex min-h-dvh flex-col">
+      <SettingsNavbar />
+      {children}
+    </div>
   );
 }

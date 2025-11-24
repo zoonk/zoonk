@@ -160,6 +160,8 @@ msgid "ZgSctJ"
 msgstr "O Zoonk é uma plataforma de aprendizagem com IA onde você pode aprender qualquer coisa por meio de cursos, lições e atividades interativas."
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
+#: src/app/[locale]/(settings)/settings-navbar.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/feedback-sheet.tsx
@@ -183,6 +185,7 @@ msgid "KZv6Ml"
 msgstr "Compartilhe suas ideias e ajude a melhorar o Zoonk. Use a página de feedback para nos contatar com sugestões, dúvidas ou problemas sobre nossa plataforma de aprendizagem."
 
 #: src/app/[locale]/(settings)/follow/page.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
 msgid "l1XTI5"
 msgstr "Nos siga"
@@ -205,6 +208,7 @@ msgid "BIAaC9"
 msgstr "Obtenha suporte e respostas. Preencha o formulário abaixo ou nos envie um e-mail diretamente em hello@zoonk.com."
 
 #: src/app/[locale]/(settings)/help/page.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/user-dropdown-menu.tsx
@@ -232,9 +236,11 @@ msgid "gr4VpD"
 msgstr "Atualize o idioma do seu app Zoonk para aprender em inglês, português, espanhol, francês ou outros idiomas suportados."
 
 #: src/app/[locale]/(settings)/language/page.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-account.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/command-palette.tsx
+#: src/components/locale-switcher.tsx
 msgid "y1Z3or"
 msgstr "Idioma"
 
@@ -254,6 +260,10 @@ msgstr "Falha ao atualizar seu nome. Tente novamente ou entre em contato pelo he
 msgid "HAlOn1"
 msgstr "Nome"
 
+#: src/app/[locale]/(settings)/name/name-form.tsx
+msgid "VT+G/7"
+msgstr ""
+
 #: src/app/[locale]/(settings)/name/page.tsx
 msgid "+ceM20"
 msgstr "Defina ou atualize seu nome de exibição no Zoonk. Esse nome pode ser visível para outros e será usado ao se referir a você em lições e atividades."
@@ -263,6 +273,7 @@ msgid "9NBNq2"
 msgstr "Atualizar nome de exibição"
 
 #: src/app/[locale]/(settings)/name/page.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-account.tsx
 msgid "dOQCL8"
 msgstr "Nome de exibição"
@@ -271,24 +282,35 @@ msgstr "Nome de exibição"
 msgid "Pj/oEx"
 msgstr "Este é o nome que outros podem ver e o que usaremos para nos referir a você em atividades."
 
+#: src/app/[locale]/(settings)/settings-navbar.tsx
+msgid "4dLJ2n"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings-navbar.tsx
+#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
+#: src/components/command-palette.tsx
+#: src/components/logout-dropdown-item.tsx
+msgid "C81/uG"
+msgstr "Sair"
+
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-account.tsx
 #: src/app/[locale]/(settings)/settings/page.tsx
 #: src/components/user-dropdown-menu.tsx
 msgid "D3idYv"
 msgstr "Configurações"
 
+#: src/app/[locale]/(settings)/settings-navigation.tsx
+msgid "iZeMgn"
+msgstr ""
+
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-sidebar-account.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/subscription/page.tsx
 #: src/components/user-dropdown-menu.tsx
 msgid "R/6nsx"
 msgstr "Assinatura"
-
-#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
-#: src/components/command-palette.tsx
-#: src/components/logout-dropdown-item.tsx
-msgid "C81/uG"
-msgstr "Sair"
 
 #: src/app/[locale]/(settings)/settings-sidebar-header.tsx
 msgid "6D4Ghb"
@@ -445,6 +467,10 @@ msgid "xmcVZ0"
 msgstr "Buscar"
 
 #: src/components/contact-form.tsx
+msgid "+5vOOu"
+msgstr ""
+
+#: src/components/contact-form.tsx
 msgid "1WHPmV"
 msgstr "Falha ao enviar mensagem. Tente novamente ou envie um e-mail diretamente para hello@zoonk.com"
 
@@ -463,6 +489,10 @@ msgstr "Mensagem"
 #: src/components/contact-form.tsx
 msgid "vD72E5"
 msgstr "Mensagem enviada com sucesso! Em breve entraremos em contato."
+
+#: src/components/contact-form.tsx
+msgid "WzCvaN"
+msgstr ""
 
 #: src/components/contact-form.tsx
 msgid "Xx0WZV"

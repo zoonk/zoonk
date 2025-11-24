@@ -5,7 +5,9 @@ import { Separator } from "@zoonk/ui/components/separator";
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+
+const SUCCESS_DISPLAY_TIME = 3000;
 
 function FieldSet({ className, ...props }: React.ComponentProps<"fieldset">) {
   return (
@@ -235,15 +237,69 @@ function FieldError({
   );
 }
 
+function FieldDynamicDescription({
+  children,
+  className,
+  successMessage,
+}: {
+  children?: React.ReactNode;
+  className?: string;
+  successMessage?: string | null;
+}) {
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    if (successMessage) {
+      setShowSuccess(true);
+
+      const timer = setTimeout(
+        () => setShowSuccess(false),
+        SUCCESS_DISPLAY_TIME,
+      );
+
+      return () => clearTimeout(timer);
+    }
+    setShowSuccess(false);
+  }, [successMessage]);
+
+  return (
+    <div className={cn("grid", className)}>
+      <div
+        aria-hidden={showSuccess}
+        className={cn(
+          "col-start-1 row-start-1 transition-all duration-300 ease-in-out",
+          showSuccess ? "translate-y-2 opacity-0" : "translate-y-0 opacity-100",
+        )}
+      >
+        <FieldDescription>{children}</FieldDescription>
+      </div>
+
+      <div
+        aria-hidden={!showSuccess}
+        aria-live="polite"
+        className={cn(
+          "col-start-1 row-start-1 transition-all duration-300 ease-in-out",
+          showSuccess
+            ? "translate-y-0 opacity-100"
+            : "-translate-y-2 opacity-0",
+        )}
+      >
+        <p className="font-medium text-sm text-success">{successMessage}</p>
+      </div>
+    </div>
+  );
+}
+
 export {
   Field,
-  FieldLabel,
+  FieldContent,
   FieldDescription,
+  FieldDynamicDescription,
   FieldError,
   FieldGroup,
+  FieldLabel,
   FieldLegend,
   FieldSeparator,
   FieldSet,
-  FieldContent,
   FieldTitle,
 };
