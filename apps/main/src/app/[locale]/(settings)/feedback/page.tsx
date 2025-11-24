@@ -42,7 +42,7 @@ export default async function Feedback({
   const t = await getExtracted();
 
   return (
-    <Container>
+    <Container isForm>
       <ContainerHeader>
         <ContainerTitle>{t("Feedback")}</ContainerTitle>
         <ContainerDescription>

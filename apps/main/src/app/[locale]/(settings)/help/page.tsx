@@ -40,7 +40,7 @@ export default async function Help({ params }: PageProps<"/[locale]/help">) {
   const t = await getExtracted();
 
   return (
-    <Container>
+    <Container isForm>
       <ContainerHeader>
         <ContainerTitle>{t("Help")}</ContainerTitle>
 

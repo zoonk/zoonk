@@ -3,9 +3,20 @@ import { cn } from "@zoonk/ui/lib/utils";
 export function Container({
   children,
   className,
-}: React.ComponentProps<"main">) {
+  isForm = false,
+}: React.ComponentProps<"main"> & { isForm?: boolean }) {
   return (
-    <main className={cn("flex flex-col gap-4 p-4", className)}>{children}</main>
+    <main
+      className={cn(
+        "flex flex-col gap-4 p-4",
+        {
+          "mx-auto w-full max-w-lg lg:py-8": isForm,
+        },
+        className,
+      )}
+    >
+      {children}
+    </main>
   );
 }
 

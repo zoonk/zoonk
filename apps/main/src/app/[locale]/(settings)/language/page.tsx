@@ -42,7 +42,7 @@ export default async function Language({
   const t = await getExtracted();
 
   return (
-    <Container>
+    <Container isForm>
       <ContainerHeader>
         <ContainerTitle>{t("Language")}</ContainerTitle>
         <ContainerDescription>

@@ -43,7 +43,7 @@ export default async function Subscription({
   const t = await getExtracted();
 
   return (
-    <Container>
+    <Container isForm>
       <ContainerHeader>
         <ContainerTitle>{t("Subscription")}</ContainerTitle>
         <ContainerDescription>
