@@ -26,6 +26,7 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-warning: var(--warning);
   --color-success: var(--success);
   --color-border: var(--border);
@@ -62,7 +63,8 @@
   --muted-foreground: var(--color-neutral-500);
   --accent: var(--color-neutral-100);
   --accent-foreground: var(--color-neutral-900);
-  --destructive: var(--color-pink-600);
+  --destructive: var(--color-pink-100);
+  --destructive-foreground: var(--color-pink-600);
   --warning: var(--color-amber-600);
   --success: var(--color-emerald-600);
   --border: var(--color-neutral-200);
@@ -100,7 +102,8 @@
     --muted-foreground: var(--color-black);
     --accent: var(--color-neutral-200);
     --accent-foreground: var(--color-black);
-    --destructive: var(--color-red-700);
+    --destructive: var(--color-pink-200);
+    --destructive-foreground: var(--color-pink-950);
     --warning: var(--color-amber-800);
     --success: var(--color-emerald-950);
     --border: var(--color-neutral-950);
@@ -138,7 +141,8 @@
     --muted-foreground: var(--color-neutral-400);
     --accent: var(--color-neutral-800);
     --accent-foreground: var(--color-neutral-50);
-    --destructive: var(--color-red-400);
+    --destructive: var(--color-pink-600);
+    --destructive-foreground: var(--color-pink-100);
     --warning: var(--color-amber-400);
     --success: var(--color-emerald-400);
     --border: var(--color-neutral-700);
@@ -176,7 +180,8 @@
     --muted-foreground: var(--color-white);
     --accent: var(--color-neutral-700);
     --accent-foreground: var(--color-white);
-    --destructive: var(--color-red-400);
+    --destructive: var(--color-pink-800);
+    --destructive-foreground: var(--color-pink-50);
     --warning: var(--color-amber-400);
     --success: var(--color-emerald-400);
     --border: var(--color-neutral-50);
