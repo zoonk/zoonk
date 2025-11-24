@@ -7,7 +7,6 @@ msgstr ""
 "X-Crowdin-SourceKey: msgstr\n"
 
 #: src/app/[locale]/(auth)/layout.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
 #: src/components/command-palette.tsx
 #: src/components/navbar-links.tsx
 msgid "U3l+Q9"
@@ -160,7 +159,8 @@ msgid "ZgSctJ"
 msgstr "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and activities."
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
+#: src/app/[locale]/(settings)/settings-navbar.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/feedback-sheet.tsx
 #: src/components/user-dropdown-menu.tsx
@@ -183,7 +183,7 @@ msgid "KZv6Ml"
 msgstr "Share your thoughts and help improve Zoonk. Use the feedback page to contact us with suggestions, questions, or issues about our learning platform."
 
 #: src/app/[locale]/(settings)/follow/page.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 msgid "l1XTI5"
 msgstr "Follow us"
 
@@ -205,7 +205,7 @@ msgid "BIAaC9"
 msgstr "Get support and answers. Fill in the form below or email us directly at hello@zoonk.com."
 
 #: src/app/[locale]/(settings)/help/page.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/user-dropdown-menu.tsx
 msgid "SENRqu"
@@ -232,9 +232,10 @@ msgid "gr4VpD"
 msgstr "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages."
 
 #: src/app/[locale]/(settings)/language/page.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/command-palette.tsx
+#: src/components/locale-switcher.tsx
 msgid "y1Z3or"
 msgstr "Language"
 
@@ -254,6 +255,10 @@ msgstr "Failed to update your name. Please try again or contact hello@zoonk.com"
 msgid "HAlOn1"
 msgstr "Name"
 
+#: src/app/[locale]/(settings)/name/name-form.tsx
+msgid "VT+G/7"
+msgstr "This name will be visible to other users."
+
 #: src/app/[locale]/(settings)/name/page.tsx
 msgid "+ceM20"
 msgstr "Set or update your Zoonk display name. This name may be visible to others and will be used when referring to you in lessons and activities."
@@ -263,7 +268,7 @@ msgid "9NBNq2"
 msgstr "Update Display Name"
 
 #: src/app/[locale]/(settings)/name/page.tsx
-#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
 msgid "dOQCL8"
 msgstr "Display name"
 
@@ -271,41 +276,32 @@ msgstr "Display name"
 msgid "Pj/oEx"
 msgstr "This is the name others may see and the one we'll use to refer to you in activities."
 
-#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
-#: src/app/[locale]/(settings)/settings/page.tsx
-#: src/components/user-dropdown-menu.tsx
-msgid "D3idYv"
-msgstr "Settings"
+#: src/app/[locale]/(settings)/settings-navbar.tsx
+msgid "4dLJ2n"
+msgstr "Close settings"
 
-#: src/app/[locale]/(settings)/settings-sidebar-account.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
-#: src/app/[locale]/(settings)/subscription/page.tsx
-#: src/components/user-dropdown-menu.tsx
-msgid "R/6nsx"
-msgstr "Subscription"
-
-#: src/app/[locale]/(settings)/settings-sidebar-footer.tsx
+#: src/app/[locale]/(settings)/settings-navbar.tsx
 #: src/components/command-palette.tsx
 #: src/components/logout-dropdown-item.tsx
 msgid "C81/uG"
 msgstr "Logout"
 
-#: src/app/[locale]/(settings)/settings-sidebar-header.tsx
-msgid "6D4Ghb"
-msgstr "Toggle sidebar"
+#: src/app/[locale]/(settings)/settings-navigation.tsx
+#: src/app/[locale]/(settings)/settings/page.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "D3idYv"
+msgstr "Settings"
 
-#: src/app/[locale]/(settings)/settings-sidebar.tsx
-msgid "91zLBH"
-msgstr "Navigate to all settings"
+#: src/app/[locale]/(settings)/settings-navigation.tsx
+msgid "iZeMgn"
+msgstr "Navigate settings"
 
-#: src/app/[locale]/(settings)/settings-sidebar.tsx
-msgid "oovqxW"
-msgstr "Settings sidebar"
-
-#: src/app/[locale]/(settings)/settings-sidebar.tsx
-#: src/components/feedback-sheet.tsx
-msgid "rbrahO"
-msgstr "Close"
+#: src/app/[locale]/(settings)/settings-navigation.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/subscription/page.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "R/6nsx"
+msgstr "Subscription"
 
 #: src/app/[locale]/(settings)/settings/page.tsx
 msgid "FMLZiG"
@@ -445,6 +441,10 @@ msgid "xmcVZ0"
 msgstr "Search"
 
 #: src/components/contact-form.tsx
+msgid "+5vOOu"
+msgstr "Please provide as much detail as possible."
+
+#: src/components/contact-form.tsx
 msgid "1WHPmV"
 msgstr "Failed to send message. Please try again or email us directly at hello@zoonk.com"
 
@@ -465,6 +465,10 @@ msgid "vD72E5"
 msgstr "Message sent successfully! We'll get back to you soon."
 
 #: src/components/contact-form.tsx
+msgid "WzCvaN"
+msgstr "We'll use this email to contact you."
+
+#: src/components/contact-form.tsx
 msgid "Xx0WZV"
 msgstr "Send message"
 
@@ -479,6 +483,10 @@ msgstr "I didn't like it"
 #: src/components/content-feedback.tsx
 msgid "rTFrsw"
 msgstr "I liked it"
+
+#: src/components/feedback-sheet.tsx
+msgid "rbrahO"
+msgstr "Close"
 
 #: src/components/locale-switcher.tsx
 msgid "GmcCqz"
