@@ -10,7 +10,7 @@ export async function sendVerificationOTPAction(formData: FormData) {
   const email = parseFormField(formData, "email");
 
   if (!email) {
-    return { status: "error" };
+    return;
   }
 
   await sendVerificationOTP(email);
