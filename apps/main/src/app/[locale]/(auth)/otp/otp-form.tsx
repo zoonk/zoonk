@@ -9,6 +9,7 @@ import {
   InputOTPSlot,
 } from "@zoonk/ui/components/input-otp";
 import { Spinner } from "@zoonk/ui/components/spinner";
+import { parseFormField } from "@zoonk/utils/form";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
@@ -27,7 +28,12 @@ export function OTPForm({ email }: OTPFormProps) {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
-    const otp = String(formData.get("otp"));
+    const otp = parseFormField(formData, "otp");
+
+    if (!otp) {
+      setState("error");
+      return;
+    }
 
     const { data, error } = await authClient.signIn.emailOtp({ email, otp });
 

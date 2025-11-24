@@ -1,10 +1,11 @@
 "use server";
 
 import { auth } from "@zoonk/auth";
+import { parseFormField } from "@zoonk/utils/form";
 import { headers } from "next/headers";
 
 export async function nameFormAction(_prevState: unknown, formData: FormData) {
-  const name = String(formData.get("name") || "").trim();
+  const name = parseFormField(formData, "name");
 
   if (!name) {
     return { name, status: "error" };

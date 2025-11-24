@@ -1,9 +1,14 @@
 "use server";
 
 import { createCourseThumbnail } from "@zoonk/api/course-thumbnail";
+import { parseFormField } from "@zoonk/utils/form";
 
 export async function generateThumbnailAction(formData: FormData) {
-  const title = String(formData.get("title") ?? "").trim();
+  const title = parseFormField(formData, "title");
+
+  if (!title) {
+    return { error: "Title is required." };
+  }
 
   const { data: imageUrl, error } = await createCourseThumbnail({ title });
 

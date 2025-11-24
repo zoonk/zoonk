@@ -1,13 +1,17 @@
 "use server";
 
 import { sendVerificationOTP } from "@zoonk/api/users";
+import { parseFormField } from "@zoonk/utils/form";
 import { getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 
 export async function sendVerificationOTPAction(formData: FormData) {
   const locale = await getLocale();
+  const email = parseFormField(formData, "email");
 
-  const email = formData.get("email") as string;
+  if (!email) {
+    return;
+  }
 
   await sendVerificationOTP(email);
 
