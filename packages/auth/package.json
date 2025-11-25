@@ -8,7 +8,7 @@
     "stripe": "19.1.0"
   },
   "devDependencies": {
-    "@types/node": "^22",
+    "@types/node": "^24",
     "@types/react": ">=19.2.0",
     "@zoonk/tsconfig": "workspace:*",
     "typescript": "^5"

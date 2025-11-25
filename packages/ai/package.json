@@ -5,7 +5,7 @@
     "ai": "5.0.93"
   },
   "devDependencies": {
-    "@types/node": "^22",
+    "@types/node": "^24",
     "@zoonk/tsconfig": "workspace:*",
     "typescript": "^5"
   },

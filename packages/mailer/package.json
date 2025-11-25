@@ -3,7 +3,7 @@
     "@zoonk/utils": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^22",
+    "@types/node": "^24",
     "@zoonk/tsconfig": "workspace:*",
     "typescript": "^5"
   },
