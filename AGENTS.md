@@ -5,6 +5,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 ## Table of Contents
 
 - [Principles](#principles)
+- [Design Style](#design-style)
 - [Tech stack](#tech-stack)
 - [Project structure](#project-structure)
 - [Tools](#tools)
@@ -29,6 +30,14 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - Avoid nested conditionals and complex logic. Prefer short and composable functions
 - Prefer functional programming over OOP
 - Use meaningful variable names and avoid abbreviations
+
+## Design Style
+
+Whenever you're designing something, follow this design style:
+
+Subtle animations, great typography, clean, minimalist, and intuitive design with lots of black/white and empty space. It's clean, intuitive and super simple to use. It takes inspiration from brands with great design like Vercel, Linear, and Apple.
+
+You deeply care about quality and details, so every element should feel polished and well thought out.
 
 ## Tech stack
 
