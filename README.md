@@ -1,11 +1,11 @@
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/345ed7d9-40a8-4ebb-adf1-8f22cafa492d">
-  <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/8d018809-14b9-435b-9409-d515c599335d">
-  <img alt="Zoonk logo (a smiley brain) on the first line. Below it says 'learn anything with interactive courses'" src="https://github.com/user-attachments/assets/8d018809-14b9-435b-9409-d515c599335d">
+  <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/df56a63d-e046-4745-9924-a302ef40ea37">
+  <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/84dd27e8-5e2e-4d61-aa73-2c1cede2e4ca">
+  <img alt="Minimalist brain icon with a lightning bolt in the center next to the text learn. build. shape." src="https://github.com/user-attachments/assets/84dd27e8-5e2e-4d61-aa73-2c1cede2e4ca">
 </picture>
 
 <p align="center">
-  Web app for learning anything using AI.
+  Learn anything with step-by-step activities.
   <br />
   <br />
   <a href="https://forms.gle/jHeTqPUkw1vA7wLh8">Waitlist</a>
@@ -67,19 +67,6 @@ Then, link to the remote cache:
 pnpm turbo link
 ```
 
-## Social Media
-
-- [X](https://x.com/zoonkcom)
-- [Bluesky](https://bsky.app/profile/zoonk.bsky.social)
-- [Threads](https://www.threads.net/@zoonkcom)
-- [LinkedIn](https://www.linkedin.com/company/zoonk)
-
 ## Supporters
 
-People who supported this project:
-
-- [Sephora Lillian](https://github.com/sephoralillian)
-- [Ben Biran](https://github.com/benbiran)
-- [David Szabo-Stuban](https://github.com/ssdavidai)
-- [Gustavo A. Castillo](https://github.com/guscastilloa)
-- [Greg Lind](https://github.com/glind)
+See everyone who has [supported this project](./SUPPORTERS.md).
