@@ -127,6 +127,12 @@ export const EVAL_MODELS: ModelConfig[] = [
     outputCost: 0.5,
   },
   {
+    id: "prime-intellect/intellect-3",
+    inputCost: 0.2,
+    name: "intellect-3",
+    outputCost: 1.1,
+  },
+  {
     id: "xai/grok-4.1-fast-reasoning",
     inputCost: 0.2,
     name: "grok-4.1-fast-reasoning",
