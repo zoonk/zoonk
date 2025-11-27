@@ -26,7 +26,6 @@
   - [Installation](#installation)
   - [Local Development](#local-development)
 - [Remote Caching](#remote-caching)
-- [Social Media](#social-media)
 - [Supporters](#supporters)
 
 ## Getting Started
