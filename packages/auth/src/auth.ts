@@ -2,7 +2,7 @@ import { prisma } from "@zoonk/db";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { betterAuth } from "better-auth/minimal";
 import { nextCookies } from "better-auth/next-js";
-import { admin, emailOTP } from "better-auth/plugins";
+import { admin, emailOTP, organization } from "better-auth/plugins";
 import { appleProvider } from "./apple";
 import { googleProvider } from "./google";
 import { sendVerificationOTP } from "./otp";
@@ -28,6 +28,20 @@ export const auth = betterAuth({
       overrideDefaultEmailVerification: true,
       sendVerificationOTP,
       storeOTP: "hashed",
+    }),
+    organization({
+      // temporarily disable organization creation
+      // we'll support this in the future
+      allowUserToCreateOrganization: false,
+      membershipLimit: Number.POSITIVE_INFINITY,
+      organizationLimit: Number.POSITIVE_INFINITY,
+      schema: {
+        organization: {
+          additionalFields: {
+            kind: { defaultValue: "brand", required: true, type: "string" },
+          },
+        },
+      },
     }),
     stripePlugin(),
   ],

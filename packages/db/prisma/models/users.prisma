@@ -14,6 +14,9 @@ model User {
   sessions         Session[]
   accounts         Account[]
 
+  members     Member[]
+  invitations Invitation[]
+
   @@unique([email])
   @@map("user")
 }
@@ -29,6 +32,8 @@ model Session {
   userId         String
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   impersonatedBy String?
+
+  activeOrganizationId String?
 
   @@unique([token])
   @@index([userId])
@@ -91,4 +96,53 @@ model RateLimit {
   lastRequest BigInt?
 
   @@map("rateLimit")
+}
+
+model Organization {
+  id          String       @id
+  name        String
+  slug        String
+  logo        String?
+  createdAt   DateTime
+  metadata    String?
+  kind        String       @default("brand")
+  members     Member[]
+  invitations Invitation[]
+
+  @@unique([slug])
+  @@index([kind])
+  @@index([kind, name])
+  @@index([kind, createdAt])
+  @@map("organization")
+}
+
+model Member {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role           String       @default("member")
+  createdAt      DateTime
+
+  @@index([organizationId])
+  @@index([userId])
+  @@map("member")
+}
+
+model Invitation {
+  id             String       @id
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  email          String
+  role           String?
+  status         String       @default("pending")
+  expiresAt      DateTime
+  createdAt      DateTime     @default(now())
+  inviterId      String
+  user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([email])
+  @@map("invitation")
 }
