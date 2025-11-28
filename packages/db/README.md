@@ -1,6 +1,6 @@
 # Zoonk DB
 
-This package contains all schemas and queries for interacting with our database. We're using [Prisma](https://www.prisma.io/) as our ORM.
+This package contains all schemas the DB client for interacting with our database. We're using [Prisma](https://www.prisma.io/) as our ORM.
 
 ### PostgreSQL Setup
 
@@ -69,5 +69,4 @@ Run the following commands to set up Prisma:
 - `prisma/migrations`: Contains all migrations.
 - `src/index.ts`: Our Prisma client instance to use in our apps.
 - `src/models.ts`: Exported types and interfaces for our models.
-- `src/queries`: Contains all database queries.
 - `generated`: Contains the generated Prisma client, never edit this folder manually.

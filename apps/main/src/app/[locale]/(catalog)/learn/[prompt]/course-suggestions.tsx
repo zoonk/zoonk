@@ -1,4 +1,4 @@
-import { fetchCourseSuggestions } from "@zoonk/api/course-suggestions";
+import { getCourseSuggestions } from "@zoonk/api/course-suggestions";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,
@@ -29,7 +29,7 @@ export async function CourseSuggestions({
   prompt,
 }: CourseSuggestionsProps) {
   const t = await getExtracted();
-  const suggestions = await fetchCourseSuggestions({ locale, prompt });
+  const suggestions = await getCourseSuggestions({ locale, prompt });
 
   return (
     <Container className="mx-auto w-full max-w-2xl">

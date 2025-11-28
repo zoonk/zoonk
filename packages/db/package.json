@@ -14,8 +14,7 @@
   },
   "exports": {
     ".": "./src/index.ts",
-    "./models": "./src/models.ts",
-    "./queries/*": "./src/queries/*.ts"
+    "./models": "./src/models.ts"
   },
   "name": "@zoonk/db",
   "peerDependencies": {

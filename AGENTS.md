@@ -57,7 +57,7 @@ You deeply care about quality and details, so every element should feel polished
 - `packages/ai`: Functions for AI interactions. Anything that calls the AI SDK should be here
 - `packages/api`: Functions connecting services and queries. Anything calling `@zoonk/ai` or `@zoonk/db` should be here
 - `packages/auth`: Authentication logic and clients using Better Auth
-- `packages/db`: Database client and queries. All queries should be defined here
+- `packages/db`: Database client
 - `packages/mailer`: Client for sending emails
 - `packages/tsconfig`: Shared TypeScript configuration
 - `packages/ui`: Shared UI components, hooks, and patterns for all apps

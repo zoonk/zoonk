@@ -1,9 +1,11 @@
 import * as courseSuggestions from "@zoonk/ai/course-suggestions";
-import { addCourseSuggestion } from "@zoonk/db/queries/course-suggestions";
 import { describe, expect, test, vi } from "vitest";
-import { fetchCourseSuggestions } from "./course-suggestions";
+import {
+  getCourseSuggestions,
+  upsertCourseSuggestion,
+} from "./course-suggestions";
 
-describe("fetchCourseSuggestions()", () => {
+describe("getCourseSuggestions()", () => {
   test("get an existing item", async () => {
     const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
 
@@ -14,9 +16,9 @@ describe("fetchCourseSuggestions()", () => {
       { description: "A course on TypeScript basics.", title: "TypeScript" },
     ];
 
-    await addCourseSuggestion({ locale, prompt, suggestions });
+    await upsertCourseSuggestion({ locale, prompt, suggestions });
 
-    const result = await fetchCourseSuggestions({ locale, prompt });
+    const result = await getCourseSuggestions({ locale, prompt });
 
     expect(result).toEqual(suggestions);
     expect(spy).not.toHaveBeenCalled();
@@ -34,13 +36,13 @@ describe("fetchCourseSuggestions()", () => {
 
     spy.mockResolvedValueOnce({ data: generatedSuggestions } as any);
 
-    const result = await fetchCourseSuggestions({ locale, prompt });
+    const result = await getCourseSuggestions({ locale, prompt });
 
     expect(result).toEqual(generatedSuggestions);
     expect(spy).toHaveBeenCalledOnce();
 
     // check if the record was added to the database
-    const record = await fetchCourseSuggestions({ locale, prompt });
+    const record = await getCourseSuggestions({ locale, prompt });
     expect(record).toEqual(generatedSuggestions);
     expect(spy).toHaveBeenCalledOnce();
   });
