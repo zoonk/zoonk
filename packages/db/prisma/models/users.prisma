@@ -1,148 +1,143 @@
 model User {
-  id               String    @id
+  id               Int          @id @default(autoincrement())
   name             String
   email            String
-  emailVerified    Boolean   @default(false)
+  emailVerified    Boolean      @default(false) @map("email_verified")
   image            String?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
   role             String?
-  banned           Boolean?  @default(false)
-  banReason        String?
-  banExpires       DateTime?
-  stripeCustomerId String?
+  banned           Boolean?     @default(false)
+  banReason        String?      @map("ban_reason")
+  banExpires       DateTime?    @map("ban_expires")
+  stripeCustomerId String?      @map("stripe_customer_id")
   sessions         Session[]
   accounts         Account[]
-
-  members     Member[]
-  invitations Invitation[]
+  members          Member[]
+  invitations      Invitation[]
 
   @@unique([email])
-  @@map("user")
+  @@map("users")
 }
 
 model Session {
-  id             String   @id
-  expiresAt      DateTime
-  token          String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  ipAddress      String?
-  userAgent      String?
-  userId         String
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  impersonatedBy String?
-
-  activeOrganizationId String?
+  id                   Int      @id @default(autoincrement())
+  expiresAt            DateTime @map("expires_at")
+  token                String
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+  ipAddress            String?  @map("ip_address")
+  userAgent            String?  @map("user_agent")
+  userId               Int      @map("user_id")
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impersonatedBy       String?  @map("impersonated_by")
+  activeOrganizationId String?  @map("active_organization_id")
 
   @@unique([token])
   @@index([userId])
-  @@map("session")
+  @@map("sessions")
 }
 
 model Account {
-  id                    String    @id
-  accountId             String
-  providerId            String
-  userId                String
+  id                    Int       @id @default(autoincrement())
+  accountId             String    @map("account_id")
+  providerId            String    @map("provider_id")
+  userId                Int       @map("user_id")
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  accessToken           String?
-  refreshToken          String?
-  idToken               String?
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at")
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at")
   scope                 String?
   password              String?
-  createdAt             DateTime  @default(now())
-  updatedAt             DateTime  @updatedAt
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
 
   @@index([userId])
-  @@map("account")
+  @@map("accounts")
 }
 
 model Verification {
-  id         String   @id
+  id         Int      @id @default(autoincrement())
   identifier String
   value      String
-  expiresAt  DateTime
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  expiresAt  DateTime @map("expires_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
   @@index([identifier])
-  @@map("verification")
-}
-
-model Subscription {
-  id                   String    @id
-  plan                 String
-  referenceId          String
-  stripeCustomerId     String?
-  stripeSubscriptionId String?
-  status               String?   @default("incomplete")
-  periodStart          DateTime?
-  periodEnd            DateTime?
-  trialStart           DateTime?
-  trialEnd             DateTime?
-  cancelAtPeriodEnd    Boolean?  @default(false)
-  seats                Int?
-
-  @@map("subscription")
-}
-
-model RateLimit {
-  id          String  @id
-  key         String?
-  count       Int?
-  lastRequest BigInt?
-
-  @@map("rateLimit")
+  @@map("verifications")
 }
 
 model Organization {
-  id          String       @id
+  id          Int          @id @default(autoincrement())
   name        String
   slug        String
   logo        String?
-  createdAt   DateTime
+  createdAt   DateTime     @map("created_at")
   metadata    String?
   kind        String       @default("brand")
   members     Member[]
   invitations Invitation[]
 
   @@unique([slug])
-  @@index([kind])
-  @@index([kind, name])
-  @@index([kind, createdAt])
-  @@map("organization")
+  @@map("organizations")
 }
 
 model Member {
-  id             String       @id
-  organizationId String
+  id             Int          @id @default(autoincrement())
+  organizationId Int          @map("organization_id")
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId         String
+  userId         Int          @map("user_id")
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   role           String       @default("member")
-  createdAt      DateTime
+  createdAt      DateTime     @map("created_at")
 
   @@index([organizationId])
   @@index([userId])
-  @@map("member")
+  @@map("members")
 }
 
 model Invitation {
-  id             String       @id
-  organizationId String
+  id             Int          @id @default(autoincrement())
+  organizationId Int          @map("organization_id")
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   email          String
   role           String?
   status         String       @default("pending")
-  expiresAt      DateTime
-  createdAt      DateTime     @default(now())
-  inviterId      String
+  expiresAt      DateTime     @map("expires_at")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  inviterId      Int          @map("inviter_id")
   user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
 
   @@index([organizationId])
   @@index([email])
-  @@map("invitation")
+  @@map("invitations")
+}
+
+model Subscription {
+  id                   Int       @id @default(autoincrement())
+  plan                 String
+  referenceId          String    @map("reference_id")
+  stripeCustomerId     String?   @map("stripe_customer_id")
+  stripeSubscriptionId String?   @map("stripe_subscription_id")
+  status               String?   @default("incomplete")
+  periodStart          DateTime? @map("period_start")
+  periodEnd            DateTime? @map("period_end")
+  trialStart           DateTime? @map("trial_start")
+  trialEnd             DateTime? @map("trial_end")
+  cancelAtPeriodEnd    Boolean?  @default(false) @map("cancel_at_period_end")
+  seats                Int?
+
+  @@map("subscriptions")
+}
+
+model RateLimit {
+  id          Int     @id @default(autoincrement())
+  key         String?
+  count       Int?
+  lastRequest BigInt? @map("last_request")
+
+  @@map("rate_limits")
 }

@@ -1,11 +1,11 @@
 model CourseSuggestion {
   id          Int      @id @default(autoincrement())
   locale      String   @db.VarChar(10)
-  prompt      String   @db.Citext
+  prompt      String
   suggestions Json
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
 
   @@unique([locale, prompt], name: "localePrompt")
-  @@map("courseSuggestion")
+  @@map("course_suggestions")
 }

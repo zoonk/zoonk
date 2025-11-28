@@ -13,9 +13,10 @@ const COOKIE_CACHE_MINUTES = 60;
 
 export const auth = betterAuth({
   account: {
-    accountLinking: {
-      enabled: true,
-    },
+    accountLinking: { enabled: true },
+  },
+  advanced: {
+    database: { generateId: "serial" },
   },
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   experimental: {
