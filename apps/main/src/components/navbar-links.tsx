@@ -4,7 +4,7 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
-import { CommandPalette } from "./command-palette";
+import { AppCommandPalette } from "./command/app-command-palette";
 
 function getVariant(
   href: string,
@@ -57,7 +57,7 @@ export function NavbarLinks() {
         <span className="hidden sm:inline">{t("Courses")}</span>
       </Link>
 
-      <CommandPalette />
+      <AppCommandPalette />
 
       <Link
         className={buttonVariants({

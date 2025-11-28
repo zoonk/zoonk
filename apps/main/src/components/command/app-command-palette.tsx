@@ -19,7 +19,7 @@ import { getMenu } from "@/lib/menu";
 
 const logoutMenu = getMenu("logout");
 
-export function CommandPalette() {
+export function AppCommandPalette() {
   const { push } = useRouter();
   const t = useExtracted();
   const [query, setQuery] = useState("");
