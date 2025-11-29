@@ -16,7 +16,7 @@ import { stripePlugin } from "./stripe";
 const SESSION_EXPIRES_IN_DAYS = 30;
 const COOKIE_CACHE_MINUTES = 60;
 
-export const auth = betterAuth({
+export const baseAuthConfig = {
   account: {
     accountLinking: { enabled: true },
   },
@@ -27,32 +27,6 @@ export const auth = betterAuth({
   experimental: {
     joins: true,
   },
-  plugins: [
-    nextCookies(),
-    adminPlugin(),
-    emailOTP({
-      overrideDefaultEmailVerification: true,
-      sendVerificationOTP,
-      storeOTP: "hashed",
-    }),
-    organization({
-      ac,
-      // temporarily disable organization creation
-      // we'll support this in the future
-      allowUserToCreateOrganization: false,
-      membershipLimit: Number.POSITIVE_INFINITY,
-      organizationLimit: Number.POSITIVE_INFINITY,
-      roles: { admin, member, owner },
-      schema: {
-        organization: {
-          additionalFields: {
-            kind: { defaultValue: "brand", required: true, type: "string" },
-          },
-        },
-      },
-    }),
-    stripePlugin(),
-  ],
   rateLimit: {
     enabled: true,
     storage: "database",
@@ -64,6 +38,41 @@ export const auth = betterAuth({
     },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
   },
+} as const;
+
+export const baseAuthPlugins = [
+  adminPlugin(),
+  organization({
+    ac,
+    // temporarily disable organization creation
+    // we'll support this in the future
+    allowUserToCreateOrganization: false,
+    membershipLimit: Number.POSITIVE_INFINITY,
+    organizationLimit: Number.POSITIVE_INFINITY,
+    roles: { admin, member, owner },
+    schema: {
+      organization: {
+        additionalFields: {
+          kind: { defaultValue: "brand", required: true, type: "string" },
+        },
+      },
+    },
+  }),
+];
+
+export const auth = betterAuth({
+  ...baseAuthConfig,
+  plugins: [
+    ...baseAuthPlugins,
+    emailOTP({
+      overrideDefaultEmailVerification: true,
+      sendVerificationOTP,
+      storeOTP: "hashed",
+    }),
+    stripePlugin(),
+    // nextCookies should be the last plugin in the array
+    nextCookies(),
+  ],
   socialProviders: {
     ...appleProvider,
     ...googleProvider,

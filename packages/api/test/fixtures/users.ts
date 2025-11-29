@@ -1,26 +1,25 @@
-import { auth } from "@zoonk/auth";
+import { auth } from "@zoonk/auth/testing";
 
 type UserAttrs = {
   email: string;
   name: string;
   role: "user" | "admin";
+  password: string;
 };
 
 export function userAttrs(attrs?: Partial<UserAttrs>): UserAttrs {
   return {
-    email: `testuser${Date.now()}@example.test`,
-    name: "Test User",
-    role: "user",
+    email: attrs?.email || `testuser${Date.now()}@example.test`,
+    name: attrs?.name || "Test User",
+    password: attrs?.password || "Testuser123!",
+    role: attrs?.role || "user",
     ...attrs,
   };
 }
 
 export async function userFixture(attrs?: Partial<UserAttrs>) {
   const params = userAttrs(attrs);
+  const result = await auth.api.createUser({ body: params });
 
-  const result = await auth.api.createUser({
-    body: { ...params, password: "Testuser123!" },
-  });
-
-  return result.user;
+  return { ...result.user, password: params.password };
 }

@@ -24,14 +24,21 @@ export async function getOrganizationId(
 
 export async function canUpdateCourses(
   organizationId: number,
+  opts?: { headers?: Headers },
 ): Promise<boolean> {
-  const permissions = await auth.api.hasPermission({
-    body: {
-      organizationId: String(organizationId),
-      permissions: { course: ["update"] },
-    },
-    headers: await headers(),
-  });
+  const { data } = await safeAsync(async () =>
+    auth.api.hasPermission({
+      body: {
+        organizationId: String(organizationId),
+        permissions: { course: ["update"] },
+      },
+      headers: opts?.headers ?? (await headers()),
+    }),
+  );
 
-  return permissions.success;
+  if (!data) {
+    return false;
+  }
+
+  return data.success;
 }

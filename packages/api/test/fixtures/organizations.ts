@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
-import type { Organization } from "@zoonk/db/models";
+import type { Member, Organization } from "@zoonk/db/models";
+import { userFixture } from "./users";
 
 export function organizationAttrs(
   attrs?: Partial<Organization>,
@@ -27,4 +28,20 @@ export async function organizationFixture(attrs?: Partial<Organization>) {
   });
 
   return org;
+}
+
+export async function memberFixture(attrs?: Partial<Member>) {
+  const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+
+  const member = await prisma.member.create({
+    data: {
+      createdAt: new Date(),
+      organizationId: attrs?.organizationId || org.id,
+      role: attrs?.role || "member",
+      userId: attrs?.userId || Number(user.id),
+      ...attrs,
+    },
+  });
+
+  return { member, organization: org, user };
 }
