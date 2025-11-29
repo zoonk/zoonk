@@ -9,6 +9,7 @@ msgstr ""
 #: src/app/[locale]/(auth)/layout.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
+#: src/components/editor/editor-header.tsx
 #: src/components/navbar-links.tsx
 msgid "U3l+Q9"
 msgstr "Página de inicio"
@@ -367,6 +368,7 @@ msgid "Oj9Phc"
 msgstr "Administrar suscripción"
 
 #: src/app/[locale]/editor/[orgSlug]/page.tsx
+#: src/components/editor/editor-header.tsx
 msgid "fWKwFM"
 msgstr "Editor"
 

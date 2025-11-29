@@ -1,11 +1,6 @@
-import { buttonVariants } from "@zoonk/ui/components/button";
 import type { Metadata } from "next";
 import { getExtracted } from "next-intl/server";
-import { Header } from "@/components/header";
-import { Link } from "@/i18n/navigation";
-import { getMenu } from "@/lib/menu";
-
-const homeMenu = getMenu("home");
+import { EditorHeader } from "@/components/editor/editor-header";
 
 export async function generateMetadata({
   params,
@@ -20,21 +15,14 @@ export async function generateMetadata({
   };
 }
 
-export default async function EditorOverview() {
+export default async function EditorOverview({
+  params,
+}: PageProps<"/[locale]/editor/[orgSlug]">) {
+  const { orgSlug } = await params;
+
   return (
     <>
-      <Header>
-        <Link
-          className={buttonVariants({
-            size: "icon",
-            variant: "outline",
-          })}
-          href={homeMenu.url}
-        >
-          <homeMenu.icon aria-hidden="true" />
-        </Link>
-      </Header>
-
+      <EditorHeader active="overview" orgSlug={orgSlug} />
       <main>{}</main>
     </>
   );
