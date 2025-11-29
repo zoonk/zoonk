@@ -1,12 +1,16 @@
+import { buttonVariants } from "@zoonk/ui/components/button";
 import type { Metadata } from "next";
-import { cacheTag } from "next/cache";
 import { getExtracted } from "next-intl/server";
+import { Header } from "@/components/header";
+import { Link } from "@/i18n/navigation";
+import { getMenu } from "@/lib/menu";
+
+const homeMenu = getMenu("home");
 
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/editor/[orgSlug]">): Promise<Metadata> {
   "use cache";
-  cacheTag("max");
 
   const { locale } = await params;
   const t = await getExtracted({ locale });
@@ -17,5 +21,21 @@ export async function generateMetadata({
 }
 
 export default async function EditorOverview() {
-  return <div>{}</div>;
+  return (
+    <>
+      <Header>
+        <Link
+          className={buttonVariants({
+            size: "icon",
+            variant: "outline",
+          })}
+          href={homeMenu.url}
+        >
+          <homeMenu.icon aria-hidden="true" />
+        </Link>
+      </Header>
+
+      <main>{}</main>
+    </>
+  );
 }
