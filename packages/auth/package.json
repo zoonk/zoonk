@@ -17,7 +17,8 @@
     ".": "./src/auth.ts",
     "./client": "./src/client.ts",
     "./hooks/*": "./src/hooks/*.ts",
-    "./next": "./src/next.ts"
+    "./next": "./src/next.ts",
+    "./testing": "./src/testing.ts"
   },
   "name": "@zoonk/auth",
   "peerDependencies": {

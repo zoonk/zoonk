@@ -4,6 +4,7 @@ import { cacheTagCatalog } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
+import { Header } from "@/components/header";
 import { NavbarLinks } from "@/components/navbar-links";
 import { UserAvatarMenu } from "@/components/user-avatar-menu";
 
@@ -19,13 +20,13 @@ export default async function CatalogLayout({
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <nav className="flex w-full items-center justify-between gap-2 p-4">
+      <Header>
         <Suspense>
           <NavbarLinks />
         </Suspense>
 
         <UserAvatarMenu />
-      </nav>
+      </Header>
 
       {children}
     </div>

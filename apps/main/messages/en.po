@@ -9,6 +9,7 @@ msgstr ""
 #: src/app/[locale]/(auth)/layout.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
+#: src/components/editor/editor-header.tsx
 #: src/components/navbar-links.tsx
 msgid "U3l+Q9"
 msgstr "Home page"
@@ -365,6 +366,11 @@ msgstr "Unable to change your subscription. Contact us at hello@zoonk.com"
 #: src/components/command/app-command-palette.tsx
 msgid "Oj9Phc"
 msgstr "Manage subscription"
+
+#: src/app/[locale]/editor/[orgSlug]/page.tsx
+#: src/components/editor/editor-header.tsx
+msgid "fWKwFM"
+msgstr "Editor"
 
 #: src/app/[locale]/privacy/page.tsx
 msgid "iql85X"

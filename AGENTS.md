@@ -78,6 +78,7 @@ Read each folder's README file for more details
 - Avoid `useEffect` and `useState` unless absolutely required
 - Fetch data on the server whenever possible and use `Suspense` with a fallback for loading states, [see docs for streaming data](https://nextjs.org/docs/app/getting-started/fetching-data#streaming)
 - Keep comments minimal—explain **why**, not **what**
+- Use `safeAsync` when using `await` to better handle errors
 
 ## CSS
 

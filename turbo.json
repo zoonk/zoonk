@@ -37,7 +37,7 @@
     },
     "db:generate": {
       "dependsOn": ["^db:generate"],
-      "outputs": ["generated/**"]
+      "outputs": ["src/generated/**"]
     },
     "db:migrate": {
       "cache": false,
