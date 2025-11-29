@@ -1,6 +1,9 @@
 export type {
   Account,
   CourseSuggestion,
+  Invitation,
+  Member,
+  Organization,
   RateLimit,
   Session,
   Subscription,
