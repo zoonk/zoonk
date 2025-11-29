@@ -366,6 +366,10 @@ msgstr "No se puede cambiar tu suscripción. Contáctanos en contacto@zoonk.com"
 msgid "Oj9Phc"
 msgstr "Administrar suscripción"
 
+#: src/app/[locale]/editor/[orgSlug]/page.tsx
+msgid "fWKwFM"
+msgstr "Editor"
+
 #: src/app/[locale]/privacy/page.tsx
 msgid "iql85X"
 msgstr "Lee la política de privacidad de Zoonk para entender cómo recopilamos, usamos y protegemos tu información personal."

@@ -366,6 +366,10 @@ msgstr "Não foi possível alterar sua assinatura. Entre em contato pelo hello@z
 msgid "Oj9Phc"
 msgstr "Gerenciar assinatura"
 
+#: src/app/[locale]/editor/[orgSlug]/page.tsx
+msgid "fWKwFM"
+msgstr "Editor"
+
 #: src/app/[locale]/privacy/page.tsx
 msgid "iql85X"
 msgstr "Leia a política de privacidade do Zoonk para entender como coletamos, usamos e protegemos suas informações pessoais."
