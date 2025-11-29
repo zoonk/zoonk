@@ -2,10 +2,15 @@ import { prisma } from "@zoonk/db";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { betterAuth } from "better-auth/minimal";
 import { nextCookies } from "better-auth/next-js";
-import { admin, emailOTP, organization } from "better-auth/plugins";
+import {
+  admin as adminPlugin,
+  emailOTP,
+  organization,
+} from "better-auth/plugins";
 import { appleProvider } from "./apple";
 import { googleProvider } from "./google";
 import { sendVerificationOTP } from "./otp";
+import { ac, admin, member, owner } from "./permissions";
 import { stripePlugin } from "./stripe";
 
 const SESSION_EXPIRES_IN_DAYS = 30;
@@ -24,18 +29,20 @@ export const auth = betterAuth({
   },
   plugins: [
     nextCookies(),
-    admin(),
+    adminPlugin(),
     emailOTP({
       overrideDefaultEmailVerification: true,
       sendVerificationOTP,
       storeOTP: "hashed",
     }),
     organization({
+      ac,
       // temporarily disable organization creation
       // we'll support this in the future
       allowUserToCreateOrganization: false,
       membershipLimit: Number.POSITIVE_INFINITY,
       organizationLimit: Number.POSITIVE_INFINITY,
+      roles: { admin, member, owner },
       schema: {
         organization: {
           additionalFields: {
