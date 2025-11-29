@@ -10,11 +10,11 @@
     "@zoonk/tsconfig": "workspace:*",
     "dotenv": "17.2.3",
     "prisma": "7.0.1",
+    "tsx": "4.20.6",
     "typescript": "^5"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./models": "./src/models.ts"
+    ".": "./src/index.ts"
   },
   "name": "@zoonk/db",
   "peerDependencies": {
@@ -28,6 +28,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
+    "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
     "db:test:setup": "env $(cat .env.test | xargs) prisma migrate deploy",
     "typecheck": "tsc --noEmit"

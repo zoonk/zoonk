@@ -64,9 +64,8 @@ Run the following commands to set up Prisma:
 
 ## Structure
 
-- `prisma/schema.prisma`: The main Prisma schema file with the `datasource` and `generator` definitions.
-- `prisma/models`: Contains all Prisma model files.
-- `prisma/migrations`: Contains all migrations.
-- `src/index.ts`: Our Prisma client instance to use in our apps.
-- `src/models.ts`: Exported types and interfaces for our models.
-- `generated`: Contains the generated Prisma client, never edit this folder manually.
+- `src/prisma/schema.prisma`: The main Prisma schema file with the `datasource` and `generator` definitions
+- `src/prisma/models`: Contains all Prisma model files
+- `src/prisma/migrations`: Contains all migrations
+- `src/index.ts`: Our Prisma client instance to use in our apps
+- `src/generated`: Contains the generated Prisma client, never edit this folder manually. Run `pnpm db:generate` to regenerate.

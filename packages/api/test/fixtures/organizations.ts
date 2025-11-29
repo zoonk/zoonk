@@ -1,5 +1,4 @@
-import { prisma } from "@zoonk/db";
-import type { Member, Organization } from "@zoonk/db/models";
+import { type Member, type Organization, prisma } from "@zoonk/db";
 import { userFixture } from "./users";
 
 export function organizationAttrs(
