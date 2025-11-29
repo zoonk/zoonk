@@ -19,9 +19,10 @@ const buttonVariants = cva(
         sm: "h-8 gap-1.5 px-3 has-[>svg]:px-2.5",
       },
       variant: {
-        default: "bg-primary text-primary-foreground hover:brightness-95",
+        default:
+          "bg-primary-foreground text-primary hover:brightness-95 dark:bg-primary dark:text-primary-foreground",
         destructive:
-          "bg-destructive text-destructive-foreground hover:brightness-95 focus-visible:ring-destructive/20",
+          "bg-destructive/10 text-destructive hover:brightness-95 focus-visible:ring-destructive/20 dark:bg-destructive dark:text-white",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
         outline:
