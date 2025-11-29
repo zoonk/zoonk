@@ -75,7 +75,7 @@ model Organization {
   name        String
   slug        String
   logo        String?
-  createdAt   DateTime     @map("created_at")
+  createdAt   DateTime     @default(now()) @map("created_at")
   metadata    String?
   kind        String       @default("brand")
   members     Member[]
@@ -92,7 +92,7 @@ model Member {
   userId         Int          @map("user_id")
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   role           String       @default("member")
-  createdAt      DateTime     @map("created_at")
+  createdAt      DateTime     @default(now()) @map("created_at")
 
   @@index([organizationId])
   @@index([userId])
