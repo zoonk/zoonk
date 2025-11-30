@@ -45,7 +45,10 @@ export async function CourseList({ orgSlug }: CourseListProps) {
               <ItemDescription>{course.description}</ItemDescription>
             </ItemContent>
 
-            <Badge className="text-muted-foreground" variant="secondary">
+            <Badge
+              className="text-muted-foreground uppercase"
+              variant="secondary"
+            >
               {course.language}
             </Badge>
 
