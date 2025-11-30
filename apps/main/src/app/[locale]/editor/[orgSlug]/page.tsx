@@ -6,6 +6,7 @@ import {
 } from "@zoonk/ui/components/container";
 import type { Metadata } from "next";
 import { getExtracted } from "next-intl/server";
+import { CourseList } from "@/components/editor/course-list";
 import { EditorHeader } from "@/components/editor/editor-header";
 
 export async function generateMetadata({
@@ -38,6 +39,8 @@ export default async function EditorOverview({
             {t("Select a course to edit its content")}
           </ContainerDescription>
         </ContainerHeader>
+
+        <CourseList orgSlug={orgSlug} />
       </Container>
     </>
   );
