@@ -368,9 +368,20 @@ msgid "Oj9Phc"
 msgstr "Gerenciar assinatura"
 
 #: src/app/[locale]/editor/[orgSlug]/page.tsx
+msgid "6gzGoI"
+msgstr "Selecione um curso para editar o conteúdo"
+
+#: src/app/[locale]/editor/[orgSlug]/page.tsx
 #: src/components/editor/editor-header.tsx
 msgid "fWKwFM"
 msgstr "Editor"
+
+#: src/app/[locale]/editor/[orgSlug]/page.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+#: src/components/navbar-links.tsx
+msgid "R85gsW"
+msgstr "Cursos"
 
 #: src/app/[locale]/privacy/page.tsx
 msgid "iql85X"
@@ -450,12 +461,6 @@ msgstr "Fechar busca"
 #: src/components/command/app-command-palette.tsx
 msgid "OhXwmw"
 msgstr "Atualizar idioma"
-
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-#: src/components/navbar-links.tsx
-msgid "R85gsW"
-msgstr "Cursos"
 
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
