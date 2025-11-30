@@ -64,7 +64,12 @@ export async function CourseList({ orgSlug }: CourseListProps) {
         <Item asChild key={course.id}>
           <Link href={`/editor/${orgSlug}/${course.slug}`}>
             <ItemMedia variant="image">
-              <Image alt="" height={40} src={course.imageUrl} width={40} />
+              <Image
+                alt={course.title}
+                height={40}
+                src={course.imageUrl}
+                width={40}
+              />
             </ItemMedia>
 
             <ItemContent>
