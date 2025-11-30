@@ -63,12 +63,12 @@ export async function CourseList({ orgSlug }: CourseListProps) {
       {courses.map((course) => (
         <Item asChild key={course.id}>
           <Link href={`/editor/${orgSlug}/${course.slug}`}>
-            <ItemMedia variant="image">
+            <ItemMedia className="size-16" variant="image">
               <Image
                 alt={course.title}
-                height={40}
+                height={64}
                 src={course.imageUrl}
-                width={40}
+                width={64}
               />
             </ItemMedia>
 

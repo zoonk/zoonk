@@ -43,11 +43,11 @@ export default async function EditorOverview({
             {t("Select a course to edit its content")}
           </ContainerDescription>
         </ContainerHeader>
-
-        <Suspense fallback={<CourseListSkeleton />}>
-          <CourseList orgSlug={orgSlug} />
-        </Suspense>
       </Container>
+
+      <Suspense fallback={<CourseListSkeleton />}>
+        <CourseList orgSlug={orgSlug} />
+      </Suspense>
     </>
   );
 }
