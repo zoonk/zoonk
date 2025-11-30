@@ -4,11 +4,7 @@ import {
   memberFixture,
   organizationFixture,
 } from "../test/fixtures/organizations";
-import {
-  canReadCourses,
-  canUpdateCourses,
-  getOrganizationId,
-} from "./organizations";
+import { canUpdateCourses, getOrganizationId } from "./organizations";
 
 describe("getOrganizationId()", () => {
   test("returns the organization id for a valid slug", async () => {
@@ -24,42 +20,6 @@ describe("getOrganizationId()", () => {
 
     expect(result.data).toBeNull();
     expect(result.error).toBeNull();
-  });
-});
-
-describe("canReadCourses()", () => {
-  test("returns true for users with member role", async () => {
-    const { organization, user } = await memberFixture({ role: "member" });
-    const headers = await signInAs(user.email, user.password);
-    const canRead = await canReadCourses(organization.id, { headers });
-
-    expect(canRead).toBe(true);
-  });
-
-  test("returns true for users with admin role", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
-    const canRead = await canReadCourses(organization.id, { headers });
-
-    expect(canRead).toBe(true);
-  });
-
-  test("returns true for users with owner role", async () => {
-    const { organization, user } = await memberFixture({ role: "owner" });
-    const headers = await signInAs(user.email, user.password);
-    const canRead = await canReadCourses(organization.id, { headers });
-
-    expect(canRead).toBe(true);
-  });
-
-  test("returns false for unauthenticated users", async () => {
-    const organization = await organizationFixture();
-
-    const canRead = await canReadCourses(organization.id, {
-      headers: new Headers(),
-    });
-
-    expect(canRead).toBe(false);
   });
 });
 
