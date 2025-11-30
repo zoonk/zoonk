@@ -1,3 +1,5 @@
+export const PERMISSION_ERROR_CODE = 403;
+
 export function toError(error: unknown): Error {
   if (error instanceof Error) {
     return error;
