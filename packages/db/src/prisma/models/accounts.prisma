@@ -1,3 +1,5 @@
+// Better Auth models for Prisma
+
 model User {
   id               Int          @id @default(autoincrement())
   name             String
@@ -80,6 +82,7 @@ model Organization {
   kind        String       @default("brand")
   members     Member[]
   invitations Invitation[]
+  courses     Course[]
 
   @@unique([slug])
   @@map("organizations")
