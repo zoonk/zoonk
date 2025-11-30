@@ -22,6 +22,27 @@ export async function getOrganizationId(
   return { data: org?.id ?? null, error: null };
 }
 
+export async function canReadCourses(
+  organizationId: number,
+  opts?: { headers?: Headers },
+): Promise<boolean> {
+  const { data } = await safeAsync(async () =>
+    auth.api.hasPermission({
+      body: {
+        organizationId: String(organizationId),
+        permissions: { course: ["read"] },
+      },
+      headers: opts?.headers ?? (await headers()),
+    }),
+  );
+
+  if (!data) {
+    return false;
+  }
+
+  return data.success;
+}
+
 export async function canUpdateCourses(
   organizationId: number,
   opts?: { headers?: Headers },
