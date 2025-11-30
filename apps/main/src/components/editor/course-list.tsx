@@ -9,6 +9,7 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@zoonk/ui/components/item";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { ChevronRightIcon } from "lucide-react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
@@ -16,6 +17,32 @@ import { Link } from "@/i18n/navigation";
 type CourseListProps = {
   orgSlug: string;
 };
+
+export function CourseListSkeleton() {
+  return (
+    <ItemGroup>
+      {Array.from({ length: 3 }).map((_, index) => (
+        <Item key={index}>
+          <ItemMedia variant="image">
+            <Skeleton className="size-10" />
+          </ItemMedia>
+
+          <ItemContent>
+            <Skeleton className="h-4 w-48" />
+            <Skeleton className="h-4 w-72" />
+          </ItemContent>
+
+          <Skeleton className="h-5 w-10 rounded-full" />
+
+          <ChevronRightIcon
+            aria-hidden="true"
+            className="size-4 text-muted-foreground"
+          />
+        </Item>
+      ))}
+    </ItemGroup>
+  );
+}
 
 export async function CourseList({ orgSlug }: CourseListProps) {
   const { data: orgId, error: orgError } = await getOrganizationId(orgSlug);
