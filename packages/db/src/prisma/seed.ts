@@ -1,4 +1,5 @@
 import { prisma } from "../index";
+import { courses } from "./seed/courses";
 
 async function main() {
   const owner = await prisma.user.upsert({
@@ -34,7 +35,7 @@ async function main() {
     where: { email: "member@zoonk.test" },
   });
 
-  await prisma.organization.upsert({
+  const org = await prisma.organization.upsert({
     create: {
       members: {
         create: [
@@ -49,6 +50,21 @@ async function main() {
     update: {},
     where: { slug: "ai" },
   });
+
+  await Promise.all(
+    courses.map((course) =>
+      prisma.course.upsert({
+        create: {
+          organizationId: org.id,
+          ...course,
+        },
+        update: {},
+        where: {
+          orgSlug: { organizationId: org.id, slug: course.slug },
+        },
+      }),
+    ),
+  );
 }
 
 main()
