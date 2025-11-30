@@ -15,6 +15,7 @@ import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 
 type CourseListProps = {
+  locale: string;
   orgSlug: string;
 };
 
@@ -44,15 +45,17 @@ export function CourseListSkeleton() {
   );
 }
 
-export async function CourseList({ orgSlug }: CourseListProps) {
+export async function CourseList({ locale, orgSlug }: CourseListProps) {
   const { data: orgId, error: orgError } = await getOrganizationId(orgSlug);
 
   if (orgError || !orgId) {
     return null;
   }
 
-  const { data: courses, error: coursesError } =
-    await listOrganizationCourses(orgId);
+  const { data: courses, error: coursesError } = await listOrganizationCourses(
+    orgId,
+    { language: locale },
+  );
 
   if (coursesError || courses.length === 0) {
     return null;

@@ -516,6 +516,10 @@ msgstr "Eu não gostei"
 msgid "rTFrsw"
 msgstr "Eu gostei"
 
+#: src/components/editor/language-filter.tsx
+msgid "KL74/Q"
+msgstr "Filtrar por idioma"
+
 #: src/components/feedback-sheet.tsx
 msgid "rbrahO"
 msgstr "Fechar"
