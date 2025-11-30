@@ -23,7 +23,7 @@ model Course {
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @default(now()) @updatedAt @map("updated_at")
 
-  @@unique([organizationId, slug], name: "orgSlug")
+  @@unique([organizationId, language, slug], name: "orgSlug")
   @@index([organizationId, language, isPublished])
   @@map("courses")
 }

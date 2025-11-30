@@ -60,7 +60,11 @@ async function main() {
         },
         update: {},
         where: {
-          orgSlug: { organizationId: org.id, slug: course.slug },
+          orgSlug: {
+            language: course.language,
+            organizationId: org.id,
+            slug: course.slug,
+          },
         },
       }),
     ),
