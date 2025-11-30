@@ -4,23 +4,24 @@ import { auth } from "@zoonk/auth";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { headers } from "next/headers";
+import { cache } from "react";
 
-export async function getOrganizationId(
-  slug: string,
-): Promise<SafeReturn<number | null>> {
-  const { data: org, error } = await safeAsync(() =>
-    prisma.organization.findUnique({
-      select: { id: true },
-      where: { slug },
-    }),
-  );
+export const getOrganizationId = cache(
+  async (slug: string): Promise<SafeReturn<number | null>> => {
+    const { data: org, error } = await safeAsync(() =>
+      prisma.organization.findUnique({
+        select: { id: true },
+        where: { slug },
+      }),
+    );
 
-  if (error) {
-    return { data: null, error };
-  }
+    if (error) {
+      return { data: null, error };
+    }
 
-  return { data: org?.id ?? null, error: null };
-}
+    return { data: org?.id ?? null, error: null };
+  },
+);
 
 export async function canReadCourses(
   organizationId: number,
