@@ -1,6 +1,7 @@
 import { sendEmail } from "@zoonk/mailer";
 import type { EmailOTPOptions } from "better-auth/plugins";
 import { cookies } from "next/headers";
+import { after } from "next/server";
 import { getTranslation } from "./translations";
 
 export const sendVerificationOTP: EmailOTPOptions["sendVerificationOTP"] =
@@ -18,10 +19,12 @@ export const sendVerificationOTP: EmailOTPOptions["sendVerificationOTP"] =
       <p>${t.otpDisclaimer}</p>
     `;
 
-    await sendEmail({
-      subject,
-      text,
-      to: email,
+    after(() => {
+      void sendEmail({
+        subject,
+        text,
+        to: email,
+      });
     });
 
     return;
