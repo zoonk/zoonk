@@ -1,6 +1,7 @@
 import "server-only";
 
 import { type Course, prisma } from "@zoonk/db";
+import { clampQueryItems } from "@zoonk/db/utils";
 import { PERMISSION_ERROR_CODE, safeAsync } from "@zoonk/utils/error";
 import { canUpdateCourses } from "./organizations";
 
@@ -32,7 +33,7 @@ export async function listOrganizationCourses(
   const { data, error } = await safeAsync(() =>
     prisma.course.findMany({
       orderBy: { createdAt: "desc" },
-      take: opts?.limit ?? LIST_COURSES_LIMIT,
+      take: clampQueryItems(opts?.limit ?? LIST_COURSES_LIMIT),
       where: {
         organizationId,
         ...(opts?.language && { language: opts.language }),
