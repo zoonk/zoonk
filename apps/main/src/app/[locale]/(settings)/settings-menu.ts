@@ -1,8 +1,8 @@
-import { useExtracted } from "next-intl";
+import { getExtracted } from "next-intl/server";
 import { getMenu } from "@/lib/menu";
 
-export function useSettings() {
-  const t = useExtracted();
+export async function settingsMenu() {
+  const t = await getExtracted();
 
   const settingsPages = [
     { label: t("Settings"), ...getMenu("settings") },

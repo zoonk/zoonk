@@ -83,6 +83,7 @@ msgid "zx7CKB"
 msgstr "Check your email"
 
 #: src/app/[locale]/(catalog)/catalog-tab-bar.tsx
+#: src/app/[locale]/(settings)/settings-menu.ts
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/page.tsx
@@ -200,6 +201,7 @@ msgid "ZgSctJ"
 msgstr "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and activities."
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
+#: src/app/[locale]/(settings)/settings-menu.ts
 #: src/app/[locale]/(settings)/settings-navbar.tsx
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
@@ -255,6 +257,7 @@ msgid "BIAaC9"
 msgstr "Get support and answers. Fill in the form below or email us directly at hello@zoonk.com."
 
 #: src/app/[locale]/(settings)/help/page.tsx
+#: src/app/[locale]/(settings)/settings-menu.ts
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
@@ -284,6 +287,7 @@ msgid "gr4VpD"
 msgstr "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages."
 
 #: src/app/[locale]/(settings)/language/page.tsx
+#: src/app/[locale]/(settings)/settings-menu.ts
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
@@ -334,6 +338,31 @@ msgstr "Display name"
 msgid "Pj/oEx"
 msgstr "This is the name others may see and the one we'll use to refer to you in activities."
 
+#: src/app/[locale]/(settings)/settings-menu.ts
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
+msgid "ieGrWo"
+msgstr "Follow"
+
+#: src/app/[locale]/(settings)/settings-menu.ts
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
+msgid "pwlQEY"
+msgstr "Display Name"
+
+#: src/app/[locale]/(settings)/settings-menu.ts
+#: src/app/[locale]/(settings)/settings-navigation.tsx
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/subscription/page.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
+#: src/components/tab-bar/settings-tab-bar.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "R/6nsx"
+msgstr "Subscription"
+
 #: src/app/[locale]/(settings)/settings-navbar.tsx
 #: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
@@ -347,32 +376,12 @@ msgstr "Logout"
 msgid "iZeMgn"
 msgstr "Navigate settings"
 
-#: src/app/[locale]/(settings)/settings-navigation.tsx
-#: src/app/[locale]/(settings)/settings-tab-bar.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
-#: src/app/[locale]/(settings)/subscription/page.tsx
-#: src/app/[locale]/(settings)/use-settings.ts
-#: src/components/tab-bar/settings-tab-bar.tsx
-#: src/components/user-dropdown-menu.tsx
-msgid "R/6nsx"
-msgstr "Subscription"
-
 #: src/app/[locale]/(settings)/settings-overflow-trigger.tsx
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
+#: src/components/overflow-trigger.tsx
+#: src/components/tab-bar.tsx
 msgid "yoLwRW"
 msgstr "See more"
-
-#: src/app/[locale]/(settings)/settings-tab-bar.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
-#: src/app/[locale]/(settings)/use-settings.ts
-msgid "ieGrWo"
-msgstr "Follow"
-
-#: src/app/[locale]/(settings)/settings-tab-bar.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
-#: src/app/[locale]/(settings)/use-settings.ts
-msgid "pwlQEY"
-msgstr "Display Name"
 
 #: src/app/[locale]/(settings)/settings/page.tsx
 msgid "FMLZiG"

@@ -1,8 +1,17 @@
 "use client";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@zoonk/ui/components/dropdown-menu";
 import { useScrollDirection } from "@zoonk/ui/hooks/use-scroll-direction";
 import { cn } from "@zoonk/ui/lib/utils";
+import { Ellipsis } from "lucide-react";
+import { useExtracted } from "next-intl";
+import { ClientLink } from "@/i18n/client-link";
 import { Link, usePathname } from "@/i18n/navigation";
 
 type TabBarProps = {
@@ -81,5 +90,59 @@ export function TabBarItem({
       {icon}
       <span className="sr-only">{label}</span>
     </Link>
+  );
+}
+
+type OverflowTriggerProps = {
+  pages: string[];
+};
+
+export function TabOverflow({ children }: React.ComponentProps<"div">) {
+  return <DropdownMenu>{children}</DropdownMenu>;
+}
+
+export function TabOverflowTrigger({ pages }: OverflowTriggerProps) {
+  const t = useExtracted();
+  const pathname = usePathname();
+
+  const isOverflowActive = pages.some((page) => pathname.startsWith(page));
+
+  return (
+    <DropdownMenuTrigger
+      className={cn(
+        buttonVariants({
+          size: "icon",
+          variant: isOverflowActive ? "default" : "ghost",
+        }),
+        "rounded-full md:hidden",
+      )}
+    >
+      <Ellipsis aria-hidden="true" />
+      <span className="sr-only">{t("See more")}</span>
+    </DropdownMenuTrigger>
+  );
+}
+
+export function TabOverflowMenu({ children }: React.ComponentProps<"div">) {
+  return (
+    <DropdownMenuContent align="end" side="top">
+      {children}
+    </DropdownMenuContent>
+  );
+}
+
+type OverflowItemProps = {
+  url: string;
+  label: string;
+  icon: React.ReactNode;
+};
+
+export function TabOverflowIMenutem({ url, label, icon }: OverflowItemProps) {
+  return (
+    <DropdownMenuItem asChild>
+      <ClientLink href={url}>
+        {icon} {label}
+      </ClientLink>
+    </DropdownMenuItem>
   );
 }

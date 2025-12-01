@@ -83,6 +83,7 @@ msgid "zx7CKB"
 msgstr "Revisa tu correo"
 
 #: src/app/[locale]/(catalog)/catalog-tab-bar.tsx
+#: src/app/[locale]/(settings)/settings-menu.ts
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/page.tsx
@@ -200,6 +201,7 @@ msgid "ZgSctJ"
 msgstr "Zoonk es una plataforma de aprendizaje impulsada por IA donde puedes aprender cualquier cosa a través de cursos interactivos, lecciones y actividades."
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
+#: src/app/[locale]/(settings)/settings-menu.ts
 #: src/app/[locale]/(settings)/settings-navbar.tsx
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
@@ -255,6 +257,7 @@ msgid "BIAaC9"
 msgstr "Obtén soporte y respuestas. Completa el formulario a continuación o envíanos un correo directamente a contacto@zoonk.com."
 
 #: src/app/[locale]/(settings)/help/page.tsx
+#: src/app/[locale]/(settings)/settings-menu.ts
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
@@ -284,6 +287,7 @@ msgid "gr4VpD"
 msgstr "Actualiza el idioma de tu aplicación Zoonk para aprender en inglés, portugués, español, francés u otros idiomas compatibles."
 
 #: src/app/[locale]/(settings)/language/page.tsx
+#: src/app/[locale]/(settings)/settings-menu.ts
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
@@ -334,6 +338,31 @@ msgstr "Nombre para mostrar"
 msgid "Pj/oEx"
 msgstr "Este es el nombre que otros pueden ver y el que usaremos para referirnos a ti en las actividades."
 
+#: src/app/[locale]/(settings)/settings-menu.ts
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
+msgid "ieGrWo"
+msgstr "Seguir"
+
+#: src/app/[locale]/(settings)/settings-menu.ts
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
+msgid "pwlQEY"
+msgstr "Nombre para mostrar"
+
+#: src/app/[locale]/(settings)/settings-menu.ts
+#: src/app/[locale]/(settings)/settings-navigation.tsx
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/subscription/page.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
+#: src/components/tab-bar/settings-tab-bar.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "R/6nsx"
+msgstr "Suscripción"
+
 #: src/app/[locale]/(settings)/settings-navbar.tsx
 #: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
@@ -347,32 +376,12 @@ msgstr "Cerrar sesión"
 msgid "iZeMgn"
 msgstr "Navegar por la configuración"
 
-#: src/app/[locale]/(settings)/settings-navigation.tsx
-#: src/app/[locale]/(settings)/settings-tab-bar.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
-#: src/app/[locale]/(settings)/subscription/page.tsx
-#: src/app/[locale]/(settings)/use-settings.ts
-#: src/components/tab-bar/settings-tab-bar.tsx
-#: src/components/user-dropdown-menu.tsx
-msgid "R/6nsx"
-msgstr "Suscripción"
-
 #: src/app/[locale]/(settings)/settings-overflow-trigger.tsx
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
+#: src/components/overflow-trigger.tsx
+#: src/components/tab-bar.tsx
 msgid "yoLwRW"
 msgstr "Ver más"
-
-#: src/app/[locale]/(settings)/settings-tab-bar.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
-#: src/app/[locale]/(settings)/use-settings.ts
-msgid "ieGrWo"
-msgstr "Seguir"
-
-#: src/app/[locale]/(settings)/settings-tab-bar.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
-#: src/app/[locale]/(settings)/use-settings.ts
-msgid "pwlQEY"
-msgstr "Nombre para mostrar"
 
 #: src/app/[locale]/(settings)/settings/page.tsx
 msgid "FMLZiG"
