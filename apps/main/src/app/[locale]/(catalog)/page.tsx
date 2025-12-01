@@ -33,10 +33,10 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   cacheTag(locale, cacheTagHome());
 
   return (
-    <main>
-      <div className="flex justify-end p-4">
+    <div>
+      <header className="flex justify-end p-4">
         <UserAvatarMenu />
-      </div>
-    </main>
+      </header>
+    </div>
   );
 }
