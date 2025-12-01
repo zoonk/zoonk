@@ -17,7 +17,7 @@ export default async function CatalogLayout({
   cacheTag(locale, cacheTagCatalog());
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col pb-24">
       {children}
 
       <Suspense>
