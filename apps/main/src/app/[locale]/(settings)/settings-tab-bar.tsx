@@ -30,6 +30,17 @@ export async function SettingsTabBar() {
         />
       ))}
 
+      {/* Desktop: Show remaining items directly */}
+      {overflowPages.map((page) => (
+        <TabBarItem
+          className="hidden md:flex"
+          href={page.url}
+          icon={<page.icon aria-hidden="true" />}
+          key={page.label}
+          label={page.label}
+        />
+      ))}
+
       {/* Mobile: Show overflow menu for remaining items */}
       {overflowPages.length > 0 && (
         <TabOverflow>
@@ -47,17 +58,6 @@ export async function SettingsTabBar() {
           </TabOverflowMenu>
         </TabOverflow>
       )}
-
-      {/* Desktop: Show remaining items directly */}
-      {overflowPages.map((page) => (
-        <TabBarItem
-          className="hidden md:block"
-          href={page.url}
-          icon={<page.icon aria-hidden="true" />}
-          key={page.label}
-          label={page.label}
-        />
-      ))}
     </TabBar>
   );
 }
