@@ -19,13 +19,14 @@ export function EditorTabBar({ orgSlug }: EditorTabBarProps) {
       <TabBarItem
         exact
         href={homeMenu.url}
-        icon={homeMenu.icon}
+        icon={<homeMenu.icon aria-hidden="true" />}
         label={t("Home")}
       />
+
       {orgSlug && (
         <TabBarItem
           href={`/editor/${orgSlug}`}
-          icon={editorMenu.icon}
+          icon={<editorMenu.icon aria-hidden="true" />}
           label={t("Editor")}
         />
       )}

@@ -3,7 +3,6 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { useScrollDirection } from "@zoonk/ui/hooks/use-scroll-direction";
 import { cn } from "@zoonk/ui/lib/utils";
-import type { LucideIcon } from "lucide-react";
 import { Link, usePathname } from "@/i18n/navigation";
 
 type TabBarProps = {
@@ -42,7 +41,7 @@ export function TabBar({ children, action, className }: TabBarProps) {
 
 type TabBarItemProps = {
   href: string;
-  icon: LucideIcon | React.ComponentType<{ className?: string }>;
+  icon: React.ReactNode;
   label: string;
   /** If true, matches exact path. If false, matches path prefix. */
   exact?: boolean;
@@ -60,7 +59,7 @@ function isActive(href: string, pathname: string, exact: boolean): boolean {
 
 export function TabBarItem({
   href,
-  icon: Icon,
+  icon,
   label,
   exact = false,
 }: TabBarItemProps) {
@@ -79,7 +78,7 @@ export function TabBarItem({
       )}
       href={href}
     >
-      <Icon aria-hidden="true" />
+      {icon}
       <span className="sr-only">{label}</span>
     </Link>
   );

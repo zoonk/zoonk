@@ -44,7 +44,7 @@ export function SettingsTabBar() {
       {visiblePages.map((page) => (
         <TabBarItem
           href={page.url}
-          icon={page.icon}
+          icon={<page.icon aria-hidden="true" />}
           key={page.label}
           label={page.label}
         />
@@ -82,7 +82,11 @@ export function SettingsTabBar() {
       {/* Desktop: Show remaining items directly */}
       {overflowPages.map((page) => (
         <div className="hidden md:block" key={page.label}>
-          <TabBarItem href={page.url} icon={page.icon} label={page.label} />
+          <TabBarItem
+            href={page.url}
+            icon={<page.icon aria-hidden="true" />}
+            label={page.label}
+          />
         </div>
       ))}
     </TabBar>
