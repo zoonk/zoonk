@@ -55,9 +55,14 @@ type TabBarItemProps = {
   /** If true, matches exact path. If false, matches path prefix. */
   exact?: boolean;
   className?: string;
+  isActive?: boolean;
 };
 
-function isActive(href: string, pathname: string, exact: boolean): boolean {
+function checkIsActive(
+  href: string,
+  pathname: string,
+  exact: boolean,
+): boolean {
   if (exact) {
     return href === pathname;
   }
@@ -73,9 +78,10 @@ export function TabBarItem({
   label,
   exact = false,
   className,
+  isActive = false,
 }: TabBarItemProps) {
   const pathname = usePathname();
-  const active = isActive(href, pathname, exact);
+  const active = isActive || checkIsActive(href, pathname, exact);
 
   return (
     <Link

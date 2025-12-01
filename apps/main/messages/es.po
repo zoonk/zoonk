@@ -89,6 +89,7 @@ msgstr "Revisa tu correo"
 #: src/app/[locale]/(settings)/settings/page.tsx
 #: src/app/[locale]/(settings)/use-settings.ts
 #: src/app/[locale]/app-tab-bar.tsx
+#: src/components/app-tab-bar.tsx
 #: src/components/tab-bar/catalog-tab-bar.tsx
 #: src/components/tab-bar/settings-tab-bar.tsx
 #: src/components/user-dropdown-menu.tsx
@@ -99,6 +100,7 @@ msgstr "Configuración"
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/app-tab-bar.tsx
 #: src/app/[locale]/editor/editor-tab-bar.tsx
+#: src/components/app-tab-bar.tsx
 #: src/components/tab-bar.tsx
 #: src/components/tab-bar/catalog-tab-bar.tsx
 #: src/components/tab-bar/editor-tab-bar.tsx
@@ -108,6 +110,7 @@ msgstr "Inicio"
 
 #: src/app/[locale]/(catalog)/catalog-tab-bar.tsx
 #: src/app/[locale]/app-tab-bar.tsx
+#: src/components/app-tab-bar.tsx
 #: src/components/navbar-links.tsx
 #: src/components/tab-bar/catalog-tab-bar.tsx
 msgid "IbrSk1"
@@ -116,6 +119,7 @@ msgstr "Aprender"
 #: src/app/[locale]/(catalog)/catalog-tab-bar.tsx
 #: src/app/[locale]/app-tab-bar.tsx
 #: src/app/[locale]/editor/[orgSlug]/page.tsx
+#: src/components/app-tab-bar.tsx
 #: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx

@@ -15,7 +15,7 @@ export async function EditorHomeView() {
   const t = await getExtracted();
 
   return (
-    <Container className="mx-auto w-full max-w-2xl pb-24">
+    <Container className="mx-auto w-full max-w-2xl">
       <ContainerHeader className="text-center">
         <ContainerTitle>{t("Select an organization")}</ContainerTitle>
         <ContainerDescription>

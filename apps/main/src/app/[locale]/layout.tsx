@@ -7,8 +7,6 @@ import { setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 
 import "@zoonk/ui/globals.css";
-import { Suspense } from "react";
-import { AppTabBar } from "./app-tab-bar";
 
 const geistSans = Geist({
   display: "swap",
@@ -51,13 +49,7 @@ export default async function RootLayout({
       <body
         className={`font-sans antialiased ${geistSans.variable} ${geistMono.variable}`}
       >
-        <NextIntlClientProvider>
-          {children}
-
-          <Suspense>
-            <AppTabBar />
-          </Suspense>
-        </NextIntlClientProvider>
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
         <Analytics />
       </body>
     </html>
