@@ -38,7 +38,7 @@ export function ContainerTitle({
   return (
     <h1
       className={cn(
-        "scroll-m-20 text-balance pb-2 font-semibold text-foreground/90 text-xl leading-none tracking-tight",
+        "scroll-m-20 text-balance pb-0.5 font-semibold text-foreground/90 text-xl leading-none tracking-tight",
         className,
       )}
     >
