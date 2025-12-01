@@ -15,8 +15,8 @@ export async function SettingsList() {
 
   const settingsPages = [
     { label: t("Subscription"), ...getMenu("subscription") },
-    { label: t("Display Name"), ...getMenu("displayName") },
     { label: t("Language"), ...getMenu("language") },
+    { label: t("Display Name"), ...getMenu("displayName") },
     { label: t("Feedback"), ...getMenu("feedback") },
     { label: t("Help"), ...getMenu("help") },
     { label: t("Follow"), ...getMenu("follow") },

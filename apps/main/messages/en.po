@@ -164,6 +164,7 @@ msgstr "Zoonk is an AI-powered learning platform where you can learn anything th
 #: src/app/[locale]/(settings)/feedback/page.tsx
 #: src/app/[locale]/(settings)/settings-navbar.tsx
 #: src/app/[locale]/(settings)/settings-navigation.tsx
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/feedback-sheet.tsx
 #: src/components/tab-bar/settings-tab-bar.tsx
@@ -214,6 +215,7 @@ msgstr "Get support and answers. Fill in the form below or email us directly at 
 
 #: src/app/[locale]/(settings)/help/page.tsx
 #: src/app/[locale]/(settings)/settings-navigation.tsx
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/user-dropdown-menu.tsx
 msgid "SENRqu"
@@ -241,6 +243,7 @@ msgstr "Update your Zoonk app language to learn in English, Portuguese, Spanish,
 
 #: src/app/[locale]/(settings)/language/page.tsx
 #: src/app/[locale]/(settings)/settings-navigation.tsx
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
@@ -296,6 +299,7 @@ msgid "C81/uG"
 msgstr "Logout"
 
 #: src/app/[locale]/(settings)/settings-navigation.tsx
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/page.tsx
 #: src/components/tab-bar/catalog-tab-bar.tsx
 #: src/components/tab-bar/settings-tab-bar.tsx
@@ -308,12 +312,30 @@ msgid "iZeMgn"
 msgstr "Navigate settings"
 
 #: src/app/[locale]/(settings)/settings-navigation.tsx
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/subscription/page.tsx
 #: src/components/tab-bar/settings-tab-bar.tsx
 #: src/components/user-dropdown-menu.tsx
 msgid "R/6nsx"
 msgstr "Subscription"
+
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
+#: src/components/tab-bar/catalog-tab-bar.tsx
+#: src/components/tab-bar/editor-tab-bar.tsx
+#: src/components/tab-bar/settings-tab-bar.tsx
+msgid "ejEGdx"
+msgstr "Home"
+
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+msgid "ieGrWo"
+msgstr "Follow"
+
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+msgid "pwlQEY"
+msgstr "Display Name"
 
 #: src/app/[locale]/(settings)/settings/page.tsx
 msgid "FMLZiG"
@@ -322,14 +344,6 @@ msgstr "Customize your Zoonk learning experience. Manage account settings, profi
 #: src/app/[locale]/(settings)/settings/page.tsx
 msgid "v9T5Oi"
 msgstr "Manage your account settings, profile, and preferences."
-
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
-msgid "ieGrWo"
-msgstr "Follow"
-
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
-msgid "pwlQEY"
-msgstr "Display Name"
 
 #: src/app/[locale]/(settings)/subscription/page.tsx
 msgid "9vk07U"
@@ -589,9 +603,3 @@ msgstr "Checking if you're logged in..."
 #: src/components/protected-section.tsx
 msgid "yOFm9C"
 msgstr "You need to be logged in to access this page."
-
-#: src/components/tab-bar/catalog-tab-bar.tsx
-#: src/components/tab-bar/editor-tab-bar.tsx
-#: src/components/tab-bar/settings-tab-bar.tsx
-msgid "ejEGdx"
-msgstr "Home"
