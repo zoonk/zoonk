@@ -28,10 +28,6 @@ export function cacheTagHelp() {
   return "help";
 }
 
-export function cacheTagHome() {
-  return "home";
-}
-
 export function cacheTagLanguage() {
   return "language";
 }

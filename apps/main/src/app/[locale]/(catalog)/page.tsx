@@ -1,18 +1,11 @@
-"use cache";
-
-import { cacheTagHome } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
-import { cacheLife, cacheTag } from "next/cache";
-import { getExtracted, setRequestLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { UserAvatarMenu } from "@/components/user-avatar-menu";
 
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]">): Promise<Metadata> {
   const { locale } = await params;
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagHome());
 
   const t = await getExtracted({ locale });
 
@@ -24,14 +17,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Home({ params }: PageProps<"/[locale]">) {
-  const { locale } = await params;
-
-  setRequestLocale(locale);
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagHome());
-
+export default async function Home() {
   return (
     <div>
       <header className="flex justify-end p-4">
