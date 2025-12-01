@@ -1,14 +1,40 @@
-import { getExtracted } from "next-intl/server";
+"use client";
+
+import { TabBar, TabBarItem } from "@zoonk/ui/components/tab-bar";
+import { isPathActive } from "@zoonk/utils/routing";
+import { useExtracted } from "next-intl";
 import { CommandPalette } from "@/components/command-palette";
-import { TabBar, TabBarItem } from "@/components/tab-bar";
+import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 
-type AppTabBarProps = {
-  active?: string;
-};
+export function AppTabBarItem({
+  href,
+  icon,
+  label,
+  className,
+  isActive = false,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  className?: string;
+  isActive?: boolean;
+}) {
+  const pathname = usePathname();
+  const active = isActive || isPathActive({ href, pathname });
 
-export async function AppTabBar({ active }: AppTabBarProps) {
-  const t = await getExtracted();
+  return (
+    <TabBarItem active={active} asChild className={className}>
+      <Link href={href}>
+        {icon}
+        <span className="sr-only">{label}</span>
+      </Link>
+    </TabBarItem>
+  );
+}
+
+export function AppTabBar({ active }: { active?: string }) {
+  const t = useExtracted();
 
   const menuItems = [
     { label: t("Home"), ...getMenu("home") },
@@ -20,8 +46,7 @@ export async function AppTabBar({ active }: AppTabBarProps) {
   return (
     <TabBar action={<CommandPalette />}>
       {menuItems.map((menu) => (
-        <TabBarItem
-          exact={menu.url === "/"}
+        <AppTabBarItem
           href={menu.url}
           icon={<menu.icon aria-hidden="true" />}
           isActive={active === menu.url}
