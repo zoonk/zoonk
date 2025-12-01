@@ -1,11 +1,11 @@
+import { FullPageLoading } from "@zoonk/ui/components/loading";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
-
-import "@zoonk/ui/globals.css";
 import { getLocale } from "next-intl/server";
 import { Suspense } from "react";
-import { FullPageLoading } from "../../../../packages/ui/src/components/loading";
+
+import "@zoonk/ui/globals.css";
 
 const geistSans = Geist({
   display: "swap",
