@@ -9,7 +9,7 @@ const homeMenu = getMenu("home");
 
 type EditorHeaderProps = React.ComponentProps<"header"> & {
   active: "overview";
-  orgSlug: string;
+  orgSlug?: string;
 };
 
 export async function EditorHeader({
@@ -32,16 +32,18 @@ export async function EditorHeader({
         <span className="sr-only">{t("Home page")}</span>
       </Link>
 
-      <Link
-        className={buttonVariants({
-          size: "icon",
-          variant: active === "overview" ? "default" : "outline",
-        })}
-        href={`/editor/${orgSlug}`}
-      >
-        <LayoutTemplateIcon aria-hidden="true" />
-        <span className="sr-only">{t("Editor")}</span>
-      </Link>
+      {orgSlug && (
+        <Link
+          className={buttonVariants({
+            size: "icon",
+            variant: active === "overview" ? "default" : "outline",
+          })}
+          href={`/editor/${orgSlug}`}
+        >
+          <LayoutTemplateIcon aria-hidden="true" />
+          <span className="sr-only">{t("Editor")}</span>
+        </Link>
+      )}
 
       <div className="ml-auto flex items-center gap-2">{children}</div>
     </Header>

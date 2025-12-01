@@ -12,6 +12,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - [Conventions](#conventions)
 - [CSS](#css)
 - [Icons](#icons)
+- [Cache Components](#cache-components)
 - [Links](#links)
 - [Params](#params)
 - [Interactions](#interactions)
@@ -79,6 +80,8 @@ Read each folder's README file for more details
 - Fetch data on the server whenever possible and use `Suspense` with a fallback for loading states, [see docs for streaming data](https://nextjs.org/docs/app/getting-started/fetching-data#streaming)
 - Keep comments minimal—explain **why**, not **what**
 - Use `safeAsync` when using `await` to better handle errors
+- When creating a skeleton, use the `Skeleton` component from `@zoonk/ui/components/skeleton`
+- Always build skeleton components when using `Suspense` for loading states
 
 ## CSS
 
@@ -92,6 +95,30 @@ Read each folder's README file for more details
 
 - We support both `lucide-react` and `@tabler/icons-react`
 - Prefer `lucide-react`, only use `@tabler/icons-react` when the icon is not available in `lucide-react`
+
+## Cache Components
+
+When creating a `page.tsx` file, you should either use `use cache` or don't make any `await` calls directly in the component. Otherwise, Next.js will throw an error. Instead, move it to its own async component and wrap it with `<Suspense>`.
+
+Don't wrap multiple elements in the same `Suspense` because this way the fallback using a skeleton would be too generic. Instead, wrap each component that fetches data in its own `Suspense` so you can provide a more specific fallback.
+
+For example:
+
+```tsx
+<>
+  <Suspense fallback={<OrganizationHeaderSkeleton />}>
+    <OrganizationHeader />
+  </Suspense>
+
+  <Suspense fallback={<OrganizationListSkeleton />}>
+    <OrganizationList />
+  </Suspense>
+</>
+```
+
+Avoid using `use cache` by default unless we know the page can be static. Plus, you can't use `use cache` with `searchParams`, `cookies()`, or `headers()`.
+
+Use the `nextjs_docs` tool for searching the Next.js documentation when you have doubts about how to implement something.
 
 ## Links
 

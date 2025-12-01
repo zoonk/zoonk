@@ -372,6 +372,7 @@ msgid "6gzGoI"
 msgstr "Select a course to edit its content"
 
 #: src/app/[locale]/editor/[orgSlug]/page.tsx
+#: src/app/[locale]/editor/page.tsx
 #: src/components/editor/editor-header.tsx
 msgid "fWKwFM"
 msgstr "Editor"
@@ -382,6 +383,17 @@ msgstr "Editor"
 #: src/components/navbar-links.tsx
 msgid "R85gsW"
 msgstr "Courses"
+
+#: src/app/[locale]/editor/editor-home-content.tsx
+#: src/app/[locale]/editor/editor-home-view.tsx
+#: src/app/[locale]/editor/org-container-header.tsx
+#: src/app/[locale]/editor/page.tsx
+msgid "MPQ0kS"
+msgstr "Select an organization"
+
+#: src/app/[locale]/editor/editor-home-view.tsx
+msgid "jflB8q"
+msgstr "Choose an organization to manage its courses"
 
 #: src/app/[locale]/privacy/page.tsx
 msgid "iql85X"
@@ -519,6 +531,14 @@ msgstr "I liked it"
 #: src/components/editor/language-filter.tsx
 msgid "KL74/Q"
 msgstr "Filter by language"
+
+#: src/components/editor/organization-list.tsx
+msgid "p4BgKL"
+msgstr "You're not part of any organization yet"
+
+#: src/components/editor/organization-list.tsx
+msgid "sFoGzO"
+msgstr "No organizations"
 
 #: src/components/feedback-sheet.tsx
 msgid "rbrahO"

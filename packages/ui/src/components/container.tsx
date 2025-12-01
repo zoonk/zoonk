@@ -1,4 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
+import { Skeleton } from "./skeleton";
 
 export function Container({
   children,
@@ -60,3 +61,12 @@ export const ContainerDescription = ({
     {children}
   </h2>
 );
+
+export function ContainerHeaderSkeleton({ className }: { className?: string }) {
+  return (
+    <header className={cn("flex flex-col gap-0.5", className)}>
+      <Skeleton className="mb-1 h-6 w-1/2" />
+      <Skeleton className="h-4 w-1/3" />
+    </header>
+  );
+}
