@@ -7,6 +7,7 @@ msgstr ""
 "X-Crowdin-SourceKey: msgstr\n"
 
 #: src/app/[locale]/(auth)/layout.tsx
+#: src/app/[locale]/(settings)/settings-navbar.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/editor/editor-header.tsx
@@ -280,10 +281,6 @@ msgstr "Nome de exibição"
 #: src/app/[locale]/(settings)/name/page.tsx
 msgid "Pj/oEx"
 msgstr "Este é o nome que outros podem ver e o que usaremos para nos referir a você em atividades."
-
-#: src/app/[locale]/(settings)/settings-navbar.tsx
-msgid "4dLJ2n"
-msgstr "Fechar configurações"
 
 #: src/app/[locale]/(settings)/settings-navbar.tsx
 #: src/components/command-palette.tsx

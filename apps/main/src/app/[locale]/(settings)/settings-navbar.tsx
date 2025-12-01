@@ -2,11 +2,14 @@
 
 import { useLogout } from "@zoonk/auth/hooks/logout";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { LogOut, MessageCircle, X } from "lucide-react";
+import { LogOutIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
 import { Link, useRouter } from "@/i18n/navigation";
+import { getMenu } from "@/lib/menu";
 import { SettingsNavigation } from "./settings-navigation";
+
+const homeMenu = getMenu("home");
 
 export function SettingsNavbar() {
   const { push } = useRouter();
@@ -19,12 +22,12 @@ export function SettingsNavbar() {
         <Link
           className={buttonVariants({
             size: "icon",
-            variant: "destructive",
+            variant: "outline",
           })}
-          href="/"
+          href={homeMenu.url}
         >
-          <X aria-hidden="true" />
-          <span className="sr-only">{t("Close settings")}</span>
+          <homeMenu.icon aria-hidden="true" />
+          <span className="sr-only">{t("Home page")}</span>
         </Link>
 
         <Suspense>
@@ -32,32 +35,19 @@ export function SettingsNavbar() {
         </Suspense>
       </div>
 
-      <div className="flex items-center gap-2">
-        <Link
+      {isLoggedIn && (
+        <button
           className={buttonVariants({
             size: "icon",
-            variant: "outline",
+            variant: "secondary",
           })}
-          href="/feedback"
+          onClick={logout}
+          type="button"
         >
-          <MessageCircle aria-hidden="true" />
-          <span className="sr-only">{t("Feedback")}</span>
-        </Link>
-
-        {isLoggedIn && (
-          <button
-            className={buttonVariants({
-              size: "icon",
-              variant: "secondary",
-            })}
-            onClick={logout}
-            type="button"
-          >
-            <LogOut aria-hidden="true" />
-            <span className="sr-only">{t("Logout")}</span>
-          </button>
-        )}
-      </div>
+          <LogOutIcon aria-hidden="true" />
+          <span className="sr-only">{t("Logout")}</span>
+        </button>
+      )}
     </nav>
   );
 }
