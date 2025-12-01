@@ -88,6 +88,7 @@ msgstr "Verifique seu e-mail"
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/page.tsx
 #: src/app/[locale]/(settings)/use-settings.ts
+#: src/app/[locale]/app-tab-bar.tsx
 #: src/components/tab-bar/catalog-tab-bar.tsx
 #: src/components/tab-bar/settings-tab-bar.tsx
 #: src/components/user-dropdown-menu.tsx
@@ -96,6 +97,7 @@ msgstr "Configurações"
 
 #: src/app/[locale]/(catalog)/catalog-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
+#: src/app/[locale]/app-tab-bar.tsx
 #: src/app/[locale]/editor/editor-tab-bar.tsx
 #: src/components/tab-bar.tsx
 #: src/components/tab-bar/catalog-tab-bar.tsx
@@ -105,12 +107,14 @@ msgid "ejEGdx"
 msgstr "Início"
 
 #: src/app/[locale]/(catalog)/catalog-tab-bar.tsx
+#: src/app/[locale]/app-tab-bar.tsx
 #: src/components/navbar-links.tsx
 #: src/components/tab-bar/catalog-tab-bar.tsx
 msgid "IbrSk1"
 msgstr "Aprender"
 
 #: src/app/[locale]/(catalog)/catalog-tab-bar.tsx
+#: src/app/[locale]/app-tab-bar.tsx
 #: src/app/[locale]/editor/[orgSlug]/page.tsx
 #: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
@@ -436,15 +440,7 @@ msgstr "Não foi possível alterar sua assinatura. Entre em contato pelo hello@z
 msgid "Oj9Phc"
 msgstr "Gerenciar assinatura"
 
-#: src/app/[locale]/editor/[orgSlug]/language-filter.tsx
-#: src/components/editor/language-filter.tsx
-msgid "KL74/Q"
-msgstr "Filtrar por idioma"
-
-#: src/app/[locale]/editor/[orgSlug]/page.tsx
-msgid "6gzGoI"
-msgstr "Selecione um curso para editar o conteúdo"
-
+#: src/app/[locale]/app-tab-bar.tsx
 #: src/app/[locale]/editor/[orgSlug]/page.tsx
 #: src/app/[locale]/editor/editor-tab-bar.tsx
 #: src/app/[locale]/editor/page.tsx
@@ -453,6 +449,15 @@ msgstr "Selecione um curso para editar o conteúdo"
 #: src/components/user-org-menu.tsx
 msgid "fWKwFM"
 msgstr "Editor"
+
+#: src/app/[locale]/editor/[orgSlug]/language-filter.tsx
+#: src/components/editor/language-filter.tsx
+msgid "KL74/Q"
+msgstr "Filtrar por idioma"
+
+#: src/app/[locale]/editor/[orgSlug]/page.tsx
+msgid "6gzGoI"
+msgstr "Selecione um curso para editar o conteúdo"
 
 #: src/app/[locale]/editor/editor-home-content.tsx
 #: src/app/[locale]/editor/editor-home-view.tsx

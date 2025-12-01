@@ -7,7 +7,6 @@ import {
 import type { Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
-import { EditorHeader } from "../editor-header";
 import { CourseList, CourseListSkeleton } from "./course-list";
 import { LanguageFilter } from "./language-filter";
 
@@ -46,8 +45,6 @@ export default async function EditorOverview({
       <Suspense fallback={<CourseListSkeleton />}>
         <CourseList locale={locale} orgSlug={orgSlug} />
       </Suspense>
-
-      <EditorHeader orgSlug={orgSlug} />
     </>
   );
 }
