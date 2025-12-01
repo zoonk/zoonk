@@ -4,7 +4,6 @@ import { cacheTagHome } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { getExtracted, setRequestLocale } from "next-intl/server";
-import { Suspense } from "react";
 import { UserAvatarMenu } from "@/components/user-avatar-menu";
 
 export async function generateMetadata({
