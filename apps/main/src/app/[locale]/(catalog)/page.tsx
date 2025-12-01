@@ -36,9 +36,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   return (
     <main>
       <div className="flex justify-end p-4">
-        <Suspense>
-          <UserAvatarMenu />
-        </Suspense>
+        <UserAvatarMenu />
       </div>
     </main>
   );
