@@ -166,6 +166,7 @@ msgstr "Zoonk is an AI-powered learning platform where you can learn anything th
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
 #: src/components/feedback-sheet.tsx
 #: src/components/tab-bar/settings-tab-bar.tsx
 #: src/components/user-dropdown-menu.tsx
@@ -217,6 +218,7 @@ msgstr "Get support and answers. Fill in the form below or email us directly at 
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
 #: src/components/user-dropdown-menu.tsx
 msgid "SENRqu"
 msgstr "Help"
@@ -245,6 +247,7 @@ msgstr "Update your Zoonk app language to learn in English, Portuguese, Spanish,
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/locale-switcher.tsx
@@ -301,6 +304,7 @@ msgstr "Logout"
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/page.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
 #: src/components/tab-bar/catalog-tab-bar.tsx
 #: src/components/tab-bar/settings-tab-bar.tsx
 #: src/components/user-dropdown-menu.tsx
@@ -315,6 +319,7 @@ msgstr "Navigate settings"
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/subscription/page.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
 #: src/components/tab-bar/settings-tab-bar.tsx
 #: src/components/user-dropdown-menu.tsx
 msgid "R/6nsx"
@@ -334,11 +339,13 @@ msgstr "Home"
 
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
 msgid "ieGrWo"
 msgstr "Follow"
 
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
 msgid "pwlQEY"
 msgstr "Display Name"
 
