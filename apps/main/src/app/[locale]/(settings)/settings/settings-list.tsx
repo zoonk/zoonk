@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Item,
   ItemContent,
@@ -7,10 +9,10 @@ import {
 } from "@zoonk/ui/components/item";
 import { ChevronRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { settingsMenu } from "../settings-menu";
+import { useSettings } from "../use-settings";
 
-export async function SettingsList() {
-  const { settingsPages } = await settingsMenu();
+export function SettingsList() {
+  const { settingsPages } = useSettings();
 
   return (
     <ItemGroup>

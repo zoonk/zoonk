@@ -5,6 +5,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { AppTabBar } from "@/components/app-tab-bar";
+import { SettingsNavbar } from "./settings-navbar";
 
 export default async function Layout({
   children,
@@ -18,6 +19,8 @@ export default async function Layout({
 
   return (
     <div className="flex min-h-dvh flex-col">
+      <SettingsNavbar />
+
       {children}
 
       <Suspense>
