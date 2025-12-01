@@ -2,8 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { getMenu } from "@/lib/menu";
-import { TabBar } from "./tab-bar";
-import { TabBarItem } from "./tab-bar-item";
+import { TabBar, TabBarItem } from "../tab-bar";
 
 const homeMenu = getMenu("home");
 const editorMenu = getMenu("editor");

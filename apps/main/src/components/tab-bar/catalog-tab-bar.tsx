@@ -2,9 +2,8 @@
 
 import { useExtracted } from "next-intl";
 import { getMenu } from "@/lib/menu";
-import { TabBar } from "./tab-bar";
+import { TabBar, TabBarItem } from "../tab-bar";
 import { TabBarCommandPalette } from "./tab-bar-command-palette";
-import { TabBarItem } from "./tab-bar-item";
 
 const homeMenu = getMenu("home");
 const coursesMenu = getMenu("courses");

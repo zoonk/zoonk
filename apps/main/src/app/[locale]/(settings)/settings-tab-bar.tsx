@@ -10,8 +10,7 @@ import {
 import { cn } from "@zoonk/ui/lib/utils";
 import { Ellipsis, X } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { TabBar } from "@/components/tab-bar/tab-bar";
-import { TabBarItem } from "@/components/tab-bar/tab-bar-item";
+import { TabBar, TabBarItem } from "@/components/tab-bar";
 import { Link, usePathname } from "@/i18n/navigation";
 import { useSettings } from "./use-settings";
 
