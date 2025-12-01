@@ -1,6 +1,7 @@
 "use client";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useExtracted } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
@@ -28,6 +29,17 @@ function getVariant(
 const homeMenu = getMenu("home");
 const coursesMenu = getMenu("courses");
 const learnMenu = getMenu("learn");
+
+export function NavbarLinksSkeleton() {
+  return (
+    <>
+      <Skeleton className="size-9 rounded-full" />
+      <Skeleton className="size-9 rounded-full sm:h-9 sm:w-24" />
+      <Skeleton className="size-9 rounded-full" />
+      <Skeleton className="ml-auto size-9 rounded-full sm:h-9 sm:w-20" />
+    </>
+  );
+}
 
 export function NavbarLinks() {
   const pathname = usePathname();

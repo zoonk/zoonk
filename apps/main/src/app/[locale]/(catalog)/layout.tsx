@@ -5,7 +5,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { Header } from "@/components/header";
-import { NavbarLinks } from "@/components/navbar-links";
+import { NavbarLinks, NavbarLinksSkeleton } from "@/components/navbar-links";
 import { UserAvatarMenu } from "@/components/user-avatar-menu";
 
 export default async function CatalogLayout({
@@ -21,7 +21,7 @@ export default async function CatalogLayout({
   return (
     <div className="flex min-h-dvh flex-col">
       <Header>
-        <Suspense>
+        <Suspense fallback={<NavbarLinksSkeleton />}>
           <NavbarLinks />
         </Suspense>
 
