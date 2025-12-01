@@ -54,6 +54,7 @@ type TabBarItemProps = {
   label: string;
   /** If true, matches exact path. If false, matches path prefix. */
   exact?: boolean;
+  className?: string;
 };
 
 function isActive(href: string, pathname: string, exact: boolean): boolean {
@@ -71,6 +72,7 @@ export function TabBarItem({
   icon,
   label,
   exact = false,
+  className,
 }: TabBarItemProps) {
   const pathname = usePathname();
   const active = isActive(href, pathname, exact);
@@ -84,6 +86,7 @@ export function TabBarItem({
           variant: active ? "default" : "ghost",
         }),
         "rounded-full",
+        className,
       )}
       href={href}
     >

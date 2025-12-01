@@ -50,13 +50,13 @@ export async function SettingsTabBar() {
 
       {/* Desktop: Show remaining items directly */}
       {overflowPages.map((page) => (
-        <div className="hidden md:block" key={page.label}>
-          <TabBarItem
-            href={page.url}
-            icon={<page.icon aria-hidden="true" />}
-            label={page.label}
-          />
-        </div>
+        <TabBarItem
+          className="hidden md:block"
+          href={page.url}
+          icon={<page.icon aria-hidden="true" />}
+          key={page.label}
+          label={page.label}
+        />
       ))}
     </TabBar>
   );
