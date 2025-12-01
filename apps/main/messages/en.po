@@ -320,6 +320,11 @@ msgstr "Navigate settings"
 msgid "R/6nsx"
 msgstr "Subscription"
 
+#: src/app/[locale]/(settings)/settings-overflow-trigger.tsx
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
+msgid "yoLwRW"
+msgstr "See more"
+
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/components/tab-bar/catalog-tab-bar.tsx
 #: src/components/tab-bar/editor-tab-bar.tsx
@@ -336,10 +341,6 @@ msgstr "Follow"
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 msgid "pwlQEY"
 msgstr "Display Name"
-
-#: src/app/[locale]/(settings)/settings-tab-bar.tsx
-msgid "yoLwRW"
-msgstr "See more"
 
 #: src/app/[locale]/(settings)/settings/page.tsx
 msgid "FMLZiG"

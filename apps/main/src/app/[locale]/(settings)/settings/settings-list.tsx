@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Item,
   ItemContent,
@@ -6,21 +8,11 @@ import {
   ItemTitle,
 } from "@zoonk/ui/components/item";
 import { ChevronRight } from "lucide-react";
-import { getExtracted } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { getMenu } from "@/lib/menu";
+import { useSettings } from "../use-settings";
 
-export async function SettingsList() {
-  const t = await getExtracted();
-
-  const settingsPages = [
-    { label: t("Subscription"), ...getMenu("subscription") },
-    { label: t("Language"), ...getMenu("language") },
-    { label: t("Display Name"), ...getMenu("displayName") },
-    { label: t("Feedback"), ...getMenu("feedback") },
-    { label: t("Help"), ...getMenu("help") },
-    { label: t("Follow"), ...getMenu("follow") },
-  ];
+export function SettingsList() {
+  const { settingsPages } = useSettings();
 
   return (
     <ItemGroup>

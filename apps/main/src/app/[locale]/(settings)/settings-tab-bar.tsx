@@ -13,23 +13,14 @@ import { useExtracted } from "next-intl";
 import { TabBar } from "@/components/tab-bar/tab-bar";
 import { TabBarItem } from "@/components/tab-bar/tab-bar-item";
 import { Link, usePathname } from "@/i18n/navigation";
-import { getMenu } from "@/lib/menu";
+import { useSettings } from "./use-settings";
 
 const MOBILE_VISIBLE_COUNT = 5;
 
 export function SettingsTabBar() {
   const t = useExtracted();
   const pathname = usePathname();
-
-  const settingsPages = [
-    { label: t("Settings"), ...getMenu("settings") },
-    { label: t("Subscription"), ...getMenu("subscription") },
-    { label: t("Language"), ...getMenu("language") },
-    { label: t("Display Name"), ...getMenu("displayName") },
-    { label: t("Feedback"), ...getMenu("feedback") },
-    { label: t("Help"), ...getMenu("help") },
-    { label: t("Follow"), ...getMenu("follow") },
-  ];
+  const { settingsPages } = useSettings();
 
   const visiblePages = settingsPages.slice(0, MOBILE_VISIBLE_COUNT);
   const overflowPages = settingsPages.slice(MOBILE_VISIBLE_COUNT);

@@ -320,6 +320,11 @@ msgstr "Navegar por la configuración"
 msgid "R/6nsx"
 msgstr "Suscripción"
 
+#: src/app/[locale]/(settings)/settings-overflow-trigger.tsx
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
+msgid "yoLwRW"
+msgstr "Ver más"
+
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/components/tab-bar/catalog-tab-bar.tsx
 #: src/components/tab-bar/editor-tab-bar.tsx
@@ -336,10 +341,6 @@ msgstr "Seguir"
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 msgid "pwlQEY"
 msgstr "Nombre para mostrar"
-
-#: src/app/[locale]/(settings)/settings-tab-bar.tsx
-msgid "yoLwRW"
-msgstr "Ver más"
 
 #: src/app/[locale]/(settings)/settings/page.tsx
 msgid "FMLZiG"

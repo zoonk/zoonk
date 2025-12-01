@@ -320,6 +320,11 @@ msgstr "Ver configurações"
 msgid "R/6nsx"
 msgstr "Assinatura"
 
+#: src/app/[locale]/(settings)/settings-overflow-trigger.tsx
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
+msgid "yoLwRW"
+msgstr "Ver mais"
+
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/components/tab-bar/catalog-tab-bar.tsx
 #: src/components/tab-bar/editor-tab-bar.tsx
@@ -336,10 +341,6 @@ msgstr "Seguir"
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 msgid "pwlQEY"
 msgstr "Nome de exibição"
-
-#: src/app/[locale]/(settings)/settings-tab-bar.tsx
-msgid "yoLwRW"
-msgstr "Ver mais"
 
 #: src/app/[locale]/(settings)/settings/page.tsx
 msgid "FMLZiG"
