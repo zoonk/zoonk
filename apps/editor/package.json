@@ -1,0 +1,31 @@
+{
+  "dependencies": {
+    "@prisma/client": "7.0.1",
+    "@zoonk/api": "workspace:*",
+    "@zoonk/auth": "workspace:*",
+    "@zoonk/ui": "workspace:*",
+    "lucide-react": "0.553.0",
+    "next": "16.0.6",
+    "pg": "8.16.3",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "server-only": "0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@zoonk/tsconfig": "workspace:*",
+    "babel-plugin-react-compiler": "1.0.0",
+    "typescript": "^5"
+  },
+  "name": "editor",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev -p 3003",
+    "start": "next start -p 3003",
+    "typecheck": "next typegen && tsc --noEmit"
+  },
+  "version": "0.1.0"
+}

@@ -79,6 +79,58 @@ importers:
         specifier: ^5
         version: 5.9.3
 
+  apps/editor:
+    dependencies:
+      '@prisma/client':
+        specifier: 7.0.1
+        version: 7.0.1(prisma@7.0.1(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(typescript@5.9.3))(typescript@5.9.3)
+      '@zoonk/api':
+        specifier: workspace:*
+        version: link:../../packages/api
+      '@zoonk/auth':
+        specifier: workspace:*
+        version: link:../../packages/auth
+      '@zoonk/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
+      lucide-react:
+        specifier: 0.553.0
+        version: 0.553.0(react@19.2.0)
+      next:
+        specifier: 16.0.6
+        version: 16.0.6(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      pg:
+        specifier: 8.16.3
+        version: 8.16.3
+      react:
+        specifier: 19.2.0
+        version: 19.2.0
+      react-dom:
+        specifier: 19.2.0
+        version: 19.2.0(react@19.2.0)
+      server-only:
+        specifier: 0.0.1
+        version: 0.0.1
+    devDependencies:
+      '@types/node':
+        specifier: ^24
+        version: 24.10.1
+      '@types/react':
+        specifier: ^19
+        version: 19.2.2
+      '@types/react-dom':
+        specifier: ^19
+        version: 19.2.2(@types/react@19.2.2)
+      '@zoonk/tsconfig':
+        specifier: workspace:*
+        version: link:../../packages/tsconfig
+      babel-plugin-react-compiler:
+        specifier: 1.0.0
+        version: 1.0.0
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
   apps/evals:
     dependencies:
       '@ai-sdk/gateway':
