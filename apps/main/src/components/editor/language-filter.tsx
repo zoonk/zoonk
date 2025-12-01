@@ -28,7 +28,7 @@ export async function LanguageFilter({
             aria-current={isActive ? "page" : undefined}
             className={cn(
               badgeVariants({ variant: isActive ? "default" : "outline" }),
-              "uppercase",
+              "size-8 rounded-full uppercase",
             )}
             href={`/editor/${orgSlug}`}
             key={locale}
