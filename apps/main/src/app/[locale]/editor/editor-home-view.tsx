@@ -6,11 +6,11 @@ import {
 } from "@zoonk/ui/components/container";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
-import { EditorHeader } from "@/components/editor/editor-header";
+import { EditorHeader } from "./editor-header";
 import {
   OrganizationList,
   OrganizationListSkeleton,
-} from "@/components/editor/organization-list";
+} from "./organization-list";
 
 export async function EditorHomeView() {
   const t = await getExtracted();

@@ -4,7 +4,7 @@ import { cacheTagCatalog } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
-import { CatalogTabBar } from "@/components/tab-bar/catalog-tab-bar";
+import { CatalogTabBar } from "./catalog-tab-bar";
 
 export default async function CatalogLayout({
   children,

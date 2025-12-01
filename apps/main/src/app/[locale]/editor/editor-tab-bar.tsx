@@ -1,8 +1,8 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { TabBar, TabBarItem } from "@/components/tab-bar";
 import { getMenu } from "@/lib/menu";
-import { TabBar, TabBarItem } from "../tab-bar";
 
 const homeMenu = getMenu("home");
 const editorMenu = getMenu("editor");

@@ -7,12 +7,9 @@ import {
 import type { Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
-import {
-  CourseList,
-  CourseListSkeleton,
-} from "@/components/editor/course-list";
-import { EditorHeader } from "@/components/editor/editor-header";
-import { LanguageFilter } from "@/components/editor/language-filter";
+import { EditorHeader } from "../editor-header";
+import { CourseList, CourseListSkeleton } from "./course-list";
+import { LanguageFilter } from "./language-filter";
 
 export async function generateMetadata({
   params,

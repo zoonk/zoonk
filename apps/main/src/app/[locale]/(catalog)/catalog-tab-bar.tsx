@@ -1,9 +1,9 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { AppCommandPalette } from "@/components/command-palette-app";
+import { TabBar, TabBarItem } from "@/components/tab-bar";
 import { getMenu } from "@/lib/menu";
-import { TabBar, TabBarItem } from "../tab-bar";
-import { TabBarCommandPalette } from "./tab-bar-command-palette";
 
 const homeMenu = getMenu("home");
 const coursesMenu = getMenu("courses");
@@ -14,7 +14,7 @@ export function CatalogTabBar() {
   const t = useExtracted();
 
   return (
-    <TabBar action={<TabBarCommandPalette />}>
+    <TabBar action={<AppCommandPalette />}>
       <TabBarItem
         exact
         href={homeMenu.url}

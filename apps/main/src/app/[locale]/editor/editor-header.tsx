@@ -1,4 +1,4 @@
-import { EditorTabBar } from "@/components/tab-bar/editor-tab-bar";
+import { EditorTabBar } from "./editor-tab-bar";
 
 type EditorHeaderProps = {
   orgSlug?: string;

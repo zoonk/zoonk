@@ -7,6 +7,7 @@ msgstr ""
 "X-Crowdin-SourceKey: msgstr\n"
 
 #: src/app/[locale]/(auth)/layout.tsx
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/editor/editor-header.tsx
@@ -80,6 +81,43 @@ msgstr "Ingresa el código que enviamos a {email}:"
 #: src/app/[locale]/(auth)/otp/otp-form.tsx
 msgid "zx7CKB"
 msgstr "Revisa tu correo"
+
+#: src/app/[locale]/(catalog)/catalog-tab-bar.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
+#: src/app/[locale]/(settings)/settings/page.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
+#: src/components/tab-bar/catalog-tab-bar.tsx
+#: src/components/tab-bar/settings-tab-bar.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "D3idYv"
+msgstr "Configuración"
+
+#: src/app/[locale]/(catalog)/catalog-tab-bar.tsx
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
+#: src/app/[locale]/editor/editor-tab-bar.tsx
+#: src/components/tab-bar/catalog-tab-bar.tsx
+#: src/components/tab-bar/editor-tab-bar.tsx
+#: src/components/tab-bar/settings-tab-bar.tsx
+msgid "ejEGdx"
+msgstr "Inicio"
+
+#: src/app/[locale]/(catalog)/catalog-tab-bar.tsx
+#: src/components/navbar-links.tsx
+#: src/components/tab-bar/catalog-tab-bar.tsx
+msgid "IbrSk1"
+msgstr "Aprender"
+
+#: src/app/[locale]/(catalog)/catalog-tab-bar.tsx
+#: src/app/[locale]/editor/[orgSlug]/page.tsx
+#: src/components/command-palette-app.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+#: src/components/navbar-links.tsx
+#: src/components/tab-bar/catalog-tab-bar.tsx
+#: src/components/tab-bar/tab-bar-command-palette.tsx
+msgid "R85gsW"
+msgstr "Cursos"
 
 #: src/app/[locale]/(catalog)/courses/page.tsx
 msgid "P5jxUC"
@@ -179,6 +217,7 @@ msgid "eUzs3M"
 msgstr "Envíanos comentarios, preguntas o sugerencias. Completa el formulario a continuación o envíanos un correo directamente a contacto@zoonk.com."
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/content-feedback.tsx
@@ -200,6 +239,7 @@ msgid "Qeoeg9"
 msgstr "Encuentra todos nuestros enlaces de redes sociales y mantente en contacto con nosotros."
 
 #: src/app/[locale]/(settings)/follow/page.tsx
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/tab-bar/tab-bar-command-palette.tsx
@@ -248,6 +288,7 @@ msgstr "Actualiza el idioma de tu aplicación Zoonk para aprender en inglés, po
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/use-settings.ts
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/locale-switcher.tsx
@@ -294,22 +335,13 @@ msgid "Pj/oEx"
 msgstr "Este es el nombre que otros pueden ver y el que usaremos para referirnos a ti en las actividades."
 
 #: src/app/[locale]/(settings)/settings-navbar.tsx
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/logout-dropdown-item.tsx
 #: src/components/tab-bar/tab-bar-command-palette.tsx
 msgid "C81/uG"
 msgstr "Cerrar sesión"
-
-#: src/app/[locale]/(settings)/settings-navigation.tsx
-#: src/app/[locale]/(settings)/settings-tab-bar.tsx
-#: src/app/[locale]/(settings)/settings/page.tsx
-#: src/app/[locale]/(settings)/use-settings.ts
-#: src/components/tab-bar/catalog-tab-bar.tsx
-#: src/components/tab-bar/settings-tab-bar.tsx
-#: src/components/user-dropdown-menu.tsx
-msgid "D3idYv"
-msgstr "Configuración"
 
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 msgid "iZeMgn"
@@ -329,13 +361,6 @@ msgstr "Suscripción"
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 msgid "yoLwRW"
 msgstr "Ver más"
-
-#: src/app/[locale]/(settings)/settings-tab-bar.tsx
-#: src/components/tab-bar/catalog-tab-bar.tsx
-#: src/components/tab-bar/editor-tab-bar.tsx
-#: src/components/tab-bar/settings-tab-bar.tsx
-msgid "ejEGdx"
-msgstr "Inicio"
 
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
@@ -394,32 +419,30 @@ msgid "NiVbmQ"
 msgstr "No se puede cambiar tu suscripción. Contáctanos en contacto@zoonk.com"
 
 #: src/app/[locale]/(settings)/subscription/subscription-page.tsx
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/tab-bar/tab-bar-command-palette.tsx
 msgid "Oj9Phc"
 msgstr "Administrar suscripción"
 
+#: src/app/[locale]/editor/[orgSlug]/language-filter.tsx
+#: src/components/editor/language-filter.tsx
+msgid "KL74/Q"
+msgstr "Filtrar por idioma"
+
 #: src/app/[locale]/editor/[orgSlug]/page.tsx
 msgid "6gzGoI"
 msgstr "Selecciona un curso para editar el contenido"
 
 #: src/app/[locale]/editor/[orgSlug]/page.tsx
+#: src/app/[locale]/editor/editor-tab-bar.tsx
 #: src/app/[locale]/editor/page.tsx
 #: src/components/editor/editor-header.tsx
 #: src/components/tab-bar/editor-tab-bar.tsx
 #: src/components/user-org-menu.tsx
 msgid "fWKwFM"
 msgstr "Editor"
-
-#: src/app/[locale]/editor/[orgSlug]/page.tsx
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-#: src/components/navbar-links.tsx
-#: src/components/tab-bar/catalog-tab-bar.tsx
-#: src/components/tab-bar/tab-bar-command-palette.tsx
-msgid "R85gsW"
-msgstr "Cursos"
 
 #: src/app/[locale]/editor/editor-home-content.tsx
 #: src/app/[locale]/editor/editor-home-view.tsx
@@ -431,6 +454,16 @@ msgstr "Seleccionar organización"
 #: src/app/[locale]/editor/editor-home-view.tsx
 msgid "jflB8q"
 msgstr "Elige una organización para administrar tus cursos"
+
+#: src/app/[locale]/editor/organization-list.tsx
+#: src/components/editor/organization-list.tsx
+msgid "p4BgKL"
+msgstr "Aún no formas parte de ninguna organización"
+
+#: src/app/[locale]/editor/organization-list.tsx
+#: src/components/editor/organization-list.tsx
+msgid "sFoGzO"
+msgstr "Ninguna organización"
 
 #: src/app/[locale]/privacy/page.tsx
 msgid "iql85X"
@@ -448,12 +481,14 @@ msgstr "Lee los términos de uso de Zoonk para entender las reglas y condiciones
 msgid "UhkSyx"
 msgstr "Términos de uso"
 
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/tab-bar/tab-bar-command-palette.tsx
 msgid "/aBLH2"
 msgstr "Comenzar"
 
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/logout-dropdown-item.tsx
@@ -462,36 +497,42 @@ msgstr "Comenzar"
 msgid "AyGauy"
 msgstr "Iniciar sesión"
 
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/tab-bar/tab-bar-command-palette.tsx
 msgid "dXSivY"
 msgstr "Mi cuenta"
 
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/tab-bar/tab-bar-command-palette.tsx
 msgid "gvd2HB"
 msgstr "Actualizar nombre para mostrar"
 
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/tab-bar/tab-bar-command-palette.tsx
 msgid "h7uoBs"
 msgstr "Ayuda y soporte"
 
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/tab-bar/tab-bar-command-palette.tsx
 msgid "HC7Mi4"
 msgstr "Buscar cursos o páginas..."
 
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/tab-bar/tab-bar-command-palette.tsx
 msgid "hX5PAb"
 msgstr "No se encontraron resultados"
 
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/tab-bar/tab-bar-command-palette.tsx
@@ -499,36 +540,42 @@ msgstr "No se encontraron resultados"
 msgid "I+38K2"
 msgstr "Mis cursos"
 
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/tab-bar/tab-bar-command-palette.tsx
 msgid "KwsmcD"
 msgstr "Administrar configuración"
 
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/tab-bar/tab-bar-command-palette.tsx
 msgid "L6kaJv"
 msgstr "Aprender algo"
 
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/tab-bar/tab-bar-command-palette.tsx
 msgid "NjD8y3"
 msgstr "Cerrar búsqueda"
 
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/tab-bar/tab-bar-command-palette.tsx
 msgid "OhXwmw"
 msgstr "Actualizar idioma"
 
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/tab-bar/tab-bar-command-palette.tsx
 msgid "WnQ/AZ"
 msgstr "Contáctanos"
 
+#: src/components/command-palette-app.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/tab-bar/tab-bar-command-palette.tsx
@@ -579,18 +626,6 @@ msgstr "No me gustó"
 msgid "rTFrsw"
 msgstr "Me gustó"
 
-#: src/components/editor/language-filter.tsx
-msgid "KL74/Q"
-msgstr "Filtrar por idioma"
-
-#: src/components/editor/organization-list.tsx
-msgid "p4BgKL"
-msgstr "Aún no formas parte de ninguna organización"
-
-#: src/components/editor/organization-list.tsx
-msgid "sFoGzO"
-msgstr "Ninguna organización"
-
 #: src/components/feedback-sheet.tsx
 msgid "rbrahO"
 msgstr "Cerrar"
@@ -602,11 +637,6 @@ msgstr "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} es {🇪
 #: src/components/locale-switcher.tsx
 msgid "jOuyTp"
 msgstr "Cambiar idioma"
-
-#: src/components/navbar-links.tsx
-#: src/components/tab-bar/catalog-tab-bar.tsx
-msgid "IbrSk1"
-msgstr "Aprender"
 
 #: src/components/protected-section.tsx
 msgid "2jC0rX"
