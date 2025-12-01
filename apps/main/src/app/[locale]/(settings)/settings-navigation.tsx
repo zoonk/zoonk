@@ -7,24 +7,17 @@ import {
 import { useExtracted } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
+import { useSettings } from "./use-settings";
 
 export function SettingsNavigation() {
   const t = useExtracted();
   const pathname = usePathname();
   const router = useRouter();
+  const { menuPages } = useSettings();
 
   const menuItems = [
     { key: "settings", label: t("Settings"), ...getMenu("settings") },
-    {
-      key: "subscription",
-      label: t("Subscription"),
-      ...getMenu("subscription"),
-    },
-    { key: "displayName", label: t("Display name"), ...getMenu("displayName") },
-    { key: "language", label: t("Language"), ...getMenu("language") },
-    { key: "feedback", label: t("Feedback"), ...getMenu("feedback") },
-    { key: "help", label: t("Help"), ...getMenu("help") },
-    { key: "follow", label: t("Follow us"), ...getMenu("follow") },
+    ...menuPages,
   ];
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {

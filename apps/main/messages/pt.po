@@ -165,6 +165,7 @@ msgstr "O Zoonk é uma plataforma de aprendizagem com IA onde você pode aprende
 #: src/app/[locale]/(settings)/settings-navbar.tsx
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
 #: src/components/feedback-sheet.tsx
 #: src/components/user-dropdown-menu.tsx
 msgid "Ejhdi4"
@@ -188,6 +189,7 @@ msgstr "Compartilhe suas ideias e ajude a melhorar o Zoonk. Use a página de fee
 
 #: src/app/[locale]/(settings)/follow/page.tsx
 #: src/app/[locale]/(settings)/settings-navigation.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
 msgid "l1XTI5"
 msgstr "Nos siga"
 
@@ -212,6 +214,7 @@ msgstr "Obtenha suporte e respostas. Preencha o formulário abaixo ou nos envie 
 #: src/app/[locale]/(settings)/help/page.tsx
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
 #: src/components/user-dropdown-menu.tsx
 msgid "SENRqu"
 msgstr "Ajuda"
@@ -239,6 +242,7 @@ msgstr "Atualize o idioma do seu app Zoonk para aprender em inglês, português,
 #: src/app/[locale]/(settings)/language/page.tsx
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 #: src/components/locale-switcher.tsx
@@ -275,6 +279,7 @@ msgstr "Atualizar nome de exibição"
 
 #: src/app/[locale]/(settings)/name/page.tsx
 #: src/app/[locale]/(settings)/settings-navigation.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
 msgid "dOQCL8"
 msgstr "Nome de exibição"
 
@@ -302,6 +307,7 @@ msgstr "Ver configurações"
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/subscription/page.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
 #: src/components/user-dropdown-menu.tsx
 msgid "R/6nsx"
 msgstr "Assinatura"
@@ -313,14 +319,6 @@ msgstr "Personalize sua experiência de aprendizagem no Zoonk. Gerencie configur
 #: src/app/[locale]/(settings)/settings/page.tsx
 msgid "v9T5Oi"
 msgstr "Gerencie as configurações da sua conta, perfil e preferências."
-
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
-msgid "ieGrWo"
-msgstr "Seguir"
-
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
-msgid "pwlQEY"
-msgstr "Nome de exibição"
 
 #: src/app/[locale]/(settings)/subscription/page.tsx
 msgid "9vk07U"
