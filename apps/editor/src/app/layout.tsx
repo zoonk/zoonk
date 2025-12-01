@@ -22,8 +22,8 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://zoonk.com"),
   title: {
-    default: "",
-    template: "%s | Zoonk",
+    default: "Zoonk Editor",
+    template: "%s | Zoonk Editor",
   },
 };
 
