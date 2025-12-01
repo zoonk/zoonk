@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
 const CACHE_IMAGE_DAYS = 30;
 
@@ -23,4 +24,18 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
 };
 
-export default nextConfig;
+const withNextIntl = createNextIntlPlugin({
+  experimental: {
+    extract: {
+      sourceLocale: "en",
+    },
+    messages: {
+      format: "po",
+      locales: "infer",
+      path: "./messages",
+    },
+    srcPath: "./src",
+  },
+});
+
+export default withNextIntl(nextConfig);
