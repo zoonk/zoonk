@@ -374,6 +374,7 @@ msgstr "Selecione um curso para editar o conteúdo"
 #: src/app/[locale]/editor/[orgSlug]/page.tsx
 #: src/app/[locale]/editor/page.tsx
 #: src/components/editor/editor-header.tsx
+#: src/components/user-org-menu.tsx
 msgid "fWKwFM"
 msgstr "Editor"
 

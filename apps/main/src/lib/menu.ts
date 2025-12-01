@@ -5,6 +5,7 @@ import {
   IdCardLanyard,
   Languages,
   LayoutGrid,
+  LayoutTemplate,
   LifeBuoy,
   LogIn,
   LogOut,
@@ -17,6 +18,7 @@ import {
 const menu = {
   courses: { icon: LayoutGrid, url: "/courses" },
   displayName: { icon: IdCardLanyard, url: "/name" },
+  editor: { icon: LayoutTemplate, url: "/editor" },
   feedback: { icon: MessageCircle, url: "/feedback" },
   follow: { icon: Megaphone, url: "/follow" },
   help: { icon: LifeBuoy, url: "/help" },

@@ -1,11 +1,11 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { LayoutTemplateIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { Header } from "../header";
 
 const homeMenu = getMenu("home");
+const editorMenu = getMenu("editor");
 
 type EditorHeaderProps = React.ComponentProps<"header"> & {
   active: "overview";
@@ -40,7 +40,7 @@ export async function EditorHeader({
           })}
           href={`/editor/${orgSlug}`}
         >
-          <LayoutTemplateIcon aria-hidden="true" />
+          <editorMenu.icon aria-hidden="true" />
           <span className="sr-only">{t("Editor")}</span>
         </Link>
       )}

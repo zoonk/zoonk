@@ -7,6 +7,7 @@ import { getExtracted } from "next-intl/server";
 import { getMenu } from "@/lib/menu";
 import { ClientLink } from "../i18n/client-link";
 import { LogoutDropdownItem } from "./logout-dropdown-item";
+import { UserOrgMenu } from "./user-org-menu";
 
 export async function UserDropdownMenu() {
   const t = await getExtracted();
@@ -32,6 +33,8 @@ export async function UserDropdownMenu() {
       ))}
 
       <DropdownMenuSeparator />
+
+      <UserOrgMenu />
 
       {accountMenu.map((menu) => (
         <DropdownMenuItem asChild key={menu.key}>
