@@ -4,9 +4,7 @@ import { cacheTagCatalog } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
-import { Header } from "@/components/header";
-import { NavbarLinks, NavbarLinksSkeleton } from "@/components/navbar-links";
-import { UserAvatarMenu } from "@/components/user-avatar-menu";
+import { CatalogTabBar } from "@/components/tab-bar/catalog-tab-bar";
 
 export default async function CatalogLayout({
   children,
@@ -19,16 +17,12 @@ export default async function CatalogLayout({
   cacheTag(locale, cacheTagCatalog());
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      <Header>
-        <Suspense fallback={<NavbarLinksSkeleton />}>
-          <NavbarLinks />
-        </Suspense>
-
-        <UserAvatarMenu />
-      </Header>
-
+    <div className="flex min-h-dvh flex-col pb-24">
       {children}
+
+      <Suspense>
+        <CatalogTabBar />
+      </Suspense>
     </div>
   );
 }

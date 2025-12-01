@@ -35,8 +35,6 @@ export default async function EditorOverview({
 
   return (
     <>
-      <EditorHeader active="overview" orgSlug={orgSlug} />
-
       <Container>
         <ContainerHeader>
           <ContainerTitle>{t("Courses")}</ContainerTitle>
@@ -51,6 +49,8 @@ export default async function EditorOverview({
       <Suspense fallback={<CourseListSkeleton />}>
         <CourseList locale={locale} orgSlug={orgSlug} />
       </Suspense>
+
+      <EditorHeader orgSlug={orgSlug} />
     </>
   );
 }

@@ -4,6 +4,7 @@ import { cacheTagSettings } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
 import { SettingsNavbar } from "@/app/[locale]/(settings)/settings-navbar";
+import { SettingsTabBar } from "@/components/tab-bar/settings-tab-bar";
 
 export default async function Layout({
   children,
@@ -16,9 +17,10 @@ export default async function Layout({
   cacheTag(locale, cacheTagSettings());
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col pb-24">
       <SettingsNavbar />
       {children}
+      <SettingsTabBar />
     </div>
   );
 }

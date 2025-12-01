@@ -3,7 +3,9 @@
 import { cacheTagHome } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, setRequestLocale } from "next-intl/server";
+import { Suspense } from "react";
+import { UserAvatarMenu } from "@/components/user-avatar-menu";
 
 export async function generateMetadata({
   params,
@@ -23,8 +25,21 @@ export async function generateMetadata({
   };
 }
 
-export default async function Home() {
+export default async function Home({ params }: PageProps<"/[locale]">) {
+  const { locale } = await params;
+
+  setRequestLocale(locale);
+
   cacheLife("max");
-  cacheTag(cacheTagHome());
-  return <main>{}</main>;
+  cacheTag(locale, cacheTagHome());
+
+  return (
+    <main>
+      <div className="flex justify-end p-4">
+        <Suspense>
+          <UserAvatarMenu />
+        </Suspense>
+      </div>
+    </main>
+  );
 }

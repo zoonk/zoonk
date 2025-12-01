@@ -17,9 +17,7 @@ export async function EditorHomeView() {
 
   return (
     <>
-      <EditorHeader active="overview" />
-
-      <Container className="mx-auto w-full max-w-2xl">
+      <Container className="mx-auto w-full max-w-2xl pb-24">
         <ContainerHeader className="text-center">
           <ContainerTitle>{t("Select an organization")}</ContainerTitle>
           <ContainerDescription>
@@ -31,6 +29,8 @@ export async function EditorHomeView() {
           <OrganizationList />
         </Suspense>
       </Container>
+
+      <EditorHeader />
     </>
   );
 }
