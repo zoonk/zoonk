@@ -97,6 +97,7 @@ msgstr "Configurações"
 #: src/app/[locale]/(catalog)/catalog-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/editor/editor-tab-bar.tsx
+#: src/components/tab-bar.tsx
 #: src/components/tab-bar/catalog-tab-bar.tsx
 #: src/components/tab-bar/editor-tab-bar.tsx
 #: src/components/tab-bar/settings-tab-bar.tsx

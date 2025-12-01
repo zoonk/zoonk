@@ -9,7 +9,7 @@ import {
 } from "@zoonk/ui/components/dropdown-menu";
 import { useScrollDirection } from "@zoonk/ui/hooks/use-scroll-direction";
 import { cn } from "@zoonk/ui/lib/utils";
-import { Ellipsis } from "lucide-react";
+import { Ellipsis, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { ClientLink } from "@/i18n/client-link";
 import { Link, usePathname } from "@/i18n/navigation";
@@ -144,5 +144,27 @@ export function TabOverflowIMenutem({ url, label, icon }: OverflowItemProps) {
         {icon} {label}
       </ClientLink>
     </DropdownMenuItem>
+  );
+}
+
+type TabBarCloseActionProps = {
+  url?: string;
+  label?: string;
+};
+
+export function TabBarCloseAction({
+  url = "/",
+  label,
+}: TabBarCloseActionProps) {
+  const t = useExtracted();
+
+  return (
+    <Link
+      className={buttonVariants({ size: "icon", variant: "ghost" })}
+      href={url}
+    >
+      <XIcon aria-hidden="true" />
+      <span className="sr-only">{label ?? t("Home")}</span>
+    </Link>
   );
 }

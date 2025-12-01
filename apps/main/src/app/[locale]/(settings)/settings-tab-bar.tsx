@@ -1,21 +1,17 @@
-import { buttonVariants } from "@zoonk/ui/components/button";
-import { X } from "lucide-react";
-import { getExtracted } from "next-intl/server";
 import {
   TabBar,
+  TabBarCloseAction,
   TabBarItem,
   TabOverflow,
   TabOverflowIMenutem,
   TabOverflowMenu,
   TabOverflowTrigger,
 } from "@/components/tab-bar";
-import { Link } from "@/i18n/navigation";
 import { settingsMenu } from "./settings-menu";
 
 const MOBILE_VISIBLE_COUNT = 5;
 
 export async function SettingsTabBar() {
-  const t = await getExtracted();
   const { settingsPages } = await settingsMenu();
 
   const visiblePages = settingsPages.slice(0, MOBILE_VISIBLE_COUNT);
@@ -23,17 +19,7 @@ export async function SettingsTabBar() {
   const overflowPageUrls = overflowPages.map((page) => page.url);
 
   return (
-    <TabBar
-      action={
-        <Link
-          className={buttonVariants({ size: "icon", variant: "ghost" })}
-          href="/"
-        >
-          <X aria-hidden="true" />
-          <span className="sr-only">{t("Home")}</span>
-        </Link>
-      }
-    >
+    <TabBar action={<TabBarCloseAction />}>
       {/* Mobile: Show first 5 items */}
       {visiblePages.map((page) => (
         <TabBarItem
