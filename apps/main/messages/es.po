@@ -337,6 +337,10 @@ msgstr "Seguir"
 msgid "pwlQEY"
 msgstr "Nombre para mostrar"
 
+#: src/app/[locale]/(settings)/settings-tab-bar.tsx
+msgid "yoLwRW"
+msgstr "Ver más"
+
 #: src/app/[locale]/(settings)/settings/page.tsx
 msgid "FMLZiG"
 msgstr "Personaliza tu experiencia de aprendizaje en Zoonk. Administra la configuración de la cuenta, el perfil y las preferencias para aprovechar al máximo nuestra plataforma educativa."
