@@ -1,6 +1,5 @@
 "use client";
 
-import { IconUfo } from "@tabler/icons-react";
 import {
   Sidebar,
   SidebarContent,
@@ -12,12 +11,12 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@zoonk/ui/components/sidebar";
-import { Users } from "lucide-react";
+import { HomeIcon, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const menuItems = [
-  { icon: IconUfo, label: "Home", url: "/" },
+  { icon: HomeIcon, label: "Home", url: "/" },
   { icon: Users, label: "Users", url: "/users" },
 ] as const;
 

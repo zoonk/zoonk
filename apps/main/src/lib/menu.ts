@@ -1,7 +1,7 @@
-import { IconUfo } from "@tabler/icons-react";
 import {
   Brain,
   Gem,
+  Home,
   IdCardLanyard,
   Languages,
   LayoutGrid,
@@ -22,7 +22,7 @@ const menu = {
   feedback: { icon: MessageCircle, url: "/feedback" },
   follow: { icon: Megaphone, url: "/follow" },
   help: { icon: LifeBuoy, url: "/help" },
-  home: { icon: IconUfo, url: "/" },
+  home: { icon: Home, url: "/" },
   language: { icon: Languages, url: "/language" },
   learn: { icon: Brain, url: "/learn" },
   login: { icon: LogIn, url: "/login" },
