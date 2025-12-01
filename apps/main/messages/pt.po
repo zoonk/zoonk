@@ -212,6 +212,7 @@ msgstr "O Zoonk é uma plataforma de aprendizagem com IA onde você pode aprende
 #: src/app/[locale]/(settings)/settings-tab-bar.tsx
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/use-settings.ts
+#: src/app/[locale]/app-tab-bar.tsx
 #: src/components/feedback-sheet.tsx
 #: src/components/tab-bar/settings-tab-bar.tsx
 #: src/components/user-dropdown-menu.tsx
@@ -363,6 +364,7 @@ msgstr "Nome de exibição"
 #: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/subscription/page.tsx
 #: src/app/[locale]/(settings)/use-settings.ts
+#: src/app/[locale]/app-tab-bar.tsx
 #: src/components/tab-bar/settings-tab-bar.tsx
 #: src/components/user-dropdown-menu.tsx
 msgid "R/6nsx"

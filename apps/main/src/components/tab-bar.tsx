@@ -117,7 +117,7 @@ export function TabOverflowTrigger({ pages }: OverflowTriggerProps) {
           size: "icon",
           variant: isOverflowActive ? "default" : "ghost",
         }),
-        "rounded-full md:hidden",
+        "rounded-full",
       )}
     >
       <Ellipsis aria-hidden="true" />
