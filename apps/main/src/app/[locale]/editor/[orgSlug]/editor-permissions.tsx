@@ -1,4 +1,7 @@
-import { canUpdateCourses, getOrganizationId } from "@zoonk/api/organizations";
+import {
+  getOrganizationId,
+  hasCoursePermission,
+} from "@zoonk/api/organizations";
 import { notFound, unauthorized } from "next/navigation";
 
 export async function EditorPermissions({
@@ -12,7 +15,7 @@ export async function EditorPermissions({
     return notFound();
   }
 
-  const canViewPage = await canUpdateCourses(organizationId);
+  const canViewPage = await hasCoursePermission(organizationId, "update");
 
   if (!canViewPage) {
     return unauthorized();

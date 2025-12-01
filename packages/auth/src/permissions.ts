@@ -6,10 +6,12 @@ import {
   ownerAc,
 } from "better-auth/plugins/organization/access";
 
-const statement = {
+export const statement = {
   ...defaultStatements,
   course: ["create", "read", "update", "delete"],
 } as const;
+
+export type CoursePermission = (typeof statement.course)[number];
 
 export const ac = createAccessControl(statement);
 

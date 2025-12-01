@@ -4,7 +4,7 @@ import {
   memberFixture,
   organizationFixture,
 } from "../test/fixtures/organizations";
-import { canUpdateCourses, getOrganizationId } from "./organizations";
+import { getOrganizationId, hasCoursePermission } from "./organizations";
 
 describe("getOrganizationId()", () => {
   test("returns the organization id for a valid slug", async () => {
@@ -23,38 +23,157 @@ describe("getOrganizationId()", () => {
   });
 });
 
-describe("canUpdateCourses()", () => {
-  test("returns false for users with member role", async () => {
-    const { organization, user } = await memberFixture({ role: "member" });
-    const headers = await signInAs(user.email, user.password);
-    const canUpdate = await canUpdateCourses(organization.id, { headers });
+describe("hasCoursePermission()", () => {
+  describe("unauthenticated users", () => {
+    test("returns false for any permission", async () => {
+      const organization = await organizationFixture();
 
-    expect(canUpdate).toBe(false);
+      const canCreate = await hasCoursePermission(organization.id, "create", {
+        headers: new Headers(),
+      });
+
+      const canRead = await hasCoursePermission(organization.id, "read", {
+        headers: new Headers(),
+      });
+
+      const canUpdate = await hasCoursePermission(organization.id, "update", {
+        headers: new Headers(),
+      });
+
+      const canDelete = await hasCoursePermission(organization.id, "delete", {
+        headers: new Headers(),
+      });
+
+      expect(canCreate).toBe(false);
+      expect(canRead).toBe(false);
+      expect(canUpdate).toBe(false);
+      expect(canDelete).toBe(false);
+    });
   });
 
-  test("returns true for users with admin role", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
-    const canUpdate = await canUpdateCourses(organization.id, { headers });
+  describe("member role", () => {
+    test("can read courses", async () => {
+      const { organization, user } = await memberFixture({ role: "member" });
+      const headers = await signInAs(user.email, user.password);
+      const canRead = await hasCoursePermission(organization.id, "read", {
+        headers,
+      });
 
-    expect(canUpdate).toBe(true);
-  });
-
-  test("returns true for users with owner role", async () => {
-    const { organization, user } = await memberFixture({ role: "owner" });
-    const headers = await signInAs(user.email, user.password);
-    const canUpdate = await canUpdateCourses(organization.id, { headers });
-
-    expect(canUpdate).toBe(true);
-  });
-
-  test("returns false for unauthenticated users", async () => {
-    const organization = await organizationFixture();
-
-    const canUpdate = await canUpdateCourses(organization.id, {
-      headers: new Headers(),
+      expect(canRead).toBe(true);
     });
 
-    expect(canUpdate).toBe(false);
+    test("cannot create courses", async () => {
+      const { organization, user } = await memberFixture({ role: "member" });
+      const headers = await signInAs(user.email, user.password);
+      const canCreate = await hasCoursePermission(organization.id, "create", {
+        headers,
+      });
+
+      expect(canCreate).toBe(false);
+    });
+
+    test("cannot update courses", async () => {
+      const { organization, user } = await memberFixture({ role: "member" });
+      const headers = await signInAs(user.email, user.password);
+      const canUpdate = await hasCoursePermission(organization.id, "update", {
+        headers,
+      });
+
+      expect(canUpdate).toBe(false);
+    });
+
+    test("cannot delete courses", async () => {
+      const { organization, user } = await memberFixture({ role: "member" });
+      const headers = await signInAs(user.email, user.password);
+      const canDelete = await hasCoursePermission(organization.id, "delete", {
+        headers,
+      });
+
+      expect(canDelete).toBe(false);
+    });
+  });
+
+  describe("admin role", () => {
+    test("can create courses", async () => {
+      const { organization, user } = await memberFixture({ role: "admin" });
+      const headers = await signInAs(user.email, user.password);
+      const canCreate = await hasCoursePermission(organization.id, "create", {
+        headers,
+      });
+
+      expect(canCreate).toBe(true);
+    });
+
+    test("can read courses", async () => {
+      const { organization, user } = await memberFixture({ role: "admin" });
+      const headers = await signInAs(user.email, user.password);
+      const canRead = await hasCoursePermission(organization.id, "read", {
+        headers,
+      });
+
+      expect(canRead).toBe(true);
+    });
+
+    test("can update courses", async () => {
+      const { organization, user } = await memberFixture({ role: "admin" });
+      const headers = await signInAs(user.email, user.password);
+      const canUpdate = await hasCoursePermission(organization.id, "update", {
+        headers,
+      });
+
+      expect(canUpdate).toBe(true);
+    });
+
+    test("cannot delete courses", async () => {
+      const { organization, user } = await memberFixture({ role: "admin" });
+      const headers = await signInAs(user.email, user.password);
+      const canDelete = await hasCoursePermission(organization.id, "delete", {
+        headers,
+      });
+
+      expect(canDelete).toBe(false);
+    });
+  });
+
+  describe("owner role", () => {
+    test("can create courses", async () => {
+      const { organization, user } = await memberFixture({ role: "owner" });
+      const headers = await signInAs(user.email, user.password);
+      const canCreate = await hasCoursePermission(organization.id, "create", {
+        headers,
+      });
+
+      expect(canCreate).toBe(true);
+    });
+
+    test("can read courses", async () => {
+      const { organization, user } = await memberFixture({ role: "owner" });
+      const headers = await signInAs(user.email, user.password);
+      const canRead = await hasCoursePermission(organization.id, "read", {
+        headers,
+      });
+
+      expect(canRead).toBe(true);
+    });
+
+    test("can update courses", async () => {
+      const { organization, user } = await memberFixture({ role: "owner" });
+      const headers = await signInAs(user.email, user.password);
+      const canUpdate = await hasCoursePermission(organization.id, "update", {
+        headers,
+      });
+
+      expect(canUpdate).toBe(true);
+    });
+
+    test("can delete courses", async () => {
+      const { organization, user } = await memberFixture({ role: "owner" });
+      const headers = await signInAs(user.email, user.password);
+      const canDelete = await hasCoursePermission(organization.id, "delete", {
+        headers,
+      });
+
+      expect(canDelete).toBe(true);
+    });
   });
 });

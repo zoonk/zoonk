@@ -18,6 +18,7 @@
     "./client": "./src/client.ts",
     "./hooks/*": "./src/hooks/*.ts",
     "./next": "./src/next.ts",
+    "./permissions": "./src/permissions.ts",
     "./testing": "./src/testing.ts"
   },
   "name": "@zoonk/auth",

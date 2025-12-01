@@ -3,7 +3,7 @@ import "server-only";
 import { type Course, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
 import { PERMISSION_ERROR_CODE, safeAsync } from "@zoonk/utils/error";
-import { canUpdateCourses } from "./organizations";
+import { hasCoursePermission } from "./organizations";
 
 export const LIST_COURSES_LIMIT = 20;
 
@@ -17,7 +17,8 @@ export async function listOrganizationCourses(
   organizationId: number,
   opts?: ListOrganizationCoursesOptions,
 ): Promise<{ data: Course[]; error: Error | null }> {
-  const hasPermission = await canUpdateCourses(organizationId, {
+  // we use update permissions here because this query includes drafts
+  const hasPermission = await hasCoursePermission(organizationId, "update", {
     headers: opts?.headers,
   });
 
