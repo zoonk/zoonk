@@ -1,6 +1,5 @@
 import { listOrganizationCourses } from "@zoonk/api/courses";
 import { getOrganizationId } from "@zoonk/api/organizations";
-import { Badge } from "@zoonk/ui/components/badge";
 import {
   Item,
   ItemContent,
@@ -79,13 +78,6 @@ export async function CourseList({ locale, orgSlug }: CourseListProps) {
               <ItemTitle>{course.title}</ItemTitle>
               <ItemDescription>{course.description}</ItemDescription>
             </ItemContent>
-
-            <Badge
-              className="text-muted-foreground uppercase"
-              variant="secondary"
-            >
-              {course.language}
-            </Badge>
 
             <ChevronRightIcon
               aria-hidden="true"
