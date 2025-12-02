@@ -1,3 +1,10 @@
+import { EditorHeader } from "@/components/header";
+
 export default async function HomePage() {
-  return <div>Welcome to the Editor Home Page!</div>;
+  return (
+    <>
+      <EditorHeader active="home" />
+      {}
+    </>
+  );
 }
