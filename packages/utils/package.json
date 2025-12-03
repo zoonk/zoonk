@@ -3,7 +3,7 @@
     "@zoonk/tsconfig": "workspace:*",
     "typescript": "^5",
     "vite-tsconfig-paths": "5.1.4",
-    "vitest": "4.0.8"
+    "vitest": "4.0.15"
   },
   "exports": {
     "./*": "./src/*.ts"

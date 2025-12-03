@@ -34,7 +34,7 @@ const productionTrustedOrigins = [
 export const trustedOrigins =
   process.env.NODE_ENV === "production"
     ? productionTrustedOrigins
-    : localTrustedOrigins;
+    : [...localTrustedOrigins, ...productionTrustedOrigins];
 
 export const baseAuthConfig: BetterAuthOptions = {
   account: {

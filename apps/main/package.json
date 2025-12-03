@@ -41,7 +41,7 @@
     "tsx": "4.20.5",
     "typescript": "^5",
     "vite-tsconfig-paths": "5.1.4",
-    "vitest": "4.0.8"
+    "vitest": "4.0.15"
   },
   "name": "main",
   "private": true,
