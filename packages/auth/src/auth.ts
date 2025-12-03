@@ -7,6 +7,7 @@ import {
   emailOTP,
   organization,
 } from "better-auth/plugins";
+import type { BetterAuthOptions } from "better-auth/types";
 import { appleProvider } from "./apple";
 import { googleProvider } from "./google";
 import { sendVerificationOTP } from "./otp";
@@ -16,13 +17,14 @@ import { stripePlugin } from "./stripe";
 const SESSION_EXPIRES_IN_DAYS = 30;
 const COOKIE_CACHE_MINUTES = 60;
 
-export const baseAuthConfig = {
+export const baseAuthConfig: BetterAuthOptions = {
   account: {
     accountLinking: { enabled: true },
   },
   advanced: {
     database: { generateId: "serial" },
   },
+  appName: "Zoonk",
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   experimental: {
     joins: true,
@@ -38,9 +40,9 @@ export const baseAuthConfig = {
     },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
   },
-} as const;
+};
 
-export const baseAuthPlugins = [
+export const baseAuthPlugins: BetterAuthOptions["plugins"] = [
   adminPlugin(),
   organization({
     ac,
