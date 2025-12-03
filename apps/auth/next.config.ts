@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     turbopackFileSystemCacheForDev: true,
     typedEnv: true,
   },
-  transpilePackages: ["@zoonk/auth"],
+  transpilePackages: ["@zoonk/auth", "@zoonk/utils"],
   typedRoutes: true,
 };
 

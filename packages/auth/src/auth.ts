@@ -17,6 +17,25 @@ import { stripePlugin } from "./stripe";
 const SESSION_EXPIRES_IN_DAYS = 30;
 const COOKIE_CACHE_MINUTES = 60;
 
+const localTrustedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:3003",
+];
+
+const productionTrustedOrigins = [
+  "https://appleid.apple.com",
+  "https://zoonk.com",
+  "https://*.zoonk.com",
+  "https://zoonk.vercel.app",
+  "https://*-zoonk.vercel.app",
+];
+
+export const trustedOrigins =
+  process.env.NODE_ENV === "production"
+    ? productionTrustedOrigins
+    : localTrustedOrigins;
+
 export const baseAuthConfig: BetterAuthOptions = {
   account: {
     accountLinking: { enabled: true },
@@ -42,15 +61,7 @@ export const baseAuthConfig: BetterAuthOptions = {
     },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
   },
-  trustedOrigins: [
-    "https://appleid.apple.com",
-    "https://zoonk.com",
-    "https://*.zoonk.com",
-    "https://zoonk.vercel.app",
-    "https://*-zoonk.vercel.app",
-    "http://localhost:3000",
-    "http://localhost:3001",
-  ],
+  trustedOrigins,
 };
 
 export const baseAuthPlugins = [

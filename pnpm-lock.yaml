@@ -87,6 +87,9 @@ importers:
       '@zoonk/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@zoonk/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       next:
         specifier: 16.0.7
         version: 16.0.7(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)

@@ -1,16 +1,14 @@
+import { trustedOrigins } from "@zoonk/auth";
+import { isAllowedOrigin } from "@zoonk/utils/cors";
 import { type NextRequest, NextResponse } from "next/server";
 
-const allowedOrigins = ["http://localhost:3000", "http://localhost:3001"];
-
 export function proxy(request: NextRequest) {
-  // Check the origin from the request
   const origin = request.headers.get("origin") ?? "";
-  const isAllowedOrigin = allowedOrigins.includes(origin);
+  const isAllowed = isAllowedOrigin(origin, trustedOrigins);
 
-  // Handle simple requests
   const response = NextResponse.next();
 
-  if (isAllowedOrigin) {
+  if (isAllowed) {
     response.headers.set("Access-Control-Allow-Credentials", "true");
     response.headers.set("Access-Control-Allow-Origin", origin);
   }

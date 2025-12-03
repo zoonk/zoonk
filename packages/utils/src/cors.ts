@@ -10,7 +10,7 @@ function handleWildcardOrigins(origins: string[]): (string | RegExp)[] {
   });
 }
 
-export function isOriginAllowed(
+export function isAllowedOrigin(
   origin: string,
   allowedOrigins: string[],
 ): boolean {
