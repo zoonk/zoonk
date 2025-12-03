@@ -44,7 +44,10 @@ export const baseAuthConfig: BetterAuthOptions = {
   },
   trustedOrigins: [
     "https://appleid.apple.com",
+    "https://zoonk.com",
     "https://*.zoonk.com",
+    "https://zoonk.vercel.app",
+    "https://*-zoonk.vercel.app",
     "http://localhost:3000",
     "http://localhost:3001",
   ],
