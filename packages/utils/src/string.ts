@@ -5,3 +5,15 @@ export function removeAccents(str: string): string {
 export function normalizeString(str: string): string {
   return removeAccents(str).toLowerCase().replace(/\s+/g, " ").trim();
 }
+
+export function toRegex(pattern: string): RegExp {
+  // escape dots first
+  let regex = pattern.replace(/\./g, "\\.");
+
+  // replace "*\." (the escaped version of "*.") with "(.+\.)"
+  // meaning: allow one or more subdomain levels
+  regex = regex.replace(/\*\\\./g, "(.+\\.)");
+
+  // allow http/https wildcards exactly as provided
+  return new RegExp(`^${regex}$`);
+}

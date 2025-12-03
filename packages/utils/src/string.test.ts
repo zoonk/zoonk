@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { normalizeString, removeAccents } from "./string";
+import { normalizeString, removeAccents, toRegex } from "./string";
 
 describe("removeAccents", () => {
   test("removes diacritics from string", () => {
@@ -62,5 +62,61 @@ describe("normalizeString", () => {
 
   test("handles string with only spaces", () => {
     expect(normalizeString("   ")).toBe("");
+  });
+});
+
+describe("toRegex", () => {
+  test("escapes dots in the pattern", () => {
+    const regex = toRegex("example.com");
+    expect(regex.test("example.com")).toBe(true);
+    expect(regex.test("exampleXcom")).toBe(false);
+  });
+
+  test("matches exact domain", () => {
+    const regex = toRegex("zoonk.com");
+    expect(regex.test("zoonk.com")).toBe(true);
+    expect(regex.test("www.zoonk.com")).toBe(false);
+    expect(regex.test("zoonk.com.br")).toBe(false);
+  });
+
+  test("handles wildcard subdomain pattern", () => {
+    const regex = toRegex("*.zoonk.com");
+    expect(regex.test("www.zoonk.com")).toBe(true);
+    expect(regex.test("app.zoonk.com")).toBe(true);
+    expect(regex.test("api.zoonk.com")).toBe(true);
+    expect(regex.test("zoonk.com")).toBe(false);
+  });
+
+  test("handles multiple subdomain levels with wildcard", () => {
+    const regex = toRegex("*.example.com");
+    expect(regex.test("sub.example.com")).toBe(true);
+    expect(regex.test("deep.sub.example.com")).toBe(true);
+    expect(regex.test("example.com")).toBe(false);
+  });
+
+  test("handles pattern with protocol-like prefix", () => {
+    const regex = toRegex("https://example.com");
+    expect(regex.test("https://example.com")).toBe(true);
+    expect(regex.test("http://example.com")).toBe(false);
+  });
+
+  test("handles complex patterns with multiple dots", () => {
+    const regex = toRegex("api.v1.example.com");
+    expect(regex.test("api.v1.example.com")).toBe(true);
+    expect(regex.test("api.v2.example.com")).toBe(false);
+  });
+
+  test("anchors pattern to start and end", () => {
+    const regex = toRegex("example.com");
+    expect(regex.test("example.com")).toBe(true);
+    expect(regex.test("prefix.example.com")).toBe(false);
+    expect(regex.test("example.com.suffix")).toBe(false);
+    expect(regex.test("prefix.example.com.suffix")).toBe(false);
+  });
+
+  test("handles empty string", () => {
+    const regex = toRegex("");
+    expect(regex.test("")).toBe(true);
+    expect(regex.test("anything")).toBe(false);
   });
 });
