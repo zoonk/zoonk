@@ -36,9 +36,15 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 
 Whenever you're designing something, follow this design style:
 
-Subtle animations, great typography, clean, minimalist, and intuitive design with lots of black/white and empty space. It's clean, intuitive and super simple to use. It takes inspiration from brands with great design like Vercel, Linear, and Apple.
+Subtle animations, great typography, clean, minimalist, and intuitive design with lots of black/white and empty space. Make it clean, intuitive and super simple to use. Take inspiration from brands with great design like Vercel, Linear, and Apple.
 
 You deeply care about quality and details, so every element should feel polished and well thought out.
+
+Some design preferences:
+
+- Avoid cards/items with borders and heavy shadows. Prefer using empty space and subtle dividers instead
+- For buttons, prefer `outline` variant for most buttons and links. Use the default one only for active/selected states or for submit buttons. Use the `secondary` variant for buttons you want to emphasize a bit more
+- Prefer using existing components from `@zoonk/ui` instead of creating new ones. If a component doesn't exist, search the `shadcn` registry before creating a new one
 
 ## Tech stack
 
