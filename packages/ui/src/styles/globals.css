@@ -55,9 +55,9 @@
   --card: var(--color-white);
   --card-foreground: var(--color-neutral-950);
   --popover: var(--color-white);
-  --popover-foreground: var(--color-neutral-950);
-  --primary: var(--color-blue-500);
-  --primary-foreground: var(--color-blue-50);
+  --popover-foreground: var(--color-neutral-900);
+  --primary: var(--color-neutral-900);
+  --primary-foreground: var(--color-neutral-100);
   --secondary: var(--color-neutral-100);
   --secondary-foreground: var(--color-neutral-900);
   --muted: var(--color-neutral-100);
@@ -69,7 +69,7 @@
   --success: var(--color-emerald-600);
   --border: var(--color-neutral-200);
   --input: var(--color-neutral-200);
-  --ring: var(--color-blue-500);
+  --ring: var(--color-primary);
   --chart-1: var(--color-orange-600);
   --chart-2: var(--color-teal-600);
   --chart-3: var(--color-cyan-900);
@@ -77,12 +77,12 @@
   --chart-5: var(--color-amber-500);
   --sidebar: var(--color-background);
   --sidebar-foreground: var(--color-foreground);
-  --sidebar-primary: var(--color-blue-500);
-  --sidebar-primary-foreground: var(--color-blue-50);
+  --sidebar-primary: var(--color-primary);
+  --sidebar-primary-foreground: var(--color-primary-foreground);
   --sidebar-accent: var(--color-neutral-100);
   --sidebar-accent-foreground: var(--color-neutral-900);
   --sidebar-border: var(--color-neutral-200);
-  --sidebar-ring: var(--color-blue-500);
+  --sidebar-ring: var(--color-primary);
 }
 
 @media (prefers-color-scheme: light) and (prefers-contrast: more) {
@@ -94,8 +94,8 @@
     --card-foreground: var(--color-black);
     --popover: var(--color-white);
     --popover-foreground: var(--color-black);
-    --primary: var(--color-blue-950);
-    --primary-foreground: var(--color-blue-50);
+    --primary: var(--color-black);
+    --primary-foreground: var(--color-white);
     --secondary: var(--color-neutral-200);
     --secondary-foreground: var(--color-black);
     --muted: var(--color-neutral-200);
@@ -107,7 +107,7 @@
     --success: var(--color-emerald-950);
     --border: var(--color-neutral-950);
     --input: var(--color-neutral-950);
-    --ring: var(--color-blue-600);
+    --ring: var(--color-primary);
     --chart-1: var(--color-orange-700);
     --chart-2: var(--color-teal-700);
     --chart-3: var(--color-cyan-950);
@@ -115,12 +115,12 @@
     --chart-5: var(--color-amber-800);
     --sidebar: var(--color-background);
     --sidebar-foreground: var(--color-foreground);
-    --sidebar-primary: var(--color-blue-600);
-    --sidebar-primary-foreground: var(--color-white);
+    --sidebar-primary: var(--color-primary);
+    --sidebar-primary-foreground: var(--color-primary-foreground);
     --sidebar-accent: var(--color-neutral-100);
     --sidebar-accent-foreground: var(--color-black);
     --sidebar-border: var(--color-neutral-950);
-    --sidebar-ring: var(--color-blue-600);
+    --sidebar-ring: var(--color-primary);
   }
 }
 
@@ -132,8 +132,8 @@
     --card-foreground: var(--color-neutral-50);
     --popover: var(--color-neutral-900);
     --popover-foreground: var(--color-neutral-50);
-    --primary: var(--color-blue-600);
-    --primary-foreground: var(--color-blue-200);
+    --primary: var(--color-neutral-200);
+    --primary-foreground: var(--color-neutral-900);
     --secondary: var(--color-neutral-800);
     --secondary-foreground: var(--color-neutral-50);
     --muted: var(--color-neutral-800);
@@ -145,7 +145,7 @@
     --success: var(--color-emerald-400);
     --border: var(--color-neutral-700);
     --input: var(--color-neutral-600);
-    --ring: var(--color-blue-700);
+    --ring: var(--color-primary);
     --chart-1: var(--color-blue-700);
     --chart-2: var(--color-emerald-500);
     --chart-3: var(--color-amber-500);
@@ -153,12 +153,12 @@
     --chart-5: var(--color-rose-500);
     --sidebar: var(--color-background);
     --sidebar-foreground: var(--color-foreground);
-    --sidebar-primary: var(--color-blue-600);
-    --sidebar-primary-foreground: var(--color-blue-200);
+    --sidebar-primary: var(--color-primary);
+    --sidebar-primary-foreground: var(--color-primary-foreground);
     --sidebar-accent: var(--color-neutral-800);
     --sidebar-accent-foreground: var(--color-neutral-50);
     --sidebar-border: var(--color-neutral-700);
-    --sidebar-ring: var(--color-blue-700);
+    --sidebar-ring: var(--color-primary);
   }
 }
 
@@ -170,8 +170,8 @@
     --card-foreground: var(--color-white);
     --popover: var(--color-black);
     --popover-foreground: var(--color-white);
-    --primary: var(--color-blue-600);
-    --primary-foreground: var(--color-white);
+    --primary: var(--color-white);
+    --primary-foreground: var(--color-black);
     --secondary: var(--color-neutral-700);
     --secondary-foreground: var(--color-white);
     --muted: var(--color-neutral-600);
@@ -183,7 +183,7 @@
     --success: var(--color-emerald-400);
     --border: var(--color-neutral-50);
     --input: var(--color-neutral-50);
-    --ring: var(--color-blue-600);
+    --ring: var(--color-primary);
     --chart-1: var(--color-blue-500);
     --chart-2: var(--color-emerald-500);
     --chart-3: var(--color-amber-500);
@@ -191,12 +191,12 @@
     --chart-5: var(--color-rose-500);
     --sidebar: var(--color-background);
     --sidebar-foreground: var(--color-foreground);
-    --sidebar-primary: var(--color-blue-600);
-    --sidebar-primary-foreground: var(--color-white);
+    --sidebar-primary: var(--color-primary);
+    --sidebar-primary-foreground: var(--color-primary-foreground);
     --sidebar-accent: var(--color-neutral-700);
     --sidebar-accent-foreground: var(--color-white);
     --sidebar-border: var(--color-neutral-50);
-    --sidebar-ring: var(--color-blue-600);
+    --sidebar-ring: var(--color-primary);
   }
 }
 
