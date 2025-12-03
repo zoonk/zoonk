@@ -50,7 +50,7 @@ export const baseAuthConfig: BetterAuthOptions = {
   ],
 };
 
-export const baseAuthPlugins: BetterAuthOptions["plugins"] = [
+export const baseAuthPlugins = [
   adminPlugin(),
   organization({
     ac,
@@ -68,7 +68,7 @@ export const baseAuthPlugins: BetterAuthOptions["plugins"] = [
       },
     },
   }),
-];
+] as const;
 
 export const auth = betterAuth({
   ...baseAuthConfig,
