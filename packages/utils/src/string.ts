@@ -11,8 +11,12 @@ export function toRegex(pattern: string): RegExp {
   let regex = pattern.replace(/\./g, "\\.");
 
   // replace "*\." (the escaped version of "*.") with "(.+\.)"
-  // meaning: allow one or more subdomain levels
+  // meaning: allow any subdomain(s)
   regex = regex.replace(/\*\\\./g, "(.+\\.)");
+
+  // replace remaining "*" (e.g., "*-" patterns) with "(.+)"
+  // meaning: allow any characters
+  regex = regex.replace(/\*/g, "(.+)");
 
   // allow http/https wildcards exactly as provided
   return new RegExp(`^${regex}$`);

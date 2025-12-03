@@ -87,6 +87,13 @@ describe("toRegex", () => {
     expect(regex.test("zoonk.com")).toBe(false);
   });
 
+  test("handles vercel preview deployment patterns", () => {
+    const regex = toRegex("*-zoonk.vercel.app");
+    expect(regex.test("zoonk-branch-zoonk.vercel.app")).toBe(true);
+    expect(regex.test("test-zoonk.vercel.app")).toBe(true);
+    expect(regex.test("zoonk.vercel.app.com")).toBe(false);
+  });
+
   test("handles multiple subdomain levels with wildcard", () => {
     const regex = toRegex("*.example.com");
     expect(regex.test("sub.example.com")).toBe(true);
