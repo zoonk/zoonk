@@ -22,6 +22,7 @@ export const baseAuthConfig: BetterAuthOptions = {
     accountLinking: { enabled: true },
   },
   advanced: {
+    crossSubDomainCookies: { enabled: true },
     database: { generateId: "serial" },
   },
   appName: "Zoonk",
