@@ -16,6 +16,7 @@ import { stripePlugin } from "./stripe";
 
 const SESSION_EXPIRES_IN_DAYS = 30;
 const COOKIE_CACHE_MINUTES = 60;
+const CROSS_SUBDOMAIN_COOKIE_DOMAIN = process.env.COOKIE_DOMAIN || "zoonk.com";
 
 const localTrustedOrigins = [
   "http://localhost:3000",
@@ -41,7 +42,10 @@ export const baseAuthConfig: BetterAuthOptions = {
     accountLinking: { enabled: true },
   },
   advanced: {
-    crossSubDomainCookies: { domain: "zoonk.com", enabled: true },
+    crossSubDomainCookies: {
+      domain: CROSS_SUBDOMAIN_COOKIE_DOMAIN,
+      enabled: true,
+    },
     database: { generateId: "serial" },
   },
   appName: "Zoonk",
