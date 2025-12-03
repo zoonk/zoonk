@@ -22,7 +22,7 @@ export const baseAuthConfig: BetterAuthOptions = {
     accountLinking: { enabled: true },
   },
   advanced: {
-    crossSubDomainCookies: { enabled: true },
+    crossSubDomainCookies: { domain: "zoonk.com", enabled: true },
     database: { generateId: "serial" },
   },
   appName: "Zoonk",
@@ -42,6 +42,12 @@ export const baseAuthConfig: BetterAuthOptions = {
     },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
   },
+  trustedOrigins: [
+    "https://appleid.apple.com",
+    "https://*.zoonk.com",
+    "http://localhost:3000",
+    "http://localhost:3001",
+  ],
 };
 
 export const baseAuthPlugins: BetterAuthOptions["plugins"] = [
@@ -81,5 +87,4 @@ export const auth = betterAuth({
     ...appleProvider,
     ...googleProvider,
   },
-  trustedOrigins: ["https://appleid.apple.com", "https://*.zoonk.com"],
 });

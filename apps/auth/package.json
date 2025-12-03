@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@prisma/client": "7.0.1",
+    "@prisma/client": "7.1.0",
     "@zoonk/auth": "workspace:*",
     "next": "16.0.7",
     "pg": "8.16.3",
