@@ -25,6 +25,7 @@ export const baseAuthConfig: BetterAuthOptions = {
     database: { generateId: "serial" },
   },
   appName: "Zoonk",
+  basePath: "/v1",
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   experimental: {
     joins: true,
