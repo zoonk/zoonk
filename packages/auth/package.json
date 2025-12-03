@@ -9,7 +9,7 @@
   },
   "devDependencies": {
     "@types/node": "^24",
-    "@types/react": ">=19.2.0",
+    "@types/react": ">=19.2.1",
     "@zoonk/tsconfig": "workspace:*",
     "typescript": "^5"
   },
@@ -23,8 +23,8 @@
   },
   "name": "@zoonk/auth",
   "peerDependencies": {
-    "next": ">=16.0.6",
-    "react": ">=19.2.0"
+    "next": ">=16.0.7",
+    "react": ">=19.2.1"
   },
   "private": true,
   "scripts": {
