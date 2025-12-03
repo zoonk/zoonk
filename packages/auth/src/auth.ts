@@ -80,5 +80,5 @@ export const auth = betterAuth({
     ...appleProvider,
     ...googleProvider,
   },
-  trustedOrigins: ["https://appleid.apple.com"],
+  trustedOrigins: ["https://appleid.apple.com", "https://*.zoonk.com"],
 });
