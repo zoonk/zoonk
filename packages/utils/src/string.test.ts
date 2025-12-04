@@ -108,6 +108,8 @@ describe("toRegex", () => {
     const regex = toRegex("https://example.com");
     expect(regex.test("https://example.com")).toBe(true);
     expect(regex.test("http://example.com")).toBe(false);
+    expect(regex.test("foohttps://example.com")).toBe(false);
+    expect(regex.test("https://example.combar")).toBe(false);
   });
 
   test("handles complex patterns with multiple dots", () => {
