@@ -7,6 +7,7 @@ import {
   emailOTP,
   organization,
 } from "better-auth/plugins";
+import type { BetterAuthOptions } from "better-auth/types";
 import { appleProvider } from "./apple";
 import { googleProvider } from "./google";
 import { sendVerificationOTP } from "./otp";
@@ -15,14 +16,40 @@ import { stripePlugin } from "./stripe";
 
 const SESSION_EXPIRES_IN_DAYS = 30;
 const COOKIE_CACHE_MINUTES = 60;
+const CROSS_SUBDOMAIN_COOKIE_DOMAIN = process.env.COOKIE_DOMAIN || "zoonk.com";
 
-export const baseAuthConfig = {
+const localTrustedOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "http://localhost:3003",
+];
+
+const productionTrustedOrigins = [
+  "https://appleid.apple.com",
+  "https://zoonk.com",
+  "https://*.zoonk.com",
+  "https://zoonk.vercel.app",
+  "https://*-zoonk.vercel.app",
+];
+
+export const trustedOrigins =
+  process.env.NODE_ENV === "production"
+    ? productionTrustedOrigins
+    : [...localTrustedOrigins, ...productionTrustedOrigins];
+
+export const baseAuthConfig: BetterAuthOptions = {
   account: {
     accountLinking: { enabled: true },
   },
   advanced: {
+    crossSubDomainCookies: {
+      domain: CROSS_SUBDOMAIN_COOKIE_DOMAIN,
+      enabled: true,
+    },
     database: { generateId: "serial" },
   },
+  appName: "Zoonk",
+  basePath: "/v1",
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   experimental: {
     joins: true,
@@ -38,7 +65,8 @@ export const baseAuthConfig = {
     },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
   },
-} as const;
+  trustedOrigins,
+};
 
 export const baseAuthPlugins = [
   adminPlugin(),
@@ -58,7 +86,7 @@ export const baseAuthPlugins = [
       },
     },
   }),
-];
+] as const;
 
 export const auth = betterAuth({
   ...baseAuthConfig,
@@ -77,5 +105,4 @@ export const auth = betterAuth({
     ...appleProvider,
     ...googleProvider,
   },
-  trustedOrigins: ["https://appleid.apple.com"],
 });

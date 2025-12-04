@@ -10,6 +10,8 @@ import type { auth } from "./auth";
 import { ac, admin, member, owner } from "./permissions";
 
 export const authClient = createAuthClient({
+  basePath: "/v1",
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3004",
   plugins: [
     adminClient(),
     emailOTPClient(),
