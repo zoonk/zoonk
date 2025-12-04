@@ -1,26 +1,25 @@
-import { toRegex } from "./string";
+function checkPattern(pattern: string, origin: string): boolean {
+  const lowerPattern = pattern.toLowerCase();
+  const lowerOrigin = origin.toLowerCase();
+  const isWildcard = pattern.includes("*");
 
-function handleWildcardOrigins(origins: string[]): (string | RegExp)[] {
-  return origins.map((origin) => {
-    if (origin.includes("*")) {
-      return toRegex(origin);
-    }
+  if (!isWildcard) {
+    return lowerOrigin === lowerPattern;
+  }
 
-    return origin;
-  });
+  const [prefix, suffix] = lowerPattern.split("*");
+
+  if (prefix && !lowerOrigin.startsWith(prefix)) {
+    return false;
+  }
+
+  if (suffix && !lowerOrigin.endsWith(suffix)) {
+    return false;
+  }
+
+  return true;
 }
 
-export function isAllowedOrigin(
-  origin: string,
-  allowedOrigins: string[],
-): boolean {
-  const handledOrigins = handleWildcardOrigins(allowedOrigins);
-
-  return handledOrigins.some((allowedOrigin) => {
-    if (typeof allowedOrigin === "string") {
-      return allowedOrigin.toLowerCase() === origin.toLowerCase();
-    }
-
-    return allowedOrigin.test(origin.toLowerCase());
-  });
+export function isAllowedOrigin(origin: string, allowed: string[]) {
+  return allowed.some((pattern) => checkPattern(pattern, origin));
 }
