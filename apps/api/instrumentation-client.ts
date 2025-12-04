@@ -4,7 +4,7 @@ initBotId({
   protect: [
     {
       method: "POST",
-      path: "/v1/*",
+      path: "/v1/auth/*",
     },
   ],
 });
