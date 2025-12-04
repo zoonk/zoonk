@@ -1,4 +1,4 @@
-import { trustedOrigins } from "@zoonk/auth";
+import { trustedOrigins } from "@zoonk/utils";
 import { isAllowedOrigin } from "@zoonk/utils/cors";
 import { type NextRequest, NextResponse } from "next/server";
 

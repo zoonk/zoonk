@@ -18,7 +18,7 @@
     "vite-tsconfig-paths": "5.1.4",
     "vitest": "4.0.15"
   },
-  "name": "auth",
+  "name": "api",
   "private": true,
   "scripts": {
     "build": "next build",

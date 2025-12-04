@@ -1,4 +1,5 @@
 import { stripeClient } from "@better-auth/stripe/client";
+import { apiUrl } from "@zoonk/utils";
 import {
   adminClient,
   emailOTPClient,
@@ -10,8 +11,8 @@ import type { auth } from "./auth";
 import { ac, admin, member, owner } from "./permissions";
 
 export const authClient = createAuthClient({
-  basePath: "/v1",
-  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3004",
+  basePath: "/v1/auth",
+  baseURL: apiUrl,
   plugins: [
     adminClient(),
     emailOTPClient(),

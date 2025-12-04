@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { apiUrl, cookieDomain, trustedOrigins } from "@zoonk/utils";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { betterAuth } from "better-auth/minimal";
 import { nextCookies } from "better-auth/next-js";
@@ -16,40 +17,18 @@ import { stripePlugin } from "./stripe";
 
 const SESSION_EXPIRES_IN_DAYS = 30;
 const COOKIE_CACHE_MINUTES = 60;
-const CROSS_SUBDOMAIN_COOKIE_DOMAIN = process.env.COOKIE_DOMAIN || "zoonk.com";
-
-const localTrustedOrigins = [
-  "http://localhost:3000",
-  "http://localhost:3001",
-  "http://localhost:3003",
-];
-
-const productionTrustedOrigins = [
-  "https://appleid.apple.com",
-  "https://zoonk.com",
-  "https://*.zoonk.com",
-  "https://zoonk.vercel.app",
-  "https://*-zoonk.vercel.app",
-];
-
-export const trustedOrigins =
-  process.env.NODE_ENV === "production"
-    ? productionTrustedOrigins
-    : [...localTrustedOrigins, ...productionTrustedOrigins];
 
 export const baseAuthConfig: BetterAuthOptions = {
   account: {
     accountLinking: { enabled: true },
   },
   advanced: {
-    crossSubDomainCookies: {
-      domain: CROSS_SUBDOMAIN_COOKIE_DOMAIN,
-      enabled: true,
-    },
+    crossSubDomainCookies: { domain: cookieDomain, enabled: true },
     database: { generateId: "serial" },
   },
   appName: "Zoonk",
-  basePath: "/v1",
+  basePath: "/v1/auth",
+  baseURL: apiUrl,
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   experimental: {
     joins: true,
