@@ -7,8 +7,10 @@ export function normalizeString(str: string): string {
 }
 
 export function toRegex(pattern: string): RegExp {
-  // escape dots first
-  let regex = pattern.replace(/\./g, "\\.");
+  // escape backslashes first
+  let regex = pattern.replace(/\\/g, "\\\\");
+  // escape dots
+  regex = regex.replace(/\./g, "\\.");
 
   // replace "*\." (the escaped version of "*.") with "(.+\.)"
   // meaning: allow any subdomain(s)
