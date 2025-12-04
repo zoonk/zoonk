@@ -70,6 +70,9 @@ describe("toRegex", () => {
     const regex = toRegex("example.com");
     expect(regex.test("example.com")).toBe(true);
     expect(regex.test("exampleXcom")).toBe(false);
+    // Extra anchor tests (should not match substrings)
+    expect(regex.test("prefix.example.com")).toBe(false);
+    expect(regex.test("example.com.suffix")).toBe(false);
   });
 
   test("matches exact domain", () => {
