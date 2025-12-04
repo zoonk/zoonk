@@ -66,16 +66,10 @@ describe("isAllowedOrigin", () => {
     expect(isAllowedOrigin("https://zoonk.com", [])).toBe(false);
   });
 
-  describe("edge cases", () => {
-    test("handles empty allowed origins array", () => {
-      expect(isAllowedOrigin("https://zoonk.com", [])).toBe(false);
-    });
+  test("is case-insensitive", () => {
+    const trustedOrigins = ["https://zoonk.com"];
 
-    test("is case-insensitive", () => {
-      const trustedOrigins = ["https://zoonk.com"];
-
-      expect(isAllowedOrigin("https://ZOONK.COM", trustedOrigins)).toBe(true);
-      expect(isAllowedOrigin("HTTPS://zoonk.com", trustedOrigins)).toBe(true);
-    });
+    expect(isAllowedOrigin("https://ZOONK.COM", trustedOrigins)).toBe(true);
+    expect(isAllowedOrigin("HTTPS://zoonk.com", trustedOrigins)).toBe(true);
   });
 });
