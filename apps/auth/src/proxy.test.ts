@@ -135,4 +135,44 @@ describe("headers", () => {
     expect(allowCredentials).toBeNull();
     expect(allowOrigin).toBeNull();
   });
+
+  test("handles OPTIONS preflight for allowed origins", () => {
+    const origin = "https://app.zoonk.com";
+
+    const request = new NextRequest("https://auth.zoonk.com/v1/get-session", {
+      headers: { origin },
+      method: "OPTIONS",
+    });
+
+    const response = proxy(request);
+
+    const allowCredentials = response.headers.get(
+      "Access-Control-Allow-Credentials",
+    );
+    const allowOrigin = response.headers.get("Access-Control-Allow-Origin");
+    const allowMethods = response.headers.get("Access-Control-Allow-Methods");
+    const allowHeaders = response.headers.get("Access-Control-Allow-Headers");
+
+    expect(allowCredentials).toBe("true");
+    expect(allowOrigin).toBe(origin);
+    expect(allowMethods).not.toBeNull();
+    expect(allowMethods?.includes("POST")).toBe(true);
+    expect(allowHeaders).not.toBeNull();
+  });
+
+  test("rejects OPTIONS preflight for untrusted origins", () => {
+    const request = new NextRequest("https://auth.zoonk.com/v1/get-session", {
+      headers: {
+        "access-control-request-method": "POST",
+        origin: "https://evil.com",
+      },
+      method: "OPTIONS",
+    });
+
+    const response = proxy(request);
+
+    const allowOrigin = response.headers.get("Access-Control-Allow-Origin");
+
+    expect(allowOrigin).toBeNull();
+  });
 });
