@@ -62,6 +62,49 @@ describe("isAllowedOrigin", () => {
     ).toBe(false);
   });
 
+  test("rejects path-based bypass attempts", () => {
+    const trustedOrigins = ["*-zoonk.vercel.app"];
+
+    // Attacker crafts origin with trusted suffix in path
+    expect(
+      isAllowedOrigin("https://evil.com/-zoonk.vercel.app", trustedOrigins),
+    ).toBe(false);
+
+    // Attacker uses subdomain with trusted suffix
+    expect(
+      isAllowedOrigin(
+        "https://evil-zoonk.vercel.app.attacker.com",
+        trustedOrigins,
+      ),
+    ).toBe(false);
+  });
+
+  test("rejects patterns with multiple wildcards", () => {
+    const trustedOrigins = ["https://*.*.zoonk.com"];
+
+    expect(isAllowedOrigin("https://sub.deep.zoonk.com", trustedOrigins)).toBe(
+      false,
+    );
+  });
+
+  test("rejects malformed URLs", () => {
+    const trustedOrigins = ["https://zoonk.com"];
+
+    expect(isAllowedOrigin("not-a-url", trustedOrigins)).toBe(false);
+    expect(isAllowedOrigin("javascript:alert(1)", trustedOrigins)).toBe(false);
+  });
+
+  test("rejects multiple wildcards in a single pattern", () => {
+    const trustedOrigins = ["*-*.zoonk.vercel.app"];
+
+    expect(
+      isAllowedOrigin(
+        "https://feature-branch.zoonk.vercel.app",
+        trustedOrigins,
+      ),
+    ).toBe(false);
+  });
+
   test("handles empty allowed origins array", () => {
     expect(isAllowedOrigin("https://zoonk.com", [])).toBe(false);
   });
