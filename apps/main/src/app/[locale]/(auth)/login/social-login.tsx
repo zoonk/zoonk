@@ -10,6 +10,11 @@ import { InputError } from "@zoonk/ui/components/input";
 import { Loader2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import {
+  authCallbackUrl,
+  authErrorCallbackUrl,
+  authNewUserCallbackUrl,
+} from "@/lib";
 
 type SocialState = "initial" | "loadingGoogle" | "loadingApple" | "error";
 
@@ -24,7 +29,12 @@ export function SocialLogin() {
   const signIn = async (provider: "google" | "apple") => {
     setState(getLoadingState(provider));
 
-    const { error } = await authClient.signIn.social({ provider });
+    const { error } = await authClient.signIn.social({
+      callbackURL: authCallbackUrl,
+      errorCallbackURL: authErrorCallbackUrl,
+      newUserCallbackURL: authNewUserCallbackUrl,
+      provider,
+    });
 
     if (error) {
       console.error("Social login error:", error);
