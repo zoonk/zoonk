@@ -6,6 +6,34 @@ msgstr ""
 "X-Generator: next-intl\n"
 "X-Crowdin-SourceKey: msgstr\n"
 
+#: src/app/login/page.tsx
+msgid "1UEnr3"
+msgstr "Utilice su cuenta de trabajo o escolar para iniciar sesión en el editor"
+
+#: src/app/login/page.tsx
+msgid "9KyprR"
+msgstr "Acceda a su cuenta"
+
+#: src/app/login/social-login.tsx
+msgid "FJ6r9E"
+msgstr "Continuar con Google"
+
+#: src/app/login/social-login.tsx
+msgid "X02lYY"
+msgstr "Error de inicio de sesión. Inténtalo de nuevo."
+
+#: src/app/unauthorized.tsx
+msgid "C81/uG"
+msgstr "Cerrar sesión"
+
+#: src/app/unauthorized.tsx
+msgid "gNtXZ8"
+msgstr "401 - No autorizado"
+
+#: src/app/unauthorized.tsx
+msgid "vFidRR"
+msgstr "No puedes editar cursos para esta organización. Inicia sesión con otra cuenta o cambia a una organización diferente."
+
 #: src/components/header.tsx
 msgid "U3l+Q9"
 msgstr "Página de inicio"

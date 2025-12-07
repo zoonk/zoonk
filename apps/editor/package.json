@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@prisma/client": "7.1.0",
+    "@tabler/icons-react": "3.35.0",
     "@zoonk/auth": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/ui": "workspace:*",

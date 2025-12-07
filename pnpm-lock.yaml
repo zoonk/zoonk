@@ -81,6 +81,9 @@ importers:
       '@prisma/client':
         specifier: 7.1.0
         version: 7.1.0(prisma@7.1.0(@types/react@19.2.7)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(typescript@5.9.3))(typescript@5.9.3)
+      '@tabler/icons-react':
+        specifier: 3.35.0
+        version: 3.35.0(react@19.2.1)
       '@zoonk/auth':
         specifier: workspace:*
         version: link:../../packages/auth
