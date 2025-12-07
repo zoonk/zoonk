@@ -1,4 +1,4 @@
-import { getCourseSuggestions } from "@zoonk/api/course-suggestions";
+import { getCourseSuggestions } from "@zoonk/core/course-suggestions";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,

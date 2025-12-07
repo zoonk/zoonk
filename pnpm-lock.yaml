@@ -23,12 +23,12 @@ importers:
       '@tabler/icons-react':
         specifier: 3.35.0
         version: 3.35.0(react@19.2.1)
-      '@zoonk/api':
-        specifier: workspace:*
-        version: link:../../packages/api
       '@zoonk/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@zoonk/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -81,12 +81,12 @@ importers:
       '@prisma/client':
         specifier: 7.1.0
         version: 7.1.0(prisma@7.1.0(@types/react@19.2.7)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)(typescript@5.9.3))(typescript@5.9.3)
-      '@zoonk/api':
-        specifier: workspace:*
-        version: link:../../packages/api
       '@zoonk/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@zoonk/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@zoonk/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -139,9 +139,9 @@ importers:
       '@zoonk/ai':
         specifier: workspace:*
         version: link:../../packages/ai
-      '@zoonk/api':
+      '@zoonk/core':
         specifier: workspace:*
-        version: link:../../packages/api
+        version: link:../../packages/core
       '@zoonk/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -209,12 +209,12 @@ importers:
       '@zoonk/ai':
         specifier: workspace:*
         version: link:../../packages/ai
-      '@zoonk/api':
-        specifier: workspace:*
-        version: link:../../packages/api
       '@zoonk/auth':
         specifier: workspace:*
         version: link:../../packages/auth
+      '@zoonk/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
@@ -344,7 +344,47 @@ importers:
         specifier: ^5
         version: 5.9.3
 
-  packages/api:
+  packages/auth:
+    dependencies:
+      '@better-auth/stripe':
+        specifier: 1.4.5
+        version: 1.4.5(@better-auth/core@1.4.5(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.18)(better-call@1.1.4(zod@4.1.12))(jose@6.1.0)(kysely@0.28.8)(nanostores@1.1.0))(better-auth@1.4.5(next@16.0.7(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(stripe@19.1.0(@types/node@24.10.1))
+      '@zoonk/db':
+        specifier: workspace:*
+        version: link:../db
+      '@zoonk/mailer':
+        specifier: workspace:*
+        version: link:../mailer
+      better-auth:
+        specifier: 1.4.5
+        version: 1.4.5(next@16.0.7(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      jose:
+        specifier: 6.1.0
+        version: 6.1.0
+      next:
+        specifier: '>=16.0.7'
+        version: 16.0.7(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      react:
+        specifier: '>=19.2.1'
+        version: 19.2.1
+      stripe:
+        specifier: 19.1.0
+        version: 19.1.0(@types/node@24.10.1)
+    devDependencies:
+      '@types/node':
+        specifier: ^24
+        version: 24.10.1
+      '@types/react':
+        specifier: '>=19.2.1'
+        version: 19.2.7
+      '@zoonk/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  packages/core:
     dependencies:
       '@vercel/blob':
         specifier: 2.0.0
@@ -395,46 +435,6 @@ importers:
       vitest:
         specifier: 4.0.15
         version: 4.0.15(@opentelemetry/api@1.9.0)(@types/node@24.10.1)(jiti@2.6.1)(jsdom@27.0.0)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.20.6)
-
-  packages/auth:
-    dependencies:
-      '@better-auth/stripe':
-        specifier: 1.4.5
-        version: 1.4.5(@better-auth/core@1.4.5(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.18)(better-call@1.1.4(zod@4.1.12))(jose@6.1.0)(kysely@0.28.8)(nanostores@1.1.0))(better-auth@1.4.5(next@16.0.7(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(stripe@19.1.0(@types/node@24.10.1))
-      '@zoonk/db':
-        specifier: workspace:*
-        version: link:../db
-      '@zoonk/mailer':
-        specifier: workspace:*
-        version: link:../mailer
-      better-auth:
-        specifier: 1.4.5
-        version: 1.4.5(next@16.0.7(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1))(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
-      jose:
-        specifier: 6.1.0
-        version: 6.1.0
-      next:
-        specifier: '>=16.0.7'
-        version: 16.0.7(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
-      react:
-        specifier: '>=19.2.1'
-        version: 19.2.1
-      stripe:
-        specifier: 19.1.0
-        version: 19.1.0(@types/node@24.10.1)
-    devDependencies:
-      '@types/node':
-        specifier: ^24
-        version: 24.10.1
-      '@types/react':
-        specifier: '>=19.2.1'
-        version: 19.2.7
-      '@zoonk/tsconfig':
-        specifier: workspace:*
-        version: link:../tsconfig
-      typescript:
-        specifier: ^5
-        version: 5.9.3
 
   packages/db:
     dependencies:

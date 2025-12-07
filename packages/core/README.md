@@ -1,11 +1,11 @@
-# Zoonk API
+# Zoonk Core
 
-This package organizes all requests that need to interact with multiple services such as external APIs or databases.
+This package organizes all requests that need to interact with multiple services such as external services or databases.
 
 ## Usage
 
 ```tsx
-import { fetchCourseSuggestions } from "zoonk/api/course-suggestions";
+import { fetchCourseSuggestions } from "zoonk/core/course-suggestions";
 ```
 
 ## Guidelines

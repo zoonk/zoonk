@@ -1,8 +1,8 @@
 {
   "dependencies": {
     "@prisma/client": "7.1.0",
-    "@zoonk/api": "workspace:*",
     "@zoonk/auth": "workspace:*",
+    "@zoonk/core": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "lucide-react": "0.556.0",
     "next": "16.0.7",

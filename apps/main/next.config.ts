@@ -27,7 +27,7 @@ const nextConfig: NextConfig = {
   // we use next.js compiler to transpile our internal packages
   transpilePackages: [
     "@zoonk/ai",
-    "@zoonk/api",
+    "@zoonk/core",
     "@zoonk/auth",
     "@zoonk/db",
     "@zoonk/mailer",

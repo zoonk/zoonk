@@ -60,15 +60,23 @@ Some design preferences:
 
 ## Project structure
 
-- `apps/main`: Our main Next.js app, powering zoonk.com
-- `packages/ai`: Functions for AI interactions. Anything that calls the AI SDK should be here
-- `packages/api`: Functions connecting services and queries. Anything calling `@zoonk/ai` or `@zoonk/db` should be here
-- `packages/auth`: Authentication logic and clients using Better Auth
-- `packages/db`: Database client
-- `packages/mailer`: Client for sending emails
-- `packages/tsconfig`: Shared TypeScript configuration
-- `packages/ui`: Shared UI components, hooks, and patterns for all apps
-- `packages/utils`: Shared utility and helper functions
+### Apps
+
+- [main](./apps/main): Public web app (`zoonk.com`)
+- [admin](./apps/admin): Dashboard for managing users and organizations (`admin.zoonk.com`)
+- [editor](./apps/editor): Visual editor for building courses and activities (`editor.zoonk.com`)
+- [evals](./apps/evals): Local-only tool for evaluating AI-generated content
+
+### Packages
+
+- [ai](./packages/ai): AI prompts, tasks, and helpers for content generation
+- [core](./packages/core): Server utilities for database access and external integrations (the only package that should talk to `db`)
+- [auth](./packages/auth): Shared Better Auth setup and plugins
+- [db](./packages/db): Prisma schema and client (used only by `core`)
+- [mailer](./packages/mailer): Email-sending utilities
+- [tsconfig](./packages/tsconfig): Shared TypeScript config
+- [ui](./packages/ui): Shared React components, patterns, hooks, and styles
+- [utils](./packages/utils): Shared utilities and helpers
 
 Read each folder's README file for more details
 

@@ -18,7 +18,7 @@
   "exports": {
     "./*": "./src/*.ts"
   },
-  "name": "@zoonk/api",
+  "name": "@zoonk/core",
   "peerDependencies": {
     "next": ">=16.0.7",
     "react": ">=19.2.1",

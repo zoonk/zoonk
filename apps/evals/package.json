@@ -2,7 +2,7 @@
   "dependencies": {
     "@ai-sdk/gateway": "2.0.9",
     "@zoonk/ai": "workspace:*",
-    "@zoonk/api": "workspace:*",
+    "@zoonk/core": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "ai": "5.0.93",

@@ -2,8 +2,8 @@
   "dependencies": {
     "@prisma/client": "7.1.0",
     "@tabler/icons-react": "3.35.0",
-    "@zoonk/api": "workspace:*",
     "@zoonk/auth": "workspace:*",
+    "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "lucide-react": "0.556.0",

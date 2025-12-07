@@ -1,6 +1,6 @@
 "use server";
 
-import { createCourseThumbnail } from "@zoonk/api/course-thumbnail";
+import { createCourseThumbnail } from "@zoonk/core/course-thumbnail";
 import { parseFormField } from "@zoonk/utils/form";
 
 export async function generateThumbnailAction(formData: FormData) {

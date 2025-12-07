@@ -1,4 +1,4 @@
-import { getSession } from "@zoonk/api/users";
+import { getSession } from "@zoonk/core/users";
 import { redirect } from "next/navigation";
 
 export default async function AuthLayout({ children }: LayoutProps<"/login">) {

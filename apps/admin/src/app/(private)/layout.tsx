@@ -1,4 +1,4 @@
-import { getSession } from "@zoonk/api/users";
+import { getSession } from "@zoonk/core/users";
 import { SidebarInset, SidebarProvider } from "@zoonk/ui/components/sidebar";
 import { redirect, unauthorized } from "next/navigation";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
