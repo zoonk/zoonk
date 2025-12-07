@@ -1,5 +1,4 @@
 import { prisma } from "@zoonk/db";
-import { apiUrl, cookieDomain, trustedOrigins } from "@zoonk/utils";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { betterAuth } from "better-auth/minimal";
 import { nextCookies } from "better-auth/next-js";
@@ -23,12 +22,9 @@ export const baseAuthConfig: BetterAuthOptions = {
     accountLinking: { enabled: true },
   },
   advanced: {
-    crossSubDomainCookies: { domain: cookieDomain, enabled: true },
     database: { generateId: "serial" },
   },
   appName: "Zoonk",
-  basePath: "/v1/auth",
-  baseURL: apiUrl,
   database: prismaAdapter(prisma, { provider: "postgresql" }),
   experimental: {
     joins: true,
@@ -44,7 +40,7 @@ export const baseAuthConfig: BetterAuthOptions = {
     },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
   },
-  trustedOrigins,
+  trustedOrigins: ["https://appleid.apple.com"],
 };
 
 export const baseAuthPlugins = [
@@ -85,3 +81,5 @@ export const auth = betterAuth({
     ...googleProvider,
   },
 });
+
+export type { UserWithRole } from "better-auth/plugins";

@@ -1,5 +1,5 @@
+import type { UserWithRole } from "@zoonk/auth";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
-import type { UserWithRole } from "better-auth/plugins";
 
 type UserRowProps = {
   user: UserWithRole;

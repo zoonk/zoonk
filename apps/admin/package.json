@@ -6,8 +6,6 @@
     "@zoonk/auth": "workspace:*",
     "@zoonk/db": "workspace:*",
     "@zoonk/ui": "workspace:*",
-    "@zoonk/utils": "workspace:*",
-    "better-auth": "1.4.5",
     "lucide-react": "0.553.0",
     "next": "16.0.7",
     "nuqs": "2.7.3",

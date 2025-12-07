@@ -1,6 +1,5 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { attachDatabasePool } from "@vercel/functions";
-import { isProduction } from "@zoonk/utils";
 import { Pool } from "pg";
 import { PrismaClient } from "./generated/prisma/client";
 
@@ -12,7 +11,7 @@ const adapter = new PrismaPg(pool);
 const globalForPrisma = global as unknown as { prisma: PrismaClient };
 const prisma = globalForPrisma.prisma || new PrismaClient({ adapter });
 
-if (!isProduction) {
+if (process.env.NODE_ENV !== "production") {
   globalForPrisma.prisma = prisma;
 }
 
