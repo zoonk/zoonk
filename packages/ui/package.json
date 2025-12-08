@@ -37,6 +37,7 @@
   },
   "name": "@zoonk/ui",
   "peerDependencies": {
+    "@tabler/icons-react": "3.35.0",
     "lucide-react": ">=0.556.0",
     "react": ">=19.2.1",
     "react-dom": ">=19.2.1"

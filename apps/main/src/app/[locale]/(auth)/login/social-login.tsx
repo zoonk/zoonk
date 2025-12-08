@@ -1,13 +1,12 @@
 "use client";
 
-import {
-  IconBrandAppleFilled,
-  IconBrandGoogleFilled,
-} from "@tabler/icons-react";
 import { authClient } from "@zoonk/auth/client";
-import { Button } from "@zoonk/ui/components/button";
-import { InputError } from "@zoonk/ui/components/input";
-import { Loader2Icon } from "lucide-react";
+import {
+  LoginError,
+  LoginSocial,
+  LoginWithApple,
+  LoginWithGoogle,
+} from "@zoonk/ui/patterns/auth/login";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 
@@ -33,38 +32,28 @@ export function SocialLogin() {
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <Button
-        className="w-full"
-        disabled={state === "loadingGoogle"}
+    <LoginSocial>
+      <LoginWithGoogle
+        isLoading={state === "loadingGoogle"}
         onClick={() => signIn("google")}
-        type="button"
-        variant="outline"
       >
-        {state === "loadingGoogle" && <Loader2Icon className="animate-spin" />}
-        <IconBrandGoogleFilled aria-hidden="true" />
         {t("Continue with Google")}
-      </Button>
+      </LoginWithGoogle>
 
-      <Button
-        className="w-full"
-        disabled={state === "loadingApple"}
+      <LoginWithApple
+        isLoading={state === "loadingApple"}
         onClick={() => signIn("apple")}
-        type="button"
-        variant="outline"
       >
-        {state === "loadingApple" && <Loader2Icon className="animate-spin" />}
-        <IconBrandAppleFilled aria-hidden="true" />
         {t("Continue with Apple")}
-      </Button>
+      </LoginWithApple>
 
       {state === "error" && (
-        <InputError>
+        <LoginError>
           {t(
             "There was an error signing you in. Please try again or contact hello@zoonk.com",
           )}
-        </InputError>
+        </LoginError>
       )}
-    </div>
+    </LoginSocial>
   );
 }

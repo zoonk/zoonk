@@ -16,32 +16,39 @@ msgid "U3l+Q9"
 msgstr "Página de inicio"
 
 #: src/app/[locale]/(auth)/login/login-footer.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "Ju9oB+"
 msgstr "Al hacer clic en Continuar, aceptas nuestros <terms>Términos de servicio</terms> y <privacy>Política de privacidad</privacy>."
 
 #: src/app/[locale]/(auth)/login/login-form.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 #: src/app/[locale]/(auth)/otp/otp-form.tsx
 msgid "acrOoz"
 msgstr "Continuar"
 
 #: src/app/[locale]/(auth)/login/login-form.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 #: src/components/contact-form.tsx
 msgid "OiSL94"
 msgstr "micorreo@gmail.com"
 
 #: src/app/[locale]/(auth)/login/login-form.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "sy+pv5"
 msgstr "Correo electrónico"
 
 #: src/app/[locale]/(auth)/login/login-header.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "4wpUNc"
 msgstr "O"
 
 #: src/app/[locale]/(auth)/login/login-header.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "CoMQ1+"
 msgstr "Continúa con tu correo o una cuenta social"
 
 #: src/app/[locale]/(auth)/login/login-header.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "eN8MTJ"
 msgstr "Inicia sesión o crea una cuenta"
 

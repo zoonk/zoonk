@@ -529,6 +529,9 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: 1.2.8
         version: 1.2.8(@types/react-dom@19.2.3(@types/react@19.2.7))(@types/react@19.2.7)(react-dom@19.2.1(react@19.2.1))(react@19.2.1)
+      '@tabler/icons-react':
+        specifier: 3.35.0
+        version: 3.35.0(react@19.2.1)
       '@zoonk/utils':
         specifier: workspace:*
         version: link:../utils

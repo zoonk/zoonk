@@ -16,32 +16,39 @@ msgid "U3l+Q9"
 msgstr "Home page"
 
 #: src/app/[locale]/(auth)/login/login-footer.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "Ju9oB+"
 msgstr "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
 
 #: src/app/[locale]/(auth)/login/login-form.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 #: src/app/[locale]/(auth)/otp/otp-form.tsx
 msgid "acrOoz"
 msgstr "Continue"
 
 #: src/app/[locale]/(auth)/login/login-form.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 #: src/components/contact-form.tsx
 msgid "OiSL94"
 msgstr "myemail@gmail.com"
 
 #: src/app/[locale]/(auth)/login/login-form.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "sy+pv5"
 msgstr "Email"
 
 #: src/app/[locale]/(auth)/login/login-header.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "4wpUNc"
 msgstr "Or"
 
 #: src/app/[locale]/(auth)/login/login-header.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "CoMQ1+"
 msgstr "Continue with your email or a social account"
 
 #: src/app/[locale]/(auth)/login/login-header.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "eN8MTJ"
 msgstr "Sign in or create an account"
 

@@ -2,6 +2,7 @@
 
 import { authClient } from "@zoonk/auth/client";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
+import { Login } from "@zoonk/ui/patterns/auth/login";
 import { useRouter } from "@/i18n/navigation";
 
 export default function LoginContainer({ children }: React.PropsWithChildren) {
@@ -17,5 +18,5 @@ export default function LoginContainer({ children }: React.PropsWithChildren) {
     return null;
   }
 
-  return <div className="flex flex-col gap-6">{children}</div>;
+  return <Login>{children}</Login>;
 }
