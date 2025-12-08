@@ -4,13 +4,11 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { OTPInput, OTPInputContext } from "input-otp";
 import { useContext } from "react";
 
-function InputOTP({
-  className,
-  containerClassName,
-  ...props
-}: React.ComponentProps<typeof OTPInput> & {
+type InputOTPProps = React.ComponentProps<typeof OTPInput> & {
   containerClassName?: string;
-}) {
+};
+
+function InputOTP({ className, containerClassName, ...props }: InputOTPProps) {
   return (
     <OTPInput
       className={cn("disabled:cursor-not-allowed", className)}
@@ -64,4 +62,4 @@ function InputOTPSlot({
   );
 }
 
-export { InputOTP, InputOTPGroup, InputOTPSlot };
+export { InputOTP, InputOTPGroup, type InputOTPProps, InputOTPSlot };

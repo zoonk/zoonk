@@ -1,18 +1,16 @@
 "use client";
 
 import { authClient } from "@zoonk/auth/client";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import { InputError } from "@zoonk/ui/components/input";
 import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@zoonk/ui/components/input-otp";
-import { Spinner } from "@zoonk/ui/components/spinner";
+  OTPError,
+  OTPForm as OTPFormContainer,
+  OTPInput,
+  OTPSubmit,
+} from "@zoonk/ui/patterns/auth/otp";
 import { parseFormField } from "@zoonk/utils/form";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { Link, useRouter } from "@/i18n/navigation";
+import { useRouter } from "@/i18n/navigation";
 
 type FormState = "idle" | "pending" | "error";
 
@@ -45,46 +43,15 @@ export function OTPForm({ email }: OTPFormProps) {
   };
 
   return (
-    <div className="flex w-full flex-col items-center gap-6 text-center">
-      <div className="flex flex-col items-center gap-2">
-        <h1 className="font-bold text-xl">{t("Check your email")}</h1>
-        <p className="text-balance text-center text-sm">
-          {t("Enter the code we sent to {email}:", { email })}
-        </p>
-      </div>
-
-      <form
-        className="flex flex-col items-center gap-4"
-        onSubmit={handleSubmit}
-      >
-        <InputOTP maxLength={6} name="otp" pattern="[0-9]*" required>
-          <InputOTPGroup>
-            <InputOTPSlot index={0} />
-            <InputOTPSlot index={1} />
-            <InputOTPSlot index={2} />
-            <InputOTPSlot index={3} />
-            <InputOTPSlot index={4} />
-            <InputOTPSlot index={5} />
-          </InputOTPGroup>
-        </InputOTP>
-
-        {state === "error" && (
-          <InputError>
-            {t(
-              "The code you entered is incorrect. Please try again or contact hello@zoonk.com",
-            )}
-          </InputError>
+    <OTPFormContainer onSubmit={handleSubmit}>
+      <OTPInput />
+      <OTPError hasError={state === "error"}>
+        {t(
+          "The code you entered is incorrect. Please try again or contact hello@zoonk.com",
         )}
+      </OTPError>
 
-        <Button disabled={state === "pending"} type="submit">
-          {state === "pending" && <Spinner />}
-          {t("Continue")}
-        </Button>
-
-        <Link className={buttonVariants({ variant: "link" })} href="/login">
-          {t("Change email")}
-        </Link>
-      </form>
-    </div>
+      <OTPSubmit isLoading={state === "pending"}>{t("Continue")}</OTPSubmit>
+    </OTPFormContainer>
   );
 }
