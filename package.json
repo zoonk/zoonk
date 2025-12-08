@@ -21,6 +21,7 @@
     "evals:export": "./apps/evals/scripts/export-test-case.sh",
     "evals:remove": "./apps/evals/scripts/remove-test-cases.sh",
     "format": "biome format --write",
+    "i18n": "pnpm dlx lingo.dev run",
     "i18n:check": "./scripts/i18n.sh",
     "lint": "biome check",
     "start": "turbo start",

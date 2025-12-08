@@ -40,3 +40,4 @@ yarn-error.log*
 
 # VSCode
 tasks.json
+i18n.cache
