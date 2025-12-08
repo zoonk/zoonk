@@ -2,6 +2,7 @@
 
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { FullPageContainer } from "@zoonk/ui/components/container";
+import { LoginNav } from "@zoonk/ui/patterns/auth/login";
 import { cacheTagLogin } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 import { getExtracted, setRequestLocale } from "next-intl/server";
@@ -24,7 +25,7 @@ export default async function AuthLayout({
 
   return (
     <FullPageContainer>
-      <nav className="fixed top-4 left-4">
+      <LoginNav>
         <Link
           className={buttonVariants({ size: "icon", variant: "outline" })}
           href={homeMenu.url}
@@ -32,7 +33,7 @@ export default async function AuthLayout({
           <homeMenu.icon aria-hidden="true" />
           <span className="sr-only">{t("Home page")}</span>
         </Link>
-      </nav>
+      </LoginNav>
 
       {children}
     </FullPageContainer>
