@@ -61,10 +61,7 @@ export default async function Login({ params }: PageProps<"/[locale]/login">) {
 
       <LoginDivider>{t("Or")}</LoginDivider>
 
-      <LoginForm
-        action={sendVerificationOTPAction}
-        className="flex flex-col gap-6"
-      >
+      <LoginForm action={sendVerificationOTPAction}>
         <LoginField>
           <LoginEmailLabel>{t("Email")}</LoginEmailLabel>
           <LoginEmailInput placeholder={t("myemail@gmail.com")} />

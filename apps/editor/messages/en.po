@@ -6,6 +6,65 @@ msgstr ""
 "X-Generator: next-intl\n"
 "X-Crowdin-SourceKey: msgstr\n"
 
+#: src/app/(auth)/layout.tsx
+#: src/components/header.tsx
+msgid "U3l+Q9"
+msgstr "Home page"
+
+#: src/app/(auth)/login/page.tsx
+msgid "4nOs3z"
+msgstr "me@myorg.com"
+
+#: src/app/(auth)/login/page.tsx
+msgid "4wpUNc"
+msgstr "Or"
+
+#: src/app/(auth)/login/page.tsx
+#: src/app/(auth)/otp/otp-form.tsx
+msgid "acrOoz"
+msgstr "Continue"
+
+#: src/app/(auth)/login/page.tsx
+msgid "SQJto2"
+msgstr "Sign in"
+
+#: src/app/(auth)/login/page.tsx
+msgid "sy+pv5"
+msgstr "Email"
+
+#: src/app/(auth)/login/page.tsx
+msgid "yFJ+Ej"
+msgstr "Continue with your email or social account"
+
+#: src/app/(auth)/login/social-login.tsx
+msgid "BmecBA"
+msgstr "Continue with Apple"
+
+#: src/app/(auth)/login/social-login.tsx
+#: src/app/login/social-login.tsx
+msgid "FJ6r9E"
+msgstr "Continue with Google"
+
+#: src/app/(auth)/login/social-login.tsx
+msgid "pN2p0t"
+msgstr "There was an error signing you in. Please try again or contact hello@zoonk.com"
+
+#: src/app/(auth)/otp/otp-form.tsx
+msgid "HkHvQv"
+msgstr "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
+
+#: src/app/(auth)/otp/page.tsx
+msgid "ChATeO"
+msgstr "Change email"
+
+#: src/app/(auth)/otp/page.tsx
+msgid "LZHcmZ"
+msgstr "Enter the code we sent to {email}:"
+
+#: src/app/(auth)/otp/page.tsx
+msgid "zx7CKB"
+msgstr "Check your email"
+
 #: src/app/login/page.tsx
 msgid "1UEnr3"
 msgstr "Use your work or school account to sign in to the editor"
@@ -13,10 +72,6 @@ msgstr "Use your work or school account to sign in to the editor"
 #: src/app/login/page.tsx
 msgid "9KyprR"
 msgstr "Access your account"
-
-#: src/app/login/social-login.tsx
-msgid "FJ6r9E"
-msgstr "Continue with Google"
 
 #: src/app/login/social-login.tsx
 msgid "X02lYY"
@@ -33,7 +88,3 @@ msgstr "401 - Unauthorized"
 #: src/app/unauthorized.tsx
 msgid "vFidRR"
 msgstr "You can’t edit courses for this organization. Log in with another account or switch to a different organization."
-
-#: src/components/header.tsx
-msgid "U3l+Q9"
-msgstr "Home page"

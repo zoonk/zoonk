@@ -20,7 +20,12 @@ const nextConfig: NextConfig = {
     ],
   },
   reactCompiler: true,
-  transpilePackages: ["@zoonk/auth", "@zoonk/core", "@zoonk/ui"],
+  transpilePackages: [
+    "@zoonk/auth",
+    "@zoonk/core",
+    "@zoonk/ui",
+    "@zoonk/utils",
+  ],
   typedRoutes: true,
 };
 

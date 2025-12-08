@@ -6,6 +6,65 @@ msgstr ""
 "X-Generator: next-intl\n"
 "X-Crowdin-SourceKey: msgstr\n"
 
+#: src/app/(auth)/layout.tsx
+#: src/components/header.tsx
+msgid "U3l+Q9"
+msgstr "Página de inicio"
+
+#: src/app/(auth)/login/page.tsx
+msgid "4nOs3z"
+msgstr "yo@miempresa.com"
+
+#: src/app/(auth)/login/page.tsx
+msgid "4wpUNc"
+msgstr "O"
+
+#: src/app/(auth)/login/page.tsx
+#: src/app/(auth)/otp/otp-form.tsx
+msgid "acrOoz"
+msgstr "Continuar"
+
+#: src/app/(auth)/login/page.tsx
+msgid "SQJto2"
+msgstr "Iniciar sesión"
+
+#: src/app/(auth)/login/page.tsx
+msgid "sy+pv5"
+msgstr "Correo electrónico"
+
+#: src/app/(auth)/login/page.tsx
+msgid "yFJ+Ej"
+msgstr "Continúa con tu correo electrónico o cuenta social"
+
+#: src/app/(auth)/login/social-login.tsx
+msgid "BmecBA"
+msgstr "Continuar con Apple"
+
+#: src/app/(auth)/login/social-login.tsx
+#: src/app/login/social-login.tsx
+msgid "FJ6r9E"
+msgstr "Continuar con Google"
+
+#: src/app/(auth)/login/social-login.tsx
+msgid "pN2p0t"
+msgstr "Hubo un error al iniciar sesión. Inténtalo de nuevo o contacta a contacto@zoonk.com"
+
+#: src/app/(auth)/otp/otp-form.tsx
+msgid "HkHvQv"
+msgstr "El código que ingresaste es incorrecto. Inténtalo de nuevo o contacta a contacto@zoonk.com"
+
+#: src/app/(auth)/otp/page.tsx
+msgid "ChATeO"
+msgstr "Cambiar correo electrónico"
+
+#: src/app/(auth)/otp/page.tsx
+msgid "LZHcmZ"
+msgstr "Ingresa el código que enviamos al correo electrónico {email}:"
+
+#: src/app/(auth)/otp/page.tsx
+msgid "zx7CKB"
+msgstr "Revisa tu correo electrónico"
+
 #: src/app/login/page.tsx
 msgid "1UEnr3"
 msgstr "Utilice su cuenta de trabajo o escolar para iniciar sesión en el editor"
@@ -13,10 +72,6 @@ msgstr "Utilice su cuenta de trabajo o escolar para iniciar sesión en el editor
 #: src/app/login/page.tsx
 msgid "9KyprR"
 msgstr "Acceda a su cuenta"
-
-#: src/app/login/social-login.tsx
-msgid "FJ6r9E"
-msgstr "Continuar con Google"
 
 #: src/app/login/social-login.tsx
 msgid "X02lYY"
@@ -33,7 +88,3 @@ msgstr "401 - No autorizado"
 #: src/app/unauthorized.tsx
 msgid "vFidRR"
 msgstr "No puedes editar cursos para esta organización. Inicia sesión con otra cuenta o cambia a una organización diferente."
-
-#: src/components/header.tsx
-msgid "U3l+Q9"
-msgstr "Página de inicio"

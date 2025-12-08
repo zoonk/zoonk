@@ -6,6 +6,65 @@ msgstr ""
 "X-Generator: next-intl\n"
 "X-Crowdin-SourceKey: msgstr\n"
 
+#: src/app/(auth)/layout.tsx
+#: src/components/header.tsx
+msgid "U3l+Q9"
+msgstr "Página inicial"
+
+#: src/app/(auth)/login/page.tsx
+msgid "4nOs3z"
+msgstr "eu@minhaorg.com.br"
+
+#: src/app/(auth)/login/page.tsx
+msgid "4wpUNc"
+msgstr "Ou"
+
+#: src/app/(auth)/login/page.tsx
+#: src/app/(auth)/otp/otp-form.tsx
+msgid "acrOoz"
+msgstr "Continuar"
+
+#: src/app/(auth)/login/page.tsx
+msgid "SQJto2"
+msgstr "Entrar"
+
+#: src/app/(auth)/login/page.tsx
+msgid "sy+pv5"
+msgstr "Email"
+
+#: src/app/(auth)/login/page.tsx
+msgid "yFJ+Ej"
+msgstr "Continue com seu email ou conta social"
+
+#: src/app/(auth)/login/social-login.tsx
+msgid "BmecBA"
+msgstr "Continuar com a Apple"
+
+#: src/app/(auth)/login/social-login.tsx
+#: src/app/login/social-login.tsx
+msgid "FJ6r9E"
+msgstr "Continuar com o Google"
+
+#: src/app/(auth)/login/social-login.tsx
+msgid "pN2p0t"
+msgstr "Houve um erro ao entrar. Tente novamente ou entre em contato com contato@zoonk.com"
+
+#: src/app/(auth)/otp/otp-form.tsx
+msgid "HkHvQv"
+msgstr "O código que você inseriu está incorreto. Tente novamente ou entre em contato com contato@zoonk.com"
+
+#: src/app/(auth)/otp/page.tsx
+msgid "ChATeO"
+msgstr "Mudar email"
+
+#: src/app/(auth)/otp/page.tsx
+msgid "LZHcmZ"
+msgstr "Digite o código que enviamos para o email {email}:"
+
+#: src/app/(auth)/otp/page.tsx
+msgid "zx7CKB"
+msgstr "Verifique seu email"
+
 #: src/app/login/page.tsx
 msgid "1UEnr3"
 msgstr "Use sua conta de trabalho ou escolar para entrar no editor"
@@ -13,10 +72,6 @@ msgstr "Use sua conta de trabalho ou escolar para entrar no editor"
 #: src/app/login/page.tsx
 msgid "9KyprR"
 msgstr "Acesse sua conta"
-
-#: src/app/login/social-login.tsx
-msgid "FJ6r9E"
-msgstr "Continuar com o Google"
 
 #: src/app/login/social-login.tsx
 msgid "X02lYY"
@@ -33,7 +88,3 @@ msgstr "401 - Não autorizado"
 #: src/app/unauthorized.tsx
 msgid "vFidRR"
 msgstr "Você não pode editar cursos para esta organização. Faça login com outra conta ou mude para uma organização diferente."
-
-#: src/components/header.tsx
-msgid "U3l+Q9"
-msgstr "Página inicial"
