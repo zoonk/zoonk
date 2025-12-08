@@ -47,13 +47,11 @@ export function SocialLogin() {
         {t("Continue with Apple")}
       </LoginWithApple>
 
-      {state === "error" && (
-        <LoginError>
-          {t(
-            "There was an error signing you in. Please try again or contact hello@zoonk.com",
-          )}
-        </LoginError>
-      )}
+      <LoginError hasError={state === "error"}>
+        {t(
+          "There was an error signing you in. Please try again or contact hello@zoonk.com",
+        )}
+      </LoginError>
     </LoginSocial>
   );
 }

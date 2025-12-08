@@ -1,17 +1,23 @@
+import {
+  Login,
+  LoginDescription,
+  LoginHeader,
+  LoginTitle,
+} from "@zoonk/ui/patterns/auth/login";
 import { SocialLogin } from "./social-login";
 
-export default function Login() {
+export default function LoginPage() {
   return (
-    <main className="flex flex-col gap-6">
-      <header className="flex flex-col items-center gap-2">
-        <h1 className="font-bold text-xl">Access our admin panel</h1>
+    <Login>
+      <LoginHeader>
+        <LoginTitle>Access our admin panel</LoginTitle>
 
-        <p className="text-center text-sm">
+        <LoginDescription>
           Use your Zoonk Google account to sign in.
-        </p>
-      </header>
+        </LoginDescription>
+      </LoginHeader>
 
       <SocialLogin />
-    </main>
+    </Login>
   );
 }

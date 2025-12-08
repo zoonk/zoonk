@@ -113,7 +113,15 @@ export function LoginWithApple({ children, ...props }: LoginWithProviderProps) {
   );
 }
 
-export function LoginError({ children, ...props }: React.ComponentProps<"p">) {
+export function LoginError({
+  children,
+  hasError,
+  ...props
+}: React.ComponentProps<"p"> & { hasError?: boolean }) {
+  if (!hasError) {
+    return null;
+  }
+
   return <InputError {...props}>{children}</InputError>;
 }
 

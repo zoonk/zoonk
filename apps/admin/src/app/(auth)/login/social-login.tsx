@@ -1,10 +1,11 @@
 "use client";
 
-import { IconBrandGoogleFilled } from "@tabler/icons-react";
 import { authClient } from "@zoonk/auth/client";
-import { Button } from "@zoonk/ui/components/button";
-import { InputError } from "@zoonk/ui/components/input";
-import { Loader2Icon } from "lucide-react";
+import {
+  LoginError,
+  LoginSocial,
+  LoginWithGoogle,
+} from "@zoonk/ui/patterns/auth/login";
 import { useState } from "react";
 
 type SocialState = "initial" | "loading" | "error";
@@ -24,20 +25,14 @@ export function SocialLogin() {
   };
 
   return (
-    <div className="flex flex-col gap-2">
-      <Button
-        className="w-full"
-        disabled={state === "loading"}
-        onClick={signIn}
-        type="button"
-        variant="outline"
-      >
-        {state === "loading" && <Loader2Icon className="animate-spin" />}
-        <IconBrandGoogleFilled aria-hidden="true" />
+    <LoginSocial>
+      <LoginWithGoogle isLoading={state === "loading"} onClick={signIn}>
         Continue with Google
-      </Button>
+      </LoginWithGoogle>
 
-      {state === "error" && <InputError>Login failed. Try again.</InputError>}
-    </div>
+      <LoginError hasError={state === "error"}>
+        Login failed. Try again.
+      </LoginError>
+    </LoginSocial>
   );
 }
