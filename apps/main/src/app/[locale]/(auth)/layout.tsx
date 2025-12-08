@@ -1,6 +1,7 @@
 "use cache";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { FullPageContainer } from "@zoonk/ui/components/container";
 import { cacheTagLogin } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 import { getExtracted, setRequestLocale } from "next-intl/server";
@@ -22,7 +23,7 @@ export default async function AuthLayout({
   const t = await getExtracted();
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-sm flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
+    <FullPageContainer>
       <nav className="fixed top-4 left-4">
         <Link
           className={buttonVariants({ size: "icon", variant: "outline" })}
@@ -34,6 +35,6 @@ export default async function AuthLayout({
       </nav>
 
       {children}
-    </main>
+    </FullPageContainer>
   );
 }

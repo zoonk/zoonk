@@ -21,6 +21,22 @@ export function Container({
   );
 }
 
+export function FullPageContainer({
+  children,
+  className,
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn(
+        "mx-auto flex min-h-dvh w-full max-w-sm flex-col items-center justify-center gap-6 bg-background p-6 md:p-10",
+        className,
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
 export function ContainerHeader({
   children,
   className,
