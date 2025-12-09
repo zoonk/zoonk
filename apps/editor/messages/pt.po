@@ -77,6 +77,14 @@ msgstr "Acesse sua conta"
 msgid "X02lYY"
 msgstr "Falha no login. Tente novamente."
 
+#: src/app/page.tsx
+msgid "jflB8q"
+msgstr "Escolha uma organização para gerenciar seus cursos"
+
+#: src/app/page.tsx
+msgid "MPQ0kS"
+msgstr "Selecione uma organização"
+
 #: src/app/unauthorized.tsx
 msgid "C81/uG"
 msgstr "Sair"
@@ -88,3 +96,11 @@ msgstr "401 - Não autorizado"
 #: src/app/unauthorized.tsx
 msgid "vFidRR"
 msgstr "Você não pode editar cursos para esta organização. Faça login com outra conta ou mude para uma organização diferente."
+
+#: src/components/organization-list.tsx
+msgid "p4BgKL"
+msgstr "Você ainda não faz parte de nenhuma organização"
+
+#: src/components/organization-list.tsx
+msgid "sFoGzO"
+msgstr "Sem organizações"

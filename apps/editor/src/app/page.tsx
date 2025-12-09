@@ -1,9 +1,22 @@
 import { getSession } from "@zoonk/core/users";
+import {
+  Container,
+  ContainerDescription,
+  ContainerHeader,
+  ContainerTitle,
+} from "@zoonk/ui/components/container";
 import { redirect, unauthorized } from "next/navigation";
+import { getExtracted } from "next-intl/server";
+import { Suspense } from "react";
 import { EditorHeader } from "@/components/header";
+import {
+  OrganizationList,
+  OrganizationListSkeleton,
+} from "@/components/organization-list";
 
 export default async function HomePage() {
   const session = await getSession();
+  const t = await getExtracted();
 
   if (!session) {
     redirect("/login");
@@ -20,7 +33,19 @@ export default async function HomePage() {
   return (
     <>
       <EditorHeader active="home" />
-      {}
+
+      <Container className="mx-auto w-full max-w-2xl">
+        <ContainerHeader className="text-center">
+          <ContainerTitle>{t("Select an organization")}</ContainerTitle>
+          <ContainerDescription>
+            {t("Choose an organization to manage its courses")}
+          </ContainerDescription>
+        </ContainerHeader>
+
+        <Suspense fallback={<OrganizationListSkeleton />}>
+          <OrganizationList />
+        </Suspense>
+      </Container>
     </>
   );
 }
