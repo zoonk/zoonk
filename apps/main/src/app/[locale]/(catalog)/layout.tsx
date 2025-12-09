@@ -1,6 +1,6 @@
 "use cache";
 
-import { Header } from "@zoonk/ui/components/header";
+import { Navbar } from "@zoonk/ui/components/navbar";
 import { cacheTagCatalog } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
@@ -20,13 +20,13 @@ export default async function CatalogLayout({
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <Header>
+      <Navbar>
         <Suspense fallback={<NavbarLinksSkeleton />}>
           <NavbarLinks />
         </Suspense>
 
         <UserAvatarMenu />
-      </Header>
+      </Navbar>
 
       {children}
     </div>

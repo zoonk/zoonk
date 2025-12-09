@@ -8,6 +8,7 @@ msgstr ""
 
 #: src/app/(auth)/layout.tsx
 #: src/components/header.tsx
+#: src/components/navbar.tsx
 msgid "U3l+Q9"
 msgstr "Home page"
 

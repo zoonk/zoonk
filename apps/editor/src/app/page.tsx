@@ -8,7 +8,7 @@ import {
 import { redirect, unauthorized } from "next/navigation";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
-import { EditorHeader } from "@/components/header";
+import { EditorNavbar } from "@/components/navbar";
 import {
   OrganizationList,
   OrganizationListSkeleton,
@@ -32,7 +32,7 @@ export default async function HomePage() {
 
   return (
     <>
-      <EditorHeader active="home" />
+      <EditorNavbar active="home" />
 
       <Container className="mx-auto w-full max-w-2xl">
         <ContainerHeader className="text-center">

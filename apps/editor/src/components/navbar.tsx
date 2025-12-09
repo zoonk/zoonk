@@ -1,19 +1,23 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { Header } from "@zoonk/ui/components/header";
+import { Navbar } from "@zoonk/ui/components/navbar";
 import { HomeIcon } from "lucide-react";
 import Link from "next/link";
 import { getExtracted } from "next-intl/server";
 
-type EditorHeaderProps = React.ComponentProps<"header"> & {
+type EditorNavbarProps = React.ComponentProps<"nav"> & {
   active: "home" | "courses";
   orgSlug?: string;
 };
 
-export async function EditorHeader({ active, children }: EditorHeaderProps) {
+export async function EditorNavbar({
+  active,
+  children,
+  ...props
+}: EditorNavbarProps) {
   const t = await getExtracted();
 
   return (
-    <Header>
+    <Navbar {...props}>
       <Link
         className={buttonVariants({
           size: "icon",
@@ -26,6 +30,6 @@ export async function EditorHeader({ active, children }: EditorHeaderProps) {
       </Link>
 
       <div className="ml-auto flex items-center gap-2">{children}</div>
-    </Header>
+    </Navbar>
   );
 }
