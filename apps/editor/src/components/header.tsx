@@ -9,7 +9,7 @@ type EditorHeaderProps = React.ComponentProps<"header"> & {
   orgSlug?: string;
 };
 
-export async function EditorHeader({ children }: EditorHeaderProps) {
+export async function EditorHeader({ active, children }: EditorHeaderProps) {
   const t = await getExtracted();
 
   return (
@@ -17,7 +17,7 @@ export async function EditorHeader({ children }: EditorHeaderProps) {
       <Link
         className={buttonVariants({
           size: "icon",
-          variant: "outline",
+          variant: active === "home" ? "default" : "outline",
         })}
         href="/"
       >
