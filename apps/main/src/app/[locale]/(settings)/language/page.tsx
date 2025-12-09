@@ -2,6 +2,7 @@
 
 import {
   Container,
+  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,
@@ -42,7 +43,7 @@ export default async function Language({
   const t = await getExtracted();
 
   return (
-    <Container isForm>
+    <Container variant="narrow">
       <ContainerHeader>
         <ContainerTitle>{t("Language")}</ContainerTitle>
         <ContainerDescription>
@@ -50,7 +51,9 @@ export default async function Language({
         </ContainerDescription>
       </ContainerHeader>
 
-      <LocaleSwitcher />
+      <ContainerBody>
+        <LocaleSwitcher />
+      </ContainerBody>
     </Container>
   );
 }

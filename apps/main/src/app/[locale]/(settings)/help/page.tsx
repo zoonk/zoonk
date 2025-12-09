@@ -2,6 +2,7 @@
 
 import {
   Container,
+  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,
@@ -40,7 +41,7 @@ export default async function Help({ params }: PageProps<"/[locale]/help">) {
   const t = await getExtracted();
 
   return (
-    <Container isForm>
+    <Container variant="narrow">
       <ContainerHeader>
         <ContainerTitle>{t("Help")}</ContainerTitle>
 
@@ -51,7 +52,9 @@ export default async function Help({ params }: PageProps<"/[locale]/help">) {
         </ContainerDescription>
       </ContainerHeader>
 
-      <ContactForm />
+      <ContainerBody>
+        <ContactForm />
+      </ContainerBody>
     </Container>
   );
 }

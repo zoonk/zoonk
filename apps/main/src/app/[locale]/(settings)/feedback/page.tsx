@@ -2,6 +2,7 @@
 
 import {
   Container,
+  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,
@@ -42,7 +43,7 @@ export default async function Feedback({
   const t = await getExtracted();
 
   return (
-    <Container isForm>
+    <Container variant="narrow">
       <ContainerHeader>
         <ContainerTitle>{t("Feedback")}</ContainerTitle>
         <ContainerDescription>
@@ -52,7 +53,9 @@ export default async function Feedback({
         </ContainerDescription>
       </ContainerHeader>
 
-      <ContactForm />
+      <ContainerBody>
+        <ContactForm />
+      </ContainerBody>
     </Container>
   );
 }

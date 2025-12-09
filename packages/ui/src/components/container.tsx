@@ -1,39 +1,30 @@
 import { cn } from "@zoonk/ui/lib/utils";
+import { cva, type VariantProps } from "class-variance-authority";
 import { Skeleton } from "./skeleton";
+
+const containerVariants = cva("flex w-full flex-col gap-4 antialiased", {
+  defaultVariants: {
+    variant: "default",
+  },
+  variants: {
+    variant: {
+      centered:
+        "mx-auto min-h-dvh max-w-sm items-center justify-center bg-background py-4 lg:gap-8",
+      default: "",
+      narrow: "mx-auto max-w-3xl py-4 lg:max-w-xl lg:gap-8 lg:py-16",
+    },
+  },
+});
 
 export function Container({
   children,
   className,
-  isForm = false,
-}: React.ComponentProps<"main"> & { isForm?: boolean }) {
+  variant,
+}: React.ComponentProps<"main"> & VariantProps<typeof containerVariants>) {
   return (
-    <main
-      className={cn(
-        "flex flex-col gap-4 p-4",
-        {
-          "mx-auto w-full max-w-lg lg:py-8": isForm,
-        },
-        className,
-      )}
-    >
+    <main className={cn(containerVariants({ variant }), className)}>
       {children}
     </main>
-  );
-}
-
-export function FullPageContainer({
-  children,
-  className,
-}: React.ComponentProps<"div">) {
-  return (
-    <div
-      className={cn(
-        "mx-auto flex min-h-dvh w-full max-w-sm flex-col items-center justify-center gap-6 bg-background p-6 md:p-10",
-        className,
-      )}
-    >
-      {children}
-    </div>
   );
 }
 
@@ -42,7 +33,7 @@ export function ContainerHeader({
   className,
 }: React.ComponentProps<"header">) {
   return (
-    <header className={cn("flex flex-col gap-0.5", className)}>
+    <header className={cn("flex flex-col gap-2 px-4", className)}>
       {children}
     </header>
   );
@@ -55,7 +46,7 @@ export function ContainerTitle({
   return (
     <h1
       className={cn(
-        "scroll-m-20 text-balance pb-0.5 font-semibold text-foreground/90 text-xl leading-none tracking-tight",
+        "scroll-m-20 text-balance font-semibold text-foreground/90 text-xl leading-none tracking-tight",
         className,
       )}
     >
@@ -64,19 +55,37 @@ export function ContainerTitle({
   );
 }
 
-export const ContainerDescription = ({
+export function ContainerDescription({
   children,
   className,
-}: React.ComponentProps<"h2">) => (
-  <h2
-    className={cn(
-      "text-balance text-muted-foreground leading-snug tracking-tight",
-      className,
-    )}
-  >
-    {children}
-  </h2>
-);
+}: React.ComponentProps<"h2">) {
+  return (
+    <h2
+      className={cn(
+        "text-pretty text-muted-foreground leading-snug tracking-tight",
+        className,
+      )}
+    >
+      {children}
+    </h2>
+  );
+}
+
+export function ContainerBody({
+  children,
+  className,
+}: React.ComponentProps<"div">) {
+  return (
+    <section
+      className={cn(
+        "flex w-full flex-1 flex-col gap-4 px-4 sm:flex-initial",
+        className,
+      )}
+    >
+      {children}
+    </section>
+  );
+}
 
 export function ContainerHeaderSkeleton({ className }: { className?: string }) {
   return (

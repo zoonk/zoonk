@@ -3,10 +3,11 @@
 import { authClient } from "@zoonk/auth/client";
 import { Button } from "@zoonk/ui/components/button";
 import {
+  Container,
+  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,
-  FullPageContainer,
 } from "@zoonk/ui/components/container";
 import { useRouter } from "next/navigation";
 import { useExtracted } from "next-intl";
@@ -22,7 +23,7 @@ export default function Unauthorized() {
   };
 
   return (
-    <FullPageContainer className="antialiased">
+    <Container variant="centered">
       <ContainerHeader>
         <ContainerTitle>{t("401 - Unauthorized")}</ContainerTitle>
 
@@ -33,7 +34,9 @@ export default function Unauthorized() {
         </ContainerDescription>
       </ContainerHeader>
 
-      <Button onClick={logout}>{t("Logout")}</Button>
-    </FullPageContainer>
+      <ContainerBody className="justify-end">
+        <Button onClick={logout}>{t("Logout")}</Button>
+      </ContainerBody>
+    </Container>
   );
 }

@@ -2,6 +2,7 @@
 
 import {
   Container,
+  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,
@@ -41,7 +42,7 @@ export default async function Name({ params }: PageProps<"/[locale]/name">) {
   const t = await getExtracted();
 
   return (
-    <Container isForm>
+    <Container variant="narrow">
       <ContainerHeader>
         <ContainerTitle>{t("Display name")}</ContainerTitle>
         <ContainerDescription>
@@ -51,9 +52,11 @@ export default async function Name({ params }: PageProps<"/[locale]/name">) {
         </ContainerDescription>
       </ContainerHeader>
 
-      <ProtectedSection>
-        <NameForm />
-      </ProtectedSection>
+      <ContainerBody>
+        <ProtectedSection>
+          <NameForm />
+        </ProtectedSection>
+      </ContainerBody>
     </Container>
   );
 }

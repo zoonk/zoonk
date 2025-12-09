@@ -1,5 +1,5 @@
 import { getSession } from "@zoonk/core/users";
-import { FullPageContainer } from "@zoonk/ui/components/container";
+import { Container } from "@zoonk/ui/components/container";
 import { redirect } from "next/navigation";
 
 export default async function AuthLayout({ children }: LayoutProps<"/login">) {
@@ -9,5 +9,5 @@ export default async function AuthLayout({ children }: LayoutProps<"/login">) {
     redirect("/");
   }
 
-  return <FullPageContainer>{children}</FullPageContainer>;
+  return <Container variant="centered">{children}</Container>;
 }

@@ -1,5 +1,5 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { FullPageContainer } from "@zoonk/ui/components/container";
+import { Container } from "@zoonk/ui/components/container";
 import { LoginNav } from "@zoonk/ui/patterns/auth/login";
 import { HomeIcon } from "lucide-react";
 import Link from "next/link";
@@ -9,7 +9,7 @@ export default async function AuthLayout({ children }: LayoutProps<"/">) {
   const t = await getExtracted();
 
   return (
-    <FullPageContainer>
+    <Container variant="centered">
       <LoginNav>
         <Link
           className={buttonVariants({ size: "icon", variant: "outline" })}
@@ -21,6 +21,6 @@ export default async function AuthLayout({ children }: LayoutProps<"/">) {
       </LoginNav>
 
       {children}
-    </FullPageContainer>
+    </Container>
   );
 }

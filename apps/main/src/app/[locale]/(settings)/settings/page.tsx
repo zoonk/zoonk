@@ -42,7 +42,7 @@ export default async function Settings({
   const t = await getExtracted();
 
   return (
-    <Container className="p-0">
+    <Container className="gap-2">
       <ContainerHeader className="px-4 pt-4">
         <ContainerTitle>{t("Settings")}</ContainerTitle>
         <ContainerDescription>

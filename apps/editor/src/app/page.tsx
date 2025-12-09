@@ -34,7 +34,7 @@ export default async function HomePage() {
     <>
       <EditorNavbar active="home" />
 
-      <Container className="mx-auto w-full max-w-2xl">
+      <Container variant="narrow">
         <ContainerHeader className="text-center">
           <ContainerTitle>{t("Select an organization")}</ContainerTitle>
           <ContainerDescription>

@@ -1,7 +1,8 @@
 import { getCourseSuggestions } from "@zoonk/core/course-suggestions";
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import {
   Container,
+  ContainerDescription,
   ContainerHeader,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
@@ -32,14 +33,16 @@ export async function CourseSuggestions({
   const suggestions = await getCourseSuggestions({ locale, prompt });
 
   return (
-    <Container className="mx-auto w-full max-w-2xl">
+    <Container variant="narrow">
       <ContainerHeader className="text-center">
         <ContainerTitle>
           {t("Course ideas for {prompt}", { prompt })}
         </ContainerTitle>
 
-        <Link className={buttonVariants({ variant: "link" })} href="/learn">
-          {t("Change subject")}
+        <Link href="/learn">
+          <ContainerDescription className="text-sm hover:underline">
+            {t("Change subject")}
+          </ContainerDescription>
         </Link>
       </ContainerHeader>
 

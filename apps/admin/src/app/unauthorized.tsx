@@ -1,14 +1,15 @@
 import {
+  Container,
+  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,
-  FullPageContainer,
 } from "@zoonk/ui/components/container";
 import { LogoutButton } from "@/components/logout-button";
 
 export default function Unauthorized() {
   return (
-    <FullPageContainer className="antialiased">
+    <Container variant="centered">
       <ContainerHeader>
         <ContainerTitle>401 - Unauthorized</ContainerTitle>
         <ContainerDescription>
@@ -16,7 +17,9 @@ export default function Unauthorized() {
         </ContainerDescription>
       </ContainerHeader>
 
-      <LogoutButton />
-    </FullPageContainer>
+      <ContainerBody className="justify-end">
+        <LogoutButton />
+      </ContainerBody>
+    </Container>
   );
 }
