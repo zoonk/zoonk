@@ -1,3 +1,3 @@
 export default function OrgHomePage() {
-  return <>test</>;
+  return <div>{}</div>;
 }
