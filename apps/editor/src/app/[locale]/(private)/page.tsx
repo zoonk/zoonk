@@ -8,6 +8,8 @@ import {
 } from "@zoonk/ui/components/container";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ProtectedSection } from "@zoonk/ui/patterns/auth/protected-section";
+import { cacheTagHome } from "@zoonk/utils/cache";
+import { cacheLife, cacheTag } from "next/cache";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import {
@@ -27,6 +29,9 @@ async function HomeView({
 
   const { locale } = await params;
   setRequestLocale(locale);
+
+  cacheLife("max");
+  cacheTag(locale, cacheTagHome());
 
   const t = await getExtracted();
 
