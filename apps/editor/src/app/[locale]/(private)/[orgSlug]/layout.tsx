@@ -2,12 +2,17 @@ import {
   getOrganizationId,
   hasCoursePermission,
 } from "@zoonk/core/organizations";
+import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { notFound, unauthorized } from "next/navigation";
+import { Suspense } from "react";
 
-export default async function OrgHomeLayout({
+async function LayoutPermissions({
   children,
   params,
-}: LayoutProps<"/[locale]/[orgSlug]">) {
+}: {
+  children: React.ReactNode;
+  params: LayoutProps<"/[locale]/[orgSlug]">["params"];
+}) {
   const { orgSlug } = await params;
   const { data: organizationId } = await getOrganizationId(orgSlug);
 
@@ -21,5 +26,16 @@ export default async function OrgHomeLayout({
     return unauthorized();
   }
 
-  return <>{children}</>;
+  return <div>{children}</div>;
+}
+
+export default async function OrgHomeLayout({
+  children,
+  params,
+}: LayoutProps<"/[locale]/[orgSlug]">) {
+  return (
+    <Suspense fallback={<FullPageLoading />}>
+      <LayoutPermissions params={params}>{children}</LayoutPermissions>
+    </Suspense>
+  );
 }

@@ -10,7 +10,12 @@ export function BackButton() {
   const t = useExtracted();
 
   return (
-    <Button onClick={() => back()} size="icon" variant="secondary">
+    <Button
+      className="cursor-pointer"
+      onClick={() => back()}
+      size="icon"
+      variant="secondary"
+    >
       <ChevronLeftIcon />
       <span className="sr-only">{t("Back")}</span>
     </Button>

@@ -2,6 +2,7 @@
 
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { Navbar } from "@zoonk/ui/components/navbar";
+import { cn } from "@zoonk/ui/lib/utils";
 import { HomeIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
@@ -23,18 +24,22 @@ export function EditorNavbar() {
 
   return (
     <Navbar>
-      {!isHome && <BackButton />}
+      <div className="flex items-center gap-2">
+        <BackButton />
 
-      <Link
-        className={buttonVariants({
-          size: "icon",
-          variant: isHome ? "default" : "outline",
-        })}
-        href="/"
-      >
-        <HomeIcon aria-hidden="true" />
-        <span className="sr-only">{t("Home page")}</span>
-      </Link>
+        <Link
+          className={cn(
+            buttonVariants({
+              size: "icon",
+              variant: isHome ? "default" : "secondary",
+            }),
+          )}
+          href="/"
+        >
+          <HomeIcon aria-hidden="true" />
+          <span className="sr-only">{t("Home page")}</span>
+        </Link>
+      </div>
     </Navbar>
   );
 }

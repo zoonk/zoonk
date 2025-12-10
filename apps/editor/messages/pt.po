@@ -82,24 +82,20 @@ msgstr "Digite o código que enviamos para o email {email}:"
 msgid "zx7CKB"
 msgstr "Verifique seu email"
 
-#: src/app/[locale]/(private)/page.tsx
 #: src/app/[locale]/page.tsx
 msgid "AyGauy"
 msgstr "Login"
 
-#: src/app/[locale]/(private)/page.tsx
 #: src/app/[locale]/page.tsx
 #: src/app/page.tsx
 msgid "jflB8q"
 msgstr "Escolha uma organização para gerenciar seus cursos"
 
-#: src/app/[locale]/(private)/page.tsx
 #: src/app/[locale]/page.tsx
 #: src/app/page.tsx
 msgid "MPQ0kS"
 msgstr "Selecione uma organização"
 
-#: src/app/[locale]/(private)/page.tsx
 #: src/app/[locale]/page.tsx
 msgid "yOFm9C"
 msgstr "Você precisa estar logado para acessar esta página."
