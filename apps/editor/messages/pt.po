@@ -7,64 +7,89 @@ msgstr ""
 "X-Crowdin-SourceKey: msgstr\n"
 
 #: src/app/(auth)/layout.tsx
+#: src/app/[locale]/(auth)/layout.tsx
 #: src/components/header.tsx
 #: src/components/navbar.tsx
 msgid "U3l+Q9"
 msgstr "Página inicial"
 
 #: src/app/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "4nOs3z"
 msgstr "eu@minhaorg.com.br"
 
 #: src/app/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "4wpUNc"
 msgstr "Ou"
 
 #: src/app/(auth)/login/page.tsx
 #: src/app/(auth)/otp/otp-form.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/otp/otp-form.tsx
 msgid "acrOoz"
 msgstr "Continuar"
 
 #: src/app/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "SQJto2"
 msgstr "Entrar"
 
 #: src/app/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "sy+pv5"
 msgstr "Email"
 
 #: src/app/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "yFJ+Ej"
 msgstr "Continue com seu email ou conta social"
 
 #: src/app/(auth)/login/social-login.tsx
+#: src/app/[locale]/(auth)/login/social-login.tsx
 msgid "BmecBA"
 msgstr "Continuar com a Apple"
 
 #: src/app/(auth)/login/social-login.tsx
+#: src/app/[locale]/(auth)/login/social-login.tsx
 #: src/app/login/social-login.tsx
 msgid "FJ6r9E"
 msgstr "Continuar com o Google"
 
 #: src/app/(auth)/login/social-login.tsx
+#: src/app/[locale]/(auth)/login/social-login.tsx
 msgid "pN2p0t"
 msgstr "Houve um erro ao entrar. Tente novamente ou entre em contato com contato@zoonk.com"
 
 #: src/app/(auth)/otp/otp-form.tsx
+#: src/app/[locale]/(auth)/otp/otp-form.tsx
 msgid "HkHvQv"
 msgstr "O código que você inseriu está incorreto. Tente novamente ou entre em contato com contato@zoonk.com"
 
 #: src/app/(auth)/otp/page.tsx
+#: src/app/[locale]/(auth)/otp/page.tsx
 msgid "ChATeO"
 msgstr "Mudar email"
 
 #: src/app/(auth)/otp/page.tsx
+#: src/app/[locale]/(auth)/otp/page.tsx
 msgid "LZHcmZ"
 msgstr "Digite o código que enviamos para o email {email}:"
 
 #: src/app/(auth)/otp/page.tsx
+#: src/app/[locale]/(auth)/otp/page.tsx
 msgid "zx7CKB"
 msgstr "Verifique seu email"
+
+#: src/app/[locale]/page.tsx
+#: src/app/page.tsx
+msgid "jflB8q"
+msgstr "Escolha uma organização para gerenciar seus cursos"
+
+#: src/app/[locale]/page.tsx
+#: src/app/page.tsx
+msgid "MPQ0kS"
+msgstr "Selecione uma organização"
 
 #: src/app/login/page.tsx
 msgid "1UEnr3"
@@ -77,14 +102,6 @@ msgstr "Acesse sua conta"
 #: src/app/login/social-login.tsx
 msgid "X02lYY"
 msgstr "Falha no login. Tente novamente."
-
-#: src/app/page.tsx
-msgid "jflB8q"
-msgstr "Escolha uma organização para gerenciar seus cursos"
-
-#: src/app/page.tsx
-msgid "MPQ0kS"
-msgstr "Selecione uma organização"
 
 #: src/app/unauthorized.tsx
 msgid "C81/uG"

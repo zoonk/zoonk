@@ -1,11 +1,11 @@
-import { FullPageLoading } from "@zoonk/ui/components/loading";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { NextIntlClientProvider } from "next-intl";
-import { getLocale } from "next-intl/server";
-import { Suspense } from "react";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
 
 import "@zoonk/ui/globals.css";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
 
 const geistSans = Geist({
   display: "swap",
@@ -27,8 +27,21 @@ export const metadata: Metadata = {
   },
 };
 
-async function LayoutView({ children }: React.ComponentProps<"html">) {
-  const locale = await getLocale();
+export async function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export default async function RootLayout({
+  children,
+  params,
+}: LayoutProps<"/[locale]">) {
+  const { locale } = await params;
+
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
+  setRequestLocale(locale);
 
   return (
     <html lang={locale}>
@@ -38,13 +51,5 @@ async function LayoutView({ children }: React.ComponentProps<"html">) {
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>
-  );
-}
-
-export default async function RootLayout({ children }: LayoutProps<"/">) {
-  return (
-    <Suspense fallback={<FullPageLoading />}>
-      <LayoutView>{children}</LayoutView>
-    </Suspense>
   );
 }

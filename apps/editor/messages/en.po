@@ -7,64 +7,89 @@ msgstr ""
 "X-Crowdin-SourceKey: msgstr\n"
 
 #: src/app/(auth)/layout.tsx
+#: src/app/[locale]/(auth)/layout.tsx
 #: src/components/header.tsx
 #: src/components/navbar.tsx
 msgid "U3l+Q9"
 msgstr "Home page"
 
 #: src/app/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "4nOs3z"
 msgstr "me@myorg.com"
 
 #: src/app/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "4wpUNc"
 msgstr "Or"
 
 #: src/app/(auth)/login/page.tsx
 #: src/app/(auth)/otp/otp-form.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/otp/otp-form.tsx
 msgid "acrOoz"
 msgstr "Continue"
 
 #: src/app/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "SQJto2"
 msgstr "Sign in"
 
 #: src/app/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "sy+pv5"
 msgstr "Email"
 
 #: src/app/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "yFJ+Ej"
 msgstr "Continue with your email or social account"
 
 #: src/app/(auth)/login/social-login.tsx
+#: src/app/[locale]/(auth)/login/social-login.tsx
 msgid "BmecBA"
 msgstr "Continue with Apple"
 
 #: src/app/(auth)/login/social-login.tsx
+#: src/app/[locale]/(auth)/login/social-login.tsx
 #: src/app/login/social-login.tsx
 msgid "FJ6r9E"
 msgstr "Continue with Google"
 
 #: src/app/(auth)/login/social-login.tsx
+#: src/app/[locale]/(auth)/login/social-login.tsx
 msgid "pN2p0t"
 msgstr "There was an error signing you in. Please try again or contact hello@zoonk.com"
 
 #: src/app/(auth)/otp/otp-form.tsx
+#: src/app/[locale]/(auth)/otp/otp-form.tsx
 msgid "HkHvQv"
 msgstr "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
 
 #: src/app/(auth)/otp/page.tsx
+#: src/app/[locale]/(auth)/otp/page.tsx
 msgid "ChATeO"
 msgstr "Change email"
 
 #: src/app/(auth)/otp/page.tsx
+#: src/app/[locale]/(auth)/otp/page.tsx
 msgid "LZHcmZ"
 msgstr "Enter the code we sent to {email}:"
 
 #: src/app/(auth)/otp/page.tsx
+#: src/app/[locale]/(auth)/otp/page.tsx
 msgid "zx7CKB"
 msgstr "Check your email"
+
+#: src/app/[locale]/page.tsx
+#: src/app/page.tsx
+msgid "jflB8q"
+msgstr "Choose an organization to manage its courses"
+
+#: src/app/[locale]/page.tsx
+#: src/app/page.tsx
+msgid "MPQ0kS"
+msgstr "Select an organization"
 
 #: src/app/login/page.tsx
 msgid "1UEnr3"
@@ -77,14 +102,6 @@ msgstr "Access your account"
 #: src/app/login/social-login.tsx
 msgid "X02lYY"
 msgstr "Login failed. Try again."
-
-#: src/app/page.tsx
-msgid "jflB8q"
-msgstr "Choose an organization to manage its courses"
-
-#: src/app/page.tsx
-msgid "MPQ0kS"
-msgstr "Select an organization"
 
 #: src/app/unauthorized.tsx
 msgid "C81/uG"

@@ -7,64 +7,89 @@ msgstr ""
 "X-Crowdin-SourceKey: msgstr\n"
 
 #: src/app/(auth)/layout.tsx
+#: src/app/[locale]/(auth)/layout.tsx
 #: src/components/header.tsx
 #: src/components/navbar.tsx
 msgid "U3l+Q9"
 msgstr "Página de inicio"
 
 #: src/app/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "4nOs3z"
 msgstr "yo@miempresa.com"
 
 #: src/app/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "4wpUNc"
 msgstr "O"
 
 #: src/app/(auth)/login/page.tsx
 #: src/app/(auth)/otp/otp-form.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/otp/otp-form.tsx
 msgid "acrOoz"
 msgstr "Continuar"
 
 #: src/app/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "SQJto2"
 msgstr "Iniciar sesión"
 
 #: src/app/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "sy+pv5"
 msgstr "Correo electrónico"
 
 #: src/app/(auth)/login/page.tsx
+#: src/app/[locale]/(auth)/login/page.tsx
 msgid "yFJ+Ej"
 msgstr "Continúa con tu correo electrónico o cuenta social"
 
 #: src/app/(auth)/login/social-login.tsx
+#: src/app/[locale]/(auth)/login/social-login.tsx
 msgid "BmecBA"
 msgstr "Continuar con Apple"
 
 #: src/app/(auth)/login/social-login.tsx
+#: src/app/[locale]/(auth)/login/social-login.tsx
 #: src/app/login/social-login.tsx
 msgid "FJ6r9E"
 msgstr "Continuar con Google"
 
 #: src/app/(auth)/login/social-login.tsx
+#: src/app/[locale]/(auth)/login/social-login.tsx
 msgid "pN2p0t"
 msgstr "Hubo un error al iniciar sesión. Inténtalo de nuevo o contacta a contacto@zoonk.com"
 
 #: src/app/(auth)/otp/otp-form.tsx
+#: src/app/[locale]/(auth)/otp/otp-form.tsx
 msgid "HkHvQv"
 msgstr "El código que ingresaste es incorrecto. Inténtalo de nuevo o contacta a contacto@zoonk.com"
 
 #: src/app/(auth)/otp/page.tsx
+#: src/app/[locale]/(auth)/otp/page.tsx
 msgid "ChATeO"
 msgstr "Cambiar correo electrónico"
 
 #: src/app/(auth)/otp/page.tsx
+#: src/app/[locale]/(auth)/otp/page.tsx
 msgid "LZHcmZ"
 msgstr "Ingresa el código que enviamos al correo electrónico {email}:"
 
 #: src/app/(auth)/otp/page.tsx
+#: src/app/[locale]/(auth)/otp/page.tsx
 msgid "zx7CKB"
 msgstr "Revisa tu correo electrónico"
+
+#: src/app/[locale]/page.tsx
+#: src/app/page.tsx
+msgid "jflB8q"
+msgstr "Elige una organización para gestionar sus cursos"
+
+#: src/app/[locale]/page.tsx
+#: src/app/page.tsx
+msgid "MPQ0kS"
+msgstr "Selecciona una organización"
 
 #: src/app/login/page.tsx
 msgid "1UEnr3"
@@ -77,14 +102,6 @@ msgstr "Acceda a su cuenta"
 #: src/app/login/social-login.tsx
 msgid "X02lYY"
 msgstr "Error de inicio de sesión. Inténtalo de nuevo."
-
-#: src/app/page.tsx
-msgid "jflB8q"
-msgstr "Elige una organización para gestionar sus cursos"
-
-#: src/app/page.tsx
-msgid "MPQ0kS"
-msgstr "Selecciona una organización"
 
 #: src/app/unauthorized.tsx
 msgid "C81/uG"
