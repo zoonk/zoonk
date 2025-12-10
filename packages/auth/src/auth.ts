@@ -40,7 +40,7 @@ export const baseAuthConfig: BetterAuthOptions = {
     },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
   },
-  trustedOrigins: ["https://appleid.apple.com"],
+  trustedOrigins: ["https://appleid.apple.com", "https://*-zoonk.vercel.app"],
 };
 
 export const baseAuthPlugins = [
