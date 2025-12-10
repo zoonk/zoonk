@@ -10,7 +10,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ProtectedSection } from "@zoonk/ui/patterns/auth/protected-section";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
-import { EditorNavbar } from "@/components/navbar";
 import {
   OrganizationList,
   OrganizationListSkeleton,
@@ -32,20 +31,16 @@ async function HomeView({
   const t = await getExtracted();
 
   return (
-    <>
-      <EditorNavbar active="home" />
+    <Container variant="narrow">
+      <ContainerHeader className="text-center">
+        <ContainerTitle>{t("Select an organization")}</ContainerTitle>
+        <ContainerDescription>
+          {t("Choose an organization to manage its courses")}
+        </ContainerDescription>
+      </ContainerHeader>
 
-      <Container variant="narrow">
-        <ContainerHeader className="text-center">
-          <ContainerTitle>{t("Select an organization")}</ContainerTitle>
-          <ContainerDescription>
-            {t("Choose an organization to manage its courses")}
-          </ContainerDescription>
-        </ContainerHeader>
-
-        {children}
-      </Container>
-    </>
+      {children}
+    </Container>
   );
 }
 

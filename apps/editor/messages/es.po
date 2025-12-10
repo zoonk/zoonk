@@ -8,6 +8,7 @@ msgstr ""
 
 #: src/app/(auth)/layout.tsx
 #: src/app/[locale]/(auth)/layout.tsx
+#: src/app/[locale]/(private)/navbar.tsx
 #: src/components/header.tsx
 #: src/components/navbar.tsx
 msgid "U3l+Q9"
@@ -81,20 +82,24 @@ msgstr "Ingresa el código que enviamos al correo electrónico {email}:"
 msgid "zx7CKB"
 msgstr "Revisa tu correo electrónico"
 
+#: src/app/[locale]/(private)/page.tsx
 #: src/app/[locale]/page.tsx
 msgid "AyGauy"
 msgstr "Iniciar sesión"
 
+#: src/app/[locale]/(private)/page.tsx
 #: src/app/[locale]/page.tsx
 #: src/app/page.tsx
 msgid "jflB8q"
 msgstr "Elige una organización para gestionar sus cursos"
 
+#: src/app/[locale]/(private)/page.tsx
 #: src/app/[locale]/page.tsx
 #: src/app/page.tsx
 msgid "MPQ0kS"
 msgstr "Selecciona una organización"
 
+#: src/app/[locale]/(private)/page.tsx
 #: src/app/[locale]/page.tsx
 msgid "yOFm9C"
 msgstr "Necesitas iniciar sesión para acceder a esta página."
