@@ -3,6 +3,7 @@ import { Navbar } from "@zoonk/ui/components/navbar";
 import { HomeIcon } from "lucide-react";
 import Link from "next/link";
 import { getExtracted } from "next-intl/server";
+import { BackButton } from "./back";
 
 type EditorNavbarProps = React.ComponentProps<"nav"> & {
   active: "home" | "courses";
@@ -18,6 +19,8 @@ export async function EditorNavbar({
 
   return (
     <Navbar {...props}>
+      {active !== "home" && <BackButton />}
+
       <Link
         className={buttonVariants({
           size: "icon",

@@ -1,3 +1,10 @@
+import { EditorNavbar } from "@/components/navbar";
+
 export default function OrgHomePage() {
-  return <div>{}</div>;
+  return (
+    <>
+      <EditorNavbar active="courses" />
+      {}
+    </>
+  );
 }

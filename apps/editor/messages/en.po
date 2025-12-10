@@ -98,6 +98,10 @@ msgstr "401 - Unauthorized"
 msgid "vFidRR"
 msgstr "You can’t edit courses for this organization. Log in with another account or switch to a different organization."
 
+#: src/components/back.tsx
+msgid "cyR7Kh"
+msgstr "Back"
+
 #: src/components/organization-list.tsx
 msgid "p4BgKL"
 msgstr "You're not part of any organization yet"

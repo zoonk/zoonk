@@ -98,6 +98,10 @@ msgstr "401 - No autorizado"
 msgid "vFidRR"
 msgstr "No puedes editar cursos para esta organización. Inicia sesión con otra cuenta o cambia a una organización diferente."
 
+#: src/components/back.tsx
+msgid "cyR7Kh"
+msgstr "Atrás"
+
 #: src/components/organization-list.tsx
 msgid "p4BgKL"
 msgstr "Aún no formas parte de ninguna organización"
