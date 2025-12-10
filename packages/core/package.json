@@ -16,6 +16,7 @@
     "vitest": "4.0.15"
   },
   "exports": {
+    ".": "./src/index.ts",
     "./*": "./src/*.ts"
   },
   "name": "@zoonk/core",

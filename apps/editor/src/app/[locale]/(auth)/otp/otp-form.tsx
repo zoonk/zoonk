@@ -8,9 +8,9 @@ import {
   OTPSubmit,
 } from "@zoonk/ui/patterns/auth/otp";
 import { parseFormField } from "@zoonk/utils/form";
-import { useRouter } from "next/navigation";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { useRouter } from "@/i18n/navigation";
 
 type FormState = "idle" | "pending" | "error";
 

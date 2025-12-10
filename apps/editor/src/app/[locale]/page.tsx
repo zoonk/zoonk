@@ -1,3 +1,5 @@
+import { auth } from "@zoonk/auth";
+import type { Organization } from "@zoonk/core";
 import { getSession } from "@zoonk/core/users";
 import {
   Container,
@@ -5,21 +7,71 @@ import {
   ContainerHeader,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { redirect, unauthorized } from "next/navigation";
-import { getExtracted } from "next-intl/server";
+import { headers } from "next/headers";
+import { unauthorized } from "next/navigation";
+import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { EditorNavbar } from "@/components/navbar";
 import {
   OrganizationList,
   OrganizationListSkeleton,
 } from "@/components/organization-list";
+import { redirect } from "@/i18n/navigation";
 
-export default async function HomePage() {
-  const session = await getSession();
+async function EditorHeader() {
   const t = await getExtracted();
 
+  return (
+    <ContainerHeader className="text-center">
+      <ContainerTitle>{t("Select an organization")}</ContainerTitle>
+      <ContainerDescription>
+        {t("Choose an organization to manage its courses")}
+      </ContainerDescription>
+    </ContainerHeader>
+  );
+}
+
+async function EditorHomeView({
+  locale,
+  organizations,
+}: {
+  locale: string;
+  organizations: Organization[];
+}) {
+  "use cache";
+
+  setRequestLocale(locale);
+
+  return (
+    <Suspense>
+      <EditorNavbar active="home" />
+
+      <Container variant="narrow">
+        <EditorHeader />
+
+        <Suspense fallback={<OrganizationListSkeleton />}>
+          <OrganizationList organizations={organizations} />
+        </Suspense>
+      </Container>
+    </Suspense>
+  );
+}
+
+async function listOrganizations() {
+  return auth.api.listOrganizations({
+    headers: await headers(),
+  });
+}
+
+export default async function HomePage({ params }: PageProps<"/[locale]">) {
+  const { locale } = await params;
+  const [session, organizations] = await Promise.all([
+    getSession(),
+    listOrganizations(),
+  ]);
+
   if (!session) {
-    redirect("/login");
+    return redirect({ href: "/login", locale });
   }
 
   // temporarily restrict access to app admins only
@@ -31,21 +83,8 @@ export default async function HomePage() {
   }
 
   return (
-    <>
-      <EditorNavbar active="home" />
-
-      <Container variant="narrow">
-        <ContainerHeader className="text-center">
-          <ContainerTitle>{t("Select an organization")}</ContainerTitle>
-          <ContainerDescription>
-            {t("Choose an organization to manage its courses")}
-          </ContainerDescription>
-        </ContainerHeader>
-
-        <Suspense fallback={<OrganizationListSkeleton />}>
-          <OrganizationList />
-        </Suspense>
-      </Container>
-    </>
+    <Suspense>
+      <EditorHomeView locale={locale} organizations={organizations as any} />
+    </Suspense>
   );
 }

@@ -1,4 +1,4 @@
-import { auth } from "@zoonk/auth";
+import type { Organization } from "@zoonk/core";
 import {
   Empty,
   EmptyDescription,
@@ -14,9 +14,8 @@ import {
 } from "@zoonk/ui/components/item";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Building2Icon, ChevronRightIcon } from "lucide-react";
-import { headers } from "next/headers";
-import Link from "next/link";
 import { getExtracted } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 
 export function OrganizationListSkeleton() {
   return (
@@ -37,12 +36,12 @@ export function OrganizationListSkeleton() {
   );
 }
 
-export async function OrganizationList() {
+export async function OrganizationList({
+  organizations,
+}: {
+  organizations: Organization[];
+}) {
   const t = await getExtracted();
-
-  const organizations = await auth.api.listOrganizations({
-    headers: await headers(),
-  });
 
   if (!organizations || organizations.length === 0) {
     return (

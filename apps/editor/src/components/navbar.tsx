@@ -1,8 +1,8 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { Navbar } from "@zoonk/ui/components/navbar";
 import { HomeIcon } from "lucide-react";
-import Link from "next/link";
 import { getExtracted } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { BackButton } from "./back";
 
 type EditorNavbarProps = React.ComponentProps<"nav"> & {

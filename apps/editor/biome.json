@@ -5,6 +5,9 @@
     "rules": {
       "nursery": {
         "noJsxLiterals": "error"
+      },
+      "suspicious": {
+        "noExplicitAny": "off"
       }
     }
   }

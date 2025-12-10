@@ -7,7 +7,7 @@ import { notFound, unauthorized } from "next/navigation";
 export default async function OrgHomeLayout({
   children,
   params,
-}: LayoutProps<"/[orgSlug]">) {
+}: LayoutProps<"/[locale]/[orgSlug]">) {
   const { orgSlug } = await params;
   const { data: organizationId } = await getOrganizationId(orgSlug);
 

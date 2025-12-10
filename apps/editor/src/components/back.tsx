@@ -2,8 +2,8 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { ChevronLeftIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useExtracted } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 
 export function BackButton() {
   const { back } = useRouter();

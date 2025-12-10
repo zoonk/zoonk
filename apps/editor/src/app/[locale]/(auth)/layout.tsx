@@ -2,10 +2,18 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { Container } from "@zoonk/ui/components/container";
 import { LoginNav } from "@zoonk/ui/patterns/auth/login";
 import { HomeIcon } from "lucide-react";
-import Link from "next/link";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, setRequestLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 
-export default async function AuthLayout({ children }: LayoutProps<"/">) {
+export default async function AuthLayout({
+  children,
+  params,
+}: LayoutProps<"/[locale]">) {
+  "use cache";
+
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const t = await getExtracted();
 
   return (
