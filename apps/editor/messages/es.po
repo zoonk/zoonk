@@ -82,6 +82,10 @@ msgid "zx7CKB"
 msgstr "Revisa tu correo electrónico"
 
 #: src/app/[locale]/page.tsx
+msgid "AyGauy"
+msgstr "Iniciar sesión"
+
+#: src/app/[locale]/page.tsx
 #: src/app/page.tsx
 msgid "jflB8q"
 msgstr "Elige una organización para gestionar sus cursos"
@@ -90,6 +94,10 @@ msgstr "Elige una organización para gestionar sus cursos"
 #: src/app/page.tsx
 msgid "MPQ0kS"
 msgstr "Selecciona una organización"
+
+#: src/app/[locale]/page.tsx
+msgid "yOFm9C"
+msgstr "Necesitas iniciar sesión para acceder a esta página."
 
 #: src/app/login/page.tsx
 msgid "1UEnr3"

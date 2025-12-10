@@ -1,4 +1,4 @@
-import type { Organization } from "@zoonk/core";
+import type { AuthOrganization } from "@zoonk/core/types";
 import {
   Empty,
   EmptyDescription,
@@ -39,7 +39,7 @@ export function OrganizationListSkeleton() {
 export async function OrganizationList({
   organizations,
 }: {
-  organizations: Organization[];
+  organizations: AuthOrganization[];
 }) {
   const t = await getExtracted();
 
