@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://zoonk.com"),
   title: {
     default: "Zoonk Editor",
-    template: "%s | Zoonk Editor",
+    template: "%s | Editor",
   },
 };
 
