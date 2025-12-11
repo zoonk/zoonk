@@ -4,6 +4,7 @@ import {
   hasCoursePermission,
 } from "@zoonk/core/organizations";
 import { CommandPaletteProvider } from "@zoonk/next/patterns/command";
+import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { headers } from "next/headers";
 import { notFound, unauthorized } from "next/navigation";
 import { Suspense } from "react";
@@ -47,7 +48,7 @@ export default async function OrgHomeLayout({
 }: LayoutProps<"/[locale]/[orgSlug]"> & { commandPalette: React.ReactNode }) {
   return (
     <CommandPaletteProvider>
-      <Suspense>
+      <Suspense fallback={<FullPageLoading />}>
         <LayoutPermissions params={params}>
           <EditorNavbar />
           {commandPalette}
