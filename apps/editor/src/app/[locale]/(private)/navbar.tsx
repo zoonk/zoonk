@@ -28,7 +28,7 @@ export function EditorNavbar() {
           className={cn(
             buttonVariants({
               size: "icon",
-              variant: isHome ? "default" : "secondary",
+              variant: isHome ? "default" : "outline",
             }),
           )}
           href="/"
