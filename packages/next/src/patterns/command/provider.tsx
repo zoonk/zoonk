@@ -2,7 +2,7 @@
 
 import { useKeyboardShortcut } from "@zoonk/ui/hooks/use-keyboard-shortcut";
 import { NuqsAdapter } from "nuqs/adapters/next";
-import { createContext, useContext, useEffect, useMemo } from "react";
+import { createContext, useContext, useEffect } from "react";
 
 type CommandPaletteContextValue = {
   close: () => void;
@@ -68,11 +68,9 @@ export function CommandPaletteProvider({
     }
   }, [searchParamKey, open]);
 
-  const value = useMemo(() => ({ close, isOpen, open }), [isOpen, open, close]);
-
   return (
     <NuqsAdapter>
-      <CommandPaletteContext.Provider value={value}>
+      <CommandPaletteContext.Provider value={{ close, isOpen, open }}>
         {children}
       </CommandPaletteContext.Provider>
     </NuqsAdapter>
