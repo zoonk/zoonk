@@ -7,11 +7,17 @@ import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { NavbarLinks, NavbarLinksSkeleton } from "@/components/navbar-links";
 import { UserAvatarMenu } from "@/components/user-avatar-menu";
+import { CatalogCommandPaletteProvider } from "./command-palette-provider";
+
+type CatalogLayoutProps = LayoutProps<"/[locale]"> & {
+  commandPalette: React.ReactNode;
+};
 
 export default async function CatalogLayout({
   children,
+  commandPalette,
   params,
-}: LayoutProps<"/[locale]">) {
+}: CatalogLayoutProps) {
   const { locale } = await params;
   setRequestLocale(locale);
 
@@ -19,16 +25,20 @@ export default async function CatalogLayout({
   cacheTag(locale, cacheTagCatalog());
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      <Navbar>
-        <Suspense fallback={<NavbarLinksSkeleton />}>
-          <NavbarLinks />
-        </Suspense>
+    <CatalogCommandPaletteProvider>
+      <div className="flex min-h-dvh flex-col">
+        <Navbar>
+          <Suspense fallback={<NavbarLinksSkeleton />}>
+            <NavbarLinks />
+          </Suspense>
 
-        <UserAvatarMenu />
-      </Navbar>
+          <UserAvatarMenu />
+        </Navbar>
 
-      {children}
-    </div>
+        {children}
+      </div>
+
+      {commandPalette}
+    </CatalogCommandPaletteProvider>
   );
 }

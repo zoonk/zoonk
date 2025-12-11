@@ -4,6 +4,7 @@
     "@tabler/icons-react": "3.35.0",
     "@zoonk/auth": "workspace:*",
     "@zoonk/core": "workspace:*",
+    "@zoonk/next": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "lucide-react": "0.556.0",
