@@ -21,12 +21,12 @@ type CommandPaletteDialogProps = {
 
 export function CommandPaletteDialog({ children }: CommandPaletteDialogProps) {
   const { push } = useRouter();
-  const params = useParams();
+  const params = useParams<{ orgSlug: string }>();
   const t = useExtracted();
   const { isOpen, close } = useCommandPalette();
   const [query, setQuery] = useQueryState("q", { shallow: false });
 
-  const orgSlug = params.orgSlug as string;
+  const orgSlug = params.orgSlug;
 
   const closePalette = () => {
     close();
