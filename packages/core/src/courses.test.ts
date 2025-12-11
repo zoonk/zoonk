@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { describe, expect, test } from "vitest";
 import { organizationFixture } from "@/fixtures/organizations";
@@ -13,7 +14,7 @@ describe("listOrganizationCourses()", () => {
         imageUrl: "https://example.com/image.jpg",
         language: "en",
         organizationId: organization.id,
-        slug: `test-course-${Date.now()}`,
+        slug: `test-course-${randomUUID()}`,
         title: "Test Course",
       },
     });
@@ -35,7 +36,7 @@ describe("listOrganizationCourses()", () => {
           imageUrl: "https://example.com/image.jpg",
           language: "en",
           organizationId: organization.id,
-          slug: `english-course-${Date.now()}`,
+          slug: `english-course-${randomUUID()}`,
           title: "English Course",
         },
         {
@@ -43,7 +44,7 @@ describe("listOrganizationCourses()", () => {
           imageUrl: "https://example.com/image.jpg",
           language: "pt",
           organizationId: organization.id,
-          slug: `portuguese-course-${Date.now()}`,
+          slug: `portuguese-course-${randomUUID()}`,
           title: "Portuguese Course",
         },
       ],
@@ -67,7 +68,7 @@ describe("listOrganizationCourses()", () => {
         imageUrl: "https://example.com/image.jpg",
         language: "en",
         organizationId: organization.id,
-        slug: `test-course-${Date.now()}-${i}`,
+        slug: `test-course-${randomUUID()}-${i}`,
         title: `Test Course ${i}`,
       })),
     });
@@ -90,7 +91,7 @@ describe("listOrganizationCourses()", () => {
         imageUrl: "https://example.com/image.jpg",
         language: "en",
         organizationId: organization.id,
-        slug: `test-course-${Date.now()}-${i}`,
+        slug: `test-course-${randomUUID()}-${i}`,
         title: `Test Course ${i}`,
       })),
     });
@@ -111,7 +112,7 @@ describe("listOrganizationCourses()", () => {
         imageUrl: "https://example.com/image.jpg",
         language: "en",
         organizationId: organization.id,
-        slug: `old-course-${Date.now()}`,
+        slug: `old-course-${randomUUID()}`,
         title: "Old Course",
       },
     });
@@ -123,7 +124,7 @@ describe("listOrganizationCourses()", () => {
         imageUrl: "https://example.com/image.jpg",
         language: "en",
         organizationId: organization.id,
-        slug: `new-course-${Date.now()}`,
+        slug: `new-course-${randomUUID()}`,
         title: "New Course",
       },
     });

@@ -1,17 +1,16 @@
+import { randomUUID } from "node:crypto";
 import { type Member, type Organization, prisma } from "@zoonk/db";
 import { userFixture } from "./users";
 
 export function organizationAttrs(
   attrs?: Partial<Organization>,
 ): Omit<Organization, "id" | "createdAt" | "updatedAt"> {
-  const timestamp = Date.now();
-
   return {
     kind: "brand",
     logo: null,
     metadata: null,
     name: "Test Organization",
-    slug: `test-org-${timestamp}`,
+    slug: `test-org-${randomUUID()}`,
     ...attrs,
   };
 }

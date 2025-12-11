@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { auth } from "@zoonk/auth/testing";
 
 type UserAttrs = {
@@ -9,7 +10,7 @@ type UserAttrs = {
 
 export function userAttrs(attrs?: Partial<UserAttrs>): UserAttrs {
   return {
-    email: attrs?.email || `testuser${Date.now()}@example.test`,
+    email: attrs?.email || `testuser${randomUUID()}@example.test`,
     name: attrs?.name || "Test User",
     password: attrs?.password || "Testuser123!",
     role: attrs?.role || "user",

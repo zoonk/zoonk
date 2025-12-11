@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import * as courseSuggestions from "@zoonk/ai/course-suggestions";
 import { describe, expect, test, vi } from "vitest";
 import {
@@ -28,7 +29,7 @@ describe("getCourseSuggestions()", () => {
     const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
 
     const locale = "en";
-    const prompt = `vitest-${Date.now()}`;
+    const prompt = `vitest-${randomUUID()}`;
 
     const generatedSuggestions = [
       { description: "A course on Vitest basics.", title: "Vitest" },
