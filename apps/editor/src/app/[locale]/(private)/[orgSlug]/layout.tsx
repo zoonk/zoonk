@@ -6,6 +6,7 @@ import {
 import { headers } from "next/headers";
 import { notFound, unauthorized } from "next/navigation";
 import { Suspense } from "react";
+import { CommandPaletteProvider } from "./command-palette-provider";
 import { EditorNavbar } from "./navbar";
 
 async function LayoutPermissions({
@@ -41,15 +42,18 @@ async function LayoutPermissions({
 
 export default async function OrgHomeLayout({
   children,
+  commandPalette,
   params,
-}: LayoutProps<"/[locale]/[orgSlug]">) {
+}: LayoutProps<"/[locale]/[orgSlug]"> & { commandPalette: React.ReactNode }) {
   return (
-    <Suspense>
-      <LayoutPermissions params={params}>
-        <EditorNavbar />
-
-        {children}
-      </LayoutPermissions>
-    </Suspense>
+    <CommandPaletteProvider>
+      <Suspense>
+        <LayoutPermissions params={params}>
+          <EditorNavbar />
+          {commandPalette}
+          {children}
+        </LayoutPermissions>
+      </Suspense>
+    </CommandPaletteProvider>
   );
 }
