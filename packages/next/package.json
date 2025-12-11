@@ -8,7 +8,7 @@
     "typescript": "^5"
   },
   "exports": {
-    "./patterns/command": "./src/patterns/command/index.ts",
+    "./patterns/command": "./src/patterns/command/index.tsx",
     "./patterns/command/*": "./src/patterns/command/*.tsx"
   },
   "name": "@zoonk/next",
