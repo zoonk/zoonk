@@ -6,13 +6,7 @@ import { useParams } from "next/navigation";
 import { useExtracted } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 
-type EditorCommandPaletteDialogProps = {
-  children: React.ReactNode;
-};
-
-export function CommandPaletteDialog({
-  children,
-}: EditorCommandPaletteDialogProps) {
+export function CommandPaletteDialog({ children }: React.PropsWithChildren) {
   const { push } = useRouter();
   const params = useParams<{ orgSlug: string }>();
   const t = useExtracted();
