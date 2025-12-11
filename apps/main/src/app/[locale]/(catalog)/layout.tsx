@@ -5,19 +5,17 @@ import { Navbar } from "@zoonk/ui/components/navbar";
 import { cacheTagCatalog } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
-import { Fragment, Suspense } from "react";
+import { Suspense } from "react";
 import { NavbarLinks, NavbarLinksSkeleton } from "@/components/navbar-links";
 import { UserAvatarMenu } from "@/components/user-avatar-menu";
-
-type CatalogLayoutProps = LayoutProps<"/[locale]"> & {
-  commandPalette: React.ReactNode;
-};
 
 export default async function CatalogLayout({
   children,
   commandPalette,
   params,
-}: CatalogLayoutProps) {
+}: LayoutProps<"/[locale]"> & {
+  commandPalette: React.ReactNode;
+}) {
   const { locale } = await params;
   setRequestLocale(locale);
 
@@ -26,23 +24,19 @@ export default async function CatalogLayout({
 
   return (
     <CommandPaletteProvider>
-      <Fragment key="main-content">
-        <div className="flex min-h-dvh flex-col">
-          <Navbar>
-            <Suspense fallback={<NavbarLinksSkeleton />}>
-              <NavbarLinks />
-            </Suspense>
+      <div className="flex min-h-dvh flex-col">
+        <Navbar>
+          <Suspense fallback={<NavbarLinksSkeleton />}>
+            <NavbarLinks />
+          </Suspense>
 
-            <UserAvatarMenu />
-          </Navbar>
+          <UserAvatarMenu />
+        </Navbar>
 
-          {children}
-        </div>
-      </Fragment>
+        {children}
+      </div>
 
-      <Suspense fallback={null} key="command-palette">
-        {commandPalette}
-      </Suspense>
+      <Suspense>{commandPalette}</Suspense>
     </CommandPaletteProvider>
   );
 }
