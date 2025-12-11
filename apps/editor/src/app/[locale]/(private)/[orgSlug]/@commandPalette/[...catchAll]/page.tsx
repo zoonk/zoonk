@@ -2,8 +2,8 @@ import { Suspense } from "react";
 import {
   CommandPaletteCourses,
   CommandPaletteCoursesSkeleton,
-} from "../../command-palette-courses";
-import { CommandPaletteDialog } from "../../command-palette-dialog";
+} from "../command-palette-courses";
+import { CommandPaletteDialog } from "../command-palette-dialog";
 
 type CommandPaletteCatchAllProps = {
   params: Promise<{ orgSlug: string }>;

@@ -1,5 +1,6 @@
 "use client";
 
+import { CommandPaletteTrigger } from "@zoonk/next/patterns/command-palette/command-palette-trigger";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { Navbar } from "@zoonk/ui/components/navbar";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -7,7 +8,6 @@ import { HomeIcon } from "lucide-react";
 import { useSelectedLayoutSegments } from "next/navigation";
 import { useExtracted } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { CommandPaletteTrigger } from "./command-palette-provider";
 
 export function EditorNavbar() {
   const t = useExtracted();
@@ -31,7 +31,7 @@ export function EditorNavbar() {
           <span className="sr-only">{t("Home page")}</span>
         </Link>
 
-        <CommandPaletteTrigger />
+        <CommandPaletteTrigger label={t("Search")} />
       </div>
     </Navbar>
   );
