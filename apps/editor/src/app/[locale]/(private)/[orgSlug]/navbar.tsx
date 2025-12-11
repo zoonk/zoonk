@@ -4,22 +4,15 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { Navbar } from "@zoonk/ui/components/navbar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { HomeIcon } from "lucide-react";
+import { useSelectedLayoutSegments } from "next/navigation";
 import { useExtracted } from "next-intl";
-import { Link, usePathname } from "@/i18n/navigation";
-
-function getPage(pathname: string) {
-  if (pathname === "/") {
-    return "home";
-  }
-
-  return "other";
-}
+import { Link } from "@/i18n/navigation";
 
 export function EditorNavbar() {
-  const pathname = usePathname();
   const t = useExtracted();
 
-  const isHome = getPage(pathname) === "home";
+  const segments = useSelectedLayoutSegments();
+  const isHome = segments.length === 0;
 
   return (
     <Navbar>
