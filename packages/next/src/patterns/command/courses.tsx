@@ -21,10 +21,12 @@ export async function CommandPaletteCourses({
     return null;
   }
 
-  const { data: courses } = await searchCourses({
+  const { data: courses, error } = await searchCourses({
     orgSlug,
     title: query,
   });
+
+  console.error("Failed to search courses:", error);
 
   if (!courses || courses.length === 0) {
     return null;
