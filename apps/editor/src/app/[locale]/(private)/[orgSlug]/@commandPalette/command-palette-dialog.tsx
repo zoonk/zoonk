@@ -1,6 +1,6 @@
 "use client";
 
-import { CommandPaletteDialog as Dialog } from "@zoonk/next/patterns/command-palette/command-palette-dialog";
+import { CommandPaletteDialog as Dialog } from "@zoonk/next/patterns/command";
 import { HomeIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useExtracted } from "next-intl";

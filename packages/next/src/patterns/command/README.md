@@ -53,7 +53,7 @@ The key benefit: **parallel routes receive `searchParams`**, even though layouts
 Context provider that manages open/close state and keyboard shortcuts.
 
 ```tsx
-import { CommandPaletteProvider } from "@zoonk/next/patterns/command-palette/command-palette-provider";
+import { CommandPaletteProvider } from "@zoonk/next/patterns/command";
 
 function Layout({ children }) {
   return <CommandPaletteProvider>{children}</CommandPaletteProvider>;
@@ -72,7 +72,7 @@ The provider also wraps children with `NuqsAdapter` for URL state management.
 Hook to access command palette state.
 
 ```tsx
-import { useCommandPalette } from "@zoonk/next/patterns/command-palette/command-palette-provider";
+import { useCommandPalette } from "@zoonk/next/patterns/command";
 
 function MyComponent() {
   const { isOpen, open, close } = useCommandPalette();
@@ -85,7 +85,7 @@ function MyComponent() {
 Button to open the command palette.
 
 ```tsx
-import { CommandPaletteTrigger } from "@zoonk/next/patterns/command-palette/command-palette-trigger";
+import { CommandPaletteTrigger } from "@zoonk/next/patterns/command";
 
 function Navbar() {
   return <CommandPaletteTrigger label="Search" />;
@@ -101,7 +101,7 @@ function Navbar() {
 Search input that syncs with URL query parameters.
 
 ```tsx
-import { CommandPaletteSearch } from "@zoonk/next/patterns/command-palette/command-palette-search";
+import { CommandPaletteSearch } from "@zoonk/next/patterns/command";
 
 function MyDialog() {
   return <CommandPaletteSearch placeholder="Search..." queryParam="q" />;
@@ -119,7 +119,7 @@ function MyDialog() {
 Complete dialog with search input, static pages filtering, and slots for server-fetched results.
 
 ```tsx
-import { CommandPaletteDialog } from "@zoonk/next/patterns/command-palette/command-palette-dialog";
+import { CommandPaletteDialog } from "@zoonk/next/patterns/command";
 import { HomeIcon, SettingsIcon } from "lucide-react";
 
 function MyPalette({ children }) {
@@ -184,7 +184,7 @@ app/
 // command-palette-provider.tsx
 "use client";
 
-import { CommandPaletteProvider } from "@zoonk/next/patterns/command-palette/command-palette-provider";
+import { CommandPaletteProvider } from "@zoonk/next/patterns/command";
 
 export function MyCommandPaletteProvider({
   children,
@@ -201,7 +201,7 @@ export function MyCommandPaletteProvider({
 // command-palette-trigger.tsx
 "use client";
 
-import { CommandPaletteTrigger } from "@zoonk/next/patterns/command-palette/command-palette-trigger";
+import { CommandPaletteTrigger } from "@zoonk/next/patterns/command";
 import { useTranslations } from "next-intl";
 
 export function MyCommandPaletteTrigger() {
@@ -216,7 +216,7 @@ export function MyCommandPaletteTrigger() {
 // command-palette-dialog.tsx
 "use client";
 
-import { CommandPaletteDialog } from "@zoonk/next/patterns/command-palette/command-palette-dialog";
+import { CommandPaletteDialog } from "@zoonk/next/patterns/command";
 import { HomeIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";

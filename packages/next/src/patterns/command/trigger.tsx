@@ -2,7 +2,7 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { Search } from "lucide-react";
-import { useCommandPalette } from "./command-palette-provider";
+import { useCommandPalette } from "./provider";
 
 type CommandPaletteTriggerProps = {
   /**

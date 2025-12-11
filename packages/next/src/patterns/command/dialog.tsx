@@ -9,8 +9,8 @@ import {
 } from "@zoonk/ui/components/command";
 import type { LucideIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
-import { useCommandPalette } from "./command-palette-provider";
-import { CommandPaletteSearch } from "./command-palette-search";
+import { useCommandPalette } from "./provider";
+import { CommandPaletteSearch } from "./search";
 
 /**
  * A static page item that can be displayed in the command palette.

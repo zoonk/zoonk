@@ -3,7 +3,7 @@ import {
   getOrganizationBySlug,
   hasCoursePermission,
 } from "@zoonk/core/organizations";
-import { CommandPaletteProvider } from "@zoonk/next/patterns/command-palette/command-palette-provider";
+import { CommandPaletteProvider } from "@zoonk/next/patterns/command";
 import { headers } from "next/headers";
 import { notFound, unauthorized } from "next/navigation";
 import { Suspense } from "react";

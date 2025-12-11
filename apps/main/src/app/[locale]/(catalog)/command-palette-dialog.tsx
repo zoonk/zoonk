@@ -4,7 +4,7 @@ import { useLogout } from "@zoonk/auth/hooks/logout";
 import {
   type CommandPaletteStaticPage,
   CommandPaletteDialog as Dialog,
-} from "@zoonk/next/patterns/command-palette/command-palette-dialog";
+} from "@zoonk/next/patterns/command";
 import {
   Brain,
   Gem,

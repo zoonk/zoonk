@@ -1,7 +1,7 @@
 import {
   CommandPaletteCourses,
   CommandPaletteCoursesSkeleton,
-} from "@zoonk/next/patterns/command-palette";
+} from "@zoonk/next/patterns/command/courses";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { CatalogCommandPaletteDialog } from "../command-palette-dialog";

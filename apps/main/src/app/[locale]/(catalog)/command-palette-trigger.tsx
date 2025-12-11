@@ -1,6 +1,6 @@
 "use client";
 
-import { CommandPaletteTrigger as TriggerBase } from "@zoonk/next/patterns/command-palette/command-palette-trigger";
+import { CommandPaletteTrigger as TriggerBase } from "@zoonk/next/patterns/command";
 import { useExtracted } from "next-intl";
 
 /**

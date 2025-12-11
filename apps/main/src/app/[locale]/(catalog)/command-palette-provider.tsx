@@ -1,6 +1,6 @@
 "use client";
 
-import { CommandPaletteProvider } from "@zoonk/next/patterns/command-palette/command-palette-provider";
+import { CommandPaletteProvider } from "@zoonk/next/patterns/command";
 
 export function CatalogCommandPaletteProvider({
   children,

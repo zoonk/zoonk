@@ -8,6 +8,7 @@ msgstr ""
 
 #: src/app/(auth)/layout.tsx
 #: src/app/[locale]/(auth)/layout.tsx
+#: src/app/[locale]/(private)/[orgSlug]/@commandPalette/command-palette-dialog.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette-dialog.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command/command-palette-dialog.tsx
@@ -86,21 +87,14 @@ msgstr "Enter the code we sent to {email}:"
 msgid "zx7CKB"
 msgstr "Check your email"
 
-#: src/app/[locale]/(private)/[orgSlug]/@commandPalette/command-palette-courses.tsx
-#: src/app/[locale]/(private)/[orgSlug]/@commandPalette/page.tsx
-#: src/app/[locale]/(private)/[orgSlug]/command-palette-courses.tsx
-#: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
-#: src/app/[locale]/(private)/[orgSlug]/command/command-palette-courses.tsx
-#: src/app/[locale]/(private)/[orgSlug]/page.tsx
-msgid "R85gsW"
-msgstr "Courses"
-
+#: src/app/[locale]/(private)/[orgSlug]/@commandPalette/command-palette-dialog.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette-dialog.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command/command-palette-dialog.tsx
 msgid "CxfKLC"
 msgstr "Pages"
 
+#: src/app/[locale]/(private)/[orgSlug]/@commandPalette/command-palette-dialog.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette-dialog.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette-search.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
@@ -108,18 +102,21 @@ msgstr "Pages"
 msgid "HC7Mi4"
 msgstr "Search courses or pages..."
 
+#: src/app/[locale]/(private)/[orgSlug]/@commandPalette/command-palette-dialog.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette-dialog.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command/command-palette-dialog.tsx
 msgid "hX5PAb"
 msgstr "No results found"
 
+#: src/app/[locale]/(private)/[orgSlug]/@commandPalette/command-palette-dialog.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette-dialog.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command/command-palette-dialog.tsx
 msgid "NjD8y3"
 msgstr "Close search"
 
+#: src/app/[locale]/(private)/[orgSlug]/@commandPalette/command-palette-dialog.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette-dialog.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette-provider.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
@@ -127,6 +124,13 @@ msgstr "Close search"
 #: src/app/[locale]/(private)/[orgSlug]/navbar.tsx
 msgid "xmcVZ0"
 msgstr "Search"
+
+#: src/app/[locale]/(private)/[orgSlug]/command-palette-courses.tsx
+#: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
+#: src/app/[locale]/(private)/[orgSlug]/command/command-palette-courses.tsx
+#: src/app/[locale]/(private)/[orgSlug]/page.tsx
+msgid "R85gsW"
+msgstr "Courses"
 
 #: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
 msgid "NNQzoi"

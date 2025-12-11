@@ -1,6 +1,6 @@
 "use client";
 
-import { CommandPaletteTrigger } from "@zoonk/next/patterns/command-palette/command-palette-trigger";
+import { CommandPaletteTrigger } from "@zoonk/next/patterns/command";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { Navbar } from "@zoonk/ui/components/navbar";
 import { cn } from "@zoonk/ui/lib/utils";
