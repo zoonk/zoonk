@@ -22,6 +22,9 @@ import {
 import { useExtracted } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 
+// Special marker for logout action
+const LOGOUT_ACTION_URL = "__logout__";
+
 export function CatalogCommandPaletteDialog({
   children,
 }: React.PropsWithChildren) {
@@ -46,6 +49,7 @@ export function CatalogCommandPaletteDialog({
     { icon: Settings, label: t("Manage settings"), url: "/settings" },
     { icon: Languages, label: t("Update language"), url: "/language" },
     { icon: IdCardLanyard, label: t("Update display name"), url: "/name" },
+    { icon: LogOut, label: t("Logout"), url: LOGOUT_ACTION_URL },
   ];
 
   const contactUsPages: CommandPaletteStaticPage[] = [
@@ -61,17 +65,8 @@ export function CatalogCommandPaletteDialog({
     ...contactUsPages,
   ];
 
-  // Add logout as a custom action if logged in
-  if (isLoggedIn) {
-    allStaticPages.push({
-      icon: LogOut,
-      label: t("Logout"),
-      url: "__logout__", // Special marker for logout action
-    });
-  }
-
   const handleSelect = (url: string) => {
-    if (url === "__logout__") {
+    if (url === LOGOUT_ACTION_URL) {
       logout();
     } else {
       push(url);
