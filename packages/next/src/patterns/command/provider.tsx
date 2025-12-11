@@ -2,7 +2,7 @@
 
 import { useKeyboardShortcut } from "@zoonk/ui/hooks/use-keyboard-shortcut";
 import { NuqsAdapter } from "nuqs/adapters/next";
-import { createContext, useContext, useEffect } from "react";
+import { createContext, useContext, useEffect, useEffectEvent } from "react";
 
 type CommandPaletteContextValue = {
   close: () => void;
@@ -57,6 +57,10 @@ export function CommandPaletteProvider({
 }: CommandPaletteProviderProps) {
   const { close, isOpen, open } = useKeyboardShortcut(shortcutKey);
 
+  const onOpen = useEffectEvent(() => {
+    open();
+  });
+
   // Open automatically if URL has non-empty search param on mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -64,9 +68,9 @@ export function CommandPaletteProvider({
     const hasQuery = Boolean(query?.trim());
 
     if (hasQuery) {
-      open();
+      onOpen();
     }
-  }, [searchParamKey, open]);
+  }, [searchParamKey]);
 
   return (
     <NuqsAdapter>
