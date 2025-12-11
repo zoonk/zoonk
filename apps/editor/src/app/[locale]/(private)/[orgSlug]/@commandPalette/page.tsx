@@ -2,6 +2,7 @@ import {
   CommandPaletteCourses,
   CommandPaletteCoursesSkeleton,
 } from "@zoonk/next/patterns/command/courses";
+import { safeParams } from "@zoonk/utils/params";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { CommandPaletteDialog } from "./command-palette-dialog";
@@ -17,7 +18,7 @@ export default async function CommandPalettePage({
 }: CommandPalettePageProps) {
   const { orgSlug } = await params;
   const search = await searchParams;
-  const query = Array.isArray(search.q) ? search.q[0] : search.q;
+  const query = safeParams(search.q);
   const t = await getExtracted();
 
   return (

@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
+import { safeParams } from "@zoonk/utils/params";
 import { cacheLife } from "next/cache";
 import { headers } from "next/headers";
 import { UserPagination } from "./user-pagination";
@@ -25,10 +26,7 @@ export default async function UserList({ searchParams }: UserListProps) {
   const page = Number(params.page) || 1;
   const limit = Number(params.limit) || DEFAULT_PAGE_SIZE;
   const offset = (page - 1) * limit;
-
-  const search = Array.isArray(params.search)
-    ? params.search[0]
-    : params.search;
+  const search = safeParams(params.search);
 
   const result = await auth.api.listUsers({
     headers: await headers(),
