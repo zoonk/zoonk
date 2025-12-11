@@ -8,10 +8,8 @@ import { useRouter } from "@/i18n/navigation";
 
 export function CommandPaletteDialog({ children }: React.PropsWithChildren) {
   const { push } = useRouter();
-  const params = useParams<{ orgSlug: string }>();
+  const { orgSlug } = useParams<{ orgSlug: string }>();
   const t = useExtracted();
-
-  const orgSlug = params.orgSlug;
 
   const staticPages = [
     {
