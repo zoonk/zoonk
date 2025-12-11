@@ -1,12 +1,5 @@
 import type { Course } from "@zoonk/core/types";
 import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@zoonk/ui/components/empty";
-import {
   Item,
   ItemContent,
   ItemDescription,
@@ -15,6 +8,7 @@ import {
   ItemTitle,
 } from "@zoonk/ui/components/item";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { EmptyView } from "@zoonk/ui/patterns/empty";
 import { ChevronRightIcon, NotebookPenIcon } from "lucide-react";
 import Image from "next/image";
 import { getExtracted } from "next-intl/server";
@@ -56,17 +50,11 @@ export async function CourseList({ orgSlug, courses }: CourseListProps) {
 
   if (courses.length === 0) {
     return (
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <NotebookPenIcon />
-          </EmptyMedia>
-          <EmptyTitle>{t("No courses")}</EmptyTitle>
-          <EmptyDescription>
-            {t("Your organization hasn't created any courses yet.")}
-          </EmptyDescription>
-        </EmptyHeader>
-      </Empty>
+      <EmptyView
+        description={t("Your organization hasn't created any courses yet.")}
+        icon={NotebookPenIcon}
+        title={t("No courses")}
+      />
     );
   }
 

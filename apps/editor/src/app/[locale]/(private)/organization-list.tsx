@@ -1,18 +1,12 @@
 import type { AuthOrganization } from "@zoonk/core/types";
 import {
-  Empty,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyMedia,
-  EmptyTitle,
-} from "@zoonk/ui/components/empty";
-import {
   Item,
   ItemContent,
   ItemGroup,
   ItemTitle,
 } from "@zoonk/ui/components/item";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { EmptyView } from "@zoonk/ui/patterns/empty";
 import { Building2Icon, ChevronRightIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -45,17 +39,11 @@ export async function OrganizationList({
 
   if (organizations.length === 0) {
     return (
-      <Empty>
-        <EmptyHeader>
-          <EmptyMedia variant="icon">
-            <Building2Icon />
-          </EmptyMedia>
-          <EmptyTitle>{t("No organizations")}</EmptyTitle>
-          <EmptyDescription>
-            {t("You're not part of any organization yet")}
-          </EmptyDescription>
-        </EmptyHeader>
-      </Empty>
+      <EmptyView
+        description={t("You're not part of any organization yet")}
+        icon={Building2Icon}
+        title={t("No organizations")}
+      />
     );
   }
 
