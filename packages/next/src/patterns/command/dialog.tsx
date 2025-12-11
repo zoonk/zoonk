@@ -97,6 +97,9 @@ type CommandPaletteDialogProps = {
  * The main command palette dialog.
  * Handles opening/closing, search input, filtering static pages,
  * and rendering children (typically server-fetched results).
+ *
+ * @remarks
+ * Must be used within CommandPaletteProvider to access the required context.
  */
 export function CommandPaletteDialog({
   children,
