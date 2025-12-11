@@ -82,6 +82,22 @@ msgstr "Digite o código que enviamos para o email {email}:"
 msgid "zx7CKB"
 msgstr "Verifique seu email"
 
+#: src/app/[locale]/(private)/[orgSlug]/course-list.tsx
+msgid "c0YWuA"
+msgstr "Sua organização ainda não criou nenhum curso."
+
+#: src/app/[locale]/(private)/[orgSlug]/course-list.tsx
+msgid "zJxO2f"
+msgstr "Sem cursos"
+
+#: src/app/[locale]/(private)/[orgSlug]/page.tsx
+msgid "6gzGoI"
+msgstr "Selecione um curso para editar seu conteúdo"
+
+#: src/app/[locale]/(private)/[orgSlug]/page.tsx
+msgid "R85gsW"
+msgstr "Cursos"
+
 #: src/app/[locale]/(private)/organization-list.tsx
 #: src/components/organization-list.tsx
 msgid "p4BgKL"

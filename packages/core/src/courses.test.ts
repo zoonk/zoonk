@@ -1,14 +1,11 @@
 import { prisma } from "@zoonk/db";
-import { PERMISSION_ERROR_CODE } from "@zoonk/utils/error";
 import { describe, expect, test } from "vitest";
-import { signInAs } from "@/fixtures/auth";
-import { courseFixture } from "@/fixtures/courses";
-import { memberFixture } from "@/fixtures/organizations";
+import { organizationFixture } from "@/fixtures/organizations";
 import { LIST_COURSES_LIMIT, listOrganizationCourses } from "./courses";
 
 describe("listOrganizationCourses()", () => {
-  test("returns courses for users with admin role", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
+  test("returns list of courses for an org", async () => {
+    const organization = await organizationFixture();
 
     const course = await prisma.course.create({
       data: {
@@ -21,70 +18,15 @@ describe("listOrganizationCourses()", () => {
       },
     });
 
-    const headers = await signInAs(user.email, user.password);
-    const result = await listOrganizationCourses(organization.id, { headers });
+    const result = await listOrganizationCourses(organization.id);
 
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(1);
     expect(result.data[0]?.id).toBe(course.id);
-  });
-
-  test("returns courses for users with owner role", async () => {
-    const { organization, user } = await memberFixture({ role: "owner" });
-
-    const course = await prisma.course.create({
-      data: {
-        description: "Test description",
-        imageUrl: "https://example.com/image.jpg",
-        language: "en",
-        organizationId: organization.id,
-        slug: `test-course-${Date.now()}`,
-        title: "Test Course",
-      },
-    });
-
-    const headers = await signInAs(user.email, user.password);
-    const result = await listOrganizationCourses(organization.id, { headers });
-
-    expect(result.error).toBeNull();
-    expect(result.data).toHaveLength(1);
-    expect(result.data[0]?.id).toBe(course.id);
-  });
-
-  test("returns empty array for users with member role", async () => {
-    const { organization, user } = await memberFixture({ role: "member" });
-
-    await prisma.course.create({
-      data: {
-        description: "Test description",
-        imageUrl: "https://example.com/image.jpg",
-        language: "en",
-        organizationId: organization.id,
-        slug: `test-course-${Date.now()}`,
-        title: "Test Course",
-      },
-    });
-
-    const headers = await signInAs(user.email, user.password);
-    const result = await listOrganizationCourses(organization.id, { headers });
-
-    expect(result.data).toEqual([]);
-    expect(result.error?.cause).toBe(PERMISSION_ERROR_CODE);
-  });
-
-  test("returns empty array for unauthenticated users", async () => {
-    const { organization } = await courseFixture();
-
-    const result = await listOrganizationCourses(organization.id, {
-      headers: new Headers(),
-    });
-
-    expect(result.data).toEqual([]);
-    expect(result.error?.cause).toBe(PERMISSION_ERROR_CODE);
   });
 
   test("filters courses by language", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
+    const organization = await organizationFixture();
 
     await prisma.course.createMany({
       data: [
@@ -107,9 +49,7 @@ describe("listOrganizationCourses()", () => {
       ],
     });
 
-    const headers = await signInAs(user.email, user.password);
     const result = await listOrganizationCourses(organization.id, {
-      headers,
       language: "en",
     });
 
@@ -119,7 +59,7 @@ describe("listOrganizationCourses()", () => {
   });
 
   test("limits results to the specified amount", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
+    const organization = await organizationFixture();
 
     await prisma.course.createMany({
       data: Array.from({ length: 5 }, (_, i) => ({
@@ -133,9 +73,7 @@ describe("listOrganizationCourses()", () => {
     });
 
     const customLimit = 3;
-    const headers = await signInAs(user.email, user.password);
     const result = await listOrganizationCourses(organization.id, {
-      headers,
       limit: customLimit,
     });
 
@@ -144,7 +82,7 @@ describe("listOrganizationCourses()", () => {
   });
 
   test("uses default limit of 20", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
+    const organization = await organizationFixture();
 
     await prisma.course.createMany({
       data: Array.from({ length: 25 }, (_, i) => ({
@@ -157,15 +95,14 @@ describe("listOrganizationCourses()", () => {
       })),
     });
 
-    const headers = await signInAs(user.email, user.password);
-    const result = await listOrganizationCourses(organization.id, { headers });
+    const result = await listOrganizationCourses(organization.id);
 
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(LIST_COURSES_LIMIT);
   });
 
   test("returns courses ordered by createdAt descending", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
+    const organization = await organizationFixture();
 
     const oldCourse = await prisma.course.create({
       data: {
@@ -191,8 +128,7 @@ describe("listOrganizationCourses()", () => {
       },
     });
 
-    const headers = await signInAs(user.email, user.password);
-    const result = await listOrganizationCourses(organization.id, { headers });
+    const result = await listOrganizationCourses(organization.id);
 
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(2);

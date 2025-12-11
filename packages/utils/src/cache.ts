@@ -52,6 +52,14 @@ export function cacheTagPrivacy() {
   return "privacy";
 }
 
+export function cacheTagOrg({ orgSlug }: { orgSlug: string }) {
+  return `org:${orgSlug}`.slice(0, CACHE_TAG_LIMIT);
+}
+
+export function cacheTagOrgCourses({ orgSlug }: { orgSlug: string }) {
+  return `org-courses:${orgSlug}`.slice(0, CACHE_TAG_LIMIT);
+}
+
 export function cacheTagSettings() {
   return "settings";
 }

@@ -2,7 +2,6 @@ import {
   getOrganizationBySlug,
   hasCoursePermission,
 } from "@zoonk/core/organizations";
-import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { notFound, unauthorized } from "next/navigation";
 import { Suspense } from "react";
 
@@ -34,7 +33,7 @@ export default async function OrgHomeLayout({
   params,
 }: LayoutProps<"/[locale]/[orgSlug]">) {
   return (
-    <Suspense fallback={<FullPageLoading />}>
+    <Suspense>
       <LayoutPermissions params={params}>{children}</LayoutPermissions>
     </Suspense>
   );

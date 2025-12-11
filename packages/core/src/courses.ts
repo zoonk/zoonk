@@ -2,35 +2,19 @@ import "server-only";
 
 import { type Course, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
-import { PERMISSION_ERROR_CODE, safeAsync } from "@zoonk/utils/error";
-import { hasCoursePermission } from "./organizations";
+import { safeAsync } from "@zoonk/utils/error";
 
 export const LIST_COURSES_LIMIT = 20;
 
 export type ListOrganizationCoursesOptions = {
   language?: string;
   limit?: number;
-  headers?: Headers;
 };
 
 export async function listOrganizationCourses(
   organizationId: number,
   opts?: ListOrganizationCoursesOptions,
 ): Promise<{ data: Course[]; error: Error | null }> {
-  // we use update permissions here because this query includes drafts
-  const hasPermission = await hasCoursePermission(organizationId, "update", {
-    headers: opts?.headers,
-  });
-
-  if (!hasPermission) {
-    return {
-      data: [],
-      error: new Error("You don't have permission to view courses", {
-        cause: PERMISSION_ERROR_CODE,
-      }),
-    };
-  }
-
   const { data, error } = await safeAsync(() =>
     prisma.course.findMany({
       orderBy: { createdAt: "desc" },
