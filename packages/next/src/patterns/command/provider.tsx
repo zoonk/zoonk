@@ -37,6 +37,12 @@ export function useCommandPalette() {
 type CommandPaletteProviderProps = {
   children: React.ReactNode;
   /**
+   * URL query parameter key used for search.
+   * If this parameter exists in the URL on mount, the palette opens automatically.
+   * @default "q"
+   */
+  searchParamKey?: string;
+  /**
    * Keyboard shortcut key to toggle the command palette.
    * Used with Cmd (Mac) or Ctrl (Windows/Linux).
    * @default "k"
@@ -52,11 +58,20 @@ type CommandPaletteProviderProps = {
  */
 export function CommandPaletteProvider({
   children,
+  searchParamKey = "q",
   shortcutKey = "k",
 }: CommandPaletteProviderProps) {
   const [isOpen, setIsOpen] = useState(false);
   const open = useCallback(() => setIsOpen(true), []);
   const close = useCallback(() => setIsOpen(false), []);
+
+  // Open automatically if URL has search param on mount
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has(searchParamKey)) {
+      setIsOpen(true);
+    }
+  }, [searchParamKey]);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
