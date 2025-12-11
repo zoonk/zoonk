@@ -122,11 +122,13 @@ export function CommandPaletteDialog({
 
   const closePalette = () => {
     close();
-    void setQuery("");
+    setQuery("");
   };
 
   const handleSelect = (url: string) => {
-    closePalette();
+    // Only close the dialog without clearing query to avoid navigation race condition.
+    // The setQuery("") with shallow: false triggers a navigation that interferes with onSelect.
+    close();
     onSelect(url);
   };
 
