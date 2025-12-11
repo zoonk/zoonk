@@ -12,11 +12,11 @@ import { cacheTagHome } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
+import { Link } from "@/i18n/navigation";
 import {
   OrganizationList,
   OrganizationListSkeleton,
-} from "@/components/organization-list";
-import { Link } from "@/i18n/navigation";
+} from "./organization-list";
 
 async function HomeView({
   children,

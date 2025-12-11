@@ -82,6 +82,16 @@ msgstr "Ingresa el código que enviamos al correo electrónico {email}:"
 msgid "zx7CKB"
 msgstr "Revisa tu correo electrónico"
 
+#: src/app/[locale]/(private)/organization-list.tsx
+#: src/components/organization-list.tsx
+msgid "p4BgKL"
+msgstr "Aún no formas parte de ninguna organización"
+
+#: src/app/[locale]/(private)/organization-list.tsx
+#: src/components/organization-list.tsx
+msgid "sFoGzO"
+msgstr "No hay organizaciones"
+
 #: src/app/[locale]/(private)/page.tsx
 #: src/app/[locale]/page.tsx
 msgid "AyGauy"
@@ -127,11 +137,3 @@ msgstr "401 - No autorizado"
 #: src/app/unauthorized.tsx
 msgid "vFidRR"
 msgstr "No puedes editar cursos para esta organización. Inicia sesión con otra cuenta o cambia a una organización diferente."
-
-#: src/components/organization-list.tsx
-msgid "p4BgKL"
-msgstr "Aún no formas parte de ninguna organización"
-
-#: src/components/organization-list.tsx
-msgid "sFoGzO"
-msgstr "No hay organizaciones"

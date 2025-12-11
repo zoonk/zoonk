@@ -82,6 +82,16 @@ msgstr "Enter the code we sent to {email}:"
 msgid "zx7CKB"
 msgstr "Check your email"
 
+#: src/app/[locale]/(private)/organization-list.tsx
+#: src/components/organization-list.tsx
+msgid "p4BgKL"
+msgstr "You're not part of any organization yet"
+
+#: src/app/[locale]/(private)/organization-list.tsx
+#: src/components/organization-list.tsx
+msgid "sFoGzO"
+msgstr "No organizations"
+
 #: src/app/[locale]/(private)/page.tsx
 #: src/app/[locale]/page.tsx
 msgid "AyGauy"
@@ -127,11 +137,3 @@ msgstr "401 - Unauthorized"
 #: src/app/unauthorized.tsx
 msgid "vFidRR"
 msgstr "You can’t edit courses for this organization. Log in with another account or switch to a different organization."
-
-#: src/components/organization-list.tsx
-msgid "p4BgKL"
-msgstr "You're not part of any organization yet"
-
-#: src/components/organization-list.tsx
-msgid "sFoGzO"
-msgstr "No organizations"

@@ -43,7 +43,7 @@ export async function OrganizationList({
 }) {
   const t = await getExtracted();
 
-  if (!organizations || organizations.length === 0) {
+  if (organizations.length === 0) {
     return (
       <Empty>
         <EmptyHeader>
