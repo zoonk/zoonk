@@ -11,17 +11,17 @@ export default async function CommandPalettePage({
   searchParams,
 }: PageProps<"/[locale]/[...catchAll]">) {
   const search = await searchParams;
-  const query = safeParams(search.q);
+  const query = safeParams(search.q) ?? "";
   const t = await getExtracted();
 
   return (
     <CatalogCommandPaletteDialog>
       <Suspense fallback={<CommandPaletteCoursesSkeleton />}>
         <CommandPaletteCourses
-          getLinkUrl={(courseSlug: string) => `/courses/${courseSlug}`}
-          heading={t("AI Courses")}
+          getLinkUrl={(courseSlug: string) => `/c/${courseSlug}`}
+          heading={t("Courses")}
           orgSlug="ai"
-          query={query ?? ""}
+          query={query}
         />
       </Suspense>
     </CatalogCommandPaletteDialog>

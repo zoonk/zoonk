@@ -96,6 +96,15 @@ msgstr "Trocar e-mail"
 msgid "knNfU5"
 msgstr "Cursos de IA"
 
+#: src/app/[locale]/(catalog)/@commandPalette/page.tsx
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/app/[locale]/editor/[orgSlug]/page.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+#: src/components/navbar-links.tsx
+msgid "R85gsW"
+msgstr "Cursos"
+
 #: src/app/[locale]/(catalog)/command-palette-dialog.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
@@ -185,14 +194,6 @@ msgstr "Atualizar idioma"
 #: src/components/command/app-command-palette.tsx
 msgid "Oj9Phc"
 msgstr "Gerenciar assinatura"
-
-#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
-#: src/app/[locale]/editor/[orgSlug]/page.tsx
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-#: src/components/navbar-links.tsx
-msgid "R85gsW"
-msgstr "Cursos"
 
 #: src/app/[locale]/(catalog)/command-palette-dialog.tsx
 #: src/app/[locale]/(settings)/follow/page.tsx
