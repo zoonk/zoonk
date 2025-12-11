@@ -6,14 +6,14 @@ import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { headers } from "next/headers";
 import { cache } from "react";
+import type { Organization } from "./types";
 
 export type { CoursePermission } from "@zoonk/auth/permissions";
 
-export const getOrganizationId = cache(
-  async (slug: string): Promise<SafeReturn<number | null>> => {
+export const getOrganizationBySlug = cache(
+  async (slug: string): Promise<SafeReturn<Organization | null>> => {
     const { data: org, error } = await safeAsync(() =>
       prisma.organization.findUnique({
-        select: { id: true },
         where: { slug },
       }),
     );
@@ -22,7 +22,7 @@ export const getOrganizationId = cache(
       return { data: null, error };
     }
 
-    return { data: org?.id ?? null, error: null };
+    return { data: org ?? null, error: null };
   },
 );
 

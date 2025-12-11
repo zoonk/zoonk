@@ -1,5 +1,5 @@
 import {
-  getOrganizationId,
+  getOrganizationBySlug,
   hasCoursePermission,
 } from "@zoonk/core/organizations";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
@@ -14,13 +14,13 @@ async function LayoutPermissions({
   params: LayoutProps<"/[locale]/[orgSlug]">["params"];
 }) {
   const { orgSlug } = await params;
-  const { data: organizationId } = await getOrganizationId(orgSlug);
+  const { data: org } = await getOrganizationBySlug(orgSlug);
 
-  if (!organizationId) {
+  if (!org) {
     return notFound();
   }
 
-  const canViewPage = await hasCoursePermission(organizationId, "update");
+  const canViewPage = await hasCoursePermission(org.id, "update");
 
   if (!canViewPage) {
     return unauthorized();
