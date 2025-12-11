@@ -2,7 +2,8 @@
 
 import { sendVerificationOTP } from "@zoonk/core/users";
 import { parseFormField } from "@zoonk/utils/form";
-import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
+import { redirect } from "@/i18n/navigation";
 
 export async function sendVerificationOTPAction(formData: FormData) {
   const email = parseFormField(formData, "email");
@@ -13,5 +14,10 @@ export async function sendVerificationOTPAction(formData: FormData) {
 
   await sendVerificationOTP(email);
 
-  redirect(`/otp?email=${encodeURIComponent(email)}`);
+  const locale = await getLocale();
+
+  redirect({
+    href: { pathname: "/otp", query: { email } },
+    locale,
+  });
 }

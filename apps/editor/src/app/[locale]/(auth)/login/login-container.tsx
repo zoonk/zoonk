@@ -3,7 +3,7 @@
 import { authClient } from "@zoonk/auth/client";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { Login } from "@zoonk/ui/patterns/auth/login";
-import { useRouter } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
 
 export default function LoginContainer({ children }: React.PropsWithChildren) {
   const { push } = useRouter();

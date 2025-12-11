@@ -5,11 +5,13 @@ import {
   OTPHeader,
   OTPTitle,
 } from "@zoonk/ui/patterns/auth/otp";
-import Link from "next/link";
 import { getExtracted } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { OTPForm } from "./otp-form";
 
-export default async function OTPPage({ searchParams }: PageProps<"/otp">) {
+export default async function OTPPage({
+  searchParams,
+}: PageProps<"/[locale]/otp">) {
   const { email } = await searchParams;
   const t = await getExtracted();
 

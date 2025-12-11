@@ -9,13 +9,23 @@ import {
   LoginSubmit,
   LoginTitle,
 } from "@zoonk/ui/patterns/auth/login";
-import { getExtracted } from "next-intl/server";
+import { cacheTagLogin } from "@zoonk/utils/cache";
+import { cacheLife, cacheTag } from "next/cache";
+import { getExtracted, setRequestLocale } from "next-intl/server";
 import { sendVerificationOTPAction } from "./actions";
 import LoginContainer from "./login-container";
 import { SocialLogin } from "./social-login";
 
-export default async function Login() {
+export default async function Login({ params }: PageProps<"/[locale]/login">) {
+  "use cache";
+
+  const { locale } = await params;
+  setRequestLocale(locale);
+
   const t = await getExtracted();
+
+  cacheLife("max");
+  cacheTag(locale, cacheTagLogin());
 
   return (
     <LoginContainer>

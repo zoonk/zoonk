@@ -9,8 +9,8 @@ import {
   ContainerHeader,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { useRouter } from "next/navigation";
 import { useExtracted } from "next-intl";
+import { useRouter } from "@/i18n/navigation";
 
 export default function Unauthorized() {
   const { push } = useRouter();
