@@ -8,6 +8,7 @@ msgstr ""
 
 #: src/app/(auth)/layout.tsx
 #: src/app/[locale]/(auth)/layout.tsx
+#: src/app/[locale]/(private)/[orgSlug]/navbar.tsx
 #: src/app/[locale]/(private)/navbar.tsx
 #: src/components/header.tsx
 #: src/components/navbar.tsx

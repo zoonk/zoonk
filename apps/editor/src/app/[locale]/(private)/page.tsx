@@ -1,3 +1,4 @@
+import { findOrganizationById } from "@zoonk/core/organizations";
 import { getSession, listUserOrgs } from "@zoonk/core/users";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
@@ -8,73 +9,54 @@ import {
 } from "@zoonk/ui/components/container";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ProtectedSection } from "@zoonk/ui/patterns/auth/protected-section";
-import { cacheTagHome } from "@zoonk/utils/cache";
-import { cacheLife, cacheTag } from "next/cache";
-import { getExtracted, setRequestLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
-import { Link } from "@/i18n/navigation";
+import { Link, redirect } from "@/i18n/navigation";
 import {
   OrganizationList,
   OrganizationListSkeleton,
 } from "./organization-list";
 
-async function HomeView({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: PageProps<"/[locale]">["params"];
-}) {
-  "use cache";
-
+export default async function HomePage({ params }: PageProps<"/[locale]">) {
+  const [userSession, orgs] = await Promise.all([getSession(), listUserOrgs()]);
   const { locale } = await params;
-  setRequestLocale(locale);
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagHome());
-
   const t = await getExtracted();
+
+  const activeOrganizationId = userSession?.session.activeOrganizationId;
+
+  const activeOrganization = findOrganizationById(
+    orgs.data,
+    activeOrganizationId,
+  );
+
+  if (activeOrganization) {
+    redirect({ href: `/${activeOrganization.slug}`, locale });
+  }
 
   return (
     <Container variant="narrow">
       <ContainerHeader className="text-center">
         <ContainerTitle>{t("Select an organization")}</ContainerTitle>
+
         <ContainerDescription>
           {t("Choose an organization to manage its courses")}
         </ContainerDescription>
       </ContainerHeader>
 
-      {children}
+      <ProtectedSection
+        actions={
+          <Link className={cn(buttonVariants())} href="/login">
+            {t("Login")}
+          </Link>
+        }
+        alertTitle={t("You need to be logged in to access this page.")}
+        centered
+        state={userSession ? "authenticated" : "unauthenticated"}
+      >
+        <Suspense fallback={<OrganizationListSkeleton />}>
+          <OrganizationList organizations={orgs.data} />
+        </Suspense>
+      </ProtectedSection>
     </Container>
-  );
-}
-
-async function HomeOrgs() {
-  const [session, orgs] = await Promise.all([getSession(), listUserOrgs()]);
-  const t = await getExtracted();
-
-  return (
-    <ProtectedSection
-      actions={
-        <Link className={cn(buttonVariants())} href="/login">
-          {t("Login")}
-        </Link>
-      }
-      alertTitle={t("You need to be logged in to access this page.")}
-      centered
-      state={session ? "authenticated" : "unauthenticated"}
-    >
-      <OrganizationList organizations={orgs.data} />
-    </ProtectedSection>
-  );
-}
-
-export default async function HomePage({ params }: PageProps<"/[locale]">) {
-  return (
-    <HomeView params={params}>
-      <Suspense fallback={<OrganizationListSkeleton />}>
-        <HomeOrgs />
-      </Suspense>
-    </HomeView>
   );
 }

@@ -4,6 +4,7 @@ import {
 } from "@zoonk/core/organizations";
 import { notFound, unauthorized } from "next/navigation";
 import { Suspense } from "react";
+import { EditorNavbar } from "./navbar";
 
 async function LayoutPermissions({
   children,
@@ -34,7 +35,11 @@ export default async function OrgHomeLayout({
 }: LayoutProps<"/[locale]/[orgSlug]">) {
   return (
     <Suspense>
-      <LayoutPermissions params={params}>{children}</LayoutPermissions>
+      <LayoutPermissions params={params}>
+        <EditorNavbar />
+
+        {children}
+      </LayoutPermissions>
     </Suspense>
   );
 }

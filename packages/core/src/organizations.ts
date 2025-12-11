@@ -6,9 +6,16 @@ import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { headers } from "next/headers";
 import { cache } from "react";
-import type { Organization } from "./types";
+import type { AuthOrganization, Organization } from "./types";
 
 export type { CoursePermission } from "@zoonk/auth/permissions";
+
+export function findOrganizationById(
+  orgs: Organization[] | AuthOrganization[],
+  orgId?: string | null,
+) {
+  return orgs.find((org) => Number(org.id) === Number(orgId)) ?? null;
+}
 
 export const getOrganizationBySlug = cache(
   async (slug: string): Promise<SafeReturn<Organization | null>> => {
