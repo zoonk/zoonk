@@ -6,7 +6,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { HomeIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
-import { BackButton } from "../../../components/back";
 
 function getPage(pathname: string) {
   if (pathname === "/") {
@@ -25,8 +24,6 @@ export function EditorNavbar() {
   return (
     <Navbar>
       <div className="flex items-center gap-2">
-        <BackButton />
-
         <Link
           className={cn(
             buttonVariants({

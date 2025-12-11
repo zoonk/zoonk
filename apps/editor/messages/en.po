@@ -82,20 +82,24 @@ msgstr "Enter the code we sent to {email}:"
 msgid "zx7CKB"
 msgstr "Check your email"
 
+#: src/app/[locale]/(private)/page.tsx
 #: src/app/[locale]/page.tsx
 msgid "AyGauy"
 msgstr "Login"
 
+#: src/app/[locale]/(private)/page.tsx
 #: src/app/[locale]/page.tsx
 #: src/app/page.tsx
 msgid "jflB8q"
 msgstr "Choose an organization to manage its courses"
 
+#: src/app/[locale]/(private)/page.tsx
 #: src/app/[locale]/page.tsx
 #: src/app/page.tsx
 msgid "MPQ0kS"
 msgstr "Select an organization"
 
+#: src/app/[locale]/(private)/page.tsx
 #: src/app/[locale]/page.tsx
 msgid "yOFm9C"
 msgstr "You need to be logged in to access this page."
@@ -123,10 +127,6 @@ msgstr "401 - Unauthorized"
 #: src/app/unauthorized.tsx
 msgid "vFidRR"
 msgstr "You can’t edit courses for this organization. Log in with another account or switch to a different organization."
-
-#: src/components/back.tsx
-msgid "cyR7Kh"
-msgstr "Back"
 
 #: src/components/organization-list.tsx
 msgid "p4BgKL"
