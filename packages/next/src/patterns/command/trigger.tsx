@@ -28,7 +28,7 @@ export function CommandPaletteTrigger({
       size="icon"
       variant="outline"
     >
-      <Search />
+      <Search aria-hidden="true" />
       <span className="sr-only">{label}</span>
     </Button>
   );
