@@ -65,10 +65,13 @@ export function CommandPaletteProvider({
   const open = useCallback(() => setIsOpen(true), []);
   const close = useCallback(() => setIsOpen(false), []);
 
-  // Open automatically if URL has search param on mount
+  // Open automatically if URL has non-empty search param on mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    if (params.has(searchParamKey)) {
+    const query = params.get(searchParamKey);
+    const hasQuery = Boolean(query?.trim());
+
+    if (hasQuery) {
       setIsOpen(true);
     }
   }, [searchParamKey]);
