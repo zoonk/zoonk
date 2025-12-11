@@ -206,6 +206,7 @@ msgstr "Follow us on social media"
 #: src/app/[locale]/(catalog)/command-palette-trigger.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
+#: src/components/navbar-links.tsx
 msgid "xmcVZ0"
 msgstr "Search"
 
