@@ -121,7 +121,7 @@ export function LoginError({
   children,
   hasError,
   ...props
-}: React.ComponentProps<"p"> & { hasError?: boolean }) {
+}: React.ComponentProps<"p"> & { hasError: boolean }) {
   if (!hasError) {
     return null;
   }
