@@ -2,7 +2,11 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { describe, expect, test } from "vitest";
 import { organizationFixture } from "@/fixtures/organizations";
-import { LIST_COURSES_LIMIT, listOrganizationCourses } from "./courses";
+import {
+  LIST_COURSES_LIMIT,
+  listOrganizationCourses,
+  searchCourses,
+} from "./courses";
 
 describe("listOrganizationCourses()", () => {
   test("returns list of courses for an org", async () => {
@@ -13,6 +17,7 @@ describe("listOrganizationCourses()", () => {
         description: "Test description",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
+        normalizedTitle: "test course",
         organizationId: organization.id,
         slug: `test-course-${randomUUID()}`,
         title: "Test Course",
@@ -35,6 +40,7 @@ describe("listOrganizationCourses()", () => {
           description: "English course",
           imageUrl: "https://example.com/image.jpg",
           language: "en",
+          normalizedTitle: "english course",
           organizationId: organization.id,
           slug: `english-course-${randomUUID()}`,
           title: "English Course",
@@ -43,6 +49,7 @@ describe("listOrganizationCourses()", () => {
           description: "Portuguese course",
           imageUrl: "https://example.com/image.jpg",
           language: "pt",
+          normalizedTitle: "portuguese course",
           organizationId: organization.id,
           slug: `portuguese-course-${randomUUID()}`,
           title: "Portuguese Course",
@@ -67,6 +74,7 @@ describe("listOrganizationCourses()", () => {
         description: `Course ${i} description`,
         imageUrl: "https://example.com/image.jpg",
         language: "en",
+        normalizedTitle: `test course ${i}`,
         organizationId: organization.id,
         slug: `test-course-${randomUUID()}-${i}`,
         title: `Test Course ${i}`,
@@ -90,6 +98,7 @@ describe("listOrganizationCourses()", () => {
         description: `Course ${i} description`,
         imageUrl: "https://example.com/image.jpg",
         language: "en",
+        normalizedTitle: `test course ${i}`,
         organizationId: organization.id,
         slug: `test-course-${randomUUID()}-${i}`,
         title: `Test Course ${i}`,
@@ -111,6 +120,7 @@ describe("listOrganizationCourses()", () => {
         description: "Old course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
+        normalizedTitle: "old course",
         organizationId: organization.id,
         slug: `old-course-${randomUUID()}`,
         title: "Old Course",
@@ -123,6 +133,7 @@ describe("listOrganizationCourses()", () => {
         description: "New course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
+        normalizedTitle: "new course",
         organizationId: organization.id,
         slug: `new-course-${randomUUID()}`,
         title: "New Course",
@@ -135,5 +146,221 @@ describe("listOrganizationCourses()", () => {
     expect(result.data).toHaveLength(2);
     expect(result.data[0]?.id).toBe(newCourse.id);
     expect(result.data[1]?.id).toBe(oldCourse.id);
+  });
+});
+
+describe("searchCourses()", () => {
+  test("returns courses matching the search title", async () => {
+    const organization = await organizationFixture();
+
+    const matchingCourse = await prisma.course.create({
+      data: {
+        description: "Computer Science course",
+        imageUrl: "https://example.com/image.jpg",
+        language: "en",
+        normalizedTitle: "computer science fundamentals",
+        organizationId: organization.id,
+        slug: `computer-science-${randomUUID()}`,
+        title: "Computer Science Fundamentals",
+      },
+    });
+
+    await prisma.course.create({
+      data: {
+        description: "Biology course",
+        imageUrl: "https://example.com/image.jpg",
+        language: "en",
+        normalizedTitle: "biology basics",
+        organizationId: organization.id,
+        slug: `biology-${randomUUID()}`,
+        title: "Biology Basics",
+      },
+    });
+
+    const result = await searchCourses({
+      orgSlug: organization.slug,
+      title: "Computer",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0]?.id).toBe(matchingCourse.id);
+  });
+
+  test("matches partial words", async () => {
+    const organization = await organizationFixture();
+
+    const course = await prisma.course.create({
+      data: {
+        description: "Computer Science course",
+        imageUrl: "https://example.com/image.jpg",
+        language: "en",
+        normalizedTitle: "ciencia da computacao",
+        organizationId: organization.id,
+        slug: `computer-science-${randomUUID()}`,
+        title: "Ciência da Computação",
+      },
+    });
+
+    const result = await searchCourses({
+      orgSlug: organization.slug,
+      title: "comput",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0]?.id).toBe(course.id);
+  });
+
+  test("matches words without accents to titles with accents", async () => {
+    const organization = await organizationFixture();
+
+    const course = await prisma.course.create({
+      data: {
+        description: "Computer Science course",
+        imageUrl: "https://example.com/image.jpg",
+        language: "pt",
+        normalizedTitle: "ciencia da computacao",
+        organizationId: organization.id,
+        slug: `ciencia-computacao-${randomUUID()}`,
+        title: "Ciência da Computação",
+      },
+    });
+
+    const result = await searchCourses({
+      orgSlug: organization.slug,
+      title: "ciencia da computacao",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0]?.id).toBe(course.id);
+  });
+
+  test("is case-insensitive", async () => {
+    const organization = await organizationFixture();
+
+    const course = await prisma.course.create({
+      data: {
+        description: "Programming course",
+        imageUrl: "https://example.com/image.jpg",
+        language: "en",
+        normalizedTitle: "introduction to programming",
+        organizationId: organization.id,
+        slug: `programming-${randomUUID()}`,
+        title: "Introduction to Programming",
+      },
+    });
+
+    const result = await searchCourses({
+      orgSlug: organization.slug,
+      title: "PROGRAMMING",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0]?.id).toBe(course.id);
+  });
+
+  test("only returns courses from the specified organization", async () => {
+    const org1 = await organizationFixture();
+    const org2 = await organizationFixture();
+
+    const org1Course = await prisma.course.create({
+      data: {
+        description: "Org 1 course",
+        imageUrl: "https://example.com/image.jpg",
+        language: "en",
+        normalizedTitle: "mathematics",
+        organizationId: org1.id,
+        slug: `math-${randomUUID()}`,
+        title: "Mathematics",
+      },
+    });
+
+    await prisma.course.create({
+      data: {
+        description: "Org 2 course",
+        imageUrl: "https://example.com/image.jpg",
+        language: "en",
+        normalizedTitle: "mathematics advanced",
+        organizationId: org2.id,
+        slug: `math-${randomUUID()}`,
+        title: "Mathematics Advanced",
+      },
+    });
+
+    const result = await searchCourses({
+      orgSlug: org1.slug,
+      title: "Mathematics",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0]?.id).toBe(org1Course.id);
+  });
+
+  test("returns courses ordered by createdAt descending", async () => {
+    const organization = await organizationFixture();
+
+    const oldCourse = await prisma.course.create({
+      data: {
+        createdAt: new Date("2024-01-01"),
+        description: "Old programming course",
+        imageUrl: "https://example.com/image.jpg",
+        language: "en",
+        normalizedTitle: "old programming course",
+        organizationId: organization.id,
+        slug: `old-programming-${randomUUID()}`,
+        title: "Old Programming Course",
+      },
+    });
+
+    const newCourse = await prisma.course.create({
+      data: {
+        createdAt: new Date("2024-06-01"),
+        description: "New programming course",
+        imageUrl: "https://example.com/image.jpg",
+        language: "en",
+        normalizedTitle: "new programming course",
+        organizationId: organization.id,
+        slug: `new-programming-${randomUUID()}`,
+        title: "New Programming Course",
+      },
+    });
+
+    const result = await searchCourses({
+      orgSlug: organization.slug,
+      title: "programming",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(2);
+    expect(result.data[0]?.id).toBe(newCourse.id);
+    expect(result.data[1]?.id).toBe(oldCourse.id);
+  });
+
+  test("returns empty array when no courses match", async () => {
+    const organization = await organizationFixture();
+
+    await prisma.course.create({
+      data: {
+        description: "Biology course",
+        imageUrl: "https://example.com/image.jpg",
+        language: "en",
+        normalizedTitle: "biology basics",
+        organizationId: organization.id,
+        slug: `biology-${randomUUID()}`,
+        title: "Biology Basics",
+      },
+    });
+
+    const result = await searchCourses({
+      orgSlug: organization.slug,
+      title: "Physics",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(0);
   });
 });

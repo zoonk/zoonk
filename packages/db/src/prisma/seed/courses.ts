@@ -1,3 +1,14 @@
+/**
+ * Normalizes text for accent-insensitive search by removing accents
+ * and converting to lowercase.
+ */
+function normalizeForSearch(text: string): string {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
 export const courses = [
   // English courses
   {
@@ -7,6 +18,7 @@ export const courses = [
       "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
     isPublished: true,
     language: "en",
+    normalizedTitle: normalizeForSearch("Machine Learning"),
     slug: "machine-learning",
     title: "Machine Learning",
   },
@@ -17,6 +29,7 @@ export const courses = [
       "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/spanish-G8NTOu5F2vUzMSaJ7oa2hgKrzAQtGr.webp",
     isPublished: true,
     language: "en",
+    normalizedTitle: normalizeForSearch("Spanish"),
     slug: "spanish",
     title: "Spanish",
   },
@@ -27,6 +40,7 @@ export const courses = [
       "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/astronomy-OfBov0VHGQPk98amhfAPg4UVrJH114.webp",
     isPublished: false,
     language: "en",
+    normalizedTitle: normalizeForSearch("Astronomy"),
     slug: "astronomy",
     title: "Astronomy",
   },
@@ -39,6 +53,7 @@ export const courses = [
       "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
     isPublished: true,
     language: "pt",
+    normalizedTitle: normalizeForSearch("Machine Learning"),
     slug: "machine-learning",
     title: "Machine Learning",
   },
@@ -49,6 +64,7 @@ export const courses = [
       "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/spanish-G8NTOu5F2vUzMSaJ7oa2hgKrzAQtGr.webp",
     isPublished: true,
     language: "pt",
+    normalizedTitle: normalizeForSearch("Espanhol"),
     slug: "espanhol",
     title: "Espanhol",
   },
@@ -59,6 +75,7 @@ export const courses = [
       "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/astronomy-OfBov0VHGQPk98amhfAPg4UVrJH114.webp",
     isPublished: false,
     language: "pt",
+    normalizedTitle: normalizeForSearch("Astronomia"),
     slug: "astronomia",
     title: "Astronomia",
   },
