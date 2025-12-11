@@ -7,30 +7,23 @@ import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { CommandPaletteDialog } from "./command-palette-dialog";
 
-type CommandPalettePageProps = {
-  params: Promise<{ orgSlug: string }>;
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-};
-
 export default async function CommandPalettePage({
   params,
   searchParams,
-}: CommandPalettePageProps) {
+}: PageProps<"/[locale]/[orgSlug]">) {
   const { orgSlug } = await params;
   const search = await searchParams;
-  const query = safeParams(search.q);
+  const query = safeParams(search.q) ?? "";
   const t = await getExtracted();
 
   return (
     <CommandPaletteDialog>
       <Suspense fallback={<CommandPaletteCoursesSkeleton />}>
         <CommandPaletteCourses
-          getLinkUrl={(courseSlug: string) =>
-            `/${orgSlug}/courses/${courseSlug}`
-          }
+          getLinkUrl={(courseSlug: string) => `/${orgSlug}/c/${courseSlug}`}
           heading={t("Courses")}
           orgSlug={orgSlug}
-          query={query ?? ""}
+          query={query}
         />
       </Suspense>
     </CommandPaletteDialog>
