@@ -1,14 +1,8 @@
 "use client";
 
+import { useKeyboardShortcut } from "@zoonk/ui/hooks/use-keyboard-shortcut";
 import { NuqsAdapter } from "nuqs/adapters/next";
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useMemo } from "react";
 
 type CommandPaletteContextValue = {
   close: () => void;
@@ -61,9 +55,7 @@ export function CommandPaletteProvider({
   searchParamKey = "q",
   shortcutKey = "k",
 }: CommandPaletteProviderProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const open = useCallback(() => setIsOpen(true), []);
-  const close = useCallback(() => setIsOpen(false), []);
+  const { close, isOpen, open } = useKeyboardShortcut(shortcutKey);
 
   // Open automatically if URL has non-empty search param on mount
   useEffect(() => {
@@ -72,21 +64,9 @@ export function CommandPaletteProvider({
     const hasQuery = Boolean(query?.trim());
 
     if (hasQuery) {
-      setIsOpen(true);
+      open();
     }
-  }, [searchParamKey]);
-
-  useEffect(() => {
-    const down = (e: KeyboardEvent) => {
-      if (e.key === shortcutKey && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        setIsOpen((oldState) => !oldState);
-      }
-    };
-
-    document.addEventListener("keydown", down);
-    return () => document.removeEventListener("keydown", down);
-  }, [shortcutKey]);
+  }, [searchParamKey, open]);
 
   const value = useMemo(() => ({ close, isOpen, open }), [isOpen, open, close]);
 

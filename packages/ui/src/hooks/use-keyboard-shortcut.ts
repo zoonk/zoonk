@@ -10,7 +10,10 @@ export function useKeyboardShortcut(key: string) {
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
-      if (e.key === key && (e.metaKey || e.ctrlKey)) {
+      if (
+        e.key.toLowerCase() === key.toLowerCase() &&
+        (e.metaKey || e.ctrlKey)
+      ) {
         e.preventDefault();
         setIsOpen((oldState) => !oldState);
       }
