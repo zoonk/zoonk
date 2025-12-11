@@ -26,7 +26,9 @@ export async function CommandPaletteCourses({
     title: query,
   });
 
-  console.error("Failed to search courses:", error);
+  if (error) {
+    console.error("Failed to search courses:", error);
+  }
 
   if (!courses || courses.length === 0) {
     return null;
