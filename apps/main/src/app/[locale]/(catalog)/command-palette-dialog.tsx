@@ -22,13 +22,9 @@ import {
 import { useExtracted } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
 
-type CatalogCommandPaletteDialogProps = {
-  children?: React.ReactNode;
-};
-
 export function CatalogCommandPaletteDialog({
   children,
-}: CatalogCommandPaletteDialogProps) {
+}: React.PropsWithChildren) {
   const { push } = useRouter();
   const t = useExtracted();
   const { isLoggedIn, logout } = useLogout({ onSuccess: () => push("/login") });
