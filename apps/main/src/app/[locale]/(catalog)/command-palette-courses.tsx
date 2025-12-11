@@ -1,6 +1,7 @@
 import { searchCourses } from "@zoonk/core/courses";
 import { Badge } from "@zoonk/ui/components/badge";
 import { CommandGroup, CommandItem } from "@zoonk/ui/components/command";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import Image from "next/image";
 import { getExtracted } from "next-intl/server";
 
@@ -55,14 +56,14 @@ export async function CatalogCommandPaletteCourses({
 export function CatalogCommandPaletteCoursesSkeleton() {
   return (
     <div className="flex flex-col gap-2 p-2">
-      <div className="h-4 w-20 animate-pulse rounded bg-muted" />
+      <Skeleton className="h-4 w-20" />
       <div className="flex items-center gap-2">
-        <div className="size-8 animate-pulse rounded bg-muted" />
-        <div className="h-4 flex-1 animate-pulse rounded bg-muted" />
+        <Skeleton className="size-8" />
+        <Skeleton className="h-4 flex-1" />
       </div>
       <div className="flex items-center gap-2">
-        <div className="size-8 animate-pulse rounded bg-muted" />
-        <div className="h-4 flex-1 animate-pulse rounded bg-muted" />
+        <Skeleton className="size-8" />
+        <Skeleton className="h-4 flex-1" />
       </div>
     </div>
   );
