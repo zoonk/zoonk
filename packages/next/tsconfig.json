@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@zoonk/next/*": ["./src/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist"],
+  "extends": "@zoonk/tsconfig/react-library.json",
+  "include": ["."]
+}

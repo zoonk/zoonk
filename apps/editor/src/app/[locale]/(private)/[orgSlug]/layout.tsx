@@ -3,10 +3,10 @@ import {
   getOrganizationBySlug,
   hasCoursePermission,
 } from "@zoonk/core/organizations";
+import { CommandPaletteProvider } from "@zoonk/next/patterns/command";
 import { headers } from "next/headers";
 import { notFound, unauthorized } from "next/navigation";
 import { Suspense } from "react";
-import { CommandPaletteProvider } from "./command-palette-provider";
 import { EditorNavbar } from "./navbar";
 
 async function LayoutPermissions({

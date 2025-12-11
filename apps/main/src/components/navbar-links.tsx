@@ -3,9 +3,9 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useExtracted } from "next-intl";
+import { CommandPaletteTrigger } from "@/app/[locale]/(catalog)/command-palette-trigger";
 import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
-import { CommandPalette } from "./command-palette";
 
 function getVariant(
   href: string,
@@ -69,7 +69,7 @@ export function NavbarLinks() {
         <span className="hidden sm:inline">{t("Courses")}</span>
       </Link>
 
-      <CommandPalette />
+      <CommandPaletteTrigger />
 
       <Link
         className={buttonVariants({

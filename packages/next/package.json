@@ -1,0 +1,27 @@
+{
+  "devDependencies": {
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@zoonk/core": "workspace:*",
+    "@zoonk/tsconfig": "workspace:*",
+    "@zoonk/ui": "workspace:*",
+    "typescript": "^5"
+  },
+  "exports": {
+    "./patterns/command": "./src/patterns/command/index.ts",
+    "./patterns/command/*": "./src/patterns/command/*.tsx"
+  },
+  "name": "@zoonk/next",
+  "peerDependencies": {
+    "lucide-react": ">=0.556.0",
+    "next": ">=16.0.0",
+    "nuqs": ">=2.8.0",
+    "react": ">=19.2.1",
+    "react-dom": ">=19.2.1"
+  },
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "type": "module"
+}

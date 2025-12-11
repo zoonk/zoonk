@@ -7,6 +7,7 @@ msgstr ""
 "X-Crowdin-SourceKey: msgstr\n"
 
 #: src/app/[locale]/(auth)/layout.tsx
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
 #: src/app/[locale]/(settings)/settings-navbar.tsx
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
@@ -89,6 +90,134 @@ msgstr "Check your email"
 #: src/app/[locale]/(auth)/otp/page.tsx
 msgid "ChATeO"
 msgstr "Change email"
+
+#: src/app/[locale]/(catalog)/@commandPalette/page.tsx
+#: src/app/[locale]/(catalog)/command-palette-courses.tsx
+msgid "knNfU5"
+msgstr "AI Courses"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+#: src/components/logout-dropdown-item.tsx
+#: src/components/protected-section.tsx
+msgid "AyGauy"
+msgstr "Login"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/app/[locale]/(settings)/settings-navbar.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+#: src/components/logout-dropdown-item.tsx
+msgid "C81/uG"
+msgstr "Logout"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+msgid "CxfKLC"
+msgstr "Pages"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/app/[locale]/(settings)/feedback/page.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+#: src/components/content-feedback.tsx
+msgid "G5YSJR"
+msgstr "Send feedback"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+msgid "gvd2HB"
+msgstr "Update display name"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+msgid "h7uoBs"
+msgstr "Help and support"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+msgid "HC7Mi4"
+msgstr "Search courses or pages..."
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+msgid "hX5PAb"
+msgstr "No results found"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+#: src/components/user-dropdown-menu.tsx
+msgid "I+38K2"
+msgstr "My courses"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+msgid "KwsmcD"
+msgstr "Manage settings"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+msgid "L6kaJv"
+msgstr "Learn something"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+msgid "NjD8y3"
+msgstr "Close search"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+msgid "OhXwmw"
+msgstr "Update language"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+msgid "Oj9Phc"
+msgstr "Manage subscription"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/app/[locale]/editor/[orgSlug]/page.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+#: src/components/navbar-links.tsx
+msgid "R85gsW"
+msgstr "Courses"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/app/[locale]/(settings)/follow/page.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+msgid "VfU4TH"
+msgstr "Follow us on social media"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/app/[locale]/(catalog)/command-palette-trigger.tsx
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+msgid "xmcVZ0"
+msgstr "Search"
+
+#: src/app/[locale]/(catalog)/command-palette-dialog.tsx
+#: src/app/[locale]/(settings)/language/page.tsx
+#: src/app/[locale]/(settings)/settings-navigation.tsx
+#: src/app/[locale]/(settings)/settings/settings-list.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
+#: src/components/command-palette.tsx
+#: src/components/command/app-command-palette.tsx
+#: src/components/locale-switcher.tsx
+msgid "y1Z3or"
+msgstr "Language"
 
 #: src/app/[locale]/(catalog)/courses/page.tsx
 msgid "P5jxUC"
@@ -186,13 +315,6 @@ msgid "eUzs3M"
 msgstr "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-#: src/components/content-feedback.tsx
-msgid "G5YSJR"
-msgstr "Send feedback"
-
-#: src/app/[locale]/(settings)/feedback/page.tsx
 msgid "KZv6Ml"
 msgstr "Share your thoughts and help improve Zoonk. Use the feedback page to contact us with suggestions, questions, or issues about our learning platform."
 
@@ -205,12 +327,6 @@ msgstr "Follow us"
 #: src/app/[locale]/(settings)/follow/page.tsx
 msgid "Qeoeg9"
 msgstr "Find all our social media links and keep in touch with us."
-
-#: src/app/[locale]/(settings)/follow/page.tsx
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "VfU4TH"
-msgstr "Follow us on social media"
 
 #: src/app/[locale]/(settings)/follow/page.tsx
 msgid "YmFPw3"
@@ -247,16 +363,6 @@ msgstr "Choose the app language you prefer for this device."
 #: src/app/[locale]/(settings)/language/page.tsx
 msgid "gr4VpD"
 msgstr "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages."
-
-#: src/app/[locale]/(settings)/language/page.tsx
-#: src/app/[locale]/(settings)/settings-navigation.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
-#: src/app/[locale]/(settings)/use-settings.ts
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-#: src/components/locale-switcher.tsx
-msgid "y1Z3or"
-msgstr "Language"
 
 #: src/app/[locale]/(settings)/name/name-form.tsx
 msgid "7jmSf7"
@@ -295,13 +401,6 @@ msgstr "Display name"
 #: src/app/[locale]/(settings)/name/page.tsx
 msgid "Pj/oEx"
 msgstr "This is the name others may see and the one we'll use to refer to you in activities."
-
-#: src/app/[locale]/(settings)/settings-navbar.tsx
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-#: src/components/logout-dropdown-item.tsx
-msgid "C81/uG"
-msgstr "Logout"
 
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings/page.tsx
@@ -365,12 +464,6 @@ msgstr "You’re on Zoonk Plus"
 msgid "NiVbmQ"
 msgstr "Unable to change your subscription. Contact us at hello@zoonk.com"
 
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "Oj9Phc"
-msgstr "Manage subscription"
-
 #: src/app/[locale]/editor/[orgSlug]/page.tsx
 msgid "6gzGoI"
 msgstr "Select a course to edit its content"
@@ -381,13 +474,6 @@ msgstr "Select a course to edit its content"
 #: src/components/user-org-menu.tsx
 msgid "fWKwFM"
 msgstr "Editor"
-
-#: src/app/[locale]/editor/[orgSlug]/page.tsx
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-#: src/components/navbar-links.tsx
-msgid "R85gsW"
-msgstr "Courses"
 
 #: src/app/[locale]/editor/editor-home-content.tsx
 #: src/app/[locale]/editor/editor-home-view.tsx
@@ -423,71 +509,13 @@ msgstr "Get started"
 
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
-#: src/components/logout-dropdown-item.tsx
-#: src/components/protected-section.tsx
-msgid "AyGauy"
-msgstr "Login"
-
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
 msgid "dXSivY"
 msgstr "My account"
 
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
-msgid "gvd2HB"
-msgstr "Update display name"
-
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "h7uoBs"
-msgstr "Help and support"
-
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "HC7Mi4"
-msgstr "Search courses or pages..."
-
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "hX5PAb"
-msgstr "No results found"
-
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-#: src/components/user-dropdown-menu.tsx
-msgid "I+38K2"
-msgstr "My courses"
-
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "KwsmcD"
-msgstr "Manage settings"
-
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "L6kaJv"
-msgstr "Learn something"
-
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "NjD8y3"
-msgstr "Close search"
-
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "OhXwmw"
-msgstr "Update language"
-
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
 msgid "WnQ/AZ"
 msgstr "Contact us"
-
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "xmcVZ0"
-msgstr "Search"
 
 #: src/components/contact-form.tsx
 msgid "+5vOOu"
