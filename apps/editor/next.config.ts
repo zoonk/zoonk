@@ -23,6 +23,7 @@ const nextConfig: NextConfig = {
   transpilePackages: [
     "@zoonk/auth",
     "@zoonk/core",
+    "@zoonk/next",
     "@zoonk/ui",
     "@zoonk/utils",
   ],

@@ -31,6 +31,7 @@ const nextConfig: NextConfig = {
     "@zoonk/auth",
     "@zoonk/db",
     "@zoonk/mailer",
+    "@zoonk/next",
     "@zoonk/ui",
     "@zoonk/utils",
   ],
