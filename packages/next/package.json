@@ -2,11 +2,13 @@
   "devDependencies": {
     "@types/node": "^24",
     "@types/react": "^19",
+    "@zoonk/core": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "typescript": "^5"
   },
   "exports": {
+    "./patterns/command-palette": "./src/patterns/command-palette/index.ts",
     "./patterns/command-palette/*": "./src/patterns/command-palette/*.tsx"
   },
   "name": "@zoonk/next",

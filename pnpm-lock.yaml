@@ -537,6 +537,9 @@ importers:
       '@types/react':
         specifier: ^19
         version: 19.2.7
+      '@zoonk/core':
+        specifier: workspace:*
+        version: link:../core
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig

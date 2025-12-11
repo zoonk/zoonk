@@ -86,6 +86,8 @@ msgstr "Digite o código que enviamos para o email {email}:"
 msgid "zx7CKB"
 msgstr "Verifique seu email"
 
+#: src/app/[locale]/(private)/[orgSlug]/@commandPalette/command-palette-courses.tsx
+#: src/app/[locale]/(private)/[orgSlug]/@commandPalette/page.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette-courses.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command/command-palette-courses.tsx

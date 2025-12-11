@@ -1,8 +1,9 @@
-import { Suspense } from "react";
 import {
-  CatalogCommandPaletteCourses,
-  CatalogCommandPaletteCoursesSkeleton,
-} from "../command-palette-courses";
+  CommandPaletteCourses,
+  CommandPaletteCoursesSkeleton,
+} from "@zoonk/next/patterns/command-palette";
+import { getExtracted } from "next-intl/server";
+import { Suspense } from "react";
 import { CatalogCommandPaletteDialog } from "../command-palette-dialog";
 
 type CommandPalettePageProps = {
@@ -14,11 +15,17 @@ export default async function CommandPalettePage({
 }: CommandPalettePageProps) {
   const search = await searchParams;
   const query = Array.isArray(search.q) ? search.q[0] : search.q;
+  const t = await getExtracted();
 
   return (
     <CatalogCommandPaletteDialog>
-      <Suspense fallback={<CatalogCommandPaletteCoursesSkeleton />}>
-        <CatalogCommandPaletteCourses query={query ?? ""} />
+      <Suspense fallback={<CommandPaletteCoursesSkeleton />}>
+        <CommandPaletteCourses
+          getLinkUrl={(courseSlug: string) => `/courses/${courseSlug}`}
+          heading={t("AI Courses")}
+          orgSlug="ai"
+          query={query ?? ""}
+        />
       </Suspense>
     </CatalogCommandPaletteDialog>
   );

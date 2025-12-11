@@ -91,6 +91,7 @@ msgstr "Revisa tu correo"
 msgid "ChATeO"
 msgstr "Cambiar correo"
 
+#: src/app/[locale]/(catalog)/@commandPalette/page.tsx
 #: src/app/[locale]/(catalog)/command-palette-courses.tsx
 msgid "knNfU5"
 msgstr ""

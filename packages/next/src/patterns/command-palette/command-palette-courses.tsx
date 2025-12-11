@@ -3,19 +3,20 @@ import { Badge } from "@zoonk/ui/components/badge";
 import { CommandGroup, CommandItem } from "@zoonk/ui/components/command";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import Image from "next/image";
-import { getExtracted } from "next-intl/server";
 
-type CommandPaletteCoursesProps = {
+export type CommandPaletteCoursesProps = {
   orgSlug: string;
   query: string;
+  heading: string;
+  getLinkUrl: (courseSlug: string) => string;
 };
 
 export async function CommandPaletteCourses({
   orgSlug,
   query,
+  heading,
+  getLinkUrl,
 }: CommandPaletteCoursesProps) {
-  const t = await getExtracted();
-
   if (!query.trim()) {
     return null;
   }
@@ -30,25 +31,25 @@ export async function CommandPaletteCourses({
   }
 
   return (
-    <CommandGroup heading={t("Courses")}>
-      {courses.map((course) => (
-        <CommandItem
-          key={course.id}
-          value={`/${orgSlug}/courses/${course.slug}`}
-        >
-          <Image
-            alt={course.title}
-            className="size-8 rounded object-cover"
-            height={32}
-            src={course.imageUrl}
-            width={32}
-          />
-          <span className="flex-1">{course.title}</span>
-          <Badge className="uppercase" variant="outline">
-            {course.language}
-          </Badge>
-        </CommandItem>
-      ))}
+    <CommandGroup heading={heading}>
+      {courses.map((course) => {
+        const linkUrl = getLinkUrl(course.slug);
+        return (
+          <CommandItem key={course.id} value={linkUrl}>
+            <Image
+              alt={course.title}
+              className="size-8 rounded object-cover"
+              height={32}
+              src={course.imageUrl}
+              width={32}
+            />
+            <span className="flex-1">{course.title}</span>
+            <Badge className="uppercase" variant="outline">
+              {course.language}
+            </Badge>
+          </CommandItem>
+        );
+      })}
     </CommandGroup>
   );
 }
