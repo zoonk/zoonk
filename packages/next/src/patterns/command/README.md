@@ -32,7 +32,7 @@ A **parallel route** is a special folder that starts with `@` (like `@commandPal
 
 Think of it like having two "slots" in the layout:
 
-```
+```text
 ┌─────────────────────────────────────┐
 │ Layout                              │
 │  ┌─────────────────────────────────┐│
@@ -161,7 +161,7 @@ function MyPalette({ children }) {
 
 ### 1. Create the parallel route structure
 
-```
+```text
 app/
   [locale]/
     (routeGroup)/
