@@ -94,7 +94,7 @@ msgstr "Trocar e-mail"
 #: src/app/[locale]/(catalog)/@commandPalette/page.tsx
 #: src/app/[locale]/(catalog)/command-palette-courses.tsx
 msgid "knNfU5"
-msgstr ""
+msgstr "Cursos de IA"
 
 #: src/app/[locale]/(catalog)/command-palette-dialog.tsx
 #: src/components/command-palette.tsx
@@ -114,7 +114,7 @@ msgstr "Sair"
 
 #: src/app/[locale]/(catalog)/command-palette-dialog.tsx
 msgid "CxfKLC"
-msgstr ""
+msgstr "Páginas"
 
 #: src/app/[locale]/(catalog)/command-palette-dialog.tsx
 #: src/app/[locale]/(settings)/feedback/page.tsx
