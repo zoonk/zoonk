@@ -44,6 +44,7 @@ function CommandDialog({
   className,
   showCloseButton = true,
   closeLabel,
+  shouldFilter,
   ...props
 }: React.ComponentProps<typeof Dialog> & {
   title?: string;
@@ -51,6 +52,7 @@ function CommandDialog({
   className?: string;
   showCloseButton?: boolean;
   closeLabel: string;
+  shouldFilter?: boolean;
 }) {
   return (
     <Dialog {...props}>
@@ -66,6 +68,7 @@ function CommandDialog({
         <Command
           className="**:data-[slot=command-input-wrapper]:h-12 [&_[cmdk-group]:not([hidden])_~[cmdk-group]]:pt-0 [&_[cmdk-input-wrapper]_svg]:h-5 [&_[cmdk-input-wrapper]_svg]:w-5 [&_[cmdk-item]_svg]:h-5 [&_[cmdk-item]_svg]:w-5 **:[[cmdk-group-heading]]:px-2 **:[[cmdk-group-heading]]:font-medium **:[[cmdk-group-heading]]:text-muted-foreground **:[[cmdk-group]]:px-2 **:[[cmdk-input]]:h-12 **:[[cmdk-item]]:px-2 **:[[cmdk-item]]:py-3"
           filter={defaultNormalizedFilter}
+          shouldFilter={shouldFilter}
         >
           {children}
         </Command>

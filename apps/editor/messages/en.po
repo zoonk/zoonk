@@ -8,6 +8,7 @@ msgstr ""
 
 #: src/app/(auth)/layout.tsx
 #: src/app/[locale]/(auth)/layout.tsx
+#: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
 #: src/app/[locale]/(private)/[orgSlug]/navbar.tsx
 #: src/app/[locale]/(private)/navbar.tsx
 #: src/components/header.tsx
@@ -83,6 +84,35 @@ msgstr "Enter the code we sent to {email}:"
 msgid "zx7CKB"
 msgstr "Check your email"
 
+#: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
+msgid "CxfKLC"
+msgstr "Pages"
+
+#: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
+msgid "HC7Mi4"
+msgstr "Search courses or pages..."
+
+#: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
+msgid "hX5PAb"
+msgstr "No results found"
+
+#: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
+msgid "NjD8y3"
+msgstr "Close search"
+
+#: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
+msgid "NNQzoi"
+msgstr "Searching..."
+
+#: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
+#: src/app/[locale]/(private)/[orgSlug]/page.tsx
+msgid "R85gsW"
+msgstr "Courses"
+
+#: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
+msgid "xmcVZ0"
+msgstr "Search"
+
 #: src/app/[locale]/(private)/[orgSlug]/course-list.tsx
 msgid "c0YWuA"
 msgstr "Your organization hasn't created any courses yet."
@@ -94,10 +124,6 @@ msgstr "No courses"
 #: src/app/[locale]/(private)/[orgSlug]/page.tsx
 msgid "6gzGoI"
 msgstr "Select a course to edit its content"
-
-#: src/app/[locale]/(private)/[orgSlug]/page.tsx
-msgid "R85gsW"
-msgstr "Courses"
 
 #: src/app/[locale]/(private)/organization-list.tsx
 #: src/components/organization-list.tsx
@@ -131,6 +157,21 @@ msgstr "Select an organization"
 msgid "yOFm9C"
 msgstr "You need to be logged in to access this page."
 
+#: src/app/[locale]/unauthorized.tsx
+#: src/app/unauthorized.tsx
+msgid "C81/uG"
+msgstr "Logout"
+
+#: src/app/[locale]/unauthorized.tsx
+#: src/app/unauthorized.tsx
+msgid "gNtXZ8"
+msgstr "401 - Unauthorized"
+
+#: src/app/[locale]/unauthorized.tsx
+#: src/app/unauthorized.tsx
+msgid "vFidRR"
+msgstr "You can’t edit courses for this organization. Log in with another account or switch to a different organization."
+
 #: src/app/login/page.tsx
 msgid "1UEnr3"
 msgstr "Use your work or school account to sign in to the editor"
@@ -142,15 +183,3 @@ msgstr "Access your account"
 #: src/app/login/social-login.tsx
 msgid "X02lYY"
 msgstr "Login failed. Try again."
-
-#: src/app/unauthorized.tsx
-msgid "C81/uG"
-msgstr "Logout"
-
-#: src/app/unauthorized.tsx
-msgid "gNtXZ8"
-msgstr "401 - Unauthorized"
-
-#: src/app/unauthorized.tsx
-msgid "vFidRR"
-msgstr "You can’t edit courses for this organization. Log in with another account or switch to a different organization."
