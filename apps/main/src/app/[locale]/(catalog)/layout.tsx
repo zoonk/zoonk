@@ -4,7 +4,7 @@ import { Navbar } from "@zoonk/ui/components/navbar";
 import { cacheTagCatalog } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
-import { Suspense } from "react";
+import { Fragment, Suspense } from "react";
 import { NavbarLinks, NavbarLinksSkeleton } from "@/components/navbar-links";
 import { UserAvatarMenu } from "@/components/user-avatar-menu";
 import { CatalogCommandPaletteProvider } from "./command-palette-provider";
@@ -26,19 +26,23 @@ export default async function CatalogLayout({
 
   return (
     <CatalogCommandPaletteProvider>
-      <div className="flex min-h-dvh flex-col">
-        <Navbar>
-          <Suspense fallback={<NavbarLinksSkeleton />}>
-            <NavbarLinks />
-          </Suspense>
+      <Fragment key="main-content">
+        <div className="flex min-h-dvh flex-col">
+          <Navbar>
+            <Suspense fallback={<NavbarLinksSkeleton />}>
+              <NavbarLinks />
+            </Suspense>
 
-          <UserAvatarMenu />
-        </Navbar>
+            <UserAvatarMenu />
+          </Navbar>
 
-        {children}
-      </div>
+          {children}
+        </div>
+      </Fragment>
 
-      {commandPalette}
+      <Suspense fallback={null} key="command-palette">
+        {commandPalette}
+      </Suspense>
     </CatalogCommandPaletteProvider>
   );
 }

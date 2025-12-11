@@ -125,6 +125,7 @@ msgstr "Cerrar búsqueda"
 msgid "xmcVZ0"
 msgstr "Buscar"
 
+#: src/app/[locale]/(private)/[orgSlug]/@commandPalette/page.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette-courses.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command/command-palette-courses.tsx
