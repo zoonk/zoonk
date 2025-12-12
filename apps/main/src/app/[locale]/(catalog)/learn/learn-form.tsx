@@ -62,7 +62,7 @@ export function LearnForm() {
           id={queryId}
           maxLength={PROMPT_MAX_LENGTH}
           name="query"
-          placeholder={t("e.g., computer science, astronomy, biology, ...")}
+          placeholder={t("e.g., computer science, astronomy, biology, …")}
           required
         />
 

@@ -100,7 +100,7 @@ msgstr "Páginas"
 #: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command/command-palette-dialog.tsx
 msgid "HC7Mi4"
-msgstr "Buscar cursos o páginas..."
+msgstr "Buscar cursos o páginas…"
 
 #: src/app/[locale]/(private)/[orgSlug]/@commandPalette/command-palette-dialog.tsx
 #: src/app/[locale]/(private)/[orgSlug]/command-palette-dialog.tsx
@@ -135,7 +135,7 @@ msgstr "Cursos"
 
 #: src/app/[locale]/(private)/[orgSlug]/command-palette.tsx
 msgid "NNQzoi"
-msgstr "Buscando..."
+msgstr "Buscando…"
 
 #: src/app/[locale]/(private)/[orgSlug]/course-list.tsx
 msgid "c0YWuA"

@@ -77,10 +77,10 @@ export function CatalogCommandPaletteDialog({
     <Dialog
       labels={{
         close: t("Close search"),
-        description: t("Search courses or pages..."),
+        description: t("Search courses or pages…"),
         emptyText: t("No results found"),
         pagesHeading: t("Pages"),
-        placeholder: t("Search courses or pages..."),
+        placeholder: t("Search courses or pages…"),
         title: t("Search"),
       }}
       onSelect={handleSelect}

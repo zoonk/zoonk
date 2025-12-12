@@ -21,7 +21,7 @@ export function ProtectedSection({
         </Link>
       }
       alertTitle={t("You need to be logged in to access this page.")}
-      pendingTitle={t("Checking if you're logged in...")}
+      pendingTitle={t("Checking if you're logged in…")}
       state={authState}
     >
       {children}

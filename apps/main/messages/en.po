@@ -149,7 +149,7 @@ msgstr "Help and support"
 #: src/components/command-palette.tsx
 #: src/components/command/app-command-palette.tsx
 msgid "HC7Mi4"
-msgstr "Search courses or pages..."
+msgstr "Search courses or pages…"
 
 #: src/app/[locale]/(catalog)/command-palette-dialog.tsx
 #: src/components/command-palette.tsx
@@ -263,7 +263,7 @@ msgstr "Learn {prompt} with AI"
 
 #: src/app/[locale]/(catalog)/learn/learn-form.tsx
 msgid "LDMSuO"
-msgstr "e.g., computer science, astronomy, biology, ..."
+msgstr "e.g., computer science, astronomy, biology, …"
 
 #: src/app/[locale]/(catalog)/learn/learn-form.tsx
 msgid "mOFG3K"
@@ -593,7 +593,7 @@ msgstr "Learn"
 
 #: src/components/protected-section.tsx
 msgid "2jC0rX"
-msgstr "Checking if you're logged in..."
+msgstr "Checking if you're logged in…"
 
 #: src/components/protected-section.tsx
 msgid "yOFm9C"
