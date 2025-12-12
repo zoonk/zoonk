@@ -38,10 +38,12 @@ export function CommandPaletteResultsSkeleton({
   count = 2,
   showImage = true,
 }: CommandPaletteResultsSkeletonProps) {
+  const safeCount = Number.isFinite(count) ? Math.max(0, count) : 0;
+
   return (
     <div className="flex flex-col gap-2 p-2">
       <Skeleton className="h-4 w-16" />
-      {Array.from({ length: count }).map((_, i) => (
+      {Array.from({ length: safeCount }).map((_, i) => (
         <div className="flex items-center gap-2" key={i}>
           {showImage && <Skeleton className="size-8" />}
           <Skeleton className="h-4 flex-1" />
