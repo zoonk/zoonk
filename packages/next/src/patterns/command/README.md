@@ -1,402 +1,269 @@
 # Command Palette Pattern
 
-A reusable command palette with URL-based search state using [nuqs](https://nuqs.dev) and Next.js parallel routes.
+A composable command palette with server-side search, URL state, and keyboard shortcuts.
 
-## Overview
+## Quick Start
 
-This pattern provides a global search feature (command palette) that:
+**For adding to an existing app**, you need:
 
-1. Opens with `Cmd+K` (or `Ctrl+K`) from any page
-2. Searches content using server-side data fetching (not client-side)
-3. Persists the search query in the URL (e.g., `?q=react`)
-4. Works on every page within the route group
+1. A layout with `CommandPaletteProvider` and the trigger button
+2. A parallel route `@commandPalette` to render the dialog
+3. Search result components (we provide utilities to make this easy)
 
-## The Problem
+**For extending to new content types** (chapters, lessons, etc.), you only need to:
 
-We need a search dialog that:
+1. Create a search component (10-20 lines using our utilities)
+2. Add it to your parallel route page
 
-- Opens from anywhere in the app
-- Fetches search results on the server, not the client
-- Persists the search query in the URL for sharing/bookmarking
-- Works across all pages in a route group
+The pattern handles everything else: query validation, error handling, empty states, selection, and navigation.
 
-The challenge is that:
+## Key Concepts
 
-- Layouts don't have access to URL query parameters (`searchParams`)
-- We want to fetch search results on the server, not the client
-- The search dialog needs to be available on every page
+### Parallel Routes
 
-## The Solution: Parallel Routes
-
-A **parallel route** is a special folder that starts with `@` (like `@commandPalette`). It renders alongside the main page content, not instead of it.
-
-Think of it like having two "slots" in the layout:
+A **parallel route** (`@commandPalette`) renders alongside your page content:
 
 ```text
-┌─────────────────────────────────────┐
-│ Layout                              │
-│  ┌─────────────────────────────────┐│
-│  │ @commandPalette (parallel slot) ││ ← Search dialog
-│  └─────────────────────────────────┘│
-│  ┌─────────────────────────────────┐│
-│  │ children (main page content)    ││ ← Actual page
-│  └─────────────────────────────────┘│
-└─────────────────────────────────────┘
+Layout
+├── @commandPalette  ← Dialog with server-fetched results
+└── children         ← Your main page content
 ```
 
-The key benefit: **parallel routes receive `searchParams`**, even though layouts don't.
+**Why?** Parallel routes receive `searchParams`, letting you fetch search results on the server even though the dialog is global.
 
-## Components
+### Composable Search Components
 
-### CommandPaletteProvider
+Instead of duplicating code, use our utilities:
 
-Context provider that manages open/close state and keyboard shortcuts.
+- `searchWithValidation()` - Handles query validation and errors
+- `CommandPaletteResultsGroup` - Wraps results consistently
+- `CommandPaletteResultsSkeleton` - Generic loading state
+- `CommandPaletteItem` - Item with selection handling
 
-```tsx
-import { CommandPaletteProvider } from "@zoonk/next/patterns/command";
+## Creating Search Components
 
-function Layout({ children }) {
-  return <CommandPaletteProvider>{children}</CommandPaletteProvider>;
-}
-```
+### Example: Courses Search
 
-**Props:**
-
-- `children` - React children
-- `shortcutKey` - Keyboard shortcut key (default: `"k"`)
-
-The provider also wraps children with `NuqsAdapter` for URL state management.
-
-### useCommandPalette
-
-Hook to access command palette state.
+Here's a complete search component for courses (~30 lines):
 
 ```tsx
-import { useCommandPalette } from "@zoonk/next/patterns/command";
+import { searchCourses } from "@zoonk/core/courses";
+import { Badge } from "@zoonk/ui/components/badge";
+import Image from "next/image";
+import {
+  CommandPaletteItem,
+  CommandPaletteResultsGroup,
+  CommandPaletteResultsSkeleton,
+  searchWithValidation,
+} from "@zoonk/next/patterns/command";
 
-function MyComponent() {
-  const { isOpen, open, close } = useCommandPalette();
-  // ...
-}
-```
+export async function CommandPaletteCourses({
+  orgSlug,
+  query,
+  heading,
+  getLinkUrl,
+}: {
+  orgSlug: string;
+  query: string;
+  heading: string;
+  getLinkUrl: (slug: string) => string;
+}) {
+  // searchWithValidation handles query validation, errors, and empty results
+  const courses = await searchWithValidation(query, () =>
+    searchCourses({ orgSlug, title: query })
+  );
 
-### CommandPaletteTrigger
-
-Button to open the command palette.
-
-```tsx
-import { CommandPaletteTrigger } from "@zoonk/next/patterns/command";
-
-function Navbar() {
-  return <CommandPaletteTrigger label="Search" />;
-}
-```
-
-**Props:**
-
-- `label` - Accessible label for screen readers (required)
-
-### CommandPaletteSearch
-
-Search input that syncs with URL query parameters.
-
-```tsx
-import { CommandPaletteSearch } from "@zoonk/next/patterns/command";
-
-function MyDialog() {
-  return <CommandPaletteSearch placeholder="Search..." queryParam="q" />;
-}
-```
-
-**Props:**
-
-- `placeholder` - Input placeholder (default: `"Search..."`)
-- `queryParam` - URL query parameter name (default: `"q"`)
-- `throttleMs` - Throttle delay for URL updates (default: `300`)
-
-### CommandPaletteDialog
-
-Complete dialog with search input, static pages filtering, and slots for server-fetched results.
-
-```tsx
-import { CommandPaletteDialog } from "@zoonk/next/patterns/command";
-import { HomeIcon, SettingsIcon } from "lucide-react";
-
-function MyPalette({ children }) {
-  const router = useRouter();
-
-  const staticPages = [
-    { icon: HomeIcon, label: "Home", url: "/" },
-    { icon: SettingsIcon, label: "Settings", url: "/settings" },
-  ];
+  if (!courses) return null;
 
   return (
-    <CommandPaletteDialog
-      labels={{
-        close: "Close",
-        description: "Search...",
-        emptyText: "No results found",
-        pagesHeading: "Pages",
-        placeholder: "Search...",
-        title: "Search",
-      }}
-      onSelect={(url) => router.push(url)}
-      staticPages={staticPages}
-    >
-      {children}
-    </CommandPaletteDialog>
+    <CommandPaletteResultsGroup heading={heading}>
+      {courses.map((course) => (
+        <CommandPaletteItem href={getLinkUrl(course.slug)} key={course.id}>
+          <Image src={course.imageUrl} alt={course.title} /* ... */ />
+          <span>{course.title}</span>
+          <Badge>{course.language}</Badge>
+        </CommandPaletteItem>
+      ))}
+    </CommandPaletteResultsGroup>
   );
+}
+
+export function CommandPaletteCoursesSkeleton() {
+  return <CommandPaletteResultsSkeleton />;
 }
 ```
 
-**Props:**
+**What's happening:**
 
-- `children` - Content (typically server-fetched `CommandGroup` components)
-- `labels` - Object with localized labels
-- `onSelect` - Callback when an item is selected
-- `queryParam` - URL query parameter (default: `"q"`)
-- `staticPages` - Array of static pages to filter and display
+1. `searchWithValidation()` validates the query and handles errors/empty results
+2. `CommandPaletteResultsGroup` wraps items with a heading
+3. `CommandPaletteItem` handles selection → closes dialog → navigates
+4. `CommandPaletteResultsSkeleton` shows loading state
 
-## Implementation Guide
+### Extending to Chapters
 
-### 1. Create the parallel route structure
+Adding chapter search is just as simple:
+
+```tsx
+export async function CommandPaletteChapters({
+  courseId,
+  query,
+  heading,
+  getLinkUrl,
+}: {
+  courseId: string;
+  query: string;
+  heading: string;
+  getLinkUrl: (slug: string) => string;
+}) {
+  const chapters = await searchWithValidation(query, () =>
+    searchChapters({ courseId, title: query })
+  );
+
+  if (!chapters) return null;
+
+  return (
+    <CommandPaletteResultsGroup heading={heading}>
+      {chapters.map((chapter) => (
+        <CommandPaletteItem href={getLinkUrl(chapter.slug)} key={chapter.id}>
+          <span>{chapter.title}</span>
+        </CommandPaletteItem>
+      ))}
+    </CommandPaletteResultsGroup>
+  );
+}
+
+export function CommandPaletteChaptersSkeleton() {
+  // No images for chapters, show 3 items
+  return <CommandPaletteResultsSkeleton showImage={false} count={3} />;
+}
+```
+
+**That's it!** No duplication of validation, error handling, or selection logic.
+
+## Setup Guide
+
+### 1. File Structure
 
 ```text
 app/
   [locale]/
-    (routeGroup)/
-      layout.tsx                    # Renders children + commandPalette slot
-      page.tsx                      # Main page content
-      command-palette-provider.tsx  # Client wrapper for provider
-      command-palette-trigger.tsx   # Client trigger button
-      command-palette-dialog.tsx    # Client dialog with static pages
-      command-palette-results.tsx   # Server component for search results
+    (catalog)/                      # Your route group
+      layout.tsx                    # Add provider + trigger
+      command-palette-dialog.tsx    # Dialog wrapper (client)
       @commandPalette/
-        page.tsx                    # Handles root route
-        default.tsx                 # Fallback for hard navigation
+        page.tsx                    # Root route
+        default.tsx                 # Fallback
         [...catchAll]/
-          page.tsx                  # Handles all nested routes
+          page.tsx                  # Catch-all for nested routes
 ```
 
-### 2. Create the provider wrapper
+### 2. Update Layout
+
+Add the provider, trigger, and parallel route slot:
 
 ```tsx
-// command-palette-provider.tsx
-"use client";
+// layout.tsx
+import {
+  CommandPaletteProvider,
+  CommandPaletteTrigger,
+} from "@zoonk/next/patterns/command";
 
-import { CommandPaletteProvider } from "@zoonk/next/patterns/command";
-
-export function MyCommandPaletteProvider({
-  children,
-}: {
+type LayoutProps = {
   children: React.ReactNode;
-}) {
-  return <CommandPaletteProvider>{children}</CommandPaletteProvider>;
+  commandPalette: React.ReactNode; // Parallel route slot
+};
+
+export default function Layout({ children, commandPalette }: LayoutProps) {
+  return (
+    <CommandPaletteProvider>
+      <nav>
+        <CommandPaletteTrigger label="Search" />
+      </nav>
+      {children}
+      {commandPalette}
+    </CommandPaletteProvider>
+  );
 }
 ```
 
-### 3. Create the trigger wrapper (with localization)
+### 3. Create Dialog Wrapper
 
 ```tsx
-// command-palette-trigger.tsx
-"use client";
-
-import { CommandPaletteTrigger } from "@zoonk/next/patterns/command";
-import { useTranslations } from "next-intl";
-
-export function MyCommandPaletteTrigger() {
-  const t = useTranslations();
-  return <CommandPaletteTrigger label={t("Search")} />;
-}
-```
-
-### 4. Create the dialog wrapper (with static pages)
-
-```tsx
-// command-palette-dialog.tsx
+// dialog.tsx
 "use client";
 
 import { CommandPaletteDialog } from "@zoonk/next/patterns/command";
 import { HomeIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
 
-export function MyCommandPaletteDialog({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const router = useRouter();
-  const t = useTranslations();
+const staticPages = [
+  { icon: HomeIcon, label: "Home", url: "/" },
+  { label: "About", url: "/about" },
+];
 
-  const staticPages = [
-    { icon: HomeIcon, label: t("Home"), url: "/" },
-    // Add more static pages...
-  ];
-
+export function MyCommandDialog({ children }: { children: React.ReactNode }) {
   return (
-    <CommandPaletteDialog
-      labels={{
-        close: t("Close"),
-        emptyText: t("No results"),
-        placeholder: t("Search..."),
-        title: t("Search"),
-      }}
-      onSelect={(url) => router.push(url)}
-      staticPages={staticPages}
-    >
+    <CommandPaletteDialog placeholder="Search..." staticPages={staticPages}>
       {children}
     </CommandPaletteDialog>
   );
 }
 ```
 
-### 5. Create the server results component
-
-```tsx
-// command-palette-results.tsx
-import { CommandGroup, CommandItem } from "@zoonk/ui/components/command";
-
-type ResultsProps = {
-  query: string;
-};
-
-export async function CommandPaletteResults({ query }: ResultsProps) {
-  if (!query.trim()) return null;
-
-  const results = await searchSomething(query);
-
-  if (results.length === 0) return null;
-
-  return (
-    <CommandGroup heading="Results">
-      {results.map((item) => (
-        <CommandItem key={item.id} value={item.url}>
-          {item.title}
-        </CommandItem>
-      ))}
-    </CommandGroup>
-  );
-}
-
-export function CommandPaletteResultsSkeleton() {
-  return (
-    <div className="flex flex-col gap-2 p-2">
-      <div className="h-4 w-16 animate-pulse rounded bg-muted" />
-      <div className="h-8 animate-pulse rounded bg-muted" />
-      <div className="h-8 animate-pulse rounded bg-muted" />
-    </div>
-  );
-}
-```
-
-### 6. Update the layout
-
-```tsx
-// layout.tsx
-import { MyCommandPaletteProvider } from "./command-palette-provider";
-import { MyCommandPaletteTrigger } from "./command-palette-trigger";
-
-type LayoutProps = {
-  children: React.ReactNode;
-  commandPalette: React.ReactNode; // The parallel route slot
-};
-
-export default function Layout({ children, commandPalette }: LayoutProps) {
-  return (
-    <MyCommandPaletteProvider>
-      <nav>
-        <MyCommandPaletteTrigger />
-      </nav>
-      {children}
-      {commandPalette}
-    </MyCommandPaletteProvider>
-  );
-}
-```
-
-### 7. Create the parallel route page
+### 4. Create Parallel Route Pages
 
 ```tsx
 // @commandPalette/page.tsx
 import { Suspense } from "react";
-import { MyCommandPaletteDialog } from "../command-palette-dialog";
+import { MyCommandDialog } from "../dialog";
 import {
-  CommandPaletteResults,
-  CommandPaletteResultsSkeleton,
-} from "../command-palette-results";
+  CommandPaletteCourses,
+  CommandPaletteCoursesSkeleton,
+} from "../courses";
 
 type Props = {
   searchParams: Promise<{ q?: string }>;
 };
 
-export default async function CommandPalettePage({ searchParams }: Props) {
+export default async function Page({ searchParams }: Props) {
   const { q } = await searchParams;
 
   return (
-    <MyCommandPaletteDialog>
-      <Suspense fallback={<CommandPaletteResultsSkeleton />}>
-        <CommandPaletteResults query={q ?? ""} />
+    <MyCommandDialog>
+      <Suspense fallback={<CommandPaletteCoursesSkeleton />}>
+        <CommandPaletteCourses query={q ?? ""} />
       </Suspense>
-    </MyCommandPaletteDialog>
+    </MyCommandDialog>
   );
 }
 ```
 
-### 8. Create the catch-all for nested routes
+```tsx
+// @commandPalette/default.tsx
+export default function Default() {
+  return null;
+}
+```
 
 ```tsx
 // @commandPalette/[...catchAll]/page.tsx
-// Duplicate the same content as page.tsx
-// (Required because parallel routes must match all possible routes)
+// Same as page.tsx (handles nested routes)
 ```
 
-### 9. Create the default fallback
+That's it! You now have a working command palette with search functionality.
 
-```tsx
-// @commandPalette/default.tsx
-// Duplicate the same content as page.tsx
-// (Required for hard navigation/refresh scenarios)
-```
+## How It Works
 
-## Data Flow
+1. User presses `Cmd+K` → Opens dialog
+2. User types → Query updates in URL via `nuqs`
+3. URL change → Server re-renders parallel route
+4. Search component fetches data → Streams results to client
+5. User selects item → Navigates and closes dialog
 
-1. User presses `Cmd+K` → `CommandPaletteProvider` sets `isOpen: true`
-2. `CommandPaletteDialog` sees `isOpen` and shows the dialog
-3. User types "react" → `CommandPaletteSearch` updates URL to `?q=react`
-4. URL change triggers server re-render of `@commandPalette/page.tsx`
-5. `page.tsx` reads `searchParams.q` and passes it to results component
-6. Results component fetches matching data on the server
-7. Results stream to the client and appear in the dialog
+## Troubleshooting
 
-## Key Technologies
+**Dialog doesn't open**: Check that layout includes `CommandPaletteProvider` and `commandPalette` slot
 
-- **nuqs**: Library that syncs React state with URL query parameters
-- **React Context**: Shares open/close state between navbar and dialog
-- **Suspense**: Shows loading skeleton while results are being fetched
-- **Server Components**: Data fetching happens on the server, not client
+**Search doesn't work**: Ensure `[...catchAll]/page.tsx` exists to handle nested routes
 
-## Common Issues
-
-### Search doesn't work on a new page
-
-Make sure the `[...catchAll]/page.tsx` exists. It handles all nested routes.
-
-### Dialog doesn't open
-
-Check that the page is wrapped in `CommandPaletteProvider` (should be in layout).
-
-### Search results are stale
-
-The `nuqs` library has a `throttleMs` option (default 300ms). Results update after the user stops typing.
-
-### TypeScript errors with parallel routes
-
-Make sure your layout type includes the parallel route slot:
-
-```tsx
-type LayoutProps = {
-  children: React.ReactNode;
-  commandPalette: React.ReactNode;
-};
-```
+**TypeScript errors**: Layout must include parallel route in type: `{ commandPalette: React.ReactNode }`
