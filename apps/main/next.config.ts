@@ -31,6 +31,7 @@ const nextConfig: NextConfig = {
     "@zoonk/auth",
     "@zoonk/db",
     "@zoonk/mailer",
+    "@zoonk/next",
     "@zoonk/ui",
     "@zoonk/utils",
   ],
@@ -55,7 +56,10 @@ const withNextIntl = createNextIntlPlugin({
       sourceLocale: "en",
     },
     messages: {
-      format: "po",
+      format: {
+        codec: "./src/i18n/codec.ts",
+        extension: ".po",
+      },
       locales: "infer",
       path: "./messages",
     },

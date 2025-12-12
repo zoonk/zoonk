@@ -1,156 +1,143 @@
 msgid ""
 msgstr ""
 "Language: es\n"
-"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
-"X-Crowdin-SourceKey: msgstr\n"
 
-#: src/app/(auth)/layout.tsx
 #: src/app/[locale]/(auth)/layout.tsx
 #: src/app/[locale]/(private)/[orgSlug]/navbar.tsx
-#: src/app/[locale]/(private)/navbar.tsx
-#: src/components/header.tsx
-#: src/components/navbar.tsx
-msgid "U3l+Q9"
+msgctxt "U3l+Q9"
+msgid "Home page"
 msgstr "Página de inicio"
 
-#: src/app/(auth)/login/page.tsx
 #: src/app/[locale]/(auth)/login/page.tsx
-msgid "4nOs3z"
-msgstr "yo@miempresa.com"
+msgctxt "4nOs3z"
+msgid "me@myorg.com"
+msgstr "yo@myorg.com"
 
-#: src/app/(auth)/login/page.tsx
 #: src/app/[locale]/(auth)/login/page.tsx
-msgid "4wpUNc"
+msgctxt "4wpUNc"
+msgid "Or"
 msgstr "O"
 
-#: src/app/(auth)/login/page.tsx
-#: src/app/(auth)/otp/otp-form.tsx
 #: src/app/[locale]/(auth)/login/page.tsx
 #: src/app/[locale]/(auth)/otp/otp-form.tsx
-msgid "acrOoz"
+msgctxt "acrOoz"
+msgid "Continue"
 msgstr "Continuar"
 
-#: src/app/(auth)/login/page.tsx
 #: src/app/[locale]/(auth)/login/page.tsx
-msgid "SQJto2"
+msgctxt "SQJto2"
+msgid "Sign in"
 msgstr "Iniciar sesión"
 
-#: src/app/(auth)/login/page.tsx
 #: src/app/[locale]/(auth)/login/page.tsx
-msgid "sy+pv5"
+msgctxt "sy+pv5"
+msgid "Email"
 msgstr "Correo electrónico"
 
-#: src/app/(auth)/login/page.tsx
 #: src/app/[locale]/(auth)/login/page.tsx
-msgid "yFJ+Ej"
-msgstr "Continúa con tu correo electrónico o cuenta social"
+msgctxt "yFJ+Ej"
+msgid "Continue with your email or social account"
+msgstr "Continuar con tu correo electrónico o cuenta social"
 
-#: src/app/(auth)/login/social-login.tsx
 #: src/app/[locale]/(auth)/login/social-login.tsx
-msgid "BmecBA"
+msgctxt "BmecBA"
+msgid "Continue with Apple"
 msgstr "Continuar con Apple"
 
-#: src/app/(auth)/login/social-login.tsx
 #: src/app/[locale]/(auth)/login/social-login.tsx
-#: src/app/login/social-login.tsx
-msgid "FJ6r9E"
+msgctxt "FJ6r9E"
+msgid "Continue with Google"
 msgstr "Continuar con Google"
 
-#: src/app/(auth)/login/social-login.tsx
 #: src/app/[locale]/(auth)/login/social-login.tsx
-msgid "pN2p0t"
-msgstr "Hubo un error al iniciar sesión. Inténtalo de nuevo o contacta a contacto@zoonk.com"
+msgctxt "pN2p0t"
+msgid "There was an error signing you in. Please try again or contact hello@zoonk.com"
+msgstr "Hubo un error al iniciar sesión. Por favor, inténtalo de nuevo o contacta a contacto@zoonk.com"
 
-#: src/app/(auth)/otp/otp-form.tsx
 #: src/app/[locale]/(auth)/otp/otp-form.tsx
-msgid "HkHvQv"
-msgstr "El código que ingresaste es incorrecto. Inténtalo de nuevo o contacta a contacto@zoonk.com"
+msgctxt "HkHvQv"
+msgid "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
+msgstr "El código que ingresaste es incorrecto. Por favor, inténtalo de nuevo o contacta a contacto@zoonk.com"
 
-#: src/app/(auth)/otp/page.tsx
 #: src/app/[locale]/(auth)/otp/page.tsx
-msgid "ChATeO"
+msgctxt "ChATeO"
+msgid "Change email"
 msgstr "Cambiar correo electrónico"
 
-#: src/app/(auth)/otp/page.tsx
 #: src/app/[locale]/(auth)/otp/page.tsx
-msgid "LZHcmZ"
-msgstr "Ingresa el código que enviamos al correo electrónico {email}:"
+msgctxt "LZHcmZ"
+msgid "Enter the code we sent to {email}:"
+msgstr "Ingresa el código que enviamos a {email}:"
 
-#: src/app/(auth)/otp/page.tsx
 #: src/app/[locale]/(auth)/otp/page.tsx
-msgid "zx7CKB"
+msgctxt "zx7CKB"
+msgid "Check your email"
 msgstr "Revisa tu correo electrónico"
 
 #: src/app/[locale]/(private)/[orgSlug]/course-list.tsx
-msgid "c0YWuA"
+msgctxt "c0YWuA"
+msgid "Your organization hasn't created any courses yet."
 msgstr "Tu organización aún no ha creado ningún curso."
 
 #: src/app/[locale]/(private)/[orgSlug]/course-list.tsx
-msgid "zJxO2f"
-msgstr "No hay cursos"
+msgctxt "zJxO2f"
+msgid "No courses"
+msgstr "Sin cursos"
 
 #: src/app/[locale]/(private)/[orgSlug]/page.tsx
-msgid "6gzGoI"
+msgctxt "6gzGoI"
+msgid "Select a course to edit its content"
 msgstr "Selecciona un curso para editar su contenido"
 
 #: src/app/[locale]/(private)/[orgSlug]/page.tsx
-msgid "R85gsW"
+msgctxt "R85gsW"
+msgid "Courses"
 msgstr "Cursos"
 
 #: src/app/[locale]/(private)/organization-list.tsx
-#: src/components/organization-list.tsx
-msgid "p4BgKL"
+msgctxt "p4BgKL"
+msgid "You're not part of any organization yet"
 msgstr "Aún no formas parte de ninguna organización"
 
 #: src/app/[locale]/(private)/organization-list.tsx
-#: src/components/organization-list.tsx
-msgid "sFoGzO"
-msgstr "No hay organizaciones"
+msgctxt "sFoGzO"
+msgid "No organizations"
+msgstr "Sin organizaciones"
 
 #: src/app/[locale]/(private)/page.tsx
-#: src/app/[locale]/page.tsx
-msgid "AyGauy"
+msgctxt "AyGauy"
+msgid "Login"
 msgstr "Iniciar sesión"
 
 #: src/app/[locale]/(private)/page.tsx
-#: src/app/[locale]/page.tsx
-#: src/app/page.tsx
-msgid "jflB8q"
+msgctxt "jflB8q"
+msgid "Choose an organization to manage its courses"
 msgstr "Elige una organización para gestionar sus cursos"
 
 #: src/app/[locale]/(private)/page.tsx
-#: src/app/[locale]/page.tsx
-#: src/app/page.tsx
-msgid "MPQ0kS"
+msgctxt "MPQ0kS"
+msgid "Select an organization"
 msgstr "Selecciona una organización"
 
 #: src/app/[locale]/(private)/page.tsx
-#: src/app/[locale]/page.tsx
-msgid "yOFm9C"
+msgctxt "yOFm9C"
+msgid "You need to be logged in to access this page."
 msgstr "Necesitas iniciar sesión para acceder a esta página."
 
-#: src/app/login/page.tsx
-msgid "1UEnr3"
-msgstr "Utilice su cuenta de trabajo o escolar para iniciar sesión en el editor"
-
-#: src/app/login/page.tsx
-msgid "9KyprR"
-msgstr "Acceda a su cuenta"
-
-#: src/app/login/social-login.tsx
-msgid "X02lYY"
-msgstr "Error de inicio de sesión. Inténtalo de nuevo."
-
-#: src/app/unauthorized.tsx
-msgid "C81/uG"
+#: src/app/[locale]/unauthorized.tsx
+msgctxt "C81/uG"
+msgid "Logout"
 msgstr "Cerrar sesión"
 
-#: src/app/unauthorized.tsx
-msgid "gNtXZ8"
+#: src/app/[locale]/unauthorized.tsx
+msgctxt "gNtXZ8"
+msgid "401 - Unauthorized"
 msgstr "401 - No autorizado"
 
-#: src/app/unauthorized.tsx
-msgid "vFidRR"
+#: src/app/[locale]/unauthorized.tsx
+msgctxt "vFidRR"
+msgid "You can’t edit courses for this organization. Log in with another account or switch to a different organization."
 msgstr "No puedes editar cursos para esta organización. Inicia sesión con otra cuenta o cambia a una organización diferente."

@@ -20,10 +20,10 @@
   },
   "name": "@zoonk/core",
   "peerDependencies": {
-    "next": ">=16.0.10",
-    "react": ">=19.2.3",
+    "next": ">=16",
+    "react": ">=19",
     "server-only": ">=0.0.1",
-    "sharp": "0.34.4"
+    "sharp": ">=0.34"
   },
   "private": true,
   "scripts": {

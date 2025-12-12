@@ -37,10 +37,10 @@
   },
   "name": "@zoonk/ui",
   "peerDependencies": {
-    "@tabler/icons-react": "3.35.0",
+    "@tabler/icons-react": ">=3",
     "lucide-react": ">=0.556.0",
-    "react": ">=19.2.3",
-    "react-dom": ">=19.2.3"
+    "react": ">=19",
+    "react-dom": ">=19"
   },
   "private": true,
   "scripts": {

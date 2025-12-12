@@ -23,8 +23,8 @@
   },
   "name": "@zoonk/auth",
   "peerDependencies": {
-    "next": ">=16.0.10",
-    "react": ">=19.2.3"
+    "next": ">=16",
+    "react": ">=19"
   },
   "private": true,
   "scripts": {

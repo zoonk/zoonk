@@ -2,13 +2,14 @@ packages:
   - apps/*
   - packages/*
 
+ignoredBuiltDependencies:
+  - "@parcel/watcher"
+  - "@prisma/client"
+  - sharp
+
 onlyBuiltDependencies:
   - "@prisma/engines"
   - "@swc/core"
   - "@tailwindcss/oxide"
   - esbuild
   - prisma
-
-ignoredBuiltDependencies:
-  - "@prisma/client"
-  - sharp

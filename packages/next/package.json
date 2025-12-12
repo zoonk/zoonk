@@ -1,0 +1,33 @@
+{
+  "dependencies": {
+    "po-parser": "2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "^5"
+  },
+  "exports": {
+    "./*": "./src/*.ts"
+  },
+  "name": "@zoonk/next",
+  "peerDependencies": {
+    "next": ">=16",
+    "next-intl": ">=4.6",
+    "react": ">=19",
+    "react-dom": ">=19"
+  },
+  "peerDependenciesMeta": {
+    "next-intl": {
+      "optional": true
+    }
+  },
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "type": "module",
+  "version": "0.0.0"
+}

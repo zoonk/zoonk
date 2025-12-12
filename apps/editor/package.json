@@ -4,11 +4,12 @@
     "@tabler/icons-react": "3.35.0",
     "@zoonk/auth": "workspace:*",
     "@zoonk/core": "workspace:*",
+    "@zoonk/next": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "lucide-react": "0.556.0",
     "next": "16.0.10",
-    "next-intl": "4.5.8",
+    "next-intl": "4.6.0",
     "pg": "8.16.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
@@ -30,5 +31,6 @@
     "start": "next start -p 3003",
     "typecheck": "next typegen && tsc --noEmit"
   },
+  "type": "module",
   "version": "0.1.0"
 }

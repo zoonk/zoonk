@@ -1,570 +1,606 @@
 msgid ""
 msgstr ""
 "Language: en\n"
-"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
-"X-Crowdin-SourceKey: msgstr\n"
 
 #: src/app/[locale]/(auth)/layout.tsx
 #: src/app/[locale]/(settings)/settings-navbar.tsx
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-#: src/components/editor/editor-header.tsx
 #: src/components/navbar-links.tsx
-msgid "U3l+Q9"
+msgctxt "U3l+Q9"
+msgid "Home page"
 msgstr "Home page"
 
-#: src/app/[locale]/(auth)/login/login-footer.tsx
 #: src/app/[locale]/(auth)/login/page.tsx
-msgid "Ju9oB+"
-msgstr "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
-
-#: src/app/[locale]/(auth)/login/login-form.tsx
-#: src/app/[locale]/(auth)/login/page.tsx
-#: src/app/[locale]/(auth)/otp/otp-form.tsx
-msgid "acrOoz"
-msgstr "Continue"
-
-#: src/app/[locale]/(auth)/login/login-form.tsx
-#: src/app/[locale]/(auth)/login/page.tsx
-#: src/components/contact-form.tsx
-msgid "OiSL94"
-msgstr "myemail@gmail.com"
-
-#: src/app/[locale]/(auth)/login/login-form.tsx
-#: src/app/[locale]/(auth)/login/page.tsx
-msgid "sy+pv5"
-msgstr "Email"
-
-#: src/app/[locale]/(auth)/login/login-header.tsx
-#: src/app/[locale]/(auth)/login/page.tsx
-msgid "4wpUNc"
+msgctxt "4wpUNc"
+msgid "Or"
 msgstr "Or"
 
-#: src/app/[locale]/(auth)/login/login-header.tsx
 #: src/app/[locale]/(auth)/login/page.tsx
-msgid "CoMQ1+"
-msgstr "Continue with your email or a social account"
-
-#: src/app/[locale]/(auth)/login/login-header.tsx
-#: src/app/[locale]/(auth)/login/page.tsx
-msgid "eN8MTJ"
-msgstr "Sign in or create an account"
+#: src/app/[locale]/(auth)/otp/otp-form.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "Continue"
 
 #: src/app/[locale]/(auth)/login/page.tsx
-msgid "BQ8wka"
+msgctxt "BQ8wka"
+msgid "Login to your account or create a new one to start using Zoonk."
 msgstr "Login to your account or create a new one to start using Zoonk."
 
 #: src/app/[locale]/(auth)/login/page.tsx
-msgid "od4A2z"
+msgctxt "CoMQ1+"
+msgid "Continue with your email or a social account"
+msgstr "Continue with your email or a social account"
+
+#: src/app/[locale]/(auth)/login/page.tsx
+msgctxt "eN8MTJ"
+msgid "Sign in or create an account"
+msgstr "Sign in or create an account"
+
+#: src/app/[locale]/(auth)/login/page.tsx
+msgctxt "Ju9oB+"
+msgid "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+msgstr "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
+
+#: src/app/[locale]/(auth)/login/page.tsx
+msgctxt "od4A2z"
+msgid "Login or Sign Up"
 msgstr "Login or Sign Up"
 
+#: src/app/[locale]/(auth)/login/page.tsx
+#: src/components/contact-form.tsx
+msgctxt "OiSL94"
+msgid "myemail@gmail.com"
+msgstr "myemail@gmail.com"
+
+#: src/app/[locale]/(auth)/login/page.tsx
+msgctxt "sy+pv5"
+msgid "Email"
+msgstr "Email"
+
 #: src/app/[locale]/(auth)/login/social-login.tsx
-msgid "BmecBA"
+msgctxt "BmecBA"
+msgid "Continue with Apple"
 msgstr "Continue with Apple"
 
 #: src/app/[locale]/(auth)/login/social-login.tsx
-msgid "FJ6r9E"
+msgctxt "FJ6r9E"
+msgid "Continue with Google"
 msgstr "Continue with Google"
 
 #: src/app/[locale]/(auth)/login/social-login.tsx
-msgid "pN2p0t"
+msgctxt "pN2p0t"
+msgid "There was an error signing you in. Please try again or contact hello@zoonk.com"
 msgstr "There was an error signing you in. Please try again or contact hello@zoonk.com"
 
 #: src/app/[locale]/(auth)/otp/otp-form.tsx
-msgid "HkHvQv"
+msgctxt "HkHvQv"
+msgid "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
 msgstr "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
 
-#: src/app/[locale]/(auth)/otp/otp-form.tsx
 #: src/app/[locale]/(auth)/otp/page.tsx
-msgid "LZHcmZ"
-msgstr "Enter the code we sent to {email}:"
-
-#: src/app/[locale]/(auth)/otp/otp-form.tsx
-#: src/app/[locale]/(auth)/otp/page.tsx
-msgid "zx7CKB"
-msgstr "Check your email"
-
-#: src/app/[locale]/(auth)/otp/page.tsx
-msgid "ChATeO"
+msgctxt "ChATeO"
+msgid "Change email"
 msgstr "Change email"
 
+#: src/app/[locale]/(auth)/otp/page.tsx
+msgctxt "LZHcmZ"
+msgid "Enter the code we sent to {email}:"
+msgstr "Enter the code we sent to {email}:"
+
+#: src/app/[locale]/(auth)/otp/page.tsx
+msgctxt "zx7CKB"
+msgid "Check your email"
+msgstr "Check your email"
+
 #: src/app/[locale]/(catalog)/courses/page.tsx
-msgid "P5jxUC"
+msgctxt "P5jxUC"
+msgid "Online Courses using AI"
 msgstr "Online Courses using AI"
 
 #: src/app/[locale]/(catalog)/courses/page.tsx
-msgid "z6saPZ"
+msgctxt "z6saPZ"
+msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons, challenges, and activities to learn subjects like science, math, technology, and more."
 msgstr "Explore all Zoonk courses to learn anything using AI. Find interactive lessons, challenges, and activities to learn subjects like science, math, technology, and more."
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
-msgid "47FYwb"
+msgctxt "47FYwb"
+msgid "Cancel"
 msgstr "Cancel"
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
-msgid "TUuPG9"
+msgctxt "TUuPG9"
+msgid "Cooking up some course ideas"
 msgstr "Cooking up some course ideas"
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
-msgid "uQHhkm"
+msgctxt "uQHhkm"
+msgid "We're putting together a few course suggestions for you. This may take a few seconds."
 msgstr "We're putting together a few course suggestions for you. This may take a few seconds."
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx
-msgid "7x4411"
+msgctxt "7x4411"
+msgid "Course ideas for {prompt}"
 msgstr "Course ideas for {prompt}"
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx
-msgid "dCKXDB"
+msgctxt "dCKXDB"
+msgid "Create course"
 msgstr "Create course"
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx
-msgid "RbslnC"
+msgctxt "RbslnC"
+msgid "Change subject"
 msgstr "Change subject"
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/page.tsx
-msgid "A63MWw"
+msgctxt "A63MWw"
+msgid "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to generate interactive lessons and activities tailored to you."
 msgstr "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to generate interactive lessons and activities tailored to you."
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/page.tsx
-msgid "X2b6pH"
+msgctxt "X2b6pH"
+msgid "Learn {prompt} with AI"
 msgstr "Learn {prompt} with AI"
 
 #: src/app/[locale]/(catalog)/learn/learn-form.tsx
-msgid "LDMSuO"
+msgctxt "LDMSuO"
+msgid "e.g., computer science, astronomy, biology, ..."
 msgstr "e.g., computer science, astronomy, biology, ..."
 
 #: src/app/[locale]/(catalog)/learn/learn-form.tsx
-msgid "mOFG3K"
+msgctxt "mOFG3K"
+msgid "Start"
 msgstr "Start"
 
 #: src/app/[locale]/(catalog)/learn/learn-form.tsx
-msgid "uCb1nG"
+msgctxt "uCb1nG"
+msgid "Enter a subject"
 msgstr "Enter a subject"
 
 #: src/app/[locale]/(catalog)/learn/page.tsx
-msgid "3NEMCK"
+msgctxt "3NEMCK"
+msgid "Tell Zoonk what you want to learn and get a course generated by AI. Start learning any subject with interactive lessons and activities."
 msgstr "Tell Zoonk what you want to learn and get a course generated by AI. Start learning any subject with interactive lessons and activities."
 
 #: src/app/[locale]/(catalog)/learn/page.tsx
-msgid "9zLpJ/"
+msgctxt "9zLpJ/"
+msgid "What do you want to learn?"
 msgstr "What do you want to learn?"
 
 #: src/app/[locale]/(catalog)/learn/page.tsx
-msgid "Zs1QEq"
+msgctxt "Zs1QEq"
+msgid "Learn Anything with AI"
 msgstr "Learn Anything with AI"
 
 #: src/app/[locale]/(catalog)/my/page.tsx
-msgid "eeNr/Y"
+msgctxt "eeNr/Y"
+msgid "My Courses"
 msgstr "My Courses"
 
 #: src/app/[locale]/(catalog)/my/page.tsx
-msgid "wfuVYZ"
+msgctxt "wfuVYZ"
+msgid "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons and activities."
 msgstr "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons and activities."
 
 #: src/app/[locale]/(catalog)/page.tsx
-msgid "qsfeMJ"
+msgctxt "qsfeMJ"
+msgid "Zoonk: AI Learning Platform"
 msgstr "Zoonk: AI Learning Platform"
 
 #: src/app/[locale]/(catalog)/page.tsx
-msgid "ZgSctJ"
+msgctxt "ZgSctJ"
+msgid "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and activities."
 msgstr "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and activities."
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
-#: src/app/[locale]/(settings)/settings-navbar.tsx
-#: src/app/[locale]/(settings)/settings-navigation.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/use-settings.ts
 #: src/components/feedback-sheet.tsx
 #: src/components/user-dropdown-menu.tsx
-msgid "Ejhdi4"
+msgctxt "Ejhdi4"
+msgid "Feedback"
 msgstr "Feedback"
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
 #: src/components/feedback-sheet.tsx
-msgid "eUzs3M"
+msgctxt "eUzs3M"
+msgid "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
 msgstr "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
 #: src/components/content-feedback.tsx
-msgid "G5YSJR"
+msgctxt "G5YSJR"
+msgid "Send feedback"
 msgstr "Send feedback"
 
 #: src/app/[locale]/(settings)/feedback/page.tsx
-msgid "KZv6Ml"
+msgctxt "KZv6Ml"
+msgid "Share your thoughts and help improve Zoonk. Use the feedback page to contact us with suggestions, questions, or issues about our learning platform."
 msgstr "Share your thoughts and help improve Zoonk. Use the feedback page to contact us with suggestions, questions, or issues about our learning platform."
 
 #: src/app/[locale]/(settings)/follow/page.tsx
-#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/use-settings.ts
-msgid "l1XTI5"
+msgctxt "l1XTI5"
+msgid "Follow us"
 msgstr "Follow us"
 
 #: src/app/[locale]/(settings)/follow/page.tsx
-msgid "Qeoeg9"
+msgctxt "Qeoeg9"
+msgid "Find all our social media links and keep in touch with us."
 msgstr "Find all our social media links and keep in touch with us."
 
 #: src/app/[locale]/(settings)/follow/page.tsx
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "VfU4TH"
+msgctxt "VfU4TH"
+msgid "Follow us on social media"
 msgstr "Follow us on social media"
 
 #: src/app/[locale]/(settings)/follow/page.tsx
-msgid "YmFPw3"
+msgctxt "YmFPw3"
+msgid "Connect with Zoonk across social media. Follow us on X, LinkedIn, YouTube, and more to stay updated on new features, tips, and learning content."
 msgstr "Connect with Zoonk across social media. Follow us on X, LinkedIn, YouTube, and more to stay updated on new features, tips, and learning content."
 
 #: src/app/[locale]/(settings)/help/page.tsx
-msgid "BIAaC9"
+msgctxt "BIAaC9"
+msgid "Get support and answers. Fill in the form below or email us directly at hello@zoonk.com."
 msgstr "Get support and answers. Fill in the form below or email us directly at hello@zoonk.com."
 
 #: src/app/[locale]/(settings)/help/page.tsx
-#: src/app/[locale]/(settings)/settings-navigation.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/use-settings.ts
 #: src/components/user-dropdown-menu.tsx
-msgid "SENRqu"
+msgctxt "SENRqu"
+msgid "Help"
 msgstr "Help"
 
 #: src/app/[locale]/(settings)/help/page.tsx
-msgid "Uf3+S6"
+msgctxt "Uf3+S6"
+msgid "Help & Support"
 msgstr "Help & Support"
 
 #: src/app/[locale]/(settings)/help/page.tsx
-msgid "V+glDo"
+msgctxt "V+glDo"
+msgid "Need help with Zoonk? Contact our support or browse the FAQ to quickly find answers to common questions."
 msgstr "Need help with Zoonk? Contact our support or browse the FAQ to quickly find answers to common questions."
 
 #: src/app/[locale]/(settings)/language/page.tsx
-msgid "3KdX2W"
+msgctxt "3KdX2W"
+msgid "Change Language"
 msgstr "Change Language"
 
 #: src/app/[locale]/(settings)/language/page.tsx
-msgid "aNLa1G"
+msgctxt "aNLa1G"
+msgid "Choose the app language you prefer for this device."
 msgstr "Choose the app language you prefer for this device."
 
 #: src/app/[locale]/(settings)/language/page.tsx
-msgid "gr4VpD"
+msgctxt "gr4VpD"
+msgid "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages."
 msgstr "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages."
 
 #: src/app/[locale]/(settings)/language/page.tsx
-#: src/app/[locale]/(settings)/settings-navigation.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
 #: src/app/[locale]/(settings)/use-settings.ts
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
 #: src/components/locale-switcher.tsx
-msgid "y1Z3or"
+msgctxt "y1Z3or"
+msgid "Language"
 msgstr "Language"
 
 #: src/app/[locale]/(settings)/name/name-form.tsx
-msgid "7jmSf7"
+msgctxt "7jmSf7"
+msgid "Your name has been updated successfully!"
 msgstr "Your name has been updated successfully!"
 
 #: src/app/[locale]/(settings)/name/name-form.tsx
-msgid "eLjVDg"
+msgctxt "eLjVDg"
+msgid "Update name"
 msgstr "Update name"
 
 #: src/app/[locale]/(settings)/name/name-form.tsx
-msgid "Gr/Ipw"
+msgctxt "Gr/Ipw"
+msgid "Failed to update your name. Please try again or contact hello@zoonk.com"
 msgstr "Failed to update your name. Please try again or contact hello@zoonk.com"
 
 #: src/app/[locale]/(settings)/name/name-form.tsx
-msgid "HAlOn1"
+msgctxt "HAlOn1"
+msgid "Name"
 msgstr "Name"
 
 #: src/app/[locale]/(settings)/name/name-form.tsx
-msgid "VT+G/7"
+msgctxt "VT+G/7"
+msgid "This name will be visible to other users."
 msgstr "This name will be visible to other users."
 
 #: src/app/[locale]/(settings)/name/page.tsx
-msgid "+ceM20"
+msgctxt "+ceM20"
+msgid "Set or update your Zoonk display name. This name may be visible to others and will be used when referring to you in lessons and activities."
 msgstr "Set or update your Zoonk display name. This name may be visible to others and will be used when referring to you in lessons and activities."
 
 #: src/app/[locale]/(settings)/name/page.tsx
-msgid "9NBNq2"
+msgctxt "9NBNq2"
+msgid "Update Display Name"
 msgstr "Update Display Name"
 
 #: src/app/[locale]/(settings)/name/page.tsx
-#: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/use-settings.ts
-msgid "dOQCL8"
+msgctxt "dOQCL8"
+msgid "Display name"
 msgstr "Display name"
 
 #: src/app/[locale]/(settings)/name/page.tsx
-msgid "Pj/oEx"
+msgctxt "Pj/oEx"
+msgid "This is the name others may see and the one we'll use to refer to you in activities."
 msgstr "This is the name others may see and the one we'll use to refer to you in activities."
 
 #: src/app/[locale]/(settings)/settings-navbar.tsx
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
 #: src/components/logout-dropdown-item.tsx
-msgid "C81/uG"
+msgctxt "C81/uG"
+msgid "Logout"
 msgstr "Logout"
 
 #: src/app/[locale]/(settings)/settings-navigation.tsx
 #: src/app/[locale]/(settings)/settings/page.tsx
 #: src/components/user-dropdown-menu.tsx
-msgid "D3idYv"
+msgctxt "D3idYv"
+msgid "Settings"
 msgstr "Settings"
 
 #: src/app/[locale]/(settings)/settings-navigation.tsx
-msgid "iZeMgn"
+msgctxt "iZeMgn"
+msgid "Navigate settings"
 msgstr "Navigate settings"
 
-#: src/app/[locale]/(settings)/settings-navigation.tsx
-#: src/app/[locale]/(settings)/settings/settings-list.tsx
-#: src/app/[locale]/(settings)/subscription/page.tsx
-#: src/app/[locale]/(settings)/use-settings.ts
-#: src/components/user-dropdown-menu.tsx
-msgid "R/6nsx"
-msgstr "Subscription"
-
 #: src/app/[locale]/(settings)/settings/page.tsx
-msgid "FMLZiG"
+msgctxt "FMLZiG"
+msgid "Customize your Zoonk learning experience. Manage account settings, profile, and preferences to get the most out of our education platform."
 msgstr "Customize your Zoonk learning experience. Manage account settings, profile, and preferences to get the most out of our education platform."
 
 #: src/app/[locale]/(settings)/settings/page.tsx
-msgid "v9T5Oi"
+msgctxt "v9T5Oi"
+msgid "Manage your account settings, profile, and preferences."
 msgstr "Manage your account settings, profile, and preferences."
 
 #: src/app/[locale]/(settings)/subscription/page.tsx
-msgid "9vk07U"
+msgctxt "9vk07U"
+msgid "Manage Subscription"
 msgstr "Manage Subscription"
 
 #: src/app/[locale]/(settings)/subscription/page.tsx
-msgid "GjSDly"
+msgctxt "GjSDly"
+msgid "Manage your Zoonk subscription. View your current plan, upgrade or downgrade, and see available benefits."
 msgstr "Manage your Zoonk subscription. View your current plan, upgrade or downgrade, and see available benefits."
 
 #: src/app/[locale]/(settings)/subscription/page.tsx
-msgid "qux0WX"
+msgctxt "qux0WX"
+msgid "Check your plan details and manage your subscription."
 msgstr "Check your plan details and manage your subscription."
 
+#: src/app/[locale]/(settings)/subscription/page.tsx
+#: src/app/[locale]/(settings)/use-settings.ts
+#: src/components/user-dropdown-menu.tsx
+msgctxt "R/6nsx"
+msgid "Subscription"
+msgstr "Subscription"
+
 #: src/app/[locale]/(settings)/subscription/subscription-page.tsx
-msgid "0h/lPM"
+msgctxt "0h/lPM"
+msgid "Upgrade"
 msgstr "Upgrade"
 
 #: src/app/[locale]/(settings)/subscription/subscription-page.tsx
-msgid "bqJOI8"
+msgctxt "bqJOI8"
+msgid "No ads, unlimited lessons, and full progress tracking."
 msgstr "No ads, unlimited lessons, and full progress tracking."
 
 #: src/app/[locale]/(settings)/subscription/subscription-page.tsx
-msgid "ES/etj"
+msgctxt "ES/etj"
+msgid "Remove ads, unlock unlimited lessons, and track your progress."
 msgstr "Remove ads, unlock unlimited lessons, and track your progress."
 
 #: src/app/[locale]/(settings)/subscription/subscription-page.tsx
-msgid "igjTln"
+msgctxt "igjTln"
+msgid "Upgrade to Plus"
 msgstr "Upgrade to Plus"
 
 #: src/app/[locale]/(settings)/subscription/subscription-page.tsx
-msgid "iMhTwm"
+msgctxt "iMhTwm"
+msgid "You’re on Zoonk Plus"
 msgstr "You’re on Zoonk Plus"
 
 #: src/app/[locale]/(settings)/subscription/subscription-page.tsx
-msgid "NiVbmQ"
+msgctxt "NiVbmQ"
+msgid "Unable to change your subscription. Contact us at hello@zoonk.com"
 msgstr "Unable to change your subscription. Contact us at hello@zoonk.com"
 
 #: src/app/[locale]/(settings)/subscription/subscription-page.tsx
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "Oj9Phc"
+msgctxt "Oj9Phc"
+msgid "Manage subscription"
 msgstr "Manage subscription"
 
-#: src/app/[locale]/editor/[orgSlug]/page.tsx
-msgid "6gzGoI"
-msgstr "Select a course to edit its content"
-
-#: src/app/[locale]/editor/[orgSlug]/page.tsx
-#: src/app/[locale]/editor/page.tsx
-#: src/components/editor/editor-header.tsx
-#: src/components/user-org-menu.tsx
-msgid "fWKwFM"
-msgstr "Editor"
-
-#: src/app/[locale]/editor/[orgSlug]/page.tsx
-#: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-#: src/components/navbar-links.tsx
-msgid "R85gsW"
-msgstr "Courses"
-
-#: src/app/[locale]/editor/editor-home-content.tsx
-#: src/app/[locale]/editor/editor-home-view.tsx
-#: src/app/[locale]/editor/org-container-header.tsx
-#: src/app/[locale]/editor/page.tsx
-msgid "MPQ0kS"
-msgstr "Select an organization"
-
-#: src/app/[locale]/editor/editor-home-view.tsx
-msgid "jflB8q"
-msgstr "Choose an organization to manage its courses"
-
 #: src/app/[locale]/privacy/page.tsx
-msgid "iql85X"
+msgctxt "iql85X"
+msgid "Read Zoonk's privacy policy to understand how we collect, use, and protect your personal information."
 msgstr "Read Zoonk's privacy policy to understand how we collect, use, and protect your personal information."
 
 #: src/app/[locale]/privacy/page.tsx
-msgid "vx0nkZ"
+msgctxt "vx0nkZ"
+msgid "Privacy Policy"
 msgstr "Privacy Policy"
 
 #: src/app/[locale]/terms/page.tsx
-msgid "DaGtoz"
+msgctxt "DaGtoz"
+msgid "Read Zoonk's terms of use to understand the rules and conditions for using our platform and services"
 msgstr "Read Zoonk's terms of use to understand the rules and conditions for using our platform and services"
 
 #: src/app/[locale]/terms/page.tsx
-msgid "UhkSyx"
+msgctxt "UhkSyx"
+msgid "Terms of Use"
 msgstr "Terms of Use"
 
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "/aBLH2"
+msgctxt "/aBLH2"
+msgid "Get started"
 msgstr "Get started"
 
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
 #: src/components/logout-dropdown-item.tsx
 #: src/components/protected-section.tsx
-msgid "AyGauy"
+msgctxt "AyGauy"
+msgid "Login"
 msgstr "Login"
 
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "dXSivY"
+msgctxt "dXSivY"
+msgid "My account"
 msgstr "My account"
 
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "gvd2HB"
+msgctxt "gvd2HB"
+msgid "Update display name"
 msgstr "Update display name"
 
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "h7uoBs"
+msgctxt "h7uoBs"
+msgid "Help and support"
 msgstr "Help and support"
 
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "HC7Mi4"
+msgctxt "HC7Mi4"
+msgid "Search courses or pages..."
 msgstr "Search courses or pages..."
 
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "hX5PAb"
+msgctxt "hX5PAb"
+msgid "No results found"
 msgstr "No results found"
 
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
 #: src/components/user-dropdown-menu.tsx
-msgid "I+38K2"
+msgctxt "I+38K2"
+msgid "My courses"
 msgstr "My courses"
 
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "KwsmcD"
+msgctxt "KwsmcD"
+msgid "Manage settings"
 msgstr "Manage settings"
 
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "L6kaJv"
+msgctxt "L6kaJv"
+msgid "Learn something"
 msgstr "Learn something"
 
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "NjD8y3"
+msgctxt "NjD8y3"
+msgid "Close search"
 msgstr "Close search"
 
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "OhXwmw"
+msgctxt "OhXwmw"
+msgid "Update language"
 msgstr "Update language"
 
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "WnQ/AZ"
+#: src/components/navbar-links.tsx
+msgctxt "R85gsW"
+msgid "Courses"
+msgstr "Courses"
+
+#: src/components/command-palette.tsx
+msgctxt "WnQ/AZ"
+msgid "Contact us"
 msgstr "Contact us"
 
 #: src/components/command-palette.tsx
-#: src/components/command/app-command-palette.tsx
-msgid "xmcVZ0"
+msgctxt "xmcVZ0"
+msgid "Search"
 msgstr "Search"
 
 #: src/components/contact-form.tsx
-msgid "+5vOOu"
+msgctxt "+5vOOu"
+msgid "Please provide as much detail as possible."
 msgstr "Please provide as much detail as possible."
 
 #: src/components/contact-form.tsx
-msgid "1WHPmV"
+msgctxt "1WHPmV"
+msgid "Failed to send message. Please try again or email us directly at hello@zoonk.com"
 msgstr "Failed to send message. Please try again or email us directly at hello@zoonk.com"
 
 #: src/components/contact-form.tsx
-msgid "hJZwTS"
+msgctxt "hJZwTS"
+msgid "Email address"
 msgstr "Email address"
 
 #: src/components/contact-form.tsx
-msgid "M6PcEI"
+msgctxt "M6PcEI"
+msgid "How can we help you?"
 msgstr "How can we help you?"
 
 #: src/components/contact-form.tsx
-msgid "T7Ry38"
+msgctxt "T7Ry38"
+msgid "Message"
 msgstr "Message"
 
 #: src/components/contact-form.tsx
-msgid "vD72E5"
+msgctxt "vD72E5"
+msgid "Message sent successfully! We'll get back to you soon."
 msgstr "Message sent successfully! We'll get back to you soon."
 
 #: src/components/contact-form.tsx
-msgid "WzCvaN"
+msgctxt "WzCvaN"
+msgid "We'll use this email to contact you."
 msgstr "We'll use this email to contact you."
 
 #: src/components/contact-form.tsx
-msgid "Xx0WZV"
+msgctxt "Xx0WZV"
+msgid "Send message"
 msgstr "Send message"
 
 #: src/components/content-feedback.tsx
-msgid "BlI1/9"
+msgctxt "BlI1/9"
+msgid "Did you like this content?"
 msgstr "Did you like this content?"
 
 #: src/components/content-feedback.tsx
-msgid "Hqn5Uo"
+msgctxt "Hqn5Uo"
+msgid "I didn't like it"
 msgstr "I didn't like it"
 
 #: src/components/content-feedback.tsx
-msgid "rTFrsw"
+msgctxt "rTFrsw"
+msgid "I liked it"
 msgstr "I liked it"
 
-#: src/components/editor/language-filter.tsx
-msgid "KL74/Q"
-msgstr "Filter by language"
-
-#: src/components/editor/organization-list.tsx
-msgid "p4BgKL"
-msgstr "You're not part of any organization yet"
-
-#: src/components/editor/organization-list.tsx
-msgid "sFoGzO"
-msgstr "No organizations"
-
 #: src/components/feedback-sheet.tsx
-msgid "rbrahO"
+msgctxt "rbrahO"
+msgid "Close"
 msgstr "Close"
 
 #: src/components/locale-switcher.tsx
-msgid "GmcCqz"
+msgctxt "GmcCqz"
+msgid "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} es {🇪🇸 Español} other {Unknown}}"
 msgstr "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} es {🇪🇸 Español} other {Unknown}}"
 
 #: src/components/locale-switcher.tsx
-msgid "jOuyTp"
+msgctxt "jOuyTp"
+msgid "Change language"
 msgstr "Change language"
 
 #: src/components/navbar-links.tsx
-msgid "IbrSk1"
+msgctxt "IbrSk1"
+msgid "Learn"
 msgstr "Learn"
 
 #: src/components/protected-section.tsx
-msgid "2jC0rX"
+msgctxt "2jC0rX"
+msgid "Checking if you're logged in..."
 msgstr "Checking if you're logged in..."
 
 #: src/components/protected-section.tsx
-msgid "yOFm9C"
+msgctxt "yOFm9C"
+msgid "You need to be logged in to access this page."
 msgstr "You need to be logged in to access this page."

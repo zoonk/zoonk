@@ -19,8 +19,8 @@
   },
   "name": "@zoonk/db",
   "peerDependencies": {
-    "@prisma/client": ">=7.1.0",
-    "pg": ">=8.16.0",
+    "@prisma/client": ">=7.1",
+    "pg": ">=8.16",
     "server-only": ">=0.0.1"
   },
   "private": true,
