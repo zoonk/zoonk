@@ -97,6 +97,7 @@ Read each folder's README file for more details
 - When creating a skeleton, use the `Skeleton` component from `@zoonk/ui/components/skeleton`
 - Always build skeleton components when using `Suspense` for loading states
 - Never import model types from `@zoonk/db` directly. Always import them from `@zoonk/core` instead. Only `@zoonk/core/types` should import and consume from `@zoonk/db`
+- When creating components, follow the best practices from `components.build`, especially following a composable architecture: https://www.components.build/llms.txt
 
 ## CSS
 
