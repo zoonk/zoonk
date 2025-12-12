@@ -20,8 +20,8 @@
   },
   "name": "@zoonk/core",
   "peerDependencies": {
-    "next": ">=16.0.7",
-    "react": ">=19.2.1",
+    "next": ">=16.0.10",
+    "react": ">=19.2.3",
     "server-only": ">=0.0.1",
     "sharp": "0.34.4"
   },
