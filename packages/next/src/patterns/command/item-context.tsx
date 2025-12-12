@@ -32,7 +32,7 @@ export function useCommandPaletteSelect() {
   const context = useContext(CommandPaletteItemContext);
   if (!context) {
     throw new Error(
-      "useCommandPaletteSelect must be used within CommandPaletteDialog",
+      "useCommandPaletteSelect must be used within CommandPaletteItemProvider",
     );
   }
   return context.onSelect;
