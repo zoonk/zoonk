@@ -9,6 +9,7 @@ import {
 } from "@zoonk/ui/components/command";
 import type { LucideIcon } from "lucide-react";
 import { useQueryState } from "nuqs";
+import { CommandPaletteItemProvider } from "./item-context";
 import { useCommandPalette } from "./provider";
 import { CommandPaletteSearch } from "./search";
 
@@ -153,7 +154,9 @@ export function CommandPaletteDialog({
           <p>{emptyText}</p>
         </CommandEmpty>
 
-        {children}
+        <CommandPaletteItemProvider onSelect={handleSelect}>
+          {children}
+        </CommandPaletteItemProvider>
 
         {filteredStaticPages.length > 0 && (
           <CommandGroup heading={pagesHeading}>

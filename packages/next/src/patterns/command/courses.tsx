@@ -1,8 +1,7 @@
 import { searchCourses } from "@zoonk/core/courses";
-import { Badge } from "@zoonk/ui/components/badge";
-import { CommandGroup, CommandItem } from "@zoonk/ui/components/command";
+import { CommandGroup } from "@zoonk/ui/components/command";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import Image from "next/image";
+import { CommandPaletteCourseItem } from "./course-item";
 
 export type CommandPaletteCoursesProps = {
   orgSlug: string;
@@ -39,19 +38,13 @@ export async function CommandPaletteCourses({
       {courses.map((course) => {
         const linkUrl = getLinkUrl(course.slug);
         return (
-          <CommandItem key={course.id} value={linkUrl}>
-            <Image
-              alt={course.title}
-              className="size-8 rounded object-cover"
-              height={32}
-              src={course.imageUrl}
-              width={32}
-            />
-            <span className="flex-1">{course.title}</span>
-            <Badge className="uppercase" variant="outline">
-              {course.language}
-            </Badge>
-          </CommandItem>
+          <CommandPaletteCourseItem
+            imageUrl={course.imageUrl}
+            key={course.id}
+            language={course.language}
+            title={course.title}
+            url={linkUrl}
+          />
         );
       })}
     </CommandGroup>
