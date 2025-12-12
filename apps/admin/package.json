@@ -7,7 +7,7 @@
     "@zoonk/db": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "lucide-react": "0.556.0",
-    "next": "16.0.7",
+    "next": "16.0.9",
     "nuqs": "2.7.3",
     "pg": "8.16.3",
     "react": "19.2.1",
