@@ -43,8 +43,8 @@ export default async function Settings({
   const t = await getExtracted();
 
   return (
-    <Container>
-      <ContainerHeader className="px-4 pt-4">
+    <Container variant="narrow">
+      <ContainerHeader>
         <ContainerTitle>{t("Settings")}</ContainerTitle>
         <ContainerDescription>
           {t("Manage your account settings, profile, and preferences.")}

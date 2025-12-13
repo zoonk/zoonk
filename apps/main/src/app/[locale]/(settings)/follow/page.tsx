@@ -2,6 +2,7 @@
 
 import {
   Container,
+  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,
@@ -43,14 +44,14 @@ export default async function Follow({
 
   return (
     <Container>
-      <ContainerHeader>
+      <ContainerHeader variant="sidebar">
         <ContainerTitle>{t("Follow us")}</ContainerTitle>
         <ContainerDescription>
           {t("Find all our social media links and keep in touch with us.")}
         </ContainerDescription>
       </ContainerHeader>
 
-      <div className="grid w-full gap-4 sm:grid-cols-2 md:grid-cols-3">
+      <ContainerBody className="grid w-full gap-4 sm:grid-cols-2 md:grid-cols-3">
         {getSocialProfiles(locale).map((social) => (
           <a
             className="flex items-center gap-3 rounded-lg border p-4 text-secondary-foreground/70 transition-colors hover:bg-accent"
@@ -70,7 +71,7 @@ export default async function Follow({
             </div>
           </a>
         ))}
-      </div>
+      </ContainerBody>
     </Container>
   );
 }
