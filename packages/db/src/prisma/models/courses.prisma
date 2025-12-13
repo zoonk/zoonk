@@ -20,7 +20,7 @@ model Course {
   title           String
   normalizedTitle String       @map("normalized_title")
   description     String
-  imageUrl        String       @map("image_url")
+  imageUrl        String?      @map("image_url")
   createdAt       DateTime     @default(now()) @map("created_at")
   updatedAt       DateTime     @default(now()) @updatedAt @map("updated_at")
 
