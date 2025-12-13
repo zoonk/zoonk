@@ -1,5 +1,6 @@
 import {
   Container,
+  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,
@@ -16,22 +17,22 @@ export const metadata: Metadata = {
 export default function UsersPage({ searchParams }: PageProps<"/users">) {
   return (
     <Container>
-      <ContainerHeader>
+      <ContainerHeader variant="sidebar">
         <ContainerTitle>Users</ContainerTitle>
         <ContainerDescription>
           Manage all users in the system.
         </ContainerDescription>
       </ContainerHeader>
 
-      <div className="mb-4">
+      <ContainerBody>
         <Suspense fallback={<div className="h-10" />}>
           <UserSearch />
         </Suspense>
-      </div>
 
-      <Suspense>
-        <UserList searchParams={searchParams} />
-      </Suspense>
+        <Suspense>
+          <UserList searchParams={searchParams} />
+        </Suspense>
+      </ContainerBody>
     </Container>
   );
 }

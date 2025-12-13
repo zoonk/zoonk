@@ -5,11 +5,16 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from "@zoonk/ui/components/breadcrumb";
+import { cn } from "@zoonk/ui/lib/utils";
 import Link from "next/link";
 
-function AppBreadcrumb({ children, ...props }: React.ComponentProps<"nav">) {
+function AppBreadcrumb({
+  children,
+  className,
+  ...props
+}: React.ComponentProps<"nav">) {
   return (
-    <Breadcrumb {...props}>
+    <Breadcrumb className={cn("px-4 pt-4", className)} {...props}>
       <BreadcrumbList>{children}</BreadcrumbList>
     </Breadcrumb>
   );

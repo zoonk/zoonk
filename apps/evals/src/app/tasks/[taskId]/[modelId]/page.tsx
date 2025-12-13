@@ -8,6 +8,7 @@ import {
   CardTitle,
 } from "@zoonk/ui/components/card";
 import {
+  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,
@@ -49,7 +50,7 @@ export default async function TaskModelPage({
   const results = await getTaskResults(taskId, modelId);
 
   return (
-    <main className="flex flex-col gap-6">
+    <main className="flex flex-col gap-4">
       <AppBreadcrumb>
         <HomeLinkBreadcrumb />
         <BreadcrumbSeparator />
@@ -65,36 +66,38 @@ export default async function TaskModelPage({
         </ContainerDescription>
       </ContainerHeader>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            Run Eval
-            <ModelStatusBadge modelId={modelId} taskId={taskId} />
-          </CardTitle>
-          <CardDescription>
-            Evaluating with {model?.name || modelId}
-          </CardDescription>
-        </CardHeader>
+      <ContainerBody>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              Run Eval
+              <ModelStatusBadge modelId={modelId} taskId={taskId} />
+            </CardTitle>
+            <CardDescription>
+              Evaluating with {model?.name || modelId}
+            </CardDescription>
+          </CardHeader>
 
-        <CardContent className="space-y-4">
-          <form action={runEvalAction}>
-            <input name="taskId" type="hidden" value={taskId} />
-            <input name="modelId" type="hidden" value={modelId} />
+          <CardContent className="space-y-4">
+            <form action={runEvalAction}>
+              <input name="taskId" type="hidden" value={taskId} />
+              <input name="modelId" type="hidden" value={modelId} />
 
-            <div className="flex items-center gap-4">
-              <SubmitButton icon={<PlayIcon />}>Run Eval</SubmitButton>
+              <div className="flex items-center gap-4">
+                <SubmitButton icon={<PlayIcon />}>Run Eval</SubmitButton>
 
-              <Link href={`/tasks/${taskId}`}>
-                <Button type="button" variant="outline">
-                  Change Model
-                </Button>
-              </Link>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+                <Link href={`/tasks/${taskId}`}>
+                  <Button type="button" variant="outline">
+                    Change Model
+                  </Button>
+                </Link>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
 
-      {results && <EvalResults results={results} />}
+        {results && <EvalResults results={results} />}
+      </ContainerBody>
     </main>
   );
 }

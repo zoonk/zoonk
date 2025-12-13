@@ -29,12 +29,26 @@ export function Container({
   );
 }
 
+const containerHeaderVariants = cva("flex flex-col gap-2 px-4", {
+  defaultVariants: {
+    variant: "page",
+  },
+  variants: {
+    variant: {
+      page: "pt-0",
+      sidebar: "pt-4",
+    },
+  },
+});
+
 export function ContainerHeader({
   children,
   className,
-}: React.ComponentProps<"header">) {
+  variant,
+}: React.ComponentProps<"header"> &
+  VariantProps<typeof containerHeaderVariants>) {
   return (
-    <header className={cn("flex flex-col gap-2 px-4", className)}>
+    <header className={cn(containerHeaderVariants({ variant }), className)}>
       {children}
     </header>
   );

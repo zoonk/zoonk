@@ -1,4 +1,5 @@
 import {
+  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,
@@ -30,7 +31,7 @@ export default function Home() {
         </ContainerDescription>
       </ContainerHeader>
 
-      <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <ContainerBody className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Item variant="outline">
           <ItemContent>
             <ItemTitle>Image Test</ItemTitle>
@@ -66,7 +67,7 @@ export default function Home() {
             </ItemActions>
           </Item>
         ))}
-      </section>
+      </ContainerBody>
     </main>
   );
 }

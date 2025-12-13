@@ -1,5 +1,6 @@
 import {
   Container,
+  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,
@@ -15,16 +16,18 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <Container>
-      <ContainerHeader>
+      <ContainerHeader variant="sidebar">
         <ContainerTitle>Admin Dashboard</ContainerTitle>
         <ContainerDescription>
           Manage users and system settings
         </ContainerDescription>
       </ContainerHeader>
 
-      <Suspense fallback={<AppStatsFallback />}>
-        <AppStats />
-      </Suspense>
+      <ContainerBody>
+        <Suspense fallback={<AppStatsFallback />}>
+          <AppStats />
+        </Suspense>
+      </ContainerBody>
     </Container>
   );
 }
