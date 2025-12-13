@@ -350,11 +350,6 @@ msgctxt "D3idYv"
 msgid "Settings"
 msgstr "Ajustes"
 
-#: src/app/[locale]/(settings)/settings-navigation.tsx
-msgctxt "iZeMgn"
-msgid "Navigate settings"
-msgstr "Navegar por los ajustes"
-
 #: src/app/[locale]/(settings)/settings/page.tsx
 msgctxt "FMLZiG"
 msgid "Customize your Zoonk learning experience. Manage account settings, profile, and preferences to get the most out of our education platform."

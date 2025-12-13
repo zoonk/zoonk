@@ -1,41 +1,66 @@
 "use client";
 
+import { buttonVariants } from "@zoonk/ui/components/button";
 import {
-  NativeSelect,
-  NativeSelectOption,
-} from "@zoonk/ui/components/native-select";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@zoonk/ui/components/dropdown-menu";
+import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { usePathname, useRouter } from "@/i18n/navigation";
+import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { useSettings } from "./use-settings";
 
 export function SettingsNavigation() {
   const t = useExtracted();
   const pathname = usePathname();
-  const router = useRouter();
   const { menuPages } = useSettings();
 
+  const settingsMenu = getMenu("settings");
+
   const menuItems = [
-    { key: "settings", label: t("Settings"), ...getMenu("settings") },
+    {
+      icon: settingsMenu.icon,
+      key: "settings",
+      label: t("Settings"),
+      url: settingsMenu.url,
+    },
     ...menuPages,
   ];
 
-  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedUrl = event.target.value;
-    router.push(selectedUrl);
-  };
+  const currentItem = menuItems.find((item) => item.url === pathname);
+  const CurrentIcon = currentItem?.icon ?? settingsMenu.icon;
 
   return (
-    <NativeSelect
-      aria-label={t("Navigate settings")}
-      onChange={handleChange}
-      value={pathname}
-    >
-      {menuItems.map((item) => (
-        <NativeSelectOption key={item.key} value={item.url}>
-          {item.label}
-        </NativeSelectOption>
-      ))}
-    </NativeSelect>
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        className={buttonVariants({ size: "default", variant: "outline" })}
+      >
+        <CurrentIcon aria-hidden="true" className="size-4" />
+        <span>{currentItem?.label ?? t("Settings")}</span>
+        <ChevronDownIcon aria-hidden="true" className="size-4" />
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent align="start">
+        {menuItems.map((item) => {
+          const Icon = item.icon;
+          const isActive = item.url === pathname;
+
+          return (
+            <DropdownMenuItem asChild key={item.key}>
+              <Link
+                className={isActive ? "bg-accent" : undefined}
+                href={item.url}
+              >
+                <Icon aria-hidden="true" className="size-4" />
+                {item.label}
+              </Link>
+            </DropdownMenuItem>
+          );
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
