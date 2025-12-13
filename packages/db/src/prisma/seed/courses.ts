@@ -1,3 +1,6 @@
+import type { Organization, PrismaClient } from "../../generated/prisma/client";
+import type { SeedUsers } from "./users";
+
 /**
  * Normalizes text for accent-insensitive search by removing accents
  * and converting to lowercase.
@@ -9,7 +12,7 @@ function normalizeForSearch(text: string): string {
     .toLowerCase();
 }
 
-export const courses = [
+export const coursesData = [
   // English courses
   {
     description:
@@ -80,3 +83,29 @@ export const courses = [
     title: "Astronomia",
   },
 ];
+
+export async function seedCourses(
+  prisma: PrismaClient,
+  org: Organization,
+  users: SeedUsers,
+): Promise<void> {
+  await Promise.all(
+    coursesData.map((course) =>
+      prisma.course.upsert({
+        create: {
+          authorId: users.owner.id,
+          organizationId: org.id,
+          ...course,
+        },
+        update: {},
+        where: {
+          orgSlug: {
+            language: course.language,
+            organizationId: org.id,
+            slug: course.slug,
+          },
+        },
+      }),
+    ),
+  );
+}
