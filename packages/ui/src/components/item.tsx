@@ -40,6 +40,9 @@ const itemVariants = cva(
     variants: {
       size: {
         default: "gap-4 p-4",
+        // adding padding messes up with the container gap on lists
+        // we remove the padding to keep the spacing consistent
+        list: "gap-4 p-0",
         sm: "gap-2.5 px-4 py-3",
       },
       variant: {

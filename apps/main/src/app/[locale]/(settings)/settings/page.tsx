@@ -2,6 +2,7 @@
 
 import {
   Container,
+  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,
@@ -42,7 +43,7 @@ export default async function Settings({
   const t = await getExtracted();
 
   return (
-    <Container className="gap-2">
+    <Container>
       <ContainerHeader className="px-4 pt-4">
         <ContainerTitle>{t("Settings")}</ContainerTitle>
         <ContainerDescription>
@@ -50,7 +51,9 @@ export default async function Settings({
         </ContainerDescription>
       </ContainerHeader>
 
-      <SettingsList />
+      <ContainerBody>
+        <SettingsList />
+      </ContainerBody>
     </Container>
   );
 }

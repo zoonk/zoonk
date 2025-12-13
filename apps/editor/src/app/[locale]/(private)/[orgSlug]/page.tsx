@@ -2,6 +2,7 @@ import { listOrganizationCourses } from "@zoonk/core/courses";
 import { getOrganizationBySlug } from "@zoonk/core/organizations";
 import {
   Container,
+  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,
@@ -61,9 +62,11 @@ export default async function OrgHomePage({
         </ContainerDescription>
       </ContainerHeader>
 
-      <Suspense fallback={<CourseListSkeleton />}>
-        <CourseList courses={orgCourses} orgSlug={org.slug} />
-      </Suspense>
+      <ContainerBody>
+        <Suspense fallback={<CourseListSkeleton />}>
+          <CourseList courses={orgCourses} orgSlug={org.slug} />
+        </Suspense>
+      </ContainerBody>
     </Container>
   );
 }

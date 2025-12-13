@@ -15,9 +15,9 @@ export function SettingsList() {
   const { menuPages } = useSettings();
 
   return (
-    <ItemGroup>
+    <ItemGroup className="gap-4">
       {menuPages.map((page) => (
-        <Item asChild key={page.label}>
+        <Item asChild key={page.label} size="list">
           <Link href={page.url}>
             <ItemMedia variant="icon">
               <page.icon aria-hidden="true" />

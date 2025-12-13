@@ -2,6 +2,7 @@ import { getCourseSuggestions } from "@zoonk/core/course-suggestions";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Container,
+  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,
@@ -33,7 +34,7 @@ export async function CourseSuggestions({
   const suggestions = await getCourseSuggestions({ locale, prompt });
 
   return (
-    <Container variant="narrow">
+    <Container variant="list">
       <ContainerHeader className="text-center">
         <ContainerTitle>
           {t("Course ideas for {prompt}", { prompt })}
@@ -46,26 +47,28 @@ export async function CourseSuggestions({
         </Link>
       </ContainerHeader>
 
-      <ItemGroup>
-        {suggestions.map((course, index) => (
-          <Fragment key={course.title}>
-            <Item>
-              <ItemContent className="gap-0.5">
-                <ItemTitle>{course.title}</ItemTitle>
-                <ItemDescription>{course.description}</ItemDescription>
-              </ItemContent>
+      <ContainerBody>
+        <ItemGroup className="gap-4">
+          {suggestions.map((course, index) => (
+            <Fragment key={course.title}>
+              <Item size="list">
+                <ItemContent className="gap-0.5">
+                  <ItemTitle>{course.title}</ItemTitle>
+                  <ItemDescription>{course.description}</ItemDescription>
+                </ItemContent>
 
-              <ItemActions>
-                <Button size="sm" variant="outline">
-                  {t("Create course")}
-                </Button>
-              </ItemActions>
-            </Item>
+                <ItemActions>
+                  <Button size="sm" variant="outline">
+                    {t("Create course")}
+                  </Button>
+                </ItemActions>
+              </Item>
 
-            {index !== suggestions.length - 1 && <ItemSeparator />}
-          </Fragment>
-        ))}
-      </ItemGroup>
+              {index !== suggestions.length - 1 && <ItemSeparator />}
+            </Fragment>
+          ))}
+        </ItemGroup>
+      </ContainerBody>
 
       <ContentFeedback
         className="py-4"
