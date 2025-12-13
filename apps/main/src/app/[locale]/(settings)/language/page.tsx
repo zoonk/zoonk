@@ -27,7 +27,7 @@ export async function generateMetadata({
     description: t(
       "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages.",
     ),
-    title: t("Change Language"),
+    title: t("Update language"),
   };
 }
 

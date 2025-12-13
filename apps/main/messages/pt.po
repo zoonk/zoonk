@@ -266,11 +266,6 @@ msgid "Need help with Zoonk? Contact our support or browse the FAQ to quickly fi
 msgstr "Precisa de ajuda com o Zoonk? Entre em contato com nosso suporte ou navegue pelo FAQ para encontrar rapidamente respostas para perguntas comuns."
 
 #: src/app/[locale]/(settings)/language/page.tsx
-msgctxt "3KdX2W"
-msgid "Change Language"
-msgstr "Mudar idioma"
-
-#: src/app/[locale]/(settings)/language/page.tsx
 msgctxt "aNLa1G"
 msgid "Choose the app language you prefer for this device."
 msgstr "Escolha o idioma do aplicativo que você prefere para este dispositivo."
@@ -279,6 +274,13 @@ msgstr "Escolha o idioma do aplicativo que você prefere para este dispositivo."
 msgctxt "gr4VpD"
 msgid "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages."
 msgstr "Atualize o idioma do seu aplicativo Zoonk para aprender em inglês, português, espanhol, francês ou outros idiomas suportados."
+
+#: src/app/[locale]/(settings)/language/page.tsx
+#: src/components/command-palette.tsx
+#: src/components/locale-switcher.tsx
+msgctxt "OhXwmw"
+msgid "Update language"
+msgstr "Atualizar idioma"
 
 #: src/app/[locale]/(settings)/language/page.tsx
 #: src/app/[locale]/(settings)/use-settings.ts
@@ -411,15 +413,15 @@ msgid "You’re on Zoonk Plus"
 msgstr "Você está no Zoonk Plus"
 
 #: src/app/[locale]/(settings)/subscription/subscription-page.tsx
-msgctxt "NiVbmQ"
-msgid "Unable to change your subscription. Contact us at hello@zoonk.com"
-msgstr "Não foi possível alterar sua assinatura. Contacte-nos em contato@zoonk.com"
-
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
 #: src/components/command-palette.tsx
 msgctxt "Oj9Phc"
 msgid "Manage subscription"
 msgstr "Gerenciar assinatura"
+
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
+msgctxt "s1ZXI0"
+msgid "Unable to update your subscription. Contact us at hello@zoonk.com"
+msgstr "Não foi possível atualizar sua assinatura. Entre em contato pelo email contato@zoonk.com"
 
 #: src/app/[locale]/privacy/page.tsx
 msgctxt "iql85X"
@@ -498,11 +500,6 @@ msgstr "Aprenda algo"
 msgctxt "NjD8y3"
 msgid "Close search"
 msgstr "Fechar pesquisa"
-
-#: src/components/command-palette.tsx
-msgctxt "OhXwmw"
-msgid "Update language"
-msgstr "Atualizar idioma"
 
 #: src/components/command-palette.tsx
 #: src/components/navbar-links.tsx
@@ -584,11 +581,6 @@ msgstr "Fechar"
 msgctxt "GmcCqz"
 msgid "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} es {🇪🇸 Español} other {Unknown}}"
 msgstr "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} es {🇪🇸 Español} other {Unknown}}"
-
-#: src/components/locale-switcher.tsx
-msgctxt "jOuyTp"
-msgid "Change language"
-msgstr "Mudar idioma"
 
 #: src/components/navbar-links.tsx
 msgctxt "IbrSk1"

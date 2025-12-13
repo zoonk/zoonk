@@ -92,7 +92,7 @@ export function SubscriptionPage() {
       {hasError && (
         <ItemFooter className="text-destructive">
           {t(
-            "Unable to change your subscription. Contact us at hello@zoonk.com",
+            "Unable to update your subscription. Contact us at hello@zoonk.com",
           )}
         </ItemFooter>
       )}

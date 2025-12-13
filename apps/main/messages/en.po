@@ -266,11 +266,6 @@ msgid "Need help with Zoonk? Contact our support or browse the FAQ to quickly fi
 msgstr "Need help with Zoonk? Contact our support or browse the FAQ to quickly find answers to common questions."
 
 #: src/app/[locale]/(settings)/language/page.tsx
-msgctxt "3KdX2W"
-msgid "Change Language"
-msgstr "Change Language"
-
-#: src/app/[locale]/(settings)/language/page.tsx
 msgctxt "aNLa1G"
 msgid "Choose the app language you prefer for this device."
 msgstr "Choose the app language you prefer for this device."
@@ -279,6 +274,13 @@ msgstr "Choose the app language you prefer for this device."
 msgctxt "gr4VpD"
 msgid "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages."
 msgstr "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages."
+
+#: src/app/[locale]/(settings)/language/page.tsx
+#: src/components/command-palette.tsx
+#: src/components/locale-switcher.tsx
+msgctxt "OhXwmw"
+msgid "Update language"
+msgstr "Update language"
 
 #: src/app/[locale]/(settings)/language/page.tsx
 #: src/app/[locale]/(settings)/use-settings.ts
@@ -411,15 +413,15 @@ msgid "You’re on Zoonk Plus"
 msgstr "You’re on Zoonk Plus"
 
 #: src/app/[locale]/(settings)/subscription/subscription-page.tsx
-msgctxt "NiVbmQ"
-msgid "Unable to change your subscription. Contact us at hello@zoonk.com"
-msgstr "Unable to change your subscription. Contact us at hello@zoonk.com"
-
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
 #: src/components/command-palette.tsx
 msgctxt "Oj9Phc"
 msgid "Manage subscription"
 msgstr "Manage subscription"
+
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
+msgctxt "s1ZXI0"
+msgid "Unable to update your subscription. Contact us at hello@zoonk.com"
+msgstr "Unable to update your subscription. Contact us at hello@zoonk.com"
 
 #: src/app/[locale]/privacy/page.tsx
 msgctxt "iql85X"
@@ -498,11 +500,6 @@ msgstr "Learn something"
 msgctxt "NjD8y3"
 msgid "Close search"
 msgstr "Close search"
-
-#: src/components/command-palette.tsx
-msgctxt "OhXwmw"
-msgid "Update language"
-msgstr "Update language"
 
 #: src/components/command-palette.tsx
 #: src/components/navbar-links.tsx
@@ -584,11 +581,6 @@ msgstr "Close"
 msgctxt "GmcCqz"
 msgid "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} es {🇪🇸 Español} other {Unknown}}"
 msgstr "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} es {🇪🇸 Español} other {Unknown}}"
-
-#: src/components/locale-switcher.tsx
-msgctxt "jOuyTp"
-msgid "Change language"
-msgstr "Change language"
 
 #: src/components/navbar-links.tsx
 msgctxt "IbrSk1"

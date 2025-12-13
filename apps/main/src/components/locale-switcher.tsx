@@ -38,7 +38,7 @@ export default function LocaleSwitcher() {
       <FieldContent>
         <FieldLabel htmlFor="language">{t("Language")}</FieldLabel>
         <NativeSelect
-          aria-label={t("Change language")}
+          aria-label={t("Update language")}
           className="w-full sm:w-[280px]"
           defaultValue={locale}
           disabled={isPending}
