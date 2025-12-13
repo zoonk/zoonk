@@ -87,6 +87,11 @@ msgctxt "zJxO2f"
 msgid "No courses"
 msgstr "Sem cursos"
 
+#: src/app/[locale]/(private)/[orgSlug]/locale-switcher.tsx
+msgctxt "y1Z3or"
+msgid "Language"
+msgstr "Idioma"
+
 #: src/app/[locale]/(private)/[orgSlug]/logout-menu-item.tsx
 #: src/app/[locale]/unauthorized.tsx
 msgctxt "C81/uG"

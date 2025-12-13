@@ -8,6 +8,7 @@ import { HomeIcon } from "lucide-react";
 import { useSelectedLayoutSegments } from "next/navigation";
 import { useExtracted } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { LocaleSwitcher } from "./locale-switcher";
 import { LogoutMenuItem } from "./logout-menu-item";
 import { OrgSwitcher } from "./org-switcher";
 
@@ -36,6 +37,8 @@ export function EditorNavbar() {
 
       {isHome && (
         <OrgSwitcher>
+          <DropdownMenuSeparator />
+          <LocaleSwitcher />
           <DropdownMenuSeparator />
           <LogoutMenuItem />
         </OrgSwitcher>
