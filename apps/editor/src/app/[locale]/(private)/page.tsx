@@ -22,6 +22,13 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   const t = await getExtracted();
 
+  const userHasOnlyOneOrg = orgs.data.length === 1;
+
+  // when users have only one organization, we redirect them to that organization
+  if (userHasOnlyOneOrg) {
+    redirect({ href: `/${orgs.data[0].slug}`, locale });
+  }
+
   const activeOrganizationId = userSession?.session.activeOrganizationId;
 
   const activeOrganization = findOrganizationById(
@@ -29,6 +36,8 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
     activeOrganizationId,
   );
 
+  // when users have set an active organization, we redirect them to that organization
+  // otherwise, we show the organization list to choose from
   if (activeOrganization) {
     redirect({ href: `/${activeOrganization.slug}`, locale });
   }
