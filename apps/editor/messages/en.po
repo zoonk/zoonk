@@ -87,6 +87,21 @@ msgctxt "zJxO2f"
 msgid "No courses"
 msgstr "No courses"
 
+#: src/app/[locale]/(private)/[orgSlug]/org-switcher.tsx
+msgctxt "0lmKIf"
+msgid "Switch organization"
+msgstr "Switch organization"
+
+#: src/app/[locale]/(private)/[orgSlug]/org-switcher.tsx
+msgctxt "JD2pwH"
+msgid "Organizations"
+msgstr "Organizations"
+
+#: src/app/[locale]/(private)/[orgSlug]/org-switcher.tsx
+msgctxt "NI1jZo"
+msgid "No other organizations"
+msgstr "No other organizations"
+
 #: src/app/[locale]/(private)/[orgSlug]/page.tsx
 msgctxt "6gzGoI"
 msgid "Select a course to edit its content"

@@ -7,6 +7,7 @@ import { HomeIcon } from "lucide-react";
 import { useSelectedLayoutSegments } from "next/navigation";
 import { useExtracted } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { OrgSwitcher } from "./org-switcher";
 
 export function EditorNavbar() {
   const t = useExtracted();
@@ -30,6 +31,8 @@ export function EditorNavbar() {
           <span className="sr-only">{t("Home page")}</span>
         </Link>
       </div>
+
+      {isHome && <OrgSwitcher />}
     </Navbar>
   );
 }

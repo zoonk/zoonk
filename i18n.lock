@@ -17,6 +17,9 @@ checksums:
     Check%20your%20email/singular: c51aa8640fe15af146f3e2dd4602e0c1
     Your%20organization%20hasn't%20created%20any%20courses%20yet./singular: 4c09c8406dbf7bfe159f850fc1f22b99
     No%20courses/singular: 72fc2629e79529e927834070a26d2a07
+    Switch%20organization/singular: 4af1be73eddcd59e55dfb09751005472
+    Organizations/singular: bd50dd0b17bd74a72b728a8385b5ee28
+    No%20other%20organizations/singular: e9de48fc34aa9de5d30e3eb8eed79ed1
     Select%20a%20course%20to%20edit%20its%20content/singular: 2f17c5f381acd6ffb1c1109a87e341b5
     Courses/singular: e6d00f3285e8fc48b949af0c4aad3da5
     You're%20not%20part%20of%20any%20organization%20yet/singular: 841ec9672110a0c5b2cbdb689a5ab5dd
