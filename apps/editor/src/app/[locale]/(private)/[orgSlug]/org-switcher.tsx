@@ -18,7 +18,7 @@ import { useExtracted } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
 export function OrgSwitcherSkeleton() {
-  return <Skeleton className="size-9 rounded-md" />;
+  return <Skeleton className="h-8 w-36 rounded-full" />;
 }
 
 export function OrgSwitcher() {
