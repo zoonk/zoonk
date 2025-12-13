@@ -25,14 +25,12 @@ export function OrgSwitcher() {
   const t = useExtracted();
   const params = useParams<{ orgSlug: string }>();
   const { data: organizations, isPending } = authClient.useListOrganizations();
-  const { data: activeOrg } = authClient.useActiveOrganization();
 
   if (isPending) {
     return <OrgSwitcherSkeleton />;
   }
 
-  const currentOrg =
-    activeOrg ?? organizations?.find((org) => org.slug === params.orgSlug);
+  const currentOrg = organizations?.find((org) => org.slug === params.orgSlug);
 
   const otherOrgs =
     organizations?.filter((org) => org.id !== currentOrg?.id) ?? [];
