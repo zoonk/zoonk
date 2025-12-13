@@ -1,12 +1,14 @@
 "use client";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
+import { DropdownMenuSeparator } from "@zoonk/ui/components/dropdown-menu";
 import { Navbar } from "@zoonk/ui/components/navbar";
 import { cn } from "@zoonk/ui/lib/utils";
 import { HomeIcon } from "lucide-react";
 import { useSelectedLayoutSegments } from "next/navigation";
 import { useExtracted } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { LogoutMenuItem } from "./logout-menu-item";
 import { OrgSwitcher } from "./org-switcher";
 
 export function EditorNavbar() {
@@ -32,7 +34,12 @@ export function EditorNavbar() {
         </Link>
       </div>
 
-      {isHome && <OrgSwitcher />}
+      {isHome && (
+        <OrgSwitcher>
+          <DropdownMenuSeparator />
+          <LogoutMenuItem />
+        </OrgSwitcher>
+      )}
     </Navbar>
   );
 }

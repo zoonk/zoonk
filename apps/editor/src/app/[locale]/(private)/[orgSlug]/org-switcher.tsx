@@ -15,13 +15,14 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { BuildingIcon, ChevronsUpDownIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useExtracted } from "next-intl";
+import type { ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 
 export function OrgSwitcherSkeleton() {
   return <Skeleton className="h-8 w-36 rounded-full" />;
 }
 
-export function OrgSwitcher() {
+export function OrgSwitcher({ children }: React.PropsWithChildren) {
   const t = useExtracted();
   const params = useParams<{ orgSlug: string }>();
   const { data: organizations, isPending } = authClient.useListOrganizations();
@@ -72,6 +73,8 @@ export function OrgSwitcher() {
             </DropdownMenuItem>
           ))
         )}
+
+        {children}
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -87,6 +87,12 @@ msgctxt "zJxO2f"
 msgid "No courses"
 msgstr "No courses"
 
+#: src/app/[locale]/(private)/[orgSlug]/logout-menu-item.tsx
+#: src/app/[locale]/unauthorized.tsx
+msgctxt "C81/uG"
+msgid "Logout"
+msgstr "Logout"
+
 #: src/app/[locale]/(private)/[orgSlug]/org-switcher.tsx
 msgctxt "0lmKIf"
 msgid "Switch organization"
@@ -141,11 +147,6 @@ msgstr "Select an organization"
 msgctxt "yOFm9C"
 msgid "You need to be logged in to access this page."
 msgstr "You need to be logged in to access this page."
-
-#: src/app/[locale]/unauthorized.tsx
-msgctxt "C81/uG"
-msgid "Logout"
-msgstr "Logout"
 
 #: src/app/[locale]/unauthorized.tsx
 msgctxt "gNtXZ8"
