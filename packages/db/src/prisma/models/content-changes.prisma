@@ -1,0 +1,79 @@
+enum ContentType {
+  COURSE
+  CHAPTER
+  LESSON
+  ACTIVITY
+}
+
+enum ChangeStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model ContentChange {
+  id Int @id @default(autoincrement())
+
+  // Parent course (for aggregating all changes across course content)
+  courseId Int    @map("course_id")
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  // Polymorphic content reference
+  contentType ContentType @map("content_type")
+  contentId   Int         @map("content_id")
+
+  organizationId Int          @map("organization_id")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  // Summary of the change (like a commit message)
+  title String
+
+  // Hybrid diff: { fieldName: { before: value, after: value } }
+  diff Json
+
+  // Who proposed this change
+  authorId Int  @map("author_id")
+  author   User @relation("ChangeAuthor", fields: [authorId], references: [id])
+
+  // Review status
+  status       ChangeStatus @default(PENDING)
+  reviewedById Int?         @map("reviewed_by_id")
+  reviewedBy   User?        @relation("ChangeReviewer", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?    @map("reviewed_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  comments ChangeComment[]
+
+  // Indexes for key queries
+  @@index([contentType, contentId]) // Filter by specific content item
+  @@index([courseId, authorId, status]) // Leaderboard per course (all content types)
+  @@index([courseId, contentType, status]) // Filter course changes by content type
+  @@index([organizationId, status]) // List changes in org
+  @@index([authorId]) // User's contributions
+  @@map("content_changes")
+}
+
+model ChangeComment {
+  id       Int           @id @default(autoincrement())
+  changeId Int           @map("change_id")
+  change   ContentChange @relation(fields: [changeId], references: [id], onDelete: Cascade)
+
+  // Threading support (null = root comment)
+  parentId Int?            @map("parent_id")
+  parent   ChangeComment?  @relation("CommentThread", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  ChangeComment[] @relation("CommentThread")
+
+  authorId Int  @map("author_id")
+  author   User @relation(fields: [authorId], references: [id])
+
+  content String
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@index([changeId])
+  @@index([parentId])
+  @@map("change_comments")
+}

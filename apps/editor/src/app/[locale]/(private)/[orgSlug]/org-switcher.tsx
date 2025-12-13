@@ -15,7 +15,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { BuildingIcon, ChevronsUpDownIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useExtracted } from "next-intl";
-import type { ReactNode } from "react";
 import { Link } from "@/i18n/navigation";
 
 export function OrgSwitcherSkeleton() {

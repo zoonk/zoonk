@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { describe, expect, test } from "vitest";
 import { organizationFixture } from "@/fixtures/organizations";
+import { userFixture } from "@/fixtures/users";
 import {
   LIST_COURSES_LIMIT,
   listOrganizationCourses,
@@ -11,9 +12,11 @@ import {
 describe("listOrganizationCourses()", () => {
   test("returns list of courses for an org", async () => {
     const organization = await organizationFixture();
+    const author = await userFixture();
 
     const course = await prisma.course.create({
       data: {
+        authorId: Number(author.id),
         description: "Test description",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -33,10 +36,12 @@ describe("listOrganizationCourses()", () => {
 
   test("filters courses by language", async () => {
     const organization = await organizationFixture();
+    const author = await userFixture();
 
     await prisma.course.createMany({
       data: [
         {
+          authorId: Number(author.id),
           description: "English course",
           imageUrl: "https://example.com/image.jpg",
           language: "en",
@@ -46,6 +51,7 @@ describe("listOrganizationCourses()", () => {
           title: "English Course",
         },
         {
+          authorId: Number(author.id),
           description: "Portuguese course",
           imageUrl: "https://example.com/image.jpg",
           language: "pt",
@@ -68,9 +74,11 @@ describe("listOrganizationCourses()", () => {
 
   test("limits results to the specified amount", async () => {
     const organization = await organizationFixture();
+    const author = await userFixture();
 
     await prisma.course.createMany({
       data: Array.from({ length: 5 }, (_, i) => ({
+        authorId: Number(author.id),
         description: `Course ${i} description`,
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -92,9 +100,11 @@ describe("listOrganizationCourses()", () => {
 
   test("uses default limit of 20", async () => {
     const organization = await organizationFixture();
+    const author = await userFixture();
 
     await prisma.course.createMany({
       data: Array.from({ length: 25 }, (_, i) => ({
+        authorId: Number(author.id),
         description: `Course ${i} description`,
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -113,9 +123,11 @@ describe("listOrganizationCourses()", () => {
 
   test("returns courses ordered by createdAt descending", async () => {
     const organization = await organizationFixture();
+    const author = await userFixture();
 
     const oldCourse = await prisma.course.create({
       data: {
+        authorId: Number(author.id),
         createdAt: new Date("2024-01-01"),
         description: "Old course",
         imageUrl: "https://example.com/image.jpg",
@@ -129,6 +141,7 @@ describe("listOrganizationCourses()", () => {
 
     const newCourse = await prisma.course.create({
       data: {
+        authorId: Number(author.id),
         createdAt: new Date("2024-06-01"),
         description: "New course",
         imageUrl: "https://example.com/image.jpg",
@@ -152,9 +165,11 @@ describe("listOrganizationCourses()", () => {
 describe("searchCourses()", () => {
   test("returns courses matching the search title", async () => {
     const organization = await organizationFixture();
+    const author = await userFixture();
 
     const matchingCourse = await prisma.course.create({
       data: {
+        authorId: Number(author.id),
         description: "Computer Science course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -167,6 +182,7 @@ describe("searchCourses()", () => {
 
     await prisma.course.create({
       data: {
+        authorId: Number(author.id),
         description: "Biology course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -189,9 +205,11 @@ describe("searchCourses()", () => {
 
   test("matches partial words", async () => {
     const organization = await organizationFixture();
+    const author = await userFixture();
 
     const course = await prisma.course.create({
       data: {
+        authorId: Number(author.id),
         description: "Computer Science course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -214,9 +232,11 @@ describe("searchCourses()", () => {
 
   test("matches words without accents to titles with accents", async () => {
     const organization = await organizationFixture();
+    const author = await userFixture();
 
     const course = await prisma.course.create({
       data: {
+        authorId: Number(author.id),
         description: "Computer Science course",
         imageUrl: "https://example.com/image.jpg",
         language: "pt",
@@ -239,9 +259,11 @@ describe("searchCourses()", () => {
 
   test("is case-insensitive", async () => {
     const organization = await organizationFixture();
+    const author = await userFixture();
 
     const course = await prisma.course.create({
       data: {
+        authorId: Number(author.id),
         description: "Programming course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -265,9 +287,11 @@ describe("searchCourses()", () => {
   test("only returns courses from the specified organization", async () => {
     const org1 = await organizationFixture();
     const org2 = await organizationFixture();
+    const author = await userFixture();
 
     const org1Course = await prisma.course.create({
       data: {
+        authorId: Number(author.id),
         description: "Org 1 course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -280,6 +304,7 @@ describe("searchCourses()", () => {
 
     await prisma.course.create({
       data: {
+        authorId: Number(author.id),
         description: "Org 2 course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -302,9 +327,11 @@ describe("searchCourses()", () => {
 
   test("returns courses ordered by createdAt descending", async () => {
     const organization = await organizationFixture();
+    const author = await userFixture();
 
     const oldCourse = await prisma.course.create({
       data: {
+        authorId: Number(author.id),
         createdAt: new Date("2024-01-01"),
         description: "Old programming course",
         imageUrl: "https://example.com/image.jpg",
@@ -318,6 +345,7 @@ describe("searchCourses()", () => {
 
     const newCourse = await prisma.course.create({
       data: {
+        authorId: Number(author.id),
         createdAt: new Date("2024-06-01"),
         description: "New programming course",
         imageUrl: "https://example.com/image.jpg",
@@ -342,9 +370,11 @@ describe("searchCourses()", () => {
 
   test("returns empty array when no courses match", async () => {
     const organization = await organizationFixture();
+    const author = await userFixture();
 
     await prisma.course.create({
       data: {
+        authorId: Number(author.id),
         description: "Biology course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
