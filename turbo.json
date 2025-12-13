@@ -37,6 +37,7 @@
       "dependsOn": ["^db:deploy"]
     },
     "db:generate": {
+      "cache": false,
       "dependsOn": ["^db:generate"],
       "outputs": ["src/generated/**"]
     },

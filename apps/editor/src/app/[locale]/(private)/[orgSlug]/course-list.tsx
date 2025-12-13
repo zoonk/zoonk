@@ -63,14 +63,20 @@ export async function CourseList({ orgSlug, courses }: CourseListProps) {
       {courses.map((course) => (
         <Item asChild key={course.id}>
           <Link href={`/${orgSlug}/${course.slug}`}>
-            <ItemMedia className="size-16" variant="image">
-              <Image
-                alt={course.title}
-                height={64}
-                src={course.imageUrl}
-                width={64}
-              />
-            </ItemMedia>
+            {course.imageUrl ? (
+              <ItemMedia className="size-16" variant="image">
+                <Image
+                  alt={course.title}
+                  height={64}
+                  src={course.imageUrl}
+                  width={64}
+                />
+              </ItemMedia>
+            ) : (
+              <ItemMedia className="size-16" variant="icon">
+                <NotebookPenIcon className="size-6 text-muted-foreground/80" />
+              </ItemMedia>
+            )}
 
             <ItemContent>
               <ItemTitle>{course.title}</ItemTitle>
