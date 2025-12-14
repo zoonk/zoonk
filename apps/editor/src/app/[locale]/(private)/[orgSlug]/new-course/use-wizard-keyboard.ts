@@ -38,11 +38,6 @@ export function useWizardKeyboard({
     }
 
     function handleArrowNavigation(event: KeyboardEvent) {
-      // Language step uses arrows for selection, skip navigation
-      if (currentStepName === "language") {
-        return;
-      }
-
       if (event.key === "ArrowLeft" && !isFirstStep) {
         event.preventDefault();
         onBack();
