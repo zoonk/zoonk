@@ -29,7 +29,11 @@ export function LanguageStep({ value, onChange }: LanguageStepProps) {
 
       <WizardRadioGroup onValueChange={onChange} value={value}>
         {SUPPORTED_LOCALES.map((locale) => (
-          <WizardRadioGroupItem key={locale} value={locale}>
+          <WizardRadioGroupItem
+            autoFocus={locale === value}
+            key={locale}
+            value={locale}
+          >
             {LOCALE_LABELS[locale]}
           </WizardRadioGroupItem>
         ))}
