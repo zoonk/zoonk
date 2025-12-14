@@ -19,6 +19,7 @@ import slugify from "slugify";
 import { checkSlugExistsAction } from "../actions";
 
 const SLUG_DEBOUNCE_DELAY_MS = 300;
+const COURSE_URL_PREFIX = "/c/";
 
 type SlugStepProps = {
   title: string;
@@ -82,13 +83,11 @@ export function SlugStep({
       <WizardLabel htmlFor={slugId}>{t("Course URL")}</WizardLabel>
 
       <WizardDescription>
-        {isPending
-          ? t("Checking availability…")
-          : t("This will be the URL path for your course")}
+        {t("This will be the URL path for your course")}
       </WizardDescription>
 
       <div className="flex items-baseline gap-2">
-        <span className="text-muted-foreground">{`/${language}/c/`}</span>
+        <span className="text-muted-foreground">{COURSE_URL_PREFIX}</span>
         <WizardInput
           autoFocus
           className="text-muted-foreground"
