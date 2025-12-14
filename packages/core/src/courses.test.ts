@@ -4,6 +4,7 @@ import { describe, expect, test } from "vitest";
 import { organizationFixture } from "@/fixtures/organizations";
 import { userFixture } from "@/fixtures/users";
 import {
+  createCourse,
   LIST_COURSES_LIMIT,
   listOrganizationCourses,
   searchCourses,
@@ -395,4 +396,20 @@ describe("searchCourses()", () => {
   });
 });
 
-// TODO: Add createCourse tests - requires auth testing setup
+describe("createCourse()", () => {
+  test("returns error session is invalid", async () => {
+    const organization = await organizationFixture();
+
+    const result = await createCourse({
+      description: "Test description",
+      headers: new Headers(),
+      language: "en",
+      orgSlug: organization.slug,
+      slug: "test-course",
+      title: "Test Course",
+    });
+
+    expect(result.error).toBeDefined();
+    expect(result.data).toBeNull();
+  });
+});

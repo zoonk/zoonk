@@ -87,11 +87,13 @@ export async function createCourse(params: {
   orgSlug: string;
   slug: string;
   title: string;
+  headers?: Headers;
 }): Promise<SafeReturn<Course>> {
-  const reqHeaders = await headers();
-  const session = await auth.api.getSession({ headers: reqHeaders });
+  const session = await auth.api.getSession({
+    headers: params.headers ?? (await headers()),
+  });
 
-  if (!session?.user) {
+  if (!session) {
     return { data: null, error: new Error("Unauthorized") };
   }
 
