@@ -35,7 +35,7 @@ function WizardLabel({ className, ...props }: React.ComponentProps<"label">) {
     // biome-ignore lint/a11y/noLabelWithoutControl: htmlFor is passed via props when used
     <label
       className={cn(
-        "font-medium text-muted-foreground text-xs uppercase tracking-widest",
+        "font-medium font-mono text-muted-foreground text-xs uppercase tracking-widest",
         className,
       )}
       data-slot="wizard-label"
