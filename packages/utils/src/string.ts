@@ -1,9 +1,7 @@
 import slugify from "slugify";
 
-const ACCENTS_REGEX = /[\u0300-\u036f]/g;
-
 export function removeAccents(str: string): string {
-  return str.normalize("NFD").replace(ACCENTS_REGEX, "");
+  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
 export function normalizeString(str: string): string {
