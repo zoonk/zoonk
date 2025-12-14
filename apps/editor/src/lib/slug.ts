@@ -1,25 +1,6 @@
-import { courseSlugExists } from "@zoonk/core/courses";
 import { useDebouncedValue } from "@zoonk/ui/hooks/use-debounced-value";
-import { toSlug } from "@zoonk/utils/string";
 import { useEffect, useEffectEvent, useState, useTransition } from "react";
-
-async function checkSlugExists({
-  language,
-  orgSlug,
-  slug,
-}: {
-  language: string;
-  orgSlug: string;
-  slug: string;
-}): Promise<boolean> {
-  "use server";
-
-  if (!slug.trim()) {
-    return false;
-  }
-
-  return courseSlugExists({ language, orgSlug, slug: toSlug(slug) });
-}
+import { checkSlugExists } from "./slug-action";
 
 /**
  * Hook to check if a slug already exists with debouncing.
