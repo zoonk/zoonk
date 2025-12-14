@@ -5,8 +5,9 @@ import {
   WizardLabel,
   WizardTextarea,
 } from "@zoonk/ui/components/wizard";
+import { useKeyboardCallback } from "@zoonk/ui/hooks/use-keyboard";
 import { useExtracted } from "next-intl";
-import { useEffect, useId } from "react";
+import { useId } from "react";
 
 type DescriptionStepProps = {
   value: string;
@@ -22,18 +23,7 @@ export function DescriptionStep({
   const t = useExtracted();
   const descriptionId = useId();
 
-  // Handle Cmd/Ctrl + Enter to proceed
-  useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
-        event.preventDefault();
-        onSubmit();
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [onSubmit]);
+  useKeyboardCallback("Enter", onSubmit);
 
   return (
     <div className="flex flex-col gap-2">

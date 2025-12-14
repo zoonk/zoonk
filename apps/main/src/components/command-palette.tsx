@@ -10,7 +10,7 @@ import {
   CommandItem,
   CommandList,
 } from "@zoonk/ui/components/command";
-import { useKeyboardShortcut } from "@zoonk/ui/hooks/use-keyboard-shortcut";
+import { useKeyboardCallback } from "@zoonk/ui/hooks/use-keyboard";
 import { Search } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
@@ -23,8 +23,13 @@ export function CommandPalette() {
   const { push } = useRouter();
   const t = useExtracted();
   const [query, setQuery] = useState("");
-  const { isOpen, open, close } = useKeyboardShortcut("k");
+  const [isOpen, setIsOpen] = useState(false);
   const { isLoggedIn, logout } = useLogout({ onSuccess: () => push("/login") });
+
+  useKeyboardCallback("k", () => setIsOpen((prev) => !prev));
+
+  const open = () => setIsOpen(true);
+  const close = () => setIsOpen(false);
 
   const closePalette = () => {
     close();
