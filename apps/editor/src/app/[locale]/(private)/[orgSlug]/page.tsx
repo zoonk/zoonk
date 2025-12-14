@@ -70,7 +70,7 @@ export default async function OrgHomePage({
           href={`/${orgSlug}/new`}
         >
           <PlusIcon aria-hidden="true" />
-          <span className="hidden sm:inline">{t("Create course")}</span>
+          <span className="sr-only sm:not-sr-only">{t("Create course")}</span>
         </Link>
       </ContainerHeader>
 
