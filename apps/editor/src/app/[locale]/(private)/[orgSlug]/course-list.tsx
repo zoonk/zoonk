@@ -62,7 +62,7 @@ export async function CourseList({ orgSlug, courses }: CourseListProps) {
     <ItemGroup className="gap-4">
       {courses.map((course) => (
         <Item asChild key={course.id} size="list">
-          <Link href={`/${orgSlug}/${course.slug}`}>
+          <Link href={`/${orgSlug}/c/${course.language}/${course.slug}`}>
             {course.imageUrl ? (
               <ItemMedia className="size-16" variant="image">
                 <Image

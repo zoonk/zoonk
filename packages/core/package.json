@@ -4,8 +4,7 @@
     "@zoonk/ai": "workspace:*",
     "@zoonk/auth": "workspace:*",
     "@zoonk/db": "workspace:*",
-    "@zoonk/utils": "workspace:*",
-    "slugify": "1.6.6"
+    "@zoonk/utils": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19",
