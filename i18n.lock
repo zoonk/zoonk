@@ -17,6 +17,27 @@ checksums:
     Check%20your%20email/singular: c51aa8640fe15af146f3e2dd4602e0c1
     Your%20organization%20hasn't%20created%20any%20courses%20yet./singular: 4c09c8406dbf7bfe159f850fc1f22b99
     No%20courses/singular: 72fc2629e79529e927834070a26d2a07
+    Language/singular: 277fd1a41cc237a437cd1d5e4a80463b
+    Logout/singular: 07948fdf20705e04a7bf68ab197512bf
+    Failed%20to%20create%20course/singular: b8071fa167001a6e20c46226759400d9
+    All%20fields%20are%20required/singular: 01fe4fe061a783c06c001dd39c78053a
+    Next/singular: 89ddbcf710eba274963494f312bdc8a9
+    Back/singular: f541015a827e37cb3b1234e56bc2aa3c
+    Close/singular: 2c2e22f8424a1031de89063bd0022e16
+    Create/singular: 757ccd28dd533ff3a933355273c1e32a
+    Create%20course/singular: 41f52f80def95a611c9cc3a5e1a11dde
+    A%20brief%20description%20of%20your%20course%E2%80%A6/singular: 26ac2beaaae4ce3f3cccb399935c8b9a
+    Course%20description/singular: 19e0252f9b2da688a9b029817995c3b2
+    A%20short%20summary%20that%20helps%20learners%20understand%20what%20they'll%20learn/singular: 68a3b304d5ce93306c7059f1af9546f2
+    Course%20language/singular: 92bda1f51d4211b800b1712536338b90
+    Select%20the%20language%20your%20course%20content%20will%20be%20in/singular: bddf11e7edeeff2957657c4c6b068e04
+    This%20will%20be%20the%20URL%20path%20for%20your%20course/singular: a3916423b648f9cb3d381e9184f7b7af
+    Course%20URL/singular: 573679edcae41f66266a350946e053a0
+    course-title/singular: bf1fe58a4284f0eb37f9e391d9c3f9e1
+    course%20title/singular: d088cfb29c99f6256c5b166aaf760530
+    The%20main%20title%20that%20learners%20will%20see%20for%20your%20course/singular: 5e0707d1ace160525f64c1ff51474569
+    Course%20title/singular: 40d5c412b95b9a452643c69e48465350
+    A%20course%20with%20this%20URL%20already%20exists/singular: 36f9d2ffb6817af1ae69ec6dd37cf5d6
     Switch%20organization/singular: 4af1be73eddcd59e55dfb09751005472
     Organizations/singular: bd50dd0b17bd74a72b728a8385b5ee28
     No%20other%20organizations/singular: e9de48fc34aa9de5d30e3eb8eed79ed1
@@ -28,7 +49,6 @@ checksums:
     Choose%20an%20organization%20to%20manage%20its%20courses/singular: d88708fca31021a9ca78692de8a29fd3
     Select%20an%20organization/singular: a88e8fefabe447cba0f1bfcfbe68e745
     You%20need%20to%20be%20logged%20in%20to%20access%20this%20page./singular: 759ca522663d8f628718332f756dd6c4
-    Logout/singular: 07948fdf20705e04a7bf68ab197512bf
     401%20-%20Unauthorized/singular: 0612c3a47aaacaa9fd8aa3d5f0fbc0b8
     You%20can%E2%80%99t%20edit%20courses%20for%20this%20organization.%20Log%20in%20with%20another%20account%20or%20switch%20to%20a%20different%20organization./singular: edc91af724186f7214404c06f6ec36c3
   9270df1bc9e10fdb8026bb4ab67061d4:

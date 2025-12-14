@@ -78,7 +78,7 @@ msgstr "Hubo un error al iniciar sesión. Por favor, inténtalo de nuevo o conta
 #: src/app/[locale]/(auth)/otp/otp-form.tsx
 msgctxt "HkHvQv"
 msgid "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
-msgstr "El código que has introducido es incorrecto. Por favor, inténtalo de nuevo o contacta con contacto@zoonk.com"
+msgstr "El código que ingresaste es incorrecto. Por favor, inténtalo de nuevo o contacta con contacto@zoonk.com"
 
 #: src/app/[locale]/(auth)/otp/page.tsx
 msgctxt "ChATeO"
@@ -88,7 +88,7 @@ msgstr "Cambiar correo electrónico"
 #: src/app/[locale]/(auth)/otp/page.tsx
 msgctxt "LZHcmZ"
 msgid "Enter the code we sent to {email}:"
-msgstr "Introduce el código que enviamos a {email}:"
+msgstr "Ingresa el código que enviamos a {email}:"
 
 #: src/app/[locale]/(auth)/otp/page.tsx
 msgctxt "zx7CKB"
@@ -158,7 +158,7 @@ msgstr "Comenzar"
 #: src/app/[locale]/(catalog)/learn/learn-form.tsx
 msgctxt "uCb1nG"
 msgid "Enter a subject"
-msgstr "Introduce una materia"
+msgstr "Ingresa un tema"
 
 #: src/app/[locale]/(catalog)/learn/page.tsx
 msgctxt "3NEMCK"

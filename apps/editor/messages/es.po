@@ -98,106 +98,101 @@ msgctxt "C81/uG"
 msgid "Logout"
 msgstr "Cerrar sesión"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/actions.ts
+#: src/app/[locale]/(private)/[orgSlug]/new/actions.ts
 msgctxt "/c3jWN"
 msgid "Failed to create course"
-msgstr ""
+msgstr "Error al crear curso"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/actions.ts
+#: src/app/[locale]/(private)/[orgSlug]/new/actions.ts
 msgctxt "bLbK+M"
 msgid "All fields are required"
-msgstr ""
+msgstr "Todos los campos son obligatorios"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/create-course-navbar.tsx
 #: src/app/[locale]/(private)/[orgSlug]/new/create-course-navbar.tsx
 msgctxt "9+Ddtu"
 msgid "Next"
-msgstr ""
+msgstr "Siguiente"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/create-course-navbar.tsx
 #: src/app/[locale]/(private)/[orgSlug]/new/create-course-navbar.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
-msgstr ""
+msgstr "Atrás"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/create-course-navbar.tsx
 #: src/app/[locale]/(private)/[orgSlug]/new/create-course-navbar.tsx
 msgctxt "rbrahO"
 msgid "Close"
-msgstr ""
+msgstr "Cerrar"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/create-course-navbar.tsx
 #: src/app/[locale]/(private)/[orgSlug]/new/create-course-navbar.tsx
 msgctxt "VzzYJk"
 msgid "Create"
-msgstr ""
+msgstr "Crear"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/page.tsx
 #: src/app/[locale]/(private)/[orgSlug]/new/page.tsx
 #: src/app/[locale]/(private)/[orgSlug]/page.tsx
 msgctxt "dCKXDB"
 msgid "Create course"
-msgstr ""
+msgstr "Crear curso"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/description-step.tsx
+#: src/app/[locale]/(private)/[orgSlug]/new/steps/description-step.tsx
 msgctxt "2qMJ2X"
 msgid "A brief description of your course…"
-msgstr ""
+msgstr "Una breve descripción de tu curso…"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/description-step.tsx
+#: src/app/[locale]/(private)/[orgSlug]/new/steps/description-step.tsx
 msgctxt "43Q2tB"
 msgid "Course description"
-msgstr ""
+msgstr "Descripción del curso"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/description-step.tsx
+#: src/app/[locale]/(private)/[orgSlug]/new/steps/description-step.tsx
 msgctxt "zLHjeU"
 msgid "A short summary that helps learners understand what they'll learn"
-msgstr ""
+msgstr "Un resumen corto para ayudar a los estudiantes a entender lo que aprenderán"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/language-step.tsx
+#: src/app/[locale]/(private)/[orgSlug]/new/steps/language-step.tsx
 msgctxt "KYeXR4"
 msgid "Course language"
-msgstr ""
+msgstr "Idioma del curso"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/language-step.tsx
+#: src/app/[locale]/(private)/[orgSlug]/new/steps/language-step.tsx
 msgctxt "wjs5Mw"
 msgid "Select the language your course content will be in"
-msgstr ""
+msgstr "Selecciona el idioma en el que estará el contenido de tu curso"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
+#: src/app/[locale]/(private)/[orgSlug]/new/steps/slug-step.tsx
 msgctxt "lE3Euj"
 msgid "This will be the URL path for your course"
-msgstr ""
+msgstr "Esta será la ruta URL para tu curso"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
+#: src/app/[locale]/(private)/[orgSlug]/new/steps/slug-step.tsx
 msgctxt "nRWWPC"
 msgid "Course URL"
-msgstr ""
+msgstr "URL del curso"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
+#: src/app/[locale]/(private)/[orgSlug]/new/steps/slug-step.tsx
 msgctxt "wQWt52"
 msgid "course-title"
-msgstr ""
+msgstr "titulo-del-curso"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/title-step.tsx
+#: src/app/[locale]/(private)/[orgSlug]/new/steps/title-step.tsx
 msgctxt "B0oGiF"
 msgid "course title"
-msgstr ""
+msgstr "título del curso"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/title-step.tsx
+#: src/app/[locale]/(private)/[orgSlug]/new/steps/title-step.tsx
 msgctxt "bZ8+Wq"
 msgid "The main title that learners will see for your course"
-msgstr ""
+msgstr "El título principal que los estudiantes verán para tu curso"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/title-step.tsx
+#: src/app/[locale]/(private)/[orgSlug]/new/steps/title-step.tsx
 msgctxt "JHdbKf"
 msgid "Course title"
-msgstr ""
+msgstr "Título del curso"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/use-course-form.ts
+#: src/app/[locale]/(private)/[orgSlug]/new/use-course-form.ts
 msgctxt "lP29gk"
 msgid "A course with this URL already exists"
-msgstr ""
+msgstr "Ya existe un curso con esta dirección"
 
 #: src/app/[locale]/(private)/[orgSlug]/org-switcher.tsx
 msgctxt "0lmKIf"
