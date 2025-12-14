@@ -42,7 +42,7 @@ export function SlugStep({
 }: SlugStepProps) {
   const t = useExtracted();
   const slugId = useId();
-  const [isPending, startTransition] = useTransition();
+  const [_isPending, startTransition] = useTransition();
   const [slugExists, setSlugExists] = useState(false);
   const debouncedSlug = useDebouncedValue(value, SLUG_DEBOUNCE_DELAY_MS);
 
@@ -76,7 +76,11 @@ export function SlugStep({
     });
   }, [debouncedSlug, language, orgSlug]);
 
-  const showSlugError = slugExists && !isPending;
+  const slugErrorMessage = slugExists
+    ? t("A course with this URL already exists")
+    : null;
+
+  const errorMessage = error || slugErrorMessage;
 
   return (
     <WizardField>
@@ -98,15 +102,7 @@ export function SlugStep({
         />
       </div>
 
-      {showSlugError && (
-        <p className="text-destructive text-sm">
-          {t("A course with this URL already exists")}
-        </p>
-      )}
-
-      {error && !showSlugError && (
-        <p className="text-destructive text-sm">{error}</p>
-      )}
+      <p className="text-destructive text-sm">{errorMessage}</p>
     </WizardField>
   );
 }
