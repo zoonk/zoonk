@@ -1,9 +1,8 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import { ProgressDots } from "@zoonk/ui/components/progress-dots";
 import { Spinner } from "@zoonk/ui/components/spinner";
-import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
@@ -35,52 +34,40 @@ export function WizardNavbar({
   return (
     <nav className="sticky top-0 z-40 flex items-center justify-between gap-2 bg-background/80 p-4 backdrop-blur-md">
       <div className="flex items-center gap-2">
-        {isFirstStep ? (
-          <button
-            className={cn(buttonVariants({ size: "icon", variant: "outline" }))}
-            onClick={onClose}
-            type="button"
-          >
-            <XIcon aria-hidden="true" />
-            <span className="sr-only">{t("Close")}</span>
-          </button>
-        ) : (
-          <button
-            className={cn(buttonVariants({ size: "icon", variant: "outline" }))}
-            onClick={onBack}
-            type="button"
-          >
-            <ChevronLeftIcon aria-hidden="true" />
-            <span className="sr-only">{t("Back")}</span>
-          </button>
-        )}
+        <Button onClick={onClose} size="icon" variant="secondary">
+          <XIcon aria-hidden="true" />
+          <span className="sr-only">{t("Close")}</span>
+        </Button>
+
+        <Button
+          disabled={isFirstStep}
+          onClick={onBack}
+          size="icon"
+          variant="outline"
+        >
+          <ChevronLeftIcon aria-hidden="true" />
+          <span className="sr-only">{t("Back")}</span>
+        </Button>
       </div>
 
       <ProgressDots current={currentStep} total={totalSteps} />
 
       <div className="flex items-center gap-2">
         {isLastStep ? (
-          <button
-            className={cn(
-              buttonVariants({ size: "default", variant: "default" }),
-            )}
-            disabled={!canProceed || isPending}
-            onClick={onSubmit}
-            type="button"
-          >
-            {isPending ? <Spinner /> : null}
+          <Button disabled={!canProceed || isPending} onClick={onSubmit}>
+            {isPending && <Spinner aria-hidden="true" />}
             {t("Create")}
-          </button>
+          </Button>
         ) : (
-          <button
-            className={cn(buttonVariants({ size: "icon", variant: "outline" }))}
-            disabled={!canProceed}
+          <Button
+            disabled={!canProceed || isPending}
             onClick={onNext}
-            type="button"
+            size="icon"
+            variant="outline"
           >
             <ChevronRightIcon aria-hidden="true" />
             <span className="sr-only">{t("Next")}</span>
-          </button>
+          </Button>
         )}
       </div>
     </nav>
