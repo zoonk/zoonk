@@ -74,6 +74,32 @@ export type CreateCourseParams = {
   title: string;
 };
 
+export type CourseSlugExistsParams = {
+  language: string;
+  organizationId: number;
+  slug: string;
+};
+
+/**
+ * Checks if a course with the given slug already exists for the organization and language.
+ */
+export async function courseSlugExists(
+  params: CourseSlugExistsParams,
+): Promise<boolean> {
+  const { data } = await safeAsync(() =>
+    prisma.course.findFirst({
+      select: { id: true },
+      where: {
+        language: params.language,
+        organizationId: params.organizationId,
+        slug: params.slug,
+      },
+    }),
+  );
+
+  return data !== null;
+}
+
 export async function createCourse(
   params: CreateCourseParams,
 ): Promise<SafeReturn<Course>> {

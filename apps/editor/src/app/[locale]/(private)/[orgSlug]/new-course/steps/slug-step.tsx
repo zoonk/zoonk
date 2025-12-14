@@ -5,9 +5,8 @@ import {
   WizardInput,
   WizardLabel,
 } from "@zoonk/ui/components/wizard";
-import { validateSlug } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
-import { useEffect, useId, useMemo } from "react";
+import { useEffect, useId } from "react";
 import slugify from "slugify";
 
 type SlugStepProps = {
@@ -33,10 +32,7 @@ export function SlugStep({
     if (!value && title) {
       onChange(slugify(title, { lower: true, strict: true }));
     }
-  }, [onChange, title, value]); // Only run on mount
-
-  const validation = useMemo(() => validateSlug(value), [value]);
-  const showValidationError = value.length > 0 && !validation.isValid;
+  }, [onChange, title, value]);
 
   return (
     <div className="flex flex-col gap-2">
@@ -55,9 +51,6 @@ export function SlugStep({
       <WizardDescription>
         {t("This will be the URL path for your course")}
       </WizardDescription>
-      {showValidationError && (
-        <p className="text-destructive text-sm">{validation.error}</p>
-      )}
       {error && <p className="text-destructive text-sm">{error}</p>}
     </div>
   );

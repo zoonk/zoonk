@@ -1,10 +1,11 @@
 "use server";
 
-import { createCourse } from "@zoonk/core/courses";
+import { courseSlugExists, createCourse } from "@zoonk/core/courses";
 import { getOrganizationBySlug } from "@zoonk/core/organizations";
 import { cacheTagOrgCourses } from "@zoonk/utils/cache";
 import { parseFormField } from "@zoonk/utils/form";
 import { revalidateTag } from "next/cache";
+import slugify from "slugify";
 import { redirect } from "@/i18n/navigation";
 
 export async function createCourseAction(formData: FormData) {
@@ -25,11 +26,23 @@ export async function createCourseAction(formData: FormData) {
     return { error: "Organization not found" };
   }
 
+  const normalizedSlug = slugify(slug, { lower: true, strict: true });
+
+  const slugExists = await courseSlugExists({
+    language,
+    organizationId: org.id,
+    slug: normalizedSlug,
+  });
+
+  if (slugExists) {
+    return { error: "A course with this URL already exists" };
+  }
+
   const { data: course, error } = await createCourse({
     description,
     language,
     organizationId: org.id,
-    slug,
+    slug: normalizedSlug,
     title,
   });
 

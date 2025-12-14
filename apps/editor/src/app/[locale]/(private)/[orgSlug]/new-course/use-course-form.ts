@@ -1,6 +1,5 @@
 "use client";
 
-import { validateSlug } from "@zoonk/utils/string";
 import { useCallback, useState } from "react";
 
 export type CourseFormData = {
@@ -38,10 +37,8 @@ export function useCourseForm({ defaultLanguage }: UseCourseFormOptions) {
           return formData.language.length > 0;
         case "description":
           return formData.description.trim().length > 0;
-        case "slug": {
-          const validation = validateSlug(formData.slug);
-          return formData.slug.trim().length > 0 && validation.isValid;
-        }
+        case "slug":
+          return formData.slug.trim().length > 0;
         default:
           return false;
       }
