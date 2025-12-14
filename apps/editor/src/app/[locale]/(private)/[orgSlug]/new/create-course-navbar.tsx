@@ -1,6 +1,7 @@
 "use client";
 
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
+import { Navbar } from "@zoonk/ui/components/navbar";
 import { ProgressDots } from "@zoonk/ui/components/progress-dots";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
@@ -33,7 +34,7 @@ export function CreateCourseNavbar({
   const t = useExtracted();
 
   return (
-    <nav className="sticky top-0 z-40 flex items-center justify-between gap-2 bg-background/80 p-4 backdrop-blur-md">
+    <Navbar>
       <div className="flex items-center gap-2">
         <Link
           className={buttonVariants({ size: "icon", variant: "secondary" })}
@@ -74,6 +75,6 @@ export function CreateCourseNavbar({
           </Button>
         )}
       </div>
-    </nav>
+    </Navbar>
   );
 }
