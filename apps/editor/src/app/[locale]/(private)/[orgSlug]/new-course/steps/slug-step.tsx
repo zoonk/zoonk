@@ -8,7 +8,13 @@ import {
 } from "@zoonk/ui/components/wizard";
 import { useDebouncedValue } from "@zoonk/ui/hooks/use-debounced-value";
 import { useExtracted } from "next-intl";
-import { useEffect, useId, useState, useTransition } from "react";
+import {
+  useEffect,
+  useEffectEvent,
+  useId,
+  useState,
+  useTransition,
+} from "react";
 import slugify from "slugify";
 import { checkSlugExistsAction } from "../actions";
 
@@ -39,6 +45,11 @@ export function SlugStep({
   const [slugExists, setSlugExists] = useState(false);
   const debouncedSlug = useDebouncedValue(value, SLUG_DEBOUNCE_DELAY_MS);
 
+  const slugExistsCallback = useEffectEvent((exists: boolean) => {
+    setSlugExists(exists);
+    onSlugExists(exists);
+  });
+
   // Auto-fill slug from title when entering this step if slug is empty
   useEffect(() => {
     if (!value && title) {
@@ -49,8 +60,7 @@ export function SlugStep({
   // Check if slug exists when debounced value changes
   useEffect(() => {
     if (!debouncedSlug.trim()) {
-      setSlugExists(false);
-      onSlugExists(false);
+      slugExistsCallback(false);
       return;
     }
 
@@ -60,10 +70,10 @@ export function SlugStep({
         orgSlug,
         slug: debouncedSlug,
       });
-      setSlugExists(exists);
-      onSlugExists(exists);
+
+      slugExistsCallback(exists);
     });
-  }, [debouncedSlug, language, orgSlug, onSlugExists]);
+  }, [debouncedSlug, language, orgSlug]);
 
   const showSlugError = slugExists && !isPending;
 
