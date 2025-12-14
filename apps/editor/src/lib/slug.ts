@@ -19,13 +19,18 @@ export function useSlugCheck({
 
   const debouncedSlug = useDebounce(slug);
 
-  const handleSlugCheck = useEffectEvent((exists: boolean) => {
-    setSlugExists(exists);
-  });
+  const handleSlugCheck = useEffectEvent(
+    (checkedSlug: string, exists: boolean) => {
+      // Only update if response is for the current slug to avoid stale results
+      if (checkedSlug === debouncedSlug) {
+        setSlugExists(exists);
+      }
+    },
+  );
 
   useEffect(() => {
     if (!debouncedSlug.trim()) {
-      handleSlugCheck(false);
+      setSlugExists(false);
       return;
     }
 
@@ -36,7 +41,7 @@ export function useSlugCheck({
         slug: debouncedSlug,
       });
 
-      handleSlugCheck(exists);
+      handleSlugCheck(debouncedSlug, exists);
     });
   }, [debouncedSlug, language, orgSlug]);
 
