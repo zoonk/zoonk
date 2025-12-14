@@ -3,6 +3,7 @@
 import {
   WizardDescription,
   WizardField,
+  WizardGroup,
   WizardLabel,
   WizardRadioGroup,
   WizardRadioGroupItem,
@@ -19,7 +20,7 @@ export function LanguageStep({ value, onChange }: LanguageStepProps) {
   const t = useExtracted();
 
   return (
-    <div className="flex flex-col gap-4">
+    <WizardGroup>
       <WizardField>
         <WizardLabel>{t("COURSE LANGUAGE")}</WizardLabel>
         <WizardDescription>
@@ -38,6 +39,6 @@ export function LanguageStep({ value, onChange }: LanguageStepProps) {
           </WizardRadioGroupItem>
         ))}
       </WizardRadioGroup>
-    </div>
+    </WizardGroup>
   );
 }

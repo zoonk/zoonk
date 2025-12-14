@@ -9,7 +9,66 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
 import type * as React from "react";
 
-function WizardInput({ className, ...props }: React.ComponentProps<"input">) {
+export function WizardGroup({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn("flex flex-col gap-4", className)}
+      data-slot="wizard-group"
+      {...props}
+    />
+  );
+}
+
+export function WizardField({
+  className,
+  ...props
+}: React.ComponentProps<"fieldset">) {
+  return (
+    <fieldset
+      className={cn("flex flex-col gap-2", className)}
+      data-slot="wizard-field"
+      {...props}
+    />
+  );
+}
+
+export function WizardLabel({
+  className,
+  ...props
+}: React.ComponentProps<"label">) {
+  return (
+    // biome-ignore lint/a11y/noLabelWithoutControl: htmlFor is passed via props when used
+    <label
+      className={cn(
+        "font-medium font-mono text-muted-foreground text-xs uppercase tracking-widest",
+        className,
+      )}
+      data-slot="wizard-label"
+      {...props}
+    />
+  );
+}
+
+export function WizardDescription({
+  className,
+  ...props
+}: React.ComponentProps<"p">) {
+  return (
+    <p
+      className={cn("text-muted-foreground text-sm", className)}
+      data-slot="wizard-description"
+      {...props}
+    />
+  );
+}
+
+export function WizardInput({
+  className,
+  ...props
+}: React.ComponentProps<"input">) {
   return (
     <input
       className={cn(
@@ -22,7 +81,7 @@ function WizardInput({ className, ...props }: React.ComponentProps<"input">) {
   );
 }
 
-function WizardTextarea({
+export function WizardTextarea({
   className,
   ...props
 }: React.ComponentProps<"textarea">) {
@@ -38,44 +97,7 @@ function WizardTextarea({
   );
 }
 
-function WizardLabel({ className, ...props }: React.ComponentProps<"label">) {
-  return (
-    // biome-ignore lint/a11y/noLabelWithoutControl: htmlFor is passed via props when used
-    <label
-      className={cn(
-        "font-medium font-mono text-muted-foreground text-xs uppercase tracking-widest",
-        className,
-      )}
-      data-slot="wizard-label"
-      {...props}
-    />
-  );
-}
-
-function WizardDescription({ className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("text-muted-foreground text-sm", className)}
-      data-slot="wizard-description"
-      {...props}
-    />
-  );
-}
-
-function WizardField({
-  className,
-  ...props
-}: React.ComponentProps<"fieldset">) {
-  return (
-    <fieldset
-      className={cn("flex flex-col gap-2", className)}
-      data-slot="wizard-field"
-      {...props}
-    />
-  );
-}
-
-function WizardRadioGroup({
+export function WizardRadioGroup({
   className,
   ...props
 }: React.ComponentProps<typeof RadioGroupRoot>) {
@@ -88,7 +110,7 @@ function WizardRadioGroup({
   );
 }
 
-function WizardRadioGroupItem({
+export function WizardRadioGroupItem({
   children,
   className,
   ...props
@@ -113,13 +135,3 @@ function WizardRadioGroupItem({
     </RadioGroupItem>
   );
 }
-
-export {
-  WizardDescription,
-  WizardField,
-  WizardInput,
-  WizardLabel,
-  WizardRadioGroup,
-  WizardRadioGroupItem,
-  WizardTextarea,
-};
