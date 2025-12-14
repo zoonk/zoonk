@@ -78,6 +78,32 @@ export function WizardError({
   );
 }
 
+export function WizardInputGroup({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn("flex items-baseline gap-2", className)}
+      data-slot="wizard-input-group"
+      {...props}
+    />
+  );
+}
+
+export function WizardInputPrefix({
+  className,
+  ...props
+}: React.ComponentProps<"span">) {
+  return (
+    <span
+      className={cn("text-muted-foreground", className)}
+      data-slot="wizard-input-prefix"
+      {...props}
+    />
+  );
+}
+
 export function WizardInput({
   className,
   ...props

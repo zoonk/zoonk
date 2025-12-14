@@ -5,6 +5,8 @@ import {
   WizardError,
   WizardField,
   WizardInput,
+  WizardInputGroup,
+  WizardInputPrefix,
   WizardLabel,
 } from "@zoonk/ui/components/wizard";
 import { useDebouncedValue } from "@zoonk/ui/hooks/use-debounced-value";
@@ -91,8 +93,8 @@ export function SlugStep({
         {t("This will be the URL path for your course")}
       </WizardDescription>
 
-      <div className="flex items-baseline gap-2">
-        <span className="text-muted-foreground">{COURSE_URL_PREFIX}</span>
+      <WizardInputGroup>
+        <WizardInputPrefix>{COURSE_URL_PREFIX}</WizardInputPrefix>
         <WizardInput
           autoFocus
           className="text-muted-foreground"
@@ -101,7 +103,7 @@ export function SlugStep({
           placeholder={t("course-title")}
           value={value}
         />
-      </div>
+      </WizardInputGroup>
 
       <WizardError>{errorMessage}</WizardError>
     </WizardField>
