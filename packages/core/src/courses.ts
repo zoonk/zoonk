@@ -103,7 +103,9 @@ export async function createCourse(params: {
     return { data: null, error: new Error("Organization not found") };
   }
 
-  const hasPermission = await hasCoursePermission(org.id, "create");
+  const hasPermission = await hasCoursePermission(org.id, "create", {
+    headers: params.headers,
+  });
 
   if (!hasPermission) {
     return { data: null, error: new Error("Forbidden") };

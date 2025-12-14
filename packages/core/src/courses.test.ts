@@ -1,9 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { describe, expect, test } from "vitest";
-import { organizationFixture } from "@/fixtures/organizations";
+import { signInAs } from "@/fixtures/auth";
+import { memberFixture, organizationFixture } from "@/fixtures/organizations";
 import { userFixture } from "@/fixtures/users";
 import {
+  courseSlugExists,
   createCourse,
   LIST_COURSES_LIMIT,
   listOrganizationCourses,
@@ -160,6 +162,99 @@ describe("listOrganizationCourses()", () => {
     expect(result.data).toHaveLength(2);
     expect(result.data[0]?.id).toBe(newCourse.id);
     expect(result.data[1]?.id).toBe(oldCourse.id);
+  });
+});
+
+describe("courseSlugExists()", () => {
+  test("returns true when course with same slug, language, and org exists", async () => {
+    const organization = await organizationFixture();
+    const author = await userFixture();
+    const slug = `test-course-${randomUUID()}`;
+
+    await prisma.course.create({
+      data: {
+        authorId: Number(author.id),
+        description: "Test description",
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: organization.id,
+        slug,
+        title: "Test Course",
+      },
+    });
+
+    const exists = await courseSlugExists({
+      language: "en",
+      orgSlug: organization.slug,
+      slug,
+    });
+
+    expect(exists).toBe(true);
+  });
+
+  test("returns false when course doesn't exist", async () => {
+    const organization = await organizationFixture();
+
+    const exists = await courseSlugExists({
+      language: "en",
+      orgSlug: organization.slug,
+      slug: "non-existent-slug",
+    });
+
+    expect(exists).toBe(false);
+  });
+
+  test("returns false when slug matches but different language", async () => {
+    const organization = await organizationFixture();
+    const author = await userFixture();
+    const slug = `test-course-${randomUUID()}`;
+
+    await prisma.course.create({
+      data: {
+        authorId: Number(author.id),
+        description: "Test description",
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: organization.id,
+        slug,
+        title: "Test Course",
+      },
+    });
+
+    const exists = await courseSlugExists({
+      language: "pt",
+      orgSlug: organization.slug,
+      slug,
+    });
+
+    expect(exists).toBe(false);
+  });
+
+  test("returns false when slug matches but different organization", async () => {
+    const org1 = await organizationFixture();
+    const org2 = await organizationFixture();
+    const author = await userFixture();
+    const slug = `test-course-${randomUUID()}`;
+
+    await prisma.course.create({
+      data: {
+        authorId: Number(author.id),
+        description: "Test description",
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: org1.id,
+        slug,
+        title: "Test Course",
+      },
+    });
+
+    const exists = await courseSlugExists({
+      language: "en",
+      orgSlug: org2.slug,
+      slug,
+    });
+
+    expect(exists).toBe(false);
   });
 });
 
@@ -397,7 +492,7 @@ describe("searchCourses()", () => {
 });
 
 describe("createCourse()", () => {
-  test("returns error session is invalid", async () => {
+  test("returns Unauthorized error when session is invalid", async () => {
     const organization = await organizationFixture();
 
     const result = await createCourse({
@@ -409,7 +504,118 @@ describe("createCourse()", () => {
       title: "Test Course",
     });
 
-    expect(result.error).toBeDefined();
+    expect(result.error?.message).toBe("Unauthorized");
     expect(result.data).toBeNull();
+  });
+
+  test("returns Organization not found when org doesn't exist", async () => {
+    const { user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
+
+    const result = await createCourse({
+      description: "Test description",
+      headers,
+      language: "en",
+      orgSlug: "non-existent-org",
+      slug: "test-course",
+      title: "Test Course",
+    });
+
+    expect(result.error?.message).toBe("Organization not found");
+    expect(result.data).toBeNull();
+  });
+
+  test("returns Forbidden when user doesn't have permission", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
+
+    const result = await createCourse({
+      description: "Test description",
+      headers,
+      language: "en",
+      orgSlug: organization.slug,
+      slug: "test-course",
+      title: "Test Course",
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+  });
+
+  test("creates course when user has admin permission", async () => {
+    const { organization, user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
+    const slug = `test-course-${randomUUID()}`;
+
+    const result = await createCourse({
+      description: "Test description",
+      headers,
+      language: "en",
+      orgSlug: organization.slug,
+      slug,
+      title: "Test Course",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toBeDefined();
+    expect(result.data?.title).toBe("Test Course");
+    expect(result.data?.description).toBe("Test description");
+    expect(result.data?.language).toBe("en");
+    expect(result.data?.organizationId).toBe(organization.id);
+    expect(result.data?.authorId).toBe(Number(user.id));
+  });
+
+  test("creates course when user has owner permission", async () => {
+    const { organization, user } = await memberFixture({ role: "owner" });
+    const headers = await signInAs(user.email, user.password);
+    const slug = `test-course-${randomUUID()}`;
+
+    const result = await createCourse({
+      description: "Owner's course",
+      headers,
+      language: "pt",
+      orgSlug: organization.slug,
+      slug,
+      title: "Owner Course",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toBeDefined();
+    expect(result.data?.title).toBe("Owner Course");
+  });
+
+  test("normalizes the slug", async () => {
+    const { organization, user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
+
+    const result = await createCourse({
+      description: "Test description",
+      headers,
+      language: "en",
+      orgSlug: organization.slug,
+      slug: "My Test Course!",
+      title: "My Test Course",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.slug).toBe("my-test-course");
+  });
+
+  test("normalizes the title for search", async () => {
+    const { organization, user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
+    const slug = `test-course-${randomUUID()}`;
+
+    const result = await createCourse({
+      description: "Test description",
+      headers,
+      language: "pt",
+      orgSlug: organization.slug,
+      slug,
+      title: "Ciência da Computação",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.normalizedTitle).toBe("ciencia da computacao");
   });
 });
