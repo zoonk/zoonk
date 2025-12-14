@@ -108,17 +108,6 @@ msgctxt "bLbK+M"
 msgid "All fields are required"
 msgstr ""
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/actions.ts
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
-msgctxt "lP29gk"
-msgid "A course with this URL already exists"
-msgstr ""
-
-#: src/app/[locale]/(private)/[orgSlug]/new-course/actions.ts
-msgctxt "yVHcXv"
-msgid "Organization not found"
-msgstr ""
-
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/description-step.tsx
 msgctxt "2qMJ2X"
 msgid "A brief description of your course…"
@@ -147,6 +136,11 @@ msgstr ""
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
 msgctxt "lE3Euj"
 msgid "This will be the URL path for your course"
+msgstr ""
+
+#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
+msgctxt "lP29gk"
+msgid "A course with this URL already exists"
 msgstr ""
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx

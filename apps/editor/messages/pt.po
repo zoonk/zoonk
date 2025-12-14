@@ -98,6 +98,16 @@ msgctxt "C81/uG"
 msgid "Logout"
 msgstr "Sair"
 
+#: src/app/[locale]/(private)/[orgSlug]/new-course/actions.ts
+msgctxt "/c3jWN"
+msgid "Failed to create course"
+msgstr ""
+
+#: src/app/[locale]/(private)/[orgSlug]/new-course/actions.ts
+msgctxt "bLbK+M"
+msgid "All fields are required"
+msgstr ""
+
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/description-step.tsx
 msgctxt "2qMJ2X"
 msgid "A brief description of your course…"
@@ -121,11 +131,6 @@ msgstr ""
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/language-step.tsx
 msgctxt "wjs5Mw"
 msgid "Select the language your course content will be in"
-msgstr ""
-
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
-msgctxt "1y9Pqv"
-msgid "Checking availability…"
 msgstr ""
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx

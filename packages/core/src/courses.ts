@@ -6,7 +6,7 @@ import { clampQueryItems } from "@zoonk/db/utils";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { headers } from "next/headers";
-import { hasCoursePermission } from "./organizations";
+import { getOrganizationBySlug, hasCoursePermission } from "./organizations";
 
 export const LIST_COURSES_LIMIT = 20;
 
@@ -68,7 +68,7 @@ export async function searchCourses(
 export type CreateCourseParams = {
   description: string;
   language: string;
-  organizationId: number;
+  orgSlug: string;
   slug: string;
   title: string;
 };
@@ -109,10 +109,13 @@ export async function createCourse(
     return { data: null, error: new Error("Unauthorized") };
   }
 
-  const hasPermission = await hasCoursePermission(
-    params.organizationId,
-    "create",
-  );
+  const { data: org } = await getOrganizationBySlug(params.orgSlug);
+
+  if (!org) {
+    return { data: null, error: new Error("Organization not found") };
+  }
+
+  const hasPermission = await hasCoursePermission(org.id, "create");
 
   if (!hasPermission) {
     return { data: null, error: new Error("Forbidden") };
@@ -128,7 +131,7 @@ export async function createCourse(
         description: params.description,
         language: params.language,
         normalizedTitle,
-        organizationId: params.organizationId,
+        organizationId: org.id,
         slug: courseSlug,
         title: params.title,
       },
