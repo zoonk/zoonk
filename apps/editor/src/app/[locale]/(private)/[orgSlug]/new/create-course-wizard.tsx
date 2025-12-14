@@ -41,7 +41,7 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
   }, [canProceed, wizard]);
 
   const handleSubmit = useCallback(() => {
-    if (!canProceed) {
+    if (!canProceed || isPending) {
       return;
     }
 
@@ -54,7 +54,7 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
         setSubmitError(result.error);
       }
     });
-  }, [canProceed, formData, orgSlug]);
+  }, [canProceed, formData, isPending, orgSlug]);
 
   useWizardKeyboard({
     canProceed,
