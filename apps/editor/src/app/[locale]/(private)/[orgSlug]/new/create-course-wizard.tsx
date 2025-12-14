@@ -6,6 +6,7 @@ import {
   Wizard,
   WizardContent,
 } from "@zoonk/ui/components/wizard";
+import { toSlug } from "@zoonk/utils/string";
 import { useCallback, useState, useTransition } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { createCourseAction } from "./actions";
@@ -35,10 +36,17 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
   }, [router, orgSlug]);
 
   const handleNext = useCallback(() => {
-    if (canProceed && !wizard.isLastStep) {
-      wizard.goToNext();
+    if (!canProceed || wizard.isLastStep) {
+      return;
     }
-  }, [canProceed, wizard]);
+
+    // Auto-fill slug from title when entering the slug step
+    if (wizard.currentStepName === "description" && !formData.slug) {
+      updateField("slug", toSlug(formData.title));
+    }
+
+    wizard.goToNext();
+  }, [canProceed, formData.slug, formData.title, updateField, wizard]);
 
   const handleSubmit = useCallback(() => {
     if (!canProceed || isPending) {
@@ -107,7 +115,6 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
           <SlugStep
             error={submitError || getStepError("slug")}
             onChange={(v) => updateField("slug", v)}
-            title={formData.title}
             value={formData.slug}
           />
         )}
