@@ -23,9 +23,7 @@ export async function checkSlugExistsAction({
     return false;
   }
 
-  const normalizedSlug = toSlug(slug);
-
-  return courseSlugExists({ language, orgSlug, slug: normalizedSlug });
+  return courseSlugExists({ language, orgSlug, slug: toSlug(slug) });
 }
 
 export async function createCourseAction(formData: FormData) {
