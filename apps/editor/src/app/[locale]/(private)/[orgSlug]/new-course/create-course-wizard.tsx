@@ -20,11 +20,10 @@ const STEPS = ["title", "language", "description", "slug"] as const;
 
 export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
   const router = useRouter();
+  const wizard = useWizard({ steps: STEPS });
 
   const [isPending, startTransition] = useTransition();
   const [submitError, setSubmitError] = useState<string | null>(null);
-
-  const wizard = useWizard({ steps: STEPS });
 
   const { formData, updateField, canProceedFromStep, getStepError } =
     useCourseForm({ orgSlug });
