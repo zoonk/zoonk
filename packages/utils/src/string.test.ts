@@ -1,6 +1,11 @@
 import { describe, expect, test } from "vitest";
 
-import { normalizeString, removeAccents } from "./string";
+import {
+  MAX_SLUG_LENGTH,
+  normalizeString,
+  removeAccents,
+  validateSlug,
+} from "./string";
 
 describe("removeAccents", () => {
   test("removes diacritics from string", () => {
@@ -62,5 +67,74 @@ describe("normalizeString", () => {
 
   test("handles string with only spaces", () => {
     expect(normalizeString("   ")).toBe("");
+  });
+});
+
+describe("validateSlug", () => {
+  test("returns valid for correct slugs", () => {
+    expect(validateSlug("hello-world")).toEqual({ isValid: true });
+    expect(validateSlug("my-course-123")).toEqual({ isValid: true });
+    expect(validateSlug("course")).toEqual({ isValid: true });
+    expect(validateSlug("a")).toEqual({ isValid: true });
+  });
+
+  test("rejects empty slugs", () => {
+    expect(validateSlug("")).toEqual({
+      error: "Slug cannot be empty",
+      isValid: false,
+    });
+  });
+
+  test("rejects slugs over max length", () => {
+    const longSlug = "a".repeat(MAX_SLUG_LENGTH + 1);
+    expect(validateSlug(longSlug)).toEqual({
+      error: `Slug must be ${MAX_SLUG_LENGTH} characters or less`,
+      isValid: false,
+    });
+  });
+
+  test("rejects slugs with invalid characters", () => {
+    expect(validateSlug("Hello World")).toEqual({
+      error: "Slug can only contain lowercase letters, numbers, and hyphens",
+      isValid: false,
+    });
+    expect(validateSlug("hello_world")).toEqual({
+      error: "Slug can only contain lowercase letters, numbers, and hyphens",
+      isValid: false,
+    });
+    expect(validateSlug("hello@world")).toEqual({
+      error: "Slug can only contain lowercase letters, numbers, and hyphens",
+      isValid: false,
+    });
+    expect(validateSlug("UPPERCASE")).toEqual({
+      error: "Slug can only contain lowercase letters, numbers, and hyphens",
+      isValid: false,
+    });
+  });
+
+  test("rejects slugs starting with hyphen", () => {
+    expect(validateSlug("-hello")).toEqual({
+      error: "Slug cannot start or end with a hyphen",
+      isValid: false,
+    });
+  });
+
+  test("rejects slugs ending with hyphen", () => {
+    expect(validateSlug("hello-")).toEqual({
+      error: "Slug cannot start or end with a hyphen",
+      isValid: false,
+    });
+  });
+
+  test("rejects slugs with consecutive hyphens", () => {
+    expect(validateSlug("hello--world")).toEqual({
+      error: "Slug cannot have consecutive hyphens",
+      isValid: false,
+    });
+  });
+
+  test("allows slugs at exactly max length", () => {
+    const slugMaxLength = "a".repeat(MAX_SLUG_LENGTH);
+    expect(validateSlug(slugMaxLength)).toEqual({ isValid: true });
   });
 });

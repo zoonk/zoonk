@@ -13,7 +13,8 @@
     "pg": "8.16.3",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "server-only": "0.0.1"
+    "server-only": "0.0.1",
+    "slugify": "1.6.6"
   },
   "devDependencies": {
     "@types/node": "^24",

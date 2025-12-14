@@ -1,0 +1,35 @@
+"use client";
+
+import {
+  WizardDescription,
+  WizardInput,
+  WizardLabel,
+} from "@zoonk/ui/components/wizard";
+import { useExtracted } from "next-intl";
+import { useId } from "react";
+
+type TitleStepProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
+
+export function TitleStep({ value, onChange }: TitleStepProps) {
+  const t = useExtracted();
+  const titleId = useId();
+
+  return (
+    <div className="flex flex-col gap-2">
+      <WizardLabel htmlFor={titleId}>{t("COURSE TITLE")}</WizardLabel>
+      <WizardInput
+        autoFocus
+        id={titleId}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={t("course title")}
+        value={value}
+      />
+      <WizardDescription>
+        {t("The main title that learners will see for your course")}
+      </WizardDescription>
+    </div>
+  );
+}

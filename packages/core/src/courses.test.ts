@@ -394,3 +394,5 @@ describe("searchCourses()", () => {
     expect(result.data).toHaveLength(0);
   });
 });
+
+// TODO: Add createCourse tests - requires auth testing setup

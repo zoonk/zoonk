@@ -17,6 +17,11 @@ export function EditorNavbar() {
 
   const segments = useSelectedLayoutSegments();
   const isHome = segments.length === 0;
+  const isNewCourse = segments.includes("new-course");
+
+  if (isNewCourse) {
+    return null;
+  }
 
   return (
     <Navbar>

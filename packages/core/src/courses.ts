@@ -1,9 +1,13 @@
 import "server-only";
 
+import { auth } from "@zoonk/auth";
 import { type Course, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
-import { safeAsync } from "@zoonk/utils/error";
+import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString } from "@zoonk/utils/string";
+import { headers } from "next/headers";
+import slugify from "slugify";
+import { hasCoursePermission } from "./organizations";
 
 export const LIST_COURSES_LIMIT = 20;
 
@@ -60,4 +64,55 @@ export async function searchCourses(
   }
 
   return { data: data ?? [], error: null };
+}
+
+export type CreateCourseParams = {
+  description: string;
+  language: string;
+  organizationId: number;
+  slug: string;
+  title: string;
+};
+
+export async function createCourse(
+  params: CreateCourseParams,
+): Promise<SafeReturn<Course>> {
+  const reqHeaders = await headers();
+  const session = await auth.api.getSession({ headers: reqHeaders });
+
+  if (!session?.user) {
+    return { data: null, error: new Error("Unauthorized") };
+  }
+
+  const hasPermission = await hasCoursePermission(
+    params.organizationId,
+    "create",
+  );
+
+  if (!hasPermission) {
+    return { data: null, error: new Error("Forbidden") };
+  }
+
+  const courseSlug = slugify(params.slug, { lower: true, strict: true });
+  const normalizedTitle = normalizeString(params.title);
+
+  const { data, error } = await safeAsync(() =>
+    prisma.course.create({
+      data: {
+        authorId: Number(session.user.id),
+        description: params.description,
+        language: params.language,
+        normalizedTitle,
+        organizationId: params.organizationId,
+        slug: courseSlug,
+        title: params.title,
+      },
+    }),
+  );
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  return { data, error: null };
 }

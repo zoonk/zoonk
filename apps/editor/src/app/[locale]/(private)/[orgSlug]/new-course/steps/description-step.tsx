@@ -1,0 +1,55 @@
+"use client";
+
+import {
+  WizardDescription,
+  WizardLabel,
+  WizardTextarea,
+} from "@zoonk/ui/components/wizard";
+import { useExtracted } from "next-intl";
+import { useEffect, useId } from "react";
+
+type DescriptionStepProps = {
+  value: string;
+  onChange: (value: string) => void;
+  onSubmit: () => void;
+};
+
+export function DescriptionStep({
+  value,
+  onChange,
+  onSubmit,
+}: DescriptionStepProps) {
+  const t = useExtracted();
+  const descriptionId = useId();
+
+  // Handle Cmd/Ctrl + Enter to proceed
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+        event.preventDefault();
+        onSubmit();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onSubmit]);
+
+  return (
+    <div className="flex flex-col gap-2">
+      <WizardLabel htmlFor={descriptionId}>
+        {t("COURSE DESCRIPTION")}
+      </WizardLabel>
+      <WizardTextarea
+        autoFocus
+        id={descriptionId}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={t("A brief description of your course…")}
+        value={value}
+      />
+      <WizardDescription>
+        {t("A short summary that helps learners understand what they'll learn")}
+      </WizardDescription>
+    </div>
+  );
+}
