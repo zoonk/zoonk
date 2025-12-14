@@ -1,4 +1,4 @@
-import { useDebouncedValue } from "@zoonk/ui/hooks/use-debounced-value";
+import { useDebounce } from "@zoonk/ui/hooks/use-debounce";
 import { useEffect, useEffectEvent, useState, useTransition } from "react";
 import { checkSlugExists } from "./slug-action";
 
@@ -17,7 +17,7 @@ export function useSlugCheck({
   const [_isPending, startTransition] = useTransition();
   const [slugExists, setSlugExists] = useState(false);
 
-  const debouncedSlug = useDebouncedValue(slug);
+  const debouncedSlug = useDebounce(slug);
 
   const handleSlugCheck = useEffectEvent((exists: boolean) => {
     setSlugExists(exists);
