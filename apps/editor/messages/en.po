@@ -98,6 +98,27 @@ msgctxt "C81/uG"
 msgid "Logout"
 msgstr "Logout"
 
+#: src/app/[locale]/(private)/[orgSlug]/new-course/actions.ts
+msgctxt "/c3jWN"
+msgid "Failed to create course"
+msgstr "Failed to create course"
+
+#: src/app/[locale]/(private)/[orgSlug]/new-course/actions.ts
+msgctxt "bLbK+M"
+msgid "All fields are required"
+msgstr "All fields are required"
+
+#: src/app/[locale]/(private)/[orgSlug]/new-course/actions.ts
+#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
+msgctxt "lP29gk"
+msgid "A course with this URL already exists"
+msgstr "A course with this URL already exists"
+
+#: src/app/[locale]/(private)/[orgSlug]/new-course/actions.ts
+msgctxt "yVHcXv"
+msgid "Organization not found"
+msgstr "Organization not found"
+
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/description-step.tsx
 msgctxt "2qMJ2X"
 msgid "A brief description of your course…"
@@ -124,19 +145,9 @@ msgid "Select the language your course content will be in"
 msgstr "Select the language your course content will be in"
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
-msgctxt "1y9Pqv"
-msgid "Checking availability…"
-msgstr "Checking availability…"
-
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
 msgctxt "lE3Euj"
 msgid "This will be the URL path for your course"
 msgstr "This will be the URL path for your course"
-
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
-msgctxt "lP29gk"
-msgid "A course with this URL already exists"
-msgstr "A course with this URL already exists"
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
 msgctxt "nRWWPC"

@@ -6,6 +6,7 @@ import { cacheTagOrgCourses } from "@zoonk/utils/cache";
 import { parseFormField } from "@zoonk/utils/form";
 import { toSlug } from "@zoonk/utils/string";
 import { revalidateTag } from "next/cache";
+import { getExtracted, getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 
 type CheckSlugParams = {
@@ -32,16 +33,18 @@ export async function createCourseAction(formData: FormData) {
   const description = parseFormField(formData, "description");
   const language = parseFormField(formData, "language");
   const slug = parseFormField(formData, "slug");
-  const locale = parseFormField(formData, "locale");
 
-  if (!(orgSlug && title && description && language && slug && locale)) {
-    return { error: "All fields are required" };
+  const locale = await getLocale();
+  const t = await getExtracted();
+
+  if (!(orgSlug && title && description && language && slug)) {
+    return { error: t("All fields are required") };
   }
 
   const { data: org } = await getOrganizationBySlug(orgSlug);
 
   if (!org) {
-    return { error: "Organization not found" };
+    return { error: t("Organization not found") };
   }
 
   const normalizedSlug = toSlug(slug);
@@ -53,7 +56,7 @@ export async function createCourseAction(formData: FormData) {
   });
 
   if (slugExists) {
-    return { error: "A course with this URL already exists" };
+    return { error: t("A course with this URL already exists") };
   }
 
   const { data: course, error } = await createCourse({
@@ -65,7 +68,7 @@ export async function createCourseAction(formData: FormData) {
   });
 
   if (error || !course) {
-    return { error: error?.message ?? "Failed to create course" };
+    return { error: error?.message ?? t("Failed to create course") };
   }
 
   revalidateTag(cacheTagOrgCourses({ orgSlug }), "max");
