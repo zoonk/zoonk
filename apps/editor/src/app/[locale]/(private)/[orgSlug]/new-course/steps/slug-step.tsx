@@ -102,7 +102,7 @@ export function SlugStep({
         />
       </div>
 
-      <p className="text-destructive text-sm">{errorMessage}</p>
+      <p className="min-h-5 text-destructive text-sm">{errorMessage}</p>
     </WizardField>
   );
 }
