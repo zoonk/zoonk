@@ -25,11 +25,7 @@ export async function checkSlugExistsAction({
 
   const normalizedSlug = slugify(slug, { lower: true, strict: true });
 
-  return courseSlugExists({
-    language,
-    orgSlug,
-    slug: normalizedSlug,
-  });
+  return courseSlugExists({ language, orgSlug, slug: normalizedSlug });
 }
 
 export async function createCourseAction(formData: FormData) {
