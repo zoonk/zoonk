@@ -18,11 +18,10 @@ export type CourseFormData = {
   slug: string;
 };
 
-const SLUG_DEBOUNCE_DELAY_MS = 300;
-
 export function useCourseForm({ orgSlug }: { orgSlug: string }) {
   const t = useExtracted();
   const defaultLanguage = useLocale();
+
   const [_isPending, startTransition] = useTransition();
   const [slugExists, setSlugExists] = useState(false);
 
@@ -33,10 +32,7 @@ export function useCourseForm({ orgSlug }: { orgSlug: string }) {
     title: "",
   });
 
-  const debouncedSlug = useDebouncedValue(
-    formData.slug,
-    SLUG_DEBOUNCE_DELAY_MS,
-  );
+  const debouncedSlug = useDebouncedValue(formData.slug);
 
   const handleSlugCheck = useEffectEvent((exists: boolean) => {
     setSlugExists(exists);
