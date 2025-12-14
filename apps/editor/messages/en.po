@@ -77,16 +77,6 @@ msgctxt "zx7CKB"
 msgid "Check your email"
 msgstr "Check your email"
 
-#: src/app/[locale]/(private)/[orgSlug]/c/[courseSlug]/page.tsx
-msgctxt "6+rwTE"
-msgid "Course editing coming soon"
-msgstr "Course editing coming soon"
-
-#: src/app/[locale]/(private)/[orgSlug]/c/[courseSlug]/page.tsx
-msgctxt "hbm9cV"
-msgid "This page is under construction."
-msgstr "This page is under construction."
-
 #: src/app/[locale]/(private)/[orgSlug]/course-list.tsx
 msgctxt "c0YWuA"
 msgid "Your organization hasn't created any courses yet."
