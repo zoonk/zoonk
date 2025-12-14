@@ -10,19 +10,12 @@ import { getOrganizationBySlug, hasCoursePermission } from "./organizations";
 
 export const LIST_COURSES_LIMIT = 20;
 
-export type ListOrganizationCoursesOptions = {
-  language?: string;
-  limit?: number;
-};
-
-export type SearchCoursesOptions = {
-  title: string;
-  orgSlug: string;
-};
-
 export async function listOrganizationCourses(
   organizationId: number,
-  opts?: ListOrganizationCoursesOptions,
+  opts?: {
+    language?: string;
+    limit?: number;
+  },
 ): Promise<{ data: Course[]; error: Error | null }> {
   const { data, error } = await safeAsync(() =>
     prisma.course.findMany({
@@ -42,9 +35,10 @@ export async function listOrganizationCourses(
   return { data: data ?? [], error: null };
 }
 
-export async function searchCourses(
-  params: SearchCoursesOptions,
-): Promise<{ data: Course[]; error: Error | null }> {
+export async function searchCourses(params: {
+  title: string;
+  orgSlug: string;
+}): Promise<{ data: Course[]; error: Error | null }> {
   const { title, orgSlug } = params;
   const normalizedSearch = normalizeString(title);
 
@@ -65,26 +59,14 @@ export async function searchCourses(
   return { data: data ?? [], error: null };
 }
 
-export type CreateCourseParams = {
-  description: string;
-  language: string;
-  orgSlug: string;
-  slug: string;
-  title: string;
-};
-
-export type CourseSlugExistsParams = {
-  language: string;
-  orgSlug: string;
-  slug: string;
-};
-
 /**
  * Checks if a course with the given slug already exists for the organization and language.
  */
-export async function courseSlugExists(
-  params: CourseSlugExistsParams,
-): Promise<boolean> {
+export async function courseSlugExists(params: {
+  language: string;
+  orgSlug: string;
+  slug: string;
+}): Promise<boolean> {
   const { data } = await safeAsync(() =>
     prisma.course.findFirst({
       select: { id: true },
@@ -99,9 +81,13 @@ export async function courseSlugExists(
   return data !== null;
 }
 
-export async function createCourse(
-  params: CreateCourseParams,
-): Promise<SafeReturn<Course>> {
+export async function createCourse(params: {
+  description: string;
+  language: string;
+  orgSlug: string;
+  slug: string;
+  title: string;
+}): Promise<SafeReturn<Course>> {
   const reqHeaders = await headers();
   const session = await auth.api.getSession({ headers: reqHeaders });
 
