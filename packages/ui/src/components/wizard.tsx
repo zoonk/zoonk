@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Indicator as RadioGroupIndicator,
   Item as RadioGroupItem,
