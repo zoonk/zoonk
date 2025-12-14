@@ -1,28 +1,12 @@
 "use server";
 
-import { courseSlugExists, createCourse } from "@zoonk/core/courses";
+import { createCourse } from "@zoonk/core/courses";
 import { cacheTagOrgCourses } from "@zoonk/utils/cache";
 import { toSlug } from "@zoonk/utils/string";
 import { revalidateTag } from "next/cache";
 import { getExtracted, getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 import type { CourseFormData } from "./use-course-form";
-
-export async function checkSlugExistsAction({
-  orgSlug,
-  language,
-  slug,
-}: {
-  orgSlug: string;
-  language: string;
-  slug: string;
-}): Promise<boolean> {
-  if (!slug.trim()) {
-    return false;
-  }
-
-  return courseSlugExists({ language, orgSlug, slug: toSlug(slug) });
-}
 
 export async function createCourseAction(
   formData: CourseFormData,

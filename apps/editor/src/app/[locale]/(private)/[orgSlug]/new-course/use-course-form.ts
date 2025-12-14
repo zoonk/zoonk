@@ -1,15 +1,8 @@
 "use client";
 
-import { useDebouncedValue } from "@zoonk/ui/hooks/use-debounced-value";
 import { useExtracted, useLocale } from "next-intl";
-import {
-  useCallback,
-  useEffect,
-  useEffectEvent,
-  useState,
-  useTransition,
-} from "react";
-import { checkSlugExistsAction } from "./actions";
+import { useCallback, useState } from "react";
+import { useSlugCheck } from "@/lib/slug";
 
 export type CourseFormData = {
   title: string;
@@ -18,12 +11,12 @@ export type CourseFormData = {
   slug: string;
 };
 
+/**
+ * Data validation and state management for the course creation form.
+ */
 export function useCourseForm({ orgSlug }: { orgSlug: string }) {
   const t = useExtracted();
   const defaultLanguage = useLocale();
-
-  const [_isPending, startTransition] = useTransition();
-  const [slugExists, setSlugExists] = useState(false);
 
   const [formData, setFormData] = useState<CourseFormData>({
     description: "",
@@ -32,28 +25,11 @@ export function useCourseForm({ orgSlug }: { orgSlug: string }) {
     title: "",
   });
 
-  const debouncedSlug = useDebouncedValue(formData.slug);
-
-  const handleSlugCheck = useEffectEvent((exists: boolean) => {
-    setSlugExists(exists);
+  const slugExists = useSlugCheck({
+    language: formData.language,
+    orgSlug,
+    slug: formData.slug,
   });
-
-  useEffect(() => {
-    if (!debouncedSlug.trim()) {
-      handleSlugCheck(false);
-      return;
-    }
-
-    startTransition(async () => {
-      const exists = await checkSlugExistsAction({
-        language: formData.language,
-        orgSlug,
-        slug: debouncedSlug,
-      });
-
-      handleSlugCheck(exists);
-    });
-  }, [debouncedSlug, formData.language, orgSlug]);
 
   const updateField = useCallback(
     <K extends keyof CourseFormData>(field: K, value: CourseFormData[K]) => {
