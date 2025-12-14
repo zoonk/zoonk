@@ -2,6 +2,7 @@
 
 import {
   WizardDescription,
+  WizardField,
   WizardLabel,
   WizardTextarea,
 } from "@zoonk/ui/components/wizard";
@@ -26,10 +27,11 @@ export function DescriptionStep({
   useKeyboardCallback("Enter", onSubmit);
 
   return (
-    <div className="flex flex-col gap-2">
+    <WizardField>
       <WizardLabel htmlFor={descriptionId}>
         {t("COURSE DESCRIPTION")}
       </WizardLabel>
+
       <WizardTextarea
         autoFocus
         id={descriptionId}
@@ -37,9 +39,10 @@ export function DescriptionStep({
         placeholder={t("A brief description of your course…")}
         value={value}
       />
+
       <WizardDescription>
         {t("A short summary that helps learners understand what they'll learn")}
       </WizardDescription>
-    </div>
+    </WizardField>
   );
 }

@@ -2,6 +2,7 @@
 
 import {
   WizardDescription,
+  WizardField,
   WizardInput,
   WizardLabel,
 } from "@zoonk/ui/components/wizard";
@@ -18,7 +19,7 @@ export function TitleStep({ value, onChange }: TitleStepProps) {
   const titleId = useId();
 
   return (
-    <div className="flex flex-col gap-2">
+    <WizardField>
       <WizardLabel htmlFor={titleId}>{t("COURSE TITLE")}</WizardLabel>
       <WizardInput
         autoFocus
@@ -30,6 +31,6 @@ export function TitleStep({ value, onChange }: TitleStepProps) {
       <WizardDescription>
         {t("The main title that learners will see for your course")}
       </WizardDescription>
-    </div>
+    </WizardField>
   );
 }

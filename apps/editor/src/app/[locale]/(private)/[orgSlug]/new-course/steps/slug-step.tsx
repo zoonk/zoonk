@@ -2,6 +2,7 @@
 
 import {
   WizardDescription,
+  WizardField,
   WizardInput,
   WizardLabel,
 } from "@zoonk/ui/components/wizard";
@@ -67,7 +68,7 @@ export function SlugStep({
   const showSlugError = slugExists && !isPending;
 
   return (
-    <div className="flex flex-col gap-2">
+    <WizardField>
       <WizardLabel htmlFor={slugId}>{t("COURSE URL")}</WizardLabel>
       <div className="flex items-baseline gap-2">
         <span className="text-muted-foreground">{`/${language}/c/`}</span>
@@ -80,19 +81,22 @@ export function SlugStep({
           value={value}
         />
       </div>
+
       <WizardDescription>
         {isPending
           ? t("Checking availability…")
           : t("This will be the URL path for your course")}
       </WizardDescription>
+
       {showSlugError && (
         <p className="text-destructive text-sm">
           {t("A course with this URL already exists")}
         </p>
       )}
+
       {error && !showSlugError && (
         <p className="text-destructive text-sm">{error}</p>
       )}
-    </div>
+    </WizardField>
   );
 }

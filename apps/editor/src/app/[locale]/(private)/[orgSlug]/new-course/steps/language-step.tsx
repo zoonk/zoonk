@@ -1,6 +1,10 @@
 "use client";
 
-import { WizardDescription, WizardLabel } from "@zoonk/ui/components/wizard";
+import {
+  WizardDescription,
+  WizardField,
+  WizardLabel,
+} from "@zoonk/ui/components/wizard";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -52,12 +56,12 @@ export function LanguageStep({ value, onChange }: LanguageStepProps) {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
+      <WizardField>
         <WizardLabel>{t("COURSE LANGUAGE")}</WizardLabel>
         <WizardDescription>
           {t("Select the language your course content will be in")}
         </WizardDescription>
-      </div>
+      </WizardField>
 
       <div className="flex flex-col">
         {LANGUAGE_OPTIONS.map((option) => (
@@ -73,6 +77,7 @@ export function LanguageStep({ value, onChange }: LanguageStepProps) {
             type="button"
           >
             {option.label}
+
             {value === option.value && (
               <CheckIcon aria-hidden="true" className="size-5" />
             )}

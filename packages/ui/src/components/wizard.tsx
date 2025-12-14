@@ -54,4 +54,23 @@ function WizardDescription({ className, ...props }: React.ComponentProps<"p">) {
   );
 }
 
-export { WizardDescription, WizardInput, WizardLabel, WizardTextarea };
+function WizardField({
+  className,
+  ...props
+}: React.ComponentProps<"fieldset">) {
+  return (
+    <fieldset
+      className={cn("flex flex-col gap-2", className)}
+      data-slot="wizard-field"
+      {...props}
+    />
+  );
+}
+
+export {
+  WizardDescription,
+  WizardField,
+  WizardInput,
+  WizardLabel,
+  WizardTextarea,
+};
