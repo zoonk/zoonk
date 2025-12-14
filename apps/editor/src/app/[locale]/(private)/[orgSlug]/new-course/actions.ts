@@ -2,11 +2,11 @@
 
 import { courseSlugExists, createCourse } from "@zoonk/core/courses";
 import { cacheTagOrgCourses } from "@zoonk/utils/cache";
-import { parseFormField } from "@zoonk/utils/form";
 import { toSlug } from "@zoonk/utils/string";
 import { revalidateTag } from "next/cache";
 import { getExtracted, getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
+import type { CourseFormData } from "./use-course-form";
 
 export async function checkSlugExistsAction({
   orgSlug,
@@ -24,17 +24,19 @@ export async function checkSlugExistsAction({
   return courseSlugExists({ language, orgSlug, slug: toSlug(slug) });
 }
 
-export async function createCourseAction(formData: FormData) {
-  const orgSlug = parseFormField(formData, "orgSlug");
-  const title = parseFormField(formData, "title");
-  const description = parseFormField(formData, "description");
-  const language = parseFormField(formData, "language");
-  const slug = parseFormField(formData, "slug");
+export async function createCourseAction(
+  formData: CourseFormData,
+  orgSlug: string,
+) {
+  const title = formData.title.trim();
+  const description = formData.description.trim();
+  const language = formData.language;
+  const slug = formData.slug.trim();
 
   const locale = await getLocale();
   const t = await getExtracted();
 
-  if (!(orgSlug && title && description && language && slug)) {
+  if (!(title && description && language && slug)) {
     return { error: t("All fields are required") };
   }
 

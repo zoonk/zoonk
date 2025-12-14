@@ -52,21 +52,13 @@ export function CreateCourseWizard({ orgSlug }: CreateCourseWizardProps) {
 
     setError(null);
     startTransition(async () => {
-      const data = new FormData();
-      data.set("orgSlug", orgSlug);
-      data.set("title", formData.title.trim());
-      data.set("description", formData.description.trim());
-      data.set("language", formData.language);
-      data.set("slug", formData.slug.trim());
-      data.set("locale", locale);
-
-      const result = await createCourseAction(data);
+      const result = await createCourseAction(formData, orgSlug);
 
       if (result?.error) {
         setError(result.error);
       }
     });
-  }, [canProceed, formData, locale, orgSlug]);
+  }, [canProceed, formData, orgSlug]);
 
   useWizardKeyboard({
     canProceed,
