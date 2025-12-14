@@ -4,7 +4,7 @@ import { CreateCourseWizard } from "./create-course-wizard";
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/[orgSlug]/new-course">): Promise<Metadata> {
+}: PageProps<"/[locale]/[orgSlug]/new">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getExtracted({ locale });
 
@@ -13,7 +13,7 @@ export async function generateMetadata({
 
 export default async function NewCoursePage({
   params,
-}: PageProps<"/[locale]/[orgSlug]/new-course">) {
+}: PageProps<"/[locale]/[orgSlug]/new">) {
   const { orgSlug } = await params;
 
   return <CreateCourseWizard orgSlug={orgSlug} />;

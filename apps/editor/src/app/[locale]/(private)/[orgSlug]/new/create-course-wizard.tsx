@@ -9,12 +9,12 @@ import {
 import { useCallback, useState, useTransition } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { createCourseAction } from "./actions";
+import { CreateCourseNavbar } from "./create-course-navbar";
 import { DescriptionStep } from "./steps/description-step";
 import { LanguageStep } from "./steps/language-step";
 import { SlugStep } from "./steps/slug-step";
 import { TitleStep } from "./steps/title-step";
 import { useCourseForm } from "./use-course-form";
-import { WizardNavbar } from "./wizard-navbar";
 
 const STEPS = ["title", "language", "description", "slug"] as const;
 
@@ -68,16 +68,16 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
 
   return (
     <Wizard>
-      <WizardNavbar
+      <CreateCourseNavbar
         canProceed={canProceed}
         currentStep={wizard.currentStep}
         isFirstStep={wizard.isFirstStep}
         isLastStep={wizard.isLastStep}
         isPending={isPending}
         onBack={wizard.goToPrevious}
-        onClose={handleClose}
         onNext={handleNext}
         onSubmit={handleSubmit}
+        orgSlug={orgSlug}
         totalSteps={wizard.totalSteps}
       />
 

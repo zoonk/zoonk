@@ -108,7 +108,32 @@ msgctxt "bLbK+M"
 msgid "All fields are required"
 msgstr "All fields are required"
 
+#: src/app/[locale]/(private)/[orgSlug]/new-course/create-course-navbar.tsx
+#: src/app/[locale]/(private)/[orgSlug]/new/create-course-navbar.tsx
+msgctxt "9+Ddtu"
+msgid "Next"
+msgstr "Next"
+
+#: src/app/[locale]/(private)/[orgSlug]/new-course/create-course-navbar.tsx
+#: src/app/[locale]/(private)/[orgSlug]/new/create-course-navbar.tsx
+msgctxt "cyR7Kh"
+msgid "Back"
+msgstr "Back"
+
+#: src/app/[locale]/(private)/[orgSlug]/new-course/create-course-navbar.tsx
+#: src/app/[locale]/(private)/[orgSlug]/new/create-course-navbar.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "Close"
+
+#: src/app/[locale]/(private)/[orgSlug]/new-course/create-course-navbar.tsx
+#: src/app/[locale]/(private)/[orgSlug]/new/create-course-navbar.tsx
+msgctxt "VzzYJk"
+msgid "Create"
+msgstr "Create"
+
 #: src/app/[locale]/(private)/[orgSlug]/new-course/page.tsx
+#: src/app/[locale]/(private)/[orgSlug]/new/page.tsx
 #: src/app/[locale]/(private)/[orgSlug]/page.tsx
 msgctxt "dCKXDB"
 msgid "Create course"
@@ -173,26 +198,6 @@ msgstr "Course title"
 msgctxt "lP29gk"
 msgid "A course with this URL already exists"
 msgstr "A course with this URL already exists"
-
-#: src/app/[locale]/(private)/[orgSlug]/new-course/wizard-navbar.tsx
-msgctxt "9+Ddtu"
-msgid "Next"
-msgstr "Next"
-
-#: src/app/[locale]/(private)/[orgSlug]/new-course/wizard-navbar.tsx
-msgctxt "cyR7Kh"
-msgid "Back"
-msgstr "Back"
-
-#: src/app/[locale]/(private)/[orgSlug]/new-course/wizard-navbar.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "Close"
-
-#: src/app/[locale]/(private)/[orgSlug]/new-course/wizard-navbar.tsx
-msgctxt "VzzYJk"
-msgid "Create"
-msgstr "Create"
 
 #: src/app/[locale]/(private)/[orgSlug]/org-switcher.tsx
 msgctxt "0lmKIf"

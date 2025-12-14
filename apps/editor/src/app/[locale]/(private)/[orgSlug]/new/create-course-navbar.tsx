@@ -1,19 +1,20 @@
 "use client";
 
-import { Button } from "@zoonk/ui/components/button";
+import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { ProgressDots } from "@zoonk/ui/components/progress-dots";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
-export function WizardNavbar({
+export function CreateCourseNavbar({
   currentStep,
   totalSteps,
   isFirstStep,
   isLastStep,
   isPending,
   canProceed,
-  onClose,
+  orgSlug,
   onBack,
   onNext,
   onSubmit,
@@ -24,7 +25,7 @@ export function WizardNavbar({
   isLastStep: boolean;
   isPending: boolean;
   canProceed: boolean;
-  onClose: () => void;
+  orgSlug: string;
   onBack: () => void;
   onNext: () => void;
   onSubmit: () => void;
@@ -34,10 +35,13 @@ export function WizardNavbar({
   return (
     <nav className="sticky top-0 z-40 flex items-center justify-between gap-2 bg-background/80 p-4 backdrop-blur-md">
       <div className="flex items-center gap-2">
-        <Button onClick={onClose} size="icon" variant="secondary">
+        <Link
+          className={buttonVariants({ size: "icon", variant: "secondary" })}
+          href={`/${orgSlug}`}
+        >
           <XIcon aria-hidden="true" />
           <span className="sr-only">{t("Close")}</span>
-        </Button>
+        </Link>
 
         <Button
           disabled={isFirstStep}
