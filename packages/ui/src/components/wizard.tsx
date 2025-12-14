@@ -255,8 +255,8 @@ export function useWizard<T extends string>({
 /**
  * Hook to handle global keyboard navigation for the wizard.
  * - Escape: Close the wizard
- * - Arrow Left/Right: Navigate between steps (except on language step)
- * - Enter: Proceed to next step or submit (except on description step)
+ * - Arrow Left/Right: Navigate between steps
+ * - Enter: Proceed to next step or submit
  */
 export function useWizardKeyboard({
   isFirstStep,

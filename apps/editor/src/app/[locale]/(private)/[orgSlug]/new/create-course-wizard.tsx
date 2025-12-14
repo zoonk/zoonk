@@ -99,7 +99,6 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
         {wizard.currentStepName === "description" && (
           <DescriptionStep
             onChange={(v) => updateField("description", v)}
-            onSubmit={handleNext}
             value={formData.description}
           />
         )}

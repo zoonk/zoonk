@@ -6,23 +6,18 @@ import {
   WizardLabel,
   WizardTextarea,
 } from "@zoonk/ui/components/wizard";
-import { useKeyboardCallback } from "@zoonk/ui/hooks/use-keyboard";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 
 export function DescriptionStep({
   value,
   onChange,
-  onSubmit,
 }: {
   value: string;
   onChange: (value: string) => void;
-  onSubmit: () => void;
 }) {
   const t = useExtracted();
   const descriptionId = useId();
-
-  useKeyboardCallback("Enter", onSubmit);
 
   return (
     <WizardField>
