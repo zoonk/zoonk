@@ -9,6 +9,34 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
 import type * as React from "react";
 
+export function Wizard({ className, ...props }: React.ComponentProps<"main">) {
+  return (
+    <main
+      className={cn("flex min-h-dvh flex-col", className)}
+      data-slot="wizard"
+      {...props}
+    />
+  );
+}
+
+export function WizardContent({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"section">) {
+  return (
+    <section
+      className="flex flex-1 flex-col items-start p-4 lg:items-center lg:justify-center lg:pt-0"
+      data-slot="wizard-content"
+      {...props}
+    >
+      <div className={cn("flex w-full max-w-xl flex-col gap-4", className)}>
+        {children}
+      </div>
+    </section>
+  );
+}
+
 export function WizardGroup({
   className,
   ...props

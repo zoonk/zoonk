@@ -1,5 +1,6 @@
 "use client";
 
+import { Wizard, WizardContent } from "@zoonk/ui/components/wizard";
 import { useWizard } from "@zoonk/ui/hooks/use-wizard";
 import { useLocale } from "next-intl";
 import { useCallback, useState, useTransition } from "react";
@@ -70,7 +71,7 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
   });
 
   return (
-    <div className="flex min-h-dvh flex-col">
+    <Wizard>
       <WizardNavbar
         canProceed={canProceed}
         currentStep={wizard.currentStep}
@@ -84,40 +85,38 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
         totalSteps={wizard.totalSteps}
       />
 
-      <div className="flex flex-1 flex-col items-start px-4 pt-8 lg:items-center lg:justify-center lg:pt-0">
-        <div className="flex w-full max-w-xl flex-col gap-4">
-          {wizard.currentStepName === "title" && (
-            <TitleStep
-              onChange={(v) => updateField("title", v)}
-              value={formData.title}
-            />
-          )}
+      <WizardContent>
+        {wizard.currentStepName === "title" && (
+          <TitleStep
+            onChange={(v) => updateField("title", v)}
+            value={formData.title}
+          />
+        )}
 
-          {wizard.currentStepName === "language" && (
-            <LanguageStep
-              onChange={(v) => updateField("language", v)}
-              value={formData.language}
-            />
-          )}
+        {wizard.currentStepName === "language" && (
+          <LanguageStep
+            onChange={(v) => updateField("language", v)}
+            value={formData.language}
+          />
+        )}
 
-          {wizard.currentStepName === "description" && (
-            <DescriptionStep
-              onChange={(v) => updateField("description", v)}
-              onSubmit={handleNext}
-              value={formData.description}
-            />
-          )}
+        {wizard.currentStepName === "description" && (
+          <DescriptionStep
+            onChange={(v) => updateField("description", v)}
+            onSubmit={handleNext}
+            value={formData.description}
+          />
+        )}
 
-          {wizard.currentStepName === "slug" && (
-            <SlugStep
-              error={submitError || getStepError("slug")}
-              onChange={(v) => updateField("slug", v)}
-              title={formData.title}
-              value={formData.slug}
-            />
-          )}
-        </div>
-      </div>
-    </div>
+        {wizard.currentStepName === "slug" && (
+          <SlugStep
+            error={submitError || getStepError("slug")}
+            onChange={(v) => updateField("slug", v)}
+            title={formData.title}
+            value={formData.slug}
+          />
+        )}
+      </WizardContent>
+    </Wizard>
   );
 }
