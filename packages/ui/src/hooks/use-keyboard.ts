@@ -1,24 +1,118 @@
 import { useEffect, useEffectEvent } from "react";
 
 type KeyboardModifiers = {
-  metaKey?: boolean;
-  ctrlKey?: boolean;
-  shiftKey?: boolean;
   altKey?: boolean;
+  ctrlKey?: boolean;
+  metaKey?: boolean;
+  shiftKey?: boolean;
 };
+
+type ModifierMode = "all" | "any" | "none";
+
+type KeyboardOptions = {
+  /**
+   * How to match modifiers:
+   * - "all": ALL specified modifiers must be pressed (AND) — default
+   * - "any": ANY specified modifier triggers (OR)
+   * - "none": NO modifier keys can be pressed
+   */
+  mode?: ModifierMode;
+  /**
+   * Modifiers to check. If undefined/empty, modifiers are ignored (just the key matters).
+   */
+  modifiers?: KeyboardModifiers;
+};
+
+function hasAnyModifier(event: KeyboardEvent): boolean {
+  return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+}
+
+function getModifierChecks(
+  event: KeyboardEvent,
+  modifiers: KeyboardModifiers,
+): boolean[] {
+  const checks: boolean[] = [];
+
+  if (modifiers.altKey !== undefined) {
+    checks.push(modifiers.altKey === event.altKey);
+  }
+
+  if (modifiers.ctrlKey !== undefined) {
+    checks.push(modifiers.ctrlKey === event.ctrlKey);
+  }
+
+  if (modifiers.metaKey !== undefined) {
+    checks.push(modifiers.metaKey === event.metaKey);
+  }
+
+  if (modifiers.shiftKey !== undefined) {
+    checks.push(modifiers.shiftKey === event.shiftKey);
+  }
+
+  return checks;
+}
+
+function checkModifiers(
+  event: KeyboardEvent,
+  modifiers: KeyboardModifiers | undefined,
+  mode: ModifierMode,
+): boolean {
+  if (mode === "none") {
+    return !hasAnyModifier(event);
+  }
+
+  if (!modifiers || Object.keys(modifiers).length === 0) {
+    return true;
+  }
+
+  const checks = getModifierChecks(event, modifiers);
+
+  if (mode === "any") {
+    return checks.some(Boolean);
+  }
+
+  return checks.every(Boolean);
+}
 
 /**
  * A custom hook that executes a callback when a keyboard shortcut is pressed.
  *
- * @param key The shortcut key to listen for (e.g., "Enter" for Cmd+Enter).
+ * @param key The shortcut key to listen for.
  * @param callback The function to call when the shortcut is pressed.
- * @param modifiers Optional modifiers to require (default: { metaKey: true, ctrlKey: true } - either works).
+ * @param options Optional configuration for modifier keys and matching mode.
+ *
+ * @example
+ * // Cmd+K OR Ctrl+K (cross-platform toggle)
+ * useKeyboardCallback("k", toggle, {
+ *   mode: "any",
+ *   modifiers: { ctrlKey: true, metaKey: true },
+ * });
+ *
+ * @example
+ * // Cmd+Shift+P (both modifiers required)
+ * useKeyboardCallback("p", openPalette, {
+ *   modifiers: { metaKey: true, shiftKey: true },
+ * });
+ *
+ * @example
+ * // Just Enter, no modifiers allowed
+ * useKeyboardCallback("Enter", submit, { mode: "none" });
+ *
+ * @example
+ * // Any Enter (modifiers don't matter)
+ * useKeyboardCallback("Enter", submit);
+ *
+ * @example
+ * // Escape key without modifiers
+ * useKeyboardCallback("Escape", close, { mode: "none" });
  */
 export function useKeyboardCallback(
   key: string,
   callback: () => void,
-  modifiers: KeyboardModifiers = { ctrlKey: true, metaKey: true },
+  options: KeyboardOptions = {},
 ) {
+  const { mode = "all", modifiers } = options;
+
   const onKeyPress = useEffectEvent(() => {
     callback();
   });
@@ -29,13 +123,7 @@ export function useKeyboardCallback(
         return;
       }
 
-      const modifierMatch =
-        (modifiers.metaKey && event.metaKey) ||
-        (modifiers.ctrlKey && event.ctrlKey) ||
-        (modifiers.shiftKey && event.shiftKey) ||
-        (modifiers.altKey && event.altKey);
-
-      if (modifierMatch) {
+      if (checkModifiers(event, modifiers, mode)) {
         event.preventDefault();
         onKeyPress();
       }
@@ -43,11 +131,5 @@ export function useKeyboardCallback(
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [
-    key,
-    modifiers.metaKey,
-    modifiers.ctrlKey,
-    modifiers.shiftKey,
-    modifiers.altKey,
-  ]);
+  }, [key, mode, modifiers]);
 }

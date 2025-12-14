@@ -26,7 +26,10 @@ export function CommandPalette() {
   const [isOpen, setIsOpen] = useState(false);
   const { isLoggedIn, logout } = useLogout({ onSuccess: () => push("/login") });
 
-  useKeyboardCallback("k", () => setIsOpen((prev) => !prev));
+  useKeyboardCallback("k", () => setIsOpen((prev) => !prev), {
+    mode: "any",
+    modifiers: { ctrlKey: true, metaKey: true },
+  });
 
   const open = () => setIsOpen(true);
   const close = () => setIsOpen(false);
