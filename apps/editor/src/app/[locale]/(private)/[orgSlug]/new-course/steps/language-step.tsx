@@ -11,12 +11,13 @@ import {
 import { LOCALE_LABELS, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
 
-type LanguageStepProps = {
+export function LanguageStep({
+  value,
+  onChange,
+}: {
   value: string;
   onChange: (value: string) => void;
-};
-
-export function LanguageStep({ value, onChange }: LanguageStepProps) {
+}) {
   const t = useExtracted();
 
   return (

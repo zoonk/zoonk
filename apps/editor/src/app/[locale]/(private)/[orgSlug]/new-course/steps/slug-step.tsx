@@ -24,16 +24,6 @@ import { checkSlugExistsAction } from "../actions";
 const SLUG_DEBOUNCE_DELAY_MS = 300;
 const COURSE_URL_PREFIX = "/c/";
 
-type SlugStepProps = {
-  title: string;
-  language: string;
-  orgSlug: string;
-  value: string;
-  onChange: (value: string) => void;
-  onSlugExists: (exists: boolean) => void;
-  error?: string | null;
-};
-
 export function SlugStep({
   title,
   language,
@@ -42,7 +32,15 @@ export function SlugStep({
   onChange,
   onSlugExists,
   error,
-}: SlugStepProps) {
+}: {
+  title: string;
+  language: string;
+  orgSlug: string;
+  value: string;
+  onChange: (value: string) => void;
+  onSlugExists: (exists: boolean) => void;
+  error?: string | null;
+}) {
   const t = useExtracted();
   const slugId = useId();
   const [_isPending, startTransition] = useTransition();

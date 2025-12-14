@@ -9,12 +9,13 @@ import {
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 
-type TitleStepProps = {
+export function TitleStep({
+  value,
+  onChange,
+}: {
   value: string;
   onChange: (value: string) => void;
-};
-
-export function TitleStep({ value, onChange }: TitleStepProps) {
+}) {
   const t = useExtracted();
   const titleId = useId();
 

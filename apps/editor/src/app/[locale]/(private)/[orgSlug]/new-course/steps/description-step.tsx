@@ -10,17 +10,15 @@ import { useKeyboardCallback } from "@zoonk/ui/hooks/use-keyboard";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 
-type DescriptionStepProps = {
-  value: string;
-  onChange: (value: string) => void;
-  onSubmit: () => void;
-};
-
 export function DescriptionStep({
   value,
   onChange,
   onSubmit,
-}: DescriptionStepProps) {
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  onSubmit: () => void;
+}) {
   const t = useExtracted();
   const descriptionId = useId();
 
