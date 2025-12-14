@@ -277,6 +277,10 @@ export function useWizardKeyboard({
   onSubmit: () => void;
 }) {
   useEffect(() => {
+    function hasModifier(event: KeyboardEvent) {
+      return event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
+    }
+
     function handleEscape(event: KeyboardEvent) {
       if (event.key === "Escape") {
         event.preventDefault();
@@ -285,6 +289,11 @@ export function useWizardKeyboard({
     }
 
     function handleArrowNavigation(event: KeyboardEvent) {
+      // Skip if any modifier is pressed to avoid conflicts with browser/text shortcuts
+      if (hasModifier(event)) {
+        return;
+      }
+
       if (event.key === "ArrowLeft" && !isFirstStep) {
         event.preventDefault();
         onBack();
@@ -297,6 +306,11 @@ export function useWizardKeyboard({
     }
 
     function handleEnter(event: KeyboardEvent) {
+      // Skip if any modifier is pressed to avoid conflicts with other shortcuts
+      if (hasModifier(event)) {
+        return;
+      }
+
       if (event.key === "Enter") {
         event.preventDefault();
 
