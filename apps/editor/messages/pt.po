@@ -139,11 +139,6 @@ msgid "This will be the URL path for your course"
 msgstr ""
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
-msgctxt "lP29gk"
-msgid "A course with this URL already exists"
-msgstr ""
-
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
 msgctxt "nRWWPC"
 msgid "Course URL"
 msgstr ""
@@ -166,6 +161,11 @@ msgstr ""
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/title-step.tsx
 msgctxt "JHdbKf"
 msgid "Course title"
+msgstr ""
+
+#: src/app/[locale]/(private)/[orgSlug]/new-course/use-course-form.ts
+msgctxt "lP29gk"
+msgid "A course with this URL already exists"
 msgstr ""
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/wizard-navbar.tsx

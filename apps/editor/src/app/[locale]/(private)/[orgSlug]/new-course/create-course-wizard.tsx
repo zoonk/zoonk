@@ -18,18 +18,19 @@ const STEPS = ["title", "language", "description", "slug"] as const;
 export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
   const router = useRouter();
   const locale = useLocale();
+
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-  const [slugExists, setSlugExists] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const wizard = useWizard({ steps: STEPS });
-  const { formData, updateField, canProceedFromStep } = useCourseForm({
-    defaultLanguage: locale,
-  });
 
-  const canProceedFromField = canProceedFromStep(wizard.currentStepName);
-  const canProceed =
-    canProceedFromField && (wizard.currentStepName !== "slug" || !slugExists);
+  const { formData, updateField, canProceedFromStep, getStepError } =
+    useCourseForm({
+      defaultLanguage: locale,
+      orgSlug,
+    });
+
+  const canProceed = canProceedFromStep(wizard.currentStepName);
 
   const handleClose = useCallback(() => {
     router.push(`/${orgSlug}`);
@@ -46,12 +47,12 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
       return;
     }
 
-    setError(null);
+    setSubmitError(null);
     startTransition(async () => {
       const result = await createCourseAction(formData, orgSlug);
 
       if (result?.error) {
-        setError(result.error);
+        setSubmitError(result.error);
       }
     });
   }, [canProceed, formData, orgSlug]);
@@ -108,11 +109,8 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
 
           {wizard.currentStepName === "slug" && (
             <SlugStep
-              error={error}
-              language={formData.language}
+              error={submitError || getStepError("slug")}
               onChange={(v) => updateField("slug", v)}
-              onSlugExists={setSlugExists}
-              orgSlug={orgSlug}
               title={formData.title}
               value={formData.slug}
             />

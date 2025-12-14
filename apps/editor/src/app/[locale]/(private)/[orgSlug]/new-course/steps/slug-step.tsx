@@ -9,48 +9,25 @@ import {
   WizardInputPrefix,
   WizardLabel,
 } from "@zoonk/ui/components/wizard";
-import { useDebouncedValue } from "@zoonk/ui/hooks/use-debounced-value";
 import { toSlug } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
-import {
-  useEffect,
-  useEffectEvent,
-  useId,
-  useState,
-  useTransition,
-} from "react";
-import { checkSlugExistsAction } from "../actions";
+import { useEffect, useId } from "react";
 
-const SLUG_DEBOUNCE_DELAY_MS = 300;
 const COURSE_URL_PREFIX = "/c/";
 
 export function SlugStep({
   title,
-  language,
-  orgSlug,
   value,
   onChange,
-  onSlugExists,
   error,
 }: {
   title: string;
-  language: string;
-  orgSlug: string;
   value: string;
   onChange: (value: string) => void;
-  onSlugExists: (exists: boolean) => void;
   error?: string | null;
 }) {
   const t = useExtracted();
   const slugId = useId();
-  const [_isPending, startTransition] = useTransition();
-  const [slugExists, setSlugExists] = useState(false);
-  const debouncedSlug = useDebouncedValue(value, SLUG_DEBOUNCE_DELAY_MS);
-
-  const slugExistsCallback = useEffectEvent((exists: boolean) => {
-    setSlugExists(exists);
-    onSlugExists(exists);
-  });
 
   // Auto-fill slug from title when entering this step if slug is empty
   useEffect(() => {
@@ -58,30 +35,6 @@ export function SlugStep({
       onChange(toSlug(title));
     }
   }, [onChange, title, value]);
-
-  // Check if slug exists when debounced value changes
-  useEffect(() => {
-    if (!debouncedSlug.trim()) {
-      slugExistsCallback(false);
-      return;
-    }
-
-    startTransition(async () => {
-      const exists = await checkSlugExistsAction({
-        language,
-        orgSlug,
-        slug: debouncedSlug,
-      });
-
-      slugExistsCallback(exists);
-    });
-  }, [debouncedSlug, language, orgSlug]);
-
-  const slugErrorMessage = slugExists
-    ? t("A course with this URL already exists")
-    : null;
-
-  const errorMessage = error || slugErrorMessage;
 
   return (
     <WizardField>
@@ -107,7 +60,7 @@ export function SlugStep({
         />
       </WizardInputGroup>
 
-      <WizardError>{errorMessage}</WizardError>
+      <WizardError>{error}</WizardError>
     </WizardField>
   );
 }
