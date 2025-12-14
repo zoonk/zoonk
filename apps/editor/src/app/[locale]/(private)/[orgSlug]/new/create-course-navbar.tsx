@@ -35,7 +35,7 @@ export function CreateCourseNavbar({
 
   return (
     <Navbar>
-      <div className="flex items-center gap-2">
+      <div className="flex flex-1 items-center gap-2">
         <Link
           className={buttonVariants({ size: "icon", variant: "secondary" })}
           href={`/${orgSlug}`}
@@ -57,7 +57,7 @@ export function CreateCourseNavbar({
 
       <ProgressDots current={currentStep} total={totalSteps} />
 
-      <div className="flex items-center gap-2">
+      <div className="flex flex-1 items-center justify-end gap-2">
         {isLastStep ? (
           <Button disabled={!canProceed || isPending} onClick={onSubmit}>
             {isPending && <Spinner aria-hidden="true" />}
