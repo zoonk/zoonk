@@ -4,16 +4,11 @@ import {
   WizardDescription,
   WizardField,
   WizardLabel,
+  WizardRadioGroup,
+  WizardRadioGroupItem,
 } from "@zoonk/ui/components/wizard";
-import { cn } from "@zoonk/ui/lib/utils";
-import {
-  LOCALE_LABELS,
-  SUPPORTED_LOCALES,
-  type SupportedLocale,
-} from "@zoonk/utils/locale";
-import { CheckIcon } from "lucide-react";
+import { LOCALE_LABELS, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent } from "react";
 
 type LanguageStepProps = {
   value: string;
@@ -22,36 +17,6 @@ type LanguageStepProps = {
 
 export function LanguageStep({ value, onChange }: LanguageStepProps) {
   const t = useExtracted();
-
-  const currentIndex = SUPPORTED_LOCALES.indexOf(value as SupportedLocale);
-
-  const selectNext = useEffectEvent(() => {
-    const nextIndex = (currentIndex + 1) % SUPPORTED_LOCALES.length;
-    onChange(SUPPORTED_LOCALES[nextIndex]);
-  });
-
-  const selectPrevious = useEffectEvent(() => {
-    const prevIndex =
-      (currentIndex - 1 + SUPPORTED_LOCALES.length) % SUPPORTED_LOCALES.length;
-    onChange(SUPPORTED_LOCALES[prevIndex]);
-  });
-
-  useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "ArrowDown") {
-        event.preventDefault();
-        selectNext();
-      }
-
-      if (event.key === "ArrowUp") {
-        event.preventDefault();
-        selectPrevious();
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, []);
 
   return (
     <div className="flex flex-col gap-4">
@@ -62,27 +27,13 @@ export function LanguageStep({ value, onChange }: LanguageStepProps) {
         </WizardDescription>
       </WizardField>
 
-      <div className="flex flex-col">
+      <WizardRadioGroup onValueChange={onChange} value={value}>
         {SUPPORTED_LOCALES.map((locale) => (
-          <button
-            className={cn(
-              "flex items-center justify-between rounded-lg px-4 py-4 text-left font-semibold text-lg transition-colors",
-              value === locale
-                ? "bg-foreground text-background"
-                : "hover:bg-muted",
-            )}
-            key={locale}
-            onClick={() => onChange(locale)}
-            type="button"
-          >
+          <WizardRadioGroupItem key={locale} value={locale}>
             {LOCALE_LABELS[locale]}
-
-            {value === locale && (
-              <CheckIcon aria-hidden="true" className="size-5" />
-            )}
-          </button>
+          </WizardRadioGroupItem>
         ))}
-      </div>
+      </WizardRadioGroup>
     </div>
   );
 }

@@ -1,4 +1,12 @@
+"use client";
+
+import {
+  Indicator as RadioGroupIndicator,
+  Item as RadioGroupItem,
+  Root as RadioGroupRoot,
+} from "@radix-ui/react-radio-group";
 import { cn } from "@zoonk/ui/lib/utils";
+import { CheckIcon } from "lucide-react";
 import type * as React from "react";
 
 function WizardInput({ className, ...props }: React.ComponentProps<"input">) {
@@ -67,10 +75,51 @@ function WizardField({
   );
 }
 
+function WizardRadioGroup({
+  className,
+  ...props
+}: React.ComponentProps<typeof RadioGroupRoot>) {
+  return (
+    <RadioGroupRoot
+      className={cn("flex flex-col", className)}
+      data-slot="wizard-radio-group"
+      {...props}
+    />
+  );
+}
+
+function WizardRadioGroupItem({
+  children,
+  className,
+  ...props
+}: React.ComponentProps<typeof RadioGroupItem>) {
+  return (
+    <RadioGroupItem
+      className={cn(
+        "flex cursor-pointer items-center justify-between rounded-lg px-4 py-4 text-left font-semibold text-lg transition-colors",
+        "hover:bg-muted",
+        "data-[state=checked]:bg-foreground data-[state=checked]:text-background",
+        "outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
+        className,
+      )}
+      data-slot="wizard-radio-group-item"
+      {...props}
+    >
+      {children}
+
+      <RadioGroupIndicator data-slot="wizard-radio-group-indicator">
+        <CheckIcon aria-hidden="true" className="size-5" />
+      </RadioGroupIndicator>
+    </RadioGroupItem>
+  );
+}
+
 export {
   WizardDescription,
   WizardField,
   WizardInput,
   WizardLabel,
+  WizardRadioGroup,
+  WizardRadioGroupItem,
   WizardTextarea,
 };
