@@ -22,7 +22,8 @@ export function LanguageStep({ value, onChange }: LanguageStepProps) {
   return (
     <WizardGroup>
       <WizardField>
-        <WizardLabel>{t("COURSE LANGUAGE")}</WizardLabel>
+        <WizardLabel>{t("Course language")}</WizardLabel>
+
         <WizardDescription>
           {t("Select the language your course content will be in")}
         </WizardDescription>

@@ -114,9 +114,9 @@ msgid "A brief description of your course…"
 msgstr "A brief description of your course…"
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/description-step.tsx
-msgctxt "mjwrQa"
-msgid "COURSE DESCRIPTION"
-msgstr "COURSE DESCRIPTION"
+msgctxt "43Q2tB"
+msgid "Course description"
+msgstr "Course description"
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/description-step.tsx
 msgctxt "zLHjeU"
@@ -124,9 +124,9 @@ msgid "A short summary that helps learners understand what they'll learn"
 msgstr "A short summary that helps learners understand what they'll learn"
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/language-step.tsx
-msgctxt "GqZccZ"
-msgid "COURSE LANGUAGE"
-msgstr "COURSE LANGUAGE"
+msgctxt "KYeXR4"
+msgid "Course language"
+msgstr "Course language"
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/language-step.tsx
 msgctxt "wjs5Mw"
@@ -139,11 +139,6 @@ msgid "Checking availability…"
 msgstr "Checking availability…"
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
-msgctxt "bKCakg"
-msgid "COURSE URL"
-msgstr "COURSE URL"
-
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
 msgctxt "lE3Euj"
 msgid "This will be the URL path for your course"
 msgstr "This will be the URL path for your course"
@@ -152,6 +147,11 @@ msgstr "This will be the URL path for your course"
 msgctxt "lP29gk"
 msgid "A course with this URL already exists"
 msgstr "A course with this URL already exists"
+
+#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
+msgctxt "nRWWPC"
+msgid "Course URL"
+msgstr "Course URL"
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
 msgctxt "wQWt52"
@@ -169,9 +169,9 @@ msgid "The main title that learners will see for your course"
 msgstr "The main title that learners will see for your course"
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/title-step.tsx
-msgctxt "D5IUaU"
-msgid "COURSE TITLE"
-msgstr "COURSE TITLE"
+msgctxt "JHdbKf"
+msgid "Course title"
+msgstr "Course title"
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/wizard-navbar.tsx
 msgctxt "9+Ddtu"

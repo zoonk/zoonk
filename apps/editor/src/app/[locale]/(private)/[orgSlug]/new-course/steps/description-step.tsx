@@ -29,8 +29,12 @@ export function DescriptionStep({
   return (
     <WizardField>
       <WizardLabel htmlFor={descriptionId}>
-        {t("COURSE DESCRIPTION")}
+        {t("Course description")}
       </WizardLabel>
+
+      <WizardDescription>
+        {t("A short summary that helps learners understand what they'll learn")}
+      </WizardDescription>
 
       <WizardTextarea
         autoFocus
@@ -39,10 +43,6 @@ export function DescriptionStep({
         placeholder={t("A brief description of your course…")}
         value={value}
       />
-
-      <WizardDescription>
-        {t("A short summary that helps learners understand what they'll learn")}
-      </WizardDescription>
     </WizardField>
   );
 }

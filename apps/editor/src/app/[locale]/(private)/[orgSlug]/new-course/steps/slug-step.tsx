@@ -69,7 +69,14 @@ export function SlugStep({
 
   return (
     <WizardField>
-      <WizardLabel htmlFor={slugId}>{t("COURSE URL")}</WizardLabel>
+      <WizardLabel htmlFor={slugId}>{t("Course URL")}</WizardLabel>
+
+      <WizardDescription>
+        {isPending
+          ? t("Checking availability…")
+          : t("This will be the URL path for your course")}
+      </WizardDescription>
+
       <div className="flex items-baseline gap-2">
         <span className="text-muted-foreground">{`/${language}/c/`}</span>
         <WizardInput
@@ -81,12 +88,6 @@ export function SlugStep({
           value={value}
         />
       </div>
-
-      <WizardDescription>
-        {isPending
-          ? t("Checking availability…")
-          : t("This will be the URL path for your course")}
-      </WizardDescription>
 
       {showSlugError && (
         <p className="text-destructive text-sm">

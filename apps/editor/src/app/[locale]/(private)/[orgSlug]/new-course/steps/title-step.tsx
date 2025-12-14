@@ -20,7 +20,12 @@ export function TitleStep({ value, onChange }: TitleStepProps) {
 
   return (
     <WizardField>
-      <WizardLabel htmlFor={titleId}>{t("COURSE TITLE")}</WizardLabel>
+      <WizardLabel htmlFor={titleId}>{t("Course title")}</WizardLabel>
+
+      <WizardDescription>
+        {t("The main title that learners will see for your course")}
+      </WizardDescription>
+
       <WizardInput
         autoFocus
         id={titleId}
@@ -28,9 +33,6 @@ export function TitleStep({ value, onChange }: TitleStepProps) {
         placeholder={t("course title")}
         value={value}
       />
-      <WizardDescription>
-        {t("The main title that learners will see for your course")}
-      </WizardDescription>
     </WizardField>
   );
 }
