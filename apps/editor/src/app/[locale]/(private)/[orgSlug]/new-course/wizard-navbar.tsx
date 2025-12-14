@@ -7,19 +7,6 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
-type WizardNavbarProps = {
-  currentStep: number;
-  totalSteps: number;
-  isFirstStep: boolean;
-  isLastStep: boolean;
-  isPending: boolean;
-  canProceed: boolean;
-  onClose: () => void;
-  onBack: () => void;
-  onNext: () => void;
-  onSubmit: () => void;
-};
-
 export function WizardNavbar({
   currentStep,
   totalSteps,
@@ -31,7 +18,18 @@ export function WizardNavbar({
   onBack,
   onNext,
   onSubmit,
-}: WizardNavbarProps) {
+}: {
+  currentStep: number;
+  totalSteps: number;
+  isFirstStep: boolean;
+  isLastStep: boolean;
+  isPending: boolean;
+  canProceed: boolean;
+  onClose: () => void;
+  onBack: () => void;
+  onNext: () => void;
+  onSubmit: () => void;
+}) {
   const t = useExtracted();
 
   return (
