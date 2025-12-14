@@ -1,7 +1,7 @@
 "use client";
 
 import { useDebouncedValue } from "@zoonk/ui/hooks/use-debounced-value";
-import { useExtracted } from "next-intl";
+import { useExtracted, useLocale } from "next-intl";
 import {
   useCallback,
   useEffect,
@@ -20,14 +20,9 @@ export type CourseFormData = {
 
 const SLUG_DEBOUNCE_DELAY_MS = 300;
 
-export function useCourseForm({
-  defaultLanguage,
-  orgSlug,
-}: {
-  defaultLanguage: string;
-  orgSlug: string;
-}) {
+export function useCourseForm({ orgSlug }: { orgSlug: string }) {
   const t = useExtracted();
+  const defaultLanguage = useLocale();
   const [_isPending, startTransition] = useTransition();
   const [slugExists, setSlugExists] = useState(false);
 

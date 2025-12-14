@@ -6,7 +6,6 @@ import {
   Wizard,
   WizardContent,
 } from "@zoonk/ui/components/wizard";
-import { useLocale } from "next-intl";
 import { useCallback, useState, useTransition } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { createCourseAction } from "./actions";
@@ -21,7 +20,6 @@ const STEPS = ["title", "language", "description", "slug"] as const;
 
 export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
   const router = useRouter();
-  const locale = useLocale();
 
   const [isPending, startTransition] = useTransition();
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -29,10 +27,7 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
   const wizard = useWizard({ steps: STEPS });
 
   const { formData, updateField, canProceedFromStep, getStepError } =
-    useCourseForm({
-      defaultLanguage: locale,
-      orgSlug,
-    });
+    useCourseForm({ orgSlug });
 
   const canProceed = canProceedFromStep(wizard.currentStepName);
 
