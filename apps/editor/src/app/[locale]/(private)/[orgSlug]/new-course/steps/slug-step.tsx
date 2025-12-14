@@ -2,6 +2,7 @@
 
 import {
   WizardDescription,
+  WizardError,
   WizardField,
   WizardInput,
   WizardLabel,
@@ -102,7 +103,7 @@ export function SlugStep({
         />
       </div>
 
-      <p className="min-h-5 text-destructive text-sm">{errorMessage}</p>
+      <WizardError>{errorMessage}</WizardError>
     </WizardField>
   );
 }

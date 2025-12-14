@@ -65,6 +65,19 @@ export function WizardDescription({
   );
 }
 
+export function WizardError({
+  className,
+  ...props
+}: React.ComponentProps<"p">) {
+  return (
+    <p
+      className={cn("min-h-5 text-destructive text-sm", className)}
+      data-slot="wizard-error"
+      {...props}
+    />
+  );
+}
+
 export function WizardInput({
   className,
   ...props
