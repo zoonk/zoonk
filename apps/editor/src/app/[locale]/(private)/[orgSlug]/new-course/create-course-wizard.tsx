@@ -24,13 +24,16 @@ export function CreateCourseWizard({ orgSlug }: CreateCourseWizardProps) {
   const locale = useLocale();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [slugExists, setSlugExists] = useState(false);
 
   const wizard = useWizard({ steps: STEPS });
   const { formData, updateField, canProceedFromStep } = useCourseForm({
     defaultLanguage: locale,
   });
 
-  const canProceed = canProceedFromStep(wizard.currentStepName);
+  const canProceedFromField = canProceedFromStep(wizard.currentStepName);
+  const canProceed =
+    canProceedFromField && (wizard.currentStepName !== "slug" || !slugExists);
 
   const handleClose = useCallback(() => {
     router.push(`/${orgSlug}`);
@@ -120,6 +123,8 @@ export function CreateCourseWizard({ orgSlug }: CreateCourseWizardProps) {
               error={error}
               language={formData.language}
               onChange={(v) => updateField("slug", v)}
+              onSlugExists={setSlugExists}
+              orgSlug={orgSlug}
               title={formData.title}
               value={formData.slug}
             />

@@ -8,6 +8,36 @@ import { revalidateTag } from "next/cache";
 import slugify from "slugify";
 import { redirect } from "@/i18n/navigation";
 
+type CheckSlugParams = {
+  orgSlug: string;
+  language: string;
+  slug: string;
+};
+
+export async function checkSlugExistsAction({
+  orgSlug,
+  language,
+  slug,
+}: CheckSlugParams): Promise<boolean> {
+  if (!slug.trim()) {
+    return false;
+  }
+
+  const { data: org } = await getOrganizationBySlug(orgSlug);
+
+  if (!org) {
+    return false;
+  }
+
+  const normalizedSlug = slugify(slug, { lower: true, strict: true });
+
+  return courseSlugExists({
+    language,
+    organizationId: org.id,
+    slug: normalizedSlug,
+  });
+}
+
 export async function createCourseAction(formData: FormData) {
   const orgSlug = parseFormField(formData, "orgSlug");
   const title = parseFormField(formData, "title");

@@ -77,6 +77,16 @@ msgctxt "zx7CKB"
 msgid "Check your email"
 msgstr ""
 
+#: src/app/[locale]/(private)/[orgSlug]/c/[courseSlug]/page.tsx
+msgctxt "6+rwTE"
+msgid "Course editing coming soon"
+msgstr ""
+
+#: src/app/[locale]/(private)/[orgSlug]/c/[courseSlug]/page.tsx
+msgctxt "hbm9cV"
+msgid "This page is under construction."
+msgstr ""
+
 #: src/app/[locale]/(private)/[orgSlug]/course-list.tsx
 msgctxt "c0YWuA"
 msgid "Your organization hasn't created any courses yet."
@@ -124,6 +134,11 @@ msgid "Select the language your course content will be in"
 msgstr ""
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
+msgctxt "1y9Pqv"
+msgid "Checking availability…"
+msgstr ""
+
+#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
 msgctxt "bKCakg"
 msgid "COURSE URL"
 msgstr ""
@@ -131,6 +146,11 @@ msgstr ""
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
 msgctxt "lE3Euj"
 msgid "This will be the URL path for your course"
+msgstr ""
+
+#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
+msgctxt "lP29gk"
+msgid "A course with this URL already exists"
 msgstr ""
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
