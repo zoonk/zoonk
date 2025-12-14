@@ -4,9 +4,8 @@ import { auth } from "@zoonk/auth";
 import { type Course, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { normalizeString } from "@zoonk/utils/string";
+import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { headers } from "next/headers";
-import slugify from "slugify";
 import { hasCoursePermission } from "./organizations";
 
 export const LIST_COURSES_LIMIT = 20;
@@ -119,7 +118,7 @@ export async function createCourse(
     return { data: null, error: new Error("Forbidden") };
   }
 
-  const courseSlug = slugify(params.slug, { lower: true, strict: true });
+  const courseSlug = toSlug(params.slug);
   const normalizedTitle = normalizeString(params.title);
 
   const { data, error } = await safeAsync(() =>

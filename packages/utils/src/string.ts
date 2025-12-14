@@ -1,3 +1,5 @@
+import slugify from "slugify";
+
 const ACCENTS_REGEX = /[\u0300-\u036f]/g;
 
 export function removeAccents(str: string): string {
@@ -6,4 +8,8 @@ export function removeAccents(str: string): string {
 
 export function normalizeString(str: string): string {
   return removeAccents(str).toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+export function toSlug(str: string): string {
+  return slugify(str, { lower: true, strict: true });
 }

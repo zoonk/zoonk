@@ -3,7 +3,7 @@ import {
   generateCourseThumbnail,
 } from "@zoonk/ai/course-thumbnail";
 import type { SafeReturn } from "@zoonk/utils/error";
-import slugify from "slugify";
+import { toSlug } from "@zoonk/utils/string";
 import { uploadGeneratedImage } from "./upload";
 
 export async function createCourseThumbnail(
@@ -16,7 +16,7 @@ export async function createCourseThumbnail(
     return { data: null, error: imageGenerationError };
   }
 
-  const slug = slugify(params.title, { lower: true, strict: true });
+  const slug = toSlug(params.title);
   const fileName = `courses/${slug}.webp`;
 
   const { data: url, error: uploadError } = await uploadGeneratedImage({

@@ -4,8 +4,8 @@ import { courseSlugExists, createCourse } from "@zoonk/core/courses";
 import { getOrganizationBySlug } from "@zoonk/core/organizations";
 import { cacheTagOrgCourses } from "@zoonk/utils/cache";
 import { parseFormField } from "@zoonk/utils/form";
+import { toSlug } from "@zoonk/utils/string";
 import { revalidateTag } from "next/cache";
-import slugify from "slugify";
 import { redirect } from "@/i18n/navigation";
 
 type CheckSlugParams = {
@@ -23,7 +23,7 @@ export async function checkSlugExistsAction({
     return false;
   }
 
-  const normalizedSlug = slugify(slug, { lower: true, strict: true });
+  const normalizedSlug = toSlug(slug);
 
   return courseSlugExists({ language, orgSlug, slug: normalizedSlug });
 }
@@ -46,7 +46,7 @@ export async function createCourseAction(formData: FormData) {
     return { error: "Organization not found" };
   }
 
-  const normalizedSlug = slugify(slug, { lower: true, strict: true });
+  const normalizedSlug = toSlug(slug);
 
   const slugExists = await courseSlugExists({
     language,

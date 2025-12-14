@@ -10,6 +10,7 @@ import {
   WizardLabel,
 } from "@zoonk/ui/components/wizard";
 import { useDebouncedValue } from "@zoonk/ui/hooks/use-debounced-value";
+import { toSlug } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
 import {
   useEffect,
@@ -18,7 +19,6 @@ import {
   useState,
   useTransition,
 } from "react";
-import slugify from "slugify";
 import { checkSlugExistsAction } from "../actions";
 
 const SLUG_DEBOUNCE_DELAY_MS = 300;
@@ -57,7 +57,7 @@ export function SlugStep({
   // Auto-fill slug from title when entering this step if slug is empty
   useEffect(() => {
     if (!value && title) {
-      onChange(slugify(title, { lower: true, strict: true }));
+      onChange(toSlug(title));
     }
   }, [onChange, title, value]);
 
