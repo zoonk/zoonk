@@ -1,21 +1,14 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
-type ProgressDotsProps = {
-  /**
-   * Current step index (0-based)
-   */
+export function ProgressDots({
+  current,
+  total,
+  className,
+}: {
   current: number;
-  /**
-   * Total number of steps
-   */
   total: number;
-  /**
-   * Optional className for the container
-   */
   className?: string;
-};
-
-function ProgressDots({ current, total, className }: ProgressDotsProps) {
+}) {
   return (
     <div
       aria-label={`Step ${current + 1} of ${total}`}
@@ -40,5 +33,3 @@ function ProgressDots({ current, total, className }: ProgressDotsProps) {
     </div>
   );
 }
-
-export { ProgressDots };
