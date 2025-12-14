@@ -13,7 +13,7 @@ import {
 } from "@zoonk/utils/locale";
 import { CheckIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useCallback, useEffect } from "react";
+import { useEffect, useEffectEvent } from "react";
 
 type LanguageStepProps = {
   value: string;
@@ -25,16 +25,16 @@ export function LanguageStep({ value, onChange }: LanguageStepProps) {
 
   const currentIndex = SUPPORTED_LOCALES.indexOf(value as SupportedLocale);
 
-  const selectNext = useCallback(() => {
+  const selectNext = useEffectEvent(() => {
     const nextIndex = (currentIndex + 1) % SUPPORTED_LOCALES.length;
     onChange(SUPPORTED_LOCALES[nextIndex]);
-  }, [currentIndex, onChange]);
+  });
 
-  const selectPrevious = useCallback(() => {
+  const selectPrevious = useEffectEvent(() => {
     const prevIndex =
       (currentIndex - 1 + SUPPORTED_LOCALES.length) % SUPPORTED_LOCALES.length;
     onChange(SUPPORTED_LOCALES[prevIndex]);
-  }, [currentIndex, onChange]);
+  });
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -51,7 +51,7 @@ export function LanguageStep({ value, onChange }: LanguageStepProps) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selectNext, selectPrevious]);
+  }, []);
 
   return (
     <div className="flex flex-col gap-4">
