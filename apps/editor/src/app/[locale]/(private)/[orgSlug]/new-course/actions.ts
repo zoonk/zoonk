@@ -23,17 +23,11 @@ export async function checkSlugExistsAction({
     return false;
   }
 
-  const { data: org } = await getOrganizationBySlug(orgSlug);
-
-  if (!org) {
-    return false;
-  }
-
   const normalizedSlug = slugify(slug, { lower: true, strict: true });
 
   return courseSlugExists({
     language,
-    organizationId: org.id,
+    orgSlug,
     slug: normalizedSlug,
   });
 }
@@ -60,7 +54,7 @@ export async function createCourseAction(formData: FormData) {
 
   const slugExists = await courseSlugExists({
     language,
-    organizationId: org.id,
+    orgSlug,
     slug: normalizedSlug,
   });
 

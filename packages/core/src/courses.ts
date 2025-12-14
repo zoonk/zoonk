@@ -76,7 +76,7 @@ export type CreateCourseParams = {
 
 export type CourseSlugExistsParams = {
   language: string;
-  organizationId: number;
+  orgSlug: string;
   slug: string;
 };
 
@@ -91,7 +91,7 @@ export async function courseSlugExists(
       select: { id: true },
       where: {
         language: params.language,
-        organizationId: params.organizationId,
+        organization: { slug: params.orgSlug },
         slug: params.slug,
       },
     }),
