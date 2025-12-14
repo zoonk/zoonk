@@ -6,18 +6,12 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
+import { LOCALE_LABELS, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { CheckIcon, LanguagesIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useExtracted, useLocale } from "next-intl";
 import { useTransition } from "react";
 import { usePathname, useRouter } from "@/i18n/navigation";
-import { routing } from "@/i18n/routing";
-
-const localeNames: Record<string, string> = {
-  en: "English",
-  es: "Español",
-  pt: "Português",
-};
 
 export function LocaleSwitcher() {
   const t = useExtracted();
@@ -47,13 +41,13 @@ export function LocaleSwitcher() {
       </DropdownMenuSubTrigger>
 
       <DropdownMenuSubContent>
-        {routing.locales.map((lang) => (
+        {SUPPORTED_LOCALES.map((lang) => (
           <DropdownMenuItem
             disabled={isPending}
             key={lang}
             onClick={() => onLocaleChange(lang)}
           >
-            {localeNames[lang] ?? lang}
+            {LOCALE_LABELS[lang]}
             {lang === locale && (
               <CheckIcon aria-hidden="true" className="ml-auto size-4" />
             )}

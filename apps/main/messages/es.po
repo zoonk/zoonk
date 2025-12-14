@@ -572,11 +572,6 @@ msgctxt "rbrahO"
 msgid "Close"
 msgstr "Cerrar"
 
-#: src/components/locale-switcher.tsx
-msgctxt "GmcCqz"
-msgid "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} es {🇪🇸 Español} other {Unknown}}"
-msgstr "{locale, select, pt {🇧🇷 Português} en {🇺🇸 English} es {🇪🇸 Español} other {Unknown}}"
-
 #: src/components/navbar-links.tsx
 msgctxt "IbrSk1"
 msgid "Learn"
