@@ -15,11 +15,7 @@ import { WizardNavbar } from "./wizard-navbar";
 
 const STEPS = ["title", "language", "description", "slug"] as const;
 
-type CreateCourseWizardProps = {
-  orgSlug: string;
-};
-
-export function CreateCourseWizard({ orgSlug }: CreateCourseWizardProps) {
+export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
   const router = useRouter();
   const locale = useLocale();
   const [isPending, startTransition] = useTransition();
