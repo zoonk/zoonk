@@ -7,7 +7,7 @@ import {
 } from "@radix-ui/react-radio-group";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
-import type * as React from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export function Wizard({ className, ...props }: React.ComponentProps<"main">) {
   return (
@@ -201,4 +201,120 @@ export function WizardRadioGroupItem({
       </RadioGroupIndicator>
     </RadioGroupItem>
   );
+}
+
+export function useWizard<T extends string>({
+  steps,
+  initialStep = 0,
+}: {
+  steps: readonly T[];
+  initialStep?: number;
+}): {
+  currentStep: number;
+  currentStepName: T;
+  isFirstStep: boolean;
+  isLastStep: boolean;
+  goToNext: () => void;
+  goToPrevious: () => void;
+  goToStep: (step: number) => void;
+  totalSteps: number;
+} {
+  const [currentStep, setCurrentStep] = useState(initialStep);
+
+  const currentStepName = steps[currentStep] as T;
+  const isFirstStep = currentStep === 0;
+  const isLastStep = currentStep === steps.length - 1;
+  const totalSteps = steps.length;
+
+  const goToNext = useCallback(() => {
+    setCurrentStep((prev) => Math.min(prev + 1, steps.length - 1));
+  }, [steps.length]);
+
+  const goToPrevious = useCallback(() => {
+    setCurrentStep((prev) => Math.max(prev - 1, 0));
+  }, []);
+
+  const goToStep = useCallback(
+    (step: number) => {
+      setCurrentStep(Math.max(0, Math.min(step, steps.length - 1)));
+    },
+    [steps.length],
+  );
+
+  return {
+    currentStep,
+    currentStepName,
+    goToNext,
+    goToPrevious,
+    goToStep,
+    isFirstStep,
+    isLastStep,
+    totalSteps,
+  };
+}
+
+/**
+ * Hook to handle global keyboard navigation for the wizard.
+ * - Escape: Close the wizard
+ * - Arrow Left/Right: Navigate between steps (except on language step)
+ * - Enter: Proceed to next step or submit (except on description step)
+ */
+export function useWizardKeyboard({
+  isFirstStep,
+  isLastStep,
+  canProceed,
+  onClose,
+  onBack,
+  onNext,
+  onSubmit,
+}: {
+  isFirstStep: boolean;
+  isLastStep: boolean;
+  canProceed: boolean;
+  onClose: () => void;
+  onBack: () => void;
+  onNext: () => void;
+  onSubmit: () => void;
+}) {
+  useEffect(() => {
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+      }
+    }
+
+    function handleArrowNavigation(event: KeyboardEvent) {
+      if (event.key === "ArrowLeft" && !isFirstStep) {
+        event.preventDefault();
+        onBack();
+      }
+
+      if (event.key === "ArrowRight" && canProceed && !isLastStep) {
+        event.preventDefault();
+        onNext();
+      }
+    }
+
+    function handleEnter(event: KeyboardEvent) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+
+        if (isLastStep) {
+          onSubmit();
+        } else {
+          onNext();
+        }
+      }
+    }
+
+    function handleKeyDown(event: KeyboardEvent) {
+      handleEscape(event);
+      handleArrowNavigation(event);
+      handleEnter(event);
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [canProceed, isFirstStep, isLastStep, onBack, onClose, onNext, onSubmit]);
 }

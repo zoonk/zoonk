@@ -1,7 +1,11 @@
 "use client";
 
-import { Wizard, WizardContent } from "@zoonk/ui/components/wizard";
-import { useWizard } from "@zoonk/ui/hooks/use-wizard";
+import {
+  useWizard,
+  useWizardKeyboard,
+  Wizard,
+  WizardContent,
+} from "@zoonk/ui/components/wizard";
 import { useLocale } from "next-intl";
 import { useCallback, useState, useTransition } from "react";
 import { useRouter } from "@/i18n/navigation";
@@ -11,7 +15,6 @@ import { LanguageStep } from "./steps/language-step";
 import { SlugStep } from "./steps/slug-step";
 import { TitleStep } from "./steps/title-step";
 import { useCourseForm } from "./use-course-form";
-import { useWizardKeyboard } from "./use-wizard-keyboard";
 import { WizardNavbar } from "./wizard-navbar";
 
 const STEPS = ["title", "language", "description", "slug"] as const;
@@ -61,7 +64,6 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
 
   useWizardKeyboard({
     canProceed,
-    currentStepName: wizard.currentStepName,
     isFirstStep: wizard.isFirstStep,
     isLastStep: wizard.isLastStep,
     onBack: wizard.goToPrevious,
