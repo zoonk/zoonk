@@ -65,7 +65,6 @@ export function WizardField({
 
 export function WizardLabel({
   className,
-  htmlFor,
   ...props
 }: React.ComponentProps<"label">) {
   return (
