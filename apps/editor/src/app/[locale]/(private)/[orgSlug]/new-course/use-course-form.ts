@@ -1,7 +1,7 @@
 "use client";
 
 import { useExtracted, useLocale } from "next-intl";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useSlugCheck } from "@/lib/slug";
 
 export type CourseFormData = {
@@ -31,30 +31,27 @@ export function useCourseForm({ orgSlug }: { orgSlug: string }) {
     slug: formData.slug,
   });
 
-  const updateField = useCallback(
-    <K extends keyof CourseFormData>(field: K, value: CourseFormData[K]) => {
-      setFormData((prev) => ({ ...prev, [field]: value }));
-    },
-    [],
-  );
+  const updateField = <K extends keyof CourseFormData>(
+    field: K,
+    value: CourseFormData[K],
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
-  const canProceedFromStep = useCallback(
-    (stepName: string): boolean => {
-      switch (stepName) {
-        case "title":
-          return formData.title.trim().length > 0;
-        case "language":
-          return formData.language.length > 0;
-        case "description":
-          return formData.description.trim().length > 0;
-        case "slug":
-          return formData.slug.trim().length > 0 && !slugExists;
-        default:
-          return false;
-      }
-    },
-    [formData, slugExists],
-  );
+  const canProceedFromStep = (stepName: string): boolean => {
+    switch (stepName) {
+      case "title":
+        return formData.title.trim().length > 0;
+      case "language":
+        return formData.language.length > 0;
+      case "description":
+        return formData.description.trim().length > 0;
+      case "slug":
+        return formData.slug.trim().length > 0 && !slugExists;
+      default:
+        return false;
+    }
+  };
 
   const getStepError = (stepName: string): string | null => {
     if (stepName === "slug" && slugExists) {
