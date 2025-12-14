@@ -56,15 +56,13 @@ export function useCourseForm({ orgSlug }: { orgSlug: string }) {
     [formData, slugExists],
   );
 
-  const getStepError = useCallback(
-    (stepName: string): string | null => {
-      if (stepName === "slug" && slugExists) {
-        return t("A course with this URL already exists");
-      }
-      return null;
-    },
-    [slugExists, t],
-  );
+  const getStepError = (stepName: string): string | null => {
+    if (stepName === "slug" && slugExists) {
+      return t("A course with this URL already exists");
+    }
+
+    return null;
+  };
 
   return {
     canProceedFromStep,
