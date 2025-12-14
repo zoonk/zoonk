@@ -96,11 +96,15 @@ export function SlugStep({
       <WizardInputGroup>
         <WizardInputPrefix>{COURSE_URL_PREFIX}</WizardInputPrefix>
         <WizardInput
+          autoCapitalize="off"
+          autoComplete="off"
+          autoCorrect="off"
           autoFocus
           className="text-muted-foreground"
           id={slugId}
           onChange={(e) => onChange(e.target.value)}
           placeholder={t("course-title")}
+          spellCheck="false"
           value={value}
         />
       </WizardInputGroup>
