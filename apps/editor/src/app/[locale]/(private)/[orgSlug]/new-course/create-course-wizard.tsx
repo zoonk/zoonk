@@ -48,6 +48,7 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
     }
 
     setSubmitError(null);
+
     startTransition(async () => {
       const result = await createCourseAction(formData, orgSlug);
 
