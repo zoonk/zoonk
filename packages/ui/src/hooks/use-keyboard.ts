@@ -112,6 +112,7 @@ export function useKeyboardCallback(
   options: KeyboardOptions = {},
 ) {
   const { mode = "all", modifiers } = options;
+  const { altKey, ctrlKey, metaKey, shiftKey } = modifiers ?? {};
 
   const onKeyPress = useEffectEvent(() => {
     callback();
@@ -123,7 +124,9 @@ export function useKeyboardCallback(
         return;
       }
 
-      if (checkModifiers(event, modifiers, mode)) {
+      const mods = { altKey, ctrlKey, metaKey, shiftKey };
+
+      if (checkModifiers(event, mods, mode)) {
         event.preventDefault();
         onKeyPress();
       }
@@ -131,5 +134,5 @@ export function useKeyboardCallback(
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [key, mode, modifiers]);
+  }, [key, mode, altKey, ctrlKey, metaKey, shiftKey]);
 }
