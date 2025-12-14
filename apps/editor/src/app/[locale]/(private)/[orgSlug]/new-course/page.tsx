@@ -1,28 +1,20 @@
 import type { Metadata } from "next";
-import { setRequestLocale } from "next-intl/server";
-import { Suspense } from "react";
+import { getExtracted } from "next-intl/server";
 import { CreateCourseWizard } from "./create-course-wizard";
 
-type Params = {
-  locale: string;
-  orgSlug: string;
-};
+export async function generateMetadata({
+  params,
+}: PageProps<"/[locale]/[orgSlug]/new-course">): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getExtracted({ locale });
 
-export async function generateMetadata(): Promise<Metadata> {
-  return { title: "Create Course" };
+  return { title: t("Create course") };
 }
 
 export default async function NewCoursePage({
   params,
-}: {
-  params: Promise<Params>;
-}) {
-  const { locale, orgSlug } = await params;
-  setRequestLocale(locale);
+}: PageProps<"/[locale]/[orgSlug]/new-course">) {
+  const { orgSlug } = await params;
 
-  return (
-    <Suspense>
-      <CreateCourseWizard orgSlug={orgSlug} />
-    </Suspense>
-  );
+  return <CreateCourseWizard orgSlug={orgSlug} />;
 }

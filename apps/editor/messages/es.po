@@ -108,6 +108,12 @@ msgctxt "bLbK+M"
 msgid "All fields are required"
 msgstr ""
 
+#: src/app/[locale]/(private)/[orgSlug]/new-course/page.tsx
+#: src/app/[locale]/(private)/[orgSlug]/page.tsx
+msgctxt "dCKXDB"
+msgid "Create course"
+msgstr ""
+
 #: src/app/[locale]/(private)/[orgSlug]/new-course/steps/description-step.tsx
 msgctxt "2qMJ2X"
 msgid "A brief description of your course…"
@@ -207,11 +213,6 @@ msgstr "No hay otras organizaciones"
 msgctxt "6gzGoI"
 msgid "Select a course to edit its content"
 msgstr "Selecciona un curso para editar su contenido"
-
-#: src/app/[locale]/(private)/[orgSlug]/page.tsx
-msgctxt "dCKXDB"
-msgid "Create course"
-msgstr ""
 
 #: src/app/[locale]/(private)/[orgSlug]/page.tsx
 msgctxt "R85gsW"
