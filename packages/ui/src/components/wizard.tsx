@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Indicator as RadioGroupIndicator,
   Item as RadioGroupItem,
@@ -65,6 +63,7 @@ export function WizardField({
 
 export function WizardLabel({
   className,
+  htmlFor,
   ...props
 }: React.ComponentProps<"label">) {
   return (
