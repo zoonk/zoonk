@@ -11,7 +11,7 @@ import {
 } from "@zoonk/ui/components/wizard";
 import { toSlug } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
-import { useEffect, useId } from "react";
+import { useEffect, useEffectEvent, useId } from "react";
 
 const COURSE_URL_PREFIX = "/c/";
 
@@ -29,12 +29,16 @@ export function SlugStep({
   const t = useExtracted();
   const slugId = useId();
 
+  const handleChange = useEffectEvent((newValue: string) => {
+    onChange(newValue);
+  });
+
   // Auto-fill slug from title when entering this step if slug is empty
   useEffect(() => {
     if (!value && title) {
-      onChange(toSlug(title));
+      handleChange(toSlug(title));
     }
-  }, [onChange, title, value]);
+  }, [title, value]);
 
   return (
     <WizardField>
