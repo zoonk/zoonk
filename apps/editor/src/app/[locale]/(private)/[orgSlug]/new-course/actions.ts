@@ -8,17 +8,15 @@ import { revalidateTag } from "next/cache";
 import { getExtracted, getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 
-type CheckSlugParams = {
-  orgSlug: string;
-  language: string;
-  slug: string;
-};
-
 export async function checkSlugExistsAction({
   orgSlug,
   language,
   slug,
-}: CheckSlugParams): Promise<boolean> {
+}: {
+  orgSlug: string;
+  language: string;
+  slug: string;
+}): Promise<boolean> {
   if (!slug.trim()) {
     return false;
   }
