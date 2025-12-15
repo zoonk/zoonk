@@ -3,6 +3,8 @@ import {
   BreadcrumbPage,
 } from "@zoonk/ui/components/breadcrumb";
 import {
+  Container,
+  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,
@@ -12,7 +14,7 @@ import { ImageTestForm } from "./form";
 
 export default function ImageTestPage() {
   return (
-    <main className="flex flex-col gap-4">
+    <Container>
       <AppBreadcrumb>
         <HomeLinkBreadcrumb />
         <BreadcrumbItem>
@@ -27,7 +29,9 @@ export default function ImageTestPage() {
         </ContainerDescription>
       </ContainerHeader>
 
-      <ImageTestForm />
-    </main>
+      <ContainerBody>
+        <ImageTestForm />
+      </ContainerBody>
+    </Container>
   );
 }
