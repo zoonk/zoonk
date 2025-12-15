@@ -98,6 +98,19 @@ function AvatarGroupCount({
   );
 }
 
+function AvatarSkeleton({ className, ...props }: React.ComponentProps<"div">) {
+  return (
+    <div
+      className={cn(
+        "size-8 shrink-0 animate-pulse rounded-full bg-muted",
+        className,
+      )}
+      data-slot="avatar-skeleton"
+      {...props}
+    />
+  );
+}
+
 export {
   Avatar,
   AvatarImage,
@@ -105,4 +118,5 @@ export {
   AvatarGroup,
   AvatarGroupCount,
   AvatarBadge,
+  AvatarSkeleton,
 };

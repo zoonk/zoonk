@@ -10,7 +10,7 @@ function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
     // biome-ignore lint/a11y/useSemanticElements: Stylized grouping component, not an actual list
     <div
       className={cn(
-        "group/item-group flex w-full flex-col gap-4 has-data-[size=sm]:gap-2.5 has-data-[size=xs]:gap-2",
+        "group/item-group flex w-full flex-col gap-4 has-data-[size=sm]:gap-2.5 has-data-[size=xs]:gap-2 has-data-[variant=default]:gap-0",
         className,
       )}
       data-slot="item-group"
@@ -56,13 +56,16 @@ const itemVariants = cva(
   },
 );
 
+type ItemProps = useRender.ComponentProps<"div"> &
+  VariantProps<typeof itemVariants>;
+
 function Item({
   className,
   variant = "default",
   size = "default",
   render,
   ...props
-}: useRender.ComponentProps<"div"> & VariantProps<typeof itemVariants>) {
+}: ItemProps) {
   return useRender({
     defaultTagName: "div",
     props: mergeProps<"div">(
@@ -97,11 +100,14 @@ const itemMediaVariants = cva(
   },
 );
 
+type ItemMediaProps = React.ComponentProps<"div"> &
+  VariantProps<typeof itemMediaVariants>;
+
 function ItemMedia({
   className,
   variant = "default",
   ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof itemMediaVariants>) {
+}: ItemMediaProps) {
   return (
     <div
       className={cn(itemMediaVariants({ className, variant }))}
@@ -198,4 +204,6 @@ export {
   ItemDescription,
   ItemHeader,
   ItemFooter,
+  type ItemProps,
+  type ItemMediaProps,
 };

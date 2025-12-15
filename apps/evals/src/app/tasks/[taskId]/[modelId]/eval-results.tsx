@@ -33,7 +33,7 @@ export function EvalResults({ results }: EvalResultsProps) {
       <div className="flex flex-col gap-4">
         <ContainerTitle>Test Cases</ContainerTitle>
 
-        <Accordion className="w-full" collapsible type="single">
+        <Accordion className="w-full">
           {results.results.map((result, index) => (
             <TestCase
               index={index}

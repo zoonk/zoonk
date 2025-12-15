@@ -59,11 +59,12 @@ export function OrgSwitcher({ children }: React.PropsWithChildren) {
           </DropdownMenuItem>
         ) : (
           otherOrgs.map((org) => (
-            <DropdownMenuItem asChild key={org.id}>
-              <Link href={`/${org.slug}`}>
-                <BuildingIcon aria-hidden="true" className="size-4" />
-                <span className="truncate">{org.name}</span>
-              </Link>
+            <DropdownMenuItem
+              key={org.id}
+              render={<Link href={`/${org.slug}`} />}
+            >
+              <BuildingIcon aria-hidden="true" className="size-4" />
+              <span className="truncate">{org.name}</span>
             </DropdownMenuItem>
           ))
         )}

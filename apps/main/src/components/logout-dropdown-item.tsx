@@ -18,11 +18,9 @@ export function LogoutDropdownItem() {
 
   if (!session) {
     return (
-      <DropdownMenuItem asChild>
-        <Link href="/login">
-          <User aria-hidden="true" />
-          {t("Login")}
-        </Link>
+      <DropdownMenuItem render={<Link href="/login" />}>
+        <User aria-hidden="true" />
+        {t("Login")}
       </DropdownMenuItem>
     );
   }

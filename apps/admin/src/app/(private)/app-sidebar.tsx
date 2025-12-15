@@ -34,7 +34,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <SidebarTrigger toggleLabel="Toggle sidebar" />
+        <SidebarTrigger />
       </SidebarHeader>
 
       <SidebarContent>
@@ -44,13 +44,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.label}>
                   <SidebarMenuButton
-                    asChild
                     isActive={isActive(pathname, item.url)}
+                    render={<Link href={item.url} />}
                   >
-                    <Link href={item.url}>
-                      <item.icon aria-hidden="true" />
-                      <span>{item.label}</span>
-                    </Link>
+                    <item.icon aria-hidden="true" />
+                    <span>{item.label}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}

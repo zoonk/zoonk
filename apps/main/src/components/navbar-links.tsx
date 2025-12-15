@@ -60,13 +60,13 @@ export function NavbarLinks() {
 
       <Link
         className={buttonVariants({
-          size: "adaptive",
+          size: "icon",
           variant: getVariant(coursesMenu.url, pathname),
         })}
         href={coursesMenu.url}
       >
         <coursesMenu.icon aria-hidden="true" />
-        <span className="hidden sm:inline">{t("Courses")}</span>
+        <span className="sr-only">{t("Courses")}</span>
       </Link>
 
       <CommandPalette />
@@ -74,13 +74,13 @@ export function NavbarLinks() {
       <Link
         className={buttonVariants({
           className: "ml-auto",
-          size: "adaptive",
+          size: "sm",
           variant: getVariant(learnMenu.url, pathname),
         })}
         href={learnMenu.url}
       >
         <learnMenu.icon aria-hidden="true" />
-        <span className="hidden sm:inline">{t("Learn")}</span>
+        {t("Learn")}
       </Link>
     </>
   );

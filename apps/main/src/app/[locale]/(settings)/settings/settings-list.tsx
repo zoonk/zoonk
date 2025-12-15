@@ -17,21 +17,19 @@ export function SettingsList() {
   return (
     <ItemGroup className="gap-4">
       {menuPages.map((page) => (
-        <Item asChild key={page.label} size="list">
-          <Link href={page.url}>
-            <ItemMedia variant="icon">
-              <page.icon aria-hidden="true" />
-            </ItemMedia>
+        <Item key={page.label} render={<Link href={page.url} />}>
+          <ItemMedia variant="icon">
+            <page.icon aria-hidden="true" />
+          </ItemMedia>
 
-            <ItemContent>
-              <ItemTitle>{page.label}</ItemTitle>
-            </ItemContent>
+          <ItemContent>
+            <ItemTitle>{page.label}</ItemTitle>
+          </ItemContent>
 
-            <ChevronRight
-              aria-hidden="true"
-              className="size-4 text-muted-foreground"
-            />
-          </Link>
+          <ChevronRight
+            aria-hidden="true"
+            className="size-4 text-muted-foreground"
+          />
         </Item>
       ))}
     </ItemGroup>

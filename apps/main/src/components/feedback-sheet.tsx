@@ -10,18 +10,20 @@ import {
   SheetTrigger,
 } from "@zoonk/ui/components/sheet";
 import { useExtracted } from "next-intl";
+import type { ReactElement } from "react";
 import { ContactForm } from "./contact-form";
 
-interface FeedbackSheetProps extends React.ComponentProps<"div"> {
+type FeedbackSheetProps = {
+  children: ReactElement;
   side?: "top" | "right" | "bottom" | "left";
-}
+};
 
 export function FeedbackSheet({ children, side }: FeedbackSheetProps) {
   const t = useExtracted();
 
   return (
     <Sheet>
-      <SheetTrigger asChild>{children}</SheetTrigger>
+      <SheetTrigger render={children} />
       <SheetContent className="mx-auto max-w-lg" side={side}>
         <SheetHeader>
           <SheetTitle>{t("Feedback")}</SheetTitle>

@@ -11,7 +11,7 @@ const containerVariants = cva("flex w-full flex-col gap-4 antialiased", {
       centered:
         "mx-auto min-h-dvh max-w-sm items-center justify-center bg-background py-4 lg:gap-8",
       default: "",
-      list: "mx-auto pb-4 lg:max-w-xl lg:py-8",
+      list: "mx-auto gap-1 pb-4 lg:max-w-xl lg:py-8",
       narrow: "mx-auto py-4 lg:max-w-xl lg:gap-8 lg:py-16",
     },
   },
@@ -93,7 +93,7 @@ export function ContainerBody({
   return (
     <section
       className={cn(
-        "flex w-full flex-1 flex-col gap-4 px-4 sm:flex-initial",
+        "flex w-full flex-1 flex-col gap-4 sm:flex-initial",
         className,
       )}
     >

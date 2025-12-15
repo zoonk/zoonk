@@ -31,9 +31,7 @@ function HomePageBreadcrumb() {
 function HomeLinkBreadcrumb() {
   return (
     <BreadcrumbItem>
-      <BreadcrumbLink asChild>
-        <Link href="/">Home</Link>
-      </BreadcrumbLink>
+      <BreadcrumbLink render={<Link href="/" />}>Home</BreadcrumbLink>
     </BreadcrumbItem>
   );
 }
@@ -55,8 +53,8 @@ function TaskLinkBreadcrumb({
 }) {
   return (
     <BreadcrumbItem>
-      <BreadcrumbLink asChild>
-        <Link href={`/tasks/${taskId}`}>{taskName}</Link>
+      <BreadcrumbLink render={<Link href={`/tasks/${taskId}`} />}>
+        {taskName}
       </BreadcrumbLink>
     </BreadcrumbItem>
   );

@@ -51,7 +51,7 @@ export async function CourseSuggestions({
         <ItemGroup className="gap-4">
           {suggestions.map((course, index) => (
             <Fragment key={course.title}>
-              <Item size="list">
+              <Item>
                 <ItemContent className="gap-0.5">
                   <ItemTitle>{course.title}</ItemTitle>
                   <ItemDescription>{course.description}</ItemDescription>

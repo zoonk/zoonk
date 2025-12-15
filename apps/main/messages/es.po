@@ -492,11 +492,6 @@ msgid "Learn something"
 msgstr "Aprende algo"
 
 #: src/components/command-palette.tsx
-msgctxt "NjD8y3"
-msgid "Close search"
-msgstr "Cerrar búsqueda"
-
-#: src/components/command-palette.tsx
 #: src/components/navbar-links.tsx
 msgctxt "R85gsW"
 msgid "Courses"
@@ -566,11 +561,6 @@ msgstr "No me gustó"
 msgctxt "rTFrsw"
 msgid "I liked it"
 msgstr "Me gustó"
-
-#: src/components/feedback-sheet.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "Cerrar"
 
 #: src/components/navbar-links.tsx
 msgctxt "IbrSk1"

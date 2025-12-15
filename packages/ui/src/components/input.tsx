@@ -16,4 +16,14 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   );
 }
 
-export { Input };
+function InputError({ className, ...props }: React.ComponentProps<"p">) {
+  return (
+    <p
+      className={cn("text-destructive text-sm", className)}
+      data-slot="input-error"
+      {...props}
+    />
+  );
+}
+
+export { Input, InputError };

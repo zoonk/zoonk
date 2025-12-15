@@ -50,17 +50,15 @@ export async function OrganizationList({
   return (
     <ItemGroup>
       {organizations.map((org) => (
-        <Item asChild key={org.id}>
-          <Link href={`/${org.slug}`}>
-            <ItemContent>
-              <ItemTitle>{org.name}</ItemTitle>
-            </ItemContent>
+        <Item key={org.id} render={<Link href={`/${org.slug}`} />}>
+          <ItemContent>
+            <ItemTitle>{org.name}</ItemTitle>
+          </ItemContent>
 
-            <ChevronRightIcon
-              aria-hidden="true"
-              className="size-4 text-muted-foreground"
-            />
-          </Link>
+          <ChevronRightIcon
+            aria-hidden="true"
+            className="size-4 text-muted-foreground"
+          />
         </Item>
       ))}
     </ItemGroup>
