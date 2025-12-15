@@ -8,11 +8,20 @@
     "utils": "@zoonk/ui/lib/utils"
   },
   "iconLibrary": "lucide",
+  "menuAccent": "subtle",
+  "menuColor": "default",
   "registries": {
-    "@kibo-ui": "https://www.kibo-ui.com/r/{name}.json"
+    "@ai-elements": "https://registry.ai-sdk.dev/{name}.json",
+    "@elements": "https://tryelements.dev/r/{name}.json",
+    "@elevenlabs-ui": "https://ui.elevenlabs.io/r/{name}.json",
+    "@hooks": "https://shadcn-hooks.vercel.app/r/{name}.json",
+    "@kibo-ui": "https://www.kibo-ui.com/r/{name}.json",
+    "@lucide-animated": "https://lucide-animated.com/r/{name}.json",
+    "@motion-primitives": "https://motion-primitives.com/c/{name}.json",
+    "@nuqs": "https://nuqs.dev/r/{name}.json"
   },
   "rsc": true,
-  "style": "new-york",
+  "style": "base-maia",
   "tailwind": {
     "baseColor": "neutral",
     "config": "",
