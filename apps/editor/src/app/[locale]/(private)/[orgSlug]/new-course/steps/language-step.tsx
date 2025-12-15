@@ -31,7 +31,7 @@ export function LanguageStep({
       </WizardField>
 
       <WizardRadioGroup
-        onValueChange={(val) => onChange(val as string)}
+        onValueChange={(newValue) => onChange(String(newValue))}
         value={value}
       >
         {SUPPORTED_LOCALES.map((locale) => (
