@@ -20,12 +20,7 @@ export default async function PrivateLayout({ children }: LayoutProps<"/">) {
   return (
     <NuqsAdapter>
       <SidebarProvider>
-        <AppSidebar
-          closeLabel="Close"
-          collapsible="icon"
-          description="Admin navigation"
-          title="Admin sidebar"
-        />
+        <AppSidebar collapsible="icon" title="Admin sidebar" />
 
         <SidebarInset>{children}</SidebarInset>
       </SidebarProvider>

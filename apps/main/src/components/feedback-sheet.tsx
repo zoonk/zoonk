@@ -22,11 +22,7 @@ export function FeedbackSheet({ children, side }: FeedbackSheetProps) {
   return (
     <Sheet>
       <SheetTrigger asChild>{children}</SheetTrigger>
-      <SheetContent
-        className="mx-auto max-w-lg"
-        closeLabel={t("Close")}
-        side={side}
-      >
+      <SheetContent className="mx-auto max-w-lg" side={side}>
         <SheetHeader>
           <SheetTitle>{t("Feedback")}</SheetTitle>
           <SheetDescription>

@@ -83,7 +83,6 @@ export function CommandPalette() {
 
       <CommandDialog
         className="top-4 translate-y-0 lg:top-1/2 lg:translate-y-[-50%]"
-        closeLabel={t("Close search")}
         description={t("Search courses or pages...")}
         onOpenChange={closePalette}
         open={isOpen}
