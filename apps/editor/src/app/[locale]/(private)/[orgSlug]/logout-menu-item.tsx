@@ -12,7 +12,7 @@ export function LogoutMenuItem() {
   const { logout } = useLogout({ onSuccess: () => push("/login") });
 
   return (
-    <DropdownMenuItem onSelect={logout}>
+    <DropdownMenuItem onClick={logout}>
       <LogOutIcon aria-hidden="true" />
       {t("Logout")}
     </DropdownMenuItem>
