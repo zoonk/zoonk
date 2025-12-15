@@ -63,7 +63,7 @@ export function OrgSwitcher({ children }: React.PropsWithChildren) {
               key={org.id}
               render={<Link href={`/${org.slug}`} />}
             >
-              <BuildingIcon aria-hidden="true" className="size-4" />
+              <BuildingIcon aria-hidden="true" />
               <span className="truncate">{org.name}</span>
             </DropdownMenuItem>
           ))
