@@ -23,7 +23,7 @@ export function WizardContent({
 }: React.ComponentProps<"section">) {
   return (
     <section
-      className="flex flex-1 flex-col items-start p-4 lg:items-center lg:justify-center lg:pt-0"
+      className="flex flex-1 flex-col items-start p-4 md:items-center md:justify-center lg:pt-0"
       data-slot="wizard-content"
       {...props}
     >
