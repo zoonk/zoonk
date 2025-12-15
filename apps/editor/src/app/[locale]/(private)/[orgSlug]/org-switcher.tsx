@@ -41,14 +41,14 @@ export function OrgSwitcher({ children }: React.PropsWithChildren) {
           "gap-2",
         )}
       >
-        <BuildingIcon aria-hidden="true" className="size-4" />
+        <BuildingIcon aria-hidden="true" />
         <span className="max-w-32 truncate">
           {currentOrg?.name ?? t("Organizations")}
         </span>
 
         <ChevronsUpDownIcon
           aria-hidden="true"
-          className="size-4 text-muted-foreground"
+          className="text-muted-foreground/50 contrast-more:text-muted-foreground"
         />
       </DropdownMenuTrigger>
 
