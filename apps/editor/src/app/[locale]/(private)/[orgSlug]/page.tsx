@@ -3,7 +3,6 @@ import { getOrganizationBySlug } from "@zoonk/core/organizations";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,
-  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,
@@ -74,11 +73,9 @@ export default async function OrgHomePage({
         </Link>
       </ContainerHeader>
 
-      <ContainerBody>
-        <Suspense fallback={<CourseListSkeleton />}>
-          <CourseList courses={orgCourses} orgSlug={org.slug} />
-        </Suspense>
-      </ContainerBody>
+      <Suspense fallback={<CourseListSkeleton />}>
+        <CourseList courses={orgCourses} orgSlug={org.slug} />
+      </Suspense>
     </Container>
   );
 }
