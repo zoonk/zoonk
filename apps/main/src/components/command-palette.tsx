@@ -77,7 +77,7 @@ export function CommandPalette() {
         size="icon"
         variant="outline"
       >
-        <Search />
+        <Search aria-hidden="true" />
         <span className="sr-only">{t("Search")}</span>
       </Button>
 

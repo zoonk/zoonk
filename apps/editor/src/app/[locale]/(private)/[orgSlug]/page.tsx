@@ -66,7 +66,7 @@ export default async function OrgHomePage({
           </ContainerDescription>
         </div>
         <Link
-          className={buttonVariants({ size: "sm", variant: "outline" })}
+          className={buttonVariants({ size: "adaptive", variant: "outline" })}
           href={`/${orgSlug}/new-course`}
         >
           <PlusIcon aria-hidden="true" />
