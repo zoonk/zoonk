@@ -34,7 +34,7 @@ export async function CourseSuggestions({
   const suggestions = await getCourseSuggestions({ locale, prompt });
 
   return (
-    <Container variant="list">
+    <Container variant="narrow">
       <ContainerHeader className="text-center">
         <ContainerTitle>
           {t("Course ideas for {prompt}", { prompt })}
@@ -48,10 +48,10 @@ export async function CourseSuggestions({
       </ContainerHeader>
 
       <ContainerBody>
-        <ItemGroup className="gap-4">
+        <ItemGroup>
           {suggestions.map((course, index) => (
             <Fragment key={course.title}>
-              <Item>
+              <Item className="px-0 py-2">
                 <ItemContent className="gap-0.5">
                   <ItemTitle>{course.title}</ItemTitle>
                   <ItemDescription>{course.description}</ItemDescription>

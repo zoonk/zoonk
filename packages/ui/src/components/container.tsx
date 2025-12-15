@@ -93,7 +93,7 @@ export function ContainerBody({
   return (
     <section
       className={cn(
-        "flex w-full flex-1 flex-col gap-4 sm:flex-initial",
+        "flex w-full flex-1 flex-col gap-4 px-4 sm:flex-initial",
         className,
       )}
     >
