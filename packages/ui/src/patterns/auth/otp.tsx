@@ -4,6 +4,7 @@ import {
   InputOTP,
   InputOTPGroup,
   type InputOTPProps,
+  InputOTPSeparator,
   InputOTPSlot,
 } from "@zoonk/ui/components/input-otp";
 import { Spinner } from "@zoonk/ui/components/spinner";
@@ -70,6 +71,9 @@ export function OTPInput({ ...props }: Partial<Omit<InputOTPProps, "render">>) {
         <InputOTPSlot index={0} />
         <InputOTPSlot index={1} />
         <InputOTPSlot index={2} />
+      </InputOTPGroup>
+      <InputOTPSeparator />
+      <InputOTPGroup>
         <InputOTPSlot index={3} />
         <InputOTPSlot index={4} />
         <InputOTPSlot index={5} />

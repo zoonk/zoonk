@@ -77,13 +77,12 @@ export function CommandPalette() {
         size="icon"
         variant="outline"
       >
-        <Search />
+        <Search aria-hidden="true" />
         <span className="sr-only">{t("Search")}</span>
       </Button>
 
       <CommandDialog
         className="top-4 translate-y-0 lg:top-1/2 lg:translate-y-[-50%]"
-        closeLabel={t("Close search")}
         description={t("Search courses or pages...")}
         onOpenChange={closePalette}
         open={isOpen}

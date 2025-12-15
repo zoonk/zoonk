@@ -41,14 +41,14 @@ export function OrgSwitcher({ children }: React.PropsWithChildren) {
           "gap-2",
         )}
       >
-        <BuildingIcon aria-hidden="true" className="size-4" />
+        <BuildingIcon aria-hidden="true" />
         <span className="max-w-32 truncate">
           {currentOrg?.name ?? t("Organizations")}
         </span>
 
         <ChevronsUpDownIcon
           aria-hidden="true"
-          className="size-4 text-muted-foreground"
+          className="text-muted-foreground/50 contrast-more:text-muted-foreground"
         />
       </DropdownMenuTrigger>
 
@@ -59,11 +59,12 @@ export function OrgSwitcher({ children }: React.PropsWithChildren) {
           </DropdownMenuItem>
         ) : (
           otherOrgs.map((org) => (
-            <DropdownMenuItem asChild key={org.id}>
-              <Link href={`/${org.slug}`}>
-                <BuildingIcon aria-hidden="true" className="size-4" />
-                <span className="truncate">{org.name}</span>
-              </Link>
+            <DropdownMenuItem
+              key={org.id}
+              render={<Link href={`/${org.slug}`} />}
+            >
+              <BuildingIcon aria-hidden="true" />
+              <span className="truncate">{org.name}</span>
             </DropdownMenuItem>
           ))
         )}

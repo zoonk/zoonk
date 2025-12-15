@@ -66,7 +66,7 @@ export function NavbarLinks() {
         href={coursesMenu.url}
       >
         <coursesMenu.icon aria-hidden="true" />
-        <span className="hidden sm:inline">{t("Courses")}</span>
+        <span className="sr-only sm:not-sr-only">{t("Courses")}</span>
       </Link>
 
       <CommandPalette />
@@ -80,7 +80,7 @@ export function NavbarLinks() {
         href={learnMenu.url}
       >
         <learnMenu.icon aria-hidden="true" />
-        <span className="hidden sm:inline">{t("Learn")}</span>
+        <span className="sr-only sm:not-sr-only">{t("Learn")}</span>
       </Link>
     </>
   );

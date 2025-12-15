@@ -49,14 +49,13 @@ export function SettingsNavigation() {
           const isActive = item.url === pathname;
 
           return (
-            <DropdownMenuItem asChild key={item.key}>
-              <Link
-                className={isActive ? "bg-accent" : undefined}
-                href={item.url}
-              >
-                <Icon aria-hidden="true" className="size-4" />
-                {item.label}
-              </Link>
+            <DropdownMenuItem
+              className={isActive ? "bg-accent" : undefined}
+              key={item.key}
+              render={<Link href={item.url} />}
+            >
+              <Icon aria-hidden="true" className="size-4" />
+              {item.label}
             </DropdownMenuItem>
           );
         })}

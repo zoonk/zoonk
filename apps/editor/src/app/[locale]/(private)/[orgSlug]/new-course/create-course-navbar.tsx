@@ -2,7 +2,7 @@
 
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Navbar } from "@zoonk/ui/components/navbar";
-import { ProgressDots } from "@zoonk/ui/components/progress";
+import { ProgressDots } from "@zoonk/ui/components/progress-dots";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";

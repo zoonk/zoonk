@@ -49,11 +49,9 @@ export function LeaderboardExport({ taskId, entries }: LeaderboardExportProps) {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button size="sm" variant="outline">
-          <Download className="size-4" />
-          Export
-        </Button>
+      <DropdownMenuTrigger render={<Button size="sm" variant="outline" />}>
+        <Download className="size-4" />
+        Export
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => exportAsMarkdown(false)}>

@@ -36,7 +36,7 @@ export function LocaleSwitcher() {
   return (
     <DropdownMenuSub>
       <DropdownMenuSubTrigger className="gap-2" disabled={isPending}>
-        <LanguagesIcon aria-hidden="true" className="size-4" />
+        <LanguagesIcon aria-hidden="true" />
         {t("Language")}
       </DropdownMenuSubTrigger>
 
@@ -49,7 +49,7 @@ export function LocaleSwitcher() {
           >
             {LOCALE_LABELS[lang]}
             {lang === locale && (
-              <CheckIcon aria-hidden="true" className="ml-auto size-4" />
+              <CheckIcon aria-hidden="true" className="ml-auto" />
             )}
           </DropdownMenuItem>
         ))}

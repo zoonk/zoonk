@@ -59,35 +59,38 @@ export async function CourseList({ orgSlug, courses }: CourseListProps) {
   }
 
   return (
-    <ItemGroup className="gap-4">
+    <ItemGroup>
       {courses.map((course) => (
-        <Item asChild key={course.id} size="list">
-          <Link href={`/${orgSlug}/c/${course.language}/${course.slug}`}>
-            {course.imageUrl ? (
-              <ItemMedia className="size-16" variant="image">
-                <Image
-                  alt={course.title}
-                  height={64}
-                  src={course.imageUrl}
-                  width={64}
-                />
-              </ItemMedia>
-            ) : (
-              <ItemMedia className="size-16" variant="icon">
-                <NotebookPenIcon className="size-6 text-muted-foreground/80" />
-              </ItemMedia>
-            )}
+        <Item
+          key={course.id}
+          render={
+            <Link href={`/${orgSlug}/c/${course.language}/${course.slug}`} />
+          }
+        >
+          {course.imageUrl ? (
+            <ItemMedia className="size-16" variant="image">
+              <Image
+                alt={course.title}
+                height={64}
+                src={course.imageUrl}
+                width={64}
+              />
+            </ItemMedia>
+          ) : (
+            <ItemMedia className="size-16" variant="icon">
+              <NotebookPenIcon className="size-6 text-muted-foreground/80" />
+            </ItemMedia>
+          )}
 
-            <ItemContent>
-              <ItemTitle>{course.title}</ItemTitle>
-              <ItemDescription>{course.description}</ItemDescription>
-            </ItemContent>
+          <ItemContent>
+            <ItemTitle>{course.title}</ItemTitle>
+            <ItemDescription>{course.description}</ItemDescription>
+          </ItemContent>
 
-            <ChevronRightIcon
-              aria-hidden="true"
-              className="size-4 text-muted-foreground"
-            />
-          </Link>
+          <ChevronRightIcon
+            aria-hidden="true"
+            className="size-4 text-muted-foreground"
+          />
         </Item>
       ))}
     </ItemGroup>
