@@ -166,16 +166,20 @@ function SidebarProvider({
 function Sidebar({
   side = "left",
   variant = "sidebar",
-  collapsible = "offExamples",
+  collapsible = "offcanvas",
   className,
   children,
+  title = "Sidebar",
+  description = "Displays the mobile sidebar.",
   ...props
 }: React.ComponentProps<"div"> & {
   side?: "left" | "right";
   variant?: "sidebar" | "floating" | "inset";
-  collapsible?: "offExamples" | "icon" | "none";
+  collapsible?: "offcanvas" | "icon" | "none";
+  title?: string;
+  description?: string;
 }) {
-  const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+  const { state, openMobile, setOpenMobile } = useSidebar();
 
   if (collapsible === "none") {
     return (
@@ -192,11 +196,12 @@ function Sidebar({
     );
   }
 
-  if (isMobile) {
-    return (
-      <Sheet onOpenChange={setOpenMobile} open={openMobile} {...props}>
+  return (
+    <>
+      {/* Sheet overlay for mobile when expanded */}
+      <Sheet onOpenChange={setOpenMobile} open={openMobile}>
         <SheetContent
-          className="w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground [&>button]:hidden"
+          className="w-(--sidebar-width) bg-sidebar p-0 text-sidebar-foreground md:hidden [&>button]:hidden"
           data-mobile="true"
           data-sidebar="sidebar"
           data-slot="sidebar"
@@ -208,60 +213,67 @@ function Sidebar({
           }
         >
           <SheetHeader className="sr-only">
-            <SheetTitle>Sidebar</SheetTitle>
-            <SheetDescription>Displays the mobile sidebar.</SheetDescription>
+            <SheetTitle>{title}</SheetTitle>
+            <SheetDescription>{description}</SheetDescription>
           </SheetHeader>
           <div className="flex h-full w-full flex-col">{children}</div>
         </SheetContent>
       </Sheet>
-    );
-  }
 
-  return (
-    <div
-      className="group peer hidden text-sidebar-foreground md:block"
-      data-collapsible={state === "collapsed" ? collapsible : ""}
-      data-side={side}
-      data-slot="sidebar"
-      data-state={state}
-      data-variant={variant}
-    >
-      {/* This is what handles the sidebar gap on desktop */}
+      {/* Icon sidebar - always visible, forced to icon mode on mobile */}
       <div
-        className={cn(
-          "relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear",
-          "group-data-[collapsible=offExamples]:w-0",
-          "group-data-[side=right]:rotate-180",
-          variant === "floating" || variant === "inset"
-            ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]"
-            : "group-data-[collapsible=icon]:w-(--sidebar-width-icon)",
-        )}
-        data-slot="sidebar-gap"
-      />
-      <div
-        className={cn(
-          "fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex",
-          side === "left"
-            ? "left-0 group-data-[collapsible=offExamples]:left-[calc(var(--sidebar-width)*-1)]"
-            : "right-0 group-data-[collapsible=offExamples]:right-[calc(var(--sidebar-width)*-1)]",
-          // Adjust the padding for floating and inset variants.
-          variant === "floating" || variant === "inset"
-            ? "p-2 group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
-            : "group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[side=left]:border-r group-data-[side=right]:border-l",
-          className,
-        )}
-        data-slot="sidebar-container"
-        {...props}
+        className="group peer text-sidebar-foreground"
+        data-collapsible={state === "collapsed" ? collapsible : ""}
+        data-side={side}
+        data-slot="sidebar"
+        data-state={state}
+        data-variant={variant}
       >
+        {/* This is what handles the sidebar gap */}
         <div
-          className="flex size-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border"
-          data-sidebar="sidebar"
-          data-slot="sidebar-inner"
+          className={cn(
+            "relative bg-transparent transition-[width] duration-200 ease-linear",
+            // Mobile: always show icon width
+            "w-(--sidebar-width-icon)",
+            // Desktop: responsive width based on state
+            "md:w-(--sidebar-width)",
+            "md:group-data-[collapsible=offcanvas]:w-0",
+            "group-data-[side=right]:rotate-180",
+            variant === "floating" || variant === "inset"
+              ? "md:group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]"
+              : "md:group-data-[collapsible=icon]:w-(--sidebar-width-icon)",
+          )}
+          data-slot="sidebar-gap"
+        />
+        <div
+          className={cn(
+            "fixed inset-y-0 z-10 flex h-svh transition-[left,right,width] duration-200 ease-linear",
+            // Mobile: always icon width
+            "w-(--sidebar-width-icon)",
+            // Desktop: full width with responsive behavior
+            "md:w-(--sidebar-width)",
+            side === "left"
+              ? "left-0 md:group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
+              : "right-0 md:group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
+            // Adjust the padding for floating and inset variants.
+            variant === "floating" || variant === "inset"
+              ? "p-2 md:group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4))+2px)]"
+              : "group-data-[side=left]:border-r group-data-[side=right]:border-l md:group-data-[collapsible=icon]:w-(--sidebar-width-icon)",
+            className,
+          )}
+          data-slot="sidebar-container"
+          {...props}
         >
-          {children}
+          <div
+            className="flex size-full flex-col bg-sidebar group-data-[variant=floating]:rounded-lg group-data-[variant=floating]:shadow-sm group-data-[variant=floating]:ring-1 group-data-[variant=floating]:ring-sidebar-border"
+            data-sidebar="sidebar"
+            data-slot="sidebar-inner"
+          >
+            {children}
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -301,9 +313,9 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
         "-translate-x-1/2 group-data-[side=left]:-right-4 absolute inset-y-0 z-20 hidden w-4 transition-all ease-linear after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] hover:after:bg-sidebar-border group-data-[side=right]:left-0 sm:flex",
         "in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize",
         "[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
-        "group-data-[collapsible=offExamples]:translate-x-0 hover:group-data-[collapsible=offExamples]:bg-sidebar group-data-[collapsible=offExamples]:after:left-full",
-        "[[data-side=left][data-collapsible=offExamples]_&]:-right-2",
-        "[[data-side=right][data-collapsible=offExamples]_&]:-left-2",
+        "group-data-[collapsible=offcanvas]:translate-x-0 hover:group-data-[collapsible=offcanvas]:bg-sidebar group-data-[collapsible=offcanvas]:after:left-full",
+        "[[data-side=left][data-collapsible=offcanvas]_&]:-right-2",
+        "[[data-side=right][data-collapsible=offcanvas]_&]:-left-2",
         className,
       )}
       data-sidebar="rail"
