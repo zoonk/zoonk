@@ -6,8 +6,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
@@ -55,9 +53,6 @@ export function OrgSwitcher({ children }: React.PropsWithChildren) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel>{t("Switch organization")}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-
         {otherOrgs.length === 0 ? (
           <DropdownMenuItem disabled>
             {t("No other organizations")}

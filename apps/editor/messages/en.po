@@ -195,11 +195,6 @@ msgid "A course with this URL already exists"
 msgstr "A course with this URL already exists"
 
 #: src/app/[locale]/(private)/[orgSlug]/org-switcher.tsx
-msgctxt "0lmKIf"
-msgid "Switch organization"
-msgstr "Switch organization"
-
-#: src/app/[locale]/(private)/[orgSlug]/org-switcher.tsx
 msgctxt "JD2pwH"
 msgid "Organizations"
 msgstr "Organizations"
