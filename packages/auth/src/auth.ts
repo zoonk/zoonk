@@ -17,6 +17,11 @@ import { stripePlugin } from "./stripe";
 const SESSION_EXPIRES_IN_DAYS = 30;
 const COOKIE_CACHE_MINUTES = 60;
 
+// We don't want to limit the number of memberships or organizations
+// so we use the maximum safe integer because Better Auth doesn't support infinity.
+const AUTH_MEMBERSHIP_LIMIT = Number.MAX_SAFE_INTEGER;
+const AUTH_ORGANIZATION_LIMIT = Number.MAX_SAFE_INTEGER;
+
 export const baseAuthConfig: BetterAuthOptions = {
   account: {
     accountLinking: { enabled: true },
@@ -50,8 +55,8 @@ export const baseAuthPlugins = [
     // temporarily disable organization creation
     // we'll support this in the future
     allowUserToCreateOrganization: false,
-    membershipLimit: Number.POSITIVE_INFINITY,
-    organizationLimit: Number.POSITIVE_INFINITY,
+    membershipLimit: AUTH_MEMBERSHIP_LIMIT,
+    organizationLimit: AUTH_ORGANIZATION_LIMIT,
     roles: { admin, member, owner },
     schema: {
       organization: {
