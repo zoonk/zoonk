@@ -43,7 +43,7 @@ export default async function Settings({
   const t = await getExtracted();
 
   return (
-    <Container variant="narrow">
+    <Container className="gap-2 lg:gap-2" variant="narrow">
       <ContainerHeader>
         <ContainerTitle>{t("Settings")}</ContainerTitle>
         <ContainerDescription>
@@ -51,9 +51,7 @@ export default async function Settings({
         </ContainerDescription>
       </ContainerHeader>
 
-      <ContainerBody>
-        <SettingsList />
-      </ContainerBody>
+      <SettingsList />
     </Container>
   );
 }
