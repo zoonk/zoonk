@@ -1,10 +1,7 @@
 "use client";
 
-import {
-  Indicator as RadioGroupIndicator,
-  Item as RadioGroupItem,
-  Root as RadioGroupRoot,
-} from "@radix-ui/react-radio-group";
+import { Radio as RadioPrimitive } from "@base-ui/react/radio";
+import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -167,9 +164,9 @@ export function WizardTextarea({
 export function WizardRadioGroup({
   className,
   ...props
-}: React.ComponentProps<typeof RadioGroupRoot>) {
+}: RadioGroupPrimitive.Props) {
   return (
-    <RadioGroupRoot
+    <RadioGroupPrimitive
       className={cn("flex flex-col", className)}
       data-slot="wizard-radio-group"
       {...props}
@@ -181,13 +178,13 @@ export function WizardRadioGroupItem({
   children,
   className,
   ...props
-}: React.ComponentProps<typeof RadioGroupItem>) {
+}: RadioPrimitive.Root.Props) {
   return (
-    <RadioGroupItem
+    <RadioPrimitive.Root
       className={cn(
         "flex cursor-pointer items-center justify-between rounded-lg px-4 py-4 text-left font-semibold text-lg transition-colors",
         "hover:bg-muted",
-        "data-[state=checked]:bg-foreground data-[state=checked]:text-background",
+        "data-checked:bg-foreground data-checked:text-background",
         "outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50",
         className,
       )}
@@ -196,10 +193,10 @@ export function WizardRadioGroupItem({
     >
       {children}
 
-      <RadioGroupIndicator data-slot="wizard-radio-group-indicator">
+      <RadioPrimitive.Indicator data-slot="wizard-radio-group-indicator">
         <CheckIcon aria-hidden="true" className="size-5" />
-      </RadioGroupIndicator>
-    </RadioGroupItem>
+      </RadioPrimitive.Indicator>
+    </RadioPrimitive.Root>
   );
 }
 
