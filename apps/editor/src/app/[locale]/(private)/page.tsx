@@ -43,7 +43,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   }
 
   return (
-    <Container variant="narrow">
+    <Container variant="centered">
       <ContainerHeader className="text-center">
         <ContainerTitle>{t("Select an organization")}</ContainerTitle>
 
@@ -60,6 +60,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
         }
         alertTitle={t("You need to be logged in to access this page.")}
         centered
+        className="w-full"
         state={userSession ? "authenticated" : "unauthenticated"}
       >
         <Suspense fallback={<OrganizationListSkeleton />}>
