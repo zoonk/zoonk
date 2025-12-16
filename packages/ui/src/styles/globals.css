@@ -224,3 +224,7 @@
     opacity: 0.3;
   }
 }
+
+::selection {
+  @apply bg-primary text-primary-foreground;
+}
