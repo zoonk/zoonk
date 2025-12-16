@@ -1,6 +1,6 @@
 "use client";
 
-import { useLogout } from "@zoonk/auth/hooks/logout";
+import { authClient } from "@zoonk/auth/client";
 import { Button } from "@zoonk/ui/components/button";
 import {
   CommandDialog,
@@ -17,14 +17,13 @@ import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 
-const logoutMenu = getMenu("logout");
-
 export function CommandPalette() {
   const { push } = useRouter();
   const t = useExtracted();
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const { isLoggedIn, logout } = useLogout({ onSuccess: () => push("/login") });
+  const { data: session } = authClient.useSession();
+  const isLoggedIn = Boolean(session);
 
   useKeyboardCallback("k", () => setIsOpen((prev) => !prev), {
     mode: "any",
@@ -61,6 +60,7 @@ export function CommandPalette() {
     { key: t("Manage settings"), ...getMenu("settings") },
     { key: t("Update language"), ...getMenu("language") },
     { key: t("Update display name"), ...getMenu("displayName") },
+    { key: t("Logout"), ...getMenu("logout") },
   ];
 
   const contactUs = [
@@ -133,13 +133,6 @@ export function CommandPalette() {
                   {item.key}
                 </CommandItem>
               ))}
-
-            {isLoggedIn && (
-              <CommandItem onSelect={logout}>
-                <logoutMenu.icon aria-hidden="true" />
-                {t("Logout")}
-              </CommandItem>
-            )}
           </CommandGroup>
 
           <CommandGroup heading={t("Contact us")}>

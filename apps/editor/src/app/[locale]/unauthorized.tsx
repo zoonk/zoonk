@@ -1,7 +1,4 @@
-"use client";
-
-import { authClient } from "@zoonk/auth/client";
-import { Button } from "@zoonk/ui/components/button";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,
   ContainerBody,
@@ -9,18 +6,11 @@ import {
   ContainerHeader,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { useExtracted } from "next-intl";
-import { useRouter } from "@/i18n/navigation";
+import { getExtracted } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 
-export default function Unauthorized() {
-  const { push } = useRouter();
-  const t = useExtracted();
-
-  const logout = async () => {
-    await authClient.signOut({
-      fetchOptions: { onSuccess: () => push("/login") },
-    });
-  };
+export default async function Unauthorized() {
+  const t = await getExtracted();
 
   return (
     <Container variant="centered">
@@ -35,7 +25,9 @@ export default function Unauthorized() {
       </ContainerHeader>
 
       <ContainerBody className="justify-end">
-        <Button onClick={logout}>{t("Logout")}</Button>
+        <Link className={buttonVariants()} href="/logout" prefetch={false}>
+          {t("Logout")}
+        </Link>
       </ContainerBody>
     </Container>
   );

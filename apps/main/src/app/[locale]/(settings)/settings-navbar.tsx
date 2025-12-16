@@ -1,20 +1,20 @@
 "use client";
 
-import { useLogout } from "@zoonk/auth/hooks/logout";
+import { authClient } from "@zoonk/auth/client";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { LogOutIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Suspense } from "react";
-import { Link, useRouter } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
 import { SettingsNavigation } from "./settings-navigation";
 
 const homeMenu = getMenu("home");
 
 export function SettingsNavbar() {
-  const { push } = useRouter();
   const t = useExtracted();
-  const { isLoggedIn, logout } = useLogout({ onSuccess: () => push("/login") });
+  const { data: session } = authClient.useSession();
+  const isLoggedIn = Boolean(session);
 
   return (
     <nav className="sticky top-0 z-10 flex w-full items-center justify-between gap-2 bg-background/95 px-4 pt-4 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -36,17 +36,17 @@ export function SettingsNavbar() {
       </div>
 
       {isLoggedIn && (
-        <button
+        <Link
           className={buttonVariants({
             size: "icon",
             variant: "secondary",
           })}
-          onClick={logout}
-          type="button"
+          href="/logout"
+          prefetch={false}
         >
           <LogOutIcon aria-hidden="true" />
           <span className="sr-only">{t("Logout")}</span>
-        </button>
+        </Link>
       )}
     </nav>
   );
