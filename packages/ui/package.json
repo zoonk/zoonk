@@ -14,13 +14,19 @@
   "devDependencies": {
     "@tailwindcss/postcss": "4.1.17",
     "@tailwindcss/typography": "0.5.19",
+    "@testing-library/jest-dom": "^6",
+    "@testing-library/react": "^16",
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@zoonk/tsconfig": "workspace:*",
+    "jsdom": "^27",
     "tailwindcss": "^4",
     "tw-animate-css": "1.3.8",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite": "7.3.0",
+    "vite-tsconfig-paths": "6.0.1",
+    "vitest": "4.0.16"
   },
   "exports": {
     "./components/*": "./src/components/*.tsx",
@@ -39,6 +45,8 @@
   },
   "private": true,
   "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "tsc --noEmit"
   },
   "type": "module",
