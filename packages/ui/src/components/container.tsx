@@ -79,7 +79,7 @@ export function ContainerTitle({ children, className }: ContainerTitleProps) {
   return (
     <h1
       className={cn(
-        "scroll-m-20 text-balance font-semibold text-base text-foreground/90 leading-none tracking-tight",
+        "scroll-m-20 text-balance font-semibold text-foreground/90 text-lg leading-none tracking-tight",
         className,
       )}
     >
@@ -97,7 +97,7 @@ export function ContainerDescription({
   return (
     <h2
       className={cn(
-        "text-pretty text-muted-foreground text-sm leading-none tracking-tight",
+        "text-pretty text-muted-foreground leading-tight tracking-tight",
         className,
       )}
     >
