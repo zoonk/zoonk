@@ -5,6 +5,14 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CheckIcon, ChevronRightIcon } from "lucide-react";
 import type * as React from "react";
 
+/**
+ * When using DropdownMenu inside dynamic route segments (e.g., `[slug]`),
+ * add a `key` prop that changes with the route to prevent Base UI Menu's
+ * internal context from becoming stale during soft navigations.
+ *
+ * @example
+ * <DropdownMenu key={params.slug}>
+ */
 function DropdownMenu({ ...props }: MenuPrimitive.Root.Props) {
   return <MenuPrimitive.Root data-slot="dropdown-menu" {...props} />;
 }

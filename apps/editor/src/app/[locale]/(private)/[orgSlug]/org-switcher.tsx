@@ -34,7 +34,8 @@ export function OrgSwitcher({ children }: React.PropsWithChildren) {
     organizations?.filter((org) => org.id !== currentOrg?.id) ?? [];
 
   return (
-    <DropdownMenu>
+    // Key forces remount when org changes, fixing Base UI Menu context disconnection
+    <DropdownMenu key={params.orgSlug}>
       <DropdownMenuTrigger
         className={cn(
           buttonVariants({ size: "sm", variant: "outline" }),
