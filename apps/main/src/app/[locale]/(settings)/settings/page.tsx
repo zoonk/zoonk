@@ -2,7 +2,6 @@
 
 import {
   Container,
-  ContainerBody,
   ContainerDescription,
   ContainerHeader,
   ContainerTitle,

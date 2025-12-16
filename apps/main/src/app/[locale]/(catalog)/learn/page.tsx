@@ -36,7 +36,7 @@ export default async function Learn({ params }: PageProps<"/[locale]/learn">) {
   return (
     <main className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center gap-4 p-4">
       <h1
-        className="-tracking-wide md:-tracking-wider pt-4 text-center font-semibold text-2xl text-foreground/90 md:pt-8 md:text-3xl md:tracking-tightest"
+        className="pt-4 text-center font-semibold text-2xl text-foreground/90 -tracking-wide md:pt-8 md:text-3xl md:-tracking-wider md:tracking-tightest"
         id="learn-title"
       >
         {t("What do you want to learn?")}

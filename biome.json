@@ -77,6 +77,7 @@
         "noNextAsyncClientComponent": "error",
         "noProto": "error",
         "noReactForwardRef": "error",
+        "noScriptUrl": "error",
         "noShadow": "error",
         "noSyncScripts": "error",
         "noUnnecessaryConditions": "error",
@@ -87,6 +88,7 @@
         "useExhaustiveSwitchCases": "error",
         "useFind": "error",
         "useMaxParams": "error",
+        "useRequiredScripts": "error",
         "useSortedClasses": {
           "fix": "safe",
           "level": "error",

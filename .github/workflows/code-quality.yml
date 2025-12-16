@@ -44,7 +44,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
         with:
-          version: 10.24.0
+          version: 10.26.0
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v5
@@ -59,7 +59,7 @@ jobs:
         run: pnpm db:generate
 
       - name: Run Biome
-        run: pnpm biome ci
+        run: pnpm biome ci --error-on-warnings
 
       - name: Run type check
         run: pnpm typecheck
