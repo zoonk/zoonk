@@ -1,9 +1,11 @@
 "use server";
 
 import { createCourse } from "@zoonk/core/courses";
+import { revalidateMainApp } from "@zoonk/core/revalidate";
 import { cacheTagOrgCourses } from "@zoonk/utils/cache";
 import { toSlug } from "@zoonk/utils/string";
 import { revalidateTag } from "next/cache";
+import { after } from "next/server";
 import { getExtracted, getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
 import type { CourseFormData } from "./use-course-form";
@@ -36,7 +38,13 @@ export async function createCourseAction(
     return { error: error?.message ?? t("Failed to create course") };
   }
 
-  revalidateTag(cacheTagOrgCourses({ orgSlug }), "max");
+  const tag = cacheTagOrgCourses({ orgSlug });
+
+  revalidateTag(tag, "max");
+
+  after(async () => {
+    await revalidateMainApp([tag]);
+  });
 
   redirect({
     href: `/${orgSlug}/c/${course.language}/${course.slug}`,
