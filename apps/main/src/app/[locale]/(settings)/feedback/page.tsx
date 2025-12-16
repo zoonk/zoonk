@@ -5,6 +5,7 @@ import {
   ContainerBody,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { cacheTagFeedback } from "@zoonk/utils/cache";
@@ -45,12 +46,14 @@ export default async function Feedback({
   return (
     <Container variant="narrow">
       <ContainerHeader>
-        <ContainerTitle>{t("Feedback")}</ContainerTitle>
-        <ContainerDescription>
-          {t(
-            "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com.",
-          )}
-        </ContainerDescription>
+        <ContainerHeaderGroup>
+          <ContainerTitle>{t("Feedback")}</ContainerTitle>
+          <ContainerDescription>
+            {t(
+              "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com.",
+            )}
+          </ContainerDescription>
+        </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>

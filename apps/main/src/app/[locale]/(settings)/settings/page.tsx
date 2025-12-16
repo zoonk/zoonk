@@ -4,6 +4,7 @@ import {
   Container,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { cacheTagSettings } from "@zoonk/utils/cache";
@@ -44,10 +45,12 @@ export default async function Settings({
   return (
     <Container className="gap-2 lg:gap-2" variant="narrow">
       <ContainerHeader>
-        <ContainerTitle>{t("Settings")}</ContainerTitle>
-        <ContainerDescription>
-          {t("Manage your account settings, profile, and preferences.")}
-        </ContainerDescription>
+        <ContainerHeaderGroup>
+          <ContainerTitle>{t("Settings")}</ContainerTitle>
+          <ContainerDescription>
+            {t("Manage your account settings, profile, and preferences.")}
+          </ContainerDescription>
+        </ContainerHeaderGroup>
       </ContainerHeader>
 
       <SettingsList />

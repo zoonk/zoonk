@@ -5,6 +5,7 @@ import {
   ContainerBody,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { cacheTagDisplayName } from "@zoonk/utils/cache";
@@ -44,12 +45,14 @@ export default async function Name({ params }: PageProps<"/[locale]/name">) {
   return (
     <Container variant="narrow">
       <ContainerHeader>
-        <ContainerTitle>{t("Display name")}</ContainerTitle>
-        <ContainerDescription>
-          {t(
-            "This is the name others may see and the one we'll use to refer to you in activities.",
-          )}
-        </ContainerDescription>
+        <ContainerHeaderGroup>
+          <ContainerTitle>{t("Display name")}</ContainerTitle>
+          <ContainerDescription>
+            {t(
+              "This is the name others may see and the one we'll use to refer to you in activities.",
+            )}
+          </ContainerDescription>
+        </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>

@@ -3,6 +3,7 @@ import {
   ContainerBody,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import type { Metadata } from "next";
@@ -17,10 +18,12 @@ export default function Home() {
   return (
     <Container>
       <ContainerHeader variant="sidebar">
-        <ContainerTitle>Admin Dashboard</ContainerTitle>
-        <ContainerDescription>
-          Manage users and system settings
-        </ContainerDescription>
+        <ContainerHeaderGroup>
+          <ContainerTitle>Admin Dashboard</ContainerTitle>
+          <ContainerDescription>
+            Manage users and system settings
+          </ContainerDescription>
+        </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>

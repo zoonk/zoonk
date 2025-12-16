@@ -11,6 +11,7 @@ import {
   ContainerBody,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
@@ -60,10 +61,12 @@ export default async function TaskModelPage({
       </AppBreadcrumb>
 
       <ContainerHeader>
-        <ContainerTitle>{task.name}</ContainerTitle>
-        <ContainerDescription>
-          Run evals and view results for this task
-        </ContainerDescription>
+        <ContainerHeaderGroup>
+          <ContainerTitle>{task.name}</ContainerTitle>
+          <ContainerDescription>
+            Run evals and view results for this task
+          </ContainerDescription>
+        </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>

@@ -4,6 +4,7 @@ import {
   ContainerBody,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { getExtracted } from "next-intl/server";
@@ -15,13 +16,15 @@ export default async function Unauthorized() {
   return (
     <Container variant="centered">
       <ContainerHeader>
-        <ContainerTitle>{t("401 - Unauthorized")}</ContainerTitle>
+        <ContainerHeaderGroup>
+          <ContainerTitle>{t("401 - Unauthorized")}</ContainerTitle>
 
-        <ContainerDescription>
-          {t(
-            "You can’t edit courses for this organization. Log in with another account or switch to a different organization.",
-          )}
-        </ContainerDescription>
+          <ContainerDescription>
+            {t(
+              "You can't edit courses for this organization. Log in with another account or switch to a different organization.",
+            )}
+          </ContainerDescription>
+        </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody className="justify-end">

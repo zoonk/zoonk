@@ -5,6 +5,7 @@ import {
   ContainerBody,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { cacheTagFollow } from "@zoonk/utils/cache";
@@ -45,10 +46,12 @@ export default async function Follow({
   return (
     <Container>
       <ContainerHeader variant="sidebar">
-        <ContainerTitle>{t("Follow us")}</ContainerTitle>
-        <ContainerDescription>
-          {t("Find all our social media links and keep in touch with us.")}
-        </ContainerDescription>
+        <ContainerHeaderGroup>
+          <ContainerTitle>{t("Follow us")}</ContainerTitle>
+          <ContainerDescription>
+            {t("Find all our social media links and keep in touch with us.")}
+          </ContainerDescription>
+        </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody className="grid w-full gap-4 sm:grid-cols-2 md:grid-cols-3">

@@ -1,5 +1,9 @@
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
+import type { LucideIcon } from "lucide-react";
 import { Skeleton } from "./skeleton";
 
 const containerVariants = cva("flex w-full flex-col gap-4 antialiased", {
@@ -17,11 +21,10 @@ const containerVariants = cva("flex w-full flex-col gap-4 antialiased", {
   },
 });
 
-export function Container({
-  children,
-  className,
-  variant,
-}: React.ComponentProps<"main"> & VariantProps<typeof containerVariants>) {
+export type ContainerProps = React.ComponentProps<"main"> &
+  VariantProps<typeof containerVariants>;
+
+export function Container({ children, className, variant }: ContainerProps) {
   return (
     <main className={cn(containerVariants({ variant }), className)}>
       {children}
@@ -29,24 +32,29 @@ export function Container({
   );
 }
 
-const containerHeaderVariants = cva("flex flex-col gap-2 px-4", {
-  defaultVariants: {
-    variant: "page",
-  },
-  variants: {
-    variant: {
-      page: "pt-0",
-      sidebar: "pt-4",
+const containerHeaderVariants = cva(
+  "flex items-center justify-between gap-2 px-4",
+  {
+    defaultVariants: {
+      variant: "page",
+    },
+    variants: {
+      variant: {
+        page: "pt-0",
+        sidebar: "pt-4",
+      },
     },
   },
-});
+);
+
+export type ContainerHeaderProps = React.ComponentProps<"header"> &
+  VariantProps<typeof containerHeaderVariants>;
 
 export function ContainerHeader({
   children,
   className,
   variant,
-}: React.ComponentProps<"header"> &
-  VariantProps<typeof containerHeaderVariants>) {
+}: ContainerHeaderProps) {
   return (
     <header className={cn(containerHeaderVariants({ variant }), className)}>
       {children}
@@ -54,14 +62,24 @@ export function ContainerHeader({
   );
 }
 
-export function ContainerTitle({
+export type ContainerHeaderGroupProps = React.ComponentProps<"div">;
+
+export function ContainerHeaderGroup({
   children,
   className,
-}: React.ComponentProps<"h1">) {
+}: ContainerHeaderGroupProps) {
+  return (
+    <div className={cn("flex flex-col gap-1.5", className)}>{children}</div>
+  );
+}
+
+export type ContainerTitleProps = React.ComponentProps<"h1">;
+
+export function ContainerTitle({ children, className }: ContainerTitleProps) {
   return (
     <h1
       className={cn(
-        "scroll-m-20 text-balance font-semibold text-foreground/90 text-xl leading-none tracking-tight",
+        "scroll-m-20 text-balance font-semibold text-base text-foreground/90 leading-none tracking-tight",
         className,
       )}
     >
@@ -70,14 +88,16 @@ export function ContainerTitle({
   );
 }
 
+export type ContainerDescriptionProps = React.ComponentProps<"h2">;
+
 export function ContainerDescription({
   children,
   className,
-}: React.ComponentProps<"h2">) {
+}: ContainerDescriptionProps) {
   return (
     <h2
       className={cn(
-        "text-pretty text-muted-foreground leading-snug tracking-tight",
+        "text-pretty text-muted-foreground text-sm leading-none tracking-tight",
         className,
       )}
     >
@@ -86,10 +106,57 @@ export function ContainerDescription({
   );
 }
 
-export function ContainerBody({
+export type ContainerActionsProps = React.ComponentProps<"div">;
+
+export function ContainerActions({
   children,
   className,
-}: React.ComponentProps<"div">) {
+}: ContainerActionsProps) {
+  return (
+    <div className={cn("flex items-center gap-2", className)}>{children}</div>
+  );
+}
+
+export type ContainerActionProps = useRender.ComponentProps<"a"> & {
+  icon: LucideIcon;
+};
+
+export function ContainerAction({
+  icon: Icon,
+  children,
+  className,
+  render,
+  ...props
+}: ContainerActionProps) {
+  return useRender({
+    defaultTagName: "a",
+    props: mergeProps<"a">(
+      {
+        className: cn(
+          buttonVariants({ size: "adaptive", variant: "outline" }),
+          className,
+        ),
+      },
+      {
+        ...props,
+        children: (
+          <>
+            <Icon aria-hidden="true" />
+            <span className="sr-only sm:not-sr-only">{children}</span>
+          </>
+        ),
+      },
+    ),
+    render,
+    state: {
+      slot: "container-action",
+    },
+  });
+}
+
+export type ContainerBodyProps = React.ComponentProps<"div">;
+
+export function ContainerBody({ children, className }: ContainerBodyProps) {
   return (
     <section
       className={cn(
@@ -102,9 +169,15 @@ export function ContainerBody({
   );
 }
 
-export function ContainerHeaderSkeleton({ className }: { className?: string }) {
+export type ContainerHeaderSkeletonProps = {
+  className?: string;
+};
+
+export function ContainerHeaderSkeleton({
+  className,
+}: ContainerHeaderSkeletonProps) {
   return (
-    <header className={cn("flex flex-col gap-0.5", className)}>
+    <header className={cn("flex flex-col gap-1", className)}>
       <Skeleton className="mb-1 h-6 w-1/2" />
       <Skeleton className="h-4 w-1/3" />
     </header>

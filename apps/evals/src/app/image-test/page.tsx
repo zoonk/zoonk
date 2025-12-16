@@ -7,6 +7,7 @@ import {
   ContainerBody,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { AppBreadcrumb, HomeLinkBreadcrumb } from "@/patterns/breadcrumb";
@@ -23,10 +24,12 @@ export default function ImageTestPage() {
       </AppBreadcrumb>
 
       <ContainerHeader>
-        <ContainerTitle>Course Thumbnail Generator</ContainerTitle>
-        <ContainerDescription>
-          Test AI-generated course thumbnails
-        </ContainerDescription>
+        <ContainerHeaderGroup>
+          <ContainerTitle>Course Thumbnail Generator</ContainerTitle>
+          <ContainerDescription>
+            Test AI-generated course thumbnails
+          </ContainerDescription>
+        </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>

@@ -245,11 +245,11 @@ msgid "You need to be logged in to access this page."
 msgstr "Você precisa estar logado para acessar esta página."
 
 #: src/app/[locale]/unauthorized.tsx
+msgctxt "Ajg4UO"
+msgid "You can't edit courses for this organization. Log in with another account or switch to a different organization."
+msgstr "Você não pode editar cursos para esta organização. Faça login com outra conta ou mude para uma organização diferente."
+
+#: src/app/[locale]/unauthorized.tsx
 msgctxt "gNtXZ8"
 msgid "401 - Unauthorized"
 msgstr "401 - Não autorizado"
-
-#: src/app/[locale]/unauthorized.tsx
-msgctxt "vFidRR"
-msgid "You can’t edit courses for this organization. Log in with another account or switch to a different organization."
-msgstr "Você não pode editar cursos para esta organização. Faça login com outra conta ou mude para uma organização diferente."

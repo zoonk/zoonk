@@ -1,6 +1,7 @@
 import {
   Container,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 
@@ -13,7 +14,9 @@ export default async function CoursePage({
   return (
     <Container variant="narrow">
       <ContainerHeader>
-        <ContainerTitle>{courseSlug}</ContainerTitle>
+        <ContainerHeaderGroup>
+          <ContainerTitle>{courseSlug}</ContainerTitle>
+        </ContainerHeaderGroup>
       </ContainerHeader>
     </Container>
   );

@@ -4,6 +4,7 @@ import {
   ContainerBody,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import {
@@ -50,11 +51,13 @@ export default async function TaskPage({ params }: TaskPageProps) {
       </AppBreadcrumb>
 
       <ContainerHeader>
-        <ContainerTitle>{task.name}</ContainerTitle>
-        <ContainerDescription>
-          Choose a model to run evaluations on {task.testCases.length} test
-          cases ({RUNS_PER_TEST_CASE} runs each)
-        </ContainerDescription>
+        <ContainerHeaderGroup>
+          <ContainerTitle>{task.name}</ContainerTitle>
+          <ContainerDescription>
+            Choose a model to run evaluations on {task.testCases.length} test
+            cases ({RUNS_PER_TEST_CASE} runs each)
+          </ContainerDescription>
+        </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>

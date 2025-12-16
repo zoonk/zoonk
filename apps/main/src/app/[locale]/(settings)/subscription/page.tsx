@@ -5,6 +5,7 @@ import {
   ContainerBody,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { cacheTagSubscription } from "@zoonk/utils/cache";
@@ -46,10 +47,12 @@ export default async function Subscription({
   return (
     <Container variant="narrow">
       <ContainerHeader>
-        <ContainerTitle>{t("Subscription")}</ContainerTitle>
-        <ContainerDescription>
-          {t("Check your plan details and manage your subscription.")}
-        </ContainerDescription>
+        <ContainerHeaderGroup>
+          <ContainerTitle>{t("Subscription")}</ContainerTitle>
+          <ContainerDescription>
+            {t("Check your plan details and manage your subscription.")}
+          </ContainerDescription>
+        </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>

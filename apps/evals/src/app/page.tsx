@@ -2,6 +2,7 @@ import {
   ContainerBody,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import {
@@ -25,10 +26,12 @@ export default function Home() {
       </AppBreadcrumb>
 
       <ContainerHeader>
-        <ContainerTitle>Evals Dashboard</ContainerTitle>
-        <ContainerDescription>
-          Run and monitor evaluations for AI tasks
-        </ContainerDescription>
+        <ContainerHeaderGroup>
+          <ContainerTitle>Evals Dashboard</ContainerTitle>
+          <ContainerDescription>
+            Run and monitor evaluations for AI tasks
+          </ContainerDescription>
+        </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

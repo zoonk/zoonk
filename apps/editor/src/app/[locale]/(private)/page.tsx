@@ -5,6 +5,7 @@ import {
   Container,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -44,12 +45,14 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
   return (
     <Container variant="centered">
-      <ContainerHeader className="text-center">
-        <ContainerTitle>{t("Select an organization")}</ContainerTitle>
+      <ContainerHeader>
+        <ContainerHeaderGroup className="text-center">
+          <ContainerTitle>{t("Select an organization")}</ContainerTitle>
 
-        <ContainerDescription>
-          {t("Choose an organization to manage its courses")}
-        </ContainerDescription>
+          <ContainerDescription>
+            {t("Choose an organization to manage its courses")}
+          </ContainerDescription>
+        </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ProtectedSection

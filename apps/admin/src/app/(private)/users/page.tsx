@@ -3,6 +3,7 @@ import {
   ContainerBody,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import type { Metadata } from "next";
@@ -18,10 +19,12 @@ export default function UsersPage({ searchParams }: PageProps<"/users">) {
   return (
     <Container>
       <ContainerHeader variant="sidebar">
-        <ContainerTitle>Users</ContainerTitle>
-        <ContainerDescription>
-          Manage all users in the system.
-        </ContainerDescription>
+        <ContainerHeaderGroup>
+          <ContainerTitle>Users</ContainerTitle>
+          <ContainerDescription>
+            Manage all users in the system.
+          </ContainerDescription>
+        </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>

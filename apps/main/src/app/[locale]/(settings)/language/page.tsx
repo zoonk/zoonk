@@ -5,6 +5,7 @@ import {
   ContainerBody,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { cacheTagLanguage } from "@zoonk/utils/cache";
@@ -45,10 +46,12 @@ export default async function Language({
   return (
     <Container variant="narrow">
       <ContainerHeader>
-        <ContainerTitle>{t("Language")}</ContainerTitle>
-        <ContainerDescription>
-          {t("Choose the app language you prefer for this device.")}
-        </ContainerDescription>
+        <ContainerHeaderGroup>
+          <ContainerTitle>{t("Language")}</ContainerTitle>
+          <ContainerDescription>
+            {t("Choose the app language you prefer for this device.")}
+          </ContainerDescription>
+        </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>

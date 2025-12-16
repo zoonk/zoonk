@@ -5,6 +5,7 @@ import {
   ContainerBody,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { cacheTagHelp } from "@zoonk/utils/cache";
@@ -43,13 +44,15 @@ export default async function Help({ params }: PageProps<"/[locale]/help">) {
   return (
     <Container variant="narrow">
       <ContainerHeader>
-        <ContainerTitle>{t("Help")}</ContainerTitle>
+        <ContainerHeaderGroup>
+          <ContainerTitle>{t("Help")}</ContainerTitle>
 
-        <ContainerDescription>
-          {t(
-            "Get support and answers. Fill in the form below or email us directly at hello@zoonk.com.",
-          )}
-        </ContainerDescription>
+          <ContainerDescription>
+            {t(
+              "Get support and answers. Fill in the form below or email us directly at hello@zoonk.com.",
+            )}
+          </ContainerDescription>
+        </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>

@@ -5,6 +5,7 @@ import {
   ContainerBody,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import {
@@ -35,16 +36,18 @@ export async function CourseSuggestions({
 
   return (
     <Container variant="narrow">
-      <ContainerHeader className="text-center">
-        <ContainerTitle>
-          {t("Course ideas for {prompt}", { prompt })}
-        </ContainerTitle>
+      <ContainerHeader>
+        <ContainerHeaderGroup className="text-center">
+          <ContainerTitle>
+            {t("Course ideas for {prompt}", { prompt })}
+          </ContainerTitle>
 
-        <Link href="/learn">
-          <ContainerDescription className="text-sm hover:underline">
-            {t("Change subject")}
-          </ContainerDescription>
-        </Link>
+          <Link href="/learn">
+            <ContainerDescription className="text-sm hover:underline">
+              {t("Change subject")}
+            </ContainerDescription>
+          </Link>
+        </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>

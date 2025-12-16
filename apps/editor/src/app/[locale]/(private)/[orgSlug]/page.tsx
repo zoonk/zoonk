@@ -1,10 +1,12 @@
 import { listOrganizationCourses } from "@zoonk/core/courses";
 import { getOrganizationBySlug } from "@zoonk/core/organizations";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,
+  ContainerAction,
+  ContainerActions,
   ContainerDescription,
   ContainerHeader,
+  ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { cacheTagOrg, cacheTagOrgCourses } from "@zoonk/utils/cache";
@@ -57,20 +59,22 @@ export default async function OrgHomePage({
 
   return (
     <Container variant="list">
-      <ContainerHeader className="flex-row items-start justify-between">
-        <div className="flex flex-col gap-2">
+      <ContainerHeader>
+        <ContainerHeaderGroup>
           <ContainerTitle>{t("Courses")}</ContainerTitle>
           <ContainerDescription>
             {t("Select a course to edit its content")}
           </ContainerDescription>
-        </div>
-        <Link
-          className={buttonVariants({ size: "adaptive", variant: "outline" })}
-          href={`/${orgSlug}/new-course`}
-        >
-          <PlusIcon aria-hidden="true" />
-          <span className="sr-only sm:not-sr-only">{t("Create course")}</span>
-        </Link>
+        </ContainerHeaderGroup>
+
+        <ContainerActions>
+          <ContainerAction
+            icon={PlusIcon}
+            render={<Link href={`/${orgSlug}/new-course`} />}
+          >
+            {t("Create course")}
+          </ContainerAction>
+        </ContainerActions>
       </ContainerHeader>
 
       <Suspense fallback={<CourseListSkeleton />}>
