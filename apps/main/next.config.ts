@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   experimental: {
     authInterrupts: true,
-    turbopackFileSystemCacheForDev: true,
+    turbopackFileSystemCacheForBuild: true,
     typedEnv: true,
   },
   images: {
@@ -24,17 +24,6 @@ const nextConfig: NextConfig = {
   },
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   reactCompiler: true,
-  // we use next.js compiler to transpile our internal packages
-  transpilePackages: [
-    "@zoonk/ai",
-    "@zoonk/core",
-    "@zoonk/auth",
-    "@zoonk/db",
-    "@zoonk/mailer",
-    "@zoonk/next",
-    "@zoonk/ui",
-    "@zoonk/utils",
-  ],
   turbopack: {
     root: path.resolve(__dirname, "../.."),
     rules: {

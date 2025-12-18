@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   devIndicators: false,
   experimental: {
-    turbopackFileSystemCacheForDev: true,
+    turbopackFileSystemCacheForBuild: true,
     typedEnv: true,
   },
   images: {
@@ -15,8 +15,6 @@ const nextConfig: NextConfig = {
   },
   pageExtensions: ["ts", "tsx"],
   reactCompiler: true,
-  // we use next.js compiler to transpile our internal packages
-  transpilePackages: ["@zoonk/ai", "@zoonk/core", "@zoonk/ui", "@zoonk/utils"],
   turbopack: {
     root: path.resolve(__dirname, "../.."),
     rules: {

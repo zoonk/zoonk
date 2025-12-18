@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   experimental: {
     authInterrupts: true,
-    turbopackFileSystemCacheForDev: true,
+    turbopackFileSystemCacheForBuild: true,
     typedEnv: true,
   },
   images: {
@@ -20,13 +20,6 @@ const nextConfig: NextConfig = {
     ],
   },
   reactCompiler: true,
-  transpilePackages: [
-    "@zoonk/auth",
-    "@zoonk/core",
-    "@zoonk/next",
-    "@zoonk/ui",
-    "@zoonk/utils",
-  ],
   typedRoutes: true,
 };
 

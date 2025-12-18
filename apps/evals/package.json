@@ -7,10 +7,9 @@
     "@zoonk/utils": "workspace:*",
     "ai": "5.0.93",
     "lucide-react": "0.556.0",
-    "next": "16.0.10",
+    "next": "16.1.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "sharp": "0.34.4",
     "zod": "4.1.12"
   },
   "devDependencies": {
@@ -25,6 +24,7 @@
   "name": "evals",
   "private": true,
   "scripts": {
+    "analyze": "next experimental-analyze",
     "build": "next build",
     "build-and-start": "pnpm build && pnpm start",
     "dev": "next dev -p 3002",
