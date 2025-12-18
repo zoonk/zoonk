@@ -63,7 +63,7 @@ export function getLeaderboardEntries(
         averageScore: calculateAverageScore(result),
         modelId: result.modelId,
         modelName: getModelDisplayName(model),
-        provider: result.modelId.split("/")[0],
+        provider: result.modelId.split("/")[0] ?? result.modelId,
         totalCost: stats.totalCost,
       } satisfies LeaderboardEntry;
     })

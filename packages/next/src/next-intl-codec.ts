@@ -20,6 +20,10 @@ function setNestedProperty(
 
   for (let i = 0; i < keys.length - 1; i++) {
     const key = keys[i];
+    if (!key) {
+      continue;
+    }
+
     if (
       !(key in current) ||
       typeof current[key] !== "object" ||

@@ -27,7 +27,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
   // when users have only one organization, we redirect them to that organization
   if (userHasOnlyOneOrg) {
-    redirect({ href: `/${orgs.data[0].slug}`, locale });
+    redirect({ href: `/${orgs.data[0]?.slug}`, locale });
   }
 
   const activeOrganizationId = userSession?.session.activeOrganizationId;
