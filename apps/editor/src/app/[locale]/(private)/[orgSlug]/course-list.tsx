@@ -1,5 +1,4 @@
 import { listOrganizationCourses } from "@zoonk/core/courses";
-import type { Course } from "@zoonk/core/types";
 import {
   Item,
   ItemContent,
