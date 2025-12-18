@@ -16,6 +16,7 @@ const SHARED_EXPECTATIONS = `
   - Should follow title and description guidelines: no fluff, be concise, straight to the point
   - Descriptions should be concise and straight to the point, no fluff/filler words (avoid "learn", "understand", "explore", "introduction to", etc.)
   - You don't need to evaluate the output format here, just focus on the lesson content quality
+  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons
   
   Things to check:
   - Is each lesson too broad? If so, it should be broken down further

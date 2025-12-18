@@ -7,13 +7,10 @@ import systemPrompt from "./prompt.md";
 const DEFAULT_MODEL = process.env.AI_MODEL_CHAPTER_LESSONS ?? "openai/gpt-5.2";
 
 const FALLBACK_MODELS = [
-  "openai/gpt-5.1-instant",
-  "google/gemini-2.5-flash",
-  "openai/gpt-5-mini",
   "google/gemini-3-pro-preview",
-  "xai/grok-4",
-  "openai/gpt-5.1-thinking",
-  "anthropic/claude-sonnet-4.5",
+  "openai/gpt-5.2",
+  "anthropic/claude-opus-4.5",
+  "openai/gpt-5-mini",
 ];
 
 const schema = z.object({

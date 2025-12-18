@@ -78,6 +78,7 @@ Or:
 - Add **as many lessons as needed** to break down each concept fully
 - Don't limit the number of lessons arbitrarily
 - It's better to have many focused lessons than fewer broad ones
+- Make sure to have all lessons needed to **fully master the chapter's scope**
 
 # Quality Checks
 

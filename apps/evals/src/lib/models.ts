@@ -8,6 +8,12 @@ export type ModelConfig = {
 
 export const EVAL_MODELS: ModelConfig[] = [
   {
+    id: "anthropic/claude-opus-4.5",
+    inputCost: 5,
+    name: "claude-opus-4.5",
+    outputCost: 25,
+  },
+  {
     id: "anthropic/claude-sonnet-4.5",
     inputCost: 3,
     name: "claude-sonnet-4.5",
@@ -24,6 +30,12 @@ export const EVAL_MODELS: ModelConfig[] = [
     inputCost: 2,
     name: "gemini-3-pro",
     outputCost: 12,
+  },
+  {
+    id: "google/gemini-3-flash",
+    inputCost: 0.5,
+    name: "gemini-3-flash",
+    outputCost: 3,
   },
   {
     id: "google/gemini-2.5-pro",
