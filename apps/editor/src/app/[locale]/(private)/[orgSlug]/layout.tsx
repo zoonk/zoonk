@@ -1,12 +1,12 @@
 import { Suspense } from "react";
-import { EditorNavbar } from "@/components/navbar";
+import { EditorNavbar, NavbarSkeleton } from "@/components/navbar";
 
 export default async function Layout({
   children,
 }: LayoutProps<"/[locale]/[orgSlug]">) {
   return (
     <>
-      <Suspense>
+      <Suspense fallback={<NavbarSkeleton />}>
         <EditorNavbar />
       </Suspense>
 

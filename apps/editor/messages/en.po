@@ -118,6 +118,7 @@ msgid "Create"
 msgstr "Create"
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/page.tsx
+#: src/app/[locale]/(private)/[orgSlug]/page.tsx
 msgctxt "dCKXDB"
 msgid "Create course"
 msgstr "Create course"
