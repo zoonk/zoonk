@@ -33,18 +33,49 @@ export const getOrganizationBySlug = cache(
   },
 );
 
+type HasCoursePermissionOptionsBase = {
+  permission: CoursePermission;
+  headers?: Headers;
+};
+
+type HasCoursePermissionOptionsWithOrgId = HasCoursePermissionOptionsBase & {
+  orgId: number;
+  orgSlug?: never;
+};
+
+type HasCoursePermissionOptionsWithOrgSlug = HasCoursePermissionOptionsBase & {
+  orgId?: never;
+  orgSlug: string;
+};
+
+type HasCoursePermissionOptions =
+  | HasCoursePermissionOptionsWithOrgId
+  | HasCoursePermissionOptionsWithOrgSlug;
+
 export async function hasCoursePermission(
-  organizationId: number,
-  permission: CoursePermission,
-  opts?: { headers?: Headers },
+  opts: HasCoursePermissionOptions,
 ): Promise<boolean> {
+  let organizationId: number;
+
+  if ("orgSlug" in opts && opts.orgSlug) {
+    const { data: org } = await getOrganizationBySlug(opts.orgSlug);
+
+    if (!org) {
+      return false;
+    }
+
+    organizationId = org.id;
+  } else {
+    organizationId = (opts as { orgId: number }).orgId;
+  }
+
   const { data } = await safeAsync(async () =>
     auth.api.hasPermission({
       body: {
         organizationId: String(organizationId),
-        permissions: { course: [permission] },
+        permissions: { course: [opts.permission] },
       },
-      headers: opts?.headers ?? (await headers()),
+      headers: opts.headers ?? (await headers()),
     }),
   );
 

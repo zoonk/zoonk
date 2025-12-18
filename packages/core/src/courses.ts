@@ -18,8 +18,10 @@ export async function listOrganizationCourses(
     headers?: Headers;
   },
 ): Promise<{ data: Course[]; error: Error | null }> {
-  const hasPermission = await hasCoursePermission(organizationId, "read", {
+  const hasPermission = await hasCoursePermission({
     headers: opts?.headers,
+    orgId: organizationId,
+    permission: "read",
   });
 
   if (!hasPermission) {
@@ -112,8 +114,10 @@ export async function createCourse(params: {
     return { data: null, error: new Error("Organization not found") };
   }
 
-  const hasPermission = await hasCoursePermission(org.id, "create", {
+  const hasPermission = await hasCoursePermission({
     headers: params.headers,
+    orgId: org.id,
+    permission: "create",
   });
 
   if (!hasPermission) {
