@@ -271,7 +271,7 @@ You can delay unwrapping the Promise (either with await or React.use) until you 
 - MUST: No dead ends; always offer next step/recovery
 - MUST: Design empty/sparse/dense/error states
 - SHOULD: Curly quotes (“ ”); avoid widows/orphans
-- MUST: Tabular numbers for comparisons (`font-variant-numeric: tabular-nums` or a mono like Geist Mono)
+- MUST: Tabular numbers for comparisons (`font-variant-numeric: tabular-nums` or a monospace font)
 - MUST: Redundant status cues (not color-only); icons have text labels
 - MUST: Don’t ship the schema—visuals may omit labels but accessible names still exist
 - MUST: Use the ellipsis character `…` (not ``)

@@ -4,7 +4,7 @@ import "@zoonk/ui/globals.css";
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en">
-      <body className="antialiased">
+      <body className="font-sans antialiased">
         <Container>{children}</Container>
       </body>
     </html>

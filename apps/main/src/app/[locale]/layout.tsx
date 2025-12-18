@@ -33,7 +33,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale}>
-      <body className="antialiased">
+      <body className="font-sans antialiased">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
         <Analytics />
       </body>
