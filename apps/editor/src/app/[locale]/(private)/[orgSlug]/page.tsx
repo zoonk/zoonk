@@ -31,6 +31,8 @@ export async function generateMetadata({
 export default async function OrgHomePage({
   params,
 }: PageProps<"/[locale]/[orgSlug]">) {
+  "use cache: private";
+
   const { orgSlug } = await params;
   const t = await getExtracted();
 
