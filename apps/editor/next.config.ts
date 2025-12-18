@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   experimental: {
     authInterrupts: true,
+    staleTimes: {
+      dynamic: 300,
+    },
     turbopackFileSystemCacheForDev: true,
     typedEnv: true,
   },
