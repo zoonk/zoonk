@@ -9,6 +9,7 @@ const DEFAULT_MODEL =
 
 const FALLBACK_MODELS = [
   "google/gemini-2.5-flash",
+  "google/gemini-3-flash",
   "openai/gpt-4.1-nano",
   "openai/gpt-oss-120b",
   "meta/llama-4-scout",

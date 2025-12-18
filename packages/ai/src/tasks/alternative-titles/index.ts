@@ -5,9 +5,10 @@ import { z } from "zod";
 import systemPrompt from "./prompt.md";
 
 const DEFAULT_MODEL =
-  process.env.AI_MODEL_ALTERNATIVE_TITLES || "xai/grok-4-fast-reasoning";
+  process.env.AI_MODEL_ALTERNATIVE_TITLES || "google/gemini-3-flash";
 
 const FALLBACK_MODELS = [
+  "xai/grok-4-fast-reasoning",
   "google/gemini-2.5-flash",
   "meta/llama-4-maverick",
   "openai/gpt-4.1-mini",
