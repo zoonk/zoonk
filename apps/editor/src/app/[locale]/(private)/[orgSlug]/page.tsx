@@ -28,36 +28,32 @@ export async function generateMetadata({
   return { title: org.name };
 }
 
-export default async function OrgHomePage({
-  params,
-}: PageProps<"/[locale]/[orgSlug]">) {
-  "use cache: private";
-
-  const { orgSlug } = await params;
+async function HomeContainerHeader() {
   const t = await getExtracted();
 
   return (
-    <Container variant="list">
-      <ContainerHeader>
-        <ContainerHeaderGroup>
-          <ContainerTitle>{t("Courses")}</ContainerTitle>
-          <ContainerDescription>
-            {t("Select a course to edit its content")}
-          </ContainerDescription>
-        </ContainerHeaderGroup>
+    <ContainerHeader>
+      <ContainerHeaderGroup>
+        <ContainerTitle>{t("Courses")}</ContainerTitle>
+        <ContainerDescription>
+          {t("Select a course to edit its content")}
+        </ContainerDescription>
+      </ContainerHeaderGroup>
+    </ContainerHeader>
+  );
+}
 
-        <ContainerActions>
-          <ContainerAction
-            icon={PlusIcon}
-            render={<Link href={`/${orgSlug}/new-course`} />}
-          >
-            {t("Create course")}
-          </ContainerAction>
-        </ContainerActions>
-      </ContainerHeader>
+export default async function OrgHomePage({
+  params,
+}: PageProps<"/[locale]/[orgSlug]">) {
+  return (
+    <Container variant="list">
+      <Suspense>
+        <HomeContainerHeader />
+      </Suspense>
 
       <Suspense fallback={<CourseListSkeleton />}>
-        <CourseList orgSlug={orgSlug} />
+        <CourseList params={params} />
       </Suspense>
     </Container>
   );

@@ -40,7 +40,12 @@ export function CourseListSkeleton() {
   );
 }
 
-export async function CourseList({ orgSlug }: { orgSlug: string }) {
+export async function CourseList({
+  params,
+}: {
+  params: PageProps<"/[locale]/[orgSlug]">["params"];
+}) {
+  const { orgSlug } = await params;
   const t = await getExtracted();
   const { data: courses } = await listOrganizationCourses({ orgSlug });
 
