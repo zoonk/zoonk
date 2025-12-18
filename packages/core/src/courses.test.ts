@@ -16,8 +16,9 @@ describe("listOrganizationCourses()", () => {
   test("returns Forbidden error when session is invalid", async () => {
     const organization = await organizationFixture();
 
-    const result = await listOrganizationCourses(organization.id, {
+    const result = await listOrganizationCourses({
       headers: new Headers(),
+      orgSlug: organization.slug,
     });
 
     expect(result.error?.message).toBe("Forbidden");
@@ -29,7 +30,10 @@ describe("listOrganizationCourses()", () => {
     const { user } = await memberFixture({ role: "member" });
     const headers = await signInAs(user.email, user.password);
 
-    const result = await listOrganizationCourses(organization.id, { headers });
+    const result = await listOrganizationCourses({
+      headers,
+      orgSlug: organization.slug,
+    });
 
     expect(result.error?.message).toBe("Forbidden");
     expect(result.data).toEqual([]);
@@ -52,7 +56,10 @@ describe("listOrganizationCourses()", () => {
       },
     });
 
-    const result = await listOrganizationCourses(organization.id, { headers });
+    const result = await listOrganizationCourses({
+      headers,
+      orgSlug: organization.slug,
+    });
 
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(1);
@@ -88,9 +95,10 @@ describe("listOrganizationCourses()", () => {
       ],
     });
 
-    const result = await listOrganizationCourses(organization.id, {
+    const result = await listOrganizationCourses({
       headers,
       language: "en",
+      orgSlug: organization.slug,
     });
 
     expect(result.error).toBeNull();
@@ -116,9 +124,10 @@ describe("listOrganizationCourses()", () => {
     });
 
     const customLimit = 3;
-    const result = await listOrganizationCourses(organization.id, {
+    const result = await listOrganizationCourses({
       headers,
       limit: customLimit,
+      orgSlug: organization.slug,
     });
 
     expect(result.error).toBeNull();
@@ -142,7 +151,10 @@ describe("listOrganizationCourses()", () => {
       })),
     });
 
-    const result = await listOrganizationCourses(organization.id, { headers });
+    const result = await listOrganizationCourses({
+      headers,
+      orgSlug: organization.slug,
+    });
 
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(LIST_COURSES_LIMIT);
@@ -180,7 +192,10 @@ describe("listOrganizationCourses()", () => {
       },
     });
 
-    const result = await listOrganizationCourses(organization.id, { headers });
+    const result = await listOrganizationCourses({
+      headers,
+      orgSlug: organization.slug,
+    });
 
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(2);

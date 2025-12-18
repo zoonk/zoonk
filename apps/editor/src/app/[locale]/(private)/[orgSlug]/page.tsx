@@ -1,4 +1,3 @@
-import { listOrganizationCourses } from "@zoonk/core/courses";
 import { getOrganizationBySlug } from "@zoonk/core/organizations";
 import {
   Container,
@@ -11,7 +10,6 @@ import {
 } from "@zoonk/ui/components/container";
 import { PlusIcon } from "lucide-react";
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { Link } from "@/i18n/navigation";
@@ -34,15 +32,7 @@ export default async function OrgHomePage({
   params,
 }: PageProps<"/[locale]/[orgSlug]">) {
   const { orgSlug } = await params;
-  const { data: org } = await getOrganizationBySlug(orgSlug);
-
-  if (!org) {
-    notFound();
-  }
-
   const t = await getExtracted();
-
-  const { data: orgCourses } = await listOrganizationCourses(org.id);
 
   return (
     <Container variant="list">
@@ -65,7 +55,7 @@ export default async function OrgHomePage({
       </ContainerHeader>
 
       <Suspense fallback={<CourseListSkeleton />}>
-        <CourseList courses={orgCourses} orgSlug={org.slug} />
+        <CourseList orgSlug={orgSlug} />
       </Suspense>
     </Container>
   );

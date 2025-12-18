@@ -1,3 +1,4 @@
+import { listOrganizationCourses } from "@zoonk/core/courses";
 import type { Course } from "@zoonk/core/types";
 import {
   Item,
@@ -13,11 +14,6 @@ import { ChevronRightIcon, NotebookPenIcon } from "lucide-react";
 import Image from "next/image";
 import { getExtracted } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-
-type CourseListProps = {
-  orgSlug: string;
-  courses: Course[];
-};
 
 export function CourseListSkeleton() {
   return (
@@ -45,8 +41,9 @@ export function CourseListSkeleton() {
   );
 }
 
-export async function CourseList({ orgSlug, courses }: CourseListProps) {
+export async function CourseList({ orgSlug }: { orgSlug: string }) {
   const t = await getExtracted();
+  const { data: courses } = await listOrganizationCourses({ orgSlug });
 
   if (courses.length === 0) {
     return (

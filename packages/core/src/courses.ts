@@ -10,17 +10,15 @@ import { getOrganizationBySlug, hasCoursePermission } from "./organizations";
 
 export const LIST_COURSES_LIMIT = 20;
 
-export async function listOrganizationCourses(
-  organizationId: number,
-  opts?: {
-    language?: string;
-    limit?: number;
-    headers?: Headers;
-  },
-): Promise<{ data: Course[]; error: Error | null }> {
+export async function listOrganizationCourses(opts?: {
+  orgSlug: string;
+  language?: string;
+  limit?: number;
+  headers?: Headers;
+}): Promise<{ data: Course[]; error: Error | null }> {
   const hasPermission = await hasCoursePermission({
     headers: opts?.headers,
-    orgId: organizationId,
+    orgSlug: opts?.orgSlug,
     permission: "read",
   });
 
@@ -33,7 +31,7 @@ export async function listOrganizationCourses(
       orderBy: { createdAt: "desc" },
       take: clampQueryItems(opts?.limit ?? LIST_COURSES_LIMIT),
       where: {
-        organizationId,
+        organization: { slug: opts?.orgSlug },
         ...(opts?.language && { language: opts.language }),
       },
     }),
