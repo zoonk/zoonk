@@ -6,7 +6,7 @@ msgstr ""
 "X-Generator: next-intl\n"
 
 #: src/app/[locale]/(auth)/layout.tsx
-#: src/app/[locale]/(private)/[orgSlug]/navbar.tsx
+#: src/components/navbar/index.tsx
 msgctxt "U3l+Q9"
 msgid "Home page"
 msgstr "Página de inicio"
@@ -86,17 +86,6 @@ msgstr "Tu organización aún no ha creado ningún curso."
 msgctxt "zJxO2f"
 msgid "No courses"
 msgstr "Sin cursos"
-
-#: src/app/[locale]/(private)/[orgSlug]/locale-switcher.tsx
-msgctxt "y1Z3or"
-msgid "Language"
-msgstr "Idioma"
-
-#: src/app/[locale]/(private)/[orgSlug]/logout-menu-item.tsx
-#: src/app/[locale]/unauthorized.tsx
-msgctxt "C81/uG"
-msgid "Logout"
-msgstr "Cerrar sesión"
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/actions.ts
 msgctxt "/c3jWN"
@@ -194,16 +183,6 @@ msgctxt "lP29gk"
 msgid "A course with this URL already exists"
 msgstr "Ya existe un curso con esta dirección"
 
-#: src/app/[locale]/(private)/[orgSlug]/org-switcher.tsx
-msgctxt "JD2pwH"
-msgid "Organizations"
-msgstr "Organizaciones"
-
-#: src/app/[locale]/(private)/[orgSlug]/org-switcher.tsx
-msgctxt "NI1jZo"
-msgid "No other organizations"
-msgstr "No hay otras organizaciones"
-
 #: src/app/[locale]/(private)/[orgSlug]/page.tsx
 msgctxt "6gzGoI"
 msgid "Select a course to edit its content"
@@ -250,6 +229,27 @@ msgid "You can't edit courses for this organization. Log in with another account
 msgstr "No puedes editar cursos para esta organización. Inicia sesión con otra cuenta o cambia a una organización diferente."
 
 #: src/app/[locale]/unauthorized.tsx
+#: src/components/navbar/logout-menu-item.tsx
+msgctxt "C81/uG"
+msgid "Logout"
+msgstr "Cerrar sesión"
+
+#: src/app/[locale]/unauthorized.tsx
 msgctxt "gNtXZ8"
 msgid "401 - Unauthorized"
 msgstr "401 - No autorizado"
+
+#: src/components/navbar/locale-switcher.tsx
+msgctxt "y1Z3or"
+msgid "Language"
+msgstr "Idioma"
+
+#: src/components/navbar/org-switcher.tsx
+msgctxt "JD2pwH"
+msgid "Organizations"
+msgstr "Organizaciones"
+
+#: src/components/navbar/org-switcher.tsx
+msgctxt "NI1jZo"
+msgid "No other organizations"
+msgstr "No hay otras organizaciones"

@@ -15,8 +15,17 @@ export async function listOrganizationCourses(
   opts?: {
     language?: string;
     limit?: number;
+    headers?: Headers;
   },
 ): Promise<{ data: Course[]; error: Error | null }> {
+  const hasPermission = await hasCoursePermission(organizationId, "read", {
+    headers: opts?.headers,
+  });
+
+  if (!hasPermission) {
+    return { data: [], error: new Error("Forbidden") };
+  }
+
   const { data, error } = await safeAsync(() =>
     prisma.course.findMany({
       orderBy: { createdAt: "desc" },
