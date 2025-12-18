@@ -9,8 +9,11 @@ const DEFAULT_MODEL = process.env.AI_MODEL_COURSE_CHAPTERS ?? "openai/gpt-5.2";
 const FALLBACK_MODELS = [
   "openai/gpt-5.1-instant",
   "google/gemini-3-pro-preview",
+  "openai/gpt-5",
+  "anthropic/claude-opus-4.5",
   "anthropic/claude-sonnet-4.5",
-  "xai/grok-4.1-fast-reasoning",
+  "openai/gpt-5.1-thinking",
+  "openai/gpt-5-mini",
 ];
 
 const schema = z.object({
