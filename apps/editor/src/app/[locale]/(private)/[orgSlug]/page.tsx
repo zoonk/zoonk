@@ -8,28 +8,14 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cacheTagOrg } from "@zoonk/utils/cache";
 import { PlusIcon } from "lucide-react";
 import type { Metadata } from "next";
-import { getExtracted } from "next-intl/server";
+import { cacheLife, cacheTag } from "next/cache";
+import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { Link } from "@/i18n/navigation";
 import { CourseList, CourseListSkeleton } from "./course-list";
-
-function HomeContainerHeaderSkeleton() {
-  return (
-    <ContainerHeader>
-      <ContainerHeaderGroup>
-        <Skeleton className="h-[18px] w-20" />
-        <Skeleton className="h-5 w-52" />
-      </ContainerHeaderGroup>
-
-      <ContainerActions>
-        <Skeleton className="size-9 rounded-4xl sm:h-9 sm:w-28" />
-      </ContainerActions>
-    </ContainerHeader>
-  );
-}
 
 export async function generateMetadata({
   params,
@@ -49,7 +35,14 @@ async function HomeContainerHeader({
 }: {
   params: PageProps<"/[locale]/[orgSlug]">["params"];
 }) {
-  const { orgSlug } = await params;
+  "use cache";
+
+  const { locale, orgSlug } = await params;
+  setRequestLocale(locale);
+
+  cacheLife("max");
+  cacheTag(locale, cacheTagOrg({ orgSlug }));
+
   const t = await getExtracted();
 
   return (
@@ -78,9 +71,7 @@ export default async function OrgHomePage({
 }: PageProps<"/[locale]/[orgSlug]">) {
   return (
     <Container variant="list">
-      <Suspense fallback={<HomeContainerHeaderSkeleton />}>
-        <HomeContainerHeader params={params} />
-      </Suspense>
+      <HomeContainerHeader params={params} />
 
       <Suspense fallback={<CourseListSkeleton />}>
         <CourseList params={params} />
