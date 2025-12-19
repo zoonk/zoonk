@@ -45,6 +45,7 @@ export function EditorNavbar() {
             }),
           )}
           href={`/${orgSlug}`}
+          prefetch={true}
         >
           <HomeIcon aria-hidden="true" />
           <span className="sr-only">{t("Home page")}</span>

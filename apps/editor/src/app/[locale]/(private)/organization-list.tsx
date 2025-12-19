@@ -50,7 +50,10 @@ export async function OrganizationList({
   return (
     <ItemGroup>
       {organizations.map((org) => (
-        <Item key={org.id} render={<Link href={`/${org.slug}`} />}>
+        <Item
+          key={org.id}
+          render={<Link href={`/${org.slug}`} prefetch={true} />}
+        >
           <ItemContent>
             <ItemTitle>{org.name}</ItemTitle>
           </ItemContent>

@@ -27,6 +27,7 @@ export default async function AuthLayout({
         <Link
           className={buttonVariants({ size: "icon", variant: "outline" })}
           href="/"
+          prefetch={true}
         >
           <HomeIcon aria-hidden="true" />
           <span className="sr-only">{t("Home page")}</span>

@@ -57,7 +57,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
 
       <ProtectedSection
         actions={
-          <Link className={cn(buttonVariants())} href="/login">
+          <Link className={cn(buttonVariants())} href="/login" prefetch={true}>
             {t("Login")}
           </Link>
         }
