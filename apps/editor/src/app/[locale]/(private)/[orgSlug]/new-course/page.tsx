@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
+import { cacheLife, cacheTag } from "next/cache";
 import { getExtracted } from "next-intl/server";
 import { CreateCourseWizard } from "./create-course-wizard";
 
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/[orgSlug]/new-course">): Promise<Metadata> {
+  "use cache";
+
   const { locale } = await params;
   const t = await getExtracted({ locale });
+
+  cacheLife("max");
+  cacheTag(locale);
 
   return { title: t("Create course") };
 }
