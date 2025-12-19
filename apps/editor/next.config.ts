@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     staleTimes: {
       dynamic: 300,
     },
-    turbopackFileSystemCacheForDev: true,
+    turbopackFileSystemCacheForBuild: true,
     typedEnv: true,
   },
   images: {
@@ -23,13 +23,6 @@ const nextConfig: NextConfig = {
     ],
   },
   reactCompiler: true,
-  transpilePackages: [
-    "@zoonk/auth",
-    "@zoonk/core",
-    "@zoonk/next",
-    "@zoonk/ui",
-    "@zoonk/utils",
-  ],
   typedRoutes: true,
 };
 

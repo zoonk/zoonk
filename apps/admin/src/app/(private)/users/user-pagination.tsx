@@ -46,7 +46,7 @@ function getVisiblePageNumbers(
 function addEllipsesToPages(pageNumbers: number[]): (number | "ellipsis")[] {
   return pageNumbers.flatMap((pageNumber, index, allPages) => {
     const previousPage = allPages[index - 1];
-    const hasGap = index > 0 && pageNumber - previousPage > 1;
+    const hasGap = previousPage !== undefined && pageNumber - previousPage > 1;
     return hasGap ? (["ellipsis", pageNumber] as const) : [pageNumber];
   });
 }
