@@ -199,6 +199,11 @@ msgid "You can't edit courses for this organization. Log in with another account
 msgstr "No puedes editar cursos para esta organización. Inicia sesión con otra cuenta o cambia a una organización diferente."
 
 #: src/app/[locale]/unauthorized.tsx
+msgctxt "AyGauy"
+msgid "Login"
+msgstr "Iniciar sesión"
+
+#: src/app/[locale]/unauthorized.tsx
 #: src/components/navbar/logout-menu-item.tsx
 msgctxt "C81/uG"
 msgid "Logout"
