@@ -12,11 +12,16 @@ import {
 import { cacheTagLogin } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 import { getExtracted, setRequestLocale } from "next-intl/server";
+import { Suspense } from "react";
 import { sendVerificationOTPAction } from "./actions";
 import LoginContainer from "./login-container";
 import { SocialLogin } from "./social-login";
 
-export default async function Login({ params }: PageProps<"/[locale]/login">) {
+async function Login({
+  params,
+}: {
+  params: PageProps<"/[locale]/login">["params"];
+}) {
   "use cache";
 
   const { locale } = await params;
@@ -28,7 +33,7 @@ export default async function Login({ params }: PageProps<"/[locale]/login">) {
   cacheTag(locale, cacheTagLogin());
 
   return (
-    <LoginContainer>
+    <>
       <LoginHeader>
         <LoginTitle>{t("Sign in")}</LoginTitle>
         <LoginDescription>
@@ -48,6 +53,16 @@ export default async function Login({ params }: PageProps<"/[locale]/login">) {
 
         <LoginSubmit>{t("Continue")}</LoginSubmit>
       </LoginForm>
+    </>
+  );
+}
+
+export default function LoginPage({ params }: PageProps<"/[locale]/login">) {
+  return (
+    <LoginContainer>
+      <Suspense fallback={null}>
+        <Login params={params} />
+      </Suspense>
     </LoginContainer>
   );
 }
