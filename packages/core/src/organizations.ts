@@ -52,31 +52,33 @@ export const getOrganizationBySlug = cache(
   },
 );
 
-export async function hasCoursePermission(opts: {
-  permission: CoursePermission;
-  headers?: Headers;
-  orgId?: number;
-  orgSlug?: string;
-}): Promise<boolean> {
-  const organizationId = await getOrganizationId(opts);
+export const hasCoursePermission = cache(
+  async (opts: {
+    permission: CoursePermission;
+    headers?: Headers;
+    orgId?: number;
+    orgSlug?: string;
+  }): Promise<boolean> => {
+    const organizationId = await getOrganizationId(opts);
 
-  if (!organizationId) {
-    return false;
-  }
+    if (!organizationId) {
+      return false;
+    }
 
-  const { data } = await safeAsync(async () =>
-    auth.api.hasPermission({
-      body: {
-        organizationId: String(organizationId),
-        permissions: { course: [opts.permission] },
-      },
-      headers: opts.headers ?? (await headers()),
-    }),
-  );
+    const { data } = await safeAsync(async () =>
+      auth.api.hasPermission({
+        body: {
+          organizationId: String(organizationId),
+          permissions: { course: [opts.permission] },
+        },
+        headers: opts.headers ?? (await headers()),
+      }),
+    );
 
-  if (!data) {
-    return false;
-  }
+    if (!data) {
+      return false;
+    }
 
-  return data.success;
-}
+    return data.success;
+  },
+);
