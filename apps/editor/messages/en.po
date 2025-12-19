@@ -193,36 +193,6 @@ msgctxt "R85gsW"
 msgid "Courses"
 msgstr "Courses"
 
-#: src/app/[locale]/(private)/organization-list.tsx
-msgctxt "p4BgKL"
-msgid "You're not part of any organization yet"
-msgstr "You're not part of any organization yet"
-
-#: src/app/[locale]/(private)/organization-list.tsx
-msgctxt "sFoGzO"
-msgid "No organizations"
-msgstr "No organizations"
-
-#: src/app/[locale]/(private)/page.tsx
-msgctxt "AyGauy"
-msgid "Login"
-msgstr "Login"
-
-#: src/app/[locale]/(private)/page.tsx
-msgctxt "jflB8q"
-msgid "Choose an organization to manage its courses"
-msgstr "Choose an organization to manage its courses"
-
-#: src/app/[locale]/(private)/page.tsx
-msgctxt "MPQ0kS"
-msgid "Select an organization"
-msgstr "Select an organization"
-
-#: src/app/[locale]/(private)/page.tsx
-msgctxt "yOFm9C"
-msgid "You need to be logged in to access this page."
-msgstr "You need to be logged in to access this page."
-
 #: src/app/[locale]/unauthorized.tsx
 msgctxt "Ajg4UO"
 msgid "You can't edit courses for this organization. Log in with another account or switch to a different organization."
