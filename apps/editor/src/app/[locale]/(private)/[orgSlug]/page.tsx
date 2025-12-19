@@ -20,8 +20,13 @@ import { CourseList, CourseListSkeleton } from "./course-list";
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/[orgSlug]">): Promise<Metadata> {
-  const { orgSlug } = await params;
+  "use cache";
+
+  const { locale, orgSlug } = await params;
   const { data: org } = await getOrganizationBySlug(orgSlug);
+
+  cacheLife("max");
+  cacheTag(locale, cacheTagOrg({ orgSlug }));
 
   if (!org) {
     return {};
