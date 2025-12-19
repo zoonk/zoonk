@@ -65,7 +65,10 @@ export async function CourseList({
         <Item
           key={course.id}
           render={
-            <Link href={`/${orgSlug}/c/${course.language}/${course.slug}`} />
+            <Link
+              href={`/${orgSlug}/c/${course.language}/${course.slug}`}
+              prefetch={true}
+            />
           }
         >
           {course.imageUrl ? (
