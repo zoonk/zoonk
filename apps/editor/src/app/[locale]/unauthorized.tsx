@@ -1,3 +1,4 @@
+import { getSession } from "@zoonk/core/users";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,
@@ -12,6 +13,8 @@ import { Link } from "@/i18n/navigation";
 
 export default async function Unauthorized() {
   const t = await getExtracted();
+
+  const session = await getSession();
 
   return (
     <Container variant="centered">
@@ -28,9 +31,15 @@ export default async function Unauthorized() {
       </ContainerHeader>
 
       <ContainerBody className="justify-end">
-        <Link className={buttonVariants()} href="/logout" prefetch={false}>
-          {t("Logout")}
-        </Link>
+        {session ? (
+          <Link className={buttonVariants()} href="/logout" prefetch={false}>
+            {t("Logout")}
+          </Link>
+        ) : (
+          <Link className={buttonVariants()} href="/login" prefetch={true}>
+            {t("Login")}
+          </Link>
+        )}
       </ContainerBody>
     </Container>
   );

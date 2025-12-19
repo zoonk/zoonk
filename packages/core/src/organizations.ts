@@ -10,6 +10,25 @@ import type { AuthOrganization, Organization } from "./types";
 
 export type { CoursePermission } from "@zoonk/auth/permissions";
 
+async function getOrganizationId({
+  orgId,
+  orgSlug,
+}: {
+  orgId?: number;
+  orgSlug?: string;
+}): Promise<number | null> {
+  if (orgId) {
+    return orgId;
+  }
+
+  if (orgSlug) {
+    const { data: org } = await getOrganizationBySlug(orgSlug);
+    return org?.id ?? null;
+  }
+
+  return null;
+}
+
 export function findOrganizationById(
   orgs: Organization[] | AuthOrganization[],
   orgId?: string | null,
@@ -33,24 +52,33 @@ export const getOrganizationBySlug = cache(
   },
 );
 
-export async function hasCoursePermission(
-  organizationId: number,
-  permission: CoursePermission,
-  opts?: { headers?: Headers },
-): Promise<boolean> {
-  const { data } = await safeAsync(async () =>
-    auth.api.hasPermission({
-      body: {
-        organizationId: String(organizationId),
-        permissions: { course: [permission] },
-      },
-      headers: opts?.headers ?? (await headers()),
-    }),
-  );
+export const hasCoursePermission = cache(
+  async (opts: {
+    permission: CoursePermission;
+    headers?: Headers;
+    orgId?: number;
+    orgSlug?: string;
+  }): Promise<boolean> => {
+    const organizationId = await getOrganizationId(opts);
 
-  if (!data) {
-    return false;
-  }
+    if (!organizationId) {
+      return false;
+    }
 
-  return data.success;
-}
+    const { data } = await safeAsync(async () =>
+      auth.api.hasPermission({
+        body: {
+          organizationId: String(organizationId),
+          permissions: { course: [opts.permission] },
+        },
+        headers: opts.headers ?? (await headers()),
+      }),
+    );
+
+    if (!data) {
+      return false;
+    }
+
+    return data.success;
+  },
+);

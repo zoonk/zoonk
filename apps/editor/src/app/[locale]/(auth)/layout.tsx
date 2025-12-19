@@ -5,12 +5,14 @@ import { cacheTagLogin } from "@zoonk/utils/cache";
 import { HomeIcon } from "lucide-react";
 import { cacheLife, cacheTag } from "next/cache";
 import { getExtracted, setRequestLocale } from "next-intl/server";
+import { Suspense } from "react";
 import { Link } from "@/i18n/navigation";
 
-export default async function AuthLayout({
-  children,
+async function AuthLinks({
   params,
-}: LayoutProps<"/[locale]">) {
+}: {
+  params: LayoutProps<"/[locale]">["params"];
+}) {
   "use cache";
 
   const { locale } = await params;
@@ -22,15 +24,30 @@ export default async function AuthLayout({
   const t = await getExtracted();
 
   return (
+    <Link
+      className={buttonVariants({ size: "icon", variant: "outline" })}
+      href="/"
+      prefetch={true}
+    >
+      <HomeIcon aria-hidden="true" />
+      <span className="sr-only">{t("Home page")}</span>
+    </Link>
+  );
+}
+
+export default function Layout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: LayoutProps<"/[locale]">["params"];
+}) {
+  return (
     <Container variant="centered">
       <LoginNav>
-        <Link
-          className={buttonVariants({ size: "icon", variant: "outline" })}
-          href="/"
-        >
-          <HomeIcon aria-hidden="true" />
-          <span className="sr-only">{t("Home page")}</span>
-        </Link>
+        <Suspense fallback={null}>
+          <AuthLinks params={params} />
+        </Suspense>
       </LoginNav>
 
       {children}

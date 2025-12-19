@@ -9,11 +9,10 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { cacheTagOrg, cacheTagOrgCourses } from "@zoonk/utils/cache";
+import { cacheTagOrg } from "@zoonk/utils/cache";
 import { PlusIcon } from "lucide-react";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { notFound } from "next/navigation";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { Link } from "@/i18n/navigation";
@@ -22,7 +21,7 @@ import { CourseList, CourseListSkeleton } from "./course-list";
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/[orgSlug]">): Promise<Metadata> {
-  "use cache: remote";
+  "use cache";
 
   const { locale, orgSlug } = await params;
   const { data: org } = await getOrganizationBySlug(orgSlug);
@@ -37,48 +36,62 @@ export async function generateMetadata({
   return { title: org.name };
 }
 
+async function HomeContainerHeader({
+  params,
+}: {
+  params: PageProps<"/[locale]/[orgSlug]">["params"];
+}) {
+  "use cache";
+
+  const { locale, orgSlug } = await params;
+  setRequestLocale(locale);
+
+  cacheLife("max");
+  cacheTag(locale, cacheTagOrg({ orgSlug }));
+
+  const t = await getExtracted();
+
+  return (
+    <ContainerHeader>
+      <ContainerHeaderGroup>
+        <ContainerTitle>{t("Courses")}</ContainerTitle>
+        <ContainerDescription>
+          {t("Select a course to edit its content")}
+        </ContainerDescription>
+      </ContainerHeaderGroup>
+
+      <ContainerActions>
+        <ContainerAction
+          icon={PlusIcon}
+          render={<Link href={`/${orgSlug}/new-course`} prefetch={true} />}
+        >
+          {t("Create course")}
+        </ContainerAction>
+      </ContainerActions>
+    </ContainerHeader>
+  );
+}
+
+async function ListCourses({
+  params,
+}: {
+  params: PageProps<"/[locale]/[orgSlug]">["params"];
+}) {
+  const { locale, orgSlug } = await params;
+  const { data: courses } = await listOrganizationCourses({ orgSlug });
+
+  return <CourseList courses={courses} locale={locale} orgSlug={orgSlug} />;
+}
+
 export default async function OrgHomePage({
   params,
 }: PageProps<"/[locale]/[orgSlug]">) {
-  "use cache: remote";
-
-  const { locale, orgSlug } = await params;
-  const { data: org } = await getOrganizationBySlug(orgSlug);
-
-  if (!org) {
-    notFound();
-  }
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagOrg({ orgSlug }), cacheTagOrgCourses({ orgSlug }));
-
-  setRequestLocale(locale);
-  const t = await getExtracted();
-
-  const { data: orgCourses } = await listOrganizationCourses(org.id);
-
   return (
     <Container variant="list">
-      <ContainerHeader>
-        <ContainerHeaderGroup>
-          <ContainerTitle>{t("Courses")}</ContainerTitle>
-          <ContainerDescription>
-            {t("Select a course to edit its content")}
-          </ContainerDescription>
-        </ContainerHeaderGroup>
-
-        <ContainerActions>
-          <ContainerAction
-            icon={PlusIcon}
-            render={<Link href={`/${orgSlug}/new-course`} />}
-          >
-            {t("Create course")}
-          </ContainerAction>
-        </ContainerActions>
-      </ContainerHeader>
+      <HomeContainerHeader params={params} />
 
       <Suspense fallback={<CourseListSkeleton />}>
-        <CourseList courses={orgCourses} orgSlug={org.slug} />
+        <ListCourses params={params} />
       </Suspense>
     </Container>
   );

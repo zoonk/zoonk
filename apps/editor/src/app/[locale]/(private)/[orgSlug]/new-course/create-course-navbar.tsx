@@ -39,6 +39,7 @@ export function CreateCourseNavbar({
         <Link
           className={buttonVariants({ size: "icon", variant: "secondary" })}
           href={`/${orgSlug}`}
+          prefetch={true}
         >
           <XIcon aria-hidden="true" />
           <span className="sr-only">{t("Close")}</span>

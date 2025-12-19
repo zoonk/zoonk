@@ -6,7 +6,7 @@ import {
 import { headers } from "next/headers";
 import { notFound, unauthorized } from "next/navigation";
 import { Suspense } from "react";
-import { EditorNavbar } from "./navbar";
+import { EditorNavbar } from "@/components/navbar";
 
 async function LayoutPermissions({
   children,
@@ -16,25 +16,28 @@ async function LayoutPermissions({
   params: LayoutProps<"/[locale]/[orgSlug]">["params"];
 }) {
   const { orgSlug } = await params;
-  const { data: org } = await getOrganizationBySlug(orgSlug);
+  const [org, canViewPage] = await Promise.all([
+    getOrganizationBySlug(orgSlug),
+    hasCoursePermission({
+      orgSlug,
+      permission: "update",
+    }),
+    // We're setting the current org as the active one,
+    // so we can automatically redirect users to this org
+    // next time they visit the editor
+    auth.api.setActiveOrganization({
+      body: { organizationSlug: orgSlug },
+      headers: await headers(),
+    }),
+  ]);
 
-  if (!org) {
+  if (!org.data) {
     return notFound();
   }
-
-  const canViewPage = await hasCoursePermission(org.id, "update");
 
   if (!canViewPage) {
     return unauthorized();
   }
-
-  // We're setting the current org as the active one,
-  // so we can automatically redirect users to this org
-  // next time they visit the editor
-  await auth.api.setActiveOrganization({
-    body: { organizationSlug: orgSlug },
-    headers: await headers(),
-  });
 
   return <div>{children}</div>;
 }

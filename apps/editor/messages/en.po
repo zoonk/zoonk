@@ -6,7 +6,7 @@ msgstr ""
 "X-Generator: next-intl\n"
 
 #: src/app/[locale]/(auth)/layout.tsx
-#: src/app/[locale]/(private)/[orgSlug]/navbar.tsx
+#: src/components/navbar/index.tsx
 msgctxt "U3l+Q9"
 msgid "Home page"
 msgstr "Home page"
@@ -86,17 +86,6 @@ msgstr "Your organization hasn't created any courses yet."
 msgctxt "zJxO2f"
 msgid "No courses"
 msgstr "No courses"
-
-#: src/app/[locale]/(private)/[orgSlug]/locale-switcher.tsx
-msgctxt "y1Z3or"
-msgid "Language"
-msgstr "Language"
-
-#: src/app/[locale]/(private)/[orgSlug]/logout-menu-item.tsx
-#: src/app/[locale]/unauthorized.tsx
-msgctxt "C81/uG"
-msgid "Logout"
-msgstr "Logout"
 
 #: src/app/[locale]/(private)/[orgSlug]/new-course/actions.ts
 msgctxt "/c3jWN"
@@ -194,16 +183,6 @@ msgctxt "lP29gk"
 msgid "A course with this URL already exists"
 msgstr "A course with this URL already exists"
 
-#: src/app/[locale]/(private)/[orgSlug]/org-switcher.tsx
-msgctxt "JD2pwH"
-msgid "Organizations"
-msgstr "Organizations"
-
-#: src/app/[locale]/(private)/[orgSlug]/org-switcher.tsx
-msgctxt "NI1jZo"
-msgid "No other organizations"
-msgstr "No other organizations"
-
 #: src/app/[locale]/(private)/[orgSlug]/page.tsx
 msgctxt "6gzGoI"
 msgid "Select a course to edit its content"
@@ -214,42 +193,38 @@ msgctxt "R85gsW"
 msgid "Courses"
 msgstr "Courses"
 
-#: src/app/[locale]/(private)/organization-list.tsx
-msgctxt "p4BgKL"
-msgid "You're not part of any organization yet"
-msgstr "You're not part of any organization yet"
-
-#: src/app/[locale]/(private)/organization-list.tsx
-msgctxt "sFoGzO"
-msgid "No organizations"
-msgstr "No organizations"
-
-#: src/app/[locale]/(private)/page.tsx
-msgctxt "AyGauy"
-msgid "Login"
-msgstr "Login"
-
-#: src/app/[locale]/(private)/page.tsx
-msgctxt "jflB8q"
-msgid "Choose an organization to manage its courses"
-msgstr "Choose an organization to manage its courses"
-
-#: src/app/[locale]/(private)/page.tsx
-msgctxt "MPQ0kS"
-msgid "Select an organization"
-msgstr "Select an organization"
-
-#: src/app/[locale]/(private)/page.tsx
-msgctxt "yOFm9C"
-msgid "You need to be logged in to access this page."
-msgstr "You need to be logged in to access this page."
-
 #: src/app/[locale]/unauthorized.tsx
 msgctxt "Ajg4UO"
 msgid "You can't edit courses for this organization. Log in with another account or switch to a different organization."
 msgstr "You can't edit courses for this organization. Log in with another account or switch to a different organization."
 
 #: src/app/[locale]/unauthorized.tsx
+msgctxt "AyGauy"
+msgid "Login"
+msgstr "Login"
+
+#: src/app/[locale]/unauthorized.tsx
+#: src/components/navbar/logout-menu-item.tsx
+msgctxt "C81/uG"
+msgid "Logout"
+msgstr "Logout"
+
+#: src/app/[locale]/unauthorized.tsx
 msgctxt "gNtXZ8"
 msgid "401 - Unauthorized"
 msgstr "401 - Unauthorized"
+
+#: src/components/navbar/locale-switcher.tsx
+msgctxt "y1Z3or"
+msgid "Language"
+msgstr "Language"
+
+#: src/components/navbar/org-switcher.tsx
+msgctxt "JD2pwH"
+msgid "Organizations"
+msgstr "Organizations"
+
+#: src/components/navbar/org-switcher.tsx
+msgctxt "NI1jZo"
+msgid "No other organizations"
+msgstr "No other organizations"

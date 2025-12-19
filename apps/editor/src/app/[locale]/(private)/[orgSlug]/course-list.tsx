@@ -9,20 +9,17 @@ import {
 } from "@zoonk/ui/components/item";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { EmptyView } from "@zoonk/ui/patterns/empty";
+import { cacheTagOrgCourses } from "@zoonk/utils/cache";
 import { ChevronRightIcon, NotebookPenIcon } from "lucide-react";
+import { cacheLife, cacheTag } from "next/cache";
 import Image from "next/image";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-
-type CourseListProps = {
-  orgSlug: string;
-  courses: Course[];
-};
 
 export function CourseListSkeleton() {
   return (
     <ItemGroup>
-      {Array.from({ length: 3 }).map((_, index) => (
+      {Array.from({ length: 10 }).map((_, index) => (
         <Item key={index}>
           <ItemMedia variant="image">
             <Skeleton className="size-10" />
@@ -45,7 +42,21 @@ export function CourseListSkeleton() {
   );
 }
 
-export async function CourseList({ orgSlug, courses }: CourseListProps) {
+export async function CourseList({
+  locale,
+  orgSlug,
+  courses,
+}: {
+  locale: string;
+  orgSlug: string;
+  courses: Course[];
+}) {
+  "use cache";
+
+  setRequestLocale(locale);
+  cacheLife("max");
+  cacheTag(locale, cacheTagOrgCourses({ orgSlug }));
+
   const t = await getExtracted();
 
   if (courses.length === 0) {
@@ -64,7 +75,10 @@ export async function CourseList({ orgSlug, courses }: CourseListProps) {
         <Item
           key={course.id}
           render={
-            <Link href={`/${orgSlug}/c/${course.language}/${course.slug}`} />
+            <Link
+              href={`/${orgSlug}/c/${course.language}/${course.slug}`}
+              prefetch={true}
+            />
           }
         >
           {course.imageUrl ? (

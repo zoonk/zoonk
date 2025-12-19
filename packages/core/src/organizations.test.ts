@@ -25,23 +25,31 @@ describe("getOrganizationBySlug()", () => {
 
 describe("hasCoursePermission()", () => {
   describe("unauthenticated users", () => {
-    test("returns false for any permission", async () => {
+    test("returns false for any permission using orgId", async () => {
       const organization = await organizationFixture();
 
-      const canCreate = await hasCoursePermission(organization.id, "create", {
+      const canCreate = await hasCoursePermission({
         headers: new Headers(),
+        orgId: organization.id,
+        permission: "create",
       });
 
-      const canRead = await hasCoursePermission(organization.id, "read", {
+      const canRead = await hasCoursePermission({
         headers: new Headers(),
+        orgId: organization.id,
+        permission: "read",
       });
 
-      const canUpdate = await hasCoursePermission(organization.id, "update", {
+      const canUpdate = await hasCoursePermission({
         headers: new Headers(),
+        orgId: organization.id,
+        permission: "update",
       });
 
-      const canDelete = await hasCoursePermission(organization.id, "delete", {
+      const canDelete = await hasCoursePermission({
         headers: new Headers(),
+        orgId: organization.id,
+        permission: "delete",
       });
 
       expect(canCreate).toBe(false);
@@ -49,14 +57,45 @@ describe("hasCoursePermission()", () => {
       expect(canUpdate).toBe(false);
       expect(canDelete).toBe(false);
     });
+
+    test("returns false for any permission using orgSlug", async () => {
+      const organization = await organizationFixture();
+
+      const canCreate = await hasCoursePermission({
+        headers: new Headers(),
+        orgSlug: organization.slug,
+        permission: "create",
+      });
+
+      const canRead = await hasCoursePermission({
+        headers: new Headers(),
+        orgSlug: organization.slug,
+        permission: "read",
+      });
+
+      expect(canCreate).toBe(false);
+      expect(canRead).toBe(false);
+    });
+
+    test("returns false when orgSlug does not exist", async () => {
+      const canCreate = await hasCoursePermission({
+        headers: new Headers(),
+        orgSlug: "non-existent-slug",
+        permission: "create",
+      });
+
+      expect(canCreate).toBe(false);
+    });
   });
 
   describe("member role", () => {
     test("can read courses", async () => {
       const { organization, user } = await memberFixture({ role: "member" });
       const headers = await signInAs(user.email, user.password);
-      const canRead = await hasCoursePermission(organization.id, "read", {
+      const canRead = await hasCoursePermission({
         headers,
+        orgId: organization.id,
+        permission: "read",
       });
 
       expect(canRead).toBe(true);
@@ -65,8 +104,10 @@ describe("hasCoursePermission()", () => {
     test("cannot create courses", async () => {
       const { organization, user } = await memberFixture({ role: "member" });
       const headers = await signInAs(user.email, user.password);
-      const canCreate = await hasCoursePermission(organization.id, "create", {
+      const canCreate = await hasCoursePermission({
         headers,
+        orgId: organization.id,
+        permission: "create",
       });
 
       expect(canCreate).toBe(false);
@@ -75,8 +116,10 @@ describe("hasCoursePermission()", () => {
     test("cannot update courses", async () => {
       const { organization, user } = await memberFixture({ role: "member" });
       const headers = await signInAs(user.email, user.password);
-      const canUpdate = await hasCoursePermission(organization.id, "update", {
+      const canUpdate = await hasCoursePermission({
         headers,
+        orgId: organization.id,
+        permission: "update",
       });
 
       expect(canUpdate).toBe(false);
@@ -85,8 +128,10 @@ describe("hasCoursePermission()", () => {
     test("cannot delete courses", async () => {
       const { organization, user } = await memberFixture({ role: "member" });
       const headers = await signInAs(user.email, user.password);
-      const canDelete = await hasCoursePermission(organization.id, "delete", {
+      const canDelete = await hasCoursePermission({
         headers,
+        orgId: organization.id,
+        permission: "delete",
       });
 
       expect(canDelete).toBe(false);
@@ -97,8 +142,10 @@ describe("hasCoursePermission()", () => {
     test("can create courses", async () => {
       const { organization, user } = await memberFixture({ role: "admin" });
       const headers = await signInAs(user.email, user.password);
-      const canCreate = await hasCoursePermission(organization.id, "create", {
+      const canCreate = await hasCoursePermission({
         headers,
+        orgId: organization.id,
+        permission: "create",
       });
 
       expect(canCreate).toBe(true);
@@ -107,8 +154,10 @@ describe("hasCoursePermission()", () => {
     test("can read courses", async () => {
       const { organization, user } = await memberFixture({ role: "admin" });
       const headers = await signInAs(user.email, user.password);
-      const canRead = await hasCoursePermission(organization.id, "read", {
+      const canRead = await hasCoursePermission({
         headers,
+        orgId: organization.id,
+        permission: "read",
       });
 
       expect(canRead).toBe(true);
@@ -117,8 +166,10 @@ describe("hasCoursePermission()", () => {
     test("can update courses", async () => {
       const { organization, user } = await memberFixture({ role: "admin" });
       const headers = await signInAs(user.email, user.password);
-      const canUpdate = await hasCoursePermission(organization.id, "update", {
+      const canUpdate = await hasCoursePermission({
         headers,
+        orgId: organization.id,
+        permission: "update",
       });
 
       expect(canUpdate).toBe(true);
@@ -127,8 +178,10 @@ describe("hasCoursePermission()", () => {
     test("cannot delete courses", async () => {
       const { organization, user } = await memberFixture({ role: "admin" });
       const headers = await signInAs(user.email, user.password);
-      const canDelete = await hasCoursePermission(organization.id, "delete", {
+      const canDelete = await hasCoursePermission({
         headers,
+        orgId: organization.id,
+        permission: "delete",
       });
 
       expect(canDelete).toBe(false);
@@ -139,8 +192,10 @@ describe("hasCoursePermission()", () => {
     test("can create courses", async () => {
       const { organization, user } = await memberFixture({ role: "owner" });
       const headers = await signInAs(user.email, user.password);
-      const canCreate = await hasCoursePermission(organization.id, "create", {
+      const canCreate = await hasCoursePermission({
         headers,
+        orgId: organization.id,
+        permission: "create",
       });
 
       expect(canCreate).toBe(true);
@@ -149,8 +204,10 @@ describe("hasCoursePermission()", () => {
     test("can read courses", async () => {
       const { organization, user } = await memberFixture({ role: "owner" });
       const headers = await signInAs(user.email, user.password);
-      const canRead = await hasCoursePermission(organization.id, "read", {
+      const canRead = await hasCoursePermission({
         headers,
+        orgId: organization.id,
+        permission: "read",
       });
 
       expect(canRead).toBe(true);
@@ -159,8 +216,10 @@ describe("hasCoursePermission()", () => {
     test("can update courses", async () => {
       const { organization, user } = await memberFixture({ role: "owner" });
       const headers = await signInAs(user.email, user.password);
-      const canUpdate = await hasCoursePermission(organization.id, "update", {
+      const canUpdate = await hasCoursePermission({
         headers,
+        orgId: organization.id,
+        permission: "update",
       });
 
       expect(canUpdate).toBe(true);
@@ -169,8 +228,10 @@ describe("hasCoursePermission()", () => {
     test("can delete courses", async () => {
       const { organization, user } = await memberFixture({ role: "owner" });
       const headers = await signInAs(user.email, user.password);
-      const canDelete = await hasCoursePermission(organization.id, "delete", {
+      const canDelete = await hasCoursePermission({
         headers,
+        orgId: organization.id,
+        permission: "delete",
       });
 
       expect(canDelete).toBe(true);

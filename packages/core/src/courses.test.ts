@@ -13,13 +13,39 @@ import {
 } from "./courses";
 
 describe("listOrganizationCourses()", () => {
-  test("returns list of courses for an org", async () => {
+  test("returns Forbidden error when session is invalid", async () => {
     const organization = await organizationFixture();
-    const author = await userFixture();
+
+    const result = await listOrganizationCourses({
+      headers: new Headers(),
+      orgSlug: organization.slug,
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toEqual([]);
+  });
+
+  test("returns Forbidden error when user is not a member of the organization", async () => {
+    const organization = await organizationFixture();
+    const { user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
+
+    const result = await listOrganizationCourses({
+      headers,
+      orgSlug: organization.slug,
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toEqual([]);
+  });
+
+  test("returns list of courses for an org", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         description: "Test description",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -30,7 +56,10 @@ describe("listOrganizationCourses()", () => {
       },
     });
 
-    const result = await listOrganizationCourses(organization.id);
+    const result = await listOrganizationCourses({
+      headers,
+      orgSlug: organization.slug,
+    });
 
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(1);
@@ -38,13 +67,13 @@ describe("listOrganizationCourses()", () => {
   });
 
   test("filters courses by language", async () => {
-    const organization = await organizationFixture();
-    const author = await userFixture();
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
 
     await prisma.course.createMany({
       data: [
         {
-          authorId: Number(author.id),
+          authorId: Number(user.id),
           description: "English course",
           imageUrl: "https://example.com/image.jpg",
           language: "en",
@@ -54,7 +83,7 @@ describe("listOrganizationCourses()", () => {
           title: "English Course",
         },
         {
-          authorId: Number(author.id),
+          authorId: Number(user.id),
           description: "Portuguese course",
           imageUrl: "https://example.com/image.jpg",
           language: "pt",
@@ -66,8 +95,10 @@ describe("listOrganizationCourses()", () => {
       ],
     });
 
-    const result = await listOrganizationCourses(organization.id, {
+    const result = await listOrganizationCourses({
+      headers,
       language: "en",
+      orgSlug: organization.slug,
     });
 
     expect(result.error).toBeNull();
@@ -76,12 +107,12 @@ describe("listOrganizationCourses()", () => {
   });
 
   test("limits results to the specified amount", async () => {
-    const organization = await organizationFixture();
-    const author = await userFixture();
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
 
     await prisma.course.createMany({
       data: Array.from({ length: 5 }, (_, i) => ({
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         description: `Course ${i} description`,
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -93,8 +124,10 @@ describe("listOrganizationCourses()", () => {
     });
 
     const customLimit = 3;
-    const result = await listOrganizationCourses(organization.id, {
+    const result = await listOrganizationCourses({
+      headers,
       limit: customLimit,
+      orgSlug: organization.slug,
     });
 
     expect(result.error).toBeNull();
@@ -102,12 +135,12 @@ describe("listOrganizationCourses()", () => {
   });
 
   test("uses default limit of 20", async () => {
-    const organization = await organizationFixture();
-    const author = await userFixture();
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
 
     await prisma.course.createMany({
       data: Array.from({ length: 25 }, (_, i) => ({
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         description: `Course ${i} description`,
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -118,19 +151,22 @@ describe("listOrganizationCourses()", () => {
       })),
     });
 
-    const result = await listOrganizationCourses(organization.id);
+    const result = await listOrganizationCourses({
+      headers,
+      orgSlug: organization.slug,
+    });
 
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(LIST_COURSES_LIMIT);
   });
 
   test("returns courses ordered by createdAt descending", async () => {
-    const organization = await organizationFixture();
-    const author = await userFixture();
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
 
     const oldCourse = await prisma.course.create({
       data: {
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         createdAt: new Date("2024-01-01"),
         description: "Old course",
         imageUrl: "https://example.com/image.jpg",
@@ -144,7 +180,7 @@ describe("listOrganizationCourses()", () => {
 
     const newCourse = await prisma.course.create({
       data: {
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         createdAt: new Date("2024-06-01"),
         description: "New course",
         imageUrl: "https://example.com/image.jpg",
@@ -156,7 +192,10 @@ describe("listOrganizationCourses()", () => {
       },
     });
 
-    const result = await listOrganizationCourses(organization.id);
+    const result = await listOrganizationCourses({
+      headers,
+      orgSlug: organization.slug,
+    });
 
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(2);

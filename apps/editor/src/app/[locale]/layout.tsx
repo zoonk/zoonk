@@ -7,7 +7,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://zoonk.com"),
+  metadataBase: new URL("https://editor.zoonk.com"),
   title: {
     default: "Zoonk Editor",
     template: "%s | Editor",
