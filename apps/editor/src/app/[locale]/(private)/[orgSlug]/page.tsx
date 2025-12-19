@@ -1,3 +1,4 @@
+import { listOrganizationCourses } from "@zoonk/core/courses";
 import { getOrganizationBySlug } from "@zoonk/core/organizations";
 import {
   Container,
@@ -71,6 +72,17 @@ async function HomeContainerHeader({
   );
 }
 
+async function ListCourses({
+  params,
+}: {
+  params: PageProps<"/[locale]/[orgSlug]">["params"];
+}) {
+  const { locale, orgSlug } = await params;
+  const { data: courses } = await listOrganizationCourses({ orgSlug });
+
+  return <CourseList courses={courses} locale={locale} orgSlug={orgSlug} />;
+}
+
 export default async function OrgHomePage({
   params,
 }: PageProps<"/[locale]/[orgSlug]">) {
@@ -79,7 +91,7 @@ export default async function OrgHomePage({
       <HomeContainerHeader params={params} />
 
       <Suspense fallback={<CourseListSkeleton />}>
-        <CourseList params={params} />
+        <ListCourses params={params} />
       </Suspense>
     </Container>
   );

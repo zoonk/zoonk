@@ -1,4 +1,5 @@
 import { listOrganizationCourses } from "@zoonk/core/courses";
+import type { Course } from "@zoonk/core/types";
 import {
   Item,
   ItemContent,
@@ -9,9 +10,11 @@ import {
 } from "@zoonk/ui/components/item";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { EmptyView } from "@zoonk/ui/patterns/empty";
+import { cacheTagOrgCourses } from "@zoonk/utils/cache";
 import { ChevronRightIcon, NotebookPenIcon } from "lucide-react";
+import { cacheLife, cacheTag } from "next/cache";
 import Image from "next/image";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 
 export function CourseListSkeleton() {
@@ -41,13 +44,21 @@ export function CourseListSkeleton() {
 }
 
 export async function CourseList({
-  params,
+  locale,
+  orgSlug,
+  courses,
 }: {
-  params: PageProps<"/[locale]/[orgSlug]">["params"];
+  locale: string;
+  orgSlug: string;
+  courses: Course[];
 }) {
-  const { orgSlug } = await params;
+  "use cache";
+
+  setRequestLocale(locale);
+  cacheLife("max");
+  cacheTag(locale, cacheTagOrgCourses({ orgSlug }));
+
   const t = await getExtracted();
-  const { data: courses } = await listOrganizationCourses({ orgSlug });
 
   if (courses.length === 0) {
     return (
