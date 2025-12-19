@@ -1,4 +1,7 @@
+import { getSession } from "@zoonk/core/users";
+import { FullPageLoading } from "@zoonk/ui/components/loading";
 import {
+  Login,
   LoginDescription,
   LoginDivider,
   LoginEmailInput,
@@ -13,11 +16,11 @@ import { cacheTagLogin } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
+import { redirect } from "@/i18n/navigation";
 import { sendVerificationOTPAction } from "./actions";
-import LoginContainer from "./login-container";
 import { SocialLogin } from "./social-login";
 
-async function Login({
+async function LoginView({
   params,
 }: {
   params: PageProps<"/[locale]/login">["params"];
@@ -57,12 +60,31 @@ async function Login({
   );
 }
 
+async function LoginPermissions({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: PageProps<"/[locale]/login">["params"];
+}) {
+  const { locale } = await params;
+  const session = await getSession();
+
+  if (session) {
+    redirect({ href: "/", locale });
+  }
+
+  return children;
+}
+
 export default function LoginPage({ params }: PageProps<"/[locale]/login">) {
   return (
-    <LoginContainer>
-      <Suspense fallback={null}>
-        <Login params={params} />
+    <Login>
+      <Suspense fallback={<FullPageLoading />}>
+        <LoginPermissions params={params}>
+          <LoginView params={params} />
+        </LoginPermissions>
       </Suspense>
-    </LoginContainer>
+    </Login>
   );
 }
