@@ -3,7 +3,6 @@
 import {
   useWizard,
   useWizardKeyboard,
-  Wizard,
   WizardContent,
 } from "@zoonk/ui/components/wizard";
 import { toSlug } from "@zoonk/utils/string";
@@ -75,7 +74,7 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
   });
 
   return (
-    <Wizard>
+    <>
       <CreateCourseNavbar
         canProceed={canProceed}
         currentStep={wizard.currentStep}
@@ -119,6 +118,6 @@ export function CreateCourseWizard({ orgSlug }: { orgSlug: string }) {
           />
         )}
       </WizardContent>
-    </Wizard>
+    </>
   );
 }

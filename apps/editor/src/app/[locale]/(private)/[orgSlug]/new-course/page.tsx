@@ -1,6 +1,8 @@
+import { Wizard } from "@zoonk/ui/components/wizard";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, setRequestLocale } from "next-intl/server";
+import { Suspense } from "react";
 import { CreateCourseWizard } from "./create-course-wizard";
 
 export async function generateMetadata({
@@ -17,10 +19,31 @@ export async function generateMetadata({
   return { title: t("Create course") };
 }
 
+async function WizardView({
+  params,
+}: {
+  params: PageProps<"/[locale]/[orgSlug]/new-course">["params"];
+}) {
+  "use cache";
+
+  const { locale, orgSlug } = await params;
+
+  cacheLife("max");
+  cacheTag(locale);
+
+  setRequestLocale(locale);
+
+  return <CreateCourseWizard orgSlug={orgSlug} />;
+}
+
 export default async function NewCoursePage({
   params,
 }: PageProps<"/[locale]/[orgSlug]/new-course">) {
-  const { orgSlug } = await params;
-
-  return <CreateCourseWizard orgSlug={orgSlug} />;
+  return (
+    <Wizard>
+      <Suspense fallback={null}>
+        <WizardView params={params} />
+      </Suspense>
+    </Wizard>
+  );
 }
