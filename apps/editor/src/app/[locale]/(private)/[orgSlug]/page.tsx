@@ -64,7 +64,7 @@ async function HomeContainerHeader({
       <ContainerActions>
         <ContainerAction
           icon={PlusIcon}
-          render={<Link href={`/${orgSlug}/new-course`} />}
+          render={<Link href={`/${orgSlug}/new-course`} prefetch={true} />}
         >
           {t("Create course")}
         </ContainerAction>
