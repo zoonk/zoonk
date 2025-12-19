@@ -11,8 +11,8 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { EmptyView } from "@zoonk/ui/patterns/empty";
 import { ChevronRightIcon, NotebookPenIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { getExtracted } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
 
 export function CourseListSkeleton() {
   return (
