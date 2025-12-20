@@ -33,9 +33,9 @@ after(async () => {
 
 The following environment variables must be set for cross-app revalidation to work:
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `REVALIDATE_SECRET` | Shared secret for authenticating revalidation requests between apps. Generate with `openssl rand -hex 32` | `a1b2c3d4e5f6...` |
-| `MAIN_APP_URL` | The URL of the main app | `https://zoonk.com` or `http://localhost:3000` |
+| Variable                   | Description                                                                                               | Example                                        |
+| -------------------------- | --------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `REVALIDATE_SECRET`        | Shared secret for authenticating revalidation requests between apps. Generate with `openssl rand -hex 32` | `a1b2c3d4e5f6...`                              |
+| `NEXT_PUBLIC_MAIN_APP_URL` | The URL of the main app                                                                                   | `https://zoonk.com` or `http://localhost:3000` |
 
 Both the `editor` app and the `main` app need `REVALIDATE_SECRET` set to the same value.

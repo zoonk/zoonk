@@ -37,7 +37,8 @@
       "next": "all",
       "project": "all",
       "react": "all",
-      "test": "all"
+      "test": "all",
+      "turborepo": "all"
     },
     "enabled": true,
     "rules": {
@@ -80,6 +81,7 @@
         "noScriptUrl": "error",
         "noShadow": "error",
         "noSyncScripts": "error",
+        "noUndeclaredEnvVars": "error",
         "noUnnecessaryConditions": "error",
         "noUnusedExpressions": "error",
         "noUselessCatchBinding": "error",
