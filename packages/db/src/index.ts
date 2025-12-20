@@ -17,10 +17,6 @@ if (process.env.NODE_ENV !== "production") {
 
 export type {
   Account,
-  ChangeComment,
-  ChangeStatus,
-  ContentChange,
-  ContentType,
   Course,
   CourseSuggestion,
   Invitation,

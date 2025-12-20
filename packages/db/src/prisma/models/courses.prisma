@@ -11,21 +11,20 @@ model CourseSuggestion {
 }
 
 model Course {
-  id              Int             @id @default(autoincrement())
-  organizationId  Int             @map("organization_id")
-  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  authorId        Int             @map("author_id")
-  author          User            @relation(fields: [authorId], references: [id])
-  isPublished     Boolean         @default(false) @map("is_published")
-  language        String          @db.VarChar(10)
+  id              Int          @id @default(autoincrement())
+  organizationId  Int          @map("organization_id")
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  authorId        Int?         @map("author_id")
+  author          User?        @relation(fields: [authorId], references: [id])
+  isPublished     Boolean      @default(false) @map("is_published")
+  language        String       @db.VarChar(10)
   slug            String
   title           String
-  normalizedTitle String          @map("normalized_title")
+  normalizedTitle String       @map("normalized_title")
   description     String
-  imageUrl        String?         @map("image_url")
-  createdAt       DateTime        @default(now()) @map("created_at")
-  updatedAt       DateTime        @default(now()) @updatedAt @map("updated_at")
-  changes         ContentChange[]
+  imageUrl        String?      @map("image_url")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @default(now()) @updatedAt @map("updated_at")
 
   @@unique([organizationId, language, slug], name: "orgSlug")
   @@index([organizationId, language, isPublished])
