@@ -1,10 +1,12 @@
 import { getSession } from "@zoonk/core/users";
+import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { buildAuthLoginUrl } from "@zoonk/utils/auth-url";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import { LoginRedirect } from "./login-redirect";
 
-export default async function LoginPage() {
+async function LoginHandler() {
   const session = await getSession();
 
   if (session) {
@@ -19,4 +21,12 @@ export default async function LoginPage() {
   const authUrl = buildAuthLoginUrl({ callbackUrl });
 
   return <LoginRedirect url={authUrl} />;
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<FullPageLoading />}>
+      <LoginHandler />
+    </Suspense>
+  );
 }

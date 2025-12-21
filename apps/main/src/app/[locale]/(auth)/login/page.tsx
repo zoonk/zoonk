@@ -1,10 +1,12 @@
 import { getSession } from "@zoonk/core/users";
+import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { buildAuthLoginUrl } from "@zoonk/utils/auth-url";
 import { cacheTagLogin } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { headers } from "next/headers";
 import { getExtracted, getLocale } from "next-intl/server";
+import { Suspense } from "react";
 import { redirect } from "@/i18n/navigation";
 import { LoginRedirect } from "./login-redirect";
 
@@ -26,7 +28,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Login() {
+async function LoginHandler() {
   const session = await getSession();
   const locale = await getLocale();
 
@@ -42,4 +44,12 @@ export default async function Login() {
   const authUrl = buildAuthLoginUrl({ callbackUrl, locale });
 
   return <LoginRedirect url={authUrl} />;
+}
+
+export default function Login() {
+  return (
+    <Suspense fallback={<FullPageLoading />}>
+      <LoginHandler />
+    </Suspense>
+  );
 }
