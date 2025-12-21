@@ -13,88 +13,6 @@ msgctxt "U3l+Q9"
 msgid "Home page"
 msgstr "Página de inicio"
 
-#: src/app/[locale]/(auth)/login/page.tsx
-msgctxt "4wpUNc"
-msgid "Or"
-msgstr "O"
-
-#: src/app/[locale]/(auth)/login/page.tsx
-#: src/app/[locale]/(auth)/otp/otp-form.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "Continuar"
-
-#: src/app/[locale]/(auth)/login/page.tsx
-msgctxt "BQ8wka"
-msgid "Login to your account or create a new one to start using Zoonk."
-msgstr "Inicia sesión en tu cuenta o crea una nueva para empezar a usar Zoonk."
-
-#: src/app/[locale]/(auth)/login/page.tsx
-msgctxt "CoMQ1+"
-msgid "Continue with your email or a social account"
-msgstr "Continúa con tu correo electrónico o una cuenta social"
-
-#: src/app/[locale]/(auth)/login/page.tsx
-msgctxt "eN8MTJ"
-msgid "Sign in or create an account"
-msgstr "Inicia sesión o crea una cuenta"
-
-#: src/app/[locale]/(auth)/login/page.tsx
-msgctxt "Ju9oB+"
-msgid "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
-msgstr "Al hacer clic en Continuar, aceptas nuestros <terms>Términos de servicio</terms> y <privacy>Política de privacidad</privacy>."
-
-#: src/app/[locale]/(auth)/login/page.tsx
-msgctxt "od4A2z"
-msgid "Login or Sign Up"
-msgstr "Iniciar sesión o registrarse"
-
-#: src/app/[locale]/(auth)/login/page.tsx
-#: src/components/contact-form.tsx
-msgctxt "OiSL94"
-msgid "myemail@gmail.com"
-msgstr "miemail@gmail.com"
-
-#: src/app/[locale]/(auth)/login/page.tsx
-msgctxt "sy+pv5"
-msgid "Email"
-msgstr "Correo electrónico"
-
-#: src/app/[locale]/(auth)/login/social-login.tsx
-msgctxt "BmecBA"
-msgid "Continue with Apple"
-msgstr "Continuar con Apple"
-
-#: src/app/[locale]/(auth)/login/social-login.tsx
-msgctxt "FJ6r9E"
-msgid "Continue with Google"
-msgstr "Continuar con Google"
-
-#: src/app/[locale]/(auth)/login/social-login.tsx
-msgctxt "pN2p0t"
-msgid "There was an error signing you in. Please try again or contact hello@zoonk.com"
-msgstr "Hubo un error al iniciar sesión. Por favor, inténtalo de nuevo o contacta con contacto@zoonk.com"
-
-#: src/app/[locale]/(auth)/otp/otp-form.tsx
-msgctxt "HkHvQv"
-msgid "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
-msgstr "El código que ingresaste es incorrecto. Por favor, inténtalo de nuevo o contacta con contacto@zoonk.com"
-
-#: src/app/[locale]/(auth)/otp/page.tsx
-msgctxt "ChATeO"
-msgid "Change email"
-msgstr "Cambiar correo electrónico"
-
-#: src/app/[locale]/(auth)/otp/page.tsx
-msgctxt "LZHcmZ"
-msgid "Enter the code we sent to {email}:"
-msgstr "Ingresa el código que enviamos a {email}:"
-
-#: src/app/[locale]/(auth)/otp/page.tsx
-msgctxt "zx7CKB"
-msgid "Check your email"
-msgstr "Revisa tu correo electrónico"
-
 #: src/app/[locale]/(catalog)/courses/page.tsx
 msgctxt "P5jxUC"
 msgid "Online Courses using AI"
@@ -526,6 +444,11 @@ msgstr "Dirección de correo electrónico"
 msgctxt "M6PcEI"
 msgid "How can we help you?"
 msgstr "¿Cómo podemos ayudarte?"
+
+#: src/components/contact-form.tsx
+msgctxt "OiSL94"
+msgid "myemail@gmail.com"
+msgstr "miemail@gmail.com"
 
 #: src/components/contact-form.tsx
 msgctxt "T7Ry38"

@@ -5,7 +5,6 @@ import {
   OTPHeader,
   OTPTitle,
 } from "@zoonk/ui/patterns/auth/otp";
-import { sanitizeRedirectUrl } from "@zoonk/utils/auth-url";
 import { getExtracted } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { OTPForm } from "./otp-form";
@@ -15,11 +14,6 @@ export default async function OTPPage({
 }: PageProps<"/[locale]/otp">) {
   const { email, redirectTo } = await searchParams;
   const t = await getExtracted();
-
-  // Validate and sanitize the redirectTo parameter
-  const safeRedirectTo = sanitizeRedirectUrl(
-    redirectTo ? String(redirectTo) : undefined,
-  );
 
   return (
     <OTP>
@@ -31,13 +25,16 @@ export default async function OTPPage({
         </OTPDescription>
       </OTPHeader>
 
-      <OTPForm email={String(email)} redirectTo={safeRedirectTo ?? undefined} />
+      <OTPForm
+        email={String(email)}
+        redirectTo={redirectTo ? String(redirectTo) : undefined}
+      />
 
       <Link
         className={buttonVariants({ variant: "link" })}
         href={{
           pathname: "/login",
-          query: safeRedirectTo ? { redirectTo: safeRedirectTo } : undefined,
+          query: redirectTo ? { redirectTo: String(redirectTo) } : undefined,
         }}
       >
         {t("Change email")}
