@@ -3,12 +3,12 @@
     "@tabler/icons-react": "3.35.0",
     "@zoonk/auth": "workspace:*",
     "@zoonk/core": "workspace:*",
-    "@zoonk/db": "workspace:*",
+    "@zoonk/next": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "lucide-react": "0.556.0",
     "next": "16.1.0",
-    "nuqs": "2.7.3",
+    "next-intl": "4.6.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "server-only": "0.0.1"
@@ -21,14 +21,15 @@
     "babel-plugin-react-compiler": "1.0.0",
     "typescript": "^5"
   },
-  "name": "admin",
+  "name": "auth",
   "private": true,
   "scripts": {
     "analyze": "next experimental-analyze",
     "build": "next build",
-    "dev": "next dev -p 3001",
-    "start": "next start -p 3001",
+    "dev": "next dev -p 3004",
+    "start": "next start -p 3004",
     "typecheck": "next typegen && tsc --noEmit"
   },
+  "type": "module",
   "version": "0.1.0"
 }

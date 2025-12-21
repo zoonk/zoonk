@@ -16,15 +16,18 @@ type FormState = "idle" | "pending" | "error";
 
 type OTPFormProps = {
   email: string;
+  redirectTo?: string;
 };
 
-export function OTPForm({ email }: OTPFormProps) {
+export function OTPForm({ email, redirectTo }: OTPFormProps) {
   const { push } = useRouter();
   const t = useExtracted();
   const [state, setState] = useState<FormState>("idle");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setState("pending");
+
     const formData = new FormData(event.currentTarget);
     const otp = parseFormField(formData, "otp");
 
@@ -35,10 +38,24 @@ export function OTPForm({ email }: OTPFormProps) {
 
     const { data, error } = await authClient.signIn.emailOtp({ email, otp });
 
-    setState(error ? "error" : "idle");
+    if (error) {
+      setState("error");
+      return;
+    }
+
+    setState("idle");
 
     if (data) {
-      push("/");
+      // After successful login, redirect to callback to generate OTT
+      if (redirectTo) {
+        push({
+          pathname: "/callback",
+          query: { redirectTo },
+        });
+      } else {
+        // No redirect specified, just show success
+        push("/callback");
+      }
     }
   };
 

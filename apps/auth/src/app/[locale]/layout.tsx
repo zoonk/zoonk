@@ -1,0 +1,40 @@
+import type { Metadata } from "next";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
+
+import "@zoonk/ui/globals.css";
+import { notFound } from "next/navigation";
+import { routing } from "@/i18n/routing";
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://auth.zoonk.com"),
+  title: {
+    default: "Sign in to Zoonk",
+    template: "%s | Zoonk Auth",
+  },
+};
+
+export async function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
+}
+
+export default async function RootLayout({
+  children,
+  params,
+}: LayoutProps<"/[locale]">) {
+  const { locale } = await params;
+
+  if (!hasLocale(routing.locales, locale)) {
+    notFound();
+  }
+
+  setRequestLocale(locale);
+
+  return (
+    <html lang={locale}>
+      <body className="font-sans antialiased">
+        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+      </body>
+    </html>
+  );
+}

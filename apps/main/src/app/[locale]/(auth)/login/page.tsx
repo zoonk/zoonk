@@ -1,25 +1,11 @@
-"use cache";
-
-import {
-  LoginDescription,
-  LoginDivider,
-  LoginEmailInput,
-  LoginEmailLabel,
-  LoginField,
-  LoginFooter,
-  LoginForm,
-  LoginHeader,
-  LoginSubmit,
-  LoginTitle,
-} from "@zoonk/ui/patterns/auth/login";
+import { getSession } from "@zoonk/core/users";
+import { buildAuthLoginUrl } from "@zoonk/utils/auth-url";
 import { cacheTagLogin } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { getExtracted, setRequestLocale } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
-import { sendVerificationOTPAction } from "./actions";
-import LoginContainer from "./login-container";
-import { SocialLogin } from "./social-login";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { getExtracted, getLocale } from "next-intl/server";
 
 export async function generateMetadata({
   params,
@@ -39,46 +25,20 @@ export async function generateMetadata({
   };
 }
 
-export default async function Login({ params }: PageProps<"/[locale]/login">) {
-  const { locale } = await params;
-  setRequestLocale(locale);
+export default async function Login() {
+  const session = await getSession();
 
-  const t = await getExtracted();
+  if (session) {
+    redirect("/" as Parameters<typeof redirect>[0]);
+  }
 
-  cacheLife("max");
-  cacheTag(locale, cacheTagLogin());
+  const locale = await getLocale();
+  const headersList = await headers();
+  const host = headersList.get("host") || "zoonk.com";
+  const protocol = host.includes("localhost") ? "http" : "https";
+  const callbackUrl = `${protocol}://${host}/${locale}/auth/callback`;
 
-  return (
-    <LoginContainer>
-      <LoginHeader>
-        <LoginTitle>{t("Sign in or create an account")}</LoginTitle>
-        <LoginDescription>
-          {t("Continue with your email or a social account")}
-        </LoginDescription>
-      </LoginHeader>
+  const authUrl = buildAuthLoginUrl({ callbackUrl, locale });
 
-      <SocialLogin />
-
-      <LoginDivider>{t("Or")}</LoginDivider>
-
-      <LoginForm action={sendVerificationOTPAction}>
-        <LoginField>
-          <LoginEmailLabel>{t("Email")}</LoginEmailLabel>
-          <LoginEmailInput placeholder={t("myemail@gmail.com")} />
-        </LoginField>
-
-        <LoginSubmit>{t("Continue")}</LoginSubmit>
-      </LoginForm>
-
-      <LoginFooter>
-        {t.rich(
-          "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
-          {
-            privacy: (children) => <Link href="/privacy">{children}</Link>,
-            terms: (children) => <Link href="/terms">{children}</Link>,
-          },
-        )}
-      </LoginFooter>
-    </LoginContainer>
-  );
+  redirect(authUrl as Parameters<typeof redirect>[0]);
 }

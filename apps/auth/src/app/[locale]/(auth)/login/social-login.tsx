@@ -16,14 +16,26 @@ function getLoadingState(provider: "google" | "apple"): SocialState {
   return provider === "google" ? "loadingGoogle" : "loadingApple";
 }
 
-export function SocialLogin() {
+type SocialLoginProps = {
+  redirectTo?: string;
+};
+
+export function SocialLogin({ redirectTo }: SocialLoginProps) {
   const [state, setState] = useState<SocialState>("initial");
   const t = useExtracted();
 
   const signIn = async (provider: "google" | "apple") => {
     setState(getLoadingState(provider));
 
-    const { error } = await authClient.signIn.social({ provider });
+    // Build the callback URL to redirect after social login
+    const callbackURL = redirectTo
+      ? `/callback?redirectTo=${encodeURIComponent(redirectTo)}`
+      : "/callback";
+
+    const { error } = await authClient.signIn.social({
+      provider,
+      callbackURL,
+    });
 
     if (error) {
       console.error("Social login error:", error);

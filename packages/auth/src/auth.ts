@@ -5,6 +5,7 @@ import { nextCookies } from "better-auth/next-js";
 import {
   admin as adminPlugin,
   emailOTP,
+  oneTimeToken,
   organization,
 } from "better-auth/plugins";
 import type { BetterAuthOptions } from "better-auth/types";
@@ -77,7 +78,35 @@ export const auth = betterAuth({
       sendVerificationOTP,
       storeOTP: "hashed",
     }),
+    oneTimeToken({
+      storeToken: "hashed",
+    }),
     stripePlugin(),
+    // nextCookies should be the last plugin in the array
+    nextCookies(),
+  ],
+  socialProviders: {
+    ...appleProvider,
+    ...googleProvider,
+  },
+});
+
+/**
+ * Auth instance with One-Time Token plugin for the centralized auth app.
+ * This is used to generate OTT tokens that can be verified by other apps.
+ */
+export const authWithOTT = betterAuth({
+  ...baseAuthConfig,
+  plugins: [
+    ...baseAuthPlugins,
+    emailOTP({
+      overrideDefaultEmailVerification: true,
+      sendVerificationOTP,
+      storeOTP: "hashed",
+    }),
+    oneTimeToken({
+      storeToken: "hashed",
+    }),
     // nextCookies should be the last plugin in the array
     nextCookies(),
   ],

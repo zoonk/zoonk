@@ -1,23 +1,23 @@
-import {
-  Login,
-  LoginDescription,
-  LoginHeader,
-  LoginTitle,
-} from "@zoonk/ui/patterns/auth/login";
-import { SocialLogin } from "./social-login";
+import { getSession } from "@zoonk/core/users";
+import { buildAuthLoginUrl } from "@zoonk/utils/auth-url";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import type { RedirectType } from "next/navigation";
 
-export default function LoginPage() {
-  return (
-    <Login>
-      <LoginHeader>
-        <LoginTitle>Access our admin panel</LoginTitle>
+export default async function LoginPage() {
+  const session = await getSession();
 
-        <LoginDescription>
-          Use your Zoonk Google account to sign in.
-        </LoginDescription>
-      </LoginHeader>
+  if (session) {
+    redirect("/");
+  }
 
-      <SocialLogin />
-    </Login>
-  );
+  const headersList = await headers();
+  const host = headersList.get("host") || "admin.zoonk.com";
+  const protocol = host.includes("localhost") ? "http" : "https";
+  const callbackUrl = `${protocol}://${host}/auth/callback`;
+
+  const authUrl = buildAuthLoginUrl({ callbackUrl });
+
+  // Using type assertion for external URL redirect
+  redirect(authUrl as Parameters<typeof redirect>[0]);
 }
