@@ -1,8 +1,10 @@
 import { getSession } from "@zoonk/core/users";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { redirect } from "next/navigation";
+import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { createOneTimeTokenAction } from "./actions";
+import { CallbackRedirect } from "./callback-redirect";
 
 async function CallbackHandler({
   searchParams,
@@ -17,26 +19,28 @@ async function CallbackHandler({
     const loginUrl = redirectTo
       ? `/login?redirectTo=${encodeURIComponent(String(redirectTo))}`
       : "/login";
-    redirect(loginUrl as Parameters<typeof redirect>[0]);
+    redirect(loginUrl);
   }
 
   if (!redirectTo) {
     // No redirect URL, show a success message
+    const t = await getExtracted();
+
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-4 p-4 text-center">
-        <h1 className="font-bold text-xl">{"You're signed in!"}</h1>
+        <h1 className="font-bold text-xl">{t("You're signed in!")}</h1>
         <p className="text-muted-foreground">
-          {"You can close this window and return to your app."}
+          {t("You can close this window and return to your app.")}
         </p>
       </div>
     );
   }
 
-  // Generate OTT and redirect
-  await createOneTimeTokenAction(String(redirectTo));
+  // Generate OTT and get the redirect URL
+  const externalUrl = await createOneTimeTokenAction(String(redirectTo));
 
-  // This won't be reached due to redirect, but TypeScript needs it
-  return null;
+  // Use client-side redirect for external URL
+  return <CallbackRedirect url={externalUrl} />;
 }
 
 export default async function CallbackPage(

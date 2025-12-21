@@ -94,8 +94,7 @@ async function LoginPermissions({
     // User is already logged in, redirect back with a token
     // This will be handled by the callback action
     const { redirect } = await import("next/navigation");
-    const callbackUrl = `/callback?redirectTo=${encodeURIComponent(String(redirectTo))}`;
-    redirect(callbackUrl as Parameters<typeof redirect>[0]);
+    redirect(`/callback?redirectTo=${encodeURIComponent(String(redirectTo))}`);
   }
 
   return children;

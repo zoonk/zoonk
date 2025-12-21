@@ -33,8 +33,8 @@ export function SocialLogin({ redirectTo }: SocialLoginProps) {
       : "/callback";
 
     const { error } = await authClient.signIn.social({
-      provider,
       callbackURL,
+      provider,
     });
 
     if (error) {

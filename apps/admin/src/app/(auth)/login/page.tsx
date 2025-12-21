@@ -2,7 +2,7 @@ import { getSession } from "@zoonk/core/users";
 import { buildAuthLoginUrl } from "@zoonk/utils/auth-url";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import type { RedirectType } from "next/navigation";
+import { LoginRedirect } from "./login-redirect";
 
 export default async function LoginPage() {
   const session = await getSession();
@@ -18,6 +18,5 @@ export default async function LoginPage() {
 
   const authUrl = buildAuthLoginUrl({ callbackUrl });
 
-  // Using type assertion for external URL redirect
-  redirect(authUrl as Parameters<typeof redirect>[0]);
+  return <LoginRedirect url={authUrl} />;
 }

@@ -1,17 +1,15 @@
 import { auth } from "@zoonk/auth";
-import { FullPageLoading } from "@zoonk/ui/components/loading";
-import { redirect } from "next/navigation";
-import { Suspense } from "react";
+import { getLocale } from "next-intl/server";
+import { redirect } from "@/i18n/navigation";
 
-async function VerifyToken({
+export default async function AuthCallbackPage({
   searchParams,
-}: {
-  searchParams: PageProps<"/[locale]/auth/callback">["searchParams"];
-}): Promise<React.ReactNode> {
+}: PageProps<"/[locale]/auth/callback">) {
   const { token } = await searchParams;
+  const locale = await getLocale();
 
   if (!token) {
-    redirect("/login" as Parameters<typeof redirect>[0]);
+    redirect({ href: "/login", locale });
   }
 
   try {
@@ -20,19 +18,9 @@ async function VerifyToken({
     });
   } catch (error) {
     console.error("Failed to verify one-time token:", error);
-    redirect("/login" as Parameters<typeof redirect>[0]);
+    redirect({ href: "/login", locale });
   }
 
   // Successfully verified, redirect to home
-  redirect("/" as Parameters<typeof redirect>[0]);
-}
-
-export default async function AuthCallbackPage(
-  props: PageProps<"/[locale]/auth/callback">,
-) {
-  return (
-    <Suspense fallback={<FullPageLoading />}>
-      <VerifyToken searchParams={props.searchParams} />
-    </Suspense>
-  );
+  redirect({ href: "/", locale });
 }

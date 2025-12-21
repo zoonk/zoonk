@@ -4,8 +4,9 @@ import { cacheTagLogin } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { getExtracted, getLocale } from "next-intl/server";
+import { redirect } from "@/i18n/navigation";
+import { LoginRedirect } from "./login-redirect";
 
 export async function generateMetadata({
   params,
@@ -27,12 +28,12 @@ export async function generateMetadata({
 
 export default async function Login() {
   const session = await getSession();
+  const locale = await getLocale();
 
   if (session) {
-    redirect("/" as Parameters<typeof redirect>[0]);
+    redirect({ href: "/", locale });
   }
 
-  const locale = await getLocale();
   const headersList = await headers();
   const host = headersList.get("host") || "zoonk.com";
   const protocol = host.includes("localhost") ? "http" : "https";
@@ -40,5 +41,5 @@ export default async function Login() {
 
   const authUrl = buildAuthLoginUrl({ callbackUrl, locale });
 
-  redirect(authUrl as Parameters<typeof redirect>[0]);
+  return <LoginRedirect url={authUrl} />;
 }

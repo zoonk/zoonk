@@ -91,29 +91,4 @@ export const auth = betterAuth({
   },
 });
 
-/**
- * Auth instance with One-Time Token plugin for the centralized auth app.
- * This is used to generate OTT tokens that can be verified by other apps.
- */
-export const authWithOTT = betterAuth({
-  ...baseAuthConfig,
-  plugins: [
-    ...baseAuthPlugins,
-    emailOTP({
-      overrideDefaultEmailVerification: true,
-      sendVerificationOTP,
-      storeOTP: "hashed",
-    }),
-    oneTimeToken({
-      storeToken: "hashed",
-    }),
-    // nextCookies should be the last plugin in the array
-    nextCookies(),
-  ],
-  socialProviders: {
-    ...appleProvider,
-    ...googleProvider,
-  },
-});
-
 export type { UserWithRole } from "better-auth/plugins";

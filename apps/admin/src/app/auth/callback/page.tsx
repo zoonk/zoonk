@@ -1,13 +1,11 @@
 import { auth } from "@zoonk/auth";
-import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { redirect } from "next/navigation";
-import { Suspense } from "react";
 
-async function VerifyToken({
+export default async function AuthCallbackPage({
   searchParams,
 }: {
   searchParams: Promise<{ token?: string }>;
-}): Promise<React.ReactNode> {
+}) {
   const { token } = await searchParams;
 
   if (!token) {
@@ -25,16 +23,4 @@ async function VerifyToken({
 
   // Successfully verified, redirect to home
   redirect("/");
-}
-
-export default async function AuthCallbackPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ token?: string }>;
-}) {
-  return (
-    <Suspense fallback={<FullPageLoading />}>
-      <VerifyToken searchParams={searchParams} />
-    </Suspense>
-  );
 }

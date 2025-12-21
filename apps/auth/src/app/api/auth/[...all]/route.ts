@@ -1,4 +1,4 @@
-import { authWithOTT } from "@zoonk/auth";
+import { auth } from "@zoonk/auth";
 import { toNextJsHandler } from "@zoonk/auth/next";
 
-export const { POST, GET } = toNextJsHandler(authWithOTT);
+export const { POST, GET } = toNextJsHandler(auth);

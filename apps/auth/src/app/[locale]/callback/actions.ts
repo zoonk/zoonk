@@ -1,13 +1,14 @@
 "use server";
 
-import { authWithOTT } from "@zoonk/auth";
+import { auth } from "@zoonk/auth";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 
-export async function createOneTimeTokenAction(redirectTo: string) {
+export async function createOneTimeTokenAction(
+  redirectTo: string,
+): Promise<string> {
   const headersList = await headers();
 
-  const response = await authWithOTT.api.generateOneTimeToken({
+  const response = await auth.api.generateOneTimeToken({
     headers: headersList,
   });
 
@@ -19,6 +20,5 @@ export async function createOneTimeTokenAction(redirectTo: string) {
   const redirectUrl = new URL(redirectTo);
   redirectUrl.searchParams.set("token", response.token);
 
-  // Use type assertion for external URL redirect
-  redirect(redirectUrl.toString() as Parameters<typeof redirect>[0]);
+  return redirectUrl.toString();
 }

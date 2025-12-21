@@ -1,14 +1,15 @@
 import { getSession } from "@zoonk/core/users";
 import { buildAuthLoginUrl } from "@zoonk/utils/auth-url";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import { getLocale } from "next-intl/server";
+import { redirect } from "@/i18n/navigation";
+import { LoginRedirect } from "./login-redirect";
 
 export default async function LoginPage() {
   const session = await getSession();
 
   if (session) {
-    redirect("/" as Parameters<typeof redirect>[0]);
+    redirect({ href: "/", locale: await getLocale() });
   }
 
   const locale = await getLocale();
@@ -19,5 +20,5 @@ export default async function LoginPage() {
 
   const authUrl = buildAuthLoginUrl({ callbackUrl, locale });
 
-  redirect(authUrl as Parameters<typeof redirect>[0]);
+  return <LoginRedirect url={authUrl} />;
 }

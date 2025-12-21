@@ -13,7 +13,6 @@ const nextConfig: NextConfig = {
     typedEnv: true,
   },
   reactCompiler: true,
-  typedRoutes: true,
 };
 
 const withNextIntl = createNextIntlPlugin({
