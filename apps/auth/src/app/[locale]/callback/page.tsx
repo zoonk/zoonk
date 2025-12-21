@@ -1,5 +1,6 @@
 import { getSession } from "@zoonk/core/users";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
+import { sanitizeRedirectUrl } from "@zoonk/utils/auth-url";
 import { redirect } from "next/navigation";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -14,16 +15,21 @@ async function CallbackHandler({
   const session = await getSession();
   const { redirectTo } = await searchParams;
 
+  // Validate and sanitize the redirectTo parameter
+  const safeRedirectTo = sanitizeRedirectUrl(
+    redirectTo ? String(redirectTo) : undefined,
+  );
+
   if (!session) {
     // Not logged in, redirect to login
-    const loginUrl = redirectTo
-      ? `/login?redirectTo=${encodeURIComponent(String(redirectTo))}`
+    const loginUrl = safeRedirectTo
+      ? `/login?redirectTo=${encodeURIComponent(safeRedirectTo)}`
       : "/login";
     redirect(loginUrl);
   }
 
-  if (!redirectTo) {
-    // No redirect URL, show a success message
+  if (!safeRedirectTo) {
+    // No valid redirect URL, show a success message
     const t = await getExtracted();
 
     return (
@@ -37,7 +43,7 @@ async function CallbackHandler({
   }
 
   // Generate OTT and get the redirect URL
-  const externalUrl = await createOneTimeTokenAction(String(redirectTo));
+  const externalUrl = await createOneTimeTokenAction(safeRedirectTo);
 
   // Use client-side redirect for external URL
   return <CallbackRedirect url={externalUrl} />;

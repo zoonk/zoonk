@@ -1,6 +1,7 @@
 "use server";
 
 import { sendVerificationOTP } from "@zoonk/core/users";
+import { sanitizeRedirectUrl } from "@zoonk/utils/auth-url";
 import { parseFormField } from "@zoonk/utils/form";
 import { getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";
@@ -13,6 +14,9 @@ export async function sendVerificationOTPAction(formData: FormData) {
     return;
   }
 
+  // Validate and sanitize the redirectTo parameter
+  const safeRedirectTo = sanitizeRedirectUrl(redirectTo ?? undefined);
+
   await sendVerificationOTP(email);
 
   const locale = await getLocale();
@@ -20,7 +24,10 @@ export async function sendVerificationOTPAction(formData: FormData) {
   redirect({
     href: {
       pathname: "/otp",
-      query: { email, ...(redirectTo ? { redirectTo } : {}) },
+      query: {
+        email,
+        ...(safeRedirectTo ? { redirectTo: safeRedirectTo } : {}),
+      },
     },
     locale,
   });

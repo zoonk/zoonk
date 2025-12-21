@@ -4,11 +4,12 @@ import { buildAuthLoginUrl } from "@zoonk/utils/auth-url";
 import { cacheTagLogin } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheLife, cacheTag } from "next/cache";
-import { headers } from "next/headers";
 import { getExtracted, getLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { redirect } from "@/i18n/navigation";
 import { LoginRedirect } from "./login-redirect";
+
+const APP_URL = process.env.NEXT_PUBLIC_MAIN_APP_URL || "https://zoonk.com";
 
 export async function generateMetadata({
   params,
@@ -36,11 +37,7 @@ async function LoginHandler() {
     redirect({ href: "/", locale });
   }
 
-  const headersList = await headers();
-  const host = headersList.get("host") || "zoonk.com";
-  const protocol = host.includes("localhost") ? "http" : "https";
-  const callbackUrl = `${protocol}://${host}/${locale}/auth/callback`;
-
+  const callbackUrl = `${APP_URL}/${locale}/auth/callback`;
   const authUrl = buildAuthLoginUrl({ callbackUrl, locale });
 
   return <LoginRedirect url={authUrl} />;

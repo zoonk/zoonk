@@ -13,6 +13,7 @@ import {
   LoginSubmit,
   LoginTitle,
 } from "@zoonk/ui/patterns/auth/login";
+import { sanitizeRedirectUrl } from "@zoonk/utils/auth-url";
 import { cacheTagLogin } from "@zoonk/utils/cache";
 import { cacheLife, cacheTag } from "next/cache";
 import { getExtracted, setRequestLocale } from "next-intl/server";
@@ -32,6 +33,11 @@ async function LoginView({
   const t = await getExtracted();
   const { redirectTo } = await searchParams;
 
+  // Validate and sanitize the redirectTo parameter
+  const safeRedirectTo = sanitizeRedirectUrl(
+    redirectTo ? String(redirectTo) : undefined,
+  );
+
   cacheLife("max");
   cacheTag(locale, cacheTagLogin());
 
@@ -44,16 +50,12 @@ async function LoginView({
         </LoginDescription>
       </LoginHeader>
 
-      <SocialLogin redirectTo={redirectTo ? String(redirectTo) : undefined} />
+      <SocialLogin redirectTo={safeRedirectTo ?? undefined} />
 
       <LoginDivider>{t("Or")}</LoginDivider>
 
       <LoginForm action={sendVerificationOTPAction}>
-        <input
-          name="redirectTo"
-          type="hidden"
-          value={redirectTo ? String(redirectTo) : ""}
-        />
+        <input name="redirectTo" type="hidden" value={safeRedirectTo ?? ""} />
 
         <LoginField>
           <LoginEmailLabel>{t("Email")}</LoginEmailLabel>
@@ -90,11 +92,16 @@ async function LoginPermissions({
   const session = await getSession();
   const { redirectTo } = await searchParams;
 
-  if (session && redirectTo) {
+  // Validate the redirectTo parameter
+  const safeRedirectTo = sanitizeRedirectUrl(
+    redirectTo ? String(redirectTo) : undefined,
+  );
+
+  if (session && safeRedirectTo) {
     // User is already logged in, redirect back with a token
     // This will be handled by the callback action
     const { redirect } = await import("next/navigation");
-    redirect(`/callback?redirectTo=${encodeURIComponent(String(redirectTo))}`);
+    redirect(`/callback?redirectTo=${encodeURIComponent(safeRedirectTo)}`);
   }
 
   return children;

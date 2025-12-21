@@ -1,10 +1,12 @@
 import { getSession } from "@zoonk/core/users";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { buildAuthLoginUrl } from "@zoonk/utils/auth-url";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { LoginRedirect } from "./login-redirect";
+
+const APP_URL =
+  process.env.NEXT_PUBLIC_ADMIN_APP_URL || "https://admin.zoonk.com";
 
 async function LoginHandler() {
   const session = await getSession();
@@ -13,11 +15,7 @@ async function LoginHandler() {
     redirect("/");
   }
 
-  const headersList = await headers();
-  const host = headersList.get("host") || "admin.zoonk.com";
-  const protocol = host.includes("localhost") ? "http" : "https";
-  const callbackUrl = `${protocol}://${host}/auth/callback`;
-
+  const callbackUrl = `${APP_URL}/auth/callback`;
   const authUrl = buildAuthLoginUrl({ callbackUrl });
 
   return <LoginRedirect url={authUrl} />;
