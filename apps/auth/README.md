@@ -29,8 +29,3 @@ This app runs on port 3004 by default:
 ```bash
 pnpm dev
 ```
-
-## Related
-
-- [@zoonk/auth](../../packages/auth) - Shared Better Auth configuration
-- [@zoonk/core](../../packages/core) - Server utilities including user/session functions
