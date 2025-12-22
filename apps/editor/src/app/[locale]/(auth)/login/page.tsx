@@ -1,29 +1,11 @@
-import { getSession } from "@zoonk/core/users";
-import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { buildAuthLoginUrl, getBaseUrl } from "@zoonk/utils/url";
-import { getLocale } from "next-intl/server";
-import { Suspense } from "react";
-import { redirect } from "@/i18n/navigation";
-import { LoginRedirect } from "./login-redirect";
+import { redirect } from "next/navigation";
 
-async function LoginHandler() {
-  const session = await getSession();
-  const locale = await getLocale();
-
-  if (session) {
-    redirect({ href: "/", locale });
-  }
-
+export default async function LoginPage({
+  params,
+}: PageProps<"/[locale]/login">) {
+  const { locale } = await params;
   const callbackUrl = `${getBaseUrl()}/${locale}/auth/callback`;
   const authUrl = buildAuthLoginUrl({ callbackUrl, locale });
-
-  return <LoginRedirect url={authUrl} />;
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense fallback={<FullPageLoading />}>
-      <LoginHandler />
-    </Suspense>
-  );
+  redirect(authUrl as never);
 }

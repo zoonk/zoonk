@@ -15,7 +15,7 @@ export function LogoutDropdownItem() {
 
   if (!session) {
     return (
-      <DropdownMenuItem render={<Link href="/login" />}>
+      <DropdownMenuItem render={<Link href="/login" prefetch={false} />}>
         <User aria-hidden="true" />
         {t("Login")}
       </DropdownMenuItem>
