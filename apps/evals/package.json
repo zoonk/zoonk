@@ -1,16 +1,16 @@
 {
   "dependencies": {
-    "@ai-sdk/gateway": "2.0.9",
+    "@ai-sdk/gateway": "3.0.0",
     "@zoonk/ai": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "ai": "5.0.93",
+    "ai": "6.0.1",
     "lucide-react": "0.556.0",
     "next": "16.1.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "zod": "4.1.12"
+    "zod": "4.2.1"
   },
   "devDependencies": {
     "@types/node": "^24",

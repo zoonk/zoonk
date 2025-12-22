@@ -2,7 +2,7 @@ import { openai } from "@ai-sdk/openai";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import {
   type Experimental_GeneratedImage as GeneratedImage,
-  experimental_generateImage as generateImage,
+  generateImage,
   type ImageModel,
 } from "ai";
 

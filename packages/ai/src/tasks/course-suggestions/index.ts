@@ -1,6 +1,6 @@
 import "server-only";
 
-import { generateObject } from "ai";
+import { generateText, Output } from "ai";
 import { z } from "zod";
 import systemPrompt from "./prompt.md";
 
@@ -44,15 +44,15 @@ export async function generateCourseSuggestions({
     USER_INPUT: ${prompt}
   `;
 
-  const { object, usage } = await generateObject({
+  const { output, usage } = await generateText({
     model,
+    output: Output.object({ schema }),
     prompt: userPrompt,
     providerOptions: {
       gateway: { models: useFallback ? FALLBACK_MODELS : [] },
     },
-    schema,
     system: systemPrompt,
   });
 
-  return { data: object.courses, systemPrompt, usage, userPrompt };
+  return { data: output.courses, systemPrompt, usage, userPrompt };
 }

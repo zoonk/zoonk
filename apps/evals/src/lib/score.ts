@@ -1,5 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
-import { generateObject } from "ai";
+import { generateText, Output } from "ai";
 import systemPrompt from "./system-prompt.md";
 import { type ScoreStep, scoreSchema } from "./types";
 
@@ -60,16 +60,16 @@ export async function generateScore(params: {
     ${output}
   `;
 
-  const { object } = await generateObject({
+  const { output: result } = await generateText({
     model: "google/gemini-3-pro-preview",
+    output: Output.object({ schema: scoreSchema }),
     prompt: evalPrompt,
-    schema: scoreSchema,
     system: systemPrompt,
   });
 
   return {
-    score: calculateScore(object.steps),
-    steps: object.steps,
+    score: calculateScore(result.steps),
+    steps: result.steps,
   };
 }
 
