@@ -1,4 +1,3 @@
-import { getSession } from "@zoonk/core/users";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import {
   Login,
@@ -13,27 +12,14 @@ import {
   LoginSubmit,
   LoginTitle,
 } from "@zoonk/ui/patterns/auth/login";
-import { cacheTagLogin } from "@zoonk/utils/cache";
-import { cacheLife, cacheTag } from "next/cache";
-import { getExtracted, setRequestLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { sendVerificationOTPAction } from "./actions";
 import { SocialLogin } from "./social-login";
 
-async function LoginView({
-  params,
-  searchParams,
-}: PageProps<"/[locale]/login">) {
-  "use cache";
-
-  const { locale } = await params;
-  setRequestLocale(locale);
-
+async function LoginView({ searchParams }: PageProps<"/[locale]/login">) {
   const t = await getExtracted();
   const { redirectTo } = await searchParams;
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagLogin());
 
   return (
     <>
@@ -80,33 +66,11 @@ async function LoginView({
   );
 }
 
-async function LoginPermissions({
-  children,
-  searchParams,
-}: {
-  children: React.ReactNode;
-  searchParams: PageProps<"/[locale]/login">["searchParams"];
-}) {
-  const session = await getSession();
-  const { redirectTo } = await searchParams;
-
-  if (session && redirectTo) {
-    // User is already logged in, redirect back with a token
-    // This will be handled by the callback action
-    const { redirect } = await import("next/navigation");
-    redirect(`/callback?redirectTo=${encodeURIComponent(String(redirectTo))}`);
-  }
-
-  return children;
-}
-
 export default async function LoginPage(props: PageProps<"/[locale]/login">) {
   return (
     <Login>
       <Suspense fallback={<FullPageLoading />}>
-        <LoginPermissions searchParams={props.searchParams}>
-          <LoginView {...props} />
-        </LoginPermissions>
+        <LoginView {...props} />
       </Suspense>
     </Login>
   );
