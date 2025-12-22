@@ -1,7 +1,7 @@
 {
   "devDependencies": {
     "@biomejs/biome": "2.3.10",
-    "turbo": "2.7.0"
+    "turbo": "2.7.1"
   },
   "engines": {
     "node": "^24"

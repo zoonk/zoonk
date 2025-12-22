@@ -5,78 +5,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
 
-#: src/app/[locale]/(auth)/layout.tsx
-#: src/components/navbar/index.tsx
-msgctxt "U3l+Q9"
-msgid "Home page"
-msgstr "Página inicial"
-
-#: src/app/[locale]/(auth)/login/page.tsx
-msgctxt "4nOs3z"
-msgid "me@myorg.com"
-msgstr "eu@myorg.com"
-
-#: src/app/[locale]/(auth)/login/page.tsx
-msgctxt "4wpUNc"
-msgid "Or"
-msgstr "Ou"
-
-#: src/app/[locale]/(auth)/login/page.tsx
-#: src/app/[locale]/(auth)/otp/otp-form.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "Continuar"
-
-#: src/app/[locale]/(auth)/login/page.tsx
-msgctxt "SQJto2"
-msgid "Sign in"
-msgstr "Entrar"
-
-#: src/app/[locale]/(auth)/login/page.tsx
-msgctxt "sy+pv5"
-msgid "Email"
-msgstr "Email"
-
-#: src/app/[locale]/(auth)/login/page.tsx
-msgctxt "yFJ+Ej"
-msgid "Continue with your email or social account"
-msgstr "Continue com seu email ou conta social"
-
-#: src/app/[locale]/(auth)/login/social-login.tsx
-msgctxt "BmecBA"
-msgid "Continue with Apple"
-msgstr "Continuar com Apple"
-
-#: src/app/[locale]/(auth)/login/social-login.tsx
-msgctxt "FJ6r9E"
-msgid "Continue with Google"
-msgstr "Continuar com Google"
-
-#: src/app/[locale]/(auth)/login/social-login.tsx
-msgctxt "pN2p0t"
-msgid "There was an error signing you in. Please try again or contact hello@zoonk.com"
-msgstr "Ocorreu um erro ao fazer login. Por favor, tente novamente ou contate contato@zoonk.com"
-
-#: src/app/[locale]/(auth)/otp/otp-form.tsx
-msgctxt "HkHvQv"
-msgid "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
-msgstr "O código que você inseriu está incorreto. Por favor, tente novamente ou contate contato@zoonk.com"
-
-#: src/app/[locale]/(auth)/otp/page.tsx
-msgctxt "ChATeO"
-msgid "Change email"
-msgstr "Alterar email"
-
-#: src/app/[locale]/(auth)/otp/page.tsx
-msgctxt "LZHcmZ"
-msgid "Enter the code we sent to {email}:"
-msgstr "Digite o código que enviamos para {email}:"
-
-#: src/app/[locale]/(auth)/otp/page.tsx
-msgctxt "zx7CKB"
-msgid "Check your email"
-msgstr "Verifique seu email"
-
 #: src/app/[locale]/(private)/[orgSlug]/course-list.tsx
 msgctxt "c0YWuA"
 msgid "Your organization hasn't created any courses yet."
@@ -213,6 +141,11 @@ msgstr "Sair"
 msgctxt "gNtXZ8"
 msgid "401 - Unauthorized"
 msgstr "401 - Não autorizado"
+
+#: src/components/navbar/index.tsx
+msgctxt "U3l+Q9"
+msgid "Home page"
+msgstr "Página inicial"
 
 #: src/components/navbar/locale-switcher.tsx
 msgctxt "y1Z3or"

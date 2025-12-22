@@ -16,7 +16,11 @@ export function ProtectedSection({
   return (
     <ProtectedSectionPattern
       actions={
-        <Link className={cn(buttonVariants(), "w-max")} href="/login">
+        <Link
+          className={cn(buttonVariants(), "w-max")}
+          href="/login"
+          prefetch={false}
+        >
           {t("Login")}
         </Link>
       }

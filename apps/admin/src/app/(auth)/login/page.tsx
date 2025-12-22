@@ -1,23 +1,18 @@
-import {
-  Login,
-  LoginDescription,
-  LoginHeader,
-  LoginTitle,
-} from "@zoonk/ui/patterns/auth/login";
-import { SocialLogin } from "./social-login";
+import { FullPageLoading } from "@zoonk/ui/components/loading";
+import { buildAuthLoginUrl, getBaseUrl } from "@zoonk/utils/url";
+import { redirect } from "next/navigation";
+import { Suspense } from "react";
+
+async function Login() {
+  const callbackUrl = `${getBaseUrl()}/auth/callback`;
+  const authUrl = buildAuthLoginUrl({ callbackUrl });
+  return redirect(authUrl as never);
+}
 
 export default function LoginPage() {
   return (
-    <Login>
-      <LoginHeader>
-        <LoginTitle>Access our admin panel</LoginTitle>
-
-        <LoginDescription>
-          Use your Zoonk Google account to sign in.
-        </LoginDescription>
-      </LoginHeader>
-
-      <SocialLogin />
-    </Login>
+    <Suspense fallback={<FullPageLoading />}>
+      <Login />
+    </Suspense>
   );
 }

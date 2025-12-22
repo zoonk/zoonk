@@ -5,6 +5,7 @@ import { nextCookies } from "better-auth/next-js";
 import {
   admin as adminPlugin,
   emailOTP,
+  oneTimeToken,
   organization,
 } from "better-auth/plugins";
 import type { BetterAuthOptions } from "better-auth/types";
@@ -76,6 +77,9 @@ export const auth = betterAuth({
       overrideDefaultEmailVerification: true,
       sendVerificationOTP,
       storeOTP: "hashed",
+    }),
+    oneTimeToken({
+      storeToken: "hashed",
     }),
     stripePlugin(),
     // nextCookies should be the last plugin in the array

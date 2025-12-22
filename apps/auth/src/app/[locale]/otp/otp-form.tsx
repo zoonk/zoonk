@@ -1,30 +1,34 @@
 "use client";
 
 import { authClient } from "@zoonk/auth/client";
+import { parseFormField } from "@zoonk/utils/form";
+import { useExtracted } from "next-intl";
+import { useState } from "react";
 import {
   OTPError,
   OTPForm as OTPFormContainer,
   OTPInput,
   OTPSubmit,
-} from "@zoonk/ui/patterns/auth/otp";
-import { parseFormField } from "@zoonk/utils/form";
-import { useExtracted } from "next-intl";
-import { useState } from "react";
+} from "@/components/otp";
 import { useRouter } from "@/i18n/navigation";
 
 type FormState = "idle" | "pending" | "error";
 
-type OTPFormProps = {
+export function OTPForm({
+  email,
+  redirectTo,
+}: {
   email: string;
-};
-
-export function OTPForm({ email }: OTPFormProps) {
+  redirectTo: string;
+}) {
   const { push } = useRouter();
   const t = useExtracted();
   const [state, setState] = useState<FormState>("idle");
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setState("pending");
+
     const formData = new FormData(event.currentTarget);
     const otp = parseFormField(formData, "otp");
 
@@ -33,13 +37,19 @@ export function OTPForm({ email }: OTPFormProps) {
       return;
     }
 
-    const { data, error } = await authClient.signIn.emailOtp({ email, otp });
+    const { error } = await authClient.signIn.emailOtp({ email, otp });
 
-    setState(error ? "error" : "idle");
-
-    if (data) {
-      push("/");
+    if (error) {
+      setState("error");
+      return;
     }
+
+    setState("idle");
+
+    push({
+      pathname: "/callback",
+      query: { redirectTo },
+    });
   };
 
   return (

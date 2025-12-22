@@ -92,6 +92,7 @@ Read each folder's README file for more details
 - Run `pnpm typecheck` to check for TypeScript errors
 - **Never manually fix formatting or linting issues** by reading files and editing them—always use the CLI commands above as it's more efficient
 - Don't run `pnpm dev` since we already have a dev server running
+- Run `pnpm build` to make sure all apps and packages are compiling correctly
 - Prefer to use server components than client components. Only use client components when absolutely necessary
 - Avoid `useEffect` and `useState` unless absolutely required
 - Fetch data on the server whenever possible and use `Suspense` with a fallback for loading states, [see docs for streaming data](https://nextjs.org/docs/app/getting-started/fetching-data#streaming)
@@ -99,6 +100,7 @@ Read each folder's README file for more details
 - Use `safeAsync` when using `await` to better handle errors
 - When creating a skeleton, use the `Skeleton` component from `@zoonk/ui/components/skeleton`
 - Always build skeleton components when using `Suspense` for loading states
+- For apps using `next-intl`, use `getExtracted` or `useExtracted`. This will extract the translations to PO files when we run `pnpm build`
 
 ## CSS
 

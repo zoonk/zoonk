@@ -40,10 +40,6 @@ export function cacheTagLearn() {
   return "learn";
 }
 
-export function cacheTagLogin() {
-  return "login";
-}
-
 export function cacheTagMyCourses() {
   return "my-courses";
 }
