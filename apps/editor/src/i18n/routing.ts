@@ -1,8 +1,8 @@
-import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { defineRouting } from "next-intl/routing";
 
 export const routing = defineRouting({
-  defaultLocale: "en",
+  defaultLocale: DEFAULT_LOCALE,
   localePrefix: "as-needed",
   locales: SUPPORTED_LOCALES,
 });
