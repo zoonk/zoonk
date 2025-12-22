@@ -1,14 +1,14 @@
 "use client";
 
 import { authClient } from "@zoonk/auth/client";
+import { useExtracted } from "next-intl";
+import { useState } from "react";
 import {
   LoginError,
   LoginSocial,
   LoginWithApple,
   LoginWithGoogle,
-} from "@zoonk/ui/patterns/auth/login";
-import { useExtracted } from "next-intl";
-import { useState } from "react";
+} from "@/components/login";
 
 type SocialState = "initial" | "loadingGoogle" | "loadingApple" | "error";
 

@@ -1,15 +1,15 @@
 "use client";
 
 import { authClient } from "@zoonk/auth/client";
+import { parseFormField } from "@zoonk/utils/form";
+import { useExtracted } from "next-intl";
+import { useState } from "react";
 import {
   OTPError,
   OTPForm as OTPFormContainer,
   OTPInput,
   OTPSubmit,
-} from "@zoonk/ui/patterns/auth/otp";
-import { parseFormField } from "@zoonk/utils/form";
-import { useExtracted } from "next-intl";
-import { useState } from "react";
+} from "@/components/otp";
 import { useRouter } from "@/i18n/navigation";
 
 type FormState = "idle" | "pending" | "error";

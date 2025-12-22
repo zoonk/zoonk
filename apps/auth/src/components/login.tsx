@@ -7,12 +7,8 @@ import { Button } from "@zoonk/ui/components/button";
 import { Input, InputError } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { cn } from "@zoonk/ui/lib/utils";
+import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
 import { Loader2Icon } from "lucide-react";
-import { SubmitButton } from "../buttons/submit";
-
-export function LoginNav({ children, className }: React.ComponentProps<"nav">) {
-  return <nav className={cn("fixed top-4 left-4", className)}>{children}</nav>;
-}
 
 export function Login({ children, className }: React.ComponentProps<"div">) {
   return (

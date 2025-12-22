@@ -1,11 +1,6 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
-import {
-  OTP,
-  OTPDescription,
-  OTPHeader,
-  OTPTitle,
-} from "@zoonk/ui/patterns/auth/otp";
 import { getExtracted } from "next-intl/server";
+import { OTP, OTPDescription, OTPHeader, OTPTitle } from "@/components/otp";
 import { Link } from "@/i18n/navigation";
 import { OTPForm } from "./otp-form";
 

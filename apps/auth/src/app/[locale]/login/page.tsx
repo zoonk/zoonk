@@ -1,4 +1,6 @@
 import { FullPageLoading } from "@zoonk/ui/components/loading";
+import { getExtracted } from "next-intl/server";
+import { Suspense } from "react";
 import {
   Login,
   LoginDescription,
@@ -11,9 +13,7 @@ import {
   LoginHeader,
   LoginSubmit,
   LoginTitle,
-} from "@zoonk/ui/patterns/auth/login";
-import { getExtracted } from "next-intl/server";
-import { Suspense } from "react";
+} from "@/components/login";
 import { sendVerificationOTPAction } from "./actions";
 import { SocialLogin } from "./social-login";
 

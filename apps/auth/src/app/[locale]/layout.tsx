@@ -1,18 +1,21 @@
+import { Container } from "@zoonk/ui/components/container";
 import type { Metadata } from "next";
-import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { setRequestLocale } from "next-intl/server";
-
-import "@zoonk/ui/globals.css";
 import { notFound } from "next/navigation";
+import { hasLocale, NextIntlClientProvider } from "next-intl";
+import { getExtracted, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
+import "@zoonk/ui/globals.css";
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://auth.zoonk.com"),
-  title: {
-    default: "Sign in to Zoonk",
-    template: "%s | Zoonk Auth",
-  },
-};
+export async function generateMetadata({
+  params,
+}: LayoutProps<"/[locale]">): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getExtracted({ locale });
+
+  return {
+    title: t("Sign in to Zoonk"),
+  };
+}
 
 export async function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -33,7 +36,9 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body className="font-sans antialiased">
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <Container variant="centered">{children}</Container>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
