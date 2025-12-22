@@ -19,7 +19,7 @@ export function OTPForm({
   redirectTo,
 }: {
   email: string;
-  redirectTo?: string;
+  redirectTo: string;
 }) {
   const { push } = useRouter();
   const t = useExtracted();
