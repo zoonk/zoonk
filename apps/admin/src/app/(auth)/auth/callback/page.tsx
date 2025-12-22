@@ -1,26 +1,42 @@
-import { auth } from "@zoonk/auth";
-import { safeAsync } from "@zoonk/utils/error";
-import { redirect } from "next/navigation";
+"use client";
 
-export default async function AuthCallbackPage({
-  searchParams,
-}: PageProps<"/auth/callback">) {
-  const { token } = await searchParams;
+import { authClient } from "@zoonk/auth/client";
+import { FullPageLoading } from "@zoonk/ui/components/loading";
+import { redirect, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useEffectEvent } from "react";
 
-  if (!token) {
-    redirect("/login");
-  }
+function CallbackHandler() {
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
 
-  const { error } = await safeAsync(async () => {
-    await auth.api.verifyOneTimeToken({
-      body: { token: String(token) },
+  const handleVerify = useEffectEvent(async (userToken: string) => {
+    // we're using a client component to properly set session cookies after token verification
+    // on server-side, the session cookies aren't set
+    const { error } = await authClient.oneTimeToken.verify({
+      token: userToken,
     });
+
+    if (error) {
+      console.error("Failed to verify one-time token:", error);
+      return redirect("/login");
+    }
+
+    redirect("/");
   });
 
-  if (error) {
-    console.error("Failed to verify one-time token:", error);
-    redirect("/login");
-  }
+  useEffect(() => {
+    if (token) {
+      void handleVerify(token);
+    }
+  }, [token]);
 
-  redirect("/");
+  return <FullPageLoading />;
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={<FullPageLoading />}>
+      <CallbackHandler />
+    </Suspense>
+  );
 }

@@ -5,6 +5,9 @@ const AUTH_APP_URL =
 
 const isProduction = process.env.NODE_ENV === "production";
 
+const repoOwner = process.env.GIT_REPO_OWNER || "zoonk";
+const isRepoOwner = process.env.VERCEL_GIT_REPO_OWNER === repoOwner;
+
 /**
  * Gets the base URL for the current app based on the environment.
  *
@@ -63,4 +66,15 @@ export function buildAuthLoginUrl({
  */
 export function getAuthAppUrl(): string {
   return AUTH_APP_URL;
+}
+
+/**
+ * Returns trusted origins for Vercel preview deployments.
+ */
+export function getVercelTrustedOrigins(): string[] {
+  if (isRepoOwner) {
+    return [`https://*-${repoOwner}.vercel.app`];
+  }
+
+  return [];
 }

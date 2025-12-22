@@ -16,6 +16,7 @@
     "BLOB_READ_WRITE_TOKEN",
     "DATABASE_URL_UNPOOLED",
     "DATABASE_URL",
+    "GIT_REPO_OWNER",
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
     "MAILER_API_KEY",
@@ -24,7 +25,8 @@
     "OPENAI_API_KEY",
     "REVALIDATE_SECRET",
     "STRIPE_SECRET_KEY",
-    "STRIPE_WEBHOOK_SECRET"
+    "STRIPE_WEBHOOK_SECRET",
+    "VERCEL_GIT_REPO_OWNER"
   ],
   "tasks": {
     "//#format": { "cache": false },

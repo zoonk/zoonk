@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { getVercelTrustedOrigins } from "@zoonk/utils/url";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { betterAuth } from "better-auth/minimal";
 import { nextCookies } from "better-auth/next-js";
@@ -46,7 +47,7 @@ export const baseAuthConfig: BetterAuthOptions = {
     },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
   },
-  trustedOrigins: ["https://appleid.apple.com"],
+  trustedOrigins: ["https://appleid.apple.com", ...getVercelTrustedOrigins()],
 };
 
 export const baseAuthPlugins = [
