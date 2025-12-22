@@ -16,18 +16,13 @@ function getLoadingState(provider: "google" | "apple"): SocialState {
   return provider === "google" ? "loadingGoogle" : "loadingApple";
 }
 
-type SocialLoginProps = {
-  redirectTo?: string;
-};
-
-export function SocialLogin({ redirectTo }: SocialLoginProps) {
+export function SocialLogin({ redirectTo }: { redirectTo?: string }) {
   const [state, setState] = useState<SocialState>("initial");
   const t = useExtracted();
 
   const signIn = async (provider: "google" | "apple") => {
     setState(getLoadingState(provider));
 
-    // Build the callback URL to redirect after social login
     const callbackURL = redirectTo
       ? `/callback?redirectTo=${encodeURIComponent(redirectTo)}`
       : "/callback";
