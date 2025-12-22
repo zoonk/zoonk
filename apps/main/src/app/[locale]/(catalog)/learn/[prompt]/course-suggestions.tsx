@@ -37,7 +37,7 @@ export async function CourseSuggestions({
   return (
     <Container variant="narrow">
       <ContainerHeader>
-        <ContainerHeaderGroup className="text-center">
+        <ContainerHeaderGroup>
           <ContainerTitle>
             {t("Course ideas for {prompt}", { prompt })}
           </ContainerTitle>
