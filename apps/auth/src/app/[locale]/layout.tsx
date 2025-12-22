@@ -5,6 +5,8 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { routing } from "@/i18n/routing";
 import "@zoonk/ui/globals.css";
+import { FullPageLoading } from "@zoonk/ui/components/loading";
+import { Suspense } from "react";
 
 export async function generateMetadata({
   params,
@@ -36,9 +38,11 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body className="font-sans antialiased">
-        <NextIntlClientProvider>
-          <Container variant="centered">{children}</Container>
-        </NextIntlClientProvider>
+        <Suspense fallback={<FullPageLoading />}>
+          <NextIntlClientProvider>
+            <Container variant="centered">{children}</Container>
+          </NextIntlClientProvider>
+        </Suspense>
       </body>
     </html>
   );
