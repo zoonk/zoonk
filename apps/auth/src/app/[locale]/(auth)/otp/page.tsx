@@ -25,16 +25,13 @@ export default async function OTPPage({
         </OTPDescription>
       </OTPHeader>
 
-      <OTPForm
-        email={String(email)}
-        redirectTo={redirectTo ? String(redirectTo) : undefined}
-      />
+      <OTPForm email={String(email)} redirectTo={String(redirectTo)} />
 
       <Link
         className={buttonVariants({ variant: "link" })}
         href={{
           pathname: "/login",
-          query: redirectTo ? { redirectTo: String(redirectTo) } : undefined,
+          query: { redirectTo: String(redirectTo) },
         }}
       >
         {t("Change email")}
