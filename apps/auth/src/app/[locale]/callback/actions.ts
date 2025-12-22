@@ -1,24 +1,25 @@
 "use server";
 
 import { auth } from "@zoonk/auth";
+import { safeAsync } from "@zoonk/utils/error";
 import { headers } from "next/headers";
 
 export async function createOneTimeTokenAction(
   redirectTo: string,
 ): Promise<string> {
-  const headersList = await headers();
+  const { data, error } = await safeAsync(
+    async () =>
+      await auth.api.generateOneTimeToken({
+        headers: await headers(),
+      }),
+  );
 
-  const response = await auth.api.generateOneTimeToken({
-    headers: headersList,
-  });
-
-  if (!response?.token) {
-    throw new Error("Failed to generate one-time token");
+  if (error) {
+    console.error("Error generating one-time token:", error);
   }
 
-  // Build the redirect URL with the token
   const redirectUrl = new URL(redirectTo);
-  redirectUrl.searchParams.set("token", response.token);
+  redirectUrl.searchParams.set("token", data?.token ?? "");
 
   return redirectUrl.toString();
 }

@@ -5,16 +5,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
 
-#: src/app/[locale]/callback/page.tsx
-msgctxt "7/cGw2"
-msgid "You're signed in!"
-msgstr "Você está conectado!"
-
-#: src/app/[locale]/callback/page.tsx
-msgctxt "F8WbDs"
-msgid "You can close this window and return to your app."
-msgstr "Você pode fechar esta janela e voltar pro seu app."
-
 #: src/app/[locale]/layout.tsx
 msgctxt "dVItHD"
 msgid "Sign in to Zoonk"
