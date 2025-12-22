@@ -14,12 +14,13 @@ import { useRouter } from "@/i18n/navigation";
 
 type FormState = "idle" | "pending" | "error";
 
-type OTPFormProps = {
+export function OTPForm({
+  email,
+  redirectTo,
+}: {
   email: string;
   redirectTo?: string;
-};
-
-export function OTPForm({ email, redirectTo }: OTPFormProps) {
+}) {
   const { push } = useRouter();
   const t = useExtracted();
   const [state, setState] = useState<FormState>("idle");
@@ -36,7 +37,7 @@ export function OTPForm({ email, redirectTo }: OTPFormProps) {
       return;
     }
 
-    const { data, error } = await authClient.signIn.emailOtp({ email, otp });
+    const { error } = await authClient.signIn.emailOtp({ email, otp });
 
     if (error) {
       setState("error");
@@ -45,18 +46,10 @@ export function OTPForm({ email, redirectTo }: OTPFormProps) {
 
     setState("idle");
 
-    if (data) {
-      // After successful login, redirect to callback to generate OTT
-      if (redirectTo) {
-        push({
-          pathname: "/callback",
-          query: { redirectTo },
-        });
-      } else {
-        // No redirect specified, just show success
-        push("/callback");
-      }
-    }
+    push({
+      pathname: "/callback",
+      query: { redirectTo },
+    });
   };
 
   return (
