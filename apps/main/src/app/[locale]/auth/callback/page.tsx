@@ -1,5 +1,6 @@
 import { auth } from "@zoonk/auth";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
+import { safeAsync } from "@zoonk/utils/error";
 import { getLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { redirect } from "@/i18n/navigation";
@@ -16,16 +17,17 @@ async function CallbackHandler({
     return redirect({ href: "/login", locale });
   }
 
-  try {
+  const { error } = await safeAsync(async () => {
     await auth.api.verifyOneTimeToken({
       body: { token: String(token) },
     });
-  } catch (error) {
+  });
+
+  if (error) {
     console.error("Failed to verify one-time token:", error);
     return redirect({ href: "/login", locale });
   }
 
-  // Successfully verified, redirect to home
   return redirect({ href: "/", locale });
 }
 
