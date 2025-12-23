@@ -578,13 +578,129 @@ describe("courseSlugExists()", () => {
 });
 
 describe("searchCourses()", () => {
-  test("returns courses matching the search title", async () => {
-    const organization = await organizationFixture();
+  test("returns Forbidden for visibility all when user is unauthenticated", async () => {
+    const organization = await organizationFixture({ kind: "brand" });
+
+    const result = await searchCourses({
+      headers: new Headers(),
+      orgSlug: organization.slug,
+      title: "test",
+      visibility: "all",
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toEqual([]);
+  });
+
+  test("returns Forbidden for visibility draft when user is unauthenticated", async () => {
+    const organization = await organizationFixture({ kind: "brand" });
+
+    const result = await searchCourses({
+      headers: new Headers(),
+      orgSlug: organization.slug,
+      title: "test",
+      visibility: "draft",
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toEqual([]);
+  });
+
+  test("returns Forbidden for visibility all when user is not a member", async () => {
+    const organization = await organizationFixture({ kind: "brand" });
+    const { user } = await memberFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    const result = await searchCourses({
+      headers,
+      orgSlug: organization.slug,
+      title: "test",
+      visibility: "all",
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toEqual([]);
+  });
+
+  test("returns Forbidden for visibility draft when user is a member", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
+
+    const result = await searchCourses({
+      headers,
+      orgSlug: organization.slug,
+      title: "test",
+      visibility: "draft",
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toEqual([]);
+  });
+
+  test("visibility published allows unauthenticated access for brand orgs", async () => {
+    const organization = await organizationFixture({ kind: "brand" });
     const author = await userFixture();
+
+    const course = await prisma.course.create({
+      data: {
+        authorId: Number(author.id),
+        description: "Published course",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: "published course",
+        organizationId: organization.id,
+        slug: `published-course-${randomUUID()}`,
+        title: "Published Course",
+      },
+    });
+
+    const result = await searchCourses({
+      headers: new Headers(),
+      orgSlug: organization.slug,
+      title: "published",
+      visibility: "published",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0]?.id).toBe(course.id);
+  });
+
+  test("visibility published returns Forbidden for non-brand orgs without authentication", async () => {
+    const organization = await organizationFixture({ kind: "school" });
+    const author = await userFixture();
+
+    await prisma.course.create({
+      data: {
+        authorId: Number(author.id),
+        description: "Published course",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: "published course",
+        organizationId: organization.id,
+        slug: `published-course-${randomUUID()}`,
+        title: "Published Course",
+      },
+    });
+
+    const result = await searchCourses({
+      headers: new Headers(),
+      orgSlug: organization.slug,
+      title: "published",
+      visibility: "published",
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toEqual([]);
+  });
+
+  test("returns courses matching the search title", async () => {
+    const { organization, user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     const matchingCourse = await prisma.course.create({
       data: {
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         description: "Computer Science course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -597,7 +713,7 @@ describe("searchCourses()", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         description: "Biology course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -609,8 +725,10 @@ describe("searchCourses()", () => {
     });
 
     const result = await searchCourses({
+      headers,
       orgSlug: organization.slug,
       title: "Computer",
+      visibility: "all",
     });
 
     expect(result.error).toBeNull();
@@ -619,12 +737,12 @@ describe("searchCourses()", () => {
   });
 
   test("matches partial words", async () => {
-    const organization = await organizationFixture();
-    const author = await userFixture();
+    const { organization, user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         description: "Computer Science course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -636,8 +754,10 @@ describe("searchCourses()", () => {
     });
 
     const result = await searchCourses({
+      headers,
       orgSlug: organization.slug,
       title: "comput",
+      visibility: "all",
     });
 
     expect(result.error).toBeNull();
@@ -646,12 +766,12 @@ describe("searchCourses()", () => {
   });
 
   test("matches words without accents to titles with accents", async () => {
-    const organization = await organizationFixture();
-    const author = await userFixture();
+    const { organization, user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         description: "Computer Science course",
         imageUrl: "https://example.com/image.jpg",
         language: "pt",
@@ -663,8 +783,10 @@ describe("searchCourses()", () => {
     });
 
     const result = await searchCourses({
+      headers,
       orgSlug: organization.slug,
       title: "ciencia da computacao",
+      visibility: "all",
     });
 
     expect(result.error).toBeNull();
@@ -673,12 +795,12 @@ describe("searchCourses()", () => {
   });
 
   test("is case-insensitive", async () => {
-    const organization = await organizationFixture();
-    const author = await userFixture();
+    const { organization, user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         description: "Programming course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -690,8 +812,10 @@ describe("searchCourses()", () => {
     });
 
     const result = await searchCourses({
+      headers,
       orgSlug: organization.slug,
       title: "PROGRAMMING",
+      visibility: "all",
     });
 
     expect(result.error).toBeNull();
@@ -700,13 +824,13 @@ describe("searchCourses()", () => {
   });
 
   test("only returns courses from the specified organization", async () => {
-    const org1 = await organizationFixture();
+    const { organization: org1, user } = await memberFixture({ role: "admin" });
     const org2 = await organizationFixture();
-    const author = await userFixture();
+    const headers = await signInAs(user.email, user.password);
 
     const org1Course = await prisma.course.create({
       data: {
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         description: "Org 1 course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -719,7 +843,7 @@ describe("searchCourses()", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         description: "Org 2 course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -731,8 +855,10 @@ describe("searchCourses()", () => {
     });
 
     const result = await searchCourses({
+      headers,
       orgSlug: org1.slug,
       title: "Mathematics",
+      visibility: "all",
     });
 
     expect(result.error).toBeNull();
@@ -741,12 +867,12 @@ describe("searchCourses()", () => {
   });
 
   test("returns courses ordered by createdAt descending", async () => {
-    const organization = await organizationFixture();
-    const author = await userFixture();
+    const { organization, user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     const oldCourse = await prisma.course.create({
       data: {
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         createdAt: new Date("2024-01-01"),
         description: "Old programming course",
         imageUrl: "https://example.com/image.jpg",
@@ -760,7 +886,7 @@ describe("searchCourses()", () => {
 
     const newCourse = await prisma.course.create({
       data: {
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         createdAt: new Date("2024-06-01"),
         description: "New programming course",
         imageUrl: "https://example.com/image.jpg",
@@ -773,8 +899,10 @@ describe("searchCourses()", () => {
     });
 
     const result = await searchCourses({
+      headers,
       orgSlug: organization.slug,
       title: "programming",
+      visibility: "all",
     });
 
     expect(result.error).toBeNull();
@@ -784,12 +912,12 @@ describe("searchCourses()", () => {
   });
 
   test("returns empty array when no courses match", async () => {
-    const organization = await organizationFixture();
-    const author = await userFixture();
+    const { organization, user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     await prisma.course.create({
       data: {
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         description: "Biology course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -801,8 +929,10 @@ describe("searchCourses()", () => {
     });
 
     const result = await searchCourses({
+      headers,
       orgSlug: organization.slug,
       title: "Physics",
+      visibility: "all",
     });
 
     expect(result.error).toBeNull();
@@ -810,12 +940,12 @@ describe("searchCourses()", () => {
   });
 
   test("filters courses by language", async () => {
-    const organization = await organizationFixture();
-    const author = await userFixture();
+    const { organization, user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     const enCourse = await prisma.course.create({
       data: {
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         description: "Machine learning basics",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -828,7 +958,7 @@ describe("searchCourses()", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(author.id),
+        authorId: Number(user.id),
         description: "Portuguese machine learning course",
         imageUrl: "https://example.com/image.jpg",
         language: "pt",
@@ -840,9 +970,11 @@ describe("searchCourses()", () => {
     });
 
     const result = await searchCourses({
+      headers,
       language: "en",
       orgSlug: organization.slug,
       title: "machine",
+      visibility: "all",
     });
 
     expect(result.error).toBeNull();
@@ -852,13 +984,13 @@ describe("searchCourses()", () => {
   });
 
   test("returns all matching courses when language is not specified", async () => {
-    const organization = await organizationFixture();
-    const author = await userFixture();
+    const { organization, user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     await prisma.course.createMany({
       data: [
         {
-          authorId: Number(author.id),
+          authorId: Number(user.id),
           description: "English programming course",
           imageUrl: "https://example.com/image.jpg",
           language: "en",
@@ -868,7 +1000,7 @@ describe("searchCourses()", () => {
           title: "Programming 101",
         },
         {
-          authorId: Number(author.id),
+          authorId: Number(user.id),
           description: "Portuguese programming course",
           imageUrl: "https://example.com/image.jpg",
           language: "pt",
@@ -881,12 +1013,98 @@ describe("searchCourses()", () => {
     });
 
     const result = await searchCourses({
+      headers,
       orgSlug: organization.slug,
       title: "programming",
+      visibility: "all",
     });
 
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(2);
+  });
+
+  test("visibility published filters only published courses", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
+
+    const publishedCourse = await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Published course",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: organization.id,
+        slug: `published-${randomUUID()}`,
+        title: "Test Course",
+      },
+    });
+
+    await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Draft course",
+        isPublished: false,
+        language: "en",
+        normalizedTitle: "test course draft",
+        organizationId: organization.id,
+        slug: `draft-${randomUUID()}`,
+        title: "Test Course Draft",
+      },
+    });
+
+    const result = await searchCourses({
+      headers,
+      orgSlug: organization.slug,
+      title: "test",
+      visibility: "published",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0]?.id).toBe(publishedCourse.id);
+  });
+
+  test("visibility draft filters only unpublished courses for admins", async () => {
+    const { organization, user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
+
+    await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Published course",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: organization.id,
+        slug: `published-${randomUUID()}`,
+        title: "Test Course",
+      },
+    });
+
+    const draftCourse = await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Draft course",
+        isPublished: false,
+        language: "en",
+        normalizedTitle: "test course draft",
+        organizationId: organization.id,
+        slug: `draft-${randomUUID()}`,
+        title: "Test Course Draft",
+      },
+    });
+
+    const result = await searchCourses({
+      headers,
+      orgSlug: organization.slug,
+      title: "test",
+      visibility: "draft",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0]?.id).toBe(draftCourse.id);
   });
 });
 

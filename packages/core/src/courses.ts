@@ -265,27 +265,52 @@ export const searchCourses = cache(
   async (params: {
     title: string;
     orgSlug: string;
+    visibility: ContentVisibility;
     language?: string;
+    headers?: Headers;
   }): Promise<{ data: Course[]; error: Error | null }> => {
-    const { title, orgSlug, language } = params;
+    const { title, orgSlug, language, visibility } = params;
     const normalizedSearch = normalizeString(title);
+    const permission = visibility === "published" ? "read" : "update";
 
     const { data, error } = await safeAsync(() =>
-      prisma.course.findMany({
-        orderBy: { createdAt: "desc" },
-        where: {
-          normalizedTitle: { contains: normalizedSearch, mode: "insensitive" },
-          organization: { slug: orgSlug },
-          ...(language && { language }),
-        },
-      }),
+      Promise.all([
+        hasCoursePermission({
+          headers: params.headers,
+          orgSlug,
+          permission,
+        }),
+        getOrganization(orgSlug),
+        prisma.course.findMany({
+          orderBy: { createdAt: "desc" },
+          where: {
+            normalizedTitle: {
+              contains: normalizedSearch,
+              mode: "insensitive",
+            },
+            organization: { slug: orgSlug },
+            ...(language && { language }),
+            ...(visibility === "published" && { isPublished: true }),
+            ...(visibility === "draft" && { isPublished: false }),
+          },
+        }),
+      ]),
     );
 
     if (error) {
       return { data: [], error };
     }
 
-    return { data: data ?? [], error: null };
+    const [hasPermission, { data: org }, courses] = data;
+    const isBrandOrg = org?.kind === "brand";
+    const canAccess =
+      hasPermission || (visibility === "published" && isBrandOrg);
+
+    if (!canAccess) {
+      return { data: [], error: new Error("Forbidden") };
+    }
+
+    return { data: courses, error: null };
   },
 );
 
