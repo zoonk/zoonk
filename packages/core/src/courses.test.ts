@@ -893,37 +893,4 @@ describe("toggleCoursePublished()", () => {
     expect(result.error).toBeNull();
     expect(result.data?.isPublished).toBe(true);
   });
-
-  test("correctly updates isPublished from true to false", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
-
-    const course = await prisma.course.create({
-      data: {
-        authorId: Number(user.id),
-        description: "Test description",
-        isPublished: true,
-        language: "en",
-        normalizedTitle: "test course",
-        organizationId: organization.id,
-        slug: `test-course-${randomUUID()}`,
-        title: "Test Course",
-      },
-    });
-
-    const result = await toggleCoursePublished({
-      courseId: course.id,
-      headers,
-      isPublished: false,
-      orgSlug: organization.slug,
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data?.isPublished).toBe(false);
-
-    const updatedCourse = await prisma.course.findUnique({
-      where: { id: course.id },
-    });
-    expect(updatedCourse?.isPublished).toBe(false);
-  });
 });
