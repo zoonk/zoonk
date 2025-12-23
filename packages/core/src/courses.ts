@@ -237,8 +237,9 @@ export const searchCourses = cache(
   async (params: {
     title: string;
     orgSlug: string;
+    language?: string;
   }): Promise<{ data: Course[]; error: Error | null }> => {
-    const { title, orgSlug } = params;
+    const { title, orgSlug, language } = params;
     const normalizedSearch = normalizeString(title);
 
     const { data, error } = await safeAsync(() =>
@@ -247,6 +248,7 @@ export const searchCourses = cache(
         where: {
           normalizedTitle: { contains: normalizedSearch, mode: "insensitive" },
           organization: { slug: orgSlug },
+          ...(language && { language }),
         },
       }),
     );

@@ -532,6 +532,86 @@ describe("searchCourses()", () => {
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(0);
   });
+
+  test("filters courses by language", async () => {
+    const organization = await organizationFixture();
+    const author = await userFixture();
+
+    const enCourse = await prisma.course.create({
+      data: {
+        authorId: Number(author.id),
+        description: "Machine learning basics",
+        imageUrl: "https://example.com/image.jpg",
+        language: "en",
+        normalizedTitle: "machine learning basics",
+        organizationId: organization.id,
+        slug: `programming-en-${randomUUID()}`,
+        title: "Machine Learning Basics",
+      },
+    });
+
+    await prisma.course.create({
+      data: {
+        authorId: Number(author.id),
+        description: "Portuguese machine learning course",
+        imageUrl: "https://example.com/image.jpg",
+        language: "pt",
+        normalizedTitle: "machine learning basics",
+        organizationId: organization.id,
+        slug: `machine-learning-pt-${randomUUID()}`,
+        title: "Machine Learning Basics",
+      },
+    });
+
+    const result = await searchCourses({
+      language: "en",
+      orgSlug: organization.slug,
+      title: "machine",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0]?.id).toBe(enCourse.id);
+    expect(result.data[0]?.language).toBe("en");
+  });
+
+  test("returns all matching courses when language is not specified", async () => {
+    const organization = await organizationFixture();
+    const author = await userFixture();
+
+    await prisma.course.createMany({
+      data: [
+        {
+          authorId: Number(author.id),
+          description: "English programming course",
+          imageUrl: "https://example.com/image.jpg",
+          language: "en",
+          normalizedTitle: "programming 101",
+          organizationId: organization.id,
+          slug: `prog-en-${randomUUID()}`,
+          title: "Programming 101",
+        },
+        {
+          authorId: Number(author.id),
+          description: "Portuguese programming course",
+          imageUrl: "https://example.com/image.jpg",
+          language: "pt",
+          normalizedTitle: "programming 101",
+          organizationId: organization.id,
+          slug: `prog-pt-${randomUUID()}`,
+          title: "Programming 101",
+        },
+      ],
+    });
+
+    const result = await searchCourses({
+      orgSlug: organization.slug,
+      title: "programming",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(2);
+  });
 });
 
 describe("createCourse()", () => {
