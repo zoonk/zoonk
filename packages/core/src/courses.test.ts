@@ -7,9 +7,11 @@ import { userFixture } from "@/fixtures/users";
 import {
   courseSlugExists,
   createCourse,
+  getCourse,
   LIST_COURSES_LIMIT,
   listOrganizationCourses,
   searchCourses,
+  toggleCoursePublished,
 } from "./courses";
 
 describe("listOrganizationCourses()", () => {
@@ -656,5 +658,296 @@ describe("createCourse()", () => {
 
     expect(result.error).toBeNull();
     expect(result.data?.normalizedTitle).toBe("ciencia da computacao");
+  });
+});
+
+describe("getCourse()", () => {
+  test("returns Forbidden when session is invalid", async () => {
+    const organization = await organizationFixture();
+
+    const result = await getCourse({
+      courseSlug: "test-course",
+      headers: new Headers(),
+      language: "en",
+      orgSlug: organization.slug,
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+  });
+
+  test("returns Forbidden when user is not a member of the organization", async () => {
+    const organization = await organizationFixture();
+    const { user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
+
+    const result = await getCourse({
+      courseSlug: "test-course",
+      headers,
+      language: "en",
+      orgSlug: organization.slug,
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+  });
+
+  test("returns course data when user has read permission", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
+    const slug = `test-course-${randomUUID()}`;
+
+    const course = await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Test description",
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: organization.id,
+        slug,
+        title: "Test Course",
+      },
+    });
+
+    const result = await getCourse({
+      courseSlug: slug,
+      headers,
+      language: "en",
+      orgSlug: organization.slug,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.id).toBe(course.id);
+    expect(result.data?.title).toBe("Test Course");
+  });
+
+  test("returns null when course doesn't exist", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
+
+    const result = await getCourse({
+      courseSlug: "non-existent-course",
+      headers,
+      language: "en",
+      orgSlug: organization.slug,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toBeNull();
+  });
+
+  test("returns null when language doesn't match", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
+    const slug = `test-course-${randomUUID()}`;
+
+    await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Test description",
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: organization.id,
+        slug,
+        title: "Test Course",
+      },
+    });
+
+    const result = await getCourse({
+      courseSlug: slug,
+      headers,
+      language: "pt",
+      orgSlug: organization.slug,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toBeNull();
+  });
+
+  test("returns null when organization doesn't match", async () => {
+    const org1 = await organizationFixture();
+    const { organization: org2, user } = await memberFixture({
+      role: "member",
+    });
+    const headers = await signInAs(user.email, user.password);
+    const slug = `test-course-${randomUUID()}`;
+
+    await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Test description",
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: org1.id,
+        slug,
+        title: "Test Course",
+      },
+    });
+
+    const result = await getCourse({
+      courseSlug: slug,
+      headers,
+      language: "en",
+      orgSlug: org2.slug,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toBeNull();
+  });
+});
+
+describe("toggleCoursePublished()", () => {
+  test("returns Course not found when course doesn't exist", async () => {
+    const result = await toggleCoursePublished({
+      courseId: 999_999,
+      headers: new Headers(),
+      isPublished: true,
+    });
+
+    expect(result.error?.message).toBe("Course not found");
+    expect(result.data).toBeNull();
+  });
+
+  test("returns Forbidden when session is invalid", async () => {
+    const organization = await organizationFixture();
+    const author = await userFixture();
+
+    const course = await prisma.course.create({
+      data: {
+        authorId: Number(author.id),
+        description: "Test description",
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: organization.id,
+        slug: `test-course-${randomUUID()}`,
+        title: "Test Course",
+      },
+    });
+
+    const result = await toggleCoursePublished({
+      courseId: course.id,
+      headers: new Headers(),
+      isPublished: true,
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+  });
+
+  test("returns Forbidden when user doesn't have update permission", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
+
+    const course = await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Test description",
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: organization.id,
+        slug: `test-course-${randomUUID()}`,
+        title: "Test Course",
+      },
+    });
+
+    const result = await toggleCoursePublished({
+      courseId: course.id,
+      headers,
+      isPublished: true,
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+  });
+
+  test("successfully toggles when user has admin permission", async () => {
+    const { organization, user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
+
+    const course = await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Test description",
+        isPublished: false,
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: organization.id,
+        slug: `test-course-${randomUUID()}`,
+        title: "Test Course",
+      },
+    });
+
+    const result = await toggleCoursePublished({
+      courseId: course.id,
+      headers,
+      isPublished: true,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.isPublished).toBe(true);
+  });
+
+  test("successfully toggles when user has owner permission", async () => {
+    const { organization, user } = await memberFixture({ role: "owner" });
+    const headers = await signInAs(user.email, user.password);
+
+    const course = await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Test description",
+        isPublished: false,
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: organization.id,
+        slug: `test-course-${randomUUID()}`,
+        title: "Test Course",
+      },
+    });
+
+    const result = await toggleCoursePublished({
+      courseId: course.id,
+      headers,
+      isPublished: true,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.isPublished).toBe(true);
+  });
+
+  test("returns Forbidden when user tries to update a course from a different organization", async () => {
+    const { user } = await memberFixture({ role: "admin" });
+    const org2 = await organizationFixture();
+    const otherUser = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    // Create a course in org2 (different org than user's)
+    const courseInOrg2 = await prisma.course.create({
+      data: {
+        authorId: Number(otherUser.id),
+        description: "Course in different org",
+        isPublished: false,
+        language: "en",
+        normalizedTitle: "test course in org2",
+        organizationId: org2.id,
+        slug: `test-course-org2-${randomUUID()}`,
+        title: "Test Course in Org2",
+      },
+    });
+
+    // User has admin permission on org1 but tries to update a course from org2
+    const result = await toggleCoursePublished({
+      courseId: courseInOrg2.id,
+      headers,
+      isPublished: true,
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+
+    // Verify the course was NOT updated
+    const unchangedCourse = await prisma.course.findUnique({
+      where: { id: courseInOrg2.id },
+    });
+    expect(unchangedCourse?.isPublished).toBe(false);
   });
 });

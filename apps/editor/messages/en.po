@@ -5,6 +5,11 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
 
+#: src/app/[locale]/(private)/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/actions.ts
+msgctxt "bQ0Gv1"
+msgid "Failed to update course"
+msgstr "Failed to update course"
+
 #: src/app/[locale]/(private)/[orgSlug]/course-list.tsx
 msgctxt "c0YWuA"
 msgid "Your organization hasn't created any courses yet."
@@ -161,3 +166,13 @@ msgstr "Organizations"
 msgctxt "NI1jZo"
 msgid "No other organizations"
 msgstr "No other organizations"
+
+#: src/components/navbar/publish-toggle.tsx
+msgctxt "W6nwjo"
+msgid "Draft"
+msgstr "Draft"
+
+#: src/components/navbar/publish-toggle.tsx
+msgctxt "w7tf2z"
+msgid "Published"
+msgstr "Published"
