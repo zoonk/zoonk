@@ -10,16 +10,16 @@ import {
   deleteCourse,
   getCourse,
   LIST_COURSES_LIMIT,
-  listOrganizationCourses,
+  listCourses,
   searchCourses,
   toggleCoursePublished,
 } from "./courses";
 
-describe("listOrganizationCourses()", () => {
+describe("listCourses()", () => {
   test("returns Forbidden error when session is invalid", async () => {
     const organization = await organizationFixture();
 
-    const result = await listOrganizationCourses({
+    const result = await listCourses({
       headers: new Headers(),
       orgSlug: organization.slug,
     });
@@ -33,7 +33,7 @@ describe("listOrganizationCourses()", () => {
     const { user } = await memberFixture({ role: "member" });
     const headers = await signInAs(user.email, user.password);
 
-    const result = await listOrganizationCourses({
+    const result = await listCourses({
       headers,
       orgSlug: organization.slug,
     });
@@ -59,7 +59,7 @@ describe("listOrganizationCourses()", () => {
       },
     });
 
-    const result = await listOrganizationCourses({
+    const result = await listCourses({
       headers,
       orgSlug: organization.slug,
     });
@@ -98,7 +98,7 @@ describe("listOrganizationCourses()", () => {
       ],
     });
 
-    const result = await listOrganizationCourses({
+    const result = await listCourses({
       headers,
       language: "en",
       orgSlug: organization.slug,
@@ -127,7 +127,7 @@ describe("listOrganizationCourses()", () => {
     });
 
     const customLimit = 3;
-    const result = await listOrganizationCourses({
+    const result = await listCourses({
       headers,
       limit: customLimit,
       orgSlug: organization.slug,
@@ -154,7 +154,7 @@ describe("listOrganizationCourses()", () => {
       })),
     });
 
-    const result = await listOrganizationCourses({
+    const result = await listCourses({
       headers,
       orgSlug: organization.slug,
     });
@@ -195,7 +195,7 @@ describe("listOrganizationCourses()", () => {
       },
     });
 
-    const result = await listOrganizationCourses({
+    const result = await listCourses({
       headers,
       orgSlug: organization.slug,
     });

@@ -46,7 +46,7 @@ export const getCourse = cache(
   },
 );
 
-export const listOrganizationCourses = cache(
+export const listCourses = cache(
   async (opts?: {
     orgSlug: string;
     language?: string;

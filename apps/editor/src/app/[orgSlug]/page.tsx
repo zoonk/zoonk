@@ -1,4 +1,4 @@
-import { listOrganizationCourses } from "@zoonk/core/courses";
+import { listCourses } from "@zoonk/core/courses";
 import { getOrganization } from "@zoonk/core/organizations";
 import {
   Container,
@@ -65,7 +65,7 @@ async function ListCourses({
   params: PageProps<"/[orgSlug]">["params"];
 }) {
   const { orgSlug } = await params;
-  const { data: courses } = await listOrganizationCourses({ orgSlug });
+  const { data: courses } = await listCourses({ orgSlug });
 
   return <CourseList courses={courses} orgSlug={orgSlug} />;
 }
