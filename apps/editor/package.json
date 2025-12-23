@@ -1,12 +1,15 @@
 {
   "dependencies": {
+    "@formatjs/intl-localematcher": "0.7.3",
     "@tabler/icons-react": "3.35.0",
     "@zoonk/auth": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/next": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
+    "js-cookie": "3.0.5",
     "lucide-react": "0.556.0",
+    "negotiator": "1.0.0",
     "next": "16.1.0",
     "next-intl": "4.6.1",
     "react": "19.2.3",
@@ -14,6 +17,8 @@
     "server-only": "0.0.1"
   },
   "devDependencies": {
+    "@types/js-cookie": "3.0.6",
+    "@types/negotiator": "0.6.4",
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
