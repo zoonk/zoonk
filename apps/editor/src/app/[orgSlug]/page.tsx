@@ -9,25 +9,18 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { cacheTagOrg } from "@zoonk/utils/cache";
 import { PlusIcon } from "lucide-react";
 import type { Metadata } from "next";
-import { cacheLife, cacheTag } from "next/cache";
-import { getExtracted, setRequestLocale } from "next-intl/server";
+import Link from "next/link";
+import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
-import { Link } from "@/i18n/navigation";
 import { CourseList, CourseListSkeleton } from "./course-list";
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/[orgSlug]">): Promise<Metadata> {
-  "use cache";
-
-  const { locale, orgSlug } = await params;
+}: PageProps<"/[orgSlug]">): Promise<Metadata> {
+  const { orgSlug } = await params;
   const { data: org } = await getOrganizationBySlug(orgSlug);
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagOrg({ orgSlug }));
 
   if (!org) {
     return {};
@@ -39,15 +32,9 @@ export async function generateMetadata({
 async function HomeContainerHeader({
   params,
 }: {
-  params: PageProps<"/[locale]/[orgSlug]">["params"];
+  params: PageProps<"/[orgSlug]">["params"];
 }) {
-  "use cache";
-
-  const { locale, orgSlug } = await params;
-  setRequestLocale(locale);
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagOrg({ orgSlug }));
+  const { orgSlug } = await params;
 
   const t = await getExtracted();
 
@@ -75,17 +62,15 @@ async function HomeContainerHeader({
 async function ListCourses({
   params,
 }: {
-  params: PageProps<"/[locale]/[orgSlug]">["params"];
+  params: PageProps<"/[orgSlug]">["params"];
 }) {
-  const { locale, orgSlug } = await params;
+  const { orgSlug } = await params;
   const { data: courses } = await listOrganizationCourses({ orgSlug });
 
-  return <CourseList courses={courses} locale={locale} orgSlug={orgSlug} />;
+  return <CourseList courses={courses} orgSlug={orgSlug} />;
 }
 
-export default async function OrgHomePage({
-  params,
-}: PageProps<"/[locale]/[orgSlug]">) {
+export default async function OrgHomePage({ params }: PageProps<"/[orgSlug]">) {
   return (
     <Container variant="list">
       <HomeContainerHeader params={params} />

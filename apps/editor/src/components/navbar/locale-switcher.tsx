@@ -7,29 +7,23 @@ import {
   DropdownMenuSubTrigger,
 } from "@zoonk/ui/components/dropdown-menu";
 import { LOCALE_LABELS, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
+import Cookies from "js-cookie";
 import { CheckIcon, LanguagesIcon } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useExtracted, useLocale } from "next-intl";
 import { useTransition } from "react";
-import { usePathname, useRouter } from "@/i18n/navigation";
 
 export function LocaleSwitcher() {
   const t = useExtracted();
   const locale = useLocale();
   const router = useRouter();
-  const pathname = usePathname();
-  const params = useParams();
   const [isPending, startTransition] = useTransition();
 
   function onLocaleChange(nextLocale: string) {
+    Cookies.set("locale", nextLocale, { expires: 365, sameSite: "lax" });
+
     startTransition(() => {
-      router.replace(
-        // @ts-expect-error -- TypeScript will validate that only known `params`
-        // are used in combination with a given `pathname`. Since the two will
-        // always match for the current route, we can skip runtime checks.
-        { params, pathname },
-        { locale: nextLocale },
-      );
+      router.refresh();
     });
   }
 

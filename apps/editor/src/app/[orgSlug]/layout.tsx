@@ -12,7 +12,7 @@ async function LayoutPermissions({
   children,
   navbarActions,
   params,
-}: LayoutProps<"/[locale]/[orgSlug]">) {
+}: LayoutProps<"/[orgSlug]">) {
   const { orgSlug } = await params;
   const [org, canViewPage] = await Promise.all([
     getOrganizationBySlug(orgSlug),
@@ -49,7 +49,7 @@ async function LayoutPermissions({
 export default async function OrgHomeLayout({
   children,
   ...props
-}: LayoutProps<"/[locale]/[orgSlug]">) {
+}: LayoutProps<"/[orgSlug]">) {
   return (
     <Suspense>
       <LayoutPermissions {...props}>{children}</LayoutPermissions>

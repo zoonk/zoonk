@@ -2,14 +2,11 @@
 
 import { authClient } from "@zoonk/auth/client";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
-import { useSearchParams } from "next/navigation";
-import { useLocale } from "next-intl";
+import { redirect, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useEffectEvent } from "react";
-import { redirect } from "@/i18n/navigation";
 
 function CallbackHandler() {
   const searchParams = useSearchParams();
-  const locale = useLocale();
   const token = searchParams.get("token");
 
   const handleVerify = useEffectEvent(async (userToken: string) => {
@@ -21,10 +18,10 @@ function CallbackHandler() {
 
     if (error) {
       console.error("Failed to verify one-time token:", error);
-      return redirect({ href: "/login", locale });
+      return redirect("/login");
     }
 
-    redirect({ href: "/", locale });
+    redirect("/" as never);
   });
 
   useEffect(() => {

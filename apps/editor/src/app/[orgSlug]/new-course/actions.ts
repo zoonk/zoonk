@@ -5,9 +5,9 @@ import { revalidateMainApp } from "@zoonk/core/revalidate";
 import { cacheTagOrgCourses } from "@zoonk/utils/cache";
 import { toSlug } from "@zoonk/utils/string";
 import { revalidateTag } from "next/cache";
+import { redirect } from "next/navigation";
 import { after } from "next/server";
-import { getExtracted, getLocale } from "next-intl/server";
-import { redirect } from "@/i18n/navigation";
+import { getExtracted } from "next-intl/server";
 import type { CourseFormData } from "./use-course-form";
 
 export async function createCourseAction(
@@ -19,7 +19,6 @@ export async function createCourseAction(
   const language = formData.language;
   const slug = formData.slug.trim();
 
-  const locale = await getLocale();
   const t = await getExtracted();
 
   if (!(title && description && language && slug)) {
@@ -46,8 +45,5 @@ export async function createCourseAction(
     await revalidateMainApp([tag]);
   });
 
-  redirect({
-    href: `/${orgSlug}/c/${course.language}/${course.slug}`,
-    locale,
-  });
+  redirect(`/${orgSlug}/c/${course.language}/${course.slug}`);
 }

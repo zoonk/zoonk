@@ -6,8 +6,8 @@ import {
   WizardContent,
 } from "@zoonk/ui/components/wizard";
 import { toSlug } from "@zoonk/utils/string";
+import { useRouter } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
-import { useRouter } from "@/i18n/navigation";
 import { createCourseAction } from "./actions";
 import { CreateCourseNavbar } from "./create-course-navbar";
 import { DescriptionStep } from "./steps/description-step";
