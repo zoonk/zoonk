@@ -9,7 +9,6 @@ import { getExtracted } from "next-intl/server";
 
 export async function togglePublishAction(
   courseId: number,
-  orgSlug: string,
   isPublished: boolean,
 ): Promise<{ error: string | null }> {
   const t = await getExtracted();
@@ -17,7 +16,6 @@ export async function togglePublishAction(
   const { error } = await toggleCoursePublished({
     courseId,
     isPublished,
-    orgSlug,
   });
 
   if (error) {

@@ -197,12 +197,26 @@ export async function createCourse(params: {
 export async function toggleCoursePublished(params: {
   courseId: number;
   isPublished: boolean;
-  orgSlug: string;
   headers?: Headers;
 }): Promise<SafeReturn<Course>> {
+  const { data: course, error: findError } = await safeAsync(() =>
+    prisma.course.findUnique({
+      select: { id: true, organizationId: true },
+      where: { id: params.courseId },
+    }),
+  );
+
+  if (findError) {
+    return { data: null, error: findError };
+  }
+
+  if (!course) {
+    return { data: null, error: new Error("Course not found") };
+  }
+
   const hasPermission = await hasCoursePermission({
     headers: params.headers,
-    orgSlug: params.orgSlug,
+    orgId: course.organizationId,
     permission: "update",
   });
 
@@ -213,7 +227,7 @@ export async function toggleCoursePublished(params: {
   const { data, error } = await safeAsync(() =>
     prisma.course.update({
       data: { isPublished: params.isPublished },
-      where: { id: params.courseId },
+      where: { id: course.id },
     }),
   );
 

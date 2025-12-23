@@ -21,7 +21,7 @@ async function CoursePublishToggle({
   return (
     <PublishToggle
       isPublished={course.isPublished}
-      onToggle={togglePublishAction.bind(null, course.id, orgSlug)}
+      onToggle={togglePublishAction.bind(null, course.id)}
     />
   );
 }
