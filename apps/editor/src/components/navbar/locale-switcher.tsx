@@ -8,10 +8,9 @@ import {
 } from "@zoonk/ui/components/dropdown-menu";
 import { LOCALE_LABELS, SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { CheckIcon, LanguagesIcon } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 import { useExtracted, useLocale } from "next-intl";
 import { useTransition } from "react";
-import { usePathname, useRouter } from "@/i18n/navigation";
 
 export function LocaleSwitcher() {
   const t = useExtracted();

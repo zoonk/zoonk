@@ -11,14 +11,14 @@ import {
 } from "@zoonk/ui/components/container";
 import { PlusIcon } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
-import { Link } from "@/i18n/navigation";
 import { CourseList, CourseListSkeleton } from "./course-list";
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/[orgSlug]">): Promise<Metadata> {
+}: PageProps<"/[orgSlug]">): Promise<Metadata> {
   const { orgSlug } = await params;
   const { data: org } = await getOrganizationBySlug(orgSlug);
 
@@ -32,7 +32,7 @@ export async function generateMetadata({
 async function HomeContainerHeader({
   params,
 }: {
-  params: PageProps<"/[locale]/[orgSlug]">["params"];
+  params: PageProps<"/[orgSlug]">["params"];
 }) {
   const { orgSlug } = await params;
 
@@ -62,7 +62,7 @@ async function HomeContainerHeader({
 async function ListCourses({
   params,
 }: {
-  params: PageProps<"/[locale]/[orgSlug]">["params"];
+  params: PageProps<"/[orgSlug]">["params"];
 }) {
   const { orgSlug } = await params;
   const { data: courses } = await listOrganizationCourses({ orgSlug });
@@ -70,9 +70,7 @@ async function ListCourses({
   return <CourseList courses={courses} orgSlug={orgSlug} />;
 }
 
-export default async function OrgHomePage({
-  params,
-}: PageProps<"/[locale]/[orgSlug]">) {
+export default async function OrgHomePage({ params }: PageProps<"/[orgSlug]">) {
   return (
     <Container variant="list">
       <HomeContainerHeader params={params} />

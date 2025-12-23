@@ -11,9 +11,9 @@ import {
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BuildingIcon, ChevronsUpDownIcon } from "lucide-react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useExtracted } from "next-intl";
-import { Link } from "@/i18n/navigation";
 
 export function OrgSwitcherSkeleton() {
   return <Skeleton className="h-8 w-36 rounded-full" />;

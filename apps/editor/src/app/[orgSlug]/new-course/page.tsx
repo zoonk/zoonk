@@ -13,7 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
 async function WizardView({
   params,
 }: {
-  params: PageProps<"/[locale]/[orgSlug]/new-course">["params"];
+  params: PageProps<"/[orgSlug]/new-course">["params"];
 }) {
   const { orgSlug } = await params;
 
@@ -22,7 +22,7 @@ async function WizardView({
 
 export default async function NewCoursePage({
   params,
-}: PageProps<"/[locale]/[orgSlug]/new-course">) {
+}: PageProps<"/[orgSlug]/new-course">) {
   return (
     <Wizard>
       <Suspense fallback={null}>

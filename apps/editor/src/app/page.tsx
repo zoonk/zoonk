@@ -1,11 +1,9 @@
 import { findOrganizationById } from "@zoonk/core/organizations";
 import { getSession, listUserOrgs } from "@zoonk/core/users";
-import { unauthorized } from "next/navigation";
-import { redirect } from "@/i18n/navigation";
+import { redirect, unauthorized } from "next/navigation";
 
-export default async function HomePage({ params }: PageProps<"/[locale]">) {
+export default async function HomePage() {
   const [userSession, orgs] = await Promise.all([getSession(), listUserOrgs()]);
-  const { locale } = await params;
 
   const firstOrg = orgs.data[0];
 
@@ -18,7 +16,7 @@ export default async function HomePage({ params }: PageProps<"/[locale]">) {
   );
 
   if (activeOrganization) {
-    redirect({ href: `/${activeOrganization.slug}`, locale });
+    redirect(`/${activeOrganization.slug}`);
   }
 
   // restrict access when they don't belong to any organization

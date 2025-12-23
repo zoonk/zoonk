@@ -5,9 +5,9 @@ import { Navbar } from "@zoonk/ui/components/navbar";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { HomeIcon } from "lucide-react";
+import Link from "next/link";
 import { useParams, useSelectedLayoutSegments } from "next/navigation";
 import { useExtracted } from "next-intl";
-import { Link } from "@/i18n/navigation";
 
 export function NavbarSkeleton() {
   return (

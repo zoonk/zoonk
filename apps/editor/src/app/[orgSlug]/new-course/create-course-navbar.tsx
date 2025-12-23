@@ -5,8 +5,8 @@ import { Navbar } from "@zoonk/ui/components/navbar";
 import { ProgressDots } from "@zoonk/ui/components/progress-dots";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { ChevronLeftIcon, ChevronRightIcon, XIcon } from "lucide-react";
+import Link from "next/link";
 import { useExtracted } from "next-intl";
-import { Link } from "@/i18n/navigation";
 
 export function CreateCourseNavbar({
   currentStep,

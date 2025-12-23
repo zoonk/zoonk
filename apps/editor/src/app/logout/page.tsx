@@ -2,8 +2,8 @@
 
 import { authClient } from "@zoonk/auth/client";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
+import { useRouter } from "next/navigation";
 import { useEffect, useEffectEvent } from "react";
-import { useRouter } from "@/i18n/navigation";
 
 export default function LogoutPage() {
   const { push } = useRouter();

@@ -5,7 +5,7 @@ import { togglePublishAction } from "./actions";
 
 async function CoursePublishToggle({
   params,
-}: PageProps<"/[locale]/[orgSlug]/c/[lang]/[courseSlug]">) {
+}: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]">) {
   const { courseSlug, lang, orgSlug } = await params;
 
   const { data: course } = await getCourse({
@@ -27,7 +27,7 @@ async function CoursePublishToggle({
 }
 
 export default async function CourseNavbarActions(
-  props: PageProps<"/[locale]/[orgSlug]/c/[lang]/[courseSlug]">,
+  props: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]">,
 ) {
   return (
     <Suspense fallback={<PublishToggle isPublished={false} />}>

@@ -5,144 +5,144 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
 
-#: src/app/[locale]/(private)/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/actions.ts
 msgctxt "bQ0Gv1"
 msgid "Failed to update course"
 msgstr "Failed to update course"
 
-#: src/app/[locale]/(private)/[orgSlug]/course-list.tsx
+#: src/app/[orgSlug]/course-list.tsx
 msgctxt "c0YWuA"
 msgid "Your organization hasn't created any courses yet."
 msgstr "Your organization hasn't created any courses yet."
 
-#: src/app/[locale]/(private)/[orgSlug]/course-list.tsx
+#: src/app/[orgSlug]/course-list.tsx
 msgctxt "zJxO2f"
 msgid "No courses"
 msgstr "No courses"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/actions.ts
+#: src/app/[orgSlug]/new-course/actions.ts
 msgctxt "/c3jWN"
 msgid "Failed to create course"
 msgstr "Failed to create course"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/actions.ts
+#: src/app/[orgSlug]/new-course/actions.ts
 msgctxt "bLbK+M"
 msgid "All fields are required"
 msgstr "All fields are required"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/create-course-navbar.tsx
+#: src/app/[orgSlug]/new-course/create-course-navbar.tsx
 msgctxt "9+Ddtu"
 msgid "Next"
 msgstr "Next"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/create-course-navbar.tsx
+#: src/app/[orgSlug]/new-course/create-course-navbar.tsx
 msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "Back"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/create-course-navbar.tsx
+#: src/app/[orgSlug]/new-course/create-course-navbar.tsx
 msgctxt "rbrahO"
 msgid "Close"
 msgstr "Close"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/create-course-navbar.tsx
+#: src/app/[orgSlug]/new-course/create-course-navbar.tsx
 msgctxt "VzzYJk"
 msgid "Create"
 msgstr "Create"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/page.tsx
-#: src/app/[locale]/(private)/[orgSlug]/page.tsx
+#: src/app/[orgSlug]/new-course/page.tsx
+#: src/app/[orgSlug]/page.tsx
 msgctxt "dCKXDB"
 msgid "Create course"
 msgstr "Create course"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/description-step.tsx
+#: src/app/[orgSlug]/new-course/steps/description-step.tsx
 msgctxt "2qMJ2X"
 msgid "A brief description of your course…"
 msgstr "A brief description of your course…"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/description-step.tsx
+#: src/app/[orgSlug]/new-course/steps/description-step.tsx
 msgctxt "43Q2tB"
 msgid "Course description"
 msgstr "Course description"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/description-step.tsx
+#: src/app/[orgSlug]/new-course/steps/description-step.tsx
 msgctxt "zLHjeU"
 msgid "A short summary that helps learners understand what they'll learn"
 msgstr "A short summary that helps learners understand what they'll learn"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/language-step.tsx
+#: src/app/[orgSlug]/new-course/steps/language-step.tsx
 msgctxt "KYeXR4"
 msgid "Course language"
 msgstr "Course language"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/language-step.tsx
+#: src/app/[orgSlug]/new-course/steps/language-step.tsx
 msgctxt "wjs5Mw"
 msgid "Select the language your course content will be in"
 msgstr "Select the language your course content will be in"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
+#: src/app/[orgSlug]/new-course/steps/slug-step.tsx
 msgctxt "lE3Euj"
 msgid "This will be the URL path for your course"
 msgstr "This will be the URL path for your course"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
+#: src/app/[orgSlug]/new-course/steps/slug-step.tsx
 msgctxt "nRWWPC"
 msgid "Course URL"
 msgstr "Course URL"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/slug-step.tsx
+#: src/app/[orgSlug]/new-course/steps/slug-step.tsx
 msgctxt "wQWt52"
 msgid "course-title"
 msgstr "course-title"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/title-step.tsx
+#: src/app/[orgSlug]/new-course/steps/title-step.tsx
 msgctxt "B0oGiF"
 msgid "course title"
 msgstr "course title"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/title-step.tsx
+#: src/app/[orgSlug]/new-course/steps/title-step.tsx
 msgctxt "bZ8+Wq"
 msgid "The main title that learners will see for your course"
 msgstr "The main title that learners will see for your course"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/steps/title-step.tsx
+#: src/app/[orgSlug]/new-course/steps/title-step.tsx
 msgctxt "JHdbKf"
 msgid "Course title"
 msgstr "Course title"
 
-#: src/app/[locale]/(private)/[orgSlug]/new-course/use-course-form.ts
+#: src/app/[orgSlug]/new-course/use-course-form.ts
 msgctxt "lP29gk"
 msgid "A course with this URL already exists"
 msgstr "A course with this URL already exists"
 
-#: src/app/[locale]/(private)/[orgSlug]/page.tsx
+#: src/app/[orgSlug]/page.tsx
 msgctxt "6gzGoI"
 msgid "Select a course to edit its content"
 msgstr "Select a course to edit its content"
 
-#: src/app/[locale]/(private)/[orgSlug]/page.tsx
+#: src/app/[orgSlug]/page.tsx
 msgctxt "R85gsW"
 msgid "Courses"
 msgstr "Courses"
 
-#: src/app/[locale]/unauthorized.tsx
+#: src/app/unauthorized.tsx
 msgctxt "Ajg4UO"
 msgid "You can't edit courses for this organization. Log in with another account or switch to a different organization."
 msgstr "You can't edit courses for this organization. Log in with another account or switch to a different organization."
 
-#: src/app/[locale]/unauthorized.tsx
+#: src/app/unauthorized.tsx
 msgctxt "AyGauy"
 msgid "Login"
 msgstr "Login"
 
-#: src/app/[locale]/unauthorized.tsx
+#: src/app/unauthorized.tsx
 #: src/components/navbar/logout-menu-item.tsx
 msgctxt "C81/uG"
 msgid "Logout"
 msgstr "Logout"
 
-#: src/app/[locale]/unauthorized.tsx
+#: src/app/unauthorized.tsx
 msgctxt "gNtXZ8"
 msgid "401 - Unauthorized"
 msgstr "401 - Unauthorized"

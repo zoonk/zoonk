@@ -1,8 +1,8 @@
 "use client";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { LogOutIcon } from "lucide-react";
+import Link from "next/link";
 import { useExtracted } from "next-intl";
-import { Link } from "@/i18n/navigation";
 
 export function LogoutMenuItem() {
   const t = useExtracted();
