@@ -101,6 +101,8 @@ Read each folder's README file for more details
 - When creating a skeleton, use the `Skeleton` component from `@zoonk/ui/components/skeleton`
 - Always build skeleton components when using `Suspense` for loading states
 - For apps using `next-intl`, use `getExtracted` or `useExtracted`. This will extract the translations to PO files when we run `pnpm build`
+- Don't add comments to a component's props
+- Pass types directly to the component declaration instead of using `type` since those types won't be exported/reused
 
 ## CSS
 

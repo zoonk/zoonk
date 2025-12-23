@@ -7,6 +7,7 @@ import { userFixture } from "@/fixtures/users";
 import {
   courseSlugExists,
   createCourse,
+  deleteCourse,
   getCourse,
   LIST_COURSES_LIMIT,
   listOrganizationCourses,
@@ -949,5 +950,179 @@ describe("toggleCoursePublished()", () => {
       where: { id: courseInOrg2.id },
     });
     expect(unchangedCourse?.isPublished).toBe(false);
+  });
+});
+
+describe("deleteCourse()", () => {
+  test("returns Course not found when course doesn't exist", async () => {
+    const result = await deleteCourse({
+      courseId: 999_999,
+      headers: new Headers(),
+    });
+
+    expect(result.error?.message).toBe("Course not found");
+    expect(result.data).toBeNull();
+  });
+
+  test("returns Forbidden when user is not authenticated", async () => {
+    const organization = await organizationFixture();
+    const author = await userFixture();
+
+    const course = await prisma.course.create({
+      data: {
+        authorId: Number(author.id),
+        description: "Test description",
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: organization.id,
+        slug: `test-course-${randomUUID()}`,
+        title: "Test Course",
+      },
+    });
+
+    const result = await deleteCourse({
+      courseId: course.id,
+      headers: new Headers(),
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+
+    // Verify the course was NOT deleted
+    const unchangedCourse = await prisma.course.findUnique({
+      where: { id: course.id },
+    });
+
+    expect(unchangedCourse).not.toBeNull();
+  });
+
+  test("returns Forbidden for org members", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
+
+    const course = await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Test description",
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: organization.id,
+        slug: `test-course-${randomUUID()}`,
+        title: "Test Course",
+      },
+    });
+
+    const result = await deleteCourse({
+      courseId: course.id,
+      headers,
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+
+    // Verify the course was NOT deleted
+    const unchangedCourse = await prisma.course.findUnique({
+      where: { id: course.id },
+    });
+
+    expect(unchangedCourse).not.toBeNull();
+  });
+
+  test("returns Forbidden for org admins", async () => {
+    const { organization, user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
+
+    const course = await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Test description",
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: organization.id,
+        slug: `test-course-${randomUUID()}`,
+        title: "Test Course",
+      },
+    });
+
+    const result = await deleteCourse({
+      courseId: course.id,
+      headers,
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+
+    // Verify the course was NOT deleted
+    const unchangedCourse = await prisma.course.findUnique({
+      where: { id: course.id },
+    });
+
+    expect(unchangedCourse).not.toBeNull();
+  });
+
+  test("deletes course for org owners", async () => {
+    const { organization, user } = await memberFixture({ role: "owner" });
+    const headers = await signInAs(user.email, user.password);
+
+    const course = await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Test description",
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: organization.id,
+        slug: `test-course-${randomUUID()}`,
+        title: "Test Course",
+      },
+    });
+
+    const result = await deleteCourse({
+      courseId: course.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.id).toBe(course.id);
+
+    // Verify the course was deleted
+    const deletedCourse = await prisma.course.findUnique({
+      where: { id: course.id },
+    });
+    expect(deletedCourse).toBeNull();
+  });
+
+  test("returns Forbidden when user tries to delete a course from a different organization", async () => {
+    const { user } = await memberFixture({ role: "admin" });
+    const org2 = await organizationFixture();
+    const otherUser = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    // Create a course in org2 (different org than user's)
+    const courseInOrg2 = await prisma.course.create({
+      data: {
+        authorId: Number(otherUser.id),
+        description: "Course in different org",
+        language: "en",
+        normalizedTitle: "test course in org2",
+        organizationId: org2.id,
+        slug: `test-course-org2-${randomUUID()}`,
+        title: "Test Course in Org2",
+      },
+    });
+
+    // User has admin permission on org1 but tries to delete a course from org2
+    const result = await deleteCourse({
+      courseId: courseInOrg2.id,
+      headers,
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+
+    // Verify the course was NOT deleted
+    const unchangedCourse = await prisma.course.findUnique({
+      where: { id: courseInOrg2.id },
+    });
+    expect(unchangedCourse).not.toBeNull();
   });
 });

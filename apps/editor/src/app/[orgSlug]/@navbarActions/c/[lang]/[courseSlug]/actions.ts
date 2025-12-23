@@ -1,8 +1,9 @@
 "use server";
 
-import { toggleCoursePublished } from "@zoonk/core/courses";
+import { deleteCourse, toggleCoursePublished } from "@zoonk/core/courses";
 import { revalidateMainApp } from "@zoonk/core/revalidate";
-import { cacheTagCourse } from "@zoonk/utils/cache";
+import { cacheTagCourse, cacheTagOrgCourses } from "@zoonk/utils/cache";
+import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { getExtracted } from "next-intl/server";
 
@@ -28,4 +29,26 @@ export async function togglePublishAction(
   });
 
   return { error: null };
+}
+
+export async function deleteCourseAction(
+  courseId: number,
+  orgSlug: string,
+): Promise<{ error: string | null }> {
+  const t = await getExtracted();
+
+  const { error } = await deleteCourse({ courseId });
+
+  if (error) {
+    return { error: error.message ?? t("Failed to delete course") };
+  }
+
+  const courseTag = cacheTagCourse({ courseId });
+  const orgCoursesTag = cacheTagOrgCourses({ orgSlug });
+
+  after(async () => {
+    await revalidateMainApp([courseTag, orgCoursesTag]);
+  });
+
+  redirect(`/${orgSlug}`);
 }

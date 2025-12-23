@@ -1,7 +1,10 @@
 version: 1
 checksums:
   15ecf73e0c158929f058900aaa9b24c8:
+    Failed%20to%20delete%20course/singular: 40eb04056db95afb58bb54cd93143fc2
     Failed%20to%20update%20course/singular: aff5796b28d794daea6d91b062514f6d
+    Delete%20course/singular: 86bac6527eb0b380a3f0a5e38b6938ff
+    Delete%20course%3F/singular: c83369b40aec2a0eb3cafd146d70020e
     Your%20organization%20hasn't%20created%20any%20courses%20yet./singular: 4c09c8406dbf7bfe159f850fc1f22b99
     No%20courses/singular: 72fc2629e79529e927834070a26d2a07
     Failed%20to%20create%20course/singular: b8071fa167001a6e20c46226759400d9
@@ -29,6 +32,11 @@ checksums:
     Login/singular: f4f219abeb5a465ecb1c7efaf50246de
     Logout/singular: 07948fdf20705e04a7bf68ab197512bf
     401%20-%20Unauthorized/singular: 0612c3a47aaacaa9fd8aa3d5f0fbc0b8
+    Cancel/singular: 2e2a849c2223911717de8caa2c71bade
+    Delete%20item/singular: b9b5755b0ed185436b52860bde313b9f
+    This%20action%20cannot%20be%20undone./singular: 3d8b13374ffd3cefc0f3f7ce077bd9c9
+    Delete/singular: 8bcf303dd10a645b5baacb02b47d72c9
+    Delete%20item%3F/singular: d847684112faebe6e59a16ba2ccaac05
     Home%20page/singular: aa72464a366b091aa6f2037ca869c09c
     Language/singular: 277fd1a41cc237a437cd1d5e4a80463b
     Organizations/singular: bd50dd0b17bd74a72b728a8385b5ee28
