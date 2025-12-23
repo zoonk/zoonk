@@ -11,6 +11,41 @@ import { getOrganizationBySlug, hasCoursePermission } from "./organizations";
 
 export const LIST_COURSES_LIMIT = 20;
 
+export const getCourse = cache(
+  async (params: {
+    courseSlug: string;
+    language: string;
+    orgSlug: string;
+    headers?: Headers;
+  }): Promise<SafeReturn<Course | null>> => {
+    const hasPermission = await hasCoursePermission({
+      headers: params.headers,
+      orgSlug: params.orgSlug,
+      permission: "read",
+    });
+
+    if (!hasPermission) {
+      return { data: null, error: new Error("Forbidden") };
+    }
+
+    const { data, error } = await safeAsync(() =>
+      prisma.course.findFirst({
+        where: {
+          language: params.language,
+          organization: { slug: params.orgSlug },
+          slug: params.courseSlug,
+        },
+      }),
+    );
+
+    if (error) {
+      return { data: null, error };
+    }
+
+    return { data: data ?? null, error: null };
+  },
+);
+
 export const listOrganizationCourses = cache(
   async (opts?: {
     orgSlug: string;
@@ -73,9 +108,6 @@ export const searchCourses = cache(
   },
 );
 
-/**
- * Checks if a course with the given slug already exists for the organization and language.
- */
 export const courseSlugExists = cache(
   async (params: {
     language: string;
@@ -94,44 +126,6 @@ export const courseSlugExists = cache(
     );
 
     return data !== null;
-  },
-);
-
-/**
- * Fetches a course by its slug, language, and organization.
- */
-export const getCourse = cache(
-  async (params: {
-    courseSlug: string;
-    language: string;
-    orgSlug: string;
-    headers?: Headers;
-  }): Promise<SafeReturn<Course | null>> => {
-    const hasPermission = await hasCoursePermission({
-      headers: params.headers,
-      orgSlug: params.orgSlug,
-      permission: "read",
-    });
-
-    if (!hasPermission) {
-      return { data: null, error: new Error("Forbidden") };
-    }
-
-    const { data, error } = await safeAsync(() =>
-      prisma.course.findFirst({
-        where: {
-          language: params.language,
-          organization: { slug: params.orgSlug },
-          slug: params.courseSlug,
-        },
-      }),
-    );
-
-    if (error) {
-      return { data: null, error };
-    }
-
-    return { data: data ?? null, error: null };
   },
 );
 
@@ -191,9 +185,6 @@ export async function createCourse(params: {
   return { data, error: null };
 }
 
-/**
- * Toggles the published status of a course.
- */
 export async function toggleCoursePublished(params: {
   courseId: number;
   isPublished: boolean;
