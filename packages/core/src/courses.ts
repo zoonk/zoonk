@@ -18,31 +18,46 @@ export const getCourse = cache(
     orgSlug: string;
     headers?: Headers;
   }): Promise<SafeReturn<Course | null>> => {
-    const hasPermission = await hasCoursePermission({
-      headers: params.headers,
-      orgSlug: params.orgSlug,
-      permission: "read",
-    });
-
-    if (!hasPermission) {
-      return { data: null, error: new Error("Forbidden") };
-    }
-
     const { data, error } = await safeAsync(() =>
-      prisma.course.findFirst({
-        where: {
-          language: params.language,
-          organization: { slug: params.orgSlug },
-          slug: params.courseSlug,
-        },
-      }),
+      Promise.all([
+        hasCoursePermission({
+          headers: params.headers,
+          orgSlug: params.orgSlug,
+          permission: "read",
+        }),
+        prisma.course.findFirst({
+          include: { organization: { select: { kind: true } } },
+          where: {
+            language: params.language,
+            organization: { slug: params.orgSlug },
+            slug: params.courseSlug,
+          },
+        }),
+      ]),
     );
 
     if (error) {
       return { data: null, error };
     }
 
-    return { data: data ?? null, error: null };
+    const [hasPermission, courseWithOrg] = data;
+
+    if (!courseWithOrg) {
+      return { data: null, error: null };
+    }
+
+    const { organization, ...course } = courseWithOrg;
+
+    const isBrandPublishedCourse =
+      organization.kind === "brand" && course.isPublished;
+
+    const canAccess = hasPermission || isBrandPublishedCourse;
+
+    if (!canAccess) {
+      return { data: null, error: new Error("Forbidden") };
+    }
+
+    return { data: course, error: null };
   },
 );
 
