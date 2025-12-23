@@ -36,16 +36,16 @@ export function PublishToggle({ isPublished, onToggle }: PublishToggleProps) {
 
   return (
     <Label className="cursor-pointer select-none gap-2">
+      <span className="text-muted-foreground text-xs sm:text-sm">
+        {optimisticPublished ? t("Published") : t("Draft")}
+      </span>
+
       <Switch
         checked={optimisticPublished}
         disabled={isPending || !onToggle}
         onCheckedChange={handleToggle}
         size="sm"
       />
-
-      <span className="text-muted-foreground text-xs sm:text-sm">
-        {optimisticPublished ? t("Published") : t("Draft")}
-      </span>
     </Label>
   );
 }
