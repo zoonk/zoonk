@@ -2,9 +2,7 @@ import "server-only";
 
 import { auth } from "@zoonk/auth";
 import { prisma } from "@zoonk/db";
-import { cacheTagUsers } from "@zoonk/utils/cache";
 import { safeAsync } from "@zoonk/utils/error";
-import { cacheLife, cacheTag } from "next/cache";
 import { headers } from "next/headers";
 import { cache } from "react";
 import type { AuthOrganization } from "./types";
@@ -26,10 +24,6 @@ export async function sendVerificationOTP(email: string) {
 }
 
 export async function countUsers() {
-  "use cache";
-  cacheLife("hours");
-  cacheTag(cacheTagUsers());
-
   return prisma.user.count();
 }
 

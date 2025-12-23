@@ -9,11 +9,9 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { cacheTagOrg } from "@zoonk/utils/cache";
 import { PlusIcon } from "lucide-react";
 import type { Metadata } from "next";
-import { cacheLife, cacheTag } from "next/cache";
-import { getExtracted, setRequestLocale } from "next-intl/server";
+import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { Link } from "@/i18n/navigation";
 import { CourseList, CourseListSkeleton } from "./course-list";
@@ -21,13 +19,8 @@ import { CourseList, CourseListSkeleton } from "./course-list";
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/[orgSlug]">): Promise<Metadata> {
-  "use cache";
-
-  const { locale, orgSlug } = await params;
+  const { orgSlug } = await params;
   const { data: org } = await getOrganizationBySlug(orgSlug);
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagOrg({ orgSlug }));
 
   if (!org) {
     return {};
@@ -41,13 +34,7 @@ async function HomeContainerHeader({
 }: {
   params: PageProps<"/[locale]/[orgSlug]">["params"];
 }) {
-  "use cache";
-
-  const { locale, orgSlug } = await params;
-  setRequestLocale(locale);
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagOrg({ orgSlug }));
+  const { orgSlug } = await params;
 
   const t = await getExtracted();
 
@@ -77,10 +64,10 @@ async function ListCourses({
 }: {
   params: PageProps<"/[locale]/[orgSlug]">["params"];
 }) {
-  const { locale, orgSlug } = await params;
+  const { orgSlug } = await params;
   const { data: courses } = await listOrganizationCourses({ orgSlug });
 
-  return <CourseList courses={courses} locale={locale} orgSlug={orgSlug} />;
+  return <CourseList courses={courses} orgSlug={orgSlug} />;
 }
 
 export default async function OrgHomePage({
