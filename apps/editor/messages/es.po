@@ -8,7 +8,7 @@ msgstr ""
 #: src/app/[locale]/(private)/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/actions.ts
 msgctxt "bQ0Gv1"
 msgid "Failed to update course"
-msgstr ""
+msgstr "Error al actualizar curso"
 
 #: src/app/[locale]/(private)/[orgSlug]/course-list.tsx
 msgctxt "c0YWuA"
@@ -170,9 +170,9 @@ msgstr "No hay otras organizaciones"
 #: src/components/navbar/publish-toggle.tsx
 msgctxt "W6nwjo"
 msgid "Draft"
-msgstr ""
+msgstr "Borrador"
 
 #: src/components/navbar/publish-toggle.tsx
 msgctxt "w7tf2z"
 msgid "Published"
-msgstr ""
+msgstr "Publicado"
