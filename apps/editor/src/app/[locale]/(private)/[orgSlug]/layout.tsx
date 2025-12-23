@@ -12,11 +12,7 @@ async function LayoutPermissions({
   children,
   navbarActions,
   params,
-}: {
-  children: React.ReactNode;
-  navbarActions: React.ReactNode;
-  params: LayoutProps<"/[locale]/[orgSlug]">["params"];
-}) {
+}: LayoutProps<"/[locale]/[orgSlug]">) {
   const { orgSlug } = await params;
   const [org, canViewPage] = await Promise.all([
     getOrganizationBySlug(orgSlug),
@@ -52,14 +48,11 @@ async function LayoutPermissions({
 
 export default async function OrgHomeLayout({
   children,
-  navbarActions,
-  params,
-}: LayoutProps<"/[locale]/[orgSlug]"> & { navbarActions: React.ReactNode }) {
+  ...props
+}: LayoutProps<"/[locale]/[orgSlug]">) {
   return (
     <Suspense>
-      <LayoutPermissions navbarActions={navbarActions} params={params}>
-        {children}
-      </LayoutPermissions>
+      <LayoutPermissions {...props}>{children}</LayoutPermissions>
     </Suspense>
   );
 }
