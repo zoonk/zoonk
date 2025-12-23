@@ -1,5 +1,3 @@
-"use client";
-
 import { DropdownMenuSeparator } from "@zoonk/ui/components/dropdown-menu";
 import { LocaleSwitcher } from "@/components/navbar/locale-switcher";
 import { LogoutMenuItem } from "@/components/navbar/logout-menu-item";
