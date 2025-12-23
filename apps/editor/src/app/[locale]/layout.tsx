@@ -3,6 +3,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
 
 import "@zoonk/ui/globals.css";
+import { Toaster } from "@zoonk/ui/components/sonner";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 
@@ -34,6 +35,7 @@ export default async function RootLayout({
     <html lang={locale}>
       <body className="font-sans antialiased">
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <Toaster />
       </body>
     </html>
   );

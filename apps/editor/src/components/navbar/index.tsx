@@ -1,7 +1,6 @@
 "use client";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { DropdownMenuSeparator } from "@zoonk/ui/components/dropdown-menu";
 import { Navbar } from "@zoonk/ui/components/navbar";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -9,9 +8,6 @@ import { HomeIcon } from "lucide-react";
 import { useParams, useSelectedLayoutSegments } from "next/navigation";
 import { useExtracted } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { LocaleSwitcher } from "./locale-switcher";
-import { LogoutMenuItem } from "./logout-menu-item";
-import { OrgSwitcher } from "./org-switcher";
 
 export function NavbarSkeleton() {
   return (
@@ -22,7 +18,7 @@ export function NavbarSkeleton() {
   );
 }
 
-export function EditorNavbar() {
+export function EditorNavbar({ children }: React.PropsWithChildren) {
   const t = useExtracted();
   const { orgSlug } = useParams<{ orgSlug: string }>();
 
@@ -52,14 +48,7 @@ export function EditorNavbar() {
         </Link>
       </div>
 
-      {isHome && (
-        <OrgSwitcher>
-          <DropdownMenuSeparator />
-          <LocaleSwitcher />
-          <DropdownMenuSeparator />
-          <LogoutMenuItem />
-        </OrgSwitcher>
-      )}
+      {children}
     </Navbar>
   );
 }

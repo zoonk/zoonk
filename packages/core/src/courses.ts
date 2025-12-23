@@ -97,6 +97,44 @@ export const courseSlugExists = cache(
   },
 );
 
+/**
+ * Fetches a course by its slug, language, and organization.
+ */
+export const getCourse = cache(
+  async (params: {
+    courseSlug: string;
+    language: string;
+    orgSlug: string;
+    headers?: Headers;
+  }): Promise<SafeReturn<Course | null>> => {
+    const hasPermission = await hasCoursePermission({
+      headers: params.headers,
+      orgSlug: params.orgSlug,
+      permission: "read",
+    });
+
+    if (!hasPermission) {
+      return { data: null, error: new Error("Forbidden") };
+    }
+
+    const { data, error } = await safeAsync(() =>
+      prisma.course.findFirst({
+        where: {
+          language: params.language,
+          organization: { slug: params.orgSlug },
+          slug: params.courseSlug,
+        },
+      }),
+    );
+
+    if (error) {
+      return { data: null, error };
+    }
+
+    return { data: data ?? null, error: null };
+  },
+);
+
 export async function createCourse(params: {
   description: string;
   language: string;
@@ -143,6 +181,39 @@ export async function createCourse(params: {
         slug: courseSlug,
         title: params.title,
       },
+    }),
+  );
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  return { data, error: null };
+}
+
+/**
+ * Toggles the published status of a course.
+ */
+export async function toggleCoursePublished(params: {
+  courseId: number;
+  isPublished: boolean;
+  orgSlug: string;
+  headers?: Headers;
+}): Promise<SafeReturn<Course>> {
+  const hasPermission = await hasCoursePermission({
+    headers: params.headers,
+    orgSlug: params.orgSlug,
+    permission: "update",
+  });
+
+  if (!hasPermission) {
+    return { data: null, error: new Error("Forbidden") };
+  }
+
+  const { data, error } = await safeAsync(() =>
+    prisma.course.update({
+      data: { isPublished: params.isPublished },
+      where: { id: params.courseId },
     }),
   );
 

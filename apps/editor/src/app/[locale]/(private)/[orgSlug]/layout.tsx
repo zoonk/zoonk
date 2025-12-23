@@ -10,9 +10,11 @@ import { EditorNavbar } from "@/components/navbar";
 
 async function LayoutPermissions({
   children,
+  navbarActions,
   params,
 }: {
   children: React.ReactNode;
+  navbarActions: React.ReactNode;
   params: LayoutProps<"/[locale]/[orgSlug]">["params"];
 }) {
   const { orgSlug } = await params;
@@ -39,18 +41,23 @@ async function LayoutPermissions({
     return unauthorized();
   }
 
-  return <div>{children}</div>;
+  return (
+    <div>
+      <EditorNavbar>{navbarActions}</EditorNavbar>
+
+      {children}
+    </div>
+  );
 }
 
 export default async function OrgHomeLayout({
   children,
+  navbarActions,
   params,
-}: LayoutProps<"/[locale]/[orgSlug]">) {
+}: LayoutProps<"/[locale]/[orgSlug]"> & { navbarActions: React.ReactNode }) {
   return (
     <Suspense>
-      <LayoutPermissions params={params}>
-        <EditorNavbar />
-
+      <LayoutPermissions navbarActions={navbarActions} params={params}>
         {children}
       </LayoutPermissions>
     </Suspense>
