@@ -4,17 +4,13 @@ import { PublishToggle } from "@/components/navbar/publish-toggle";
 import { togglePublishAction } from "./actions";
 
 async function CoursePublishToggle({
-  courseSlug,
-  language,
-  orgSlug,
-}: {
-  courseSlug: string;
-  language: string;
-  orgSlug: string;
-}) {
+  params,
+}: PageProps<"/[locale]/[orgSlug]/c/[lang]/[courseSlug]">) {
+  const { courseSlug, lang, orgSlug } = await params;
+
   const { data: course } = await getCourse({
     courseSlug,
-    language,
+    language: lang,
     orgSlug,
   });
 
@@ -22,25 +18,20 @@ async function CoursePublishToggle({
     return <PublishToggle isPublished={false} />;
   }
 
-  const handleToggle = togglePublishAction.bind(null, course.id, orgSlug);
-
   return (
-    <PublishToggle isPublished={course.isPublished} onToggle={handleToggle} />
+    <PublishToggle
+      isPublished={course.isPublished}
+      onToggle={togglePublishAction.bind(null, course.id, orgSlug)}
+    />
   );
 }
 
-export default async function CourseNavbarActions({
-  params,
-}: PageProps<"/[locale]/[orgSlug]/c/[lang]/[courseSlug]">) {
-  const { courseSlug, lang, orgSlug } = await params;
-
+export default async function CourseNavbarActions(
+  props: PageProps<"/[locale]/[orgSlug]/c/[lang]/[courseSlug]">,
+) {
   return (
     <Suspense fallback={<PublishToggle isPublished={false} />}>
-      <CoursePublishToggle
-        courseSlug={courseSlug}
-        language={lang}
-        orgSlug={orgSlug}
-      />
+      <CoursePublishToggle {...props} />
     </Suspense>
   );
 }
