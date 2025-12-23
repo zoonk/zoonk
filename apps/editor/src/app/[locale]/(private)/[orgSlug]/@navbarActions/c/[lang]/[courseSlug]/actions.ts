@@ -2,8 +2,8 @@
 
 import { toggleCoursePublished } from "@zoonk/core/courses";
 import { revalidateMainApp } from "@zoonk/core/revalidate";
-import { cacheTagOrgCourses } from "@zoonk/utils/cache";
-import { revalidateTag } from "next/cache";
+import { cacheTagCourse } from "@zoonk/utils/cache";
+import { updateTag } from "next/cache";
 import { after } from "next/server";
 import { getExtracted } from "next-intl/server";
 
@@ -24,9 +24,9 @@ export async function togglePublishAction(
     return { error: error.message ?? t("Failed to update course") };
   }
 
-  const tag = cacheTagOrgCourses({ orgSlug });
+  const tag = cacheTagCourse({ courseId });
 
-  revalidateTag(tag, "max");
+  updateTag(tag);
 
   after(async () => {
     await revalidateMainApp([tag]);

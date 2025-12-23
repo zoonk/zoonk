@@ -8,6 +8,10 @@ export function cacheTagCourses() {
   return "courses";
 }
 
+export function cacheTagCourse({ courseId }: { courseId: number }) {
+  return `course:${courseId}`.slice(0, CACHE_TAG_LIMIT);
+}
+
 export function cacheTagCourseSuggestions({ prompt }: { prompt: string }) {
   return `suggestions:${prompt}`.slice(0, CACHE_TAG_LIMIT);
 }
