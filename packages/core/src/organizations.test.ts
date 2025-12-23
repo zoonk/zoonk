@@ -4,19 +4,19 @@ import {
   memberFixture,
   organizationFixture,
 } from "../test/fixtures/organizations";
-import { getOrganizationBySlug, hasCoursePermission } from "./organizations";
+import { getOrganization, hasCoursePermission } from "./organizations";
 
-describe("getOrganizationBySlug()", () => {
+describe("getOrganization()", () => {
   test("returns the organization id for a valid slug", async () => {
     const org = await organizationFixture();
-    const result = await getOrganizationBySlug(org.slug);
+    const result = await getOrganization(org.slug);
 
     expect(result.data).toEqual(org);
     expect(result.error).toBeNull();
   });
 
   test("returns null when organization is not found", async () => {
-    const result = await getOrganizationBySlug("non-existent-slug");
+    const result = await getOrganization("non-existent-slug");
 
     expect(result.data).toBeNull();
     expect(result.error).toBeNull();

@@ -22,7 +22,7 @@ async function getOrganizationId({
   }
 
   if (orgSlug) {
-    const { data: org } = await getOrganizationBySlug(orgSlug);
+    const { data: org } = await getOrganization(orgSlug);
     return org?.id ?? null;
   }
 
@@ -36,12 +36,10 @@ export function findOrganizationById(
   return orgs.find((org) => Number(org.id) === Number(orgId)) ?? null;
 }
 
-export const getOrganizationBySlug = cache(
+export const getOrganization = cache(
   async (slug: string): Promise<SafeReturn<Organization | null>> => {
     const { data: org, error } = await safeAsync(() =>
-      prisma.organization.findUnique({
-        where: { slug },
-      }),
+      prisma.organization.findUnique({ where: { slug } }),
     );
 
     if (error) {

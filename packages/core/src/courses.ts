@@ -7,7 +7,7 @@ import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { headers } from "next/headers";
 import { cache } from "react";
-import { getOrganizationBySlug, hasCoursePermission } from "./organizations";
+import { getOrganization, hasCoursePermission } from "./organizations";
 
 export const LIST_COURSES_LIMIT = 20;
 
@@ -145,7 +145,7 @@ export async function createCourse(params: {
     return { data: null, error: new Error("Unauthorized") };
   }
 
-  const { data: org } = await getOrganizationBySlug(params.orgSlug);
+  const { data: org } = await getOrganization(params.orgSlug);
 
   if (!org) {
     return { data: null, error: new Error("Organization not found") };

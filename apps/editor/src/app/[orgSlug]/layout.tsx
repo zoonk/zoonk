@@ -1,6 +1,6 @@
 import { auth } from "@zoonk/auth";
 import {
-  getOrganizationBySlug,
+  getOrganization,
   hasCoursePermission,
 } from "@zoonk/core/organizations";
 import { headers } from "next/headers";
@@ -15,7 +15,7 @@ async function LayoutPermissions({
 }: LayoutProps<"/[orgSlug]">) {
   const { orgSlug } = await params;
   const [org, canViewPage] = await Promise.all([
-    getOrganizationBySlug(orgSlug),
+    getOrganization(orgSlug),
     hasCoursePermission({
       orgSlug,
       permission: "update",
