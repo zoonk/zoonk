@@ -61,39 +61,53 @@ export const getCourse = cache(
   },
 );
 
+export type CourseVisibility = "all" | "draft" | "published";
+
 export const listCourses = cache(
-  async (opts?: {
+  async (params: {
     orgSlug: string;
+    visibility: CourseVisibility;
     language?: string;
     limit?: number;
     headers?: Headers;
   }): Promise<{ data: Course[]; error: Error | null }> => {
-    const hasPermission = await hasCoursePermission({
-      headers: opts?.headers,
-      orgSlug: opts?.orgSlug,
-      permission: "read",
-    });
-
-    if (!hasPermission) {
-      return { data: [], error: new Error("Forbidden") };
-    }
-
     const { data, error } = await safeAsync(() =>
-      prisma.course.findMany({
-        orderBy: { createdAt: "desc" },
-        take: clampQueryItems(opts?.limit ?? LIST_COURSES_LIMIT),
-        where: {
-          organization: { slug: opts?.orgSlug },
-          ...(opts?.language && { language: opts.language }),
-        },
-      }),
+      Promise.all([
+        hasCoursePermission({
+          headers: params.headers,
+          orgSlug: params.orgSlug,
+          permission: "read",
+        }),
+        getOrganization(params.orgSlug),
+        prisma.course.findMany({
+          orderBy: { createdAt: "desc" },
+          take: clampQueryItems(params.limit ?? LIST_COURSES_LIMIT),
+          where: {
+            organization: { slug: params.orgSlug },
+            ...(params.language && { language: params.language }),
+            ...(params.visibility === "published" && { isPublished: true }),
+            ...(params.visibility === "draft" && { isPublished: false }),
+          },
+        }),
+      ]),
     );
 
     if (error) {
       return { data: [], error };
     }
 
-    return { data: data ?? [], error: null };
+    const [hasPermission, { data: org }, courses] = data;
+
+    const isBrandOrg = org?.kind === "brand";
+
+    const canAccess =
+      hasPermission || (params.visibility === "published" && isBrandOrg);
+
+    if (!canAccess) {
+      return { data: [], error: new Error("Forbidden") };
+    }
+
+    return { data: courses, error: null };
   },
 );
 

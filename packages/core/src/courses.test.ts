@@ -17,33 +17,48 @@ import {
 } from "./courses";
 
 describe("listCourses()", () => {
-  test("returns Forbidden error when session is invalid", async () => {
-    const organization = await organizationFixture();
+  test("returns Forbidden for visibility all when user is unauthenticated", async () => {
+    const organization = await organizationFixture({ kind: "brand" });
 
     const result = await listCourses({
       headers: new Headers(),
       orgSlug: organization.slug,
+      visibility: "all",
     });
 
     expect(result.error?.message).toBe("Forbidden");
     expect(result.data).toEqual([]);
   });
 
-  test("returns Forbidden error when user is not a member of the organization", async () => {
-    const organization = await organizationFixture();
-    const { user } = await memberFixture({ role: "member" });
+  test("returns Forbidden for visibility draft when user is unauthenticated", async () => {
+    const organization = await organizationFixture({ kind: "brand" });
+
+    const result = await listCourses({
+      headers: new Headers(),
+      orgSlug: organization.slug,
+      visibility: "draft",
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toEqual([]);
+  });
+
+  test("returns Forbidden for visibility all when user is not a member", async () => {
+    const organization = await organizationFixture({ kind: "school" });
+    const { user } = await memberFixture();
     const headers = await signInAs(user.email, user.password);
 
     const result = await listCourses({
       headers,
       orgSlug: organization.slug,
+      visibility: "all",
     });
 
     expect(result.error?.message).toBe("Forbidden");
     expect(result.data).toEqual([]);
   });
 
-  test("returns list of courses for an org", async () => {
+  test("returns list of courses for an org with visibility all", async () => {
     const { organization, user } = await memberFixture({ role: "member" });
     const headers = await signInAs(user.email, user.password);
 
@@ -63,6 +78,7 @@ describe("listCourses()", () => {
     const result = await listCourses({
       headers,
       orgSlug: organization.slug,
+      visibility: "all",
     });
 
     expect(result.error).toBeNull();
@@ -103,6 +119,7 @@ describe("listCourses()", () => {
       headers,
       language: "en",
       orgSlug: organization.slug,
+      visibility: "all",
     });
 
     expect(result.error).toBeNull();
@@ -132,6 +149,7 @@ describe("listCourses()", () => {
       headers,
       limit: customLimit,
       orgSlug: organization.slug,
+      visibility: "all",
     });
 
     expect(result.error).toBeNull();
@@ -158,6 +176,7 @@ describe("listCourses()", () => {
     const result = await listCourses({
       headers,
       orgSlug: organization.slug,
+      visibility: "all",
     });
 
     expect(result.error).toBeNull();
@@ -199,12 +218,215 @@ describe("listCourses()", () => {
     const result = await listCourses({
       headers,
       orgSlug: organization.slug,
+      visibility: "all",
     });
 
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(2);
     expect(result.data[0]?.id).toBe(newCourse.id);
     expect(result.data[1]?.id).toBe(oldCourse.id);
+  });
+
+  test("visibility published filters only published courses", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
+
+    const publishedCourse = await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Published course",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: "published course",
+        organizationId: organization.id,
+        slug: `published-course-${randomUUID()}`,
+        title: "Published Course",
+      },
+    });
+
+    await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Draft course",
+        isPublished: false,
+        language: "en",
+        normalizedTitle: "draft course",
+        organizationId: organization.id,
+        slug: `draft-course-${randomUUID()}`,
+        title: "Draft Course",
+      },
+    });
+
+    const result = await listCourses({
+      headers,
+      orgSlug: organization.slug,
+      visibility: "published",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0]?.id).toBe(publishedCourse.id);
+  });
+
+  test("visibility draft filters only unpublished courses", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
+
+    await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Published course",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: "published course",
+        organizationId: organization.id,
+        slug: `published-course-${randomUUID()}`,
+        title: "Published Course",
+      },
+    });
+
+    const draftCourse = await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Draft course",
+        isPublished: false,
+        language: "en",
+        normalizedTitle: "draft course",
+        organizationId: organization.id,
+        slug: `draft-course-${randomUUID()}`,
+        title: "Draft Course",
+      },
+    });
+
+    const result = await listCourses({
+      headers,
+      orgSlug: organization.slug,
+      visibility: "draft",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0]?.id).toBe(draftCourse.id);
+  });
+
+  test("visibility all returns both published and draft courses", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
+
+    await prisma.course.createMany({
+      data: [
+        {
+          authorId: Number(user.id),
+          description: "Published course",
+          isPublished: true,
+          language: "en",
+          normalizedTitle: "published course",
+          organizationId: organization.id,
+          slug: `published-course-${randomUUID()}`,
+          title: "Published Course",
+        },
+        {
+          authorId: Number(user.id),
+          description: "Draft course",
+          isPublished: false,
+          language: "en",
+          normalizedTitle: "draft course",
+          organizationId: organization.id,
+          slug: `draft-course-${randomUUID()}`,
+          title: "Draft Course",
+        },
+      ],
+    });
+
+    const result = await listCourses({
+      headers,
+      orgSlug: organization.slug,
+      visibility: "all",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(2);
+  });
+
+  test("visibility published allows unauthenticated access for brand orgs", async () => {
+    const organization = await organizationFixture({ kind: "brand" });
+    const author = await userFixture();
+
+    const publishedCourse = await prisma.course.create({
+      data: {
+        authorId: Number(author.id),
+        description: "Published course",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: "published course",
+        organizationId: organization.id,
+        slug: `published-course-${randomUUID()}`,
+        title: "Published Course",
+      },
+    });
+
+    const result = await listCourses({
+      headers: new Headers(),
+      orgSlug: organization.slug,
+      visibility: "published",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0]?.id).toBe(publishedCourse.id);
+  });
+
+  test("visibility published returns Forbidden for non-brand orgs without authentication", async () => {
+    const organization = await organizationFixture({ kind: "school" });
+    const author = await userFixture();
+
+    await prisma.course.create({
+      data: {
+        authorId: Number(author.id),
+        description: "Published course",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: "published course",
+        organizationId: organization.id,
+        slug: `published-course-${randomUUID()}`,
+        title: "Published Course",
+      },
+    });
+
+    const result = await listCourses({
+      headers: new Headers(),
+      orgSlug: organization.slug,
+      visibility: "published",
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toEqual([]);
+  });
+
+  test("does not include organization data in returned courses", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
+
+    await prisma.course.create({
+      data: {
+        authorId: Number(user.id),
+        description: "Test course",
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: organization.id,
+        slug: `test-course-${randomUUID()}`,
+        title: "Test Course",
+      },
+    });
+
+    const result = await listCourses({
+      headers,
+      orgSlug: organization.slug,
+      visibility: "all",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data[0]).not.toHaveProperty("organization");
   });
 });
 

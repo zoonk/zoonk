@@ -65,7 +65,7 @@ async function ListCourses({
   params: PageProps<"/[orgSlug]">["params"];
 }) {
   const { orgSlug } = await params;
-  const { data: courses } = await listCourses({ orgSlug });
+  const { data: courses } = await listCourses({ orgSlug, visibility: "all" });
 
   return <CourseList courses={courses} orgSlug={orgSlug} />;
 }
