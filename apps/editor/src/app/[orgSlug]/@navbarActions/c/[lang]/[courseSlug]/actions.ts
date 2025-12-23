@@ -3,7 +3,6 @@
 import { toggleCoursePublished } from "@zoonk/core/courses";
 import { revalidateMainApp } from "@zoonk/core/revalidate";
 import { cacheTagCourse } from "@zoonk/utils/cache";
-import { updateTag } from "next/cache";
 import { after } from "next/server";
 import { getExtracted } from "next-intl/server";
 
@@ -23,8 +22,6 @@ export async function togglePublishAction(
   }
 
   const tag = cacheTagCourse({ courseId });
-
-  updateTag(tag);
 
   after(async () => {
     await revalidateMainApp([tag]);
