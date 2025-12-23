@@ -6,9 +6,24 @@ msgstr ""
 "X-Generator: next-intl\n"
 
 #: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/actions.ts
+msgctxt "a1Q/b5"
+msgid "Failed to delete course"
+msgstr "Error al eliminar curso"
+
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/actions.ts
 msgctxt "bQ0Gv1"
 msgid "Failed to update course"
 msgstr "Error al actualizar curso"
+
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/page.tsx
+msgctxt "Ljsy5D"
+msgid "Delete course"
+msgstr "Eliminar curso"
+
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/page.tsx
+msgctxt "ZFXb/x"
+msgid "Delete course?"
+msgstr "¿Eliminar curso?"
 
 #: src/app/[orgSlug]/course-list.tsx
 msgctxt "c0YWuA"
@@ -146,6 +161,31 @@ msgstr "Cerrar sesión"
 msgctxt "gNtXZ8"
 msgid "401 - Unauthorized"
 msgstr "401 - No autorizado"
+
+#: src/components/navbar/delete-item-button.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/components/navbar/delete-item-button.tsx
+msgctxt "hHa3Ql"
+msgid "Delete item"
+msgstr "Eliminar elemento"
+
+#: src/components/navbar/delete-item-button.tsx
+msgctxt "JDJoIZ"
+msgid "This action cannot be undone."
+msgstr "Esta acción no se puede deshacer."
+
+#: src/components/navbar/delete-item-button.tsx
+msgctxt "K3r6DQ"
+msgid "Delete"
+msgstr "Eliminar"
+
+#: src/components/navbar/delete-item-button.tsx
+msgctxt "W5ajIY"
+msgid "Delete item?"
+msgstr "¿Eliminar elemento?"
 
 #: src/components/navbar/index.tsx
 msgctxt "U3l+Q9"

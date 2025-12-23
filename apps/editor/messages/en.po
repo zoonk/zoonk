@@ -6,9 +6,24 @@ msgstr ""
 "X-Generator: next-intl\n"
 
 #: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/actions.ts
+msgctxt "a1Q/b5"
+msgid "Failed to delete course"
+msgstr "Failed to delete course"
+
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/actions.ts
 msgctxt "bQ0Gv1"
 msgid "Failed to update course"
 msgstr "Failed to update course"
+
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/page.tsx
+msgctxt "Ljsy5D"
+msgid "Delete course"
+msgstr "Delete course"
+
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/page.tsx
+msgctxt "ZFXb/x"
+msgid "Delete course?"
+msgstr "Delete course?"
 
 #: src/app/[orgSlug]/course-list.tsx
 msgctxt "c0YWuA"
@@ -146,6 +161,31 @@ msgstr "Logout"
 msgctxt "gNtXZ8"
 msgid "401 - Unauthorized"
 msgstr "401 - Unauthorized"
+
+#: src/components/navbar/delete-item-button.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "Cancel"
+
+#: src/components/navbar/delete-item-button.tsx
+msgctxt "hHa3Ql"
+msgid "Delete item"
+msgstr "Delete item"
+
+#: src/components/navbar/delete-item-button.tsx
+msgctxt "JDJoIZ"
+msgid "This action cannot be undone."
+msgstr "This action cannot be undone."
+
+#: src/components/navbar/delete-item-button.tsx
+msgctxt "K3r6DQ"
+msgid "Delete"
+msgstr "Delete"
+
+#: src/components/navbar/delete-item-button.tsx
+msgctxt "W5ajIY"
+msgid "Delete item?"
+msgstr "Delete item?"
 
 #: src/components/navbar/index.tsx
 msgctxt "U3l+Q9"

@@ -1,12 +1,29 @@
 import { getCourse } from "@zoonk/core/courses";
+import { notFound } from "next/navigation";
+import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
+import { DeleteItemButton } from "@/components/navbar/delete-item-button";
 import { PublishToggle } from "@/components/navbar/publish-toggle";
-import { togglePublishAction } from "./actions";
+import { deleteCourseAction, togglePublishAction } from "./actions";
 
-async function CoursePublishToggle({
+function CourseActionsContainer({ children }: React.PropsWithChildren) {
+  return <div className="flex items-center gap-2">{children}</div>;
+}
+
+function CourseActionsSkeleton() {
+  return (
+    <CourseActionsContainer>
+      <PublishToggle isPublished={false} />
+      <DeleteItemButton />
+    </CourseActionsContainer>
+  );
+}
+
+async function CourseActions({
   params,
 }: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]">) {
   const { courseSlug, lang, orgSlug } = await params;
+  const t = await getExtracted();
 
   const { data: course } = await getCourse({
     courseSlug,
@@ -15,14 +32,22 @@ async function CoursePublishToggle({
   });
 
   if (!course) {
-    return <PublishToggle isPublished={false} />;
+    return notFound();
   }
 
   return (
-    <PublishToggle
-      isPublished={course.isPublished}
-      onToggle={togglePublishAction.bind(null, course.id)}
-    />
+    <CourseActionsContainer>
+      <PublishToggle
+        isPublished={course.isPublished}
+        onToggle={togglePublishAction.bind(null, course.id)}
+      />
+
+      <DeleteItemButton
+        onDelete={deleteCourseAction.bind(null, course.id, orgSlug)}
+        srLabel={t("Delete course")}
+        title={t("Delete course?")}
+      />
+    </CourseActionsContainer>
   );
 }
 
@@ -30,8 +55,8 @@ export default async function CourseNavbarActions(
   props: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]">,
 ) {
   return (
-    <Suspense fallback={<PublishToggle isPublished={false} />}>
-      <CoursePublishToggle {...props} />
+    <Suspense fallback={<CourseActionsSkeleton />}>
+      <CourseActions {...props} />
     </Suspense>
   );
 }
