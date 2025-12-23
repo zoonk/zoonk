@@ -28,7 +28,6 @@ export function PublishToggle({ isPublished, onToggle }: PublishToggleProps) {
       const result = await onToggle(checked);
 
       if (result.error) {
-        setOptimisticPublished(!checked);
         toast.error(result.error);
       }
     });
