@@ -8,6 +8,7 @@ import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { headers } from "next/headers";
 import { cache } from "react";
 import { getOrganization, hasCoursePermission } from "./organizations";
+import type { ContentVisibility } from "./types";
 
 export const LIST_COURSES_LIMIT = 20;
 
@@ -16,17 +17,20 @@ export const getCourse = cache(
     courseSlug: string;
     language: string;
     orgSlug: string;
+    visibility: ContentVisibility;
     headers?: Headers;
   }): Promise<SafeReturn<Course | null>> => {
+    const permission = params.visibility === "published" ? "read" : "update";
+
     const { data, error } = await safeAsync(() =>
       Promise.all([
         hasCoursePermission({
           headers: params.headers,
           orgSlug: params.orgSlug,
-          permission: "read",
+          permission,
         }),
+        getOrganization(params.orgSlug),
         prisma.course.findFirst({
-          include: { organization: { select: { kind: true } } },
           where: {
             language: params.language,
             organization: { slug: params.orgSlug },
@@ -40,18 +44,14 @@ export const getCourse = cache(
       return { data: null, error };
     }
 
-    const [hasPermission, courseWithOrg] = data;
+    const [hasPermission, { data: org }, course] = data;
 
-    if (!courseWithOrg) {
+    if (!course) {
       return { data: null, error: null };
     }
 
-    const { organization, ...course } = courseWithOrg;
-
-    const isBrandPublishedCourse =
-      organization.kind === "brand" && course.isPublished;
-
-    const canAccess = hasPermission || isBrandPublishedCourse;
+    const isBrandOrg = org?.kind === "brand";
+    const canAccess = hasPermission || (course.isPublished && isBrandOrg);
 
     if (!canAccess) {
       return { data: null, error: new Error("Forbidden") };
@@ -61,22 +61,22 @@ export const getCourse = cache(
   },
 );
 
-export type CourseVisibility = "all" | "draft" | "published";
-
 export const listCourses = cache(
   async (params: {
     orgSlug: string;
-    visibility: CourseVisibility;
+    visibility: ContentVisibility;
     language?: string;
     limit?: number;
     headers?: Headers;
   }): Promise<{ data: Course[]; error: Error | null }> => {
+    const permission = params.visibility === "published" ? "read" : "update";
+
     const { data, error } = await safeAsync(() =>
       Promise.all([
         hasCoursePermission({
           headers: params.headers,
           orgSlug: params.orgSlug,
-          permission: "read",
+          permission,
         }),
         getOrganization(params.orgSlug),
         prisma.course.findMany({
@@ -97,7 +97,6 @@ export const listCourses = cache(
     }
 
     const [hasPermission, { data: org }, courses] = data;
-
     const isBrandOrg = org?.kind === "brand";
 
     const canAccess =

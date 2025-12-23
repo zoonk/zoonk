@@ -29,6 +29,7 @@ async function CourseActions({
     courseSlug,
     language: lang,
     orgSlug,
+    visibility: "all",
   });
 
   if (!course) {
