@@ -2,7 +2,7 @@ import "server-only";
 
 import { type Course, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { hasCoursePermission } from "../organizations";
+import { hasCoursePermission } from "../organizations/org-permissions";
 
 export async function deleteCourse(params: {
   courseId: number;

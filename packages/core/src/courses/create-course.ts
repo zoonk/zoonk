@@ -5,8 +5,8 @@ import { type Course, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { headers } from "next/headers";
-import { hasCoursePermission } from "../organizations";
 import { getOrganization } from "../organizations/get-organization";
+import { hasCoursePermission } from "../organizations/org-permissions";
 
 export async function createCourse(params: {
   description: string;

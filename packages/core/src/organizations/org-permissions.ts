@@ -5,8 +5,7 @@ import type { CoursePermission } from "@zoonk/auth/permissions";
 import { safeAsync } from "@zoonk/utils/error";
 import { headers } from "next/headers";
 import { cache } from "react";
-import { getOrganization } from "./organizations/get-organization";
-import type { AuthOrganization, Organization } from "./types";
+import { getOrganization } from "./get-organization";
 
 async function getOrganizationId({
   orgId,

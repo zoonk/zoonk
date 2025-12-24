@@ -4,8 +4,8 @@ import { type Course, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
-import { hasCoursePermission } from "../organizations";
 import { getOrganization } from "../organizations/get-organization";
+import { hasCoursePermission } from "../organizations/org-permissions";
 import type { ContentVisibility } from "../types";
 
 export const LIST_COURSES_LIMIT = 20;

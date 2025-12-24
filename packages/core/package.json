@@ -27,7 +27,8 @@
     "./courses/suggestions": "./src/courses/course-suggestions.ts",
     "./courses/update": "./src/courses/update-course.ts",
     "./organizations/find": "./src/organizations/find-organization.ts",
-    "./organizations/get": "./src/organizations/get-organization.ts"
+    "./organizations/get": "./src/organizations/get-organization.ts",
+    "./organizations/permissions": "./src/organizations/org-permissions.ts"
   },
   "name": "@zoonk/core",
   "peerDependencies": {
