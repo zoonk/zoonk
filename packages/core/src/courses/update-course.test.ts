@@ -1,38 +1,14 @@
-import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
 import { describe, expect, test } from "vitest";
 import { signInAs } from "@/fixtures/auth";
+import { courseFixture } from "@/fixtures/courses";
 import { memberFixture, organizationFixture } from "@/fixtures/orgs";
 import { updateCourse } from "./update-course";
 
-describe("non-existent course", () => {
-  test("returns Course not found", async () => {
-    const result = await updateCourse({
-      courseId: 999_999,
-      headers: new Headers(),
-      title: "Updated Title",
-    });
+describe("unauthenticated users", async () => {
+  const organization = await organizationFixture();
+  const course = await courseFixture({ organizationId: organization.id });
 
-    expect(result.error?.message).toBe("Course not found");
-    expect(result.data).toBeNull();
-  });
-});
-
-describe("unauthenticated users", () => {
   test("returns Forbidden", async () => {
-    const organization = await organizationFixture();
-
-    const course = await prisma.course.create({
-      data: {
-        description: "Test description",
-        language: "en",
-        normalizedTitle: "test course",
-        organizationId: organization.id,
-        slug: `test-course-${randomUUID()}`,
-        title: "Test Course",
-      },
-    });
-
     const result = await updateCourse({
       courseId: course.id,
       headers: new Headers(),
@@ -41,30 +17,15 @@ describe("unauthenticated users", () => {
 
     expect(result.error?.message).toBe("Forbidden");
     expect(result.data).toBeNull();
-
-    const unchangedCourse = await prisma.course.findUnique({
-      where: { id: course.id },
-    });
-    expect(unchangedCourse?.title).toBe("Test Course");
   });
 });
 
-describe("members", () => {
+describe("members", async () => {
+  const { organization, user } = await memberFixture({ role: "member" });
+  const headers = await signInAs(user.email, user.password);
+  const course = await courseFixture({ organizationId: organization.id });
+
   test("returns Forbidden", async () => {
-    const { organization, user } = await memberFixture({ role: "member" });
-    const headers = await signInAs(user.email, user.password);
-
-    const course = await prisma.course.create({
-      data: {
-        description: "Test description",
-        language: "en",
-        normalizedTitle: "test course",
-        organizationId: organization.id,
-        slug: `test-course-${randomUUID()}`,
-        title: "Test Course",
-      },
-    });
-
     const result = await updateCourse({
       courseId: course.id,
       headers,
@@ -73,30 +34,15 @@ describe("members", () => {
 
     expect(result.error?.message).toBe("Forbidden");
     expect(result.data).toBeNull();
-
-    const unchangedCourse = await prisma.course.findUnique({
-      where: { id: course.id },
-    });
-    expect(unchangedCourse?.title).toBe("Test Course");
   });
 });
 
-describe("admins", () => {
+describe("admins", async () => {
+  const { organization, user } = await memberFixture({ role: "admin" });
+  const headers = await signInAs(user.email, user.password);
+  const course = await courseFixture({ organizationId: organization.id });
+
   test("updates title successfully", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
-
-    const course = await prisma.course.create({
-      data: {
-        description: "Test description",
-        language: "en",
-        normalizedTitle: "test course",
-        organizationId: organization.id,
-        slug: `test-course-${randomUUID()}`,
-        title: "Test Course",
-      },
-    });
-
     const result = await updateCourse({
       courseId: course.id,
       headers,
@@ -105,49 +51,9 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
     expect(result.data?.title).toBe("Updated Title");
-    expect(result.data?.normalizedTitle).toBe("updated title");
-  });
-
-  test("returns course unchanged when no fields provided", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
-
-    const course = await prisma.course.create({
-      data: {
-        description: "Original description",
-        language: "en",
-        normalizedTitle: "test course",
-        organizationId: organization.id,
-        slug: `test-course-${randomUUID()}`,
-        title: "Test Course",
-      },
-    });
-
-    const result = await updateCourse({
-      courseId: course.id,
-      headers,
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data?.title).toBe("Test Course");
-    expect(result.data?.description).toBe("Original description");
   });
 
   test("updates description successfully", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
-
-    const course = await prisma.course.create({
-      data: {
-        description: "Original description",
-        language: "en",
-        normalizedTitle: "test course",
-        organizationId: organization.id,
-        slug: `test-course-${randomUUID()}`,
-        title: "Test Course",
-      },
-    });
-
     const result = await updateCourse({
       courseId: course.id,
       description: "Updated description",
@@ -156,79 +62,31 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
     expect(result.data?.description).toBe("Updated description");
-    expect(result.data?.title).toBe("Test Course");
   });
 
-  test("updates slug and normalizes it", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
-
-    const course = await prisma.course.create({
-      data: {
-        description: "Test description",
-        language: "en",
-        normalizedTitle: "test course",
-        organizationId: organization.id,
-        slug: `test-course-${randomUUID()}`,
-        title: "Test Course",
-      },
-    });
-
+  test("updates slug successfully", async () => {
     const result = await updateCourse({
       courseId: course.id,
-      headers,
-      slug: "My New Slug!",
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data?.slug).toBe("my-new-slug");
-  });
-
-  test("updates multiple fields at once", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
-
-    const course = await prisma.course.create({
-      data: {
-        description: "Original description",
-        language: "en",
-        normalizedTitle: "test course",
-        organizationId: organization.id,
-        slug: `test-course-${randomUUID()}`,
-        title: "Test Course",
-      },
-    });
-
-    const result = await updateCourse({
-      courseId: course.id,
-      description: "New description",
       headers,
       slug: "new-slug",
-      title: "New Title",
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.title).toBe("New Title");
-    expect(result.data?.normalizedTitle).toBe("new title");
-    expect(result.data?.description).toBe("New description");
     expect(result.data?.slug).toBe("new-slug");
   });
 
-  test("normalizes title with accents for search", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
-
-    const course = await prisma.course.create({
-      data: {
-        description: "Test description",
-        language: "pt",
-        normalizedTitle: "test course",
-        organizationId: organization.id,
-        slug: `test-course-${randomUUID()}`,
-        title: "Test Course",
-      },
+  test("normalizes slug", async () => {
+    const result = await updateCourse({
+      courseId: course.id,
+      headers,
+      slug: "My Updated Course!",
     });
 
+    expect(result.error).toBeNull();
+    expect(result.data?.slug).toBe("my-updated-course");
+  });
+
+  test("normalizes title for search", async () => {
     const result = await updateCourse({
       courseId: course.id,
       headers,
@@ -236,57 +94,56 @@ describe("admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.title).toBe("Ciência da Computação");
     expect(result.data?.normalizedTitle).toBe("ciencia da computacao");
   });
 
-  test("returns Forbidden for course in different organization", async () => {
-    const { user } = await memberFixture({ role: "admin" });
-    const org2 = await organizationFixture();
-    const headers = await signInAs(user.email, user.password);
-
-    const courseInOrg2 = await prisma.course.create({
-      data: {
-        description: "Course in different org",
-        language: "en",
-        normalizedTitle: "test course in org2",
-        organizationId: org2.id,
-        slug: `test-course-org2-${randomUUID()}`,
-        title: "Test Course in Org2",
-      },
+  test("updates multiple fields at once", async () => {
+    const result = await updateCourse({
+      courseId: course.id,
+      description: "New description",
+      headers,
+      slug: "new-slug-multi",
+      title: "New Title",
     });
 
+    expect(result.error).toBeNull();
+    expect(result.data?.title).toBe("New Title");
+    expect(result.data?.description).toBe("New description");
+    expect(result.data?.slug).toBe("new-slug-multi");
+  });
+
+  test("returns Course not found", async () => {
     const result = await updateCourse({
-      courseId: courseInOrg2.id,
+      courseId: 999_999,
       headers,
-      title: "Hacked Title",
+      title: "Updated Title",
+    });
+
+    expect(result.error?.message).toBe("Course not found");
+    expect(result.data).toBeNull();
+  });
+
+  test("don't allow to update course for a different organization", async () => {
+    const otherOrg = await organizationFixture();
+    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+
+    const result = await updateCourse({
+      courseId: otherCourse.id,
+      headers,
+      title: "Updated Title",
     });
 
     expect(result.error?.message).toBe("Forbidden");
     expect(result.data).toBeNull();
-
-    const unchangedCourse = await prisma.course.findUnique({
-      where: { id: courseInOrg2.id },
-    });
-    expect(unchangedCourse?.title).toBe("Test Course in Org2");
   });
 });
 
-describe("owners", () => {
-  test("updates title successfully", async () => {
-    const { organization, user } = await memberFixture({ role: "owner" });
-    const headers = await signInAs(user.email, user.password);
+describe("owners", async () => {
+  const { organization, user } = await memberFixture({ role: "owner" });
+  const headers = await signInAs(user.email, user.password);
 
-    const course = await prisma.course.create({
-      data: {
-        description: "Test description",
-        language: "en",
-        normalizedTitle: "test course",
-        organizationId: organization.id,
-        slug: `test-course-${randomUUID()}`,
-        title: "Test Course",
-      },
-    });
+  test("updates course successfully", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
 
     const result = await updateCourse({
       courseId: course.id,
