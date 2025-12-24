@@ -3,10 +3,10 @@ import { signInAs } from "@/fixtures/auth";
 import { memberFixture, organizationFixture } from "@/fixtures/orgs";
 import { hasCoursePermission } from "./org-permissions";
 
-describe("unauthenticated users", () => {
-  test("returns false for any permission using orgId", async () => {
-    const organization = await organizationFixture();
+describe("unauthenticated users", async () => {
+  const organization = await organizationFixture();
 
+  test("returns false for any permission using orgId", async () => {
     const canCreate = await hasCoursePermission({
       headers: new Headers(),
       orgId: organization.id,
@@ -38,8 +38,6 @@ describe("unauthenticated users", () => {
   });
 
   test("returns false for any permission using orgSlug", async () => {
-    const organization = await organizationFixture();
-
     const canCreate = await hasCoursePermission({
       headers: new Headers(),
       orgSlug: organization.slug,
@@ -91,10 +89,11 @@ describe("unauthenticated users", () => {
   });
 });
 
-describe("member role", () => {
+describe("member role", async () => {
+  const { organization, user } = await memberFixture({ role: "member" });
+  const headers = await signInAs(user.email, user.password);
+
   test("can read courses", async () => {
-    const { organization, user } = await memberFixture({ role: "member" });
-    const headers = await signInAs(user.email, user.password);
     const canRead = await hasCoursePermission({
       headers,
       orgId: organization.id,
@@ -105,8 +104,6 @@ describe("member role", () => {
   });
 
   test("cannot create courses", async () => {
-    const { organization, user } = await memberFixture({ role: "member" });
-    const headers = await signInAs(user.email, user.password);
     const canCreate = await hasCoursePermission({
       headers,
       orgId: organization.id,
@@ -117,8 +114,6 @@ describe("member role", () => {
   });
 
   test("cannot update courses", async () => {
-    const { organization, user } = await memberFixture({ role: "member" });
-    const headers = await signInAs(user.email, user.password);
     const canUpdate = await hasCoursePermission({
       headers,
       orgId: organization.id,
@@ -129,8 +124,6 @@ describe("member role", () => {
   });
 
   test("cannot delete courses", async () => {
-    const { organization, user } = await memberFixture({ role: "member" });
-    const headers = await signInAs(user.email, user.password);
     const canDelete = await hasCoursePermission({
       headers,
       orgId: organization.id,
@@ -141,10 +134,11 @@ describe("member role", () => {
   });
 });
 
-describe("admin role", () => {
+describe("admin role", async () => {
+  const { organization, user } = await memberFixture({ role: "admin" });
+  const headers = await signInAs(user.email, user.password);
+
   test("can create courses", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
     const canCreate = await hasCoursePermission({
       headers,
       orgId: organization.id,
@@ -155,8 +149,6 @@ describe("admin role", () => {
   });
 
   test("can read courses", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
     const canRead = await hasCoursePermission({
       headers,
       orgId: organization.id,
@@ -167,8 +159,6 @@ describe("admin role", () => {
   });
 
   test("can update courses", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
     const canUpdate = await hasCoursePermission({
       headers,
       orgId: organization.id,
@@ -179,8 +169,6 @@ describe("admin role", () => {
   });
 
   test("cannot delete courses", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
     const canDelete = await hasCoursePermission({
       headers,
       orgId: organization.id,
@@ -191,10 +179,11 @@ describe("admin role", () => {
   });
 });
 
-describe("owner role", () => {
+describe("owner role", async () => {
+  const { organization, user } = await memberFixture({ role: "owner" });
+  const headers = await signInAs(user.email, user.password);
+
   test("can create courses", async () => {
-    const { organization, user } = await memberFixture({ role: "owner" });
-    const headers = await signInAs(user.email, user.password);
     const canCreate = await hasCoursePermission({
       headers,
       orgId: organization.id,
@@ -205,8 +194,6 @@ describe("owner role", () => {
   });
 
   test("can read courses", async () => {
-    const { organization, user } = await memberFixture({ role: "owner" });
-    const headers = await signInAs(user.email, user.password);
     const canRead = await hasCoursePermission({
       headers,
       orgId: organization.id,
@@ -217,8 +204,6 @@ describe("owner role", () => {
   });
 
   test("can update courses", async () => {
-    const { organization, user } = await memberFixture({ role: "owner" });
-    const headers = await signInAs(user.email, user.password);
     const canUpdate = await hasCoursePermission({
       headers,
       orgId: organization.id,
@@ -229,8 +214,6 @@ describe("owner role", () => {
   });
 
   test("can delete courses", async () => {
-    const { organization, user } = await memberFixture({ role: "owner" });
-    const headers = await signInAs(user.email, user.password);
     const canDelete = await hasCoursePermission({
       headers,
       orgId: organization.id,
