@@ -18,7 +18,6 @@ export default defineConfig({
   test: {
     env: loadEnv("test", process.cwd(), ""),
     environment: "node",
-    globalSetup: ["./prisma-test-setup.ts"],
     setupFiles: ["./setup-tests.ts"],
   },
 });
