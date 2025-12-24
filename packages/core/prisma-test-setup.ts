@@ -1,7 +1,6 @@
 import { prisma } from "@zoonk/db";
-import { beforeAll } from "vitest";
 
-async function truncateAllTables() {
+export default async function setup() {
   try {
     const tablenames = await prisma.$queryRaw<
       Array<{ tablename: string }>
@@ -22,7 +21,3 @@ async function truncateAllTables() {
     console.error({ error });
   }
 }
-
-beforeAll(async () => {
-  await truncateAllTables();
-});
