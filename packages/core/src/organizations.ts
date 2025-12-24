@@ -2,10 +2,10 @@ import "server-only";
 
 import { auth } from "@zoonk/auth";
 import type { CoursePermission } from "@zoonk/auth/permissions";
-import { prisma } from "@zoonk/db";
-import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { safeAsync } from "@zoonk/utils/error";
 import { headers } from "next/headers";
 import { cache } from "react";
+import { getOrganization } from "./organizations/get-organization";
 import type { AuthOrganization, Organization } from "./types";
 
 async function getOrganizationId({
@@ -33,20 +33,6 @@ export function findOrganizationById(
 ) {
   return orgs.find((org) => Number(org.id) === Number(orgId)) ?? null;
 }
-
-export const getOrganization = cache(
-  async (slug: string): Promise<SafeReturn<Organization | null>> => {
-    const { data: org, error } = await safeAsync(() =>
-      prisma.organization.findUnique({ where: { slug } }),
-    );
-
-    if (error) {
-      return { data: null, error };
-    }
-
-    return { data: org ?? null, error: null };
-  },
-);
 
 export const hasCoursePermission = cache(
   async (opts: {
