@@ -8,8 +8,6 @@ import { headers } from "next/headers";
 import { cache } from "react";
 import type { AuthOrganization, Organization } from "./types";
 
-export type { CoursePermission } from "@zoonk/auth/permissions";
-
 async function getOrganizationId({
   orgId,
   orgSlug,
