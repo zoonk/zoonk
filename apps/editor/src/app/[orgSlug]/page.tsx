@@ -1,4 +1,4 @@
-import { listCourses } from "@zoonk/core/courses";
+import { listCourses } from "@zoonk/core/courses/list";
 import { getOrganization } from "@zoonk/core/organizations";
 import {
   Container,

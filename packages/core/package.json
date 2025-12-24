@@ -15,7 +15,8 @@
     "vitest": "4.0.16"
   },
   "exports": {
-    "./*": "./src/*.ts"
+    "./*": "./src/*.ts",
+    "./courses/list": "./src/courses/list-courses.ts"
   },
   "name": "@zoonk/core",
   "peerDependencies": {
