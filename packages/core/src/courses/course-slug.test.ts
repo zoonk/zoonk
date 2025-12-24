@@ -6,8 +6,11 @@ import { userFixture } from "@/fixtures/users";
 import { courseSlugExists } from "./course-slug";
 
 test("returns true when slug exists for same language and org", async () => {
-  const organization = await organizationFixture();
-  const author = await userFixture();
+  const [organization, author] = await Promise.all([
+    organizationFixture(),
+    userFixture(),
+  ]);
+
   const slug = `test-course-${randomUUID()}`;
 
   await prisma.course.create({
@@ -44,8 +47,10 @@ test("returns false when slug does not exist", async () => {
 });
 
 test("returns false when slug exists but language differs", async () => {
-  const organization = await organizationFixture();
-  const author = await userFixture();
+  const [organization, author] = await Promise.all([
+    organizationFixture(),
+    userFixture(),
+  ]);
   const slug = `test-course-${randomUUID()}`;
 
   await prisma.course.create({
@@ -70,9 +75,12 @@ test("returns false when slug exists but language differs", async () => {
 });
 
 test("returns false when slug exists but organization differs", async () => {
-  const org1 = await organizationFixture();
-  const org2 = await organizationFixture();
-  const author = await userFixture();
+  const [org1, org2, author] = await Promise.all([
+    organizationFixture(),
+    organizationFixture(),
+    userFixture(),
+  ]);
+
   const slug = `test-course-${randomUUID()}`;
 
   await prisma.course.create({
