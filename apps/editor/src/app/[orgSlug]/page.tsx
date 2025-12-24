@@ -1,5 +1,5 @@
 import { listCourses } from "@zoonk/core/courses/list";
-import { getOrganization } from "@zoonk/core/organizations";
+import { getOrganization } from "@zoonk/core/organizations/get";
 import {
   Container,
   ContainerAction,

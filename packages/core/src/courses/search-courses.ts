@@ -4,7 +4,8 @@ import { type Course, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
-import { getOrganization, hasCoursePermission } from "../organizations";
+import { hasCoursePermission } from "../organizations";
+import { getOrganization } from "../organizations/get-organization";
 import type { ContentVisibility } from "../types";
 
 export const searchCourses = cache(
