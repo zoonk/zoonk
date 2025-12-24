@@ -4,13 +4,12 @@ import { courseAttrs } from "@/fixtures/courses";
 import { memberFixture, organizationFixture } from "@/fixtures/orgs";
 import { createCourse } from "./create-course";
 
-describe("unauthenticated users", () => {
-  test("returns Unauthorized", async () => {
-    const organization = await organizationFixture();
-    const attrs = courseAttrs();
+describe("unauthenticated users", async () => {
+  const organization = await organizationFixture();
 
+  test("returns Unauthorized", async () => {
     const result = await createCourse({
-      ...attrs,
+      ...courseAttrs(),
       headers: new Headers(),
       orgSlug: organization.slug,
     });
@@ -20,31 +19,13 @@ describe("unauthenticated users", () => {
   });
 });
 
-describe("non-existent organization", () => {
-  test("returns Organization not found", async () => {
-    const { user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
-    const attrs = courseAttrs();
+describe("members", async () => {
+  const { organization, user } = await memberFixture({ role: "member" });
+  const headers = await signInAs(user.email, user.password);
 
-    const result = await createCourse({
-      ...attrs,
-      headers,
-      orgSlug: "non-existent-org",
-    });
-
-    expect(result.error?.message).toBe("Organization not found");
-    expect(result.data).toBeNull();
-  });
-});
-
-describe("members", () => {
   test("returns Forbidden", async () => {
-    const { organization, user } = await memberFixture({ role: "member" });
-    const headers = await signInAs(user.email, user.password);
-    const attrs = courseAttrs();
-
     const result = await createCourse({
-      ...attrs,
+      ...courseAttrs(),
       headers,
       orgSlug: organization.slug,
     });
@@ -54,10 +35,11 @@ describe("members", () => {
   });
 });
 
-describe("admins", () => {
+describe("admins", async () => {
+  const { organization, user } = await memberFixture({ role: "admin" });
+  const headers = await signInAs(user.email, user.password);
+
   test("creates course successfully", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
     const attrs = courseAttrs();
 
     const result = await createCourse({
@@ -75,8 +57,6 @@ describe("admins", () => {
   });
 
   test("normalizes slug", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
     const attrs = courseAttrs();
 
     const result = await createCourse({
@@ -91,8 +71,6 @@ describe("admins", () => {
   });
 
   test("normalizes title for search", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
     const attrs = courseAttrs();
 
     const result = await createCourse({
@@ -105,30 +83,32 @@ describe("admins", () => {
     expect(result.error).toBeNull();
     expect(result.data?.normalizedTitle).toBe("ciencia da computacao");
   });
-});
 
-describe("owners", () => {
-  test("creates course successfully", async () => {
-    const { organization, user } = await memberFixture({ role: "owner" });
-    const headers = await signInAs(user.email, user.password);
-    const attrs = courseAttrs();
-
+  test("returns Organization not found", async () => {
     const result = await createCourse({
-      ...attrs,
+      ...courseAttrs(),
       headers,
-      orgSlug: organization.slug,
+      orgSlug: "non-existent-org",
     });
 
-    expect(result.error).toBeNull();
-    expect(result.data).toBeDefined();
-    expect(result.data?.title).toBe(attrs.title);
+    expect(result.error?.message).toBe("Organization not found");
+    expect(result.data).toBeNull();
   });
-});
 
-describe("duplicate slug", () => {
+  test("don't allow to create course for a different organization", async () => {
+    const otherOrg = await organizationFixture();
+
+    const result = await createCourse({
+      ...courseAttrs(),
+      headers,
+      orgSlug: otherOrg.slug,
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+  });
+
   test("returns error when slug already exists for same language and org", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
     const attrs = courseAttrs();
 
     await createCourse({
@@ -147,8 +127,6 @@ describe("duplicate slug", () => {
   });
 
   test("allows same slug for different language", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
     const attrs = courseAttrs();
 
     await createCourse({
@@ -167,5 +145,24 @@ describe("duplicate slug", () => {
 
     expect(result.error).toBeNull();
     expect(result.data?.language).toBe("pt");
+  });
+});
+
+describe("owners", async () => {
+  const { organization, user } = await memberFixture({ role: "owner" });
+  const headers = await signInAs(user.email, user.password);
+
+  test("creates course successfully", async () => {
+    const attrs = courseAttrs();
+
+    const result = await createCourse({
+      ...attrs,
+      headers,
+      orgSlug: organization.slug,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toBeDefined();
+    expect(result.data?.title).toBe(attrs.title);
   });
 });
