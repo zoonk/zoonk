@@ -1,6 +1,7 @@
 "use server";
 
-import { deleteCourse, toggleCoursePublished } from "@zoonk/core/courses";
+import { toggleCoursePublished } from "@zoonk/core/courses";
+import { deleteCourse } from "@zoonk/core/courses/delete";
 import { revalidateMainApp } from "@zoonk/core/revalidate";
 import { cacheTagCourse, cacheTagOrgCourses } from "@zoonk/utils/cache";
 import { redirect } from "next/navigation";

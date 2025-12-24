@@ -17,6 +17,7 @@
   "exports": {
     "./*": "./src/*.ts",
     "./courses/create": "./src/courses/create-course.ts",
+    "./courses/delete": "./src/courses/delete-course.ts",
     "./courses/get": "./src/courses/get-course.ts",
     "./courses/list": "./src/courses/list-courses.ts",
     "./courses/update": "./src/courses/update-course.ts"
