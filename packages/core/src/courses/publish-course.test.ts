@@ -1,38 +1,19 @@
-import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { describe, expect, test } from "vitest";
 import { signInAs } from "@/fixtures/auth";
+import { courseFixture } from "@/fixtures/courses";
 import { memberFixture, organizationFixture } from "@/fixtures/orgs";
 import { toggleCoursePublished } from "./publish-course";
 
-describe("non-existent course", () => {
-  test("returns Course not found", async () => {
-    const result = await toggleCoursePublished({
-      courseId: 999_999,
-      headers: new Headers(),
-      isPublished: true,
-    });
+describe("unauthenticated users", async () => {
+  const organization = await organizationFixture();
 
-    expect(result.error?.message).toBe("Course not found");
-    expect(result.data).toBeNull();
+  const course = await courseFixture({
+    isPublished: false,
+    organizationId: organization.id,
   });
-});
 
-describe("unauthenticated users", () => {
   test("returns Forbidden", async () => {
-    const organization = await organizationFixture();
-
-    const course = await prisma.course.create({
-      data: {
-        description: "Test description",
-        language: "en",
-        normalizedTitle: "test course",
-        organizationId: organization.id,
-        slug: `test-course-${randomUUID()}`,
-        title: "Test Course",
-      },
-    });
-
     const result = await toggleCoursePublished({
       courseId: course.id,
       headers: new Headers(),
@@ -44,22 +25,16 @@ describe("unauthenticated users", () => {
   });
 });
 
-describe("members", () => {
+describe("members", async () => {
+  const { organization, user } = await memberFixture({ role: "member" });
+  const headers = await signInAs(user.email, user.password);
+
+  const course = await courseFixture({
+    isPublished: false,
+    organizationId: organization.id,
+  });
+
   test("returns Forbidden", async () => {
-    const { organization, user } = await memberFixture({ role: "member" });
-    const headers = await signInAs(user.email, user.password);
-
-    const course = await prisma.course.create({
-      data: {
-        description: "Test description",
-        language: "en",
-        normalizedTitle: "test course",
-        organizationId: organization.id,
-        slug: `test-course-${randomUUID()}`,
-        title: "Test Course",
-      },
-    });
-
     const result = await toggleCoursePublished({
       courseId: course.id,
       headers,
@@ -71,21 +46,25 @@ describe("members", () => {
   });
 });
 
-describe("admins", () => {
-  test("publishes a draft course", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
+describe("admins", async () => {
+  const { organization, user } = await memberFixture({ role: "admin" });
+  const headers = await signInAs(user.email, user.password);
 
-    const course = await prisma.course.create({
-      data: {
-        description: "Test description",
-        isPublished: false,
-        language: "en",
-        normalizedTitle: "test course",
-        organizationId: organization.id,
-        slug: `test-course-${randomUUID()}`,
-        title: "Test Course",
-      },
+  test("returns Course not found", async () => {
+    const result = await toggleCoursePublished({
+      courseId: 999_999,
+      headers,
+      isPublished: true,
+    });
+
+    expect(result.error?.message).toBe("Course not found");
+    expect(result.data).toBeNull();
+  });
+
+  test("publishes a draft course", async () => {
+    const course = await courseFixture({
+      isPublished: false,
+      organizationId: organization.id,
     });
 
     const result = await toggleCoursePublished({
@@ -99,19 +78,9 @@ describe("admins", () => {
   });
 
   test("unpublishes a published course", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
-
-    const course = await prisma.course.create({
-      data: {
-        description: "Test description",
-        isPublished: true,
-        language: "en",
-        normalizedTitle: "test course",
-        organizationId: organization.id,
-        slug: `test-course-${randomUUID()}`,
-        title: "Test Course",
-      },
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: organization.id,
     });
 
     const result = await toggleCoursePublished({
@@ -125,53 +94,11 @@ describe("admins", () => {
   });
 
   test("returns Forbidden for course in different organization", async () => {
-    const { user } = await memberFixture({ role: "admin" });
-    const org2 = await organizationFixture();
-    const headers = await signInAs(user.email, user.password);
+    const otherOrg = await organizationFixture();
 
-    const courseInOrg2 = await prisma.course.create({
-      data: {
-        description: "Course in different org",
-        isPublished: false,
-        language: "en",
-        normalizedTitle: "test course in org2",
-        organizationId: org2.id,
-        slug: `test-course-org2-${randomUUID()}`,
-        title: "Test Course in Org2",
-      },
-    });
-
-    const result = await toggleCoursePublished({
-      courseId: courseInOrg2.id,
-      headers,
-      isPublished: true,
-    });
-
-    expect(result.error?.message).toBe("Forbidden");
-    expect(result.data).toBeNull();
-
-    const unchangedCourse = await prisma.course.findUnique({
-      where: { id: courseInOrg2.id },
-    });
-    expect(unchangedCourse?.isPublished).toBe(false);
-  });
-});
-
-describe("owners", () => {
-  test("toggles course published status successfully", async () => {
-    const { organization, user } = await memberFixture({ role: "owner" });
-    const headers = await signInAs(user.email, user.password);
-
-    const course = await prisma.course.create({
-      data: {
-        description: "Test description",
-        isPublished: false,
-        language: "en",
-        normalizedTitle: "test course",
-        organizationId: organization.id,
-        slug: `test-course-${randomUUID()}`,
-        title: "Test Course",
-      },
+    const course = await courseFixture({
+      isPublished: false,
+      organizationId: otherOrg.id,
     });
 
     const result = await toggleCoursePublished({
@@ -180,7 +107,13 @@ describe("owners", () => {
       isPublished: true,
     });
 
-    expect(result.error).toBeNull();
-    expect(result.data?.isPublished).toBe(true);
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+
+    const unchangedCourse = await prisma.course.findUnique({
+      where: { id: course.id },
+    });
+
+    expect(unchangedCourse?.isPublished).toBe(false);
   });
 });
