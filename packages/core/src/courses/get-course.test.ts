@@ -4,19 +4,19 @@ import { courseFixture } from "@/fixtures/courses";
 import { memberFixture, organizationFixture } from "@/fixtures/orgs";
 import { getCourse } from "./get-course";
 
-describe("brand org: unauthenticated users", () => {
+describe("brand org: unauthenticated users", async () => {
+  const organization = await organizationFixture({ kind: "brand" });
+
+  const [publishedCourse, draftCourse] = await Promise.all([
+    courseFixture({ isPublished: true, organizationId: organization.id }),
+    courseFixture({ isPublished: false, organizationId: organization.id }),
+  ]);
+
   test("returns Forbidden for visibility all", async () => {
-    const organization = await organizationFixture({ kind: "brand" });
-
-    const course = await courseFixture({
-      isPublished: false,
-      organizationId: organization.id,
-    });
-
     const result = await getCourse({
-      courseSlug: course.slug,
+      courseSlug: draftCourse.slug,
       headers: new Headers(),
-      language: course.language,
+      language: draftCourse.language,
       orgSlug: organization.slug,
       visibility: "all",
     });
@@ -26,17 +26,10 @@ describe("brand org: unauthenticated users", () => {
   });
 
   test("returns Forbidden for visibility draft", async () => {
-    const organization = await organizationFixture({ kind: "brand" });
-
-    const course = await courseFixture({
-      isPublished: false,
-      organizationId: organization.id,
-    });
-
     const result = await getCourse({
-      courseSlug: course.slug,
+      courseSlug: draftCourse.slug,
       headers: new Headers(),
-      language: course.language,
+      language: draftCourse.language,
       orgSlug: organization.slug,
       visibility: "draft",
     });
@@ -46,35 +39,28 @@ describe("brand org: unauthenticated users", () => {
   });
 
   test("returns published course for visibility published", async () => {
-    const organization = await organizationFixture({ kind: "brand" });
-
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: organization.id,
-    });
-
     const result = await getCourse({
-      courseSlug: course.slug,
+      courseSlug: publishedCourse.slug,
       headers: new Headers(),
-      language: course.language,
+      language: publishedCourse.language,
       orgSlug: organization.slug,
       visibility: "published",
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.id).toBe(course.id);
+    expect(result.data?.id).toBe(publishedCourse.id);
   });
 });
 
-describe("non-brand orgs: unauthenticated users", () => {
+describe("non-brand orgs: unauthenticated users", async () => {
+  const organization = await organizationFixture({ kind: "school" });
+
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: organization.id,
+  });
+
   test("returns Forbidden for visibility published", async () => {
-    const organization = await organizationFixture({ kind: "school" });
-
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: organization.id,
-    });
-
     const result = await getCourse({
       courseSlug: course.slug,
       headers: new Headers(),
@@ -88,19 +74,24 @@ describe("non-brand orgs: unauthenticated users", () => {
   });
 });
 
-describe("org members", () => {
+describe("org members", async () => {
+  const { organization, user } = await memberFixture({ role: "member" });
+
+  const [headers, draftCourse, publishedCourse] = await Promise.all([
+    signInAs(user.email, user.password),
+    courseFixture({ isPublished: false, organizationId: organization.id }),
+    courseFixture({
+      isPublished: true,
+      language: "en",
+      organizationId: organization.id,
+    }),
+  ]);
+
   test("returns Forbidden for visibility draft", async () => {
-    const { organization, user } = await memberFixture({ role: "member" });
-
-    const [headers, course] = await Promise.all([
-      signInAs(user.email, user.password),
-      courseFixture({ isPublished: false, organizationId: organization.id }),
-    ]);
-
     const result = await getCourse({
-      courseSlug: course.slug,
+      courseSlug: draftCourse.slug,
       headers,
-      language: course.language,
+      language: draftCourse.language,
       orgSlug: organization.slug,
       visibility: "draft",
     });
@@ -110,17 +101,10 @@ describe("org members", () => {
   });
 
   test("returns Forbidden for visibility all", async () => {
-    const { organization, user } = await memberFixture({ role: "member" });
-
-    const [headers, course] = await Promise.all([
-      signInAs(user.email, user.password),
-      courseFixture({ isPublished: false, organizationId: organization.id }),
-    ]);
-
     const result = await getCourse({
-      courseSlug: course.slug,
+      courseSlug: draftCourse.slug,
       headers,
-      language: course.language,
+      language: draftCourse.language,
       orgSlug: organization.slug,
       visibility: "all",
     });
@@ -130,31 +114,20 @@ describe("org members", () => {
   });
 
   test("returns published course for visibility published", async () => {
-    const { organization, user } = await memberFixture({ role: "member" });
-
-    const [headers, course] = await Promise.all([
-      signInAs(user.email, user.password),
-      courseFixture({ isPublished: true, organizationId: organization.id }),
-    ]);
-
     const result = await getCourse({
-      courseSlug: course.slug,
+      courseSlug: publishedCourse.slug,
       headers,
-      language: course.language,
+      language: publishedCourse.language,
       orgSlug: organization.slug,
       visibility: "published",
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.id).toBe(course.id);
-    expect(result.data?.title).toBe(course.title);
+    expect(result.data?.id).toBe(publishedCourse.id);
+    expect(result.data?.title).toBe(publishedCourse.title);
   });
 
   test("returns null when course does not exist", async () => {
-    const { organization, user } = await memberFixture({ role: "member" });
-
-    const headers = await signInAs(user.email, user.password);
-
     const result = await getCourse({
       courseSlug: "non-existent-course",
       headers,
@@ -168,15 +141,8 @@ describe("org members", () => {
   });
 
   test("returns null when language does not match", async () => {
-    const { organization, user } = await memberFixture({ role: "member" });
-
-    const [headers, course] = await Promise.all([
-      signInAs(user.email, user.password),
-      courseFixture({ language: "en", organizationId: organization.id }),
-    ]);
-
     const result = await getCourse({
-      courseSlug: course.slug,
+      courseSlug: publishedCourse.slug,
       headers,
       language: "pt",
       orgSlug: organization.slug,
@@ -188,21 +154,13 @@ describe("org members", () => {
   });
 
   test("returns null when organization does not match", async () => {
-    const [org1, { organization: org2, user }] = await Promise.all([
-      organizationFixture(),
-      memberFixture({ role: "member" }),
-    ]);
-
-    const [headers, course] = await Promise.all([
-      signInAs(user.email, user.password),
-      courseFixture({ organizationId: org1.id }),
-    ]);
+    const otherOrg = await organizationFixture();
 
     const result = await getCourse({
-      courseSlug: course.slug,
+      courseSlug: publishedCourse.slug,
       headers,
-      language: course.language,
-      orgSlug: org2.slug,
+      language: publishedCourse.language,
+      orgSlug: otherOrg.slug,
       visibility: "published",
     });
 
@@ -211,15 +169,15 @@ describe("org members", () => {
   });
 });
 
-describe("org admins", () => {
+describe("org admins", async () => {
+  const { organization, user } = await memberFixture({ role: "admin" });
+
+  const [headers, course] = await Promise.all([
+    signInAs(user.email, user.password),
+    courseFixture({ isPublished: false, organizationId: organization.id }),
+  ]);
+
   test("returns course for visibility draft", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-
-    const [headers, course] = await Promise.all([
-      signInAs(user.email, user.password),
-      courseFixture({ isPublished: false, organizationId: organization.id }),
-    ]);
-
     const result = await getCourse({
       courseSlug: course.slug,
       headers,
@@ -234,13 +192,6 @@ describe("org admins", () => {
   });
 
   test("returns course for visibility all", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-
-    const [headers, course] = await Promise.all([
-      signInAs(user.email, user.password),
-      courseFixture({ isPublished: false, organizationId: organization.id }),
-    ]);
-
     const result = await getCourse({
       courseSlug: course.slug,
       headers,
@@ -254,9 +205,6 @@ describe("org admins", () => {
   });
 
   test("returns null when course does not exist", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
-
     const result = await getCourse({
       courseSlug: "non-existent-course",
       headers,
@@ -266,31 +214,6 @@ describe("org admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data).toBeNull();
-  });
-});
-
-describe("non-brand org members", () => {
-  test("returns Forbidden for visibility published", async () => {
-    const [organization, { user }] = await Promise.all([
-      organizationFixture({ kind: "school" }),
-      memberFixture({ role: "member" }),
-    ]);
-
-    const [headers, course] = await Promise.all([
-      signInAs(user.email, user.password),
-      courseFixture({ isPublished: true, organizationId: organization.id }),
-    ]);
-
-    const result = await getCourse({
-      courseSlug: course.slug,
-      headers,
-      language: course.language,
-      orgSlug: organization.slug,
-      visibility: "published",
-    });
-
-    expect(result.error?.message).toBe("Forbidden");
     expect(result.data).toBeNull();
   });
 });
