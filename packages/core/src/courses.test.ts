@@ -61,6 +61,19 @@ describe("listCourses()", () => {
         },
       });
 
+      await prisma.course.create({
+        data: {
+          authorId: Number(author.id),
+          description: "Draft course",
+          isPublished: false,
+          language: "en",
+          normalizedTitle: "draft course",
+          organizationId: organization.id,
+          slug: `draft-course-${randomUUID()}`,
+          title: "Draft Course",
+        },
+      });
+
       const result = await listCourses({
         headers: new Headers(),
         orgSlug: organization.slug,
@@ -664,6 +677,19 @@ describe("searchCourses()", () => {
           organizationId: organization.id,
           slug: `published-course-${randomUUID()}`,
           title: "Published Course",
+        },
+      });
+
+      await prisma.course.create({
+        data: {
+          authorId: Number(author.id),
+          description: "Draft published course",
+          isPublished: false,
+          language: "en",
+          normalizedTitle: "published draft course",
+          organizationId: organization.id,
+          slug: `draft-published-course-${randomUUID()}`,
+          title: "Published Draft Course",
         },
       });
 
@@ -1386,6 +1412,19 @@ describe("getCourse()", () => {
         },
       });
 
+      await prisma.course.create({
+        data: {
+          authorId: Number(author.id),
+          description: "Draft course",
+          isPublished: false,
+          language: "en",
+          normalizedTitle: "draft course",
+          organizationId: organization.id,
+          slug: `draft-course-${randomUUID()}`,
+          title: "Draft Course",
+        },
+      });
+
       const result = await getCourse({
         courseSlug: slug,
         headers: new Headers(),
@@ -1451,6 +1490,19 @@ describe("getCourse()", () => {
           organizationId: organization.id,
           slug,
           title: "Test Course",
+        },
+      });
+
+      await prisma.course.create({
+        data: {
+          authorId: Number(user.id),
+          description: "Draft course",
+          isPublished: false,
+          language: "en",
+          normalizedTitle: "draft course",
+          organizationId: organization.id,
+          slug: `draft-course-${randomUUID()}`,
+          title: "Draft Course",
         },
       });
 
