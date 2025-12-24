@@ -3,7 +3,7 @@ import "server-only";
 import { type Course, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
-import { hasCoursePermission } from "../organizations/org-permissions";
+import { hasCoursePermission } from "../orgs/org-permissions";
 
 export async function updateCourse(params: {
   courseId: number;

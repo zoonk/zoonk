@@ -1,6 +1,6 @@
 import { auth } from "@zoonk/auth";
-import { getOrganization } from "@zoonk/core/organizations/get";
-import { hasCoursePermission } from "@zoonk/core/organizations/permissions";
+import { getOrganization } from "@zoonk/core/orgs/get";
+import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { headers } from "next/headers";
 import { notFound, unauthorized } from "next/navigation";
 import { Suspense } from "react";

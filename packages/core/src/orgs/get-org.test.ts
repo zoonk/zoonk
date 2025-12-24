@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
-import { organizationFixture } from "@/fixtures/organizations";
-import { getOrganization } from "./get-organization";
+import { organizationFixture } from "@/fixtures/orgs";
+import { getOrganization } from "./get-org";
 
 test("returns the organization id for a valid slug", async () => {
   const org = await organizationFixture();

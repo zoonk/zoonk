@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "vitest";
-import { organizationFixture } from "@/fixtures/organizations";
+import { organizationFixture } from "@/fixtures/orgs";
 import { userFixture } from "@/fixtures/users";
 import { courseSlugExists } from "./course-slug";
 

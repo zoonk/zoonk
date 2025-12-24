@@ -3,8 +3,8 @@ import "server-only";
 import { type Course, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
-import { getOrganization } from "../organizations/get-organization";
-import { hasCoursePermission } from "../organizations/org-permissions";
+import { getOrganization } from "../orgs/get-org";
+import { hasCoursePermission } from "../orgs/org-permissions";
 import type { ContentVisibility } from "../types";
 
 export const getCourse = cache(

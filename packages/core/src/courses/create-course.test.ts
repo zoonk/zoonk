@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { describe, expect, test } from "vitest";
 import { signInAs } from "@/fixtures/auth";
-import { memberFixture, organizationFixture } from "@/fixtures/organizations";
+import { memberFixture, organizationFixture } from "@/fixtures/orgs";
 import { createCourse } from "./create-course";
 
 describe("unauthenticated users", () => {

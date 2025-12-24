@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Course, prisma } from "@zoonk/db";
-import { organizationFixture } from "./organizations";
+import { organizationFixture } from "./orgs";
 import { userFixture } from "./users";
 
 export function courseAttrs(

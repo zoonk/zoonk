@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { describe, expect, test } from "vitest";
 import { signInAs } from "@/fixtures/auth";
-import { memberFixture, organizationFixture } from "@/fixtures/organizations";
+import { memberFixture, organizationFixture } from "@/fixtures/orgs";
 import { userFixture } from "@/fixtures/users";
 import { getCourse } from "./get-course";
 

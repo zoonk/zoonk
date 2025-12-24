@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { signInAs } from "@/fixtures/auth";
-import { memberFixture, organizationFixture } from "@/fixtures/organizations";
+import { memberFixture, organizationFixture } from "@/fixtures/orgs";
 import { hasCoursePermission } from "./org-permissions";
 
 describe("unauthenticated users", () => {
