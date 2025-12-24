@@ -6,6 +6,34 @@ import { memberFixture, organizationFixture } from "@/fixtures/orgs";
 import { getCourse } from "./get-course";
 
 describe("brand org: unauthenticated users", () => {
+  test("returns Forbidden for visibility all", async () => {
+    const organization = await organizationFixture({ kind: "brand" });
+    const slug = `test-course-${randomUUID()}`;
+
+    await prisma.course.create({
+      data: {
+        description: "Test description",
+        isPublished: false,
+        language: "en",
+        normalizedTitle: "test course",
+        organizationId: organization.id,
+        slug,
+        title: "Test Course",
+      },
+    });
+
+    const result = await getCourse({
+      courseSlug: slug,
+      headers: new Headers(),
+      language: "en",
+      orgSlug: organization.slug,
+      visibility: "all",
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+  });
+
   test("returns Forbidden for visibility draft", async () => {
     const organization = await organizationFixture({ kind: "brand" });
     const slug = `test-course-${randomUUID()}`;
