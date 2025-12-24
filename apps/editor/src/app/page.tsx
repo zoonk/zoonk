@@ -1,4 +1,4 @@
-import { findOrganizationById } from "@zoonk/core/organizations";
+import { findOrganizationById } from "@zoonk/core/orgs/find";
 import { getSession, listUserOrgs } from "@zoonk/core/users";
 import { redirect, unauthorized } from "next/navigation";
 

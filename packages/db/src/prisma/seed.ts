@@ -1,12 +1,12 @@
 import { prisma } from "../index";
 import { seedCourses } from "./seed/courses";
-import { seedOrganizations } from "./seed/organizations";
+import { seedOrganizations } from "./seed/orgs";
 import { seedUsers } from "./seed/users";
 
 async function main() {
   const users = await seedUsers(prisma);
   const org = await seedOrganizations(prisma, users);
-  await seedCourses(prisma, org, users);
+  await seedCourses(prisma, org);
 }
 
 main()

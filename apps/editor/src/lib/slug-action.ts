@@ -1,6 +1,6 @@
 "use server";
 
-import { courseSlugExists } from "@zoonk/core/courses";
+import { courseSlugExists } from "@zoonk/core/courses/slug";
 import { toSlug } from "@zoonk/utils/string";
 
 export async function checkSlugExists({

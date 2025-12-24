@@ -17,7 +17,6 @@ model User {
   accounts         Account[]
   members          Member[]
   invitations      Invitation[]
-  authoredCourses  Course[]
 
   @@unique([email])
   @@map("users")

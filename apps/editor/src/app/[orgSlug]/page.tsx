@@ -1,5 +1,5 @@
-import { listOrganizationCourses } from "@zoonk/core/courses";
-import { getOrganizationBySlug } from "@zoonk/core/organizations";
+import { listCourses } from "@zoonk/core/courses/list";
+import { getOrganization } from "@zoonk/core/orgs/get";
 import {
   Container,
   ContainerAction,
@@ -20,7 +20,7 @@ export async function generateMetadata({
   params,
 }: PageProps<"/[orgSlug]">): Promise<Metadata> {
   const { orgSlug } = await params;
-  const { data: org } = await getOrganizationBySlug(orgSlug);
+  const { data: org } = await getOrganization(orgSlug);
 
   if (!org) {
     return {};
@@ -65,7 +65,7 @@ async function ListCourses({
   params: PageProps<"/[orgSlug]">["params"];
 }) {
   const { orgSlug } = await params;
-  const { data: courses } = await listOrganizationCourses({ orgSlug });
+  const { data: courses } = await listCourses({ orgSlug, visibility: "all" });
 
   return <CourseList courses={courses} orgSlug={orgSlug} />;
 }

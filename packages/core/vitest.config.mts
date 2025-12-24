@@ -18,6 +18,6 @@ export default defineConfig({
   test: {
     env: loadEnv("test", process.cwd(), ""),
     environment: "node",
-    setupFiles: ["./setup-tests.ts", "./prisma-test-setup.ts"],
+    setupFiles: ["./setup-tests.ts"],
   },
 });

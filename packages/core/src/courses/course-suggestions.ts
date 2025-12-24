@@ -1,10 +1,8 @@
 import "server-only";
 
-import { generateCourseSuggestions } from "@zoonk/ai/course-suggestions";
+import { generateCourseSuggestions as generateTask } from "@zoonk/ai/course-suggestions";
 import { prisma } from "@zoonk/db";
-import { cacheTagCourseSuggestions } from "@zoonk/utils/cache";
 import { normalizeString } from "@zoonk/utils/string";
-import { cacheLife, cacheTag } from "next/cache";
 
 type Suggestion = {
   title: string;
@@ -23,7 +21,7 @@ async function findCourseSuggestion(params: {
   });
 }
 
-export async function upsertCourseSuggestion(input: {
+async function upsertCourseSuggestion(input: {
   locale: string;
   prompt: string;
   suggestions: Suggestion[];
@@ -38,21 +36,17 @@ export async function upsertCourseSuggestion(input: {
   });
 }
 
-export async function getCourseSuggestions({
+export async function generateCourseSuggestions({
   locale,
   prompt,
 }: {
   locale: string;
   prompt: string;
 }): Promise<Suggestion[]> {
-  "use cache";
-  cacheLife("max");
-  cacheTag(locale, cacheTagCourseSuggestions({ prompt }));
-
   const record = await findCourseSuggestion({ locale, prompt });
 
   if (!record) {
-    const { data } = await generateCourseSuggestions({ locale, prompt });
+    const { data } = await generateTask({ locale, prompt });
 
     await upsertCourseSuggestion({ locale, prompt, suggestions: data });
 

@@ -4,9 +4,9 @@ import {
 } from "@zoonk/ai/course-thumbnail";
 import type { SafeReturn } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
-import { uploadGeneratedImage } from "./upload";
+import { uploadGeneratedImage } from "../upload";
 
-export async function createCourseThumbnail(
+export async function generateCourseImage(
   params: CourseThumbnailParams,
 ): Promise<SafeReturn<string>> {
   const { data: image, error: imageGenerationError } =

@@ -1,6 +1,6 @@
 "use server";
 
-import { createCourse } from "@zoonk/core/courses";
+import { createCourse } from "@zoonk/core/courses/create";
 import { revalidateMainApp } from "@zoonk/core/revalidate";
 import { cacheTagOrgCourses } from "@zoonk/utils/cache";
 import { toSlug } from "@zoonk/utils/string";

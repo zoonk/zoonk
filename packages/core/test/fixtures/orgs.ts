@@ -28,16 +28,24 @@ export async function organizationFixture(attrs?: Partial<Organization>) {
   return org;
 }
 
-export async function memberFixture(attrs?: Partial<Member>) {
-  const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+interface MemberFixtureOptions extends Partial<Member> {
+  orgKind?: Organization["kind"];
+}
+
+export async function memberFixture(attrs?: MemberFixtureOptions) {
+  const { orgKind, ...memberAttrs } = attrs || {};
+  const [user, org] = await Promise.all([
+    userFixture(),
+    organizationFixture({ kind: orgKind }),
+  ]);
 
   const member = await prisma.member.create({
     data: {
       createdAt: new Date(),
-      organizationId: attrs?.organizationId || org.id,
-      role: attrs?.role || "member",
-      userId: attrs?.userId || Number(user.id),
-      ...attrs,
+      organizationId: memberAttrs?.organizationId || org.id,
+      role: memberAttrs?.role || "member",
+      userId: memberAttrs?.userId || Number(user.id),
+      ...memberAttrs,
     },
   });
 

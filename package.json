@@ -1,13 +1,13 @@
 {
   "devDependencies": {
     "@biomejs/biome": "2.3.10",
-    "turbo": "2.7.1"
+    "turbo": "2.7.2"
   },
   "engines": {
     "node": "^24"
   },
   "name": "zoonk",
-  "packageManager": "pnpm@10.26.1",
+  "packageManager": "pnpm@10.26.2",
   "private": true,
   "scripts": {
     "auth:generate": "pnpm dlx @better-auth/cli@latest generate --output=./packages/db/src/prisma/models/accounts.prisma --config=./packages/auth/src/auth.ts",
