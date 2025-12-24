@@ -1,4 +1,4 @@
-import { getCourse } from "@zoonk/core/courses";
+import { getCourse } from "@zoonk/core/courses/get";
 import { notFound } from "next/navigation";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";

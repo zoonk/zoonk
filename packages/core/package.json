@@ -16,6 +16,7 @@
   },
   "exports": {
     "./*": "./src/*.ts",
+    "./courses/get": "./src/courses/get-course.ts",
     "./courses/list": "./src/courses/list-courses.ts"
   },
   "name": "@zoonk/core",
