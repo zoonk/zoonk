@@ -8,7 +8,7 @@ import { getOrganization } from "../orgs/get-org";
 import { hasCoursePermission } from "../orgs/org-permissions";
 import type { ContentVisibility } from "../types";
 
-export const LIST_COURSES_LIMIT = 20;
+const LIST_COURSES_LIMIT = 20;
 
 export const listCourses = cache(
   async (params: {
