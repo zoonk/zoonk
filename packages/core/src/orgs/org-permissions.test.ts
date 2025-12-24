@@ -52,14 +52,38 @@ describe("unauthenticated users", () => {
       permission: "read",
     });
 
+    const canUpdate = await hasCoursePermission({
+      headers: new Headers(),
+      orgSlug: organization.slug,
+      permission: "update",
+    });
+
+    const canDelete = await hasCoursePermission({
+      headers: new Headers(),
+      orgSlug: organization.slug,
+      permission: "delete",
+    });
+
     expect(canCreate).toBe(false);
     expect(canRead).toBe(false);
+    expect(canUpdate).toBe(false);
+    expect(canDelete).toBe(false);
   });
 
   test("returns false when orgSlug does not exist", async () => {
     const canCreate = await hasCoursePermission({
       headers: new Headers(),
       orgSlug: "non-existent-slug",
+      permission: "create",
+    });
+
+    expect(canCreate).toBe(false);
+  });
+
+  test("returns false when orgId does not exist", async () => {
+    const canCreate = await hasCoursePermission({
+      headers: new Headers(),
+      orgId: -1,
       permission: "create",
     });
 

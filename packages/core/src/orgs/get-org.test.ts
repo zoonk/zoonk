@@ -2,7 +2,7 @@ import { expect, test } from "vitest";
 import { organizationFixture } from "@/fixtures/orgs";
 import { getOrganization } from "./get-org";
 
-test("returns the organization id for a valid slug", async () => {
+test("returns the organization for a valid slug", async () => {
   const org = await organizationFixture();
   const result = await getOrganization(org.slug);
 
