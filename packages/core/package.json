@@ -24,6 +24,7 @@
     "./courses/publish": "./src/courses/publish-course.ts",
     "./courses/search": "./src/courses/search-courses.ts",
     "./courses/slug": "./src/courses/course-slug.ts",
+    "./courses/suggestions": "./src/courses/course-suggestions.ts",
     "./courses/update": "./src/courses/update-course.ts"
   },
   "name": "@zoonk/core",
