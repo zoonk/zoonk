@@ -27,13 +27,6 @@ async function getOrganizationId({
   return null;
 }
 
-export function findOrganizationById(
-  orgs: Organization[] | AuthOrganization[],
-  orgId?: string | null,
-) {
-  return orgs.find((org) => Number(org.id) === Number(orgId)) ?? null;
-}
-
 export const hasCoursePermission = cache(
   async (opts: {
     permission: CoursePermission;

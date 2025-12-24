@@ -26,6 +26,7 @@
     "./courses/slug": "./src/courses/course-slug.ts",
     "./courses/suggestions": "./src/courses/course-suggestions.ts",
     "./courses/update": "./src/courses/update-course.ts",
+    "./organizations/find": "./src/organizations/find-organization.ts",
     "./organizations/get": "./src/organizations/get-organization.ts"
   },
   "name": "@zoonk/core",
