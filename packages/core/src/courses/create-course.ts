@@ -46,7 +46,6 @@ export async function createCourse(params: {
   const { data, error } = await safeAsync(() =>
     prisma.course.create({
       data: {
-        authorId: Number(session.user.id),
         description: params.description,
         language: params.language,
         normalizedTitle,

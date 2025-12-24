@@ -1,28 +1,17 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "@zoonk/db";
 import { expect, test } from "vitest";
+import { courseFixture } from "@/fixtures/courses";
 import { organizationFixture } from "@/fixtures/orgs";
-import { userFixture } from "@/fixtures/users";
 import { courseSlugExists } from "./course-slug";
 
 test("returns true when slug exists for same language and org", async () => {
-  const [organization, author] = await Promise.all([
-    organizationFixture(),
-    userFixture(),
-  ]);
+  const organization = await organizationFixture();
 
   const slug = `test-course-${randomUUID()}`;
 
-  await prisma.course.create({
-    data: {
-      authorId: Number(author.id),
-      description: "Test description",
-      language: "en",
-      normalizedTitle: "test course",
-      organizationId: organization.id,
-      slug,
-      title: "Test Course",
-    },
+  await courseFixture({
+    organizationId: organization.id,
+    slug,
   });
 
   const exists = await courseSlugExists({
@@ -47,22 +36,13 @@ test("returns false when slug does not exist", async () => {
 });
 
 test("returns false when slug exists but language differs", async () => {
-  const [organization, author] = await Promise.all([
-    organizationFixture(),
-    userFixture(),
-  ]);
+  const organization = await organizationFixture();
   const slug = `test-course-${randomUUID()}`;
 
-  await prisma.course.create({
-    data: {
-      authorId: Number(author.id),
-      description: "Test description",
-      language: "en",
-      normalizedTitle: "test course",
-      organizationId: organization.id,
-      slug,
-      title: "Test Course",
-    },
+  await courseFixture({
+    language: "en",
+    organizationId: organization.id,
+    slug,
   });
 
   const exists = await courseSlugExists({
@@ -75,24 +55,17 @@ test("returns false when slug exists but language differs", async () => {
 });
 
 test("returns false when slug exists but organization differs", async () => {
-  const [org1, org2, author] = await Promise.all([
+  const [org1, org2] = await Promise.all([
     organizationFixture(),
     organizationFixture(),
-    userFixture(),
   ]);
 
   const slug = `test-course-${randomUUID()}`;
 
-  await prisma.course.create({
-    data: {
-      authorId: Number(author.id),
-      description: "Test description",
-      language: "en",
-      normalizedTitle: "test course",
-      organizationId: org1.id,
-      slug,
-      title: "Test Course",
-    },
+  await courseFixture({
+    language: "en",
+    organizationId: org1.id,
+    slug,
   });
 
   const exists = await courseSlugExists({

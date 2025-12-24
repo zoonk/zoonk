@@ -3,18 +3,15 @@ import { prisma } from "@zoonk/db";
 import { describe, expect, test } from "vitest";
 import { signInAs } from "@/fixtures/auth";
 import { memberFixture, organizationFixture } from "@/fixtures/orgs";
-import { userFixture } from "@/fixtures/users";
 import { getCourse } from "./get-course";
 
 describe("brand org: unauthenticated users", () => {
   test("returns Forbidden for visibility draft", async () => {
     const organization = await organizationFixture({ kind: "brand" });
-    const author = await userFixture();
     const slug = `test-course-${randomUUID()}`;
 
     await prisma.course.create({
       data: {
-        authorId: Number(author.id),
         description: "Test description",
         isPublished: false,
         language: "en",
@@ -39,12 +36,10 @@ describe("brand org: unauthenticated users", () => {
 
   test("returns published course for visibility published", async () => {
     const organization = await organizationFixture({ kind: "brand" });
-    const author = await userFixture();
     const slug = `test-course-${randomUUID()}`;
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(author.id),
         description: "Published course",
         isPublished: true,
         language: "en",
@@ -57,7 +52,6 @@ describe("brand org: unauthenticated users", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(author.id),
         description: "Draft course",
         isPublished: false,
         language: "en",
@@ -92,7 +86,6 @@ describe("brand org: members", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Test description",
         isPublished: false,
         language: "en",
@@ -125,7 +118,6 @@ describe("brand org: members", () => {
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Test description",
         isPublished: true,
         language: "en",
@@ -138,7 +130,6 @@ describe("brand org: members", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Draft course",
         isPublished: false,
         language: "en",
@@ -191,7 +182,6 @@ describe("brand org: members", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Test description",
         isPublished: true,
         language: "en",
@@ -225,7 +215,6 @@ describe("brand org: members", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Test description",
         isPublished: true,
         language: "en",
@@ -260,7 +249,6 @@ describe("brand org: admins", () => {
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Test description",
         isPublished: false,
         language: "en",
@@ -294,7 +282,6 @@ describe("brand org: admins", () => {
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Test description",
         isPublished: false,
         language: "en",
@@ -340,12 +327,10 @@ describe("brand org: admins", () => {
 describe("school org: unauthenticated users", () => {
   test("returns Forbidden for visibility published", async () => {
     const organization = await organizationFixture({ kind: "school" });
-    const author = await userFixture();
     const slug = `test-course-${randomUUID()}`;
 
     await prisma.course.create({
       data: {
-        authorId: Number(author.id),
         description: "Test description",
         isPublished: true,
         language: "en",
@@ -373,13 +358,11 @@ describe("school org: non-members", () => {
   test("returns Forbidden for visibility published", async () => {
     const organization = await organizationFixture({ kind: "school" });
     const { user } = await memberFixture({ role: "member" });
-    const author = await userFixture();
     const headers = await signInAs(user.email, user.password);
     const slug = `test-course-${randomUUID()}`;
 
     await prisma.course.create({
       data: {
-        authorId: Number(author.id),
         description: "Test description",
         isPublished: true,
         language: "en",

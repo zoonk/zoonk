@@ -3,7 +3,6 @@ import { prisma } from "@zoonk/db";
 import { describe, expect, test } from "vitest";
 import { signInAs } from "@/fixtures/auth";
 import { memberFixture, organizationFixture } from "@/fixtures/orgs";
-import { userFixture } from "@/fixtures/users";
 import { LIST_COURSES_LIMIT, listCourses } from "./list-courses";
 
 describe("brand org: unauthenticated users", () => {
@@ -35,11 +34,9 @@ describe("brand org: unauthenticated users", () => {
 
   test("returns published courses for visibility published", async () => {
     const organization = await organizationFixture({ kind: "brand" });
-    const author = await userFixture();
 
     const publishedCourse = await prisma.course.create({
       data: {
-        authorId: Number(author.id),
         description: "Published course",
         isPublished: true,
         language: "en",
@@ -52,7 +49,6 @@ describe("brand org: unauthenticated users", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(author.id),
         description: "Draft course",
         isPublished: false,
         language: "en",
@@ -118,7 +114,6 @@ describe("brand org: members", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Test description",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -149,7 +144,6 @@ describe("brand org: members", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Draft course",
         isPublished: false,
         language: "en",
@@ -180,7 +174,6 @@ describe("brand org: members", () => {
 
     const publishedCourse = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Published course",
         isPublished: true,
         language: "en",
@@ -193,7 +186,6 @@ describe("brand org: members", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Draft course",
         isPublished: false,
         language: "en",
@@ -227,7 +219,6 @@ describe("brand org: admins", () => {
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Test description",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -259,7 +250,6 @@ describe("brand org: admins", () => {
     await prisma.course.createMany({
       data: [
         {
-          authorId: Number(user.id),
           description: "Published course",
           isPublished: true,
           language: "en",
@@ -269,7 +259,6 @@ describe("brand org: admins", () => {
           title: "Published Course",
         },
         {
-          authorId: Number(user.id),
           description: "Draft course",
           isPublished: false,
           language: "en",
@@ -300,7 +289,6 @@ describe("brand org: admins", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Published course",
         isPublished: true,
         language: "en",
@@ -313,7 +301,6 @@ describe("brand org: admins", () => {
 
     const draftCourse = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Draft course",
         isPublished: false,
         language: "en",
@@ -345,7 +332,6 @@ describe("brand org: admins", () => {
     await prisma.course.createMany({
       data: [
         {
-          authorId: Number(user.id),
           description: "English course",
           imageUrl: "https://example.com/image.jpg",
           language: "en",
@@ -355,7 +341,6 @@ describe("brand org: admins", () => {
           title: "English Course",
         },
         {
-          authorId: Number(user.id),
           description: "Portuguese course",
           imageUrl: "https://example.com/image.jpg",
           language: "pt",
@@ -388,7 +373,6 @@ describe("brand org: admins", () => {
 
     await prisma.course.createMany({
       data: Array.from({ length: 5 }, (_, i) => ({
-        authorId: Number(user.id),
         description: `Course ${i} description`,
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -420,7 +404,6 @@ describe("brand org: admins", () => {
 
     await prisma.course.createMany({
       data: Array.from({ length: 25 }, (_, i) => ({
-        authorId: Number(user.id),
         description: `Course ${i} description`,
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -450,7 +433,6 @@ describe("brand org: admins", () => {
 
     const oldCourse = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         createdAt: new Date("2024-01-01"),
         description: "Old course",
         imageUrl: "https://example.com/image.jpg",
@@ -464,7 +446,6 @@ describe("brand org: admins", () => {
 
     const newCourse = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         createdAt: new Date("2024-06-01"),
         description: "New course",
         imageUrl: "https://example.com/image.jpg",
@@ -497,7 +478,6 @@ describe("brand org: admins", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Test course",
         language: "en",
         normalizedTitle: "test course",
@@ -521,11 +501,9 @@ describe("brand org: admins", () => {
 describe("school org: unauthenticated users", () => {
   test("returns Forbidden for visibility published", async () => {
     const organization = await organizationFixture({ kind: "school" });
-    const author = await userFixture();
 
     await prisma.course.create({
       data: {
-        authorId: Number(author.id),
         description: "Published course",
         isPublished: true,
         language: "en",
@@ -557,7 +535,6 @@ describe("school org: members", () => {
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Published course",
         isPublished: true,
         language: "en",

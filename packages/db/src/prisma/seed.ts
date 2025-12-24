@@ -6,7 +6,7 @@ import { seedUsers } from "./seed/users";
 async function main() {
   const users = await seedUsers(prisma);
   const org = await seedOrganizations(prisma, users);
-  await seedCourses(prisma, org, users);
+  await seedCourses(prisma, org);
 }
 
 main()

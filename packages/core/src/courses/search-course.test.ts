@@ -3,7 +3,6 @@ import { prisma } from "@zoonk/db";
 import { describe, expect, test } from "vitest";
 import { signInAs } from "@/fixtures/auth";
 import { memberFixture, organizationFixture } from "@/fixtures/orgs";
-import { userFixture } from "@/fixtures/users";
 import { searchCourses } from "./search-courses";
 
 describe("brand org: unauthenticated users", () => {
@@ -37,11 +36,9 @@ describe("brand org: unauthenticated users", () => {
 
   test("returns matching published courses for visibility published", async () => {
     const organization = await organizationFixture({ kind: "brand" });
-    const author = await userFixture();
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(author.id),
         description: "Published course",
         isPublished: true,
         language: "en",
@@ -54,7 +51,6 @@ describe("brand org: unauthenticated users", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(author.id),
         description: "Draft published course",
         isPublished: false,
         language: "en",
@@ -124,7 +120,6 @@ describe("brand org: members", () => {
 
     const publishedCourse = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Published course",
         isPublished: true,
         language: "en",
@@ -137,7 +132,6 @@ describe("brand org: members", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Draft course",
         isPublished: false,
         language: "en",
@@ -171,7 +165,6 @@ describe("brand org: admins", () => {
 
     const matchingCourse = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Computer Science course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -184,7 +177,6 @@ describe("brand org: admins", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Biology course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -216,7 +208,6 @@ describe("brand org: admins", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Published course",
         isPublished: true,
         language: "en",
@@ -229,7 +220,6 @@ describe("brand org: admins", () => {
 
     const draftCourse = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Draft course",
         isPublished: false,
         language: "en",
@@ -261,7 +251,6 @@ describe("brand org: admins", () => {
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Computer Science course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -293,7 +282,6 @@ describe("brand org: admins", () => {
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Computer Science course",
         imageUrl: "https://example.com/image.jpg",
         language: "pt",
@@ -325,7 +313,6 @@ describe("brand org: admins", () => {
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Programming course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -358,7 +345,6 @@ describe("brand org: admins", () => {
 
     const org1Course = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Org 1 course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -371,7 +357,6 @@ describe("brand org: admins", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Org 2 course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -403,7 +388,6 @@ describe("brand org: admins", () => {
 
     const oldCourse = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         createdAt: new Date("2024-01-01"),
         description: "Old programming course",
         imageUrl: "https://example.com/image.jpg",
@@ -417,7 +401,6 @@ describe("brand org: admins", () => {
 
     const newCourse = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         createdAt: new Date("2024-06-01"),
         description: "New programming course",
         imageUrl: "https://example.com/image.jpg",
@@ -451,7 +434,6 @@ describe("brand org: admins", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Biology course",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -482,7 +464,6 @@ describe("brand org: admins", () => {
 
     const enCourse = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Machine learning basics",
         imageUrl: "https://example.com/image.jpg",
         language: "en",
@@ -495,7 +476,6 @@ describe("brand org: admins", () => {
 
     await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Portuguese machine learning course",
         imageUrl: "https://example.com/image.jpg",
         language: "pt",
@@ -530,7 +510,6 @@ describe("brand org: admins", () => {
     await prisma.course.createMany({
       data: [
         {
-          authorId: Number(user.id),
           description: "English programming course",
           imageUrl: "https://example.com/image.jpg",
           language: "en",
@@ -540,7 +519,6 @@ describe("brand org: admins", () => {
           title: "Programming 101",
         },
         {
-          authorId: Number(user.id),
           description: "Portuguese programming course",
           imageUrl: "https://example.com/image.jpg",
           language: "pt",
@@ -567,11 +545,9 @@ describe("brand org: admins", () => {
 describe("school org: unauthenticated users", () => {
   test("returns Forbidden for visibility published", async () => {
     const organization = await organizationFixture({ kind: "school" });
-    const author = await userFixture();
 
     await prisma.course.create({
       data: {
-        authorId: Number(author.id),
         description: "Published course",
         isPublished: true,
         language: "en",

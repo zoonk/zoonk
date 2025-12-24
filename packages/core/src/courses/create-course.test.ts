@@ -81,7 +81,6 @@ describe("admins", () => {
     expect(result.data?.description).toBe("Test description");
     expect(result.data?.language).toBe("en");
     expect(result.data?.organizationId).toBe(organization.id);
-    expect(result.data?.authorId).toBe(Number(user.id));
   });
 
   test("normalizes slug", async () => {

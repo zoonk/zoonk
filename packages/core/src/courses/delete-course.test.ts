@@ -3,7 +3,6 @@ import { prisma } from "@zoonk/db";
 import { describe, expect, test } from "vitest";
 import { signInAs } from "@/fixtures/auth";
 import { memberFixture, organizationFixture } from "@/fixtures/orgs";
-import { userFixture } from "@/fixtures/users";
 import { deleteCourse } from "./delete-course";
 
 describe("non-existent course", () => {
@@ -21,11 +20,9 @@ describe("non-existent course", () => {
 describe("unauthenticated users", () => {
   test("returns Forbidden", async () => {
     const organization = await organizationFixture();
-    const author = await userFixture();
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(author.id),
         description: "Test description",
         language: "en",
         normalizedTitle: "test course",
@@ -57,7 +54,6 @@ describe("members", () => {
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Test description",
         language: "en",
         normalizedTitle: "test course",
@@ -89,7 +85,6 @@ describe("admins", () => {
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Test description",
         language: "en",
         normalizedTitle: "test course",
@@ -116,12 +111,10 @@ describe("admins", () => {
   test("returns Forbidden for course in different organization", async () => {
     const { user } = await memberFixture({ role: "admin" });
     const org2 = await organizationFixture();
-    const otherUser = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
     const courseInOrg2 = await prisma.course.create({
       data: {
-        authorId: Number(otherUser.id),
         description: "Course in different org",
         language: "en",
         normalizedTitle: "test course in org2",
@@ -153,7 +146,6 @@ describe("owners", () => {
 
     const course = await prisma.course.create({
       data: {
-        authorId: Number(user.id),
         description: "Test description",
         language: "en",
         normalizedTitle: "test course",
