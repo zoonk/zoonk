@@ -19,6 +19,7 @@
     "./courses/create": "./src/courses/create-course.ts",
     "./courses/delete": "./src/courses/delete-course.ts",
     "./courses/get": "./src/courses/get-course.ts",
+    "./courses/image": "./src/courses/course-image.ts",
     "./courses/list": "./src/courses/list-courses.ts",
     "./courses/publish": "./src/courses/publish-course.ts",
     "./courses/search": "./src/courses/search-courses.ts",
