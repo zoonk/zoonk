@@ -20,6 +20,7 @@
     "./courses/delete": "./src/courses/delete-course.ts",
     "./courses/get": "./src/courses/get-course.ts",
     "./courses/list": "./src/courses/list-courses.ts",
+    "./courses/publish": "./src/courses/publish-course.ts",
     "./courses/search": "./src/courses/search-courses.ts",
     "./courses/slug": "./src/courses/course-slug.ts",
     "./courses/update": "./src/courses/update-course.ts"

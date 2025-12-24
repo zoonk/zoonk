@@ -2,7 +2,7 @@ import "server-only";
 
 import { type Course, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { hasCoursePermission } from "./organizations";
+import { hasCoursePermission } from "../organizations";
 
 export async function toggleCoursePublished(params: {
   courseId: number;
