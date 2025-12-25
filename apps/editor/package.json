@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "@formatjs/intl-localematcher": "0.7.3",
-    "@tabler/icons-react": "3.35.0",
     "@zoonk/core": "workspace:*",
     "@zoonk/next": "workspace:*",
     "@zoonk/ui": "workspace:*",

@@ -1,8 +1,6 @@
 {
   "dependencies": {
-    "@tabler/icons-react": "3.35.0",
     "@zoonk/core": "workspace:*",
-    "@zoonk/db": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "lucide-react": "0.556.0",

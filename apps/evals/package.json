@@ -1,11 +1,10 @@
 {
   "dependencies": {
-    "@ai-sdk/gateway": "3.0.0",
     "@zoonk/ai": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "ai": "6.0.1",
+    "ai": "6.0.3",
     "lucide-react": "0.556.0",
     "next": "16.1.0",
     "react": "19.2.3",

@@ -1,8 +1,9 @@
 {
   "dependencies": {
-    "@ai-sdk/openai": "3.0.0",
+    "@ai-sdk/gateway": "3.0.2",
+    "@ai-sdk/openai": "3.0.1",
     "@zoonk/utils": "workspace:*",
-    "ai": "6.0.1"
+    "ai": "6.0.3"
   },
   "devDependencies": {
     "@types/node": "^24",
@@ -17,6 +18,7 @@
     "./course-description/generate": "./src/course-description/generate-course-description.ts",
     "./course-suggestions/generate": "./src/course-suggestions/generate-course-suggestions.ts",
     "./course-thumbnail/generate": "./src/course-thumbnail/generate-course-thumbnail.ts",
+    "./gateway": "./src/gateway.ts",
     "./types": "./src/types.ts"
   },
   "name": "@zoonk/ai",

@@ -1,6 +1,6 @@
 "use server";
 
-import { sendEmail } from "@zoonk/mailer";
+import { sendEmail } from "@zoonk/core/mailer/send";
 import { parseFormField } from "@zoonk/utils/form";
 
 export async function contactFormAction(
