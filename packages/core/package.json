@@ -15,7 +15,7 @@
     "vitest": "4.0.16"
   },
   "exports": {
-    "./*": "./src/*.ts",
+    "./cache/revalidate": "./src/cache/revalidate-main-app.ts",
     "./courses/create": "./src/courses/create-course.ts",
     "./courses/delete": "./src/courses/delete-course.ts",
     "./courses/get": "./src/courses/get-course.ts",
@@ -26,9 +26,16 @@
     "./courses/slug": "./src/courses/course-slug.ts",
     "./courses/suggestions": "./src/courses/course-suggestions.ts",
     "./courses/update": "./src/courses/update-course.ts",
+    "./images/optimize": "./src/images/optimize-image.ts",
+    "./images/upload": "./src/images/upload-image.ts",
     "./orgs/find": "./src/orgs/find-org.ts",
     "./orgs/get": "./src/orgs/get-org.ts",
-    "./orgs/permissions": "./src/orgs/org-permissions.ts"
+    "./orgs/permissions": "./src/orgs/org-permissions.ts",
+    "./types": "./src/types.ts",
+    "./users/orgs/list": "./src/users/list-user-orgs.ts",
+    "./users/otp/send": "./src/users/send-otp.ts",
+    "./users/session/get": "./src/users/get-user-session.ts",
+    "./users/stats/count": "./src/users/count-users.ts"
   },
   "name": "@zoonk/core",
   "peerDependencies": {

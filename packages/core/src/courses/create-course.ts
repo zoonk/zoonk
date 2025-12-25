@@ -1,12 +1,11 @@
 import "server-only";
 
-import { auth } from "@zoonk/auth";
 import { type Course, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
-import { headers } from "next/headers";
 import { getOrganization } from "../orgs/get-org";
 import { hasCoursePermission } from "../orgs/org-permissions";
+import { getSession } from "../users/get-user-session";
 
 export async function createCourse(params: {
   description: string;
@@ -16,9 +15,7 @@ export async function createCourse(params: {
   title: string;
   headers?: Headers;
 }): Promise<SafeReturn<Course>> {
-  const session = await auth.api.getSession({
-    headers: params.headers ?? (await headers()),
-  });
+  const session = await getSession({ headers: params.headers });
 
   if (!session) {
     return { data: null, error: new Error("Unauthorized") };

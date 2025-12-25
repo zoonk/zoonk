@@ -1,4 +1,4 @@
-import { getSession } from "@zoonk/core/users";
+import { getSession } from "@zoonk/core/users/session/get";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,

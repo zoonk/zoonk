@@ -1,6 +1,6 @@
 "use server";
 
-import { sendVerificationOTP } from "@zoonk/core/users";
+import { sendVerificationOTP } from "@zoonk/core/users/otp/send";
 import { parseFormField } from "@zoonk/utils/form";
 import { getLocale } from "next-intl/server";
 import { redirect } from "@/i18n/navigation";

@@ -1,5 +1,6 @@
 import { findOrganizationById } from "@zoonk/core/orgs/find";
-import { getSession, listUserOrgs } from "@zoonk/core/users";
+import { listUserOrgs } from "@zoonk/core/users/orgs/list";
+import { getSession } from "@zoonk/core/users/session/get";
 import { redirect, unauthorized } from "next/navigation";
 
 export default async function HomePage() {
