@@ -2,7 +2,7 @@ import "server-only";
 
 import { generateText, Output } from "ai";
 import { z } from "zod";
-import systemPrompt from "./prompt.md";
+import systemPrompt from "./alternative-titles.prompt.md";
 
 const DEFAULT_MODEL =
   process.env.AI_MODEL_ALTERNATIVE_TITLES || "google/gemini-3-flash";

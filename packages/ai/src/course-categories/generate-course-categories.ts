@@ -2,7 +2,7 @@ import "server-only";
 
 import { generateText, Output } from "ai";
 import { z } from "zod";
-import systemPrompt from "./prompt.md";
+import systemPrompt from "./course-categories.prompt.md";
 
 const DEFAULT_MODEL =
   process.env.AI_MODEL_COURSE_CATEGORIES ?? "google/gemini-3-flash";

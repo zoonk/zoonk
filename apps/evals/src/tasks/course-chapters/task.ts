@@ -2,7 +2,7 @@ import {
   type CourseChaptersParams,
   type CourseChaptersSchema,
   generateCourseChapters,
-} from "@zoonk/ai/course-chapters";
+} from "@zoonk/ai/course-chapters/generate";
 import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
 

@@ -2,22 +2,19 @@ import "server-only";
 
 import { generateText, Output } from "ai";
 import { z } from "zod";
-import systemPrompt from "./prompt.md";
+import systemPrompt from "./chapter-lessons.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_COURSE_CHAPTERS ?? "openai/gpt-5.2";
+const DEFAULT_MODEL = process.env.AI_MODEL_CHAPTER_LESSONS ?? "openai/gpt-5.2";
 
 const FALLBACK_MODELS = [
-  "openai/gpt-5.1-instant",
   "google/gemini-3-pro-preview",
-  "openai/gpt-5",
+  "openai/gpt-5.2",
   "anthropic/claude-opus-4.5",
-  "anthropic/claude-sonnet-4.5",
-  "openai/gpt-5.1-thinking",
   "openai/gpt-5-mini",
 ];
 
 const schema = z.object({
-  chapters: z.array(
+  lessons: z.array(
     z.object({
       description: z.string(),
       title: z.string(),
@@ -25,24 +22,30 @@ const schema = z.object({
   ),
 });
 
-export type CourseChaptersSchema = z.infer<typeof schema>;
+export type ChapterLessonsSchema = z.infer<typeof schema>;
 
-export type CourseChaptersParams = {
-  locale: string;
+export type ChapterLessonsParams = {
+  chapterDescription: string;
+  chapterTitle: string;
   courseTitle: string;
+  locale: string;
   model?: string;
   useFallback?: boolean;
 };
 
-export async function generateCourseChapters({
-  locale,
+export async function generateChapterLessons({
+  chapterDescription,
+  chapterTitle,
   courseTitle,
+  locale,
   model = DEFAULT_MODEL,
   useFallback = true,
-}: CourseChaptersParams) {
+}: ChapterLessonsParams) {
   const userPrompt = `
     LANGUAGE: ${locale}
     COURSE_TITLE: ${courseTitle}
+    CHAPTER_TITLE: ${chapterTitle}
+    CHAPTER_DESCRIPTION: ${chapterDescription}
   `;
 
   const { output, usage } = await generateText({

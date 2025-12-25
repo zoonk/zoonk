@@ -75,7 +75,7 @@ Be **vendor neutral** unless the field has widely accepted standards (then name 
 
 # Scope & Granularity Guidelines
 
-- Prefer **practical, job-linked** chapter scopes (e.g., “Forms & Validation” rather than “Advanced Miscellaneous”).
+- Prefer **practical, job-linked** chapter scopes (e.g., "Forms & Validation" rather than "Advanced Miscellaneous").
 - Where the field spans multiple modalities (e.g., theory + tools + ops), make that explicit with separate chapters.
 - Where safety or compliance applies, include a dedicated chapter.
 - Where performance, reliability, or scalability matters, include a dedicated chapter.

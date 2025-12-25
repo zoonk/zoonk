@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import * as courseSuggestions from "@zoonk/ai/course-suggestions";
+import * as courseSuggestions from "@zoonk/ai/course-suggestions/generate";
 import { prisma } from "@zoonk/db";
 import { expect, test, vi } from "vitest";
 import { generateCourseSuggestions } from "./course-suggestions";

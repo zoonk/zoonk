@@ -1,4 +1,4 @@
-import { generateChapterLessons } from "@zoonk/ai/chapter-lessons";
+import { generateChapterLessons } from "@zoonk/ai/chapter-lessons/generate";
 import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
 

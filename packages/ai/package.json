@@ -10,8 +10,14 @@
     "typescript": "^5"
   },
   "exports": {
-    ".": "./src/index.ts",
-    "./*": "./src/tasks/*/index.ts"
+    "./alternative-titles/generate": "./src/alternative-titles/generate-alternative-titles.ts",
+    "./chapter-lessons/generate": "./src/chapter-lessons/generate-chapter-lessons.ts",
+    "./course-categories/generate": "./src/course-categories/generate-course-categories.ts",
+    "./course-chapters/generate": "./src/course-chapters/generate-course-chapters.ts",
+    "./course-description/generate": "./src/course-description/generate-course-description.ts",
+    "./course-suggestions/generate": "./src/course-suggestions/generate-course-suggestions.ts",
+    "./course-thumbnail/generate": "./src/course-thumbnail/generate-course-thumbnail.ts",
+    "./types": "./src/types.ts"
   },
   "name": "@zoonk/ai",
   "peerDependencies": {
