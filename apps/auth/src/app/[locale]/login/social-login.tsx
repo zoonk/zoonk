@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient } from "@zoonk/auth/client";
+import { authClient } from "@zoonk/core/auth/client";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import {

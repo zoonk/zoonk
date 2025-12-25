@@ -1,7 +1,7 @@
 "use client";
 
-import { authClient } from "@zoonk/auth/client";
-import { useSubscription } from "@zoonk/auth/hooks/subscription";
+import { authClient } from "@zoonk/core/auth/client";
+import { useSubscription } from "@zoonk/core/auth/hooks/subscription";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Item,

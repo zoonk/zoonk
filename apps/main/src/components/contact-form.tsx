@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient } from "@zoonk/auth/client";
+import { authClient } from "@zoonk/core/auth/client";
 import {
   Field,
   FieldContent,

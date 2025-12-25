@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "@tabler/icons-react": "3.35.0",
-    "@zoonk/auth": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/next": "workspace:*",
     "@zoonk/ui": "workspace:*",

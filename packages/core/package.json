@@ -15,6 +15,11 @@
     "vitest": "4.0.16"
   },
   "exports": {
+    "./auth": "./src/auth/auth.ts",
+    "./auth/client": "./src/auth/client.ts",
+    "./auth/hooks/auth-state": "./src/auth/hooks/auth-state.ts",
+    "./auth/hooks/subscription": "./src/auth/hooks/subscription.ts",
+    "./auth/next": "./src/auth/next.ts",
     "./cache/revalidate": "./src/cache/revalidate-main-app.ts",
     "./courses/create": "./src/courses/create-course.ts",
     "./courses/delete": "./src/courses/delete-course.ts",

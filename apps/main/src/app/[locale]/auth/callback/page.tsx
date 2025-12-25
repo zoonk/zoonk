@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient } from "@zoonk/auth/client";
+import { authClient } from "@zoonk/core/auth/client";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { useSearchParams } from "next/navigation";
 import { useLocale } from "next-intl";

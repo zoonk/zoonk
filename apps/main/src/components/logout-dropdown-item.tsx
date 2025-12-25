@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient } from "@zoonk/auth/client";
+import { authClient } from "@zoonk/core/auth/client";
 import { DropdownMenuItem } from "@zoonk/ui/components/dropdown-menu";
 import { User } from "lucide-react";
 import { useExtracted } from "next-intl";

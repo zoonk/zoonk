@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@zoonk/auth";
+import { auth } from "@zoonk/core/auth";
 import { parseFormField } from "@zoonk/utils/form";
 import { headers } from "next/headers";
 

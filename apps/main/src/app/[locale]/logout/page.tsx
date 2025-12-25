@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient } from "@zoonk/auth/client";
+import { authClient } from "@zoonk/core/auth/client";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { useEffect, useEffectEvent } from "react";
 import { useRouter } from "@/i18n/navigation";

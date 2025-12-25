@@ -1,4 +1,4 @@
-import { auth } from "@zoonk/auth";
+import { auth } from "@zoonk/core/auth";
 import { getOrganization } from "@zoonk/core/orgs/get";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { headers } from "next/headers";

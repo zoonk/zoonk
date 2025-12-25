@@ -1,4 +1,4 @@
-import { auth } from "@zoonk/auth";
+import { auth } from "@zoonk/core/auth";
 import {
   Table,
   TableBody,
