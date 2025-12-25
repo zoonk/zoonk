@@ -9,7 +9,12 @@
     "vitest": "4.0.16"
   },
   "exports": {
-    "./*": "./src/*.ts"
+    "./cache": "./src/cache.ts",
+    "./error": "./src/error.ts",
+    "./form": "./src/form.ts",
+    "./locale": "./src/locale.ts",
+    "./string": "./src/string.ts",
+    "./url": "./src/url.ts"
   },
   "name": "@zoonk/utils",
   "private": true,

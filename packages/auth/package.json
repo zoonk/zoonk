@@ -17,10 +17,11 @@
   "exports": {
     ".": "./src/auth.ts",
     "./client": "./src/client.ts",
-    "./hooks/*": "./src/hooks/*.ts",
+    "./hooks/auth-state": "./src/hooks/use-auth-state.ts",
+    "./hooks/subscription": "./src/hooks/use-subscription.ts",
     "./next": "./src/next.ts",
-    "./permissions": "./src/permissions.ts",
-    "./testing": "./src/testing.ts"
+    "./testing": "./src/testing.ts",
+    "./types": "./src/types.ts"
   },
   "name": "@zoonk/auth",
   "peerDependencies": {

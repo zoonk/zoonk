@@ -1,4 +1,4 @@
-import type { UserWithRole } from "@zoonk/auth";
+import type { UserWithRole } from "@zoonk/auth/types";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
 
 type UserRowProps = {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuthState } from "@zoonk/auth/hooks/state";
+import { useAuthState } from "@zoonk/auth/hooks/auth-state";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ProtectedSection as ProtectedSectionPattern } from "@zoonk/ui/patterns/auth/protected-section";

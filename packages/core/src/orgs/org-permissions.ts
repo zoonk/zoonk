@@ -1,7 +1,7 @@
 import "server-only";
 
 import { auth } from "@zoonk/auth";
-import type { CoursePermission } from "@zoonk/auth/permissions";
+import type { CoursePermission } from "@zoonk/auth/types";
 import { safeAsync } from "@zoonk/utils/error";
 import { headers } from "next/headers";
 import { cache } from "react";
