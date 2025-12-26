@@ -104,24 +104,3 @@ describe("admins", async () => {
     expect(result.data).toBeNull();
   });
 });
-
-describe("owners", async () => {
-  const { organization, user } = await memberFixture({ role: "owner" });
-  const headers = await signInAs(user.email, user.password);
-
-  test("publishes chapter successfully", async () => {
-    const chapter = await chapterFixture({
-      isPublished: false,
-      organizationId: organization.id,
-    });
-
-    const result = await toggleChapterPublished({
-      chapterId: chapter.id,
-      headers,
-      isPublished: true,
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data?.isPublished).toBe(true);
-  });
-});

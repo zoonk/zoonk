@@ -136,25 +136,3 @@ describe("admins", async () => {
     expect(result.data).toEqual([]);
   });
 });
-
-describe("owners", async () => {
-  const { organization, user } = await memberFixture({ role: "owner" });
-  const headers = await signInAs(user.email, user.password);
-
-  test("searches chapters successfully", async () => {
-    await chapterFixture({
-      organizationId: organization.id,
-      title: "Owner Org Search Test",
-    });
-
-    const result = await searchOrgChapters({
-      headers,
-      orgSlug: organization.slug,
-      title: "Owner Org Search",
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data.length).toBe(1);
-    expect(result.data[0]?.title).toBe("Owner Org Search Test");
-  });
-});

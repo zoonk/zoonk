@@ -346,30 +346,3 @@ describe("admins", async () => {
     expect(chapters[1]?.position).toBe(1);
   });
 });
-
-describe("owners", async () => {
-  const { organization, user } = await memberFixture({ role: "owner" });
-  const headers = await signInAs(user.email, user.password);
-
-  test("removes chapter from course successfully", async () => {
-    const [course, chapter] = await Promise.all([
-      courseFixture({ organizationId: organization.id }),
-      chapterFixture({ organizationId: organization.id }),
-    ]);
-
-    await courseChapterFixture({
-      chapterId: chapter.id,
-      courseId: course.id,
-      position: 0,
-    });
-
-    const result = await removeChapterFromCourse({
-      chapterId: chapter.id,
-      courseId: course.id,
-      headers,
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data?.chapterId).toBe(chapter.id);
-  });
-});

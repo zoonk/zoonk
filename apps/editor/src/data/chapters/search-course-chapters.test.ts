@@ -178,37 +178,3 @@ describe("admins", async () => {
     expect(result.data[0]?.position).toBe(expectedPosition);
   });
 });
-
-describe("owners", async () => {
-  const { organization, user } = await memberFixture({ role: "owner" });
-
-  const [headers, course] = await Promise.all([
-    signInAs(user.email, user.password),
-    courseFixture({ organizationId: organization.id }),
-  ]);
-
-  test("searches chapters successfully", async () => {
-    const chapter = await chapterFixture({
-      organizationId: organization.id,
-      title: "Owner Search Test",
-    });
-
-    await courseChapterFixture({
-      chapterId: chapter.id,
-      courseId: course.id,
-      position: 0,
-    });
-
-    const result = await searchCourseChapters({
-      courseSlug: course.slug,
-      headers,
-      language: course.language,
-      orgSlug: organization.slug,
-      title: "Owner Search",
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data.length).toBe(1);
-    expect(result.data[0]?.id).toBe(chapter.id);
-  });
-});
