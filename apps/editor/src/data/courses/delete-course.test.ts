@@ -1,5 +1,9 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
+import {
+  chapterFixture,
+  courseChapterFixture,
+} from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
   memberFixture,
@@ -128,5 +132,97 @@ describe("owners", async () => {
     });
 
     expect(unchangedCourse).not.toBeNull();
+  });
+
+  test("cascades deletion to course chapters", async () => {
+    const [course, chapter] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
+
+    const courseChapter = await courseChapterFixture({
+      chapterId: chapter.id,
+      courseId: course.id,
+      position: 0,
+    });
+
+    const result = await deleteCourse({
+      courseId: course.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+
+    const deletedCourseChapter = await prisma.courseChapter.findUnique({
+      where: { id: courseChapter.id },
+    });
+
+    expect(deletedCourseChapter).toBeNull();
+  });
+
+  test("deletes orphaned chapters that don't belong to other courses", async () => {
+    const [course, chapter] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
+
+    await courseChapterFixture({
+      chapterId: chapter.id,
+      courseId: course.id,
+      position: 0,
+    });
+
+    const result = await deleteCourse({
+      courseId: course.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+
+    const deletedChapter = await prisma.chapter.findUnique({
+      where: { id: chapter.id },
+    });
+
+    expect(deletedChapter).toBeNull();
+  });
+
+  test("does not delete chapters that belong to other courses", async () => {
+    const [course1, course2, chapter] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
+
+    await Promise.all([
+      courseChapterFixture({
+        chapterId: chapter.id,
+        courseId: course1.id,
+        position: 0,
+      }),
+      courseChapterFixture({
+        chapterId: chapter.id,
+        courseId: course2.id,
+        position: 0,
+      }),
+    ]);
+
+    const result = await deleteCourse({
+      courseId: course1.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+
+    const remainingChapter = await prisma.chapter.findUnique({
+      where: { id: chapter.id },
+    });
+
+    expect(remainingChapter).not.toBeNull();
+
+    const remainingCourseChapter = await prisma.courseChapter.findFirst({
+      where: { chapterId: chapter.id, courseId: course2.id },
+    });
+
+    expect(remainingCourseChapter).not.toBeNull();
   });
 });

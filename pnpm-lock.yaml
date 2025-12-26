@@ -601,6 +601,9 @@ importers:
       '@zoonk/db':
         specifier: workspace:*
         version: link:../db
+      '@zoonk/utils':
+        specifier: workspace:*
+        version: link:../utils
 
   packages/tsconfig: {}
 

@@ -220,6 +220,9 @@
           "performance": {
             "noNamespaceImport": "off"
           },
+          "style": {
+            "noMagicNumbers": "off"
+          },
           "suspicious": {
             "noExplicitAny": "off"
           }

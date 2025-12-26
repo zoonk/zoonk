@@ -10,6 +10,7 @@ export async function deleteCourse(params: {
 }): Promise<SafeReturn<Course>> {
   const { data: course, error: findError } = await safeAsync(() =>
     prisma.course.findUnique({
+      include: { courseChapters: { select: { chapterId: true } } },
       where: { id: params.courseId },
     }),
   );
@@ -32,9 +33,32 @@ export async function deleteCourse(params: {
     return { data: null, error: new Error("Forbidden") };
   }
 
+  const chapterIds = course.courseChapters.map((cc) => cc.chapterId);
+
   const { error } = await safeAsync(() =>
-    prisma.course.delete({
-      where: { id: course.id },
+    prisma.$transaction(async (tx) => {
+      // Lock chapters to prevent race conditions when checking for orphans
+      if (chapterIds.length > 0) {
+        await tx.$queryRaw`SELECT id FROM chapters WHERE id = ANY(${chapterIds}::int[]) FOR UPDATE`;
+      }
+
+      await tx.course.delete({ where: { id: course.id } });
+
+      if (chapterIds.length > 0) {
+        const orphanedChapters = await tx.chapter.findMany({
+          select: { id: true },
+          where: {
+            courseChapters: { none: {} },
+            id: { in: chapterIds },
+          },
+        });
+
+        if (orphanedChapters.length > 0) {
+          await tx.chapter.deleteMany({
+            where: { id: { in: orphanedChapters.map((c) => c.id) } },
+          });
+        }
+      }
     }),
   );
 
