@@ -143,40 +143,4 @@ describe("admins", async () => {
     expect(result.error?.message).toBe("Forbidden");
     expect(result.data).toEqual([]);
   });
-
-  test("respects limit parameter", async () => {
-    const limitCourse = await courseFixture({
-      organizationId: organization.id,
-    });
-
-    const chapters = await Promise.all([
-      chapterFixture({ organizationId: organization.id }),
-      chapterFixture({ organizationId: organization.id }),
-      chapterFixture({ organizationId: organization.id }),
-      chapterFixture({ organizationId: organization.id }),
-      chapterFixture({ organizationId: organization.id }),
-    ]);
-
-    await Promise.all(
-      chapters.map((chapter, i) =>
-        courseChapterFixture({
-          chapterId: chapter.id,
-          courseId: limitCourse.id,
-          position: i,
-        }),
-      ),
-    );
-
-    const limit = 3;
-    const result = await listCourseChapters({
-      courseSlug: limitCourse.slug,
-      headers,
-      language: limitCourse.language,
-      limit,
-      orgSlug: organization.slug,
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data.length).toBe(limit);
-  });
 });

@@ -2,15 +2,12 @@ import "server-only";
 
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Chapter, prisma } from "@zoonk/db";
-import { clampQueryItems } from "@zoonk/db/utils";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
-const LIST_CHAPTERS_LIMIT = 50;
-
-interface ChapterWithPosition extends Chapter {
+export type ChapterWithPosition = Chapter & {
   position: number;
-}
+};
 
 export const listCourseChapters = cache(
   async (params: {
@@ -30,7 +27,6 @@ export const listCourseChapters = cache(
         prisma.courseChapter.findMany({
           include: { chapter: true },
           orderBy: { position: "asc" },
-          take: clampQueryItems(params.limit ?? LIST_CHAPTERS_LIMIT),
           where: {
             course: {
               language: params.language,
