@@ -98,7 +98,7 @@ describe("admins", async () => {
     expect(courseChapter).toBeNull();
   });
 
-  test("keeps chapter after removal from course", async () => {
+  test("deletes orphaned chapter after removal from course", async () => {
     const [course, chapter] = await Promise.all([
       courseFixture({ organizationId: organization.id }),
       chapterFixture({ organizationId: organization.id }),
@@ -116,15 +116,14 @@ describe("admins", async () => {
       headers,
     });
 
-    const existingChapter = await prisma.chapter.findUnique({
+    const deletedChapter = await prisma.chapter.findUnique({
       where: { id: chapter.id },
     });
 
-    expect(existingChapter).not.toBeNull();
-    expect(existingChapter?.id).toBe(chapter.id);
+    expect(deletedChapter).toBeNull();
   });
 
-  test("removes chapter from one course but keeps it in another", async () => {
+  test("keeps chapter when it is linked to another course", async () => {
     const [course1, course2, chapter] = await Promise.all([
       courseFixture({ organizationId: organization.id }),
       courseFixture({ organizationId: organization.id }),
@@ -158,8 +157,14 @@ describe("admins", async () => {
       where: { chapterId: chapter.id, courseId: course2.id },
     });
 
+    const existingChapter = await prisma.chapter.findUnique({
+      where: { id: chapter.id },
+    });
+
     expect(course1Chapter).toBeNull();
     expect(course2Chapter).not.toBeNull();
+    expect(existingChapter).not.toBeNull();
+    expect(existingChapter?.id).toBe(chapter.id);
   });
 
   test("returns Chapter not found in course", async () => {

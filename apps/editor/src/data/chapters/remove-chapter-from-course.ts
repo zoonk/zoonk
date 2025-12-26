@@ -52,6 +52,16 @@ export async function removeChapterFromCourse(params: {
           position: { gt: courseChapter.position },
         },
       });
+
+      const remainingLinks = await tx.courseChapter.count({
+        where: { chapterId: params.chapterId },
+      });
+
+      if (remainingLinks === 0) {
+        await tx.chapter.delete({
+          where: { id: params.chapterId },
+        });
+      }
     }),
   );
 
