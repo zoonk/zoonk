@@ -6,12 +6,16 @@ import { safeAsync } from "@zoonk/utils/error";
 import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
 
+export type ChapterWithCourses = Chapter & {
+  courses: { slug: string; language: string }[];
+};
+
 export const searchOrgChapters = cache(
   async (params: {
     headers?: Headers;
     orgSlug: string;
     title: string;
-  }): Promise<{ data: Chapter[]; error: Error | null }> => {
+  }): Promise<{ data: ChapterWithCourses[]; error: Error | null }> => {
     const { title, orgSlug } = params;
     const normalizedSearch = normalizeString(title);
 
@@ -23,6 +27,13 @@ export const searchOrgChapters = cache(
           permission: "update",
         }),
         prisma.chapter.findMany({
+          include: {
+            courseChapters: {
+              select: {
+                course: { select: { language: true, slug: true } },
+              },
+            },
+          },
           orderBy: { createdAt: "desc" },
           where: {
             normalizedTitle: {
@@ -45,6 +56,11 @@ export const searchOrgChapters = cache(
       return { data: [], error: new Error("Forbidden") };
     }
 
-    return { data: chapters, error: null };
+    const chaptersWithCourses = chapters.map((chapter) => ({
+      ...chapter,
+      courses: chapter.courseChapters.map((cc) => cc.course),
+    }));
+
+    return { data: chaptersWithCourses, error: null };
   },
 );
