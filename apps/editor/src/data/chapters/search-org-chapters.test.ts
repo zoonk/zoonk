@@ -43,18 +43,20 @@ describe("admins", async () => {
   const headers = await signInAs(user.email, user.password);
 
   test("searches all chapters in organization by title", async () => {
-    await chapterFixture({
-      organizationId: organization.id,
-      title: "Learn JavaScript Basics",
-    });
-    await chapterFixture({
-      organizationId: organization.id,
-      title: "Advanced Python Techniques",
-    });
-    await chapterFixture({
-      organizationId: organization.id,
-      title: "JavaScript Functions",
-    });
+    await Promise.all([
+      chapterFixture({
+        organizationId: organization.id,
+        title: "Learn JavaScript Basics",
+      }),
+      chapterFixture({
+        organizationId: organization.id,
+        title: "Advanced Python Techniques",
+      }),
+      chapterFixture({
+        organizationId: organization.id,
+        title: "JavaScript Functions",
+      }),
+    ]);
 
     const result = await searchOrgChapters({
       headers,
@@ -98,14 +100,17 @@ describe("admins", async () => {
 
   test("only returns chapters from the specified organization", async () => {
     const otherOrg = await organizationFixture();
-    await chapterFixture({
-      organizationId: otherOrg.id,
-      title: "Other Org Unique Chapter",
-    });
-    await chapterFixture({
-      organizationId: organization.id,
-      title: "My Org Unique Chapter",
-    });
+
+    await Promise.all([
+      chapterFixture({
+        organizationId: otherOrg.id,
+        title: "Other Org Unique Chapter",
+      }),
+      chapterFixture({
+        organizationId: organization.id,
+        title: "My Org Unique Chapter",
+      }),
+    ]);
 
     const result = await searchOrgChapters({
       headers,

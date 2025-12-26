@@ -113,8 +113,10 @@ describe("owners", async () => {
   });
 
   test("cascades deletion to course chapters", async () => {
-    const course = await courseFixture({ organizationId: organization.id });
-    const chapter = await chapterFixture({ organizationId: organization.id });
+    const [course, chapter] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
     const courseChapter = await courseChapterFixture({
       chapterId: chapter.id,
       courseId: course.id,

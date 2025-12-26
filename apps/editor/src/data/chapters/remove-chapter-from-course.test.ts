@@ -14,8 +14,11 @@ import { removeChapterFromCourse } from "./remove-chapter-from-course";
 
 describe("unauthenticated users", async () => {
   const organization = await organizationFixture();
-  const course = await courseFixture({ organizationId: organization.id });
-  const chapter = await chapterFixture({ organizationId: organization.id });
+
+  const [course, chapter] = await Promise.all([
+    courseFixture({ organizationId: organization.id }),
+    chapterFixture({ organizationId: organization.id }),
+  ]);
 
   test("returns Forbidden", async () => {
     await courseChapterFixture({
@@ -37,9 +40,12 @@ describe("unauthenticated users", async () => {
 
 describe("members", async () => {
   const { organization, user } = await memberFixture({ role: "member" });
-  const headers = await signInAs(user.email, user.password);
-  const course = await courseFixture({ organizationId: organization.id });
-  const chapter = await chapterFixture({ organizationId: organization.id });
+
+  const [headers, course, chapter] = await Promise.all([
+    signInAs(user.email, user.password),
+    courseFixture({ organizationId: organization.id }),
+    chapterFixture({ organizationId: organization.id }),
+  ]);
 
   test("returns Forbidden", async () => {
     await courseChapterFixture({
@@ -64,8 +70,10 @@ describe("admins", async () => {
   const headers = await signInAs(user.email, user.password);
 
   test("removes chapter from course successfully", async () => {
-    const course = await courseFixture({ organizationId: organization.id });
-    const chapter = await chapterFixture({ organizationId: organization.id });
+    const [course, chapter] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
 
     await courseChapterFixture({
       chapterId: chapter.id,
@@ -91,8 +99,10 @@ describe("admins", async () => {
   });
 
   test("keeps chapter after removal from course", async () => {
-    const course = await courseFixture({ organizationId: organization.id });
-    const chapter = await chapterFixture({ organizationId: organization.id });
+    const [course, chapter] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
 
     await courseChapterFixture({
       chapterId: chapter.id,
@@ -115,20 +125,24 @@ describe("admins", async () => {
   });
 
   test("removes chapter from one course but keeps it in another", async () => {
-    const course1 = await courseFixture({ organizationId: organization.id });
-    const course2 = await courseFixture({ organizationId: organization.id });
-    const chapter = await chapterFixture({ organizationId: organization.id });
+    const [course1, course2, chapter] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
 
-    await courseChapterFixture({
-      chapterId: chapter.id,
-      courseId: course1.id,
-      position: 0,
-    });
-    await courseChapterFixture({
-      chapterId: chapter.id,
-      courseId: course2.id,
-      position: 0,
-    });
+    await Promise.all([
+      courseChapterFixture({
+        chapterId: chapter.id,
+        courseId: course1.id,
+        position: 0,
+      }),
+      courseChapterFixture({
+        chapterId: chapter.id,
+        courseId: course2.id,
+        position: 0,
+      }),
+    ]);
 
     await removeChapterFromCourse({
       chapterId: chapter.id,
@@ -149,8 +163,10 @@ describe("admins", async () => {
   });
 
   test("returns Chapter not found in course", async () => {
-    const course = await courseFixture({ organizationId: organization.id });
-    const chapter = await chapterFixture({ organizationId: organization.id });
+    const [course, chapter] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
 
     const result = await removeChapterFromCourse({
       chapterId: chapter.id,
@@ -164,8 +180,11 @@ describe("admins", async () => {
 
   test("returns Forbidden for course in different organization", async () => {
     const otherOrg = await organizationFixture();
-    const course = await courseFixture({ organizationId: otherOrg.id });
-    const chapter = await chapterFixture({ organizationId: otherOrg.id });
+
+    const [course, chapter] = await Promise.all([
+      courseFixture({ organizationId: otherOrg.id }),
+      chapterFixture({ organizationId: otherOrg.id }),
+    ]);
 
     await courseChapterFixture({
       chapterId: chapter.id,
@@ -189,8 +208,10 @@ describe("owners", async () => {
   const headers = await signInAs(user.email, user.password);
 
   test("removes chapter from course successfully", async () => {
-    const course = await courseFixture({ organizationId: organization.id });
-    const chapter = await chapterFixture({ organizationId: organization.id });
+    const [course, chapter] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
 
     await courseChapterFixture({
       chapterId: chapter.id,

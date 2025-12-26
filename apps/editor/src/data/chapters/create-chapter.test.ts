@@ -28,8 +28,11 @@ describe("unauthenticated users", async () => {
 
 describe("members", async () => {
   const { organization, user } = await memberFixture({ role: "member" });
-  const headers = await signInAs(user.email, user.password);
-  const course = await courseFixture({ organizationId: organization.id });
+
+  const [headers, course] = await Promise.all([
+    signInAs(user.email, user.password),
+    courseFixture({ organizationId: organization.id }),
+  ]);
 
   test("returns Forbidden", async () => {
     const result = await createChapter({
@@ -46,8 +49,11 @@ describe("members", async () => {
 
 describe("admins", async () => {
   const { organization, user } = await memberFixture({ role: "admin" });
-  const headers = await signInAs(user.email, user.password);
-  const course = await courseFixture({ organizationId: organization.id });
+
+  const [headers, course] = await Promise.all([
+    signInAs(user.email, user.password),
+    courseFixture({ organizationId: organization.id }),
+  ]);
 
   test("creates chapter successfully", async () => {
     const attrs = chapterAttrs();
@@ -167,8 +173,11 @@ describe("admins", async () => {
 
 describe("owners", async () => {
   const { organization, user } = await memberFixture({ role: "owner" });
-  const headers = await signInAs(user.email, user.password);
-  const course = await courseFixture({ organizationId: organization.id });
+
+  const [headers, course] = await Promise.all([
+    signInAs(user.email, user.password),
+    courseFixture({ organizationId: organization.id }),
+  ]);
 
   test("creates chapter successfully", async () => {
     const attrs = chapterAttrs();

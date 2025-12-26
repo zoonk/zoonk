@@ -31,8 +31,11 @@ describe("unauthenticated users", async () => {
 
 describe("members", async () => {
   const { organization, user } = await memberFixture({ role: "member" });
-  const headers = await signInAs(user.email, user.password);
-  const course = await courseFixture({ organizationId: organization.id });
+
+  const [headers, course] = await Promise.all([
+    signInAs(user.email, user.password),
+    courseFixture({ organizationId: organization.id }),
+  ]);
 
   test("returns Forbidden", async () => {
     const result = await searchCourseChapters({
@@ -50,29 +53,36 @@ describe("members", async () => {
 
 describe("admins", async () => {
   const { organization, user } = await memberFixture({ role: "admin" });
-  const headers = await signInAs(user.email, user.password);
-  const course = await courseFixture({ organizationId: organization.id });
+
+  const [headers, course] = await Promise.all([
+    signInAs(user.email, user.password),
+    courseFixture({ organizationId: organization.id }),
+  ]);
 
   test("searches chapters by title", async () => {
-    const chapter1 = await chapterFixture({
-      organizationId: organization.id,
-      title: "Introduction to JavaScript",
-    });
-    const chapter2 = await chapterFixture({
-      organizationId: organization.id,
-      title: "Advanced Python",
-    });
+    const [chapter1, chapter2] = await Promise.all([
+      chapterFixture({
+        organizationId: organization.id,
+        title: "Introduction to JavaScript",
+      }),
+      chapterFixture({
+        organizationId: organization.id,
+        title: "Advanced Python",
+      }),
+    ]);
 
-    await courseChapterFixture({
-      chapterId: chapter1.id,
-      courseId: course.id,
-      position: 0,
-    });
-    await courseChapterFixture({
-      chapterId: chapter2.id,
-      courseId: course.id,
-      position: 1,
-    });
+    await Promise.all([
+      courseChapterFixture({
+        chapterId: chapter1.id,
+        courseId: course.id,
+        position: 0,
+      }),
+      courseChapterFixture({
+        chapterId: chapter2.id,
+        courseId: course.id,
+        position: 1,
+      }),
+    ]);
 
     const result = await searchCourseChapters({
       courseSlug: course.slug,
@@ -171,8 +181,11 @@ describe("admins", async () => {
 
 describe("owners", async () => {
   const { organization, user } = await memberFixture({ role: "owner" });
-  const headers = await signInAs(user.email, user.password);
-  const course = await courseFixture({ organizationId: organization.id });
+
+  const [headers, course] = await Promise.all([
+    signInAs(user.email, user.password),
+    courseFixture({ organizationId: organization.id }),
+  ]);
 
   test("searches chapters successfully", async () => {
     const chapter = await chapterFixture({

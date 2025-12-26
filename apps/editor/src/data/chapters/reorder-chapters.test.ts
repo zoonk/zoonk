@@ -30,8 +30,11 @@ describe("unauthenticated users", async () => {
 
 describe("members", async () => {
   const { organization, user } = await memberFixture({ role: "member" });
-  const headers = await signInAs(user.email, user.password);
-  const course = await courseFixture({ organizationId: organization.id });
+
+  const [headers, course] = await Promise.all([
+    signInAs(user.email, user.password),
+    courseFixture({ organizationId: organization.id }),
+  ]);
 
   test("returns Forbidden", async () => {
     const result = await reorderChapters({
@@ -47,29 +50,36 @@ describe("members", async () => {
 
 describe("admins", async () => {
   const { organization, user } = await memberFixture({ role: "admin" });
-  const headers = await signInAs(user.email, user.password);
-  const course = await courseFixture({ organizationId: organization.id });
+
+  const [headers, course] = await Promise.all([
+    signInAs(user.email, user.password),
+    courseFixture({ organizationId: organization.id }),
+  ]);
 
   test("reorders chapters successfully", async () => {
-    const chapter1 = await chapterFixture({ organizationId: organization.id });
-    const chapter2 = await chapterFixture({ organizationId: organization.id });
-    const chapter3 = await chapterFixture({ organizationId: organization.id });
+    const [chapter1, chapter2, chapter3] = await Promise.all([
+      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
 
-    await courseChapterFixture({
-      chapterId: chapter1.id,
-      courseId: course.id,
-      position: 0,
-    });
-    await courseChapterFixture({
-      chapterId: chapter2.id,
-      courseId: course.id,
-      position: 1,
-    });
-    await courseChapterFixture({
-      chapterId: chapter3.id,
-      courseId: course.id,
-      position: 2,
-    });
+    await Promise.all([
+      courseChapterFixture({
+        chapterId: chapter1.id,
+        courseId: course.id,
+        position: 0,
+      }),
+      courseChapterFixture({
+        chapterId: chapter2.id,
+        courseId: course.id,
+        position: 1,
+      }),
+      courseChapterFixture({
+        chapterId: chapter3.id,
+        courseId: course.id,
+        position: 2,
+      }),
+    ]);
 
     const result = await reorderChapters({
       chapters: [
@@ -164,23 +174,30 @@ describe("admins", async () => {
 
 describe("owners", async () => {
   const { organization, user } = await memberFixture({ role: "owner" });
-  const headers = await signInAs(user.email, user.password);
-  const course = await courseFixture({ organizationId: organization.id });
+
+  const [headers, course] = await Promise.all([
+    signInAs(user.email, user.password),
+    courseFixture({ organizationId: organization.id }),
+  ]);
 
   test("reorders chapters successfully", async () => {
-    const chapter1 = await chapterFixture({ organizationId: organization.id });
-    const chapter2 = await chapterFixture({ organizationId: organization.id });
+    const [chapter1, chapter2] = await Promise.all([
+      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
 
-    await courseChapterFixture({
-      chapterId: chapter1.id,
-      courseId: course.id,
-      position: 0,
-    });
-    await courseChapterFixture({
-      chapterId: chapter2.id,
-      courseId: course.id,
-      position: 1,
-    });
+    await Promise.all([
+      courseChapterFixture({
+        chapterId: chapter1.id,
+        courseId: course.id,
+        position: 0,
+      }),
+      courseChapterFixture({
+        chapterId: chapter2.id,
+        courseId: course.id,
+        position: 1,
+      }),
+    ]);
 
     const result = await reorderChapters({
       chapters: [

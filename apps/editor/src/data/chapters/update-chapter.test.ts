@@ -25,8 +25,11 @@ describe("unauthenticated users", async () => {
 
 describe("members", async () => {
   const { organization, user } = await memberFixture({ role: "member" });
-  const headers = await signInAs(user.email, user.password);
-  const chapter = await chapterFixture({ organizationId: organization.id });
+
+  const [headers, chapter] = await Promise.all([
+    signInAs(user.email, user.password),
+    chapterFixture({ organizationId: organization.id }),
+  ]);
 
   test("returns Forbidden", async () => {
     const result = await updateChapter({
@@ -42,8 +45,11 @@ describe("members", async () => {
 
 describe("admins", async () => {
   const { organization, user } = await memberFixture({ role: "admin" });
-  const headers = await signInAs(user.email, user.password);
-  const chapter = await chapterFixture({ organizationId: organization.id });
+
+  const [headers, chapter] = await Promise.all([
+    signInAs(user.email, user.password),
+    chapterFixture({ organizationId: organization.id }),
+  ]);
 
   test("updates title successfully", async () => {
     const result = await updateChapter({

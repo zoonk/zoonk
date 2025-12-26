@@ -14,8 +14,11 @@ import { addChapterToCourse } from "./add-chapter-to-course";
 
 describe("unauthenticated users", async () => {
   const organization = await organizationFixture();
-  const course = await courseFixture({ organizationId: organization.id });
-  const chapter = await chapterFixture({ organizationId: organization.id });
+
+  const [course, chapter] = await Promise.all([
+    courseFixture({ organizationId: organization.id }),
+    chapterFixture({ organizationId: organization.id }),
+  ]);
 
   test("returns Forbidden", async () => {
     const result = await addChapterToCourse({
@@ -32,9 +35,12 @@ describe("unauthenticated users", async () => {
 
 describe("members", async () => {
   const { organization, user } = await memberFixture({ role: "member" });
-  const headers = await signInAs(user.email, user.password);
-  const course = await courseFixture({ organizationId: organization.id });
-  const chapter = await chapterFixture({ organizationId: organization.id });
+
+  const [headers, course, chapter] = await Promise.all([
+    signInAs(user.email, user.password),
+    courseFixture({ organizationId: organization.id }),
+    chapterFixture({ organizationId: organization.id }),
+  ]);
 
   test("returns Forbidden", async () => {
     const result = await addChapterToCourse({
@@ -54,8 +60,10 @@ describe("admins", async () => {
   const headers = await signInAs(user.email, user.password);
 
   test("adds chapter to course successfully", async () => {
-    const course = await courseFixture({ organizationId: organization.id });
-    const chapter = await chapterFixture({ organizationId: organization.id });
+    const [course, chapter] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
 
     const result = await addChapterToCourse({
       chapterId: chapter.id,
@@ -71,9 +79,11 @@ describe("admins", async () => {
   });
 
   test("adds same chapter to multiple courses", async () => {
-    const course1 = await courseFixture({ organizationId: organization.id });
-    const course2 = await courseFixture({ organizationId: organization.id });
-    const chapter = await chapterFixture({ organizationId: organization.id });
+    const [course1, course2, chapter] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
 
     const result1 = await addChapterToCourse({
       chapterId: chapter.id,
@@ -102,8 +112,10 @@ describe("admins", async () => {
   });
 
   test("returns error when chapter already in course", async () => {
-    const course = await courseFixture({ organizationId: organization.id });
-    const chapter = await chapterFixture({ organizationId: organization.id });
+    const [course, chapter] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
 
     await courseChapterFixture({
       chapterId: chapter.id,
@@ -151,8 +163,10 @@ describe("admins", async () => {
   });
 
   test("returns error when chapter and course belong to different organizations", async () => {
-    const otherOrg = await organizationFixture();
-    const course = await courseFixture({ organizationId: organization.id });
+    const [otherOrg, course] = await Promise.all([
+      organizationFixture(),
+      courseFixture({ organizationId: organization.id }),
+    ]);
     const chapter = await chapterFixture({ organizationId: otherOrg.id });
 
     const result = await addChapterToCourse({
@@ -170,8 +184,11 @@ describe("admins", async () => {
 
   test("returns Forbidden for course in different organization", async () => {
     const otherOrg = await organizationFixture();
-    const course = await courseFixture({ organizationId: otherOrg.id });
-    const chapter = await chapterFixture({ organizationId: otherOrg.id });
+
+    const [course, chapter] = await Promise.all([
+      courseFixture({ organizationId: otherOrg.id }),
+      chapterFixture({ organizationId: otherOrg.id }),
+    ]);
 
     const result = await addChapterToCourse({
       chapterId: chapter.id,
@@ -190,8 +207,10 @@ describe("owners", async () => {
   const headers = await signInAs(user.email, user.password);
 
   test("adds chapter to course successfully", async () => {
-    const course = await courseFixture({ organizationId: organization.id });
-    const chapter = await chapterFixture({ organizationId: organization.id });
+    const [course, chapter] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
 
     const result = await addChapterToCourse({
       chapterId: chapter.id,
