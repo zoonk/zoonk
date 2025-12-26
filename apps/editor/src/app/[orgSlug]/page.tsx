@@ -1,4 +1,3 @@
-import { listCourses } from "@zoonk/core/courses/list";
 import { getOrganization } from "@zoonk/core/orgs/get";
 import {
   Container,
@@ -14,6 +13,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
+import { listCourses } from "@/data/courses/list-courses";
 import { CourseList, CourseListSkeleton } from "./course-list";
 
 export async function generateMetadata({
@@ -65,7 +65,7 @@ async function ListCourses({
   params: PageProps<"/[orgSlug]">["params"];
 }) {
   const { orgSlug } = await params;
-  const { data: courses } = await listCourses({ orgSlug, visibility: "all" });
+  const { data: courses } = await listCourses({ orgSlug });
 
   return <CourseList courses={courses} orgSlug={orgSlug} />;
 }

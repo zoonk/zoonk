@@ -70,13 +70,24 @@ Some design preferences:
 ### Packages
 
 - [ai](./packages/ai): AI prompts, tasks, and helpers for content generation
-- [core](./packages/core): Server utilities for database access and external integrations (the only package that should talk to `db`)
+- [core](./packages/core): Shared server utilities
 - [auth](./packages/auth): Shared Better Auth setup and plugins
-- [db](./packages/db): Prisma schema and client (used only by `core`)
+- [db](./packages/db): Prisma schema and client
 - [mailer](./packages/mailer): Email-sending utilities
 - [tsconfig](./packages/tsconfig): Shared TypeScript config
 - [ui](./packages/ui): Shared React components, patterns, hooks, and styles
 - [utils](./packages/utils): Shared utilities and helpers
+
+### Data Fetching Architecture
+
+- **Shared utilities** → Use `@zoonk/core`
+- **App-specific queries** → Use `@zoonk/db` directly in `apps/{app}/src/data/`
+
+This separation allows each app to:
+
+- Control its own caching strategy
+- Handle permissions at the appropriate level
+- Avoid complex conditional logic for different use cases
 
 Read each folder's README file for more details
 

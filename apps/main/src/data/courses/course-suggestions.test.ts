@@ -36,7 +36,7 @@ test("generates a new item", async () => {
     { description: "A course on Vitest basics.", title: "Vitest" },
   ];
 
-  spy.mockResolvedValueOnce({ data: generatedSuggestions } as any);
+  spy.mockResolvedValueOnce({ data: generatedSuggestions } as never);
 
   const result = await generateCourseSuggestions({ locale, prompt });
 

@@ -1,6 +1,6 @@
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, test } from "vitest";
-import { courseFixture } from "@/fixtures/courses";
-import { organizationFixture } from "@/fixtures/orgs";
 import { courseSlugExists } from "./course-slug";
 
 describe("courseSlugExists()", async () => {

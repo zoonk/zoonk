@@ -1,12 +1,16 @@
 import "server-only";
 
+import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Course, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { hasCoursePermission } from "../orgs/org-permissions";
+import { normalizeString, toSlug } from "@zoonk/utils/string";
 
-export async function deleteCourse(params: {
+export async function updateCourse(params: {
   courseId: number;
+  description?: string;
   headers?: Headers;
+  slug?: string;
+  title?: string;
 }): Promise<SafeReturn<Course>> {
   const { data: course, error: findError } = await safeAsync(() =>
     prisma.course.findUnique({
@@ -25,15 +29,25 @@ export async function deleteCourse(params: {
   const hasPermission = await hasCoursePermission({
     headers: params.headers,
     orgId: course.organizationId,
-    permission: "delete",
+    permission: "update",
   });
 
   if (!hasPermission) {
     return { data: null, error: new Error("Forbidden") };
   }
 
-  const { error } = await safeAsync(() =>
-    prisma.course.delete({
+  const { data, error } = await safeAsync(() =>
+    prisma.course.update({
+      data: {
+        ...(params.description !== undefined && {
+          description: params.description,
+        }),
+        ...(params.slug !== undefined && { slug: toSlug(params.slug) }),
+        ...(params.title !== undefined && {
+          normalizedTitle: normalizeString(params.title),
+          title: params.title,
+        }),
+      },
       where: { id: course.id },
     }),
   );
@@ -42,5 +56,5 @@ export async function deleteCourse(params: {
     return { data: null, error };
   }
 
-  return { data: course, error: null };
+  return { data, error: null };
 }

@@ -1,6 +1,9 @@
+import { signInAs } from "@zoonk/testing/fixtures/auth";
+import {
+  memberFixture,
+  organizationFixture,
+} from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, test } from "vitest";
-import { signInAs } from "@/fixtures/auth";
-import { memberFixture, organizationFixture } from "@/fixtures/orgs";
 import { hasCoursePermission } from "./org-permissions";
 
 describe("unauthenticated users", async () => {

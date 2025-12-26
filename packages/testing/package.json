@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "@zoonk/auth": "workspace:*",
+    "@zoonk/db": "workspace:*"
+  },
+  "exports": {
+    "./fixtures/auth": "./src/fixtures/auth.ts",
+    "./fixtures/courses": "./src/fixtures/courses.ts",
+    "./fixtures/orgs": "./src/fixtures/orgs.ts",
+    "./fixtures/users": "./src/fixtures/users.ts"
+  },
+  "name": "@zoonk/testing",
+  "private": true,
+  "type": "module"
+}

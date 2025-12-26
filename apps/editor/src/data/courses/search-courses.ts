@@ -1,33 +1,28 @@
 import "server-only";
 
+import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Course, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
-import { getOrganization } from "../orgs/get-org";
-import { hasCoursePermission } from "../orgs/org-permissions";
-import type { ContentVisibility } from "../types";
 
 export const searchCourses = cache(
   async (params: {
     title: string;
     orgSlug: string;
-    visibility: ContentVisibility;
-    language?: string;
     headers?: Headers;
+    language?: string;
   }): Promise<{ data: Course[]; error: Error | null }> => {
-    const { title, orgSlug, language, visibility } = params;
+    const { title, orgSlug, language } = params;
     const normalizedSearch = normalizeString(title);
-    const permission = visibility === "published" ? "read" : "update";
 
     const { data, error } = await safeAsync(() =>
       Promise.all([
         hasCoursePermission({
           headers: params.headers,
           orgSlug,
-          permission,
+          permission: "update",
         }),
-        getOrganization(orgSlug),
         prisma.course.findMany({
           orderBy: { createdAt: "desc" },
           where: {
@@ -37,8 +32,6 @@ export const searchCourses = cache(
             },
             organization: { slug: orgSlug },
             ...(language && { language }),
-            ...(visibility === "published" && { isPublished: true }),
-            ...(visibility === "draft" && { isPublished: false }),
           },
         }),
       ]),
@@ -48,12 +41,9 @@ export const searchCourses = cache(
       return { data: [], error };
     }
 
-    const [hasPermission, { data: org }, courses] = data;
-    const isBrandOrg = org?.kind === "brand";
-    const canAccess =
-      hasPermission || (visibility === "published" && isBrandOrg);
+    const [hasPermission, courses] = data;
 
-    if (!canAccess) {
+    if (!hasPermission) {
       return { data: [], error: new Error("Forbidden") };
     }
 

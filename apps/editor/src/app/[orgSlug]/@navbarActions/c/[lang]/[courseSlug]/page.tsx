@@ -1,9 +1,9 @@
-import { getCourse } from "@zoonk/core/courses/get";
 import { notFound } from "next/navigation";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { DeleteItemButton } from "@/components/navbar/delete-item-button";
 import { PublishToggle } from "@/components/navbar/publish-toggle";
+import { getCourse } from "@/data/courses/get-course";
 import { deleteCourseAction, togglePublishAction } from "./actions";
 
 function CourseActionsContainer({ children }: React.PropsWithChildren) {
@@ -29,7 +29,6 @@ async function CourseActions({
     courseSlug,
     language: lang,
     orgSlug,
-    visibility: "all",
   });
 
   if (!course) {

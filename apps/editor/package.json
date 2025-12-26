@@ -2,6 +2,7 @@
   "dependencies": {
     "@formatjs/intl-localematcher": "0.7.3",
     "@zoonk/core": "workspace:*",
+    "@zoonk/db": "workspace:*",
     "@zoonk/next": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
@@ -20,9 +21,13 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vite": "7.3.0",
+    "vite-tsconfig-paths": "6.0.3",
+    "vitest": "4.0.16"
   },
   "name": "editor",
   "private": true,
@@ -31,6 +36,8 @@
     "build": "next build",
     "dev": "next dev -p 3003",
     "start": "next start -p 3003",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "next typegen && tsc --noEmit"
   },
   "type": "module",

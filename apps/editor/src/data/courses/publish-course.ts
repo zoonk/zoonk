@@ -1,13 +1,13 @@
 import "server-only";
 
+import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Course, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { hasCoursePermission } from "../orgs/org-permissions";
 
 export async function toggleCoursePublished(params: {
   courseId: number;
-  isPublished: boolean;
   headers?: Headers;
+  isPublished: boolean;
 }): Promise<SafeReturn<Course>> {
   const { data: course, error: findError } = await safeAsync(() =>
     prisma.course.findUnique({

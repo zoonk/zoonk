@@ -1,5 +1,5 @@
+import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { expect, test } from "vitest";
-import { organizationFixture } from "@/fixtures/orgs";
 import { getOrganization } from "./get-org";
 
 test("returns the organization for a valid slug", async () => {

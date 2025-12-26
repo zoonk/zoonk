@@ -1,4 +1,3 @@
-import { generateCourseSuggestions } from "@zoonk/core/courses/suggestions";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Container,
@@ -19,6 +18,7 @@ import {
 } from "@zoonk/ui/components/item";
 import { getExtracted } from "next-intl/server";
 import { Fragment } from "react/jsx-runtime";
+import { generateCourseSuggestions } from "@/data/courses/course-suggestions";
 import { Link } from "@/i18n/navigation";
 import { ContentFeedback } from "./content-feedback";
 

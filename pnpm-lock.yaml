@@ -130,6 +130,9 @@ importers:
       '@zoonk/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@zoonk/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@zoonk/next':
         specifier: workspace:*
         version: link:../../packages/next
@@ -179,6 +182,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.3(@types/react@19.2.7)
+      '@zoonk/testing':
+        specifier: workspace:*
+        version: link:../../packages/testing
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
@@ -188,6 +194,15 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.3
+      vite:
+        specifier: 7.3.0
+        version: 7.3.0(@types/node@24.10.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.20.6)
+      vite-tsconfig-paths:
+        specifier: 6.0.3
+        version: 6.0.3(typescript@5.9.3)(vite@7.3.0(@types/node@24.10.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.20.6))
+      vitest:
+        specifier: 4.0.16
+        version: 4.0.16(@opentelemetry/api@1.9.0)(@types/node@24.10.3)(jiti@2.6.1)(jsdom@27.0.0(postcss@8.5.6))(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.20.6)
 
   apps/evals:
     dependencies:
@@ -252,9 +267,15 @@ importers:
       '@vercel/analytics':
         specifier: 1.5.0
         version: 1.5.0(next@16.1.0(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
+      '@zoonk/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
       '@zoonk/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@zoonk/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@zoonk/next':
         specifier: workspace:*
         version: link:../../packages/next
@@ -319,6 +340,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: 5.1.0
         version: 5.1.0(vite@7.3.0(@types/node@24.10.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.20.5))
+      '@zoonk/testing':
+        specifier: workspace:*
+        version: link:../../packages/testing
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
@@ -337,6 +361,9 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.3
+      vite:
+        specifier: 7.3.0
+        version: 7.3.0(@types/node@24.10.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.20.5)
       vite-tsconfig-paths:
         specifier: 6.0.3
         version: 6.0.3(typescript@5.9.3)(vite@7.3.0(@types/node@24.10.3)(jiti@2.6.1)(lightningcss@1.30.2)(terser@5.44.1)(tsx@4.20.5))
@@ -454,6 +481,9 @@ importers:
       '@types/react':
         specifier: ^19
         version: 19.2.7
+      '@zoonk/testing':
+        specifier: workspace:*
+        version: link:../testing
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
@@ -562,6 +592,15 @@ importers:
       typescript:
         specifier: ^5
         version: 5.9.3
+
+  packages/testing:
+    dependencies:
+      '@zoonk/auth':
+        specifier: workspace:*
+        version: link:../auth
+      '@zoonk/db':
+        specifier: workspace:*
+        version: link:../db
 
   packages/tsconfig: {}
 
@@ -5907,7 +5946,7 @@ snapshots:
 
   '@vitest/expect@4.0.16':
     dependencies:
-      '@standard-schema/spec': 1.0.0
+      '@standard-schema/spec': 1.1.0
       '@types/chai': 5.2.3
       '@vitest/spy': 4.0.16
       '@vitest/utils': 4.0.16

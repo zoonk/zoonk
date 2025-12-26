@@ -2,9 +2,8 @@ import type { auth } from "@zoonk/auth";
 
 export type AuthOrganization = typeof auth.$Infer.Organization;
 
-export type ContentVisibility = "all" | "draft" | "published";
-
 export type { CoursePermission, UserWithRole } from "@zoonk/auth/types";
+
 export type {
   Account,
   Course,

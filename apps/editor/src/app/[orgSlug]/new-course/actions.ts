@@ -1,13 +1,13 @@
 "use server";
 
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { createCourse } from "@zoonk/core/courses/create";
-import { courseSlugExists } from "@zoonk/core/courses/slug";
 import { cacheTagOrgCourses } from "@zoonk/utils/cache";
 import { toSlug } from "@zoonk/utils/string";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { getExtracted } from "next-intl/server";
+import { courseSlugExists } from "@/data/courses/course-slug";
+import { createCourse } from "@/data/courses/create-course";
 import type { CourseFormData } from "./use-course-form";
 
 export async function checkSlugExists({

@@ -1,21 +1,25 @@
 # Zoonk Core
 
-This package organizes all requests that need to interact with multiple services such as external services or databases. This is our public interface for other packages and apps to use.
+This package contains **shared utilities** used across multiple apps. It handles cross-cutting concerns like authentication, user management, organization access, and cache revalidation.
 
-This means apps won't likely need to interact with packages such as `@zoonk/ai` or `@zoonk/db` directly. Instead, they should use the functions in this package.
+## What does NOT belong in Core
 
-## Usage
+App-specific data fetching that is not shared across apps should live in the app's `src/data/` folder. This allows each app to:
 
-```tsx
-import { listCourses } from "@zoonk/core/courses/list";
-import { getCourse } from "@zoonk/core/courses/get";
-```
+- Control its own caching strategy
+- Handle permissions at the appropriate level
+- Avoid complex conditional logic for different use cases
+
+For example:
+
+- `apps/editor/src/data/courses/` - Editor-specific course queries with permission checks
+- `apps/main/src/data/courses/` - Public course queries, cacheable
 
 ## Guidelines
 
-- Each file should represent a specific domain or service (e.g., `list-courses.ts`, `get-course.ts`).
-- For `get` and `list` functions, make sure to use React `cache` to deduplicate requests.
-- For async functions, use the `safeAsync` helper to handle errors.
+- For `get` and `list` functions, use React `cache` to deduplicate requests
+- For async functions, use the `safeAsync` helper to handle errors
+- Keep this package focused on truly shared utilities
 
 ## Cross-App Cache Revalidation
 

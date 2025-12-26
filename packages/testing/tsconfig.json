@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "exclude": ["node_modules"],
+  "extends": "@zoonk/tsconfig/base.json",
+  "include": ["**/*.ts"]
+}
