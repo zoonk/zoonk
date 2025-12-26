@@ -5,11 +5,6 @@ import { type Chapter, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
-type CreateChapterResult = {
-  chapter: Chapter;
-  courseChapterId: number;
-};
-
 export async function createChapter(params: {
   courseId: number;
   description: string;
@@ -17,7 +12,12 @@ export async function createChapter(params: {
   position: number;
   slug: string;
   title: string;
-}): Promise<SafeReturn<CreateChapterResult>> {
+}): Promise<
+  SafeReturn<{
+    chapter: Chapter;
+    courseChapterId: number;
+  }>
+> {
   const { data: course, error: findError } = await safeAsync(() =>
     prisma.course.findUnique({
       where: { id: params.courseId },
