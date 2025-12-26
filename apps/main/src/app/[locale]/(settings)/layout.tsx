@@ -1,7 +1,7 @@
 "use cache";
 
 import { setRequestLocale } from "next-intl/server";
-import { SettingsNavbar } from "@/app/[locale]/(settings)/settings-navbar";
+import { SettingsNavbar } from "./_components/settings-navbar";
 
 export default async function Layout({
   children,

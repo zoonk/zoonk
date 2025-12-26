@@ -16,7 +16,7 @@ import Link from "next/link";
 import { TASKS } from "@/tasks";
 import "@zoonk/ui/globals.css";
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { AppBreadcrumb, HomePageBreadcrumb } from "@/patterns/breadcrumb";
+import { AppBreadcrumb, HomePageBreadcrumb } from "@/components/breadcrumb";
 
 export default function Home() {
   return (

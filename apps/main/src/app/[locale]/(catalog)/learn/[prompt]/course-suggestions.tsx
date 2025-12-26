@@ -19,8 +19,8 @@ import {
 } from "@zoonk/ui/components/item";
 import { getExtracted } from "next-intl/server";
 import { Fragment } from "react/jsx-runtime";
-import { ContentFeedback } from "@/components/content-feedback";
 import { Link } from "@/i18n/navigation";
+import { ContentFeedback } from "./content-feedback";
 
 type CourseSuggestionsProps = {
   locale: string;

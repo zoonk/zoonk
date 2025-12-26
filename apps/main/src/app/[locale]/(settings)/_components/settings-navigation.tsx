@@ -11,7 +11,7 @@ import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
-import { useSettings } from "./use-settings";
+import { useSettings } from "../_hooks/use-settings";
 
 export function SettingsNavigation() {
   const t = useExtracted();

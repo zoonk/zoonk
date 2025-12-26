@@ -6,7 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { MessageSquareIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { FeedbackSheet } from "./feedback-sheet";
+import { FeedbackSheet } from "@/components/feedback/feedback-sheet";
 
 type ContentFeedbackProps = {
   kind: "courseSuggestions";

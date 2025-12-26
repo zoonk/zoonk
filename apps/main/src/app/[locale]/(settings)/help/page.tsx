@@ -10,7 +10,7 @@ import {
 } from "@zoonk/ui/components/container";
 import type { Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
-import { ContactForm } from "@/components/contact-form";
+import { ContactForm } from "@/components/feedback/contact-form";
 
 export async function generateMetadata({
   params,

@@ -1,6 +1,6 @@
 import { useDebounce } from "@zoonk/ui/hooks/debounce";
 import { useEffect, useEffectEvent, useState, useTransition } from "react";
-import { checkSlugExists } from "./slug-action";
+import { checkSlugExists } from "./actions";
 
 /**
  * Hook to check if a slug already exists with debouncing.

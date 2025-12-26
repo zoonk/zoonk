@@ -17,12 +17,16 @@ cp .env.example .env
 - `messages/`: i18n translation files
 - `public/`: Static assets
 - `src/`: Source code
-  - `app`: Next.js routes
-  - `components`: React components
-  - `hooks`: Reusable React hooks
-  - `i18n`: Internationalization setup
-  - `lib`: Constants, utilities, and helper functions
+  - `app/`: Next.js routes
+  - `components/`: Cross-route-group shared components (domain organized)
+  - `i18n/`: Internationalization setup
+  - `lib/`: Shared utilities and constants
   - `proxy.ts`: Next.js Proxy setup
-- `test/`: Test utilities and mocks
-- `components.json`: shadcn configuration
 - `mdx-components.tsx`: MDX components mapping, see the [Next.js MDX docs](https://nextjs.org/docs/app/guides/mdx) for more info
+
+## Component Organization Rules
+
+1. **Route-specific components**: Colocate directly with the route's `page.tsx`
+2. **Route group shared components**: Use `_components/` or `_hooks/` folders within the route group
+3. **Cross-route-group components**: Place in `src/components/{domain}/`
+4. **Shared utilities**: Place in `src/lib/`

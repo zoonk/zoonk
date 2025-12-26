@@ -9,7 +9,7 @@ import {
 } from "@zoonk/ui/components/item";
 import { ChevronRight } from "lucide-react";
 import { Link } from "@/i18n/navigation";
-import { useSettings } from "../use-settings";
+import { useSettings } from "../_hooks/use-settings";
 
 export function SettingsList() {
   const { menuPages } = useSettings();

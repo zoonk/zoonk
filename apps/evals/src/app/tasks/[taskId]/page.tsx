@@ -16,14 +16,14 @@ import {
 } from "@zoonk/ui/components/item";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ModelStatusBadge } from "@/components/model-status-badge";
-import { getModelDisplayName } from "@/lib/models";
-import { getModelsWithResults, getSortedModels } from "@/lib/utils";
 import {
   AppBreadcrumb,
   HomeLinkBreadcrumb,
   TaskPageBreadcrumb,
-} from "@/patterns/breadcrumb";
+} from "@/components/breadcrumb";
+import { ModelStatusBadge } from "@/components/model-status-badge";
+import { getModelDisplayName } from "@/lib/models";
+import { getModelsWithResults, getSortedModels } from "@/lib/utils";
 import { getTaskById, RUNS_PER_TEST_CASE } from "@/tasks";
 import { Leaderboard } from "./leaderboard";
 

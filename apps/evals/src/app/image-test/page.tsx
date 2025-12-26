@@ -10,7 +10,7 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { AppBreadcrumb, HomeLinkBreadcrumb } from "@/patterns/breadcrumb";
+import { AppBreadcrumb, HomeLinkBreadcrumb } from "@/components/breadcrumb";
 import { ImageTestForm } from "./form";
 
 export default function ImageTestPage() {

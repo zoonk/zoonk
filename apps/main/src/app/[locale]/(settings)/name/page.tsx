@@ -10,7 +10,7 @@ import {
 } from "@zoonk/ui/components/container";
 import type { Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
-import { ProtectedSection } from "@/components/protected-section";
+import { ProtectedSection } from "../_components/protected-section";
 import { NameForm } from "./name-form";
 
 export async function generateMetadata({

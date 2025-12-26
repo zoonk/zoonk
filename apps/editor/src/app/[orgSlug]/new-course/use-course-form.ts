@@ -2,7 +2,7 @@
 
 import { useExtracted, useLocale } from "next-intl";
 import { useState } from "react";
-import { useSlugCheck } from "@/lib/slug";
+import { useSlugCheck } from "./use-slug-check";
 
 export type CourseFormData = {
   title: string;

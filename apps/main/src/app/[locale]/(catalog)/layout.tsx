@@ -3,8 +3,8 @@
 import { Navbar } from "@zoonk/ui/components/navbar";
 import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
-import { NavbarLinks, NavbarLinksSkeleton } from "@/components/navbar-links";
-import { UserAvatarMenu } from "@/components/user-avatar-menu";
+import { NavbarLinks, NavbarLinksSkeleton } from "./_components/navbar-links";
+import { UserAvatarMenu } from "./_components/user-avatar-menu";
 
 export default async function CatalogLayout({
   children,

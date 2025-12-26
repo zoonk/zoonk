@@ -10,7 +10,7 @@ import {
 } from "@zoonk/ui/components/container";
 import type { Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
-import LocaleSwitcher from "@/components/locale-switcher";
+import LocaleSwitcher from "../_components/locale-switcher";
 
 export async function generateMetadata({
   params,
