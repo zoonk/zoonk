@@ -10,7 +10,7 @@ import {
   CommandItem,
   CommandList,
 } from "@zoonk/ui/components/command";
-import { useKeyboardCallback } from "@zoonk/ui/hooks/use-keyboard";
+import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { Search } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";

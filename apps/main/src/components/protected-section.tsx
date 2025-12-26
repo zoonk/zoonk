@@ -3,7 +3,7 @@
 import { useAuthState } from "@zoonk/core/auth/hooks/auth-state";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ProtectedSection as ProtectedSectionPattern } from "@zoonk/ui/patterns/auth/protected-section";
+import { ProtectedSection as ProtectedSectionPattern } from "@zoonk/ui/patterns/auth/protected";
 import { useExtracted } from "next-intl";
 import { Link } from "@/i18n/navigation";
 

@@ -1,4 +1,4 @@
-import { useDebounce } from "@zoonk/ui/hooks/use-debounce";
+import { useDebounce } from "@zoonk/ui/hooks/debounce";
 import { useEffect, useEffectEvent, useState, useTransition } from "react";
 import { checkSlugExists } from "./slug-action";
 

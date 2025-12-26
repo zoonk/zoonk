@@ -6,7 +6,7 @@ import {
   AccordionTrigger,
 } from "@zoonk/ui/components/accordion";
 import { Button } from "@zoonk/ui/components/button";
-import { useClipboard } from "@zoonk/ui/hooks/use-clipboard";
+import { useClipboard } from "@zoonk/ui/hooks/clipboard";
 import { Check, Copy } from "lucide-react";
 import { calculateScore, getScoreClassName } from "@/lib/score";
 import type { EvalResult, ScoreStep } from "@/lib/types";

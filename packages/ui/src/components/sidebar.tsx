@@ -22,7 +22,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@zoonk/ui/components/tooltip";
-import { useIsMobile } from "@zoonk/ui/hooks/use-mobile";
+import { useIsMobile } from "@zoonk/ui/hooks/mobile";
 import { cn } from "@zoonk/ui/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 import { PanelLeftIcon } from "lucide-react";
