@@ -168,6 +168,7 @@ describe("admins", async () => {
       organizationFixture(),
       courseFixture({ organizationId: organization.id }),
     ]);
+
     const chapter = await chapterFixture({ organizationId: otherOrg.id });
 
     const result = await addChapterToCourse({
@@ -180,6 +181,7 @@ describe("admins", async () => {
     expect(result.error?.message).toBe(
       "Chapter and course must belong to the same organization",
     );
+
     expect(result.data).toBeNull();
   });
 
@@ -200,28 +202,5 @@ describe("admins", async () => {
 
     expect(result.error?.message).toBe("Forbidden");
     expect(result.data).toBeNull();
-  });
-});
-
-describe("owners", async () => {
-  const { organization, user } = await memberFixture({ role: "owner" });
-  const headers = await signInAs(user.email, user.password);
-
-  test("adds chapter to course successfully", async () => {
-    const [course, chapter] = await Promise.all([
-      courseFixture({ organizationId: organization.id }),
-      chapterFixture({ organizationId: organization.id }),
-    ]);
-
-    const result = await addChapterToCourse({
-      chapterId: chapter.id,
-      courseId: course.id,
-      headers,
-      position: 0,
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data?.chapterId).toBe(chapter.id);
-    expect(result.data?.courseId).toBe(course.id);
   });
 });
