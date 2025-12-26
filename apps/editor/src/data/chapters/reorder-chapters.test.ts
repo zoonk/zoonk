@@ -91,10 +91,8 @@ describe("admins", async () => {
       headers,
     });
 
-    const expectedUpdated = 3;
-
     expect(result.error).toBeNull();
-    expect(result.data?.updated).toBe(expectedUpdated);
+    expect(result.data?.updated).toBe(3);
 
     const reorderedChapters = await prisma.courseChapter.findMany({
       orderBy: { position: "asc" },

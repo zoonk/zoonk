@@ -4,7 +4,7 @@ import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
-type ChapterPosition = {
+export type ChapterPosition = {
   chapterId: number;
   position: number;
 };
