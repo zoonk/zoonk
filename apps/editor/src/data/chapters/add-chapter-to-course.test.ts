@@ -133,6 +133,12 @@ describe("admins", async () => {
 
     expect(result.error).not.toBeNull();
     expect(result.data).toBeNull();
+
+    const courseChapters = await prisma.courseChapter.findMany({
+      where: { chapterId: chapter.id },
+    });
+
+    expect(courseChapters.length).toBe(1);
   });
 
   test("returns Course not found", async () => {
