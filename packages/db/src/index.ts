@@ -17,7 +17,9 @@ if (process.env.NODE_ENV !== "production") {
 
 export type {
   Account,
+  Chapter,
   Course,
+  CourseChapter,
   CourseSuggestion,
   Invitation,
   Member,

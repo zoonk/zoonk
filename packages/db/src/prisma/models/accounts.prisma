@@ -83,6 +83,7 @@ model Organization {
   members     Member[]
   invitations Invitation[]
   courses     Course[]
+  chapters    Chapter[]
 
   @@unique([slug])
   @@map("organizations")

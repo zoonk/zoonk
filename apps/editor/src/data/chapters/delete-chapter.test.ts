@@ -1,0 +1,159 @@
+import { prisma } from "@zoonk/db";
+import { signInAs } from "@zoonk/testing/fixtures/auth";
+import {
+  chapterFixture,
+  courseChapterFixture,
+} from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import {
+  memberFixture,
+  organizationFixture,
+} from "@zoonk/testing/fixtures/orgs";
+import { describe, expect, test } from "vitest";
+import { deleteChapter } from "./delete-chapter";
+
+describe("unauthenticated users", async () => {
+  const organization = await organizationFixture();
+
+  test("returns Forbidden", async () => {
+    const chapter = await chapterFixture({ organizationId: organization.id });
+
+    const result = await deleteChapter({
+      chapterId: chapter.id,
+      headers: new Headers(),
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+
+    const unchangedChapter = await prisma.chapter.findUnique({
+      where: { id: chapter.id },
+    });
+
+    expect(unchangedChapter).not.toBeNull();
+  });
+});
+
+describe("members", async () => {
+  const { organization, user } = await memberFixture({ role: "member" });
+  const headers = await signInAs(user.email, user.password);
+
+  test("returns Forbidden", async () => {
+    const chapter = await chapterFixture({ organizationId: organization.id });
+
+    const result = await deleteChapter({
+      chapterId: chapter.id,
+      headers,
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+
+    const unchangedChapter = await prisma.chapter.findUnique({
+      where: { id: chapter.id },
+    });
+
+    expect(unchangedChapter).not.toBeNull();
+  });
+});
+
+describe("admins", async () => {
+  const { organization, user } = await memberFixture({ role: "admin" });
+  const headers = await signInAs(user.email, user.password);
+
+  test("returns Forbidden", async () => {
+    const chapter = await chapterFixture({ organizationId: organization.id });
+
+    const result = await deleteChapter({
+      chapterId: chapter.id,
+      headers,
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+
+    const unchangedChapter = await prisma.chapter.findUnique({
+      where: { id: chapter.id },
+    });
+
+    expect(unchangedChapter).not.toBeNull();
+  });
+});
+
+describe("owners", async () => {
+  const { organization, user } = await memberFixture({ role: "owner" });
+  const headers = await signInAs(user.email, user.password);
+
+  test("returns Chapter not found", async () => {
+    const result = await deleteChapter({
+      chapterId: 999_999,
+      headers,
+    });
+
+    expect(result.error?.message).toBe("Chapter not found");
+    expect(result.data).toBeNull();
+  });
+
+  test("deletes chapter successfully", async () => {
+    const chapter = await chapterFixture({ organizationId: organization.id });
+
+    const result = await deleteChapter({
+      chapterId: chapter.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.id).toBe(chapter.id);
+
+    const deletedChapter = await prisma.chapter.findUnique({
+      where: { id: chapter.id },
+    });
+
+    expect(deletedChapter).toBeNull();
+  });
+
+  test("cascades deletion to course chapters", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({ organizationId: organization.id });
+    const courseChapter = await courseChapterFixture({
+      chapterId: chapter.id,
+      courseId: course.id,
+      position: 0,
+    });
+
+    const result = await deleteChapter({
+      chapterId: chapter.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+
+    const deletedCourseChapter = await prisma.courseChapter.findUnique({
+      where: { id: courseChapter.id },
+    });
+
+    expect(deletedCourseChapter).toBeNull();
+  });
+
+  test("returns Forbidden for chapter in different organization", async () => {
+    const otherOrg = await organizationFixture();
+
+    const chapterInOtherOrg = await chapterFixture({
+      organizationId: otherOrg.id,
+    });
+
+    const result = await deleteChapter({
+      chapterId: chapterInOtherOrg.id,
+      headers,
+    });
+
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
+
+    const unchangedChapter = await prisma.chapter.findUnique({
+      where: { id: chapterInOtherOrg.id },
+    });
+
+    expect(unchangedChapter).not.toBeNull();
+  });
+});

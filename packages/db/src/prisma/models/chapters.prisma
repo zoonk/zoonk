@@ -1,32 +1,31 @@
-model CourseSuggestion {
-  id          Int      @id @default(autoincrement())
-  locale      String   @db.VarChar(10)
-  prompt      String
-  suggestions Json
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
-
-  @@unique([locale, prompt], name: "localePrompt")
-  @@map("course_suggestions")
-}
-
-model Course {
+model Chapter {
   id              Int             @id @default(autoincrement())
   organizationId  Int             @map("organization_id")
   organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   isPublished     Boolean         @default(false) @map("is_published")
-  language        String          @db.VarChar(10)
   slug            String
   title           String
   normalizedTitle String          @map("normalized_title")
   description     String
-  imageUrl        String?         @map("image_url")
   createdAt       DateTime        @default(now()) @map("created_at")
   updatedAt       DateTime        @default(now()) @updatedAt @map("updated_at")
   courseChapters  CourseChapter[]
 
-  @@unique([organizationId, language, slug], name: "orgSlug")
-  @@index([organizationId, language, isPublished])
+  @@unique([organizationId, slug], name: "orgChapterSlug")
   @@index([organizationId, normalizedTitle])
-  @@map("courses")
+  @@map("chapters")
+}
+
+model CourseChapter {
+  id        Int      @id @default(autoincrement())
+  courseId  Int      @map("course_id")
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  chapterId Int      @map("chapter_id")
+  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  position  Int
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([courseId, chapterId], name: "courseChapter")
+  @@index([courseId, position])
+  @@map("course_chapters")
 }
