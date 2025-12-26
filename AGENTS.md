@@ -80,6 +80,33 @@ Some design preferences:
 
 Read each folder's README file for more details
 
+### Folder Structure
+
+#### Apps
+
+All apps should follow a consistent folder structure:
+
+- `src/app/`: Next.js routes
+- `src/i18n/`: Internationalization setup (if using `next-intl`)
+- `src/lib/`: Shared utilities and constants
+- `src/proxy.ts`: Next.js Proxy setup (if needed)
+
+**Component Organization:**
+
+1. **Route-specific components**: Colocate directly with the route's `page.tsx`
+2. **Route group shared components**: Use `_components/` or `_hooks/` folders within the route group (e.g., `app/(private)/_components/`)
+3. **Cross-route-group components**: Place in `src/components/{domain}/`
+4. **Shared utilities**: Place in `src/lib/`
+
+#### Packages
+
+All packages should follow a consistent structure:
+
+- `src/`: Source code with domain-organized subfolders, see existing packages for examples
+- `README.md`: Package documentation
+- `package.json`: Package manifest
+- `tsconfig.json`: TypeScript configuration
+
 ## Tools
 
 - Use `pnpm` for package management

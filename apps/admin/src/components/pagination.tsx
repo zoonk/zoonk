@@ -8,14 +8,16 @@ import {
   PaginationPrevious,
 } from "@zoonk/ui/components/pagination";
 
-type UserPaginationProps = {
+type AdminPaginationProps = {
+  basePath: string;
   page: number;
   limit: number;
   totalPages: number;
   search?: string;
 };
 
-function buildUserPageUrl(
+function buildPageUrl(
+  basePath: string,
   pageNumber: number,
   limit: number,
   search?: string,
@@ -28,7 +30,7 @@ function buildUserPageUrl(
     params.set("search", search);
   }
 
-  return `/users?${params.toString()}`;
+  return `${basePath}?${params.toString()}`;
 }
 
 function getVisiblePageNumbers(
@@ -51,12 +53,13 @@ function addEllipsesToPages(pageNumbers: number[]): (number | "ellipsis")[] {
   });
 }
 
-export function UserPagination({
+export function AdminPagination({
+  basePath,
   page,
   limit,
   totalPages,
   search,
-}: UserPaginationProps) {
+}: AdminPaginationProps) {
   if (totalPages <= 1) {
     return null;
   }
@@ -73,7 +76,11 @@ export function UserPagination({
           <PaginationPrevious
             aria-disabled={isFirstPage}
             className={isFirstPage ? "pointer-events-none opacity-50" : ""}
-            href={isFirstPage ? "#" : buildUserPageUrl(page - 1, limit, search)}
+            href={
+              isFirstPage
+                ? "#"
+                : buildPageUrl(basePath, page - 1, limit, search)
+            }
           />
         </PaginationItem>
 
@@ -86,7 +93,7 @@ export function UserPagination({
                 href={
                   pageOrEllipsis === page
                     ? "#"
-                    : buildUserPageUrl(pageOrEllipsis, limit, search)
+                    : buildPageUrl(basePath, pageOrEllipsis, limit, search)
                 }
                 isActive={pageOrEllipsis === page}
               >
@@ -100,7 +107,9 @@ export function UserPagination({
           <PaginationNext
             aria-disabled={isLastPage}
             className={isLastPage ? "pointer-events-none opacity-50" : ""}
-            href={isLastPage ? "#" : buildUserPageUrl(page + 1, limit, search)}
+            href={
+              isLastPage ? "#" : buildPageUrl(basePath, page + 1, limit, search)
+            }
           />
         </PaginationItem>
       </PaginationContent>

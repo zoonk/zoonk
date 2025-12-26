@@ -6,7 +6,7 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { LogoutButton } from "@/components/logout-button";
+import { LogoutButton } from "@/components/logout";
 
 export default function Unauthorized() {
   return (

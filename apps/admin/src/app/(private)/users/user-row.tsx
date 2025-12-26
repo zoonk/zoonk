@@ -1,11 +1,7 @@
 import type { UserWithRole } from "@zoonk/core/types";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
 
-type UserRowProps = {
-  user: UserWithRole;
-};
-
-export function UserRow({ user }: UserRowProps) {
+export function UserRow({ user }: { user: UserWithRole }) {
   return (
     <TableRow>
       <TableCell className="font-medium">{user.name || "—"}</TableCell>

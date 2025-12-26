@@ -7,24 +7,16 @@ import {
   TableRow,
 } from "@zoonk/ui/components/table";
 import { headers } from "next/headers";
-import { UserPagination } from "./user-pagination";
+import { AdminPagination } from "@/components/pagination";
+import { parseSearchParams } from "@/lib/parse-search-params";
 import { UserRow } from "./user-row";
 
-const DEFAULT_PAGE_SIZE = 50;
-
-type UserListProps = {
+export default async function UserList({
+  searchParams,
+}: {
   searchParams: PageProps<"/users">["searchParams"];
-};
-
-export default async function UserList({ searchParams }: UserListProps) {
-  const params = await searchParams;
-  const page = Number(params.page) || 1;
-  const limit = Number(params.limit) || DEFAULT_PAGE_SIZE;
-  const offset = (page - 1) * limit;
-
-  const search = Array.isArray(params.search)
-    ? params.search[0]
-    : params.search;
+}) {
+  const { page, limit, offset, search } = parseSearchParams(await searchParams);
 
   const result = await auth.api.listUsers({
     headers: await headers(),
@@ -66,7 +58,8 @@ export default async function UserList({ searchParams }: UserListProps) {
         </Table>
       </div>
 
-      <UserPagination
+      <AdminPagination
+        basePath="/users"
         limit={limit}
         page={page}
         search={search}

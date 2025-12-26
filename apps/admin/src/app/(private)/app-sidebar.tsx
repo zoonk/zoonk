@@ -11,13 +11,14 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@zoonk/ui/components/sidebar";
-import { HomeIcon, Users } from "lucide-react";
+import { BookOpen, HomeIcon, Users } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const menuItems = [
   { icon: HomeIcon, label: "Home", url: "/" },
   { icon: Users, label: "Users", url: "/users" },
+  { icon: BookOpen, label: "Courses", url: "/courses" },
 ] as const;
 
 function isActive(pathname: string, url: string) {
