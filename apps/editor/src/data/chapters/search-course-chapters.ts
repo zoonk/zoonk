@@ -1,14 +1,11 @@
 import "server-only";
 
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Chapter, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
-
-interface ChapterWithPosition extends Chapter {
-  position: number;
-}
+import type { ChapterWithPosition } from "./list-course-chapters";
 
 export const searchCourseChapters = cache(
   async (params: {
