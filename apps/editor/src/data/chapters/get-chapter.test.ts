@@ -116,23 +116,18 @@ describe("admins", async () => {
     expect(result.error?.message).toBe("Forbidden");
     expect(result.data).toBeNull();
   });
-});
 
-describe("owners", async () => {
-  const { organization, user } = await memberFixture({ role: "owner" });
+  test("returns Forbidden for chapter in different organization by slug", async () => {
+    const otherOrg = await organizationFixture();
+    const otherChapter = await chapterFixture({ organizationId: otherOrg.id });
 
-  const [headers, chapter] = await Promise.all([
-    signInAs(user.email, user.password),
-    chapterFixture({ organizationId: organization.id }),
-  ]);
-
-  test("gets chapter successfully", async () => {
     const result = await getChapter({
-      chapterId: chapter.id,
+      chapterSlug: otherChapter.slug,
       headers,
+      orgSlug: otherOrg.slug,
     });
 
-    expect(result.error).toBeNull();
-    expect(result.data?.id).toBe(chapter.id);
+    expect(result.error?.message).toBe("Forbidden");
+    expect(result.data).toBeNull();
   });
 });
