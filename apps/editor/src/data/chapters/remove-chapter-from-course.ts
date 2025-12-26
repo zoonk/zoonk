@@ -41,6 +41,19 @@ export async function removeChapterFromCourse(params: {
 
   const { error } = await safeAsync(() =>
     prisma.$transaction(async (tx) => {
+      // Lock course row to prevent race conditions with concurrent position updates
+      await tx.$queryRaw`SELECT id FROM courses WHERE id = ${params.courseId} FOR UPDATE`;
+
+      // Re-fetch position after lock to get current value (may have changed)
+      const current = await tx.courseChapter.findUnique({
+        select: { position: true },
+        where: { id: courseChapter.id },
+      });
+
+      if (!current) {
+        throw new Error("Chapter already removed");
+      }
+
       await tx.courseChapter.delete({
         where: { id: courseChapter.id },
       });
@@ -49,7 +62,7 @@ export async function removeChapterFromCourse(params: {
         data: { position: { decrement: 1 } },
         where: {
           courseId: params.courseId,
-          position: { gt: courseChapter.position },
+          position: { gt: current.position },
         },
       });
 

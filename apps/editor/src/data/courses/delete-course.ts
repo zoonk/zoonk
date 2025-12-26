@@ -37,6 +37,11 @@ export async function deleteCourse(params: {
 
   const { error } = await safeAsync(() =>
     prisma.$transaction(async (tx) => {
+      // Lock chapters to prevent race conditions when checking for orphans
+      if (chapterIds.length > 0) {
+        await tx.$queryRaw`SELECT id FROM chapters WHERE id = ANY(${chapterIds}::int[]) FOR UPDATE`;
+      }
+
       await tx.course.delete({ where: { id: course.id } });
 
       if (chapterIds.length > 0) {

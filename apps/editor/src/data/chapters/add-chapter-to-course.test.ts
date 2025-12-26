@@ -353,4 +353,43 @@ describe("admins", async () => {
     expect(chapters[2]?.chapterId).toBe(newChapter.id);
     expect(chapters[2]?.position).toBe(2);
   });
+
+  test("handles concurrent additions at same position without duplicate positions", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+
+    const chapters = await Promise.all(
+      Array.from({ length: 5 }, () =>
+        chapterFixture({ organizationId: organization.id }),
+      ),
+    );
+
+    const results = await Promise.all(
+      chapters.map((chapter) =>
+        addChapterToCourse({
+          chapterId: chapter.id,
+          courseId: course.id,
+          headers,
+          position: 0,
+        }),
+      ),
+    );
+
+    for (const result of results) {
+      expect(result.error).toBeNull();
+    }
+
+    const courseChapters = await prisma.courseChapter.findMany({
+      orderBy: { position: "asc" },
+      where: { courseId: course.id },
+    });
+
+    expect(courseChapters.length).toBe(5);
+
+    const positions = courseChapters.map((cc) => cc.position);
+    const uniquePositions = new Set(positions);
+    expect(uniquePositions.size).toBe(5);
+
+    const sortedPositions = [...positions].sort((a, b) => a - b);
+    expect(sortedPositions).toEqual([0, 1, 2, 3, 4]);
+  });
 });

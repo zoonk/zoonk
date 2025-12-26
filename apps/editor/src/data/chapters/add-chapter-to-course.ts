@@ -56,6 +56,9 @@ export async function addChapterToCourse(params: {
 
   const { data: courseChapter, error } = await safeAsync(() =>
     prisma.$transaction(async (tx) => {
+      // Lock course row to prevent race conditions with concurrent position updates
+      await tx.$queryRaw`SELECT id FROM courses WHERE id = ${params.courseId} FOR UPDATE`;
+
       await tx.courseChapter.updateMany({
         data: { position: { increment: 1 } },
         where: {

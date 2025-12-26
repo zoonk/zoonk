@@ -47,6 +47,9 @@ export async function createChapter(params: {
 
   const { data, error } = await safeAsync(() =>
     prisma.$transaction(async (tx) => {
+      // Lock course row to prevent race conditions with concurrent position updates
+      await tx.$queryRaw`SELECT id FROM courses WHERE id = ${params.courseId} FOR UPDATE`;
+
       const chapter = await tx.chapter.create({
         data: {
           description: params.description,
