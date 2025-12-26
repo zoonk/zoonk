@@ -298,8 +298,7 @@ describe("admins", async () => {
       where: { courseId: course.id },
     });
 
-    const expectedChapterCount = 4;
-    expect(chapters.length).toBe(expectedChapterCount);
+    expect(chapters.length).toBe(4);
     expect(chapters[0]?.chapterId).toBe(chapter1.id);
     expect(chapters[0]?.position).toBe(0);
     expect(chapters[1]?.chapterId).toBe(newChapter.id);
