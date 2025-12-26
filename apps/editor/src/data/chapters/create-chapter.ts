@@ -57,6 +57,14 @@ export async function createChapter(params: {
         },
       });
 
+      await tx.courseChapter.updateMany({
+        data: { position: { increment: 1 } },
+        where: {
+          courseId: params.courseId,
+          position: { gte: params.position },
+        },
+      });
+
       const courseChapter = await tx.courseChapter.create({
         data: {
           chapterId: chapter.id,
