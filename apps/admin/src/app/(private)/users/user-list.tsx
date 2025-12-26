@@ -1,4 +1,3 @@
-import { auth } from "@zoonk/core/auth";
 import {
   Table,
   TableBody,
@@ -6,8 +5,8 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
-import { headers } from "next/headers";
 import { AdminPagination } from "@/components/pagination";
+import { listUsers } from "@/data/users/list-users";
 import { parseSearchParams } from "@/lib/parse-search-params";
 import { UserRow } from "./user-row";
 
@@ -17,23 +16,8 @@ export default async function UserList({
   searchParams: PageProps<"/users">["searchParams"];
 }) {
   const { page, limit, offset, search } = parseSearchParams(await searchParams);
-
-  const result = await auth.api.listUsers({
-    headers: await headers(),
-    query: {
-      limit,
-      offset,
-      sortBy: "createdAt",
-      sortDirection: "desc",
-      ...(search && {
-        searchField: "email",
-        searchOperator: "contains",
-        searchValue: search,
-      }),
-    },
-  });
-
-  const totalPages = Math.ceil(result.total / limit);
+  const { users, total } = await listUsers({ limit, offset, search });
+  const totalPages = Math.ceil(total / limit);
 
   return (
     <>
@@ -51,7 +35,7 @@ export default async function UserList({
           </TableHeader>
 
           <TableBody>
-            {result.users.map((user) => (
+            {users.map((user) => (
               <UserRow key={user.id} user={user} />
             ))}
           </TableBody>

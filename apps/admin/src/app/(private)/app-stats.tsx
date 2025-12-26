@@ -1,9 +1,9 @@
-import { prisma } from "@zoonk/db";
 import { UsersIcon } from "lucide-react";
 import { Stats, StatsSkeleton } from "@/components/stats";
+import { countUsers } from "@/data/stats/count-users";
 
 export async function AppStats() {
-  const totalUsers = await prisma.user.count();
+  const totalUsers = await countUsers();
 
   return (
     <div className="flex items-center">
