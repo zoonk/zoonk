@@ -1,18 +1,12 @@
 "use cache";
 
-import { cacheTagPrivacy } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
-import { cacheLife, cacheTag } from "next/cache";
 import { getExtracted } from "next-intl/server";
 
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/privacy">): Promise<Metadata> {
   const { locale } = await params;
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagPrivacy());
-
   const t = await getExtracted({ locale });
 
   return {
@@ -27,10 +21,6 @@ export default async function Privacy({
   params,
 }: PageProps<"/[locale]/privacy">) {
   const { locale } = await params;
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagPrivacy());
-
   const { default: PrivacyPolicy } = await import(`./${locale}.mdx`);
 
   return (

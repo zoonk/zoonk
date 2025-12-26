@@ -8,9 +8,7 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { cacheTagSubscription } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
-import { cacheLife, cacheTag } from "next/cache";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { ProtectedSection } from "@/components/protected-section";
 import { SubscriptionPage } from "./subscription-page";
@@ -19,10 +17,6 @@ export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/subscription">): Promise<Metadata> {
   const { locale } = await params;
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagSubscription());
-
   const t = await getExtracted({ locale });
 
   return {
@@ -38,10 +32,6 @@ export default async function Subscription({
 }: PageProps<"/[locale]/subscription">) {
   const { locale } = await params;
   setRequestLocale(locale);
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagSubscription());
-
   const t = await getExtracted();
 
   return (

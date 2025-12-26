@@ -23,10 +23,8 @@ export async function togglePublishAction(
     return { error: error.message ?? t("Failed to update course") };
   }
 
-  const tag = cacheTagCourse({ courseId });
-
   after(async () => {
-    await revalidateMainApp([tag]);
+    await revalidateMainApp([cacheTagCourse({ courseId })]);
   });
 
   return { error: null };
@@ -44,10 +42,10 @@ export async function deleteCourseAction(
     return { error: error.message ?? t("Failed to delete course") };
   }
 
-  const courseTag = cacheTagCourse({ courseId });
-  const orgCoursesTag = cacheTagOrgCourses({ orgSlug });
-
   after(async () => {
+    const courseTag = cacheTagCourse({ courseId });
+    const orgCoursesTag = cacheTagOrgCourses({ orgSlug });
+
     await revalidateMainApp([courseTag, orgCoursesTag]);
   });
 

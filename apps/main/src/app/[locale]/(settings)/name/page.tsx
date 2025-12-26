@@ -8,9 +8,7 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { cacheTagDisplayName } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
-import { cacheLife, cacheTag } from "next/cache";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { ProtectedSection } from "@/components/protected-section";
 import { NameForm } from "./name-form";
@@ -19,10 +17,6 @@ export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/name">): Promise<Metadata> {
   const { locale } = await params;
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagDisplayName());
-
   const t = await getExtracted({ locale });
 
   return {
@@ -36,10 +30,6 @@ export async function generateMetadata({
 export default async function Name({ params }: PageProps<"/[locale]/name">) {
   const { locale } = await params;
   setRequestLocale(locale);
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagDisplayName());
-
   const t = await getExtracted();
 
   return (

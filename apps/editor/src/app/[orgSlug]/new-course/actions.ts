@@ -4,7 +4,6 @@ import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { createCourse } from "@zoonk/core/courses/create";
 import { cacheTagOrgCourses } from "@zoonk/utils/cache";
 import { toSlug } from "@zoonk/utils/string";
-import { revalidateTag } from "next/cache";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { getExtracted } from "next-intl/server";
@@ -37,12 +36,8 @@ export async function createCourseAction(
     return { error: error?.message ?? t("Failed to create course") };
   }
 
-  const tag = cacheTagOrgCourses({ orgSlug });
-
-  revalidateTag(tag, "max");
-
   after(async () => {
-    await revalidateMainApp([tag]);
+    await revalidateMainApp([cacheTagOrgCourses({ orgSlug })]);
   });
 
   redirect(`/${orgSlug}/c/${course.language}/${course.slug}`);

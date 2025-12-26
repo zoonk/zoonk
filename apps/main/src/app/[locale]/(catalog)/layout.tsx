@@ -1,8 +1,6 @@
 "use cache";
 
 import { Navbar } from "@zoonk/ui/components/navbar";
-import { cacheTagCatalog } from "@zoonk/utils/cache";
-import { cacheLife, cacheTag } from "next/cache";
 import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { NavbarLinks, NavbarLinksSkeleton } from "@/components/navbar-links";
@@ -14,9 +12,6 @@ export default async function CatalogLayout({
 }: LayoutProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale);
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagCatalog());
 
   return (
     <div className="flex min-h-dvh flex-col">

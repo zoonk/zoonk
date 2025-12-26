@@ -8,9 +8,7 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import { cacheTagFollow } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
-import { cacheLife, cacheTag } from "next/cache";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { getSocialProfiles } from "@/lib/social";
 
@@ -18,10 +16,6 @@ export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/follow">): Promise<Metadata> {
   const { locale } = await params;
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagFollow());
-
   const t = await getExtracted({ locale });
 
   return {
@@ -37,9 +31,6 @@ export default async function Follow({
 }: PageProps<"/[locale]/follow">) {
   const { locale } = await params;
   setRequestLocale(locale);
-
-  cacheLife("max");
-  cacheTag(locale, cacheTagFollow());
 
   const t = await getExtracted();
 
