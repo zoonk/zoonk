@@ -117,6 +117,7 @@ describe("owners", async () => {
       courseFixture({ organizationId: organization.id }),
       chapterFixture({ organizationId: organization.id }),
     ]);
+
     const courseChapter = await courseChapterFixture({
       chapterId: chapter.id,
       courseId: course.id,
