@@ -85,19 +85,20 @@ describe("admins", async () => {
       chapterFixture({ organizationId: organization.id }),
     ]);
 
-    const result1 = await addChapterToCourse({
-      chapterId: chapter.id,
-      courseId: course1.id,
-      headers,
-      position: 0,
-    });
-
-    const result2 = await addChapterToCourse({
-      chapterId: chapter.id,
-      courseId: course2.id,
-      headers,
-      position: 0,
-    });
+    const [result1, result2] = await Promise.all([
+      addChapterToCourse({
+        chapterId: chapter.id,
+        courseId: course1.id,
+        headers,
+        position: 0,
+      }),
+      addChapterToCourse({
+        chapterId: chapter.id,
+        courseId: course2.id,
+        headers,
+        position: 0,
+      }),
+    ]);
 
     expect(result1.error).toBeNull();
     expect(result2.error).toBeNull();
