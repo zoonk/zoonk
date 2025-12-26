@@ -6,7 +6,6 @@ import {
   TableHeader,
   TableRow,
 } from "@zoonk/ui/components/table";
-import { cacheLife } from "next/cache";
 import { headers } from "next/headers";
 import { UserPagination } from "./user-pagination";
 import { UserRow } from "./user-row";
@@ -18,9 +17,6 @@ type UserListProps = {
 };
 
 export default async function UserList({ searchParams }: UserListProps) {
-  "use cache: private";
-  cacheLife("minutes");
-
   const params = await searchParams;
   const page = Number(params.page) || 1;
   const limit = Number(params.limit) || DEFAULT_PAGE_SIZE;

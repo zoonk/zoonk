@@ -1,13 +1,8 @@
 import { countUsers } from "@zoonk/core/users/stats/count";
 import { UsersIcon } from "lucide-react";
-import { cacheLife, cacheTag } from "next/cache";
 import { Stats, StatsSkeleton } from "@/components/stats";
 
 export async function AppStats() {
-  "use cache";
-  cacheLife("hours");
-  cacheTag("stats");
-
   const totalUsers = await countUsers();
 
   return (
