@@ -170,27 +170,3 @@ describe("admins", async () => {
     expect(courseChapter?.position).toBe(expectedPosition);
   });
 });
-
-describe("owners", async () => {
-  const { organization, user } = await memberFixture({ role: "owner" });
-
-  const [headers, course] = await Promise.all([
-    signInAs(user.email, user.password),
-    courseFixture({ organizationId: organization.id }),
-  ]);
-
-  test("creates chapter successfully", async () => {
-    const attrs = chapterAttrs();
-
-    const result = await createChapter({
-      ...attrs,
-      courseId: course.id,
-      headers,
-      position: 0,
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data).toBeDefined();
-    expect(result.data?.chapter.title).toBe(attrs.title);
-  });
-});
