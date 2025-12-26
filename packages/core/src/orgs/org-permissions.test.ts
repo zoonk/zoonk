@@ -3,11 +3,15 @@ import {
   memberFixture,
   organizationFixture,
 } from "@zoonk/testing/fixtures/orgs";
-import { describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { hasCoursePermission } from "./org-permissions";
 
-describe("unauthenticated users", async () => {
-  const organization = await organizationFixture();
+describe("unauthenticated users", () => {
+  let organization: Awaited<ReturnType<typeof organizationFixture>>;
+
+  beforeAll(async () => {
+    organization = await organizationFixture();
+  });
 
   test("returns false for any permission using orgId", async () => {
     const canCreate = await hasCoursePermission({
@@ -92,9 +96,15 @@ describe("unauthenticated users", async () => {
   });
 });
 
-describe("member role", async () => {
-  const { organization, user } = await memberFixture({ role: "member" });
-  const headers = await signInAs(user.email, user.password);
+describe("member role", () => {
+  let organization: Awaited<ReturnType<typeof memberFixture>>["organization"];
+  let headers: Headers;
+
+  beforeAll(async () => {
+    const fixture = await memberFixture({ role: "member" });
+    organization = fixture.organization;
+    headers = await signInAs(fixture.user.email, fixture.user.password);
+  });
 
   test("can read courses", async () => {
     const canRead = await hasCoursePermission({
@@ -137,9 +147,15 @@ describe("member role", async () => {
   });
 });
 
-describe("admin role", async () => {
-  const { organization, user } = await memberFixture({ role: "admin" });
-  const headers = await signInAs(user.email, user.password);
+describe("admin role", () => {
+  let organization: Awaited<ReturnType<typeof memberFixture>>["organization"];
+  let headers: Headers;
+
+  beforeAll(async () => {
+    const fixture = await memberFixture({ role: "admin" });
+    organization = fixture.organization;
+    headers = await signInAs(fixture.user.email, fixture.user.password);
+  });
 
   test("can create courses", async () => {
     const canCreate = await hasCoursePermission({
@@ -182,9 +198,15 @@ describe("admin role", async () => {
   });
 });
 
-describe("owner role", async () => {
-  const { organization, user } = await memberFixture({ role: "owner" });
-  const headers = await signInAs(user.email, user.password);
+describe("owner role", () => {
+  let organization: Awaited<ReturnType<typeof memberFixture>>["organization"];
+  let headers: Headers;
+
+  beforeAll(async () => {
+    const fixture = await memberFixture({ role: "owner" });
+    organization = fixture.organization;
+    headers = await signInAs(fixture.user.email, fixture.user.password);
+  });
 
   test("can create courses", async () => {
     const canCreate = await hasCoursePermission({

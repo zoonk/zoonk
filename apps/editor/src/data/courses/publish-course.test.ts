@@ -5,18 +5,17 @@ import {
   memberFixture,
   organizationFixture,
 } from "@zoonk/testing/fixtures/orgs";
-import { describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { toggleCoursePublished } from "./publish-course";
 
-describe("unauthenticated users", async () => {
-  const organization = await organizationFixture();
-
-  const course = await courseFixture({
-    isPublished: false,
-    organizationId: organization.id,
-  });
-
+describe("unauthenticated users", () => {
   test("returns Forbidden", async () => {
+    const organization = await organizationFixture();
+    const course = await courseFixture({
+      isPublished: false,
+      organizationId: organization.id,
+    });
+
     const result = await toggleCoursePublished({
       courseId: course.id,
       headers: new Headers(),
@@ -28,16 +27,15 @@ describe("unauthenticated users", async () => {
   });
 });
 
-describe("members", async () => {
-  const { organization, user } = await memberFixture({ role: "member" });
-  const headers = await signInAs(user.email, user.password);
-
-  const course = await courseFixture({
-    isPublished: false,
-    organizationId: organization.id,
-  });
-
+describe("members", () => {
   test("returns Forbidden", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
+    const course = await courseFixture({
+      isPublished: false,
+      organizationId: organization.id,
+    });
+
     const result = await toggleCoursePublished({
       courseId: course.id,
       headers,
@@ -49,9 +47,15 @@ describe("members", async () => {
   });
 });
 
-describe("admins", async () => {
-  const { organization, user } = await memberFixture({ role: "admin" });
-  const headers = await signInAs(user.email, user.password);
+describe("admins", () => {
+  let organization: Awaited<ReturnType<typeof memberFixture>>["organization"];
+  let headers: Headers;
+
+  beforeAll(async () => {
+    const fixture = await memberFixture({ role: "admin" });
+    organization = fixture.organization;
+    headers = await signInAs(fixture.user.email, fixture.user.password);
+  });
 
   test("returns Course not found", async () => {
     const result = await toggleCoursePublished({

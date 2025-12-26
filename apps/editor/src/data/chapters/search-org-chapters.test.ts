@@ -8,13 +8,13 @@ import {
   memberFixture,
   organizationFixture,
 } from "@zoonk/testing/fixtures/orgs";
-import { describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { searchOrgChapters } from "./search-org-chapters";
 
-describe("unauthenticated users", async () => {
-  const organization = await organizationFixture();
-
+describe("unauthenticated users", () => {
   test("returns Forbidden", async () => {
+    const organization = await organizationFixture();
+
     const result = await searchOrgChapters({
       headers: new Headers(),
       orgSlug: organization.slug,
@@ -26,11 +26,11 @@ describe("unauthenticated users", async () => {
   });
 });
 
-describe("members", async () => {
-  const { organization, user } = await memberFixture({ role: "member" });
-  const headers = await signInAs(user.email, user.password);
-
+describe("members", () => {
   test("returns Forbidden", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+    const headers = await signInAs(user.email, user.password);
+
     const result = await searchOrgChapters({
       headers,
       orgSlug: organization.slug,
@@ -42,9 +42,15 @@ describe("members", async () => {
   });
 });
 
-describe("admins", async () => {
-  const { organization, user } = await memberFixture({ role: "admin" });
-  const headers = await signInAs(user.email, user.password);
+describe("admins", () => {
+  let organization: Awaited<ReturnType<typeof memberFixture>>["organization"];
+  let headers: Headers;
+
+  beforeAll(async () => {
+    const fixture = await memberFixture({ role: "admin" });
+    organization = fixture.organization;
+    headers = await signInAs(fixture.user.email, fixture.user.password);
+  });
 
   test("searches all chapters in organization by title", async () => {
     await Promise.all([

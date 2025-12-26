@@ -1,10 +1,14 @@
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { courseSlugExists } from "./course-slug";
 
-describe("courseSlugExists()", async () => {
-  const organization = await organizationFixture();
+describe("courseSlugExists()", () => {
+  let organization: Awaited<ReturnType<typeof organizationFixture>>;
+
+  beforeAll(async () => {
+    organization = await organizationFixture();
+  });
 
   test("returns true when slug exists for same language and org", async () => {
     const course = await courseFixture({ organizationId: organization.id });

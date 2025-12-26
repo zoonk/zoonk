@@ -9,14 +9,14 @@ import {
   memberFixture,
   organizationFixture,
 } from "@zoonk/testing/fixtures/orgs";
-import { describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { reorderChapters } from "./reorder-chapters";
 
-describe("unauthenticated users", async () => {
-  const organization = await organizationFixture();
-  const course = await courseFixture({ organizationId: organization.id });
-
+describe("unauthenticated users", () => {
   test("returns Forbidden", async () => {
+    const organization = await organizationFixture();
+    const course = await courseFixture({ organizationId: organization.id });
+
     const result = await reorderChapters({
       chapters: [],
       courseId: course.id,
@@ -28,15 +28,15 @@ describe("unauthenticated users", async () => {
   });
 });
 
-describe("members", async () => {
-  const { organization, user } = await memberFixture({ role: "member" });
-
-  const [headers, course] = await Promise.all([
-    signInAs(user.email, user.password),
-    courseFixture({ organizationId: organization.id }),
-  ]);
-
+describe("members", () => {
   test("returns Forbidden", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+
+    const [headers, course] = await Promise.all([
+      signInAs(user.email, user.password),
+      courseFixture({ organizationId: organization.id }),
+    ]);
+
     const result = await reorderChapters({
       chapters: [],
       courseId: course.id,
@@ -48,13 +48,20 @@ describe("members", async () => {
   });
 });
 
-describe("admins", async () => {
-  const { organization, user } = await memberFixture({ role: "admin" });
+describe("admins", () => {
+  let organization: Awaited<ReturnType<typeof memberFixture>>["organization"];
+  let headers: Headers;
+  let course: Awaited<ReturnType<typeof courseFixture>>;
 
-  const [headers, course] = await Promise.all([
-    signInAs(user.email, user.password),
-    courseFixture({ organizationId: organization.id }),
-  ]);
+  beforeAll(async () => {
+    const fixture = await memberFixture({ role: "admin" });
+    organization = fixture.organization;
+
+    [headers, course] = await Promise.all([
+      signInAs(fixture.user.email, fixture.user.password),
+      courseFixture({ organizationId: fixture.organization.id }),
+    ]);
+  });
 
   test("reorders chapters successfully", async () => {
     const [chapter1, chapter2, chapter3] = await Promise.all([

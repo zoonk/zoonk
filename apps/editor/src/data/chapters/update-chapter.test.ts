@@ -4,14 +4,14 @@ import {
   memberFixture,
   organizationFixture,
 } from "@zoonk/testing/fixtures/orgs";
-import { describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { updateChapter } from "./update-chapter";
 
-describe("unauthenticated users", async () => {
-  const organization = await organizationFixture();
-  const chapter = await chapterFixture({ organizationId: organization.id });
-
+describe("unauthenticated users", () => {
   test("returns Forbidden", async () => {
+    const organization = await organizationFixture();
+    const chapter = await chapterFixture({ organizationId: organization.id });
+
     const result = await updateChapter({
       chapterId: chapter.id,
       headers: new Headers(),
@@ -23,15 +23,15 @@ describe("unauthenticated users", async () => {
   });
 });
 
-describe("members", async () => {
-  const { organization, user } = await memberFixture({ role: "member" });
-
-  const [headers, chapter] = await Promise.all([
-    signInAs(user.email, user.password),
-    chapterFixture({ organizationId: organization.id }),
-  ]);
-
+describe("members", () => {
   test("returns Forbidden", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+
+    const [headers, chapter] = await Promise.all([
+      signInAs(user.email, user.password),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
+
     const result = await updateChapter({
       chapterId: chapter.id,
       headers,
@@ -43,13 +43,20 @@ describe("members", async () => {
   });
 });
 
-describe("admins", async () => {
-  const { organization, user } = await memberFixture({ role: "admin" });
+describe("admins", () => {
+  let _organization: Awaited<ReturnType<typeof memberFixture>>["organization"];
+  let headers: Headers;
+  let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
-  const [headers, chapter] = await Promise.all([
-    signInAs(user.email, user.password),
-    chapterFixture({ organizationId: organization.id }),
-  ]);
+  beforeAll(async () => {
+    const fixture = await memberFixture({ role: "admin" });
+    _organization = fixture.organization;
+
+    [headers, chapter] = await Promise.all([
+      signInAs(fixture.user.email, fixture.user.password),
+      chapterFixture({ organizationId: fixture.organization.id }),
+    ]);
+  });
 
   test("updates title successfully", async () => {
     const result = await updateChapter({

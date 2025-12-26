@@ -4,20 +4,20 @@ import {
   memberFixture,
   organizationFixture,
 } from "@zoonk/testing/fixtures/orgs";
-import { describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { searchCourses } from "./search-courses";
 
-describe("unauthenticated users", async () => {
-  const organization = await organizationFixture();
-
-  await courseFixture({
-    isPublished: true,
-    normalizedTitle: "searchable course",
-    organizationId: organization.id,
-    title: "Searchable Course",
-  });
-
+describe("unauthenticated users", () => {
   test("returns Forbidden", async () => {
+    const organization = await organizationFixture();
+
+    await courseFixture({
+      isPublished: true,
+      normalizedTitle: "searchable course",
+      organizationId: organization.id,
+      title: "Searchable Course",
+    });
+
     const result = await searchCourses({
       headers: new Headers(),
       orgSlug: organization.slug,
@@ -29,23 +29,23 @@ describe("unauthenticated users", async () => {
   });
 });
 
-describe("non members", async () => {
-  const [organization, { user }] = await Promise.all([
-    organizationFixture(),
-    memberFixture({ role: "member" }),
-  ]);
-
-  const [headers, _course] = await Promise.all([
-    signInAs(user.email, user.password),
-    courseFixture({
-      isPublished: true,
-      normalizedTitle: "member course",
-      organizationId: organization.id,
-      title: "Member Course",
-    }),
-  ]);
-
+describe("non members", () => {
   test("returns Forbidden", async () => {
+    const [organization, { user }] = await Promise.all([
+      organizationFixture(),
+      memberFixture({ role: "member" }),
+    ]);
+
+    const [headers] = await Promise.all([
+      signInAs(user.email, user.password),
+      courseFixture({
+        isPublished: true,
+        normalizedTitle: "member course",
+        organizationId: organization.id,
+        title: "Member Course",
+      }),
+    ]);
+
     const result = await searchCourses({
       headers,
       orgSlug: organization.slug,
@@ -57,24 +57,32 @@ describe("non members", async () => {
   });
 });
 
-describe("org admins", async () => {
-  const { organization, user } = await memberFixture({ role: "admin" });
+describe("org admins", () => {
+  let organization: Awaited<ReturnType<typeof memberFixture>>["organization"];
+  let headers: Headers;
+  let draftCourse: Awaited<ReturnType<typeof courseFixture>>;
+  let publishedCourse: Awaited<ReturnType<typeof courseFixture>>;
 
-  const [headers, draftCourse, publishedCourse] = await Promise.all([
-    signInAs(user.email, user.password),
-    courseFixture({
-      isPublished: false,
-      normalizedTitle: "admin draft course",
-      organizationId: organization.id,
-      title: "Admin Draft Course",
-    }),
-    courseFixture({
-      isPublished: true,
-      normalizedTitle: "admin published course",
-      organizationId: organization.id,
-      title: "Admin Published Course",
-    }),
-  ]);
+  beforeAll(async () => {
+    const fixture = await memberFixture({ role: "admin" });
+    organization = fixture.organization;
+
+    [headers, draftCourse, publishedCourse] = await Promise.all([
+      signInAs(fixture.user.email, fixture.user.password),
+      courseFixture({
+        isPublished: false,
+        normalizedTitle: "admin draft course",
+        organizationId: fixture.organization.id,
+        title: "Admin Draft Course",
+      }),
+      courseFixture({
+        isPublished: true,
+        normalizedTitle: "admin published course",
+        organizationId: fixture.organization.id,
+        title: "Admin Published Course",
+      }),
+    ]);
+  });
 
   test("returns all matching courses (published and draft)", async () => {
     const result = await searchCourses({
