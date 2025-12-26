@@ -56,10 +56,12 @@ export const searchOrgChapters = cache(
       return { data: [], error: new Error("Forbidden") };
     }
 
-    const chaptersWithCourses = chapters.map((chapter) => ({
-      ...chapter,
-      courses: chapter.courseChapters.map((cc) => cc.course),
-    }));
+    const chaptersWithCourses = chapters.map(
+      ({ courseChapters, ...chapter }) => ({
+        ...chapter,
+        courses: courseChapters.map((cc) => cc.course),
+      }),
+    );
 
     return { data: chaptersWithCourses, error: null };
   },
