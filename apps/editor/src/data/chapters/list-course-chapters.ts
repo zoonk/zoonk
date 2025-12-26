@@ -14,7 +14,6 @@ export const listCourseChapters = cache(
     courseSlug: string;
     headers?: Headers;
     language: string;
-    limit?: number;
     orgSlug: string;
   }): Promise<{ data: ChapterWithPosition[]; error: Error | null }> => {
     const { data, error } = await safeAsync(() =>
