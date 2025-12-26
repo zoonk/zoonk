@@ -42,8 +42,7 @@
     "./types": "./src/types.ts",
     "./users/orgs/list": "./src/users/list-user-orgs.ts",
     "./users/otp/send": "./src/users/send-otp.ts",
-    "./users/session/get": "./src/users/get-user-session.ts",
-    "./users/stats/count": "./src/users/count-users.ts"
+    "./users/session/get": "./src/users/get-user-session.ts"
   },
   "name": "@zoonk/core",
   "peerDependencies": {

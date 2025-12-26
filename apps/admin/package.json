@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@zoonk/core": "workspace:*",
+    "@zoonk/db": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "lucide-react": "0.556.0",

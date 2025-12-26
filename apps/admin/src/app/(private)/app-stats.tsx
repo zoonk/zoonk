@@ -1,6 +1,6 @@
-import { countUsers } from "@zoonk/core/users/stats/count";
 import { UsersIcon } from "lucide-react";
 import { Stats, StatsSkeleton } from "@/components/stats";
+import { countUsers } from "@/lib/stats/count-users";
 
 export async function AppStats() {
   const totalUsers = await countUsers();

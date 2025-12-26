@@ -20,6 +20,9 @@ importers:
       '@zoonk/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@zoonk/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@zoonk/ui':
         specifier: workspace:*
         version: link:../../packages/ui

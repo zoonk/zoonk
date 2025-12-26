@@ -2,6 +2,8 @@
 
 This package contains all schemas the DB client for interacting with our database. We're using [Prisma](https://www.prisma.io/) as our ORM.
 
+This is an internal package used by other packages. It shouldn't be imported directly by apps, except for the `admin` app. For public-facing apps, use `@zoonk/core` instead.
+
 ### PostgreSQL Setup
 
 For macOS users, you can install PostgreSQL using Homebrew:
