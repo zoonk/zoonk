@@ -203,4 +203,149 @@ describe("admins", async () => {
     expect(result.error?.message).toBe("Forbidden");
     expect(result.data).toBeNull();
   });
+
+  test("shifts existing chapters when inserting at position 0", async () => {
+    const [course, chapter1, chapter2, newChapter] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
+
+    await Promise.all([
+      courseChapterFixture({
+        chapterId: chapter1.id,
+        courseId: course.id,
+        position: 0,
+      }),
+      courseChapterFixture({
+        chapterId: chapter2.id,
+        courseId: course.id,
+        position: 1,
+      }),
+    ]);
+
+    const result = await addChapterToCourse({
+      chapterId: newChapter.id,
+      courseId: course.id,
+      headers,
+      position: 0,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.position).toBe(0);
+
+    const chapters = await prisma.courseChapter.findMany({
+      orderBy: { position: "asc" },
+      where: { courseId: course.id },
+    });
+
+    expect(chapters.length).toBe(3);
+    expect(chapters[0]?.chapterId).toBe(newChapter.id);
+    expect(chapters[0]?.position).toBe(0);
+    expect(chapters[1]?.chapterId).toBe(chapter1.id);
+    expect(chapters[1]?.position).toBe(1);
+    expect(chapters[2]?.chapterId).toBe(chapter2.id);
+    expect(chapters[2]?.position).toBe(2);
+  });
+
+  test("shifts only chapters after insertion point", async () => {
+    const [course, chapter1, chapter2, chapter3, newChapter] =
+      await Promise.all([
+        courseFixture({ organizationId: organization.id }),
+        chapterFixture({ organizationId: organization.id }),
+        chapterFixture({ organizationId: organization.id }),
+        chapterFixture({ organizationId: organization.id }),
+        chapterFixture({ organizationId: organization.id }),
+      ]);
+
+    await Promise.all([
+      courseChapterFixture({
+        chapterId: chapter1.id,
+        courseId: course.id,
+        position: 0,
+      }),
+      courseChapterFixture({
+        chapterId: chapter2.id,
+        courseId: course.id,
+        position: 1,
+      }),
+      courseChapterFixture({
+        chapterId: chapter3.id,
+        courseId: course.id,
+        position: 2,
+      }),
+    ]);
+
+    const result = await addChapterToCourse({
+      chapterId: newChapter.id,
+      courseId: course.id,
+      headers,
+      position: 1,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.position).toBe(1);
+
+    const chapters = await prisma.courseChapter.findMany({
+      orderBy: { position: "asc" },
+      where: { courseId: course.id },
+    });
+
+    const expectedChapterCount = 4;
+    expect(chapters.length).toBe(expectedChapterCount);
+    expect(chapters[0]?.chapterId).toBe(chapter1.id);
+    expect(chapters[0]?.position).toBe(0);
+    expect(chapters[1]?.chapterId).toBe(newChapter.id);
+    expect(chapters[1]?.position).toBe(1);
+    expect(chapters[2]?.chapterId).toBe(chapter2.id);
+    expect(chapters[2]?.position).toBe(2);
+    expect(chapters[3]?.chapterId).toBe(chapter3.id);
+    expect(chapters[3]?.position).toBe(3);
+  });
+
+  test("does not shift chapters when inserting at end", async () => {
+    const [course, chapter1, chapter2, newChapter] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
+
+    await Promise.all([
+      courseChapterFixture({
+        chapterId: chapter1.id,
+        courseId: course.id,
+        position: 0,
+      }),
+      courseChapterFixture({
+        chapterId: chapter2.id,
+        courseId: course.id,
+        position: 1,
+      }),
+    ]);
+
+    const result = await addChapterToCourse({
+      chapterId: newChapter.id,
+      courseId: course.id,
+      headers,
+      position: 2,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.position).toBe(2);
+
+    const chapters = await prisma.courseChapter.findMany({
+      orderBy: { position: "asc" },
+      where: { courseId: course.id },
+    });
+
+    expect(chapters.length).toBe(3);
+    expect(chapters[0]?.chapterId).toBe(chapter1.id);
+    expect(chapters[0]?.position).toBe(0);
+    expect(chapters[1]?.chapterId).toBe(chapter2.id);
+    expect(chapters[1]?.position).toBe(1);
+    expect(chapters[2]?.chapterId).toBe(newChapter.id);
+    expect(chapters[2]?.position).toBe(2);
+  });
 });

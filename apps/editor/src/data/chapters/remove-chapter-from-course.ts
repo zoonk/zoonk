@@ -40,8 +40,18 @@ export async function removeChapterFromCourse(params: {
   }
 
   const { error } = await safeAsync(() =>
-    prisma.courseChapter.delete({
-      where: { id: courseChapter.id },
+    prisma.$transaction(async (tx) => {
+      await tx.courseChapter.delete({
+        where: { id: courseChapter.id },
+      });
+
+      await tx.courseChapter.updateMany({
+        data: { position: { decrement: 1 } },
+        where: {
+          courseId: params.courseId,
+          position: { gt: courseChapter.position },
+        },
+      });
     }),
   );
 

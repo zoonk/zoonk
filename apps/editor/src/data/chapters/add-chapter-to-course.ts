@@ -55,12 +55,22 @@ export async function addChapterToCourse(params: {
   }
 
   const { data: courseChapter, error } = await safeAsync(() =>
-    prisma.courseChapter.create({
-      data: {
-        chapterId: params.chapterId,
-        courseId: params.courseId,
-        position: params.position,
-      },
+    prisma.$transaction(async (tx) => {
+      await tx.courseChapter.updateMany({
+        data: { position: { increment: 1 } },
+        where: {
+          courseId: params.courseId,
+          position: { gte: params.position },
+        },
+      });
+
+      return tx.courseChapter.create({
+        data: {
+          chapterId: params.chapterId,
+          courseId: params.courseId,
+          position: params.position,
+        },
+      });
     }),
   );
 

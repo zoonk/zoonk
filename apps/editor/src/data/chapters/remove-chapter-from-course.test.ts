@@ -201,6 +201,150 @@ describe("admins", async () => {
     expect(result.error?.message).toBe("Forbidden");
     expect(result.data).toBeNull();
   });
+
+  test("closes gap in positions after removal", async () => {
+    const [course, chapter1, chapter2, chapter3] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
+
+    await Promise.all([
+      courseChapterFixture({
+        chapterId: chapter1.id,
+        courseId: course.id,
+        position: 0,
+      }),
+      courseChapterFixture({
+        chapterId: chapter2.id,
+        courseId: course.id,
+        position: 1,
+      }),
+      courseChapterFixture({
+        chapterId: chapter3.id,
+        courseId: course.id,
+        position: 2,
+      }),
+    ]);
+
+    await removeChapterFromCourse({
+      chapterId: chapter2.id,
+      courseId: course.id,
+      headers,
+    });
+
+    const chapters = await prisma.courseChapter.findMany({
+      orderBy: { position: "asc" },
+      where: { courseId: course.id },
+    });
+
+    expect(chapters.length).toBe(2);
+    expect(chapters[0]?.chapterId).toBe(chapter1.id);
+    expect(chapters[0]?.position).toBe(0);
+    expect(chapters[1]?.chapterId).toBe(chapter3.id);
+    expect(chapters[1]?.position).toBe(1);
+  });
+
+  test("removing last chapter does not affect others", async () => {
+    const [course, chapter1, chapter2, chapter3] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
+
+    await Promise.all([
+      courseChapterFixture({
+        chapterId: chapter1.id,
+        courseId: course.id,
+        position: 0,
+      }),
+      courseChapterFixture({
+        chapterId: chapter2.id,
+        courseId: course.id,
+        position: 1,
+      }),
+      courseChapterFixture({
+        chapterId: chapter3.id,
+        courseId: course.id,
+        position: 2,
+      }),
+    ]);
+
+    await removeChapterFromCourse({
+      chapterId: chapter3.id,
+      courseId: course.id,
+      headers,
+    });
+
+    const chapters = await prisma.courseChapter.findMany({
+      orderBy: { position: "asc" },
+      where: { courseId: course.id },
+    });
+
+    expect(chapters.length).toBe(2);
+    expect(chapters[0]?.chapterId).toBe(chapter1.id);
+    expect(chapters[0]?.position).toBe(0);
+    expect(chapters[1]?.chapterId).toBe(chapter2.id);
+    expect(chapters[1]?.position).toBe(1);
+  });
+
+  test("positions remain consecutive after multiple removals", async () => {
+    const [course, chapter1, chapter2, chapter3, chapter4] = await Promise.all([
+      courseFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({ organizationId: organization.id }),
+    ]);
+
+    await Promise.all([
+      courseChapterFixture({
+        chapterId: chapter1.id,
+        courseId: course.id,
+        position: 0,
+      }),
+      courseChapterFixture({
+        chapterId: chapter2.id,
+        courseId: course.id,
+        position: 1,
+      }),
+      courseChapterFixture({
+        chapterId: chapter3.id,
+        courseId: course.id,
+        position: 2,
+      }),
+      courseChapterFixture({
+        chapterId: chapter4.id,
+        courseId: course.id,
+        position: 3,
+      }),
+    ]);
+
+    await removeChapterFromCourse({
+      chapterId: chapter1.id,
+      courseId: course.id,
+      headers,
+    });
+
+    await removeChapterFromCourse({
+      chapterId: chapter3.id,
+      courseId: course.id,
+      headers,
+    });
+
+    const chapters = await prisma.courseChapter.findMany({
+      orderBy: { position: "asc" },
+      where: { courseId: course.id },
+    });
+
+    expect(chapters.length).toBe(2);
+    expect(chapters[0]?.chapterId).toBe(chapter2.id);
+    expect(chapters[0]?.position).toBe(0);
+    expect(chapters[1]?.chapterId).toBe(chapter4.id);
+    expect(chapters[1]?.position).toBe(1);
+  });
 });
 
 describe("owners", async () => {
