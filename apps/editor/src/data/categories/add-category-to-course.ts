@@ -2,6 +2,7 @@ import "server-only";
 
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type CourseCategory, prisma } from "@zoonk/db";
+import { isUniqueConstraintError } from "@zoonk/db/utils";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { ErrorCode } from "@/lib/app-error";
@@ -49,7 +50,7 @@ export async function addCategoryToCourse(params: {
   );
 
   if (error) {
-    if (error.message.includes("Unique constraint")) {
+    if (isUniqueConstraintError(error)) {
       return {
         data: null,
         error: new AppError(ErrorCode.categoryAlreadyAdded),
