@@ -51,33 +51,46 @@ export function useAutoSave({
       }
     }, SAVING_STATUS_DELAY_MS);
 
-    onSave(valueToSave).then((result) => {
-      clearTimeout(savingTimeout);
+    onSave(valueToSave)
+      .then((result) => {
+        clearTimeout(savingTimeout);
 
-      // Ignore outdated save completions to prevent race conditions
-      if (currentRequest !== saveRequestRef.current) {
-        return;
-      }
+        // Ignore outdated save completions to prevent race conditions
+        if (currentRequest !== saveRequestRef.current) {
+          return;
+        }
 
-      if (result.error) {
-        toast.error(result.error);
-        setStatus("unsaved");
-      } else {
-        lastSavedValue.current = valueToSave;
-        setStatus("saved");
+        if (result.error) {
+          toast.error(result.error);
+          setStatus("unsaved");
+        } else {
+          lastSavedValue.current = valueToSave;
+          setStatus("saved");
 
-        // Start fading after the visible duration
-        statusTimeoutRef.current = setTimeout(() => {
-          setStatus("fading");
-
-          // Remove after fade completes
+          // Start fading after the visible duration
           statusTimeoutRef.current = setTimeout(() => {
-            setStatus("idle");
-            statusTimeoutRef.current = null;
-          }, FADE_DURATION_MS);
-        }, SAVED_VISIBLE_DURATION_MS);
-      }
-    });
+            setStatus("fading");
+
+            // Remove after fade completes
+            statusTimeoutRef.current = setTimeout(() => {
+              setStatus("idle");
+              statusTimeoutRef.current = null;
+            }, FADE_DURATION_MS);
+          }, SAVED_VISIBLE_DURATION_MS);
+        }
+      })
+      .catch((error: unknown) => {
+        clearTimeout(savingTimeout);
+
+        if (currentRequest !== saveRequestRef.current) {
+          return;
+        }
+
+        const message =
+          error instanceof Error ? error.message : "Failed to save";
+        toast.error(message);
+        setStatus("unsaved");
+      });
   }, [debouncedValue, onSave]);
 
   useEffect(
