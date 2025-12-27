@@ -142,6 +142,7 @@ All packages should follow a consistent structure:
 - Always build skeleton components when using `Suspense` for loading states
 - Don't add comments to a component's props
 - Pass types directly to the component declaration instead of using `type` since those types won't be exported/reused
+- When adding a new Prisma model, always add a seed for it in `packages/db/src/prisma/seed/`
 
 ## Testing
 

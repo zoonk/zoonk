@@ -10,6 +10,7 @@
   },
   "exports": {
     "./cache": "./src/cache.ts",
+    "./constants": "./src/constants.ts",
     "./error": "./src/error.ts",
     "./form": "./src/form.ts",
     "./locale": "./src/locale.ts",

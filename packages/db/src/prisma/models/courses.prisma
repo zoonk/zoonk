@@ -11,22 +11,36 @@ model CourseSuggestion {
 }
 
 model Course {
-  id              Int             @id @default(autoincrement())
-  organizationId  Int             @map("organization_id")
-  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  isPublished     Boolean         @default(false) @map("is_published")
-  language        String          @db.VarChar(10)
-  slug            String
-  title           String
-  normalizedTitle String          @map("normalized_title")
-  description     String
-  imageUrl        String?         @map("image_url")
-  createdAt       DateTime        @default(now()) @map("created_at")
-  updatedAt       DateTime        @default(now()) @updatedAt @map("updated_at")
-  courseChapters  CourseChapter[]
+  id                Int                      @id @default(autoincrement())
+  organizationId    Int                      @map("organization_id")
+  organization      Organization             @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  isPublished       Boolean                  @default(false) @map("is_published")
+  language          String                   @db.VarChar(10)
+  slug              String
+  title             String
+  normalizedTitle   String                   @map("normalized_title")
+  description       String
+  imageUrl          String?                  @map("image_url")
+  createdAt         DateTime                 @default(now()) @map("created_at")
+  updatedAt         DateTime                 @default(now()) @updatedAt @map("updated_at")
+  courseChapters    CourseChapter[]
+  alternativeTitles CourseAlternativeTitle[]
 
   @@unique([organizationId, language, slug], name: "orgSlug")
   @@index([organizationId, language, isPublished])
   @@index([organizationId, normalizedTitle])
   @@map("courses")
+}
+
+model CourseAlternativeTitle {
+  id        Int      @id @default(autoincrement())
+  courseId  Int      @map("course_id")
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  slug      String
+  locale    String   @db.VarChar(10)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([locale, slug], name: "localeSlug")
+  @@index([courseId])
+  @@map("course_alternative_titles")
 }

@@ -1,15 +1,5 @@
+import { normalizeString } from "@zoonk/utils/string";
 import type { Organization, PrismaClient } from "../../generated/prisma/client";
-
-/**
- * Normalizes text for accent-insensitive search by removing accents
- * and converting to lowercase.
- */
-function normalizeForSearch(text: string): string {
-  return text
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
-}
 
 export const coursesData = [
   // English courses
@@ -20,7 +10,7 @@ export const coursesData = [
       "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
     isPublished: true,
     language: "en",
-    normalizedTitle: normalizeForSearch("Machine Learning"),
+    normalizedTitle: normalizeString("Machine Learning"),
     slug: "machine-learning",
     title: "Machine Learning",
   },
@@ -31,7 +21,7 @@ export const coursesData = [
       "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/spanish-G8NTOu5F2vUzMSaJ7oa2hgKrzAQtGr.webp",
     isPublished: true,
     language: "en",
-    normalizedTitle: normalizeForSearch("Spanish"),
+    normalizedTitle: normalizeString("Spanish"),
     slug: "spanish",
     title: "Spanish",
   },
@@ -42,7 +32,7 @@ export const coursesData = [
       "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/astronomy-OfBov0VHGQPk98amhfAPg4UVrJH114.webp",
     isPublished: false,
     language: "en",
-    normalizedTitle: normalizeForSearch("Astronomy"),
+    normalizedTitle: normalizeString("Astronomy"),
     slug: "astronomy",
     title: "Astronomy",
   },
@@ -55,7 +45,7 @@ export const coursesData = [
       "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
     isPublished: true,
     language: "pt",
-    normalizedTitle: normalizeForSearch("Machine Learning"),
+    normalizedTitle: normalizeString("Machine Learning"),
     slug: "machine-learning",
     title: "Machine Learning",
   },
@@ -66,7 +56,7 @@ export const coursesData = [
       "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/spanish-G8NTOu5F2vUzMSaJ7oa2hgKrzAQtGr.webp",
     isPublished: true,
     language: "pt",
-    normalizedTitle: normalizeForSearch("Espanhol"),
+    normalizedTitle: normalizeString("Espanhol"),
     slug: "espanhol",
     title: "Espanhol",
   },
@@ -77,7 +67,7 @@ export const coursesData = [
       "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/astronomy-OfBov0VHGQPk98amhfAPg4UVrJH114.webp",
     isPublished: false,
     language: "pt",
-    normalizedTitle: normalizeForSearch("Astronomia"),
+    normalizedTitle: normalizeString("Astronomia"),
     slug: "astronomia",
     title: "Astronomia",
   },
