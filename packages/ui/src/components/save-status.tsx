@@ -1,7 +1,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import type * as React from "react";
 
-export type SaveStatusType = "idle" | "unsaved" | "saving" | "saved";
+export type SaveStatusType = "idle" | "unsaved" | "saving" | "saved" | "fading";
 
 export type SaveStatusLabels = {
   unsaved: React.ReactNode;
@@ -24,8 +24,8 @@ function SaveStatus({ status, labels, className, ...props }: SaveStatusProps) {
       aria-live="polite"
       className={cn(
         "text-muted-foreground/60 text-xs",
-        "transition-opacity duration-2000",
-        status === "saved" && "opacity-0",
+        "transition-opacity duration-500",
+        status === "fading" && "opacity-0",
         className,
       )}
       data-slot="save-status"
@@ -34,7 +34,7 @@ function SaveStatus({ status, labels, className, ...props }: SaveStatusProps) {
     >
       {status === "unsaved" && labels.unsaved}
       {status === "saving" && labels.saving}
-      {status === "saved" && labels.saved}
+      {(status === "saved" || status === "fading") && labels.saved}
     </span>
   );
 }
@@ -50,6 +50,10 @@ function combineSaveStatuses(...statuses: SaveStatusType[]): SaveStatusType {
 
   if (statuses.some((s) => s === "saved")) {
     return "saved";
+  }
+
+  if (statuses.some((s) => s === "fading")) {
+    return "fading";
   }
 
   return "idle";

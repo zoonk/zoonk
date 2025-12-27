@@ -3,10 +3,12 @@
 import type { SaveStatusType } from "@zoonk/ui/components/save-status";
 import { toast } from "@zoonk/ui/components/sonner";
 import { useDebounce } from "@zoonk/ui/hooks/debounce";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const AUTO_SAVE_DEBOUNCE_MS = 500;
-const SAVED_STATUS_DURATION_MS = 2000;
+const SAVED_VISIBLE_DURATION_MS = 2500;
+const FADE_DURATION_MS = 500;
+const SAVING_STATUS_DELAY_MS = 500;
 
 export function useAutoSave({
   initialValue,
@@ -23,45 +25,65 @@ export function useAutoSave({
 } {
   const [value, setValue] = useState(initialValue);
   const [status, setStatus] = useState<SaveStatusType>("idle");
-  const [isPending, startTransition] = useTransition();
 
   const debouncedValue = useDebounce(value, debounceMs);
   const lastSavedValue = useRef(initialValue);
-  const savedTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const statusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveRequestRef = useRef(0);
 
   useEffect(() => {
     if (debouncedValue === lastSavedValue.current) {
       return;
     }
 
-    if (savedTimeoutRef.current) {
-      clearTimeout(savedTimeoutRef.current);
-      savedTimeoutRef.current = null;
+    if (statusTimeoutRef.current) {
+      clearTimeout(statusTimeoutRef.current);
+      statusTimeoutRef.current = null;
     }
 
-    startTransition(async () => {
-      setStatus("saving");
-      const result = await onSave(debouncedValue);
+    const currentRequest = ++saveRequestRef.current;
+    const valueToSave = debouncedValue;
+
+    // Only show "saving" if the request takes longer than the delay
+    const savingTimeout = setTimeout(() => {
+      if (currentRequest === saveRequestRef.current) {
+        setStatus("saving");
+      }
+    }, SAVING_STATUS_DELAY_MS);
+
+    onSave(valueToSave).then((result) => {
+      clearTimeout(savingTimeout);
+
+      // Ignore outdated save completions to prevent race conditions
+      if (currentRequest !== saveRequestRef.current) {
+        return;
+      }
 
       if (result.error) {
         toast.error(result.error);
         setStatus("unsaved");
       } else {
-        lastSavedValue.current = debouncedValue;
+        lastSavedValue.current = valueToSave;
         setStatus("saved");
 
-        savedTimeoutRef.current = setTimeout(() => {
-          setStatus("idle");
-          savedTimeoutRef.current = null;
-        }, SAVED_STATUS_DURATION_MS);
+        // Start fading after the visible duration
+        statusTimeoutRef.current = setTimeout(() => {
+          setStatus("fading");
+
+          // Remove after fade completes
+          statusTimeoutRef.current = setTimeout(() => {
+            setStatus("idle");
+            statusTimeoutRef.current = null;
+          }, FADE_DURATION_MS);
+        }, SAVED_VISIBLE_DURATION_MS);
       }
     });
   }, [debouncedValue, onSave]);
 
   useEffect(
     () => () => {
-      if (savedTimeoutRef.current) {
-        clearTimeout(savedTimeoutRef.current);
+      if (statusTimeoutRef.current) {
+        clearTimeout(statusTimeoutRef.current);
       }
     },
     [],
@@ -69,14 +91,11 @@ export function useAutoSave({
 
   function handleSetValue(newValue: string) {
     setValue(newValue);
-    if (newValue !== lastSavedValue.current && status !== "unsaved") {
-      setStatus("unsaved");
-    }
   }
 
   return {
     setValue: handleSetValue,
-    status: isPending ? "saving" : status,
+    status,
     value,
   };
 }
