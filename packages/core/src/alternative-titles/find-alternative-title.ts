@@ -5,10 +5,11 @@ import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { toSlug } from "@zoonk/utils/string";
 import { cache } from "react";
 
-type FindResult = { slug: string; language: string } | null;
-
 export const findAlternativeTitle = cache(
-  async (params: { title: string; locale: string }): Promise<FindResult> => {
+  async (params: {
+    title: string;
+    locale: string;
+  }): Promise<{ slug: string; language: string } | null> => {
     const slug = toSlug(params.title);
 
     const result = await prisma.courseAlternativeTitle.findUnique({

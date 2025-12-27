@@ -52,4 +52,21 @@ describe("listAlternativeTitles", () => {
       `zebra-${suffix}`,
     ]);
   });
+
+  test("returns alternative titles by course slug", async () => {
+    const org = await organizationFixture();
+    const course = await courseFixture({ organizationId: org.id });
+
+    const suffix = randomUUID().slice(0, 8);
+
+    await addAlternativeTitles({
+      courseId: course.id,
+      locale: "en",
+      titles: [`foo-${suffix}`, `bar-${suffix}`],
+    });
+
+    const result = await listAlternativeTitles({ courseSlug: course.slug });
+
+    expect(result).toEqual([`bar-${suffix}`, `foo-${suffix}`]);
+  });
 });
