@@ -13,8 +13,6 @@ import { beforeAll, describe, expect, test } from "vitest";
 import { ErrorCode } from "@/lib/app-error";
 import { importChapters } from "./import-chapters";
 
-const GENERATED_SLUG_PATTERN = /^my-title-\d+-0$/;
-
 function createMockFile(
   content: string,
   name = "chapters.json",
@@ -382,7 +380,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.chapter.slug).toMatch(GENERATED_SLUG_PATTERN);
+      expect(result.data?.[0]?.chapter.slug).toMatch(/^my-title-\d+-0$/);
     });
 
     test("creates new chapter when generated slug doesn't exist", async () => {
@@ -402,6 +400,60 @@ describe("admins", () => {
 
       expect(result.error).toBeNull();
       expect(result.data?.[0]?.chapter.slug).toBe("unique-title");
+    });
+
+    test("handles duplicate titles within the same batch", async () => {
+      const newCourse = await courseFixture({
+        organizationId: organization.id,
+      });
+
+      const file = createImportFile([
+        { description: "First introduction", title: "Introduction" },
+        { description: "Second introduction", title: "Introduction" },
+        { description: "Third introduction", title: "Introduction" },
+      ]);
+
+      const result = await importChapters({
+        courseId: newCourse.id,
+        file,
+        headers,
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data).toHaveLength(3);
+
+      const slugs = result.data?.map((item) => item.chapter.slug) ?? [];
+      const uniqueSlugs = new Set(slugs);
+
+      expect(uniqueSlugs.size).toBe(3);
+      expect(slugs[0]).toBe("introduction");
+      expect(slugs[1]).toMatch(/^introduction-\d+-1$/);
+      expect(slugs[2]).toMatch(/^introduction-\d+-2$/);
+    });
+
+    test("handles duplicate explicit slugs within the same batch", async () => {
+      const newCourse = await courseFixture({
+        organizationId: organization.id,
+      });
+
+      const file = createImportFile([
+        { description: "First", slug: "same-slug", title: "Chapter 1" },
+        { description: "Second", slug: "same-slug", title: "Chapter 2" },
+      ]);
+
+      const result = await importChapters({
+        courseId: newCourse.id,
+        file,
+        headers,
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data).toHaveLength(2);
+
+      const slugs = result.data?.map((item) => item.chapter.slug) ?? [];
+      const uniqueSlugs = new Set(slugs);
+
+      expect(uniqueSlugs.size).toBe(2);
     });
   });
 

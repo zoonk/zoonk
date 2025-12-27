@@ -218,7 +218,8 @@
       "linter": {
         "rules": {
           "performance": {
-            "noNamespaceImport": "off"
+            "noNamespaceImport": "off",
+            "useTopLevelRegex": "off"
           },
           "style": {
             "noMagicNumbers": "off"

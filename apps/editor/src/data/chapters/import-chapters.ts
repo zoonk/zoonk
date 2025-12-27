@@ -232,9 +232,22 @@ export async function importChapters(params: {
         existingChaptersInOrg.map((c) => [c.slug, c]),
       );
 
+      // Deduplicate slugs within the batch to prevent unique constraint violations
+      const slugCounts = new Map<string, number>();
+      const deduplicatedChapters = chaptersToImport.map((item) => {
+        const count = slugCounts.get(item.slug) ?? 0;
+        slugCounts.set(item.slug, count + 1);
+
+        // If this slug already appeared in the batch, make it unique
+        const batchUniqueSlug =
+          count > 0 ? `${item.slug}-${Date.now()}-${item.index}` : item.slug;
+
+        return { ...item, slug: batchUniqueSlug };
+      });
+
       const imported: ImportedChapter[] = [];
 
-      const chapterOperations = chaptersToImport.map(async (item, i) => {
+      const chapterOperations = deduplicatedChapters.map(async (item, i) => {
         const existingChapter = existingChapterMap.get(item.slug);
 
         let chapter: Chapter;

@@ -10,6 +10,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - [Project structure](#project-structure)
 - [Tools](#tools)
 - [Conventions](#conventions)
+- [Testing](#testing)
 - [i18n](#i18n)
 - [CSS](#css)
 - [Icons](#icons)
@@ -141,6 +142,11 @@ All packages should follow a consistent structure:
 - Always build skeleton components when using `Suspense` for loading states
 - Don't add comments to a component's props
 - Pass types directly to the component declaration instead of using `type` since those types won't be exported/reused
+
+## Testing
+
+- Always write tests for functions in `data` folders that need to interact with the database, except for the `admin` and `evals` apps since they're internal tools
+- When writing business logic, follow a TDD approach. Write the test first and make sure it fails. Then write the code to make it pass
 
 ## i18n
 
