@@ -44,6 +44,7 @@ checksums:
     Chapter%20not%20found/singular: 72d4a8758136678acbae0ec942227f7e
     Chapter%20not%20found%20in%20this%20course/singular: d81e3e6176f913514f413784a8e881e3
     Invalid%20chapter%20format.%20Each%20chapter%20must%20have%20a%20title%20and%20description/singular: 6c9dc938c75674b73b61177b55cce86d
+    Invalid%20format.%20Please%20provide%20an%20array%20of%20non-empty%20strings/singular: c9dbc954cf099eedbb573d647356f52e
     Course%20not%20found/singular: 679d024095e9e605246a1928a7e1d87b
     Invalid%20file%20type.%20Please%20upload%20a%20JSON%20file/singular: 9164c5c1930e61a6037fab99386c02f6
     Please%20sign%20in%20to%20continue/singular: 051e59dd3d3b0bfad95982f982fd6b9d

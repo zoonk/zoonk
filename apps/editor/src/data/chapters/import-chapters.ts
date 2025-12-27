@@ -5,6 +5,7 @@ import { type Chapter, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { ErrorCode } from "@/lib/app-error";
+import { parseJsonFile } from "@/lib/parse-json-file";
 
 export type ImportedChapter = {
   chapter: Chapter;
@@ -22,11 +23,6 @@ export type ChaptersImport = {
 };
 
 export type ImportMode = "merge" | "replace";
-
-const BYTES_PER_KB = 1024;
-const KB_PER_MB = 1024;
-const MAX_FILE_SIZE_MB = 5;
-const MAX_FILE_SIZE = MAX_FILE_SIZE_MB * KB_PER_MB * BYTES_PER_KB;
 
 type TransactionClient = Parameters<
   Parameters<typeof prisma.$transaction>[0]
@@ -57,54 +53,6 @@ function validateImportData(data: unknown): data is ChaptersImport {
   }
 
   return d.chapters.every(validateChapterData);
-}
-
-async function parseChaptersFile(
-  file: File,
-): Promise<SafeReturn<ChaptersImport>> {
-  if (file.size > MAX_FILE_SIZE) {
-    return {
-      data: null,
-      error: new AppError(ErrorCode.fileTooLarge),
-    };
-  }
-
-  const isJsonType = file.type.includes("json");
-  const isJsonFile = file.name.endsWith(".json");
-  const isValidJsonFile = isJsonType || isJsonFile;
-
-  if (!isValidJsonFile) {
-    return {
-      data: null,
-      error: new AppError(ErrorCode.invalidFileType),
-    };
-  }
-
-  const { data: text, error: readError } = await safeAsync(() => file.text());
-
-  if (readError) {
-    return { data: null, error: readError };
-  }
-
-  const { data: parsed, error: parseError } = await safeAsync(async () =>
-    JSON.parse(text),
-  );
-
-  if (parseError) {
-    return {
-      data: null,
-      error: new AppError(ErrorCode.invalidJsonFormat),
-    };
-  }
-
-  if (!validateImportData(parsed)) {
-    return {
-      data: null,
-      error: new AppError(ErrorCode.invalidChapterFormat),
-    };
-  }
-
-  return { data: parsed, error: null };
 }
 
 async function removeExistingChapters(
@@ -154,9 +102,11 @@ export async function importChapters(params: {
 }): Promise<SafeReturn<ImportedChapter[]>> {
   const mode = params.mode ?? "merge";
 
-  const { data: importData, error: parseError } = await parseChaptersFile(
-    params.file,
-  );
+  const { data: importData, error: parseError } = await parseJsonFile({
+    file: params.file,
+    invalidFormatError: ErrorCode.invalidChapterFormat,
+    validate: validateImportData,
+  });
 
   if (parseError) {
     return { data: null, error: parseError };
