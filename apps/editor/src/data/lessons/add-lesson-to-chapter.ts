@@ -66,6 +66,13 @@ export async function addLessonToChapter(params: {
         },
       });
 
+      if (!chapter.isPublished) {
+        await tx.lesson.update({
+          data: { isPublished: true },
+          where: { id: params.lessonId },
+        });
+      }
+
       return tx.chapterLesson.create({
         data: {
           chapterId: params.chapterId,

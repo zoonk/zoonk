@@ -203,7 +203,14 @@ export async function importChapters(params: {
         let chapter: Chapter;
 
         if (item.hasExplicitSlug && existingChapter) {
-          chapter = existingChapter;
+          if (course.isPublished || existingChapter.isPublished) {
+            chapter = existingChapter;
+          } else {
+            chapter = await tx.chapter.update({
+              data: { isPublished: true },
+              where: { id: existingChapter.id },
+            });
+          }
         } else {
           const uniqueSlug =
             !item.hasExplicitSlug && existingChapter
@@ -213,6 +220,7 @@ export async function importChapters(params: {
           chapter = await tx.chapter.create({
             data: {
               description: item.chapterData.description,
+              isPublished: !course.isPublished,
               normalizedTitle: item.normalizedTitle,
               organizationId: course.organizationId,
               slug: uniqueSlug,

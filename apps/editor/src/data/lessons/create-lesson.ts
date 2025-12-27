@@ -54,6 +54,7 @@ export async function createLesson(params: {
       const lesson = await tx.lesson.create({
         data: {
           description: params.description,
+          isPublished: !chapter.isPublished,
           normalizedTitle,
           organizationId: chapter.organizationId,
           slug: lessonSlug,

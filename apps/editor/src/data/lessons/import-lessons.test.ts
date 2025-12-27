@@ -764,4 +764,77 @@ describe("admins", () => {
       expect(result.data).toHaveLength(1);
     });
   });
+
+  describe("isPublished behavior", () => {
+    test("imported lessons are published when chapter is unpublished", async () => {
+      const unpublishedChapter = await chapterFixture({
+        isPublished: false,
+        organizationId: organization.id,
+      });
+
+      const file = createImportFile([
+        { description: "Desc", title: "Test Lesson" },
+      ]);
+
+      const result = await importLessons({
+        chapterId: unpublishedChapter.id,
+        file,
+        headers,
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data?.[0]?.lesson.isPublished).toBe(true);
+    });
+
+    test("imported lessons are unpublished when chapter is published", async () => {
+      const publishedChapter = await chapterFixture({
+        isPublished: true,
+        organizationId: organization.id,
+      });
+
+      const file = createImportFile([
+        { description: "Desc", title: "Test Lesson" },
+      ]);
+
+      const result = await importLessons({
+        chapterId: publishedChapter.id,
+        file,
+        headers,
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data?.[0]?.lesson.isPublished).toBe(false);
+    });
+
+    test("existing lesson becomes published when imported to unpublished chapter", async () => {
+      const unpublishedChapter = await chapterFixture({
+        isPublished: false,
+        organizationId: organization.id,
+      });
+
+      const existingLesson = await lessonFixture({
+        isPublished: false,
+        organizationId: organization.id,
+        slug: "existing-slug",
+      });
+
+      const file = createImportFile([
+        { description: "Desc", slug: "existing-slug", title: "Test" },
+      ]);
+
+      const result = await importLessons({
+        chapterId: unpublishedChapter.id,
+        file,
+        headers,
+      });
+
+      expect(result.error).toBeNull();
+
+      const updatedLesson = await prisma.lesson.findUnique({
+        where: { id: existingLesson.id },
+      });
+
+      expect(updatedLesson?.isPublished).toBe(true);
+    });
+  });
 });

@@ -297,4 +297,60 @@ describe("admins", () => {
     const sortedPositions = [...positions].sort((a, b) => a - b);
     expect(sortedPositions).toEqual([0, 1, 2, 3, 4]);
   });
+
+  describe("isPublished behavior", () => {
+    test("lesson becomes published when added to unpublished chapter", async () => {
+      const unpublishedChapter = await chapterFixture({
+        isPublished: false,
+        organizationId: organization.id,
+      });
+
+      const unpublishedLesson = await lessonFixture({
+        isPublished: false,
+        organizationId: organization.id,
+      });
+
+      const result = await addLessonToChapter({
+        chapterId: unpublishedChapter.id,
+        headers,
+        lessonId: unpublishedLesson.id,
+        position: 0,
+      });
+
+      expect(result.error).toBeNull();
+
+      const updatedLesson = await prisma.lesson.findUnique({
+        where: { id: unpublishedLesson.id },
+      });
+
+      expect(updatedLesson?.isPublished).toBe(true);
+    });
+
+    test("lesson remains unpublished when added to published chapter", async () => {
+      const publishedChapter = await chapterFixture({
+        isPublished: true,
+        organizationId: organization.id,
+      });
+
+      const unpublishedLesson = await lessonFixture({
+        isPublished: false,
+        organizationId: organization.id,
+      });
+
+      const result = await addLessonToChapter({
+        chapterId: publishedChapter.id,
+        headers,
+        lessonId: unpublishedLesson.id,
+        position: 0,
+      });
+
+      expect(result.error).toBeNull();
+
+      const updatedLesson = await prisma.lesson.findUnique({
+        where: { id: unpublishedLesson.id },
+      });
+
+      expect(updatedLesson?.isPublished).toBe(false);
+    });
+  });
 });
