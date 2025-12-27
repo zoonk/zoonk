@@ -604,6 +604,16 @@ importers:
       '@zoonk/utils':
         specifier: workspace:*
         version: link:../utils
+    devDependencies:
+      '@types/node':
+        specifier: ^24
+        version: 24.10.3
+      '@zoonk/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      typescript:
+        specifier: ^5
+        version: 5.9.3
 
   packages/tsconfig: {}
 

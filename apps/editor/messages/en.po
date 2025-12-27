@@ -223,6 +223,11 @@ msgid "Invalid chapter format. Each chapter must have a title and description"
 msgstr "Invalid chapter format. Each chapter must have a title and description"
 
 #: src/lib/error-messages.ts
+msgctxt "A87nSW"
+msgid "Lesson not found"
+msgstr "Lesson not found"
+
+#: src/lib/error-messages.ts
 msgctxt "c3FYXv"
 msgid "Invalid format. Please provide an array of non-empty strings"
 msgstr "Invalid format. Please provide an array of non-empty strings"
@@ -238,6 +243,11 @@ msgid "Invalid file type. Please upload a JSON file"
 msgstr "Invalid file type. Please upload a JSON file"
 
 #: src/lib/error-messages.ts
+msgctxt "foSzTN"
+msgid "Lesson not found in this chapter"
+msgstr "Lesson not found in this chapter"
+
+#: src/lib/error-messages.ts
 msgctxt "g5WLcA"
 msgid "Please sign in to continue"
 msgstr "Please sign in to continue"
@@ -248,9 +258,19 @@ msgid "Chapter and course must belong to the same organization"
 msgstr "Chapter and course must belong to the same organization"
 
 #: src/lib/error-messages.ts
+msgctxt "MqOLCG"
+msgid "Invalid lesson format. Each lesson must have a title and description"
+msgstr "Invalid lesson format. Each lesson must have a title and description"
+
+#: src/lib/error-messages.ts
 msgctxt "ORQvOg"
 msgid "You don't have permission to perform this action"
 msgstr "You don't have permission to perform this action"
+
+#: src/lib/error-messages.ts
+msgctxt "pFzToj"
+msgid "This lesson has already been removed"
+msgstr "This lesson has already been removed"
 
 #: src/lib/error-messages.ts
 msgctxt "sOXLAA"

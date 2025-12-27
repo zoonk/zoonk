@@ -84,6 +84,7 @@ model Organization {
   invitations Invitation[]
   courses     Course[]
   chapters    Chapter[]
+  lessons     Lesson[]
 
   @@unique([slug])
   @@map("organizations")

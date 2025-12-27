@@ -223,6 +223,11 @@ msgid "Invalid chapter format. Each chapter must have a title and description"
 msgstr "Formato de capítulo inválido. Cada capítulo precisa ter um título e uma descrição"
 
 #: src/lib/error-messages.ts
+msgctxt "A87nSW"
+msgid "Lesson not found"
+msgstr "Aula não encontrada"
+
+#: src/lib/error-messages.ts
 msgctxt "c3FYXv"
 msgid "Invalid format. Please provide an array of non-empty strings"
 msgstr "Formato inválido. Forneça um array de strings não vazias"
@@ -238,6 +243,11 @@ msgid "Invalid file type. Please upload a JSON file"
 msgstr "Tipo de arquivo inválido. Por favor, envie um arquivo JSON"
 
 #: src/lib/error-messages.ts
+msgctxt "foSzTN"
+msgid "Lesson not found in this chapter"
+msgstr "Aula não encontrada neste capítulo"
+
+#: src/lib/error-messages.ts
 msgctxt "g5WLcA"
 msgid "Please sign in to continue"
 msgstr "Faça login para continuar"
@@ -248,9 +258,19 @@ msgid "Chapter and course must belong to the same organization"
 msgstr "Capítulo e curso devem pertencer à mesma organização"
 
 #: src/lib/error-messages.ts
+msgctxt "MqOLCG"
+msgid "Invalid lesson format. Each lesson must have a title and description"
+msgstr "Formato de aula inválido. Cada aula precisa ter um título e uma descrição"
+
+#: src/lib/error-messages.ts
 msgctxt "ORQvOg"
 msgid "You don't have permission to perform this action"
 msgstr "Você não tem permissão para realizar esta ação"
+
+#: src/lib/error-messages.ts
+msgctxt "pFzToj"
+msgid "This lesson has already been removed"
+msgstr "Esta aula já foi removida"
 
 #: src/lib/error-messages.ts
 msgctxt "sOXLAA"

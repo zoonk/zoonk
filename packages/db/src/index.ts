@@ -18,11 +18,13 @@ if (process.env.NODE_ENV !== "production") {
 export type {
   Account,
   Chapter,
+  ChapterLesson,
   Course,
   CourseAlternativeTitle,
   CourseChapter,
   CourseSuggestion,
   Invitation,
+  Lesson,
   Member,
   Organization,
   RateLimit,

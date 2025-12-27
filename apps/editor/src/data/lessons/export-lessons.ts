@@ -1,0 +1,76 @@
+import "server-only";
+
+import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
+import { prisma } from "@zoonk/db";
+import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { ErrorCode } from "@/lib/app-error";
+
+export type ExportedLesson = {
+  description: string;
+  position: number;
+  slug: string;
+  title: string;
+};
+
+export type LessonsExport = {
+  lessons: ExportedLesson[];
+  exportedAt: string;
+  version: number;
+};
+
+export async function exportLessons(params: {
+  chapterId: number;
+  headers?: Headers;
+}): Promise<SafeReturn<LessonsExport>> {
+  const { data: chapter, error: findError } = await safeAsync(() =>
+    prisma.chapter.findUnique({
+      where: { id: params.chapterId },
+    }),
+  );
+
+  if (findError) {
+    return { data: null, error: findError };
+  }
+
+  if (!chapter) {
+    return { data: null, error: new AppError(ErrorCode.chapterNotFound) };
+  }
+
+  const hasPermission = await hasCoursePermission({
+    headers: params.headers,
+    orgId: chapter.organizationId,
+    permission: "update",
+  });
+
+  if (!hasPermission) {
+    return { data: null, error: new AppError(ErrorCode.forbidden) };
+  }
+
+  const { data: chapterLessons, error: lessonsError } = await safeAsync(() =>
+    prisma.chapterLesson.findMany({
+      include: { lesson: true },
+      orderBy: { position: "asc" },
+      where: { chapterId: params.chapterId },
+    }),
+  );
+
+  if (lessonsError) {
+    return { data: null, error: lessonsError };
+  }
+
+  const lessons: ExportedLesson[] = chapterLessons.map((cl) => ({
+    description: cl.lesson.description,
+    position: cl.position,
+    slug: cl.lesson.slug,
+    title: cl.lesson.title,
+  }));
+
+  return {
+    data: {
+      exportedAt: new Date().toISOString(),
+      lessons,
+      version: 1,
+    },
+    error: null,
+  };
+}

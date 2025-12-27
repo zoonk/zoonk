@@ -1,4 +1,4 @@
-model Chapter {
+model Lesson {
   id              Int             @id @default(autoincrement())
   organizationId  Int             @map("organization_id")
   organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -9,25 +9,24 @@ model Chapter {
   description     String
   createdAt       DateTime        @default(now()) @map("created_at")
   updatedAt       DateTime        @default(now()) @updatedAt @map("updated_at")
-  courseChapters  CourseChapter[]
   chapterLessons  ChapterLesson[]
 
-  @@unique([organizationId, slug], name: "orgChapterSlug")
+  @@unique([organizationId, slug], name: "orgLessonSlug")
   @@index([organizationId, normalizedTitle])
-  @@map("chapters")
+  @@map("lessons")
 }
 
-model CourseChapter {
+model ChapterLesson {
   id        Int      @id @default(autoincrement())
-  courseId  Int      @map("course_id")
-  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   chapterId Int      @map("chapter_id")
   chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  lessonId  Int      @map("lesson_id")
+  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   position  Int
   createdAt DateTime @default(now()) @map("created_at")
 
-  @@unique([courseId, chapterId], name: "courseChapter")
-  @@index([courseId, position])
-  @@index([chapterId])
-  @@map("course_chapters")
+  @@unique([chapterId, lessonId], name: "chapterLesson")
+  @@index([chapterId, position])
+  @@index([lessonId])
+  @@map("chapter_lessons")
 }
