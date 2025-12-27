@@ -19,9 +19,7 @@
   "exports": {
     "./ai": "./src/ai.ts",
     "./alternative-titles/add": "./src/alternative-titles/add-alternative-titles.ts",
-    "./alternative-titles/delete": "./src/alternative-titles/delete-alternative-titles.ts",
     "./alternative-titles/find": "./src/alternative-titles/find-alternative-title.ts",
-    "./alternative-titles/list": "./src/alternative-titles/list-alternative-titles.ts",
     "./auth": "./src/auth/auth.ts",
     "./auth/client": "./src/auth/client.ts",
     "./auth/hooks/auth-state": "./src/auth/hooks/auth-state.ts",

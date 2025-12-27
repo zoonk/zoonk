@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
+import { addAlternativeTitles } from "@zoonk/core/alternative-titles/add";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, test } from "vitest";
-import { addAlternativeTitles } from "./add-alternative-titles";
 import { listAlternativeTitles } from "./list-alternative-titles";
 
 describe("listAlternativeTitles", () => {
