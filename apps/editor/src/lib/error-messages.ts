@@ -20,6 +20,10 @@ export async function getErrorMessage(error: Error): Promise<string> {
 
   if (isEditorError(error)) {
     switch (error.code) {
+      case ErrorCode.categoryAlreadyAdded:
+        return t("This category has already been added to the course");
+      case ErrorCode.categoryNotInCourse:
+        return t("Category not found in this course");
       case ErrorCode.forbidden:
         return t("You don't have permission to perform this action");
       case ErrorCode.unauthorized:
@@ -42,6 +46,8 @@ export async function getErrorMessage(error: Error): Promise<string> {
         return t("Invalid file type. Please upload a JSON file");
       case ErrorCode.invalidJsonFormat:
         return t("Invalid JSON format. Please check your file");
+      case ErrorCode.invalidCategory:
+        return t("Invalid category");
       case ErrorCode.invalidChapterFormat:
         return t(
           "Invalid chapter format. Each chapter must have a title and description",

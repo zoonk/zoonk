@@ -498,3 +498,78 @@ msgstr "Usaremos este correo electrónico para contactarte."
 msgctxt "Xx0WZV"
 msgid "Send message"
 msgstr "Enviar mensaje"
+
+#: src/lib/categories.ts
+msgctxt "djJp6c"
+msgid "History"
+msgstr "Historia"
+
+#: src/lib/categories.ts
+msgctxt "dPgwrL"
+msgid "Math"
+msgstr "Matemáticas"
+
+#: src/lib/categories.ts
+msgctxt "fFt3il"
+msgid "Arts"
+msgstr "Artes"
+
+#: src/lib/categories.ts
+msgctxt "GsBRWL"
+msgid "Languages"
+msgstr "Idiomas"
+
+#: src/lib/categories.ts
+msgctxt "hlmkcL"
+msgid "Health"
+msgstr "Salud"
+
+#: src/lib/categories.ts
+msgctxt "hwL7a0"
+msgid "Engineering"
+msgstr "Ingeniería"
+
+#: src/lib/categories.ts
+msgctxt "I1ZCPK"
+msgid "Technology"
+msgstr "Tecnología"
+
+#: src/lib/categories.ts
+msgctxt "KOuDOE"
+msgid "Economics"
+msgstr "Economía"
+
+#: src/lib/categories.ts
+msgctxt "mn6pIm"
+msgid "Culture"
+msgstr "Cultura"
+
+#: src/lib/categories.ts
+msgctxt "n5D/Ku"
+msgid "Communication"
+msgstr "Comunicación"
+
+#: src/lib/categories.ts
+msgctxt "OV/2+4"
+msgid "Society"
+msgstr "Sociedad"
+
+#: src/lib/categories.ts
+msgctxt "qydxOd"
+msgid "Science"
+msgstr "Ciencia"
+
+#: src/lib/categories.ts
+msgctxt "u3ovjm"
+msgid "Law"
+msgstr "Derecho"
+
+#: src/lib/categories.ts
+msgctxt "w1Fanr"
+msgid "Business"
+msgstr "Negocios"
+
+#: src/lib/categories.ts
+msgctxt "YMDBNH"
+msgid "Geography"
+msgstr "Geografía"

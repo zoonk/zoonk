@@ -23,8 +23,9 @@ model Course {
   imageUrl          String?                  @map("image_url")
   createdAt         DateTime                 @default(now()) @map("created_at")
   updatedAt         DateTime                 @default(now()) @updatedAt @map("updated_at")
-  courseChapters    CourseChapter[]
   alternativeTitles CourseAlternativeTitle[]
+  categories        CourseCategory[]
+  courseChapters    CourseChapter[]
 
   @@unique([organizationId, language, slug], name: "orgSlug")
   @@index([organizationId, language, isPublished])
@@ -43,4 +44,16 @@ model CourseAlternativeTitle {
   @@unique([locale, slug], name: "localeSlug")
   @@index([courseId])
   @@map("course_alternative_titles")
+}
+
+model CourseCategory {
+  id        Int      @id @default(autoincrement())
+  courseId  Int      @map("course_id")
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  category  String   @db.VarChar(50)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@unique([courseId, category], name: "courseCategory")
+  @@index([category])
+  @@map("course_categories")
 }

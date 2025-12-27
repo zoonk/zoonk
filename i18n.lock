@@ -40,7 +40,24 @@ checksums:
     No%20other%20organizations/singular: e9de48fc34aa9de5d30e3eb8eed79ed1
     Draft/singular: e8a92958ad300aacfe46c2bf6644927e
     Published/singular: ad5e035c44f71ed32d41e47c7643f32f
+    History/singular: b0578d6d225f512e42f823fbca2e3c32
+    Math/singular: 0a604ffa5ef57408918fe98ef05eb05a
+    Arts/singular: 9b1845cec1210e57ea990b1a90823228
+    Languages/singular: 2d2a54a7cbbf640ba2aff643a8a3c7c1
+    Health/singular: db2f8a6e827b5436d1eedaf453eaae8a
+    Engineering/singular: 76e841ae8ec3340d7d0a5c2191abbea4
+    Technology/singular: 694755ad06c9b0d9bfcd78e1610670b8
+    Economics/singular: 3931d28200c67977f6ecdf9b2aa61014
+    Culture/singular: 598e8cf9fdd3ed940090e97eac0674b1
+    Communication/singular: 478f3ecaf6419fa9f11f2a83639188c6
+    Society/singular: fc07530371cde440aac96dae7a33aad4
+    Science/singular: 7b1aa37d3f038f226223f85531c688d8
+    Law/singular: 3f04c791596043e899781f74003b9324
+    Business/singular: 7682c7966c6e718836388561e7e68cab
+    Geography/singular: fd93fe516c40f1f2dd96f53a507ce95d
+    Category%20not%20found%20in%20this%20course/singular: 32ae23f7913223e56ab7207abfe032bb
     An%20unexpected%20error%20occurred/singular: fe07b9cdb1fc3f7397f6d89c102c60af
+    Invalid%20category/singular: 5f9195d3e0d1d819cc9d812b712eaca1
     Chapter%20not%20found/singular: 72d4a8758136678acbae0ec942227f7e
     Chapter%20not%20found%20in%20this%20course/singular: d81e3e6176f913514f413784a8e881e3
     Invalid%20chapter%20format.%20Each%20chapter%20must%20have%20a%20title%20and%20description/singular: 6c9dc938c75674b73b61177b55cce86d
@@ -48,6 +65,7 @@ checksums:
     Invalid%20format.%20Please%20provide%20an%20array%20of%20non-empty%20strings/singular: c9dbc954cf099eedbb573d647356f52e
     Course%20not%20found/singular: 679d024095e9e605246a1928a7e1d87b
     Invalid%20file%20type.%20Please%20upload%20a%20JSON%20file/singular: 9164c5c1930e61a6037fab99386c02f6
+    This%20category%20has%20already%20been%20added%20to%20the%20course/singular: 5b220e40c0bfc7b3700d1f402697c522
     Lesson%20not%20found%20in%20this%20chapter/singular: 2697f3d918027ce266c25004b71a51d9
     Please%20sign%20in%20to%20continue/singular: 051e59dd3d3b0bfad95982f982fd6b9d
     Chapter%20and%20course%20must%20belong%20to%20the%20same%20organization/singular: f3c132074516ccc5cad52c88c86d440d
@@ -59,25 +77,36 @@ checksums:
     Invalid%20JSON%20format.%20Please%20check%20your%20file/singular: 2a890d833f49aa36f02433476ca33468
     Organization%20not%20found/singular: 4cb8c07ec2c599b6f48750e06ffa182b
   9270df1bc9e10fdb8026bb4ab67061d4:
+    Get%20started/singular: 5c783951b0100a168bdd2161ff294833
+    Login/singular: f4f219abeb5a465ecb1c7efaf50246de
+    Logout/singular: 07948fdf20705e04a7bf68ab197512bf
+    My%20account/singular: 4791806fd9fadc33912e3df7e4e3911c
+    Send%20feedback/singular: 9631cc08d49da04475b30a0d320ce97c
+    Update%20display%20name/singular: eb9878176a51d19451553ed035114e88
+    Help%20and%20support/singular: 19383599a92f1b191066d7f29588d72f
+    Search%20courses%20or%20pages.../singular: d059e326784d4e9b074d82e7957a3eef
+    No%20results%20found/singular: 5518f2865757dc73900aa03ef8be6934
+    My%20courses/singular: d97cf4146d15d6ff06df054f89cf2bbd
+    Manage%20settings/singular: 72d60ef4e53cd4eb8c041576b9382b51
+    Learn%20something/singular: 2b9c846ff3fe4df7416deac9aa405e30
+    Update%20language/singular: 578f6d1e35422e5fdc38bf8c85126585
+    Manage%20subscription/singular: b83a75127b8eabc21dfa1e0f7104db56
+    Courses/singular: e6d00f3285e8fc48b949af0c4aad3da5
     Home%20page/singular: aa72464a366b091aa6f2037ca869c09c
-    Or/singular: 98639bcbc7b4889bae62ad0ebde740e1
-    Continue/singular: 3cfba90b4600131e82fc4260c568d044
-    Login%20to%20your%20account%20or%20create%20a%20new%20one%20to%20start%20using%20Zoonk./singular: 19158f1a61c7514a587a7adb58dbbd07
-    Continue%20with%20your%20email%20or%20a%20social%20account/singular: 1f2b79de8d5cb3a40df757ab1b50db55
-    Sign%20in%20or%20create%20an%20account/singular: b29f31bce3d279137572901bf10d6e5f
-    By%20clicking%20on%20Continue%2C%20you%20agree%20to%20our%20%3Cterms%3ETerms%20of%20Service%3C%2Fterms%3E%20and%20%3Cprivacy%3EPrivacy%20Policy%3C%2Fprivacy%3E./singular: 5056e412e67c45780a80009328ad062d
-    Login%20or%20Sign%20Up/singular: 62f0c46df2ef1c62965147ab41b3b715
-    myemail%40gmail.com/singular: cc0e6fe2486416d0d35b100ea3830496
-    Email/singular: e7f34943a0c2fb849db1839ff6ef5cb5
-    Continue%20with%20Apple/singular: 8b13538d47736d8b7b0b0edbbeb9c741
-    Continue%20with%20Google/singular: 296841ac969a7f5d0fffc144f2488bbb
-    There%20was%20an%20error%20signing%20you%20in.%20Please%20try%20again%20or%20contact%20hello%40zoonk.com/singular: abb16bd44edbd2ace037414c5ab9567b
-    The%20code%20you%20entered%20is%20incorrect.%20Please%20try%20again%20or%20contact%20hello%40zoonk.com/singular: b437ceb9d111fd91320f586ee73f7024
-    Change%20email/singular: de3d14d915838e1eb5b04e620de35114
-    Enter%20the%20code%20we%20sent%20to%20%7Bemail%7D%3A/singular: 939208aaf736312126ef0fe08cb1faa3
-    Check%20your%20email/singular: c51aa8640fe15af146f3e2dd4602e0c1
+    Follow%20us%20on%20social%20media/singular: d799b702a7881c797d6a1e9668713590
+    Contact%20us/singular: 694a45bc5c96f6f3a27873c1cf5a7707
+    Search/singular: 49dd6c21604b5e8d4153ff1aff2177e1
+    Language/singular: 277fd1a41cc237a437cd1d5e4a80463b
+    Learn/singular: 6559e2075ab6947a1d4fa43e19a5d66b
+    Settings/singular: 8df6777277469c1fd88cc18dde2f1cc3
+    Feedback/singular: 6fac88806e0c269a30777b283988c61c
+    Subscription/singular: ba9f3675e18987d067d48533c8897343
+    Help/singular: 62712a1f2fcef75e399e9a9a9ddbd495
     Online%20Courses%20using%20AI/singular: 4e3c619f363cc66f3f2e604e372ca038
     Explore%20all%20Zoonk%20courses%20to%20learn%20anything%20using%20AI.%20Find%20interactive%20lessons%2C%20challenges%2C%20and%20activities%20to%20learn%20subjects%20like%20science%2C%20math%2C%20technology%2C%20and%20more./singular: c3f4a7dfd17b4523b5535f40170c7731
+    Did%20you%20like%20this%20content%3F/singular: 23b97024cf20ceee3ee4a1ddc65d251c
+    I%20didn't%20like%20it/singular: 9761a96b22323e7db7d7176b77cf7caa
+    I%20liked%20it/singular: ed20592186f53abcc526360869bd0f55
     Cancel/singular: 2e2a849c2223911717de8caa2c71bade
     Cooking%20up%20some%20course%20ideas/singular: a42520f96dbac3580a2ccae4bd6ceb31
     We're%20putting%20together%20a%20few%20course%20suggestions%20for%20you.%20This%20may%20take%20a%20few%20seconds./singular: 8467af30434eb8bfb2f13e109b1d9334
@@ -96,22 +125,19 @@ checksums:
     View%20all%20the%20courses%20you%20started%20on%20Zoonk.%20Continue%20where%20you%20left%20off%20and%20track%20your%20progress%20across%20interactive%20lessons%20and%20activities./singular: eee1ce9f3b0be49ddc9bb3ce21270796
     Zoonk%3A%20AI%20Learning%20Platform/singular: 4a2d25490f4a5e5cd4543f48fcec968d
     Zoonk%20is%20an%20AI-powered%20learning%20platform%20where%20you%20can%20learn%20anything%20through%20interactive%20courses%2C%20lessons%2C%20and%20activities./singular: e836899ce8100db55d5fa54fe6375970
-    Feedback/singular: 6fac88806e0c269a30777b283988c61c
-    Send%20feedback%2C%20questions%2C%20or%20suggestions%20to%20us.%20Fill%20in%20the%20form%20below%20or%20email%20us%20directly%20at%20hello%40zoonk.com./singular: 6ce5e55ddeeb7de9480b806358aa5b95
-    Send%20feedback/singular: 9631cc08d49da04475b30a0d320ce97c
-    Share%20your%20thoughts%20and%20help%20improve%20Zoonk.%20Use%20the%20feedback%20page%20to%20contact%20us%20with%20suggestions%2C%20questions%2C%20or%20issues%20about%20our%20learning%20platform./singular: 6b06a1c72037c5a874506c495070db64
+    Checking%20if%20you're%20logged%20in.../singular: b50f05bfcb51cad6913150273e551291
+    You%20need%20to%20be%20logged%20in%20to%20access%20this%20page./singular: 759ca522663d8f628718332f756dd6c4
+    Display%20name/singular: 725f331065e9d594d720d07b1ae51a90
     Follow%20us/singular: 778f7a4744f77dbcbd31a8c778cb5209
+    Send%20feedback%2C%20questions%2C%20or%20suggestions%20to%20us.%20Fill%20in%20the%20form%20below%20or%20email%20us%20directly%20at%20hello%40zoonk.com./singular: 6ce5e55ddeeb7de9480b806358aa5b95
+    Share%20your%20thoughts%20and%20help%20improve%20Zoonk.%20Use%20the%20feedback%20page%20to%20contact%20us%20with%20suggestions%2C%20questions%2C%20or%20issues%20about%20our%20learning%20platform./singular: 6b06a1c72037c5a874506c495070db64
     Find%20all%20our%20social%20media%20links%20and%20keep%20in%20touch%20with%20us./singular: 622a8496ae558c2347113749ac3c4ab8
-    Follow%20us%20on%20social%20media/singular: d799b702a7881c797d6a1e9668713590
     Connect%20with%20Zoonk%20across%20social%20media.%20Follow%20us%20on%20X%2C%20LinkedIn%2C%20YouTube%2C%20and%20more%20to%20stay%20updated%20on%20new%20features%2C%20tips%2C%20and%20learning%20content./singular: fc9668fa1d3d825afa62bbebf4655fcd
     Get%20support%20and%20answers.%20Fill%20in%20the%20form%20below%20or%20email%20us%20directly%20at%20hello%40zoonk.com./singular: 08e65ee4ac29acae31f47a08f7381365
-    Help/singular: 62712a1f2fcef75e399e9a9a9ddbd495
     Help%20%26%20Support/singular: 662d807b3768c9753238bd5f1c86d2f6
     Need%20help%20with%20Zoonk%3F%20Contact%20our%20support%20or%20browse%20the%20FAQ%20to%20quickly%20find%20answers%20to%20common%20questions./singular: 688f26b3492222993d84ba21fd74a1a3
-    Change%20Language/singular: c798f65b78e23b2cf8fc29a1a24a182f
     Choose%20the%20app%20language%20you%20prefer%20for%20this%20device./singular: 4e22090be4b9fda9945e41822872c030
     Update%20your%20Zoonk%20app%20language%20to%20learn%20in%20English%2C%20Portuguese%2C%20Spanish%2C%20French%2C%20or%20other%20supported%20languages./singular: 1c0ee0edf658ce641954e5e20a447905
-    Language/singular: 277fd1a41cc237a437cd1d5e4a80463b
     Your%20name%20has%20been%20updated%20successfully!/singular: 57bbf14c5b2eb3cefb1bf1dcba56cfa0
     Update%20name/singular: ad5a6fc8a83d09e6e959e21fc1034956
     Failed%20to%20update%20your%20name.%20Please%20try%20again%20or%20contact%20hello%40zoonk.com/singular: 5c23accc74863614c754e0af7d49ab1f
@@ -119,60 +145,46 @@ checksums:
     This%20name%20will%20be%20visible%20to%20other%20users./singular: f09fcb0452297983c7b73c689206fa08
     Set%20or%20update%20your%20Zoonk%20display%20name.%20This%20name%20may%20be%20visible%20to%20others%20and%20will%20be%20used%20when%20referring%20to%20you%20in%20lessons%20and%20activities./singular: 27a489da570cb0d40c7b47d81d271213
     Update%20Display%20Name/singular: 6583c6a89e7dfe4373ba2e6033547b69
-    Display%20name/singular: 725f331065e9d594d720d07b1ae51a90
     This%20is%20the%20name%20others%20may%20see%20and%20the%20one%20we'll%20use%20to%20refer%20to%20you%20in%20activities./singular: 84084520f32cbe01700e2f32c43558aa
-    Logout/singular: 07948fdf20705e04a7bf68ab197512bf
-    Settings/singular: 8df6777277469c1fd88cc18dde2f1cc3
-    Navigate%20settings/singular: 3a3a2a7811fc04b3e7faa316cee3c532
     Customize%20your%20Zoonk%20learning%20experience.%20Manage%20account%20settings%2C%20profile%2C%20and%20preferences%20to%20get%20the%20most%20out%20of%20our%20education%20platform./singular: 36a3ad216744e032858a6279929bd37b
     Manage%20your%20account%20settings%2C%20profile%2C%20and%20preferences./singular: fb026dbc30e3549c3d15e6c254e7d70e
     Manage%20Subscription/singular: 31cafd367fc70d656d8dd979d537dc96
     Manage%20your%20Zoonk%20subscription.%20View%20your%20current%20plan%2C%20upgrade%20or%20downgrade%2C%20and%20see%20available%20benefits./singular: 47f6b6e7b8217ffc7b8135863f626906
     Check%20your%20plan%20details%20and%20manage%20your%20subscription./singular: b9c54ab5f7759daa9fde43d201b05a3d
-    Subscription/singular: ba9f3675e18987d067d48533c8897343
     Upgrade/singular: 63c3b52882e0d779859307d672c178c2
     No%20ads%2C%20unlimited%20lessons%2C%20and%20full%20progress%20tracking./singular: 8f01b698721c3c79191463236f039529
     Remove%20ads%2C%20unlock%20unlimited%20lessons%2C%20and%20track%20your%20progress./singular: d935ae55f9b7faf08bf520b7457972ac
     Upgrade%20to%20Plus/singular: 5ffe2178c10543c0be3b54a15c82da54
     You%E2%80%99re%20on%20Zoonk%20Plus/singular: 5ca1a2563220c91f7eb44a60d2701a79
-    Unable%20to%20change%20your%20subscription.%20Contact%20us%20at%20hello%40zoonk.com/singular: ea42a3331f02e49fabc79ba9e55eb57b
-    Manage%20subscription/singular: b83a75127b8eabc21dfa1e0f7104db56
+    Unable%20to%20update%20your%20subscription.%20Contact%20us%20at%20hello%40zoonk.com/singular: 07449ee5fe347be88856524cec7f06ef
     Read%20Zoonk's%20privacy%20policy%20to%20understand%20how%20we%20collect%2C%20use%2C%20and%20protect%20your%20personal%20information./singular: 044f3586abe7d9915820a6629cef08e4
     Privacy%20Policy/singular: 7459744a63ef8af4e517a09024bd7c08
     Read%20Zoonk's%20terms%20of%20use%20to%20understand%20the%20rules%20and%20conditions%20for%20using%20our%20platform%20and%20services/singular: 4b82898d60691839a1999e4a17199895
     Terms%20of%20Use/singular: 9ac262b2eda552beeecd904c0b9f8fa2
-    Get%20started/singular: 5c783951b0100a168bdd2161ff294833
-    Login/singular: f4f219abeb5a465ecb1c7efaf50246de
-    My%20account/singular: 4791806fd9fadc33912e3df7e4e3911c
-    Update%20display%20name/singular: eb9878176a51d19451553ed035114e88
-    Help%20and%20support/singular: 19383599a92f1b191066d7f29588d72f
-    Search%20courses%20or%20pages.../singular: d059e326784d4e9b074d82e7957a3eef
-    No%20results%20found/singular: 5518f2865757dc73900aa03ef8be6934
-    My%20courses/singular: d97cf4146d15d6ff06df054f89cf2bbd
-    Manage%20settings/singular: 72d60ef4e53cd4eb8c041576b9382b51
-    Learn%20something/singular: 2b9c846ff3fe4df7416deac9aa405e30
-    Close%20search/singular: c992eebc22df6ad1b642e5257d800974
-    Update%20language/singular: 578f6d1e35422e5fdc38bf8c85126585
-    Courses/singular: e6d00f3285e8fc48b949af0c4aad3da5
-    Contact%20us/singular: 694a45bc5c96f6f3a27873c1cf5a7707
-    Search/singular: 49dd6c21604b5e8d4153ff1aff2177e1
     Please%20provide%20as%20much%20detail%20as%20possible./singular: 3c8b231283c751d4beae059a6ffc3643
     Failed%20to%20send%20message.%20Please%20try%20again%20or%20email%20us%20directly%20at%20hello%40zoonk.com/singular: 7f36bcd5ba5dad4b9981f85488ff794c
     Email%20address/singular: 3ba3f099b1b9be6c35ad797da660cb9f
     How%20can%20we%20help%20you%3F/singular: 4571603146ce34160e23dfc95ca53ebf
+    myemail%40gmail.com/singular: cc0e6fe2486416d0d35b100ea3830496
     Message/singular: f2f72126bd244cfc534eab395e054362
     Message%20sent%20successfully!%20We'll%20get%20back%20to%20you%20soon./singular: c34a09294fd597649e9bd42401477697
     We'll%20use%20this%20email%20to%20contact%20you./singular: a09d71670ae76167b7faa718e794086b
     Send%20message/singular: 19e7006870c6e407dece25ee8c9d5333
-    Did%20you%20like%20this%20content%3F/singular: 23b97024cf20ceee3ee4a1ddc65d251c
-    I%20didn't%20like%20it/singular: 9761a96b22323e7db7d7176b77cf7caa
-    I%20liked%20it/singular: ed20592186f53abcc526360869bd0f55
-    Close/singular: 2c2e22f8424a1031de89063bd0022e16
-    "%7Blocale%2C%20select%2C%20pt%20%7B%F0%9F%87%A7%F0%9F%87%B7%20Portugu%C3%AAs%7D%20en%20%7B%F0%9F%87%BA%F0%9F%87%B8%20English%7D%20es%20%7B%F0%9F%87%AA%F0%9F%87%B8%20Espa%C3%B1ol%7D%20other%20%7BUnknown%7D%7D/singular": c88ed734f3b526cd123c7b8f14cf1035
-    Change%20language/singular: 53bea3a813015ca3bf2e4cc6a269fb74
-    Learn/singular: 6559e2075ab6947a1d4fa43e19a5d66b
-    Checking%20if%20you're%20logged%20in.../singular: b50f05bfcb51cad6913150273e551291
-    You%20need%20to%20be%20logged%20in%20to%20access%20this%20page./singular: 759ca522663d8f628718332f756dd6c4
+    History/singular: b0578d6d225f512e42f823fbca2e3c32
+    Math/singular: 0a604ffa5ef57408918fe98ef05eb05a
+    Arts/singular: 9b1845cec1210e57ea990b1a90823228
+    Languages/singular: 2d2a54a7cbbf640ba2aff643a8a3c7c1
+    Health/singular: db2f8a6e827b5436d1eedaf453eaae8a
+    Engineering/singular: 76e841ae8ec3340d7d0a5c2191abbea4
+    Technology/singular: 694755ad06c9b0d9bfcd78e1610670b8
+    Economics/singular: 3931d28200c67977f6ecdf9b2aa61014
+    Culture/singular: 598e8cf9fdd3ed940090e97eac0674b1
+    Communication/singular: 478f3ecaf6419fa9f11f2a83639188c6
+    Society/singular: fc07530371cde440aac96dae7a33aad4
+    Science/singular: 7b1aa37d3f038f226223f85531c688d8
+    Law/singular: 3f04c791596043e899781f74003b9324
+    Business/singular: 7682c7966c6e718836388561e7e68cab
+    Geography/singular: fd93fe516c40f1f2dd96f53a507ce95d
   61a308caf583f5835f54302028bdae73:
     You're%20signed%20in!/singular: 7f23ad13626e60f22e13b8777458750d
     You%20can%20close%20this%20window%20and%20return%20to%20your%20app./singular: 06f96197fc40b30e288b1a9603d15825

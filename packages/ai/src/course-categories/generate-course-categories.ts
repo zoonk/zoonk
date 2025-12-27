@@ -1,5 +1,6 @@
 import "server-only";
 
+import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { generateText, Output } from "ai";
 import { z } from "zod";
 import systemPrompt from "./course-categories.prompt.md";
@@ -15,26 +16,8 @@ const FALLBACK_MODELS = [
   "openai/gpt-4.1-mini",
 ];
 
-const ALLOWED_CATEGORIES = [
-  "arts",
-  "business",
-  "communication",
-  "culture",
-  "economics",
-  "engineering",
-  "geography",
-  "health",
-  "history",
-  "languages",
-  "law",
-  "math",
-  "science",
-  "society",
-  "tech",
-] as const;
-
 const schema = z.object({
-  categories: z.array(z.enum(ALLOWED_CATEGORIES)),
+  categories: z.array(z.enum(COURSE_CATEGORIES)),
 });
 
 export type CourseCategoriesSchema = z.infer<typeof schema>;
