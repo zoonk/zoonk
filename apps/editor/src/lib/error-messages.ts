@@ -1,11 +1,24 @@
+import type { AppError } from "@zoonk/utils/error";
 import { isAppError } from "@zoonk/utils/error";
 import { getExtracted } from "next-intl/server";
-import { ErrorCode } from "./app-error";
+import { ErrorCode, type ErrorCodeType } from "./app-error";
+
+// ensures that we don't have missing translations for error codes
+function assertNever(x: never): never {
+  throw new Error(`Unhandled error code: ${x}`);
+}
+
+function isEditorError(error: Error): error is AppError<ErrorCodeType> {
+  return (
+    isAppError(error) &&
+    Object.values(ErrorCode).includes(error.code as ErrorCodeType)
+  );
+}
 
 export async function getErrorMessage(error: Error): Promise<string> {
   const t = await getExtracted();
 
-  if (isAppError(error)) {
+  if (isEditorError(error)) {
     switch (error.code) {
       case ErrorCode.forbidden:
         return t("You don't have permission to perform this action");
@@ -33,6 +46,8 @@ export async function getErrorMessage(error: Error): Promise<string> {
         return t(
           "Invalid chapter format. Each chapter must have a title and description",
         );
+      default:
+        return assertNever(error.code);
     }
   }
 
