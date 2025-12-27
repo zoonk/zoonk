@@ -133,6 +133,52 @@ describe("importAlternativeTitles", () => {
     expect(titles[0]?.slug).toBe(`new-title-${suffix}`);
   });
 
+  test("replace mode only removes titles for the specified locale", async () => {
+    const suffix = randomUUID().slice(0, 8);
+    const organization = await organizationFixture();
+    const course = await courseFixture({ organizationId: organization.id });
+
+    await prisma.courseAlternativeTitle.createMany({
+      data: [
+        { courseId: course.id, locale: "en", slug: `english-title-${suffix}` },
+        {
+          courseId: course.id,
+          locale: "pt",
+          slug: `portuguese-title-${suffix}`,
+        },
+      ],
+    });
+
+    const file = createImportFile([`New English Title ${suffix}`]);
+
+    const result = await importAlternativeTitles({
+      courseId: course.id,
+      file,
+      locale: "en",
+      mode: "replace",
+    });
+
+    expect(result.error).toBeNull();
+
+    const allTitles = await prisma.courseAlternativeTitle.findMany({
+      orderBy: { locale: "asc" },
+      select: { locale: true, slug: true },
+      where: { courseId: course.id },
+    });
+
+    expect(allTitles).toHaveLength(2);
+
+    expect(allTitles).toContainEqual({
+      locale: "en",
+      slug: `new-english-title-${suffix}`,
+    });
+
+    expect(allTitles).toContainEqual({
+      locale: "pt",
+      slug: `portuguese-title-${suffix}`,
+    });
+  });
+
   test("handles duplicate titles within import file", async () => {
     const suffix = randomUUID().slice(0, 8);
     const organization = await organizationFixture();

@@ -73,7 +73,7 @@ export async function importAlternativeTitles(params: {
     prisma.$transaction(async (tx) => {
       if (mode === "replace") {
         await tx.courseAlternativeTitle.deleteMany({
-          where: { courseId: params.courseId },
+          where: { courseId: params.courseId, locale: params.locale },
         });
       }
 
