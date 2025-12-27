@@ -21,6 +21,7 @@ export type {
   ChapterLesson,
   Course,
   CourseAlternativeTitle,
+  CourseCategory,
   CourseChapter,
   CourseSuggestion,
   Invitation,

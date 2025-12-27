@@ -1,4 +1,6 @@
 export const ErrorCode = {
+  categoryAlreadyAdded: "categoryAlreadyAdded",
+  categoryNotInCourse: "categoryNotInCourse",
   chapterAlreadyRemoved: "chapterAlreadyRemoved",
   chapterNotFound: "chapterNotFound",
   chapterNotInCourse: "chapterNotInCourse",
@@ -6,6 +8,7 @@ export const ErrorCode = {
   fileTooLarge: "fileTooLarge",
   forbidden: "forbidden",
   invalidAlternativeTitleFormat: "invalidAlternativeTitleFormat",
+  invalidCategory: "invalidCategory",
   invalidChapterFormat: "invalidChapterFormat",
   invalidFileType: "invalidFileType",
   invalidJsonFormat: "invalidJsonFormat",

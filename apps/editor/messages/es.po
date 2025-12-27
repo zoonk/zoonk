@@ -202,10 +202,95 @@ msgctxt "w7tf2z"
 msgid "Published"
 msgstr "Publicado"
 
+#: src/lib/categories.ts
+msgctxt "djJp6c"
+msgid "History"
+msgstr "Historia"
+
+#: src/lib/categories.ts
+msgctxt "dPgwrL"
+msgid "Math"
+msgstr "Matemáticas"
+
+#: src/lib/categories.ts
+msgctxt "fFt3il"
+msgid "Arts"
+msgstr "Artes"
+
+#: src/lib/categories.ts
+msgctxt "GsBRWL"
+msgid "Languages"
+msgstr "Idiomas"
+
+#: src/lib/categories.ts
+msgctxt "hlmkcL"
+msgid "Health"
+msgstr "Salud"
+
+#: src/lib/categories.ts
+msgctxt "hwL7a0"
+msgid "Engineering"
+msgstr "Ingeniería"
+
+#: src/lib/categories.ts
+msgctxt "I1ZCPK"
+msgid "Technology"
+msgstr "Tecnología"
+
+#: src/lib/categories.ts
+msgctxt "KOuDOE"
+msgid "Economics"
+msgstr "Economía"
+
+#: src/lib/categories.ts
+msgctxt "mn6pIm"
+msgid "Culture"
+msgstr "Cultura"
+
+#: src/lib/categories.ts
+msgctxt "n5D/Ku"
+msgid "Communication"
+msgstr "Comunicación"
+
+#: src/lib/categories.ts
+msgctxt "OV/2+4"
+msgid "Society"
+msgstr "Sociedad"
+
+#: src/lib/categories.ts
+msgctxt "qydxOd"
+msgid "Science"
+msgstr "Ciencia"
+
+#: src/lib/categories.ts
+msgctxt "u3ovjm"
+msgid "Law"
+msgstr "Derecho"
+
+#: src/lib/categories.ts
+msgctxt "w1Fanr"
+msgid "Business"
+msgstr "Negocios"
+
+#: src/lib/categories.ts
+msgctxt "YMDBNH"
+msgid "Geography"
+msgstr "Geografía"
+
+#: src/lib/error-messages.ts
+msgctxt "12q6p9"
+msgid "Category not found in this course"
+msgstr "Categoría no encontrada en este curso"
+
 #: src/lib/error-messages.ts
 msgctxt "3IKub9"
 msgid "An unexpected error occurred"
 msgstr "Ocurrió un error inesperado"
+
+#: src/lib/error-messages.ts
+msgctxt "4ec6+l"
+msgid "Invalid category"
+msgstr "Categoría inválida"
 
 #: src/lib/error-messages.ts
 msgctxt "5hjDIG"
@@ -241,6 +326,11 @@ msgstr "Curso no encontrado"
 msgctxt "D8iYTy"
 msgid "Invalid file type. Please upload a JSON file"
 msgstr "Tipo de archivo inválido. Por favor sube un archivo JSON"
+
+#: src/lib/error-messages.ts
+msgctxt "EDiolw"
+msgid "This category has already been added to the course"
+msgstr "Esta categoría ya ha sido agregada al curso"
 
 #: src/lib/error-messages.ts
 msgctxt "foSzTN"
