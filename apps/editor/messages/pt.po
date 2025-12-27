@@ -15,6 +15,41 @@ msgctxt "ZFXb/x"
 msgid "Delete course?"
 msgstr "Excluir curso?"
 
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-editor.tsx
+msgctxt "2Pphvx"
+msgid "Course title…"
+msgstr "Título do curso…"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-editor.tsx
+msgctxt "BfrgHC"
+msgid "Unsaved"
+msgstr "Não salvo"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-editor.tsx
+msgctxt "Ek5KLE"
+msgid "Edit course description"
+msgstr "Editar descrição do curso"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-editor.tsx
+msgctxt "FKa6ED"
+msgid "Edit course title"
+msgstr "Editar título do curso"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-editor.tsx
+msgctxt "fsB/4p"
+msgid "Saved"
+msgstr "Salvo"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-editor.tsx
+msgctxt "RX7tLA"
+msgid "Course description…"
+msgstr "Descrição do curso…"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-editor.tsx
+msgctxt "WUV28A"
+msgid "Saving…"
+msgstr "Salvando…"
+
 #: src/app/[orgSlug]/course-list.tsx
 msgctxt "c0YWuA"
 msgid "Your organization hasn't created any courses yet."

@@ -1,36 +1,44 @@
-import {
-  Container,
-  ContainerHeader,
-  ContainerHeaderGroup,
-  ContainerTitle,
-} from "@zoonk/ui/components/container";
+import { Container } from "@zoonk/ui/components/container";
+import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import { getCourse } from "@/data/courses/get-course";
+import { CourseEditor } from "./course-editor";
+import { CourseEditorSkeleton } from "./course-editor-skeleton";
 
-async function CourseHeaderGroup({
+async function CourseContent({
   params,
 }: {
   params: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]">["params"];
 }) {
-  const { courseSlug } = await params;
+  const { courseSlug, lang, orgSlug } = await params;
+
+  const { data: course, error } = await getCourse({
+    courseSlug,
+    language: lang,
+    orgSlug,
+  });
+
+  if (error || !course) {
+    return notFound();
+  }
 
   return (
-    <ContainerHeaderGroup>
-      <ContainerTitle>{courseSlug}</ContainerTitle>
-    </ContainerHeaderGroup>
+    <CourseEditor
+      courseId={course.id}
+      initialDescription={course.description}
+      initialTitle={course.title}
+    />
   );
 }
 
-// this page is just a placeholder for now
-export default async function CoursePage({
-  params,
-}: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]">) {
+export default async function CoursePage(
+  props: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]">,
+) {
   return (
     <Container variant="narrow">
-      <ContainerHeader>
-        <Suspense>
-          <CourseHeaderGroup params={params} />
-        </Suspense>
-      </ContainerHeader>
+      <Suspense fallback={<CourseEditorSkeleton />}>
+        <CourseContent params={props.params} />
+      </Suspense>
     </Container>
   );
 }
