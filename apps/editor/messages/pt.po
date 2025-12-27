@@ -56,9 +56,21 @@ msgid "Course title…"
 msgstr "Título do curso…"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
+#: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "5CI3KH"
+msgid "Contact support"
+msgstr "Falar com o suporte"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
 msgctxt "Ek5KLE"
 msgid "Edit course description"
 msgstr "Editar descrição do curso"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
+#: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "FazwRl"
+msgid "Try again"
+msgstr "Tentar novamente"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
 msgctxt "FKa6ED"
@@ -69,6 +81,26 @@ msgstr "Editar título do curso"
 msgctxt "RX7tLA"
 msgid "Course description…"
 msgstr "Descrição do curso…"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
+msgctxt "sHQNSR"
+msgid "We couldn't load the chapters. Please try again."
+msgstr "Não conseguimos carregar os capítulos. Por favor, tente novamente."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
+msgctxt "xA68iL"
+msgid "Failed to load chapters"
+msgstr "Falha ao carregar capítulos"
+
+#: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "2VCKc7"
+msgid "We couldn't load the lessons. Please try again."
+msgstr "Não conseguimos carregar as aulas. Por favor, tente novamente."
+
+#: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "6ssHZM"
+msgid "Failed to load lessons"
+msgstr "Falha ao carregar aulas"
 
 #: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
 msgctxt "b3c9gA"

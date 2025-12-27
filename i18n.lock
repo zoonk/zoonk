@@ -11,9 +11,15 @@ checksums:
     Delete%20lesson%3F/singular: 7f0eb69c2ada091c8504e0197eae59ab
     Delete%20lesson/singular: 18309d2fe705fd2c4301224dee3be224
     Course%20title%E2%80%A6/singular: 4429de50f5f2d426271e76328c543daf
+    Contact%20support/singular: 32a4dee2033635e334a5f4d34724e3e0
     Edit%20course%20description/singular: 2304f3ceeea1faaa3a4451c8863ded3b
+    Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
     Edit%20course%20title/singular: 75b050a3ce516d55c480d633f5da502f
     Course%20description%E2%80%A6/singular: a548f00ce745044f2a2dfbe02b9a0130
+    We%20couldn't%20load%20the%20chapters.%20Please%20try%20again./singular: 2bfbac73debefc0d7a4ec5c41af9c415
+    Failed%20to%20load%20chapters/singular: a462d90fffa946fe5c2aedb6e6fff9b4
+    We%20couldn't%20load%20the%20lessons.%20Please%20try%20again./singular: f2e68b6dd4d7f2eb0c91f20ade06957d
+    Failed%20to%20load%20lessons/singular: 427523eb64ddb239d642ca975d6e1dbb
     Edit%20chapter%20description/singular: e27c305ac8ad54675309e239bccdd648
     Edit%20chapter%20title/singular: 21c04bd3ed6335df5195d1f2857131bf
     Chapter%20description%E2%80%A6/singular: d394513f90a5c9ad1880d364e8fc5cb8

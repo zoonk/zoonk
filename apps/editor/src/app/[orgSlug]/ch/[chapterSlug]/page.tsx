@@ -1,4 +1,6 @@
 import { Container } from "@zoonk/ui/components/container";
+import { ErrorView } from "@zoonk/ui/patterns/error";
+import { SUPPORT_URL } from "@zoonk/utils/constants";
 import { notFound } from "next/navigation";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -51,11 +53,24 @@ async function LessonList({
   params: PageProps<"/[orgSlug]/ch/[chapterSlug]">["params"];
 }) {
   const { chapterSlug, orgSlug } = await params;
+  const t = await getExtracted();
 
-  const { data: lessons } = await listChapterLessons({
+  const { data: lessons, error } = await listChapterLessons({
     chapterSlug,
     orgSlug,
   });
+
+  if (error) {
+    return (
+      <ErrorView
+        description={t("We couldn't load the lessons. Please try again.")}
+        retryLabel={t("Try again")}
+        supportHref={SUPPORT_URL}
+        supportLabel={t("Contact support")}
+        title={t("Failed to load lessons")}
+      />
+    );
+  }
 
   return (
     <ItemList
@@ -68,6 +83,14 @@ async function LessonList({
 export default async function ChapterPage(
   props: PageProps<"/[orgSlug]/ch/[chapterSlug]">,
 ) {
+  const { chapterSlug, orgSlug } = await props.params;
+
+  // Preload data in parallel (cached, so child components get the same promise)
+  void Promise.all([
+    getChapter({ chapterSlug, orgSlug }),
+    listChapterLessons({ chapterSlug, orgSlug }),
+  ]);
+
   return (
     <Container variant="narrow">
       <Suspense fallback={<ContentEditorSkeleton />}>
