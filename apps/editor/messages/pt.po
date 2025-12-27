@@ -5,6 +5,21 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
 
+#: src/app/[orgSlug]/_components/content-editor.tsx
+msgctxt "BfrgHC"
+msgid "Unsaved"
+msgstr "Não salvo"
+
+#: src/app/[orgSlug]/_components/content-editor.tsx
+msgctxt "fsB/4p"
+msgid "Saved"
+msgstr "Salvo"
+
+#: src/app/[orgSlug]/_components/content-editor.tsx
+msgctxt "WUV28A"
+msgid "Saving…"
+msgstr "Salvando…"
+
 #: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/page.tsx
 msgctxt "Ljsy5D"
 msgid "Delete course"
@@ -15,40 +30,65 @@ msgctxt "ZFXb/x"
 msgid "Delete course?"
 msgstr "Excluir curso?"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-editor.tsx
+#: src/app/[orgSlug]/@navbarActions/ch/[chapterSlug]/page.tsx
+msgctxt "kcCZue"
+msgid "Delete chapter"
+msgstr "Excluir capítulo"
+
+#: src/app/[orgSlug]/@navbarActions/ch/[chapterSlug]/page.tsx
+msgctxt "MXg41w"
+msgid "Delete chapter?"
+msgstr "Excluir capítulo?"
+
+#: src/app/[orgSlug]/@navbarActions/l/[lessonSlug]/page.tsx
+msgctxt "52DE8l"
+msgid "Delete lesson?"
+msgstr "Excluir aula?"
+
+#: src/app/[orgSlug]/@navbarActions/l/[lessonSlug]/page.tsx
+msgctxt "g5DE4z"
+msgid "Delete lesson"
+msgstr "Excluir aula"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
 msgctxt "2Pphvx"
 msgid "Course title…"
 msgstr "Título do curso…"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-editor.tsx
-msgctxt "BfrgHC"
-msgid "Unsaved"
-msgstr "Não salvo"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-editor.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
 msgctxt "Ek5KLE"
 msgid "Edit course description"
 msgstr "Editar descrição do curso"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-editor.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
 msgctxt "FKa6ED"
 msgid "Edit course title"
 msgstr "Editar título do curso"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-editor.tsx
-msgctxt "fsB/4p"
-msgid "Saved"
-msgstr "Salvo"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-editor.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
 msgctxt "RX7tLA"
 msgid "Course description…"
 msgstr "Descrição do curso…"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-editor.tsx
-msgctxt "WUV28A"
-msgid "Saving…"
-msgstr "Salvando…"
+#: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "b3c9gA"
+msgid "Edit chapter description"
+msgstr "Editar descrição do capítulo"
+
+#: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "fuhIMT"
+msgid "Edit chapter title"
+msgstr "Editar título do capítulo"
+
+#: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "kYfPBA"
+msgid "Chapter description…"
+msgstr "Descrição do capítulo…"
+
+#: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "yNvug5"
+msgid "Chapter title…"
+msgstr "Título do capítulo…"
 
 #: src/app/[orgSlug]/course-list.tsx
 msgctxt "c0YWuA"
@@ -59,6 +99,26 @@ msgstr "Sua organização ainda não criou nenhum curso."
 msgctxt "zJxO2f"
 msgid "No courses"
 msgstr "Sem cursos"
+
+#: src/app/[orgSlug]/l/[lessonSlug]/page.tsx
+msgctxt "AHvdBa"
+msgid "Edit lesson description"
+msgstr "Editar descrição da aula"
+
+#: src/app/[orgSlug]/l/[lessonSlug]/page.tsx
+msgctxt "AmPWks"
+msgid "Lesson description…"
+msgstr "Descrição da aula…"
+
+#: src/app/[orgSlug]/l/[lessonSlug]/page.tsx
+msgctxt "jrinBZ"
+msgid "Lesson title…"
+msgstr "Título da aula…"
+
+#: src/app/[orgSlug]/l/[lessonSlug]/page.tsx
+msgctxt "kdZUaI"
+msgid "Edit lesson title"
+msgstr "Editar título da aula"
 
 #: src/app/[orgSlug]/new-course/actions.ts
 msgctxt "bLbK+M"

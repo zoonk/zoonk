@@ -31,6 +31,7 @@
   "exports": {
     "./components/*": "./src/components/*.tsx",
     "./globals.css": "./src/styles/globals.css",
+    "./hooks/auto-save": "./src/hooks/use-auto-save.ts",
     "./hooks/clipboard": "./src/hooks/use-clipboard.ts",
     "./hooks/debounce": "./src/hooks/use-debounce.ts",
     "./hooks/keyboard": "./src/hooks/use-keyboard.ts",

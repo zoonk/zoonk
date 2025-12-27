@@ -1,17 +1,29 @@
 version: 1
 checksums:
   15ecf73e0c158929f058900aaa9b24c8:
+    Unsaved/singular: ddc9094aecf93ceabe363846756a9925
+    Saved/singular: 6554b923011266821d74e06e013a40e6
+    Saving%E2%80%A6/singular: ee98ff32f9a585a9108c8cd961d6077e
     Delete%20course/singular: 86bac6527eb0b380a3f0a5e38b6938ff
     Delete%20course%3F/singular: c83369b40aec2a0eb3cafd146d70020e
+    Delete%20chapter/singular: 17a0d21cc5650c1a8de6e918fd754a63
+    Delete%20chapter%3F/singular: 5dfc389e36ee2f05e01896b81bd59493
+    Delete%20lesson%3F/singular: 7f0eb69c2ada091c8504e0197eae59ab
+    Delete%20lesson/singular: 18309d2fe705fd2c4301224dee3be224
     Course%20title%E2%80%A6/singular: 4429de50f5f2d426271e76328c543daf
-    Unsaved/singular: ddc9094aecf93ceabe363846756a9925
     Edit%20course%20description/singular: 2304f3ceeea1faaa3a4451c8863ded3b
     Edit%20course%20title/singular: 75b050a3ce516d55c480d633f5da502f
-    Saved/singular: 6554b923011266821d74e06e013a40e6
     Course%20description%E2%80%A6/singular: a548f00ce745044f2a2dfbe02b9a0130
-    Saving%E2%80%A6/singular: ee98ff32f9a585a9108c8cd961d6077e
+    Edit%20chapter%20description/singular: e27c305ac8ad54675309e239bccdd648
+    Edit%20chapter%20title/singular: 21c04bd3ed6335df5195d1f2857131bf
+    Chapter%20description%E2%80%A6/singular: d394513f90a5c9ad1880d364e8fc5cb8
+    Chapter%20title%E2%80%A6/singular: 3ed70a2e64aefe189999ff5899e8a7a2
     Your%20organization%20hasn't%20created%20any%20courses%20yet./singular: 4c09c8406dbf7bfe159f850fc1f22b99
     No%20courses/singular: 72fc2629e79529e927834070a26d2a07
+    Edit%20lesson%20description/singular: b959f1e2fc7f00f593ae2c1a12fd330d
+    Lesson%20description%E2%80%A6/singular: 77ad5a9829eda8182865a46455d5a842
+    Lesson%20title%E2%80%A6/singular: d7b981d2734c11f2ee5d58f21c93bd3e
+    Edit%20lesson%20title/singular: 15b5a30f4a0365bae4da264383dae889
     All%20fields%20are%20required/singular: 01fe4fe061a783c06c001dd39c78053a
     Next/singular: 89ddbcf710eba274963494f312bdc8a9
     Back/singular: f541015a827e37cb3b1234e56bc2aa3c
