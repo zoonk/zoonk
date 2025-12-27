@@ -10,6 +10,7 @@ import {
   organizationFixture,
 } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
+import { ErrorCode } from "@/lib/app-error";
 import { deleteChapter } from "./delete-chapter";
 
 describe("unauthenticated users", () => {
@@ -22,7 +23,7 @@ describe("unauthenticated users", () => {
       headers: new Headers(),
     });
 
-    expect(result.error?.message).toBe("Forbidden");
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toBeNull();
 
     const unchangedChapter = await prisma.chapter.findUnique({
@@ -44,7 +45,7 @@ describe("members", () => {
       headers,
     });
 
-    expect(result.error?.message).toBe("Forbidden");
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toBeNull();
 
     const unchangedChapter = await prisma.chapter.findUnique({
@@ -66,7 +67,7 @@ describe("admins", () => {
       headers,
     });
 
-    expect(result.error?.message).toBe("Forbidden");
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toBeNull();
 
     const unchangedChapter = await prisma.chapter.findUnique({
@@ -93,7 +94,7 @@ describe("owners", () => {
       headers,
     });
 
-    expect(result.error?.message).toBe("Chapter not found");
+    expect(result.error?.message).toBe(ErrorCode.chapterNotFound);
     expect(result.data).toBeNull();
   });
 
@@ -153,7 +154,7 @@ describe("owners", () => {
       headers,
     });
 
-    expect(result.error?.message).toBe("Forbidden");
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toBeNull();
 
     const unchangedChapter = await prisma.chapter.findUnique({

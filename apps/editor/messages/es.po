@@ -5,16 +5,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
 
-#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/actions.ts
-msgctxt "a1Q/b5"
-msgid "Failed to delete course"
-msgstr "Error al eliminar curso"
-
-#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/actions.ts
-msgctxt "bQ0Gv1"
-msgid "Failed to update course"
-msgstr "Error al actualizar curso"
-
 #: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/page.tsx
 msgctxt "Ljsy5D"
 msgid "Delete course"
@@ -34,11 +24,6 @@ msgstr "Tu organización aún no ha creado ningún curso."
 msgctxt "zJxO2f"
 msgid "No courses"
 msgstr "Sin cursos"
-
-#: src/app/[orgSlug]/new-course/actions.ts
-msgctxt "/c3jWN"
-msgid "Failed to create course"
-msgstr "Error al crear curso"
 
 #: src/app/[orgSlug]/new-course/actions.ts
 msgctxt "bLbK+M"
@@ -216,3 +201,48 @@ msgstr "Borrador"
 msgctxt "w7tf2z"
 msgid "Published"
 msgstr "Publicado"
+
+#: src/lib/error-messages.ts
+msgctxt "3IKub9"
+msgid "An unexpected error occurred"
+msgstr "Ocurrió un error inesperado"
+
+#: src/lib/error-messages.ts
+msgctxt "5hjDIG"
+msgid "Chapter not found"
+msgstr "Capítulo no encontrado"
+
+#: src/lib/error-messages.ts
+msgctxt "7xD1m/"
+msgid "Chapter not found in this course"
+msgstr "Capítulo no encontrado en este curso"
+
+#: src/lib/error-messages.ts
+msgctxt "cvtZ2C"
+msgid "Course not found"
+msgstr "Curso no encontrado"
+
+#: src/lib/error-messages.ts
+msgctxt "g5WLcA"
+msgid "Please sign in to continue"
+msgstr "Por favor inicia sesión para continuar"
+
+#: src/lib/error-messages.ts
+msgctxt "gYaLKN"
+msgid "Chapter and course must belong to the same organization"
+msgstr "El capítulo y el curso deben pertenecer a la misma organización"
+
+#: src/lib/error-messages.ts
+msgctxt "ORQvOg"
+msgid "You don't have permission to perform this action"
+msgstr "No tienes permiso para realizar esta acción"
+
+#: src/lib/error-messages.ts
+msgctxt "sOXLAA"
+msgid "This chapter has already been removed"
+msgstr "Este capítulo ya ha sido eliminado"
+
+#: src/lib/error-messages.ts
+msgctxt "yVHcXv"
+msgid "Organization not found"
+msgstr "Organización no encontrada"

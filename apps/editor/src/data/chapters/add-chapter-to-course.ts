@@ -2,7 +2,8 @@ import "server-only";
 
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type CourseChapter, prisma } from "@zoonk/db";
-import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { ErrorCode } from "@/lib/app-error";
 
 export async function addChapterToCourse(params: {
   chapterId: number;
@@ -28,19 +29,17 @@ export async function addChapterToCourse(params: {
   const [course, chapter] = result;
 
   if (!course) {
-    return { data: null, error: new Error("Course not found") };
+    return { data: null, error: new AppError(ErrorCode.courseNotFound) };
   }
 
   if (!chapter) {
-    return { data: null, error: new Error("Chapter not found") };
+    return { data: null, error: new AppError(ErrorCode.chapterNotFound) };
   }
 
   if (course.organizationId !== chapter.organizationId) {
     return {
       data: null,
-      error: new Error(
-        "Chapter and course must belong to the same organization",
-      ),
+      error: new AppError(ErrorCode.orgMismatch),
     };
   }
 
@@ -51,7 +50,7 @@ export async function addChapterToCourse(params: {
   });
 
   if (!hasPermission) {
-    return { data: null, error: new Error("Forbidden") };
+    return { data: null, error: new AppError(ErrorCode.forbidden) };
   }
 
   const { data: courseChapter, error } = await safeAsync(() =>

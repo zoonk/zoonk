@@ -2,9 +2,10 @@ import "server-only";
 
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Chapter, prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
+import { AppError, safeAsync } from "@zoonk/utils/error";
 import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
+import { ErrorCode } from "@/lib/app-error";
 
 export type ChapterWithCourses = Chapter & {
   courses: { slug: string; language: string }[];
@@ -53,7 +54,7 @@ export const searchOrgChapters = cache(
     const [hasPermission, chapters] = data;
 
     if (!hasPermission) {
-      return { data: [], error: new Error("Forbidden") };
+      return { data: [], error: new AppError(ErrorCode.forbidden) };
     }
 
     const chaptersWithCourses = chapters.map(

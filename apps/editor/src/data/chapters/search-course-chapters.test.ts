@@ -9,6 +9,7 @@ import {
   organizationFixture,
 } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
+import { ErrorCode } from "@/lib/app-error";
 import { searchCourseChapters } from "./search-course-chapters";
 
 describe("unauthenticated users", () => {
@@ -24,7 +25,7 @@ describe("unauthenticated users", () => {
       title: "test",
     });
 
-    expect(result.error?.message).toBe("Forbidden");
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toEqual([]);
   });
 });
@@ -46,7 +47,7 @@ describe("members", () => {
       title: "test",
     });
 
-    expect(result.error?.message).toBe("Forbidden");
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toEqual([]);
   });
 });
@@ -154,7 +155,7 @@ describe("admins", () => {
       title: "test",
     });
 
-    expect(result.error?.message).toBe("Forbidden");
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toEqual([]);
   });
 

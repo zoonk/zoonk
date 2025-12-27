@@ -2,7 +2,8 @@ import "server-only";
 
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Chapter, prisma } from "@zoonk/db";
-import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { ErrorCode } from "@/lib/app-error";
 
 export async function deleteChapter(params: {
   chapterId: number;
@@ -19,7 +20,7 @@ export async function deleteChapter(params: {
   }
 
   if (!chapter) {
-    return { data: null, error: new Error("Chapter not found") };
+    return { data: null, error: new AppError(ErrorCode.chapterNotFound) };
   }
 
   const hasPermission = await hasCoursePermission({
@@ -29,7 +30,7 @@ export async function deleteChapter(params: {
   });
 
   if (!hasPermission) {
-    return { data: null, error: new Error("Forbidden") };
+    return { data: null, error: new AppError(ErrorCode.forbidden) };
   }
 
   const { error } = await safeAsync(() =>

@@ -5,6 +5,7 @@ import {
   organizationFixture,
 } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
+import { ErrorCode } from "@/lib/app-error";
 import { toggleChapterPublished } from "./publish-chapter";
 
 describe("unauthenticated users", () => {
@@ -18,7 +19,7 @@ describe("unauthenticated users", () => {
       isPublished: true,
     });
 
-    expect(result.error?.message).toBe("Forbidden");
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toBeNull();
   });
 });
@@ -38,7 +39,7 @@ describe("members", () => {
       isPublished: true,
     });
 
-    expect(result.error?.message).toBe("Forbidden");
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toBeNull();
   });
 });
@@ -92,7 +93,7 @@ describe("admins", () => {
       isPublished: true,
     });
 
-    expect(result.error?.message).toBe("Chapter not found");
+    expect(result.error?.message).toBe(ErrorCode.chapterNotFound);
     expect(result.data).toBeNull();
   });
 
@@ -106,7 +107,7 @@ describe("admins", () => {
       isPublished: true,
     });
 
-    expect(result.error?.message).toBe("Forbidden");
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toBeNull();
   });
 });

@@ -5,16 +5,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
 
-#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/actions.ts
-msgctxt "a1Q/b5"
-msgid "Failed to delete course"
-msgstr "Falha ao excluir curso"
-
-#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/actions.ts
-msgctxt "bQ0Gv1"
-msgid "Failed to update course"
-msgstr "Falha ao atualizar curso"
-
 #: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/page.tsx
 msgctxt "Ljsy5D"
 msgid "Delete course"
@@ -34,11 +24,6 @@ msgstr "Sua organização ainda não criou nenhum curso."
 msgctxt "zJxO2f"
 msgid "No courses"
 msgstr "Sem cursos"
-
-#: src/app/[orgSlug]/new-course/actions.ts
-msgctxt "/c3jWN"
-msgid "Failed to create course"
-msgstr "Falha ao criar curso"
 
 #: src/app/[orgSlug]/new-course/actions.ts
 msgctxt "bLbK+M"
@@ -216,3 +201,48 @@ msgstr "Rascunho"
 msgctxt "w7tf2z"
 msgid "Published"
 msgstr "Publicado"
+
+#: src/lib/error-messages.ts
+msgctxt "3IKub9"
+msgid "An unexpected error occurred"
+msgstr "Ocorreu um erro inesperado"
+
+#: src/lib/error-messages.ts
+msgctxt "5hjDIG"
+msgid "Chapter not found"
+msgstr "Capítulo não encontrado"
+
+#: src/lib/error-messages.ts
+msgctxt "7xD1m/"
+msgid "Chapter not found in this course"
+msgstr "Capítulo não encontrado neste curso"
+
+#: src/lib/error-messages.ts
+msgctxt "cvtZ2C"
+msgid "Course not found"
+msgstr "Curso não encontrado"
+
+#: src/lib/error-messages.ts
+msgctxt "g5WLcA"
+msgid "Please sign in to continue"
+msgstr "Faça login para continuar"
+
+#: src/lib/error-messages.ts
+msgctxt "gYaLKN"
+msgid "Chapter and course must belong to the same organization"
+msgstr "Capítulo e curso devem pertencer à mesma organização"
+
+#: src/lib/error-messages.ts
+msgctxt "ORQvOg"
+msgid "You don't have permission to perform this action"
+msgstr "Você não tem permissão para realizar esta ação"
+
+#: src/lib/error-messages.ts
+msgctxt "sOXLAA"
+msgid "This chapter has already been removed"
+msgstr "Este capítulo já foi removido"
+
+#: src/lib/error-messages.ts
+msgctxt "yVHcXv"
+msgid "Organization not found"
+msgstr "Organização não encontrada"

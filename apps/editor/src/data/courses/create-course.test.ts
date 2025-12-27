@@ -5,6 +5,7 @@ import {
   organizationFixture,
 } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
+import { ErrorCode } from "@/lib/app-error";
 import { createCourse } from "./create-course";
 
 describe("unauthenticated users", () => {
@@ -17,7 +18,7 @@ describe("unauthenticated users", () => {
       orgSlug: organization.slug,
     });
 
-    expect(result.error?.message).toBe("Unauthorized");
+    expect(result.error?.message).toBe(ErrorCode.unauthorized);
     expect(result.data).toBeNull();
   });
 });
@@ -33,7 +34,7 @@ describe("members", () => {
       orgSlug: organization.slug,
     });
 
-    expect(result.error?.message).toBe("Forbidden");
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toBeNull();
   });
 });
@@ -100,7 +101,7 @@ describe("admins", () => {
       orgSlug: "non-existent-org",
     });
 
-    expect(result.error?.message).toBe("Organization not found");
+    expect(result.error?.message).toBe(ErrorCode.organizationNotFound);
     expect(result.data).toBeNull();
   });
 
@@ -113,7 +114,7 @@ describe("admins", () => {
       orgSlug: otherOrg.slug,
     });
 
-    expect(result.error?.message).toBe("Forbidden");
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toBeNull();
   });
 

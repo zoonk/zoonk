@@ -8,6 +8,7 @@ import { after } from "next/server";
 import { getExtracted } from "next-intl/server";
 import { courseSlugExists } from "@/data/courses/course-slug";
 import { createCourse } from "@/data/courses/create-course";
+import { getErrorMessage } from "@/lib/error-messages";
 import type { CourseFormData } from "./use-course-form";
 
 export async function checkSlugExists({
@@ -50,7 +51,7 @@ export async function createCourseAction(
   });
 
   if (error || !course) {
-    return { error: error?.message ?? t("Failed to create course") };
+    return { error: await getErrorMessage(error) };
   }
 
   after(async () => {

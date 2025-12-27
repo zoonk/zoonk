@@ -1,8 +1,6 @@
 version: 1
 checksums:
   15ecf73e0c158929f058900aaa9b24c8:
-    Failed%20to%20delete%20course/singular: 40eb04056db95afb58bb54cd93143fc2
-    Failed%20to%20update%20course/singular: aff5796b28d794daea6d91b062514f6d
     Delete%20course/singular: 86bac6527eb0b380a3f0a5e38b6938ff
     Delete%20course%3F/singular: c83369b40aec2a0eb3cafd146d70020e
     Your%20organization%20hasn't%20created%20any%20courses%20yet./singular: 4c09c8406dbf7bfe159f850fc1f22b99
@@ -43,6 +41,15 @@ checksums:
     No%20other%20organizations/singular: e9de48fc34aa9de5d30e3eb8eed79ed1
     Draft/singular: e8a92958ad300aacfe46c2bf6644927e
     Published/singular: ad5e035c44f71ed32d41e47c7643f32f
+    An%20unexpected%20error%20occurred/singular: fe07b9cdb1fc3f7397f6d89c102c60af
+    Chapter%20not%20found/singular: 72d4a8758136678acbae0ec942227f7e
+    Chapter%20not%20found%20in%20this%20course/singular: d81e3e6176f913514f413784a8e881e3
+    Course%20not%20found/singular: 679d024095e9e605246a1928a7e1d87b
+    Please%20sign%20in%20to%20continue/singular: 051e59dd3d3b0bfad95982f982fd6b9d
+    Chapter%20and%20course%20must%20belong%20to%20the%20same%20organization/singular: f3c132074516ccc5cad52c88c86d440d
+    You%20don't%20have%20permission%20to%20perform%20this%20action/singular: b99aa4dbc03b5e9b7bf6c64b245a9ab8
+    This%20chapter%20has%20already%20been%20removed/singular: b5afad30e3174c18d5aa887a3143397f
+    Organization%20not%20found/singular: 4cb8c07ec2c599b6f48750e06ffa182b
   9270df1bc9e10fdb8026bb4ab67061d4:
     Home%20page/singular: aa72464a366b091aa6f2037ca869c09c
     Or/singular: 98639bcbc7b4889bae62ad0ebde740e1

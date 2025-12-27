@@ -10,6 +10,7 @@ import {
   organizationFixture,
 } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
+import { ErrorCode } from "@/lib/app-error";
 import { addChapterToCourse } from "./add-chapter-to-course";
 
 describe("unauthenticated users", () => {
@@ -28,7 +29,7 @@ describe("unauthenticated users", () => {
       position: 0,
     });
 
-    expect(result.error?.message).toBe("Forbidden");
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toBeNull();
   });
 });
@@ -50,7 +51,7 @@ describe("members", () => {
       position: 0,
     });
 
-    expect(result.error?.message).toBe("Forbidden");
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toBeNull();
   });
 });
@@ -157,7 +158,7 @@ describe("admins", () => {
       position: 0,
     });
 
-    expect(result.error?.message).toBe("Course not found");
+    expect(result.error?.message).toBe(ErrorCode.courseNotFound);
     expect(result.data).toBeNull();
   });
 
@@ -171,7 +172,7 @@ describe("admins", () => {
       position: 0,
     });
 
-    expect(result.error?.message).toBe("Chapter not found");
+    expect(result.error?.message).toBe(ErrorCode.chapterNotFound);
     expect(result.data).toBeNull();
   });
 
@@ -190,9 +191,7 @@ describe("admins", () => {
       position: 0,
     });
 
-    expect(result.error?.message).toBe(
-      "Chapter and course must belong to the same organization",
-    );
+    expect(result.error?.message).toBe(ErrorCode.orgMismatch);
 
     expect(result.data).toBeNull();
   });
@@ -212,7 +211,7 @@ describe("admins", () => {
       position: 0,
     });
 
-    expect(result.error?.message).toBe("Forbidden");
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toBeNull();
   });
 

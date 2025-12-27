@@ -2,9 +2,10 @@ import "server-only";
 
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
+import { AppError, safeAsync } from "@zoonk/utils/error";
 import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
+import { ErrorCode } from "@/lib/app-error";
 import type { ChapterWithPosition } from "./list-course-chapters";
 
 export const searchCourseChapters = cache(
@@ -52,7 +53,7 @@ export const searchCourseChapters = cache(
     const [hasPermission, courseChapters] = data;
 
     if (!hasPermission) {
-      return { data: [], error: new Error("Forbidden") };
+      return { data: [], error: new AppError(ErrorCode.forbidden) };
     }
 
     const chapters = courseChapters.map((cc) => ({

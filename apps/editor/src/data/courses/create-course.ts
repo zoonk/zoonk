@@ -4,8 +4,9 @@ import { getOrganization } from "@zoonk/core/orgs/get";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { getSession } from "@zoonk/core/users/session/get";
 import { type Course, prisma } from "@zoonk/db";
-import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
+import { ErrorCode } from "@/lib/app-error";
 
 export async function createCourse(params: {
   description: string;
@@ -18,13 +19,16 @@ export async function createCourse(params: {
   const session = await getSession({ headers: params.headers });
 
   if (!session) {
-    return { data: null, error: new Error("Unauthorized") };
+    return { data: null, error: new AppError(ErrorCode.unauthorized) };
   }
 
   const { data: org } = await getOrganization(params.orgSlug);
 
   if (!org) {
-    return { data: null, error: new Error("Organization not found") };
+    return {
+      data: null,
+      error: new AppError(ErrorCode.organizationNotFound),
+    };
   }
 
   const hasPermission = await hasCoursePermission({
@@ -34,7 +38,7 @@ export async function createCourse(params: {
   });
 
   if (!hasPermission) {
-    return { data: null, error: new Error("Forbidden") };
+    return { data: null, error: new AppError(ErrorCode.forbidden) };
   }
 
   const courseSlug = toSlug(params.slug);

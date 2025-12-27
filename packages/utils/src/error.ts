@@ -1,6 +1,24 @@
 export const PERMISSION_ERROR_CODE = 403;
 
+export class AppError<T extends string = string> extends Error {
+  readonly code: T;
+
+  constructor(code: T) {
+    super(code);
+    this.code = code;
+    this.name = "AppError";
+  }
+}
+
+export function isAppError(error: unknown): error is AppError {
+  return error instanceof AppError;
+}
+
 export function toError(error: unknown): Error {
+  if (isAppError(error)) {
+    return error;
+  }
+
   if (error instanceof Error) {
     return error;
   }
