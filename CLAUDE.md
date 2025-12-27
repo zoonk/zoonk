@@ -191,6 +191,33 @@ For example:
 
 Avoid using `use cache` by default unless we know the page can be static. Plus, you can't use `use cache` with `searchParams`, `cookies()`, or `headers()`.
 
+### Preloading Data in Parallel
+
+When a page has multiple async components that fetch data, preload them in parallel at the page level using `Promise.all`. Since data fetching functions use React's `cache`, child components will reuse the same cached promise:
+
+```tsx
+export default async function SomePage(props: PageProps<"/some-route">) {
+  const { slug } = await props.params;
+
+  // Preload data in parallel (cached, so child components get the same promise)
+  void Promise.all([getMainData({ slug }), getRelatedItems({ slug })]);
+
+  return (
+    <Container>
+      <Suspense fallback={<MainContentSkeleton />}>
+        <MainContent params={props.params} />
+      </Suspense>
+
+      <Suspense fallback={<ItemListSkeleton />}>
+        <RelatedItemList params={props.params} />
+      </Suspense>
+    </Container>
+  );
+}
+```
+
+Use `void` to explicitly indicate the promise result is intentionally unused (avoids linter warnings about floating promises).
+
 Use the `nextjs_docs` tool for searching the Next.js documentation when you have doubts about how to implement something.
 
 ## Links

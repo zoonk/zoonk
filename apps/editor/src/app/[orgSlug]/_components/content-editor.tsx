@@ -12,19 +12,38 @@ import {
   combineSaveStatuses,
   SaveStatus,
 } from "@zoonk/ui/components/save-status";
+import { useAutoSave } from "@zoonk/ui/hooks/auto-save";
 import { useExtracted } from "next-intl";
-import { updateCourseAction } from "./actions";
-import { useAutoSave } from "./use-auto-save";
 
-export function CourseEditor({
-  courseId,
-  initialTitle,
-  initialDescription,
-}: {
-  courseId: number;
+type ContentEditorProps = {
+  entityId: number;
   initialTitle: string;
   initialDescription: string;
-}) {
+  onSaveTitle: (
+    id: number,
+    data: { title: string },
+  ) => Promise<{ error: string | null }>;
+  onSaveDescription: (
+    id: number,
+    data: { description: string },
+  ) => Promise<{ error: string | null }>;
+  titlePlaceholder: string;
+  descriptionPlaceholder: string;
+  titleLabel: string;
+  descriptionLabel: string;
+};
+
+export function ContentEditor({
+  entityId,
+  initialTitle,
+  initialDescription,
+  onSaveTitle,
+  onSaveDescription,
+  titlePlaceholder,
+  descriptionPlaceholder,
+  titleLabel,
+  descriptionLabel,
+}: ContentEditorProps) {
   const t = useExtracted();
 
   const {
@@ -33,7 +52,7 @@ export function CourseEditor({
     setValue: setTitle,
   } = useAutoSave({
     initialValue: initialTitle,
-    onSave: (value) => updateCourseAction(courseId, { title: value }),
+    onSave: (value) => onSaveTitle(entityId, { title: value }),
   });
 
   const {
@@ -42,7 +61,7 @@ export function CourseEditor({
     setValue: setDescription,
   } = useAutoSave({
     initialValue: initialDescription,
-    onSave: (value) => updateCourseAction(courseId, { description: value }),
+    onSave: (value) => onSaveDescription(entityId, { description: value }),
   });
 
   const overallStatus = combineSaveStatuses(titleStatus, descriptionStatus);
@@ -51,17 +70,17 @@ export function CourseEditor({
     <ContainerHeader className="relative">
       <ContainerHeaderGroup className="flex-1">
         <EditableText
-          aria-label={t("Edit course title")}
+          aria-label={titleLabel}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder={t("Course title…")}
+          placeholder={titlePlaceholder}
           value={title}
           variant="title"
         />
 
         <EditableTextarea
-          aria-label={t("Edit course description")}
+          aria-label={descriptionLabel}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder={t("Course description…")}
+          placeholder={descriptionPlaceholder}
           value={description}
           variant="description"
         />

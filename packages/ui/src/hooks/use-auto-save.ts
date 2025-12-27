@@ -1,9 +1,9 @@
 "use client";
 
-import type { SaveStatusType } from "@zoonk/ui/components/save-status";
-import { toast } from "@zoonk/ui/components/sonner";
-import { useDebounce } from "@zoonk/ui/hooks/debounce";
 import { useEffect, useRef, useState } from "react";
+import type { SaveStatusType } from "../components/save-status";
+import { toast } from "../components/sonner";
+import { useDebounce } from "./use-debounce";
 
 const AUTO_SAVE_DEBOUNCE_MS = 500;
 const SAVED_VISIBLE_DURATION_MS = 2500;
