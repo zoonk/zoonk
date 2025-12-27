@@ -4,10 +4,16 @@
     "@zoonk/db": "workspace:*",
     "@zoonk/utils": "workspace:*"
   },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "^5"
+  },
   "exports": {
     "./fixtures/auth": "./src/fixtures/auth.ts",
     "./fixtures/chapters": "./src/fixtures/chapters.ts",
     "./fixtures/courses": "./src/fixtures/courses.ts",
+    "./fixtures/lessons": "./src/fixtures/lessons.ts",
     "./fixtures/orgs": "./src/fixtures/orgs.ts",
     "./fixtures/users": "./src/fixtures/users.ts"
   },

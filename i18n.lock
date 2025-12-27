@@ -44,12 +44,16 @@ checksums:
     Chapter%20not%20found/singular: 72d4a8758136678acbae0ec942227f7e
     Chapter%20not%20found%20in%20this%20course/singular: d81e3e6176f913514f413784a8e881e3
     Invalid%20chapter%20format.%20Each%20chapter%20must%20have%20a%20title%20and%20description/singular: 6c9dc938c75674b73b61177b55cce86d
+    Lesson%20not%20found/singular: 41c0c0e96242a28b4d90a84b3bf80e94
     Invalid%20format.%20Please%20provide%20an%20array%20of%20non-empty%20strings/singular: c9dbc954cf099eedbb573d647356f52e
     Course%20not%20found/singular: 679d024095e9e605246a1928a7e1d87b
     Invalid%20file%20type.%20Please%20upload%20a%20JSON%20file/singular: 9164c5c1930e61a6037fab99386c02f6
+    Lesson%20not%20found%20in%20this%20chapter/singular: 2697f3d918027ce266c25004b71a51d9
     Please%20sign%20in%20to%20continue/singular: 051e59dd3d3b0bfad95982f982fd6b9d
     Chapter%20and%20course%20must%20belong%20to%20the%20same%20organization/singular: f3c132074516ccc5cad52c88c86d440d
+    Invalid%20lesson%20format.%20Each%20lesson%20must%20have%20a%20title%20and%20description/singular: e449a82367ccec6680313c4711549e2e
     You%20don't%20have%20permission%20to%20perform%20this%20action/singular: b99aa4dbc03b5e9b7bf6c64b245a9ab8
+    This%20lesson%20has%20already%20been%20removed/singular: f2630463c13ad524f0cd9378a9c39b06
     This%20chapter%20has%20already%20been%20removed/singular: b5afad30e3174c18d5aa887a3143397f
     File%20is%20too%20large.%20Maximum%20size%20is%205MB/singular: 6ee737426f04528c60f84ba1004542b3
     Invalid%20JSON%20format.%20Please%20check%20your%20file/singular: 2a890d833f49aa36f02433476ca33468
