@@ -766,4 +766,77 @@ describe("admins", () => {
       expect(result.data).toHaveLength(1);
     });
   });
+
+  describe("isPublished behavior", () => {
+    test("imported chapters are published when course is unpublished", async () => {
+      const unpublishedCourse = await courseFixture({
+        isPublished: false,
+        organizationId: organization.id,
+      });
+
+      const file = createImportFile([
+        { description: "Desc", title: "Test Chapter" },
+      ]);
+
+      const result = await importChapters({
+        courseId: unpublishedCourse.id,
+        file,
+        headers,
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data?.[0]?.chapter.isPublished).toBe(true);
+    });
+
+    test("imported chapters are unpublished when course is published", async () => {
+      const publishedCourse = await courseFixture({
+        isPublished: true,
+        organizationId: organization.id,
+      });
+
+      const file = createImportFile([
+        { description: "Desc", title: "Test Chapter" },
+      ]);
+
+      const result = await importChapters({
+        courseId: publishedCourse.id,
+        file,
+        headers,
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data?.[0]?.chapter.isPublished).toBe(false);
+    });
+
+    test("existing chapter becomes published when imported to unpublished course", async () => {
+      const unpublishedCourse = await courseFixture({
+        isPublished: false,
+        organizationId: organization.id,
+      });
+
+      const existingChapter = await chapterFixture({
+        isPublished: false,
+        organizationId: organization.id,
+        slug: "existing-slug",
+      });
+
+      const file = createImportFile([
+        { description: "Desc", slug: "existing-slug", title: "Test" },
+      ]);
+
+      const result = await importChapters({
+        courseId: unpublishedCourse.id,
+        file,
+        headers,
+      });
+
+      expect(result.error).toBeNull();
+
+      const updatedChapter = await prisma.chapter.findUnique({
+        where: { id: existingChapter.id },
+      });
+
+      expect(updatedChapter?.isPublished).toBe(true);
+    });
+  });
 });

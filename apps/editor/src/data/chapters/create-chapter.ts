@@ -54,6 +54,7 @@ export async function createChapter(params: {
       const chapter = await tx.chapter.create({
         data: {
           description: params.description,
+          isPublished: !course.isPublished,
           normalizedTitle,
           organizationId: course.organizationId,
           slug: chapterSlug,

@@ -364,4 +364,40 @@ describe("admins", () => {
     const sortedPositions = [...positions].sort((a, b) => a - b);
     expect(sortedPositions).toEqual([0, 1, 2, 3, 4]);
   });
+
+  describe("isPublished behavior", () => {
+    test("lesson is published when chapter is unpublished", async () => {
+      const unpublishedChapter = await chapterFixture({
+        isPublished: false,
+        organizationId: organization.id,
+      });
+
+      const result = await createLesson({
+        ...lessonAttrs(),
+        chapterId: unpublishedChapter.id,
+        headers,
+        position: 0,
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data?.lesson.isPublished).toBe(true);
+    });
+
+    test("lesson is unpublished when chapter is published", async () => {
+      const publishedChapter = await chapterFixture({
+        isPublished: true,
+        organizationId: organization.id,
+      });
+
+      const result = await createLesson({
+        ...lessonAttrs(),
+        chapterId: publishedChapter.id,
+        headers,
+        position: 0,
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data?.lesson.isPublished).toBe(false);
+    });
+  });
 });

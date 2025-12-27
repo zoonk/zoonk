@@ -66,6 +66,13 @@ export async function addChapterToCourse(params: {
         },
       });
 
+      if (!course.isPublished) {
+        await tx.chapter.update({
+          data: { isPublished: true },
+          where: { id: params.chapterId },
+        });
+      }
+
       return tx.courseChapter.create({
         data: {
           chapterId: params.chapterId,

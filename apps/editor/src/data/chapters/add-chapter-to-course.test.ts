@@ -397,4 +397,60 @@ describe("admins", () => {
     const sortedPositions = [...positions].sort((a, b) => a - b);
     expect(sortedPositions).toEqual([0, 1, 2, 3, 4]);
   });
+
+  describe("isPublished behavior", () => {
+    test("chapter becomes published when added to unpublished course", async () => {
+      const unpublishedCourse = await courseFixture({
+        isPublished: false,
+        organizationId: organization.id,
+      });
+
+      const unpublishedChapter = await chapterFixture({
+        isPublished: false,
+        organizationId: organization.id,
+      });
+
+      const result = await addChapterToCourse({
+        chapterId: unpublishedChapter.id,
+        courseId: unpublishedCourse.id,
+        headers,
+        position: 0,
+      });
+
+      expect(result.error).toBeNull();
+
+      const updatedChapter = await prisma.chapter.findUnique({
+        where: { id: unpublishedChapter.id },
+      });
+
+      expect(updatedChapter?.isPublished).toBe(true);
+    });
+
+    test("chapter remains unpublished when added to published course", async () => {
+      const publishedCourse = await courseFixture({
+        isPublished: true,
+        organizationId: organization.id,
+      });
+
+      const unpublishedChapter = await chapterFixture({
+        isPublished: false,
+        organizationId: organization.id,
+      });
+
+      const result = await addChapterToCourse({
+        chapterId: unpublishedChapter.id,
+        courseId: publishedCourse.id,
+        headers,
+        position: 0,
+      });
+
+      expect(result.error).toBeNull();
+
+      const updatedChapter = await prisma.chapter.findUnique({
+        where: { id: unpublishedChapter.id },
+      });
+
+      expect(updatedChapter?.isPublished).toBe(false);
+    });
+  });
 });

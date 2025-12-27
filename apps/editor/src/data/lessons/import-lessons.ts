@@ -203,7 +203,14 @@ export async function importLessons(params: {
         let lesson: Lesson;
 
         if (item.hasExplicitSlug && existingLesson) {
-          lesson = existingLesson;
+          if (chapter.isPublished || existingLesson.isPublished) {
+            lesson = existingLesson;
+          } else {
+            lesson = await tx.lesson.update({
+              data: { isPublished: true },
+              where: { id: existingLesson.id },
+            });
+          }
         } else {
           const uniqueSlug =
             !item.hasExplicitSlug && existingLesson
@@ -213,6 +220,7 @@ export async function importLessons(params: {
           lesson = await tx.lesson.create({
             data: {
               description: item.lessonData.description,
+              isPublished: !chapter.isPublished,
               normalizedTitle: item.normalizedTitle,
               organizationId: chapter.organizationId,
               slug: uniqueSlug,
