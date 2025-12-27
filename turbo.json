@@ -33,7 +33,7 @@
     "//#lint": {},
     "build": {
       "cache": false,
-      "dependsOn": ["^db:generate", "^build", "^db:deploy"],
+      "dependsOn": ["^db:generate", "^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
