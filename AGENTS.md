@@ -10,6 +10,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - [Project structure](#project-structure)
 - [Tools](#tools)
 - [Conventions](#conventions)
+- [i18n](#i18n)
 - [CSS](#css)
 - [Icons](#icons)
 - [Cache Components](#cache-components)
@@ -138,9 +139,15 @@ All packages should follow a consistent structure:
 - Use `safeAsync` when using `await` to better handle errors
 - When creating a skeleton, use the `Skeleton` component from `@zoonk/ui/components/skeleton`
 - Always build skeleton components when using `Suspense` for loading states
-- For apps using `next-intl`, use `getExtracted` or `useExtracted`. This will extract the translations to PO files when we run `pnpm build`
 - Don't add comments to a component's props
 - Pass types directly to the component declaration instead of using `type` since those types won't be exported/reused
+
+## i18n
+
+- When updating `app-error.ts` files also update `error-messages.ts` to include the new error code and run `pnpm build` to update PO files
+- For apps using `next-intl`, use `getExtracted` or `useExtracted`. This will extract the translations to PO files when we run `pnpm build`
+- You can't pass the `t` function from `getExtracted` or `useExtracted` to other functions or components. Instead, call it directly in the component or function
+- Whenever using `getExtracted` or `useExtracted`, run `pnpm build` to update PO files
 
 ## CSS
 

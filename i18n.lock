@@ -5,7 +5,6 @@ checksums:
     Delete%20course%3F/singular: c83369b40aec2a0eb3cafd146d70020e
     Your%20organization%20hasn't%20created%20any%20courses%20yet./singular: 4c09c8406dbf7bfe159f850fc1f22b99
     No%20courses/singular: 72fc2629e79529e927834070a26d2a07
-    Failed%20to%20create%20course/singular: b8071fa167001a6e20c46226759400d9
     All%20fields%20are%20required/singular: 01fe4fe061a783c06c001dd39c78053a
     Next/singular: 89ddbcf710eba274963494f312bdc8a9
     Back/singular: f541015a827e37cb3b1234e56bc2aa3c
@@ -44,11 +43,15 @@ checksums:
     An%20unexpected%20error%20occurred/singular: fe07b9cdb1fc3f7397f6d89c102c60af
     Chapter%20not%20found/singular: 72d4a8758136678acbae0ec942227f7e
     Chapter%20not%20found%20in%20this%20course/singular: d81e3e6176f913514f413784a8e881e3
+    Invalid%20chapter%20format.%20Each%20chapter%20must%20have%20a%20title%20and%20description/singular: 6c9dc938c75674b73b61177b55cce86d
     Course%20not%20found/singular: 679d024095e9e605246a1928a7e1d87b
+    Invalid%20file%20type.%20Please%20upload%20a%20JSON%20file/singular: 9164c5c1930e61a6037fab99386c02f6
     Please%20sign%20in%20to%20continue/singular: 051e59dd3d3b0bfad95982f982fd6b9d
     Chapter%20and%20course%20must%20belong%20to%20the%20same%20organization/singular: f3c132074516ccc5cad52c88c86d440d
     You%20don't%20have%20permission%20to%20perform%20this%20action/singular: b99aa4dbc03b5e9b7bf6c64b245a9ab8
     This%20chapter%20has%20already%20been%20removed/singular: b5afad30e3174c18d5aa887a3143397f
+    File%20is%20too%20large.%20Maximum%20size%20is%205MB/singular: 6ee737426f04528c60f84ba1004542b3
+    Invalid%20JSON%20format.%20Please%20check%20your%20file/singular: 2a890d833f49aa36f02433476ca33468
     Organization%20not%20found/singular: 4cb8c07ec2c599b6f48750e06ffa182b
   9270df1bc9e10fdb8026bb4ab67061d4:
     Home%20page/singular: aa72464a366b091aa6f2037ca869c09c
