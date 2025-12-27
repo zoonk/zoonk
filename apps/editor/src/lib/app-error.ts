@@ -5,6 +5,7 @@ export const ErrorCode = {
   courseNotFound: "courseNotFound",
   fileTooLarge: "fileTooLarge",
   forbidden: "forbidden",
+  invalidAlternativeTitleFormat: "invalidAlternativeTitleFormat",
   invalidChapterFormat: "invalidChapterFormat",
   invalidFileType: "invalidFileType",
   invalidJsonFormat: "invalidJsonFormat",

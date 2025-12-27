@@ -46,6 +46,10 @@ export async function getErrorMessage(error: Error): Promise<string> {
         return t(
           "Invalid chapter format. Each chapter must have a title and description",
         );
+      case ErrorCode.invalidAlternativeTitleFormat:
+        return t(
+          "Invalid format. Please provide an array of non-empty strings",
+        );
       default:
         return assertNever(error.code);
     }

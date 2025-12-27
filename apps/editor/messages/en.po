@@ -223,6 +223,11 @@ msgid "Invalid chapter format. Each chapter must have a title and description"
 msgstr "Invalid chapter format. Each chapter must have a title and description"
 
 #: src/lib/error-messages.ts
+msgctxt "c3FYXv"
+msgid "Invalid format. Please provide an array of non-empty strings"
+msgstr "Invalid format. Please provide an array of non-empty strings"
+
+#: src/lib/error-messages.ts
 msgctxt "cvtZ2C"
 msgid "Course not found"
 msgstr "Course not found"
