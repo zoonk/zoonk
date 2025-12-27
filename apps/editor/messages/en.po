@@ -218,9 +218,19 @@ msgid "Chapter not found in this course"
 msgstr "Chapter not found in this course"
 
 #: src/lib/error-messages.ts
+msgctxt "96w/uD"
+msgid "Invalid chapter format. Each chapter must have a title and description"
+msgstr "Invalid chapter format. Each chapter must have a title and description"
+
+#: src/lib/error-messages.ts
 msgctxt "cvtZ2C"
 msgid "Course not found"
 msgstr "Course not found"
+
+#: src/lib/error-messages.ts
+msgctxt "D8iYTy"
+msgid "Invalid file type. Please upload a JSON file"
+msgstr "Invalid file type. Please upload a JSON file"
 
 #: src/lib/error-messages.ts
 msgctxt "g5WLcA"
@@ -241,6 +251,16 @@ msgstr "You don't have permission to perform this action"
 msgctxt "sOXLAA"
 msgid "This chapter has already been removed"
 msgstr "This chapter has already been removed"
+
+#: src/lib/error-messages.ts
+msgctxt "UDTehx"
+msgid "File is too large. Maximum size is 5MB"
+msgstr "File is too large. Maximum size is 5MB"
+
+#: src/lib/error-messages.ts
+msgctxt "VYO3DG"
+msgid "Invalid JSON format. Please check your file"
+msgstr "Invalid JSON format. Please check your file"
 
 #: src/lib/error-messages.ts
 msgctxt "yVHcXv"

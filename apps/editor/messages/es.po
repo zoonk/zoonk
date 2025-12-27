@@ -218,9 +218,19 @@ msgid "Chapter not found in this course"
 msgstr "Capítulo no encontrado en este curso"
 
 #: src/lib/error-messages.ts
+msgctxt "96w/uD"
+msgid "Invalid chapter format. Each chapter must have a title and description"
+msgstr "Formato de capítulo inválido. Cada capítulo debe tener un título y una descripción"
+
+#: src/lib/error-messages.ts
 msgctxt "cvtZ2C"
 msgid "Course not found"
 msgstr "Curso no encontrado"
+
+#: src/lib/error-messages.ts
+msgctxt "D8iYTy"
+msgid "Invalid file type. Please upload a JSON file"
+msgstr "Tipo de archivo inválido. Por favor sube un archivo JSON"
 
 #: src/lib/error-messages.ts
 msgctxt "g5WLcA"
@@ -241,6 +251,16 @@ msgstr "No tienes permiso para realizar esta acción"
 msgctxt "sOXLAA"
 msgid "This chapter has already been removed"
 msgstr "Este capítulo ya ha sido eliminado"
+
+#: src/lib/error-messages.ts
+msgctxt "UDTehx"
+msgid "File is too large. Maximum size is 5MB"
+msgstr "El archivo es demasiado grande. El tamaño máximo es 5MB"
+
+#: src/lib/error-messages.ts
+msgctxt "VYO3DG"
+msgid "Invalid JSON format. Please check your file"
+msgstr "Formato JSON inválido. Por favor revisa tu archivo"
 
 #: src/lib/error-messages.ts
 msgctxt "yVHcXv"
