@@ -7,6 +7,7 @@ export type { CoursePermission, UserWithRole } from "@zoonk/auth/types";
 export type {
   Account,
   Course,
+  CourseAlternativeTitle,
   CourseSuggestion,
   Invitation,
   Member,

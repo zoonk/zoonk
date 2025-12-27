@@ -1,11 +1,5 @@
+import { normalizeString } from "@zoonk/utils/string";
 import type { Organization, PrismaClient } from "../../generated/prisma/client";
-
-function normalizeForSearch(text: string): string {
-  return text
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase();
-}
 
 type ChapterSeedData = {
   description: string;
@@ -125,7 +119,7 @@ async function seedChaptersForLanguage(
       create: {
         description: chapterData.description,
         isPublished: chapterData.isPublished,
-        normalizedTitle: normalizeForSearch(chapterData.title),
+        normalizedTitle: normalizeString(chapterData.title),
         organizationId: org.id,
         slug: chapterData.slug,
         title: chapterData.title,

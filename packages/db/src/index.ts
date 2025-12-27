@@ -19,6 +19,7 @@ export type {
   Account,
   Chapter,
   Course,
+  CourseAlternativeTitle,
   CourseChapter,
   CourseSuggestion,
   Invitation,
