@@ -30,13 +30,6 @@ msgid "My account"
 msgstr "Minha conta"
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx
-#: src/app/[locale]/(settings)/feedback/page.tsx
-msgctxt "G5YSJR"
-msgid "Send feedback"
-msgstr "Enviar feedback"
-
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx
 msgctxt "gvd2HB"
 msgid "Update display name"
 msgstr "Atualizar nome de exibição"
@@ -99,12 +92,6 @@ msgid "Home page"
 msgstr "Página inicial"
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx
-#: src/app/[locale]/(settings)/follow/page.tsx
-msgctxt "VfU4TH"
-msgid "Follow us on social media"
-msgstr "Siga-nos nas redes sociais"
-
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx
 msgctxt "WnQ/AZ"
 msgid "Contact us"
 msgstr "Contacte-nos"
@@ -136,11 +123,9 @@ msgstr "Configurações"
 
 #: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[locale]/(settings)/_hooks/use-settings.ts
-#: src/app/[locale]/(settings)/feedback/page.tsx
-#: src/components/feedback/feedback-sheet.tsx
-msgctxt "Ejhdi4"
-msgid "Feedback"
-msgstr "Feedback"
+msgctxt "HqRNN8"
+msgid "Support"
+msgstr "Suporte"
 
 #: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx
 #: src/app/[locale]/(settings)/_hooks/use-settings.ts
@@ -148,13 +133,6 @@ msgstr "Feedback"
 msgctxt "R/6nsx"
 msgid "Subscription"
 msgstr "Assinatura"
-
-#: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx
-#: src/app/[locale]/(settings)/_hooks/use-settings.ts
-#: src/app/[locale]/(settings)/help/page.tsx
-msgctxt "SENRqu"
-msgid "Help"
-msgstr "Ajuda"
 
 #: src/app/[locale]/(catalog)/courses/page.tsx
 msgctxt "P5jxUC"
@@ -170,6 +148,11 @@ msgstr "Explore todos os cursos do Zoonk para aprender qualquer coisa usando IA.
 msgctxt "BlI1/9"
 msgid "Did you like this content?"
 msgstr "Você gostou deste conteúdo?"
+
+#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx
+msgctxt "G5YSJR"
+msgid "Send feedback"
+msgstr "Enviar feedback"
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx
 msgctxt "Hqn5Uo"
@@ -287,48 +270,6 @@ msgctxt "dOQCL8"
 msgid "Display name"
 msgstr "Nome de exibição"
 
-#: src/app/[locale]/(settings)/_hooks/use-settings.ts
-#: src/app/[locale]/(settings)/follow/page.tsx
-msgctxt "l1XTI5"
-msgid "Follow us"
-msgstr "Siga-nos"
-
-#: src/app/[locale]/(settings)/feedback/page.tsx
-#: src/components/feedback/feedback-sheet.tsx
-msgctxt "eUzs3M"
-msgid "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
-msgstr "Envie feedback, perguntas ou sugestões para a gente. Preencha o formulário abaixo ou envie um email diretamente para contato@zoonk.com."
-
-#: src/app/[locale]/(settings)/feedback/page.tsx
-msgctxt "KZv6Ml"
-msgid "Share your thoughts and help improve Zoonk. Use the feedback page to contact us with suggestions, questions, or issues about our learning platform."
-msgstr "Compartilhe suas ideias e ajude a melhorar o Zoonk. Use a página de feedback para nos contatar com sugestões, perguntas ou problemas sobre nossa plataforma de aprendizagem."
-
-#: src/app/[locale]/(settings)/follow/page.tsx
-msgctxt "Qeoeg9"
-msgid "Find all our social media links and keep in touch with us."
-msgstr "Encontre todos os nossos links de redes sociais e mantenha contato conosco."
-
-#: src/app/[locale]/(settings)/follow/page.tsx
-msgctxt "YmFPw3"
-msgid "Connect with Zoonk across social media. Follow us on X, LinkedIn, YouTube, and more to stay updated on new features, tips, and learning content."
-msgstr "Conecte-se com o Zoonk nas redes sociais. Siga a gente no X, LinkedIn, YouTube e mais para ficar atualizado sobre novos recursos, dicas e conteúdo de aprendizagem."
-
-#: src/app/[locale]/(settings)/help/page.tsx
-msgctxt "BIAaC9"
-msgid "Get support and answers. Fill in the form below or email us directly at hello@zoonk.com."
-msgstr "Obtenha suporte e respostas. Preencha o formulário abaixo ou envie um email diretamente para contato@zoonk.com."
-
-#: src/app/[locale]/(settings)/help/page.tsx
-msgctxt "Uf3+S6"
-msgid "Help & Support"
-msgstr "Ajuda e suporte"
-
-#: src/app/[locale]/(settings)/help/page.tsx
-msgctxt "V+glDo"
-msgid "Need help with Zoonk? Contact our support or browse the FAQ to quickly find answers to common questions."
-msgstr "Precisa de ajuda com o Zoonk? Entre em contato com nosso suporte ou navegue pelo FAQ para encontrar rapidamente respostas para perguntas comuns."
-
 #: src/app/[locale]/(settings)/language/page.tsx
 msgctxt "aNLa1G"
 msgid "Choose the app language you prefer for this device."
@@ -434,6 +375,43 @@ msgctxt "s1ZXI0"
 msgid "Unable to update your subscription. Contact us at hello@zoonk.com"
 msgstr "Não foi possível atualizar sua assinatura. Entre em contato pelo email contato@zoonk.com"
 
+#: src/app/[locale]/(settings)/support/page.tsx
+#: src/app/[locale]/(settings)/support/support-content.tsx
+msgctxt "63m0Wt"
+msgid "Get help with your account, courses, or any technical issues. Our support team is here to assist you."
+msgstr "Receba ajuda com sua conta, cursos ou qualquer problema técnico. Nossa equipe de suporte está aqui para ajudar você."
+
+#: src/app/[locale]/(settings)/support/page.tsx
+#: src/app/[locale]/(settings)/support/support-content.tsx
+msgctxt "Uf3+S6"
+msgid "Help & Support"
+msgstr "Ajuda e suporte"
+
+#: src/app/[locale]/(settings)/support/support-content.tsx
+msgctxt "7h49qt"
+msgid "Connect with the community and get answers"
+msgstr "Conecte-se com a comunidade e obtenha respostas"
+
+#: src/app/[locale]/(settings)/support/support-content.tsx
+msgctxt "cDAb4a"
+msgid "GitHub Discussions"
+msgstr "GitHub Discussions"
+
+#: src/app/[locale]/(settings)/support/support-content.tsx
+msgctxt "dQIo6c"
+msgid "Email us at hello@zoonk.com"
+msgstr "Envie um email para contato@zoonk.com"
+
+#: src/app/[locale]/(settings)/support/support-content.tsx
+msgctxt "l1XTI5"
+msgid "Follow us"
+msgstr "Siga-nos"
+
+#: src/app/[locale]/(settings)/support/support-content.tsx
+msgctxt "YdQxfw"
+msgid "Contact Support"
+msgstr "Contatar suporte"
+
 #: src/app/[locale]/privacy/page.tsx
 msgctxt "iql85X"
 msgid "Read Zoonk's privacy policy to understand how we collect, use, and protect your personal information."
@@ -498,6 +476,16 @@ msgstr "Usaremos este email para entrar em contato com você."
 msgctxt "Xx0WZV"
 msgid "Send message"
 msgstr "Enviar mensagem"
+
+#: src/components/feedback/feedback-sheet.tsx
+msgctxt "Ejhdi4"
+msgid "Feedback"
+msgstr "Feedback"
+
+#: src/components/feedback/feedback-sheet.tsx
+msgctxt "eUzs3M"
+msgid "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
+msgstr "Envie feedback, perguntas ou sugestões para a gente. Preencha o formulário abaixo ou envie um email diretamente para contato@zoonk.com."
 
 #: src/lib/categories.ts
 msgctxt "djJp6c"

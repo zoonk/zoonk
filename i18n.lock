@@ -106,7 +106,6 @@ checksums:
     Login/singular: f4f219abeb5a465ecb1c7efaf50246de
     Logout/singular: 07948fdf20705e04a7bf68ab197512bf
     My%20account/singular: 4791806fd9fadc33912e3df7e4e3911c
-    Send%20feedback/singular: 9631cc08d49da04475b30a0d320ce97c
     Update%20display%20name/singular: eb9878176a51d19451553ed035114e88
     Help%20and%20support/singular: 19383599a92f1b191066d7f29588d72f
     Search%20courses%20or%20pages.../singular: d059e326784d4e9b074d82e7957a3eef
@@ -118,18 +117,17 @@ checksums:
     Manage%20subscription/singular: b83a75127b8eabc21dfa1e0f7104db56
     Courses/singular: e6d00f3285e8fc48b949af0c4aad3da5
     Home%20page/singular: aa72464a366b091aa6f2037ca869c09c
-    Follow%20us%20on%20social%20media/singular: d799b702a7881c797d6a1e9668713590
     Contact%20us/singular: 694a45bc5c96f6f3a27873c1cf5a7707
     Search/singular: 49dd6c21604b5e8d4153ff1aff2177e1
     Language/singular: 277fd1a41cc237a437cd1d5e4a80463b
     Learn/singular: 6559e2075ab6947a1d4fa43e19a5d66b
     Settings/singular: 8df6777277469c1fd88cc18dde2f1cc3
-    Feedback/singular: 6fac88806e0c269a30777b283988c61c
+    Support/singular: 55aab5fd0f31a9cb055a2edeeedfaf63
     Subscription/singular: ba9f3675e18987d067d48533c8897343
-    Help/singular: 62712a1f2fcef75e399e9a9a9ddbd495
     Online%20Courses%20using%20AI/singular: 4e3c619f363cc66f3f2e604e372ca038
     Explore%20all%20Zoonk%20courses%20to%20learn%20anything%20using%20AI.%20Find%20interactive%20lessons%2C%20challenges%2C%20and%20activities%20to%20learn%20subjects%20like%20science%2C%20math%2C%20technology%2C%20and%20more./singular: c3f4a7dfd17b4523b5535f40170c7731
     Did%20you%20like%20this%20content%3F/singular: 23b97024cf20ceee3ee4a1ddc65d251c
+    Send%20feedback/singular: 9631cc08d49da04475b30a0d320ce97c
     I%20didn't%20like%20it/singular: 9761a96b22323e7db7d7176b77cf7caa
     I%20liked%20it/singular: ed20592186f53abcc526360869bd0f55
     Cancel/singular: 2e2a849c2223911717de8caa2c71bade
@@ -153,14 +151,6 @@ checksums:
     Checking%20if%20you're%20logged%20in.../singular: b50f05bfcb51cad6913150273e551291
     You%20need%20to%20be%20logged%20in%20to%20access%20this%20page./singular: 759ca522663d8f628718332f756dd6c4
     Display%20name/singular: 725f331065e9d594d720d07b1ae51a90
-    Follow%20us/singular: 778f7a4744f77dbcbd31a8c778cb5209
-    Send%20feedback%2C%20questions%2C%20or%20suggestions%20to%20us.%20Fill%20in%20the%20form%20below%20or%20email%20us%20directly%20at%20hello%40zoonk.com./singular: 6ce5e55ddeeb7de9480b806358aa5b95
-    Share%20your%20thoughts%20and%20help%20improve%20Zoonk.%20Use%20the%20feedback%20page%20to%20contact%20us%20with%20suggestions%2C%20questions%2C%20or%20issues%20about%20our%20learning%20platform./singular: 6b06a1c72037c5a874506c495070db64
-    Find%20all%20our%20social%20media%20links%20and%20keep%20in%20touch%20with%20us./singular: 622a8496ae558c2347113749ac3c4ab8
-    Connect%20with%20Zoonk%20across%20social%20media.%20Follow%20us%20on%20X%2C%20LinkedIn%2C%20YouTube%2C%20and%20more%20to%20stay%20updated%20on%20new%20features%2C%20tips%2C%20and%20learning%20content./singular: fc9668fa1d3d825afa62bbebf4655fcd
-    Get%20support%20and%20answers.%20Fill%20in%20the%20form%20below%20or%20email%20us%20directly%20at%20hello%40zoonk.com./singular: 08e65ee4ac29acae31f47a08f7381365
-    Help%20%26%20Support/singular: 662d807b3768c9753238bd5f1c86d2f6
-    Need%20help%20with%20Zoonk%3F%20Contact%20our%20support%20or%20browse%20the%20FAQ%20to%20quickly%20find%20answers%20to%20common%20questions./singular: 688f26b3492222993d84ba21fd74a1a3
     Choose%20the%20app%20language%20you%20prefer%20for%20this%20device./singular: 4e22090be4b9fda9945e41822872c030
     Update%20your%20Zoonk%20app%20language%20to%20learn%20in%20English%2C%20Portuguese%2C%20Spanish%2C%20French%2C%20or%20other%20supported%20languages./singular: 1c0ee0edf658ce641954e5e20a447905
     Your%20name%20has%20been%20updated%20successfully!/singular: 57bbf14c5b2eb3cefb1bf1dcba56cfa0
@@ -182,6 +172,13 @@ checksums:
     Upgrade%20to%20Plus/singular: 5ffe2178c10543c0be3b54a15c82da54
     You%E2%80%99re%20on%20Zoonk%20Plus/singular: 5ca1a2563220c91f7eb44a60d2701a79
     Unable%20to%20update%20your%20subscription.%20Contact%20us%20at%20hello%40zoonk.com/singular: 07449ee5fe347be88856524cec7f06ef
+    Get%20help%20with%20your%20account%2C%20courses%2C%20or%20any%20technical%20issues.%20Our%20support%20team%20is%20here%20to%20assist%20you./singular: 9de0c5af17bcf14dc8229ac5896db641
+    Help%20%26%20Support/singular: 662d807b3768c9753238bd5f1c86d2f6
+    Connect%20with%20the%20community%20and%20get%20answers/singular: ddbaaadbe1d98d93c6ceb40231559402
+    GitHub%20Discussions/singular: ac9e45aca17511aa133bbae5f13bcf18
+    Email%20us%20at%20hello%40zoonk.com/singular: f30da451e0bc14b7463bde402c876af9
+    Follow%20us/singular: 778f7a4744f77dbcbd31a8c778cb5209
+    Contact%20Support/singular: fcbd9e317c7286b3e08752eb73eb1a81
     Read%20Zoonk's%20privacy%20policy%20to%20understand%20how%20we%20collect%2C%20use%2C%20and%20protect%20your%20personal%20information./singular: 044f3586abe7d9915820a6629cef08e4
     Privacy%20Policy/singular: 7459744a63ef8af4e517a09024bd7c08
     Read%20Zoonk's%20terms%20of%20use%20to%20understand%20the%20rules%20and%20conditions%20for%20using%20our%20platform%20and%20services/singular: 4b82898d60691839a1999e4a17199895
@@ -195,6 +192,8 @@ checksums:
     Message%20sent%20successfully!%20We'll%20get%20back%20to%20you%20soon./singular: c34a09294fd597649e9bd42401477697
     We'll%20use%20this%20email%20to%20contact%20you./singular: a09d71670ae76167b7faa718e794086b
     Send%20message/singular: 19e7006870c6e407dece25ee8c9d5333
+    Feedback/singular: 6fac88806e0c269a30777b283988c61c
+    Send%20feedback%2C%20questions%2C%20or%20suggestions%20to%20us.%20Fill%20in%20the%20form%20below%20or%20email%20us%20directly%20at%20hello%40zoonk.com./singular: 6ce5e55ddeeb7de9480b806358aa5b95
     History/singular: b0578d6d225f512e42f823fbca2e3c32
     Math/singular: 0a604ffa5ef57408918fe98ef05eb05a
     Arts/singular: 9b1845cec1210e57ea990b1a90823228

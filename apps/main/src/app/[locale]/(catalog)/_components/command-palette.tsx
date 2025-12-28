@@ -63,11 +63,7 @@ export function CommandPalette() {
     { key: t("Logout"), ...getMenu("logout") },
   ];
 
-  const contactUs = [
-    { key: t("Send feedback"), ...getMenu("feedback") },
-    { key: t("Help and support"), ...getMenu("help") },
-    { key: t("Follow us on social media"), ...getMenu("follow") },
-  ];
+  const contactUs = [{ key: t("Help and support"), ...getMenu("support") }];
 
   return (
     <>

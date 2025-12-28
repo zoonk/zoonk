@@ -12,9 +12,7 @@ export function useSettings() {
     },
     { key: "language", label: t("Language"), ...getMenu("language") },
     { key: "displayName", label: t("Display name"), ...getMenu("displayName") },
-    { key: "feedback", label: t("Feedback"), ...getMenu("feedback") },
-    { key: "help", label: t("Help"), ...getMenu("help") },
-    { key: "follow", label: t("Follow us"), ...getMenu("follow") },
+    { key: "support", label: t("Support"), ...getMenu("support") },
   ];
 
   return { menuPages };

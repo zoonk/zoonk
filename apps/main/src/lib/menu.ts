@@ -8,8 +8,6 @@ import {
   LifeBuoy,
   LogIn,
   LogOut,
-  Megaphone,
-  MessageCircle,
   Search,
   Settings,
 } from "lucide-react";
@@ -17,9 +15,6 @@ import {
 const menu = {
   courses: { icon: LayoutGrid, url: "/courses" },
   displayName: { icon: IdCardLanyard, url: "/name" },
-  feedback: { icon: MessageCircle, url: "/feedback" },
-  follow: { icon: Megaphone, url: "/follow" },
-  help: { icon: LifeBuoy, url: "/help" },
   home: { icon: Home, url: "/" },
   language: { icon: Languages, url: "/language" },
   learn: { icon: Brain, url: "/learn" },
@@ -29,6 +24,7 @@ const menu = {
   search: { icon: Search, url: "/search" },
   settings: { icon: Settings, url: "/settings" },
   subscription: { icon: Gem, url: "/subscription" },
+  support: { icon: LifeBuoy, url: "/support" },
 } as const;
 
 type MenuKey = keyof typeof menu;

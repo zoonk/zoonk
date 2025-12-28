@@ -43,7 +43,8 @@
     "enabled": true,
     "rules": {
       "a11y": {
-        "noNoninteractiveElementInteractions": "error"
+        "noNoninteractiveElementInteractions": "error",
+        "useAnchorContent": "off"
       },
       "complexity": {
         "noExcessiveCognitiveComplexity": "error",
