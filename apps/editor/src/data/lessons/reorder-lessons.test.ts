@@ -1,10 +1,8 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import {
-  chapterLessonFixture,
-  lessonFixture,
-} from "@zoonk/testing/fixtures/lessons";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import {
   memberFixture,
   organizationFixture,
@@ -16,7 +14,12 @@ import { reorderLessons } from "./reorder-lessons";
 describe("unauthenticated users", () => {
   test("returns Forbidden", async () => {
     const organization = await organizationFixture();
-    const chapter = await chapterFixture({ organizationId: organization.id });
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
 
     const result = await reorderLessons({
       chapterId: chapter.id,
@@ -32,10 +35,15 @@ describe("unauthenticated users", () => {
 describe("members", () => {
   test("returns Forbidden", async () => {
     const { organization, user } = await memberFixture({ role: "member" });
+    const course = await courseFixture({ organizationId: organization.id });
 
     const [headers, chapter] = await Promise.all([
       signInAs(user.email, user.password),
-      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({
+        courseId: course.id,
+        language: course.language,
+        organizationId: organization.id,
+      }),
     ]);
 
     const result = await reorderLessons({
@@ -57,40 +65,51 @@ describe("admins", () => {
   beforeAll(async () => {
     const fixture = await memberFixture({ role: "admin" });
     organization = fixture.organization;
+    const course = await courseFixture({
+      organizationId: fixture.organization.id,
+    });
 
     [headers, chapter] = await Promise.all([
       signInAs(fixture.user.email, fixture.user.password),
-      chapterFixture({ organizationId: fixture.organization.id }),
+      chapterFixture({
+        courseId: course.id,
+        language: course.language,
+        organizationId: fixture.organization.id,
+      }),
     ]);
   });
 
   test("reorders lessons successfully", async () => {
-    const [lesson1, lesson2, lesson3] = await Promise.all([
-      lessonFixture({ organizationId: organization.id }),
-      lessonFixture({ organizationId: organization.id }),
-      lessonFixture({ organizationId: organization.id }),
-    ]);
+    const course = await courseFixture({ organizationId: organization.id });
+    const newChapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
 
-    await Promise.all([
-      chapterLessonFixture({
-        chapterId: chapter.id,
-        lessonId: lesson1.id,
+    const [lesson1, lesson2, lesson3] = await Promise.all([
+      lessonFixture({
+        chapterId: newChapter.id,
+        language: newChapter.language,
+        organizationId: organization.id,
         position: 0,
       }),
-      chapterLessonFixture({
-        chapterId: chapter.id,
-        lessonId: lesson2.id,
+      lessonFixture({
+        chapterId: newChapter.id,
+        language: newChapter.language,
+        organizationId: organization.id,
         position: 1,
       }),
-      chapterLessonFixture({
-        chapterId: chapter.id,
-        lessonId: lesson3.id,
+      lessonFixture({
+        chapterId: newChapter.id,
+        language: newChapter.language,
+        organizationId: organization.id,
         position: 2,
       }),
     ]);
 
     const result = await reorderLessons({
-      chapterId: chapter.id,
+      chapterId: newChapter.id,
       headers,
       lessons: [
         { lessonId: lesson3.id, position: 0 },
@@ -102,14 +121,14 @@ describe("admins", () => {
     expect(result.error).toBeNull();
     expect(result.data?.updated).toBe(3);
 
-    const reorderedLessons = await prisma.chapterLesson.findMany({
+    const reorderedLessons = await prisma.lesson.findMany({
       orderBy: { position: "asc" },
-      where: { chapterId: chapter.id },
+      where: { chapterId: newChapter.id },
     });
 
-    expect(reorderedLessons[0]?.lessonId).toBe(lesson3.id);
-    expect(reorderedLessons[1]?.lessonId).toBe(lesson1.id);
-    expect(reorderedLessons[2]?.lessonId).toBe(lesson2.id);
+    expect(reorderedLessons[0]?.id).toBe(lesson3.id);
+    expect(reorderedLessons[1]?.id).toBe(lesson1.id);
+    expect(reorderedLessons[2]?.id).toBe(lesson2.id);
   });
 
   test("returns Chapter not found", async () => {
@@ -125,7 +144,12 @@ describe("admins", () => {
 
   test("returns Forbidden for chapter in different organization", async () => {
     const otherOrg = await organizationFixture();
-    const otherChapter = await chapterFixture({ organizationId: otherOrg.id });
+    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+    const otherChapter = await chapterFixture({
+      courseId: otherCourse.id,
+      language: otherCourse.language,
+      organizationId: otherOrg.id,
+    });
 
     const result = await reorderLessons({
       chapterId: otherChapter.id,
@@ -149,17 +173,24 @@ describe("admins", () => {
   });
 
   test("only updates lessons that exist in the chapter", async () => {
-    const lesson = await lessonFixture({ organizationId: organization.id });
-    await chapterLessonFixture({
-      chapterId: chapter.id,
-      lessonId: lesson.id,
+    const course = await courseFixture({ organizationId: organization.id });
+    const newChapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: newChapter.id,
+      language: newChapter.language,
+      organizationId: organization.id,
       position: 0,
     });
 
     const expectedPosition = 5;
 
     const result = await reorderLessons({
-      chapterId: chapter.id,
+      chapterId: newChapter.id,
       headers,
       lessons: [
         { lessonId: lesson.id, position: expectedPosition },
@@ -170,8 +201,8 @@ describe("admins", () => {
     expect(result.error).toBeNull();
     expect(result.data?.updated).toBe(1);
 
-    const updatedLesson = await prisma.chapterLesson.findFirst({
-      where: { chapterId: chapter.id, lessonId: lesson.id },
+    const updatedLesson = await prisma.lesson.findFirst({
+      where: { chapterId: newChapter.id, id: lesson.id },
     });
 
     expect(updatedLesson?.position).toBe(expectedPosition);

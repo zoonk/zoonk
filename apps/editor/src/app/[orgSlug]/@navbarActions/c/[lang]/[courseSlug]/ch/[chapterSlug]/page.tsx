@@ -31,10 +31,9 @@ async function ChapterActions({
   const { chapterSlug, courseSlug, lang, orgSlug } = await params;
   const t = await getExtracted();
 
-  const { data: chapter } = await getChapter({
-    chapterSlug,
-    orgSlug,
-  });
+  const pageParams = { chapterSlug, courseSlug, language: lang, orgSlug };
+
+  const { data: chapter } = await getChapter(pageParams);
 
   if (!chapter) {
     return notFound();
@@ -46,11 +45,22 @@ async function ChapterActions({
     <ChapterActionsContainer>
       <PublishToggle
         isPublished={chapter.isPublished}
-        onToggle={togglePublishAction.bind(null, chapter.id)}
+        onToggle={togglePublishAction.bind(
+          null,
+          chapterSlug,
+          courseSlug,
+          chapter.id,
+        )}
       />
 
       <DeleteItemButton
-        onDelete={deleteChapterAction.bind(null, chapter.id, courseUrl)}
+        onDelete={deleteChapterAction.bind(
+          null,
+          chapterSlug,
+          courseSlug,
+          chapter.id,
+          courseUrl,
+        )}
         srLabel={t("Delete chapter")}
         title={t("Delete chapter?")}
       />

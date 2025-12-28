@@ -1,9 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
-import {
-  chapterFixture,
-  courseChapterFixture,
-} from "@zoonk/testing/fixtures/chapters";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
   memberFixture,
@@ -65,26 +62,25 @@ describe("admins", () => {
   });
 
   test("reorders chapters successfully", async () => {
-    const [chapter1, chapter2, chapter3] = await Promise.all([
-      chapterFixture({ organizationId: organization.id }),
-      chapterFixture({ organizationId: organization.id }),
-      chapterFixture({ organizationId: organization.id }),
-    ]);
+    const newCourse = await courseFixture({ organizationId: organization.id });
 
-    await Promise.all([
-      courseChapterFixture({
-        chapterId: chapter1.id,
-        courseId: course.id,
+    const [chapter1, chapter2, chapter3] = await Promise.all([
+      chapterFixture({
+        courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 0,
       }),
-      courseChapterFixture({
-        chapterId: chapter2.id,
-        courseId: course.id,
+      chapterFixture({
+        courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 1,
       }),
-      courseChapterFixture({
-        chapterId: chapter3.id,
-        courseId: course.id,
+      chapterFixture({
+        courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 2,
       }),
     ]);
@@ -95,21 +91,21 @@ describe("admins", () => {
         { chapterId: chapter1.id, position: 1 },
         { chapterId: chapter2.id, position: 2 },
       ],
-      courseId: course.id,
+      courseId: newCourse.id,
       headers,
     });
 
     expect(result.error).toBeNull();
     expect(result.data?.updated).toBe(3);
 
-    const reorderedChapters = await prisma.courseChapter.findMany({
+    const reorderedChapters = await prisma.chapter.findMany({
       orderBy: { position: "asc" },
-      where: { courseId: course.id },
+      where: { courseId: newCourse.id },
     });
 
-    expect(reorderedChapters[0]?.chapterId).toBe(chapter3.id);
-    expect(reorderedChapters[1]?.chapterId).toBe(chapter1.id);
-    expect(reorderedChapters[2]?.chapterId).toBe(chapter2.id);
+    expect(reorderedChapters[0]?.id).toBe(chapter3.id);
+    expect(reorderedChapters[1]?.id).toBe(chapter1.id);
+    expect(reorderedChapters[2]?.id).toBe(chapter2.id);
   });
 
   test("returns Course not found", async () => {
@@ -149,10 +145,12 @@ describe("admins", () => {
   });
 
   test("only updates chapters that exist in the course", async () => {
-    const chapter = await chapterFixture({ organizationId: organization.id });
-    await courseChapterFixture({
-      chapterId: chapter.id,
-      courseId: course.id,
+    const newCourse = await courseFixture({ organizationId: organization.id });
+
+    const chapter = await chapterFixture({
+      courseId: newCourse.id,
+      language: newCourse.language,
+      organizationId: organization.id,
       position: 0,
     });
 
@@ -163,15 +161,15 @@ describe("admins", () => {
         { chapterId: chapter.id, position: expectedPosition },
         { chapterId: 999_999, position: 0 },
       ],
-      courseId: course.id,
+      courseId: newCourse.id,
       headers,
     });
 
     expect(result.error).toBeNull();
     expect(result.data?.updated).toBe(1);
 
-    const updatedChapter = await prisma.courseChapter.findFirst({
-      where: { chapterId: chapter.id, courseId: course.id },
+    const updatedChapter = await prisma.chapter.findFirst({
+      where: { courseId: newCourse.id, id: chapter.id },
     });
 
     expect(updatedChapter?.position).toBe(expectedPosition);

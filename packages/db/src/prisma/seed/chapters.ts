@@ -115,35 +115,24 @@ async function seedChaptersForLanguage(
   }
 
   const chapterPromises = data.chapters.map(async (chapterData, position) => {
-    const chapter = await prisma.chapter.upsert({
+    await prisma.chapter.upsert({
       create: {
+        courseId: course.id,
         description: chapterData.description,
         isPublished: chapterData.isPublished,
+        language,
         normalizedTitle: normalizeString(chapterData.title),
         organizationId: org.id,
+        position,
         slug: chapterData.slug,
         title: chapterData.title,
       },
       update: {},
       where: {
-        orgChapterSlug: {
+        orgLanguageChapterSlug: {
+          language,
           organizationId: org.id,
           slug: chapterData.slug,
-        },
-      },
-    });
-
-    await prisma.courseChapter.upsert({
-      create: {
-        chapterId: chapter.id,
-        courseId: course.id,
-        position,
-      },
-      update: {},
-      where: {
-        courseChapter: {
-          chapterId: chapter.id,
-          courseId: course.id,
         },
       },
     });

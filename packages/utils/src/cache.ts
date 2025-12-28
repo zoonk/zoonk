@@ -1,15 +1,15 @@
 const CACHE_TAG_LIMIT = 256;
 
-export function cacheTagChapter({ chapterId }: { chapterId: number }) {
-  return `chapter:${chapterId}`.slice(0, CACHE_TAG_LIMIT);
+export function cacheTagChapter({ chapterSlug }: { chapterSlug: string }) {
+  return `chapter:${chapterSlug}`.slice(0, CACHE_TAG_LIMIT);
 }
 
-export function cacheTagCourse({ courseId }: { courseId: number }) {
-  return `course:${courseId}`.slice(0, CACHE_TAG_LIMIT);
+export function cacheTagCourse({ courseSlug }: { courseSlug: string }) {
+  return `course:${courseSlug}`.slice(0, CACHE_TAG_LIMIT);
 }
 
-export function cacheTagLesson({ lessonId }: { lessonId: number }) {
-  return `lesson:${lessonId}`.slice(0, CACHE_TAG_LIMIT);
+export function cacheTagLesson({ lessonSlug }: { lessonSlug: string }) {
+  return `lesson:${lessonSlug}`.slice(0, CACHE_TAG_LIMIT);
 }
 
 export function cacheTagOrgCourses({ orgSlug }: { orgSlug: string }) {

@@ -1,15 +1,17 @@
 "use server";
 
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
+import { cacheTagChapter, cacheTagCourse } from "@zoonk/utils/cache";
 import type { Route } from "next";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { deleteChapter } from "@/data/chapters/delete-chapter";
 import { toggleChapterPublished } from "@/data/chapters/publish-chapter";
-import { getChapterCacheTags } from "@/lib/cache";
 import { getErrorMessage } from "@/lib/error-messages";
 
 export async function togglePublishAction(
+  chapterSlug: string,
+  courseSlug: string,
   chapterId: number,
   isPublished: boolean,
 ): Promise<{ error: string | null }> {
@@ -23,20 +25,21 @@ export async function togglePublishAction(
   }
 
   after(async () => {
-    const tags = await getChapterCacheTags(chapterId);
-    await revalidateMainApp(tags);
+    await revalidateMainApp([
+      cacheTagChapter({ chapterSlug }),
+      cacheTagCourse({ courseSlug }),
+    ]);
   });
 
   return { error: null };
 }
 
 export async function deleteChapterAction(
+  chapterSlug: string,
+  courseSlug: string,
   chapterId: number,
   courseUrl: Route,
 ): Promise<{ error: string | null }> {
-  // Get cache tags before deleting (while relationships still exist)
-  const tags = await getChapterCacheTags(chapterId);
-
   const { error } = await deleteChapter({ chapterId });
 
   if (error) {
@@ -44,7 +47,10 @@ export async function deleteChapterAction(
   }
 
   after(async () => {
-    await revalidateMainApp(tags);
+    await revalidateMainApp([
+      cacheTagChapter({ chapterSlug }),
+      cacheTagCourse({ courseSlug }),
+    ]);
   });
 
   redirect(courseUrl);

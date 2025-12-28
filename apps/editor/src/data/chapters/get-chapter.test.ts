@@ -1,5 +1,6 @@
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
   memberFixture,
   organizationFixture,
@@ -14,7 +15,12 @@ describe("unauthenticated users", () => {
 
   beforeAll(async () => {
     organization = await organizationFixture();
-    chapter = await chapterFixture({ organizationId: organization.id });
+    const course = await courseFixture({ organizationId: organization.id });
+    chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
   });
 
   test("returns Forbidden when getting by id", async () => {
@@ -42,10 +48,15 @@ describe("unauthenticated users", () => {
 describe("members", () => {
   test("returns Forbidden", async () => {
     const { organization, user } = await memberFixture({ role: "member" });
+    const course = await courseFixture({ organizationId: organization.id });
 
     const [headers, chapter] = await Promise.all([
       signInAs(user.email, user.password),
-      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({
+        courseId: course.id,
+        language: course.language,
+        organizationId: organization.id,
+      }),
     ]);
 
     const result = await getChapter({
@@ -67,9 +78,15 @@ describe("admins", () => {
     const fixture = await memberFixture({ role: "admin" });
     organization = fixture.organization;
 
+    const course = await courseFixture({ organizationId: organization.id });
+
     [headers, chapter] = await Promise.all([
       signInAs(fixture.user.email, fixture.user.password),
-      chapterFixture({ organizationId: fixture.organization.id }),
+      chapterFixture({
+        courseId: course.id,
+        language: course.language,
+        organizationId: fixture.organization.id,
+      }),
     ]);
   });
 
@@ -119,7 +136,12 @@ describe("admins", () => {
 
   test("returns Forbidden for chapter in different organization", async () => {
     const otherOrg = await organizationFixture();
-    const otherChapter = await chapterFixture({ organizationId: otherOrg.id });
+    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+    const otherChapter = await chapterFixture({
+      courseId: otherCourse.id,
+      language: otherCourse.language,
+      organizationId: otherOrg.id,
+    });
 
     const result = await getChapter({
       chapterId: otherChapter.id,
@@ -132,7 +154,12 @@ describe("admins", () => {
 
   test("returns Forbidden for chapter in different organization by slug", async () => {
     const otherOrg = await organizationFixture();
-    const otherChapter = await chapterFixture({ organizationId: otherOrg.id });
+    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+    const otherChapter = await chapterFixture({
+      courseId: otherCourse.id,
+      language: otherCourse.language,
+      organizationId: otherOrg.id,
+    });
 
     const result = await getChapter({
       chapterSlug: otherChapter.slug,

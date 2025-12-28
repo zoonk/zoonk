@@ -46,9 +46,8 @@ export async function exportLessons(params: {
     return { data: null, error: new AppError(ErrorCode.forbidden) };
   }
 
-  const { data: chapterLessons, error: lessonsError } = await safeAsync(() =>
-    prisma.chapterLesson.findMany({
-      include: { lesson: true },
+  const { data: lessons, error: lessonsError } = await safeAsync(() =>
+    prisma.lesson.findMany({
       orderBy: { position: "asc" },
       where: { chapterId: params.chapterId },
     }),
@@ -58,17 +57,17 @@ export async function exportLessons(params: {
     return { data: null, error: lessonsError };
   }
 
-  const lessons: ExportedLesson[] = chapterLessons.map((cl) => ({
-    description: cl.lesson.description,
-    position: cl.position,
-    slug: cl.lesson.slug,
-    title: cl.lesson.title,
+  const exportedLessons: ExportedLesson[] = lessons.map((lesson) => ({
+    description: lesson.description,
+    position: lesson.position,
+    slug: lesson.slug,
+    title: lesson.title,
   }));
 
   return {
     data: {
       exportedAt: new Date().toISOString(),
-      lessons,
+      lessons: exportedLessons,
       version: 1,
     },
     error: null,

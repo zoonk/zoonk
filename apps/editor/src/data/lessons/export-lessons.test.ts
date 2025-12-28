@@ -1,9 +1,7 @@
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import {
-  chapterLessonFixture,
-  lessonFixture,
-} from "@zoonk/testing/fixtures/lessons";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import {
   memberFixture,
   organizationFixture,
@@ -15,7 +13,12 @@ import { exportLessons } from "./export-lessons";
 describe("unauthenticated users", () => {
   test("returns Forbidden", async () => {
     const organization = await organizationFixture();
-    const chapter = await chapterFixture({ organizationId: organization.id });
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
 
     const result = await exportLessons({
       chapterId: chapter.id,
@@ -30,10 +33,15 @@ describe("unauthenticated users", () => {
 describe("members", () => {
   test("returns Forbidden", async () => {
     const { organization, user } = await memberFixture({ role: "member" });
+    const course = await courseFixture({ organizationId: organization.id });
 
     const [headers, chapter] = await Promise.all([
       signInAs(user.email, user.password),
-      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({
+        courseId: course.id,
+        language: course.language,
+        organizationId: organization.id,
+      }),
     ]);
 
     const result = await exportLessons({
@@ -54,33 +62,42 @@ describe("admins", () => {
   beforeAll(async () => {
     const fixture = await memberFixture({ role: "admin" });
     organization = fixture.organization;
+    const course = await courseFixture({
+      organizationId: fixture.organization.id,
+    });
 
     [headers, chapter] = await Promise.all([
       signInAs(fixture.user.email, fixture.user.password),
-      chapterFixture({ organizationId: fixture.organization.id }),
+      chapterFixture({
+        courseId: course.id,
+        language: course.language,
+        organizationId: fixture.organization.id,
+      }),
     ]);
   });
 
   test("exports lessons successfully", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
     const newChapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
       organizationId: organization.id,
     });
 
-    const [lesson1, lesson2] = await Promise.all([
-      lessonFixture({ organizationId: organization.id, title: "Lesson 1" }),
-      lessonFixture({ organizationId: organization.id, title: "Lesson 2" }),
-    ]);
-
     await Promise.all([
-      chapterLessonFixture({
+      lessonFixture({
         chapterId: newChapter.id,
-        lessonId: lesson1.id,
+        language: newChapter.language,
+        organizationId: organization.id,
         position: 0,
+        title: "Lesson 1",
       }),
-      chapterLessonFixture({
+      lessonFixture({
         chapterId: newChapter.id,
-        lessonId: lesson2.id,
+        language: newChapter.language,
+        organizationId: organization.id,
         position: 1,
+        title: "Lesson 2",
       }),
     ]);
 
@@ -122,7 +139,12 @@ describe("admins", () => {
 
   test("don't allow exporting lessons from a different organization", async () => {
     const otherOrg = await organizationFixture();
-    const otherChapter = await chapterFixture({ organizationId: otherOrg.id });
+    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+    const otherChapter = await chapterFixture({
+      courseId: otherCourse.id,
+      language: otherCourse.language,
+      organizationId: otherOrg.id,
+    });
 
     const result = await exportLessons({
       chapterId: otherChapter.id,
@@ -134,31 +156,34 @@ describe("admins", () => {
   });
 
   test("exports lessons in correct order", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
     const newChapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
       organizationId: organization.id,
     });
 
-    const [lesson1, lesson2, lesson3] = await Promise.all([
-      lessonFixture({ organizationId: organization.id, title: "Third" }),
-      lessonFixture({ organizationId: organization.id, title: "First" }),
-      lessonFixture({ organizationId: organization.id, title: "Second" }),
-    ]);
-
     await Promise.all([
-      chapterLessonFixture({
+      lessonFixture({
         chapterId: newChapter.id,
-        lessonId: lesson1.id,
+        language: newChapter.language,
+        organizationId: organization.id,
         position: 2,
+        title: "Third",
       }),
-      chapterLessonFixture({
+      lessonFixture({
         chapterId: newChapter.id,
-        lessonId: lesson2.id,
+        language: newChapter.language,
+        organizationId: organization.id,
         position: 0,
+        title: "First",
       }),
-      chapterLessonFixture({
+      lessonFixture({
         chapterId: newChapter.id,
-        lessonId: lesson3.id,
+        language: newChapter.language,
+        organizationId: organization.id,
         position: 1,
+        title: "Second",
       }),
     ]);
 
@@ -178,21 +203,21 @@ describe("admins", () => {
   });
 
   test("includes all lesson fields in export", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
     const newChapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
       organizationId: organization.id,
     });
 
-    const lesson = await lessonFixture({
+    await lessonFixture({
+      chapterId: newChapter.id,
       description: "Test Description",
+      language: newChapter.language,
       organizationId: organization.id,
+      position: 0,
       slug: "test-slug",
       title: "Test Title",
-    });
-
-    await chapterLessonFixture({
-      chapterId: newChapter.id,
-      lessonId: lesson.id,
-      position: 0,
     });
 
     const result = await exportLessons({

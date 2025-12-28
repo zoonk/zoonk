@@ -1,9 +1,7 @@
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import {
-  chapterLessonFixture,
-  lessonFixture,
-} from "@zoonk/testing/fixtures/lessons";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import {
   memberFixture,
   organizationFixture,
@@ -15,7 +13,12 @@ import { listChapterLessons } from "./list-chapter-lessons";
 describe("unauthenticated users", () => {
   test("returns Forbidden", async () => {
     const organization = await organizationFixture();
-    const chapter = await chapterFixture({ organizationId: organization.id });
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
 
     const result = await listChapterLessons({
       chapterSlug: chapter.slug,
@@ -31,10 +34,15 @@ describe("unauthenticated users", () => {
 describe("members", () => {
   test("returns Forbidden", async () => {
     const { organization, user } = await memberFixture({ role: "member" });
+    const course = await courseFixture({ organizationId: organization.id });
 
     const [headers, chapter] = await Promise.all([
       signInAs(user.email, user.password),
-      chapterFixture({ organizationId: organization.id }),
+      chapterFixture({
+        courseId: course.id,
+        language: course.language,
+        organizationId: organization.id,
+      }),
     ]);
 
     const result = await listChapterLessons({
@@ -51,45 +59,56 @@ describe("members", () => {
 describe("admins", () => {
   let organization: Awaited<ReturnType<typeof memberFixture>>["organization"];
   let headers: Headers;
-  let chapter: Awaited<ReturnType<typeof chapterFixture>>;
+  let _chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
   beforeAll(async () => {
     const fixture = await memberFixture({ role: "admin" });
     organization = fixture.organization;
+    const course = await courseFixture({
+      organizationId: fixture.organization.id,
+    });
 
-    [headers, chapter] = await Promise.all([
+    [headers, _chapter] = await Promise.all([
       signInAs(fixture.user.email, fixture.user.password),
-      chapterFixture({ organizationId: fixture.organization.id }),
+      chapterFixture({
+        courseId: course.id,
+        language: course.language,
+        organizationId: fixture.organization.id,
+      }),
     ]);
   });
 
   test("lists lessons for a chapter ordered by position", async () => {
-    const [lesson1, lesson2, lesson3] = await Promise.all([
-      lessonFixture({ organizationId: organization.id }),
-      lessonFixture({ organizationId: organization.id }),
-      lessonFixture({ organizationId: organization.id }),
-    ]);
+    const course = await courseFixture({ organizationId: organization.id });
+    const newChapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
 
-    await Promise.all([
-      chapterLessonFixture({
-        chapterId: chapter.id,
-        lessonId: lesson1.id,
+    const [lesson1, lesson2, lesson3] = await Promise.all([
+      lessonFixture({
+        chapterId: newChapter.id,
+        language: newChapter.language,
+        organizationId: organization.id,
         position: 2,
       }),
-      chapterLessonFixture({
-        chapterId: chapter.id,
-        lessonId: lesson2.id,
+      lessonFixture({
+        chapterId: newChapter.id,
+        language: newChapter.language,
+        organizationId: organization.id,
         position: 0,
       }),
-      chapterLessonFixture({
-        chapterId: chapter.id,
-        lessonId: lesson3.id,
+      lessonFixture({
+        chapterId: newChapter.id,
+        language: newChapter.language,
+        organizationId: organization.id,
         position: 1,
       }),
     ]);
 
     const result = await listChapterLessons({
-      chapterSlug: chapter.slug,
+      chapterSlug: newChapter.slug,
       headers,
       orgSlug: organization.slug,
     });
@@ -107,7 +126,10 @@ describe("admins", () => {
   });
 
   test("returns empty array when chapter has no lessons", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
     const emptyChapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
       organizationId: organization.id,
     });
 
@@ -134,7 +156,12 @@ describe("admins", () => {
 
   test("returns Forbidden for chapter in different organization", async () => {
     const otherOrg = await organizationFixture();
-    const otherChapter = await chapterFixture({ organizationId: otherOrg.id });
+    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+    const otherChapter = await chapterFixture({
+      courseId: otherCourse.id,
+      language: otherCourse.language,
+      organizationId: otherOrg.id,
+    });
 
     const result = await listChapterLessons({
       chapterSlug: otherChapter.slug,

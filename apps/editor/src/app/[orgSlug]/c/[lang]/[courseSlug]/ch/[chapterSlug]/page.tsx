@@ -23,13 +23,12 @@ async function ChapterContent({
 }: {
   params: ChapterPageProps["params"];
 }) {
-  const { chapterSlug, orgSlug } = await params;
+  const { chapterSlug, courseSlug, lang, orgSlug } = await params;
   const t = await getExtracted();
 
-  const { data: chapter, error } = await getChapter({
-    chapterSlug,
-    orgSlug,
-  });
+  const pageParams = { chapterSlug, courseSlug, language: lang, orgSlug };
+
+  const { data: chapter, error } = await getChapter(pageParams);
 
   if (error || !chapter) {
     return notFound();
@@ -42,8 +41,12 @@ async function ChapterContent({
       entityId={chapter.id}
       initialDescription={chapter.description}
       initialTitle={chapter.title}
-      onSaveDescription={updateChapterDescriptionAction}
-      onSaveTitle={updateChapterTitleAction}
+      onSaveDescription={updateChapterDescriptionAction.bind(
+        null,
+        chapterSlug,
+        courseSlug,
+      )}
+      onSaveTitle={updateChapterTitleAction.bind(null, chapterSlug, courseSlug)}
       titleLabel={t("Edit chapter title")}
       titlePlaceholder={t("Chapter title…")}
     />

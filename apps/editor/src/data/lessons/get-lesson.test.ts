@@ -1,4 +1,6 @@
 import { signInAs } from "@zoonk/testing/fixtures/auth";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import {
   memberFixture,
@@ -14,7 +16,17 @@ describe("unauthenticated users", () => {
 
   beforeAll(async () => {
     organization = await organizationFixture();
-    lesson = await lessonFixture({ organizationId: organization.id });
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    lesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+    });
   });
 
   test("returns Forbidden when getting by id", async () => {
@@ -42,10 +54,20 @@ describe("unauthenticated users", () => {
 describe("members", () => {
   test("returns Forbidden", async () => {
     const { organization, user } = await memberFixture({ role: "member" });
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
 
     const [headers, lesson] = await Promise.all([
       signInAs(user.email, user.password),
-      lessonFixture({ organizationId: organization.id }),
+      lessonFixture({
+        chapterId: chapter.id,
+        language: chapter.language,
+        organizationId: organization.id,
+      }),
     ]);
 
     const result = await getLesson({
@@ -67,9 +89,20 @@ describe("admins", () => {
     const fixture = await memberFixture({ role: "admin" });
     organization = fixture.organization;
 
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
     [headers, lesson] = await Promise.all([
       signInAs(fixture.user.email, fixture.user.password),
-      lessonFixture({ organizationId: fixture.organization.id }),
+      lessonFixture({
+        chapterId: chapter.id,
+        language: chapter.language,
+        organizationId: fixture.organization.id,
+      }),
     ]);
   });
 
@@ -119,7 +152,17 @@ describe("admins", () => {
 
   test("returns Forbidden for lesson in different organization", async () => {
     const otherOrg = await organizationFixture();
-    const otherLesson = await lessonFixture({ organizationId: otherOrg.id });
+    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+    const otherChapter = await chapterFixture({
+      courseId: otherCourse.id,
+      language: otherCourse.language,
+      organizationId: otherOrg.id,
+    });
+    const otherLesson = await lessonFixture({
+      chapterId: otherChapter.id,
+      language: otherChapter.language,
+      organizationId: otherOrg.id,
+    });
 
     const result = await getLesson({
       headers,
@@ -132,7 +175,17 @@ describe("admins", () => {
 
   test("returns Forbidden for lesson in different organization by slug", async () => {
     const otherOrg = await organizationFixture();
-    const otherLesson = await lessonFixture({ organizationId: otherOrg.id });
+    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+    const otherChapter = await chapterFixture({
+      courseId: otherCourse.id,
+      language: otherCourse.language,
+      organizationId: otherOrg.id,
+    });
+    const otherLesson = await lessonFixture({
+      chapterId: otherChapter.id,
+      language: otherChapter.language,
+      organizationId: otherOrg.id,
+    });
 
     const result = await getLesson({
       headers,

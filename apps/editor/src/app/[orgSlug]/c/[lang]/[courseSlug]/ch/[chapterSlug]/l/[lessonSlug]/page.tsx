@@ -18,17 +18,24 @@ async function LessonContent({
 }: {
   params: LessonPageProps["params"];
 }) {
-  const { lessonSlug, orgSlug } = await params;
+  const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await params;
   const t = await getExtracted();
 
-  const { data: lesson, error } = await getLesson({
+  const pageParams = {
+    chapterSlug,
+    courseSlug,
+    language: lang,
     lessonSlug,
     orgSlug,
-  });
+  };
+
+  const { data: lesson, error } = await getLesson(pageParams);
 
   if (error || !lesson) {
     return notFound();
   }
+
+  const slugs = { chapterSlug, courseSlug, lessonSlug };
 
   return (
     <ContentEditor
@@ -37,8 +44,8 @@ async function LessonContent({
       entityId={lesson.id}
       initialDescription={lesson.description}
       initialTitle={lesson.title}
-      onSaveDescription={updateLessonDescriptionAction}
-      onSaveTitle={updateLessonTitleAction}
+      onSaveDescription={updateLessonDescriptionAction.bind(null, slugs)}
+      onSaveTitle={updateLessonTitleAction.bind(null, slugs)}
       titleLabel={t("Edit lesson title")}
       titlePlaceholder={t("Lesson title…")}
     />

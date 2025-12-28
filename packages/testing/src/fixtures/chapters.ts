@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Chapter, type CourseChapter, prisma } from "@zoonk/db";
+import { type Chapter, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 
 export function chapterAttrs(
@@ -9,10 +9,13 @@ export function chapterAttrs(
   const normalizedTitle = attrs?.normalizedTitle ?? normalizeString(title);
 
   return {
+    courseId: 0,
     description: "Test chapter description",
     isPublished: false,
+    language: "en",
     normalizedTitle,
     organizationId: 0,
+    position: 0,
     slug: `test-chapter-${randomUUID()}`,
     title,
     ...attrs,
@@ -22,17 +25,4 @@ export function chapterAttrs(
 export async function chapterFixture(attrs?: Partial<Chapter>) {
   const chapter = await prisma.chapter.create({ data: chapterAttrs(attrs) });
   return chapter;
-}
-
-export async function courseChapterFixture(
-  attrs: Omit<CourseChapter, "id" | "createdAt">,
-) {
-  const courseChapter = await prisma.courseChapter.create({
-    data: {
-      chapterId: attrs.chapterId,
-      courseId: attrs.courseId,
-      position: attrs.position,
-    },
-  });
-  return courseChapter;
 }

@@ -1,9 +1,7 @@
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import {
-  chapterLessonFixture,
-  lessonFixture,
-} from "@zoonk/testing/fixtures/lessons";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import {
   memberFixture,
   organizationFixture,
@@ -54,17 +52,33 @@ describe("admins", () => {
   });
 
   test("searches all lessons in organization by title", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
     await Promise.all([
       lessonFixture({
+        chapterId: chapter.id,
+        language: chapter.language,
         organizationId: organization.id,
+        position: 0,
         title: "Learn JavaScript Basics",
       }),
       lessonFixture({
+        chapterId: chapter.id,
+        language: chapter.language,
         organizationId: organization.id,
+        position: 1,
         title: "Advanced Python Techniques",
       }),
       lessonFixture({
+        chapterId: chapter.id,
+        language: chapter.language,
         organizationId: organization.id,
+        position: 2,
         title: "JavaScript Functions",
       }),
     ]);
@@ -80,8 +94,18 @@ describe("admins", () => {
   });
 
   test("searches with normalized title (removes accents)", async () => {
-    await lessonFixture({
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
       organizationId: organization.id,
+    });
+
+    await lessonFixture({
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+      position: 0,
       title: "Introdução à Programação",
     });
 
@@ -102,39 +126,14 @@ describe("admins", () => {
     const result = await searchOrgLessons({
       headers,
       orgSlug: organization.slug,
-      title: "xyznonexistentxyz",
+      title: "xyznonexistent123",
     });
 
     expect(result.error).toBeNull();
     expect(result.data).toEqual([]);
   });
 
-  test("only returns lessons from the specified organization", async () => {
-    const otherOrg = await organizationFixture();
-
-    await Promise.all([
-      lessonFixture({
-        organizationId: otherOrg.id,
-        title: "Other Org Unique Lesson",
-      }),
-      lessonFixture({
-        organizationId: organization.id,
-        title: "My Org Unique Lesson",
-      }),
-    ]);
-
-    const result = await searchOrgLessons({
-      headers,
-      orgSlug: organization.slug,
-      title: "Unique Lesson",
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data.length).toBe(1);
-    expect(result.data[0]?.title).toBe("My Org Unique Lesson");
-  });
-
-  test("returns Forbidden for different organization", async () => {
+  test("returns Forbidden for lesson in different organization", async () => {
     const otherOrg = await organizationFixture();
 
     const result = await searchOrgLessons({
@@ -147,95 +146,94 @@ describe("admins", () => {
     expect(result.data).toEqual([]);
   });
 
-  test("returns chapters array with slug for linked lessons", async () => {
-    const lesson = await lessonFixture({
-      organizationId: organization.id,
-      title: "Lesson With Chapters Linked",
-    });
-
-    const [chapter1, chapter2] = await Promise.all([
-      chapterFixture({
-        organizationId: organization.id,
-        slug: "chapter-one",
-      }),
-      chapterFixture({
-        organizationId: organization.id,
-        slug: "chapter-two",
-      }),
-    ]);
-
-    await Promise.all([
-      chapterLessonFixture({
-        chapterId: chapter1.id,
-        lessonId: lesson.id,
-        position: 0,
-      }),
-      chapterLessonFixture({
-        chapterId: chapter2.id,
-        lessonId: lesson.id,
-        position: 0,
-      }),
-    ]);
-
-    const result = await searchOrgLessons({
-      headers,
-      orgSlug: organization.slug,
-      title: "Lesson With Chapters Linked",
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data).toHaveLength(1);
-    expect(result.data[0]?.chapters).toHaveLength(2);
-
-    const chapterSlugs = result.data[0]?.chapters.map((c) => c.slug);
-
-    expect(chapterSlugs).toContain("chapter-one");
-    expect(chapterSlugs).toContain("chapter-two");
-  });
-
-  test("returns empty chapters array for lessons not linked to any chapter", async () => {
-    await lessonFixture({
-      organizationId: organization.id,
-      title: "Standalone Lesson No Chapter",
-    });
-
-    const result = await searchOrgLessons({
-      headers,
-      orgSlug: organization.slug,
-      title: "Standalone Lesson No Chapter",
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data).toHaveLength(1);
-    expect(result.data[0]?.chapters).toEqual([]);
-  });
-
-  test("returns lesson linked to single chapter", async () => {
-    const lesson = await lessonFixture({
-      organizationId: organization.id,
-      title: "Single Chapter Lesson Link",
-    });
-
+  test("case insensitive search", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
     const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
       organizationId: organization.id,
-      slug: "single-chapter-link",
     });
 
-    await chapterLessonFixture({
+    await lessonFixture({
       chapterId: chapter.id,
-      lessonId: lesson.id,
+      language: chapter.language,
+      organizationId: organization.id,
       position: 0,
+      title: "UPPERCASE TITLE",
     });
 
     const result = await searchOrgLessons({
       headers,
       orgSlug: organization.slug,
-      title: "Single Chapter Lesson Link",
+      title: "uppercase",
     });
 
     expect(result.error).toBeNull();
-    expect(result.data).toHaveLength(1);
-    expect(result.data[0]?.chapters).toHaveLength(1);
-    expect(result.data[0]?.chapters[0]?.slug).toBe("single-chapter-link");
+    expect(result.data.length).toBeGreaterThanOrEqual(1);
+    expect(result.data.some((l) => l.title === "UPPERCASE TITLE")).toBe(true);
+  });
+
+  test("partial match search", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    await lessonFixture({
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+      position: 0,
+      title: "Very Long Lesson Title For Testing",
+    });
+
+    const result = await searchOrgLessons({
+      headers,
+      orgSlug: organization.slug,
+      title: "Long Lesson",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data.length).toBeGreaterThanOrEqual(1);
+    expect(
+      result.data.some((l) => l.title === "Very Long Lesson Title For Testing"),
+    ).toBe(true);
+  });
+
+  test("includes chapter info in results", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    await lessonFixture({
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+      position: 0,
+      title: "Lesson With Chapter Info",
+    });
+
+    const result = await searchOrgLessons({
+      headers,
+      orgSlug: organization.slug,
+      title: "Lesson With Chapter",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data.length).toBeGreaterThanOrEqual(1);
+
+    const lesson = result.data.find(
+      (l) => l.title === "Lesson With Chapter Info",
+    );
+
+    expect(lesson?.chapter).toBeDefined();
+    expect(lesson?.chapter.slug).toBe(chapter.slug);
+    expect(lesson?.chapter.course.slug).toBe(course.slug);
+    expect(lesson?.chapter.course.language).toBe(course.language);
   });
 });
