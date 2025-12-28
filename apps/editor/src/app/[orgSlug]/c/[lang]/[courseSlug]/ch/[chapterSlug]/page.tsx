@@ -23,12 +23,10 @@ async function ChapterContent({
 }: {
   params: ChapterPageProps["params"];
 }) {
-  const { chapterSlug, courseSlug, lang, orgSlug } = await params;
+  const { chapterSlug, courseSlug, orgSlug } = await params;
   const t = await getExtracted();
 
-  const pageParams = { chapterSlug, courseSlug, language: lang, orgSlug };
-
-  const { data: chapter, error } = await getChapter(pageParams);
+  const { data: chapter, error } = await getChapter({ chapterSlug, orgSlug });
 
   if (error || !chapter) {
     return notFound();

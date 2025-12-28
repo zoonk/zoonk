@@ -169,14 +169,21 @@ export async function importChapters(params: {
         let chapter: Chapter;
 
         if (item.hasExplicitSlug && existingChapter) {
-          if (course.isPublished || existingChapter.isPublished) {
-            chapter = existingChapter;
-          } else {
-            chapter = await tx.chapter.update({
-              data: { isPublished: true },
-              where: { id: existingChapter.id },
-            });
-          }
+          // If both course and chapter are unpublished, mark chapter as published
+          // Otherwise keep current published state
+          const isPublished =
+            course.isPublished || existingChapter.isPublished
+              ? existingChapter.isPublished
+              : true;
+
+          chapter = await tx.chapter.update({
+            data: {
+              courseId: params.courseId,
+              isPublished,
+              position: startPosition + i,
+            },
+            where: { id: existingChapter.id },
+          });
         } else {
           const uniqueSlug =
             !item.hasExplicitSlug && existingChapter

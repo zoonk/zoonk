@@ -77,34 +77,36 @@ export async function seedLessons(
           slug: data.chapterSlug,
         },
       })
-      .then((chapter) => {
+      .then(async (chapter) => {
         if (!chapter) {
-          return [];
+          return;
         }
 
-        return data.lessons.map(async (lessonData, position) => {
-          await prisma.lesson.upsert({
-            create: {
-              chapterId: chapter.id,
-              description: lessonData.description,
-              isPublished: lessonData.isPublished,
-              language: data.language,
-              normalizedTitle: normalizeString(lessonData.title),
-              organizationId: org.id,
-              position,
-              slug: lessonData.slug,
-              title: lessonData.title,
-            },
-            update: {},
-            where: {
-              orgLanguageLessonSlug: {
+        await Promise.all(
+          data.lessons.map((lessonData, position) =>
+            prisma.lesson.upsert({
+              create: {
+                chapterId: chapter.id,
+                description: lessonData.description,
+                isPublished: lessonData.isPublished,
                 language: data.language,
+                normalizedTitle: normalizeString(lessonData.title),
                 organizationId: org.id,
+                position,
                 slug: lessonData.slug,
+                title: lessonData.title,
               },
-            },
-          });
-        });
+              update: {},
+              where: {
+                orgLanguageLessonSlug: {
+                  language: data.language,
+                  organizationId: org.id,
+                  slug: lessonData.slug,
+                },
+              },
+            }),
+          ),
+        );
       }),
   );
 
