@@ -4,7 +4,7 @@ import {
 } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 
-export function CourseEditorSkeleton() {
+export function ContentEditorSkeleton() {
   return (
     <ContainerHeader>
       <ContainerHeaderGroup className="flex-1 gap-2">

@@ -1,17 +1,17 @@
 "use server";
 
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { cacheTagCourse } from "@zoonk/utils/cache";
 import { after } from "next/server";
-import { updateCourse } from "@/data/courses/update-course";
+import { updateLesson } from "@/data/lessons/update-lesson";
+import { getLessonCacheTags } from "@/lib/cache";
 import { getErrorMessage } from "@/lib/error-messages";
 
-export async function updateCourseTitleAction(
-  courseId: number,
+export async function updateLessonTitleAction(
+  lessonId: number,
   data: { title: string },
 ): Promise<{ error: string | null }> {
-  const { error } = await updateCourse({
-    courseId,
+  const { error } = await updateLesson({
+    lessonId,
     title: data.title,
   });
 
@@ -20,19 +20,20 @@ export async function updateCourseTitleAction(
   }
 
   after(async () => {
-    await revalidateMainApp([cacheTagCourse({ courseId })]);
+    const tags = await getLessonCacheTags(lessonId);
+    await revalidateMainApp(tags);
   });
 
   return { error: null };
 }
 
-export async function updateCourseDescriptionAction(
-  courseId: number,
+export async function updateLessonDescriptionAction(
+  lessonId: number,
   data: { description: string },
 ): Promise<{ error: string | null }> {
-  const { error } = await updateCourse({
-    courseId,
+  const { error } = await updateLesson({
     description: data.description,
+    lessonId,
   });
 
   if (error) {
@@ -40,7 +41,8 @@ export async function updateCourseDescriptionAction(
   }
 
   after(async () => {
-    await revalidateMainApp([cacheTagCourse({ courseId })]);
+    const tags = await getLessonCacheTags(lessonId);
+    await revalidateMainApp(tags);
   });
 
   return { error: null };

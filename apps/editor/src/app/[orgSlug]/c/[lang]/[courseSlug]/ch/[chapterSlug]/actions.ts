@@ -1,17 +1,17 @@
 "use server";
 
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { cacheTagCourse } from "@zoonk/utils/cache";
 import { after } from "next/server";
-import { updateCourse } from "@/data/courses/update-course";
+import { updateChapter } from "@/data/chapters/update-chapter";
+import { getChapterCacheTags } from "@/lib/cache";
 import { getErrorMessage } from "@/lib/error-messages";
 
-export async function updateCourseTitleAction(
-  courseId: number,
+export async function updateChapterTitleAction(
+  chapterId: number,
   data: { title: string },
 ): Promise<{ error: string | null }> {
-  const { error } = await updateCourse({
-    courseId,
+  const { error } = await updateChapter({
+    chapterId,
     title: data.title,
   });
 
@@ -20,18 +20,19 @@ export async function updateCourseTitleAction(
   }
 
   after(async () => {
-    await revalidateMainApp([cacheTagCourse({ courseId })]);
+    const tags = await getChapterCacheTags(chapterId);
+    await revalidateMainApp(tags);
   });
 
   return { error: null };
 }
 
-export async function updateCourseDescriptionAction(
-  courseId: number,
+export async function updateChapterDescriptionAction(
+  chapterId: number,
   data: { description: string },
 ): Promise<{ error: string | null }> {
-  const { error } = await updateCourse({
-    courseId,
+  const { error } = await updateChapter({
+    chapterId,
     description: data.description,
   });
 
@@ -40,7 +41,8 @@ export async function updateCourseDescriptionAction(
   }
 
   after(async () => {
-    await revalidateMainApp([cacheTagCourse({ courseId })]);
+    const tags = await getChapterCacheTags(chapterId);
+    await revalidateMainApp(tags);
   });
 
   return { error: null };
