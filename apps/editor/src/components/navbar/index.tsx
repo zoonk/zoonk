@@ -8,6 +8,7 @@ import { HomeIcon } from "lucide-react";
 import Link from "next/link";
 import { useParams, useSelectedLayoutSegments } from "next/navigation";
 import { useExtracted } from "next-intl";
+import { CommandPalette } from "./command-palette";
 
 export function NavbarSkeleton() {
   return (
@@ -46,6 +47,8 @@ export function EditorNavbar({ children }: React.PropsWithChildren) {
           <HomeIcon aria-hidden="true" />
           <span className="sr-only">{t("Home page")}</span>
         </Link>
+
+        <CommandPalette />
       </div>
 
       {children}
