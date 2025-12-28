@@ -18,10 +18,14 @@ async function LessonContent({
 }: {
   params: LessonPageProps["params"];
 }) {
-  const { chapterSlug, courseSlug, lessonSlug, orgSlug } = await params;
+  const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await params;
   const t = await getExtracted();
 
-  const { data: lesson, error } = await getLesson({ lessonSlug, orgSlug });
+  const { data: lesson, error } = await getLesson({
+    language: lang,
+    lessonSlug,
+    orgSlug,
+  });
 
   if (error || !lesson) {
     return notFound();
@@ -45,10 +49,10 @@ async function LessonContent({
 }
 
 export default async function LessonPage(props: LessonPageProps) {
-  const { lessonSlug, orgSlug } = await props.params;
+  const { lang, lessonSlug, orgSlug } = await props.params;
 
   // Preload data (cached, so child components get the same promise)
-  void getLesson({ lessonSlug, orgSlug });
+  void getLesson({ language: lang, lessonSlug, orgSlug });
 
   return (
     <Container variant="narrow">

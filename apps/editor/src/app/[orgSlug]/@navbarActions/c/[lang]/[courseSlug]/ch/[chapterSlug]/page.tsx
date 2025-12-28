@@ -31,9 +31,11 @@ async function ChapterActions({
   const { chapterSlug, courseSlug, lang, orgSlug } = await params;
   const t = await getExtracted();
 
-  const pageParams = { chapterSlug, courseSlug, language: lang, orgSlug };
-
-  const { data: chapter } = await getChapter(pageParams);
+  const { data: chapter } = await getChapter({
+    chapterSlug,
+    language: lang,
+    orgSlug,
+  });
 
   if (!chapter) {
     return notFound();

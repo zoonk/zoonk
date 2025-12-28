@@ -23,10 +23,14 @@ async function ChapterContent({
 }: {
   params: ChapterPageProps["params"];
 }) {
-  const { chapterSlug, courseSlug, orgSlug } = await params;
+  const { chapterSlug, courseSlug, lang, orgSlug } = await params;
   const t = await getExtracted();
 
-  const { data: chapter, error } = await getChapter({ chapterSlug, orgSlug });
+  const { data: chapter, error } = await getChapter({
+    chapterSlug,
+    language: lang,
+    orgSlug,
+  });
 
   if (error || !chapter) {
     return notFound();
@@ -83,11 +87,11 @@ async function LessonList({ params }: { params: ChapterPageProps["params"] }) {
 }
 
 export default async function ChapterPage(props: ChapterPageProps) {
-  const { chapterSlug, orgSlug } = await props.params;
+  const { chapterSlug, lang, orgSlug } = await props.params;
 
   // Preload data in parallel (cached, so child components get the same promise)
   void Promise.all([
-    getChapter({ chapterSlug, orgSlug }),
+    getChapter({ chapterSlug, language: lang, orgSlug }),
     listChapterLessons({ chapterSlug, orgSlug }),
   ]);
 

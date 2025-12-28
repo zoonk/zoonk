@@ -31,15 +31,11 @@ async function LessonActions({
   const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await params;
   const t = await getExtracted();
 
-  const pageParams = {
-    chapterSlug,
-    courseSlug,
+  const { data: lesson } = await getLesson({
     language: lang,
     lessonSlug,
     orgSlug,
-  };
-
-  const { data: lesson } = await getLesson(pageParams);
+  });
 
   if (!lesson) {
     return notFound();
@@ -48,20 +44,17 @@ async function LessonActions({
   const chapterUrl =
     `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}` as Route;
 
+  const slugs = { chapterSlug, courseSlug, lessonSlug };
+
   return (
     <LessonActionsContainer>
       <PublishToggle
         isPublished={lesson.isPublished}
-        onToggle={togglePublishAction.bind(null, pageParams, lesson.id)}
+        onToggle={togglePublishAction.bind(null, slugs, lesson.id)}
       />
 
       <DeleteItemButton
-        onDelete={deleteLessonAction.bind(
-          null,
-          pageParams,
-          lesson.id,
-          chapterUrl,
-        )}
+        onDelete={deleteLessonAction.bind(null, slugs, lesson.id, chapterUrl)}
         srLabel={t("Delete lesson")}
         title={t("Delete lesson?")}
       />

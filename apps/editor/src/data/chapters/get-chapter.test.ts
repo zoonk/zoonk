@@ -23,20 +23,11 @@ describe("unauthenticated users", () => {
     });
   });
 
-  test("returns Forbidden when getting by id", async () => {
-    const result = await getChapter({
-      chapterId: chapter.id,
-      headers: new Headers(),
-    });
-
-    expect(result.error?.message).toBe(ErrorCode.forbidden);
-    expect(result.data).toBeNull();
-  });
-
-  test("returns Forbidden when getting by slug", async () => {
+  test("returns Forbidden", async () => {
     const result = await getChapter({
       chapterSlug: chapter.slug,
       headers: new Headers(),
+      language: chapter.language,
       orgSlug: organization.slug,
     });
 
@@ -60,8 +51,10 @@ describe("members", () => {
     ]);
 
     const result = await getChapter({
-      chapterId: chapter.id,
+      chapterSlug: chapter.slug,
       headers,
+      language: chapter.language,
+      orgSlug: organization.slug,
     });
 
     expect(result.error?.message).toBe(ErrorCode.forbidden);
@@ -72,13 +65,17 @@ describe("members", () => {
 describe("admins", () => {
   let organization: Awaited<ReturnType<typeof memberFixture>>["organization"];
   let headers: Headers;
+  let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
   beforeAll(async () => {
     const fixture = await memberFixture({ role: "admin" });
     organization = fixture.organization;
 
-    const course = await courseFixture({ organizationId: organization.id });
+    course = await courseFixture({
+      language: "en",
+      organizationId: organization.id,
+    });
 
     [headers, chapter] = await Promise.all([
       signInAs(fixture.user.email, fixture.user.password),
@@ -90,21 +87,11 @@ describe("admins", () => {
     ]);
   });
 
-  test("gets chapter by id successfully", async () => {
-    const result = await getChapter({
-      chapterId: chapter.id,
-      headers,
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data?.id).toBe(chapter.id);
-    expect(result.data?.title).toBe(chapter.title);
-  });
-
   test("gets chapter by slug successfully", async () => {
     const result = await getChapter({
       chapterSlug: chapter.slug,
       headers,
+      language: chapter.language,
       orgSlug: organization.slug,
     });
 
@@ -113,25 +100,48 @@ describe("admins", () => {
     expect(result.data?.title).toBe(chapter.title);
   });
 
-  test("returns null when chapter not found by id", async () => {
+  test("returns null when chapter not found", async () => {
     const result = await getChapter({
-      chapterId: 999_999,
+      chapterSlug: "non-existent-slug",
       headers,
+      language: chapter.language,
+      orgSlug: organization.slug,
     });
 
     expect(result.error).toBeNull();
     expect(result.data).toBeNull();
   });
 
-  test("returns null when chapter not found by slug", async () => {
+  test("returns null when language doesn't match", async () => {
     const result = await getChapter({
-      chapterSlug: "non-existent-slug",
+      chapterSlug: chapter.slug,
       headers,
+      language: "xx",
       orgSlug: organization.slug,
     });
 
     expect(result.error).toBeNull();
     expect(result.data).toBeNull();
+  });
+
+  test("returns the chapter with the correct language", async () => {
+    const ptChapter = await chapterFixture({
+      courseId: course.id,
+      language: "pt",
+      organizationId: organization.id,
+      slug: chapter.slug,
+    });
+
+    const result = await getChapter({
+      chapterSlug: chapter.slug,
+      headers,
+      language: "pt",
+      orgSlug: organization.slug,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.id).toBe(ptChapter.id);
+    expect(result.data?.language).toBe("pt");
   });
 
   test("returns Forbidden for chapter in different organization", async () => {
@@ -144,26 +154,9 @@ describe("admins", () => {
     });
 
     const result = await getChapter({
-      chapterId: otherChapter.id,
-      headers,
-    });
-
-    expect(result.error?.message).toBe(ErrorCode.forbidden);
-    expect(result.data).toBeNull();
-  });
-
-  test("returns Forbidden for chapter in different organization by slug", async () => {
-    const otherOrg = await organizationFixture();
-    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
-    const otherChapter = await chapterFixture({
-      courseId: otherCourse.id,
-      language: otherCourse.language,
-      organizationId: otherOrg.id,
-    });
-
-    const result = await getChapter({
       chapterSlug: otherChapter.slug,
       headers,
+      language: otherChapter.language,
       orgSlug: otherOrg.slug,
     });
 
