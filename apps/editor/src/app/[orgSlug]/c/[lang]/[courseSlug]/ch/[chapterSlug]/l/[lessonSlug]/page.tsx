@@ -10,10 +10,13 @@ import {
   updateLessonTitleAction,
 } from "./actions";
 
+type LessonPageProps =
+  PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
+
 async function LessonContent({
   params,
 }: {
-  params: PageProps<"/[orgSlug]/l/[lessonSlug]">["params"];
+  params: LessonPageProps["params"];
 }) {
   const { lessonSlug, orgSlug } = await params;
   const t = await getExtracted();
@@ -42,9 +45,7 @@ async function LessonContent({
   );
 }
 
-export default async function LessonPage(
-  props: PageProps<"/[orgSlug]/l/[lessonSlug]">,
-) {
+export default async function LessonPage(props: LessonPageProps) {
   return (
     <Container variant="narrow">
       <Suspense fallback={<ContentEditorSkeleton />}>

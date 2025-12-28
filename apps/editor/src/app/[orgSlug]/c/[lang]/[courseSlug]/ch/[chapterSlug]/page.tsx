@@ -15,10 +15,13 @@ import {
   updateChapterTitleAction,
 } from "./actions";
 
+type ChapterPageProps =
+  PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">;
+
 async function ChapterContent({
   params,
 }: {
-  params: PageProps<"/[orgSlug]/ch/[chapterSlug]">["params"];
+  params: ChapterPageProps["params"];
 }) {
   const { chapterSlug, orgSlug } = await params;
   const t = await getExtracted();
@@ -47,12 +50,8 @@ async function ChapterContent({
   );
 }
 
-async function LessonList({
-  params,
-}: {
-  params: PageProps<"/[orgSlug]/ch/[chapterSlug]">["params"];
-}) {
-  const { chapterSlug, orgSlug } = await params;
+async function LessonList({ params }: { params: ChapterPageProps["params"] }) {
+  const { chapterSlug, courseSlug, lang, orgSlug } = await params;
   const t = await getExtracted();
 
   const { data: lessons, error } = await listChapterLessons({
@@ -74,15 +73,15 @@ async function LessonList({
 
   return (
     <ItemList
-      getHref={(item) => `/${orgSlug}/l/${item.slug}`}
+      getHref={(item) =>
+        `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${item.slug}`
+      }
       items={lessons}
     />
   );
 }
 
-export default async function ChapterPage(
-  props: PageProps<"/[orgSlug]/ch/[chapterSlug]">,
-) {
+export default async function ChapterPage(props: ChapterPageProps) {
   const { chapterSlug, orgSlug } = await props.params;
 
   // Preload data in parallel (cached, so child components get the same promise)

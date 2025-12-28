@@ -20,6 +20,26 @@ msgctxt "WUV28A"
 msgid "Saving…"
 msgstr "Guardando…"
 
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+msgctxt "52DE8l"
+msgid "Delete lesson?"
+msgstr "¿Eliminar lección?"
+
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+msgctxt "g5DE4z"
+msgid "Delete lesson"
+msgstr "Eliminar lección"
+
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "kcCZue"
+msgid "Delete chapter"
+msgstr "Eliminar capítulo"
+
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "MXg41w"
+msgid "Delete chapter?"
+msgstr "¿Eliminar capítulo?"
+
 #: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/page.tsx
 msgctxt "Ljsy5D"
 msgid "Delete course"
@@ -30,25 +50,67 @@ msgctxt "ZFXb/x"
 msgid "Delete course?"
 msgstr "¿Eliminar curso?"
 
-#: src/app/[orgSlug]/@navbarActions/ch/[chapterSlug]/page.tsx
-msgctxt "kcCZue"
-msgid "Delete chapter"
-msgstr "Eliminar capítulo"
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+msgctxt "AHvdBa"
+msgid "Edit lesson description"
+msgstr "Editar descripción de la lección"
 
-#: src/app/[orgSlug]/@navbarActions/ch/[chapterSlug]/page.tsx
-msgctxt "MXg41w"
-msgid "Delete chapter?"
-msgstr "¿Eliminar capítulo?"
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+msgctxt "AmPWks"
+msgid "Lesson description…"
+msgstr "Descripción de la lección…"
 
-#: src/app/[orgSlug]/@navbarActions/l/[lessonSlug]/page.tsx
-msgctxt "52DE8l"
-msgid "Delete lesson?"
-msgstr "¿Eliminar lección?"
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+msgctxt "jrinBZ"
+msgid "Lesson title…"
+msgstr "Título de la lección…"
 
-#: src/app/[orgSlug]/@navbarActions/l/[lessonSlug]/page.tsx
-msgctxt "g5DE4z"
-msgid "Delete lesson"
-msgstr "Eliminar lección"
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+msgctxt "kdZUaI"
+msgid "Edit lesson title"
+msgstr "Editar título de la lección"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "2VCKc7"
+msgid "We couldn't load the lessons. Please try again."
+msgstr "No pudimos cargar las lecciones. Por favor, intenta de nuevo."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
+msgctxt "5CI3KH"
+msgid "Contact support"
+msgstr "Contactar soporte"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "6ssHZM"
+msgid "Failed to load lessons"
+msgstr "Error al cargar lecciones"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "b3c9gA"
+msgid "Edit chapter description"
+msgstr "Editar descripción del capítulo"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
+msgctxt "FazwRl"
+msgid "Try again"
+msgstr "Intentar de nuevo"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "fuhIMT"
+msgid "Edit chapter title"
+msgstr "Editar título del capítulo"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "kYfPBA"
+msgid "Chapter description…"
+msgstr "Descripción del capítulo…"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "yNvug5"
+msgid "Chapter title…"
+msgstr "Título del capítulo…"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
 msgctxt "2Pphvx"
@@ -56,21 +118,9 @@ msgid "Course title…"
 msgstr "Título del curso…"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-#: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
-msgctxt "5CI3KH"
-msgid "Contact support"
-msgstr "Contactar soporte"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
 msgctxt "Ek5KLE"
 msgid "Edit course description"
 msgstr "Editar descripción del curso"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-#: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
-msgctxt "FazwRl"
-msgid "Try again"
-msgstr "Intentar de nuevo"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
 msgctxt "FKa6ED"
@@ -92,36 +142,6 @@ msgctxt "xA68iL"
 msgid "Failed to load chapters"
 msgstr "Error al cargar capítulos"
 
-#: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
-msgctxt "2VCKc7"
-msgid "We couldn't load the lessons. Please try again."
-msgstr "No pudimos cargar las lecciones. Por favor, intenta de nuevo."
-
-#: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
-msgctxt "6ssHZM"
-msgid "Failed to load lessons"
-msgstr "Error al cargar lecciones"
-
-#: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
-msgctxt "b3c9gA"
-msgid "Edit chapter description"
-msgstr "Editar descripción del capítulo"
-
-#: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
-msgctxt "fuhIMT"
-msgid "Edit chapter title"
-msgstr "Editar título del capítulo"
-
-#: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
-msgctxt "kYfPBA"
-msgid "Chapter description…"
-msgstr "Descripción del capítulo…"
-
-#: src/app/[orgSlug]/ch/[chapterSlug]/page.tsx
-msgctxt "yNvug5"
-msgid "Chapter title…"
-msgstr "Título del capítulo…"
-
 #: src/app/[orgSlug]/course-list.tsx
 msgctxt "c0YWuA"
 msgid "Your organization hasn't created any courses yet."
@@ -131,26 +151,6 @@ msgstr "Tu organización aún no ha creado ningún curso."
 msgctxt "zJxO2f"
 msgid "No courses"
 msgstr "Sin cursos"
-
-#: src/app/[orgSlug]/l/[lessonSlug]/page.tsx
-msgctxt "AHvdBa"
-msgid "Edit lesson description"
-msgstr "Editar descripción de la lección"
-
-#: src/app/[orgSlug]/l/[lessonSlug]/page.tsx
-msgctxt "AmPWks"
-msgid "Lesson description…"
-msgstr "Descripción de la lección…"
-
-#: src/app/[orgSlug]/l/[lessonSlug]/page.tsx
-msgctxt "jrinBZ"
-msgid "Lesson title…"
-msgstr "Título de la lección…"
-
-#: src/app/[orgSlug]/l/[lessonSlug]/page.tsx
-msgctxt "kdZUaI"
-msgid "Edit lesson title"
-msgstr "Editar título de la lección"
 
 #: src/app/[orgSlug]/new-course/actions.ts
 msgctxt "bLbK+M"

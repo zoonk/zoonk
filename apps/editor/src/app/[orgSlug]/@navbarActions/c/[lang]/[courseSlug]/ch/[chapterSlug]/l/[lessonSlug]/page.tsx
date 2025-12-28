@@ -1,3 +1,4 @@
+import type { Route } from "next";
 import { notFound } from "next/navigation";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
@@ -5,6 +6,9 @@ import { DeleteItemButton } from "@/components/navbar/delete-item-button";
 import { PublishToggle } from "@/components/navbar/publish-toggle";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { deleteLessonAction, togglePublishAction } from "./actions";
+
+type LessonNavbarActionsPageProps =
+  PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
 
 function LessonActionsContainer({ children }: React.PropsWithChildren) {
   return <div className="flex items-center gap-2">{children}</div>;
@@ -21,8 +25,10 @@ function LessonActionsSkeleton() {
 
 async function LessonActions({
   params,
-}: PageProps<"/[orgSlug]/l/[lessonSlug]">) {
-  const { lessonSlug, orgSlug } = await params;
+}: {
+  params: LessonNavbarActionsPageProps["params"];
+}) {
+  const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await params;
   const t = await getExtracted();
 
   const { data: lesson } = await getLesson({
@@ -34,6 +40,9 @@ async function LessonActions({
     return notFound();
   }
 
+  const chapterUrl =
+    `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}` as Route;
+
   return (
     <LessonActionsContainer>
       <PublishToggle
@@ -42,7 +51,7 @@ async function LessonActions({
       />
 
       <DeleteItemButton
-        onDelete={deleteLessonAction.bind(null, lesson.id, orgSlug)}
+        onDelete={deleteLessonAction.bind(null, lesson.id, chapterUrl)}
         srLabel={t("Delete lesson")}
         title={t("Delete lesson?")}
       />
@@ -51,11 +60,11 @@ async function LessonActions({
 }
 
 export default async function LessonNavbarActions(
-  props: PageProps<"/[orgSlug]/l/[lessonSlug]">,
+  props: LessonNavbarActionsPageProps,
 ) {
   return (
     <Suspense fallback={<LessonActionsSkeleton />}>
-      <LessonActions {...props} />
+      <LessonActions params={props.params} />
     </Suspense>
   );
 }

@@ -76,7 +76,7 @@ async function ChapterList({
 
   return (
     <ItemList
-      getHref={(item) => `/${orgSlug}/ch/${item.slug}`}
+      getHref={(item) => `/${orgSlug}/c/${lang}/${courseSlug}/ch/${item.slug}`}
       items={chapters}
     />
   );

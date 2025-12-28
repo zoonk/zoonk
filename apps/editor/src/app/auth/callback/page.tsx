@@ -21,7 +21,7 @@ function CallbackHandler() {
       return redirect("/login");
     }
 
-    redirect("/" as never);
+    redirect("/");
   });
 
   useEffect(() => {
