@@ -1,12 +1,14 @@
 "use server";
 
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
+import { cacheTagChapter, cacheTagCourse } from "@zoonk/utils/cache";
 import { after } from "next/server";
 import { updateChapter } from "@/data/chapters/update-chapter";
-import { getChapterCacheTags } from "@/lib/cache";
 import { getErrorMessage } from "@/lib/error-messages";
 
 export async function updateChapterTitleAction(
+  chapterSlug: string,
+  courseSlug: string,
   chapterId: number,
   data: { title: string },
 ): Promise<{ error: string | null }> {
@@ -20,14 +22,18 @@ export async function updateChapterTitleAction(
   }
 
   after(async () => {
-    const tags = await getChapterCacheTags(chapterId);
-    await revalidateMainApp(tags);
+    await revalidateMainApp([
+      cacheTagChapter({ chapterSlug }),
+      cacheTagCourse({ courseSlug }),
+    ]);
   });
 
   return { error: null };
 }
 
 export async function updateChapterDescriptionAction(
+  chapterSlug: string,
+  courseSlug: string,
   chapterId: number,
   data: { description: string },
 ): Promise<{ error: string | null }> {
@@ -41,8 +47,10 @@ export async function updateChapterDescriptionAction(
   }
 
   after(async () => {
-    const tags = await getChapterCacheTags(chapterId);
-    await revalidateMainApp(tags);
+    await revalidateMainApp([
+      cacheTagChapter({ chapterSlug }),
+      cacheTagCourse({ courseSlug }),
+    ]);
   });
 
   return { error: null };

@@ -13,12 +13,7 @@ export async function createLesson(params: {
   position: number;
   slug: string;
   title: string;
-}): Promise<
-  SafeReturn<{
-    lesson: Lesson;
-    chapterLessonId: number;
-  }>
-> {
+}): Promise<SafeReturn<Lesson>> {
   const { data: chapter, error: findError } = await safeAsync(() =>
     prisma.chapter.findUnique({
       where: { id: params.chapterId },
@@ -46,23 +41,12 @@ export async function createLesson(params: {
   const lessonSlug = toSlug(params.slug);
   const normalizedTitle = normalizeString(params.title);
 
-  const { data, error } = await safeAsync(() =>
+  const { data: lesson, error } = await safeAsync(() =>
     prisma.$transaction(async (tx) => {
       // Lock chapter row to prevent race conditions with concurrent position updates
       await tx.$queryRaw`SELECT id FROM chapters WHERE id = ${params.chapterId} FOR UPDATE`;
 
-      const lesson = await tx.lesson.create({
-        data: {
-          description: params.description,
-          isPublished: !chapter.isPublished,
-          normalizedTitle,
-          organizationId: chapter.organizationId,
-          slug: lessonSlug,
-          title: params.title,
-        },
-      });
-
-      await tx.chapterLesson.updateMany({
+      await tx.lesson.updateMany({
         data: { position: { increment: 1 } },
         where: {
           chapterId: params.chapterId,
@@ -70,15 +54,19 @@ export async function createLesson(params: {
         },
       });
 
-      const chapterLesson = await tx.chapterLesson.create({
+      return tx.lesson.create({
         data: {
           chapterId: params.chapterId,
-          lessonId: lesson.id,
+          description: params.description,
+          isPublished: !chapter.isPublished,
+          language: chapter.language,
+          normalizedTitle,
+          organizationId: chapter.organizationId,
           position: params.position,
+          slug: lessonSlug,
+          title: params.title,
         },
       });
-
-      return { chapterLessonId: chapterLesson.id, lesson };
     }),
   );
 
@@ -86,5 +74,5 @@ export async function createLesson(params: {
     return { data: null, error };
   }
 
-  return { data, error: null };
+  return { data: lesson, error: null };
 }

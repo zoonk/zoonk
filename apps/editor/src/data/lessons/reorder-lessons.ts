@@ -42,11 +42,11 @@ export async function reorderLessons(params: {
   const { data, error } = await safeAsync(() =>
     prisma.$transaction(
       params.lessons.map((lesson) =>
-        prisma.chapterLesson.updateMany({
+        prisma.lesson.updateMany({
           data: { position: lesson.position },
           where: {
             chapterId: params.chapterId,
-            lessonId: lesson.lessonId,
+            id: lesson.lessonId,
           },
         }),
       ),

@@ -7,6 +7,7 @@ import { updateCourse } from "@/data/courses/update-course";
 import { getErrorMessage } from "@/lib/error-messages";
 
 export async function updateCourseTitleAction(
+  courseSlug: string,
   courseId: number,
   data: { title: string },
 ): Promise<{ error: string | null }> {
@@ -20,13 +21,14 @@ export async function updateCourseTitleAction(
   }
 
   after(async () => {
-    await revalidateMainApp([cacheTagCourse({ courseId })]);
+    await revalidateMainApp([cacheTagCourse({ courseSlug })]);
   });
 
   return { error: null };
 }
 
 export async function updateCourseDescriptionAction(
+  courseSlug: string,
   courseId: number,
   data: { description: string },
 ): Promise<{ error: string | null }> {
@@ -40,7 +42,7 @@ export async function updateCourseDescriptionAction(
   }
 
   after(async () => {
-    await revalidateMainApp([cacheTagCourse({ courseId })]);
+    await revalidateMainApp([cacheTagCourse({ courseSlug })]);
   });
 
   return { error: null };

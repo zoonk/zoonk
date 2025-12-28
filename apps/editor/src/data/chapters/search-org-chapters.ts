@@ -7,8 +7,8 @@ import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
 import { ErrorCode } from "@/lib/app-error";
 
-export type ChapterWithCourses = Chapter & {
-  courses: { slug: string; language: string }[];
+export type ChapterWithCourse = Chapter & {
+  course: { slug: string; language: string };
 };
 
 export const searchOrgChapters = cache(
@@ -16,7 +16,7 @@ export const searchOrgChapters = cache(
     headers?: Headers;
     orgSlug: string;
     title: string;
-  }): Promise<{ data: ChapterWithCourses[]; error: Error | null }> => {
+  }): Promise<{ data: ChapterWithCourse[]; error: Error | null }> => {
     const { title, orgSlug } = params;
     const normalizedSearch = normalizeString(title);
 
@@ -29,10 +29,8 @@ export const searchOrgChapters = cache(
         }),
         prisma.chapter.findMany({
           include: {
-            courseChapters: {
-              select: {
-                course: { select: { language: true, slug: true } },
-              },
+            course: {
+              select: { language: true, slug: true },
             },
           },
           orderBy: { createdAt: "desc" },
@@ -57,13 +55,6 @@ export const searchOrgChapters = cache(
       return { data: [], error: new AppError(ErrorCode.forbidden) };
     }
 
-    const chaptersWithCourses = chapters.map(
-      ({ courseChapters, ...chapter }) => ({
-        ...chapter,
-        courses: courseChapters.map((cc) => cc.course),
-      }),
-    );
-
-    return { data: chaptersWithCourses, error: null };
+    return { data: chapters, error: null };
   },
 );

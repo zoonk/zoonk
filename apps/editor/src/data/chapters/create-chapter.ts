@@ -13,12 +13,7 @@ export async function createChapter(params: {
   position: number;
   slug: string;
   title: string;
-}): Promise<
-  SafeReturn<{
-    chapter: Chapter;
-    courseChapterId: number;
-  }>
-> {
+}): Promise<SafeReturn<Chapter>> {
   const { data: course, error: findError } = await safeAsync(() =>
     prisma.course.findUnique({
       where: { id: params.courseId },
@@ -46,23 +41,12 @@ export async function createChapter(params: {
   const chapterSlug = toSlug(params.slug);
   const normalizedTitle = normalizeString(params.title);
 
-  const { data, error } = await safeAsync(() =>
+  const { data: chapter, error } = await safeAsync(() =>
     prisma.$transaction(async (tx) => {
       // Lock course row to prevent race conditions with concurrent position updates
       await tx.$queryRaw`SELECT id FROM courses WHERE id = ${params.courseId} FOR UPDATE`;
 
-      const chapter = await tx.chapter.create({
-        data: {
-          description: params.description,
-          isPublished: !course.isPublished,
-          normalizedTitle,
-          organizationId: course.organizationId,
-          slug: chapterSlug,
-          title: params.title,
-        },
-      });
-
-      await tx.courseChapter.updateMany({
+      await tx.chapter.updateMany({
         data: { position: { increment: 1 } },
         where: {
           courseId: params.courseId,
@@ -70,15 +54,19 @@ export async function createChapter(params: {
         },
       });
 
-      const courseChapter = await tx.courseChapter.create({
+      return tx.chapter.create({
         data: {
-          chapterId: chapter.id,
           courseId: params.courseId,
+          description: params.description,
+          isPublished: !course.isPublished,
+          language: course.language,
+          normalizedTitle,
+          organizationId: course.organizationId,
           position: params.position,
+          slug: chapterSlug,
+          title: params.title,
         },
       });
-
-      return { chapter, courseChapterId: courseChapter.id };
     }),
   );
 
@@ -86,5 +74,5 @@ export async function createChapter(params: {
     return { data: null, error };
   }
 
-  return { data, error: null };
+  return { data: chapter, error: null };
 }

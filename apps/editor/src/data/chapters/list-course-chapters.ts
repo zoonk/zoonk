@@ -6,17 +6,13 @@ import { AppError, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import { ErrorCode } from "@/lib/app-error";
 
-export type ChapterWithPosition = Chapter & {
-  position: number;
-};
-
 export const listCourseChapters = cache(
   async (params: {
     courseSlug: string;
     headers?: Headers;
     language: string;
     orgSlug: string;
-  }): Promise<{ data: ChapterWithPosition[]; error: Error | null }> => {
+  }): Promise<{ data: Chapter[]; error: Error | null }> => {
     const { data, error } = await safeAsync(() =>
       Promise.all([
         hasCoursePermission({
@@ -24,8 +20,7 @@ export const listCourseChapters = cache(
           orgSlug: params.orgSlug,
           permission: "update",
         }),
-        prisma.courseChapter.findMany({
-          include: { chapter: true },
+        prisma.chapter.findMany({
           orderBy: { position: "asc" },
           where: {
             course: {
@@ -42,16 +37,11 @@ export const listCourseChapters = cache(
       return { data: [], error };
     }
 
-    const [hasPermission, courseChapters] = data;
+    const [hasPermission, chapters] = data;
 
     if (!hasPermission) {
       return { data: [], error: new AppError(ErrorCode.forbidden) };
     }
-
-    const chapters = courseChapters.map((cc) => ({
-      ...cc.chapter,
-      position: cc.position,
-    }));
 
     return { data: chapters, error: null };
   },

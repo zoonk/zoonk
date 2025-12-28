@@ -7,11 +7,6 @@ import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { ErrorCode } from "@/lib/app-error";
 import { parseJsonFile } from "@/lib/parse-json-file";
 
-export type ImportedChapter = {
-  chapter: Chapter;
-  courseChapterId: number;
-};
-
 export type ChapterImportData = {
   description: string;
   slug?: string;
@@ -59,39 +54,9 @@ async function removeExistingChapters(
   tx: TransactionClient,
   courseId: number,
 ): Promise<void> {
-  const existingCourseChapters = await tx.courseChapter.findMany({
-    select: { chapterId: true, id: true },
+  await tx.chapter.deleteMany({
     where: { courseId },
   });
-
-  if (existingCourseChapters.length === 0) {
-    return;
-  }
-
-  await tx.courseChapter.deleteMany({
-    where: { courseId },
-  });
-
-  const chapterIds = existingCourseChapters.map((cc) => cc.chapterId);
-
-  const chaptersWithOtherCourses = await tx.courseChapter.groupBy({
-    by: ["chapterId"],
-    where: { chapterId: { in: chapterIds } },
-  });
-
-  const chaptersInOtherCourses = new Set(
-    chaptersWithOtherCourses.map((c) => c.chapterId),
-  );
-
-  const chaptersToDelete = chapterIds.filter(
-    (id) => !chaptersInOtherCourses.has(id),
-  );
-
-  if (chaptersToDelete.length > 0) {
-    await tx.chapter.deleteMany({
-      where: { id: { in: chaptersToDelete } },
-    });
-  }
 }
 
 export async function importChapters(params: {
@@ -99,7 +64,7 @@ export async function importChapters(params: {
   file: File;
   headers?: Headers;
   mode?: ImportMode;
-}): Promise<SafeReturn<ImportedChapter[]>> {
+}): Promise<SafeReturn<Chapter[]>> {
   const mode = params.mode ?? "merge";
 
   const { data: importData, error: parseError } = await parseJsonFile({
@@ -143,7 +108,7 @@ export async function importChapters(params: {
       if (mode === "replace") {
         await removeExistingChapters(tx, params.courseId);
       } else {
-        const existingChapters = await tx.courseChapter.findMany({
+        const existingChapters = await tx.chapter.findMany({
           orderBy: { position: "desc" },
           select: { position: true },
           take: 1,
@@ -173,6 +138,7 @@ export async function importChapters(params: {
 
       const existingChaptersInOrg = await tx.chapter.findMany({
         where: {
+          language: course.language,
           organizationId: course.organizationId,
           slug: { in: allSlugs },
         },
@@ -195,7 +161,7 @@ export async function importChapters(params: {
         return { ...item, slug: batchUniqueSlug };
       });
 
-      const imported: ImportedChapter[] = [];
+      const imported: Chapter[] = [];
 
       const chapterOperations = deduplicatedChapters.map(async (item, i) => {
         const existingChapter = existingChapterMap.get(item.slug);
@@ -203,14 +169,21 @@ export async function importChapters(params: {
         let chapter: Chapter;
 
         if (item.hasExplicitSlug && existingChapter) {
-          if (course.isPublished || existingChapter.isPublished) {
-            chapter = existingChapter;
-          } else {
-            chapter = await tx.chapter.update({
-              data: { isPublished: true },
-              where: { id: existingChapter.id },
-            });
-          }
+          // If both course and chapter are unpublished, mark chapter as published
+          // Otherwise keep current published state
+          const isPublished =
+            course.isPublished || existingChapter.isPublished
+              ? existingChapter.isPublished
+              : true;
+
+          chapter = await tx.chapter.update({
+            data: {
+              courseId: params.courseId,
+              isPublished,
+              position: startPosition + i,
+            },
+            where: { id: existingChapter.id },
+          });
         } else {
           const uniqueSlug =
             !item.hasExplicitSlug && existingChapter
@@ -219,25 +192,20 @@ export async function importChapters(params: {
 
           chapter = await tx.chapter.create({
             data: {
+              courseId: params.courseId,
               description: item.chapterData.description,
               isPublished: !course.isPublished,
+              language: course.language,
               normalizedTitle: item.normalizedTitle,
               organizationId: course.organizationId,
+              position: startPosition + i,
               slug: uniqueSlug,
               title: item.chapterData.title,
             },
           });
         }
 
-        const courseChapter = await tx.courseChapter.create({
-          data: {
-            chapterId: chapter.id,
-            courseId: params.courseId,
-            position: startPosition + i,
-          },
-        });
-
-        return { chapter, courseChapterId: courseChapter.id, index: i };
+        return { chapter, index: i };
       });
 
       const results = await Promise.all(chapterOperations);
@@ -245,10 +213,7 @@ export async function importChapters(params: {
       results.sort((a, b) => a.index - b.index);
 
       for (const chapterResult of results) {
-        imported.push({
-          chapter: chapterResult.chapter,
-          courseChapterId: chapterResult.courseChapterId,
-        });
+        imported.push(chapterResult.chapter);
       }
 
       return imported;

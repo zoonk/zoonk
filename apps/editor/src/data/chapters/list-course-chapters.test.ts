@@ -1,8 +1,5 @@
 import { signInAs } from "@zoonk/testing/fixtures/auth";
-import {
-  chapterFixture,
-  courseChapterFixture,
-} from "@zoonk/testing/fixtures/chapters";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
   memberFixture,
@@ -53,47 +50,46 @@ describe("members", () => {
 describe("admins", () => {
   let organization: Awaited<ReturnType<typeof memberFixture>>["organization"];
   let headers: Headers;
-  let course: Awaited<ReturnType<typeof courseFixture>>;
+  let _course: Awaited<ReturnType<typeof courseFixture>>;
 
   beforeAll(async () => {
     const fixture = await memberFixture({ role: "admin" });
     organization = fixture.organization;
 
-    [headers, course] = await Promise.all([
+    [headers, _course] = await Promise.all([
       signInAs(fixture.user.email, fixture.user.password),
       courseFixture({ organizationId: fixture.organization.id }),
     ]);
   });
 
   test("lists chapters for a course ordered by position", async () => {
-    const [chapter1, chapter2, chapter3] = await Promise.all([
-      chapterFixture({ organizationId: organization.id }),
-      chapterFixture({ organizationId: organization.id }),
-      chapterFixture({ organizationId: organization.id }),
-    ]);
+    const newCourse = await courseFixture({ organizationId: organization.id });
 
-    await Promise.all([
-      courseChapterFixture({
-        chapterId: chapter1.id,
-        courseId: course.id,
+    const [chapter1, chapter2, chapter3] = await Promise.all([
+      chapterFixture({
+        courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 2,
       }),
-      courseChapterFixture({
-        chapterId: chapter2.id,
-        courseId: course.id,
+      chapterFixture({
+        courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 0,
       }),
-      courseChapterFixture({
-        chapterId: chapter3.id,
-        courseId: course.id,
+      chapterFixture({
+        courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 1,
       }),
     ]);
 
     const result = await listCourseChapters({
-      courseSlug: course.slug,
+      courseSlug: newCourse.slug,
       headers,
-      language: course.language,
+      language: newCourse.language,
       orgSlug: organization.slug,
     });
 

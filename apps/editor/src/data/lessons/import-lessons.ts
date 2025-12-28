@@ -7,11 +7,6 @@ import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { ErrorCode } from "@/lib/app-error";
 import { parseJsonFile } from "@/lib/parse-json-file";
 
-export type ImportedLesson = {
-  lesson: Lesson;
-  chapterLessonId: number;
-};
-
 export type LessonImportData = {
   description: string;
   slug?: string;
@@ -59,39 +54,9 @@ async function removeExistingLessons(
   tx: TransactionClient,
   chapterId: number,
 ): Promise<void> {
-  const existingChapterLessons = await tx.chapterLesson.findMany({
-    select: { id: true, lessonId: true },
+  await tx.lesson.deleteMany({
     where: { chapterId },
   });
-
-  if (existingChapterLessons.length === 0) {
-    return;
-  }
-
-  await tx.chapterLesson.deleteMany({
-    where: { chapterId },
-  });
-
-  const lessonIds = existingChapterLessons.map((cl) => cl.lessonId);
-
-  const lessonsWithOtherChapters = await tx.chapterLesson.groupBy({
-    by: ["lessonId"],
-    where: { lessonId: { in: lessonIds } },
-  });
-
-  const lessonsInOtherChapters = new Set(
-    lessonsWithOtherChapters.map((l) => l.lessonId),
-  );
-
-  const lessonsToDelete = lessonIds.filter(
-    (id) => !lessonsInOtherChapters.has(id),
-  );
-
-  if (lessonsToDelete.length > 0) {
-    await tx.lesson.deleteMany({
-      where: { id: { in: lessonsToDelete } },
-    });
-  }
 }
 
 export async function importLessons(params: {
@@ -99,7 +64,7 @@ export async function importLessons(params: {
   file: File;
   headers?: Headers;
   mode?: ImportMode;
-}): Promise<SafeReturn<ImportedLesson[]>> {
+}): Promise<SafeReturn<Lesson[]>> {
   const mode = params.mode ?? "merge";
 
   const { data: importData, error: parseError } = await parseJsonFile({
@@ -143,7 +108,7 @@ export async function importLessons(params: {
       if (mode === "replace") {
         await removeExistingLessons(tx, params.chapterId);
       } else {
-        const existingLessons = await tx.chapterLesson.findMany({
+        const existingLessons = await tx.lesson.findMany({
           orderBy: { position: "desc" },
           select: { position: true },
           take: 1,
@@ -173,6 +138,7 @@ export async function importLessons(params: {
 
       const existingLessonsInOrg = await tx.lesson.findMany({
         where: {
+          language: chapter.language,
           organizationId: chapter.organizationId,
           slug: { in: allSlugs },
         },
@@ -195,7 +161,7 @@ export async function importLessons(params: {
         return { ...item, slug: batchUniqueSlug };
       });
 
-      const imported: ImportedLesson[] = [];
+      const imported: Lesson[] = [];
 
       const lessonOperations = deduplicatedLessons.map(async (item, i) => {
         const existingLesson = existingLessonMap.get(item.slug);
@@ -219,25 +185,20 @@ export async function importLessons(params: {
 
           lesson = await tx.lesson.create({
             data: {
+              chapterId: params.chapterId,
               description: item.lessonData.description,
               isPublished: !chapter.isPublished,
+              language: chapter.language,
               normalizedTitle: item.normalizedTitle,
               organizationId: chapter.organizationId,
+              position: startPosition + i,
               slug: uniqueSlug,
               title: item.lessonData.title,
             },
           });
         }
 
-        const chapterLesson = await tx.chapterLesson.create({
-          data: {
-            chapterId: params.chapterId,
-            lessonId: lesson.id,
-            position: startPosition + i,
-          },
-        });
-
-        return { chapterLessonId: chapterLesson.id, index: i, lesson };
+        return { index: i, lesson };
       });
 
       const results = await Promise.all(lessonOperations);
@@ -245,10 +206,7 @@ export async function importLessons(params: {
       results.sort((a, b) => a.index - b.index);
 
       for (const lessonResult of results) {
-        imported.push({
-          chapterLessonId: lessonResult.chapterLessonId,
-          lesson: lessonResult.lesson,
-        });
+        imported.push(lessonResult.lesson);
       }
 
       return imported;

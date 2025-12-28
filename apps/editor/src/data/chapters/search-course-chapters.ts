@@ -1,12 +1,11 @@
 import "server-only";
 
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { prisma } from "@zoonk/db";
+import { type Chapter, prisma } from "@zoonk/db";
 import { AppError, safeAsync } from "@zoonk/utils/error";
 import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
 import { ErrorCode } from "@/lib/app-error";
-import type { ChapterWithPosition } from "./list-course-chapters";
 
 export const searchCourseChapters = cache(
   async (params: {
@@ -15,7 +14,7 @@ export const searchCourseChapters = cache(
     language: string;
     orgSlug: string;
     title: string;
-  }): Promise<{ data: ChapterWithPosition[]; error: Error | null }> => {
+  }): Promise<{ data: Chapter[]; error: Error | null }> => {
     const { title, courseSlug, language, orgSlug } = params;
     const normalizedSearch = normalizeString(title);
 
@@ -26,20 +25,17 @@ export const searchCourseChapters = cache(
           orgSlug,
           permission: "update",
         }),
-        prisma.courseChapter.findMany({
-          include: { chapter: true },
+        prisma.chapter.findMany({
           orderBy: { position: "asc" },
           where: {
-            chapter: {
-              normalizedTitle: {
-                contains: normalizedSearch,
-                mode: "insensitive",
-              },
-            },
             course: {
               language,
               organization: { slug: orgSlug },
               slug: courseSlug,
+            },
+            normalizedTitle: {
+              contains: normalizedSearch,
+              mode: "insensitive",
             },
           },
         }),
@@ -50,16 +46,11 @@ export const searchCourseChapters = cache(
       return { data: [], error };
     }
 
-    const [hasPermission, courseChapters] = data;
+    const [hasPermission, chapters] = data;
 
     if (!hasPermission) {
       return { data: [], error: new AppError(ErrorCode.forbidden) };
     }
-
-    const chapters = courseChapters.map((cc) => ({
-      ...cc.chapter,
-      position: cc.position,
-    }));
 
     return { data: chapters, error: null };
   },

@@ -40,8 +40,8 @@ async function CourseContent({
       entityId={course.id}
       initialDescription={course.description}
       initialTitle={course.title}
-      onSaveDescription={updateCourseDescriptionAction}
-      onSaveTitle={updateCourseTitleAction}
+      onSaveDescription={updateCourseDescriptionAction.bind(null, courseSlug)}
+      onSaveTitle={updateCourseTitleAction.bind(null, courseSlug)}
       titleLabel={t("Edit course title")}
       titlePlaceholder={t("Course title…")}
     />

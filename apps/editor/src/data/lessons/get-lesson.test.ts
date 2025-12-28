@@ -1,4 +1,6 @@
 import { signInAs } from "@zoonk/testing/fixtures/auth";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import {
   memberFixture,
@@ -14,22 +16,23 @@ describe("unauthenticated users", () => {
 
   beforeAll(async () => {
     organization = await organizationFixture();
-    lesson = await lessonFixture({ organizationId: organization.id });
-  });
-
-  test("returns Forbidden when getting by id", async () => {
-    const result = await getLesson({
-      headers: new Headers(),
-      lessonId: lesson.id,
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
     });
-
-    expect(result.error?.message).toBe(ErrorCode.forbidden);
-    expect(result.data).toBeNull();
+    lesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+    });
   });
 
-  test("returns Forbidden when getting by slug", async () => {
+  test("returns Forbidden", async () => {
     const result = await getLesson({
       headers: new Headers(),
+      language: lesson.language,
       lessonSlug: lesson.slug,
       orgSlug: organization.slug,
     });
@@ -42,15 +45,27 @@ describe("unauthenticated users", () => {
 describe("members", () => {
   test("returns Forbidden", async () => {
     const { organization, user } = await memberFixture({ role: "member" });
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
 
     const [headers, lesson] = await Promise.all([
       signInAs(user.email, user.password),
-      lessonFixture({ organizationId: organization.id }),
+      lessonFixture({
+        chapterId: chapter.id,
+        language: chapter.language,
+        organizationId: organization.id,
+      }),
     ]);
 
     const result = await getLesson({
       headers,
-      lessonId: lesson.id,
+      language: lesson.language,
+      lessonSlug: lesson.slug,
+      orgSlug: organization.slug,
     });
 
     expect(result.error?.message).toBe(ErrorCode.forbidden);
@@ -61,32 +76,39 @@ describe("members", () => {
 describe("admins", () => {
   let organization: Awaited<ReturnType<typeof memberFixture>>["organization"];
   let headers: Headers;
+  let course: Awaited<ReturnType<typeof courseFixture>>;
+  let chapter: Awaited<ReturnType<typeof chapterFixture>>;
   let lesson: Awaited<ReturnType<typeof lessonFixture>>;
 
   beforeAll(async () => {
     const fixture = await memberFixture({ role: "admin" });
     organization = fixture.organization;
 
-    [headers, lesson] = await Promise.all([
-      signInAs(fixture.user.email, fixture.user.password),
-      lessonFixture({ organizationId: fixture.organization.id }),
-    ]);
-  });
-
-  test("gets lesson by id successfully", async () => {
-    const result = await getLesson({
-      headers,
-      lessonId: lesson.id,
+    course = await courseFixture({
+      language: "en",
+      organizationId: organization.id,
     });
 
-    expect(result.error).toBeNull();
-    expect(result.data?.id).toBe(lesson.id);
-    expect(result.data?.title).toBe(lesson.title);
+    chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    [headers, lesson] = await Promise.all([
+      signInAs(fixture.user.email, fixture.user.password),
+      lessonFixture({
+        chapterId: chapter.id,
+        language: chapter.language,
+        organizationId: fixture.organization.id,
+      }),
+    ]);
   });
 
   test("gets lesson by slug successfully", async () => {
     const result = await getLesson({
       headers,
+      language: lesson.language,
       lessonSlug: lesson.slug,
       orgSlug: organization.slug,
     });
@@ -96,19 +118,10 @@ describe("admins", () => {
     expect(result.data?.title).toBe(lesson.title);
   });
 
-  test("returns null when lesson not found by id", async () => {
+  test("returns null when lesson not found", async () => {
     const result = await getLesson({
       headers,
-      lessonId: 999_999,
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data).toBeNull();
-  });
-
-  test("returns null when lesson not found by slug", async () => {
-    const result = await getLesson({
-      headers,
+      language: lesson.language,
       lessonSlug: "non-existent-slug",
       orgSlug: organization.slug,
     });
@@ -117,25 +130,57 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
-  test("returns Forbidden for lesson in different organization", async () => {
-    const otherOrg = await organizationFixture();
-    const otherLesson = await lessonFixture({ organizationId: otherOrg.id });
-
+  test("returns null when language doesn't match", async () => {
     const result = await getLesson({
       headers,
-      lessonId: otherLesson.id,
+      language: "xx",
+      lessonSlug: lesson.slug,
+      orgSlug: organization.slug,
     });
 
-    expect(result.error?.message).toBe(ErrorCode.forbidden);
+    expect(result.error).toBeNull();
     expect(result.data).toBeNull();
   });
 
-  test("returns Forbidden for lesson in different organization by slug", async () => {
-    const otherOrg = await organizationFixture();
-    const otherLesson = await lessonFixture({ organizationId: otherOrg.id });
+  test("returns the lesson with the correct language", async () => {
+    const ptLesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: "pt",
+      organizationId: organization.id,
+      slug: lesson.slug,
+    });
 
     const result = await getLesson({
       headers,
+      language: "pt",
+      lessonSlug: lesson.slug,
+      orgSlug: organization.slug,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.id).toBe(ptLesson.id);
+    expect(result.data?.language).toBe("pt");
+  });
+
+  test("returns Forbidden for lesson in different organization", async () => {
+    const otherOrg = await organizationFixture();
+    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+
+    const otherChapter = await chapterFixture({
+      courseId: otherCourse.id,
+      language: otherCourse.language,
+      organizationId: otherOrg.id,
+    });
+
+    const otherLesson = await lessonFixture({
+      chapterId: otherChapter.id,
+      language: otherChapter.language,
+      organizationId: otherOrg.id,
+    });
+
+    const result = await getLesson({
+      headers,
+      language: otherLesson.language,
       lessonSlug: otherLesson.slug,
       orgSlug: otherOrg.slug,
     });

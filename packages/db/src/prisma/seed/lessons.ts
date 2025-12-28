@@ -10,12 +10,14 @@ type LessonSeedData = {
 
 type ChapterLessons = {
   chapterSlug: string;
+  language: string;
   lessons: LessonSeedData[];
 };
 
 const lessonsData: ChapterLessons[] = [
   {
     chapterSlug: "introduction-to-machine-learning",
+    language: "en",
     lessons: [
       {
         description:
@@ -42,6 +44,7 @@ const lessonsData: ChapterLessons[] = [
   },
   {
     chapterSlug: "data-preparation",
+    language: "en",
     lessons: [
       {
         description:
@@ -65,59 +68,47 @@ export async function seedLessons(
   prisma: PrismaClient,
   org: Organization,
 ): Promise<void> {
-  const chapterSlugs = lessonsData.map((data) => data.chapterSlug);
-
-  const chapters = await prisma.chapter.findMany({
-    where: {
-      organizationId: org.id,
-      slug: { in: chapterSlugs },
-    },
-  });
-
-  const chapterMap = new Map(chapters.map((c) => [c.slug, c]));
-
-  const allLessonPromises = lessonsData.flatMap((data) => {
-    const chapter = chapterMap.get(data.chapterSlug);
-
-    if (!chapter) {
-      return [];
-    }
-
-    return data.lessons.map(async (lessonData, position) => {
-      const lesson = await prisma.lesson.upsert({
-        create: {
-          description: lessonData.description,
-          isPublished: lessonData.isPublished,
-          normalizedTitle: normalizeString(lessonData.title),
+  const allLessonPromises = lessonsData.flatMap((data) =>
+    prisma.chapter
+      .findFirst({
+        where: {
+          language: data.language,
           organizationId: org.id,
-          slug: lessonData.slug,
-          title: lessonData.title,
+          slug: data.chapterSlug,
         },
-        update: {},
-        where: {
-          orgLessonSlug: {
-            organizationId: org.id,
-            slug: lessonData.slug,
-          },
-        },
-      });
+      })
+      .then(async (chapter) => {
+        if (!chapter) {
+          return;
+        }
 
-      await prisma.chapterLesson.upsert({
-        create: {
-          chapterId: chapter.id,
-          lessonId: lesson.id,
-          position,
-        },
-        update: {},
-        where: {
-          chapterLesson: {
-            chapterId: chapter.id,
-            lessonId: lesson.id,
-          },
-        },
-      });
-    });
-  });
+        await Promise.all(
+          data.lessons.map((lessonData, position) =>
+            prisma.lesson.upsert({
+              create: {
+                chapterId: chapter.id,
+                description: lessonData.description,
+                isPublished: lessonData.isPublished,
+                language: data.language,
+                normalizedTitle: normalizeString(lessonData.title),
+                organizationId: org.id,
+                position,
+                slug: lessonData.slug,
+                title: lessonData.title,
+              },
+              update: {},
+              where: {
+                orgLanguageLessonSlug: {
+                  language: data.language,
+                  organizationId: org.id,
+                  slug: lessonData.slug,
+                },
+              },
+            }),
+          ),
+        );
+      }),
+  );
 
   await Promise.all(allLessonPromises);
 }

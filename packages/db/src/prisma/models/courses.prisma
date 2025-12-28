@@ -25,7 +25,7 @@ model Course {
   updatedAt         DateTime                 @default(now()) @updatedAt @map("updated_at")
   alternativeTitles CourseAlternativeTitle[]
   categories        CourseCategory[]
-  courseChapters    CourseChapter[]
+  chapters          Chapter[]
 
   @@unique([organizationId, language, slug], name: "orgSlug")
   @@index([organizationId, language, isPublished])

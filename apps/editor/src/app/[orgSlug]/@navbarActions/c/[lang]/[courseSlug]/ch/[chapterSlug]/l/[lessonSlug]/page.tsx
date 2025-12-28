@@ -32,6 +32,7 @@ async function LessonActions({
   const t = await getExtracted();
 
   const { data: lesson } = await getLesson({
+    language: lang,
     lessonSlug,
     orgSlug,
   });
@@ -43,15 +44,17 @@ async function LessonActions({
   const chapterUrl =
     `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}` as Route;
 
+  const slugs = { chapterSlug, courseSlug, lessonSlug };
+
   return (
     <LessonActionsContainer>
       <PublishToggle
         isPublished={lesson.isPublished}
-        onToggle={togglePublishAction.bind(null, lesson.id)}
+        onToggle={togglePublishAction.bind(null, slugs, lesson.id)}
       />
 
       <DeleteItemButton
-        onDelete={deleteLessonAction.bind(null, lesson.id, chapterUrl)}
+        onDelete={deleteLessonAction.bind(null, slugs, lesson.id, chapterUrl)}
         srLabel={t("Delete lesson")}
         title={t("Delete lesson?")}
       />

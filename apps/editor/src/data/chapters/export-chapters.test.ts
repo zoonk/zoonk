@@ -1,8 +1,5 @@
 import { signInAs } from "@zoonk/testing/fixtures/auth";
-import {
-  chapterFixture,
-  courseChapterFixture,
-} from "@zoonk/testing/fixtures/chapters";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
   memberFixture,
@@ -64,21 +61,20 @@ describe("admins", () => {
   test("exports chapters successfully", async () => {
     const newCourse = await courseFixture({ organizationId: organization.id });
 
-    const [chapter1, chapter2] = await Promise.all([
-      chapterFixture({ organizationId: organization.id, title: "Chapter 1" }),
-      chapterFixture({ organizationId: organization.id, title: "Chapter 2" }),
-    ]);
-
     await Promise.all([
-      courseChapterFixture({
-        chapterId: chapter1.id,
+      chapterFixture({
         courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 0,
+        title: "Chapter 1",
       }),
-      courseChapterFixture({
-        chapterId: chapter2.id,
+      chapterFixture({
         courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 1,
+        title: "Chapter 2",
       }),
     ]);
 
@@ -134,27 +130,27 @@ describe("admins", () => {
   test("exports chapters in correct order", async () => {
     const newCourse = await courseFixture({ organizationId: organization.id });
 
-    const [chapter1, chapter2, chapter3] = await Promise.all([
-      chapterFixture({ organizationId: organization.id, title: "Third" }),
-      chapterFixture({ organizationId: organization.id, title: "First" }),
-      chapterFixture({ organizationId: organization.id, title: "Second" }),
-    ]);
-
     await Promise.all([
-      courseChapterFixture({
-        chapterId: chapter1.id,
+      chapterFixture({
         courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 2,
+        title: "Third",
       }),
-      courseChapterFixture({
-        chapterId: chapter2.id,
+      chapterFixture({
         courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 0,
+        title: "First",
       }),
-      courseChapterFixture({
-        chapterId: chapter3.id,
+      chapterFixture({
         courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 1,
+        title: "Second",
       }),
     ]);
 
@@ -176,17 +172,14 @@ describe("admins", () => {
   test("includes all chapter fields in export", async () => {
     const newCourse = await courseFixture({ organizationId: organization.id });
 
-    const chapter = await chapterFixture({
+    await chapterFixture({
+      courseId: newCourse.id,
       description: "Test Description",
+      language: newCourse.language,
       organizationId: organization.id,
+      position: 0,
       slug: "test-slug",
       title: "Test Title",
-    });
-
-    await courseChapterFixture({
-      chapterId: chapter.id,
-      courseId: newCourse.id,
-      position: 0,
     });
 
     const result = await exportChapters({

@@ -425,11 +425,6 @@ msgid "Chapter not found"
 msgstr "Chapter not found"
 
 #: src/lib/error-messages.ts
-msgctxt "7xD1m/"
-msgid "Chapter not found in this course"
-msgstr "Chapter not found in this course"
-
-#: src/lib/error-messages.ts
 msgctxt "96w/uD"
 msgid "Invalid chapter format. Each chapter must have a title and description"
 msgstr "Invalid chapter format. Each chapter must have a title and description"
@@ -460,11 +455,6 @@ msgid "This category has already been added to the course"
 msgstr "This category has already been added to the course"
 
 #: src/lib/error-messages.ts
-msgctxt "foSzTN"
-msgid "Lesson not found in this chapter"
-msgstr "Lesson not found in this chapter"
-
-#: src/lib/error-messages.ts
 msgctxt "g5WLcA"
 msgid "Please sign in to continue"
 msgstr "Please sign in to continue"
@@ -483,16 +473,6 @@ msgstr "Invalid lesson format. Each lesson must have a title and description"
 msgctxt "ORQvOg"
 msgid "You don't have permission to perform this action"
 msgstr "You don't have permission to perform this action"
-
-#: src/lib/error-messages.ts
-msgctxt "pFzToj"
-msgid "This lesson has already been removed"
-msgstr "This lesson has already been removed"
-
-#: src/lib/error-messages.ts
-msgctxt "sOXLAA"
-msgid "This chapter has already been removed"
-msgstr "This chapter has already been removed"
 
 #: src/lib/error-messages.ts
 msgctxt "UDTehx"

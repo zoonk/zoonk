@@ -1,10 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
-import {
-  chapterAttrs,
-  chapterFixture,
-  courseChapterFixture,
-} from "@zoonk/testing/fixtures/chapters";
+import { chapterAttrs, chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
   memberFixture,
@@ -20,7 +16,7 @@ describe("unauthenticated users", () => {
     const course = await courseFixture({ organizationId: organization.id });
 
     const result = await createChapter({
-      ...chapterAttrs(),
+      ...chapterAttrs({ courseId: course.id, organizationId: organization.id }),
       courseId: course.id,
       headers: new Headers(),
       position: 0,
@@ -41,7 +37,7 @@ describe("members", () => {
     ]);
 
     const result = await createChapter({
-      ...chapterAttrs(),
+      ...chapterAttrs({ courseId: course.id, organizationId: organization.id }),
       courseId: course.id,
       headers,
       position: 0,
@@ -68,7 +64,10 @@ describe("admins", () => {
   });
 
   test("creates chapter successfully", async () => {
-    const attrs = chapterAttrs();
+    const attrs = chapterAttrs({
+      courseId: course.id,
+      organizationId: organization.id,
+    });
 
     const result = await createChapter({
       ...attrs,
@@ -79,14 +78,18 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
     expect(result.data).toBeDefined();
-    expect(result.data?.chapter.title).toBe(attrs.title);
-    expect(result.data?.chapter.description).toBe(attrs.description);
-    expect(result.data?.chapter.organizationId).toBe(organization.id);
-    expect(result.data?.courseChapterId).toBeDefined();
+    expect(result.data?.title).toBe(attrs.title);
+    expect(result.data?.description).toBe(attrs.description);
+    expect(result.data?.organizationId).toBe(organization.id);
+    expect(result.data?.courseId).toBe(course.id);
+    expect(result.data?.language).toBe(course.language);
   });
 
   test("normalizes slug", async () => {
-    const attrs = chapterAttrs();
+    const attrs = chapterAttrs({
+      courseId: course.id,
+      organizationId: organization.id,
+    });
 
     const result = await createChapter({
       ...attrs,
@@ -97,11 +100,14 @@ describe("admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.chapter.slug).toBe("my-test-chapter");
+    expect(result.data?.slug).toBe("my-test-chapter");
   });
 
   test("normalizes title for search", async () => {
-    const attrs = chapterAttrs();
+    const attrs = chapterAttrs({
+      courseId: course.id,
+      organizationId: organization.id,
+    });
 
     const result = await createChapter({
       ...attrs,
@@ -112,12 +118,15 @@ describe("admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.chapter.normalizedTitle).toBe("ciencia da computacao");
+    expect(result.data?.normalizedTitle).toBe("ciencia da computacao");
   });
 
   test("returns Course not found", async () => {
     const result = await createChapter({
-      ...chapterAttrs(),
+      ...chapterAttrs({
+        courseId: 999_999,
+        organizationId: organization.id,
+      }),
       courseId: 999_999,
       headers,
       position: 0,
@@ -132,7 +141,10 @@ describe("admins", () => {
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
 
     const result = await createChapter({
-      ...chapterAttrs(),
+      ...chapterAttrs({
+        courseId: otherCourse.id,
+        organizationId: otherOrg.id,
+      }),
       courseId: otherCourse.id,
       headers,
       position: 0,
@@ -142,8 +154,11 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
-  test("returns error when slug already exists for same org", async () => {
-    const attrs = chapterAttrs();
+  test("returns error when slug already exists for same org and language", async () => {
+    const attrs = chapterAttrs({
+      courseId: course.id,
+      organizationId: organization.id,
+    });
 
     await createChapter({
       ...attrs,
@@ -163,7 +178,10 @@ describe("admins", () => {
   });
 
   test("creates chapter at correct position", async () => {
-    const attrs = chapterAttrs();
+    const attrs = chapterAttrs({
+      courseId: course.id,
+      organizationId: organization.id,
+    });
     const expectedPosition = 5;
 
     const result = await createChapter({
@@ -174,37 +192,32 @@ describe("admins", () => {
     });
 
     expect(result.error).toBeNull();
-
-    const courseChapter = await prisma.courseChapter.findUnique({
-      where: { id: result.data?.courseChapterId },
-    });
-
-    expect(courseChapter?.position).toBe(expectedPosition);
+    expect(result.data?.position).toBe(expectedPosition);
   });
 
   test("shifts existing chapters when creating at position 0", async () => {
     const newCourse = await courseFixture({ organizationId: organization.id });
 
     const [chapter1, chapter2] = await Promise.all([
-      chapterFixture({ organizationId: organization.id }),
-      chapterFixture({ organizationId: organization.id }),
-    ]);
-
-    await Promise.all([
-      courseChapterFixture({
-        chapterId: chapter1.id,
+      chapterFixture({
         courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 0,
       }),
-      courseChapterFixture({
-        chapterId: chapter2.id,
+      chapterFixture({
         courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 1,
       }),
     ]);
 
     const result = await createChapter({
-      ...chapterAttrs(),
+      ...chapterAttrs({
+        courseId: newCourse.id,
+        organizationId: organization.id,
+      }),
       courseId: newCourse.id,
       headers,
       position: 0,
@@ -212,17 +225,17 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
 
-    const chapters = await prisma.courseChapter.findMany({
+    const chapters = await prisma.chapter.findMany({
       orderBy: { position: "asc" },
       where: { courseId: newCourse.id },
     });
 
     expect(chapters.length).toBe(3);
-    expect(chapters[0]?.chapterId).toBe(result.data?.chapter.id);
+    expect(chapters[0]?.id).toBe(result.data?.id);
     expect(chapters[0]?.position).toBe(0);
-    expect(chapters[1]?.chapterId).toBe(chapter1.id);
+    expect(chapters[1]?.id).toBe(chapter1.id);
     expect(chapters[1]?.position).toBe(1);
-    expect(chapters[2]?.chapterId).toBe(chapter2.id);
+    expect(chapters[2]?.id).toBe(chapter2.id);
     expect(chapters[2]?.position).toBe(2);
   });
 
@@ -230,31 +243,31 @@ describe("admins", () => {
     const newCourse = await courseFixture({ organizationId: organization.id });
 
     const [chapter1, chapter2, chapter3] = await Promise.all([
-      chapterFixture({ organizationId: organization.id }),
-      chapterFixture({ organizationId: organization.id }),
-      chapterFixture({ organizationId: organization.id }),
-    ]);
-
-    await Promise.all([
-      courseChapterFixture({
-        chapterId: chapter1.id,
+      chapterFixture({
         courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 0,
       }),
-      courseChapterFixture({
-        chapterId: chapter2.id,
+      chapterFixture({
         courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 1,
       }),
-      courseChapterFixture({
-        chapterId: chapter3.id,
+      chapterFixture({
         courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 2,
       }),
     ]);
 
     const result = await createChapter({
-      ...chapterAttrs(),
+      ...chapterAttrs({
+        courseId: newCourse.id,
+        organizationId: organization.id,
+      }),
       courseId: newCourse.id,
       headers,
       position: 1,
@@ -262,19 +275,19 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
 
-    const chapters = await prisma.courseChapter.findMany({
+    const chapters = await prisma.chapter.findMany({
       orderBy: { position: "asc" },
       where: { courseId: newCourse.id },
     });
 
     expect(chapters.length).toBe(4);
-    expect(chapters[0]?.chapterId).toBe(chapter1.id);
+    expect(chapters[0]?.id).toBe(chapter1.id);
     expect(chapters[0]?.position).toBe(0);
-    expect(chapters[1]?.chapterId).toBe(result.data?.chapter.id);
+    expect(chapters[1]?.id).toBe(result.data?.id);
     expect(chapters[1]?.position).toBe(1);
-    expect(chapters[2]?.chapterId).toBe(chapter2.id);
+    expect(chapters[2]?.id).toBe(chapter2.id);
     expect(chapters[2]?.position).toBe(2);
-    expect(chapters[3]?.chapterId).toBe(chapter3.id);
+    expect(chapters[3]?.id).toBe(chapter3.id);
     expect(chapters[3]?.position).toBe(3);
   });
 
@@ -282,25 +295,25 @@ describe("admins", () => {
     const newCourse = await courseFixture({ organizationId: organization.id });
 
     const [chapter1, chapter2] = await Promise.all([
-      chapterFixture({ organizationId: organization.id }),
-      chapterFixture({ organizationId: organization.id }),
-    ]);
-
-    await Promise.all([
-      courseChapterFixture({
-        chapterId: chapter1.id,
+      chapterFixture({
         courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 0,
       }),
-      courseChapterFixture({
-        chapterId: chapter2.id,
+      chapterFixture({
         courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 1,
       }),
     ]);
 
     const result = await createChapter({
-      ...chapterAttrs(),
+      ...chapterAttrs({
+        courseId: newCourse.id,
+        organizationId: organization.id,
+      }),
       courseId: newCourse.id,
       headers,
       position: 2,
@@ -308,17 +321,17 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
 
-    const chapters = await prisma.courseChapter.findMany({
+    const chapters = await prisma.chapter.findMany({
       orderBy: { position: "asc" },
       where: { courseId: newCourse.id },
     });
 
     expect(chapters.length).toBe(3);
-    expect(chapters[0]?.chapterId).toBe(chapter1.id);
+    expect(chapters[0]?.id).toBe(chapter1.id);
     expect(chapters[0]?.position).toBe(0);
-    expect(chapters[1]?.chapterId).toBe(chapter2.id);
+    expect(chapters[1]?.id).toBe(chapter2.id);
     expect(chapters[1]?.position).toBe(1);
-    expect(chapters[2]?.chapterId).toBe(result.data?.chapter.id);
+    expect(chapters[2]?.id).toBe(result.data?.id);
     expect(chapters[2]?.position).toBe(2);
   });
 
@@ -328,7 +341,10 @@ describe("admins", () => {
     const results = await Promise.all(
       Array.from({ length: 5 }, () =>
         createChapter({
-          ...chapterAttrs(),
+          ...chapterAttrs({
+            courseId: newCourse.id,
+            organizationId: organization.id,
+          }),
           courseId: newCourse.id,
           headers,
           position: 0,
@@ -340,14 +356,14 @@ describe("admins", () => {
       expect(result.error).toBeNull();
     }
 
-    const chapters = await prisma.courseChapter.findMany({
+    const chapters = await prisma.chapter.findMany({
       orderBy: { position: "asc" },
       where: { courseId: newCourse.id },
     });
 
     expect(chapters.length).toBe(5);
 
-    const positions = chapters.map((cc) => cc.position);
+    const positions = chapters.map((c) => c.position);
     const uniquePositions = new Set(positions);
     expect(uniquePositions.size).toBe(5);
 
@@ -363,14 +379,17 @@ describe("admins", () => {
       });
 
       const result = await createChapter({
-        ...chapterAttrs(),
+        ...chapterAttrs({
+          courseId: unpublishedCourse.id,
+          organizationId: organization.id,
+        }),
         courseId: unpublishedCourse.id,
         headers,
         position: 0,
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.chapter.isPublished).toBe(true);
+      expect(result.data?.isPublished).toBe(true);
     });
 
     test("chapter is unpublished when course is published", async () => {
@@ -380,14 +399,17 @@ describe("admins", () => {
       });
 
       const result = await createChapter({
-        ...chapterAttrs(),
+        ...chapterAttrs({
+          courseId: publishedCourse.id,
+          organizationId: organization.id,
+        }),
         courseId: publishedCourse.id,
         headers,
         position: 0,
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.chapter.isPublished).toBe(false);
+      expect(result.data?.isPublished).toBe(false);
     });
   });
 });

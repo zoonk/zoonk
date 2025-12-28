@@ -34,10 +34,6 @@ export async function getErrorMessage(error: Error): Promise<string> {
         return t("Chapter not found");
       case ErrorCode.organizationNotFound:
         return t("Organization not found");
-      case ErrorCode.chapterNotInCourse:
-        return t("Chapter not found in this course");
-      case ErrorCode.chapterAlreadyRemoved:
-        return t("This chapter has already been removed");
       case ErrorCode.orgMismatch:
         return t("Chapter and course must belong to the same organization");
       case ErrorCode.fileTooLarge:
@@ -60,12 +56,8 @@ export async function getErrorMessage(error: Error): Promise<string> {
         return t(
           "Invalid lesson format. Each lesson must have a title and description",
         );
-      case ErrorCode.lessonAlreadyRemoved:
-        return t("This lesson has already been removed");
       case ErrorCode.lessonNotFound:
         return t("Lesson not found");
-      case ErrorCode.lessonNotInChapter:
-        return t("Lesson not found in this chapter");
       default:
         return assertNever(error.code);
     }

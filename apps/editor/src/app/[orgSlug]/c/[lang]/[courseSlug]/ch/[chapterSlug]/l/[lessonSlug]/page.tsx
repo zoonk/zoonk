@@ -18,10 +18,11 @@ async function LessonContent({
 }: {
   params: LessonPageProps["params"];
 }) {
-  const { lessonSlug, orgSlug } = await params;
+  const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await params;
   const t = await getExtracted();
 
   const { data: lesson, error } = await getLesson({
+    language: lang,
     lessonSlug,
     orgSlug,
   });
@@ -30,6 +31,8 @@ async function LessonContent({
     return notFound();
   }
 
+  const slugs = { chapterSlug, courseSlug, lessonSlug };
+
   return (
     <ContentEditor
       descriptionLabel={t("Edit lesson description")}
@@ -37,8 +40,8 @@ async function LessonContent({
       entityId={lesson.id}
       initialDescription={lesson.description}
       initialTitle={lesson.title}
-      onSaveDescription={updateLessonDescriptionAction}
-      onSaveTitle={updateLessonTitleAction}
+      onSaveDescription={updateLessonDescriptionAction.bind(null, slugs)}
+      onSaveTitle={updateLessonTitleAction.bind(null, slugs)}
       titleLabel={t("Edit lesson title")}
       titlePlaceholder={t("Lesson title…")}
     />
@@ -46,6 +49,11 @@ async function LessonContent({
 }
 
 export default async function LessonPage(props: LessonPageProps) {
+  const { lang, lessonSlug, orgSlug } = await props.params;
+
+  // Preload data (cached, so child components get the same promise)
+  void getLesson({ language: lang, lessonSlug, orgSlug });
+
   return (
     <Container variant="narrow">
       <Suspense fallback={<ContentEditorSkeleton />}>

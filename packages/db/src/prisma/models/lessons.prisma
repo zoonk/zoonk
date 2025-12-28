@@ -1,32 +1,21 @@
 model Lesson {
-  id              Int             @id @default(autoincrement())
-  organizationId  Int             @map("organization_id")
-  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  isPublished     Boolean         @default(false) @map("is_published")
+  id              Int      @id @default(autoincrement())
+  organizationId  Int      @map("organization_id")
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  chapterId       Int      @map("chapter_id")
+  chapter         Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  isPublished     Boolean  @default(false) @map("is_published")
+  language        String   @db.VarChar(10)
   slug            String
   title           String
-  normalizedTitle String          @map("normalized_title")
+  normalizedTitle String   @map("normalized_title")
   description     String
-  createdAt       DateTime        @default(now()) @map("created_at")
-  updatedAt       DateTime        @default(now()) @updatedAt @map("updated_at")
-  chapterLessons  ChapterLesson[]
+  position        Int
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
 
-  @@unique([organizationId, slug], name: "orgLessonSlug")
+  @@unique([organizationId, language, slug], name: "orgLanguageLessonSlug")
   @@index([organizationId, normalizedTitle])
-  @@map("lessons")
-}
-
-model ChapterLesson {
-  id        Int      @id @default(autoincrement())
-  chapterId Int      @map("chapter_id")
-  chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  lessonId  Int      @map("lesson_id")
-  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  position  Int
-  createdAt DateTime @default(now()) @map("created_at")
-
-  @@unique([chapterId, lessonId], name: "chapterLesson")
   @@index([chapterId, position])
-  @@index([lessonId])
-  @@map("chapter_lessons")
+  @@map("lessons")
 }

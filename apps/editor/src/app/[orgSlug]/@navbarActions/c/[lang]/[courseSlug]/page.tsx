@@ -39,11 +39,11 @@ async function CourseActions({
     <CourseActionsContainer>
       <PublishToggle
         isPublished={course.isPublished}
-        onToggle={togglePublishAction.bind(null, course.id)}
+        onToggle={togglePublishAction.bind(null, courseSlug, course.id)}
       />
 
       <DeleteItemButton
-        onDelete={deleteCourseAction.bind(null, course.id, orgSlug)}
+        onDelete={deleteCourseAction.bind(null, courseSlug, orgSlug, course.id)}
         srLabel={t("Delete course")}
         title={t("Delete course?")}
       />

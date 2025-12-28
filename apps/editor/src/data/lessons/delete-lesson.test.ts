@@ -1,10 +1,8 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import {
-  chapterLessonFixture,
-  lessonFixture,
-} from "@zoonk/testing/fixtures/lessons";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import {
   memberFixture,
   organizationFixture,
@@ -16,7 +14,17 @@ import { deleteLesson } from "./delete-lesson";
 describe("unauthenticated users", () => {
   test("returns Forbidden", async () => {
     const organization = await organizationFixture();
-    const lesson = await lessonFixture({ organizationId: organization.id });
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+    });
 
     const result = await deleteLesson({
       headers: new Headers(),
@@ -37,8 +45,18 @@ describe("unauthenticated users", () => {
 describe("members", () => {
   test("returns Forbidden", async () => {
     const { organization, user } = await memberFixture({ role: "member" });
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
     const headers = await signInAs(user.email, user.password);
-    const lesson = await lessonFixture({ organizationId: organization.id });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+    });
 
     const result = await deleteLesson({
       headers,
@@ -59,8 +77,18 @@ describe("members", () => {
 describe("admins", () => {
   test("returns Forbidden", async () => {
     const { organization, user } = await memberFixture({ role: "admin" });
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
     const headers = await signInAs(user.email, user.password);
-    const lesson = await lessonFixture({ organizationId: organization.id });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+    });
 
     const result = await deleteLesson({
       headers,
@@ -99,7 +127,17 @@ describe("owners", () => {
   });
 
   test("deletes lesson successfully", async () => {
-    const lesson = await lessonFixture({ organizationId: organization.id });
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+    });
 
     const result = await deleteLesson({
       headers,
@@ -116,36 +154,18 @@ describe("owners", () => {
     expect(deletedLesson).toBeNull();
   });
 
-  test("cascades deletion to chapter lessons", async () => {
-    const [chapter, lesson] = await Promise.all([
-      chapterFixture({ organizationId: organization.id }),
-      lessonFixture({ organizationId: organization.id }),
-    ]);
-
-    const chapterLesson = await chapterLessonFixture({
-      chapterId: chapter.id,
-      lessonId: lesson.id,
-      position: 0,
-    });
-
-    const result = await deleteLesson({
-      headers,
-      lessonId: lesson.id,
-    });
-
-    expect(result.error).toBeNull();
-
-    const deletedChapterLesson = await prisma.chapterLesson.findUnique({
-      where: { id: chapterLesson.id },
-    });
-
-    expect(deletedChapterLesson).toBeNull();
-  });
-
   test("returns Forbidden for lesson in different organization", async () => {
     const otherOrg = await organizationFixture();
+    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+    const otherChapter = await chapterFixture({
+      courseId: otherCourse.id,
+      language: otherCourse.language,
+      organizationId: otherOrg.id,
+    });
 
     const lessonInOtherOrg = await lessonFixture({
+      chapterId: otherChapter.id,
+      language: otherChapter.language,
       organizationId: otherOrg.id,
     });
 

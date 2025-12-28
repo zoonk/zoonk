@@ -1,9 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
-import {
-  chapterFixture,
-  courseChapterFixture,
-} from "@zoonk/testing/fixtures/chapters";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import {
   memberFixture,
@@ -99,16 +96,16 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(2);
-    expect(result.data?.[0]?.chapter.title).toBe("First Chapter");
-    expect(result.data?.[1]?.chapter.title).toBe("Second Chapter");
+    expect(result.data?.[0]?.title).toBe("First Chapter");
+    expect(result.data?.[1]?.title).toBe("Second Chapter");
 
-    const chapters = await prisma.courseChapter.findMany({
+    const chapters = await prisma.chapter.findMany({
       orderBy: { position: "asc" },
       where: { courseId: newCourse.id },
     });
 
     expect(chapters).toHaveLength(2);
-    expect(chapters[0]?.chapterId).toBe(result.data?.[0]?.chapter.id);
+    expect(chapters[0]?.id).toBe(result.data?.[0]?.id);
     expect(chapters[0]?.position).toBe(0);
     expect(chapters[1]?.position).toBe(1);
   });
@@ -147,15 +144,12 @@ describe("admins", () => {
       organizationId: organization.id,
     });
 
-    const existingChapter = await chapterFixture({
-      organizationId: organization.id,
-      title: "Existing",
-    });
-
-    await courseChapterFixture({
-      chapterId: existingChapter.id,
+    await chapterFixture({
       courseId: newCourse.id,
+      language: newCourse.language,
+      organizationId: organization.id,
       position: 0,
+      title: "Existing",
     });
 
     const file = createImportFile([{ description: "Desc", title: "Imported" }]);
@@ -168,15 +162,14 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
 
-    const chapters = await prisma.courseChapter.findMany({
-      include: { chapter: true },
+    const chapters = await prisma.chapter.findMany({
       orderBy: { position: "asc" },
       where: { courseId: newCourse.id },
     });
 
     expect(chapters).toHaveLength(2);
-    expect(chapters[0]?.chapterId).toBe(existingChapter.id);
-    expect(chapters[1]?.chapter.title).toBe("Imported");
+    expect(chapters[0]?.title).toBe("Existing");
+    expect(chapters[1]?.title).toBe("Imported");
   });
 
   test("generates slug from title", async () => {
@@ -195,7 +188,7 @@ describe("admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.[0]?.chapter.slug).toBe("my-test-chapter");
+    expect(result.data?.[0]?.slug).toBe("my-test-chapter");
   });
 
   test("normalizes chapter title for search", async () => {
@@ -214,9 +207,7 @@ describe("admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.[0]?.chapter.normalizedTitle).toBe(
-      "ciencia da computacao",
-    );
+    expect(result.data?.[0]?.normalizedTitle).toBe("ciencia da computacao");
   });
 
   test("assigns positions in order", async () => {
@@ -238,19 +229,18 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
 
-    const chapters = await prisma.courseChapter.findMany({
-      include: { chapter: true },
+    const chapters = await prisma.chapter.findMany({
       orderBy: { position: "asc" },
       where: { courseId: newCourse.id },
     });
 
     expect(chapters).toHaveLength(3);
     expect(chapters[0]?.position).toBe(0);
-    expect(chapters[0]?.chapter.title).toBe("First");
+    expect(chapters[0]?.title).toBe("First");
     expect(chapters[1]?.position).toBe(1);
-    expect(chapters[1]?.chapter.title).toBe("Second");
+    expect(chapters[1]?.title).toBe("Second");
     expect(chapters[2]?.position).toBe(2);
-    expect(chapters[2]?.chapter.title).toBe("Third");
+    expect(chapters[2]?.title).toBe("Third");
   });
 
   describe("slug handling", () => {
@@ -270,7 +260,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.chapter.slug).toBe("my-custom-slug");
+      expect(result.data?.[0]?.slug).toBe("my-custom-slug");
     });
 
     test("reuses existing chapter when explicit slug matches", async () => {
@@ -279,8 +269,11 @@ describe("admins", () => {
       });
 
       const existingChapter = await chapterFixture({
+        courseId: newCourse.id,
         description: "Original description",
+        language: newCourse.language,
         organizationId: organization.id,
+        position: 0,
         slug: "existing-chapter",
         title: "Original Title",
       });
@@ -300,63 +293,9 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.chapter.id).toBe(existingChapter.id);
-      expect(result.data?.[0]?.chapter.title).toBe("Original Title");
-      expect(result.data?.[0]?.chapter.description).toBe(
-        "Original description",
-      );
-    });
-
-    test("adds existing chapter to course without creating new one", async () => {
-      const course1 = await courseFixture({
-        organizationId: organization.id,
-      });
-
-      const course2 = await courseFixture({
-        organizationId: organization.id,
-      });
-
-      const existingChapter = await chapterFixture({
-        organizationId: organization.id,
-        slug: "shared-chapter",
-        title: "Shared Chapter",
-      });
-
-      await courseChapterFixture({
-        chapterId: existingChapter.id,
-        courseId: course1.id,
-        position: 0,
-      });
-
-      const file = createImportFile([
-        {
-          description: "Desc",
-          slug: "shared-chapter",
-          title: "Different Title",
-        },
-      ]);
-
-      const result = await importChapters({
-        courseId: course2.id,
-        file,
-        headers,
-      });
-
-      expect(result.error).toBeNull();
-      expect(result.data?.[0]?.chapter.id).toBe(existingChapter.id);
-
-      const chaptersInCourse2 = await prisma.courseChapter.findMany({
-        where: { courseId: course2.id },
-      });
-
-      expect(chaptersInCourse2).toHaveLength(1);
-      expect(chaptersInCourse2[0]?.chapterId).toBe(existingChapter.id);
-
-      const allChaptersWithSlug = await prisma.chapter.findMany({
-        where: { organizationId: organization.id, slug: "shared-chapter" },
-      });
-
-      expect(allChaptersWithSlug).toHaveLength(1);
+      expect(result.data?.[0]?.id).toBe(existingChapter.id);
+      expect(result.data?.[0]?.title).toBe("Original Title");
+      expect(result.data?.[0]?.description).toBe("Original description");
     });
 
     test("appends timestamp when generated slug exists and no explicit slug", async () => {
@@ -365,7 +304,10 @@ describe("admins", () => {
       });
 
       await chapterFixture({
+        courseId: newCourse.id,
+        language: newCourse.language,
         organizationId: organization.id,
+        position: 0,
         slug: "my-title",
       });
 
@@ -380,7 +322,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.chapter.slug).toMatch(/^my-title-\d+-0$/);
+      expect(result.data?.[0]?.slug).toMatch(/^my-title-\d+-0$/);
     });
 
     test("creates new chapter when generated slug doesn't exist", async () => {
@@ -399,7 +341,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.chapter.slug).toBe("unique-title");
+      expect(result.data?.[0]?.slug).toBe("unique-title");
     });
 
     test("handles duplicate titles within the same batch", async () => {
@@ -422,7 +364,7 @@ describe("admins", () => {
       expect(result.error).toBeNull();
       expect(result.data).toHaveLength(3);
 
-      const slugs = result.data?.map((item) => item.chapter.slug) ?? [];
+      const slugs = result.data?.map((item) => item.slug) ?? [];
       const uniqueSlugs = new Set(slugs);
 
       expect(uniqueSlugs.size).toBe(3);
@@ -450,7 +392,7 @@ describe("admins", () => {
       expect(result.error).toBeNull();
       expect(result.data).toHaveLength(2);
 
-      const slugs = result.data?.map((item) => item.chapter.slug) ?? [];
+      const slugs = result.data?.map((item) => item.slug) ?? [];
       const uniqueSlugs = new Set(slugs);
 
       expect(uniqueSlugs.size).toBe(2);
@@ -463,15 +405,12 @@ describe("admins", () => {
         organizationId: organization.id,
       });
 
-      const existingChapter = await chapterFixture({
-        organizationId: organization.id,
-        title: "Existing",
-      });
-
-      await courseChapterFixture({
-        chapterId: existingChapter.id,
+      await chapterFixture({
         courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 0,
+        title: "Existing",
       });
 
       const file = createImportFile([
@@ -487,15 +426,14 @@ describe("admins", () => {
 
       expect(result.error).toBeNull();
       expect(result.data).toHaveLength(1);
-      expect(result.data?.[0]?.chapter.title).toBe("New Chapter");
+      expect(result.data?.[0]?.title).toBe("New Chapter");
 
-      const chapters = await prisma.courseChapter.findMany({
-        include: { chapter: true },
+      const chapters = await prisma.chapter.findMany({
         where: { courseId: newCourse.id },
       });
 
       expect(chapters).toHaveLength(1);
-      expect(chapters[0]?.chapter.title).toBe("New Chapter");
+      expect(chapters[0]?.title).toBe("New Chapter");
     });
 
     test("starts positions from 0 after replace", async () => {
@@ -503,13 +441,10 @@ describe("admins", () => {
         organizationId: organization.id,
       });
 
-      const existingChapter = await chapterFixture({
-        organizationId: organization.id,
-      });
-
-      await courseChapterFixture({
-        chapterId: existingChapter.id,
+      await chapterFixture({
         courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
         position: 5,
       });
 
@@ -527,7 +462,7 @@ describe("admins", () => {
 
       expect(result.error).toBeNull();
 
-      const chapters = await prisma.courseChapter.findMany({
+      const chapters = await prisma.chapter.findMany({
         orderBy: { position: "asc" },
         where: { courseId: newCourse.id },
       });
@@ -535,89 +470,6 @@ describe("admins", () => {
       expect(chapters).toHaveLength(2);
       expect(chapters[0]?.position).toBe(0);
       expect(chapters[1]?.position).toBe(1);
-    });
-
-    test("deletes chapters not linked to other courses", async () => {
-      const newCourse = await courseFixture({
-        organizationId: organization.id,
-      });
-
-      const chapterToDelete = await chapterFixture({
-        organizationId: organization.id,
-        title: "To Delete",
-      });
-
-      await courseChapterFixture({
-        chapterId: chapterToDelete.id,
-        courseId: newCourse.id,
-        position: 0,
-      });
-
-      const file = createImportFile([{ description: "Desc", title: "New" }]);
-
-      await importChapters({
-        courseId: newCourse.id,
-        file,
-        headers,
-        mode: "replace",
-      });
-
-      const deletedChapter = await prisma.chapter.findUnique({
-        where: { id: chapterToDelete.id },
-      });
-
-      expect(deletedChapter).toBeNull();
-    });
-
-    test("keeps chapters linked to other courses", async () => {
-      const course1 = await courseFixture({
-        organizationId: organization.id,
-      });
-
-      const course2 = await courseFixture({
-        organizationId: organization.id,
-      });
-
-      const sharedChapter = await chapterFixture({
-        organizationId: organization.id,
-        title: "Shared",
-      });
-
-      await Promise.all([
-        courseChapterFixture({
-          chapterId: sharedChapter.id,
-          courseId: course1.id,
-          position: 0,
-        }),
-        courseChapterFixture({
-          chapterId: sharedChapter.id,
-          courseId: course2.id,
-          position: 0,
-        }),
-      ]);
-
-      const file = createImportFile([{ description: "Desc", title: "New" }]);
-
-      await importChapters({
-        courseId: course1.id,
-        file,
-        headers,
-        mode: "replace",
-      });
-
-      const keptChapter = await prisma.chapter.findUnique({
-        where: { id: sharedChapter.id },
-      });
-
-      expect(keptChapter).not.toBeNull();
-      expect(keptChapter?.title).toBe("Shared");
-
-      const course2Chapters = await prisma.courseChapter.findMany({
-        where: { courseId: course2.id },
-      });
-
-      expect(course2Chapters).toHaveLength(1);
-      expect(course2Chapters[0]?.chapterId).toBe(sharedChapter.id);
     });
 
     test("works with empty course", async () => {
@@ -785,7 +637,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.chapter.isPublished).toBe(true);
+      expect(result.data?.[0]?.isPublished).toBe(true);
     });
 
     test("imported chapters are unpublished when course is published", async () => {
@@ -805,7 +657,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.chapter.isPublished).toBe(false);
+      expect(result.data?.[0]?.isPublished).toBe(false);
     });
 
     test("existing chapter becomes published when imported to unpublished course", async () => {
@@ -815,8 +667,11 @@ describe("admins", () => {
       });
 
       const existingChapter = await chapterFixture({
+        courseId: unpublishedCourse.id,
         isPublished: false,
+        language: unpublishedCourse.language,
         organizationId: organization.id,
+        position: 0,
         slug: "existing-slug",
       });
 
