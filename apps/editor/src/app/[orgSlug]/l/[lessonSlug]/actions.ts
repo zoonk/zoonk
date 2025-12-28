@@ -1,9 +1,9 @@
 "use server";
 
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
-import { cacheTagLesson } from "@zoonk/utils/cache";
 import { after } from "next/server";
 import { updateLesson } from "@/data/lessons/update-lesson";
+import { getLessonCacheTags } from "@/lib/cache";
 import { getErrorMessage } from "@/lib/error-messages";
 
 export async function updateLessonTitleAction(
@@ -20,7 +20,8 @@ export async function updateLessonTitleAction(
   }
 
   after(async () => {
-    await revalidateMainApp([cacheTagLesson({ lessonId })]);
+    const tags = await getLessonCacheTags(lessonId);
+    await revalidateMainApp(tags);
   });
 
   return { error: null };
@@ -40,7 +41,8 @@ export async function updateLessonDescriptionAction(
   }
 
   after(async () => {
-    await revalidateMainApp([cacheTagLesson({ lessonId })]);
+    const tags = await getLessonCacheTags(lessonId);
+    await revalidateMainApp(tags);
   });
 
   return { error: null };
