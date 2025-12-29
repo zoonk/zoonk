@@ -1,5 +1,10 @@
 import { randomUUID } from "node:crypto";
-import { type Course, type CourseCategory, prisma } from "@zoonk/db";
+import {
+  type Course,
+  type CourseCategory,
+  type CourseUser,
+  prisma,
+} from "@zoonk/db";
 
 export function courseAttrs(
   attrs?: Partial<Course>,
@@ -32,4 +37,17 @@ export async function courseCategoryFixture(
     },
   });
   return courseCategory;
+}
+
+export async function courseUserFixture(
+  attrs: Omit<CourseUser, "id" | "startedAt">,
+) {
+  const courseUser = await prisma.courseUser.create({
+    data: {
+      courseId: attrs.courseId,
+      userId: attrs.userId,
+    },
+  });
+
+  return courseUser;
 }

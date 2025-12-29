@@ -26,6 +26,7 @@ model Course {
   alternativeTitles CourseAlternativeTitle[]
   categories        CourseCategory[]
   chapters          Chapter[]
+  users             CourseUser[]
 
   @@unique([organizationId, language, slug], name: "orgSlug")
   @@index([organizationId, language, isPublished])
@@ -56,4 +57,18 @@ model CourseCategory {
   @@unique([courseId, category], name: "courseCategory")
   @@index([category])
   @@map("course_categories")
+}
+
+model CourseUser {
+  id        Int      @id @default(autoincrement())
+  courseId  Int      @map("course_id")
+  course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  userId    Int      @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startedAt DateTime @default(now()) @map("started_at")
+
+  @@unique([courseId, userId], name: "courseUser")
+  @@index([courseId])
+  @@index([userId])
+  @@map("course_users")
 }
