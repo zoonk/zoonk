@@ -9,6 +9,8 @@ import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { getExtracted } from "next-intl/server";
 import { deleteAlternativeTitles } from "@/data/alternative-titles/delete-alternative-titles";
+import { exportAlternativeTitles } from "@/data/alternative-titles/export-alternative-titles";
+import { importAlternativeTitles } from "@/data/alternative-titles/import-alternative-titles";
 import { createChapter } from "@/data/chapters/create-chapter";
 import { exportChapters } from "@/data/chapters/export-chapters";
 import { importChapters } from "@/data/chapters/import-chapters";
@@ -331,4 +333,45 @@ export async function deleteAlternativeTitleAction(
 
   revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
   return { error: null };
+}
+
+export async function importAlternativeTitlesAction(
+  params: ChapterRouteParams,
+  formData: FormData,
+): Promise<{ error: string | null }> {
+  const { courseId, courseSlug, lang, orgSlug } = params;
+  const file = formData.get("file");
+  const mode = formData.get("mode") as "merge" | "replace";
+
+  if (!(file && file instanceof File)) {
+    const t = await getExtracted();
+    return { error: t("No file provided") };
+  }
+
+  const { error } = await importAlternativeTitles({
+    courseId,
+    file,
+    locale: lang,
+    mode,
+  });
+
+  if (error) {
+    return { error: await getErrorMessage(error) };
+  }
+
+  revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
+  return { error: null };
+}
+
+export async function exportAlternativeTitlesAction(courseId: number): Promise<{
+  data: object | null;
+  error: Error | null;
+}> {
+  const { data, error } = await exportAlternativeTitles({ courseId });
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  return { data, error: null };
 }

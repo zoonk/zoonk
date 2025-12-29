@@ -71,31 +71,35 @@ checksums:
     Logout/singular: 07948fdf20705e04a7bf68ab197512bf
     401%20-%20Unauthorized/singular: 0612c3a47aaacaa9fd8aa3d5f0fbc0b8
     Add/singular: 87c4a663507f2bcbbf79934af8164e13
+    Cancel/singular: 2e2a849c2223911717de8caa2c71bade
+    Drop%20file%20or%20click%20to%20select/singular: e18ab4b554f4a2ab70350d565634021e
+    Alternative%20titles%20exported%20successfully/singular: 533d342c9b0ff576b40b1098d8e6d03c
+    Replace%20(remove%20existing%20first)/singular: 0c375e65816d893151b927f8928c647b
+    Import%20mode/singular: 99a121a79e9385892a65b17c2be56bfa
+    Import/singular: 348b8ab981de5b7f1fca6d7302263bbd
+    Import%20alternative%20titles/singular: 6184f68131e1b31ce82b27e682c32473
     Search%20titles%E2%80%A6/singular: 17c8f6ebb441b65bcd71751d895b083c
     Remove%20%7Btitle%7D/singular: 7ea5f663311db30da2ee678435d6c019
+    Show%20expected%20format/singular: 923bfe5861a5c67c5816dcbc1c6efa29
+    Merge%20(add%20to%20existing)/singular: cb7e20a5abf4b5d9ef49cdb09e037d6a
     Alternative%20titles/singular: 46f935d0da3101e12be5dda4fb12e520
+    More%20options/singular: 53d90eae6a9b0243b5bc043b3d9de169
     Add%20alternative%20title%E2%80%A6/singular: cd5bd023fe1686324a3a146a072c968a
     No%20titles%20match%20your%20search/singular: e35f274fe8b17b3db9b59116ac5b1d5e
     and%20%7Bcount%7D%20more/singular: 1caeff4ca948a7db83103b95323a62b6
     (%7Bcount%7D)/singular: 61cc7515856066d5ddb9c5f2087563d8
+    Export/singular: 709afbc86c5fdca279a111ea8e49d1c9
+    Failed%20to%20export/singular: e1ed0bd77fc4509b338f2ed32565012a
+    Upload%20a%20JSON%20file%20containing%20alternative%20titles%20to%20import./singular: 7dd18059ccf7955ba864342fdc0d6629
+    Alternative%20titles%20imported%20successfully/singular: ca67e17d28382d5ef29bd27219a4104e
     Unsaved/singular: ddc9094aecf93ceabe363846756a9925
     Saved/singular: 6554b923011266821d74e06e013a40e6
     Saving%E2%80%A6/singular: ee98ff32f9a585a9108c8cd961d6077e
-    Cancel/singular: 2e2a849c2223911717de8caa2c71bade
-    Drop%20file%20or%20click%20to%20select/singular: e18ab4b554f4a2ab70350d565634021e
-    Replace%20(remove%20existing%20first)/singular: 0c375e65816d893151b927f8928c647b
     Lessons%20imported%20successfully/singular: 117dcb8f25eb05362ffab7974ecdb5de
-    Import%20mode/singular: 99a121a79e9385892a65b17c2be56bfa
-    Import/singular: 348b8ab981de5b7f1fca6d7302263bbd
     Chapters%20exported%20successfully/singular: c619d46cc34322ce5777a87ec3cc6131
-    Show%20expected%20format/singular: 923bfe5861a5c67c5816dcbc1c6efa29
-    Merge%20(add%20to%20existing)/singular: cb7e20a5abf4b5d9ef49cdb09e037d6a
     Lessons%20exported%20successfully/singular: f896c30aab64bfcc43725f8bd3fc02f7
-    More%20options/singular: 53d90eae6a9b0243b5bc043b3d9de169
     Upload%20a%20JSON%20file%20containing%20chapters%20to%20import./singular: 7bd7e36f80ba8cdcd19c18f53962f747
-    Export/singular: 709afbc86c5fdca279a111ea8e49d1c9
     Import%20chapters/singular: 0bf66ec2862c199b95f19512d832ba9b
-    Failed%20to%20export/singular: e1ed0bd77fc4509b338f2ed32565012a
     Import%20lessons/singular: 8d1fae531b7e8156042321586d18b522
     Chapters%20imported%20successfully/singular: 2a3fda7021d4d81b1cdc6e869f94664f
     Upload%20a%20JSON%20file%20containing%20lessons%20to%20import./singular: a6aec991263d7f81fe5f06e48c4aaa68
