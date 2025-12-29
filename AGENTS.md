@@ -10,6 +10,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - [Project structure](#project-structure)
 - [Tools](#tools)
 - [Conventions](#conventions)
+- [Compound Components](#compound-components)
 - [Testing](#testing)
 - [i18n](#i18n)
 - [CSS](#css)
@@ -145,6 +146,103 @@ All packages should follow a consistent structure:
 - Pass types directly to the component declaration instead of using `type` since those types won't be exported/reused
 - When adding a new Prisma model, always add a seed for it in `packages/db/src/prisma/seed/`
 
+## Compound Components
+
+**IMPORTANT**: This is the required pattern for building UI components in this codebase. Do not create monolithic components with many props. Instead, use the compound components pattern.
+
+### What are Compound Components?
+
+Compound components are small, single-purpose components that compose together to form a complete UI. Each component wraps a single HTML element and handles one responsibility. They share state through React Context.
+
+### When to Use
+
+Use compound components when:
+
+- A component has **more than 3-4 props** that are just labels or configuration
+- You're **passing props through multiple levels** (prop drilling)
+- A component has **multiple internal elements** that users might want to customize
+- You want to give consumers **flexibility** over structure and content
+
+### The Pattern
+
+1. **Provider** - Wraps all children and shares state via Context
+2. **Single-element wrappers** - Each component renders exactly one element
+3. **Children for content** - Use `children` instead of label props
+4. **Context for shared state** - Use React Context for state that multiple components need
+
+### Example: The Right Way
+
+```tsx
+// Each component is small and single-purpose
+<ImportProvider onImport={handleImport}>
+  <Dialog open={open} onOpenChange={setOpen}>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>{t("Import chapters")}</DialogTitle>
+        <DialogDescription>
+          {t("Upload a JSON file to import.")}
+        </DialogDescription>
+      </DialogHeader>
+
+      <ImportDropzone>{t("Drop file or click to select")}</ImportDropzone>
+
+      <ImportModeSelector label={t("Import mode")}>
+        <ImportModeOption value="merge">
+          {t("Merge (add to existing)")}
+        </ImportModeOption>
+        <ImportModeOption value="replace">
+          {t("Replace existing")}
+        </ImportModeOption>
+      </ImportModeSelector>
+
+      <DialogFooter>
+        <ImportCancel>{t("Cancel")}</ImportCancel>
+        <ImportSubmit>{t("Import")}</ImportSubmit>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+</ImportProvider>
+```
+
+### Example: The Wrong Way (Do NOT Do This)
+
+```tsx
+// BAD: Monolithic component with many props
+<ImportDialog
+  title={t("Import chapters")}
+  description={t("Upload a JSON file to import.")}
+  dropLabel={t("Drop file or click to select")}
+  modeLabel={t("Import mode")}
+  modeMergeLabel={t("Merge (add to existing)")}
+  modeReplaceLabel={t("Replace existing")}
+  cancelLabel={t("Cancel")}
+  importLabel={t("Import")}
+  onImport={handleImport}
+  open={open}
+  onOpenChange={setOpen}
+/>
+```
+
+### Why This Matters
+
+1. **Flexibility** - Consumers can add, remove, or reorder any piece
+2. **Customization** - Each element can be styled or modified independently
+3. **No prop drilling** - State flows through context, not props
+4. **Self-documenting** - The JSX structure shows intent
+5. **Easy to extend** - Add new features without changing existing components
+
+### Reference Examples
+
+See these existing patterns in the codebase:
+
+- `packages/ui/src/components/sidebar.tsx` - Sidebar compound components
+- `packages/ui/src/components/dialog.tsx` - Dialog compound components
+- `packages/ui/src/components/dropdown-menu.tsx` - Menu compound components
+- `packages/ui/src/components/item.tsx` - Item/list compound components
+- `packages/ui/src/components/container.tsx` - Container compound components
+- `apps/editor/src/components/editor-list.tsx` - Editor list compound components
+- `apps/editor/src/components/import.tsx` - Import dialog compound components
+
 ## Testing
 
 - Always write tests for functions in `data` folders that need to interact with the database, except for the `admin` and `evals` apps since they're internal tools
@@ -156,6 +254,7 @@ All packages should follow a consistent structure:
 - For apps using `next-intl`, use `getExtracted` or `useExtracted`. This will extract the translations to PO files when we run `pnpm build`
 - You can't pass the `t` function from `getExtracted` or `useExtracted` to other functions or components. Instead, call it directly in the component or function
 - Whenever using `getExtracted` or `useExtracted`, run `pnpm build` to update PO files
+- Run `pnpm i18n:check` to check for any missing translations and translate empty strings in PO files
 
 ## CSS
 

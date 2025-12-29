@@ -21,8 +21,7 @@ msgid "Saving…"
 msgstr "Guardando…"
 
 #: src/app/[orgSlug]/_components/slug-editor.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
+#: src/components/entity-list-actions.tsx
 #: src/components/navbar/delete-item-button.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
@@ -132,38 +131,9 @@ msgid "Contact support"
 msgstr "Contactar soporte"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-msgctxt "5kTT3Y"
-msgid "Drop file or click to select"
-msgstr "Suelta el archivo o haz clic para seleccionar"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
 msgctxt "6ssHZM"
 msgid "Failed to load lessons"
 msgstr "Error al cargar lecciones"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-msgctxt "70OZD0"
-msgid "Replace (remove existing first)"
-msgstr "Reemplazar (eliminar existente primero)"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
-msgctxt "8n7YmS"
-msgid "Lessons imported successfully"
-msgstr "Lecciones importadas exitosamente"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-msgctxt "95TwrO"
-msgid "Import mode"
-msgstr "Modo de importación"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-msgctxt "9XUYQt"
-msgid "Import"
-msgstr "Importar"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
 msgctxt "b3c9gA"
@@ -182,29 +152,6 @@ msgid "Edit chapter title"
 msgstr "Editar título del capítulo"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-msgctxt "GAHXbk"
-msgid "Show expected format"
-msgstr "Mostrar formato esperado"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-msgctxt "HNBlXY"
-msgid "Merge (add to existing)"
-msgstr "Combinar (agregar a existente)"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
-msgctxt "itDWRC"
-msgid "Lessons exported successfully"
-msgstr "Lecciones exportadas exitosamente"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-msgctxt "IzCVhG"
-msgid "More options"
-msgstr "Más opciones"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
 msgctxt "kYfPBA"
 msgid "Chapter description…"
 msgstr "Descripción del capítulo…"
@@ -215,47 +162,14 @@ msgid "Add lesson"
 msgstr "Agregar lección"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-msgctxt "SVwJTM"
-msgid "Export"
-msgstr "Exportar"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-msgctxt "vDIBFm"
-msgid "KB"
-msgstr "KB"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-msgctxt "w6G8oe"
-msgid "Failed to export"
-msgstr "Error al exportar"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
-msgctxt "WDo1Sx"
-msgid "Import lessons"
-msgstr "Importar lecciones"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
 msgctxt "yNvug5"
 msgid "Chapter title…"
 msgstr "Título del capítulo…"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
-msgctxt "ZuOjRf"
-msgid "Upload a JSON file containing lessons to import."
-msgstr "Sube un archivo JSON que contenga las lecciones a importar."
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
 msgctxt "2Pphvx"
 msgid "Course title…"
 msgstr "Título del curso…"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-msgctxt "bc4z39"
-msgid "Chapters exported successfully"
-msgstr "Capítulos exportados exitosamente"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
 msgctxt "dlQpGl"
@@ -273,11 +187,6 @@ msgid "Edit course title"
 msgstr "Editar título del curso"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-msgctxt "lwIuOL"
-msgid "Upload a JSON file containing chapters to import."
-msgstr "Sube un archivo JSON que contenga los capítulos a importar."
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
 msgctxt "RX7tLA"
 msgid "Course description…"
 msgstr "Descripción del curso…"
@@ -288,19 +197,9 @@ msgid "We couldn't load the chapters. Please try again."
 msgstr "No pudimos cargar los capítulos. Por favor, intenta de nuevo."
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-msgctxt "TQmijK"
-msgid "Import chapters"
-msgstr "Importar capítulos"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
 msgctxt "xA68iL"
 msgid "Failed to load chapters"
 msgstr "Error al cargar capítulos"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-msgctxt "XTTRzf"
-msgid "Chapters imported successfully"
-msgstr "Capítulos importados exitosamente"
 
 #: src/app/[orgSlug]/course-list.tsx
 msgctxt "c0YWuA"
@@ -436,6 +335,91 @@ msgstr "Cerrar sesión"
 msgctxt "gNtXZ8"
 msgid "401 - Unauthorized"
 msgstr "401 - No autorizado"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "5kTT3Y"
+msgid "Drop file or click to select"
+msgstr "Suelta el archivo o haz clic para seleccionar"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "70OZD0"
+msgid "Replace (remove existing first)"
+msgstr "Reemplazar (eliminar existente primero)"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "8n7YmS"
+msgid "Lessons imported successfully"
+msgstr "Lecciones importadas exitosamente"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "95TwrO"
+msgid "Import mode"
+msgstr "Modo de importación"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "9XUYQt"
+msgid "Import"
+msgstr "Importar"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "bc4z39"
+msgid "Chapters exported successfully"
+msgstr "Capítulos exportados exitosamente"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "GAHXbk"
+msgid "Show expected format"
+msgstr "Mostrar formato esperado"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "HNBlXY"
+msgid "Merge (add to existing)"
+msgstr "Combinar (agregar a existente)"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "itDWRC"
+msgid "Lessons exported successfully"
+msgstr "Lecciones exportadas exitosamente"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "IzCVhG"
+msgid "More options"
+msgstr "Más opciones"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "lwIuOL"
+msgid "Upload a JSON file containing chapters to import."
+msgstr "Sube un archivo JSON que contenga los capítulos a importar."
+
+#: src/components/entity-list-actions.tsx
+msgctxt "SVwJTM"
+msgid "Export"
+msgstr "Exportar"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "TQmijK"
+msgid "Import chapters"
+msgstr "Importar capítulos"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "w6G8oe"
+msgid "Failed to export"
+msgstr "Error al exportar"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "WDo1Sx"
+msgid "Import lessons"
+msgstr "Importar lecciones"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "XTTRzf"
+msgid "Chapters imported successfully"
+msgstr "Capítulos importados exitosamente"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "ZuOjRf"
+msgid "Upload a JSON file containing lessons to import."
+msgstr "Sube un archivo JSON que contenga las lecciones a importar."
 
 #: src/components/navbar/command-palette.tsx
 msgctxt "6BySgv"
