@@ -41,10 +41,30 @@ msgid "Untitled chapter"
 msgstr "Capítulo sin título"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+msgctxt "E+/68R"
+msgid "Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image."
+msgstr "Tipo de archivo inválido. Por favor sube una imagen JPEG, PNG, WebP o GIF."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+msgctxt "in2TjU"
+msgid "File is too large. Maximum size is 5MB."
+msgstr "El archivo es demasiado grande. El tamaño máximo es 5MB."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+msgctxt "JkrKUt"
+msgid "Failed to upload image. Please try again."
+msgstr "Error al subir la imagen. Por favor intenta de nuevo."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
 msgctxt "lgvvCe"
 msgid "No file provided"
 msgstr "No se proporcionó ningún archivo"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+msgctxt "Q1jVC0"
+msgid "Failed to process image. Please try again."
+msgstr "Error al procesar la imagen. Por favor intenta de nuevo."
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
@@ -164,6 +184,21 @@ msgstr "Editar título del curso"
 msgctxt "RX7tLA"
 msgid "Course description…"
 msgstr "Descripción del curso…"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+msgctxt "+MD59T"
+msgid "Change course image"
+msgstr "Cambiar imagen del curso"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+msgctxt "7vM5rK"
+msgid "Remove image"
+msgstr "Eliminar imagen"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+msgctxt "N8c7X3"
+msgid "Upload course image"
+msgstr "Subir imagen del curso"
 
 #: src/app/[orgSlug]/course-list.tsx
 msgctxt "c0YWuA"

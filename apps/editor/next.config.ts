@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   experimental: {
     authInterrupts: true,
+    serverActions: {
+      bodySizeLimit: "10mb",
+    },
     staleTimes: {
       dynamic: 300,
     },

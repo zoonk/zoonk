@@ -108,7 +108,7 @@ All apps should follow a consistent folder structure:
 **Component Organization:**
 
 1. **Route-specific components**: Colocate directly with the route's `page.tsx`
-2. **Route group shared components**: Use `_components/` or `_hooks/` folders within the route group (e.g., `app/(private)/_components/`)
+2. **Route group shared components**: Use `_components/` or `_hooks/` folders within the route group (e.g., `app/(private)/_components/`), except for the root route group (eg `/[locale]` for `main` app and `/[orgSlug]/c/[lang]/[courseSlug]` for `editor` app) where you should use `src/components/{domain}/` since all components are shared across the app.
 3. **Cross-route-group components**: Place in `src/components/{domain}/`
 4. **Shared utilities**: Place in `src/lib/`
 
@@ -254,7 +254,7 @@ See these existing patterns in the codebase:
 - For apps using `next-intl`, use `getExtracted` or `useExtracted`. This will extract the translations to PO files when we run `pnpm build`
 - You can't pass the `t` function from `getExtracted` or `useExtracted` to other functions or components. Instead, call it directly in the component or function
 - Whenever using `getExtracted` or `useExtracted`, run `pnpm build` to update PO files
-- Run `pnpm i18n:check` to check for any missing translations and translate empty strings in PO files
+- Run `pnpm i18n:check` to check for any missing translations and translate empty strings in PO files, making sure translations are consistent across the codebase
 
 ## CSS
 

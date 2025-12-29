@@ -10,6 +10,7 @@ export async function updateCourse(params: {
   courseId: number;
   description?: string;
   headers?: Headers;
+  imageUrl?: string | null;
   slug?: string;
   title?: string;
 }): Promise<SafeReturn<Course>> {
@@ -43,6 +44,7 @@ export async function updateCourse(params: {
         ...(params.description !== undefined && {
           description: params.description,
         }),
+        ...(params.imageUrl !== undefined && { imageUrl: params.imageUrl }),
         ...(params.slug !== undefined && { slug: toSlug(params.slug) }),
         ...(params.title !== undefined && {
           normalizedTitle: normalizeString(params.title),

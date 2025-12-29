@@ -254,7 +254,7 @@ See these existing patterns in the codebase:
 - For apps using `next-intl`, use `getExtracted` or `useExtracted`. This will extract the translations to PO files when we run `pnpm build`
 - You can't pass the `t` function from `getExtracted` or `useExtracted` to other functions or components. Instead, call it directly in the component or function
 - Whenever using `getExtracted` or `useExtracted`, run `pnpm build` to update PO files
-- Run `pnpm i18n:check` to check for any missing translations and translate empty strings in PO files
+- Run `pnpm i18n:check` to check for any missing translations and translate empty strings in PO files, making sure translations are consistent across the codebase
 
 ## CSS
 

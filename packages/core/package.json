@@ -28,6 +28,7 @@
     "./cache/revalidate": "./src/cache/revalidate-main-app.ts",
     "./courses/image": "./src/courses/course-image.ts",
     "./images/optimize": "./src/images/optimize-image.ts",
+    "./images/process-and-upload": "./src/images/process-and-upload-image.ts",
     "./images/upload": "./src/images/upload-image.ts",
     "./mailer/send": "./src/mailer/send-email.ts",
     "./orgs/find": "./src/orgs/find-org.ts",
