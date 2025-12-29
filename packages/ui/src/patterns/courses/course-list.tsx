@@ -72,8 +72,6 @@ export function CourseListSkeleton({ count = 10 }: { count?: number }) {
             <Skeleton className="h-4 w-72" />
           </ItemContent>
 
-          <Skeleton className="h-5 w-10 rounded-full" />
-
           <ChevronRightIcon
             aria-hidden="true"
             className="size-4 text-muted-foreground"
