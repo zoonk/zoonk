@@ -1,8 +1,8 @@
 import { getOrganization } from "@zoonk/core/orgs/get";
 import { Container } from "@zoonk/ui/components/container";
+import { CourseListSkeleton } from "@zoonk/ui/patterns/courses/list";
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { CourseListSkeleton } from "./course-list";
 import { HomeContainerHeader } from "./home-container-header";
 import { ListCourses } from "./list-courses";
 

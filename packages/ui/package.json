@@ -7,6 +7,7 @@
     "cmdk": "1.1.1",
     "input-otp": "1.4.2",
     "next-themes": "0.4.6",
+    "react-infinite-scroll-hook": "6.0.1",
     "react-resizable-panels": "3.0.6",
     "sonner": "2.0.7",
     "tailwind-merge": "3.3.1"
@@ -35,11 +36,13 @@
     "./hooks/clipboard": "./src/hooks/use-clipboard.ts",
     "./hooks/command-palette-search": "./src/hooks/use-command-palette-search.ts",
     "./hooks/debounce": "./src/hooks/use-debounce.ts",
+    "./hooks/infinite-list": "./src/hooks/use-infinite-list.ts",
     "./hooks/keyboard": "./src/hooks/use-keyboard.ts",
     "./hooks/mobile": "./src/hooks/use-mobile.ts",
     "./lib/*": "./src/lib/*.ts",
     "./patterns/auth/protected": "./src/patterns/auth/protected-section.tsx",
     "./patterns/buttons/submit": "./src/patterns/buttons/submit-button.tsx",
+    "./patterns/courses/list": "./src/patterns/courses/course-list.tsx",
     "./patterns/empty": "./src/patterns/empty.tsx",
     "./patterns/error": "./src/patterns/error-view.tsx",
     "./postcss.config": "./postcss.config.mjs"

@@ -134,10 +134,35 @@ msgctxt "R/6nsx"
 msgid "Subscription"
 msgstr "Subscription"
 
+#: src/app/[locale]/(catalog)/courses/course-list-client.tsx
+msgctxt "T0mfNV"
+msgid "Loading more courses…"
+msgstr "Loading more courses…"
+
+#: src/app/[locale]/(catalog)/courses/course-list-client.tsx
+msgctxt "Wc7aau"
+msgid "No courses available yet."
+msgstr "No courses available yet."
+
+#: src/app/[locale]/(catalog)/courses/course-list-client.tsx
+msgctxt "zJxO2f"
+msgid "No courses"
+msgstr "No courses"
+
+#: src/app/[locale]/(catalog)/courses/page.tsx
+msgctxt "hUF3bo"
+msgid "Start learning something new today"
+msgstr "Start learning something new today"
+
 #: src/app/[locale]/(catalog)/courses/page.tsx
 msgctxt "P5jxUC"
 msgid "Online Courses using AI"
 msgstr "Online Courses using AI"
+
+#: src/app/[locale]/(catalog)/courses/page.tsx
+msgctxt "s+Ncqj"
+msgid "Explore courses"
+msgstr "Explore courses"
 
 #: src/app/[locale]/(catalog)/courses/page.tsx
 msgctxt "z6saPZ"
