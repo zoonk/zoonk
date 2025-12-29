@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  DEFAULT_IMAGE_ACCEPTED_TYPES,
+  DEFAULT_IMAGE_MAX_SIZE,
+} from "@zoonk/utils/constants";
 import { LoaderCircleIcon } from "lucide-react";
 import {
   createContext,
@@ -12,15 +16,6 @@ import {
 import { cn } from "../lib/utils";
 import { Skeleton } from "./skeleton";
 import { toast } from "./sonner";
-
-const BYTES_PER_MB = 1024 * 1024;
-const DEFAULT_MAX_SIZE = 5 * BYTES_PER_MB;
-const DEFAULT_ACCEPTED_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "image/gif",
-];
 
 type ImageUploadContextValue = {
   currentImageUrl: string | null;
@@ -68,40 +63,52 @@ function isValidImage(params: {
   return true;
 }
 
+type ImageUploadMessages = {
+  invalidType?: string;
+  tooLarge?: string;
+  uploadSuccess?: string;
+  removeSuccess?: string;
+};
+
+const DEFAULT_MESSAGES: Required<ImageUploadMessages> = {
+  invalidType: "Invalid file type",
+  removeSuccess: "Image removed",
+  tooLarge: "File is too large",
+  uploadSuccess: "Image uploaded",
+};
+
 function ImageUploadProvider({
   children,
   currentImageUrl,
   onUpload,
   onRemove,
   onSuccess,
-  onInvalidType,
-  onTooLarge,
-  acceptedTypes = DEFAULT_ACCEPTED_TYPES,
-  maxSize = DEFAULT_MAX_SIZE,
+  acceptedTypes = DEFAULT_IMAGE_ACCEPTED_TYPES,
+  maxSize = DEFAULT_IMAGE_MAX_SIZE,
+  messages,
 }: {
   children: React.ReactNode;
   currentImageUrl: string | null;
   onUpload: (formData: FormData) => Promise<{ error: string | null }>;
   onRemove: () => Promise<{ error: string | null }>;
   onSuccess?: () => void;
-  onInvalidType?: () => void;
-  onTooLarge?: () => void;
   acceptedTypes?: string[];
   maxSize?: number;
+  messages?: ImageUploadMessages;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, startUploadTransition] = useTransition();
   const [removing, startRemoveTransition] = useTransition();
 
-  const defaultInvalidType = useCallback(() => {
-    toast.error(
-      "Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image.",
-    );
-  }, []);
+  const resolvedMessages = { ...DEFAULT_MESSAGES, ...messages };
 
-  const defaultTooLarge = useCallback(() => {
-    toast.error("File is too large. Maximum size is 5MB.");
-  }, []);
+  const handleInvalidType = useCallback(() => {
+    toast.error(resolvedMessages.invalidType);
+  }, [resolvedMessages.invalidType]);
+
+  const handleTooLarge = useCallback(() => {
+    toast.error(resolvedMessages.tooLarge);
+  }, [resolvedMessages.tooLarge]);
 
   const handleFileSelect = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,8 +120,8 @@ function ImageUploadProvider({
             acceptedTypes,
             file,
             maxSize,
-            onInvalidType: onInvalidType ?? defaultInvalidType,
-            onTooLarge: onTooLarge ?? defaultTooLarge,
+            onInvalidType: handleInvalidType,
+            onTooLarge: handleTooLarge,
           })
         )
       ) {
@@ -130,7 +137,7 @@ function ImageUploadProvider({
         if (error) {
           toast.error(error);
         } else {
-          toast.success("Image uploaded");
+          toast.success(resolvedMessages.uploadSuccess);
           onSuccess?.();
         }
       });
@@ -144,10 +151,9 @@ function ImageUploadProvider({
       maxSize,
       onUpload,
       onSuccess,
-      onInvalidType,
-      onTooLarge,
-      defaultInvalidType,
-      defaultTooLarge,
+      handleInvalidType,
+      handleTooLarge,
+      resolvedMessages.uploadSuccess,
     ],
   );
 
@@ -162,11 +168,11 @@ function ImageUploadProvider({
       if (error) {
         toast.error(error);
       } else {
-        toast.success("Image removed");
+        toast.success(resolvedMessages.removeSuccess);
         onSuccess?.();
       }
     });
-  }, [onRemove, onSuccess]);
+  }, [onRemove, onSuccess, resolvedMessages.removeSuccess]);
 
   const hasImage = Boolean(currentImageUrl);
   const pending = uploading || removing;

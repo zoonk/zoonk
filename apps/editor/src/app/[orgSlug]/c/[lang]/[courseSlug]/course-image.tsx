@@ -8,6 +8,11 @@ import {
   ImageUploadRemoveButton,
   ImageUploadTrigger,
 } from "@zoonk/ui/components/image-upload";
+import {
+  BYTES_PER_MB,
+  DEFAULT_IMAGE_ACCEPTED_TYPES,
+  DEFAULT_IMAGE_MAX_SIZE,
+} from "@zoonk/utils/constants";
 import { ImageIcon, Trash2Icon, UploadIcon } from "lucide-react";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -34,11 +39,26 @@ export async function CourseImage({
   }
 
   const routeParams = { courseId: course.id, courseSlug, lang, orgSlug };
+  const maxSizeMB = DEFAULT_IMAGE_MAX_SIZE / BYTES_PER_MB;
+  const acceptedFormats = DEFAULT_IMAGE_ACCEPTED_TYPES.map((type) =>
+    type.replace("image/", "").toUpperCase(),
+  ).join(", ");
 
   return (
     <ContainerHeader>
       <ImageUploadProvider
         currentImageUrl={course.imageUrl}
+        messages={{
+          invalidType: t(
+            "Invalid file type. Please upload a {formats} image.",
+            { formats: acceptedFormats },
+          ),
+          removeSuccess: t("Image removed"),
+          tooLarge: t("File is too large. Maximum size is {max}MB.", {
+            max: String(maxSizeMB),
+          }),
+          uploadSuccess: t("Image uploaded"),
+        }}
         onRemove={removeCourseImageAction.bind(null, routeParams)}
         onUpload={uploadCourseImageAction.bind(null, routeParams)}
       >

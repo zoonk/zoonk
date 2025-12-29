@@ -191,6 +191,16 @@ msgid "Change course image"
 msgstr "Cambiar imagen del curso"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+msgctxt "09WQsL"
+msgid "Invalid file type. Please upload a {formats} image."
+msgstr "Tipo de archivo inválido. Por favor sube una imagen {formats}."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+msgctxt "4pIjq5"
+msgid "File is too large. Maximum size is {max}MB."
+msgstr "El archivo es demasiado grande. El tamaño máximo es {max}MB."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
 msgctxt "7vM5rK"
 msgid "Remove image"
 msgstr "Eliminar imagen"
@@ -199,6 +209,16 @@ msgstr "Eliminar imagen"
 msgctxt "N8c7X3"
 msgid "Upload course image"
 msgstr "Subir imagen del curso"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+msgctxt "P4DaWb"
+msgid "Image removed"
+msgstr "Imagen eliminada"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+msgctxt "TcTp+J"
+msgid "Image uploaded"
+msgstr "Imagen subida"
 
 #: src/app/[orgSlug]/course-list.tsx
 msgctxt "c0YWuA"
