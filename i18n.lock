@@ -4,32 +4,32 @@ checksums:
     Unsaved/singular: ddc9094aecf93ceabe363846756a9925
     Saved/singular: 6554b923011266821d74e06e013a40e6
     Saving%E2%80%A6/singular: ee98ff32f9a585a9108c8cd961d6077e
-    Delete%20course/singular: 86bac6527eb0b380a3f0a5e38b6938ff
-    Delete%20course%3F/singular: c83369b40aec2a0eb3cafd146d70020e
-    Delete%20chapter/singular: 17a0d21cc5650c1a8de6e918fd754a63
-    Delete%20chapter%3F/singular: 5dfc389e36ee2f05e01896b81bd59493
     Delete%20lesson%3F/singular: 7f0eb69c2ada091c8504e0197eae59ab
     Delete%20lesson/singular: 18309d2fe705fd2c4301224dee3be224
-    Course%20title%E2%80%A6/singular: 4429de50f5f2d426271e76328c543daf
-    Contact%20support/singular: 32a4dee2033635e334a5f4d34724e3e0
-    Edit%20course%20description/singular: 2304f3ceeea1faaa3a4451c8863ded3b
-    Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
-    Edit%20course%20title/singular: 75b050a3ce516d55c480d633f5da502f
-    Course%20description%E2%80%A6/singular: a548f00ce745044f2a2dfbe02b9a0130
-    We%20couldn't%20load%20the%20chapters.%20Please%20try%20again./singular: 2bfbac73debefc0d7a4ec5c41af9c415
-    Failed%20to%20load%20chapters/singular: a462d90fffa946fe5c2aedb6e6fff9b4
-    We%20couldn't%20load%20the%20lessons.%20Please%20try%20again./singular: f2e68b6dd4d7f2eb0c91f20ade06957d
-    Failed%20to%20load%20lessons/singular: 427523eb64ddb239d642ca975d6e1dbb
-    Edit%20chapter%20description/singular: e27c305ac8ad54675309e239bccdd648
-    Edit%20chapter%20title/singular: 21c04bd3ed6335df5195d1f2857131bf
-    Chapter%20description%E2%80%A6/singular: d394513f90a5c9ad1880d364e8fc5cb8
-    Chapter%20title%E2%80%A6/singular: 3ed70a2e64aefe189999ff5899e8a7a2
-    Your%20organization%20hasn't%20created%20any%20courses%20yet./singular: 4c09c8406dbf7bfe159f850fc1f22b99
-    No%20courses/singular: 72fc2629e79529e927834070a26d2a07
+    Delete%20chapter/singular: 17a0d21cc5650c1a8de6e918fd754a63
+    Delete%20chapter%3F/singular: 5dfc389e36ee2f05e01896b81bd59493
+    Delete%20course/singular: 86bac6527eb0b380a3f0a5e38b6938ff
+    Delete%20course%3F/singular: c83369b40aec2a0eb3cafd146d70020e
     Edit%20lesson%20description/singular: b959f1e2fc7f00f593ae2c1a12fd330d
     Lesson%20description%E2%80%A6/singular: 77ad5a9829eda8182865a46455d5a842
     Lesson%20title%E2%80%A6/singular: d7b981d2734c11f2ee5d58f21c93bd3e
     Edit%20lesson%20title/singular: 15b5a30f4a0365bae4da264383dae889
+    We%20couldn't%20load%20the%20lessons.%20Please%20try%20again./singular: f2e68b6dd4d7f2eb0c91f20ade06957d
+    Contact%20support/singular: 32a4dee2033635e334a5f4d34724e3e0
+    Failed%20to%20load%20lessons/singular: 427523eb64ddb239d642ca975d6e1dbb
+    Edit%20chapter%20description/singular: e27c305ac8ad54675309e239bccdd648
+    Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
+    Edit%20chapter%20title/singular: 21c04bd3ed6335df5195d1f2857131bf
+    Chapter%20description%E2%80%A6/singular: d394513f90a5c9ad1880d364e8fc5cb8
+    Chapter%20title%E2%80%A6/singular: 3ed70a2e64aefe189999ff5899e8a7a2
+    Course%20title%E2%80%A6/singular: 4429de50f5f2d426271e76328c543daf
+    Edit%20course%20description/singular: 2304f3ceeea1faaa3a4451c8863ded3b
+    Edit%20course%20title/singular: 75b050a3ce516d55c480d633f5da502f
+    Course%20description%E2%80%A6/singular: a548f00ce745044f2a2dfbe02b9a0130
+    We%20couldn't%20load%20the%20chapters.%20Please%20try%20again./singular: 2bfbac73debefc0d7a4ec5c41af9c415
+    Failed%20to%20load%20chapters/singular: a462d90fffa946fe5c2aedb6e6fff9b4
+    Your%20organization%20hasn't%20created%20any%20courses%20yet./singular: 4c09c8406dbf7bfe159f850fc1f22b99
+    No%20courses/singular: 72fc2629e79529e927834070a26d2a07
     All%20fields%20are%20required/singular: 01fe4fe061a783c06c001dd39c78053a
     Next/singular: 89ddbcf710eba274963494f312bdc8a9
     Back/singular: f541015a827e37cb3b1234e56bc2aa3c
@@ -54,13 +54,34 @@ checksums:
     Login/singular: f4f219abeb5a465ecb1c7efaf50246de
     Logout/singular: 07948fdf20705e04a7bf68ab197512bf
     401%20-%20Unauthorized/singular: 0612c3a47aaacaa9fd8aa3d5f0fbc0b8
+    logout/singular: 77ca3565971e69e420e8eec6f752be84
+    home/singular: c227d2c8e5d86a375988bd63ebeececc
+    create/singular: 1323e3c278824cce3b4975f937fed459
+    Pages/singular: 75088c94fb3c374efd452624d4b74be8
+    Chapters/singular: 8528514cebd8dbe0e3a3c84989243d3b
+    add/singular: ba087d9ce25cf6e71df29e8c75706fb8
+    Search%20courses%2C%20chapters%2C%20lessons%2C%20or%20pages.../singular: b89375cf6aa859f0ee3b021222a10705
+    No%20results%20found/singular: 5518f2865757dc73900aa03ef8be6934
+    dashboard/singular: 3e3998114a2eab7daa3c9a23dbeb16b9
+    Lessons/singular: 52fdbe5a3a6ee1cc1e166546516f9111
+    Searching.../singular: 56cf28d6712bf3f7f73af2a81974ac45
+    settings/singular: 2313357d3b991dbd48a264c559ea9b35
+    locale/singular: 1baedd0f3a7e1e835804c3ab7066d364
+    new/singular: 59c16092bc6a4b9de0debe084e4b5f49
+    language/singular: f0106a9b4354555a31e54c05c9b1e1f6
+    course/singular: a8f5f6a15055aa74f1b98d4821329d19
+    Home%20page/singular: aa72464a366b091aa6f2037ca869c09c
+    sign%20out/singular: a917e8428004b4108a66fa0ba9c0c15c
+    exit/singular: 8eff58f44e53377753566cba50541cf9
+    Search/singular: 49dd6c21604b5e8d4153ff1aff2177e1
+    Language/singular: 277fd1a41cc237a437cd1d5e4a80463b
+    translate/singular: a9ff69701924ae84bd571f09df986e00
+    start/singular: e19dc5c089daea13eeb2efffb890057d
     Cancel/singular: 2e2a849c2223911717de8caa2c71bade
     Delete%20item/singular: b9b5755b0ed185436b52860bde313b9f
     This%20action%20cannot%20be%20undone./singular: 3d8b13374ffd3cefc0f3f7ce077bd9c9
     Delete/singular: 8bcf303dd10a645b5baacb02b47d72c9
     Delete%20item%3F/singular: d847684112faebe6e59a16ba2ccaac05
-    Home%20page/singular: aa72464a366b091aa6f2037ca869c09c
-    Language/singular: 277fd1a41cc237a437cd1d5e4a80463b
     Organizations/singular: bd50dd0b17bd74a72b728a8385b5ee28
     No%20other%20organizations/singular: e9de48fc34aa9de5d30e3eb8eed79ed1
     Draft/singular: e8a92958ad300aacfe46c2bf6644927e
@@ -84,20 +105,16 @@ checksums:
     An%20unexpected%20error%20occurred/singular: fe07b9cdb1fc3f7397f6d89c102c60af
     Invalid%20category/singular: 5f9195d3e0d1d819cc9d812b712eaca1
     Chapter%20not%20found/singular: 72d4a8758136678acbae0ec942227f7e
-    Chapter%20not%20found%20in%20this%20course/singular: d81e3e6176f913514f413784a8e881e3
     Invalid%20chapter%20format.%20Each%20chapter%20must%20have%20a%20title%20and%20description/singular: 6c9dc938c75674b73b61177b55cce86d
     Lesson%20not%20found/singular: 41c0c0e96242a28b4d90a84b3bf80e94
     Invalid%20format.%20Please%20provide%20an%20array%20of%20non-empty%20strings/singular: c9dbc954cf099eedbb573d647356f52e
     Course%20not%20found/singular: 679d024095e9e605246a1928a7e1d87b
     Invalid%20file%20type.%20Please%20upload%20a%20JSON%20file/singular: 9164c5c1930e61a6037fab99386c02f6
     This%20category%20has%20already%20been%20added%20to%20the%20course/singular: 5b220e40c0bfc7b3700d1f402697c522
-    Lesson%20not%20found%20in%20this%20chapter/singular: 2697f3d918027ce266c25004b71a51d9
     Please%20sign%20in%20to%20continue/singular: 051e59dd3d3b0bfad95982f982fd6b9d
     Chapter%20and%20course%20must%20belong%20to%20the%20same%20organization/singular: f3c132074516ccc5cad52c88c86d440d
     Invalid%20lesson%20format.%20Each%20lesson%20must%20have%20a%20title%20and%20description/singular: e449a82367ccec6680313c4711549e2e
     You%20don't%20have%20permission%20to%20perform%20this%20action/singular: b99aa4dbc03b5e9b7bf6c64b245a9ab8
-    This%20lesson%20has%20already%20been%20removed/singular: f2630463c13ad524f0cd9378a9c39b06
-    This%20chapter%20has%20already%20been%20removed/singular: b5afad30e3174c18d5aa887a3143397f
     File%20is%20too%20large.%20Maximum%20size%20is%205MB/singular: 6ee737426f04528c60f84ba1004542b3
     Invalid%20JSON%20format.%20Please%20check%20your%20file/singular: 2a890d833f49aa36f02433476ca33468
     Organization%20not%20found/singular: 4cb8c07ec2c599b6f48750e06ffa182b

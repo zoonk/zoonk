@@ -179,6 +179,7 @@ msgstr "Create"
 
 #: src/app/[orgSlug]/new-course/page.tsx
 #: src/app/[orgSlug]/page.tsx
+#: src/components/navbar/command-palette.tsx
 msgctxt "dCKXDB"
 msgid "Create course"
 msgstr "Create course"
@@ -249,6 +250,7 @@ msgid "Select a course to edit its content"
 msgstr "Select a course to edit its content"
 
 #: src/app/[orgSlug]/page.tsx
+#: src/components/navbar/command-palette.tsx
 msgctxt "R85gsW"
 msgid "Courses"
 msgstr "Courses"
@@ -264,6 +266,7 @@ msgid "Login"
 msgstr "Login"
 
 #: src/app/unauthorized.tsx
+#: src/components/navbar/command-palette.tsx
 #: src/components/navbar/logout-menu-item.tsx
 msgctxt "C81/uG"
 msgid "Logout"
@@ -273,6 +276,97 @@ msgstr "Logout"
 msgctxt "gNtXZ8"
 msgid "401 - Unauthorized"
 msgstr "401 - Unauthorized"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "6BySgv"
+msgid "logout"
+msgstr "logout"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "7XTPKO"
+msgid "home"
+msgstr "home"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "C6QAK4"
+msgid "create"
+msgstr "create"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "CxfKLC"
+msgid "Pages"
+msgstr "Pages"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "Do1Pfd"
+msgid "Chapters"
+msgstr "Chapters"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "GH0hAP"
+msgid "add"
+msgstr "add"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "gxt0jA"
+msgid "Search courses, chapters, lessons, or pages..."
+msgstr "Search courses, chapters, lessons, or pages..."
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "hX5PAb"
+msgid "No results found"
+msgstr "No results found"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "i2cX1K"
+msgid "dashboard"
+msgstr "dashboard"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "iqLF8D"
+msgid "Lessons"
+msgstr "Lessons"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "NNQzoi"
+msgid "Searching..."
+msgstr "Searching..."
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "qlTe+e"
+msgid "new"
+msgstr "new"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "RSFKID"
+msgid "course"
+msgstr "course"
+
+#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/index.tsx
+msgctxt "U3l+Q9"
+msgid "Home page"
+msgstr "Home page"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "UExMYV"
+msgid "sign out"
+msgstr "sign out"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "wmNq1X"
+msgid "exit"
+msgstr "exit"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "xmcVZ0"
+msgid "Search"
+msgstr "Search"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "zTylMM"
+msgid "start"
+msgstr "start"
 
 #: src/components/navbar/delete-item-button.tsx
 msgctxt "47FYwb"
@@ -298,11 +392,6 @@ msgstr "Delete"
 msgctxt "W5ajIY"
 msgid "Delete item?"
 msgstr "Delete item?"
-
-#: src/components/navbar/index.tsx
-msgctxt "U3l+Q9"
-msgid "Home page"
-msgstr "Home page"
 
 #: src/components/navbar/locale-switcher.tsx
 msgctxt "y1Z3or"
