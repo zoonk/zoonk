@@ -102,14 +102,9 @@ async function ChapterList({
   }
 
   async function handleImport(
-    file: File,
-    mode: "merge" | "replace",
+    formData: FormData,
   ): Promise<{ error: string | null }> {
     "use server";
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("mode", mode);
-
     const { error: importError } = await importChaptersAction(
       courseSlug,
       courseId,
@@ -145,6 +140,7 @@ async function ChapterList({
       cancelLabel={t("Cancel")}
       dropLabel={t("Drop file or click to select")}
       entityType="chapters"
+      exportErrorMessage={t("Failed to export")}
       exportLabel={t("Export")}
       exportSuccessMessage={t("Chapters exported successfully")}
       fileSizeUnit={t("KB")}

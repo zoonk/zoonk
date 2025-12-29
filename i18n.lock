@@ -16,6 +16,7 @@ checksums:
     Delete%20course/singular: 86bac6527eb0b380a3f0a5e38b6938ff
     Delete%20course%3F/singular: c83369b40aec2a0eb3cafd146d70020e
     Untitled%20chapter/singular: 28963b46f393d2828ea31c00345d2a2e
+    No%20file%20provided/singular: 04285abfc9d18ce401da2f6f570523a5
     Add%20a%20description%E2%80%A6/singular: 6737ac865733a3e459ddfeb5b6134ce5
     Untitled%20lesson/singular: 252aefbc39883b5a3aae879535b0c6d2
     Edit%20lesson%20description/singular: b959f1e2fc7f00f593ae2c1a12fd330d
@@ -41,6 +42,7 @@ checksums:
     Add%20lesson/singular: 101a1880b35c68eed6f80e7574f4ff2d
     Export/singular: 709afbc86c5fdca279a111ea8e49d1c9
     KB/singular: 476c6cddd277e93a1bb7af4a763e95dc
+    Failed%20to%20export/singular: e1ed0bd77fc4509b338f2ed32565012a
     Import%20lessons/singular: 8d1fae531b7e8156042321586d18b522
     Chapter%20title%E2%80%A6/singular: 3ed70a2e64aefe189999ff5899e8a7a2
     Upload%20a%20JSON%20file%20containing%20lessons%20to%20import./singular: a6aec991263d7f81fe5f06e48c4aaa68

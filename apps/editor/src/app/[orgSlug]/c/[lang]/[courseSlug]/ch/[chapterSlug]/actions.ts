@@ -138,8 +138,13 @@ export async function importLessonsAction(
   chapterId: number,
   formData: FormData,
 ): Promise<{ error: string | null }> {
-  const file = formData.get("file") as File;
+  const file = formData.get("file");
   const mode = formData.get("mode") as "merge" | "replace";
+
+  if (!(file && file instanceof File)) {
+    const t = await getExtracted();
+    return { error: t("No file provided") };
+  }
 
   const { error } = await importLessons({
     chapterId,

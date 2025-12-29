@@ -136,14 +136,9 @@ async function LessonList({ params }: { params: ChapterPageProps["params"] }) {
   }
 
   async function handleImport(
-    file: File,
-    mode: "merge" | "replace",
+    formData: FormData,
   ): Promise<{ error: string | null }> {
     "use server";
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("mode", mode);
-
     const { error: importError } = await importLessonsAction(
       chapterSlug,
       courseSlug,
@@ -180,6 +175,7 @@ async function LessonList({ params }: { params: ChapterPageProps["params"] }) {
       cancelLabel={t("Cancel")}
       dropLabel={t("Drop file or click to select")}
       entityType="lessons"
+      exportErrorMessage={t("Failed to export")}
       exportLabel={t("Export")}
       exportSuccessMessage={t("Lessons exported successfully")}
       fileSizeUnit={t("KB")}

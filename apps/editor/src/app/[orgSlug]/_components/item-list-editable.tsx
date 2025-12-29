@@ -16,13 +16,12 @@ type ItemListItem = {
   position: number;
 };
 
-type ImportMode = "merge" | "replace";
-
 type ItemListEditableProps = {
   addLabel: string;
   cancelLabel?: string;
   dropLabel?: string;
   entityType?: "chapters" | "lessons";
+  exportErrorMessage?: string;
   exportLabel?: string;
   exportSuccessMessage?: string;
   fileSizeUnit?: string;
@@ -37,10 +36,7 @@ type ItemListEditableProps = {
   modeReplaceLabel?: string;
   moreOptionsLabel?: string;
   onExport?: () => Promise<{ data: object | null; error: Error | null }>;
-  onImport?: (
-    file: File,
-    mode: ImportMode,
-  ) => Promise<{ error: string | null }>;
+  onImport?: (formData: FormData) => Promise<{ error: string | null }>;
   onInsert: (position: number) => Promise<void>;
   showFormatLabel?: string;
 };
@@ -50,6 +46,7 @@ export function ItemListEditable({
   cancelLabel,
   dropLabel,
   entityType,
+  exportErrorMessage,
   exportLabel,
   exportSuccessMessage,
   fileSizeUnit,
@@ -106,6 +103,7 @@ export function ItemListEditable({
         {entityType &&
           cancelLabel &&
           dropLabel &&
+          exportErrorMessage &&
           exportLabel &&
           exportSuccessMessage &&
           fileSizeUnit &&
@@ -124,6 +122,7 @@ export function ItemListEditable({
               cancelLabel={cancelLabel}
               dropLabel={dropLabel}
               entityType={entityType}
+              exportErrorMessage={exportErrorMessage}
               exportLabel={exportLabel}
               exportSuccessMessage={exportSuccessMessage}
               fileSizeUnit={fileSizeUnit}

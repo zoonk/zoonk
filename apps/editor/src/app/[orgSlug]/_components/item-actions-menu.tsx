@@ -12,8 +12,6 @@ import { DownloadIcon, EllipsisVerticalIcon, UploadIcon } from "lucide-react";
 import { useState, useTransition } from "react";
 import { ImportDialog } from "./import-dialog";
 
-type ImportMode = "merge" | "replace";
-
 const EXAMPLE_FORMAT = {
   chapters: {
     chapters: [
@@ -39,6 +37,7 @@ export function ItemActionsMenu({
   cancelLabel,
   dropLabel,
   entityType,
+  exportErrorMessage,
   exportLabel,
   exportSuccessMessage,
   fileSizeUnit,
@@ -57,6 +56,7 @@ export function ItemActionsMenu({
   cancelLabel: string;
   dropLabel: string;
   entityType: "chapters" | "lessons";
+  exportErrorMessage: string;
   exportLabel: string;
   exportSuccessMessage: string;
   fileSizeUnit: string;
@@ -69,7 +69,7 @@ export function ItemActionsMenu({
   modeReplaceLabel: string;
   moreOptionsLabel: string;
   onExport: () => Promise<{ data: object | null; error: Error | null }>;
-  onImport: (file: File, mode: ImportMode) => Promise<{ error: string | null }>;
+  onImport: (formData: FormData) => Promise<{ error: string | null }>;
   showFormatLabel: string;
 }) {
   const [importOpen, setImportOpen] = useState(false);
@@ -80,7 +80,7 @@ export function ItemActionsMenu({
       const { data, error } = await onExport();
 
       if (error || !data) {
-        toast.error(error?.message ?? "Failed to export");
+        toast.error(error?.message ?? exportErrorMessage);
         return;
       }
 

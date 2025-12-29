@@ -85,6 +85,12 @@ msgstr "Capítulo sin título"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
+msgctxt "lgvvCe"
+msgid "No file provided"
+msgstr "No se proporcionó ningún archivo"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
 msgctxt "sGJpuF"
 msgid "Add a description…"
 msgstr "Agrega una descripción…"
@@ -219,6 +225,12 @@ msgstr "Exportar"
 msgctxt "vDIBFm"
 msgid "KB"
 msgstr "KB"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
+msgctxt "w6G8oe"
+msgid "Failed to export"
+msgstr "Error al exportar"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
 msgctxt "WDo1Sx"

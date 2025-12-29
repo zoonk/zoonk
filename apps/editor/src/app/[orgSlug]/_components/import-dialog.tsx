@@ -56,7 +56,7 @@ export function ImportDialog({
   modeLabel: string;
   modeMergeLabel: string;
   modeReplaceLabel: string;
-  onImport: (file: File, mode: ImportMode) => Promise<{ error: string | null }>;
+  onImport: (formData: FormData) => Promise<{ error: string | null }>;
   onOpenChange: (open: boolean) => void;
   open: boolean;
   showFormatLabel: string;
@@ -76,10 +76,14 @@ export function ImportDialog({
     }
   }
 
+  function isJsonFile(f: File): boolean {
+    return f.type === "application/json" || f.name.endsWith(".json");
+  }
+
   function handleDrop(e: React.DragEvent<HTMLLabelElement>) {
     e.preventDefault();
     const droppedFile = e.dataTransfer.files[0];
-    if (droppedFile) {
+    if (droppedFile && isJsonFile(droppedFile)) {
       setFile(droppedFile);
     }
   }
@@ -94,7 +98,11 @@ export function ImportDialog({
     }
 
     startTransition(async () => {
-      const { error } = await onImport(file, mode);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("mode", mode);
+
+      const { error } = await onImport(formData);
 
       if (error) {
         toast.error(error);
