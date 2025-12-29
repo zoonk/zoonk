@@ -2,6 +2,7 @@ import { prisma } from "../index";
 import { seedAlternativeTitles } from "./seed/alternative-titles";
 import { seedCategories } from "./seed/categories";
 import { seedChapters } from "./seed/chapters";
+import { seedCourseUsers } from "./seed/course-users";
 import { seedCourses } from "./seed/courses";
 import { seedLessons } from "./seed/lessons";
 import { seedOrganizations } from "./seed/orgs";
@@ -15,6 +16,7 @@ async function main() {
   await seedChapters(prisma, org);
   await seedLessons(prisma, org);
   await seedAlternativeTitles(prisma, org);
+  await seedCourseUsers(prisma, org, users);
 }
 
 main()

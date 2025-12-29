@@ -561,3 +561,13 @@ msgstr "Business"
 msgctxt "YMDBNH"
 msgid "Geography"
 msgstr "Geography"
+
+#: src/lib/error-messages.ts
+msgctxt "3IKub9"
+msgid "An unexpected error occurred"
+msgstr "An unexpected error occurred"
+
+#: src/lib/error-messages.ts
+msgctxt "g5WLcA"
+msgid "Please sign in to continue"
+msgstr "Please sign in to continue"

@@ -22,6 +22,7 @@ export type {
   CourseAlternativeTitle,
   CourseCategory,
   CourseSuggestion,
+  CourseUser,
   Invitation,
   Lesson,
   Member,
