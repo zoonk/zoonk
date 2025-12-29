@@ -103,7 +103,7 @@ export function SlugEditor({
           id="slug-editor"
           onChange={(e) => setSlug(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder={t("slug…")}
+          placeholder={t("your-custom-url")}
           value={slug}
           variant="muted"
         />
@@ -113,7 +113,7 @@ export function SlugEditor({
         >
           {showError ? (
             <span
-              aria-label={t("Slug already exists")}
+              aria-label={t("This URL is already in use")}
               className="flex size-5 items-center justify-center"
               role="img"
             >
@@ -121,7 +121,7 @@ export function SlugEditor({
             </span>
           ) : (
             <Button
-              aria-label={t("Save slug")}
+              aria-label={t("Save")}
               disabled={!canSave}
               onClick={handleSave}
               size="icon-sm"
@@ -145,7 +145,7 @@ export function SlugEditor({
 
       {showError && (
         <p className="text-destructive text-xs">
-          {t("This slug is already in use")}
+          {t("This URL is already in use")}
         </p>
       )}
     </div>

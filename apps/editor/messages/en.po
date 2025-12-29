@@ -27,29 +27,24 @@ msgid "Cancel"
 msgstr "Cancel"
 
 #: src/app/[orgSlug]/_components/slug-editor.tsx
-msgctxt "fZThA8"
-msgid "Slug already exists"
-msgstr "Slug already exists"
+msgctxt "8mWdw8"
+msgid "your-custom-url"
+msgstr "your-custom-url"
 
 #: src/app/[orgSlug]/_components/slug-editor.tsx
-msgctxt "J9+DwE"
-msgid "slug…"
-msgstr "slug…"
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "Save"
+
+#: src/app/[orgSlug]/_components/slug-editor.tsx
+msgctxt "NJUZ2D"
+msgid "This URL is already in use"
+msgstr "This URL is already in use"
 
 #: src/app/[orgSlug]/_components/slug-editor.tsx
 msgctxt "QGLi0O"
 msgid "URL address"
 msgstr "URL address"
-
-#: src/app/[orgSlug]/_components/slug-editor.tsx
-msgctxt "Rr6+VH"
-msgid "This slug is already in use"
-msgstr "This slug is already in use"
-
-#: src/app/[orgSlug]/_components/slug-editor.tsx
-msgctxt "Tk3zpi"
-msgid "Save slug"
-msgstr "Save slug"
 
 #: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
 msgctxt "52DE8l"
