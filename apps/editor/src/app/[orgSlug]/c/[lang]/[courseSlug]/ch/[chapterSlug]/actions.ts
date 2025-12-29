@@ -2,16 +2,14 @@
 
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { cacheTagChapter, cacheTagCourse } from "@zoonk/utils/cache";
-import type { SafeReturn } from "@zoonk/utils/error";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { getExtracted } from "next-intl/server";
 import { chapterSlugExists } from "@/data/chapters/chapter-slug";
 import { updateChapter } from "@/data/chapters/update-chapter";
 import { createLesson } from "@/data/lessons/create-lesson";
-import {
-  exportLessons,
-  type LessonsExport,
-} from "@/data/lessons/export-lessons";
+import { exportLessons } from "@/data/lessons/export-lessons";
 import { importLessons } from "@/data/lessons/import-lessons";
 import { getErrorMessage } from "@/lib/error-messages";
 
@@ -166,8 +164,65 @@ export async function importLessonsAction(
   return { error: null };
 }
 
-export async function exportLessonsAction(
-  chapterId: number,
-): Promise<SafeReturn<LessonsExport>> {
-  return exportLessons({ chapterId });
+export async function exportLessonsAction(chapterId: number): Promise<{
+  data: object | null;
+  error: Error | null;
+}> {
+  const { data, error } = await exportLessons({ chapterId });
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  return { data, error: null };
+}
+
+interface LessonRouteParams {
+  chapterId: number;
+  chapterSlug: string;
+  courseSlug: string;
+  lang: string;
+  orgSlug: string;
+}
+
+export async function insertLessonAction(
+  params: LessonRouteParams,
+  position: number,
+): Promise<void> {
+  const { chapterId, chapterSlug, courseSlug, lang, orgSlug } = params;
+  const { slug, error } = await createLessonAction(
+    chapterSlug,
+    courseSlug,
+    chapterId,
+    position,
+  );
+
+  if (error) {
+    throw new Error(error);
+  }
+
+  if (slug) {
+    revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}`);
+    redirect(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${slug}`);
+  }
+}
+
+export async function handleImportLessonsAction(
+  params: LessonRouteParams,
+  formData: FormData,
+): Promise<{ error: string | null }> {
+  const { chapterId, chapterSlug, courseSlug, lang, orgSlug } = params;
+  const { error } = await importLessonsAction(
+    chapterSlug,
+    courseSlug,
+    chapterId,
+    formData,
+  );
+
+  if (error) {
+    return { error };
+  }
+
+  revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}`);
+  return { error: null };
 }

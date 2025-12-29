@@ -2,14 +2,12 @@
 
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { cacheTagCourse } from "@zoonk/utils/cache";
-import type { SafeReturn } from "@zoonk/utils/error";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { getExtracted } from "next-intl/server";
 import { createChapter } from "@/data/chapters/create-chapter";
-import {
-  type ChaptersExport,
-  exportChapters,
-} from "@/data/chapters/export-chapters";
+import { exportChapters } from "@/data/chapters/export-chapters";
 import { importChapters } from "@/data/chapters/import-chapters";
 import { courseSlugExists } from "@/data/courses/course-slug";
 import { updateCourse } from "@/data/courses/update-course";
@@ -148,8 +146,58 @@ export async function importChaptersAction(
   return { error: null };
 }
 
-export async function exportChaptersAction(
-  courseId: number,
-): Promise<SafeReturn<ChaptersExport>> {
-  return exportChapters({ courseId });
+export async function exportChaptersAction(courseId: number): Promise<{
+  data: object | null;
+  error: Error | null;
+}> {
+  const { data, error } = await exportChapters({ courseId });
+
+  if (error) {
+    return { data: null, error };
+  }
+
+  return { data, error: null };
+}
+
+interface ChapterRouteParams {
+  courseId: number;
+  courseSlug: string;
+  lang: string;
+  orgSlug: string;
+}
+
+export async function insertChapterAction(
+  params: ChapterRouteParams,
+  position: number,
+): Promise<void> {
+  const { courseId, courseSlug, lang, orgSlug } = params;
+  const { slug, error } = await createChapterAction(
+    courseSlug,
+    courseId,
+    position,
+  );
+
+  if (error) {
+    throw new Error(error);
+  }
+
+  if (slug) {
+    revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
+    redirect(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${slug}`);
+  }
+}
+
+export async function handleImportChaptersAction(
+  params: ChapterRouteParams,
+  formData: FormData,
+): Promise<{ error: string | null }> {
+  const { courseId, courseSlug, lang, orgSlug } = params;
+  const { error } = await importChaptersAction(courseSlug, courseId, formData);
+
+  if (error) {
+    return { error };
+  }
+
+  revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
+  return { error: null };
 }

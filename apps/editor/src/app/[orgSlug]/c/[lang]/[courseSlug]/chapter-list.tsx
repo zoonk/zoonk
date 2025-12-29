@@ -1,8 +1,6 @@
 import { ErrorView } from "@zoonk/ui/patterns/error";
 import { SUPPORT_URL } from "@zoonk/utils/constants";
-import { revalidatePath } from "next/cache";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { getExtracted } from "next-intl/server";
 import { Fragment } from "react";
 import {
@@ -22,9 +20,9 @@ import { EntityListActions } from "@/components/entity-list-actions";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import {
-  createChapterAction,
   exportChaptersAction,
-  importChaptersAction,
+  handleImportChaptersAction,
+  insertChapterAction,
 } from "./actions";
 
 export async function ChapterList({
@@ -54,62 +52,13 @@ export async function ChapterList({
 
   const courseId = course.id;
 
-  async function handleInsert(position: number) {
-    "use server";
-    const { slug, error: createError } = await createChapterAction(
-      courseSlug,
-      courseId,
-      position,
-    );
-
-    if (createError) {
-      throw new Error(createError);
-    }
-
-    if (slug) {
-      revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
-      redirect(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${slug}`);
-    }
-  }
-
-  async function handleImport(
-    formData: FormData,
-  ): Promise<{ error: string | null }> {
-    "use server";
-    const { error: importError } = await importChaptersAction(
-      courseSlug,
-      courseId,
-      formData,
-    );
-
-    if (importError) {
-      return { error: importError };
-    }
-
-    revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
-    return { error: null };
-  }
-
-  async function handleExport(): Promise<{
-    data: object | null;
-    error: Error | null;
-  }> {
-    "use server";
-    const { data: exportData, error: exportError } =
-      await exportChaptersAction(courseId);
-
-    if (exportError) {
-      return { data: null, error: exportError };
-    }
-
-    return { data: exportData, error: null };
-  }
+  const routeParams = { courseId, courseSlug, lang, orgSlug };
 
   const lastChapter = chapters.at(-1);
   const endPosition = lastChapter ? lastChapter.position + 1 : 0;
 
   return (
-    <EditorListProvider onInsert={handleInsert}>
+    <EditorListProvider onInsert={insertChapterAction.bind(null, routeParams)}>
       <EditorListSpinner />
 
       <EditorListHeader>
@@ -119,8 +68,8 @@ export async function ChapterList({
 
         <EntityListActions
           entityType="chapters"
-          onExport={handleExport}
-          onImport={handleImport}
+          onExport={exportChaptersAction.bind(null, courseId)}
+          onImport={handleImportChaptersAction.bind(null, routeParams)}
         />
       </EditorListHeader>
 
