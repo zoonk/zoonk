@@ -27,7 +27,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useExtracted } from "next-intl";
 import { startTransition, useDeferredValue, useEffect, useState } from "react";
 import {
-  type SearchResultCourse,
+  type ResultWithImage,
   type SearchResults,
   searchContent,
 } from "@/data/search-content";
@@ -236,7 +236,7 @@ function CourseItem({
   course,
   onSelect,
 }: {
-  course: SearchResultCourse;
+  course: ResultWithImage;
   onSelect: (url: string) => void;
 }) {
   return (
