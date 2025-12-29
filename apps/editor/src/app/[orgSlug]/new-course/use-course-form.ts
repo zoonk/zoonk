@@ -2,7 +2,8 @@
 
 import { useExtracted, useLocale } from "next-intl";
 import { useState } from "react";
-import { useSlugCheck } from "./use-slug-check";
+import { useSlugCheck } from "@/hooks/use-slug-check";
+import { checkSlugExists } from "./actions";
 
 export type CourseFormData = {
   title: string;
@@ -26,6 +27,7 @@ export function useCourseForm({ orgSlug }: { orgSlug: string }) {
   });
 
   const slugExists = useSlugCheck({
+    checkFn: checkSlugExists,
     language: formData.language,
     orgSlug,
     slug: formData.slug,
