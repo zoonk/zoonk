@@ -10,37 +10,48 @@ import {
   CommandItem,
   CommandList,
 } from "@zoonk/ui/components/command";
-import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
-import { Search } from "lucide-react";
-import { useExtracted } from "next-intl";
-import { useState } from "react";
+import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
+import { BookOpenIcon, Search } from "lucide-react";
+import Image from "next/image";
+import { useExtracted, useLocale } from "next-intl";
+import { useCallback } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { getMenu } from "@/lib/menu";
+import {
+  type CourseSearchResult,
+  searchCoursesAction,
+} from "./search-courses-action";
 
 export function CommandPalette() {
   const { push } = useRouter();
   const t = useExtracted();
-  const [query, setQuery] = useState("");
-  const [isOpen, setIsOpen] = useState(false);
+  const locale = useLocale();
+
   const { data: session } = authClient.useSession();
   const isLoggedIn = Boolean(session);
 
-  useKeyboardCallback("k", () => setIsOpen((prev) => !prev), {
-    mode: "any",
-    modifiers: { ctrlKey: true, metaKey: true },
+  const handleSearch = useCallback(
+    (searchQuery: string) =>
+      searchCoursesAction({ language: locale, query: searchQuery }),
+    [locale],
+  );
+
+  const {
+    closePalette,
+    isOpen,
+    onSelectItem,
+    open,
+    query,
+    results: courses,
+    setQuery,
+  } = useCommandPaletteSearch<CourseSearchResult[]>({
+    emptyResults: [],
+    onSearch: handleSearch,
   });
 
-  const open = () => setIsOpen(true);
-  const close = () => setIsOpen(false);
-
-  const closePalette = () => {
-    close();
-    setQuery("");
-  };
-
-  const onSelectItem = (item: string) => {
-    closePalette();
-    push(item);
+  const handleSelect = (url: string) => {
+    onSelectItem();
+    push(url);
   };
 
   const getStarted = [
@@ -64,6 +75,8 @@ export function CommandPalette() {
   ];
 
   const contactUs = [{ key: t("Help and support"), ...getMenu("support") }];
+
+  const hasCourses = courses.length > 0;
 
   return (
     <>
@@ -95,11 +108,11 @@ export function CommandPalette() {
             <p>{t("No results found")}</p>
           </CommandEmpty>
 
-          <CommandGroup heading={t("Get started")}>
+          <CommandGroup heading={t("Pages")}>
             {getStarted.map((item) => (
               <CommandItem
                 key={item.key}
-                onSelect={() => onSelectItem(item.url)}
+                onSelect={() => handleSelect(item.url)}
               >
                 <item.icon aria-hidden="true" />
                 {item.key}
@@ -112,7 +125,7 @@ export function CommandPalette() {
               accountPublic.map((item) => (
                 <CommandItem
                   key={item.key}
-                  onSelect={() => onSelectItem(item.url)}
+                  onSelect={() => handleSelect(item.url)}
                 >
                   <item.icon aria-hidden="true" />
                   {item.key}
@@ -123,7 +136,7 @@ export function CommandPalette() {
               accountPrivate.map((item) => (
                 <CommandItem
                   key={item.key}
-                  onSelect={() => onSelectItem(item.url)}
+                  onSelect={() => handleSelect(item.url)}
                 >
                   <item.icon aria-hidden="true" />
                   {item.key}
@@ -135,15 +148,68 @@ export function CommandPalette() {
             {contactUs.map((item) => (
               <CommandItem
                 key={item.key}
-                onSelect={() => onSelectItem(item.url)}
+                onSelect={() => handleSelect(item.url)}
               >
                 <item.icon aria-hidden="true" />
                 {item.key}
               </CommandItem>
             ))}
           </CommandGroup>
+
+          {hasCourses && (
+            <CommandGroup heading={t("Courses")}>
+              {courses.map((course) => (
+                <CourseItem
+                  course={course}
+                  key={course.id}
+                  onSelect={handleSelect}
+                />
+              ))}
+            </CommandGroup>
+          )}
         </CommandList>
       </CommandDialog>
     </>
+  );
+}
+
+function CourseItem({
+  course,
+  onSelect,
+}: {
+  course: CourseSearchResult;
+  onSelect: (url: string) => void;
+}) {
+  const url = `/b/${course.brandSlug}/c/${course.slug}`;
+
+  return (
+    <CommandItem
+      className="flex items-start gap-3"
+      onSelect={() => onSelect(url)}
+      value={`${course.title}-${course.id}`}
+    >
+      {course.imageUrl ? (
+        <Image
+          alt={course.title}
+          className="size-8 shrink-0 rounded-md object-cover"
+          height={32}
+          src={course.imageUrl}
+          width={32}
+        />
+      ) : (
+        <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted">
+          <BookOpenIcon aria-hidden="true" className="size-4" />
+        </div>
+      )}
+
+      <div className="min-w-0 flex-1">
+        <p className="truncate font-medium">{course.title}</p>
+        {course.description && (
+          <p className="truncate text-muted-foreground text-xs">
+            {course.description}
+          </p>
+        )}
+      </div>
+    </CommandItem>
   );
 }

@@ -9,9 +9,7 @@ import {
   CommandItem,
   CommandList,
 } from "@zoonk/ui/components/command";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { Spinner } from "@zoonk/ui/components/spinner";
-import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
+import { useCommandPaletteSearch } from "@zoonk/ui/hooks/command-palette-search";
 import {
   BookOpenIcon,
   FileTextIcon,
@@ -25,7 +23,7 @@ import {
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useExtracted } from "next-intl";
-import { startTransition, useDeferredValue, useEffect, useState } from "react";
+import { useCallback, useMemo } from "react";
 import {
   type ResultWithImage,
   type SearchResults,
@@ -40,88 +38,68 @@ type StaticMenuItem = {
   url: string;
 };
 
+const emptyResults: SearchResults = {
+  chapters: [],
+  courses: [],
+  lessons: [],
+};
+
 export function CommandPalette() {
   const t = useExtracted();
   const router = useRouter();
   const { orgSlug } = useParams<{ orgSlug: string }>();
 
-  const [isOpen, setIsOpen] = useState(false);
-  const [query, setQuery] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const handleSearch = useCallback(
+    (searchQuery: string) => {
+      if (!orgSlug) {
+        return Promise.resolve(emptyResults);
+      }
+      return searchContent({ orgSlug, title: searchQuery });
+    },
+    [orgSlug],
+  );
 
-  const [results, setResults] = useState<SearchResults>({
-    chapters: [],
-    courses: [],
-    lessons: [],
-  });
+  const { closePalette, isOpen, onSelectItem, open, query, results, setQuery } =
+    useCommandPaletteSearch<SearchResults>({
+      emptyResults,
+      onSearch: handleSearch,
+    });
 
-  const deferredQuery = useDeferredValue(query);
-
-  useKeyboardCallback("k", () => setIsOpen((prev) => !prev), {
-    mode: "any",
-    modifiers: { ctrlKey: true, metaKey: true },
-  });
-
-  const open = () => setIsOpen(true);
-
-  const closePalette = () => {
-    setIsOpen(false);
-    setQuery("");
-    setResults({ chapters: [], courses: [], lessons: [] });
-  };
-
-  const onSelectItem = (url: string) => {
-    closePalette();
+  const handleSelect = (url: string) => {
+    onSelectItem();
     router.push(url as Parameters<typeof router.push>[0]);
   };
 
-  // Fetch search results when query changes
-  useEffect(() => {
-    if (!(deferredQuery.trim() && orgSlug)) {
-      setResults({ chapters: [], courses: [], lessons: [] });
-      return;
-    }
-
-    setIsLoading(true);
-
-    startTransition(() => {
-      searchContent({ orgSlug, title: deferredQuery })
-        .then(setResults)
-        .catch(() => {
-          setResults({ chapters: [], courses: [], lessons: [] });
-        })
-        .finally(() => setIsLoading(false));
-    });
-  }, [deferredQuery, orgSlug]);
-
-  const staticItems: StaticMenuItem[] = [
-    {
-      icon: HomeIcon,
-      id: "home",
-      keywords: [t("home"), t("dashboard"), t("start")],
-      label: t("Home page"),
-      url: `/${orgSlug}`,
-    },
-    {
-      icon: PlusIcon,
-      id: "create-course",
-      keywords: [t("new"), t("add"), t("create"), t("course")],
-      label: t("Create course"),
-      url: `/${orgSlug}/new-course`,
-    },
-    {
-      icon: LogOutIcon,
-      id: "logout",
-      keywords: [t("logout"), t("sign out"), t("exit")],
-      label: t("Logout"),
-      url: "/logout",
-    },
-  ];
+  const staticItems: StaticMenuItem[] = useMemo(
+    () => [
+      {
+        icon: HomeIcon,
+        id: "home",
+        keywords: [t("home"), t("dashboard"), t("start")],
+        label: t("Home page"),
+        url: `/${orgSlug}`,
+      },
+      {
+        icon: PlusIcon,
+        id: "create-course",
+        keywords: [t("new"), t("add"), t("create"), t("course")],
+        label: t("Create course"),
+        url: `/${orgSlug}/new-course`,
+      },
+      {
+        icon: LogOutIcon,
+        id: "logout",
+        keywords: [t("logout"), t("sign out"), t("exit")],
+        label: t("Logout"),
+        url: "/logout",
+      },
+    ],
+    [orgSlug, t],
+  );
 
   const hasCourses = results.courses.length > 0;
   const hasChapters = results.chapters.length > 0;
   const hasLessons = results.lessons.length > 0;
-  const hasDynamicResults = hasCourses || hasChapters || hasLessons;
 
   return (
     <>
@@ -150,14 +128,7 @@ export function CommandPalette() {
 
         <CommandList>
           <CommandEmpty>
-            {isLoading ? (
-              <div className="flex items-center justify-center gap-2">
-                <Spinner />
-                <span>{t("Searching...")}</span>
-              </div>
-            ) : (
-              <p>{t("No results found")}</p>
-            )}
+            <p>{t("No results found")}</p>
           </CommandEmpty>
 
           {/* Static pages - always shown, filtered by cmdk */}
@@ -166,7 +137,7 @@ export function CommandPalette() {
               <CommandItem
                 key={item.id}
                 keywords={item.keywords}
-                onSelect={() => onSelectItem(item.url)}
+                onSelect={() => handleSelect(item.url)}
                 value={`${item.label}-${item.id}`}
               >
                 <item.icon aria-hidden="true" />
@@ -182,7 +153,7 @@ export function CommandPalette() {
                 <CourseItem
                   course={course}
                   key={course.id}
-                  onSelect={onSelectItem}
+                  onSelect={handleSelect}
                 />
               ))}
             </CommandGroup>
@@ -196,7 +167,7 @@ export function CommandPalette() {
                   icon={FolderIcon}
                   id={chapter.id}
                   key={chapter.id}
-                  onSelect={() => onSelectItem(chapter.url)}
+                  onSelect={() => handleSelect(chapter.url)}
                   position={chapter.position}
                   title={chapter.title}
                 />
@@ -212,19 +183,12 @@ export function CommandPalette() {
                   icon={FileTextIcon}
                   id={lesson.id}
                   key={lesson.id}
-                  onSelect={() => onSelectItem(lesson.url)}
+                  onSelect={() => handleSelect(lesson.url)}
                   position={lesson.position}
                   title={lesson.title}
                 />
               ))}
             </CommandGroup>
-          )}
-
-          {/* Loading indicator for dynamic results */}
-          {isLoading && query.trim() && !hasDynamicResults && (
-            <div className="p-4">
-              <Skeleton className="h-8 w-full rounded-lg" />
-            </div>
           )}
         </CommandList>
       </CommandDialog>

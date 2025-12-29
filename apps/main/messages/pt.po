@@ -6,11 +6,6 @@ msgstr ""
 "X-Generator: next-intl\n"
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx
-msgctxt "/aBLH2"
-msgid "Get started"
-msgstr "Começar"
-
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx
 #: src/app/[locale]/(catalog)/_components/logout-dropdown-item.tsx
 #: src/app/[locale]/(settings)/_components/protected-section.tsx
 msgctxt "AyGauy"
@@ -23,6 +18,11 @@ msgstr "Entrar"
 msgctxt "C81/uG"
 msgid "Logout"
 msgstr "Sair"
+
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
+msgctxt "CxfKLC"
+msgid "Pages"
+msgstr "Páginas"
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx
 msgctxt "dXSivY"
@@ -411,6 +411,16 @@ msgstr "Siga-nos"
 msgctxt "YdQxfw"
 msgid "Contact Support"
 msgstr "Contatar suporte"
+
+#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "oCQePC"
+msgid "Learn with interactive lessons and activities. Explore this course and start your learning journey."
+msgstr "Aprenda com aulas e atividades interativas. Explore este curso e comece sua jornada de aprendizado."
+
+#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "onDfe/"
+msgid "Course"
+msgstr "Curso"
 
 #: src/app/[locale]/privacy/page.tsx
 msgctxt "iql85X"

@@ -354,11 +354,6 @@ msgid "Lessons"
 msgstr "Lessons"
 
 #: src/components/navbar/command-palette.tsx
-msgctxt "NNQzoi"
-msgid "Searching..."
-msgstr "Searching..."
-
-#: src/components/navbar/command-palette.tsx
 msgctxt "qlTe+e"
 msgid "new"
 msgstr "new"
