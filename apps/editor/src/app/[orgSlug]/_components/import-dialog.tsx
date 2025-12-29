@@ -185,7 +185,7 @@ export function ImportDialog({
               {showFormatLabel}
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <pre className="mt-3 max-h-48 overflow-auto whitespace-pre-wrap break-words rounded-xl bg-muted/50 p-4 font-mono text-xs">
+              <pre className="wrap-break-word mt-3 max-h-48 overflow-auto whitespace-pre-wrap rounded-xl bg-muted/50 p-4 font-mono text-xs">
                 {JSON.stringify(exampleFormat, null, 2)}
               </pre>
             </CollapsibleContent>
