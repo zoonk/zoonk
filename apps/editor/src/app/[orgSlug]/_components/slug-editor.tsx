@@ -1,9 +1,12 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
-import { EditableText } from "@zoonk/ui/components/editable-text";
+import {
+  EditableLabel,
+  EditableText,
+} from "@zoonk/ui/components/editable-text";
 import { toast } from "@zoonk/ui/components/sonner";
-import { Check, CircleAlert, Link, X } from "lucide-react";
+import { Check, CircleAlert, Link as LinkIcon, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
@@ -88,13 +91,9 @@ export function SlugEditor({
 
   return (
     <div className="flex flex-col gap-1 px-4">
-      <label
-        className="flex items-center gap-1.5 text-muted-foreground text-xs"
-        htmlFor="slug-editor"
-      >
-        <Link aria-hidden="true" className="size-3" />
+      <EditableLabel htmlFor="slug-editor" icon={LinkIcon}>
         {t("URL address")}
-      </label>
+      </EditableLabel>
 
       <div className="flex h-5 items-center gap-2">
         <EditableText
