@@ -49,6 +49,7 @@ export function CommandPalette() {
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
   const [results, setResults] = useState<SearchResults>({
     chapters: [],
     courses: [],
@@ -57,7 +58,6 @@ export function CommandPalette() {
 
   const deferredQuery = useDeferredValue(query);
 
-  // Keyboard shortcut: Ctrl+K / Cmd+K
   useKeyboardCallback("k", () => setIsOpen((prev) => !prev), {
     mode: "any",
     modifiers: { ctrlKey: true, metaKey: true },
@@ -88,6 +88,9 @@ export function CommandPalette() {
     startTransition(() => {
       searchContent({ orgSlug, title: deferredQuery })
         .then(setResults)
+        .catch(() => {
+          setResults({ chapters: [], courses: [], lessons: [] });
+        })
         .finally(() => setIsLoading(false));
     });
   }, [deferredQuery, orgSlug]);
