@@ -10,6 +10,7 @@ import {
   CommandList,
 } from "@zoonk/ui/components/command";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { Spinner } from "@zoonk/ui/components/spinner";
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import {
   BookOpenIcon,
@@ -17,7 +18,6 @@ import {
   FolderIcon,
   HomeIcon,
   LanguagesIcon,
-  LoaderCircleIcon,
   LogOutIcon,
   type LucideIcon,
   PlusIcon,
@@ -92,7 +92,6 @@ export function CommandPalette() {
     });
   }, [deferredQuery, orgSlug]);
 
-  // Static menu items with literal translation keys
   const staticItems: StaticMenuItem[] = [
     {
       icon: HomeIcon,
@@ -158,10 +157,7 @@ export function CommandPalette() {
           <CommandEmpty>
             {isLoading ? (
               <div className="flex items-center justify-center gap-2">
-                <LoaderCircleIcon
-                  aria-hidden="true"
-                  className="size-4 animate-spin"
-                />
+                <Spinner />
                 <span>{t("Searching...")}</span>
               </div>
             ) : (
@@ -256,7 +252,7 @@ function CourseItem({
     >
       {course.imageUrl ? (
         <Image
-          alt=""
+          alt={course.title}
           className="size-8 shrink-0 rounded-md object-cover"
           height={32}
           src={course.imageUrl}
@@ -307,11 +303,13 @@ function PositionedItem({
       <div className="flex size-8 shrink-0 items-center justify-center rounded-md bg-muted font-medium text-sm">
         {position}
       </div>
+
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <Icon aria-hidden="true" className="size-3.5 shrink-0" />
           <p className="truncate font-medium">{title}</p>
         </div>
+
         {description && (
           <p className="truncate text-muted-foreground text-xs">
             {description}
