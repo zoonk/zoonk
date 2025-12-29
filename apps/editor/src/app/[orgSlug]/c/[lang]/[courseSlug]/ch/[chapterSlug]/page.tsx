@@ -2,25 +2,41 @@ import { Container } from "@zoonk/ui/components/container";
 import { ErrorView } from "@zoonk/ui/patterns/error";
 import { SUPPORT_URL } from "@zoonk/utils/constants";
 import { revalidatePath } from "next/cache";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getExtracted } from "next-intl/server";
-import { Suspense } from "react";
+import { Fragment, Suspense } from "react";
 import {
   BackLink,
   BackLinkSkeleton,
 } from "@/app/[orgSlug]/_components/back-link";
 import { ContentEditor } from "@/app/[orgSlug]/_components/content-editor";
 import { ContentEditorSkeleton } from "@/app/[orgSlug]/_components/content-editor-skeleton";
-import { ItemListEditable } from "@/app/[orgSlug]/_components/item-list-editable";
 import { ItemListSkeleton } from "@/app/[orgSlug]/_components/item-list-skeleton";
 import { SlugEditor } from "@/app/[orgSlug]/_components/slug-editor";
 import { SlugEditorSkeleton } from "@/app/[orgSlug]/_components/slug-editor-skeleton";
+import {
+  EditorListAddButton,
+  EditorListContent,
+  EditorListHeader,
+  EditorListInsertLine,
+  EditorListItem,
+  EditorListItemContent,
+  EditorListItemDescription,
+  EditorListItemPosition,
+  EditorListItemTitle,
+  EditorListProvider,
+  EditorListSpinner,
+} from "@/components/editor-list";
+import { EntityListActions } from "@/components/entity-list-actions";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { getCourse } from "@/data/courses/get-course";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
 import {
   checkChapterSlugExists,
   createLessonAction,
+  exportLessonsAction,
+  importLessonsAction,
   updateChapterDescriptionAction,
   updateChapterSlugAction,
   updateChapterTitleAction,
@@ -133,13 +149,92 @@ async function LessonList({ params }: { params: ChapterPageProps["params"] }) {
     }
   }
 
+  async function handleImport(
+    formData: FormData,
+  ): Promise<{ error: string | null }> {
+    "use server";
+    const { error: importError } = await importLessonsAction(
+      chapterSlug,
+      courseSlug,
+      chapterId,
+      formData,
+    );
+
+    if (importError) {
+      return { error: importError };
+    }
+
+    revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}`);
+    return { error: null };
+  }
+
+  async function handleExport(): Promise<{
+    data: object | null;
+    error: Error | null;
+  }> {
+    "use server";
+    const { data: exportData, error: exportError } =
+      await exportLessonsAction(chapterId);
+
+    if (exportError) {
+      return { data: null, error: exportError };
+    }
+
+    return { data: exportData, error: null };
+  }
+
+  const lastLesson = lessons.at(-1);
+  const endPosition = lastLesson ? lastLesson.position + 1 : 0;
+
   return (
-    <ItemListEditable
-      addLabel={t("Add lesson")}
-      hrefPrefix={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/`}
-      items={lessons}
-      onInsert={handleInsert}
-    />
+    <EditorListProvider onInsert={handleInsert}>
+      <EditorListSpinner />
+
+      <EditorListHeader>
+        <EditorListAddButton position={endPosition}>
+          {t("Add lesson")}
+        </EditorListAddButton>
+
+        <EntityListActions
+          entityType="lessons"
+          onExport={handleExport}
+          onImport={handleImport}
+        />
+      </EditorListHeader>
+
+      {lessons.length > 0 && (
+        <EditorListContent>
+          <EditorListInsertLine position={0} />
+
+          {lessons.map((lesson) => (
+            <Fragment key={lesson.slug}>
+              <EditorListItem>
+                <Link
+                  className="flex items-start gap-4 px-4 py-3 transition-colors hover:bg-muted/50"
+                  href={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${lesson.slug}`}
+                >
+                  <EditorListItemPosition>
+                    {lesson.position}
+                  </EditorListItemPosition>
+
+                  <EditorListItemContent>
+                    <EditorListItemTitle>{lesson.title}</EditorListItemTitle>
+
+                    {lesson.description && (
+                      <EditorListItemDescription>
+                        {lesson.description}
+                      </EditorListItemDescription>
+                    )}
+                  </EditorListItemContent>
+                </Link>
+              </EditorListItem>
+
+              <EditorListInsertLine position={lesson.position + 1} />
+            </Fragment>
+          ))}
+        </EditorListContent>
+      )}
+    </EditorListProvider>
   );
 }
 

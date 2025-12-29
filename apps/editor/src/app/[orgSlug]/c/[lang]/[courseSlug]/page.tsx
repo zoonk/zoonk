@@ -2,20 +2,36 @@ import { Container } from "@zoonk/ui/components/container";
 import { ErrorView } from "@zoonk/ui/patterns/error";
 import { SUPPORT_URL } from "@zoonk/utils/constants";
 import { revalidatePath } from "next/cache";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getExtracted } from "next-intl/server";
-import { Suspense } from "react";
+import { Fragment, Suspense } from "react";
 import { ContentEditor } from "@/app/[orgSlug]/_components/content-editor";
 import { ContentEditorSkeleton } from "@/app/[orgSlug]/_components/content-editor-skeleton";
-import { ItemListEditable } from "@/app/[orgSlug]/_components/item-list-editable";
 import { ItemListSkeleton } from "@/app/[orgSlug]/_components/item-list-skeleton";
 import { SlugEditor } from "@/app/[orgSlug]/_components/slug-editor";
 import { SlugEditorSkeleton } from "@/app/[orgSlug]/_components/slug-editor-skeleton";
+import {
+  EditorListAddButton,
+  EditorListContent,
+  EditorListHeader,
+  EditorListInsertLine,
+  EditorListItem,
+  EditorListItemContent,
+  EditorListItemDescription,
+  EditorListItemPosition,
+  EditorListItemTitle,
+  EditorListProvider,
+  EditorListSpinner,
+} from "@/components/editor-list";
+import { EntityListActions } from "@/components/entity-list-actions";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import {
   checkCourseSlugExists,
   createChapterAction,
+  exportChaptersAction,
+  importChaptersAction,
   updateCourseDescriptionAction,
   updateCourseSlugAction,
   updateCourseTitleAction,
@@ -99,13 +115,91 @@ async function ChapterList({
     }
   }
 
+  async function handleImport(
+    formData: FormData,
+  ): Promise<{ error: string | null }> {
+    "use server";
+    const { error: importError } = await importChaptersAction(
+      courseSlug,
+      courseId,
+      formData,
+    );
+
+    if (importError) {
+      return { error: importError };
+    }
+
+    revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
+    return { error: null };
+  }
+
+  async function handleExport(): Promise<{
+    data: object | null;
+    error: Error | null;
+  }> {
+    "use server";
+    const { data: exportData, error: exportError } =
+      await exportChaptersAction(courseId);
+
+    if (exportError) {
+      return { data: null, error: exportError };
+    }
+
+    return { data: exportData, error: null };
+  }
+
+  const lastChapter = chapters.at(-1);
+  const endPosition = lastChapter ? lastChapter.position + 1 : 0;
+
   return (
-    <ItemListEditable
-      addLabel={t("Add chapter")}
-      hrefPrefix={`/${orgSlug}/c/${lang}/${courseSlug}/ch/`}
-      items={chapters}
-      onInsert={handleInsert}
-    />
+    <EditorListProvider onInsert={handleInsert}>
+      <EditorListSpinner />
+
+      <EditorListHeader>
+        <EditorListAddButton position={endPosition}>
+          {t("Add chapter")}
+        </EditorListAddButton>
+
+        <EntityListActions
+          entityType="chapters"
+          onExport={handleExport}
+          onImport={handleImport}
+        />
+      </EditorListHeader>
+
+      {chapters.length > 0 && (
+        <EditorListContent>
+          <EditorListInsertLine position={0} />
+
+          {chapters.map((chapter) => (
+            <Fragment key={chapter.slug}>
+              <EditorListItem>
+                <Link
+                  className="flex items-start gap-4 px-4 py-3 transition-colors hover:bg-muted/50"
+                  href={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapter.slug}`}
+                >
+                  <EditorListItemPosition>
+                    {chapter.position}
+                  </EditorListItemPosition>
+
+                  <EditorListItemContent>
+                    <EditorListItemTitle>{chapter.title}</EditorListItemTitle>
+
+                    {chapter.description && (
+                      <EditorListItemDescription>
+                        {chapter.description}
+                      </EditorListItemDescription>
+                    )}
+                  </EditorListItemContent>
+                </Link>
+              </EditorListItem>
+
+              <EditorListInsertLine position={chapter.position + 1} />
+            </Fragment>
+          ))}
+        </EditorListContent>
+      )}
+    </EditorListProvider>
   );
 }
 

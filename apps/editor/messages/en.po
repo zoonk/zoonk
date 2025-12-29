@@ -21,6 +21,7 @@ msgid "Saving…"
 msgstr "Saving…"
 
 #: src/app/[orgSlug]/_components/slug-editor.tsx
+#: src/components/entity-list-actions.tsx
 #: src/components/navbar/delete-item-button.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
@@ -80,6 +81,12 @@ msgstr "Delete course?"
 msgctxt "BAkmPD"
 msgid "Untitled chapter"
 msgstr "Untitled chapter"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
+msgctxt "lgvvCe"
+msgid "No file provided"
+msgstr "No file provided"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
@@ -328,6 +335,91 @@ msgstr "Logout"
 msgctxt "gNtXZ8"
 msgid "401 - Unauthorized"
 msgstr "401 - Unauthorized"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "5kTT3Y"
+msgid "Drop file or click to select"
+msgstr "Drop file or click to select"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "70OZD0"
+msgid "Replace (remove existing first)"
+msgstr "Replace (remove existing first)"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "8n7YmS"
+msgid "Lessons imported successfully"
+msgstr "Lessons imported successfully"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "95TwrO"
+msgid "Import mode"
+msgstr "Import mode"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "9XUYQt"
+msgid "Import"
+msgstr "Import"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "bc4z39"
+msgid "Chapters exported successfully"
+msgstr "Chapters exported successfully"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "GAHXbk"
+msgid "Show expected format"
+msgstr "Show expected format"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "HNBlXY"
+msgid "Merge (add to existing)"
+msgstr "Merge (add to existing)"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "itDWRC"
+msgid "Lessons exported successfully"
+msgstr "Lessons exported successfully"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "IzCVhG"
+msgid "More options"
+msgstr "More options"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "lwIuOL"
+msgid "Upload a JSON file containing chapters to import."
+msgstr "Upload a JSON file containing chapters to import."
+
+#: src/components/entity-list-actions.tsx
+msgctxt "SVwJTM"
+msgid "Export"
+msgstr "Export"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "TQmijK"
+msgid "Import chapters"
+msgstr "Import chapters"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "w6G8oe"
+msgid "Failed to export"
+msgstr "Failed to export"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "WDo1Sx"
+msgid "Import lessons"
+msgstr "Import lessons"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "XTTRzf"
+msgid "Chapters imported successfully"
+msgstr "Chapters imported successfully"
+
+#: src/components/entity-list-actions.tsx
+msgctxt "ZuOjRf"
+msgid "Upload a JSON file containing lessons to import."
+msgstr "Upload a JSON file containing lessons to import."
 
 #: src/components/navbar/command-palette.tsx
 msgctxt "6BySgv"

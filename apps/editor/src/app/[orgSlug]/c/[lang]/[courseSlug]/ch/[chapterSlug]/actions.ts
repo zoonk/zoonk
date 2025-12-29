@@ -2,11 +2,17 @@
 
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { cacheTagChapter, cacheTagCourse } from "@zoonk/utils/cache";
+import type { SafeReturn } from "@zoonk/utils/error";
 import { after } from "next/server";
 import { getExtracted } from "next-intl/server";
 import { chapterSlugExists } from "@/data/chapters/chapter-slug";
 import { updateChapter } from "@/data/chapters/update-chapter";
 import { createLesson } from "@/data/lessons/create-lesson";
+import {
+  exportLessons,
+  type LessonsExport,
+} from "@/data/lessons/export-lessons";
+import { importLessons } from "@/data/lessons/import-lessons";
 import { getErrorMessage } from "@/lib/error-messages";
 
 export async function checkChapterSlugExists(params: {
@@ -124,4 +130,44 @@ export async function createLessonAction(
   });
 
   return { error: null, slug: data.slug };
+}
+
+export async function importLessonsAction(
+  chapterSlug: string,
+  courseSlug: string,
+  chapterId: number,
+  formData: FormData,
+): Promise<{ error: string | null }> {
+  const file = formData.get("file");
+  const mode = formData.get("mode") as "merge" | "replace";
+
+  if (!(file && file instanceof File)) {
+    const t = await getExtracted();
+    return { error: t("No file provided") };
+  }
+
+  const { error } = await importLessons({
+    chapterId,
+    file,
+    mode,
+  });
+
+  if (error) {
+    return { error: await getErrorMessage(error) };
+  }
+
+  after(async () => {
+    await revalidateMainApp([
+      cacheTagChapter({ chapterSlug }),
+      cacheTagCourse({ courseSlug }),
+    ]);
+  });
+
+  return { error: null };
+}
+
+export async function exportLessonsAction(
+  chapterId: number,
+): Promise<SafeReturn<LessonsExport>> {
+  return exportLessons({ chapterId });
 }
