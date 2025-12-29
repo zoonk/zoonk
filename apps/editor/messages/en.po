@@ -333,24 +333,9 @@ msgid "Searching..."
 msgstr "Searching..."
 
 #: src/components/navbar/command-palette.tsx
-msgctxt "oFJ8He"
-msgid "settings"
-msgstr "settings"
-
-#: src/components/navbar/command-palette.tsx
-msgctxt "PlQvK/"
-msgid "locale"
-msgstr "locale"
-
-#: src/components/navbar/command-palette.tsx
 msgctxt "qlTe+e"
 msgid "new"
 msgstr "new"
-
-#: src/components/navbar/command-palette.tsx
-msgctxt "Rbe+bp"
-msgid "language"
-msgstr "language"
 
 #: src/components/navbar/command-palette.tsx
 msgctxt "RSFKID"
@@ -377,17 +362,6 @@ msgstr "exit"
 msgctxt "xmcVZ0"
 msgid "Search"
 msgstr "Search"
-
-#: src/components/navbar/command-palette.tsx
-#: src/components/navbar/locale-switcher.tsx
-msgctxt "y1Z3or"
-msgid "Language"
-msgstr "Language"
-
-#: src/components/navbar/command-palette.tsx
-msgctxt "Zr33al"
-msgid "translate"
-msgstr "translate"
 
 #: src/components/navbar/command-palette.tsx
 msgctxt "zTylMM"
@@ -418,6 +392,11 @@ msgstr "Delete"
 msgctxt "W5ajIY"
 msgid "Delete item?"
 msgstr "Delete item?"
+
+#: src/components/navbar/locale-switcher.tsx
+msgctxt "y1Z3or"
+msgid "Language"
+msgstr "Language"
 
 #: src/components/navbar/org-switcher.tsx
 msgctxt "JD2pwH"

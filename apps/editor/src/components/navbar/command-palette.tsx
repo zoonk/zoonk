@@ -111,13 +111,6 @@ export function CommandPalette() {
       url: `/${orgSlug}/new-course`,
     },
     {
-      icon: LanguagesIcon,
-      id: "language",
-      keywords: [t("language"), t("translate"), t("locale"), t("settings")],
-      label: t("Language"),
-      url: "/language",
-    },
-    {
       icon: LogOutIcon,
       id: "logout",
       keywords: [t("logout"), t("sign out"), t("exit")],
