@@ -76,6 +76,7 @@ export function AlternativeTitlesEditor({
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [importOpen, setImportOpen] = useState(false);
+  const [showAll, setShowAll] = useState(false);
   const [exportPending, startExportTransition] = useTransition();
   const [optimisticTitles, updateOptimisticTitles] = useOptimistic(titles);
 
@@ -111,7 +112,9 @@ export function AlternativeTitlesEditor({
 
   const filteredTitles = useMemo(() => {
     if (!search.trim()) {
-      return optimisticTitles.slice(0, MAX_VISIBLE_ITEMS);
+      return showAll
+        ? optimisticTitles
+        : optimisticTitles.slice(0, MAX_VISIBLE_ITEMS);
     }
 
     const searchLower = search.toLowerCase();
@@ -119,9 +122,10 @@ export function AlternativeTitlesEditor({
     return optimisticTitles.filter((title) =>
       title.toLowerCase().includes(searchLower),
     );
-  }, [optimisticTitles, search]);
+  }, [optimisticTitles, search, showAll]);
 
-  const hasMore = !search.trim() && optimisticTitles.length > MAX_VISIBLE_ITEMS;
+  const hasMore =
+    !(search.trim() || showAll) && optimisticTitles.length > MAX_VISIBLE_ITEMS;
   const hiddenCount = optimisticTitles.length - MAX_VISIBLE_ITEMS;
 
   async function handleAdd(
@@ -249,9 +253,23 @@ export function AlternativeTitlesEditor({
               </div>
 
               {hasMore && (
-                <p className="text-muted-foreground text-xs">
+                <button
+                  className="text-muted-foreground text-xs hover:text-foreground hover:underline"
+                  onClick={() => setShowAll(true)}
+                  type="button"
+                >
                   {t("and {count} more", { count: String(hiddenCount) })}
-                </p>
+                </button>
+              )}
+
+              {showAll && !search.trim() && hiddenCount > 0 && (
+                <button
+                  className="text-muted-foreground text-xs hover:text-foreground hover:underline"
+                  onClick={() => setShowAll(false)}
+                  type="button"
+                >
+                  {t("Show less")}
+                </button>
               )}
 
               {search && filteredTitles.length === 0 && (

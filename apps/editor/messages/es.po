@@ -456,6 +456,11 @@ msgid "and {count} more"
 msgstr "y {count} más"
 
 #: src/components/alternative-titles-editor.tsx
+msgctxt "qyJtWy"
+msgid "Show less"
+msgstr "Mostrar menos"
+
+#: src/components/alternative-titles-editor.tsx
 msgctxt "R6KURz"
 msgid "({count})"
 msgstr "({count})"
