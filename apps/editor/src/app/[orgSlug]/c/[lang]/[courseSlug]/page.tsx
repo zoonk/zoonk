@@ -92,7 +92,6 @@ async function CourseSlug({
   params: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]">["params"];
 }) {
   const { courseSlug, lang, orgSlug } = await params;
-  const t = await getExtracted();
 
   const { data: course } = await getCourse({
     courseSlug,
@@ -109,7 +108,6 @@ async function CourseSlug({
       checkFn={checkCourseSlugExists}
       entityId={course.id}
       initialSlug={course.slug}
-      label={t("Edit course slug")}
       language={lang}
       onSave={updateCourseSlugAction.bind(null, courseSlug)}
       orgSlug={orgSlug}

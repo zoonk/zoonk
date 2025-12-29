@@ -83,7 +83,6 @@ async function LessonContent({
 
 async function LessonSlug({ params }: { params: LessonPageProps["params"] }) {
   const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await params;
-  const t = await getExtracted();
 
   const { data: lesson } = await getLesson({
     language: lang,
@@ -102,7 +101,6 @@ async function LessonSlug({ params }: { params: LessonPageProps["params"] }) {
       checkFn={checkLessonSlugExists}
       entityId={lesson.id}
       initialSlug={lesson.slug}
-      label={t("Edit lesson slug")}
       language={lang}
       onSave={updateLessonSlugAction.bind(null, slugs)}
       orgSlug={orgSlug}

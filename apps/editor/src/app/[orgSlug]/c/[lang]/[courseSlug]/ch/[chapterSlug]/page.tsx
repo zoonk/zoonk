@@ -120,7 +120,6 @@ async function LessonList({ params }: { params: ChapterPageProps["params"] }) {
 
 async function ChapterSlug({ params }: { params: ChapterPageProps["params"] }) {
   const { chapterSlug, courseSlug, lang, orgSlug } = await params;
-  const t = await getExtracted();
 
   const { data: chapter } = await getChapter({
     chapterSlug,
@@ -137,7 +136,6 @@ async function ChapterSlug({ params }: { params: ChapterPageProps["params"] }) {
       checkFn={checkChapterSlugExists}
       entityId={chapter.id}
       initialSlug={chapter.slug}
-      label={t("Edit chapter slug")}
       language={lang}
       onSave={updateChapterSlugAction.bind(null, chapterSlug, courseSlug)}
       orgSlug={orgSlug}

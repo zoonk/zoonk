@@ -19,7 +19,6 @@ type SlugEditorProps = {
   checkFn: (params: SlugCheckParams) => Promise<boolean>;
   entityId: number;
   initialSlug: string;
-  label: string;
   language: string;
   onSave: (
     id: number,
@@ -34,7 +33,6 @@ export function SlugEditor({
   checkFn,
   entityId,
   initialSlug,
-  label,
   language,
   onSave,
   orgSlug,
@@ -90,16 +88,19 @@ export function SlugEditor({
 
   return (
     <div className="flex flex-col gap-1 px-4">
-      <label className="flex items-center gap-1.5 text-muted-foreground text-xs">
+      <label
+        className="flex items-center gap-1.5 text-muted-foreground text-xs"
+        htmlFor="slug-editor"
+      >
         <Link aria-hidden="true" className="size-3" />
-        <span>{t("URL address")}</span>
+        {t("URL address")}
       </label>
 
       <div className="flex h-5 items-center gap-2">
         <EditableText
-          aria-label={label}
           className="max-w-48 text-sm"
           disabled={isPending}
+          id="slug-editor"
           onChange={(e) => setSlug(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={t("slug…")}

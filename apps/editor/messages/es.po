@@ -92,11 +92,6 @@ msgid "Lesson description…"
 msgstr "Descripción de la lección…"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
-msgctxt "jE/NFn"
-msgid "Edit lesson slug"
-msgstr "Editar slug de la lección"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
 msgctxt "jrinBZ"
 msgid "Lesson title…"
 msgstr "Título de la lección…"
@@ -144,11 +139,6 @@ msgid "Chapter description…"
 msgstr "Descripción del capítulo…"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
-msgctxt "lU8tx5"
-msgid "Edit chapter slug"
-msgstr "Editar slug del capítulo"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
 msgctxt "yNvug5"
 msgid "Chapter title…"
 msgstr "Título del capítulo…"
@@ -177,11 +167,6 @@ msgstr "Descripción del curso…"
 msgctxt "sHQNSR"
 msgid "We couldn't load the chapters. Please try again."
 msgstr "No pudimos cargar los capítulos. Por favor, intenta de nuevo."
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
-msgctxt "v2PuXy"
-msgid "Edit course slug"
-msgstr "Editar slug del curso"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
 msgctxt "xA68iL"
