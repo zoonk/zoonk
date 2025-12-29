@@ -5,6 +5,8 @@ import { getCourse } from "@/data/courses/get-course";
 import {
   addAlternativeTitleAction,
   deleteAlternativeTitleAction,
+  exportAlternativeTitlesAction,
+  importAlternativeTitlesAction,
 } from "./actions";
 
 export async function CourseAlternativeTitles({
@@ -41,6 +43,8 @@ export async function CourseAlternativeTitles({
     <AlternativeTitlesEditor
       onAdd={addAlternativeTitleAction.bind(null, routeParams)}
       onDelete={deleteAlternativeTitleAction.bind(null, routeParams)}
+      onExport={exportAlternativeTitlesAction.bind(null, course.id)}
+      onImport={importAlternativeTitlesAction.bind(null, routeParams)}
       titles={titles}
     />
   );
