@@ -1,12 +1,13 @@
 import { Container } from "@zoonk/ui/components/container";
 import { ErrorView } from "@zoonk/ui/patterns/error";
 import { SUPPORT_URL } from "@zoonk/utils/constants";
-import { notFound } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { notFound, redirect } from "next/navigation";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import { ContentEditor } from "@/app/[orgSlug]/_components/content-editor";
 import { ContentEditorSkeleton } from "@/app/[orgSlug]/_components/content-editor-skeleton";
-import { ItemList } from "@/app/[orgSlug]/_components/item-list";
+import { ItemListEditable } from "@/app/[orgSlug]/_components/item-list-editable";
 import { ItemListSkeleton } from "@/app/[orgSlug]/_components/item-list-skeleton";
 import { SlugEditor } from "@/app/[orgSlug]/_components/slug-editor";
 import { SlugEditorSkeleton } from "@/app/[orgSlug]/_components/slug-editor-skeleton";
@@ -14,6 +15,7 @@ import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import {
   checkCourseSlugExists,
+  createChapterAction,
   updateCourseDescriptionAction,
   updateCourseSlugAction,
   updateCourseTitleAction,
@@ -60,13 +62,12 @@ async function ChapterList({
   const { courseSlug, lang, orgSlug } = await params;
   const t = await getExtracted();
 
-  const { data: chapters, error } = await listCourseChapters({
-    courseSlug,
-    language: lang,
-    orgSlug,
-  });
+  const [{ data: chapters, error }, { data: course }] = await Promise.all([
+    listCourseChapters({ courseSlug, language: lang, orgSlug }),
+    getCourse({ courseSlug, language: lang, orgSlug }),
+  ]);
 
-  if (error) {
+  if (error || !course) {
     return (
       <ErrorView
         description={t("We couldn't load the chapters. Please try again.")}
@@ -78,10 +79,28 @@ async function ChapterList({
     );
   }
 
+  const courseId = course.id;
+
+  async function handleInsert(position: number) {
+    "use server";
+    const { slug, error: createError } = await createChapterAction(
+      courseSlug,
+      courseId,
+      position,
+    );
+
+    if (!createError && slug) {
+      revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
+      redirect(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${slug}`);
+    }
+  }
+
   return (
-    <ItemList
-      getHref={(item) => `/${orgSlug}/c/${lang}/${courseSlug}/ch/${item.slug}`}
+    <ItemListEditable
+      addLabel={t("Add chapter")}
+      hrefPrefix={`/${orgSlug}/c/${lang}/${courseSlug}/ch/`}
       items={chapters}
+      onInsert={handleInsert}
     />
   );
 }

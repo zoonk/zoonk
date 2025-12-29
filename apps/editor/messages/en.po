@@ -76,6 +76,22 @@ msgctxt "ZFXb/x"
 msgid "Delete course?"
 msgstr "Delete course?"
 
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+msgctxt "BAkmPD"
+msgid "Untitled chapter"
+msgstr "Untitled chapter"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
+msgctxt "sGJpuF"
+msgid "Add a description…"
+msgstr "Add a description…"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
+msgctxt "oUJv8w"
+msgid "Untitled lesson"
+msgstr "Untitled lesson"
+
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
 msgctxt "AHvdBa"
 msgid "Edit lesson description"
@@ -134,6 +150,11 @@ msgid "Chapter description…"
 msgstr "Chapter description…"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "RWzfUY"
+msgid "Add lesson"
+msgstr "Add lesson"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
 msgctxt "yNvug5"
 msgid "Chapter title…"
 msgstr "Chapter title…"
@@ -142,6 +163,11 @@ msgstr "Chapter title…"
 msgctxt "2Pphvx"
 msgid "Course title…"
 msgstr "Course title…"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
+msgctxt "dlQpGl"
+msgid "Add chapter"
+msgstr "Add chapter"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
 msgctxt "Ek5KLE"

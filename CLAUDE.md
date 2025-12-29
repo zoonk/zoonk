@@ -127,6 +127,7 @@ All packages should follow a consistent structure:
 
 ## Conventions
 
+- **Never pass functions to Client Components** unless they are Server Actions (marked with `"use server"`). Regular functions like `getHref` or callbacks cannot be serialized. Instead, pass serializable data (strings, numbers, objects) and construct values in the client component. For example, pass `hrefPrefix: string` instead of `getHref: (item) => string`
 - When there are **formatting issues**, run `pnpm format` to auto-fix them
 - When there are **linting issues**, run `pnpm lint --write --unsafe` to auto-fix them
 - Run `pnpm typecheck` to check for TypeScript errors
@@ -190,6 +191,21 @@ For example:
 ```
 
 Avoid using `use cache` by default unless we know the page can be static. Plus, you can't use `use cache` with `searchParams`, `cookies()`, or `headers()`.
+
+### Invalidating Client Router Cache with staleTimes
+
+When using `staleTimes` (experimental feature for client-side route caching), mutations that create/update/delete data need to call `revalidatePath()` before redirecting. Otherwise, navigating back to the parent page will show stale cached data.
+
+```tsx
+async function handleCreate() {
+  "use server";
+  const { slug } = await createItem(...);
+
+  // Invalidate the parent page's client cache before redirecting
+  revalidatePath(`/${orgSlug}/items`);
+  redirect(`/${orgSlug}/items/${slug}`);
+}
+```
 
 ### Preloading Data in Parallel
 

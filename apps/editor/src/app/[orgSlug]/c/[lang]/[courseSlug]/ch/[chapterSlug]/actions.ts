@@ -3,8 +3,10 @@
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { cacheTagChapter, cacheTagCourse } from "@zoonk/utils/cache";
 import { after } from "next/server";
+import { getExtracted } from "next-intl/server";
 import { chapterSlugExists } from "@/data/chapters/chapter-slug";
 import { updateChapter } from "@/data/chapters/update-chapter";
+import { createLesson } from "@/data/lessons/create-lesson";
 import { getErrorMessage } from "@/lib/error-messages";
 
 export async function checkChapterSlugExists(params: {
@@ -89,4 +91,37 @@ export async function updateChapterSlugAction(
   });
 
   return { error: null, newSlug: chapter.slug };
+}
+
+export async function createLessonAction(
+  chapterSlug: string,
+  courseSlug: string,
+  chapterId: number,
+  position: number,
+): Promise<{ error: string | null; slug?: string }> {
+  const t = await getExtracted();
+  const slug = `lesson-${Date.now()}`;
+  const title = t("Untitled lesson");
+  const description = t("Add a description…");
+
+  const { data, error } = await createLesson({
+    chapterId,
+    description,
+    position,
+    slug,
+    title,
+  });
+
+  if (error) {
+    return { error: await getErrorMessage(error) };
+  }
+
+  after(async () => {
+    await revalidateMainApp([
+      cacheTagChapter({ chapterSlug }),
+      cacheTagCourse({ courseSlug }),
+    ]);
+  });
+
+  return { error: null, slug: data.slug };
 }
