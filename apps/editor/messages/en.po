@@ -41,10 +41,30 @@ msgid "Untitled chapter"
 msgstr "Untitled chapter"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+msgctxt "E+/68R"
+msgid "Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image."
+msgstr "Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+msgctxt "in2TjU"
+msgid "File is too large. Maximum size is 5MB."
+msgstr "File is too large. Maximum size is 5MB."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+msgctxt "JkrKUt"
+msgid "Failed to upload image. Please try again."
+msgstr "Failed to upload image. Please try again."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
 msgctxt "lgvvCe"
 msgid "No file provided"
 msgstr "No file provided"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+msgctxt "Q1jVC0"
+msgid "Failed to process image. Please try again."
+msgstr "Failed to process image. Please try again."
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
@@ -164,6 +184,41 @@ msgstr "Edit course title"
 msgctxt "RX7tLA"
 msgid "Course description…"
 msgstr "Course description…"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+msgctxt "+MD59T"
+msgid "Change course image"
+msgstr "Change course image"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+msgctxt "09WQsL"
+msgid "Invalid file type. Please upload a {formats} image."
+msgstr "Invalid file type. Please upload a {formats} image."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+msgctxt "4pIjq5"
+msgid "File is too large. Maximum size is {max}MB."
+msgstr "File is too large. Maximum size is {max}MB."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+msgctxt "7vM5rK"
+msgid "Remove image"
+msgstr "Remove image"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+msgctxt "N8c7X3"
+msgid "Upload course image"
+msgstr "Upload course image"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+msgctxt "P4DaWb"
+msgid "Image removed"
+msgstr "Image removed"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+msgctxt "TcTp+J"
+msgid "Image uploaded"
+msgstr "Image uploaded"
 
 #: src/app/[orgSlug]/course-list.tsx
 msgctxt "c0YWuA"

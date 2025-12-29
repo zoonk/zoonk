@@ -123,6 +123,28 @@ describe("admins", () => {
     expect(result.data?.slug).toBe("new-slug-multi");
   });
 
+  test("updates imageUrl successfully", async () => {
+    const result = await updateCourse({
+      courseId: course.id,
+      headers,
+      imageUrl: "https://example.com/image.webp",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.imageUrl).toBe("https://example.com/image.webp");
+  });
+
+  test("removes imageUrl by setting it to null", async () => {
+    const result = await updateCourse({
+      courseId: course.id,
+      headers,
+      imageUrl: null,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.imageUrl).toBeNull();
+  });
+
   test("returns Course not found", async () => {
     const result = await updateCourse({
       courseId: 999_999,

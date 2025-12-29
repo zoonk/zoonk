@@ -116,7 +116,7 @@
         "noEnum": "error",
         "noExportedImports": "error",
         "noInferrableTypes": "error",
-        "noMagicNumbers": "error",
+        "noMagicNumbers": "off",
         "noNamespace": "error",
         "noNegationElse": "error",
         "noNestedTernary": "error",

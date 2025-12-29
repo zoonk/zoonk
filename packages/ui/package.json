@@ -50,7 +50,7 @@
   "name": "@zoonk/ui",
   "peerDependencies": {
     "@tabler/icons-react": ">=3",
-    "lucide-react": ">=0.556.0",
+    "lucide-react": ">=0.562.0",
     "react": ">=19",
     "react-dom": ">=19"
   },
