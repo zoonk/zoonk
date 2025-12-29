@@ -1,5 +1,6 @@
 "use server";
 
+import { addAlternativeTitles } from "@zoonk/core/alternative-titles/add";
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { processAndUploadImage } from "@zoonk/core/images/process-and-upload";
 import { cacheTagCourse } from "@zoonk/utils/cache";
@@ -7,6 +8,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { getExtracted } from "next-intl/server";
+import { deleteAlternativeTitles } from "@/data/alternative-titles/delete-alternative-titles";
 import { createChapter } from "@/data/chapters/create-chapter";
 import { exportChapters } from "@/data/chapters/export-chapters";
 import { importChapters } from "@/data/chapters/import-chapters";
@@ -289,6 +291,42 @@ export async function removeCourseImageAction(
 
   after(async () => {
     await revalidateMainApp([cacheTagCourse({ courseSlug })]);
+  });
+
+  revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
+  return { error: null };
+}
+
+export async function addAlternativeTitleAction(
+  params: ChapterRouteParams,
+  title: string,
+): Promise<{ error: string | null }> {
+  const { courseId, courseSlug, lang, orgSlug } = params;
+  const t = await getExtracted();
+
+  if (!title.trim()) {
+    return { error: t("Title is required") };
+  }
+
+  await addAlternativeTitles({
+    courseId,
+    locale: lang,
+    titles: [title],
+  });
+
+  revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
+  return { error: null };
+}
+
+export async function deleteAlternativeTitleAction(
+  params: ChapterRouteParams,
+  slug: string,
+): Promise<{ error: string | null }> {
+  const { courseId, courseSlug, lang, orgSlug } = params;
+
+  await deleteAlternativeTitles({
+    courseId,
+    titles: [slug],
   });
 
   revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);

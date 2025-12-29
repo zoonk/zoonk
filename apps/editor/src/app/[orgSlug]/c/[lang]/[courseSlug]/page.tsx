@@ -1,12 +1,14 @@
 import { Container } from "@zoonk/ui/components/container";
 import { ImageUploadSkeleton } from "@zoonk/ui/components/image-upload";
 import { Suspense } from "react";
+import { AlternativeTitlesSkeleton } from "@/components/alternative-titles-editor";
 import { ContentEditorSkeleton } from "@/components/content-editor";
 import { ItemListSkeleton } from "@/components/item-list";
 import { SlugEditorSkeleton } from "@/components/slug-editor";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import { ChapterList } from "./chapter-list";
+import { CourseAlternativeTitles } from "./course-alternative-titles";
 import { CourseContent } from "./course-content";
 import { CourseImage } from "./course-image";
 import { CourseSlug } from "./course-slug";
@@ -34,6 +36,10 @@ export default async function CoursePage(
 
       <Suspense fallback={<SlugEditorSkeleton />}>
         <CourseSlug params={props.params} />
+      </Suspense>
+
+      <Suspense fallback={<AlternativeTitlesSkeleton />}>
+        <CourseAlternativeTitles params={props.params} />
       </Suspense>
 
       <Suspense fallback={<ItemListSkeleton />}>
