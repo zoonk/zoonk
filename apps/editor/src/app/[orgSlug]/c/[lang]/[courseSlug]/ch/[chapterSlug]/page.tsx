@@ -21,6 +21,8 @@ import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
 import {
   checkChapterSlugExists,
   createLessonAction,
+  exportLessonsAction,
+  importLessonsAction,
   updateChapterDescriptionAction,
   updateChapterSlugAction,
   updateChapterTitleAction,
@@ -133,12 +135,68 @@ async function LessonList({ params }: { params: ChapterPageProps["params"] }) {
     }
   }
 
+  async function handleImport(
+    file: File,
+    mode: "merge" | "replace",
+  ): Promise<{ error: string | null }> {
+    "use server";
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("mode", mode);
+
+    const { error: importError } = await importLessonsAction(
+      chapterSlug,
+      courseSlug,
+      chapterId,
+      formData,
+    );
+
+    if (importError) {
+      return { error: importError };
+    }
+
+    revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}`);
+    return { error: null };
+  }
+
+  async function handleExport(): Promise<{
+    data: object | null;
+    error: Error | null;
+  }> {
+    "use server";
+    const { data: exportData, error: exportError } =
+      await exportLessonsAction(chapterId);
+
+    if (exportError) {
+      return { data: null, error: exportError };
+    }
+
+    return { data: exportData, error: null };
+  }
+
   return (
     <ItemListEditable
       addLabel={t("Add lesson")}
+      cancelLabel={t("Cancel")}
+      dropLabel={t("Drop file or click to select")}
+      entityType="lessons"
+      exportLabel={t("Export")}
+      exportSuccessMessage={t("Lessons exported successfully")}
+      fileSizeUnit={t("KB")}
       hrefPrefix={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/`}
+      importDescription={t("Upload a JSON file containing lessons to import.")}
+      importLabel={t("Import")}
+      importSuccessMessage={t("Lessons imported successfully")}
+      importTitle={t("Import lessons")}
       items={lessons}
+      modeLabel={t("Import mode")}
+      modeMergeLabel={t("Merge (add to existing)")}
+      modeReplaceLabel={t("Replace (remove existing first)")}
+      moreOptionsLabel={t("More options")}
+      onExport={handleExport}
+      onImport={handleImport}
       onInsert={handleInsert}
+      showFormatLabel={t("Show expected format")}
     />
   );
 }

@@ -16,6 +16,8 @@ import { getCourse } from "@/data/courses/get-course";
 import {
   checkCourseSlugExists,
   createChapterAction,
+  exportChaptersAction,
+  importChaptersAction,
   updateCourseDescriptionAction,
   updateCourseSlugAction,
   updateCourseTitleAction,
@@ -99,12 +101,67 @@ async function ChapterList({
     }
   }
 
+  async function handleImport(
+    file: File,
+    mode: "merge" | "replace",
+  ): Promise<{ error: string | null }> {
+    "use server";
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("mode", mode);
+
+    const { error: importError } = await importChaptersAction(
+      courseSlug,
+      courseId,
+      formData,
+    );
+
+    if (importError) {
+      return { error: importError };
+    }
+
+    revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
+    return { error: null };
+  }
+
+  async function handleExport(): Promise<{
+    data: object | null;
+    error: Error | null;
+  }> {
+    "use server";
+    const { data: exportData, error: exportError } =
+      await exportChaptersAction(courseId);
+
+    if (exportError) {
+      return { data: null, error: exportError };
+    }
+
+    return { data: exportData, error: null };
+  }
+
   return (
     <ItemListEditable
       addLabel={t("Add chapter")}
+      cancelLabel={t("Cancel")}
+      dropLabel={t("Drop file or click to select")}
+      entityType="chapters"
+      exportLabel={t("Export")}
+      exportSuccessMessage={t("Chapters exported successfully")}
+      fileSizeUnit={t("KB")}
       hrefPrefix={`/${orgSlug}/c/${lang}/${courseSlug}/ch/`}
+      importDescription={t("Upload a JSON file containing chapters to import.")}
+      importLabel={t("Import")}
+      importSuccessMessage={t("Chapters imported successfully")}
+      importTitle={t("Import chapters")}
       items={chapters}
+      modeLabel={t("Import mode")}
+      modeMergeLabel={t("Merge (add to existing)")}
+      modeReplaceLabel={t("Replace (remove existing first)")}
+      moreOptionsLabel={t("More options")}
+      onExport={handleExport}
+      onImport={handleImport}
       onInsert={handleInsert}
+      showFormatLabel={t("Show expected format")}
     />
   );
 }

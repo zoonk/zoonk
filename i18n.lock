@@ -24,20 +24,37 @@ checksums:
     Edit%20lesson%20title/singular: 15b5a30f4a0365bae4da264383dae889
     We%20couldn't%20load%20the%20lessons.%20Please%20try%20again./singular: f2e68b6dd4d7f2eb0c91f20ade06957d
     Contact%20support/singular: 32a4dee2033635e334a5f4d34724e3e0
+    Drop%20file%20or%20click%20to%20select/singular: e18ab4b554f4a2ab70350d565634021e
     Failed%20to%20load%20lessons/singular: 427523eb64ddb239d642ca975d6e1dbb
+    Replace%20(remove%20existing%20first)/singular: 0c375e65816d893151b927f8928c647b
+    Lessons%20imported%20successfully/singular: 117dcb8f25eb05362ffab7974ecdb5de
+    Import%20mode/singular: 99a121a79e9385892a65b17c2be56bfa
+    Import/singular: 348b8ab981de5b7f1fca6d7302263bbd
     Edit%20chapter%20description/singular: e27c305ac8ad54675309e239bccdd648
     Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
     Edit%20chapter%20title/singular: 21c04bd3ed6335df5195d1f2857131bf
+    Show%20expected%20format/singular: 923bfe5861a5c67c5816dcbc1c6efa29
+    Merge%20(add%20to%20existing)/singular: cb7e20a5abf4b5d9ef49cdb09e037d6a
+    Lessons%20exported%20successfully/singular: f896c30aab64bfcc43725f8bd3fc02f7
+    More%20options/singular: 53d90eae6a9b0243b5bc043b3d9de169
     Chapter%20description%E2%80%A6/singular: d394513f90a5c9ad1880d364e8fc5cb8
     Add%20lesson/singular: 101a1880b35c68eed6f80e7574f4ff2d
+    Export/singular: 709afbc86c5fdca279a111ea8e49d1c9
+    KB/singular: 476c6cddd277e93a1bb7af4a763e95dc
+    Import%20lessons/singular: 8d1fae531b7e8156042321586d18b522
     Chapter%20title%E2%80%A6/singular: 3ed70a2e64aefe189999ff5899e8a7a2
+    Upload%20a%20JSON%20file%20containing%20lessons%20to%20import./singular: a6aec991263d7f81fe5f06e48c4aaa68
     Course%20title%E2%80%A6/singular: 4429de50f5f2d426271e76328c543daf
+    Chapters%20exported%20successfully/singular: c619d46cc34322ce5777a87ec3cc6131
     Add%20chapter/singular: af2ea03f1678fcea1fb005f66f28bfa5
     Edit%20course%20description/singular: 2304f3ceeea1faaa3a4451c8863ded3b
     Edit%20course%20title/singular: 75b050a3ce516d55c480d633f5da502f
+    Upload%20a%20JSON%20file%20containing%20chapters%20to%20import./singular: 7bd7e36f80ba8cdcd19c18f53962f747
     Course%20description%E2%80%A6/singular: a548f00ce745044f2a2dfbe02b9a0130
     We%20couldn't%20load%20the%20chapters.%20Please%20try%20again./singular: 2bfbac73debefc0d7a4ec5c41af9c415
+    Import%20chapters/singular: 0bf66ec2862c199b95f19512d832ba9b
     Failed%20to%20load%20chapters/singular: a462d90fffa946fe5c2aedb6e6fff9b4
+    Chapters%20imported%20successfully/singular: 2a3fda7021d4d81b1cdc6e869f94664f
     Your%20organization%20hasn't%20created%20any%20courses%20yet./singular: 4c09c8406dbf7bfe159f850fc1f22b99
     No%20courses/singular: 72fc2629e79529e927834070a26d2a07
     All%20fields%20are%20required/singular: 01fe4fe061a783c06c001dd39c78053a

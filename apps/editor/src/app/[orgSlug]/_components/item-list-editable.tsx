@@ -7,6 +7,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { useTransition } from "react";
 import { InsertLine } from "./insert-line";
+import { ItemActionsMenu } from "./item-actions-menu";
 
 type ItemListItem = {
   slug: string;
@@ -15,18 +16,57 @@ type ItemListItem = {
   position: number;
 };
 
+type ImportMode = "merge" | "replace";
+
 type ItemListEditableProps = {
   addLabel: string;
+  cancelLabel?: string;
+  dropLabel?: string;
+  entityType?: "chapters" | "lessons";
+  exportLabel?: string;
+  exportSuccessMessage?: string;
+  fileSizeUnit?: string;
   hrefPrefix: string;
+  importDescription?: string;
+  importLabel?: string;
+  importSuccessMessage?: string;
+  importTitle?: string;
   items: ItemListItem[];
+  modeLabel?: string;
+  modeMergeLabel?: string;
+  modeReplaceLabel?: string;
+  moreOptionsLabel?: string;
+  onExport?: () => Promise<{ data: object | null; error: Error | null }>;
+  onImport?: (
+    file: File,
+    mode: ImportMode,
+  ) => Promise<{ error: string | null }>;
   onInsert: (position: number) => Promise<void>;
+  showFormatLabel?: string;
 };
 
 export function ItemListEditable({
   addLabel,
+  cancelLabel,
+  dropLabel,
+  entityType,
+  exportLabel,
+  exportSuccessMessage,
+  fileSizeUnit,
   hrefPrefix,
+  importDescription,
+  importLabel,
+  importSuccessMessage,
+  importTitle,
   items,
+  modeLabel,
+  modeMergeLabel,
+  modeReplaceLabel,
+  moreOptionsLabel,
+  onExport,
+  onImport,
   onInsert,
+  showFormatLabel,
 }: ItemListEditableProps) {
   const [pending, startTransition] = useTransition();
 
@@ -52,7 +92,7 @@ export function ItemListEditable({
         </div>
       )}
 
-      <div className="flex items-center justify-end px-4 pb-2">
+      <div className="flex items-center justify-end gap-2 px-4 pb-2">
         <Button
           disabled={pending}
           onClick={() => handleInsert(endPosition)}
@@ -62,6 +102,44 @@ export function ItemListEditable({
           <PlusIcon />
           {addLabel}
         </Button>
+
+        {entityType &&
+          cancelLabel &&
+          dropLabel &&
+          exportLabel &&
+          exportSuccessMessage &&
+          fileSizeUnit &&
+          importDescription &&
+          importLabel &&
+          importSuccessMessage &&
+          importTitle &&
+          modeLabel &&
+          modeMergeLabel &&
+          modeReplaceLabel &&
+          moreOptionsLabel &&
+          showFormatLabel &&
+          onExport &&
+          onImport && (
+            <ItemActionsMenu
+              cancelLabel={cancelLabel}
+              dropLabel={dropLabel}
+              entityType={entityType}
+              exportLabel={exportLabel}
+              exportSuccessMessage={exportSuccessMessage}
+              fileSizeUnit={fileSizeUnit}
+              importDescription={importDescription}
+              importLabel={importLabel}
+              importSuccessMessage={importSuccessMessage}
+              importTitle={importTitle}
+              modeLabel={modeLabel}
+              modeMergeLabel={modeMergeLabel}
+              modeReplaceLabel={modeReplaceLabel}
+              moreOptionsLabel={moreOptionsLabel}
+              onExport={onExport}
+              onImport={onImport}
+              showFormatLabel={showFormatLabel}
+            />
+          )}
       </div>
 
       {items.length > 0 && (
