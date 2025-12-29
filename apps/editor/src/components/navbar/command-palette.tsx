@@ -17,7 +17,6 @@ import {
   FileTextIcon,
   FolderIcon,
   HomeIcon,
-  LanguagesIcon,
   LogOutIcon,
   type LucideIcon,
   PlusIcon,
