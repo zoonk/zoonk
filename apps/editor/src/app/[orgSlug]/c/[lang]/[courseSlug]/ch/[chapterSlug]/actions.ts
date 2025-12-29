@@ -11,6 +11,7 @@ import { updateChapter } from "@/data/chapters/update-chapter";
 import { createLesson } from "@/data/lessons/create-lesson";
 import { exportLessons } from "@/data/lessons/export-lessons";
 import { importLessons } from "@/data/lessons/import-lessons";
+import { reorderLessons } from "@/data/lessons/reorder-lessons";
 import { getErrorMessage } from "@/lib/error-messages";
 
 export async function checkChapterSlugExists(params: {
@@ -222,6 +223,32 @@ export async function handleImportLessonsAction(
   if (error) {
     return { error };
   }
+
+  revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}`);
+  return { error: null };
+}
+
+export async function reorderLessonsAction(
+  params: LessonRouteParams,
+  lessons: { id: number; position: number }[],
+): Promise<{ error: string | null }> {
+  const { chapterId, chapterSlug, courseSlug, lang, orgSlug } = params;
+
+  const { error } = await reorderLessons({
+    chapterId,
+    lessons: lessons.map((l) => ({ lessonId: l.id, position: l.position })),
+  });
+
+  if (error) {
+    return { error: await getErrorMessage(error) };
+  }
+
+  after(async () => {
+    await revalidateMainApp([
+      cacheTagChapter({ chapterSlug }),
+      cacheTagCourse({ courseSlug }),
+    ]);
+  });
 
   revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}`);
   return { error: null };
