@@ -1,44 +1,13 @@
 import type { Course } from "@zoonk/core/types";
 import {
-  Item,
-  ItemContent,
-  ItemDescription,
-  ItemGroup,
-  ItemMedia,
-  ItemTitle,
-} from "@zoonk/ui/components/item";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
+  CourseListGroup,
+  CourseListItemView,
+} from "@zoonk/ui/patterns/courses/list";
 import { EmptyView } from "@zoonk/ui/patterns/empty";
-import { ChevronRightIcon, NotebookPenIcon } from "lucide-react";
+import { NotebookPenIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { getExtracted } from "next-intl/server";
-
-export function CourseListSkeleton() {
-  return (
-    <ItemGroup>
-      {Array.from({ length: 10 }).map((_, index) => (
-        <Item key={index}>
-          <ItemMedia variant="image">
-            <Skeleton className="size-10" />
-          </ItemMedia>
-
-          <ItemContent>
-            <Skeleton className="h-4 w-48" />
-            <Skeleton className="h-4 w-72" />
-          </ItemContent>
-
-          <Skeleton className="h-5 w-10 rounded-full" />
-
-          <ChevronRightIcon
-            aria-hidden="true"
-            className="size-4 text-muted-foreground"
-          />
-        </Item>
-      ))}
-    </ItemGroup>
-  );
-}
 
 export async function CourseList({
   orgSlug,
@@ -60,43 +29,29 @@ export async function CourseList({
   }
 
   return (
-    <ItemGroup>
+    <CourseListGroup>
       {courses.map((course) => (
-        <Item
-          key={course.id}
-          render={
-            <Link
-              href={`/${orgSlug}/c/${course.language}/${course.slug}`}
-              prefetch={true}
-            />
-          }
-        >
-          {course.imageUrl ? (
-            <ItemMedia className="size-16" variant="image">
+        <CourseListItemView
+          course={course}
+          image={
+            course.imageUrl ? (
               <Image
                 alt={course.title}
                 height={64}
                 src={course.imageUrl}
                 width={64}
               />
-            </ItemMedia>
-          ) : (
-            <ItemMedia className="size-16" variant="icon">
-              <NotebookPenIcon className="size-6 text-muted-foreground/80" />
-            </ItemMedia>
-          )}
-
-          <ItemContent>
-            <ItemTitle>{course.title}</ItemTitle>
-            <ItemDescription>{course.description}</ItemDescription>
-          </ItemContent>
-
-          <ChevronRightIcon
-            aria-hidden="true"
-            className="size-4 text-muted-foreground"
-          />
-        </Item>
+            ) : undefined
+          }
+          key={course.id}
+          linkComponent={
+            <Link
+              href={`/${orgSlug}/c/${course.language}/${course.slug}`}
+              prefetch={true}
+            />
+          }
+        />
       ))}
-    </ItemGroup>
+    </CourseListGroup>
   );
 }
