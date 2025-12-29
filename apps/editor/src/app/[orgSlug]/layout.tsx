@@ -3,7 +3,6 @@ import { getOrganization } from "@zoonk/core/orgs/get";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { headers } from "next/headers";
 import { notFound, unauthorized } from "next/navigation";
-import { after } from "next/server";
 import { Suspense } from "react";
 import { EditorNavbar } from "@/components/navbar";
 
@@ -30,12 +29,9 @@ async function LayoutPermissions({
   // We're setting the current org as the active one,
   // so we can automatically redirect users to this org
   // next time they visit the editor
-  // run this in the background after the page is rendered
-  after(async () => {
-    await auth.api.setActiveOrganization({
-      body: { organizationSlug: orgSlug },
-      headers: await headers(),
-    });
+  await auth.api.setActiveOrganization({
+    body: { organizationId: String(org.data.id) },
+    headers: await headers(),
   });
 
   return (
