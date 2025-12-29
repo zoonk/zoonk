@@ -1,7 +1,8 @@
 import { Container } from "@zoonk/ui/components/container";
 import { ErrorView } from "@zoonk/ui/patterns/error";
 import { SUPPORT_URL } from "@zoonk/utils/constants";
-import { notFound } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { notFound, redirect } from "next/navigation";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import {
@@ -10,7 +11,7 @@ import {
 } from "@/app/[orgSlug]/_components/back-link";
 import { ContentEditor } from "@/app/[orgSlug]/_components/content-editor";
 import { ContentEditorSkeleton } from "@/app/[orgSlug]/_components/content-editor-skeleton";
-import { ItemList } from "@/app/[orgSlug]/_components/item-list";
+import { ItemListEditable } from "@/app/[orgSlug]/_components/item-list-editable";
 import { ItemListSkeleton } from "@/app/[orgSlug]/_components/item-list-skeleton";
 import { SlugEditor } from "@/app/[orgSlug]/_components/slug-editor";
 import { SlugEditorSkeleton } from "@/app/[orgSlug]/_components/slug-editor-skeleton";
@@ -19,6 +20,7 @@ import { getCourse } from "@/data/courses/get-course";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
 import {
   checkChapterSlugExists,
+  createLessonAction,
   updateChapterDescriptionAction,
   updateChapterSlugAction,
   updateChapterTitleAction,
@@ -91,12 +93,12 @@ async function LessonList({ params }: { params: ChapterPageProps["params"] }) {
   const { chapterSlug, courseSlug, lang, orgSlug } = await params;
   const t = await getExtracted();
 
-  const { data: lessons, error } = await listChapterLessons({
-    chapterSlug,
-    orgSlug,
-  });
+  const [{ data: lessons, error }, { data: chapter }] = await Promise.all([
+    listChapterLessons({ chapterSlug, orgSlug }),
+    getChapter({ chapterSlug, language: lang, orgSlug }),
+  ]);
 
-  if (error) {
+  if (error || !chapter) {
     return (
       <ErrorView
         description={t("We couldn't load the lessons. Please try again.")}
@@ -108,12 +110,35 @@ async function LessonList({ params }: { params: ChapterPageProps["params"] }) {
     );
   }
 
+  const chapterId = chapter.id;
+
+  async function handleInsert(position: number) {
+    "use server";
+    const { slug, error: createError } = await createLessonAction(
+      chapterSlug,
+      courseSlug,
+      chapterId,
+      position,
+    );
+
+    if (createError) {
+      throw new Error(createError);
+    }
+
+    if (slug) {
+      revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}`);
+      redirect(
+        `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${slug}`,
+      );
+    }
+  }
+
   return (
-    <ItemList
-      getHref={(item) =>
-        `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${item.slug}`
-      }
+    <ItemListEditable
+      addLabel={t("Add lesson")}
+      hrefPrefix={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/`}
       items={lessons}
+      onInsert={handleInsert}
     />
   );
 }

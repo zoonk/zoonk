@@ -15,6 +15,9 @@ checksums:
     Delete%20chapter%3F/singular: 5dfc389e36ee2f05e01896b81bd59493
     Delete%20course/singular: 86bac6527eb0b380a3f0a5e38b6938ff
     Delete%20course%3F/singular: c83369b40aec2a0eb3cafd146d70020e
+    Untitled%20chapter/singular: 28963b46f393d2828ea31c00345d2a2e
+    Add%20a%20description%E2%80%A6/singular: 6737ac865733a3e459ddfeb5b6134ce5
+    Untitled%20lesson/singular: 252aefbc39883b5a3aae879535b0c6d2
     Edit%20lesson%20description/singular: b959f1e2fc7f00f593ae2c1a12fd330d
     Lesson%20description%E2%80%A6/singular: 77ad5a9829eda8182865a46455d5a842
     Lesson%20title%E2%80%A6/singular: d7b981d2734c11f2ee5d58f21c93bd3e
@@ -26,8 +29,10 @@ checksums:
     Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
     Edit%20chapter%20title/singular: 21c04bd3ed6335df5195d1f2857131bf
     Chapter%20description%E2%80%A6/singular: d394513f90a5c9ad1880d364e8fc5cb8
+    Add%20lesson/singular: 101a1880b35c68eed6f80e7574f4ff2d
     Chapter%20title%E2%80%A6/singular: 3ed70a2e64aefe189999ff5899e8a7a2
     Course%20title%E2%80%A6/singular: 4429de50f5f2d426271e76328c543daf
+    Add%20chapter/singular: af2ea03f1678fcea1fb005f66f28bfa5
     Edit%20course%20description/singular: 2304f3ceeea1faaa3a4451c8863ded3b
     Edit%20course%20title/singular: 75b050a3ce516d55c480d633f5da502f
     Course%20description%E2%80%A6/singular: a548f00ce745044f2a2dfbe02b9a0130
