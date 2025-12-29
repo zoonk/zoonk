@@ -20,6 +20,37 @@ msgctxt "WUV28A"
 msgid "Saving…"
 msgstr "Salvando…"
 
+#: src/app/[orgSlug]/_components/slug-editor.tsx
+#: src/components/navbar/delete-item-button.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/app/[orgSlug]/_components/slug-editor.tsx
+msgctxt "fZThA8"
+msgid "Slug already exists"
+msgstr "Slug já existe"
+
+#: src/app/[orgSlug]/_components/slug-editor.tsx
+msgctxt "J9+DwE"
+msgid "slug…"
+msgstr "slug…"
+
+#: src/app/[orgSlug]/_components/slug-editor.tsx
+msgctxt "QGLi0O"
+msgid "URL address"
+msgstr "Endereço URL"
+
+#: src/app/[orgSlug]/_components/slug-editor.tsx
+msgctxt "Rr6+VH"
+msgid "This slug is already in use"
+msgstr "Este slug já está em uso"
+
+#: src/app/[orgSlug]/_components/slug-editor.tsx
+msgctxt "Tk3zpi"
+msgid "Save slug"
+msgstr "Salvar slug"
+
 #: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
 msgctxt "52DE8l"
 msgid "Delete lesson?"
@@ -59,6 +90,11 @@ msgstr "Editar descrição da aula"
 msgctxt "AmPWks"
 msgid "Lesson description…"
 msgstr "Descrição da aula…"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+msgctxt "jE/NFn"
+msgid "Edit lesson slug"
+msgstr "Editar slug da aula"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
 msgctxt "jrinBZ"
@@ -108,6 +144,11 @@ msgid "Chapter description…"
 msgstr "Descrição do capítulo…"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
+msgctxt "lU8tx5"
+msgid "Edit chapter slug"
+msgstr "Editar slug do capítulo"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/page.tsx
 msgctxt "yNvug5"
 msgid "Chapter title…"
 msgstr "Título do capítulo…"
@@ -136,6 +177,11 @@ msgstr "Descrição do curso…"
 msgctxt "sHQNSR"
 msgid "We couldn't load the chapters. Please try again."
 msgstr "Não conseguimos carregar os capítulos. Por favor, tente novamente."
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
+msgctxt "v2PuXy"
+msgid "Edit course slug"
+msgstr "Editar slug do curso"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/page.tsx
 msgctxt "xA68iL"
@@ -367,11 +413,6 @@ msgstr "Buscar"
 msgctxt "zTylMM"
 msgid "start"
 msgstr "começar"
-
-#: src/components/navbar/delete-item-button.tsx
-msgctxt "47FYwb"
-msgid "Cancel"
-msgstr "Cancelar"
 
 #: src/components/navbar/delete-item-button.tsx
 msgctxt "hHa3Ql"

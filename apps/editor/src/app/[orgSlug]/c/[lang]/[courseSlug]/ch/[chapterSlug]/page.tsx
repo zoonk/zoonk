@@ -12,11 +12,15 @@ import { ContentEditor } from "@/app/[orgSlug]/_components/content-editor";
 import { ContentEditorSkeleton } from "@/app/[orgSlug]/_components/content-editor-skeleton";
 import { ItemList } from "@/app/[orgSlug]/_components/item-list";
 import { ItemListSkeleton } from "@/app/[orgSlug]/_components/item-list-skeleton";
+import { SlugEditor } from "@/app/[orgSlug]/_components/slug-editor";
+import { SlugEditorSkeleton } from "@/app/[orgSlug]/_components/slug-editor-skeleton";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { getCourse } from "@/data/courses/get-course";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
 import {
+  checkChapterSlugExists,
   updateChapterDescriptionAction,
+  updateChapterSlugAction,
   updateChapterTitleAction,
 } from "./actions";
 
@@ -114,6 +118,34 @@ async function LessonList({ params }: { params: ChapterPageProps["params"] }) {
   );
 }
 
+async function ChapterSlug({ params }: { params: ChapterPageProps["params"] }) {
+  const { chapterSlug, courseSlug, lang, orgSlug } = await params;
+  const t = await getExtracted();
+
+  const { data: chapter } = await getChapter({
+    chapterSlug,
+    language: lang,
+    orgSlug,
+  });
+
+  if (!chapter) {
+    return null;
+  }
+
+  return (
+    <SlugEditor
+      checkFn={checkChapterSlugExists}
+      entityId={chapter.id}
+      initialSlug={chapter.slug}
+      label={t("Edit chapter slug")}
+      language={lang}
+      onSave={updateChapterSlugAction.bind(null, chapterSlug, courseSlug)}
+      orgSlug={orgSlug}
+      redirectPrefix={`/${orgSlug}/c/${lang}/${courseSlug}/ch/`}
+    />
+  );
+}
+
 export default async function ChapterPage(props: ChapterPageProps) {
   const { chapterSlug, courseSlug, lang, orgSlug } = await props.params;
 
@@ -132,6 +164,10 @@ export default async function ChapterPage(props: ChapterPageProps) {
 
       <Suspense fallback={<ContentEditorSkeleton />}>
         <ChapterContent params={props.params} />
+      </Suspense>
+
+      <Suspense fallback={<SlugEditorSkeleton />}>
+        <ChapterSlug params={props.params} />
       </Suspense>
 
       <Suspense fallback={<ItemListSkeleton />}>

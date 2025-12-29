@@ -8,10 +8,14 @@ import {
 } from "@/app/[orgSlug]/_components/back-link";
 import { ContentEditor } from "@/app/[orgSlug]/_components/content-editor";
 import { ContentEditorSkeleton } from "@/app/[orgSlug]/_components/content-editor-skeleton";
+import { SlugEditor } from "@/app/[orgSlug]/_components/slug-editor";
+import { SlugEditorSkeleton } from "@/app/[orgSlug]/_components/slug-editor-skeleton";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { getLesson } from "@/data/lessons/get-lesson";
 import {
+  checkLessonSlugExists,
   updateLessonDescriptionAction,
+  updateLessonSlugAction,
   updateLessonTitleAction,
 } from "./actions";
 
@@ -77,6 +81,36 @@ async function LessonContent({
   );
 }
 
+async function LessonSlug({ params }: { params: LessonPageProps["params"] }) {
+  const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await params;
+  const t = await getExtracted();
+
+  const { data: lesson } = await getLesson({
+    language: lang,
+    lessonSlug,
+    orgSlug,
+  });
+
+  if (!lesson) {
+    return null;
+  }
+
+  const slugs = { chapterSlug, courseSlug, lessonSlug };
+
+  return (
+    <SlugEditor
+      checkFn={checkLessonSlugExists}
+      entityId={lesson.id}
+      initialSlug={lesson.slug}
+      label={t("Edit lesson slug")}
+      language={lang}
+      onSave={updateLessonSlugAction.bind(null, slugs)}
+      orgSlug={orgSlug}
+      redirectPrefix={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/`}
+    />
+  );
+}
+
 export default async function LessonPage(props: LessonPageProps) {
   const { chapterSlug, lang, lessonSlug, orgSlug } = await props.params;
 
@@ -94,6 +128,10 @@ export default async function LessonPage(props: LessonPageProps) {
 
       <Suspense fallback={<ContentEditorSkeleton />}>
         <LessonContent params={props.params} />
+      </Suspense>
+
+      <Suspense fallback={<SlugEditorSkeleton />}>
+        <LessonSlug params={props.params} />
       </Suspense>
     </Container>
   );

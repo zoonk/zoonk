@@ -1,0 +1,152 @@
+"use client";
+
+import { Button } from "@zoonk/ui/components/button";
+import { EditableText } from "@zoonk/ui/components/editable-text";
+import { toast } from "@zoonk/ui/components/sonner";
+import { Check, CircleAlert, Link, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useExtracted } from "next-intl";
+import { useState, useTransition } from "react";
+import { useSlugCheck } from "@/hooks/use-slug-check";
+
+type SlugCheckParams = {
+  language: string;
+  orgSlug: string;
+  slug: string;
+};
+
+type SlugEditorProps = {
+  checkFn: (params: SlugCheckParams) => Promise<boolean>;
+  entityId: number;
+  initialSlug: string;
+  label: string;
+  language: string;
+  onSave: (
+    id: number,
+    data: { slug: string },
+  ) => Promise<{ error: string | null; newSlug?: string }>;
+  orgSlug: string;
+  redirectPrefix: string;
+  redirectSuffix?: string;
+};
+
+export function SlugEditor({
+  checkFn,
+  entityId,
+  initialSlug,
+  label,
+  language,
+  onSave,
+  orgSlug,
+  redirectPrefix,
+  redirectSuffix = "",
+}: SlugEditorProps) {
+  const t = useExtracted();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [slug, setSlug] = useState(initialSlug);
+
+  const slugExists = useSlugCheck({
+    checkFn,
+    language,
+    orgSlug,
+    slug,
+  });
+
+  const hasChanged = slug.trim() !== initialSlug;
+  const isEmpty = slug.trim().length === 0;
+  const showError = hasChanged && slugExists;
+  const canSave = hasChanged && !isEmpty && !slugExists && !isPending;
+
+  function handleCancel() {
+    setSlug(initialSlug);
+  }
+
+  function handleSave() {
+    startTransition(async () => {
+      const result = await onSave(entityId, { slug: slug.trim() });
+
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
+
+      if (result.newSlug) {
+        const url = `${redirectPrefix}${result.newSlug}${redirectSuffix}`;
+        router.push(url as Parameters<typeof router.push>[0]);
+      }
+    });
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Enter" && canSave) {
+      e.preventDefault();
+      handleSave();
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      handleCancel();
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-1 px-4">
+      <label className="flex items-center gap-1.5 text-muted-foreground text-xs">
+        <Link aria-hidden="true" className="size-3" />
+        <span>{t("URL address")}</span>
+      </label>
+
+      <div className="flex h-5 items-center gap-2">
+        <EditableText
+          aria-label={label}
+          className="max-w-48 text-sm"
+          disabled={isPending}
+          onChange={(e) => setSlug(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={t("slug…")}
+          value={slug}
+          variant="muted"
+        />
+
+        <div
+          className={`flex items-center gap-1 transition-opacity ${hasChanged ? "opacity-100" : "pointer-events-none opacity-0"}`}
+        >
+          {showError ? (
+            <span
+              aria-label={t("Slug already exists")}
+              className="flex size-5 items-center justify-center"
+              role="img"
+            >
+              <CircleAlert className="size-4 text-destructive" />
+            </span>
+          ) : (
+            <Button
+              aria-label={t("Save slug")}
+              disabled={!canSave}
+              onClick={handleSave}
+              size="icon-sm"
+              variant="ghost"
+            >
+              <Check className="size-4" />
+            </Button>
+          )}
+
+          <Button
+            aria-label={t("Cancel")}
+            disabled={isPending}
+            onClick={handleCancel}
+            size="icon-sm"
+            variant="ghost"
+          >
+            <X className="size-4" />
+          </Button>
+        </div>
+      </div>
+
+      {showError && (
+        <p className="text-destructive text-xs">
+          {t("This slug is already in use")}
+        </p>
+      )}
+    </div>
+  );
+}
