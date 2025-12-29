@@ -159,12 +159,12 @@ export async function exportChaptersAction(courseId: number): Promise<{
   return { data, error: null };
 }
 
-interface ChapterRouteParams {
+type ChapterRouteParams = {
   courseId: number;
   courseSlug: string;
   lang: string;
   orgSlug: string;
-}
+};
 
 export async function insertChapterAction(
   params: ChapterRouteParams,

@@ -177,13 +177,13 @@ export async function exportLessonsAction(chapterId: number): Promise<{
   return { data, error: null };
 }
 
-interface LessonRouteParams {
+type LessonRouteParams = {
   chapterId: number;
   chapterSlug: string;
   courseSlug: string;
   lang: string;
   orgSlug: string;
-}
+};
 
 export async function insertLessonAction(
   params: LessonRouteParams,
