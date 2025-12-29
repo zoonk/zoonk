@@ -69,15 +69,15 @@ export function ImportDialog({
   const [pending, startTransition] = useTransition();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-    }
-  }
-
   function isJsonFile(f: File): boolean {
     return f.type === "application/json" || f.name.endsWith(".json");
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile && isJsonFile(selectedFile)) {
+      setFile(selectedFile);
+    }
   }
 
   function handleDrop(e: React.DragEvent<HTMLLabelElement>) {
