@@ -2,8 +2,13 @@ import { Container } from "@zoonk/ui/components/container";
 import { notFound } from "next/navigation";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
+import {
+  BackLink,
+  BackLinkSkeleton,
+} from "@/app/[orgSlug]/_components/back-link";
 import { ContentEditor } from "@/app/[orgSlug]/_components/content-editor";
 import { ContentEditorSkeleton } from "@/app/[orgSlug]/_components/content-editor-skeleton";
+import { getChapter } from "@/data/chapters/get-chapter";
 import { getLesson } from "@/data/lessons/get-lesson";
 import {
   updateLessonDescriptionAction,
@@ -12,6 +17,30 @@ import {
 
 type LessonPageProps =
   PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
+
+async function LessonBackLink({
+  params,
+}: {
+  params: LessonPageProps["params"];
+}) {
+  const { chapterSlug, courseSlug, lang, orgSlug } = await params;
+
+  const { data: chapter } = await getChapter({
+    chapterSlug,
+    language: lang,
+    orgSlug,
+  });
+
+  if (!chapter) {
+    return null;
+  }
+
+  return (
+    <BackLink href={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}`}>
+      {chapter.title}
+    </BackLink>
+  );
+}
 
 async function LessonContent({
   params,
@@ -49,13 +78,20 @@ async function LessonContent({
 }
 
 export default async function LessonPage(props: LessonPageProps) {
-  const { lang, lessonSlug, orgSlug } = await props.params;
+  const { chapterSlug, lang, lessonSlug, orgSlug } = await props.params;
 
-  // Preload data (cached, so child components get the same promise)
-  void getLesson({ language: lang, lessonSlug, orgSlug });
+  // Preload data in parallel (cached, so child components get the same promise)
+  void Promise.all([
+    getChapter({ chapterSlug, language: lang, orgSlug }),
+    getLesson({ language: lang, lessonSlug, orgSlug }),
+  ]);
 
   return (
     <Container variant="narrow">
+      <Suspense fallback={<BackLinkSkeleton />}>
+        <LessonBackLink params={props.params} />
+      </Suspense>
+
       <Suspense fallback={<ContentEditorSkeleton />}>
         <LessonContent params={props.params} />
       </Suspense>
