@@ -91,7 +91,7 @@ export async function ChapterList({
                 <EditorSortableItem id={chapter.id}>
                   <EditorListItem>
                     <EditorSortableItemRow>
-                      <EditorDragHandle />
+                      <EditorDragHandle aria-label={t("Drag to reorder")} />
 
                       <Link
                         className="flex flex-1 items-start gap-4"
