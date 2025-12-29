@@ -1,19 +1,26 @@
+"use client";
+
 import { useDebounce } from "@zoonk/ui/hooks/debounce";
 import { useEffect, useEffectEvent, useState, useTransition } from "react";
-import { checkSlugExists } from "./actions";
 
-/**
- * Hook to check if a slug already exists with debouncing.
- */
-export function useSlugCheck({
-  language,
-  orgSlug,
-  slug,
-}: {
+type SlugCheckParams = {
   language: string;
   orgSlug: string;
   slug: string;
-}) {
+};
+
+type SlugCheckFn = (params: SlugCheckParams) => Promise<boolean>;
+
+/**
+ * Hook to check if a slug already exists with debouncing.
+ * Works with any entity type (course, chapter, lesson) by accepting a check function.
+ */
+export function useSlugCheck({
+  checkFn,
+  language,
+  orgSlug,
+  slug,
+}: SlugCheckParams & { checkFn: SlugCheckFn }) {
   const [_isPending, startTransition] = useTransition();
   const [slugExists, setSlugExists] = useState(false);
 
@@ -35,7 +42,7 @@ export function useSlugCheck({
     }
 
     startTransition(async () => {
-      const exists = await checkSlugExists({
+      const exists = await checkFn({
         language,
         orgSlug,
         slug: debouncedSlug,
@@ -43,7 +50,7 @@ export function useSlugCheck({
 
       handleSlugCheck(debouncedSlug, exists);
     });
-  }, [debouncedSlug, language, orgSlug]);
+  }, [checkFn, debouncedSlug, language, orgSlug]);
 
   return slugExists;
 }
