@@ -4,6 +4,11 @@ checksums:
     Unsaved/singular: ddc9094aecf93ceabe363846756a9925
     Saved/singular: 6554b923011266821d74e06e013a40e6
     Saving%E2%80%A6/singular: ee98ff32f9a585a9108c8cd961d6077e
+    Cancel/singular: 2e2a849c2223911717de8caa2c71bade
+    your-custom-url/singular: 762da425a11b62bd253ca0a1dc48f47d
+    Save/singular: f7a2929f33bc420195e59ac5a8bcd454
+    This%20URL%20is%20already%20in%20use/singular: dfc6df86970a8fa27f4f4b4c3f2716b1
+    URL%20address/singular: e752a4cebaefb0cf38c129ec8edd6b65
     Delete%20lesson%3F/singular: 7f0eb69c2ada091c8504e0197eae59ab
     Delete%20lesson/singular: 18309d2fe705fd2c4301224dee3be224
     Delete%20chapter/singular: 17a0d21cc5650c1a8de6e918fd754a63
@@ -65,23 +70,18 @@ checksums:
     dashboard/singular: 3e3998114a2eab7daa3c9a23dbeb16b9
     Lessons/singular: 52fdbe5a3a6ee1cc1e166546516f9111
     Searching.../singular: 56cf28d6712bf3f7f73af2a81974ac45
-    settings/singular: 2313357d3b991dbd48a264c559ea9b35
-    locale/singular: 1baedd0f3a7e1e835804c3ab7066d364
     new/singular: 59c16092bc6a4b9de0debe084e4b5f49
-    language/singular: f0106a9b4354555a31e54c05c9b1e1f6
     course/singular: a8f5f6a15055aa74f1b98d4821329d19
     Home%20page/singular: aa72464a366b091aa6f2037ca869c09c
     sign%20out/singular: a917e8428004b4108a66fa0ba9c0c15c
     exit/singular: 8eff58f44e53377753566cba50541cf9
     Search/singular: 49dd6c21604b5e8d4153ff1aff2177e1
-    Language/singular: 277fd1a41cc237a437cd1d5e4a80463b
-    translate/singular: a9ff69701924ae84bd571f09df986e00
     start/singular: e19dc5c089daea13eeb2efffb890057d
-    Cancel/singular: 2e2a849c2223911717de8caa2c71bade
     Delete%20item/singular: b9b5755b0ed185436b52860bde313b9f
     This%20action%20cannot%20be%20undone./singular: 3d8b13374ffd3cefc0f3f7ce077bd9c9
     Delete/singular: 8bcf303dd10a645b5baacb02b47d72c9
     Delete%20item%3F/singular: d847684112faebe6e59a16ba2ccaac05
+    Language/singular: 277fd1a41cc237a437cd1d5e4a80463b
     Organizations/singular: bd50dd0b17bd74a72b728a8385b5ee28
     No%20other%20organizations/singular: e9de48fc34aa9de5d30e3eb8eed79ed1
     Draft/singular: e8a92958ad300aacfe46c2bf6644927e

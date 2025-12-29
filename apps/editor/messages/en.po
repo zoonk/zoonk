@@ -20,6 +20,32 @@ msgctxt "WUV28A"
 msgid "Saving…"
 msgstr "Saving…"
 
+#: src/app/[orgSlug]/_components/slug-editor.tsx
+#: src/components/navbar/delete-item-button.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "Cancel"
+
+#: src/app/[orgSlug]/_components/slug-editor.tsx
+msgctxt "8mWdw8"
+msgid "your-custom-url"
+msgstr "your-custom-url"
+
+#: src/app/[orgSlug]/_components/slug-editor.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "Save"
+
+#: src/app/[orgSlug]/_components/slug-editor.tsx
+msgctxt "NJUZ2D"
+msgid "This URL is already in use"
+msgstr "This URL is already in use"
+
+#: src/app/[orgSlug]/_components/slug-editor.tsx
+msgctxt "QGLi0O"
+msgid "URL address"
+msgstr "URL address"
+
 #: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
 msgctxt "52DE8l"
 msgid "Delete lesson?"
@@ -367,11 +393,6 @@ msgstr "Search"
 msgctxt "zTylMM"
 msgid "start"
 msgstr "start"
-
-#: src/components/navbar/delete-item-button.tsx
-msgctxt "47FYwb"
-msgid "Cancel"
-msgstr "Cancel"
 
 #: src/components/navbar/delete-item-button.tsx
 msgctxt "hHa3Ql"

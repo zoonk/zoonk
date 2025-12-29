@@ -1,5 +1,31 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
+import type { LucideIcon } from "lucide-react";
+
+export type EditableLabelProps = React.ComponentProps<"label"> & {
+  icon?: LucideIcon;
+};
+
+function EditableLabel({
+  children,
+  className,
+  icon: Icon,
+  ...props
+}: EditableLabelProps) {
+  return (
+    // biome-ignore lint/a11y/noLabelWithoutControl: htmlFor is passed via props
+    <label
+      className={cn(
+        "flex items-center gap-1.5 text-muted-foreground text-xs",
+        className,
+      )}
+      {...props}
+    >
+      {Icon && <Icon aria-hidden="true" className="size-3" />}
+      {children}
+    </label>
+  );
+}
 
 const editableTextVariants = cva(
   [
@@ -82,6 +108,7 @@ function EditableTextarea({
 }
 
 export {
+  EditableLabel,
   EditableText,
   editableTextVariants,
   EditableTextarea,
