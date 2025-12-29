@@ -124,9 +124,9 @@ checksums:
     Invalid%20JSON%20format.%20Please%20check%20your%20file/singular: 2a890d833f49aa36f02433476ca33468
     Organization%20not%20found/singular: 4cb8c07ec2c599b6f48750e06ffa182b
   9270df1bc9e10fdb8026bb4ab67061d4:
-    Get%20started/singular: 5c783951b0100a168bdd2161ff294833
     Login/singular: f4f219abeb5a465ecb1c7efaf50246de
     Logout/singular: 07948fdf20705e04a7bf68ab197512bf
+    Pages/singular: 75088c94fb3c374efd452624d4b74be8
     My%20account/singular: 4791806fd9fadc33912e3df7e4e3911c
     Update%20display%20name/singular: eb9878176a51d19451553ed035114e88
     Help%20and%20support/singular: 19383599a92f1b191066d7f29588d72f
@@ -201,6 +201,8 @@ checksums:
     Email%20us%20at%20hello%40zoonk.com/singular: f30da451e0bc14b7463bde402c876af9
     Follow%20us/singular: 778f7a4744f77dbcbd31a8c778cb5209
     Contact%20Support/singular: fcbd9e317c7286b3e08752eb73eb1a81
+    Learn%20with%20interactive%20lessons%20and%20activities.%20Explore%20this%20course%20and%20start%20your%20learning%20journey./singular: 7a3e7eaf93f01f45aa4e11cec5b89cce
+    Course/singular: e85604e8dd47d3ce09440554127079fe
     Read%20Zoonk's%20privacy%20policy%20to%20understand%20how%20we%20collect%2C%20use%2C%20and%20protect%20your%20personal%20information./singular: 044f3586abe7d9915820a6629cef08e4
     Privacy%20Policy/singular: 7459744a63ef8af4e517a09024bd7c08
     Read%20Zoonk's%20terms%20of%20use%20to%20understand%20the%20rules%20and%20conditions%20for%20using%20our%20platform%20and%20services/singular: 4b82898d60691839a1999e4a17199895
