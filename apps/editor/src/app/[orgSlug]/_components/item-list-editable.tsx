@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@zoonk/ui/components/button";
+import { toast } from "@zoonk/ui/components/sonner";
 import { LoaderCircleIcon, PlusIcon } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
@@ -31,7 +32,12 @@ export function ItemListEditable({
 
   function handleInsert(position: number) {
     startTransition(async () => {
-      await onInsert(position);
+      try {
+        await onInsert(position);
+      } catch (error) {
+        console.error(`Failed to insert item at position ${position}:`, error);
+        toast.error(error instanceof Error ? error.message : String(error));
+      }
     });
   }
 

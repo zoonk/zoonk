@@ -89,7 +89,11 @@ async function ChapterList({
       position,
     );
 
-    if (!createError && slug) {
+    if (createError) {
+      throw new Error(createError);
+    }
+
+    if (slug) {
       revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
       redirect(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${slug}`);
     }

@@ -121,7 +121,11 @@ async function LessonList({ params }: { params: ChapterPageProps["params"] }) {
       position,
     );
 
-    if (!createError && slug) {
+    if (createError) {
+      throw new Error(createError);
+    }
+
+    if (slug) {
       revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}`);
       redirect(
         `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${slug}`,
