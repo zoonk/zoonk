@@ -2,6 +2,7 @@
 
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { cacheTagCourse, cacheTagOrgCourses } from "@zoonk/utils/cache";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { deleteCourse } from "@/data/courses/delete-course";
@@ -47,5 +48,6 @@ export async function deleteCourseAction(
     await revalidateMainApp([courseTag, orgCoursesTag]);
   });
 
+  revalidatePath(`/${orgSlug}`);
   redirect(`/${orgSlug}`);
 }

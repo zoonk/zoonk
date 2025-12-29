@@ -3,6 +3,7 @@
 import { revalidateMainApp } from "@zoonk/core/cache/revalidate";
 import { cacheTagChapter, cacheTagCourse } from "@zoonk/utils/cache";
 import type { Route } from "next";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { deleteChapter } from "@/data/chapters/delete-chapter";
@@ -53,5 +54,6 @@ export async function deleteChapterAction(
     ]);
   });
 
+  revalidatePath(courseUrl);
   redirect(courseUrl);
 }

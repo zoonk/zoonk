@@ -7,6 +7,7 @@ import {
   cacheTagLesson,
 } from "@zoonk/utils/cache";
 import type { Route } from "next";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import { deleteLesson } from "@/data/lessons/delete-lesson";
@@ -57,5 +58,6 @@ export async function deleteLessonAction(
     ]);
   });
 
+  revalidatePath(chapterUrl);
   redirect(chapterUrl);
 }
