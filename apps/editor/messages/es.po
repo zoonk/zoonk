@@ -115,6 +115,12 @@ msgstr "Error al cargar lecciones"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+msgctxt "aJ/bsX"
+msgid "Drag to reorder"
+msgstr "Arrastra para reordenar"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
 msgctxt "FazwRl"
 msgid "Try again"
 msgstr "Intentar de nuevo"

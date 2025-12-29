@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getExtracted } from "next-intl/server";
 import { Fragment } from "react";
 import {
+  EditorDragHandle,
   EditorListAddButton,
   EditorListContent,
   EditorListHeader,
@@ -15,6 +16,9 @@ import {
   EditorListItemTitle,
   EditorListProvider,
   EditorListSpinner,
+  EditorSortableItem,
+  EditorSortableItemRow,
+  EditorSortableList,
 } from "@/components/editor-list";
 import { EntityListActions } from "@/components/entity-list-actions";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
@@ -23,6 +27,7 @@ import {
   exportChaptersAction,
   handleImportChaptersAction,
   insertChapterAction,
+  reorderChaptersAction,
 } from "./actions";
 
 export async function ChapterList({
@@ -74,36 +79,47 @@ export async function ChapterList({
       </EditorListHeader>
 
       {chapters.length > 0 && (
-        <EditorListContent>
-          <EditorListInsertLine position={0} />
+        <EditorSortableList
+          items={chapters}
+          onReorder={reorderChaptersAction.bind(null, routeParams)}
+        >
+          <EditorListContent>
+            <EditorListInsertLine position={0} />
 
-          {chapters.map((chapter) => (
-            <Fragment key={chapter.slug}>
-              <EditorListItem>
-                <Link
-                  className="flex items-start gap-4 px-4 py-3 transition-colors hover:bg-muted/50"
-                  href={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapter.slug}`}
-                >
-                  <EditorListItemPosition>
-                    {chapter.position}
-                  </EditorListItemPosition>
+            {chapters.map((chapter, index) => (
+              <Fragment key={chapter.slug}>
+                <EditorSortableItem id={chapter.id}>
+                  <EditorListItem>
+                    <EditorSortableItemRow>
+                      <EditorDragHandle aria-label={t("Drag to reorder")} />
 
-                  <EditorListItemContent>
-                    <EditorListItemTitle>{chapter.title}</EditorListItemTitle>
+                      <Link
+                        className="flex flex-1 items-start gap-4"
+                        href={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapter.slug}`}
+                      >
+                        <EditorListItemPosition>{index}</EditorListItemPosition>
 
-                    {chapter.description && (
-                      <EditorListItemDescription>
-                        {chapter.description}
-                      </EditorListItemDescription>
-                    )}
-                  </EditorListItemContent>
-                </Link>
-              </EditorListItem>
+                        <EditorListItemContent>
+                          <EditorListItemTitle>
+                            {chapter.title}
+                          </EditorListItemTitle>
 
-              <EditorListInsertLine position={chapter.position + 1} />
-            </Fragment>
-          ))}
-        </EditorListContent>
+                          {chapter.description && (
+                            <EditorListItemDescription>
+                              {chapter.description}
+                            </EditorListItemDescription>
+                          )}
+                        </EditorListItemContent>
+                      </Link>
+                    </EditorSortableItemRow>
+                  </EditorListItem>
+                </EditorSortableItem>
+
+                <EditorListInsertLine position={index + 1} />
+              </Fragment>
+            ))}
+          </EditorListContent>
+        </EditorSortableList>
       )}
     </EditorListProvider>
   );

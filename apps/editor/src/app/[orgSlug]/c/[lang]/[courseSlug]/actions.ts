@@ -9,6 +9,7 @@ import { getExtracted } from "next-intl/server";
 import { createChapter } from "@/data/chapters/create-chapter";
 import { exportChapters } from "@/data/chapters/export-chapters";
 import { importChapters } from "@/data/chapters/import-chapters";
+import { reorderChapters } from "@/data/chapters/reorder-chapters";
 import { courseSlugExists } from "@/data/courses/course-slug";
 import { updateCourse } from "@/data/courses/update-course";
 import { getErrorMessage } from "@/lib/error-messages";
@@ -197,6 +198,29 @@ export async function handleImportChaptersAction(
   if (error) {
     return { error };
   }
+
+  revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
+  return { error: null };
+}
+
+export async function reorderChaptersAction(
+  params: ChapterRouteParams,
+  chapters: { id: number; position: number }[],
+): Promise<{ error: string | null }> {
+  const { courseId, courseSlug, lang, orgSlug } = params;
+
+  const { error } = await reorderChapters({
+    chapters: chapters.map((c) => ({ chapterId: c.id, position: c.position })),
+    courseId,
+  });
+
+  if (error) {
+    return { error: await getErrorMessage(error) };
+  }
+
+  after(async () => {
+    await revalidateMainApp([cacheTagCourse({ courseSlug })]);
+  });
 
   revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
   return { error: null };
