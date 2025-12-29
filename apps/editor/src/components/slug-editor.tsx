@@ -5,12 +5,17 @@ import {
   EditableLabel,
   EditableText,
 } from "@zoonk/ui/components/editable-text";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { toast } from "@zoonk/ui/components/sonner";
 import { Check, CircleAlert, Link as LinkIcon, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useExtracted } from "next-intl";
 import { useState, useTransition } from "react";
 import { useSlugCheck } from "@/hooks/use-slug-check";
+
+export function SlugEditorSkeleton() {
+  return <Skeleton className="mx-4 h-5 w-32" />;
+}
 
 type SlugCheckParams = {
   language: string;

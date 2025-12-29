@@ -12,8 +12,21 @@ import {
   combineSaveStatuses,
   SaveStatus,
 } from "@zoonk/ui/components/save-status";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useAutoSave } from "@zoonk/ui/hooks/auto-save";
 import { useExtracted } from "next-intl";
+
+export function ContentEditorSkeleton() {
+  return (
+    <ContainerHeader>
+      <ContainerHeaderGroup className="flex-1 gap-2">
+        <Skeleton className="h-6 w-3/4" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-2/3" />
+      </ContainerHeaderGroup>
+    </ContainerHeader>
+  );
+}
 
 type ContentEditorProps = {
   entityId: number;

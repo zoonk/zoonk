@@ -6,11 +6,10 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getExtracted } from "next-intl/server";
 import { Fragment, Suspense } from "react";
-import { ContentEditor } from "@/app/[orgSlug]/_components/content-editor";
-import { ContentEditorSkeleton } from "@/app/[orgSlug]/_components/content-editor-skeleton";
-import { ItemListSkeleton } from "@/app/[orgSlug]/_components/item-list-skeleton";
-import { SlugEditor } from "@/app/[orgSlug]/_components/slug-editor";
-import { SlugEditorSkeleton } from "@/app/[orgSlug]/_components/slug-editor-skeleton";
+import {
+  ContentEditor,
+  ContentEditorSkeleton,
+} from "@/components/content-editor";
 import {
   EditorListAddButton,
   EditorListContent,
@@ -25,6 +24,8 @@ import {
   EditorListSpinner,
 } from "@/components/editor-list";
 import { EntityListActions } from "@/components/entity-list-actions";
+import { ItemListSkeleton } from "@/components/item-list";
+import { SlugEditor, SlugEditorSkeleton } from "@/components/slug-editor";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import {

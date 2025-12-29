@@ -108,7 +108,7 @@ All apps should follow a consistent folder structure:
 **Component Organization:**
 
 1. **Route-specific components**: Colocate directly with the route's `page.tsx`
-2. **Route group shared components**: Use `_components/` or `_hooks/` folders within the route group (e.g., `app/(private)/_components/`)
+2. **Route group shared components**: Use `_components/` or `_hooks/` folders within the route group (e.g., `app/(private)/_components/`), except for the root route group (eg `/[locale]` for `main` app and `/[orgSlug]/c/[lang]/[courseSlug]` for `editor` app) where you should use `src/components/{domain}/` since all components are shared across the app.
 3. **Cross-route-group components**: Place in `src/components/{domain}/`
 4. **Shared utilities**: Place in `src/lib/`
 

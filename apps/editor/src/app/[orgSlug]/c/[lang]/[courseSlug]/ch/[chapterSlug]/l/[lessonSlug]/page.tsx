@@ -2,14 +2,12 @@ import { Container } from "@zoonk/ui/components/container";
 import { notFound } from "next/navigation";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
+import { BackLink, BackLinkSkeleton } from "@/components/back-link";
 import {
-  BackLink,
-  BackLinkSkeleton,
-} from "@/app/[orgSlug]/_components/back-link";
-import { ContentEditor } from "@/app/[orgSlug]/_components/content-editor";
-import { ContentEditorSkeleton } from "@/app/[orgSlug]/_components/content-editor-skeleton";
-import { SlugEditor } from "@/app/[orgSlug]/_components/slug-editor";
-import { SlugEditorSkeleton } from "@/app/[orgSlug]/_components/slug-editor-skeleton";
+  ContentEditor,
+  ContentEditorSkeleton,
+} from "@/components/content-editor";
+import { SlugEditor, SlugEditorSkeleton } from "@/components/slug-editor";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { getLesson } from "@/data/lessons/get-lesson";
 import {

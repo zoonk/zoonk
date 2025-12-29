@@ -5,48 +5,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
 
-#: src/app/[orgSlug]/_components/content-editor.tsx
-msgctxt "BfrgHC"
-msgid "Unsaved"
-msgstr "Sin guardar"
-
-#: src/app/[orgSlug]/_components/content-editor.tsx
-msgctxt "fsB/4p"
-msgid "Saved"
-msgstr "Guardado"
-
-#: src/app/[orgSlug]/_components/content-editor.tsx
-msgctxt "WUV28A"
-msgid "Saving…"
-msgstr "Guardando…"
-
-#: src/app/[orgSlug]/_components/slug-editor.tsx
-#: src/components/entity-list-actions.tsx
-#: src/components/navbar/delete-item-button.tsx
-msgctxt "47FYwb"
-msgid "Cancel"
-msgstr "Cancelar"
-
-#: src/app/[orgSlug]/_components/slug-editor.tsx
-msgctxt "8mWdw8"
-msgid "your-custom-url"
-msgstr "tu-url-personalizada"
-
-#: src/app/[orgSlug]/_components/slug-editor.tsx
-msgctxt "jvo0vs"
-msgid "Save"
-msgstr "Guardar"
-
-#: src/app/[orgSlug]/_components/slug-editor.tsx
-msgctxt "NJUZ2D"
-msgid "This URL is already in use"
-msgstr "Esta URL ya está en uso"
-
-#: src/app/[orgSlug]/_components/slug-editor.tsx
-msgctxt "QGLi0O"
-msgid "URL address"
-msgstr "Dirección URL"
-
 #: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
 msgctxt "52DE8l"
 msgid "Delete lesson?"
@@ -336,6 +294,28 @@ msgctxt "gNtXZ8"
 msgid "401 - Unauthorized"
 msgstr "401 - No autorizado"
 
+#: src/components/content-editor.tsx
+msgctxt "BfrgHC"
+msgid "Unsaved"
+msgstr "Sin guardar"
+
+#: src/components/content-editor.tsx
+msgctxt "fsB/4p"
+msgid "Saved"
+msgstr "Guardado"
+
+#: src/components/content-editor.tsx
+msgctxt "WUV28A"
+msgid "Saving…"
+msgstr "Guardando…"
+
+#: src/components/entity-list-actions.tsx
+#: src/components/navbar/delete-item-button.tsx
+#: src/components/slug-editor.tsx
+msgctxt "47FYwb"
+msgid "Cancel"
+msgstr "Cancelar"
+
 #: src/components/entity-list-actions.tsx
 msgctxt "5kTT3Y"
 msgid "Drop file or click to select"
@@ -551,6 +531,26 @@ msgstr "Borrador"
 msgctxt "w7tf2z"
 msgid "Published"
 msgstr "Publicado"
+
+#: src/components/slug-editor.tsx
+msgctxt "8mWdw8"
+msgid "your-custom-url"
+msgstr "tu-url-personalizada"
+
+#: src/components/slug-editor.tsx
+msgctxt "jvo0vs"
+msgid "Save"
+msgstr "Guardar"
+
+#: src/components/slug-editor.tsx
+msgctxt "NJUZ2D"
+msgid "This URL is already in use"
+msgstr "Esta URL ya está en uso"
+
+#: src/components/slug-editor.tsx
+msgctxt "QGLi0O"
+msgid "URL address"
+msgstr "Dirección URL"
 
 #: src/lib/categories.ts
 msgctxt "djJp6c"
