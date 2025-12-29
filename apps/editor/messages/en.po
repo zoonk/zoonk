@@ -62,6 +62,11 @@ msgid "No file provided"
 msgstr "No file provided"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+msgctxt "Lp3DO2"
+msgid "Title is required"
+msgstr "Title is required"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
 msgctxt "Q1jVC0"
 msgid "Failed to process image. Please try again."
 msgstr "Failed to process image. Please try again."
@@ -354,6 +359,46 @@ msgstr "Logout"
 msgctxt "gNtXZ8"
 msgid "401 - Unauthorized"
 msgstr "401 - Unauthorized"
+
+#: src/components/alternative-titles-editor.tsx
+msgctxt "2/2yg+"
+msgid "Add"
+msgstr "Add"
+
+#: src/components/alternative-titles-editor.tsx
+msgctxt "cvL4Xs"
+msgid "Search titles…"
+msgstr "Search titles…"
+
+#: src/components/alternative-titles-editor.tsx
+msgctxt "G5e8UX"
+msgid "Remove {title}"
+msgstr "Remove {title}"
+
+#: src/components/alternative-titles-editor.tsx
+msgctxt "iQDWe6"
+msgid "Alternative titles"
+msgstr "Alternative titles"
+
+#: src/components/alternative-titles-editor.tsx
+msgctxt "jQY6mT"
+msgid "Add alternative title…"
+msgstr "Add alternative title…"
+
+#: src/components/alternative-titles-editor.tsx
+msgctxt "n2FbaN"
+msgid "No titles match your search"
+msgstr "No titles match your search"
+
+#: src/components/alternative-titles-editor.tsx
+msgctxt "oDI/Rp"
+msgid "and {count} more"
+msgstr "and {count} more"
+
+#: src/components/alternative-titles-editor.tsx
+msgctxt "R6KURz"
+msgid "({count})"
+msgstr "({count})"
 
 #: src/components/content-editor.tsx
 msgctxt "BfrgHC"

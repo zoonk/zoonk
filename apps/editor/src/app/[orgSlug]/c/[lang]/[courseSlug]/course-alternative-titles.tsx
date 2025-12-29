@@ -1,0 +1,47 @@
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { AlternativeTitlesEditor } from "@/components/alternative-titles-editor";
+import { listAlternativeTitles } from "@/data/alternative-titles/list-alternative-titles";
+import { getCourse } from "@/data/courses/get-course";
+import {
+  addAlternativeTitleAction,
+  deleteAlternativeTitleAction,
+} from "./actions";
+
+export async function CourseAlternativeTitles({
+  params,
+}: {
+  params: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]">["params"];
+}) {
+  const { courseSlug, lang, orgSlug } = await params;
+
+  if (orgSlug !== AI_ORG_SLUG) {
+    return null;
+  }
+
+  const { data: course } = await getCourse({
+    courseSlug,
+    language: lang,
+    orgSlug,
+  });
+
+  if (!course) {
+    return null;
+  }
+
+  const titles = await listAlternativeTitles({ courseId: course.id });
+
+  const routeParams = {
+    courseId: course.id,
+    courseSlug,
+    lang,
+    orgSlug,
+  };
+
+  return (
+    <AlternativeTitlesEditor
+      onAdd={addAlternativeTitleAction.bind(null, routeParams)}
+      onDelete={deleteAlternativeTitleAction.bind(null, routeParams)}
+      titles={titles}
+    />
+  );
+}
