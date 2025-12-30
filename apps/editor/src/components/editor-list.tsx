@@ -22,6 +22,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { toast } from "@zoonk/ui/components/sonner";
 import { mergeProps, useRender } from "@zoonk/ui/lib/render";
 import { cn } from "@zoonk/ui/lib/utils";
+import { isNextRedirectError } from "@zoonk/utils/error";
 import { GripVerticalIcon, LoaderCircleIcon, PlusIcon } from "lucide-react";
 import {
   createContext,
@@ -69,11 +70,14 @@ function EditorListProvider({
         try {
           await onInsert(position);
         } catch (error) {
-          console.error(
-            `Failed to insert item at position ${position}:`,
-            error,
-          );
-          toast.error(error instanceof Error ? error.message : String(error));
+          if (!isNextRedirectError(error)) {
+            console.error(
+              `Failed to insert item at position ${position}:`,
+              error,
+            );
+
+            toast.error(error instanceof Error ? error.message : String(error));
+          }
         }
       });
     },

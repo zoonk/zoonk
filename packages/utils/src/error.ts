@@ -1,5 +1,7 @@
 export const PERMISSION_ERROR_CODE = 403;
 
+const NEXT_REDIRECT_ERROR_MESSAGE = "NEXT_REDIRECT";
+
 export class AppError<T extends string = string> extends Error {
   readonly code: T;
 
@@ -12,6 +14,11 @@ export class AppError<T extends string = string> extends Error {
 
 export function isAppError(error: unknown): error is AppError {
   return error instanceof AppError;
+}
+
+export function isNextRedirectError(error: unknown): boolean {
+  const errorObject = JSON.stringify(error);
+  return errorObject.includes(NEXT_REDIRECT_ERROR_MESSAGE);
 }
 
 export function toError(error: unknown): Error {
