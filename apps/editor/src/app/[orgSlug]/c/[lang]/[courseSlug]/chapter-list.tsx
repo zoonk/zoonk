@@ -101,7 +101,9 @@ export async function ChapterList({
                           />
                         }
                       >
-                        <EditorListItemPosition>{index}</EditorListItemPosition>
+                        <EditorListItemPosition>
+                          {index + 1}
+                        </EditorListItemPosition>
 
                         <EditorListItemContent>
                           <EditorListItemTitle>

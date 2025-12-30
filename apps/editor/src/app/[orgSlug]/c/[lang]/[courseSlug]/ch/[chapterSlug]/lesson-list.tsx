@@ -104,7 +104,9 @@ export async function LessonList({
                           />
                         }
                       >
-                        <EditorListItemPosition>{index}</EditorListItemPosition>
+                        <EditorListItemPosition>
+                          {index + 1}
+                        </EditorListItemPosition>
 
                         <EditorListItemContent>
                           <EditorListItemTitle>
