@@ -11,6 +11,7 @@ import {
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { toast } from "@zoonk/ui/components/sonner";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { PlusIcon, TagsIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -64,10 +65,18 @@ export function CategoryEditor({
     startTransition(async () => {
       if (isSelected) {
         updateOptimistic({ category, type: "remove" });
-        await onRemove(category);
+        const { error } = await onRemove(category);
+
+        if (error) {
+          toast.error(error);
+        }
       } else {
         updateOptimistic({ category, type: "add" });
-        await onAdd(category);
+        const { error } = await onAdd(category);
+
+        if (error) {
+          toast.error(error);
+        }
       }
     });
   }
