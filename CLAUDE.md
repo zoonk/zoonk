@@ -142,6 +142,7 @@ All packages should follow a consistent structure:
 - Use `safeAsync` when using `await` to better handle errors
 - When creating a skeleton, use the `Skeleton` component from `@zoonk/ui/components/skeleton`
 - Always build skeleton components when using `Suspense` for loading states
+- Always place skeletons in the same file as the component they're loading for, not in a separate file
 - Don't add comments to a component's props
 - Pass types directly to the component declaration instead of using `type` since those types won't be exported/reused
 - When adding a new Prisma model, always add a seed for it in `packages/db/src/prisma/seed/`
@@ -252,9 +253,13 @@ See these existing patterns in the codebase:
 
 - When updating `app-error.ts` files also update `error-messages.ts` to include the new error code and run `pnpm build` to update PO files
 - For apps using `next-intl`, use `getExtracted` or `useExtracted`. This will extract the translations to PO files when we run `pnpm build`
-- You can't pass the `t` function from `getExtracted` or `useExtracted` to other functions or components. Instead, call it directly in the component or function
+- You can't pass the `t` function from `getExtracted` or `useExtracted` to other functions or components. Instead, call it directly in the component or function. Eg. don't do this: `myFunction(t, label)` instead do this: `myFunction(t("label"))`
+- **IMPORTANT: The `t` function from `getExtracted`/`useExtracted` does NOT support dynamic values**. You cannot use `t(getLabel(value))`. Instead, you need to use string literals: `t("Arts courses")`, `t("Business courses")`, etc
+- You CAN use string interpolation in `getExtracted`/`useExtracted` to get the translation for a dynamic value. For example: `t("Explore all {category} courses", { category: "arts" })`
 - Whenever using `getExtracted` or `useExtracted`, run `pnpm build` to update PO files
 - Run `pnpm i18n:check` to check for any missing translations and translate empty strings in PO files, making sure translations are consistent across the codebase
+- When you see a `MISSING_TRANSLATION` error (or similar), it means the PO file hasn't been translated. Just go to the PO file and translate the empty strings
+- You don't need to pass a locale to `getExtracted` when using RSC, only on `generateMetadata` or server actions. It works without a locale on server components
 
 ## CSS
 

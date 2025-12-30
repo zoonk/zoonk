@@ -134,6 +134,16 @@ msgctxt "R/6nsx"
 msgid "Subscription"
 msgstr "Suscripción"
 
+#: src/app/[locale]/(catalog)/courses/category-pills.tsx
+msgctxt "tuZsq+"
+msgid "Course categories"
+msgstr "Categorías de cursos"
+
+#: src/app/[locale]/(catalog)/courses/category-pills.tsx
+msgctxt "zQvVDJ"
+msgid "All"
+msgstr "Todos"
+
 #: src/app/[locale]/(catalog)/courses/course-list-client.tsx
 msgctxt "T0mfNV"
 msgid "Loading more courses…"
@@ -538,80 +548,115 @@ msgctxt "eUzs3M"
 msgid "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
 msgstr "Envíanos comentarios, preguntas o sugerencias. Completa el formulario a continuación o escríbenos directamente a contacto@zoonk.com."
 
+#: src/hooks/use-categories.ts
 #: src/lib/categories.ts
 msgctxt "djJp6c"
 msgid "History"
 msgstr "Historia"
 
+#: src/hooks/use-categories.ts
 #: src/lib/categories.ts
 msgctxt "dPgwrL"
 msgid "Math"
 msgstr "Matemáticas"
 
+#: src/hooks/use-categories.ts
 #: src/lib/categories.ts
 msgctxt "fFt3il"
 msgid "Arts"
 msgstr "Artes"
 
+#: src/hooks/use-categories.ts
 #: src/lib/categories.ts
 msgctxt "GsBRWL"
 msgid "Languages"
 msgstr "Idiomas"
 
+#: src/hooks/use-categories.ts
 #: src/lib/categories.ts
 msgctxt "hlmkcL"
 msgid "Health"
 msgstr "Salud"
 
+#: src/hooks/use-categories.ts
 #: src/lib/categories.ts
 msgctxt "hwL7a0"
 msgid "Engineering"
 msgstr "Ingeniería"
 
+#: src/hooks/use-categories.ts
 #: src/lib/categories.ts
 msgctxt "I1ZCPK"
 msgid "Technology"
 msgstr "Tecnología"
 
+#: src/hooks/use-categories.ts
 #: src/lib/categories.ts
 msgctxt "KOuDOE"
 msgid "Economics"
 msgstr "Economía"
 
+#: src/hooks/use-categories.ts
 #: src/lib/categories.ts
 msgctxt "mn6pIm"
 msgid "Culture"
 msgstr "Cultura"
 
+#: src/hooks/use-categories.ts
 #: src/lib/categories.ts
 msgctxt "n5D/Ku"
 msgid "Communication"
 msgstr "Comunicación"
 
+#: src/hooks/use-categories.ts
 #: src/lib/categories.ts
 msgctxt "OV/2+4"
 msgid "Society"
 msgstr "Sociedad"
 
+#: src/hooks/use-categories.ts
 #: src/lib/categories.ts
 msgctxt "qydxOd"
 msgid "Science"
 msgstr "Ciencia"
 
+#: src/hooks/use-categories.ts
 #: src/lib/categories.ts
 msgctxt "u3ovjm"
 msgid "Law"
 msgstr "Derecho"
 
+#: src/hooks/use-categories.ts
 #: src/lib/categories.ts
 msgctxt "w1Fanr"
 msgid "Business"
 msgstr "Negocios"
 
+#: src/hooks/use-categories.ts
 #: src/lib/categories.ts
 msgctxt "YMDBNH"
 msgid "Geography"
 msgstr "Geografía"
+
+#: src/lib/categories.ts
+msgctxt "4HKnmB"
+msgid "{category} Courses"
+msgstr "Cursos de {category}"
+
+#: src/lib/categories.ts
+msgctxt "EMi23I"
+msgid "Explore all {category} courses"
+msgstr "Explorar todos los cursos de {category}"
+
+#: src/lib/categories.ts
+msgctxt "Rz9oL+"
+msgid "{category} courses"
+msgstr "Cursos de {category}"
+
+#: src/lib/categories.ts
+msgctxt "XL8IWT"
+msgid "{category} courses. The best {category} online courses, interactive lessons to learn."
+msgstr "Cursos de {category}. Los mejores cursos en línea de {category}, lecciones interactivas para aprender."
 
 #: src/lib/error-messages.ts
 msgctxt "3IKub9"

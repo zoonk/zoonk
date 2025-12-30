@@ -8,6 +8,7 @@ import {
   CourseListItemView,
 } from "@zoonk/ui/patterns/courses/list";
 import { EmptyView } from "@zoonk/ui/patterns/empty";
+import type { CourseCategory } from "@zoonk/utils/categories";
 import { Loader2Icon, NotebookPenIcon } from "lucide-react";
 import Image from "next/image";
 import { useExtracted } from "next-intl";
@@ -25,10 +26,12 @@ function toCourseListItem(course: Course): CourseListItem {
 }
 
 export function CourseListClient({
+  category,
   initialCourses,
   language,
   limit,
 }: {
+  category?: CourseCategory;
   initialCourses: Course[];
   language: string;
   limit: number;
@@ -40,7 +43,7 @@ export function CourseListClient({
     isLoading,
     sentryRef,
   } = useInfiniteList<Course, number>({
-    fetchMore: (cursor) => loadMoreCourses({ cursor, language }),
+    fetchMore: (cursor) => loadMoreCourses({ category, cursor, language }),
     getCursor: (course) => course.id,
     getKey: (course) => course.id,
     initialItems: initialCourses,

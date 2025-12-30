@@ -191,6 +191,8 @@ checksums:
     Settings/singular: 8df6777277469c1fd88cc18dde2f1cc3
     Support/singular: 55aab5fd0f31a9cb055a2edeeedfaf63
     Subscription/singular: ba9f3675e18987d067d48533c8897343
+    Course%20categories/singular: 3c86af7c305be0c0f5b65077fb06708d
+    All/singular: 5e2e93f8e2a5f315b6fecdd0a0e6f55f
     Loading%20more%20courses%E2%80%A6/singular: 290733f8b53c88f64b385ba9dd320acf
     No%20courses%20available%20yet./singular: 1a6b72175b8ad0ce36f9cb0bcaab4c84
     No%20courses/singular: 72fc2629e79529e927834070a26d2a07
@@ -286,6 +288,10 @@ checksums:
     Law/singular: 3f04c791596043e899781f74003b9324
     Business/singular: 7682c7966c6e718836388561e7e68cab
     Geography/singular: fd93fe516c40f1f2dd96f53a507ce95d
+    "%7Bcategory%7D%20Courses/singular": f82680a650c487992e1025b66f324d4c
+    Explore%20all%20%7Bcategory%7D%20courses/singular: b1f2775c67b4a61b3d92b4345b8b852e
+    "%7Bcategory%7D%20courses/singular": eafd6f9b1fa97400abe1bfe0c8ee5f19
+    "%7Bcategory%7D%20courses.%20The%20best%20%7Bcategory%7D%20online%20courses%2C%20interactive%20lessons%20to%20learn./singular": 2ec8d2bc2e44d9def010ec678286dc88
     An%20unexpected%20error%20occurred/singular: fe07b9cdb1fc3f7397f6d89c102c60af
     Please%20sign%20in%20to%20continue/singular: 051e59dd3d3b0bfad95982f982fd6b9d
   61a308caf583f5835f54302028bdae73:
