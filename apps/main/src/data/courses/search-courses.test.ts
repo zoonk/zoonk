@@ -181,9 +181,9 @@ describe("searchCourses", () => {
     expect(newIndex).toBeLessThan(oldIndex);
   });
 
-  test("limits results to 50", async () => {
+  test("limits results to default of 10", async () => {
     await prisma.course.createMany({
-      data: Array.from({ length: 55 }, (_, i) => ({
+      data: Array.from({ length: 15 }, (_, i) => ({
         description: `Bulk course ${i} description`,
         imageUrl: "https://example.com/image.jpg",
         isPublished: true,
@@ -200,6 +200,29 @@ describe("searchCourses", () => {
       query: "Bulk Search Limit Test",
     });
 
-    expect(result).toHaveLength(50);
+    expect(result).toHaveLength(10);
+  });
+
+  test("respects custom limit parameter", async () => {
+    await prisma.course.createMany({
+      data: Array.from({ length: 15 }, (_, i) => ({
+        description: `Custom limit course ${i} description`,
+        imageUrl: "https://example.com/image.jpg",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: `custom limit test course ${i}`,
+        organizationId: brandOrg.id,
+        slug: `custom-limit-test-${randomUUID()}-${i}`,
+        title: `Custom Limit Test Course ${i}`,
+      })),
+    });
+
+    const result = await searchCourses({
+      language: "en",
+      limit: 5,
+      query: "Custom Limit Test",
+    });
+
+    expect(result).toHaveLength(5);
   });
 });

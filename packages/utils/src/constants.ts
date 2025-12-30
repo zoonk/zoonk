@@ -10,3 +10,5 @@ export const DEFAULT_IMAGE_ACCEPTED_TYPES = [
   "image/webp",
   "image/gif",
 ];
+
+export const DEFAULT_SEARCH_LIMIT = 10;

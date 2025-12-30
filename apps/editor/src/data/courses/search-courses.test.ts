@@ -165,4 +165,49 @@ describe("org admins", () => {
     expect(result.error).toBeNull();
     expect(result.data[0]).not.toHaveProperty("organization");
   });
+
+  test("limits results to default of 10", async () => {
+    await Promise.all(
+      Array.from({ length: 15 }, (_, i) =>
+        courseFixture({
+          isPublished: true,
+          normalizedTitle: `limit test course ${i}`,
+          organizationId: organization.id,
+          title: `Limit Test Course ${i}`,
+        }),
+      ),
+    );
+
+    const result = await searchCourses({
+      headers,
+      orgSlug: organization.slug,
+      title: "Limit Test",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(10);
+  });
+
+  test("respects custom limit parameter", async () => {
+    await Promise.all(
+      Array.from({ length: 15 }, (_, i) =>
+        courseFixture({
+          isPublished: true,
+          normalizedTitle: `custom limit test course ${i}`,
+          organizationId: organization.id,
+          title: `Custom Limit Test Course ${i}`,
+        }),
+      ),
+    );
+
+    const result = await searchCourses({
+      headers,
+      limit: 5,
+      orgSlug: organization.slug,
+      title: "Custom Limit Test",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(5);
+  });
 });

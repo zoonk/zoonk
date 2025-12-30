@@ -40,8 +40,9 @@ export const searchContent = cache(
   async (params: {
     title: string;
     orgSlug: string;
+    limit?: number;
   }): Promise<SearchResults> => {
-    const { title, orgSlug } = params;
+    const { title, orgSlug, limit } = params;
 
     if (!title.trim()) {
       return { chapters: [], courses: [], lessons: [] };
@@ -50,9 +51,9 @@ export const searchContent = cache(
     const requestHeaders = await headers();
 
     const [coursesResult, chaptersResult, lessonsResult] = await Promise.all([
-      searchCourses({ headers: requestHeaders, orgSlug, title }),
-      searchOrgChapters({ headers: requestHeaders, orgSlug, title }),
-      searchOrgLessons({ headers: requestHeaders, orgSlug, title }),
+      searchCourses({ headers: requestHeaders, limit, orgSlug, title }),
+      searchOrgChapters({ headers: requestHeaders, limit, orgSlug, title }),
+      searchOrgLessons({ headers: requestHeaders, limit, orgSlug, title }),
     ]);
 
     const courses: ResultWithImage[] = coursesResult.data.map((course) => ({

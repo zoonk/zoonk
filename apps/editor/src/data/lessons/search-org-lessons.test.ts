@@ -236,4 +236,65 @@ describe("admins", () => {
     expect(lesson?.chapter.course.slug).toBe(course.slug);
     expect(lesson?.chapter.course.language).toBe(course.language);
   });
+
+  test("limits results to default of 10", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    await Promise.all(
+      Array.from({ length: 15 }, (_, i) =>
+        lessonFixture({
+          chapterId: chapter.id,
+          language: chapter.language,
+          organizationId: organization.id,
+          position: i,
+          title: `Limit Test Lesson ${i}`,
+        }),
+      ),
+    );
+
+    const result = await searchOrgLessons({
+      headers,
+      orgSlug: organization.slug,
+      title: "Limit Test",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(10);
+  });
+
+  test("respects custom limit parameter", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    await Promise.all(
+      Array.from({ length: 15 }, (_, i) =>
+        lessonFixture({
+          chapterId: chapter.id,
+          language: chapter.language,
+          organizationId: organization.id,
+          position: i,
+          title: `Custom Limit Test Lesson ${i}`,
+        }),
+      ),
+    );
+
+    const result = await searchOrgLessons({
+      headers,
+      limit: 5,
+      orgSlug: organization.slug,
+      title: "Custom Limit Test",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toHaveLength(5);
+  });
 });

@@ -2,6 +2,8 @@ import "server-only";
 
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Course, prisma } from "@zoonk/db";
+import { clampQueryItems } from "@zoonk/db/utils";
+import { DEFAULT_SEARCH_LIMIT } from "@zoonk/utils/constants";
 import { AppError, safeAsync } from "@zoonk/utils/error";
 import { normalizeString } from "@zoonk/utils/string";
 import { cache } from "react";
@@ -13,9 +15,11 @@ export const searchCourses = cache(
     orgSlug: string;
     headers?: Headers;
     language?: string;
+    limit?: number;
   }): Promise<{ data: Course[]; error: Error | null }> => {
     const { title, orgSlug, language } = params;
     const normalizedSearch = normalizeString(title);
+    const limit = clampQueryItems(params.limit ?? DEFAULT_SEARCH_LIMIT);
 
     const { data, error } = await safeAsync(() =>
       Promise.all([
@@ -26,6 +30,7 @@ export const searchCourses = cache(
         }),
         prisma.course.findMany({
           orderBy: { createdAt: "desc" },
+          take: limit,
           where: {
             normalizedTitle: {
               contains: normalizedSearch,
