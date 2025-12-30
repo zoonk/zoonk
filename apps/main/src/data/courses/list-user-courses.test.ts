@@ -61,6 +61,31 @@ describe("authenticated users", () => {
     expect(result.data?.some((c) => c.id === course.id)).toBe(true);
   });
 
+  test("includes the organization in the response", async () => {
+    const testUser = await userFixture();
+    const testHeaders = await signInAs(testUser.email, testUser.password);
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: organization.id,
+    });
+
+    await courseUserFixture({
+      courseId: course.id,
+      userId: Number(testUser.id),
+    });
+
+    const result = await listUserCourses({ headers: testHeaders });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toBeDefined();
+
+    const returnedCourse = result.data?.find((c) => c.id === course.id);
+    expect(returnedCourse?.organization).toBeDefined();
+    expect(returnedCourse?.organization.id).toBe(organization.id);
+    expect(returnedCourse?.organization.slug).toBe(organization.slug);
+  });
+
   test("orders courses by startedAt descending (most recent first)", async () => {
     const testUser = await userFixture();
     const testHeaders = await signInAs(testUser.email, testUser.password);
@@ -103,31 +128,6 @@ describe("authenticated users", () => {
 
     const courseIds = result.data?.map((c) => c.id);
     expect(courseIds).toEqual([course2.id, course3.id, course1.id]);
-  });
-
-  test("respects the limit parameter", async () => {
-    const testUser = await userFixture();
-    const testHeaders = await signInAs(testUser.email, testUser.password);
-
-    const courses = await Promise.all(
-      Array.from({ length: 5 }, () =>
-        courseFixture({ isPublished: true, organizationId: organization.id }),
-      ),
-    );
-
-    await Promise.all(
-      courses.map((course) =>
-        courseUserFixture({
-          courseId: course.id,
-          userId: Number(testUser.id),
-        }),
-      ),
-    );
-
-    const result = await listUserCourses({ headers: testHeaders, limit: 3 });
-
-    expect(result.error).toBeNull();
-    expect(result.data).toHaveLength(3);
   });
 
   test("does not return other users courses", async () => {

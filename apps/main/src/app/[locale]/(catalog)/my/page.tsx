@@ -1,5 +1,14 @@
+import {
+  Container,
+  ContainerDescription,
+  ContainerHeader,
+  ContainerHeaderGroup,
+  ContainerTitle,
+} from "@zoonk/ui/components/container";
 import type { Metadata } from "next";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, setRequestLocale } from "next-intl/server";
+import { Suspense } from "react";
+import { UserCourseList, UserCourseListSkeleton } from "./user-course-list";
 
 export async function generateMetadata({
   params,
@@ -15,6 +24,26 @@ export async function generateMetadata({
   };
 }
 
-export default async function MyCourses() {
-  return <main>{}</main>;
+export default async function MyCourses({ params }: PageProps<"/[locale]/my">) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+
+  const t = await getExtracted();
+
+  return (
+    <Container variant="list">
+      <ContainerHeader>
+        <ContainerHeaderGroup>
+          <ContainerTitle>{t("My Courses")}</ContainerTitle>
+          <ContainerDescription>
+            {t("Continue where you left off")}
+          </ContainerDescription>
+        </ContainerHeaderGroup>
+      </ContainerHeader>
+
+      <Suspense fallback={<UserCourseListSkeleton />}>
+        <UserCourseList />
+      </Suspense>
+    </Container>
+  );
 }
