@@ -1,5 +1,3 @@
-"use client";
-
 import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,
@@ -19,15 +17,13 @@ import {
   ItemTitle,
 } from "@zoonk/ui/components/item";
 import { Mail, MessagesSquare } from "lucide-react";
-import { useParams } from "next/navigation";
-import { useExtracted } from "next-intl";
+import { getExtracted, getLocale } from "next-intl/server";
 import { FeedbackSheet } from "@/components/feedback/feedback-sheet";
 import { getSocialProfiles } from "@/lib/social";
 
-export function SupportContent() {
-  const t = useExtracted();
-  const params = useParams();
-  const locale = (params.locale as string) || "en";
+export async function SupportContent() {
+  const t = await getExtracted();
+  const locale = await getLocale();
   const socials = getSocialProfiles(locale);
 
   return (
@@ -66,7 +62,7 @@ export function SupportContent() {
           </ItemContent>
         </Item>
 
-        <FeedbackSheet side="right">
+        <FeedbackSheet side="bottom">
           <Item render={<button type="button" />} size="sm">
             <ItemMedia className="size-10 rounded-full bg-muted" variant="icon">
               <Mail aria-hidden="true" />
