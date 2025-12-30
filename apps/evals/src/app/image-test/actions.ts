@@ -10,7 +10,10 @@ export async function generateThumbnailAction(formData: FormData) {
     return { error: "Title is required." };
   }
 
-  const { data: imageUrl, error } = await generateCourseImage({ title });
+  const { data: imageUrl, error } = await generateCourseImage({
+    orgSlug: "evals",
+    title,
+  });
 
   if (error) {
     console.error("Error generating thumbnail:", error);

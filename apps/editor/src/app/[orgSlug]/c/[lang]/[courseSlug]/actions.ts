@@ -247,7 +247,7 @@ export async function uploadCourseImageAction(
 
   const { data: imageUrl, error: uploadError } = await processAndUploadImage({
     file,
-    fileName: `courses/${courseId}/cover.webp`,
+    fileName: `courses/${orgSlug}/${courseSlug}.webp`,
   });
 
   if (uploadError) {

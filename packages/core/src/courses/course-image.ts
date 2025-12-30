@@ -2,13 +2,14 @@ import {
   type CourseThumbnailParams,
   generateCourseThumbnail,
 } from "@zoonk/ai/course-thumbnail/generate";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import type { SafeReturn } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
 import { optimizeImage } from "../images/optimize-image";
 import { uploadImage } from "../images/upload-image";
 
 export async function generateCourseImage(
-  params: CourseThumbnailParams,
+  params: CourseThumbnailParams & { orgSlug?: string },
 ): Promise<SafeReturn<string>> {
   const { data: image, error: imageGenerationError } =
     await generateCourseThumbnail(params);
@@ -26,7 +27,8 @@ export async function generateCourseImage(
   }
 
   const slug = toSlug(params.title);
-  const fileName = `courses/${slug}.webp`;
+  const orgSlug = params.orgSlug ?? AI_ORG_SLUG;
+  const fileName = `courses/${orgSlug}/${slug}.webp`;
 
   const { data: url, error: uploadError } = await uploadImage({
     fileName,
