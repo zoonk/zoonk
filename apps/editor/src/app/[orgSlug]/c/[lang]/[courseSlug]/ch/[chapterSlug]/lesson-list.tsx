@@ -12,6 +12,7 @@ import {
   EditorListItem,
   EditorListItemContent,
   EditorListItemDescription,
+  EditorListItemLink,
   EditorListItemPosition,
   EditorListItemTitle,
   EditorListProvider,
@@ -96,9 +97,12 @@ export async function LessonList({
                     <EditorSortableItemRow>
                       <EditorDragHandle aria-label={t("Drag to reorder")} />
 
-                      <Link
-                        className="flex flex-1 items-start gap-4"
-                        href={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${lesson.slug}`}
+                      <EditorListItemLink
+                        render={
+                          <Link
+                            href={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${lesson.slug}`}
+                          />
+                        }
                       >
                         <EditorListItemPosition>{index}</EditorListItemPosition>
 
@@ -113,7 +117,7 @@ export async function LessonList({
                             </EditorListItemDescription>
                           )}
                         </EditorListItemContent>
-                      </Link>
+                      </EditorListItemLink>
                     </EditorSortableItemRow>
                   </EditorListItem>
                 </EditorSortableItem>

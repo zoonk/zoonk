@@ -20,6 +20,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@zoonk/ui/components/button";
 import { toast } from "@zoonk/ui/components/sonner";
+import { mergeProps, useRender } from "@zoonk/ui/lib/render";
 import { cn } from "@zoonk/ui/lib/utils";
 import { GripVerticalIcon, LoaderCircleIcon, PlusIcon } from "lucide-react";
 import {
@@ -209,18 +210,22 @@ function EditorListItem({ className, ...props }: React.ComponentProps<"li">) {
 
 function EditorListItemLink({
   className,
+  render,
   ...props
-}: React.ComponentProps<"a">) {
-  return (
-    <a
-      className={cn(
-        "flex items-start gap-4 px-4 py-3 transition-colors hover:bg-muted/50",
-        className,
-      )}
-      data-slot="editor-list-item-link"
-      {...props}
-    />
-  );
+}: useRender.ComponentProps<"a">) {
+  return useRender({
+    defaultTagName: "a",
+    props: mergeProps<"a">(
+      {
+        className: cn("flex min-w-0 flex-1 items-start gap-4", className),
+      },
+      props,
+    ),
+    render,
+    state: {
+      slot: "editor-list-item-link",
+    },
+  });
 }
 
 function EditorListItemPosition({
@@ -263,7 +268,7 @@ function EditorListItemTitle({
 }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("truncate font-medium", className)}
+      className={cn("font-medium", className)}
       data-slot="editor-list-item-title"
       {...props}
     />
