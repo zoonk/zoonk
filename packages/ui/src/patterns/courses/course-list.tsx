@@ -63,19 +63,17 @@ export function CourseListSkeleton({ count = 10 }: { count?: number }) {
     <ItemGroup>
       {Array.from({ length: count }).map((_, index) => (
         <Item key={index}>
-          <ItemMedia variant="image">
-            <Skeleton className="size-16" />
+          <ItemMedia
+            className="size-16 translate-y-0.5 self-start"
+            variant="image"
+          >
+            <Skeleton className="size-full" />
           </ItemMedia>
 
-          <ItemContent>
-            <Skeleton className="h-4 w-48" />
-            <Skeleton className="h-4 w-72" />
+          <ItemContent className="pt-1">
+            <Skeleton className="h-4 w-full max-w-48" />
+            <Skeleton className="h-4 w-full max-w-72" />
           </ItemContent>
-
-          <ChevronRightIcon
-            aria-hidden="true"
-            className="size-4 text-muted-foreground"
-          />
         </Item>
       ))}
     </ItemGroup>
