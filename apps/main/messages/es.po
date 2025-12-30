@@ -528,12 +528,12 @@ msgctxt "Xx0WZV"
 msgid "Send message"
 msgstr "Enviar mensaje"
 
-#: src/components/feedback/feedback-sheet.tsx
+#: src/components/feedback/feedback-dialog.tsx
 msgctxt "Ejhdi4"
 msgid "Feedback"
 msgstr "Comentarios"
 
-#: src/components/feedback/feedback-sheet.tsx
+#: src/components/feedback/feedback-dialog.tsx
 msgctxt "eUzs3M"
 msgid "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
 msgstr "Envíanos comentarios, preguntas o sugerencias. Completa el formulario a continuación o escríbenos directamente a contacto@zoonk.com."

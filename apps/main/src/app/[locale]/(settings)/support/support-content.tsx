@@ -18,7 +18,7 @@ import {
 } from "@zoonk/ui/components/item";
 import { Mail, MessagesSquare } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
-import { FeedbackSheet } from "@/components/feedback/feedback-sheet";
+import { FeedbackDialog } from "@/components/feedback/feedback-dialog";
 import { getSocialProfiles } from "@/lib/social";
 
 export async function SupportContent() {
@@ -62,7 +62,7 @@ export async function SupportContent() {
           </ItemContent>
         </Item>
 
-        <FeedbackSheet side="bottom">
+        <FeedbackDialog>
           <Item render={<button type="button" />} size="sm">
             <ItemMedia className="size-10 rounded-full bg-muted" variant="icon">
               <Mail aria-hidden="true" />
@@ -75,7 +75,7 @@ export async function SupportContent() {
               </ItemDescription>
             </ItemContent>
           </Item>
-        </FeedbackSheet>
+        </FeedbackDialog>
       </ItemGroup>
 
       <ItemSeparator />

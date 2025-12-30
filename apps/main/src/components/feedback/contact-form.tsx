@@ -35,7 +35,7 @@ export function ContactForm() {
   const hasError = state.status === "error";
 
   return (
-    <form action={formAction} className="flex flex-col gap-6">
+    <form action={formAction} className="flex w-full flex-col gap-6">
       <Field>
         <FieldContent>
           <FieldLabel htmlFor={emailId}>{t("Email address")}</FieldLabel>

@@ -6,7 +6,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { MessageSquareIcon, ThumbsDownIcon, ThumbsUpIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
-import { FeedbackSheet } from "@/components/feedback/feedback-sheet";
+import { FeedbackDialog } from "@/components/feedback/feedback-dialog";
 
 type ContentFeedbackProps = {
   kind: "courseSuggestions";
@@ -65,12 +65,12 @@ export function ContentFeedback({
         </Button>
       </div>
 
-      <FeedbackSheet side="bottom">
+      <FeedbackDialog>
         <Button className="text-muted-foreground" size="sm" variant="ghost">
           <MessageSquareIcon aria-hidden="true" />
           {t("Send feedback")}
         </Button>
-      </FeedbackSheet>
+      </FeedbackDialog>
     </footer>
   );
 }
