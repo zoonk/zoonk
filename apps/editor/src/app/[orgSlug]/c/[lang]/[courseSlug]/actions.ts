@@ -11,6 +11,8 @@ import { getExtracted } from "next-intl/server";
 import { deleteAlternativeTitles } from "@/data/alternative-titles/delete-alternative-titles";
 import { exportAlternativeTitles } from "@/data/alternative-titles/export-alternative-titles";
 import { importAlternativeTitles } from "@/data/alternative-titles/import-alternative-titles";
+import { addCategoryToCourse } from "@/data/categories/add-category-to-course";
+import { removeCategoryFromCourse } from "@/data/categories/remove-category-from-course";
 import { createChapter } from "@/data/chapters/create-chapter";
 import { exportChapters } from "@/data/chapters/export-chapters";
 import { importChapters } from "@/data/chapters/import-chapters";
@@ -374,4 +376,52 @@ export async function exportAlternativeTitlesAction(courseId: number): Promise<{
   }
 
   return { data, error: null };
+}
+
+export async function addCourseCategoryAction(
+  params: ChapterRouteParams,
+  category: string,
+): Promise<{ error: string | null }> {
+  const { courseId, courseSlug, lang, orgSlug } = params;
+
+  const { error } = await addCategoryToCourse({
+    category,
+    courseId,
+  });
+
+  if (error) {
+    return { error: await getErrorMessage(error) };
+  }
+
+  after(async () => {
+    await revalidateMainApp([cacheTagCourse({ courseSlug })]);
+  });
+
+  revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
+
+  return { error: null };
+}
+
+export async function removeCourseCategoryAction(
+  params: ChapterRouteParams,
+  category: string,
+): Promise<{ error: string | null }> {
+  const { courseId, courseSlug, lang, orgSlug } = params;
+
+  const { error } = await removeCategoryFromCourse({
+    category,
+    courseId,
+  });
+
+  if (error) {
+    return { error: await getErrorMessage(error) };
+  }
+
+  after(async () => {
+    await revalidateMainApp([cacheTagCourse({ courseSlug })]);
+  });
+
+  revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
+
+  return { error: null };
 }

@@ -165,7 +165,7 @@ export function AlternativeTitlesEditor({
 
   return (
     <>
-      <Collapsible className="px-4" onOpenChange={setIsOpen} open={isOpen}>
+      <Collapsible onOpenChange={setIsOpen} open={isOpen}>
         <CollapsibleTrigger className="group flex w-full items-center gap-2 py-2 text-muted-foreground text-sm hover:text-foreground">
           {isOpen ? (
             <ChevronDownIcon className="size-4" />

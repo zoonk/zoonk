@@ -11,7 +11,11 @@ describe("listCourseCategories", () => {
     const organization = await organizationFixture();
     const course = await courseFixture({ organizationId: organization.id });
 
-    const result = await listCourseCategories({ courseId: course.id });
+    const result = await listCourseCategories({
+      courseSlug: course.slug,
+      language: course.language,
+      orgSlug: organization.slug,
+    });
 
     expect(result.error).toBeNull();
     expect(result.data).toEqual([]);
@@ -27,7 +31,11 @@ describe("listCourseCategories", () => {
       courseCategoryFixture({ category: "math", courseId: course.id }),
     ]);
 
-    const result = await listCourseCategories({ courseId: course.id });
+    const result = await listCourseCategories({
+      courseSlug: course.slug,
+      language: course.language,
+      orgSlug: organization.slug,
+    });
 
     expect(result.error).toBeNull();
     expect(result.data?.length).toBe(3);
@@ -43,7 +51,11 @@ describe("listCourseCategories", () => {
       courseCategoryFixture({ category: "math", courseId: course.id }),
     ]);
 
-    const result = await listCourseCategories({ courseId: course.id });
+    const result = await listCourseCategories({
+      courseSlug: course.slug,
+      language: course.language,
+      orgSlug: organization.slug,
+    });
 
     expect(result.error).toBeNull();
     expect(result.data?.[0]?.category).toBe("arts");
@@ -65,7 +77,11 @@ describe("listCourseCategories", () => {
       courseCategoryFixture({ category: "arts", courseId: course2.id }),
     ]);
 
-    const result = await listCourseCategories({ courseId: course1.id });
+    const result = await listCourseCategories({
+      courseSlug: course1.slug,
+      language: course1.language,
+      orgSlug: organization.slug,
+    });
 
     expect(result.error).toBeNull();
     expect(result.data?.length).toBe(2);
@@ -73,7 +89,13 @@ describe("listCourseCategories", () => {
   });
 
   test("returns empty array for non-existent course", async () => {
-    const result = await listCourseCategories({ courseId: 999_999 });
+    const organization = await organizationFixture();
+
+    const result = await listCourseCategories({
+      courseSlug: "non-existent-course",
+      language: "en",
+      orgSlug: organization.slug,
+    });
 
     expect(result.error).toBeNull();
     expect(result.data).toEqual([]);
