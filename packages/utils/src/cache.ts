@@ -19,3 +19,13 @@ export function cacheTagOrgCourses({ orgSlug }: { orgSlug: string }) {
 export function cacheTagCoursesList({ language }: { language: string }) {
   return `courses-list:${language}`.slice(0, CACHE_TAG_LIMIT);
 }
+
+export function cacheTagCoursesListByCategory({
+  language,
+  category,
+}: {
+  language: string;
+  category: string;
+}) {
+  return `courses-list:${language}:${category}`.slice(0, CACHE_TAG_LIMIT);
+}
