@@ -3,11 +3,13 @@ import {
   ItemContent,
   ItemDescription,
   ItemGroup,
+  type ItemGroupProps,
   ItemMedia,
   type ItemProps,
   ItemTitle,
 } from "@zoonk/ui/components/item";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon, NotebookPenIcon } from "lucide-react";
 
 export type CourseListItem = {
@@ -54,13 +56,23 @@ export function CourseListItemView({
   );
 }
 
-export function CourseListGroup(props: React.ComponentProps<typeof ItemGroup>) {
-  return <ItemGroup {...props} />;
+export function CourseListGroup({
+  className,
+  layout = "grid",
+  ...props
+}: ItemGroupProps) {
+  return (
+    <ItemGroup
+      className={cn({ "-mt-4": layout === "grid" }, className)}
+      layout={layout}
+      {...props}
+    />
+  );
 }
 
-export function CourseListSkeleton({ count = 10 }: { count?: number }) {
+export function CourseListSkeleton({ count = 12 }: { count?: number }) {
   return (
-    <ItemGroup>
+    <ItemGroup layout="grid">
       {Array.from({ length: count }).map((_, index) => (
         <Item key={index}>
           <ItemMedia

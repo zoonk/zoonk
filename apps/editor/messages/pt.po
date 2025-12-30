@@ -225,16 +225,6 @@ msgctxt "TcTp+J"
 msgid "Image uploaded"
 msgstr "Imagem enviada"
 
-#: src/app/[orgSlug]/course-list.tsx
-msgctxt "c0YWuA"
-msgid "Your organization hasn't created any courses yet."
-msgstr "Sua organização ainda não criou nenhum curso."
-
-#: src/app/[orgSlug]/course-list.tsx
-msgctxt "zJxO2f"
-msgid "No courses"
-msgstr "Sem cursos"
-
 #: src/app/[orgSlug]/home-container-header.tsx
 msgctxt "6gzGoI"
 msgid "Select a course to edit its content"
@@ -252,6 +242,16 @@ msgstr "Criar curso"
 msgctxt "R85gsW"
 msgid "Courses"
 msgstr "Cursos"
+
+#: src/app/[orgSlug]/list-courses.tsx
+msgctxt "c0YWuA"
+msgid "Your organization hasn't created any courses yet."
+msgstr "Sua organização ainda não criou nenhum curso."
+
+#: src/app/[orgSlug]/list-courses.tsx
+msgctxt "zJxO2f"
+msgid "No courses"
+msgstr "Sem cursos"
 
 #: src/app/[orgSlug]/new-course/actions.ts
 msgctxt "bLbK+M"

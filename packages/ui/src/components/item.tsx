@@ -5,14 +5,29 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 import type * as React from "react";
 
-function ItemGroup({ className, ...props }: React.ComponentProps<"div">) {
+const itemGroupVariants = cva(
+  "group/item-group flex w-full flex-col gap-4 has-data-[size=sm]:gap-2.5 has-data-[size=xs]:gap-2 has-data-[variant=default]:gap-0",
+  {
+    defaultVariants: {
+      layout: "list",
+    },
+    variants: {
+      layout: {
+        grid: "md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-4 xl:grid-cols-3 2xl:grid-cols-4",
+        list: "",
+      },
+    },
+  },
+);
+
+type ItemGroupProps = React.ComponentProps<"div"> &
+  VariantProps<typeof itemGroupVariants>;
+
+function ItemGroup({ className, layout, ...props }: ItemGroupProps) {
   return (
     // biome-ignore lint/a11y/useSemanticElements: Stylized grouping component, not an actual list
     <div
-      className={cn(
-        "group/item-group flex w-full flex-col gap-4 has-data-[size=sm]:gap-2.5 has-data-[size=xs]:gap-2 has-data-[variant=default]:gap-0",
-        className,
-      )}
+      className={cn(itemGroupVariants({ layout }), className)}
       data-slot="item-group"
       role="list"
       {...props}
@@ -205,5 +220,6 @@ export {
   ItemHeader,
   ItemFooter,
   type ItemProps,
+  type ItemGroupProps,
   type ItemMediaProps,
 };
