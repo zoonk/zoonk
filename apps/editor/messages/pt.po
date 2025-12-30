@@ -487,6 +487,16 @@ msgctxt "xl9KyD"
 msgid "Alternative titles imported successfully"
 msgstr "Títulos alternativos importados com sucesso"
 
+#: src/components/category-editor.tsx
+msgctxt "HzJbix"
+msgid "Add category"
+msgstr "Adicionar categoria"
+
+#: src/components/category-editor.tsx
+msgctxt "VKb1MS"
+msgid "Categories"
+msgstr "Categorias"
+
 #: src/components/content-editor.tsx
 msgctxt "BfrgHC"
 msgid "Unsaved"
@@ -693,77 +703,77 @@ msgctxt "QGLi0O"
 msgid "URL address"
 msgstr "Endereço URL"
 
-#: src/lib/categories.ts
+#: src/hooks/use-category-labels.ts
 msgctxt "djJp6c"
 msgid "History"
 msgstr "História"
 
-#: src/lib/categories.ts
+#: src/hooks/use-category-labels.ts
 msgctxt "dPgwrL"
 msgid "Math"
 msgstr "Matemática"
 
-#: src/lib/categories.ts
+#: src/hooks/use-category-labels.ts
 msgctxt "fFt3il"
 msgid "Arts"
 msgstr "Artes"
 
-#: src/lib/categories.ts
+#: src/hooks/use-category-labels.ts
 msgctxt "GsBRWL"
 msgid "Languages"
 msgstr "Idiomas"
 
-#: src/lib/categories.ts
+#: src/hooks/use-category-labels.ts
 msgctxt "hlmkcL"
 msgid "Health"
 msgstr "Saúde"
 
-#: src/lib/categories.ts
+#: src/hooks/use-category-labels.ts
 msgctxt "hwL7a0"
 msgid "Engineering"
 msgstr "Engenharia"
 
-#: src/lib/categories.ts
+#: src/hooks/use-category-labels.ts
 msgctxt "I1ZCPK"
 msgid "Technology"
 msgstr "Tecnologia"
 
-#: src/lib/categories.ts
+#: src/hooks/use-category-labels.ts
 msgctxt "KOuDOE"
 msgid "Economics"
 msgstr "Economia"
 
-#: src/lib/categories.ts
+#: src/hooks/use-category-labels.ts
 msgctxt "mn6pIm"
 msgid "Culture"
 msgstr "Cultura"
 
-#: src/lib/categories.ts
+#: src/hooks/use-category-labels.ts
 msgctxt "n5D/Ku"
 msgid "Communication"
 msgstr "Comunicação"
 
-#: src/lib/categories.ts
+#: src/hooks/use-category-labels.ts
 msgctxt "OV/2+4"
 msgid "Society"
 msgstr "Sociedade"
 
-#: src/lib/categories.ts
+#: src/hooks/use-category-labels.ts
 msgctxt "qydxOd"
 msgid "Science"
 msgstr "Ciência"
 
-#: src/lib/categories.ts
+#: src/hooks/use-category-labels.ts
 msgctxt "u3ovjm"
 msgid "Law"
 msgstr "Direito"
 
-#: src/lib/categories.ts
+#: src/hooks/use-category-labels.ts
 msgctxt "w1Fanr"
 msgid "Business"
 msgstr "Negócios"
 
-#: src/lib/categories.ts
+#: src/hooks/use-category-labels.ts
 msgctxt "YMDBNH"
 msgid "Geography"
 msgstr "Geografia"

@@ -95,7 +95,7 @@ export function SlugEditor({
   }
 
   return (
-    <div className="flex flex-col gap-1 px-4">
+    <div className="flex flex-col gap-1">
       <EditableLabel htmlFor="slug-editor" icon={LinkIcon}>
         {t("URL address")}
       </EditableLabel>
