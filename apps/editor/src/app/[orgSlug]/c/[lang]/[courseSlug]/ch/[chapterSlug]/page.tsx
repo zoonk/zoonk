@@ -1,4 +1,4 @@
-import { Container } from "@zoonk/ui/components/container";
+import { Container, ContainerBody } from "@zoonk/ui/components/container";
 import { Suspense } from "react";
 import { BackLinkSkeleton } from "@/components/back-link";
 import { ContentEditorSkeleton } from "@/components/content-editor";
@@ -35,9 +35,11 @@ export default async function ChapterPage(props: ChapterPageProps) {
         <ChapterContent params={props.params} />
       </Suspense>
 
-      <Suspense fallback={<SlugEditorSkeleton />}>
-        <ChapterSlug params={props.params} />
-      </Suspense>
+      <ContainerBody>
+        <Suspense fallback={<SlugEditorSkeleton />}>
+          <ChapterSlug params={props.params} />
+        </Suspense>
+      </ContainerBody>
 
       <Suspense fallback={<ItemListSkeleton />}>
         <LessonList params={props.params} />
