@@ -1,19 +1,15 @@
 import "server-only";
 
 import { getSession } from "@zoonk/core/users/session/get";
-import { type Course, prisma } from "@zoonk/db";
-import { clampQueryItems } from "@zoonk/db/utils";
+import { type Course, type Organization, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import { ErrorCode } from "@/lib/app-error";
 
-const LIST_USER_COURSES_LIMIT = 20;
+export type UserCourse = Course & { organization: Organization };
 
 export const listUserCourses = cache(
-  async (params?: {
-    headers?: Headers;
-    limit?: number;
-  }): Promise<SafeReturn<Course[]>> => {
+  async (params?: { headers?: Headers }): Promise<SafeReturn<UserCourse[]>> => {
     const session = await getSession({ headers: params?.headers });
 
     if (!session) {
@@ -24,9 +20,8 @@ export const listUserCourses = cache(
 
     const { data, error } = await safeAsync(() =>
       prisma.courseUser.findMany({
-        include: { course: true },
+        include: { course: { include: { organization: true } } },
         orderBy: { startedAt: "desc" },
-        take: clampQueryItems(params?.limit ?? LIST_USER_COURSES_LIMIT),
         where: { userId },
       }),
     );

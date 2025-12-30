@@ -160,6 +160,7 @@ msgid "Online Courses using AI"
 msgstr "Cursos online usando IA"
 
 #: src/app/[locale]/(catalog)/courses/page.tsx
+#: src/app/[locale]/(catalog)/my/user-course-list.tsx
 msgctxt "s+Ncqj"
 msgid "Explore courses"
 msgstr "Explorar cursos"
@@ -260,6 +261,11 @@ msgid "Learn Anything with AI"
 msgstr "Aprenda qualquer coisa com IA"
 
 #: src/app/[locale]/(catalog)/my/page.tsx
+msgctxt "Dr13kE"
+msgid "Continue where you left off"
+msgstr "Continue de onde você parou"
+
+#: src/app/[locale]/(catalog)/my/page.tsx
 msgctxt "eeNr/Y"
 msgid "My Courses"
 msgstr "Meus cursos"
@@ -268,6 +274,16 @@ msgstr "Meus cursos"
 msgctxt "wfuVYZ"
 msgid "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons and activities."
 msgstr "Veja todos os cursos que você começou no Zoonk. Continue de onde parou e acompanhe seu progresso nas aulas interativas e atividades."
+
+#: src/app/[locale]/(catalog)/my/user-course-list.tsx
+msgctxt "azX41u"
+msgid "Start learning something new today."
+msgstr "Comece a aprender algo novo hoje."
+
+#: src/app/[locale]/(catalog)/my/user-course-list.tsx
+msgctxt "BDHWkf"
+msgid "No courses yet"
+msgstr "Ainda não há cursos"
 
 #: src/app/[locale]/(catalog)/page.tsx
 msgctxt "qsfeMJ"

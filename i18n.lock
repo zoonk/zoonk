@@ -189,7 +189,12 @@ checksums:
     Settings/singular: 8df6777277469c1fd88cc18dde2f1cc3
     Support/singular: 55aab5fd0f31a9cb055a2edeeedfaf63
     Subscription/singular: ba9f3675e18987d067d48533c8897343
+    Loading%20more%20courses%E2%80%A6/singular: 290733f8b53c88f64b385ba9dd320acf
+    No%20courses%20available%20yet./singular: 1a6b72175b8ad0ce36f9cb0bcaab4c84
+    No%20courses/singular: 72fc2629e79529e927834070a26d2a07
+    Start%20learning%20something%20new%20today/singular: 727ed4b5249a54fc3975f77b91e96757
     Online%20Courses%20using%20AI/singular: 4e3c619f363cc66f3f2e604e372ca038
+    Explore%20courses/singular: 3a60fa1d4a1a6cfffcc0573e3366cd35
     Explore%20all%20Zoonk%20courses%20to%20learn%20anything%20using%20AI.%20Find%20interactive%20lessons%2C%20challenges%2C%20and%20activities%20to%20learn%20subjects%20like%20science%2C%20math%2C%20technology%2C%20and%20more./singular: c3f4a7dfd17b4523b5535f40170c7731
     Did%20you%20like%20this%20content%3F/singular: 23b97024cf20ceee3ee4a1ddc65d251c
     Send%20feedback/singular: 9631cc08d49da04475b30a0d320ce97c
@@ -209,8 +214,11 @@ checksums:
     Tell%20Zoonk%20what%20you%20want%20to%20learn%20and%20get%20a%20course%20generated%20by%20AI.%20Start%20learning%20any%20subject%20with%20interactive%20lessons%20and%20activities./singular: bce6930e3cd7b20455ea7996a65cbe4f
     What%20do%20you%20want%20to%20learn%3F/singular: eae5c853dbe20fa2e1eacb1e8396d3de
     Learn%20Anything%20with%20AI/singular: af8ba68f4986f321a1025e9b0f4ac794
+    Continue%20where%20you%20left%20off/singular: c3ef4fd14e046d53816ede13fc5d27fc
     My%20Courses/singular: 3031c7801404796addff2b7d796fa4c2
     View%20all%20the%20courses%20you%20started%20on%20Zoonk.%20Continue%20where%20you%20left%20off%20and%20track%20your%20progress%20across%20interactive%20lessons%20and%20activities./singular: eee1ce9f3b0be49ddc9bb3ce21270796
+    Start%20learning%20something%20new%20today./singular: 55903bfd6e1f8c3e95c73ec67427ed11
+    No%20courses%20yet/singular: d5fcc38466fdc83a74eab5032a2f85b6
     Zoonk%3A%20AI%20Learning%20Platform/singular: 4a2d25490f4a5e5cd4543f48fcec968d
     Zoonk%20is%20an%20AI-powered%20learning%20platform%20where%20you%20can%20learn%20anything%20through%20interactive%20courses%2C%20lessons%2C%20and%20activities./singular: e836899ce8100db55d5fa54fe6375970
     Checking%20if%20you're%20logged%20in.../singular: b50f05bfcb51cad6913150273e551291
