@@ -10,6 +10,7 @@
     "typescript": "^5"
   },
   "exports": {
+    "./fixtures/activities": "./src/fixtures/activities.ts",
     "./fixtures/auth": "./src/fixtures/auth.ts",
     "./fixtures/chapters": "./src/fixtures/chapters.ts",
     "./fixtures/courses": "./src/fixtures/courses.ts",
