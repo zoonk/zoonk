@@ -8,13 +8,14 @@ type ChapterSeedData = {
   title: string;
 };
 
-type LanguageChapters = {
+type CourseChapters = {
   courseSlug: string;
+  language: string;
   chapters: ChapterSeedData[];
 };
 
-const chaptersData: Record<string, LanguageChapters> = {
-  en: {
+const chaptersData: CourseChapters[] = [
+  {
     chapters: [
       {
         description:
@@ -53,8 +54,9 @@ const chaptersData: Record<string, LanguageChapters> = {
       },
     ],
     courseSlug: "machine-learning",
+    language: "en",
   },
-  pt: {
+  {
     chapters: [
       {
         description:
@@ -93,18 +95,118 @@ const chaptersData: Record<string, LanguageChapters> = {
       },
     ],
     courseSlug: "machine-learning",
+    language: "pt",
   },
-};
+  {
+    chapters: [
+      {
+        description:
+          "Learn the Spanish alphabet, basic pronunciation rules, and common greetings for everyday conversations.",
+        isPublished: true,
+        slug: "spanish-basics",
+        title: "Spanish Basics",
+      },
+      {
+        description:
+          "Build essential vocabulary for travel, food, family, and daily activities.",
+        isPublished: true,
+        slug: "essential-vocabulary",
+        title: "Essential Vocabulary",
+      },
+    ],
+    courseSlug: "spanish",
+    language: "en",
+  },
+  {
+    chapters: [
+      {
+        description:
+          "Explore our solar system, including the Sun, planets, moons, and other celestial bodies.",
+        isPublished: true,
+        slug: "solar-system",
+        title: "The Solar System",
+      },
+      {
+        description:
+          "Learn about stars, their life cycles, and how they form the building blocks of galaxies.",
+        isPublished: true,
+        slug: "stars-and-galaxies",
+        title: "Stars and Galaxies",
+      },
+    ],
+    courseSlug: "astronomy",
+    language: "en",
+  },
+  {
+    chapters: [
+      {
+        description:
+          "Learn Python syntax, variables, data types, and write your first programs.",
+        isPublished: true,
+        slug: "python-fundamentals",
+        title: "Python Fundamentals",
+      },
+      {
+        description:
+          "Master lists, dictionaries, sets, and tuples for organizing and manipulating data.",
+        isPublished: true,
+        slug: "data-structures",
+        title: "Data Structures",
+      },
+    ],
+    courseSlug: "python-programming",
+    language: "en",
+  },
+  {
+    chapters: [
+      {
+        description:
+          "Learn HTML structure, semantic elements, and how to create well-organized web pages.",
+        isPublished: true,
+        slug: "html-foundations",
+        title: "HTML Foundations",
+      },
+      {
+        description:
+          "Style your web pages with CSS, including layouts, colors, typography, and responsive design.",
+        isPublished: true,
+        slug: "css-styling",
+        title: "CSS Styling",
+      },
+    ],
+    courseSlug: "web-development",
+    language: "en",
+  },
+  {
+    chapters: [
+      {
+        description:
+          "Understand data types, data sources, and the fundamentals of data analysis workflows.",
+        isPublished: true,
+        slug: "intro-to-data-science",
+        title: "Introduction to Data Science",
+      },
+      {
+        description:
+          "Learn techniques for cleaning, transforming, and preparing data for analysis.",
+        isPublished: true,
+        slug: "data-wrangling",
+        title: "Data Wrangling",
+      },
+    ],
+    courseSlug: "data-science",
+    language: "en",
+  },
+];
 
-async function seedChaptersForLanguage(
+async function seedChaptersForCourse(
   prisma: PrismaClient,
   org: Organization,
-  language: string,
-  data: LanguageChapters,
+  data: CourseChapters,
 ): Promise<void> {
   const course = await prisma.course.findFirst({
     where: {
-      language,
+      language: data.language,
       organizationId: org.id,
       slug: data.courseSlug,
     },
@@ -120,7 +222,7 @@ async function seedChaptersForLanguage(
         courseId: course.id,
         description: chapterData.description,
         isPublished: chapterData.isPublished,
-        language,
+        language: data.language,
         normalizedTitle: normalizeString(chapterData.title),
         organizationId: org.id,
         position,
@@ -130,7 +232,7 @@ async function seedChaptersForLanguage(
       update: {},
       where: {
         orgLanguageChapterSlug: {
-          language,
+          language: data.language,
           organizationId: org.id,
           slug: chapterData.slug,
         },
@@ -145,8 +247,8 @@ export async function seedChapters(
   prisma: PrismaClient,
   org: Organization,
 ): Promise<void> {
-  const seedPromises = Object.entries(chaptersData).map(([language, data]) =>
-    seedChaptersForLanguage(prisma, org, language, data),
+  const seedPromises = chaptersData.map((data) =>
+    seedChaptersForCourse(prisma, org, data),
   );
 
   await Promise.all(seedPromises);

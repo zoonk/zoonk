@@ -64,6 +64,106 @@ const lessonsData: ChapterLessons[] = [
       },
     ],
   },
+  {
+    chapterSlug: "spanish-basics",
+    language: "en",
+    lessons: [
+      {
+        description:
+          "Learn the Spanish alphabet, vowel sounds, and basic pronunciation rules.",
+        isPublished: true,
+        slug: "spanish-alphabet",
+        title: "The Spanish Alphabet",
+      },
+      {
+        description:
+          "Master common greetings and introductions for everyday conversations.",
+        isPublished: true,
+        slug: "greetings-introductions",
+        title: "Greetings and Introductions",
+      },
+    ],
+  },
+  {
+    chapterSlug: "solar-system",
+    language: "en",
+    lessons: [
+      {
+        description:
+          "Learn about the Sun, its structure, and its importance to our solar system.",
+        isPublished: true,
+        slug: "the-sun",
+        title: "The Sun",
+      },
+      {
+        description:
+          "Explore the inner planets: Mercury, Venus, Earth, and Mars.",
+        isPublished: true,
+        slug: "inner-planets",
+        title: "The Inner Planets",
+      },
+    ],
+  },
+  {
+    chapterSlug: "python-fundamentals",
+    language: "en",
+    lessons: [
+      {
+        description:
+          "Set up Python on your computer and write your first Hello World program.",
+        isPublished: true,
+        slug: "getting-started-python",
+        title: "Getting Started with Python",
+      },
+      {
+        description:
+          "Understand variables, data types, and basic operations in Python.",
+        isPublished: true,
+        slug: "variables-data-types",
+        title: "Variables and Data Types",
+      },
+    ],
+  },
+  {
+    chapterSlug: "html-foundations",
+    language: "en",
+    lessons: [
+      {
+        description:
+          "Understand HTML document structure, elements, and create your first web page.",
+        isPublished: true,
+        slug: "intro-to-html",
+        title: "Introduction to HTML",
+      },
+      {
+        description:
+          "Learn about semantic HTML elements and how to structure content meaningfully.",
+        isPublished: true,
+        slug: "semantic-html",
+        title: "Semantic HTML",
+      },
+    ],
+  },
+  {
+    chapterSlug: "intro-to-data-science",
+    language: "en",
+    lessons: [
+      {
+        description:
+          "Understand what data science is and the role of a data scientist in modern organizations.",
+        isPublished: true,
+        slug: "what-is-data-science",
+        title: "What is Data Science?",
+      },
+      {
+        description:
+          "Learn about different types of data, data sources, and how to collect data for analysis.",
+        isPublished: true,
+        slug: "types-of-data",
+        title: "Types of Data",
+      },
+    ],
+  },
 ];
 
 export async function seedLessons(
