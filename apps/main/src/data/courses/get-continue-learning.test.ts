@@ -13,7 +13,10 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
-import { getContinueLearning } from "./get-continue-learning";
+import {
+  getContinueLearning,
+  MAX_CONTINUE_LEARNING_ITEMS,
+} from "./get-continue-learning";
 
 async function createCourseWithActivity(organizationId: number) {
   const course = await courseFixture({
@@ -93,7 +96,7 @@ describe("authenticated users", () => {
     const headers = await signInAs(user.email, user.password);
 
     const courseData = await Promise.all(
-      Array.from({ length: 7 }, () =>
+      Array.from({ length: MAX_CONTINUE_LEARNING_ITEMS + 3 }, () =>
         createCourseWithActivity(organization.id),
       ),
     );
@@ -109,7 +112,7 @@ describe("authenticated users", () => {
 
     const result = await getContinueLearning({ headers });
 
-    expect(result).toHaveLength(5);
+    expect(result).toHaveLength(MAX_CONTINUE_LEARNING_ITEMS);
 
     const resultCourseIds = result.map((r) => r.course.id);
     const expectedIds = courseData

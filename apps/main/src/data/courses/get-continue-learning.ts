@@ -13,6 +13,8 @@ import {
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
+export const MAX_CONTINUE_LEARNING_ITEMS = 4;
+
 export type ContinueLearningActivity = Pick<
   Activity,
   "id" | "kind" | "title" | "position"
@@ -153,7 +155,7 @@ export const getContinueLearning = cache(
           },
         },
         orderBy: { startedAt: "desc" },
-        take: 4,
+        take: MAX_CONTINUE_LEARNING_ITEMS,
         where: { userId },
       }),
     );
