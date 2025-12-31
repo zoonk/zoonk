@@ -8,6 +8,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - [Design Style](#design-style)
 - [Tech stack](#tech-stack)
 - [Project structure](#project-structure)
+- [Database Queries](#database-queries)
 - [Tools](#tools)
 - [Conventions](#conventions)
 - [Compound Components](#compound-components)
@@ -93,6 +94,65 @@ This separation allows each app to:
 - Avoid complex conditional logic for different use cases
 
 Read each folder's README file for more details
+
+## Database Queries
+
+### Avoiding Over-Fetching
+
+**CRITICAL**: Never fetch more data than needed. This is a common performance anti-pattern:
+
+```ts
+// BAD: Fetches ALL chapters, lessons, activities just to find ONE item
+const courses = await prisma.course.findMany({
+  include: {
+    chapters: {
+      include: {
+        lessons: {
+          include: {
+            activities: true, // Fetches 100s of records
+          },
+        },
+      },
+    },
+  },
+});
+// Then iterates in JavaScript to find one item - WASTEFUL!
+```
+
+**Problems with over-fetching:**
+
+- Loads 100s-1000s of records when only a few are needed
+- JavaScript iteration instead of database filtering
+- Memory pressure on server
+- Slow first loads even with caching
+
+**Solutions:**
+
+1. Use `select` to fetch only needed fields
+2. Use `where` clauses to filter at database level
+3. Use `take` to limit results
+4. For complex queries, use [TypedSQL](#typedsql)
+
+### TypedSQL
+
+When Prisma's query builder can't efficiently express what you need (e.g., `DISTINCT ON`, window functions, complex joins), use [Prisma TypedSQL](https://www.prisma.io/docs/orm/prisma-client/using-raw-sql/typedsql) instead of `$queryRaw`.
+
+See [get-continue-learning.ts](./apps/main/src/data/courses/get-continue-learning.ts) for an example of how to use TypedSQL.
+
+**Why TypedSQL over raw SQL:**
+
+- Full type safety (inputs and outputs)
+- Auto-completion in IDE
+- Compile-time checks
+- No manual type mapping
+
+**When to use TypedSQL:**
+
+- `DISTINCT ON` queries (PostgreSQL)
+- Window functions (`ROW_NUMBER`, `RANK`, etc.)
+- Complex aggregations
+- CTEs (Common Table Expressions)
+- Any query where Prisma would over-fetch then filter in JS
 
 ### Folder Structure
 
