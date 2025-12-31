@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
+import { getContinueLearning } from "@/data/courses/get-continue-learning";
 import {
   ContinueLearning,
   ContinueLearningSkeleton,
@@ -23,6 +24,9 @@ export async function generateMetadata({
 export default async function Home({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale);
+
+  // preload data
+  void getContinueLearning();
 
   return (
     <Suspense fallback={<ContinueLearningSkeleton />}>

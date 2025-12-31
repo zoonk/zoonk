@@ -1,5 +1,6 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { ChevronRightIcon, PlayCircleIcon } from "lucide-react";
+import { cacheLife } from "next/cache";
 import Image from "next/image";
 import { getExtracted } from "next-intl/server";
 import {
@@ -79,11 +80,12 @@ function ContinueLearningCard({
 }
 
 export async function ContinueLearning() {
+  "use cache: private";
+  cacheLife("minutes");
+
   const t = await getExtracted();
-  const [items, activityKinds] = await Promise.all([
-    getContinueLearning(),
-    getActivityKinds(),
-  ]);
+  const activityKinds = await getActivityKinds();
+  const items = await getContinueLearning();
 
   if (items.length === 0) {
     return <Hero />;
