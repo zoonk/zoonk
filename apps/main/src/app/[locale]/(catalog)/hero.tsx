@@ -29,7 +29,7 @@ export async function Hero() {
           })}
           href="/learn"
         >
-          <SparklesIcon aria-hidden="true" className="size-4" />
+          <SparklesIcon aria-hidden="true" />
           {t("Learn anything")}
         </Link>
 
@@ -42,7 +42,7 @@ export async function Hero() {
           href="/courses"
         >
           {t("Explore courses")}
-          <ArrowRightIcon aria-hidden="true" className="size-4" />
+          <ArrowRightIcon aria-hidden="true" />
         </Link>
       </div>
     </main>
