@@ -91,7 +91,7 @@ describe("authenticated users", () => {
     expect(result[0]?.activity.id).toBe(activity.id);
   });
 
-  test("returns max 5 courses ordered by most recent", async () => {
+  test("returns max courses ordered by most recent", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
