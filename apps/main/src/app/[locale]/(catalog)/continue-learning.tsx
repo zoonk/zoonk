@@ -14,7 +14,7 @@ import {
   FeatureCardThumbnailImage,
   FeatureCardThumbnailPlaceholder,
   FeatureCardTitle,
-} from "@zoonk/ui/components/feature-card";
+} from "@zoonk/ui/components/feature";
 import { ScrollArea, ScrollBar } from "@zoonk/ui/components/scroll-area";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { PlayCircleIcon } from "lucide-react";
@@ -56,22 +56,24 @@ function ContinueLearningCard({
       </Link>
 
       <FeatureCardContent>
-        <FeatureCardThumbnail size="lg">
-          {course.imageUrl ? (
-            <FeatureCardThumbnailImage>
-              <Image
-                alt={course.title}
-                height={96}
-                src={course.imageUrl}
-                width={96}
-              />
-            </FeatureCardThumbnailImage>
-          ) : (
-            <FeatureCardThumbnailPlaceholder>
-              <PlayCircleIcon aria-hidden="true" />
-            </FeatureCardThumbnailPlaceholder>
-          )}
-        </FeatureCardThumbnail>
+        <Link href={activityHref}>
+          <FeatureCardThumbnail size="lg">
+            {course.imageUrl ? (
+              <FeatureCardThumbnailImage>
+                <Image
+                  alt={course.title}
+                  height={96}
+                  src={course.imageUrl}
+                  width={96}
+                />
+              </FeatureCardThumbnailImage>
+            ) : (
+              <FeatureCardThumbnailPlaceholder>
+                <PlayCircleIcon aria-hidden="true" />
+              </FeatureCardThumbnailPlaceholder>
+            )}
+          </FeatureCardThumbnail>
+        </Link>
 
         <FeatureCardBody>
           <FeatureCardTitle>
