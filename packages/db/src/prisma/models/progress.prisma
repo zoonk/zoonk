@@ -1,0 +1,57 @@
+model StepAttempt {
+  id              Int          @id @default(autoincrement())
+  userId          Int          @map("user_id")
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stepId          Int          @map("step_id")
+  step            Step         @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  organizationId  Int          @map("organization_id")
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  isCorrect       Boolean      @map("is_correct")
+  answer          Json
+  effects         Json?
+  durationSeconds Int          @map("duration_seconds")
+  answeredAt      DateTime     @default(now()) @map("answered_at")
+  hourOfDay       Int          @map("hour_of_day") @db.SmallInt
+  dayOfWeek       Int          @map("day_of_week") @db.SmallInt
+
+  @@index([userId, answeredAt])
+  @@index([stepId])
+  @@index([organizationId])
+  @@index([userId, organizationId])
+  @@index([userId, dayOfWeek])
+  @@index([userId, hourOfDay])
+  @@map("step_attempts")
+}
+
+model UserProgress {
+  id              Int      @id @default(autoincrement())
+  userId          Int      @unique @map("user_id")
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  currentEnergy   Float    @default(0) @map("current_energy")
+  totalBrainPower BigInt   @default(0) @map("total_brain_power")
+  lastActiveAt    DateTime @default(now()) @map("last_active_at")
+
+  @@map("user_progress")
+}
+
+model DailyProgress {
+  id                   Int           @id @default(autoincrement())
+  userId               Int           @map("user_id")
+  user                 User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date                 DateTime      @db.Date
+  organizationId       Int?          @map("organization_id")
+  organization         Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  correctAnswers       Int           @default(0) @map("correct_answers")
+  incorrectAnswers     Int           @default(0) @map("incorrect_answers")
+  staticCompleted      Int           @default(0) @map("static_completed")
+  interactiveCompleted Int           @default(0) @map("interactive_completed")
+  challengesCompleted  Int           @default(0) @map("challenges_completed")
+  brainPowerEarned     Int           @default(0) @map("brain_power_earned")
+  timeSpentSeconds     Int           @default(0) @map("time_spent_seconds")
+  energyAtEnd          Float         @default(0) @map("energy_at_end")
+
+  @@unique([userId, date, organizationId], name: "userDateOrg")
+  @@index([userId, date])
+  @@index([organizationId])
+  @@map("daily_progress")
+}

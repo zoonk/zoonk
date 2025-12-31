@@ -24,6 +24,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - [Content & Accessibility](#content--accessibility)
 - [Performance](#performance)
 - [Design](#design)
+- [Content System](#content-system)
 
 ## Principles
 
@@ -511,6 +512,76 @@ You can delay unwrapping the Promise (either with await or React.use) until you 
 - MUST: Increase contrast on `:hover/:active/:focus`
 - SHOULD: Match browser UI to bg
 - SHOULD: Avoid gradient banding (use masks when needed)
+
+## Content System
+
+Zoonk's content is structured hierarchically: **Courses → Chapters → Lessons → Activities → Steps**.
+
+### Lessons
+
+Lessons have a `kind` field that determines their structure:
+
+- **core**: Regular AI-generated lessons with structured activities (background, explanation, explanation_quiz, mechanics, examples, story, logic, challenge, lesson_quiz)
+- **language**: Language learning lessons (vocabulary, grammar, reading, listening, pronunciation, review)
+- **custom**: User-created lessons or lessons that don't fit the standard structure (e.g., tutorials, step-by-step guides)
+
+### Activities
+
+Activities belong to lessons and have a `kind` field that specifies the activity type. Valid activity kinds depend on the parent lesson's kind:
+
+- **Core lessons**: background, explanation, explanation_quiz, mechanics, examples, story, logic, challenge, lesson_quiz
+- **Language lessons**: vocabulary, grammar, reading, listening, pronunciation, review
+- **Custom lessons**: custom (uses title/description for user-defined content)
+
+#### Challenge Mode
+
+Any activity can become a challenge by setting `inventory` and `winCriteria`. Challenges track inventory items (e.g., `codeQuality: 60`) and require meeting win conditions (e.g., `codeQuality >= 70`). Step options have `effects` that modify inventory values.
+
+### Steps
+
+Steps are the atomic learning units within activities. Kinds:
+
+| Kind              | Description                                     |
+| ----------------- | ----------------------------------------------- |
+| `static`          | Title + brief text content (informational)      |
+| `multiple_choice` | Question with selectable options                |
+| `match_columns`   | Pair matching exercise                          |
+| `fill_blank`      | Sentence completion with word bank              |
+| `select_image`    | Image selection question                        |
+| `sort_order`      | Ordering items correctly                        |
+| `arrange_words`   | Word arrangement (useful for language learning) |
+
+Steps can have visual resources (`visualKind`): `code`, `image`, `table`, `chart_bar`, `chart_line`, `chart_pie`, `chart_area`, `diagram`, `timeline`, `quote`, `audio`, `video`.
+
+### User Progress
+
+Progress is tracked at multiple levels:
+
+- **StepAttempt**: Every answer recorded with correctness, duration, time of day
+- **ActivityProgress**: Activity start/completion times, challenge results
+- **UserProgress**: Current energy level (0-100%), total Brain Power
+- **DailyProgress**: Daily aggregates per organization
+
+#### Energy Level
+
+- Starts at 0%, max 100%
+- Correct answers: +0.1%
+- Incorrect answers: -0.05%
+- Daily decay: -1% per inactive day
+
+#### Belt System (Brain Power)
+
+Users earn BP for completing activities:
+
+- Static steps: 10 BP
+- Interactive steps: 25 BP
+- Challenges: 100 BP
+
+Belt levels (10 levels each): White (250 BP/level) → Yellow (500) → Orange (1k) → Green (5k) → Blue (10k) → Purple (20k) → Brown (40k) → Red (60k) → Gray (80k) → Black (100k)
+
+#### Future Extensibility
+
+The `StepAttempt.effects` JSON field is designed to support future skill tracking (e.g., `{ "skills": { "leadership": 5 } }`). When skills are implemented, aggregation tables will be added for fast querying.
 
 ## Updating this document
 

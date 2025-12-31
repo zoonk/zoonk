@@ -1,21 +1,24 @@
 model Lesson {
-  id              Int      @id @default(autoincrement())
-  organizationId  Int      @map("organization_id")
+  id              Int          @id @default(autoincrement())
+  organizationId  Int          @map("organization_id")
   organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  chapterId       Int      @map("chapter_id")
-  chapter         Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  isPublished     Boolean  @default(false) @map("is_published")
-  language        String   @db.VarChar(10)
+  chapterId       Int          @map("chapter_id")
+  chapter         Chapter      @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  isPublished     Boolean      @default(false) @map("is_published")
+  language        String       @db.VarChar(10)
+  kind            String       @default("core") @db.VarChar(20)
   slug            String
   title           String
-  normalizedTitle String   @map("normalized_title")
+  normalizedTitle String       @map("normalized_title")
   description     String
   position        Int
-  createdAt       DateTime @default(now()) @map("created_at")
-  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @default(now()) @updatedAt @map("updated_at")
+  activities      Activity[]
 
   @@unique([organizationId, language, slug], name: "orgLanguageLessonSlug")
   @@index([organizationId, normalizedTitle])
   @@index([chapterId, position])
+  @@index([organizationId, kind])
   @@map("lessons")
 }

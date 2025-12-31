@@ -12,6 +12,7 @@ export function lessonAttrs(
     chapterId: 0,
     description: "Test lesson description",
     isPublished: false,
+    kind: "core",
     language: "en",
     normalizedTitle,
     organizationId: 0,
