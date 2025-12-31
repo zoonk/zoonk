@@ -233,7 +233,7 @@ function FeatureCardTitle({
   return (
     <div
       className={cn(
-        "truncate font-semibold text-base text-foreground/90 leading-none [&>a]:underline-offset-2 [&>a]:transition-colors [&>a]:hover:text-foreground [&>a]:hover:underline",
+        "truncate font-semibold text-base text-foreground/90 leading-none [&>a]:underline-offset-1 [&>a]:transition-colors [&>a]:hover:text-foreground [&>a]:hover:underline",
         className,
       )}
       data-slot="feature-card-title"
