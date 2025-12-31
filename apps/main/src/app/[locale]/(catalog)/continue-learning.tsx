@@ -26,13 +26,13 @@ function ContinueLearningCard({
   const courseHref = `/b/${course.organization.slug}/c/${course.slug}`;
 
   return (
-    <article className="group flex w-72 shrink-0 snap-start flex-col gap-2 md:w-80">
+    <article className="group flex w-[85vw] shrink-0 snap-start flex-col gap-2 sm:w-[45vw] 2xl:w-[calc(20%-1rem)]">
       <Link
         className="flex w-full items-center justify-between text-primary text-sm transition-colors hover:text-primary/80"
         href={activityHref}
       >
-        <span className="flex items-center gap-2">
-          <PlayCircleIcon aria-hidden="true" className="size-4" />
+        <span className="flex items-center gap-1 text-muted-foreground text-xs">
+          <PlayCircleIcon aria-hidden="true" className="size-3" />
           <span className="truncate">{nextLabel}</span>
         </span>
         <ChevronRightIcon aria-hidden="true" className="size-3" />
@@ -42,13 +42,13 @@ function ContinueLearningCard({
         {course.imageUrl ? (
           <Image
             alt={course.title}
-            className="size-16 shrink-0 rounded-lg object-cover"
-            height={64}
+            className="size-24 shrink-0 rounded-lg object-cover"
+            height={96}
             src={course.imageUrl}
-            width={64}
+            width={96}
           />
         ) : (
-          <div className="flex size-16 shrink-0 items-center justify-center rounded-lg bg-muted">
+          <div className="flex size-24 shrink-0 items-center justify-center rounded-lg bg-muted">
             <PlayCircleIcon
               aria-hidden="true"
               className="size-6 text-muted-foreground/60"
@@ -58,20 +58,20 @@ function ContinueLearningCard({
 
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <Link
-            className="truncate font-medium text-foreground/90 text-sm transition-colors hover:text-foreground"
+            className="truncate font-semibold text-base text-foreground/90 leading-none underline-offset-2 transition-colors hover:text-foreground hover:underline"
             href={lessonHref}
           >
             {lesson.title}
           </Link>
 
           <Link
-            className="truncate text-muted-foreground text-xs transition-colors hover:text-muted-foreground/80"
+            className="mb-0.5 truncate text-muted-foreground text-sm underline-offset-2 transition-colors hover:text-muted-foreground/80 hover:underline"
             href={courseHref}
           >
             {course.title}
           </Link>
 
-          <p className="line-clamp-2 text-muted-foreground/80 text-xs leading-relaxed">
+          <p className="line-clamp-3 text-muted-foreground/80 text-xs">
             {lesson.description}
           </p>
         </div>
@@ -102,12 +102,14 @@ export async function ContinueLearning() {
       <SectionTitle className="px-4">{t("Continue learning")}</SectionTitle>
 
       <ScrollArea className="w-full px-4 pb-2">
-        <div className="flex gap-6">
+        <div className="flex snap-x snap-mandatory gap-4">
           {items.map((item) => {
             const { activity, course } = item;
             const activityLabel =
               activity.title ?? kindLabels.get(activity.kind) ?? defaultLabel;
-            const nextLabel = t("Next: {activity}", { activity: activityLabel });
+            const nextLabel = t("Next: {activity}", {
+              activity: activityLabel,
+            });
 
             return (
               <ContinueLearningCard
