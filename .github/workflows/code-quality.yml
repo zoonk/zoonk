@@ -14,6 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
+      DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
@@ -23,6 +24,7 @@ jobs:
         ports: ["5432:5432"]
         env:
           POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: zoonk_test
         options: >-
           --health-cmd pg_isready
           --health-interval 1s
@@ -54,6 +56,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
+
+      - name: Run database migrations
+        run: pnpm --filter @zoonk/db db:deploy
 
       - name: Generate Prisma client
         run: pnpm db:generate

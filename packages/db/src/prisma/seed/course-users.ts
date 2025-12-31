@@ -7,31 +7,40 @@ export async function seedCourseUsers(
   users: SeedUsers,
 ): Promise<void> {
   const courses = await prisma.course.findMany({
-    where: { isPublished: true, organizationId: org.id },
+    orderBy: { id: "asc" },
+    take: 5,
+    where: { isPublished: true, language: "en", organizationId: org.id },
   });
 
   if (courses.length === 0) {
     return;
   }
 
-  const firstCourse = courses[0];
-  const secondCourse = courses[1];
-
-  if (firstCourse) {
-    await prisma.courseUser.upsert({
-      create: {
-        courseId: firstCourse.id,
-        userId: users.owner.id,
-      },
-      update: {},
-      where: {
-        courseUser: {
-          courseId: firstCourse.id,
+  // Enroll owner in all 5 courses with different startedAt times
+  // so they appear in order in the continue learning section
+  const now = new Date();
+  await Promise.all(
+    courses.map((course, index) =>
+      prisma.courseUser.upsert({
+        create: {
+          courseId: course.id,
+          startedAt: new Date(now.getTime() - index * 60 * 60 * 1000), // Each course started 1 hour earlier
           userId: users.owner.id,
         },
-      },
-    });
+        update: {},
+        where: {
+          courseUser: {
+            courseId: course.id,
+            userId: users.owner.id,
+          },
+        },
+      }),
+    ),
+  );
 
+  // Also enroll member in the first course
+  const firstCourse = courses[0];
+  if (firstCourse) {
     await prisma.courseUser.upsert({
       create: {
         courseId: firstCourse.id,
@@ -42,22 +51,6 @@ export async function seedCourseUsers(
         courseUser: {
           courseId: firstCourse.id,
           userId: users.member.id,
-        },
-      },
-    });
-  }
-
-  if (secondCourse) {
-    await prisma.courseUser.upsert({
-      create: {
-        courseId: secondCourse.id,
-        userId: users.owner.id,
-      },
-      update: {},
-      where: {
-        courseUser: {
-          courseId: secondCourse.id,
-          userId: users.owner.id,
         },
       },
     });

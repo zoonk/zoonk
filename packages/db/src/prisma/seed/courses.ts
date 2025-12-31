@@ -30,11 +30,41 @@ export const coursesData = [
       "Astronomy studies celestial objects, space phenomena, and the structure of the universe. Covers planets, stars, galaxies, black holes, and cosmology from observational techniques to theoretical frameworks.",
     imageUrl:
       "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/astronomy-OfBov0VHGQPk98amhfAPg4UVrJH114.webp",
-    isPublished: false,
+    isPublished: true,
     language: "en",
     normalizedTitle: normalizeString("Astronomy"),
     slug: "astronomy",
     title: "Astronomy",
+  },
+  {
+    description:
+      "Master Python programming from fundamentals to advanced concepts. Learn syntax, data structures, functions, object-oriented programming, and build real-world applications.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Python Programming"),
+    slug: "python-programming",
+    title: "Python Programming",
+  },
+  {
+    description:
+      "Build modern web applications with HTML, CSS, JavaScript, and popular frameworks. Learn frontend and backend development, APIs, and deployment strategies.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Web Development"),
+    slug: "web-development",
+    title: "Web Development",
+  },
+  {
+    description:
+      "Analyze and interpret complex data using statistical methods and visualization tools. Learn data wrangling, exploratory analysis, and machine learning applications.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Data Science"),
+    slug: "data-science",
+    title: "Data Science",
   },
 
   // Portuguese courses

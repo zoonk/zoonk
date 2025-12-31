@@ -97,6 +97,76 @@ const activitiesData: LessonActivities[] = [
     language: "en",
     lessonSlug: "types-of-learning",
   },
+  {
+    activities: [
+      {
+        isPublished: true,
+        kind: "background",
+      },
+      {
+        isPublished: true,
+        kind: "explanation",
+      },
+    ],
+    language: "en",
+    lessonSlug: "spanish-alphabet",
+  },
+  {
+    activities: [
+      {
+        isPublished: true,
+        kind: "background",
+      },
+      {
+        isPublished: true,
+        kind: "explanation",
+      },
+    ],
+    language: "en",
+    lessonSlug: "the-sun",
+  },
+  {
+    activities: [
+      {
+        isPublished: true,
+        kind: "background",
+      },
+      {
+        isPublished: true,
+        kind: "explanation",
+      },
+    ],
+    language: "en",
+    lessonSlug: "getting-started-python",
+  },
+  {
+    activities: [
+      {
+        isPublished: true,
+        kind: "background",
+      },
+      {
+        isPublished: true,
+        kind: "explanation",
+      },
+    ],
+    language: "en",
+    lessonSlug: "intro-to-html",
+  },
+  {
+    activities: [
+      {
+        isPublished: true,
+        kind: "background",
+      },
+      {
+        isPublished: true,
+        kind: "explanation",
+      },
+    ],
+    language: "en",
+    lessonSlug: "what-is-data-science",
+  },
 ];
 
 export async function seedActivities(

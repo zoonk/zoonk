@@ -53,6 +53,7 @@ export function NavbarLinks() {
           variant: getVariant(homeMenu.url, pathname),
         })}
         href={homeMenu.url}
+        prefetch={true}
       >
         <homeMenu.icon aria-hidden="true" />
         <span className="sr-only">{t("Home page")}</span>
