@@ -96,7 +96,7 @@ describe("authenticated users", () => {
     const headers = await signInAs(user.email, user.password);
 
     const courseData = await Promise.all(
-      Array.from({ length: MAX_CONTINUE_LEARNING_ITEMS + 3 }, () =>
+      Array.from({ length: MAX_CONTINUE_LEARNING_ITEMS + 1 }, () =>
         createCourseWithActivity(organization.id),
       ),
     );
@@ -116,7 +116,7 @@ describe("authenticated users", () => {
 
     const resultCourseIds = result.map((r) => r.course.id);
     const expectedIds = courseData
-      .slice(2)
+      .slice(1)
       .map((d) => d.course.id)
       .reverse();
     expect(resultCourseIds).toEqual(expectedIds);
