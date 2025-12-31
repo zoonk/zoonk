@@ -134,6 +134,16 @@ msgctxt "R/6nsx"
 msgid "Subscription"
 msgstr "Subscription"
 
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "cvtZ2C"
+msgid "Course not found"
+msgstr "Course not found"
+
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "oCQePC"
+msgid "Learn with interactive lessons and activities. Explore this course and start your learning journey."
+msgstr "Learn with interactive lessons and activities. Explore this course and start your learning journey."
+
 #: src/app/[locale]/(catalog)/courses/category-pills.tsx
 msgctxt "tuZsq+"
 msgid "Course categories"
@@ -462,16 +472,6 @@ msgstr "Follow us"
 msgctxt "YdQxfw"
 msgid "Contact Support"
 msgstr "Contact Support"
-
-#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/page.tsx
-msgctxt "oCQePC"
-msgid "Learn with interactive lessons and activities. Explore this course and start your learning journey."
-msgstr "Learn with interactive lessons and activities. Explore this course and start your learning journey."
-
-#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/page.tsx
-msgctxt "onDfe/"
-msgid "Course"
-msgstr "Course"
 
 #: src/app/[locale]/privacy/page.tsx
 msgctxt "iql85X"

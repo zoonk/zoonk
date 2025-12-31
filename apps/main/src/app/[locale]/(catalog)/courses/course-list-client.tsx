@@ -1,6 +1,5 @@
 "use client";
 
-import type { Course } from "@zoonk/db";
 import { useInfiniteList } from "@zoonk/ui/hooks/infinite-list";
 import {
   CourseListGroup,
@@ -12,10 +11,11 @@ import type { CourseCategory } from "@zoonk/utils/categories";
 import { Loader2Icon, NotebookPenIcon } from "lucide-react";
 import Image from "next/image";
 import { useExtracted } from "next-intl";
+import type { CourseWithOrg } from "@/data/courses/list-courses";
 import { ClientLink } from "@/i18n/client-link";
 import { loadMoreCourses } from "./actions";
 
-function toCourseListItem(course: Course): CourseListItem {
+function toCourseListItem(course: CourseWithOrg): CourseListItem {
   return {
     description: course.description,
     id: course.id,
@@ -32,7 +32,7 @@ export function CourseListClient({
   limit,
 }: {
   category?: CourseCategory;
-  initialCourses: Course[];
+  initialCourses: CourseWithOrg[];
   language: string;
   limit: number;
 }) {
@@ -42,7 +42,7 @@ export function CourseListClient({
     items: courses,
     isLoading,
     sentryRef,
-  } = useInfiniteList<Course, number>({
+  } = useInfiniteList<CourseWithOrg, number>({
     fetchMore: (cursor) => loadMoreCourses({ category, cursor, language }),
     getCursor: (course) => course.id,
     getKey: (course) => course.id,
@@ -78,7 +78,10 @@ export function CourseListClient({
             }
             key={course.id}
             linkComponent={
-              <ClientLink href={`/b/zoonk/c/${course.slug}`} prefetch={false} />
+              <ClientLink
+                href={`/b/${course.organization.slug}/c/${course.slug}`}
+                prefetch={false}
+              />
             }
           />
         ))}
