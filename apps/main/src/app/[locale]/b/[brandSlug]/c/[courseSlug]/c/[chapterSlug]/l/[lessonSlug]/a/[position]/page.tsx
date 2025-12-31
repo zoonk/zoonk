@@ -1,20 +1,9 @@
 import type { Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 
-type ActivityPageParams = {
-  params: Promise<{
-    locale: string;
-    brandSlug: string;
-    courseSlug: string;
-    chapterSlug: string;
-    lessonSlug: string;
-    position: string;
-  }>;
-};
-
 export async function generateMetadata({
   params,
-}: ActivityPageParams): Promise<Metadata> {
+}: PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/a/[position]">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getExtracted({ locale });
 
