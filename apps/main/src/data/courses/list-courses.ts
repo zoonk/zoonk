@@ -7,16 +7,25 @@ import { cache } from "react";
 
 export const LIST_COURSES_LIMIT = 20;
 
+export type CourseWithOrg = Course & {
+  organization: { slug: string };
+};
+
 export const listCourses = cache(
   async (params: {
     category?: CourseCategory;
     cursor?: number;
     language: string;
     limit?: number;
-  }): Promise<Course[]> => {
+  }): Promise<CourseWithOrg[]> => {
     const limit = clampQueryItems(params.limit ?? LIST_COURSES_LIMIT);
 
     const courses = await prisma.course.findMany({
+      include: {
+        organization: {
+          select: { slug: true },
+        },
+      },
       // biome-ignore lint/style/useNamingConvention: _count is Prisma's syntax for counting relations
       orderBy: [{ users: { _count: "desc" } }, { createdAt: "desc" }],
       take: limit,
