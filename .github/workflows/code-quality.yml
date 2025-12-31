@@ -56,6 +56,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Run database migrations
+        run: pnpm --filter @zoonk/db db:deploy
+
       - name: Generate Prisma client
         run: pnpm db:generate
 
