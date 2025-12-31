@@ -9,11 +9,11 @@ export async function Hero() {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-8 px-4 py-16 md:py-24">
       <div className="flex flex-col items-center gap-4 text-center">
-        <h1 className="font-semibold text-3xl text-foreground/90 tracking-tight md:text-5xl md:tracking-tighter">
+        <h1 className="text-balance font-semibold text-3xl text-foreground/90 tracking-tight md:text-5xl md:tracking-tighter">
           {t("Learn anything with AI")}
         </h1>
 
-        <p className="max-w-md text-lg text-muted-foreground md:text-xl">
+        <p className="max-w-md text-pretty text-lg text-muted-foreground md:text-xl">
           {t(
             "Interactive courses built for you. Just tell us what you want to learn.",
           )}
