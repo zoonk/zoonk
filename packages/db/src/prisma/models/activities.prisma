@@ -1,0 +1,41 @@
+model Activity {
+  id             Int                @id @default(autoincrement())
+  organizationId Int                @map("organization_id")
+  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lessonId       Int                @map("lesson_id")
+  lesson         Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  isPublished    Boolean            @default(false) @map("is_published")
+  language       String             @db.VarChar(10)
+  kind           String             @db.VarChar(30)
+  title          String?
+  description    String?
+  position       Int
+  inventory      Json?
+  winCriteria    Json?              @map("win_criteria")
+  createdAt      DateTime           @default(now()) @map("created_at")
+  updatedAt      DateTime           @default(now()) @updatedAt @map("updated_at")
+  steps          Step[]
+  progress       ActivityProgress[]
+
+  @@index([lessonId, position])
+  @@index([organizationId, kind])
+  @@map("activities")
+}
+
+model ActivityProgress {
+  id              Int       @id @default(autoincrement())
+  userId          Int       @map("user_id")
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  activityId      Int       @map("activity_id")
+  activity        Activity  @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  startedAt       DateTime  @default(now()) @map("started_at")
+  completedAt     DateTime? @map("completed_at")
+  durationSeconds Int?      @map("duration_seconds")
+  inventoryFinal  Json?     @map("inventory_final")
+  passed          Boolean?
+
+  @@unique([userId, activityId], name: "userActivity")
+  @@index([userId])
+  @@index([activityId])
+  @@map("activity_progress")
+}

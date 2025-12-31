@@ -1,23 +1,27 @@
 // Better Auth models for Prisma
 
 model User {
-  id               Int          @id @default(autoincrement())
+  id               Int                @id @default(autoincrement())
   name             String
   email            String
-  emailVerified    Boolean      @default(false) @map("email_verified")
+  emailVerified    Boolean            @default(false) @map("email_verified")
   image            String?
-  createdAt        DateTime     @default(now()) @map("created_at")
-  updatedAt        DateTime     @updatedAt @map("updated_at")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @updatedAt @map("updated_at")
   role             String?
-  banned           Boolean?     @default(false)
-  banReason        String?      @map("ban_reason")
-  banExpires       DateTime?    @map("ban_expires")
-  stripeCustomerId String?      @map("stripe_customer_id")
+  banned           Boolean?           @default(false)
+  banReason        String?            @map("ban_reason")
+  banExpires       DateTime?          @map("ban_expires")
+  stripeCustomerId String?            @map("stripe_customer_id")
   sessions         Session[]
   accounts         Account[]
   members          Member[]
   invitations      Invitation[]
   courses          CourseUser[]
+  activityProgress ActivityProgress[]
+  stepAttempts     StepAttempt[]
+  progress         UserProgress?
+  dailyProgress    DailyProgress[]
 
   @@unique([email])
   @@map("users")
@@ -74,18 +78,21 @@ model Verification {
 }
 
 model Organization {
-  id          Int          @id @default(autoincrement())
-  name        String
-  slug        String
-  logo        String?
-  createdAt   DateTime     @default(now()) @map("created_at")
-  metadata    String?
-  kind        String       @default("brand")
-  members     Member[]
-  invitations Invitation[]
-  courses     Course[]
-  chapters    Chapter[]
-  lessons     Lesson[]
+  id            Int             @id @default(autoincrement())
+  name          String
+  slug          String
+  logo          String?
+  createdAt     DateTime        @default(now()) @map("created_at")
+  metadata      String?
+  kind          String          @default("brand")
+  members       Member[]
+  invitations   Invitation[]
+  courses       Course[]
+  chapters      Chapter[]
+  lessons       Lesson[]
+  activities    Activity[]
+  stepAttempts  StepAttempt[]
+  dailyProgress DailyProgress[]
 
   @@unique([slug])
   @@map("organizations")

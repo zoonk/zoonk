@@ -17,20 +17,26 @@ if (process.env.NODE_ENV !== "production") {
 
 export type {
   Account,
+  Activity,
+  ActivityProgress,
   Chapter,
   Course,
   CourseAlternativeTitle,
   CourseCategory,
   CourseSuggestion,
   CourseUser,
+  DailyProgress,
   Invitation,
   Lesson,
   Member,
   Organization,
   RateLimit,
   Session,
+  Step,
+  StepAttempt,
   Subscription,
   User,
+  UserProgress,
   Verification,
 } from "./generated/prisma/client";
 

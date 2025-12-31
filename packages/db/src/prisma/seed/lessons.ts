@@ -4,6 +4,7 @@ import type { Organization, PrismaClient } from "../../generated/prisma/client";
 type LessonSeedData = {
   description: string;
   isPublished: boolean;
+  kind?: string;
   slug: string;
   title: string;
 };
@@ -37,6 +38,7 @@ const lessonsData: ChapterLessons[] = [
         description:
           "Understand supervised, unsupervised, and reinforcement learning approaches.",
         isPublished: false,
+        kind: "custom",
         slug: "types-of-learning",
         title: "Types of Learning",
       },
@@ -89,6 +91,7 @@ export async function seedLessons(
                 chapterId: chapter.id,
                 description: lessonData.description,
                 isPublished: lessonData.isPublished,
+                kind: lessonData.kind ?? "core",
                 language: data.language,
                 normalizedTitle: normalizeString(lessonData.title),
                 organizationId: org.id,

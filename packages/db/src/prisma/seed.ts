@@ -1,4 +1,5 @@
 import { prisma } from "../index";
+import { seedActivities } from "./seed/activities";
 import { seedAlternativeTitles } from "./seed/alternative-titles";
 import { seedCategories } from "./seed/categories";
 import { seedChapters } from "./seed/chapters";
@@ -6,6 +7,8 @@ import { seedCourseUsers } from "./seed/course-users";
 import { seedCourses } from "./seed/courses";
 import { seedLessons } from "./seed/lessons";
 import { seedOrganizations } from "./seed/orgs";
+import { seedProgress } from "./seed/progress";
+import { seedSteps } from "./seed/steps";
 import { seedUsers } from "./seed/users";
 
 async function main() {
@@ -17,6 +20,9 @@ async function main() {
   await seedLessons(prisma, org);
   await seedAlternativeTitles(prisma, org);
   await seedCourseUsers(prisma, org, users);
+  await seedActivities(prisma, org);
+  await seedSteps(prisma, org);
+  await seedProgress(prisma, org, users);
 }
 
 main()
