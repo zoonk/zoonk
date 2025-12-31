@@ -509,12 +509,12 @@ msgstr "Complete esta atividade para reforçar seu aprendizado e acompanhar seu 
 #: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/page.tsx
 msgctxt "b/7UZV"
 msgid "Interactive lesson with exercises and activities to help you learn effectively."
-msgstr "Lição interativa com exercícios e atividades para ajudá-lo a aprender efetivamente."
+msgstr "Aula interativa com exercícios e atividades para ajudá-lo a aprender efetivamente."
 
 #: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/page.tsx
 msgctxt "PJivSX"
 msgid "Lesson"
-msgstr "Lição"
+msgstr "Aula"
 
 #: src/app/[locale]/privacy/page.tsx
 msgctxt "iql85X"
@@ -729,7 +729,7 @@ msgstr "Mecânica"
 #: src/lib/activities.ts
 msgctxt "OuR/Ij"
 msgid "Quiz"
-msgstr "Questionário"
+msgstr "Quiz"
 
 #: src/lib/activities.ts
 msgctxt "QzTY8x"
@@ -749,7 +749,7 @@ msgstr "Pronúncia"
 #: src/lib/activities.ts
 msgctxt "W+u0Zk"
 msgid "Lesson Quiz"
-msgstr "Questionário da lição"
+msgstr "Quiz da aula"
 
 #: src/lib/activities.ts
 msgctxt "XQZA8e"
