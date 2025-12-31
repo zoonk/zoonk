@@ -80,7 +80,6 @@ export function CourseListClient({
             linkComponent={
               <ClientLink
                 href={`/b/${course.organization.slug}/c/${course.slug}`}
-                prefetch={false}
               />
             }
           />
