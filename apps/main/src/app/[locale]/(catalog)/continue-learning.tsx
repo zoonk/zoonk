@@ -21,75 +21,10 @@ import { PlayCircleIcon } from "lucide-react";
 import { cacheLife } from "next/cache";
 import Image from "next/image";
 import { getExtracted } from "next-intl/server";
-import {
-  type ContinueLearningItem,
-  getContinueLearning,
-} from "@/data/courses/get-continue-learning";
+import { getContinueLearning } from "@/data/courses/get-continue-learning";
 import { Link } from "@/i18n/navigation";
 import { getActivityKinds } from "@/lib/activities";
 import { Hero } from "./hero";
-
-function ContinueLearningCard({
-  item,
-  nextLabel,
-}: {
-  item: ContinueLearningItem;
-  nextLabel: string;
-}) {
-  const { activity, chapter, course, lesson } = item;
-  const lessonHref = `/b/${course.organization.slug}/c/${course.slug}/c/${chapter.slug}/l/${lesson.slug}`;
-  const activityHref = `${lessonHref}/a/${activity.position}`;
-  const courseHref = `/b/${course.organization.slug}/c/${course.slug}`;
-
-  return (
-    <FeatureCard className="w-[85vw] shrink-0 snap-start sm:w-[45vw] 2xl:w-[calc(25%-1rem)]">
-      <Link href={activityHref}>
-        <FeatureCardHeader>
-          <FeatureCardHeaderContent>
-            <FeatureCardIcon>
-              <PlayCircleIcon />
-            </FeatureCardIcon>
-            <FeatureCardLabel>{nextLabel}</FeatureCardLabel>
-          </FeatureCardHeaderContent>
-          <FeatureCardIndicator />
-        </FeatureCardHeader>
-      </Link>
-
-      <FeatureCardContent>
-        <Link href={activityHref}>
-          <FeatureCardThumbnail size="lg">
-            {course.imageUrl ? (
-              <FeatureCardThumbnailImage>
-                <Image
-                  alt={course.title}
-                  height={96}
-                  src={course.imageUrl}
-                  width={96}
-                />
-              </FeatureCardThumbnailImage>
-            ) : (
-              <FeatureCardThumbnailPlaceholder>
-                <PlayCircleIcon aria-hidden="true" />
-              </FeatureCardThumbnailPlaceholder>
-            )}
-          </FeatureCardThumbnail>
-        </Link>
-
-        <FeatureCardBody>
-          <FeatureCardTitle>
-            <Link href={lessonHref}>{lesson.title}</Link>
-          </FeatureCardTitle>
-
-          <FeatureCardSubtitle>
-            <Link href={courseHref}>{course.title}</Link>
-          </FeatureCardSubtitle>
-
-          <FeatureCardDescription>{lesson.description}</FeatureCardDescription>
-        </FeatureCardBody>
-      </FeatureCardContent>
-    </FeatureCard>
-  );
-}
 
 export async function ContinueLearning() {
   "use cache: private";
@@ -117,19 +52,71 @@ export async function ContinueLearning() {
       <ScrollArea className="w-full px-4 pb-2">
         <div className="flex snap-x snap-mandatory gap-4">
           {items.map((item) => {
-            const { activity, course } = item;
+            const { activity, chapter, course, lesson } = item;
+
             const activityLabel =
               activity.title ?? kindLabels.get(activity.kind) ?? defaultLabel;
+
             const nextLabel = t("Next: {activity}", {
               activity: activityLabel,
             });
 
+            const lessonHref = `/b/${course.organization.slug}/c/${course.slug}/c/${chapter.slug}/l/${lesson.slug}`;
+            const activityHref = `${lessonHref}/a/${activity.position}`;
+            const courseHref = `/b/${course.organization.slug}/c/${course.slug}`;
+
             return (
-              <ContinueLearningCard
-                item={item}
-                key={course.id}
-                nextLabel={nextLabel}
-              />
+              <FeatureCard
+                className="w-[85vw] shrink-0 snap-start sm:w-[45vw] 2xl:w-[calc(25%-1rem)]"
+                key={activity.id}
+              >
+                <Link href={activityHref}>
+                  <FeatureCardHeader>
+                    <FeatureCardHeaderContent>
+                      <FeatureCardIcon>
+                        <PlayCircleIcon />
+                      </FeatureCardIcon>
+                      <FeatureCardLabel>{nextLabel}</FeatureCardLabel>
+                    </FeatureCardHeaderContent>
+                    <FeatureCardIndicator />
+                  </FeatureCardHeader>
+                </Link>
+
+                <FeatureCardContent>
+                  <Link href={activityHref}>
+                    <FeatureCardThumbnail size="lg">
+                      {course.imageUrl ? (
+                        <FeatureCardThumbnailImage>
+                          <Image
+                            alt={course.title}
+                            height={96}
+                            src={course.imageUrl}
+                            width={96}
+                          />
+                        </FeatureCardThumbnailImage>
+                      ) : (
+                        <FeatureCardThumbnailPlaceholder>
+                          <PlayCircleIcon aria-hidden="true" />
+                        </FeatureCardThumbnailPlaceholder>
+                      )}
+                    </FeatureCardThumbnail>
+                  </Link>
+
+                  <FeatureCardBody>
+                    <FeatureCardTitle>
+                      <Link href={lessonHref}>{lesson.title}</Link>
+                    </FeatureCardTitle>
+
+                    <FeatureCardSubtitle>
+                      <Link href={courseHref}>{course.title}</Link>
+                    </FeatureCardSubtitle>
+
+                    <FeatureCardDescription>
+                      {lesson.description}
+                    </FeatureCardDescription>
+                  </FeatureCardBody>
+                </FeatureCardContent>
+              </FeatureCard>
             );
           })}
         </div>
