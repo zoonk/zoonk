@@ -42,7 +42,7 @@ function ContinueLearningCard({
   const courseHref = `/b/${course.organization.slug}/c/${course.slug}`;
 
   return (
-    <FeatureCard className="w-[85vw] shrink-0 snap-start sm:w-[45vw] 2xl:w-[calc(20%-1rem)]">
+    <FeatureCard className="w-[85vw] shrink-0 snap-start sm:w-[45vw] 2xl:w-[calc(25%-1rem)]">
       <Link href={activityHref}>
         <FeatureCardHeader>
           <FeatureCardHeaderContent>

@@ -153,7 +153,7 @@ export const getContinueLearning = cache(
           },
         },
         orderBy: { startedAt: "desc" },
-        take: 5,
+        take: 4,
         where: { userId },
       }),
     );
