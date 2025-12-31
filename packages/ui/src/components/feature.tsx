@@ -182,7 +182,7 @@ function FeatureCardThumbnailImage({
   return (
     <div
       className={cn(
-        "size-full [&>img]:size-full [&>img]:object-cover",
+        "size-full transition-transform duration-300 ease-out group-hover/feature-card:scale-110 [&>img]:size-full [&>img]:object-cover",
         className,
       )}
       data-slot="feature-card-thumbnail-image"
@@ -201,7 +201,7 @@ function FeatureCardThumbnailPlaceholder({
   return (
     <div
       className={cn(
-        "flex size-full items-center justify-center bg-muted [&>svg]:size-6 [&>svg]:text-muted-foreground/60",
+        "flex size-full items-center justify-center bg-muted transition-transform duration-300 ease-out group-hover/feature-card:scale-110 [&>svg]:size-6 [&>svg]:text-muted-foreground/60",
         className,
       )}
       data-slot="feature-card-thumbnail-placeholder"
