@@ -7,16 +7,8 @@ import {
   getContinueLearning,
 } from "@/data/courses/get-continue-learning";
 import { Link } from "@/i18n/navigation";
+import { getActivityKinds } from "@/lib/activities";
 import { Hero } from "./hero";
-
-type ContinueLearningCardProps = {
-  activityHref: string;
-  lessonHref: string;
-  courseHref: string;
-  course: ContinueLearningItem["course"];
-  lesson: ContinueLearningItem["lesson"];
-  nextLabel: string;
-};
 
 function ContinueLearningCard({
   activityHref,
@@ -25,7 +17,14 @@ function ContinueLearningCard({
   lesson,
   lessonHref,
   nextLabel,
-}: ContinueLearningCardProps) {
+}: {
+  activityHref: string;
+  lessonHref: string;
+  courseHref: string;
+  course: ContinueLearningItem["course"];
+  lesson: ContinueLearningItem["lesson"];
+  nextLabel: string;
+}) {
   return (
     <article className="group flex w-72 shrink-0 snap-start flex-col gap-3 md:w-80">
       <Link
@@ -81,48 +80,19 @@ function ContinueLearningCard({
 
 export async function ContinueLearning() {
   const t = await getExtracted();
-  const items = await getContinueLearning();
+  const [items, activityKinds] = await Promise.all([
+    getContinueLearning(),
+    getActivityKinds(),
+  ]);
 
   if (items.length === 0) {
     return <Hero />;
   }
 
-  function getActivityKindLabel(kind: string): string {
-    switch (kind) {
-      case "background":
-        return t("Background");
-      case "challenge":
-        return t("Challenge");
-      case "examples":
-        return t("Examples");
-      case "explanation":
-        return t("Explanation");
-      case "explanation_quiz":
-        return t("Quiz");
-      case "grammar":
-        return t("Grammar");
-      case "lesson_quiz":
-        return t("Lesson Quiz");
-      case "listening":
-        return t("Listening");
-      case "logic":
-        return t("Logic");
-      case "mechanics":
-        return t("Mechanics");
-      case "pronunciation":
-        return t("Pronunciation");
-      case "reading":
-        return t("Reading");
-      case "review":
-        return t("Review");
-      case "story":
-        return t("Story");
-      case "vocabulary":
-        return t("Vocabulary");
-      default:
-        return t("Activity");
-    }
-  }
+  const kindLabels = new Map<string, string>(
+    activityKinds.map((k) => [k.key, k.label]),
+  );
+  const defaultLabel = t("Activity");
 
   return (
     <section className="flex flex-col gap-4 px-4 py-8 md:py-12">
@@ -134,7 +104,7 @@ export async function ContinueLearning() {
         {items.map((item) => {
           const { activity, chapter, course, lesson } = item;
           const activityLabel =
-            activity.title ?? getActivityKindLabel(activity.kind);
+            activity.title ?? kindLabels.get(activity.kind) ?? defaultLabel;
           const lessonHref = `/b/${course.organization.slug}/c/${course.slug}/c/${chapter.slug}/l/${lesson.slug}`;
           const activityHref = `${lessonHref}/a/${activity.position}`;
           const courseHref = `/b/${course.organization.slug}/c/${course.slug}`;

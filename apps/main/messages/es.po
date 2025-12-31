@@ -145,87 +145,13 @@ msgid "Continue learning"
 msgstr "Continúa aprendiendo"
 
 #: src/app/[locale]/(catalog)/continue-learning.tsx
-msgctxt "1TOMnj"
-msgid "Listening"
-msgstr "Escucha"
-
-#: src/app/[locale]/(catalog)/continue-learning.tsx
-msgctxt "3GLH+d"
-msgid "Examples"
-msgstr "Ejemplos"
-
-#: src/app/[locale]/(catalog)/continue-learning.tsx
-msgctxt "9MidH4"
-msgid "Challenge"
-msgstr "Desafío"
-
-#: src/app/[locale]/(catalog)/continue-learning.tsx
-msgctxt "Bfq+7w"
-msgid "Story"
-msgstr "Historia"
-
-#: src/app/[locale]/(catalog)/continue-learning.tsx
-msgctxt "E1bF/X"
-msgid "Explanation"
-msgstr "Explicación"
-
-#: src/app/[locale]/(catalog)/continue-learning.tsx
-msgctxt "HhyGLP"
-msgid "Logic"
-msgstr "Lógica"
-
-#: src/app/[locale]/(catalog)/continue-learning.tsx
-msgctxt "lqtP+R"
-msgid "Vocabulary"
-msgstr "Vocabulario"
-
-#: src/app/[locale]/(catalog)/continue-learning.tsx
-msgctxt "MOK/yK"
-msgid "Reading"
-msgstr "Lectura"
-
-#: src/app/[locale]/(catalog)/continue-learning.tsx
-msgctxt "NoV4pb"
-msgid "Mechanics"
-msgstr "Mecánica"
-
-#: src/app/[locale]/(catalog)/continue-learning.tsx
-msgctxt "OuR/Ij"
-msgid "Quiz"
-msgstr "Cuestionario"
-
-#: src/app/[locale]/(catalog)/continue-learning.tsx
-msgctxt "QzTY8x"
-msgid "Grammar"
-msgstr "Gramática"
-
-#: src/app/[locale]/(catalog)/continue-learning.tsx
-msgctxt "R+J5ox"
-msgid "Review"
-msgstr "Repaso"
-
-#: src/app/[locale]/(catalog)/continue-learning.tsx
 msgctxt "TyANVg"
 msgid "Next: {activity}"
 msgstr "Siguiente: {activity}"
 
 #: src/app/[locale]/(catalog)/continue-learning.tsx
-msgctxt "vuwclE"
-msgid "Pronunciation"
-msgstr "Pronunciación"
-
-#: src/app/[locale]/(catalog)/continue-learning.tsx
-msgctxt "W+u0Zk"
-msgid "Lesson Quiz"
-msgstr "Cuestionario de lección"
-
-#: src/app/[locale]/(catalog)/continue-learning.tsx
-msgctxt "XQZA8e"
-msgid "Background"
-msgstr "Contexto"
-
-#: src/app/[locale]/(catalog)/continue-learning.tsx
 #: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
+#: src/lib/activities.ts
 msgctxt "ZmlNQ3"
 msgid "Activity"
 msgstr "Actividad"
@@ -754,6 +680,81 @@ msgstr "Negocios"
 msgctxt "YMDBNH"
 msgid "Geography"
 msgstr "Geografía"
+
+#: src/lib/activities.ts
+msgctxt "1TOMnj"
+msgid "Listening"
+msgstr "Escucha"
+
+#: src/lib/activities.ts
+msgctxt "3GLH+d"
+msgid "Examples"
+msgstr "Ejemplos"
+
+#: src/lib/activities.ts
+msgctxt "9MidH4"
+msgid "Challenge"
+msgstr "Desafío"
+
+#: src/lib/activities.ts
+msgctxt "Bfq+7w"
+msgid "Story"
+msgstr "Historia"
+
+#: src/lib/activities.ts
+msgctxt "E1bF/X"
+msgid "Explanation"
+msgstr "Explicación"
+
+#: src/lib/activities.ts
+msgctxt "HhyGLP"
+msgid "Logic"
+msgstr "Lógica"
+
+#: src/lib/activities.ts
+msgctxt "lqtP+R"
+msgid "Vocabulary"
+msgstr "Vocabulario"
+
+#: src/lib/activities.ts
+msgctxt "MOK/yK"
+msgid "Reading"
+msgstr "Lectura"
+
+#: src/lib/activities.ts
+msgctxt "NoV4pb"
+msgid "Mechanics"
+msgstr "Mecánica"
+
+#: src/lib/activities.ts
+msgctxt "OuR/Ij"
+msgid "Quiz"
+msgstr "Cuestionario"
+
+#: src/lib/activities.ts
+msgctxt "QzTY8x"
+msgid "Grammar"
+msgstr "Gramática"
+
+#: src/lib/activities.ts
+msgctxt "R+J5ox"
+msgid "Review"
+msgstr "Repaso"
+
+#: src/lib/activities.ts
+msgctxt "vuwclE"
+msgid "Pronunciation"
+msgstr "Pronunciación"
+
+#: src/lib/activities.ts
+msgctxt "W+u0Zk"
+msgid "Lesson Quiz"
+msgstr "Cuestionario de lección"
+
+#: src/lib/activities.ts
+msgctxt "XQZA8e"
+msgid "Background"
+msgstr "Contexto"
 
 #: src/lib/categories.ts
 msgctxt "4HKnmB"

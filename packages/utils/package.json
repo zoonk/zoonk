@@ -9,6 +9,7 @@
     "vitest": "4.0.16"
   },
   "exports": {
+    "./activities": "./src/activities.ts",
     "./cache": "./src/cache.ts",
     "./categories": "./src/categories.ts",
     "./constants": "./src/constants.ts",
