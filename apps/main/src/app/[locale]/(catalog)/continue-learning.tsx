@@ -1,7 +1,14 @@
 import { ScrollArea, ScrollBar } from "@zoonk/ui/components/scroll-area";
-import { SectionTitle } from "@zoonk/ui/components/section-title";
+import {
+  SectionHeader,
+  SectionHeaderContent,
+  SectionHeaderIcon,
+  SectionHeaderIndicator,
+  SectionHeaderLabel,
+  SectionTitle,
+} from "@zoonk/ui/components/section";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { ChevronRightIcon, PlayCircleIcon } from "lucide-react";
+import { PlayCircleIcon } from "lucide-react";
 import { cacheLife } from "next/cache";
 import Image from "next/image";
 import { getExtracted } from "next-intl/server";
@@ -27,15 +34,16 @@ function ContinueLearningCard({
 
   return (
     <article className="group flex w-[85vw] shrink-0 snap-start flex-col gap-2 sm:w-[45vw] 2xl:w-[calc(20%-1rem)]">
-      <Link
-        className="flex w-full items-center justify-between text-primary text-sm transition-colors hover:text-primary/80"
-        href={activityHref}
-      >
-        <span className="flex items-center gap-1 text-muted-foreground text-xs">
-          <PlayCircleIcon aria-hidden="true" className="size-3" />
-          <span className="truncate">{nextLabel}</span>
-        </span>
-        <ChevronRightIcon aria-hidden="true" className="size-3" />
+      <Link href={activityHref}>
+        <SectionHeader>
+          <SectionHeaderContent>
+            <SectionHeaderIcon>
+              <PlayCircleIcon />
+            </SectionHeaderIcon>
+            <SectionHeaderLabel>{nextLabel}</SectionHeaderLabel>
+          </SectionHeaderContent>
+          <SectionHeaderIndicator />
+        </SectionHeader>
       </Link>
 
       <div className="flex gap-3">
