@@ -44,7 +44,10 @@ function FeatureCardHeader({
 }: React.ComponentProps<"div">) {
   return (
     <div
-      className={cn("flex items-center justify-between", className)}
+      className={cn(
+        "flex items-center justify-between text-muted-foreground transition-colors group-hover/feature-card:text-secondary-foreground",
+        className,
+      )}
       data-slot="feature-card-header"
       {...props}
     >
@@ -77,10 +80,7 @@ function FeatureCardIcon({
   return (
     <span
       aria-hidden="true"
-      className={cn(
-        "flex shrink-0 text-muted-foreground/50 transition-colors group-hover/feature-card:text-muted-foreground [&>svg]:size-4",
-        className,
-      )}
+      className={cn("flex shrink-0 [&>svg]:size-4", className)}
       data-slot="feature-card-icon"
       {...props}
     >
@@ -96,7 +96,7 @@ function FeatureCardLabel({
 }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("truncate font-light text-sm", className)}
+      className={cn("truncate font-light text-sm transition-colors", className)}
       data-slot="feature-card-label"
       {...props}
     >
@@ -109,10 +109,7 @@ function FeatureCardIndicator({ className }: { className?: string }) {
   return (
     <ChevronRightIcon
       aria-hidden="true"
-      className={cn(
-        "size-4 shrink-0 text-muted-foreground/50 transition-colors group-hover/feature-card:text-muted-foreground",
-        className,
-      )}
+      className={cn("size-4 shrink-0 transition-colors", className)}
       data-slot="feature-card-indicator"
     />
   );
