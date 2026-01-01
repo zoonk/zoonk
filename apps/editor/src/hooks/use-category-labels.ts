@@ -5,34 +5,45 @@ import {
   type CourseCategory,
 } from "@zoonk/utils/categories";
 import { useExtracted } from "next-intl";
+import { useMemo } from "react";
 
 type CategoryLabels = Record<CourseCategory, string>;
 
 type UseCategoryLabelsResult = {
   labels: CategoryLabels;
+  sortedCategories: CourseCategory[];
   getLabel: (category: string) => string | null;
 };
 
 export function useCategoryLabels(): UseCategoryLabelsResult {
   const t = useExtracted();
 
-  const labels: CategoryLabels = {
-    arts: t("Arts"),
-    business: t("Business"),
-    communication: t("Communication"),
-    culture: t("Culture"),
-    economics: t("Economics"),
-    engineering: t("Engineering"),
-    geography: t("Geography"),
-    health: t("Health"),
-    history: t("History"),
-    languages: t("Languages"),
-    law: t("Law"),
-    math: t("Math"),
-    science: t("Science"),
-    society: t("Society"),
-    tech: t("Technology"),
-  };
+  const labels = useMemo<CategoryLabels>(
+    () => ({
+      arts: t("Arts"),
+      business: t("Business"),
+      communication: t("Communication"),
+      culture: t("Culture"),
+      economics: t("Economics"),
+      engineering: t("Engineering"),
+      geography: t("Geography"),
+      health: t("Health"),
+      history: t("History"),
+      languages: t("Languages"),
+      law: t("Law"),
+      math: t("Math"),
+      science: t("Science"),
+      society: t("Society"),
+      tech: t("Technology"),
+    }),
+    [t],
+  );
+
+  const sortedCategories = useMemo(
+    () =>
+      [...COURSE_CATEGORIES].sort((a, b) => labels[a].localeCompare(labels[b])),
+    [labels],
+  );
 
   function getLabel(category: string): string | null {
     if (!COURSE_CATEGORIES.includes(category as CourseCategory)) {
@@ -41,5 +52,5 @@ export function useCategoryLabels(): UseCategoryLabelsResult {
     return labels[category as CourseCategory];
   }
 
-  return { getLabel, labels };
+  return { getLabel, labels, sortedCategories };
 }
