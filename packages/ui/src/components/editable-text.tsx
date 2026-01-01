@@ -1,6 +1,9 @@
+"use client";
+
 import { cn } from "@zoonk/ui/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 import type { LucideIcon } from "lucide-react";
+import { useAutoResize } from "../hooks/use-auto-resize";
 
 export type EditableLabelProps = React.ComponentProps<"label"> & {
   icon?: LucideIcon;
@@ -95,13 +98,20 @@ function EditableTextarea({
   className,
   variant,
   rows = 1,
+  value,
   ...props
 }: EditableTextareaProps) {
+  const autoResizeRef = useAutoResize({
+    value: typeof value === "string" ? value : undefined,
+  });
+
   return (
     <textarea
       className={cn(editableTextareaVariants({ variant }), className)}
       data-slot="editable-textarea"
+      ref={autoResizeRef}
       rows={rows}
+      value={value}
       {...props}
     />
   );
