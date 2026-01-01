@@ -227,8 +227,8 @@ msgstr "Image uploaded"
 
 #: src/app/[orgSlug]/home-container-header.tsx
 msgctxt "6gzGoI"
-msgid "Select a course to edit its content"
-msgstr "Select a course to edit its content"
+msgid "Courses that are not published yet"
+msgstr "Courses that are not published yet"
 
 #: src/app/[orgSlug]/home-container-header.tsx
 #: src/app/[orgSlug]/new-course/page.tsx
@@ -238,20 +238,24 @@ msgid "Create course"
 msgstr "Create course"
 
 #: src/app/[orgSlug]/home-container-header.tsx
-#: src/components/navbar/command-palette.tsx
 msgctxt "R85gsW"
+msgid "Draft courses"
+msgstr "Draft courses"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "R85gsX"
 msgid "Courses"
 msgstr "Courses"
 
 #: src/app/[orgSlug]/list-courses.tsx
 msgctxt "c0YWuA"
-msgid "Your organization hasn't created any courses yet."
-msgstr "Your organization hasn't created any courses yet."
+msgid "Your organization doesn't have any draft courses."
+msgstr "Your organization doesn't have any draft courses."
 
 #: src/app/[orgSlug]/list-courses.tsx
 msgctxt "zJxO2f"
-msgid "No courses"
-msgstr "No courses"
+msgid "No draft courses"
+msgstr "No draft courses"
 
 #: src/app/[orgSlug]/new-course/actions.ts
 msgctxt "bLbK+M"

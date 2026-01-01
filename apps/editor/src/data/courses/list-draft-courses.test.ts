@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -8,7 +7,7 @@ import {
 } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { ErrorCode } from "@/lib/app-error";
-import { listCourses } from "./list-courses";
+import { listDraftCourses } from "./list-draft-courses";
 
 describe("unauthenticated users", () => {
   test("returns Forbidden", async () => {
@@ -19,7 +18,7 @@ describe("unauthenticated users", () => {
       courseFixture({ isPublished: false, organizationId: organization.id }),
     ]);
 
-    const result = await listCourses({
+    const result = await listDraftCourses({
       headers: new Headers(),
       orgSlug: organization.slug,
     });
@@ -38,7 +37,7 @@ describe("non members", () => {
 
     const headers = await signInAs(user.email, user.password);
 
-    const result = await listCourses({
+    const result = await listDraftCourses({
       headers,
       orgSlug: organization.slug,
     });
@@ -58,7 +57,7 @@ describe("org members", () => {
       courseFixture({ isPublished: true, organizationId: organization.id }),
     ]);
 
-    const result = await listCourses({
+    const result = await listDraftCourses({
       headers,
       orgSlug: organization.slug,
     });
@@ -91,27 +90,36 @@ describe("org admins", () => {
     ]);
   });
 
-  test("returns all courses (published and draft)", async () => {
-    const result = await listCourses({
+  test("returns only draft courses", async () => {
+    const result = await listDraftCourses({
       headers,
       orgSlug: organization.slug,
     });
 
     expect(result.error).toBeNull();
-    expect(result.data).toHaveLength(2);
+    expect(result.data).toHaveLength(1);
+    expect(result.data[0].id).toBe(draftCourse.id);
+    expect(result.data.every((c) => c.isPublished === false)).toBe(true);
+  });
 
-    const ids = result.data.map((c) => c.id);
-    expect(ids).toContain(draftCourse.id);
-    expect(ids).toContain(publishedCourse.id);
+  test("does not return published courses", async () => {
+    const result = await listDraftCourses({
+      headers,
+      orgSlug: organization.slug,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data.find((c) => c.id === publishedCourse.id)).toBeUndefined();
   });
 
   test("filters by language", async () => {
     await courseFixture({
+      isPublished: false,
       language: "pt",
       organizationId: organization.id,
     });
 
-    const result = await listCourses({
+    const result = await listDraftCourses({
       headers,
       language: "en",
       orgSlug: organization.slug,
@@ -123,34 +131,32 @@ describe("org admins", () => {
     expect(hasPtCourse).toBe(false);
   });
 
-  test("limits results to specified amount", async () => {
+  test("returns all draft courses without limit", async () => {
     await prisma.course.createMany({
-      data: Array.from({ length: 5 }, (_, i) => ({
-        description: `Course ${i} description`,
+      data: Array.from({ length: 25 }, (_, i) => ({
+        description: `Draft Course ${i} description`,
         imageUrl: "https://example.com/image.jpg",
-        isPublished: true,
-        language: "en",
-        normalizedTitle: `test course ${i}`,
+        isPublished: false,
+        language: "de",
+        normalizedTitle: `draft course ${i}`,
         organizationId: organization.id,
-        slug: `test-course-${randomUUID()}-${i}`,
-        title: `Test Course ${i}`,
+        slug: `draft-course-${organization.id}-${i}`,
+        title: `Draft Course ${i}`,
       })),
     });
 
-    const customLimit = 3;
-
-    const result = await listCourses({
+    const result = await listDraftCourses({
       headers,
-      limit: customLimit,
+      language: "de",
       orgSlug: organization.slug,
     });
 
     expect(result.error).toBeNull();
-    expect(result.data).toHaveLength(customLimit);
+    expect(result.data.length).toBeGreaterThanOrEqual(25);
   });
 
   test("does not include organization data in results", async () => {
-    const result = await listCourses({
+    const result = await listDraftCourses({
       headers,
       orgSlug: organization.slug,
     });

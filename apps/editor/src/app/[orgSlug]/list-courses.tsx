@@ -7,7 +7,7 @@ import { NotebookPenIcon } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { getExtracted } from "next-intl/server";
-import { listCourses } from "@/data/courses/list-courses";
+import { listDraftCourses } from "@/data/courses/list-draft-courses";
 
 export async function ListCourses({
   params,
@@ -15,16 +15,16 @@ export async function ListCourses({
   params: PageProps<"/[orgSlug]">["params"];
 }) {
   const { orgSlug } = await params;
-  const { data: courses } = await listCourses({ orgSlug });
+  const { data: courses } = await listDraftCourses({ orgSlug });
 
   const t = await getExtracted();
 
   if (courses.length === 0) {
     return (
       <EmptyView
-        description={t("Your organization hasn't created any courses yet.")}
+        description={t("Your organization doesn't have any draft courses.")}
         icon={NotebookPenIcon}
-        title={t("No courses")}
+        title={t("No draft courses")}
       />
     );
   }
