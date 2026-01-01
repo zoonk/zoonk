@@ -7,7 +7,7 @@ const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
 export function stripePlugin() {
   return stripe({
     createCustomerOnSignUp: true,
-    stripeClient: new Stripe(secretKey, { apiVersion: "2025-09-30.clover" }),
+    stripeClient: new Stripe(secretKey, { apiVersion: "2025-12-15.clover" }),
     stripeWebhookSecret: webhookSecret,
     subscription: {
       enabled: true,

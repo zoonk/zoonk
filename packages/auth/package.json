@@ -1,12 +1,12 @@
 {
   "dependencies": {
-    "@better-auth/stripe": "1.4.7",
+    "@better-auth/stripe": "1.4.10",
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "better-auth": "1.4.7",
+    "better-auth": "1.4.10",
     "jose": "6.1.0",
-    "stripe": "19.1.0"
+    "stripe": "20.1.0"
   },
   "devDependencies": {
     "@types/node": "^24",
