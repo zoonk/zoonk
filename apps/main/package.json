@@ -43,7 +43,7 @@
   "private": true,
   "scripts": {
     "analyze": "next experimental-analyze",
-    "build": "pnpm --filter @zoonk/db db:deploy && next build",
+    "build": "bash scripts/maybe-migrate.sh && next build",
     "dev": "next dev",
     "start": "next start",
     "stripe:listen": "stripe listen --forward-to http://localhost:3000/api/auth/stripe/webhook",
