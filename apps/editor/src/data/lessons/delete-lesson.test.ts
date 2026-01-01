@@ -75,17 +75,54 @@ describe("members", () => {
 });
 
 describe("admins", () => {
-  test("returns Forbidden", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
+  let organization: Awaited<ReturnType<typeof memberFixture>>["organization"];
+  let headers: Headers;
+
+  beforeAll(async () => {
+    const fixture = await memberFixture({ role: "admin" });
+    organization = fixture.organization;
+    headers = await signInAs(fixture.user.email, fixture.user.password);
+  });
+
+  test("deletes unpublished lesson successfully", async () => {
     const course = await courseFixture({ organizationId: organization.id });
     const chapter = await chapterFixture({
       courseId: course.id,
       language: course.language,
       organizationId: organization.id,
     });
-    const headers = await signInAs(user.email, user.password);
     const lesson = await lessonFixture({
       chapterId: chapter.id,
+      isPublished: false,
+      language: chapter.language,
+      organizationId: organization.id,
+    });
+
+    const result = await deleteLesson({
+      headers,
+      lessonId: lesson.id,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.id).toBe(lesson.id);
+
+    const deletedLesson = await prisma.lesson.findUnique({
+      where: { id: lesson.id },
+    });
+
+    expect(deletedLesson).toBeNull();
+  });
+
+  test("returns Forbidden for published lesson", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
       language: chapter.language,
       organizationId: organization.id,
     });
