@@ -224,7 +224,7 @@ test.describe("Command Palette - Authenticated", () => {
     ).toBeVisible();
   });
 
-  test("selecting Logout logs user out and redirects to login", async ({
+  test("selecting Logout logs user out and redirects to home", async ({
     authenticatedPage,
   }) => {
     await authenticatedPage.goto("/");
@@ -241,8 +241,14 @@ test.describe("Command Palette - Authenticated", () => {
       .getByText(/^logout$/i)
       .click();
 
-    // Logout process redirects to login page (which then redirects to auth service)
-    await authenticatedPage.waitForURL(/\/(login|auth)/);
+    // Wait for logout to complete - redirects to home page
+    await authenticatedPage.waitForURL(/^[^?]*\/$/);
+
+    // Verify user is logged out - command palette should show Login option
+    await authenticatedPage.getByRole("button", { name: /search/i }).click();
+    await expect(
+      authenticatedPage.getByRole("dialog").getByText(/^login$/i),
+    ).toBeVisible();
   });
 });
 

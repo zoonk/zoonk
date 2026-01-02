@@ -169,7 +169,7 @@ test.describe("Navbar - Authenticated", () => {
     ).toBeVisible();
   });
 
-  test("clicking Logout logs user out and redirects to login", async ({
+  test("clicking Logout logs user out and redirects to home", async ({
     authenticatedPage,
   }) => {
     await authenticatedPage.goto("/");
@@ -183,9 +183,14 @@ test.describe("Navbar - Authenticated", () => {
     // Logout
     await authenticatedPage.getByRole("menuitem", { name: /logout/i }).click();
 
-    // Logout process redirects to login page (which then redirects to auth service)
-    // We verify the URL contains /login or the auth service path
-    await authenticatedPage.waitForURL(/\/(login|auth)/);
+    // Wait for logout to complete - redirects to home page
+    await authenticatedPage.waitForURL(/^[^?]*\/$/);
+
+    // Verify user is logged out - menu should show "Login" instead of "Logout"
+    await authenticatedPage.getByRole("button", { name: /user menu/i }).click();
+    await expect(
+      authenticatedPage.getByRole("menuitem", { name: /login/i }),
+    ).toBeVisible();
   });
 });
 

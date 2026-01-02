@@ -9,7 +9,7 @@ export default function LogoutPage() {
   const { push } = useRouter();
 
   const handleSuccess = useEffectEvent(() => {
-    push("/login");
+    push("/");
   });
 
   useEffect(() => {
