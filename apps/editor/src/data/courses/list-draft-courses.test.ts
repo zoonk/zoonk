@@ -98,7 +98,7 @@ describe("org admins", () => {
 
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(1);
-    expect(result.data[0].id).toBe(draftCourse.id);
+    expect(result.data[0]?.id).toBe(draftCourse.id);
     expect(result.data.every((c) => c.isPublished === false)).toBe(true);
   });
 
@@ -109,7 +109,9 @@ describe("org admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data.find((c) => c.id === publishedCourse.id)).toBeUndefined();
+    expect(
+      result.data.find((c) => c.id === publishedCourse.id),
+    ).toBeUndefined();
   });
 
   test("filters by language", async () => {

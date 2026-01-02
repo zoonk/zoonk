@@ -226,9 +226,9 @@ msgid "Image uploaded"
 msgstr "Imagem enviada"
 
 #: src/app/[orgSlug]/home-container-header.tsx
-msgctxt "6gzGoI"
-msgid "Courses that are not published yet"
-msgstr "Cursos que ainda não foram publicados"
+msgctxt "3MA05s"
+msgid "Draft courses"
+msgstr ""
 
 #: src/app/[orgSlug]/home-container-header.tsx
 #: src/app/[orgSlug]/new-course/page.tsx
@@ -238,24 +238,19 @@ msgid "Create course"
 msgstr "Criar curso"
 
 #: src/app/[orgSlug]/home-container-header.tsx
-msgctxt "R85gsW"
-msgid "Draft courses"
-msgstr "Cursos em rascunho"
-
-#: src/components/navbar/command-palette.tsx
-msgctxt "R85gsX"
-msgid "Courses"
-msgstr "Cursos"
+msgctxt "ugXYXv"
+msgid "Courses that are not published yet"
+msgstr ""
 
 #: src/app/[orgSlug]/list-courses.tsx
-msgctxt "c0YWuA"
-msgid "Your organization doesn't have any draft courses."
-msgstr "Sua organização não tem nenhum curso em rascunho."
-
-#: src/app/[orgSlug]/list-courses.tsx
-msgctxt "zJxO2f"
+msgctxt "F5+xrT"
 msgid "No draft courses"
-msgstr "Sem cursos em rascunho"
+msgstr ""
+
+#: src/app/[orgSlug]/list-courses.tsx
+msgctxt "mYCw6F"
+msgid "Your organization doesn't have any draft courses."
+msgstr ""
 
 #: src/app/[orgSlug]/new-course/actions.ts
 msgctxt "bLbK+M"
@@ -610,6 +605,11 @@ msgstr "Aulas"
 msgctxt "qlTe+e"
 msgid "new"
 msgstr "novo"
+
+#: src/components/navbar/command-palette.tsx
+msgctxt "R85gsW"
+msgid "Courses"
+msgstr "Cursos em rascunho"
 
 #: src/components/navbar/command-palette.tsx
 msgctxt "RSFKID"
