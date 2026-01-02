@@ -44,6 +44,12 @@ const e2eEmailAndPassword =
       }
     : {};
 
+// Disable rate limiting for e2e tests to avoid 429 errors during parallel test runs
+const e2eRateLimit =
+  process.env.E2E_TESTING === "true"
+    ? { enabled: false }
+    : { enabled: true, storage: "database" as const };
+
 export const baseAuthConfig: BetterAuthOptions = {
   ...e2eEmailAndPassword,
   account: {
@@ -57,10 +63,7 @@ export const baseAuthConfig: BetterAuthOptions = {
   experimental: {
     joins: true,
   },
-  rateLimit: {
-    enabled: true,
-    storage: "database",
-  },
+  rateLimit: e2eRateLimit,
   session: {
     cookieCache: {
       enabled: true,

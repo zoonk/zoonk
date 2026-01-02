@@ -4,6 +4,7 @@ import { seedActivities } from "./seed/activities";
 import { seedAlternativeTitles } from "./seed/alternative-titles";
 import { seedCategories } from "./seed/categories";
 import { seedChapters } from "./seed/chapters";
+import { seedCourseSuggestions } from "./seed/course-suggestions";
 import { seedCourseUsers } from "./seed/course-users";
 import { seedCourses } from "./seed/courses";
 import { seedLessons } from "./seed/lessons";
@@ -25,6 +26,7 @@ async function main() {
   await seedActivities(prisma, org);
   await seedSteps(prisma, org);
   await seedProgress(prisma, org, users);
+  await seedCourseSuggestions(prisma);
 }
 
 main()
