@@ -10,13 +10,14 @@ type CategoryLabels = Record<CourseCategory, string>;
 
 type UseCategoryLabelsResult = {
   labels: CategoryLabels;
+  sortedCategories: CourseCategory[];
   getLabel: (category: string) => string | null;
 };
 
 export function useCategoryLabels(): UseCategoryLabelsResult {
   const t = useExtracted();
 
-  const labels: CategoryLabels = {
+  const labels = {
     arts: t("Arts"),
     business: t("Business"),
     communication: t("Communication"),
@@ -34,6 +35,10 @@ export function useCategoryLabels(): UseCategoryLabelsResult {
     tech: t("Technology"),
   };
 
+  const sortedCategories = [...COURSE_CATEGORIES].sort((a, b) =>
+    labels[a].localeCompare(labels[b]),
+  );
+
   function getLabel(category: string): string | null {
     if (!COURSE_CATEGORIES.includes(category as CourseCategory)) {
       return null;
@@ -41,5 +46,5 @@ export function useCategoryLabels(): UseCategoryLabelsResult {
     return labels[category as CourseCategory];
   }
 
-  return { getLabel, labels };
+  return { getLabel, labels, sortedCategories };
 }

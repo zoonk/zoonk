@@ -17,6 +17,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - [CSS](#css)
 - [Icons](#icons)
 - [Cache Components](#cache-components)
+- [React Compiler](#react-compiler)
 - [Links](#links)
 - [Params](#params)
 - [Interactions](#interactions)
@@ -428,6 +429,10 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 
 <Link className={buttonVariants({ variant: "outline" })}>Click here</Link>;
 ```
+
+## React Compiler
+
+We're using the new [React Compiler](https://react.dev/learn/react-compiler/introduction). By default, React Compiler will memoize your code based on its analysis and heuristics. In most cases, this memoization will be as precise, or moreso, than what you may have written. This means you don't need to `useMemo` or `useCallback` as much. The useMemo and useCallback hooks can continue to be used with React Compiler as an escape hatch to provide control over which values are memoized. A common use-case for this is if a memoized value is used as an effect dependency, in order to ensure that an effect does not fire repeatedly even when its dependencies do not meaningfully change. However, this should be used sparingly and only when necessary. Don't default to using `useMemo` or `useCallback` with React Compiler, use them only when necessary.
 
 ## Params
 

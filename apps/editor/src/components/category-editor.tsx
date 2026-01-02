@@ -4,6 +4,7 @@ import { Badge } from "@zoonk/ui/components/badge";
 import { Button } from "@zoonk/ui/components/button";
 import { Checkbox } from "@zoonk/ui/components/checkbox";
 import { EditableLabel } from "@zoonk/ui/components/editable-text";
+import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import {
   Popover,
@@ -12,10 +13,9 @@ import {
 } from "@zoonk/ui/components/popover";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { toast } from "@zoonk/ui/components/sonner";
-import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { PlusIcon, TagsIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useOptimistic, useTransition } from "react";
+import { useMemo, useOptimistic, useState, useTransition } from "react";
 import { useCategoryLabels } from "@/hooks/use-category-labels";
 
 export function CategoryEditorSkeleton() {
@@ -47,24 +47,49 @@ export function CategoryEditor({
   onRemove,
 }: CategoryEditorProps) {
   const t = useExtracted();
-  const { labels: categoryLabels, getLabel } = useCategoryLabels();
+  const {
+    labels: categoryLabels,
+    sortedCategories,
+    getLabel,
+  } = useCategoryLabels();
+
   const [isPending, startTransition] = useTransition();
+  const [search, setSearch] = useState("");
 
   const [optimisticCategories, updateOptimistic] = useOptimistic(
     categories,
     (state, action: OptimisticAction) => {
       if (action.type === "add") {
-        return [...state, action.category].sort();
+        return [...state, action.category];
       }
 
       return state.filter((c) => c !== action.category);
     },
   );
 
+  const sortedOptimisticCategories = [...optimisticCategories].sort((a, b) => {
+    const labelA = getLabel(a) ?? a;
+    const labelB = getLabel(b) ?? b;
+    return labelA.localeCompare(labelB);
+  });
+
+  const filteredCategories = useMemo(() => {
+    if (!search.trim()) {
+      return sortedCategories;
+    }
+
+    const searchLower = search.toLowerCase();
+
+    return sortedCategories.filter((category) =>
+      categoryLabels[category].toLowerCase().includes(searchLower),
+    );
+  }, [sortedCategories, categoryLabels, search]);
+
   function handleToggle(category: string, isSelected: boolean) {
     startTransition(async () => {
       if (isSelected) {
         updateOptimistic({ category, type: "remove" });
+
         const { error } = await onRemove(category);
 
         if (error) {
@@ -72,6 +97,7 @@ export function CategoryEditor({
         }
       } else {
         updateOptimistic({ category, type: "add" });
+
         const { error } = await onAdd(category);
 
         if (error) {
@@ -86,7 +112,7 @@ export function CategoryEditor({
       <EditableLabel icon={TagsIcon}>{t("Categories")}</EditableLabel>
 
       <div className="flex flex-wrap items-center gap-2">
-        {optimisticCategories.map((category) => {
+        {sortedOptimisticCategories.map((category) => {
           const label = getLabel(category);
 
           if (!label) {
@@ -115,8 +141,16 @@ export function CategoryEditor({
           </PopoverTrigger>
 
           <PopoverContent align="start" className="w-56 p-2">
-            <div className="flex max-h-64 flex-col gap-1 overflow-y-auto">
-              {COURSE_CATEGORIES.map((category) => {
+            <Input
+              className="mb-2"
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={`${t("Search")}…`}
+              type="search"
+              value={search}
+            />
+
+            <div className="flex max-h-64 flex-col gap-1 overflow-y-auto overscroll-contain">
+              {filteredCategories.map((category) => {
                 const isSelected = optimisticCategories.includes(category);
 
                 return (
