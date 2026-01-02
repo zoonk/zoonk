@@ -22,9 +22,9 @@ export async function HomeContainerHeader({
   return (
     <ContainerHeader>
       <ContainerHeaderGroup>
-        <ContainerTitle>{t("Courses")}</ContainerTitle>
+        <ContainerTitle>{t("Draft courses")}</ContainerTitle>
         <ContainerDescription>
-          {t("Select a course to edit its content")}
+          {t("Courses that are not published yet")}
         </ContainerDescription>
       </ContainerHeaderGroup>
 

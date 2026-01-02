@@ -44,11 +44,11 @@ checksums:
     Upload%20course%20image/singular: 3d06104ec6418b93ee038445418c9599
     Image%20removed/singular: b0eb0cb47f8f6c1a2919713e8d1180e7
     Image%20uploaded/singular: 4161c70f9863af81286081a2f6bab12f
-    Your%20organization%20hasn't%20created%20any%20courses%20yet./singular: 4c09c8406dbf7bfe159f850fc1f22b99
-    No%20courses/singular: 72fc2629e79529e927834070a26d2a07
-    Select%20a%20course%20to%20edit%20its%20content/singular: 2f17c5f381acd6ffb1c1109a87e341b5
+    Draft%20courses/singular: a08a92e1697e25ae3f60e282326d942e
     Create%20course/singular: 41f52f80def95a611c9cc3a5e1a11dde
-    Courses/singular: e6d00f3285e8fc48b949af0c4aad3da5
+    Courses%20that%20are%20not%20published%20yet/singular: e08fd000b4c30ddb0b14ff1d2a875eb0
+    No%20draft%20courses/singular: 0f0801105a49bf8e6486ed3435a120f8
+    Your%20organization%20doesn't%20have%20any%20draft%20courses./singular: 5118aa8f79e5d6508b9fdc49ee13c34c
     All%20fields%20are%20required/singular: 01fe4fe061a783c06c001dd39c78053a
     Next/singular: 89ddbcf710eba274963494f312bdc8a9
     Back/singular: f541015a827e37cb3b1234e56bc2aa3c
@@ -117,6 +117,7 @@ checksums:
     dashboard/singular: 3e3998114a2eab7daa3c9a23dbeb16b9
     Lessons/singular: 52fdbe5a3a6ee1cc1e166546516f9111
     new/singular: 59c16092bc6a4b9de0debe084e4b5f49
+    Courses/singular: e6d00f3285e8fc48b949af0c4aad3da5
     course/singular: a8f5f6a15055aa74f1b98d4821329d19
     Home%20page/singular: aa72464a366b091aa6f2037ca869c09c
     sign%20out/singular: a917e8428004b4108a66fa0ba9c0c15c
