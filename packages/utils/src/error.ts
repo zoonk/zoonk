@@ -54,7 +54,6 @@ export async function safeAsync<T>(
     const data = await fn();
     return { data, error: null };
   } catch (e) {
-    console.error(`Error in safeAsync: ${e}`);
     return { data: null, error: toError(e) };
   }
 }
