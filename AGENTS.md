@@ -19,13 +19,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - [Cache Components](#cache-components)
 - [React Compiler](#react-compiler)
 - [Links](#links)
-- [Params](#params)
-- [Interactions](#interactions)
-- [Animation](#animation)
-- [Layout](#layout)
-- [Content & Accessibility](#content--accessibility)
 - [Performance](#performance)
-- [Design](#design)
 
 ## Principles
 
@@ -33,7 +27,8 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - Favor **clarity and minimalism** in both code and UI
 - Follow design inspirations from Apple, Linear, Vercel
 - Code must be modular, following SOLID and DRY principles
-- Avoid nested conditionals and complex logic. Prefer short and composable functions
+- Avoid nested conditionals and complex logic
+- Prefer short and composable functions
 - Prefer functional programming over OOP
 - Use meaningful variable names and avoid abbreviations
 
@@ -41,15 +36,17 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 
 Whenever you're designing something, follow this design style:
 
-Subtle animations, great typography, clean, minimalist, and intuitive design with lots of black/white and empty space. Make it clean, intuitive and super simple to use. Take inspiration from brands with great design like Vercel, Linear, and Apple.
+Subtle animations, great typography, clean, minimalist, and intuitive design with lots of black/white and empty space. Make it clean, intuitive and super simple to use. Take inspiration from brands with great design like Vercel, Linear, and Apple. Ask yourself "How would Apple, Linear, or Vercel design this?"
 
-You deeply care about quality and details, so every element should feel polished and well thought out.
+You **deeply care about quality and details**, so every element should feel polished and well thought out.
 
 Some design preferences:
 
 - Avoid cards/items with borders and heavy shadows. Prefer using empty space and subtle dividers instead
 - For buttons, prefer `outline` variant for most buttons and links. Use the default one only for active/selected states or for submit buttons. Use the `secondary` variant for buttons you want to emphasize a bit more
 - Prefer using existing components from `@zoonk/ui` instead of creating new ones. If a component doesn't exist, search the `shadcn` registry before creating a new one
+
+For detailed UX guidelines (interactions, animation, layout, accessibility), see `.claude/skills/design/SKILL.md`
 
 ## Tech stack
 
@@ -59,7 +56,7 @@ Some design preferences:
 - Tailwind CSS
 - [Prisma Postgres](https://www.prisma.io/postgres)
 - [Prisma ORM](https://www.prisma.io/docs/orm)
-- [shadcn/ui](https://ui.shadcn.com/) and [Kibo UI](https://www.kibo-ui.com/)
+- [shadcn/ui](https://ui.shadcn.com/)
 - [Vercel AI SDK](https://ai-sdk.dev/llms.txt)
 - [Better Auth](https://www.better-auth.com/llms.txt)
 
@@ -69,16 +66,19 @@ Some design preferences:
 
 - [main](./apps/main): Public web app (`zoonk.com`)
 - [admin](./apps/admin): Dashboard for managing users and organizations (`admin.zoonk.com`)
+- [auth](./apps/auth): Centralized authentication for all apps
 - [editor](./apps/editor): Visual editor for building courses and activities (`editor.zoonk.com`)
 - [evals](./apps/evals): Local-only tool for evaluating AI-generated content
 
 ### Packages
 
 - [ai](./packages/ai): AI prompts, tasks, and helpers for content generation
-- [core](./packages/core): Shared server utilities
 - [auth](./packages/auth): Shared Better Auth setup and plugins
+- [core](./packages/core): Shared server utilities
 - [db](./packages/db): Prisma schema and client
 - [mailer](./packages/mailer): Email-sending utilities
+- [next](./packages/next): Shared Next.js utilities
+- [testing](./packages/testing): Shared testing utilities
 - [tsconfig](./packages/tsconfig): Shared TypeScript config
 - [ui](./packages/ui): Shared React components, patterns, hooks, and styles
 - [utils](./packages/utils): Shared utilities and helpers
@@ -114,74 +114,6 @@ All apps should follow a consistent folder structure:
 3. **Cross-route-group components**: Place in `src/components/{domain}/`
 4. **Shared utilities**: Place in `src/lib/`
 
-#### Packages
-
-All packages should follow a consistent structure:
-
-- `src/`: Source code with domain-organized subfolders, see existing packages for examples
-- `README.md`: Package documentation
-- `package.json`: Package manifest
-- `tsconfig.json`: TypeScript configuration
-
-## Database Queries
-
-### Avoiding Over-Fetching
-
-**CRITICAL**: Never fetch more data than needed. This is a common performance anti-pattern:
-
-```ts
-// BAD: Fetches ALL chapters, lessons, activities just to find ONE item
-const courses = await prisma.course.findMany({
-  include: {
-    chapters: {
-      include: {
-        lessons: {
-          include: {
-            activities: true, // Fetches 100s of records
-          },
-        },
-      },
-    },
-  },
-});
-// Then iterates in JavaScript to find one item - WASTEFUL!
-```
-
-**Problems with over-fetching:**
-
-- Loads 100s-1000s of records when only a few are needed
-- JavaScript iteration instead of database filtering
-- Memory pressure on server
-- Slow first loads even with caching
-
-**Solutions:**
-
-1. Use `select` to fetch only needed fields
-2. Use `where` clauses to filter at database level
-3. Use `take` to limit results
-4. For complex queries, use [TypedSQL](#typedsql)
-
-### TypedSQL
-
-When Prisma's query builder can't efficiently express what you need (e.g., `DISTINCT ON`, window functions, complex joins), use [Prisma TypedSQL](https://www.prisma.io/docs/orm/prisma-client/using-raw-sql/typedsql) instead of `$queryRaw`.
-
-See [get-continue-learning.ts](./apps/main/src/data/courses/get-continue-learning.ts) for an example of how to use TypedSQL.
-
-**Why TypedSQL over raw SQL:**
-
-- Full type safety (inputs and outputs)
-- Auto-completion in IDE
-- Compile-time checks
-- No manual type mapping
-
-**When to use TypedSQL:**
-
-- `DISTINCT ON` queries (PostgreSQL)
-- Window functions (`ROW_NUMBER`, `RANK`, etc.)
-- Complex aggregations
-- CTEs (Common Table Expressions)
-- Any query where Prisma would over-fetch then filter in JS
-
 ## Tools
 
 - Use `pnpm` for package management
@@ -210,117 +142,19 @@ See [get-continue-learning.ts](./apps/main/src/data/courses/get-continue-learnin
 
 ## Compound Components
 
-**IMPORTANT**: This is the REQUIRED pattern for ALL UI components. Always use compound components by default - do not wait to be asked.
-
-### What are Compound Components?
-
-Compound components are small, single-purpose components that compose together. Each component wraps exactly ONE HTML element and has ONE responsibility. They are combined like building blocks.
+**IMPORTANT**: This is the REQUIRED pattern for ALL UI components. Always use compound components by default.
 
 ### Core Rules
 
 1. **Each component = one element** - A component wraps exactly one HTML element
-2. **Use `children` for content** - Never use props like `title`, `description`, `label` - pass content as children
+2. **Use `children` for content** - Never use props like `title`, `description`, `label`
 3. **Use `className` for customization** - Allow consumers to override styles
-4. **Use `data-slot` for CSS coordination** - Style child components based on parent context using `data-slot` attributes and Tailwind's `has-*` or `group-*` selectors
-5. **Make components generic** - Name components for what they ARE, not what they're FOR. A component used for courses, users, and brands should be in the UI package with a generic name like `MediaCard`, not `CourseHeader`
+4. **Use `data-slot` for CSS coordination** - Style child components based on parent context
+5. **Make components generic** - Name for what they ARE, not what they're FOR (e.g., `MediaCard` not `CourseHeader`)
 
-### Context/Provider - LAST RESORT
+**Do NOT use React Context by default.** Most compound components don't need it.
 
-**Do NOT use React Context by default.** Most compound components don't need it. Context is only for:
-
-- Shared state that MULTIPLE children need to read/write (like form state, open/close state)
-- When props would need to pass through 3+ levels
-
-If you find yourself reaching for Context, first ask: "Can I solve this with just composition and CSS?" Usually the answer is yes.
-
-### Example: The Right Way
-
-```tsx
-// Each component wraps ONE element, uses children, no context needed
-<MediaCard>
-  <MediaCardTrigger>
-    <MediaCardImage>
-      <Image src={...} />
-    </MediaCardImage>
-    <MediaCardContent>
-      <MediaCardTitle>{title}</MediaCardTitle>
-      <MediaCardDescription>{description}</MediaCardDescription>
-    </MediaCardContent>
-    <MediaCardIndicator />
-  </MediaCardTrigger>
-  <MediaCardPopover>
-    <MediaCardPopoverText>{fullDescription}</MediaCardPopoverText>
-    <MediaCardPopoverMeta>
-      <MediaCardPopoverSource>{source}</MediaCardPopoverSource>
-    </MediaCardPopoverMeta>
-  </MediaCardPopover>
-</MediaCard>
-```
-
-### Example: The Wrong Way (Do NOT Do This)
-
-```tsx
-// BAD: Props instead of children
-<CourseHeader
-  title={t("Course title")}
-  description={t("Course description")}
-  organization={org.name}
-  categories={categories}
-  imageUrl={course.imageUrl}
-/>
-
-// BAD: Unnecessary Context/Provider
-<CourseHeaderProvider value={{ description, organization }}>
-  <CourseHeaderContent />
-</CourseHeaderProvider>
-
-// BAD: Domain-specific naming for generic patterns
-<CourseHeaderImage /> // Should be <MediaCardImage /> in UI package
-```
-
-### Using data-slot for CSS Coordination
-
-Use `data-slot` attributes to coordinate styles between parent and child:
-
-```tsx
-// Parent component
-function MediaCard({ children }) {
-  return <div data-slot="media-card">{children}</div>;
-}
-
-// Child component - styled based on parent context
-function MediaCardTitle({ children, className }) {
-  return (
-    <h1
-      className={cn(
-        // Base styles
-        "font-semibold",
-        // Contextual styles using Tailwind's group/has selectors
-        "group-data-[size=sm]/media-card:text-sm",
-        className
-      )}
-      data-slot="media-card-title"
-    >
-      {children}
-    </h1>
-  );
-}
-```
-
-### Why This Matters
-
-1. **Flexibility** - Consumers can add, remove, or reorder any piece
-2. **Reusability** - Generic components work across the entire codebase
-3. **No magic** - The JSX structure shows exactly what renders
-4. **Easy to extend** - Add new child components without changing existing ones
-5. **Testable** - Each small component is easy to test in isolation
-
-### Reference Examples
-
-- `packages/ui/src/components/item.tsx` - Item/list compound components
-- `packages/ui/src/components/container.tsx` - Container compound components
-- `packages/ui/src/components/sidebar.tsx` - Sidebar compound components
-- `packages/ui/src/components/dialog.tsx` - Dialog compound components
+For detailed examples and patterns, see `.claude/skills/compound-components/SKILL.md`
 
 ## Testing
 
@@ -329,15 +163,10 @@ function MediaCardTitle({ children, className }) {
 
 ## i18n
 
-- When updating `app-error.ts` files also update `error-messages.ts` to include the new error code and run `pnpm build` to update PO files
-- For apps using `next-intl`, use `getExtracted` or `useExtracted`. This will extract the translations to PO files when we run `pnpm build`
-- You can't pass the `t` function from `getExtracted` or `useExtracted` to other functions or components. Instead, call it directly in the component or function. Eg. don't do this: `myFunction(t, label)` instead do this: `myFunction(t("label"))`
-- **IMPORTANT: The `t` function from `getExtracted`/`useExtracted` does NOT support dynamic values**. You cannot use `t(getLabel(value))`. Instead, you need to use string literals: `t("Arts courses")`, `t("Business courses")`, etc
-- You CAN use string interpolation in `getExtracted`/`useExtracted` to get the translation for a dynamic value. For example: `t("Explore all {category} courses", { category: "arts" })`
-- Whenever using `getExtracted` or `useExtracted`, run `pnpm build` to update PO files
-- Run `pnpm i18n:check` to check for any missing translations and translate empty strings in PO files, making sure translations are consistent across the codebase
-- When you see a `MISSING_TRANSLATION` error (or similar), it means the PO file hasn't been translated. Just go to the PO file and translate the empty strings. You should never create new translations on PO files manually, just extract them using `pnpm build`. If you're on an environment where you can't run `pnpm build`, just ignore this i18n step.
-- You don't need to pass a locale to `getExtracted` when using RSC, only on `generateMetadata` or server actions. It works without a locale on server components
+- Use `getExtracted` (server) or `useExtracted` (client) for translations
+- **IMPORTANT**: The `t` function does NOT support dynamic keys. Use string literals: `t("Arts courses")`, not `t(someVariable)`
+
+For detailed i18n workflow and gotchas, see `.claude/skills/translations/SKILL.md`
 
 ## CSS
 
@@ -354,69 +183,13 @@ function MediaCardTitle({ children, className }) {
 
 ## Cache Components
 
-When creating a `page.tsx` file, you should either use `use cache` or don't make any `await` calls directly in the component. Otherwise, Next.js will throw an error. Instead, move it to its own async component and wrap it with `<Suspense>`.
+When creating a `page.tsx` file, either use `use cache` or don't make any `await` calls directly. Move async logic to separate components wrapped with `<Suspense>`.
 
-Don't wrap multiple elements in the same `Suspense` because this way the fallback using a skeleton would be too generic. Instead, wrap each component that fetches data in its own `Suspense` so you can provide a more specific fallback.
+- Wrap each data-fetching component in its own `Suspense` with a specific skeleton
+- Avoid `use cache` by default (can't use with `searchParams`, `cookies()`, `headers()`)
+- Call `revalidatePath()` before redirecting after mutations
 
-For example:
-
-```tsx
-<>
-  <Suspense fallback={<OrganizationHeaderSkeleton />}>
-    <OrganizationHeader />
-  </Suspense>
-
-  <Suspense fallback={<OrganizationListSkeleton />}>
-    <OrganizationList />
-  </Suspense>
-</>
-```
-
-Avoid using `use cache` by default unless we know the page can be static. Plus, you can't use `use cache` with `searchParams`, `cookies()`, or `headers()`.
-
-### Invalidating Client Router Cache with staleTimes
-
-When using `staleTimes` (experimental feature for client-side route caching), mutations that create/update/delete data need to call `revalidatePath()` before redirecting. Otherwise, navigating back to the parent page will show stale cached data.
-
-```tsx
-async function handleCreate() {
-  "use server";
-  const { slug } = await createItem(...);
-
-  // Invalidate the parent page's client cache before redirecting
-  revalidatePath(`/${orgSlug}/items`);
-  redirect(`/${orgSlug}/items/${slug}`);
-}
-```
-
-### Preloading Data in Parallel
-
-When a page has multiple async components that fetch data, preload them in parallel at the page level using `Promise.all`. Since data fetching functions use React's `cache`, child components will reuse the same cached promise:
-
-```tsx
-export default async function SomePage(props: PageProps<"/some-route">) {
-  const { slug } = await props.params;
-
-  // Preload data in parallel (cached, so child components get the same promise)
-  void Promise.all([getMainData({ slug }), getRelatedItems({ slug })]);
-
-  return (
-    <Container>
-      <Suspense fallback={<MainContentSkeleton />}>
-        <MainContent params={props.params} />
-      </Suspense>
-
-      <Suspense fallback={<ItemListSkeleton />}>
-        <RelatedItemList params={props.params} />
-      </Suspense>
-    </Container>
-  );
-}
-```
-
-Use `void` to explicitly indicate the promise result is intentionally unused (avoids linter warnings about floating promises).
-
-Use the `nextjs_docs` tool for searching the Next.js documentation when you have doubts about how to implement something.
+For detailed caching patterns, streaming, and preloading, see the latest Next.js docs from the `next-devtools` MCP server.
 
 ## Links
 
@@ -434,165 +207,26 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 
 We're using the new [React Compiler](https://react.dev/learn/react-compiler/introduction). By default, React Compiler will memoize your code based on its analysis and heuristics. In most cases, this memoization will be as precise, or moreso, than what you may have written. This means you don't need to `useMemo` or `useCallback` as much. The useMemo and useCallback hooks can continue to be used with React Compiler as an escape hatch to provide control over which values are memoized. A common use-case for this is if a memoized value is used as an effect dependency, in order to ensure that an effect does not fire repeatedly even when its dependencies do not meaningfully change. However, this should be used sparingly and only when necessary. Don't default to using `useMemo` or `useCallback` with React Compiler, use them only when necessary.
 
-## Params
-
-In Next.js 15, `params` use Dynamic APIs. Dynamic APIs are: The `params` and `searchParams` props that get provided to pages, layouts, metadata APIs, and route handlers; `cookies()`, `draftMode()`, and `headers()` from `next/headers`. In Next 15, these APIs have been made asynchronous.
-
-For example, the following code will issue a warning:
-
-```ts
-function Page({ params }) {
-  // direct access of `params.id`.
-  return <p>ID: {params.id}</p>;
-}
-```
-
-This also includes enumerating (e.g. {...params}, or Object.keys(params)) or iterating over the return value of these APIs (e.g. [...headers()] or for (const cookie of cookies()), or explicitly with cookies()[Symbol.iterator]()).
-
-In the version of Next.js that issued this warning, access to these properties is still possible directly but will warn. In future versions, these APIs will be async and direct access will not work as expected.
-
-### How to fix
-
-If you're using a server (e.g. a route handler, or a Server Component), you must await the dynamic API to access its properties:
-
-```tsx
-async function Page({ params }: { params: Promise<{ id: string }> }) {
-  // asynchronous access of `params.id`.
-  const { id } = await params;
-  return <p>ID: {id}</p>;
-}
-```
-
-If you're using a synchronous component (e.g. a Client component), you must use React.use() to unwrap the Promise first:
-
-```tsx
-"use client";
-import { use } from "react";
-
-function Page({ params }: { params: Promise<{ id: string }> }) {
-  // asynchronous access of `params.id`.
-  const { id } = use(params);
-  return <p>ID: {id}</p>;
-}
-```
-
-You can delay unwrapping the Promise (either with await or React.use) until you actually need to consume the value. This will allow Next.js to statically render more of your page.
-
-## Interactions
-
-- Keyboard
-  - MUST: Full keyboard support per [WAI-ARIA APG](https://wwww3org/WAI/ARIA/apg/patterns/)
-  - MUST: Visible focus rings (`:focus-visible`; group with `:focus-within`)
-  - MUST: Manage focus (trap, move, and return) per APG patterns
-- Targets & input
-  - MUST: Hit target ≥24px (mobile ≥44px) If visual <24px, expand hit area
-  - MUST: Mobile `<input>` font-size ≥16px or set:
-    ```html
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
-    />
-    ```
-  - NEVER: Disable browser zoom
-  - MUST: `touch-action: manipulation` to prevent double-tap zoom; set `-webkit-tap-highlight-color` to match design
-- Inputs & forms (behavior)
-  - MUST: Hydration-safe inputs (no lost focus/value)
-  - NEVER: Block paste in `<input>/<textarea>`
-  - MUST: Loading buttons show spinner and keep original label
-  - MUST: Enter submits focused text input In `<textarea>`, ⌘/Ctrl+Enter submits; Enter adds newline
-  - MUST: Keep submit enabled until request starts; then disable, show spinner, use idempotency key
-  - MUST: Don’t block typing; accept free text and validate after
-  - MUST: Allow submitting incomplete forms to surface validation
-  - MUST: Errors inline next to fields; on submit, focus first error
-  - MUST: `autocomplete` + meaningful `name`; correct `type` and `inputmode`
-  - SHOULD: Disable spellcheck for emails/codes/usernames
-  - SHOULD: Placeholders end with ellipsis and show example pattern (eg, `+1 (123) 456-7890`, `sk-012345…`)
-  - MUST: Warn on unsaved changes before navigation
-  - MUST: Compatible with password managers & 2FA; allow pasting one-time codes
-  - MUST: Trim values to handle text expansion trailing spaces
-  - MUST: No dead zones on checkboxes/radios; label+control share one generous hit target
-- State & navigation
-  - MUST: URL reflects state (deep-link filters/tabs/pagination/expanded panels) Prefer libs like [nuqs](https://nuqs.dev)
-  - MUST: Back/Forward restores scroll
-  - MUST: Links are links—use `<a>/<Link>` for navigation (support Cmd/Ctrl/middle-click)
-- Feedback
-  - SHOULD: Optimistic UI; reconcile on response; on failure show error and rollback or offer Undo
-  - MUST: Confirm destructive actions or provide Undo window
-  - MUST: Use polite `aria-live` for toasts/inline validation
-  - SHOULD: Ellipsis (`…`) for options that open follow-ups (eg, “Rename…”)
-- Touch/drag/scroll
-  - MUST: Design forgiving interactions (generous targets, clear affordances; avoid finickiness)
-  - MUST: Delay first tooltip in a group; subsequent peers no delay
-  - MUST: Intentional `overscroll-behavior: contain` in modals/drawers
-  - MUST: During drag, disable text selection and set `inert` on dragged element/containers
-  - MUST: No “dead-looking” interactive zones—if it looks clickable, it is
-- Autofocus
-  - SHOULD: Autofocus on desktop when there’s a single primary input; rarely on mobile (to avoid layout shift)
-
-## Animation
-
-- MUST: Honor `prefers-reduced-motion` (provide reduced variant)
-- SHOULD: Prefer CSS > Web Animations API > JS libraries
-- MUST: Animate compositor-friendly props (`transform`, `opacity`); avoid layout/repaint props (`top/left/width/height`)
-- SHOULD: Animate only to clarify cause/effect or add deliberate delight
-- SHOULD: Choose easing to match the change (size/distance/trigger)
-- MUST: Animations are interruptible and input-driven (avoid autoplay)
-- MUST: Correct `transform-origin` (motion starts where it “physically” should)
-
-## Layout
-
-- SHOULD: Optical alignment; adjust by ±1px when perception beats geometry
-- MUST: Deliberate alignment to grid/baseline/edges/optical centers—no accidental placement
-- SHOULD: Balance icon/text lockups (stroke/weight/size/spacing/color)
-- MUST: Verify mobile, laptop, ultra-wide (simulate ultra-wide at 50% zoom)
-- MUST: Respect safe areas (use env(safe-area-inset-\*))
-- MUST: Avoid unwanted scrollbars; fix overflows
-
-## Content & Accessibility
-
-- SHOULD: Inline help first; tooltips last resort
-- MUST: Skeletons mirror final content to avoid layout shift
-- MUST: `<title>` matches current context
-- MUST: No dead ends; always offer next step/recovery
-- MUST: Design empty/sparse/dense/error states
-- SHOULD: Curly quotes (“ ”); avoid widows/orphans
-- MUST: Tabular numbers for comparisons (`font-variant-numeric: tabular-nums` or a monospace font)
-- MUST: Redundant status cues (not color-only); icons have text labels
-- MUST: Don’t ship the schema—visuals may omit labels but accessible names still exist
-- MUST: Use the ellipsis character `…` (not ``)
-- MUST: `scroll-margin-top` on headings for anchored links; include a “Skip to content” link; hierarchical `<h1–h6>`
-- MUST: Resilient to user-generated content (short/avg/very long)
-- MUST: Locale-aware dates/times/numbers/currency
-- MUST: Accurate names (`aria-label`), decorative elements `aria-hidden`, verify in the Accessibility Tree
-- MUST: Icon-only buttons have descriptive `aria-label`
-- MUST: Prefer native semantics (`button`, `a`, `label`, `table`) before ARIA
-- SHOULD: Right-clicking the nav logo surfaces brand assets
-- MUST: Use non-breaking spaces to glue terms: `10&nbsp;MB`, `⌘&nbsp;+&nbsp;K`, `Vercel&nbsp;SDK`
-
 ## Performance
 
-- SHOULD: Test iOS Low Power Mode and macOS Safari
 - MUST: Measure reliably (disable extensions that skew runtime)
 - MUST: Track and minimize re-renders (React DevTools/React Scan)
 - MUST: Profile with CPU/network throttling
 - MUST: Batch layout reads/writes; avoid unnecessary reflows/repaints
-- MUST: Mutations (`POST/PATCH/DELETE`) target <500 ms
 - SHOULD: Prefer uncontrolled inputs; make controlled loops cheap (keystroke cost)
 - MUST: Virtualize large lists (eg, `virtua`)
-- MUST: Preload only above-the-fold images; lazy-load the rest
-- MUST: Prevent CLS from images (explicit dimensions or reserved space)
 
-## Design
+## Specialized Skills
 
-- SHOULD: Layered shadows (ambient + direct)
-- SHOULD: Crisp edges via semi-transparent borders + shadows
-- SHOULD: Nested radii: child ≤ parent; concentric
-- SHOULD: Hue consistency: tint borders/shadows/text toward bg hue
-- MUST: Accessible charts (color-blind-friendly palettes)
-- MUST: Meet contrast—prefer [APCA](https://apcacontrastcom/) over WCAG 2
-- MUST: Increase contrast on `:hover/:active/:focus`
-- SHOULD: Match browser UI to bg
-- SHOULD: Avoid gradient banding (use masks when needed)
+For detailed guidance on complex workflows, see these skill files:
+
+| Skill               | When to Use                 | File                                          |
+| ------------------- | --------------------------- | --------------------------------------------- |
+| Compound Components | Building UI components      | `.claude/skills/compound-components/SKILL.md` |
+| Design              | UI/UX, interactions, a11y   | `.claude/skills/design/SKILL.md`              |
+| Translations        | Working with i18n, PO files | `.claude/skills/translations/SKILL.md`        |
+
+**Note**: Claude Code auto-discovers these skills. Other AI agents should read the SKILL.md files directly when working on related tasks.
 
 ## Updating this document
 
