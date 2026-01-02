@@ -5,865 +5,872 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
 
-#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-actions.tsx
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-actions.tsx:53
 msgctxt "kcCZue"
 msgid "Delete chapter"
 msgstr "Eliminar capítulo"
 
-#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-actions.tsx
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-actions.tsx:54
 msgctxt "MXg41w"
 msgid "Delete chapter?"
 msgstr "¿Eliminar capítulo?"
 
-#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-actions.tsx
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-actions.tsx:46
 msgctxt "52DE8l"
 msgid "Delete lesson?"
 msgstr "¿Eliminar lección?"
 
-#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-actions.tsx
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-actions.tsx:45
 msgctxt "g5DE4z"
 msgid "Delete lesson"
 msgstr "Eliminar lección"
 
-#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/course-actions.tsx
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/course-actions.tsx:34
 msgctxt "Ljsy5D"
 msgid "Delete course"
 msgstr "Eliminar curso"
 
-#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/course-actions.tsx
+#: src/app/[orgSlug]/@navbarActions/c/[lang]/[courseSlug]/course-actions.tsx:35
 msgctxt "ZFXb/x"
 msgid "Delete course?"
 msgstr "¿Eliminar curso?"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts:105
 msgctxt "BAkmPD"
 msgid "Untitled chapter"
 msgstr "Capítulo sin título"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts:255
 msgctxt "E+/68R"
 msgid "Invalid file type. Please upload a JPEG, PNG, WebP, or GIF image."
 msgstr "Tipo de archivo inválido. Por favor sube una imagen JPEG, PNG, WebP o GIF."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts:259
 msgctxt "in2TjU"
 msgid "File is too large. Maximum size is 5MB."
 msgstr "El archivo es demasiado grande. El tamaño máximo es 5MB."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts:260
 msgctxt "JkrKUt"
 msgid "Failed to upload image. Please try again."
 msgstr "Error al subir la imagen. Por favor intenta de nuevo."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts:137
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts:245
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts:350
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts:145
 msgctxt "lgvvCe"
 msgid "No file provided"
 msgstr "No se proporcionó ningún archivo"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts:312
 msgctxt "Lp3DO2"
 msgid "Title is required"
 msgstr "El título es obligatorio"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts:258
 msgctxt "Q1jVC0"
 msgid "Failed to process image. Please try again."
 msgstr "Error al procesar la imagen. Por favor intenta de nuevo."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts:106
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts:110
 msgctxt "sGJpuF"
 msgid "Add a description…"
 msgstr "Agrega una descripción…"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/actions.ts:109
 msgctxt "oUJv8w"
 msgid "Untitled lesson"
 msgstr "Lección sin título"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-content.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-content.tsx:33
 msgctxt "b3c9gA"
 msgid "Edit chapter description"
 msgstr "Editar descripción del capítulo"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-content.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-content.tsx:44
 msgctxt "fuhIMT"
 msgid "Edit chapter title"
 msgstr "Editar título del capítulo"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-content.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-content.tsx:34
 msgctxt "kYfPBA"
 msgid "Chapter description…"
 msgstr "Descripción del capítulo…"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-content.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/chapter-content.tsx:45
 msgctxt "yNvug5"
 msgid "Chapter title…"
 msgstr "Título del capítulo…"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx:35
 msgctxt "AHvdBa"
 msgid "Edit lesson description"
 msgstr "Editar descripción de la lección"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx:36
 msgctxt "AmPWks"
 msgid "Lesson description…"
 msgstr "Descripción de la lección…"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx:43
 msgctxt "jrinBZ"
 msgid "Lesson title…"
 msgstr "Título de la lección…"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/lesson-content.tsx:42
 msgctxt "kdZUaI"
 msgid "Edit lesson title"
 msgstr "Editar título de la lección"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx:53
 msgctxt "2VCKc7"
 msgid "We couldn't load the lessons. Please try again."
 msgstr "No pudimos cargar las lecciones. Por favor, intenta de nuevo."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx:56
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx:53
 msgctxt "5CI3KH"
 msgid "Contact support"
 msgstr "Contactar soporte"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx:57
 msgctxt "6ssHZM"
 msgid "Failed to load lessons"
 msgstr "Error al cargar lecciones"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx:98
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx:95
 msgctxt "aJ/bsX"
 msgid "Drag to reorder"
 msgstr "Arrastra para reordenar"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx:54
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx:51
 msgctxt "FazwRl"
 msgid "Try again"
 msgstr "Intentar de nuevo"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx:75
 msgctxt "RWzfUY"
 msgid "Add lesson"
 msgstr "Agregar lección"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx:72
 msgctxt "dlQpGl"
 msgid "Add chapter"
 msgstr "Agregar capítulo"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx:50
 msgctxt "sHQNSR"
 msgid "We couldn't load the chapters. Please try again."
 msgstr "No pudimos cargar los capítulos. Por favor, intenta de nuevo."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx:54
 msgctxt "xA68iL"
 msgid "Failed to load chapters"
 msgstr "Error al cargar capítulos"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-content.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-content.tsx:38
 msgctxt "2Pphvx"
 msgid "Course title…"
 msgstr "Título del curso…"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-content.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-content.tsx:30
 msgctxt "Ek5KLE"
 msgid "Edit course description"
 msgstr "Editar descripción del curso"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-content.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-content.tsx:37
 msgctxt "FKa6ED"
 msgid "Edit course title"
 msgstr "Editar título del curso"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-content.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-content.tsx:31
 msgctxt "RX7tLA"
 msgid "Course description…"
 msgstr "Descripción del curso…"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx:68
 msgctxt "+MD59T"
 msgid "Change course image"
 msgstr "Cambiar imagen del curso"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx:52
 msgctxt "09WQsL"
 msgid "Invalid file type. Please upload a {formats} image."
 msgstr "Tipo de archivo inválido. Por favor sube una imagen {formats}."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx:57
 msgctxt "4pIjq5"
 msgid "File is too large. Maximum size is {max}MB."
 msgstr "El archivo es demasiado grande. El tamaño máximo es {max}MB."
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx:91
 msgctxt "7vM5rK"
 msgid "Remove image"
 msgstr "Eliminar imagen"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx:69
 msgctxt "N8c7X3"
 msgid "Upload course image"
 msgstr "Subir imagen del curso"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx:56
 msgctxt "P4DaWb"
 msgid "Image removed"
 msgstr "Imagen eliminada"
 
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/course-image.tsx:60
 msgctxt "TcTp+J"
 msgid "Image uploaded"
 msgstr "Imagen subida"
 
-#: src/app/[orgSlug]/home-container-header.tsx
+#: src/app/[orgSlug]/home-container-header.tsx:25
 msgctxt "3MA05s"
 msgid "Draft courses"
 msgstr "Cursos en borrador"
 
-#: src/app/[orgSlug]/home-container-header.tsx
-#: src/app/[orgSlug]/new-course/page.tsx
-#: src/components/navbar/command-palette.tsx
+#: src/app/[orgSlug]/home-container-header.tsx:36
+#: src/app/[orgSlug]/new-course/page.tsx:10
+#: src/components/navbar/command-palette.tsx:86
 msgctxt "dCKXDB"
 msgid "Create course"
 msgstr "Crear curso"
 
-#: src/app/[orgSlug]/home-container-header.tsx
+#: src/app/[orgSlug]/home-container-header.tsx:27
 msgctxt "ugXYXv"
 msgid "Courses that are not published yet"
 msgstr "Cursos que aún no están publicados"
 
-#: src/app/[orgSlug]/list-courses.tsx
+#: src/app/[orgSlug]/list-courses.tsx:27
 msgctxt "F5+xrT"
 msgid "No draft courses"
 msgstr "No hay cursos en borrador"
 
-#: src/app/[orgSlug]/list-courses.tsx
+#: src/app/[orgSlug]/list-courses.tsx:25
 msgctxt "mYCw6F"
 msgid "Your organization doesn't have any draft courses."
 msgstr "Tu organización no tiene cursos en borrador."
 
-#: src/app/[orgSlug]/new-course/actions.ts
+#: src/app/[orgSlug]/new-course/actions.ts:42
 msgctxt "bLbK+M"
 msgid "All fields are required"
 msgstr "Todos los campos son obligatorios"
 
-#: src/app/[orgSlug]/new-course/create-course-navbar.tsx
+#: src/app/[orgSlug]/new-course/create-course-navbar.tsx:75
 msgctxt "9+Ddtu"
 msgid "Next"
 msgstr "Siguiente"
 
-#: src/app/[orgSlug]/new-course/create-course-navbar.tsx
+#: src/app/[orgSlug]/new-course/create-course-navbar.tsx:55
 msgctxt "cyR7Kh"
 msgid "Back"
 msgstr "Atrás"
 
-#: src/app/[orgSlug]/new-course/create-course-navbar.tsx
+#: src/app/[orgSlug]/new-course/create-course-navbar.tsx:45
 msgctxt "rbrahO"
 msgid "Close"
 msgstr "Cerrar"
 
-#: src/app/[orgSlug]/new-course/create-course-navbar.tsx
+#: src/app/[orgSlug]/new-course/create-course-navbar.tsx:65
 msgctxt "VzzYJk"
 msgid "Create"
 msgstr "Crear"
 
-#: src/app/[orgSlug]/new-course/steps/description-step.tsx
+#: src/app/[orgSlug]/new-course/steps/description-step.tsx:36
 msgctxt "2qMJ2X"
 msgid "A brief description of your course…"
 msgstr "Una breve descripción de tu curso…"
 
-#: src/app/[orgSlug]/new-course/steps/description-step.tsx
+#: src/app/[orgSlug]/new-course/steps/description-step.tsx:25
 msgctxt "43Q2tB"
 msgid "Course description"
 msgstr "Descripción del curso"
 
-#: src/app/[orgSlug]/new-course/steps/description-step.tsx
+#: src/app/[orgSlug]/new-course/steps/description-step.tsx:29
 msgctxt "zLHjeU"
 msgid "A short summary that helps learners understand what they'll learn"
 msgstr "Un resumen corto para ayudar a los estudiantes a entender lo que aprenderán"
 
-#: src/app/[orgSlug]/new-course/steps/language-step.tsx
+#: src/app/[orgSlug]/new-course/steps/language-step.tsx:26
 msgctxt "KYeXR4"
 msgid "Course language"
 msgstr "Idioma del curso"
 
-#: src/app/[orgSlug]/new-course/steps/language-step.tsx
+#: src/app/[orgSlug]/new-course/steps/language-step.tsx:29
 msgctxt "wjs5Mw"
 msgid "Select the language your course content will be in"
 msgstr "Selecciona el idioma en el que estará el contenido de tu curso"
 
-#: src/app/[orgSlug]/new-course/steps/slug-step.tsx
+#: src/app/[orgSlug]/new-course/steps/slug-step.tsx:34
 msgctxt "lE3Euj"
 msgid "This will be the URL path for your course"
 msgstr "Esta será la ruta URL para tu curso"
 
-#: src/app/[orgSlug]/new-course/steps/slug-step.tsx
+#: src/app/[orgSlug]/new-course/steps/slug-step.tsx:31
 msgctxt "nRWWPC"
 msgid "Course URL"
 msgstr "URL del curso"
 
-#: src/app/[orgSlug]/new-course/steps/slug-step.tsx
+#: src/app/[orgSlug]/new-course/steps/slug-step.tsx:47
 msgctxt "wQWt52"
 msgid "course-title"
 msgstr "titulo-del-curso"
 
-#: src/app/[orgSlug]/new-course/steps/title-step.tsx
+#: src/app/[orgSlug]/new-course/steps/title-step.tsx:34
 msgctxt "B0oGiF"
 msgid "course title"
 msgstr "título del curso"
 
-#: src/app/[orgSlug]/new-course/steps/title-step.tsx
+#: src/app/[orgSlug]/new-course/steps/title-step.tsx:27
 msgctxt "bZ8+Wq"
 msgid "The main title that learners will see for your course"
 msgstr "El título principal que los estudiantes verán para tu curso"
 
-#: src/app/[orgSlug]/new-course/steps/title-step.tsx
+#: src/app/[orgSlug]/new-course/steps/title-step.tsx:24
 msgctxt "JHdbKf"
 msgid "Course title"
 msgstr "Título del curso"
 
-#: src/app/[orgSlug]/new-course/use-course-form.ts
+#: src/app/[orgSlug]/new-course/use-course-form.ts:60
 msgctxt "lP29gk"
 msgid "A course with this URL already exists"
 msgstr "Ya existe un curso con esta dirección"
 
-#: src/app/unauthorized.tsx
+#: src/app/unauthorized.tsx:26
 msgctxt "Ajg4UO"
 msgid "You can't edit courses for this organization. Log in with another account or switch to a different organization."
 msgstr "No puedes editar cursos para esta organización. Inicia sesión con otra cuenta o cambia a una organización diferente."
 
-#: src/app/unauthorized.tsx
+#: src/app/unauthorized.tsx:40
 msgctxt "AyGauy"
 msgid "Login"
 msgstr "Iniciar sesión"
 
-#: src/app/unauthorized.tsx
-#: src/components/navbar/command-palette.tsx
-#: src/components/navbar/logout-menu-item.tsx
+#: src/app/unauthorized.tsx:36
+#: src/components/navbar/command-palette.tsx:93
+#: src/components/navbar/logout-menu-item.tsx:13
 msgctxt "C81/uG"
 msgid "Logout"
 msgstr "Cerrar sesión"
 
-#: src/app/unauthorized.tsx
+#: src/app/unauthorized.tsx:23
 msgctxt "gNtXZ8"
 msgid "401 - Unauthorized"
 msgstr "401 - No autorizado"
 
-#: src/components/alternative-titles-editor.tsx
+#: src/components/alternative-titles-editor.tsx:193
 msgctxt "2/2yg+"
 msgid "Add"
 msgstr "Agregar"
 
-#: src/components/alternative-titles-editor.tsx
-#: src/components/entity-list-actions.tsx
-#: src/components/navbar/delete-item-button.tsx
-#: src/components/slug-editor.tsx
+#: src/components/alternative-titles-editor.tsx:319
+#: src/components/entity-list-actions.tsx:171
+#: src/components/navbar/delete-item-button.tsx:78
+#: src/components/slug-editor.tsx:139
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/components/alternative-titles-editor.tsx
-#: src/components/entity-list-actions.tsx
+#: src/components/alternative-titles-editor.tsx:299
+#: src/components/entity-list-actions.tsx:151
 msgctxt "5kTT3Y"
 msgid "Drop file or click to select"
 msgstr "Suelta el archivo o haz clic para seleccionar"
 
-#: src/components/alternative-titles-editor.tsx
+#: src/components/alternative-titles-editor.tsx:104
 msgctxt "6MeYja"
 msgid "Alternative titles exported successfully"
 msgstr "Títulos alternativos exportados exitosamente"
 
-#: src/components/alternative-titles-editor.tsx
-#: src/components/entity-list-actions.tsx
+#: src/components/alternative-titles-editor.tsx:307
+#: src/components/entity-list-actions.tsx:159
 msgctxt "70OZD0"
 msgid "Replace (remove existing first)"
 msgstr "Reemplazar (eliminar existente primero)"
 
-#: src/components/alternative-titles-editor.tsx
-#: src/components/entity-list-actions.tsx
+#: src/components/alternative-titles-editor.tsx:302
+#: src/components/entity-list-actions.tsx:154
 msgctxt "95TwrO"
 msgid "Import mode"
 msgstr "Modo de importación"
 
-#: src/components/alternative-titles-editor.tsx
-#: src/components/entity-list-actions.tsx
+#: src/components/alternative-titles-editor.tsx:208
+#: src/components/alternative-titles-editor.tsx:321
+#: src/components/entity-list-actions.tsx:129
+#: src/components/entity-list-actions.tsx:173
 msgctxt "9XUYQt"
 msgid "Import"
 msgstr "Importar"
 
-#: src/components/alternative-titles-editor.tsx
+#: src/components/alternative-titles-editor.tsx:289
 msgctxt "AICU1d"
 msgid "Import alternative titles"
 msgstr "Importar títulos alternativos"
 
-#: src/components/alternative-titles-editor.tsx
+#: src/components/alternative-titles-editor.tsx:230
 msgctxt "cvL4Xs"
 msgid "Search titles…"
 msgstr "Buscar títulos…"
 
-#: src/components/alternative-titles-editor.tsx
+#: src/components/alternative-titles-editor.tsx:244
 msgctxt "G5e8UX"
 msgid "Remove {title}"
 msgstr "Eliminar {title}"
 
-#: src/components/alternative-titles-editor.tsx
-#: src/components/entity-list-actions.tsx
+#: src/components/alternative-titles-editor.tsx:313
+#: src/components/entity-list-actions.tsx:165
 msgctxt "GAHXbk"
 msgid "Show expected format"
 msgstr "Mostrar formato esperado"
 
-#: src/components/alternative-titles-editor.tsx
-#: src/components/entity-list-actions.tsx
+#: src/components/alternative-titles-editor.tsx:304
+#: src/components/entity-list-actions.tsx:156
 msgctxt "HNBlXY"
 msgid "Merge (add to existing)"
 msgstr "Combinar (agregar a existente)"
 
-#: src/components/alternative-titles-editor.tsx
+#: src/components/alternative-titles-editor.tsx:175
 msgctxt "iQDWe6"
 msgid "Alternative titles"
 msgstr "Títulos alternativos"
 
-#: src/components/alternative-titles-editor.tsx
-#: src/components/entity-list-actions.tsx
+#: src/components/alternative-titles-editor.tsx:202
+#: src/components/entity-list-actions.tsx:123
 msgctxt "IzCVhG"
 msgid "More options"
 msgstr "Más opciones"
 
-#: src/components/alternative-titles-editor.tsx
+#: src/components/alternative-titles-editor.tsx:190
 msgctxt "jQY6mT"
 msgid "Add alternative title…"
 msgstr "Agregar título alternativo…"
 
-#: src/components/alternative-titles-editor.tsx
+#: src/components/alternative-titles-editor.tsx:277
 msgctxt "n2FbaN"
 msgid "No titles match your search"
 msgstr "No hay títulos que coincidan con tu búsqueda"
 
-#: src/components/alternative-titles-editor.tsx
+#: src/components/alternative-titles-editor.tsx:261
 msgctxt "oDI/Rp"
 msgid "and {count} more"
 msgstr "y {count} más"
 
-#: src/components/alternative-titles-editor.tsx
+#: src/components/alternative-titles-editor.tsx:271
 msgctxt "qyJtWy"
 msgid "Show less"
 msgstr "Mostrar menos"
 
-#: src/components/alternative-titles-editor.tsx
+#: src/components/alternative-titles-editor.tsx:178
 msgctxt "R6KURz"
 msgid "({count})"
 msgstr "({count})"
 
-#: src/components/alternative-titles-editor.tsx
-#: src/components/entity-list-actions.tsx
+#: src/components/alternative-titles-editor.tsx:213
+#: src/components/entity-list-actions.tsx:134
 msgctxt "SVwJTM"
 msgid "Export"
 msgstr "Exportar"
 
-#: src/components/alternative-titles-editor.tsx
-#: src/components/entity-list-actions.tsx
+#: src/components/alternative-titles-editor.tsx:88
+#: src/components/entity-list-actions.tsx:90
 msgctxt "w6G8oe"
 msgid "Failed to export"
 msgstr "Error al exportar"
 
-#: src/components/alternative-titles-editor.tsx
+#: src/components/alternative-titles-editor.tsx:291
 msgctxt "Ws/LkY"
 msgid "Upload a JSON file containing alternative titles to import."
 msgstr "Sube un archivo JSON que contenga los títulos alternativos para importar."
 
-#: src/components/alternative-titles-editor.tsx
+#: src/components/alternative-titles-editor.tsx:109
 msgctxt "xl9KyD"
 msgid "Alternative titles imported successfully"
 msgstr "Títulos alternativos importados exitosamente"
 
-#: src/components/category-editor.tsx
+#: src/components/category-editor.tsx:133
 msgctxt "HzJbix"
 msgid "Add category"
 msgstr "Agregar categoría"
 
-#: src/components/category-editor.tsx
+#: src/components/category-editor.tsx:112
 msgctxt "VKb1MS"
 msgid "Categories"
 msgstr "Categorías"
 
-#: src/components/category-editor.tsx
-#: src/components/navbar/command-palette.tsx
+#: src/components/category-editor.tsx:147
+#: src/components/navbar/command-palette.tsx:113
+#: src/components/navbar/command-palette.tsx:121
 msgctxt "xmcVZ0"
 msgid "Search"
 msgstr "Buscar"
 
-#: src/components/content-editor.tsx
+#: src/components/content-editor.tsx:107
 msgctxt "BfrgHC"
 msgid "Unsaved"
 msgstr "Sin guardar"
 
-#: src/components/content-editor.tsx
+#: src/components/content-editor.tsx:105
 msgctxt "fsB/4p"
 msgid "Saved"
 msgstr "Guardado"
 
-#: src/components/content-editor.tsx
+#: src/components/content-editor.tsx:106
 msgctxt "WUV28A"
 msgid "Saving…"
 msgstr "Guardando…"
 
-#: src/components/entity-list-actions.tsx
+#: src/components/entity-list-actions.tsx:78
 msgctxt "8n7YmS"
 msgid "Lessons imported successfully"
 msgstr "Lecciones importadas exitosamente"
 
-#: src/components/entity-list-actions.tsx
+#: src/components/entity-list-actions.tsx:70
 msgctxt "bc4z39"
 msgid "Chapters exported successfully"
 msgstr "Capítulos exportados exitosamente"
 
-#: src/components/entity-list-actions.tsx
+#: src/components/entity-list-actions.tsx:76
 msgctxt "itDWRC"
 msgid "Lessons exported successfully"
 msgstr "Lecciones exportadas exitosamente"
 
-#: src/components/entity-list-actions.tsx
+#: src/components/entity-list-actions.tsx:71
 msgctxt "lwIuOL"
 msgid "Upload a JSON file containing chapters to import."
 msgstr "Sube un archivo JSON que contenga los capítulos a importar."
 
-#: src/components/entity-list-actions.tsx
+#: src/components/entity-list-actions.tsx:73
 msgctxt "TQmijK"
 msgid "Import chapters"
 msgstr "Importar capítulos"
 
-#: src/components/entity-list-actions.tsx
+#: src/components/entity-list-actions.tsx:79
 msgctxt "WDo1Sx"
 msgid "Import lessons"
 msgstr "Importar lecciones"
 
-#: src/components/entity-list-actions.tsx
+#: src/components/entity-list-actions.tsx:72
 msgctxt "XTTRzf"
 msgid "Chapters imported successfully"
 msgstr "Capítulos importados exitosamente"
 
-#: src/components/entity-list-actions.tsx
+#: src/components/entity-list-actions.tsx:77
 msgctxt "ZuOjRf"
 msgid "Upload a JSON file containing lessons to import."
 msgstr "Sube un archivo JSON que contenga las lecciones a importar."
 
-#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/command-palette.tsx:92
 msgctxt "6BySgv"
 msgid "logout"
 msgstr "cerrar sesión"
 
-#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/command-palette.tsx:78
 msgctxt "7XTPKO"
 msgid "home"
 msgstr "inicio"
 
-#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/command-palette.tsx:85
 msgctxt "C6QAK4"
 msgid "create"
 msgstr "crear"
 
-#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/command-palette.tsx:135
 msgctxt "CxfKLC"
 msgid "Pages"
 msgstr "Páginas"
 
-#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/command-palette.tsx:163
 msgctxt "Do1Pfd"
 msgid "Chapters"
 msgstr "Capítulos"
 
-#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/command-palette.tsx:85
 msgctxt "GH0hAP"
 msgid "add"
 msgstr "agregar"
 
-#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/command-palette.tsx:118
+#: src/components/navbar/command-palette.tsx:125
 msgctxt "gxt0jA"
 msgid "Search courses, chapters, lessons, or pages..."
 msgstr "Busca cursos, capítulos, lecciones o páginas..."
 
-#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/command-palette.tsx:131
 msgctxt "hX5PAb"
 msgid "No results found"
 msgstr "No se encontraron resultados"
 
-#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/command-palette.tsx:78
 msgctxt "i2cX1K"
 msgid "dashboard"
 msgstr "panel"
 
-#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/command-palette.tsx:179
 msgctxt "iqLF8D"
 msgid "Lessons"
 msgstr "Lecciones"
 
-#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/command-palette.tsx:85
 msgctxt "qlTe+e"
 msgid "new"
 msgstr "nuevo"
 
-#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/command-palette.tsx:151
 msgctxt "R85gsW"
 msgid "Courses"
 msgstr "Cursos"
 
-#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/command-palette.tsx:85
 msgctxt "RSFKID"
 msgid "course"
 msgstr "curso"
 
-#: src/components/navbar/command-palette.tsx
-#: src/components/navbar/index.tsx
+#: src/components/navbar/command-palette.tsx:79
+#: src/components/navbar/index.tsx:48
 msgctxt "U3l+Q9"
 msgid "Home page"
 msgstr "Página de inicio"
 
-#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/command-palette.tsx:92
 msgctxt "UExMYV"
 msgid "sign out"
 msgstr "cerrar sesión"
 
-#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/command-palette.tsx:92
 msgctxt "wmNq1X"
 msgid "exit"
 msgstr "salir"
 
-#: src/components/navbar/command-palette.tsx
+#: src/components/navbar/command-palette.tsx:78
 msgctxt "zTylMM"
 msgid "start"
 msgstr "comenzar"
 
-#: src/components/navbar/delete-item-button.tsx
+#: src/components/navbar/delete-item-button.tsx:42
 msgctxt "hHa3Ql"
 msgid "Delete item"
 msgstr "Eliminar elemento"
 
-#: src/components/navbar/delete-item-button.tsx
+#: src/components/navbar/delete-item-button.tsx:41
 msgctxt "JDJoIZ"
 msgid "This action cannot be undone."
 msgstr "Esta acción no se puede deshacer."
 
-#: src/components/navbar/delete-item-button.tsx
+#: src/components/navbar/delete-item-button.tsx:86
 msgctxt "K3r6DQ"
 msgid "Delete"
 msgstr "Eliminar"
 
-#: src/components/navbar/delete-item-button.tsx
+#: src/components/navbar/delete-item-button.tsx:40
 msgctxt "W5ajIY"
 msgid "Delete item?"
 msgstr "¿Eliminar elemento?"
 
-#: src/components/navbar/locale-switcher.tsx
+#: src/components/navbar/locale-switcher.tsx:34
 msgctxt "y1Z3or"
 msgid "Language"
 msgstr "Idioma"
 
-#: src/components/navbar/org-switcher.tsx
+#: src/components/navbar/org-switcher.tsx:47
 msgctxt "JD2pwH"
 msgid "Organizations"
 msgstr "Organizaciones"
 
-#: src/components/navbar/org-switcher.tsx
+#: src/components/navbar/org-switcher.tsx:59
 msgctxt "NI1jZo"
 msgid "No other organizations"
 msgstr "No hay otras organizaciones"
 
-#: src/components/navbar/publish-toggle.tsx
+#: src/components/navbar/publish-toggle.tsx:39
 msgctxt "W6nwjo"
 msgid "Draft"
 msgstr "Borrador"
 
-#: src/components/navbar/publish-toggle.tsx
+#: src/components/navbar/publish-toggle.tsx:39
 msgctxt "w7tf2z"
 msgid "Published"
 msgstr "Publicado"
 
-#: src/components/slug-editor.tsx
+#: src/components/slug-editor.tsx:110
 msgctxt "8mWdw8"
 msgid "your-custom-url"
 msgstr "tu-url-personalizada"
 
-#: src/components/slug-editor.tsx
+#: src/components/slug-editor.tsx:128
 msgctxt "jvo0vs"
 msgid "Save"
 msgstr "Guardar"
 
-#: src/components/slug-editor.tsx
+#: src/components/slug-editor.tsx:120
+#: src/components/slug-editor.tsx:152
 msgctxt "NJUZ2D"
 msgid "This URL is already in use"
 msgstr "Esta URL ya está en uso"
 
-#: src/components/slug-editor.tsx
+#: src/components/slug-editor.tsx:100
 msgctxt "QGLi0O"
 msgid "URL address"
 msgstr "Dirección URL"
 
-#: src/hooks/use-category-labels.ts
+#: src/hooks/use-category-labels.ts:29
 msgctxt "djJp6c"
 msgid "History"
 msgstr "Historia"
 
-#: src/hooks/use-category-labels.ts
+#: src/hooks/use-category-labels.ts:32
 msgctxt "dPgwrL"
 msgid "Math"
 msgstr "Matemáticas"
 
-#: src/hooks/use-category-labels.ts
+#: src/hooks/use-category-labels.ts:21
 msgctxt "fFt3il"
 msgid "Arts"
 msgstr "Artes"
 
-#: src/hooks/use-category-labels.ts
+#: src/hooks/use-category-labels.ts:30
 msgctxt "GsBRWL"
 msgid "Languages"
 msgstr "Idiomas"
 
-#: src/hooks/use-category-labels.ts
+#: src/hooks/use-category-labels.ts:28
 msgctxt "hlmkcL"
 msgid "Health"
 msgstr "Salud"
 
-#: src/hooks/use-category-labels.ts
+#: src/hooks/use-category-labels.ts:26
 msgctxt "hwL7a0"
 msgid "Engineering"
 msgstr "Ingeniería"
 
-#: src/hooks/use-category-labels.ts
+#: src/hooks/use-category-labels.ts:35
 msgctxt "I1ZCPK"
 msgid "Technology"
 msgstr "Tecnología"
 
-#: src/hooks/use-category-labels.ts
+#: src/hooks/use-category-labels.ts:25
 msgctxt "KOuDOE"
 msgid "Economics"
 msgstr "Economía"
 
-#: src/hooks/use-category-labels.ts
+#: src/hooks/use-category-labels.ts:24
 msgctxt "mn6pIm"
 msgid "Culture"
 msgstr "Cultura"
 
-#: src/hooks/use-category-labels.ts
+#: src/hooks/use-category-labels.ts:23
 msgctxt "n5D/Ku"
 msgid "Communication"
 msgstr "Comunicación"
 
-#: src/hooks/use-category-labels.ts
+#: src/hooks/use-category-labels.ts:34
 msgctxt "OV/2+4"
 msgid "Society"
 msgstr "Sociedad"
 
-#: src/hooks/use-category-labels.ts
+#: src/hooks/use-category-labels.ts:33
 msgctxt "qydxOd"
 msgid "Science"
 msgstr "Ciencia"
 
-#: src/hooks/use-category-labels.ts
+#: src/hooks/use-category-labels.ts:31
 msgctxt "u3ovjm"
 msgid "Law"
 msgstr "Derecho"
 
-#: src/hooks/use-category-labels.ts
+#: src/hooks/use-category-labels.ts:22
 msgctxt "w1Fanr"
 msgid "Business"
 msgstr "Negocios"
 
-#: src/hooks/use-category-labels.ts
+#: src/hooks/use-category-labels.ts:27
 msgctxt "YMDBNH"
 msgid "Geography"
 msgstr "Geografía"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:26
 msgctxt "12q6p9"
 msgid "Category not found in this course"
 msgstr "Categoría no encontrada en este curso"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:66
 msgctxt "3IKub9"
 msgid "An unexpected error occurred"
 msgstr "Ocurrió un error inesperado"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:46
 msgctxt "4ec6+l"
 msgid "Invalid category"
 msgstr "Categoría inválida"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:34
 msgctxt "5hjDIG"
 msgid "Chapter not found"
 msgstr "Capítulo no encontrado"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:48
 msgctxt "96w/uD"
 msgid "Invalid chapter format. Each chapter must have a title and description"
 msgstr "Formato de capítulo inválido. Cada capítulo debe tener un título y una descripción"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:60
 msgctxt "A87nSW"
 msgid "Lesson not found"
 msgstr "Lección no encontrada"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:52
 msgctxt "c3FYXv"
 msgid "Invalid format. Please provide an array of non-empty strings"
 msgstr "Formato inválido. Por favor, proporciona un array de cadenas no vacías"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:32
 msgctxt "cvtZ2C"
 msgid "Course not found"
 msgstr "Curso no encontrado"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:42
 msgctxt "D8iYTy"
 msgid "Invalid file type. Please upload a JSON file"
 msgstr "Tipo de archivo inválido. Por favor sube un archivo JSON"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:24
 msgctxt "EDiolw"
 msgid "This category has already been added to the course"
 msgstr "Esta categoría ya ha sido agregada al curso"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:30
 msgctxt "g5WLcA"
 msgid "Please sign in to continue"
 msgstr "Por favor inicia sesión para continuar"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:38
 msgctxt "gYaLKN"
 msgid "Chapter and course must belong to the same organization"
 msgstr "El capítulo y el curso deben pertenecer a la misma organización"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:56
 msgctxt "MqOLCG"
 msgid "Invalid lesson format. Each lesson must have a title and description"
 msgstr "Formato de lección inválido. Cada lección debe tener un título y una descripción"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:28
 msgctxt "ORQvOg"
 msgid "You don't have permission to perform this action"
 msgstr "No tienes permiso para realizar esta acción"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:40
 msgctxt "UDTehx"
 msgid "File is too large. Maximum size is 5MB"
 msgstr "El archivo es demasiado grande. El tamaño máximo es 5MB"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:44
 msgctxt "VYO3DG"
 msgid "Invalid JSON format. Please check your file"
 msgstr "Formato JSON inválido. Por favor revisa tu archivo"
 
-#: src/lib/error-messages.ts
+#: src/lib/error-messages.ts:36
 msgctxt "yVHcXv"
 msgid "Organization not found"
 msgstr "Organización no encontrada"

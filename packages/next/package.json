@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "po-parser": "2.0.0"
+    "po-parser": "2.1.1"
   },
   "devDependencies": {
     "@types/node": "^24",
