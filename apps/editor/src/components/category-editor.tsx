@@ -52,6 +52,7 @@ export function CategoryEditor({
     sortedCategories,
     getLabel,
   } = useCategoryLabels();
+
   const [isPending, startTransition] = useTransition();
   const [search, setSearch] = useState("");
 
@@ -66,21 +67,19 @@ export function CategoryEditor({
     },
   );
 
-  const sortedOptimisticCategories = useMemo(
-    () =>
-      [...optimisticCategories].sort((a, b) => {
-        const labelA = getLabel(a) ?? a;
-        const labelB = getLabel(b) ?? b;
-        return labelA.localeCompare(labelB);
-      }),
-    [optimisticCategories, getLabel],
-  );
+  const sortedOptimisticCategories = [...optimisticCategories].sort((a, b) => {
+    const labelA = getLabel(a) ?? a;
+    const labelB = getLabel(b) ?? b;
+    return labelA.localeCompare(labelB);
+  });
 
   const filteredCategories = useMemo(() => {
     if (!search.trim()) {
       return sortedCategories;
     }
+
     const searchLower = search.toLowerCase();
+
     return sortedCategories.filter((category) =>
       categoryLabels[category].toLowerCase().includes(searchLower),
     );
@@ -90,6 +89,7 @@ export function CategoryEditor({
     startTransition(async () => {
       if (isSelected) {
         updateOptimistic({ category, type: "remove" });
+
         const { error } = await onRemove(category);
 
         if (error) {
@@ -97,6 +97,7 @@ export function CategoryEditor({
         }
       } else {
         updateOptimistic({ category, type: "add" });
+
         const { error } = await onAdd(category);
 
         if (error) {

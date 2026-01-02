@@ -497,6 +497,12 @@ msgctxt "VKb1MS"
 msgid "Categories"
 msgstr "Categories"
 
+#: src/components/category-editor.tsx
+#: src/components/navbar/command-palette.tsx
+msgctxt "xmcVZ0"
+msgid "Search"
+msgstr "Search"
+
 #: src/components/content-editor.tsx
 msgctxt "BfrgHC"
 msgid "Unsaved"
@@ -627,11 +633,6 @@ msgstr "sign out"
 msgctxt "wmNq1X"
 msgid "exit"
 msgstr "exit"
-
-#: src/components/navbar/command-palette.tsx
-msgctxt "xmcVZ0"
-msgid "Search"
-msgstr "Search"
 
 #: src/components/navbar/command-palette.tsx
 msgctxt "zTylMM"
