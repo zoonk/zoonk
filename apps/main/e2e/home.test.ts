@@ -102,7 +102,9 @@ test.describe("Home Page - Authenticated", () => {
 
     // User without course enrollment should see the hero section
     await expect(
-      userWithoutProgress.getByRole("heading", { name: HEADING_LEARN_ANYTHING }),
+      userWithoutProgress.getByRole("heading", {
+        name: HEADING_LEARN_ANYTHING,
+      }),
     ).toBeVisible();
   });
 });

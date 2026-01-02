@@ -82,7 +82,10 @@ test.describe("Course Detail Page - Locale", () => {
     await page.goto("/pt/courses");
 
     // Click on a Portuguese course link
-    await page.getByRole("link", { name: /machine learning/i }).first().click();
+    await page
+      .getByRole("link", { name: /machine learning/i })
+      .first()
+      .click();
 
     // Should be on Portuguese course detail page
     await expect(page).toHaveURL(/\/pt\/b\/ai\/c\/machine-learning/);
