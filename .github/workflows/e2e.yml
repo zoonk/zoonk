@@ -76,8 +76,11 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: pnpm exec playwright install-deps chromium
 
+      - name: Generate Prisma client
+        run: pnpm db:generate
+
       - name: Run database migrations
-        run: pnpm --filter @zoonk/db db:deploy
+        run: pnpm db:deploy
 
       - name: Seed test database
         run: pnpm --filter @zoonk/db db:seed
