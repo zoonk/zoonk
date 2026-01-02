@@ -335,7 +335,7 @@ function MediaCardTitle({ children, className }) {
 - You CAN use string interpolation in `getExtracted`/`useExtracted` to get the translation for a dynamic value. For example: `t("Explore all {category} courses", { category: "arts" })`
 - Whenever using `getExtracted` or `useExtracted`, run `pnpm build` to update PO files
 - Run `pnpm i18n:check` to check for any missing translations and translate empty strings in PO files, making sure translations are consistent across the codebase
-- When you see a `MISSING_TRANSLATION` error (or similar), it means the PO file hasn't been translated. Just go to the PO file and translate the empty strings
+- When you see a `MISSING_TRANSLATION` error (or similar), it means the PO file hasn't been translated. Just go to the PO file and translate the empty strings. You should never create new translations on PO files manually, just extract them using `pnpm build`. If you're on an environment where you can't run `pnpm build`, just ignore this i18n step.
 - You don't need to pass a locale to `getExtracted` when using RSC, only on `generateMetadata` or server actions. It works without a locale on server components
 
 ## CSS

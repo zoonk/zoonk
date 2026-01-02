@@ -228,7 +228,7 @@ msgstr "Imagen subida"
 #: src/app/[orgSlug]/home-container-header.tsx
 msgctxt "3MA05s"
 msgid "Draft courses"
-msgstr ""
+msgstr "Cursos en borrador"
 
 #: src/app/[orgSlug]/home-container-header.tsx
 #: src/app/[orgSlug]/new-course/page.tsx
@@ -240,17 +240,17 @@ msgstr "Crear curso"
 #: src/app/[orgSlug]/home-container-header.tsx
 msgctxt "ugXYXv"
 msgid "Courses that are not published yet"
-msgstr ""
+msgstr "Cursos que aún no están publicados"
 
 #: src/app/[orgSlug]/list-courses.tsx
 msgctxt "F5+xrT"
 msgid "No draft courses"
-msgstr ""
+msgstr "No hay cursos en borrador"
 
 #: src/app/[orgSlug]/list-courses.tsx
 msgctxt "mYCw6F"
 msgid "Your organization doesn't have any draft courses."
-msgstr ""
+msgstr "Tu organización no tiene cursos en borrador."
 
 #: src/app/[orgSlug]/new-course/actions.ts
 msgctxt "bLbK+M"
@@ -609,7 +609,7 @@ msgstr "nuevo"
 #: src/components/navbar/command-palette.tsx
 msgctxt "R85gsW"
 msgid "Courses"
-msgstr "Cursos en borrador"
+msgstr "Cursos"
 
 #: src/components/navbar/command-palette.tsx
 msgctxt "RSFKID"
