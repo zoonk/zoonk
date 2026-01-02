@@ -1,7 +1,7 @@
 import { getSession } from "@zoonk/core/users/session/get";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
-import { getExtracted } from "next-intl/server";
 import { redirect } from "next/navigation";
+import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import {
   Login,
