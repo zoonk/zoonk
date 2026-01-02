@@ -55,10 +55,41 @@ describe("members", () => {
 });
 
 describe("admins", () => {
-  test("returns Forbidden", async () => {
-    const { organization, user } = await memberFixture({ role: "admin" });
-    const headers = await signInAs(user.email, user.password);
-    const course = await courseFixture({ organizationId: organization.id });
+  let organization: Awaited<ReturnType<typeof memberFixture>>["organization"];
+  let headers: Headers;
+
+  beforeAll(async () => {
+    const fixture = await memberFixture({ role: "admin" });
+    organization = fixture.organization;
+    headers = await signInAs(fixture.user.email, fixture.user.password);
+  });
+
+  test("deletes unpublished course successfully", async () => {
+    const course = await courseFixture({
+      isPublished: false,
+      organizationId: organization.id,
+    });
+
+    const result = await deleteCourse({
+      courseId: course.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.id).toBe(course.id);
+
+    const deletedCourse = await prisma.course.findUnique({
+      where: { id: course.id },
+    });
+
+    expect(deletedCourse).toBeNull();
+  });
+
+  test("returns Forbidden for published course", async () => {
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: organization.id,
+    });
 
     const result = await deleteCourse({
       courseId: course.id,

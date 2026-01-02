@@ -26,7 +26,7 @@ export async function deleteChapter(params: {
   const hasPermission = await hasCoursePermission({
     headers: params.headers,
     orgId: chapter.organizationId,
-    permission: "delete",
+    permission: chapter.isPublished ? "delete" : "update",
   });
 
   if (!hasPermission) {

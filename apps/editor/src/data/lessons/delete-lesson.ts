@@ -26,7 +26,7 @@ export async function deleteLesson(params: {
   const hasPermission = await hasCoursePermission({
     headers: params.headers,
     orgId: lesson.organizationId,
-    permission: "delete",
+    permission: lesson.isPublished ? "delete" : "update",
   });
 
   if (!hasPermission) {
