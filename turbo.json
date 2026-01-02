@@ -16,17 +16,18 @@
     "BLOB_READ_WRITE_TOKEN",
     "DATABASE_URL_UNPOOLED",
     "DATABASE_URL",
+    "E2E_TESTING",
     "GIT_REPO_OWNER",
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
     "MAILER_API_KEY",
-    "VERCEL_ENV",
-    "VERCEL_URL",
     "OPENAI_API_KEY",
     "REVALIDATE_SECRET",
     "STRIPE_SECRET_KEY",
     "STRIPE_WEBHOOK_SECRET",
-    "VERCEL_GIT_REPO_OWNER"
+    "VERCEL_ENV",
+    "VERCEL_GIT_REPO_OWNER",
+    "VERCEL_URL"
   ],
   "tasks": {
     "//#format": { "cache": false },
@@ -69,6 +70,16 @@
     },
     "test": {
       "dependsOn": ["^db:test:setup", "^test"]
+    },
+    "test:e2e": {
+      "cache": false,
+      "dependsOn": ["build"],
+      "env": [
+        "BETTER_AUTH_SECRET",
+        "CI",
+        "DATABASE_URL_UNPOOLED",
+        "DATABASE_URL"
+      ]
     },
     "test:watch": {
       "cache": false,

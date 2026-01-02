@@ -1,4 +1,5 @@
 import { prisma } from "../index";
+import { seedAccounts } from "./seed/accounts";
 import { seedActivities } from "./seed/activities";
 import { seedAlternativeTitles } from "./seed/alternative-titles";
 import { seedCategories } from "./seed/categories";
@@ -13,6 +14,7 @@ import { seedUsers } from "./seed/users";
 
 async function main() {
   const users = await seedUsers(prisma);
+  await seedAccounts(prisma, users);
   const org = await seedOrganizations(prisma, users);
   await seedCourses(prisma, org);
   await seedCategories(prisma, org);

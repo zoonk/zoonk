@@ -28,6 +28,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "5.1.0",
+    "@zoonk/e2e": "workspace:*",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
@@ -48,6 +49,8 @@
     "start": "next start",
     "stripe:listen": "stripe listen --forward-to http://localhost:3000/api/auth/stripe/webhook",
     "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "test:watch": "vitest",
     "typecheck": "next typegen && tsc --noEmit"
   },

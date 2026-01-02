@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "@playwright/test": "^1.52.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "^5"
+  },
+  "exports": {
+    "./base.config": "./src/base.config.ts",
+    "./fixtures": "./src/fixtures/index.ts"
+  },
+  "name": "@zoonk/e2e",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "type": "module"
+}

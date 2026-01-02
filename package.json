@@ -26,6 +26,7 @@
     "lint": "biome check",
     "start": "turbo start",
     "test": "turbo test",
+    "test:e2e": "turbo test:e2e",
     "test:watch": "turbo test:watch",
     "typecheck": "turbo typecheck"
   }

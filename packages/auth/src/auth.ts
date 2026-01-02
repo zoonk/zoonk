@@ -24,7 +24,28 @@ const COOKIE_CACHE_MINUTES = 60;
 const AUTH_MEMBERSHIP_LIMIT = Number.MAX_SAFE_INTEGER;
 const AUTH_ORGANIZATION_LIMIT = Number.MAX_SAFE_INTEGER;
 
+// Enable email+password auth for e2e tests (uses plain-text password matching)
+const e2eEmailAndPassword =
+  process.env.E2E_TESTING === "true"
+    ? {
+        emailAndPassword: {
+          enabled: true,
+          password: {
+            hash: async (password: string) => password,
+            verify: async ({
+              hash,
+              password,
+            }: {
+              hash: string;
+              password: string;
+            }) => hash === password,
+          },
+        },
+      }
+    : {};
+
 export const baseAuthConfig: BetterAuthOptions = {
+  ...e2eEmailAndPassword,
   account: {
     accountLinking: { enabled: true },
   },
