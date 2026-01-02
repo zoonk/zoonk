@@ -1,4 +1,6 @@
+import { getSession } from "@zoonk/core/users/session/get";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
+import { redirect } from "next/navigation";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 import {
@@ -18,8 +20,15 @@ import { sendVerificationOTPAction } from "./actions";
 import { SocialLogin } from "./social-login";
 
 async function LoginView({ searchParams }: PageProps<"/[locale]/login">) {
-  const t = await getExtracted();
   const { redirectTo } = await searchParams;
+
+  // If user already has a session, skip login and redirect with a one-time token
+  const session = await getSession();
+  if (session && redirectTo) {
+    redirect(`/callback?redirectTo=${encodeURIComponent(String(redirectTo))}`);
+  }
+
+  const t = await getExtracted();
 
   return (
     <>
