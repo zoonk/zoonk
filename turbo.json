@@ -44,9 +44,14 @@
       "cache": false,
       "dependsOn": ["^db:deploy"]
     },
+    "db:e2e:generate": {
+      "cache": false,
+      "dependsOn": ["db:e2e:setup"],
+      "outputs": ["src/generated/**"]
+    },
     "db:e2e:seed": {
       "cache": false,
-      "dependsOn": ["db:e2e:setup", "db:generate"]
+      "dependsOn": ["db:e2e:generate"]
     },
     "db:e2e:setup": {
       "cache": false,
