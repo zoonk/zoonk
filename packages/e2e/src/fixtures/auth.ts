@@ -91,5 +91,4 @@ export const test = base.extend<AuthFixtures>({
   },
 });
 
-// biome-ignore lint/performance/noBarrelFile: re-exporting for convenience
 export { expect, type Page, request } from "@playwright/test";
