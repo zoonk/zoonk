@@ -2,6 +2,7 @@ import type { PrismaClient, User } from "../../generated/prisma/client";
 
 export type SeedUsers = {
   admin: User;
+  logoutTest: User;
   member: User;
   owner: User;
 };
@@ -40,5 +41,17 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
     where: { email: "member@zoonk.test" },
   });
 
-  return { admin, member, owner };
+  // Dedicated user for logout tests to avoid session interference with parallel tests
+  const logoutTest = await prisma.user.upsert({
+    create: {
+      email: "logout-test@zoonk.test",
+      emailVerified: true,
+      name: "Logout Test User",
+      role: "member",
+    },
+    update: {},
+    where: { email: "logout-test@zoonk.test" },
+  });
+
+  return { admin, logoutTest, member, owner };
 }

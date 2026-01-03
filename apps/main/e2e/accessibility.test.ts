@@ -41,14 +41,15 @@ test.describe("Keyboard-only Users Can", () => {
   test("select command palette item with Enter and see destination content", async ({
     page,
   }) => {
-    await page.goto("/");
+    await page.goto("/courses"); // Start from courses page so Home navigation is verifiable
     await page.getByRole("button", { name: /search/i }).click();
 
-    // Use keyboard navigation: arrow down to select item, Enter to activate
+    // Type to filter to Home option, then use keyboard to select
+    await page.getByPlaceholder(/search/i).fill("Home");
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Enter");
 
-    // Verify user sees home page content (first item is Home Page)
+    // Verify user sees home page content
     await expect(
       page.getByRole("heading", { name: /learn anything with ai/i }),
     ).toBeVisible();

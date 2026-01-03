@@ -169,27 +169,37 @@ test.describe("Navbar - Authenticated", () => {
     ).toBeVisible();
   });
 
+  // Logout test uses dedicated logoutPage fixture to avoid session interference
   test("clicking Logout logs user out and redirects to home", async ({
-    authenticatedPage,
+    logoutPage,
   }) => {
-    await authenticatedPage.goto("/");
+    await logoutPage.goto("/");
 
     // Verify authenticated state - menu should show "Logout" option
-    await authenticatedPage.getByRole("button", { name: /user menu/i }).click();
+    await logoutPage.getByRole("button", { name: /user menu/i }).click();
     await expect(
-      authenticatedPage.getByRole("menuitem", { name: /logout/i }),
+      logoutPage.getByRole("menuitem", { name: /logout/i }),
     ).toBeVisible();
 
-    // Logout
-    await authenticatedPage.getByRole("menuitem", { name: /logout/i }).click();
+    // Logout - this triggers a hard navigation
+    await Promise.all([
+      logoutPage.waitForURL(/^[^?]*\/$/),
+      logoutPage.getByRole("menuitem", { name: /logout/i }).click(),
+    ]);
 
-    // Wait for logout to complete - redirects to home page
-    await authenticatedPage.waitForURL(/^[^?]*\/$/);
+    // Wait for page to fully load and session to be fetched
+    await logoutPage.waitForLoadState("load");
+    await logoutPage.waitForResponse(
+      (response) =>
+        response.url().includes("/api/auth/get-session") &&
+        response.status() === 200,
+      { timeout: 10_000 },
+    );
 
     // Verify user is logged out - menu should show "Login" instead of "Logout"
-    await authenticatedPage.getByRole("button", { name: /user menu/i }).click();
+    await logoutPage.getByRole("button", { name: /user menu/i }).click();
     await expect(
-      authenticatedPage.getByRole("menuitem", { name: /login/i }),
+      logoutPage.getByRole("menuitem", { name: /login/i }),
     ).toBeVisible();
   });
 });

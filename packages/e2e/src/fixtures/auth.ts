@@ -7,12 +7,14 @@ type TestUser = {
 
 export const TEST_USERS = {
   admin: { email: "admin@zoonk.test", password: "password123" },
+  logoutTest: { email: "logout-test@zoonk.test", password: "password123" },
   member: { email: "member@zoonk.test", password: "password123" },
   owner: { email: "owner@zoonk.test", password: "password123" },
 } as const satisfies Record<string, TestUser>;
 
 type AuthFixtures = {
   authenticatedPage: Page;
+  logoutPage: Page;
   userWithProgress: Page;
   userWithoutProgress: Page;
 };
@@ -36,6 +38,14 @@ export const test = base.extend<AuthFixtures>({
     const context = await browser.newContext();
     const page = await context.newPage();
     await signIn(page, TEST_USERS.member);
+    await use(page);
+    await context.close();
+  },
+  logoutPage: async ({ browser }, use) => {
+    // Dedicated user for logout tests to avoid session interference with parallel tests
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    await signIn(page, TEST_USERS.logoutTest);
     await use(page);
     await context.close();
   },

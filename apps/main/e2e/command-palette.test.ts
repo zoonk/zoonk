@@ -223,30 +223,37 @@ test.describe("Command Palette - Authenticated", () => {
     ).toBeVisible();
   });
 
+  // Logout test uses dedicated logoutPage fixture to avoid session interference
   test("selecting Logout logs user out and redirects to home", async ({
-    authenticatedPage,
+    logoutPage,
   }) => {
-    await authenticatedPage.goto("/");
+    await logoutPage.goto("/");
 
     // Verify authenticated state by checking command palette shows Logout option
-    await authenticatedPage.getByRole("button", { name: /search/i }).click();
+    await logoutPage.getByRole("button", { name: /search/i }).click();
     await expect(
-      authenticatedPage.getByRole("dialog").getByText(/^logout$/i),
+      logoutPage.getByRole("dialog").getByText(/^logout$/i),
     ).toBeVisible();
 
-    // Click logout
-    await authenticatedPage
-      .getByRole("dialog")
-      .getByText(/^logout$/i)
-      .click();
+    // Click logout - this triggers a hard navigation
+    await Promise.all([
+      logoutPage.waitForURL(/^[^?]*\/$/),
+      logoutPage.getByRole("dialog").getByText(/^logout$/i).click(),
+    ]);
 
-    // Wait for logout to complete - redirects to home page
-    await authenticatedPage.waitForURL(/^[^?]*\/$/);
+    // Wait for page to fully load and session to be fetched
+    await logoutPage.waitForLoadState("load");
+    await logoutPage.waitForResponse(
+      (response) =>
+        response.url().includes("/api/auth/get-session") &&
+        response.status() === 200,
+      { timeout: 10_000 },
+    );
 
     // Verify user is logged out - command palette should show Login option
-    await authenticatedPage.getByRole("button", { name: /search/i }).click();
+    await logoutPage.getByRole("button", { name: /search/i }).click();
     await expect(
-      authenticatedPage.getByRole("dialog").getByText(/^login$/i),
+      logoutPage.getByRole("dialog").getByText(/^login$/i),
     ).toBeVisible();
   });
 });
@@ -360,15 +367,16 @@ test.describe("Command Palette - Keyboard Navigation", () => {
   });
 
   test("Enter to select navigates correctly", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/courses"); // Start from courses page so Home navigation is verifiable
     await page.getByRole("button", { name: /search/i }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    // Navigate down to first item (Home) and press Enter
+    // Type to filter to Home option, then press Enter to select it
+    await page.getByPlaceholder(/search/i).fill("Home");
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("Enter");
 
-    // Verify user sees home page content (first item is "Home Page")
+    // Verify user sees home page content
     await expect(
       page.getByRole("heading", { name: /learn anything with ai/i }),
     ).toBeVisible();
