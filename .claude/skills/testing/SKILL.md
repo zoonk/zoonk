@@ -37,6 +37,34 @@ Follow TDD (Test-Driven Development) for all features and bug fixes. **Always wr
 
 Test what users see and do, not implementation details. If your test breaks when you refactor CSS or rename a class, it's testing the wrong thing.
 
+### Avoid Redundant Visibility Tests
+
+**Don't write tests that only check if elements are visible when another test already interacts with them.** If a test clicks a button or checks its attributes, visibility is implicitly verified—the interaction would fail if the element wasn't visible.
+
+```typescript
+// BAD: Redundant test - visibility is already covered by the interaction test below
+test("shows feedback buttons", async ({ page }) => {
+  await expect(page.getByRole("button", { name: /i liked it/i })).toBeVisible();
+  await expect(page.getByRole("button", { name: /i didn't like it/i })).toBeVisible();
+});
+
+// GOOD: This test implicitly verifies visibility through interaction
+test("clicking feedback button marks it as pressed", async ({ page }) => {
+  const thumbsUp = page.getByRole("button", { name: /i liked it/i });
+  const thumbsDown = page.getByRole("button", { name: /i didn't like it/i });
+
+  await expect(thumbsUp).toHaveAttribute("aria-pressed", "false");
+  await thumbsUp.click();
+  await expect(thumbsUp).toHaveAttribute("aria-pressed", "true");
+});
+```
+
+**When visibility-only tests ARE useful:**
+
+- Testing conditional rendering (element appears/disappears based on state)
+- Waiting for async content to load before proceeding
+- Verifying error messages or notifications appear
+
 ### Query Priority
 
 Use semantic queries that reflect how users interact with the page:
