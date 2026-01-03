@@ -37,7 +37,7 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "build:e2e": {
-      "dependsOn": ["^db:e2e:seed", "^build"],
+      "dependsOn": ["^db:e2e:seed"],
       "outputs": [".next-e2e/**", "!.next-e2e/cache/**"]
     },
     "db:deploy": {
