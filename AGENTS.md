@@ -123,7 +123,7 @@ All apps should follow a consistent folder structure:
 
 - **Never pass functions to Client Components** unless they are Server Actions (marked with `"use server"`). Regular functions like `getHref` or callbacks cannot be serialized. Instead, pass serializable data (strings, numbers, objects) and construct values in the client component. For example, pass `hrefPrefix: string` instead of `getHref: (item) => string`
 - When there are **formatting issues**, run `pnpm format` to auto-fix them
-- When there are **linting issues**, run `pnpm lint --write --unsafe` to auto-fix them
+- When there are **linting issues**, run `pnpm lint --write --unsafe` from the **root of the monorepo** to auto-fix them (lint is a global setup, not per app/package)
 - Run `pnpm typecheck` to check for TypeScript errors
 - **Never manually fix formatting or linting issues** by reading files and editing them—always use the CLI commands above as it's more efficient
 - Don't run `pnpm dev` since we already have a dev server running
@@ -165,6 +165,8 @@ For detailed examples and patterns, see `.claude/skills/compound-components/SKIL
 - **Unit tests**: For utils, helpers, and UI component edge cases
 
 **Exclude** `admin` and `evals` apps from testing requirements (internal tools).
+
+**E2E builds**: Apps use separate build directories for E2E testing (e.g., `.next-e2e` instead of `.next`). When running E2E tests, build with `E2E_TESTING=true pnpm --filter {app} build` to ensure the correct build directory is used.
 
 For detailed testing patterns, fixtures, and best practices, see `.claude/skills/testing/SKILL.md`
 
