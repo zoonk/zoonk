@@ -1,23 +1,14 @@
 import { expect, test } from "./fixtures";
 
 // Content feedback is tested on the course suggestions page where it's used
-test.describe("Content Feedback - Feedback Buttons", () => {
+test.describe("Content Feedback", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/learn/test%20prompt");
+
     // Wait for content to load
     await expect(page.getByText("Introduction to Testing")).toBeVisible({
       timeout: 15_000,
     });
-  });
-
-  test("shows feedback prompt and buttons", async ({ page }) => {
-    await expect(page.getByText(/did you like this content/i)).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /i liked it/i }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /i didn't like it/i }),
-    ).toBeVisible();
   });
 
   test("clicking feedback button marks it as pressed", async ({ page }) => {
@@ -38,26 +29,6 @@ test.describe("Content Feedback - Feedback Buttons", () => {
     await expect(thumbsDown).toHaveAttribute("aria-pressed", "true");
     await expect(thumbsUp).toHaveAttribute("aria-pressed", "false");
   });
-});
-
-test.describe("Content Feedback - Feedback Dialog", () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto("/learn/test%20prompt");
-    await expect(page.getByText("Introduction to Testing")).toBeVisible({
-      timeout: 15_000,
-    });
-  });
-
-  test("opens dialog with email and message fields", async ({ page }) => {
-    await page.getByRole("button", { name: /send feedback/i }).click();
-
-    const dialog = page.getByRole("dialog");
-    await expect(dialog.getByLabel(/email/i)).toBeVisible();
-    await expect(dialog.getByLabel(/message/i)).toBeVisible();
-    await expect(
-      dialog.getByRole("button", { name: /send message/i }),
-    ).toBeVisible();
-  });
 
   test("submit with valid data shows success message", async ({ page }) => {
     await page.getByRole("button", { name: /send feedback/i }).click();
@@ -70,6 +41,64 @@ test.describe("Content Feedback - Feedback Dialog", () => {
     await expect(dialog.getByText(/message sent successfully/i)).toBeVisible({
       timeout: 5000,
     });
+  });
+
+  test("submit with invalid email shows validation error", async ({ page }) => {
+    await page.getByRole("button", { name: /send feedback/i }).click();
+
+    const dialog = page.getByRole("dialog");
+    const emailInput = dialog.getByLabel(/email/i);
+    await emailInput.fill("invalid-email");
+    await dialog.getByLabel(/message/i).fill("This is test feedback");
+    await dialog.getByRole("button", { name: /send message/i }).click();
+
+    // Browser validation should prevent submission and show validation message
+    await expect(emailInput).toHaveAttribute("type", "email");
+
+    const validationMessage = await emailInput.evaluate(
+      (el: HTMLInputElement) => el.validationMessage,
+    );
+
+    expect(validationMessage).toBeTruthy();
+  });
+
+  test("submit failure shows error message", async ({ page }) => {
+    // Intercept server action requests and modify response to return error
+    await page.route("**/*", async (route) => {
+      const request = route.request();
+
+      // Server actions use POST with Next-Action header
+      if (
+        request.method() === "POST" &&
+        request.headers()["next-action"] !== undefined
+      ) {
+        // Fetch the real response first to get the correct format
+        const response = await route.fetch();
+        const body = await response.text();
+
+        // Replace status:"success" with status:"error" in the RSC response
+        const errorBody = body.replace(
+          '"status":"success"',
+          '"status":"error"',
+        );
+
+        await route.fulfill({
+          body: errorBody,
+          response,
+        });
+      } else {
+        await route.continue();
+      }
+    });
+
+    await page.getByRole("button", { name: /send feedback/i }).click();
+
+    const dialog = page.getByRole("dialog");
+    await dialog.getByLabel(/email/i).fill("test@example.com");
+    await dialog.getByLabel(/message/i).fill("This is test feedback");
+    await dialog.getByRole("button", { name: /send message/i }).click();
+
+    await expect(dialog.getByText(/failed to send message/i)).toBeVisible();
   });
 });
 
