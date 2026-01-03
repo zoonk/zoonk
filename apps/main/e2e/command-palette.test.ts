@@ -231,19 +231,16 @@ test.describe("Command Palette - Authenticated", () => {
     // Click logout - this triggers a hard navigation
     await Promise.all([
       logoutPage.waitForURL(/^[^?]*\/$/),
+      logoutPage.waitForResponse(
+        (response) =>
+          response.url().includes("/api/auth/get-session") &&
+          response.status() === 200,
+      ),
       logoutPage
         .getByRole("dialog")
         .getByText(/^logout$/i)
         .click(),
     ]);
-
-    // Wait for page to fully load and session to be fetched
-    await logoutPage.waitForLoadState("load");
-    await logoutPage.waitForResponse(
-      (response) =>
-        response.url().includes("/api/auth/get-session") &&
-        response.status() === 200,
-    );
 
     // Verify user is logged out - command palette should show Login option
     await logoutPage.getByRole("button", { name: /search/i }).click();
