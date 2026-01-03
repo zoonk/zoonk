@@ -1,4 +1,4 @@
-name: E2E Tests
+name: E2E Tests (Main App)
 
 on: push
 
@@ -51,15 +51,11 @@ jobs:
       - name: Cache Next.js build
         uses: actions/cache@v4
         with:
-          path: |
-            apps/main/.next/cache
-            apps/auth/.next/cache
-            apps/editor/.next/cache
-            apps/admin/.next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('apps/**/*.ts', 'apps/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx') }}
+          path: apps/main/.next/cache
+          key: ${{ runner.os }}-nextjs-main-${{ hashFiles('**/pnpm-lock.yaml') }}-${{ hashFiles('apps/main/**/*.ts', 'apps/main/**/*.tsx', 'packages/**/*.ts', 'packages/**/*.tsx') }}
           restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/pnpm-lock.yaml') }}-
-            ${{ runner.os }}-nextjs-
+            ${{ runner.os }}-nextjs-main-${{ hashFiles('**/pnpm-lock.yaml') }}-
+            ${{ runner.os }}-nextjs-main-
 
       - name: Setup pnpm
         uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061
@@ -75,22 +71,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Cache Playwright browsers
+      - name: Cache Playwright browsers and deps
         uses: actions/cache@v4
         id: playwright-cache
         with:
-          path: ~/.cache/ms-playwright
+          path: |
+            ~/.cache/ms-playwright
+            /var/cache/apt/archives
           key: ${{ runner.os }}-playwright-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-playwright-
 
-      - name: Install Playwright browsers
+      - name: Install Playwright browsers and deps
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: pnpm exec playwright install --with-deps chromium
-
-      - name: Install Playwright system deps (cached)
-        if: steps.playwright-cache.outputs.cache-hit == 'true'
-        run: pnpm exec playwright install-deps chromium
 
       - name: Run database migrations
         run: pnpm db:deploy
@@ -101,5 +95,8 @@ jobs:
       - name: Seed test database
         run: pnpm --filter @zoonk/db db:seed
 
+      - name: Build main app
+        run: pnpm turbo build --filter=main
+
       - name: Run E2E tests
-        run: pnpm test:e2e
+        run: pnpm --filter main test:e2e

@@ -71,14 +71,7 @@
       "dependsOn": ["^db:test:setup", "^test"]
     },
     "test:e2e": {
-      "cache": false,
-      "dependsOn": ["build"],
-      "env": [
-        "BETTER_AUTH_SECRET",
-        "CI",
-        "DATABASE_URL_UNPOOLED",
-        "DATABASE_URL"
-      ]
+      "cache": false
     },
     "test:watch": {
       "cache": false,
