@@ -14,8 +14,8 @@ jobs:
     timeout-minutes: 30
     env:
       BETTER_AUTH_SECRET: test-secret-for-ci
-      DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_test
-      DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_test
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/zoonk_e2e
+      DATABASE_URL_UNPOOLED: postgres://postgres:postgres@localhost:5432/zoonk_e2e
       E2E_TESTING: "true"
       NEXT_PUBLIC_APP_DOMAIN: localhost:3000
       NEXT_PUBLIC_AUTH_APP_URL: http://localhost:3001
@@ -28,7 +28,7 @@ jobs:
         ports: ["5432:5432"]
         env:
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: zoonk_test
+          POSTGRES_DB: zoonk_e2e
         options: >-
           --health-cmd pg_isready
           --health-interval 1s
@@ -93,9 +93,6 @@ jobs:
 
       - name: Generate Prisma client
         run: pnpm db:generate
-
-      - name: Seed test database
-        run: pnpm --filter @zoonk/db db:seed
 
       - name: Build main app
         run: pnpm turbo build --filter=main

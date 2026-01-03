@@ -1,4 +1,4 @@
-import { expect, test } from "@zoonk/e2e/fixtures";
+import { expect, test } from "./fixtures";
 
 // Content feedback is tested on the course suggestions page where it's used
 test.describe("Content Feedback - Feedback Buttons", () => {
@@ -141,7 +141,7 @@ test.describe("Content Feedback - Authenticated", () => {
       .click();
 
     const emailInput = authenticatedPage.getByLabel(/email/i);
-    // Should be pre-filled with user's email (member@zoonk.test)
-    await expect(emailInput).toHaveValue(/member@zoonk\.test/);
+    // Should be pre-filled with user's email
+    await expect(emailInput).toHaveValue(/e2e-progress@zoonk\.test/);
   });
 });

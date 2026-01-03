@@ -1,6 +1,11 @@
-import { test as base, type Page } from "@playwright/test";
+import {
+  type Browser,
+  type BrowserContext,
+  test as base,
+  type Page,
+} from "@playwright/test";
 
-type TestUser = {
+export type TestUser = {
   email: string;
   password: string;
 };
@@ -11,6 +16,8 @@ export const TEST_USERS = {
   member: { email: "member@zoonk.test", password: "password123" },
   owner: { email: "owner@zoonk.test", password: "password123" },
 } as const satisfies Record<string, TestUser>;
+
+export type TestUserKey = keyof typeof TEST_USERS;
 
 type AuthFixtures = {
   authenticatedPage: Page;
@@ -28,8 +35,25 @@ async function signIn(page: Page, user: TestUser): Promise<void> {
   });
 
   if (!response.ok()) {
-    throw new Error(`Failed to sign in as ${user.email}: ${response.status()}`);
+    const body = await response.text();
+    throw new Error(
+      `Sign-in failed for ${user.email}: ${response.status()} - ${body}`,
+    );
   }
+}
+
+/**
+ * Create a new authenticated browser context for a custom user.
+ * Useful for tests that need a specific user not covered by fixtures.
+ */
+export async function createAuthContext(
+  browser: Browser,
+  user: TestUser,
+): Promise<BrowserContext> {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await signIn(page, user);
+  return context;
 }
 
 export const test = base.extend<AuthFixtures>({
@@ -68,4 +92,4 @@ export const test = base.extend<AuthFixtures>({
 });
 
 // biome-ignore lint/performance/noBarrelFile: re-exporting for convenience
-export { expect, type Page } from "@playwright/test";
+export { expect, type Page, request } from "@playwright/test";

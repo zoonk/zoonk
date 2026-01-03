@@ -1,4 +1,4 @@
-import { expect, test } from "@zoonk/e2e/fixtures";
+import { expect, test } from "./fixtures";
 
 test.describe("Settings - Unauthenticated", () => {
   test("/settings shows settings list (public page)", async ({ page }) => {

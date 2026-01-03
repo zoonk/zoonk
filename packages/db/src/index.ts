@@ -40,4 +40,7 @@ export type {
   Verification,
 } from "./generated/prisma/client";
 
+// biome-ignore lint/performance/noBarrelFile: re-exporting Prisma namespace for type utilities
+export { Prisma, type PrismaClient } from "./generated/prisma/client";
+
 export { prisma };

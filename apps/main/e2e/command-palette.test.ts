@@ -1,4 +1,4 @@
-import { expect, type Page, test } from "@zoonk/e2e/fixtures";
+import { expect, type Page, test } from "./fixtures";
 
 // Helper to open command palette via click (reliable for tests that don't test keyboard shortcuts)
 async function openCommandPalette(page: Page) {

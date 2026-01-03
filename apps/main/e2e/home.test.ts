@@ -1,4 +1,4 @@
-import { expect, test } from "@zoonk/e2e/fixtures";
+import { expect, test } from "./fixtures";
 
 const HEADING_LEARN_ANYTHING = /learn anything with ai/i;
 const HEADING_LEARN_PAGE = /what do you want to learn/i;

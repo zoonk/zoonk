@@ -1,4 +1,4 @@
-import { expect, test } from "@zoonk/e2e/fixtures";
+import { expect, test } from "./fixtures";
 
 test.describe("Course Detail Page", () => {
   test("shows course title", async ({ page }) => {

@@ -1,4 +1,4 @@
-import { expect, test } from "@zoonk/e2e/fixtures";
+import { expect, test } from "./fixtures";
 
 test.describe("Locale Behavior - English", () => {
   test("home page shows English content", async ({ page }) => {
