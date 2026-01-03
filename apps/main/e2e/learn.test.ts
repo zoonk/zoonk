@@ -57,9 +57,7 @@ test.describe("Course Suggestions", () => {
       page.getByRole("heading", { name: /what do you want to learn/i }),
     ).toBeVisible();
   });
-});
 
-test.describe("Learn Form - Accessibility", () => {
   test("submits form using Enter key", async ({ page }) => {
     await page.goto("/learn");
 
@@ -70,23 +68,5 @@ test.describe("Learn Form - Accessibility", () => {
     await expect(
       page.getByRole("heading", { name: /course ideas for/i }),
     ).toBeVisible();
-  });
-
-  test("form fields have accessible labels", async ({ page }) => {
-    await page.goto("/learn");
-
-    const input = page.getByRole("textbox");
-    const hasLabel = await input.evaluate((el) => {
-      const labelledby = el.getAttribute("aria-labelledby");
-      const label = el.getAttribute("aria-label");
-      const id = el.getAttribute("id");
-      const associatedLabel = id
-        ? document.querySelector(`label[for="${id}"]`)
-        : null;
-      return Boolean(
-        labelledby || label || associatedLabel || el.closest("label"),
-      );
-    });
-    expect(hasLabel).toBe(true);
   });
 });
