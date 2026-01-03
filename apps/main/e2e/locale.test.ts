@@ -8,6 +8,7 @@ test.describe("Locale Behavior - English", () => {
     await expect(
       page.getByRole("link", { exact: true, name: "Courses" }),
     ).toBeVisible();
+
     await expect(
       page.getByRole("link", { exact: true, name: "Learn" }),
     ).toBeVisible();
@@ -32,6 +33,7 @@ test.describe("Locale Behavior - Portuguese", () => {
     await expect(
       page.getByRole("link", { exact: true, name: "Cursos" }),
     ).toBeVisible();
+
     await expect(
       page.getByRole("link", { exact: true, name: "Aprender" }),
     ).toBeVisible();
@@ -49,6 +51,7 @@ test.describe("Locale Navigation", () => {
 
     // Should be on Portuguese courses page
     await expect(page).toHaveURL(/\/pt\/courses/);
+
     await expect(
       page.getByRole("heading", { name: /explorar cursos/i }),
     ).toBeVisible();

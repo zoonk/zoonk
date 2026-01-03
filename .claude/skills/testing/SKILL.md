@@ -110,6 +110,7 @@ test("shows fallback icon", async ({ page }) => {
 ```
 
 Common accessibility fixes:
+
 - Decorative icons acting as image placeholders → add `role="img"` and `aria-label`
 - Interactive elements without labels → add `aria-label` or visible text
 - Custom controls → add appropriate ARIA roles
@@ -290,8 +291,21 @@ pnpm test                    # Run all tests once
 pnpm --filter @zoonk/editor test -- --run src/data/chapters/create-chapter.test.ts
 
 # E2E tests using Playwright
-pnpm e2e                     # Run all e2e tests
+E2E_TESTING=true pnpm --filter main build  # Build for E2E (uses .next-e2e directory)
+pnpm e2e                                    # Run all e2e tests
 ```
+
+### E2E Build Directory
+
+Apps use separate build directories for E2E testing. For example, `apps/main` uses `.next-e2e` when `E2E_TESTING=true` is set (configured in `next.config.ts`).
+
+**Important**: If E2E tests fail after making component changes, ensure you've rebuilt with the E2E flag:
+
+```bash
+E2E_TESTING=true pnpm --filter main build
+```
+
+The regular `pnpm build` creates a production build in `.next`, which E2E tests don't use.
 
 ## Reference Files
 
