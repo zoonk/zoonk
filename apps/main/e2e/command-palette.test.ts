@@ -238,7 +238,10 @@ test.describe("Command Palette - Authenticated", () => {
     // Click logout - this triggers a hard navigation
     await Promise.all([
       logoutPage.waitForURL(/^[^?]*\/$/),
-      logoutPage.getByRole("dialog").getByText(/^logout$/i).click(),
+      logoutPage
+        .getByRole("dialog")
+        .getByText(/^logout$/i)
+        .click(),
     ]);
 
     // Wait for page to fully load and session to be fetched
