@@ -426,4 +426,32 @@ test.describe("Command Palette - Accessibility", () => {
     const searchButton = page.getByRole("button", { name: /search/i });
     await expect(searchButton).toHaveAttribute("aria-keyshortcuts", /k/i);
   });
+
+  /**
+   * iOS Safari automatically zooms when focusing inputs with font-size < 16px.
+   * This test verifies the input meets the 16px threshold on mobile to prevent this behavior.
+   */
+  test("search input has font-size >= 16px on mobile to prevent iOS Safari zoom", async ({
+    browser,
+  }) => {
+    // Create a mobile-sized context since iOS Safari zoom only affects mobile
+    const context = await browser.newContext({
+      viewport: { height: 667, width: 375 },
+    });
+
+    const page = await context.newPage();
+
+    await page.goto("/");
+    await openCommandPalette(page);
+
+    const input = page.getByPlaceholder(/search/i);
+
+    const fontSize = await input.evaluate((el) =>
+      Number.parseFloat(getComputedStyle(el).fontSize),
+    );
+
+    expect(fontSize).toBeGreaterThanOrEqual(16);
+
+    await context.close();
+  });
 });
