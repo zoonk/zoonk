@@ -29,6 +29,7 @@ coverage
 
 # Build Outputs
 .next/
+.next-e2e/
 out/
 build
 dist

@@ -9,11 +9,12 @@ const CACHE_EXPIRE_DAYS = 365;
 const CACHE_STALE_MINUTES = 5;
 const CACHE_REVALIDATE_DAYS = 30;
 
+const isE2E = process.env.E2E_TESTING === "true";
+
 // Swap @zoonk/auth for E2E-specific config during E2E builds
-const e2eAliases: Record<string, string> =
-  process.env.E2E_TESTING === "true"
-    ? { "@zoonk/auth": "@zoonk/auth/e2e" }
-    : {};
+const e2eAliases: Record<string, string> = isE2E
+  ? { "@zoonk/auth": "../../packages/auth/src/e2e.ts" }
+  : {};
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
@@ -25,6 +26,8 @@ const nextConfig: NextConfig = {
     },
   },
   devIndicators: false,
+  // Use separate build directories so E2E and production builds don't conflict
+  distDir: isE2E ? ".next-e2e" : ".next",
   experimental: {
     authInterrupts: true,
     staleTimes: {
