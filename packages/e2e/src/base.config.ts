@@ -37,6 +37,6 @@ export function createBaseConfig(options: BaseConfigOptions) {
       timeout: 120_000,
       url: options.baseURL,
     },
-    workers: process.env.CI ? 2 : undefined,
+    workers: process.env.CI ? 1 : undefined,
   });
 }
