@@ -91,9 +91,6 @@ jobs:
       - name: Run database migrations
         run: pnpm db:deploy
 
-      - name: Generate Prisma client
-        run: pnpm db:generate
-
       - name: Build main app
         run: pnpm turbo build --filter=main
 
