@@ -117,6 +117,11 @@ msgctxt "IbrSk1"
 msgid "Learn"
 msgstr "Aprender"
 
+#: src/app/[locale]/(catalog)/_components/user-avatar-menu.tsx:15
+msgctxt "6b2CRH"
+msgid "User menu"
+msgstr "Menu do usuário"
+
 #: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx:18
 #: src/app/[locale]/(settings)/_components/settings-navigation.tsx:27
 #: src/app/[locale]/(settings)/_components/settings-navigation.tsx:42

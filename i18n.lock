@@ -189,27 +189,13 @@ checksums:
     Search/singular: 49dd6c21604b5e8d4153ff1aff2177e1
     Language/singular: 277fd1a41cc237a437cd1d5e4a80463b
     Learn/singular: 6559e2075ab6947a1d4fa43e19a5d66b
+    User%20menu/singular: ee471ecb3870493792e60d1b41fcce86
     Settings/singular: 8df6777277469c1fd88cc18dde2f1cc3
     Support/singular: 55aab5fd0f31a9cb055a2edeeedfaf63
     Subscription/singular: ba9f3675e18987d067d48533c8897343
     This%20content%20was%20generated%20by%20AI.%20It%20may%20contain%20errors%20or%20inaccuracies%20and%20should%20not%20be%20considered%20professional%20advice./singular: 269e7c16a722903b9b434f28aa6cf617
     Continue%20learning/singular: ff5ff528cbacf657af36fb9b711431d6
-    Listening/singular: 9e680c44cd88a178b953349ed8881ef2
-    Examples/singular: 9dacb7c56bc894e4bcad39f41265e3a0
-    Challenge/singular: 7f333a59ee7a3596e27a2f8c3401b764
-    Story/singular: fabac3f62af801d429e2cd7115bf14c9
-    Explanation/singular: f6b595df4ffb1a5b0cbbe1dda5993522
-    Logic/singular: c8e5ef649c6904d7327df3731d9de873
-    Vocabulary/singular: 2c8127af4c194fa05463e82d5e414c62
-    Reading/singular: 9d93f1dff4a01a9e1566f23b401b8868
-    Mechanics/singular: 9885fd6c35db2bd26affb830d537046b
-    Quiz/singular: 22bce287f7a90d3b41b418108eaab43b
-    Grammar/singular: 1d97aca351a45df1d6eb27adbee04832
-    Review/singular: 299f75db25382980b2895622d7712927
     Next%3A%20%7Bactivity%7D/singular: 9208679843466247d2161793249e5eda
-    Pronunciation/singular: fa10bd7f4b790473afcec2a8cb2d8188
-    Lesson%20Quiz/singular: dd56fd2bf35d3bdf15729bcf2ec1aca7
-    Background/singular: 0ceaed10d99ed4ad83cb0934ab970174
     Activity/singular: 1948763de8e531483a798b68195e297e
     Course%20categories/singular: 3c86af7c305be0c0f5b65077fb06708d
     All/singular: 5e2e93f8e2a5f315b6fecdd0a0e6f55f
@@ -312,6 +298,21 @@ checksums:
     Law/singular: 3f04c791596043e899781f74003b9324
     Business/singular: 7682c7966c6e718836388561e7e68cab
     Geography/singular: fd93fe516c40f1f2dd96f53a507ce95d
+    Listening/singular: 9e680c44cd88a178b953349ed8881ef2
+    Examples/singular: 9dacb7c56bc894e4bcad39f41265e3a0
+    Challenge/singular: 7f333a59ee7a3596e27a2f8c3401b764
+    Story/singular: fabac3f62af801d429e2cd7115bf14c9
+    Explanation/singular: f6b595df4ffb1a5b0cbbe1dda5993522
+    Logic/singular: c8e5ef649c6904d7327df3731d9de873
+    Vocabulary/singular: 2c8127af4c194fa05463e82d5e414c62
+    Reading/singular: 9d93f1dff4a01a9e1566f23b401b8868
+    Mechanics/singular: 9885fd6c35db2bd26affb830d537046b
+    Quiz/singular: 22bce287f7a90d3b41b418108eaab43b
+    Grammar/singular: 1d97aca351a45df1d6eb27adbee04832
+    Review/singular: 299f75db25382980b2895622d7712927
+    Pronunciation/singular: fa10bd7f4b790473afcec2a8cb2d8188
+    Lesson%20Quiz/singular: dd56fd2bf35d3bdf15729bcf2ec1aca7
+    Background/singular: 0ceaed10d99ed4ad83cb0934ab970174
     "%7Bcategory%7D%20Courses/singular": f82680a650c487992e1025b66f324d4c
     Explore%20all%20%7Bcategory%7D%20courses/singular: b1f2775c67b4a61b3d92b4345b8b852e
     "%7Bcategory%7D%20courses/singular": eafd6f9b1fa97400abe1bfe0c8ee5f19
