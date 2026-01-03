@@ -14,9 +14,6 @@ importers:
       '@playwright/test':
         specifier: 1.57.0
         version: 1.57.0
-      dotenv-cli:
-        specifier: 11.0.0
-        version: 11.0.0
       turbo:
         specifier: 2.7.2
         version: 2.7.2
@@ -551,6 +548,9 @@ importers:
       dotenv:
         specifier: 17.2.3
         version: 17.2.3
+      dotenv-cli:
+        specifier: 11.0.0
+        version: 11.0.0
       prisma:
         specifier: 7.2.0
         version: 7.2.0(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.9.3)
