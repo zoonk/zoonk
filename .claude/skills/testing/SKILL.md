@@ -25,12 +25,11 @@ Follow TDD (Test-Driven Development) for all features and bug fixes. **Always wr
 
 ## Test Types
 
-| When                    | Test Type   | Framework    | Location                                                |
-| ----------------------- | ----------- | ------------ | ------------------------------------------------------- |
-| Apps/UI features        | E2E         | Playwright   | `apps/{app}/e2e/`                                       |
-| Data functions (Prisma) | Integration | Vitest       | `apps/{app}/src/data/` or `packages/core/src/{domain}/` |
-| Utils/helpers           | Unit        | Vitest       | `packages/{pkg}/*.test.ts`                              |
-| UI component edge cases | Unit        | Vitest + RTL | `packages/ui/src/components/*.test.tsx`                 |
+| When                    | Test Type   | Framework  | Location                                                |
+| ----------------------- | ----------- | ---------- | ------------------------------------------------------- |
+| Apps/UI features        | E2E         | Playwright | `apps/{app}/e2e/`                                       |
+| Data functions (Prisma) | Integration | Vitest     | `apps/{app}/src/data/` or `packages/core/src/{domain}/` |
+| Utils/helpers           | Unit        | Vitest     | `packages/{pkg}/*.test.ts`                              |
 
 ## E2E Testing (Playwright)
 
@@ -219,31 +218,9 @@ describe("removeAccents", () => {
 });
 ```
 
-### UI Component Edge Cases
-
-Use `@testing-library/react` with semantic queries:
-
-```typescript
-import { render, screen } from "@testing-library/react";
-
-describe("CommandInput", () => {
-  test("has text-base class to prevent iOS Safari zoom on focus", () => {
-    render(
-      <Command>
-        <CommandInput placeholder="Search..." />
-      </Command>
-    );
-
-    const input = screen.getByPlaceholderText("Search...");
-    expect(input).toHaveClass("text-base");
-  });
-});
-```
-
 ### When to Add Unit Tests
 
 - Edge cases not covered by e2e tests
-- Platform-specific behaviors (iOS Safari, etc.)
 - Complex utility functions
 - Error boundary conditions
 
@@ -268,4 +245,3 @@ pnpm e2e                     # Run all e2e tests
 - Vitest config: `apps/{app}/vitest.config.mts`
 - Example e2e tests: `apps/main/e2e/`
 - Example integration tests: `apps/editor/src/data/chapters/`
-- Example unit test: `packages/ui/src/components/command.test.tsx`
