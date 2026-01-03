@@ -271,9 +271,6 @@ test.describe("Command Palette - Course Search", () => {
     const dialog = page.getByRole("dialog");
     await dialog.getByPlaceholder(/search/i).fill("M");
 
-    // Wait a moment for any potential search
-    await page.waitForTimeout(500);
-
     // Should not show course search results with single character
     await expect(dialog.getByText("Machine Learning")).not.toBeVisible();
   });
@@ -334,7 +331,6 @@ test.describe("Command Palette - Course Search", () => {
     await dialog
       .getByPlaceholder(/search/i)
       .pressSequentially("Machi", { delay: 50 });
-    await page.waitForTimeout(100);
     await dialog.getByPlaceholder(/search/i).fill("Machine");
 
     // Should show correct results after debounce
@@ -353,20 +349,31 @@ test.describe("Command Palette - Keyboard Navigation", () => {
     await expect(input).toBeFocused();
   });
 
-  test("arrow key navigation between items", async ({ page }) => {
+  test("arrow key navigation selects items", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: /search/i }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
-    // Navigate down
+    const dialog = page.getByRole("dialog");
+
+    // Navigate down twice to select an item
     await page.keyboard.press("ArrowDown");
     await page.keyboard.press("ArrowDown");
 
-    // Navigate up
+    // Verify an item is now selected (aria-selected="true")
+    const selectedOption = dialog.getByRole("option", { selected: true });
+    await expect(selectedOption).toBeVisible();
+    const selectedBefore = await selectedOption.textContent();
+
+    // Navigate up - selection should move to a different item
     await page.keyboard.press("ArrowUp");
 
-    // Dialog should still be visible and functional
-    await expect(page.getByRole("dialog")).toBeVisible();
+    const selectedAfter = await dialog
+      .getByRole("option", { selected: true })
+      .textContent();
+
+    // Selection should have changed
+    expect(selectedBefore).not.toBe(selectedAfter);
   });
 
   test("Enter to select navigates correctly", async ({ page }) => {
