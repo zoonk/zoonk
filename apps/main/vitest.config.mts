@@ -1,12 +1,11 @@
 import { resolve } from "node:path";
-import react from "@vitejs/plugin-react";
 import { loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   assetsInclude: ["**/*.md"],
-  plugins: [tsconfigPaths(), react()],
+  plugins: [tsconfigPaths()],
   resolve: {
     alias: [
       {
@@ -21,7 +20,7 @@ export default defineConfig({
       optimizer: { ssr: { include: ["next"] } },
     },
     env: loadEnv("test", process.cwd(), ""),
-    environment: "jsdom",
+    environment: "node",
     exclude: ["**/node_modules/**", "**/e2e/**"],
     server: {
       deps: {
