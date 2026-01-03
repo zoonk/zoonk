@@ -9,9 +9,7 @@ export default createBaseConfig({
   port: 3000,
   testDir: "./e2e",
   webServerEnv: {
-    // biome-ignore lint/style/useNamingConvention: environment variable naming
     DATABASE_URL: E2E_DATABASE_URL,
-    // biome-ignore lint/style/useNamingConvention: environment variable naming
     DATABASE_URL_UNPOOLED: E2E_DATABASE_URL,
   },
 });

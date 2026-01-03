@@ -26,7 +26,6 @@ export const listCourses = cache(
           select: { slug: true },
         },
       },
-      // biome-ignore lint/style/useNamingConvention: _count is Prisma's syntax for counting relations
       orderBy: [{ users: { _count: "desc" } }, { createdAt: "desc" }],
       take: limit,
       ...(params.cursor && {

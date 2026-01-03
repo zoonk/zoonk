@@ -33,7 +33,6 @@ export function createBaseConfig(options: BaseConfigOptions) {
     webServer: {
       command: `pnpm start -p ${options.port}`,
       env: {
-        // biome-ignore lint/style/useNamingConvention: environment variable naming
         E2E_TESTING: "true",
         ...options.webServerEnv,
       },
