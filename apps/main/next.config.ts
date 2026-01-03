@@ -9,6 +9,12 @@ const CACHE_EXPIRE_DAYS = 365;
 const CACHE_STALE_MINUTES = 5;
 const CACHE_REVALIDATE_DAYS = 30;
 
+// Swap @zoonk/auth for E2E-specific config during E2E builds
+const e2eAliases: Record<string, string> =
+  process.env.E2E_TESTING === "true"
+    ? { "@zoonk/auth": "@zoonk/auth/e2e" }
+    : {};
+
 const nextConfig: NextConfig = {
   cacheComponents: true,
   cacheLife: {
@@ -38,6 +44,9 @@ const nextConfig: NextConfig = {
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   reactCompiler: true,
   turbopack: {
+    resolveAlias: {
+      ...e2eAliases,
+    },
     root: path.resolve(__dirname, "../.."),
     rules: {
       // Allow to import MDX files used for AI prompts
