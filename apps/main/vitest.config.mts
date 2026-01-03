@@ -22,6 +22,7 @@ export default defineConfig({
     },
     env: loadEnv("test", process.cwd(), ""),
     environment: "jsdom",
+    exclude: ["**/node_modules/**", "**/e2e/**"],
     server: {
       deps: {
         // https://github.com/vercel/next.js/issues/77200
