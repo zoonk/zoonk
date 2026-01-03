@@ -9,6 +9,7 @@ test.describe("Course Detail Page", () => {
     await expect(
       page.getByRole("heading", { name: /machine learning/i }),
     ).toBeVisible();
+
     await expect(page.getByText(/patterns|predictions|data/i)).toBeVisible();
 
     const courseImage = page.getByRole("img", { name: /machine learning/i });
@@ -31,17 +32,6 @@ test.describe("Course Detail Page", () => {
 });
 
 test.describe("Course Detail Page - Locale", () => {
-  test("Portuguese course shows translated content", async ({ page }) => {
-    await page.goto("/pt/b/ai/c/machine-learning");
-
-    await expect(
-      page.getByRole("heading", { name: /machine learning/i }),
-    ).toBeVisible();
-    await expect(
-      page.getByText(/permite que computadores identifiquem/i),
-    ).toBeVisible();
-  });
-
   test("navigating from Portuguese courses page preserves locale", async ({
     page,
   }) => {
@@ -53,6 +43,7 @@ test.describe("Course Detail Page - Locale", () => {
       .click();
 
     await expect(page).toHaveURL(/\/pt\/b\/ai\/c\/machine-learning/);
+
     await expect(
       page.getByText(/permite que computadores identifiquem/i).first(),
     ).toBeVisible();
