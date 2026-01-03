@@ -33,7 +33,7 @@ test.describe("Home Page - Authenticated", () => {
 
     await expect(
       authenticatedPage.getByText(TEXT_CONTINUE_LEARNING),
-    ).toBeVisible({ timeout: 10_000 });
+    ).toBeVisible();
 
     await expect(
       authenticatedPage.getByRole("heading", { name: HEADING_LEARN_ANYTHING }),

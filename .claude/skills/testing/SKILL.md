@@ -45,7 +45,9 @@ Test what users see and do, not implementation details. If your test breaks when
 // BAD: Redundant test - visibility is already covered by the interaction test below
 test("shows feedback buttons", async ({ page }) => {
   await expect(page.getByRole("button", { name: /i liked it/i })).toBeVisible();
-  await expect(page.getByRole("button", { name: /i didn't like it/i })).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: /i didn't like it/i })
+  ).toBeVisible();
 });
 
 // GOOD: This test implicitly verifies visibility through interaction
@@ -90,7 +92,7 @@ page.locator("button.bg-blue-500");
 
 ```typescript
 // GOOD: Wait for visible state with timeout
-await expect(page.getByRole("heading")).toBeVisible({ timeout: 10_000 });
+await expect(page.getByRole("heading")).toBeVisible();
 await expect(page.getByText("Success")).toBeVisible();
 
 // GOOD: Wait for URL change

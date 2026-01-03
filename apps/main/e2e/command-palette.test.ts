@@ -243,7 +243,6 @@ test.describe("Command Palette - Authenticated", () => {
       (response) =>
         response.url().includes("/api/auth/get-session") &&
         response.status() === 200,
-      { timeout: 10_000 },
     );
 
     // Verify user is logged out - command palette should show Login option
@@ -273,9 +272,7 @@ test.describe("Command Palette - Course Search", () => {
     await dialog.getByPlaceholder(/search/i).fill("machine");
 
     // Wait for results
-    await expect(dialog.getByText("Machine Learning").first()).toBeVisible({
-      timeout: 5000,
-    });
+    await expect(dialog.getByText("Machine Learning").first()).toBeVisible();
 
     // Course description should be visible
     await expect(
@@ -283,7 +280,7 @@ test.describe("Command Palette - Course Search", () => {
     ).toBeVisible();
 
     // Wait for and click the course result
-    await dialog.getByText("Machine Learning").first().click({ timeout: 5000 });
+    await dialog.getByText("Machine Learning").first().click();
 
     // Verify user sees course detail page
     await expect(
@@ -295,9 +292,7 @@ test.describe("Command Palette - Course Search", () => {
     const dialog = page.getByRole("dialog");
     await dialog.getByPlaceholder(/search/i).fill("xyznonexistent");
 
-    await expect(dialog.getByText(/no results found/i)).toBeVisible({
-      timeout: 5000,
-    });
+    await expect(dialog.getByText(/no results found/i)).toBeVisible();
   });
 
   test("handles rapid typing correctly", async ({ page }) => {
@@ -311,9 +306,7 @@ test.describe("Command Palette - Course Search", () => {
     await dialog.getByPlaceholder(/search/i).fill("Machine");
 
     // Should show correct results after debounce
-    await expect(dialog.getByText("Machine Learning").first()).toBeVisible({
-      timeout: 5000,
-    });
+    await expect(dialog.getByText("Machine Learning").first()).toBeVisible();
   });
 });
 

@@ -69,7 +69,7 @@ test.describe("Settings - Name Form", () => {
 
     await expect(
       authenticatedPage.getByText(/saved|updated|success/i),
-    ).toBeVisible({ timeout: 5000 });
+    ).toBeVisible();
 
     // Navigate away and back
     await authenticatedPage.goto("/settings");

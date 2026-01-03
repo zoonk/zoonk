@@ -21,7 +21,7 @@ test.describe("Learn Form", () => {
 
     await expect(
       page.getByRole("heading", { name: /course ideas for/i }),
-    ).toBeVisible({ timeout: 15_000 });
+    ).toBeVisible();
   });
 });
 
@@ -33,7 +33,7 @@ test.describe("Course Suggestions", () => {
 
     await expect(
       page.getByRole("heading", { name: /course ideas for test prompt/i }),
-    ).toBeVisible({ timeout: 15_000 });
+    ).toBeVisible();
 
     await expect(page.getByText("Introduction to Testing")).toBeVisible();
     await expect(
@@ -49,7 +49,7 @@ test.describe("Course Suggestions", () => {
 
     await expect(
       page.getByRole("heading", { name: /course ideas for/i }),
-    ).toBeVisible({ timeout: 15_000 });
+    ).toBeVisible();
 
     await page.getByRole("link", { name: /change subject/i }).click();
 
@@ -69,7 +69,7 @@ test.describe("Learn Form - Accessibility", () => {
 
     await expect(
       page.getByRole("heading", { name: /course ideas for/i }),
-    ).toBeVisible({ timeout: 15_000 });
+    ).toBeVisible();
   });
 
   test("form fields have accessible labels", async ({ page }) => {

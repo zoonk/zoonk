@@ -6,9 +6,7 @@ test.describe("Content Feedback", () => {
     await page.goto("/learn/test%20prompt");
 
     // Wait for content to load
-    await expect(page.getByText("Introduction to Testing")).toBeVisible({
-      timeout: 15_000,
-    });
+    await expect(page.getByText("Introduction to Testing")).toBeVisible();
   });
 
   test("clicking feedback button marks it as pressed", async ({ page }) => {
@@ -38,9 +36,7 @@ test.describe("Content Feedback", () => {
     await dialog.getByLabel(/message/i).fill("This is test feedback");
     await dialog.getByRole("button", { name: /send message/i }).click();
 
-    await expect(dialog.getByText(/message sent successfully/i)).toBeVisible({
-      timeout: 5000,
-    });
+    await expect(dialog.getByText(/message sent successfully/i)).toBeVisible();
   });
 
   test("submit with invalid email shows validation error", async ({ page }) => {
@@ -110,7 +106,7 @@ test.describe("Content Feedback - Authenticated", () => {
     // Wait for content to load
     await expect(
       authenticatedPage.getByText("Introduction to Testing"),
-    ).toBeVisible({ timeout: 15_000 });
+    ).toBeVisible();
 
     await authenticatedPage
       .getByRole("button", { name: /send feedback/i })
