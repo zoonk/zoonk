@@ -1,5 +1,6 @@
 "use cache";
 
+import { prisma } from "@zoonk/db";
 import { cacheTagCourse } from "@zoonk/utils/cache";
 import type { Metadata } from "next";
 import { cacheTag } from "next/cache";
@@ -9,7 +10,21 @@ import { getCourse } from "@/data/courses/get-course";
 import { CourseHeader } from "./course-header";
 
 export async function generateStaticParams() {
-  return [{ brandSlug: "ai", courseSlug: "machine-learning", locale: "en" }];
+  const course = await prisma.course.findFirst({
+    select: { language: true, slug: true },
+    where: {
+      isPublished: true,
+      organization: { kind: "brand", slug: "ai" },
+    },
+  });
+
+  if (!course) {
+    return [];
+  }
+
+  return [
+    { brandSlug: "ai", courseSlug: course.slug, locale: course.language },
+  ];
 }
 
 export async function generateMetadata({
