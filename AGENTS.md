@@ -158,8 +158,15 @@ For detailed examples and patterns, see `.claude/skills/compound-components/SKIL
 
 ## Testing
 
-- Always write tests for functions in `data` folders that need to interact with the database, except for the `admin` and `evals` apps since they're internal tools
-- When writing business logic, follow a TDD approach. Write the test first and make sure it fails. Then write the code to make it pass
+**Always follow TDD (Test-Driven Development)**: Write a failing test first, then write the code to make it pass.
+
+- **E2E tests**: For app/UI features, use Playwright (`apps/{app}/e2e/`)
+- **Integration tests**: For data functions with Prisma (`apps/{app}/src/data/`)
+- **Unit tests**: For utils, helpers, and UI component edge cases
+
+**Exclude** `admin` and `evals` apps from testing requirements (internal tools).
+
+For detailed testing patterns, fixtures, and best practices, see `.claude/skills/testing/SKILL.md`
 
 ## i18n
 
@@ -220,11 +227,12 @@ We're using the new [React Compiler](https://react.dev/learn/react-compiler/intr
 
 For detailed guidance on complex workflows, see these skill files:
 
-| Skill               | When to Use                 | File                                          |
-| ------------------- | --------------------------- | --------------------------------------------- |
-| Compound Components | Building UI components      | `.claude/skills/compound-components/SKILL.md` |
-| Design              | UI/UX, interactions, a11y   | `.claude/skills/design/SKILL.md`              |
-| Translations        | Working with i18n, PO files | `.claude/skills/translations/SKILL.md`        |
+| Skill               | When to Use                  | File                                          |
+| ------------------- | ---------------------------- | --------------------------------------------- |
+| Compound Components | Building UI components       | `.claude/skills/compound-components/SKILL.md` |
+| Design              | UI/UX, interactions, a11y    | `.claude/skills/design/SKILL.md`              |
+| Testing             | Bug fixes, new features, TDD | `.claude/skills/testing/SKILL.md`             |
+| Translations        | Working with i18n, PO files  | `.claude/skills/translations/SKILL.md`        |
 
 **Note**: Claude Code auto-discovers these skills. Other AI agents should read the SKILL.md files directly when working on related tasks.
 
