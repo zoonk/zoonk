@@ -22,12 +22,20 @@ test.describe("Course Detail Page", () => {
     await expect(page.getByText(/not found|404/i)).toBeVisible();
   });
 
-  test("handles course without image gracefully", async ({ page }) => {
+  test("shows fallback icon when course has no image", async ({ page }) => {
     await page.goto("/b/ai/c/python-programming");
 
     await expect(
       page.getByRole("heading", { name: /python programming/i }),
     ).toBeVisible();
+
+    // Fallback icon should have role="img" with the course title as aria-label
+    // This distinguishes it from actual images which use <img> elements
+    const fallbackIcon = page
+      .getByRole("img", { name: /python programming/i })
+      .first();
+    await expect(fallbackIcon).toBeVisible();
+    await expect(fallbackIcon).not.toHaveAttribute("src");
   });
 });
 

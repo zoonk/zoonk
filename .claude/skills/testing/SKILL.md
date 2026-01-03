@@ -79,14 +79,40 @@ page.getByLabel("Email address");
 page.getByText("Sign up for free");
 page.getByPlaceholder("Search...");
 
-// BAD: Implementation details
+// BAD: Implementation details (including data-slot, data-testid, CSS classes)
 page.locator(".btn-primary");
 page.locator("#submit-button");
 page.locator("[data-testid='submit']");
+page.locator("[data-slot='media-card-icon']");
 page.locator("button.bg-blue-500");
 ```
 
 **If you can't use `getByRole`, the component likely has accessibility issues.** Refactor to make it more accessible instead of using implementation-detail selectors.
+
+### Fix Accessibility First, Then Test
+
+When a component lacks semantic markup, fix the component before writing tests:
+
+```typescript
+// BAD: Using implementation details because component lacks accessibility
+test("shows fallback icon", async ({ page }) => {
+  await expect(page.locator("[data-slot='media-card-icon']")).toBeVisible();
+});
+
+// GOOD: First fix the component to be accessible
+// In the component: <MediaCardIcon role="img" aria-label={title}>
+// Then test with semantic queries:
+test("shows fallback icon", async ({ page }) => {
+  const fallbackIcon = page.getByRole("img", { name: /course title/i }).first();
+  await expect(fallbackIcon).toBeVisible();
+  await expect(fallbackIcon).not.toHaveAttribute("src"); // Distinguishes from <img>
+});
+```
+
+Common accessibility fixes:
+- Decorative icons acting as image placeholders → add `role="img"` and `aria-label`
+- Interactive elements without labels → add `aria-label` or visible text
+- Custom controls → add appropriate ARIA roles
 
 ### Wait Patterns
 
