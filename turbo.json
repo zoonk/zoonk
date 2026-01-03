@@ -37,12 +37,16 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "build:e2e": {
-      "dependsOn": ["seed:e2e", "^db:generate", "^build"],
+      "dependsOn": ["^db:e2e:seed", "^build"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "db:deploy": {
       "cache": false,
       "dependsOn": ["^db:deploy"]
+    },
+    "db:e2e:seed": {
+      "cache": false,
+      "dependsOn": ["db:e2e:setup", "db:generate"]
     },
     "db:e2e:setup": {
       "cache": false,
@@ -73,10 +77,6 @@
     "e2e": {
       "cache": false,
       "dependsOn": ["build:e2e"]
-    },
-    "seed:e2e": {
-      "cache": false,
-      "dependsOn": ["db:e2e:setup"]
     },
     "start": {
       "cache": false,

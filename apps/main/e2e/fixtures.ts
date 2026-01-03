@@ -44,4 +44,4 @@ export const test = base.extend<AuthFixtures>({
 
 // biome-ignore lint/performance/noBarrelFile: re-exporting for convenience
 export { expect, type Page } from "@zoonk/e2e/fixtures";
-export { E2E_USERS, type E2EUserKey } from "./seed/users";
+export { E2E_USERS, type E2EUserKey } from "./global-setup";
