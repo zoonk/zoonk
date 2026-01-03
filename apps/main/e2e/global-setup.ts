@@ -18,8 +18,6 @@ export const E2E_USERS = {
   },
 } as const;
 
-export type E2EUserKey = keyof typeof E2E_USERS;
-
 async function authenticateUser(
   name: string,
   user: { email: string; password: string },

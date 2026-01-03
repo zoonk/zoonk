@@ -230,6 +230,16 @@
           }
         }
       }
+    },
+    {
+      "includes": ["**/e2e/**"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off"
+          }
+        }
+      }
     }
   ],
   "vcs": {
