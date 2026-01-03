@@ -50,3 +50,19 @@ test.describe("Courses Page - Locale", () => {
     await expect(page.getByText("Astronomia")).not.toBeVisible();
   });
 });
+
+test.describe("Courses Page - Accessibility", () => {
+  test("navigates course list items with Tab", async ({ page }) => {
+    await page.goto("/courses");
+
+    await expect(page.getByText("Machine Learning").first()).toBeVisible();
+
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
+    await page.keyboard.press("Tab");
+
+    await expect(
+      page.getByRole("heading", { name: /explore courses/i }),
+    ).toBeVisible();
+  });
+});

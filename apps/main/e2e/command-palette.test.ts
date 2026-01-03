@@ -414,3 +414,32 @@ test.describe("Command Palette - Mobile Viewport", () => {
     await expect(dialog.getByPlaceholder(/search/i)).toBeVisible();
   });
 });
+
+test.describe("Command Palette - Accessibility", () => {
+  test("has dialog role", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: /search/i }).click();
+
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+  });
+
+  test("has accessible title", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: /search/i }).click();
+
+    const dialog = page.getByRole("dialog");
+    const hasLabel = await dialog.evaluate(
+      (el) =>
+        el.hasAttribute("aria-label") || el.hasAttribute("aria-labelledby"),
+    );
+    expect(hasLabel).toBe(true);
+  });
+
+  test("search button indicates keyboard shortcut", async ({ page }) => {
+    await page.goto("/");
+
+    const searchButton = page.getByRole("button", { name: /search/i });
+    await expect(searchButton).toHaveAttribute("aria-keyshortcuts", /k/i);
+  });
+});
