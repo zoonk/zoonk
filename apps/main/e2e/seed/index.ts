@@ -12,7 +12,7 @@ import { seedCourseSuggestions } from "./course-suggestions";
 import { seedCourseUsers, seedProgress } from "./enrollments";
 import { seedAccounts, seedUsers } from "./users";
 
-export async function seedE2EData(): Promise<void> {
+async function seedE2EData(): Promise<void> {
   const users = await seedUsers(prisma);
   await seedAccounts(prisma, users);
   const org = await seedOrganization(prisma, users);
@@ -26,3 +26,5 @@ export async function seedE2EData(): Promise<void> {
   await seedProgress(prisma, org, users);
   await seedCourseSuggestions(prisma);
 }
+
+await seedE2EData();

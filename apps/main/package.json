@@ -45,12 +45,14 @@
   "scripts": {
     "analyze": "next experimental-analyze",
     "build": "bash scripts/maybe-migrate.sh && next build",
+    "build:e2e": "dotenv -e .env.e2e -- next build",
     "dev": "next dev",
+    "e2e": "dotenv -e .env.e2e -- playwright test",
+    "e2e:ui": "dotenv -e .env.e2e -- playwright test --ui",
+    "seed:e2e": "dotenv -e .env.e2e -- tsx e2e/seed/index.ts",
     "start": "next start",
     "stripe:listen": "stripe listen --forward-to http://localhost:3000/api/auth/stripe/webhook",
     "test": "vitest run",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
     "test:watch": "vitest",
     "typecheck": "next typegen && tsc --noEmit"
   },

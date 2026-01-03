@@ -88,11 +88,5 @@ jobs:
         if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: pnpm exec playwright install-deps chromium
 
-      - name: Run database migrations
-        run: pnpm db:deploy
-
-      - name: Build main app
-        run: pnpm turbo build --filter=main
-
       - name: Run E2E tests
-        run: pnpm --filter main test:e2e
+        run: pnpm e2e --filter=main

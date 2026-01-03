@@ -36,9 +36,17 @@
       "dependsOn": ["^db:generate", "^build"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
+    "build:e2e": {
+      "dependsOn": ["seed:e2e", "^db:generate", "^build"],
+      "outputs": [".next/**", "!.next/cache/**"]
+    },
     "db:deploy": {
       "cache": false,
       "dependsOn": ["^db:deploy"]
+    },
+    "db:e2e:setup": {
+      "cache": false,
+      "dependsOn": ["^db:e2e:setup"]
     },
     "db:generate": {
       "cache": false,
@@ -62,6 +70,14 @@
       "dependsOn": ["^db:generate", "^dev"],
       "persistent": true
     },
+    "e2e": {
+      "cache": false,
+      "dependsOn": ["build:e2e"]
+    },
+    "seed:e2e": {
+      "cache": false,
+      "dependsOn": ["db:e2e:setup"]
+    },
     "start": {
       "cache": false,
       "dependsOn": ["^start"],
@@ -69,9 +85,6 @@
     },
     "test": {
       "dependsOn": ["^db:test:setup", "^test"]
-    },
-    "test:e2e": {
-      "cache": false
     },
     "test:watch": {
       "cache": false,

@@ -27,6 +27,7 @@
   "private": true,
   "scripts": {
     "db:deploy": "prisma migrate deploy",
+    "db:e2e:setup": "dotenv -e .env.e2e -o -- prisma migrate deploy",
     "db:generate": "prisma generate --sql",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
