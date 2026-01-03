@@ -39,6 +39,7 @@ export function ContentFeedback({
 
       <div className="flex gap-1">
         <Button
+          aria-pressed={feedback === "upvote"}
           className={cn(
             "size-8 hover:bg-green-50 hover:text-green-600",
             feedback === "upvote" && "bg-green-50 text-green-600",
@@ -52,6 +53,7 @@ export function ContentFeedback({
         </Button>
 
         <Button
+          aria-pressed={feedback === "downvote"}
           className={cn(
             "size-8 hover:bg-red-50 hover:text-red-600",
             feedback === "downvote" && "bg-red-50 text-red-600",

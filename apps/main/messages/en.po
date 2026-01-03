@@ -228,17 +228,17 @@ msgctxt "BlI1/9"
 msgid "Did you like this content?"
 msgstr "Did you like this content?"
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx:71
+#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx:73
 msgctxt "G5YSJR"
 msgid "Send feedback"
 msgstr "Send feedback"
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx:64
+#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx:66
 msgctxt "Hqn5Uo"
 msgid "I didn't like it"
 msgstr "I didn't like it"
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx:51
+#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx:52
 msgctxt "rTFrsw"
 msgid "I liked it"
 msgstr "I liked it"
