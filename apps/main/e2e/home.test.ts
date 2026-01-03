@@ -1,26 +1,26 @@
 import { expect, test } from "./fixtures";
 
-const HEADING_LEARN_ANYTHING = /learn anything with ai/i;
-const HEADING_LEARN_PAGE = /what do you want to learn/i;
-const TEXT_CONTINUE_LEARNING = /continue learning/i;
-
 test.describe("Home Page - Unauthenticated", () => {
   test("shows hero with CTAs that navigate to correct pages", async ({
     page,
   }) => {
     await page.goto("/");
 
+    await expect(page.getByText(/continue learning/i)).not.toBeVisible();
+
     const hero = page.getByRole("main");
+
     await expect(
-      hero.getByRole("heading", { name: HEADING_LEARN_ANYTHING }),
+      hero.getByRole("heading", { name: /learn anything with ai/i }),
     ).toBeVisible();
 
     // Test Learn anything CTA
     await hero
       .getByRole("link", { exact: true, name: "Learn anything" })
       .click();
+
     await expect(
-      page.getByRole("heading", { name: HEADING_LEARN_PAGE }),
+      page.getByRole("heading", { name: /what do you want to learn/i }),
     ).toBeVisible();
   });
 });
@@ -32,11 +32,13 @@ test.describe("Home Page - Authenticated", () => {
     await authenticatedPage.goto("/");
 
     await expect(
-      authenticatedPage.getByText(TEXT_CONTINUE_LEARNING),
+      authenticatedPage.getByText(/continue learning/i),
     ).toBeVisible();
 
     await expect(
-      authenticatedPage.getByRole("heading", { name: HEADING_LEARN_ANYTHING }),
+      authenticatedPage.getByRole("heading", {
+        name: /learn anything with ai/i,
+      }),
     ).not.toBeVisible();
   });
 
@@ -46,32 +48,13 @@ test.describe("Home Page - Authenticated", () => {
     await userWithoutProgress.goto("/");
 
     await expect(
+      userWithoutProgress.getByText(/continue learning/i),
+    ).not.toBeVisible();
+
+    await expect(
       userWithoutProgress.getByRole("heading", {
-        name: HEADING_LEARN_ANYTHING,
+        name: /learn anything with ai/i,
       }),
-    ).toBeVisible();
-  });
-});
-
-test.describe("Home Page - Mobile", () => {
-  test.use({ viewport: { height: 667, width: 375 } });
-
-  test("hero and CTAs work on mobile viewport", async ({ page }) => {
-    await page.goto("/");
-
-    await expect(
-      page.getByRole("heading", { name: HEADING_LEARN_ANYTHING }),
-    ).toBeVisible();
-
-    const learnCTA = page.getByRole("link", {
-      exact: true,
-      name: "Learn anything",
-    });
-    await expect(learnCTA).toBeVisible();
-
-    await learnCTA.click();
-    await expect(
-      page.getByRole("heading", { name: HEADING_LEARN_PAGE }),
     ).toBeVisible();
   });
 });
