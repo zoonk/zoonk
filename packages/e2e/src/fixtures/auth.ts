@@ -39,19 +39,19 @@ export const test = base.extend<AuthFixtures>({
     await use(page);
     await context.close();
   },
-  userWithProgress: async ({ browser }, use) => {
-    // Create a new isolated context for user with progress (owner has most progress)
-    const context = await browser.newContext();
-    const page = await context.newPage();
-    await signIn(page, TEST_USERS.owner);
-    await use(page);
-    await context.close();
-  },
   userWithoutProgress: async ({ browser }, use) => {
     // Create a new isolated context for user without course enrollment (admin has no CourseUser)
     const context = await browser.newContext();
     const page = await context.newPage();
     await signIn(page, TEST_USERS.admin);
+    await use(page);
+    await context.close();
+  },
+  userWithProgress: async ({ browser }, use) => {
+    // Create a new isolated context for user with progress (owner has most progress)
+    const context = await browser.newContext();
+    const page = await context.newPage();
+    await signIn(page, TEST_USERS.owner);
     await use(page);
     await context.close();
   },

@@ -6,9 +6,10 @@ import { useEffect, useEffectEvent } from "react";
 import { useRouter } from "@/i18n/navigation";
 
 export default function LogoutPage() {
-  const { push } = useRouter();
+  const { push, refresh } = useRouter();
 
   const handleSuccess = useEffectEvent(() => {
+    refresh();
     push("/");
   });
 

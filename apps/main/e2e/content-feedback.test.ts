@@ -102,6 +102,7 @@ test.describe("Content Feedback - Feedback Dialog", () => {
     await page.getByRole("button", { name: /send feedback/i }).click();
 
     const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
     await dialog.getByRole("button", { name: /send message/i }).click();
 
     // Should show validation error or field should be marked invalid
