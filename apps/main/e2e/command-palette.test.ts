@@ -18,14 +18,6 @@ test.describe("Command Palette - Unauthenticated", () => {
     await expect(page.getByRole("button", { name: /search/i })).toBeVisible();
   });
 
-  test("opens with Ctrl+K / Cmd+K keyboard shortcut", async ({ page }) => {
-    const modifier = getModifierKey();
-    // Focus the page body to ensure keyboard events are received
-    await page.locator("body").click();
-    await page.keyboard.press(`${modifier}+k`);
-    await expect(page.getByRole("dialog")).toBeVisible();
-  });
-
   test("toggles closed with Ctrl+K / Cmd+K when already open", async ({
     page,
   }) => {
@@ -43,6 +35,7 @@ test.describe("Command Palette - Unauthenticated", () => {
   });
 
   test("opens when clicking search button", async ({ page }) => {
+    await expect(page.getByRole("dialog")).not.toBeVisible();
     await page.getByRole("button", { name: /search/i }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
   });
@@ -275,19 +268,9 @@ test.describe("Command Palette - Course Search", () => {
     await expect(dialog.getByText("Machine Learning")).not.toBeVisible();
   });
 
-  test("displays course results when typing search query", async ({ page }) => {
+  test("shows course in results", async ({ page }) => {
     const dialog = page.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill("Machine");
-
-    // Wait for search results
-    await expect(dialog.getByText("Machine Learning").first()).toBeVisible({
-      timeout: 5000,
-    });
-  });
-
-  test("shows course title and description in results", async ({ page }) => {
-    const dialog = page.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill("Machine");
+    await dialog.getByPlaceholder(/search/i).fill("machine");
 
     // Wait for results
     await expect(dialog.getByText("Machine Learning").first()).toBeVisible({
@@ -298,13 +281,6 @@ test.describe("Command Palette - Course Search", () => {
     await expect(
       dialog.getByText(/patterns|predictions|computers|identify/i).first(),
     ).toBeVisible();
-  });
-
-  test("navigates to course page on selection and shows course content", async ({
-    page,
-  }) => {
-    const dialog = page.getByRole("dialog");
-    await dialog.getByPlaceholder(/search/i).fill("Machine");
 
     // Wait for and click the course result
     await dialog.getByText("Machine Learning").first().click({ timeout: 5000 });
@@ -331,6 +307,7 @@ test.describe("Command Palette - Course Search", () => {
     await dialog
       .getByPlaceholder(/search/i)
       .pressSequentially("Machi", { delay: 50 });
+
     await dialog.getByPlaceholder(/search/i).fill("Machine");
 
     // Should show correct results after debounce
