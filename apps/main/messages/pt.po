@@ -5,794 +5,788 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:64
-#: src/app/[locale]/(catalog)/_components/logout-dropdown-item.tsx:20
-#: src/app/[locale]/(settings)/_components/protected-section.tsx:24
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
+#: src/app/[locale]/(catalog)/_components/logout-dropdown-item.tsx
+#: src/app/[locale]/(settings)/_components/protected-section.tsx
 msgctxt "AyGauy"
 msgid "Login"
 msgstr "Entrar"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:74
-#: src/app/[locale]/(catalog)/_components/logout-dropdown-item.tsx:28
-#: src/app/[locale]/(settings)/_components/settings-navbar.tsx:48
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
+#: src/app/[locale]/(catalog)/_components/logout-dropdown-item.tsx
+#: src/app/[locale]/(settings)/_components/settings-navbar.tsx
 msgctxt "C81/uG"
 msgid "Logout"
 msgstr "Sair"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:111
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
 msgctxt "CxfKLC"
 msgid "Pages"
 msgstr "Páginas"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:123
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
 msgctxt "dXSivY"
 msgid "My account"
 msgstr "Minha conta"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:73
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
 msgctxt "gvd2HB"
 msgid "Update display name"
 msgstr "Atualizar nome de exibição"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:77
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
 msgctxt "h7uoBs"
 msgid "Help and support"
 msgstr "Ajuda e suporte"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:95
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:102
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
 msgctxt "HC7Mi4"
 msgid "Search courses or pages..."
 msgstr "Pesquisar cursos ou páginas..."
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:108
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
 msgctxt "hX5PAb"
 msgid "No results found"
 msgstr "Nenhum resultado encontrado"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:69
-#: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx:14
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
+#: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx
 msgctxt "I+38K2"
 msgid "My courses"
 msgstr "Meus cursos"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:71
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
 msgctxt "KwsmcD"
 msgid "Manage settings"
 msgstr "Gerenciar configurações"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:60
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
 msgctxt "L6kaJv"
 msgid "Learn something"
 msgstr "Aprenda algo"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:72
-#: src/app/[locale]/(settings)/_components/locale-switcher.tsx:41
-#: src/app/[locale]/(settings)/language/page.tsx:25
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
+#: src/app/[locale]/(settings)/_components/locale-switcher.tsx
+#: src/app/[locale]/(settings)/language/page.tsx
 msgctxt "OhXwmw"
 msgid "Update language"
 msgstr "Atualizar idioma"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:70
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx:27
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
 msgctxt "Oj9Phc"
 msgid "Manage subscription"
 msgstr "Gerenciar assinatura"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:59
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:160
-#: src/app/[locale]/(catalog)/_components/navbar-links.tsx:76
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
+#: src/app/[locale]/(catalog)/_components/navbar-links.tsx
 msgctxt "R85gsW"
 msgid "Courses"
 msgstr "Cursos"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:58
-#: src/app/[locale]/(catalog)/_components/navbar-links.tsx:64
-#: src/app/[locale]/(settings)/_components/settings-navbar.tsx:30
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
+#: src/app/[locale]/(catalog)/_components/navbar-links.tsx
+#: src/app/[locale]/(settings)/_components/settings-navbar.tsx
 msgctxt "U3l+Q9"
 msgid "Home page"
 msgstr "Página inicial"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:147
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
 msgctxt "WnQ/AZ"
 msgid "Contact us"
 msgstr "Contacte-nos"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:90
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:98
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
 msgctxt "xmcVZ0"
 msgid "Search"
 msgstr "Pesquisar"
 
-#: src/app/[locale]/(catalog)/_components/command-palette.tsx:65
-#: src/app/[locale]/(settings)/_components/locale-switcher.tsx:39
-#: src/app/[locale]/(settings)/_hooks/use-settings.ts:13
-#: src/app/[locale]/(settings)/language/page.tsx:41
+#: src/app/[locale]/(catalog)/_components/command-palette.tsx
+#: src/app/[locale]/(settings)/_components/locale-switcher.tsx
+#: src/app/[locale]/(settings)/_hooks/use-settings.ts
+#: src/app/[locale]/(settings)/language/page.tsx
 msgctxt "y1Z3or"
 msgid "Language"
 msgstr "Idioma"
 
-#: src/app/[locale]/(catalog)/_components/navbar-links.tsx:91
+#: src/app/[locale]/(catalog)/_components/navbar-links.tsx
 msgctxt "IbrSk1"
 msgid "Learn"
 msgstr "Aprender"
 
-#: src/app/[locale]/(catalog)/_components/user-avatar-menu.tsx:15
+#: src/app/[locale]/(catalog)/_components/user-avatar-menu.tsx
 msgctxt "6b2CRH"
 msgid "User menu"
 msgstr "Menu do usuário"
 
-#: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx:18
-#: src/app/[locale]/(settings)/_components/settings-navigation.tsx:27
-#: src/app/[locale]/(settings)/_components/settings-navigation.tsx:42
-#: src/app/[locale]/(settings)/settings/page.tsx:24
-#: src/app/[locale]/(settings)/settings/page.tsx:39
+#: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[locale]/(settings)/_components/settings-navigation.tsx
+#: src/app/[locale]/(settings)/settings/page.tsx
 msgctxt "D3idYv"
 msgid "Settings"
 msgstr "Configurações"
 
-#: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx:19
-#: src/app/[locale]/(settings)/_hooks/use-settings.ts:15
+#: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[locale]/(settings)/_hooks/use-settings.ts
 msgctxt "HqRNN8"
 msgid "Support"
 msgstr "Suporte"
 
-#: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx:17
-#: src/app/[locale]/(settings)/_hooks/use-settings.ts:10
-#: src/app/[locale]/(settings)/subscription/page.tsx:41
+#: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx
+#: src/app/[locale]/(settings)/_hooks/use-settings.ts
+#: src/app/[locale]/(settings)/subscription/page.tsx
 msgctxt "R/6nsx"
 msgid "Subscription"
 msgstr "Assinatura"
 
-#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-header.tsx:79
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/course-header.tsx
 msgctxt "Dwdx/1"
 msgid "This content was generated by AI. It may contain errors or inaccuracies and should not be considered professional advice."
 msgstr "Este conteúdo foi gerado por IA. Pode conter erros ou imprecisões e não deve ser considerado aconselhamento profissional."
 
-#: src/app/[locale]/(catalog)/continue-learning.tsx:49
+#: src/app/[locale]/(catalog)/continue-learning.tsx
 msgctxt "0X+xfW"
 msgid "Continue learning"
 msgstr "Continue aprendendo"
 
-#: src/app/[locale]/(catalog)/continue-learning.tsx:60
+#: src/app/[locale]/(catalog)/continue-learning.tsx
 msgctxt "TyANVg"
 msgid "Next: {activity}"
 msgstr "Próximo: {activity}"
 
-#: src/app/[locale]/(catalog)/continue-learning.tsx:44
-#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx:14
-#: src/lib/activities.ts:39
+#: src/app/[locale]/(catalog)/continue-learning.tsx
+#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
+#: src/lib/activities.ts
 msgctxt "ZmlNQ3"
 msgid "Activity"
 msgstr "Atividade"
 
-#: src/app/[locale]/(catalog)/courses/category-pills.tsx:33
+#: src/app/[locale]/(catalog)/courses/category-pills.tsx
 msgctxt "tuZsq+"
 msgid "Course categories"
 msgstr "Categorias de cursos"
 
-#: src/app/[locale]/(catalog)/courses/category-pills.tsx:41
+#: src/app/[locale]/(catalog)/courses/category-pills.tsx
 msgctxt "zQvVDJ"
 msgid "All"
 msgstr "Todos"
 
-#: src/app/[locale]/(catalog)/courses/course-list-client.tsx:92
+#: src/app/[locale]/(catalog)/courses/course-list-client.tsx
 msgctxt "T0mfNV"
 msgid "Loading more courses…"
 msgstr "Carregando mais cursos…"
 
-#: src/app/[locale]/(catalog)/courses/course-list-client.tsx:56
+#: src/app/[locale]/(catalog)/courses/course-list-client.tsx
 msgctxt "Wc7aau"
 msgid "No courses available yet."
 msgstr "Ainda não há cursos disponíveis."
 
-#: src/app/[locale]/(catalog)/courses/course-list-client.tsx:58
+#: src/app/[locale]/(catalog)/courses/course-list-client.tsx
 msgctxt "zJxO2f"
 msgid "No courses"
 msgstr "Nenhum curso"
 
-#: src/app/[locale]/(catalog)/courses/page.tsx:47
+#: src/app/[locale]/(catalog)/courses/page.tsx
 msgctxt "hUF3bo"
 msgid "Start learning something new today"
 msgstr "Comece a aprender algo novo hoje"
 
-#: src/app/[locale]/(catalog)/courses/page.tsx:27
+#: src/app/[locale]/(catalog)/courses/page.tsx
 msgctxt "P5jxUC"
 msgid "Online Courses using AI"
 msgstr "Cursos online usando IA"
 
-#: src/app/[locale]/(catalog)/courses/page.tsx:45
-#: src/app/[locale]/(catalog)/hero.tsx:44
-#: src/app/[locale]/(catalog)/my/user-course-list.tsx:56
+#: src/app/[locale]/(catalog)/courses/page.tsx
+#: src/app/[locale]/(catalog)/hero.tsx
+#: src/app/[locale]/(catalog)/my/user-course-list.tsx
 msgctxt "s+Ncqj"
 msgid "Explore courses"
 msgstr "Explorar cursos"
 
-#: src/app/[locale]/(catalog)/courses/page.tsx:24
+#: src/app/[locale]/(catalog)/courses/page.tsx
 msgctxt "z6saPZ"
 msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons, challenges, and activities to learn subjects like science, math, technology, and more."
 msgstr "Explore todos os cursos do Zoonk para aprender qualquer coisa usando IA. Encontre aulas interativas, desafios e atividades para aprender matérias como ciência, matemática, tecnologia e muito mais."
 
-#: src/app/[locale]/(catalog)/hero.tsx:33
+#: src/app/[locale]/(catalog)/hero.tsx
 msgctxt "nlT+zW"
 msgid "Learn anything"
 msgstr "Aprenda qualquer coisa"
 
-#: src/app/[locale]/(catalog)/hero.tsx:13
+#: src/app/[locale]/(catalog)/hero.tsx
 msgctxt "qvmpye"
 msgid "Learn anything with AI"
 msgstr "Aprenda qualquer coisa com IA"
 
-#: src/app/[locale]/(catalog)/hero.tsx:17
+#: src/app/[locale]/(catalog)/hero.tsx
 msgctxt "VcxnWX"
 msgid "Interactive courses built for you. Just tell us what you want to learn."
 msgstr "Cursos interativos criados para você. Apenas nos diga o que você quer aprender."
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx:37
+#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx
 msgctxt "BlI1/9"
 msgid "Did you like this content?"
 msgstr "Você gostou deste conteúdo?"
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx:73
+#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx
 msgctxt "G5YSJR"
 msgid "Send feedback"
 msgstr "Enviar feedback"
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx:66
+#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx
 msgctxt "Hqn5Uo"
 msgid "I didn't like it"
 msgstr "Não gostei"
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx:52
+#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx
 msgctxt "rTFrsw"
 msgid "I liked it"
 msgstr "Gostei"
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx:38
+#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
 msgctxt "47FYwb"
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx:24
+#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
 msgctxt "TUuPG9"
 msgid "Cooking up some course ideas"
 msgstr "Preparando algumas ideias de cursos"
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx:27
+#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions-fallback.tsx
 msgctxt "uQHhkm"
 msgid "We're putting together a few course suggestions for you. This may take a few seconds."
 msgstr "Estamos reunindo algumas sugestões de cursos para você. Isso pode levar alguns segundos."
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx:42
+#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx
 msgctxt "7x4411"
 msgid "Course ideas for {prompt}"
 msgstr "Ideias de cursos para {prompt}"
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx:65
+#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx
 msgctxt "dCKXDB"
 msgid "Create course"
 msgstr "Criar curso"
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx:47
+#: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx
 msgctxt "RbslnC"
 msgid "Change subject"
 msgstr "Mudar assunto"
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/page.tsx:15
+#: src/app/[locale]/(catalog)/learn/[prompt]/page.tsx
 msgctxt "A63MWw"
 msgid "Discover personalized courses and resources to learn {prompt}. Zoonk uses AI to generate interactive lessons and activities tailored to you."
 msgstr "Descubra cursos e recursos personalizados para aprender {prompt}. O Zoonk usa IA para gerar aulas interativas e atividades adaptadas para você."
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/page.tsx:19
+#: src/app/[locale]/(catalog)/learn/[prompt]/page.tsx
 msgctxt "X2b6pH"
 msgid "Learn {prompt} with AI"
 msgstr "Aprenda {prompt} com IA"
 
-#: src/app/[locale]/(catalog)/learn/learn-form.tsx:65
+#: src/app/[locale]/(catalog)/learn/learn-form.tsx
 msgctxt "LDMSuO"
 msgid "e.g., computer science, astronomy, biology, ..."
 msgstr "ex.: ciência da computação, astronomia, biologia, ..."
 
-#: src/app/[locale]/(catalog)/learn/learn-form.tsx:31
+#: src/app/[locale]/(catalog)/learn/learn-form.tsx
 msgctxt "mOFG3K"
 msgid "Start"
 msgstr "Começar"
 
-#: src/app/[locale]/(catalog)/learn/learn-form.tsx:55
+#: src/app/[locale]/(catalog)/learn/learn-form.tsx
 msgctxt "uCb1nG"
 msgid "Enter a subject"
 msgstr "Digite um assunto"
 
-#: src/app/[locale]/(catalog)/learn/page.tsx:14
+#: src/app/[locale]/(catalog)/learn/page.tsx
 msgctxt "3NEMCK"
 msgid "Tell Zoonk what you want to learn and get a course generated by AI. Start learning any subject with interactive lessons and activities."
 msgstr "Diga ao Zoonk o que você quer aprender e receba um curso gerado por IA. Comece a aprender qualquer assunto com aulas interativas e atividades."
 
-#: src/app/[locale]/(catalog)/learn/page.tsx:33
+#: src/app/[locale]/(catalog)/learn/page.tsx
 msgctxt "9zLpJ/"
 msgid "What do you want to learn?"
 msgstr "O que você quer aprender?"
 
-#: src/app/[locale]/(catalog)/learn/page.tsx:17
+#: src/app/[locale]/(catalog)/learn/page.tsx
 msgctxt "Zs1QEq"
 msgid "Learn Anything with AI"
 msgstr "Aprenda qualquer coisa com IA"
 
-#: src/app/[locale]/(catalog)/my/page.tsx:39
+#: src/app/[locale]/(catalog)/my/page.tsx
 msgctxt "Dr13kE"
 msgid "Continue where you left off"
 msgstr "Continue de onde você parou"
 
-#: src/app/[locale]/(catalog)/my/page.tsx:23
-#: src/app/[locale]/(catalog)/my/page.tsx:37
+#: src/app/[locale]/(catalog)/my/page.tsx
 msgctxt "eeNr/Y"
 msgid "My Courses"
 msgstr "Meus cursos"
 
-#: src/app/[locale]/(catalog)/my/page.tsx:20
+#: src/app/[locale]/(catalog)/my/page.tsx
 msgctxt "wfuVYZ"
 msgid "View all the courses you started on Zoonk. Continue where you left off and track your progress across interactive lessons and activities."
 msgstr "Veja todos os cursos que você começou no Zoonk. Continue de onde parou e acompanhe seu progresso nas aulas interativas e atividades."
 
-#: src/app/[locale]/(catalog)/my/user-course-list.tsx:47
+#: src/app/[locale]/(catalog)/my/user-course-list.tsx
 msgctxt "azX41u"
 msgid "Start learning something new today."
 msgstr "Comece a aprender algo novo hoje."
 
-#: src/app/[locale]/(catalog)/my/user-course-list.tsx:45
+#: src/app/[locale]/(catalog)/my/user-course-list.tsx
 msgctxt "BDHWkf"
 msgid "No courses yet"
 msgstr "Ainda não há cursos"
 
-#: src/app/[locale]/(catalog)/page.tsx:20
+#: src/app/[locale]/(catalog)/page.tsx
 msgctxt "qsfeMJ"
 msgid "Zoonk: AI Learning Platform"
 msgstr "Zoonk: plataforma de aprendizagem com IA"
 
-#: src/app/[locale]/(catalog)/page.tsx:17
+#: src/app/[locale]/(catalog)/page.tsx
 msgctxt "ZgSctJ"
 msgid "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and activities."
 msgstr "O Zoonk é uma plataforma de aprendizagem com IA onde você pode aprender qualquer coisa através de cursos interativos, aulas e atividades."
 
-#: src/app/[locale]/(settings)/_components/protected-section.tsx:28
+#: src/app/[locale]/(settings)/_components/protected-section.tsx
 msgctxt "2jC0rX"
 msgid "Checking if you're logged in..."
 msgstr "Verificando se você está conectado..."
 
-#: src/app/[locale]/(settings)/_components/protected-section.tsx:27
+#: src/app/[locale]/(settings)/_components/protected-section.tsx
 msgctxt "yOFm9C"
 msgid "You need to be logged in to access this page."
 msgstr "Você precisa estar conectado para acessar esta página."
 
-#: src/app/[locale]/(settings)/_hooks/use-settings.ts:14
-#: src/app/[locale]/(settings)/name/page.tsx:39
+#: src/app/[locale]/(settings)/_hooks/use-settings.ts
+#: src/app/[locale]/(settings)/name/page.tsx
 msgctxt "dOQCL8"
 msgid "Display name"
 msgstr "Nome de exibição"
 
-#: src/app/[locale]/(settings)/language/page.tsx:43
+#: src/app/[locale]/(settings)/language/page.tsx
 msgctxt "aNLa1G"
 msgid "Choose the app language you prefer for this device."
 msgstr "Escolha o idioma do aplicativo que você prefere para este dispositivo."
 
-#: src/app/[locale]/(settings)/language/page.tsx:22
+#: src/app/[locale]/(settings)/language/page.tsx
 msgctxt "gr4VpD"
 msgid "Update your Zoonk app language to learn in English, Portuguese, Spanish, French, or other supported languages."
 msgstr "Atualize o idioma do seu aplicativo Zoonk para aprender em inglês, português, espanhol, francês ou outros idiomas suportados."
 
-#: src/app/[locale]/(settings)/name/name-form.tsx:56
+#: src/app/[locale]/(settings)/name/name-form.tsx
 msgctxt "7jmSf7"
 msgid "Your name has been updated successfully!"
 msgstr "Seu nome foi atualizado com sucesso!"
 
-#: src/app/[locale]/(settings)/name/name-form.tsx:73
+#: src/app/[locale]/(settings)/name/name-form.tsx
 msgctxt "eLjVDg"
 msgid "Update name"
 msgstr "Atualizar nome"
 
-#: src/app/[locale]/(settings)/name/name-form.tsx:65
+#: src/app/[locale]/(settings)/name/name-form.tsx
 msgctxt "Gr/Ipw"
 msgid "Failed to update your name. Please try again or contact hello@zoonk.com"
 msgstr "Falha ao atualizar seu nome. Por favor, tente novamente ou contate contato@zoonk.com"
 
-#: src/app/[locale]/(settings)/name/name-form.tsx:41
+#: src/app/[locale]/(settings)/name/name-form.tsx
 msgctxt "HAlOn1"
 msgid "Name"
 msgstr "Nome"
 
-#: src/app/[locale]/(settings)/name/name-form.tsx:60
+#: src/app/[locale]/(settings)/name/name-form.tsx
 msgctxt "VT+G/7"
 msgid "This name will be visible to other users."
 msgstr "Este nome será visível para outros usuários."
 
-#: src/app/[locale]/(settings)/name/page.tsx:23
+#: src/app/[locale]/(settings)/name/page.tsx
 msgctxt "+ceM20"
 msgid "Set or update your Zoonk display name. This name may be visible to others and will be used when referring to you in lessons and activities."
 msgstr "Defina ou atualize seu nome de exibição no Zoonk. Este nome pode ser visível para outros e será usado quando nos referirmos a você nas aulas e atividades."
 
-#: src/app/[locale]/(settings)/name/page.tsx:26
+#: src/app/[locale]/(settings)/name/page.tsx
 msgctxt "9NBNq2"
 msgid "Update Display Name"
 msgstr "Atualizar nome de exibição"
 
-#: src/app/[locale]/(settings)/name/page.tsx:41
+#: src/app/[locale]/(settings)/name/page.tsx
 msgctxt "Pj/oEx"
 msgid "This is the name others may see and the one we'll use to refer to you in activities."
 msgstr "Este é o nome que outros podem ver e o que usaremos para nos referir a você nas atividades."
 
-#: src/app/[locale]/(settings)/settings/page.tsx:21
+#: src/app/[locale]/(settings)/settings/page.tsx
 msgctxt "FMLZiG"
 msgid "Customize your Zoonk learning experience. Manage account settings, profile, and preferences to get the most out of our education platform."
 msgstr "Personalize sua experiência de aprendizado no Zoonk. Gerencie configurações da conta, perfil e preferências para aproveitar ao máximo nossa plataforma educacional."
 
-#: src/app/[locale]/(settings)/settings/page.tsx:41
+#: src/app/[locale]/(settings)/settings/page.tsx
 msgctxt "v9T5Oi"
 msgid "Manage your account settings, profile, and preferences."
 msgstr "Gerencie as configurações da sua conta, perfil e preferências."
 
-#: src/app/[locale]/(settings)/subscription/page.tsx:26
+#: src/app/[locale]/(settings)/subscription/page.tsx
 msgctxt "9vk07U"
 msgid "Manage Subscription"
 msgstr "Gerenciar assinatura"
 
-#: src/app/[locale]/(settings)/subscription/page.tsx:23
+#: src/app/[locale]/(settings)/subscription/page.tsx
 msgctxt "GjSDly"
 msgid "Manage your Zoonk subscription. View your current plan, upgrade or downgrade, and see available benefits."
 msgstr "Gerencie sua assinatura do Zoonk. Veja seu plano atual, faça upgrade ou downgrade, e confira os benefícios disponíveis."
 
-#: src/app/[locale]/(settings)/subscription/page.tsx:43
+#: src/app/[locale]/(settings)/subscription/page.tsx
 msgctxt "qux0WX"
 msgid "Check your plan details and manage your subscription."
 msgstr "Verifique os detalhes do seu plano e gerencie sua assinatura."
 
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx:27
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
 msgctxt "0h/lPM"
 msgid "Upgrade"
 msgstr "Upgrade"
 
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx:29
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
 msgctxt "bqJOI8"
 msgid "No ads, unlimited lessons, and full progress tracking."
 msgstr "Sem anúncios, aulas ilimitadas e rastreamento completo de progresso."
 
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx:30
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
 msgctxt "ES/etj"
 msgid "Remove ads, unlock unlimited lessons, and track your progress."
 msgstr "Remova anúncios, desbloqueie aulas ilimitadas e acompanhe seu progresso."
 
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx:26
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
 msgctxt "igjTln"
 msgid "Upgrade to Plus"
 msgstr "Fazer upgrade para Plus"
 
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx:26
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
 msgctxt "iMhTwm"
 msgid "You’re on Zoonk Plus"
 msgstr "Você está no Zoonk Plus"
 
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx:94
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
 msgctxt "s1ZXI0"
 msgid "Unable to update your subscription. Contact us at hello@zoonk.com"
 msgstr "Não foi possível atualizar sua assinatura. Entre em contato pelo email contato@zoonk.com"
 
-#: src/app/[locale]/(settings)/support/page.tsx:14
-#: src/app/[locale]/(settings)/support/support-content.tsx:35
+#: src/app/[locale]/(settings)/support/page.tsx
+#: src/app/[locale]/(settings)/support/support-content.tsx
 msgctxt "63m0Wt"
 msgid "Get help with your account, courses, or any technical issues. Our support team is here to assist you."
 msgstr "Receba ajuda com sua conta, cursos ou qualquer problema técnico. Nossa equipe de suporte está aqui para ajudar você."
 
-#: src/app/[locale]/(settings)/support/page.tsx:17
-#: src/app/[locale]/(settings)/support/support-content.tsx:33
+#: src/app/[locale]/(settings)/support/page.tsx
+#: src/app/[locale]/(settings)/support/support-content.tsx
 msgctxt "Uf3+S6"
 msgid "Help & Support"
 msgstr "Ajuda e suporte"
 
-#: src/app/[locale]/(settings)/support/support-content.tsx:60
+#: src/app/[locale]/(settings)/support/support-content.tsx
 msgctxt "7h49qt"
 msgid "Connect with the community and get answers"
 msgstr "Conecte-se com a comunidade e obtenha respostas"
 
-#: src/app/[locale]/(settings)/support/support-content.tsx:58
+#: src/app/[locale]/(settings)/support/support-content.tsx
 msgctxt "cDAb4a"
 msgid "GitHub Discussions"
 msgstr "GitHub Discussions"
 
-#: src/app/[locale]/(settings)/support/support-content.tsx:74
+#: src/app/[locale]/(settings)/support/support-content.tsx
 msgctxt "dQIo6c"
 msgid "Email us at hello@zoonk.com"
 msgstr "Envie um email para contato@zoonk.com"
 
-#: src/app/[locale]/(settings)/support/support-content.tsx:85
+#: src/app/[locale]/(settings)/support/support-content.tsx
 msgctxt "l1XTI5"
 msgid "Follow us"
 msgstr "Siga-nos"
 
-#: src/app/[locale]/(settings)/support/support-content.tsx:72
+#: src/app/[locale]/(settings)/support/support-content.tsx
 msgctxt "YdQxfw"
 msgid "Contact Support"
 msgstr "Contatar suporte"
 
-#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx:11
+#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
 msgctxt "qtQJTV"
 msgid "Complete this activity to reinforce your learning and track your progress."
 msgstr "Complete esta atividade para reforçar seu aprendizado e acompanhar seu progresso."
 
-#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/page.tsx:11
+#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/page.tsx
 msgctxt "b/7UZV"
 msgid "Interactive lesson with exercises and activities to help you learn effectively."
 msgstr "Aula interativa com exercícios e atividades para ajudá-lo a aprender efetivamente."
 
-#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/page.tsx:14
+#: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/page.tsx
 msgctxt "PJivSX"
 msgid "Lesson"
 msgstr "Aula"
 
-#: src/app/[locale]/privacy/page.tsx:13
+#: src/app/[locale]/privacy/page.tsx
 msgctxt "iql85X"
 msgid "Read Zoonk's privacy policy to understand how we collect, use, and protect your personal information."
 msgstr "Leia a política de privacidade da Zoonk para entender como coletamos, usamos e protegemos suas informações pessoais."
 
-#: src/app/[locale]/privacy/page.tsx:16
+#: src/app/[locale]/privacy/page.tsx
 msgctxt "vx0nkZ"
 msgid "Privacy Policy"
 msgstr "Política de privacidade"
 
-#: src/app/[locale]/terms/page.tsx:13
+#: src/app/[locale]/terms/page.tsx
 msgctxt "DaGtoz"
 msgid "Read Zoonk's terms of use to understand the rules and conditions for using our platform and services"
 msgstr "Leia os termos de uso da Zoonk para entender as regras e condições de utilização da nossa plataforma e serviços"
 
-#: src/app/[locale]/terms/page.tsx:16
+#: src/app/[locale]/terms/page.tsx
 msgctxt "UhkSyx"
 msgid "Terms of Use"
 msgstr "Termos de uso"
 
-#: src/components/feedback/contact-form.tsx:75
+#: src/components/feedback/contact-form.tsx
 msgctxt "+5vOOu"
 msgid "Please provide as much detail as possible."
 msgstr "Por favor, forneça o máximo de detalhes possível."
 
-#: src/components/feedback/contact-form.tsx:80
+#: src/components/feedback/contact-form.tsx
 msgctxt "1WHPmV"
 msgid "Failed to send message. Please try again or email us directly at hello@zoonk.com"
 msgstr "Falha ao enviar mensagem. Por favor, tente novamente ou envie-nos um email diretamente para contato@zoonk.com"
 
-#: src/components/feedback/contact-form.tsx:41
+#: src/components/feedback/contact-form.tsx
 msgctxt "hJZwTS"
 msgid "Email address"
 msgstr "Endereço de email"
 
-#: src/components/feedback/contact-form.tsx:65
+#: src/components/feedback/contact-form.tsx
 msgctxt "M6PcEI"
 msgid "How can we help you?"
 msgstr "Como podemos ajudar você?"
 
-#: src/components/feedback/contact-form.tsx:48
+#: src/components/feedback/contact-form.tsx
 msgctxt "OiSL94"
 msgid "myemail@gmail.com"
 msgstr "meuemail@gmail.com"
 
-#: src/components/feedback/contact-form.tsx:60
+#: src/components/feedback/contact-form.tsx
 msgctxt "T7Ry38"
 msgid "Message"
 msgstr "Mensagem"
 
-#: src/components/feedback/contact-form.tsx:71
+#: src/components/feedback/contact-form.tsx
 msgctxt "vD72E5"
 msgid "Message sent successfully! We'll get back to you soon."
 msgstr "Mensagem enviada com sucesso! Entraremos em contato em breve."
 
-#: src/components/feedback/contact-form.tsx:53
+#: src/components/feedback/contact-form.tsx
 msgctxt "WzCvaN"
 msgid "We'll use this email to contact you."
 msgstr "Usaremos este email para entrar em contato com você."
 
-#: src/components/feedback/contact-form.tsx:88
+#: src/components/feedback/contact-form.tsx
 msgctxt "Xx0WZV"
 msgid "Send message"
 msgstr "Enviar mensagem"
 
-#: src/components/feedback/feedback-dialog.tsx:28
+#: src/components/feedback/feedback-dialog.tsx
 msgctxt "Ejhdi4"
 msgid "Feedback"
 msgstr "Feedback"
 
-#: src/components/feedback/feedback-dialog.tsx:30
+#: src/components/feedback/feedback-dialog.tsx
 msgctxt "eUzs3M"
 msgid "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
 msgstr "Envie feedback, perguntas ou sugestões para a gente. Preencha o formulário abaixo ou envie um email diretamente para contato@zoonk.com."
 
-#: src/hooks/use-categories.ts:35
-#: src/lib/categories.ts:76
+#: src/hooks/use-categories.ts
+#: src/lib/categories.ts
 msgctxt "djJp6c"
 msgid "History"
 msgstr "História"
 
-#: src/hooks/use-categories.ts:42
-#: src/lib/categories.ts:83
+#: src/hooks/use-categories.ts
+#: src/lib/categories.ts
 msgctxt "dPgwrL"
 msgid "Math"
 msgstr "Matemática"
 
-#: src/hooks/use-categories.ts:11
-#: src/lib/categories.ts:52
+#: src/hooks/use-categories.ts
+#: src/lib/categories.ts
 msgctxt "fFt3il"
 msgid "Arts"
 msgstr "Artes"
 
-#: src/hooks/use-categories.ts:39
-#: src/lib/categories.ts:80
+#: src/hooks/use-categories.ts
+#: src/lib/categories.ts
 msgctxt "GsBRWL"
 msgid "Languages"
 msgstr "Idiomas"
 
-#: src/hooks/use-categories.ts:34
-#: src/lib/categories.ts:75
+#: src/hooks/use-categories.ts
+#: src/lib/categories.ts
 msgctxt "hlmkcL"
 msgid "Health"
 msgstr "Saúde"
 
-#: src/hooks/use-categories.ts:27
-#: src/lib/categories.ts:68
+#: src/hooks/use-categories.ts
+#: src/lib/categories.ts
 msgctxt "hwL7a0"
 msgid "Engineering"
 msgstr "Engenharia"
 
-#: src/hooks/use-categories.ts:45
-#: src/lib/categories.ts:86
+#: src/hooks/use-categories.ts
+#: src/lib/categories.ts
 msgctxt "I1ZCPK"
 msgid "Technology"
 msgstr "Tecnologia"
 
-#: src/hooks/use-categories.ts:22
-#: src/lib/categories.ts:63
+#: src/hooks/use-categories.ts
+#: src/lib/categories.ts
 msgctxt "KOuDOE"
 msgid "Economics"
 msgstr "Economia"
 
-#: src/hooks/use-categories.ts:18
-#: src/lib/categories.ts:59
+#: src/hooks/use-categories.ts
+#: src/lib/categories.ts
 msgctxt "mn6pIm"
 msgid "Culture"
 msgstr "Cultura"
 
-#: src/hooks/use-categories.ts:16
-#: src/lib/categories.ts:57
+#: src/hooks/use-categories.ts
+#: src/lib/categories.ts
 msgctxt "n5D/Ku"
 msgid "Communication"
 msgstr "Comunicação"
 
-#: src/hooks/use-categories.ts:44
-#: src/lib/categories.ts:85
+#: src/hooks/use-categories.ts
+#: src/lib/categories.ts
 msgctxt "OV/2+4"
 msgid "Society"
 msgstr "Sociedade"
 
-#: src/hooks/use-categories.ts:43
-#: src/lib/categories.ts:84
+#: src/hooks/use-categories.ts
+#: src/lib/categories.ts
 msgctxt "qydxOd"
 msgid "Science"
 msgstr "Ciências"
 
-#: src/hooks/use-categories.ts:41
-#: src/lib/categories.ts:82
+#: src/hooks/use-categories.ts
+#: src/lib/categories.ts
 msgctxt "u3ovjm"
 msgid "Law"
 msgstr "Direito"
 
-#: src/hooks/use-categories.ts:12
-#: src/lib/categories.ts:53
+#: src/hooks/use-categories.ts
+#: src/lib/categories.ts
 msgctxt "w1Fanr"
 msgid "Business"
 msgstr "Negócios"
 
-#: src/hooks/use-categories.ts:32
-#: src/lib/categories.ts:73
+#: src/hooks/use-categories.ts
+#: src/lib/categories.ts
 msgctxt "YMDBNH"
 msgid "Geography"
 msgstr "Geografia"
 
-#: src/lib/activities.ts:22
+#: src/lib/activities.ts
 msgctxt "1TOMnj"
 msgid "Listening"
 msgstr "Escuta"
 
-#: src/lib/activities.ts:17
+#: src/lib/activities.ts
 msgctxt "3GLH+d"
 msgid "Examples"
 msgstr "Exemplos"
 
-#: src/lib/activities.ts:16
+#: src/lib/activities.ts
 msgctxt "9MidH4"
 msgid "Challenge"
 msgstr "Desafio"
 
-#: src/lib/activities.ts:28
+#: src/lib/activities.ts
 msgctxt "Bfq+7w"
 msgid "Story"
 msgstr "História"
 
-#: src/lib/activities.ts:18
+#: src/lib/activities.ts
 msgctxt "E1bF/X"
 msgid "Explanation"
 msgstr "Explicação"
 
-#: src/lib/activities.ts:23
+#: src/lib/activities.ts
 msgctxt "HhyGLP"
 msgid "Logic"
 msgstr "Lógica"
 
-#: src/lib/activities.ts:29
+#: src/lib/activities.ts
 msgctxt "lqtP+R"
 msgid "Vocabulary"
 msgstr "Vocabulário"
 
-#: src/lib/activities.ts:26
+#: src/lib/activities.ts
 msgctxt "MOK/yK"
 msgid "Reading"
 msgstr "Leitura"
 
-#: src/lib/activities.ts:24
+#: src/lib/activities.ts
 msgctxt "NoV4pb"
 msgid "Mechanics"
 msgstr "Mecânica"
 
-#: src/lib/activities.ts:19
+#: src/lib/activities.ts
 msgctxt "OuR/Ij"
 msgid "Quiz"
 msgstr "Quiz"
 
-#: src/lib/activities.ts:20
+#: src/lib/activities.ts
 msgctxt "QzTY8x"
 msgid "Grammar"
 msgstr "Gramática"
 
-#: src/lib/activities.ts:27
+#: src/lib/activities.ts
 msgctxt "R+J5ox"
 msgid "Review"
 msgstr "Revisão"
 
-#: src/lib/activities.ts:25
+#: src/lib/activities.ts
 msgctxt "vuwclE"
 msgid "Pronunciation"
 msgstr "Pronúncia"
 
-#: src/lib/activities.ts:21
+#: src/lib/activities.ts
 msgctxt "W+u0Zk"
 msgid "Lesson Quiz"
 msgstr "Quiz da aula"
 
-#: src/lib/activities.ts:15
+#: src/lib/activities.ts
 msgctxt "XQZA8e"
 msgid "Background"
 msgstr "Contexto"
 
-#: src/lib/categories.ts:115
+#: src/lib/categories.ts
 msgctxt "4HKnmB"
 msgid "{category} Courses"
 msgstr "Cursos de {category}"
 
-#: src/lib/categories.ts:124
+#: src/lib/categories.ts
 msgctxt "EMi23I"
 msgid "Explore all {category} courses"
 msgstr "Explorar todos os cursos de {category}"
 
-#: src/lib/categories.ts:125
+#: src/lib/categories.ts
 msgctxt "Rz9oL+"
 msgid "{category} courses"
 msgstr "Cursos de {category}"
 
-#: src/lib/categories.ts:109
+#: src/lib/categories.ts
 msgctxt "XL8IWT"
 msgid "{category} courses. The best {category} online courses, interactive lessons to learn."
 msgstr "Cursos de {category}. Os melhores cursos online de {category}, aulas interativas pra aprender."
 
-#: src/lib/error-messages.ts:29
+#: src/lib/error-messages.ts
 msgctxt "3IKub9"
 msgid "An unexpected error occurred"
 msgstr "Ocorreu um erro inesperado"
 
-#: src/lib/error-messages.ts:23
+#: src/lib/error-messages.ts
 msgctxt "g5WLcA"
 msgid "Please sign in to continue"
 msgstr "Faça login para continuar"

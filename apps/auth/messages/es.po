@@ -5,78 +5,78 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
 
-#: src/app/[locale]/layout.tsx:18
+#: src/app/[locale]/layout.tsx
 msgctxt "dVItHD"
 msgid "Sign in to Zoonk"
 msgstr "Inicia sesión en Zoonk"
 
-#: src/app/[locale]/login/page.tsx:55
+#: src/app/[locale]/login/page.tsx
 msgctxt "4nOs3z"
 msgid "me@myorg.com"
 msgstr "yo@miempresa.com"
 
-#: src/app/[locale]/login/page.tsx:44
+#: src/app/[locale]/login/page.tsx
 msgctxt "4wpUNc"
 msgid "Or"
 msgstr "O"
 
-#: src/app/[locale]/login/page.tsx:58
-#: src/app/[locale]/otp/otp-form.tsx:64
+#: src/app/[locale]/login/page.tsx
+#: src/app/[locale]/otp/otp-form.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuar"
 
-#: src/app/[locale]/login/page.tsx:38
+#: src/app/[locale]/login/page.tsx
 msgctxt "CoMQ1+"
 msgid "Continue with your email or a social account"
 msgstr "Continúa con tu correo o una cuenta social"
 
-#: src/app/[locale]/login/page.tsx:36
+#: src/app/[locale]/login/page.tsx
 msgctxt "eN8MTJ"
 msgid "Sign in or create an account"
 msgstr "Inicia sesión o crea una cuenta"
 
-#: src/app/[locale]/login/page.tsx:62
+#: src/app/[locale]/login/page.tsx
 msgctxt "Ju9oB+"
 msgid "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
 msgstr "Al hacer clic en Continuar, aceptas nuestros <terms>Términos de servicio</terms> y <privacy>Política de privacidad</privacy>."
 
-#: src/app/[locale]/login/page.tsx:54
+#: src/app/[locale]/login/page.tsx
 msgctxt "sy+pv5"
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: src/app/[locale]/login/social-login.tsx:54
+#: src/app/[locale]/login/social-login.tsx
 msgctxt "BmecBA"
 msgid "Continue with Apple"
 msgstr "Continuar con Apple"
 
-#: src/app/[locale]/login/social-login.tsx:47
+#: src/app/[locale]/login/social-login.tsx
 msgctxt "FJ6r9E"
 msgid "Continue with Google"
 msgstr "Continuar con Google"
 
-#: src/app/[locale]/login/social-login.tsx:58
+#: src/app/[locale]/login/social-login.tsx
 msgctxt "pN2p0t"
 msgid "There was an error signing you in. Please try again or contact hello@zoonk.com"
 msgstr "Hubo un error al iniciar sesión. Intenta de nuevo o contacta a hello@zoonk.com"
 
-#: src/app/[locale]/otp/otp-form.tsx:59
+#: src/app/[locale]/otp/otp-form.tsx
 msgctxt "HkHvQv"
 msgid "The code you entered is incorrect. Please try again or contact hello@zoonk.com"
 msgstr "El código que ingresaste es incorrecto. Intenta de nuevo o contacta a hello@zoonk.com"
 
-#: src/app/[locale]/otp/page.tsx:32
+#: src/app/[locale]/otp/page.tsx
 msgctxt "ChATeO"
 msgid "Change email"
 msgstr "Cambiar correo"
 
-#: src/app/[locale]/otp/page.tsx:19
+#: src/app/[locale]/otp/page.tsx
 msgctxt "LZHcmZ"
 msgid "Enter the code we sent to {email}:"
 msgstr "Ingresa el código que enviamos a {email}:"
 
-#: src/app/[locale]/otp/page.tsx:16
+#: src/app/[locale]/otp/page.tsx
 msgctxt "zx7CKB"
 msgid "Check your email"
 msgstr "Revisa tu correo"

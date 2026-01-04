@@ -1,11 +1,11 @@
 import { defineCodec } from "next-intl/extractor";
-import POParser from "po-parser";
+import POParser, { type Entry } from "po-parser";
 
 type ExtractedMessage = {
   id: string;
   message: string;
   description?: string;
-  references?: Array<{ path: string }>;
+  references?: Entry["references"];
   /** Allows for additional properties like .po flags to be read and later written. */
   [key: string]: unknown;
 };
@@ -55,6 +55,17 @@ function getSortedMessages(messages: ExtractedMessage[]): ExtractedMessage[] {
 
 function localeCompare(a: string, b: string) {
   return a.localeCompare(b, "en");
+}
+
+function getUniqueReferences(
+  references: Entry["references"],
+): Array<{ path: string }> | undefined {
+  if (!references || references.length === 0) {
+    return;
+  }
+
+  const uniquePaths = [...new Set(references.map((ref) => ref.path))];
+  return uniquePaths.map((path) => ({ path }));
 }
 
 export default defineCodec(() => {
@@ -110,14 +121,14 @@ export default defineCodec(() => {
           );
         }
 
-        // Store the hashed ID in msgctxt so we can restore it during decode
-        const { description, id, message, ...rest } = msg;
+        const { description, id, message, references, ...rest } = msg;
         return {
           ...(description && { extractedComments: [description] }),
           ...rest,
           msgctxt: id,
           msgid: sourceMessage,
           msgstr: message,
+          references: getUniqueReferences(references),
         };
       });
 
