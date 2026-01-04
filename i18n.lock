@@ -66,6 +66,11 @@ checksums:
     The%20main%20title%20that%20learners%20will%20see%20for%20your%20course/singular: 5e0707d1ace160525f64c1ff51474569
     Course%20title/singular: 40d5c412b95b9a452643c69e48465350
     A%20course%20with%20this%20URL%20already%20exists/singular: 36f9d2ffb6817af1ae69ec6dd37cf5d6
+    Authentication%20Error/singular: f8db504523897fad229a0cfdcc34652c
+    The%20authentication%20token%20is%20missing.%20Please%20try%20logging%20in%20again./singular: 74e0970a1f77afba28fe761910aa4604
+    Return%20to%20login/singular: a73bc2aa109b100645c49a3eab040dbf
+    The%20authentication%20token%20is%20invalid%20or%20expired.%20Please%20try%20logging%20in%20again./singular: 9e23335b29f210d8ae14c265aeb6ab1a
+    Need%20help%3F%20Contact%20us%20at%20hello%40zoonk.com/singular: 0053665fad1f58782cc3a6f442b36726
     You%20can't%20edit%20courses%20for%20this%20organization.%20Log%20in%20with%20another%20account%20or%20switch%20to%20a%20different%20organization./singular: f4c2f472730fa69b3602af2d9cfa56c5
     Login/singular: f4f219abeb5a465ecb1c7efaf50246de
     Logout/singular: 07948fdf20705e04a7bf68ab197512bf
@@ -95,6 +100,7 @@ checksums:
     Alternative%20titles%20imported%20successfully/singular: ca67e17d28382d5ef29bd27219a4104e
     Add%20category/singular: f1ef62efcd0e61cff264dd18047ebd6f
     Categories/singular: fd4e44f3b1b2bba9ca45f3aef963d042
+    Search/singular: 49dd6c21604b5e8d4153ff1aff2177e1
     Unsaved/singular: ddc9094aecf93ceabe363846756a9925
     Saved/singular: 6554b923011266821d74e06e013a40e6
     Saving%E2%80%A6/singular: ee98ff32f9a585a9108c8cd961d6077e
@@ -122,7 +128,6 @@ checksums:
     Home%20page/singular: aa72464a366b091aa6f2037ca869c09c
     sign%20out/singular: a917e8428004b4108a66fa0ba9c0c15c
     exit/singular: 8eff58f44e53377753566cba50541cf9
-    Search/singular: 49dd6c21604b5e8d4153ff1aff2177e1
     start/singular: e19dc5c089daea13eeb2efffb890057d
     Delete%20item/singular: b9b5755b0ed185436b52860bde313b9f
     This%20action%20cannot%20be%20undone./singular: 3d8b13374ffd3cefc0f3f7ce077bd9c9
@@ -265,6 +270,11 @@ checksums:
     Email%20us%20at%20hello%40zoonk.com/singular: f30da451e0bc14b7463bde402c876af9
     Follow%20us/singular: 778f7a4744f77dbcbd31a8c778cb5209
     Contact%20Support/singular: fcbd9e317c7286b3e08752eb73eb1a81
+    Authentication%20Error/singular: f8db504523897fad229a0cfdcc34652c
+    The%20authentication%20token%20is%20missing.%20Please%20try%20logging%20in%20again./singular: 74e0970a1f77afba28fe761910aa4604
+    Return%20to%20login/singular: a73bc2aa109b100645c49a3eab040dbf
+    The%20authentication%20token%20is%20invalid%20or%20expired.%20Please%20try%20logging%20in%20again./singular: 9e23335b29f210d8ae14c265aeb6ab1a
+    Need%20help%3F%20Contact%20us%20at%20hello%40zoonk.com/singular: 0053665fad1f58782cc3a6f442b36726
     Complete%20this%20activity%20to%20reinforce%20your%20learning%20and%20track%20your%20progress./singular: ae9411230fe031bbbd7471a8fde4b17d
     Interactive%20lesson%20with%20exercises%20and%20activities%20to%20help%20you%20learn%20effectively./singular: f74de010a6977351bee6b20c81d90d31
     Lesson/singular: 0369d21b141f7f54c4586224e7e7ae65
@@ -317,8 +327,6 @@ checksums:
     Explore%20all%20%7Bcategory%7D%20courses/singular: b1f2775c67b4a61b3d92b4345b8b852e
     "%7Bcategory%7D%20courses/singular": eafd6f9b1fa97400abe1bfe0c8ee5f19
     "%7Bcategory%7D%20courses.%20The%20best%20%7Bcategory%7D%20online%20courses%2C%20interactive%20lessons%20to%20learn./singular": 2ec8d2bc2e44d9def010ec678286dc88
-    An%20unexpected%20error%20occurred/singular: fe07b9cdb1fc3f7397f6d89c102c60af
-    Please%20sign%20in%20to%20continue/singular: 051e59dd3d3b0bfad95982f982fd6b9d
   61a308caf583f5835f54302028bdae73:
     You're%20signed%20in!/singular: 7f23ad13626e60f22e13b8777458750d
     You%20can%20close%20this%20window%20and%20return%20to%20your%20app./singular: 06f96197fc40b30e288b1a9603d15825
