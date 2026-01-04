@@ -410,15 +410,13 @@ test.describe("Course Creation Wizard - Form Validation", () => {
       title: "Test Course",
     });
 
-    await authenticatedPage.waitForTimeout(500);
+    await expect(
+      authenticatedPage.getByRole("button", { name: /create/i }),
+    ).toBeEnabled();
 
     await expect(
       authenticatedPage.getByText(/a course with this url already exists/i),
     ).not.toBeVisible();
-
-    await expect(
-      authenticatedPage.getByRole("button", { name: /create/i }),
-    ).toBeEnabled();
   });
 
   test("slug step cannot submit with empty slug", async ({
@@ -461,9 +459,12 @@ test.describe("Course Creation Wizard - Successful Creation", () => {
       title: courseTitle,
     });
 
-    await authenticatedPage.waitForTimeout(500);
-
-    await authenticatedPage.getByRole("button", { name: /create/i }).click();
+    // Wait for debounced slug validation to complete by asserting button is enabled
+    const createButton = authenticatedPage.getByRole("button", {
+      name: /create/i,
+    });
+    await expect(createButton).toBeEnabled();
+    await createButton.click();
 
     // Verify destination page shows the created course content
     const titleInput = authenticatedPage.getByRole("textbox", {
