@@ -505,6 +505,31 @@ msgctxt "YdQxfw"
 msgid "Contact Support"
 msgstr "Contatar suporte"
 
+#: src/app/[locale]/auth/callback/page.tsx
+msgctxt "57VhQb"
+msgid "Authentication Error"
+msgstr "Erro de autenticação"
+
+#: src/app/[locale]/auth/callback/page.tsx
+msgctxt "ARSMi2"
+msgid "The authentication token is missing. Please try logging in again."
+msgstr "O token de autenticação está faltando. Por favor, tente fazer login novamente."
+
+#: src/app/[locale]/auth/callback/page.tsx
+msgctxt "Le3MTe"
+msgid "Return to login"
+msgstr "Voltar para o login"
+
+#: src/app/[locale]/auth/callback/page.tsx
+msgctxt "mffe4M"
+msgid "The authentication token is invalid or expired. Please try logging in again."
+msgstr "O token de autenticação é inválido ou expirou. Por favor, tente fazer login novamente."
+
+#: src/app/[locale]/auth/callback/page.tsx
+msgctxt "vQjckV"
+msgid "Need help? Contact us at hello@zoonk.com"
+msgstr "Precisa de ajuda? Entre em contato com a gente em contato@zoonk.com"
+
 #: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
 msgctxt "qtQJTV"
 msgid "Complete this activity to reinforce your learning and track your progress."
