@@ -1,8 +1,10 @@
-import {
-  type Browser,
-  type BrowserContext,
-  test as base,
-  type Page,
+import type {
+  Browser,
+  BrowserContext,
+  Fixtures,
+  Page,
+  PlaywrightTestArgs,
+  PlaywrightWorkerArgs,
 } from "@playwright/test";
 
 export type TestUser = {
@@ -10,23 +12,16 @@ export type TestUser = {
   password: string;
 };
 
-export const TEST_USERS = {
-  admin: { email: "admin@zoonk.test", password: "password123" },
-  logoutTest: { email: "logout-test@zoonk.test", password: "password123" },
-  member: { email: "member@zoonk.test", password: "password123" },
-  owner: { email: "owner@zoonk.test", password: "password123" },
-} as const satisfies Record<string, TestUser>;
-
-export type TestUserKey = keyof typeof TEST_USERS;
-
-type AuthFixtures = {
-  authenticatedPage: Page;
-  logoutPage: Page;
-  userWithProgress: Page;
-  userWithoutProgress: Page;
+export type StorageStateConfig = {
+  authDir: string;
+  files: {
+    authenticatedPage: string;
+    logoutPage: string;
+    userWithoutProgress: string;
+  };
 };
 
-async function signIn(page: Page, user: TestUser): Promise<void> {
+export async function signIn(page: Page, user: TestUser): Promise<void> {
   const response = await page.request.post("/api/auth/sign-in/email", {
     data: {
       email: user.email,
@@ -56,39 +51,47 @@ export async function createAuthContext(
   return context;
 }
 
-export const test = base.extend<AuthFixtures>({
-  authenticatedPage: async ({ browser }, use) => {
-    // Create a new isolated context for authenticated tests (member has course enrollment)
-    const context = await browser.newContext();
-    const page = await context.newPage();
-    await signIn(page, TEST_USERS.member);
-    await use(page);
-    await context.close();
-  },
-  logoutPage: async ({ browser }, use) => {
-    // Dedicated user for logout tests to avoid session interference with parallel tests
-    const context = await browser.newContext();
-    const page = await context.newPage();
-    await signIn(page, TEST_USERS.logoutTest);
-    await use(page);
-    await context.close();
-  },
-  userWithoutProgress: async ({ browser }, use) => {
-    // Create a new isolated context for user without course enrollment (admin has no CourseUser)
-    const context = await browser.newContext();
-    const page = await context.newPage();
-    await signIn(page, TEST_USERS.admin);
-    await use(page);
-    await context.close();
-  },
-  userWithProgress: async ({ browser }, use) => {
-    // Create a new isolated context for user with progress (owner has most progress)
-    const context = await browser.newContext();
-    const page = await context.newPage();
-    await signIn(page, TEST_USERS.owner);
-    await use(page);
-    await context.close();
-  },
-});
+export type AuthFixtures = {
+  authenticatedPage: Page;
+  logoutPage: Page;
+  userWithoutProgress: Page;
+};
 
-export { expect, type Page, request } from "@playwright/test";
+/**
+ * Create auth fixtures using pre-generated storage state files.
+ * This is faster than API sign-in (~5ms vs ~100ms per test).
+ *
+ * Apps should generate storage states in their global-setup.ts using signIn().
+ */
+export function createStorageStateFixtures(
+  config: StorageStateConfig,
+): Fixtures<AuthFixtures, object, PlaywrightTestArgs, PlaywrightWorkerArgs> {
+  return {
+    authenticatedPage: async ({ browser }, use) => {
+      const context = await browser.newContext({
+        storageState: `${config.authDir}/${config.files.authenticatedPage}`,
+      });
+      const page = await context.newPage();
+      await use(page);
+      await context.close();
+    },
+    logoutPage: async ({ browser }, use) => {
+      const context = await browser.newContext({
+        storageState: `${config.authDir}/${config.files.logoutPage}`,
+      });
+      const page = await context.newPage();
+      await use(page);
+      await context.close();
+    },
+    userWithoutProgress: async ({ browser }, use) => {
+      const context = await browser.newContext({
+        storageState: `${config.authDir}/${config.files.userWithoutProgress}`,
+      });
+      const page = await context.newPage();
+      await use(page);
+      await context.close();
+    },
+  };
+}
+
+export { expect, type Page, request, test } from "@playwright/test";

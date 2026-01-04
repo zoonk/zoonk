@@ -1,36 +1,18 @@
-import { test as base, type Page } from "@zoonk/e2e/fixtures";
+import {
+  type AuthFixtures,
+  test as base,
+  createStorageStateFixtures,
+} from "@zoonk/e2e/fixtures";
 
-type AuthFixtures = {
-  authenticatedPage: Page;
-  logoutPage: Page;
-  userWithoutProgress: Page;
-};
-
-export const test = base.extend<AuthFixtures>({
-  authenticatedPage: async ({ browser }, use) => {
-    const context = await browser.newContext({
-      storageState: "e2e/.auth/withProgress.json",
-    });
-    const page = await context.newPage();
-    await use(page);
-    await context.close();
-  },
-  logoutPage: async ({ browser }, use) => {
-    const context = await browser.newContext({
-      storageState: "e2e/.auth/logout.json",
-    });
-    const page = await context.newPage();
-    await use(page);
-    await context.close();
-  },
-  userWithoutProgress: async ({ browser }, use) => {
-    const context = await browser.newContext({
-      storageState: "e2e/.auth/noProgress.json",
-    });
-    const page = await context.newPage();
-    await use(page);
-    await context.close();
-  },
-});
+export const test = base.extend<AuthFixtures>(
+  createStorageStateFixtures({
+    authDir: "e2e/.auth",
+    files: {
+      authenticatedPage: "withProgress.json",
+      logoutPage: "logout.json",
+      userWithoutProgress: "noProgress.json",
+    },
+  }),
+);
 
 export { expect, type Page } from "@zoonk/e2e/fixtures";
