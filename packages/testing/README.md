@@ -29,11 +29,3 @@ import {
 } from "@zoonk/testing/fixtures/orgs";
 import { userFixture, userAttrs } from "@zoonk/testing/fixtures/users";
 ```
-
-## Environment
-
-Tests should use `.env.test` with the test database connection. Copy from `packages/core/.env.test`:
-
-```bash
-cp packages/core/.env.test apps/myapp/.env.test
-```
