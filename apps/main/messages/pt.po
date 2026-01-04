@@ -156,7 +156,6 @@ msgstr "Próximo: {activity}"
 
 #: src/app/[locale]/(catalog)/continue-learning.tsx
 #: src/app/[locale]/b/[brandSlug]/c/[courseSlug]/c/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
-#: src/lib/activities.ts
 msgctxt "ZmlNQ3"
 msgid "Activity"
 msgstr "Atividade"
@@ -780,13 +779,3 @@ msgstr "Cursos de {category}"
 msgctxt "XL8IWT"
 msgid "{category} courses. The best {category} online courses, interactive lessons to learn."
 msgstr "Cursos de {category}. Os melhores cursos online de {category}, aulas interativas pra aprender."
-
-#: src/lib/error-messages.ts
-msgctxt "3IKub9"
-msgid "An unexpected error occurred"
-msgstr "Ocorreu um erro inesperado"
-
-#: src/lib/error-messages.ts
-msgctxt "g5WLcA"
-msgid "Please sign in to continue"
-msgstr "Faça login para continuar"

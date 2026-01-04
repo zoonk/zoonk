@@ -1,8 +1,19 @@
 import { normalizeString } from "@zoonk/utils/string";
-import type { Organization, PrismaClient } from "../../generated/prisma/client";
+import type { PrismaClient } from "../../generated/prisma/client";
+import type { SeedOrganizations } from "./orgs";
 
 export const coursesData = [
   // English courses
+  {
+    description:
+      "A draft course for E2E testing. This course should only appear in the draft courses list.",
+    imageUrl: null,
+    isPublished: false,
+    language: "en",
+    normalizedTitle: normalizeString("E2E Draft Course"),
+    slug: "e2e-draft-course",
+    title: "E2E Draft Course",
+  },
   {
     description:
       "Machine learning enables computers to identify patterns and make predictions from data. Covers supervised and unsupervised techniques, neural networks, and model evaluation. Prepares you to work as a machine learning engineer at tech companies, research labs, or startups building AI products.",
@@ -103,26 +114,54 @@ export const coursesData = [
   },
 ];
 
+const testOrgCoursesData = [
+  {
+    description: "A course from test-org that should not appear in ai org.",
+    imageUrl: null,
+    isPublished: false,
+    language: "en",
+    normalizedTitle: normalizeString("Test Org Course"),
+    slug: "test-org-course",
+    title: "Test Org Course",
+  },
+];
+
 export async function seedCourses(
   prisma: PrismaClient,
-  org: Organization,
+  orgs: SeedOrganizations,
 ): Promise<void> {
-  await Promise.all(
-    coursesData.map((course) =>
+  await Promise.all([
+    ...coursesData.map((course) =>
       prisma.course.upsert({
         create: {
-          organizationId: org.id,
+          organizationId: orgs.ai.id,
           ...course,
         },
         update: {},
         where: {
           orgSlug: {
             language: course.language,
-            organizationId: org.id,
+            organizationId: orgs.ai.id,
             slug: course.slug,
           },
         },
       }),
     ),
-  );
+    ...testOrgCoursesData.map((course) =>
+      prisma.course.upsert({
+        create: {
+          organizationId: orgs.testOrg.id,
+          ...course,
+        },
+        update: {},
+        where: {
+          orgSlug: {
+            language: course.language,
+            organizationId: orgs.testOrg.id,
+            slug: course.slug,
+          },
+        },
+      }),
+    ),
+  ]);
 }

@@ -8,8 +8,16 @@ export const E2E_USERS = {
     email: "admin@zoonk.test",
     password: "password123",
   },
+  member: {
+    email: "member@zoonk.test",
+    password: "password123",
+  },
   noOrg: {
     email: "e2e-logout@zoonk.test",
+    password: "password123",
+  },
+  owner: {
+    email: "owner@zoonk.test",
     password: "password123",
   },
 } as const;
