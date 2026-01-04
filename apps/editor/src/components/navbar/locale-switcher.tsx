@@ -37,6 +37,7 @@ export function LocaleSwitcher() {
       <DropdownMenuSubContent>
         {SUPPORTED_LOCALES.map((lang) => (
           <DropdownMenuItem
+            aria-current={lang === locale ? "true" : undefined}
             disabled={isPending}
             key={lang}
             onClick={() => onLocaleChange(lang)}
