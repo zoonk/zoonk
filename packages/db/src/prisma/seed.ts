@@ -16,16 +16,16 @@ import { seedUsers } from "./seed/users";
 async function main() {
   const users = await seedUsers(prisma);
   await seedAccounts(prisma, users);
-  const org = await seedOrganizations(prisma, users);
-  await seedCourses(prisma, org);
-  await seedCategories(prisma, org);
-  await seedChapters(prisma, org);
-  await seedLessons(prisma, org);
-  await seedAlternativeTitles(prisma, org);
-  await seedCourseUsers(prisma, org, users);
-  await seedActivities(prisma, org);
-  await seedSteps(prisma, org);
-  await seedProgress(prisma, org, users);
+  const orgs = await seedOrganizations(prisma, users);
+  await seedCourses(prisma, orgs);
+  await seedCategories(prisma, orgs.ai);
+  await seedChapters(prisma, orgs.ai);
+  await seedLessons(prisma, orgs.ai);
+  await seedAlternativeTitles(prisma, orgs.ai);
+  await seedCourseUsers(prisma, orgs.ai, users);
+  await seedActivities(prisma, orgs.ai);
+  await seedSteps(prisma, orgs.ai);
+  await seedProgress(prisma, orgs.ai, users);
   await seedCourseSuggestions(prisma);
 }
 
