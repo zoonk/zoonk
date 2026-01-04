@@ -20,6 +20,7 @@ export default defineConfig({
         "postgres://postgres:postgres@localhost:5432/zoonk_test",
     },
     environment: "node",
+    exclude: ["**/node_modules/**", "**/e2e/**"],
     setupFiles: ["./setup-tests.ts"],
   },
 });
