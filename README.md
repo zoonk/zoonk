@@ -55,6 +55,7 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 - `pnpm lint` to run linting
 - `pnpm typecheck` to run TypeScript type checking
 - `pnpm test` to run tests with Vitest
+- `pnpm e2e` to run end-to-end tests with Playwright
 
 ## Overview
 
@@ -62,16 +63,19 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 
 - [main](./apps/main): Public web app (`zoonk.com`)
 - [admin](./apps/admin): Dashboard for managing users and organizations (`admin.zoonk.com`)
+- [auth](./apps/auth): Centralized authentication for all apps
 - [editor](./apps/editor): Visual editor for building courses and activities (`editor.zoonk.com`)
 - [evals](./apps/evals): Local-only tool for evaluating AI-generated content
 
 ### Packages
 
 - [ai](./packages/ai): AI prompts, tasks, and helpers for content generation
-- [core](./packages/core): Server utilities for database access and external integrations (the only package that should talk to `db`)
 - [auth](./packages/auth): Shared Better Auth setup and plugins
-- [db](./packages/db): Prisma schema and client (used only by `core`)
+- [core](./packages/core): Shared server utilities
+- [db](./packages/db): Prisma schema and client
 - [mailer](./packages/mailer): Email-sending utilities
+- [next](./packages/next): Shared Next.js utilities
+- [testing](./packages/testing): Shared testing utilities
 - [tsconfig](./packages/tsconfig): Shared TypeScript config
 - [ui](./packages/ui): Shared React components, patterns, hooks, and styles
 - [utils](./packages/utils): Shared utilities and helpers

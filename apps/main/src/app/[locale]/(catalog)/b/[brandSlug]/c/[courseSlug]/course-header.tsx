@@ -56,7 +56,7 @@ export async function CourseHeader({
             />
           </MediaCardImage>
         ) : (
-          <MediaCardIcon>
+          <MediaCardIcon aria-label={course.title} role="img">
             <NotebookPenIcon
               aria-hidden="true"
               className="size-8 text-muted-foreground/80"

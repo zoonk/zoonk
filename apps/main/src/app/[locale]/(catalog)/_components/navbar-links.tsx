@@ -45,12 +45,17 @@ export function NavbarLinks() {
   const pathname = usePathname();
   const t = useExtracted();
 
+  const homeVariant = getVariant(homeMenu.url, pathname);
+  const coursesVariant = getVariant(coursesMenu.url, pathname);
+  const learnVariant = getVariant(learnMenu.url, pathname);
+
   return (
     <>
       <Link
+        aria-current={homeVariant === "default" ? "page" : undefined}
         className={buttonVariants({
           size: "icon",
-          variant: getVariant(homeMenu.url, pathname),
+          variant: homeVariant,
         })}
         href={homeMenu.url}
         prefetch={true}
@@ -60,9 +65,10 @@ export function NavbarLinks() {
       </Link>
 
       <Link
+        aria-current={coursesVariant === "default" ? "page" : undefined}
         className={buttonVariants({
           size: "adaptive",
-          variant: getVariant(coursesMenu.url, pathname),
+          variant: coursesVariant,
         })}
         href={coursesMenu.url}
       >
@@ -73,10 +79,11 @@ export function NavbarLinks() {
       <CommandPalette />
 
       <Link
+        aria-current={learnVariant === "default" ? "page" : undefined}
         className={buttonVariants({
           className: "ml-auto",
           size: "adaptive",
-          variant: getVariant(learnMenu.url, pathname),
+          variant: learnVariant,
         })}
         href={learnMenu.url}
       >

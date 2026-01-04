@@ -41,6 +41,17 @@ export async function seedProgress(
       update: {},
       where: { userId: users.member.id },
     }),
+    // E2E user progress (deterministic values for testing)
+    prisma.userProgress.upsert({
+      create: {
+        currentEnergy: 75.0,
+        lastActiveAt: now,
+        totalBrainPower: BigInt(15_000),
+        userId: users.e2eWithProgress.id,
+      },
+      update: {},
+      where: { userId: users.e2eWithProgress.id },
+    }),
   ]);
 
   // Create DailyProgress for the past 7 days for the owner user

@@ -81,13 +81,13 @@ msgstr "Administrar suscripción"
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx:59
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx:160
-#: src/app/[locale]/(catalog)/_components/navbar-links.tsx:70
+#: src/app/[locale]/(catalog)/_components/navbar-links.tsx:76
 msgctxt "R85gsW"
 msgid "Courses"
 msgstr "Cursos"
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx:58
-#: src/app/[locale]/(catalog)/_components/navbar-links.tsx:59
+#: src/app/[locale]/(catalog)/_components/navbar-links.tsx:64
 #: src/app/[locale]/(settings)/_components/settings-navbar.tsx:30
 msgctxt "U3l+Q9"
 msgid "Home page"
@@ -112,10 +112,15 @@ msgctxt "y1Z3or"
 msgid "Language"
 msgstr "Idioma"
 
-#: src/app/[locale]/(catalog)/_components/navbar-links.tsx:84
+#: src/app/[locale]/(catalog)/_components/navbar-links.tsx:91
 msgctxt "IbrSk1"
 msgid "Learn"
 msgstr "Aprender"
+
+#: src/app/[locale]/(catalog)/_components/user-avatar-menu.tsx:15
+msgctxt "6b2CRH"
+msgid "User menu"
+msgstr "Menú de usuario"
 
 #: src/app/[locale]/(catalog)/_components/user-dropdown-menu.tsx:18
 #: src/app/[locale]/(settings)/_components/settings-navigation.tsx:27
@@ -228,17 +233,17 @@ msgctxt "BlI1/9"
 msgid "Did you like this content?"
 msgstr "¿Te gustó este contenido?"
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx:71
+#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx:73
 msgctxt "G5YSJR"
 msgid "Send feedback"
 msgstr "Enviar comentarios"
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx:64
+#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx:66
 msgctxt "Hqn5Uo"
 msgid "I didn't like it"
 msgstr "No me gustó"
 
-#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx:51
+#: src/app/[locale]/(catalog)/learn/[prompt]/content-feedback.tsx:52
 msgctxt "rTFrsw"
 msgid "I liked it"
 msgstr "Me gustó"

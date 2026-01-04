@@ -9,6 +9,7 @@
     "@types/pg": "8.15.5",
     "@zoonk/tsconfig": "workspace:*",
     "dotenv": "17.2.3",
+    "dotenv-cli": "11.0.0",
     "prisma": "7.2.0",
     "tsx": "4.20.6",
     "typescript": "^5"
@@ -27,6 +28,9 @@
   "private": true,
   "scripts": {
     "db:deploy": "prisma migrate deploy",
+    "db:e2e:generate": "dotenv -e .env.e2e -o -- prisma generate --sql",
+    "db:e2e:seed": "dotenv -e .env.e2e -o -- prisma db seed",
+    "db:e2e:setup": "dotenv -e .env.e2e -o -- prisma migrate deploy",
     "db:generate": "prisma generate --sql",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",

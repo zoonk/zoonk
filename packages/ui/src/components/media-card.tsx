@@ -64,6 +64,7 @@ export function MediaCardImage({
 export function MediaCardIcon({
   children,
   className,
+  ...props
 }: React.ComponentProps<"div">) {
   return (
     <div
@@ -72,6 +73,7 @@ export function MediaCardIcon({
         className,
       )}
       data-slot="media-card-icon"
+      {...props}
     >
       {children}
     </div>

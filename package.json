@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "@biomejs/biome": "2.3.10",
+    "@playwright/test": "1.57.0",
     "turbo": "2.7.2"
   },
   "engines": {
@@ -17,6 +18,7 @@
     "db:migrate": "turbo db:migrate",
     "db:studio": "turbo db:studio",
     "dev": "turbo dev",
+    "e2e": "turbo e2e",
     "evals": "cd apps/evals && pnpm build-and-start",
     "evals:export": "./apps/evals/scripts/export-test-case.sh",
     "evals:remove": "./apps/evals/scripts/remove-test-cases.sh",

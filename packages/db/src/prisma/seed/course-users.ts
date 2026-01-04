@@ -55,4 +55,24 @@ export async function seedCourseUsers(
       },
     });
   }
+
+  // Enroll E2E withProgress user in all courses for E2E testing
+  await Promise.all(
+    courses.map((course, index) =>
+      prisma.courseUser.upsert({
+        create: {
+          courseId: course.id,
+          startedAt: new Date(now.getTime() - index * 60 * 60 * 1000),
+          userId: users.e2eWithProgress.id,
+        },
+        update: {},
+        where: {
+          courseUser: {
+            courseId: course.id,
+            userId: users.e2eWithProgress.id,
+          },
+        },
+      }),
+    ),
+  );
 }
