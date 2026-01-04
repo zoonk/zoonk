@@ -33,6 +33,11 @@ export function OrgSwitcher({ children }: React.PropsWithChildren) {
   const otherOrgs =
     organizations?.filter((org) => org.id !== currentOrg?.id) ?? [];
 
+  function handleOrgClick(orgSlug: string) {
+    // Set active org fire-and-forget (don't block navigation)
+    authClient.organization.setActive({ organizationSlug: orgSlug });
+  }
+
   return (
     // Key forces remount when org changes, fixing Base UI Menu context disconnection
     <DropdownMenu key={params.orgSlug}>
@@ -62,7 +67,12 @@ export function OrgSwitcher({ children }: React.PropsWithChildren) {
           otherOrgs.map((org) => (
             <DropdownMenuItem
               key={org.id}
-              render={<Link href={`/${org.slug}`} />}
+              render={
+                <Link
+                  href={`/${org.slug}`}
+                  onClick={() => handleOrgClick(org.slug)}
+                />
+              }
             >
               <BuildingIcon aria-hidden="true" />
               <span className="truncate">{org.name}</span>
