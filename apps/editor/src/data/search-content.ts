@@ -24,8 +24,6 @@ export type ResultWithPosition = {
   position: number;
 };
 
-export type SearchResult = ResultWithImage | ResultWithPosition;
-
 export type SearchResults = {
   courses: ResultWithImage[];
   chapters: ResultWithPosition[];

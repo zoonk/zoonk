@@ -4,7 +4,7 @@ import { Suspense } from "react";
 import { AlternativeTitlesSkeleton } from "@/components/alternative-titles-editor";
 import { CategoryEditorSkeleton } from "@/components/category-editor";
 import { ContentEditorSkeleton } from "@/components/content-editor";
-import { ItemListSkeleton } from "@/components/item-list";
+import { EditorListSkeleton } from "@/components/editor-list";
 import { SlugEditorSkeleton } from "@/components/slug-editor";
 import { listCourseCategories } from "@/data/categories/list-course-categories";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
@@ -52,7 +52,7 @@ export default async function CoursePage(
         </Suspense>
       </ContainerBody>
 
-      <Suspense fallback={<ItemListSkeleton />}>
+      <Suspense fallback={<EditorListSkeleton />}>
         <ChapterList params={props.params} />
       </Suspense>
     </Container>

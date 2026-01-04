@@ -6,7 +6,7 @@ import {
   ownerAc,
 } from "better-auth/plugins/organization/access";
 
-export const statement = {
+const statement = {
   ...defaultStatements,
   course: ["create", "read", "update", "delete"],
 } as const;

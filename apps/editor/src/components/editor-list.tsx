@@ -19,6 +19,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@zoonk/ui/components/button";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { toast } from "@zoonk/ui/components/sonner";
 import { mergeProps, useRender } from "@zoonk/ui/lib/render";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -309,16 +310,6 @@ const EditorSortableContext = createContext<
   EditorSortableContextValue | undefined
 >(undefined);
 
-function useEditorSortable() {
-  const context = useContext(EditorSortableContext);
-  if (!context) {
-    throw new Error(
-      "EditorSortable components must be used within an EditorSortableList.",
-    );
-  }
-  return context;
-}
-
 function EditorSortableList<T extends SortableItem>({
   children,
   items: initialItems,
@@ -540,6 +531,36 @@ function EditorDragHandle({
   );
 }
 
+function EditorListSkeleton({ count = 3 }: { count?: number }) {
+  return (
+    <div data-slot="editor-list">
+      <div className="flex items-center justify-end gap-2 px-4 pb-2">
+        <Skeleton className="h-8 w-28" />
+      </div>
+
+      <ul>
+        {Array.from({ length: count }).map((_, i) => (
+          <li
+            className="flex items-center gap-2 border-border border-t px-4 py-3"
+            key={i}
+          >
+            <Skeleton className="size-4" />
+
+            <div className="flex min-w-0 flex-1 items-start gap-4">
+              <Skeleton className="mt-0.5 h-5 w-6" />
+
+              <div className="min-w-0 flex-1 space-y-2">
+                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+              </div>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 export {
   EditorDragHandle,
   EditorListAddButton,
@@ -553,10 +574,9 @@ export {
   EditorListItemPosition,
   EditorListItemTitle,
   EditorListProvider,
+  EditorListSkeleton,
   EditorListSpinner,
   EditorSortableItem,
   EditorSortableItemRow,
   EditorSortableList,
-  useEditorList,
-  useEditorSortable,
 };

@@ -15,7 +15,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useExtracted } from "next-intl";
 
-export function OrgSwitcherSkeleton() {
+function OrgSwitcherSkeleton() {
   return <Skeleton className="h-8 w-36 rounded-full" />;
 }
 

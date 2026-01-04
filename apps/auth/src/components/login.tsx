@@ -73,7 +73,7 @@ type LoginWithProviderProps = React.ComponentProps<"button"> & {
   icon?: React.ForwardRefExoticComponent<IconProps>;
 };
 
-export function LoginWithProvider({
+function LoginWithProvider({
   children,
   className,
   icon: Icon,

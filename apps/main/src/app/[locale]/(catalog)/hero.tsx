@@ -48,19 +48,3 @@ export async function Hero() {
     </main>
   );
 }
-
-export function HeroSkeleton() {
-  return (
-    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center gap-8 px-4 py-16 md:py-24">
-      <div className="flex flex-col items-center gap-4 text-center">
-        <div className="h-10 w-64 animate-pulse rounded-lg bg-muted md:h-12 md:w-96" />
-        <div className="h-6 w-80 animate-pulse rounded-lg bg-muted" />
-      </div>
-
-      <div className="flex gap-4">
-        <div className="h-10 w-32 animate-pulse rounded-4xl bg-muted" />
-        <div className="h-10 w-32 animate-pulse rounded-4xl bg-muted" />
-      </div>
-    </main>
-  );
-}

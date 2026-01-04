@@ -29,12 +29,3 @@ export async function getActivityKinds(params?: {
     { key: "vocabulary", label: t("Vocabulary") },
   ];
 }
-
-export async function getActivityKindLabel(
-  kind: string,
-  opts?: { locale: string },
-): Promise<string> {
-  const t = await getExtracted(opts);
-  const kinds = await getActivityKinds(opts);
-  return kinds.find((k) => k.key === kind)?.label ?? t("Activity");
-}
