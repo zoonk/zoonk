@@ -1,5 +1,4 @@
 import { resolve } from "node:path";
-import { loadEnv } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
@@ -19,7 +18,11 @@ export default defineConfig({
     deps: {
       optimizer: { ssr: { include: ["next"] } },
     },
-    env: loadEnv("test", process.cwd(), ""),
+    env: {
+      DATABASE_URL: "postgres://postgres:postgres@localhost:5432/zoonk_test",
+      DATABASE_URL_UNPOOLED:
+        "postgres://postgres:postgres@localhost:5432/zoonk_test",
+    },
     environment: "node",
     exclude: ["**/node_modules/**", "**/e2e/**"],
     server: {

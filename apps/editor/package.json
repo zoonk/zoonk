@@ -28,7 +28,6 @@
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
     "typescript": "^5",
-    "vite": "7.3.0",
     "vite-tsconfig-paths": "6.0.3",
     "vitest": "4.0.16"
   },

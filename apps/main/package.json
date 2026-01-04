@@ -33,7 +33,6 @@
     "raw-loader": "4.0.2",
     "tsx": "4.20.5",
     "typescript": "^5",
-    "vite": "7.3.0",
     "vite-tsconfig-paths": "6.0.3",
     "vitest": "4.0.16"
   },
