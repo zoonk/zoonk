@@ -1,0 +1,43 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignoreBinaries": ["diff", "stripe", "build-and-start"],
+  "ignoreDependencies": [
+    "@tailwindcss/postcss",
+    "@types/react",
+    "@types/react-dom",
+    "next",
+    "next-intl",
+    "postcss",
+    "postcss-load-config",
+    "raw-loader",
+    "tsx"
+  ],
+  "ignoreExportsUsedInFile": {
+    "interface": true,
+    "type": true
+  },
+  "tags": ["-lintignore"],
+  "workspaces": {
+    "apps/auth": {
+      "entry": ["src/i18n/codec.ts"]
+    },
+    "apps/editor": {
+      "entry": ["src/i18n/codec.ts"]
+    },
+    "apps/main": {
+      "entry": [
+        "src/i18n/codec.ts",
+        "src/app/[locale]/privacy/*.mdx",
+        "src/app/[locale]/terms/*.mdx"
+      ]
+    },
+    "packages/db": {
+      "entry": ["prisma.config.ts", "src/prisma/seed.ts"],
+      "ignore": ["src/prisma/**/*.prisma"],
+      "prisma": false
+    },
+    "packages/ui": {
+      "ignore": ["src/styles/globals.css"]
+    }
+  }
+}

@@ -83,7 +83,7 @@ export function getDefaultSortDirection(key: SortKey): SortDirection {
  * Always returns values for ascending order; caller applies direction.
  * For averageScore: implements tie-breaker using totalCost (lower cost wins ties).
  */
-export function compareEntries(
+function compareEntries(
   a: LeaderboardEntry,
   b: LeaderboardEntry,
   key: SortKey,

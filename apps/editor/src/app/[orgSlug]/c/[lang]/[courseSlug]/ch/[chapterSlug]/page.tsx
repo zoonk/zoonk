@@ -2,7 +2,7 @@ import { Container, ContainerBody } from "@zoonk/ui/components/container";
 import { Suspense } from "react";
 import { BackLinkSkeleton } from "@/components/back-link";
 import { ContentEditorSkeleton } from "@/components/content-editor";
-import { ItemListSkeleton } from "@/components/item-list";
+import { EditorListSkeleton } from "@/components/editor-list";
 import { SlugEditorSkeleton } from "@/components/slug-editor";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { getCourse } from "@/data/courses/get-course";
@@ -41,7 +41,7 @@ export default async function ChapterPage(props: ChapterPageProps) {
         </Suspense>
       </ContainerBody>
 
-      <Suspense fallback={<ItemListSkeleton />}>
+      <Suspense fallback={<EditorListSkeleton />}>
         <LessonList params={props.params} />
       </Suspense>
     </Container>

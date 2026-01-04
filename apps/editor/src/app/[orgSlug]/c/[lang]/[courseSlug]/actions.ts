@@ -95,7 +95,7 @@ export async function updateCourseSlugAction(
   return { error: null, newSlug: course.slug };
 }
 
-export async function createChapterAction(
+async function createChapterAction(
   courseSlug: string,
   courseId: number,
   position: number,
@@ -124,7 +124,7 @@ export async function createChapterAction(
   return { error: null, slug: data.slug };
 }
 
-export async function importChaptersAction(
+async function importChaptersAction(
   courseSlug: string,
   courseId: number,
   formData: FormData,

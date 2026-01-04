@@ -66,6 +66,9 @@ jobs:
       - name: Run Biome
         run: pnpm biome ci --error-on-warnings
 
+      - name: Run knip
+        run: pnpm knip
+
       - name: Run type check
         run: pnpm typecheck
 

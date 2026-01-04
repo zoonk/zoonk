@@ -122,6 +122,7 @@ All apps should follow a consistent folder structure:
 ## Conventions
 
 - **Never pass functions to Client Components** unless they are Server Actions (marked with `"use server"`). Regular functions like `getHref` or callbacks cannot be serialized. Instead, pass serializable data (strings, numbers, objects) and construct values in the client component. For example, pass `hrefPrefix: string` instead of `getHref: (item) => string`
+- Run the following commands before completing your task: `pnpm format`, `pnpm lint --write --unsafe`, `pnpm typecheck`, `pnpm knip`
 - When there are **formatting issues**, run `pnpm format` to auto-fix them
 - When there are **linting issues**, run `pnpm lint --write --unsafe` from the **root of the monorepo** to auto-fix them (lint is a global setup, not per app/package)
 - Run `pnpm typecheck` to check for TypeScript errors
