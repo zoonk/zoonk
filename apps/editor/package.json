@@ -24,6 +24,7 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@zoonk/e2e": "workspace:*",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
@@ -36,7 +37,10 @@
   "scripts": {
     "analyze": "next experimental-analyze",
     "build": "next build",
+    "build:e2e": "E2E_TESTING=true next build",
     "dev": "next dev -p 3003",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
     "start": "next start -p 3003",
     "test": "vitest run",
     "test:watch": "vitest",

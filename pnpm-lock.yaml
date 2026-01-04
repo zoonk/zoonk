@@ -203,6 +203,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.3(@types/react@19.2.7)
+      '@zoonk/e2e':
+        specifier: workspace:*
+        version: link:../../packages/e2e
       '@zoonk/testing':
         specifier: workspace:*
         version: link:../../packages/testing
