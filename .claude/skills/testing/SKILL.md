@@ -129,6 +129,42 @@ await page.waitForURL(/\/dashboard/);
 await page.waitForTimeout(2000);
 ```
 
+### Verify Destination Content, Not Just URLs
+
+**Never rely solely on `toHaveURL` for navigation tests.** If a route is moved or broken, URL-only tests will pass even when the destination is wrong. Always verify the destination page renders expected content.
+
+```typescript
+// BAD: Only checks URL - will pass even if page is broken or moved
+test("creates course and redirects", async ({ page }) => {
+  await page.getByRole("button", { name: /create/i }).click();
+  await expect(page).toHaveURL(/\/courses\/new-course/);
+});
+
+// GOOD: Verifies destination content exists
+test("creates course and redirects to course page", async ({ page }) => {
+  const courseTitle = "My New Course";
+  const courseDescription = "Course description";
+
+  // ... fill form with title and description ...
+
+  await page.getByRole("button", { name: /create/i }).click();
+
+  // Verify destination page shows the created content
+  // For editable fields, use toHaveValue:
+  await expect(
+    page.getByRole("textbox", { name: /edit title/i })
+  ).toHaveValue(courseTitle);
+
+  // For static text, use toBeVisible:
+  await expect(page.getByText(courseDescription)).toBeVisible();
+});
+```
+
+This ensures:
+- The redirect goes to the correct page
+- The page actually renders (not a 404 or error)
+- The created data is properly displayed
+
 ### Authentication Fixtures
 
 Use pre-configured fixtures from `apps/{app}/e2e/fixtures.ts`:
