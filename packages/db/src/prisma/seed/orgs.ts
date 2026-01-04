@@ -18,6 +18,7 @@ export async function seedOrganizations(
             { role: "owner", userId: users.owner.id },
             { role: "admin", userId: users.admin.id },
             { role: "member", userId: users.member.id },
+            { role: "admin", userId: users.multiOrg.id },
           ],
         },
         name: "Zoonk AI",
@@ -28,6 +29,9 @@ export async function seedOrganizations(
     }),
     prisma.organization.upsert({
       create: {
+        members: {
+          create: [{ role: "owner", userId: users.multiOrg.id }],
+        },
         name: "Test Org",
         slug: "test-org",
       },

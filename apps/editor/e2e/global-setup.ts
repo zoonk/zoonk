@@ -12,6 +12,10 @@ export const E2E_USERS = {
     email: "member@zoonk.test",
     password: "password123",
   },
+  multiOrg: {
+    email: "multi-org@zoonk.test",
+    password: "password123",
+  },
   noOrg: {
     email: "e2e-logout@zoonk.test",
     password: "password123",

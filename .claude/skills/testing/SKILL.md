@@ -295,6 +295,16 @@ E2E_TESTING=true pnpm --filter main build  # Build for E2E (uses .next-e2e direc
 pnpm e2e                                    # Run all e2e tests
 ```
 
+### E2E Database Reset
+
+When updating seed files (e.g., adding test users or organizations), reset the E2E database:
+
+```bash
+dropdb zoonk_e2e && createdb zoonk_e2e
+```
+
+**Note**: Prisma's `migrate reset` command may have issues with AI tooling like Claude. Use `dropdb/createdb` instead.
+
 ### E2E Build Directory
 
 Apps use separate build directories for E2E testing. For example, `apps/main` uses `.next-e2e` when `E2E_TESTING=true` is set (configured in `next.config.ts`).

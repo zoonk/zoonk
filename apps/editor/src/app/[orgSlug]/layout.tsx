@@ -1,9 +1,5 @@
-import { auth } from "@zoonk/core/auth";
 import { getOrganization } from "@zoonk/core/orgs/get";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { getSession } from "@zoonk/core/users/session/get";
-import { safeAsync } from "@zoonk/utils/error";
-import { headers } from "next/headers";
 import { notFound, unauthorized } from "next/navigation";
 import { Suspense } from "react";
 import { EditorNavbar } from "@/components/navbar";
@@ -15,8 +11,7 @@ async function LayoutPermissions({
 }: LayoutProps<"/[orgSlug]">) {
   const { orgSlug } = await params;
 
-  const [sessionData, org, canViewPage] = await Promise.all([
-    getSession(),
+  const [org, canViewPage] = await Promise.all([
     getOrganization(orgSlug),
     hasCoursePermission({ orgSlug, permission: "update" }),
   ]);
@@ -27,21 +22,6 @@ async function LayoutPermissions({
 
   if (!canViewPage) {
     return unauthorized();
-  }
-
-  const activeOrgId = sessionData?.session.activeOrganizationId;
-  const orgId = String(org.data.id);
-
-  // We're setting the current org as the active one,
-  // so we can automatically redirect users to this org
-  // next time they visit the editor
-  if (activeOrgId !== orgId) {
-    await safeAsync(async () =>
-      auth.api.setActiveOrganization({
-        body: { organizationId: orgId },
-        headers: await headers(),
-      }),
-    );
   }
 
   return (

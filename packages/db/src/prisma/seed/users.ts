@@ -7,6 +7,7 @@ export type SeedUsers = {
   e2eWithProgress: User;
   logoutTest: User;
   member: User;
+  multiOrg: User;
   owner: User;
 };
 
@@ -90,6 +91,18 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
     where: { email: "e2e-logout@zoonk.test" },
   });
 
+  // E2E test user with access to multiple organizations
+  const multiOrg = await prisma.user.upsert({
+    create: {
+      email: "multi-org@zoonk.test",
+      emailVerified: true,
+      name: "Multi Org User",
+      role: "admin",
+    },
+    update: {},
+    where: { email: "multi-org@zoonk.test" },
+  });
+
   return {
     admin,
     e2eLogout,
@@ -97,6 +110,7 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
     e2eWithProgress,
     logoutTest,
     member,
+    multiOrg,
     owner,
   };
 }
