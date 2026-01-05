@@ -98,7 +98,9 @@ checksums:
     Failed%20to%20export/singular: e1ed0bd77fc4509b338f2ed32565012a
     Upload%20a%20JSON%20file%20containing%20alternative%20titles%20to%20import./singular: 7dd18059ccf7955ba864342fdc0d6629
     Alternative%20titles%20imported%20successfully/singular: ca67e17d28382d5ef29bd27219a4104e
+    Available%20categories/singular: bcd678590ae6b4f047a6641bb3c15d6d
     Add%20category/singular: f1ef62efcd0e61cff264dd18047ebd6f
+    Category%20options/singular: c968d0f8e27f746f50efeda29834ad74
     Categories/singular: fd4e44f3b1b2bba9ca45f3aef963d042
     Search/singular: 49dd6c21604b5e8d4153ff1aff2177e1
     Unsaved/singular: ddc9094aecf93ceabe363846756a9925

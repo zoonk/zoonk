@@ -140,7 +140,11 @@ export function CategoryEditor({
             <PlusIcon />
           </PopoverTrigger>
 
-          <PopoverContent align="start" className="w-56 p-2">
+          <PopoverContent
+            align="start"
+            aria-label={t("Category options")}
+            className="w-56 p-2"
+          >
             <Input
               className="mb-2"
               onChange={(e) => setSearch(e.target.value)}
@@ -152,6 +156,7 @@ export function CategoryEditor({
             <div className="flex max-h-64 flex-col gap-1 overflow-y-auto overscroll-contain">
               {filteredCategories.map((category) => {
                 const isSelected = optimisticCategories.includes(category);
+                const label = categoryLabels[category];
 
                 return (
                   <Label
@@ -162,7 +167,7 @@ export function CategoryEditor({
                       checked={isSelected}
                       onCheckedChange={() => handleToggle(category, isSelected)}
                     />
-                    {categoryLabels[category]}
+                    {label}
                   </Label>
                 );
               })}
