@@ -54,6 +54,7 @@ export function SlugEditor({
 
   const slugExists = useSlugCheck({
     checkFn,
+    initialSlug,
     language,
     orgSlug,
     slug,

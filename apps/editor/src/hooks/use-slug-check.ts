@@ -17,10 +17,11 @@ type SlugCheckFn = (params: SlugCheckParams) => Promise<boolean>;
  */
 export function useSlugCheck({
   checkFn,
+  initialSlug,
   language,
   orgSlug,
   slug,
-}: SlugCheckParams & { checkFn: SlugCheckFn }) {
+}: SlugCheckParams & { checkFn: SlugCheckFn; initialSlug: string }) {
   const [_isPending, startTransition] = useTransition();
   const [slugExists, setSlugExists] = useState(false);
 
@@ -36,7 +37,8 @@ export function useSlugCheck({
   );
 
   useEffect(() => {
-    if (!debouncedSlug.trim()) {
+    // Skip check if empty or if it matches the current entity's slug
+    if (!debouncedSlug.trim() || debouncedSlug.trim() === initialSlug.trim()) {
       setSlugExists(false);
       return;
     }
@@ -50,7 +52,7 @@ export function useSlugCheck({
 
       handleSlugCheck(debouncedSlug, exists);
     });
-  }, [checkFn, debouncedSlug, language, orgSlug]);
+  }, [checkFn, debouncedSlug, initialSlug, language, orgSlug]);
 
   return slugExists;
 }
