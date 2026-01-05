@@ -9,11 +9,19 @@ import { deleteCourse } from "@/data/courses/delete-course";
 import { toggleCoursePublished } from "@/data/courses/publish-course";
 import { getErrorMessage } from "@/lib/error-messages";
 
+type TogglePublishParams = {
+  courseId: number;
+  courseSlug: string;
+  courseUrl: string;
+  orgSlug: string;
+};
+
 export async function togglePublishAction(
-  courseSlug: string,
-  courseId: number,
+  params: TogglePublishParams,
   isPublished: boolean,
 ): Promise<{ error: string | null }> {
+  const { courseId, courseSlug, courseUrl, orgSlug } = params;
+
   const { error } = await toggleCoursePublished({
     courseId,
     isPublished,
@@ -24,8 +32,13 @@ export async function togglePublishAction(
   }
 
   after(async () => {
-    await revalidateMainApp([cacheTagCourse({ courseSlug })]);
+    const courseTag = cacheTagCourse({ courseSlug });
+    const orgCoursesTag = cacheTagOrgCourses({ orgSlug });
+
+    await revalidateMainApp([courseTag, orgCoursesTag]);
   });
+
+  revalidatePath(courseUrl);
 
   return { error: null };
 }

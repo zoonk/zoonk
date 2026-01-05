@@ -11,6 +11,7 @@ export async function CourseActions({
 }: PageProps<"/[orgSlug]/c/[lang]/[courseSlug]">) {
   const { courseSlug, lang, orgSlug } = await params;
   const t = await getExtracted();
+  const courseUrl = `/${orgSlug}/c/${lang}/${courseSlug}`;
 
   const { data: course } = await getCourse({
     courseSlug,
@@ -26,7 +27,12 @@ export async function CourseActions({
     <CourseActionsContainer>
       <PublishToggle
         isPublished={course.isPublished}
-        onToggle={togglePublishAction.bind(null, courseSlug, course.id)}
+        onToggle={togglePublishAction.bind(null, {
+          courseId: course.id,
+          courseSlug,
+          courseUrl,
+          orgSlug,
+        })}
       />
 
       <DeleteItemButton
