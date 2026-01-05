@@ -1,16 +1,15 @@
 import { randomUUID } from "node:crypto";
 import * as fs from "node:fs";
-import * as os from "node:os";
-import path from "node:path";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import tmp from "tmp";
 import { expect, type Page, test } from "./fixtures";
 
 function createImportFile(slugs: string[]): string {
   const content = JSON.stringify({ alternativeTitles: slugs }, null, 2);
-  const tmpFile = path.join(os.tmpdir(), `alt-titles-${randomUUID()}.json`);
-  fs.writeFileSync(tmpFile, content);
-  return tmpFile;
+  const tmpFile = tmp.fileSync({ postfix: ".json", prefix: "alt-titles-" });
+  fs.writeFileSync(tmpFile.name, content);
+  return tmpFile.name;
 }
 
 async function createTestCourse() {

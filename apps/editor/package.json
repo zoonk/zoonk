@@ -24,10 +24,12 @@
     "@types/node": "^24",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/tmp": "0.2.6",
     "@zoonk/e2e": "workspace:*",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
+    "tmp": "0.2.3",
     "typescript": "^5",
     "vite-tsconfig-paths": "6.0.3",
     "vitest": "4.0.16"
