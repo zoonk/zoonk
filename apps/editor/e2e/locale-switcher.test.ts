@@ -7,6 +7,8 @@ async function openOrgDropdown(page: Page) {
 async function openLanguageSubmenu(page: Page) {
   await openOrgDropdown(page);
   await page.getByRole("menuitem", { name: /language/i }).click();
+  // Wait for submenu animation to complete (items are visible and stable)
+  await expect(page.getByRole("menuitem", { name: "English" })).toBeVisible();
 }
 
 test.describe("Locale Switcher", () => {
@@ -19,10 +21,13 @@ test.describe("Locale Switcher", () => {
   }) => {
     await openLanguageSubmenu(authenticatedPage);
 
-    // Switch to Portuguese
-    await authenticatedPage
-      .getByRole("menuitem", { name: "Português" })
-      .click();
+    // Switch to Portuguese - force click since submenu animations may cause instability
+    const portugueseItem = authenticatedPage.getByRole("menuitem", {
+      name: "Português",
+    });
+
+    await portugueseItem.click({ force: true });
+    await authenticatedPage.waitForLoadState("domcontentloaded");
 
     // Reopen to verify the Language menu item text changed
     await openOrgDropdown(authenticatedPage);
@@ -55,8 +60,13 @@ test.describe("Locale Switcher", () => {
   }) => {
     await openLanguageSubmenu(authenticatedPage);
 
-    // Switch to Spanish
-    await authenticatedPage.getByRole("menuitem", { name: "Español" }).click();
+    // Switch to Spanish - force click since submenu animations may cause instability
+    const spanishItem = authenticatedPage.getByRole("menuitem", {
+      name: "Español",
+    });
+
+    await spanishItem.click({ force: true });
+    await authenticatedPage.waitForLoadState("domcontentloaded");
 
     // Refresh the page
     await authenticatedPage.reload();
