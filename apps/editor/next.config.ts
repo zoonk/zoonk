@@ -6,9 +6,12 @@ const CACHE_IMAGE_DAYS = 30;
 
 const isE2E = process.env.E2E_TESTING === "true";
 
-// Swap @zoonk/auth for E2E-specific config during E2E builds
+// Swap modules for E2E-specific config during E2E builds
 const e2eAliases: Record<string, string> = isE2E
-  ? { "@zoonk/auth": "../../packages/auth/src/e2e.ts" }
+  ? {
+      "@vercel/blob": "./e2e/mocks/vercel-blob.ts",
+      "@zoonk/auth": "../../packages/auth/src/e2e.ts",
+    }
   : {};
 
 const nextConfig: NextConfig = {

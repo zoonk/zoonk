@@ -22,7 +22,7 @@
       "entry": ["src/i18n/codec.ts"]
     },
     "apps/editor": {
-      "entry": ["src/i18n/codec.ts"]
+      "entry": ["src/i18n/codec.ts", "e2e/mocks/vercel-blob.ts"]
     },
     "apps/main": {
       "entry": [
