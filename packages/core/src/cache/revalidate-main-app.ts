@@ -3,6 +3,7 @@ import "server-only";
 const vercelEnv = process.env.VERCEL_ENV;
 const isVercelEnv = Boolean(vercelEnv);
 const isVercelPreview = isVercelEnv && vercelEnv !== "production";
+const isE2ETesting = process.env.E2E_TESTING === "true";
 
 /**
  * Revalidates cache tags in the main app.
@@ -13,8 +14,7 @@ export async function revalidateMainApp(tags: string[]) {
   const url = `${process.env.NEXT_PUBLIC_MAIN_APP_URL}/api/revalidate`;
   const secret = process.env.REVALIDATE_SECRET;
 
-  if (isVercelPreview) {
-    console.info("Skipping revalidation in Vercel preview environment");
+  if (isVercelPreview || isE2ETesting) {
     return;
   }
 
