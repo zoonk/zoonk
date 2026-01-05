@@ -85,7 +85,10 @@ export async function ChapterList({
           onReorder={reorderChaptersAction.bind(null, routeParams)}
         >
           <EditorListContent>
-            <EditorListInsertLine position={0} />
+            <EditorListInsertLine
+              aria-label={t("Insert chapter")}
+              position={0}
+            />
 
             {chapters.map((chapter, index) => (
               <Fragment key={chapter.slug}>
@@ -121,7 +124,10 @@ export async function ChapterList({
                   </EditorListItem>
                 </EditorSortableItem>
 
-                <EditorListInsertLine position={index + 1} />
+                <EditorListInsertLine
+                  aria-label={t("Insert chapter")}
+                  position={index + 1}
+                />
               </Fragment>
             ))}
           </EditorListContent>

@@ -175,10 +175,12 @@ function EditorListContent({
 }
 
 function EditorListInsertLine({
+  "aria-label": ariaLabel,
   position,
   className,
   ...props
 }: Omit<React.ComponentProps<"div">, "onClick"> & {
+  "aria-label"?: string;
   position: number;
 }) {
   const { pending, handleInsert } = useEditorList();
@@ -193,6 +195,7 @@ function EditorListInsertLine({
         <div className="h-px flex-1 bg-primary/30" />
 
         <button
+          aria-label={ariaLabel}
           className="flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
           disabled={pending}
           onClick={() => handleInsert(position)}

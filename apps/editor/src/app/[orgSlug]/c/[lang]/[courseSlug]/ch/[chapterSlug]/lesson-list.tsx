@@ -88,7 +88,10 @@ export async function LessonList({
           onReorder={reorderLessonsAction.bind(null, routeParams)}
         >
           <EditorListContent>
-            <EditorListInsertLine position={0} />
+            <EditorListInsertLine
+              aria-label={t("Insert lesson")}
+              position={0}
+            />
 
             {lessons.map((lesson, index) => (
               <Fragment key={lesson.slug}>
@@ -124,7 +127,10 @@ export async function LessonList({
                   </EditorListItem>
                 </EditorSortableItem>
 
-                <EditorListInsertLine position={index + 1} />
+                <EditorListInsertLine
+                  aria-label={t("Insert lesson")}
+                  position={index + 1}
+                />
               </Fragment>
             ))}
           </EditorListContent>

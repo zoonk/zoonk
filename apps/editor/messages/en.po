@@ -155,10 +155,20 @@ msgctxt "RWzfUY"
 msgid "Add lesson"
 msgstr "Add lesson"
 
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+msgctxt "ZRJz2g"
+msgid "Insert lesson"
+msgstr "Insert lesson"
+
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
 msgctxt "dlQpGl"
 msgid "Add chapter"
 msgstr "Add chapter"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+msgctxt "niU+md"
+msgid "Insert chapter"
+msgstr "Insert chapter"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
 msgctxt "sHQNSR"
