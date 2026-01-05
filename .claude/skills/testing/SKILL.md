@@ -37,6 +37,54 @@ Follow TDD (Test-Driven Development) for all features and bug fixes. **Always wr
 
 Test what users see and do, not implementation details. If your test breaks when you refactor CSS or rename a class, it's testing the wrong thing.
 
+### Preventing Flaky Tests
+
+**CRITICAL: Run new tests multiple times before considering them done.** Flaky tests often pass 90% of the time but fail intermittently. After writing a new E2E test:
+
+```bash
+# Run the test 5+ times to catch flakiness
+for i in {1..5}; do pnpm e2e -- -g "test name" --reporter=line; done
+```
+
+**High-risk scenarios that commonly cause flakiness:**
+
+| Scenario                        | Risk                          | Prevention                                         |
+| ------------------------------- | ----------------------------- | -------------------------------------------------- |
+| Clicking dropdown/menu items    | Animations cause instability  | Wait for item visibility, use `force: true`        |
+| Actions that trigger navigation | Page reload detaches elements | Use `waitForLoadState` or `waitForURL` after click |
+| Form submissions                | Async save operations         | Wait for success indicator before next action      |
+| Clicking items in lists         | List may still be loading     | Wait for specific item with `toBeVisible()` first  |
+| Keyboard navigation             | Focus state transitions       | Wait for focused element before next key press     |
+
+**Defensive patterns for common interactions:**
+
+```typescript
+// RISKY: Dropdown item click without animation handling
+await page.getByRole("menuitem", { name: /settings/i }).click();
+await page.getByRole("menuitem", { name: "Dark mode" }).click();
+
+// SAFE: Wait for submenu, then force click
+await page.getByRole("menuitem", { name: /settings/i }).click();
+await expect(page.getByRole("menuitem", { name: "Dark mode" })).toBeVisible();
+await page.getByRole("menuitem", { name: "Dark mode" }).click({ force: true });
+
+// RISKY: Click that triggers navigation without waiting
+await page.getByRole("button", { name: /save/i }).click();
+await page.getByRole("link", { name: /home/i }).click(); // May fail if save triggers reload
+
+// SAFE: Wait for navigation to complete
+await page.getByRole("button", { name: /save/i }).click();
+await page.waitForLoadState("domcontentloaded");
+await page.getByRole("link", { name: /home/i }).click();
+```
+
+**Before marking a test as complete, ask:**
+
+1. Does this test interact with animated elements (dropdowns, modals, tooltips)?
+2. Does any action trigger navigation or page reload?
+3. Does the test depend on async operations completing?
+4. Have I run this test multiple times to verify it's stable?
+
 ### Avoid Redundant Tests
 
 **Don't write separate tests when a higher-level test already covers the behavior.** If a test proves the final outcome, intermediate steps are implicitly verified.
@@ -161,6 +209,46 @@ await page.waitForURL(/\/dashboard/);
 // BAD: Arbitrary delays
 await page.waitForTimeout(2000);
 ```
+
+### Animated Elements (Dropdowns, Modals, Submenus)
+
+Animated elements with CSS transitions (`slide-in-from-*`, `zoom-in-*`, `fade-in-*`) can cause flaky tests because Playwright considers moving elements "not stable" and won't click them.
+
+**Pattern**: Wait for content to be visible, then use `force: true` to bypass stability checks:
+
+```typescript
+// BAD: Click immediately - element may still be animating
+async function openLanguageSubmenu(page: Page) {
+  await page.getByRole("button", { name: /menu/i }).click();
+  await page.getByRole("menuitem", { name: /language/i }).click();
+}
+
+test("switches locale", async ({ page }) => {
+  await openLanguageSubmenu(page);
+  // This fails intermittently with "element is not stable"
+  await page.getByRole("menuitem", { name: "Español" }).click();
+});
+
+// GOOD: Wait for animation to complete, then force click
+async function openLanguageSubmenu(page: Page) {
+  await page.getByRole("button", { name: /menu/i }).click();
+  await page.getByRole("menuitem", { name: /language/i }).click();
+  // Wait for submenu content to be visible (animation complete)
+  await expect(page.getByRole("menuitem", { name: "English" })).toBeVisible();
+}
+
+test("switches locale", async ({ page }) => {
+  await openLanguageSubmenu(page);
+  // Force click bypasses stability check - safe because we confirmed visibility
+  await page.getByRole("menuitem", { name: "Español" }).click({ force: true });
+});
+```
+
+**When to use `force: true`**:
+
+- After confirming the element is visible via `toBeVisible()`
+- When CSS animations cause repeated "element is not stable" errors
+- Never as a first resort—always investigate why the element is unstable first
 
 ### Verify Destination Content, Not Just URLs
 
