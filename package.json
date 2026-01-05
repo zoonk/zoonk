@@ -16,6 +16,7 @@
   "scripts": {
     "auth:generate": "pnpm dlx @better-auth/cli@latest generate --output=./packages/db/src/prisma/models/accounts.prisma --config=./packages/auth/src/auth.ts",
     "build": "turbo build",
+    "build:e2e": "turbo build:e2e",
     "db:deploy": "turbo db:deploy",
     "db:generate": "turbo db:generate",
     "db:migrate": "turbo db:migrate",
