@@ -1,4 +1,6 @@
+import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import type { Route } from "next";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { getExtracted } from "next-intl/server";
 import { DeleteItemButton } from "@/components/navbar/delete-item-button";
@@ -28,6 +30,12 @@ export async function LessonActions({
     return notFound();
   }
 
+  const canDelete = await hasCoursePermission({
+    headers: await headers(),
+    orgId: lesson.organizationId,
+    permission: lesson.isPublished ? "delete" : "update",
+  });
+
   const chapterUrl =
     `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}` as Route;
 
@@ -40,11 +48,13 @@ export async function LessonActions({
         onToggle={togglePublishAction.bind(null, slugs, lesson.id)}
       />
 
-      <DeleteItemButton
-        onDelete={deleteLessonAction.bind(null, slugs, lesson.id, chapterUrl)}
-        srLabel={t("Delete lesson")}
-        title={t("Delete lesson?")}
-      />
+      {canDelete && (
+        <DeleteItemButton
+          onDelete={deleteLessonAction.bind(null, slugs, lesson.id, chapterUrl)}
+          srLabel={t("Delete lesson")}
+          title={t("Delete lesson?")}
+        />
+      )}
     </LessonActionsContainer>
   );
 }
