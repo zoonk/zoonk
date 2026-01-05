@@ -169,8 +169,6 @@ For detailed examples and patterns, see `.claude/skills/compound-components/SKIL
 
 **E2E builds**: Apps use separate build directories for E2E testing (e.g., `.next-e2e` instead of `.next`). When running E2E tests, build with `E2E_TESTING=true pnpm --filter {app} build` to ensure the correct build directory is used.
 
-**E2E database reset**: When updating seed files, reset the E2E database with `dropdb zoonk_e2e && createdb zoonk_e2e`
-
 For detailed testing patterns, fixtures, and best practices, see `.claude/skills/testing/SKILL.md`
 
 ## i18n

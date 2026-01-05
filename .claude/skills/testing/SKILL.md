@@ -37,35 +37,68 @@ Follow TDD (Test-Driven Development) for all features and bug fixes. **Always wr
 
 Test what users see and do, not implementation details. If your test breaks when you refactor CSS or rename a class, it's testing the wrong thing.
 
-### Avoid Redundant Visibility Tests
+### Avoid Redundant Tests
 
-**Don't write tests that only check if elements are visible when another test already interacts with them.** If a test clicks a button or checks its attributes, visibility is implicitly verified—the interaction would fail if the element wasn't visible.
+**Don't write separate tests when a higher-level test already covers the behavior.** If a test proves the final outcome, intermediate steps are implicitly verified.
+
+**Examples of redundancy to avoid:**
+
+1. **Visibility + interaction**: If you click a button, don't also test that it's visible—the click would fail if it weren't.
+2. **Intermediate + final states**: If "data persists after reload" passes, "auto-save works" is already proven—don't test both.
+3. **Multiple steps in a flow**: If "user completes checkout" passes, you don't need separate tests for each form field.
 
 ```typescript
-// BAD: Redundant test - visibility is already covered by the interaction test below
-test("shows feedback buttons", async ({ page }) => {
-  await expect(page.getByRole("button", { name: /i liked it/i })).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: /i didn't like it/i })
-  ).toBeVisible();
+// BAD: Two redundant tests - persistence proves auto-save worked
+test("auto-saves title changes", async ({ page }) => {
+  await page.getByRole("textbox", { name: /title/i }).fill("New Title");
+  await expect(page.getByText(/saved/i)).toBeVisible();
 });
 
-// GOOD: This test implicitly verifies visibility through interaction
-test("clicking feedback button marks it as pressed", async ({ page }) => {
-  const thumbsUp = page.getByRole("button", { name: /i liked it/i });
-  const thumbsDown = page.getByRole("button", { name: /i didn't like it/i });
+test("persists title after reload", async ({ page }) => {
+  await page.getByRole("textbox", { name: /title/i }).fill("New Title");
+  await expect(page.getByText(/saved/i)).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole("textbox", { name: /title/i })).toHaveValue(
+    "New Title"
+  );
+});
 
-  await expect(thumbsUp).toHaveAttribute("aria-pressed", "false");
-  await thumbsUp.click();
-  await expect(thumbsUp).toHaveAttribute("aria-pressed", "true");
+// GOOD: Single test that implicitly verifies auto-save through persistence
+test("auto-saves and persists title", async ({ page }) => {
+  const titleInput = page.getByRole("textbox", { name: /title/i });
+  await titleInput.fill("New Title");
+  await expect(page.getByText(/saved/i)).toBeVisible();
+
+  await page.reload();
+  await expect(titleInput).toHaveValue("New Title");
 });
 ```
 
-**When visibility-only tests ARE useful:**
+```typescript
+// BAD: Visibility test is redundant when interaction test exists
+test("shows feedback buttons", async ({ page }) => {
+  await expect(page.getByRole("button", { name: /like/i })).toBeVisible();
+});
+
+test("clicking feedback button marks it as pressed", async ({ page }) => {
+  const likeButton = page.getByRole("button", { name: /like/i });
+  await likeButton.click();
+  await expect(likeButton).toHaveAttribute("aria-pressed", "true");
+});
+
+// GOOD: Interaction test implicitly verifies visibility
+test("clicking feedback button marks it as pressed", async ({ page }) => {
+  const likeButton = page.getByRole("button", { name: /like/i });
+  await likeButton.click();
+  await expect(likeButton).toHaveAttribute("aria-pressed", "true");
+});
+```
+
+**When separate tests ARE useful:**
 
 - Testing conditional rendering (element appears/disappears based on state)
-- Waiting for async content to load before proceeding
-- Verifying error messages or notifications appear
+- Testing error states that require different setup than success states
+- Testing independent behaviors that don't share a logical flow
 
 ### Query Priority
 
@@ -151,9 +184,9 @@ test("creates course and redirects to course page", async ({ page }) => {
 
   // Verify destination page shows the created content
   // For editable fields, use toHaveValue:
-  await expect(
-    page.getByRole("textbox", { name: /edit title/i })
-  ).toHaveValue(courseTitle);
+  await expect(page.getByRole("textbox", { name: /edit title/i })).toHaveValue(
+    courseTitle
+  );
 
   // For static text, use toBeVisible:
   await expect(page.getByText(courseDescription)).toBeVisible();
@@ -161,6 +194,7 @@ test("creates course and redirects to course page", async ({ page }) => {
 ```
 
 This ensures:
+
 - The redirect goes to the correct page
 - The page actually renders (not a 404 or error)
 - The created data is properly displayed
@@ -182,6 +216,70 @@ test("authenticated user sees dashboard", async ({ authenticatedPage }) => {
 test("new user sees onboarding", async ({ userWithoutProgress }) => {
   await userWithoutProgress.goto("/");
   await expect(userWithoutProgress.getByText("Get started")).toBeVisible();
+});
+```
+
+### E2E Test Data Setup
+
+Choose the right approach based on what you're testing:
+
+| Scenario                              | Approach            | Why                                        |
+| ------------------------------------- | ------------------- | ------------------------------------------ |
+| Testing a creation wizard/form        | Use UI              | You're testing the creation flow itself    |
+| Testing edit/mutation behavior        | Use Prisma fixtures | Faster, isolated, focused on edit behavior |
+| Testing read-only pages               | Use seeded data     | No isolation needed, seeded data is stable |
+| Testing validation against duplicates | Use seeded data     | Need known duplicates to validate against  |
+
+**Use Prisma fixtures when tests mutate data:**
+
+```typescript
+import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+
+async function createTestCourse() {
+  const org = await prisma.organization.findUniqueOrThrow({
+    where: { slug: "ai" },
+  });
+
+  return courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-${randomUUID().slice(0, 8)}`,
+  });
+}
+
+test("edits course title", async ({ authenticatedPage }) => {
+  const course = await createTestCourse();
+  await authenticatedPage.goto(`/ai/c/en/${course.slug}`);
+  // ... test editing behavior
+});
+```
+
+**Benefits over UI-based setup:**
+
+- ~100x faster (50ms vs 5s per record)
+- Tests only what you intend to test
+- Failures are isolated to the behavior under test
+- Clear arrange/act/assert structure
+
+**Use seeded data for read-only tests:**
+
+```typescript
+// GOOD: Read-only test uses seeded "machine-learning" course
+test("shows course details", async ({ page }) => {
+  await page.goto("/ai/c/en/machine-learning");
+
+  await expect(
+    page.getByRole("heading", { name: /machine learning/i })
+  ).toBeVisible();
+});
+
+// GOOD: Validation test uses seeded course as duplicate target
+test("shows error for duplicate slug", async ({ authenticatedPage }) => {
+  const course = await createTestCourse();
+  await authenticatedPage.goto(`/ai/c/en/${course.slug}`);
+  await authenticatedPage.getByLabel(/url/i).fill("spanish"); // seeded course
+  await expect(authenticatedPage.getByText(/already in use/i)).toBeVisible();
 });
 ```
 
@@ -330,16 +428,6 @@ pnpm --filter @zoonk/editor test -- --run src/data/chapters/create-chapter.test.
 E2E_TESTING=true pnpm --filter main build  # Build for E2E (uses .next-e2e directory)
 pnpm e2e                                    # Run all e2e tests
 ```
-
-### E2E Database Reset
-
-When updating seed files (e.g., adding test users or organizations), reset the E2E database:
-
-```bash
-dropdb zoonk_e2e && createdb zoonk_e2e
-```
-
-**Note**: Prisma's `migrate reset` command may have issues with AI tooling like Claude. Use `dropdb/createdb` instead.
 
 ### E2E Build Directory
 
