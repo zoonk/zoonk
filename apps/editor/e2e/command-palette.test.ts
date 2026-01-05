@@ -264,24 +264,44 @@ test.describe("Command Palette - Keyboard Navigation", () => {
   test("arrow key navigation selects items", async ({ ownerPage }) => {
     await ownerPage.goto("/ai");
     await ownerPage.getByRole("button", { name: /search/i }).click();
-    await expect(ownerPage.getByRole("dialog")).toBeVisible();
 
     const dialog = ownerPage.getByRole("dialog");
+    await expect(dialog).toBeVisible();
 
+    // Wait for cmdk to initialize and auto-select first item
+    const firstOption = dialog.getByRole("option", { selected: true });
+    await expect(firstOption).toBeVisible();
+    const firstName = await firstOption.textContent();
+
+    // Press ArrowDown and wait for selection to change
     await ownerPage.keyboard.press("ArrowDown");
-    await ownerPage.keyboard.press("ArrowDown");
 
-    const selectedOption = dialog.getByRole("option", { selected: true });
-    await expect(selectedOption).toBeVisible();
-    const selectedBefore = await selectedOption.textContent();
+    // Wait for the selection to move to a DIFFERENT item
+    await expect(
+      dialog.getByRole("option", { name: firstName as string, selected: true }),
+    ).not.toBeVisible();
 
+    // Verify a new item is selected
+    const secondOption = dialog.getByRole("option", { selected: true });
+    await expect(secondOption).toBeVisible();
+    const secondName = await secondOption.textContent();
+    expect(secondName).not.toBe(firstName);
+
+    // Press ArrowUp and wait for selection to change back
     await ownerPage.keyboard.press("ArrowUp");
 
-    const selectedAfter = await dialog
-      .getByRole("option", { selected: true })
-      .textContent();
+    // Wait for selection to move away from second item
+    await expect(
+      dialog.getByRole("option", {
+        name: secondName as string,
+        selected: true,
+      }),
+    ).not.toBeVisible();
 
-    expect(selectedBefore).not.toBe(selectedAfter);
+    // Verify we're back on the first item
+    await expect(
+      dialog.getByRole("option", { name: firstName as string, selected: true }),
+    ).toBeVisible();
   });
 
   test("Enter to select navigates correctly", async ({ ownerPage }) => {
