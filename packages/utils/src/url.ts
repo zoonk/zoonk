@@ -3,27 +3,31 @@ import { DEFAULT_LOCALE } from "./locale";
 const AUTH_APP_URL =
   process.env.NEXT_PUBLIC_AUTH_APP_URL || "https://auth.zoonk.com";
 
-const isProduction = process.env.NODE_ENV === "production";
-
 const repoOwner = process.env.GIT_REPO_OWNER || "zoonk";
 const isRepoOwner = process.env.VERCEL_GIT_REPO_OWNER === repoOwner;
+
+/**
+ * Determines the appropriate scheme (http/https) for a domain.
+ * Uses http for localhost, https for everything else.
+ */
+function getScheme(domain: string): "http" | "https" {
+  return domain.startsWith("localhost") ? "http" : "https";
+}
 
 /**
  * Gets the base URL for the current app based on the environment.
  *
  * Uses the following logic:
- * 1. In local development, uses `http://` scheme
- * 2. In Vercel preview environments, uses `VERCEL_URL`
+ * 1. For localhost domains, uses `http://` scheme
+ * 2. In Vercel preview environments, uses `VERCEL_URL` with `https://`
  * 3. Otherwise, uses `NEXT_PUBLIC_APP_DOMAIN` with `https://`
  *
  * @returns The full base URL including scheme (e.g., "https://zoonk.com" or "http://localhost:3000")
  */
 export function getBaseUrl(): string {
-  const scheme = isProduction ? "https" : "http";
-
   // In Vercel preview deployments, use the deployment URL
   if (process.env.VERCEL_ENV === "preview" && process.env.VERCEL_URL) {
-    return `${scheme}://${process.env.VERCEL_URL}`;
+    return `https://${process.env.VERCEL_URL}`;
   }
 
   const domain = process.env.NEXT_PUBLIC_APP_DOMAIN;
@@ -35,7 +39,7 @@ export function getBaseUrl(): string {
     );
   }
 
-  return `${scheme}://${domain}`;
+  return `${getScheme(domain)}://${domain}`;
 }
 
 /**

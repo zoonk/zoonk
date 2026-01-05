@@ -512,11 +512,6 @@ msgid "Alternative titles imported successfully"
 msgstr "Títulos alternativos importados com sucesso"
 
 #: src/components/category-editor.tsx
-msgctxt "1O4/kv"
-msgid "Available categories"
-msgstr "Categorias disponíveis"
-
-#: src/components/category-editor.tsx
 msgctxt "HzJbix"
 msgid "Add category"
 msgstr "Adicionar categoria"
