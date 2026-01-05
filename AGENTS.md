@@ -159,11 +159,35 @@ For detailed examples and patterns, see `.claude/skills/compound-components/SKIL
 
 ## Testing
 
+**CRITICAL**: Before writing ANY test, you MUST:
+
+1. **Read `.claude/skills/testing/SKILL.md`** - Contains mandatory patterns and anti-patterns
+2. **Use the `e2e-test-architect` agent** if available - It knows the testing patterns
+3. **Invoke the `/testing` skill** - Use `Skill(testing)` to get guidance
+
 **Always follow TDD (Test-Driven Development)**: Write a failing test first, then write the code to make it pass.
 
 - **E2E tests**: For app/UI features, use Playwright (`apps/{app}/e2e/`)
 - **Integration tests**: For data functions with Prisma (`apps/{app}/src/data/`)
 - **Unit tests**: For utils, helpers, and UI component edge cases
+
+**E2E Query Rules (MANDATORY)**:
+
+- **ALWAYS use semantic queries**: `getByRole`, `getByLabel`, `getByText`, `getByPlaceholder`
+- **NEVER use implementation details**: `data-slot`, `data-testid`, CSS classes, or `.locator()` with selectors
+- **If semantic queries don't work**: Fix the component's accessibility first (add `aria-label`, proper roles, etc.)
+
+```typescript
+// BAD - Implementation details
+page.locator("[data-slot='badge']");
+page.locator("[data-testid='submit']");
+page.locator(".btn-primary");
+
+// GOOD - Semantic queries
+page.getByRole("button", { name: /submit/i });
+page.getByRole("heading", { name: /welcome/i });
+page.getByLabel(/email/i);
+```
 
 **Exclude** `admin` and `evals` apps from testing requirements (internal tools).
 
