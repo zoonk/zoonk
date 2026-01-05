@@ -29,7 +29,7 @@
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
-    "tmp": "0.2.3",
+    "tmp": "0.2.4",
     "typescript": "^5",
     "vite-tsconfig-paths": "6.0.3",
     "vitest": "4.0.16"
