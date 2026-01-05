@@ -319,28 +319,44 @@ test.describe("Command Palette - Keyboard Navigation", () => {
   test("arrow key navigation selects items", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("button", { name: /search/i }).click();
-    await expect(page.getByRole("dialog")).toBeVisible();
 
     const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
 
-    // Navigate down twice to select an item
+    // Wait for cmdk to initialize and auto-select first item
+    const firstOption = dialog.getByRole("option", { selected: true });
+    await expect(firstOption).toBeVisible();
+    const firstName = await firstOption.textContent();
+
+    // Press ArrowDown and wait for selection to change
     await page.keyboard.press("ArrowDown");
-    await page.keyboard.press("ArrowDown");
 
-    // Verify an item is now selected (aria-selected="true")
-    const selectedOption = dialog.getByRole("option", { selected: true });
-    await expect(selectedOption).toBeVisible();
-    const selectedBefore = await selectedOption.textContent();
+    // Wait for the selection to move to a DIFFERENT item
+    await expect(
+      dialog.getByRole("option", { name: firstName as string, selected: true }),
+    ).not.toBeVisible();
 
-    // Navigate up - selection should move to a different item
+    // Verify a new item is selected
+    const secondOption = dialog.getByRole("option", { selected: true });
+    await expect(secondOption).toBeVisible();
+    const secondName = await secondOption.textContent();
+    expect(secondName).not.toBe(firstName);
+
+    // Press ArrowUp and wait for selection to change back
     await page.keyboard.press("ArrowUp");
 
-    const selectedAfter = await dialog
-      .getByRole("option", { selected: true })
-      .textContent();
+    // Wait for selection to move away from second item
+    await expect(
+      dialog.getByRole("option", {
+        name: secondName as string,
+        selected: true,
+      }),
+    ).not.toBeVisible();
 
-    // Selection should have changed
-    expect(selectedBefore).not.toBe(selectedAfter);
+    // Verify we're back on the first item
+    await expect(
+      dialog.getByRole("option", { name: firstName as string, selected: true }),
+    ).toBeVisible();
   });
 
   test("Enter to select navigates correctly", async ({ page }) => {

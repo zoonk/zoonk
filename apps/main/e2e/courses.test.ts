@@ -1,4 +1,21 @@
+import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { expect, test } from "./fixtures";
+
+async function createUnpublishedCourse() {
+  const org = await prisma.organization.findUniqueOrThrow({
+    where: { slug: "ai" },
+  });
+
+  return courseFixture({
+    isPublished: false,
+    language: "pt",
+    organizationId: org.id,
+    slug: `e2e-unpublished-${randomUUID().slice(0, 8)}`,
+    title: `Curso Não Publicado ${randomUUID().slice(0, 8)}`,
+  });
+}
 
 test.describe("Courses Page - Basic", () => {
   test("shows page content with course cards", async ({ page }) => {
@@ -45,9 +62,13 @@ test.describe("Courses Page - Locale", () => {
   });
 
   test("unpublished courses are hidden", async ({ page }) => {
+    const course = await createUnpublishedCourse();
     await page.goto("/pt/courses");
 
-    // Astronomia is unpublished in PT and should NOT be visible
-    await expect(page.getByText("Astronomia")).not.toBeVisible();
+    // Wait for page to load with expected content
+    await expect(page.getByText("Machine Learning").first()).toBeVisible();
+
+    // Unpublished course should NOT be visible
+    await expect(page.getByText(course.title)).not.toBeVisible();
   });
 });

@@ -48,14 +48,12 @@ test.describe("Content Feedback", () => {
     await dialog.getByLabel(/message/i).fill("This is test feedback");
     await dialog.getByRole("button", { name: /send message/i }).click();
 
-    // Browser validation should prevent submission and show validation message
-    await expect(emailInput).toHaveAttribute("type", "email");
+    // Browser validation prevents submission - verify semantically:
+    // 1. Dialog remains visible (form wasn't submitted)
+    await expect(dialog).toBeVisible();
 
-    const validationMessage = await emailInput.evaluate(
-      (el: HTMLInputElement) => el.validationMessage,
-    );
-
-    expect(validationMessage).toBeTruthy();
+    // 2. Email input is focused (browser focuses invalid fields)
+    await expect(emailInput).toBeFocused();
   });
 
   test("submit failure shows error message", async ({ page }) => {
