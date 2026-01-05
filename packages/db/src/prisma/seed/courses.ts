@@ -6,6 +6,16 @@ export const coursesData = [
   // English courses
   {
     description:
+      "A draft course for E2E testing. This course should only appear in the draft courses list.",
+    imageUrl: null,
+    isPublished: false,
+    language: "en",
+    normalizedTitle: normalizeString("E2E Draft Course"),
+    slug: "e2e-draft-course",
+    title: "E2E Draft Course",
+  },
+  {
+    description:
       "Machine learning enables computers to identify patterns and make predictions from data. Covers supervised and unsupervised techniques, neural networks, and model evaluation. Prepares you to work as a machine learning engineer at tech companies, research labs, or startups building AI products.",
     imageUrl:
       "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
