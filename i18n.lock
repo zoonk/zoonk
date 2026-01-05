@@ -30,7 +30,9 @@ checksums:
     Drag%20to%20reorder/singular: 42c84478eb582f41d72d5bd7b27bb028
     Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
     Add%20lesson/singular: 101a1880b35c68eed6f80e7574f4ff2d
+    Insert%20lesson/singular: 0d943237877e356d1c8aaca8b5360e67
     Add%20chapter/singular: af2ea03f1678fcea1fb005f66f28bfa5
+    Insert%20chapter/singular: cbd41a4782e1254a5c450577cbd7e95d
     We%20couldn't%20load%20the%20chapters.%20Please%20try%20again./singular: 2bfbac73debefc0d7a4ec5c41af9c415
     Failed%20to%20load%20chapters/singular: a462d90fffa946fe5c2aedb6e6fff9b4
     Course%20title%E2%80%A6/singular: 4429de50f5f2d426271e76328c543daf
@@ -98,7 +100,6 @@ checksums:
     Failed%20to%20export/singular: e1ed0bd77fc4509b338f2ed32565012a
     Upload%20a%20JSON%20file%20containing%20alternative%20titles%20to%20import./singular: 7dd18059ccf7955ba864342fdc0d6629
     Alternative%20titles%20imported%20successfully/singular: ca67e17d28382d5ef29bd27219a4104e
-    Available%20categories/singular: bcd678590ae6b4f047a6641bb3c15d6d
     Add%20category/singular: f1ef62efcd0e61cff264dd18047ebd6f
     Category%20options/singular: c968d0f8e27f746f50efeda29834ad74
     Categories/singular: fd4e44f3b1b2bba9ca45f3aef963d042

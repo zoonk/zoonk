@@ -4,6 +4,7 @@ import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import tmp from "tmp";
 import { expect, type Page, test } from "./fixtures";
+import { importFlow } from "./helpers/import-dialog";
 
 function createImportFile(slugs: string[]): string {
   const content = JSON.stringify({ alternativeTitles: slugs }, null, 2);
@@ -61,10 +62,6 @@ async function createManyAlternativeTitleFixtures(
   });
 
   return slugs;
-}
-
-function getMoreOptionsButton(page: Page) {
-  return page.getByRole("button", { name: /more options/i }).first();
 }
 
 test.describe("Alternative Titles Editor", () => {
@@ -240,47 +237,32 @@ test.describe("Alternative Titles Editor", () => {
     const importedSlug2 = `imported-${prefix}-2`;
     const importFile = createImportFile([importedSlug1, importedSlug2]);
 
-    await navigateToCoursePage(authenticatedPage, course.slug);
-    await openAlternativeTitles(authenticatedPage);
+    try {
+      await navigateToCoursePage(authenticatedPage, course.slug);
+      await openAlternativeTitles(authenticatedPage);
 
-    await expect(authenticatedPage.getByText(existingSlug)).toBeVisible();
+      await expect(authenticatedPage.getByText(existingSlug)).toBeVisible();
 
-    await getMoreOptionsButton(authenticatedPage).click();
-    await authenticatedPage.getByRole("menuitem", { name: /import/i }).click();
+      await importFlow(authenticatedPage, importFile, "merge");
 
-    const dialog = authenticatedPage.getByRole("dialog");
-    await expect(dialog).toBeVisible();
+      await expect(authenticatedPage.getByText(existingSlug)).toBeVisible();
+      await expect(authenticatedPage.getByText(importedSlug1)).toBeVisible();
+      await expect(authenticatedPage.getByText(importedSlug2)).toBeVisible();
 
-    const [fileChooser] = await Promise.all([
-      authenticatedPage.waitForEvent("filechooser"),
-      dialog.getByText(/drop file or click to select/i).click(),
-    ]);
+      await authenticatedPage.reload();
 
-    await fileChooser.setFiles(importFile);
+      await expect(
+        authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
+      ).toBeVisible();
 
-    await expect(dialog.getByLabel(/merge/i)).toBeChecked();
+      await openAlternativeTitles(authenticatedPage);
 
-    await dialog.getByRole("button", { name: /^import$/i }).click();
-
-    await expect(dialog).not.toBeVisible();
-
-    await expect(authenticatedPage.getByText(existingSlug)).toBeVisible();
-    await expect(authenticatedPage.getByText(importedSlug1)).toBeVisible();
-    await expect(authenticatedPage.getByText(importedSlug2)).toBeVisible();
-
-    await authenticatedPage.reload();
-
-    await expect(
-      authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
-    ).toBeVisible();
-
-    await openAlternativeTitles(authenticatedPage);
-
-    await expect(authenticatedPage.getByText(existingSlug)).toBeVisible();
-    await expect(authenticatedPage.getByText(importedSlug1)).toBeVisible();
-    await expect(authenticatedPage.getByText(importedSlug2)).toBeVisible();
-
-    fs.unlinkSync(importFile);
+      await expect(authenticatedPage.getByText(existingSlug)).toBeVisible();
+      await expect(authenticatedPage.getByText(importedSlug1)).toBeVisible();
+      await expect(authenticatedPage.getByText(importedSlug2)).toBeVisible();
+    } finally {
+      fs.unlinkSync(importFile);
+    }
   });
 
   test("imports titles in replace mode", async ({ authenticatedPage }) => {
@@ -291,47 +273,32 @@ test.describe("Alternative Titles Editor", () => {
     const importedSlug2 = `replaced-${prefix}-2`;
     const importFile = createImportFile([importedSlug1, importedSlug2]);
 
-    await navigateToCoursePage(authenticatedPage, course.slug);
-    await openAlternativeTitles(authenticatedPage);
+    try {
+      await navigateToCoursePage(authenticatedPage, course.slug);
+      await openAlternativeTitles(authenticatedPage);
 
-    await expect(authenticatedPage.getByText(oldSlug)).toBeVisible();
+      await expect(authenticatedPage.getByText(oldSlug)).toBeVisible();
 
-    await getMoreOptionsButton(authenticatedPage).click();
-    await authenticatedPage.getByRole("menuitem", { name: /import/i }).click();
+      await importFlow(authenticatedPage, importFile, "replace");
 
-    const dialog = authenticatedPage.getByRole("dialog");
-    await expect(dialog).toBeVisible();
+      await expect(authenticatedPage.getByText(oldSlug)).not.toBeVisible();
+      await expect(authenticatedPage.getByText(importedSlug1)).toBeVisible();
+      await expect(authenticatedPage.getByText(importedSlug2)).toBeVisible();
 
-    const [fileChooser] = await Promise.all([
-      authenticatedPage.waitForEvent("filechooser"),
-      dialog.getByText(/drop file or click to select/i).click(),
-    ]);
+      await authenticatedPage.reload();
 
-    await fileChooser.setFiles(importFile);
+      await expect(
+        authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
+      ).toBeVisible();
 
-    await dialog.getByText(/replace \(remove existing first\)/i).click();
+      await openAlternativeTitles(authenticatedPage);
 
-    await dialog.getByRole("button", { name: /^import$/i }).click();
-
-    await expect(dialog).not.toBeVisible();
-
-    await expect(authenticatedPage.getByText(oldSlug)).not.toBeVisible();
-    await expect(authenticatedPage.getByText(importedSlug1)).toBeVisible();
-    await expect(authenticatedPage.getByText(importedSlug2)).toBeVisible();
-
-    await authenticatedPage.reload();
-
-    await expect(
-      authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
-    ).toBeVisible();
-
-    await openAlternativeTitles(authenticatedPage);
-
-    await expect(authenticatedPage.getByText(oldSlug)).not.toBeVisible();
-    await expect(authenticatedPage.getByText(importedSlug1)).toBeVisible();
-    await expect(authenticatedPage.getByText(importedSlug2)).toBeVisible();
-
-    fs.unlinkSync(importFile);
+      await expect(authenticatedPage.getByText(oldSlug)).not.toBeVisible();
+      await expect(authenticatedPage.getByText(importedSlug1)).toBeVisible();
+      await expect(authenticatedPage.getByText(importedSlug2)).toBeVisible();
+    } finally {
+      fs.unlinkSync(importFile);
+    }
   });
 
   test("does not add duplicate titles", async ({ authenticatedPage }) => {
