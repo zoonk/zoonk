@@ -219,6 +219,70 @@ test("new user sees onboarding", async ({ userWithoutProgress }) => {
 });
 ```
 
+### E2E Test Data Setup
+
+Choose the right approach based on what you're testing:
+
+| Scenario                              | Approach            | Why                                        |
+| ------------------------------------- | ------------------- | ------------------------------------------ |
+| Testing a creation wizard/form        | Use UI              | You're testing the creation flow itself    |
+| Testing edit/mutation behavior        | Use Prisma fixtures | Faster, isolated, focused on edit behavior |
+| Testing read-only pages               | Use seeded data     | No isolation needed, seeded data is stable |
+| Testing validation against duplicates | Use seeded data     | Need known duplicates to validate against  |
+
+**Use Prisma fixtures when tests mutate data:**
+
+```typescript
+import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+
+async function createTestCourse() {
+  const org = await prisma.organization.findUniqueOrThrow({
+    where: { slug: "ai" },
+  });
+
+  return courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-${randomUUID().slice(0, 8)}`,
+  });
+}
+
+test("edits course title", async ({ authenticatedPage }) => {
+  const course = await createTestCourse();
+  await authenticatedPage.goto(`/ai/c/en/${course.slug}`);
+  // ... test editing behavior
+});
+```
+
+**Benefits over UI-based setup:**
+
+- ~100x faster (50ms vs 5s per record)
+- Tests only what you intend to test
+- Failures are isolated to the behavior under test
+- Clear arrange/act/assert structure
+
+**Use seeded data for read-only tests:**
+
+```typescript
+// GOOD: Read-only test uses seeded "machine-learning" course
+test("shows course details", async ({ page }) => {
+  await page.goto("/ai/c/en/machine-learning");
+
+  await expect(
+    page.getByRole("heading", { name: /machine learning/i })
+  ).toBeVisible();
+});
+
+// GOOD: Validation test uses seeded course as duplicate target
+test("shows error for duplicate slug", async ({ authenticatedPage }) => {
+  const course = await createTestCourse();
+  await authenticatedPage.goto(`/ai/c/en/${course.slug}`);
+  await authenticatedPage.getByLabel(/url/i).fill("spanish"); // seeded course
+  await expect(authenticatedPage.getByText(/already in use/i)).toBeVisible();
+});
+```
+
 ### Test Organization
 
 ```typescript
