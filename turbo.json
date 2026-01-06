@@ -39,22 +39,10 @@
     "build:e2e": {
       "outputs": [".next-e2e/**", "!.next-e2e/cache/**"]
     },
-    "db:deploy": {
-      "cache": false,
-      "dependsOn": ["^db:deploy"]
-    },
     "db:generate": {
       "cache": false,
       "dependsOn": ["^db:generate"],
       "outputs": ["src/generated/**"]
-    },
-    "db:migrate": {
-      "cache": false,
-      "dependsOn": ["^db:migrate"]
-    },
-    "db:studio": {
-      "cache": false,
-      "dependsOn": ["^db:studio"]
     },
     "db:test:setup": {
       "cache": false,
