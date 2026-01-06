@@ -44,9 +44,9 @@
       "dependsOn": ["^db:generate"],
       "outputs": ["src/generated/**"]
     },
-    "db:test:setup": {
+    "db:setup:test": {
       "cache": false,
-      "dependsOn": ["^db:test:setup"]
+      "dependsOn": ["^db:setup:test"]
     },
     "dev": {
       "cache": false,
@@ -62,11 +62,11 @@
       "persistent": true
     },
     "test": {
-      "dependsOn": ["^db:test:setup", "^test"]
+      "dependsOn": ["^db:setup:test", "^test"]
     },
     "test:watch": {
       "cache": false,
-      "dependsOn": ["^db:test:setup"],
+      "dependsOn": ["^db:setup:test"],
       "persistent": true
     },
     "typecheck": {

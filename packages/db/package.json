@@ -26,15 +26,15 @@
   "private": true,
   "scripts": {
     "db:deploy": "prisma migrate deploy",
-    "db:e2e:generate": "env $(cat .env.e2e | xargs) prisma generate --sql",
-    "db:e2e:seed": "env $(cat .env.e2e | xargs) prisma db seed",
-    "db:e2e:setup": "env $(cat .env.e2e | xargs) prisma migrate deploy",
     "db:generate": "prisma generate --sql",
+    "db:generate:e2e": "env $(cat .env.e2e | xargs) prisma generate --sql",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
     "db:seed": "prisma db seed",
+    "db:seed:e2e": "env $(cat .env.e2e | xargs) prisma db seed",
+    "db:setup:e2e": "env $(cat .env.e2e | xargs) prisma migrate deploy",
+    "db:setup:test": "env $(cat .env.test | xargs) prisma migrate deploy",
     "db:studio": "prisma studio",
-    "db:test:setup": "env $(cat .env.test | xargs) prisma migrate deploy",
     "typecheck": "tsc --noEmit"
   },
   "type": "module"
