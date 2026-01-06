@@ -74,5 +74,17 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
 
+      - name: Setup database
+        run: pnpm --filter @zoonk/db db:e2e:setup
+
+      - name: Generate Prisma client
+        run: pnpm --filter @zoonk/db db:e2e:generate
+
+      - name: Seed database
+        run: pnpm --filter @zoonk/db db:e2e:seed
+
+      - name: Build app
+        run: pnpm --filter editor build:e2e
+
       - name: Run E2E tests
-        run: pnpm e2e --filter=editor
+        run: pnpm --filter editor e2e
