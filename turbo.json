@@ -37,42 +37,16 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "build:e2e": {
-      "dependsOn": ["^db:e2e:seed"],
       "outputs": [".next-e2e/**", "!.next-e2e/cache/**"]
-    },
-    "db:deploy": {
-      "cache": false,
-      "dependsOn": ["^db:deploy"]
-    },
-    "db:e2e:generate": {
-      "cache": false,
-      "dependsOn": ["db:e2e:setup"],
-      "outputs": ["src/generated/**"]
-    },
-    "db:e2e:seed": {
-      "cache": false,
-      "dependsOn": ["db:e2e:generate"]
-    },
-    "db:e2e:setup": {
-      "cache": false,
-      "dependsOn": ["^db:e2e:setup"]
     },
     "db:generate": {
       "cache": false,
       "dependsOn": ["^db:generate"],
       "outputs": ["src/generated/**"]
     },
-    "db:migrate": {
+    "db:setup:test": {
       "cache": false,
-      "dependsOn": ["^db:migrate"]
-    },
-    "db:studio": {
-      "cache": false,
-      "dependsOn": ["^db:studio"]
-    },
-    "db:test:setup": {
-      "cache": false,
-      "dependsOn": ["^db:test:setup"]
+      "dependsOn": ["^db:setup:test"]
     },
     "dev": {
       "cache": false,
@@ -80,8 +54,7 @@
       "persistent": true
     },
     "e2e": {
-      "cache": false,
-      "dependsOn": ["build:e2e"]
+      "passThroughEnv": ["PLAYWRIGHT_*"]
     },
     "start": {
       "cache": false,
@@ -89,11 +62,11 @@
       "persistent": true
     },
     "test": {
-      "dependsOn": ["^db:test:setup", "^test"]
+      "dependsOn": ["^db:setup:test", "^test"]
     },
     "test:watch": {
       "cache": false,
-      "dependsOn": ["^db:test:setup"],
+      "dependsOn": ["^db:setup:test"],
       "persistent": true
     },
     "typecheck": {
