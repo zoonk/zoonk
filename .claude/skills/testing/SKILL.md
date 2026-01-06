@@ -48,13 +48,14 @@ for i in {1..5}; do pnpm e2e -- -g "test name" --reporter=line; done
 
 **High-risk scenarios that commonly cause flakiness:**
 
-| Scenario                        | Risk                          | Prevention                                         |
-| ------------------------------- | ----------------------------- | -------------------------------------------------- |
-| Clicking dropdown/menu items    | Animations cause instability  | Wait for item visibility, use `force: true`        |
-| Actions that trigger navigation | Page reload detaches elements | Use `waitForLoadState` or `waitForURL` after click |
-| Form submissions                | Async save operations         | Wait for success indicator before next action      |
-| Clicking items in lists         | List may still be loading     | Wait for specific item with `toBeVisible()` first  |
-| Keyboard navigation             | Focus state transitions       | Wait for focused element before next key press     |
+| Scenario                         | Risk                          | Prevention                                         |
+| -------------------------------- | ----------------------------- | -------------------------------------------------- |
+| Clicking dropdown/menu items     | Animations cause instability  | Wait for item visibility, use `force: true`        |
+| Actions that trigger navigation  | Page reload detaches elements | Use `waitForLoadState` or `waitForURL` after click |
+| Form submissions                 | Async save operations         | Wait for success indicator before next action      |
+| Clicking items in lists          | List may still be loading     | Wait for specific item with `toBeVisible()` first  |
+| Keyboard navigation              | Focus state transitions       | Wait for focused element before next key press     |
+| Inputs with debounced validation | State changes between actions | Use `waitForLoadState("networkidle")` after fill   |
 
 **Defensive patterns for common interactions:**
 

@@ -106,7 +106,7 @@ test.describe("Chapter Content Page", () => {
 
     await expect(
       authenticatedPage.getByRole("button", { name: /^save$/i }),
-    ).not.toBeVisible();
+    ).toBeDisabled();
   });
 
   test("saves valid slug and redirects", async ({ authenticatedPage }) => {
