@@ -65,6 +65,9 @@
       "dependsOn": ["^db:generate", "^dev"],
       "persistent": true
     },
+    "e2e": {
+      "passThroughEnv": ["PLAYWRIGHT_*"]
+    },
     "start": {
       "cache": false,
       "dependsOn": ["^start"],

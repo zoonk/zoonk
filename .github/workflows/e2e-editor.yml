@@ -84,7 +84,7 @@ jobs:
         run: pnpm --filter @zoonk/db db:e2e:seed
 
       - name: Build app
-        run: pnpm --filter editor build:e2e
+        run: pnpm build:e2e --filter editor
 
       - name: Run E2E tests
-        run: pnpm --filter editor e2e
+        run: pnpm e2e --filter editor
