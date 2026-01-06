@@ -127,7 +127,7 @@ test.describe("Lesson Content Page", () => {
 
     await expect(
       authenticatedPage.getByRole("button", { name: /^save$/i }),
-    ).not.toBeVisible();
+    ).toBeDisabled();
   });
 
   test("saves valid slug and redirects", async ({ authenticatedPage }) => {
@@ -184,10 +184,12 @@ test.describe("Lesson Content Page", () => {
     const uniqueSlug = `enter-test-${randomUUID().slice(0, 8)}`;
 
     await slugInput.fill(uniqueSlug);
+    await authenticatedPage.waitForLoadState("networkidle");
 
-    await expect(
-      authenticatedPage.getByRole("button", { name: /^save$/i }),
-    ).toBeEnabled();
+    const saveButton = authenticatedPage.getByRole("button", {
+      name: /^save$/i,
+    });
+    await expect(saveButton).toBeEnabled();
     await slugInput.press("Enter");
 
     await expect(authenticatedPage).toHaveURL(

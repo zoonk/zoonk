@@ -28,6 +28,7 @@ export function useCourseForm({ orgSlug }: { orgSlug: string }) {
 
   const slugExists = useSlugCheck({
     checkFn: checkSlugExists,
+    initialSlug: "",
     language: formData.language,
     orgSlug,
     slug: formData.slug,
