@@ -2,14 +2,13 @@ import { ErrorView } from "@zoonk/ui/patterns/error";
 import { SUPPORT_URL } from "@zoonk/utils/constants";
 import Link from "next/link";
 import { getExtracted } from "next-intl/server";
-import { Fragment } from "react";
 import {
   EditorDragHandle,
   EditorListAddButton,
   EditorListContent,
   EditorListHeader,
-  EditorListInsertLine,
   EditorListItem,
+  EditorListItemActions,
   EditorListItemContent,
   EditorListItemDescription,
   EditorListItemLink,
@@ -88,50 +87,45 @@ export async function LessonList({
           onReorder={reorderLessonsAction.bind(null, routeParams)}
         >
           <EditorListContent>
-            <EditorListInsertLine
-              aria-label={t("Insert lesson")}
-              position={0}
-            />
-
             {lessons.map((lesson, index) => (
-              <Fragment key={lesson.slug}>
-                <EditorSortableItem id={lesson.id}>
-                  <EditorListItem>
-                    <EditorSortableItemRow>
-                      <EditorDragHandle aria-label={t("Drag to reorder")} />
+              <EditorSortableItem id={lesson.id} key={lesson.slug}>
+                <EditorListItem>
+                  <EditorSortableItemRow>
+                    <EditorDragHandle aria-label={t("Drag to reorder")} />
 
-                      <EditorListItemLink
-                        render={
-                          <Link
-                            href={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${lesson.slug}`}
-                          />
-                        }
-                      >
-                        <EditorListItemPosition>
-                          {index + 1}
-                        </EditorListItemPosition>
+                    <EditorListItemLink
+                      render={
+                        <Link
+                          href={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${lesson.slug}`}
+                        />
+                      }
+                    >
+                      <EditorListItemPosition>
+                        {index + 1}
+                      </EditorListItemPosition>
 
-                        <EditorListItemContent>
-                          <EditorListItemTitle>
-                            {lesson.title}
-                          </EditorListItemTitle>
+                      <EditorListItemContent>
+                        <EditorListItemTitle>
+                          {lesson.title}
+                        </EditorListItemTitle>
 
-                          {lesson.description && (
-                            <EditorListItemDescription>
-                              {lesson.description}
-                            </EditorListItemDescription>
-                          )}
-                        </EditorListItemContent>
-                      </EditorListItemLink>
-                    </EditorSortableItemRow>
-                  </EditorListItem>
-                </EditorSortableItem>
+                        {lesson.description && (
+                          <EditorListItemDescription>
+                            {lesson.description}
+                          </EditorListItemDescription>
+                        )}
+                      </EditorListItemContent>
+                    </EditorListItemLink>
 
-                <EditorListInsertLine
-                  aria-label={t("Insert lesson")}
-                  position={index + 1}
-                />
-              </Fragment>
+                    <EditorListItemActions
+                      aria-label={t("Lesson actions")}
+                      insertAboveLabel={t("Insert above")}
+                      insertBelowLabel={t("Insert below")}
+                      position={index}
+                    />
+                  </EditorSortableItemRow>
+                </EditorListItem>
+              </EditorSortableItem>
             ))}
           </EditorListContent>
         </EditorSortableList>

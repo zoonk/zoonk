@@ -19,12 +19,23 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@zoonk/ui/components/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@zoonk/ui/components/dropdown-menu";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { toast } from "@zoonk/ui/components/sonner";
 import { mergeProps, useRender } from "@zoonk/ui/lib/render";
 import { cn } from "@zoonk/ui/lib/utils";
 import { isNextRedirectError } from "@zoonk/utils/error";
-import { GripVerticalIcon, LoaderCircleIcon, PlusIcon } from "lucide-react";
+import {
+  EllipsisIcon,
+  GripVerticalIcon,
+  LoaderCircleIcon,
+  PlusIcon,
+} from "lucide-react";
 import {
   createContext,
   useCallback,
@@ -171,42 +182,6 @@ function EditorListContent({
 }: React.ComponentProps<"ul">) {
   return (
     <ul className={cn(className)} data-slot="editor-list-content" {...props} />
-  );
-}
-
-function EditorListInsertLine({
-  "aria-label": ariaLabel,
-  position,
-  className,
-  ...props
-}: Omit<React.ComponentProps<"div">, "onClick"> & {
-  "aria-label"?: string;
-  position: number;
-}) {
-  const { pending, handleInsert } = useEditorList();
-
-  return (
-    <div
-      className={cn("group relative h-0", className)}
-      data-slot="editor-list-insert-line"
-      {...props}
-    >
-      <div className="absolute inset-x-4 -top-px z-10 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
-        <div className="h-px flex-1 bg-primary/30" />
-
-        <button
-          aria-label={ariaLabel}
-          className="flex size-5 items-center justify-center rounded-full bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-          disabled={pending}
-          onClick={() => handleInsert(position)}
-          type="button"
-        >
-          <PlusIcon className="size-3" />
-        </button>
-
-        <div className="h-px flex-1 bg-primary/30" />
-      </div>
-    </div>
   );
 }
 
@@ -497,7 +472,7 @@ function EditorSortableItemRow({
   return (
     <div
       className={cn(
-        "flex items-start gap-2 px-4 py-3 transition-colors hover:bg-muted/50",
+        "group/row flex items-start gap-2 px-4 py-3 transition-colors hover:bg-muted/50",
         className,
       )}
       data-slot="editor-sortable-item-row"
@@ -531,6 +506,44 @@ function EditorDragHandle({
     >
       <GripVerticalIcon className="size-4" />
     </button>
+  );
+}
+
+function EditorListItemActions({
+  "aria-label": ariaLabel,
+  insertAboveLabel,
+  insertBelowLabel,
+  position,
+}: {
+  "aria-label": string;
+  insertAboveLabel: string;
+  insertBelowLabel: string;
+  position: number;
+}) {
+  const { pending, handleInsert } = useEditorList();
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger
+        aria-label={ariaLabel}
+        className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-opacity hover:bg-muted hover:text-foreground focus:opacity-100 group-hover/row:opacity-100 [@media(hover:none)]:opacity-100"
+        disabled={pending}
+      >
+        <EllipsisIcon className="size-4" />
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => handleInsert(position)}>
+          <PlusIcon />
+          {insertAboveLabel}
+        </DropdownMenuItem>
+
+        <DropdownMenuItem onClick={() => handleInsert(position + 1)}>
+          <PlusIcon />
+          {insertBelowLabel}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -569,8 +582,8 @@ export {
   EditorListAddButton,
   EditorListContent,
   EditorListHeader,
-  EditorListInsertLine,
   EditorListItem,
+  EditorListItemActions,
   EditorListItemContent,
   EditorListItemDescription,
   EditorListItemLink,
