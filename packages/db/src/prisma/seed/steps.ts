@@ -167,14 +167,14 @@ const stepsData: ActivitySteps[] = [
               feedback:
                 "Correct! Neural networks have interconnected layers of nodes.",
               isCorrect: true,
-              url: "https://example.com/neural-network.png",
+              url: "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
             },
             {
               alt: "Simple flowchart",
               feedback:
                 "This is a flowchart, not a neural network architecture.",
               isCorrect: false,
-              url: "https://example.com/flowchart.png",
+              url: "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/astronomy-OfBov0VHGQPk98amhfAPg4UVrJH114.webp",
             },
           ],
           question: "Which diagram best represents a neural network?",
