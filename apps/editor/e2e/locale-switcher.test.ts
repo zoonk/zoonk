@@ -6,9 +6,17 @@ async function openOrgDropdown(page: Page) {
 
 async function openLanguageSubmenu(page: Page) {
   await openOrgDropdown(page);
-  await page.getByRole("menuitem", { name: /language/i }).click();
-  // Wait for submenu animation to complete (items are visible and stable)
-  await expect(page.getByRole("menuitem", { name: "English" })).toBeVisible();
+
+  const languageMenuItem = page.getByRole("menuitem", { name: /language/i });
+  const englishMenuItem = page.getByRole("menuitem", { name: "English" });
+
+  // Use keyboard navigation to open submenu reliably.
+  // Arrow keys work consistently with Base UI menus.
+  await languageMenuItem.focus();
+  await page.keyboard.press("ArrowRight");
+
+  // Wait for submenu to appear
+  await expect(englishMenuItem).toBeVisible();
 }
 
 test.describe("Locale Switcher", () => {
