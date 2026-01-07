@@ -31,6 +31,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - Prefer short and composable functions
 - Prefer functional programming over OOP
 - Use meaningful variable names and avoid abbreviations
+- Never guess at imports, table names, or conventions—always search for existing patterns first
 
 ## Design Style
 

@@ -38,7 +38,6 @@ export function createBaseConfig(options: BaseConfigOptions) {
         E2E_TESTING: "true",
         ...options.webServerEnv,
       },
-      reuseExistingServer: !process.env.CI,
       timeout: 120_000,
       // Capture port from Next.js stdout: "- Local: http://localhost:12345"
       wait: {

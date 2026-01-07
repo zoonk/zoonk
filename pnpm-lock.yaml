@@ -124,6 +124,9 @@ importers:
       '@types/react-dom':
         specifier: ^19
         version: 19.2.3(@types/react@19.2.7)
+      '@zoonk/db':
+        specifier: workspace:*
+        version: link:../../packages/db
       '@zoonk/e2e':
         specifier: workspace:*
         version: link:../../packages/e2e
