@@ -224,10 +224,21 @@ test.describe("Lesson List", () => {
         .getByRole("button", { exact: true, name: "Drag to reorder" })
         .nth(1);
 
-      const firstBox = await firstHandle.boundingBox();
-      const secondBox = await secondHandle.boundingBox();
+      // Wait for drag handles to have stable bounding boxes (handles hydration timing)
+      type BoundingBox = Awaited<ReturnType<typeof firstHandle.boundingBox>>;
+      const boxes: { first: BoundingBox; second: BoundingBox } = {
+        first: null,
+        second: null,
+      };
 
-      if (!(firstBox && secondBox)) {
+      await expect(async () => {
+        boxes.first = await firstHandle.boundingBox();
+        boxes.second = await secondHandle.boundingBox();
+        expect(boxes.first).toBeTruthy();
+        expect(boxes.second).toBeTruthy();
+      }).toPass({ timeout: 10_000 });
+
+      if (!(boxes.first && boxes.second)) {
         throw new Error("Drag handle bounding boxes should exist");
       }
 
@@ -235,16 +246,16 @@ test.describe("Lesson List", () => {
       await firstHandle.hover();
       await authenticatedPage.mouse.down();
 
-      const targetY = secondBox.y + secondBox.height / 2 + 5;
+      const targetY = boxes.second.y + boxes.second.height / 2 + 5;
 
       await authenticatedPage.mouse.move(
-        firstBox.x + firstBox.width / 2,
-        firstBox.y + 20,
+        boxes.first.x + boxes.first.width / 2,
+        boxes.first.y + 20,
         { steps: 5 },
       );
 
       await authenticatedPage.mouse.move(
-        firstBox.x + firstBox.width / 2,
+        boxes.first.x + boxes.first.width / 2,
         targetY,
         { steps: 10 },
       );
