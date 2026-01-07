@@ -77,6 +77,7 @@
         "noImportCycles": "error",
         "noLeakedRender": "off",
         "noMisusedPromises": "error",
+        "noMultiAssign": "error",
         "noMultiStr": "error",
         "noNextAsyncClientComponent": "error",
         "noProto": "error",
