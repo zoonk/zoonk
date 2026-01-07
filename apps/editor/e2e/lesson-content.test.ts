@@ -61,8 +61,14 @@ test.describe("Lesson Content Page", () => {
     });
     const uniqueTitle = `Test Title ${randomUUID().slice(0, 8)}`;
 
+    // Clear first to ensure we're replacing, not appending
+    await titleInput.clear();
     await titleInput.fill(uniqueTitle);
+    // Verify the value is correct before save triggers
+    await expect(titleInput).toHaveValue(uniqueTitle);
+    // Wait for save to complete and indicator to disappear (ensures full save lifecycle)
     await expect(authenticatedPage.getByText(/^saved$/i)).toBeVisible();
+    await expect(authenticatedPage.getByText(/^saved$/i)).not.toBeVisible();
     await authenticatedPage.waitForLoadState("networkidle");
 
     await authenticatedPage.reload();
@@ -84,8 +90,14 @@ test.describe("Lesson Content Page", () => {
     });
     const uniqueDescription = `Test Description ${randomUUID().slice(0, 8)}`;
 
+    // Clear first to ensure we're replacing, not appending
+    await descriptionInput.clear();
     await descriptionInput.fill(uniqueDescription);
+    // Verify the value is correct before save triggers
+    await expect(descriptionInput).toHaveValue(uniqueDescription);
+    // Wait for save to complete and indicator to disappear (ensures full save lifecycle)
     await expect(authenticatedPage.getByText(/^saved$/i)).toBeVisible();
+    await expect(authenticatedPage.getByText(/^saved$/i)).not.toBeVisible();
     await authenticatedPage.waitForLoadState("networkidle");
 
     await authenticatedPage.reload();
