@@ -9,11 +9,13 @@ async function CallbackHandler({
   searchParams: PageProps<"/[locale]/callback">["searchParams"];
 }) {
   const { redirectTo } = await searchParams;
+  const result = await createOneTimeTokenAction(String(redirectTo));
 
-  // Generate OTT and get the redirect URL
-  const externalUrl = await createOneTimeTokenAction(String(redirectTo));
+  if (!result.success) {
+    return redirect("/untrusted-origin");
+  }
 
-  return redirect(externalUrl);
+  return redirect(result.url);
 }
 
 export default async function CallbackPage(

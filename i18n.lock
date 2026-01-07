@@ -331,8 +331,6 @@ checksums:
     "%7Bcategory%7D%20courses/singular": eafd6f9b1fa97400abe1bfe0c8ee5f19
     "%7Bcategory%7D%20courses.%20The%20best%20%7Bcategory%7D%20online%20courses%2C%20interactive%20lessons%20to%20learn./singular": 2ec8d2bc2e44d9def010ec678286dc88
   61a308caf583f5835f54302028bdae73:
-    You're%20signed%20in!/singular: 7f23ad13626e60f22e13b8777458750d
-    You%20can%20close%20this%20window%20and%20return%20to%20your%20app./singular: 06f96197fc40b30e288b1a9603d15825
     Sign%20in%20to%20Zoonk/singular: e382c90df1855628b2ea78c3d8a62ea9
     me%40myorg.com/singular: 261d9ee525c108801f822ecb3fa7b8e8
     Or/singular: 98639bcbc7b4889bae62ad0ebde740e1
@@ -348,3 +346,8 @@ checksums:
     Change%20email/singular: de3d14d915838e1eb5b04e620de35114
     Enter%20the%20code%20we%20sent%20to%20%7Bemail%7D%3A/singular: 939208aaf736312126ef0fe08cb1faa3
     Check%20your%20email/singular: c51aa8640fe15af146f3e2dd4602e0c1
+    Continue%20to%20Zoonk/singular: 78daa6a6e9d8cebee3648e542a5698c6
+    Unable%20to%20redirect/singular: 3388d8d53433bb039c452fd72024a325
+    For%20your%20safety%2C%20we%20cannot%20redirect%20you%20to%20an%20unrecognized%20destination./singular: f97a1cc22da69727a50bfded6f6206d9
+    The%20destination%20URL%20is%20not%20recognized%20as%20a%20trusted%20Zoonk%20application./singular: 913c9989fcb6a24661c5c9d9d4d32aeb
+    Security%20warning/singular: c506448a9d3c887f05f9c00527d87cf0

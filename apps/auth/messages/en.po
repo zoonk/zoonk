@@ -80,3 +80,28 @@ msgstr "Enter the code we sent to {email}:"
 msgctxt "zx7CKB"
 msgid "Check your email"
 msgstr "Check your email"
+
+#: src/app/[locale]/untrusted-origin/page.tsx
+msgctxt "+e4BVR"
+msgid "Continue to Zoonk"
+msgstr "Continue to Zoonk"
+
+#: src/app/[locale]/untrusted-origin/page.tsx
+msgctxt "1vqX2W"
+msgid "Unable to redirect"
+msgstr "Unable to redirect"
+
+#: src/app/[locale]/untrusted-origin/page.tsx
+msgctxt "585u5Z"
+msgid "For your safety, we cannot redirect you to an unrecognized destination."
+msgstr "For your safety, we cannot redirect you to an unrecognized destination."
+
+#: src/app/[locale]/untrusted-origin/page.tsx
+msgctxt "83K2kN"
+msgid "The destination URL is not recognized as a trusted Zoonk application."
+msgstr "The destination URL is not recognized as a trusted Zoonk application."
+
+#: src/app/[locale]/untrusted-origin/page.tsx
+msgctxt "wkO19y"
+msgid "Security warning"
+msgstr "Security warning"
