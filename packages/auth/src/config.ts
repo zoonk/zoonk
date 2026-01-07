@@ -1,5 +1,8 @@
 import { prisma } from "@zoonk/db";
-import { getVercelTrustedOrigins } from "@zoonk/utils/url";
+import {
+  getDevTrustedOrigins,
+  getVercelTrustedOrigins,
+} from "@zoonk/utils/url";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
 import {
@@ -12,6 +15,7 @@ import type { BetterAuthOptions } from "better-auth/types";
 import { ac, admin, member, owner } from "./permissions";
 import { sendVerificationOTP } from "./plugins/otp";
 import { stripePlugin } from "./plugins/stripe";
+import { trustedOriginPlugin } from "./plugins/trusted-origin";
 import { appleProvider } from "./providers/apple";
 import { googleProvider } from "./providers/google";
 
@@ -46,7 +50,13 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
     },
     expiresIn: 60 * 60 * 24 * SESSION_EXPIRES_IN_DAYS,
   },
-  trustedOrigins: ["https://appleid.apple.com", ...getVercelTrustedOrigins()],
+  trustedOrigins: [
+    "https://appleid.apple.com",
+    "https://zoonk.com",
+    "https://*.zoonk.com",
+    ...getDevTrustedOrigins(),
+    ...getVercelTrustedOrigins(),
+  ],
 };
 
 export const baseAuthPlugins = [
@@ -79,6 +89,7 @@ export const fullPlugins = [
     storeToken: "hashed",
   }),
   stripePlugin(),
+  trustedOriginPlugin(),
   // nextCookies should be the last plugin in the array
   nextCookies(),
 ] as const;

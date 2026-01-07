@@ -6,7 +6,8 @@
     "@zoonk/utils": "workspace:*",
     "better-auth": "1.4.10",
     "jose": "6.1.0",
-    "stripe": "20.1.0"
+    "stripe": "20.1.0",
+    "zod": "4.2.1"
   },
   "devDependencies": {
     "@types/node": "^24",

@@ -3,6 +3,8 @@ import { DEFAULT_LOCALE } from "./locale";
 const AUTH_APP_URL =
   process.env.NEXT_PUBLIC_AUTH_APP_URL || "https://auth.zoonk.com";
 
+const isProduction = process.env.NODE_ENV === "production";
+const isE2E = process.env.E2E_TESTING === "true";
 const repoOwner = process.env.GIT_REPO_OWNER || "zoonk";
 const isRepoOwner = process.env.VERCEL_GIT_REPO_OWNER === repoOwner;
 
@@ -81,4 +83,28 @@ export function getVercelTrustedOrigins(): string[] {
   }
 
   return [];
+}
+
+/**
+ * Returns trusted origins for development/testing environments.
+ *
+ * Includes:
+ * - Localhost ports 3000-3009 when E2E_TESTING=true
+ * - Custom origins from TRUSTED_ORIGINS env var (comma-separated, non-production only)
+ */
+export function getDevTrustedOrigins(): string[] {
+  if (!isE2E && isProduction) {
+    return [];
+  }
+
+  const localhostOrigins = Array.from(
+    { length: 10 },
+    (_, i) => `http://localhost:${3000 + i}`,
+  );
+
+  const customOrigins =
+    process.env.TRUSTED_ORIGINS?.split(",").map((origin) => origin.trim()) ??
+    [];
+
+  return [...localhostOrigins, ...customOrigins];
 }
