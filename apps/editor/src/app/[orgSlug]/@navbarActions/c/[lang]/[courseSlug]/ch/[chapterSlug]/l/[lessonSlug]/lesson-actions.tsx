@@ -38,6 +38,7 @@ export async function LessonActions({
 
   const chapterUrl =
     `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}` as Route;
+  const lessonUrl = `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`;
 
   const slugs = { chapterSlug, courseSlug, lessonSlug };
 
@@ -45,7 +46,7 @@ export async function LessonActions({
     <LessonActionsContainer>
       <PublishToggle
         isPublished={lesson.isPublished}
-        onToggle={togglePublishAction.bind(null, slugs, lesson.id)}
+        onToggle={togglePublishAction.bind(null, slugs, lessonUrl, lesson.id)}
       />
 
       {canDelete && (
