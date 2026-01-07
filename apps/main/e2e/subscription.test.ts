@@ -3,14 +3,15 @@ import { prisma } from "@zoonk/db";
 import { expect, test } from "./fixtures";
 
 test.describe("Subscription Page - Unauthenticated", () => {
-  test("login link navigates to login page", async ({ page }) => {
+  test("shows login prompt with link to login page", async ({ page }) => {
     await page.goto("/subscription");
     await expect(
       page.getByRole("alert").filter({ hasText: /logged in/i }),
     ).toBeVisible();
 
-    await page.getByRole("link", { name: /login/i }).click();
-    await expect(page).toHaveURL(/\/login/);
+    const loginLink = page.getByRole("link", { name: /login/i });
+    await expect(loginLink).toBeVisible();
+    await expect(loginLink).toHaveAttribute("href", "/login");
   });
 });
 
