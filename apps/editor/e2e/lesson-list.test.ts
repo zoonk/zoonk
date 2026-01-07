@@ -162,19 +162,22 @@ test.describe("Lesson List", () => {
         { position: 4, title: "Lesson 4" },
       ]);
 
-      // Hover over the third lesson to reveal the insert button between 2 and 3
-      const thirdLessonItem = authenticatedPage.getByRole("link", {
-        name: /^03.*Lesson 3/i,
+      // Click the actions menu on Lesson 2 to insert below it (at position 2)
+      // Use exact match to avoid matching outer container buttons
+      const actionsButtons = authenticatedPage.getByRole("button", {
+        exact: true,
+        name: "Lesson actions",
       });
 
-      await thirdLessonItem.hover();
+      // Click the second lesson's actions button (index 1)
+      await actionsButtons.nth(1).click();
 
-      // Click the insert button that appears before lesson 3 (position 2)
-      const insertButtons = authenticatedPage.getByRole("button", {
-        name: /insert lesson/i,
+      // Wait for the menu to appear and click "Insert below"
+      const insertBelowItem = authenticatedPage.getByRole("menuitem", {
+        name: /insert below/i,
       });
-
-      await insertButtons.nth(2).click();
+      await insertBelowItem.waitFor({ state: "visible" });
+      await insertBelowItem.click();
 
       // After clicking insert, we're redirected to the lesson edit page
       await expect(

@@ -160,10 +160,12 @@ test.describe("Chapter List", () => {
       // Click the second chapter's actions button (index 1)
       await actionsButtons.nth(1).click();
 
-      // Click "Insert below" to insert after Chapter 2
-      await authenticatedPage
-        .getByRole("menuitem", { name: /insert below/i })
-        .click();
+      // Wait for the menu to appear and click "Insert below"
+      const insertBelowItem = authenticatedPage.getByRole("menuitem", {
+        name: /insert below/i,
+      });
+      await insertBelowItem.waitFor({ state: "visible" });
+      await insertBelowItem.click();
 
       // After clicking insert, we're redirected to the chapter edit page
       await expect(
