@@ -16,7 +16,7 @@ const nextConfig: NextConfig = {
   pageExtensions: ["ts", "tsx"],
   reactCompiler: true,
   turbopack: {
-    root: path.resolve(__dirname, "../.."),
+    root: path.resolve(import.meta.dirname, "../.."),
     rules: {
       // Allow to import MDX files used for AI prompts
       "*.md": {
