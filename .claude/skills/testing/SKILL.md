@@ -288,6 +288,68 @@ This ensures:
 - The page actually renders (not a 404 or error)
 - The created data is properly displayed
 
+### Testing Server Actions
+
+**Server Actions run server-side, so `page.route()` cannot intercept them.** Don't try to mock server action failures with route interception—it only works for client-side HTTP requests.
+
+**To test error states, trigger real validation errors through user input:**
+
+```typescript
+// BAD: Trying to intercept server action (won't work)
+test("shows error on failure", async ({ page }) => {
+  await page.route("**/api/endpoint", (route) =>
+    route.fulfill({ status: 500 })
+  );
+  // This won't affect server actions - they don't go through the browser
+});
+
+// GOOD: Trigger real validation error
+test("shows error for whitespace-only name", async ({ authenticatedPage }) => {
+  const nameInput = authenticatedPage.getByLabel(/name/i);
+  const originalName = await nameInput.inputValue();
+
+  // Whitespace passes HTML5 "required" but fails server-side when trimmed
+  await nameInput.clear();
+  await nameInput.fill("   ");
+
+  await authenticatedPage.getByRole("button", { name: /submit/i }).click();
+
+  await expect(authenticatedPage.getByRole("alert")).toBeVisible();
+
+  // Verify data wasn't corrupted
+  await authenticatedPage.reload();
+  await expect(nameInput).toHaveValue(originalName);
+});
+```
+
+**Common ways to trigger real server-side errors:**
+
+| Error Type            | How to Trigger                                       |
+| --------------------- | ---------------------------------------------------- |
+| Empty/invalid input   | Whitespace-only `"   "` (passes HTML5, fails server) |
+| Duplicate values      | Use existing slug/email from seeded data             |
+| Invalid file          | Upload wrong type or oversized file                  |
+| Missing required data | Remove required field via JavaScript before submit   |
+
+**Always verify persistence after mutations:**
+
+```typescript
+// Success test: verify new data persisted
+await nameInput.fill("New Name");
+await submitButton.click();
+await expect(page.getByText(/success/i)).toBeVisible();
+await page.reload();
+await expect(nameInput).toHaveValue("New Name");
+
+// Error test: verify original data wasn't corrupted
+const originalName = await nameInput.inputValue();
+await nameInput.fill("   "); // Invalid
+await submitButton.click();
+await expect(page.getByRole("alert")).toBeVisible();
+await page.reload();
+await expect(nameInput).toHaveValue(originalName);
+```
+
 ### Authentication Fixtures
 
 Use pre-configured fixtures from `apps/{app}/e2e/fixtures.ts`:
