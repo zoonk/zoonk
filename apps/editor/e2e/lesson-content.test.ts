@@ -63,6 +63,7 @@ test.describe("Lesson Content Page", () => {
 
     await titleInput.fill(uniqueTitle);
     await expect(authenticatedPage.getByText(/^saved$/i)).toBeVisible();
+    await authenticatedPage.waitForLoadState("networkidle");
 
     await authenticatedPage.reload();
     await expect(titleInput).toBeVisible();
@@ -85,6 +86,7 @@ test.describe("Lesson Content Page", () => {
 
     await descriptionInput.fill(uniqueDescription);
     await expect(authenticatedPage.getByText(/^saved$/i)).toBeVisible();
+    await authenticatedPage.waitForLoadState("networkidle");
 
     await authenticatedPage.reload();
     await expect(descriptionInput).toBeVisible();
