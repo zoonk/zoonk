@@ -1,12 +1,11 @@
 export {
   type AuthFixtures,
-  createAuthContext,
+  createAuthFixture,
   createStorageStateFixtures,
   expect,
+  getBaseURL,
   type Page,
   request,
   type StorageStateConfig,
-  signIn,
-  type TestUser,
   test,
 } from "./auth";

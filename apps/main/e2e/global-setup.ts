@@ -1,7 +1,5 @@
 import { mkdir } from "node:fs/promises";
-import { request } from "@zoonk/e2e/fixtures";
-
-const BASE_URL = "http://localhost:3000";
+import { getBaseURL, request } from "@zoonk/e2e/fixtures";
 
 export const E2E_USERS = {
   logout: {
@@ -22,7 +20,7 @@ async function authenticateUser(
   name: string,
   user: { email: string; password: string },
 ): Promise<void> {
-  const context = await request.newContext({ baseURL: BASE_URL });
+  const context = await request.newContext({ baseURL: getBaseURL() });
 
   const response = await context.post("/api/auth/sign-in/email", {
     data: {
