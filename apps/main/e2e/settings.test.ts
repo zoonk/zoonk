@@ -45,19 +45,20 @@ test.describe("Settings page", () => {
       (label) => label.toLowerCase() !== "settings",
     );
 
-    // Verify each dropdown item (except Settings) has a corresponding link on the page
-    // This catches: someone adds to dropdown but forgets the settings list
+    // Verify each dropdown item (except Settings) has exactly one corresponding link on the page
+    // This catches: dropdown item added but list link missing, or duplicate links
+    // Note: Both components use the same useSettings() hook, so they're synced by design.
+    // This test verifies that sync is maintained at runtime.
     await Promise.all(
-      expectedListLabels.map((label) =>
-        expect(
-          page.getByRole("link", { name: new RegExp(`^${label}$`, "i") }),
-        ).toBeVisible(),
-      ),
-    );
+      expectedListLabels.map(async (label) => {
+        const link = page.getByRole("link", {
+          name: new RegExp(`^${label}$`, "i"),
+        });
 
-    // Verify there's exactly one more dropdown item than list items (the Settings link)
-    // This helps catch: someone adds to list but forgets the dropdown
-    expect(dropdownLabels.length).toBe(expectedListLabels.length + 1);
+        await expect(link).toBeVisible();
+        await expect(link).toHaveCount(1);
+      }),
+    );
   });
 
   test("Settings item is active in dropdown when on settings page", async ({
