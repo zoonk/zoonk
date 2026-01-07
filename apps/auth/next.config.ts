@@ -24,7 +24,7 @@ const nextConfig: NextConfig = {
     resolveAlias: {
       ...e2eAliases,
     },
-    root: path.resolve(__dirname, "../.."),
+    root: path.resolve(import.meta.dirname, "../.."),
   },
 };
 

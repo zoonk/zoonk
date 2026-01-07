@@ -50,7 +50,7 @@ const nextConfig: NextConfig = {
     resolveAlias: {
       ...e2eAliases,
     },
-    root: path.resolve(__dirname, "../.."),
+    root: path.resolve(import.meta.dirname, "../.."),
     rules: {
       // Allow to import MDX files used for AI prompts
       "*.md": {
