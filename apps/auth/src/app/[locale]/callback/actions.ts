@@ -4,6 +4,8 @@ import { auth } from "@zoonk/core/auth";
 import { safeAsync } from "@zoonk/utils/error";
 import { headers } from "next/headers";
 
+const TRAILING_SLASHES = /\/+$/;
+
 export type TokenResult =
   | { success: true; url: string }
   | { success: false; error: "UNTRUSTED_ORIGIN" };
@@ -41,7 +43,8 @@ export async function createOneTimeTokenAction(
   }
 
   const redirectUrl = new URL(redirectTo);
-  redirectUrl.pathname = `${redirectUrl.pathname}/${data?.token ?? ""}`;
+  const normalizedPath = redirectUrl.pathname.replace(TRAILING_SLASHES, "");
+  redirectUrl.pathname = `${normalizedPath}/${data?.token ?? ""}`;
 
   return { success: true, url: redirectUrl.toString() };
 }
