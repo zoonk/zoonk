@@ -1,15 +1,31 @@
-import type {
-  Browser,
-  BrowserContext,
-  Fixtures,
-  Page,
-  PlaywrightTestArgs,
-  PlaywrightWorkerArgs,
+import {
+  type Browser,
+  test as baseTest,
+  type Fixtures,
+  type Page,
+  type PlaywrightTestArgs,
+  type PlaywrightWorkerArgs,
 } from "@playwright/test";
 
-export type TestUser = {
-  email: string;
-  password: string;
+export type { Page } from "@playwright/test";
+export { expect, request } from "@playwright/test";
+
+export function getBaseURL(): string {
+  const url = process.env.E2E_BASE_URL;
+
+  if (!url) {
+    throw new Error("E2E_BASE_URL not set. Is the webServer running?");
+  }
+
+  console.info(`[E2E] Running on ${url}`);
+
+  return url;
+}
+
+export type AuthFixtures = {
+  authenticatedPage: Page;
+  logoutPage: Page;
+  userWithoutProgress: Page;
 };
 
 export type StorageStateConfig = {
@@ -21,47 +37,9 @@ export type StorageStateConfig = {
   };
 };
 
-export async function signIn(page: Page, user: TestUser): Promise<void> {
-  const response = await page.request.post("/api/auth/sign-in/email", {
-    data: {
-      email: user.email,
-      password: user.password,
-    },
-  });
-
-  if (!response.ok()) {
-    const body = await response.text();
-    throw new Error(
-      `Sign-in failed for ${user.email}: ${response.status()} - ${body}`,
-    );
-  }
-}
-
-/**
- * Create a new authenticated browser context for a custom user.
- * Useful for tests that need a specific user not covered by fixtures.
- */
-export async function createAuthContext(
-  browser: Browser,
-  user: TestUser,
-): Promise<BrowserContext> {
-  const context = await browser.newContext();
-  const page = await context.newPage();
-  await signIn(page, user);
-  return context;
-}
-
-export type AuthFixtures = {
-  authenticatedPage: Page;
-  logoutPage: Page;
-  userWithoutProgress: Page;
-};
-
 /**
  * Create auth fixtures using pre-generated storage state files.
- * This is faster than API sign-in (~5ms vs ~100ms per test).
- *
- * Apps should generate storage states in their global-setup.ts using signIn().
+ * Apps should generate storage states in their global-setup.ts.
  */
 export function createStorageStateFixtures(
   config: StorageStateConfig,
@@ -94,4 +72,32 @@ export function createStorageStateFixtures(
   };
 }
 
-export { expect, type Page, request, test } from "@playwright/test";
+/**
+ * Create a single auth fixture for a storage state file.
+ * Use this to reduce boilerplate when defining multiple user fixtures.
+ */
+export function createAuthFixture(storageState: string) {
+  return async (
+    { browser }: { browser: Browser },
+    use: (page: Page) => Promise<void>,
+  ) => {
+    const context = await browser.newContext({ storageState });
+    const page = await context.newPage();
+    await use(page);
+    await context.close();
+  };
+}
+
+// Extend test with dynamic baseURL from captured webServer port
+export const test = baseTest.extend({
+  // biome-ignore lint/correctness/noEmptyPattern: Playwright requires destructuring pattern
+  baseURL: async ({}, use) => {
+    const url = process.env.E2E_BASE_URL;
+
+    if (!url) {
+      throw new Error("E2E_BASE_URL not set. Is the webServer running?");
+    }
+
+    await use(url);
+  },
+});

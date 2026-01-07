@@ -375,22 +375,15 @@ test.describe("Command Palette - Accessibility", () => {
 
   test("search input has font-size >= 16px on mobile to prevent iOS Safari zoom", async ({
     browser,
+    baseURL,
   }) => {
     const context = await browser.newContext({
+      storageState: "e2e/.auth/owner.json",
       viewport: { height: 667, width: 375 },
     });
 
     const page = await context.newPage();
-
-    // Login as owner for this test
-    await page.goto("http://localhost:3003/api/auth/sign-in/email", {
-      waitUntil: "networkidle",
-    });
-    await page.request.post("http://localhost:3003/api/auth/sign-in/email", {
-      data: { email: "owner@zoonk.test", password: "password123" },
-    });
-
-    await page.goto("http://localhost:3003/ai");
+    await page.goto(`${baseURL}/ai`);
     await openCommandPalette(page);
 
     const input = page.getByPlaceholder(/search/i);

@@ -54,7 +54,7 @@
       "persistent": true
     },
     "e2e": {
-      "passThroughEnv": ["PLAYWRIGHT_*"]
+      "passThroughEnv": ["PLAYWRIGHT_*", "E2E_BASE_URL"]
     },
     "start": {
       "cache": false,
