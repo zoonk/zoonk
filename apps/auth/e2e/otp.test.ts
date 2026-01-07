@@ -41,7 +41,8 @@ test.describe("OTP Login Flow", () => {
 
     const redirectPromise = page.waitForRequest((request) => {
       const url = request.url();
-      return url.startsWith(REDIRECT_URL) && url.includes("token=");
+      // Token is now appended to the path, not as a query param
+      return url.startsWith(REDIRECT_URL) && url.split("/").length > 4;
     });
 
     await page.getByRole("textbox").click();
@@ -50,9 +51,10 @@ test.describe("OTP Login Flow", () => {
 
     const redirectRequest = await redirectPromise;
     const redirectUrl = new URL(redirectRequest.url());
+    const pathSegments = redirectUrl.pathname.split("/").filter(Boolean);
 
-    expect(redirectUrl.origin + redirectUrl.pathname).toBe(REDIRECT_URL);
-    expect(redirectUrl.searchParams.get("token")).toBeTruthy();
+    expect(`${redirectUrl.origin}/${pathSegments[0]}`).toBe(REDIRECT_URL);
+    expect(pathSegments[1]).toBeTruthy();
   });
 
   test("shows error for invalid OTP", async ({ page }) => {
@@ -78,5 +80,40 @@ test.describe("OTP Login Flow", () => {
     await expect(
       page.getByRole("heading", { name: /sign in or create an account/i }),
     ).toBeVisible();
+  });
+
+  test("handles redirect URL with trailing slash without double slashes", async ({
+    page,
+  }) => {
+    const trailingSlashUrl = "http://localhost:3000/test/";
+    await page.goto(
+      `/en/login?redirectTo=${encodeURIComponent(trailingSlashUrl)}`,
+    );
+    await page.getByLabel(/email/i).fill(TEST_EMAIL);
+    await page.getByRole("button", { name: /^continue$/i }).click();
+    await page.waitForURL(/\/otp/);
+
+    const otp = await getOTPForEmail(TEST_EMAIL);
+
+    if (!otp) {
+      throw new Error("OTP not found in database");
+    }
+
+    const redirectPromise = page.waitForRequest((request) => {
+      const url = request.url();
+      return url.startsWith("http://localhost:3000/test/") && url.length > 27;
+    });
+
+    await page.getByRole("textbox").click();
+    await page.keyboard.type(otp);
+    await page.getByRole("button", { name: /^continue$/i }).click();
+
+    const redirectRequest = await redirectPromise;
+    const redirectUrl = new URL(redirectRequest.url());
+
+    // Verify no double slashes in the path
+    expect(redirectUrl.pathname).not.toContain("//");
+    // Verify token is present
+    expect(redirectUrl.pathname.split("/").filter(Boolean).length).toBe(2);
   });
 });

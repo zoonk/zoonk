@@ -12,12 +12,11 @@ import {
 } from "@zoonk/ui/components/empty";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { AlertCircleIcon } from "lucide-react";
-import Link from "next/link";
-import { redirect, useSearchParams } from "next/navigation";
-import { useExtracted } from "next-intl";
-import { useEffect, useEffectEvent, useState } from "react";
+import { useExtracted, useLocale } from "next-intl";
+import { use, useEffect, useEffectEvent, useState } from "react";
+import { Link, redirect } from "@/i18n/navigation";
 
-type CallbackErrorType = "missing" | "invalid";
+type CallbackErrorType = "invalid";
 
 function CallbackError({ type }: { type: CallbackErrorType }) {
   const t = useExtracted();
@@ -31,13 +30,10 @@ function CallbackError({ type }: { type: CallbackErrorType }) {
           </EmptyMedia>
           <EmptyTitle>{t("Authentication Error")}</EmptyTitle>
           <EmptyDescription>
-            {type === "missing"
-              ? t(
-                  "The authentication token is missing. Please try logging in again.",
-                )
-              : t(
-                  "The authentication token is invalid or expired. Please try logging in again.",
-                )}
+            {type === "invalid" &&
+              t(
+                "The authentication token is invalid or expired. Please try logging in again.",
+              )}
           </EmptyDescription>
         </EmptyHeader>
 
@@ -57,14 +53,14 @@ function CallbackError({ type }: { type: CallbackErrorType }) {
   );
 }
 
-export function CallbackHandler() {
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token");
+export default function AuthCallbackPage(
+  props: PageProps<"/[locale]/auth/callback/[token]">,
+) {
+  const { token } = use(props.params);
+  const locale = useLocale();
   const [error, setError] = useState<CallbackErrorType | null>(null);
 
   const handleVerify = useEffectEvent(async (userToken: string) => {
-    // we're using a client component to properly set session cookies after token verification
-    // on server-side, the session cookies aren't set
     const { error: verifyError } = await authClient.oneTimeToken.verify({
       token: userToken,
     });
@@ -75,16 +71,11 @@ export function CallbackHandler() {
       return;
     }
 
-    redirect("/");
+    redirect({ href: "/", locale });
   });
 
   useEffect(() => {
-    if (token) {
-      void handleVerify(token);
-    } else {
-      console.info("Auth callback: missing token");
-      setError("missing");
-    }
+    void handleVerify(token);
   }, [token]);
 
   if (error) {

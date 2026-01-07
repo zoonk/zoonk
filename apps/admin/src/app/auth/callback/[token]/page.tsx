@@ -12,16 +12,13 @@ import {
 } from "@zoonk/ui/components/empty";
 import { FullPageLoading } from "@zoonk/ui/components/loading";
 import { AlertCircleIcon } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import { useExtracted, useLocale } from "next-intl";
-import { Suspense, useEffect, useEffectEvent, useState } from "react";
-import { Link, redirect } from "@/i18n/navigation";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { use, useEffect, useEffectEvent, useState } from "react";
 
-type CallbackErrorType = "missing" | "invalid";
+type CallbackErrorType = "invalid";
 
 function CallbackError({ type }: { type: CallbackErrorType }) {
-  const t = useExtracted();
-
   return (
     <div className="flex min-h-dvh items-center justify-center p-4">
       <Empty className="border-none">
@@ -29,15 +26,10 @@ function CallbackError({ type }: { type: CallbackErrorType }) {
           <EmptyMedia variant="icon">
             <AlertCircleIcon aria-hidden="true" />
           </EmptyMedia>
-          <EmptyTitle>{t("Authentication Error")}</EmptyTitle>
+          <EmptyTitle>Authentication Error</EmptyTitle>
           <EmptyDescription>
-            {type === "missing"
-              ? t(
-                  "The authentication token is missing. Please try logging in again.",
-                )
-              : t(
-                  "The authentication token is invalid or expired. Please try logging in again.",
-                )}
+            {type === "invalid" &&
+              "The authentication token is invalid or expired. Please try logging in again."}
           </EmptyDescription>
         </EmptyHeader>
 
@@ -46,10 +38,10 @@ function CallbackError({ type }: { type: CallbackErrorType }) {
             className={buttonVariants({ variant: "outline" })}
             href="/login"
           >
-            {t("Return to login")}
+            Return to login
           </Link>
           <p className="text-muted-foreground text-sm">
-            {t("Need help? Contact us at hello@zoonk.com")}
+            Need help? Contact us at hello@zoonk.com
           </p>
         </EmptyContent>
       </Empty>
@@ -57,15 +49,13 @@ function CallbackError({ type }: { type: CallbackErrorType }) {
   );
 }
 
-function CallbackHandler() {
-  const searchParams = useSearchParams();
-  const locale = useLocale();
-  const token = searchParams.get("token");
+export default function AuthCallbackPage(
+  props: PageProps<"/auth/callback/[token]">,
+) {
+  const { token } = use(props.params);
   const [error, setError] = useState<CallbackErrorType | null>(null);
 
   const handleVerify = useEffectEvent(async (userToken: string) => {
-    // we're using a client component to properly set session cookies after token verification
-    // on server-side, the session cookies aren't set
     const { error: verifyError } = await authClient.oneTimeToken.verify({
       token: userToken,
     });
@@ -76,16 +66,11 @@ function CallbackHandler() {
       return;
     }
 
-    redirect({ href: "/", locale });
+    redirect("/");
   });
 
   useEffect(() => {
-    if (token) {
-      void handleVerify(token);
-    } else {
-      console.info("Auth callback: missing token");
-      setError("missing");
-    }
+    void handleVerify(token);
   }, [token]);
 
   if (error) {
@@ -93,12 +78,4 @@ function CallbackHandler() {
   }
 
   return <FullPageLoading />;
-}
-
-export default function AuthCallbackPage() {
-  return (
-    <Suspense fallback={<FullPageLoading />}>
-      <CallbackHandler />
-    </Suspense>
-  );
 }

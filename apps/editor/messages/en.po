@@ -347,27 +347,22 @@ msgctxt "lP29gk"
 msgid "A course with this URL already exists"
 msgstr "A course with this URL already exists"
 
-#: src/app/auth/callback/callback-handler.tsx
+#: src/app/auth/callback/[token]/page.tsx
 msgctxt "57VhQb"
 msgid "Authentication Error"
 msgstr "Authentication Error"
 
-#: src/app/auth/callback/callback-handler.tsx
-msgctxt "ARSMi2"
-msgid "The authentication token is missing. Please try logging in again."
-msgstr "The authentication token is missing. Please try logging in again."
-
-#: src/app/auth/callback/callback-handler.tsx
+#: src/app/auth/callback/[token]/page.tsx
 msgctxt "Le3MTe"
 msgid "Return to login"
 msgstr "Return to login"
 
-#: src/app/auth/callback/callback-handler.tsx
+#: src/app/auth/callback/[token]/page.tsx
 msgctxt "mffe4M"
 msgid "The authentication token is invalid or expired. Please try logging in again."
 msgstr "The authentication token is invalid or expired. Please try logging in again."
 
-#: src/app/auth/callback/callback-handler.tsx
+#: src/app/auth/callback/[token]/page.tsx
 msgctxt "vQjckV"
 msgid "Need help? Contact us at hello@zoonk.com"
 msgstr "Need help? Contact us at hello@zoonk.com"
