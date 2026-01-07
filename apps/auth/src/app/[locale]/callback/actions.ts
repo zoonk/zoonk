@@ -23,7 +23,7 @@ export async function createOneTimeTokenAction(
   );
 
   if (validationError) {
-    console.error("Untrusted origin:", redirectTo);
+    console.error("Untrusted origin:", JSON.stringify(redirectTo));
     return { error: "UNTRUSTED_ORIGIN", success: false };
   }
 
