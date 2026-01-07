@@ -32,7 +32,12 @@ test.describe("Content Feedback", () => {
     await page.getByRole("button", { name: /send feedback/i }).click();
 
     const dialog = page.getByRole("dialog");
-    await dialog.getByLabel(/email/i).fill("test@example.com");
+    const emailInput = dialog.getByLabel(/email/i);
+
+    // Wait for dialog to be fully visible and email input to be enabled
+    await expect(emailInput).toBeEnabled();
+
+    await emailInput.fill("test@example.com");
     await dialog.getByLabel(/message/i).fill("This is test feedback");
     await dialog.getByRole("button", { name: /send message/i }).click();
 
@@ -44,6 +49,10 @@ test.describe("Content Feedback", () => {
 
     const dialog = page.getByRole("dialog");
     const emailInput = dialog.getByLabel(/email/i);
+
+    // Wait for dialog to be fully visible and email input to be enabled
+    await expect(emailInput).toBeEnabled();
+
     await emailInput.fill("invalid-email");
     await dialog.getByLabel(/message/i).fill("This is test feedback");
     await dialog.getByRole("button", { name: /send message/i }).click();
@@ -88,7 +97,12 @@ test.describe("Content Feedback", () => {
     await page.getByRole("button", { name: /send feedback/i }).click();
 
     const dialog = page.getByRole("dialog");
-    await dialog.getByLabel(/email/i).fill("test@example.com");
+    const emailInput = dialog.getByLabel(/email/i);
+
+    // Wait for dialog to be fully visible and email input to be enabled
+    await expect(emailInput).toBeEnabled();
+
+    await emailInput.fill("test@example.com");
     await dialog.getByLabel(/message/i).fill("This is test feedback");
     await dialog.getByRole("button", { name: /send message/i }).click();
 
@@ -111,6 +125,10 @@ test.describe("Content Feedback - Authenticated", () => {
       .click();
 
     const emailInput = authenticatedPage.getByLabel(/email/i);
+
+    // Wait for dialog to be fully visible and email input to be enabled
+    await expect(emailInput).toBeEnabled();
+
     // Should be pre-filled with user's email
     await expect(emailInput).toHaveValue(/e2e-progress@zoonk\.test/);
   });
