@@ -27,6 +27,7 @@ async function navigateToCoursePage(page: Page, slug: string) {
 
 async function openCategoryPopover(page: Page) {
   await page.getByRole("button", { name: /add category/i }).click();
+  await expect(page.getByRole("dialog")).toBeVisible();
 }
 
 function getCategoryOption(page: Page, name: RegExp) {
@@ -232,5 +233,44 @@ test.describe("Course Categories Editor", () => {
     await expect(authenticatedPage.getByText("Arts")).toBeVisible();
     await expect(authenticatedPage.getByText("Science")).toBeVisible();
     await expect(authenticatedPage.getByText("Math")).toBeVisible();
+  });
+
+  // track a regression where the category is not selected after the server action completes
+  test("keeps category selected after server action completes - regression", async ({
+    authenticatedPage,
+  }) => {
+    const course = await createTestCourse();
+    await navigateToCoursePage(authenticatedPage, course.slug);
+
+    await openCategoryPopover(authenticatedPage);
+
+    // Click the category option to select it
+    await getCategoryOption(authenticatedPage, /technology/i).click();
+
+    // Wait for the add button to be enabled (indicates transition completed)
+    const addButton = authenticatedPage.getByRole("button", {
+      name: /add category/i,
+    });
+
+    await expect(addButton).toBeEnabled();
+
+    // Close the popover and wait for it to close
+    await authenticatedPage.keyboard.press("Escape");
+    await expect(authenticatedPage.getByRole("dialog")).not.toBeVisible();
+
+    // Verify the badge is still visible after transition completed
+    // This is the key assertion - if revalidatePath is missing,
+    // the optimistic update reverts and the badge disappears
+    const main = authenticatedPage.getByRole("main");
+    await expect(main.getByText("Technology")).toBeVisible();
+
+    // Verify persistence
+    await authenticatedPage.reload();
+
+    await expect(
+      authenticatedPage.getByRole("textbox", { name: /edit course title/i }),
+    ).toBeVisible();
+
+    await expect(authenticatedPage.getByText("Technology")).toBeVisible();
   });
 });
