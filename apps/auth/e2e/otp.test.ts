@@ -41,7 +41,8 @@ test.describe("OTP Login Flow", () => {
 
     const redirectPromise = page.waitForRequest((request) => {
       const url = request.url();
-      return url.startsWith(REDIRECT_URL) && url.includes("token=");
+      // Token is now appended to the path, not as a query param
+      return url.startsWith(REDIRECT_URL) && url.split("/").length > 4;
     });
 
     await page.getByRole("textbox").click();
@@ -50,9 +51,10 @@ test.describe("OTP Login Flow", () => {
 
     const redirectRequest = await redirectPromise;
     const redirectUrl = new URL(redirectRequest.url());
+    const pathSegments = redirectUrl.pathname.split("/").filter(Boolean);
 
-    expect(redirectUrl.origin + redirectUrl.pathname).toBe(REDIRECT_URL);
-    expect(redirectUrl.searchParams.get("token")).toBeTruthy();
+    expect(`${redirectUrl.origin}/${pathSegments[0]}`).toBe(REDIRECT_URL);
+    expect(pathSegments[1]).toBeTruthy();
   });
 
   test("shows error for invalid OTP", async ({ page }) => {

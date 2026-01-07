@@ -41,7 +41,7 @@ export async function createOneTimeTokenAction(
   }
 
   const redirectUrl = new URL(redirectTo);
-  redirectUrl.searchParams.set("token", data?.token ?? "");
+  redirectUrl.pathname = `${redirectUrl.pathname}/${data?.token ?? ""}`;
 
   return { success: true, url: redirectUrl.toString() };
 }

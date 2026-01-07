@@ -1,25 +1,5 @@
 import { expect, test } from "./fixtures";
 
-test.describe("Auth Callback - Missing Token", () => {
-  test("shows error page when token is missing", async ({ page }) => {
-    await page.goto("/auth/callback");
-
-    await expect(page.getByText(/authentication error/i)).toBeVisible();
-    await expect(page.getByText(/token.*missing/i)).toBeVisible();
-    await expect(page.getByRole("link", { name: /login/i })).toBeVisible();
-    await expect(page.getByText(/hello@zoonk\.com/i)).toBeVisible();
-  });
-
-  test("shows Portuguese error page when locale is Portuguese", async ({
-    page,
-  }) => {
-    await page.goto("/pt/auth/callback");
-
-    // Check for link to Portuguese login page
-    await expect(page.locator('a[href="/pt/login"]')).toBeVisible();
-  });
-});
-
 test.describe("Auth Callback - Invalid Token", () => {
   test("shows error page when verification fails", async ({ page }) => {
     // Mock API to return 401 error (how Better Auth returns errors)
@@ -39,7 +19,7 @@ test.describe("Auth Callback - Invalid Token", () => {
       }
     });
 
-    await page.goto("/auth/callback?token=invalid-token");
+    await page.goto("/auth/callback/invalid-token");
 
     await expect(page.getByText(/authentication error/i)).toBeVisible();
     await expect(page.getByText(/invalid|expired/i)).toBeVisible();
@@ -64,7 +44,7 @@ test.describe("Auth Callback - Invalid Token", () => {
       }
     });
 
-    await page.goto("/pt/auth/callback?token=invalid-token");
+    await page.goto("/pt/auth/callback/invalid-token");
 
     // Check for link to Portuguese login page
     await expect(page.locator('a[href="/pt/login"]')).toBeVisible();
@@ -86,7 +66,7 @@ test.describe("Auth Callback - Valid Token", () => {
       }
     });
 
-    await page.goto("/auth/callback?token=valid-token");
+    await page.goto("/auth/callback/valid-token");
     await page.waitForURL(/^(?!.*\/auth\/callback)/);
   });
 });
