@@ -10,12 +10,19 @@ import { deleteChapter } from "@/data/chapters/delete-chapter";
 import { toggleChapterPublished } from "@/data/chapters/publish-chapter";
 import { getErrorMessage } from "@/lib/error-messages";
 
+type TogglePublishParams = {
+  chapterId: number;
+  chapterSlug: string;
+  chapterUrl: string;
+  courseSlug: string;
+};
+
 export async function togglePublishAction(
-  chapterSlug: string,
-  courseSlug: string,
-  chapterId: number,
+  params: TogglePublishParams,
   isPublished: boolean,
 ): Promise<{ error: string | null }> {
+  const { chapterId, chapterSlug, chapterUrl, courseSlug } = params;
+
   const { error } = await toggleChapterPublished({
     chapterId,
     isPublished,
@@ -31,6 +38,8 @@ export async function togglePublishAction(
       cacheTagCourse({ courseSlug }),
     ]);
   });
+
+  revalidatePath(chapterUrl);
 
   return { error: null };
 }

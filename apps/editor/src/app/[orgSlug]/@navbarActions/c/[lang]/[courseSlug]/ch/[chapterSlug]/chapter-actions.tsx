@@ -37,17 +37,18 @@ export async function ChapterActions({
   });
 
   const courseUrl = `/${orgSlug}/c/${lang}/${courseSlug}` as Route;
+  const chapterUrl = `/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}`;
 
   return (
     <ChapterActionsContainer>
       <PublishToggle
         isPublished={chapter.isPublished}
-        onToggle={togglePublishAction.bind(
-          null,
+        onToggle={togglePublishAction.bind(null, {
+          chapterId: chapter.id,
           chapterSlug,
+          chapterUrl,
           courseSlug,
-          chapter.id,
-        )}
+        })}
       />
 
       {canDelete && (

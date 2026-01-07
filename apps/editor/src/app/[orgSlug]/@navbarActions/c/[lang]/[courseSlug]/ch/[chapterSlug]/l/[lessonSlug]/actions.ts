@@ -16,6 +16,7 @@ import { getErrorMessage } from "@/lib/error-messages";
 
 export async function togglePublishAction(
   slugs: { lessonSlug: string; chapterSlug: string; courseSlug: string },
+  lessonUrl: string,
   lessonId: number,
   isPublished: boolean,
 ): Promise<{ error: string | null }> {
@@ -35,6 +36,8 @@ export async function togglePublishAction(
       cacheTagCourse({ courseSlug: slugs.courseSlug }),
     ]);
   });
+
+  revalidatePath(lessonUrl);
 
   return { error: null };
 }
