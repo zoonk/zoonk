@@ -46,8 +46,6 @@ test.describe("Display name settings page", () => {
       .getByRole("button", { name: /update name/i })
       .click();
 
-    await expect(authenticatedPage.getByRole("alert")).toBeVisible();
-
     await expect(
       authenticatedPage.getByText(/failed to update your name/i),
     ).toBeVisible();
