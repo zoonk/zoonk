@@ -77,14 +77,13 @@ test.describe("Home Page - Performance Section", () => {
     ).toBeVisible();
   });
 
-  test("user without progress sees energy level at 0%", async ({
+  test("user without progress does not see performance section", async ({
     userWithoutProgress,
   }) => {
     await userWithoutProgress.goto("/");
 
-    await expect(userWithoutProgress.getByText(/^performance$/i)).toBeVisible();
     await expect(
-      userWithoutProgress.getByText("Your energy level is 0%"),
-    ).toBeVisible();
+      userWithoutProgress.getByText(/^performance$/i),
+    ).not.toBeVisible();
   });
 });

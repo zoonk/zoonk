@@ -33,6 +33,17 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - Use meaningful variable names and avoid abbreviations
 - Never guess at imports, table names, or conventions—always search for existing patterns first
 
+Important: Before completing a task, make sure to run the following commands:
+
+- `pnpm format`
+- `pnpm lint --write --unsafe`
+- `pnpm typecheck`
+- `pnpm knip`
+- `pnpm test`
+- `pnpm --filter {app} build`
+- `pnpm --filter {app} build:e2e`
+- `pnpm --filter {app} e2e`
+
 ## Design Style
 
 Whenever you're designing something, follow this design style:
