@@ -6,6 +6,7 @@ import {
   cacheTagCourse,
   cacheTagLesson,
 } from "@zoonk/utils/cache";
+import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { lessonSlugExists } from "@/data/lessons/lesson-slug";
 import { updateLesson } from "@/data/lessons/update-lesson";
@@ -20,10 +21,18 @@ export async function checkLessonSlugExists(params: {
 }
 
 export async function updateLessonTitleAction(
-  slugs: { lessonSlug: string; chapterSlug: string; courseSlug: string },
+  slugs: {
+    chapterSlug: string;
+    courseSlug: string;
+    lang: string;
+    lessonSlug: string;
+    orgSlug: string;
+  },
   lessonId: number,
   data: { title: string },
 ): Promise<{ error: string | null }> {
+  const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = slugs;
+
   const { error } = await updateLesson({
     lessonId,
     title: data.title,
@@ -35,20 +44,29 @@ export async function updateLessonTitleAction(
 
   after(async () => {
     await revalidateMainApp([
-      cacheTagLesson({ lessonSlug: slugs.lessonSlug }),
-      cacheTagChapter({ chapterSlug: slugs.chapterSlug }),
-      cacheTagCourse({ courseSlug: slugs.courseSlug }),
+      cacheTagLesson({ lessonSlug }),
+      cacheTagChapter({ chapterSlug }),
+      cacheTagCourse({ courseSlug }),
     ]);
   });
 
+  revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}`);
   return { error: null };
 }
 
 export async function updateLessonDescriptionAction(
-  slugs: { lessonSlug: string; chapterSlug: string; courseSlug: string },
+  slugs: {
+    chapterSlug: string;
+    courseSlug: string;
+    lang: string;
+    lessonSlug: string;
+    orgSlug: string;
+  },
   lessonId: number,
   data: { description: string },
 ): Promise<{ error: string | null }> {
+  const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = slugs;
+
   const { error } = await updateLesson({
     description: data.description,
     lessonId,
@@ -60,12 +78,13 @@ export async function updateLessonDescriptionAction(
 
   after(async () => {
     await revalidateMainApp([
-      cacheTagLesson({ lessonSlug: slugs.lessonSlug }),
-      cacheTagChapter({ chapterSlug: slugs.chapterSlug }),
-      cacheTagCourse({ courseSlug: slugs.courseSlug }),
+      cacheTagLesson({ lessonSlug }),
+      cacheTagChapter({ chapterSlug }),
+      cacheTagCourse({ courseSlug }),
     ]);
   });
 
+  revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}`);
   return { error: null };
 }
 

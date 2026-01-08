@@ -249,4 +249,76 @@ test.describe("Lesson Content Page", () => {
       authenticatedPage.getByRole("textbox", { name: /edit chapter title/i }),
     ).toBeVisible();
   });
+
+  test("updated title shows in chapter lesson list after navigating back", async ({
+    authenticatedPage,
+  }) => {
+    const { chapter, course, lesson } = await createTestLesson();
+    await navigateToLessonPage(
+      authenticatedPage,
+      course.slug,
+      chapter.slug,
+      lesson.slug,
+    );
+
+    const titleInput = authenticatedPage.getByRole("textbox", {
+      name: /edit lesson title/i,
+    });
+    const uniqueTitle = `Updated Lesson ${randomUUID().slice(0, 8)}`;
+
+    await titleInput.clear();
+    await titleInput.fill(uniqueTitle);
+    await expect(authenticatedPage.getByText(/^saved$/i)).toBeVisible();
+    await expect(authenticatedPage.getByText(/^saved$/i)).not.toBeVisible();
+    await authenticatedPage.waitForLoadState("networkidle");
+
+    // Navigate back to chapter page via back link
+    const backLink = authenticatedPage.getByRole("link", {
+      name: chapter.title,
+    });
+    await backLink.click();
+
+    await expect(authenticatedPage).toHaveURL(
+      new RegExp(`/ai/c/en/${course.slug}/ch/${chapter.slug}$`),
+    );
+
+    // Verify the updated title shows in the lesson list
+    await expect(authenticatedPage.getByText(uniqueTitle)).toBeVisible();
+  });
+
+  test("updated description shows in chapter lesson list after navigating back", async ({
+    authenticatedPage,
+  }) => {
+    const { chapter, course, lesson } = await createTestLesson();
+    await navigateToLessonPage(
+      authenticatedPage,
+      course.slug,
+      chapter.slug,
+      lesson.slug,
+    );
+
+    const descriptionInput = authenticatedPage.getByRole("textbox", {
+      name: /edit lesson description/i,
+    });
+    const uniqueDescription = `Updated Description ${randomUUID().slice(0, 8)}`;
+
+    await descriptionInput.clear();
+    await descriptionInput.fill(uniqueDescription);
+    await expect(authenticatedPage.getByText(/^saved$/i)).toBeVisible();
+    await expect(authenticatedPage.getByText(/^saved$/i)).not.toBeVisible();
+    await authenticatedPage.waitForLoadState("networkidle");
+
+    // Navigate back to chapter page via back link
+    const backLink = authenticatedPage.getByRole("link", {
+      name: chapter.title,
+    });
+    await backLink.click();
+
+    await expect(authenticatedPage).toHaveURL(
+      new RegExp(`/ai/c/en/${course.slug}/ch/${chapter.slug}$`),
+    );
+
+    // Verify the updated description shows in the lesson list
+    await expect(authenticatedPage.getByText(uniqueDescription)).toBeVisible();
+  });
 });

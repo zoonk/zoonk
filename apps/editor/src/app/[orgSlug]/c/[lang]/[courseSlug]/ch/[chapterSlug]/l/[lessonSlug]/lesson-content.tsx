@@ -28,7 +28,7 @@ export async function LessonContent({
     return notFound();
   }
 
-  const slugs = { chapterSlug, courseSlug, lessonSlug };
+  const slugs = { chapterSlug, courseSlug, lang, lessonSlug, orgSlug };
 
   return (
     <ContentEditor
