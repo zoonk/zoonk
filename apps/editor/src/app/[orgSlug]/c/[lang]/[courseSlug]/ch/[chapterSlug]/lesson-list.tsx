@@ -12,7 +12,6 @@ import {
   EditorListItemContent,
   EditorListItemDescription,
   EditorListItemLink,
-  EditorListItemPosition,
   EditorListItemTitle,
   EditorListProvider,
   EditorListSpinner,
@@ -91,7 +90,9 @@ export async function LessonList({
               <EditorSortableItem id={lesson.id} key={lesson.slug}>
                 <EditorListItem>
                   <EditorSortableItemRow>
-                    <EditorDragHandle aria-label={t("Drag to reorder")} />
+                    <EditorDragHandle aria-label={t("Drag to reorder")}>
+                      {index + 1}
+                    </EditorDragHandle>
 
                     <EditorListItemLink
                       render={
@@ -100,10 +101,6 @@ export async function LessonList({
                         />
                       }
                     >
-                      <EditorListItemPosition>
-                        {index + 1}
-                      </EditorListItemPosition>
-
                       <EditorListItemContent>
                         <EditorListItemTitle>
                           {lesson.title}

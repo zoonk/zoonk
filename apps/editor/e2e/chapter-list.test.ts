@@ -57,16 +57,17 @@ async function expectChaptersVisible(
   chapters: { position: number; title: string }[],
 ) {
   await Promise.all(
-    chapters.map(({ position, title }) =>
-      expect(
-        page.getByRole("link", {
-          name: new RegExp(
-            `^${String(position).padStart(2, "0")}.*${title}`,
-            "i",
-          ),
-        }),
-      ).toBeVisible(),
-    ),
+    chapters.map(async ({ position, title }) => {
+      // Find the listitem containing both the position number and title link
+      // This verifies they are in the same row
+      const listItem = page.getByRole("listitem").filter({
+        hasText: new RegExp(String(position).padStart(2, "0")),
+      });
+
+      await expect(
+        listItem.getByRole("link", { name: new RegExp(title, "i") }),
+      ).toBeVisible();
+    }),
   );
 }
 
@@ -204,7 +205,7 @@ test.describe("Chapter List", () => {
         { position: 3, title: "Chapter 3" },
       ]);
 
-      // Get the inner drag handle buttons (exact name match to avoid outer container buttons)
+      // Get the drag handle buttons
       const firstHandle = authenticatedPage
         .getByRole("button", { exact: true, name: "Drag to reorder" })
         .first();
@@ -231,7 +232,7 @@ test.describe("Chapter List", () => {
         throw new Error("Drag handle bounding boxes should exist");
       }
 
-      // Perform drag past 8px activation threshold
+      // Perform drag past 8px activation threshold (PointerSensor uses distance)
       await firstHandle.hover();
       await authenticatedPage.mouse.down();
 

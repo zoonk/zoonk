@@ -7,6 +7,7 @@ import {
   DragOverlay,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -30,12 +31,7 @@ import { toast } from "@zoonk/ui/components/sonner";
 import { mergeProps, useRender } from "@zoonk/ui/lib/render";
 import { cn } from "@zoonk/ui/lib/utils";
 import { isNextRedirectError } from "@zoonk/utils/error";
-import {
-  EllipsisIcon,
-  GripVerticalIcon,
-  LoaderCircleIcon,
-  PlusIcon,
-} from "lucide-react";
+import { EllipsisIcon, LoaderCircleIcon, PlusIcon } from "lucide-react";
 import {
   createContext,
   useCallback,
@@ -211,27 +207,6 @@ function EditorListItemLink({
   });
 }
 
-function EditorListItemPosition({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
-  return (
-    <span
-      className={cn(
-        "mt-0.5 font-mono text-muted-foreground text-sm tabular-nums",
-        className,
-      )}
-      data-slot="editor-list-item-position"
-      {...props}
-    >
-      {typeof children === "number"
-        ? String(children).padStart(2, "0")
-        : children}
-    </span>
-  );
-}
-
 function EditorListItemContent({
   className,
   ...props
@@ -317,12 +292,23 @@ function EditorSortableList<T extends SortableItem>({
         distance: 8,
       },
     }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        // Short delay to distinguish tap from drag, with tolerance for slight movement
+        delay: 150,
+        tolerance: 8,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   );
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
+    // Haptic feedback when drag activates
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      navigator.vibrate(10);
+    }
     setActiveId(event.active.id as number);
   }, []);
 
@@ -424,6 +410,15 @@ function EditorSortableList<T extends SortableItem>({
   );
 }
 
+type SortableItemContextValue = {
+  attributes: ReturnType<typeof useSortable>["attributes"];
+  listeners: ReturnType<typeof useSortable>["listeners"];
+};
+
+const EditorSortableItemContext = createContext<
+  SortableItemContextValue | undefined
+>(undefined);
+
 function EditorSortableItem({
   children,
   id,
@@ -445,6 +440,11 @@ function EditorSortableItem({
     transition,
   };
 
+  const contextValue = useMemo<SortableItemContextValue>(
+    () => ({ attributes, listeners }),
+    [attributes, listeners],
+  );
+
   return (
     <div
       className={cn(isDragging && "opacity-50")}
@@ -452,18 +452,13 @@ function EditorSortableItem({
       data-slot="editor-sortable-item"
       ref={setNodeRef}
       style={style}
-      {...attributes}
     >
-      <EditorSortableItemContext.Provider value={listeners}>
+      <EditorSortableItemContext.Provider value={contextValue}>
         {children}
       </EditorSortableItemContext.Provider>
     </div>
   );
 }
-
-const EditorSortableItemContext = createContext<
-  ReturnType<typeof useSortable>["listeners"] | undefined
->(undefined);
 
 function EditorSortableItemRow({
   className,
@@ -482,12 +477,13 @@ function EditorSortableItemRow({
 }
 
 function EditorDragHandle({
+  children,
   className,
   ...props
 }: React.ComponentProps<"button">) {
-  const listeners = useContext(EditorSortableItemContext);
+  const context = useContext(EditorSortableItemContext);
 
-  if (!listeners) {
+  if (!context) {
     throw new Error(
       "EditorDragHandle must be used within an EditorSortableItem.",
     );
@@ -496,15 +492,18 @@ function EditorDragHandle({
   return (
     <button
       className={cn(
-        "mt-1 flex shrink-0 cursor-grab touch-none items-center justify-center text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-none active:cursor-grabbing",
+        "relative flex min-h-11 min-w-11 shrink-0 cursor-grab touch-none select-none items-center justify-center rounded-md font-mono text-muted-foreground text-sm tabular-nums transition-colors before:absolute before:top-1/2 before:left-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2 hover:bg-muted hover:text-foreground focus-visible:bg-muted focus-visible:text-foreground focus-visible:outline-none active:cursor-grabbing active:bg-muted",
         className,
       )}
       data-slot="editor-drag-handle"
       type="button"
-      {...listeners}
+      {...context.attributes}
+      {...context.listeners}
       {...props}
     >
-      <GripVerticalIcon className="size-4" />
+      {typeof children === "number"
+        ? String(children).padStart(2, "0")
+        : children}
     </button>
   );
 }
@@ -587,7 +586,6 @@ export {
   EditorListItemContent,
   EditorListItemDescription,
   EditorListItemLink,
-  EditorListItemPosition,
   EditorListItemTitle,
   EditorListProvider,
   EditorListSkeleton,
