@@ -11,11 +11,16 @@ import {
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { ZapIcon } from "lucide-react";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, getLocale } from "next-intl/server";
 
 export async function EnergyLevel({ energy }: { energy: number }) {
   const t = await getExtracted();
-  const roundedEnergy = Math.round(energy);
+  const locale = await getLocale();
+
+  const formattedEnergy = new Intl.NumberFormat(locale, {
+    maximumFractionDigits: 1,
+    trailingZeroDisplay: "stripIfInteger",
+  }).format(energy);
 
   const description =
     energy < 100
@@ -36,7 +41,7 @@ export async function EnergyLevel({ energy }: { energy: number }) {
 
       <FeatureCardBody>
         <FeatureCardTitle>
-          {t("Your energy level is {value}%", { value: String(roundedEnergy) })}
+          {t("Your energy level is {value}%", { value: formattedEnergy })}
         </FeatureCardTitle>
         <FeatureCardSubtitle>{description}</FeatureCardSubtitle>
       </FeatureCardBody>
