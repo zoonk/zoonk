@@ -40,7 +40,7 @@
   "private": true,
   "scripts": {
     "analyze": "next experimental-analyze",
-    "build": "bash scripts/maybe-migrate.sh && next build",
+    "build": "pnpm --filter @zoonk/db db:deploy && next build",
     "build:e2e": "env $(cat ../../packages/db/.env.e2e | xargs) next build",
     "dev": "next dev",
     "e2e": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test",
