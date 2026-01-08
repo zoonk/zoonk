@@ -226,7 +226,7 @@ function EditorListItemTitle({
 }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("font-medium leading-snug", className)}
+      className={cn("font-medium leading-tight", className)}
       data-slot="editor-list-item-title"
       {...props}
     />
