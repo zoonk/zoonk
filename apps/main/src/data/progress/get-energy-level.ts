@@ -26,12 +26,12 @@ export const getEnergyLevel = cache(
       }),
     );
 
-    if (error) {
+    if (error || !progress) {
       return null;
     }
 
     return {
-      currentEnergy: progress?.currentEnergy ?? 0,
+      currentEnergy: progress.currentEnergy,
     };
   },
 );

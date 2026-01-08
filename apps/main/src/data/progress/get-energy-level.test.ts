@@ -12,12 +12,12 @@ describe("unauthenticated users", () => {
 });
 
 describe("authenticated users", () => {
-  test("returns 0 when user has no progress record", async () => {
+  test("returns null when user has no progress record", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
 
     const result = await getEnergyLevel({ headers });
-    expect(result).toEqual({ currentEnergy: 0 });
+    expect(result).toBeNull();
   });
 
   test("returns energy level when user has progress record", async () => {
