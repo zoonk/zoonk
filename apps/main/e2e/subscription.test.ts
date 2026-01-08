@@ -30,8 +30,6 @@ test.describe("Subscription Page - No Subscription", () => {
     await expect(
       authenticatedPage.getByRole("button", { name: /upgrade/i }),
     ).toBeVisible();
-
-    await expect(authenticatedPage.getByText(/upgrade to plus/i)).toBeVisible();
   });
 
   test("upgrade button shows loading state when clicked", async ({
@@ -61,7 +59,7 @@ test.describe("Subscription Page - With Subscription", () => {
 
     const subscription = await prisma.subscription.create({
       data: {
-        plan: "plus",
+        plan: "hobby",
         referenceId: String(user.id),
         status: "active",
         stripeCustomerId: `cus_test_e2e_${uniqueId}`,
@@ -81,7 +79,7 @@ test.describe("Subscription Page - With Subscription", () => {
       await userWithoutProgress.goto("/subscription");
 
       await expect(
-        userWithoutProgress.getByText(/you.re on zoonk plus/i),
+        userWithoutProgress.getByText(/your subscription is active/i),
       ).toBeVisible();
 
       const manageButton = userWithoutProgress.getByRole("button", {

@@ -22,9 +22,9 @@ export function stripePlugin() {
       }),
       plans: [
         {
-          annualDiscountLookupKey: "plus_yearly",
-          lookupKey: "plus_monthly",
-          name: "plus",
+          annualDiscountLookupKey: "hobby_yearly",
+          lookupKey: "hobby_monthly",
+          name: "hobby",
         },
       ],
     },

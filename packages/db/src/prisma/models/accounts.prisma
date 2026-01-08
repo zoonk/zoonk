@@ -141,6 +141,9 @@ model Subscription {
   trialStart           DateTime? @map("trial_start")
   trialEnd             DateTime? @map("trial_end")
   cancelAtPeriodEnd    Boolean?  @default(false) @map("cancel_at_period_end")
+  cancelAt             DateTime? @map("cancel_at")
+  canceledAt           DateTime? @map("canceled_at")
+  endedAt              DateTime? @map("ended_at")
   seats                Int?
 
   @@map("subscriptions")

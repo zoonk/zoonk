@@ -454,19 +454,14 @@ msgid "Remove ads, unlock unlimited lessons, and track your progress."
 msgstr "Elimina los anuncios, desbloquea lecciones ilimitadas y haz seguimiento de tu progreso."
 
 #: src/app/[locale]/(settings)/subscription/subscription-page.tsx
-msgctxt "igjTln"
-msgid "Upgrade to Plus"
-msgstr "Mejorar a Plus"
-
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
-msgctxt "iMhTwm"
-msgid "You’re on Zoonk Plus"
-msgstr "Estás en Zoonk Plus"
-
-#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
 msgctxt "s1ZXI0"
 msgid "Unable to update your subscription. Contact us at hello@zoonk.com"
 msgstr "No se pudo actualizar tu suscripción. Contacta con nosotros en contacto@zoonk.com"
+
+#: src/app/[locale]/(settings)/subscription/subscription-page.tsx
+msgctxt "YCSaAY"
+msgid "Your subscription is active"
+msgstr "Tu suscripción está activa"
 
 #: src/app/[locale]/(settings)/support/page.tsx
 #: src/app/[locale]/(settings)/support/support-content.tsx

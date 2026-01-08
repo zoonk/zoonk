@@ -23,8 +23,9 @@ export function SubscriptionPage() {
   const isLoading = state === "loading";
   const hasError = state === "error";
 
-  const title = subscription ? t("You’re on Zoonk Plus") : t("Upgrade to Plus");
+  const title = subscription ? t("Your subscription is active") : t("Upgrade");
   const action = subscription ? t("Manage subscription") : t("Upgrade");
+
   const description = subscription
     ? t("No ads, unlimited lessons, and full progress tracking.")
     : t("Remove ads, unlock unlimited lessons, and track your progress.");
@@ -34,7 +35,7 @@ export function SubscriptionPage() {
 
     const { error } = await authClient.subscription.upgrade({
       cancelUrl: "/subscription",
-      plan: "plus",
+      plan: "hobby",
       successUrl: "/subscription",
     });
 
