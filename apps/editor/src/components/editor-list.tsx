@@ -190,7 +190,6 @@ function EditorListItem({ className, ...props }: React.ComponentProps<"li">) {
 function EditorListItemLink({
   className,
   render,
-  style,
   ...props
 }: useRender.ComponentProps<"a">) {
   return useRender({
@@ -198,11 +197,6 @@ function EditorListItemLink({
     props: mergeProps<"a">(
       {
         className: cn("flex min-w-0 flex-1 items-start gap-4", className),
-        style: {
-          // Prevent iOS context menu on long-press (allows row drag to work)
-          WebkitTouchCallout: "none",
-          ...style,
-        },
       },
       props,
     ),
@@ -300,8 +294,9 @@ function EditorSortableList<T extends SortableItem>({
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 450,
-        tolerance: 5,
+        // Short delay to distinguish tap from drag, with tolerance for slight movement
+        delay: 150,
+        tolerance: 8,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -467,11 +462,8 @@ function EditorSortableItem({
 
 function EditorSortableItemRow({
   className,
-  style,
   ...props
 }: React.ComponentProps<"div">) {
-  const context = useContext(EditorSortableItemContext);
-
   return (
     <div
       className={cn(
@@ -479,13 +471,6 @@ function EditorSortableItemRow({
         className,
       )}
       data-slot="editor-sortable-item-row"
-      style={{
-        // Prevent iOS context menu on long-press
-        WebkitTouchCallout: "none",
-        WebkitUserSelect: "none",
-        ...style,
-      }}
-      {...context?.listeners}
       {...props}
     />
   );
@@ -507,7 +492,7 @@ function EditorDragHandle({
   return (
     <button
       className={cn(
-        "relative flex min-h-11 min-w-11 shrink-0 cursor-grab select-none items-center justify-center rounded-md font-mono text-muted-foreground text-sm tabular-nums transition-colors before:absolute before:top-1/2 before:left-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2 hover:bg-muted hover:text-foreground focus-visible:bg-muted focus-visible:text-foreground focus-visible:outline-none active:cursor-grabbing active:bg-muted",
+        "relative flex min-h-11 min-w-11 shrink-0 cursor-grab touch-none select-none items-center justify-center rounded-md font-mono text-muted-foreground text-sm tabular-nums transition-colors before:absolute before:top-1/2 before:left-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2 hover:bg-muted hover:text-foreground focus-visible:bg-muted focus-visible:text-foreground focus-visible:outline-none active:cursor-grabbing active:bg-muted",
         className,
       )}
       data-slot="editor-drag-handle"
