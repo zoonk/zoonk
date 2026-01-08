@@ -62,7 +62,7 @@ export function CourseListClient({
 
   return (
     <>
-      <CourseListGroup>
+      <CourseListGroup layout="list">
         {courses.map((course) => (
           <CourseListItemView
             course={toCourseListItem(course)}

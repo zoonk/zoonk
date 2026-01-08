@@ -49,7 +49,7 @@ export default async function CategoryCourses({
   const courses = await listCourses({ category, language: locale });
 
   return (
-    <Container>
+    <Container variant="list">
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>{header.title}</ContainerTitle>

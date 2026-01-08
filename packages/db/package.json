@@ -30,6 +30,7 @@
     "db:generate:e2e": "env $(cat .env.e2e | xargs) prisma generate --sql",
     "db:migrate": "prisma migrate dev",
     "db:reset": "prisma migrate reset",
+    "db:reset:e2e": "env $(cat .env.e2e | xargs) prisma migrate reset",
     "db:seed": "prisma db seed",
     "db:seed:e2e": "env $(cat .env.e2e | xargs) prisma db seed",
     "db:setup:e2e": "env $(cat .env.e2e | xargs) prisma migrate deploy",

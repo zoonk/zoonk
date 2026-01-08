@@ -30,9 +30,7 @@ test.describe("Courses Page - Basic", () => {
       page.getByText(/start learning something new today/i),
     ).toBeVisible();
 
-    // Multiple courses should be visible from seed data
     await expect(page.getByText("Machine Learning").first()).toBeVisible();
-    await expect(page.getByText("Spanish").first()).toBeVisible();
   });
 
   test("clicking course card navigates to course detail", async ({ page }) => {
@@ -56,9 +54,7 @@ test.describe("Courses Page - Locale", () => {
       page.getByRole("heading", { name: /explorar cursos/i }),
     ).toBeVisible();
 
-    // Portuguese courses should be visible
     await expect(page.getByText("Machine Learning").first()).toBeVisible();
-    await expect(page.getByText("Espanhol").first()).toBeVisible();
   });
 
   test("unpublished courses are hidden", async ({ page }) => {

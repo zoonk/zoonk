@@ -61,7 +61,7 @@ export async function UserCourseList() {
   }
 
   return (
-    <CourseListGroup>
+    <CourseListGroup layout="list">
       {courses.map((course) => (
         <CourseListItemView
           course={toCourseListItem(course)}
@@ -89,5 +89,5 @@ export async function UserCourseList() {
 }
 
 export function UserCourseListSkeleton() {
-  return <CourseListSkeleton count={5} />;
+  return <CourseListSkeleton />;
 }
