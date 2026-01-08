@@ -204,6 +204,20 @@ checksums:
     Support/singular: 55aab5fd0f31a9cb055a2edeeedfaf63
     Subscription/singular: ba9f3675e18987d067d48533c8897343
     This%20content%20was%20generated%20by%20AI.%20It%20may%20contain%20errors%20or%20inaccuracies%20and%20should%20not%20be%20considered%20professional%20advice./singular: 269e7c16a722903b9b434f28aa6cf617
+    Green/singular: 482ff383a4258357ba404f283682471d
+    Yellow/singular: 15d533755d35af887dfa584975549fda
+    "%7Bvalue%7D%20BP%20to%20next%20level/singular": dc80ce93407f21e5e909760ec2c9aaef
+    Red/singular: bace0083b78cdb188523bc4abc7b55c6
+    Brown/singular: 82d5fc088538ffd2a24581d1ca1836ef
+    Belt%20level/singular: c1a910b105280d7d27f3c5061bea6213
+    Blue/singular: a5cf034b2d370a976119335cd99f4217
+    Orange/singular: 836094fa3fcf7488957f6d7cba7c1f60
+    White/singular: 5d3dd2b57ed2fc668362b9b9efd8fb41
+    Max%20level%20reached/singular: 5bfdf2d9ba3929b456dcf5c253315e92
+    Purple/singular: 547ba93b6f68317e2dfbafb16cabc30f
+    "%7Bcolor%7D%20Belt%20-%20Level%20%7Blevel%7D/singular": abb5a7600bd66f523906425beffbaff4
+    Black/singular: 0a78282fb00e09a335608b154ffa01de
+    Gray/singular: 54ec745c22b59509822468ba82070d74
     Continue%20learning/singular: ff5ff528cbacf657af36fb9b711431d6
     Next%3A%20%7Bactivity%7D/singular: 9208679843466247d2161793249e5eda
     Activity/singular: 1948763de8e531483a798b68195e297e
@@ -217,7 +231,6 @@ checksums:
     Explore%20courses/singular: 3a60fa1d4a1a6cfffcc0573e3366cd35
     Explore%20all%20Zoonk%20courses%20to%20learn%20anything%20using%20AI.%20Find%20interactive%20lessons%2C%20challenges%2C%20and%20activities%20to%20learn%20subjects%20like%20science%2C%20math%2C%20technology%2C%20and%20more./singular: c3f4a7dfd17b4523b5535f40170c7731
     Energy%20level/singular: 9c2b27fe5529d52a24e9cff65feda402
-    "%7Bvalue%7D%25/singular": 35cbe4d3fffd3e6b5415eea333f532d7
     Keep%20learning%20to%20increase%20it/singular: a3c3f15ac29089d9448b0971126cabf7
     Your%20energy%20level%20is%20%7Bvalue%7D%25/singular: ca18bb24c0e7c81836adda3a098e20f7
     Keep%20learning%20to%20maintain%20it/singular: 0d21c6a7c014a9e42e97c37d4e8d9674

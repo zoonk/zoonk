@@ -77,6 +77,20 @@ test.describe("Home Page - Performance Section", () => {
     ).toBeVisible();
   });
 
+  test("authenticated user with progress sees belt level", async ({
+    authenticatedPage,
+  }) => {
+    await authenticatedPage.goto("/");
+
+    await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
+    await expect(
+      authenticatedPage.getByText("Orange Belt - Level 8"),
+    ).toBeVisible();
+    await expect(
+      authenticatedPage.getByText("500 BP to next level"),
+    ).toBeVisible();
+  });
+
   test("user without progress does not see performance section", async ({
     userWithoutProgress,
   }) => {

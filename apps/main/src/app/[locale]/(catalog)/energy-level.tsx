@@ -28,8 +28,8 @@ export async function EnergyLevel({ energy }: { energy: number }) {
       : t("Keep learning to maintain it");
 
   return (
-    <FeatureCard className="w-full max-w-xs">
-      <FeatureCardHeader className="text-orange-500">
+    <FeatureCard className="w-full">
+      <FeatureCardHeader className="text-energy">
         <FeatureCardHeaderContent>
           <FeatureCardIcon>
             <ZapIcon />
@@ -51,7 +51,7 @@ export async function EnergyLevel({ energy }: { energy: number }) {
 
 export function EnergyLevelSkeleton() {
   return (
-    <FeatureCard className="w-full max-w-xs">
+    <FeatureCard className="w-full">
       <Skeleton className="h-5 w-28" />
 
       <FeatureCardBody className="gap-1">
