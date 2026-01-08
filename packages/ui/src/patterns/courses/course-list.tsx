@@ -70,10 +70,18 @@ export function CourseListGroup({
   );
 }
 
-export function CourseListSkeleton({ count = 12 }: { count?: number }) {
+export function CourseListSkeleton({
+  count,
+  layout = "list",
+}: {
+  count?: number;
+  layout?: ItemGroupProps["layout"];
+}) {
+  const defaultCount = layout === "list" ? 5 : 12;
+
   return (
-    <ItemGroup layout="grid">
-      {Array.from({ length: count }).map((_, index) => (
+    <ItemGroup layout={layout}>
+      {Array.from({ length: count ?? defaultCount }).map((_, index) => (
         <Item key={index}>
           <ItemMedia
             className="size-16 translate-y-0.5 self-start"

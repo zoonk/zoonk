@@ -39,7 +39,7 @@ export default async function Courses({
   const courses = await listCourses({ language: locale });
 
   return (
-    <Container>
+    <Container variant="list">
       <ContainerHeader>
         <ContainerHeaderGroup>
           <ContainerTitle>{t("Explore courses")}</ContainerTitle>

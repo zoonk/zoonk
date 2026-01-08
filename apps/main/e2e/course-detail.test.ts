@@ -45,10 +45,7 @@ test.describe("Course Detail Page - Locale", () => {
   }) => {
     await page.goto("/pt/courses");
 
-    await page
-      .getByRole("link", { name: /machine learning/i })
-      .first()
-      .click();
+    await page.getByRole("link", { name: /^Machine Learning/ }).click();
 
     await expect(page).toHaveURL(/\/pt\/b\/ai\/c\/machine-learning/);
 

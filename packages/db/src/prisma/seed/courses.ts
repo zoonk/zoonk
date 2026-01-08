@@ -77,6 +77,156 @@ export const coursesData = [
     slug: "data-science",
     title: "Data Science",
   },
+  {
+    description:
+      "Learn the fundamentals of economics including microeconomics, macroeconomics, market structures, and economic policy. Understand how economies function and make informed financial decisions.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Introduction to Economics"),
+    slug: "introduction-to-economics",
+    title: "Introduction to Economics",
+  },
+  {
+    description:
+      "Master digital photography from camera basics to advanced composition techniques. Learn lighting, post-processing, and develop your artistic vision.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Digital Photography"),
+    slug: "digital-photography",
+    title: "Digital Photography",
+  },
+  {
+    description:
+      "Understand the principles of nutrition and how food affects your health. Learn about macronutrients, micronutrients, meal planning, and evidence-based dietary guidelines.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Nutrition Fundamentals"),
+    slug: "nutrition-fundamentals",
+    title: "Nutrition Fundamentals",
+  },
+  {
+    description:
+      "Explore the history and techniques of Western philosophy. From ancient Greek thinkers to modern existentialism, develop critical thinking and analytical skills.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Philosophy"),
+    slug: "philosophy",
+    title: "Philosophy",
+  },
+  {
+    description:
+      "Learn to play guitar from scratch. Covers chords, strumming patterns, fingerpicking, music theory, and popular songs across various genres.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Guitar for Beginners"),
+    slug: "guitar-for-beginners",
+    title: "Guitar for Beginners",
+  },
+  {
+    description:
+      "Develop essential public speaking skills. Learn to structure presentations, engage audiences, overcome stage fright, and communicate with confidence.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Public Speaking"),
+    slug: "public-speaking",
+    title: "Public Speaking",
+  },
+  {
+    description:
+      "Introduction to psychology covering cognition, behavior, development, social interactions, and mental health. Understand how the human mind works.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Psychology 101"),
+    slug: "psychology-101",
+    title: "Psychology 101",
+  },
+  {
+    description:
+      "Learn calculus from limits and derivatives to integrals and series. Build a strong mathematical foundation for science and engineering fields.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Calculus"),
+    slug: "calculus",
+    title: "Calculus",
+  },
+  {
+    description:
+      "Master the art of creative writing. Learn storytelling techniques, character development, dialogue, and how to craft compelling narratives.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Creative Writing"),
+    slug: "creative-writing",
+    title: "Creative Writing",
+  },
+  {
+    description:
+      "Understand climate science and environmental challenges. Learn about ecosystems, sustainability, renewable energy, and how to address climate change.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Environmental Science"),
+    slug: "environmental-science",
+    title: "Environmental Science",
+  },
+  {
+    description:
+      "Learn UI/UX design principles and modern design tools. Create user-centered interfaces, wireframes, prototypes, and conduct usability testing.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("UI/UX Design"),
+    slug: "ui-ux-design",
+    title: "UI/UX Design",
+  },
+  {
+    description:
+      "Explore world history from ancient civilizations to modern times. Understand key events, movements, and figures that shaped our world.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("World History"),
+    slug: "world-history",
+    title: "World History",
+  },
+  {
+    description:
+      "Master personal finance including budgeting, investing, retirement planning, and debt management. Build wealth and achieve financial independence.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Personal Finance"),
+    slug: "personal-finance",
+    title: "Personal Finance",
+  },
+  {
+    description:
+      "Learn Japanese from basic hiragana and katakana to conversational fluency. Covers grammar, vocabulary, kanji, and cultural context.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Japanese Language"),
+    slug: "japanese-language",
+    title: "Japanese Language",
+  },
+  {
+    description:
+      "Introduction to biology covering cells, genetics, evolution, ecology, and human anatomy. Understand the fundamental principles of life.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Biology Essentials"),
+    slug: "biology-essentials",
+    title: "Biology Essentials",
+  },
 
   // Portuguese courses
   {
@@ -111,6 +261,186 @@ export const coursesData = [
     normalizedTitle: normalizeString("Astronomia"),
     slug: "astronomia",
     title: "Astronomia",
+  },
+  {
+    description:
+      "Domine a programação Python desde os fundamentos até conceitos avançados. Aprenda sintaxe, estruturas de dados, funções, programação orientada a objetos e construa aplicações reais.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Programação Python"),
+    slug: "programacao-python",
+    title: "Programação Python",
+  },
+  {
+    description:
+      "Construa aplicações web modernas com HTML, CSS, JavaScript e frameworks populares. Aprenda desenvolvimento frontend e backend, APIs e estratégias de deploy.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Desenvolvimento Web"),
+    slug: "desenvolvimento-web",
+    title: "Desenvolvimento Web",
+  },
+  {
+    description:
+      "Analise e interprete dados complexos usando métodos estatísticos e ferramentas de visualização. Aprenda manipulação de dados, análise exploratória e aplicações de machine learning.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Ciência de Dados"),
+    slug: "ciencia-de-dados",
+    title: "Ciência de Dados",
+  },
+  {
+    description:
+      "Aprenda os fundamentos da economia incluindo microeconomia, macroeconomia, estruturas de mercado e política econômica. Entenda como as economias funcionam e tome decisões financeiras informadas.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Introdução à Economia"),
+    slug: "introducao-a-economia",
+    title: "Introdução à Economia",
+  },
+  {
+    description:
+      "Domine a fotografia digital desde o básico da câmera até técnicas avançadas de composição. Aprenda iluminação, pós-processamento e desenvolva sua visão artística.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Fotografia Digital"),
+    slug: "fotografia-digital",
+    title: "Fotografia Digital",
+  },
+  {
+    description:
+      "Entenda os princípios da nutrição e como a alimentação afeta sua saúde. Aprenda sobre macronutrientes, micronutrientes, planejamento de refeições e diretrizes alimentares baseadas em evidências.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Fundamentos de Nutrição"),
+    slug: "fundamentos-de-nutricao",
+    title: "Fundamentos de Nutrição",
+  },
+  {
+    description:
+      "Explore a história e técnicas da filosofia ocidental. Dos pensadores gregos antigos ao existencialismo moderno, desenvolva pensamento crítico e habilidades analíticas.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Filosofia"),
+    slug: "filosofia",
+    title: "Filosofia",
+  },
+  {
+    description:
+      "Aprenda a tocar violão do zero. Cobre acordes, padrões de batida, dedilhado, teoria musical e músicas populares de vários gêneros.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Violão para Iniciantes"),
+    slug: "violao-para-iniciantes",
+    title: "Violão para Iniciantes",
+  },
+  {
+    description:
+      "Desenvolva habilidades essenciais de oratória. Aprenda a estruturar apresentações, engajar audiências, superar o medo de palco e comunicar-se com confiança.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Oratória"),
+    slug: "oratoria",
+    title: "Oratória",
+  },
+  {
+    description:
+      "Introdução à psicologia cobrindo cognição, comportamento, desenvolvimento, interações sociais e saúde mental. Entenda como a mente humana funciona.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Psicologia"),
+    slug: "psicologia",
+    title: "Psicologia",
+  },
+  {
+    description:
+      "Aprenda cálculo desde limites e derivadas até integrais e séries. Construa uma base matemática sólida para áreas de ciência e engenharia.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Cálculo"),
+    slug: "calculo",
+    title: "Cálculo",
+  },
+  {
+    description:
+      "Domine a arte da escrita criativa. Aprenda técnicas de narrativa, desenvolvimento de personagens, diálogos e como criar histórias envolventes.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Escrita Criativa"),
+    slug: "escrita-criativa",
+    title: "Escrita Criativa",
+  },
+  {
+    description:
+      "Entenda a ciência do clima e os desafios ambientais. Aprenda sobre ecossistemas, sustentabilidade, energia renovável e como enfrentar as mudanças climáticas.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Ciências Ambientais"),
+    slug: "ciencias-ambientais",
+    title: "Ciências Ambientais",
+  },
+  {
+    description:
+      "Aprenda princípios de design UI/UX e ferramentas modernas de design. Crie interfaces centradas no usuário, wireframes, protótipos e conduza testes de usabilidade.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Design UI/UX"),
+    slug: "design-ui-ux",
+    title: "Design UI/UX",
+  },
+  {
+    description:
+      "Explore a história mundial das civilizações antigas até os tempos modernos. Entenda eventos-chave, movimentos e figuras que moldaram nosso mundo.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("História Mundial"),
+    slug: "historia-mundial",
+    title: "História Mundial",
+  },
+  {
+    description:
+      "Domine finanças pessoais incluindo orçamento, investimentos, planejamento de aposentadoria e gestão de dívidas. Construa riqueza e alcance independência financeira.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Finanças Pessoais"),
+    slug: "financas-pessoais",
+    title: "Finanças Pessoais",
+  },
+  {
+    description:
+      "Aprenda inglês do básico à fluência conversacional. Cobre gramática, vocabulário, pronúncia e contexto cultural para comunicação eficaz.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Inglês"),
+    slug: "ingles",
+    title: "Inglês",
+  },
+  {
+    description:
+      "Introdução à biologia cobrindo células, genética, evolução, ecologia e anatomia humana. Entenda os princípios fundamentais da vida.",
+    imageUrl: null,
+    isPublished: true,
+    language: "pt",
+    normalizedTitle: normalizeString("Biologia"),
+    slug: "biologia",
+    title: "Biologia",
   },
 ];
 
