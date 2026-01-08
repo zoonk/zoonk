@@ -294,7 +294,8 @@ function EditorSortableList<T extends SortableItem>({
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        distance: 10,
+        delay: 450,
+        tolerance: 5,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -303,6 +304,10 @@ function EditorSortableList<T extends SortableItem>({
   );
 
   const handleDragStart = useCallback((event: DragStartEvent) => {
+    // Haptic feedback when drag activates
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      navigator.vibrate(10);
+    }
     setActiveId(event.active.id as number);
   }, []);
 
@@ -404,6 +409,15 @@ function EditorSortableList<T extends SortableItem>({
   );
 }
 
+type SortableItemContextValue = {
+  attributes: ReturnType<typeof useSortable>["attributes"];
+  listeners: ReturnType<typeof useSortable>["listeners"];
+};
+
+const EditorSortableItemContext = createContext<
+  SortableItemContextValue | undefined
+>(undefined);
+
 function EditorSortableItem({
   children,
   id,
@@ -425,6 +439,11 @@ function EditorSortableItem({
     transition,
   };
 
+  const contextValue = useMemo<SortableItemContextValue>(
+    () => ({ attributes, listeners }),
+    [attributes, listeners],
+  );
+
   return (
     <div
       className={cn(isDragging && "opacity-50")}
@@ -432,23 +451,20 @@ function EditorSortableItem({
       data-slot="editor-sortable-item"
       ref={setNodeRef}
       style={style}
-      {...attributes}
     >
-      <EditorSortableItemContext.Provider value={listeners}>
+      <EditorSortableItemContext.Provider value={contextValue}>
         {children}
       </EditorSortableItemContext.Provider>
     </div>
   );
 }
 
-const EditorSortableItemContext = createContext<
-  ReturnType<typeof useSortable>["listeners"] | undefined
->(undefined);
-
 function EditorSortableItemRow({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const context = useContext(EditorSortableItemContext);
+
   return (
     <div
       className={cn(
@@ -456,6 +472,7 @@ function EditorSortableItemRow({
         className,
       )}
       data-slot="editor-sortable-item-row"
+      {...context?.listeners}
       {...props}
     />
   );
@@ -466,9 +483,9 @@ function EditorDragHandle({
   className,
   ...props
 }: React.ComponentProps<"button">) {
-  const listeners = useContext(EditorSortableItemContext);
+  const context = useContext(EditorSortableItemContext);
 
-  if (!listeners) {
+  if (!context) {
     throw new Error(
       "EditorDragHandle must be used within an EditorSortableItem.",
     );
@@ -477,12 +494,13 @@ function EditorDragHandle({
   return (
     <button
       className={cn(
-        "relative flex min-h-11 min-w-8 shrink-0 cursor-grab select-none items-center justify-center rounded-md font-mono text-muted-foreground text-sm tabular-nums transition-colors hover:bg-muted hover:text-foreground focus-visible:bg-muted focus-visible:text-foreground focus-visible:outline-none active:cursor-grabbing active:bg-muted",
+        "relative flex min-h-11 min-w-11 shrink-0 cursor-grab select-none items-center justify-center rounded-md font-mono text-muted-foreground text-sm tabular-nums transition-colors before:absolute before:top-1/2 before:left-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2 hover:bg-muted hover:text-foreground focus-visible:bg-muted focus-visible:text-foreground focus-visible:outline-none active:cursor-grabbing active:bg-muted",
         className,
       )}
       data-slot="editor-drag-handle"
       type="button"
-      {...listeners}
+      {...context.attributes}
+      {...context.listeners}
       {...props}
     >
       {typeof children === "number"
