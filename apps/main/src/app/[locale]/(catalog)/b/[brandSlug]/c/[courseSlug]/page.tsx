@@ -6,7 +6,9 @@ import type { Metadata } from "next";
 import { cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
+import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
+import { ChapterList } from "./chapter-list";
 import { CourseHeader } from "./course-header";
 
 export async function generateStaticParams() {
@@ -47,7 +49,11 @@ export default async function CoursePage({
   params,
 }: PageProps<"/[locale]/b/[brandSlug]/c/[courseSlug]">) {
   const { brandSlug, courseSlug, locale } = await params;
-  const course = await getCourse({ brandSlug, courseSlug, language: locale });
+
+  const [course, chapters] = await Promise.all([
+    getCourse({ brandSlug, courseSlug, language: locale }),
+    listCourseChapters({ brandSlug, courseSlug, language: locale }),
+  ]);
 
   setRequestLocale(locale);
   cacheTag(cacheTagCourse({ courseSlug }));
@@ -59,6 +65,14 @@ export default async function CoursePage({
   return (
     <main className="flex flex-1 flex-col">
       <CourseHeader brandSlug={brandSlug} course={course} />
+
+      <div className="mx-auto w-full px-4 py-8 md:py-10 lg:max-w-xl">
+        <ChapterList
+          brandSlug={brandSlug}
+          chapters={chapters}
+          courseSlug={courseSlug}
+        />
+      </div>
     </main>
   );
 }

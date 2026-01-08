@@ -279,9 +279,9 @@ test.describe("Command Palette - Course Search", () => {
     // Wait for and click the course result
     await dialog.getByText("Machine Learning").first().click();
 
-    // Verify user sees course detail page
+    // Verify user sees course detail page (level: 1 for main title, not chapter headings)
     await expect(
-      page.getByRole("heading", { name: /machine learning/i }),
+      page.getByRole("heading", { level: 1, name: /machine learning/i }),
     ).toBeVisible();
   });
 

@@ -7,10 +7,13 @@ test.describe("Course Detail Page", () => {
     await page.goto("/b/ai/c/machine-learning");
 
     await expect(
-      page.getByRole("heading", { name: /machine learning/i }),
+      page.getByRole("heading", { level: 1, name: /machine learning/i }),
     ).toBeVisible();
 
-    await expect(page.getByText(/patterns|predictions|data/i)).toBeVisible();
+    // Use .first() since chapter descriptions may also contain matching words
+    await expect(
+      page.getByText(/patterns|predictions|data/i).first(),
+    ).toBeVisible();
 
     const courseImage = page.getByRole("img", { name: /machine learning/i });
     await expect(courseImage).toBeVisible();
