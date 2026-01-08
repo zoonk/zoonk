@@ -265,9 +265,8 @@ checksums:
     Upgrade/singular: 63c3b52882e0d779859307d672c178c2
     No%20ads%2C%20unlimited%20lessons%2C%20and%20full%20progress%20tracking./singular: 8f01b698721c3c79191463236f039529
     Remove%20ads%2C%20unlock%20unlimited%20lessons%2C%20and%20track%20your%20progress./singular: d935ae55f9b7faf08bf520b7457972ac
-    Upgrade%20to%20Plus/singular: 5ffe2178c10543c0be3b54a15c82da54
-    You%E2%80%99re%20on%20Zoonk%20Plus/singular: 5ca1a2563220c91f7eb44a60d2701a79
     Unable%20to%20update%20your%20subscription.%20Contact%20us%20at%20hello%40zoonk.com/singular: 07449ee5fe347be88856524cec7f06ef
+    Your%20subscription%20is%20active/singular: 4afa66402844306fde2bccddb4c31adc
     Get%20help%20with%20your%20account%2C%20courses%2C%20or%20any%20technical%20issues.%20Our%20support%20team%20is%20here%20to%20assist%20you./singular: 9de0c5af17bcf14dc8229ac5896db641
     Help%20%26%20Support/singular: 662d807b3768c9753238bd5f1c86d2f6
     Connect%20with%20the%20community%20and%20get%20answers/singular: ddbaaadbe1d98d93c6ceb40231559402
@@ -276,7 +275,6 @@ checksums:
     Follow%20us/singular: 778f7a4744f77dbcbd31a8c778cb5209
     Contact%20Support/singular: fcbd9e317c7286b3e08752eb73eb1a81
     Authentication%20Error/singular: f8db504523897fad229a0cfdcc34652c
-    The%20authentication%20token%20is%20missing.%20Please%20try%20logging%20in%20again./singular: 74e0970a1f77afba28fe761910aa4604
     Return%20to%20login/singular: a73bc2aa109b100645c49a3eab040dbf
     The%20authentication%20token%20is%20invalid%20or%20expired.%20Please%20try%20logging%20in%20again./singular: 9e23335b29f210d8ae14c265aeb6ab1a
     Need%20help%3F%20Contact%20us%20at%20hello%40zoonk.com/singular: 0053665fad1f58782cc3a6f442b36726
