@@ -190,6 +190,7 @@ function EditorListItem({ className, ...props }: React.ComponentProps<"li">) {
 function EditorListItemLink({
   className,
   render,
+  style,
   ...props
 }: useRender.ComponentProps<"a">) {
   return useRender({
@@ -197,6 +198,11 @@ function EditorListItemLink({
     props: mergeProps<"a">(
       {
         className: cn("flex min-w-0 flex-1 items-start gap-4", className),
+        style: {
+          // Prevent iOS context menu on long-press (allows row drag to work)
+          WebkitTouchCallout: "none",
+          ...style,
+        },
       },
       props,
     ),
@@ -461,6 +467,7 @@ function EditorSortableItem({
 
 function EditorSortableItemRow({
   className,
+  style,
   ...props
 }: React.ComponentProps<"div">) {
   const context = useContext(EditorSortableItemContext);
@@ -472,6 +479,12 @@ function EditorSortableItemRow({
         className,
       )}
       data-slot="editor-sortable-item-row"
+      style={{
+        // Prevent iOS context menu on long-press
+        WebkitTouchCallout: "none",
+        WebkitUserSelect: "none",
+        ...style,
+      }}
       {...context?.listeners}
       {...props}
     />
