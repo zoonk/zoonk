@@ -207,6 +207,26 @@ msgctxt "z6saPZ"
 msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons, challenges, and activities to learn subjects like science, math, technology, and more."
 msgstr "Explora todos los cursos de Zoonk para aprender cualquier cosa usando IA. Encuentra lecciones interactivas, desafíos y actividades para aprender materias como ciencia, matemáticas, tecnología y más."
 
+#: src/app/[locale]/(catalog)/energy-level.tsx
+msgctxt "aRv72g"
+msgid "Energy level"
+msgstr "Nivel de energía"
+
+#: src/app/[locale]/(catalog)/energy-level.tsx
+msgctxt "soDmlG"
+msgid "Keep learning to increase it"
+msgstr "Sigue aprendiendo para aumentarlo"
+
+#: src/app/[locale]/(catalog)/energy-level.tsx
+msgctxt "UW6IeG"
+msgid "Your energy level is {value}%"
+msgstr "Tu nivel de energía es {value}%"
+
+#: src/app/[locale]/(catalog)/energy-level.tsx
+msgctxt "WgeB0r"
+msgid "Keep learning to maintain it"
+msgstr "Sigue aprendiendo para mantenerlo"
+
 #: src/app/[locale]/(catalog)/hero.tsx
 msgctxt "nlT+zW"
 msgid "Learn anything"
@@ -346,6 +366,11 @@ msgstr "Zoonk: plataforma de aprendizaje con IA"
 msgctxt "ZgSctJ"
 msgid "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and activities."
 msgstr "Zoonk es una plataforma de aprendizaje impulsada por IA donde puedes aprender cualquier cosa a través de cursos interactivos, lecciones y actividades."
+
+#: src/app/[locale]/(catalog)/performance.tsx
+msgctxt "AA5h7P"
+msgid "Performance"
+msgstr "Rendimiento"
 
 #: src/app/[locale]/(settings)/_components/protected-section.tsx
 msgctxt "2jC0rX"

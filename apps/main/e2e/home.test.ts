@@ -23,6 +23,12 @@ test.describe("Home Page - Unauthenticated", () => {
       page.getByRole("heading", { name: /what do you want to learn/i }),
     ).toBeVisible();
   });
+
+  test("does not show performance section", async ({ page }) => {
+    await page.goto("/");
+
+    await expect(page.getByText(/^performance$/i)).not.toBeVisible();
+  });
 });
 
 test.describe("Home Page - Authenticated", () => {
@@ -55,6 +61,30 @@ test.describe("Home Page - Authenticated", () => {
       userWithoutProgress.getByRole("heading", {
         name: /learn anything with ai/i,
       }),
+    ).toBeVisible();
+  });
+});
+
+test.describe("Home Page - Performance Section", () => {
+  test("authenticated user with progress sees energy level", async ({
+    authenticatedPage,
+  }) => {
+    await authenticatedPage.goto("/");
+
+    await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
+    await expect(
+      authenticatedPage.getByText("Your energy level is 75%"),
+    ).toBeVisible();
+  });
+
+  test("user without progress sees energy level at 0%", async ({
+    userWithoutProgress,
+  }) => {
+    await userWithoutProgress.goto("/");
+
+    await expect(userWithoutProgress.getByText(/^performance$/i)).toBeVisible();
+    await expect(
+      userWithoutProgress.getByText("Your energy level is 0%"),
     ).toBeVisible();
   });
 });
