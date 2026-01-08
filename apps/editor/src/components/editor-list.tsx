@@ -7,6 +7,7 @@ import {
   DragOverlay,
   KeyboardSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -317,6 +318,12 @@ function EditorSortableList<T extends SortableItem>({
         distance: 8,
       },
     }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 5,
+      },
+    }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
@@ -496,7 +503,7 @@ function EditorDragHandle({
   return (
     <button
       className={cn(
-        "mt-1 flex shrink-0 cursor-grab touch-none items-center justify-center text-muted-foreground transition-colors hover:text-foreground focus-visible:text-foreground focus-visible:outline-none active:cursor-grabbing",
+        "relative mt-1 flex shrink-0 cursor-grab items-center justify-center text-muted-foreground transition-colors before:absolute before:top-1/2 before:left-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2 hover:text-foreground focus-visible:text-foreground focus-visible:outline-none active:cursor-grabbing",
         className,
       )}
       data-slot="editor-drag-handle"
