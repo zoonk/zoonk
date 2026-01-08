@@ -23,11 +23,17 @@ export async function checkChapterSlugExists(params: {
 }
 
 export async function updateChapterTitleAction(
-  chapterSlug: string,
-  courseSlug: string,
+  slugs: {
+    chapterSlug: string;
+    courseSlug: string;
+    lang: string;
+    orgSlug: string;
+  },
   chapterId: number,
   data: { title: string },
 ): Promise<{ error: string | null }> {
+  const { chapterSlug, courseSlug, lang, orgSlug } = slugs;
+
   const { error } = await updateChapter({
     chapterId,
     title: data.title,
@@ -44,15 +50,22 @@ export async function updateChapterTitleAction(
     ]);
   });
 
+  revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
   return { error: null };
 }
 
 export async function updateChapterDescriptionAction(
-  chapterSlug: string,
-  courseSlug: string,
+  slugs: {
+    chapterSlug: string;
+    courseSlug: string;
+    lang: string;
+    orgSlug: string;
+  },
   chapterId: number,
   data: { description: string },
 ): Promise<{ error: string | null }> {
+  const { chapterSlug, courseSlug, lang, orgSlug } = slugs;
+
   const { error } = await updateChapter({
     chapterId,
     description: data.description,
@@ -69,6 +82,7 @@ export async function updateChapterDescriptionAction(
     ]);
   });
 
+  revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
   return { error: null };
 }
 

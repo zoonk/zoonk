@@ -28,6 +28,8 @@ export async function ChapterContent({
     return notFound();
   }
 
+  const slugs = { chapterSlug, courseSlug, lang, orgSlug };
+
   return (
     <ContentEditor
       descriptionLabel={t("Edit chapter description")}
@@ -35,12 +37,8 @@ export async function ChapterContent({
       entityId={chapter.id}
       initialDescription={chapter.description}
       initialTitle={chapter.title}
-      onSaveDescription={updateChapterDescriptionAction.bind(
-        null,
-        chapterSlug,
-        courseSlug,
-      )}
-      onSaveTitle={updateChapterTitleAction.bind(null, chapterSlug, courseSlug)}
+      onSaveDescription={updateChapterDescriptionAction.bind(null, slugs)}
+      onSaveTitle={updateChapterTitleAction.bind(null, slugs)}
       titleLabel={t("Edit chapter title")}
       titlePlaceholder={t("Chapter title…")}
     />
