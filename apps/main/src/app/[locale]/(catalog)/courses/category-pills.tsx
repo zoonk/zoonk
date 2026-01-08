@@ -1,7 +1,6 @@
 "use client";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { ScrollArea, ScrollBar } from "@zoonk/ui/components/scroll-area";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { useExtracted } from "next-intl";
@@ -29,36 +28,35 @@ export function CategoryPills() {
   const t = useExtracted();
 
   return (
-    <ScrollArea className="w-full px-4 pb-4">
-      <nav aria-label={t("Course categories")} className="flex gap-2">
-        <Link
-          className={buttonVariants({
-            size: "sm",
-            variant: segment === null ? "default" : "outline",
-          })}
-          href="/courses"
-        >
-          {t("All")}
-        </Link>
+    <nav
+      aria-label={t("Course categories")}
+      className="flex w-full gap-2 overflow-x-auto overflow-y-hidden px-4 pb-4 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+    >
+      <Link
+        className={buttonVariants({
+          size: "sm",
+          variant: segment === null ? "default" : "outline",
+        })}
+        href="/courses"
+      >
+        {t("All")}
+      </Link>
 
-        {categories
-          .sort((a, b) => a.label.localeCompare(b.label))
-          .map((category) => (
-            <Link
-              className={buttonVariants({
-                size: "sm",
-                variant: segment === category.key ? "default" : "outline",
-              })}
-              href={`/courses/${category.key}`}
-              key={category.key}
-            >
-              <category.icon aria-hidden className="size-4" />
-              {category.label}
-            </Link>
-          ))}
-      </nav>
-
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+      {categories
+        .sort((a, b) => a.label.localeCompare(b.label))
+        .map((category) => (
+          <Link
+            className={buttonVariants({
+              size: "sm",
+              variant: segment === category.key ? "default" : "outline",
+            })}
+            href={`/courses/${category.key}`}
+            key={category.key}
+          >
+            <category.icon aria-hidden className="size-4" />
+            {category.label}
+          </Link>
+        ))}
+    </nav>
   );
 }
