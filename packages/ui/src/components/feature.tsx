@@ -10,7 +10,7 @@ function FeatureCardSectionTitle({
   return (
     <h2
       className={cn(
-        "font-medium text-muted-foreground text-sm tracking-tight",
+        "font-medium text-muted-foreground text-xs uppercase tracking-wide",
         className,
       )}
       data-slot="feature-card-section-title"
@@ -45,7 +45,7 @@ function FeatureCardHeader({
   return (
     <div
       className={cn(
-        "flex items-center justify-between text-muted-foreground transition-colors group-hover/feature-card:text-secondary-foreground",
+        "flex items-center justify-between text-muted-foreground",
         className,
       )}
       data-slot="feature-card-header"
@@ -96,7 +96,10 @@ function FeatureCardLabel({
 }: React.ComponentProps<"span">) {
   return (
     <span
-      className={cn("truncate font-light text-sm transition-colors", className)}
+      className={cn(
+        "truncate font-medium text-sm transition-colors",
+        className,
+      )}
       data-slot="feature-card-label"
       {...props}
     >
@@ -252,7 +255,7 @@ function FeatureCardSubtitle({
   return (
     <div
       className={cn(
-        "mb-0.5 truncate text-muted-foreground text-sm [&>a]:underline-offset-2 [&>a]:transition-colors [&>a]:hover:text-muted-foreground/80 [&>a]:hover:underline",
+        "mb-0.5 truncate text-muted-foreground text-sm tracking-tight [&>a]:underline-offset-2 [&>a]:transition-colors [&>a]:hover:text-muted-foreground/80 [&>a]:hover:underline",
         className,
       )}
       data-slot="feature-card-subtitle"

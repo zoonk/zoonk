@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { getContinueLearning } from "@/data/courses/get-continue-learning";
+import { getEnergyLevel } from "@/data/progress/get-energy-level";
 import {
   ContinueLearning,
   ContinueLearningSkeleton,
 } from "./continue-learning";
+import { Performance, PerformanceSkeleton } from "./performance";
 
 export async function generateMetadata({
   params,
@@ -26,11 +28,17 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   setRequestLocale(locale);
 
   // preload data
-  void getContinueLearning();
+  void Promise.all([getContinueLearning(), getEnergyLevel()]);
 
   return (
-    <Suspense fallback={<ContinueLearningSkeleton />}>
-      <ContinueLearning />
-    </Suspense>
+    <>
+      <Suspense fallback={<ContinueLearningSkeleton />}>
+        <ContinueLearning />
+      </Suspense>
+
+      <Suspense fallback={<PerformanceSkeleton />}>
+        <Performance />
+      </Suspense>
+    </>
   );
 }
