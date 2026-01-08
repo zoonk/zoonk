@@ -12,7 +12,6 @@ import {
   EditorListItemContent,
   EditorListItemDescription,
   EditorListItemLink,
-  EditorListItemPosition,
   EditorListItemTitle,
   EditorListProvider,
   EditorListSpinner,
@@ -88,7 +87,9 @@ export async function ChapterList({
               <EditorSortableItem id={chapter.id} key={chapter.slug}>
                 <EditorListItem>
                   <EditorSortableItemRow>
-                    <EditorDragHandle aria-label={t("Drag to reorder")} />
+                    <EditorDragHandle aria-label={t("Drag to reorder")}>
+                      {index + 1}
+                    </EditorDragHandle>
 
                     <EditorListItemLink
                       render={
@@ -97,10 +98,6 @@ export async function ChapterList({
                         />
                       }
                     >
-                      <EditorListItemPosition>
-                        {index + 1}
-                      </EditorListItemPosition>
-
                       <EditorListItemContent>
                         <EditorListItemTitle>
                           {chapter.title}

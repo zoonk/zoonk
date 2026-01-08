@@ -57,16 +57,19 @@ async function expectChaptersVisible(
   chapters: { position: number; title: string }[],
 ) {
   await Promise.all(
-    chapters.map(({ position, title }) =>
-      expect(
-        page.getByRole("link", {
-          name: new RegExp(
-            `^${String(position).padStart(2, "0")}.*${title}`,
-            "i",
-          ),
-        }),
-      ).toBeVisible(),
-    ),
+    chapters.map(async ({ position, title }) => {
+      // Position is now in the drag handle button
+      await expect(
+        page
+          .getByRole("button", { name: "Drag to reorder" })
+          .filter({ hasText: String(position).padStart(2, "0") }),
+      ).toBeVisible();
+
+      // Title is in the link
+      await expect(
+        page.getByRole("link", { name: new RegExp(title, "i") }),
+      ).toBeVisible();
+    }),
   );
 }
 

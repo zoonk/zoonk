@@ -31,12 +31,7 @@ import { toast } from "@zoonk/ui/components/sonner";
 import { mergeProps, useRender } from "@zoonk/ui/lib/render";
 import { cn } from "@zoonk/ui/lib/utils";
 import { isNextRedirectError } from "@zoonk/utils/error";
-import {
-  EllipsisIcon,
-  GripVerticalIcon,
-  LoaderCircleIcon,
-  PlusIcon,
-} from "lucide-react";
+import { EllipsisIcon, LoaderCircleIcon, PlusIcon } from "lucide-react";
 import {
   createContext,
   useCallback,
@@ -212,27 +207,6 @@ function EditorListItemLink({
   });
 }
 
-function EditorListItemPosition({
-  children,
-  className,
-  ...props
-}: React.ComponentProps<"span">) {
-  return (
-    <span
-      className={cn(
-        "mt-0.5 font-mono text-muted-foreground text-sm tabular-nums",
-        className,
-      )}
-      data-slot="editor-list-item-position"
-      {...props}
-    >
-      {typeof children === "number"
-        ? String(children).padStart(2, "0")
-        : children}
-    </span>
-  );
-}
-
 function EditorListItemContent({
   className,
   ...props
@@ -320,8 +294,7 @@ function EditorSortableList<T extends SortableItem>({
     }),
     useSensor(TouchSensor, {
       activationConstraint: {
-        delay: 200,
-        tolerance: 5,
+        distance: 10,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -479,7 +452,7 @@ function EditorSortableItemRow({
   return (
     <div
       className={cn(
-        "group/row flex select-none items-start gap-2 px-4 py-3 transition-colors hover:bg-muted/50",
+        "group/row flex items-start gap-2 px-4 py-3 transition-colors hover:bg-muted/50",
         className,
       )}
       data-slot="editor-sortable-item-row"
@@ -489,6 +462,7 @@ function EditorSortableItemRow({
 }
 
 function EditorDragHandle({
+  children,
   className,
   ...props
 }: React.ComponentProps<"button">) {
@@ -503,7 +477,7 @@ function EditorDragHandle({
   return (
     <button
       className={cn(
-        "relative mt-1 flex shrink-0 cursor-grab items-center justify-center text-muted-foreground transition-colors before:absolute before:top-1/2 before:left-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2 hover:text-foreground focus-visible:text-foreground focus-visible:outline-none active:cursor-grabbing",
+        "relative flex min-h-11 min-w-8 shrink-0 cursor-grab select-none items-center justify-center rounded-md font-mono text-muted-foreground text-sm tabular-nums transition-colors hover:bg-muted hover:text-foreground focus-visible:bg-muted focus-visible:text-foreground focus-visible:outline-none active:cursor-grabbing active:bg-muted",
         className,
       )}
       data-slot="editor-drag-handle"
@@ -511,7 +485,9 @@ function EditorDragHandle({
       {...listeners}
       {...props}
     >
-      <GripVerticalIcon className="size-4" />
+      {typeof children === "number"
+        ? String(children).padStart(2, "0")
+        : children}
     </button>
   );
 }
@@ -594,7 +570,6 @@ export {
   EditorListItemContent,
   EditorListItemDescription,
   EditorListItemLink,
-  EditorListItemPosition,
   EditorListItemTitle,
   EditorListProvider,
   EditorListSkeleton,
