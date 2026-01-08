@@ -226,7 +226,7 @@ function EditorListItemTitle({
 }: React.ComponentProps<"p">) {
   return (
     <p
-      className={cn("font-medium", className)}
+      className={cn("font-medium leading-snug", className)}
       data-slot="editor-list-item-title"
       {...props}
     />
@@ -492,7 +492,7 @@ function EditorDragHandle({
   return (
     <button
       className={cn(
-        "relative flex min-h-11 min-w-11 shrink-0 cursor-grab touch-none select-none items-center justify-center rounded-md font-mono text-muted-foreground text-sm tabular-nums transition-colors before:absolute before:top-1/2 before:left-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2 hover:bg-muted hover:text-foreground focus-visible:bg-muted focus-visible:text-foreground focus-visible:outline-none active:cursor-grabbing active:bg-muted",
+        "relative flex min-h-11 min-w-11 shrink-0 cursor-grab touch-none select-none items-start justify-center rounded-md pt-0.5 font-mono text-muted-foreground text-sm tabular-nums transition-colors before:absolute before:top-1/2 before:left-1/2 before:size-full before:min-h-11 before:min-w-11 before:-translate-x-1/2 before:-translate-y-1/2 hover:bg-muted hover:text-foreground focus-visible:bg-muted focus-visible:text-foreground focus-visible:outline-none active:cursor-grabbing active:bg-muted",
         className,
       )}
       data-slot="editor-drag-handle"
