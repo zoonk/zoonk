@@ -2,7 +2,9 @@ import { FeatureCardSectionTitle } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cacheLife } from "next/cache";
 import { getExtracted } from "next-intl/server";
+import { getBeltLevel } from "@/data/progress/get-belt-level";
 import { getEnergyLevel } from "@/data/progress/get-energy-level";
+import { BeltLevel, BeltLevelSkeleton } from "./belt-level";
 import { EnergyLevel, EnergyLevelSkeleton } from "./energy-level";
 
 export async function Performance() {
@@ -10,9 +12,12 @@ export async function Performance() {
   cacheLife("minutes");
 
   const t = await getExtracted();
-  const energyData = await getEnergyLevel();
+  const [energyData, beltData] = await Promise.all([
+    getEnergyLevel(),
+    getBeltLevel(),
+  ]);
 
-  if (!energyData) {
+  if (!(energyData && beltData)) {
     return null;
   }
 
@@ -25,8 +30,14 @@ export async function Performance() {
         {t("Performance")}
       </FeatureCardSectionTitle>
 
-      <div className="flex flex-wrap gap-4 px-4">
+      <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         <EnergyLevel energy={energyData.currentEnergy} />
+        <BeltLevel
+          bpToNextLevel={beltData.bpToNextLevel}
+          color={beltData.color}
+          isMaxLevel={beltData.isMaxLevel}
+          level={beltData.level}
+        />
       </div>
     </section>
   );
@@ -37,8 +48,9 @@ export function PerformanceSkeleton() {
     <section className="flex flex-col gap-3 py-4 md:py-6">
       <Skeleton className="mx-4 h-5 w-24" />
 
-      <div className="flex flex-wrap gap-4 px-4">
+      <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         <EnergyLevelSkeleton />
+        <BeltLevelSkeleton />
       </div>
     </section>
   );

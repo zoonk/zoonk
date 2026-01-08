@@ -47,6 +47,8 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+  --color-energy: var(--energy);
+  --color-belt: var(--belt);
 }
 
 :root {
@@ -84,6 +86,8 @@
   --sidebar-accent-foreground: var(--color-neutral-900);
   --sidebar-border: var(--color-neutral-200);
   --sidebar-ring: var(--color-primary);
+  --energy: var(--color-orange-500);
+  --belt: var(--color-purple-500);
 }
 
 @media (prefers-color-scheme: light) and (prefers-contrast: more) {
@@ -122,6 +126,8 @@
     --sidebar-accent-foreground: var(--color-black);
     --sidebar-border: var(--color-neutral-950);
     --sidebar-ring: var(--color-primary);
+    --energy: var(--color-orange-700);
+    --belt: var(--color-purple-700);
   }
 }
 
@@ -160,6 +166,8 @@
     --sidebar-accent-foreground: var(--color-neutral-50);
     --sidebar-border: var(--color-neutral-700);
     --sidebar-ring: var(--color-primary);
+    --energy: var(--color-orange-400);
+    --belt: var(--color-purple-400);
   }
 }
 
@@ -198,6 +206,8 @@
     --sidebar-accent-foreground: var(--color-white);
     --sidebar-border: var(--color-neutral-50);
     --sidebar-ring: var(--color-primary);
+    --energy: var(--color-orange-200);
+    --belt: var(--color-purple-200);
   }
 }
 
