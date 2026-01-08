@@ -152,7 +152,7 @@ msgstr "Verde"
 #: src/app/[locale]/(catalog)/belt-level.tsx
 msgctxt "5Tw3Ta"
 msgid "Yellow"
-msgstr "Amarelo"
+msgstr "Amarela"
 
 #: src/app/[locale]/(catalog)/belt-level.tsx
 msgctxt "8N9BRu"
@@ -162,7 +162,7 @@ msgstr "{value} BP para o próximo nível"
 #: src/app/[locale]/(catalog)/belt-level.tsx
 msgctxt "D+ZFS/"
 msgid "Red"
-msgstr "Vermelho"
+msgstr "Vermelha"
 
 #: src/app/[locale]/(catalog)/belt-level.tsx
 msgctxt "eM/4ho"
@@ -187,7 +187,7 @@ msgstr "Laranja"
 #: src/app/[locale]/(catalog)/belt-level.tsx
 msgctxt "OAG+sQ"
 msgid "White"
-msgstr "Branco"
+msgstr "Branca"
 
 #: src/app/[locale]/(catalog)/belt-level.tsx
 msgctxt "pgt3eW"
@@ -197,7 +197,7 @@ msgstr "Nível máximo alcançado"
 #: src/app/[locale]/(catalog)/belt-level.tsx
 msgctxt "tihmF3"
 msgid "Purple"
-msgstr "Roxo"
+msgstr "Roxa"
 
 #: src/app/[locale]/(catalog)/belt-level.tsx
 msgctxt "uiwFZe"
