@@ -145,10 +145,21 @@ msgid "Drag to reorder"
 msgstr "Arrastra para reordenar"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+msgctxt "drUbPJ"
+msgid "Lesson actions"
+msgstr "Acciones de la lección"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
 msgctxt "FazwRl"
 msgid "Try again"
 msgstr "Intentar de nuevo"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+msgctxt "geXvrp"
+msgid "Insert below"
+msgstr "Insertar debajo"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
 msgctxt "RWzfUY"
@@ -156,19 +167,20 @@ msgid "Add lesson"
 msgstr "Agregar lección"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
-msgctxt "ZRJz2g"
-msgid "Insert lesson"
-msgstr "Insertar lección"
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+msgctxt "vTz4RU"
+msgid "Insert above"
+msgstr "Insertar arriba"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
+msgctxt "BxygZD"
+msgid "Chapter actions"
+msgstr "Acciones del capítulo"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
 msgctxt "dlQpGl"
 msgid "Add chapter"
 msgstr "Agregar capítulo"
-
-#: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
-msgctxt "niU+md"
-msgid "Insert chapter"
-msgstr "Insertar capítulo"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/chapter-list.tsx
 msgctxt "sHQNSR"

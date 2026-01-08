@@ -150,19 +150,22 @@ test.describe("Chapter List", () => {
         { position: 4, title: "Chapter 4" },
       ]);
 
-      // Hover over the third chapter to reveal the insert button between 2 and 3
-      const thirdChapterItem = authenticatedPage.getByRole("link", {
-        name: /^03.*Chapter 3/i,
+      // Click the actions menu on Chapter 2 to insert below it (at position 2)
+      // Use exact match to avoid matching outer container buttons
+      const actionsButtons = authenticatedPage.getByRole("button", {
+        exact: true,
+        name: "Chapter actions",
       });
 
-      await thirdChapterItem.hover();
+      // Click the second chapter's actions button (index 1)
+      await actionsButtons.nth(1).click();
 
-      // Click the insert button that appears before chapter 3 (position 2)
-      const insertButtons = authenticatedPage.getByRole("button", {
-        name: /insert chapter/i,
+      // Wait for the menu to appear and click "Insert below"
+      const insertBelowItem = authenticatedPage.getByRole("menuitem", {
+        name: /insert below/i,
       });
-
-      await insertButtons.nth(2).click();
+      await insertBelowItem.waitFor({ state: "visible" });
+      await insertBelowItem.click();
 
       // After clicking insert, we're redirected to the chapter edit page
       await expect(

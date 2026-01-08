@@ -28,11 +28,13 @@ checksums:
     Contact%20support/singular: 32a4dee2033635e334a5f4d34724e3e0
     Failed%20to%20load%20lessons/singular: 427523eb64ddb239d642ca975d6e1dbb
     Drag%20to%20reorder/singular: 42c84478eb582f41d72d5bd7b27bb028
+    Lesson%20actions/singular: e014e6d8a3eb4906b17a79ca0ee96867
     Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
+    Insert%20below/singular: 13f5339830c81c2c64a513b4f0a77c2d
     Add%20lesson/singular: 101a1880b35c68eed6f80e7574f4ff2d
-    Insert%20lesson/singular: 0d943237877e356d1c8aaca8b5360e67
+    Insert%20above/singular: 24d027b3c1e816c98f5571bb637669bf
+    Chapter%20actions/singular: 9f8fd63a1c71839fddbb5b57a1c62f73
     Add%20chapter/singular: af2ea03f1678fcea1fb005f66f28bfa5
-    Insert%20chapter/singular: cbd41a4782e1254a5c450577cbd7e95d
     We%20couldn't%20load%20the%20chapters.%20Please%20try%20again./singular: 2bfbac73debefc0d7a4ec5c41af9c415
     Failed%20to%20load%20chapters/singular: a462d90fffa946fe5c2aedb6e6fff9b4
     Course%20title%E2%80%A6/singular: 4429de50f5f2d426271e76328c543daf
