@@ -479,7 +479,7 @@ function EditorSortableItemRow({
   return (
     <div
       className={cn(
-        "group/row flex items-start gap-2 px-4 py-3 transition-colors hover:bg-muted/50",
+        "group/row flex select-none items-start gap-2 px-4 py-3 transition-colors hover:bg-muted/50",
         className,
       )}
       data-slot="editor-sortable-item-row"
