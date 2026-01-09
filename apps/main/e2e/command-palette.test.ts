@@ -230,7 +230,7 @@ test.describe("Command Palette - Authenticated", () => {
 
     // Click logout - this triggers a hard navigation
     await Promise.all([
-      logoutPage.waitForURL(/^[^?]*\/$/),
+      logoutPage.waitForURL(/^\/(en|pt)\/?$/),
       logoutPage.waitForResponse(
         (response) =>
           response.url().includes("/api/auth/get-session") &&

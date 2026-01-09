@@ -76,7 +76,7 @@ test.describe("Settings Navbar", () => {
     ).toBeVisible();
 
     await Promise.all([
-      logoutPage.waitForURL(/^[^?]*\/$/),
+      logoutPage.waitForURL(/^\/(en|pt)\/?$/),
       logoutPage.waitForResponse(
         (response) =>
           response.url().includes("/api/auth/get-session") &&

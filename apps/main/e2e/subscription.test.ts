@@ -11,7 +11,7 @@ test.describe("Subscription Page - Unauthenticated", () => {
 
     const loginLink = page.getByRole("link", { name: /login/i });
     await expect(loginLink).toBeVisible();
-    await expect(loginLink).toHaveAttribute("href", "/login");
+    await expect(loginLink).toHaveAttribute("href", "/en/login");
   });
 });
 
