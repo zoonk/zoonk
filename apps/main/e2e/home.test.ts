@@ -103,6 +103,17 @@ test.describe("Home Page - Performance Section", () => {
     await expect(authenticatedPage.getByText("Past 30 days")).toBeVisible();
   });
 
+  test("authenticated user with progress sees best day", async ({
+    authenticatedPage,
+  }) => {
+    await authenticatedPage.goto("/");
+
+    await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
+    await expect(authenticatedPage.getByText(/best day/i)).toBeVisible();
+    await expect(authenticatedPage.getByText(/with 85%/i)).toBeVisible();
+    await expect(authenticatedPage.getByText("Past 3 months")).toBeVisible();
+  });
+
   test("user without progress does not see performance section", async ({
     userWithoutProgress,
   }) => {
