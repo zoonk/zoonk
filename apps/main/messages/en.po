@@ -149,6 +149,13 @@ msgctxt "uCsywK"
 msgid "Accuracy"
 msgstr "Accuracy"
 
+#: src/app/[locale]/(catalog)/accuracy.tsx
+#: src/app/[locale]/(catalog)/best-day.tsx
+#: src/app/[locale]/(catalog)/peak-time.tsx
+msgctxt "zml1/y"
+msgid "Past 3 months"
+msgstr "Past 3 months"
+
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-search-container.tsx
 msgctxt "ai9FYU"
 msgid "Search chapters and lessons..."
@@ -253,11 +260,6 @@ msgstr "{day} with {value}%"
 msgctxt "HHFpcy"
 msgid "Best day"
 msgstr "Best day"
-
-#: src/app/[locale]/(catalog)/best-day.tsx
-msgctxt "zml1/y"
-msgid "Past 3 months"
-msgstr "Past 3 months"
 
 #: src/app/[locale]/(catalog)/continue-learning.tsx
 msgctxt "0X+xfW"
@@ -481,6 +483,36 @@ msgstr "Zoonk: AI Learning Platform"
 msgctxt "ZgSctJ"
 msgid "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and activities."
 msgstr "Zoonk is an AI-powered learning platform where you can learn anything through interactive courses, lessons, and activities."
+
+#: src/app/[locale]/(catalog)/peak-time.tsx
+msgctxt "/kzk/m"
+msgid "Morning"
+msgstr "Morning"
+
+#: src/app/[locale]/(catalog)/peak-time.tsx
+msgctxt "00/IyC"
+msgid "Night"
+msgstr "Night"
+
+#: src/app/[locale]/(catalog)/peak-time.tsx
+msgctxt "mF+J9o"
+msgid "Afternoon"
+msgstr "Afternoon"
+
+#: src/app/[locale]/(catalog)/peak-time.tsx
+msgctxt "mPEpnN"
+msgid "Evening"
+msgstr "Evening"
+
+#: src/app/[locale]/(catalog)/peak-time.tsx
+msgctxt "NtOh+J"
+msgid "Peak time"
+msgstr "Peak time"
+
+#: src/app/[locale]/(catalog)/peak-time.tsx
+msgctxt "vG7kPp"
+msgid "{period} with {value}%"
+msgstr "{period} with {value}%"
 
 #: src/app/[locale]/(catalog)/performance.tsx
 msgctxt "AA5h7P"

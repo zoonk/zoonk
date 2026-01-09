@@ -204,9 +204,10 @@ checksums:
     Support/singular: 55aab5fd0f31a9cb055a2edeeedfaf63
     Subscription/singular: ba9f3675e18987d067d48533c8897343
     "%7Bvalue%7D%25%20correct%20answers/singular": 0a95eedb35d1990c8e8af833ddba628f
-    Past%2030%20days/singular: 6d69a6c6519721c00a9ef320e70099bc
     Accuracy/singular: d6022b38e0960d1a7bea84586e4986eb
+    Past%203%20months/singular: 0784d60565f6812fce36c72252663412
     Search%20chapters%20and%20lessons.../singular: 9efe924871c3c733391ccd1e3c6d044f
+    Search%20chapters%20and%20lessons/singular: 1478233cb8fcb9b66cea6661a11d388c
     No%20chapters%20or%20lessons%20found/singular: 2fe297df8b5d61f27245373ef71d1f10
     This%20content%20was%20generated%20by%20AI.%20It%20may%20contain%20errors%20or%20inaccuracies%20and%20should%20not%20be%20considered%20professional%20advice./singular: 269e7c16a722903b9b434f28aa6cf617
     Green/singular: 482ff383a4258357ba404f283682471d
@@ -224,6 +225,14 @@ checksums:
     "%7Bcolor%7D%20Belt%20-%20Level%20%7Blevel%7D/singular": abb5a7600bd66f523906425beffbaff4
     Black/singular: 0a78282fb00e09a335608b154ffa01de
     Gray/singular: 54ec745c22b59509822468ba82070d74
+    "%7Bday%7D%20with%20%7Bvalue%7D%25/singular": 6e5416262bf719f632e31ed1a8236801
+    Best%20day/singular: c7d1324abc9d2515ec3bbc955b317404
+    Morning/singular: c2f3e2bb2361eebb1576896fcc6c0d69
+    Night/singular: 6fa09c4a1c03187be163148a653056ae
+    Afternoon/singular: b34f73070b6ce5e811f2aeec93798d7d
+    Evening/singular: d401caa89963f8017a148bcdd1749c2d
+    Peak%20time/singular: 00610169ef99ad10cd58469e43f5a056
+    "%7Bperiod%7D%20with%20%7Bvalue%7D%25/singular": 958bc2c65d9a6823edee6f2585fd6501
     Continue%20learning/singular: ff5ff528cbacf657af36fb9b711431d6
     Next%3A%20%7Bactivity%7D/singular: 9208679843466247d2161793249e5eda
     Activity/singular: 1948763de8e531483a798b68195e297e

@@ -115,6 +115,18 @@ test.describe("Home Page - Performance Section", () => {
     await expect(authenticatedPage.getByText(/with 85%/i)).toBeVisible();
   });
 
+  test("authenticated user with progress sees peak time", async ({
+    authenticatedPage,
+  }) => {
+    await authenticatedPage.goto("/");
+
+    await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
+    await expect(authenticatedPage.getByText(/peak time/i)).toBeVisible();
+    await expect(
+      authenticatedPage.getByText(/morning with 90%/i),
+    ).toBeVisible();
+  });
+
   test("user without progress does not see performance section", async ({
     userWithoutProgress,
   }) => {

@@ -5,20 +5,24 @@ import { getAccuracy } from "@/data/progress/get-accuracy";
 import { getBeltLevel } from "@/data/progress/get-belt-level";
 import { getBestDay } from "@/data/progress/get-best-day";
 import { getEnergyLevel } from "@/data/progress/get-energy-level";
+import { getPeakTime } from "@/data/progress/get-peak-time";
 import { Accuracy, AccuracySkeleton } from "./accuracy";
 import { BeltLevel, BeltLevelSkeleton } from "./belt-level";
 import { BestDay, BestDaySkeleton } from "./best-day";
 import { EnergyLevel, EnergyLevelSkeleton } from "./energy-level";
+import { PeakTime, PeakTimeSkeleton } from "./peak-time";
 
 export async function Performance() {
   const t = await getExtracted();
 
-  const [energyData, beltData, accuracyData, bestDayData] = await Promise.all([
-    getEnergyLevel(),
-    getBeltLevel(),
-    getAccuracy(),
-    getBestDay(),
-  ]);
+  const [energyData, beltData, accuracyData, bestDayData, peakTimeData] =
+    await Promise.all([
+      getEnergyLevel(),
+      getBeltLevel(),
+      getAccuracy(),
+      getBestDay(),
+      getPeakTime(),
+    ]);
 
   return (
     <section
@@ -49,6 +53,13 @@ export async function Performance() {
             dayOfWeek={bestDayData.dayOfWeek}
           />
         )}
+
+        {peakTimeData && (
+          <PeakTime
+            accuracy={peakTimeData.accuracy}
+            period={peakTimeData.period}
+          />
+        )}
       </div>
     </section>
   );
@@ -64,6 +75,7 @@ export function PerformanceSkeleton() {
         <BeltLevelSkeleton />
         <AccuracySkeleton />
         <BestDaySkeleton />
+        <PeakTimeSkeleton />
       </div>
     </section>
   );
