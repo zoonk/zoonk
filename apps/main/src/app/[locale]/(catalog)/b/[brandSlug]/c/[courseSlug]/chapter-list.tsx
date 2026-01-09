@@ -24,7 +24,7 @@ export function ChapterList({
 
   return (
     <section>
-      <Accordion className="rounded-none border-0">
+      <Accordion className="rounded-none border-0 leading-snug">
         {chapters.map((chapter, index) => (
           <AccordionItem
             className="border-border/30 border-b last:border-b-0 data-open:bg-transparent"
@@ -32,36 +32,36 @@ export function ChapterList({
             value={chapter.slug}
           >
             <AccordionTrigger className="px-0 py-4 hover:no-underline">
-              <div className="flex gap-4">
-                <span className="w-6 shrink-0 font-mono text-muted-foreground/60 text-sm tabular-nums leading-7">
+              <div className="flex items-start gap-4">
+                <span className="w-6 shrink-0 font-mono text-muted-foreground/60 text-sm tabular-nums">
                   {String(index + 1).padStart(2, "0")}
                 </span>
 
-                <div className="flex min-w-0 flex-col gap-0.5 text-left">
-                  <span className="font-medium leading-7">{chapter.title}</span>
-
-                  {chapter.description && (
-                    <span className="line-clamp-2 text-muted-foreground text-sm leading-relaxed">
-                      {chapter.description}
-                    </span>
-                  )}
-                </div>
+                <span className="text-left font-medium">{chapter.title}</span>
               </div>
             </AccordionTrigger>
 
             <AccordionContent className="[&_a]:no-underline">
-              <ul className="ml-10 flex flex-col">
-                {chapter.lessons.map((lesson) => (
-                  <li key={lesson.id}>
-                    <ClientLink
-                      className="-ml-2 block rounded-md px-2 py-2 text-muted-foreground text-sm transition-colors hover:bg-muted/50 hover:text-foreground"
-                      href={`/b/${brandSlug}/c/${courseSlug}/c/${chapter.slug}/l/${lesson.slug}`}
-                    >
-                      {lesson.title}
-                    </ClientLink>
-                  </li>
-                ))}
-              </ul>
+              <div className="ml-10 flex flex-col">
+                {chapter.description && (
+                  <p className="mb-4 text-muted-foreground text-sm leading-relaxed">
+                    {chapter.description}
+                  </p>
+                )}
+
+                <ul className="flex flex-col">
+                  {chapter.lessons.map((lesson) => (
+                    <li key={lesson.id}>
+                      <ClientLink
+                        className="-ml-2 block rounded-md px-2 py-2 font-medium text-sm transition-colors hover:bg-muted/50"
+                        href={`/b/${brandSlug}/c/${courseSlug}/c/${chapter.slug}/l/${lesson.slug}`}
+                      >
+                        {lesson.title}
+                      </ClientLink>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </AccordionContent>
           </AccordionItem>
         ))}
