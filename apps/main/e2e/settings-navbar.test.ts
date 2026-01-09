@@ -75,15 +75,11 @@ test.describe("Settings Navbar", () => {
       logoutPage.getByRole("link", { name: /logout/i }),
     ).toBeVisible();
 
-    await Promise.all([
-      logoutPage.waitForURL(/^\/(en|pt)\/?$/),
-      logoutPage.waitForResponse(
-        (response) =>
-          response.url().includes("/api/auth/get-session") &&
-          response.status() === 200,
-      ),
-      logoutPage.getByRole("link", { name: /logout/i }).click(),
-    ]);
+    // Click logout - this triggers a hard navigation via window.location.href
+    await logoutPage.getByRole("link", { name: /logout/i }).click();
+
+    // Wait for navigation to complete (home page with locale)
+    await logoutPage.waitForURL(/\/(en|pt)\/?$/);
 
     await logoutPage.getByRole("button", { name: /search/i }).click();
 

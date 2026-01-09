@@ -20,15 +20,16 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { PlayCircleIcon } from "lucide-react";
 import { cacheLife } from "next/cache";
 import Image from "next/image";
-import { getExtracted } from "next-intl/server";
+import { getExtracted, setRequestLocale } from "next-intl/server";
 import { getContinueLearning } from "@/data/courses/get-continue-learning";
 import { Link } from "@/i18n/navigation";
 import { getActivityKinds } from "@/lib/activities";
 import { Hero } from "./hero";
 
-export async function ContinueLearning() {
+export async function ContinueLearning({ locale }: { locale: string }) {
   "use cache: private";
   cacheLife("minutes");
+  setRequestLocale(locale);
 
   const t = await getExtracted();
   const activityKinds = await getActivityKinds();

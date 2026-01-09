@@ -228,19 +228,19 @@ test.describe("Command Palette - Authenticated", () => {
       logoutPage.getByRole("dialog").getByText(/^logout$/i),
     ).toBeVisible();
 
-    // Click logout - this triggers a hard navigation
-    await Promise.all([
-      logoutPage.waitForURL(/^\/(en|pt)\/?$/),
-      logoutPage.waitForResponse(
-        (response) =>
-          response.url().includes("/api/auth/get-session") &&
-          response.status() === 200,
-      ),
-      logoutPage
-        .getByRole("dialog")
-        .getByText(/^logout$/i)
-        .click(),
-    ]);
+    // Click logout - this triggers a hard navigation via window.location.href
+    await logoutPage
+      .getByRole("dialog")
+      .getByText(/^logout$/i)
+      .click();
+
+    // Wait for navigation to complete (home page with locale)
+    await logoutPage.waitForURL(/\/(en|pt)\/?$/);
+
+    // Wait for page to be interactive after hard navigation
+    await expect(
+      logoutPage.getByRole("button", { name: /search/i }),
+    ).toBeVisible();
 
     // Verify user is logged out - command palette should show Login option
     await logoutPage.getByRole("button", { name: /search/i }).click();

@@ -33,11 +33,11 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   return (
     <>
       <Suspense fallback={<ContinueLearningSkeleton />}>
-        <ContinueLearning />
+        <ContinueLearning locale={locale} />
       </Suspense>
 
       <Suspense fallback={<PerformanceSkeleton />}>
-        <Performance />
+        <Performance locale={locale} />
       </Suspense>
     </>
   );
