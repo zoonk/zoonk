@@ -1,6 +1,5 @@
 import { FeatureCardSectionTitle } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { cacheLife } from "next/cache";
 import { getExtracted } from "next-intl/server";
 import { getBeltLevel } from "@/data/progress/get-belt-level";
 import { getEnergyLevel } from "@/data/progress/get-energy-level";
@@ -8,10 +7,8 @@ import { BeltLevel, BeltLevelSkeleton } from "./belt-level";
 import { EnergyLevel, EnergyLevelSkeleton } from "./energy-level";
 
 export async function Performance() {
-  "use cache: private";
-  cacheLife("minutes");
-
   const t = await getExtracted();
+
   const [energyData, beltData] = await Promise.all([
     getEnergyLevel(),
     getBeltLevel(),
