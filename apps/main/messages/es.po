@@ -160,6 +160,11 @@ msgid "Search chapters and lessons..."
 msgstr "Buscar capítulos y lecciones..."
 
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-search-container.tsx
+msgctxt "p8Tezk"
+msgid "Search chapters and lessons"
+msgstr "Buscar capítulos y lecciones"
+
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-search-container.tsx
 msgctxt "SxedrD"
 msgid "No chapters or lessons found"
 msgstr "No se encontraron capítulos o lecciones"

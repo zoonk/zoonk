@@ -154,7 +154,7 @@ test.describe("Course Chapter Search", () => {
     await page.goto("/b/ai/c/machine-learning");
 
     // Fill search input
-    await page.getByPlaceholder(/search chapters/i).fill("regression");
+    await page.getByLabel(/search chapters/i).fill("regression");
 
     // Only matching chapter should be visible
     await expect(
@@ -176,7 +176,7 @@ test.describe("Course Chapter Search", () => {
     await page.goto("/b/ai/c/machine-learning");
 
     // Search for a lesson title
-    await page.getByPlaceholder(/search chapters/i).fill("cleaning");
+    await page.getByLabel(/search chapters/i).fill("cleaning");
 
     // Parent chapter should be visible and expanded
     await expect(
@@ -197,7 +197,7 @@ test.describe("Course Chapter Search", () => {
   test("persists search in URL and survives page reload", async ({ page }) => {
     await page.goto("/b/ai/c/machine-learning");
 
-    await page.getByPlaceholder(/search chapters/i).fill("regression");
+    await page.getByLabel(/search chapters/i).fill("regression");
 
     // URL should update with search param
     await expect(page).toHaveURL(/\?q=regression/);
@@ -206,9 +206,7 @@ test.describe("Course Chapter Search", () => {
     await page.reload();
 
     // Search should persist
-    await expect(page.getByPlaceholder(/search chapters/i)).toHaveValue(
-      "regression",
-    );
+    await expect(page.getByLabel(/search chapters/i)).toHaveValue("regression");
 
     // Filtered results should still show
     await expect(
@@ -219,7 +217,7 @@ test.describe("Course Chapter Search", () => {
   test("shows empty state when no matches found", async ({ page }) => {
     await page.goto("/b/ai/c/machine-learning");
 
-    await page.getByPlaceholder(/search chapters/i).fill("nonexistent xyz");
+    await page.getByLabel(/search chapters/i).fill("nonexistent xyz");
 
     await expect(page.getByText(/no chapters or lessons found/i)).toBeVisible();
   });
@@ -228,7 +226,7 @@ test.describe("Course Chapter Search", () => {
     await page.goto("/b/ai/c/machine-learning");
 
     // Search to filter
-    const searchInput = page.getByPlaceholder(/search chapters/i);
+    const searchInput = page.getByLabel(/search chapters/i);
     await searchInput.fill("regression");
 
     // Verify filtered
@@ -257,7 +255,7 @@ test.describe("Course Chapter Search", () => {
     await page.goto("/pt/b/ai/c/machine-learning");
 
     // Search for "introducao" (without accent) should match "Introdução ao Machine Learning"
-    await page.getByPlaceholder(/pesquisar capítulos/i).fill("introducao");
+    await page.getByLabel(/buscar capítulos/i).fill("introducao");
 
     // Chapter with accent "Introdução" should be visible
     await expect(

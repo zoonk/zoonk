@@ -88,6 +88,7 @@ function ChapterSearchContent({
       <div className="relative mb-4">
         <SearchIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground/60" />
         <Input
+          aria-label={t("Search chapters and lessons")}
           className="h-10 border-border/40 bg-transparent pl-9 placeholder:text-muted-foreground/50 focus-visible:border-border focus-visible:ring-0"
           onChange={(e) => setSearch(e.target.value || null)}
           placeholder={t("Search chapters and lessons...")}
