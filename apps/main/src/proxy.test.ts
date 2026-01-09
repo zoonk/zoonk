@@ -31,41 +31,34 @@ test("doesn't match paths starting with 149e (BotID paths)", () => {
   expect(doesMiddlewareMatch({ config, url: "/149eabcd" })).toBe(false);
 });
 
-test("redirects home page to language-specific URL", () => {
+test("doesn't match paths already containing locale", () => {
+  expect(doesMiddlewareMatch({ config, url: "/en/some/page" })).toBe(false);
+});
+
+test("redirects home page to /en when cookies are set", () => {
   const request = new NextRequest("https://zoonk.com");
-  request.cookies.set("NEXT_LOCALE", "pt");
+  request.cookies.set("NEXT_LOCALE", "en");
+  const response = proxy(request);
+
+  expect(getRedirectUrl(response)).toBe("https://zoonk.com/en");
+});
+
+test("redirects home page to /en when Accept-Language is en-US", () => {
+  const request = new NextRequest("https://zoonk.com", {
+    headers: { "Accept-Language": "en-US,en;q=0.9" },
+  });
+
+  const response = proxy(request);
+
+  expect(getRedirectUrl(response)).toBe("https://zoonk.com/en");
+});
+
+test("redirects home page to /pt when Accept-Language is pt-BR", () => {
+  const request = new NextRequest("https://zoonk.com", {
+    headers: { "Accept-Language": "pt-BR,pt;q=0.9" },
+  });
+
   const response = proxy(request);
 
   expect(getRedirectUrl(response)).toBe("https://zoonk.com/pt");
-});
-
-test("redirects nested page to language-specific URL", () => {
-  const request = new NextRequest("https://zoonk.com/some/page");
-  request.cookies.set("NEXT_LOCALE", "pt");
-  const response = proxy(request);
-
-  expect(getRedirectUrl(response)).toBe("https://zoonk.com/pt/some/page");
-});
-
-test("don't redirect home page if using default locale", () => {
-  const request = new NextRequest("https://zoonk.com");
-  request.cookies.set("NEXT_LOCALE", "en");
-  const response = proxy(request);
-
-  expect(getRedirectUrl(response)).toBeFalsy();
-});
-
-test("don't redirect nested page if using default locale", () => {
-  const request = new NextRequest("https://zoonk.com/some/page");
-  request.cookies.set("NEXT_LOCALE", "en");
-  const response = proxy(request);
-
-  expect(getRedirectUrl(response)).toBeFalsy();
-});
-
-test("remove default locale from URL", () => {
-  const request = new NextRequest("https://zoonk.com/en/some/page");
-  const response = proxy(request);
-
-  expect(getRedirectUrl(response)).toBe("https://zoonk.com/some/page");
 });
