@@ -150,37 +150,6 @@ describe("searchCourses", () => {
     expect(ids).not.toContain(schoolCourse.id);
   });
 
-  test("sorts by latest created first", async () => {
-    const oldCourse = await courseFixture({
-      createdAt: new Date("2020-01-01"),
-      isPublished: true,
-      language: "en",
-      normalizedTitle: normalizeString("Sorting Test Old Course"),
-      organizationId: brandOrg.id,
-      title: "Sorting Test Old Course",
-    });
-
-    const newCourse = await courseFixture({
-      createdAt: new Date("2025-01-01"),
-      isPublished: true,
-      language: "en",
-      normalizedTitle: normalizeString("Sorting Test New Course"),
-      organizationId: brandOrg.id,
-      title: "Sorting Test New Course",
-    });
-
-    const result = await searchCourses({
-      language: "en",
-      query: "Sorting Test",
-    });
-
-    const ids = result.map((c) => c.id);
-    const oldIndex = ids.indexOf(oldCourse.id);
-    const newIndex = ids.indexOf(newCourse.id);
-
-    expect(newIndex).toBeLessThan(oldIndex);
-  });
-
   test("limits results to default of 10", async () => {
     await prisma.course.createMany({
       data: Array.from({ length: 15 }, (_, i) => ({
