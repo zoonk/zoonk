@@ -48,8 +48,17 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-energy: var(--energy);
-  --color-belt: var(--belt);
   --color-accuracy: var(--accuracy);
+  --color-belt-white: var(--belt-white);
+  --color-belt-yellow: var(--belt-yellow);
+  --color-belt-orange: var(--belt-orange);
+  --color-belt-green: var(--belt-green);
+  --color-belt-blue: var(--belt-blue);
+  --color-belt-purple: var(--belt-purple);
+  --color-belt-brown: var(--belt-brown);
+  --color-belt-red: var(--belt-red);
+  --color-belt-gray: var(--belt-gray);
+  --color-belt-black: var(--belt-black);
 }
 
 :root {
@@ -88,8 +97,17 @@
   --sidebar-border: var(--color-neutral-200);
   --sidebar-ring: var(--color-primary);
   --energy: var(--color-orange-500);
-  --belt: var(--color-purple-500);
   --accuracy: var(--color-green-500);
+  --belt-white: var(--color-white);
+  --belt-yellow: var(--color-yellow-400);
+  --belt-orange: var(--color-orange-400);
+  --belt-green: var(--color-green-500);
+  --belt-blue: var(--color-blue-500);
+  --belt-purple: var(--color-purple-500);
+  --belt-brown: var(--color-amber-800);
+  --belt-red: var(--color-red-500);
+  --belt-gray: var(--color-gray-500);
+  --belt-black: var(--color-black);
 }
 
 @media (prefers-color-scheme: light) and (prefers-contrast: more) {
@@ -129,7 +147,6 @@
     --sidebar-border: var(--color-neutral-950);
     --sidebar-ring: var(--color-primary);
     --energy: var(--color-orange-700);
-    --belt: var(--color-purple-700);
     --accuracy: var(--color-green-700);
   }
 }
@@ -170,8 +187,8 @@
     --sidebar-border: var(--color-neutral-700);
     --sidebar-ring: var(--color-primary);
     --energy: var(--color-orange-400);
-    --belt: var(--color-purple-400);
     --accuracy: var(--color-green-400);
+    --belt-black: var(--color-neutral-700);
   }
 }
 
@@ -211,8 +228,8 @@
     --sidebar-border: var(--color-neutral-50);
     --sidebar-ring: var(--color-primary);
     --energy: var(--color-orange-200);
-    --belt: var(--color-purple-200);
     --accuracy: var(--color-green-200);
+    --belt-black: var(--color-neutral-500);
   }
 }
 

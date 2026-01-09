@@ -180,6 +180,11 @@ msgid "Green"
 msgstr "Verde"
 
 #: src/app/[locale]/(catalog)/belt-level.tsx
+msgctxt "3UK8wh"
+msgid "{color} belt"
+msgstr "Cinturón {color}"
+
+#: src/app/[locale]/(catalog)/belt-level.tsx
 msgctxt "5Tw3Ta"
 msgid "Yellow"
 msgstr "Amarillo"
