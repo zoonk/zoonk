@@ -103,7 +103,7 @@ test.describe("Home Page - Performance Section", () => {
     await expect(
       authenticatedPage.getByText("85% correct answers"),
     ).toBeVisible();
-    await expect(authenticatedPage.getByText("Past 30 days")).toBeVisible();
+    await expect(authenticatedPage.getByText("Past 3 months")).toBeVisible();
   });
 
   test("authenticated user with progress sees best day", async ({

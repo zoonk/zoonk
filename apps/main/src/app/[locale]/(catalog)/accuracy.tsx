@@ -38,7 +38,7 @@ export async function Accuracy({ accuracy }: { accuracy: number }) {
         <FeatureCardTitle>
           {t("{value}% correct answers", { value: formattedAccuracy })}
         </FeatureCardTitle>
-        <FeatureCardSubtitle>{t("Past 30 days")}</FeatureCardSubtitle>
+        <FeatureCardSubtitle>{t("Past 3 months")}</FeatureCardSubtitle>
       </FeatureCardBody>
     </FeatureCard>
   );

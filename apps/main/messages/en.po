@@ -145,11 +145,6 @@ msgid "{value}% correct answers"
 msgstr "{value}% correct answers"
 
 #: src/app/[locale]/(catalog)/accuracy.tsx
-msgctxt "OIM20v"
-msgid "Past 30 days"
-msgstr "Past 30 days"
-
-#: src/app/[locale]/(catalog)/accuracy.tsx
 msgctxt "uCsywK"
 msgid "Accuracy"
 msgstr "Accuracy"

@@ -56,14 +56,14 @@ describe("authenticated users", () => {
     expect(result?.accuracy).toBeCloseTo(83.33, 1);
   });
 
-  test("excludes records older than 30 days", async () => {
+  test("excludes records older than 3 months", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
     const org = await organizationFixture();
 
     const today = new Date();
     const oldDate = new Date(today);
-    oldDate.setDate(oldDate.getDate() - 31);
+    oldDate.setDate(oldDate.getDate() - 91);
 
     await prisma.dailyProgress.createMany({
       data: [
