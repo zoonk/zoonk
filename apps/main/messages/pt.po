@@ -249,6 +249,21 @@ msgctxt "Yp7v0H"
 msgid "Gray"
 msgstr "Cinza"
 
+#: src/app/[locale]/(catalog)/best-day.tsx
+msgctxt "bcsugq"
+msgid "{day} with {value}%"
+msgstr "{day} com {value}%"
+
+#: src/app/[locale]/(catalog)/best-day.tsx
+msgctxt "HHFpcy"
+msgid "Best day"
+msgstr "Melhor dia"
+
+#: src/app/[locale]/(catalog)/best-day.tsx
+msgctxt "zml1/y"
+msgid "Past 3 months"
+msgstr "Últimos 3 meses"
+
 #: src/app/[locale]/(catalog)/continue-learning.tsx
 msgctxt "0X+xfW"
 msgid "Continue learning"

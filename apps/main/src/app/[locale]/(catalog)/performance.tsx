@@ -3,23 +3,22 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted } from "next-intl/server";
 import { getAccuracy } from "@/data/progress/get-accuracy";
 import { getBeltLevel } from "@/data/progress/get-belt-level";
+import { getBestDay } from "@/data/progress/get-best-day";
 import { getEnergyLevel } from "@/data/progress/get-energy-level";
 import { Accuracy, AccuracySkeleton } from "./accuracy";
 import { BeltLevel, BeltLevelSkeleton } from "./belt-level";
+import { BestDay, BestDaySkeleton } from "./best-day";
 import { EnergyLevel, EnergyLevelSkeleton } from "./energy-level";
 
 export async function Performance() {
   const t = await getExtracted();
 
-  const [energyData, beltData, accuracyData] = await Promise.all([
+  const [energyData, beltData, accuracyData, bestDayData] = await Promise.all([
     getEnergyLevel(),
     getBeltLevel(),
     getAccuracy(),
+    getBestDay(),
   ]);
-
-  if (!(energyData && beltData && accuracyData)) {
-    return null;
-  }
 
   return (
     <section
@@ -31,14 +30,25 @@ export async function Performance() {
       </FeatureCardSectionTitle>
 
       <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-        <EnergyLevel energy={energyData.currentEnergy} />
-        <BeltLevel
-          bpToNextLevel={beltData.bpToNextLevel}
-          color={beltData.color}
-          isMaxLevel={beltData.isMaxLevel}
-          level={beltData.level}
-        />
-        <Accuracy accuracy={accuracyData.accuracy} />
+        {energyData && <EnergyLevel energy={energyData.currentEnergy} />}
+
+        {beltData && (
+          <BeltLevel
+            bpToNextLevel={beltData.bpToNextLevel}
+            color={beltData.color}
+            isMaxLevel={beltData.isMaxLevel}
+            level={beltData.level}
+          />
+        )}
+
+        {accuracyData && <Accuracy accuracy={accuracyData.accuracy} />}
+
+        {bestDayData && (
+          <BestDay
+            accuracy={bestDayData.accuracy}
+            dayOfWeek={bestDayData.dayOfWeek}
+          />
+        )}
       </div>
     </section>
   );
@@ -53,6 +63,7 @@ export function PerformanceSkeleton() {
         <EnergyLevelSkeleton />
         <BeltLevelSkeleton />
         <AccuracySkeleton />
+        <BestDaySkeleton />
       </div>
     </section>
   );
