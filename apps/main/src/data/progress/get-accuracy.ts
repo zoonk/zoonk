@@ -18,8 +18,8 @@ export const getAccuracy = cache(
     }
 
     const userId = Number(session.user.id);
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const threeMonthsAgo = new Date();
+    threeMonthsAgo.setDate(threeMonthsAgo.getDate() - 90);
 
     const { data: result, error } = await safeAsync(() =>
       prisma.dailyProgress.aggregate({
@@ -29,7 +29,7 @@ export const getAccuracy = cache(
           incorrectAnswers: true,
         },
         where: {
-          date: { gte: thirtyDaysAgo },
+          date: { gte: threeMonthsAgo },
           userId,
         },
       }),
