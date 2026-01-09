@@ -4,7 +4,7 @@ test.describe("Home Page - Unauthenticated", () => {
   test("shows hero with CTAs that navigate to correct pages", async ({
     page,
   }) => {
-    await page.goto("/");
+    await page.goto("/en/");
 
     await expect(page.getByText(/continue learning/i)).not.toBeVisible();
 
@@ -25,7 +25,7 @@ test.describe("Home Page - Unauthenticated", () => {
   });
 
   test("does not show performance section", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/en/");
 
     await expect(page.getByText(/^performance$/i)).not.toBeVisible();
   });
@@ -35,7 +35,7 @@ test.describe("Home Page - Authenticated", () => {
   test("user with progress sees continue learning instead of hero", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/");
+    await authenticatedPage.goto("/en/");
 
     await expect(
       authenticatedPage.getByText(/continue learning/i),
@@ -51,7 +51,7 @@ test.describe("Home Page - Authenticated", () => {
   test("user without progress sees hero section", async ({
     userWithoutProgress,
   }) => {
-    await userWithoutProgress.goto("/");
+    await userWithoutProgress.goto("/en/");
 
     await expect(
       userWithoutProgress.getByText(/continue learning/i),
@@ -69,7 +69,7 @@ test.describe("Home Page - Performance Section", () => {
   test("authenticated user with progress sees energy level", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/");
+    await authenticatedPage.goto("/en/");
 
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
     await expect(
@@ -80,7 +80,7 @@ test.describe("Home Page - Performance Section", () => {
   test("authenticated user with progress sees belt level", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/");
+    await authenticatedPage.goto("/en/");
 
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
     await expect(
@@ -94,7 +94,7 @@ test.describe("Home Page - Performance Section", () => {
   test("user without progress does not see performance section", async ({
     userWithoutProgress,
   }) => {
-    await userWithoutProgress.goto("/");
+    await userWithoutProgress.goto("/en/");
 
     await expect(
       userWithoutProgress.getByText(/^performance$/i),

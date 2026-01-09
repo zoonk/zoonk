@@ -2,7 +2,7 @@ import { expect, test } from "./fixtures";
 
 test.describe("Support page", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/support");
+    await page.goto("/en/support");
 
     await expect(
       page.getByRole("heading", { name: /help & support/i }),
@@ -96,7 +96,7 @@ test.describe("Support page - Authenticated", () => {
   test("email field shows authenticated user's email", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/support");
+    await authenticatedPage.goto("/en/support");
 
     await authenticatedPage
       .getByRole("button", { name: /contact support/i })

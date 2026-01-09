@@ -2,7 +2,7 @@ import { expect, test } from "./fixtures";
 
 test.describe("Learn Form", () => {
   test("shows form with auto-focused input", async ({ page }) => {
-    await page.goto("/learn");
+    await page.goto("/en/learn");
 
     await expect(
       page.getByRole("heading", { name: /what do you want to learn/i }),
@@ -14,7 +14,7 @@ test.describe("Learn Form", () => {
   });
 
   test("submitting prompt navigates to suggestions page", async ({ page }) => {
-    await page.goto("/learn");
+    await page.goto("/en/learn");
 
     await page.getByRole("textbox").fill("test prompt");
     await page.getByRole("button", { name: /start/i }).click();
@@ -29,7 +29,7 @@ test.describe("Course Suggestions", () => {
   test("shows suggestions with title, description, and create button", async ({
     page,
   }) => {
-    await page.goto("/learn/test%20prompt");
+    await page.goto("/en/learn/test%20prompt");
 
     await expect(
       page.getByRole("heading", { name: /course ideas for test prompt/i }),
@@ -45,7 +45,7 @@ test.describe("Course Suggestions", () => {
   });
 
   test("Change subject navigates back to learn form", async ({ page }) => {
-    await page.goto("/learn/test%20prompt");
+    await page.goto("/en/learn/test%20prompt");
 
     await expect(
       page.getByRole("heading", { name: /course ideas for/i }),
@@ -59,7 +59,7 @@ test.describe("Course Suggestions", () => {
   });
 
   test("submits form using Enter key", async ({ page }) => {
-    await page.goto("/learn");
+    await page.goto("/en/learn");
 
     const input = page.getByRole("textbox");
     await input.fill("test prompt");

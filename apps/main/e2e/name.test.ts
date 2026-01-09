@@ -2,14 +2,14 @@ import { expect, test } from "./fixtures";
 
 test.describe("Display name settings page", () => {
   test("shows login prompt for unauthenticated users", async ({ page }) => {
-    await page.goto("/name");
+    await page.goto("/en/name");
 
     await expect(page.getByText(/you need to be logged in/i)).toBeVisible();
     await expect(page.getByRole("link", { name: /login/i })).toBeVisible();
   });
 
   test("updates display name successfully", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/name");
+    await authenticatedPage.goto("/en/name");
 
     const nameInput = authenticatedPage.getByLabel(/name/i);
     await nameInput.clear();
@@ -34,7 +34,7 @@ test.describe("Display name settings page", () => {
   test("shows error for whitespace-only name", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/name");
+    await authenticatedPage.goto("/en/name");
 
     const nameInput = authenticatedPage.getByLabel(/name/i);
     const originalName = await nameInput.inputValue();

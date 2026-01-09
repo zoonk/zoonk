@@ -4,7 +4,7 @@ test.describe("Course Chapters Accordion", () => {
   test("displays chapters with position numbers and expands to show lessons", async ({
     page,
   }) => {
-    await page.goto("/b/ai/c/machine-learning");
+    await page.goto("/en/b/ai/c/machine-learning");
 
     // Verify chapters are displayed with position numbers
     // Position numbers should be visible (01, 02, 03 for the 3 published chapters)
@@ -43,7 +43,7 @@ test.describe("Course Chapters Accordion", () => {
   });
 
   test("closes current chapter when another is opened", async ({ page }) => {
-    await page.goto("/b/ai/c/machine-learning");
+    await page.goto("/en/b/ai/c/machine-learning");
 
     // Expand first chapter
     await page
@@ -73,7 +73,7 @@ test.describe("Course Chapters Accordion", () => {
   });
 
   test("lesson link navigates to the correct URL", async ({ page }) => {
-    await page.goto("/b/ai/c/machine-learning");
+    await page.goto("/en/b/ai/c/machine-learning");
 
     // Expand first chapter
     await page
@@ -96,7 +96,7 @@ test.describe("Course Chapters Accordion", () => {
   });
 
   test("excludes unpublished chapters from the list", async ({ page }) => {
-    await page.goto("/b/ai/c/machine-learning");
+    await page.goto("/en/b/ai/c/machine-learning");
 
     // Published chapters should be visible
     await expect(
@@ -119,7 +119,7 @@ test.describe("Course Chapters - Empty State", () => {
   test("renders course page without chapters gracefully", async ({ page }) => {
     // This course has chapters but we're testing the page renders
     // A course that never had chapters would also work
-    await page.goto("/b/ai/c/python-programming");
+    await page.goto("/en/b/ai/c/python-programming");
 
     // Course header should still show
     await expect(

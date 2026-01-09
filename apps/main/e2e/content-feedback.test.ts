@@ -3,7 +3,7 @@ import { expect, test } from "./fixtures";
 // Content feedback is tested on the course suggestions page where it's used
 test.describe("Content Feedback", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/learn/test%20prompt");
+    await page.goto("/en/learn/test%20prompt");
 
     // Wait for content to load
     await expect(page.getByText("Introduction to Testing")).toBeVisible();
@@ -114,7 +114,7 @@ test.describe("Content Feedback - Authenticated", () => {
   test("email field shows authenticated user's email", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/learn/test%20prompt");
+    await authenticatedPage.goto("/en/learn/test%20prompt");
     // Wait for content to load
     await expect(
       authenticatedPage.getByText("Introduction to Testing"),

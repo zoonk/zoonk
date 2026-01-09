@@ -19,7 +19,7 @@ async function createUnpublishedCourse() {
 
 test.describe("Courses Page - Basic", () => {
   test("shows page content with course cards", async ({ page }) => {
-    await page.goto("/courses");
+    await page.goto("/en/courses");
 
     // Page title and description
     await expect(
@@ -34,7 +34,7 @@ test.describe("Courses Page - Basic", () => {
   });
 
   test("clicking course card navigates to course detail", async ({ page }) => {
-    await page.goto("/courses");
+    await page.goto("/en/courses");
 
     await page.getByText("Machine Learning").first().click();
 

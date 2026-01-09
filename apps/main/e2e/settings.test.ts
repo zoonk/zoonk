@@ -2,7 +2,7 @@ import { expect, test } from "./fixtures";
 
 test.describe("Settings page", () => {
   test("displays correct heading and description", async ({ page }) => {
-    await page.goto("/settings");
+    await page.goto("/en/settings");
 
     await expect(
       page.getByRole("heading", { level: 1, name: /settings/i }),
@@ -14,7 +14,7 @@ test.describe("Settings page", () => {
   test("settings list items match dropdown items except Settings link", async ({
     page,
   }) => {
-    await page.goto("/settings");
+    await page.goto("/en/settings");
 
     // Open dropdown to get all menu items dynamically (source of truth)
     await page.getByRole("button", { name: /settings/i }).click();
@@ -64,7 +64,7 @@ test.describe("Settings page", () => {
   test("Settings item is active in dropdown when on settings page", async ({
     page,
   }) => {
-    await page.goto("/settings");
+    await page.goto("/en/settings");
     await page.getByRole("button", { name: /settings/i }).click();
 
     // The Settings menu item should be highlighted/active
@@ -73,7 +73,7 @@ test.describe("Settings page", () => {
   });
 
   test("Subscription link navigates to subscription page", async ({ page }) => {
-    await page.goto("/settings");
+    await page.goto("/en/settings");
     await page.getByRole("link", { name: /subscription/i }).click();
 
     await expect(
@@ -82,7 +82,7 @@ test.describe("Settings page", () => {
   });
 
   test("Language link navigates to language page", async ({ page }) => {
-    await page.goto("/settings");
+    await page.goto("/en/settings");
     await page.getByRole("link", { name: /language/i }).click();
 
     await expect(
@@ -91,7 +91,7 @@ test.describe("Settings page", () => {
   });
 
   test("Display name link navigates to name page", async ({ page }) => {
-    await page.goto("/settings");
+    await page.goto("/en/settings");
     await page.getByRole("link", { name: /display name/i }).click();
 
     await expect(
@@ -100,7 +100,7 @@ test.describe("Settings page", () => {
   });
 
   test("Support link navigates to support page", async ({ page }) => {
-    await page.goto("/settings");
+    await page.goto("/en/settings");
     await page.getByRole("link", { name: /support/i }).click();
 
     await expect(

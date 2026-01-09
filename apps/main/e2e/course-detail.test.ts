@@ -4,7 +4,7 @@ test.describe("Course Detail Page", () => {
   test("shows course content with title, description, and image", async ({
     page,
   }) => {
-    await page.goto("/b/ai/c/machine-learning");
+    await page.goto("/en/b/ai/c/machine-learning");
 
     await expect(
       page.getByRole("heading", { level: 1, name: /machine learning/i }),
@@ -20,13 +20,13 @@ test.describe("Course Detail Page", () => {
   });
 
   test("non-existent course shows 404 page", async ({ page }) => {
-    await page.goto("/b/ai/c/nonexistent-course");
+    await page.goto("/en/b/ai/c/nonexistent-course");
 
     await expect(page.getByText(/not found|404/i)).toBeVisible();
   });
 
   test("shows fallback icon when course has no image", async ({ page }) => {
-    await page.goto("/b/ai/c/python-programming");
+    await page.goto("/en/b/ai/c/python-programming");
 
     await expect(
       page.getByRole("heading", { name: /python programming/i }),

@@ -2,7 +2,7 @@ import { expect, test } from "./fixtures";
 
 test.describe("Navbar - Unauthenticated", () => {
   test("Home link navigates to home page", async ({ page }) => {
-    await page.goto("/courses");
+    await page.goto("/en/courses");
 
     await page.getByRole("link", { name: /home/i }).click();
 
@@ -12,7 +12,7 @@ test.describe("Navbar - Unauthenticated", () => {
   });
 
   test("Courses link navigates to courses page", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/en/");
 
     await page.getByRole("link", { exact: true, name: "Courses" }).click();
 
@@ -22,7 +22,7 @@ test.describe("Navbar - Unauthenticated", () => {
   });
 
   test("Learn link navigates to learn page", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/en/");
 
     await page.getByRole("link", { exact: true, name: "Learn" }).click();
 
@@ -32,7 +32,7 @@ test.describe("Navbar - Unauthenticated", () => {
   });
 
   test("Home link is active on home page", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/en/");
 
     const homeLink = page.getByRole("link", { name: /home/i });
 
@@ -40,7 +40,7 @@ test.describe("Navbar - Unauthenticated", () => {
   });
 
   test("Courses link is active on courses page", async ({ page }) => {
-    await page.goto("/courses");
+    await page.goto("/en/courses");
 
     const coursesLink = page.getByRole("link", {
       exact: true,
@@ -51,7 +51,7 @@ test.describe("Navbar - Unauthenticated", () => {
   });
 
   test("Learn link is active on learn page", async ({ page }) => {
-    await page.goto("/learn");
+    await page.goto("/en/learn");
 
     const learnLink = page.getByRole("link", { exact: true, name: "Learn" });
 
@@ -63,7 +63,7 @@ test.describe("Navbar - Authenticated", () => {
   test("My courses menu item navigates to my courses page", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/");
+    await authenticatedPage.goto("/en/");
 
     await authenticatedPage.getByRole("button", { name: /user menu/i }).click();
 
@@ -79,7 +79,7 @@ test.describe("Navbar - Authenticated", () => {
   test("Settings menu item navigates to settings page", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/");
+    await authenticatedPage.goto("/en/");
 
     await authenticatedPage.getByRole("button", { name: /user menu/i }).click();
 

@@ -4,7 +4,7 @@ import { expect, test } from "./fixtures";
 
 test.describe("Subscription Page - Unauthenticated", () => {
   test("shows login prompt with link to login page", async ({ page }) => {
-    await page.goto("/subscription");
+    await page.goto("/en/subscription");
     await expect(
       page.getByRole("alert").filter({ hasText: /logged in/i }),
     ).toBeVisible();
@@ -17,7 +17,7 @@ test.describe("Subscription Page - Unauthenticated", () => {
 
 test.describe("Subscription Page - No Subscription", () => {
   test("shows upgrade content", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/subscription");
+    await authenticatedPage.goto("/en/subscription");
 
     await expect(
       authenticatedPage.getByRole("heading", {
@@ -35,7 +35,7 @@ test.describe("Subscription Page - No Subscription", () => {
   test("upgrade button shows loading state when clicked", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/subscription");
+    await authenticatedPage.goto("/en/subscription");
 
     const upgradeButton = authenticatedPage.getByRole("button", {
       name: /upgrade/i,
@@ -76,7 +76,7 @@ test.describe("Subscription Page - With Subscription", () => {
     const subscription = await createTestSubscription();
 
     try {
-      await userWithoutProgress.goto("/subscription");
+      await userWithoutProgress.goto("/en/subscription");
 
       await expect(
         userWithoutProgress.getByText(/your subscription is active/i),

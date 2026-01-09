@@ -13,7 +13,7 @@ function getModifierKey(): "Meta" | "Control" {
 
 test.describe("Command Palette - Unauthenticated", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/en/");
     // Wait for the page to be fully interactive before testing keyboard shortcuts
     await expect(page.getByRole("button", { name: /search/i })).toBeVisible();
   });
@@ -93,7 +93,7 @@ test.describe("Command Palette - Unauthenticated", () => {
   });
 
   test("selecting Home shows home content", async ({ page }) => {
-    await page.goto("/courses"); // Start from different page
+    await page.goto("/en/courses"); // Start from different page
     await openCommandPalette(page);
 
     await page
@@ -140,7 +140,7 @@ test.describe("Command Palette - Authenticated", () => {
   test("shows My account group with authenticated options", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/");
+    await authenticatedPage.goto("/en/");
     await authenticatedPage.getByRole("button", { name: /search/i }).click();
 
     const dialog = authenticatedPage.getByRole("dialog");
@@ -155,7 +155,7 @@ test.describe("Command Palette - Authenticated", () => {
   test("does NOT show Login option when authenticated", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/");
+    await authenticatedPage.goto("/en/");
     await authenticatedPage.getByRole("button", { name: /search/i }).click();
 
     const dialog = authenticatedPage.getByRole("dialog");
@@ -165,7 +165,7 @@ test.describe("Command Palette - Authenticated", () => {
   test("selecting My courses shows user's enrolled courses", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/");
+    await authenticatedPage.goto("/en/");
     await authenticatedPage.getByRole("button", { name: /search/i }).click();
 
     await authenticatedPage
@@ -182,7 +182,7 @@ test.describe("Command Palette - Authenticated", () => {
   test("selecting Subscription shows subscription content", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/");
+    await authenticatedPage.goto("/en/");
     await authenticatedPage.getByRole("button", { name: /search/i }).click();
 
     await authenticatedPage
@@ -202,7 +202,7 @@ test.describe("Command Palette - Authenticated", () => {
   test("selecting Settings shows settings content", async ({
     authenticatedPage,
   }) => {
-    await authenticatedPage.goto("/");
+    await authenticatedPage.goto("/en/");
     await authenticatedPage.getByRole("button", { name: /search/i }).click();
 
     await authenticatedPage
@@ -220,7 +220,7 @@ test.describe("Command Palette - Authenticated", () => {
   test("selecting Logout logs user out and redirects to home", async ({
     logoutPage,
   }) => {
-    await logoutPage.goto("/");
+    await logoutPage.goto("/en/");
 
     // Verify authenticated state by checking command palette shows Logout option
     await logoutPage.getByRole("button", { name: /search/i }).click();
@@ -252,7 +252,7 @@ test.describe("Command Palette - Authenticated", () => {
 
 test.describe("Command Palette - Course Search", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/en/");
     await page.getByRole("button", { name: /search/i }).click();
   });
 
@@ -309,7 +309,7 @@ test.describe("Command Palette - Course Search", () => {
 
 test.describe("Command Palette - Keyboard Navigation", () => {
   test("focuses input on open", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/en/");
     await page.getByRole("button", { name: /search/i }).click();
 
     const input = page.getByPlaceholder(/search/i);
@@ -317,7 +317,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
   });
 
   test("arrow key navigation selects items", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/en/");
     await page.getByRole("button", { name: /search/i }).click();
 
     const dialog = page.getByRole("dialog");
@@ -360,7 +360,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
   });
 
   test("Enter to select navigates correctly", async ({ page }) => {
-    await page.goto("/courses"); // Start from courses page so Home navigation is verifiable
+    await page.goto("/en/courses"); // Start from courses page so Home navigation is verifiable
     await page.getByRole("button", { name: /search/i }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
@@ -376,7 +376,7 @@ test.describe("Command Palette - Keyboard Navigation", () => {
   });
 
   test("focus trap within dialog", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/en/");
     await page.getByRole("button", { name: /search/i }).click();
     await expect(page.getByRole("dialog")).toBeVisible();
 
@@ -394,7 +394,7 @@ test.describe("Command Palette - Mobile Viewport", () => {
   test.use({ viewport: { height: 667, width: 375 } });
 
   test("command palette opens and functions on mobile", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/en/");
     await page.getByRole("button", { name: /search/i }).click();
 
     const dialog = page.getByRole("dialog");
@@ -407,7 +407,7 @@ test.describe("Command Palette - Mobile Viewport", () => {
 
 test.describe("Command Palette - Accessibility", () => {
   test("has dialog role", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/en/");
     await page.getByRole("button", { name: /search/i }).click();
 
     const dialog = page.getByRole("dialog");
@@ -415,7 +415,7 @@ test.describe("Command Palette - Accessibility", () => {
   });
 
   test("has accessible title", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/en/");
     await page.getByRole("button", { name: /search/i }).click();
 
     const dialog = page.getByRole("dialog");
@@ -427,7 +427,7 @@ test.describe("Command Palette - Accessibility", () => {
   });
 
   test("search button indicates keyboard shortcut", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/en/");
 
     const searchButton = page.getByRole("button", { name: /search/i });
     await expect(searchButton).toHaveAttribute("aria-keyshortcuts", /k/i);
@@ -447,7 +447,7 @@ test.describe("Command Palette - Accessibility", () => {
 
     const page = await context.newPage();
 
-    await page.goto("/");
+    await page.goto("/en/");
     await openCommandPalette(page);
 
     const input = page.getByPlaceholder(/search/i);

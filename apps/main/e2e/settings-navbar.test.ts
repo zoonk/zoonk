@@ -2,7 +2,7 @@ import { expect, test } from "./fixtures";
 
 test.describe("Settings Navbar", () => {
   test("home link navigates to home page", async ({ page }) => {
-    await page.goto("/settings");
+    await page.goto("/en/settings");
     await page.getByRole("link", { name: /home page/i }).click();
 
     await expect(
@@ -13,7 +13,7 @@ test.describe("Settings Navbar", () => {
   test("dropdown Settings item navigates to settings page", async ({
     page,
   }) => {
-    await page.goto("/subscription");
+    await page.goto("/en/subscription");
     await page.getByRole("button", { name: /subscription/i }).click();
     await page.getByRole("menuitem", { name: /^settings$/i }).click();
 
@@ -25,7 +25,7 @@ test.describe("Settings Navbar", () => {
   test("dropdown Subscription item navigates to subscription page", async ({
     page,
   }) => {
-    await page.goto("/settings");
+    await page.goto("/en/settings");
     await page.getByRole("button", { name: /settings/i }).click();
     await page.getByRole("menuitem", { name: /subscription/i }).click();
 
@@ -37,7 +37,7 @@ test.describe("Settings Navbar", () => {
   test("dropdown Language item navigates to language page", async ({
     page,
   }) => {
-    await page.goto("/settings");
+    await page.goto("/en/settings");
     await page.getByRole("button", { name: /settings/i }).click();
     await page.getByRole("menuitem", { name: /language/i }).click();
 
@@ -49,7 +49,7 @@ test.describe("Settings Navbar", () => {
   test("dropdown Display name item navigates to name page", async ({
     page,
   }) => {
-    await page.goto("/settings");
+    await page.goto("/en/settings");
     await page.getByRole("button", { name: /settings/i }).click();
     await page.getByRole("menuitem", { name: /display name/i }).click();
 
@@ -59,7 +59,7 @@ test.describe("Settings Navbar", () => {
   });
 
   test("dropdown Support item navigates to support page", async ({ page }) => {
-    await page.goto("/settings");
+    await page.goto("/en/settings");
     await page.getByRole("button", { name: /settings/i }).click();
     await page.getByRole("menuitem", { name: /support/i }).click();
 
@@ -69,7 +69,7 @@ test.describe("Settings Navbar", () => {
   });
 
   test("logout button logs user out", async ({ logoutPage }) => {
-    await logoutPage.goto("/settings");
+    await logoutPage.goto("/en/settings");
 
     await expect(
       logoutPage.getByRole("link", { name: /logout/i }),

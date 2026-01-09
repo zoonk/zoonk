@@ -19,7 +19,7 @@ test.describe("Auth Callback - Invalid Token", () => {
       }
     });
 
-    await page.goto("/auth/callback/invalid-token");
+    await page.goto("/en/auth/callback/invalid-token");
 
     await expect(page.getByText(/authentication error/i)).toBeVisible();
     await expect(page.getByText(/invalid|expired/i)).toBeVisible();
@@ -66,7 +66,7 @@ test.describe("Auth Callback - Valid Token", () => {
       }
     });
 
-    await page.goto("/auth/callback/valid-token");
+    await page.goto("/en/auth/callback/valid-token");
     await page.waitForURL(/^(?!.*\/auth\/callback)/);
   });
 });

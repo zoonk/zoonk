@@ -2,7 +2,7 @@ import { expect, test } from "./fixtures";
 
 test.describe("Locale Behavior - English", () => {
   test("home page shows English content", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/en/");
 
     // Navbar should be in English
     await expect(
