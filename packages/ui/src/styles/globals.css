@@ -49,6 +49,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-energy: var(--energy);
   --color-belt: var(--belt);
+  --color-accuracy: var(--accuracy);
 }
 
 :root {
@@ -88,6 +89,7 @@
   --sidebar-ring: var(--color-primary);
   --energy: var(--color-orange-500);
   --belt: var(--color-purple-500);
+  --accuracy: var(--color-green-500);
 }
 
 @media (prefers-color-scheme: light) and (prefers-contrast: more) {
@@ -128,6 +130,7 @@
     --sidebar-ring: var(--color-primary);
     --energy: var(--color-orange-700);
     --belt: var(--color-purple-700);
+    --accuracy: var(--color-green-700);
   }
 }
 
@@ -168,6 +171,7 @@
     --sidebar-ring: var(--color-primary);
     --energy: var(--color-orange-400);
     --belt: var(--color-purple-400);
+    --accuracy: var(--color-green-400);
   }
 }
 
@@ -208,6 +212,7 @@
     --sidebar-ring: var(--color-primary);
     --energy: var(--color-orange-200);
     --belt: var(--color-purple-200);
+    --accuracy: var(--color-green-200);
   }
 }
 

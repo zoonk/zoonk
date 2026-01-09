@@ -91,6 +91,18 @@ test.describe("Home Page - Performance Section", () => {
     ).toBeVisible();
   });
 
+  test("authenticated user with progress sees accuracy", async ({
+    authenticatedPage,
+  }) => {
+    await authenticatedPage.goto("/");
+
+    await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
+    await expect(
+      authenticatedPage.getByText("85% correct answers"),
+    ).toBeVisible();
+    await expect(authenticatedPage.getByText("Past 30 days")).toBeVisible();
+  });
+
   test("user without progress does not see performance section", async ({
     userWithoutProgress,
   }) => {

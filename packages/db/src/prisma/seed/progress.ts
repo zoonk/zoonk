@@ -91,6 +91,24 @@ export async function seedProgress(
     }
   }
 
+  // E2E user daily progress (deterministic values for testing: 85% accuracy)
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+    dailyProgressData.push({
+      brainPowerEarned: 300,
+      challengesCompleted: 0,
+      correctAnswers: 17,
+      date,
+      energyAtEnd: 75,
+      incorrectAnswers: 3,
+      interactiveCompleted: 10,
+      organizationId: org.id,
+      staticCompleted: 5,
+      timeSpentSeconds: 1800,
+      userId: users.e2eWithProgress.id,
+    });
+  }
+
   await Promise.all(
     dailyProgressData.map((data) =>
       prisma.dailyProgress.upsert({
