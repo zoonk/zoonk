@@ -85,7 +85,11 @@ test.describe("Settings Navbar", () => {
       logoutPage.getByRole("link", { name: /logout/i }).click(),
     ]);
 
-    await logoutPage.getByRole("button", { name: /search/i }).click();
+    // Scope to navigation to avoid strict mode violation
+    await logoutPage
+      .getByRole("navigation")
+      .getByRole("button", { name: /search/i })
+      .click();
 
     await expect(
       logoutPage.getByRole("dialog").getByText(/^login$/i),

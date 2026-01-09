@@ -37,8 +37,11 @@ test.describe("Home Page - Authenticated", () => {
   }) => {
     await authenticatedPage.goto("/");
 
+    // Use .first() to handle potential duplicates during streaming/hydration
     await expect(
-      authenticatedPage.getByText(/continue learning/i),
+      authenticatedPage
+        .getByRole("heading", { name: /continue learning/i })
+        .first(),
     ).toBeVisible();
 
     await expect(
