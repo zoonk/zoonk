@@ -4,7 +4,11 @@ test.describe("Navbar - Unauthenticated", () => {
   test("Home link navigates to home page", async ({ page }) => {
     await page.goto("/courses");
 
-    await page.getByRole("link", { name: /home/i }).click();
+    // Scope to navigation to avoid conflicts with links in main content
+    await page
+      .getByRole("navigation")
+      .getByRole("link", { name: /home/i })
+      .click();
 
     await expect(
       page.getByRole("heading", { name: /learn anything with ai/i }),
@@ -14,7 +18,11 @@ test.describe("Navbar - Unauthenticated", () => {
   test("Courses link navigates to courses page", async ({ page }) => {
     await page.goto("/");
 
-    await page.getByRole("link", { exact: true, name: "Courses" }).click();
+    // Scope to navigation to avoid conflicts with "Explore courses" in hero
+    await page
+      .getByRole("navigation")
+      .getByRole("link", { exact: true, name: "Courses" })
+      .click();
 
     await expect(
       page.getByRole("heading", { name: /explore courses/i }),
@@ -24,7 +32,11 @@ test.describe("Navbar - Unauthenticated", () => {
   test("Learn link navigates to learn page", async ({ page }) => {
     await page.goto("/");
 
-    await page.getByRole("link", { exact: true, name: "Learn" }).click();
+    // Scope to navigation to avoid conflicts with "Learn anything" in hero
+    await page
+      .getByRole("navigation")
+      .getByRole("link", { exact: true, name: "Learn" })
+      .click();
 
     await expect(
       page.getByRole("heading", { name: /what do you want to learn/i }),
@@ -34,7 +46,9 @@ test.describe("Navbar - Unauthenticated", () => {
   test("Home link is active on home page", async ({ page }) => {
     await page.goto("/");
 
-    const homeLink = page.getByRole("link", { name: /home/i });
+    const homeLink = page
+      .getByRole("navigation")
+      .getByRole("link", { name: /home/i });
 
     await expect(homeLink).toHaveAttribute("aria-current", "page");
   });
@@ -42,10 +56,9 @@ test.describe("Navbar - Unauthenticated", () => {
   test("Courses link is active on courses page", async ({ page }) => {
     await page.goto("/courses");
 
-    const coursesLink = page.getByRole("link", {
-      exact: true,
-      name: "Courses",
-    });
+    const coursesLink = page
+      .getByRole("navigation")
+      .getByRole("link", { exact: true, name: "Courses" });
 
     await expect(coursesLink).toHaveAttribute("aria-current", "page");
   });
@@ -53,7 +66,9 @@ test.describe("Navbar - Unauthenticated", () => {
   test("Learn link is active on learn page", async ({ page }) => {
     await page.goto("/learn");
 
-    const learnLink = page.getByRole("link", { exact: true, name: "Learn" });
+    const learnLink = page
+      .getByRole("navigation")
+      .getByRole("link", { exact: true, name: "Learn" });
 
     await expect(learnLink).toHaveAttribute("aria-current", "page");
   });
