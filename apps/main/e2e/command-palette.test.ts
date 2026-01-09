@@ -244,6 +244,7 @@ test.describe("Command Palette - Authenticated", () => {
 
     // Verify user is logged out - command palette should show Login option
     await logoutPage.getByRole("button", { name: /search/i }).click();
+    await expect(logoutPage.getByRole("dialog")).toBeVisible();
     await expect(
       logoutPage.getByRole("dialog").getByText(/^login$/i),
     ).toBeVisible();
