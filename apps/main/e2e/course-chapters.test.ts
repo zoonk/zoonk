@@ -8,9 +8,9 @@ test.describe("Course Chapters Accordion", () => {
 
     // Verify chapters are displayed with position numbers
     // Position numbers should be visible (01, 02, 03 for the 3 published chapters)
-    await expect(page.getByText("01")).toBeVisible();
-    await expect(page.getByText("02")).toBeVisible();
-    await expect(page.getByText("03")).toBeVisible();
+    await expect(page.getByText("01", { exact: true })).toBeVisible();
+    await expect(page.getByText("02", { exact: true })).toBeVisible();
+    await expect(page.getByText("03", { exact: true })).toBeVisible();
 
     // Verify chapter titles are visible
     await expect(
@@ -111,7 +111,7 @@ test.describe("Course Chapters Accordion", () => {
 
     // Position number 04 (for Tree-Based Models) should not exist
     // since only 3 chapters are published
-    await expect(page.getByText("04")).not.toBeVisible();
+    await expect(page.getByText("04", { exact: true })).not.toBeVisible();
   });
 });
 
@@ -146,5 +146,125 @@ test.describe("Course Chapters - Locale", () => {
     await expect(
       page.getByRole("button", { name: /Preparação de Dados/i }),
     ).toBeVisible();
+  });
+});
+
+test.describe("Course Chapter Search", () => {
+  test("filters chapters by chapter title", async ({ page }) => {
+    await page.goto("/b/ai/c/machine-learning");
+
+    // Fill search input
+    await page.getByLabel(/search chapters/i).fill("regression");
+
+    // Only matching chapter should be visible
+    await expect(
+      page.getByRole("button", { name: /Regression Algorithms/i }),
+    ).toBeVisible();
+
+    // Non-matching chapters should be hidden
+    await expect(
+      page.getByRole("button", { name: /Introduction to Machine Learning/i }),
+    ).not.toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /Data Preparation/i }),
+    ).not.toBeVisible();
+  });
+
+  test("filters by lesson title and auto-expands parent chapter", async ({
+    page,
+  }) => {
+    await page.goto("/b/ai/c/machine-learning");
+
+    // Search for a lesson title
+    await page.getByLabel(/search chapters/i).fill("cleaning");
+
+    // Parent chapter should be visible and expanded
+    await expect(
+      page.getByRole("button", { name: /Data Preparation/i }),
+    ).toBeVisible();
+
+    // Matching lesson should be visible (auto-expanded)
+    await expect(
+      page.getByRole("link", { name: /Data Cleaning/i }),
+    ).toBeVisible();
+
+    // Non-matching lessons in same chapter should be hidden
+    await expect(
+      page.getByRole("link", { name: /Understanding Datasets/i }),
+    ).not.toBeVisible();
+  });
+
+  test("persists search in URL and survives page reload", async ({ page }) => {
+    await page.goto("/b/ai/c/machine-learning");
+
+    await page.getByLabel(/search chapters/i).fill("regression");
+
+    // URL should update with search param
+    await expect(page).toHaveURL(/\?q=regression/);
+
+    // Reload the page
+    await page.reload();
+
+    // Search should persist
+    await expect(page.getByLabel(/search chapters/i)).toHaveValue("regression");
+
+    // Filtered results should still show
+    await expect(
+      page.getByRole("button", { name: /Regression Algorithms/i }),
+    ).toBeVisible();
+  });
+
+  test("shows empty state when no matches found", async ({ page }) => {
+    await page.goto("/b/ai/c/machine-learning");
+
+    await page.getByLabel(/search chapters/i).fill("nonexistent xyz");
+
+    await expect(page.getByText(/no chapters or lessons found/i)).toBeVisible();
+  });
+
+  test("clears search and shows all chapters again", async ({ page }) => {
+    await page.goto("/b/ai/c/machine-learning");
+
+    // Search to filter
+    const searchInput = page.getByLabel(/search chapters/i);
+    await searchInput.fill("regression");
+
+    // Verify filtered
+    await expect(
+      page.getByRole("button", { name: /Introduction to Machine Learning/i }),
+    ).not.toBeVisible();
+
+    // Clear search
+    await searchInput.clear();
+
+    // All chapters should be visible again
+    await expect(
+      page.getByRole("button", { name: /Introduction to Machine Learning/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /Data Preparation/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /Regression Algorithms/i }),
+    ).toBeVisible();
+  });
+
+  test("matches Portuguese chapters without accents (accent-insensitive search)", async ({
+    page,
+  }) => {
+    await page.goto("/pt/b/ai/c/machine-learning");
+
+    // Search for "introducao" (without accent) should match "Introdução ao Machine Learning"
+    await page.getByLabel(/buscar capítulos/i).fill("introducao");
+
+    // Chapter with accent "Introdução" should be visible
+    await expect(
+      page.getByRole("button", { name: /Introdução ao Machine Learning/i }),
+    ).toBeVisible();
+
+    // Non-matching chapters should be hidden
+    await expect(
+      page.getByRole("button", { name: /Preparação de Dados/i }),
+    ).not.toBeVisible();
   });
 });

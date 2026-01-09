@@ -13,18 +13,35 @@ export function ChapterList({
   brandSlug,
   chapters,
   courseSlug,
+  emptyStateText,
+  expandedValues,
+  onExpandedChange,
 }: {
   brandSlug: string;
   chapters: ChapterWithLessons[];
   courseSlug: string;
+  emptyStateText?: string;
+  expandedValues?: string[];
+  onExpandedChange?: (values: string[]) => void;
 }) {
   if (chapters.length === 0) {
-    return null;
+    if (!emptyStateText) {
+      return null;
+    }
+    return (
+      <p className="py-8 text-center text-muted-foreground text-sm">
+        {emptyStateText}
+      </p>
+    );
   }
 
   return (
     <section>
-      <Accordion className="rounded-none border-0 leading-snug">
+      <Accordion
+        className="rounded-none border-0 leading-snug"
+        onValueChange={(values) => onExpandedChange?.(values as string[])}
+        value={expandedValues}
+      >
         {chapters.map((chapter, index) => (
           <AccordionItem
             className="border-border/30 border-b last:border-b-0 data-open:bg-transparent"
