@@ -1,9 +1,9 @@
+import { BeltIndicator } from "@zoonk/ui/components/belt-indicator";
 import {
   FeatureCard,
   FeatureCardBody,
   FeatureCardHeader,
   FeatureCardHeaderContent,
-  FeatureCardIcon,
   FeatureCardIndicator,
   FeatureCardLabel,
   FeatureCardSubtitle,
@@ -11,7 +11,6 @@ import {
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import type { BeltColor } from "@zoonk/utils/belt-level";
-import { AwardIcon } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
 
 type BeltLevelProps = {
@@ -71,13 +70,13 @@ export async function BeltLevel({
     ? t("Max level reached")
     : t("{value} BP to next level", { value: formattedBp });
 
+  const beltLabel = t("{color} belt", { color: colorName });
+
   return (
     <FeatureCard className="w-full">
-      <FeatureCardHeader className="text-belt">
+      <FeatureCardHeader>
         <FeatureCardHeaderContent>
-          <FeatureCardIcon>
-            <AwardIcon />
-          </FeatureCardIcon>
+          <BeltIndicator color={color} label={beltLabel} size="sm" />
           <FeatureCardLabel>{t("Belt level")}</FeatureCardLabel>
         </FeatureCardHeaderContent>
         <FeatureCardIndicator />
