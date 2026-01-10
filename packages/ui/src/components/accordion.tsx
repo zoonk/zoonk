@@ -2,25 +2,55 @@
 
 import { Accordion as AccordionPrimitive } from "@base-ui/react/accordion";
 import { cn } from "@zoonk/ui/lib/utils";
+import { cva, type VariantProps } from "class-variance-authority";
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
-function Accordion({ className, ...props }: AccordionPrimitive.Root.Props) {
+const accordionVariants = cva("flex w-full flex-col overflow-hidden", {
+  defaultVariants: {
+    variant: "default",
+  },
+  variants: {
+    variant: {
+      default: "rounded-2xl border",
+      ghost: "rounded-none border-0",
+    },
+  },
+});
+
+const accordionItemVariants = cva("data-open:bg-muted/50", {
+  defaultVariants: {
+    variant: "default",
+  },
+  variants: {
+    variant: {
+      default: "not-last:border-b",
+      ghost: "border-b-0 data-open:bg-transparent",
+    },
+  },
+});
+
+function Accordion({
+  className,
+  variant,
+  ...props
+}: AccordionPrimitive.Root.Props & VariantProps<typeof accordionVariants>) {
   return (
     <AccordionPrimitive.Root
-      className={cn(
-        "flex w-full flex-col overflow-hidden rounded-2xl border",
-        className,
-      )}
+      className={cn(accordionVariants({ className, variant }))}
       data-slot="accordion"
       {...props}
     />
   );
 }
 
-function AccordionItem({ className, ...props }: AccordionPrimitive.Item.Props) {
+function AccordionItem({
+  className,
+  variant,
+  ...props
+}: AccordionPrimitive.Item.Props & VariantProps<typeof accordionItemVariants>) {
   return (
     <AccordionPrimitive.Item
-      className={cn("not-last:border-b data-open:bg-muted/50", className)}
+      className={cn(accordionItemVariants({ className, variant }))}
       data-slot="accordion-item"
       {...props}
     />
@@ -79,4 +109,11 @@ function AccordionContent({
   );
 }
 
-export { Accordion, AccordionItem, AccordionTrigger, AccordionContent };
+export {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  accordionItemVariants,
+  accordionVariants,
+};
