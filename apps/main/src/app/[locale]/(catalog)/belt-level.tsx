@@ -6,12 +6,15 @@ import {
   FeatureCardHeaderContent,
   FeatureCardIndicator,
   FeatureCardLabel,
+  FeatureCardLink,
   FeatureCardSubtitle,
   FeatureCardTitle,
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import type { BeltColor } from "@zoonk/utils/belt-level";
 import { getExtracted, getLocale } from "next-intl/server";
+import { ClientLink } from "@/i18n/client-link";
+import { getMenu } from "@/lib/menu";
 
 type BeltLevelProps = {
   bpToNextLevel: number;
@@ -28,6 +31,7 @@ export async function BeltLevel({
 }: BeltLevelProps) {
   const t = await getExtracted();
   const locale = await getLocale();
+  const beltMenu = getMenu("belt");
 
   let colorName: string;
   // biome-ignore lint/nursery/noUnnecessaryConditions: exhaustive switch for i18n extraction
@@ -73,25 +77,27 @@ export async function BeltLevel({
   const beltLabel = t("{color} belt", { color: colorName });
 
   return (
-    <FeatureCard className="w-full">
-      <FeatureCardHeader>
-        <FeatureCardHeaderContent>
-          <BeltIndicator color={color} label={beltLabel} size="sm" />
-          <FeatureCardLabel>{t("Belt level")}</FeatureCardLabel>
-        </FeatureCardHeaderContent>
-        <FeatureCardIndicator />
-      </FeatureCardHeader>
+    <FeatureCardLink render={<ClientLink href={beltMenu.url} />}>
+      <FeatureCard>
+        <FeatureCardHeader>
+          <FeatureCardHeaderContent>
+            <BeltIndicator color={color} label={beltLabel} size="sm" />
+            <FeatureCardLabel>{t("Belt level")}</FeatureCardLabel>
+          </FeatureCardHeaderContent>
+          <FeatureCardIndicator />
+        </FeatureCardHeader>
 
-      <FeatureCardBody>
-        <FeatureCardTitle>
-          {t("{color} Belt - Level {level}", {
-            color: colorName,
-            level: String(level),
-          })}
-        </FeatureCardTitle>
-        <FeatureCardSubtitle>{subtitle}</FeatureCardSubtitle>
-      </FeatureCardBody>
-    </FeatureCard>
+        <FeatureCardBody>
+          <FeatureCardTitle>
+            {t("{color} Belt - Level {level}", {
+              color: colorName,
+              level: String(level),
+            })}
+          </FeatureCardTitle>
+          <FeatureCardSubtitle>{subtitle}</FeatureCardSubtitle>
+        </FeatureCardBody>
+      </FeatureCard>
+    </FeatureCardLink>
   );
 }
 

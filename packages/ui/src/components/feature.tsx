@@ -1,3 +1,5 @@
+import { mergeProps } from "@base-ui/react/merge-props";
+import { useRender } from "@base-ui/react/use-render";
 import { cn } from "@zoonk/ui/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 import { ChevronRightIcon } from "lucide-react";
@@ -35,6 +37,31 @@ function FeatureCard({
       {children}
     </article>
   );
+}
+
+type FeatureCardLinkProps = useRender.ComponentProps<"a">;
+
+function FeatureCardLink({
+  className,
+  render,
+  ...props
+}: FeatureCardLinkProps) {
+  return useRender({
+    defaultTagName: "a",
+    props: mergeProps<"a">(
+      {
+        className: cn(
+          "-m-2 block rounded-lg p-2 transition-colors hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
+    state: {
+      slot: "feature-card-link",
+    },
+  });
 }
 
 function FeatureCardHeader({
@@ -292,11 +319,13 @@ export {
   FeatureCardIcon,
   FeatureCardIndicator,
   FeatureCardLabel,
+  FeatureCardLink,
   FeatureCardSectionTitle,
   FeatureCardSubtitle,
   FeatureCardThumbnail,
   FeatureCardThumbnailImage,
   FeatureCardThumbnailPlaceholder,
   FeatureCardTitle,
+  type FeatureCardLinkProps,
   type FeatureCardThumbnailProps,
 };

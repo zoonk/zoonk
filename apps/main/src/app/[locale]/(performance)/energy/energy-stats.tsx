@@ -1,0 +1,61 @@
+import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { getExtracted, getLocale } from "next-intl/server";
+import type { EnergyPeriod } from "@/data/progress/get-energy-history";
+import { formatPeriodLabel } from "../_utils";
+import { EnergyComparison } from "./energy-comparison";
+
+export async function EnergyStats({
+  average,
+  period,
+  periodEnd,
+  periodStart,
+  previousAverage,
+}: {
+  average: number;
+  period: EnergyPeriod;
+  periodEnd: Date;
+  periodStart: Date;
+  previousAverage: number | null;
+}) {
+  const t = await getExtracted();
+  const locale = await getLocale();
+
+  const formattedAverage = new Intl.NumberFormat(locale, {
+    maximumFractionDigits: 1,
+    trailingZeroDisplay: "stripIfInteger",
+  }).format(average);
+
+  const periodLabel = formatPeriodLabel(periodStart, periodEnd, period, locale);
+
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="text-muted-foreground text-sm">{periodLabel}</span>
+
+      <div className="flex items-baseline gap-3">
+        <span className="font-bold text-5xl text-energy tabular-nums tracking-tight">
+          {t("{value}%", { value: formattedAverage })}
+        </span>
+
+        {previousAverage !== null && (
+          <EnergyComparison
+            current={average}
+            period={period}
+            previous={previousAverage}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function EnergyStatsSkeleton() {
+  return (
+    <div className="flex flex-col gap-1">
+      <Skeleton className="h-4 w-28" />
+      <div className="flex items-baseline gap-3">
+        <Skeleton className="h-12 w-28" />
+        <Skeleton className="h-5 w-32" />
+      </div>
+    </div>
+  );
+}

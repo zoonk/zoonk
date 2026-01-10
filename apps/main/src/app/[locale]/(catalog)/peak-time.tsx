@@ -6,12 +6,14 @@ import {
   FeatureCardIcon,
   FeatureCardIndicator,
   FeatureCardLabel,
+  FeatureCardLink,
   FeatureCardSubtitle,
   FeatureCardTitle,
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { Clock } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
+import { ClientLink } from "@/i18n/client-link";
 
 type PeakTimeProps = {
   accuracy: number;
@@ -37,27 +39,29 @@ export async function PeakTime({ accuracy, period }: PeakTimeProps) {
   }).format(accuracy);
 
   return (
-    <FeatureCard className="w-full">
-      <FeatureCardHeader className="text-accuracy">
-        <FeatureCardHeaderContent>
-          <FeatureCardIcon>
-            <Clock />
-          </FeatureCardIcon>
-          <FeatureCardLabel>{t("Peak time")}</FeatureCardLabel>
-        </FeatureCardHeaderContent>
-        <FeatureCardIndicator />
-      </FeatureCardHeader>
+    <FeatureCardLink render={<ClientLink href="/accuracy" />}>
+      <FeatureCard>
+        <FeatureCardHeader className="text-accuracy">
+          <FeatureCardHeaderContent>
+            <FeatureCardIcon>
+              <Clock />
+            </FeatureCardIcon>
+            <FeatureCardLabel>{t("Peak time")}</FeatureCardLabel>
+          </FeatureCardHeaderContent>
+          <FeatureCardIndicator />
+        </FeatureCardHeader>
 
-      <FeatureCardBody>
-        <FeatureCardTitle className="first-letter:uppercase">
-          {t("{period} with {value}%", {
-            period: periodName,
-            value: formattedAccuracy,
-          })}
-        </FeatureCardTitle>
-        <FeatureCardSubtitle>{t("Past 3 months")}</FeatureCardSubtitle>
-      </FeatureCardBody>
-    </FeatureCard>
+        <FeatureCardBody>
+          <FeatureCardTitle className="first-letter:uppercase">
+            {t("{period} with {value}%", {
+              period: periodName,
+              value: formattedAccuracy,
+            })}
+          </FeatureCardTitle>
+          <FeatureCardSubtitle>{t("Past 3 months")}</FeatureCardSubtitle>
+        </FeatureCardBody>
+      </FeatureCard>
+    </FeatureCardLink>
   );
 }
 

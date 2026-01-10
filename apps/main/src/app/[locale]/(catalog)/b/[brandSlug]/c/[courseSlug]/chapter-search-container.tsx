@@ -5,7 +5,6 @@ import { normalizeString } from "@zoonk/utils/string";
 import { SearchIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useQueryState } from "nuqs";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { useMemo, useState } from "react";
 import type { ChapterWithLessons } from "@/data/chapters/list-course-chapters";
 import { ChapterList } from "./chapter-list";
@@ -35,26 +34,6 @@ function filterChapters(chapters: ChapterWithLessons[], query: string) {
 }
 
 export function ChapterSearchContainer({
-  brandSlug,
-  chapters,
-  courseSlug,
-}: {
-  brandSlug: string;
-  chapters: ChapterWithLessons[];
-  courseSlug: string;
-}) {
-  return (
-    <NuqsAdapter>
-      <ChapterSearchContent
-        brandSlug={brandSlug}
-        chapters={chapters}
-        courseSlug={courseSlug}
-      />
-    </NuqsAdapter>
-  );
-}
-
-function ChapterSearchContent({
   brandSlug,
   chapters,
   courseSlug,
