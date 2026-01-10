@@ -86,6 +86,7 @@ msgstr "Courses"
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx
 #: src/app/[locale]/(catalog)/_components/navbar-links.tsx
+#: src/app/[locale]/(performance)/_components/performance-navbar.tsx
 #: src/app/[locale]/(settings)/_components/settings-navbar.tsx
 msgctxt "U3l+Q9"
 msgid "Home page"
@@ -145,6 +146,8 @@ msgid "{value}% correct answers"
 msgstr "{value}% correct answers"
 
 #: src/app/[locale]/(catalog)/accuracy.tsx
+#: src/app/[locale]/(performance)/_components/metric-pills.tsx
+#: src/app/[locale]/(performance)/accuracy/page.tsx
 msgctxt "uCsywK"
 msgid "Accuracy"
 msgstr "Accuracy"
@@ -518,6 +521,138 @@ msgstr "{period} with {value}%"
 msgctxt "AA5h7P"
 msgid "Performance"
 msgstr "Performance"
+
+#: src/app/[locale]/(performance)/_components/metric-pills.tsx
+msgctxt "cVpmV7"
+msgid "Energy"
+msgstr "Energy"
+
+#: src/app/[locale]/(performance)/_components/metric-pills.tsx
+msgctxt "erSdxr"
+msgid "Belt"
+msgstr "Belt"
+
+#: src/app/[locale]/(performance)/_components/period-navigation.tsx
+msgctxt "hCCWuZ"
+msgid "Previous period"
+msgstr "Previous period"
+
+#: src/app/[locale]/(performance)/_components/period-navigation.tsx
+msgctxt "I2z5s/"
+msgid "Next period"
+msgstr "Next period"
+
+#: src/app/[locale]/(performance)/_components/period-tabs.tsx
+msgctxt "IFo1oo"
+msgid "Year"
+msgstr "Year"
+
+#: src/app/[locale]/(performance)/_components/period-tabs.tsx
+msgctxt "NPrFLC"
+msgid "6 Months"
+msgstr "6 Months"
+
+#: src/app/[locale]/(performance)/_components/period-tabs.tsx
+msgctxt "PIaUh+"
+msgid "Period selection"
+msgstr "Period selection"
+
+#: src/app/[locale]/(performance)/_components/period-tabs.tsx
+msgctxt "TBovrx"
+msgid "Month"
+msgstr "Month"
+
+#: src/app/[locale]/(performance)/accuracy/page.tsx
+#: src/app/[locale]/(performance)/belt/page.tsx
+msgctxt "e61Jf3"
+msgid "Coming soon"
+msgstr "Coming soon"
+
+#: src/app/[locale]/(performance)/accuracy/page.tsx
+msgctxt "lPlYts"
+msgid "Track your accuracy over time and see your best days and peak times."
+msgstr "Track your accuracy over time and see your best days and peak times."
+
+#: src/app/[locale]/(performance)/accuracy/page.tsx
+msgctxt "Nrp+EC"
+msgid "Track your accuracy and performance trends"
+msgstr "Track your accuracy and performance trends"
+
+#: src/app/[locale]/(performance)/belt/page.tsx
+msgctxt "DYTbSA"
+msgid "Track your belt level progress"
+msgstr "Track your belt level progress"
+
+#: src/app/[locale]/(performance)/belt/page.tsx
+msgctxt "gX5+n3"
+msgid "Track your belt level progress and see how you advance."
+msgstr "Track your belt level progress and see how you advance."
+
+#: src/app/[locale]/(performance)/belt/page.tsx
+msgctxt "oBJMVB"
+msgid "Belt Level"
+msgstr "Belt Level"
+
+#: src/app/[locale]/(performance)/energy/energy-chart-client.tsx
+#: src/app/[locale]/(performance)/energy/energy-stats.tsx
+msgctxt "kggwrj"
+msgid "{value}%"
+msgstr "{value}%"
+
+#: src/app/[locale]/(performance)/energy/energy-chart-client.tsx
+msgctxt "rGSqvt"
+msgid "Avg"
+msgstr "Avg"
+
+#: src/app/[locale]/(performance)/energy/energy-chart.tsx
+msgctxt "OlW5Z8"
+msgid "No data available for this period"
+msgstr "No data available for this period"
+
+#: src/app/[locale]/(performance)/energy/energy-comparison.tsx
+msgctxt "7Ab7lJ"
+msgid "{change}% vs last 6 months"
+msgstr "{change}% vs last 6 months"
+
+#: src/app/[locale]/(performance)/energy/energy-comparison.tsx
+msgctxt "DQ545N"
+msgid "{change}% vs last month"
+msgstr "{change}% vs last month"
+
+#: src/app/[locale]/(performance)/energy/energy-comparison.tsx
+msgctxt "jbB0eP"
+msgid "{change}% vs last year"
+msgstr "{change}% vs last year"
+
+#: src/app/[locale]/(performance)/energy/energy-content.tsx
+msgctxt "U6BGyx"
+msgid "Start learning to track your energy level"
+msgstr "Start learning to track your energy level"
+
+#: src/app/[locale]/(performance)/energy/energy-explanation.tsx
+msgctxt "bbspjV"
+msgid "Energy reflects your learning consistency. It increases with correct answers (+0.1%), decreases with wrong answers (-0.03%), and drops 1% for each inactive day."
+msgstr "Energy reflects your learning consistency. It increases with correct answers (+0.1%), decreases with wrong answers (-0.03%), and drops 1% for each inactive day."
+
+#: src/app/[locale]/(performance)/energy/energy-explanation.tsx
+msgctxt "OxVSBr"
+msgid "About Energy Level"
+msgstr "About Energy Level"
+
+#: src/app/[locale]/(performance)/energy/page.tsx
+msgctxt "7Rfk+O"
+msgid "Track your learning energy over time"
+msgstr "Track your learning energy over time"
+
+#: src/app/[locale]/(performance)/energy/page.tsx
+msgctxt "DFNCi8"
+msgid "Energy Level"
+msgstr "Energy Level"
+
+#: src/app/[locale]/(performance)/energy/page.tsx
+msgctxt "gOpTHJ"
+msgid "Track your energy level over time and see how your learning consistency affects your progress."
+msgstr "Track your energy level over time and see how your learning consistency affects your progress."
 
 #: src/app/[locale]/(settings)/_components/protected-section.tsx
 msgctxt "2jC0rX"

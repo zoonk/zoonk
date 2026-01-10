@@ -131,25 +131,45 @@ export async function seedProgress(
 
   const dailyProgressData: DailyProgressInput[] = [];
 
-  for (let i = 6; i >= 0; i--) {
+  // Generate 90 days of data for owner user (covers ~3 months for comparison)
+  // Use a seeded random for deterministic results
+  const seededRandom = (seed: number) => {
+    const x = Math.sin(seed) * 10_000;
+    return x - Math.floor(x);
+  };
+
+  for (let i = 89; i >= 0; i--) {
     const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
-    const isActiveDay = i !== 3 && i !== 5;
+    const seed = i * 12_345;
+
+    // Skip some days randomly (about 15% inactive days)
+    const isActiveDay = seededRandom(seed) > 0.15;
 
     if (isActiveDay) {
+      // Vary energy based on "month" - older months had lower energy on average
+      const monthsAgo = Math.floor(i / 30);
+      const baseEnergy = 72 - monthsAgo * 5; // Current month: ~72%, 1 month ago: ~67%, 2 months: ~62%
+      const energyVariation = (seededRandom(seed + 1) - 0.5) * 15;
+
       dailyProgressData.push({
-        brainPowerEarned: 200 + Math.floor(Math.random() * 300),
-        challengesCompleted: i === 0 ? 1 : 0,
-        correctAnswers: 15 + Math.floor(Math.random() * 20),
+        brainPowerEarned: 150 + Math.floor(seededRandom(seed + 2) * 350),
+        challengesCompleted: seededRandom(seed + 3) > 0.7 ? 1 : 0,
+        correctAnswers: 12 + Math.floor(seededRandom(seed + 4) * 25),
         date,
-        energyAtEnd: 65 + Math.random() * 10,
-        incorrectAnswers: 2 + Math.floor(Math.random() * 5),
-        interactiveCompleted: 8 + Math.floor(Math.random() * 10),
+        energyAtEnd: Math.max(20, Math.min(95, baseEnergy + energyVariation)),
+        incorrectAnswers: 1 + Math.floor(seededRandom(seed + 5) * 6),
+        interactiveCompleted: 6 + Math.floor(seededRandom(seed + 6) * 12),
         organizationId: org.id,
-        staticCompleted: 5 + Math.floor(Math.random() * 8),
-        timeSpentSeconds: 1200 + Math.floor(Math.random() * 1800),
+        staticCompleted: 3 + Math.floor(seededRandom(seed + 7) * 10),
+        timeSpentSeconds: 900 + Math.floor(seededRandom(seed + 8) * 2100),
         userId: users.owner.id,
       });
     }
+  }
+
+  // E2E user - keep simple 7-day data for stable tests
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
 
     dailyProgressData.push({
       brainPowerEarned: 300,

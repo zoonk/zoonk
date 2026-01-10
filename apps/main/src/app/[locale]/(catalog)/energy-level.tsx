@@ -12,6 +12,7 @@ import {
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { ZapIcon } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 
 export async function EnergyLevel({ energy }: { energy: number }) {
   const t = await getExtracted();
@@ -28,24 +29,26 @@ export async function EnergyLevel({ energy }: { energy: number }) {
       : t("Keep learning to maintain it");
 
   return (
-    <FeatureCard className="w-full">
-      <FeatureCardHeader className="text-energy">
-        <FeatureCardHeaderContent>
-          <FeatureCardIcon>
-            <ZapIcon />
-          </FeatureCardIcon>
-          <FeatureCardLabel>{t("Energy level")}</FeatureCardLabel>
-        </FeatureCardHeaderContent>
-        <FeatureCardIndicator />
-      </FeatureCardHeader>
+    <Link className="w-full" href="/energy">
+      <FeatureCard className="w-full transition-colors hover:bg-muted/50">
+        <FeatureCardHeader className="text-energy">
+          <FeatureCardHeaderContent>
+            <FeatureCardIcon>
+              <ZapIcon />
+            </FeatureCardIcon>
+            <FeatureCardLabel>{t("Energy level")}</FeatureCardLabel>
+          </FeatureCardHeaderContent>
+          <FeatureCardIndicator />
+        </FeatureCardHeader>
 
-      <FeatureCardBody>
-        <FeatureCardTitle>
-          {t("Your energy level is {value}%", { value: formattedEnergy })}
-        </FeatureCardTitle>
-        <FeatureCardSubtitle>{description}</FeatureCardSubtitle>
-      </FeatureCardBody>
-    </FeatureCard>
+        <FeatureCardBody>
+          <FeatureCardTitle>
+            {t("Your energy level is {value}%", { value: formattedEnergy })}
+          </FeatureCardTitle>
+          <FeatureCardSubtitle>{description}</FeatureCardSubtitle>
+        </FeatureCardBody>
+      </FeatureCard>
+    </Link>
   );
 }
 

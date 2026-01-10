@@ -227,12 +227,6 @@ checksums:
     Gray/singular: 54ec745c22b59509822468ba82070d74
     "%7Bday%7D%20with%20%7Bvalue%7D%25/singular": 6e5416262bf719f632e31ed1a8236801
     Best%20day/singular: c7d1324abc9d2515ec3bbc955b317404
-    Morning/singular: c2f3e2bb2361eebb1576896fcc6c0d69
-    Night/singular: 6fa09c4a1c03187be163148a653056ae
-    Afternoon/singular: b34f73070b6ce5e811f2aeec93798d7d
-    Evening/singular: d401caa89963f8017a148bcdd1749c2d
-    Peak%20time/singular: 00610169ef99ad10cd58469e43f5a056
-    "%7Bperiod%7D%20with%20%7Bvalue%7D%25/singular": 958bc2c65d9a6823edee6f2585fd6501
     Continue%20learning/singular: ff5ff528cbacf657af36fb9b711431d6
     Next%3A%20%7Bactivity%7D/singular: 9208679843466247d2161793249e5eda
     Activity/singular: 1948763de8e531483a798b68195e297e
@@ -277,7 +271,39 @@ checksums:
     No%20courses%20yet/singular: d5fcc38466fdc83a74eab5032a2f85b6
     Zoonk%3A%20AI%20Learning%20Platform/singular: 4a2d25490f4a5e5cd4543f48fcec968d
     Zoonk%20is%20an%20AI-powered%20learning%20platform%20where%20you%20can%20learn%20anything%20through%20interactive%20courses%2C%20lessons%2C%20and%20activities./singular: e836899ce8100db55d5fa54fe6375970
+    Morning/singular: c2f3e2bb2361eebb1576896fcc6c0d69
+    Night/singular: 6fa09c4a1c03187be163148a653056ae
+    Afternoon/singular: b34f73070b6ce5e811f2aeec93798d7d
+    Evening/singular: d401caa89963f8017a148bcdd1749c2d
+    Peak%20time/singular: 00610169ef99ad10cd58469e43f5a056
+    "%7Bperiod%7D%20with%20%7Bvalue%7D%25/singular": 958bc2c65d9a6823edee6f2585fd6501
     Performance/singular: 28b6d3a3d4a53afa0617a180e318ff4d
+    Energy/singular: 958809db5050650b97519e0f1f3e1951
+    Belt/singular: fa36e8e36732c223d2876c0337d372e9
+    Previous%20period/singular: b53b793ab929e364ecc20d8b15c694e9
+    Next%20period/singular: aa98c0595afc2b75886531e6d77d8415
+    Year/singular: ed86f5f60583f9d8ffdbeed306aa0ec7
+    6%20Months/singular: 087e8a324c3bcac4f34c23d814f7057a
+    Period%20selection/singular: e23c5c435a91f9a8a1ff74d08ac44750
+    Month/singular: ae7bef950efc406ff0980affabc1a64c
+    Coming%20soon/singular: ee2b0671e00972773210c5be5a9ccb89
+    Track%20your%20accuracy%20over%20time%20and%20see%20your%20best%20days%20and%20peak%20times./singular: 6cf7fcfdc6aeba2b3663cd106bb9edf8
+    Track%20your%20accuracy%20and%20performance%20trends/singular: 880e1c11776101f3fd7e3ba37f621842
+    Track%20your%20belt%20level%20progress/singular: 60f8b3c34ac6960c4abde9ae894b7364
+    Track%20your%20belt%20level%20progress%20and%20see%20how%20you%20advance./singular: 82ca9705d6a726080cd57d39b9ffe635
+    Belt%20Level/singular: a2e673c2fb1df26a5a48470893fae07a
+    "%7Bvalue%7D%25/singular": 35cbe4d3fffd3e6b5415eea333f532d7
+    Avg/singular: 2d7f837da968af2579e75135d3787b3d
+    No%20data%20available%20for%20this%20period/singular: 2aac0a35f0be9371444d96a7fff3009d
+    "%7Bchange%7D%25%20vs%20last%206%20months/singular": 58016376e383a25b495ec60273874863
+    "%7Bchange%7D%25%20vs%20last%20month/singular": e773b0c94f10d90c3ff5745a0ba5f27b
+    "%7Bchange%7D%25%20vs%20last%20year/singular": de21b3a7bfba3b5a7c466c8567484213
+    Start%20learning%20to%20track%20your%20energy%20level/singular: 09714e088f54128f034671262e20ab98
+    Energy%20reflects%20your%20learning%20consistency.%20It%20increases%20with%20correct%20answers%20(%2B0.1%25)%2C%20decreases%20with%20wrong%20answers%20(-0.03%25)%2C%20and%20drops%201%25%20for%20each%20inactive%20day./singular: 94dd59a838ae089f5aa690db00866501
+    About%20Energy%20Level/singular: 10fc71fe14c91508304c509e7f2852a4
+    Track%20your%20learning%20energy%20over%20time/singular: c9ec5b7fab47c0313af0dbb14e83c653
+    Energy%20Level/singular: 2f75f38b291f23ea193eeb7e78774822
+    Track%20your%20energy%20level%20over%20time%20and%20see%20how%20your%20learning%20consistency%20affects%20your%20progress./singular: 7cd0feaf8821cf9e2ff8d94c048d5d01
     Checking%20if%20you're%20logged%20in.../singular: b50f05bfcb51cad6913150273e551291
     You%20need%20to%20be%20logged%20in%20to%20access%20this%20page./singular: 759ca522663d8f628718332f756dd6c4
     Display%20name/singular: 725f331065e9d594d720d07b1ae51a90

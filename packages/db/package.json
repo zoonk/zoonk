@@ -16,6 +16,9 @@
     ".": "./src/index.ts",
     "./best-day": "./src/generated/prisma/sql/getBestDay.ts",
     "./continue-learning": "./src/generated/prisma/sql/getContinueLearning.ts",
+    "./energy-history-daily": "./src/generated/prisma/sql/getEnergyHistoryDaily.ts",
+    "./energy-history-monthly": "./src/generated/prisma/sql/getEnergyHistoryMonthly.ts",
+    "./energy-history-weekly": "./src/generated/prisma/sql/getEnergyHistoryWeekly.ts",
     "./peak-time": "./src/generated/prisma/sql/getPeakTime.ts",
     "./utils": "./src/utils.ts"
   },
