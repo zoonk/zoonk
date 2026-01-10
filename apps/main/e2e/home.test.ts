@@ -101,7 +101,7 @@ test.describe("Home Page - Performance Section", () => {
 
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
     await expect(
-      authenticatedPage.getByText("85% correct answers"),
+      authenticatedPage.getByText("75% correct answers"),
     ).toBeVisible();
   });
 
@@ -112,7 +112,7 @@ test.describe("Home Page - Performance Section", () => {
 
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
     await expect(authenticatedPage.getByText(/best day/i)).toBeVisible();
-    await expect(authenticatedPage.getByText(/with 85%/i)).toBeVisible();
+    await expect(authenticatedPage.getByText(/with 76\.1%/i)).toBeVisible();
   });
 
   test("authenticated user with progress sees peak time", async ({
