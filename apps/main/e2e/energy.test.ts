@@ -2,12 +2,19 @@ import { expect, test } from "./fixtures";
 
 test.describe("Energy Page", () => {
   test.describe("Unauthenticated Users", () => {
-    test("can navigate to login from energy page", async ({ page }) => {
+    test("shows login prompt with link to login page", async ({ page }) => {
       await page.goto("/energy");
 
-      await page.getByRole("link", { name: /login/i }).click();
+      // User sees prompt to log in
+      await expect(
+        page.getByText(/log in to track your energy level/i),
+      ).toBeVisible();
 
-      await expect(page).toHaveURL(/\/login/);
+      // Login link points to correct destination
+      await expect(page.getByRole("link", { name: /login/i })).toHaveAttribute(
+        "href",
+        "/login",
+      );
     });
   });
 
