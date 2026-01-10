@@ -9,17 +9,16 @@ import { EnergyChart, EnergyChartSkeleton } from "./energy-chart";
 import { EnergyExplanation } from "./energy-explanation";
 import { EnergyStats, EnergyStatsSkeleton } from "./energy-stats";
 
-type EnergyContentProps = {
-  locale: string;
-  searchParams: Promise<{ offset?: string; period?: string }>;
-};
-
 export async function EnergyContent({
   locale,
   searchParams,
-}: EnergyContentProps) {
+}: {
+  locale: string;
+  searchParams: Promise<{ offset?: string; period?: string }>;
+}) {
   const { offset = "0", period = "month" } = await searchParams;
   const t = await getExtracted();
+
   const [data, session] = await Promise.all([
     getEnergyHistory({
       locale,
@@ -83,7 +82,6 @@ export function EnergyContentSkeleton() {
       <EnergyStatsSkeleton />
       <EnergyChartSkeleton />
 
-      {/* Explanation skeleton */}
       <div className="flex flex-col gap-2">
         <Skeleton className="h-4 w-36" />
         <Skeleton className="h-5 w-64" />

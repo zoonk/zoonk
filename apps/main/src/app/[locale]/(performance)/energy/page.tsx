@@ -11,8 +11,6 @@ import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { EnergyContent, EnergyContentSkeleton } from "./energy-content";
 
-type SearchParams = Promise<{ offset?: string; period?: string }>;
-
 export async function generateMetadata({
   params,
 }: PageProps<"/[locale]/energy">): Promise<Metadata> {
@@ -30,9 +28,10 @@ export async function generateMetadata({
 export default async function EnergyPage({
   params,
   searchParams,
-}: PageProps<"/[locale]/energy"> & { searchParams: SearchParams }) {
+}: PageProps<"/[locale]/energy">) {
   const { locale } = await params;
   setRequestLocale(locale);
+
   const t = await getExtracted();
 
   return (
