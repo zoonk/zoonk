@@ -26,9 +26,11 @@ describe("authenticated users", () => {
 
   describe("month period", () => {
     test("returns daily data points for current month", async () => {
-      const user = await userFixture();
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
       const headers = await signInAs(user.email, user.password);
-      const org = await organizationFixture();
 
       const today = new Date();
       const yesterday = new Date(today);
@@ -59,9 +61,11 @@ describe("authenticated users", () => {
     });
 
     test("calculates average correctly", async () => {
-      const user = await userFixture();
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
       const headers = await signInAs(user.email, user.password);
-      const org = await organizationFixture();
 
       const today = new Date();
 
@@ -89,9 +93,11 @@ describe("authenticated users", () => {
     });
 
     test("calculates comparison with previous month", async () => {
-      const user = await userFixture();
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
       const headers = await signInAs(user.email, user.password);
-      const org = await organizationFixture();
 
       const today = new Date();
       const lastMonth = new Date(today);
@@ -122,9 +128,11 @@ describe("authenticated users", () => {
     });
 
     test("navigates to previous month with offset", async () => {
-      const user = await userFixture();
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
       const headers = await signInAs(user.email, user.password);
-      const org = await organizationFixture();
 
       const today = new Date();
       const lastMonth = new Date(today);
@@ -161,9 +169,11 @@ describe("authenticated users", () => {
 
   describe("6months period", () => {
     test("returns weekly aggregated data points", async () => {
-      const user = await userFixture();
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
       const headers = await signInAs(user.email, user.password);
-      const org = await organizationFixture();
 
       const today = new Date();
       const oneWeekAgo = new Date(today);
@@ -195,9 +205,11 @@ describe("authenticated users", () => {
 
   describe("year period", () => {
     test("returns monthly aggregated data points", async () => {
-      const user = await userFixture();
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
       const headers = await signInAs(user.email, user.password);
-      const org = await organizationFixture();
 
       const today = new Date();
       const lastMonth = new Date(today);
@@ -229,9 +241,11 @@ describe("authenticated users", () => {
 
   describe("navigation flags", () => {
     test("hasPreviousPeriod is true when historical data exists", async () => {
-      const user = await userFixture();
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
       const headers = await signInAs(user.email, user.password);
-      const org = await organizationFixture();
 
       const today = new Date();
       const twoMonthsAgo = new Date(today);
@@ -261,9 +275,11 @@ describe("authenticated users", () => {
     });
 
     test("hasNextPeriod is false when on current period (offset=0)", async () => {
-      const user = await userFixture();
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
       const headers = await signInAs(user.email, user.password);
-      const org = await organizationFixture();
 
       await prisma.dailyProgress.create({
         data: {
@@ -281,9 +297,11 @@ describe("authenticated users", () => {
     });
 
     test("hasNextPeriod is true when offset > 0", async () => {
-      const user = await userFixture();
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
       const headers = await signInAs(user.email, user.password);
-      const org = await organizationFixture();
 
       const lastMonth = new Date();
       lastMonth.setMonth(lastMonth.getMonth() - 1);
@@ -305,6 +323,219 @@ describe("authenticated users", () => {
 
       expect(result).not.toBeNull();
       expect(result?.hasNextPeriod).toBe(true);
+    });
+  });
+
+  describe("daily decay for month period", () => {
+    test("fills gaps between data points with -1 decay per day", async () => {
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
+
+      const headers = await signInAs(user.email, user.password);
+
+      const day1 = new Date();
+      day1.setDate(day1.getDate() - 4);
+      const day5 = new Date();
+
+      await prisma.dailyProgress.createMany({
+        data: [
+          {
+            date: day1,
+            energyAtEnd: 75,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+          {
+            date: day5,
+            energyAtEnd: 76,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+        ],
+      });
+
+      const result = await getEnergyHistory({ headers, period: "month" });
+
+      if (!result) {
+        throw new Error("Expected result");
+      }
+
+      // Should have 5 data points: day1 + 3 decayed days + day5
+      const { dataPoints } = result;
+      expect(dataPoints.length).toBe(5);
+
+      // First and last should be actual data
+      expect(dataPoints[0]?.energy).toBe(75);
+      expect(dataPoints[4]?.energy).toBe(76);
+
+      // Middle days should have decayed values
+      expect(dataPoints[1]?.energy).toBe(74);
+      expect(dataPoints[2]?.energy).toBe(73);
+      expect(dataPoints[3]?.energy).toBe(72);
+    });
+
+    test("decay never goes below 0", async () => {
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
+
+      const headers = await signInAs(user.email, user.password);
+
+      const day1 = new Date();
+      day1.setDate(day1.getDate() - 5);
+      const day6 = new Date();
+
+      await prisma.dailyProgress.createMany({
+        data: [
+          {
+            date: day1,
+            energyAtEnd: 3,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+          {
+            date: day6,
+            energyAtEnd: 50,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+        ],
+      });
+
+      const result = await getEnergyHistory({ headers, period: "month" });
+      if (!result) {
+        throw new Error("Expected result");
+      }
+
+      // Should have 6 data points: day1 + 4 decayed days + day6
+      const { dataPoints } = result;
+      expect(dataPoints.length).toBe(6);
+
+      // Day 1: 3, Day 2: 2, Day 3: 1, Day 4: 0, Day 5: 0 (not negative), Day 6: 50
+      expect(dataPoints[0]?.energy).toBe(3);
+      expect(dataPoints[1]?.energy).toBe(2);
+      expect(dataPoints[2]?.energy).toBe(1);
+      expect(dataPoints[3]?.energy).toBe(0);
+      expect(dataPoints[4]?.energy).toBe(0);
+      expect(dataPoints[5]?.energy).toBe(50);
+    });
+
+    test("average includes decayed values", async () => {
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
+
+      const headers = await signInAs(user.email, user.password);
+
+      const day1 = new Date();
+      day1.setDate(day1.getDate() - 2);
+      const day3 = new Date();
+
+      await prisma.dailyProgress.createMany({
+        data: [
+          {
+            date: day1,
+            energyAtEnd: 90,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+          {
+            date: day3,
+            energyAtEnd: 95,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+        ],
+      });
+
+      const result = await getEnergyHistory({ headers, period: "month" });
+
+      expect(result).not.toBeNull();
+
+      // day1=90, day2=89, day3=95 → avg = (90+89+95)/3 = 91.33
+      expect(result?.average).toBeCloseTo(91.33, 1);
+    });
+
+    test("applies decay and aggregates by week for 6months period", async () => {
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
+      const headers = await signInAs(user.email, user.password);
+
+      // Create data with a 2-day gap in the same week
+      const day1 = new Date();
+      day1.setDate(day1.getDate() - 2);
+
+      const day3 = new Date();
+
+      await prisma.dailyProgress.createMany({
+        data: [
+          {
+            date: day1,
+            energyAtEnd: 80,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+          {
+            date: day3,
+            energyAtEnd: 90,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+        ],
+      });
+
+      const result = await getEnergyHistory({ headers, period: "6months" });
+
+      expect(result).not.toBeNull();
+
+      // Weekly average should include decayed day2: (80 + 79 + 90) / 3 = 83
+      expect(result?.average).toBeCloseTo(83, 0);
+    });
+
+    test("applies decay and aggregates by month for year period", async () => {
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
+
+      const headers = await signInAs(user.email, user.password);
+
+      // Create data with a 2-day gap in the same month
+      const day1 = new Date();
+      day1.setDate(day1.getDate() - 3);
+
+      const day4 = new Date();
+
+      await prisma.dailyProgress.createMany({
+        data: [
+          {
+            date: day1,
+            energyAtEnd: 100,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+          {
+            date: day4,
+            energyAtEnd: 100,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+        ],
+      });
+
+      const result = await getEnergyHistory({ headers, period: "year" });
+
+      expect(result).not.toBeNull();
+
+      // Monthly average should include decayed days 2 and 3:
+      // day1=100, day2=99, day3=98, day4=100 → avg = (100+99+98+100)/4 = 99.25
+      expect(result?.average).toBeCloseTo(99.25, 1);
     });
   });
 });
