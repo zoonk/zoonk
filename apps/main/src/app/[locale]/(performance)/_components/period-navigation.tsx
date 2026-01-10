@@ -1,22 +1,21 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useQueryState } from "nuqs";
-
-type PeriodNavigationProps = {
-  hasPrevious: boolean;
-  hasNext: boolean;
-  periodLabel: string;
-};
 
 export function PeriodNavigation({
   hasPrevious,
   hasNext,
   periodLabel,
-}: PeriodNavigationProps) {
+}: {
+  hasPrevious: boolean;
+  hasNext: boolean;
+  periodLabel: string;
+}) {
   const t = useExtracted();
+
   const [offset, setOffset] = useQueryState("offset", {
     defaultValue: "0",
     shallow: false,
@@ -34,35 +33,29 @@ export function PeriodNavigation({
 
   return (
     <div className="flex items-center gap-2">
-      <button
+      <Button
         aria-label={t("Previous period")}
-        className={buttonVariants({
-          size: "icon",
-          variant: "outline",
-        })}
         disabled={!hasPrevious}
         onClick={handlePrevious}
-        type="button"
+        size="icon"
+        variant="outline"
       >
-        <ChevronLeftIcon aria-hidden className="size-4" />
-      </button>
+        <ChevronLeftIcon aria-hidden />
+      </Button>
 
       <span className="min-w-32 text-center font-medium text-sm">
         {periodLabel}
       </span>
 
-      <button
+      <Button
         aria-label={t("Next period")}
-        className={buttonVariants({
-          size: "icon",
-          variant: "outline",
-        })}
         disabled={!hasNext}
         onClick={handleNext}
-        type="button"
+        size="icon"
+        variant="outline"
       >
-        <ChevronRightIcon aria-hidden className="size-4" />
-      </button>
+        <ChevronRightIcon aria-hidden />
+      </Button>
     </div>
   );
 }
