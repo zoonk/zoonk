@@ -1,55 +1,50 @@
 "use client";
 
-import { buttonVariants } from "@zoonk/ui/components/button";
+import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useQueryState } from "nuqs";
 import type { EnergyPeriod } from "@/data/progress/get-energy-history";
 
 export function PeriodTabs() {
   const t = useExtracted();
+
   const [period, setPeriod] = useQueryState("period", {
     defaultValue: "month",
     shallow: false,
   });
 
+  const [, setOffset] = useQueryState("offset", { shallow: false });
+
   function handlePeriodChange(newPeriod: EnergyPeriod) {
+    void setOffset(null);
     void setPeriod(newPeriod);
   }
 
   return (
     <nav aria-label={t("Period selection")} className="flex gap-1">
-      <button
-        className={buttonVariants({
-          size: "sm",
-          variant: period === "month" ? "default" : "outline",
-        })}
+      <Button
         onClick={() => handlePeriodChange("month")}
-        type="button"
+        size="sm"
+        variant={period === "month" ? "default" : "outline"}
       >
         {t("Month")}
-      </button>
+      </Button>
 
-      <button
-        className={buttonVariants({
-          size: "sm",
-          variant: period === "6months" ? "default" : "outline",
-        })}
+      <Button
         onClick={() => handlePeriodChange("6months")}
-        type="button"
+        size="sm"
+        variant={period === "6months" ? "default" : "outline"}
       >
         {t("6 Months")}
-      </button>
+      </Button>
 
-      <button
-        className={buttonVariants({
-          size: "sm",
-          variant: period === "year" ? "default" : "outline",
-        })}
+      <Button
         onClick={() => handlePeriodChange("year")}
-        type="button"
+        size="sm"
+        variant={period === "year" ? "default" : "outline"}
       >
         {t("Year")}
-      </button>
+      </Button>
     </nav>
   );
 }

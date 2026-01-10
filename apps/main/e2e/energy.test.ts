@@ -87,6 +87,41 @@ test.describe("Energy Page", () => {
         authenticatedPage.getByText(/vs last 6 months/i),
       ).not.toBeVisible();
     });
+
+    test("resets offset when switching periods", async ({
+      authenticatedPage,
+    }) => {
+      await authenticatedPage.goto("/energy");
+
+      // Verify we see the comparison initially
+      await expect(authenticatedPage.getByText(/vs last month/i)).toBeVisible();
+
+      // Navigate back in time by clicking previous period
+      const prevButton = authenticatedPage.getByRole("button", {
+        name: /previous period/i,
+      });
+
+      await prevButton.click();
+      await authenticatedPage.waitForURL(/offset=1/);
+
+      // Now switch to "6 Months" - should reset offset and show data
+      await authenticatedPage
+        .getByRole("button", { name: /6 months/i })
+        .click();
+
+      // URL should not contain offset anymore (or should be reset to 0)
+      await expect(authenticatedPage).not.toHaveURL(/offset=1/);
+
+      // Should see the comparison for 6 months (not "Start learning" message)
+      await expect(
+        authenticatedPage.getByText(/vs last 6 months/i),
+      ).toBeVisible();
+
+      // Should NOT see the "start learning" prompt
+      await expect(
+        authenticatedPage.getByText(/start learning to track your energy/i),
+      ).not.toBeVisible();
+    });
   });
 
   test.describe("Users Without Progress", () => {
