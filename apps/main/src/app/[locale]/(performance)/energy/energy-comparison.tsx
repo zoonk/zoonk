@@ -1,18 +1,17 @@
+import { cn } from "@zoonk/ui/lib/utils";
 import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
 import type { EnergyPeriod } from "@/data/progress/get-energy-history";
-
-type EnergyComparisonProps = {
-  current: number;
-  period: EnergyPeriod;
-  previous: number;
-};
 
 export async function EnergyComparison({
   current,
   period,
   previous,
-}: EnergyComparisonProps) {
+}: {
+  current: number;
+  period: EnergyPeriod;
+  previous: number;
+}) {
   const t = await getExtracted();
   const locale = await getLocale();
 
@@ -35,17 +34,20 @@ export async function EnergyComparison({
     if (period === "month") {
       return t("{change}% vs last month", { change: formattedChange });
     }
+
     if (period === "6months") {
       return t("{change}% vs last 6 months", { change: formattedChange });
     }
+
     return t("{change}% vs last year", { change: formattedChange });
   }
 
   return (
     <div
-      className={`flex items-center gap-1 text-sm ${
-        isPositive ? "text-green-600" : "text-red-600"
-      }`}
+      className={cn(
+        "flex items-center gap-1 text-sm",
+        isPositive ? "text-success" : "text-destructive",
+      )}
     >
       <Icon aria-hidden className="size-4" />
       <span>{renderComparison()}</span>
