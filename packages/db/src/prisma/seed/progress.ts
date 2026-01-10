@@ -43,39 +43,35 @@ function buildE2eStepAttempts(
     { correct: 7, hourOfDay: 21, incorrect: 3 }, // Evening: 70%
   ];
 
-  const attempts: E2eAttemptData[] = [];
+  return configs.flatMap((config) => {
+    const base = {
+      dayOfWeek: now.getDay(),
+      durationSeconds: 15,
+      hourOfDay: config.hourOfDay,
+      organizationId: org.id,
+      stepId: step.id,
+      userId,
+    };
 
-  for (const config of configs) {
-    for (let i = 0; i < config.correct; i++) {
-      attempts.push({
-        answer: { selectedOption: 1 },
-        answeredAt: new Date(now.getTime() - i * 60 * 1000),
-        dayOfWeek: now.getDay(),
-        durationSeconds: 15,
-        hourOfDay: config.hourOfDay,
-        isCorrect: true,
-        organizationId: org.id,
-        stepId: step.id,
-        userId,
-      });
-    }
+    const correctAttempts = Array.from({ length: config.correct }, (_, i) => ({
+      ...base,
+      answer: { selectedOption: 1 },
+      answeredAt: new Date(now.getTime() - i * 60 * 1000),
+      isCorrect: true,
+    }));
 
-    for (let i = 0; i < config.incorrect; i++) {
-      attempts.push({
+    const incorrectAttempts = Array.from(
+      { length: config.incorrect },
+      (_, i) => ({
+        ...base,
         answer: { selectedOption: 0 },
         answeredAt: new Date(now.getTime() - (config.correct + i) * 60 * 1000),
-        dayOfWeek: now.getDay(),
-        durationSeconds: 15,
-        hourOfDay: config.hourOfDay,
         isCorrect: false,
-        organizationId: org.id,
-        stepId: step.id,
-        userId,
-      });
-    }
-  }
+      }),
+    );
 
-  return attempts;
+    return [...correctAttempts, ...incorrectAttempts];
+  });
 }
 
 // Deterministic random for reproducible seed data
@@ -259,10 +255,9 @@ async function seedStepAttempts(
     now,
   );
 
-  await Promise.all([
-    ...attemptData.map((data) => prisma.stepAttempt.create({ data })),
-    ...e2eAttemptData.map((data) => prisma.stepAttempt.create({ data })),
-  ]);
+  await prisma.stepAttempt.createMany({
+    data: [...attemptData, ...e2eAttemptData],
+  });
 
   await prisma.activityProgress.upsert({
     create: {
