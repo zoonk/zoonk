@@ -18,15 +18,13 @@ type SerializedDataPoint = {
   label: string;
 };
 
-type EnergyChartClientProps = {
-  average: number;
-  dataPoints: SerializedDataPoint[];
-};
-
 export function EnergyChartClient({
   average,
   dataPoints,
-}: EnergyChartClientProps) {
+}: {
+  average: number;
+  dataPoints: SerializedDataPoint[];
+}) {
   const t = useExtracted();
 
   return (
