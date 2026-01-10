@@ -3,18 +3,9 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { useQueryState } from "nuqs";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 import type { EnergyPeriod } from "@/data/progress/get-energy-history";
 
 export function PeriodTabs() {
-  return (
-    <NuqsAdapter>
-      <PeriodTabsContent />
-    </NuqsAdapter>
-  );
-}
-
-function PeriodTabsContent() {
   const t = useExtracted();
   const [period, setPeriod] = useQueryState("period", {
     defaultValue: "month",

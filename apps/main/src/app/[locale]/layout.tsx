@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { routing } from "@/i18n/routing";
 
 import "@zoonk/ui/globals.css";
@@ -34,7 +35,9 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body className="font-sans antialiased">
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NuqsAdapter>
+          <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        </NuqsAdapter>
         <Analytics />
       </body>
     </html>

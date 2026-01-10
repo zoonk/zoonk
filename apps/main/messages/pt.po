@@ -601,6 +601,11 @@ msgid "{value}%"
 msgstr "{value}%"
 
 #: src/app/[locale]/(performance)/energy/energy-chart-client.tsx
+msgctxt "M+JIpD"
+msgid "Energy chart"
+msgstr "Gráfico de energia"
+
+#: src/app/[locale]/(performance)/energy/energy-chart-client.tsx
 msgctxt "rGSqvt"
 msgid "Avg"
 msgstr "Média"

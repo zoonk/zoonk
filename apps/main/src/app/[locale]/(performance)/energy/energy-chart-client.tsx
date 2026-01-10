@@ -30,7 +30,7 @@ export function EnergyChartClient({
   const t = useExtracted();
 
   return (
-    <div className="h-64 w-full">
+    <figure aria-label={t("Energy chart")} className="h-64 w-full">
       <ResponsiveContainer height="100%" width="100%">
         <AreaChart
           data={dataPoints}
@@ -110,6 +110,6 @@ export function EnergyChartClient({
           />
         </AreaChart>
       </ResponsiveContainer>
-    </div>
+    </figure>
   );
 }

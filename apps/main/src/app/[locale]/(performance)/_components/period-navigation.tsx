@@ -4,7 +4,6 @@ import { buttonVariants } from "@zoonk/ui/components/button";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useQueryState } from "nuqs";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 type PeriodNavigationProps = {
   hasPrevious: boolean;
@@ -13,22 +12,6 @@ type PeriodNavigationProps = {
 };
 
 export function PeriodNavigation({
-  hasPrevious,
-  hasNext,
-  periodLabel,
-}: PeriodNavigationProps) {
-  return (
-    <NuqsAdapter>
-      <PeriodNavigationContent
-        hasNext={hasNext}
-        hasPrevious={hasPrevious}
-        periodLabel={periodLabel}
-      />
-    </NuqsAdapter>
-  );
-}
-
-function PeriodNavigationContent({
   hasPrevious,
   hasNext,
   periodLabel,

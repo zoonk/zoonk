@@ -17,6 +17,20 @@ type E2eAttemptData = {
   userId: number;
 };
 
+type DailyProgressInput = {
+  brainPowerEarned: number;
+  challengesCompleted: number;
+  correctAnswers: number;
+  date: Date;
+  energyAtEnd: number;
+  incorrectAnswers: number;
+  interactiveCompleted: number;
+  organizationId: number;
+  staticCompleted: number;
+  timeSpentSeconds: number;
+  userId: number;
+};
+
 function buildE2eStepAttempts(
   step: Step,
   org: Organization,
@@ -64,14 +78,88 @@ function buildE2eStepAttempts(
   return attempts;
 }
 
-export async function seedProgress(
-  prisma: PrismaClient,
-  org: Organization,
-  users: SeedUsers,
-): Promise<void> {
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+// Deterministic random for reproducible seed data
+function seededRandom(seed: number) {
+  const x = Math.sin(seed) * 10_000;
+  return x - Math.floor(x);
+}
 
+function buildOwnerDailyProgress(
+  today: Date,
+  orgId: number,
+  userId: number,
+): DailyProgressInput[] {
+  const data: DailyProgressInput[] = [];
+
+  for (let i = 89; i >= 0; i--) {
+    const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+    const seed = i * 12_345;
+    const isActiveDay = seededRandom(seed) > 0.15;
+
+    if (!isActiveDay) {
+      continue;
+    }
+
+    const monthsAgo = Math.floor(i / 30);
+    const baseEnergy = 72 - monthsAgo * 5;
+    const energyVariation = (seededRandom(seed + 1) - 0.5) * 15;
+
+    data.push({
+      brainPowerEarned: 150 + Math.floor(seededRandom(seed + 2) * 350),
+      challengesCompleted: seededRandom(seed + 3) > 0.7 ? 1 : 0,
+      correctAnswers: 12 + Math.floor(seededRandom(seed + 4) * 25),
+      date,
+      energyAtEnd: Math.max(20, Math.min(95, baseEnergy + energyVariation)),
+      incorrectAnswers: 1 + Math.floor(seededRandom(seed + 5) * 6),
+      interactiveCompleted: 6 + Math.floor(seededRandom(seed + 6) * 12),
+      organizationId: orgId,
+      staticCompleted: 3 + Math.floor(seededRandom(seed + 7) * 10),
+      timeSpentSeconds: 900 + Math.floor(seededRandom(seed + 8) * 2100),
+      userId,
+    });
+  }
+
+  return data;
+}
+
+function buildE2eDailyProgress(
+  today: Date,
+  orgId: number,
+  userId: number,
+): DailyProgressInput[] {
+  const data: DailyProgressInput[] = [];
+
+  // 60 days: current month (75% energy), previous month (65% energy)
+  for (let i = 59; i >= 0; i--) {
+    const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
+    const isCurrentMonth = i < 30;
+    const energy = isCurrentMonth ? 75 : 65;
+    const correctAnswers = isCurrentMonth ? 17 : 13;
+    const incorrectAnswers = isCurrentMonth ? 3 : 7;
+
+    data.push({
+      brainPowerEarned: 300,
+      challengesCompleted: 0,
+      correctAnswers,
+      date,
+      energyAtEnd: energy,
+      incorrectAnswers,
+      interactiveCompleted: 10,
+      organizationId: orgId,
+      staticCompleted: 5,
+      timeSpentSeconds: 1800,
+      userId,
+    });
+  }
+
+  return data;
+}
+
+async function seedUserProgress(
+  prisma: PrismaClient,
+  users: SeedUsers,
+  now: Date,
+) {
   await Promise.all([
     prisma.userProgress.upsert({
       create: {
@@ -114,94 +202,14 @@ export async function seedProgress(
       where: { userId: users.e2eWithProgress.id },
     }),
   ]);
+}
 
-  type DailyProgressInput = {
-    brainPowerEarned: number;
-    challengesCompleted: number;
-    correctAnswers: number;
-    date: Date;
-    energyAtEnd: number;
-    incorrectAnswers: number;
-    interactiveCompleted: number;
-    organizationId: number;
-    staticCompleted: number;
-    timeSpentSeconds: number;
-    userId: number;
-  };
-
-  const dailyProgressData: DailyProgressInput[] = [];
-
-  // Generate 90 days of data for owner user (covers ~3 months for comparison)
-  // Use a seeded random for deterministic results
-  const seededRandom = (seed: number) => {
-    const x = Math.sin(seed) * 10_000;
-    return x - Math.floor(x);
-  };
-
-  for (let i = 89; i >= 0; i--) {
-    const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
-    const seed = i * 12_345;
-
-    // Skip some days randomly (about 15% inactive days)
-    const isActiveDay = seededRandom(seed) > 0.15;
-
-    if (isActiveDay) {
-      // Vary energy based on "month" - older months had lower energy on average
-      const monthsAgo = Math.floor(i / 30);
-      const baseEnergy = 72 - monthsAgo * 5; // Current month: ~72%, 1 month ago: ~67%, 2 months: ~62%
-      const energyVariation = (seededRandom(seed + 1) - 0.5) * 15;
-
-      dailyProgressData.push({
-        brainPowerEarned: 150 + Math.floor(seededRandom(seed + 2) * 350),
-        challengesCompleted: seededRandom(seed + 3) > 0.7 ? 1 : 0,
-        correctAnswers: 12 + Math.floor(seededRandom(seed + 4) * 25),
-        date,
-        energyAtEnd: Math.max(20, Math.min(95, baseEnergy + energyVariation)),
-        incorrectAnswers: 1 + Math.floor(seededRandom(seed + 5) * 6),
-        interactiveCompleted: 6 + Math.floor(seededRandom(seed + 6) * 12),
-        organizationId: org.id,
-        staticCompleted: 3 + Math.floor(seededRandom(seed + 7) * 10),
-        timeSpentSeconds: 900 + Math.floor(seededRandom(seed + 8) * 2100),
-        userId: users.owner.id,
-      });
-    }
-  }
-
-  // E2E user - keep simple 7-day data for stable tests
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
-
-    dailyProgressData.push({
-      brainPowerEarned: 300,
-      challengesCompleted: 0,
-      correctAnswers: 17,
-      date,
-      energyAtEnd: 75,
-      incorrectAnswers: 3,
-      interactiveCompleted: 10,
-      organizationId: org.id,
-      staticCompleted: 5,
-      timeSpentSeconds: 1800,
-      userId: users.e2eWithProgress.id,
-    });
-  }
-
-  await Promise.all(
-    dailyProgressData.map((data) =>
-      prisma.dailyProgress.upsert({
-        create: data,
-        update: {},
-        where: {
-          userDateOrg: {
-            date: data.date,
-            organizationId: data.organizationId,
-            userId: data.userId,
-          },
-        },
-      }),
-    ),
-  );
-
+async function seedStepAttempts(
+  prisma: PrismaClient,
+  org: Organization,
+  users: SeedUsers,
+  now: Date,
+) {
   const lesson = await prisma.lesson.findFirst({
     where: {
       language: "en",
@@ -227,12 +235,7 @@ export async function seedProgress(
     where: { activityId: activity.id },
   });
 
-  if (steps.length === 0) {
-    return;
-  }
-
   const firstStep = steps[0];
-
   if (!firstStep) {
     return;
   }
@@ -277,4 +280,38 @@ export async function seedProgress(
       },
     },
   });
+}
+
+export async function seedProgress(
+  prisma: PrismaClient,
+  org: Organization,
+  users: SeedUsers,
+): Promise<void> {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  await seedUserProgress(prisma, users, now);
+
+  const dailyProgressData = [
+    ...buildOwnerDailyProgress(today, org.id, users.owner.id),
+    ...buildE2eDailyProgress(today, org.id, users.e2eWithProgress.id),
+  ];
+
+  await Promise.all(
+    dailyProgressData.map((data) =>
+      prisma.dailyProgress.upsert({
+        create: data,
+        update: {},
+        where: {
+          userDateOrg: {
+            date: data.date,
+            organizationId: data.organizationId,
+            userId: data.userId,
+          },
+        },
+      }),
+    ),
+  );
+
+  await seedStepAttempts(prisma, org, users, now);
 }

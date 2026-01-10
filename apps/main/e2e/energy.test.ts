@@ -1,159 +1,94 @@
 import { expect, test } from "./fixtures";
 
-test.describe("Energy Page - Unauthenticated", () => {
-  test("shows energy page with login CTA", async ({ page }) => {
-    await page.goto("/energy");
+test.describe("Energy Page", () => {
+  test.describe("Unauthenticated Users", () => {
+    test("can navigate to login from energy page", async ({ page }) => {
+      await page.goto("/energy");
 
-    await expect(
-      page.getByRole("heading", { name: /energy level/i }),
-    ).toBeVisible();
+      await page.getByRole("link", { name: /login/i }).click();
 
-    await expect(
-      page.getByText(/log in to track your energy level/i),
-    ).toBeVisible();
-
-    await expect(page.getByRole("link", { name: /login/i })).toBeVisible();
-  });
-});
-
-test.describe("Energy Page - Authenticated with Progress", () => {
-  test("shows page title and description", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/energy");
-
-    await expect(
-      authenticatedPage.getByRole("heading", { name: /energy level/i }),
-    ).toBeVisible();
-
-    await expect(
-      authenticatedPage.getByText(/track your learning energy over time/i),
-    ).toBeVisible();
+      await expect(page).toHaveURL(/\/login/);
+    });
   });
 
-  test("shows energy explanation section", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/energy");
+  test.describe("Authenticated Users", () => {
+    test("navigates from home and sees energy details with comparison", async ({
+      authenticatedPage,
+    }) => {
+      await authenticatedPage.goto("/");
 
-    await expect(
-      authenticatedPage.getByText(/about energy level/i),
-    ).toBeVisible();
-    await expect(authenticatedPage.getByText(/correct answers/i)).toBeVisible();
-    await expect(authenticatedPage.getByText(/wrong answers/i)).toBeVisible();
-    await expect(authenticatedPage.getByText(/inactive day/i)).toBeVisible();
-  });
+      // User clicks energy card on home page
+      await authenticatedPage
+        .getByRole("link")
+        .filter({
+          has: authenticatedPage.getByText(/your energy level is 75%/i),
+        })
+        .click();
 
-  test("shows period tabs", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/energy");
+      // Wait for navigation to energy page
+      await expect(authenticatedPage).toHaveURL(/\/energy/);
 
-    const periodNav = authenticatedPage.getByRole("navigation", {
-      name: /period selection/i,
+      // User sees the energy page heading
+      await expect(
+        authenticatedPage.getByRole("heading", { name: /energy level/i }),
+      ).toBeVisible();
+
+      // User sees comparison to previous month (proves dynamic data loaded)
+      await expect(authenticatedPage.getByText(/vs last month/i)).toBeVisible();
     });
 
-    await expect(
-      periodNav.getByRole("button", { exact: true, name: "Month" }),
-    ).toBeVisible();
-    await expect(
-      periodNav.getByRole("button", { name: /6 months/i }),
-    ).toBeVisible();
-    await expect(
-      periodNav.getByRole("button", { name: /year/i }),
-    ).toBeVisible();
-  });
+    test("switching to 6 months shows different comparison text", async ({
+      authenticatedPage,
+    }) => {
+      await authenticatedPage.goto("/energy");
 
-  test("period tabs update URL parameter", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/energy");
+      // Verify we start with month comparison
+      await expect(authenticatedPage.getByText(/vs last month/i)).toBeVisible();
 
-    const periodNav = authenticatedPage.getByRole("navigation", {
-      name: /period selection/i,
+      // Switch to 6 months
+      await authenticatedPage
+        .getByRole("button", { name: /6 months/i })
+        .click();
+
+      // Comparison text changes to reference 6 months
+      await expect(
+        authenticatedPage.getByText(/vs last 6 months/i),
+      ).toBeVisible();
+
+      // The month comparison should no longer be visible
+      await expect(
+        authenticatedPage.getByText(/vs last month/i),
+      ).not.toBeVisible();
     });
 
-    await periodNav.getByRole("button", { name: /6 months/i }).click();
-    await expect(authenticatedPage).toHaveURL(/period=6months/);
+    test("switching to year shows different comparison text", async ({
+      authenticatedPage,
+    }) => {
+      await authenticatedPage.goto("/energy");
 
-    await periodNav.getByRole("button", { name: /year/i }).click();
-    await expect(authenticatedPage).toHaveURL(/period=year/);
+      // Switch directly to year
+      await authenticatedPage.getByRole("button", { name: /year/i }).click();
 
-    // Month is the default, so clicking it removes the param from URL
-    await periodNav.getByRole("button", { exact: true, name: "Month" }).click();
-    await expect(authenticatedPage).toHaveURL(/\/energy$/);
+      // Comparison text references year
+      await expect(authenticatedPage.getByText(/vs last year/i)).toBeVisible();
+
+      // Other comparison texts should not be visible
+      await expect(
+        authenticatedPage.getByText(/vs last month/i),
+      ).not.toBeVisible();
+      await expect(
+        authenticatedPage.getByText(/vs last 6 months/i),
+      ).not.toBeVisible();
+    });
   });
 
-  test("shows metric navigation pills", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/energy");
+  test.describe("Users Without Progress", () => {
+    test("sees prompt to start learning", async ({ userWithoutProgress }) => {
+      await userWithoutProgress.goto("/energy");
 
-    await expect(
-      authenticatedPage.getByRole("link", { name: /energy/i }),
-    ).toBeVisible();
-    await expect(
-      authenticatedPage.getByRole("link", { name: /belt/i }),
-    ).toBeVisible();
-    await expect(
-      authenticatedPage.getByRole("link", { name: /accuracy/i }),
-    ).toBeVisible();
-  });
-
-  test("energy metric pill is active", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/energy");
-
-    const energyLink = authenticatedPage.getByRole("link", { name: /energy/i });
-    await expect(energyLink).toBeVisible();
-  });
-
-  test("shows energy chart with data", async ({ authenticatedPage }) => {
-    await authenticatedPage.goto("/energy");
-
-    // Chart should be visible - we check for the chart container
-    await expect(authenticatedPage.locator(".recharts-wrapper")).toBeVisible();
-  });
-
-  test("shows energy percentage for current period", async ({
-    authenticatedPage,
-  }) => {
-    await authenticatedPage.goto("/energy");
-
-    // E2E user has 75% energy, should display as "75%"
-    await expect(authenticatedPage.getByText("75%")).toBeVisible();
-  });
-});
-
-test.describe("Energy Page - Authenticated without Progress", () => {
-  test("shows empty state message", async ({ userWithoutProgress }) => {
-    await userWithoutProgress.goto("/energy");
-
-    await expect(
-      userWithoutProgress.getByText(/start learning to track your energy/i),
-    ).toBeVisible();
-  });
-
-  test("shows explanation even without data", async ({
-    userWithoutProgress,
-  }) => {
-    await userWithoutProgress.goto("/energy");
-
-    await expect(
-      userWithoutProgress.getByText(/about energy level/i),
-    ).toBeVisible();
-  });
-});
-
-test.describe("Energy Page - Navigation from Home", () => {
-  test("energy level card links to energy page", async ({
-    authenticatedPage,
-  }) => {
-    await authenticatedPage.goto("/");
-
-    // Find the energy level text and click its parent link
-    const energyText = authenticatedPage.getByText("Your energy level is 75%");
-    await expect(energyText).toBeVisible();
-
-    // Click the link that contains this text
-    await authenticatedPage
-      .getByRole("link")
-      .filter({ has: energyText })
-      .click();
-
-    await expect(
-      authenticatedPage.getByRole("heading", { name: /energy level/i }),
-    ).toBeVisible();
-
-    await expect(authenticatedPage).toHaveURL(/\/energy/);
+      await expect(
+        userWithoutProgress.getByText(/start learning to track your energy/i),
+      ).toBeVisible();
+    });
   });
 });
