@@ -38,30 +38,28 @@ export function ChapterList({
   return (
     <section>
       <Accordion
-        className="rounded-none border-0 leading-snug"
         onValueChange={(values) => onExpandedChange?.(values as string[])}
         value={expandedValues}
+        variant="ghost"
       >
         {chapters.map((chapter, index) => (
-          <AccordionItem
-            className="border-border/30 border-b last:border-b-0 data-open:bg-transparent"
-            key={chapter.id}
-            value={chapter.slug}
-          >
-            <AccordionTrigger className="px-0 py-4 hover:no-underline">
-              <div className="flex items-start gap-4">
-                <span className="w-6 shrink-0 font-mono text-muted-foreground/60 text-sm tabular-nums">
+          <AccordionItem key={chapter.id} value={chapter.slug} variant="ghost">
+            <AccordionTrigger className="px-0 py-3 hover:no-underline">
+              <div className="flex items-start gap-3 sm:gap-4">
+                <span className="w-5 shrink-0 font-mono text-muted-foreground/40 tabular-nums leading-snug sm:w-6">
                   {String(index + 1).padStart(2, "0")}
                 </span>
 
-                <span className="text-left font-medium">{chapter.title}</span>
+                <span className="text-left font-medium leading-snug">
+                  {chapter.title}
+                </span>
               </div>
             </AccordionTrigger>
 
-            <AccordionContent className="[&_a]:no-underline">
-              <div className="ml-10 flex flex-col">
+            <AccordionContent className="pb-2 [&_a]:no-underline">
+              <div className="ml-4 flex flex-col gap-3 sm:ml-6">
                 {chapter.description && (
-                  <p className="mb-4 text-muted-foreground text-sm leading-relaxed">
+                  <p className="max-w-prose text-muted-foreground text-sm leading-relaxed">
                     {chapter.description}
                   </p>
                 )}
@@ -70,7 +68,7 @@ export function ChapterList({
                   {chapter.lessons.map((lesson) => (
                     <li key={lesson.id}>
                       <ClientLink
-                        className="-ml-2 block rounded-md px-2 py-2 font-medium text-sm transition-colors hover:bg-muted/50"
+                        className="-mx-2 block rounded-md px-2 py-2.5 text-foreground/80 text-sm transition-colors hover:bg-muted/40 hover:text-foreground"
                         href={`/b/${brandSlug}/c/${courseSlug}/c/${chapter.slug}/l/${lesson.slug}`}
                       >
                         {lesson.title}
