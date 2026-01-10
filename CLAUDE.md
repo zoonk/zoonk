@@ -6,20 +6,16 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 
 - [Principles](#principles)
 - [Design Style](#design-style)
-- [Tech stack](#tech-stack)
-- [Project structure](#project-structure)
-- [Database Queries](#database-queries)
-- [Tools](#tools)
 - [Conventions](#conventions)
+- [Component Organization](#component-organization)
 - [Compound Components](#compound-components)
 - [Testing](#testing)
 - [i18n](#i18n)
 - [CSS](#css)
 - [Icons](#icons)
-- [Cache Components](#cache-components)
 - [React Compiler](#react-compiler)
-- [Links](#links)
-- [Performance](#performance)
+- [Specialized Skills](#specialized-skills)
+- [Updating this document](#updating-this-document)
 
 ## Principles
 
@@ -58,89 +54,10 @@ Some design preferences:
 - For buttons, prefer `outline` variant for most buttons and links. Use the default one only for active/selected states or for submit buttons. Use the `secondary` variant for buttons you want to emphasize a bit more
 - Prefer using existing components from `@zoonk/ui` instead of creating new ones. If a component doesn't exist, search the `shadcn` registry before creating a new one
 
-For detailed UX guidelines (interactions, animation, layout, accessibility), see `.claude/skills/design/SKILL.md`
-
-## Tech stack
-
-- Monorepo using [Turborepo](https://turborepo.com/docs)
-- [Next.js (App Router)](https://nextjs.org/docs)
-- TypeScript
-- Tailwind CSS
-- [Prisma Postgres](https://www.prisma.io/postgres)
-- [Prisma ORM](https://www.prisma.io/docs/orm)
-- [shadcn/ui](https://ui.shadcn.com/)
-- [Vercel AI SDK](https://ai-sdk.dev/llms.txt)
-- [Better Auth](https://www.better-auth.com/llms.txt)
-
-## Project structure
-
-### Apps
-
-- [main](./apps/main): Public web app (`zoonk.com`)
-- [admin](./apps/admin): Dashboard for managing users and organizations (`admin.zoonk.com`)
-- [auth](./apps/auth): Centralized authentication for all apps
-- [editor](./apps/editor): Visual editor for building courses and activities (`editor.zoonk.com`)
-- [evals](./apps/evals): Local-only tool for evaluating AI-generated content
-
-### Packages
-
-- [ai](./packages/ai): AI prompts, tasks, and helpers for content generation
-- [auth](./packages/auth): Shared Better Auth setup and plugins
-- [core](./packages/core): Shared server utilities
-- [db](./packages/db): Prisma schema and client
-- [mailer](./packages/mailer): Email-sending utilities
-- [next](./packages/next): Shared Next.js utilities
-- [testing](./packages/testing): Shared testing utilities
-- [tsconfig](./packages/tsconfig): Shared TypeScript config
-- [ui](./packages/ui): Shared React components, patterns, hooks, and styles
-- [utils](./packages/utils): Shared utilities and helpers
-
-### Data Fetching Architecture
-
-- **Shared utilities** → Use `@zoonk/core`
-- **App-specific queries** → Use `@zoonk/db` directly in `apps/{app}/src/data/`
-
-This separation allows each app to:
-
-- Control its own caching strategy
-- Handle permissions at the appropriate level
-- Avoid complex conditional logic for different use cases
-
-Read each folder's README file for more details
-
-### Folder Structure
-
-#### Apps
-
-All apps should follow a consistent folder structure:
-
-- `src/app/`: Next.js routes
-- `src/i18n/`: Internationalization setup (if using `next-intl`)
-- `src/lib/`: Shared utilities and constants
-- `src/proxy.ts`: Next.js Proxy setup (if needed)
-
-**Component Organization:**
-
-1. **Route-specific components**: Colocate directly with the route's `page.tsx`
-2. **Route group shared components**: Use `_components/` or `_hooks/` folders within the route group (e.g., `app/(private)/_components/`), except for the root route group (eg `/[locale]` for `main` app and `/[orgSlug]/c/[lang]/[courseSlug]` for `editor` app) where you should use `src/components/{domain}/` since all components are shared across the app.
-3. **Cross-route-group components**: Place in `src/components/{domain}/`
-4. **Shared utilities**: Place in `src/lib/`
-
-## Tools
-
-- Use `pnpm` for package management
-- For AI features, use the [Vercel AI SDK](https://ai-sdk.dev) and the [Vercel AI Gateway](https://vercel.com/docs/ai-gateway). See docs for the AI SDK [here](https://ai-sdk.dev/llms.txt)
+For detailed UX guidelines (interactions, animation, layout, accessibility), see [.claude/skills/design/SKILL.md](.claude/skills/design/SKILL.md)
 
 ## Conventions
 
-- **Never pass functions to Client Components** unless they are Server Actions (marked with `"use server"`). Regular functions like `getHref` or callbacks cannot be serialized. Instead, pass serializable data (strings, numbers, objects) and construct values in the client component. For example, pass `hrefPrefix: string` instead of `getHref: (item) => string`
-- Run the following commands before completing your task: `pnpm format`, `pnpm lint --write --unsafe`, `pnpm typecheck`, `pnpm knip`
-- When there are **formatting issues**, run `pnpm format` to auto-fix them
-- When there are **linting issues**, run `pnpm lint --write --unsafe` from the **root of the monorepo** to auto-fix them (lint is a global setup, not per app/package)
-- Run `pnpm typecheck` to check for TypeScript errors
-- **Never manually fix formatting or linting issues** by reading files and editing them—always use the CLI commands above as it's more efficient
-- Don't run `pnpm dev` since we already have a dev server running
-- Run `pnpm build` to make sure all apps and packages are compiling correctly
 - Prefer to use server components than client components. Only use client components when absolutely necessary
 - Avoid `useEffect` and `useState` unless absolutely required
 - Fetch data on the server whenever possible and use `Suspense` with a fallback for loading states, [see docs for streaming data](https://nextjs.org/docs/app/getting-started/fetching-data#streaming)
@@ -152,6 +69,13 @@ All apps should follow a consistent folder structure:
 - Don't add comments to a component's props
 - Pass types directly to the component declaration instead of using `type` since those types won't be exported/reused
 - When adding a new Prisma model, always add a seed for it in `packages/db/src/prisma/seed/`
+
+## Component Organization
+
+1. **Route-specific components**: Colocate directly with the route's `page.tsx`
+2. **Route group shared components**: Use `_components/` or `_hooks/` folders within the route group (e.g., `app/(private)/_components/`), except for the root route group (eg `/[locale]` for `main` app and `/[orgSlug]/c/[lang]/[courseSlug]` for `editor` app) where you should use `src/components/{domain}/` since all components are shared across the app.
+3. **Cross-route-group components**: Place in `src/components/{domain}/`
+4. **Shared utilities**: Place in `src/lib/`
 
 ## Compound Components
 
@@ -227,40 +151,9 @@ For detailed i18n workflow and gotchas, see `.claude/skills/translations/SKILL.m
 - We support both `lucide-react` and `@tabler/icons-react`
 - Prefer `lucide-react`, only use `@tabler/icons-react` when the icon is not available in `lucide-react`
 
-## Cache Components
-
-When creating a `page.tsx` file, either use `use cache` or don't make any `await` calls directly. Move async logic to separate components wrapped with `<Suspense>`.
-
-- Wrap each data-fetching component in its own `Suspense` with a specific skeleton
-- Avoid `use cache` by default (can't use with `searchParams`, `cookies()`, `headers()`)
-- Call `revalidatePath()` before redirecting after mutations
-
-For detailed caching patterns, streaming, and preloading, see the latest Next.js docs from the `next-devtools` MCP server.
-
-## Links
-
-You can style links as buttons like this:
-
-You can use the buttonVariants helper to create a link that looks like a button.
-
-```tsx
-import { buttonVariants } from "@zoonk/ui/components/button";
-
-<Link className={buttonVariants({ variant: "outline" })}>Click here</Link>;
-```
-
 ## React Compiler
 
 We're using the new [React Compiler](https://react.dev/learn/react-compiler/introduction). By default, React Compiler will memoize your code based on its analysis and heuristics. In most cases, this memoization will be as precise, or moreso, than what you may have written. This means you don't need to `useMemo` or `useCallback` as much. The useMemo and useCallback hooks can continue to be used with React Compiler as an escape hatch to provide control over which values are memoized. A common use-case for this is if a memoized value is used as an effect dependency, in order to ensure that an effect does not fire repeatedly even when its dependencies do not meaningfully change. However, this should be used sparingly and only when necessary. Don't default to using `useMemo` or `useCallback` with React Compiler, use them only when necessary.
-
-## Performance
-
-- MUST: Measure reliably (disable extensions that skew runtime)
-- MUST: Track and minimize re-renders (React DevTools/React Scan)
-- MUST: Profile with CPU/network throttling
-- MUST: Batch layout reads/writes; avoid unnecessary reflows/repaints
-- SHOULD: Prefer uncontrolled inputs; make controlled loops cheap (keystroke cost)
-- MUST: Virtualize large lists (eg, `virtua`)
 
 ## Specialized Skills
 
@@ -273,8 +166,6 @@ For detailed guidance on complex workflows, see these skill files:
 | Testing             | Bug fixes, new features, TDD | `.claude/skills/testing/SKILL.md`             |
 | Translations        | Working with i18n, PO files  | `.claude/skills/translations/SKILL.md`        |
 
-**Note**: Claude Code auto-discovers these skills. Other AI agents should read the SKILL.md files directly when working on related tasks.
-
 ## Updating this document
 
-AI agents should update this file whenever they learn something new about this project that future tasks might need to take into account. Keeping the guidelines current helps everyone work more effectively.
+Update this file whenever you learn something new about this project that future tasks might need to take into account. Keeping the guidelines current helps everyone work more effectively.
