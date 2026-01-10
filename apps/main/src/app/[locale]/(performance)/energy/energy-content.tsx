@@ -33,7 +33,7 @@ export async function EnergyContent({
   if (!(data && isAuthenticated)) {
     return (
       <div className="flex flex-col gap-8">
-        <div className="flex h-64 flex-col items-center justify-center gap-4 rounded-xl border border-dashed text-muted-foreground">
+        <div className="flex h-64 flex-col items-center justify-center gap-4 rounded-xl border border-dashed p-4 text-muted-foreground">
           {isAuthenticated ? (
             t("Start learning to track your energy level")
           ) : (
