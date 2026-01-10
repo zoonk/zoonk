@@ -8,16 +8,6 @@ import { PeriodNavigation } from "../_components/period-navigation";
 import { PeriodTabs } from "../_components/period-tabs";
 import { EnergyChartClient } from "./energy-chart-client";
 
-type EnergyChartProps = {
-  average: number;
-  dataPoints: EnergyDataPoint[];
-  hasNext: boolean;
-  hasPrevious: boolean;
-  period: EnergyPeriod;
-  periodEnd: Date;
-  periodStart: Date;
-};
-
 function formatPeriodLabel(
   periodStart: Date,
   periodEnd: Date,
@@ -35,14 +25,16 @@ function formatPeriodLabel(
     const startMonth = new Intl.DateTimeFormat(locale, {
       month: "short",
     }).format(periodStart);
+
     const endMonth = new Intl.DateTimeFormat(locale, { month: "short" }).format(
       periodEnd,
     );
+
     const year = periodStart.getFullYear();
+
     return `${startMonth} - ${endMonth} ${year}`;
   }
 
-  // Year
   return String(periodStart.getFullYear());
 }
 
@@ -54,13 +46,20 @@ export async function EnergyChart({
   period,
   periodEnd,
   periodStart,
-}: EnergyChartProps) {
+}: {
+  average: number;
+  dataPoints: EnergyDataPoint[];
+  hasNext: boolean;
+  hasPrevious: boolean;
+  period: EnergyPeriod;
+  periodEnd: Date;
+  periodStart: Date;
+}) {
   const t = await getExtracted();
   const locale = await getLocale();
 
   const periodLabel = formatPeriodLabel(periodStart, periodEnd, period, locale);
 
-  // Serialize data points for client component
   const serializedDataPoints = dataPoints.map((point) => ({
     date: point.date.toISOString(),
     energy: point.energy,
