@@ -1,18 +1,18 @@
 import { expect, test } from "./fixtures";
 
 test.describe("Energy Page - Unauthenticated", () => {
-  test("shows energy page without data", async ({ page }) => {
+  test("shows energy page with login CTA", async ({ page }) => {
     await page.goto("/energy");
 
-    // Page loads but shows empty state since no user is logged in
     await expect(
       page.getByRole("heading", { name: /energy level/i }),
     ).toBeVisible();
 
-    // Shows start learning message
     await expect(
-      page.getByText(/start learning to track your energy/i),
+      page.getByText(/log in to track your energy level/i),
     ).toBeVisible();
+
+    await expect(page.getByRole("link", { name: /login/i })).toBeVisible();
   });
 });
 

@@ -7,6 +7,7 @@ msgstr ""
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx
 #: src/app/[locale]/(catalog)/_components/logout-dropdown-item.tsx
+#: src/app/[locale]/(performance)/energy/energy-content.tsx
 #: src/app/[locale]/(settings)/_components/protected-section.tsx
 msgctxt "AyGauy"
 msgid "Login"
@@ -623,6 +624,11 @@ msgstr "{change}% vs last month"
 msgctxt "jbB0eP"
 msgid "{change}% vs last year"
 msgstr "{change}% vs last year"
+
+#: src/app/[locale]/(performance)/energy/energy-content.tsx
+msgctxt "2/t4XK"
+msgid "Log in to track your energy level"
+msgstr "Log in to track your energy level"
 
 #: src/app/[locale]/(performance)/energy/energy-content.tsx
 msgctxt "U6BGyx"
