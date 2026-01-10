@@ -15,7 +15,7 @@
     "nuqs": "2.8.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "recharts": "^3.6.0",
+    "recharts": "3.6.0",
     "server-only": "0.0.1"
   },
   "devDependencies": {

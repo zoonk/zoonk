@@ -340,7 +340,7 @@ importers:
         specifier: 19.2.3
         version: 19.2.3(react@19.2.3)
       recharts:
-        specifier: ^3.6.0
+        specifier: 3.6.0
         version: 3.6.0(@types/react@19.2.7)(react-dom@19.2.3(react@19.2.3))(react-is@19.2.3)(react@19.2.3)(redux@5.0.1)
       server-only:
         specifier: 0.0.1
