@@ -1,43 +1,8 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted, getLocale } from "next-intl/server";
 import type { EnergyPeriod } from "@/data/progress/get-energy-history";
+import { formatPeriodLabel } from "../_utils";
 import { EnergyComparison } from "./energy-comparison";
-
-type EnergyStatsProps = {
-  average: number;
-  period: EnergyPeriod;
-  periodEnd: Date;
-  periodStart: Date;
-  previousAverage: number | null;
-};
-
-function formatPeriodLabel(
-  periodStart: Date,
-  periodEnd: Date,
-  period: EnergyPeriod,
-  locale: string,
-): string {
-  if (period === "month") {
-    return new Intl.DateTimeFormat(locale, {
-      month: "long",
-      year: "numeric",
-    }).format(periodStart);
-  }
-
-  if (period === "6months") {
-    const startMonth = new Intl.DateTimeFormat(locale, {
-      month: "short",
-    }).format(periodStart);
-    const endMonth = new Intl.DateTimeFormat(locale, { month: "short" }).format(
-      periodEnd,
-    );
-    const year = periodStart.getFullYear();
-    return `${startMonth} - ${endMonth} ${year}`;
-  }
-
-  // Year
-  return String(periodStart.getFullYear());
-}
 
 export async function EnergyStats({
   average,
@@ -45,7 +10,13 @@ export async function EnergyStats({
   periodEnd,
   periodStart,
   previousAverage,
-}: EnergyStatsProps) {
+}: {
+  average: number;
+  period: EnergyPeriod;
+  periodEnd: Date;
+  periodStart: Date;
+  previousAverage: number | null;
+}) {
   const t = await getExtracted();
   const locale = await getLocale();
 
