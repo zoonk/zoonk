@@ -1,14 +1,18 @@
 "use client";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { CircleGaugeIcon, TargetIcon, ZapIcon } from "lucide-react";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { useExtracted } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { getMenu } from "@/lib/menu";
 
 export function MetricPills() {
   const segment = useSelectedLayoutSegment();
   const t = useExtracted();
+
+  const energy = getMenu("energy");
+  const belt = getMenu("belt");
+  const accuracy = getMenu("accuracy");
 
   return (
     <div className="flex gap-2 overflow-x-auto overflow-y-hidden pb-1 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -17,9 +21,9 @@ export function MetricPills() {
           size: "sm",
           variant: segment === "energy" ? "default" : "outline",
         })}
-        href="/energy"
+        href={energy.url}
       >
-        <ZapIcon aria-hidden className="size-4" />
+        <energy.icon aria-hidden className="size-4" />
         {t("Energy")}
       </Link>
 
@@ -28,9 +32,9 @@ export function MetricPills() {
           size: "sm",
           variant: segment === "belt" ? "default" : "outline",
         })}
-        href="/belt"
+        href={belt.url}
       >
-        <CircleGaugeIcon aria-hidden className="size-4" />
+        <belt.icon aria-hidden className="size-4" />
         {t("Belt")}
       </Link>
 
@@ -39,9 +43,9 @@ export function MetricPills() {
           size: "sm",
           variant: segment === "accuracy" ? "default" : "outline",
         })}
-        href="/accuracy"
+        href={accuracy.url}
       >
-        <TargetIcon aria-hidden className="size-4" />
+        <accuracy.icon aria-hidden className="size-4" />
         {t("Accuracy")}
       </Link>
     </div>

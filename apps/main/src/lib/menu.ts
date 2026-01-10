@@ -1,5 +1,6 @@
 import {
   Brain,
+  CircleGaugeIcon,
   Gem,
   Home,
   IdCardLanyard,
@@ -10,11 +11,16 @@ import {
   LogOut,
   Search,
   Settings,
+  TargetIcon,
+  ZapIcon,
 } from "lucide-react";
 
 const menu = {
+  accuracy: { icon: TargetIcon, url: "/accuracy" },
+  belt: { icon: CircleGaugeIcon, url: "/belt" },
   courses: { icon: LayoutGrid, url: "/courses" },
   displayName: { icon: IdCardLanyard, url: "/name" },
+  energy: { icon: ZapIcon, url: "/energy" },
   home: { icon: Home, url: "/" },
   language: { icon: Languages, url: "/language" },
   learn: { icon: Brain, url: "/learn" },

@@ -11,13 +11,14 @@ import {
   FeatureCardTitle,
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { ZapIcon } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
 import { ClientLink } from "@/i18n/client-link";
+import { getMenu } from "@/lib/menu";
 
 export async function EnergyLevel({ energy }: { energy: number }) {
   const t = await getExtracted();
   const locale = await getLocale();
+  const energyMenu = getMenu("energy");
 
   const formattedEnergy = new Intl.NumberFormat(locale, {
     maximumFractionDigits: 1,
@@ -30,12 +31,12 @@ export async function EnergyLevel({ energy }: { energy: number }) {
       : t("Keep learning to maintain it");
 
   return (
-    <FeatureCardLink render={<ClientLink href="/energy" />}>
+    <FeatureCardLink render={<ClientLink href={energyMenu.url} />}>
       <FeatureCard>
         <FeatureCardHeader className="text-energy">
           <FeatureCardHeaderContent>
             <FeatureCardIcon>
-              <ZapIcon />
+              <energyMenu.icon />
             </FeatureCardIcon>
             <FeatureCardLabel>{t("Energy level")}</FeatureCardLabel>
           </FeatureCardHeaderContent>
