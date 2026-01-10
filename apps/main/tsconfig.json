@@ -2,7 +2,8 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "plugins": [{ "name": "workflow" }]
   },
   "exclude": ["node_modules"],
   "extends": "@zoonk/tsconfig/nextjs.json",

@@ -8,6 +8,7 @@ export type CourseWithDetails = {
   slug: string;
   title: string;
   description: string;
+  generationStatus: string;
   imageUrl: string | null;
   organization: {
     name: string;
@@ -29,6 +30,7 @@ export const getCourse = cache(
           select: { category: true },
         },
         description: true,
+        generationStatus: true,
         id: true,
         imageUrl: true,
         organization: {

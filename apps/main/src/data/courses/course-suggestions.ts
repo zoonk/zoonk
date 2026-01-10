@@ -4,9 +4,14 @@ import { generateCourseSuggestions as generateTask } from "@zoonk/ai/course-sugg
 import { prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 
-type Suggestion = {
+export type Suggestion = {
   title: string;
   description: string;
+};
+
+export type CourseSuggestionsResult = {
+  id: number;
+  suggestions: Suggestion[];
 };
 
 async function findCourseSuggestion(params: {
@@ -42,16 +47,20 @@ export async function generateCourseSuggestions({
 }: {
   locale: string;
   prompt: string;
-}): Promise<Suggestion[]> {
+}): Promise<CourseSuggestionsResult> {
   const record = await findCourseSuggestion({ locale, prompt });
 
   if (!record) {
     const { data } = await generateTask({ locale, prompt });
 
-    await upsertCourseSuggestion({ locale, prompt, suggestions: data });
+    const created = await upsertCourseSuggestion({
+      locale,
+      prompt,
+      suggestions: data,
+    });
 
-    return data;
+    return { id: created.id, suggestions: data };
   }
 
-  return record.suggestions as Suggestion[];
+  return { id: record.id, suggestions: record.suggestions as Suggestion[] };
 }

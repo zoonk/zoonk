@@ -10,6 +10,7 @@ import { Suspense } from "react";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import { ChapterSearchContainer } from "./chapter-search-container";
+import { CourseGenerating } from "./course-generating";
 import { CourseHeader } from "./course-header";
 
 export async function generateStaticParams() {
@@ -61,6 +62,11 @@ export default async function CoursePage({
 
   if (!course) {
     notFound();
+  }
+
+  // Show loading state if course is still being generated
+  if (course.generationStatus === "generating") {
+    return <CourseGenerating course={course} />;
   }
 
   return (

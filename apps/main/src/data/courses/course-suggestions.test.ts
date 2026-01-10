@@ -22,7 +22,8 @@ test("get an existing item", async () => {
 
   const result = await generateCourseSuggestions({ locale, prompt });
 
-  expect(result).toEqual(suggestions);
+  expect(result.suggestions).toEqual(suggestions);
+  expect(result.id).toBeTypeOf("number");
   expect(spy).not.toHaveBeenCalled();
 });
 
@@ -40,11 +41,13 @@ test("generates a new item", async () => {
 
   const result = await generateCourseSuggestions({ locale, prompt });
 
-  expect(result).toEqual(generatedSuggestions);
+  expect(result.suggestions).toEqual(generatedSuggestions);
+  expect(result.id).toBeTypeOf("number");
   expect(spy).toHaveBeenCalledOnce();
 
   // check if the record was added to the database
   const record = await generateCourseSuggestions({ locale, prompt });
-  expect(record).toEqual(generatedSuggestions);
+  expect(record.suggestions).toEqual(generatedSuggestions);
+  expect(record.id).toBe(result.id);
   expect(spy).toHaveBeenCalledOnce();
 });

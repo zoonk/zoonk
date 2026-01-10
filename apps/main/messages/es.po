@@ -156,6 +156,16 @@ msgctxt "zml1/y"
 msgid "Past 3 months"
 msgstr "Últimos 3 meses"
 
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+msgctxt "DG7kYp"
+msgid "Generate lessons"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+msgctxt "GJPbzr"
+msgid "Generating lessons..."
+msgstr ""
+
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-search-container.tsx
 msgctxt "ai9FYU"
 msgid "Search chapters and lessons..."
@@ -344,6 +354,21 @@ msgctxt "WgeB0r"
 msgid "Keep learning to maintain it"
 msgstr "Sigue aprendiendo para mantenerlo"
 
+#: src/app/[locale]/(catalog)/generate/cs/[courseSuggestionId]/generate-course-form.tsx
+msgctxt "viV+Jl"
+msgid "This may take a minute..."
+msgstr ""
+
+#: src/app/[locale]/(catalog)/generate/cs/[courseSuggestionId]/generate-course-form.tsx
+msgctxt "WuNYFO"
+msgid "Generating course"
+msgstr ""
+
+#: src/app/[locale]/(catalog)/generate/cs/[courseSuggestionId]/generate-course-form.tsx
+msgctxt "ykfekN"
+msgid "Failed to generate course. Please try again."
+msgstr ""
+
 #: src/app/[locale]/(catalog)/hero.tsx
 msgctxt "nlT+zW"
 msgid "Learn anything"
@@ -400,9 +425,9 @@ msgid "Course ideas for {prompt}"
 msgstr "Ideas de cursos para {prompt}"
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx
-msgctxt "dCKXDB"
-msgid "Create course"
-msgstr "Crear curso"
+msgctxt "Pc+tM3"
+msgid "Generate"
+msgstr ""
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx
 msgctxt "RbslnC"

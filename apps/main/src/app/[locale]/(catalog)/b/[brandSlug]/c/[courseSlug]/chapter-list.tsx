@@ -6,6 +6,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@zoonk/ui/components/accordion";
+import { Button } from "@zoonk/ui/components/button";
+import { Loader2Icon, SparklesIcon } from "lucide-react";
+import { useExtracted } from "next-intl";
 import type { ChapterWithLessons } from "@/data/chapters/list-course-chapters";
 import { ClientLink } from "@/i18n/client-link";
 
@@ -24,6 +27,8 @@ export function ChapterList({
   expandedValues?: string[];
   onExpandedChange?: (values: string[]) => void;
 }) {
+  const t = useExtracted();
+
   if (chapters.length === 0) {
     if (!emptyStateText) {
       return null;
@@ -66,18 +71,39 @@ export function ChapterList({
                   </p>
                 )}
 
-                <ul className="flex flex-col">
-                  {chapter.lessons.map((lesson) => (
-                    <li key={lesson.id}>
-                      <ClientLink
-                        className="-ml-2 block rounded-md px-2 py-2 font-medium text-sm transition-colors hover:bg-muted/50"
-                        href={`/b/${brandSlug}/c/${courseSlug}/c/${chapter.slug}/l/${lesson.slug}`}
-                      >
-                        {lesson.title}
-                      </ClientLink>
-                    </li>
-                  ))}
-                </ul>
+                {chapter.lessons.length > 0 && (
+                  <ul className="flex flex-col">
+                    {chapter.lessons.map((lesson) => (
+                      <li key={lesson.id}>
+                        <ClientLink
+                          className="-ml-2 block rounded-md px-2 py-2 font-medium text-sm transition-colors hover:bg-muted/50"
+                          href={`/b/${brandSlug}/c/${courseSlug}/c/${chapter.slug}/l/${lesson.slug}`}
+                        >
+                          {lesson.title}
+                        </ClientLink>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {chapter.lessons.length === 0 &&
+                  chapter.lessonGenerationStatus === "generating" && (
+                    <div className="flex items-center gap-2 py-2 text-muted-foreground text-sm">
+                      <Loader2Icon
+                        aria-hidden="true"
+                        className="size-3.5 animate-spin"
+                      />
+                      <span>{t("Generating lessons...")}</span>
+                    </div>
+                  )}
+
+                {chapter.lessons.length === 0 &&
+                  chapter.lessonGenerationStatus === "pending" && (
+                    <Button className="w-fit gap-1.5" size="sm" variant="ghost">
+                      <SparklesIcon aria-hidden="true" className="size-3.5" />
+                      {t("Generate lessons")}
+                    </Button>
+                  )}
               </div>
             </AccordionContent>
           </AccordionItem>

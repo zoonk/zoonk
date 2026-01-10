@@ -26,7 +26,7 @@ test.describe("Learn Form", () => {
 });
 
 test.describe("Course Suggestions", () => {
-  test("shows suggestions with title, description, and create button", async ({
+  test("shows suggestions with title, description, and generate link", async ({
     page,
   }) => {
     await page.goto("/learn/test%20prompt");
@@ -40,8 +40,8 @@ test.describe("Course Suggestions", () => {
       page.getByText(/fundamentals of software testing/i),
     ).toBeVisible();
 
-    const createButtons = page.getByRole("button", { name: /create course/i });
-    await expect(createButtons.first()).toBeVisible();
+    const generateLinks = page.getByRole("link", { name: /generate/i });
+    await expect(generateLinks.first()).toBeVisible();
   });
 
   test("Change subject navigates back to learn form", async ({ page }) => {

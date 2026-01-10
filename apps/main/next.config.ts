@@ -3,6 +3,7 @@ import createMDX from "@next/mdx";
 import { withBotId } from "botid/next/config";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { withWorkflow } from "workflow/next";
 
 const CACHE_IMAGE_DAYS = 30;
 const CACHE_EXPIRE_DAYS = 365;
@@ -81,4 +82,4 @@ const withNextIntl = createNextIntlPlugin({
   },
 });
 
-export default withBotId(withNextIntl(withMDX(nextConfig)));
+export default withWorkflow(withBotId(withNextIntl(withMDX(nextConfig))));

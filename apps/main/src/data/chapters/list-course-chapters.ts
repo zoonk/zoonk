@@ -9,6 +9,7 @@ export type ChapterWithLessons = {
   title: string;
   description: string;
   position: number;
+  lessonGenerationStatus: string;
   lessons: {
     id: number;
     slug: string;
@@ -29,6 +30,7 @@ export const listCourseChapters = cache(
       select: {
         description: true,
         id: true,
+        lessonGenerationStatus: true,
         lessons: {
           orderBy: { position: "asc" },
           select: {

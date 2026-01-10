@@ -13,6 +13,7 @@ export function chapterAttrs(
     description: "Test chapter description",
     isPublished: false,
     language: "en",
+    lessonGenerationStatus: "pending",
     normalizedTitle,
     organizationId: 0,
     position: 0,

@@ -11,6 +11,7 @@ export function courseAttrs(
 ): Omit<Course, "id" | "createdAt" | "updatedAt"> {
   return {
     description: "Test course description",
+    generationStatus: "completed",
     imageUrl: null,
     isPublished: false,
     language: "en",
