@@ -6,13 +6,14 @@ import {
   FeatureCardIcon,
   FeatureCardIndicator,
   FeatureCardLabel,
+  FeatureCardLink,
   FeatureCardSubtitle,
   FeatureCardTitle,
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { ZapIcon } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
-import { Link } from "@/i18n/navigation";
+import { ClientLink } from "@/i18n/client-link";
 
 export async function EnergyLevel({ energy }: { energy: number }) {
   const t = await getExtracted();
@@ -29,8 +30,8 @@ export async function EnergyLevel({ energy }: { energy: number }) {
       : t("Keep learning to maintain it");
 
   return (
-    <Link className="w-full" href="/energy">
-      <FeatureCard className="w-full transition-colors hover:bg-muted/50">
+    <FeatureCardLink render={<ClientLink href="/energy" />}>
+      <FeatureCard>
         <FeatureCardHeader className="text-energy">
           <FeatureCardHeaderContent>
             <FeatureCardIcon>
@@ -48,7 +49,7 @@ export async function EnergyLevel({ energy }: { energy: number }) {
           <FeatureCardSubtitle>{description}</FeatureCardSubtitle>
         </FeatureCardBody>
       </FeatureCard>
-    </Link>
+    </FeatureCardLink>
   );
 }
 

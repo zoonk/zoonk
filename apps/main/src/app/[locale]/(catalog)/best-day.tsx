@@ -6,12 +6,14 @@ import {
   FeatureCardIcon,
   FeatureCardIndicator,
   FeatureCardLabel,
+  FeatureCardLink,
   FeatureCardSubtitle,
   FeatureCardTitle,
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { CalendarDays } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
+import { ClientLink } from "@/i18n/client-link";
 
 type BestDayProps = {
   accuracy: number;
@@ -34,24 +36,29 @@ export async function BestDay({ accuracy, dayOfWeek }: BestDayProps) {
   }).format(accuracy);
 
   return (
-    <FeatureCard className="w-full">
-      <FeatureCardHeader className="text-accuracy">
-        <FeatureCardHeaderContent>
-          <FeatureCardIcon>
-            <CalendarDays />
-          </FeatureCardIcon>
-          <FeatureCardLabel>{t("Best day")}</FeatureCardLabel>
-        </FeatureCardHeaderContent>
-        <FeatureCardIndicator />
-      </FeatureCardHeader>
+    <FeatureCardLink render={<ClientLink href="/accuracy" />}>
+      <FeatureCard>
+        <FeatureCardHeader className="text-accuracy">
+          <FeatureCardHeaderContent>
+            <FeatureCardIcon>
+              <CalendarDays />
+            </FeatureCardIcon>
+            <FeatureCardLabel>{t("Best day")}</FeatureCardLabel>
+          </FeatureCardHeaderContent>
+          <FeatureCardIndicator />
+        </FeatureCardHeader>
 
-      <FeatureCardBody>
-        <FeatureCardTitle className="first-letter:uppercase">
-          {t("{day} with {value}%", { day: dayName, value: formattedAccuracy })}
-        </FeatureCardTitle>
-        <FeatureCardSubtitle>{t("Past 3 months")}</FeatureCardSubtitle>
-      </FeatureCardBody>
-    </FeatureCard>
+        <FeatureCardBody>
+          <FeatureCardTitle className="first-letter:uppercase">
+            {t("{day} with {value}%", {
+              day: dayName,
+              value: formattedAccuracy,
+            })}
+          </FeatureCardTitle>
+          <FeatureCardSubtitle>{t("Past 3 months")}</FeatureCardSubtitle>
+        </FeatureCardBody>
+      </FeatureCard>
+    </FeatureCardLink>
   );
 }
 

@@ -6,12 +6,14 @@ import {
   FeatureCardIcon,
   FeatureCardIndicator,
   FeatureCardLabel,
+  FeatureCardLink,
   FeatureCardSubtitle,
   FeatureCardTitle,
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { TargetIcon } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
+import { ClientLink } from "@/i18n/client-link";
 
 export async function Accuracy({ accuracy }: { accuracy: number }) {
   const t = await getExtracted();
@@ -23,24 +25,26 @@ export async function Accuracy({ accuracy }: { accuracy: number }) {
   }).format(accuracy);
 
   return (
-    <FeatureCard className="w-full">
-      <FeatureCardHeader className="text-accuracy">
-        <FeatureCardHeaderContent>
-          <FeatureCardIcon>
-            <TargetIcon />
-          </FeatureCardIcon>
-          <FeatureCardLabel>{t("Accuracy")}</FeatureCardLabel>
-        </FeatureCardHeaderContent>
-        <FeatureCardIndicator />
-      </FeatureCardHeader>
+    <FeatureCardLink render={<ClientLink href="/accuracy" />}>
+      <FeatureCard>
+        <FeatureCardHeader className="text-accuracy">
+          <FeatureCardHeaderContent>
+            <FeatureCardIcon>
+              <TargetIcon />
+            </FeatureCardIcon>
+            <FeatureCardLabel>{t("Accuracy")}</FeatureCardLabel>
+          </FeatureCardHeaderContent>
+          <FeatureCardIndicator />
+        </FeatureCardHeader>
 
-      <FeatureCardBody>
-        <FeatureCardTitle>
-          {t("{value}% correct answers", { value: formattedAccuracy })}
-        </FeatureCardTitle>
-        <FeatureCardSubtitle>{t("Past 3 months")}</FeatureCardSubtitle>
-      </FeatureCardBody>
-    </FeatureCard>
+        <FeatureCardBody>
+          <FeatureCardTitle>
+            {t("{value}% correct answers", { value: formattedAccuracy })}
+          </FeatureCardTitle>
+          <FeatureCardSubtitle>{t("Past 3 months")}</FeatureCardSubtitle>
+        </FeatureCardBody>
+      </FeatureCard>
+    </FeatureCardLink>
   );
 }
 
