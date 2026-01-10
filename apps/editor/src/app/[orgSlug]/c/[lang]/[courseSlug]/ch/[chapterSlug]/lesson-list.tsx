@@ -1,6 +1,5 @@
 import { ErrorView } from "@zoonk/ui/patterns/error";
 import { SUPPORT_URL } from "@zoonk/utils/constants";
-import Link from "next/link";
 import { getExtracted } from "next-intl/server";
 import {
   EditorDragHandle,
@@ -9,10 +8,6 @@ import {
   EditorListHeader,
   EditorListItem,
   EditorListItemActions,
-  EditorListItemContent,
-  EditorListItemDescription,
-  EditorListItemLink,
-  EditorListItemTitle,
   EditorListProvider,
   EditorListSpinner,
   EditorSortableItem,
@@ -28,6 +23,7 @@ import {
   insertLessonAction,
   reorderLessonsAction,
 } from "./actions";
+import { LessonListItemLink } from "./lesson-list-item-link";
 
 type ChapterPageProps =
   PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]">;
@@ -94,25 +90,15 @@ export async function LessonList({
                       {index + 1}
                     </EditorDragHandle>
 
-                    <EditorListItemLink
-                      render={
-                        <Link
-                          href={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapterSlug}/l/${lesson.slug}`}
-                        />
-                      }
-                    >
-                      <EditorListItemContent>
-                        <EditorListItemTitle>
-                          {lesson.title}
-                        </EditorListItemTitle>
-
-                        {lesson.description && (
-                          <EditorListItemDescription>
-                            {lesson.description}
-                          </EditorListItemDescription>
-                        )}
-                      </EditorListItemContent>
-                    </EditorListItemLink>
+                    <LessonListItemLink
+                      chapterSlug={chapterSlug}
+                      courseSlug={courseSlug}
+                      description={lesson.description}
+                      lang={lang}
+                      lessonSlug={lesson.slug}
+                      orgSlug={orgSlug}
+                      title={lesson.title}
+                    />
 
                     <EditorListItemActions
                       aria-label={t("Lesson actions")}
