@@ -15,6 +15,18 @@ describe("unauthenticated users", () => {
   });
 });
 
+/**
+ * Creates a date safely in the middle of a month to avoid edge cases.
+ * Using day 15 prevents issues when subtracting months (e.g., March 31 - 1 month
+ * would roll over since Feb 31 doesn't exist).
+ */
+function createSafeDate(monthsAgo = 0): Date {
+  const date = new Date();
+  date.setDate(15);
+  date.setMonth(date.getMonth() - monthsAgo);
+  return date;
+}
+
 describe("authenticated users", () => {
   test("returns null when user has no DailyProgress records", async () => {
     const user = await userFixture();
@@ -99,14 +111,13 @@ describe("authenticated users", () => {
       ]);
       const headers = await signInAs(user.email, user.password);
 
-      const today = new Date();
-      const lastMonth = new Date(today);
-      lastMonth.setMonth(lastMonth.getMonth() - 1);
+      const currentMonth = createSafeDate(0);
+      const lastMonth = createSafeDate(1);
 
       await prisma.dailyProgress.createMany({
         data: [
           {
-            date: today,
+            date: currentMonth,
             energyAtEnd: 80,
             organizationId: org.id,
             userId: Number(user.id),
@@ -134,14 +145,13 @@ describe("authenticated users", () => {
       ]);
       const headers = await signInAs(user.email, user.password);
 
-      const today = new Date();
-      const lastMonth = new Date(today);
-      lastMonth.setMonth(lastMonth.getMonth() - 1);
+      const currentMonth = createSafeDate(0);
+      const lastMonth = createSafeDate(1);
 
       await prisma.dailyProgress.createMany({
         data: [
           {
-            date: today,
+            date: currentMonth,
             energyAtEnd: 80,
             organizationId: org.id,
             userId: Number(user.id),
@@ -211,14 +221,13 @@ describe("authenticated users", () => {
       ]);
       const headers = await signInAs(user.email, user.password);
 
-      const today = new Date();
-      const lastMonth = new Date(today);
-      lastMonth.setMonth(lastMonth.getMonth() - 1);
+      const currentMonth = createSafeDate(0);
+      const lastMonth = createSafeDate(1);
 
       await prisma.dailyProgress.createMany({
         data: [
           {
-            date: today,
+            date: currentMonth,
             energyAtEnd: 85,
             organizationId: org.id,
             userId: Number(user.id),
@@ -247,14 +256,13 @@ describe("authenticated users", () => {
       ]);
       const headers = await signInAs(user.email, user.password);
 
-      const today = new Date();
-      const twoMonthsAgo = new Date(today);
-      twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+      const currentMonth = createSafeDate(0);
+      const twoMonthsAgo = createSafeDate(2);
 
       await prisma.dailyProgress.createMany({
         data: [
           {
-            date: today,
+            date: currentMonth,
             energyAtEnd: 80,
             organizationId: org.id,
             userId: Number(user.id),
@@ -303,8 +311,7 @@ describe("authenticated users", () => {
       ]);
       const headers = await signInAs(user.email, user.password);
 
-      const lastMonth = new Date();
-      lastMonth.setMonth(lastMonth.getMonth() - 1);
+      const lastMonth = createSafeDate(1);
 
       await prisma.dailyProgress.create({
         data: {

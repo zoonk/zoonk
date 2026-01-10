@@ -89,7 +89,8 @@ function buildOwnerDailyProgress(
 
   for (let i = 89; i >= 0; i--) {
     const date = new Date(today.getTime() - i * 24 * 60 * 60 * 1000);
-    const seed = i * 12_345;
+    // Add base offset of 1 to avoid seed=0 when i=0 (sin(0)=0 would always skip today)
+    const seed = (i + 1) * 12_345;
     const isActiveDay = seededRandom(seed) > 0.15;
 
     if (!isActiveDay) {
