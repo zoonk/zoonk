@@ -1,6 +1,5 @@
 import { ErrorView } from "@zoonk/ui/patterns/error";
 import { SUPPORT_URL } from "@zoonk/utils/constants";
-import Link from "next/link";
 import { getExtracted } from "next-intl/server";
 import {
   EditorDragHandle,
@@ -9,10 +8,6 @@ import {
   EditorListHeader,
   EditorListItem,
   EditorListItemActions,
-  EditorListItemContent,
-  EditorListItemDescription,
-  EditorListItemLink,
-  EditorListItemTitle,
   EditorListProvider,
   EditorListSpinner,
   EditorSortableItem,
@@ -28,6 +23,7 @@ import {
   insertChapterAction,
   reorderChaptersAction,
 } from "./actions";
+import { ChapterListItemLink } from "./chapter-list-item-link";
 
 export async function ChapterList({
   params,
@@ -91,25 +87,14 @@ export async function ChapterList({
                       {index + 1}
                     </EditorDragHandle>
 
-                    <EditorListItemLink
-                      render={
-                        <Link
-                          href={`/${orgSlug}/c/${lang}/${courseSlug}/ch/${chapter.slug}`}
-                        />
-                      }
-                    >
-                      <EditorListItemContent>
-                        <EditorListItemTitle>
-                          {chapter.title}
-                        </EditorListItemTitle>
-
-                        {chapter.description && (
-                          <EditorListItemDescription>
-                            {chapter.description}
-                          </EditorListItemDescription>
-                        )}
-                      </EditorListItemContent>
-                    </EditorListItemLink>
+                    <ChapterListItemLink
+                      chapterSlug={chapter.slug}
+                      courseSlug={courseSlug}
+                      description={chapter.description}
+                      lang={lang}
+                      orgSlug={orgSlug}
+                      title={chapter.title}
+                    />
 
                     <EditorListItemActions
                       aria-label={t("Chapter actions")}
