@@ -53,5 +53,5 @@ i18n.cache
 .cursor
 debug.log
 
-# AI tasks
+# Tasks for AI agents
 /tasks/
