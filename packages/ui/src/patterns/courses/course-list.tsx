@@ -14,7 +14,7 @@ import { ChevronRightIcon, NotebookPenIcon } from "lucide-react";
 
 export type CourseListItem = {
   id: number;
-  description: string;
+  description: string | null;
   imageUrl: string | null;
   slug: string;
   title: string;
