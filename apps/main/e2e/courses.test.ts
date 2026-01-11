@@ -36,10 +36,12 @@ test.describe("Courses Page - Basic", () => {
   test("clicking course card navigates to course detail", async ({ page }) => {
     await page.goto("/courses");
 
-    await page
+    const courseLink = page
       .getByRole("link", { name: /^Machine Learning/ })
-      .first()
-      .click();
+      .first();
+
+    await expect(courseLink).toBeVisible();
+    await courseLink.click();
 
     await expect(page).toHaveURL(/\/b\/ai\/c\/machine-learning/);
 

@@ -60,7 +60,9 @@ test.describe("Course Detail Page - Locale", () => {
   }) => {
     await page.goto("/pt/courses");
 
-    await page.getByRole("link", { name: /^Machine Learning/ }).click();
+    const courseLink = page.getByRole("link", { name: /^Machine Learning/ });
+    await expect(courseLink).toBeVisible();
+    await courseLink.click();
 
     await expect(page).toHaveURL(/\/pt\/b\/ai\/c\/machine-learning/);
 
