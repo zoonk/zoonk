@@ -52,3 +52,6 @@ i18n.cache
 # Cursor
 .cursor
 debug.log
+
+# AI tasks
+tasks/
