@@ -120,7 +120,7 @@ describe("authenticated users", () => {
 
     expect(result).not.toBeNull();
     expect(result?.period).toBe(1); // Morning
-    expect(result?.accuracy).toBe(90);
+    expect(result?.score).toBe(90);
   });
 
   test("excludes records older than 90 days", async () => {
@@ -160,7 +160,7 @@ describe("authenticated users", () => {
 
     expect(result).not.toBeNull();
     expect(result?.period).toBe(1); // Morning
-    expect(result?.accuracy).toBe(80);
+    expect(result?.score).toBe(80);
   });
 
   test("uses period with most answers as tiebreaker", async () => {
@@ -188,10 +188,10 @@ describe("authenticated users", () => {
 
     expect(result).not.toBeNull();
     expect(result?.period).toBe(2); // Afternoon (more answers)
-    expect(result?.accuracy).toBe(90);
+    expect(result?.score).toBe(90);
   });
 
-  test("returns correct accuracy calculation", async () => {
+  test("returns correct score calculation", async () => {
     const [user, org] = await Promise.all([
       userFixture(),
       organizationFixture(),
@@ -212,7 +212,7 @@ describe("authenticated users", () => {
 
     expect(result).not.toBeNull();
     expect(result?.period).toBe(3); // Evening
-    expect(result?.accuracy).toBe(85);
+    expect(result?.score).toBe(85);
   });
 
   test("correctly maps hours to periods", async () => {
@@ -236,7 +236,7 @@ describe("authenticated users", () => {
 
     expect(result).not.toBeNull();
     expect(result?.period).toBe(0); // Night
-    expect(result?.accuracy).toBe(100);
+    expect(result?.score).toBe(100);
   });
 
   test("filters by custom date range when startDate is provided", async () => {
@@ -282,6 +282,6 @@ describe("authenticated users", () => {
 
     expect(result).not.toBeNull();
     expect(result?.period).toBe(1); // Morning (only recent data)
-    expect(result?.accuracy).toBe(80);
+    expect(result?.score).toBe(80);
   });
 });

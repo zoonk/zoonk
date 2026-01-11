@@ -12,7 +12,7 @@ export async function ScoreExplanation() {
 
   return (
     <Explanation className="gap-1 border-t pt-6">
-      <ExplanationHeader className="text-accuracy">
+      <ExplanationHeader className="text-score">
         <Target aria-hidden />
         <ExplanationTitle>{t("About Score")}</ExplanationTitle>
       </ExplanationHeader>

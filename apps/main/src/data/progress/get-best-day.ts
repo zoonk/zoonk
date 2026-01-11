@@ -7,7 +7,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
 export type BestDayData = {
-  accuracy: number;
+  score: number;
   dayOfWeek: number;
 };
 
@@ -60,15 +60,15 @@ export const getBestDay = cache(
         continue;
       }
 
-      const accuracy = (correct / total) * 100;
+      const score = (correct / total) * 100;
 
       const isBetter =
         !bestDay ||
-        accuracy > bestDay.accuracy ||
-        (accuracy === bestDay.accuracy && total > bestDayTotal);
+        score > bestDay.score ||
+        (score === bestDay.score && total > bestDayTotal);
 
       if (isBetter) {
-        bestDay = { accuracy, dayOfWeek: Number(row.dayOfWeek) };
+        bestDay = { score, dayOfWeek: Number(row.dayOfWeek) };
         bestDayTotal = total;
       }
     }

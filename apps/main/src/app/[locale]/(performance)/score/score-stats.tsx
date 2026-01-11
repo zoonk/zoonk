@@ -32,7 +32,7 @@ export async function ScoreStats({
       <span className="text-muted-foreground text-sm">{periodLabel}</span>
 
       <div className="flex items-baseline gap-3">
-        <span className="font-bold text-5xl text-accuracy tabular-nums tracking-tight">
+        <span className="font-bold text-5xl text-score tabular-nums tracking-tight">
           {t("{value}%", { value: formattedAverage })}
         </span>
 

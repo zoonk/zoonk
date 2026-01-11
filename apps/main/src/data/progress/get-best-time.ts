@@ -7,7 +7,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
 export type BestTimeData = {
-  accuracy: number;
+  score: number;
   period: number;
 };
 
@@ -65,15 +65,15 @@ export const getBestTime = cache(
         continue;
       }
 
-      const accuracy = (correct / total) * 100;
+      const score = (correct / total) * 100;
 
       const isBetter =
         !bestTime ||
-        accuracy > bestTime.accuracy ||
-        (accuracy === bestTime.accuracy && total > bestTimeTotal);
+        score > bestTime.score ||
+        (score === bestTime.score && total > bestTimeTotal);
 
       if (isBetter) {
-        bestTime = { accuracy, period: Number(row.period) };
+        bestTime = { score, period: Number(row.period) };
         bestTimeTotal = total;
       }
     }

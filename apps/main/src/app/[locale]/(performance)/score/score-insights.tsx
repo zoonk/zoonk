@@ -52,7 +52,7 @@ export async function ScoreInsights({
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       {bestDayData && (
         <BestDayCard
-          accuracy={bestDayData.accuracy}
+          score={bestDayData.score}
           dayOfWeek={bestDayData.dayOfWeek}
           locale={locale}
           periodLabel={periodLabel}
@@ -61,7 +61,7 @@ export async function ScoreInsights({
 
       {bestTimeData && (
         <BestTimeCard
-          accuracy={bestTimeData.accuracy}
+          score={bestTimeData.score}
           period={bestTimeData.period}
           periodLabel={periodLabel}
         />
@@ -71,12 +71,12 @@ export async function ScoreInsights({
 }
 
 async function BestDayCard({
-  accuracy,
+  score,
   dayOfWeek,
   locale,
   periodLabel,
 }: {
-  accuracy: number;
+  score: number;
   dayOfWeek: number;
   locale: string;
   periodLabel: string;
@@ -89,14 +89,14 @@ async function BestDayCard({
     referenceDate,
   );
 
-  const formattedAccuracy = new Intl.NumberFormat(locale, {
+  const formattedScore = new Intl.NumberFormat(locale, {
     maximumFractionDigits: 1,
     trailingZeroDisplay: "stripIfInteger",
-  }).format(accuracy);
+  }).format(score);
 
   return (
     <FeatureCard>
-      <FeatureCardHeader className="text-accuracy">
+      <FeatureCardHeader className="text-score">
         <FeatureCardHeaderContent>
           <FeatureCardIcon>
             <CalendarDays />
@@ -109,7 +109,7 @@ async function BestDayCard({
         <FeatureCardTitle className="first-letter:uppercase">
           {t("{day} with {value}%", {
             day: dayName,
-            value: formattedAccuracy,
+            value: formattedScore,
           })}
         </FeatureCardTitle>
         <FeatureCardSubtitle>{periodLabel}</FeatureCardSubtitle>
@@ -119,11 +119,11 @@ async function BestDayCard({
 }
 
 async function BestTimeCard({
-  accuracy,
+  score,
   period,
   periodLabel,
 }: {
-  accuracy: number;
+  score: number;
   period: number;
   periodLabel: string;
 }) {
@@ -139,14 +139,14 @@ async function BestTimeCard({
 
   const periodName = periodNames[period] ?? periodNames[1];
 
-  const formattedAccuracy = new Intl.NumberFormat(locale, {
+  const formattedScore = new Intl.NumberFormat(locale, {
     maximumFractionDigits: 1,
     trailingZeroDisplay: "stripIfInteger",
-  }).format(accuracy);
+  }).format(score);
 
   return (
     <FeatureCard>
-      <FeatureCardHeader className="text-accuracy">
+      <FeatureCardHeader className="text-score">
         <FeatureCardHeaderContent>
           <FeatureCardIcon>
             <Clock />
@@ -159,7 +159,7 @@ async function BestTimeCard({
         <FeatureCardTitle className="first-letter:uppercase">
           {t("{period} with {value}%", {
             period: periodName,
-            value: formattedAccuracy,
+            value: formattedScore,
           })}
         </FeatureCardTitle>
         <FeatureCardSubtitle>{periodLabel}</FeatureCardSubtitle>

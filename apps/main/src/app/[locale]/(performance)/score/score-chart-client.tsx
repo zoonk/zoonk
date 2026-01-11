@@ -36,8 +36,8 @@ export function ScoreChartClient({
         >
           <defs>
             <linearGradient id="scoreGradient" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="5%" stopColor="var(--accuracy)" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="var(--accuracy)" stopOpacity={0} />
+              <stop offset="5%" stopColor="var(--score)" stopOpacity={0.3} />
+              <stop offset="95%" stopColor="var(--score)" stopOpacity={0} />
             </linearGradient>
           </defs>
 
@@ -78,7 +78,7 @@ export function ScoreChartClient({
               return (
                 <div className="rounded-lg border bg-background px-3 py-2 shadow-sm">
                   <p className="text-muted-foreground text-xs">{data.label}</p>
-                  <p className="font-medium text-accuracy text-sm">
+                  <p className="font-medium text-score text-sm">
                     {t("{value}%", { value })}
                   </p>
                 </div>
@@ -102,7 +102,7 @@ export function ScoreChartClient({
             dataKey="score"
             fill="url(#scoreGradient)"
             fillOpacity={1}
-            stroke="var(--accuracy)"
+            stroke="var(--score)"
             strokeWidth={2}
             type="monotone"
           />

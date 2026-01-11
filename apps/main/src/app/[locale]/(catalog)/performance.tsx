@@ -45,18 +45,18 @@ export async function Performance() {
           />
         )}
 
-        {scoreData && <Score accuracy={scoreData.score} />}
+        {scoreData && <Score score={scoreData.score} />}
 
         {bestDayData && (
           <BestDay
-            accuracy={bestDayData.accuracy}
+            score={bestDayData.score}
             dayOfWeek={bestDayData.dayOfWeek}
           />
         )}
 
         {bestTimeData && (
           <BestTime
-            accuracy={bestTimeData.accuracy}
+            score={bestTimeData.score}
             period={bestTimeData.period}
           />
         )}
