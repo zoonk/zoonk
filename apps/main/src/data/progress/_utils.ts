@@ -110,50 +110,143 @@ export function getMonthKey(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
 
-type BpDataPoint = { date: Date; bp: number };
+export function getMondayOfWeek(date: Date): Date {
+  const monday = new Date(date);
+  const day = monday.getDay();
+  const diff = monday.getDate() - day + (day === 0 ? -6 : 1);
+  monday.setDate(diff);
+  monday.setHours(0, 0, 0, 0);
+  return monday;
+}
 
-export function aggregateBpByWeek(dataPoints: BpDataPoint[]): BpDataPoint[] {
-  const weekMap = new Map<string, { total: number; date: Date }>();
+export function getFirstOfMonth(date: Date): Date {
+  return new Date(date.getFullYear(), date.getMonth(), 1);
+}
+
+type AggregationStrategy = "sum" | "average";
+
+export function aggregateByWeek<T extends { date: Date }>(
+  dataPoints: T[],
+  getValue: (point: T) => number,
+  strategy: AggregationStrategy,
+): { date: Date; value: number }[] {
+  const map = new Map<string, { total: number; count: number; date: Date }>();
 
   for (const point of dataPoints) {
     const key = getWeekKey(point.date);
-    const existing = weekMap.get(key);
+    const existing = map.get(key);
     if (existing) {
-      existing.total += point.bp;
+      existing.total += getValue(point);
+      existing.count += 1;
     } else {
-      const monday = new Date(point.date);
-      const day = monday.getDay();
-      const diff = monday.getDate() - day + (day === 0 ? -6 : 1);
-      monday.setDate(diff);
-      monday.setHours(0, 0, 0, 0);
-      weekMap.set(key, { date: monday, total: point.bp });
+      map.set(key, {
+        count: 1,
+        date: getMondayOfWeek(point.date),
+        total: getValue(point),
+      });
     }
   }
 
-  return Array.from(weekMap.values())
-    .map((v) => ({ bp: v.total, date: v.date }))
+  return Array.from(map.values())
+    .map((v) => ({
+      date: v.date,
+      value: strategy === "sum" ? v.total : v.total / v.count,
+    }))
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
-export function aggregateBpByMonth(dataPoints: BpDataPoint[]): BpDataPoint[] {
-  const monthMap = new Map<string, { total: number; date: Date }>();
+export function aggregateByMonth<T extends { date: Date }>(
+  dataPoints: T[],
+  getValue: (point: T) => number,
+  strategy: AggregationStrategy,
+): { date: Date; value: number }[] {
+  const map = new Map<string, { total: number; count: number; date: Date }>();
 
   for (const point of dataPoints) {
     const key = getMonthKey(point.date);
-    const existing = monthMap.get(key);
+    const existing = map.get(key);
     if (existing) {
-      existing.total += point.bp;
+      existing.total += getValue(point);
+      existing.count += 1;
     } else {
-      const firstOfMonth = new Date(
-        point.date.getFullYear(),
-        point.date.getMonth(),
-        1,
-      );
-      monthMap.set(key, { date: firstOfMonth, total: point.bp });
+      map.set(key, {
+        count: 1,
+        date: getFirstOfMonth(point.date),
+        total: getValue(point),
+      });
     }
   }
 
-  return Array.from(monthMap.values())
-    .map((v) => ({ bp: v.total, date: v.date }))
+  return Array.from(map.values())
+    .map((v) => ({
+      date: v.date,
+      value: strategy === "sum" ? v.total : v.total / v.count,
+    }))
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
+}
+
+type ScoreDataPoint = { date: Date; correct: number; incorrect: number };
+
+export function aggregateScoreByWeek(
+  dataPoints: ScoreDataPoint[],
+  calculateScore: (correct: number, incorrect: number) => number,
+): { date: Date; score: number }[] {
+  const map = new Map<
+    string,
+    { correct: number; incorrect: number; date: Date }
+  >();
+
+  for (const point of dataPoints) {
+    const key = getWeekKey(point.date);
+    const existing = map.get(key);
+    if (existing) {
+      existing.correct += point.correct;
+      existing.incorrect += point.incorrect;
+    } else {
+      map.set(key, {
+        correct: point.correct,
+        date: getMondayOfWeek(point.date),
+        incorrect: point.incorrect,
+      });
+    }
+  }
+
+  return Array.from(map.values())
+    .map((v) => ({
+      date: v.date,
+      score: calculateScore(v.correct, v.incorrect),
+    }))
+    .sort((a, b) => a.date.getTime() - b.date.getTime());
+}
+
+export function aggregateScoreByMonth(
+  dataPoints: ScoreDataPoint[],
+  calculateScore: (correct: number, incorrect: number) => number,
+): { date: Date; score: number }[] {
+  const map = new Map<
+    string,
+    { correct: number; incorrect: number; date: Date }
+  >();
+
+  for (const point of dataPoints) {
+    const key = getMonthKey(point.date);
+    const existing = map.get(key);
+    if (existing) {
+      existing.correct += point.correct;
+      existing.incorrect += point.incorrect;
+    } else {
+      map.set(key, {
+        correct: point.correct,
+        date: getFirstOfMonth(point.date),
+        incorrect: point.incorrect,
+      });
+    }
+  }
+
+  return Array.from(map.values())
+    .map((v) => ({
+      date: v.date,
+      score: calculateScore(v.correct, v.incorrect),
+    }))
     .sort((a, b) => a.date.getTime() - b.date.getTime());
 }

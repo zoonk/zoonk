@@ -5,12 +5,18 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
-export type AccuracyData = {
-  accuracy: number;
+export type ScoreData = {
+  score: number;
 };
 
-export const getAccuracy = cache(
-  async (params?: { headers?: Headers }): Promise<AccuracyData | null> => {
+export type ScoreParams = {
+  headers?: Headers;
+  startDate?: Date;
+  endDate?: Date;
+};
+
+export const getScore = cache(
+  async (params?: ScoreParams): Promise<ScoreData | null> => {
     const session = await getSession({ headers: params?.headers });
 
     if (!session) {
@@ -18,18 +24,28 @@ export const getAccuracy = cache(
     }
 
     const userId = Number(session.user.id);
-    const threeMonthsAgo = new Date();
-    threeMonthsAgo.setDate(threeMonthsAgo.getDate() - 90);
+
+    // Use provided date range or default to 90 days
+    let startDate: Date;
+    let endDate: Date;
+
+    if (params?.startDate && params?.endDate) {
+      startDate = params.startDate;
+      endDate = params.endDate;
+    } else {
+      endDate = new Date();
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - 90);
+    }
 
     const { data: result, error } = await safeAsync(() =>
       prisma.dailyProgress.aggregate({
-        // biome-ignore lint/style/useNamingConvention: Prisma aggregate uses _sum convention
         _sum: {
           correctAnswers: true,
           incorrectAnswers: true,
         },
         where: {
-          date: { gte: threeMonthsAgo },
+          date: { gte: startDate, lte: endDate },
           userId,
         },
       }),
@@ -47,10 +63,10 @@ export const getAccuracy = cache(
       return null;
     }
 
-    const accuracy = (correct / total) * 100;
+    const score = (correct / total) * 100;
 
     return {
-      accuracy,
+      score,
     };
   },
 );

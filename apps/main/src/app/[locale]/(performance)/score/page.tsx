@@ -8,6 +8,8 @@ import {
 } from "@zoonk/ui/components/container";
 import type { Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
+import { Suspense } from "react";
+import { ScoreContent, ScoreContentSkeleton } from "./score-content";
 
 export async function generateMetadata({
   params,
@@ -25,6 +27,7 @@ export async function generateMetadata({
 
 export default async function ScorePage({
   params,
+  searchParams,
 }: PageProps<"/[locale]/score">) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -42,9 +45,9 @@ export default async function ScorePage({
       </ContainerHeader>
 
       <ContainerBody>
-        <div className="flex h-64 items-center justify-center rounded-xl border border-dashed text-muted-foreground">
-          {t("Coming soon")}
-        </div>
+        <Suspense fallback={<ScoreContentSkeleton />}>
+          <ScoreContent locale={locale} searchParams={searchParams} />
+        </Suspense>
       </ContainerBody>
     </Container>
   );

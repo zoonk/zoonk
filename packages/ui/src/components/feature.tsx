@@ -120,9 +120,9 @@ function FeatureCardLabel({
   children,
   className,
   ...props
-}: React.ComponentProps<"span">) {
+}: React.ComponentProps<"h3">) {
   return (
-    <span
+    <h3
       className={cn(
         "truncate font-medium text-sm transition-colors",
         className,
@@ -131,7 +131,7 @@ function FeatureCardLabel({
       {...props}
     >
       {children}
-    </span>
+    </h3>
   );
 }
 

@@ -1,11 +1,11 @@
 import { FeatureCardSectionTitle } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted } from "next-intl/server";
-import { getAccuracy } from "@/data/progress/get-accuracy";
 import { getBeltLevel } from "@/data/progress/get-belt-level";
 import { getBestDay } from "@/data/progress/get-best-day";
+import { getBestTime } from "@/data/progress/get-best-time";
 import { getEnergyLevel } from "@/data/progress/get-energy-level";
-import { getPeakTime } from "@/data/progress/get-peak-time";
+import { getScore } from "@/data/progress/get-score";
 import { BestDay, BestDaySkeleton } from "./best-day";
 import { BestTime, BestTimeSkeleton } from "./best-time";
 import { Energy, EnergySkeleton } from "./energy";
@@ -15,13 +15,13 @@ import { Score, ScoreSkeleton } from "./score";
 export async function Performance() {
   const t = await getExtracted();
 
-  const [energyData, beltData, accuracyData, bestDayData, peakTimeData] =
+  const [energyData, beltData, scoreData, bestDayData, bestTimeData] =
     await Promise.all([
       getEnergyLevel(),
       getBeltLevel(),
-      getAccuracy(),
+      getScore(),
       getBestDay(),
-      getPeakTime(),
+      getBestTime(),
     ]);
 
   return (
@@ -45,7 +45,7 @@ export async function Performance() {
           />
         )}
 
-        {accuracyData && <Score accuracy={accuracyData.accuracy} />}
+        {scoreData && <Score accuracy={scoreData.score} />}
 
         {bestDayData && (
           <BestDay
@@ -54,10 +54,10 @@ export async function Performance() {
           />
         )}
 
-        {peakTimeData && (
+        {bestTimeData && (
           <BestTime
-            accuracy={peakTimeData.accuracy}
-            period={peakTimeData.period}
+            accuracy={bestTimeData.accuracy}
+            period={bestTimeData.period}
           />
         )}
       </div>
