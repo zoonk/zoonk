@@ -7,7 +7,7 @@ import { getBeltColorLabel } from "@/lib/belt-colors";
 import { MetricComparison } from "../_components/metric-comparison";
 import { formatPeriodLabel } from "../_utils";
 
-export async function BeltStats({
+export async function LevelStats({
   currentBelt,
   period,
   periodEnd,
@@ -92,7 +92,7 @@ export async function BeltStats({
   );
 }
 
-export function BeltStatsSkeleton() {
+export function LevelStatsSkeleton() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-1">

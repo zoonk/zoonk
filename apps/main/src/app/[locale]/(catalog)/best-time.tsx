@@ -11,53 +11,64 @@ import {
   FeatureCardTitle,
 } from "@zoonk/ui/components/feature";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { Clock } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
 import { ClientLink } from "@/i18n/client-link";
-import { getMenu } from "@/lib/menu";
 
-export async function EnergyLevel({ energy }: { energy: number }) {
+type BestTimeProps = {
+  accuracy: number;
+  period: number;
+};
+
+export async function BestTime({ accuracy, period }: BestTimeProps) {
   const t = await getExtracted();
   const locale = await getLocale();
-  const energyMenu = getMenu("energy");
 
-  const formattedEnergy = new Intl.NumberFormat(locale, {
+  const periodNames = [
+    t("Night"),
+    t("Morning"),
+    t("Afternoon"),
+    t("Evening"),
+  ] as const;
+
+  const periodName = periodNames[period] ?? periodNames[1];
+
+  const formattedAccuracy = new Intl.NumberFormat(locale, {
     maximumFractionDigits: 1,
     trailingZeroDisplay: "stripIfInteger",
-  }).format(energy);
-
-  const description =
-    energy < 100
-      ? t("Keep learning to increase it")
-      : t("Keep learning to maintain it");
+  }).format(accuracy);
 
   return (
-    <FeatureCardLink render={<ClientLink href={energyMenu.url} />}>
+    <FeatureCardLink render={<ClientLink href="/score" />}>
       <FeatureCard>
-        <FeatureCardHeader className="text-energy">
+        <FeatureCardHeader className="text-accuracy">
           <FeatureCardHeaderContent>
             <FeatureCardIcon>
-              <energyMenu.icon />
+              <Clock />
             </FeatureCardIcon>
-            <FeatureCardLabel>{t("Energy level")}</FeatureCardLabel>
+            <FeatureCardLabel>{t("Best time")}</FeatureCardLabel>
           </FeatureCardHeaderContent>
           <FeatureCardIndicator />
         </FeatureCardHeader>
 
         <FeatureCardBody>
-          <FeatureCardTitle>
-            {t("Your energy level is {value}%", { value: formattedEnergy })}
+          <FeatureCardTitle className="first-letter:uppercase">
+            {t("{period} with {value}%", {
+              period: periodName,
+              value: formattedAccuracy,
+            })}
           </FeatureCardTitle>
-          <FeatureCardSubtitle>{description}</FeatureCardSubtitle>
+          <FeatureCardSubtitle>{t("Past 3 months")}</FeatureCardSubtitle>
         </FeatureCardBody>
       </FeatureCard>
     </FeatureCardLink>
   );
 }
 
-export function EnergyLevelSkeleton() {
+export function BestTimeSkeleton() {
   return (
     <FeatureCard className="w-full">
-      <Skeleton className="h-5 w-28" />
+      <Skeleton className="h-5 w-24" />
 
       <FeatureCardBody className="gap-1">
         <Skeleton className="h-4 w-full max-w-40" />

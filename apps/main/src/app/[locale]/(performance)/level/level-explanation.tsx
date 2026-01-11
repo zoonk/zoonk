@@ -5,12 +5,12 @@ import {
 } from "@zoonk/ui/components/explanation";
 import { getExtracted } from "next-intl/server";
 
-export async function BeltExplanation() {
+export async function LevelExplanation() {
   const t = await getExtracted();
 
   return (
     <Explanation>
-      <ExplanationTitle>{t("About Belt Levels")}</ExplanationTitle>
+      <ExplanationTitle>{t("About Levels")}</ExplanationTitle>
 
       <ExplanationText>
         {t(

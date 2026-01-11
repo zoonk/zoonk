@@ -11,8 +11,8 @@ export function MetricPills() {
   const t = useExtracted();
 
   const energy = getMenu("energy");
-  const belt = getMenu("belt");
-  const accuracy = getMenu("accuracy");
+  const level = getMenu("level");
+  const score = getMenu("score");
 
   return (
     <div className="flex gap-2 overflow-x-auto overflow-y-hidden pb-1 [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -30,23 +30,23 @@ export function MetricPills() {
       <Link
         className={buttonVariants({
           size: "sm",
-          variant: segment === "belt" ? "default" : "outline",
+          variant: segment === "level" ? "default" : "outline",
         })}
-        href={belt.url}
+        href={level.url}
       >
-        <belt.icon aria-hidden className="size-4" />
-        {t("Belt")}
+        <level.icon aria-hidden className="size-4" />
+        {t("Level")}
       </Link>
 
       <Link
         className={buttonVariants({
           size: "sm",
-          variant: segment === "accuracy" ? "default" : "outline",
+          variant: segment === "score" ? "default" : "outline",
         })}
-        href={accuracy.url}
+        href={score.url}
       >
-        <accuracy.icon aria-hidden className="size-4" />
-        {t("Accuracy")}
+        <score.icon aria-hidden className="size-4" />
+        {t("Score")}
       </Link>
     </div>
   );

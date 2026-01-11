@@ -1,9 +1,9 @@
 import { expect, test } from "./fixtures";
 
-test.describe("Belt Page", () => {
+test.describe("Level Page", () => {
   test.describe("Unauthenticated Users", () => {
     test("shows login prompt with link to login page", async ({ page }) => {
-      await page.goto("/belt");
+      await page.goto("/level");
 
       await expect(
         page.getByText(/log in to track your progress/i),
@@ -17,7 +17,7 @@ test.describe("Belt Page", () => {
   });
 
   test.describe("Authenticated Users", () => {
-    test("navigates from home and sees belt details with comparison", async ({
+    test("navigates from home and sees level details with comparison", async ({
       authenticatedPage,
     }) => {
       await authenticatedPage.goto("/");
@@ -29,12 +29,12 @@ test.describe("Belt Page", () => {
         })
         .click();
 
-      await expect(authenticatedPage).toHaveURL(/\/belt/);
+      await expect(authenticatedPage).toHaveURL(/\/level/);
 
       await expect(
         authenticatedPage.getByRole("heading", {
           level: 1,
-          name: /belt level/i,
+          name: /^level$/i,
         }),
       ).toBeVisible();
 
@@ -44,7 +44,7 @@ test.describe("Belt Page", () => {
     test("displays total BP and current belt level", async ({
       authenticatedPage,
     }) => {
-      await authenticatedPage.goto("/belt");
+      await authenticatedPage.goto("/level");
 
       await expect(
         authenticatedPage.getByText(/total brain power/i).first(),
@@ -64,7 +64,7 @@ test.describe("Belt Page", () => {
     test("displays belt progression visualization", async ({
       authenticatedPage,
     }) => {
-      await authenticatedPage.goto("/belt");
+      await authenticatedPage.goto("/level");
 
       await expect(
         authenticatedPage.getByText(/belt progression/i),
@@ -76,7 +76,7 @@ test.describe("Belt Page", () => {
     test("switching to 6 months shows different comparison text", async ({
       authenticatedPage,
     }) => {
-      await authenticatedPage.goto("/belt");
+      await authenticatedPage.goto("/level");
 
       await expect(authenticatedPage.getByText(/vs last month/i)).toBeVisible();
 
@@ -96,7 +96,7 @@ test.describe("Belt Page", () => {
     test("switching to year shows different comparison text", async ({
       authenticatedPage,
     }) => {
-      await authenticatedPage.goto("/belt");
+      await authenticatedPage.goto("/level");
 
       await authenticatedPage.getByRole("button", { name: /year/i }).click();
 
@@ -114,7 +114,7 @@ test.describe("Belt Page", () => {
     test("resets offset when switching periods", async ({
       authenticatedPage,
     }) => {
-      await authenticatedPage.goto("/belt");
+      await authenticatedPage.goto("/level");
 
       await expect(authenticatedPage.getByText(/vs last month/i)).toBeVisible();
 
@@ -139,7 +139,7 @@ test.describe("Belt Page", () => {
 
   test.describe("Users Without Progress", () => {
     test("sees prompt to start learning", async ({ userWithoutProgress }) => {
-      await userWithoutProgress.goto("/belt");
+      await userWithoutProgress.goto("/level");
 
       await expect(
         userWithoutProgress.getByText(/start learning to track your progress/i),

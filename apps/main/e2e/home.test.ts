@@ -76,7 +76,7 @@ test.describe("Home Page - Performance Section", () => {
 
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
     await expect(
-      authenticatedPage.getByText("Your energy level is 75%"),
+      authenticatedPage.getByText("Your energy is 75%"),
     ).toBeVisible();
   });
 
@@ -94,7 +94,7 @@ test.describe("Home Page - Performance Section", () => {
     ).toBeVisible();
   });
 
-  test("authenticated user with progress sees accuracy", async ({
+  test("authenticated user with progress sees score", async ({
     authenticatedPage,
   }) => {
     await authenticatedPage.goto("/");
@@ -115,13 +115,13 @@ test.describe("Home Page - Performance Section", () => {
     await expect(authenticatedPage.getByText(/with 76\.1%/i)).toBeVisible();
   });
 
-  test("authenticated user with progress sees peak time", async ({
+  test("authenticated user with progress sees best time", async ({
     authenticatedPage,
   }) => {
     await authenticatedPage.goto("/");
 
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
-    await expect(authenticatedPage.getByText(/peak time/i)).toBeVisible();
+    await expect(authenticatedPage.getByText(/best time/i)).toBeVisible();
     await expect(
       authenticatedPage.getByText(/morning with 90%/i),
     ).toBeVisible();

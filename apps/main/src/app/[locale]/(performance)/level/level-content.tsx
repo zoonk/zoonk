@@ -4,12 +4,15 @@ import type { HistoryPeriod } from "@/data/progress/_utils";
 import { getBpHistory } from "@/data/progress/get-bp-history";
 import { PerformanceChartSkeleton } from "../_components/performance-chart-skeleton";
 import { PerformanceEmptyState } from "../_components/performance-empty-state";
-import { BeltChart } from "./belt-chart";
-import { BeltExplanation } from "./belt-explanation";
-import { BeltProgression, BeltProgressionSkeleton } from "./belt-progression";
-import { BeltStats, BeltStatsSkeleton } from "./belt-stats";
+import { LevelChart } from "./level-chart";
+import { LevelExplanation } from "./level-explanation";
+import {
+  LevelProgression,
+  LevelProgressionSkeleton,
+} from "./level-progression";
+import { LevelStats, LevelStatsSkeleton } from "./level-stats";
 
-export async function BeltContent({
+export async function LevelContent({
   locale,
   searchParams,
 }: {
@@ -32,14 +35,14 @@ export async function BeltContent({
   if (!(data && isAuthenticated)) {
     return (
       <PerformanceEmptyState isAuthenticated={isAuthenticated}>
-        <BeltExplanation />
+        <LevelExplanation />
       </PerformanceEmptyState>
     );
   }
 
   return (
     <div className="flex flex-col gap-8">
-      <BeltStats
+      <LevelStats
         currentBelt={data.currentBelt}
         period={period as HistoryPeriod}
         periodEnd={data.periodEnd}
@@ -49,7 +52,7 @@ export async function BeltContent({
         totalBp={data.totalBp}
       />
 
-      <BeltChart
+      <LevelChart
         dataPoints={data.dataPoints}
         hasNext={data.hasNextPeriod}
         hasPrevious={data.hasPreviousPeriod}
@@ -59,19 +62,19 @@ export async function BeltContent({
         periodTotal={data.periodTotal}
       />
 
-      <BeltProgression currentBelt={data.currentBelt} />
+      <LevelProgression currentBelt={data.currentBelt} />
 
-      <BeltExplanation />
+      <LevelExplanation />
     </div>
   );
 }
 
-export function BeltContentSkeleton() {
+export function LevelContentSkeleton() {
   return (
     <div className="flex flex-col gap-8">
-      <BeltStatsSkeleton />
+      <LevelStatsSkeleton />
       <PerformanceChartSkeleton />
-      <BeltProgressionSkeleton />
+      <LevelProgressionSkeleton />
 
       <div className="flex flex-col gap-2">
         <Skeleton className="h-4 w-36" />

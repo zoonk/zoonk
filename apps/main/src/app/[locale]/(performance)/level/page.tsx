@@ -8,24 +8,25 @@ import {
 } from "@zoonk/ui/components/container";
 import type { Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
+import { Suspense } from "react";
+import { LevelContent, LevelContentSkeleton } from "./level-content";
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/accuracy">): Promise<Metadata> {
+}: PageProps<"/[locale]/level">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getExtracted({ locale });
 
   return {
-    description: t(
-      "Track your accuracy over time and see your best days and peak times.",
-    ),
-    title: t("Accuracy"),
+    description: t("Track your level progress and see how you advance."),
+    title: t("Level"),
   };
 }
 
-export default async function AccuracyPage({
+export default async function LevelPage({
   params,
-}: PageProps<"/[locale]/accuracy">) {
+  searchParams,
+}: PageProps<"/[locale]/level">) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getExtracted();
@@ -34,17 +35,17 @@ export default async function AccuracyPage({
     <Container variant="narrow">
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <ContainerTitle>{t("Accuracy")}</ContainerTitle>
+          <ContainerTitle>{t("Level")}</ContainerTitle>
           <ContainerDescription>
-            {t("Track your accuracy and performance trends")}
+            {t("Track your level progress")}
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>
-        <div className="flex h-64 items-center justify-center rounded-xl border border-dashed text-muted-foreground">
-          {t("Coming soon")}
-        </div>
+        <Suspense fallback={<LevelContentSkeleton />}>
+          <LevelContent locale={locale} searchParams={searchParams} />
+        </Suspense>
       </ContainerBody>
     </Container>
   );

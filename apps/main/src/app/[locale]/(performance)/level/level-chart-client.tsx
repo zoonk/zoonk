@@ -17,7 +17,7 @@ type SerializedDataPoint = {
   label: string;
 };
 
-export function BeltChartClient({
+export function LevelChartClient({
   dataPoints,
   total,
 }: {

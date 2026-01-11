@@ -14,7 +14,7 @@ export async function EnergyExplanation() {
     <Explanation className="gap-1 border-t pt-6">
       <ExplanationHeader className="text-energy">
         <ZapIcon aria-hidden />
-        <ExplanationTitle>{t("About Energy Level")}</ExplanationTitle>
+        <ExplanationTitle>{t("About Energy")}</ExplanationTitle>
       </ExplanationHeader>
 
       <ExplanationText className="leading-relaxed">
