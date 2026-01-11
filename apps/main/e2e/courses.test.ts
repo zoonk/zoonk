@@ -36,7 +36,12 @@ test.describe("Courses Page - Basic", () => {
   test("clicking course card navigates to course detail", async ({ page }) => {
     await page.goto("/courses");
 
-    await page.getByText("Machine Learning").first().click();
+    await page
+      .getByRole("link", { name: /^Machine Learning/ })
+      .first()
+      .click();
+
+    await expect(page).toHaveURL(/\/b\/ai\/c\/machine-learning/);
 
     // Verify user sees course detail page (level: 1 for main title, not chapter headings)
     await expect(
