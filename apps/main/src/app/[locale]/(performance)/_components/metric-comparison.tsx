@@ -30,27 +30,30 @@ export async function MetricComparison({
 
   const Icon = isPositive ? TrendingUpIcon : TrendingDownIcon;
 
-  function renderComparison() {
+  function getComparisonLabel() {
     if (period === "month") {
-      return t("{change}% vs last month", { change: formattedChange });
+      return t("vs last month");
     }
 
     if (period === "6months") {
-      return t("{change}% vs last 6 months", { change: formattedChange });
+      return t("vs last 6 months");
     }
 
-    return t("{change}% vs last year", { change: formattedChange });
+    return t("vs last year");
   }
 
   return (
     <div
       className={cn(
-        "flex items-center gap-1 text-sm",
+        "flex items-center gap-1 text-sm tabular-nums",
         isPositive ? "text-success" : "text-destructive",
       )}
     >
-      <Icon aria-hidden className="size-4" />
-      <span>{renderComparison()}</span>
+      <Icon aria-hidden className="size-4 shrink-0" />
+      <span className="whitespace-nowrap">
+        <span>{t("{value}%", { value: formattedChange })}</span>
+        <span className="hidden sm:inline"> {getComparisonLabel()}</span>
+      </span>
     </div>
   );
 }

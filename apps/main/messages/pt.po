@@ -479,19 +479,26 @@ msgid "Performance"
 msgstr "Desempenho"
 
 #: src/app/[locale]/(performance)/_components/metric-comparison.tsx
-msgctxt "7Ab7lJ"
-msgid "{change}% vs last 6 months"
-msgstr "{change}% vs últimos 6 meses"
+#: src/app/[locale]/(performance)/energy/energy-chart-client.tsx
+#: src/app/[locale]/(performance)/energy/energy-stats.tsx
+msgctxt "kggwrj"
+msgid "{value}%"
+msgstr "{value}%"
 
 #: src/app/[locale]/(performance)/_components/metric-comparison.tsx
-msgctxt "DQ545N"
-msgid "{change}% vs last month"
-msgstr "{change}% vs último mês"
+msgctxt "pev/fB"
+msgid "vs last month"
+msgstr "vs mês passado"
 
 #: src/app/[locale]/(performance)/_components/metric-comparison.tsx
-msgctxt "jbB0eP"
-msgid "{change}% vs last year"
-msgstr "{change}% vs último ano"
+msgctxt "R9qHBU"
+msgid "vs last 6 months"
+msgstr "vs últimos 6 meses"
+
+#: src/app/[locale]/(performance)/_components/metric-comparison.tsx
+msgctxt "YFV6dH"
+msgid "vs last year"
+msgstr "vs ano passado"
 
 #: src/app/[locale]/(performance)/_components/metric-pills.tsx
 msgctxt "cVpmV7"
@@ -657,12 +664,6 @@ msgstr "Acompanhe seu progresso de nível de faixa e veja como você avança."
 msgctxt "oBJMVB"
 msgid "Belt Level"
 msgstr "Nível da faixa"
-
-#: src/app/[locale]/(performance)/energy/energy-chart-client.tsx
-#: src/app/[locale]/(performance)/energy/energy-stats.tsx
-msgctxt "kggwrj"
-msgid "{value}%"
-msgstr "{value}%"
 
 #: src/app/[locale]/(performance)/energy/energy-chart-client.tsx
 msgctxt "M+JIpD"
