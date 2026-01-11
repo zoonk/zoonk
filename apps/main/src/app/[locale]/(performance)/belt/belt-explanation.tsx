@@ -1,29 +1,34 @@
+import {
+  Explanation,
+  ExplanationText,
+  ExplanationTitle,
+} from "@zoonk/ui/components/explanation";
 import { getExtracted } from "next-intl/server";
 
 export async function BeltExplanation() {
   const t = await getExtracted();
 
   return (
-    <section className="flex flex-col gap-2">
-      <h3 className="font-medium text-sm">{t("About Belt Levels")}</h3>
+    <Explanation>
+      <ExplanationTitle>{t("About Belt Levels")}</ExplanationTitle>
 
-      <p className="text-muted-foreground text-sm">
+      <ExplanationText>
         {t(
           "Brain Power (BP) represents your knowledge growth. Unlike energy, BP never decreases - it only grows as you learn more.",
         )}
-      </p>
+      </ExplanationText>
 
-      <p className="text-muted-foreground text-sm">
+      <ExplanationText>
         {t(
           "Every time you complete an activity, you earn Brain Power. As you accumulate BP, you progress through 10 belt colors, each with 10 levels.",
         )}
-      </p>
+      </ExplanationText>
 
-      <p className="text-muted-foreground text-sm">
+      <ExplanationText>
         {t(
           "Belt colors in order: White, Yellow, Orange, Green, Blue, Purple, Brown, Red, Gray, and Black. Keep learning to reach the highest level!",
         )}
-      </p>
-    </section>
+      </ExplanationText>
+    </Explanation>
   );
 }
