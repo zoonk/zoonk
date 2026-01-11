@@ -9,7 +9,7 @@ import {
 import type { Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
-import { BeltContent, BeltContentSkeleton } from "./belt-content";
+import { LevelContent, LevelContentSkeleton } from "./level-content";
 
 export async function generateMetadata({
   params,
@@ -43,8 +43,8 @@ export default async function LevelPage({
       </ContainerHeader>
 
       <ContainerBody>
-        <Suspense fallback={<BeltContentSkeleton />}>
-          <BeltContent locale={locale} searchParams={searchParams} />
+        <Suspense fallback={<LevelContentSkeleton />}>
+          <LevelContent locale={locale} searchParams={searchParams} />
         </Suspense>
       </ContainerBody>
     </Container>

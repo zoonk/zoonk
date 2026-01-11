@@ -11,7 +11,7 @@ import {
   getBeltColors,
 } from "@/lib/belt-colors";
 
-export async function BeltProgression({
+export async function LevelProgression({
   currentBelt,
 }: {
   currentBelt: BeltLevelResult;
@@ -121,7 +121,7 @@ export async function BeltProgression({
   );
 }
 
-export function BeltProgressionSkeleton() {
+export function LevelProgressionSkeleton() {
   return (
     <div className="flex flex-col gap-4">
       <Skeleton className="h-5 w-32" />

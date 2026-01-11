@@ -3,7 +3,7 @@ import type { HistoryPeriod } from "@/data/progress/_utils";
 import type { BpDataPoint } from "@/data/progress/get-bp-history";
 import { PerformanceChartLayout } from "../_components/performance-chart-layout";
 import { formatPeriodLabel } from "../_utils";
-import { BeltChartClient } from "./belt-chart-client";
+import { LevelChartClient } from "./level-chart-client";
 
 type SerializedDataPoint = {
   date: string;
@@ -11,7 +11,7 @@ type SerializedDataPoint = {
   label: string;
 };
 
-export async function BeltChart({
+export async function LevelChart({
   dataPoints,
   hasNext,
   hasPrevious,
@@ -46,7 +46,7 @@ export async function BeltChart({
       isEmpty={dataPoints.length === 0}
       periodLabel={periodLabel}
     >
-      <BeltChartClient dataPoints={serializedDataPoints} total={periodTotal} />
+      <LevelChartClient dataPoints={serializedDataPoints} total={periodTotal} />
     </PerformanceChartLayout>
   );
 }

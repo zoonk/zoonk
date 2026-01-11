@@ -399,25 +399,25 @@ msgid "Learn Anything with AI"
 msgstr "Learn Anything with AI"
 
 #: src/app/[locale]/(catalog)/level.tsx
-#: src/app/[locale]/(performance)/level/belt-stats.tsx
+#: src/app/[locale]/(performance)/level/level-stats.tsx
 msgctxt "3UK8wh"
 msgid "{color} belt"
 msgstr "{color} belt"
 
 #: src/app/[locale]/(catalog)/level.tsx
-#: src/app/[locale]/(performance)/level/belt-stats.tsx
+#: src/app/[locale]/(performance)/level/level-stats.tsx
 msgctxt "8N9BRu"
 msgid "{value} BP to next level"
 msgstr "{value} BP to next level"
 
 #: src/app/[locale]/(catalog)/level.tsx
-#: src/app/[locale]/(performance)/level/belt-stats.tsx
+#: src/app/[locale]/(performance)/level/level-stats.tsx
 msgctxt "pgt3eW"
 msgid "Max level reached"
 msgstr "Max level reached"
 
 #: src/app/[locale]/(catalog)/level.tsx
-#: src/app/[locale]/(performance)/level/belt-stats.tsx
+#: src/app/[locale]/(performance)/level/level-stats.tsx
 msgctxt "uiwFZe"
 msgid "{color} Belt - Level {level}"
 msgstr "{color} Belt - Level {level}"
@@ -578,82 +578,82 @@ msgctxt "7Rfk+O"
 msgid "Track your learning energy over time"
 msgstr "Track your learning energy over time"
 
-#: src/app/[locale]/(performance)/level/belt-chart-client.tsx
+#: src/app/[locale]/(performance)/level/level-chart-client.tsx
 msgctxt "GA8RuL"
 msgid "Brain Power chart"
 msgstr "Brain Power chart"
 
-#: src/app/[locale]/(performance)/level/belt-chart-client.tsx
+#: src/app/[locale]/(performance)/level/level-chart-client.tsx
 msgctxt "tDbspx"
 msgid "Total Brain Power earned: {total}"
 msgstr "Total Brain Power earned: {total}"
 
-#: src/app/[locale]/(performance)/level/belt-chart-client.tsx
+#: src/app/[locale]/(performance)/level/level-chart-client.tsx
 msgctxt "XdkaHc"
 msgid "{value} BP"
 msgstr "{value} BP"
 
-#: src/app/[locale]/(performance)/level/belt-explanation.tsx
+#: src/app/[locale]/(performance)/level/level-explanation.tsx
 msgctxt "C6bCZT"
 msgid "Brain Power (BP) represents your knowledge growth. Unlike energy, BP never decreases - it only grows as you learn more."
 msgstr "Brain Power (BP) represents your knowledge growth. Unlike energy, BP never decreases - it only grows as you learn more."
 
-#: src/app/[locale]/(performance)/level/belt-explanation.tsx
+#: src/app/[locale]/(performance)/level/level-explanation.tsx
 msgctxt "J60fb6"
 msgid "Belt colors in order: White, Yellow, Orange, Green, Blue, Purple, Brown, Red, Gray, and Black. Keep learning to reach the highest level!"
 msgstr "Belt colors in order: White, Yellow, Orange, Green, Blue, Purple, Brown, Red, Gray, and Black. Keep learning to reach the highest level!"
 
-#: src/app/[locale]/(performance)/level/belt-explanation.tsx
+#: src/app/[locale]/(performance)/level/level-explanation.tsx
 msgctxt "l2jnwA"
 msgid "About Levels"
 msgstr "About Levels"
 
-#: src/app/[locale]/(performance)/level/belt-explanation.tsx
+#: src/app/[locale]/(performance)/level/level-explanation.tsx
 msgctxt "wPDPFc"
 msgid "Every time you complete an activity, you earn Brain Power. As you accumulate BP, you progress through 10 belt colors, each with 10 levels."
 msgstr "Every time you complete an activity, you earn Brain Power. As you accumulate BP, you progress through 10 belt colors, each with 10 levels."
 
-#: src/app/[locale]/(performance)/level/belt-progression.tsx
+#: src/app/[locale]/(performance)/level/level-progression.tsx
 msgctxt "FM+wHG"
 msgid "Level {current} of 10 in {color} belt"
 msgstr "Level {current} of 10 in {color} belt"
 
-#: src/app/[locale]/(performance)/level/belt-progression.tsx
+#: src/app/[locale]/(performance)/level/level-progression.tsx
 msgctxt "JXdbo8"
 msgid "Done"
 msgstr "Done"
 
-#: src/app/[locale]/(performance)/level/belt-progression.tsx
+#: src/app/[locale]/(performance)/level/level-progression.tsx
 msgctxt "n/mgOm"
 msgid "Belt Progression"
 msgstr "Belt Progression"
 
-#: src/app/[locale]/(performance)/level/belt-progression.tsx
+#: src/app/[locale]/(performance)/level/level-progression.tsx
 msgctxt "pabu7K"
 msgid "{color} Belt, Level {level} of 10. {bp} brain power until next level."
 msgstr "{color} Belt, Level {level} of 10. {bp} brain power until next level."
 
-#: src/app/[locale]/(performance)/level/belt-progression.tsx
+#: src/app/[locale]/(performance)/level/level-progression.tsx
 msgctxt "VHH0kD"
 msgid "{color} Belt, Level {level} of 10. Maximum level achieved."
 msgstr "{color} Belt, Level {level} of 10. Maximum level achieved."
 
-#: src/app/[locale]/(performance)/level/belt-progression.tsx
+#: src/app/[locale]/(performance)/level/level-progression.tsx
 msgctxt "ZKbTsS"
 msgid "{current}/10"
 msgstr "{current}/10"
 
-#: src/app/[locale]/(performance)/level/belt-stats.tsx
+#: src/app/[locale]/(performance)/level/level-stats.tsx
 msgctxt "/Q0taG"
 msgid "BP"
 msgstr "BP"
 
-#: src/app/[locale]/(performance)/level/belt-stats.tsx
+#: src/app/[locale]/(performance)/level/level-stats.tsx
 msgctxt "u/oEJA"
 msgid "{value} BP earned"
 msgstr "{value} BP earned"
 
-#: src/app/[locale]/(performance)/level/belt-stats.tsx
+#: src/app/[locale]/(performance)/level/level-stats.tsx
 msgctxt "v5yNm3"
 msgid "Total Brain Power"
 msgstr "Total Brain Power"
