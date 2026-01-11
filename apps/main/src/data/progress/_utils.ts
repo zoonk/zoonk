@@ -96,7 +96,7 @@ export function formatLabel(
   return new Intl.DateTimeFormat(locale, { month: "short" }).format(date);
 }
 
-export function getWeekKey(date: Date): string {
+function getWeekKey(date: Date): string {
   const d = new Date(date);
   d.setHours(0, 0, 0, 0);
   // Get Monday of this week
@@ -106,11 +106,11 @@ export function getWeekKey(date: Date): string {
   return d.toISOString().split("T")[0] as string;
 }
 
-export function getMonthKey(date: Date): string {
+function getMonthKey(date: Date): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
 
-export function getMondayOfWeek(date: Date): Date {
+function getMondayOfWeek(date: Date): Date {
   const monday = new Date(date);
   const day = monday.getDay();
   const diff = monday.getDate() - day + (day === 0 ? -6 : 1);
@@ -119,7 +119,7 @@ export function getMondayOfWeek(date: Date): Date {
   return monday;
 }
 
-export function getFirstOfMonth(date: Date): Date {
+function getFirstOfMonth(date: Date): Date {
   return new Date(date.getFullYear(), date.getMonth(), 1);
 }
 
