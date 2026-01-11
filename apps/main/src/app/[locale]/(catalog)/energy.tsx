@@ -15,7 +15,7 @@ import { getExtracted, getLocale } from "next-intl/server";
 import { ClientLink } from "@/i18n/client-link";
 import { getMenu } from "@/lib/menu";
 
-export async function EnergyLevel({ energy }: { energy: number }) {
+export async function Energy({ energy }: { energy: number }) {
   const t = await getExtracted();
   const locale = await getLocale();
   const energyMenu = getMenu("energy");
@@ -54,7 +54,7 @@ export async function EnergyLevel({ energy }: { energy: number }) {
   );
 }
 
-export function EnergyLevelSkeleton() {
+export function EnergySkeleton() {
   return (
     <FeatureCard className="w-full">
       <Skeleton className="h-5 w-28" />

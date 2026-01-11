@@ -17,19 +17,19 @@ import { ClientLink } from "@/i18n/client-link";
 import { getBeltColorLabel } from "@/lib/belt-colors";
 import { getMenu } from "@/lib/menu";
 
-type BeltLevelProps = {
+type BeltProps = {
   bpToNextLevel: number;
   color: BeltColor;
   isMaxLevel: boolean;
   level: number;
 };
 
-export async function BeltLevel({
+export async function Belt({
   bpToNextLevel,
   color,
   isMaxLevel,
   level,
-}: BeltLevelProps) {
+}: BeltProps) {
   const t = await getExtracted();
   const locale = await getLocale();
   const beltMenu = getMenu("belt");
@@ -69,7 +69,7 @@ export async function BeltLevel({
   );
 }
 
-export function BeltLevelSkeleton() {
+export function BeltSkeleton() {
   return (
     <FeatureCard className="w-full">
       <Skeleton className="h-5 w-24" />

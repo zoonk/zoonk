@@ -36,7 +36,7 @@ export async function BestDay({ accuracy, dayOfWeek }: BestDayProps) {
   }).format(accuracy);
 
   return (
-    <FeatureCardLink render={<ClientLink href="/accuracy" />}>
+    <FeatureCardLink render={<ClientLink href="/score" />}>
       <FeatureCard>
         <FeatureCardHeader className="text-accuracy">
           <FeatureCardHeaderContent>

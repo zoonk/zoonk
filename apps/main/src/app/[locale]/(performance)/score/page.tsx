@@ -11,21 +11,21 @@ import { getExtracted, setRequestLocale } from "next-intl/server";
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/accuracy">): Promise<Metadata> {
+}: PageProps<"/[locale]/score">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getExtracted({ locale });
 
   return {
     description: t(
-      "Track your accuracy over time and see your best days and peak times.",
+      "Track your score over time and see your best days and times.",
     ),
-    title: t("Accuracy"),
+    title: t("Score"),
   };
 }
 
-export default async function AccuracyPage({
+export default async function ScorePage({
   params,
-}: PageProps<"/[locale]/accuracy">) {
+}: PageProps<"/[locale]/score">) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getExtracted();
@@ -34,9 +34,9 @@ export default async function AccuracyPage({
     <Container variant="narrow">
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <ContainerTitle>{t("Accuracy")}</ContainerTitle>
+          <ContainerTitle>{t("Score")}</ContainerTitle>
           <ContainerDescription>
-            {t("Track your accuracy and performance trends")}
+            {t("Track your score and performance trends")}
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>

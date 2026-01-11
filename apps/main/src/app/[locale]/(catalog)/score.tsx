@@ -15,10 +15,10 @@ import { getExtracted, getLocale } from "next-intl/server";
 import { ClientLink } from "@/i18n/client-link";
 import { getMenu } from "@/lib/menu";
 
-export async function Accuracy({ accuracy }: { accuracy: number }) {
+export async function Score({ accuracy }: { accuracy: number }) {
   const t = await getExtracted();
   const locale = await getLocale();
-  const accuracyMenu = getMenu("accuracy");
+  const scoreMenu = getMenu("score");
 
   const formattedAccuracy = new Intl.NumberFormat(locale, {
     maximumFractionDigits: 1,
@@ -26,14 +26,14 @@ export async function Accuracy({ accuracy }: { accuracy: number }) {
   }).format(accuracy);
 
   return (
-    <FeatureCardLink render={<ClientLink href={accuracyMenu.url} />}>
+    <FeatureCardLink render={<ClientLink href={scoreMenu.url} />}>
       <FeatureCard>
         <FeatureCardHeader className="text-accuracy">
           <FeatureCardHeaderContent>
             <FeatureCardIcon>
-              <accuracyMenu.icon />
+              <scoreMenu.icon />
             </FeatureCardIcon>
-            <FeatureCardLabel>{t("Accuracy")}</FeatureCardLabel>
+            <FeatureCardLabel>{t("Score")}</FeatureCardLabel>
           </FeatureCardHeaderContent>
           <FeatureCardIndicator />
         </FeatureCardHeader>
@@ -49,7 +49,7 @@ export async function Accuracy({ accuracy }: { accuracy: number }) {
   );
 }
 
-export function AccuracySkeleton() {
+export function ScoreSkeleton() {
   return (
     <FeatureCard className="w-full">
       <Skeleton className="h-5 w-24" />

@@ -15,12 +15,12 @@ import { Clock } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
 import { ClientLink } from "@/i18n/client-link";
 
-type PeakTimeProps = {
+type BestTimeProps = {
   accuracy: number;
   period: number;
 };
 
-export async function PeakTime({ accuracy, period }: PeakTimeProps) {
+export async function BestTime({ accuracy, period }: BestTimeProps) {
   const t = await getExtracted();
   const locale = await getLocale();
 
@@ -39,14 +39,14 @@ export async function PeakTime({ accuracy, period }: PeakTimeProps) {
   }).format(accuracy);
 
   return (
-    <FeatureCardLink render={<ClientLink href="/accuracy" />}>
+    <FeatureCardLink render={<ClientLink href="/score" />}>
       <FeatureCard>
         <FeatureCardHeader className="text-accuracy">
           <FeatureCardHeaderContent>
             <FeatureCardIcon>
               <Clock />
             </FeatureCardIcon>
-            <FeatureCardLabel>{t("Peak time")}</FeatureCardLabel>
+            <FeatureCardLabel>{t("Best time")}</FeatureCardLabel>
           </FeatureCardHeaderContent>
           <FeatureCardIndicator />
         </FeatureCardHeader>
@@ -65,7 +65,7 @@ export async function PeakTime({ accuracy, period }: PeakTimeProps) {
   );
 }
 
-export function PeakTimeSkeleton() {
+export function BestTimeSkeleton() {
   return (
     <FeatureCard className="w-full">
       <Skeleton className="h-5 w-24" />

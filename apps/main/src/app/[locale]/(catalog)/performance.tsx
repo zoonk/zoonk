@@ -6,11 +6,11 @@ import { getBeltLevel } from "@/data/progress/get-belt-level";
 import { getBestDay } from "@/data/progress/get-best-day";
 import { getEnergyLevel } from "@/data/progress/get-energy-level";
 import { getPeakTime } from "@/data/progress/get-peak-time";
-import { Accuracy, AccuracySkeleton } from "./accuracy";
-import { BeltLevel, BeltLevelSkeleton } from "./belt-level";
+import { Belt, BeltSkeleton } from "./belt";
 import { BestDay, BestDaySkeleton } from "./best-day";
-import { EnergyLevel, EnergyLevelSkeleton } from "./energy-level";
-import { PeakTime, PeakTimeSkeleton } from "./peak-time";
+import { BestTime, BestTimeSkeleton } from "./best-time";
+import { Energy, EnergySkeleton } from "./energy";
+import { Score, ScoreSkeleton } from "./score";
 
 export async function Performance() {
   const t = await getExtracted();
@@ -34,10 +34,10 @@ export async function Performance() {
       </FeatureCardSectionTitle>
 
       <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-        {energyData && <EnergyLevel energy={energyData.currentEnergy} />}
+        {energyData && <Energy energy={energyData.currentEnergy} />}
 
         {beltData && (
-          <BeltLevel
+          <Belt
             bpToNextLevel={beltData.bpToNextLevel}
             color={beltData.color}
             isMaxLevel={beltData.isMaxLevel}
@@ -45,7 +45,7 @@ export async function Performance() {
           />
         )}
 
-        {accuracyData && <Accuracy accuracy={accuracyData.accuracy} />}
+        {accuracyData && <Score accuracy={accuracyData.accuracy} />}
 
         {bestDayData && (
           <BestDay
@@ -55,7 +55,7 @@ export async function Performance() {
         )}
 
         {peakTimeData && (
-          <PeakTime
+          <BestTime
             accuracy={peakTimeData.accuracy}
             period={peakTimeData.period}
           />
@@ -71,11 +71,11 @@ export function PerformanceSkeleton() {
       <Skeleton className="mx-4 h-5 w-24" />
 
       <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-        <EnergyLevelSkeleton />
-        <BeltLevelSkeleton />
-        <AccuracySkeleton />
+        <EnergySkeleton />
+        <BeltSkeleton />
+        <ScoreSkeleton />
         <BestDaySkeleton />
-        <PeakTimeSkeleton />
+        <BestTimeSkeleton />
       </div>
     </section>
   );

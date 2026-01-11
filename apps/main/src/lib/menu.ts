@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 
 const menu = {
-  accuracy: { icon: TargetIcon, url: "/accuracy" },
   belt: { icon: Brain, url: "/belt" },
   courses: { icon: LayoutGrid, url: "/courses" },
   displayName: { icon: IdCardLanyard, url: "/name" },
@@ -26,6 +25,7 @@ const menu = {
   login: { icon: LogIn, url: "/login" },
   logout: { icon: LogOut, url: "/logout" },
   myCourses: { icon: LayoutGrid, url: "/my" },
+  score: { icon: TargetIcon, url: "/score" },
   search: { icon: Search, url: "/search" },
   settings: { icon: Settings, url: "/settings" },
   subscription: { icon: Gem, url: "/subscription" },
