@@ -62,7 +62,7 @@ export async function BeltProgression({
 
             return (
               <div
-                className="flex flex-1 flex-col items-center gap-1.5"
+                className="flex min-w-0 flex-1 flex-col items-center gap-1.5"
                 key={belt.key}
               >
                 <div className="flex h-6 items-center justify-center">
@@ -130,7 +130,7 @@ export function BeltProgressionSkeleton() {
         <div className="flex items-start justify-between gap-2">
           {Array.from({ length: 10 }).map((_, index) => (
             <div
-              className="flex flex-1 flex-col items-center gap-1.5"
+              className="flex min-w-0 flex-1 flex-col items-center gap-1.5"
               key={index}
             >
               <div className="flex h-6 items-center justify-center">
