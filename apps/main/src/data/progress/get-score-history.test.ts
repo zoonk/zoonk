@@ -54,9 +54,8 @@ describe("authenticated users", () => {
       ]);
       const headers = await signInAs(user.email, user.password);
 
-      const today = new Date();
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
+      const today = createSafeDate(0, 0);
+      const yesterday = createSafeDate(0, 1);
 
       await prisma.dailyProgress.createMany({
         data: [
@@ -398,9 +397,8 @@ describe("authenticated users", () => {
       ]);
       const headers = await signInAs(user.email, user.password);
 
-      const today = new Date();
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
+      const today = createSafeDate(0, 0);
+      const yesterday = createSafeDate(0, 1);
 
       await prisma.dailyProgress.createMany({
         data: [
