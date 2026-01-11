@@ -29,7 +29,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - Use meaningful variable names and avoid abbreviations
 - Never guess at imports, table names, or conventions—always search for existing patterns first
 
-Important: Before completing a task, make sure to run the following commands:
+**IMPORTANT**: Before completing a task, make sure to run the following commands:
 
 - `pnpm format`
 - `pnpm lint --write --unsafe`
@@ -37,7 +37,7 @@ Important: Before completing a task, make sure to run the following commands:
 - `pnpm knip`
 - `pnpm test`
 - `pnpm --filter {app} build`
-- `pnpm --filter {app} build:e2e`
+- `pnpm --filter {app} build:e2e` (always run this before running e2e tests)
 - `pnpm --filter {app} e2e`
 
 ## Design Style
@@ -70,6 +70,7 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - Pass types directly to the component declaration instead of using `type` since those types won't be exported/reused
 - When adding a new Prisma model, always add a seed for it in `packages/db/src/prisma/seed/`
 - Never run `pnpm dev` as there's already a dev server running
+- When writing a plan, don't include "manual verification" steps. We always do manual verification, you don't need to do it. Just ensure you add the necessary e2e tests for the task
 
 ## Component Organization
 

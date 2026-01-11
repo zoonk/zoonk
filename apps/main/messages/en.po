@@ -141,6 +141,16 @@ msgctxt "R/6nsx"
 msgid "Subscription"
 msgstr "Subscription"
 
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+msgctxt "8AbgQ7"
+msgid "Lessons haven't been generated for this chapter yet."
+msgstr "Lessons haven't been generated for this chapter yet."
+
+#: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+msgctxt "DG7kYp"
+msgid "Generate lessons"
+msgstr "Generate lessons"
+
 #: src/app/[locale]/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-search-container.tsx
 msgctxt "ai9FYU"
 msgid "Search chapters and lessons..."

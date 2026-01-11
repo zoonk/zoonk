@@ -170,6 +170,14 @@ const chaptersData: CourseChapters[] = [
         slug: "data-structures",
         title: "Data Structures",
       },
+      {
+        description:
+          "A chapter with no lessons for E2E testing generation status.",
+        generationStatus: "pending",
+        isPublished: true,
+        slug: "e2e-no-lessons-chapter",
+        title: "E2E No Lessons Chapter",
+      },
     ],
     courseSlug: "python-programming",
     language: "en",

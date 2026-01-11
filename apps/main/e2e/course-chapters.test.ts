@@ -133,6 +133,38 @@ test.describe("Course Chapters - Empty State", () => {
   });
 });
 
+test.describe("Course Chapters - No Lessons", () => {
+  test("shows generate lessons message and navigates to generate page", async ({
+    page,
+  }) => {
+    await page.goto("/b/ai/c/python-programming");
+
+    // Expand the chapter that has no lessons
+    await page.getByRole("button", { name: /e2e no lessons chapter/i }).click();
+
+    // Should see the explanatory message
+    await expect(
+      page.getByText(/lessons haven't been generated for this chapter yet/i),
+    ).toBeVisible();
+
+    // Should see the generate lessons button
+    const generateButton = page.getByRole("link", {
+      name: /generate lessons/i,
+    });
+    await expect(generateButton).toBeVisible();
+
+    // Click the generate lessons button
+    await generateButton.click();
+
+    // Should navigate to generate chapter page
+    await expect(page).toHaveURL(/\/generate\/ch\/\d+/);
+    await expect(
+      page.getByRole("heading", { name: /generate chapter/i }),
+    ).toBeVisible();
+    await expect(page.getByText(/coming soon/i)).toBeVisible();
+  });
+});
+
 test.describe("Course Chapters - Locale", () => {
   test("shows chapters in Portuguese for Portuguese locale", async ({
     page,
