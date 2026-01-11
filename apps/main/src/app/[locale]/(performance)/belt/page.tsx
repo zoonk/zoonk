@@ -8,6 +8,8 @@ import {
 } from "@zoonk/ui/components/container";
 import type { Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
+import { Suspense } from "react";
+import { BeltContent, BeltContentSkeleton } from "./belt-content";
 
 export async function generateMetadata({
   params,
@@ -23,6 +25,7 @@ export async function generateMetadata({
 
 export default async function BeltPage({
   params,
+  searchParams,
 }: PageProps<"/[locale]/belt">) {
   const { locale } = await params;
   setRequestLocale(locale);
@@ -40,9 +43,9 @@ export default async function BeltPage({
       </ContainerHeader>
 
       <ContainerBody>
-        <div className="flex h-64 items-center justify-center rounded-xl border border-dashed text-muted-foreground">
-          {t("Coming soon")}
-        </div>
+        <Suspense fallback={<BeltContentSkeleton />}>
+          <BeltContent locale={locale} searchParams={searchParams} />
+        </Suspense>
       </ContainerBody>
     </Container>
   );

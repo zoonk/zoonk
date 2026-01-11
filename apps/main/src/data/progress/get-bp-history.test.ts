@@ -1,0 +1,375 @@
+import { prisma } from "@zoonk/db";
+import { signInAs } from "@zoonk/testing/fixtures/auth";
+import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { userFixture } from "@zoonk/testing/fixtures/users";
+import { describe, expect, test } from "vitest";
+import { getBpHistory } from "./get-bp-history";
+
+describe("unauthenticated users", () => {
+  test("returns null", async () => {
+    const result = await getBpHistory({
+      headers: new Headers(),
+      period: "month",
+    });
+    expect(result).toBeNull();
+  });
+});
+
+/**
+ * Creates a date safely in the middle of a month to avoid edge cases.
+ * Using day 15 prevents issues when subtracting months (e.g., March 31 - 1 month
+ * would roll over since Feb 31 doesn't exist).
+ */
+function createSafeDate(monthsAgo = 0): Date {
+  const date = new Date();
+  date.setDate(15);
+  date.setMonth(date.getMonth() - monthsAgo);
+  return date;
+}
+
+describe("authenticated users", () => {
+  test("returns null when user has no DailyProgress records", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    const result = await getBpHistory({ headers, period: "month" });
+    expect(result).toBeNull();
+  });
+
+  describe("month period", () => {
+    test("returns daily data points with BP values", async () => {
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
+      const headers = await signInAs(user.email, user.password);
+
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      await prisma.dailyProgress.createMany({
+        data: [
+          {
+            brainPowerEarned: 100,
+            date: today,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+          {
+            brainPowerEarned: 50,
+            date: yesterday,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+        ],
+      });
+
+      const result = await getBpHistory({ headers, period: "month" });
+
+      expect(result).not.toBeNull();
+      expect(result?.dataPoints.length).toBe(2);
+      expect(result?.periodTotal).toBe(150);
+    });
+
+    test("calculates period total correctly", async () => {
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
+      const headers = await signInAs(user.email, user.password);
+
+      const today = new Date();
+
+      await prisma.dailyProgress.createMany({
+        data: [
+          {
+            brainPowerEarned: 200,
+            date: today,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+          {
+            brainPowerEarned: 300,
+            date: new Date(today.getTime() - 24 * 60 * 60 * 1000),
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+        ],
+      });
+
+      const result = await getBpHistory({ headers, period: "month" });
+
+      expect(result).not.toBeNull();
+      expect(result?.periodTotal).toBe(500);
+    });
+
+    test("includes current belt level", async () => {
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
+      const headers = await signInAs(user.email, user.password);
+
+      await prisma.userProgress.upsert({
+        create: {
+          totalBrainPower: 5000,
+          userId: Number(user.id),
+        },
+        update: {
+          totalBrainPower: 5000,
+        },
+        where: { userId: Number(user.id) },
+      });
+
+      await prisma.dailyProgress.create({
+        data: {
+          brainPowerEarned: 100,
+          date: new Date(),
+          organizationId: org.id,
+          userId: Number(user.id),
+        },
+      });
+
+      const result = await getBpHistory({ headers, period: "month" });
+
+      expect(result).not.toBeNull();
+      expect(result?.totalBp).toBe(5000);
+      expect(result?.currentBelt.color).toBe("yellow");
+    });
+
+    test("calculates comparison with previous month", async () => {
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
+      const headers = await signInAs(user.email, user.password);
+
+      const currentMonth = createSafeDate(0);
+      const lastMonth = createSafeDate(1);
+
+      await prisma.dailyProgress.createMany({
+        data: [
+          {
+            brainPowerEarned: 200,
+            date: currentMonth,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+          {
+            brainPowerEarned: 100,
+            date: lastMonth,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+        ],
+      });
+
+      const result = await getBpHistory({ headers, period: "month" });
+
+      expect(result).not.toBeNull();
+      expect(result?.periodTotal).toBe(200);
+      expect(result?.previousPeriodTotal).toBe(100);
+    });
+
+    test("navigates to previous month with offset", async () => {
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
+      const headers = await signInAs(user.email, user.password);
+
+      const currentMonth = createSafeDate(0);
+      const lastMonth = createSafeDate(1);
+
+      await prisma.dailyProgress.createMany({
+        data: [
+          {
+            brainPowerEarned: 300,
+            date: currentMonth,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+          {
+            brainPowerEarned: 150,
+            date: lastMonth,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+        ],
+      });
+
+      const result = await getBpHistory({
+        headers,
+        offset: 1,
+        period: "month",
+      });
+
+      expect(result).not.toBeNull();
+      expect(result?.periodTotal).toBe(150);
+      expect(result?.hasNextPeriod).toBe(true);
+    });
+  });
+
+  describe("6months period", () => {
+    test("returns weekly aggregated data points", async () => {
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
+      const headers = await signInAs(user.email, user.password);
+
+      const today = new Date();
+      const oneWeekAgo = new Date(today);
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+      await prisma.dailyProgress.createMany({
+        data: [
+          {
+            brainPowerEarned: 100,
+            date: today,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+          {
+            brainPowerEarned: 80,
+            date: oneWeekAgo,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+        ],
+      });
+
+      const result = await getBpHistory({ headers, period: "6months" });
+
+      expect(result).not.toBeNull();
+      expect(result?.dataPoints.length).toBeGreaterThanOrEqual(1);
+      expect(result?.periodTotal).toBe(180);
+    });
+  });
+
+  describe("year period", () => {
+    test("returns monthly aggregated data points", async () => {
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
+      const headers = await signInAs(user.email, user.password);
+
+      // Use two dates in the same month to ensure they're both in the current year
+      // This tests that data is aggregated correctly regardless of what month we're in
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      await prisma.dailyProgress.createMany({
+        data: [
+          {
+            brainPowerEarned: 250,
+            date: today,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+          {
+            brainPowerEarned: 150,
+            date: yesterday,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+        ],
+      });
+
+      const result = await getBpHistory({ headers, period: "year" });
+
+      expect(result).not.toBeNull();
+      // Data points are aggregated by month, so we expect 1 data point for current month
+      expect(result?.dataPoints.length).toBe(1);
+      expect(result?.periodTotal).toBe(400);
+    });
+  });
+
+  describe("navigation flags", () => {
+    test("hasPreviousPeriod is true when historical data exists", async () => {
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
+      const headers = await signInAs(user.email, user.password);
+
+      const currentMonth = createSafeDate(0);
+      const twoMonthsAgo = createSafeDate(2);
+
+      await prisma.dailyProgress.createMany({
+        data: [
+          {
+            brainPowerEarned: 100,
+            date: currentMonth,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+          {
+            brainPowerEarned: 50,
+            date: twoMonthsAgo,
+            organizationId: org.id,
+            userId: Number(user.id),
+          },
+        ],
+      });
+
+      const result = await getBpHistory({ headers, period: "month" });
+
+      expect(result).not.toBeNull();
+      expect(result?.hasPreviousPeriod).toBe(true);
+    });
+
+    test("hasNextPeriod is false when on current period (offset=0)", async () => {
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
+      const headers = await signInAs(user.email, user.password);
+
+      await prisma.dailyProgress.create({
+        data: {
+          brainPowerEarned: 100,
+          date: new Date(),
+          organizationId: org.id,
+          userId: Number(user.id),
+        },
+      });
+
+      const result = await getBpHistory({ headers, period: "month" });
+
+      expect(result).not.toBeNull();
+      expect(result?.hasNextPeriod).toBe(false);
+    });
+
+    test("hasNextPeriod is true when offset > 0", async () => {
+      const [user, org] = await Promise.all([
+        userFixture(),
+        organizationFixture(),
+      ]);
+      const headers = await signInAs(user.email, user.password);
+
+      const lastMonth = createSafeDate(1);
+
+      await prisma.dailyProgress.create({
+        data: {
+          brainPowerEarned: 75,
+          date: lastMonth,
+          organizationId: org.id,
+          userId: Number(user.id),
+        },
+      });
+
+      const result = await getBpHistory({
+        headers,
+        offset: 1,
+        period: "month",
+      });
+
+      expect(result).not.toBeNull();
+      expect(result?.hasNextPeriod).toBe(true);
+    });
+  });
+});

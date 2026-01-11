@@ -1,5 +1,4 @@
 import {
-  Award,
   Brain,
   Gem,
   Home,
@@ -17,7 +16,7 @@ import {
 
 const menu = {
   accuracy: { icon: TargetIcon, url: "/accuracy" },
-  belt: { icon: Award, url: "/belt" },
+  belt: { icon: Brain, url: "/belt" },
   courses: { icon: LayoutGrid, url: "/courses" },
   displayName: { icon: IdCardLanyard, url: "/name" },
   energy: { icon: ZapIcon, url: "/energy" },

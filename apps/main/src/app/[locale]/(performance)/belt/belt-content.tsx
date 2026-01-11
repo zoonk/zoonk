@@ -2,15 +2,16 @@ import { getSession } from "@zoonk/core/users/session/get";
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted } from "next-intl/server";
-import type { EnergyPeriod } from "@/data/progress/get-energy-history";
-import { getEnergyHistory } from "@/data/progress/get-energy-history";
+import type { HistoryPeriod } from "@/data/progress/_utils";
+import { getBpHistory } from "@/data/progress/get-bp-history";
 import { Link } from "@/i18n/navigation";
 import { PerformanceChartSkeleton } from "../_components/performance-chart-skeleton";
-import { EnergyChart } from "./energy-chart";
-import { EnergyExplanation } from "./energy-explanation";
-import { EnergyStats, EnergyStatsSkeleton } from "./energy-stats";
+import { BeltChart } from "./belt-chart";
+import { BeltExplanation } from "./belt-explanation";
+import { BeltProgression, BeltProgressionSkeleton } from "./belt-progression";
+import { BeltStats, BeltStatsSkeleton } from "./belt-stats";
 
-export async function EnergyContent({
+export async function BeltContent({
   locale,
   searchParams,
 }: {
@@ -21,10 +22,10 @@ export async function EnergyContent({
   const t = await getExtracted();
 
   const [data, session] = await Promise.all([
-    getEnergyHistory({
+    getBpHistory({
       locale,
       offset: Number(offset),
-      period: period as EnergyPeriod,
+      period: period as HistoryPeriod,
     }),
     getSession(),
   ]);
@@ -36,10 +37,10 @@ export async function EnergyContent({
       <div className="flex flex-col gap-8">
         <div className="flex h-64 flex-col items-center justify-center gap-4 rounded-xl border border-dashed p-4 text-muted-foreground">
           {isAuthenticated ? (
-            t("Start learning to track your energy level")
+            t("Start learning to track your belt level")
           ) : (
             <>
-              <span>{t("Log in to track your energy level")}</span>
+              <span>{t("Log in to track your belt level")}</span>
               <Link className={buttonVariants()} href="/login" prefetch={false}>
                 {t("Login")}
               </Link>
@@ -47,41 +48,46 @@ export async function EnergyContent({
           )}
         </div>
 
-        <EnergyExplanation />
+        <BeltExplanation />
       </div>
     );
   }
 
   return (
     <div className="flex flex-col gap-8">
-      <EnergyStats
-        average={data.average}
-        period={period as EnergyPeriod}
+      <BeltStats
+        currentBelt={data.currentBelt}
+        period={period as HistoryPeriod}
         periodEnd={data.periodEnd}
         periodStart={data.periodStart}
-        previousAverage={data.previousAverage}
+        periodTotal={data.periodTotal}
+        previousPeriodTotal={data.previousPeriodTotal}
+        totalBp={data.totalBp}
       />
 
-      <EnergyChart
-        average={data.average}
+      <BeltChart
         dataPoints={data.dataPoints}
         hasNext={data.hasNextPeriod}
         hasPrevious={data.hasPreviousPeriod}
-        period={period as EnergyPeriod}
+        period={period as HistoryPeriod}
         periodEnd={data.periodEnd}
         periodStart={data.periodStart}
+        periodTotal={data.periodTotal}
       />
 
-      <EnergyExplanation />
+      <BeltProgression currentBelt={data.currentBelt} />
+
+      <BeltExplanation />
     </div>
   );
 }
 
-export function EnergyContentSkeleton() {
+export function BeltContentSkeleton() {
   return (
     <div className="flex flex-col gap-8">
-      <EnergyStatsSkeleton />
+      <BeltStatsSkeleton />
       <PerformanceChartSkeleton />
+      <BeltProgressionSkeleton />
 
       <div className="flex flex-col gap-2">
         <Skeleton className="h-4 w-36" />

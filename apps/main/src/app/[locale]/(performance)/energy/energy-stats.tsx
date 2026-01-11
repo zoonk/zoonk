@@ -1,8 +1,8 @@
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { getExtracted, getLocale } from "next-intl/server";
-import type { EnergyPeriod } from "@/data/progress/get-energy-history";
+import type { HistoryPeriod } from "@/data/progress/_utils";
+import { MetricComparison } from "../_components/metric-comparison";
 import { formatPeriodLabel } from "../_utils";
-import { EnergyComparison } from "./energy-comparison";
 
 export async function EnergyStats({
   average,
@@ -12,7 +12,7 @@ export async function EnergyStats({
   previousAverage,
 }: {
   average: number;
-  period: EnergyPeriod;
+  period: HistoryPeriod;
   periodEnd: Date;
   periodStart: Date;
   previousAverage: number | null;
@@ -37,7 +37,7 @@ export async function EnergyStats({
         </span>
 
         {previousAverage !== null && (
-          <EnergyComparison
+          <MetricComparison
             current={average}
             period={period}
             previous={previousAverage}

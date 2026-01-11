@@ -10,6 +10,19 @@ export type BeltColor =
   | "gray"
   | "black";
 
+export const BELT_COLORS_ORDER: BeltColor[] = [
+  "white",
+  "yellow",
+  "orange",
+  "green",
+  "blue",
+  "purple",
+  "brown",
+  "red",
+  "gray",
+  "black",
+];
+
 export type BeltLevelResult = {
   bpToNextLevel: number;
   color: BeltColor;

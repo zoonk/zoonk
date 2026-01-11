@@ -1,15 +1,15 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { TrendingDownIcon, TrendingUpIcon } from "lucide-react";
 import { getExtracted, getLocale } from "next-intl/server";
-import type { EnergyPeriod } from "@/data/progress/get-energy-history";
+import type { HistoryPeriod } from "@/data/progress/_utils";
 
-export async function EnergyComparison({
+export async function MetricComparison({
   current,
   period,
   previous,
 }: {
   current: number;
-  period: EnergyPeriod;
+  period: HistoryPeriod;
   previous: number;
 }) {
   const t = await getExtracted();

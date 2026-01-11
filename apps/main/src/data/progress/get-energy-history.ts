@@ -2,11 +2,17 @@ import "server-only";
 
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
-import { getEnergyHistoryDaily } from "@zoonk/db/energy-history-daily";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
+import {
+  calculateDateRanges,
+  formatLabel,
+  getMonthKey,
+  getWeekKey,
+  type HistoryPeriod,
+} from "./_utils";
 
-export type EnergyPeriod = "month" | "6months" | "year";
+export type EnergyPeriod = HistoryPeriod;
 
 export type EnergyDataPoint = {
   date: Date;
@@ -23,96 +29,6 @@ export type EnergyHistoryData = {
   hasPreviousPeriod: boolean;
   hasNextPeriod: boolean;
 };
-
-type DateRange = {
-  start: Date;
-  end: Date;
-};
-
-function calculateDateRanges(
-  period: EnergyPeriod,
-  offset: number,
-): { current: DateRange; previous: DateRange } {
-  const now = new Date();
-
-  if (period === "month") {
-    const currentStart = new Date(
-      now.getFullYear(),
-      now.getMonth() - offset,
-      1,
-    );
-    const currentEnd = new Date(
-      now.getFullYear(),
-      now.getMonth() - offset + 1,
-      0,
-    );
-    const previousStart = new Date(
-      now.getFullYear(),
-      now.getMonth() - offset - 1,
-      1,
-    );
-    const previousEnd = new Date(now.getFullYear(), now.getMonth() - offset, 0);
-
-    return {
-      current: { end: currentEnd, start: currentStart },
-      previous: { end: previousEnd, start: previousStart },
-    };
-  }
-
-  if (period === "6months") {
-    const currentHalf = Math.floor(now.getMonth() / 6) - offset;
-    const currentYear =
-      now.getFullYear() + Math.floor((now.getMonth() - offset * 6) / 12);
-    const normalizedHalf = ((currentHalf % 2) + 2) % 2;
-
-    const currentStartMonth = normalizedHalf * 6;
-    const currentStart = new Date(currentYear, currentStartMonth, 1);
-    const currentEnd = new Date(currentYear, currentStartMonth + 6, 0);
-
-    const previousHalf = normalizedHalf === 0 ? 1 : 0;
-    const previousYear = normalizedHalf === 0 ? currentYear - 1 : currentYear;
-    const previousStartMonth = previousHalf * 6;
-    const previousStart = new Date(previousYear, previousStartMonth, 1);
-    const previousEnd = new Date(previousYear, previousStartMonth + 6, 0);
-
-    return {
-      current: { end: currentEnd, start: currentStart },
-      previous: { end: previousEnd, start: previousStart },
-    };
-  }
-
-  // Year
-  const currentYear = now.getFullYear() - offset;
-  const currentStart = new Date(currentYear, 0, 1);
-  const currentEnd = new Date(currentYear, 11, 31);
-  const previousStart = new Date(currentYear - 1, 0, 1);
-  const previousEnd = new Date(currentYear - 1, 11, 31);
-
-  return {
-    current: { end: currentEnd, start: currentStart },
-    previous: { end: previousEnd, start: previousStart },
-  };
-}
-
-function formatLabel(date: Date, period: EnergyPeriod, locale: string): string {
-  if (period === "month") {
-    return new Intl.DateTimeFormat(locale, {
-      day: "numeric",
-      month: "short",
-    }).format(date);
-  }
-
-  if (period === "6months") {
-    const weekNum = Math.ceil(
-      (date.getTime() - new Date(date.getFullYear(), 0, 1).getTime()) /
-        (7 * 24 * 60 * 60 * 1000),
-    );
-    return `W${weekNum}`;
-  }
-
-  // Year - show month name
-  return new Intl.DateTimeFormat(locale, { month: "short" }).format(date);
-}
 
 function calculateAverage(dataPoints: { energy: number }[]): number {
   if (dataPoints.length === 0) {
@@ -173,20 +89,6 @@ function fillGapsWithDecay(dataPoints: RawDataPoint[]): RawDataPoint[] {
   }
 
   return result;
-}
-
-function getWeekKey(date: Date): string {
-  const d = new Date(date);
-  d.setHours(0, 0, 0, 0);
-  // Get Monday of this week
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  d.setDate(diff);
-  return d.toISOString().split("T")[0] as string;
-}
-
-function getMonthKey(date: Date): string {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
 
 function aggregateByWeek(dataPoints: RawDataPoint[]): RawDataPoint[] {
@@ -258,13 +160,22 @@ async function fetchDailyData(
   end: Date,
 ): Promise<{ data: RawDataPoint[] | null; error: unknown }> {
   const result = await safeAsync(() =>
-    prisma.$queryRawTyped(getEnergyHistoryDaily(userId, start, end)),
+    prisma.dailyProgress.findMany({
+      orderBy: { date: "asc" },
+      select: { date: true, energyAtEnd: true },
+      where: { date: { gte: start, lte: end }, userId },
+    }),
   );
+
   if (result.error || !result.data) {
     return { data: null, error: result.error };
   }
+
   return {
-    data: result.data.map((row) => ({ date: row.date, energy: row.energy })),
+    data: result.data.map((row) => ({
+      date: row.date,
+      energy: row.energyAtEnd,
+    })),
     error: null,
   };
 }
