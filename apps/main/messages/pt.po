@@ -555,7 +555,6 @@ msgid "Month"
 msgstr "Mês"
 
 #: src/app/[locale]/(performance)/accuracy/page.tsx
-#: src/app/[locale]/(performance)/belt/page.tsx
 #: src/app/[locale]/generate/cs/[id]/generate-course-suggestion-content.tsx
 msgctxt "e61Jf3"
 msgid "Coming soon"
