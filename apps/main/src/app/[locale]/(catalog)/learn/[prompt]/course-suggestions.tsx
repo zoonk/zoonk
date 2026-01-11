@@ -1,4 +1,4 @@
-import { Button } from "@zoonk/ui/components/button";
+import { buttonVariants } from "@zoonk/ui/components/button";
 import {
   Container,
   ContainerBody,
@@ -16,6 +16,7 @@ import {
   ItemSeparator,
   ItemTitle,
 } from "@zoonk/ui/components/item";
+import { SparklesIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import { Fragment } from "react/jsx-runtime";
 import { generateCourseSuggestions } from "@/data/courses/course-suggestions";
@@ -32,7 +33,10 @@ export async function CourseSuggestions({
   prompt,
 }: CourseSuggestionsProps) {
   const t = await getExtracted();
-  const suggestions = await generateCourseSuggestions({ locale, prompt });
+  const { id, suggestions } = await generateCourseSuggestions({
+    locale,
+    prompt,
+  });
 
   return (
     <Container variant="narrow">
@@ -61,9 +65,17 @@ export async function CourseSuggestions({
                 </ItemContent>
 
                 <ItemActions>
-                  <Button size="sm" variant="outline">
-                    {t("Create course")}
-                  </Button>
+                  <Link
+                    className={buttonVariants({
+                      className: "gap-1.5",
+                      size: "sm",
+                      variant: "outline",
+                    })}
+                    href={`/generate/cs/${id}`}
+                  >
+                    <SparklesIcon aria-hidden="true" className="size-4" />
+                    {t("Generate")}
+                  </Link>
                 </ItemActions>
               </Item>
 

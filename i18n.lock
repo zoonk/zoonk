@@ -244,7 +244,7 @@ checksums:
     Cooking%20up%20some%20course%20ideas/singular: a42520f96dbac3580a2ccae4bd6ceb31
     We're%20putting%20together%20a%20few%20course%20suggestions%20for%20you.%20This%20may%20take%20a%20few%20seconds./singular: 8467af30434eb8bfb2f13e109b1d9334
     Course%20ideas%20for%20%7Bprompt%7D/singular: 23f94da8ce9272d654ff40bb80e6a352
-    Create%20course/singular: 41f52f80def95a611c9cc3a5e1a11dde
+    Generate/singular: 0345bf322c191e70d01fd6607ec5c2f8
     Change%20subject/singular: 8585bb703ba2d857dd9a7b36f97be507
     Discover%20personalized%20courses%20and%20resources%20to%20learn%20%7Bprompt%7D.%20Zoonk%20uses%20AI%20to%20generate%20interactive%20lessons%20and%20activities%20tailored%20to%20you./singular: 7d54c62a9c8d49b713626fa25edff820
     Learn%20%7Bprompt%7D%20with%20AI/singular: 5a8a8ee7f52faf0cb790e0f0cfbcce7d
@@ -349,6 +349,7 @@ checksums:
     Complete%20this%20activity%20to%20reinforce%20your%20learning%20and%20track%20your%20progress./singular: ae9411230fe031bbbd7471a8fde4b17d
     Interactive%20lesson%20with%20exercises%20and%20activities%20to%20help%20you%20learn%20effectively./singular: f74de010a6977351bee6b20c81d90d31
     Lesson/singular: 0369d21b141f7f54c4586224e7e7ae65
+    Generate%20Course/singular: f9286dd24f884cca823c70524b6562d8
     Read%20Zoonk's%20privacy%20policy%20to%20understand%20how%20we%20collect%2C%20use%2C%20and%20protect%20your%20personal%20information./singular: 044f3586abe7d9915820a6629cef08e4
     Privacy%20Policy/singular: 7459744a63ef8af4e517a09024bd7c08
     Read%20Zoonk's%20terms%20of%20use%20to%20understand%20the%20rules%20and%20conditions%20for%20using%20our%20platform%20and%20services/singular: 4b82898d60691839a1999e4a17199895
