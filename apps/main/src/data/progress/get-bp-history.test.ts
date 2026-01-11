@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
+import { createSafeDate } from "@zoonk/testing/fixtures/dates";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, test } from "vitest";
@@ -14,18 +15,6 @@ describe("unauthenticated users", () => {
     expect(result).toBeNull();
   });
 });
-
-/**
- * Creates a date safely in the middle of a month to avoid edge cases.
- * Using day 15 prevents issues when subtracting months (e.g., March 31 - 1 month
- * would roll over since Feb 31 doesn't exist).
- */
-function createSafeDate(monthsAgo = 0): Date {
-  const date = new Date();
-  date.setDate(15);
-  date.setMonth(date.getMonth() - monthsAgo);
-  return date;
-}
 
 describe("authenticated users", () => {
   test("returns null when user has no DailyProgress records", async () => {
@@ -44,9 +33,8 @@ describe("authenticated users", () => {
       ]);
       const headers = await signInAs(user.email, user.password);
 
-      const today = new Date();
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
+      const today = createSafeDate(0);
+      const yesterday = createSafeDate(0, 1);
 
       await prisma.dailyProgress.createMany({
         data: [
@@ -79,7 +67,8 @@ describe("authenticated users", () => {
       ]);
       const headers = await signInAs(user.email, user.password);
 
-      const today = new Date();
+      const today = createSafeDate(0);
+      const yesterday = createSafeDate(0, 1);
 
       await prisma.dailyProgress.createMany({
         data: [
@@ -91,7 +80,7 @@ describe("authenticated users", () => {
           },
           {
             brainPowerEarned: 300,
-            date: new Date(today.getTime() - 24 * 60 * 60 * 1000),
+            date: yesterday,
             organizationId: org.id,
             userId: Number(user.id),
           },
@@ -125,7 +114,7 @@ describe("authenticated users", () => {
       await prisma.dailyProgress.create({
         data: {
           brainPowerEarned: 100,
-          date: new Date(),
+          date: createSafeDate(0),
           organizationId: org.id,
           userId: Number(user.id),
         },
@@ -219,9 +208,8 @@ describe("authenticated users", () => {
       ]);
       const headers = await signInAs(user.email, user.password);
 
-      const today = new Date();
-      const oneWeekAgo = new Date(today);
-      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      const today = createSafeDate(0);
+      const oneWeekAgo = createSafeDate(0, 7);
 
       await prisma.dailyProgress.createMany({
         data: [
@@ -256,11 +244,8 @@ describe("authenticated users", () => {
       ]);
       const headers = await signInAs(user.email, user.password);
 
-      // Use two dates in the same month to ensure they're both in the current year
-      // This tests that data is aggregated correctly regardless of what month we're in
-      const today = new Date();
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
+      const today = createSafeDate(0);
+      const yesterday = createSafeDate(0, 1);
 
       await prisma.dailyProgress.createMany({
         data: [
@@ -282,7 +267,6 @@ describe("authenticated users", () => {
       const result = await getBpHistory({ headers, period: "year" });
 
       expect(result).not.toBeNull();
-      // Data points are aggregated by month, so we expect 1 data point for current month
       expect(result?.dataPoints.length).toBe(1);
       expect(result?.periodTotal).toBe(400);
     });
@@ -332,7 +316,7 @@ describe("authenticated users", () => {
       await prisma.dailyProgress.create({
         data: {
           brainPowerEarned: 100,
-          date: new Date(),
+          date: createSafeDate(0),
           organizationId: org.id,
           userId: Number(user.id),
         },
