@@ -275,6 +275,8 @@ checksums:
     Energy/singular: 958809db5050650b97519e0f1f3e1951
     Belt/singular: fa36e8e36732c223d2876c0337d372e9
     No%20data%20available%20for%20this%20period/singular: 2aac0a35f0be9371444d96a7fff3009d
+    Start%20learning%20to%20track%20your%20progress/singular: 3da12ddb251d423ee8ef4bb80f7b2845
+    Log%20in%20to%20track%20your%20progress/singular: 51a9c02af2bf374e6b942da88533d034
     Previous%20period/singular: b53b793ab929e364ecc20d8b15c694e9
     Next%20period/singular: aa98c0595afc2b75886531e6d77d8415
     Year/singular: ed86f5f60583f9d8ffdbeed306aa0ec7
@@ -287,8 +289,6 @@ checksums:
     Brain%20Power%20chart/singular: 07ca213967e88b69e1000a6cda465ad8
     Total%20Brain%20Power%20earned%3A%20%7Btotal%7D/singular: d28228f7edab6482d1a444de33646b1a
     "%7Bvalue%7D%20BP/singular": a2480149a0208509d79feeb1ca1cfa1e
-    Log%20in%20to%20track%20your%20belt%20level/singular: 61c05a4d72bc8b18be934e6d13fb27a9
-    Start%20learning%20to%20track%20your%20belt%20level/singular: 20445921f8dea58022d6a491f0e7d19b
     Brain%20Power%20(BP)%20represents%20your%20knowledge%20growth.%20Unlike%20energy%2C%20BP%20never%20decreases%20-%20it%20only%20grows%20as%20you%20learn%20more./singular: 436619a12f6800283deddf1f429d506a
     Belt%20colors%20in%20order%3A%20White%2C%20Yellow%2C%20Orange%2C%20Green%2C%20Blue%2C%20Purple%2C%20Brown%2C%20Red%2C%20Gray%2C%20and%20Black.%20Keep%20learning%20to%20reach%20the%20highest%20level!/singular: 9e74564402564784900f3ba7c0da5f10
     About%20Belt%20Levels/singular: 096f881928325936207417b8f69b0934
@@ -307,8 +307,6 @@ checksums:
     Belt%20Level/singular: a2e673c2fb1df26a5a48470893fae07a
     Energy%20chart/singular: 79a504a3370c1e606dc714f587012cbe
     Avg/singular: 2d7f837da968af2579e75135d3787b3d
-    Log%20in%20to%20track%20your%20energy%20level/singular: b72c3eebef3e53679c15bb6c59e3ff80
-    Start%20learning%20to%20track%20your%20energy%20level/singular: 09714e088f54128f034671262e20ab98
     Energy%20reflects%20your%20learning%20consistency.%20It%20increases%20with%20correct%20answers%20(%2B0.1%25)%2C%20decreases%20with%20wrong%20answers%20(-0.03%25)%2C%20and%20drops%201%25%20for%20each%20inactive%20day./singular: 94dd59a838ae089f5aa690db00866501
     About%20Energy%20Level/singular: 10fc71fe14c91508304c509e7f2852a4
     Track%20your%20learning%20energy%20over%20time/singular: c9ec5b7fab47c0313af0dbb14e83c653

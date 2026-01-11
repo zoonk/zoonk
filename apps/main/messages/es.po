@@ -7,8 +7,7 @@ msgstr ""
 
 #: src/app/[locale]/(catalog)/_components/command-palette.tsx
 #: src/app/[locale]/(catalog)/_components/logout-dropdown-item.tsx
-#: src/app/[locale]/(performance)/belt/belt-content.tsx
-#: src/app/[locale]/(performance)/energy/energy-content.tsx
+#: src/app/[locale]/(performance)/_components/performance-empty-state.tsx
 #: src/app/[locale]/(settings)/_components/protected-section.tsx
 msgctxt "AyGauy"
 msgid "Login"
@@ -515,6 +514,16 @@ msgctxt "OlW5Z8"
 msgid "No data available for this period"
 msgstr "No hay datos disponibles para este período"
 
+#: src/app/[locale]/(performance)/_components/performance-empty-state.tsx
+msgctxt "FVh2Tr"
+msgid "Start learning to track your progress"
+msgstr "Empieza a aprender para seguir tu progreso"
+
+#: src/app/[locale]/(performance)/_components/performance-empty-state.tsx
+msgctxt "Y1zzQt"
+msgid "Log in to track your progress"
+msgstr "Inicia sesión para seguir tu progreso"
+
 #: src/app/[locale]/(performance)/_components/period-navigation.tsx
 msgctxt "hCCWuZ"
 msgid "Previous period"
@@ -574,16 +583,6 @@ msgstr "poder mental total ganado: {total}"
 msgctxt "XdkaHc"
 msgid "{value} BP"
 msgstr "{value} PM"
-
-#: src/app/[locale]/(performance)/belt/belt-content.tsx
-msgctxt "+mpwrk"
-msgid "Log in to track your belt level"
-msgstr "Inicia sesión para seguir tu nivel de cinturón"
-
-#: src/app/[locale]/(performance)/belt/belt-content.tsx
-msgctxt "y6CX3T"
-msgid "Start learning to track your belt level"
-msgstr "Empieza a aprender para seguir tu nivel de cinturón"
 
 #: src/app/[locale]/(performance)/belt/belt-explanation.tsx
 msgctxt "C6bCZT"
@@ -674,16 +673,6 @@ msgstr "Gráfico de energía"
 msgctxt "rGSqvt"
 msgid "Avg"
 msgstr "Prom"
-
-#: src/app/[locale]/(performance)/energy/energy-content.tsx
-msgctxt "2/t4XK"
-msgid "Log in to track your energy level"
-msgstr "Inicia sesión para hacer seguimiento de tu nivel de energía"
-
-#: src/app/[locale]/(performance)/energy/energy-content.tsx
-msgctxt "U6BGyx"
-msgid "Start learning to track your energy level"
-msgstr "Empieza a aprender para rastrear tu nivel de energía"
 
 #: src/app/[locale]/(performance)/energy/energy-explanation.tsx
 msgctxt "bbspjV"

@@ -1,11 +1,9 @@
 import { getSession } from "@zoonk/core/users/session/get";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { getExtracted } from "next-intl/server";
 import type { HistoryPeriod } from "@/data/progress/_utils";
 import { getBpHistory } from "@/data/progress/get-bp-history";
-import { Link } from "@/i18n/navigation";
 import { PerformanceChartSkeleton } from "../_components/performance-chart-skeleton";
+import { PerformanceEmptyState } from "../_components/performance-empty-state";
 import { BeltChart } from "./belt-chart";
 import { BeltExplanation } from "./belt-explanation";
 import { BeltProgression, BeltProgressionSkeleton } from "./belt-progression";
@@ -19,7 +17,6 @@ export async function BeltContent({
   searchParams: Promise<{ offset?: string; period?: string }>;
 }) {
   const { offset = "0", period = "month" } = await searchParams;
-  const t = await getExtracted();
 
   const [data, session] = await Promise.all([
     getBpHistory({
@@ -34,22 +31,9 @@ export async function BeltContent({
 
   if (!(data && isAuthenticated)) {
     return (
-      <div className="flex flex-col gap-8">
-        <div className="flex h-64 flex-col items-center justify-center gap-4 rounded-xl border border-dashed p-4 text-muted-foreground">
-          {isAuthenticated ? (
-            t("Start learning to track your belt level")
-          ) : (
-            <>
-              <span>{t("Log in to track your belt level")}</span>
-              <Link className={buttonVariants()} href="/login" prefetch={false}>
-                {t("Login")}
-              </Link>
-            </>
-          )}
-        </div>
-
+      <PerformanceEmptyState isAuthenticated={isAuthenticated}>
         <BeltExplanation />
-      </div>
+      </PerformanceEmptyState>
     );
   }
 
