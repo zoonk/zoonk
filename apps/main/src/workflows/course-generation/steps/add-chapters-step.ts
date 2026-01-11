@@ -16,6 +16,7 @@ export async function addChaptersStep(input: Input): Promise<void> {
     courseId: input.courseId,
     description: chapter.description,
     generationStatus: "pending",
+    isPublished: true,
     language: input.locale,
     normalizedTitle: normalizeString(chapter.title),
     organizationId: input.organizationId,

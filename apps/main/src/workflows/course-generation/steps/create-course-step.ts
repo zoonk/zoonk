@@ -24,6 +24,7 @@ export async function createCourseStep(input: Input): Promise<Output> {
   const course = await prisma.course.create({
     data: {
       generationStatus: "in_progress",
+      isPublished: true,
       language: input.locale,
       normalizedTitle,
       organizationId: org.id,

@@ -37,6 +37,7 @@ export async function generateLessonsStep(input: Input): Promise<void> {
     chapterId: dbChapter.id,
     description: lesson.description,
     generationStatus: "pending",
+    isPublished: true,
     language: input.locale,
     normalizedTitle: normalizeString(lesson.title),
     organizationId: input.organizationId,
