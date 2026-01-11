@@ -7,7 +7,7 @@ test.describe("Energy Page", () => {
 
       // User sees prompt to log in
       await expect(
-        page.getByText(/log in to track your energy level/i),
+        page.getByText(/log in to track your progress/i),
       ).toBeVisible();
 
       // Login link points to correct destination
@@ -119,7 +119,7 @@ test.describe("Energy Page", () => {
 
       // Should NOT see the "start learning" prompt
       await expect(
-        authenticatedPage.getByText(/start learning to track your energy/i),
+        authenticatedPage.getByText(/start learning to track your progress/i),
       ).not.toBeVisible();
     });
   });
@@ -129,7 +129,7 @@ test.describe("Energy Page", () => {
       await userWithoutProgress.goto("/energy");
 
       await expect(
-        userWithoutProgress.getByText(/start learning to track your energy/i),
+        userWithoutProgress.getByText(/start learning to track your progress/i),
       ).toBeVisible();
     });
   });

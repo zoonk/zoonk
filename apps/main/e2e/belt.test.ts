@@ -6,7 +6,7 @@ test.describe("Belt Page", () => {
       await page.goto("/belt");
 
       await expect(
-        page.getByText(/log in to track your belt level/i),
+        page.getByText(/log in to track your progress/i),
       ).toBeVisible();
 
       await expect(page.getByRole("link", { name: /login/i })).toHaveAttribute(
@@ -142,7 +142,7 @@ test.describe("Belt Page", () => {
       await userWithoutProgress.goto("/belt");
 
       await expect(
-        userWithoutProgress.getByText(/start learning to track your belt/i),
+        userWithoutProgress.getByText(/start learning to track your progress/i),
       ).toBeVisible();
     });
   });
