@@ -9,6 +9,7 @@ import { setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
+import { redirect } from "@/i18n/navigation";
 import { ChapterSearchContainer } from "./chapter-search-container";
 import { CourseHeader } from "./course-header";
 
@@ -61,6 +62,10 @@ export default async function CoursePage({
 
   if (!course) {
     notFound();
+  }
+
+  if (chapters.length === 0) {
+    redirect({ href: `/generate/c/${course.id}`, locale });
   }
 
   return (

@@ -25,6 +25,18 @@ test.describe("Course Detail Page", () => {
     await expect(page.getByText(/not found|404/i)).toBeVisible();
   });
 
+  test("redirects to generate page when course has no chapters", async ({
+    page,
+  }) => {
+    await page.goto("/b/ai/c/e2e-no-chapters-course");
+
+    await expect(page).toHaveURL(/\/generate\/c\/\d+/);
+    await expect(
+      page.getByRole("heading", { name: /generate course/i }),
+    ).toBeVisible();
+    await expect(page.getByText(/coming soon/i)).toBeVisible();
+  });
+
   test("shows fallback icon when course has no image", async ({ page }) => {
     await page.goto("/b/ai/c/python-programming");
 
