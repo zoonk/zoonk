@@ -5,7 +5,7 @@ import { searchCourses } from "@/data/courses/search-courses";
 export type CourseSearchResult = {
   id: number;
   title: string;
-  description: string;
+  description: string | null;
   slug: string;
   imageUrl: string | null;
   brandSlug: string;

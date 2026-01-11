@@ -6,11 +6,16 @@ import {
   prisma,
 } from "@zoonk/db";
 
-export function courseAttrs(
-  attrs?: Partial<Course>,
-): Omit<Course, "id" | "createdAt" | "updatedAt"> {
+type CourseAttrs = Omit<Course, "id" | "createdAt" | "updatedAt"> & {
+  description: string;
+};
+
+export function courseAttrs(attrs?: Partial<Course>): CourseAttrs {
+  const { description, ...rest } = attrs ?? {};
+
   return {
-    description: "Test course description",
+    description: description ?? "Test course description",
+    generationStatus: "completed",
     imageUrl: null,
     isPublished: false,
     language: "en",
@@ -18,7 +23,7 @@ export function courseAttrs(
     organizationId: 0,
     slug: `test-course-${randomUUID()}`,
     title: "Test Course",
-    ...attrs,
+    ...rest,
   };
 }
 

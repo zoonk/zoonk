@@ -11,6 +11,7 @@ export function lessonAttrs(
   return {
     chapterId: 0,
     description: "Test lesson description",
+    generationStatus: "completed",
     isPublished: false,
     kind: "core",
     language: "en",

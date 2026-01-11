@@ -30,7 +30,7 @@ export async function CourseContent({
       descriptionLabel={t("Edit course description")}
       descriptionPlaceholder={t("Course description…")}
       entityId={course.id}
-      initialDescription={course.description}
+      initialDescription={course.description ?? ""}
       initialTitle={course.title}
       onSaveDescription={updateCourseDescriptionAction.bind(null, courseSlug)}
       onSaveTitle={updateCourseTitleAction.bind(null, courseSlug)}

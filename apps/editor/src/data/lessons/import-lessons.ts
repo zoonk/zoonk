@@ -209,6 +209,11 @@ export async function importLessons(params: {
         imported.push(lessonResult.lesson);
       }
 
+      await tx.chapter.update({
+        data: { generationStatus: "completed" },
+        where: { id: params.chapterId },
+      });
+
       return imported;
     }),
   );

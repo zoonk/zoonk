@@ -7,7 +7,7 @@ export type CourseWithDetails = {
   id: number;
   slug: string;
   title: string;
-  description: string;
+  description: string | null;
   imageUrl: string | null;
   organization: {
     name: string;

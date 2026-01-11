@@ -8,8 +8,9 @@ model Activity {
   language       String             @db.VarChar(10)
   kind           String             @db.VarChar(30)
   title          String?
-  description    String?
-  position       Int
+  description      String?
+  generationStatus String             @default("pending") @map("generation_status") @db.VarChar(20)
+  position         Int
   inventory      Json?
   winCriteria    Json?              @map("win_criteria")
   createdAt      DateTime           @default(now()) @map("created_at")

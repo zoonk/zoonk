@@ -659,4 +659,35 @@ describe("admins", () => {
       expect(updatedLesson?.isPublished).toBe(true);
     });
   });
+
+  describe("generationStatus behavior", () => {
+    test("sets chapter generationStatus to completed after importing", async () => {
+      const course = await courseFixture({ organizationId: organization.id });
+
+      const newChapter = await chapterFixture({
+        courseId: course.id,
+        generationStatus: "pending",
+        language: course.language,
+        organizationId: organization.id,
+      });
+
+      const file = createImportFile([
+        { description: "Desc", title: "Test Lesson" },
+      ]);
+
+      const result = await importLessons({
+        chapterId: newChapter.id,
+        file,
+        headers,
+      });
+
+      expect(result.error).toBeNull();
+
+      const updatedChapter = await prisma.chapter.findUnique({
+        where: { id: newChapter.id },
+      });
+
+      expect(updatedChapter?.generationStatus).toBe("completed");
+    });
+  });
 });
