@@ -1,6 +1,7 @@
 import type { Organization, PrismaClient } from "../../generated/prisma/client";
 
 type ActivitySeedData = {
+  generationStatus: string;
   isPublished: boolean;
   kind: string;
   title?: string;
@@ -19,30 +20,37 @@ const activitiesData: LessonActivities[] = [
   {
     activities: [
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "background",
       },
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "explanation",
       },
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "explanation_quiz",
       },
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "examples",
       },
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "story",
       },
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "logic",
       },
       {
+        generationStatus: "completed",
         inventory: {
           computeResources: 70,
           dataQuality: 50,
@@ -59,6 +67,7 @@ const activitiesData: LessonActivities[] = [
         },
       },
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "lesson_quiz",
       },
@@ -69,14 +78,17 @@ const activitiesData: LessonActivities[] = [
   {
     activities: [
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "background",
       },
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "explanation",
       },
       {
+        generationStatus: "completed",
         isPublished: false,
         kind: "mechanics",
       },
@@ -89,6 +101,7 @@ const activitiesData: LessonActivities[] = [
       {
         description:
           "A custom activity exploring the differences between supervised and unsupervised learning approaches.",
+        generationStatus: "completed",
         isPublished: false,
         kind: "custom",
         title: "Supervised vs Unsupervised Learning",
@@ -100,10 +113,12 @@ const activitiesData: LessonActivities[] = [
   {
     activities: [
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "background",
       },
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "explanation",
       },
@@ -114,10 +129,12 @@ const activitiesData: LessonActivities[] = [
   {
     activities: [
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "background",
       },
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "explanation",
       },
@@ -128,10 +145,12 @@ const activitiesData: LessonActivities[] = [
   {
     activities: [
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "background",
       },
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "explanation",
       },
@@ -142,10 +161,12 @@ const activitiesData: LessonActivities[] = [
   {
     activities: [
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "background",
       },
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "explanation",
       },
@@ -156,10 +177,12 @@ const activitiesData: LessonActivities[] = [
   {
     activities: [
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "background",
       },
       {
+        generationStatus: "completed",
         isPublished: true,
         kind: "explanation",
       },
@@ -192,6 +215,7 @@ export async function seedActivities(
             prisma.activity.upsert({
               create: {
                 description: activityData.description,
+                generationStatus: activityData.generationStatus,
                 inventory: activityData.inventory,
                 isPublished: activityData.isPublished,
                 kind: activityData.kind,

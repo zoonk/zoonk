@@ -3,6 +3,7 @@ import type { Organization, PrismaClient } from "../../generated/prisma/client";
 
 type LessonSeedData = {
   description: string;
+  generationStatus: string;
   isPublished: boolean;
   kind?: string;
   slug: string;
@@ -23,6 +24,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Learn what machine learning is and how it differs from traditional programming.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "what-is-machine-learning",
         title: "What is Machine Learning?",
@@ -30,6 +32,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Explore the history of machine learning from its origins to modern developments.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "history-of-ml",
         title: "History of Machine Learning",
@@ -37,6 +40,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Understand supervised, unsupervised, and reinforcement learning approaches.",
+        generationStatus: "completed",
         isPublished: false,
         kind: "custom",
         slug: "types-of-learning",
@@ -51,6 +55,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Learn about different types of datasets and where to find quality data for your projects.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "understanding-datasets",
         title: "Understanding Datasets",
@@ -58,6 +63,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Master techniques for cleaning and preprocessing raw data before training.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "data-cleaning",
         title: "Data Cleaning",
@@ -71,6 +77,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Learn the Spanish alphabet, vowel sounds, and basic pronunciation rules.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "spanish-alphabet",
         title: "The Spanish Alphabet",
@@ -78,6 +85,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Master common greetings and introductions for everyday conversations.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "greetings-introductions",
         title: "Greetings and Introductions",
@@ -91,6 +99,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Learn about the Sun, its structure, and its importance to our solar system.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "the-sun",
         title: "The Sun",
@@ -98,6 +107,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Explore the inner planets: Mercury, Venus, Earth, and Mars.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "inner-planets",
         title: "The Inner Planets",
@@ -111,6 +121,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Set up Python on your computer and write your first Hello World program.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "getting-started-python",
         title: "Getting Started with Python",
@@ -118,6 +129,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Understand variables, data types, and basic operations in Python.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "variables-data-types",
         title: "Variables and Data Types",
@@ -131,6 +143,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Understand HTML document structure, elements, and create your first web page.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "intro-to-html",
         title: "Introduction to HTML",
@@ -138,6 +151,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Learn about semantic HTML elements and how to structure content meaningfully.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "semantic-html",
         title: "Semantic HTML",
@@ -151,6 +165,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Understand what data science is and the role of a data scientist in modern organizations.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "what-is-data-science",
         title: "What is Data Science?",
@@ -158,6 +173,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Learn about different types of data, data sources, and how to collect data for analysis.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "types-of-data",
         title: "Types of Data",
@@ -190,6 +206,7 @@ export async function seedLessons(
               create: {
                 chapterId: chapter.id,
                 description: lessonData.description,
+                generationStatus: lessonData.generationStatus,
                 isPublished: lessonData.isPublished,
                 kind: lessonData.kind ?? "core",
                 language: data.language,

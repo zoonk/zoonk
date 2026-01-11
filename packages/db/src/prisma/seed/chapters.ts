@@ -3,6 +3,7 @@ import type { Organization, PrismaClient } from "../../generated/prisma/client";
 
 type ChapterSeedData = {
   description: string;
+  generationStatus: string;
   isPublished: boolean;
   slug: string;
   title: string;
@@ -20,6 +21,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Understand what machine learning is, its history, and the different types of learning: supervised, unsupervised, and reinforcement learning.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "introduction-to-machine-learning",
         title: "Introduction to Machine Learning",
@@ -27,6 +29,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Learn about datasets, data preprocessing, feature engineering, and how to prepare your data for training models.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "data-preparation",
         title: "Data Preparation",
@@ -34,6 +37,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Explore linear regression, logistic regression, and gradient descent algorithms for predictive modeling.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "regression-algorithms",
         title: "Regression Algorithms",
@@ -41,6 +45,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Understand decision trees, random forests, and ensemble methods for classification and regression tasks.",
+        generationStatus: "completed",
         isPublished: false,
         slug: "tree-based-models",
         title: "Tree-Based Models",
@@ -48,6 +53,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Learn the fundamentals of neural networks, activation functions, backpropagation, and deep learning architectures.",
+        generationStatus: "completed",
         isPublished: false,
         slug: "neural-networks",
         title: "Neural Networks",
@@ -61,6 +67,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Entenda o que é machine learning, sua história e os diferentes tipos de aprendizado: supervisionado, não supervisionado e por reforço.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "introducao-ao-machine-learning",
         title: "Introdução ao Machine Learning",
@@ -68,6 +75,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Aprenda sobre datasets, pré-processamento de dados, engenharia de features e como preparar seus dados para treinar modelos.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "preparacao-de-dados",
         title: "Preparação de Dados",
@@ -75,6 +83,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Explore regressão linear, regressão logística e algoritmos de gradiente descendente para modelagem preditiva.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "algoritmos-de-regressao",
         title: "Algoritmos de Regressão",
@@ -82,6 +91,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Entenda árvores de decisão, florestas aleatórias e métodos de ensemble para tarefas de classificação e regressão.",
+        generationStatus: "completed",
         isPublished: false,
         slug: "modelos-baseados-em-arvores",
         title: "Modelos Baseados em Árvores",
@@ -89,6 +99,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Aprenda os fundamentos de redes neurais, funções de ativação, backpropagation e arquiteturas de deep learning.",
+        generationStatus: "completed",
         isPublished: false,
         slug: "redes-neurais",
         title: "Redes Neurais",
@@ -102,6 +113,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Learn the Spanish alphabet, basic pronunciation rules, and common greetings for everyday conversations.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "spanish-basics",
         title: "Spanish Basics",
@@ -109,6 +121,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Build essential vocabulary for travel, food, family, and daily activities.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "essential-vocabulary",
         title: "Essential Vocabulary",
@@ -122,6 +135,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Explore our solar system, including the Sun, planets, moons, and other celestial bodies.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "solar-system",
         title: "The Solar System",
@@ -129,6 +143,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Learn about stars, their life cycles, and how they form the building blocks of galaxies.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "stars-and-galaxies",
         title: "Stars and Galaxies",
@@ -142,6 +157,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Learn Python syntax, variables, data types, and write your first programs.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "python-fundamentals",
         title: "Python Fundamentals",
@@ -149,6 +165,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Master lists, dictionaries, sets, and tuples for organizing and manipulating data.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "data-structures",
         title: "Data Structures",
@@ -162,6 +179,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Learn HTML structure, semantic elements, and how to create well-organized web pages.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "html-foundations",
         title: "HTML Foundations",
@@ -169,6 +187,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Style your web pages with CSS, including layouts, colors, typography, and responsive design.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "css-styling",
         title: "CSS Styling",
@@ -182,6 +201,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Understand data types, data sources, and the fundamentals of data analysis workflows.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "intro-to-data-science",
         title: "Introduction to Data Science",
@@ -189,6 +209,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Learn techniques for cleaning, transforming, and preparing data for analysis.",
+        generationStatus: "completed",
         isPublished: true,
         slug: "data-wrangling",
         title: "Data Wrangling",
@@ -221,6 +242,7 @@ async function seedChaptersForCourse(
       create: {
         courseId: course.id,
         description: chapterData.description,
+        generationStatus: chapterData.generationStatus,
         isPublished: chapterData.isPublished,
         language: data.language,
         normalizedTitle: normalizeString(chapterData.title),

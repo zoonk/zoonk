@@ -9,8 +9,9 @@ model Chapter {
   slug            String
   title           String
   normalizedTitle String   @map("normalized_title")
-  description     String
-  position        Int
+  description      String
+  generationStatus String   @default("pending") @map("generation_status") @db.VarChar(20)
+  position         Int
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
   lessons         Lesson[]
