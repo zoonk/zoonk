@@ -71,7 +71,7 @@ export async function CourseSuggestions({
                       size: "sm",
                       variant: "outline",
                     })}
-                    href={`/generate/cs/${id}`}
+                    href={`/generate/cs/${id}?title=${encodeURIComponent(course.title)}`}
                     prefetch={false}
                   >
                     <SparklesIcon aria-hidden="true" className="size-4" />

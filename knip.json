@@ -5,8 +5,6 @@
     "@tailwindcss/postcss",
     "@types/react",
     "@types/react-dom",
-    "@workflow/core",
-    "@workflow/utils",
     "next",
     "next-intl",
     "postcss",
@@ -31,7 +29,8 @@
         "src/i18n/codec.ts",
         "src/app/[locale]/privacy/*.mdx",
         "src/app/[locale]/terms/*.mdx"
-      ]
+      ],
+      "ignore": ["src/workflows/**", "src/app/**/actions.ts"]
     },
     "packages/db": {
       "entry": ["prisma.config.ts", "src/prisma/seed.ts"],
