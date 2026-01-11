@@ -5,6 +5,8 @@
     "@tailwindcss/postcss",
     "@types/react",
     "@types/react-dom",
+    "@workflow/core",
+    "@workflow/utils",
     "next",
     "next-intl",
     "postcss",

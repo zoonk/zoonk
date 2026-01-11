@@ -125,8 +125,12 @@ describe("admins", () => {
   });
 
   test("returns the chapter with the correct language", async () => {
+    const ptCourse = await courseFixture({
+      language: "pt",
+      organizationId: organization.id,
+    });
     const ptChapter = await chapterFixture({
-      courseId: course.id,
+      courseId: ptCourse.id,
       language: "pt",
       organizationId: organization.id,
       slug: chapter.slug,
