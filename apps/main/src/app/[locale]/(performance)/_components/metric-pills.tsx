@@ -11,7 +11,7 @@ export function MetricPills() {
   const t = useExtracted();
 
   const energy = getMenu("energy");
-  const belt = getMenu("belt");
+  const level = getMenu("level");
   const score = getMenu("score");
 
   return (
@@ -30,12 +30,12 @@ export function MetricPills() {
       <Link
         className={buttonVariants({
           size: "sm",
-          variant: segment === "belt" ? "default" : "outline",
+          variant: segment === "level" ? "default" : "outline",
         })}
-        href={belt.url}
+        href={level.url}
       >
-        <belt.icon aria-hidden className="size-4" />
-        {t("Belt")}
+        <level.icon aria-hidden className="size-4" />
+        {t("Level")}
       </Link>
 
       <Link

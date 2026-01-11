@@ -6,10 +6,10 @@ import { getBeltLevel } from "@/data/progress/get-belt-level";
 import { getBestDay } from "@/data/progress/get-best-day";
 import { getEnergyLevel } from "@/data/progress/get-energy-level";
 import { getPeakTime } from "@/data/progress/get-peak-time";
-import { Belt, BeltSkeleton } from "./belt";
 import { BestDay, BestDaySkeleton } from "./best-day";
 import { BestTime, BestTimeSkeleton } from "./best-time";
 import { Energy, EnergySkeleton } from "./energy";
+import { Level, LevelSkeleton } from "./level";
 import { Score, ScoreSkeleton } from "./score";
 
 export async function Performance() {
@@ -37,7 +37,7 @@ export async function Performance() {
         {energyData && <Energy energy={energyData.currentEnergy} />}
 
         {beltData && (
-          <Belt
+          <Level
             bpToNextLevel={beltData.bpToNextLevel}
             color={beltData.color}
             isMaxLevel={beltData.isMaxLevel}
@@ -72,7 +72,7 @@ export function PerformanceSkeleton() {
 
       <div className="grid grid-cols-1 gap-4 px-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
         <EnergySkeleton />
-        <BeltSkeleton />
+        <LevelSkeleton />
         <ScoreSkeleton />
         <BestDaySkeleton />
         <BestTimeSkeleton />

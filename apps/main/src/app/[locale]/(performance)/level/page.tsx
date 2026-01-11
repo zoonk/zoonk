@@ -13,20 +13,20 @@ import { BeltContent, BeltContentSkeleton } from "./belt-content";
 
 export async function generateMetadata({
   params,
-}: PageProps<"/[locale]/belt">): Promise<Metadata> {
+}: PageProps<"/[locale]/level">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getExtracted({ locale });
 
   return {
-    description: t("Track your belt progress and see how you advance."),
-    title: t("Belt"),
+    description: t("Track your level progress and see how you advance."),
+    title: t("Level"),
   };
 }
 
-export default async function BeltPage({
+export default async function LevelPage({
   params,
   searchParams,
-}: PageProps<"/[locale]/belt">) {
+}: PageProps<"/[locale]/level">) {
   const { locale } = await params;
   setRequestLocale(locale);
   const t = await getExtracted();
@@ -35,9 +35,9 @@ export default async function BeltPage({
     <Container variant="narrow">
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <ContainerTitle>{t("Belt")}</ContainerTitle>
+          <ContainerTitle>{t("Level")}</ContainerTitle>
           <ContainerDescription>
-            {t("Track your belt progress")}
+            {t("Track your level progress")}
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>

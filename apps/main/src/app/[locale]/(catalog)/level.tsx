@@ -17,22 +17,22 @@ import { ClientLink } from "@/i18n/client-link";
 import { getBeltColorLabel } from "@/lib/belt-colors";
 import { getMenu } from "@/lib/menu";
 
-type BeltProps = {
+type LevelProps = {
   bpToNextLevel: number;
   color: BeltColor;
   isMaxLevel: boolean;
   level: number;
 };
 
-export async function Belt({
+export async function Level({
   bpToNextLevel,
   color,
   isMaxLevel,
   level,
-}: BeltProps) {
+}: LevelProps) {
   const t = await getExtracted();
   const locale = await getLocale();
-  const beltMenu = getMenu("belt");
+  const levelMenu = getMenu("level");
 
   const colorName = await getBeltColorLabel(color);
 
@@ -45,12 +45,12 @@ export async function Belt({
   const beltLabel = t("{color} belt", { color: colorName });
 
   return (
-    <FeatureCardLink render={<ClientLink href={beltMenu.url} />}>
+    <FeatureCardLink render={<ClientLink href={levelMenu.url} />}>
       <FeatureCard>
         <FeatureCardHeader>
           <FeatureCardHeaderContent>
             <BeltIndicator color={color} label={beltLabel} size="sm" />
-            <FeatureCardLabel>{t("Belt")}</FeatureCardLabel>
+            <FeatureCardLabel>{t("Level")}</FeatureCardLabel>
           </FeatureCardHeaderContent>
           <FeatureCardIndicator />
         </FeatureCardHeader>
@@ -69,7 +69,7 @@ export async function Belt({
   );
 }
 
-export function BeltSkeleton() {
+export function LevelSkeleton() {
   return (
     <FeatureCard className="w-full">
       <Skeleton className="h-5 w-24" />
