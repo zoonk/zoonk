@@ -76,7 +76,7 @@ test.describe("Home Page - Performance Section", () => {
 
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
     await expect(
-      authenticatedPage.getByText("Your energy level is 75%"),
+      authenticatedPage.getByText("Your energy is 75%"),
     ).toBeVisible();
   });
 

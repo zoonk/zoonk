@@ -19,9 +19,9 @@ export async function generateMetadata({
 
   return {
     description: t(
-      "Track your energy level over time and see how your learning consistency affects your progress.",
+      "Track your energy over time and see how your learning consistency affects your progress.",
     ),
-    title: t("Energy Level"),
+    title: t("Energy"),
   };
 }
 
@@ -38,7 +38,7 @@ export default async function EnergyPage({
     <Container variant="narrow">
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <ContainerTitle>{t("Energy Level")}</ContainerTitle>
+          <ContainerTitle>{t("Energy")}</ContainerTitle>
           <ContainerDescription>
             {t("Track your learning energy over time")}
           </ContainerDescription>

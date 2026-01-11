@@ -38,14 +38,14 @@ export async function EnergyLevel({ energy }: { energy: number }) {
             <FeatureCardIcon>
               <energyMenu.icon />
             </FeatureCardIcon>
-            <FeatureCardLabel>{t("Energy level")}</FeatureCardLabel>
+            <FeatureCardLabel>{t("Energy")}</FeatureCardLabel>
           </FeatureCardHeaderContent>
           <FeatureCardIndicator />
         </FeatureCardHeader>
 
         <FeatureCardBody>
           <FeatureCardTitle>
-            {t("Your energy level is {value}%", { value: formattedEnergy })}
+            {t("Your energy is {value}%", { value: formattedEnergy })}
           </FeatureCardTitle>
           <FeatureCardSubtitle>{description}</FeatureCardSubtitle>
         </FeatureCardBody>

@@ -194,8 +194,8 @@ msgstr "{value} PM para el siguiente nivel"
 
 #: src/app/[locale]/(catalog)/belt-level.tsx
 msgctxt "FP4TgI"
-msgid "Belt level"
-msgstr "Nivel de cinturón"
+msgid "Belt"
+msgstr "Cinturón"
 
 #: src/app/[locale]/(catalog)/belt-level.tsx
 #: src/app/[locale]/(performance)/belt/belt-stats.tsx
@@ -284,8 +284,8 @@ msgstr "Explora todos los cursos de Zoonk para aprender cualquier cosa usando IA
 
 #: src/app/[locale]/(catalog)/energy-level.tsx
 msgctxt "aRv72g"
-msgid "Energy level"
-msgstr "Nivel de energía"
+msgid "Energy"
+msgstr "Energía"
 
 #: src/app/[locale]/(catalog)/energy-level.tsx
 msgctxt "soDmlG"
@@ -294,8 +294,8 @@ msgstr "Sigue aprendiendo para aumentarlo"
 
 #: src/app/[locale]/(catalog)/energy-level.tsx
 msgctxt "UW6IeG"
-msgid "Your energy level is {value}%"
-msgstr "Tu nivel de energía es {value}%"
+msgid "Your energy is {value}%"
+msgstr "Tu energía es {value}%"
 
 #: src/app/[locale]/(catalog)/energy-level.tsx
 msgctxt "WgeB0r"
@@ -597,8 +597,8 @@ msgstr "Colores de cinturón en orden: blanco, amarillo, naranja, verde, azul, m
 
 #: src/app/[locale]/(performance)/belt/belt-explanation.tsx
 msgctxt "oyVnZ2"
-msgid "About Belt Levels"
-msgstr "Acerca de los niveles de cinturón"
+msgid "About Belts"
+msgstr "Acerca de los cinturones"
 
 #: src/app/[locale]/(performance)/belt/belt-explanation.tsx
 msgctxt "wPDPFc"
@@ -652,18 +652,18 @@ msgstr "poder mental total"
 
 #: src/app/[locale]/(performance)/belt/page.tsx
 msgctxt "DYTbSA"
-msgid "Track your belt level progress"
-msgstr "Rastrea tu progreso de nivel de cinturón"
+msgid "Track your belt progress"
+msgstr "Rastrea tu progreso de cinturón"
 
 #: src/app/[locale]/(performance)/belt/page.tsx
 msgctxt "gX5+n3"
-msgid "Track your belt level progress and see how you advance."
-msgstr "Rastrea tu progreso de nivel de cinturón y ve cómo avanzas."
+msgid "Track your belt progress and see how you advance."
+msgstr "Rastrea tu progreso de cinturón y ve cómo avanzas."
 
 #: src/app/[locale]/(performance)/belt/page.tsx
 msgctxt "oBJMVB"
-msgid "Belt Level"
-msgstr "Nivel de cinturón"
+msgid "Belt"
+msgstr "Cinturón"
 
 #: src/app/[locale]/(performance)/energy/energy-chart-client.tsx
 msgctxt "M+JIpD"
@@ -682,8 +682,8 @@ msgstr "La energía refleja tu consistencia de aprendizaje. Aumenta con respuest
 
 #: src/app/[locale]/(performance)/energy/energy-explanation.tsx
 msgctxt "OxVSBr"
-msgid "About Energy Level"
-msgstr "Acerca del nivel de energía"
+msgid "About Energy"
+msgstr "Acerca de la energía"
 
 #: src/app/[locale]/(performance)/energy/page.tsx
 msgctxt "7Rfk+O"
@@ -692,13 +692,13 @@ msgstr "Rastrea tu energía de aprendizaje a lo largo del tiempo"
 
 #: src/app/[locale]/(performance)/energy/page.tsx
 msgctxt "DFNCi8"
-msgid "Energy Level"
-msgstr "Nivel de energía"
+msgid "Energy"
+msgstr "Energía"
 
 #: src/app/[locale]/(performance)/energy/page.tsx
 msgctxt "gOpTHJ"
-msgid "Track your energy level over time and see how your learning consistency affects your progress."
-msgstr "Rastrea tu nivel de energía con el tiempo y observa cómo la constancia en tu aprendizaje afecta tu progreso."
+msgid "Track your energy over time and see how your learning consistency affects your progress."
+msgstr "Rastrea tu energía con el tiempo y observa cómo la constancia en tu aprendizaje afecta tu progreso."
 
 #: src/app/[locale]/(settings)/_components/protected-section.tsx
 msgctxt "2jC0rX"

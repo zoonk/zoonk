@@ -194,8 +194,8 @@ msgstr "{value} BP to next level"
 
 #: src/app/[locale]/(catalog)/belt-level.tsx
 msgctxt "FP4TgI"
-msgid "Belt level"
-msgstr "Belt level"
+msgid "Belt"
+msgstr "Belt"
 
 #: src/app/[locale]/(catalog)/belt-level.tsx
 #: src/app/[locale]/(performance)/belt/belt-stats.tsx
@@ -284,8 +284,8 @@ msgstr "Explore all Zoonk courses to learn anything using AI. Find interactive l
 
 #: src/app/[locale]/(catalog)/energy-level.tsx
 msgctxt "aRv72g"
-msgid "Energy level"
-msgstr "Energy level"
+msgid "Energy"
+msgstr "Energy"
 
 #: src/app/[locale]/(catalog)/energy-level.tsx
 msgctxt "soDmlG"
@@ -294,8 +294,8 @@ msgstr "Keep learning to increase it"
 
 #: src/app/[locale]/(catalog)/energy-level.tsx
 msgctxt "UW6IeG"
-msgid "Your energy level is {value}%"
-msgstr "Your energy level is {value}%"
+msgid "Your energy is {value}%"
+msgstr "Your energy is {value}%"
 
 #: src/app/[locale]/(catalog)/energy-level.tsx
 msgctxt "WgeB0r"
@@ -597,8 +597,8 @@ msgstr "Belt colors in order: White, Yellow, Orange, Green, Blue, Purple, Brown,
 
 #: src/app/[locale]/(performance)/belt/belt-explanation.tsx
 msgctxt "oyVnZ2"
-msgid "About Belt Levels"
-msgstr "About Belt Levels"
+msgid "About Belts"
+msgstr "About Belts"
 
 #: src/app/[locale]/(performance)/belt/belt-explanation.tsx
 msgctxt "wPDPFc"
@@ -652,18 +652,18 @@ msgstr "Total Brain Power"
 
 #: src/app/[locale]/(performance)/belt/page.tsx
 msgctxt "DYTbSA"
-msgid "Track your belt level progress"
-msgstr "Track your belt level progress"
+msgid "Track your belt progress"
+msgstr "Track your belt progress"
 
 #: src/app/[locale]/(performance)/belt/page.tsx
 msgctxt "gX5+n3"
-msgid "Track your belt level progress and see how you advance."
-msgstr "Track your belt level progress and see how you advance."
+msgid "Track your belt progress and see how you advance."
+msgstr "Track your belt progress and see how you advance."
 
 #: src/app/[locale]/(performance)/belt/page.tsx
 msgctxt "oBJMVB"
-msgid "Belt Level"
-msgstr "Belt Level"
+msgid "Belt"
+msgstr "Belt"
 
 #: src/app/[locale]/(performance)/energy/energy-chart-client.tsx
 msgctxt "M+JIpD"
@@ -682,8 +682,8 @@ msgstr "Energy reflects your learning consistency. It increases with correct ans
 
 #: src/app/[locale]/(performance)/energy/energy-explanation.tsx
 msgctxt "OxVSBr"
-msgid "About Energy Level"
-msgstr "About Energy Level"
+msgid "About Energy"
+msgstr "About Energy"
 
 #: src/app/[locale]/(performance)/energy/page.tsx
 msgctxt "7Rfk+O"
@@ -692,13 +692,13 @@ msgstr "Track your learning energy over time"
 
 #: src/app/[locale]/(performance)/energy/page.tsx
 msgctxt "DFNCi8"
-msgid "Energy Level"
-msgstr "Energy Level"
+msgid "Energy"
+msgstr "Energy"
 
 #: src/app/[locale]/(performance)/energy/page.tsx
 msgctxt "gOpTHJ"
-msgid "Track your energy level over time and see how your learning consistency affects your progress."
-msgstr "Track your energy level over time and see how your learning consistency affects your progress."
+msgid "Track your energy over time and see how your learning consistency affects your progress."
+msgstr "Track your energy over time and see how your learning consistency affects your progress."
 
 #: src/app/[locale]/(settings)/_components/protected-section.tsx
 msgctxt "2jC0rX"

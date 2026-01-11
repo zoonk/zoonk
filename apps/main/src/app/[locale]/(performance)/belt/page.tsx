@@ -18,8 +18,8 @@ export async function generateMetadata({
   const t = await getExtracted({ locale });
 
   return {
-    description: t("Track your belt level progress and see how you advance."),
-    title: t("Belt Level"),
+    description: t("Track your belt progress and see how you advance."),
+    title: t("Belt"),
   };
 }
 
@@ -35,9 +35,9 @@ export default async function BeltPage({
     <Container variant="narrow">
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <ContainerTitle>{t("Belt Level")}</ContainerTitle>
+          <ContainerTitle>{t("Belt")}</ContainerTitle>
           <ContainerDescription>
-            {t("Track your belt level progress")}
+            {t("Track your belt progress")}
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>

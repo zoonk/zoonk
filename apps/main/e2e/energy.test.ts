@@ -28,7 +28,7 @@ test.describe("Energy Page", () => {
       await authenticatedPage
         .getByRole("link")
         .filter({
-          has: authenticatedPage.getByText(/your energy level is 75%/i),
+          has: authenticatedPage.getByText(/your energy is 75%/i),
         })
         .click();
 
@@ -37,7 +37,7 @@ test.describe("Energy Page", () => {
 
       // User sees the energy page heading
       await expect(
-        authenticatedPage.getByRole("heading", { name: /energy level/i }),
+        authenticatedPage.getByRole("heading", { name: /^energy$/i }),
       ).toBeVisible();
 
       // User sees comparison to previous month (proves dynamic data loaded)

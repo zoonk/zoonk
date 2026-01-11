@@ -10,7 +10,7 @@ export async function BeltExplanation() {
 
   return (
     <Explanation>
-      <ExplanationTitle>{t("About Belt Levels")}</ExplanationTitle>
+      <ExplanationTitle>{t("About Belts")}</ExplanationTitle>
 
       <ExplanationText>
         {t(

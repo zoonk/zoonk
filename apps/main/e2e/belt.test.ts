@@ -34,7 +34,7 @@ test.describe("Belt Page", () => {
       await expect(
         authenticatedPage.getByRole("heading", {
           level: 1,
-          name: /belt level/i,
+          name: /^belt$/i,
         }),
       ).toBeVisible();
 

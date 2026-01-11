@@ -50,7 +50,7 @@ export async function BeltLevel({
         <FeatureCardHeader>
           <FeatureCardHeaderContent>
             <BeltIndicator color={color} label={beltLabel} size="sm" />
-            <FeatureCardLabel>{t("Belt level")}</FeatureCardLabel>
+            <FeatureCardLabel>{t("Belt")}</FeatureCardLabel>
           </FeatureCardHeaderContent>
           <FeatureCardIndicator />
         </FeatureCardHeader>
