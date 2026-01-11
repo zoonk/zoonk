@@ -52,18 +52,18 @@ export async function ScoreInsights({
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
       {bestDayData && (
         <BestDayCard
-          score={bestDayData.score}
           dayOfWeek={bestDayData.dayOfWeek}
           locale={locale}
           periodLabel={periodLabel}
+          score={bestDayData.score}
         />
       )}
 
       {bestTimeData && (
         <BestTimeCard
-          score={bestTimeData.score}
           period={bestTimeData.period}
           periodLabel={periodLabel}
+          score={bestTimeData.score}
         />
       )}
     </div>

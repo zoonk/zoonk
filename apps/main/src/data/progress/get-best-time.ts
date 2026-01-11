@@ -73,7 +73,7 @@ export const getBestTime = cache(
         (score === bestTime.score && total > bestTimeTotal);
 
       if (isBetter) {
-        bestTime = { score, period: Number(row.period) };
+        bestTime = { period: Number(row.period), score };
         bestTimeTotal = total;
       }
     }

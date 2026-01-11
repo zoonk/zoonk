@@ -49,16 +49,13 @@ export async function Performance() {
 
         {bestDayData && (
           <BestDay
-            score={bestDayData.score}
             dayOfWeek={bestDayData.dayOfWeek}
+            score={bestDayData.score}
           />
         )}
 
         {bestTimeData && (
-          <BestTime
-            score={bestTimeData.score}
-            period={bestTimeData.period}
-          />
+          <BestTime period={bestTimeData.period} score={bestTimeData.score} />
         )}
       </div>
     </section>

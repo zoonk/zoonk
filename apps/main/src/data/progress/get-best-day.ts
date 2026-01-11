@@ -68,7 +68,7 @@ export const getBestDay = cache(
         (score === bestDay.score && total > bestDayTotal);
 
       if (isBetter) {
-        bestDay = { score, dayOfWeek: Number(row.dayOfWeek) };
+        bestDay = { dayOfWeek: Number(row.dayOfWeek), score };
         bestDayTotal = total;
       }
     }
