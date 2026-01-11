@@ -193,7 +193,9 @@ msgid "{value} BP to next level"
 msgstr "{value} PM para o próximo nível"
 
 #: src/app/[locale]/(catalog)/belt-level.tsx
-msgctxt "FP4TgI"
+#: src/app/[locale]/(performance)/_components/metric-pills.tsx
+#: src/app/[locale]/(performance)/belt/page.tsx
+msgctxt "erSdxr"
 msgid "Belt"
 msgstr "Faixa"
 
@@ -283,7 +285,14 @@ msgid "Explore all Zoonk courses to learn anything using AI. Find interactive le
 msgstr "Explore todos os cursos do Zoonk para aprender qualquer coisa usando IA. Encontre aulas interativas, desafios e atividades para aprender matérias como ciência, matemática, tecnologia e muito mais."
 
 #: src/app/[locale]/(catalog)/energy-level.tsx
-msgctxt "aRv72g"
+msgctxt "C7ROJx"
+msgid "Your energy is {value}%"
+msgstr "Sua energia está em {value}%"
+
+#: src/app/[locale]/(catalog)/energy-level.tsx
+#: src/app/[locale]/(performance)/_components/metric-pills.tsx
+#: src/app/[locale]/(performance)/energy/page.tsx
+msgctxt "cVpmV7"
 msgid "Energy"
 msgstr "Energia"
 
@@ -291,11 +300,6 @@ msgstr "Energia"
 msgctxt "soDmlG"
 msgid "Keep learning to increase it"
 msgstr "Continue aprendendo para aumentá-lo"
-
-#: src/app/[locale]/(catalog)/energy-level.tsx
-msgctxt "UW6IeG"
-msgid "Your energy is {value}%"
-msgstr "Sua energia é {value}%"
 
 #: src/app/[locale]/(catalog)/energy-level.tsx
 msgctxt "WgeB0r"
@@ -499,16 +503,6 @@ msgctxt "YFV6dH"
 msgid "vs last year"
 msgstr "vs ano passado"
 
-#: src/app/[locale]/(performance)/_components/metric-pills.tsx
-msgctxt "cVpmV7"
-msgid "Energy"
-msgstr "Energia"
-
-#: src/app/[locale]/(performance)/_components/metric-pills.tsx
-msgctxt "erSdxr"
-msgid "Belt"
-msgstr "Faixa"
-
 #: src/app/[locale]/(performance)/_components/performance-chart-layout.tsx
 msgctxt "OlW5Z8"
 msgid "No data available for this period"
@@ -591,14 +585,14 @@ msgid "Brain Power (BP) represents your knowledge growth. Unlike energy, BP neve
 msgstr "poder mental (PM) representa seu crescimento de conhecimento. Diferente da energia, o PM nunca diminui - ele só cresce conforme você aprende mais."
 
 #: src/app/[locale]/(performance)/belt/belt-explanation.tsx
+msgctxt "Dy+nyL"
+msgid "About Belts"
+msgstr "Sobre as faixas"
+
+#: src/app/[locale]/(performance)/belt/belt-explanation.tsx
 msgctxt "J60fb6"
 msgid "Belt colors in order: White, Yellow, Orange, Green, Blue, Purple, Brown, Red, Gray, and Black. Keep learning to reach the highest level!"
 msgstr "Cores das faixas em ordem: Branca, Amarela, Laranja, Verde, Azul, Roxa, Marrom, Vermelha, Cinza e Preta. Continue aprendendo pra alcançar o nível mais alto!"
-
-#: src/app/[locale]/(performance)/belt/belt-explanation.tsx
-msgctxt "oyVnZ2"
-msgid "About Belts"
-msgstr "Sobre as faixas"
 
 #: src/app/[locale]/(performance)/belt/belt-explanation.tsx
 msgctxt "wPDPFc"
@@ -651,19 +645,14 @@ msgid "Total Brain Power"
 msgstr "poder mental total"
 
 #: src/app/[locale]/(performance)/belt/page.tsx
-msgctxt "DYTbSA"
-msgid "Track your belt progress"
-msgstr "Acompanhe seu progresso de faixa"
-
-#: src/app/[locale]/(performance)/belt/page.tsx
-msgctxt "gX5+n3"
+msgctxt "EeL8az"
 msgid "Track your belt progress and see how you advance."
-msgstr "Acompanhe seu progresso de faixa e veja como você avança."
+msgstr "Acompanhe o progresso da sua faixa e veja como você avança."
 
 #: src/app/[locale]/(performance)/belt/page.tsx
-msgctxt "oBJMVB"
-msgid "Belt"
-msgstr "Faixa"
+msgctxt "njNVDG"
+msgid "Track your belt progress"
+msgstr "Acompanhe o progresso da sua faixa"
 
 #: src/app/[locale]/(performance)/energy/energy-chart-client.tsx
 msgctxt "M+JIpD"
@@ -681,24 +670,19 @@ msgid "Energy reflects your learning consistency. It increases with correct answ
 msgstr "Energia reflete sua consistência de aprendizado. Ela aumenta com respostas corretas (+0,1%), diminui com respostas erradas (-0,03%) e cai 1% para cada dia inativo."
 
 #: src/app/[locale]/(performance)/energy/energy-explanation.tsx
-msgctxt "OxVSBr"
+msgctxt "tqJIUh"
 msgid "About Energy"
-msgstr "Sobre a energia"
+msgstr "Sobre energia"
+
+#: src/app/[locale]/(performance)/energy/page.tsx
+msgctxt "1IwE3q"
+msgid "Track your energy over time and see how your learning consistency affects your progress."
+msgstr "Acompanhe sua energia ao longo do tempo e veja como sua consistência de aprendizado afeta seu progresso."
 
 #: src/app/[locale]/(performance)/energy/page.tsx
 msgctxt "7Rfk+O"
 msgid "Track your learning energy over time"
 msgstr "Acompanhe sua energia de aprendizado ao longo do tempo"
-
-#: src/app/[locale]/(performance)/energy/page.tsx
-msgctxt "DFNCi8"
-msgid "Energy"
-msgstr "Energia"
-
-#: src/app/[locale]/(performance)/energy/page.tsx
-msgctxt "gOpTHJ"
-msgid "Track your energy over time and see how your learning consistency affects your progress."
-msgstr "Acompanhe sua energia ao longo do tempo e veja como a consistência nos estudos afeta seu progresso."
 
 #: src/app/[locale]/(settings)/_components/protected-section.tsx
 msgctxt "2jC0rX"
