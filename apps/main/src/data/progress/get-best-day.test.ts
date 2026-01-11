@@ -56,7 +56,7 @@ describe("authenticated users", () => {
 
     expect(result).not.toBeNull();
     expect(result?.dayOfWeek).toBe(0);
-    expect(result?.accuracy).toBe(90);
+    expect(result?.score).toBe(90);
   });
 
   test("excludes records older than 90 days", async () => {
@@ -90,7 +90,7 @@ describe("authenticated users", () => {
     const result = await getBestDay({ headers });
 
     expect(result).not.toBeNull();
-    expect(result?.accuracy).toBe(80);
+    expect(result?.score).toBe(80);
   });
 
   test("uses day with most answers as tiebreaker", async () => {
@@ -138,10 +138,10 @@ describe("authenticated users", () => {
 
     expect(result).not.toBeNull();
     expect(result?.dayOfWeek).toBe(0);
-    expect(result?.accuracy).toBe(90);
+    expect(result?.score).toBe(90);
   });
 
-  test("returns correct accuracy calculation", async () => {
+  test("returns correct score calculation", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
     const org = await organizationFixture();
@@ -161,6 +161,6 @@ describe("authenticated users", () => {
     const result = await getBestDay({ headers });
 
     expect(result).not.toBeNull();
-    expect(result?.accuracy).toBe(85);
+    expect(result?.score).toBe(85);
   });
 });

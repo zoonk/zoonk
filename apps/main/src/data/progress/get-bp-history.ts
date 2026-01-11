@@ -7,8 +7,8 @@ import { calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import {
-  aggregateBpByMonth,
-  aggregateBpByWeek,
+  aggregateByMonth,
+  aggregateByWeek,
   calculateDateRanges,
   formatLabel,
   type HistoryPeriod,
@@ -72,11 +72,17 @@ function processBpData(
   period: HistoryPeriod,
 ): RawDataPoint[] {
   if (period === "6months") {
-    return aggregateBpByWeek(rawData);
+    return aggregateByWeek(rawData, (p) => p.bp, "sum").map((v) => ({
+      bp: v.value,
+      date: v.date,
+    }));
   }
 
   if (period === "year") {
-    return aggregateBpByMonth(rawData);
+    return aggregateByMonth(rawData, (p) => p.bp, "sum").map((v) => ({
+      bp: v.value,
+      date: v.date,
+    }));
   }
 
   return rawData;

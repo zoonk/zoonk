@@ -16,11 +16,11 @@ import { getExtracted, getLocale } from "next-intl/server";
 import { ClientLink } from "@/i18n/client-link";
 
 type BestDayProps = {
-  accuracy: number;
+  score: number;
   dayOfWeek: number;
 };
 
-export async function BestDay({ accuracy, dayOfWeek }: BestDayProps) {
+export async function BestDay({ score, dayOfWeek }: BestDayProps) {
   const t = await getExtracted();
   const locale = await getLocale();
 
@@ -30,15 +30,15 @@ export async function BestDay({ accuracy, dayOfWeek }: BestDayProps) {
     referenceDate,
   );
 
-  const formattedAccuracy = new Intl.NumberFormat(locale, {
+  const formattedScore = new Intl.NumberFormat(locale, {
     maximumFractionDigits: 1,
     trailingZeroDisplay: "stripIfInteger",
-  }).format(accuracy);
+  }).format(score);
 
   return (
     <FeatureCardLink render={<ClientLink href="/score" />}>
       <FeatureCard>
-        <FeatureCardHeader className="text-accuracy">
+        <FeatureCardHeader className="text-score">
           <FeatureCardHeaderContent>
             <FeatureCardIcon>
               <CalendarDays />
@@ -52,7 +52,7 @@ export async function BestDay({ accuracy, dayOfWeek }: BestDayProps) {
           <FeatureCardTitle className="first-letter:uppercase">
             {t("{day} with {value}%", {
               day: dayName,
-              value: formattedAccuracy,
+              value: formattedScore,
             })}
           </FeatureCardTitle>
           <FeatureCardSubtitle>{t("Past 3 months")}</FeatureCardSubtitle>

@@ -16,11 +16,11 @@ import { getExtracted, getLocale } from "next-intl/server";
 import { ClientLink } from "@/i18n/client-link";
 
 type BestTimeProps = {
-  accuracy: number;
+  score: number;
   period: number;
 };
 
-export async function BestTime({ accuracy, period }: BestTimeProps) {
+export async function BestTime({ score, period }: BestTimeProps) {
   const t = await getExtracted();
   const locale = await getLocale();
 
@@ -33,15 +33,15 @@ export async function BestTime({ accuracy, period }: BestTimeProps) {
 
   const periodName = periodNames[period] ?? periodNames[1];
 
-  const formattedAccuracy = new Intl.NumberFormat(locale, {
+  const formattedScore = new Intl.NumberFormat(locale, {
     maximumFractionDigits: 1,
     trailingZeroDisplay: "stripIfInteger",
-  }).format(accuracy);
+  }).format(score);
 
   return (
     <FeatureCardLink render={<ClientLink href="/score" />}>
       <FeatureCard>
-        <FeatureCardHeader className="text-accuracy">
+        <FeatureCardHeader className="text-score">
           <FeatureCardHeaderContent>
             <FeatureCardIcon>
               <Clock />
@@ -55,7 +55,7 @@ export async function BestTime({ accuracy, period }: BestTimeProps) {
           <FeatureCardTitle className="first-letter:uppercase">
             {t("{period} with {value}%", {
               period: periodName,
-              value: formattedAccuracy,
+              value: formattedScore,
             })}
           </FeatureCardTitle>
           <FeatureCardSubtitle>{t("Past 3 months")}</FeatureCardSubtitle>

@@ -1,0 +1,61 @@
+import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { getExtracted, getLocale } from "next-intl/server";
+import type { HistoryPeriod } from "@/data/progress/_utils";
+import { MetricComparison } from "../_components/metric-comparison";
+import { formatPeriodLabel } from "../_utils";
+
+export async function ScoreStats({
+  average,
+  period,
+  periodEnd,
+  periodStart,
+  previousAverage,
+}: {
+  average: number;
+  period: HistoryPeriod;
+  periodEnd: Date;
+  periodStart: Date;
+  previousAverage: number | null;
+}) {
+  const t = await getExtracted();
+  const locale = await getLocale();
+
+  const formattedAverage = new Intl.NumberFormat(locale, {
+    maximumFractionDigits: 1,
+    trailingZeroDisplay: "stripIfInteger",
+  }).format(average);
+
+  const periodLabel = formatPeriodLabel(periodStart, periodEnd, period, locale);
+
+  return (
+    <div className="flex flex-col gap-1">
+      <span className="text-muted-foreground text-sm">{periodLabel}</span>
+
+      <div className="flex items-baseline gap-3">
+        <span className="font-bold text-5xl text-score tabular-nums tracking-tight">
+          {t("{value}%", { value: formattedAverage })}
+        </span>
+
+        {previousAverage !== null && (
+          <MetricComparison
+            current={average}
+            period={period}
+            previous={previousAverage}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function ScoreStatsSkeleton() {
+  return (
+    <div className="flex flex-col gap-1">
+      <Skeleton className="h-4 w-28" />
+      <div className="flex items-baseline gap-3">
+        <Skeleton className="h-12 w-28" />
+        <Skeleton className="h-5 w-32" />
+      </div>
+    </div>
+  );
+}

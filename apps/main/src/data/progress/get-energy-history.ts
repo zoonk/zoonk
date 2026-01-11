@@ -5,10 +5,10 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import {
+  aggregateByMonth,
+  aggregateByWeek,
   calculateDateRanges,
   formatLabel,
-  getMonthKey,
-  getWeekKey,
   type HistoryPeriod,
 } from "./_utils";
 
@@ -91,60 +91,18 @@ function fillGapsWithDecay(dataPoints: RawDataPoint[]): RawDataPoint[] {
   return result;
 }
 
-function aggregateByWeek(dataPoints: RawDataPoint[]): RawDataPoint[] {
-  const weekMap = new Map<
-    string,
-    { total: number; count: number; date: Date }
-  >();
-
-  for (const point of dataPoints) {
-    const key = getWeekKey(point.date);
-    const existing = weekMap.get(key);
-    if (existing) {
-      existing.total += point.energy;
-      existing.count += 1;
-    } else {
-      // Use the Monday of the week as the representative date
-      const monday = new Date(point.date);
-      const day = monday.getDay();
-      const diff = monday.getDate() - day + (day === 0 ? -6 : 1);
-      monday.setDate(diff);
-      monday.setHours(0, 0, 0, 0);
-      weekMap.set(key, { count: 1, date: monday, total: point.energy });
-    }
-  }
-
-  return Array.from(weekMap.values())
-    .map((v) => ({ date: v.date, energy: v.total / v.count }))
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
+function aggregateEnergyByWeek(dataPoints: RawDataPoint[]): RawDataPoint[] {
+  return aggregateByWeek(dataPoints, (p) => p.energy, "average").map((v) => ({
+    date: v.date,
+    energy: v.value,
+  }));
 }
 
-function aggregateByMonth(dataPoints: RawDataPoint[]): RawDataPoint[] {
-  const monthMap = new Map<
-    string,
-    { total: number; count: number; date: Date }
-  >();
-
-  for (const point of dataPoints) {
-    const key = getMonthKey(point.date);
-    const existing = monthMap.get(key);
-    if (existing) {
-      existing.total += point.energy;
-      existing.count += 1;
-    } else {
-      // Use the 1st of the month as the representative date
-      const firstOfMonth = new Date(
-        point.date.getFullYear(),
-        point.date.getMonth(),
-        1,
-      );
-      monthMap.set(key, { count: 1, date: firstOfMonth, total: point.energy });
-    }
-  }
-
-  return Array.from(monthMap.values())
-    .map((v) => ({ date: v.date, energy: v.total / v.count }))
-    .sort((a, b) => a.date.getTime() - b.date.getTime());
+function aggregateEnergyByMonth(dataPoints: RawDataPoint[]): RawDataPoint[] {
+  return aggregateByMonth(dataPoints, (p) => p.energy, "average").map((v) => ({
+    date: v.date,
+    energy: v.value,
+  }));
 }
 
 export type EnergyHistoryParams = {
@@ -189,11 +147,11 @@ function processEnergyData(
 
   // Then aggregate based on period
   if (period === "6months") {
-    return aggregateByWeek(withDecay);
+    return aggregateEnergyByWeek(withDecay);
   }
 
   if (period === "year") {
-    return aggregateByMonth(withDecay);
+    return aggregateEnergyByMonth(withDecay);
   }
 
   return withDecay;

@@ -15,20 +15,20 @@ import { getExtracted, getLocale } from "next-intl/server";
 import { ClientLink } from "@/i18n/client-link";
 import { getMenu } from "@/lib/menu";
 
-export async function Score({ accuracy }: { accuracy: number }) {
+export async function Score({ score }: { score: number }) {
   const t = await getExtracted();
   const locale = await getLocale();
   const scoreMenu = getMenu("score");
 
-  const formattedAccuracy = new Intl.NumberFormat(locale, {
+  const formattedScore = new Intl.NumberFormat(locale, {
     maximumFractionDigits: 1,
     trailingZeroDisplay: "stripIfInteger",
-  }).format(accuracy);
+  }).format(score);
 
   return (
     <FeatureCardLink render={<ClientLink href={scoreMenu.url} />}>
       <FeatureCard>
-        <FeatureCardHeader className="text-accuracy">
+        <FeatureCardHeader className="text-score">
           <FeatureCardHeaderContent>
             <FeatureCardIcon>
               <scoreMenu.icon />
@@ -40,7 +40,7 @@ export async function Score({ accuracy }: { accuracy: number }) {
 
         <FeatureCardBody>
           <FeatureCardTitle>
-            {t("{value}% correct answers", { value: formattedAccuracy })}
+            {t("{value}% correct answers", { value: formattedScore })}
           </FeatureCardTitle>
           <FeatureCardSubtitle>{t("Past 3 months")}</FeatureCardSubtitle>
         </FeatureCardBody>
