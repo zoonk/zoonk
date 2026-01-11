@@ -190,7 +190,7 @@ msgstr "Cinturón {color}"
 #: src/app/[locale]/(performance)/belt/belt-stats.tsx
 msgctxt "8N9BRu"
 msgid "{value} BP to next level"
-msgstr "{value} BP para el siguiente nivel"
+msgstr "{value} PM para el siguiente nivel"
 
 #: src/app/[locale]/(catalog)/belt-level.tsx
 msgctxt "FP4TgI"

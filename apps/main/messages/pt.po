@@ -190,7 +190,7 @@ msgstr "faixa {color}"
 #: src/app/[locale]/(performance)/belt/belt-stats.tsx
 msgctxt "8N9BRu"
 msgid "{value} BP to next level"
-msgstr "{value} BP para o próximo nível"
+msgstr "{value} PM para o próximo nível"
 
 #: src/app/[locale]/(catalog)/belt-level.tsx
 msgctxt "FP4TgI"
