@@ -54,4 +54,4 @@ i18n.cache
 debug.log
 
 # AI tasks
-tasks/
+/tasks/
