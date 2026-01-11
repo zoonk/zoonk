@@ -2,7 +2,10 @@ import { randomUUID } from "node:crypto";
 import * as courseSuggestions from "@zoonk/ai/course-suggestions/generate";
 import { prisma } from "@zoonk/db";
 import { expect, test, vi } from "vitest";
-import { generateCourseSuggestions } from "./course-suggestions";
+import {
+  generateCourseSuggestions,
+  getCourseSuggestionById,
+} from "./course-suggestions";
 
 test("get an existing item", async () => {
   const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
@@ -22,7 +25,8 @@ test("get an existing item", async () => {
 
   const result = await generateCourseSuggestions({ locale, prompt });
 
-  expect(result).toEqual(suggestions);
+  expect(result.suggestions).toEqual(suggestions);
+  expect(result.id).toBeTypeOf("number");
   expect(spy).not.toHaveBeenCalled();
 });
 
@@ -40,11 +44,38 @@ test("generates a new item", async () => {
 
   const result = await generateCourseSuggestions({ locale, prompt });
 
-  expect(result).toEqual(generatedSuggestions);
+  expect(result.suggestions).toEqual(generatedSuggestions);
+  expect(result.id).toBeTypeOf("number");
   expect(spy).toHaveBeenCalledOnce();
 
   // check if the record was added to the database
   const record = await generateCourseSuggestions({ locale, prompt });
-  expect(record).toEqual(generatedSuggestions);
+  expect(record.suggestions).toEqual(generatedSuggestions);
+  expect(record.id).toBe(result.id);
   expect(spy).toHaveBeenCalledOnce();
+});
+
+test("getCourseSuggestionById returns null for non-existent id", async () => {
+  const result = await getCourseSuggestionById(999_999);
+  expect(result).toBeNull();
+});
+
+test("getCourseSuggestionById returns suggestion by id", async () => {
+  const locale = "en";
+  const prompt = `by-id-${randomUUID()}`;
+  const suggestions = [
+    { description: "Test description", title: "Test Course" },
+  ];
+
+  const record = await prisma.courseSuggestion.create({
+    data: { locale, prompt, suggestions },
+  });
+
+  const result = await getCourseSuggestionById(record.id);
+
+  expect(result).toEqual({
+    locale,
+    prompt,
+    suggestions,
+  });
 });

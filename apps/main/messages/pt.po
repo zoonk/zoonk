@@ -358,9 +358,9 @@ msgid "Course ideas for {prompt}"
 msgstr "Ideias de cursos para {prompt}"
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx
-msgctxt "dCKXDB"
-msgid "Create course"
-msgstr "Criar curso"
+msgctxt "Pc+tM3"
+msgid "Generate"
+msgstr "Gerar"
 
 #: src/app/[locale]/(catalog)/learn/[prompt]/course-suggestions.tsx
 msgctxt "RbslnC"
@@ -555,6 +555,8 @@ msgid "Month"
 msgstr "Mês"
 
 #: src/app/[locale]/(performance)/accuracy/page.tsx
+#: src/app/[locale]/(performance)/belt/page.tsx
+#: src/app/[locale]/generate/cs/[id]/generate-course-suggestion-content.tsx
 msgctxt "e61Jf3"
 msgid "Coming soon"
 msgstr "Em breve"
@@ -886,6 +888,11 @@ msgstr "Aula interativa com exercícios e atividades para ajudá-lo a aprender e
 msgctxt "PJivSX"
 msgid "Lesson"
 msgstr "Aula"
+
+#: src/app/[locale]/generate/cs/[id]/generate-course-suggestion-content.tsx
+msgctxt "9IJjWu"
+msgid "Generate Course"
+msgstr "Gerar curso"
 
 #: src/app/[locale]/privacy/page.tsx
 msgctxt "iql85X"
