@@ -677,12 +677,12 @@ msgstr "Em breve"
 #: src/app/[locale]/(performance)/score/page.tsx
 msgctxt "iJoPjp"
 msgid "Track your score and performance trends"
-msgstr ""
+msgstr "Acompanhe seus acertos e tendências de desempenho"
 
 #: src/app/[locale]/(performance)/score/page.tsx
 msgctxt "qHWZBu"
 msgid "Track your score over time and see your best days and times."
-msgstr ""
+msgstr "Acompanhe seus acertos ao longo do tempo e veja seus melhores dias e horários."
 
 #: src/app/[locale]/(settings)/_components/protected-section.tsx
 msgctxt "2jC0rX"
