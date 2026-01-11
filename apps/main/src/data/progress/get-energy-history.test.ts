@@ -1,5 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
+import { createSafeDate } from "@zoonk/testing/fixtures/dates";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, test } from "vitest";
@@ -14,18 +15,6 @@ describe("unauthenticated users", () => {
     expect(result).toBeNull();
   });
 });
-
-/**
- * Creates a date safely in the middle of a month to avoid edge cases.
- * Using day 15 prevents issues when subtracting months (e.g., March 31 - 1 month
- * would roll over since Feb 31 doesn't exist).
- */
-function createSafeDate(monthsAgo = 0): Date {
-  const date = new Date();
-  date.setDate(15);
-  date.setMonth(date.getMonth() - monthsAgo);
-  return date;
-}
 
 describe("authenticated users", () => {
   test("returns null when user has no DailyProgress records", async () => {

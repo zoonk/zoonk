@@ -1,9 +1,9 @@
-import type { EnergyPeriod } from "@/data/progress/get-energy-history";
+import type { HistoryPeriod } from "@/data/progress/_utils";
 
 export function formatPeriodLabel(
   periodStart: Date,
   periodEnd: Date,
-  period: EnergyPeriod,
+  period: HistoryPeriod,
   locale: string,
 ): string {
   if (period === "month") {

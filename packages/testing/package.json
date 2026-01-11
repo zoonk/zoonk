@@ -14,6 +14,7 @@
     "./fixtures/auth": "./src/fixtures/auth.ts",
     "./fixtures/chapters": "./src/fixtures/chapters.ts",
     "./fixtures/courses": "./src/fixtures/courses.ts",
+    "./fixtures/dates": "./src/fixtures/dates.ts",
     "./fixtures/lessons": "./src/fixtures/lessons.ts",
     "./fixtures/orgs": "./src/fixtures/orgs.ts",
     "./fixtures/users": "./src/fixtures/users.ts"

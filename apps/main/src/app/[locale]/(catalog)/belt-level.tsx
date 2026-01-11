@@ -14,6 +14,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import type { BeltColor } from "@zoonk/utils/belt-level";
 import { getExtracted, getLocale } from "next-intl/server";
 import { ClientLink } from "@/i18n/client-link";
+import { getBeltColorLabel } from "@/lib/belt-colors";
 import { getMenu } from "@/lib/menu";
 
 type BeltLevelProps = {
@@ -33,40 +34,7 @@ export async function BeltLevel({
   const locale = await getLocale();
   const beltMenu = getMenu("belt");
 
-  let colorName: string;
-  // biome-ignore lint/nursery/noUnnecessaryConditions: exhaustive switch for i18n extraction
-  switch (color) {
-    case "white":
-      colorName = t("White");
-      break;
-    case "yellow":
-      colorName = t("Yellow");
-      break;
-    case "orange":
-      colorName = t("Orange");
-      break;
-    case "green":
-      colorName = t("Green");
-      break;
-    case "blue":
-      colorName = t("Blue");
-      break;
-    case "purple":
-      colorName = t("Purple");
-      break;
-    case "brown":
-      colorName = t("Brown");
-      break;
-    case "red":
-      colorName = t("Red");
-      break;
-    case "gray":
-      colorName = t("Gray");
-      break;
-    case "black":
-      colorName = t("Black");
-      break;
-  }
+  const colorName = await getBeltColorLabel(color);
 
   const formattedBp = new Intl.NumberFormat(locale).format(bpToNextLevel);
 

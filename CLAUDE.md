@@ -69,6 +69,7 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - Don't add comments to a component's props
 - Pass types directly to the component declaration instead of using `type` since those types won't be exported/reused
 - When adding a new Prisma model, always add a seed for it in `packages/db/src/prisma/seed/`
+- Never run `pnpm dev` as there's already a dev server running
 
 ## Component Organization
 
@@ -135,8 +136,8 @@ For detailed testing patterns, fixtures, and best practices, see `.claude/skills
 
 - Use `getExtracted` (server) or `useExtracted` (client) for translations
 - **IMPORTANT**: The `t` function does NOT support dynamic keys. Use string literals: `t("Arts courses")`, not `t(someVariable)`
-
-For detailed i18n workflow and gotchas, see `.claude/skills/translations/SKILL.md`
+- **CRITICAL: NEVER pass `t` as a function argument**. This is a common mistake that breaks i18n extraction. Instead of passing `t` to a function, create an async function that calls `getExtracted()` internally (see `@apps/main/src/lib/categories.ts` and `@apps/main/src/lib/belt-colors.ts` for examples)
+- Always read the [translations skill](.claude/skills/translations/SKILL.md) when using `next-intl`.
 
 ## CSS
 

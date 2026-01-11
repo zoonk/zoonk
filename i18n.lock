@@ -210,21 +210,11 @@ checksums:
     Search%20chapters%20and%20lessons/singular: 1478233cb8fcb9b66cea6661a11d388c
     No%20chapters%20or%20lessons%20found/singular: 2fe297df8b5d61f27245373ef71d1f10
     This%20content%20was%20generated%20by%20AI.%20It%20may%20contain%20errors%20or%20inaccuracies%20and%20should%20not%20be%20considered%20professional%20advice./singular: 269e7c16a722903b9b434f28aa6cf617
-    Green/singular: 482ff383a4258357ba404f283682471d
     "%7Bcolor%7D%20belt/singular": 5949446c9b4a223c04cc500fa17a1fe0
-    Yellow/singular: 15d533755d35af887dfa584975549fda
     "%7Bvalue%7D%20BP%20to%20next%20level/singular": dc80ce93407f21e5e909760ec2c9aaef
-    Red/singular: bace0083b78cdb188523bc4abc7b55c6
-    Brown/singular: 82d5fc088538ffd2a24581d1ca1836ef
     Belt%20level/singular: c1a910b105280d7d27f3c5061bea6213
-    Blue/singular: a5cf034b2d370a976119335cd99f4217
-    Orange/singular: 836094fa3fcf7488957f6d7cba7c1f60
-    White/singular: 5d3dd2b57ed2fc668362b9b9efd8fb41
     Max%20level%20reached/singular: 5bfdf2d9ba3929b456dcf5c253315e92
-    Purple/singular: 547ba93b6f68317e2dfbafb16cabc30f
     "%7Bcolor%7D%20Belt%20-%20Level%20%7Blevel%7D/singular": abb5a7600bd66f523906425beffbaff4
-    Black/singular: 0a78282fb00e09a335608b154ffa01de
-    Gray/singular: 54ec745c22b59509822468ba82070d74
     "%7Bday%7D%20with%20%7Bvalue%7D%25/singular": 6e5416262bf719f632e31ed1a8236801
     Best%20day/singular: c7d1324abc9d2515ec3bbc955b317404
     Continue%20learning/singular: ff5ff528cbacf657af36fb9b711431d6
@@ -278,8 +268,15 @@ checksums:
     Peak%20time/singular: 00610169ef99ad10cd58469e43f5a056
     "%7Bperiod%7D%20with%20%7Bvalue%7D%25/singular": 958bc2c65d9a6823edee6f2585fd6501
     Performance/singular: 28b6d3a3d4a53afa0617a180e318ff4d
+    "%7Bvalue%7D%25/singular": 35cbe4d3fffd3e6b5415eea333f532d7
+    vs%20last%20month/singular: 642c3b71173b2adbd876aa05d53d47cf
+    vs%20last%206%20months/singular: 82e8ff0c71a42ab0aa345474035d29b4
+    vs%20last%20year/singular: 2a0511aeb7dec0c7edd5e2a0adf68d24
     Energy/singular: 958809db5050650b97519e0f1f3e1951
     Belt/singular: fa36e8e36732c223d2876c0337d372e9
+    No%20data%20available%20for%20this%20period/singular: 2aac0a35f0be9371444d96a7fff3009d
+    Start%20learning%20to%20track%20your%20progress/singular: 3da12ddb251d423ee8ef4bb80f7b2845
+    Log%20in%20to%20track%20your%20progress/singular: 51a9c02af2bf374e6b942da88533d034
     Previous%20period/singular: b53b793ab929e364ecc20d8b15c694e9
     Next%20period/singular: aa98c0595afc2b75886531e6d77d8415
     Year/singular: ed86f5f60583f9d8ffdbeed306aa0ec7
@@ -289,18 +286,27 @@ checksums:
     Coming%20soon/singular: ee2b0671e00972773210c5be5a9ccb89
     Track%20your%20accuracy%20over%20time%20and%20see%20your%20best%20days%20and%20peak%20times./singular: 6cf7fcfdc6aeba2b3663cd106bb9edf8
     Track%20your%20accuracy%20and%20performance%20trends/singular: 880e1c11776101f3fd7e3ba37f621842
+    Brain%20Power%20chart/singular: 07ca213967e88b69e1000a6cda465ad8
+    Total%20Brain%20Power%20earned%3A%20%7Btotal%7D/singular: d28228f7edab6482d1a444de33646b1a
+    "%7Bvalue%7D%20BP/singular": a2480149a0208509d79feeb1ca1cfa1e
+    Brain%20Power%20(BP)%20represents%20your%20knowledge%20growth.%20Unlike%20energy%2C%20BP%20never%20decreases%20-%20it%20only%20grows%20as%20you%20learn%20more./singular: 436619a12f6800283deddf1f429d506a
+    Belt%20colors%20in%20order%3A%20White%2C%20Yellow%2C%20Orange%2C%20Green%2C%20Blue%2C%20Purple%2C%20Brown%2C%20Red%2C%20Gray%2C%20and%20Black.%20Keep%20learning%20to%20reach%20the%20highest%20level!/singular: 9e74564402564784900f3ba7c0da5f10
+    About%20Belt%20Levels/singular: 096f881928325936207417b8f69b0934
+    Every%20time%20you%20complete%20an%20activity%2C%20you%20earn%20Brain%20Power.%20As%20you%20accumulate%20BP%2C%20you%20progress%20through%2010%20belt%20colors%2C%20each%20with%2010%20levels./singular: e83109402715e0504df428c5aa41ac26
+    Level%20%7Bcurrent%7D%20of%2010%20in%20%7Bcolor%7D%20belt/singular: 2b6cc01675b41d1269ce8a1050728622
+    Done/singular: ffd408fa29d5bc9039ef8ea1b9b699bb
+    Belt%20Progression/singular: 7d421f5c2e2169fdeec9027d242bf4d2
+    "%7Bcolor%7D%20Belt%2C%20Level%20%7Blevel%7D%20of%2010.%20%7Bbp%7D%20brain%20power%20until%20next%20level./singular": e367a07e36f925916dfd40e71129786b
+    "%7Bcolor%7D%20Belt%2C%20Level%20%7Blevel%7D%20of%2010.%20Maximum%20level%20achieved./singular": f76961b35ae61781509ea9f0b5c19849
+    "%7Bcurrent%7D%2F10/singular": ae23c13a041f3d7fe6e13ca4927ad01e
+    BP/singular: 842ed01b3a4d0efa6fe96ae8c595726c
+    "%7Bvalue%7D%20BP%20earned/singular": 583e121af4a624edef99166b4af272c0
+    Total%20Brain%20Power/singular: d20bd99b8345101df62b8fa365c9b2dc
     Track%20your%20belt%20level%20progress/singular: 60f8b3c34ac6960c4abde9ae894b7364
     Track%20your%20belt%20level%20progress%20and%20see%20how%20you%20advance./singular: 82ca9705d6a726080cd57d39b9ffe635
     Belt%20Level/singular: a2e673c2fb1df26a5a48470893fae07a
-    "%7Bvalue%7D%25/singular": 35cbe4d3fffd3e6b5415eea333f532d7
     Energy%20chart/singular: 79a504a3370c1e606dc714f587012cbe
     Avg/singular: 2d7f837da968af2579e75135d3787b3d
-    No%20data%20available%20for%20this%20period/singular: 2aac0a35f0be9371444d96a7fff3009d
-    "%7Bchange%7D%25%20vs%20last%206%20months/singular": 58016376e383a25b495ec60273874863
-    "%7Bchange%7D%25%20vs%20last%20month/singular": e773b0c94f10d90c3ff5745a0ba5f27b
-    "%7Bchange%7D%25%20vs%20last%20year/singular": de21b3a7bfba3b5a7c466c8567484213
-    Log%20in%20to%20track%20your%20energy%20level/singular: b72c3eebef3e53679c15bb6c59e3ff80
-    Start%20learning%20to%20track%20your%20energy%20level/singular: 09714e088f54128f034671262e20ab98
     Energy%20reflects%20your%20learning%20consistency.%20It%20increases%20with%20correct%20answers%20(%2B0.1%25)%2C%20decreases%20with%20wrong%20answers%20(-0.03%25)%2C%20and%20drops%201%25%20for%20each%20inactive%20day./singular: 94dd59a838ae089f5aa690db00866501
     About%20Energy%20Level/singular: 10fc71fe14c91508304c509e7f2852a4
     Track%20your%20learning%20energy%20over%20time/singular: c9ec5b7fab47c0313af0dbb14e83c653
@@ -388,6 +394,16 @@ checksums:
     Pronunciation/singular: fa10bd7f4b790473afcec2a8cb2d8188
     Lesson%20Quiz/singular: dd56fd2bf35d3bdf15729bcf2ec1aca7
     Background/singular: 0ceaed10d99ed4ad83cb0934ab970174
+    Green/singular: 482ff383a4258357ba404f283682471d
+    Yellow/singular: 15d533755d35af887dfa584975549fda
+    Red/singular: bace0083b78cdb188523bc4abc7b55c6
+    Brown/singular: 82d5fc088538ffd2a24581d1ca1836ef
+    Blue/singular: a5cf034b2d370a976119335cd99f4217
+    Orange/singular: 836094fa3fcf7488957f6d7cba7c1f60
+    White/singular: 5d3dd2b57ed2fc668362b9b9efd8fb41
+    Purple/singular: 547ba93b6f68317e2dfbafb16cabc30f
+    Black/singular: 0a78282fb00e09a335608b154ffa01de
+    Gray/singular: 54ec745c22b59509822468ba82070d74
     "%7Bcategory%7D%20Courses/singular": f82680a650c487992e1025b66f324d4c
     Explore%20all%20%7Bcategory%7D%20courses/singular: b1f2775c67b4a61b3d92b4345b8b852e
     "%7Bcategory%7D%20courses/singular": eafd6f9b1fa97400abe1bfe0c8ee5f19

@@ -1,14 +1,15 @@
 import { getSession } from "@zoonk/core/users/session/get";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import type { EnergyPeriod } from "@/data/progress/get-energy-history";
-import { getEnergyHistory } from "@/data/progress/get-energy-history";
+import type { HistoryPeriod } from "@/data/progress/_utils";
+import { getBpHistory } from "@/data/progress/get-bp-history";
 import { PerformanceChartSkeleton } from "../_components/performance-chart-skeleton";
 import { PerformanceEmptyState } from "../_components/performance-empty-state";
-import { EnergyChart } from "./energy-chart";
-import { EnergyExplanation } from "./energy-explanation";
-import { EnergyStats, EnergyStatsSkeleton } from "./energy-stats";
+import { BeltChart } from "./belt-chart";
+import { BeltExplanation } from "./belt-explanation";
+import { BeltProgression, BeltProgressionSkeleton } from "./belt-progression";
+import { BeltStats, BeltStatsSkeleton } from "./belt-stats";
 
-export async function EnergyContent({
+export async function BeltContent({
   locale,
   searchParams,
 }: {
@@ -18,10 +19,10 @@ export async function EnergyContent({
   const { offset = "0", period = "month" } = await searchParams;
 
   const [data, session] = await Promise.all([
-    getEnergyHistory({
+    getBpHistory({
       locale,
       offset: Number(offset),
-      period: period as EnergyPeriod,
+      period: period as HistoryPeriod,
     }),
     getSession(),
   ]);
@@ -31,41 +32,46 @@ export async function EnergyContent({
   if (!(data && isAuthenticated)) {
     return (
       <PerformanceEmptyState isAuthenticated={isAuthenticated}>
-        <EnergyExplanation />
+        <BeltExplanation />
       </PerformanceEmptyState>
     );
   }
 
   return (
     <div className="flex flex-col gap-8">
-      <EnergyStats
-        average={data.average}
-        period={period as EnergyPeriod}
+      <BeltStats
+        currentBelt={data.currentBelt}
+        period={period as HistoryPeriod}
         periodEnd={data.periodEnd}
         periodStart={data.periodStart}
-        previousAverage={data.previousAverage}
+        periodTotal={data.periodTotal}
+        previousPeriodTotal={data.previousPeriodTotal}
+        totalBp={data.totalBp}
       />
 
-      <EnergyChart
-        average={data.average}
+      <BeltChart
         dataPoints={data.dataPoints}
         hasNext={data.hasNextPeriod}
         hasPrevious={data.hasPreviousPeriod}
-        period={period as EnergyPeriod}
+        period={period as HistoryPeriod}
         periodEnd={data.periodEnd}
         periodStart={data.periodStart}
+        periodTotal={data.periodTotal}
       />
 
-      <EnergyExplanation />
+      <BeltProgression currentBelt={data.currentBelt} />
+
+      <BeltExplanation />
     </div>
   );
 }
 
-export function EnergyContentSkeleton() {
+export function BeltContentSkeleton() {
   return (
     <div className="flex flex-col gap-8">
-      <EnergyStatsSkeleton />
+      <BeltStatsSkeleton />
       <PerformanceChartSkeleton />
+      <BeltProgressionSkeleton />
 
       <div className="flex flex-col gap-2">
         <Skeleton className="h-4 w-36" />

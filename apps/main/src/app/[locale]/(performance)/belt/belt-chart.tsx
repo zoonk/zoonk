@@ -1,37 +1,43 @@
 import { getLocale } from "next-intl/server";
-import type {
-  EnergyDataPoint,
-  EnergyPeriod,
-} from "@/data/progress/get-energy-history";
+import type { HistoryPeriod } from "@/data/progress/_utils";
+import type { BpDataPoint } from "@/data/progress/get-bp-history";
 import { PerformanceChartLayout } from "../_components/performance-chart-layout";
 import { formatPeriodLabel } from "../_utils";
-import { EnergyChartClient } from "./energy-chart-client";
+import { BeltChartClient } from "./belt-chart-client";
 
-export async function EnergyChart({
-  average,
+type SerializedDataPoint = {
+  date: string;
+  bp: number;
+  label: string;
+};
+
+export async function BeltChart({
   dataPoints,
   hasNext,
   hasPrevious,
   period,
   periodEnd,
   periodStart,
+  periodTotal,
 }: {
-  average: number;
-  dataPoints: EnergyDataPoint[];
+  dataPoints: BpDataPoint[];
   hasNext: boolean;
   hasPrevious: boolean;
-  period: EnergyPeriod;
+  period: HistoryPeriod;
   periodEnd: Date;
   periodStart: Date;
+  periodTotal: number;
 }) {
   const locale = await getLocale();
   const periodLabel = formatPeriodLabel(periodStart, periodEnd, period, locale);
 
-  const serializedDataPoints = dataPoints.map((point) => ({
-    date: point.date.toISOString(),
-    energy: point.energy,
-    label: point.label,
-  }));
+  const serializedDataPoints: SerializedDataPoint[] = dataPoints.map(
+    (point) => ({
+      bp: point.bp,
+      date: point.date.toISOString(),
+      label: point.label,
+    }),
+  );
 
   return (
     <PerformanceChartLayout
@@ -40,7 +46,7 @@ export async function EnergyChart({
       isEmpty={dataPoints.length === 0}
       periodLabel={periodLabel}
     >
-      <EnergyChartClient average={average} dataPoints={serializedDataPoints} />
+      <BeltChartClient dataPoints={serializedDataPoints} total={periodTotal} />
     </PerformanceChartLayout>
   );
 }
