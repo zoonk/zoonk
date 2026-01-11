@@ -72,6 +72,7 @@ export async function CourseSuggestions({
                       variant: "outline",
                     })}
                     href={`/generate/cs/${id}`}
+                    prefetch={false}
                   >
                     <SparklesIcon aria-hidden="true" className="size-4" />
                     {t("Generate")}
