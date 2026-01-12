@@ -6,6 +6,10 @@ import { streamStatus } from "../stream-status";
 
 type Input = { title: string; locale: string };
 
+/**
+ * When a course generation fails, we want to start over.
+ * So, we remove the failed course first.
+ */
 export async function cleanupFailedCourseStep(input: Input): Promise<void> {
   "use step";
 
