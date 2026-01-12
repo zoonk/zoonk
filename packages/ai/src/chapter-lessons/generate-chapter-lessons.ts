@@ -28,7 +28,7 @@ export type ChapterLessonsParams = {
   chapterDescription: string;
   chapterTitle: string;
   courseTitle: string;
-  locale: string;
+  language: string;
   model?: string;
   useFallback?: boolean;
 };
@@ -37,12 +37,12 @@ export async function generateChapterLessons({
   chapterDescription,
   chapterTitle,
   courseTitle,
-  locale,
+  language,
   model = DEFAULT_MODEL,
   useFallback = true,
 }: ChapterLessonsParams) {
   const userPrompt = `
-    LANGUAGE: ${locale}
+    LANGUAGE: ${language}
     COURSE_TITLE: ${courseTitle}
     CHAPTER_TITLE: ${chapterTitle}
     CHAPTER_DESCRIPTION: ${chapterDescription}

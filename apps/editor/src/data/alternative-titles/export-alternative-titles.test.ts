@@ -25,10 +25,10 @@ describe("exportAlternativeTitles", () => {
       data: [
         {
           courseId: course.id,
-          locale: "en",
+          language: "en",
           slug: `machine-learning-${suffix}`,
         },
-        { courseId: course.id, locale: "en", slug: `ml-basics-${suffix}` },
+        { courseId: course.id, language: "en", slug: `ml-basics-${suffix}` },
       ],
     });
 
@@ -62,9 +62,17 @@ describe("exportAlternativeTitles", () => {
 
     await prisma.courseAlternativeTitle.createMany({
       data: [
-        { courseId: course.id, locale: "en", slug: `zebra-learning-${suffix}` },
-        { courseId: course.id, locale: "en", slug: `alpha-course-${suffix}` },
-        { courseId: course.id, locale: "en", slug: `beta-training-${suffix}` },
+        {
+          courseId: course.id,
+          language: "en",
+          slug: `zebra-learning-${suffix}`,
+        },
+        { courseId: course.id, language: "en", slug: `alpha-course-${suffix}` },
+        {
+          courseId: course.id,
+          language: "en",
+          slug: `beta-training-${suffix}`,
+        },
       ],
     });
 

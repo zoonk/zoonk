@@ -1,12 +1,12 @@
 model CourseSuggestion {
   id          Int      @id @default(autoincrement())
-  locale      String   @db.VarChar(10)
+  language    String   @db.VarChar(10)
   prompt      String
   suggestions Json
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
 
-  @@unique([locale, prompt], name: "localePrompt")
+  @@unique([language, prompt], name: "languagePrompt")
   @@map("course_suggestions")
 }
 
@@ -40,10 +40,10 @@ model CourseAlternativeTitle {
   courseId  Int      @map("course_id")
   course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   slug      String
-  locale    String   @db.VarChar(10)
+  language  String   @db.VarChar(10)
   createdAt DateTime @default(now()) @map("created_at")
 
-  @@unique([locale, slug], name: "localeSlug")
+  @@unique([language, slug], name: "languageSlug")
   @@index([courseId])
   @@map("course_alternative_titles")
 }

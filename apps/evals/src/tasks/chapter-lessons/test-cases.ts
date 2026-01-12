@@ -12,7 +12,7 @@ const SHARED_EXPECTATIONS = `
   - Don't include summary or review lessons. For example, do NOT create a lesson title "Summary of Key Concepts" or "Review of Chapter"
   - Don't include assessment or quiz lessons
   - Don't include final project or capstone lessons
-  - Should follow the language specified by locale parameter
+  - Should follow the language specified by language parameter
   - Should follow title and description guidelines: no fluff, be concise, straight to the point
   - Descriptions should be concise and straight to the point, no fluff/filler words (avoid "learn", "understand", "explore", "introduction to", etc.)
   - You don't need to evaluate the output format here, just focus on the lesson content quality
@@ -41,7 +41,7 @@ export const TEST_CASES = [
         "Structure and semantics of web content using HTML: Elements, attributes, forms, multimedia, and accessibility.",
       chapterTitle: "HTML",
       courseTitle: "Web Development",
-      locale: "en",
+      language: "en",
     },
   },
   {
@@ -59,7 +59,7 @@ export const TEST_CASES = [
         "Iónico, covalente y metálico; VSEPR, enlace de valencia, orbitales moleculares, hibridación y polaridad.",
       chapterTitle: "Enlace químico y estructura molecular",
       courseTitle: "Química",
-      locale: "es",
+      language: "es",
     },
   },
   {
@@ -79,7 +79,7 @@ export const TEST_CASES = [
         "OLS geometry, assumptions, identification, Gauss–Markov, hypothesis testing, and model diagnostics.",
       chapterTitle: "Econometric Theory I: Linear Models",
       courseTitle: "Economics",
-      locale: "en",
+      language: "en",
     },
   },
   {
@@ -97,7 +97,7 @@ export const TEST_CASES = [
         "Papéis, eventos e artefatos; Definition of Done/Ready, refinamento eficaz e anti‑padrões comuns.",
       chapterTitle: "Scrum na Prática",
       courseTitle: "Metodologias Ágeis",
-      locale: "pt",
+      language: "pt",
     },
   },
   {
@@ -115,7 +115,7 @@ export const TEST_CASES = [
         "Influence, doubt, emotion, denial, volition, and impersonal expressions with triggers.",
       chapterTitle: "Subjunctive: Noun Clauses",
       courseTitle: "Spanish",
-      locale: "en",
+      language: "en",
     },
   },
   {
@@ -134,7 +134,7 @@ export const TEST_CASES = [
         "Fundamental principles, fundamental rights and guarantees, State organization, Union powers, constitutionality control.",
       chapterTitle: "Constitutional Law",
       courseTitle: "Brazilian Law",
-      locale: "en",
+      language: "en",
     },
   },
   {
@@ -153,7 +153,7 @@ export const TEST_CASES = [
         "Types of magic, wand lore, spell categories, nonverbal magic, wandless magic, and the limits of magic.",
       chapterTitle: "The Magic System",
       courseTitle: "Harry Potter",
-      locale: "en",
+      language: "en",
     },
   },
   {
@@ -168,7 +168,7 @@ export const TEST_CASES = [
         "Competências nucleares, portfólio de projetos e branding profissional. Estratégias de estágio, bolsas e entrevistas.",
       chapterTitle: "Mapeando uma trajetória de carreira",
       courseTitle: "Neurociência",
-      locale: "pt",
+      language: "pt",
     },
   },
   {
@@ -183,7 +183,7 @@ export const TEST_CASES = [
         "Project selection, case studies, technical writing, talks, and community presence.",
       chapterTitle: "Portfolio & personal branding",
       courseTitle: "Web Development",
-      locale: "en",
+      language: "en",
     },
   },
 ];

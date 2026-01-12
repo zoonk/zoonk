@@ -6,7 +6,7 @@ import { toSlug } from "@zoonk/utils/string";
 export async function addAlternativeTitles(params: {
   courseId: number;
   titles: string[];
-  locale: string;
+  language: string;
 }): Promise<void> {
   const slugs = params.titles.map((title) => toSlug(title));
   const uniqueSlugs = [...new Set(slugs)].filter(Boolean);
@@ -18,7 +18,7 @@ export async function addAlternativeTitles(params: {
   await prisma.courseAlternativeTitle.createMany({
     data: uniqueSlugs.map((slug) => ({
       courseId: params.courseId,
-      locale: params.locale,
+      language: params.language,
       slug,
     })),
     skipDuplicates: true,

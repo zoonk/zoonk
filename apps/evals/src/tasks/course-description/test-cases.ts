@@ -26,7 +26,7 @@ export const TEST_CASES = [
     `,
     id: "en-frontend-development",
     userInput: {
-      locale: "en",
+      language: "en",
       title: "Frontend Development",
     },
   },
@@ -41,7 +41,7 @@ export const TEST_CASES = [
     `,
     id: "en-french",
     userInput: {
-      locale: "en",
+      language: "en",
       title: "French",
     },
   },
@@ -56,7 +56,7 @@ export const TEST_CASES = [
     `,
     id: "pt-inteligencia-artificial",
     userInput: {
-      locale: "pt",
+      language: "pt",
       title: "Inteligência Artificial",
     },
   },
@@ -71,7 +71,7 @@ export const TEST_CASES = [
     `,
     id: "es-desarrollo-web",
     userInput: {
-      locale: "es",
+      language: "es",
       title: "Desarrollo Web",
     },
   },
@@ -86,7 +86,7 @@ export const TEST_CASES = [
     `,
     id: "en-the-matrix",
     userInput: {
-      locale: "en",
+      language: "en",
       title: "The Matrix",
     },
   },

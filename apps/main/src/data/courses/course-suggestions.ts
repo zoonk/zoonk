@@ -10,46 +10,46 @@ type Suggestion = {
 };
 
 async function findCourseSuggestion(params: {
-  locale: string;
+  language: string;
   prompt: string;
 }) {
-  const { locale, prompt: rawPrompt } = params;
+  const { language, prompt: rawPrompt } = params;
   const prompt = normalizeString(rawPrompt);
 
   return prisma.courseSuggestion.findUnique({
-    where: { localePrompt: { locale, prompt } },
+    where: { languagePrompt: { language, prompt } },
   });
 }
 
 async function upsertCourseSuggestion(input: {
-  locale: string;
+  language: string;
   prompt: string;
   suggestions: Suggestion[];
 }) {
-  const { locale, prompt: rawPrompt, suggestions } = input;
+  const { language, prompt: rawPrompt, suggestions } = input;
   const prompt = normalizeString(rawPrompt);
 
   return prisma.courseSuggestion.upsert({
-    create: { locale, prompt, suggestions },
+    create: { language, prompt, suggestions },
     update: { suggestions },
-    where: { localePrompt: { locale, prompt } },
+    where: { languagePrompt: { language, prompt } },
   });
 }
 
 export async function generateCourseSuggestions({
-  locale,
+  language,
   prompt,
 }: {
-  locale: string;
+  language: string;
   prompt: string;
 }): Promise<{ id: number; suggestions: Suggestion[] }> {
-  const record = await findCourseSuggestion({ locale, prompt });
+  const record = await findCourseSuggestion({ language, prompt });
 
   if (!record) {
-    const { data } = await generateTask({ locale, prompt });
+    const { data } = await generateTask({ language, prompt });
 
     const newRecord = await upsertCourseSuggestion({
-      locale,
+      language,
       prompt,
       suggestions: data,
     });
@@ -61,12 +61,12 @@ export async function generateCourseSuggestions({
 }
 
 export async function getCourseSuggestionById(id: number): Promise<{
-  locale: string;
+  language: string;
   prompt: string;
   suggestions: Suggestion[];
 } | null> {
   const record = await prisma.courseSuggestion.findUnique({
-    select: { locale: true, prompt: true, suggestions: true },
+    select: { language: true, prompt: true, suggestions: true },
     where: { id },
   });
 
@@ -75,7 +75,7 @@ export async function getCourseSuggestionById(id: number): Promise<{
   }
 
   return {
-    locale: record.locale,
+    language: record.language,
     prompt: record.prompt,
     suggestions: record.suggestions as Suggestion[],
   };

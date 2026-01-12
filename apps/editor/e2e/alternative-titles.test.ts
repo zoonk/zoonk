@@ -42,7 +42,7 @@ async function createAlternativeTitleFixture(
 ) {
   const slug = `${baseSlug}-${randomUUID().slice(0, 8)}`;
   await prisma.courseAlternativeTitle.create({
-    data: { courseId, locale: "en", slug },
+    data: { courseId, language: "en", slug },
   });
   return slug;
 }
@@ -58,7 +58,7 @@ async function createManyAlternativeTitleFixtures(
   );
 
   await prisma.courseAlternativeTitle.createMany({
-    data: slugs.map((slug) => ({ courseId, locale: "en", slug })),
+    data: slugs.map((slug) => ({ courseId, language: "en", slug })),
   });
 
   return slugs;
@@ -307,7 +307,7 @@ test.describe("Alternative Titles Editor", () => {
     const slug = `dup-test-${uniqueId}`;
 
     await prisma.courseAlternativeTitle.create({
-      data: { courseId: course.id, locale: "en", slug },
+      data: { courseId: course.id, language: "en", slug },
     });
 
     await navigateToCoursePage(authenticatedPage, course.slug);

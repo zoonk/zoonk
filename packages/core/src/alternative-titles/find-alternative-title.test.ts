@@ -27,12 +27,12 @@ describe("findAlternativeTitle", () => {
 
     await addAlternativeTitles({
       courseId: course.id,
-      locale: "en",
+      language: "en",
       titles: [uniqueTitle],
     });
 
     const result = await findAlternativeTitle({
-      locale: "en",
+      language: "en",
       title: uniqueTitle,
     });
 
@@ -50,12 +50,12 @@ describe("findAlternativeTitle", () => {
 
     await addAlternativeTitles({
       courseId: course.id,
-      locale: "en",
+      language: "en",
       titles: [uniqueTitle],
     });
 
     const result = await findAlternativeTitle({
-      locale: "en",
+      language: "en",
       title: uniqueTitle.toLowerCase(),
     });
 
@@ -64,7 +64,7 @@ describe("findAlternativeTitle", () => {
 
   test("returns null when title does not match", async () => {
     const result = await findAlternativeTitle({
-      locale: "en",
+      language: "en",
       title: `Nonexistent Course ${randomUUID()}`,
     });
 
@@ -82,12 +82,12 @@ describe("findAlternativeTitle", () => {
 
     await addAlternativeTitles({
       courseId: course.id,
-      locale: "en",
+      language: "en",
       titles: [uniqueTitle],
     });
 
     const result = await findAlternativeTitle({
-      locale: "en",
+      language: "en",
       title: uniqueTitle,
     });
 
@@ -105,12 +105,12 @@ describe("findAlternativeTitle", () => {
 
     await addAlternativeTitles({
       courseId: course.id,
-      locale: "en",
+      language: "en",
       titles: [uniqueTitle],
     });
 
     const result = await findAlternativeTitle({
-      locale: "pt",
+      language: "pt",
       title: uniqueTitle,
     });
 

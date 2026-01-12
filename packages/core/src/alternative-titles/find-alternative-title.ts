@@ -8,7 +8,7 @@ import { cache } from "react";
 export const findAlternativeTitle = cache(
   async (params: {
     title: string;
-    locale: string;
+    language: string;
   }): Promise<{ slug: string; language: string } | null> => {
     const slug = toSlug(params.title);
 
@@ -22,7 +22,7 @@ export const findAlternativeTitle = cache(
           },
         },
       },
-      where: { localeSlug: { locale: params.locale, slug } },
+      where: { languageSlug: { language: params.language, slug } },
     });
 
     if (!result || result.course.organization.slug !== AI_ORG_SLUG) {
