@@ -36,7 +36,7 @@ describe("findExistingCourse", () => {
 
     [aiCourse, otherCourse] = await Promise.all([
       courseFixture({
-        generationStatus: "in_progress",
+        generationStatus: "running",
         language: "en",
         organizationId: aiOrg.id,
         slug: aiCourseSlug,
@@ -70,7 +70,7 @@ describe("findExistingCourse", () => {
     expect(result).not.toBeNull();
     expect(result?.id).toBe(aiCourse.id);
     expect(result?.slug).toBe(aiCourseSlug);
-    expect(result?.generationStatus).toBe("in_progress");
+    expect(result?.generationStatus).toBe("running");
   });
 
   test("finds course by alternative title in AI organization", async () => {
