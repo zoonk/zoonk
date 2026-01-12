@@ -26,6 +26,12 @@ test("doesn't match _vercel paths", () => {
   );
 });
 
+test("doesn't match .well-known paths", () => {
+  expect(
+    doesMiddlewareMatch({ config, url: "/.well-known/workflow/whatever" }),
+  ).toBe(false);
+});
+
 test("doesn't match paths starting with 149e (BotID paths)", () => {
   // https://x.com/andrewqu/status/1988640986520842672?s=20
   expect(doesMiddlewareMatch({ config, url: "/149eabcd" })).toBe(false);
