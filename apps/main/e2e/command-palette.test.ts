@@ -312,6 +312,24 @@ test.describe("Command Palette - Course Search", () => {
     // Should show correct results after debounce
     await expect(dialog.getByText("Machine Learning").first()).toBeVisible();
   });
+
+  test("shows exact match first when searching", async ({ page }) => {
+    const dialog = page.getByRole("dialog");
+    await dialog.getByPlaceholder(/search/i).fill("law");
+
+    // Wait for results to load
+    await expect(dialog.getByText("Law").first()).toBeVisible();
+
+    // Get all course results - they should be in listbox options
+    const options = dialog.getByRole("option");
+    const firstOption = options.first();
+
+    // The first result should be the exact match "Law", not "Criminal Law" or others
+    await expect(firstOption).toContainText("Law");
+    await expect(firstOption).not.toContainText("Criminal Law");
+    await expect(firstOption).not.toContainText("Tax Law");
+    await expect(firstOption).not.toContainText("Civil Law");
+  });
 });
 
 test.describe("Command Palette - Keyboard Navigation", () => {
