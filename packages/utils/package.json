@@ -17,6 +17,7 @@
     "./error": "./src/error.ts",
     "./form": "./src/form.ts",
     "./locale": "./src/locale.ts",
+    "./search": "./src/search.ts",
     "./string": "./src/string.ts",
     "./url": "./src/url.ts"
   },

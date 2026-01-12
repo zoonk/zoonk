@@ -237,6 +237,46 @@ export const coursesData = [
     slug: "biology-essentials",
     title: "Biology Essentials",
   },
+  {
+    description:
+      "Comprehensive overview of legal systems, jurisprudence, and the foundations of law. Understand how laws are created, interpreted, and enforced.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Law"),
+    slug: "law",
+    title: "Law",
+  },
+  {
+    description:
+      "Study criminal law including offenses, defenses, and the criminal justice system. Learn about prosecution, evidence, and constitutional protections.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Criminal Law"),
+    slug: "criminal-law",
+    title: "Criminal Law",
+  },
+  {
+    description:
+      "Master tax law principles including income taxation, deductions, credits, and tax planning strategies for individuals and businesses.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Tax Law"),
+    slug: "tax-law",
+    title: "Tax Law",
+  },
+  {
+    description:
+      "Learn civil law covering contracts, property, torts, and family law. Understand legal rights and remedies in non-criminal disputes.",
+    imageUrl: null,
+    isPublished: true,
+    language: "en",
+    normalizedTitle: normalizeString("Civil Law"),
+    slug: "civil-law",
+    title: "Civil Law",
+  },
 
   // Portuguese courses
   {

@@ -194,4 +194,45 @@ describe("searchCourses", () => {
 
     expect(result).toHaveLength(5);
   });
+
+  test("returns exact match first", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const searchTerm = `exactmatch${uniqueId}`;
+
+    const [exactMatch, containsMatch1, containsMatch2] = await Promise.all([
+      courseFixture({
+        isPublished: true,
+        language: "en",
+        normalizedTitle: searchTerm,
+        organizationId: brandOrg.id,
+        title: searchTerm,
+      }),
+      courseFixture({
+        isPublished: true,
+        language: "en",
+        normalizedTitle: `advanced ${searchTerm}`,
+        organizationId: brandOrg.id,
+        title: `Advanced ${searchTerm}`,
+      }),
+      courseFixture({
+        isPublished: true,
+        language: "en",
+        normalizedTitle: `${searchTerm} fundamentals`,
+        organizationId: brandOrg.id,
+        title: `${searchTerm} Fundamentals`,
+      }),
+    ]);
+
+    const result = await searchCourses({
+      language: "en",
+      query: searchTerm,
+    });
+
+    const ids = result.map((c) => c.id);
+
+    expect(ids).toContain(exactMatch.id);
+    expect(ids).toContain(containsMatch1.id);
+    expect(ids).toContain(containsMatch2.id);
+    expect(result[0]?.id).toBe(exactMatch.id);
+  });
 });

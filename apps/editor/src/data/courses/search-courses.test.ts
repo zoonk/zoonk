@@ -210,4 +210,45 @@ describe("org admins", () => {
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(5);
   });
+
+  test("returns exact match first", async () => {
+    const uniqueId = crypto.randomUUID().slice(0, 8);
+    const searchTerm = `exactmatch${uniqueId}`;
+
+    const [exactMatch, containsMatch1, containsMatch2] = await Promise.all([
+      courseFixture({
+        isPublished: true,
+        normalizedTitle: searchTerm,
+        organizationId: organization.id,
+        title: searchTerm,
+      }),
+      courseFixture({
+        isPublished: true,
+        normalizedTitle: `${searchTerm} on rails`,
+        organizationId: organization.id,
+        title: `${searchTerm} on Rails`,
+      }),
+      courseFixture({
+        isPublished: true,
+        normalizedTitle: `advanced ${searchTerm} programming`,
+        organizationId: organization.id,
+        title: `Advanced ${searchTerm} Programming`,
+      }),
+    ]);
+
+    const result = await searchCourses({
+      headers,
+      orgSlug: organization.slug,
+      title: searchTerm,
+    });
+
+    expect(result.error).toBeNull();
+
+    const ids = result.data.map((c) => c.id);
+
+    expect(ids).toContain(exactMatch.id);
+    expect(ids).toContain(containsMatch1.id);
+    expect(ids).toContain(containsMatch2.id);
+    expect(result.data[0]?.id).toBe(exactMatch.id);
+  });
 });
