@@ -40,8 +40,11 @@ test.describe("Courses Page - Basic", () => {
       page.getByRole("heading", { name: /explore courses/i }),
     ).toBeVisible();
 
+    // Use exact text match to avoid matching courses where "machine learning"
+    // appears in the description (e.g., Data Science course)
     const courseLink = page
-      .getByRole("link", { name: /machine Learning/i })
+      .getByRole("link")
+      .filter({ has: page.getByText("Machine Learning", { exact: true }) })
       .first();
 
     await expect(courseLink).toBeVisible();
