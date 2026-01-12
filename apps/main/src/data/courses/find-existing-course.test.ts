@@ -131,7 +131,7 @@ describe("findExistingCourse", () => {
 
     await courseAlternativeTitleFixture({
       courseId: altCourse.id,
-      language: "pt",
+      language: "en",
       slug: uniqueSlug,
     });
 
