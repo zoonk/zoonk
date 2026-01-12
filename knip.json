@@ -30,11 +30,7 @@
         "src/app/[locale]/privacy/*.mdx",
         "src/app/[locale]/terms/*.mdx"
       ],
-      "ignore": [
-        "src/workflows/**",
-        "src/app/**/actions.ts",
-        "src/app/.well-known/workflow/**"
-      ]
+      "ignore": ["src/app/.well-known/workflow/**"]
     },
     "packages/db": {
       "entry": ["prisma.config.ts", "src/prisma/seed.ts"],
