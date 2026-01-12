@@ -11,6 +11,7 @@ export function chapterAttrs(
   return {
     courseId: 0,
     description: "Test chapter description",
+    generationRunId: null,
     generationStatus: "completed",
     isPublished: false,
     language: "en",

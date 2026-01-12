@@ -1,22 +1,23 @@
 model Activity {
-  id             Int                @id @default(autoincrement())
-  organizationId Int                @map("organization_id")
-  organization   Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  lessonId       Int                @map("lesson_id")
-  lesson         Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  isPublished    Boolean            @default(false) @map("is_published")
-  language       String             @db.VarChar(10)
-  kind           String             @db.VarChar(30)
-  title          String?
+  id               Int                @id @default(autoincrement())
+  organizationId   Int                @map("organization_id")
+  organization     Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lessonId         Int                @map("lesson_id")
+  lesson           Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  isPublished      Boolean            @default(false) @map("is_published")
+  language         String             @db.VarChar(10)
+  kind             String             @db.VarChar(30)
+  title            String?
   description      String?
   generationStatus String             @default("pending") @map("generation_status") @db.VarChar(20)
+  generationRunId  String?            @map("generation_run_id")
   position         Int
-  inventory      Json?
-  winCriteria    Json?              @map("win_criteria")
-  createdAt      DateTime           @default(now()) @map("created_at")
-  updatedAt      DateTime           @default(now()) @updatedAt @map("updated_at")
-  steps          Step[]
-  progress       ActivityProgress[]
+  inventory        Json?
+  winCriteria      Json?              @map("win_criteria")
+  createdAt        DateTime           @default(now()) @map("created_at")
+  updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at")
+  steps            Step[]
+  progress         ActivityProgress[]
 
   @@index([lessonId, position])
   @@index([organizationId, kind])

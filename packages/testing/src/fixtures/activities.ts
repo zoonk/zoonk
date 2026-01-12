@@ -8,6 +8,7 @@ export function activityAttrs(
 > {
   return {
     description: "Test activity description",
+    generationRunId: null,
     generationStatus: "completed",
     isPublished: false,
     kind: "background",

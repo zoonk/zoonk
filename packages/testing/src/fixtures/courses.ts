@@ -16,6 +16,7 @@ export function courseAttrs(attrs?: Partial<Course>): CourseAttrs {
 
   return {
     description: description ?? "Test course description",
+    generationRunId: null,
     generationStatus: "completed",
     imageUrl: null,
     isPublished: false,
