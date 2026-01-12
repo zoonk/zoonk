@@ -18,6 +18,7 @@ export function SlugEditorSkeleton() {
 }
 
 type SlugCheckParams = {
+  courseId?: number;
   language: string;
   orgSlug: string;
   slug: string;
@@ -25,6 +26,7 @@ type SlugCheckParams = {
 
 type SlugEditorProps = {
   checkFn: (params: SlugCheckParams) => Promise<boolean>;
+  courseId?: number;
   entityId: number;
   initialSlug: string;
   language: string;
@@ -39,6 +41,7 @@ type SlugEditorProps = {
 
 export function SlugEditor({
   checkFn,
+  courseId,
   entityId,
   initialSlug,
   language,
@@ -54,6 +57,7 @@ export function SlugEditor({
 
   const slugExists = useSlugCheck({
     checkFn,
+    courseId,
     initialSlug,
     language,
     orgSlug,

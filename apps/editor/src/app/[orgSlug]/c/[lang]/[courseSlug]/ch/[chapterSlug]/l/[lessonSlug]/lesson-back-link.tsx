@@ -13,6 +13,7 @@ export async function LessonBackLink({
 
   const { data: chapter } = await getChapter({
     chapterSlug,
+    courseSlug,
     language: lang,
     orgSlug,
   });

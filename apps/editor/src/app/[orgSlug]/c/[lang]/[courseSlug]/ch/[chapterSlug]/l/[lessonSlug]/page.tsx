@@ -13,11 +13,12 @@ type LessonPageProps =
   PageProps<"/[orgSlug]/c/[lang]/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]">;
 
 export default async function LessonPage(props: LessonPageProps) {
-  const { chapterSlug, lang, lessonSlug, orgSlug } = await props.params;
+  const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } =
+    await props.params;
 
   // Preload data in parallel (cached, so child components get the same promise)
   void Promise.all([
-    getChapter({ chapterSlug, language: lang, orgSlug }),
+    getChapter({ chapterSlug, courseSlug, language: lang, orgSlug }),
     getLesson({ language: lang, lessonSlug, orgSlug }),
   ]);
 

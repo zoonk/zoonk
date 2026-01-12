@@ -5,17 +5,12 @@ import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
 export const chapterSlugExists = cache(
-  async (params: {
-    language: string;
-    orgSlug: string;
-    slug: string;
-  }): Promise<boolean> => {
+  async (params: { courseId: number; slug: string }): Promise<boolean> => {
     const { data } = await safeAsync(() =>
       prisma.chapter.findFirst({
         select: { id: true },
         where: {
-          language: params.language,
-          organization: { slug: params.orgSlug },
+          courseId: params.courseId,
           slug: params.slug,
         },
       }),

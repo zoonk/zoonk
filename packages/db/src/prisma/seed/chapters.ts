@@ -261,9 +261,8 @@ async function seedChaptersForCourse(
       },
       update: {},
       where: {
-        orgLanguageChapterSlug: {
-          language: data.language,
-          organizationId: org.id,
+        courseChapterSlug: {
+          courseId: course.id,
           slug: chapterData.slug,
         },
       },
