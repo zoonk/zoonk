@@ -72,6 +72,7 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - When adding a new Prisma model, always add a seed for it in `packages/db/src/prisma/seed/`
 - Never run `pnpm dev` as there's already a dev server running
 - When writing a plan, don't include "manual verification" steps. We always do manual verification, you don't need to do it. Just ensure you add the necessary e2e tests for the task
+- Don't create migration files manually. Run `pnpm --filter @zoonk/db db:migrate --name <migration-name>` to generate migration
 
 ## Component Organization
 

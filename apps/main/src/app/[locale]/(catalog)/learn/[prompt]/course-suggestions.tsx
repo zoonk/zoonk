@@ -33,7 +33,7 @@ export async function CourseSuggestions({
   prompt,
 }: CourseSuggestionsProps) {
   const t = await getExtracted();
-  const { id, suggestions } = await generateCourseSuggestions({
+  const { suggestions } = await generateCourseSuggestions({
     language: locale,
     prompt,
   });
@@ -57,7 +57,7 @@ export async function CourseSuggestions({
       <ContainerBody>
         <ItemGroup>
           {suggestions.map((course, index) => (
-            <Fragment key={course.title}>
+            <Fragment key={course.id}>
               <Item className="px-0 py-2">
                 <ItemContent className="gap-0.5">
                   <ItemTitle>{course.title}</ItemTitle>
@@ -71,7 +71,7 @@ export async function CourseSuggestions({
                       size: "sm",
                       variant: "outline",
                     })}
-                    href={`/generate/cs/${id}`}
+                    href={`/generate/cs/${course.id}`}
                     prefetch={false}
                   >
                     <SparklesIcon aria-hidden="true" className="size-4" />
