@@ -23,3 +23,13 @@ cp .env.example .env
   - `lib/`: Shared utilities and constants
   - `proxy.ts`: Next.js Proxy setup
 - `mdx-components.tsx`: MDX components mapping, see the [Next.js MDX docs](https://nextjs.org/docs/app/guides/mdx) for more info
+
+## Inspecting Workflows
+
+We use [Workflow](https://github.com/workflow-ai/workflow) to run background jobs or any durable tasks like AI generation. You can inspect the runs with the following commands:
+
+```bash
+pnpm workflow:inspect
+# or for a web interface
+pnpm workflow:web
+```
