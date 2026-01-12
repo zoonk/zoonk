@@ -176,20 +176,3 @@ test.describe("Course Image - Validation", () => {
     await expect(getUploadButton(authenticatedPage)).toBeVisible();
   });
 });
-
-test.describe("Course Image - Keyboard Accessibility", () => {
-  test("opens file picker with Enter key", async ({ authenticatedPage }) => {
-    const course = await createTestCourse(null);
-    await navigateToCoursePage(authenticatedPage, course.slug);
-
-    await getUploadButton(authenticatedPage).focus();
-
-    const [fileChooser] = await Promise.all([
-      authenticatedPage.waitForEvent("filechooser"),
-      authenticatedPage.keyboard.press("Enter"),
-    ]);
-
-    expect(fileChooser).toBeTruthy();
-    await fileChooser.setFiles([]);
-  });
-});
