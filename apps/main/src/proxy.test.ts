@@ -32,6 +32,16 @@ test("doesn't match .well-known paths", () => {
   ).toBe(false);
 });
 
+test("matches well-known course paths", () => {
+  expect(doesMiddlewareMatch({ config, url: "/c/my-well-known-course" })).toBe(
+    true,
+  );
+
+  expect(doesMiddlewareMatch({ config, url: "/c/well-known-course/en" })).toBe(
+    true,
+  );
+});
+
 test("doesn't match paths starting with 149e (BotID paths)", () => {
   // https://x.com/andrewqu/status/1988640986520842672?s=20
   expect(doesMiddlewareMatch({ config, url: "/149eabcd" })).toBe(false);
