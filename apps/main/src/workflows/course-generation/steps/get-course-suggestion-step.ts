@@ -1,11 +1,16 @@
 import { FatalError } from "workflow";
+
 import { getCourseSuggestionById } from "@/data/courses/course-suggestions";
+
+import { streamStatus } from "../stream-status";
 
 type Input = { id: number; title: string };
 type Output = { locale: string };
 
 export async function getCourseSuggestionStep(input: Input): Promise<Output> {
   "use step";
+
+  await streamStatus({ status: "started", step: "getCourseSuggestion" });
 
   const suggestion = await getCourseSuggestionById(input.id);
 
@@ -20,6 +25,8 @@ export async function getCourseSuggestionStep(input: Input): Promise<Output> {
       `Title "${input.title}" not found in suggestion ${input.id}`,
     );
   }
+
+  await streamStatus({ status: "completed", step: "getCourseSuggestion" });
 
   return { locale: suggestion.locale };
 }

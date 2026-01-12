@@ -1,5 +1,7 @@
 import { prisma } from "@zoonk/db";
 
+import { streamStatus } from "../stream-status";
+
 type Input = {
   courseId: number;
   description: string;
@@ -10,6 +12,8 @@ type Input = {
 export async function updateCourseStep(input: Input): Promise<void> {
   "use step";
 
+  await streamStatus({ status: "started", step: "updateCourse" });
+
   await prisma.course.update({
     data: {
       description: input.description,
@@ -18,4 +22,6 @@ export async function updateCourseStep(input: Input): Promise<void> {
     },
     where: { id: input.courseId },
   });
+
+  await streamStatus({ status: "completed", step: "updateCourse" });
 }

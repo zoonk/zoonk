@@ -3,11 +3,15 @@ import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { FatalError } from "workflow";
 
+import { streamStatus } from "../stream-status";
+
 type Input = { title: string; locale: string };
 type Output = { id: number; slug: string; organizationId: number };
 
 export async function createCourseStep(input: Input): Promise<Output> {
   "use step";
+
+  await streamStatus({ status: "started", step: "createCourse" });
 
   const org = await prisma.organization.findUnique({
     select: { id: true },
@@ -32,6 +36,12 @@ export async function createCourseStep(input: Input): Promise<Output> {
       title: input.title,
     },
     select: { id: true, organizationId: true, slug: true },
+  });
+
+  await streamStatus({
+    data: { courseId: course.id, slug: course.slug },
+    status: "completed",
+    step: "createCourse",
   });
 
   return course;

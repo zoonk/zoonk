@@ -2,6 +2,8 @@ import { generateChapterLessons } from "@zoonk/ai/chapter-lessons/generate";
 import { prisma } from "@zoonk/db";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
+import { streamStatus } from "../stream-status";
+
 type Chapter = { title: string; description: string };
 type Input = {
   courseId: number;
@@ -14,6 +16,8 @@ type Input = {
 export async function generateLessonsStep(input: Input): Promise<void> {
   "use step";
 
+  await streamStatus({ status: "started", step: "generateLessons" });
+
   const dbChapter = await prisma.chapter.findFirst({
     select: { id: true },
     where: {
@@ -23,6 +27,7 @@ export async function generateLessonsStep(input: Input): Promise<void> {
   });
 
   if (!dbChapter) {
+    await streamStatus({ status: "completed", step: "generateLessons" });
     return;
   }
 
@@ -52,4 +57,6 @@ export async function generateLessonsStep(input: Input): Promise<void> {
     data: { generationStatus: "completed" },
     where: { id: dbChapter.id },
   });
+
+  await streamStatus({ status: "completed", step: "generateLessons" });
 }

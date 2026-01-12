@@ -2,10 +2,14 @@ import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { toSlug } from "@zoonk/utils/string";
 
+import { streamStatus } from "../stream-status";
+
 type Input = { title: string; locale: string };
 
 export async function cleanupFailedCourseStep(input: Input): Promise<void> {
   "use step";
+
+  await streamStatus({ status: "started", step: "cleanupFailedCourse" });
 
   const slug = toSlug(input.title);
 
@@ -19,11 +23,11 @@ export async function cleanupFailedCourseStep(input: Input): Promise<void> {
     },
   });
 
-  if (!course) {
-    return;
+  if (course) {
+    await prisma.course.delete({
+      where: { id: course.id },
+    });
   }
 
-  await prisma.course.delete({
-    where: { id: course.id },
-  });
+  await streamStatus({ status: "completed", step: "cleanupFailedCourse" });
 }

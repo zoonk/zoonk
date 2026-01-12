@@ -1,4 +1,5 @@
 export type StepName =
+  | "createRun"
   | "getCourseSuggestion"
   | "checkCourseExists"
   | "cleanupFailedCourse"
@@ -13,7 +14,8 @@ export type StepName =
   | "addCategories"
   | "addChapters"
   | "generateLessons"
-  | "updateRunStatus";
+  | "updateRunStatus"
+  | "updateStatus";
 
 export type StepStatus = "started" | "completed" | "failed";
 
