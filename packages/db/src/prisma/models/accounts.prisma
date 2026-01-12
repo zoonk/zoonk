@@ -93,7 +93,7 @@ model Organization {
   activities       Activity[]
   stepAttempts     StepAttempt[]
   dailyProgress    DailyProgress[]
-  stripeCustomerId String?
+  stripeCustomerId String?         @map("stripe_customer_id")
 
   @@unique([slug])
   @@map("organizations")
