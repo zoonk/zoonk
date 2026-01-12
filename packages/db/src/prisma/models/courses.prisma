@@ -1,10 +1,11 @@
 model CourseSuggestion {
-  id          Int      @id @default(autoincrement())
-  locale      String   @db.VarChar(10)
-  prompt      String
-  suggestions Json
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @default(now()) @updatedAt @map("updated_at")
+  id             Int                    @id @default(autoincrement())
+  locale         String                 @db.VarChar(10)
+  prompt         String
+  suggestions    Json
+  createdAt      DateTime               @default(now()) @map("created_at")
+  updatedAt      DateTime               @default(now()) @updatedAt @map("updated_at")
+  generationRuns CourseGenerationRun[]
 
   @@unique([locale, prompt], name: "localePrompt")
   @@map("course_suggestions")
@@ -27,6 +28,7 @@ model Course {
   alternativeTitles CourseAlternativeTitle[]
   categories        CourseCategory[]
   chapters          Chapter[]
+  generationRuns    CourseGenerationRun[]
   users             CourseUser[]
 
   @@unique([organizationId, language, slug], name: "orgSlug")

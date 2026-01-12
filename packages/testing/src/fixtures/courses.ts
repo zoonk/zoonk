@@ -3,6 +3,7 @@ import {
   type Course,
   type CourseAlternativeTitle,
   type CourseCategory,
+  type CourseSuggestion,
   type CourseUser,
   prisma,
 } from "@zoonk/db";
@@ -70,4 +71,20 @@ export async function courseAlternativeTitleFixture(
   });
 
   return alternativeTitle;
+}
+
+export async function courseSuggestionFixture(
+  attrs?: Partial<Omit<CourseSuggestion, "id" | "createdAt" | "updatedAt">>,
+) {
+  const suggestion = await prisma.courseSuggestion.create({
+    data: {
+      locale: attrs?.locale ?? "en",
+      prompt: attrs?.prompt ?? `test-prompt-${randomUUID()}`,
+      suggestions: attrs?.suggestions ?? [
+        { description: "Test description", title: "Test Course" },
+      ],
+    },
+  });
+
+  return suggestion;
 }

@@ -1,0 +1,17 @@
+model CourseGenerationRun {
+  id                 Int               @id @default(autoincrement())
+  runId              String            @unique @map("run_id") @db.VarChar(100)
+  courseSuggestionId Int               @map("course_suggestion_id")
+  courseSuggestion   CourseSuggestion  @relation(fields: [courseSuggestionId], references: [id], onDelete: Cascade)
+  courseId           Int?              @map("course_id")
+  course             Course?           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title              String
+  status             String            @default("running") @map("status") @db.VarChar(20)
+  createdAt          DateTime          @default(now()) @map("created_at")
+  updatedAt          DateTime          @default(now()) @updatedAt @map("updated_at")
+
+  @@index([courseSuggestionId])
+  @@index([courseId])
+  @@index([status])
+  @@map("course_generation_runs")
+}
