@@ -463,11 +463,20 @@ describe("authenticated users", () => {
       ]);
       const headers = await signInAs(user.email, user.password);
 
-      // Create data with a 2-day gap in the same week
-      const day1 = new Date();
-      day1.setDate(day1.getDate() - 2);
+      // Create data with a 2-day gap, ensuring all dates are in the same week
+      // Start from a Tuesday to ensure day1, day2, day3 are all Mon-Sun of one week
+      const today = new Date();
+      const dayOfWeek = today.getDay();
+      // Calculate days since Monday (Mon=1, Sun=0 becomes 6)
+      const daysSinceMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+      // Start from Tuesday of this week (1 day after Monday)
+      const tuesday = new Date(today);
+      tuesday.setDate(today.getDate() - daysSinceMonday + 1);
+      tuesday.setHours(12, 0, 0, 0);
 
-      const day3 = new Date();
+      const day1 = new Date(tuesday);
+      const day3 = new Date(tuesday);
+      day3.setDate(day3.getDate() + 2); // Thursday of same week
 
       await prisma.dailyProgress.createMany({
         data: [
@@ -490,7 +499,9 @@ describe("authenticated users", () => {
 
       expect(result).not.toBeNull();
 
-      // Weekly average should include decayed day2: (80 + 79 + 90) / 3 = 83
+      // All 3 days are in the same week:
+      // day1(Tue)=80, day2(Wed)=79 (decayed), day3(Thu)=90
+      // Weekly average: (80 + 79 + 90) / 3 = 83
       expect(result?.average).toBeCloseTo(83, 0);
     });
 
