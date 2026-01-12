@@ -25,7 +25,7 @@ export type CourseGenerationInput = {
 
 export type CourseGenerationResult = {
   courseId: number;
-  status: "completed" | "already_exists" | "failed";
+  status: "completed" | "alreadyExists" | "failed";
   slug: string;
 };
 
@@ -71,7 +71,7 @@ export async function courseGenerationWorkflow(
     return {
       courseId: existingCourse.id,
       slug: existingCourse.slug,
-      status: "already_exists",
+      status: "alreadyExists",
     };
   }
 
