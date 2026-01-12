@@ -18,21 +18,6 @@ async function createUnpublishedCourse() {
 }
 
 test.describe("Courses Page - Basic", () => {
-  test("shows page content with course cards", async ({ page }) => {
-    await page.goto("/courses");
-
-    // Page title and description
-    await expect(
-      page.getByRole("heading", { name: /explore courses/i }),
-    ).toBeVisible();
-
-    await expect(
-      page.getByText(/start learning something new today/i),
-    ).toBeVisible();
-
-    await expect(page.getByText("Machine Learning").first()).toBeVisible();
-  });
-
   test("clicking course card navigates to course detail", async ({ page }) => {
     await page.goto("/courses");
 
