@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import {
   type Course,
+  type CourseAlternativeTitle,
   type CourseCategory,
   type CourseUser,
   prisma,
@@ -55,4 +56,16 @@ export async function courseUserFixture(
   });
 
   return courseUser;
+}
+
+export async function courseAlternativeTitleFixture(
+  attrs: Omit<CourseAlternativeTitle, "id" | "createdAt">,
+) {
+  return prisma.courseAlternativeTitle.create({
+    data: {
+      courseId: attrs.courseId,
+      language: attrs.language,
+      slug: attrs.slug,
+    },
+  });
 }
