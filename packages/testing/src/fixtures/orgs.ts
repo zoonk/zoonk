@@ -11,6 +11,7 @@ export function organizationAttrs(
     metadata: null,
     name: "Test Organization",
     slug: `test-org-${randomUUID()}`,
+    stripeCustomerId: null,
     ...attrs,
   };
 }
