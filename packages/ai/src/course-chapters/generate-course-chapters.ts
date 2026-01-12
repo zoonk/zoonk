@@ -28,20 +28,20 @@ const schema = z.object({
 export type CourseChaptersSchema = z.infer<typeof schema>;
 
 export type CourseChaptersParams = {
-  locale: string;
+  language: string;
   courseTitle: string;
   model?: string;
   useFallback?: boolean;
 };
 
 export async function generateCourseChapters({
-  locale,
+  language,
   courseTitle,
   model = DEFAULT_MODEL,
   useFallback = true,
 }: CourseChaptersParams) {
   const userPrompt = `
-    LANGUAGE: ${locale}
+    LANGUAGE: ${language}
     COURSE_TITLE: ${courseTitle}
   `;
 

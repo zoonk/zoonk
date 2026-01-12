@@ -19,7 +19,7 @@ export const TEST_CASES = [
     `,
     id: "pt-want-to-code",
     userInput: {
-      locale: "pt",
+      language: "pt",
       prompt: "I want to code",
     },
   },
@@ -33,7 +33,7 @@ export const TEST_CASES = [
     `,
     id: "en-black-holes",
     userInput: {
-      locale: "en",
+      language: "en",
       prompt: "quero aprender sobre buracos negros",
     },
   },
@@ -47,7 +47,7 @@ export const TEST_CASES = [
     `,
     id: "es-derecho-penal",
     userInput: {
-      locale: "es",
+      language: "es",
       prompt: "derecho penal",
     },
   },
@@ -61,7 +61,7 @@ export const TEST_CASES = [
     `,
     id: "es-derecho-chileno",
     userInput: {
-      locale: "es",
+      language: "es",
       prompt: "derecho chileno",
     },
   },
@@ -75,7 +75,7 @@ export const TEST_CASES = [
     `,
     id: "pt-toefl",
     userInput: {
-      locale: "pt",
+      language: "pt",
       prompt: "quero passar no TOEFL",
     },
   },
@@ -90,7 +90,7 @@ export const TEST_CASES = [
     `,
     id: "pt-physics-and-chemistry",
     userInput: {
-      locale: "pt",
+      language: "pt",
       prompt: "physics and chemistry",
     },
   },
@@ -105,7 +105,7 @@ export const TEST_CASES = [
     `,
     id: "en-intro-to-chemistry",
     userInput: {
-      locale: "en",
+      language: "en",
       prompt: "i want an intro to chemistry",
     },
   },
@@ -119,7 +119,7 @@ export const TEST_CASES = [
     `,
     id: "pt-dragon-ball",
     userInput: {
-      locale: "pt",
+      language: "pt",
       prompt: "dragon bals",
     },
   },
@@ -133,7 +133,7 @@ export const TEST_CASES = [
     `,
     id: "en-beatles",
     userInput: {
-      locale: "en",
+      language: "en",
       prompt: "beatles",
     },
   },
@@ -147,7 +147,7 @@ export const TEST_CASES = [
     `,
     id: "fr-f1",
     userInput: {
-      locale: "fr",
+      language: "fr",
       prompt: "f1",
     },
   },
@@ -163,7 +163,7 @@ export const TEST_CASES = [
     `,
     id: "en-jlpt-n2",
     userInput: {
-      locale: "en",
+      language: "en",
       prompt: "i want to pass the JLPT N2",
     },
   },
@@ -178,7 +178,7 @@ export const TEST_CASES = [
     `,
     id: "pt-ielts-academic",
     userInput: {
-      locale: "pt",
+      language: "pt",
       prompt: "quero passar no IELTS Academic",
     },
   },
@@ -192,7 +192,7 @@ export const TEST_CASES = [
     `,
     id: "en-how-computers-work",
     userInput: {
-      locale: "en",
+      language: "en",
       prompt: "how do computers work",
     },
   },
@@ -207,7 +207,7 @@ export const TEST_CASES = [
     `,
     id: "pt-periodic-table",
     userInput: {
-      locale: "pt",
+      language: "pt",
       prompt: "tabela periódica",
     },
   },
@@ -222,7 +222,7 @@ export const TEST_CASES = [
     `,
     id: "en-matrix-movie",
     userInput: {
-      locale: "en",
+      language: "en",
       prompt: "matrix movie",
     },
   },
@@ -236,7 +236,7 @@ export const TEST_CASES = [
     `,
     id: "en-ai",
     userInput: {
-      locale: "en",
+      language: "en",
       prompt: "ai",
     },
   },
@@ -250,7 +250,7 @@ export const TEST_CASES = [
     `,
     id: "en-wealth-of-nations",
     userInput: {
-      locale: "en",
+      language: "en",
       prompt: "wealth of nations",
     },
   },

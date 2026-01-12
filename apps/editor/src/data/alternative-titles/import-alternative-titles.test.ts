@@ -32,7 +32,7 @@ describe("importAlternativeTitles", () => {
     const result = await importAlternativeTitles({
       courseId: course.id,
       file,
-      locale: "en",
+      language: "en",
     });
 
     expect(result.error).toBeNull();
@@ -56,7 +56,7 @@ describe("importAlternativeTitles", () => {
     const result = await importAlternativeTitles({
       courseId: 999_999,
       file,
-      locale: "en",
+      language: "en",
     });
 
     expect(result.error?.message).toBe(ErrorCode.courseNotFound);
@@ -71,7 +71,7 @@ describe("importAlternativeTitles", () => {
     await prisma.courseAlternativeTitle.create({
       data: {
         courseId: course.id,
-        locale: "en",
+        language: "en",
         slug: `existing-title-${suffix}`,
       },
     });
@@ -84,7 +84,7 @@ describe("importAlternativeTitles", () => {
     const result = await importAlternativeTitles({
       courseId: course.id,
       file,
-      locale: "en",
+      language: "en",
     });
 
     expect(result.error).toBeNull();
@@ -108,7 +108,7 @@ describe("importAlternativeTitles", () => {
     await prisma.courseAlternativeTitle.create({
       data: {
         courseId: course.id,
-        locale: "en",
+        language: "en",
         slug: `old-title-${suffix}`,
       },
     });
@@ -118,7 +118,7 @@ describe("importAlternativeTitles", () => {
     const result = await importAlternativeTitles({
       courseId: course.id,
       file,
-      locale: "en",
+      language: "en",
       mode: "replace",
     });
 
@@ -133,17 +133,21 @@ describe("importAlternativeTitles", () => {
     expect(titles[0]?.slug).toBe(`new-title-${suffix}`);
   });
 
-  test("replace mode only removes titles for the specified locale", async () => {
+  test("replace mode only removes titles for the specified language", async () => {
     const suffix = randomUUID().slice(0, 8);
     const organization = await organizationFixture();
     const course = await courseFixture({ organizationId: organization.id });
 
     await prisma.courseAlternativeTitle.createMany({
       data: [
-        { courseId: course.id, locale: "en", slug: `english-title-${suffix}` },
         {
           courseId: course.id,
-          locale: "pt",
+          language: "en",
+          slug: `english-title-${suffix}`,
+        },
+        {
+          courseId: course.id,
+          language: "pt",
           slug: `portuguese-title-${suffix}`,
         },
       ],
@@ -154,27 +158,27 @@ describe("importAlternativeTitles", () => {
     const result = await importAlternativeTitles({
       courseId: course.id,
       file,
-      locale: "en",
+      language: "en",
       mode: "replace",
     });
 
     expect(result.error).toBeNull();
 
     const allTitles = await prisma.courseAlternativeTitle.findMany({
-      orderBy: { locale: "asc" },
-      select: { locale: true, slug: true },
+      orderBy: { language: "asc" },
+      select: { language: true, slug: true },
       where: { courseId: course.id },
     });
 
     expect(allTitles).toHaveLength(2);
 
     expect(allTitles).toContainEqual({
-      locale: "en",
+      language: "en",
       slug: `new-english-title-${suffix}`,
     });
 
     expect(allTitles).toContainEqual({
-      locale: "pt",
+      language: "pt",
       slug: `portuguese-title-${suffix}`,
     });
   });
@@ -194,7 +198,7 @@ describe("importAlternativeTitles", () => {
     const result = await importAlternativeTitles({
       courseId: course.id,
       file,
-      locale: "en",
+      language: "en",
     });
 
     expect(result.error).toBeNull();
@@ -217,7 +221,7 @@ describe("importAlternativeTitles", () => {
     const result = await importAlternativeTitles({
       courseId: course.id,
       file,
-      locale: "en",
+      language: "en",
     });
 
     expect(result.error).toBeNull();
@@ -235,7 +239,7 @@ describe("importAlternativeTitles", () => {
       const result = await importAlternativeTitles({
         courseId: course.id,
         file,
-        locale: "en",
+        language: "en",
       });
 
       expect(result.error?.message).toBe(ErrorCode.fileTooLarge);
@@ -252,7 +256,7 @@ describe("importAlternativeTitles", () => {
       const result = await importAlternativeTitles({
         courseId: course.id,
         file,
-        locale: "en",
+        language: "en",
       });
 
       expect(result.error?.message).toBe(ErrorCode.invalidFileType);
@@ -267,7 +271,7 @@ describe("importAlternativeTitles", () => {
       const result = await importAlternativeTitles({
         courseId: course.id,
         file,
-        locale: "en",
+        language: "en",
       });
 
       expect(result.error?.message).toBe(ErrorCode.invalidJsonFormat);
@@ -282,7 +286,7 @@ describe("importAlternativeTitles", () => {
       const result = await importAlternativeTitles({
         courseId: course.id,
         file,
-        locale: "en",
+        language: "en",
       });
 
       expect(result.error?.message).toBe(
@@ -303,7 +307,7 @@ describe("importAlternativeTitles", () => {
       const result = await importAlternativeTitles({
         courseId: course.id,
         file,
-        locale: "en",
+        language: "en",
       });
 
       expect(result.error?.message).toBe(
@@ -324,7 +328,7 @@ describe("importAlternativeTitles", () => {
       const result = await importAlternativeTitles({
         courseId: course.id,
         file,
-        locale: "en",
+        language: "en",
       });
 
       expect(result.error?.message).toBe(
@@ -345,7 +349,7 @@ describe("importAlternativeTitles", () => {
       const result = await importAlternativeTitles({
         courseId: course.id,
         file,
-        locale: "en",
+        language: "en",
       });
 
       expect(result.error?.message).toBe(
@@ -367,7 +371,7 @@ describe("importAlternativeTitles", () => {
       const result = await importAlternativeTitles({
         courseId: course.id,
         file,
-        locale: "en",
+        language: "en",
       });
 
       expect(result.error).toBeNull();

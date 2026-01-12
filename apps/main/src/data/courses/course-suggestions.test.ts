@@ -10,7 +10,7 @@ import {
 test("get an existing item", async () => {
   const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
 
-  const locale = "en";
+  const language = "en";
   const prompt = `typescript-${randomUUID()}`;
 
   const suggestions = [
@@ -18,12 +18,12 @@ test("get an existing item", async () => {
   ];
 
   await prisma.courseSuggestion.upsert({
-    create: { locale, prompt, suggestions },
+    create: { language, prompt, suggestions },
     update: { suggestions },
-    where: { localePrompt: { locale, prompt } },
+    where: { languagePrompt: { language, prompt } },
   });
 
-  const result = await generateCourseSuggestions({ locale, prompt });
+  const result = await generateCourseSuggestions({ language, prompt });
 
   expect(result.suggestions).toEqual(suggestions);
   expect(result.id).toBeTypeOf("number");
@@ -33,7 +33,7 @@ test("get an existing item", async () => {
 test("generates a new item", async () => {
   const spy = vi.spyOn(courseSuggestions, "generateCourseSuggestions");
 
-  const locale = "en";
+  const language = "en";
   const prompt = `vitest-${randomUUID()}`;
 
   const generatedSuggestions = [
@@ -42,14 +42,14 @@ test("generates a new item", async () => {
 
   spy.mockResolvedValueOnce({ data: generatedSuggestions } as never);
 
-  const result = await generateCourseSuggestions({ locale, prompt });
+  const result = await generateCourseSuggestions({ language, prompt });
 
   expect(result.suggestions).toEqual(generatedSuggestions);
   expect(result.id).toBeTypeOf("number");
   expect(spy).toHaveBeenCalledOnce();
 
   // check if the record was added to the database
-  const record = await generateCourseSuggestions({ locale, prompt });
+  const record = await generateCourseSuggestions({ language, prompt });
   expect(record.suggestions).toEqual(generatedSuggestions);
   expect(record.id).toBe(result.id);
   expect(spy).toHaveBeenCalledOnce();
@@ -61,20 +61,20 @@ test("getCourseSuggestionById returns null for non-existent id", async () => {
 });
 
 test("getCourseSuggestionById returns suggestion by id", async () => {
-  const locale = "en";
+  const language = "en";
   const prompt = `by-id-${randomUUID()}`;
   const suggestions = [
     { description: "Test description", title: "Test Course" },
   ];
 
   const record = await prisma.courseSuggestion.create({
-    data: { locale, prompt, suggestions },
+    data: { language, prompt, suggestions },
   });
 
   const result = await getCourseSuggestionById(record.id);
 
   expect(result).toEqual({
-    locale,
+    language,
     prompt,
     suggestions,
   });

@@ -27,20 +27,20 @@ const schema = z.object({
 export type CourseSuggestionSchema = z.infer<typeof schema>;
 
 export type CourseSuggestionsParams = {
-  locale: string;
+  language: string;
   prompt: string;
   model?: string;
   useFallback?: boolean;
 };
 
 export async function generateCourseSuggestions({
-  locale,
+  language,
   prompt,
   model = DEFAULT_MODEL,
   useFallback = true,
 }: CourseSuggestionsParams) {
   const userPrompt = `
-    APP_LANGUAGE: ${locale}
+    LANGUAGE: ${language}
     USER_INPUT: ${prompt}
   `;
 

@@ -14,7 +14,7 @@ describe("listAlternativeTitles", () => {
 
     await addAlternativeTitles({
       courseId: course.id,
-      locale: "en",
+      language: "en",
       titles: [`aaa-${suffix}`, `bbb-${suffix}`, `ccc-${suffix}`],
     });
 
@@ -40,7 +40,7 @@ describe("listAlternativeTitles", () => {
 
     await addAlternativeTitles({
       courseId: course.id,
-      locale: "en",
+      language: "en",
       titles: [`zebra-${suffix}`, `apple-${suffix}`, `mango-${suffix}`],
     });
 
@@ -61,7 +61,7 @@ describe("listAlternativeTitles", () => {
 
     await addAlternativeTitles({
       courseId: course.id,
-      locale: "en",
+      language: "en",
       titles: [`foo-${suffix}`, `bar-${suffix}`],
     });
 

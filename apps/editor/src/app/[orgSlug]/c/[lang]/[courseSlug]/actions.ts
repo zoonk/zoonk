@@ -314,7 +314,7 @@ export async function addAlternativeTitleAction(
 
   await addAlternativeTitles({
     courseId,
-    locale: lang,
+    language: lang,
     titles: [title],
   });
 
@@ -353,7 +353,7 @@ export async function importAlternativeTitlesAction(
   const { error } = await importAlternativeTitles({
     courseId,
     file,
-    locale: lang,
+    language: lang,
     mode,
   });
 

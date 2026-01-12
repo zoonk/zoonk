@@ -31,7 +31,7 @@ export const TEST_CASES = [
   {
     id: "unique-test-case-id",
     userInput: {
-      locale: "en",
+      language: "en",
       prompt: "your test input",
     },
     expectations: `

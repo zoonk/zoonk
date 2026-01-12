@@ -6,7 +6,6 @@ const alternativeTitlesData = [
   {
     courseSlug: "machine-learning",
     language: "en",
-    locale: "en",
     titles: [
       "ML",
       "Machine Learning Fundamentals",
@@ -17,7 +16,6 @@ const alternativeTitlesData = [
   {
     courseSlug: "machine-learning",
     language: "pt",
-    locale: "pt",
     titles: ["ML", "Aprendizado de Máquina", "Introdução ao Machine Learning"],
   },
 ];
@@ -48,7 +46,7 @@ export async function seedAlternativeTitles(
       await prisma.courseAlternativeTitle.createMany({
         data: slugs.map((slug) => ({
           courseId: course.id,
-          locale: item.locale,
+          language: item.language,
           slug,
         })),
         skipDuplicates: true,

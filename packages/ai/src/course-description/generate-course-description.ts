@@ -23,20 +23,20 @@ export type CourseDescriptionSchema = z.infer<typeof schema>;
 
 export type CourseDescriptionParams = {
   title: string;
-  locale: string;
+  language: string;
   model?: string;
   useFallback?: boolean;
 };
 
 export async function generateCourseDescription({
   title,
-  locale,
+  language,
   model = DEFAULT_MODEL,
   useFallback = true,
 }: CourseDescriptionParams) {
   const userPrompt = `
     COURSE_TITLE: ${title}
-    LANGUAGE: ${locale}
+    LANGUAGE: ${language}
   `;
 
   const { output, usage } = await generateText({

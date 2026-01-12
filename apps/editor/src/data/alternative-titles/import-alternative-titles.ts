@@ -33,7 +33,7 @@ function validateImportData(data: unknown): data is AlternativeTitlesImport {
 export async function importAlternativeTitles(params: {
   courseId: number;
   file: File;
-  locale: string;
+  language: string;
   mode?: ImportMode;
 }): Promise<SafeReturn<string[]>> {
   const mode = params.mode ?? "merge";
@@ -73,14 +73,14 @@ export async function importAlternativeTitles(params: {
     prisma.$transaction(async (tx) => {
       if (mode === "replace") {
         await tx.courseAlternativeTitle.deleteMany({
-          where: { courseId: params.courseId, locale: params.locale },
+          where: { courseId: params.courseId, language: params.language },
         });
       }
 
       await tx.courseAlternativeTitle.createMany({
         data: uniqueSlugs.map((slug) => ({
           courseId: params.courseId,
-          locale: params.locale,
+          language: params.language,
           slug,
         })),
         skipDuplicates: true,

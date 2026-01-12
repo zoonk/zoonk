@@ -22,20 +22,20 @@ export type AlternativeTitlesSchema = z.infer<typeof schema>;
 
 export type AlternativeTitlesParams = {
   title: string;
-  locale: string;
+  language: string;
   model?: string;
   useFallback?: boolean;
 };
 
 export async function generateAlternativeTitles({
   title,
-  locale,
+  language,
   model = DEFAULT_MODEL,
   useFallback = true,
 }: AlternativeTitlesParams) {
   const userPrompt = `
     TITLE: ${title}
-    LANGUAGE: ${locale}
+    LANGUAGE: ${language}
   `;
 
   const { output, usage } = await generateText({

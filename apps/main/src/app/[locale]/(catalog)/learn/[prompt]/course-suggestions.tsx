@@ -34,7 +34,7 @@ export async function CourseSuggestions({
 }: CourseSuggestionsProps) {
   const t = await getExtracted();
   const { id, suggestions } = await generateCourseSuggestions({
-    locale,
+    language: locale,
     prompt,
   });
 

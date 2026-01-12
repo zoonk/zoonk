@@ -7,7 +7,7 @@ export async function seedCourseSuggestions(
   // Seed course suggestions for predictable E2E tests
   await prisma.courseSuggestion.upsert({
     create: {
-      locale: "en",
+      language: "en",
       prompt: normalizeString("test prompt"),
       suggestions: [
         {
@@ -22,13 +22,16 @@ export async function seedCourseSuggestions(
     },
     update: {},
     where: {
-      localePrompt: { locale: "en", prompt: normalizeString("test prompt") },
+      languagePrompt: {
+        language: "en",
+        prompt: normalizeString("test prompt"),
+      },
     },
   });
 
   await prisma.courseSuggestion.upsert({
     create: {
-      locale: "pt",
+      language: "pt",
       prompt: normalizeString("test prompt"),
       suggestions: [
         {
@@ -43,7 +46,10 @@ export async function seedCourseSuggestions(
     },
     update: {},
     where: {
-      localePrompt: { locale: "pt", prompt: normalizeString("test prompt") },
+      languagePrompt: {
+        language: "pt",
+        prompt: normalizeString("test prompt"),
+      },
     },
   });
 }

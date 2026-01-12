@@ -18,7 +18,7 @@ describe("deleteAlternativeTitles", () => {
 
     await addAlternativeTitles({
       courseId: course.id,
-      locale: "en",
+      language: "en",
       titles: [title1, title2, title3],
     });
 
@@ -44,7 +44,7 @@ describe("deleteAlternativeTitles", () => {
 
     await addAlternativeTitles({
       courseId: course.id,
-      locale: "en",
+      language: "en",
       titles: [`react-${suffix}`, `vue-${suffix}`, `angular-${suffix}`],
     });
 
@@ -69,7 +69,7 @@ describe("deleteAlternativeTitles", () => {
 
     await addAlternativeTitles({
       courseId: course.id,
-      locale: "en",
+      language: "en",
       titles: [`python-${suffix}`],
     });
 
@@ -94,7 +94,7 @@ describe("deleteAlternativeTitles", () => {
 
     await addAlternativeTitles({
       courseId: course.id,
-      locale: "en",
+      language: "en",
       titles: [`javascript-${suffix}`],
     });
 
@@ -120,13 +120,13 @@ describe("deleteAlternativeTitles", () => {
 
     await addAlternativeTitles({
       courseId: course1.id,
-      locale: "en",
+      language: "en",
       titles: [`typescript-${suffix}`],
     });
 
     await addAlternativeTitles({
       courseId: course2.id,
-      locale: "en",
+      language: "en",
       titles: [`go-programming-${suffix}`],
     });
 

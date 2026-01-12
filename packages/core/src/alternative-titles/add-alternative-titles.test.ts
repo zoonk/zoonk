@@ -14,7 +14,7 @@ describe("addAlternativeTitles", () => {
 
     await addAlternativeTitles({
       courseId: course.id,
-      locale: "en",
+      language: "en",
       titles: [
         `Frontend Development ${suffix}`,
         `Frontend Engineering ${suffix}`,
@@ -41,7 +41,7 @@ describe("addAlternativeTitles", () => {
 
     await addAlternativeTitles({
       courseId: course.id,
-      locale: "en",
+      language: "en",
       titles: [`Machine Learning Basics! ${suffix}`],
     });
 
@@ -62,7 +62,7 @@ describe("addAlternativeTitles", () => {
 
     await addAlternativeTitles({
       courseId: course.id,
-      locale: "en",
+      language: "en",
       titles: [title, title, title.toLowerCase()],
     });
 
@@ -85,13 +85,13 @@ describe("addAlternativeTitles", () => {
 
     await addAlternativeTitles({
       courseId: course1.id,
-      locale: "en",
+      language: "en",
       titles: [sharedTitle],
     });
 
     await addAlternativeTitles({
       courseId: course2.id,
-      locale: "en",
+      language: "en",
       titles: [sharedTitle, uniqueTitle],
     });
 
@@ -109,7 +109,7 @@ describe("addAlternativeTitles", () => {
 
     await addAlternativeTitles({
       courseId: course.id,
-      locale: "en",
+      language: "en",
       titles: [],
     });
 
@@ -128,7 +128,7 @@ describe("addAlternativeTitles", () => {
 
     await addAlternativeTitles({
       courseId: course.id,
-      locale: "en",
+      language: "en",
       titles: ["", "   ", `Valid Title ${suffix}`],
     });
 

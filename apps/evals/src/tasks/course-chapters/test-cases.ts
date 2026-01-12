@@ -4,7 +4,7 @@ const SHARED_EXPECTATIONS = `
   - By the end of this course, they should be able to lead very complex projects and tasks in this field
   - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD
   - Should include **EVERYTHING** a student needs to be at the top 1% of the field
-  - Should follow the language specified by locale parameter
+  - Should follow the language specified by language parameter
   - Should follow title and description guidelines: no fluff, be concise, straight to the point
   - Should cover latest trends in the field
   - Don't use vendors in chapter titles or descriptions (e.g. "npm", "yarn", "Redux", etc.)
@@ -34,7 +34,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-python",
-    userInput: { courseTitle: "Python", locale: "pt" },
+    userInput: { courseTitle: "Python", language: "pt" },
   },
   {
     expectations: `
@@ -44,7 +44,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-web-development",
-    userInput: { courseTitle: "Web Development", locale: "en" },
+    userInput: { courseTitle: "Web Development", language: "en" },
   },
   {
     expectations: `
@@ -54,7 +54,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-metodologias-ageis",
-    userInput: { courseTitle: "Metodologias Ágeis", locale: "pt" },
+    userInput: { courseTitle: "Metodologias Ágeis", language: "pt" },
   },
   {
     expectations: `
@@ -63,7 +63,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "es-quimica",
-    userInput: { courseTitle: "Química", locale: "es" },
+    userInput: { courseTitle: "Química", language: "es" },
   },
   {
     expectations: `
@@ -72,7 +72,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-economics",
-    userInput: { courseTitle: "Economics", locale: "en" },
+    userInput: { courseTitle: "Economics", language: "en" },
   },
   {
     expectations: `
@@ -81,7 +81,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-neurociencia",
-    userInput: { courseTitle: "Neurociência", locale: "pt" },
+    userInput: { courseTitle: "Neurociência", language: "pt" },
   },
   {
     expectations: `
@@ -95,7 +95,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-spanish",
-    userInput: { courseTitle: "Spanish", locale: "en" },
+    userInput: { courseTitle: "Spanish", language: "en" },
   },
   {
     expectations: `
@@ -105,7 +105,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "pt-direito",
-    userInput: { courseTitle: "Direito", locale: "pt" },
+    userInput: { courseTitle: "Direito", language: "pt" },
   },
   {
     expectations: `
@@ -115,7 +115,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-google-cloud",
-    userInput: { courseTitle: "Google Cloud", locale: "en" },
+    userInput: { courseTitle: "Google Cloud", language: "en" },
   },
   {
     expectations: `
@@ -125,7 +125,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-uk-law",
-    userInput: { courseTitle: "UK Law", locale: "en" },
+    userInput: { courseTitle: "UK Law", language: "en" },
   },
   {
     expectations: `
@@ -134,7 +134,7 @@ export const TEST_CASES = [
       ${SHARED_EXPECTATIONS}
     `,
     id: "en-brazilian-history",
-    userInput: { courseTitle: "Brazilian History", locale: "en" },
+    userInput: { courseTitle: "Brazilian History", language: "en" },
   },
   {
     expectations: `
@@ -144,6 +144,6 @@ export const TEST_CASES = [
         ${SHARED_EXPECTATIONS}
       `,
     id: "en-harry-potter",
-    userInput: { courseTitle: "Harry Potter", locale: "en" },
+    userInput: { courseTitle: "Harry Potter", language: "en" },
   },
 ];
