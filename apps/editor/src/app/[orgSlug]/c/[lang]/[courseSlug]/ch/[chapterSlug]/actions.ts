@@ -15,11 +15,15 @@ import { reorderLessons } from "@/data/lessons/reorder-lessons";
 import { getErrorMessage } from "@/lib/error-messages";
 
 export async function checkChapterSlugExists(params: {
+  courseId?: number;
   language: string;
   orgSlug: string;
   slug: string;
 }): Promise<boolean> {
-  return chapterSlugExists(params);
+  if (!params.courseId) {
+    return false;
+  }
+  return chapterSlugExists({ courseId: params.courseId, slug: params.slug });
 }
 
 export async function updateChapterTitleAction(

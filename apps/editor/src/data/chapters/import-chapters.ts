@@ -136,16 +136,15 @@ export async function importChapters(params: {
 
       const allSlugs = chaptersToImport.map((c) => c.slug);
 
-      const existingChaptersInOrg = await tx.chapter.findMany({
+      const existingChaptersInCourse = await tx.chapter.findMany({
         where: {
-          language: course.language,
-          organizationId: course.organizationId,
+          courseId: params.courseId,
           slug: { in: allSlugs },
         },
       });
 
       const existingChapterMap = new Map(
-        existingChaptersInOrg.map((c) => [c.slug, c]),
+        existingChaptersInCourse.map((c) => [c.slug, c]),
       );
 
       // Deduplicate slugs within the batch to prevent unique constraint violations

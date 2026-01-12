@@ -11,11 +11,12 @@ import { getChapter } from "./get-chapter";
 
 describe("unauthenticated users", () => {
   let organization: Awaited<ReturnType<typeof organizationFixture>>;
+  let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
   beforeAll(async () => {
     organization = await organizationFixture();
-    const course = await courseFixture({ organizationId: organization.id });
+    course = await courseFixture({ organizationId: organization.id });
     chapter = await chapterFixture({
       courseId: course.id,
       language: course.language,
@@ -26,6 +27,7 @@ describe("unauthenticated users", () => {
   test("returns Forbidden", async () => {
     const result = await getChapter({
       chapterSlug: chapter.slug,
+      courseSlug: course.slug,
       headers: new Headers(),
       language: chapter.language,
       orgSlug: organization.slug,
@@ -52,6 +54,7 @@ describe("members", () => {
 
     const result = await getChapter({
       chapterSlug: chapter.slug,
+      courseSlug: course.slug,
       headers,
       language: chapter.language,
       orgSlug: organization.slug,
@@ -90,6 +93,7 @@ describe("admins", () => {
   test("gets chapter by slug successfully", async () => {
     const result = await getChapter({
       chapterSlug: chapter.slug,
+      courseSlug: course.slug,
       headers,
       language: chapter.language,
       orgSlug: organization.slug,
@@ -103,6 +107,7 @@ describe("admins", () => {
   test("returns null when chapter not found", async () => {
     const result = await getChapter({
       chapterSlug: "non-existent-slug",
+      courseSlug: course.slug,
       headers,
       language: chapter.language,
       orgSlug: organization.slug,
@@ -112,11 +117,16 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
-  test("returns null when language doesn't match", async () => {
+  test("returns null when course doesn't match", async () => {
+    const otherCourse = await courseFixture({
+      organizationId: organization.id,
+    });
+
     const result = await getChapter({
       chapterSlug: chapter.slug,
+      courseSlug: otherCourse.slug,
       headers,
-      language: "xx",
+      language: chapter.language,
       orgSlug: organization.slug,
     });
 
@@ -124,24 +134,27 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
-  test("returns the chapter with the correct language", async () => {
-    const ptChapter = await chapterFixture({
-      courseId: course.id,
-      language: "pt",
+  test("returns the chapter from the correct course when same slug exists in different courses", async () => {
+    const otherCourse = await courseFixture({
+      organizationId: organization.id,
+    });
+    const otherChapter = await chapterFixture({
+      courseId: otherCourse.id,
+      language: otherCourse.language,
       organizationId: organization.id,
       slug: chapter.slug,
     });
 
     const result = await getChapter({
       chapterSlug: chapter.slug,
+      courseSlug: otherCourse.slug,
       headers,
-      language: "pt",
+      language: otherCourse.language,
       orgSlug: organization.slug,
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.id).toBe(ptChapter.id);
-    expect(result.data?.language).toBe("pt");
+    expect(result.data?.id).toBe(otherChapter.id);
   });
 
   test("returns Forbidden for chapter in different organization", async () => {
@@ -155,6 +168,7 @@ describe("admins", () => {
 
     const result = await getChapter({
       chapterSlug: otherChapter.slug,
+      courseSlug: otherCourse.slug,
       headers,
       language: otherChapter.language,
       orgSlug: otherOrg.slug,

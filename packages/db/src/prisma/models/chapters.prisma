@@ -16,7 +16,7 @@ model Chapter {
   updatedAt       DateTime @default(now()) @updatedAt @map("updated_at")
   lessons         Lesson[]
 
-  @@unique([organizationId, language, slug], name: "orgLanguageChapterSlug")
+  @@unique([courseId, slug], name: "courseChapterSlug")
   @@index([organizationId, normalizedTitle])
   @@index([courseId, position])
   @@map("chapters")

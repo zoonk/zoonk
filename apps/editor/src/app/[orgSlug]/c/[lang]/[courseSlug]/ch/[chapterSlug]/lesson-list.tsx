@@ -38,7 +38,7 @@ export async function LessonList({
 
   const [{ data: lessons, error }, { data: chapter }] = await Promise.all([
     listChapterLessons({ chapterSlug, orgSlug }),
-    getChapter({ chapterSlug, language: lang, orgSlug }),
+    getChapter({ chapterSlug, courseSlug, language: lang, orgSlug }),
   ]);
 
   if (error || !chapter) {

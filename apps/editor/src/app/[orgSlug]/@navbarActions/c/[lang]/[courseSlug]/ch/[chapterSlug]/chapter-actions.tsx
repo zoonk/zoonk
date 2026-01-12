@@ -22,6 +22,7 @@ export async function ChapterActions({
 
   const { data: chapter } = await getChapter({
     chapterSlug,
+    courseSlug,
     language: lang,
     orgSlug,
   });

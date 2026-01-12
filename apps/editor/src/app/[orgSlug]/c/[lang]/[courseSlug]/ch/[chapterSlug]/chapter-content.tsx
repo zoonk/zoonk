@@ -20,6 +20,7 @@ export async function ChapterContent({
 
   const { data: chapter, error } = await getChapter({
     chapterSlug,
+    courseSlug,
     language: lang,
     orgSlug,
   });

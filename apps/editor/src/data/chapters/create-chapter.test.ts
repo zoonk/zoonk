@@ -154,7 +154,7 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
-  test("returns error when slug already exists for same org and language", async () => {
+  test("returns error when slug already exists in the same course", async () => {
     const attrs = chapterAttrs({
       courseId: course.id,
       organizationId: organization.id,
@@ -175,6 +175,45 @@ describe("admins", () => {
     });
 
     expect(result.error).not.toBeNull();
+  });
+
+  test("allows same slug in different courses within the same organization", async () => {
+    const slug = `shared-slug-${Date.now()}`;
+
+    const attrs1 = chapterAttrs({
+      courseId: course.id,
+      organizationId: organization.id,
+    });
+
+    const otherCourse = await courseFixture({
+      organizationId: organization.id,
+    });
+
+    const attrs2 = chapterAttrs({
+      courseId: otherCourse.id,
+      organizationId: organization.id,
+    });
+
+    const result1 = await createChapter({
+      ...attrs1,
+      courseId: course.id,
+      headers,
+      position: 0,
+      slug,
+    });
+
+    const result2 = await createChapter({
+      ...attrs2,
+      courseId: otherCourse.id,
+      headers,
+      position: 0,
+      slug,
+    });
+
+    expect(result1.error).toBeNull();
+    expect(result1.data?.slug).toBe(slug);
+    expect(result2.error).toBeNull();
+    expect(result2.data?.slug).toBe(slug);
   });
 
   test("creates chapter at correct position", async () => {

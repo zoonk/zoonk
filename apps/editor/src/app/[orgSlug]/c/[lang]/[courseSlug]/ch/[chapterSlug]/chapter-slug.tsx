@@ -14,6 +14,7 @@ export async function ChapterSlug({
 
   const { data: chapter } = await getChapter({
     chapterSlug,
+    courseSlug,
     language: lang,
     orgSlug,
   });
@@ -25,6 +26,7 @@ export async function ChapterSlug({
   return (
     <SlugEditor
       checkFn={checkChapterSlugExists}
+      courseId={chapter.courseId}
       entityId={chapter.id}
       initialSlug={chapter.slug}
       language={lang}

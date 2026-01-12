@@ -13,7 +13,7 @@ describe("chapterSlugExists()", () => {
     course = await courseFixture({ organizationId: organization.id });
   });
 
-  test("returns true when slug exists for same language and org", async () => {
+  test("returns true when slug exists in the same course", async () => {
     const chapter = await chapterFixture({
       courseId: course.id,
       language: course.language,
@@ -21,8 +21,7 @@ describe("chapterSlugExists()", () => {
     });
 
     const exists = await chapterSlugExists({
-      language: chapter.language,
-      orgSlug: organization.slug,
+      courseId: course.id,
       slug: chapter.slug,
     });
 
@@ -31,42 +30,26 @@ describe("chapterSlugExists()", () => {
 
   test("returns false when slug does not exist", async () => {
     const exists = await chapterSlugExists({
-      language: "en",
-      orgSlug: organization.slug,
+      courseId: course.id,
       slug: "non-existent-slug",
     });
 
     expect(exists).toBe(false);
   });
 
-  test("returns false when slug exists but language differs", async () => {
+  test("returns false when slug exists but in a different course", async () => {
+    const otherCourse = await courseFixture({
+      organizationId: organization.id,
+    });
+
     const chapter = await chapterFixture({
-      courseId: course.id,
-      language: "en",
+      courseId: otherCourse.id,
+      language: otherCourse.language,
       organizationId: organization.id,
     });
 
     const exists = await chapterSlugExists({
-      language: "pt",
-      orgSlug: organization.slug,
-      slug: chapter.slug,
-    });
-
-    expect(exists).toBe(false);
-  });
-
-  test("returns false when slug exists but organization differs", async () => {
-    const otherOrg = await organizationFixture();
-    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
-    const chapter = await chapterFixture({
-      courseId: otherCourse.id,
-      language: otherCourse.language,
-      organizationId: otherOrg.id,
-    });
-
-    const exists = await chapterSlugExists({
-      language: chapter.language,
-      orgSlug: organization.slug,
+      courseId: course.id,
       slug: chapter.slug,
     });
 

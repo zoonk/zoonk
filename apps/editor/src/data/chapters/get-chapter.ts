@@ -9,6 +9,7 @@ import { ErrorCode } from "@/lib/app-error";
 export const getChapter = cache(
   async (params: {
     chapterSlug: string;
+    courseSlug: string;
     headers?: Headers;
     language: string;
     orgSlug: string;
@@ -16,8 +17,11 @@ export const getChapter = cache(
     const { data: chapter, error: findError } = await safeAsync(() =>
       prisma.chapter.findFirst({
         where: {
-          language: params.language,
-          organization: { slug: params.orgSlug },
+          course: {
+            language: params.language,
+            organization: { slug: params.orgSlug },
+            slug: params.courseSlug,
+          },
           slug: params.chapterSlug,
         },
       }),
