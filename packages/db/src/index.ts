@@ -31,6 +31,8 @@ export type {
   Member,
   Organization,
   RateLimit,
+  SearchPrompt,
+  SearchPromptSuggestion,
   Session,
   Step,
   StepAttempt,
