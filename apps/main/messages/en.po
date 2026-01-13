@@ -918,9 +918,14 @@ msgid "Lesson"
 msgstr "Lesson"
 
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
-msgctxt "6OWS4p"
-msgid "Processing..."
-msgstr "Processing..."
+msgctxt "/Nrb/0"
+msgid "Generation progress"
+msgstr "Generation progress"
+
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "DFlapX"
+msgid "Creating your course"
+msgstr "Creating your course"
 
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
 msgctxt "FazwRl"
@@ -931,11 +936,6 @@ msgstr "Try again"
 msgctxt "IEv8EV"
 msgid "Redirecting to your course..."
 msgstr "Redirecting to your course..."
-
-#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
-msgctxt "KV/tli"
-msgid "Starting generation..."
-msgstr "Starting generation..."
 
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
 msgctxt "ssRq8D"
@@ -952,80 +952,40 @@ msgctxt "W/5hwr"
 msgid "Something went wrong. Please try again."
 msgstr "Something went wrong. Please try again."
 
-#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
 msgctxt "1QgqKE"
 msgid "Generating lessons"
 msgstr "Generating lessons"
 
-#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
 msgctxt "4AKS22"
 msgid "Loading course information"
 msgstr "Loading course information"
 
-#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
 msgctxt "5hT53e"
 msgid "Setting up course"
 msgstr "Setting up course"
 
-#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
-msgctxt "6OV3HJ"
-msgid "Completing course setup"
-msgstr "Completing course setup"
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "KxR5iy"
+msgid "Generating course details"
+msgstr "Generating course details"
 
-#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
-msgctxt "AAzrnk"
-msgid "Identifying categories"
-msgstr "Identifying categories"
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "M8HLN6"
+msgid "Saving course metadata"
+msgstr "Saving course metadata"
 
-#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
-msgctxt "gFEV/E"
-msgid "Generating description"
-msgstr "Generating description"
-
-#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
-msgctxt "gV9649"
-msgid "Adding lessons"
-msgstr "Adding lessons"
-
-#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
-msgctxt "l8UUJE"
-msgid "Generating alternative titles"
-msgstr "Generating alternative titles"
-
-#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
-msgctxt "o7sNmG"
-msgid "Creating course image"
-msgstr "Creating course image"
-
-#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
-msgctxt "ovzOwn"
-msgid "Adding chapters"
-msgstr "Adding chapters"
-
-#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
 msgctxt "p2vSFY"
 msgid "Planning chapters"
 msgstr "Planning chapters"
 
-#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
-msgctxt "rcxuMy"
-msgid "Saving course details"
-msgstr "Saving course details"
-
-#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
 msgctxt "rso9iW"
 msgid "Checking for existing course"
 msgstr "Checking for existing course"
-
-#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
-msgctxt "YfGnxR"
-msgid "Adding alternative titles"
-msgstr "Adding alternative titles"
-
-#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
-msgctxt "ZjJkAd"
-msgid "Adding categories"
-msgstr "Adding categories"
 
 #: src/app/[locale]/privacy/page.tsx
 msgctxt "iql85X"

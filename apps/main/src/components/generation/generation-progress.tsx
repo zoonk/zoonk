@@ -7,73 +7,145 @@ import {
   AlertTitle,
 } from "@zoonk/ui/components/alert";
 import { Button } from "@zoonk/ui/components/button";
-import { Spinner } from "@zoonk/ui/components/spinner";
-import { AlertCircleIcon, CheckIcon, SparklesIcon } from "lucide-react";
-import type { ComponentProps, ReactNode } from "react";
+import {
+  Progress,
+  ProgressLabel,
+  ProgressValue,
+} from "@zoonk/ui/components/progress";
+import { cn } from "@zoonk/ui/lib/utils";
+import type { LucideIcon } from "lucide-react";
+import { AlertCircleIcon, CheckIcon } from "lucide-react";
+import type { ReactNode } from "react";
 
-function GenerationProgressTriggering({ children }: { children: ReactNode }) {
-  return (
-    <div aria-live="polite" className="flex flex-col items-center gap-3 py-8">
-      <div className="flex size-12 items-center justify-center rounded-full bg-muted">
-        <Spinner className="size-5" />
-      </div>
-      <span className="font-medium text-foreground">{children}</span>
-    </div>
-  );
-}
+type PhaseStatus = "pending" | "active" | "completed";
 
-type GenerationProgressStreamingProps = {
-  children: ReactNode;
-  completedSteps?: ReactNode;
-  icon?: ComponentProps<"svg">["children"];
-};
-
-function GenerationProgressStreaming({
-  children,
-  completedSteps,
-  icon,
-}: GenerationProgressStreamingProps) {
-  const Icon = icon ? () => <>{icon}</> : SparklesIcon;
-
+function GenerationTimeline({ children }: { children: ReactNode }) {
   return (
     <div
-      aria-atomic="true"
       aria-live="polite"
-      className="flex flex-col items-center gap-8 py-8"
+      className="flex w-full max-w-md flex-col gap-6 py-8"
+      data-slot="generation-timeline"
     >
-      <div className="flex flex-col items-center gap-3">
-        <div className="flex size-12 items-center justify-center rounded-full bg-muted">
-          {icon ? (
-            <Icon aria-hidden="true" className="size-5" />
-          ) : (
-            <Spinner className="size-5" />
-          )}
-        </div>
-        <span className="font-medium text-foreground">{children}</span>
-      </div>
-
-      {completedSteps}
+      {children}
     </div>
   );
 }
 
-function GenerationProgressCompletedSteps({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  return <div className="flex flex-col gap-2 text-sm">{children}</div>;
+function GenerationTimelineHeader({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex flex-col gap-3" data-slot="generation-timeline-header">
+      {children}
+    </div>
+  );
 }
 
-function GenerationProgressCompletedStep({
-  children,
+function GenerationTimelineTitle({ children }: { children: ReactNode }) {
+  return (
+    <h2 className="font-semibold text-lg" data-slot="generation-timeline-title">
+      {children}
+    </h2>
+  );
+}
+
+function GenerationTimelineProgress({
+  label,
+  value,
 }: {
-  children: ReactNode;
+  label: string;
+  value: number;
 }) {
   return (
-    <div className="flex items-center gap-2 text-muted-foreground">
-      <CheckIcon aria-hidden="true" className="size-4 text-foreground" />
-      <span>{children}</span>
+    <Progress className="**:data-[slot=progress-track]:h-2" value={value}>
+      <ProgressLabel className="sr-only">{label}</ProgressLabel>
+      <ProgressValue />
+    </Progress>
+  );
+}
+
+function GenerationTimelineSteps({ children }: { children: ReactNode }) {
+  return (
+    <div
+      className="relative flex flex-col gap-0"
+      data-slot="generation-timeline-steps"
+    >
+      {children}
+    </div>
+  );
+}
+
+function GenerationTimelineStepIndicator({
+  icon: Icon,
+  status,
+}: {
+  icon: LucideIcon;
+  status: PhaseStatus;
+}) {
+  if (status === "completed") {
+    return (
+      <div className="flex size-6 shrink-0 items-center justify-center rounded-full bg-foreground">
+        <CheckIcon aria-hidden="true" className="size-3.5 text-background" />
+      </div>
+    );
+  }
+
+  if (status === "active") {
+    return (
+      <div className="relative flex size-6 shrink-0 items-center justify-center">
+        <div className="absolute inset-0 animate-pulse rounded-full border-2 border-foreground/30" />
+        <div className="flex size-6 items-center justify-center rounded-full border-2 border-foreground">
+          <Icon aria-hidden="true" className="size-3 text-foreground" />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex size-6 shrink-0 items-center justify-center rounded-full border-2 border-muted-foreground/40 border-dashed">
+      <Icon aria-hidden="true" className="size-3 text-muted-foreground/40" />
+    </div>
+  );
+}
+
+function GenerationTimelineStep({
+  children,
+  icon,
+  isLast,
+  status,
+}: {
+  children: ReactNode;
+  icon: LucideIcon;
+  isLast?: boolean;
+  status: PhaseStatus;
+}) {
+  return (
+    <div
+      className="flex items-start gap-3"
+      data-slot="generation-timeline-step"
+    >
+      <div className="flex flex-col items-center">
+        <GenerationTimelineStepIndicator icon={icon} status={status} />
+        {!isLast && (
+          <div
+            aria-hidden="true"
+            className={cn(
+              "h-8 w-px",
+              status === "completed"
+                ? "bg-foreground"
+                : "bg-muted-foreground/20",
+            )}
+          />
+        )}
+      </div>
+      <span
+        className={cn(
+          "pt-0.5 text-sm",
+          status === "completed" && "text-muted-foreground",
+          status === "active" && "font-medium text-foreground",
+          status === "pending" && "text-muted-foreground/60",
+        )}
+      >
+        {children}
+      </span>
     </div>
   );
 }
@@ -131,9 +203,11 @@ function GenerationProgressError({
 
 export {
   GenerationProgressCompleted,
-  GenerationProgressCompletedStep,
-  GenerationProgressCompletedSteps,
   GenerationProgressError,
-  GenerationProgressStreaming,
-  GenerationProgressTriggering,
+  GenerationTimeline,
+  GenerationTimelineHeader,
+  GenerationTimelineProgress,
+  GenerationTimelineStep,
+  GenerationTimelineSteps,
+  GenerationTimelineTitle,
 };

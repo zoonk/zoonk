@@ -7,16 +7,17 @@ import { useExtracted } from "next-intl";
 import { useEffect } from "react";
 import {
   GenerationProgressCompleted,
-  GenerationProgressCompletedStep,
-  GenerationProgressCompletedSteps,
   GenerationProgressError,
-  GenerationProgressStreaming,
-  GenerationProgressTriggering,
+  GenerationTimeline,
+  GenerationTimelineHeader,
+  GenerationTimelineProgress,
+  GenerationTimelineStep,
+  GenerationTimelineSteps,
+  GenerationTimelineTitle,
 } from "@/components/generation/generation-progress";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
 import type { StepName } from "@/workflows/course-generation/types";
-import { STEP_ICONS } from "./generation-step-icons";
-import { useGenerationStepLabels } from "./use-generation-step-labels";
+import { useGenerationPhases } from "./use-generation-phases";
 
 type GenerationClientProps = {
   courseSlug: string;
@@ -35,7 +36,6 @@ export function GenerationClient({
 }: GenerationClientProps) {
   const t = useExtracted();
   const router = useRouter();
-  const { getLabel } = useGenerationStepLabels();
 
   const generation = useWorkflowGeneration<StepName>({
     completionStep: "addLessons",
@@ -45,6 +45,11 @@ export function GenerationClient({
     triggerBody: { courseSuggestionId: suggestionId },
     triggerUrl: "/api/workflows/course-generation/trigger",
   });
+
+  const { phases, progress } = useGenerationPhases(
+    generation.completedSteps,
+    generation.currentStep,
+  );
 
   // Redirect when completed
   useEffect(() => {
@@ -59,38 +64,32 @@ export function GenerationClient({
     return () => clearTimeout(timer);
   }, [generation.status, courseSlug, locale, router]);
 
-  if (generation.status === "triggering") {
+  if (generation.status === "triggering" || generation.status === "streaming") {
     return (
-      <GenerationProgressTriggering>
-        {t("Starting generation...")}
-      </GenerationProgressTriggering>
-    );
-  }
+      <GenerationTimeline>
+        <GenerationTimelineHeader>
+          <GenerationTimelineTitle>
+            {t("Creating your course")}
+          </GenerationTimelineTitle>
+          <GenerationTimelineProgress
+            label={t("Generation progress")}
+            value={progress}
+          />
+        </GenerationTimelineHeader>
 
-  if (generation.status === "streaming") {
-    const CurrentIcon = generation.currentStep
-      ? STEP_ICONS[generation.currentStep]
-      : null;
-
-    return (
-      <GenerationProgressStreaming
-        completedSteps={
-          generation.completedSteps.length > 0 ? (
-            <GenerationProgressCompletedSteps>
-              {generation.completedSteps.map((step) => (
-                <GenerationProgressCompletedStep key={step}>
-                  {getLabel(step)}
-                </GenerationProgressCompletedStep>
-              ))}
-            </GenerationProgressCompletedSteps>
-          ) : undefined
-        }
-        icon={CurrentIcon ? <CurrentIcon /> : undefined}
-      >
-        {generation.currentStep
-          ? getLabel(generation.currentStep)
-          : t("Processing...")}
-      </GenerationProgressStreaming>
+        <GenerationTimelineSteps>
+          {phases.map((phase, index) => (
+            <GenerationTimelineStep
+              icon={phase.icon}
+              isLast={index === phases.length - 1}
+              key={phase.name}
+              status={phase.status}
+            >
+              {phase.label}
+            </GenerationTimelineStep>
+          ))}
+        </GenerationTimelineSteps>
+      </GenerationTimeline>
     );
   }
 
