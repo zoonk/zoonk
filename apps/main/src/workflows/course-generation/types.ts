@@ -13,9 +13,9 @@ export type StepName =
   | "addAlternativeTitles"
   | "addCategories"
   | "addChapters"
+  | "completeCourseSetup"
   | "generateLessons"
-  | "addLessons"
-  | "finalize";
+  | "addLessons";
 
 export type StepStatus = "started" | "completed" | "error";
 

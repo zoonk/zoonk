@@ -20,7 +20,7 @@ export const STEP_ICONS: Record<StepName, LucideIcon> = {
   addChapters: ListPlusIcon,
   addLessons: ListPlusIcon,
   checkExistingCourse: SearchIcon,
-  finalize: CheckIcon,
+  completeCourseSetup: CheckIcon,
   generateAlternativeTitles: SparklesIcon,
   generateCategories: TagsIcon,
   generateChapters: LayoutListIcon,

@@ -968,6 +968,11 @@ msgid "Setting up course"
 msgstr "Configurando curso"
 
 #: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+msgctxt "6OV3HJ"
+msgid "Completing course setup"
+msgstr "Completando configuración del curso"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
 msgctxt "AAzrnk"
 msgid "Identifying categories"
 msgstr "Identificando categorías"
@@ -1011,11 +1016,6 @@ msgstr "Guardando detalles del curso"
 msgctxt "rso9iW"
 msgid "Checking for existing course"
 msgstr "Verificando si el curso existe"
-
-#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
-msgctxt "UedDE3"
-msgid "Finalizing course"
-msgstr "Finalizando curso"
 
 #: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
 msgctxt "YfGnxR"

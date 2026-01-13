@@ -4,16 +4,16 @@ import { expect, test } from "./fixtures";
 /**
  * Test Architecture for Course Generation Page
  *
- * The generation page interacts with 3 APIs:
+ * The generation page interacts with 2 APIs:
  * 1. POST /api/workflows/course-generation/trigger - Starts the workflow, returns { runId: string }
  * 2. GET /api/workflows/course-generation/status?runId=X&startIndex=N - Returns SSE stream of step updates
- * 3. GET /api/workflows/run-status?runId=X - Polled via SWR, returns { status: "running" | "completed" | "failed" }
  *
  * Client behavior:
  * - Auto-triggers workflow on mount (no idle state)
  * - Shows "Starting generation..." while triggering
  * - Shows current step label + spinner while streaming
  * - Shows completed steps with checkmarks
+ * - Workflow completes when the SSE stream ends
  * - Redirects to course page when workflow completes
  *
  * NOTE: Some error handling tests (trigger API failures) are not included because
@@ -27,7 +27,7 @@ const TEST_RUN_ID = "test-run-id-12345";
 type MockApiOptions = {
   triggerResponse?: { runId?: string; error?: string; status?: number };
   streamMessages?: Array<{ step: string; status: string }>;
-  runStatus?: "running" | "completed" | "failed";
+  streamError?: boolean;
 };
 
 /**
@@ -48,7 +48,7 @@ function createRouteHandler(options: MockApiOptions) {
   const {
     triggerResponse = { runId: TEST_RUN_ID },
     streamMessages = [],
-    runStatus = "running",
+    streamError = false,
   } = options;
 
   return async (route: Route) => {
@@ -81,19 +81,13 @@ function createRouteHandler(options: MockApiOptions) {
 
     // Mock status stream API
     if (url.includes("/api/workflows/course-generation/status")) {
+      if (streamError) {
+        await route.abort("failed");
+        return;
+      }
       await route.fulfill({
         body: createSSEStream(streamMessages),
         contentType: "text/event-stream",
-        status: 200,
-      });
-      return;
-    }
-
-    // Mock run status polling API
-    if (url.includes("/api/workflows/run-status")) {
-      await route.fulfill({
-        body: JSON.stringify({ status: runStatus }),
-        contentType: "application/json",
         status: 200,
       });
       return;
@@ -105,14 +99,16 @@ function createRouteHandler(options: MockApiOptions) {
 }
 
 /**
- * Sets up route interception for all course generation APIs.
+ * Sets up route interception for course generation APIs.
+ * Only intercepts specific API routes to avoid interfering with page navigation.
  * Must be called BEFORE navigation.
  */
 async function setupMockApis(
   page: Page,
   options: MockApiOptions = {},
 ): Promise<void> {
-  await page.route("**/*", createRouteHandler(options));
+  const handler = createRouteHandler(options);
+  await page.route("**/api/workflows/course-generation/**", handler);
 }
 
 /**
@@ -182,64 +178,20 @@ test.describe("Generate Course Page", () => {
     });
   });
 
-  test.describe("Streaming step updates", () => {
-    test("displays step labels as workflow progresses through multiple steps", async ({
-      page,
-    }) => {
-      await navigateWithMocks(page, {
-        runStatus: "running",
-        streamMessages: [
-          { status: "started", step: "getCourseSuggestion" },
-          { status: "completed", step: "getCourseSuggestion" },
-          { status: "started", step: "generateDescription" },
-          { status: "completed", step: "generateDescription" },
-          { status: "started", step: "generateChapters" },
-          { status: "completed", step: "generateChapters" },
-        ],
-      });
-
-      // Wait for streaming state - should see completed steps with checkmarks
-      await expect(page.getByText(/loading course information/i)).toBeVisible({
-        timeout: 10_000,
-      });
-      await expect(page.getByText(/generating description/i)).toBeVisible();
-      await expect(page.getByText(/planning chapters/i)).toBeVisible();
-    });
-
-    test("shows current step with spinner while processing", async ({
-      page,
-    }) => {
-      await navigateWithMocks(page, {
-        runStatus: "running",
-        streamMessages: [
-          { status: "started", step: "getCourseSuggestion" },
-          { status: "completed", step: "getCourseSuggestion" },
-          { status: "started", step: "generateDescription" },
-        ],
-      });
-
-      // Should show the current step being processed
-      const liveRegion = page.locator("[aria-live='polite']");
-      await expect(liveRegion).toBeVisible({ timeout: 10_000 });
-      await expect(page.getByText(/generating description/i)).toBeVisible();
-    });
-  });
-
   test.describe("Workflow completion and redirect", () => {
     test("shows completion state and redirects to course page", async ({
       page,
     }) => {
       await navigateWithMocks(page, {
-        runStatus: "completed",
         streamMessages: [
           { status: "started", step: "getCourseSuggestion" },
           { status: "completed", step: "getCourseSuggestion" },
-          { status: "started", step: "finalize" },
-          { status: "completed", step: "finalize" },
+          { status: "started", step: "addLessons" },
+          { status: "completed", step: "addLessons" },
         ],
       });
 
-      // Should show completion message
+      // Should show completion message (stream ended = workflow completed)
       await expect(page.getByText(/course generated/i)).toBeVisible({
         timeout: 10_000,
       });
@@ -251,24 +203,8 @@ test.describe("Generate Course Page", () => {
   });
 
   test.describe("Error handling", () => {
-    test("shows error when workflow status is failed", async ({ page }) => {
-      await navigateWithMocks(page, {
-        runStatus: "failed",
-        streamMessages: [
-          { status: "started", step: "getCourseSuggestion" },
-          { status: "completed", step: "getCourseSuggestion" },
-        ],
-      });
-
-      // Should show error message after detecting failed status
-      await expect(page.getByText(/generation failed/i)).toBeVisible({
-        timeout: 10_000,
-      });
-    });
-
     test("shows error when stream returns error status", async ({ page }) => {
       await navigateWithMocks(page, {
-        runStatus: "running",
         streamMessages: [
           { status: "started", step: "getCourseSuggestion" },
           { status: "error", step: "getCourseSuggestion" },

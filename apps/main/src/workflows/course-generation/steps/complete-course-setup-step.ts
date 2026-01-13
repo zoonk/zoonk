@@ -2,15 +2,17 @@ import { updateAICourse } from "@/data/courses/update-ai-course";
 import { updateCourseSuggestionStatus } from "@/data/courses/update-course-suggestion-status";
 import { streamStatus } from "../stream-status";
 
-type FinalizeInput = {
+type CompleteCourseSetupInput = {
   courseSuggestionId: number;
   courseId: number;
 };
 
-export async function finalizeStep(input: FinalizeInput): Promise<void> {
+export async function completeCourseSetupStep(
+  input: CompleteCourseSetupInput,
+): Promise<void> {
   "use step";
 
-  await streamStatus({ status: "started", step: "finalize" });
+  await streamStatus({ status: "started", step: "completeCourseSetup" });
 
   const [courseResult, suggestionResult] = await Promise.all([
     updateAICourse({
@@ -24,9 +26,9 @@ export async function finalizeStep(input: FinalizeInput): Promise<void> {
   ]);
 
   if (courseResult.error || suggestionResult.error) {
-    await streamStatus({ status: "error", step: "finalize" });
+    await streamStatus({ status: "error", step: "completeCourseSetup" });
     throw courseResult.error || suggestionResult.error;
   }
 
-  await streamStatus({ status: "completed", step: "finalize" });
+  await streamStatus({ status: "completed", step: "completeCourseSetup" });
 }

@@ -14,7 +14,7 @@ export function useGenerationStepLabels() {
     addChapters: t("Adding chapters"),
     addLessons: t("Adding lessons"),
     checkExistingCourse: t("Checking for existing course"),
-    finalize: t("Finalizing course"),
+    completeCourseSetup: t("Completing course setup"),
     generateAlternativeTitles: t("Generating alternative titles"),
     generateCategories: t("Identifying categories"),
     generateChapters: t("Planning chapters"),

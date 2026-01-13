@@ -1,180 +1,119 @@
 "use client";
 
-import { createParser, type EventSourceMessage } from "eventsource-parser";
-import { useEffect, useEffectEvent, useReducer, useRef } from "react";
-import useSWR from "swr";
+import { useSelector } from "@xstate/store/react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
-  dispatchMessage,
-  type GenerationAction,
-  type GenerationState,
-  generationReducer,
+  createGenerationStore,
+  type GenerationStatus,
+  handleStreamMessage,
   type StreamMessage,
-} from "./generation-reducer";
+} from "./generation-store";
+import { useSSE } from "./use-sse";
 
-type WorkflowConfig = {
+type WorkflowConfig<TStep extends string> = {
   autoTrigger?: boolean;
+  completionStep?: TStep;
   initialRunId?: string | null;
-  initialStatus?: "idle" | "streaming";
-  pollingInterval?: number;
+  initialStatus?: GenerationStatus;
   statusUrl: string;
   triggerBody: Record<string, unknown>;
   triggerUrl: string;
 };
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
-async function readSSEStream<TStep extends string>(
-  response: Response,
-  dispatch: React.Dispatch<GenerationAction<TStep>>,
-  onMessage: () => void,
-) {
-  const reader = response.body?.getReader();
-  if (!reader) {
-    return;
-  }
-
-  const decoder = new TextDecoder();
-  const parser = createParser({
-    onEvent: (event: EventSourceMessage) => {
-      onMessage();
-      const message = JSON.parse(event.data) as StreamMessage<TStep>;
-      dispatchMessage(message, dispatch);
-    },
-  });
-
-  let result = await reader.read();
-
-  while (!result.done) {
-    parser.feed(decoder.decode(result.value, { stream: true }));
-    // biome-ignore lint/performance/noAwaitInLoops: Sequential reads required for streaming
-    result = await reader.read();
-  }
-}
-
-function getInitialState<TStep extends string>(
-  config: WorkflowConfig,
-): GenerationState<TStep> {
-  return {
-    completedSteps: [],
-    currentStep: null,
-    error: null,
-    runId: config.initialRunId ?? null,
-    status: config.initialRunId
-      ? "streaming"
-      : (config.initialStatus ?? "idle"),
-  };
-}
-
 export function useWorkflowGeneration<TStep extends string = string>(
-  config: WorkflowConfig,
+  config: WorkflowConfig<TStep>,
 ) {
   const {
     autoTrigger = true,
-    pollingInterval = 2000,
+    completionStep,
     statusUrl,
     triggerBody,
     triggerUrl,
   } = config;
-
-  const [state, dispatch] = useReducer(
-    generationReducer<TStep>,
-    getInitialState<TStep>(config),
-  );
-
-  const streamIndexRef = useRef(0);
   const hasTriggeredRef = useRef(false);
-  const abortControllerRef = useRef<AbortController | null>(null);
 
-  const { data: statusData } = useSWR<{ status: string }>(
-    state.runId && state.status === "streaming"
-      ? `/api/workflows/run-status?runId=${state.runId}`
-      : null,
-    fetcher,
-    { refreshInterval: pollingInterval, revalidateOnFocus: false },
+  const store = useMemo(
+    () =>
+      createGenerationStore<TStep>({
+        runId: config.initialRunId ?? null,
+        status: config.initialRunId
+          ? "streaming"
+          : (config.initialStatus ?? "idle"),
+      }),
+    [config.initialRunId, config.initialStatus],
   );
 
-  const trigger = useEffectEvent(async () => {
-    dispatch({ type: "TRIGGER_START" });
+  const completedSteps = useSelector(store, (s) => s.context.completedSteps);
+  const currentStep = useSelector(store, (s) => s.context.currentStep);
+  const error = useSelector(store, (s) => s.context.error);
+  const runId = useSelector(store, (s) => s.context.runId);
+  const status = useSelector(store, (s) => s.context.status);
 
-    try {
-      const response = await fetch(triggerUrl, {
-        body: JSON.stringify(triggerBody),
-        headers: { "Content-Type": "application/json" },
-        method: "POST",
-      });
+  const handleMessage = useCallback(
+    (msg: StreamMessage<TStep>) =>
+      handleStreamMessage(msg, store, completionStep),
+    [store, completionStep],
+  );
 
-      if (!response.ok) {
-        throw new Error("Failed to start generation");
-      }
+  const handleComplete = useCallback(
+    () => store.send({ type: "workflowCompleted" }),
+    [store],
+  );
 
-      const data = await response.json();
-      dispatch({ runId: data.runId, type: "TRIGGER_SUCCESS" });
-    } catch (err) {
-      dispatch({
-        error: err instanceof Error ? err.message : "Failed to start",
-        type: "SET_ERROR",
-      });
-    }
-  });
+  const handleError = useCallback(
+    (err: Error) => store.send({ error: err.message, type: "setError" }),
+    [store],
+  );
 
-  function retry() {
-    abortControllerRef.current?.abort();
-    streamIndexRef.current = 0;
-    hasTriggeredRef.current = false;
-    dispatch({ type: "RESET" });
-  }
+  const { resetIndex } = useSSE<StreamMessage<TStep>>(
+    status === "streaming" && runId ? `${statusUrl}?runId=${runId}` : null,
+    {
+      onComplete: handleComplete,
+      onError: handleError,
+      onMessage: handleMessage,
+    },
+  );
 
-  // Auto-trigger on mount
   useEffect(() => {
-    if (autoTrigger && state.status === "idle" && !hasTriggeredRef.current) {
-      hasTriggeredRef.current = true;
-      void trigger();
-    }
-  }, [autoTrigger, state.status]);
-
-  // Stream status updates when we have a runId
-  useEffect(() => {
-    if (state.status !== "streaming" || !state.runId) {
+    if (!autoTrigger || status !== "idle" || hasTriggeredRef.current) {
       return;
     }
+    hasTriggeredRef.current = true;
 
-    const controller = new AbortController();
-    abortControllerRef.current = controller;
-
-    const startStream = async () => {
+    void (async () => {
+      store.send({ type: "triggerStart" });
       try {
-        const url = `${statusUrl}?runId=${state.runId}&startIndex=${streamIndexRef.current}`;
-        const response = await fetch(url, { signal: controller.signal });
-        await readSSEStream<TStep>(response, dispatch, () => {
-          streamIndexRef.current += 1;
+        const response = await fetch(triggerUrl, {
+          body: JSON.stringify(triggerBody),
+          headers: { "Content-Type": "application/json" },
+          method: "POST",
         });
-      } catch (err) {
-        if (err instanceof Error && err.name !== "AbortError") {
-          console.error("Stream error:", err);
+
+        if (!response.ok) {
+          throw new Error("Failed to start generation");
         }
+        const data = await response.json();
+        store.send({ runId: data.runId, type: "triggerSuccess" });
+      } catch (err) {
+        store.send({
+          error: err instanceof Error ? err.message : "Failed to start",
+          type: "setError",
+        });
       }
-    };
+    })();
+  }, [autoTrigger, status, triggerUrl, triggerBody, store]);
 
-    void startStream();
-
-    return () => controller.abort();
-  }, [state.runId, state.status, statusUrl]);
-
-  // Handle workflow completion from polling
-  useEffect(() => {
-    if (statusData?.status === "completed") {
-      dispatch({ type: "WORKFLOW_COMPLETED" });
-    } else if (statusData?.status === "failed") {
-      dispatch({ error: "Workflow failed", type: "SET_ERROR" });
-    }
-  }, [statusData?.status]);
+  const retry = useCallback(() => {
+    hasTriggeredRef.current = false;
+    resetIndex();
+    store.send({ type: "reset" });
+  }, [resetIndex, store]);
 
   return {
-    completedSteps: state.completedSteps,
-    currentStep: state.currentStep,
-    error: state.error,
+    completedSteps,
+    currentStep,
+    error,
     retry,
-    status: state.status,
-    trigger,
+    status,
   };
 }

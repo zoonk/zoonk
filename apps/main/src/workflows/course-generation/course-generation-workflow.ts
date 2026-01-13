@@ -4,7 +4,7 @@ import { addCategoriesStep } from "./steps/add-categories-step";
 import { addChaptersStep } from "./steps/add-chapters-step";
 import { addLessonsStep } from "./steps/add-lessons-step";
 import { checkExistingCourseStep } from "./steps/check-existing-course-step";
-import { finalizeStep } from "./steps/finalize-step";
+import { completeCourseSetupStep } from "./steps/complete-course-setup-step";
 import { generateAlternativeTitlesStep } from "./steps/generate-alternative-titles-step";
 import { generateCategoriesStep } from "./steps/generate-categories-step";
 import { generateChaptersStep } from "./steps/generate-chapters-step";
@@ -68,7 +68,7 @@ export async function courseGenerationWorkflow(
       }),
     ]);
 
-    await finalizeStep({
+    await completeCourseSetupStep({
       courseId: course.courseId,
       courseSuggestionId,
     });

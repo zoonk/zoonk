@@ -38,6 +38,7 @@ export function GenerationClient({
   const { getLabel } = useGenerationStepLabels();
 
   const generation = useWorkflowGeneration<StepName>({
+    completionStep: "addLessons",
     initialRunId: generationRunId,
     initialStatus: generationStatus === "running" ? "streaming" : "idle",
     statusUrl: "/api/workflows/course-generation/status",
