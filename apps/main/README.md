@@ -26,7 +26,7 @@ cp .env.example .env
 
 ## Inspecting Workflows
 
-We use [Workflow](https://github.com/workflow-ai/workflow) to run background jobs or any durable tasks like AI generation. You can inspect the runs with the following commands:
+We use [Workflow](https://useworkflow.dev/) to run background jobs or any durable tasks like AI generation. You can inspect the runs with the following commands:
 
 ```bash
 pnpm workflow:inspect
