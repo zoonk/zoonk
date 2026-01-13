@@ -2,9 +2,7 @@
 
 import type { GenerationStatus } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
-import { useRouter } from "next/navigation";
 import { useExtracted } from "next-intl";
-import { useEffect } from "react";
 import {
   GenerationProgressCompleted,
   GenerationProgressError,
@@ -15,6 +13,7 @@ import {
   GenerationTimelineSteps,
   GenerationTimelineTitle,
 } from "@/components/generation/generation-progress";
+import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
 import type { StepName } from "@/workflows/course-generation/types";
 import { useGenerationPhases } from "./use-generation-phases";
@@ -33,7 +32,6 @@ export function GenerationClient({
   suggestionId: number;
 }) {
   const t = useExtracted();
-  const router = useRouter();
 
   const generation = useWorkflowGeneration<StepName>({
     completionStep: "addLessons",
@@ -49,18 +47,10 @@ export function GenerationClient({
     generation.currentStep,
   );
 
-  // Redirect when completed
-  useEffect(() => {
-    if (generation.status !== "completed") {
-      return;
-    }
-
-    const timer = setTimeout(() => {
-      router.push(`/${locale}/b/${AI_ORG_SLUG}/c/${courseSlug}`);
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, [generation.status, courseSlug, locale, router]);
+  useCompletionRedirect({
+    status: generation.status,
+    url: `/${locale}/b/${AI_ORG_SLUG}/c/${courseSlug}`,
+  });
 
   if (generation.status === "triggering" || generation.status === "streaming") {
     return (
