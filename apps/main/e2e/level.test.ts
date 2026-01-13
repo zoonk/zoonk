@@ -22,10 +22,14 @@ test.describe("Level Page", () => {
     }) => {
       await authenticatedPage.goto("/");
 
+      // Wait for Performance section to load (indicates Suspense resolved)
+      await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
+
+      // User clicks level card on home page (use flexible matcher for belt name)
       await authenticatedPage
         .getByRole("link")
         .filter({
-          has: authenticatedPage.getByText(/orange belt/i),
+          has: authenticatedPage.getByText(/belt - level \d+/i),
         })
         .click();
 
