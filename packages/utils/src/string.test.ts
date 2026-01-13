@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { normalizeString, removeAccents } from "./string";
+import { normalizeString, parseNumericId, removeAccents } from "./string";
 
 describe("removeAccents", () => {
   test("removes diacritics from string", () => {
@@ -62,5 +62,38 @@ describe("normalizeString", () => {
 
   test("handles string with only spaces", () => {
     expect(normalizeString("   ")).toBe("");
+  });
+});
+
+describe("parseNumericId", () => {
+  test("parses valid numeric strings", () => {
+    expect(parseNumericId("123")).toBe(123);
+    expect(parseNumericId("0")).toBe(0);
+    expect(parseNumericId("999999")).toBe(999_999);
+  });
+
+  test("returns null for strings with letters", () => {
+    expect(parseNumericId("123abc")).toBeNull();
+    expect(parseNumericId("abc123")).toBeNull();
+    expect(parseNumericId("1a2b3c")).toBeNull();
+  });
+
+  test("returns null for strings with special characters", () => {
+    expect(parseNumericId("123.45")).toBeNull();
+    expect(parseNumericId("123-45")).toBeNull();
+    expect(parseNumericId("123_45")).toBeNull();
+    expect(parseNumericId("+123")).toBeNull();
+    expect(parseNumericId("-123")).toBeNull();
+  });
+
+  test("returns null for strings with whitespace", () => {
+    expect(parseNumericId(" 123")).toBeNull();
+    expect(parseNumericId("123 ")).toBeNull();
+    expect(parseNumericId(" 123 ")).toBeNull();
+    expect(parseNumericId("12 34")).toBeNull();
+  });
+
+  test("returns null for empty string", () => {
+    expect(parseNumericId("")).toBeNull();
   });
 });

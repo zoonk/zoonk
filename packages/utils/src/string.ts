@@ -1,7 +1,16 @@
 import slugify from "slugify";
 
+const NUMERIC_ID_PATTERN = /^\d+$/;
+
 export function removeAccents(str: string): string {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+export function parseNumericId(value: string): number | null {
+  if (!NUMERIC_ID_PATTERN.test(value)) {
+    return null;
+  }
+  return Number.parseInt(value, 10);
 }
 
 export function normalizeString(str: string): string {

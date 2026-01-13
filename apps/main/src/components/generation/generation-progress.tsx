@@ -187,7 +187,7 @@ function GenerationProgressError({
 }: GenerationProgressErrorProps) {
   return (
     <Alert variant="destructive">
-      <AlertCircleIcon />
+      <AlertCircleIcon aria-hidden="true" />
       <AlertTitle>{children}</AlertTitle>
       {description && <AlertDescription>{description}</AlertDescription>}
       {onRetry && (

@@ -9,6 +9,7 @@ import {
 import { Empty, EmptyContent, EmptyHeader } from "@zoonk/ui/components/empty";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { parseNumericId } from "@zoonk/utils/string";
 import { notFound, redirect } from "next/navigation";
 import { getCourseSuggestionById } from "@/data/courses/course-suggestions";
 import { findExistingCourse } from "@/data/courses/find-existing-course";
@@ -22,9 +23,9 @@ export async function GenerateCourseSuggestionContent({
   params,
 }: GenerateCourseSuggestionContentProps) {
   const { id, locale } = await params;
-  const suggestionId = Number.parseInt(id, 10);
+  const suggestionId = parseNumericId(id);
 
-  if (Number.isNaN(suggestionId)) {
+  if (suggestionId === null) {
     notFound();
   }
 

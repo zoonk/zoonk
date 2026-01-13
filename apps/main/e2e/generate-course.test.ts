@@ -156,18 +156,15 @@ test.describe("Generate Course Page", () => {
     test("shows triggering state immediately on page load", async ({
       page,
     }) => {
-      // Navigate via suggestions page to get a valid suggestion ID
-      await page.goto("/learn/test%20prompt");
-      await expect(
-        page.getByRole("heading", { name: /course ideas for/i }),
-      ).toBeVisible();
+      // Get suggestion ID first, then set up mocks to avoid real API calls
+      const suggestionId = await getSuggestionId(page);
 
-      const generateLink = page
-        .getByRole("link", { name: /generate/i })
-        .first();
-      await generateLink.click();
+      // Set up mocks with a stream that stays in "started" state
+      await setupMockApis(page, {
+        streamMessages: [{ status: "started", step: "getCourseSuggestion" }],
+      });
 
-      await expect(page).toHaveURL(/\/generate\/cs\/\d+/);
+      await page.goto(`/generate/cs/${suggestionId}`);
 
       // Should immediately show triggering or streaming state (no idle state)
       await expect(page.getByText(/creating your course/i)).toBeVisible({
