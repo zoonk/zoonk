@@ -10,7 +10,7 @@ import { expect, test } from "./fixtures";
  *
  * Client behavior:
  * - Auto-triggers workflow on mount (no idle state)
- * - Shows "Starting generation..." while triggering
+ * - Shows "Creating your course" while triggering/streaming
  * - Shows current step label + spinner while streaming
  * - Shows completed steps with checkmarks
  * - Workflow completes when the SSE stream ends
@@ -170,9 +170,7 @@ test.describe("Generate Course Page", () => {
       await expect(page).toHaveURL(/\/generate\/cs\/\d+/);
 
       // Should immediately show triggering or streaming state (no idle state)
-      await expect(
-        page.getByText(/starting generation|processing/i),
-      ).toBeVisible({
+      await expect(page.getByText(/creating your course/i)).toBeVisible({
         timeout: 10_000,
       });
     });
