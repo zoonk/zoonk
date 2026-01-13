@@ -12,6 +12,10 @@ import { generateDescriptionStep } from "./steps/generate-description-step";
 import { generateImageStep } from "./steps/generate-image-step";
 import { generateLessonsStep } from "./steps/generate-lessons-step";
 import { getCourseSuggestionStep } from "./steps/get-course-suggestion-step";
+import {
+  handleChapterFailureStep,
+  handleCourseFailureStep,
+} from "./steps/handle-failure-step";
 import { initializeCourseStep } from "./steps/initialize-course-step";
 import { updateCourseStep } from "./steps/update-course-step";
 
@@ -39,48 +43,61 @@ export async function courseGenerationWorkflow(
     workflowRunId,
   });
 
-  const [
-    description,
-    imageUrl,
-    alternativeTitles,
-    categories,
-    generatedChapters,
-  ] = await Promise.all([
-    generateDescriptionStep(course),
-    generateImageStep(course),
-    generateAlternativeTitlesStep(course),
-    generateCategoriesStep(course),
-    generateChaptersStep(course),
-  ]);
+  try {
+    const [
+      description,
+      imageUrl,
+      alternativeTitles,
+      categories,
+      generatedChapters,
+    ] = await Promise.all([
+      generateDescriptionStep(course),
+      generateImageStep(course),
+      generateAlternativeTitlesStep(course),
+      generateCategoriesStep(course),
+      generateChaptersStep(course),
+    ]);
 
-  const [, , , createdChapters] = await Promise.all([
-    updateCourseStep({ course, description, imageUrl }),
-    addAlternativeTitlesStep({ alternativeTitles, course }),
-    addCategoriesStep({ categories, course }),
-    addChaptersStep({
-      chapters: generatedChapters,
-      course,
-    }),
-  ]);
+    const [, , , createdChapters] = await Promise.all([
+      updateCourseStep({ course, description, imageUrl }),
+      addAlternativeTitlesStep({ alternativeTitles, course }),
+      addCategoriesStep({ categories, course }),
+      addChaptersStep({
+        chapters: generatedChapters,
+        course,
+      }),
+    ]);
 
-  const firstChapter = createdChapters[0];
-
-  if (firstChapter) {
-    const lessons = await generateLessonsStep({
-      chapter: firstChapter,
-      course,
+    await finalizeStep({
+      courseId: course.courseId,
+      courseSuggestionId,
     });
 
-    await addLessonsStep({
-      chapter: firstChapter,
-      course,
-      generationRunId: workflowRunId,
-      lessons,
+    const firstChapter = createdChapters[0];
+
+    if (firstChapter) {
+      try {
+        const lessons = await generateLessonsStep({
+          chapter: firstChapter,
+          course,
+          generationRunId: workflowRunId,
+        });
+
+        await addLessonsStep({
+          chapter: firstChapter,
+          course,
+          generationRunId: workflowRunId,
+          lessons,
+        });
+      } catch {
+        await handleChapterFailureStep({ chapterId: firstChapter.id });
+      }
+    }
+  } catch (error) {
+    await handleCourseFailureStep({
+      courseId: course.courseId,
+      courseSuggestionId,
     });
+    throw error;
   }
-
-  await finalizeStep({
-    courseId: course.courseId,
-    courseSuggestionId,
-  });
 }

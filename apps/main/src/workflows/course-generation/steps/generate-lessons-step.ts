@@ -1,10 +1,12 @@
 import { generateChapterLessons } from "@zoonk/ai/chapter-lessons/generate";
+import { updateChapterGenerationStatus } from "@/data/chapters/update-chapter-generation-status";
 import { streamStatus } from "../stream-status";
 import type { CourseContext, CreatedChapter, GeneratedLesson } from "../types";
 
 type GenerateInput = {
   course: CourseContext;
   chapter: CreatedChapter;
+  generationRunId: string;
 };
 
 export async function generateLessonsStep(
@@ -13,6 +15,13 @@ export async function generateLessonsStep(
   "use step";
 
   await streamStatus({ status: "started", step: "generateLessons" });
+
+  // Mark chapter as running
+  await updateChapterGenerationStatus({
+    chapterId: input.chapter.id,
+    generationRunId: input.generationRunId,
+    generationStatus: "running",
+  });
 
   const { data } = await generateChapterLessons({
     chapterDescription: input.chapter.description,
