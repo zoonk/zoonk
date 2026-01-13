@@ -917,15 +917,115 @@ msgctxt "PJivSX"
 msgid "Lesson"
 msgstr "Lesson"
 
-#: src/app/[locale]/generate/cs/[id]/generate-course-suggestion-content.tsx
-msgctxt "9IJjWu"
-msgid "Generate Course"
-msgstr "Generate Course"
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "6OWS4p"
+msgid "Processing..."
+msgstr "Processing..."
 
-#: src/app/[locale]/generate/cs/[id]/generate-course-suggestion-content.tsx
-msgctxt "e61Jf3"
-msgid "Coming soon"
-msgstr "Coming soon"
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "FazwRl"
+msgid "Try again"
+msgstr "Try again"
+
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "IEv8EV"
+msgid "Redirecting to your course..."
+msgstr "Redirecting to your course..."
+
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "KV/tli"
+msgid "Starting generation..."
+msgstr "Starting generation..."
+
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "ssRq8D"
+msgid "Generation failed"
+msgstr "Generation failed"
+
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "TKVQj2"
+msgid "Course generated"
+msgstr "Course generated"
+
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "W/5hwr"
+msgid "Something went wrong. Please try again."
+msgstr "Something went wrong. Please try again."
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+msgctxt "1QgqKE"
+msgid "Generating lessons"
+msgstr "Generating lessons"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+msgctxt "4AKS22"
+msgid "Loading course information"
+msgstr "Loading course information"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+msgctxt "5hT53e"
+msgid "Setting up course"
+msgstr "Setting up course"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+msgctxt "AAzrnk"
+msgid "Identifying categories"
+msgstr "Identifying categories"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+msgctxt "gFEV/E"
+msgid "Generating description"
+msgstr "Generating description"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+msgctxt "gV9649"
+msgid "Adding lessons"
+msgstr "Adding lessons"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+msgctxt "l8UUJE"
+msgid "Generating alternative titles"
+msgstr "Generating alternative titles"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+msgctxt "o7sNmG"
+msgid "Creating course image"
+msgstr "Creating course image"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+msgctxt "ovzOwn"
+msgid "Adding chapters"
+msgstr "Adding chapters"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+msgctxt "p2vSFY"
+msgid "Planning chapters"
+msgstr "Planning chapters"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+msgctxt "rcxuMy"
+msgid "Saving course details"
+msgstr "Saving course details"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+msgctxt "rso9iW"
+msgid "Checking for existing course"
+msgstr "Checking for existing course"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+msgctxt "UedDE3"
+msgid "Finalizing course"
+msgstr "Finalizing course"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+msgctxt "YfGnxR"
+msgid "Adding alternative titles"
+msgstr "Adding alternative titles"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-step-labels.ts
+msgctxt "ZjJkAd"
+msgid "Adding categories"
+msgstr "Adding categories"
 
 #: src/app/[locale]/privacy/page.tsx
 msgctxt "iql85X"

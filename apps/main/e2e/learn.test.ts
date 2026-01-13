@@ -55,7 +55,6 @@ test.describe("Course Suggestions", () => {
     await generateLink.click();
 
     await expect(page).toHaveURL(/\/generate\/cs\/\d+/);
-    await expect(page.getByText(/coming soon/i)).toBeVisible();
   });
 
   test("Change subject navigates back to learn form", async ({ page }) => {

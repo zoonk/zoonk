@@ -3,18 +3,13 @@ import { getRun } from "workflow/api";
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const runId = url.searchParams.get("runId");
-  const startIndex = url.searchParams.get("startIndex");
 
   if (!runId) {
     return Response.json({ error: "Missing runId" }, { status: 400 });
   }
 
   const run = getRun(runId);
-  const stream = run.getReadable<string>({
-    startIndex: startIndex ? Number.parseInt(startIndex, 10) : undefined,
-  });
+  const status = await run.status;
 
-  return new Response(stream, {
-    headers: { "Content-Type": "text/plain; charset=utf-8" },
-  });
+  return Response.json({ status });
 }

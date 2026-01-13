@@ -5,11 +5,15 @@ export async function streamStatus(params: {
   step: StepName;
   status: StepStatus;
 }) {
-  const writable = getWritable<StreamMessage>();
+  "use step";
+
+  const writable = getWritable<string>();
   const writer = writable.getWriter();
 
   try {
-    await writer.write(params);
+    // Write as JSON string with newline for NDJSON format
+    const message: StreamMessage = params;
+    await writer.write(`${JSON.stringify(message)}\n`);
   } finally {
     writer.releaseLock();
   }

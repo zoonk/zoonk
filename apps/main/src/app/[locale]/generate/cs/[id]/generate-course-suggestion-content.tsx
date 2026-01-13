@@ -1,28 +1,65 @@
 import {
   Container,
   ContainerBody,
+  ContainerDescription,
   ContainerHeader,
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
+import { Empty, EmptyContent, EmptyHeader } from "@zoonk/ui/components/empty";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { getExtracted } from "next-intl/server";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
+import { notFound, redirect } from "next/navigation";
+import { getCourseSuggestionById } from "@/data/courses/course-suggestions";
+import { findExistingCourse } from "@/data/courses/find-existing-course";
+import { GenerationClient } from "./generation-client";
 
-export async function GenerateCourseSuggestionContent() {
-  const t = await getExtracted();
+type GenerateCourseSuggestionContentProps = {
+  params: Promise<{ id: string; locale: string }>;
+};
+
+export async function GenerateCourseSuggestionContent({
+  params,
+}: GenerateCourseSuggestionContentProps) {
+  const { id, locale } = await params;
+  const suggestionId = Number.parseInt(id, 10);
+
+  if (Number.isNaN(suggestionId)) {
+    notFound();
+  }
+
+  const suggestion = await getCourseSuggestionById(suggestionId);
+
+  if (!suggestion) {
+    notFound();
+  }
+
+  const existingCourse = await findExistingCourse({
+    language: suggestion.language,
+    slug: suggestion.slug,
+  });
+
+  if (existingCourse.data?.generationStatus === "completed") {
+    redirect(`/${locale}/b/${AI_ORG_SLUG}/c/${existingCourse.data.slug}`);
+  }
 
   return (
     <Container variant="narrow">
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <ContainerTitle>{t("Generate Course")}</ContainerTitle>
+          <ContainerTitle>{suggestion.title}</ContainerTitle>
+          <ContainerDescription>{suggestion.description}</ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>
-        <div className="flex h-64 items-center justify-center rounded-xl border border-dashed text-muted-foreground">
-          {t("Coming soon")}
-        </div>
+        <GenerationClient
+          courseSlug={suggestion.slug}
+          generationRunId={suggestion.generationRunId}
+          generationStatus={suggestion.generationStatus}
+          locale={locale}
+          suggestionId={suggestionId}
+        />
       </ContainerBody>
     </Container>
   );
@@ -33,12 +70,22 @@ export function GenerateCourseSuggestionFallback() {
     <Container variant="narrow">
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-6 w-48" />
+          <Skeleton className="mt-1 h-4 w-72" />
         </ContainerHeaderGroup>
       </ContainerHeader>
 
       <ContainerBody>
-        <Skeleton className="h-64 w-full rounded-xl" />
+        <Empty className="border-0">
+          <EmptyHeader>
+            <Skeleton className="size-10 rounded-lg" />
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-4 w-64" />
+          </EmptyHeader>
+          <EmptyContent>
+            <Skeleton className="h-9 w-36 rounded-full" />
+          </EmptyContent>
+        </Empty>
       </ContainerBody>
     </Container>
   );
