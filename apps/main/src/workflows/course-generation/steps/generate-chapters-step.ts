@@ -9,12 +9,17 @@ export async function generateChaptersStep(
 
   await streamStatus({ status: "started", step: "generateChapters" });
 
-  const { data } = await generateCourseChapters({
-    courseTitle: course.courseTitle,
-    language: course.language,
-  });
+  try {
+    const { data } = await generateCourseChapters({
+      courseTitle: course.courseTitle,
+      language: course.language,
+    });
 
-  await streamStatus({ status: "completed", step: "generateChapters" });
+    await streamStatus({ status: "completed", step: "generateChapters" });
 
-  return data.chapters;
+    return data.chapters;
+  } catch (error) {
+    await streamStatus({ status: "error", step: "generateChapters" });
+    throw error;
+  }
 }

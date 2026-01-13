@@ -16,21 +16,26 @@ export async function generateLessonsStep(
 
   await streamStatus({ status: "started", step: "generateLessons" });
 
-  // Mark chapter as running
-  await updateChapterGenerationStatus({
-    chapterId: input.chapter.id,
-    generationRunId: input.generationRunId,
-    generationStatus: "running",
-  });
+  try {
+    // Mark chapter as running
+    await updateChapterGenerationStatus({
+      chapterId: input.chapter.id,
+      generationRunId: input.generationRunId,
+      generationStatus: "running",
+    });
 
-  const { data } = await generateChapterLessons({
-    chapterDescription: input.chapter.description,
-    chapterTitle: input.chapter.title,
-    courseTitle: input.course.courseTitle,
-    language: input.course.language,
-  });
+    const { data } = await generateChapterLessons({
+      chapterDescription: input.chapter.description,
+      chapterTitle: input.chapter.title,
+      courseTitle: input.course.courseTitle,
+      language: input.course.language,
+    });
 
-  await streamStatus({ status: "completed", step: "generateLessons" });
+    await streamStatus({ status: "completed", step: "generateLessons" });
 
-  return data.lessons;
+    return data.lessons;
+  } catch (error) {
+    await streamStatus({ status: "error", step: "generateLessons" });
+    throw error;
+  }
 }

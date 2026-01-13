@@ -21,13 +21,20 @@ export async function initializeCourseStep(
   const { suggestion, workflowRunId } = input;
 
   // Fetch AI org and check for existing course in parallel
-  const [aiOrg, { data: existingCourse }] = await Promise.all([
+  const [aiOrg, existingCourseResult] = await Promise.all([
     getAIOrganization(),
     findExistingCourse({
       language: suggestion.language,
       slug: suggestion.slug,
     }),
   ]);
+
+  if (existingCourseResult.error) {
+    await streamStatus({ status: "error", step: "initializeCourse" });
+    throw existingCourseResult.error;
+  }
+
+  const existingCourse = existingCourseResult.data;
 
   if (existingCourse && existingCourse.generationStatus === "failed") {
     await deleteAICourse(existingCourse.id);
