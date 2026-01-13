@@ -38,11 +38,9 @@ export async function createChapters(
     title: chapter.title,
   }));
 
-  const { data, error } = await safeAsync(async () => {
-    await prisma.chapter.createMany({ data: chaptersData });
-
-    return prisma.chapter.findMany({
-      orderBy: { position: "asc" },
+  const { data, error } = await safeAsync(() =>
+    prisma.chapter.createManyAndReturn({
+      data: chaptersData,
       select: {
         description: true,
         id: true,
@@ -50,9 +48,8 @@ export async function createChapters(
         slug: true,
         title: true,
       },
-      where: { courseId: params.courseId },
-    });
-  });
+    }),
+  );
 
   if (error) {
     return { data: null, error };
