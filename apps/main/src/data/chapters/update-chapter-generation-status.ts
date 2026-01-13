@@ -1,12 +1,12 @@
 import "server-only";
 
-import type { Chapter } from "@zoonk/db";
+import type { Chapter, GenerationStatus } from "@zoonk/db";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 type UpdateParams = {
   chapterId: number;
-  generationStatus: "pending" | "running" | "completed" | "failed";
+  generationStatus: GenerationStatus;
   generationRunId?: string;
 };
 

@@ -26,6 +26,7 @@ export type {
   CourseSuggestion,
   CourseUser,
   DailyProgress,
+  GenerationStatus,
   Invitation,
   Lesson,
   Member,

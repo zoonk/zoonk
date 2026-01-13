@@ -1,3 +1,5 @@
+import type { GenerationStatus } from "@zoonk/db";
+
 export type StepName =
   | "getCourseSuggestion"
   | "checkExistingCourse"
@@ -28,7 +30,7 @@ export type CourseSuggestionData = {
   slug: string;
   title: string;
   description: string;
-  generationStatus: string;
+  generationStatus: GenerationStatus;
   generationRunId: string | null;
 };
 

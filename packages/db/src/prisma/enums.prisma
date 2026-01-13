@@ -1,0 +1,6 @@
+enum GenerationStatus {
+  pending
+  running
+  completed
+  failed
+}

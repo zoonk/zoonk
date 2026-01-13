@@ -1,13 +1,13 @@
 import "server-only";
 
-import { type Course, prisma } from "@zoonk/db";
+import { type Course, type GenerationStatus, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 type UpdateParams = {
   courseId: number;
   description?: string;
   imageUrl?: string;
-  generationStatus?: "pending" | "running" | "completed" | "failed";
+  generationStatus?: GenerationStatus;
 };
 
 export async function updateAICourse(

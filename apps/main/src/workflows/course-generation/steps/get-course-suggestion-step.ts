@@ -17,6 +17,8 @@ export async function getCourseSuggestionStep(
     throw new FatalError("Course suggestion not found");
   }
 
+  // When the generation is running or already completed, we return null to skip the workflow,
+  // avoiding this running multiple times for the same course suggestion.
   if (
     suggestion.generationStatus === "running" ||
     suggestion.generationStatus === "completed"

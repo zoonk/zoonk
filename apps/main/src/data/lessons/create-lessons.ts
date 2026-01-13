@@ -22,7 +22,7 @@ export async function createLessons(
   const lessonsData = params.lessons.map((lesson, index) => ({
     chapterId: params.chapterId,
     description: lesson.description,
-    generationStatus: "pending",
+    generationStatus: "pending" as const,
     isPublished: true,
     language: params.language,
     normalizedTitle: normalizeString(lesson.title),

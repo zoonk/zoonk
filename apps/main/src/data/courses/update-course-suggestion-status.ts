@@ -1,11 +1,11 @@
 import "server-only";
 
-import { prisma } from "@zoonk/db";
+import { type GenerationStatus, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 type UpdateParams = {
   id: number;
-  generationStatus: "pending" | "running" | "completed" | "failed";
+  generationStatus: GenerationStatus;
   generationRunId?: string | null;
 };
 

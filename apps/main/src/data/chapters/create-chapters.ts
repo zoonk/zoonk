@@ -28,7 +28,7 @@ export async function createChapters(
   const chaptersData = params.chapters.map((chapter, index) => ({
     courseId: params.courseId,
     description: chapter.description,
-    generationStatus: "pending",
+    generationStatus: "pending" as const,
     isPublished: true,
     language: params.language,
     normalizedTitle: normalizeString(chapter.title),

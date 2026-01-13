@@ -9,7 +9,7 @@ model Activity {
   kind             String             @db.VarChar(30)
   title            String?
   description      String?
-  generationStatus String             @default("pending") @map("generation_status") @db.VarChar(20)
+  generationStatus GenerationStatus   @default(pending) @map("generation_status")
   generationRunId  String?            @map("generation_run_id")
   position         Int
   inventory        Json?
