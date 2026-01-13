@@ -18,7 +18,7 @@ model Lesson {
   updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at")
   activities       Activity[]
 
-  @@unique([organizationId, language, slug], name: "orgLanguageLessonSlug")
+  @@unique([chapterId, slug], name: "chapterLessonSlug")
   @@index([organizationId, normalizedTitle])
   @@index([chapterId, position])
   @@index([organizationId, kind])

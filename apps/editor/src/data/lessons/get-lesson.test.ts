@@ -12,12 +12,14 @@ import { getLesson } from "./get-lesson";
 
 describe("unauthenticated users", () => {
   let organization: Awaited<ReturnType<typeof organizationFixture>>;
+  let course: Awaited<ReturnType<typeof courseFixture>>;
+  let chapter: Awaited<ReturnType<typeof chapterFixture>>;
   let lesson: Awaited<ReturnType<typeof lessonFixture>>;
 
   beforeAll(async () => {
     organization = await organizationFixture();
-    const course = await courseFixture({ organizationId: organization.id });
-    const chapter = await chapterFixture({
+    course = await courseFixture({ organizationId: organization.id });
+    chapter = await chapterFixture({
       courseId: course.id,
       language: course.language,
       organizationId: organization.id,
@@ -31,6 +33,8 @@ describe("unauthenticated users", () => {
 
   test("returns Forbidden", async () => {
     const result = await getLesson({
+      chapterSlug: chapter.slug,
+      courseSlug: course.slug,
       headers: new Headers(),
       language: lesson.language,
       lessonSlug: lesson.slug,
@@ -62,6 +66,8 @@ describe("members", () => {
     ]);
 
     const result = await getLesson({
+      chapterSlug: chapter.slug,
+      courseSlug: course.slug,
       headers,
       language: lesson.language,
       lessonSlug: lesson.slug,
@@ -107,6 +113,8 @@ describe("admins", () => {
 
   test("gets lesson by slug successfully", async () => {
     const result = await getLesson({
+      chapterSlug: chapter.slug,
+      courseSlug: course.slug,
       headers,
       language: lesson.language,
       lessonSlug: lesson.slug,
@@ -120,6 +128,8 @@ describe("admins", () => {
 
   test("returns null when lesson not found", async () => {
     const result = await getLesson({
+      chapterSlug: chapter.slug,
+      courseSlug: course.slug,
       headers,
       language: lesson.language,
       lessonSlug: "non-existent-slug",
@@ -132,6 +142,8 @@ describe("admins", () => {
 
   test("returns null when language doesn't match", async () => {
     const result = await getLesson({
+      chapterSlug: chapter.slug,
+      courseSlug: course.slug,
       headers,
       language: "xx",
       lessonSlug: lesson.slug,
@@ -142,24 +154,46 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
-  test("returns the lesson with the correct language", async () => {
-    const ptLesson = await lessonFixture({
-      chapterId: chapter.id,
-      language: "pt",
-      organizationId: organization.id,
-      slug: lesson.slug,
-    });
-
+  test("returns null when chapter doesn't match", async () => {
     const result = await getLesson({
+      chapterSlug: "non-existent-chapter",
+      courseSlug: course.slug,
       headers,
-      language: "pt",
+      language: lesson.language,
       lessonSlug: lesson.slug,
       orgSlug: organization.slug,
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.id).toBe(ptLesson.id);
-    expect(result.data?.language).toBe("pt");
+    expect(result.data).toBeNull();
+  });
+
+  test("returns the correct lesson when same slug exists in different chapters", async () => {
+    const chapter2 = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const lesson2 = await lessonFixture({
+      chapterId: chapter2.id,
+      language: chapter2.language,
+      organizationId: organization.id,
+      slug: lesson.slug,
+    });
+
+    const result = await getLesson({
+      chapterSlug: chapter2.slug,
+      courseSlug: course.slug,
+      headers,
+      language: lesson2.language,
+      lessonSlug: lesson2.slug,
+      orgSlug: organization.slug,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.id).toBe(lesson2.id);
+    expect(result.data?.chapterId).toBe(chapter2.id);
   });
 
   test("returns Forbidden for lesson in different organization", async () => {
@@ -179,6 +213,8 @@ describe("admins", () => {
     });
 
     const result = await getLesson({
+      chapterSlug: otherChapter.slug,
+      courseSlug: otherCourse.slug,
       headers,
       language: otherLesson.language,
       lessonSlug: otherLesson.slug,

@@ -13,6 +13,8 @@ export async function LessonSlug({
   const { chapterSlug, courseSlug, lang, lessonSlug, orgSlug } = await params;
 
   const { data: lesson } = await getLesson({
+    chapterSlug,
+    courseSlug,
     language: lang,
     lessonSlug,
     orgSlug,
@@ -26,6 +28,7 @@ export async function LessonSlug({
 
   return (
     <SlugEditor
+      chapterId={lesson.chapterId}
       checkFn={checkLessonSlugExists}
       entityId={lesson.id}
       initialSlug={lesson.slug}

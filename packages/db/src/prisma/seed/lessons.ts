@@ -223,9 +223,8 @@ export async function seedLessons(
               },
               update: {},
               where: {
-                orgLanguageLessonSlug: {
-                  language: data.language,
-                  organizationId: org.id,
+                chapterLessonSlug: {
+                  chapterId: chapter.id,
                   slug: lessonData.slug,
                 },
               },

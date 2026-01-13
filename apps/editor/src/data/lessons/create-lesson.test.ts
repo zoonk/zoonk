@@ -183,7 +183,7 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
-  test("returns error when slug already exists for same org and language", async () => {
+  test("returns error when slug already exists for same chapter", async () => {
     const attrs = lessonAttrs({
       chapterId: chapter.id,
       organizationId: organization.id,
@@ -204,6 +204,46 @@ describe("admins", () => {
     });
 
     expect(result.error).not.toBeNull();
+  });
+
+  test("allows same slug in different chapters", async () => {
+    const newCourse = await courseFixture({ organizationId: organization.id });
+    const [chapter1, chapter2] = await Promise.all([
+      chapterFixture({
+        courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
+      }),
+      chapterFixture({
+        courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
+      }),
+    ]);
+
+    const attrs = lessonAttrs({
+      chapterId: chapter1.id,
+      organizationId: organization.id,
+    });
+
+    const [result1, result2] = await Promise.all([
+      createLesson({
+        ...attrs,
+        chapterId: chapter1.id,
+        headers,
+        position: 0,
+      }),
+      createLesson({
+        ...attrs,
+        chapterId: chapter2.id,
+        headers,
+        position: 0,
+      }),
+    ]);
+
+    expect(result1.error).toBeNull();
+    expect(result2.error).toBeNull();
+    expect(result1.data?.slug).toBe(result2.data?.slug);
   });
 
   test("creates lesson at correct position", async () => {

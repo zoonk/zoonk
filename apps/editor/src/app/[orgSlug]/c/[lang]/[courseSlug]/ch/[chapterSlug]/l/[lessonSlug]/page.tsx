@@ -19,7 +19,13 @@ export default async function LessonPage(props: LessonPageProps) {
   // Preload data in parallel (cached, so child components get the same promise)
   void Promise.all([
     getChapter({ chapterSlug, courseSlug, language: lang, orgSlug }),
-    getLesson({ language: lang, lessonSlug, orgSlug }),
+    getLesson({
+      chapterSlug,
+      courseSlug,
+      language: lang,
+      lessonSlug,
+      orgSlug,
+    }),
   ]);
 
   return (

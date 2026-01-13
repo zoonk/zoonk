@@ -19,7 +19,7 @@ describe("lessonSlugExists()", () => {
     });
   });
 
-  test("returns true when slug exists for same language and org", async () => {
+  test("returns true when slug exists in same chapter", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       language: chapter.language,
@@ -27,8 +27,7 @@ describe("lessonSlugExists()", () => {
     });
 
     const exists = await lessonSlugExists({
-      language: lesson.language,
-      orgSlug: organization.slug,
+      chapterId: chapter.id,
       slug: lesson.slug,
     });
 
@@ -37,47 +36,36 @@ describe("lessonSlugExists()", () => {
 
   test("returns false when slug does not exist", async () => {
     const exists = await lessonSlugExists({
-      language: "en",
-      orgSlug: organization.slug,
+      chapterId: chapter.id,
       slug: "non-existent-slug",
     });
 
     expect(exists).toBe(false);
   });
 
-  test("returns false when slug exists but language differs", async () => {
+  test("returns false when slug exists but chapter differs", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const [chapter1, chapter2] = await Promise.all([
+      chapterFixture({
+        courseId: course.id,
+        language: course.language,
+        organizationId: organization.id,
+      }),
+      chapterFixture({
+        courseId: course.id,
+        language: course.language,
+        organizationId: organization.id,
+      }),
+    ]);
+
     const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      language: "en",
+      chapterId: chapter1.id,
+      language: chapter1.language,
       organizationId: organization.id,
     });
 
     const exists = await lessonSlugExists({
-      language: "pt",
-      orgSlug: organization.slug,
-      slug: lesson.slug,
-    });
-
-    expect(exists).toBe(false);
-  });
-
-  test("returns false when slug exists but organization differs", async () => {
-    const otherOrg = await organizationFixture();
-    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
-    const otherChapter = await chapterFixture({
-      courseId: otherCourse.id,
-      language: otherCourse.language,
-      organizationId: otherOrg.id,
-    });
-    const lesson = await lessonFixture({
-      chapterId: otherChapter.id,
-      language: otherChapter.language,
-      organizationId: otherOrg.id,
-    });
-
-    const exists = await lessonSlugExists({
-      language: lesson.language,
-      orgSlug: organization.slug,
+      chapterId: chapter2.id,
       slug: lesson.slug,
     });
 

@@ -4,6 +4,7 @@ import { useDebounce } from "@zoonk/ui/hooks/debounce";
 import { useEffect, useEffectEvent, useState, useTransition } from "react";
 
 type SlugCheckParams = {
+  chapterId?: number;
   courseId?: number;
   language: string;
   orgSlug: string;
@@ -17,6 +18,7 @@ type SlugCheckFn = (params: SlugCheckParams) => Promise<boolean>;
  * Works with any entity type (course, chapter, lesson) by accepting a check function.
  */
 export function useSlugCheck({
+  chapterId,
   checkFn,
   courseId,
   initialSlug,
@@ -47,6 +49,7 @@ export function useSlugCheck({
 
     startTransition(async () => {
       const exists = await checkFn({
+        chapterId,
         courseId,
         language,
         orgSlug,
@@ -55,7 +58,15 @@ export function useSlugCheck({
 
       handleSlugCheck(debouncedSlug, exists);
     });
-  }, [checkFn, courseId, debouncedSlug, initialSlug, language, orgSlug]);
+  }, [
+    chapterId,
+    checkFn,
+    courseId,
+    debouncedSlug,
+    initialSlug,
+    language,
+    orgSlug,
+  ]);
 
   return slugExists;
 }
