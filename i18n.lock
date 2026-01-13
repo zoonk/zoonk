@@ -13,6 +13,7 @@ checksums:
     Failed%20to%20upload%20image.%20Please%20try%20again./singular: 2fe14e681cc529b661785fdc2abac145
     No%20file%20provided/singular: 04285abfc9d18ce401da2f6f570523a5
     Title%20is%20required/singular: a8541a9d81ad1f2d007e52328d8b4074
+    Failed%20to%20add%20alternative%20title/singular: f6cd02c75277bbdf4f137f95ea90bc63
     Failed%20to%20process%20image.%20Please%20try%20again./singular: 7dd397d230e66c4cc464d501e93caa05
     Add%20a%20description%E2%80%A6/singular: 6737ac865733a3e459ddfeb5b6134ce5
     Untitled%20lesson/singular: 252aefbc39883b5a3aae879535b0c6d2
@@ -71,7 +72,6 @@ checksums:
     Course%20title/singular: 40d5c412b95b9a452643c69e48465350
     A%20course%20with%20this%20URL%20already%20exists/singular: 36f9d2ffb6817af1ae69ec6dd37cf5d6
     Authentication%20Error/singular: f8db504523897fad229a0cfdcc34652c
-    The%20authentication%20token%20is%20missing.%20Please%20try%20logging%20in%20again./singular: 74e0970a1f77afba28fe761910aa4604
     Return%20to%20login/singular: a73bc2aa109b100645c49a3eab040dbf
     The%20authentication%20token%20is%20invalid%20or%20expired.%20Please%20try%20logging%20in%20again./singular: 9e23335b29f210d8ae14c265aeb6ab1a
     Need%20help%3F%20Contact%20us%20at%20hello%40zoonk.com/singular: 0053665fad1f58782cc3a6f442b36726

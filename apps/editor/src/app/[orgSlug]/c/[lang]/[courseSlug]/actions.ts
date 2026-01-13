@@ -312,11 +312,15 @@ export async function addAlternativeTitleAction(
     return { error: t("Title is required") };
   }
 
-  await addAlternativeTitles({
+  const { error } = await addAlternativeTitles({
     courseId,
     language: lang,
     titles: [title],
   });
+
+  if (error) {
+    return { error: t("Failed to add alternative title") };
+  }
 
   revalidatePath(`/${orgSlug}/c/${lang}/${courseSlug}`);
   return { error: null };

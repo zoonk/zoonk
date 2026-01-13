@@ -42,4 +42,6 @@ export type {
   Verification,
 } from "./generated/prisma/client";
 
+export type { BatchPayload } from "./generated/prisma/internal/prismaNamespace";
+
 export { prisma };

@@ -1,4 +1,4 @@
-import { addCourseAlternativeTitles } from "@/data/courses/add-course-alternative-titles";
+import { addAlternativeTitles } from "@zoonk/core/alternative-titles/add";
 import { streamStatus } from "../stream-status";
 import type { CourseContext } from "../types";
 
@@ -12,7 +12,7 @@ export async function addAlternativeTitlesStep(input: AddInput): Promise<void> {
 
   await streamStatus({ status: "started", step: "addAlternativeTitles" });
 
-  const { error } = await addCourseAlternativeTitles({
+  const { error } = await addAlternativeTitles({
     courseId: input.course.courseId,
     language: input.course.language,
     titles: input.alternativeTitles,
