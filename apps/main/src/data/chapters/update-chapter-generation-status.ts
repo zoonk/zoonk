@@ -1,5 +1,6 @@
 import "server-only";
 
+import type { Chapter } from "@zoonk/db";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
@@ -9,15 +10,18 @@ type UpdateParams = {
   generationRunId?: string;
 };
 
+type UpdatedChapter = Pick<Chapter, "id" | "generationStatus">;
+
 export async function updateChapterGenerationStatus(
   params: UpdateParams,
-): Promise<SafeReturn<void>> {
-  const { error } = await safeAsync(() =>
+): Promise<SafeReturn<UpdatedChapter>> {
+  const { data, error } = await safeAsync(() =>
     prisma.chapter.update({
       data: {
         generationRunId: params.generationRunId ?? null,
         generationStatus: params.generationStatus,
       },
+      select: { generationStatus: true, id: true },
       where: { id: params.chapterId },
     }),
   );
@@ -26,5 +30,5 @@ export async function updateChapterGenerationStatus(
     return { data: null, error };
   }
 
-  return { data: undefined, error: null };
+  return { data, error: null };
 }
