@@ -40,9 +40,12 @@
     "build:e2e": {
       "outputs": [".next-e2e/**", "!.next-e2e/cache/**"]
     },
+    "db:deploy": {
+      "cache": false
+    },
     "db:generate": {
       "cache": false,
-      "dependsOn": ["^db:generate"],
+      "dependsOn": ["^db:deploy", "^db:generate"],
       "outputs": ["src/generated/**"]
     },
     "db:setup:test": {
