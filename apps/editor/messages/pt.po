@@ -760,81 +760,6 @@ msgctxt "QGLi0O"
 msgid "URL address"
 msgstr "Endereço URL"
 
-#: src/hooks/use-category-labels.ts
-msgctxt "djJp6c"
-msgid "History"
-msgstr "História"
-
-#: src/hooks/use-category-labels.ts
-msgctxt "dPgwrL"
-msgid "Math"
-msgstr "Matemática"
-
-#: src/hooks/use-category-labels.ts
-msgctxt "fFt3il"
-msgid "Arts"
-msgstr "Artes"
-
-#: src/hooks/use-category-labels.ts
-msgctxt "GsBRWL"
-msgid "Languages"
-msgstr "Idiomas"
-
-#: src/hooks/use-category-labels.ts
-msgctxt "hlmkcL"
-msgid "Health"
-msgstr "Saúde"
-
-#: src/hooks/use-category-labels.ts
-msgctxt "hwL7a0"
-msgid "Engineering"
-msgstr "Engenharia"
-
-#: src/hooks/use-category-labels.ts
-msgctxt "I1ZCPK"
-msgid "Technology"
-msgstr "Tecnologia"
-
-#: src/hooks/use-category-labels.ts
-msgctxt "KOuDOE"
-msgid "Economics"
-msgstr "Economia"
-
-#: src/hooks/use-category-labels.ts
-msgctxt "mn6pIm"
-msgid "Culture"
-msgstr "Cultura"
-
-#: src/hooks/use-category-labels.ts
-msgctxt "n5D/Ku"
-msgid "Communication"
-msgstr "Comunicação"
-
-#: src/hooks/use-category-labels.ts
-msgctxt "OV/2+4"
-msgid "Society"
-msgstr "Sociedade"
-
-#: src/hooks/use-category-labels.ts
-msgctxt "qydxOd"
-msgid "Science"
-msgstr "Ciência"
-
-#: src/hooks/use-category-labels.ts
-msgctxt "u3ovjm"
-msgid "Law"
-msgstr "Direito"
-
-#: src/hooks/use-category-labels.ts
-msgctxt "w1Fanr"
-msgid "Business"
-msgstr "Negócios"
-
-#: src/hooks/use-category-labels.ts
-msgctxt "YMDBNH"
-msgid "Geography"
-msgstr "Geografia"
-
 #: src/lib/error-messages.ts
 msgctxt "12q6p9"
 msgid "Category not found in this course"
@@ -919,3 +844,78 @@ msgstr "Formato JSON inválido. Por favor, verifique seu arquivo"
 msgctxt "yVHcXv"
 msgid "Organization not found"
 msgstr "Organização não encontrada"
+
+#: src/lib/use-category-labels.ts
+msgctxt "djJp6c"
+msgid "History"
+msgstr "História"
+
+#: src/lib/use-category-labels.ts
+msgctxt "dPgwrL"
+msgid "Math"
+msgstr "Matemática"
+
+#: src/lib/use-category-labels.ts
+msgctxt "fFt3il"
+msgid "Arts"
+msgstr "Artes"
+
+#: src/lib/use-category-labels.ts
+msgctxt "GsBRWL"
+msgid "Languages"
+msgstr "Idiomas"
+
+#: src/lib/use-category-labels.ts
+msgctxt "hlmkcL"
+msgid "Health"
+msgstr "Saúde"
+
+#: src/lib/use-category-labels.ts
+msgctxt "hwL7a0"
+msgid "Engineering"
+msgstr "Engenharia"
+
+#: src/lib/use-category-labels.ts
+msgctxt "I1ZCPK"
+msgid "Technology"
+msgstr "Tecnologia"
+
+#: src/lib/use-category-labels.ts
+msgctxt "KOuDOE"
+msgid "Economics"
+msgstr "Economia"
+
+#: src/lib/use-category-labels.ts
+msgctxt "mn6pIm"
+msgid "Culture"
+msgstr "Cultura"
+
+#: src/lib/use-category-labels.ts
+msgctxt "n5D/Ku"
+msgid "Communication"
+msgstr "Comunicação"
+
+#: src/lib/use-category-labels.ts
+msgctxt "OV/2+4"
+msgid "Society"
+msgstr "Sociedade"
+
+#: src/lib/use-category-labels.ts
+msgctxt "qydxOd"
+msgid "Science"
+msgstr "Ciência"
+
+#: src/lib/use-category-labels.ts
+msgctxt "u3ovjm"
+msgid "Law"
+msgstr "Direito"
+
+#: src/lib/use-category-labels.ts
+msgctxt "w1Fanr"
+msgid "Business"
+msgstr "Negócios"
+
+#: src/lib/use-category-labels.ts
+msgctxt "YMDBNH"
+msgid "Geography"
+msgstr "Geografia"

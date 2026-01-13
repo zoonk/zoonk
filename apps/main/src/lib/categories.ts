@@ -17,6 +17,7 @@ import {
   Users,
   Wrench,
 } from "lucide-react";
+import { useExtracted } from "next-intl";
 import { getExtracted } from "next-intl/server";
 
 export type CategoryInfo = {
@@ -25,7 +26,7 @@ export type CategoryInfo = {
   label: string;
 };
 
-export const CATEGORY_ICONS: Record<CourseCategory, LucideIcon> = {
+const CATEGORY_ICONS: Record<CourseCategory, LucideIcon> = {
   arts: Palette,
   business: Briefcase,
   communication: MessageCircle,
@@ -124,4 +125,46 @@ export async function getCategoryHeader(category: CourseCategory) {
     description: t("Explore all {category} courses", { category: label }),
     title: t("{category} courses", { category: label }),
   };
+}
+
+export function useCategories(): CategoryInfo[] {
+  const t = useExtracted();
+
+  return [
+    { icon: CATEGORY_ICONS.arts, key: "arts", label: t("Arts") },
+    { icon: CATEGORY_ICONS.business, key: "business", label: t("Business") },
+    {
+      icon: CATEGORY_ICONS.communication,
+      key: "communication",
+      label: t("Communication"),
+    },
+    { icon: CATEGORY_ICONS.culture, key: "culture", label: t("Culture") },
+    {
+      icon: CATEGORY_ICONS.economics,
+      key: "economics",
+      label: t("Economics"),
+    },
+    {
+      icon: CATEGORY_ICONS.engineering,
+      key: "engineering",
+      label: t("Engineering"),
+    },
+    {
+      icon: CATEGORY_ICONS.geography,
+      key: "geography",
+      label: t("Geography"),
+    },
+    { icon: CATEGORY_ICONS.health, key: "health", label: t("Health") },
+    { icon: CATEGORY_ICONS.history, key: "history", label: t("History") },
+    {
+      icon: CATEGORY_ICONS.languages,
+      key: "languages",
+      label: t("Languages"),
+    },
+    { icon: CATEGORY_ICONS.law, key: "law", label: t("Law") },
+    { icon: CATEGORY_ICONS.math, key: "math", label: t("Math") },
+    { icon: CATEGORY_ICONS.science, key: "science", label: t("Science") },
+    { icon: CATEGORY_ICONS.society, key: "society", label: t("Society") },
+    { icon: CATEGORY_ICONS.tech, key: "tech", label: t("Technology") },
+  ];
 }
