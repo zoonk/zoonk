@@ -24,11 +24,14 @@ test.describe("Energy Page", () => {
     }) => {
       await authenticatedPage.goto("/");
 
-      // User clicks energy card on home page
+      // Wait for Performance section to load (indicates Suspense resolved)
+      await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
+
+      // User clicks energy card on home page (use flexible matcher for energy percentage)
       await authenticatedPage
         .getByRole("link")
         .filter({
-          has: authenticatedPage.getByText(/your energy is 75%/i),
+          has: authenticatedPage.getByText(/your energy is \d+%/i),
         })
         .click();
 

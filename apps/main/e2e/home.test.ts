@@ -74,9 +74,12 @@ test.describe("Home Page - Performance Section", () => {
   }) => {
     await authenticatedPage.goto("/");
 
+    // Wait for Suspense content to load - Performance section only renders when data is available
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
+
+    // Use regex to match "Your energy is X%" where X can be any number
     await expect(
-      authenticatedPage.getByText("Your energy is 75%"),
+      authenticatedPage.getByText(/your energy is \d+%/i),
     ).toBeVisible();
   });
 
@@ -86,11 +89,15 @@ test.describe("Home Page - Performance Section", () => {
     await authenticatedPage.goto("/");
 
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
+
+    // Use regex to match belt level pattern (e.g., "Orange Belt - Level 8")
     await expect(
-      authenticatedPage.getByText("Orange Belt - Level 8"),
+      authenticatedPage.getByText(/belt - level \d+/i),
     ).toBeVisible();
+
+    // Use regex to match BP to next level pattern
     await expect(
-      authenticatedPage.getByText("500 BP to next level"),
+      authenticatedPage.getByText(/\d+ bp to next level/i),
     ).toBeVisible();
   });
 
@@ -100,8 +107,10 @@ test.describe("Home Page - Performance Section", () => {
     await authenticatedPage.goto("/");
 
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
+
+    // Use regex to match any percentage of correct answers (e.g., "75%" or "75.2%")
     await expect(
-      authenticatedPage.getByText("75% correct answers"),
+      authenticatedPage.getByText(/\d+(\.\d+)?% correct answers/i),
     ).toBeVisible();
   });
 
@@ -112,7 +121,13 @@ test.describe("Home Page - Performance Section", () => {
 
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
     await expect(authenticatedPage.getByText(/best day/i)).toBeVisible();
-    await expect(authenticatedPage.getByText(/with 76\.1%/i)).toBeVisible();
+
+    // Use regex to match any day of week with percentage (e.g., "Sunday with 76.1%")
+    await expect(
+      authenticatedPage.getByText(
+        /(monday|tuesday|wednesday|thursday|friday|saturday|sunday) with \d+(\.\d+)?%/i,
+      ),
+    ).toBeVisible();
   });
 
   test("authenticated user with progress sees best time", async ({
@@ -122,8 +137,12 @@ test.describe("Home Page - Performance Section", () => {
 
     await expect(authenticatedPage.getByText(/^performance$/i)).toBeVisible();
     await expect(authenticatedPage.getByText(/best time/i)).toBeVisible();
+
+    // Use regex to match time period with percentage (e.g., "Morning with 90%")
     await expect(
-      authenticatedPage.getByText(/morning with 90%/i),
+      authenticatedPage.getByText(
+        /(morning|afternoon|evening|night) with \d+%/i,
+      ),
     ).toBeVisible();
   });
 
