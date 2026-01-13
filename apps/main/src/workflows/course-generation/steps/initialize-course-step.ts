@@ -2,6 +2,7 @@ import { createAICourse } from "@/data/courses/create-ai-course";
 import { deleteAICourse } from "@/data/courses/delete-ai-course";
 import { findExistingCourse } from "@/data/courses/find-existing-course";
 import { updateCourseSuggestionStatus } from "@/data/courses/update-course-suggestion-status";
+import { getAIOrganization } from "@/data/orgs/get-ai-organization";
 import { streamStatus } from "../stream-status";
 import type { CourseContext, CourseSuggestionData } from "../types";
 
@@ -19,11 +20,14 @@ export async function initializeCourseStep(
 
   const { suggestion, workflowRunId } = input;
 
-  // Check if a failed course exists that needs cleanup
-  const { data: existingCourse } = await findExistingCourse({
-    language: suggestion.language,
-    slug: suggestion.slug,
-  });
+  // Fetch AI org and check for existing course in parallel
+  const [aiOrg, { data: existingCourse }] = await Promise.all([
+    getAIOrganization(),
+    findExistingCourse({
+      language: suggestion.language,
+      slug: suggestion.slug,
+    }),
+  ]);
 
   if (existingCourse && existingCourse.generationStatus === "failed") {
     await deleteAICourse(existingCourse.id);
@@ -45,6 +49,7 @@ export async function initializeCourseStep(
   const { data: course, error: createError } = await createAICourse({
     generationRunId: workflowRunId,
     language: suggestion.language,
+    organizationId: aiOrg.id,
     title: suggestion.title,
   });
 
@@ -60,5 +65,6 @@ export async function initializeCourseStep(
     courseSlug: course.slug,
     courseTitle: suggestion.title,
     language: suggestion.language,
+    organizationId: aiOrg.id,
   };
 }

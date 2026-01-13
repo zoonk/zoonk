@@ -20,6 +20,7 @@ export async function addLessonsStep(input: AddInput): Promise<void> {
     generationRunId: input.generationRunId,
     language: input.course.language,
     lessons: input.lessons,
+    organizationId: input.course.organizationId,
   });
 
   if (lessonsError) {

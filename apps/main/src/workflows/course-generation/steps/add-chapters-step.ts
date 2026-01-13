@@ -18,6 +18,7 @@ export async function addChaptersStep(
     chapters: input.chapters,
     courseId: input.course.courseId,
     language: input.course.language,
+    organizationId: input.course.organizationId,
   });
 
   if (error || !createdChapters) {

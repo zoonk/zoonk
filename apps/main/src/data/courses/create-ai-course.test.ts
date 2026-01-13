@@ -1,11 +1,18 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { AI_ORG_ID } from "@zoonk/utils/constants";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { toSlug } from "@zoonk/utils/string";
-import { describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { createAICourse } from "./create-ai-course";
 
 describe("createAICourse", () => {
+  let organizationId: number;
+
+  beforeAll(async () => {
+    const org = await aiOrganizationFixture();
+    organizationId = org.id;
+  });
+
   test("creates a course with running status", async () => {
     const title = `Test Course ${randomUUID()}`;
     const runId = randomUUID();
@@ -13,6 +20,7 @@ describe("createAICourse", () => {
     const result = await createAICourse({
       generationRunId: runId,
       language: "en",
+      organizationId,
       title,
     });
 
@@ -24,7 +32,7 @@ describe("createAICourse", () => {
       where: { id: result.data?.id },
     });
 
-    expect(course?.organizationId).toBe(AI_ORG_ID);
+    expect(course?.organizationId).toBe(organizationId);
     expect(course?.generationStatus).toBe("running");
     expect(course?.generationRunId).toBe(runId);
     expect(course?.isPublished).toBe(true);
@@ -38,12 +46,14 @@ describe("createAICourse", () => {
     await createAICourse({
       generationRunId: runId,
       language: "en",
+      organizationId,
       title,
     });
 
     const result = await createAICourse({
       generationRunId: randomUUID(),
       language: "en",
+      organizationId,
       title,
     });
 

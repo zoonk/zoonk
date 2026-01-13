@@ -1,14 +1,21 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { AI_ORG_ID } from "@zoonk/utils/constants";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { toSlug } from "@zoonk/utils/string";
-import { describe, expect, test } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { createChapters } from "./create-chapters";
 
 describe("createChapters", () => {
+  let organizationId: number;
+
+  beforeAll(async () => {
+    const org = await aiOrganizationFixture();
+    organizationId = org.id;
+  });
+
   test("creates chapters with correct positions", async () => {
-    const course = await courseFixture({ organizationId: AI_ORG_ID });
+    const course = await courseFixture({ organizationId });
 
     const chapters = [
       {
@@ -25,6 +32,7 @@ describe("createChapters", () => {
       chapters,
       courseId: course.id,
       language: "en",
+      organizationId,
     });
 
     expect(result.error).toBeNull();
@@ -39,7 +47,7 @@ describe("createChapters", () => {
   });
 
   test("creates chapters with pending status and no run ID", async () => {
-    const course = await courseFixture({ organizationId: AI_ORG_ID });
+    const course = await courseFixture({ organizationId });
 
     const chapters = [
       {
@@ -52,6 +60,7 @@ describe("createChapters", () => {
       chapters,
       courseId: course.id,
       language: "en",
+      organizationId,
     });
 
     expect(result.error).toBeNull();
@@ -61,7 +70,7 @@ describe("createChapters", () => {
       where: { id: result.data?.[0]?.id },
     });
 
-    expect(dbChapter?.organizationId).toBe(AI_ORG_ID);
+    expect(dbChapter?.organizationId).toBe(organizationId);
     expect(dbChapter?.generationRunId).toBeNull();
     expect(dbChapter?.generationStatus).toBe("pending");
     expect(dbChapter?.isPublished).toBe(true);

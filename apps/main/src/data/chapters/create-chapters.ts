@@ -2,7 +2,6 @@ import "server-only";
 
 import type { Chapter } from "@zoonk/db";
 import { prisma } from "@zoonk/db";
-import { AI_ORG_ID } from "@zoonk/utils/constants";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
@@ -12,9 +11,10 @@ type ChapterInput = {
 };
 
 type CreateParams = {
+  chapters: ChapterInput[];
   courseId: number;
   language: string;
-  chapters: ChapterInput[];
+  organizationId: number;
 };
 
 type CreatedChapter = Pick<
@@ -32,7 +32,7 @@ export async function createChapters(
     isPublished: true,
     language: params.language,
     normalizedTitle: normalizeString(chapter.title),
-    organizationId: AI_ORG_ID,
+    organizationId: params.organizationId,
     position: index,
     slug: toSlug(chapter.title),
     title: chapter.title,

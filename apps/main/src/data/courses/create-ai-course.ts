@@ -2,14 +2,14 @@ import "server-only";
 
 import type { Course } from "@zoonk/db";
 import { prisma } from "@zoonk/db";
-import { AI_ORG_ID } from "@zoonk/utils/constants";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
 type CreateParams = {
-  language: string;
-  title: string;
   generationRunId: string;
+  language: string;
+  organizationId: number;
+  title: string;
 };
 
 type CreatedCourse = Pick<Course, "id" | "slug">;
@@ -28,7 +28,7 @@ export async function createAICourse(
         isPublished: true,
         language: params.language,
         normalizedTitle,
-        organizationId: AI_ORG_ID,
+        organizationId: params.organizationId,
         slug,
         title: params.title,
       },

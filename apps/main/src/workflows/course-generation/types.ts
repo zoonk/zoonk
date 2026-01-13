@@ -37,6 +37,7 @@ export type CourseContext = {
   courseSlug: string;
   courseTitle: string;
   language: string;
+  organizationId: number;
 };
 
 export type GeneratedChapter = {

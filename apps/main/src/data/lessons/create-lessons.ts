@@ -1,7 +1,6 @@
 import "server-only";
 
 import { prisma } from "@zoonk/db";
-import { AI_ORG_ID } from "@zoonk/utils/constants";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
@@ -12,9 +11,10 @@ type LessonInput = {
 
 type CreateParams = {
   chapterId: number;
-  language: string;
   generationRunId: string;
+  language: string;
   lessons: LessonInput[];
+  organizationId: number;
 };
 
 export async function createLessons(
@@ -28,7 +28,7 @@ export async function createLessons(
     isPublished: true,
     language: params.language,
     normalizedTitle: normalizeString(lesson.title),
-    organizationId: AI_ORG_ID,
+    organizationId: params.organizationId,
     position: index,
     slug: toSlug(lesson.title),
     title: lesson.title,

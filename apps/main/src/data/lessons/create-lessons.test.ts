@@ -2,19 +2,22 @@ import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { AI_ORG_ID } from "@zoonk/utils/constants";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { createLessons } from "./create-lessons";
 
 describe("createLessons", () => {
+  let organizationId: number;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
   beforeAll(async () => {
-    course = await courseFixture({ organizationId: AI_ORG_ID });
+    const org = await aiOrganizationFixture();
+    organizationId = org.id;
+    course = await courseFixture({ organizationId });
     chapter = await chapterFixture({
       courseId: course.id,
-      organizationId: AI_ORG_ID,
+      organizationId,
     });
   });
 
@@ -37,6 +40,7 @@ describe("createLessons", () => {
       generationRunId: runId,
       language: "en",
       lessons,
+      organizationId,
     });
 
     expect(result.error).toBeNull();
@@ -61,7 +65,7 @@ describe("createLessons", () => {
     const runId = randomUUID();
     const chapterForTest = await chapterFixture({
       courseId: course.id,
-      organizationId: AI_ORG_ID,
+      organizationId,
     });
 
     const lessons = [
@@ -76,6 +80,7 @@ describe("createLessons", () => {
       generationRunId: runId,
       language: "en",
       lessons,
+      organizationId,
     });
 
     expect(result.error).toBeNull();
@@ -84,7 +89,7 @@ describe("createLessons", () => {
       where: { chapterId: chapterForTest.id, title: lessons[0]?.title },
     });
 
-    expect(dbLesson?.organizationId).toBe(AI_ORG_ID);
+    expect(dbLesson?.organizationId).toBe(organizationId);
     expect(dbLesson?.generationRunId).toBe(runId);
     expect(dbLesson?.generationStatus).toBe("completed");
     expect(dbLesson?.isPublished).toBe(true);
