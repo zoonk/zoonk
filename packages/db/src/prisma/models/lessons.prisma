@@ -6,7 +6,7 @@ model Lesson {
   chapter          Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   isPublished      Boolean          @default(false) @map("is_published")
   language         String           @db.VarChar(10)
-  kind             String           @default("core") @db.VarChar(20)
+  kind             LessonKind       @default(core)
   slug             String
   title            String
   normalizedTitle  String           @map("normalized_title")

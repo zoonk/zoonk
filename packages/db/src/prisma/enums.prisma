@@ -4,3 +4,26 @@ enum GenerationStatus {
   completed
   failed
 }
+
+enum LessonKind {
+  core
+  language
+  custom
+}
+
+enum ActivityKind {
+  custom
+  background
+  explanation
+  quiz
+  mechanics
+  examples
+  story
+  challenge
+  vocabulary
+  grammar
+  reading
+  listening
+  pronunciation
+  review
+}

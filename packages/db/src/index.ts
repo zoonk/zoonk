@@ -18,6 +18,7 @@ if (process.env.NODE_ENV !== "production") {
 export type {
   Account,
   Activity,
+  ActivityKind,
   ActivityProgress,
   Chapter,
   Course,
@@ -29,6 +30,7 @@ export type {
   GenerationStatus,
   Invitation,
   Lesson,
+  LessonKind,
   Member,
   Organization,
   RateLimit,

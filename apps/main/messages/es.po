@@ -1118,11 +1118,6 @@ msgid "Explanation"
 msgstr "Explicación"
 
 #: src/lib/activities.ts
-msgctxt "HhyGLP"
-msgid "Logic"
-msgstr "Lógica"
-
-#: src/lib/activities.ts
 msgctxt "lqtP+R"
 msgid "Vocabulary"
 msgstr "Vocabulario"
@@ -1153,14 +1148,14 @@ msgid "Review"
 msgstr "Repaso"
 
 #: src/lib/activities.ts
+msgctxt "Sjo1P4"
+msgid "Custom"
+msgstr "Personalizada"
+
+#: src/lib/activities.ts
 msgctxt "vuwclE"
 msgid "Pronunciation"
 msgstr "Pronunciación"
-
-#: src/lib/activities.ts
-msgctxt "W+u0Zk"
-msgid "Lesson Quiz"
-msgstr "Cuestionario de lección"
 
 #: src/lib/activities.ts
 msgctxt "XQZA8e"

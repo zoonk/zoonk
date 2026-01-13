@@ -1,4 +1,5 @@
 import type {
+  ActivityKind,
   GenerationStatus,
   Organization,
   PrismaClient,
@@ -7,7 +8,7 @@ import type {
 type ActivitySeedData = {
   generationStatus: GenerationStatus;
   isPublished: boolean;
-  kind: string;
+  kind: ActivityKind;
   title?: string;
   description?: string;
   inventory?: Record<string, number>;
@@ -36,7 +37,7 @@ const activitiesData: LessonActivities[] = [
       {
         generationStatus: "completed",
         isPublished: true,
-        kind: "explanation_quiz",
+        kind: "quiz",
       },
       {
         generationStatus: "completed",
@@ -51,7 +52,7 @@ const activitiesData: LessonActivities[] = [
       {
         generationStatus: "completed",
         isPublished: true,
-        kind: "logic",
+        kind: "quiz",
       },
       {
         generationStatus: "completed",
@@ -73,7 +74,7 @@ const activitiesData: LessonActivities[] = [
       {
         generationStatus: "completed",
         isPublished: true,
-        kind: "lesson_quiz",
+        kind: "quiz",
       },
     ],
     language: "en",

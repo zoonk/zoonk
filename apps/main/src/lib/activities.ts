@@ -1,4 +1,4 @@
-import type { ActivityKind } from "@zoonk/utils/activities";
+import type { ActivityKind } from "@zoonk/db";
 import { getExtracted } from "next-intl/server";
 
 export type ActivityKindInfo = {
@@ -14,15 +14,14 @@ export async function getActivityKinds(params?: {
   return [
     { key: "background", label: t("Background") },
     { key: "challenge", label: t("Challenge") },
+    { key: "custom", label: t("Custom") },
     { key: "examples", label: t("Examples") },
     { key: "explanation", label: t("Explanation") },
-    { key: "explanation_quiz", label: t("Quiz") },
     { key: "grammar", label: t("Grammar") },
-    { key: "lesson_quiz", label: t("Lesson Quiz") },
     { key: "listening", label: t("Listening") },
-    { key: "logic", label: t("Logic") },
     { key: "mechanics", label: t("Mechanics") },
     { key: "pronunciation", label: t("Pronunciation") },
+    { key: "quiz", label: t("Quiz") },
     { key: "reading", label: t("Reading") },
     { key: "review", label: t("Review") },
     { key: "story", label: t("Story") },

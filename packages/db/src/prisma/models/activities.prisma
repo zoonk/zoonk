@@ -6,7 +6,7 @@ model Activity {
   lesson           Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   isPublished      Boolean            @default(false) @map("is_published")
   language         String             @db.VarChar(10)
-  kind             String             @db.VarChar(30)
+  kind             ActivityKind       @default(custom)
   title            String?
   description      String?
   generationStatus GenerationStatus   @default(pending) @map("generation_status")
