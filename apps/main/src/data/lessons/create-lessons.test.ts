@@ -22,8 +22,6 @@ describe("createLessons", () => {
   });
 
   test("creates lessons with correct positions", async () => {
-    const runId = randomUUID();
-
     const lessons = [
       {
         description: "Lesson 1 description",
@@ -37,7 +35,6 @@ describe("createLessons", () => {
 
     const result = await createLessons({
       chapterId: chapter.id,
-      generationRunId: runId,
       language: "en",
       lessons,
       organizationId,
@@ -62,7 +59,6 @@ describe("createLessons", () => {
   });
 
   test("sets correct generation metadata and AI org", async () => {
-    const runId = randomUUID();
     const chapterForTest = await chapterFixture({
       courseId: course.id,
       organizationId,
@@ -77,7 +73,6 @@ describe("createLessons", () => {
 
     const result = await createLessons({
       chapterId: chapterForTest.id,
-      generationRunId: runId,
       language: "en",
       lessons,
       organizationId,
@@ -90,8 +85,7 @@ describe("createLessons", () => {
     });
 
     expect(dbLesson?.organizationId).toBe(organizationId);
-    expect(dbLesson?.generationRunId).toBe(runId);
-    expect(dbLesson?.generationStatus).toBe("completed");
+    expect(dbLesson?.generationStatus).toBe("pending");
     expect(dbLesson?.isPublished).toBe(true);
   });
 });

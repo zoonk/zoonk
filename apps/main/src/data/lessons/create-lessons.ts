@@ -11,7 +11,6 @@ type LessonInput = {
 
 type CreateParams = {
   chapterId: number;
-  generationRunId: string;
   language: string;
   lessons: LessonInput[];
   organizationId: number;
@@ -23,8 +22,7 @@ export async function createLessons(
   const lessonsData = params.lessons.map((lesson, index) => ({
     chapterId: params.chapterId,
     description: lesson.description,
-    generationRunId: params.generationRunId,
-    generationStatus: "completed",
+    generationStatus: "pending",
     isPublished: true,
     language: params.language,
     normalizedTitle: normalizeString(lesson.title),

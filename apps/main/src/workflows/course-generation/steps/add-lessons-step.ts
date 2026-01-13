@@ -17,7 +17,6 @@ export async function addLessonsStep(input: AddInput): Promise<void> {
 
   const { error: lessonsError } = await createLessons({
     chapterId: input.chapter.id,
-    generationRunId: input.generationRunId,
     language: input.course.language,
     lessons: input.lessons,
     organizationId: input.course.organizationId,
