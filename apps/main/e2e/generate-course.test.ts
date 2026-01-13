@@ -6,7 +6,7 @@ import { expect, test } from "./fixtures";
  *
  * The generation page interacts with 3 APIs:
  * 1. POST /api/workflows/course-generation/trigger - Starts the workflow, returns { runId: string }
- * 2. GET /api/workflows/course-generation/status?runId=X&startIndex=N - Returns NDJSON stream of step updates
+ * 2. GET /api/workflows/course-generation/status?runId=X&startIndex=N - Returns SSE stream of step updates
  * 3. GET /api/workflows/run-status?runId=X - Polled via SWR, returns { status: "running" | "completed" | "failed" }
  *
  * Client behavior:
@@ -31,13 +31,13 @@ type MockApiOptions = {
 };
 
 /**
- * Creates a mock NDJSON stream response from an array of messages.
- * Each message is JSON stringified and separated by newlines.
+ * Creates a mock SSE stream response from an array of messages.
+ * Each message follows the SSE format: "data: {...}\n\n"
  */
-function createNDJSONStream(
+function createSSEStream(
   messages: Array<{ step: string; status: string }>,
 ): string {
-  return `${messages.map((msg) => JSON.stringify(msg)).join("\n")}\n`;
+  return messages.map((msg) => `data: ${JSON.stringify(msg)}\n\n`).join("");
 }
 
 /**
@@ -82,8 +82,8 @@ function createRouteHandler(options: MockApiOptions) {
     // Mock status stream API
     if (url.includes("/api/workflows/course-generation/status")) {
       await route.fulfill({
-        body: createNDJSONStream(streamMessages),
-        contentType: "text/plain; charset=utf-8",
+        body: createSSEStream(streamMessages),
+        contentType: "text/event-stream",
         status: 200,
       });
       return;

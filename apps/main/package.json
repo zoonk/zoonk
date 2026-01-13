@@ -9,6 +9,7 @@
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "botid": "1.5.10",
+    "eventsource-parser": "^3.0.6",
     "lucide-react": "0.562.0",
     "next": "16.1.0",
     "next-intl": "4.7.0",

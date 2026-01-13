@@ -11,9 +11,9 @@ export async function streamStatus(params: {
   const writer = writable.getWriter();
 
   try {
-    // Write as JSON string with newline for NDJSON format
+    // Write as SSE format for eventsource-parser consumption
     const message: StreamMessage = params;
-    await writer.write(`${JSON.stringify(message)}\n`);
+    await writer.write(`data: ${JSON.stringify(message)}\n\n`);
   } finally {
     writer.releaseLock();
   }

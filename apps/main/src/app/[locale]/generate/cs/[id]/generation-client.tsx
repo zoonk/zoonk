@@ -13,7 +13,7 @@ import {
   GenerationProgressStreaming,
   GenerationProgressTriggering,
 } from "@/components/generation/generation-progress";
-import { useWorkflowGeneration } from "@/hooks/use-workflow-generation";
+import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
 import type { StepName } from "@/workflows/course-generation/types";
 import { STEP_ICONS } from "./generation-step-icons";
 import { useGenerationStepLabels } from "./use-generation-step-labels";
