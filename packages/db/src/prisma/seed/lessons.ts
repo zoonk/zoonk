@@ -1,6 +1,7 @@
 import { normalizeString } from "@zoonk/utils/string";
 import type {
   GenerationStatus,
+  LessonKind,
   Organization,
   PrismaClient,
 } from "../../generated/prisma/client";
@@ -9,7 +10,7 @@ type LessonSeedData = {
   description: string;
   generationStatus: GenerationStatus;
   isPublished: boolean;
-  kind?: string;
+  kind?: LessonKind;
   slug: string;
   title: string;
 };

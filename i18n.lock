@@ -307,9 +307,14 @@ checksums:
     Total%20Brain%20Power/singular: d20bd99b8345101df62b8fa365c9b2dc
     Track%20your%20level%20progress%20and%20see%20how%20you%20advance./singular: 25792319622e431462e5963816d3a1c1
     Track%20your%20level%20progress/singular: d5aa88156f57e99743b099ada4daecd4
-    Coming%20soon/singular: ee2b0671e00972773210c5be5a9ccb89
     Track%20your%20score%20and%20performance%20trends/singular: b660687741358d332d8bbc63c58f1368
     Track%20your%20score%20over%20time%20and%20see%20your%20best%20days%20and%20times./singular: d477bfe0bba94da2985619fccead6fcd
+    Score%20chart/singular: bb9c5edfffb95d6a4f562093bf9b6319
+    About%20Score/singular: e5fa8ad0f5a27bb3c3b37f71ef95d564
+    Your%20score%20shows%20the%20percentage%20of%20questions%20you%20answered%20correctly.%20It%20helps%20you%20track%20your%20accuracy%20over%20time%20and%20identify%20your%20best%20days%20and%20times%20for%20learning./singular: 8e1883332ccba2b2131548f83306a665
+    Past%206%20months/singular: 216c1b653ba5908b4df61daa817fc8b1
+    This%20month/singular: 50845a38865204a97773c44dcd2ebb90
+    This%20year/singular: 1e69651c2ac722f8ce138f43cf2e02f9
     Checking%20if%20you're%20logged%20in.../singular: b50f05bfcb51cad6913150273e551291
     You%20need%20to%20be%20logged%20in%20to%20access%20this%20page./singular: 759ca522663d8f628718332f756dd6c4
     Display%20name/singular: 725f331065e9d594d720d07b1ae51a90
@@ -348,6 +353,7 @@ checksums:
     Interactive%20lesson%20with%20exercises%20and%20activities%20to%20help%20you%20learn%20effectively./singular: f74de010a6977351bee6b20c81d90d31
     Lesson/singular: 0369d21b141f7f54c4586224e7e7ae65
     Generate%20Course/singular: f9286dd24f884cca823c70524b6562d8
+    Coming%20soon/singular: ee2b0671e00972773210c5be5a9ccb89
     Read%20Zoonk's%20privacy%20policy%20to%20understand%20how%20we%20collect%2C%20use%2C%20and%20protect%20your%20personal%20information./singular: 044f3586abe7d9915820a6629cef08e4
     Privacy%20Policy/singular: 7459744a63ef8af4e517a09024bd7c08
     Read%20Zoonk's%20terms%20of%20use%20to%20understand%20the%20rules%20and%20conditions%20for%20using%20our%20platform%20and%20services/singular: 4b82898d60691839a1999e4a17199895
@@ -383,15 +389,14 @@ checksums:
     Challenge/singular: 7f333a59ee7a3596e27a2f8c3401b764
     Story/singular: fabac3f62af801d429e2cd7115bf14c9
     Explanation/singular: f6b595df4ffb1a5b0cbbe1dda5993522
-    Logic/singular: c8e5ef649c6904d7327df3731d9de873
     Vocabulary/singular: 2c8127af4c194fa05463e82d5e414c62
     Reading/singular: 9d93f1dff4a01a9e1566f23b401b8868
     Mechanics/singular: 9885fd6c35db2bd26affb830d537046b
     Quiz/singular: 22bce287f7a90d3b41b418108eaab43b
     Grammar/singular: 1d97aca351a45df1d6eb27adbee04832
     Review/singular: 299f75db25382980b2895622d7712927
+    Custom/singular: b7b89901f46267f532600a23cfc54ae2
     Pronunciation/singular: fa10bd7f4b790473afcec2a8cb2d8188
-    Lesson%20Quiz/singular: dd56fd2bf35d3bdf15729bcf2ec1aca7
     Background/singular: 0ceaed10d99ed4ad83cb0934ab970174
     Green/singular: 482ff383a4258357ba404f283682471d
     Yellow/singular: 15d533755d35af887dfa584975549fda

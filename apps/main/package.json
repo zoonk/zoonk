@@ -43,7 +43,7 @@
   "private": true,
   "scripts": {
     "analyze": "next experimental-analyze",
-    "build": "pnpm --filter @zoonk/db db:deploy && next build",
+    "build": "next build",
     "build:e2e": "env $(cat ../../packages/db/.env.e2e | xargs) next build",
     "dev": "next dev",
     "e2e": "env $(cat ../../packages/db/.env.e2e | xargs) playwright test",

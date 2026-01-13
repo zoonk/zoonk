@@ -9,7 +9,6 @@
     "vitest": "4.0.16"
   },
   "exports": {
-    "./activities": "./src/activities.ts",
     "./belt-level": "./src/belt-level.ts",
     "./cache": "./src/cache.ts",
     "./categories": "./src/categories.ts",
