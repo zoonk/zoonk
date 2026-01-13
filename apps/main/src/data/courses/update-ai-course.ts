@@ -12,8 +12,8 @@ type UpdateParams = {
 
 export async function updateAICourse(
   params: UpdateParams,
-): Promise<SafeReturn<Course | null>> {
-  const { data, error } = await safeAsync(() =>
+): Promise<SafeReturn<Course>> {
+  return safeAsync(() =>
     prisma.course.update({
       data: {
         ...(params.description !== undefined && {
@@ -27,10 +27,4 @@ export async function updateAICourse(
       where: { id: params.courseId },
     }),
   );
-
-  if (error) {
-    return { data: null, error };
-  }
-
-  return { data, error: null };
 }
