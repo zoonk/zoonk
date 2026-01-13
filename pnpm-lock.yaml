@@ -301,7 +301,7 @@ importers:
         specifier: 1.5.0
         version: 1.5.0(next@16.1.0(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
       '@xstate/store':
-        specifier: ^3.14.1
+        specifier: 3.14.1
         version: 3.14.1(react@19.2.3)
       '@zoonk/ai':
         specifier: workspace:*
@@ -325,7 +325,7 @@ importers:
         specifier: 1.5.10
         version: 1.5.10(next@16.1.0(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
       eventsource-parser:
-        specifier: ^3.0.6
+        specifier: 3.0.6
         version: 3.0.6
       lucide-react:
         specifier: 0.562.0
