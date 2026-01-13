@@ -1,6 +1,6 @@
 import "server-only";
 
-import { prisma } from "@zoonk/db";
+import { type Course, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 type UpdateParams = {
@@ -12,8 +12,8 @@ type UpdateParams = {
 
 export async function updateAICourse(
   params: UpdateParams,
-): Promise<SafeReturn<void>> {
-  const { error } = await safeAsync(() =>
+): Promise<SafeReturn<Course | null>> {
+  const { data, error } = await safeAsync(() =>
     prisma.course.update({
       data: {
         ...(params.description !== undefined && {
@@ -32,5 +32,5 @@ export async function updateAICourse(
     return { data: null, error };
   }
 
-  return { data: undefined, error: null };
+  return { data, error: null };
 }
