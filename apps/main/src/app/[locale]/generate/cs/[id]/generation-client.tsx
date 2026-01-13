@@ -19,21 +19,19 @@ import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
 import type { StepName } from "@/workflows/course-generation/types";
 import { useGenerationPhases } from "./use-generation-phases";
 
-type GenerationClientProps = {
-  courseSlug: string;
-  generationRunId: string | null;
-  generationStatus: GenerationStatus;
-  locale: string;
-  suggestionId: number;
-};
-
 export function GenerationClient({
   courseSlug,
   generationRunId,
   generationStatus,
   locale,
   suggestionId,
-}: GenerationClientProps) {
+}: {
+  courseSlug: string;
+  generationRunId: string | null;
+  generationStatus: GenerationStatus;
+  locale: string;
+  suggestionId: number;
+}) {
   const t = useExtracted();
   const router = useRouter();
 
