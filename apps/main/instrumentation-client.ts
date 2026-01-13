@@ -22,5 +22,13 @@ initBotId({
       method: "GET",
       path: "/generate/*",
     },
+    {
+      method: "GET",
+      path: "/api/workflows/*",
+    },
+    {
+      method: "POST",
+      path: "/api/workflows/*",
+    },
   ],
 });
