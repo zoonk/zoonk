@@ -67,6 +67,11 @@ msgid "Title is required"
 msgstr "Título é obrigatório"
 
 #: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
+msgctxt "PAqOAW"
+msgid "Failed to add alternative title"
+msgstr "Falha ao adicionar título alternativo"
+
+#: src/app/[orgSlug]/c/[lang]/[courseSlug]/actions.ts
 msgctxt "Q1jVC0"
 msgid "Failed to process image. Please try again."
 msgstr "Falha ao processar a imagem. Por favor, tente novamente."

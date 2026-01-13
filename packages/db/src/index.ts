@@ -26,6 +26,7 @@ export type {
   CourseSuggestion,
   CourseUser,
   DailyProgress,
+  GenerationStatus,
   Invitation,
   Lesson,
   Member,
@@ -41,5 +42,7 @@ export type {
   UserProgress,
   Verification,
 } from "./generated/prisma/client";
+
+export type { BatchPayload } from "./generated/prisma/internal/prismaNamespace";
 
 export { prisma };

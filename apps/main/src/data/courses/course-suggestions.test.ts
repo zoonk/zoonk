@@ -119,12 +119,13 @@ test("getCourseSuggestionById returns null for non-existent id", async () => {
 test("getCourseSuggestionById returns suggestion by id", async () => {
   const language = "en";
   const title = `by-id-${randomUUID()}`;
+  const slug = toSlug(title);
 
   const item = await prisma.courseSuggestion.create({
     data: {
       description: "Test description",
       language,
-      slug: toSlug(title),
+      slug,
       title,
     },
   });
@@ -133,7 +134,10 @@ test("getCourseSuggestionById returns suggestion by id", async () => {
 
   expect(result).toEqual({
     description: "Test description",
+    generationRunId: null,
+    generationStatus: "pending",
     language,
+    slug,
     title,
   });
 });

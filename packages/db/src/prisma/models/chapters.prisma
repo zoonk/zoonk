@@ -1,20 +1,20 @@
 model Chapter {
-  id               Int          @id @default(autoincrement())
-  organizationId   Int          @map("organization_id")
-  organization     Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  courseId         Int          @map("course_id")
-  course           Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  isPublished      Boolean      @default(false) @map("is_published")
-  language         String       @db.VarChar(10)
+  id               Int              @id @default(autoincrement())
+  organizationId   Int              @map("organization_id")
+  organization     Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  courseId         Int              @map("course_id")
+  course           Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  isPublished      Boolean          @default(false) @map("is_published")
+  language         String           @db.VarChar(10)
   slug             String
   title            String
-  normalizedTitle  String       @map("normalized_title")
+  normalizedTitle  String           @map("normalized_title")
   description      String
-  generationStatus String       @default("pending") @map("generation_status") @db.VarChar(20)
-  generationRunId  String?      @map("generation_run_id")
+  generationStatus GenerationStatus @default(pending) @map("generation_status")
+  generationRunId  String?          @map("generation_run_id")
   position         Int
-  createdAt        DateTime     @default(now()) @map("created_at")
-  updatedAt        DateTime     @default(now()) @updatedAt @map("updated_at")
+  createdAt        DateTime         @default(now()) @map("created_at")
+  updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at")
   lessons          Lesson[]
 
   @@unique([courseId, slug], name: "courseChapterSlug")

@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Member, type Organization, prisma } from "@zoonk/db";
+import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import { userFixture } from "./users";
 
 export function organizationAttrs(
@@ -51,4 +52,16 @@ export async function memberFixture(attrs?: MemberFixtureOptions) {
   });
 
   return { member, organization: org, user };
+}
+
+export async function aiOrganizationFixture() {
+  return prisma.organization.upsert({
+    create: {
+      kind: "brand",
+      name: "Zoonk AI",
+      slug: AI_ORG_SLUG,
+    },
+    update: {},
+    where: { slug: AI_ORG_SLUG },
+  });
 }

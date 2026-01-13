@@ -1,9 +1,13 @@
 import { normalizeString } from "@zoonk/utils/string";
-import type { Organization, PrismaClient } from "../../generated/prisma/client";
+import type {
+  GenerationStatus,
+  Organization,
+  PrismaClient,
+} from "../../generated/prisma/client";
 
 type ChapterSeedData = {
   description: string;
-  generationStatus: string;
+  generationStatus: GenerationStatus;
   isPublished: boolean;
   slug: string;
   title: string;

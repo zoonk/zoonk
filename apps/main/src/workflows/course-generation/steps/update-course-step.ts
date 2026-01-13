@@ -1,0 +1,29 @@
+import { updateAICourse } from "@/data/courses/update-ai-course";
+import { streamStatus } from "../stream-status";
+import type { CourseContext } from "../types";
+
+type UpdateInput = {
+  course: CourseContext;
+  description: string;
+  imageUrl: string | null;
+};
+
+export async function updateCourseStep(input: UpdateInput): Promise<void> {
+  "use step";
+
+  await streamStatus({ status: "started", step: "updateCourse" });
+
+  const { error } = await updateAICourse({
+    courseId: input.course.courseId,
+    description: input.description,
+    generationStatus: "completed",
+    imageUrl: input.imageUrl ?? undefined,
+  });
+
+  if (error) {
+    await streamStatus({ status: "error", step: "updateCourse" });
+    throw error;
+  }
+
+  await streamStatus({ status: "completed", step: "updateCourse" });
+}

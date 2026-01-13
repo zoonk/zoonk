@@ -34,6 +34,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 
 - `pnpm format`
 - `pnpm lint --write --unsafe`
+- `pnpm db:generate` (always run this from the root of the monorepo)
 - `pnpm typecheck`
 - `pnpm knip`
 - `pnpm test`
