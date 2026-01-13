@@ -12,26 +12,20 @@ export async function finalizeStep(input: FinalizeInput): Promise<void> {
 
   await streamStatus({ status: "started", step: "finalize" });
 
-  // Update course generation status to completed
-  const { error: courseError } = await updateAICourse({
-    courseId: input.courseId,
-    generationStatus: "completed",
-  });
+  const [courseResult, suggestionResult] = await Promise.all([
+    updateAICourse({
+      courseId: input.courseId,
+      generationStatus: "completed",
+    }),
+    updateCourseSuggestionStatus({
+      generationStatus: "completed",
+      id: input.courseSuggestionId,
+    }),
+  ]);
 
-  if (courseError) {
+  if (courseResult.error || suggestionResult.error) {
     await streamStatus({ status: "error", step: "finalize" });
-    throw courseError;
-  }
-
-  // Update course suggestion status to completed
-  const { error: suggestionError } = await updateCourseSuggestionStatus({
-    generationStatus: "completed",
-    id: input.courseSuggestionId,
-  });
-
-  if (suggestionError) {
-    await streamStatus({ status: "error", step: "finalize" });
-    throw suggestionError;
+    throw courseResult.error || suggestionResult.error;
   }
 
   await streamStatus({ status: "completed", step: "finalize" });
