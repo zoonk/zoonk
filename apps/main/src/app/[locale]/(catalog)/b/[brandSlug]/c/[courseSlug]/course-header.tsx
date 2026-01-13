@@ -22,7 +22,7 @@ import Image from "next/image";
 import { getExtracted, getLocale } from "next-intl/server";
 import type { CourseWithDetails } from "@/data/courses/get-course";
 import { Link } from "@/i18n/navigation";
-import { getCategories } from "@/lib/categories";
+import { getCategories } from "@/lib/categories/category-server";
 
 export async function CourseHeader({
   brandSlug,

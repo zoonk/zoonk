@@ -5,7 +5,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { useExtracted } from "next-intl";
 import { Link } from "@/i18n/navigation";
-import { useCategories } from "@/lib/categories";
+import { useCategories } from "@/lib/categories/category-client";
 
 export function CategoryPillsSkeleton() {
   return (

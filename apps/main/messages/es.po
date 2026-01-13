@@ -1122,97 +1122,112 @@ msgctxt "Yp7v0H"
 msgid "Gray"
 msgstr "Gris"
 
-#: src/lib/categories.ts
-msgctxt "4HKnmB"
-msgid "{category} Courses"
-msgstr "Cursos de {category}"
-
-#: src/lib/categories.ts
+#: src/lib/categories/category-client.ts
+#: src/lib/categories/category-server.ts
 msgctxt "djJp6c"
 msgid "History"
 msgstr "Historia"
 
-#: src/lib/categories.ts
+#: src/lib/categories/category-client.ts
+#: src/lib/categories/category-server.ts
 msgctxt "dPgwrL"
 msgid "Math"
 msgstr "Matemáticas"
 
-#: src/lib/categories.ts
-msgctxt "EMi23I"
-msgid "Explore all {category} courses"
-msgstr "Explorar todos los cursos de {category}"
-
-#: src/lib/categories.ts
+#: src/lib/categories/category-client.ts
+#: src/lib/categories/category-server.ts
 msgctxt "fFt3il"
 msgid "Arts"
 msgstr "Artes"
 
-#: src/lib/categories.ts
+#: src/lib/categories/category-client.ts
+#: src/lib/categories/category-server.ts
 msgctxt "GsBRWL"
 msgid "Languages"
 msgstr "Idiomas"
 
-#: src/lib/categories.ts
+#: src/lib/categories/category-client.ts
+#: src/lib/categories/category-server.ts
 msgctxt "hlmkcL"
 msgid "Health"
 msgstr "Salud"
 
-#: src/lib/categories.ts
+#: src/lib/categories/category-client.ts
+#: src/lib/categories/category-server.ts
 msgctxt "hwL7a0"
 msgid "Engineering"
 msgstr "Ingeniería"
 
-#: src/lib/categories.ts
+#: src/lib/categories/category-client.ts
+#: src/lib/categories/category-server.ts
 msgctxt "I1ZCPK"
 msgid "Technology"
 msgstr "Tecnología"
 
-#: src/lib/categories.ts
+#: src/lib/categories/category-client.ts
+#: src/lib/categories/category-server.ts
 msgctxt "KOuDOE"
 msgid "Economics"
 msgstr "Economía"
 
-#: src/lib/categories.ts
+#: src/lib/categories/category-client.ts
+#: src/lib/categories/category-server.ts
 msgctxt "mn6pIm"
 msgid "Culture"
 msgstr "Cultura"
 
-#: src/lib/categories.ts
+#: src/lib/categories/category-client.ts
+#: src/lib/categories/category-server.ts
 msgctxt "n5D/Ku"
 msgid "Communication"
 msgstr "Comunicación"
 
-#: src/lib/categories.ts
+#: src/lib/categories/category-client.ts
+#: src/lib/categories/category-server.ts
 msgctxt "OV/2+4"
 msgid "Society"
 msgstr "Sociedad"
 
-#: src/lib/categories.ts
+#: src/lib/categories/category-client.ts
+#: src/lib/categories/category-server.ts
 msgctxt "qydxOd"
 msgid "Science"
 msgstr "Ciencia"
 
-#: src/lib/categories.ts
-msgctxt "Rz9oL+"
-msgid "{category} courses"
-msgstr "Cursos de {category}"
-
-#: src/lib/categories.ts
+#: src/lib/categories/category-client.ts
+#: src/lib/categories/category-server.ts
 msgctxt "u3ovjm"
 msgid "Law"
 msgstr "Derecho"
 
-#: src/lib/categories.ts
+#: src/lib/categories/category-client.ts
+#: src/lib/categories/category-server.ts
 msgctxt "w1Fanr"
 msgid "Business"
 msgstr "Negocios"
 
-#: src/lib/categories.ts
-msgctxt "XL8IWT"
-msgid "{category} courses. The best {category} online courses, interactive lessons to learn."
-msgstr "Cursos de {category}. Los mejores cursos en línea de {category}, lecciones interactivas para aprender."
-
-#: src/lib/categories.ts
+#: src/lib/categories/category-client.ts
+#: src/lib/categories/category-server.ts
 msgctxt "YMDBNH"
 msgid "Geography"
 msgstr "Geografía"
+
+#: src/lib/categories/category-server.ts
+msgctxt "4HKnmB"
+msgid "{category} Courses"
+msgstr "Cursos de {category}"
+
+#: src/lib/categories/category-server.ts
+msgctxt "EMi23I"
+msgid "Explore all {category} courses"
+msgstr "Explorar todos los cursos de {category}"
+
+#: src/lib/categories/category-server.ts
+msgctxt "Rz9oL+"
+msgid "{category} courses"
+msgstr "Cursos de {category}"
+
+#: src/lib/categories/category-server.ts
+msgctxt "XL8IWT"
+msgid "{category} courses. The best {category} online courses, interactive lessons to learn."
+msgstr "Cursos de {category}. Los mejores cursos en línea de {category}, lecciones interactivas para aprender."
