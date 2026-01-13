@@ -111,10 +111,22 @@ export async function getCourseSuggestionById(
   id: number,
 ): Promise<Pick<
   CourseSuggestion,
-  "language" | "title" | "description"
+  | "description"
+  | "generationRunId"
+  | "generationStatus"
+  | "language"
+  | "slug"
+  | "title"
 > | null> {
   return prisma.courseSuggestion.findUnique({
-    select: { description: true, language: true, title: true },
+    select: {
+      description: true,
+      generationRunId: true,
+      generationStatus: true,
+      language: true,
+      slug: true,
+      title: true,
+    },
     where: { id },
   });
 }
