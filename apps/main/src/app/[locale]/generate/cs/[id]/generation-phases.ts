@@ -58,13 +58,13 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
 
 // Weighted progress values based on how long each phase typically takes
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
-  checkingExisting: 5,
-  generatingDetails: 25,
-  generatingLessons: 30,
-  loadingInfo: 5,
-  planningChapters: 20,
-  savingMetadata: 10,
-  settingUp: 5,
+  checkingExisting: 1,
+  generatingDetails: 19,
+  generatingLessons: 38,
+  loadingInfo: 1,
+  planningChapters: 38,
+  savingMetadata: 2,
+  settingUp: 1,
 };
 
 export function getPhaseStatus(
