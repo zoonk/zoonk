@@ -1,3 +1,5 @@
+import { cacheTagCourse } from "@zoonk/utils/cache";
+import { revalidateTag } from "next/cache";
 import { updateChapterGenerationStatus } from "@/data/chapters/update-chapter-generation-status";
 import { createLessons } from "@/data/lessons/create-lessons";
 import { streamStatus } from "../stream-status";
@@ -38,6 +40,8 @@ export async function addLessonsStep(input: AddInput): Promise<void> {
     await streamStatus({ status: "error", step: "addLessons" });
     throw chapterError;
   }
+
+  revalidateTag(cacheTagCourse({ courseSlug: input.course.courseSlug }), "max");
 
   await streamStatus({ status: "completed", step: "addLessons" });
 }

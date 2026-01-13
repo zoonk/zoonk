@@ -5,11 +5,11 @@ import {
 } from "./generate-course-suggestion-content";
 
 export default function GenerateCoursePage(
-  _props: PageProps<"/[locale]/generate/cs/[id]">,
+  props: PageProps<"/[locale]/generate/cs/[id]">,
 ) {
   return (
     <Suspense fallback={<GenerateCourseSuggestionFallback />}>
-      <GenerateCourseSuggestionContent />
+      <GenerateCourseSuggestionContent params={props.params} />
     </Suspense>
   );
 }

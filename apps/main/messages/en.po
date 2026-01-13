@@ -917,15 +917,75 @@ msgctxt "PJivSX"
 msgid "Lesson"
 msgstr "Lesson"
 
-#: src/app/[locale]/generate/cs/[id]/generate-course-suggestion-content.tsx
-msgctxt "9IJjWu"
-msgid "Generate Course"
-msgstr "Generate Course"
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "/Nrb/0"
+msgid "Generation progress"
+msgstr "Generation progress"
 
-#: src/app/[locale]/generate/cs/[id]/generate-course-suggestion-content.tsx
-msgctxt "e61Jf3"
-msgid "Coming soon"
-msgstr "Coming soon"
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "DFlapX"
+msgid "Creating your course"
+msgstr "Creating your course"
+
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "FazwRl"
+msgid "Try again"
+msgstr "Try again"
+
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "IEv8EV"
+msgid "Redirecting to your course..."
+msgstr "Redirecting to your course..."
+
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "ssRq8D"
+msgid "Generation failed"
+msgstr "Generation failed"
+
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "TKVQj2"
+msgid "Course generated"
+msgstr "Course generated"
+
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "W/5hwr"
+msgid "Something went wrong. Please try again."
+msgstr "Something went wrong. Please try again."
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "1QgqKE"
+msgid "Generating lessons"
+msgstr "Generating lessons"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "4AKS22"
+msgid "Loading course information"
+msgstr "Loading course information"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "5hT53e"
+msgid "Setting up course"
+msgstr "Setting up course"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "KxR5iy"
+msgid "Generating course details"
+msgstr "Generating course details"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "M8HLN6"
+msgid "Saving course metadata"
+msgstr "Saving course metadata"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "p2vSFY"
+msgid "Planning chapters"
+msgstr "Planning chapters"
+
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "rso9iW"
+msgid "Checking for existing course"
+msgstr "Checking for existing course"
 
 #: src/app/[locale]/privacy/page.tsx
 msgctxt "iql85X"

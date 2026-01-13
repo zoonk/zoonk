@@ -300,6 +300,9 @@ importers:
       '@vercel/analytics':
         specifier: 1.5.0
         version: 1.5.0(next@16.1.0(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
+      '@xstate/store':
+        specifier: 3.14.1
+        version: 3.14.1(react@19.2.3)
       '@zoonk/ai':
         specifier: workspace:*
         version: link:../../packages/ai
@@ -321,6 +324,9 @@ importers:
       botid:
         specifier: 1.5.10
         version: 1.5.10(next@16.1.0(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react@19.2.3)
+      eventsource-parser:
+        specifier: 3.0.6
+        version: 3.0.6
       lucide-react:
         specifier: 0.562.0
         version: 0.562.0(react@19.2.3)
@@ -3136,6 +3142,17 @@ packages:
     resolution: {integrity: sha512-+v2Tm0k+Fa6t2Q37w9sq2Fv6zW16uxcTdqRQzmA/8LAskF1IsRgR6rvzC+yQ4Ghl3y1xENlhwxN0DLduzebAYA==}
     peerDependencies:
       zod: 4.1.11
+
+  '@xstate/store@3.14.1':
+    resolution: {integrity: sha512-LNl4XspU9Yp1bV9Igvbzz0pwDtm9ya9bSqbT9WB6nvLaP6Kie9d/FTlq3gLlKcbelaJDLTLBf5kKPfbiwkbAjA==}
+    peerDependencies:
+      react: ^18.2.0 || ^19.0.0
+      solid-js: ^1.7.6
+    peerDependenciesMeta:
+      react:
+        optional: true
+      solid-js:
+        optional: true
 
   '@xtuc/ieee754@1.2.0':
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
@@ -8400,6 +8417,10 @@ snapshots:
   '@workflow/world@4.0.1-beta.12(zod@4.1.11)':
     dependencies:
       zod: 4.1.11
+
+  '@xstate/store@3.14.1(react@19.2.3)':
+    optionalDependencies:
+      react: 19.2.3
 
   '@xtuc/ieee754@1.2.0': {}
 

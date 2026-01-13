@@ -7,7 +7,7 @@ import {
   type PlaywrightWorkerArgs,
 } from "@playwright/test";
 
-export type { Page } from "@playwright/test";
+export type { Page, Route } from "@playwright/test";
 export { expect, request } from "@playwright/test";
 
 export function getBaseURL(): string {

@@ -5,6 +5,7 @@ export {
   expect,
   getBaseURL,
   type Page,
+  type Route,
   request,
   type StorageStateConfig,
   test,

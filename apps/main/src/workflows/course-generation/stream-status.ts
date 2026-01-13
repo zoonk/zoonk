@@ -5,11 +5,15 @@ export async function streamStatus(params: {
   step: StepName;
   status: StepStatus;
 }) {
-  const writable = getWritable<StreamMessage>();
+  "use step";
+
+  const writable = getWritable<string>();
   const writer = writable.getWriter();
 
   try {
-    await writer.write(params);
+    // Write as SSE format for eventsource-parser consumption
+    const message: StreamMessage = params;
+    await writer.write(`data: ${JSON.stringify(message)}\n\n`);
   } finally {
     writer.releaseLock();
   }

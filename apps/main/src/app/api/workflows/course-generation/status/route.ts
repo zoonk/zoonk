@@ -10,11 +10,11 @@ export async function GET(request: Request) {
   }
 
   const run = getRun(runId);
-  const stream = run.getReadable({
+  const stream = run.getReadable<string>({
     startIndex: startIndex ? Number.parseInt(startIndex, 10) : undefined,
   });
 
   return new Response(stream, {
-    headers: { "Content-Type": "application/octet-stream" },
+    headers: { "Content-Type": "text/event-stream" },
   });
 }
