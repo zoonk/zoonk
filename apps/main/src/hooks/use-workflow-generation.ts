@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useReducer, useRef } from "react";
+import { useEffect, useEffectEvent, useReducer, useRef } from "react";
 import useSWR from "swr";
 
 type StepStatus = "started" | "completed" | "error";
@@ -21,63 +21,53 @@ type GenerationState<TStep extends string> = {
 type GenerationAction<TStep extends string> =
   | { type: "TRIGGER_START" }
   | { type: "TRIGGER_SUCCESS"; runId: string }
-  | { type: "TRIGGER_ERROR"; error: string }
   | { type: "STEP_STARTED"; step: TStep }
   | { type: "STEP_COMPLETED"; step: TStep }
-  | { type: "STEP_ERROR"; error: string }
+  | { type: "SET_ERROR"; error: string }
   | { type: "WORKFLOW_COMPLETED" }
-  | { type: "WORKFLOW_FAILED"; error: string }
   | { type: "RESET" };
 
-function createReducer<TStep extends string>() {
-  return function reducer(
-    state: GenerationState<TStep>,
-    action: GenerationAction<TStep>,
-  ): GenerationState<TStep> {
-    switch (action.type) {
-      case "TRIGGER_START":
-        return { ...state, error: null, status: "triggering" };
+function reducer<TStep extends string>(
+  state: GenerationState<TStep>,
+  action: GenerationAction<TStep>,
+): GenerationState<TStep> {
+  switch (action.type) {
+    case "TRIGGER_START":
+      return { ...state, error: null, status: "triggering" };
 
-      case "TRIGGER_SUCCESS":
-        return { ...state, runId: action.runId, status: "streaming" };
+    case "TRIGGER_SUCCESS":
+      return { ...state, runId: action.runId, status: "streaming" };
 
-      case "TRIGGER_ERROR":
-        return { ...state, error: action.error, status: "error" };
+    case "SET_ERROR":
+      return { ...state, error: action.error, status: "error" };
 
-      case "STEP_STARTED":
-        return { ...state, currentStep: action.step };
+    case "STEP_STARTED":
+      return { ...state, currentStep: action.step };
 
-      case "STEP_COMPLETED":
-        return {
-          ...state,
-          completedSteps: state.completedSteps.includes(action.step)
-            ? state.completedSteps
-            : [...state.completedSteps, action.step],
-          currentStep: null,
-        };
+    case "STEP_COMPLETED":
+      return {
+        ...state,
+        completedSteps: state.completedSteps.includes(action.step)
+          ? state.completedSteps
+          : [...state.completedSteps, action.step],
+        currentStep: null,
+      };
 
-      case "STEP_ERROR":
-        return { ...state, error: action.error, status: "error" };
+    case "WORKFLOW_COMPLETED":
+      return { ...state, status: "completed" };
 
-      case "WORKFLOW_COMPLETED":
-        return { ...state, status: "completed" };
+    case "RESET":
+      return {
+        completedSteps: [],
+        currentStep: null,
+        error: null,
+        runId: null,
+        status: "idle",
+      };
 
-      case "WORKFLOW_FAILED":
-        return { ...state, error: action.error, status: "error" };
-
-      case "RESET":
-        return {
-          completedSteps: [],
-          currentStep: null,
-          error: null,
-          runId: null,
-          status: "idle",
-        };
-
-      default:
-        return state;
-    }
-  };
+    default:
+      return state;
+  }
 }
 
 type WorkflowConfig = {
@@ -92,89 +82,80 @@ type WorkflowConfig = {
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
-function parseStreamMessage<TStep extends string>(
-  line: string,
-): StreamMessage<TStep> | null {
-  if (!line.trim()) {
-    return null;
-  }
-  try {
-    return JSON.parse(line) as StreamMessage<TStep>;
-  } catch {
-    return null;
-  }
-}
-
-function handleStreamMessage<TStep extends string>(
+function dispatchMessage<TStep extends string>(
   message: StreamMessage<TStep>,
   dispatch: React.Dispatch<GenerationAction<TStep>>,
 ) {
-  if (message.status === "started") {
-    dispatch({ step: message.step, type: "STEP_STARTED" });
-  } else if (message.status === "completed") {
-    dispatch({ step: message.step, type: "STEP_COMPLETED" });
-  } else if (message.status === "error") {
-    dispatch({ error: "Step failed", type: "STEP_ERROR" });
+  switch (message.status) {
+    case "started":
+      dispatch({ step: message.step, type: "STEP_STARTED" });
+      break;
+    case "completed":
+      dispatch({ step: message.step, type: "STEP_COMPLETED" });
+      break;
+    case "error":
+      dispatch({ error: "Step failed", type: "SET_ERROR" });
+      break;
   }
 }
 
-function processStreamChunk<TStep extends string>(
+function processLines<TStep extends string>(
   lines: string[],
   dispatch: React.Dispatch<GenerationAction<TStep>>,
-  indexRef: React.MutableRefObject<number>,
-) {
+): number {
+  let count = 0;
+
   for (const line of lines) {
-    const message = parseStreamMessage<TStep>(line);
-    if (message) {
-      indexRef.current += 1;
-      handleStreamMessage(message, dispatch);
+    if (!line.trim()) {
+      continue;
+    }
+
+    try {
+      const message = JSON.parse(line) as StreamMessage<TStep>;
+      count += 1;
+      dispatchMessage(message, dispatch);
+    } catch {
+      // Skip malformed lines
     }
   }
+
+  return count;
 }
 
-type StreamReaderContext<TStep extends string> = {
-  decoder: TextDecoder;
-  dispatch: React.Dispatch<GenerationAction<TStep>>;
-  indexRef: React.MutableRefObject<number>;
-  reader: ReadableStreamDefaultReader<Uint8Array>;
-};
+async function* streamChunks(
+  reader: ReadableStreamDefaultReader<Uint8Array>,
+): AsyncGenerator<Uint8Array> {
+  let result = await reader.read();
 
-async function readStreamChunk<TStep extends string>(
-  ctx: StreamReaderContext<TStep>,
-  buffer: string,
-): Promise<void> {
-  const result = await ctx.reader.read();
-
-  if (result.done) {
-    return;
+  while (!result.done) {
+    yield result.value;
+    // biome-ignore lint/performance/noAwaitInLoops: Sequential reads required for streaming
+    result = await reader.read();
   }
-
-  const newBuffer = buffer + ctx.decoder.decode(result.value, { stream: true });
-  const lines = newBuffer.split("\n");
-  const remaining = lines.pop() ?? "";
-
-  processStreamChunk<TStep>(lines, ctx.dispatch, ctx.indexRef);
-
-  return readStreamChunk(ctx, remaining);
 }
 
 async function readStream<TStep extends string>(
   response: Response,
   dispatch: React.Dispatch<GenerationAction<TStep>>,
-  indexRef: React.MutableRefObject<number>,
-) {
+  startIndex: number,
+): Promise<number> {
   if (!response.body) {
-    return;
+    return startIndex;
   }
 
-  const ctx: StreamReaderContext<TStep> = {
-    decoder: new TextDecoder(),
-    dispatch,
-    indexRef,
-    reader: response.body.getReader(),
-  };
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  let index = startIndex;
 
-  return readStreamChunk(ctx, "");
+  for await (const chunk of streamChunks(reader)) {
+    buffer += decoder.decode(chunk, { stream: true });
+    const lines = buffer.split("\n");
+    buffer = lines.pop() ?? "";
+    index += processLines<TStep>(lines, dispatch);
+  }
+
+  return index;
 }
 
 export function useWorkflowGeneration<TStep extends string = string>(
@@ -190,8 +171,7 @@ export function useWorkflowGeneration<TStep extends string = string>(
     triggerUrl,
   } = config;
 
-  const reducer = createReducer<TStep>();
-  const [state, dispatch] = useReducer(reducer, {
+  const [state, dispatch] = useReducer(reducer<TStep>, {
     completedSteps: [],
     currentStep: null,
     error: null,
@@ -203,7 +183,6 @@ export function useWorkflowGeneration<TStep extends string = string>(
   const hasTriggeredRef = useRef(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // Poll for workflow completion
   const { data: statusData } = useSWR<{ status: string }>(
     state.runId && state.status === "streaming"
       ? `/api/workflows/run-status?runId=${state.runId}`
@@ -212,8 +191,8 @@ export function useWorkflowGeneration<TStep extends string = string>(
     { refreshInterval: pollingInterval, revalidateOnFocus: false },
   );
 
-  // Trigger workflow
-  const trigger = useCallback(async () => {
+  // Event handler for triggering - not a dependency of effects
+  const trigger = useEffectEvent(async () => {
     dispatch({ type: "TRIGGER_START" });
 
     try {
@@ -232,57 +211,62 @@ export function useWorkflowGeneration<TStep extends string = string>(
     } catch (err) {
       dispatch({
         error: err instanceof Error ? err.message : "Failed to start",
-        type: "TRIGGER_ERROR",
+        type: "SET_ERROR",
       });
     }
-  }, [triggerBody, triggerUrl]);
+  });
 
-  // Reset and retry
-  const retry = useCallback(() => {
+  function retry() {
     abortControllerRef.current?.abort();
     streamIndexRef.current = 0;
     hasTriggeredRef.current = false;
     dispatch({ type: "RESET" });
-  }, []);
+  }
 
-  // Auto-trigger and streaming effect
+  // Auto-trigger on mount
   useEffect(() => {
-    // Auto-trigger on mount
     if (autoTrigger && state.status === "idle" && !hasTriggeredRef.current) {
       hasTriggeredRef.current = true;
       void trigger();
+    }
+  }, [autoTrigger, state.status]);
+
+  // Stream status updates when we have a runId
+  useEffect(() => {
+    if (state.status !== "streaming" || !state.runId) {
       return;
     }
 
-    // Stream status updates
-    if (state.status === "streaming" && state.runId) {
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
-      const startStream = async () => {
-        try {
-          const url = `${statusUrl}?runId=${state.runId}&startIndex=${streamIndexRef.current}`;
-          const response = await fetch(url, { signal: controller.signal });
-          await readStream<TStep>(response, dispatch, streamIndexRef);
-        } catch (err) {
-          if (err instanceof Error && err.name !== "AbortError") {
-            console.error("Stream error:", err);
-          }
+    const startStream = async () => {
+      try {
+        const url = `${statusUrl}?runId=${state.runId}&startIndex=${streamIndexRef.current}`;
+        const response = await fetch(url, { signal: controller.signal });
+        streamIndexRef.current = await readStream<TStep>(
+          response,
+          dispatch,
+          streamIndexRef.current,
+        );
+      } catch (err) {
+        if (err instanceof Error && err.name !== "AbortError") {
+          console.error("Stream error:", err);
         }
-      };
+      }
+    };
 
-      void startStream();
+    void startStream();
 
-      return () => controller.abort();
-    }
-  }, [autoTrigger, state.runId, state.status, statusUrl, trigger]);
+    return () => controller.abort();
+  }, [state.runId, state.status, statusUrl]);
 
-  // Handle workflow status from polling
+  // Handle workflow completion from polling
   useEffect(() => {
     if (statusData?.status === "completed") {
       dispatch({ type: "WORKFLOW_COMPLETED" });
     } else if (statusData?.status === "failed") {
-      dispatch({ error: "Workflow failed", type: "WORKFLOW_FAILED" });
+      dispatch({ error: "Workflow failed", type: "SET_ERROR" });
     }
   }, [statusData?.status]);
 
