@@ -2,7 +2,7 @@
 
 import { useExtracted, useLocale } from "next-intl";
 import { useState } from "react";
-import { useSlugCheck } from "@/hooks/use-slug-check";
+import { useSlugCheck } from "@/lib/use-slug-check";
 import { checkSlugExists } from "./actions";
 
 export type CourseFormData = {

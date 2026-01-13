@@ -14,7 +14,10 @@ import { cacheTag } from "next/cache";
 import { notFound } from "next/navigation";
 import { setRequestLocale } from "next-intl/server";
 import { LIST_COURSES_LIMIT, listCourses } from "@/data/courses/list-courses";
-import { getCategoryHeader, getCategoryMeta } from "@/lib/categories";
+import {
+  getCategoryHeader,
+  getCategoryMeta,
+} from "@/lib/categories/category-server";
 import { CourseListClient } from "../course-list-client";
 
 export async function generateStaticParams() {

@@ -1,47 +1,8 @@
 import type { CourseCategory } from "@zoonk/utils/categories";
-import type { LucideIcon } from "lucide-react";
-import {
-  Briefcase,
-  Calculator,
-  Clock,
-  Cpu,
-  FlaskConical,
-  Globe,
-  Heart,
-  Languages,
-  Map as MapIcon,
-  MessageCircle,
-  Palette,
-  Scale,
-  TrendingUp,
-  Users,
-  Wrench,
-} from "lucide-react";
 import { getExtracted } from "next-intl/server";
+import { CATEGORY_ICONS, type CategoryInfo } from "./category-icons";
 
-export type CategoryInfo = {
-  icon: LucideIcon;
-  key: CourseCategory;
-  label: string;
-};
-
-export const CATEGORY_ICONS: Record<CourseCategory, LucideIcon> = {
-  arts: Palette,
-  business: Briefcase,
-  communication: MessageCircle,
-  culture: Globe,
-  economics: TrendingUp,
-  engineering: Wrench,
-  geography: MapIcon,
-  health: Heart,
-  history: Clock,
-  languages: Languages,
-  law: Scale,
-  math: Calculator,
-  science: FlaskConical,
-  society: Users,
-  tech: Cpu,
-};
+export type { CategoryInfo } from "./category-icons";
 
 export async function getCategories(params?: {
   locale: string;

@@ -16,7 +16,7 @@ import { toast } from "@zoonk/ui/components/sonner";
 import { PlusIcon, TagsIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useMemo, useOptimistic, useState, useTransition } from "react";
-import { useCategoryLabels } from "@/hooks/use-category-labels";
+import { useCategoryLabels } from "@/lib/use-category-labels";
 
 export function CategoryEditorSkeleton() {
   return (

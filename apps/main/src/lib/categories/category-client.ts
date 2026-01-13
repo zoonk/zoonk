@@ -1,8 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import type { CategoryInfo } from "@/lib/categories";
-import { CATEGORY_ICONS } from "@/lib/categories";
+import { CATEGORY_ICONS, type CategoryInfo } from "./category-icons";
 
 export function useCategories(): CategoryInfo[] {
   const t = useExtracted();
