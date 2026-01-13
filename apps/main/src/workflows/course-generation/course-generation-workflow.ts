@@ -60,7 +60,6 @@ export async function courseGenerationWorkflow(
     addChaptersStep({
       chapters: generatedChapters,
       course,
-      generationRunId: workflowRunId,
     }),
   ]);
 

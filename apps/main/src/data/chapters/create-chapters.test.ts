@@ -9,7 +9,6 @@ import { createChapters } from "./create-chapters";
 describe("createChapters", () => {
   test("creates chapters with correct positions", async () => {
     const course = await courseFixture({ organizationId: AI_ORG_ID });
-    const runId = randomUUID();
 
     const chapters = [
       {
@@ -25,7 +24,6 @@ describe("createChapters", () => {
     const result = await createChapters({
       chapters,
       courseId: course.id,
-      generationRunId: runId,
       language: "en",
     });
 
@@ -40,9 +38,8 @@ describe("createChapters", () => {
     expect(result.data?.[1]?.title).toBe(chapters[1]?.title);
   });
 
-  test("returns chapters with database IDs and AI org", async () => {
+  test("creates chapters with pending status and no run ID", async () => {
     const course = await courseFixture({ organizationId: AI_ORG_ID });
-    const runId = randomUUID();
 
     const chapters = [
       {
@@ -54,7 +51,6 @@ describe("createChapters", () => {
     const result = await createChapters({
       chapters,
       courseId: course.id,
-      generationRunId: runId,
       language: "en",
     });
 
@@ -66,8 +62,8 @@ describe("createChapters", () => {
     });
 
     expect(dbChapter?.organizationId).toBe(AI_ORG_ID);
-    expect(dbChapter?.generationRunId).toBe(runId);
-    expect(dbChapter?.generationStatus).toBe("completed");
+    expect(dbChapter?.generationRunId).toBeNull();
+    expect(dbChapter?.generationStatus).toBe("pending");
     expect(dbChapter?.isPublished).toBe(true);
   });
 });

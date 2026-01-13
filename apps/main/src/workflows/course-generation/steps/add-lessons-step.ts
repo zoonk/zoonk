@@ -1,3 +1,4 @@
+import { updateChapterGenerationStatus } from "@/data/chapters/update-chapter-generation-status";
 import { createLessons } from "@/data/lessons/create-lessons";
 import { streamStatus } from "../stream-status";
 import type { CourseContext, CreatedChapter, GeneratedLesson } from "../types";
@@ -14,16 +15,28 @@ export async function addLessonsStep(input: AddInput): Promise<void> {
 
   await streamStatus({ status: "started", step: "addLessons" });
 
-  const { error } = await createLessons({
+  const { error: lessonsError } = await createLessons({
     chapterId: input.chapter.id,
     generationRunId: input.generationRunId,
     language: input.course.language,
     lessons: input.lessons,
   });
 
-  if (error) {
+  if (lessonsError) {
     await streamStatus({ status: "error", step: "addLessons" });
-    throw error;
+    throw lessonsError;
+  }
+
+  // Mark the chapter as completed now that lessons are generated
+  const { error: chapterError } = await updateChapterGenerationStatus({
+    chapterId: input.chapter.id,
+    generationRunId: input.generationRunId,
+    generationStatus: "completed",
+  });
+
+  if (chapterError) {
+    await streamStatus({ status: "error", step: "addLessons" });
+    throw chapterError;
   }
 
   await streamStatus({ status: "completed", step: "addLessons" });

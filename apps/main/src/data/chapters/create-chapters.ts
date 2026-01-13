@@ -14,7 +14,6 @@ type ChapterInput = {
 type CreateParams = {
   courseId: number;
   language: string;
-  generationRunId: string;
   chapters: ChapterInput[];
 };
 
@@ -29,8 +28,7 @@ export async function createChapters(
   const chaptersData = params.chapters.map((chapter, index) => ({
     courseId: params.courseId,
     description: chapter.description,
-    generationRunId: params.generationRunId,
-    generationStatus: "completed",
+    generationStatus: "pending",
     isPublished: true,
     language: params.language,
     normalizedTitle: normalizeString(chapter.title),
