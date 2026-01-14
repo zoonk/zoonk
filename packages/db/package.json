@@ -14,7 +14,6 @@
   },
   "exports": {
     ".": "./src/index.ts",
-    "./best-day": "./src/generated/prisma/sql/getBestDay.ts",
     "./continue-learning": "./src/generated/prisma/sql/getContinueLearning.ts",
     "./peak-time": "./src/generated/prisma/sql/getPeakTime.ts",
     "./utils": "./src/utils.ts"

@@ -32,10 +32,12 @@ describe("authenticated users", () => {
     ]);
     const headers = await signInAs(user.email, user.password);
 
+    const date = new Date();
     await prisma.dailyProgress.create({
       data: {
         correctAnswers: 0,
-        date: new Date(),
+        date,
+        dayOfWeek: date.getDay(),
         incorrectAnswers: 0,
         organizationId: org.id,
         userId: Number(user.id),
@@ -62,6 +64,8 @@ describe("authenticated users", () => {
           {
             correctAnswers: 8,
             date: today,
+            dayOfWeek: today.getDay(),
+
             incorrectAnswers: 2,
             organizationId: org.id,
             userId: Number(user.id),
@@ -69,6 +73,8 @@ describe("authenticated users", () => {
           {
             correctAnswers: 6,
             date: yesterday,
+            dayOfWeek: yesterday.getDay(),
+
             incorrectAnswers: 4,
             organizationId: org.id,
             userId: Number(user.id),
@@ -97,6 +103,7 @@ describe("authenticated users", () => {
         data: {
           correctAnswers: 17,
           date: today,
+          dayOfWeek: today.getDay(),
           incorrectAnswers: 3,
           organizationId: org.id,
           userId: Number(user.id),
@@ -125,6 +132,7 @@ describe("authenticated users", () => {
           {
             correctAnswers: 9,
             date: currentMonth,
+            dayOfWeek: currentMonth.getDay(),
             incorrectAnswers: 1,
             organizationId: org.id,
             userId: Number(user.id),
@@ -132,6 +140,7 @@ describe("authenticated users", () => {
           {
             correctAnswers: 7,
             date: lastMonth,
+            dayOfWeek: lastMonth.getDay(),
             incorrectAnswers: 3,
             organizationId: org.id,
             userId: Number(user.id),
@@ -161,6 +170,7 @@ describe("authenticated users", () => {
           {
             correctAnswers: 9,
             date: currentMonth,
+            dayOfWeek: currentMonth.getDay(),
             incorrectAnswers: 1,
             organizationId: org.id,
             userId: Number(user.id),
@@ -168,6 +178,7 @@ describe("authenticated users", () => {
           {
             correctAnswers: 6,
             date: lastMonth,
+            dayOfWeek: lastMonth.getDay(),
             incorrectAnswers: 4,
             organizationId: org.id,
             userId: Number(user.id),
@@ -204,6 +215,7 @@ describe("authenticated users", () => {
           {
             correctAnswers: 8,
             date: today,
+            dayOfWeek: today.getDay(),
             incorrectAnswers: 2,
             organizationId: org.id,
             userId: Number(user.id),
@@ -211,6 +223,7 @@ describe("authenticated users", () => {
           {
             correctAnswers: 7,
             date: oneWeekAgo,
+            dayOfWeek: oneWeekAgo.getDay(),
             incorrectAnswers: 3,
             organizationId: org.id,
             userId: Number(user.id),
@@ -241,6 +254,7 @@ describe("authenticated users", () => {
           {
             correctAnswers: 8,
             date: day1,
+            dayOfWeek: day1.getDay(),
             incorrectAnswers: 2,
             organizationId: org.id,
             userId: Number(user.id),
@@ -248,6 +262,7 @@ describe("authenticated users", () => {
           {
             correctAnswers: 6,
             date: day2,
+            dayOfWeek: day2.getDay(),
             incorrectAnswers: 4,
             organizationId: org.id,
             userId: Number(user.id),
@@ -279,6 +294,7 @@ describe("authenticated users", () => {
           {
             correctAnswers: 9,
             date: currentMonth,
+            dayOfWeek: currentMonth.getDay(),
             incorrectAnswers: 1,
             organizationId: org.id,
             userId: Number(user.id),
@@ -286,6 +302,7 @@ describe("authenticated users", () => {
           {
             correctAnswers: 8,
             date: lastMonth,
+            dayOfWeek: lastMonth.getDay(),
             incorrectAnswers: 2,
             organizationId: org.id,
             userId: Number(user.id),
@@ -316,6 +333,7 @@ describe("authenticated users", () => {
           {
             correctAnswers: 8,
             date: currentMonth,
+            dayOfWeek: currentMonth.getDay(),
             incorrectAnswers: 2,
             organizationId: org.id,
             userId: Number(user.id),
@@ -323,6 +341,7 @@ describe("authenticated users", () => {
           {
             correctAnswers: 6,
             date: twoMonthsAgo,
+            dayOfWeek: twoMonthsAgo.getDay(),
             incorrectAnswers: 4,
             organizationId: org.id,
             userId: Number(user.id),
@@ -347,6 +366,7 @@ describe("authenticated users", () => {
         data: {
           correctAnswers: 8,
           date: new Date(),
+          dayOfWeek: new Date().getDay(),
           incorrectAnswers: 2,
           organizationId: org.id,
           userId: Number(user.id),
@@ -372,6 +392,7 @@ describe("authenticated users", () => {
         data: {
           correctAnswers: 7,
           date: lastMonth,
+          dayOfWeek: lastMonth.getDay(),
           incorrectAnswers: 3,
           organizationId: org.id,
           userId: Number(user.id),
@@ -405,6 +426,7 @@ describe("authenticated users", () => {
           {
             correctAnswers: 10,
             date: today,
+            dayOfWeek: today.getDay(),
             incorrectAnswers: 0,
             organizationId: org.id,
             userId: Number(user.id),
@@ -412,6 +434,7 @@ describe("authenticated users", () => {
           {
             correctAnswers: 0,
             date: yesterday,
+            dayOfWeek: yesterday.getDay(),
             incorrectAnswers: 0,
             organizationId: org.id,
             userId: Number(user.id),

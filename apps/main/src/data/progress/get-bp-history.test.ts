@@ -41,12 +41,14 @@ describe("authenticated users", () => {
           {
             brainPowerEarned: 100,
             date: today,
+            dayOfWeek: today.getDay(),
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             brainPowerEarned: 50,
             date: yesterday,
+            dayOfWeek: yesterday.getDay(),
             organizationId: org.id,
             userId: Number(user.id),
           },
@@ -75,12 +77,14 @@ describe("authenticated users", () => {
           {
             brainPowerEarned: 200,
             date: today,
+            dayOfWeek: today.getDay(),
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             brainPowerEarned: 300,
             date: yesterday,
+            dayOfWeek: yesterday.getDay(),
             organizationId: org.id,
             userId: Number(user.id),
           },
@@ -111,10 +115,12 @@ describe("authenticated users", () => {
         where: { userId: Number(user.id) },
       });
 
+      const date = createSafeDate(0);
       await prisma.dailyProgress.create({
         data: {
           brainPowerEarned: 100,
-          date: createSafeDate(0),
+          date,
+          dayOfWeek: date.getDay(),
           organizationId: org.id,
           userId: Number(user.id),
         },
@@ -142,12 +148,14 @@ describe("authenticated users", () => {
           {
             brainPowerEarned: 200,
             date: currentMonth,
+            dayOfWeek: currentMonth.getDay(),
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             brainPowerEarned: 100,
             date: lastMonth,
+            dayOfWeek: lastMonth.getDay(),
             organizationId: org.id,
             userId: Number(user.id),
           },
@@ -176,12 +184,14 @@ describe("authenticated users", () => {
           {
             brainPowerEarned: 300,
             date: currentMonth,
+            dayOfWeek: currentMonth.getDay(),
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             brainPowerEarned: 150,
             date: lastMonth,
+            dayOfWeek: lastMonth.getDay(),
             organizationId: org.id,
             userId: Number(user.id),
           },
@@ -216,12 +226,14 @@ describe("authenticated users", () => {
           {
             brainPowerEarned: 100,
             date: today,
+            dayOfWeek: today.getDay(),
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             brainPowerEarned: 80,
             date: oneWeekAgo,
+            dayOfWeek: oneWeekAgo.getDay(),
             organizationId: org.id,
             userId: Number(user.id),
           },
@@ -252,12 +264,14 @@ describe("authenticated users", () => {
           {
             brainPowerEarned: 250,
             date: today,
+            dayOfWeek: today.getDay(),
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             brainPowerEarned: 150,
             date: yesterday,
+            dayOfWeek: yesterday.getDay(),
             organizationId: org.id,
             userId: Number(user.id),
           },
@@ -288,12 +302,14 @@ describe("authenticated users", () => {
           {
             brainPowerEarned: 100,
             date: currentMonth,
+            dayOfWeek: currentMonth.getDay(),
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             brainPowerEarned: 50,
             date: twoMonthsAgo,
+            dayOfWeek: twoMonthsAgo.getDay(),
             organizationId: org.id,
             userId: Number(user.id),
           },
@@ -313,10 +329,12 @@ describe("authenticated users", () => {
       ]);
       const headers = await signInAs(user.email, user.password);
 
+      const date = createSafeDate(0);
       await prisma.dailyProgress.create({
         data: {
           brainPowerEarned: 100,
-          date: createSafeDate(0),
+          date,
+          dayOfWeek: date.getDay(),
           organizationId: org.id,
           userId: Number(user.id),
         },
@@ -341,6 +359,7 @@ describe("authenticated users", () => {
         data: {
           brainPowerEarned: 75,
           date: lastMonth,
+          dayOfWeek: lastMonth.getDay(),
           organizationId: org.id,
           userId: Number(user.id),
         },

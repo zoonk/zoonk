@@ -41,12 +41,14 @@ describe("authenticated users", () => {
         data: [
           {
             date: today,
+            dayOfWeek: today.getDay(),
             energyAtEnd: 85.5,
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             date: yesterday,
+            dayOfWeek: yesterday.getDay(),
             energyAtEnd: 80.0,
             organizationId: org.id,
             userId: Number(user.id),
@@ -74,12 +76,14 @@ describe("authenticated users", () => {
         data: [
           {
             date: today,
+            dayOfWeek: today.getDay(),
             energyAtEnd: 100,
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             date: new Date(today.getTime() - 24 * 60 * 60 * 1000),
+            dayOfWeek: 0,
             energyAtEnd: 50,
             organizationId: org.id,
             userId: Number(user.id),
@@ -107,12 +111,14 @@ describe("authenticated users", () => {
         data: [
           {
             date: currentMonth,
+            dayOfWeek: currentMonth.getDay(),
             energyAtEnd: 80,
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             date: lastMonth,
+            dayOfWeek: lastMonth.getDay(),
             energyAtEnd: 60,
             organizationId: org.id,
             userId: Number(user.id),
@@ -141,12 +147,14 @@ describe("authenticated users", () => {
         data: [
           {
             date: currentMonth,
+            dayOfWeek: currentMonth.getDay(),
             energyAtEnd: 80,
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             date: lastMonth,
+            dayOfWeek: lastMonth.getDay(),
             energyAtEnd: 60,
             organizationId: org.id,
             userId: Number(user.id),
@@ -182,12 +190,14 @@ describe("authenticated users", () => {
         data: [
           {
             date: today,
+            dayOfWeek: today.getDay(),
             energyAtEnd: 80,
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             date: oneWeekAgo,
+            dayOfWeek: oneWeekAgo.getDay(),
             energyAtEnd: 70,
             organizationId: org.id,
             userId: Number(user.id),
@@ -217,12 +227,14 @@ describe("authenticated users", () => {
         data: [
           {
             date: currentMonth,
+            dayOfWeek: currentMonth.getDay(),
             energyAtEnd: 85,
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             date: lastMonth,
+            dayOfWeek: lastMonth.getDay(),
             energyAtEnd: 75,
             organizationId: org.id,
             userId: Number(user.id),
@@ -252,12 +264,14 @@ describe("authenticated users", () => {
         data: [
           {
             date: currentMonth,
+            dayOfWeek: currentMonth.getDay(),
             energyAtEnd: 80,
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             date: twoMonthsAgo,
+            dayOfWeek: twoMonthsAgo.getDay(),
             energyAtEnd: 60,
             organizationId: org.id,
             userId: Number(user.id),
@@ -281,6 +295,7 @@ describe("authenticated users", () => {
       await prisma.dailyProgress.create({
         data: {
           date: new Date(),
+          dayOfWeek: new Date().getDay(),
           energyAtEnd: 80,
           organizationId: org.id,
           userId: Number(user.id),
@@ -305,6 +320,7 @@ describe("authenticated users", () => {
       await prisma.dailyProgress.create({
         data: {
           date: lastMonth,
+          dayOfWeek: lastMonth.getDay(),
           energyAtEnd: 70,
           organizationId: org.id,
           userId: Number(user.id),
@@ -339,12 +355,15 @@ describe("authenticated users", () => {
         data: [
           {
             date: day1,
+            dayOfWeek: day1.getDay(),
+
             energyAtEnd: 75,
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             date: day5,
+            dayOfWeek: day5.getDay(),
             energyAtEnd: 76,
             organizationId: org.id,
             userId: Number(user.id),
@@ -388,12 +407,15 @@ describe("authenticated users", () => {
         data: [
           {
             date: day1,
+            dayOfWeek: day1.getDay(),
+
             energyAtEnd: 3,
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             date: day6,
+            dayOfWeek: day6.getDay(),
             energyAtEnd: 50,
             organizationId: org.id,
             userId: Number(user.id),
@@ -435,12 +457,15 @@ describe("authenticated users", () => {
         data: [
           {
             date: day1,
+            dayOfWeek: day1.getDay(),
+
             energyAtEnd: 90,
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             date: day3,
+            dayOfWeek: day3.getDay(),
             energyAtEnd: 95,
             organizationId: org.id,
             userId: Number(user.id),
@@ -482,12 +507,15 @@ describe("authenticated users", () => {
         data: [
           {
             date: day1,
+            dayOfWeek: day1.getDay(),
+
             energyAtEnd: 80,
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             date: day3,
+            dayOfWeek: day3.getDay(),
             energyAtEnd: 90,
             organizationId: org.id,
             userId: Number(user.id),
@@ -523,12 +551,15 @@ describe("authenticated users", () => {
         data: [
           {
             date: day1,
+            dayOfWeek: day1.getDay(),
+
             energyAtEnd: 100,
             organizationId: org.id,
             userId: Number(user.id),
           },
           {
             date: day4,
+            dayOfWeek: day4.getDay(),
             energyAtEnd: 100,
             organizationId: org.id,
             userId: Number(user.id),

@@ -22,6 +22,7 @@ type DailyProgressInput = {
   challengesCompleted: number;
   correctAnswers: number;
   date: Date;
+  dayOfWeek: number;
   energyAtEnd: number;
   incorrectAnswers: number;
   interactiveCompleted: number;
@@ -106,6 +107,7 @@ function buildOwnerDailyProgress(
       challengesCompleted: seededRandom(seed + 3) > 0.7 ? 1 : 0,
       correctAnswers: 12 + Math.floor(seededRandom(seed + 4) * 25),
       date,
+      dayOfWeek: date.getDay(),
       energyAtEnd: Math.max(20, Math.min(95, baseEnergy + energyVariation)),
       incorrectAnswers: 1 + Math.floor(seededRandom(seed + 5) * 6),
       interactiveCompleted: 6 + Math.floor(seededRandom(seed + 6) * 12),
@@ -139,6 +141,7 @@ function buildE2eDailyProgress(
       challengesCompleted: 0,
       correctAnswers,
       date,
+      dayOfWeek: date.getDay(),
       energyAtEnd: energy,
       incorrectAnswers,
       interactiveCompleted: 10,
