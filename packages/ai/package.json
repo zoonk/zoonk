@@ -19,6 +19,7 @@
     "./course-suggestions/generate": "./src/course-suggestions/generate-course-suggestions.ts",
     "./course-thumbnail/generate": "./src/course-thumbnail/generate-course-thumbnail.ts",
     "./gateway": "./src/gateway.ts",
+    "./lesson-activities/generate": "./src/lesson-activities/generate-lesson-activities.ts",
     "./lesson-kind/generate": "./src/lesson-kind/generate-lesson-kind.ts",
     "./types": "./src/types.ts"
   },
