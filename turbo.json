@@ -2,6 +2,7 @@
   "$schema": "./node_modules/turbo/schema.json",
   "globalEnv": [
     "AI_GATEWAY_API_KEY",
+    "AI_MODEL_ACTIVITY_BACKGROUND",
     "AI_MODEL_ALTERNATIVE_TITLES",
     "AI_MODEL_CHAPTER_LESSONS",
     "AI_MODEL_COURSE_CATEGORIES",

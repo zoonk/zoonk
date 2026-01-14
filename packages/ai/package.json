@@ -11,6 +11,7 @@
     "typescript": "^5"
   },
   "exports": {
+    "./activity-background/generate": "./src/activity-background/generate-activity-background.ts",
     "./alternative-titles/generate": "./src/alternative-titles/generate-alternative-titles.ts",
     "./chapter-lessons/generate": "./src/chapter-lessons/generate-chapter-lessons.ts",
     "./course-categories/generate": "./src/course-categories/generate-course-categories.ts",
