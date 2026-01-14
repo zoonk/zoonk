@@ -1,6 +1,6 @@
 model Step {
-  id            Int           @id @default(autoincrement())
-  activityId    Int           @map("activity_id")
+  id            BigInt        @id @default(autoincrement())
+  activityId    BigInt        @map("activity_id")
   activity      Activity      @relation(fields: [activityId], references: [id], onDelete: Cascade)
   kind          String        @db.VarChar(20)
   position      Int
