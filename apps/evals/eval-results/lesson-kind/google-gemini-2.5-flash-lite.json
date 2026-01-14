@@ -1,0 +1,312 @@
+{
+  "modelId": "google/gemini-2.5-flash-lite",
+  "results": [
+    {
+      "duration": 739.7570000000123,
+      "inputTokens": 523,
+      "output": "{\n  \"kind\": \"core\"\n}",
+      "outputTokens": 11,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST return 'core' (conceptual programming topic)\n\n      \n  - Choose from the fixed set only: core, language, custom\n  - Language is strict: ONLY for actual language learning (vocabulary, grammar, etc.)\n  - Custom is for tutorials/how-to/step-by-step guides\n  - Core is the default for conceptual/theoretical content\n\n    ",
+        "id": "en-core-variables-1",
+        "userInput": {
+          "chapterTitle": "Programming Basics",
+          "courseTitle": "Learn Python",
+          "language": "en",
+          "lessonDescription": "Learn what variables are, why they exist, and how they store data in programming",
+          "lessonTitle": "Introduction to Variables"
+        }
+      }
+    },
+    {
+      "duration": 786.7472500000149,
+      "inputTokens": 522,
+      "output": "{\n  \"kind\": \"core\"\n}",
+      "outputTokens": 11,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST return 'core' (science concept requiring explanation)\n\n      \n  - Choose from the fixed set only: core, language, custom\n  - Language is strict: ONLY for actual language learning (vocabulary, grammar, etc.)\n  - Custom is for tutorials/how-to/step-by-step guides\n  - Core is the default for conceptual/theoretical content\n\n    ",
+        "id": "en-core-photosynthesis-1",
+        "userInput": {
+          "chapterTitle": "Plant Biology",
+          "courseTitle": "Biology 101",
+          "language": "en",
+          "lessonDescription": "Explore how plants convert sunlight into energy through the process of photosynthesis",
+          "lessonTitle": "Understanding Photosynthesis"
+        }
+      }
+    },
+    {
+      "duration": 742.5200410000107,
+      "inputTokens": 522,
+      "output": "{\n  \"kind\": \"language\"\n}",
+      "outputTokens": 11,
+      "steps": [
+        {
+          "conclusion": "None. The model correctly identified the lesson as a 'language' lesson based on the title 'Basic Greetings in Spanish' and the course 'Spanish for Beginners', which aligns perfectly with the definition for the 'language' category (learning a new language, vocabulary, etc.).",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The output format is correct and uses the allowed set of values.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The classification is accurate and follows all decision rules.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST return 'language' (teaching Spanish vocabulary)\n\n      \n  - Choose from the fixed set only: core, language, custom\n  - Language is strict: ONLY for actual language learning (vocabulary, grammar, etc.)\n  - Custom is for tutorials/how-to/step-by-step guides\n  - Core is the default for conceptual/theoretical content\n\n    ",
+        "id": "en-language-spanish-greetings-1",
+        "userInput": {
+          "chapterTitle": "Getting Started",
+          "courseTitle": "Spanish for Beginners",
+          "language": "en",
+          "lessonDescription": "Learn how to say hello, goodbye, and common greetings in Spanish",
+          "lessonTitle": "Basic Greetings in Spanish"
+        }
+      }
+    },
+    {
+      "duration": 760.6645830000052,
+      "inputTokens": 523,
+      "output": "{\n  \"kind\": \"language\"\n}",
+      "outputTokens": 11,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST return 'language' (teaching English grammar to Portuguese speakers)\n\n      \n  - Choose from the fixed set only: core, language, custom\n  - Language is strict: ONLY for actual language learning (vocabulary, grammar, etc.)\n  - Custom is for tutorials/how-to/step-by-step guides\n  - Core is the default for conceptual/theoretical content\n\n    ",
+        "id": "pt-language-english-past-tense-1",
+        "userInput": {
+          "chapterTitle": "Tempos Verbais",
+          "courseTitle": "Inglês Intermediário",
+          "language": "pt",
+          "lessonDescription": "Aprenda a usar o passado simples em inglês",
+          "lessonTitle": "Past Tense in English"
+        }
+      }
+    },
+    {
+      "duration": 771.0330839999951,
+      "inputTokens": 524,
+      "output": "{\n  \"kind\": \"custom\"\n}",
+      "outputTokens": 11,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST return 'custom' (step-by-step tutorial/how-to)\n\n      \n  - Choose from the fixed set only: core, language, custom\n  - Language is strict: ONLY for actual language learning (vocabulary, grammar, etc.)\n  - Custom is for tutorials/how-to/step-by-step guides\n  - Core is the default for conceptual/theoretical content\n\n    ",
+        "id": "en-custom-git-setup-1",
+        "userInput": {
+          "chapterTitle": "Getting Started",
+          "courseTitle": "Git and GitHub",
+          "language": "en",
+          "lessonDescription": "Step-by-step guide to installing and configuring Git on your computer",
+          "lessonTitle": "How to Set Up Git"
+        }
+      }
+    },
+    {
+      "duration": 961.4983329999959,
+      "inputTokens": 519,
+      "output": "{\n  \"kind\": \"custom\"\n}",
+      "outputTokens": 11,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST return 'custom' (hands-on tutorial)\n\n      \n  - Choose from the fixed set only: core, language, custom\n  - Language is strict: ONLY for actual language learning (vocabulary, grammar, etc.)\n  - Custom is for tutorials/how-to/step-by-step guides\n  - Core is the default for conceptual/theoretical content\n\n    ",
+        "id": "en-custom-react-app-1",
+        "userInput": {
+          "chapterTitle": "Project Setup",
+          "courseTitle": "React Development",
+          "language": "en",
+          "lessonDescription": "Follow along to create a new React application from scratch",
+          "lessonTitle": "Creating Your First React App"
+        }
+      }
+    },
+    {
+      "duration": 876.1202919999778,
+      "inputTokens": 518,
+      "output": "{\n  \"kind\": \"core\"\n}",
+      "outputTokens": 11,
+      "steps": [
+        {
+          "conclusion": "None. The model correctly identified that 'Introduction to Linguistics' is a conceptual subject about language structure, rather than a lesson on learning to speak a specific language. It correctly applied Decision Rule #1: 'Content ABOUT languages (linguistics, etymology) should be core'.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The model followed the decision rules perfectly and avoided the trap of classifying a linguistics course as 'language'.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The response provides the correct classification in a valid JSON format.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST return 'core' (studying ABOUT languages, not learning a language)\n      - MUST NOT return 'language'\n\n      \n  - Choose from the fixed set only: core, language, custom\n  - Language is strict: ONLY for actual language learning (vocabulary, grammar, etc.)\n  - Custom is for tutorials/how-to/step-by-step guides\n  - Core is the default for conceptual/theoretical content\n\n    ",
+        "id": "en-edge-linguistics-not-language-1",
+        "userInput": {
+          "chapterTitle": "Foundations",
+          "courseTitle": "Linguistics 101",
+          "language": "en",
+          "lessonDescription": "Explore the scientific study of language structure and meaning",
+          "lessonTitle": "Introduction to Linguistics"
+        }
+      }
+    },
+    {
+      "duration": 877.8532499999856,
+      "inputTokens": 524,
+      "output": "{\n  \"kind\": \"core\"\n}",
+      "outputTokens": 11,
+      "steps": [
+        {
+          "conclusion": "The model correctly identified the lesson as 'core'. The lesson content concerns etymology and the history of the English language (linguistics), rather than language acquisition (learning to speak/read English). The instructions specifically state: 'Content ABOUT languages (linguistics, etymology) should be core.' The model followed this rule perfectly.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No minor errors found. The output is formatted as a valid JSON object as implied by the context of the result.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No improvements needed. The classification is accurate and follows the specific negative constraint regarding 'language' vs 'core' for linguistic topics.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST return 'core' (academic study of language history, not language learning)\n      - MUST NOT return 'language'\n\n      \n  - Choose from the fixed set only: core, language, custom\n  - Language is strict: ONLY for actual language learning (vocabulary, grammar, etc.)\n  - Custom is for tutorials/how-to/step-by-step guides\n  - Core is the default for conceptual/theoretical content\n\n    ",
+        "id": "en-edge-etymology-1",
+        "userInput": {
+          "chapterTitle": "History of English",
+          "courseTitle": "English Language History",
+          "language": "en",
+          "lessonDescription": "Discover how English words evolved from Latin, Greek, and Germanic roots",
+          "lessonTitle": "Word Origins and Etymology"
+        }
+      }
+    },
+    {
+      "duration": 756.1814169999852,
+      "inputTokens": 522,
+      "output": "{\n  \"kind\": \"custom\"\n}",
+      "outputTokens": 11,
+      "steps": [
+        {
+          "conclusion": "The model correctly identified the lesson as a step-by-step installation guide. According to the 'Kind Definitions', lessons that are tutorials or how-to guides (specifically mentioning 'Installing Python' as an example analogous to 'Instalando Node.js') should be classified as 'custom'.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The model correctly avoided the 'language' classification, recognizing that while the instruction language is Spanish, the subject matter is Web Development, not language learning.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The output follows the required format and provides the correct classification.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST return 'custom' (step-by-step installation guide)\n      - MUST NOT return 'language' (Spanish is the course language, not the subject)\n\n      \n  - Choose from the fixed set only: core, language, custom\n  - Language is strict: ONLY for actual language learning (vocabulary, grammar, etc.)\n  - Custom is for tutorials/how-to/step-by-step guides\n  - Core is the default for conceptual/theoretical content\n\n    ",
+        "id": "es-edge-programming-tutorial-spanish-1",
+        "userInput": {
+          "chapterTitle": "Configuración",
+          "courseTitle": "Desarrollo Web",
+          "language": "es",
+          "lessonDescription": "Guía paso a paso para instalar Node.js en tu computadora",
+          "lessonTitle": "Instalando Node.js"
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-kind"
+}
