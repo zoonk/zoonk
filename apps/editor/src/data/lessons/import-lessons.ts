@@ -136,16 +136,15 @@ export async function importLessons(params: {
 
       const allSlugs = lessonsToImport.map((l) => l.slug);
 
-      const existingLessonsInOrg = await tx.lesson.findMany({
+      const existingLessonsInChapter = await tx.lesson.findMany({
         where: {
-          language: chapter.language,
-          organizationId: chapter.organizationId,
+          chapterId: params.chapterId,
           slug: { in: allSlugs },
         },
       });
 
       const existingLessonMap = new Map(
-        existingLessonsInOrg.map((l) => [l.slug, l]),
+        existingLessonsInChapter.map((l) => [l.slug, l]),
       );
 
       // Deduplicate slugs within the batch to prevent unique constraint violations

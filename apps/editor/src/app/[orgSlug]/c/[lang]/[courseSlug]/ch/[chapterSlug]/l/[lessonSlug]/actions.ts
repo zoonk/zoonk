@@ -13,11 +13,14 @@ import { updateLesson } from "@/data/lessons/update-lesson";
 import { getErrorMessage } from "@/lib/error-messages";
 
 export async function checkLessonSlugExists(params: {
-  language: string;
-  orgSlug: string;
+  chapterId?: number;
   slug: string;
 }): Promise<boolean> {
-  return lessonSlugExists(params);
+  if (!params.chapterId) {
+    return false;
+  }
+
+  return lessonSlugExists({ chapterId: params.chapterId, slug: params.slug });
 }
 
 export async function updateLessonTitleAction(

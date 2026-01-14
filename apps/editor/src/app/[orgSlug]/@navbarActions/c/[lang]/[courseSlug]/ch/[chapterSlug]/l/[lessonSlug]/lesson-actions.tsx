@@ -21,6 +21,8 @@ export async function LessonActions({
   const t = await getExtracted();
 
   const { data: lesson } = await getLesson({
+    chapterSlug,
+    courseSlug,
     language: lang,
     lessonSlug,
     orgSlug,
