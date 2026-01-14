@@ -1,0 +1,29 @@
+{
+  "dependencies": {
+    "@zoonk/mailer": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@zoonk/tsconfig": "workspace:*",
+    "typescript": "^5"
+  },
+  "exports": {
+    "./client": "./src/client.ts",
+    "./next": "./src/next.ts",
+    "./server": "./src/server.ts"
+  },
+  "name": "@zoonk/error-reporter",
+  "peerDependencies": {
+    "next": ">=16"
+  },
+  "peerDependenciesMeta": {
+    "next": {
+      "optional": true
+    }
+  },
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "type": "module"
+}

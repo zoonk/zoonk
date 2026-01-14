@@ -163,7 +163,7 @@
           "options": {
             "conventions": [
               {
-                "match": "output_format|Connection|DATABASE_URL|DATABASE_URL_UNPOOLED|E2E_TESTING|OR|_count|_sum|(.*)",
+                "match": "output_format|Connection|DATABASE_URL|DATABASE_URL_UNPOOLED|E2E_TESTING|OR|GET|POST|PATCH|DELETE|_count|_sum|(.*)",
                 "selector": { "kind": "objectLiteralProperty" }
               },
               {

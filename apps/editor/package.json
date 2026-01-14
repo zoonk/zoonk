@@ -6,6 +6,7 @@
     "@formatjs/intl-localematcher": "0.7.3",
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",
+    "@zoonk/error-reporter": "workspace:*",
     "@zoonk/next": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",

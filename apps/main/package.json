@@ -6,6 +6,7 @@
     "@zoonk/ai": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",
+    "@zoonk/error-reporter": "workspace:*",
     "@zoonk/next": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",

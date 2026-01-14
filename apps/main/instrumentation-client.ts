@@ -1,4 +1,13 @@
+import { reportError } from "@zoonk/error-reporter/client";
 import { initBotId } from "botid/client/core";
+
+window.addEventListener("error", (event) => {
+  reportError(event.error);
+});
+
+window.addEventListener("unhandledrejection", (event) => {
+  reportError(event.reason);
+});
 
 initBotId({
   protect: [
