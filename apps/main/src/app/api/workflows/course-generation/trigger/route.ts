@@ -1,11 +1,14 @@
+import { parseNumericId } from "@zoonk/utils/string";
 import { start } from "workflow/api";
 import { courseGenerationWorkflow } from "@/workflows/course-generation/course-generation-workflow";
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const courseSuggestionId = Number(body.courseSuggestionId);
+  const courseSuggestionId = parseNumericId(
+    String(body.courseSuggestionId ?? ""),
+  );
 
-  if (!courseSuggestionId || Number.isNaN(courseSuggestionId)) {
+  if (!courseSuggestionId) {
     return Response.json(
       { error: "Missing or invalid courseSuggestionId" },
       { status: 400 },

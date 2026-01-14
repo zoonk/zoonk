@@ -17,13 +17,6 @@ export type StepName =
   | "generateLessons"
   | "addLessons";
 
-export type StepStatus = "started" | "completed" | "error";
-
-export type StreamMessage = {
-  step: StepName;
-  status: StepStatus;
-};
-
 export type CourseSuggestionData = {
   id: number;
   language: string;
