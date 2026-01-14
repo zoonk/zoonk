@@ -1,14 +1,14 @@
 model Step {
-  id            BigInt        @id @default(autoincrement())
-  activityId    BigInt        @map("activity_id")
-  activity      Activity      @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  kind          String        @db.VarChar(20)
+  id            BigInt          @id @default(autoincrement())
+  activityId    BigInt          @map("activity_id")
+  activity      Activity        @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  kind          String          @db.VarChar(20)
   position      Int
   content       Json
-  visualKind    String?       @map("visual_kind") @db.VarChar(20)
-  visualContent Json?         @map("visual_content")
-  createdAt     DateTime      @default(now()) @map("created_at")
-  updatedAt     DateTime      @default(now()) @updatedAt @map("updated_at")
+  visualKind    StepVisualKind? @map("visual_kind")
+  visualContent Json?           @map("visual_content")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @default(now()) @updatedAt @map("updated_at")
   attempts      StepAttempt[]
 
   @@index([activityId, position])

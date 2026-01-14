@@ -2,12 +2,13 @@ import type {
   Organization,
   Prisma,
   PrismaClient,
+  StepVisualKind,
 } from "../../generated/prisma/client";
 
 type StepSeedData = {
   kind: string;
   content: Prisma.InputJsonValue;
-  visualKind?: string;
+  visualKind?: StepVisualKind;
   visualContent?: Prisma.InputJsonValue;
 };
 
