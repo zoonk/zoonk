@@ -1,4 +1,5 @@
 import path from "node:path";
+import { createSecurityHeaders } from "@zoonk/next/security-headers";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
@@ -19,6 +20,7 @@ const nextConfig: NextConfig = {
     turbopackFileSystemCacheForBuild: true,
     typedEnv: true,
   },
+  headers: async () => createSecurityHeaders(),
   reactCompiler: true,
   turbopack: {
     resolveAlias: {

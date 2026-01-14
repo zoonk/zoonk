@@ -1,4 +1,5 @@
 import path from "node:path";
+import { createSecurityHeaders } from "@zoonk/next/security-headers";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
@@ -29,6 +30,14 @@ const nextConfig: NextConfig = {
     turbopackFileSystemCacheForBuild: true,
     typedEnv: true,
   },
+  headers: async () =>
+    createSecurityHeaders({
+      imgSrc: [
+        "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com",
+        "https://*.googleusercontent.com",
+        "https://*.githubusercontent.com",
+      ],
+    }),
   images: {
     minimumCacheTTL: 60 * 60 * 24 * CACHE_IMAGE_DAYS,
     remotePatterns: [

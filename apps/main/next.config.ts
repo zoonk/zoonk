@@ -1,5 +1,6 @@
 import path from "node:path";
 import createMDX from "@next/mdx";
+import { createSecurityHeaders } from "@zoonk/next/security-headers";
 import { withBotId } from "botid/next/config";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
@@ -37,6 +38,16 @@ const nextConfig: NextConfig = {
     turbopackFileSystemCacheForBuild: true,
     typedEnv: true,
   },
+  headers: async () =>
+    createSecurityHeaders({
+      connectSrc: ["https://vitals.vercel-analytics.com"],
+      imgSrc: [
+        "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com",
+        "https://*.googleusercontent.com",
+        "https://*.githubusercontent.com",
+      ],
+      scriptSrc: ["https://va.vercel-scripts.com"],
+    }),
   images: {
     minimumCacheTTL: 60 * 60 * 24 * CACHE_IMAGE_DAYS,
     remotePatterns: [

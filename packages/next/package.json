@@ -10,7 +10,8 @@
     "typescript": "^5"
   },
   "exports": {
-    "./i18n/codec": "./src/i18n/next-intl-codec.ts"
+    "./i18n/codec": "./src/i18n/next-intl-codec.ts",
+    "./security-headers": "./src/security-headers.ts"
   },
   "name": "@zoonk/next",
   "peerDependencies": {
