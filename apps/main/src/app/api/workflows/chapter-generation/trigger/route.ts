@@ -1,4 +1,5 @@
 import { auth } from "@zoonk/core/auth";
+import { findActiveSubscription } from "@zoonk/core/auth/subscription";
 import { parseNumericId } from "@zoonk/utils/string";
 import { headers } from "next/headers";
 import { start } from "workflow/api";
@@ -19,11 +20,7 @@ export async function POST(request: Request) {
     headers: await headers(),
   });
 
-  const activeSubscription = subscriptions.find(
-    (sub) => sub.status === "active" || sub.status === "trialing",
-  );
-
-  if (!activeSubscription) {
+  if (!findActiveSubscription(subscriptions)) {
     return Response.json(
       { error: "Active subscription required" },
       { status: 402 },

@@ -23,6 +23,7 @@
     "./auth/hooks/auth-state": "./src/auth/hooks/auth-state.ts",
     "./auth/hooks/subscription": "./src/auth/hooks/subscription.ts",
     "./auth/next": "./src/auth/next.ts",
+    "./auth/subscription": "./src/auth/subscription.ts",
     "./cache/revalidate": "./src/cache/revalidate-main-app.ts",
     "./courses/image": "./src/courses/course-image.ts",
     "./images/optimize": "./src/images/optimize-image.ts",
