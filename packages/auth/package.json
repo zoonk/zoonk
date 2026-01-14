@@ -22,6 +22,7 @@
     "./hooks/auth-state": "./src/hooks/use-auth-state.ts",
     "./hooks/subscription": "./src/hooks/use-subscription.ts",
     "./next": "./src/next.ts",
+    "./subscription": "./src/subscription.ts",
     "./testing": "./src/testing.ts",
     "./types": "./src/types.ts"
   },
