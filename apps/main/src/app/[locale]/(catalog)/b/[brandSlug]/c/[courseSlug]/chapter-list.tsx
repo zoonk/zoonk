@@ -51,7 +51,7 @@ export function ChapterList({
         {chapters.map((chapter, index) => (
           <AccordionItem key={chapter.id} value={chapter.slug} variant="ghost">
             <AccordionTrigger className="px-0 py-3 hover:no-underline">
-              <div className="flex items-start gap-3 sm:gap-4">
+              <div className="flex items-baseline gap-1">
                 <span className="w-5 shrink-0 font-mono text-muted-foreground/40 tabular-nums leading-snug sm:w-6">
                   {String(index + 1).padStart(2, "0")}
                 </span>
