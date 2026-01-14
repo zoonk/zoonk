@@ -1,0 +1,30 @@
+import { randomUUID } from "node:crypto";
+import { type CourseSuggestion, prisma } from "@zoonk/db";
+
+type CourseSuggestionAttrs = Omit<
+  CourseSuggestion,
+  "id" | "createdAt" | "updatedAt"
+>;
+
+export function courseSuggestionAttrs(
+  attrs?: Partial<CourseSuggestion>,
+): CourseSuggestionAttrs {
+  return {
+    description: "Test course suggestion description",
+    generationRunId: null,
+    generationStatus: "pending",
+    language: "en",
+    slug: `test-suggestion-${randomUUID()}`,
+    title: "Test Course Suggestion",
+    ...attrs,
+  };
+}
+
+export async function courseSuggestionFixture(
+  attrs?: Partial<CourseSuggestion>,
+) {
+  const suggestion = await prisma.courseSuggestion.create({
+    data: courseSuggestionAttrs(attrs),
+  });
+  return suggestion;
+}
