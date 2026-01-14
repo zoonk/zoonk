@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { getExtracted, setRequestLocale } from "next-intl/server";
 import { Suspense } from "react";
 import { getContinueLearning } from "@/data/courses/get-continue-learning";
+import { getBeltLevel } from "@/data/progress/get-belt-level";
+import { getBestDay } from "@/data/progress/get-best-day";
+import { getBestTime } from "@/data/progress/get-best-time";
 import { getEnergyLevel } from "@/data/progress/get-energy-level";
+import { getScore } from "@/data/progress/get-score";
 import { HomeContent, HomeContentSkeleton } from "./home-content";
 
 export async function generateMetadata({
@@ -23,8 +27,15 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   const { locale } = await params;
   setRequestLocale(locale);
 
-  // preload data
-  void Promise.all([getContinueLearning(), getEnergyLevel()]);
+  // preload data for Suspense boundaries
+  void Promise.all([
+    getContinueLearning(),
+    getEnergyLevel(),
+    getBeltLevel(),
+    getScore(),
+    getBestDay(),
+    getBestTime(),
+  ]);
 
   return (
     <Suspense fallback={<HomeContentSkeleton />}>
