@@ -30,7 +30,7 @@ const activitiesData: LessonActivities[] = [
         kind: "background",
       },
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "explanation",
       },
@@ -40,17 +40,17 @@ const activitiesData: LessonActivities[] = [
         kind: "quiz",
       },
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "examples",
       },
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "story",
       },
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "quiz",
       },
@@ -72,7 +72,7 @@ const activitiesData: LessonActivities[] = [
         },
       },
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "quiz",
       },
@@ -83,17 +83,17 @@ const activitiesData: LessonActivities[] = [
   {
     activities: [
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "background",
       },
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "explanation",
       },
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: false,
         kind: "mechanics",
       },
@@ -106,7 +106,7 @@ const activitiesData: LessonActivities[] = [
       {
         description:
           "A custom activity exploring the differences between supervised and unsupervised learning approaches.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: false,
         kind: "custom",
         title: "Supervised vs Unsupervised Learning",
@@ -118,12 +118,12 @@ const activitiesData: LessonActivities[] = [
   {
     activities: [
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "background",
       },
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "explanation",
       },
@@ -134,12 +134,12 @@ const activitiesData: LessonActivities[] = [
   {
     activities: [
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "background",
       },
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "explanation",
       },
@@ -150,12 +150,12 @@ const activitiesData: LessonActivities[] = [
   {
     activities: [
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "background",
       },
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "explanation",
       },
@@ -166,12 +166,12 @@ const activitiesData: LessonActivities[] = [
   {
     activities: [
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "background",
       },
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "explanation",
       },
@@ -182,12 +182,12 @@ const activitiesData: LessonActivities[] = [
   {
     activities: [
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "background",
       },
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "explanation",
       },

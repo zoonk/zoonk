@@ -141,6 +141,7 @@ For detailed testing patterns, fixtures, and best practices, see `.claude/skills
 - Use `getExtracted` (server) or `useExtracted` (client) for translations
 - **IMPORTANT**: The `t` function does NOT support dynamic keys. Use string literals: `t("Arts courses")`, not `t(someVariable)`
 - **CRITICAL: NEVER pass `t` as a function argument**. This is a common mistake that breaks i18n extraction. Instead of passing `t` to a function, create an async function that calls `getExtracted()` internally (see `@apps/main/src/lib/categories.ts` and `@apps/main/src/lib/belt-colors.ts` for examples)
+- **CRITICAL: NEVER call `getExtracted()` inside `Promise.all()`**
 - Always read the [translations skill](.claude/skills/translations/SKILL.md) when using `next-intl`.
 
 ## CSS

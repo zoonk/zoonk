@@ -60,7 +60,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Learn about different types of datasets and where to find quality data for your projects.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         slug: "understanding-datasets",
         title: "Understanding Datasets",
@@ -68,7 +68,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Master techniques for cleaning and preprocessing raw data before training.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         slug: "data-cleaning",
         title: "Data Cleaning",
@@ -90,7 +90,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Master common greetings and introductions for everyday conversations.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         slug: "greetings-introductions",
         title: "Greetings and Introductions",
@@ -112,7 +112,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Explore the inner planets: Mercury, Venus, Earth, and Mars.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         slug: "inner-planets",
         title: "The Inner Planets",
@@ -134,7 +134,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Understand variables, data types, and basic operations in Python.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         slug: "variables-data-types",
         title: "Variables and Data Types",
@@ -156,7 +156,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Learn about semantic HTML elements and how to structure content meaningfully.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         slug: "semantic-html",
         title: "Semantic HTML",
@@ -178,7 +178,7 @@ const lessonsData: ChapterLessons[] = [
       {
         description:
           "Learn about different types of data, data sources, and how to collect data for analysis.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         slug: "types-of-data",
         title: "Types of Data",

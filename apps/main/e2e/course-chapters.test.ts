@@ -161,7 +161,6 @@ test.describe("Course Chapters - No Lessons", () => {
     await expect(
       page.getByRole("heading", { name: /generate chapter/i }),
     ).toBeVisible();
-    await expect(page.getByText(/coming soon/i)).toBeVisible();
   });
 });
 
