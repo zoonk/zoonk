@@ -1,6 +1,8 @@
-import type { Header } from "next/dist/lib/load-custom-routes";
+import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development";
+
+type Header = Awaited<ReturnType<NonNullable<NextConfig["headers"]>>>[number];
 
 type CSPOptions = {
   imgSrc?: string[];
