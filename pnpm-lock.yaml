@@ -160,6 +160,9 @@ importers:
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@zoonk/error-reporter':
+        specifier: workspace:*
+        version: link:../../packages/error-reporter
       '@zoonk/next':
         specifier: workspace:*
         version: link:../../packages/next
@@ -312,6 +315,9 @@ importers:
       '@zoonk/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@zoonk/error-reporter':
+        specifier: workspace:*
+        version: link:../../packages/error-reporter
       '@zoonk/next':
         specifier: workspace:*
         version: link:../../packages/next
@@ -584,6 +590,25 @@ importers:
       '@playwright/test':
         specifier: 1.57.0
         version: 1.57.0
+    devDependencies:
+      '@types/node':
+        specifier: ^24
+        version: 24.10.4
+      '@zoonk/tsconfig':
+        specifier: workspace:*
+        version: link:../tsconfig
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  packages/error-reporter:
+    dependencies:
+      '@zoonk/mailer':
+        specifier: workspace:*
+        version: link:../mailer
+      next:
+        specifier: '>=16'
+        version: 16.1.0(@opentelemetry/api@1.9.0)(@playwright/test@1.57.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
     devDependencies:
       '@types/node':
         specifier: ^24
