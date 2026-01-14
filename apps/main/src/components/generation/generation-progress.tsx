@@ -91,7 +91,7 @@ function GenerationTimelineStepIndicator({
   if (status === "active") {
     return (
       <div className="relative flex size-6 shrink-0 items-center justify-center">
-        <div className="absolute inset-0 animate-pulse rounded-full border-2 border-foreground/30" />
+        <div className="absolute inset-0 animate-breathe rounded-full border-2 border-foreground/30 motion-reduce:animate-none motion-reduce:opacity-50" />
         <div className="flex size-6 items-center justify-center rounded-full border-2 border-foreground">
           <Icon aria-hidden="true" className="size-3 text-foreground" />
         </div>
@@ -140,7 +140,8 @@ function GenerationTimelineStep({
         className={cn(
           "pt-0.5 text-sm",
           status === "completed" && "text-muted-foreground",
-          status === "active" && "font-medium text-foreground",
+          status === "active" &&
+            "animate-shimmer-text bg-[linear-gradient(90deg,var(--foreground)_0%,var(--foreground)_40%,var(--muted-foreground)_50%,var(--foreground)_60%,var(--foreground)_100%)] bg-size-[200%_100%] bg-clip-text font-medium text-transparent motion-reduce:animate-none motion-reduce:bg-none motion-reduce:text-foreground",
           status === "pending" && "text-muted-foreground/60",
         )}
       >
