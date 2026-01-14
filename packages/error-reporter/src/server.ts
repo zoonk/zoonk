@@ -48,7 +48,10 @@ function formatErrorHtml(error: ErrorPayload): string {
 
 export async function sendErrorEmail(error: ErrorPayload): Promise<void> {
   if (process.env.VERCEL_ENV !== "production") {
-    console.info("[Error Reporter] Skipping email (non-production):", error);
+    console.info(
+      "[Error Reporter] Skipping email (non-production):",
+      JSON.stringify(error),
+    );
     return;
   }
 
