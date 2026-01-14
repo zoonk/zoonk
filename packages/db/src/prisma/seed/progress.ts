@@ -13,7 +13,7 @@ type E2eAttemptData = {
   hourOfDay: number;
   isCorrect: boolean;
   organizationId: number;
-  stepId: number;
+  stepId: bigint;
   userId: number;
 };
 

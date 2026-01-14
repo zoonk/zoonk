@@ -14,7 +14,7 @@ type StepAttemptParams = {
   hourOfDay: number;
   isCorrect: boolean;
   orgId: number;
-  stepId: number;
+  stepId: bigint;
   userId: number;
 };
 
