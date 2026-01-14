@@ -17,6 +17,7 @@
     "./fixtures/dates": "./src/fixtures/dates.ts",
     "./fixtures/lessons": "./src/fixtures/lessons.ts",
     "./fixtures/orgs": "./src/fixtures/orgs.ts",
+    "./fixtures/progress": "./src/fixtures/progress.ts",
     "./fixtures/users": "./src/fixtures/users.ts"
   },
   "name": "@zoonk/testing",

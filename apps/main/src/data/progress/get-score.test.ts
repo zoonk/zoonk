@@ -35,6 +35,7 @@ describe("authenticated users", () => {
         {
           correctAnswers: 17,
           date: today,
+          dayOfWeek: today.getDay(),
           incorrectAnswers: 3,
           organizationId: org.id,
           userId: Number(user.id),
@@ -42,6 +43,7 @@ describe("authenticated users", () => {
         {
           correctAnswers: 8,
           date: yesterday,
+          dayOfWeek: yesterday.getDay(),
           incorrectAnswers: 2,
           organizationId: org.id,
           userId: Number(user.id),
@@ -70,6 +72,7 @@ describe("authenticated users", () => {
         {
           correctAnswers: 10,
           date: today,
+          dayOfWeek: today.getDay(),
           incorrectAnswers: 0,
           organizationId: org.id,
           userId: Number(user.id),
@@ -77,6 +80,7 @@ describe("authenticated users", () => {
         {
           correctAnswers: 0,
           date: oldDate,
+          dayOfWeek: oldDate.getDay(),
           incorrectAnswers: 100,
           organizationId: org.id,
           userId: Number(user.id),
@@ -107,6 +111,7 @@ describe("authenticated users", () => {
         {
           correctAnswers: 10,
           date: now,
+          dayOfWeek: now.getDay(),
           incorrectAnswers: 0,
           organizationId: org.id,
           userId: Number(user.id),
@@ -114,6 +119,7 @@ describe("authenticated users", () => {
         {
           correctAnswers: 5,
           date: oneWeekAgo,
+          dayOfWeek: oneWeekAgo.getDay(),
           incorrectAnswers: 5,
           organizationId: org.id,
           userId: Number(user.id),
@@ -121,6 +127,7 @@ describe("authenticated users", () => {
         {
           correctAnswers: 0,
           date: twoWeeksAgo,
+          dayOfWeek: twoWeeksAgo.getDay(),
           incorrectAnswers: 10,
           organizationId: org.id,
           userId: Number(user.id),

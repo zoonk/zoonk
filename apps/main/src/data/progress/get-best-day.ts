@@ -2,8 +2,6 @@ import "server-only";
 
 import { getSession } from "@zoonk/core/users/session/get";
 import { prisma } from "@zoonk/db";
-import { getBestDay as getBestDayQuery } from "@zoonk/db/best-day";
-import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
 export type BestDayData = {
@@ -40,11 +38,19 @@ export const getBestDay = cache(
       startDate.setDate(startDate.getDate() - 90);
     }
 
-    const { data: results, error } = await safeAsync(() =>
-      prisma.$queryRawTyped(getBestDayQuery(userId, startDate)),
-    );
+    const results = await prisma.dailyProgress.groupBy({
+      _sum: {
+        correctAnswers: true,
+        incorrectAnswers: true,
+      },
+      by: ["dayOfWeek"],
+      where: {
+        date: { gte: startDate },
+        userId,
+      },
+    });
 
-    if (error || !results || results.length === 0) {
+    if (results.length === 0) {
       return null;
     }
 
@@ -52,8 +58,8 @@ export const getBestDay = cache(
     let bestDayTotal = 0;
 
     for (const row of results) {
-      const correct = Number(row.correct);
-      const incorrect = Number(row.incorrect);
+      const correct = row._sum.correctAnswers ?? 0;
+      const incorrect = row._sum.incorrectAnswers ?? 0;
       const total = correct + incorrect;
 
       if (total === 0) {
@@ -68,7 +74,7 @@ export const getBestDay = cache(
         (score === bestDay.score && total > bestDayTotal);
 
       if (isBetter) {
-        bestDay = { dayOfWeek: Number(row.dayOfWeek), score };
+        bestDay = { dayOfWeek: row.dayOfWeek, score };
         bestDayTotal = total;
       }
     }

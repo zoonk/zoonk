@@ -26,25 +26,20 @@ describe("authenticated users", () => {
     const headers = await signInAs(user.email, user.password);
     const org = await organizationFixture();
 
-    const today = new Date();
-    const sunday = new Date(today);
-    sunday.setDate(sunday.getDate() - sunday.getDay());
-
-    const monday = new Date(sunday);
-    monday.setDate(monday.getDate() + 1);
-
     await prisma.dailyProgress.createMany({
       data: [
         {
           correctAnswers: 18,
-          date: sunday,
+          date: new Date("2025-01-05T12:00:00Z"),
+          dayOfWeek: 0, // Sunday
           incorrectAnswers: 2,
           organizationId: org.id,
           userId: Number(user.id),
         },
         {
           correctAnswers: 15,
-          date: monday,
+          date: new Date("2025-01-06T12:00:00Z"),
+          dayOfWeek: 1, // Monday
           incorrectAnswers: 5,
           organizationId: org.id,
           userId: Number(user.id),
@@ -52,10 +47,13 @@ describe("authenticated users", () => {
       ],
     });
 
-    const result = await getBestDay({ headers });
+    const result = await getBestDay({
+      headers,
+      startDate: new Date("2025-01-01T00:00:00Z"),
+    });
 
     expect(result).not.toBeNull();
-    expect(result?.dayOfWeek).toBe(0);
+    expect(result?.dayOfWeek).toBe(0); // Sunday
     expect(result?.score).toBe(90);
   });
 
@@ -73,6 +71,7 @@ describe("authenticated users", () => {
         {
           correctAnswers: 8,
           date: today,
+          dayOfWeek: today.getDay(),
           incorrectAnswers: 2,
           organizationId: org.id,
           userId: Number(user.id),
@@ -80,6 +79,7 @@ describe("authenticated users", () => {
         {
           correctAnswers: 20,
           date: oldDate,
+          dayOfWeek: oldDate.getDay(),
           incorrectAnswers: 0,
           organizationId: org.id,
           userId: Number(user.id),
@@ -98,35 +98,28 @@ describe("authenticated users", () => {
     const headers = await signInAs(user.email, user.password);
     const org = await organizationFixture();
 
-    const today = new Date();
-    const sunday = new Date(today);
-    sunday.setDate(sunday.getDate() - sunday.getDay());
-
-    const nextSunday = new Date(sunday);
-    nextSunday.setDate(nextSunday.getDate() + 7);
-
-    const monday = new Date(sunday);
-    monday.setDate(monday.getDate() + 1);
-
     await prisma.dailyProgress.createMany({
       data: [
         {
           correctAnswers: 9,
-          date: sunday,
+          date: new Date("2025-01-05T12:00:00Z"),
+          dayOfWeek: 0, // Sunday
           incorrectAnswers: 1,
           organizationId: org.id,
           userId: Number(user.id),
         },
         {
           correctAnswers: 9,
-          date: nextSunday,
+          date: new Date("2025-01-12T12:00:00Z"),
+          dayOfWeek: 0, // Next Sunday
           incorrectAnswers: 1,
           organizationId: org.id,
           userId: Number(user.id),
         },
         {
           correctAnswers: 8,
-          date: monday,
+          date: new Date("2025-01-06T12:00:00Z"),
+          dayOfWeek: 1, // Monday
           incorrectAnswers: 2,
           organizationId: org.id,
           userId: Number(user.id),
@@ -134,10 +127,13 @@ describe("authenticated users", () => {
       ],
     });
 
-    const result = await getBestDay({ headers });
+    const result = await getBestDay({
+      headers,
+      startDate: new Date("2025-01-01T00:00:00Z"),
+    });
 
     expect(result).not.toBeNull();
-    expect(result?.dayOfWeek).toBe(0);
+    expect(result?.dayOfWeek).toBe(0); // Sunday (more answers than Monday due to two Sundays)
     expect(result?.score).toBe(90);
   });
 
@@ -152,6 +148,7 @@ describe("authenticated users", () => {
       data: {
         correctAnswers: 17,
         date: today,
+        dayOfWeek: today.getDay(),
         incorrectAnswers: 3,
         organizationId: org.id,
         userId: Number(user.id),

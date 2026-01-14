@@ -39,6 +39,7 @@ model DailyProgress {
   userId               Int           @map("user_id")
   user                 User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   date                 DateTime      @db.Date
+  dayOfWeek            Int           @map("day_of_week") @db.SmallInt
   organizationId       Int?          @map("organization_id")
   organization         Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   correctAnswers       Int           @default(0) @map("correct_answers")
@@ -52,6 +53,7 @@ model DailyProgress {
 
   @@unique([userId, date, organizationId], name: "userDateOrg")
   @@index([userId, date])
+  @@index([userId, dayOfWeek])
   @@index([organizationId])
   @@map("daily_progress")
 }
