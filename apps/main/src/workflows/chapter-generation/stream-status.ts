@@ -8,5 +8,6 @@ export async function streamStatus(params: {
   step: StepName;
   status: StepStatus;
 }) {
+  "use step";
   return sharedStreamStatus(params);
 }

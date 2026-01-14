@@ -12,7 +12,6 @@ export async function streamStatus<T extends string>(params: {
   const writer = writable.getWriter();
 
   try {
-    // Write as SSE format for eventsource-parser consumption
     const message = params;
     await writer.write(`data: ${JSON.stringify(message)}\n\n`);
   } finally {
