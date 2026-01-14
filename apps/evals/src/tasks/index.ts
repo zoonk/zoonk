@@ -1,4 +1,5 @@
 import type { Task } from "@/lib/types";
+import { activityBackgroundTask } from "./activity-background/task";
 import { alternativeTitlesTask } from "./alternative-titles/task";
 import { chapterLessonsTask } from "./chapter-lessons/task";
 import { courseCategoriesTask } from "./course-categories/task";
@@ -17,6 +18,7 @@ export const TASKS: readonly Task[] = [
   chapterLessonsTask,
   lessonKindTask,
   lessonActivitiesTask,
+  activityBackgroundTask,
 ];
 
 // Number of times each test case should be run for more reliable results

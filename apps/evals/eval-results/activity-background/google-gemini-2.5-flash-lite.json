@@ -1,0 +1,419 @@
+{
+  "modelId": "google/gemini-2.5-flash-lite",
+  "results": [
+    {
+      "duration": 4769.592500000028,
+      "inputTokens": 1448,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine building software like assembling a complex machine. Before OOP, coders treated programs like one giant, tangled blueprint. Everything was procedural, a long list of instructions.\",\n      \"title\": \"The Tangled Blueprint\"\n    },\n    {\n      \"text\": \"This approach made big projects chaotic. If one part broke, the whole machine might grind to a halt. It was hard to fix, update, or even understand without getting lost in the code.\",\n      \"title\": \"The Chaos of Procedures\"\n    },\n    {\n      \"text\": \"Then came a new idea: what if we model software like the real world? Think of objects – a car, a person, a bank account. Each has its own properties and actions.\",\n      \"title\": \"Modeling the Real World\"\n    },\n    {\n      \"text\": \"This is Object-Oriented Programming (OOP). Instead of just instructions, we create 'objects' that bundle data (properties) and behaviors (methods) together. Like a self-contained unit.\",\n      \"title\": \"Bundling Data and Actions\"\n    },\n    {\n      \"text\": \"This made software development revolutionary! It was like switching from a messy workshop to organized, modular toolkits. Easier to build, manage, and reuse components.\",\n      \"title\": \"A Revolutionary Shift\"\n    },\n    {\n      \"text\": \"OOP allowed programmers to build more complex, scalable, and maintainable software. It's the foundation for so much of the technology we use today, from apps to operating systems.\",\n      \"title\": \"Building Modern Tech\"\n    }\n  ]\n}",
+      "outputTokens": 366,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is excellent and follows all constraints perfectly. To make it even more engaging and fit the 'Background' persona of a documentary storyteller better, it could have anchored the 'turning point' in actual history (e.g., mentioning the 1960s or Simula/Smalltalk) rather than just saying 'Then came a new idea'. This would provide the 'historical moments' mentioned in the instructions, but the current conceptual narrative is also a valid approach.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid jumping into code syntax or technical implementation. The background should explain WHY object-oriented programming was invented and what problems it solved — not HOW to use classes.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-programming-oop-1",
+        "userInput": {
+          "chapterTitle": "Programming Paradigms",
+          "courseTitle": "Introduction to Programming",
+          "language": "en",
+          "lessonDescription": "Understanding the core principles of object-oriented programming and why it revolutionized software development",
+          "lessonTitle": "Object-Oriented Programming"
+        }
+      }
+    },
+    {
+      "duration": 4702.005708000041,
+      "inputTokens": 1444,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine ancient thinkers trying to describe the world. They could measure static things, like the length of a wall or the area of a field. But what about things that *moved*? Like a speeding chariot or a falling stone?\",\n      \"title\": \"The World Before Calculus\"\n    },\n    {\n      \"text\": \"Describing motion was a puzzle. How do you capture the *instantaneous* speed of a ball at the exact moment you glimpse it? Or the curve of a planet's path? Early math tools felt like trying to measure a river's flow with a dry ruler.\",\n      \"title\": \"The Problem of Motion\"\n    },\n    {\n      \"text\": \"Mathematicians like Archimedes chipped away at the problem, using clever geometric tricks to approximate areas and volumes. It was like trying to paint a vibrant sunset using only black and white.\",\n      \"title\": \"Early Attempts: Clever Approximations\"\n    },\n    {\n      \"text\": \"Then came the 17th century. Thinkers like Newton and Leibniz realized they needed a whole new language for change. They imagined zooming in infinitely close on a curve, or breaking down motion into tiny, almost frozen moments.\",\n      \"title\": \"The Big Idea: Infinite Zoom\"\n    },\n    {\n      \"text\": \"This led to calculus – a way to study rates of change and accumulation. It's like developing a microscope for math, revealing the hidden dynamics of everything from crashing waves to growing populations.\",\n      \"title\": \"Calculus: A New Lens\"\n    },\n    {\n      \"text\": \"Without calculus, we couldn't model how things evolve. From engineering skyscrapers to predicting weather patterns, it's the engine powering our understanding of a dynamic universe.\",\n      \"title\": \"Why It Matters Today\"\n    }\n  ]\n}",
+      "outputTokens": 413,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid diving into formulas, derivatives, or mathematical notation. The background should explain WHY calculus was invented and what problems it solved — not HOW to calculate limits.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-math-calculus-1",
+        "userInput": {
+          "chapterTitle": "Foundations",
+          "courseTitle": "Calculus I",
+          "language": "en",
+          "lessonDescription": "The origins of calculus and why mathematicians needed a new way to describe change and motion",
+          "lessonTitle": "What is Calculus?"
+        }
+      }
+    },
+    {
+      "duration": 4515.332583000069,
+      "inputTokens": 1445,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine a world before Darwin. For centuries, people believed species were fixed, created perfectly as they are. If you saw a bird, you saw *the* bird, unchanging for all time.\",\n      \"title\": \"A World of Fixed Species\"\n    },\n    {\n      \"text\": \"But what if life wasn't so simple? Observers noticed variations within species and fossils of creatures that no longer existed. It was like finding puzzle pieces from different sets.\",\n      \"title\": \"Whispers of Change\"\n    },\n    {\n      \"text\": \"Charles Darwin, on his voyage aboard the HMS Beagle, collected an astonishing array of plants, animals, and fossils. He noticed subtle differences between finches on nearby islands.\",\n      \"title\": \"Darwin's Voyage\"\n    },\n    {\n      \"text\": \"Darwin pondered: could these finches have changed over time? Could the environment itself shape life, favoring those with helpful traits? This was a radical thought, like suggesting a sculptor shapes clay.\",\n      \"title\": \"The Great Question\"\n    },\n    {\n      \"text\": \"He proposed 'natural selection.' Nature 'selects' individuals with traits that help them survive and reproduce. Over vast stretches of time, this leads to new species adapting to their world.\",\n      \"title\": \"Nature's Selection\"\n    },\n    {\n      \"text\": \"Darwin's theory revolutionized biology, explaining the incredible diversity of life we see today. It's the grand narrative of how life adapts, evolves, and becomes the magnificent tapestry it is.\",\n      \"title\": \"The Tapestry of Life\"\n    }\n  ]\n}",
+      "outputTokens": 372,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is excellent and follows all instructions, including constraints on length, tone, and content (avoiding DNA/genetics). One very minor semantic improvement could be in Step 4: comparing the environment to a 'sculptor' can inadvertently imply intentional design (teleology), whereas evolution is a blind process. A metaphor involving a 'filter' or 'sieve' might be scientifically safer, though 'sculptor' is stylistically evocative and acceptable for a high-level narrative.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid diving into DNA mechanics or genetic terminology. The background should explain WHY the theory of evolution was developed and what questions it answered — not HOW natural selection works at a biological level.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-science-evolution-1",
+        "userInput": {
+          "chapterTitle": "Life Science",
+          "courseTitle": "Biology Fundamentals",
+          "language": "en",
+          "lessonDescription": "How Darwin's observations led to a revolutionary understanding of how species change over time",
+          "lessonTitle": "The Theory of Evolution"
+        }
+      }
+    },
+    {
+      "duration": 2459.5620000000345,
+      "inputTokens": 1443,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine a world where arguments were chaotic, like a playground brawl. People shouted, but no one truly listened or understood. How could anyone agree on anything?\",\n      \"title\": \"The Chaos Before Logic\"\n    },\n    {\n      \"text\": \"This wasn't just messy – it was a huge problem! Without clear rules, discovering truth was nearly impossible. How could you build knowledge when claims were built on shaky ground?\",\n      \"title\": \"A World Without Reliable Thinking\"\n    },\n    {\n      \"text\": \"Ancient thinkers, like Aristotle, saw this struggle. They realized that if we could find the 'rules of the game' for thinking, we could build arguments that stood strong, like a well-built bridge.\",\n      \"title\": \"The Quest for Thinking's Rules\"\n    },\n    {\n      \"text\": \"They started dissecting arguments, looking for patterns that always worked. They found that certain structures of reasoning, like 'If A is true, and B follows A, then B must be true,' were like universal laws.\",\n      \"title\": \"Discovering Argument Structures\"\n    },\n    {\n      \"text\": \"This, in essence, is Logic: the science of reasoning. It gives us the tools to build sound arguments, spot faulty ones, and navigate the complex world of ideas with clarity and confidence.\",\n      \"title\": \"The Birth of Logic\"\n    },\n    {\n      \"text\": \"Today, logic is the bedrock of everything from math and science to law and even computer programming. It's the invisible framework that helps us make sense of the world and communicate effectively.\",\n      \"title\": \"Logic's Enduring Power\"\n    }\n  ]\n}",
+      "outputTokens": 385,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The narrative is strong, but Step 3 could have added slightly more historical flavor (e.g., mentioning the marketplaces of Athens) to ground the story even more vividly in a specific time and place, enhancing the \"documentary\" feel. However, this is a stylistic preference rather than a deficiency.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        },
+        {
+          "conclusion": "The response perfectly follows the instructions. It creates a compelling narrative arc starting from 'chaos' (life before), moving through the need for rules (the problem/turning point), and ending with the modern application (resolution). It successfully uses metaphors ('playground brawl', 'well-built bridge', 'invisible framework') to make abstract concepts concrete. All character limits are respected, and the tone is appropriately conversational. It avoids technical jargon or teaching 'how' to do logic, focusing strictly on the 'why' and the background.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid listing logical operators or truth tables. The background should explain WHY formal logic was developed and what human problems it addressed — not HOW to construct syllogisms.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-philosophy-logic-1",
+        "userInput": {
+          "chapterTitle": "Foundations of Reasoning",
+          "courseTitle": "Introduction to Philosophy",
+          "language": "en",
+          "lessonDescription": "The ancient quest to find reliable rules for correct thinking and argumentation",
+          "lessonTitle": "What is Logic?"
+        }
+      }
+    },
+    {
+      "duration": 2881.6844580000034,
+      "inputTokens": 1454,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine que você tem 10 moedas e com elas compra um pão. Daqui a um ano, você ainda tem 10 moedas, mas o pão agora custa 12 moedas. Suas moedas não valem mais tanto assim, né?\",\n      \"title\": \"O Pão que Ficou Mais Caro\"\n    },\n    {\n      \"text\": \"Essa é a sensação da inflação: o dinheiro perde o poder de compra. O que antes dava pra comprar, agora precisa de mais notas. É como se o dinheiro encolhesse no bolso.\",\n      \"title\": \"Seu Dinheiro Encolhendo\"\n    },\n    {\n      \"text\": \"Por que isso acontece? Às vezes, tem muita gente querendo comprar as coisas (muita demanda), mas não tem produto suficiente pra todo mundo. Aí, os vendedores aumentam o preço.\",\n      \"title\": \"Muita Gente, Pouca Coisa\"\n    },\n    {\n      \"text\": \"Outras vezes, o custo para produzir as coisas sobe. Se o trigo fica mais caro, o pão também vai ficar. Os preços das matérias-primas e do transporte influenciam muito.\",\n      \"title\": \"Custos de Produção em Alta\"\n    },\n    {\n      \"text\": \"Essa dança dos preços afeta tudo: seu salário parece não render, planejar o futuro fica mais difícil e até aquela comprinha do mês vira um desafio.\",\n      \"title\": \"O Impacto no Seu Bolso\"\n    },\n    {\n      \"text\": \"Entender a inflação é como aprender as regras de um jogo. Saber por que os preços mudam te ajuda a tomar decisões melhores com seu dinheiro hoje e amanhã.\",\n      \"title\": \"Dominando o Jogo do Dinheiro\"\n    }\n  ]\n}",
+      "outputTokens": 424,
+      "steps": [
+        {
+          "conclusion": "The response fails to follow the core instructional design requirement: creating a 'Background' story with a narrative arc (Life Before, Tension, Resolution). Instead, it provides a standard conceptual introduction (Definition, Causes, Effects). The prompt explicitly asks to 'transform dry history into engaging narratives' and explains the 'Story Arc Principle'. The AI ignored the historical/narrative context and simply explained 'What is Inflation?' and 'Why it happens' (Demand/Cost), which creates a generic explanation rather than the requested background story.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "None. The content is factually correct and in the correct language (Portuguese), and the length constraints were respected.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The content should be completely rewritten to fit the 'Background' format. A better approach would be to tell the story of how money evolved and where inflation first appeared (e.g., Roman emperors debasing currency) or a narrative about a specific historical hyperinflation event that taught the world why price stability matters. This would fulfill the 'Storytelling' and 'History' requirements of the prompt.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Titles and descriptions must be in Portuguese.\n\n      Avoid diving into supply/demand curves or economic formulas. The background should explain WHY inflation matters and what historical problems it caused — not HOW central banks control it.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "pt-economics-inflation-1",
+        "userInput": {
+          "chapterTitle": "Conceitos Básicos",
+          "courseTitle": "Economia para Iniciantes",
+          "language": "pt",
+          "lessonDescription": "Entendendo por que os preços sobem e como isso afeta a vida das pessoas",
+          "lessonTitle": "O que é Inflação?"
+        }
+      }
+    },
+    {
+      "duration": 4866.337500000023,
+      "inputTokens": 1454,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Antes de que entendiéramos la gravedad, las caídas de objetos y los movimientos celestes eran misterios. La gente observaba, pero las explicaciones eran a menudo mágicas o filosóficas, sin una ley universal.\",\n      \"title\": \"Un Mundo de Misterios Celestes\"\n    },\n    {\n      \"text\": \"Imagina el asombro y la confusión. ¿Por qué una manzana cae al suelo y no flota? ¿Por qué la Luna gira alrededor de la Tierra sin caerse? Estas preguntas desconcertaban a las mentes más brillantes.\",\n      \"title\": \"¿Por Qué Caen las Cosas?\"\n    },\n    {\n      \"text\": \"Aristóteles pensaba que los objetos pesados buscaban el centro de la Tierra. Mucho después, Galileo se atrevió a experimentar, dejando caer objetos de diferentes pesos para ver si caían igual. ¡Una idea radical!\",\n      \"title\": \"Primeros Intentos de Explicación\"\n    },\n    {\n      \"text\": \"El genio Isaac Newton, observando una manzana (¡o eso cuenta la leyenda!), tuvo una epifanía. ¿Y si la misma fuerza que atrae la manzana al suelo también mantiene a la Luna en su órbita?\",\n      \"title\": \"La Chispa de la Epifanía\"\n    },\n    {\n      \"text\": \"Newton formuló su Ley de Gravitación Universal. ¡Boom! Una sola ley explicaba tanto las caídas en la Tierra como el baile de los planetas en el cosmos. La naturaleza tenía un lenguaje matemático.\",\n      \"title\": \"La Ley Universal Revelada\"\n    },\n    {\n      \"text\": \"Gracias a Newton, pasamos de la especulación a la predicción. Hoy, la gravedad nos ayuda a lanzar satélites, entender el universo y saber por qué tú no sales flotando de tu silla.\",\n      \"title\": \"La Gravedad Hoy: Nuestro Ancla\"\n    }\n  ]\n}",
+      "outputTokens": 445,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response follows the instructions excellently. The narrative arc is clear, moving from the mystery of the cosmos to Aristotle, Galileo, Newton, and finally the modern impact. The tone is conversational ('¡Boom!', '¡o eso cuenta la leyenda!'). The length constraints are respected. The use of imagery (apple, moon, dropping objects) is effective. While the metaphors are good ('baile de los planetas', 'ancla'), they could perhaps be even more grounded in everyday objects (like 'invisible glue' or 'tether') to fully maximize the 'Rich in metaphors' requirement, but this is a very minor stylistic suggestion for a nearly perfect response.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Titles and descriptions must be in Spanish.\n\n      Avoid diving into formulas or mathematical equations. The background should explain WHY gravity was such a mystery and what questions it answered — not HOW to calculate gravitational force.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "es-physics-gravity-1",
+        "userInput": {
+          "chapterTitle": "Mecánica Clásica",
+          "courseTitle": "Física para Principiantes",
+          "language": "es",
+          "lessonDescription": "La historia de cómo los humanos entendieron por qué las cosas caen y los planetas orbitan",
+          "lessonTitle": "La Gravedad"
+        }
+      }
+    },
+    {
+      "duration": 2637.5717919999734,
+      "inputTokens": 1448,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine AI as a robot that could only follow exact instructions. It was great at specific tasks, like playing chess, but couldn't understand a simple question like 'How are you?'\",\n      \"title\": \"AI's Early, Rigid Days\"\n    },\n    {\n      \"text\": \"For decades, AI developers built complex rule systems. It was like trying to teach a robot every single sentence it might ever hear – impossible and incredibly limiting.\",\n      \"title\": \"The Rulebook Mountain\"\n    },\n    {\n      \"text\": \"What if AI could learn language like we do? By reading massive amounts of text and figuring out patterns, not just following pre-written rules?\",\n      \"title\": \"A New Approach: Learning from Data\"\n    },\n    {\n      \"text\": \"This led to the idea of neural networks – computer systems inspired by the human brain. They could 'learn' by adjusting connections, much like we form new pathways when we learn.\",\n      \"title\": \"The Brain-Inspired Spark\"\n    },\n    {\n      \"text\": \"Then came the game-changer: feeding these networks colossal libraries of text – books, articles, websites. The AI started to grasp grammar, context, and even nuance.\",\n      \"title\": \"The Great Text Feast\"\n    },\n    {\n      \"text\": \"These aren't just 'smart' programs; they're Large Language Models (LLMs). They can write, translate, summarize, and even brainstorm ideas, bridging the gap between human thought and machine processing.\",\n      \"title\": \"Enter the LLMs: Language Masters\"\n    },\n    {\n      \"text\": \"Today, LLMs are powering everything from chatbots to advanced research tools. They represent a leap from rigid programming to a more fluid, human-like understanding of language.\",\n      \"title\": \"Your World Today: AI That Understands\"\n    }\n  ]\n}",
+      "outputTokens": 431,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is excellent and follows all instructions perfectly. The narrative arc is clear, metaphors are used effectively ('Rulebook Mountain', 'Great Text Feast'), and the tone is conversational and engaging. The lengths are strictly adhered to. One very minor nuance is that the specific breakthrough for *Large* Language Models (the Transformer architecture) is simplified to general Neural Networks and data scale. While this simplification is likely appropriate for a general audience 'Background' story to avoid jargon, hinting at the ability to pay attention to context (the 'Attention' mechanism) could have added slightly more specific flavor to the 'Breakthrough' step. However, this is a stylistic choice and the provided narrative is accurate and high quality.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      SPECIAL CONSIDERATION: This is a very recent topic (large language models). The \"history\" is short but still has a narrative arc of problems, attempts, and breakthroughs.\n\n      The story should still have tension (what was hard about AI before?) and resolution (what changed?) even if the timeline is compressed.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-edge-recent-topic-1",
+        "userInput": {
+          "chapterTitle": "Modern AI",
+          "courseTitle": "Introduction to Machine Learning",
+          "language": "en",
+          "lessonDescription": "How AI went from rigid rule-based systems to models that can understand and generate human language",
+          "lessonTitle": "Large Language Models"
+        }
+      }
+    },
+    {
+      "duration": 5005.7208330000285,
+      "inputTokens": 1439,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine trying to organize a huge collection of items, like all the stars in the sky or all the people in a city. How do you even start to describe them precisely? Before set theory, mathematicians often grappled with vague language when discussing groups of things.\",\n      \"title\": \"Trying to Count Everything\"\n    },\n    {\n      \"text\": \"Mathematicians loved to talk about 'collections' or 'groups' of numbers or shapes. But what if a collection contained itself? Or what if you tried to define a collection based on a property that led to a paradox? These fuzzy ideas were like a leaky boat, threatening to sink their logical arguments.\",\n      \"title\": \"When Collections Got Weird\"\n    },\n    {\n      \"text\": \"Think of the famous 'barber paradox': a barber shaves all men who don't shave themselves. Does the barber shave himself? If he does, he shouldn't. If he doesn't, he should! This kind of logical knot needed a solid structure to untangle.\",\n      \"title\": \"The Paradoxical Puzzle\"\n    },\n    {\n      \"text\": \"Enter Georg Cantor. He dreamed of a precise language, a blueprint for building with collections. He proposed that collections, or 'sets', could be treated as fundamental objects, defined by their members, like building blocks with clear edges.\",\n      \"title\": \"Cantor's Blueprint\"\n    },\n    {\n      \"text\": \"Cantor's idea was revolutionary! It provided a clear way to talk about infinite sets, something previously mind-boggling. It was like inventing a universal language for all of mathematics, allowing concepts to be shared and built upon with confidence.\",\n      \"title\": \"A Universal Language\"\n    },\n    {\n      \"text\": \"Today, set theory is the bedrock of modern math. From computer science algorithms to the deepest theories in physics, the idea of a 'set' is a fundamental tool, helping us organize, categorize, and reason about the vast complexities of our world.\",\n      \"title\": \"The Foundation of Modern Math\"\n    }\n  ]\n}",
+      "outputTokens": 469,
+      "steps": [
+        {
+          "conclusion": "The response incorrectly sequences historical events. It presents the 'Barber Paradox' (Russell's Paradox, 1901) as the problem that existed *before* Georg Cantor (who began publishing on Set Theory in 1874) and implies that Cantor's definition of sets solved this paradox. In reality, Cantor's 'naive' set theory *led* to these paradoxes, which were later resolved by axiomatic systems (like ZFC) or type theory. Cantor's motivation was actually understanding infinity, not fixing logical paradoxes.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The narrative implies that Cantor's 'blueprint' (treating sets as objects defined by members) 'untangled' the logical knot of the Barber paradox. Mathematically, that specific definition is exactly what *causes* the paradox. This is a logical inconsistency in the explanation of the mathematical concept.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The storytelling is otherwise excellent. It uses vivid metaphors ('leaky boat', 'blueprint'), maintains a great conversational tone, and perfectly follows the character limits and structural requirements. The narrative arc creates strong engagement.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      SPECIAL CONSIDERATION: This is a highly abstract mathematical concept. The background should make it relatable through metaphors and real-world problems it solved.\n\n      Avoid technical definitions or abstract mathematical language. Focus on WHY mathematicians needed this concept and what problems it addressed.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-edge-abstract-topic-1",
+        "userInput": {
+          "chapterTitle": "Advanced Concepts",
+          "courseTitle": "Discrete Mathematics",
+          "language": "en",
+          "lessonDescription": "Understanding why mathematicians needed a rigorous way to study collections of objects",
+          "lessonTitle": "Set Theory"
+        }
+      }
+    },
+    {
+      "duration": 4318.894666999928,
+      "inputTokens": 1443,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Before computers, organizing information meant dusty file cabinets and endless stacks of paper. Finding one specific fact could feel like searching for a needle in a haystack, slow and frustrating.\",\n      \"title\": \"The Paper Chase\"\n    },\n    {\n      \"text\": \"Early computers were powerful but clumsy. Storing data meant using punch cards or magnetic tapes. Imagine loading a whole movie just to find a single word!\",\n      \"title\": \"Digital Filing Cabinets\"\n    },\n    {\n      \"text\": \"As data grew, so did the mess. Teams struggled to manage scattered files, leading to duplication, errors, and wasted time. It was like a chaotic library with no catalog.\",\n      \"title\": \"The Data Deluge\"\n    },\n    {\n      \"text\": \"Then came a revolutionary idea: treat data like a structured collection of tables, linked together. This allowed for faster, more organized access and manipulation.\",\n      \"title\": \"A Smarter Way to Organize\"\n    },\n    {\n      \"text\": \"Databases emerged, acting as super-organized digital librarians. They could store, retrieve, and update massive amounts of information with incredible speed and accuracy.\",\n      \"title\": \"Enter the Database\"\n    },\n    {\n      \"text\": \"Today, databases power everything from your social media feed to global financial systems. They’re the invisible engines that keep our digital world running smoothly.\",\n      \"title\": \"The Backbone of Digital Life\"\n    }\n  ]\n}",
+      "outputTokens": 339,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response closely follows the instructions. The narrative arc is clear (Paper -> Punch Cards -> Mess -> Database Solution -> Modern Context). The constraints on character counts are respected. The tone is conversational and uses appropriate metaphors (library, needle in haystack). Step 4 is slightly more technical ('collection of tables') than the rest, but it serves to explain the 'breakthrough' concept without diving into actual syntax, which is acceptable.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid diving into database schemas or SQL syntax. The background should explain WHY databases were invented and what problems early computer systems faced — not HOW to structure tables.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-engineering-databases-1",
+        "userInput": {
+          "chapterTitle": "Data Storage",
+          "courseTitle": "Computer Science Fundamentals",
+          "language": "en",
+          "lessonDescription": "The history of how computers learned to organize and retrieve vast amounts of information",
+          "lessonTitle": "Introduction to Databases"
+        }
+      }
+    },
+    {
+      "duration": 4800.947207999998,
+      "inputTokens": 1442,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine Paris in the mid-1800s. Art meant perfectly polished scenes, historical epics, and god-like figures. \\\"Real life\\\" wasn't considered worthy of a canvas.\",\n      \"title\": \"The Stuffy Art World of Old\"\n    },\n    {\n      \"text\": \"Painters submitted their work to the official \\\"Salon,\\\" a strict art show. If your art didn't fit the rigid rules, you were rejected. Many artists felt stifled.\",\n      \"title\": \"The Art Establishment's Grip\"\n    },\n    {\n      \"text\": \"A group of friends, tired of the same old rules, decided to paint what they *saw* and *felt* in everyday life. They focused on light, fleeting moments, and vibrant color.\",\n      \"title\": \"Rebels with a Paintbrush\"\n    },\n    {\n      \"text\": \"Critics mocked their loose brushstrokes and \\\"unfinished\\\" look, calling it \\\"Impressionism\\\" as an insult. They wanted to capture a fleeting impression, not a detailed photograph.\",\n      \"title\": \"The Birth of a Style (and a Name)\"\n    },\n    {\n      \"text\": \"Instead of mixing colors, they placed them side-by-side, letting the viewer's eye blend them. This created a dazzling, vibrant effect, like light dancing on water.\",\n      \"title\": \"Painting with Light Itself\"\n    },\n    {\n      \"text\": \"Impressionism opened the door for all modern art. It taught us that art can be about personal experience, the beauty of the ordinary, and the magic of a single moment.\",\n      \"title\": \"A New Way to See the World\"\n    }\n  ]\n}",
+      "outputTokens": 393,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The instructions specifically requested the use of \"analogies from everyday life (sports, cooking, games, music, travel)\" to make abstract concepts tangible. The response lacks these specific analogies, relying instead on descriptive imagery (\"like light dancing on water\"). Additionally, the User Expectations explicitly stated to \"Avoid jumping into color theory rules or artistic techniques\" and to focus on the \"WHY\". Step 5 (\"Instead of mixing colors, they placed them side-by-side...\") describes a specific artistic technique (optical mixing), which borders on violating this constraint, although it does explain the breakthrough.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The narrative could be significantly enhanced by following the metaphor instruction. For example, comparing the 'Salon' to a strict club with a dress code, or the 'optical mixing' to pixels on a screen or ingredients in a salad. Step 5 could be reframed to focus more on the artist's desire to capture the vibration of life (the 'Why') rather than the specific mechanical application of paint (the 'How').",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid jumping into color theory rules or artistic techniques. The background should explain WHY artists became obsessed with light and color — not HOW to mix pigments.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-art-impressionism-1",
+        "userInput": {
+          "chapterTitle": "Art Movements",
+          "courseTitle": "Art History",
+          "language": "en",
+          "lessonDescription": "How a group of rebellious painters changed the way we see and capture the world",
+          "lessonTitle": "Impressionism"
+        }
+      }
+    },
+    {
+      "duration": 2846.811417000019,
+      "inputTokens": 1446,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine um mundo em que as pessoas viviam em pequenas aldeias, onde todos se conheciam. As regras eram claras e a vida seguia um ritmo tranquilo. Mas, aos poucos, as cidades cresceram, as pessoas começaram a se misturar e as antigas certezas foram abaladas.\",\n      \"title\": \"A vida antes da sociedade em massa\"\n    },\n    {\n      \"text\": \"Com o crescimento das cidades e a mistura de pessoas, vieram novos problemas: crimes, desigualdade e conflitos. As pessoas começaram a se perguntar: \\\"Por que isso acontece? Como podemos viver juntos em harmonia?\\\"\",\n      \"title\": \"O caos das novas cidades\"\n    },\n    {\n      \"text\": \"Filósofos e pensadores tentavam entender o comportamento humano, mas suas ideias eram mais sobre o que as pessoas \\\"deveriam\\\" fazer do que como elas realmente agiam em grupo.\",\n      \"title\": \"As primeiras tentativas de entender o 'nós'\"\n    },\n    {\n      \"text\": \"Foi então que, séculos atrás, surgiu uma nova ideia: olhar para a sociedade com os olhos de um cientista! Observar, coletar dados e tentar descobrir as regras que governam nossas interações, como se fossem leis da natureza.\",\n      \"title\": \"A faísca da curiosidade científica\"\n    },\n    {\n      \"text\": \"Essa nova abordagem, a Sociologia, nos deu as ferramentas para analisar o que acontece em nosso \\\"palco\\\" social. Ela nos ajuda a entender por que agimos como agimos em grupo e como a sociedade nos molda.\",\n      \"title\": \"Nasce a ciência da sociedade\"\n    },\n    {\n      \"text\": \"Hoje, a Sociologia é essencial. Ela nos ajuda a entender desde as pequenas interações do dia a dia até os grandes movimentos sociais globais, nos tornando cidadãos mais conscientes e críticos.\",\n      \"title\": \"Por que isso importa hoje\"\n    }\n  ]\n}",
+      "outputTokens": 452,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response follows the instructions very well. It effectively uses a narrative arc to explain the origin of sociology (moving from traditional village life to the chaos of modern cities). It uses the metaphor of a 'stage' (palco), which is relevant to the field (dramaturgy), although the prompt suggested everyday categories like sports/cooking, theater fits well enough. The tone is conversational and the length constraints are respected.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Titles and descriptions must be in Portuguese.\n\n      Avoid diving into research methodologies or academic frameworks. The background should explain WHY humans started systematically studying society — not HOW sociologists conduct research.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "pt-social-sociology-1",
+        "userInput": {
+          "chapterTitle": "Introdução",
+          "courseTitle": "Sociologia",
+          "language": "pt",
+          "lessonDescription": "Como surgiu a necessidade de estudar cientificamente a sociedade e as relações humanas",
+          "lessonTitle": "O que é Sociologia?"
+        }
+      }
+    },
+    {
+      "duration": 4303.312458999921,
+      "inputTokens": 1439,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Imagine you have a set of Russian nesting dolls. To find the smallest doll, you open the biggest one, then the next, and the next. Each step is like opening a doll, until you reach the final, smallest one.\",\n      \"title\": \"The Russian Doll Analogy\"\n    },\n    {\n      \"text\": \"Before functions could call themselves, programmers had to solve problems with long, repetitive code. Think of trying to untangle a massive knot by hand, one strand at a time, without a clear system.\",\n      \"title\": \"The Messy Past: Repetitive Code\"\n    },\n    {\n      \"text\": \"Sometimes, problems are like those nesting dolls – they have smaller, self-similar versions hidden inside. Breaking down a big problem into these smaller, identical pieces felt like a puzzle.\",\n      \"title\": \"A Problem: Self-Similar Tasks\"\n    },\n    {\n      \"text\": \"What if a function could solve a small piece of the puzzle and then call itself to solve the next, slightly smaller piece? This 'call yourself' idea was radical, like a tool that could build copies of itself.\",\n      \"title\": \"The 'Call Yourself' Idea\"\n    },\n    {\n      \"text\": \"This concept, called recursion, allows functions to elegantly solve complex problems by repeatedly applying the same logic to smaller versions of the problem, much like our nesting dolls. It’s a powerful shortcut!\",\n      \"title\": \"Recursion: The Elegant Solution\"\n    },\n    {\n      \"text\": \"Today, recursion is key in everything from sorting data efficiently to navigating complex file systems. It’s a fundamental building block for elegant and powerful programming solutions.\",\n      \"title\": \"Why It Matters Today\"\n    }\n  ]\n}",
+      "outputTokens": 400,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The narrative flow could be slightly improved to better align with the \"Tension-Resolution\" arc described in the instructions. Currently, it starts with the analogy (Step 1) before introducing the problem/history (Step 2). Moving the \"Life Before\" and \"The Problem\" steps to the beginning would build more curiosity and tension before revealing the \"Russian Doll\" analogy as the mental model for the solution. Additionally, describing the alternative to recursion merely as \"long, repetitive code\" is a slight oversimplification; highlighting the complexity of managing state or traversing structures without it would be more precise.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      SPECIAL CONSIDERATION: This is a narrow topic (recursion in programming). The background should still have a narrative, but it may be shorter since the scope is focused.\n\n      Avoid explaining how to write recursive functions. Focus on WHY recursion was developed as a concept and what elegant problems it solved.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-edge-narrow-topic-1",
+        "userInput": {
+          "chapterTitle": "Functions",
+          "courseTitle": "Programming Fundamentals",
+          "language": "en",
+          "lessonDescription": "Understanding the elegant idea of functions that call themselves to solve complex problems",
+          "lessonTitle": "Recursion"
+        }
+      }
+    }
+  ],
+  "taskId": "activity-background"
+}
