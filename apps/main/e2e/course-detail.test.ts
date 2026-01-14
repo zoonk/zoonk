@@ -1,4 +1,42 @@
+import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
+import type { Route } from "@zoonk/e2e/fixtures";
+import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { expect, test } from "./fixtures";
+
+const TEST_RUN_ID = "test-run-id-course-detail";
+
+/**
+ * Mock the workflow APIs to avoid hitting real services.
+ */
+async function mockWorkflowApis(route: Route) {
+  const url = route.request().url();
+  const method = route.request().method();
+
+  if (
+    url.includes("/api/workflows/course-generation/trigger") &&
+    method === "POST"
+  ) {
+    await route.fulfill({
+      body: JSON.stringify({ message: "Workflow started", runId: TEST_RUN_ID }),
+      contentType: "application/json",
+      status: 200,
+    });
+    return;
+  }
+
+  if (url.includes("/api/workflows/course-generation/status")) {
+    await route.fulfill({
+      body: `data: ${JSON.stringify({ status: "running", step: "getCourseSuggestion" })}\n\n`,
+      contentType: "text/event-stream",
+      status: 200,
+    });
+    return;
+  }
+
+  await route.continue();
+}
 
 test.describe("Course Detail Page", () => {
   test("shows course content with title, description, and image", async ({
@@ -28,13 +66,42 @@ test.describe("Course Detail Page", () => {
   test("redirects to generate page when course has no chapters", async ({
     page,
   }) => {
-    await page.goto("/b/ai/c/e2e-no-chapters-course");
+    const org = await prisma.organization.findUniqueOrThrow({
+      where: { slug: "ai" },
+    });
 
-    await expect(page).toHaveURL(/\/generate\/c\/\d+/);
-    await expect(
-      page.getByRole("heading", { name: /generate course/i }),
-    ).toBeVisible();
-    await expect(page.getByText(/coming soon/i)).toBeVisible();
+    const slug = `e2e-no-chapters-${randomUUID().slice(0, 8)}`;
+
+    // Create a course with no chapters
+    await courseFixture({
+      generationStatus: "running",
+      isPublished: true,
+      language: "en",
+      organizationId: org.id,
+      slug,
+      title: "E2E No Chapters Course",
+    });
+
+    // Create a matching CourseSuggestion for the redirect to work
+    const suggestion = await courseSuggestionFixture({
+      generationStatus: "running",
+      language: "en",
+      slug,
+      title: "E2E No Chapters Course",
+    });
+
+    // Mock the workflow APIs before navigating
+    await page.route("**/api/workflows/**", mockWorkflowApis);
+
+    await page.goto(`/b/ai/c/${slug}`);
+
+    // First redirects to /generate/c/{slug}, then to /generate/cs/{id}
+    await page.waitForURL(`/generate/cs/${suggestion.id}`, { timeout: 10_000 });
+
+    // Verify we're on the generation page
+    await expect(page.getByText(/creating your course/i)).toBeVisible({
+      timeout: 10_000,
+    });
   });
 
   test("shows fallback icon when course has no image", async ({ page }) => {

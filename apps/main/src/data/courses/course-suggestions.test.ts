@@ -6,6 +6,7 @@ import { expect, test, vi } from "vitest";
 import {
   generateCourseSuggestions,
   getCourseSuggestionById,
+  getCourseSuggestionBySlug,
 } from "./course-suggestions";
 
 test("get an existing item", async () => {
@@ -140,4 +141,60 @@ test("getCourseSuggestionById returns suggestion by id", async () => {
     slug,
     title,
   });
+});
+
+test("getCourseSuggestionBySlug returns null for non-existent slug", async () => {
+  const result = await getCourseSuggestionBySlug({
+    language: "en",
+    slug: `non-existent-${randomUUID()}`,
+  });
+  expect(result).toBeNull();
+});
+
+test("getCourseSuggestionBySlug returns suggestion id by slug and language", async () => {
+  const language = "en";
+  const title = `by-slug-${randomUUID()}`;
+  const slug = toSlug(title);
+
+  const item = await prisma.courseSuggestion.create({
+    data: {
+      description: "Test description",
+      language,
+      slug,
+      title,
+    },
+  });
+
+  const result = await getCourseSuggestionBySlug({ language, slug });
+
+  expect(result).toEqual({ id: item.id });
+});
+
+test("getCourseSuggestionBySlug distinguishes between languages", async () => {
+  const slug = `multi-lang-${randomUUID()}`;
+
+  const enItem = await prisma.courseSuggestion.create({
+    data: {
+      description: "English description",
+      language: "en",
+      slug,
+      title: "English Title",
+    },
+  });
+
+  const ptItem = await prisma.courseSuggestion.create({
+    data: {
+      description: "Portuguese description",
+      language: "pt",
+      slug,
+      title: "Portuguese Title",
+    },
+  });
+
+  const enResult = await getCourseSuggestionBySlug({ language: "en", slug });
+  const ptResult = await getCourseSuggestionBySlug({ language: "pt", slug });
+
+  expect(enResult).toEqual({ id: enItem.id });
+  expect(ptResult).toEqual({ id: ptItem.id });
+  expect(enResult?.id).not.toBe(ptResult?.id);
 });

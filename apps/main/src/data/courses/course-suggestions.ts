@@ -130,3 +130,16 @@ export async function getCourseSuggestionById(
     where: { id },
   });
 }
+
+export async function getCourseSuggestionBySlug({
+  slug,
+  language,
+}: {
+  slug: string;
+  language: string;
+}): Promise<Pick<CourseSuggestion, "id"> | null> {
+  return prisma.courseSuggestion.findUnique({
+    select: { id: true },
+    where: { languageSlug: { language, slug } },
+  });
+}

@@ -65,7 +65,7 @@ export default async function CoursePage({
   }
 
   if (chapters.length === 0) {
-    redirect({ href: `/generate/c/${course.id}`, locale });
+    redirect({ href: `/generate/c/${course.slug}`, locale });
   }
 
   return (

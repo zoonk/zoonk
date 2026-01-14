@@ -38,7 +38,7 @@ Zoonk is a web app where users can learn anything using AI. This app uses AI to 
 - `pnpm typecheck`
 - `pnpm knip`
 - `pnpm test`
-- `pnpm --filter {app} build`
+- `pnpm --filter {app} build` (eg `pnpm --filter main build`)
 - `pnpm --filter {app} build:e2e` (always run this before running e2e tests)
 - `pnpm --filter {app} e2e`
 
@@ -168,12 +168,14 @@ We're using the new [React Compiler](https://react.dev/learn/react-compiler/intr
 
 For detailed guidance on complex workflows, see these skill files:
 
-| Skill               | When to Use                  | File                                          |
-| ------------------- | ---------------------------- | --------------------------------------------- |
-| Compound Components | Building UI components       | `.claude/skills/compound-components/SKILL.md` |
-| Design              | UI/UX, interactions, a11y    | `.claude/skills/design/SKILL.md`              |
-| Testing             | Bug fixes, new features, TDD | `.claude/skills/testing/SKILL.md`             |
-| Translations        | Working with i18n, PO files  | `.claude/skills/translations/SKILL.md`        |
+| Skill                | When to Use                         | File                                           |
+| -------------------- | ----------------------------------- | ---------------------------------------------- |
+| Cache Components     | next.js `cacheComponents` is `true` | `.claude/skills/cache-components/SKILL.md`     |
+| Compound Components  | Building UI components              | `.claude/skills/compound-components/SKILL.md`  |
+| Design               | UI/UX, interactions, a11y           | `.claude/skills/design/SKILL.md`               |
+| React Best Practices | React best practices                | `.claude/skills/react-best-practices/SKILL.md` |
+| Testing              | Bug fixes, new features, TDD        | `.claude/skills/testing/SKILL.md`              |
+| Translations         | Working with i18n, PO files         | `.claude/skills/translations/SKILL.md`         |
 
 ## Updating this document
 

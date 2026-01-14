@@ -16,16 +16,6 @@ export const coursesData = [
   },
   {
     description:
-      "A course with no chapters for E2E testing generation status redirect.",
-    imageUrl: null,
-    isPublished: true,
-    language: "en",
-    normalizedTitle: normalizeString("E2E No Chapters Course"),
-    slug: "e2e-no-chapters-course",
-    title: "E2E No Chapters Course",
-  },
-  {
-    description:
       "Machine learning enables computers to identify patterns and make predictions from data. Covers supervised and unsupervised techniques, neural networks, and model evaluation. Prepares you to work as a machine learning engineer at tech companies, research labs, or startups building AI products.",
     imageUrl:
       "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
