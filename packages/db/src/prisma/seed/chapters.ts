@@ -41,7 +41,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Explore linear regression, logistic regression, and gradient descent algorithms for predictive modeling.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         slug: "regression-algorithms",
         title: "Regression Algorithms",
@@ -49,7 +49,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Understand decision trees, random forests, and ensemble methods for classification and regression tasks.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: false,
         slug: "tree-based-models",
         title: "Tree-Based Models",
@@ -57,7 +57,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Learn the fundamentals of neural networks, activation functions, backpropagation, and deep learning architectures.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: false,
         slug: "neural-networks",
         title: "Neural Networks",
@@ -71,7 +71,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Entenda o que é machine learning, sua história e os diferentes tipos de aprendizado: supervisionado, não supervisionado e por reforço.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         slug: "introducao-ao-machine-learning",
         title: "Introdução ao Machine Learning",
@@ -79,7 +79,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Aprenda sobre datasets, pré-processamento de dados, engenharia de features e como preparar seus dados para treinar modelos.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         slug: "preparacao-de-dados",
         title: "Preparação de Dados",
@@ -87,7 +87,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Explore regressão linear, regressão logística e algoritmos de gradiente descendente para modelagem preditiva.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         slug: "algoritmos-de-regressao",
         title: "Algoritmos de Regressão",
@@ -95,7 +95,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Entenda árvores de decisão, florestas aleatórias e métodos de ensemble para tarefas de classificação e regressão.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: false,
         slug: "modelos-baseados-em-arvores",
         title: "Modelos Baseados em Árvores",
@@ -103,7 +103,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Aprenda os fundamentos de redes neurais, funções de ativação, backpropagation e arquiteturas de deep learning.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: false,
         slug: "redes-neurais",
         title: "Redes Neurais",
@@ -125,7 +125,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Build essential vocabulary for travel, food, family, and daily activities.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         slug: "essential-vocabulary",
         title: "Essential Vocabulary",
@@ -147,7 +147,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Learn about stars, their life cycles, and how they form the building blocks of galaxies.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         slug: "stars-and-galaxies",
         title: "Stars and Galaxies",
@@ -169,7 +169,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Master lists, dictionaries, sets, and tuples for organizing and manipulating data.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         slug: "data-structures",
         title: "Data Structures",
@@ -199,7 +199,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Style your web pages with CSS, including layouts, colors, typography, and responsive design.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         slug: "css-styling",
         title: "CSS Styling",
@@ -221,7 +221,7 @@ const chaptersData: CourseChapters[] = [
       {
         description:
           "Learn techniques for cleaning, transforming, and preparing data for analysis.",
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         slug: "data-wrangling",
         title: "Data Wrangling",

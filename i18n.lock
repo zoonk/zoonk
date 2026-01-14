@@ -352,14 +352,19 @@ checksums:
     Complete%20this%20activity%20to%20reinforce%20your%20learning%20and%20track%20your%20progress./singular: ae9411230fe031bbbd7471a8fde4b17d
     Interactive%20lesson%20with%20exercises%20and%20activities%20to%20help%20you%20learn%20effectively./singular: f74de010a6977351bee6b20c81d90d31
     Lesson/singular: 0369d21b141f7f54c4586224e7e7ae65
+    Generate%20Chapter/singular: 12160bab066da65413de4b511e402446
     Generation%20progress/singular: 4940d589badd32bb89f93989945f68bb
-    Creating%20your%20course/singular: 02c33db1106e7478e5cbd00fa5f20532
     Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
     Redirecting%20to%20your%20course.../singular: 9f268e497368578b98d0125f5ac95902
     Generation%20failed/singular: 70cc0b7e6093afa33e32e6ac474d1fc7
-    Course%20generated/singular: fc6cbef2e4b3ac26d4125c8f67bbb99d
+    Lessons%20generated/singular: 7c32079f95da198e0d7f5351e47eb64f
+    Creating%20your%20lessons/singular: 93571965dc04dcef0bf92f212b3b34d3
     Something%20went%20wrong.%20Please%20try%20again./singular: c62a7718d9a1e9c4ffb707807550f836
     Generating%20lessons/singular: c4cd98341fd568b3cc5ab0daff85f483
+    Finishing%20up/singular: 5db7ffd9f1807c8e5936ddca2fe8d1b7
+    Loading%20chapter%20information/singular: 7a310c88460ccc1d8eb14885361dcfa6
+    Creating%20your%20course/singular: 02c33db1106e7478e5cbd00fa5f20532
+    Course%20generated/singular: fc6cbef2e4b3ac26d4125c8f67bbb99d
     Loading%20course%20information/singular: f2873300c0715a6fc4b3e050d7176037
     Setting%20up%20course/singular: 03144d8ba4e9c555d82e95014047a203
     Generating%20course%20details/singular: 49c28d908a8cb876f14406452c59f05b
@@ -381,21 +386,8 @@ checksums:
     Send%20message/singular: 19e7006870c6e407dece25ee8c9d5333
     Feedback/singular: 6fac88806e0c269a30777b283988c61c
     Send%20feedback%2C%20questions%2C%20or%20suggestions%20to%20us.%20Fill%20in%20the%20form%20below%20or%20email%20us%20directly%20at%20hello%40zoonk.com./singular: 6ce5e55ddeeb7de9480b806358aa5b95
-    History/singular: b0578d6d225f512e42f823fbca2e3c32
-    Math/singular: 0a604ffa5ef57408918fe98ef05eb05a
-    Arts/singular: 9b1845cec1210e57ea990b1a90823228
-    Languages/singular: 2d2a54a7cbbf640ba2aff643a8a3c7c1
-    Health/singular: db2f8a6e827b5436d1eedaf453eaae8a
-    Engineering/singular: 76e841ae8ec3340d7d0a5c2191abbea4
-    Technology/singular: 694755ad06c9b0d9bfcd78e1610670b8
-    Economics/singular: 3931d28200c67977f6ecdf9b2aa61014
-    Culture/singular: 598e8cf9fdd3ed940090e97eac0674b1
-    Communication/singular: 478f3ecaf6419fa9f11f2a83639188c6
-    Society/singular: fc07530371cde440aac96dae7a33aad4
-    Science/singular: 7b1aa37d3f038f226223f85531c688d8
-    Law/singular: 3f04c791596043e899781f74003b9324
-    Business/singular: 7682c7966c6e718836388561e7e68cab
-    Geography/singular: fd93fe516c40f1f2dd96f53a507ce95d
+    Upgrade%20to%20generate/singular: 9c4baffb6ff3a12a322dfe02735ac35c
+    Generating%20content%20with%20AI%20requires%20an%20active%20subscription./singular: ee3e62a18f3437b719f6793dd01d66f8
     Listening/singular: 9e680c44cd88a178b953349ed8881ef2
     Examples/singular: 9dacb7c56bc894e4bcad39f41265e3a0
     Challenge/singular: 7f333a59ee7a3596e27a2f8c3401b764
@@ -420,6 +412,21 @@ checksums:
     Purple/singular: 547ba93b6f68317e2dfbafb16cabc30f
     Black/singular: 0a78282fb00e09a335608b154ffa01de
     Gray/singular: 54ec745c22b59509822468ba82070d74
+    History/singular: b0578d6d225f512e42f823fbca2e3c32
+    Math/singular: 0a604ffa5ef57408918fe98ef05eb05a
+    Arts/singular: 9b1845cec1210e57ea990b1a90823228
+    Languages/singular: 2d2a54a7cbbf640ba2aff643a8a3c7c1
+    Health/singular: db2f8a6e827b5436d1eedaf453eaae8a
+    Engineering/singular: 76e841ae8ec3340d7d0a5c2191abbea4
+    Technology/singular: 694755ad06c9b0d9bfcd78e1610670b8
+    Economics/singular: 3931d28200c67977f6ecdf9b2aa61014
+    Culture/singular: 598e8cf9fdd3ed940090e97eac0674b1
+    Communication/singular: 478f3ecaf6419fa9f11f2a83639188c6
+    Society/singular: fc07530371cde440aac96dae7a33aad4
+    Science/singular: 7b1aa37d3f038f226223f85531c688d8
+    Law/singular: 3f04c791596043e899781f74003b9324
+    Business/singular: 7682c7966c6e718836388561e7e68cab
+    Geography/singular: fd93fe516c40f1f2dd96f53a507ce95d
     "%7Bcategory%7D%20Courses/singular": f82680a650c487992e1025b66f324d4c
     Explore%20all%20%7Bcategory%7D%20courses/singular: b1f2775c67b4a61b3d92b4345b8b852e
     "%7Bcategory%7D%20courses/singular": eafd6f9b1fa97400abe1bfe0c8ee5f19

@@ -8,6 +8,11 @@ import {
   SettingsIcon,
   SparklesIcon,
 } from "lucide-react";
+import {
+  calculateWeightedProgress as calculateProgress,
+  getPhaseStatus as getStatus,
+  type PhaseStatus,
+} from "@/lib/generation-phases";
 import type { StepName } from "@/workflows/course-generation/types";
 
 export type PhaseName =
@@ -18,8 +23,6 @@ export type PhaseName =
   | "savingMetadata"
   | "planningChapters"
   | "generatingLessons";
-
-export type PhaseStatus = "pending" | "active" | "completed";
 
 const PHASE_STEPS: Record<PhaseName, StepName[]> = {
   checkingExisting: ["checkExistingCourse"],
@@ -56,7 +59,6 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   settingUp: SettingsIcon,
 };
 
-// Weighted progress values based on how long each phase typically takes
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
   checkingExisting: 1,
   generatingDetails: 19,
@@ -72,47 +74,16 @@ export function getPhaseStatus(
   completedSteps: StepName[],
   currentStep: StepName | null,
 ): PhaseStatus {
-  const phaseSteps = PHASE_STEPS[phase];
-  const completedCount = phaseSteps.filter((s) =>
-    completedSteps.includes(s),
-  ).length;
-
-  if (completedCount === phaseSteps.length) {
-    return "completed";
-  }
-
-  if (currentStep && phaseSteps.includes(currentStep)) {
-    return "active";
-  }
-
-  if (completedCount > 0) {
-    return "active";
-  }
-
-  return "pending";
+  return getStatus(phase, completedSteps, currentStep, PHASE_STEPS);
 }
 
 export function calculateWeightedProgress(
   completedSteps: StepName[],
   currentStep: StepName | null,
 ): number {
-  let totalProgress = 0;
-
-  for (const phase of PHASE_ORDER) {
-    const status = getPhaseStatus(phase, completedSteps, currentStep);
-    const weight = PHASE_WEIGHTS[phase];
-
-    if (status === "completed") {
-      totalProgress += weight;
-    } else if (status === "active") {
-      const phaseSteps = PHASE_STEPS[phase];
-      const completedCount = phaseSteps.filter((s) =>
-        completedSteps.includes(s),
-      ).length;
-      const partialProgress = (completedCount / phaseSteps.length) * weight;
-      totalProgress += partialProgress;
-    }
-  }
-
-  return Math.round(totalProgress);
+  return calculateProgress(completedSteps, currentStep, {
+    phaseOrder: PHASE_ORDER,
+    phaseSteps: PHASE_STEPS,
+    phaseWeights: PHASE_WEIGHTS,
+  });
 }

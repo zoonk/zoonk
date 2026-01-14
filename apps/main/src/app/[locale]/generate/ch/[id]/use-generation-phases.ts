@@ -2,7 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import type { PhaseStatus } from "@/lib/generation-phases";
-import type { StepName } from "@/workflows/course-generation/types";
+import type { StepName } from "@/workflows/chapter-generation/types";
 import {
   calculateWeightedProgress,
   getPhaseStatus,
@@ -27,13 +27,9 @@ export function useGenerationPhases(
   const t = useExtracted();
 
   const labels: PhaseLabels = {
-    checkingExisting: t("Checking for existing course"),
-    generatingDetails: t("Generating course details"),
+    completing: t("Finishing up"),
     generatingLessons: t("Generating lessons"),
-    loadingInfo: t("Loading course information"),
-    planningChapters: t("Planning chapters"),
-    savingMetadata: t("Saving course metadata"),
-    settingUp: t("Setting up course"),
+    loadingInfo: t("Loading chapter information"),
   };
 
   const phases: PhaseInfo[] = PHASE_ORDER.map((phase) => ({

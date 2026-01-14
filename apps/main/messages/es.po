@@ -9,6 +9,7 @@ msgstr ""
 #: src/app/[locale]/(catalog)/_components/logout-dropdown-item.tsx
 #: src/app/[locale]/(performance)/_components/performance-empty-state.tsx
 #: src/app/[locale]/(settings)/_components/protected-section.tsx
+#: src/components/auth/login-required.tsx
 msgctxt "AyGauy"
 msgid "Login"
 msgstr "Iniciar sesión"
@@ -735,6 +736,7 @@ msgid "Checking if you're logged in..."
 msgstr "Comprobando si has iniciado sesión..."
 
 #: src/app/[locale]/(settings)/_components/protected-section.tsx
+#: src/components/auth/login-required.tsx
 msgctxt "yOFm9C"
 msgid "You need to be logged in to access this page."
 msgstr "Necesitas iniciar sesión para acceder a esta página."
@@ -821,6 +823,7 @@ msgid "Check your plan details and manage your subscription."
 msgstr "Consulta los detalles de tu plan y gestiona tu suscripción."
 
 #: src/app/[locale]/(settings)/subscription/subscription-page.tsx
+#: src/components/subscription/upgrade-cta.tsx
 msgctxt "0h/lPM"
 msgid "Upgrade"
 msgstr "Mejorar"
@@ -836,6 +839,7 @@ msgid "Remove ads, unlock unlimited lessons, and track your progress."
 msgstr "Elimina los anuncios, desbloquea lecciones ilimitadas y haz seguimiento de tu progreso."
 
 #: src/app/[locale]/(settings)/subscription/subscription-page.tsx
+#: src/components/subscription/upgrade-cta.tsx
 msgctxt "s1ZXI0"
 msgid "Unable to update your subscription. Contact us at hello@zoonk.com"
 msgstr "No se pudo actualizar tu suscripción. Contacta con nosotros en contacto@zoonk.com"
@@ -917,10 +921,66 @@ msgctxt "PJivSX"
 msgid "Lesson"
 msgstr "Lección"
 
+#: src/app/[locale]/generate/ch/[id]/generate-chapter-content.tsx
+msgctxt "9GwOlW"
+msgid "Generate Chapter"
+msgstr "Generar capítulo"
+
+#: src/app/[locale]/generate/ch/[id]/generation-client.tsx
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
 msgctxt "/Nrb/0"
 msgid "Generation progress"
 msgstr "Progreso de generación"
+
+#: src/app/[locale]/generate/ch/[id]/generation-client.tsx
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "FazwRl"
+msgid "Try again"
+msgstr "Intentar de nuevo"
+
+#: src/app/[locale]/generate/ch/[id]/generation-client.tsx
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "IEv8EV"
+msgid "Redirecting to your course..."
+msgstr "Redirigiendo a tu curso..."
+
+#: src/app/[locale]/generate/ch/[id]/generation-client.tsx
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "ssRq8D"
+msgid "Generation failed"
+msgstr "La generación falló"
+
+#: src/app/[locale]/generate/ch/[id]/generation-client.tsx
+msgctxt "TFEFX2"
+msgid "Lessons generated"
+msgstr "Lecciones generadas"
+
+#: src/app/[locale]/generate/ch/[id]/generation-client.tsx
+msgctxt "ViO6Dt"
+msgid "Creating your lessons"
+msgstr "Creando tus lecciones"
+
+#: src/app/[locale]/generate/ch/[id]/generation-client.tsx
+#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
+msgctxt "W/5hwr"
+msgid "Something went wrong. Please try again."
+msgstr "Algo salió mal. Por favor, intenta de nuevo."
+
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
+msgctxt "1QgqKE"
+msgid "Generating lessons"
+msgstr "Generando lecciones"
+
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+msgctxt "V4F+/7"
+msgid "Finishing up"
+msgstr "Finalizando"
+
+#: src/app/[locale]/generate/ch/[id]/use-generation-phases.ts
+msgctxt "Z2/Dlq"
+msgid "Loading chapter information"
+msgstr "Cargando información del capítulo"
 
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
 msgctxt "DFlapX"
@@ -928,34 +988,9 @@ msgid "Creating your course"
 msgstr "Creando tu curso"
 
 #: src/app/[locale]/generate/cs/[id]/generation-client.tsx
-msgctxt "FazwRl"
-msgid "Try again"
-msgstr "Intentar de nuevo"
-
-#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
-msgctxt "IEv8EV"
-msgid "Redirecting to your course..."
-msgstr "Redirigiendo a tu curso..."
-
-#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
-msgctxt "ssRq8D"
-msgid "Generation failed"
-msgstr "La generación falló"
-
-#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
 msgctxt "TKVQj2"
 msgid "Course generated"
 msgstr "Curso generado"
-
-#: src/app/[locale]/generate/cs/[id]/generation-client.tsx
-msgctxt "W/5hwr"
-msgid "Something went wrong. Please try again."
-msgstr "Algo salió mal. Por favor, intenta de nuevo."
-
-#: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
-msgctxt "1QgqKE"
-msgid "Generating lessons"
-msgstr "Generando lecciones"
 
 #: src/app/[locale]/generate/cs/[id]/use-generation-phases.ts
 msgctxt "4AKS22"
@@ -1061,6 +1096,16 @@ msgstr "Comentarios"
 msgctxt "eUzs3M"
 msgid "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
 msgstr "Envíanos comentarios, preguntas o sugerencias. Completa el formulario a continuación o escríbenos directamente a contacto@zoonk.com."
+
+#: src/components/subscription/upgrade-cta.tsx
+msgctxt "L90YUq"
+msgid "Upgrade to generate"
+msgstr "Suscríbete para generar"
+
+#: src/components/subscription/upgrade-cta.tsx
+msgctxt "rNPMU8"
+msgid "Generating content with AI requires an active subscription."
+msgstr "Generar contenido con IA requiere una suscripción activa."
 
 #: src/lib/activities.ts
 msgctxt "1TOMnj"

@@ -5,11 +5,11 @@ import {
 } from "./generate-chapter-content";
 
 export default function GenerateChapterPage(
-  _props: PageProps<"/[locale]/generate/ch/[id]">,
+  props: PageProps<"/[locale]/generate/ch/[id]">,
 ) {
   return (
     <Suspense fallback={<GenerateChapterFallback />}>
-      <GenerateChapterContent />
+      <GenerateChapterContent params={props.params} />
     </Suspense>
   );
 }
