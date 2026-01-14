@@ -27,3 +27,15 @@ enum ActivityKind {
   pronunciation
   review
 }
+
+enum StepVisualKind {
+  code
+  image
+  table
+  chart
+  diagram
+  timeline
+  quote
+  audio
+  video
+}
