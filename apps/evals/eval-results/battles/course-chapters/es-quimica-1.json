@@ -1,87 +1,93 @@
 {
   "expectations": "\n      - MUST be in Spanish\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises\n  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%\n\n    ",
-  "judgedAt": "2026-01-15T20:59:47.472Z",
+  "judgedAt": "2026-01-15T22:28:55.961Z",
   "judgments": [
     {
       "judgeId": "anthropic/claude-opus-4.5",
       "rankings": [
         {
-          "anonymousId": "Model J",
-          "modelId": "openai/gpt-5",
-          "reasoning": "Model J provides the most comprehensive and well-structured curriculum with 122 chapters covering all aspects from fundamentals to cutting-edge research, career development, and professional skills. The chapter titles are concise (e.g., 'Termodinámica estadística', 'Cinética química') and descriptions are straight to the point without filler words. It includes advanced topics like QM/MM, machine learning, FAIR standards, automation/robotics, and astroquímica. The progression from basic to expert-level is excellent, with proper inclusion of lab techniques, safety, ethics, regulatory compliance, IP/patents, and career guidance. It represents truly top 1% preparation including research methodology, grant writing, and leadership.",
-          "score": 10
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Extremely comprehensive course with 100 chapters covering all chemistry subdisciplines from fundamentals through advanced topics. Excellent progression from basic (atomic structure, nomenclature) to highly advanced (quantum chemistry, supramolecular, atmospheric chemistry). Includes modern trends like chemistry of flow, nanotechnology, sensors, and forensic chemistry. Strong coverage of both theoretical and practical aspects including lab management, ethics, and career development. Titles are generally concise, though some could be more streamlined. Descriptions are informative without excessive fluff. The breadth and depth positions students for top-tier expertise. Very strong organic, inorganic, analytical, physical, and biochemistry sections. Minor weakness: some redundancy between chapters (e.g., environmental chemistry appears in multiple forms).",
+          "score": 9.2
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model A offers 69 well-organized chapters covering an impressive breadth from fundamentals through advanced specialized topics. Strong coverage of analytical techniques, computational chemistry, materials science, and professional development. Includes unique topics like 'Roboquímica' (lab automation), forensic chemistry, and scientific leadership. Titles are concise and descriptions appropriately detailed without fluff. The inclusion of research management, funding proposals, and ethics shows preparation for academic leadership. Some descriptions could be slightly more concise but overall excellent quality.",
+          "anonymousId": "Model N",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Outstanding 120-chapter curriculum with exceptional depth and modern focus. Includes mathematics for chemists, programming, data science, and machine learning - critical for contemporary chemistry. Excellent coverage of computational methods (DFT, MD, QM/MM), automation/robotics, and HTE. Strong industrial and regulatory perspective with GLP/GMP, PAT, and process chemistry. Modern topics like PFAS, omics, and electrocatalysis well represented. Career and professional development well addressed. Titles are mostly concise. The inclusion of quimiometry, data management (FAIR standards), and gemelos digitales shows forward-thinking curriculum design. Very thorough on analytical and instrumental methods. Minor issues: some overlap and occasional verbose descriptions.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Excellent 88-chapter course with strong emphasis on practical skills, analytical methods, and modern chemistry practice. Outstanding coverage of measurement, uncertainty, and quality assurance - often overlooked in chemistry curricula. Strong on technique-based chapters (chromatography, spectroscopy, electroanalytical). Good balance of theory and application. Includes modern topics like quimioinformática, machine learning, and automation. Strong professional development section with patent/IP and career guidance. The focus on reproducibility and data management is excellent for research preparation. Titles are well-crafted and concise. Descriptions are appropriately detailed. Good integration of safety throughout. Minor weakness: slightly less depth in some advanced theoretical chemistry areas compared to top entries.",
           "score": 9
         },
         {
-          "anonymousId": "Model C",
+          "anonymousId": "Model M",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Model C provides 63 chapters with excellent balance between theory and practice. Strong coverage of analytical methods, materials, photochemistry, and supramolecular chemistry. Good inclusion of career guidance, ethics, GLP documentation, and communication skills. Titles are generally concise ('Enlace químico', 'Equilibrio químico'). The descriptions are informative and mostly avoid filler. Includes modern topics like MOFs/COFs, photocatalysis, and sustainability. Slightly less comprehensive than top models in some advanced computational and research management areas.",
-          "score": 8
+          "reasoning": "Comprehensive 63-chapter course with excellent balance across all chemistry areas. Strong emphasis on modern techniques and applications. Good coverage of analytical methods, including advanced techniques (RMN 2D, microscopy). Excellent inclusion of practical aspects like formulation science, food chemistry, and forensics. Well-structured progression from fundamentals to advanced topics. Titles are appropriately concise. Good coverage of safety, GLP, and ethics. Includes career development. Modern topics like green chemistry, computational methods, and pharmaceutical chemistry well represented. The chapter on 'Formulación y ciencia de productos químicos' shows practical industrial relevance. Could benefit from slightly more depth in some advanced theoretical areas.",
+          "score": 8.8
         },
         {
           "anonymousId": "Model D",
           "modelId": "openai/gpt-5.1-thinking",
-          "reasoning": "Model D has 97 chapters with very detailed coverage across all chemistry subdisciplines. Strong progression from fundamentals through advanced topics. Good coverage of professional skills including communication, ethics, IP, and career guidance. Some titles are slightly verbose (e.g., 'Introducción a la química de soluciones acuosas') but generally acceptable. Excellent coverage of bioinorganic, materials, and environmental chemistry. The chapter on 'Herramientas digitales y programación para químicos' is valuable. Minor issue: some chapters could be consolidated for better flow.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model M",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Model M provides 99 chapters with impressive depth, especially in organic chemistry and biochemistry. Excellent coverage of spectroscopy, analytical methods, and specialized topics like plasma chemistry and chemistry of extreme conditions. Good inclusion of ethics, project management, and career development. However, some titles are slightly verbose, and there's some repetition between chapters (e.g., multiple atmospheric chemistry chapters). The structure could be slightly better organized but content quality is high.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model I offers 72 chapters with solid foundational coverage and good progression to advanced topics. Strong in organic chemistry mechanisms and analytical techniques. Includes photochemistry, nanochemistry, green chemistry, and career development. However, titles sometimes use unnecessary words ('Enlace Químico I: Conceptos Básicos' - 'Conceptos Básicos' is redundant). Some advanced research management and computational topics are less developed compared to top models. Good but not exceptional coverage of latest trends.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model K",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model K provides 63 chapters with comprehensive coverage of fundamental through advanced topics. Reasonable balance between subdisciplines. Includes forensics, computational chemistry, and career guidance. However, many titles use capitalization inconsistently and some are verbose ('Equilibrio Ácido-Base' could just be 'Ácidos y bases'). The descriptions sometimes include words like 'Estudio de' which are unnecessary. Coverage of cutting-edge topics and research skills is less thorough than higher-ranked models.",
-          "score": 4
+          "reasoning": "Strong 93-chapter course with excellent progression and comprehensive coverage. Good balance between theoretical and practical chemistry. Strong on foundational concepts with good depth in organic, inorganic, and physical chemistry. Includes important professional skills (scientific writing, lab management, digital tools, IP). Good coverage of modern topics and trends. Titles are generally concise and clear. The inclusion of 'Herramientas digitales y programación para químicos' is valuable. Good environmental and industrial chemistry coverage. Some chapters could be more specific in their scope. Overall well-structured for building expertise from basics to advanced levels.",
+          "score": 8.7
         },
         {
           "anonymousId": "Model G",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model G has 55 chapters with good coverage of core chemistry topics. Concise titles ('Tabla periódica', 'Cinética química') are a strength. However, some descriptions are too brief and lack specificity. Missing some important advanced topics like detailed analytical validation, research management, and certain specialized areas. The progression is reasonable but the curriculum seems less complete for truly top-tier preparation. Career section exists but is less developed.",
-          "score": 3
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Comprehensive 71-chapter course with strong theoretical foundation and good practical balance. Excellent coverage of spectroscopic and analytical methods. Good inclusion of modern topics like machine learning, automation, and chemoinformatics. Strong career development section with multiple chapters. Good coverage of quality assurance and regulatory aspects. Titles are mostly concise. Strong organic synthesis section with retrosynthesis and organometallic chemistry. Good environmental and pharmaceutical chemistry coverage. Some chapters could benefit from more specific focus. The progression is logical and builds well from fundamentals to mastery.",
+          "score": 8.6
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Model B provides 50 chapters covering essential chemistry topics. The coverage is broad but lacks depth in many areas. Many descriptions are quite brief. Missing important topics like detailed spectroscopy interpretation, computational methods beyond basics, and professional skills. 'Electro química' has a typo (should be 'Electroquímica'). Limited coverage of modern trends and research methodology. The curriculum would provide solid intermediate knowledge but falls short of top-tier preparation.",
-          "score": 2
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Solid 72-chapter course with comprehensive coverage of core chemistry areas. Good structure progressing from fundamentals through advanced topics. Strong organic chemistry section with dedicated chapters for each major topic. Good coverage of instrumental analysis and spectroscopy. Includes modern topics like green chemistry, computational methods, and nanochemistry. Titles are appropriately concise. Good inclusion of safety and professional development. The heterocycles chapter is a nice specific addition. Some areas could use more depth, particularly in industrial applications and modern trends. Overall well-designed for comprehensive chemistry education.",
+          "score": 8.4
         },
         {
           "anonymousId": "Model L",
-          "modelId": "google/gemini-2.5-pro",
-          "reasoning": "Model L has 52 chapters with decent foundational coverage. However, several titles are verbose ('Fundamentos de la Química y la Materia', 'Medición y Análisis de Datos en Química'). Some descriptions contain filler words ('El Sistema Internacional de Unidades (SI)' in description repeats title content). Limited coverage of advanced computational chemistry, modern analytical techniques, and specialized applications. Career section is present but brief. Does not adequately prepare for top 1% expertise.",
-          "score": 1
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good 64-chapter course with solid coverage of fundamental and advanced chemistry. Well-structured progression through organic, inorganic, analytical, and biochemistry. Includes important modern topics like computational chemistry, nanotechnology, and photochemistry. Good inclusion of safety, ethics, and professional development. Titles are mostly concise. Some areas feel slightly condensed compared to more comprehensive courses. Good emphasis on spectroscopy and analytical methods. The photochemistry and supramolecular chemistry chapters add valuable advanced content. Could benefit from more detail in some industrial and applied areas.",
+          "score": 8.3
         },
         {
           "anonymousId": "Model H",
-          "modelId": "xai/grok-4-fast-reasoning",
-          "reasoning": "Model H provides only 36 chapters, which is insufficient for comprehensive chemistry education. Coverage is too superficial in many areas. Titles like 'Cinetica de las Reacciones' have typos (should be 'Cinética'). Missing many important advanced topics, specialized applications, and professional development content. The brief curriculum would not prepare students for advanced certifications or research leadership. Structure jumps abruptly between topics.",
-          "score": 1
+          "modelId": "google/gemini-2.5-pro",
+          "reasoning": "Well-organized 54-chapter course covering all major chemistry areas. Good balance of theory and practice. Strong organic chemistry section with logical progression. Includes important topics like green chemistry, materials, and photochemistry. Good coverage of spectroscopic methods. Titles and descriptions are generally clear and concise. The laboratory techniques section is practical. Career chapter included. However, compared to top entries, lacks some depth in modern computational methods, industrial chemistry, and emerging trends. The overall scope is somewhat narrower than the most comprehensive entries.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-2.5-flash",
+          "reasoning": "Good 41-chapter course covering essential chemistry topics. Well-organized with clear progression. Strong on fundamentals. Includes modern topics like biotechnology, nanotechnology, and green chemistry. Good ethics and career chapters. Titles are mostly concise. However, the chapter count is relatively low, meaning some areas lack depth. Some chapters try to cover too much (e.g., combined biotechnology and bioengineering). Missing some advanced specialized topics found in more comprehensive courses. Adequate for a solid chemistry education but may not fully prepare for top 1% expertise.",
+          "score": 7.8
         },
         {
           "anonymousId": "Model E",
-          "modelId": "google/gemini-2.5-flash",
-          "reasoning": "Model E has 41 chapters with basic coverage but inconsistent capitalization in titles (uses Title Case which is not typical Spanish convention). Some titles are verbose ('Química Orgánica I: Fundamentos y Nomenclatura'). The description for 'Fundamentos de Química y Medición' repeats obvious information. Missing detailed coverage of many advanced topics, analytical validation, and research skills. Career development section is present but superficial. Not comprehensive enough for top-tier preparation.",
-          "score": 1
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Compact 34-chapter course that covers core chemistry areas. Good fundamentals coverage. Includes important topics like computational chemistry and safety. Titles are appropriately concise. However, the limited chapter count means significant depth is missing in many areas. Several important specialized topics are absent or under-covered. Biochemistry receives minimal treatment. Missing many advanced analytical techniques and modern trends. Career chapter is brief. While well-organized, the scope is insufficient for preparing top-tier chemistry expertise.",
+          "score": 7.2
         },
         {
           "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model F provides only 34 chapters, which is quite limited. Uses inconsistent capitalization (Title Case). Missing many essential advanced topics like detailed organic mechanisms, materials science depth, and research methodology. The coverage would provide intermediate understanding but is insufficient for expert-level preparation. Career section exists but is minimal. Many specialized applications and modern trends are absent.",
-          "score": 1
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "50-chapter course with adequate coverage of chemistry fundamentals and some advanced topics. Includes important modern topics like supramolecular chemistry and nanomaterials. Some typos noted ('Electro química' should be one word). Laboratory safety included early which is good. However, coverage is uneven - some areas well-developed while others feel shallow. Missing depth in several important areas. The 'Carrera en química' chapter is quite brief. Some titles could be more specific. Overall functional but lacks the comprehensive depth of top entries.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4-fast-reasoning",
+          "reasoning": "Compact 36-chapter course that attempts to cover chemistry comprehensively but lacks necessary depth. Chapters are often too broad (e.g., 'Tendencias Avanzadas en Química' tries to cover too much). Missing many specialized topics needed for advanced expertise. The biochemistry coverage is split oddly between basic and advanced. Limited coverage of modern computational and data science methods. Career chapter present but brief. Titles are inconsistent in capitalization. While the course structure is logical, the limited scope would not adequately prepare students for top-level chemistry work or advanced studies.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "55-chapter course with coverage of major chemistry areas but descriptions are often too brief and vague. Many descriptions are just keyword lists rather than informative content. For example, 'Estructura y reactividad orgánica' description says only 'Sustitución, adición, eliminación, radicales, carbocationes y rutas mecanísticas' - lacking context. Some chapters are overly broad. The organization is somewhat fragmented. While covering many topics, the lack of descriptive detail makes it difficult to assess true depth. Titles are generally acceptable but some are vague. Career chapter included but overall preparation for top expertise is questionable.",
+          "score": 6.3
         }
       ]
     },
@@ -89,82 +95,88 @@
       "judgeId": "google/gemini-3-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model J",
+          "anonymousId": "Model N",
           "modelId": "openai/gpt-5",
-          "reasoning": "This model provides the most comprehensive and expert-level curriculum, perfectly aligning with the 'Top 1%' and 'PhD/Leadership' requirements. It explicitly includes essential supporting fields like Mathematics for Chemists and an extensive section on Data Science, Machine Learning, and Programming within Chemistry, which represents the cutting edge of the field. Its professional section is outstanding, covering grant writing, lab leadership, intellectual property, and regulatory compliance in detail. The progression is logical, deep, and covers every requested aspect without fluff.",
+          "reasoning": "This model provides the most comprehensive and advanced curriculum, perfectly fitting the 'top 1%' and 'PhD preparation' requirements. It uniquely includes necessary mathematical foundations ('Matemáticas para químicos'), adopts a mastery-level mechanistic approach to organic chemistry (rather than the basic functional group march), and extensively covers the latest trends such as machine learning in chemistry, generative design, and digital twins. The titles are professional and concise.",
           "score": 10
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model A is an excellent, concise, yet highly advanced curriculum. It distinguishes itself by integrating critical leadership skills such as 'Research Project Management', 'Funding and Proposal Writing', and 'Lab Automation/Robochemistry'. The technical depth is high (covering DFT, advanced spectroscopy), and the titles are perfectly concise. It is a very close second, slightly edged out by Model J's inclusion of a dedicated math foundation and broader data science focus.",
-          "score": 9.8
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "An excellent output that bridges the gap between academic chemistry and industrial mastery. It includes modern, high-value topics like Process Analytical Technology (PAT), automation, flow chemistry, and FAIR data standards. The progression is logical and the titles are concise. It is slightly less theoretically exhaustive than Model N but arguably more focused on industrial leadership.",
+          "score": 9.5
         },
         {
-          "anonymousId": "Model M",
+          "anonymousId": "Model A",
           "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Model M offers a very thorough 87-chapter curriculum that covers complex systems, flow chemistry, and extensive biochemical pathways. It addresses the leadership requirement well with chapters on project management and regulatory affairs. It is a strong, modern curriculum, though its structure is slightly more traditional compared to J's heavy emphasis on the computational/data revolution in chemistry.",
+          "reasoning": "A very strong curriculum with impressive breadth, covering specific niche fields like cosmetic, forensic, and planetary chemistry. It is very extensive (~84 chapters). However, its approach to organic chemistry follows a traditional undergraduate structure (organizing by functional groups) rather than the more advanced mechanistic approach seen in Model N. Still, it is a high-quality output.",
           "score": 9
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model C delivers a solid, well-rounded curriculum that covers all major bases, including a strong section on professional skills (management, ethics, communication). It balances the technical and soft skills well. It ranks below the top three because it is slightly less granular in the advanced emerging trends (like AI/ML or automation) compared to J and A.",
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "A solid, comprehensive curriculum that places good emphasis on professional skills, quality control, and data management. It covers the necessary ground well but feels slightly less cutting-edge regarding the 'latest trends' (AI/ML) compared to N and M.",
           "score": 8.5
         },
         {
           "anonymousId": "Model G",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "This model has a strong industrial and engineering flavor (reactor engineering, process control), which is excellent for the 'leading complex projects' requirement. It is concise and well-structured. However, it feels slightly less comprehensive in the theoretical and computational depth compared to the models ranked above it.",
-          "score": 7.5
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Provides a good pathway to advanced topics and includes specific chapters on funding and research management, which are great for the 'leading complex projects' requirement. The structure is good, though slightly less cohesive and modern than the top models.",
+          "score": 8
         },
         {
           "anonymousId": "Model D",
           "modelId": "openai/gpt-5.1-thinking",
-          "reasoning": "Model D is notable for including specific chapters on digital tools, programming, and intellectual property, which are vital for the target audience. However, the pacing is a bit slow, dedicating a large portion of the early chapters to very basic general chemistry concepts (splitting basics into many chapters), which leaves less room for advanced mastery compared to the higher-ranked models.",
-          "score": 6.5
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model I is a high-quality academic curriculum, particularly strong in organic and biological chemistry. However, it lacks specific chapters dedicated to the business, leadership, and management aspects of the field (grants, project management) required by the prompt to 'lead complex projects', focusing almost exclusively on technical scientific content.",
-          "score": 5.5
+          "reasoning": "The content is actually quite good and comprehensive (75 chapters), but the titles are consistently verbose (e.g., 'Relación entre energía libre, potencial y equilibrio'), violating the conciseness constraint relative to the top models.",
+          "score": 7
         },
         {
           "anonymousId": "Model K",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model K provides a standard, competent university-level curriculum. It covers the necessary scientific topics well but lacks the 'mastery/expert' edge found in the top models. It misses modern trends like flow chemistry or machine learning and has limited focus on leadership skills.",
-          "score": 4.5
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-2.5-flash",
-          "reasoning": "Model E is decent but somewhat generic. It groups vast topics into single chapters (e.g., 'Química Orgánica I-IV'), which suggests a lack of the granular depth needed for a 'Top 1%' course. The professional skills section is present but basic.",
-          "score": 3.5
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "xai/grok-4-fast-reasoning",
-          "reasoning": "This model is too brief for the stated goals. While the titles are concise, covering the entire field of chemistry to a PhD/Mastery level in just 36 chapters results in superficial coverage of advanced topics.",
-          "score": 3
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "A solid standard undergraduate curriculum. It covers the basics well but lacks the depth and advanced specialization required to truly reach the 'top 1%' or PhD level compared to the models above.",
+          "score": 6.5
         },
         {
           "anonymousId": "Model L",
-          "modelId": "google/gemini-2.5-pro",
-          "reasoning": "Model L fails on the specific negative constraint regarding title conciseness (e.g., 'Fundamentos de la Química y la Materia' instead of just 'Materia'). The content is a standard undergraduate overview and does not reach the advanced leadership levels required.",
-          "score": 2.5
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Competent coverage of standard topics, but the titling convention is repetitive and the scope is strictly undergraduate.",
+          "score": 6
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Model B is a basic undergraduate outline. It lacks depth in advanced topics and completely misses the leadership, management, and high-level professional skills required by the prompt.",
-          "score": 1.5
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-2.5-pro",
+          "reasoning": "Standard undergraduate content with titles that are often too wordy or fluffy ('Fundamentos de la Química y la Materia'). Lacks advanced depth.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Adequate overview, but the later chapters become generic ('Avances recientes en química') rather than teaching specific advanced skills.",
+          "score": 5.5
         },
         {
           "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Too basic. Topics like 'Técnicas básicas de laboratorio' as a chapter in a mastery course feel out of place, and the overall depth is insufficient.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-2.5-flash",
+          "reasoning": "Basic undergraduate overview. Far too short to meet the 'mastery' expectation.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model E",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Model F is the weakest output. It presents a very basic curriculum that would barely satisfy a standard bachelor's degree, failing significantly to meet the 'mastery', 'PhD ready', and 'lead complex projects' expectations.",
-          "score": 1
+          "reasoning": "Very basic structure, missing significant advanced content.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4-fast-reasoning",
+          "reasoning": "The weakest model. It is very short (36 chapters), has logical gaps (Basic Biochem followed immediately by Advanced Biochem), and uses fluffy titles.",
+          "score": 2
         }
       ]
     },
@@ -172,82 +184,88 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model J",
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Trayectoria progresiva muy bien diseñada desde metrología/uncertidumbre hasta síntesis avanzada, química computacional, automatización/DoE, QA/QC, seguridad de procesos (HAZOP), datos/FAIR y carrera. Descripciones concisas y técnicas, cubre tendencias (datos/ML, automatización) sin convertirse en lista caótica. Cumple “de cero a liderazgo” de forma realista.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model N",
           "modelId": "openai/gpt-5",
-          "reasoning": "Cobertura más completa y moderna: desde fundamentos hasta nivel de investigación, incluyendo matemáticas para químicos, metrología/calibración, PAT, ELN/LIMS, automatización/HTE, muestreo mejorado (QM/MM), contaminantes emergentes, LCA y ciencia de datos/ML. Títulos mayormente concisos y sin vendors; descripciones densas y técnicas. Cumple bien el objetivo de preparar para proyectos complejos y estudios avanzados. Único punto débil: es muy largo y algunas secciones (p. ej., forense/cosméticos/astroquímica) pueden sentirse opcionales, pero siguen siendo relevantes para “todo lo necesario”.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Extremadamente amplio y orientado a nivel avanzado/industria/academia: instrumentación, técnicas analíticas, computacional, procesos, regulación (GLP/GMP/ICH), gestión de proyectos, automatización, ML/chemoinformática, etc. Muy alineado con “top 1%”. Debilidad principal: arranca demasiado arriba para principiantes (poca base de medición/estequiometría/gases/soluciones al inicio) y la progresión puede sentirse menos pedagógica; además incluye acrónimos/métodos específicos (HF, MP2, CC) que pueden ser correctos pero elevan la barrera inicial.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model M",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Ruta de aprendizaje muy extensa y progresiva, con profundidad notable (flujo continuo, plasma, alta presión, sistemas complejos, química regulatoria, sostenibilidad industrial). Incluye tendencias actuales y temas de frontera. Penaliza por exceso de granularidad y cierto “scope creep” (p. ej., química clínica, cosmética, planetas) que puede dispersar el objetivo central; aun así, es coherente con formación de alto nivel.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model I",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Muy fuerte y estructurado: cubre desde cero (mediciones, estructura atómica) hasta temas avanzados (teoría de grupos, estado sólido avanzado, RMN 2D, mecánica estadística, computacional, supramolecular, nano, verde, forense, industrial). Buena progresión y suficiente rigor para posgrado/certificaciones. Le falta más énfasis en tendencias muy recientes (automatización, IA a nivel práctico, PAT, gestión avanzada de proyectos) comparado con los mejores.",
-          "score": 7
+          "reasoning": "Cobertura extraordinariamente amplia y moderna (PAT, ELN/LIMS, FAIR, HTE/robótica, contaminantes emergentes, ultrarrápidas, etc.) y profundidad de posgrado. Sin embargo, introduce “Matemáticas para químicos” muy exigente temprano (no necesariamente malo, pero choca con “cero conocimiento” si no se encuadra), y el plan es tan extenso/denso que parece más un temario enciclopédico que un camino pedagógico curado. Aun así, es de lo más cercano a “todo lo necesario”.",
+          "score": 9.2
         },
         {
           "anonymousId": "Model D",
           "modelId": "openai/gpt-5.1-thinking",
-          "reasoning": "Contenido sólido, progresivo y detallado, con buen equilibrio entre fundamentos, orgánica/inorgánica/fisicoquímica/analítica, ingeniería de reactores y habilidades profesionales (literatura, escritura, PI). Incluye herramientas digitales y tendencias emergentes. Baja por ser menos “estado del arte” en IA/automatización y por descripciones a veces largas (algo de ‘fluff’ leve), aunque en general son técnicas.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Muy buen plan integral y moderno: incluye preparación de muestras, validación/calidad, formulación, modelado de procesos, fotoquímica, materiales avanzados, seguridad/GLP/documentación, ética y liderazgo. Buena progresión desde fundamentos. Pierde puntos por no llegar tan lejos en temas de frontera (automatización/HTE, ELN/LIMS, ML más profundo) como J/A y por cierta mezcla de niveles en algunos capítulos intermedios.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model K",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Cobertura amplia y bastante completa para grado+; incluye coordinación, organometálica, nano, computacional, fotoquímica, supramolecular, analítica y bioquímica, además de seguridad/ética/comunicación. Sin embargo, queda corto para “maestría/PhD-ready” en tendencias recientes (IA/automatización, prácticas reproducibles avanzadas, gestión de proyectos complejos) y algunas áreas están tratadas de forma más estándar.",
-          "score": 4
-        },
-        {
-          "anonymousId": "Model L",
-          "modelId": "google/gemini-2.5-pro",
-          "reasoning": "Bien estructurado y progresivo para una formación universitaria robusta; incluye analítica instrumental, cuántica, termo estadística, computacional, verde, seguridad, metodología de investigación y carrera. No obstante, es menos profundo y menos actualizado en tendencias (IA aplicada, automatización, datos) y varias descripciones son más explicativas/verbosas de lo pedido.",
-          "score": 3
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Cubre fundamentos y varias áreas avanzadas (cuántica, superficies, nano, verde, materiales), pero presenta problemas de concisión y precisión en títulos/terminología: repeticiones y redundancias (p. ej., cromatografía menciona GC y “cromatografía de gases” a la vez), uso de siglas/términos de herramienta en títulos (GC, HPLC, TLC, AAS, ICP), y algunas erratas (“Electro química”, “super conductores”). Menos alineado con la restricción de no usar vendors/herramientas específicas en títulos salvo casos muy establecidos.",
-          "score": 2
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-2.5-flash",
-          "reasoning": "Ruta general correcta, pero demasiado genérica para el objetivo de liderazgo en proyectos complejos y preparación tipo posgrado. Varias secciones son amplias y poco técnicas; falta profundidad en analítica avanzada, computacional moderna, gestión de datos/calidad, y tendencias de frontera. Se percibe más como plan de licenciatura básica.",
-          "score": 1
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Cobertura aceptable de química general + orgánica/inorgánica/analítica y algo de computacional/industrial. Pero es bastante superficial para el estándar exigido (top 1%, PhD-ready), agrupa en exceso (p. ej., ‘Seguridad y Ética’ en un solo capítulo), no incluye tendencias recientes (IA, automatización, ciencia de datos), y la progresión hacia “maestría” es limitada.",
-          "score": 1.5
+          "reasoning": "Ruta extensa y bastante coherente desde fundamentos hasta investigación/liderazgo, con buena fisicoquímica, analítica, procesos e industrial. Incluye tendencias emergentes y habilidades profesionales. Menos moderno que B/N en datos/automatización y con algunos títulos algo largos, pero globalmente sólido para preparación avanzada.",
+          "score": 8.8
         },
         {
           "anonymousId": "Model G",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Lista amplia pero con descripciones muy vagas y poco operativas (muchos términos generales sin detalle), lo que no cumple ‘sin fluff’/‘todo lo necesario’. Repite áreas sin un hilo claro (varias de espectroscopia/avanzada) y carece de componentes clave de preparación avanzada (calidad/regulación, reproducibilidad, computación moderna con rigor, gestión de proyectos complejos).",
-          "score": 2.5
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Muy fuerte en nivel avanzado (ab initio/DFT, instrumentación, QA, GLP/GMP/ICH, ML/chemoinformática, automatización, gestión y financiación). Pero falla parcialmente el requisito de empezar desde cero: arranca en “Fundamentos de la materia” ya técnico, y se salta módulos básicos (medición, estequiometría/gases/soluciones como capítulos dedicados). Gran plan para nivel intermedio→élite, menos para principiantes.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Estructura progresiva clara y bastante completa, integra orgánica moderna, analítica con calidad de datos, procesos, formulación y materiales, además de tendencias (MOFs, baterías, etc.). Menos cobertura explícita de gobernanza de datos/ML/automatización que B/N/G, pero sigue siendo fuerte y orientado a dominio profesional.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Buen recorrido clásico con bastante profundidad (teoría de grupos, RMN 2D, superficies, computacional, forense, verde). Falta más contenido de tendencias actuales (datos/automatización/ML, procesos modernos, reproducibilidad) y de liderazgo/gestión de proyectos; aun así es un plan robusto para alta competencia técnica.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Cobertura enorme y detallada, incluye áreas avanzadas y especialidades. Problemas: excesivamente largo (parece catálogo), mezcla de subcampos sin curación pedagógica, y añade capítulos de “inicio de carrera”/CV/networking (permitido, pero es más fluff vs objetivo técnico). También menciona herramientas/procesos específicos (p.ej., baterías Li-ion) dentro de descripciones—aceptable pero se aleja de títulos neutros; en general, más enciclopedia que ruta didáctica.",
+          "score": 7.4
         },
         {
           "anonymousId": "Model H",
+          "modelId": "google/gemini-2.5-pro",
+          "reasoning": "Buen curso general con fundamentos sólidos y progresión razonable hacia analítica, computacional, materiales y sostenibilidad. Pero se queda corto para “top 1%”: poca cobertura de química computacional moderna, datos/ML, diseño experimental avanzado, procesos/seguridad de procesos y liderazgo técnico de proyectos complejos.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-2.5-flash",
+          "reasoning": "Estructura clara tipo “química general + panoramas”. Incluye ética, gestión de proyectos y tendencias emergentes, pero con poca profundidad en áreas avanzadas (p.ej., organometálica moderna, quimiometría seria, validación/regulación detallada, simulación avanzada). Adecuado para base amplia, insuficiente para maestría/PhD sin mucho más.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Temario clásico bien ordenado y relativamente completo (orgánica, analítica, inorgánica, materiales, computacional, forense). Aun así, profundidad limitada en tendencias recientes (automatización, ML, datos FAIR, PAT), y poca preparación explícita para liderar proyectos muy complejos (gestión, calidad, seguridad de procesos).",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Cobertura razonable de química general + orgánica/inorgánica/analítica/materiales; incluye industrial/ambiental y carrera. Pero es demasiado resumido y con huecos grandes para nivel avanzado (poca quimiometría, instrumentación avanzada, computacional moderna, diseño experimental, catálisis moderna, regulación/calidad profunda).",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Amplio y con algunos temas modernos (QSAR, biotecnología, ingeniería de reactores), pero los títulos/descripciones son genéricos y poco accionables; progresión menos cuidada y mucho contenido queda como etiquetas. Falta detalle para formar dominio real y preparación sólida para certificaciones avanzadas.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Incluye errores claros respecto a requisitos: usa vendors en títulos (GC, HPLC, TLC, AAS, ICP) explícitamente prohibidos. Además, varios títulos/descripciones tienen problemas de calidad (“Electro química” separado, duplicación de cromatografía de gases) y el nivel avanzado es superficial. Por estas violaciones, cae al final pese a cubrir muchos temas.",
+          "score": 4.2
+        },
+        {
+          "anonymousId": "Model C",
           "modelId": "xai/grok-4-fast-reasoning",
-          "reasoning": "Estructura razonable pero demasiado resumida y con redundancias (química cuántica aparece dos veces; termo avanzada separada sin continuidad clara). Falta profundidad para certificaciones/posgrado y casi no cubre tendencias actuales (IA, automatización, datos, regulatorio avanzado). También hay errores/acentos (“Cinetica”).",
-          "score": 2.2
+          "reasoning": "Demasiado corto y generalista; no proporciona una ruta progresiva hasta maestría/PhD ni cubre con suficiente detalle tendencias, instrumentación avanzada, calidad/regulación, modelado, diseño experimental, etc. Descripciones vagas y faltan muchos componentes para liderazgo de proyectos complejos.",
+          "score": 4
         }
       ]
     }

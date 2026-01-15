@@ -13,12 +13,6 @@ const battleRankingSchema = z.object({
   rankings: z.array(modelRankingSchema),
 });
 
-function validateNoTies(rankings: ModelRanking[]): boolean {
-  const scores = rankings.map((r) => r.score);
-  const uniqueScores = new Set(scores);
-  return scores.length === uniqueScores.size;
-}
-
 type AnonymizedOutput = {
   anonymousId: string;
   output: string;
@@ -26,13 +20,11 @@ type AnonymizedOutput = {
 
 export async function generateBattleRankings(params: {
   judgeId: string;
-  testCaseId: string;
   expectations: string;
   anonymizedOutputs: AnonymizedOutput[];
   mapping: Array<{ anonymousId: string; modelId: string }>;
 }): Promise<ModelRanking[]> {
-  const { judgeId, testCaseId, expectations, anonymizedOutputs, mapping } =
-    params;
+  const { judgeId, expectations, anonymizedOutputs, mapping } = params;
 
   const outputsSection = anonymizedOutputs
     .map(
@@ -49,7 +41,7 @@ ${expectations}
 ${outputsSection}
 
 Evaluate each model's output against the expectations and rank them from best to worst.
-Remember: Each model MUST receive a DIFFERENT score (no ties allowed).
+Ties are allowed if outputs are truly equivalent in quality.
 `;
 
   const { output: result } = await generateText({
@@ -71,13 +63,6 @@ Remember: Each model MUST receive a DIFFERENT score (no ties allowed).
       score: ranking.score,
     };
   });
-
-  if (!validateNoTies(rankings)) {
-    console.warn(
-      `Judge ${judgeId} returned tied scores for ${testCaseId}, requesting re-evaluation...`,
-    );
-    // Could implement retry logic here, but for now we'll accept and log
-  }
 
   return rankings;
 }

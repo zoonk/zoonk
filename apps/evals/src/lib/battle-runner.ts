@@ -106,6 +106,16 @@ function getMissingJudges(matchup: BattleMatchup): string[] {
   return BATTLE_JUDGES_CONFIG.filter((j) => !existingJudges.has(j));
 }
 
+function hasNewModels(
+  existingMatchup: BattleMatchup,
+  currentModelIds: string[],
+): boolean {
+  const existingModelIds = new Set(
+    extractMappingFromMatchup(existingMatchup).map((m) => m.modelId),
+  );
+  return currentModelIds.some((modelId) => !existingModelIds.has(modelId));
+}
+
 async function runBattleForTestCase(
   task: Task,
   testCase: TestCase,
@@ -134,12 +144,26 @@ async function runBattleForTestCase(
     );
   }
 
+  // Check if there are new models since the last run
+  const currentModelIds = modelOutputsForTestCase.map((m) => m.modelId);
+  const newModelsDetected =
+    existingMatchup && hasNewModels(existingMatchup, currentModelIds);
+
+  if (newModelsDetected) {
+    console.info(
+      `New models detected for ${testCaseId}, re-running all judges`,
+    );
+  }
+
+  // If new models detected, we need to re-run with fresh anonymization
+  const effectiveExistingMatchup = newModelsDetected ? null : existingMatchup;
+
   // Use existing mapping or create new one
   let mapping: Array<{ anonymousId: string; modelId: string }>;
   let anonymizedOutputs: Array<{ anonymousId: string; output: string }>;
 
-  if (existingMatchup) {
-    mapping = extractMappingFromMatchup(existingMatchup);
+  if (effectiveExistingMatchup) {
+    mapping = extractMappingFromMatchup(effectiveExistingMatchup);
     anonymizedOutputs = modelOutputsForTestCase.map((item) => {
       const mapEntry = mapping.find((m) => m.modelId === item.modelId);
       return {
@@ -154,12 +178,12 @@ async function runBattleForTestCase(
   }
 
   // Determine which judges need to run
-  const judgesToRun = existingMatchup
-    ? getMissingJudges(existingMatchup)
+  const judgesToRun = effectiveExistingMatchup
+    ? getMissingJudges(effectiveExistingMatchup)
     : [...BATTLE_JUDGES_CONFIG];
 
-  if (judgesToRun.length === 0 && existingMatchup) {
-    return existingMatchup;
+  if (judgesToRun.length === 0 && effectiveExistingMatchup) {
+    return effectiveExistingMatchup;
   }
 
   // Get rankings from each judge in parallel
@@ -170,7 +194,6 @@ async function runBattleForTestCase(
         expectations: testCase.expectations,
         judgeId,
         mapping,
-        testCaseId,
       });
 
       return {
@@ -180,9 +203,9 @@ async function runBattleForTestCase(
     }),
   );
 
-  // Merge with existing judgments
-  const allJudgments = existingMatchup
-    ? [...existingMatchup.judgments, ...newJudgments]
+  // Merge with existing judgments (only if we're not re-running due to new models)
+  const allJudgments = effectiveExistingMatchup
+    ? [...effectiveExistingMatchup.judgments, ...newJudgments]
     : newJudgments;
 
   const matchup: BattleMatchup = {
