@@ -122,7 +122,7 @@ export const EVAL_MODELS: ModelConfig[] = [
     reasoningEffort: "auto",
   },
   {
-    id: "openai/gpt-5.2",
+    id: "openai/gpt-5.2:high",
     inputCost: 1.75,
     name: "gpt-5.2",
     outputCost: 14,
@@ -200,4 +200,13 @@ export function getModelDisplayName(model: ModelConfig): string {
 
 export function getModelById(modelId: string): ModelConfig | undefined {
   return EVAL_MODELS.find((model) => model.id === modelId);
+}
+
+/**
+ * Get the base model ID to pass to the AI gateway.
+ * Strips any reasoning effort suffix (e.g., "openai/gpt-5.2:high" -> "openai/gpt-5.2")
+ */
+export function getGatewayModelId(modelId: string): string {
+  const colonIndex = modelId.indexOf(":");
+  return colonIndex === -1 ? modelId : modelId.slice(0, colonIndex);
 }

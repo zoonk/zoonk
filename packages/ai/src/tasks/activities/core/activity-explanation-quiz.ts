@@ -1,6 +1,7 @@
 import "server-only";
 
 import { generateText, stepCountIs } from "ai";
+import { buildProviderOptions, type ReasoningEffort } from "../../../types";
 
 import { type QuizQuestion, quizTools } from "../_tools/quiz";
 import systemPrompt from "./activity-explanation-quiz.prompt.md";
@@ -29,6 +30,7 @@ export type ActivityExplanationQuizParams = {
   explanationSteps: Array<{ title: string; text: string }>;
   model?: string;
   useFallback?: boolean;
+  reasoningEffort?: ReasoningEffort;
 };
 
 export async function generateActivityExplanationQuiz({
@@ -40,6 +42,7 @@ export async function generateActivityExplanationQuiz({
   explanationSteps,
   model = DEFAULT_MODEL,
   useFallback = true,
+  reasoningEffort,
 }: ActivityExplanationQuizParams) {
   const formattedExplanationSteps = explanationSteps
     .map((step, index) => `${index + 1}. ${step.title}: ${step.text}`)
@@ -55,12 +58,16 @@ ${formattedExplanationSteps}
 
 Generate quiz questions that test understanding of these concepts. Use the available tools to create questions in appropriate formats. Aim for 4-8 questions covering the key concepts.`;
 
+  const providerOptions = buildProviderOptions({
+    fallbackModels: FALLBACK_MODELS,
+    reasoningEffort,
+    useFallback,
+  });
+
   const { steps, usage } = await generateText({
     model,
     prompt: userPrompt,
-    providerOptions: {
-      gateway: { models: useFallback ? FALLBACK_MODELS : [] },
-    },
+    providerOptions,
     stopWhen: stepCountIs(10),
     system: systemPrompt,
     toolChoice: "required",

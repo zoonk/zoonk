@@ -2,6 +2,7 @@ import "server-only";
 
 import { generateText, Output } from "ai";
 import { z } from "zod";
+import { buildProviderOptions, type ReasoningEffort } from "../../types";
 import systemPrompt from "./course-suggestions.prompt.md";
 
 const DEFAULT_MODEL =
@@ -31,6 +32,7 @@ export type CourseSuggestionsParams = {
   prompt: string;
   model?: string;
   useFallback?: boolean;
+  reasoningEffort?: ReasoningEffort;
 };
 
 export async function generateCourseSuggestions({
@@ -38,19 +40,24 @@ export async function generateCourseSuggestions({
   prompt,
   model = DEFAULT_MODEL,
   useFallback = true,
+  reasoningEffort,
 }: CourseSuggestionsParams) {
   const userPrompt = `
     LANGUAGE: ${language}
     USER_INPUT: ${prompt}
   `;
 
+  const providerOptions = buildProviderOptions({
+    fallbackModels: FALLBACK_MODELS,
+    reasoningEffort,
+    useFallback,
+  });
+
   const { output, usage } = await generateText({
     model,
     output: Output.object({ schema }),
     prompt: userPrompt,
-    providerOptions: {
-      gateway: { models: useFallback ? FALLBACK_MODELS : [] },
-    },
+    providerOptions,
     system: systemPrompt,
   });
 
