@@ -18,7 +18,7 @@ export type ScoreStep = z.infer<typeof stepSchema>;
 
 export type TestCase = {
   id: string;
-  userInput: Record<string, string | string[]>;
+  userInput: Record<string, unknown>;
   expectations: string;
 };
 export type TaskResult<T = unknown> = {

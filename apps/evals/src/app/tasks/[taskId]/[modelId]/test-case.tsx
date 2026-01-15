@@ -17,7 +17,7 @@ type TestCaseCardProps = {
 };
 
 type UserInputSectionProps = {
-  userInput: Record<string, string | string[]>;
+  userInput: Record<string, unknown>;
 };
 
 type ScoreSectionProps = {
@@ -37,17 +37,47 @@ type EvaluationStepsSectionProps = {
   steps: ScoreStep[];
 };
 
+function formatValue(value: unknown): string {
+  if (typeof value === "string") {
+    return value;
+  }
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      return "[]";
+    }
+
+    if (typeof value[0] === "string") {
+      return value.join(", ");
+    }
+
+    return JSON.stringify(value, null, 2);
+  }
+  return JSON.stringify(value);
+}
+
 function UserInputSection({ userInput }: UserInputSectionProps) {
   return (
     <div>
       <p className="text-muted-foreground text-sm">User Input</p>
 
       <div className="flex flex-col gap-1">
-        {Object.entries(userInput).map(([key, value]) => (
-          <p className="font-medium text-sm" key={key}>
-            <span className="text-muted-foreground">{key}:</span> {value}
-          </p>
-        ))}
+        {Object.entries(userInput).map(([key, value]) => {
+          const formatted = formatValue(value);
+          const isMultiline = formatted.includes("\n");
+
+          return (
+            <div className="font-medium text-sm" key={key}>
+              <span className="text-muted-foreground">{key}:</span>{" "}
+              {isMultiline ? (
+                <pre className="mt-1 overflow-auto rounded bg-muted p-2 text-xs">
+                  {formatted}
+                </pre>
+              ) : (
+                formatted
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
