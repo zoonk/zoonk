@@ -1,9 +1,13 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { cache } from "react";
-import { getModelById, getModelDisplayName } from "./models";
+import { getModelById, getModelDisplayName, type ModelConfig } from "./models";
 import { getAllOutputsForTask } from "./output-loader";
-import type { BattleLeaderboardEntry, BattleMatchup } from "./types";
+import type {
+  BattleLeaderboardEntry,
+  BattleMatchup,
+  ModelOutputs,
+} from "./types";
 
 const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
 const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
@@ -66,6 +70,104 @@ function calculateCost(
   return totalInputCost + totalOutputCost;
 }
 
+type ModelScores = {
+  totalScore: number;
+  scoresByJudge: Record<string, number>;
+  scoresByTestCase: Record<string, number>;
+};
+
+function aggregateScoresFromMatchups(matchups: BattleMatchup[]): {
+  modelScores: Map<string, ModelScores>;
+  totalJudgments: number;
+} {
+  const modelScores = new Map<string, ModelScores>();
+  let totalJudgments = 0;
+
+  for (const matchup of matchups) {
+    for (const judgment of matchup.judgments) {
+      totalJudgments++;
+      for (const ranking of judgment.rankings) {
+        const existing = modelScores.get(ranking.modelId) ?? {
+          scoresByJudge: {},
+          scoresByTestCase: {},
+          totalScore: 0,
+        };
+
+        existing.totalScore += ranking.score;
+        existing.scoresByJudge[judgment.judgeId] =
+          (existing.scoresByJudge[judgment.judgeId] ?? 0) + ranking.score;
+        existing.scoresByTestCase[matchup.testCaseId] =
+          (existing.scoresByTestCase[matchup.testCaseId] ?? 0) + ranking.score;
+
+        modelScores.set(ranking.modelId, existing);
+      }
+    }
+  }
+
+  return { modelScores, totalJudgments };
+}
+
+function calculateModelMetrics(
+  outputs: ModelOutputs | undefined,
+  model: ModelConfig,
+): { averageDuration: number; averageCost: number } {
+  const numOutputs = outputs?.outputs.length ?? 0;
+
+  if (numOutputs === 0 || !outputs) {
+    return { averageCost: 0, averageDuration: 0 };
+  }
+
+  const totalDurationMs = outputs.outputs.reduce(
+    (sum, o) => sum + o.duration,
+    0,
+  );
+  const averageDuration = totalDurationMs / numOutputs / MS_TO_SECONDS;
+
+  const avgInputTokens =
+    outputs.outputs.reduce((sum, o) => sum + o.inputTokens, 0) / numOutputs;
+  const avgOutputTokens =
+    outputs.outputs.reduce((sum, o) => sum + o.outputTokens, 0) / numOutputs;
+
+  const averageCost = calculateCost(
+    avgInputTokens,
+    avgOutputTokens,
+    model.inputCost,
+    model.outputCost,
+  );
+
+  return { averageCost, averageDuration };
+}
+
+function buildLeaderboardEntry(
+  modelId: string,
+  scores: ModelScores,
+  allOutputs: Map<string, ModelOutputs>,
+  matchupsCount: number,
+): BattleLeaderboardEntry | null {
+  const model = getModelById(modelId);
+  if (!model) {
+    return null;
+  }
+
+  const outputs = allOutputs.get(modelId);
+  const { averageCost, averageDuration } = calculateModelMetrics(
+    outputs,
+    model,
+  );
+
+  return {
+    averageCost,
+    averageDuration,
+    averageScore: matchupsCount > 0 ? scores.totalScore / matchupsCount : 0,
+    modelId,
+    modelName: getModelDisplayName(model),
+    provider: modelId.split("/")[0] ?? modelId,
+    scoresByJudge: scores.scoresByJudge,
+    scoresByTestCase: scores.scoresByTestCase,
+    totalScore: scores.totalScore,
+  };
+}
+
 export const getBattleLeaderboard = cache(
   async (taskId: string): Promise<BattleLeaderboardEntry[]> => {
     const [matchups, allOutputs] = await Promise.all([
@@ -77,87 +179,20 @@ export const getBattleLeaderboard = cache(
       return [];
     }
 
-    // Aggregate scores from all matchups
-    const modelScores = new Map<
-      string,
-      {
-        totalScore: number;
-        scoresByJudge: Record<string, number>;
-        scoresByTestCase: Record<string, number>;
-      }
-    >();
+    const { modelScores } = aggregateScoresFromMatchups(matchups);
 
-    let totalJudgments = 0;
-
-    for (const matchup of matchups) {
-      for (const judgment of matchup.judgments) {
-        totalJudgments++;
-        for (const ranking of judgment.rankings) {
-          const existing = modelScores.get(ranking.modelId) ?? {
-            totalScore: 0,
-            scoresByJudge: {},
-            scoresByTestCase: {},
-          };
-
-          existing.totalScore += ranking.score;
-          existing.scoresByJudge[judgment.judgeId] =
-            (existing.scoresByJudge[judgment.judgeId] ?? 0) + ranking.score;
-          existing.scoresByTestCase[matchup.testCaseId] =
-            (existing.scoresByTestCase[matchup.testCaseId] ?? 0) +
-            ranking.score;
-
-          modelScores.set(ranking.modelId, existing);
-        }
-      }
-    }
-
-    // Build leaderboard entries
     const entries: BattleLeaderboardEntry[] = [];
 
     for (const [modelId, scores] of modelScores) {
-      const model = getModelById(modelId);
-      if (!model) continue;
-
-      const outputs = allOutputs.get(modelId);
-      const numOutputs = outputs?.outputs.length ?? 0;
-
-      let averageDuration = 0;
-      let averageCost = 0;
-
-      if (numOutputs > 0 && outputs) {
-        const totalDurationMs = outputs.outputs.reduce(
-          (sum, o) => sum + o.duration,
-          0,
-        );
-        averageDuration = totalDurationMs / numOutputs / MS_TO_SECONDS;
-
-        const avgInputTokens =
-          outputs.outputs.reduce((sum, o) => sum + o.inputTokens, 0) /
-          numOutputs;
-        const avgOutputTokens =
-          outputs.outputs.reduce((sum, o) => sum + o.outputTokens, 0) /
-          numOutputs;
-
-        averageCost = calculateCost(
-          avgInputTokens,
-          avgOutputTokens,
-          model.inputCost,
-          model.outputCost,
-        );
-      }
-
-      entries.push({
-        averageCost,
-        averageDuration,
-        averageScore:
-          totalJudgments > 0 ? scores.totalScore / matchups.length : 0,
+      const entry = buildLeaderboardEntry(
         modelId,
-        modelName: getModelDisplayName(model),
-        provider: modelId.split("/")[0] ?? modelId,
-        scoresByJudge: scores.scoresByJudge,
-        scoresByTestCase: scores.scoresByTestCase,
-        totalScore: scores.totalScore,
-      });
+        scores,
+        allOutputs,
+        matchups.length,
+      );
+      if (entry) {
+        entries.push(entry);
+      }
     }
 
     return entries.sort((a, b) => b.totalScore - a.totalScore);
