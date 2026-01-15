@@ -1,4 +1,4 @@
-import { generateAlternativeTitles } from "@zoonk/ai/alternative-titles/generate";
+import { generateAlternativeTitles } from "@zoonk/ai/tasks/courses/alternative-titles";
 import { streamStatus } from "../stream-status";
 import type { CourseContext } from "../types";
 

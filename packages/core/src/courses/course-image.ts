@@ -1,7 +1,7 @@
 import {
   type CourseThumbnailParams,
   generateCourseThumbnail,
-} from "@zoonk/ai/course-thumbnail/generate";
+} from "@zoonk/ai/tasks/courses/thumbnail";
 import { AI_ORG_SLUG } from "@zoonk/utils/constants";
 import type { SafeReturn } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";

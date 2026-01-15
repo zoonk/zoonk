@@ -1,6 +1,6 @@
 import "server-only";
 
-import { generateCourseSuggestions as generateTask } from "@zoonk/ai/course-suggestions/generate";
+import { generateCourseSuggestions as generateTask } from "@zoonk/ai/tasks/courses/suggestions";
 import { type CourseSuggestion, prisma } from "@zoonk/db";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
