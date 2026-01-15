@@ -16,22 +16,6 @@ const TOKENS_PER_MILLION = 1_000_000;
 const COST_MULTIPLIER = 1000;
 const MS_TO_SECONDS = 1000;
 
-function getMatchupFilePath(taskId: string, testCaseId: string): string {
-  return path.join(BATTLES_DIR, taskId, `${testCaseId}.json`);
-}
-
-export const getBattleMatchup = cache(
-  async (taskId: string, testCaseId: string): Promise<BattleMatchup | null> => {
-    const filePath = getMatchupFilePath(taskId, testCaseId);
-    try {
-      const data = await fs.readFile(filePath, "utf-8");
-      return JSON.parse(data) as BattleMatchup;
-    } catch {
-      return null;
-    }
-  },
-);
-
 export const getBattleMatchups = cache(
   async (taskId: string): Promise<BattleMatchup[]> => {
     const taskDir = path.join(BATTLES_DIR, taskId);

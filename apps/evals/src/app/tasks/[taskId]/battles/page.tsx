@@ -6,7 +6,6 @@ import {
   ContainerHeaderGroup,
   ContainerTitle,
 } from "@zoonk/ui/components/container";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   AppBreadcrumb,
@@ -16,6 +15,7 @@ import {
 } from "@/components/breadcrumb";
 import { getBattleMatchups } from "@/lib/battle-loader";
 import { getTaskById } from "@/tasks";
+import { BattleMatchupList } from "./battle-matchup-list";
 
 type BattlesPageProps = {
   params: Promise<{ taskId: string }>;
@@ -51,27 +51,7 @@ export default async function BattlesPage({ params }: BattlesPageProps) {
       </ContainerHeader>
 
       <ContainerBody>
-        {matchups.length === 0 ? (
-          <p className="py-8 text-center text-muted-foreground">
-            No battle results yet. Run Battle Mode first.
-          </p>
-        ) : (
-          <div className="flex flex-col gap-4">
-            {matchups.map((matchup) => (
-              <Link
-                className="flex flex-col gap-2 rounded-lg border border-border p-4 transition-colors hover:border-foreground/20"
-                href={`/tasks/${taskId}/battles/${matchup.testCaseId}`}
-                key={matchup.testCaseId}
-              >
-                <h2 className="font-semibold">{matchup.testCaseId}</h2>
-                <p className="text-muted-foreground text-sm">
-                  {matchup.judgments.length} judge(s) •{" "}
-                  {matchup.judgments[0]?.rankings.length ?? 0} models ranked
-                </p>
-              </Link>
-            ))}
-          </div>
-        )}
+        <BattleMatchupList matchups={matchups} />
       </ContainerBody>
     </main>
   );
