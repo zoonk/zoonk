@@ -122,6 +122,13 @@ export const EVAL_MODELS: ModelConfig[] = [
     reasoningEffort: "auto",
   },
   {
+    id: "openai/gpt-5.2",
+    inputCost: 1.75,
+    name: "gpt-5.2",
+    outputCost: 14,
+    reasoningEffort: "high",
+  },
+  {
     id: "openai/gpt-4.1",
     inputCost: 2,
     name: "gpt-4.1",
@@ -156,7 +163,6 @@ export const EVAL_MODELS: ModelConfig[] = [
     inputCost: 0.2,
     name: "grok-4.1-fast-reasoning",
     outputCost: 0.5,
-    reasoningEffort: "auto",
   },
   {
     id: "xai/grok-4.1-fast-non-reasoning",
@@ -175,7 +181,6 @@ export const EVAL_MODELS: ModelConfig[] = [
     inputCost: 0.2,
     name: "grok-4-fast-reasoning",
     outputCost: 0.5,
-    reasoningEffort: "auto",
   },
   {
     id: "xai/grok-4-fast-non-reasoning",
