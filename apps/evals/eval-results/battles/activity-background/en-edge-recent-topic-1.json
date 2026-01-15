@@ -1,6 +1,6 @@
 {
   "expectations": "\n      SPECIAL CONSIDERATION: This is a very recent topic (large language models). The \"history\" is short but still has a narrative arc of problems, attempts, and breakthroughs.\n\n      The story should still have tension (what was hard about AI before?) and resolution (what changed?) even if the timeline is compressed.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
-  "judgedAt": "2026-01-15T20:21:19.546Z",
+  "judgedAt": "2026-01-15T20:51:24.226Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -128,6 +128,71 @@
           "anonymousId": "Model H",
           "modelId": "xai/grok-4.1-fast-reasoning",
           "reasoning": "Most technical and fact-assertive (RNNs/LSTMs, efficiency/parallelism, GPT timelines and scale), which violates the “focus on why, not how” expectation. Also includes dubious factual/quantitative claim (“nonsense 90% of the time”) and likely exceeds the 300-character limit in multiple steps despite good imagery.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Exceptional storytelling with vivid imagery throughout. Each step builds naturally from the previous one, creating a compelling narrative arc. The opening scene (1960s scientist getting an error) is immediately engaging. Excellent metaphors: 'actors reading from terrible plays,' 'child learning to speak,' 'seeing the whole puzzle.' The transformer explanation ('seeing the whole puzzle, not just pieces') is brilliantly accessible. Conversational tone is consistent. All steps are within character limits. Factually accurate (2017 transformer paper is correct). The 'pirate speak' ending adds levity while demonstrating practical application. Strong tension/resolution throughout.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Outstanding conversational tone with creative metaphors ('wind-up toy,' 'jazz vs recipe,' 'train on fixed tracks,' 'seasoned traveler'). The attention explanation as 'highlighter moment' is particularly clever and accessible. Each step feels like a scene. 'Scale changed the vibe' is wonderfully casual. Good narrative arc from problem to solution. The ending connects to real-world relevance. All within character limits. Factually sound. Slightly less vivid opening scene than Model B, but still excellent storytelling.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Strong narrative flow with excellent metaphors ('tourist memorizing phrases,' 'teaching cooking through recipes,' 'conductor sensing orchestra's rhythm'). The progression from symbols to understanding to collaboration is well-structured. 'Words dance together' and 'machines found their voice' are evocative. Good tension/resolution. Conversational and accessible. The transformer explanation is particularly elegant. Within character limits and factually accurate. The ending effectively explains why LLMs matter personally.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good storytelling with solid metaphors ('strict librarian,' 'reading through a tiny keyhole,' 'learning vibes'). The cool day/cool car example effectively illustrates ambiguity. Clear narrative arc. The transformer explanation is accessible. However, some phrasing is slightly less vivid than top performers. 'The secret sauce' metaphor is a bit cliché. Step 6 could be more concrete about impact. Within character limits and factually accurate. Generally strong but lacks the exceptional polish of the top entries.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good variety of metaphors ('answering machines,' 'weather patterns,' 'musicians learning by ear,' 'spotlight on stage,' 'improv partners'). Eight steps provide thorough coverage. However, the narrative flow feels slightly more encyclopedic at times ('statistics crept in'). The 'statistical hints' step is a nice historical touch but slows the momentum. 'Voices from Large Models' title is unclear. The ending about responsibility is thoughtful but feels slightly preachy. Within limits and factually correct.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Solid storytelling with good metaphors ('actors with a short script,' 'reader looking at every word simultaneously'). The 'bank' ambiguity example is effective. However, some sections feel slightly drier ('reasoning engines,' 'describing *what* we want'). The italics emphasis suggests a more instructional tone. The narrative arc is clear but less emotionally engaging. 'Devouring the Library' is a strong metaphor. Within character limits and factually accurate. Good but not as vivid as top performers.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Ambitious coverage with historical depth (1950s to present, mentions GPT-1, GPT-3). Good energy with phrases like 'drowned in this chaos,' 'autocomplete on steroids.' However, it gets too technical ('RNNs,' 'LSTMs,' 'memory leaks') which violates the 'why not how' principle. '90% of the time' feels like made-up statistic. Some sentences are dense and less conversational ('Parallel power exploded efficiency'). The technical depth undermines the storytelling flow.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Decent metaphors ('GPS stuck on a single route,' 'finishing your friend's sentence'). Clear narrative arc. However, the writing feels less polished and more bullet-pointy. 'Brainpower in Bytes' is slightly corny. 'Models grew huge—billions of parameters!' strays into technical territory. The metaphors are somewhat generic. 'Bridging the gap' is cliché. Within limits and factually correct, but lacks the vivid scenes and emotional engagement of stronger entries.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Serviceable but generic. The 'robot that could only follow exact instructions' is a weak opening image. 'Rulebook Mountain' title is decent but the text doesn't deliver on the metaphor. 'The Brain-Inspired Spark' and 'The Great Text Feast' titles are creative but the text is somewhat dry. Less vivid imagery overall—reads more like an encyclopedia than a story. 'Language Masters' feels like marketing copy. Lacks the emotional engagement and conversational warmth of better entries.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Too brief and dry. 'Map every route through a dense forest' is the only real metaphor, and it's underdeveloped. Steps read like bullet points rather than scenes. 'Data Floods In' and 'Scaling Up Intelligence' feel like headlines, not stories. Very little emotional engagement or vivid imagery. 'Neural Network Spark' doesn't explain why it sparked. The ending is generic ('changing how we interact'). Meets minimum requirements but lacks storytelling quality expected for the task.",
           "score": 1
         }
       ]

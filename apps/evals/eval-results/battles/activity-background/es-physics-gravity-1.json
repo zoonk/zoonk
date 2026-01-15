@@ -1,6 +1,6 @@
 {
   "expectations": "\n      Titles and descriptions must be in Spanish.\n\n      Avoid diving into formulas or mathematical equations. The background should explain WHY gravity was such a mystery and what questions it answered — not HOW to calculate gravitational force.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
-  "judgedAt": "2026-01-15T20:20:40.944Z",
+  "judgedAt": "2026-01-15T20:51:23.973Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -128,6 +128,71 @@
           "anonymousId": "Model F",
           "modelId": "meta/llama-4-maverick",
           "reasoning": "Demasiado superficial: pocos escalones narrativos, poca tensión y casi sin escenas; además contiene una inexactitud notable (“los planetas vagaban sin rumbo fijo”). Tono muy genérico y poco evocador; metáforas casi inexistentes.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent storytelling flow with a clear narrative arc from mystery to resolution. Each step builds curiosity naturally, starting with a child throwing a stone, moving through ancient explanations, Aristotle's error, Galileo's challenge, Newton's insight, and ending with modern applications. The writing is highly conversational and vivid ('La Luna SÍ está cayendo, constantemente'). Great metaphors and analogies are used throughout. Focuses entirely on WHY gravity mattered without diving into formulas. All titles and texts are within character limits. Scope is appropriate, covering the origin and importance of gravity. Factually accurate throughout.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very strong storytelling with excellent metaphors (recipe without measurements, bicycle with thousand chains, chef understanding flavor). Good narrative arc covering the mystery, ancient explanations, Galileo and Kepler's contributions, and Newton's synthesis. Writing is conversational and engaging. Includes Kepler's contribution which adds depth. However, the step 'La caída que se vuelve órbita' slightly dips into mechanics. Some steps are text-heavy approaching limits. All content is factually accurate. Strong focus on WHY with vivid imagery.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good storytelling with clear narrative progression. Uses effective metaphors ('ceiling that drips water,' 'puzzle pieces'). Covers ancient explanations, Greek hypotheses, Galileo's experiments, and Newton's insight well. Conversational tone throughout. Nine steps may be slightly long but content quality is high. The 'two worlds divided' concept is well developed. Focus stays on WHY gravity mattered. All factually accurate. Some steps could be more vivid, but overall very solid.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong narrative with creative metaphors ('house with two floors,' 'key that opens floor and sky'). Includes Einstein's contribution which extends scope slightly but adds value. Eight steps with good progression. The metaphor of 'cosmic runners leaving tracks' is vivid. Some phrasing is slightly awkward ('pregunta pegajosa'). Good focus on WHY. Includes Tycho and Kepler which adds historical depth. The Einstein step at the end slightly expands scope beyond Newton's discovery but doesn't harm the narrative significantly.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good storytelling with vivid scenes (tower of Pisa, Newton under apple tree). Uses metaphors effectively ('crazy clock,' 'cars on oval track'). However, the step about Newton includes 'inversa al cuadrado de la distancia' which dips into mathematical territory the instructions specifically prohibited. Also mentions 'Tres leyes mágicas' for Kepler which starts getting technical. Otherwise engaging and well-structured. Eight steps with good flow. Some factual note: Kepler didn't use a telescope for his discoveries (he used Tycho's naked-eye observations).",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Solid storytelling with clear progression. The cannon analogy for orbiting is excellent and vivid. Good metaphors and conversational tone. Six steps is appropriate. However, 'la Tierra tira de todo con la misma aceleración' edges toward mechanics. The final step lists applications somewhat dry ('GPS e Internet'). Good focus on WHY overall. All factually accurate. Pisa tower legend is appropriately noted as legend. Could use more emotional engagement in some steps.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clean narrative arc in just five steps. Good metaphors ('universe speaking two languages,' 'invisible thread,' 'embrace between all matter'). Conversational tone is maintained. However, 'Cuanto más grande es algo, más fuerte tira' starts explaining mechanics, which was discouraged. The step about Newton includes 'Gravedad Universal' discovery a bit abruptly. Some steps feel slightly rushed given the complex topic. All within character limits. Factually accurate.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Adequate storytelling but somewhat encyclopedic in tone ('La naturaleza tenía un lenguaje matemático'). Six steps covering the basics. The exclamation '¡Boom!' feels forced rather than organic. Metaphors are minimal compared to other models. The step about Newton formulating the law mentions 'formuló' which is slightly technical. Less vivid imagery overall. Titles use title case which is fine. The phrase 'ancla' in the final title is a nice metaphor. Content is factually accurate but less engaging.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Basic storytelling with limited depth. Six steps but each feels thin on detail. Metaphors are weak ('puzzle without matching pieces' is decent but not developed). Some steps are quite short and lack vivid scenes. 'Una manzana sorprendió a Newton' is overly simplified. Focus on WHY is maintained but without compelling narrative development. The progression feels rushed. All factually accurate but lacks the engagement of other models.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Weakest storytelling of the group. Very generic and encyclopedic tone ('Isaac Newton, bajo un manzano, tuvo un momento eureka'). Limited metaphors and analogies. The step 'La Ley Universal' dips into mechanics ('todos los objetos se atraen entre sí'). Six steps but each lacks vivid imagery and emotional engagement. Reads more like textbook summaries than a narrative journey. The claim that 'los planetas vagaban sin rumbo fijo' is somewhat inaccurate - ancient astronomers did track planetary movements carefully, they just explained them differently.",
           "score": 1
         }
       ]

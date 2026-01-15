@@ -9,8 +9,8 @@ const DEFAULT_MODEL =
 
 const FALLBACK_MODELS = [
   "openai/gpt-5-mini",
-  "openai/gpt-5.1-instant",
   "anthropic/claude-opus-4.5",
+  "openai/gpt-5.1-instant",
   "google/gemini-3-flash",
   "google/gemini-3-pro-preview",
 ];

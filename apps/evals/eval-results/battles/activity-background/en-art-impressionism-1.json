@@ -1,6 +1,6 @@
 {
   "expectations": "\n      Avoid jumping into color theory rules or artistic techniques. The background should explain WHY artists became obsessed with light and color — not HOW to mix pigments.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
-  "judgedAt": "2026-01-15T20:20:51.785Z",
+  "judgedAt": "2026-01-15T20:51:26.771Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -128,6 +128,71 @@
           "anonymousId": "Model C",
           "modelId": "meta/llama-4-maverick",
           "reasoning": "Most encyclopedia-like and least vivid; fewer hooks, metaphors, or tension. Also includes technique talk (“short, broken brushstrokes and vivid colors”) without much emotional/story payoff. The “legacy in advertising/filmmaking” line feels broad and asserted rather than scene-based.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent storytelling flow with clear narrative arc from Academy constraints to resolution. Strong conversational tone ('Picture Paris', 'accidentally gave the movement its name'). Good metaphors ('dancing on water', 'shimmer of light'). Each step is a vivid scene. Focuses on WHY artists rebelled rather than technique. Character limit compliance: all titles under 50 chars, all texts under 300 chars. Minor issue: 'Seeing Like the Eye Sees' step edges toward technique explanation. The ending effectively explains the lasting impact.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Strong storytelling with tension (tyranny of perfection) and resolution. Good historical accuracy with portable paint tubes detail. Vivid imagery ('slapped paint on canvas quickly'). The 'Eye Mixes the Color' step unfortunately dives into HOW (technique explanation), which violates the criteria. Good conversational tone overall. Step 5 feels more like a technique explanation than WHY. Character limits respected. Nice balance of scenes and narrative.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Solid narrative flow with engaging titles ('Stealing the Sun', 'Painting at the Speed of Light'). Good vivid scenes and conversational tone. Focuses on WHY throughout. Step 3 slightly edges into technique (brushstrokes, unmixed colors) but frames it around necessity. Character limits met. The ending connects to Van Gogh and abstract art - appropriate scope. Some text feels slightly rushed. Minor issue: 'paintings had to look like photos' in 1850s is anachronistic since photography was new and not the standard for art realism.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good narrative arc with tension and resolution. Nice metaphor: 'wearing a nickname meant to embarrass you—only you make it iconic'. Conversational tone works well. Step 5's 'like a photo captures a blink' is a good analogy. Character limits respected. However, some steps feel a bit thin on vivid imagery ('Some dared to step outside, literally'). The opening metaphor ('chained to tradition') is somewhat cliché. Solid but less rich than top performers.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent vivid imagery ('velvet-lined courts', 'pin a butterfly with boxing gloves', 'cooking for one picky critic'). Strong conversational tone and creative metaphors throughout. However, 9 steps may be excessive for this topic - some could be combined. Step 5-6 dive into technique (how shadows work, brushwork technique) which violates the 'no HOW' criteria. Character limits appear met. Great writing quality but scope issues and technique discussions lower the score.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Creative metaphors ('opera sung behind velvet curtain', 'brushstrokes like guitar riffs', 'jazz solo'). 8 steps is lengthy. Several steps dive into technique: Step 4 explains how to apply color side-by-side for blending, Step 6 discusses Monet's haystack series in technique terms. The jazz/music metaphors feel overused. Good vivid scenes but the 'Focus on WHY' criterion is violated multiple times. Character limits respected.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Heavy on metaphors (orchestra, jazz, waltz, tap dance, fireflies, rain) but sometimes feels overwrought - 'like catching the scent of rain before it falls' is poetic but unclear. Step 4 explicitly describes technique ('dabbing colors side-by-side, letting eyes blend hues') violating the WHY-not-HOW criterion. The metaphors occasionally obscure meaning rather than clarify. 7 steps with some redundancy. Character limits met but quality suffers from metaphor overload.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Decent narrative flow but Step 5 'Colors Burst Free' explicitly discusses technique (broken brushstrokes, pure colors). The photography mention is interesting but factually somewhat overstated for 1860s - photography wasn't yet 'stealing their thunder' in that way. 'Impressionist piano keys' analogy in Step 5 is confusing. Instagram filters reference feels forced. Some vivid imagery but inconsistent quality. Character limits appear met.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Adequate but dry compared to others. Step 5 explicitly violates the WHY-not-HOW criterion by explaining technique: 'Instead of mixing colors, they placed them side-by-side, letting the viewer's eye blend them.' Less vivid imagery overall - statements like 'Many artists felt stifled' are telling not showing. The narrative arc exists but feels rushed. Character limits met. Missing the conversational warmth and scene-setting of better outputs.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Most encyclopedia-like tone of all outputs. Step 3 'Breaking the Rules' discusses technique (brushstrokes, colors). Lacks vivid imagery - 'captured with a newfound sense of immediacy' is abstract. 'Influences everything from advertising to filmmaking' is vague and unengaging. Missing conversational warmth throughout. 'Its emphasis on light and color continues to inspire' is exactly the dry factual style the rubric says to avoid. Character limits met but storytelling quality is weakest.",
           "score": 1
         }
       ]

@@ -1,6 +1,6 @@
 {
   "expectations": "\n      Titles and descriptions must be in Portuguese.\n\n      Avoid diving into research methodologies or academic frameworks. The background should explain WHY humans started systematically studying society — not HOW sociologists conduct research.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
-  "judgedAt": "2026-01-15T20:20:46.831Z",
+  "judgedAt": "2026-01-15T20:51:24.366Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -128,6 +128,71 @@
           "anonymousId": "Model J",
           "modelId": "meta/llama-4-maverick",
           "reasoning": "O mais enciclopédico e frio: frases genéricas, pouca imagem, quase sem analogias. Entra em detalhe específico (data/termo) e fala em “métodos científicos… descobrir suas leis e funcionamentos”, enfatizando mecânica/implementação. Menor qualidade de storytelling e engajamento.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Exceptional storytelling with vivid imagery throughout. Each step creates a compelling scene: aldeias pequenas, máquinas rugindo, cortiços apertados, fábricas pegando fogo. The narrative arc is clear - from stability to disruption to resolution. Uses excellent conversational tone without being encyclopedic. Metaphors are subtle but effective ('engrenagens invisíveis'). Strong 'why' focus - explains the need for sociology rather than methodology. All titles under 50 chars, all texts under 300 chars. The closing step connecting to modern life is particularly effective. Factually accurate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent metaphors from everyday life (time que troca de técnico, cozinhar com receita antiga, replay do jogo). Very conversational tone and strong narrative flow. Creates vivid scenes with good tension/resolution structure. The 'palpites não resolvem' framing is clever. All lengths within limits. Strong 'why' focus. The closing relevance to modern issues is effective. Slightly less emotionally gripping than Model B in some transitions, but very close in quality. Factually sound.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong opening with 'Sempre Foi Assim' concept. Excellent metaphors: 'Grande Terremoto Social', 'Telescópio Social', 'mapa'. Good narrative arc from stability through chaos to resolution. Vivid imagery (reis perderam coroas, cidades incharam). Conversational and engaging tone. All character limits respected. Good 'why' focus - explains need for sociology without diving into methodology. Slightly less detailed scenes than top models, but very effective overall. Factually accurate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good storytelling with clear tension/resolution. The 'organismo doente' metaphor is effective. Mentions Comte with 'física social' analogy which works well. Good imagery (fumaça e fábricas, mundo antigo desmoronou). The óculos metaphor at the end is engaging. All limits respected. Strong 'why' focus. Slightly more expository than the top models in some passages, but maintains good engagement. Factually correct.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good metaphors (quebra-cabeça, redemoinho, prever o clima olhando pela janela). Clear narrative progression. Mentions key figures appropriately (Comte, Durkheim, Marx). The 'óculos que revelam' closing works well. All character limits met. Good 'why' focus. Some steps feel slightly less vivid as scenes (more telling than showing). The transitions could be smoother. Factually accurate.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Vivid imagery (trem desgovernado, fábricas engoliam camponeses). Good historical framing with Enlightenment context. Mentions key figures with specific contributions. The 'peixes ignorando correnteza' analogy is excellent. However, Step 4 strays somewhat into methodology territory by describing what the pioneers did (analyzed suicides, dissected classes). Some encyclopedic tendencies. Title 1 at 34 chars, all within limits. Good but slightly less conversational than top models.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Creative metaphors (receitas de família, navio no nevoeiro, lanternas em ruínas, microscópio social). Good attempt at imagery. However, Steps 4-5 dive too much into methodology ('cidade como laboratório', collecting data, interviews, statistics). This violates the expectation to avoid research methodologies. The 'como' overwhelms the 'por quê' in middle steps. Character limits respected. Some factual accuracy but methodological focus is problematic per instructions.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Decent narrative structure with clear progression. Some good imagery (palco social). However, writing feels more generic and less vivid than other models. Step 3 ('mais sobre o que as pessoas deveriam fazer') is a bit dry. The 'séculos atrás' in step 4 is vague compared to more specific framings. Less emotional engagement overall. Missing the vivid scenes quality - reads more like summary than storytelling. Character limits met. Focus on 'why' is maintained.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Basic narrative structure but lacks vivid imagery and emotional engagement. Steps feel like summaries rather than scenes. The vila metaphor works but isn't developed. Missing specific historical grounding that would make the story tangible. 'Buscando respostas no escuro' is a decent metaphor but underutilized. Writing is functional but not conversational or engaging. All character limits met. Focus on 'why' is maintained but execution is weak.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Weakest storytelling of all models. Steps read like encyclopedia entries rather than vivid scenes. Very dry tone ('Isso gera problemas sociais', 'Comte cunha o termo'). No metaphors or analogies from everyday life. Missing emotional engagement entirely. Step 4 mentions specific date (1839) which is fine, but the overall framing is mechanical. Very short steps that feel like bullet points rather than narrative scenes. Lacks the conversational, curious-friend tone expected.",
           "score": 1
         }
       ]

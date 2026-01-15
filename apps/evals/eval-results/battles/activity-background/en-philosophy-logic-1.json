@@ -1,6 +1,6 @@
 {
   "expectations": "\n      Avoid listing logical operators or truth tables. The background should explain WHY formal logic was developed and what human problems it addressed — not HOW to construct syllogisms.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
-  "judgedAt": "2026-01-15T20:20:42.585Z",
+  "judgedAt": "2026-01-15T20:51:20.164Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -128,6 +128,71 @@
           "anonymousId": "Model H",
           "modelId": "google/gemini-2.5-flash-lite",
           "reasoning": "Most “lesson-like” and least scene-based; relies on abstract statements and mild technical framing (“If A is true… then B must be true”), edging into mechanics the prompt asked to avoid. Tone is a bit canned/exclamatory, with less original imagery and story progression.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Exceptional storytelling with vivid imagery (Athens marketplace, 'philosophy's immune system'). The narrative arc is perfect: chaos → frustration → solution → legacy. Conversational tone throughout ('drove certain Greek thinkers absolutely crazy'). Excellent metaphors (recipes, botanist, immune system). Focuses entirely on WHY logic developed without slipping into mechanics. All titles under 50 chars, all text under 300 chars. Each step feels like a scene. Factually accurate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong storytelling with excellent tension/resolution arc. Great conversational tone ('navigating a storm by vibes'). Rich metaphors (recipe, joinery, referee, flashlight). Focuses well on WHY without getting technical. 'Proof over power' is a memorable framing. Character constraints met. Slight weakness: some steps feel slightly less vivid as scenes compared to Model B, but still very strong.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong narrative with good scene-setting (marketplace, Sophists). The skeleton metaphor is excellent and memorable. Good conversational tone and appropriate focus on WHY. Mentions Sophists effectively. The 'Logos' reference is slightly academic but not problematic. Character limits respected. Slightly less flowing narrative arc than top models - jumps from Aristotle straight to modern applications without as smooth a transition.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good storytelling with vivid opening (Agora as 'battlefield of words'). Nice metaphor of 'thinking machine.' However, mentions syllogism structure which edges toward mechanics. The Leibniz/Boole/Turing step is informative but feels more like history lesson than narrative. 'Self-defense' ending is good. Character limits met. Factually accurate. Slightly less conversational than top models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good global perspective (Greece, India, China) though brief. Strong metaphors (recipes, baking, referee). 'From Words to Symbols' step is historically accurate. However, the narrative feels slightly more encyclopedic - less like talking to a friend. The 'bazaar' opening is good but text gets denser. Some steps feel like points rather than scenes. Character limits met.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Decent storytelling with good metaphors (game with no rules, circus performers, leaky roof, compass). The 'Patchwork Solutions' step is creative. However, narrative momentum weakens in middle sections. 'Hidden patterns like notes in music' is lovely. Some steps feel thinner on vivid imagery. The opening is good but doesn't sustain the same energy. Character limits respected.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Energetic tone with vivid language ('wild river,' 'flooded with errors'). Good cooking metaphor. However, 'All men are mortal' example edges toward showing HOW logic works rather than just WHY. 'Boom—proof!' is informal but slightly jarring. The Socrates/Plato step feels rushed. Some historical context is slightly dramatized. Character limits met.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Adequate coverage with decent metaphors (puzzle, referee, blueprints, compass). However, narrative arc is weaker - steps feel more like a list than a flowing story. Less vivid scene-setting. 'Dawn of logic' opener is generic. The connection between steps could be stronger. Conversational tone is present but not as engaging. Character limits met.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Weaker storytelling - 'playground brawl' metaphor is less sophisticated. The narrative is generic ('Ancient thinkers, like Aristotle, saw this struggle'). Step 4 veers into mechanics with 'If A is true, and B follows A, then B must be true.' Bridge metaphor is okay but common. Less vivid imagery overall. Feels more like textbook summary than story. Character limits met.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Weakest entry. Opens with generic forest metaphor that doesn't connect strongly to logic's origins. Mentions developing 'the syllogism, a framework for breaking down arguments' - this is explaining HOW, not WHY. Very dry, encyclopedia-like tone ('pioneered the study'). Minimal vivid scenes or emotional engagement. Reads like an outline rather than a narrative. Character limits met but storytelling fails.",
           "score": 1
         }
       ]

@@ -1,6 +1,6 @@
 {
   "expectations": "\n      SPECIAL CONSIDERATION: This is a narrow topic (recursion in programming). The background should still have a narrative, but it may be shorter since the scope is focused.\n\n      Avoid explaining how to write recursive functions. Focus on WHY recursion was developed as a concept and what elegant problems it solved.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
-  "judgedAt": "2026-01-15T20:20:43.110Z",
+  "judgedAt": "2026-01-15T20:51:20.932Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -128,6 +128,71 @@
           "anonymousId": "Model A",
           "modelId": "meta/llama-4-maverick",
           "reasoning": "Clear and structured, but it’s the most encyclopedic: it explicitly explains recursion mechanics (functions call themselves, base case) and leans on textbook examples (factorial/Fibonacci) rather than telling why the concept emerged. Least vivid/tension-driven narrative of the set, despite being within length limits.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent storytelling flow with clear narrative arc from the mirror metaphor through historical context (Alonzo Church, 1930s) to modern applications. Each step builds on the previous one beautifully. The 'Dangerous Idea' step creates wonderful tension ('too dangerous, too mind-bending'). Vivid analogies: mirrors, nesting dolls, breadcrumbs. Etymology of 'recursion' adds depth. Stays focused on WHY without diving into how-to mechanics. Conversational tone throughout. All character limits respected. Factually accurate historical references.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong narrative arc with relatable opening (messy closet). Great tension-building: 'cookbook written in panic,' 'sticky notes everywhere.' The nesting-doll insight is well-placed. Stop sign concept explained without being technical. Excellent conclusion about recursion as 'mental superpower.' Good conversational tone and vivid imagery throughout. Stays on the WHY rather than HOW. All limits respected. The flow from problem to solution to modern relevance is smooth.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good storytelling with bookshelf analogy opening. Nice progression from frustration through insight to elegance. 'A tiny idea with big teeth' is a memorable step title. Historical nod to Euclid adds credibility. 'Spaghetti on a plate' and 'folding a giant map' are vivid images. Stays focused on WHY. However, some steps feel slightly less connected than Model B or J. The 'Hints from math and early computers' step slightly disrupts the narrative flow. All limits respected.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good storytelling with clear arc. 'The Mirror Moment' is a nice climactic step. Relatable analogies: cleaning a room, pizza splitting, nested boxes. Conversational tone maintained well. Focuses appropriately on WHY. However, 'ask a mirror what you look like' is a slightly awkward metaphor. The narrative tension is less pronounced than top models. Some transitions feel abrupt. All character limits respected.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong nature analogy (fern, snowflake) is memorable and accurate. Good narrative from loops' limitations to recursion's elegance. The 'diver in ocean' metaphor for base case is creative. However, the last step ('You're about to learn...') shifts awkwardly to instructional tone. Mentioning 'Base Case' by name edges toward technical explanation. Still maintains good storytelling flow overall. All limits respected.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good analogies (hall of mirrors, nesting dolls, counting cash). The cash-counting delegation example is creative and illustrative. However, stops at only 5 steps without a strong modern relevance conclusion. The 'base case' explanation in step 4 gets somewhat technical. Missing the historical context that adds depth. The narrative feels incomplete - no sense of resolution or why it matters today. All limits respected.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Has energy and memorable phrases ('overpacked suitcases,' 'headphones in a pocket'). Factually accurate with John McCarthy/Lisp reference (1958). However, the tone is too choppy and telegraphic ('Mind-blowing!'). Some steps read like bullet points rather than scenes. 'Math's Hidden Gem' gets technical with factorial definition. Flow feels rushed. The conversational tone is inconsistent - sometimes casual, sometimes abrupt. All limits respected.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Covers the topic adequately but lacks distinctive voice. Metaphors are present but feel generic (puzzle, Russian doll, stepping stones). 'A mirror reflecting endlessly' appears but isn't developed. The narrative arc exists but feels mechanical. 'Secret sauce' in the final step is clichéd. Transitions between steps are adequate but not compelling. Doesn't create strong tension or resolution. All limits respected.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Uses nesting doll analogy but recycles it too much (appears 3 times). Less vivid storytelling - more explanatory than narrative. 'Think of trying to untangle a massive knot' is vague. Missing historical context entirely. The 'call yourself' idea step is weak in building tension. Final step is generic. The narrative feels flat without a clear arc. Skips over the 'why was this needed' aspect. All limits respected.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Very brief and reads more like an encyclopedia than a story. Lacks narrative arc - feels like disconnected facts. No tension or resolution. 'Complex problems often have smaller versions of themselves' is dry exposition, not storytelling. Missing vivid scenes and emotional engagement. The 'Mathematical Roots' step mentions factorials and Fibonacci without context or story. Fails the conversational tone requirement almost entirely. All limits respected but minimal effort.",
           "score": 1
         }
       ]

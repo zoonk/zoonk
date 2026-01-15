@@ -1,6 +1,6 @@
 {
   "expectations": "\n      Avoid diving into DNA mechanics or genetic terminology. The background should explain WHY the theory of evolution was developed and what questions it answered — not HOW natural selection works at a biological level.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
-  "judgedAt": "2026-01-15T20:20:49.692Z",
+  "judgedAt": "2026-01-15T20:51:22.233Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -128,6 +128,71 @@
           "anonymousId": "Model F",
           "modelId": "anthropic/claude-opus-4.5",
           "reasoning": "Most off-target for the prompt: it includes the DNA claim (“98% of your DNA with chimps”), which violates the instruction to avoid DNA/genetic framing, and it spends more time on mechanism/claims than on the motivating questions. Still readable, but the DNA line and stronger “how” emphasis are significant mismatches.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Exceptional storytelling with vivid, original metaphors ('furniture in nature's living room,' 'test kitchens for life,' 'too many tickets for too few seats'). Excellent narrative arc building from the problem through Darwin's journey to resolution. Conversational tone throughout. Strong focus on WHY without diving into DNA/genetic mechanics. Character limits respected. The 11-step approach suits the complexity well, with each step feeling like a distinct scene. Minor weakness: slightly long overall but each step adds value.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong narrative flow with engaging metaphors ('paintings in a gallery,' 'sculpted from below'). Good tension/resolution structure. Conversational tone. Covers WHY evolution developed well. However, final step mentions 'share 98% of your DNA with chimps' which touches on genetic terminology the instructions asked to avoid. Character limits respected. Seven steps work well for the scope.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Excellent storytelling with vivid imagery ('fossils whispered a troubling question,' 'nature wasn't a peaceful garden; it was a battlefield'). Strong narrative arc. Good historical accuracy including Wallace mention. The 'rough drafts' and 'farmer breeding cattle' analogies are effective. Stays focused on WHY. Minor issue: Step 4 gets slightly into mechanism ('Only individuals with the best traits survived') but frames it accessibly.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Creative metaphors ('messy kitchen,' 'detective chasing clues,' 'tinkerer's bench,' 'new compass'). Good narrative progression. Conversational tone. 8 steps appropriate for content. Step 5 mentions 'environment acts like a sieve' - a good analogy. Strong conclusion connecting to present-day relevance. Slight weakness: some metaphors feel dense/mixed ('museum statues' then 'fixed recipes' in same step).",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good vivid imagery ('static portrait,' 'Nature's Sorting Hat'). Strong Galapagos scene. Nice metaphor of 'giant sieve.' However, Step 4 gets into mechanism ('passes that trait to its kids') which touches on biological mechanics. Character limits respected. Only 5 steps - works but feels slightly rushed toward resolution. The 'Sorting Hat' Harry Potter reference is clever but might not land universally.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good conversational tone with accessible metaphors ('figurines on a shelf,' 'nature's rough drafts,' 'coach choosing best players'). Decent narrative arc. 7 steps appropriate. However, some scenes feel underdeveloped compared to top models. 'Backstage pass to life's ongoing performance' is nice imagery. Slightly less vivid than higher-ranked entries, with less emotional engagement.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Has energy and vivid language ('puking his guts out,' 'dropped like a bomb'). Includes Lamarck which adds historical context. However, tone is too casual/irreverent in places ('puking his guts out') which may undermine educational quality. Title 'Fossils That Defied Faith' introduces religious framing unnecessarily. 'Nature's Ruthless Audition' is catchy. Decent but uneven tone.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Has some good metaphors ('Swiss Army knives,' 'nature's tasting spoon,' 'dynamic dance'). 8 steps. However, metaphors feel mixed/scattered ('recipes,' 'tasting spoon,' 'game,' 'dance' all in different steps). Less cohesive narrative than higher-ranked models. 'Keys to Change' and 'Why Evolution Anchors Biology' titles feel more encyclopedic than conversational. Steps feel more like bullet points than vivid scenes.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Functional but less engaging. Metaphors are generic ('puzzle pieces,' 'sculptor shapes clay,' 'tapestry'). Narrative arc exists but feels rushed. Less vivid imagery - more telling than showing. 'The Tapestry of Life' conclusion is clichéd. 6 steps work but scenes lack the immersive quality of better entries. Character limits fine. Stays focused on WHY but doesn't captivate.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Too brief and dry. Opens with 'Imagine sailing...' but doesn't develop vivid scenes. Steps feel like bullet points. Weak metaphors and imagery. 'The Puzzle Pieces Fall' is underwhelming climax. Very short steps lack the richness expected. Conversational tone is minimal. Covers the topic but lacks storytelling quality. Final step about 'track disease outbreaks' is practical but uninspiring.",
           "score": 1
         }
       ]
