@@ -4,10 +4,10 @@ import { generateText, Output } from "ai";
 import { z } from "zod";
 import systemPrompt from "./course-chapters.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_COURSE_CHAPTERS ?? "openai/gpt-5.2";
+const DEFAULT_MODEL = process.env.AI_MODEL_COURSE_CHAPTERS ?? "openai/gpt-5";
 
 const FALLBACK_MODELS = [
-  "openai/gpt-5",
+  "openai/gpt-5.2",
   "openai/gpt-5-mini",
   "openai/gpt-5.1-thinking",
   "anthropic/claude-sonnet-4.5",
