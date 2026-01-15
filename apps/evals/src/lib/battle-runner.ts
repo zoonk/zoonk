@@ -14,6 +14,7 @@ const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
 
 // Battle judges - easy to extend
 const BATTLE_JUDGES_CONFIG: readonly string[] = [
+  "anthropic/claude-opus-4.5",
   "google/gemini-3-pro-preview",
   "openai/gpt-5.2",
 ];
@@ -86,14 +87,32 @@ async function saveMatchup(matchup: BattleMatchup): Promise<void> {
   await fs.writeFile(filePath, JSON.stringify(matchup, null, 2));
 }
 
+function extractMappingFromMatchup(
+  matchup: BattleMatchup,
+): Array<{ anonymousId: string; modelId: string }> {
+  const firstJudgment = matchup.judgments[0];
+  if (!firstJudgment) {
+    return [];
+  }
+
+  return firstJudgment.rankings.map((r) => ({
+    anonymousId: r.anonymousId,
+    modelId: r.modelId,
+  }));
+}
+
+function getMissingJudges(matchup: BattleMatchup): string[] {
+  const existingJudges = new Set(matchup.judgments.map((j) => j.judgeId));
+  return BATTLE_JUDGES_CONFIG.filter((j) => !existingJudges.has(j));
+}
+
 async function runBattleForTestCase(
   task: Task,
   testCase: TestCase,
   allOutputs: Map<string, ModelOutputs>,
+  existingMatchup: BattleMatchup | null,
 ): Promise<BattleMatchup> {
   const testCaseId = `${testCase.id}-1`; // Assuming RUNS_PER_TEST_CASE = 1
-
-  console.info(`\nRunning battle for test case: ${testCaseId}`);
 
   // Collect outputs from all models for this test case
   const modelOutputsForTestCase: Array<{ modelId: string; output: string }> =
@@ -115,14 +134,40 @@ async function runBattleForTestCase(
     );
   }
 
-  // Anonymize outputs
-  const { anonymizedOutputs, mapping } = anonymizeOutputs(
-    modelOutputsForTestCase,
-  );
+  // Use existing mapping or create new one
+  let mapping: Array<{ anonymousId: string; modelId: string }>;
+  let anonymizedOutputs: Array<{ anonymousId: string; output: string }>;
+
+  if (existingMatchup) {
+    mapping = extractMappingFromMatchup(existingMatchup);
+    anonymizedOutputs = modelOutputsForTestCase.map((item) => {
+      const mapEntry = mapping.find((m) => m.modelId === item.modelId);
+      return {
+        anonymousId: mapEntry?.anonymousId ?? item.modelId,
+        output: item.output,
+      };
+    });
+  } else {
+    const result = anonymizeOutputs(modelOutputsForTestCase);
+    mapping = result.mapping;
+    anonymizedOutputs = result.anonymizedOutputs;
+  }
+
+  // Determine which judges need to run
+  const judgesToRun = existingMatchup
+    ? getMissingJudges(existingMatchup)
+    : [...BATTLE_JUDGES_CONFIG];
+
+  if (judgesToRun.length === 0 && existingMatchup) {
+    return existingMatchup;
+  }
+
+  console.info(`\nRunning battle for test case: ${testCaseId}`);
+  console.info(`  Judges to run: ${judgesToRun.join(", ")}`);
 
   // Get rankings from each judge in parallel
-  const judgments = await Promise.all(
-    BATTLE_JUDGES_CONFIG.map(async (judgeId) => {
+  const newJudgments = await Promise.all(
+    judgesToRun.map(async (judgeId) => {
       const rankings = await generateBattleRankings({
         anonymizedOutputs,
         expectations: testCase.expectations,
@@ -138,10 +183,15 @@ async function runBattleForTestCase(
     }),
   );
 
+  // Merge with existing judgments
+  const allJudgments = existingMatchup
+    ? [...existingMatchup.judgments, ...newJudgments]
+    : newJudgments;
+
   const matchup: BattleMatchup = {
     expectations: testCase.expectations,
     judgedAt: new Date().toISOString(),
-    judgments,
+    judgments: allJudgments,
     taskId: task.id,
     testCaseId,
   };
@@ -182,18 +232,17 @@ export async function runBattleMode(task: Task): Promise<void> {
     }
   }
 
-  // Run battles for each test case
+  // Run battles for each test case (incremental - only runs missing judges)
   await Promise.all(
     task.testCases.map(async (testCase) => {
       const testCaseId = `${testCase.id}-1`;
       const existingMatchup = await loadExistingMatchup(task.id, testCaseId);
-
-      if (existingMatchup) {
-        console.info(`Using existing battle for ${testCaseId}`);
-        return existingMatchup;
-      }
-
-      return runBattleForTestCase(task, testCase, completeOutputs);
+      return runBattleForTestCase(
+        task,
+        testCase,
+        completeOutputs,
+        existingMatchup,
+      );
     }),
   );
 
