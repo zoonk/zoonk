@@ -1,0 +1,126 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Photosynthesis involves specific chemical processes in distinct cellular locations. Penalize if:\n   - Chlorophyll is described as producing energy rather than capturing light energy\n\n2. DEPTH CHECK: Penalize if the explanation presents photosynthesis as simply \"plants make food from sunlight\" without showing how light energy becomes chemical energy.\n\n3. DISTINCTION FROM BACKGROUND: The background covered the historical mystery of where plant mass comes from. This should explain the actual process of energy conversion.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-15T20:07:28.610Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model is exceptional. It perfectly balances conversational tone with scientific depth. It explicitly addresses the mechanism of mass creation ('air literally becoming plant matter'), which connects beautifully to the background context mentioned in the prompt. The inclusion of 'Why Plants Look Green' adds engaging flavor without fluff. The explanation of ATP/NADPH as 'molecular batteries' is accurate and accessible.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "An excellent response that offers comprehensive depth (10 steps). It uses fantastic analogies (LEGO bricks, charging vs. spending) and clearly distinguishes between the light reactions and the Calvin cycle. The clarification step regarding energy transformation vs. creation is a strong addition. It is only slightly ranked below Model G because Model G's narrative flow regarding the 'mass from air' concept was slightly more elegant.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Very strong output. It introduces specific cellular structures (thylakoids, stroma) correctly, adding a layer of depth that others missed, while maintaining a good 'tiny kitchen' analogy. It adheres strictly to the requirements and explains the chemical energy conversion well.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "A solid, high-quality explanation. It is concise but accurate, mentioning ATP, NADPH, and electron excitation. The inclusion of the chemical equation helps visualize the 'Master Equation' of inputs and outputs. It scores lower than the top three simply because it feels slightly more list-like and less narrative.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model excels in tone, calling photosynthesis an 'energy hack' and explaining the 'Solid Air' concept brilliantly. However, it scores lower on the Depth criteria because it refers to ATP/NADPH only as 'energy carrier molecules' without naming them, which makes it slightly less informative than the higher-ranked models.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Accurate and detailed, mentioning the electron transport chain. However, the tone is drier and more textbook-like ('In simple terms:', 'pigments... push electrons') compared to the 'curious friend' persona requested. It prioritizes technical precision over accessibility slightly too much.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Generally good, but it contains a significant scientific inaccuracy. It states that energy is stored in temporary molecules (ATP/NADPH) to be used 'even when the sun goes down.' In reality, these molecules are unstable and used immediately; the Calvin cycle in most plants relies on light-activated enzymes. This inaccuracy regarding the timing of the process penalizes the score.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "This response is too brief. While the tone is enthusiastic, it skims over the actual mechanism of how light energy becomes chemical energy, missing the depth required by the prompt.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "The weakest response. It uses the scientifically incorrect phrase 'create energy' (violating thermodynamics) and fails to explain the water-splitting mechanism or the specific energy carriers. It is too superficial for the depth requirements.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Most complete while staying focused on mechanism: chloroplast/chlorophyll roles are correct (captures light), clearly distinguishes light reactions vs Calvin cycle, includes ATP/NADPH and water splitting/oxygen, and explicitly clarifies “no energy created.” Conversational with analogies. Minor issue: several steps likely exceed 300 chars.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Accurate and mechanistic (thylakoids/stroma, ETC, ATP/NADPH, water split, O2). Good everyday analogies (“bottled,” “baking”). Includes a helpful misconception note. Slight scope creep into climate/agriculture and some steps may be near/over 300 chars.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Strong clarity and correct compartmentalization (thylakoids vs stroma) and good “charger/device” analogy connecting stages. Mostly focused on what it is. Weaker on how light energy becomes chemical energy (no explicit electron transport/water split), and some steps drift to “why it matters.” Possible 300-char overruns.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Accurate, reasonably deep (ATP/NADPH, water splitting, membranes, Calvin cycle) with friendly tone and analogies. However, it leans into “air becoming plant matter” (close to the background theme) and includes food-chain/why-matters content. Several steps likely exceed 300 chars.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good mechanistic detail (excited electrons, ATP/NADPH, water split) and includes an equation. But it explicitly revisits the background “tree growth mystery/without soil feasts,” violating the no-overlap requirement. Tone is a bit gimmicky (“energy conversion party”). Likely length issues too.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Mostly accurate with decent stage separation and analogies. Depth is moderate but vague on key carriers (doesn’t name ATP/NADPH), and claims like “even when the sun goes down” can mislead without context (Calvin cycle depends on products of light reactions). Some return to mass-from-light framing.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Generally accurate and clear, but includes explicit overlap with the background (“So, what is a tree made of?… tons of air solidified”), shifting toward origin/mass story rather than mechanism. Less detail on ATP/NADPH and the conversion steps. Likely exceeds 300 chars in places.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Conversational, but superficial: largely “plants use sunlight to make sugar” with minimal explanation of the energy conversion machinery (no ATP/NADPH named, no electron flow). Also has a factual sloppiness: “sugar (energy)” blurs matter vs energy. Format okay but depth weak.",
+          "score": 5.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Most superficial and contains a key accuracy issue per rubric: describes chloroplasts as “using sunlight to create energy,” implying energy production rather than capture/transfer. Minimal mechanism (no water splitting/ATP/NADPH), and overall reads like a basic summary.",
+          "score": 4.4
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-explanation",
+  "testCaseId": "en-biology-photosynthesis-1"
+}
