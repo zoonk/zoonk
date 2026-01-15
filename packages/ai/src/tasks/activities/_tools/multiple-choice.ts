@@ -1,9 +1,13 @@
 import { z } from "zod";
 
-import { contextSchema } from "./shared";
-
 export const multipleChoiceInputSchema = z.object({
-  context: contextSchema,
+  context: z
+    .string()
+    .describe(
+      "A novel real-world scenario that sets up the question (max 300 chars). " +
+        "Write it as if describing a situation to a friend. " +
+        "For code-related topics, include short code snippets inline.",
+    ),
   options: z
     .array(
       z.object({
