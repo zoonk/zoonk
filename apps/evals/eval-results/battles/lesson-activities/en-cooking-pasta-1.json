@@ -1,6 +1,6 @@
 {
   "expectations": "\n      Avoid granular steps like \"boil water\" or \"add salt\" - these belong inside activities, not as activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
-  "judgedAt": "2026-01-15T20:26:43.583Z",
+  "judgedAt": "2026-01-15T20:32:29.610Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -128,6 +128,71 @@
           "anonymousId": "Model A",
           "modelId": "google/gemini-3-pro-preview",
           "reasoning": "Under-scoped and too sparse (only three activities), with descriptions that bundle multiple operations and omit a clear finishing/plating activity. Activity sizing is uneven: “Emulsify the Sauce” is relatively narrow as a standalone activity, while key teaching points (timing coordination, serving/finishing) are missing. Overall least complete relative to the lesson scope.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model provides excellent activity sizing with 6 well-structured phases that each could expand to ~10 steps. The descriptions are detailed and action-oriented ('Choose authentic ingredients and prepare tools', 'Slice and render guanciale to extract flavorful fat'). Every activity is substantial enough and the scope coverage is complete. The only minor issue is the last activity includes serving/leftover tips which approaches fluff territory, but it's integrated with plating which keeps it acceptable. Clear, professional titles throughout.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Provides 6 well-sized activities with excellent logical grouping. Each activity is substantial and could expand to ~10 steps. Descriptions are detailed and action-oriented ('Cut and render the guanciale/pancetta slowly to get crisp pieces and flavorful fat'). Complete coverage of the lesson scope. The plating/serving activity is borderline but includes actionable content like 'serve immediately at the right texture'. Very minor concern about the last activity approaching review territory, but overall excellent.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Offers 7 activities with good coverage. Most activities are well-sized, though 'Prep the Guanciale and Cooking Station' and 'Cook the Spaghetti' descriptions are somewhat vague. The separation of cooking station prep from ingredient prep shows good thinking about workflow. The plating activity is present but acceptable. Slight redundancy in having both prep activities that could potentially be merged. Good overall but some descriptions lack specificity compared to top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Provides 6 activities with reasonable sizing. The activities are logical and cover the scope well. However, 'Plate and Serve' activity is quite thin and could struggle to expand to 10 steps - it mainly describes plating, adding pepper/cheese, and serving immediately. The other activities are adequately sized. Descriptions are clear but somewhat brief. Good overall structure but the final activity is borderline too small.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Offers 5 activities with mostly good sizing. The activities cover the essential steps well. However, 'Cook the Pasta' description is borderline thin - 'bring water to boil, cook pasta, test, drain' might not expand to 10 full steps easily. Missing explicit plating step which could be considered a gap in completeness, though the final activity does imply serving. Solid but not as comprehensive as higher-ranked models.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Has 6 activities but several sizing issues. 'Prepare the Egg Mixture' is quite small - whisking eggs with cheese and pepper is borderline a single action. 'Finish and Serve' is too small - 'season, add cheese, serve' could not expand to 10 steps. The title 'Make the Guanciale or Pancetta' is confusing (you're not making the meat, you're cooking it). Otherwise reasonable structure.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Provides 7 activities but with problematic granularity. 'Combine Pasta and Fat' is too small - it's essentially one action that belongs inside another activity. Similarly, 'Finalize and Serve Carbonara' is thin. The separation between 'Emulsify the Sauce' and 'Combine Pasta and Fat' creates artificial divisions of what should be one activity. Over-splitting reduces the substance of individual activities.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Only 4 activities, which means each must be quite large. While the activities are substantial, the structure is too condensed. 'Assemble the Carbonara' tries to do too much (toss pasta, add guanciale, incorporate egg mixture, emulsify) - this should be multiple activities. The limited number of activities suggests inadequate granularity for effective learning. Missing explicit plating/serving step.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Only 4 activities with questionable sizing. 'Prepare the Mise en Place' combines three distinct prep tasks (slicing, grating, whisking) that are each substantial - this is over-consolidated. Meanwhile, the overall coverage is thin. Missing explicit plating step. The condensed approach doesn't provide enough structure for a complete lesson.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Only 3 activities - far too few for proper lesson coverage. 'Prepare the Ingredients and Base' and 'Cook the Pasta and Guanciale' each combine what should be separate activities. This over-consolidation means activities are too large and lack the appropriate granularity. Missing any plating/serving content. Insufficient structure for a complete cooking lesson.",
           "score": 1
         }
       ]

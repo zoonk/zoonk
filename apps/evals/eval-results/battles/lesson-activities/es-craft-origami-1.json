@@ -1,6 +1,6 @@
 {
   "expectations": "\n      Titles and descriptions must be in Spanish.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
-  "judgedAt": "2026-01-15T20:25:47.640Z",
+  "judgedAt": "2026-01-15T20:32:38.496Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -129,6 +129,71 @@
           "modelId": "meta/llama-4-maverick",
           "reasoning": "Títulos y descripciones muy genéricos y poco accionables (“Crear los Pliegues Básicos”, “Formar el Cuerpo”), con escasa referencia a transformaciones/estructuras clave (base cuadrada, base de pájaro, pliegue pétalo, etc.). Varias actividades parecen etiquetas vagas que podrían convertirse en 1-3 pasos o quedar ambiguas, incumpliendo sizing y claridad.",
           "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model G provides 8 well-structured activities that cover the complete origami crane process. Each activity is substantial enough to expand into ~10 steps. The titles are action-oriented ('Preparar', 'Formar', 'Crear', 'Desarrollar') and in Spanish. The progression is logical: base preparation → square base → kite form → triangle base → diamond form → wings → neck/head → final shaping. The activities are appropriately sized - none are single actions, and each represents a meaningful phase. The descriptions are detailed enough to indicate scope without being steps themselves. Minor issue: 'Formar el triángulo base' could potentially be combined with adjacent activities, and 8 activities might be slightly more granular than needed, but overall excellent quality.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model J has 7 comprehensive activities with very detailed descriptions. Each activity clearly could expand to 10+ steps. Descriptions explicitly mention specific techniques (pliegue de pétalo, inside reverse, pliegues de cometa). The progression is logical and complete. However, the last activity 'Ajustes finales y presentación' somewhat resembles a review/summary activity with mentions of 'exhibición' and 'variar tamaño y acabado' which could be seen as slight fluff. Also, 'Preparar el papel y las herramientas' includes converting rectangular to square paper which might be overly detailed for preparation. Still, it's thorough and well-structured.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D provides 6 well-balanced activities covering the full crane process. Titles are clear and action-oriented in Spanish. Each activity is substantial - forming square base, creating bird base, molding wings/tail, forming neck/head/beak, and final adjustments. The descriptions mention specific techniques (pliegues valle y montaña, pliegue interior inverso). The scope is appropriate. However, 'Dar forma final y ajustar la grulla' could be seen as somewhat vague and close to a finishing/review activity, though it does include specific actions like opening wings and curving.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model H has 6 activities with good logical flow. Activities are appropriately sized and could expand to multiple steps. Titles are in Spanish and action-oriented. Good coverage of the process from preparation through completion. However, 'Preparar el Papel y el Espacio de Trabajo' is somewhat thin for 10 steps - selecting paper and preparing workspace might only yield 3-5 steps. The description for 'Completar la Cabeza y las Alas' combines two distinct phases which could each be substantial activities. Overall solid but some activities seem undersized.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model I provides 5 activities covering the main phases. Activities are reasonably sized but somewhat generic. 'Formar las alas y dar los toques finales' combines two concepts and 'toques finales' edges toward review/summary territory. 'Preparar el papel para el plegado' seems too small - just preparing paper and organizing workspace wouldn't expand to 10 steps. Descriptions are relatively brief and don't fully convey the substance of each activity. Coverage is complete but activities lean toward the smaller side.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Model A has 5 activities that cover the process but are somewhat thin. 'Dar Forma a las Alas' ('Give shape to the wings by folding down two sides of the bird base') sounds like it could be just 2-3 steps, not 10. 'Completar la Grulla' is vague and includes multiple actions listed quickly (head, tail, adjusting wings) that seem more like steps than an activity description. The descriptions are brief and some activities might be too small to expand to 10 steps each. Titles are action-oriented but the granularity is inconsistent.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Model F has 6 activities but several are too vague or small. 'Preparar el Papel' (selecting and preparing paper) is likely only 2-3 steps. 'Ajustar y perfeccionar los detalles finales' is very close to a review/finishing activity and is vague. Titles use some non-action words and descriptions are very generic ('pliegues específicos', 'con precisión'). The activities don't convey enough substance to clearly expand to 10 steps each. Coverage exists but quality of activity definition is weak.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model C provides only 4 activities which is quite condensed. While this could work, some activities are problematic. 'Formar la base inicial de cometa' combines initial folds AND kite base which are substantial phases crammed together. 'Abrir las alas y finalizar la grulla' combines opening wings, creating wing folds, adjusting details including beak - this is multiple distinct activities. The activities are oversized, combining too many phases together. Some steps might fit but the grouping is imbalanced and could lead to activities that are too large.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E provides only 4 activities which is a very condensed approach. 'Dar Forma Final y Detalles' includes executing internal reverse folds, elevating neck and tail, defining the head, AND expanding the body - this is clearly multiple substantial activities crammed into one. The activities are too large and combine multiple distinct phases. With only 4 activities covering the entire crane, each would need to expand to far more than 10 steps, indicating poor sizing. Activity titles are action-oriented but the grouping is problematic.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model B provides only 3 activities, which is far too few. Each activity would need to expand to dozens of steps, not ~10. 'Esculpir y Terminar la Grulla' combines narrowing points, reverse folds for neck and tail, AND adding volume to body - these are clearly multiple distinct phases. The activities are massively oversized. While titles are action-oriented and in Spanish, the fundamental sizing problem makes this approach unworkable for the lesson structure expected.",
+          "score": 10
         }
       ]
     }

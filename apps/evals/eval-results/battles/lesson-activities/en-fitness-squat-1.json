@@ -1,6 +1,6 @@
 {
   "expectations": "\n      Avoid granular cues like \"bend knees\" or \"keep back straight\" - these belong inside activities as steps, not as activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
-  "judgedAt": "2026-01-15T20:26:26.804Z",
+  "judgedAt": "2026-01-15T20:32:31.874Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -129,6 +129,71 @@
           "modelId": "meta/llama-4-maverick",
           "reasoning": "Fails sizing and ‘no single actions’ expectations: activities are basically individual movement steps (prepare/descend/bottom/ascend/complete rep) and include granular cues (“keep back straight,” “chest up”). Missing equipment setup, unrack/walkout, rerack, safety considerations—overall incomplete and too narrow.",
           "score": 2.9
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model A provides 5 well-sized activities that cover the full barbell squat lesson scope. Activities are appropriately grouped (setup/unrack, descent, ascent, rerack) with each being substantial enough to expand into ~10 steps. Titles are clear and action-oriented without vague language. Descriptions are detailed but not overly granular. The only minor weakness is that it could potentially separate the bracing aspect more explicitly, but the current grouping is logical and defensible. No fluff activities, no single actions, good completeness.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B has 6 well-structured activities covering equipment setup through reracking. Activities are appropriately sized and could expand to ~10 steps each. Titles are action-oriented and clear. The inclusion of 'Set Up the Equipment' as a separate activity covering rack adjustment and weight loading is a good practical addition. Descriptions avoid granular cues while providing enough context. Very solid overall with good logical grouping.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model F has 6 activities but some are borderline too small. 'Set Your Stance' and 'Brace Your Core and Spine' feel like they could be substeps of a larger setup activity rather than standalone activities that could expand to ~10 steps each. The foot positioning and bracing are important but splitting them this granularly violates the sizing criteria. Other activities are well-sized. Titles are clear and action-oriented.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G provides 9 activities with generally good coverage. However, 'Configure Safety and Bailing Plan' and 'Fix Common Form Errors and Cues' feel like fluff/review activities that the criteria specifically prohibit. 'Manage Breathing, Bracing, and Rep Rhythm' is also somewhat vague. The core squat mechanics activities are well-sized, but the inclusion of prohibited activity types hurts the score. Otherwise good action-oriented titles and logical grouping.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model J provides 9 detailed activities but has several issues. 'Perform a specific warm-up and activation sequence' extends beyond the lesson scope (warm-up is typically separate from the squat technique itself). 'Identify faults and apply corrective strategies' resembles a review/assessment activity which is prohibited. 'Hold and initiate the ascent from the bottom position' may be too narrow - holding at the bottom is brief and might not expand to ~10 steps. Good technical detail but scope issues.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model E has 8 activities but includes 'Review and Adjust Your Technique' which is explicitly prohibited as a review/assessment activity. Also, 'Establish Your Squat Stance' before 'Set Up Under the Barbell' seems illogical in sequence - you'd typically position under the bar before establishing final stance. Some activities are well-sized but the prohibited review activity and logical sequencing issues are significant.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Model D uses vague prohibited language in titles and descriptions: 'Learn how to...', 'Understand the proper...', 'Learn the correct...' - these are explicitly called out as words to avoid in the criteria. Activities themselves are reasonably sized but the language violations are consistent throughout. 'Brace Your Core' as a standalone activity may also be too small to expand to ~10 steps.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model I has only 5 activities with very brief descriptions that lack sufficient detail. Descriptions read more like single actions: 'Position the bar on your back, lift it off the hooks, and step back into stance' - this is essentially listing 3 quick steps rather than describing a substantial activity. 'Push through the floor to stand back up while maintaining a neutral spine' is too brief. Activities feel undersized and descriptions are too sparse.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Model C has significant issues. 'Reach the Bottom Position' is essentially a single moment/position, not an activity that could expand to ~10 steps. 'Complete the Repetition' (standing up fully and resetting) is very brief and feels like fluff. Descriptions include granular cues like 'keeping your back straight and chest up' which belong as steps not in descriptions. Missing important setup/unracking and reracking phases. Poor coverage and sizing.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model H has only 4 activities which suggests over-consolidation. The final activity 'Execute the Squat Ascent and Rerack' combines too many distinct phases (driving up, lockout, stepping back, reracking) - these should likely be separate activities. While activities might be expanded, the grouping is too aggressive and loses important distinctions between phases. Missing granularity where it matters.",
+          "score": 10
         }
       ]
     }

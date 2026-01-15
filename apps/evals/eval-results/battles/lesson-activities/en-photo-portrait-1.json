@@ -1,6 +1,6 @@
 {
   "expectations": "\n      Avoid granular steps like \"press shutter button\" or \"adjust ISO dial\" - these belong inside activities, not as activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
-  "judgedAt": "2026-01-15T20:25:44.491Z",
+  "judgedAt": "2026-01-15T20:32:34.687Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -129,6 +129,71 @@
           "modelId": "google/gemini-3-flash",
           "reasoning": "Overly generic and minimal; activities are broad but thin and read like headings without enough scope detail to reliably expand into ~10 steps. Lacks planning/location/background handling and meaningful iteration; overall least complete.",
           "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model E provides 6 well-sized activities that cover the full portrait photography workflow. Each activity is substantial enough to expand into ~10 steps. 'Scout and Choose Your Location' appropriately combines scouting and evaluation. 'Position Your Subject in the Light' is focused but substantial. 'Configure Camera Settings' is appropriately scoped. 'Frame and Compose the Shot' combines framing with composition principles. 'Guide Your Subject's Pose and Expression' combines posing and expression work. 'Capture Multiple Frames' covers the shooting process with variations. All titles are clear and action-oriented. No fluff activities. Good logical grouping without being too granular or too broad.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model C offers 5 well-sized activities covering location, lighting, posing/composition, camera settings, and capture. Each is substantial enough for ~10 steps. The activities have clear, action-oriented titles. 'Direct the Pose and Composition' efficiently combines two related aspects. 'Capture the Portrait' includes real-time adjustments which adds substance. Good coverage without fluff. Slightly less comprehensive than Model E in separating composition from posing, but still a solid approach.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model H provides 5 well-structured activities. 'Set Up the Location and Lighting' combines scouting with light modifiers. Camera settings activity is comprehensive. 'Compose the Portrait Shot' focuses on composition principles. 'Direct Poses and Expressions' covers subject direction well. 'Capture and Review the Photos' is substantial. Activities are appropriately sized and cover the lesson scope well. Clear titles. Minor concern: 'Capture and Review' combines shooting with immediate review, which works but slightly overlaps with the capture phase of other activities.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B has 6 activities with good coverage. 'Plan the Portrait and Light Conditions' includes purpose and planning. 'Set Up Camera, Lens, and Core Settings' covers equipment well. 'Build a Natural-Light Setup and Background' is unique and substantial. 'Direct Posing and Expression' is appropriately scoped. 'Capture a Strong Set of Portraits' covers shooting. However, 'Check Results and Fix Problems in the Moment' is borderline - reviewing and troubleshooting on-site could be considered part of the capture process, and the title 'Fix Problems' is slightly vague. Overall solid but the last activity is somewhat weaker.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model I provides 5 activities with reasonable coverage. 'Choose the Location and Background' is appropriately scoped. 'Assess and Position for Natural Light' combines light assessment with positioning. 'Prepare and Pose the Subject' includes preparation and posing. 'Set Up the Camera for Portraits' covers settings. 'Photograph the Portrait Series' is the capture phase. Activities are adequately sized but some descriptions are a bit thin. 'Prepare and Pose the Subject' includes clothing/hair adjustments which may be beyond typical lesson scope. Generally good but not as polished as top models.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F provides 8 activities which is comprehensive but may be too granular for the lesson scope. 'Prepare Styling and Grooming' (adjusting styling, clothing, hair, props) seems outside the scope of a basic portrait photography lesson - this is more for fashion/professional shoots. 'Prepare Gear and Camera Settings' includes equipment selection which extends beyond settings. Some activities like 'Focus and Exposure Techniques' are very technical and could overlap with camera settings. The scope seems broader than a typical lesson would cover, potentially overwhelming.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Model J has 5 activities but with issues. 'Review and Adjust as Necessary' is essentially a review activity which the criteria states to avoid ('No summary, review, or assessment activities'). Additionally, 'Direct Your Subject and Capture the Photo' ends with 'take the photo' which sounds like a single action embedded in the title. The activities are reasonably sized otherwise, but these issues affect the score.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Model A has 7 activities but includes 'Select Your Best Images' which is a review/assessment activity that the criteria explicitly prohibits. 'Frame Your Shot Effectively' and 'Direct Your Subject's Pose' are separated when they could be combined, making some activities potentially too small. The separation of framing from composition seems artificial. The review activity is a significant violation of the no-fluff rule.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G only provides 4 activities, which raises concerns about completeness and proper sizing. With only 4 activities, each would need to be very broad to cover the full lesson scope, risking being too large. 'Capture and Evaluate the Final Images' combines capture with evaluation/review, which violates the no-fluff rule. The activities seem too broadly grouped - 'Configure Camera and Equipment Settings' combines multiple distinct concepts. Missing separate consideration of composition and framing as distinct from posing.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model D provides only 4 activities which is quite minimal. 'Capture and Review the Portrait' includes reviewing which the criteria flags as fluff. The activities are very broadly grouped - 'Prepare the Environment and Lighting' combines location scouting and subject positioning. 'Compose and Pose the Subject' combines two substantial topics that could each be their own activity. The brevity suggests either activities are too large or coverage is incomplete.",
+          "score": 10
         }
       ]
     }

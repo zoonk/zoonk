@@ -1,6 +1,6 @@
 {
   "expectations": "\n      SPECIAL CONSIDERATION: This is a complex, multi-phase process. The lesson description explicitly mentions multiple distinct phases.\n\n      Each activity should represent a substantial phase. Complex tasks naturally require more activities than simple ones.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
-  "judgedAt": "2026-01-15T20:26:19.855Z",
+  "judgedAt": "2026-01-15T20:32:29.774Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -128,6 +128,71 @@
           "anonymousId": "Model F",
           "modelId": "meta/llama-4-maverick",
           "reasoning": "Significant scope and grouping problems. Starts with “Create and Feed the Sourdough Starter,” which broadens beyond the likely lesson (creating a starter is a different lesson). Then “Fold and Proof the Dough” improperly merges major phases and assumes doubling (often not the correct cue for sourdough). Missing distinct bulk management, scoring, cooling/storage phases; overall too coarse and incomplete.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Excellent breakdown of the sourdough process into 8 well-sized activities. Each activity is substantial enough to expand into ~10 steps. Good separation of 'Build Dough Strength' from 'Bulk Fermentation' which are distinct phases. Separates 'Score and Bake' from 'Finish Baking and Cool' appropriately. Clear, action-oriented titles without vague words. Descriptions are detailed and specific. No fluff activities. Covers the complete scope without being overly granular.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "9 activities covering the full process well. Includes 'Prepare Your Workspace and Timeline' which is a valid substantial phase for complex baking. Good separation of pre-shape/bench rest from final shaping. Descriptions are detailed with specific techniques mentioned. All titles are action-oriented. 'Cool, Slice, and Store' could be considered borderline fluff but the 'noting adjustments for next bake' aspect adds value. Very comprehensive coverage.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "9 activities with very detailed descriptions. Separates 'Feed and Activate the Starter' from 'Build the Levain' which is accurate for serious sourdough baking. Good technical detail throughout. However, 'Prepare Ingredients & Equipment' as a separate activity is borderline - could be too small for a lesson focused on baking itself. 'Cool, Slice, and Store' is a bit fluffy. Overall strong but slightly over-divided in places.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "9 activities with good coverage. Pre-shape and final shape are separated which is valid. However, 'Cool and Slice the Loaf' with 'evaluate the final crumb structure' verges on assessment/review which the criteria prohibit. The descriptions are somewhat less detailed than top models. Still covers the process comprehensively with action-oriented titles.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Only 6 activities, which might be too few for this complex multi-phase process. However, each activity is very detailed and substantial. The descriptions include specific techniques and tests. Combines 'Bake the Sourdough Loaf' with cooling which is efficient. Missing separate coverage of cold proofing vs room temp proofing detail. Solid but perhaps too condensed.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Only 6 activities which is on the lean side for a complex, multi-phase sourdough lesson. Combines 'Proof and Score' which are distinct phases. Missing cooling/finishing steps entirely, which is a significant gap. Descriptions are brief compared to other models. The activities that are there are well-titled but the coverage is incomplete.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "7 activities with reasonable coverage. Uses 'Levain' terminology which is appropriate. However, 'Manage Bulk Fermentation' combines stretch-and-folds INTO bulk fermentation which loses the distinction between active development and passive rising. 'Cool and Store the Finished Loaf' title is acceptable but description is thin. Some descriptions are less detailed than competitors.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "8 activities with decent structure. However, descriptions are quite brief and generic compared to top models. 'Strengthen the Dough' and 'Bulk Ferment the Dough' as separate activities is good but descriptions don't clearly differentiate what happens in each. 'Finish and Store the Loaf' with 'evaluate crust and crumb' verges on assessment. Adequate but lacks the specificity of better models.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Only 6 activities which is too condensed. 'Fold and Proof the Dough' combines stretch-and-folds with proofing which are very different phases (one is active development, one is passive rising). This is a major logical grouping issue. 'Create and Feed the Sourdough Starter' suggests creating from scratch which may be beyond lesson scope. Missing cold proofing entirely. Descriptions are adequate but structure is flawed.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "The first activity description starts with 'Learn how to...' which explicitly violates the 'no vague words like learn about' criterion. Only 8 activities but 'Cool the Sourdough Loaf' as a standalone activity is too small - it's just one action (cooling) that cannot expand to ~10 steps. Descriptions are the briefest of all models, lacking specific techniques. 'Perform Dough Folds' is a weak title. Multiple criteria violations.",
           "score": 1
         }
       ]

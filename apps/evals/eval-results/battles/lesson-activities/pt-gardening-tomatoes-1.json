@@ -1,6 +1,6 @@
 {
   "expectations": "\n      Titles and descriptions must be in Portuguese.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
-  "judgedAt": "2026-01-15T20:26:03.109Z",
+  "judgedAt": "2026-01-15T20:32:31.918Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -128,6 +128,71 @@
           "anonymousId": "Model B",
           "modelId": "google/gemini-3-pro-preview",
           "reasoning": "Muito incompleto (apenas 3 atividades) e centrado em ações iniciais; não cobre manejo contínuo, nutrição ao longo do tempo, tutoramento contínuo/poda, controle de pragas/doenças nem colheita. As atividades também são relativamente pequenas para expandir em ~10 passos sem extrapolar.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model provides 10 well-scoped activities that comprehensively cover growing tomatoes in pots. Each activity is substantial enough to expand into ~10 steps (e.g., 'Preparar o vaso e o solo' could include selecting pot size, checking drainage holes, adding drainage layer, mixing soil components, etc.). Activities cover the full lifecycle from preparation through harvest. Titles are clear and action-oriented. No fluff activities. Good logical grouping - separates related concerns like watering from fertilizing, pruning from support. The only minor issue is some slight overlap between activities, but overall excellent coverage and sizing.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Offers 11 comprehensive activities with detailed descriptions. Each activity is well-sized and expandable. Very thorough coverage including planning aspects (variety selection, microclimate), preparation, planting, ongoing care, and harvest. Descriptions are rich with specifics. However, some activities may be slightly too detailed in descriptions (almost prescriptive rather than descriptive), and 11 activities might be slightly too many for a single lesson. Some titles are a bit long. Still, excellent substance and completeness.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Provides 8 well-structured activities with good balance between preparation and ongoing care. Activities are appropriately sized - each could expand to ~10 steps. Good coverage including planning, preparation, planting, support, watering, fertilization, and pest prevention. Titles are clear and action-oriented. Descriptions provide good context. Missing explicit colheita/harvest activity, but includes pest/disease prevention which is important. Solid overall approach.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "8 activities covering the full scope from preparation to harvest. Activities are generally well-sized, though some like 'Colher os Tomates' might be on the smaller side for expanding into 10 steps. Good logical grouping with clear titles. Covers support installation, health monitoring, and harvest. Some activities could be combined (like activities 4 and 5 seem to overlap on watering/initial care), but overall good coverage and appropriate scope.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "5 activities covering key phases. Activities are decently sized - 'Preparar o Vaso e o Sistema de Drenagem' and 'Preparar o Substrato Nutritivo' are substantial. However, the model is incomplete - missing ongoing care activities like pest control, pruning, fertilization routine, and harvest. 'Finalizar com Rega e Posicionamento' sounds like a single action rather than a substantial activity. Coverage stops at initial setup, missing the maintenance phase entirely.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "5 activities covering basic flow from preparation to maintenance. Activities are reasonably sized but 'Semear as Sementes de Tomate' and descriptions are quite brief. 'Manter os Cuidados Contínuos' is somewhat vague. Missing support/tutoramento which is essential for tomatoes. Focuses only on seeds, not considering mudas as an option. Coverage is adequate but not comprehensive. Titles are clear and action-oriented.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Only 4 activities, which is too few for comprehensive coverage. While each activity is reasonably sized, the scope is incomplete. 'Realizar os Primeiros Cuidados' tries to pack too much (watering, fertilization, pest prevention) into one activity. Missing ongoing care, support/tutoramento, pruning, and harvest phases. The four activities provided are well-titled and described, but the coverage is inadequate for the lesson scope.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Only 4 activities with overly broad scope in each. 'Organizar os Primeiros Cuidados e Manutenção Inicial' tries to cover solar exposure, watering routine, tutoramento, AND initial care - this is too much for one activity and poorly grouped. Missing harvest, pest control, ongoing fertilization. The activities try to cover everything but end up being too broad rather than well-scoped. Some titles use vague words like 'Organizar'.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Only 4 activities. 'Preparar o Vaso' and 'Preparar o Substrato' are separated when they could be combined, yet the model still ends up with too few activities. Missing support/tutoramento (critical for tomatoes), ongoing care, pest management, and harvest. 'Realizar os Cuidados Iniciais' is vague and packs too much. The scope stops at initial setup without covering the growth and maintenance phases.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Only 3 activities, which is far too few. Each activity tries to cover too much scope. Missing crucial elements: variety selection, support/tutoramento, ongoing fertilization, pest control, pruning, and harvest. The three activities provided are okay in isolation, but the coverage is severely incomplete for a lesson on growing tomatoes in pots. Titles are in gerund form which is slightly inconsistent with action-oriented expectation.",
           "score": 1
         }
       ]

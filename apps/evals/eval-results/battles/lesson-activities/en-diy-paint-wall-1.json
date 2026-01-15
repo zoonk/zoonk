@@ -1,6 +1,6 @@
 {
   "expectations": "\n      Avoid granular steps like \"open paint can\" or \"dip brush\" - these belong inside activities, not as activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
-  "judgedAt": "2026-01-15T20:26:25.142Z",
+  "judgedAt": "2026-01-15T20:32:27.293Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -128,6 +128,71 @@
           "anonymousId": "Model D",
           "modelId": "google/gemini-2.5-flash-lite",
           "reasoning": "Several explicit single-action micro-activities (\"Mix the Paint\", \"Allow First Coat to Dry\") that clearly fail the sizing/no-single-actions criteria. Also splits first/second coat and drying into step-level items, reducing quality of grouping despite otherwise decent coverage.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Excellent activity sizing - each activity is substantial with rich descriptions that could clearly expand to ~10 steps. Good logical grouping with comprehensive coverage including planning, room prep, wall prep, masking/caulking, priming, first coat application, and final coat/cleanup. Activities are appropriately scoped and no single actions. Descriptions are detailed without being granular. Clear, action-oriented titles. Includes often-overlooked steps like caulking and ventilation. No fluff activities.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Very good activity sizing with 7 well-structured activities. Each activity is substantial and could expand to ~10 steps. Good separation of room prep, wall repair, masking, priming, and coating activities. Clear action-oriented titles. Minor weakness: 'Remove Tape and Finish Edges' is slightly less substantial than other activities, but still reasonable. Coverage is comprehensive with good logical flow.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good coverage with 8 activities. Most activities are appropriately sized. Includes gathering supplies as a separate activity which is reasonable. 'Cut In the Edges' activity is borderline too small - it focuses on a single technique that might struggle to expand to 10 steps as a standalone. Otherwise solid grouping and clear titles. Good overall flow from prep to finish.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "10 activities is on the high side, leading to some that are too granular. 'Cut In Edges and Corners' and 'Roll the First Coat' are split unnecessarily - these are usually part of the same coat application process. 'Final Inspection and Fixes' as a separate activity feels like it could be combined with the previous cleanup activity. However, descriptions are detailed and coverage is comprehensive. Some activities may not expand to 10 steps easily.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "7 activities with reasonable structure. However, 'Tape Off Edges' is too small as a standalone activity - taping is typically part of room or surface preparation. Descriptions are somewhat brief. 'Apply Additional Coats' is vague. Generally acceptable coverage but activity sizing is inconsistent - some are appropriately sized while others are borderline too small.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Only 5 activities, which means some are very broad. 'Apply the Paint' combines cutting in, rolling, and multiple coats into one activity - this is possibly too broad. Descriptions are relatively brief and generic. Coverage is complete but grouping is very coarse. Activities are appropriately sized but the overall approach lacks detail in the descriptions.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "10 activities with several sizing problems. 'Mix the Paint' is clearly too small - a single action. 'Allow First Coat to Dry' is not an activity at all - it's waiting time. 'Clean the Wall Surface' is quite small. Separating cleaning, repairing, and sanding into individual activities is too granular. These violate the 'no single actions' rule.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Only 5 activities, which is quite condensed. 'Apply the Final Coat' combines second coat application with tape removal - mixing painting technique with cleanup in an awkward way. Descriptions are brief. While activities are substantial, the coverage feels rushed and some important steps may be glossed over. Grouping decisions are questionable.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Only 4 activities is too few. 'Apply the Second Coat and Clean Up' awkwardly combines painting with cleanup - these are different types of work. Activities are too broad and condensed. While each could expand to many steps, the grouping lacks logical coherence in the final activity. Brief descriptions.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Only 3 activities - far too few. First activity tries to pack in gathering, protecting, cleaning, repairing, sanding, and taping - this is overly broad and unfocused. Prime and Apply Paint are reasonable but the overall structure is too condensed. Missing explicit cleanup/finishing activity. Coverage is technically there but organization is poor.",
           "score": 1
         }
       ]

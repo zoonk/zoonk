@@ -1,6 +1,6 @@
 {
   "expectations": "\n      Avoid granular steps like \"open browser\", \"click download\", \"click next\" - these belong inside activities, not as activities themselves.\n\n      Titles and descriptions must be in Portuguese.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
-  "judgedAt": "2026-01-15T20:26:19.874Z",
+  "judgedAt": "2026-01-15T20:32:32.163Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -128,6 +128,71 @@
           "anonymousId": "Model B",
           "modelId": "meta/llama-4-maverick",
           "reasoning": "Pior aderência: atividades extremamente pequenas e quase ações únicas (baixar/executar; definir nome/email; escolher editor; verificar). Falta agrupamento substancial, falta escopo (preferências relevantes, autenticação, validação prática com repo/remoto) e não atende ao requisito de atividades expansíveis em ~10 passos.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model E provides 4 well-balanced activities that cover the full scope of a Git installation and configuration lesson. Each activity is appropriately sized (can expand to ~10 steps) without being too granular or too bloated. 'Instalar o Git no Computador' combines download and installation logically. 'Configurar Identidade no Git' and 'Definir Configurações Globais' are properly separated but each substantial enough. 'Verificar a Instalação e Configurações' sensibly combines verification. Titles are clear and action-oriented. Descriptions are comprehensive. Avoids granular steps and maintains appropriate scope.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model H provides 5 activities with good sizing and coverage. Activities are substantial enough to expand into multiple steps. 'Obter o instalador do Git' and 'Instalar o Git' could potentially be combined, but each still has enough content. The separation of identity configuration and global settings is reasonable. Verification activity is appropriately scoped. Titles are clear and in Portuguese. Minor issue: 'Obter o instalador' is slightly less action-oriented than alternatives.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model C has 5 activities with generally good coverage. However, 'Baixar o Git' and 'Verificar a Instalação' are borderline too small - downloading could be 3-5 steps max, and verification (just checking version) is very limited. Splitting 'Configurar Identidade do Git' and 'Personalizar Configurações do Git' is reasonable but adds granularity. The descriptions are adequate. Overall solid but some activities may not expand to ~10 steps.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Model F has 4 activities with reasonable coverage. However, 'Baixar o Git' is too small as an activity - it's essentially just accessing a website and clicking download. 'Instalar o Git' is appropriately sized. Identity configuration and verification are combined sensibly in later activities. Missing explicit coverage of global preferences like editor, branch name, etc. (only identity is mentioned). Descriptions are clear but the download activity sizing is problematic.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G only has 3 activities, which raises completeness concerns. While each activity is substantial, combining all installation into one activity and all preferences into another may make them too broad. Missing explicit verification step, though it's partially in the identity configuration. The scope is appropriate but the coverage feels incomplete. Titles are good and action-oriented. Descriptions are adequate but the minimal number of activities is a weakness.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model J has only 3 activities. The 'Instalar o Git' is appropriately sized. 'Configurar Credenciais e Preferências' combines multiple concepts well. However, the verification activity goes beyond scope - 'inicializar um repositório local de teste e realizar um commit' extends past just verifying installation into actually using Git, which may exceed the lesson's scope (just installation and configuration). The minimal number of activities and scope creep in verification are issues.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Model B has 4 activities but they're quite thin. 'Configurar Editor Padrão' as a separate activity is too small - choosing and configuring an editor is maybe 2-3 steps. 'Verificar Configuração' is also too limited. Descriptions are too brief and don't suggest substantial content. 'Instalar o Git' combines download and install appropriately, but overall the granularity of separating editor configuration is problematic and activities feel undersubstantial.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model I has only 3 activities which limits coverage. 'Baixar o Git' is too small as a standalone activity (access site, find version, download - that's 3 steps max). While installation and identity configuration are adequately sized, missing any global preferences beyond identity (editor, branch name, line endings). The minimal activity count and missing coverage of important configuration topics are significant weaknesses.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A has 7 activities which significantly exceeds appropriate scope for a basic Git installation and configuration lesson. Including SSH authentication, GitHub repository creation, first push, and detailed troubleshooting goes far beyond installation/configuration basics. 'Configurar autenticação remota' and 'Inicializar repositório local e conectar ao GitHub' are scope creep. While individual activities are well-sized, the overall scope is too broad for the lesson.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D has 7 activities with major scope creep issues. 'Configurar autenticação via SSH' and 'Criar um repositório e fazer o primeiro push' clearly exceed the scope of a basic installation and configuration lesson. 'Preparar o ambiente' and 'Baixar o Git com segurança' may be overly granular for the initial steps. While descriptions are detailed, the lesson scope expansion is problematic. Similar to Model A but with slightly more granular early activities.",
           "score": 1
         }
       ]
