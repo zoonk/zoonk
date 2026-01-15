@@ -1,19 +1,8 @@
 import "server-only";
 
-import { generateText, stepCountIs, tool } from "ai";
+import { generateText, stepCountIs } from "ai";
 
-import { arrangeWordsInputSchema } from "../_tools/arrange-words";
-import arrangeWordsPrompt from "../_tools/arrange-words.prompt.md";
-import { fillBlankInputSchema } from "../_tools/fill-blank";
-import fillBlankPrompt from "../_tools/fill-blank.prompt.md";
-import { matchColumnsInputSchema } from "../_tools/match-columns";
-import matchColumnsPrompt from "../_tools/match-columns.prompt.md";
-import { multipleChoiceInputSchema } from "../_tools/multiple-choice";
-import multipleChoicePrompt from "../_tools/multiple-choice.prompt.md";
-import { selectImageInputSchema } from "../_tools/select-image";
-import selectImagePrompt from "../_tools/select-image.prompt.md";
-import { sortOrderInputSchema } from "../_tools/sort-order";
-import sortOrderPrompt from "../_tools/sort-order.prompt.md";
+import { type QuizQuestion, quizTools } from "../_tools/quiz";
 import systemPrompt from "./activity-explanation-quiz.prompt.md";
 
 const DEFAULT_MODEL =
@@ -27,41 +16,8 @@ const FALLBACK_MODELS = [
   "google/gemini-3-pro-preview",
 ];
 
-// Output types
-type MultipleChoiceQuestion = {
-  format: "multipleChoice";
-} & ReturnType<typeof multipleChoiceInputSchema.parse>;
-
-type MatchColumnsQuestion = {
-  format: "matchColumns";
-} & ReturnType<typeof matchColumnsInputSchema.parse>;
-
-type FillBlankQuestion = {
-  format: "fillBlank";
-} & ReturnType<typeof fillBlankInputSchema.parse>;
-
-type SortOrderQuestion = {
-  format: "sortOrder";
-} & ReturnType<typeof sortOrderInputSchema.parse>;
-
-type ArrangeWordsQuestion = {
-  format: "arrangeWords";
-} & ReturnType<typeof arrangeWordsInputSchema.parse>;
-
-type SelectImageQuestion = {
-  format: "selectImage";
-} & ReturnType<typeof selectImageInputSchema.parse>;
-
-export type ExplanationQuizQuestion =
-  | MultipleChoiceQuestion
-  | MatchColumnsQuestion
-  | FillBlankQuestion
-  | SortOrderQuestion
-  | ArrangeWordsQuestion
-  | SelectImageQuestion;
-
 export type ActivityExplanationQuizSchema = {
-  questions: ExplanationQuizQuestion[];
+  questions: QuizQuestion[];
 };
 
 export type ActivityExplanationQuizParams = {
@@ -108,32 +64,7 @@ Generate quiz questions that test understanding of these concepts. Use the avail
     stopWhen: stepCountIs(10),
     system: systemPrompt,
     toolChoice: "required",
-    tools: {
-      arrangeWords: tool({
-        description: arrangeWordsPrompt,
-        inputSchema: arrangeWordsInputSchema,
-      }),
-      fillBlank: tool({
-        description: fillBlankPrompt,
-        inputSchema: fillBlankInputSchema,
-      }),
-      matchColumns: tool({
-        description: matchColumnsPrompt,
-        inputSchema: matchColumnsInputSchema,
-      }),
-      multipleChoice: tool({
-        description: multipleChoicePrompt,
-        inputSchema: multipleChoiceInputSchema,
-      }),
-      selectImage: tool({
-        description: selectImagePrompt,
-        inputSchema: selectImageInputSchema,
-      }),
-      sortOrder: tool({
-        description: sortOrderPrompt,
-        inputSchema: sortOrderInputSchema,
-      }),
-    },
+    tools: quizTools,
   });
 
   // Collect all tool calls as questions
@@ -141,10 +72,10 @@ Generate quiz questions that test understanding of these concepts. Use the avail
     step.toolCalls
       .filter((call) => !call.dynamic)
       .map((call) => ({
-        format: call.toolName as ExplanationQuizQuestion["format"],
+        format: call.toolName as QuizQuestion["format"],
         ...call.input,
       })),
-  ) as ExplanationQuizQuestion[];
+  ) as QuizQuestion[];
 
   return { data: { questions }, systemPrompt, usage, userPrompt };
 }
