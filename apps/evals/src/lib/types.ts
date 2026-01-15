@@ -54,3 +54,69 @@ export type Task<TInput = unknown, TOutput = unknown> = {
     input: TInput & { model: string; useFallback?: boolean },
   ): Promise<TaskResult<TOutput>>;
 };
+
+// === Output Types (Separated from Eval Results) ===
+
+export type OutputEntry = {
+  testCaseId: string;
+  output: string;
+  inputTokens: number;
+  outputTokens: number;
+  duration: number;
+  systemPrompt: string;
+  userPrompt: string;
+};
+
+export type ModelOutputs = {
+  taskId: string;
+  modelId: string;
+  generatedAt: string;
+  outputs: OutputEntry[];
+};
+
+// === Scored Result Types (Without output data) ===
+
+export type ScoredResult = {
+  testCase: TestCase;
+  steps: Score["steps"];
+};
+
+export type ScoredTaskResults = {
+  taskId: string;
+  modelId: string;
+  results: ScoredResult[];
+};
+
+// === Battle Mode Types ===
+
+export type ModelRanking = {
+  modelId: string;
+  anonymousId: string;
+  score: number;
+  reasoning: string;
+};
+
+export type JudgeRanking = {
+  judgeId: string;
+  rankings: ModelRanking[];
+};
+
+export type BattleMatchup = {
+  taskId: string;
+  testCaseId: string;
+  expectations: string;
+  judgedAt: string;
+  judgments: JudgeRanking[];
+};
+
+export type BattleLeaderboardEntry = {
+  modelId: string;
+  modelName: string;
+  provider: string;
+  totalScore: number;
+  averageScore: number;
+  averageDuration: number;
+  averageCost: number;
+  scoresByJudge: Record<string, number>;
+  scoresByTestCase: Record<string, number>;
+};

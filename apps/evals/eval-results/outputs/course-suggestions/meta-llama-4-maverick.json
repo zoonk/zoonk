@@ -1,0 +1,466 @@
+{
+  "generatedAt": "2026-01-15T19:15:16.555Z",
+  "modelId": "meta/llama-4-maverick",
+  "outputs": [
+    {
+      "duration": 1729.9425000000047,
+      "inputTokens": 929,
+      "output": "[\n  {\n    \"title\": \"Programação\",\n    \"description\": \"Desenvolva habilidades em programação e crie soluções inovadoras.\"\n  },\n  {\n    \"title\": \"Desenvolvimento de Software\",\n    \"description\": \"Aprenda a criar aplicativos e sistemas para diversas plataformas.\"\n  },\n  {\n    \"title\": \"Desenvolvimento Web\",\n    \"description\": \"Desenvolva habilidades em criar aplicações web dinâmicas e interativas.\"\n  },\n  {\n    \"title\": \"Desenvolvimento de Aplicativos Móveis\",\n    \"description\": \"Aprenda a criar aplicativos para dispositivos móveis.\"\n  },\n  {\n    \"title\": \"Ciência de Dados\",\n    \"description\": \"Entenda os conceitos e técnicas de análise de dados.\"\n  }\n]",
+      "outputTokens": 163,
+      "systemPrompt": "",
+      "testCaseId": "pt-want-to-code-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1542.9167080000043,
+      "inputTokens": 929,
+      "output": "[\n  {\n    \"title\": \"Programação\",\n    \"description\": \"Desenvolva habilidades em programação e crie soluções inovadoras.\"\n  },\n  {\n    \"title\": \"Desenvolvimento de Software\",\n    \"description\": \"Aprenda a criar aplicativos e sistemas para diversas plataformas.\"\n  },\n  {\n    \"title\": \"Desenvolvimento Web\",\n    \"description\": \"Desenvolva habilidades em desenvolvimento web e crie aplicações online.\"\n  },\n  {\n    \"title\": \"Desenvolvimento de Aplicativos Móveis\",\n    \"description\": \"Aprenda a criar aplicativos para dispositivos móveis.\"\n  },\n  {\n    \"title\": \"Ciência de Dados\",\n    \"description\": \"Entenda os conceitos e técnicas de análise de dados.\"\n  }\n]",
+      "outputTokens": 162,
+      "systemPrompt": "",
+      "testCaseId": "pt-want-to-code-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1547.677209000045,
+      "inputTokens": 929,
+      "output": "[\n  {\n    \"title\": \"Programação\",\n    \"description\": \"Desenvolva habilidades em programação e crie soluções inovadoras.\"\n  },\n  {\n    \"title\": \"Desenvolvimento de Software\",\n    \"description\": \"Aprenda a criar aplicativos e sistemas para diversas plataformas.\"\n  },\n  {\n    \"title\": \"Desenvolvimento Web\",\n    \"description\": \"Desenvolva habilidades em criar interfaces web responsivas e atraentes.\"\n  },\n  {\n    \"title\": \"Desenvolvimento de Aplicativos Móveis\",\n    \"description\": \"Aprenda a criar aplicativos para dispositivos móveis.\"\n  },\n  {\n    \"title\": \"Ciência de Dados\",\n    \"description\": \"Entenda os conceitos e técnicas de análise de dados.\"\n  }\n]",
+      "outputTokens": 163,
+      "systemPrompt": "",
+      "testCaseId": "pt-want-to-code-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1201.9546669999836,
+      "inputTokens": 931,
+      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the mysteries of black holes and their role in the universe.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Understand the principles and theories governing the behavior of celestial objects.\"\n  },\n  {\n    \"title\": \"Cosmology\",\n    \"description\": \"Learn about the structure, formation, and evolution of the universe.\"\n  },\n  {\n    \"title\": \"Stellar Evolution\",\n    \"description\": \"Study the physical properties and behaviors of stars in various stages.\"\n  }\n]",
+      "outputTokens": 131,
+      "systemPrompt": "",
+      "testCaseId": "en-black-holes-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1206.8680830000085,
+      "inputTokens": 931,
+      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the mysteries of black holes and their role in the universe.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Understand the principles and theories governing the behavior of celestial objects.\"\n  },\n  {\n    \"title\": \"Cosmology\",\n    \"description\": \"Learn about the structure, formation, and evolution of the universe.\"\n  },\n  {\n    \"title\": \"Stellar Evolution\",\n    \"description\": \"Study the physical properties and behaviors of stars in various stages.\"\n  }\n]",
+      "outputTokens": 131,
+      "systemPrompt": "",
+      "testCaseId": "en-black-holes-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1276.8271670000395,
+      "inputTokens": 931,
+      "output": "[\n  {\n    \"title\": \"Black Holes\",\n    \"description\": \"Explore the mysteries of black holes and their role in the universe.\"\n  },\n  {\n    \"title\": \"Astrophysics\",\n    \"description\": \"Understand the principles and theories surrounding astrophysics and cosmology.\"\n  },\n  {\n    \"title\": \"Cosmology\",\n    \"description\": \"Learn about the structure, formation, and evolution of the universe.\"\n  },\n  {\n    \"title\": \"Stellar Evolution\",\n    \"description\": \"Study the life cycles of stars and their impact on the universe.\"\n  }\n]",
+      "outputTokens": 131,
+      "systemPrompt": "",
+      "testCaseId": "en-black-holes-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1794.3961659999914,
+      "inputTokens": 927,
+      "output": "[\n  {\n    \"title\": \"Derecho Penal\",\n    \"description\": \"Profundiza en la comprensión de las leyes y regulaciones que rigen los delitos y las penas en el sistema jurídico.\"\n  },\n  {\n    \"title\": \"Teoría del Delito\",\n    \"description\": \"Explora los principios y las normas que regulan la conducta delictiva y las consecuencias jurídicas asociadas.\"\n  },\n  {\n    \"title\": \"Delitos y Penas\",\n    \"description\": \"Analiza los diferentes tipos de delitos y sus respectivas sanciones en el marco legal vigente.\"\n  },\n  {\n    \"title\": \"Práctica Penal\",\n    \"description\": \"Estudia la aplicación práctica del derecho penal en casos concretos y su impacto en la sociedad.\"\n  },\n  {\n    \"title\": \"Legislación Penal Comparada\",\n    \"description\": \"Examina las reformas y actualizaciones recientes en la legislación penal y su influencia en el sistema de justicia.\"\n  }\n]",
+      "outputTokens": 206,
+      "systemPrompt": "",
+      "testCaseId": "es-derecho-penal-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 2058.2850000000326,
+      "inputTokens": 927,
+      "output": "[\n  {\n    \"title\": \"Derecho Penal\",\n    \"description\": \"Profundiza en la comprensión de las leyes y regulaciones que rigen los delitos y las penas en el ámbito jurídico.\"\n  },\n  {\n    \"title\": \"Teoría del Delito\",\n    \"description\": \"Explora los principios y las normas que regulan el derecho penal en diferentes jurisdicciones y contextos.\"\n  },\n  {\n    \"title\": \"Derecho Penal Comparado\",\n    \"description\": \"Analiza los elementos y las circunstancias que rodean a los delitos y las consecuencias jurídicas asociadas.\"\n  },\n  {\n    \"title\": \"Procedimiento Penal\",\n    \"description\": \"Estudia los procedimientos y las instituciones involucradas en la aplicación del derecho penal.\"\n  }\n]",
+      "outputTokens": 165,
+      "systemPrompt": "",
+      "testCaseId": "es-derecho-penal-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 2063.066959000018,
+      "inputTokens": 927,
+      "output": "[\n  {\n    \"title\": \"Derecho Penal\",\n    \"description\": \"Profundiza en la comprensión de las leyes y regulaciones que rigen los delitos y las penas en el sistema jurídico.\"\n  },\n  {\n    \"title\": \"Teoría del Delito\",\n    \"description\": \"Explora los principios y las normas que regulan la responsabilidad penal y las consecuencias jurídicas de los actos delictivos.\"\n  },\n  {\n    \"title\": \"Delitos y Penas\",\n    \"description\": \"Analiza los diferentes tipos de delitos y sus respectivas sanciones en el marco del derecho penal.\"\n  },\n  {\n    \"title\": \"Práctica Penal\",\n    \"description\": \"Estudia la aplicación práctica del derecho penal en la jurisdicción correspondiente.\"\n  },\n  {\n    \"title\": \"Derecho Penal Contemporáneo\",\n    \"description\": \"Examina las reformas y las tendencias actuales en el ámbito del derecho penal.\"\n  }\n]",
+      "outputTokens": 200,
+      "systemPrompt": "",
+      "testCaseId": "es-derecho-penal-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1271.8922499999753,
+      "inputTokens": 928,
+      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Conoce los principios y las leyes que rigen el sistema jurídico de Chile.\"\n  },\n  {\n    \"title\": \"Introducción al Sistema Jurídico Chileno\",\n    \"description\": \"Explora los conceptos y las instituciones fundamentales del sistema legal en Chile.\"\n  },\n  {\n    \"title\": \"Derecho y Sociedad en Chile\",\n    \"description\": \"Analiza los aspectos prácticos y teóricos del derecho en el contexto chileno.\"\n  }\n]",
+      "outputTokens": 119,
+      "systemPrompt": "",
+      "testCaseId": "es-derecho-chileno-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1291.928917000012,
+      "inputTokens": 928,
+      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Conoce los principios y prácticas del sistema legal en Chile.\"\n  },\n  {\n    \"title\": \"Contratos en el Derecho Chileno\",\n    \"description\": \"Explora las leyes y regulaciones que rigen los contratos en Chile.\"\n  },\n  {\n    \"title\": \"Derechos Civiles en Chile\",\n    \"description\": \"Aprende sobre los derechos y obligaciones de los ciudadanos en Chile.\"\n  },\n  {\n    \"title\": \"Derecho Mercantil Chileno\",\n    \"description\": \"Entiende el marco legal que regula las empresas en Chile.\"\n  }\n]",
+      "outputTokens": 144,
+      "systemPrompt": "",
+      "testCaseId": "es-derecho-chileno-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1336.711042000039,
+      "inputTokens": 928,
+      "output": "[\n  {\n    \"title\": \"Derecho Chileno\",\n    \"description\": \"Conoce los principios y prácticas del sistema legal en Chile.\"\n  },\n  {\n    \"title\": \"Contratos en el Derecho Chileno\",\n    \"description\": \"Explora las leyes y regulaciones que rigen los contratos en Chile.\"\n  },\n  {\n    \"title\": \"Derechos Civiles en Chile\",\n    \"description\": \"Aprende sobre los derechos y obligaciones de los ciudadanos en Chile.\"\n  },\n  {\n    \"title\": \"Derecho Mercantil Chileno\",\n    \"description\": \"Entiende el marco legal que regula las empresas en Chile.\"\n  }\n]",
+      "outputTokens": 144,
+      "systemPrompt": "",
+      "testCaseId": "es-derecho-chileno-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1093.7413749999832,
+      "inputTokens": 931,
+      "output": "[\n  {\n    \"title\": \"TOEFL\",\n    \"description\": \"Prepare-se para o exame TOEFL e alcance seus objetivos acadêmicos nos Estados Unidos.\"\n  },\n  {\n    \"title\": \"Inglês\",\n    \"description\": \"Desenvolva suas habilidades linguísticas em inglês para se comunicar de forma eficaz em ambientes acadêmicos e profissionais.\"\n  }\n]",
+      "outputTokens": 85,
+      "systemPrompt": "",
+      "testCaseId": "pt-toefl-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1540.6839999999502,
+      "inputTokens": 931,
+      "output": "[\n  {\n    \"title\": \"TOEFL\",\n    \"description\": \"Prepare-se para o exame TOEFL e alcance seus objetivos acadêmicos nos Estados Unidos.\"\n  },\n  {\n    \"title\": \"Inglês\",\n    \"description\": \"Desenvolva suas habilidades linguísticas em inglês para se comunicar de forma eficaz em ambientes acadêmicos e profissionais.\"\n  }\n]",
+      "outputTokens": 85,
+      "systemPrompt": "",
+      "testCaseId": "pt-toefl-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1440.2039160000277,
+      "inputTokens": 931,
+      "output": "[\n  {\n    \"title\": \"TOEFL\",\n    \"description\": \"Prepare-se para o exame TOEFL e alcance seus objetivos acadêmicos nos EUA.\"\n  },\n  {\n    \"title\": \"Inglês\",\n    \"description\": \"Desenvolva suas habilidades linguísticas em inglês para se comunicar com confiança.\"\n  }\n]",
+      "outputTokens": 77,
+      "systemPrompt": "",
+      "testCaseId": "pt-toefl-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 2477.46987500001,
+      "inputTokens": 928,
+      "output": "[\n  {\n    \"title\": \"Física\",\n    \"description\": \"Explore os princípios fundamentais da física e da química e como eles se aplicam ao mundo ao seu redor.\"\n  },\n  {\n    \"title\": \"Química\",\n    \"description\": \"Aprenda sobre as propriedades, composição e transformações da matéria, bem como as leis que regem as reações químicas.\"\n  },\n  {\n    \"title\": \"Física Clássica\",\n    \"description\": \"Desenvolva uma compreensão mais profunda das leis e princípios que governam o comportamento da matéria e da energia.\"\n  },\n  {\n    \"title\": \"Ciência dos Materiais\",\n    \"description\": \"Explore as propriedades e o comportamento dos materiais em diferentes escalas, desde a nanoescala até a escala macroscópica.\"\n  },\n  {\n    \"title\": \"Físico-Química\",\n    \"description\": \"Aprenda sobre as aplicações práticas da física e da química em diversas áreas, como tecnologia e engenharia.\"\n  }\n]",
+      "outputTokens": 219,
+      "systemPrompt": "",
+      "testCaseId": "pt-physics-and-chemistry-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 2485.303707999992,
+      "inputTokens": 928,
+      "output": "[\n  {\n    \"title\": \"Física\",\n    \"description\": \"Explore os princípios fundamentais da física e da química e suas aplicações no mundo real.\"\n  },\n  {\n    \"title\": \"Química\",\n    \"description\": \"Aprenda sobre as propriedades, composição e transformações da matéria, bem como as leis que regem as reações químicas.\"\n  },\n  {\n    \"title\": \"Física Clássica\",\n    \"description\": \"Desenvolva uma compreensão mais profunda das leis e princípios que regem o universo, desde a mecânica clássica até a física quântica.\"\n  },\n  {\n    \"title\": \"Física da Matéria Condensada\",\n    \"description\": \"Estude as propriedades e o comportamento dos materiais em diferentes escalas, desde a nanoescala até a escala macroscópica.\"\n  },\n  {\n    \"title\": \"Química Experimental\",\n    \"description\": \"Aprenda sobre as reações químicas, os processos e as técnicas laboratoriais utilizadas na química moderna.\"\n  }\n]",
+      "outputTokens": 223,
+      "systemPrompt": "",
+      "testCaseId": "pt-physics-and-chemistry-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1649.4099579999456,
+      "inputTokens": 928,
+      "output": "[\n  {\n    \"title\": \"Física\",\n    \"description\": \"Explore as leis e princípios fundamentais que regem o universo físico.\"\n  },\n  {\n    \"title\": \"Química\",\n    \"description\": \"Estude a composição, propriedades e transformações das substâncias químicas.\"\n  },\n  {\n    \"title\": \"Físico-Química\",\n    \"description\": \"Aprenda sobre a interseção entre a física e a química, abordando fenômenos físico-químicos.\"\n  }\n]",
+      "outputTokens": 113,
+      "systemPrompt": "",
+      "testCaseId": "pt-physics-and-chemistry-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1325.4191249999567,
+      "inputTokens": 931,
+      "output": "[\n  {\n    \"title\": \"Chemistry\",\n    \"description\": \"Gain a comprehensive understanding of the fundamental principles and concepts of chemistry.\"\n  },\n  {\n    \"title\": \"General Chemistry\",\n    \"description\": \"Explore the properties, composition, and reactions of matter at the atomic and molecular level.\"\n  },\n  {\n    \"title\": \"Principles of Chemistry\",\n    \"description\": \"Develop a foundational knowledge of chemical reactions, bonding, and the periodic table.\"\n  }\n]",
+      "outputTokens": 107,
+      "systemPrompt": "",
+      "testCaseId": "en-intro-to-chemistry-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1110.0937079999712,
+      "inputTokens": 931,
+      "output": "[\n  {\n    \"title\": \"Chemistry\",\n    \"description\": \"Gain a comprehensive understanding of the fundamental principles and concepts of chemistry.\"\n  },\n  {\n    \"title\": \"General Chemistry\",\n    \"description\": \"Develop a deeper understanding of the structure, properties, and reactions of matter.\"\n  },\n  {\n    \"title\": \"Principles of Chemistry\",\n    \"description\": \"Explore the principles of chemistry and their applications in various fields.\"\n  }\n]",
+      "outputTokens": 102,
+      "systemPrompt": "",
+      "testCaseId": "en-intro-to-chemistry-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1275.6492500000168,
+      "inputTokens": 931,
+      "output": "[\n  {\n    \"title\": \"Chemistry\",\n    \"description\": \"Gain a comprehensive understanding of the fundamental principles and concepts of chemistry.\"\n  },\n  {\n    \"title\": \"General Chemistry\",\n    \"description\": \"Develop a deeper understanding of the structure, properties, and reactions of matter.\"\n  },\n  {\n    \"title\": \"Principles of Chemistry\",\n    \"description\": \"Explore the principles of chemistry and their applications in various fields.\"\n  },\n  {\n    \"title\": \"Chemistry in Everyday Life\",\n    \"description\": \"Understand the chemical processes that occur in the world around us.\"\n  }\n]",
+      "outputTokens": 133,
+      "systemPrompt": "",
+      "testCaseId": "en-intro-to-chemistry-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1867.9830420000362,
+      "inputTokens": 927,
+      "output": "[\n  {\n    \"title\": \"Dragon Ball\",\n    \"description\": \"Explore a saga de Dragon Ball e seus personagens icônicos.\"\n  },\n  {\n    \"title\": \"Cultura de Mangá\",\n    \"description\": \"Aprenda sobre a cultura e a história por trás de Dragon Ball e outras séries de mangá.\"\n  },\n  {\n    \"title\": \"Escrita Criativa de Mangá\",\n    \"description\": \"Desenvolva habilidades para criar histórias e personagens como os de Dragon Ball.\"\n  },\n  {\n    \"title\": \"Análise de Cultura Pop\",\n    \"description\": \"Analise a influência de Dragon Ball na cultura popular e na mídia.\"\n  }\n]",
+      "outputTokens": 151,
+      "systemPrompt": "",
+      "testCaseId": "pt-dragon-ball-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1798.8827499999898,
+      "inputTokens": 927,
+      "output": "[\n  {\n    \"title\": \"Dragon Ball\",\n    \"description\": \"Explore a saga de Dragon Ball e seus personagens icônicos.\"\n  },\n  {\n    \"title\": \"Cultura de Anime Japonês\",\n    \"description\": \"Aprenda sobre a cultura e a história por trás de Dragon Ball e outras séries de anime.\"\n  },\n  {\n    \"title\": \"Escrita Criativa de Histórias em Quadrinhos\",\n    \"description\": \"Desenvolva habilidades para criar histórias e personagens como os de Dragon Ball.\"\n  }\n]",
+      "outputTokens": 120,
+      "systemPrompt": "",
+      "testCaseId": "pt-dragon-ball-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1676.5,
+      "inputTokens": 927,
+      "output": "[\n  {\n    \"title\": \"Dragon Ball\",\n    \"description\": \"Explore a saga de Dragon Ball e seus personagens icônicos.\"\n  },\n  {\n    \"title\": \"Cultura de Mangá\",\n    \"description\": \"Aprenda sobre a cultura e a história por trás de Dragon Ball e outras séries de mangá.\"\n  },\n  {\n    \"title\": \"Desenho de Mangá\",\n    \"description\": \"Desenvolva habilidades de desenho inspiradas nas ilustrações de Dragon Ball.\"\n  },\n  {\n    \"title\": \"Análise de Cultura Pop\",\n    \"description\": \"Analise a influência de Dragon Ball na cultura popular e na mídia.\"\n  }\n]",
+      "outputTokens": 151,
+      "systemPrompt": "",
+      "testCaseId": "pt-dragon-ball-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1756.8626249999506,
+      "inputTokens": 927,
+      "output": "[\n  {\n    \"title\": \"The Beatles\",\n    \"description\": \"Explore the music, history, and cultural impact of one of the most influential bands in history.\"\n  },\n  {\n    \"title\": \"British Popular Music in the 1960s\",\n    \"description\": \"Discover the musical and cultural context of 1960s Britain through the lens of the Beatles.\"\n  },\n  {\n    \"title\": \"The Sixties: Music, Culture, and Society\",\n    \"description\": \"Analyze the social and cultural changes of the 1960s through the music and legacy of the Beatles.\"\n  },\n  {\n    \"title\": \"1960s British Cultural History\",\n    \"description\": \"Learn about the historical context and cultural significance of the Beatles' music and era.\"\n  }\n]",
+      "outputTokens": 173,
+      "systemPrompt": "",
+      "testCaseId": "en-beatles-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1539.804833000002,
+      "inputTokens": 927,
+      "output": "[\n  {\n    \"title\": \"The Beatles\",\n    \"description\": \"Explore the history, music, and cultural impact of one of the most influential bands in rock history.\"\n  },\n  {\n    \"title\": \"British Cultural History 1960s\",\n    \"description\": \"Discover the musical and cultural context of 1960s Britain and its influence on the Beatles' music.\"\n  },\n  {\n    \"title\": \"Rock Music History\",\n    \"description\": \"Learn about the evolution of rock music and its key figures, including the Beatles.\"\n  },\n  {\n    \"title\": \"Popular Music Composition\",\n    \"description\": \"Understand the musical innovations and songwriting techniques that characterized the Beatles' work.\"\n  }\n]",
+      "outputTokens": 157,
+      "systemPrompt": "",
+      "testCaseId": "en-beatles-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1609.2270000000135,
+      "inputTokens": 927,
+      "output": "[\n  {\n    \"title\": \"The Beatles\",\n    \"description\": \"Explore the music, history, and cultural impact of one of the most influential bands in history.\"\n  },\n  {\n    \"title\": \"British Popular Music in the 1960s\",\n    \"description\": \"Discover the musical and cultural context of 1960s Britain through the lens of the Beatles' music.\"\n  },\n  {\n    \"title\": \"1960s Counterculture\",\n    \"description\": \"Analyze the social and cultural changes of the 1960s through the music and legacy of the Beatles.\"\n  },\n  {\n    \"title\": \"Rock Music History\",\n    \"description\": \"Learn about the evolution of rock music and its key figures, including the Beatles.\"\n  }\n]",
+      "outputTokens": 166,
+      "systemPrompt": "",
+      "testCaseId": "en-beatles-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1534.4298749999725,
+      "inputTokens": 927,
+      "output": "[\n  {\n    \"title\": \"Formule 1\",\n    \"description\": \"Découvrez les aspects techniques et stratégiques de la Formule 1.\"\n  },\n  {\n    \"title\": \"Histoire de la Formule 1\",\n    \"description\": \"Explorez l'histoire et l'évolution de la course automobile de Formule 1.\"\n  },\n  {\n    \"title\": \"Pilotes de Formule 1\",\n    \"description\": \"Apprenez-en davantage sur les pilotes de Formule 1 et leurs carrières.\"\n  },\n  {\n    \"title\": \"Règlement de la Formule 1\",\n    \"description\": \"Comprenez les règles et les réglementations de la Formule 1.\"\n  }\n]",
+      "outputTokens": 163,
+      "systemPrompt": "",
+      "testCaseId": "fr-f1-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1277.062333000009,
+      "inputTokens": 927,
+      "output": "[\n  {\n    \"title\": \"Formule 1\",\n    \"description\": \"Découvrez les aspects techniques et stratégiques de la Formule 1.\"\n  },\n  {\n    \"title\": \"Histoire de la Formule 1\",\n    \"description\": \"Explorez l'histoire et l'évolution de la course automobile de Formule 1.\"\n  },\n  {\n    \"title\": \"Circuits de Formule 1\",\n    \"description\": \"Apprenez-en davantage sur les circuits emblématiques de la Formule 1 à travers le monde.\"\n  }\n]",
+      "outputTokens": 128,
+      "systemPrompt": "",
+      "testCaseId": "fr-f1-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1405.2062499999884,
+      "inputTokens": 927,
+      "output": "[\n  {\n    \"title\": \"Formule 1\",\n    \"description\": \"Découvrez les aspects techniques et stratégiques de la Formule 1.\"\n  },\n  {\n    \"title\": \"Histoire de la Formule 1\",\n    \"description\": \"Explorez l'histoire et l'évolution de la course automobile de Formule 1.\"\n  },\n  {\n    \"title\": \"Technologie de la Formule 1\",\n    \"description\": \"Apprenez-en davantage sur les technologies avancées utilisées dans les voitures de Formule 1.\"\n  }\n]",
+      "outputTokens": 126,
+      "systemPrompt": "",
+      "testCaseId": "fr-f1-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1092.0234579999815,
+      "inputTokens": 934,
+      "output": "[\n  {\n    \"title\": \"Japanese\",\n    \"description\": \"Prepare for the JLPT N2 exam with a comprehensive Japanese course.\"\n  },\n  {\n    \"title\": \"JLPT\",\n    \"description\": \"Master the skills needed to succeed in the JLPT N2 exam.\"\n  }\n]",
+      "outputTokens": 71,
+      "systemPrompt": "",
+      "testCaseId": "en-jlpt-n2-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1039.5092499999446,
+      "inputTokens": 934,
+      "output": "[\n  {\n    \"title\": \"JLPT N2\",\n    \"description\": \"Prepare for the Japanese Language Proficiency Test N2 level.\"\n  },\n  {\n    \"title\": \"Japanese\",\n    \"description\": \"Improve your Japanese language skills.\"\n  }\n]",
+      "outputTokens": 63,
+      "systemPrompt": "",
+      "testCaseId": "en-jlpt-n2-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1083.9500830000034,
+      "inputTokens": 934,
+      "output": "[\n  {\n    \"title\": \"Japanese\",\n    \"description\": \"Prepare for the JLPT N2 exam with a comprehensive Japanese course.\"\n  },\n  {\n    \"title\": \"JLPT\",\n    \"description\": \"Master the skills needed to succeed in the JLPT N2 exam.\"\n  }\n]",
+      "outputTokens": 71,
+      "systemPrompt": "",
+      "testCaseId": "en-jlpt-n2-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1252.0732500000158,
+      "inputTokens": 931,
+      "output": "[\n  {\n    \"title\": \"IELTS\",\n    \"description\": \"Prepare-se para o exame acadêmico de proficiência em inglês mais reconhecido internacionalmente.\"\n  },\n  {\n    \"title\": \"Inglês\",\n    \"description\": \"Desenvolva suas habilidades linguísticas para se comunicar efetivamente em contextos acadêmicos e profissionais.\"\n  }\n]",
+      "outputTokens": 81,
+      "systemPrompt": "",
+      "testCaseId": "pt-ielts-academic-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1098.821333000029,
+      "inputTokens": 931,
+      "output": "[\n  {\n    \"title\": \"IELTS\",\n    \"description\": \"Prepare-se para o exame acadêmico de proficiência em inglês mais reconhecido internacionalmente.\"\n  },\n  {\n    \"title\": \"Inglês\",\n    \"description\": \"Desenvolva suas habilidades linguísticas para se comunicar com confiança em inglês.\"\n  }\n]",
+      "outputTokens": 77,
+      "systemPrompt": "",
+      "testCaseId": "pt-ielts-academic-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1222.7487079999992,
+      "inputTokens": 931,
+      "output": "[\n  {\n    \"title\": \"IELTS\",\n    \"description\": \"Prepare-se para o exame acadêmico de proficiência em inglês reconhecido globalmente.\"\n  },\n  {\n    \"title\": \"Inglês\",\n    \"description\": \"Desenvolva suas habilidades linguísticas para se comunicar efetivamente em contextos acadêmicos e profissionais.\"\n  }\n]",
+      "outputTokens": 80,
+      "systemPrompt": "",
+      "testCaseId": "pt-ielts-academic-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1614.2067079999833,
+      "inputTokens": 929,
+      "output": "[\n  {\n    \"title\": \"Computer Architecture\",\n    \"description\": \"Understand the fundamental principles and components that enable computers to process information and perform tasks.\"\n  },\n  {\n    \"title\": \"Computer Systems\",\n    \"description\": \"Gain knowledge of the inner workings of computer systems, including hardware, software, and networking components.\"\n  },\n  {\n    \"title\": \"Computer Hardware Engineering\",\n    \"description\": \"Learn about the design, development, and operation of computer hardware and its interactions with software.\"\n  },\n  {\n    \"title\": \"Computer Organization\",\n    \"description\": \"Explore the concepts and techniques used in the design and development of computer processors and systems.\"\n  },\n  {\n    \"title\": \"Binary Computing\",\n    \"description\": \"Understand how computers represent and process information at the binary level.\"\n  }\n]",
+      "outputTokens": 178,
+      "systemPrompt": "",
+      "testCaseId": "en-how-computers-work-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1535.7058750000433,
+      "inputTokens": 929,
+      "output": "[\n  {\n    \"title\": \"Computer Architecture\",\n    \"description\": \"Understand the fundamental principles and components that enable computers to process information and perform tasks.\"\n  },\n  {\n    \"title\": \"Computer Hardware\",\n    \"description\": \"Gain knowledge of the basic concepts and components of computer hardware and how they interact.\"\n  },\n  {\n    \"title\": \"Computer Organization\",\n    \"description\": \"Learn about the inner workings of computers, including the CPU, memory, and input/output devices.\"\n  },\n  {\n    \"title\": \"Computer Systems\",\n    \"description\": \"Explore the underlying concepts and technologies that drive modern computing systems.\"\n  }\n]",
+      "outputTokens": 141,
+      "systemPrompt": "",
+      "testCaseId": "en-how-computers-work-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1537.413125000021,
+      "inputTokens": 929,
+      "output": "[\n  {\n    \"title\": \"Computer Architecture\",\n    \"description\": \"Understand the fundamental principles and components that enable computers to process information and perform tasks.\"\n  },\n  {\n    \"title\": \"Computer Systems\",\n    \"description\": \"Gain knowledge of the inner workings of computer systems, including hardware, software, and networking components.\"\n  },\n  {\n    \"title\": \"Computer Hardware\",\n    \"description\": \"Learn about the design, development, and operation of computer hardware and its interactions with software.\"\n  },\n  {\n    \"title\": \"Computer Organization\",\n    \"description\": \"Explore the principles and practices of designing and building computer systems, including processor architecture and memory hierarchy.\"\n  },\n  {\n    \"title\": \"Computer Fundamentals\",\n    \"description\": \"Discover how computers process information, execute instructions, and manage data storage and retrieval.\"\n  }\n]",
+      "outputTokens": 183,
+      "systemPrompt": "",
+      "testCaseId": "en-how-computers-work-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1325.8542499999749,
+      "inputTokens": 928,
+      "output": "[\n  {\n    \"title\": \"Tabela Periódica\",\n    \"description\": \"Explore a organização e as propriedades dos elementos químicos.\"\n  },\n  {\n    \"title\": \"Química dos Elementos\",\n    \"description\": \"Aprenda sobre as propriedades e aplicações dos elementos químicos e suas relações.\"\n  },\n  {\n    \"title\": \"Estrutura Atômica e Propriedades Periódicas\",\n    \"description\": \"Desenvolva uma compreensão profunda da estrutura atômica e das propriedades periódicas.\"\n  }\n]",
+      "outputTokens": 114,
+      "systemPrompt": "",
+      "testCaseId": "pt-periodic-table-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1601.3927920000278,
+      "inputTokens": 928,
+      "output": "[\n  {\n    \"title\": \"Tabela Periódica\",\n    \"description\": \"Explore a organização e as propriedades dos elementos químicos.\"\n  },\n  {\n    \"title\": \"Química dos Elementos\",\n    \"description\": \"Aprenda sobre as propriedades e aplicações dos elementos químicos e suas relações com a tabela periódica.\"\n  },\n  {\n    \"title\": \"Química Inorgânica\",\n    \"description\": \"Entenda os princípios fundamentais da química inorgânica e sua relação com a tabela periódica.\"\n  }\n]",
+      "outputTokens": 117,
+      "systemPrompt": "",
+      "testCaseId": "pt-periodic-table-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1614.2017909999704,
+      "inputTokens": 928,
+      "output": "[\n  {\n    \"title\": \"Tabela Periódica\",\n    \"description\": \"Aprenda sobre a organização e as propriedades dos elementos químicos.\"\n  },\n  {\n    \"title\": \"Química dos Elementos\",\n    \"description\": \"Entenda as propriedades e aplicações dos elementos químicos e suas relações.\"\n  },\n  {\n    \"title\": \"Estrutura Atômica e Propriedades Periódicas\",\n    \"description\": \"Explore a estrutura atômica e as propriedades periódicas dos elementos.\"\n  }\n]",
+      "outputTokens": 112,
+      "systemPrompt": "",
+      "testCaseId": "pt-periodic-table-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1425.066541999986,
+      "inputTokens": 927,
+      "output": "[\n  {\n    \"title\": \"The Matrix\",\n    \"description\": \"Explore the cultural impact and themes of the iconic sci-fi film.\"\n  },\n  {\n    \"title\": \"Science Fiction in Film\",\n    \"description\": \"Understand the evolution and influence of science fiction in popular culture.\"\n  },\n  {\n    \"title\": \"Philosophy in Film\",\n    \"description\": \"Analyze the philosophical themes and concepts presented in influential films.\"\n  },\n  {\n    \"title\": \"Visual Effects in Cinema\",\n    \"description\": \"Examine the key elements and techniques used in creating visually stunning films.\"\n  }\n]",
+      "outputTokens": 134,
+      "systemPrompt": "",
+      "testCaseId": "en-matrix-movie-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1214.5927919999813,
+      "inputTokens": 927,
+      "output": "[\n  {\n    \"title\": \"The Matrix\",\n    \"description\": \"Explore the cultural impact and significance of the Matrix franchise in modern society.\"\n  },\n  {\n    \"title\": \"Philosophy of Science Fiction\",\n    \"description\": \"Understand the philosophical themes and concepts explored in the Matrix series.\"\n  },\n  {\n    \"title\": \"Visual Effects in Film\",\n    \"description\": \"Analyze the visual effects and cinematography techniques used in the Matrix films.\"\n  },\n  {\n    \"title\": \"Science Fiction and Social Commentary\",\n    \"description\": \"Examine the social commentary and critique of modern society presented in the Matrix.\"\n  }\n]",
+      "outputTokens": 141,
+      "systemPrompt": "",
+      "testCaseId": "en-matrix-movie-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1612.9826660000253,
+      "inputTokens": 927,
+      "output": "[\n  {\n    \"title\": \"The Matrix\",\n    \"description\": \"Explore the cultural impact and cinematic techniques used in the Matrix franchise.\"\n  },\n  {\n    \"title\": \"Science Fiction in Film\",\n    \"description\": \"Understand the science fiction themes and philosophical concepts presented in the Matrix series.\"\n  },\n  {\n    \"title\": \"Visual Effects in Film\",\n    \"description\": \"Analyze the visual effects and innovative filmmaking techniques used in the Matrix movies.\"\n  },\n  {\n    \"title\": \"Film and Popular Culture\",\n    \"description\": \"Examine the influence of the Matrix on popular culture and its lasting legacy.\"\n  }\n]",
+      "outputTokens": 140,
+      "systemPrompt": "",
+      "testCaseId": "en-matrix-movie-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1415.6244580000057,
+      "inputTokens": 926,
+      "output": "[\n  {\n    \"title\": \"Artificial Intelligence\",\n    \"description\": \"Develop intelligent systems that can learn, reason, and interact with humans.\"\n  },\n  {\n    \"title\": \"Machine Learning\",\n    \"description\": \"Build intelligent systems that can learn from data and make predictions or decisions.\"\n  },\n  {\n    \"title\": \"Natural Language Processing\",\n    \"description\": \"Create systems that can understand, interpret, and generate human language.\"\n  },\n  {\n    \"title\": \"Robotics\",\n    \"description\": \"Design and develop robots that can perform tasks autonomously.\"\n  },\n  {\n    \"title\": \"Cognitive Computing\",\n    \"description\": \"Explore the intersection of computer science and cognitive science to understand human intelligence.\"\n  }\n]",
+      "outputTokens": 163,
+      "systemPrompt": "",
+      "testCaseId": "en-ai-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1276.465124999988,
+      "inputTokens": 926,
+      "output": "[\n  {\n    \"title\": \"Artificial Intelligence\",\n    \"description\": \"Understand the principles and applications of artificial intelligence in various industries.\"\n  },\n  {\n    \"title\": \"Machine Learning\",\n    \"description\": \"Learn the fundamentals of machine learning and its integration with AI systems.\"\n  },\n  {\n    \"title\": \"Deep Learning\",\n    \"description\": \"Explore the techniques and tools used in deep learning for AI model development.\"\n  },\n  {\n    \"title\": \"AI for Robotics\",\n    \"description\": \"Discover how to integrate AI with robotics to create intelligent systems.\"\n  },\n  {\n    \"title\": \"Intelligent Agents\",\n    \"description\": \"Develop skills in creating intelligent agents and systems that can perceive and act.\"\n  }\n]",
+      "outputTokens": 162,
+      "systemPrompt": "",
+      "testCaseId": "en-ai-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1536.865625000035,
+      "inputTokens": 926,
+      "output": "[\n  {\n    \"title\": \"Artificial Intelligence\",\n    \"description\": \"Understand the principles and applications of artificial intelligence in various industries.\"\n  },\n  {\n    \"title\": \"Machine Learning\",\n    \"description\": \"Learn the fundamentals of machine learning and its integration with artificial intelligence.\"\n  },\n  {\n    \"title\": \"Deep Learning\",\n    \"description\": \"Explore the techniques and tools used in deep learning, a subset of machine learning and artificial intelligence.\"\n  },\n  {\n    \"title\": \"Data Science\",\n    \"description\": \"Discover how to apply data science principles to drive business decisions and strategy.\"\n  },\n  {\n    \"title\": \"AI Ethics\",\n    \"description\": \"Gain insights into the ethical considerations and implications of developing and using AI systems.\"\n  }\n]",
+      "outputTokens": 168,
+      "systemPrompt": "",
+      "testCaseId": "en-ai-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1537.847833000007,
+      "inputTokens": 928,
+      "output": "[\n  {\n    \"title\": \"The Wealth of Nations\",\n    \"description\": \"Understand the foundational principles of modern economics through the lens of Adam Smith's seminal work.\"\n  },\n  {\n    \"title\": \"Classical Economics\",\n    \"description\": \"Explore the historical context and impact of Adam Smith's ideas on contemporary economic theory and policy.\"\n  },\n  {\n    \"title\": \"History of Economic Thought\",\n    \"description\": \"Analyze the development of economic thought from Adam Smith to modern economists.\"\n  },\n  {\n    \"title\": \"Principles of Economics\",\n    \"description\": \"Learn about the key concepts and theories that underpin the study of economics.\"\n  }\n]",
+      "outputTokens": 148,
+      "systemPrompt": "",
+      "testCaseId": "en-wealth-of-nations-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1346.2518329999875,
+      "inputTokens": 928,
+      "output": "[\n  {\n    \"title\": \"The Wealth of Nations\",\n    \"description\": \"Understand the foundational principles of modern economics through the lens of Adam Smith's seminal work.\"\n  },\n  {\n    \"title\": \"Classical Economics\",\n    \"description\": \"Explore the historical context and development of classical economic theory.\"\n  },\n  {\n    \"title\": \"History of Economic Thought\",\n    \"description\": \"Learn about the key figures and ideas that shaped the field of economics in the 18th century.\"\n  },\n  {\n    \"title\": \"Adam Smith and Modern Economics\",\n    \"description\": \"Analyze the impact of Adam Smith's ideas on contemporary economic policies and theories.\"\n  }\n]",
+      "outputTokens": 149,
+      "systemPrompt": "",
+      "testCaseId": "en-wealth-of-nations-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1274.6047499999986,
+      "inputTokens": 928,
+      "output": "[\n  {\n    \"title\": \"The Wealth of Nations\",\n    \"description\": \"Understand the foundational principles of modern economics through the lens of Adam Smith's seminal work.\"\n  },\n  {\n    \"title\": \"Classical Economics\",\n    \"description\": \"Explore the historical context and impact of Adam Smith's ideas on contemporary economic theory.\"\n  },\n  {\n    \"title\": \"History of Economic Thought\",\n    \"description\": \"Analyze the development of economic thought from Adam Smith to modern economists.\"\n  },\n  {\n    \"title\": \"Economics\",\n    \"description\": \"Apply economic principles to understand the dynamics of national and global economies.\"\n  }\n]",
+      "outputTokens": 142,
+      "systemPrompt": "",
+      "testCaseId": "en-wealth-of-nations-3",
+      "userPrompt": ""
+    }
+  ],
+  "taskId": "course-suggestions"
+}

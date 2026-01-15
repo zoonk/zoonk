@@ -1,0 +1,114 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Scenarios where someone observes immune responses in everyday life (repeat exposure, recovery time, vaccination effects) and must explain the underlying mechanism\n   - GOOD PATTERN: Situations requiring prediction of immune outcomes based on understanding defense layers\n   - BAD PATTERN: Asking to name cells, list defense mechanisms, or recall definitions without application context\n   - BAD PATTERN: Questions referencing specific metaphors or examples from the explanation\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Antibodies directly killing pathogens (they MARK pathogens for destruction by other cells like macrophages)\n   - White blood cells being a single type (there are many types with different functions)\n   - Immune response being immediate (innate response is fast, adaptive takes days)\n   - Fever being harmful (it's often a beneficial immune response)\n\n3. FORMAT FIT: Multiple choice works well for \"which scenario shows X mechanism.\" Match columns work for connecting symptoms to immune responses. Sort order works for immune response sequence.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-15T19:34:41.036Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model is exceptional. It perfectly follows the guidance to test understanding through novel application scenarios (e.g., the genetic condition question, the vaccine research scenario). It explicitly addresses the 'accuracy pitfalls' (clarifying that antibodies tag rather than kill). The feedback is comprehensive, educational, and conversational. The variety of formats is used strategically to test specific types of relationships.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model provides an excellent set of questions that adhere strictly to the guidelines. The scenarios are grounded in real-life observations (cuts, re-infection), and the feedback specifically addresses why distractors are wrong. It effectively distinguishes between innate and adaptive systems. It is ranked slightly lower than Model C only because Model C included slightly deeper 'prediction-based' scenarios.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "A very good output that uses strong biological scenarios (e.g., the dry skin/mucus condition) to test the function of barriers. It avoids memory-based questions and adheres to accuracy constraints. The feedback is accurate and helpful, though slightly more curt than the top two models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "A solid, competent quiz. It avoids major pitfalls and provides accurate information. However, the questions feel a bit more standard and definition-adjacent (e.g., asking to identify the Y-shaped proteins) compared to the rich problem-solving scenarios in the higher-ranked models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model is adequate but has a notable weakness regarding the 'Application Check'. While it includes some good biological scenarios, it relies heavily on metaphors (city security, guards) for several questions. The prompt specifically requested scenarios of immune responses in everyday life and discouraged metaphors. The feedback is good, which saves it from a lower score.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "The single question provided is of high quality, with an excellent scenario and feedback that perfectly targets the learning objective. However, despite the instruction not to require a specific number of questions, providing a 'quiz' consisting of only one item significantly limits the coverage of concepts compared to other models. It places here because the quality of what *is* there is superior to the remaining models.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This model falls below average because it prioritizes recall over application. Questions like 'Which cells are doing the swallowing?' and 'What protects the wound first?' test vocabulary and definition memory rather than the ability to apply concepts to new situations. The feedback is also minimal.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model fails the specific 'Application Check' guidance. The prompt explicitly requested scenarios where someone observes immune responses in everyday life (illness, recovery). This model instead relies almost exclusively on extended analogies (medieval castles, music festivals, keys). While the analogies are accurate, they do not fulfill the requirement to test application to biological/health contexts.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong application focus with varied but appropriate formats (MC, sort, match, fill). Scenarios are novel and clearly test innate vs adaptive timing, specificity, and memory. Explicitly avoids key accuracy pitfalls (antibodies tag rather than directly kill; innate is immediate, adaptive slower). Feedback is consistently explanatory for both correct and incorrect options. Only minor nit: a few items simplify timing/roles, but not misleading.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Well-designed, application-oriented set with format choices that fit (MC + match + sort + a single fill). Accurate on major pitfalls (antibodies tag; adaptive takes days; memory requires prior exposure). Feedback is solid and reasoning-based. Slight weakness: the fillBlank is closer to terminology recall (innate/adaptive) than scenario application, though still framed conceptually.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Broad coverage with mostly good novel scenarios and strong feedback. Formats (MC/sort/match/fill) are generally well used. Main drawback: a few explanations are overconfident/iffy scientifically—e.g., implying the first line includes “cells that immediately attack” (often classified as innate internal defenses rather than the “first line” barriers) and the treatment idea of “introduce memory cells from recovered patients” being “essentially how vaccines work” (that’s closer to adoptive cell transfer and not a standard vaccine concept). These aren’t catastrophic, but they introduce conceptual wobble.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Clear, scenario-based multiple choice with good reasoning in feedback and good emphasis on layered defenses and timing. Accuracy is generally good and avoids major misconceptions. However, it includes a more memorization-leaning item asking to identify “Macrophage” directly, which conflicts with the ‘application over naming cells’ guidance. Also less format/skill variety than stronger models (not required, but it limits what’s assessed).",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Single question is application-based and mostly accurate, with decent feedback. But it contains a problematic distractor explanation: “More antibodies were already waiting from the first time” is marked wrong while the feedback implies antibodies without memory cells wouldn’t help—yet persistent antibodies from prior exposure can indeed contribute to faster secondary protection (even if memory is central). Also, the item count is minimal, so coverage is thin.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Generally accurate and includes multiple formats, but relies heavily on metaphors (“castle wall,” “wanted poster,” “security guard”) and the questions sometimes test the analogy rather than the mechanism—explicitly discouraged by the task guidance. Some phrasing is also slightly misleading (redness framed as purely not recognizing specifics; inflammation is more nuanced). Feedback is decent but often anchored to the metaphor.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Several questions drift into recall (e.g., directly asking which cells are “swallowing” = macrophages) rather than application. The first item is also muddled: after a knee scrape, saying “mucus and similar barriers act immediately” is inaccurate in that context, and “before any swelling happens” doesn’t cleanly map to barriers being the key protection once skin is broken. Feedback is brief and sometimes just declarative.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Heavily metaphor/analogy-driven (castle, keys, Pac-Man, sticky tape), which the guidance explicitly flags as a bad pattern. While some underlying immunology is okay, the matchColumns is essentially pure analogy mapping rather than novel real-world immune application, and several prompts test recognition of the metaphor. This substantially reduces conceptual assessment quality despite decent basic accuracy.",
+          "score": 3
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-explanation-quiz",
+  "testCaseId": "en-biology-immune-system-quiz-1"
+}

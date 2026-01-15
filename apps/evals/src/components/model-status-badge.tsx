@@ -7,9 +7,10 @@ type ModelStatusBadgeProps = {
 };
 
 const labelMap: Record<ModelStatus, string> = {
-  completed: "Completed",
+  completed: "Evaluated",
   incomplete: "In progress",
-  notStarted: "Not started",
+  notStarted: "No outputs",
+  outputsReady: "Outputs ready",
 };
 
 const variantMap: Record<
@@ -19,6 +20,7 @@ const variantMap: Record<
   completed: "default",
   incomplete: "secondary",
   notStarted: "outline",
+  outputsReady: "secondary",
 };
 
 export async function ModelStatusBadge({

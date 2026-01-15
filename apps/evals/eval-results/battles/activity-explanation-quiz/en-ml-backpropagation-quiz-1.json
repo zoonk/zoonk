@@ -1,0 +1,114 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Training scenarios where learners must diagnose what's happening (overfitting, underfitting, vanishing gradients) based on observed behavior\n   - GOOD PATTERN: Situations requiring understanding of why the forward-backward process produces learning\n   - BAD PATTERN: Asking for formulas, definitions, or terminology without application context\n   - BAD PATTERN: Questions about specific metaphors like \"blame assignment\" from the explanation\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Gradient descent being random trial and error (it follows the mathematical gradient direction)\n   - Neural networks understanding concepts like humans (they learn statistical patterns)\n   - More layers always being better (can cause vanishing gradients and overfitting)\n   - Training stopping when error reaches zero (this indicates overfitting)\n\n3. FORMAT FIT: Multiple choice works for training scenarios. Sort order can work for the forward-backward pass sequence. Fill blank can work for the gradient flow process.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-15T19:34:07.722Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model provides the best conceptual assessment. Question 2 (comparing sensitivity of two weights) and Question 3 (diagnosing 'bouncing' loss as a learning rate issue) are excellent examples of testing deep understanding and diagnosis skills rather than just recall. The scenarios are realistic, and the feedback is highly educational, explaining exactly why the correct answer works and why distractors fail.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model offers a comprehensive set of questions with high variety and excellent feedback. It covers key nuances like why uniform updates fail (Q2), the relationship between error size and adjustment size (Q4), and the risk of overshooting (Q6). The analogies (steering a car, autocorrect) are applied effectively to test concepts, not just vocabulary.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D focuses strongly on the logic behind the mechanics. Question 2 (proportional blame based on contribution) is a great non-mathematical test of backpropagation intuition. Question 4 effectively explains the 'why' of backpropagation (calculus vs. random guessing). The scenarios are clear and the feedback is conversational and accurate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This model uses very accessible scenarios (robot arm, watering plants) to test the core concepts without unnecessary jargon. It avoids the 'forced variety' trap and sticks to multiple choice and matching, which work well here. It is slightly less deep than the top three models but is a very solid, learner-friendly quiz.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A is technically sound and accurate. It covers the required concepts (loss, gradients/blame, sequence) well. However, the wording in Question 1 ('Which training challenge asks...') is slightly clunky, and the tone is a bit more academic than the top performers. The fill-in-the-blank question is well-constructed.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model relies heavily on analogies (classroom, dark valley). While the 'dark valley' question is a good conceptual check for gradient descent/step size, the reliance on matching analogies can sometimes test the analogy itself rather than the underlying mechanism. It is good, but less direct in its application than higher-ranked models.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model H relies almost exclusively on analogies (orchestra, radio, archery). While the mappings are correct, the quiz feels like it is testing the ability to map metaphors more than the ability to apply neural network concepts to data scenarios. Question 1 is also somewhat trivial.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "This model suffers from repetitive content. Questions 3, 4, 5, and 6 are essentially just breaking the sorting order sequence into four separate multiple-choice questions. This feels like 'forced quantity' rather than distinct conceptual tests, offering the least value in terms of checking actual understanding.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Best overall alignment with the task expectations: questions are mostly application/diagnosis oriented (e.g., unstable loss → likely too-high learning rate), avoid “according to the text” phrasing, and don’t lean heavily on the explanation’s metaphors. Feedback generally explains why the chosen option is correct and why others are wrong. Technical content is solid (loss before updates; gradients as sensitivity; overshooting with high LR). Minor weakness: the match-columns item is a bit name/label oriented, but it’s still grounded in concrete “training events,” so it tests understanding reasonably well.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Strong application focus with good scenario-based MCQs and a correct sequence question. Feedback is generally explanatory and includes key concepts (forward → loss → backprop/gradients → update). Also explicitly avoids the “random trial and error” pitfall and correctly notes descending opposite the gradient. Main drawbacks: some tone is a bit informal (“Nope”), and the match-columns item is closer to terminology mapping than diagnosis/application (though still acceptable).",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Technically accurate and mostly scenario-based. Includes both fill-in and ordering that genuinely fit the forward/backward cycle. Feedback is usually strong and specifically corrects common misconceptions (e.g., random perturbations). Weaknesses: it uses the “assign blame” phrasing (allowed, but it’s close to the metaphor the rubric warns not to over-target), and a couple items are somewhat close to “which term measures error?” even though wrapped in scenario context. Overall still high-quality.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Clear, applied scenarios and generally strong feedback explaining sequencing and proportional updates. The sort-order item is well-fitted. Accuracy is good. Weaknesses: the spam-filter question uses made-up precise attributions like “Connection A contributed 80%” which can be conceptually okay as a simplification, but can also imply an overly literal/unique decomposition of error. Also some questions drift toward generic step-recitation rather than deeper diagnosis.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Meets basics: scenario-based MCQs plus a match-columns. Avoids key accuracy pitfalls (calls out random changes as wrong). However, several questions are somewhat shallow (often “what next?” with an obvious “measure error” answer), and feedback is sometimes minimal/one-note (less ‘why correct AND why others are wrong’ depth). The match-columns is mostly definitional mapping.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Good breadth and generally strong feedback; includes overshooting risk and proportional updates. But it’s overly long and somewhat repetitive, and it leans into analogy-like framing (autocorrect, “steering a car”) more than needed. One accuracy concern: the medical example implies “larger errors drive larger adjustments” in a way that can be misleading across tasks (classification vs regression; scaling depends on the loss/gradient, not a generic ‘severity’ notion). Also includes some mild anthropomorphic phrasing (connections “discover”).",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Multiple items rely heavily on metaphors (orchestra, radio, archery), which the expectations warn against (don’t test specific analogies). Several questions become closer to terminology recognition (“which action represents backprop”) rather than applying concepts to novel training behavior. Feedback is decent, but the set is less grounded in actual ML training scenarios and more in analogy mapping, reducing conceptual assessment validity.",
+          "score": 5.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Most metaphor/analogy driven and includes problematic anthropomorphism (“change its internal ‘understanding’”). The classroom matching is largely analogy mapping, not novel application. While it does avoid calling gradient descent random and mentions small steps/overshoot, the overall quiz tests recognition of the narrative metaphors more than core training reasoning. Feedback is okay but often reinforces the metaphor framing rather than mechanism-level understanding.",
+          "score": 4.4
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-explanation-quiz",
+  "testCaseId": "en-ml-backpropagation-quiz-1"
+}

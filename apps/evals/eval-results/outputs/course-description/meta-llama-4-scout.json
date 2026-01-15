@@ -1,0 +1,52 @@
+{
+  "generatedAt": "2026-01-15T19:15:16.546Z",
+  "modelId": "meta/llama-4-scout",
+  "outputs": [
+    {
+      "duration": 1162.7796249999956,
+      "inputTokens": 1221,
+      "output": "{\n  \"description\": \"Frontend development is the practice of creating user interfaces for web applications. Covers building responsive, accessible web applications with HTML, CSS, and JavaScript. Enables you to work at tech companies, agencies, or as a freelancer building web experiences.\"\n}",
+      "outputTokens": 55,
+      "systemPrompt": "",
+      "testCaseId": "en-frontend-development-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1281.813833999986,
+      "inputTokens": 1220,
+      "output": "{\n  \"description\": \"French language proficiency progresses from basic conversations (A1) to advanced fluency (C2), covering grammar, vocabulary, reading, writing, and speaking. Enables communication in personal and professional contexts, opening opportunities in international business, translation, education, and diplomacy. Prepares you to work in multinational companies, government agencies, or as a language consultant.\"\n}",
+      "outputTokens": 79,
+      "systemPrompt": "",
+      "testCaseId": "en-french-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1253.7512909999932,
+      "inputTokens": 1222,
+      "output": "{\n  \"description\": \"Inteligência Artificial é a disciplina que desenvolve sistemas capazes de realizar tarefas que normalmente requerem inteligência humana. Este curso aborda fundamentos de aprendizado de máquina, processamento de linguagem natural e visão computacional, preparando você para trabalhar em empresas de tecnologia, startups e instituições de pesquisa.\"\n}",
+      "outputTokens": 64,
+      "systemPrompt": "",
+      "testCaseId": "pt-inteligencia-artificial-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1258.2958749999962,
+      "inputTokens": 1221,
+      "output": "{\n  \"description\": \"El desarrollo web abarca la creación y mantenimiento de sitios y aplicaciones web. Cubre diseño, desarrollo front-end y back-end, bases de datos y seguridad. Prepara para trabajar en empresas de tecnología, agencias digitales o como freelancer en proyectos web.\"\n}",
+      "outputTokens": 58,
+      "systemPrompt": "",
+      "testCaseId": "es-desarrollo-web-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1234.138500000001,
+      "inputTokens": 1221,
+      "output": "{\n  \"description\": \"The Matrix is a groundbreaking sci-fi franchise that redefined action films and philosophical storytelling. This course examines its cultural impact, themes of reality and free will, and innovative special effects. Essential for understanding modern pop culture and cinematic innovation.\"\n}",
+      "outputTokens": 54,
+      "systemPrompt": "",
+      "testCaseId": "en-the-matrix-1",
+      "userPrompt": ""
+    }
+  ],
+  "taskId": "course-description"
+}

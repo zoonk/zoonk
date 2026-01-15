@@ -1,0 +1,52 @@
+{
+  "generatedAt": "2026-01-15T19:15:16.546Z",
+  "modelId": "openai/gpt-oss-120b",
+  "outputs": [
+    {
+      "duration": 4440.506374999997,
+      "inputTokens": 1330,
+      "output": "{\n  \"description\": \"Frontend development creates the visual and interactive layer of web applications. The course covers layout, responsive design, accessibility, and performance to enable building engaging, user‑friendly sites. It prepares you for roles as a front‑end engineer at tech firms, agencies, or as a freelance web developer.\"\n}",
+      "outputTokens": 234,
+      "systemPrompt": "",
+      "testCaseId": "en-frontend-development-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 4102.660083000024,
+      "inputTokens": 1328,
+      "output": "{\n  \"description\": \"French is a worldwide language spoken across Europe, Africa, and the Americas. The course develops speaking, listening, reading and writing skills from beginner to advanced levels, enabling effective communication in personal, academic, and professional contexts. Fluency opens doors to careers in international business, diplomacy, tourism, and translation.\"\n}",
+      "outputTokens": 296,
+      "systemPrompt": "",
+      "testCaseId": "en-french-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 4443.820624999993,
+      "inputTokens": 1330,
+      "output": "{\n  \"description\": \"Inteligência artificial é a disciplina que cria sistemas capazes de executar tarefas que exigem raciocínio humano, como reconhecimento de padrões e tomada de decisões. O curso aborda técnicas de aprendizado de máquina, processamento de linguagem natural e visão computacional, preparando você para desenvolver soluções inteligentes que aumentam a eficiência e a inovação nas empresas. Você ficará apto a atuar como engenheiro de IA, cientista de dados ou pesquisador em startups, indústrias ou centros de pesquisa.\"\n}",
+      "outputTokens": 375,
+      "systemPrompt": "",
+      "testCaseId": "pt-inteligencia-artificial-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 10809.820833000005,
+      "inputTokens": 1329,
+      "output": "{\n  \"description\": \"Desarrollo web es la disciplina de crear y mantener sitios y aplicaciones en Internet. El curso cubre estructuración de contenido, interacción visual y lógica del servidor para producir experiencias digitales responsivas y seguras, lo que permite desempeñarse como desarrollador web en empresas de tecnología, agencias creativas o como profesional independiente.\"\n}",
+      "outputTokens": 293,
+      "systemPrompt": "",
+      "testCaseId": "es-desarrollo-web-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 4147.513666999992,
+      "inputTokens": 1329,
+      "output": "{\n  \"description\": \"The Matrix is a groundbreaking sci‑fi film that reshaped visual storytelling and sparked philosophical debate about reality. The course examines its narrative structure, visual effects, and cultural impact, equipping you to critically analyze modern media and recognize its lasting influence on contemporary film and pop culture.\"\n}",
+      "outputTokens": 322,
+      "systemPrompt": "",
+      "testCaseId": "en-the-matrix-1",
+      "userPrompt": ""
+    }
+  ],
+  "taskId": "course-description"
+}

@@ -1,0 +1,371 @@
+{
+  "modelId": "meta/llama-4-maverick",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is very strong and follows all instructions. The narrative flow is logical, moving from the problem (complexity/spaghetti code) to the solution (OOP). The use of metaphors like 'spaghetti code' and 'LEGO bricks' is appropriate and helpful for beginners. To achieve a perfect score (9.5+), the writing could be slightly more evocative or 'story-like' in the middle steps. For example, the 'Software Crisis' step is a bit abstract stating that projects 'were failing'; describing the specific frustration of developers or the cost of these failures could heighten the emotional engagement as requested by the persona of a 'master storyteller'.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid jumping into code syntax or technical implementation. The background should explain WHY object-oriented programming was invented and what problems it solved — not HOW to use classes.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-programming-oop-1",
+        "userInput": {
+          "chapterTitle": "Programming Paradigms",
+          "courseTitle": "Introduction to Programming",
+          "language": "en",
+          "lessonDescription": "Understanding the core principles of object-oriented programming and why it revolutionized software development",
+          "lessonTitle": "Object-Oriented Programming"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response fails to adhere to key stylistic instructions. The prompt explicitly requested a 'conversational' tone, 'vivid imagery', and the use of 'metaphors' and 'analogies from everyday life' (e.g., sports, cooking). The output is written in a dry, academic tone (e.g., 'rules of static geometry', 'dynamic systems', 'unprecedented precision') resembling a textbook summary rather than the requested 'engaging narrative'. It lists facts rather than creating 'scenes'.",
+          "kind": "minorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "To improve, the response should incorporate a concrete analogy to explain the 'why'. For example, comparing pre-calculus math to a still photograph and calculus to a movie would make the abstract concept tangible. The language should be simplified and dramatized to create emotional engagement (e.g., highlighting the frustration of scientists who couldn't calculate the speed of a falling apple at a specific instant).",
+          "kind": "potentialImprovements",
+          "score": 7.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid diving into formulas, derivatives, or mathematical notation. The background should explain WHY calculus was invented and what problems it solved — not HOW to calculate limits.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-math-calculus-1",
+        "userInput": {
+          "chapterTitle": "Foundations",
+          "courseTitle": "Calculus I",
+          "language": "en",
+          "lessonDescription": "The origins of calculus and why mathematicians needed a new way to describe change and motion",
+          "lessonTitle": "What is Calculus?"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The instructions explicitly stated to be \"Rich in metaphors: Use analogies from everyday life (sports, cooking, games, music, travel)\" and included a quality check for this (",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The narrative structure starts immediately with Darwin's voyage. To build better tension and follow the \"Life Before\" theme suggested in the guide, it would have been more effective to start with the prevailing belief of the time (that species were fixed and unchanging) to contrast with the discovery. Additionally, the writing style, while clear, is somewhat encyclopedic and lacks the requested \"vivid imagery\" and \"emotional connection.\"",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid diving into DNA mechanics or genetic terminology. The background should explain WHY the theory of evolution was developed and what questions it answered — not HOW natural selection works at a biological level.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-science-evolution-1",
+        "userInput": {
+          "chapterTitle": "Life Science",
+          "courseTitle": "Biology Fundamentals",
+          "language": "en",
+          "lessonDescription": "How Darwin's observations led to a revolutionary understanding of how species change over time",
+          "lessonTitle": "The Theory of Evolution"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response starts strong with a clear metaphor ('forest without a map') and visual imagery ('heated debates'). However, it loses the 'Master Storyteller' persona in the latter half (Steps 3, 4, and 5), reverting to more standard, slightly abstract educational language (e.g., 'systematic approach', 'structure of reasoning', 'essential in various fields'). The instructions specifically requested to be 'Rich in metaphors' and to use 'Vivid imagery' to make abstract concepts tangible. Step 4 ('The Quest for Clarity') explains 'formal logic' literally rather than using an analogy (like a cake mold or a mathematical equation) to explain the difference between structure and content, which would have better suited the prompt's requirements.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid listing logical operators or truth tables. The background should explain WHY formal logic was developed and what human problems it addressed — not HOW to construct syllogisms.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-philosophy-logic-1",
+        "userInput": {
+          "chapterTitle": "Foundations of Reasoning",
+          "courseTitle": "Introduction to Philosophy",
+          "language": "en",
+          "lessonDescription": "The ancient quest to find reliable rules for correct thinking and argumentation",
+          "lessonTitle": "What is Logic?"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response completely fails to follow the core 'Storytelling' and 'Background' instructions. The prompt explicitly requested a narrative arc with tension, turning points, and resolution (e.g., a historical origin story or a 'Life Before' scenario), citing the 'Printing Press' history as an example. The AI instead provided a standard, expository definition and explanation of the concept (What is it, Causes, Effects). It acted as a dictionary/textbook rather than a storyteller.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The content needs to be completely restructured into a narrative. Instead of defining inflation, it should tell a story that illustrates it. For example, it could describe a historical event (like the debasement of currency in Ancient Rome or Hyperinflation in Brazil/Germany) or use a fable (e.g., a village where suddenly gold becomes as common as sand). The goal is to show the *origin* of the problem and why the concept exists, not just define its mechanics.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Titles and descriptions must be in Portuguese.\n\n      Avoid diving into supply/demand curves or economic formulas. The background should explain WHY inflation matters and what historical problems it caused — not HOW central banks control it.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "pt-economics-inflation-1",
+        "userInput": {
+          "chapterTitle": "Conceitos Básicos",
+          "courseTitle": "Economia para Iniciantes",
+          "language": "pt",
+          "lessonDescription": "Entendendo por que os preços sobem e como isso afeta a vida das pessoas",
+          "lessonTitle": "O que é Inflação?"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "In Step 2, there is a slight narrative contradiction or lack of clarity. It states planets 'wandered aimlessly' ('vagaban sin rumbo fijo') and immediately follows with 'Ancient astronomers believed they revolved... in perfect orbits.' The tension between the observed irregular motion (retrograde) and the theoretical perfect orbits is not clearly articulated as a conflict, making the sentences feel disjointed. Additionally, the response relies entirely on the historical narrative (Newton's apple) and misses the specific instruction to use 'analogies from everyday life (sports, cooking, games, music, travel)' to make the concept tangible.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "To improve Step 2, clarify the conflict: 'Planets danced strangely across the sky, breaking the rules of the perfect circles astronomers believed in.' Incorporate a non-historical metaphor in Step 4 or 5 as requested by the style guide (e.g., comparing gravity to an invisible tether or a cosmic glue) to help beginners visualize the force beyond just the historical statement.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Titles and descriptions must be in Spanish.\n\n      Avoid diving into formulas or mathematical equations. The background should explain WHY gravity was such a mystery and what questions it answered — not HOW to calculate gravitational force.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "es-physics-gravity-1",
+        "userInput": {
+          "chapterTitle": "Mecánica Clásica",
+          "courseTitle": "Física para Principiantes",
+          "language": "es",
+          "lessonDescription": "La historia de cómo los humanos entendieron por qué las cosas caen y los planetas orbitan",
+          "lessonTitle": "La Gravedad"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is excellent. It strictly follows the character limits and structural requirements. The narrative arc is clear: it starts with the struggle of rule-based systems (tension), moves to the availability of data and neural networks (turning point), and ends with the current capabilities and impact (resolution). The use of the 'mapping a dense forest' metaphor in the first step is effective. The tone is conversational and engaging. No significant improvements are needed.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      SPECIAL CONSIDERATION: This is a very recent topic (large language models). The \"history\" is short but still has a narrative arc of problems, attempts, and breakthroughs.\n\n      The story should still have tension (what was hard about AI before?) and resolution (what changed?) even if the timeline is compressed.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-edge-recent-topic-1",
+        "userInput": {
+          "chapterTitle": "Modern AI",
+          "courseTitle": "Introduction to Machine Learning",
+          "language": "en",
+          "lessonDescription": "How AI went from rigid rule-based systems to models that can understand and generate human language",
+          "lessonTitle": "Large Language Models"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response meets all criteria well. The narrative flow is logical, moving from a simple analogy to the historical problem, the solution (Cantor), the impact, and modern relevance. The character limits are respected. While the storytelling is good, it could be slightly more vivid in the middle steps. For example, Step 2 ('The Need for Precision') describes the problem somewhat abstractly ('vague descriptions led to paradoxes'). Using a specific metaphor for the chaos of pre-set-theory mathematics (like 'building a castle on a swamp') or briefly alluding to a specific paradox in a simple way might have made the tension more palpable and the imagery richer, as requested in the 'Rich in metaphors' instruction.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      SPECIAL CONSIDERATION: This is a highly abstract mathematical concept. The background should make it relatable through metaphors and real-world problems it solved.\n\n      Avoid technical definitions or abstract mathematical language. Focus on WHY mathematicians needed this concept and what problems it addressed.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-edge-abstract-topic-1",
+        "userInput": {
+          "chapterTitle": "Advanced Concepts",
+          "courseTitle": "Discrete Mathematics",
+          "language": "en",
+          "lessonDescription": "Understanding why mathematicians needed a rigorous way to study collections of objects",
+          "lessonTitle": "Set Theory"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The content follows the provided constraints (character limits, step structure) and the tone is conversational as requested. The historical narrative simplifies the timeline by jumping from file systems directly to Codd's Relational Model (skipping hierarchical databases of the 1960s like IMS), but this is acceptable for a 'Fundamentals' level overview focusing on the modern concept of databases.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The narrative is solid, but could be made more vivid by referencing specific historical stakes (e.g., the Apollo program which actually drove the creation of the first databases) rather than just generic 'businesses'. Step 3 describes Codd's idea as 'organizing data into tables', which is accurate for the Relational Model, but slightly conflates 'Databases' generally with 'Relational Databases'. However, this is a minor narrative choice.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid diving into database schemas or SQL syntax. The background should explain WHY databases were invented and what problems early computer systems faced — not HOW to structure tables.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-engineering-databases-1",
+        "userInput": {
+          "chapterTitle": "Data Storage",
+          "courseTitle": "Computer Science Fundamentals",
+          "language": "en",
+          "lessonDescription": "The history of how computers learned to organize and retrieve vast amounts of information",
+          "lessonTitle": "Introduction to Databases"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The instructions explicitly requested the use of analogies from everyday life (sports, cooking, games, music, travel) to make concepts tangible. The generated text is literal and historical (e.g., mentioning specific artists and techniques directly) without employing these requested metaphors to bridge the gap for the learner.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "To better meet the 'Master Storyteller' persona, the response could use more vivid analogies (e.g., comparing the strict Art Academy to a rigid school system or a game with unfair rules). Additionally, while the tone is decent, it leans slightly towards a textbook summary ('Artists like Claude Monet...') rather than a purely immersive narrative flow.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Avoid jumping into color theory rules or artistic techniques. The background should explain WHY artists became obsessed with light and color — not HOW to mix pigments.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-art-impressionism-1",
+        "userInput": {
+          "chapterTitle": "Art Movements",
+          "courseTitle": "Art History",
+          "language": "en",
+          "lessonDescription": "How a group of rebellious painters changed the way we see and capture the world",
+          "lessonTitle": "Impressionism"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "In the fourth step, the text uses the English preposition 'in' instead of the Portuguese 'em' ('...Comte cunha o termo 'Sociologia' in 1839.'). Additionally, the instructions explicitly requested the text to be 'Rich in metaphors' using analogies from everyday life (sports, cooking, etc.), but the response relies on literal historical descriptions and the academic analogy of 'social physics' rather than everyday concepts.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The tone, while clear, leans towards an encyclopedic style ('Pensadores como Auguste Comte começam a questionar...') rather than the requested 'conversational' tone ('talking to a curious friend'). Using vivid sensory details (e.g., the smoke of factories, the noise of crowds) and specific everyday analogies (e.g., comparing society to a machine where the gears started grinding) would greatly enhance the narrative engagement as requested.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Titles and descriptions must be in Portuguese.\n\n      Avoid diving into research methodologies or academic frameworks. The background should explain WHY humans started systematically studying society — not HOW sociologists conduct research.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "pt-social-sociology-1",
+        "userInput": {
+          "chapterTitle": "Introdução",
+          "courseTitle": "Sociologia",
+          "language": "pt",
+          "lessonDescription": "Como surgiu a necessidade de estudar cientificamente a sociedade e as relações humanas",
+          "lessonTitle": "O que é Sociologia?"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The user explicitly requested a 'Background' activity with a specific narrative arc (Life Before -> Problem -> Breakthrough -> Impact) and a focus on storytelling. The AI's response fails to provide this narrative structure. Instead of a story about the origin or conceptual necessity of recursion, it provides a list of definitions and examples (What is it? How does it work? Where is it used?). This violates the 'Story Arc Principle' outlined in the instructions.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "The instructions explicitly stated to 'Avoid technical jargon without explanation' and to 'Avoid explaining how to write recursive functions.' The response violates both. Step 2 explains the mechanics ('functions call themselves... until reaching a base case'), and Step 4 introduces specific jargon ('tree traversals', 'divide-and-conquer') that a beginner (the target audience) would likely not understand yet.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The tone starts well with a mirror metaphor in Step 1 but quickly shifts to a dry, textbook style in steps 2-5. It lacks the 'conversational' and 'emotionally engaging' tone requested by the prompt.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "To improve, the model should focus on the historical or conceptual struggle that recursion solved (e.g., the difficulty of defining infinite processes or complex branching before this concept existed). It should avoid implementation details like 'base cases' and instead tell the story of how mathematicians or early computer scientists discovered that self-reference could simplify complex logic.",
+          "kind": "potentialImprovements",
+          "score": 6.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      SPECIAL CONSIDERATION: This is a narrow topic (recursion in programming). The background should still have a narrative, but it may be shorter since the scope is focused.\n\n      Avoid explaining how to write recursive functions. Focus on WHY recursion was developed as a concept and what elegant problems it solved.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+        "id": "en-edge-narrow-topic-1",
+        "userInput": {
+          "chapterTitle": "Functions",
+          "courseTitle": "Programming Fundamentals",
+          "language": "en",
+          "lessonDescription": "Understanding the elegant idea of functions that call themselves to solve complex problems",
+          "lessonTitle": "Recursion"
+        }
+      }
+    }
+  ],
+  "taskId": "activity-background"
+}

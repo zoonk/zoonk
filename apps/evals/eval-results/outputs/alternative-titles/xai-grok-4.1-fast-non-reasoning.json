@@ -1,0 +1,124 @@
+{
+  "generatedAt": "2026-01-15T19:15:16.505Z",
+  "modelId": "xai/grok-4.1-fast-non-reasoning",
+  "outputs": [
+    {
+      "duration": 2784.1939159999893,
+      "inputTokens": 589,
+      "output": "{\n  \"alternatives\": [\n    \"Frontend Engineering\",\n    \"Frontend Dev\",\n    \"Frontend Programming\",\n    \"Front End Development\",\n    \"Front-End Development\",\n    \"Frontend Web Development\",\n    \"Web Frontend Development\",\n    \"Client-Side Development\",\n    \"Frontend Developer Training\",\n    \"Frontend Development Fundamentals\",\n    \"Beginner Frontend Development\",\n    \"Advanced Frontend Development\",\n    \"Frontend Development Basics\",\n    \"Introduction to Frontend Development\",\n    \"Frontend Coding\",\n    \"Front End Engineering\",\n    \"Front-End Engineering\",\n    \"Front-End Dev\",\n    \"Frontend Web Engineering\",\n    \"Client Side Web Development\",\n    \"Frontend UI Development\",\n    \"Frontend Development for Beginners\",\n    \"Advanced Frontend Engineering\",\n    \"Frontend Development Essentials\",\n    \"Core Frontend Development\"\n  ]\n}",
+      "outputTokens": 105,
+      "systemPrompt": "",
+      "testCaseId": "en-frontend-development-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 3293.2679999999964,
+      "inputTokens": 590,
+      "output": "{\n  \"alternatives\": [\n    \"F1\",\n    \"Formula One\",\n    \"Formula 1 Racing\",\n    \"F1 Racing\",\n    \"Formula One Racing\",\n    \"Formula 1 Motorsport\",\n    \"F1 Motorsport\",\n    \"Formula One Motor Racing\",\n    \"F1 Motor Racing\",\n    \"Formula 1 for Beginners\",\n    \"Advanced Formula 1\",\n    \"Formula One Basics\",\n    \"Intro to Formula 1\",\n    \"F1 Fundamentals\",\n    \"Formula 1 Driving\",\n    \"Formula One Cars\",\n    \"F1 Cars\",\n    \"Formula 1 Drivers\",\n    \"Formula One Drivers\",\n    \"F1 Drivers\",\n    \"Formula 1 Teams\",\n    \"Formula One Teams\",\n    \"F1 Teams\",\n    \"Formula 1 Circuits\",\n    \"Formula One Circuits\",\n    \"F1 Circuits\",\n    \"Formula 1 History\",\n    \"Formula One History\",\n    \"F1 History\",\n    \"Beginner Formula 1\",\n    \"Intermediate Formula 1\",\n    \"Expert Formula 1\"\n  ]\n}",
+      "outputTokens": 148,
+      "systemPrompt": "",
+      "testCaseId": "en-formula-1-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1325.241750000001,
+      "inputTokens": 589,
+      "output": "{\n  \"alternatives\": [\n    \"User Experience Design\",\n    \"UX Designing\",\n    \"UX Designer Training\",\n    \"User Experience Designer Course\",\n    \"UX/UI Design\",\n    \"Introduction to UX Design\",\n    \"UX Design Fundamentals\",\n    \"UX Design Principles\",\n    \"Beginner UX Design\",\n    \"Advanced UX Design\",\n    \"UX Design Basics\"\n  ]\n}",
+      "outputTokens": 50,
+      "systemPrompt": "",
+      "testCaseId": "en-ux-design-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1350.8678749999963,
+      "inputTokens": 588,
+      "output": "{\n  \"alternatives\": [\n    \"Inglês\",\n    \"Língua Inglesa\",\n    \"Inglês Básico\",\n    \"Inglês Iniciante\",\n    \"Inglês para Iniciantes\",\n    \"Inglês Elementar\",\n    \"Aprender Inglês\",\n    \"Curso de Inglês\",\n    \"Inglês Fundamental\",\n    \"Inglês Inicial\"\n  ]\n}",
+      "outputTokens": 60,
+      "systemPrompt": "",
+      "testCaseId": "pt-ingles-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1144.0647080000053,
+      "inputTokens": 590,
+      "output": "{\n  \"alternatives\": [\n    \"IA\",\n    \"Inteligência Artificial Avançada\",\n    \"Inteligência Artificial para Iniciantes\",\n    \"Inteligência Artificial Básica\",\n    \"IA Avançada\",\n    \"IA para Iniciantes\",\n    \"IA Básica\"\n  ]\n}",
+      "outputTokens": 45,
+      "systemPrompt": "",
+      "testCaseId": "pt-inteligencia-artificial-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 3288.9194590000116,
+      "inputTokens": 589,
+      "output": "{\n  \"alternatives\": [\n    \"ML\",\n    \"Machine Learning\",\n    \"Machine Learning Basics\",\n    \"Intro to Machine Learning\",\n    \"Introduction to Machine Learning\",\n    \"Machine Learning Fundamentals\",\n    \"Machine Learning for Beginners\",\n    \"Beginner Machine Learning\",\n    \"Machine Learning Introduction\",\n    \"Fundamentals of Machine Learning\",\n    \"Machine Learning Principles\",\n    \"Core Machine Learning\",\n    \"Machine Learning Essentials\",\n    \"Basic Machine Learning\",\n    \"Machine Learning 101\",\n    \"ML Fundamentals\",\n    \"ML Basics\",\n    \"ML for Beginners\",\n    \"Intro ML\",\n    \"Introductory Machine Learning\",\n    \"Machine Learning Intro\",\n    \"Entry-Level Machine Learning\",\n    \"Machine Learning Starter\",\n    \"Starter Machine Learning\",\n    \"Machine Learning Beginner\",\n    \"Beginners Guide to Machine Learning\",\n    \"Machine Learning for Beginners Guide\",\n    \"Machine Learning Entry\",\n    \"Machine Learning Foundations\",\n    \"Foundations of Machine Learning\"\n  ]\n}",
+      "outputTokens": 134,
+      "systemPrompt": "",
+      "testCaseId": "en-machine-learning-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1294.0159580000036,
+      "inputTokens": 589,
+      "output": "{\n  \"alternatives\": [\n    \"JS\",\n    \"ECMAScript\",\n    \"JavaScript Programming\",\n    \"JavaScript Development\",\n    \"JavaScript for Beginners\",\n    \"Beginner JavaScript\",\n    \"Advanced JavaScript\",\n    \"JavaScript Essentials\",\n    \"Learning JavaScript\",\n    \"Intro to JavaScript\",\n    \"JavaScript Basics\",\n    \"Core JavaScript\"\n  ]\n}",
+      "outputTokens": 53,
+      "systemPrompt": "",
+      "testCaseId": "en-javascript-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1648.0422920000128,
+      "inputTokens": 588,
+      "output": "{\n  \"alternatives\": [\n    \"Python Programming\",\n    \"Python Language\",\n    \"Python Programming Language\",\n    \"Programming in Python\",\n    \"Python for Beginners\",\n    \"Beginner Python\",\n    \"Advanced Python\",\n    \"Python Development\",\n    \"Learning Python\",\n    \"Python Basics\",\n    \"Intro to Python\",\n    \"Python Intro\",\n    \"Python Coding\",\n    \"Coding with Python\",\n    \"Python 3\",\n    \"Python3\"\n  ]\n}",
+      "outputTokens": 59,
+      "systemPrompt": "",
+      "testCaseId": "en-python-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 2530.8055830000085,
+      "inputTokens": 589,
+      "output": "{\n  \"alternatives\": [\n    \"Desarrollo de Sitios Web\",\n    \"Desarrollo Web Frontend\",\n    \"Desarrollo Web Backend\",\n    \"Desarrollo para Web\",\n    \"Programación Web\",\n    \"Desarrollo de Aplicaciones Web\",\n    \"Web Development\",\n    \"Desarrollo Web para Principiantes\",\n    \"Desarrollo Web Avanzado\",\n    \"Ingeniería Web\",\n    \"Creación de Páginas Web\",\n    \"Desarrollo Front-end\",\n    \"Desarrollo Back-end\",\n    \"Full Stack Web Development\",\n    \"Desarrollo Full Stack\",\n    \"Construcción de Sitios Web\",\n    \"Programación para la Web\",\n    \"Desarrollo de Webs\",\n    \"Desarrollo Web Completo\",\n    \"Desarrollo Web Básico\"\n  ]\n}",
+      "outputTokens": 119,
+      "systemPrompt": "",
+      "testCaseId": "es-desarrollo-web-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1467.6944999999978,
+      "inputTokens": 589,
+      "output": "{\n  \"alternatives\": [\n    \"Data Science Fundamentals\",\n    \"Data Science Basics\",\n    \"Introduction to Data Science\",\n    \"Data Science for Beginners\",\n    \"Advanced Data Science\",\n    \"Data Science Essentials\",\n    \"Data Sciences\",\n    \"Datascience\",\n    \"Data Science Techniques\",\n    \"Core Data Science\",\n    \"Data Science Principles\",\n    \"Data Science Intro\",\n    \"Beginner Data Science\",\n    \"Data Science 101\",\n    \"Fundamentals of Data Science\"\n  ]\n}",
+      "outputTokens": 68,
+      "systemPrompt": "",
+      "testCaseId": "en-data-science-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1222.44249999999,
+      "inputTokens": 589,
+      "output": "{\n  \"alternatives\": [\n    \"Matrix\",\n    \"The Matrix film\",\n    \"The Matrix movie\",\n    \"Matrix (1999 film)\",\n    \"The Matrix (1999)\",\n    \"Matrix movie\",\n    \"Watch The Matrix\"\n  ]\n}",
+      "outputTokens": 33,
+      "systemPrompt": "",
+      "testCaseId": "en-the-matrix-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1860.2831250000017,
+      "inputTokens": 590,
+      "output": "{\n  \"alternatives\": [\n    \"Second World War\",\n    \"WWII\",\n    \"WW2\",\n    \"World War 2\",\n    \"The Second World War\",\n    \"The World War II\",\n    \"World War II History\",\n    \"History of World War II\",\n    \"WWII History\",\n    \"Second World War History\",\n    \"World War II for Beginners\",\n    \"Intro to World War II\",\n    \"World War Two\",\n    \"WWII Overview\",\n    \"The Great Patriotic War (English context)\"\n  ]\n}",
+      "outputTokens": 79,
+      "systemPrompt": "",
+      "testCaseId": "en-world-war-2-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1947.1599579999893,
+      "inputTokens": 588,
+      "output": "{\n  \"alternatives\": [\n    \"Calculus I\",\n    \"Calculus II\",\n    \"Calculus III\",\n    \"Single Variable Calculus\",\n    \"Multivariable Calculus\",\n    \"Introductory Calculus\",\n    \"Calculus for Beginners\",\n    \"Basic Calculus\",\n    \"Advanced Calculus\",\n    \"Differential Calculus\",\n    \"Integral Calculus\",\n    \"Calculus Fundamentals\",\n    \"Calculus Mathematics\",\n    \"Mathematical Calculus\",\n    \"The Calculus\",\n    \"Calculus Course\",\n    \"Principles of Calculus\",\n    \"Calculus Essentials\",\n    \"Elementary Calculus\",\n    \"Calculus 1\",\n    \"Calculus 2\",\n    \"Calculus 3\",\n    \"Undergraduate Calculus\",\n    \"Intro to Calculus\",\n    \"Calculus Basics\",\n    \"Core Calculus\",\n    \"Standard Calculus\",\n    \"University Calculus\",\n    \"College Calculus\",\n    \"Calculus AB\",\n    \"Calculus BC\",\n    \"AP Calculus\",\n    \"Calculus and Analysis\",\n    \"Infinitesimal Calculus\"\n  ]\n}",
+      "outputTokens": 136,
+      "systemPrompt": "",
+      "testCaseId": "en-calculus-1",
+      "userPrompt": ""
+    }
+  ],
+  "taskId": "alternative-titles"
+}

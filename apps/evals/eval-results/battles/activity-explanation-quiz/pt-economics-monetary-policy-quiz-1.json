@@ -1,0 +1,114 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: Questions, options, and feedback must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Scenarios involving economic decisions (borrowing, spending, saving) where learners must predict effects of interest rate changes\n   - GOOD PATTERN: Situations requiring understanding of transmission delays between policy and economic outcomes\n   - BAD PATTERN: Asking to list monetary tools or define economic terms without application context\n   - BAD PATTERN: Questions referencing specific examples from the explanation\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Interest rate changes having immediate effects (transmission mechanisms have significant time lags of 6-18 months)\n   - Central banks directly controlling inflation (they influence it through indirect mechanisms)\n   - Lower interest rates always being good (they can fuel inflation and asset bubbles)\n   - Monetary policy being the only tool for economic stability (fiscal policy also plays a role)\n\n3. FORMAT FIT: Multiple choice works for cause-effect scenarios. Match columns work for connecting policy actions to economic effects. Sort order can work for transmission mechanism sequences.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-15T19:34:09.692Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model delivered an exceptional output. It perfectly adhered to the application-first criteria with rich, realistic scenarios (e.g., supermarket trends, construction company decisions) rather than dry definitions. The feedback is outstanding, offering detailed explanations for both correct and incorrect answers. It correctly handled technical nuances like transmission lags and avoided all accuracy pitfalls. The formatting is flawless, and the Portuguese is natural and grammatically correct.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "An excellent response that closely rivals the top model. It used strong application scenarios (e.g., small town inflation, Carlos buying a car) to test concepts. The feedback is clear and educational. It correctly emphasized the time lag in monetary policy. The variety of formats (Multiple Choice, Match, Sort, Fill Blank) was used effectively to test different conceptual relationships.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Very good output with strong specific scenarios (e.g., a business owner giving up on a purchase due to installments). This successfully tests the 'application' criteria. The feedback explains the 'why' effectively. It is ranked slightly lower than the top two only because the scenarios felt slightly less detailed in context, but it is still a high-quality quiz.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "A solid performance. The scenarios are valid (e.g., tourist town money influx) and test understanding well. It correctly identifies transmission lags. The feedback is accurate but slightly drier and less conversational than the higher-ranked models. The distractor options were well-constructed.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The content is accurate and the language is correct. However, the questions lean slightly more towards the perspective of the policymaker (e.g., 'BC perceives that...') rather than the novel application scenarios involving everyday actors seen in higher-ranked models. It is a competent quiz but less engaging.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The underlying economic scenarios are actually quite good and focus well on application. However, the model completely failed the language requirement by omitting almost all Portuguese diacritics/accents (e.g., 'moveis', 'nao', 'circulacao'). This makes the text grammatically incorrect and unprofessional.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Like Model B, this output failed the language requirement by stripping accents from Portuguese words. It is ranked lower than B because the questions were also more abstract and definition-heavy, showing less adherence to the 'application to novel scenarios' criterion.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Critical failure. The model generated invalid JSON by inserting hallucinated XML-like function call tags inside the string. This makes the output unparseable and unusable.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Conjunto bem alinhado às expectativas: cenários aplicados, foco em causalidade (juros, crédito, demanda, inflação) e defasagens; evita “efeito imediato” e não sugere controle direto da inflação. Boa variedade só onde faz sentido (MC + match + ordem) e feedbacks explicativos, inclusive para erradas, sem apelar para “segundo o texto”. Linguagem em português (sem acentos em alguns trechos, mas compreensível).",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Questões fortes e bem contextualizadas (máquinas financiadas, operação de mercado aberto, defasagem de 6 meses). O sortOrder explica bem a cadeia de transmissão e evita imediatismo. Pequena ressalva: no matchColumns usa “impacto imediato na liquidez ou no comportamento”, e “Aumento na Taxa de Juros — Desacelera a inflação reduzindo gastos” pode sugerir imediatismo (ainda que o quiz trate de defasagem em outra questão). Feedback bom e em português.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Bom foco em aplicação e em defasagens (explicitamente menciona esperar seis meses). Match e sortOrder estão apropriados ao tema de transmissão. Feedbacks, em geral, explicam por que está certo/errado. Pequenas fragilidades: algumas alternativas simplificam demais (ex.: “injetar dinheiro … para evitar uma crise” como efeito esperado pode soar teleológico) e faltam nuances sobre prazos/condições em alguns itens, mas não comete os principais erros listados.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Cobertura ampla e bem estruturada (inflação/juros, defasagem, compra de títulos, match, sort, fillBlank). Feedbacks geralmente bons e orientados a entendimento. Porém, há deslizes contra as expectativas: numa opção incorreta diz “os preços cairão imediatamente” (marcada como errada, mas ainda assim introduz a ideia de imediatismo), e algumas explicações sugerem relações um pouco automáticas (“com mais dinheiro… a pressão sobre os juros geralmente diminui”) sem ressalvas. Ainda assim, no geral é sólido.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Grande quantidade de questões e boa adequação de formatos (match e sort para transmissão). Feedbacks detalhados e cenários variados. Principais problemas: afirma em um item que os efeitos levariam “abril ou maio” após aumento em janeiro (sugere 2–4 meses, abaixo do intervalo 6–18 meses recomendado), e em alguns pontos passa sensação de controle mais direto/rápido do que o ideal (embora diga “leva meses”). Também há um tom um pouco professoral/exclamativo, mas ainda claro.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Tem boas ideias (defasagem, operações de mercado aberto, match), mas comete um erro central das expectativas: na questão da cidade turística fala em “consequência imediata mais típica é a alta de preços” e também usa “imediatamente” em alternativas/feedback, reforçando imediatismo indevido. Algumas explicações estão excessivamente determinísticas. Apesar de estar em português e ter feedback razoável, o problema factual/ênfase em imediatismo pesa bastante.",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Cenários aplicados e linguagem simples; feedbacks presentes. Porém, vários itens são meio “adivinhe a causa” com alternativas pouco simétricas (muito fáceis por plausibilidade), e há problema de prazo/defasagem: sugere que a fala correta é que a queda de juros “ainda não se refletiu” sem explicitar horizontes consistentes (e outra questão fala “em poucos meses” para baratear financiamento, o que pode sugerir transmissão rápida). Além disso, português sem acentuação consistente reduz qualidade.",
+          "score": 4.9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Saída quebrada/contaminada por trechos de function_call e aspas/markup no campo question, o que viola formato e clareza. Só duas perguntas, e a primeira está corrompida juntando conteúdo de outra. Embora o conteúdo básico esteja em português e conceitualmente razoável, a falha estrutural e de formatação torna o material pouco utilizável; feedback e cobertura também ficam incompletos.",
+          "score": 2.3
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-explanation-quiz",
+  "testCaseId": "pt-economics-monetary-policy-quiz-1"
+}

@@ -1,0 +1,52 @@
+{
+  "generatedAt": "2026-01-15T19:15:16.545Z",
+  "modelId": "google/gemini-3-flash",
+  "outputs": [
+    {
+      "duration": 4905.312082999997,
+      "inputTokens": 1233,
+      "output": "{\n  \"description\": \"Frontend development focuses on building the visual and interactive elements of websites and applications that users engage with directly. Building responsive, accessible, and high-performance interfaces ensures seamless digital experiences across all devices. Professionals in this field work as frontend engineers or UI developers at tech companies, creative agencies, and startups.\"\n}",
+      "outputTokens": 68,
+      "systemPrompt": "",
+      "testCaseId": "en-frontend-development-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 9888.979334000003,
+      "inputTokens": 1232,
+      "output": "{\n  \"description\": \"French proficiency ranges from initial communication (A1) to full fluency (C2), facilitating seamless interaction in personal and professional contexts. This linguistic competency prepares individuals for careers in international diplomacy, global business, translation, and education across the Francophone world. Proficiency is vital for navigating diverse cultural landscapes and securing roles in international organizations or government agencies.\"\n}",
+      "outputTokens": 77,
+      "systemPrompt": "",
+      "testCaseId": "en-french-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 5263.457416999998,
+      "inputTokens": 1234,
+      "output": "{\n  \"description\": \"A inteligência artificial desenvolve sistemas capazes de simular capacidades humanas para processar informações e automatizar decisões complexas. A aplicação de modelos preditivos e algoritmos de reconhecimento de padrões possibilita a inovação tecnológica em diversos setores globais. Prepara para atuações como especialista em IA ou engenheiro de dados em empresas de tecnologia, centros de pesquisa e instituições financeiras.\"\n}",
+      "outputTokens": 87,
+      "systemPrompt": "",
+      "testCaseId": "pt-inteligencia-artificial-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 6476.804833000002,
+      "inputTokens": 1233,
+      "output": "{\n  \"description\": \"El desarrollo web es la creación y mantenimiento de sitios y aplicaciones digitales accesibles mediante internet. Abarca desde la estructura visual hasta la lógica interna y el manejo de datos para construir plataformas funcionales y seguras. Estas habilidades permiten desempeñarse en empresas de tecnología, agencias digitales o como desarrollador independiente en un mercado con alta demanda global.\"\n}",
+      "outputTokens": 74,
+      "systemPrompt": "",
+      "testCaseId": "es-desarrollo-web-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 8518.054124999995,
+      "inputTokens": 1233,
+      "output": "{\n  \"description\": \"The Matrix redefined science fiction cinema through its synthesis of philosophical themes and revolutionary visual techniques. Covers the narrative structure, cyberpunk aesthetics, and the cultural impact of the entire franchise. Essential for analyzing the series' profound influence on contemporary storytelling and digital media.\"\n}",
+      "outputTokens": 57,
+      "systemPrompt": "",
+      "testCaseId": "en-the-matrix-1",
+      "userPrompt": ""
+    }
+  ],
+  "taskId": "course-description"
+}

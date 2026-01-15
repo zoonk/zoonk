@@ -1,11 +1,20 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { cache } from "react";
-import { RUNS_PER_TEST_CASE } from "@/tasks";
+import { loadModelOutputs } from "./output-loader";
 import { generateScore } from "./score";
-import type { EvalResult, Task, TaskEvalResults, TestCase } from "./types";
+import type {
+  EvalResult,
+  OutputEntry,
+  ScoredResult,
+  ScoredTaskResults,
+  Task,
+  TaskEvalResults,
+  TestCase,
+} from "./types";
 
-const RESULTS_DIR = path.join(process.cwd(), "eval-results");
+const EVAL_RESULTS_DIR = path.join(process.cwd(), "eval-results");
+const RESULTS_DIR = path.join(EVAL_RESULTS_DIR, "results");
 
 async function ensureResultsDir(taskId: string) {
   const taskDir = path.join(RESULTS_DIR, taskId);
@@ -17,28 +26,28 @@ function getResultsFilePath(taskId: string, modelId: string): string {
   return path.join(RESULTS_DIR, taskId, `${modelPath}.json`);
 }
 
-async function loadExistingResults(
+async function loadExistingScoredResults(
   taskId: string,
   modelId: string,
-): Promise<EvalResult[]> {
+): Promise<ScoredResult[]> {
   const filePath = getResultsFilePath(taskId, modelId);
   try {
     const data = await fs.readFile(filePath, "utf-8");
-    const parsed = JSON.parse(data) as TaskEvalResults;
+    const parsed = JSON.parse(data) as ScoredTaskResults;
     return parsed.results;
   } catch {
     return [];
   }
 }
 
-async function saveResults(
+async function saveScoredResults(
   taskId: string,
   modelId: string,
-  results: EvalResult[],
+  results: ScoredResult[],
 ) {
   await ensureResultsDir(taskId);
 
-  const taskResults: TaskEvalResults = {
+  const taskResults: ScoredTaskResults = {
     modelId,
     results,
     taskId,
@@ -48,148 +57,194 @@ async function saveResults(
   await fs.writeFile(filePath, JSON.stringify(taskResults, null, 2));
 }
 
-async function runTestCase(
+function findTestCaseForOutput(
   task: Task,
+  testCaseId: string,
+): TestCase | undefined {
+  // testCaseId format is "{baseId}-{runNumber}"
+  const lastDashIndex = testCaseId.lastIndexOf("-");
+  const baseId = testCaseId.substring(0, lastDashIndex);
+  return task.testCases.find((tc) => tc.id === baseId);
+}
+
+async function scoreOutput(
+  output: OutputEntry,
   testCase: TestCase,
-  modelId: string,
-  runNumber: number,
-): Promise<EvalResult> {
-  const inputSummary = Object.entries(testCase.userInput)
-    .map(([key, value]) => `${key}=${value}`)
-    .join(", ");
-
-  console.info(`Running test case: ${inputSummary} (run ${runNumber})`);
-
-  const startTime = performance.now();
-  const result = await task.generate({
-    ...testCase.userInput,
-    model: modelId,
-    // We don't want to use fallback models during evals to ensure we're evaluating the correct model
-    useFallback: false,
-  });
-  const endTime = performance.now();
-  const duration = endTime - startTime;
-
-  const output = JSON.stringify(result.data, null, 2);
-
-  console.info("Generated output for test case, scoring...");
+): Promise<ScoredResult> {
+  console.info(`Scoring output: ${output.testCaseId}`);
 
   const scoreResult = await generateScore({
     expectations: testCase.expectations,
-    output,
-    prompt: result.userPrompt,
-    system: result.systemPrompt,
+    output: output.output,
+    prompt: output.userPrompt,
+    system: output.systemPrompt,
   });
 
   console.info(`Score: ${scoreResult.score}`);
 
-  // Create a test case with the run number appended to the ID
   const testCaseWithRun: TestCase = {
     ...testCase,
-    id: `${testCase.id}-${runNumber}`,
+    id: output.testCaseId,
   };
 
   return {
-    duration,
-    inputTokens: result.usage.inputTokens ?? 0,
-    output,
-    outputTokens: result.usage.outputTokens ?? 0,
     steps: scoreResult.steps,
     testCase: testCaseWithRun,
   };
 }
 
-function shouldSkipTestCase(
-  existing: EvalResult[],
-  baseTestCaseId: string,
-  runNumber: number,
+function isAlreadyScored(
+  existingResults: ScoredResult[],
+  testCaseId: string,
 ): boolean {
-  // Check if we already have a result for this specific test case run
-  const runId = `${baseTestCaseId}-${runNumber}`;
-  return existing.some((r) => r.testCase.id === runId);
+  return existingResults.some((r) => r.testCase.id === testCaseId);
 }
 
 export async function runEval(
   task: Task,
   modelId: string,
 ): Promise<TaskEvalResults> {
-  // Sanitize modelId before logging to prevent log injection
   const safeModelId = String(modelId).replace(/[\r\n]/g, "");
-  const totalRuns = task.testCases.length * RUNS_PER_TEST_CASE;
 
   console.info(
     `\nStarting eval for task: ${task.name}, model: [${safeModelId}]`,
   );
 
-  console.info(
-    `Total test cases: ${task.testCases.length} (${totalRuns} runs with ${RUNS_PER_TEST_CASE} iterations each)`,
-  );
-
-  const existingResults = await loadExistingResults(task.id, modelId);
-  console.info(`Found ${existingResults.length} existing results`);
-
-  // Generate all test case runs that need to be executed
-  const testCaseRunsToExecute: Array<{
-    testCase: TestCase;
-    runNumber: number;
-  }> = [];
-
-  for (const testCase of task.testCases) {
-    for (let runNumber = 1; runNumber <= RUNS_PER_TEST_CASE; runNumber++) {
-      if (!shouldSkipTestCase(existingResults, testCase.id, runNumber)) {
-        testCaseRunsToExecute.push({ runNumber, testCase });
-      }
-    }
+  // Load pre-generated outputs
+  const modelOutputs = await loadModelOutputs(task.id, modelId);
+  if (!modelOutputs || modelOutputs.outputs.length === 0) {
+    throw new Error(
+      `No outputs found for model ${modelId}. Generate outputs first.`,
+    );
   }
 
-  console.info(`Running ${testCaseRunsToExecute.length} new test case runs`);
+  console.info(`Found ${modelOutputs.outputs.length} outputs to score`);
 
-  if (testCaseRunsToExecute.length === 0) {
-    console.info("All test cases already completed, loading existing results");
-    const filePath = getResultsFilePath(task.id, modelId);
-    const data = await fs.readFile(filePath, "utf-8");
-    return JSON.parse(data) as TaskEvalResults;
+  // Load existing scored results
+  const existingResults = await loadExistingScoredResults(task.id, modelId);
+  console.info(`Found ${existingResults.length} existing scored results`);
+
+  // Find outputs that haven't been scored yet
+  const outputsToScore = modelOutputs.outputs.filter(
+    (output) => !isAlreadyScored(existingResults, output.testCaseId),
+  );
+
+  console.info(`Scoring ${outputsToScore.length} outputs`);
+
+  if (outputsToScore.length === 0) {
+    console.info("All outputs already scored");
+    return combineOutputsAndResults(
+      task.id,
+      modelId,
+      modelOutputs.outputs,
+      existingResults,
+    );
   }
 
   const results = await Promise.allSettled(
-    testCaseRunsToExecute.map(({ testCase, runNumber }) =>
-      runTestCase(task, testCase, modelId, runNumber),
-    ),
+    outputsToScore.map((output) => {
+      const testCase = findTestCaseForOutput(task, output.testCaseId);
+      if (!testCase) {
+        return Promise.reject(
+          new Error(`Test case not found for output: ${output.testCaseId}`),
+        );
+      }
+      return scoreOutput(output, testCase);
+    }),
   );
 
-  // Filter out the rejected promises and extract values from fulfilled ones
-  const newResults: EvalResult[] = results
+  const newResults: ScoredResult[] = results
     .map((result) => {
       if (result.status === "fulfilled") {
         return result.value;
       }
-
       console.error(
-        `Error running test case: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
+        `Error scoring output: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
       );
-
       return null;
     })
-    .filter((res): res is EvalResult => res !== null);
+    .filter((res): res is ScoredResult => res !== null);
 
-  const allResults = [...existingResults, ...newResults];
+  const allScoredResults = [...existingResults, ...newResults];
 
-  await saveResults(task.id, modelId, allResults);
-  console.info(`Saved ${allResults.length} total results`);
+  await saveScoredResults(task.id, modelId, allScoredResults);
+  console.info(`Saved ${allScoredResults.length} total scored results`);
 
-  const filePath = getResultsFilePath(task.id, modelId);
-  const data = await fs.readFile(filePath, "utf-8");
-  return JSON.parse(data) as TaskEvalResults;
+  return combineOutputsAndResults(
+    task.id,
+    modelId,
+    modelOutputs.outputs,
+    allScoredResults,
+  );
+}
+
+function combineOutputsAndResults(
+  taskId: string,
+  modelId: string,
+  outputs: OutputEntry[],
+  scoredResults: ScoredResult[],
+): TaskEvalResults {
+  const results: EvalResult[] = [];
+
+  for (const scored of scoredResults) {
+    const output = outputs.find((o) => o.testCaseId === scored.testCase.id);
+    if (!output) {
+      continue;
+    }
+
+    results.push({
+      duration: output.duration,
+      inputTokens: output.inputTokens,
+      output: output.output,
+      outputTokens: output.outputTokens,
+      steps: scored.steps,
+      testCase: scored.testCase,
+    });
+  }
+
+  return {
+    modelId,
+    results,
+    taskId,
+  };
 }
 
 export const getTaskResults = cache(
   async (taskId: string, modelId: string): Promise<TaskEvalResults | null> => {
-    const filePath = getResultsFilePath(taskId, modelId);
-    try {
-      const data = await fs.readFile(filePath, "utf-8");
-      return JSON.parse(data) as TaskEvalResults;
-    } catch {
+    const modelOutputs = await loadModelOutputs(taskId, modelId);
+    if (!modelOutputs) {
       return null;
     }
+
+    const scoredResults = await loadExistingScoredResults(taskId, modelId);
+    if (scoredResults.length === 0) {
+      return null;
+    }
+
+    const results: EvalResult[] = [];
+
+    for (const scored of scoredResults) {
+      const output = modelOutputs.outputs.find(
+        (o) => o.testCaseId === scored.testCase.id,
+      );
+      if (!output) {
+        continue;
+      }
+
+      results.push({
+        duration: output.duration,
+        inputTokens: output.inputTokens,
+        output: output.output,
+        outputTokens: output.outputTokens,
+        steps: scored.steps,
+        testCase: scored.testCase,
+      });
+    }
+
+    return {
+      modelId,
+      results,
+      taskId,
+    };
   },
 );

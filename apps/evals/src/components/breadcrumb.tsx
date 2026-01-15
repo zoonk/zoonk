@@ -68,6 +68,32 @@ function ModelPageBreadcrumb({ modelName }: { modelName: string }) {
   );
 }
 
+function BattlesLinkBreadcrumb({ taskId }: { taskId: string }) {
+  return (
+    <BreadcrumbItem>
+      <BreadcrumbLink render={<Link href={`/tasks/${taskId}/battles`} />}>
+        Battles
+      </BreadcrumbLink>
+    </BreadcrumbItem>
+  );
+}
+
+function BattlesPageBreadcrumb() {
+  return (
+    <BreadcrumbItem>
+      <BreadcrumbPage>Battles</BreadcrumbPage>
+    </BreadcrumbItem>
+  );
+}
+
+function BattleDetailPageBreadcrumb({ testCaseId }: { testCaseId: string }) {
+  return (
+    <BreadcrumbItem>
+      <BreadcrumbPage>{testCaseId}</BreadcrumbPage>
+    </BreadcrumbItem>
+  );
+}
+
 export {
   AppBreadcrumb,
   HomePageBreadcrumb,
@@ -75,4 +101,7 @@ export {
   TaskPageBreadcrumb,
   TaskLinkBreadcrumb,
   ModelPageBreadcrumb,
+  BattlesLinkBreadcrumb,
+  BattlesPageBreadcrumb,
+  BattleDetailPageBreadcrumb,
 };
