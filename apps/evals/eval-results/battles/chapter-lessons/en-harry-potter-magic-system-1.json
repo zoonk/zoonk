@@ -1,0 +1,221 @@
+{
+  "expectations": "\n      - MUST be in US English\n      - Creative/pop culture topic that still needs structured breakdown\n      - Should cover each spell category separately\n      - Should break down wand lore, magical creatures, and history as individual lessons\n      - Even though this is pop culture, lessons should still be focused and granular\n      \n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n  \n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+  "judgedAt": "2026-01-15T20:55:46.899Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D provides an extensive lesson list (82 lessons) with excellent granularity and logical progression. It covers spell categories separately (charms, transfiguration, jinxes, hexes, curses, counter-spells, healing magic, protective magic, memory charms), wand lore in exceptional detail (wand woods, cores split by type - phoenix feather, dragon heartstring, unicorn hair - plus flexibility, length, allegiance, twin cores, Priori Incantatem, wandmakers), nonverbal and wandless magic as distinct topics, and magical limitations (Gamp's Law, food exception, death permanence, love constraints). Lessons are focused on single concepts - e.g., 'The Imperius Curse' vs broader 'Unforgivable Curses' lesson. Descriptions are concise without fluff. Very comprehensive coverage suitable for a 100+ lesson expectation. Minor issues: some lessons could be even more granular (e.g., 'Wand Woods' could list specific woods like Model A does).",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model H provides 95 lessons with excellent granularity and systematic coverage. Spell categories are well-separated (charms, transfiguration, jinxes, hexes, curses, defensive magic, healing magic, protective charms). Wand lore is broken down thoroughly (phoenix feather, dragon heartstring, unicorn hair cores separately; wood, flexibility, length, allegiance, twin cores). Nonverbal and wandless magic covered as distinct topics with multiple sub-lessons. Limits of magic covered comprehensively. Good progression from basic to advanced. Descriptions are clear and concise. Slightly less focused than Model D on some individual spell examples, but overall very strong coverage meeting the 100+ lesson expectation.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G provides 87 lessons with very good granularity. Spell categories are well-covered and separated. Wand lore is comprehensive (cores, woods, length, flexibility, allegiance, damage, shared core resonance). Nonverbal and wandless magic are treated as distinct categories with multiple focused lessons. Limits of magic are extensively covered (15+ lessons on various constraints). Very systematic approach with logical progression. Some lessons are slightly abstract/theoretical (e.g., 'Magic as Intent Channeled Through Technique') which could be more concrete, but overall excellent coverage.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Model F provides 96 lessons with very good coverage. Wand lore is excellent (cores, woods, length, flexibility, allegiance, mastery, ownership transfer, twin cores, Priori Incantatem, Elder Wand, wandmaking tradition). Spell categories are well-separated. Nonverbal and wandless magic covered with multiple focused lessons. Limits of magic thoroughly addressed (Gamp's Law, resurrection, love, time-turners, Unbreakable Vow, Trace, etc.). Good granularity throughout. Some descriptions are quite terse but still informative. Loses points for slightly less systematic organization than top models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E provides 62 lessons with good granularity on individual concepts. Wand lore is well-covered (cores, woods, length, flexibility, allegiance, ownership transfer, Elder Wand). Nonverbal and wandless magic each have multiple dedicated lessons. Spell categories and limits are covered. However, falls short of the 100+ lesson expectation for complex topics. Some lessons are slightly broad (e.g., 'Creature-specific Magic Traits'). Overall good quality but insufficient quantity for comprehensive coverage.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model A provides 42 lessons with good focus on individual concepts. Wand lore is notably detailed with specific wood types as separate lessons (holly, vine, willow, alder, hawthorn) and cores separated (unicorn hair, dragon heartstring, phoenix feather). Spell categories separated (charms, transfiguration, jinxes, hexes, curses). However, significantly below the 100+ lesson expectation. Missing many important topics (e.g., specific unforgivable curses breakdown, Animagi, Legilimency). Good quality but insufficient breadth.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model J provides 45 lessons covering main topics adequately. Spell categories separated (charms, transfiguration, curses, hexes, jinxes, counter-spells, healing, defensive). Wand lore covered (cores, woods, length, flexibility, allegiance, Elder Wand). Unforgivable curses broken into individual lessons which is good. However, significantly below 100+ lesson expectation. Some lessons use 'AND' in concepts (e.g., 'Spells and potions used to cure injuries and illnesses'). Missing depth in many areas.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C provides only 29 lessons, far below the 100+ expectation. While individual lessons are focused (e.g., separating 'The Food Exception' and 'The Money Exception'), overall coverage is too limited. Missing many important areas - no detailed breakdown of specific curses, limited wand wood coverage, minimal nonverbal magic depth. Good granularity concept but insufficient lesson count for comprehensive coverage.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "xai/grok-4",
+          "reasoning": "Model K provides 54 lessons with some good elements (wand woods broken into specific types like acacia, alder, apple, ash, aspen, beech, blackthorn, black walnut). However, coverage is uneven - extensive wand wood detail but limited spell category breakdown. Below the 100+ lesson expectation. Some lessons use broad terms ('Spell Categories Overview', 'Limits of Magic Overview'). Missing depth in nonverbal and wandless magic sections.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model B provides only 30 lessons, significantly below the 100+ expectation. Lessons are too broad (e.g., 'Dark Magic', 'Elemental Magic'). Missing granular breakdown of wand lore (no specific woods or cores separated). Wand flexibility, length covered but minimal depth. No breakdown of specific curses. Descriptions are adequate but coverage is insufficient. Many concepts could be split into multiple lessons.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model I provides only 38 lessons, far below expectations. While focused on single concepts, severely lacking in breadth. Missing many important topics - no breakdown of unforgivable curses, limited spell categories, minimal wandless/nonverbal magic coverage. Wand lore has some good separation (three core types) but limited wood coverage. Descriptions are concise but overall insufficient for comprehensive learning.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Model F provided the most comprehensive and granular list, covering over 90 lessons. It excellently broke down the mechanics of magic (aiming, pronunciation, concentration) alongside specific spell categories and wand lore. It followed all negative constraints regarding title formatting and produced a highly logical, extensive curriculum.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G produced an excellent, extensive list with a strong focus on the mechanics of casting (intent, focus, timing). The titles were clean and followed all formatting rules. It is slightly less detailed in specific spell sub-types than Model F but arguably better structured in its progression.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D offered a very strong, extensive list with excellent breakdowns of specific curses, wand cores, and abilities. It is ranked below the top two solely because of a minor violation of the negative constraint regarding titles (using 'OR' in 'Inherited or Learned?'), whereas F and G were flawless.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model A followed all instructions and constraints perfectly. It provided a good breakdown of wand woods and cores. However, the overall list was significantly shorter (approx 40 lessons) than the top models, making it less 'extensive' as requested for complex topics.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "xai/grok-4",
+          "reasoning": "Model K provided good granularity, specifically listing many wand woods as separate lessons, which adhered well to the 'extensive list' requirement. However, it included a title with 'AND' ('Love and Emotions'), violating the negative constraint, which places it below the fully compliant Model A.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model J followed all title formatting constraints but provided a relatively generic and medium-length list. It lacked the depth and granularity found in the higher-ranked models, particularly regarding wand lore and casting mechanics.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model H provided a good, extensive list of content (approx 60 lessons), but it failed the negative constraint regarding titles multiple times, frequently using 'Versus' or 'AND'. This formatting failure significantly impacts the score despite good content depth.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E provided extensive content but had a high number of title violations (approx 8 instances of using 'AND'). While the content was granular, the repeated failure to follow the specific negative constraint regarding lesson splitting lowers its rank.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model I was compliant with formatting rules but provided a short list (38 lessons) that failed to fully meet the expectation of an 'extensive list' for a complex chapter. The content was accurate but lacked depth.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C was compliant with title constraints but provided a very short and broad list. It is ranked slightly above Model B because it attempted to break down the 'Limits of Magic' (Gamp's Law exceptions) into specific lessons, showing slightly more attention to detail.",
+          "score": 1.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model B provided the least granular list with broad categories ('Charms Magic', 'Transfiguration Magic') that should have been broken down. It failed the primary instruction to create an extensive, granular breakdown.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Most aligned with the brief’s need for a structured breakdown by spell category plus separate wand lore and limits. It’s the most granular overall: many spell categories are separated cleanly (e.g., Disarming Spells, Binding Spells, Levitation Charms, Conjuration, Vanishing, Memory Magic, etc.), and wand topics are broken into discrete micro-lessons (wood, core, compatibility, temperament, allegiance, transfer, damage, twin cores, Elder Wand principle). Also includes a distinct lesson for magical creatures as a type of magic. Titles are mostly single-concept and avoid obvious “AND/OR/VS” issues. Biggest gap: it still doesn’t hit the “100+ lessons” expectation, and it lacks explicit history lessons, but among the set it best matches the micro-lesson granularity and category coverage.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Very comprehensive and generally granular, with strong coverage of spell categories and extensive wand breakdown. It also explicitly includes “Magical Creatures and Innate Magic” as its own topic and touches legal/limits. However, it violates the title rule multiple times (“Magic Versus Technology,” “Corporeal Versus Non-Corporeal Patronus,” “Summoning and Banishing Spells,” “Limits of Magic: Love and Free Will,” etc.), and several lessons are too broad for “10 short tweets” (e.g., “Travel and Transport Magic,” “Communication Magic,” “Elemental and Environmental Magic,” “Household and Utility Magic”). Still one of the best-structured and most chapter-like.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5",
+          "reasoning": "High lesson count and strong micro-granularity in casting mechanics, spell categories, wand lore, nonverbal/wandless, and limits. It separates many concepts well (e.g., pronunciation vs mispronunciation effects; wand mastery vs borrowed/damaged/repair; multiple nonverbal subskills). Weaknesses: includes several topics that feel outside a focused “chapter” on spells/wands/limits (e.g., Arithmancy, Ancient Runes) unless the chapter explicitly includes Hogwarts subjects broadly. Also some redundancy and a few titles drift toward broader scope (e.g., “Hogwarts Wards”). No explicit history lesson set.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Large, detailed list with good progression and strong separation for wand lore (makers, cores, woods, damage, borrowing, twin cores, Priori Incantatem, Elder Wand) and several creature entries (house-elf, goblin, giants, dragons, Inferi). Spell categories are covered and the Unforgivables are properly split into individual lessons. Main issues: quite a few lessons are broader than a 2–3 minute micro-lesson (e.g., “Floo Network Travel,” “Dark Magic,” “Spell Difficulty Levels”), and it includes many extra domains (Animagi, Metamorphmagi, Seers/Prophecy) that may not belong in this specific chapter. Still one of the stronger curricula here.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "xai/grok-4",
+          "reasoning": "Decent structure, clear separation of spell categories, wand lore, and limits, and it attempts true micro-lessons for multiple wand woods (acacia, alder, etc.). However, it’s inconsistent: some areas are still “overview” level (“Spell Categories Overview,” “Limits of Magic Overview,” “Wand Woods Overview”) rather than single tight concepts, and it doesn’t include history as a distinct lesson line. Also falls far short of the “100+ lessons” expectation.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Clean, readable, and generally on-topic (spell categories, wand lore, nonverbal/wandless, limits, legal topics like the Trace). It also splits Unforgivables into the three curses, which matches the granularity requirement. Weaknesses: many lessons are still broad (“Types of Magic Users,” “Defensive Spells,” “Ancient Magic,” “Dark Magic Consequences”), and lesson count is low for the stated expectation. No magical creatures/history as dedicated lesson lines beyond house-elves.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Covers many required areas and has more sub-lessons than several models (especially for nonverbal/wandless and wand allegiance). But it repeatedly breaks the “no AND/OR/VS in titles” rule (“Concealment and Obfuscation Spells,” “Wand Flexibility and Characteristics,” “Magical Energy and Exhaustion,” “Magical Contracts and Binding Oaths,” “Differences between Wandless and Nonverbal Casting”), and several descriptions are too long and occasionally academic (“characterised,” “neutralise”). Also lacks distinct history lessons and doesn’t separate magical creatures/history into individual lesson blocks in the way requested.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Reasonably granular on wand mechanics and includes sub-lessons for nonverbal difficulty/advantages and wandless instability/global practices. Spell categories are present and transfiguration sub-branches are separated (transformation/vanishment/conjuration). Still too short overall, missing magical creatures and history lessons, and it doesn’t cover many spell categories beyond the basics. Feels like an outline rather than an extensive chapter breakdown.",
+          "score": 5.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Has some good micro-lessons (specific wand woods/cores, nonverbal split into requirements/training, basic limits like Gamp’s Law and death permanence). But it’s far too short and mostly at category-definition level rather than a granular progression through the chapter. Missing magical creatures and history lessons entirely. Some inclusions are also oddly framed for HP canon (e.g., “Wand Function” as a lesson but little on wand movement/incantations).",
+          "score": 4.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Includes several important areas (spell types, wand selection/loyalty, nonverbal, limits) but is still quite short and includes questionable/unsupported micro-claims for HP canon (“Money Exception” as a named exception; alchemy description mixing elements + turning metals to gold in a way that’s not wizarding-world specific). Missing magical creatures and history as distinct lessons, and too many topics are only at broad category level.",
+          "score": 4.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Too high-level and generic: mostly broad categories (Elemental Magic, Force Spells, Binding Spells) without enough wizarding-world specificity or granular progression. Very low lesson count relative to the requirements, missing magical creatures and history entirely, and wand lore is only minimally covered (no cores/woods subtypes, no makers, no special cases like twin cores/Priori Incantatem). Reads like a generalized fantasy magic taxonomy rather than a focused HP chapter breakdown.",
+          "score": 3.3
+        }
+      ]
+    }
+  ],
+  "taskId": "chapter-lessons",
+  "testCaseId": "en-harry-potter-magic-system-1"
+}
