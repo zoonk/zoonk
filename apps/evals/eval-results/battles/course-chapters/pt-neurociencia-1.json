@@ -1,0 +1,257 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises\n  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%\n\n    ",
+  "judgedAt": "2026-01-15T20:59:49.465Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Curso excepcionalmente abrangente com 138 capítulos que cobrem desde fundamentos até fronteiras avançadas. Estrutura progressiva excelente, indo de panorama/história até carreira. Inclui tópicos raramente cobertos como inferência causal, confundidores fisiológicos, ciência de dados, gestão de laboratório, empreendedorismo, diversidade/inclusão. Títulos concisos e descrições diretas sem fluff. Cobre todas as áreas necessárias para o top 1%: métodos avançados (optogenética, quimiogenética, multiômicas), neurociência computacional profunda, tradução clínica, neuroética, e desenvolvimento profissional. Tendências emergentes bem representadas. Único ponto menor: alguns capítulos poderiam ser consolidados.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Curso muito completo com 74 capítulos bem estruturados. Excelente progressão do básico ao avançado. Cobre neurociência molecular, celular, de sistemas, cognitiva, computacional e clínica de forma balanceada. Inclui tópicos avançados como neuroestética, neurociência da criatividade, filosofia da neurociência. Boa cobertura de métodos e técnicas. Descrições concisas e informativas. Cobre carreira e fronteiras. Pequenas lacunas em comparação ao Model G: menos detalhamento em gestão de pesquisa e aspectos práticos de laboratório.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Curso extremamente extenso (130 capítulos) com cobertura muito ampla. Inclui tópicos únicos como neurociência do riso/humor, neurociência comparada, cronobiologia neural. Boa estrutura progressiva. Cobre aspectos clínicos em profundidade (muitos transtornos específicos). Algumas descrições poderiam ser mais concisas. Organização menos coesa em algumas seções. Falta alguns tópicos de gestão de pesquisa e desenvolvimento profissional que o Model G tem.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Curso bem estruturado com 46 capítulos cobrindo áreas essenciais. Excelente organização progressiva. Títulos concisos e descrições diretas. Inclui tópicos importantes como reprodutibilidade, ciência aberta, empreendedorismo. Boa cobertura de técnicas e métodos. Cobre carreira e tendências emergentes. Porém, menos profundidade em alguns tópicos avançados comparado aos modelos superiores. Falta detalhamento em alguns sistemas sensoriais específicos.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Curso com 73 capítulos, boa estrutura. Inclui tópicos interessantes como neuromarketing (com responsabilidade), neurociência forense. Boa cobertura de métodos e análise de dados. Capítulos sobre carreira e desenvolvimento profissional bem pensados. Algumas descrições um pouco longas. Organização poderia ser mais linear em algumas partes. Menos profundidade em alguns aspectos técnicos avançados.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Curso com 92 capítulos, abordagem sólida. Boa cobertura de fundamentos e avança para tópicos complexos. Inclui estatística/ciência de dados bem detalhados. Boa integração de aspectos clínicos e de pesquisa. Algumas descrições poderiam ser mais concisas. Organização menos intuitiva em certas seções. Cobertura de tendências emergentes presente mas menos detalhada.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Curso com 41 capítulos, boa estrutura básica. Títulos concisos. Cobre áreas essenciais da neurociência. Inclui tendências e carreira. Porém, menos profundidade em métodos experimentais e técnicas avançadas. Falta detalhamento em aspectos clínicos e translacionais. Cobertura de neurociência computacional superficial. Não atinge o nível necessário para preparar alguém para o top 1%.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Curso com 51 capítulos. Cobre fundamentos bem. Inclui alguns tópicos avançados como optogenética e neurociência quântica (controverso). Organização poderia ser melhor. Algumas descrições verbosas. Falta profundidade em neurociência cognitiva e social. Cobertura de métodos estatísticos e computacionais limitada. Capítulo sobre carreira muito básico.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Curso com 49 capítulos, estrutura razoável. Cobre sistemas sensoriais e motores adequadamente. Falta profundidade em neurociência computacional e métodos avançados. Descrições concisas mas algumas seções muito superficiais. Cobertura de transtornos limitada. Capítulo sobre carreira muito breve. Não prepara adequadamente para nível avançado.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-2.5-flash",
+          "reasoning": "Curso com apenas 28 capítulos - insuficiente para um curso completo de neurociência. Falta profundidade em muitas áreas críticas. Não cobre adequadamente métodos experimentais avançados, estatística, neurociência computacional em profundidade. Descrições às vezes usam linguagem com fluff ('Introdução a'). Não prepararia aluno para mestrado/doutorado ou top 1%.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-2.5-pro",
+          "reasoning": "Curso com 53 capítulos, estrutura clara. Boa cobertura de fundamentos e alguns tópicos avançados. Inclui ciência aberta e reprodutibilidade. Porém, menos profundidade em técnicas experimentais específicas. Falta detalhamento em aspectos clínicos e translacionais. Cobertura de tendências limitada.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "xai/grok-4-fast-reasoning",
+          "reasoning": "Curso muito curto com apenas 27 capítulos - claramente insuficiente. Falta muitos tópicos essenciais: linguagem, consciência, detalhamento de sistemas sensoriais. Cobertura superficial de métodos. Não inclui aspectos de ética em pesquisa, gestão. Não prepararia para nível avançado de forma alguma.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Curso com 38 capítulos, cobertura básica. Alguns títulos informativos. Porém, falta profundidade significativa em métodos experimentais, neuroimagem funcional, estatística. Não cobre adequadamente neurociência cognitiva avançada. Capítulo de carreira muito superficial. Não atinge nível necessário para estudos avançados.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5",
+          "reasoning": "This model provides the most exceptional and rigorous curriculum, perfectly aligned with the goal of producing top 1% experts. It is the only model that explicitly includes necessary foundational skills like 'Mathematics for neuroscience', 'Scientific programming', and 'Philosophy of applied science', as well as professional skills like 'Grant writing', 'Lab safety', and 'Data management'. The granularity of the chapters (e.g., breaking down microscopy and MRI into specific modalities and analysis techniques) is exactly what is needed for mastery. The titles and descriptions are professional, concise, and fluff-free.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "An outstanding curriculum that thoughtfully addresses the 'no prior knowledge' requirement by including chapters on Physics and Chemistry for neuroscience. It covers advanced methodological topics like Causality, Open Science, and Data Science deeply. The inclusion of lab management and leadership skills is excellent. It is a very close second to Model G, slightly less granular in the breakdown of specific imaging/analysis sub-techniques but arguably better balanced for the prerequisite ramp-up.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "A very comprehensive curriculum (60 chapters) that covers the field extensively. It includes niche but relevant advanced topics like Neuroesthetics, Creativity, and Nutrition, which supports the holistic mastery requirement. The structure is logical and the descriptions are high-quality. It lacks the dedicated math/programming foundational chapters found in G and I, which are crucial for the 'top 1%' technical competency, but is otherwise excellent.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model offers a massive curriculum (82 chapters) with impressive breadth, particularly in clinical neurology and specific pathologies. It covers very specific domains (e.g., Neuroscience of Music, Mathematics, Laughter) which adds depth. However, it leans heavily towards medical/clinical pathology in the latter half, perhaps slightly at the expense of the technical research skills (coding, complex data analysis pipelines) emphasized in G and I. Still, it is a top-tier output.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Strong curriculum with a good focus on the 'meta' skills of a scientist, such as 'Reading critical analysis', 'Neuroethics', and 'Career building'. It covers the core science well. It is ranked below the top tier because it is slightly less granular in the technical methods compared to G and I, but it is superior to the remaining models in its professional preparation focus.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "A solid, high-level curriculum. It hits important advanced notes like 'Organoids', 'Entrepreneurship', and 'Reproducibility'. It is concise and follows the guidelines well. It is ranked lower than the others simply because it has fewer chapters (47) and thus groups complex topics together (e.g., Neuroimaging is split into just Structural and Functional) whereas the higher-ranked models break these down into specific principles and analysis techniques essential for mastery.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "A good, standard neuroscience curriculum. It covers the essentials well and includes some advanced topics like Optogenetics and BCI. However, it lacks the depth of the top models regarding professional skills (grant writing, lab management) and foundational technical skills (math/programming). It feels like a strong undergraduate major rather than a path to PhD mastery.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Generally good coverage, but it includes a chapter on 'Quantum Neuroscience' (microtubules), which is often regarded as fringe/pseudoscience in rigorous academic circles. While the rest of the content is solid, this inclusion detracts slightly from the credibility of a 'top 1%' scientific course. Otherwise, the structure and breadth are comparable to Model F.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-2.5-pro",
+          "reasoning": "The content is adequate and covers the necessary basics, but the writing style violates the 'no fluff' constraint more than others. Descriptions start with phrases like 'Uma visão geral...', 'Estudo das principais...', which adds unnecessary noise. The depth is standard but not exceptional.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "A decent curriculum but significantly shorter and less detailed than the top contenders. It groups vast areas into single chapters (e.g., 'Doenças Neurológicas'), which prevents the level of depth required for the 'top 1%' goal.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Too basic. With only 38 chapters, it covers the material at an introductory undergraduate level. It lacks the advanced methods, computational depth, and professional skills required by the prompt.",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-2.5-flash",
+          "reasoning": "Insufficient depth for the stated goals. 28 chapters are not enough to take a student from zero to PhD-ready mastery. It acts more like a survey course.",
+          "score": 2.5
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "xai/grok-4-fast-reasoning",
+          "reasoning": "The weakest output in terms of depth. It is a very brief overview (27 chapters) suitable for a short introductory elective, failing the requirement to prepare students for leading complex projects or advanced certification.",
+          "score": 1.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Cobertura mais completa e progressiva: começa com fundamentos conceituais e matemáticos, vai para biologia/sistemas, entra profundamente em métodos modernos (padrões de dados, pipelines reprodutíveis, HPC), clínica/translacional, ética/regulação, liderança/gestão. Inclui tendências atuais (multiômicas, closed-loop, wearables, fenotipagem digital, neuromórfico, deep learning) e componentes essenciais para pesquisa avançada e projetos complexos. Títulos concisos e descrições objetivas, sem projetos/exercícios.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Trilha muito forte para do zero à pesquisa avançada: inclui fundamentos físico-químicos, multiômicas, métodos de ponta (EEG/MEG, imagem molecular, microscopia), estatística/causalidade, ciência aberta, além de clínica, reabilitação, neuroengenharia e liderança de laboratório. Boa preparação para pós-graduação/certificações. Menos abrangente que G em gestão de dados/padrões/HPC e alguns tópicos de fronteira, mas ainda excelente.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Curso robusto e bem organizado, com grande ênfase em métodos (imagem, eletrofisiologia, microscopia, genética, organoides), translacional (biomarcadores, pipeline de fármacos, ensaios clínicos) e competências profissionais (gestão de dados, reprodutibilidade, liderança). Boa progressão e conteúdo para projetos complexos. Fica abaixo de G/I por menor profundidade explícita em fundamentos matemáticos/causais e em algumas tendências (p.ex. fenotipagem digital, padrões de dados amplos).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Abrangente, atual e com boa progressão, cobrindo métodos, modelagem, neuroética, translacional e gestão de projetos. Inclui tendências emergentes e aplicações (educação/negócios/direito) com ressalvas éticas. Um pouco mais “amplo” do que “profundo” em infraestrutura de dados/reprodutibilidade (menciona, mas menos detalhado) e algumas descrições/títulos ficam longos, mas no geral atende bem ao objetivo de alta excelência.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Conteúdo muito completo e moderno, com boa cobertura de sistemas, métodos, clínica, neuroengenharia/IA, ciência aberta e filosofia. Forte para preparação acadêmica. Perde pontos por excesso de granularidade em alguns blocos (muitos capítulos de sistemas específicos) e por alguns títulos/descritivos mais verbosos; ainda assim é bem sólido e atualizado.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Extremamente amplo (quase enciclopédico) com muitas áreas clínicas e tópicos aplicados (forense, nutrição, nanotecnologia, tumores, infecções etc.). Porém a progressão fica diluída e há menos foco explícito em competências de topo 1% como reprodutibilidade, padrões de dados, inferência causal, gestão de dados/pipelines e liderança de projetos científicos. Mais “lista de temas” do que caminho formativo até maestria.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Boa base de neurociência com detalhamento razoável em sistemas e métodos e alguns tópicos modernos (DREADDs, BCI, ciência de dados). Ainda assim falta um eixo mais completo de metodologia avançada (reprodutibilidade, padrões de dados, inferência causal), translacional/ensaios e preparação para liderança de projetos complexos. Menos abrangente que os melhores.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Cobertura ampla com técnicas e clínica, mas inclui “Neurociência quântica” com conteúdo especulativo (microtúbulos/coerência), o que prejudica a qualidade/rigor para um curso de excelência. Também há problemas de títulos pouco claros/estranhos (ex.: “Interfaces Neuropróteses”) e alguns termos/erros (“alostericas”, “CALM”). Falta trilha mais forte de dados/reprodutibilidade.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Estrutura razoável e moderna em partes (IA inspirada no cérebro, neurotecnologias), mas é mais genérica e menos profunda nos métodos, estatística, gestão de dados e pesquisa translacional. Pouca ênfase em rigor científico e preparação para liderar projetos muito complexos. Cobertura de tendências é superficial.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-2.5-flash",
+          "reasoning": "Curso introdutório/intermediário: cobre fundamentos e alguns tópicos (consciência, conectômica, computacional), mas é curto e insuficiente para o objetivo de formar alguém para liderar projetos muito complexos ou se preparar para estudos avançados. Quase não há estatística/pipelines/reprodutibilidade/gestão de dados nem profundidade metodológica.",
+          "score": 1.9
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-2.5-pro",
+          "reasoning": "Boa seleção de tópicos, incluindo teoria da informação e ciência aberta, mas várias descrições têm linguagem mais “didática/fluff” (\"Uma exploração\", \"O processamento\"), e falta cobertura moderna mais profunda em dados, multiômicas, pipelines computacionais e clínica/translacional avançada. Não chega ao nível de preparação para maestria completa.",
+          "score": 1.7
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Conteúdo clássico bem encadeado, mas relativamente tradicional e limitado em tendências atuais (multiômicas, big data, padrões de dados, reprodutibilidade) e em formação para liderança de projetos/gestão de laboratório. Pouca preparação explícita para certificações/estudos avançados comparado aos melhores.",
+          "score": 1.4
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "xai/grok-4-fast-reasoning",
+          "reasoning": "Muito genérico e curto; descrições e títulos básicos, pouca profundidade metodológica e quase nada sobre rigor, ciência aberta, inferência causal, translacional avançado, gestão/ liderança. Inclui termos pouco adequados/ambíguos (\"RMN\" em vez de nomenclatura mais padrão como RM). Insuficiente para o objetivo de topo de campo.",
+          "score": 1.2
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "pt-neurociencia-1"
+}

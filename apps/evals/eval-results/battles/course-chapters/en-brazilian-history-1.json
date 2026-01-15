@@ -1,0 +1,239 @@
+{
+  "expectations": "\n      - MUST be in US English\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises\n  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%\n\n    ",
+  "judgedAt": "2026-01-15T20:59:41.424Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Exceptionally comprehensive curriculum spanning 96 chapters with masterful coverage from temporal frameworks through contemporary debates. Strong historiographical and methodological training (archives, paleography, quantitative methods, oral history). Excellent integration of thematic approaches (race, gender, environment, regional histories) with chronological narrative. Properly prepares for advanced research with chapters on writing, argumentation, ethics, and digital history. Includes cutting-edge topics (2022-2024 developments, pandemic politics). Concise titles, no vendor/tool names inappropriately used. Minor issue: some chapter descriptions are slightly dense but still clear.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Outstanding 57-chapter curriculum with excellent depth and progressive structure. Strong on colonial through contemporary periods with sophisticated thematic integration (environmental, racial, gender, regional). Excellent historiographical training with chapters on archives, sources, research practice, and career paths. Good coverage of economic history methods. Concise titles throughout. Very strong on methodological preparation for advanced study. Slightly less comprehensive than Model I on very recent developments but still excellent overall.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Comprehensive 62-chapter course with excellent breadth from pre-colonial through contemporary periods. Strong methodological training (paleography, quantitative methods, oral history, digital tools). Good thematic coverage including race, gender, environment, and regional histories. Career preparation chapters are practical and thorough. Excellent on historiography and theoretical frameworks. Descriptions are generally concise. Some overlap in content areas but overall very strong preparation for advanced study.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Robust 70-chapter curriculum with strong chronological and thematic coverage. Excellent on research methodology (sources, archives, quantitative methods, comparative perspectives). Good career preparation chapter. Strong historiographical training. Well-balanced between colonial, imperial, republican, and contemporary periods. Good thematic integration. Some chapter titles could be more concise (e.g., 'Urbanization, Industrialization, and Social Change (Early 20th c.)'). Very solid overall.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Very comprehensive 108-chapter curriculum covering extensive ground. Excellent chronological detail and thematic breadth. Strong on cultural and intellectual history. Good methodological foundation though less detailed than top models on research methods. Some chapters are quite granular (individual presidencies, specific revolts), which provides depth but occasionally fragments narrative. Descriptions are generally good though some are dense. Career guidance less developed than higher-ranked models.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-2.5-flash",
+          "reasoning": "Solid 38-chapter curriculum with good chronological coverage from pre-colonial through contemporary. Includes important thematic chapters (cultural, environmental, socio-racial). Has historiography and research methods chapters. Good progression but less comprehensive on methodological training for advanced study. Missing some depth on regional histories and career preparation. Titles and descriptions are appropriately concise. Good baseline coverage but lacks the comprehensive preparation for top 1% mastery.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good 50-chapter curriculum with solid chronological and thematic coverage. Includes historiography, primary sources, and memory/heritage chapters. Regional histories chapter is helpful. Good coverage of Afro-Brazilian and indigenous history. However, methodological training is less developed than higher-ranked models. Missing dedicated career preparation. Some descriptions are slightly verbose. Overall competent but not as comprehensive for advanced research preparation.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Compact 44-chapter curriculum with reasonable coverage. Includes historiography and career chapter. Good balance of periods. However, lacks depth in methodological training, regional histories less developed, and thematic coverage (gender, environment) could be stronger. Some titles use parenthetical dates which adds verbosity. Missing advanced research methods. Adequate for general knowledge but insufficient for top 1% mastery preparation.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "40-chapter curriculum covers main periods adequately. Good regional history breakdown. Includes historiography chapter. However, lacks dedicated research methodology chapters, career guidance, and advanced preparation materials. Some thematic areas underdeveloped (gender mentioned in identity politics but no dedicated chapter). Missing modern methodological tools (digital history, quantitative methods). Titles are concise but overall too abbreviated for mastery-level preparation.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-2.5-pro",
+          "reasoning": "56-chapter curriculum with decent coverage but notable issues. Some titles violate guidelines with vendor-like specificity (e.g., 'The JK Years: Developmentalism and Brasília'). Good thematic chapters on Afro-Brazilian, indigenous, women's history, but methodological training weak. 'Practicing History' chapter exists but is singular. Some descriptions verbose ('Master' was avoided but other filler present). Missing depth on quantitative methods, digital humanities, and career pathways beyond single chapter.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "59-chapter curriculum but with significant structural issues. Many chapters are too granular (individual presidencies as separate chapters). Descriptions use fragmented style that lacks coherence in some places. While comprehensive in events covered, lacks systematic methodological preparation for advanced research. Missing paleography, quantitative methods, digital tools. Historiography chapter exists but sources chapter is basic. Not sufficient preparation for PhD-level work despite broad topical coverage.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "xai/grok-4-fast-reasoning",
+          "reasoning": "46-chapter curriculum with adequate chronological coverage but significant gaps. Methodological chapters exist (Historiography, Primary Sources, Research Methods) but are underdeveloped. Regional histories fragmented. Missing advanced research preparation (paleography, digital tools). Career guidance absent. Some chapters too brief in scope. Descriptions vary in quality. Not sufficient for mastery-level or advanced academic preparation.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "34-chapter curriculum is the least comprehensive. Missing significant thematic depth (gender, regional histories). Basic historiography coverage. No research methodology chapters beyond theory. Career chapter is brief. Many important periods condensed. Environmental history gets only one chapter. Not suitable for advanced study preparation or top 1% mastery. Titles are concise but coverage gaps are substantial.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model provides the most comprehensive and professionally oriented curriculum. It strikes an excellent balance between chronological history, thematic depth (e.g., 'Gender, Sexuality, and Family Histories', 'Environment, Amazon, and Resource Politics'), and rigorous methodological training. What sets it apart is the extensive section on professional development, covering paleography, quantitative methods, grant writing, policy consulting, and career paths. This directly addresses the requirement to prepare learners for complex projects and the top 1% of the field.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model H is an outstanding output that rivals Model E. It adopts a strong academic structure by beginning with 'Historical Thinking and Methods', establishing a solid foundation. It covers the history thoroughly and concludes with a robust section on advanced methods, including digital humanities, ethics, and academic writing. It is ranked slightly below Model E only because Model E includes specific chapters on project management and consulting, which are highly relevant to the 'leading complex projects' requirement.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5",
+          "reasoning": "This model offers a very strong, modern curriculum with a distinct focus on contemporary methodological trends, such as 'Indigenous and African-Language Sources' and 'Digital History'. It covers recent political events (up to Jan 2023) and includes essential chapters on writing and ethics. It is excellent preparation for advanced studies, though slightly less focused on the 'business/project' side of the field compared to Model E.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B delivers a high-quality, detailed curriculum. The descriptions are rich and informative without being fluffy. It includes necessary chapters for mastery, such as 'Economic History Methods', 'Teaching', and 'Career Paths'. It is a very strong contender but has slightly fewer specialized professional skill chapters than the top three.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-2.5-pro",
+          "reasoning": "Model F provides a solid chronological narrative followed by a dedicated section of thematic chapters (Women, Culture, Economics, Environment, Diplomacy). This structure aligns well with modern historiographical trends. It includes a chapter on 'Practicing History', which covers careers and methods, though it condenses these topics into one chapter rather than expanding them as the top models do.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model M is impressive in its sheer granularity, offering over 100 chapters that cover political events in minute detail. This demonstrates a deep mastery of content. However, its structure is heavily traditional and chronological, lacking the distinct thematic analysis found in other models. Furthermore, it dedicates only one chapter to historiography/memory, missing the opportunity to teach the *skills* required for the 'top 1%' (research methods, grants, etc.) as requested.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model K offers a good, standard comprehensive course. It includes thematic chapters at the end and touches on historiography and primary sources. It is a competent output that meets most requirements but lacks the depth of professional training found in the higher-ranked models.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-2.5-flash",
+          "reasoning": "Model A provides a decent chronological overview and surprisingly dedicates its final three chapters to historiography and research methods. This focus on methodology lifts it above the remaining models, although its overall content coverage is less granular than the higher-ranked outputs.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model D is a solid, standard curriculum. It is concise and covers the main historical beats well. It includes a chapter on research methods and one on careers, which acknowledges the prompt's requirements, but the execution is standard undergraduate level rather than 'top 1%' mastery.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "xai/grok-4-fast-reasoning",
+          "reasoning": "Model L is a standard, acceptable history course. It covers the timeline and ends with chapters on historiography and methods. It doesn't stand out in terms of depth or unique value compared to the others but follows the guidelines well.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model G is competent but feels a bit generic. It covers the material adequately but lacks the detailed breakdown or the specific focus on advanced professional skills seen in better models. It is a good overview but not a mastery path.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model C uses telegraphic sentence fragments in its descriptions (e.g., 'Sugar production boom: plantations...'). While concise, this makes for a choppy reading experience. The content is adequate, covering the timeline and some methods, but the presentation feels like study notes rather than a cohesive course curriculum.",
+          "score": 2.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model J is too basic for the requested task. With only ~34 chapters, it provides a high-level overview suitable for a beginner survey course, but completely fails the requirement to take a student to 'mastery', 'PhD prep', or 'top 1%' of the field.",
+          "score": 1.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Most complete and graduate-ready learning path: strong chronological spine plus deep thematic coverage (law, economy, environment, public health, demography), and unusually strong research training (archives, paleography, quantitative/digital methods, oral history, ethics, public history, grants/project management, applied consulting). Titles are largely concise and non-vendor. Covers current trends (climate politics, judicialization, polarization). Minor issues: a few titles/descriptions are long and a couple chapter topics are somewhat overlapping (contemporary politics/economic stabilization/corruption) but overall top-tier breadth and rigor.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Exceptional depth and “to mastery” trajectory: highly detailed periodization and modern-era granularity (2013 protests, pandemic politics, Jan 8 attacks), plus advanced methods (archives, indigenous/African-language sources, quantitative/spatial, digital history, oral history, writing/ethics). Strong coverage of state, economy, law, security, and regional histories. Main drawbacks: some titles are long and it leans into proper nouns in a few titles (e.g., Bolsonaro, Lula) which can be less platform-neutral; also very dense, risking over-specialization early.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Very strong academic structure beginning with historical methods and then building a comprehensive Brazil survey with major thematic modules (race, policing/carceral state, favelas, agrarian conflict, globalization, climate). Includes research tooling (archives, quantitative/digital methods, research design, academic writing, ethics, teaching, career building) suitable for advanced study. Minor weaknesses: some titles are wordy/verbose; a few descriptions include filler-like framing compared to the strict “straight to the point” guidance.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Broad, sophisticated, and method-aware curriculum with excellent thematic breadth (gender, religion, intellectual history, security/state capacity, economic history data). Also includes communicating/teaching history and career paths. Generally concise titles. Weaknesses: less explicit step-by-step learner ramp from zero (methods come late), and some chapters skew more like a graduate reading list than a structured beginner-to-mastery sequence.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Solid chronological coverage with good thematic additions (quilombos, modernism, social thought, research methods). Reasonably concise titles. Weaknesses: less coverage of latest trends and advanced research skill-building compared with top models (limited quantitative/digital methods, ethics, project leadership). Some titles include abbreviations/proper-noun era labels (e.g., “FHC Era”) and descriptions occasionally drift into narrative tone.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-2.5-pro",
+          "reasoning": "Strong narrative survey and generally accurate, with some thematic chapters (women, environment, diplomacy, public history/memory, methods/careers). However, multiple titles/descriptions include non-English terms and Portuguese in parentheses (violates US English requirement). Also less coverage of cutting-edge research methods and advanced project leadership skills.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Decent chronological sweep and some thematic coverage (urban inequality, foreign policy, environment, public history). But several titles are not concise and include fluff or subjective framing (e.g., “Golden Age”). Also uses Portuguese terms/diacritics frequently and mixes languages in a way that strains the strict US English requirement. Limited advanced methodology/tooling compared with stronger curricula.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Covers many key events and reaches contemporary politics, but contains clear issues: uses vendor/tool names in content (e.g., Petrobras) and includes multiple proper-noun administration chapters (Cardoso, Lula, Temer, Bolsonaro) that feel like topical news segmentation rather than a skills-based learning path. Several factual/terminology problems (e.g., “JUCEL” unclear/likely incorrect). Limited research methods and advanced historiography training relative to expectations.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-2.5-flash",
+          "reasoning": "Good chronological outline and includes historiography + primary sources + research methods, but it’s comparatively narrow and conventional: weaker thematic breadth (limited on gender, religion, law, economic methods, contemporary methodological trends). Also contains quoted Portuguese terms and heavy reliance on period narrative without enough “top 1%” preparation content (quant/digital, ethics, public history, advanced scholarly skills).",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Baseline survey that misses many expectations for mastery: minimal advanced methods, little-to-no research infrastructure, ethics, digital/quantitative approaches, or professional/academic preparation. Several titles/descriptions include Portuguese terms and quotes, and some titles are slightly fluffy/less concise. Overall least comprehensive for producing someone capable of leading complex research projects or advanced study.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "en-brazilian-history-1"
+}

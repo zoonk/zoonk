@@ -162,9 +162,6 @@ async function runBattleForTestCase(
     return existingMatchup;
   }
 
-  console.info(`\nRunning battle for test case: ${testCaseId}`);
-  console.info(`  Judges to run: ${judgesToRun.join(", ")}`);
-
   // Get rankings from each judge in parallel
   const newJudgments = await Promise.all(
     judgesToRun.map(async (judgeId) => {
@@ -233,16 +230,25 @@ export async function runBattleMode(task: Task): Promise<void> {
   }
 
   // Run battles for each test case (incremental - only runs missing judges)
+  const totalBattles = task.testCases.length;
+  let completedBattles = 0;
+
   await Promise.all(
     task.testCases.map(async (testCase) => {
       const testCaseId = `${testCase.id}-1`;
       const existingMatchup = await loadExistingMatchup(task.id, testCaseId);
-      return runBattleForTestCase(
+      const result = await runBattleForTestCase(
         task,
         testCase,
         completeOutputs,
         existingMatchup,
       );
+
+      completedBattles++;
+      const remaining = totalBattles - completedBattles;
+      console.info(`Battle complete for ${testCaseId}, ${remaining} remaining`);
+
+      return result;
     }),
   );
 

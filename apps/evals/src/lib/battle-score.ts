@@ -34,10 +34,6 @@ export async function generateBattleRankings(params: {
   const { judgeId, testCaseId, expectations, anonymizedOutputs, mapping } =
     params;
 
-  console.info(
-    `Battle scoring test case ${testCaseId} with judge ${judgeId}...`,
-  );
-
   const outputsSection = anonymizedOutputs
     .map(
       (output) =>
@@ -82,10 +78,6 @@ Remember: Each model MUST receive a DIFFERENT score (no ties allowed).
     );
     // Could implement retry logic here, but for now we'll accept and log
   }
-
-  console.info(
-    `Battle complete for ${testCaseId}: ${rankings.map((r) => `${r.anonymousId}=${r.score}`).join(", ")}`,
-  );
 
   return rankings;
 }
