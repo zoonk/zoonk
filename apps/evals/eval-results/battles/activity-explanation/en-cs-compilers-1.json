@@ -1,6 +1,6 @@
 {
   "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Compilation involves distinct transformation phases with specific purposes. Penalize if:\n   - Parsing and lexical analysis are conflated (tokenization identifies tokens; parsing builds syntax structure)\n\n2. DEPTH CHECK: Penalize if the explanation presents compilation as simply \"turning code into machine code\" without showing the transformation pipeline.\n\n3. DISTINCTION FROM BACKGROUND: The background covered the history of machine code and Grace Hopper's vision. This should explain how modern compilers actually transform code.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
-  "judgedAt": "2026-01-15T20:07:16.619Z",
+  "judgedAt": "2026-01-15T20:48:41.926Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -116,6 +116,65 @@
           "anonymousId": "Model I",
           "modelId": "meta/llama-4-maverick",
           "reasoning": "Superficial and slightly muddled: optimization is presented after “finally” generating machine code, which suggests the wrong order in a typical compiler pipeline. Also very thin on the transformation process (no IR, no structural/tree representation mention) and likely minimal depth for the task.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Exceptional comprehensive coverage of compilation phases with clear distinctions. Correctly separates lexical analysis (Step 3) from parsing (Step 4) with accurate descriptions. Excellent analogies (UN interpreter, assembly line, diagramming sentences, editor trimming manuscript). Covers all major phases: lexical analysis, parsing, semantic analysis, IR, optimization, code generation. Includes modular pipeline concept in final step. Conversational tone throughout. All steps within format limits. Minor issue: could be slightly more technical in places, but overall excellent balance of accessibility and accuracy.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent technical accuracy with proper distinction between lexing and parsing. Good analogies (cooking line, diagramming sentences, errands/backtracking). Covers all phases including IR explicitly. Mentions AST by name which adds technical depth. Includes assembly/linking step which goes slightly beyond scope but adds value. Good conversational tone. The 'translator + factory' framing is creative. Slight awkwardness in some phrasing but overall very strong.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Strong technical accuracy with clear separation of lexical analysis ('spotting the words') and syntax analysis ('checking the grammar'). Excellent analogies - 'Cat the mat sat' for grammar issues, 'The rock ate lunch' for semantic issues. Good coverage of main phases. The 2+2=4 optimization example is concrete and helpful. Conversational tone works well. Missing IR/intermediate code step, but the anti-checklist guidance says not to penalize for missing components. Clean, accessible explanations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good technical accuracy with clear distinction between lexical and syntax analysis. Strong analogies (grammar teacher, 'add a shoe to a sandwich'). Covers main phases well. The 'safety net' final step adds value about compile-time error catching. Good conversational tone. Missing explicit IR step but covers core transformation pipeline well. Slightly less detailed than top models but solid overall.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good coverage of compilation phases with correct distinctions. The Esperanto analogy for IR is creative. Mentions three-address code specifically which shows depth. Front-end/back-end distinction in final step is valuable. However, some analogies feel slightly forced ('binary chef'). The 'Assembly Line Magic' title is a bit casual. Generally accurate and comprehensive but slightly less polished than top models.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Comprehensive coverage including linking/loading which most others skip. Good technical accuracy. However, goes too broad - includes sections on 'Where You See Compilers' and 'Compiler vs Interpreter vs Assembler' which feel like scope creep beyond 'how compilers transform code.' The recipe analogy is overused. Still accurate on core phases and maintains proper distinctions. Loses points for scope issues despite good technical content.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Decent coverage but lacks precision in some areas. Step 3 conflates lexical analysis with 'understanding structure' when it should just be tokenization. Step 4 'Understanding the Structure' covers parsing but description is vague. 'Building a Meaning Map' for semantic analysis is creative but somewhat unclear. 'Where Compilers Show Up' and 'Common Misunderstanding' steps feel like padding. Missing IR step. Adequate but not as sharp as others.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Basic coverage of compilation phases but lacks depth. The recipe analogy is used throughout but becomes thin. Missing IR/intermediate representation step. Optimization is mentioned last almost as an afterthought ('Modern compilers also optimize') rather than as an integral phase. Steps are shorter and less detailed than other models. Technically accurate but superficial treatment of a complex topic - the guidance specifically penalizes this.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Critical accuracy issue: Step 3 conflates parsing and lexical analysis. It says 'syntax analysis' involves 'reads your code like a book' and checks 'grammar rules,' but this conflates lexical analysis (which should come first and break code into tokens) with syntax analysis. The guidance explicitly states to penalize if 'Parsing and lexical analysis are conflated.' Completely skips tokenization/lexical analysis phase. Missing IR step. Only 6 steps with less depth than others. The superficial treatment and accuracy issue significantly lower the score.",
           "score": 2
         }
       ]

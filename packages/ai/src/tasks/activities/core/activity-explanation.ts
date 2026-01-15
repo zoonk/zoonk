@@ -8,12 +8,11 @@ const DEFAULT_MODEL =
   process.env.AI_MODEL_ACTIVITY_EXPLANATION ?? "openai/gpt-5.2";
 
 const FALLBACK_MODELS = [
-  "openai/gpt-5-mini",
   "anthropic/claude-opus-4.5",
-  "xai/grok-4.1-fast-reasoning",
+  "openai/gpt-5-mini",
   "google/gemini-3-flash",
   "google/gemini-3-pro-preview",
-  "openai/gpt-5.1-instant",
+  "xai/grok-4.1-fast-reasoning",
 ];
 
 const schema = z.object({
