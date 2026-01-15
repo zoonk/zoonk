@@ -1,4 +1,4 @@
-import { generateCourseDescription } from "@zoonk/ai/course-description/generate";
+import { generateCourseDescription } from "@zoonk/ai/tasks/courses/description";
 import { streamStatus } from "../stream-status";
 import type { CourseContext } from "../types";
 

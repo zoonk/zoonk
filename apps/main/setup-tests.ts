@@ -4,7 +4,7 @@ import { beforeEach, vi } from "vitest";
 globalThis.AsyncLocalStorage ??= AsyncLocalStorage;
 
 vi.mock("server-only");
-vi.mock("@zoonk/ai/course-suggestions/generate", { spy: true });
+vi.mock("@zoonk/ai/tasks/courses/suggestions", { spy: true });
 
 beforeEach(() => {
   vi.clearAllMocks();

@@ -2,7 +2,7 @@ import {
   generateLessonKind,
   type LessonKindParams,
   type LessonKindSchema,
-} from "@zoonk/ai/lesson-kind/generate";
+} from "@zoonk/ai/tasks/lessons/kind";
 import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
 

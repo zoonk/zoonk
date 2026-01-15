@@ -2,7 +2,7 @@ import {
   type ActivityExplanationQuizParams,
   type ActivityExplanationQuizSchema,
   generateActivityExplanationQuiz,
-} from "@zoonk/ai/activity-explanation-quiz/generate";
+} from "@zoonk/ai/tasks/activities/core/explanation-quiz";
 import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
 

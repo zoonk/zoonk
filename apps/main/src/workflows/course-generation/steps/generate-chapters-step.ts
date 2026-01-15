@@ -1,4 +1,4 @@
-import { generateCourseChapters } from "@zoonk/ai/course-chapters/generate";
+import { generateCourseChapters } from "@zoonk/ai/tasks/courses/chapters";
 import { streamStatus } from "../stream-status";
 import type { CourseContext, GeneratedChapter } from "../types";
 

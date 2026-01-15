@@ -2,7 +2,7 @@ import {
   type ActivityBackgroundParams,
   type ActivityBackgroundSchema,
   generateActivityBackground,
-} from "@zoonk/ai/activity-background/generate";
+} from "@zoonk/ai/tasks/activities/core/background";
 import type { Task } from "@/lib/types";
 import { TEST_CASES } from "./test-cases";
 
