@@ -1,4 +1,5 @@
 import { RUNS_PER_TEST_CASE } from "@/tasks";
+import { getGatewayModelId, getModelById } from "./models";
 import { loadModelOutputs, saveModelOutputs } from "./output-loader";
 import type { ModelOutputs, OutputEntry, Task, TestCase } from "./types";
 
@@ -14,10 +15,13 @@ async function generateOutputForTestCase(
 
   console.info(`Generating output for: ${inputSummary} (run ${runNumber})`);
 
+  const model = getModelById(modelId);
+  const gatewayModelId = getGatewayModelId(modelId);
   const startTime = performance.now();
   const result = await task.generate({
     ...testCase.userInput,
-    model: modelId,
+    model: gatewayModelId,
+    reasoningEffort: model?.reasoningEffort,
     useFallback: false,
   });
   const duration = performance.now() - startTime;

@@ -2,6 +2,7 @@ import "server-only";
 
 import { generateText, Output } from "ai";
 import { z } from "zod";
+import { buildProviderOptions, type ReasoningEffort } from "../../types";
 import systemPrompt from "./course-chapters.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_COURSE_CHAPTERS ?? "openai/gpt-5";
@@ -30,6 +31,7 @@ export type CourseChaptersParams = {
   courseTitle: string;
   model?: string;
   useFallback?: boolean;
+  reasoningEffort?: ReasoningEffort;
 };
 
 export async function generateCourseChapters({
@@ -37,19 +39,24 @@ export async function generateCourseChapters({
   courseTitle,
   model = DEFAULT_MODEL,
   useFallback = true,
+  reasoningEffort,
 }: CourseChaptersParams) {
   const userPrompt = `
     LANGUAGE: ${language}
     COURSE_TITLE: ${courseTitle}
   `;
 
+  const providerOptions = buildProviderOptions({
+    fallbackModels: FALLBACK_MODELS,
+    reasoningEffort,
+    useFallback,
+  });
+
   const { output, usage } = await generateText({
     model,
     output: Output.object({ schema }),
     prompt: userPrompt,
-    providerOptions: {
-      gateway: { models: useFallback ? FALLBACK_MODELS : [] },
-    },
+    providerOptions,
     system: systemPrompt,
   });
 

@@ -3,6 +3,7 @@ import "server-only";
 import { COURSE_CATEGORIES } from "@zoonk/utils/categories";
 import { generateText, Output } from "ai";
 import { z } from "zod";
+import { buildProviderOptions, type ReasoningEffort } from "../../types";
 import systemPrompt from "./course-categories.prompt.md";
 
 const DEFAULT_MODEL =
@@ -26,22 +27,28 @@ export type CourseCategoriesParams = {
   courseTitle: string;
   model?: string;
   useFallback?: boolean;
+  reasoningEffort?: ReasoningEffort;
 };
 
 export async function generateCourseCategories({
   courseTitle,
   model = DEFAULT_MODEL,
   useFallback = true,
+  reasoningEffort,
 }: CourseCategoriesParams) {
   const userPrompt = `COURSE_TITLE: ${courseTitle}`;
+
+  const providerOptions = buildProviderOptions({
+    fallbackModels: FALLBACK_MODELS,
+    reasoningEffort,
+    useFallback,
+  });
 
   const { output, usage } = await generateText({
     model,
     output: Output.object({ schema }),
     prompt: userPrompt,
-    providerOptions: {
-      gateway: { models: useFallback ? FALLBACK_MODELS : [] },
-    },
+    providerOptions,
     system: systemPrompt,
   });
 

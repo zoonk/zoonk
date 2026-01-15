@@ -1,3 +1,4 @@
+import type { ReasoningEffort } from "@zoonk/ai/types";
 import type { LanguageModelUsage } from "ai";
 import z from "zod";
 
@@ -51,7 +52,11 @@ export type Task<TInput = unknown, TOutput = unknown> = {
   // Using method signature instead of property signature makes this bivariant,
   // allowing Task<SpecificInput> to be assignable to Task<unknown>
   generate(
-    input: TInput & { model: string; useFallback?: boolean },
+    input: TInput & {
+      model: string;
+      useFallback?: boolean;
+      reasoningEffort?: ReasoningEffort;
+    },
   ): Promise<TaskResult<TOutput>>;
 };
 

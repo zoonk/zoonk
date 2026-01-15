@@ -2,6 +2,7 @@ import "server-only";
 
 import { generateText, Output } from "ai";
 import { z } from "zod";
+import { buildProviderOptions, type ReasoningEffort } from "../../../types";
 import systemPrompt from "./activity-background.prompt.md";
 
 const DEFAULT_MODEL =
@@ -34,6 +35,7 @@ export type ActivityBackgroundParams = {
   language: string;
   model?: string;
   useFallback?: boolean;
+  reasoningEffort?: ReasoningEffort;
 };
 
 export async function generateActivityBackground({
@@ -44,6 +46,7 @@ export async function generateActivityBackground({
   language,
   model = DEFAULT_MODEL,
   useFallback = true,
+  reasoningEffort,
 }: ActivityBackgroundParams) {
   const userPrompt = `LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}
@@ -51,13 +54,17 @@ CHAPTER_TITLE: ${chapterTitle}
 COURSE_TITLE: ${courseTitle}
 LANGUAGE: ${language}`;
 
+  const providerOptions = buildProviderOptions({
+    fallbackModels: FALLBACK_MODELS,
+    reasoningEffort,
+    useFallback,
+  });
+
   const { output, usage } = await generateText({
     model,
     output: Output.object({ schema }),
     prompt: userPrompt,
-    providerOptions: {
-      gateway: { models: useFallback ? FALLBACK_MODELS : [] },
-    },
+    providerOptions,
     system: systemPrompt,
   });
 

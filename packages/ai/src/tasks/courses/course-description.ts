@@ -2,6 +2,7 @@ import "server-only";
 
 import { generateText, Output } from "ai";
 import { z } from "zod";
+import { buildProviderOptions, type ReasoningEffort } from "../../types";
 import systemPrompt from "./course-description.prompt.md";
 
 const DEFAULT_MODEL =
@@ -26,6 +27,7 @@ export type CourseDescriptionParams = {
   language: string;
   model?: string;
   useFallback?: boolean;
+  reasoningEffort?: ReasoningEffort;
 };
 
 export async function generateCourseDescription({
@@ -33,19 +35,24 @@ export async function generateCourseDescription({
   language,
   model = DEFAULT_MODEL,
   useFallback = true,
+  reasoningEffort,
 }: CourseDescriptionParams) {
   const userPrompt = `
     COURSE_TITLE: ${title}
     LANGUAGE: ${language}
   `;
 
+  const providerOptions = buildProviderOptions({
+    fallbackModels: FALLBACK_MODELS,
+    reasoningEffort,
+    useFallback,
+  });
+
   const { output, usage } = await generateText({
     model,
     output: Output.object({ schema }),
     prompt: userPrompt,
-    providerOptions: {
-      gateway: { models: useFallback ? FALLBACK_MODELS : [] },
-    },
+    providerOptions,
     system: systemPrompt,
   });
 

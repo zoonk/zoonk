@@ -2,6 +2,7 @@ import "server-only";
 
 import { generateText, Output } from "ai";
 import { z } from "zod";
+import { buildProviderOptions, type ReasoningEffort } from "../../types";
 import systemPrompt from "./alternative-titles.prompt.md";
 
 const DEFAULT_MODEL =
@@ -25,6 +26,7 @@ export type AlternativeTitlesParams = {
   language: string;
   model?: string;
   useFallback?: boolean;
+  reasoningEffort?: ReasoningEffort;
 };
 
 export async function generateAlternativeTitles({
@@ -32,19 +34,24 @@ export async function generateAlternativeTitles({
   language,
   model = DEFAULT_MODEL,
   useFallback = true,
+  reasoningEffort,
 }: AlternativeTitlesParams) {
   const userPrompt = `
     TITLE: ${title}
     LANGUAGE: ${language}
   `;
 
+  const providerOptions = buildProviderOptions({
+    fallbackModels: FALLBACK_MODELS,
+    reasoningEffort,
+    useFallback,
+  });
+
   const { output, usage } = await generateText({
     model,
     output: Output.object({ schema }),
     prompt: userPrompt,
-    providerOptions: {
-      gateway: { models: useFallback ? FALLBACK_MODELS : [] },
-    },
+    providerOptions,
     system: systemPrompt,
   });
 

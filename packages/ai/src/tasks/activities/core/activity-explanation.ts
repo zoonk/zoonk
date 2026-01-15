@@ -2,6 +2,7 @@ import "server-only";
 
 import { generateText, Output } from "ai";
 import { z } from "zod";
+import { buildProviderOptions, type ReasoningEffort } from "../../../types";
 import systemPrompt from "./activity-explanation.prompt.md";
 
 const DEFAULT_MODEL =
@@ -35,6 +36,7 @@ export type ActivityExplanationParams = {
   backgroundSteps: Array<{ title: string; text: string }>;
   model?: string;
   useFallback?: boolean;
+  reasoningEffort?: ReasoningEffort;
 };
 
 export async function generateActivityExplanation({
@@ -46,6 +48,7 @@ export async function generateActivityExplanation({
   backgroundSteps,
   model = DEFAULT_MODEL,
   useFallback = true,
+  reasoningEffort,
 }: ActivityExplanationParams) {
   const formattedBackgroundSteps = backgroundSteps
     .map((step, index) => `${index + 1}. ${step.title}: ${step.text}`)
@@ -59,13 +62,17 @@ LANGUAGE: ${language}
 BACKGROUND_STEPS:
 ${formattedBackgroundSteps}`;
 
+  const providerOptions = buildProviderOptions({
+    fallbackModels: FALLBACK_MODELS,
+    reasoningEffort,
+    useFallback,
+  });
+
   const { output, usage } = await generateText({
     model,
     output: Output.object({ schema }),
     prompt: userPrompt,
-    providerOptions: {
-      gateway: { models: useFallback ? FALLBACK_MODELS : [] },
-    },
+    providerOptions,
     system: systemPrompt,
   });
 
