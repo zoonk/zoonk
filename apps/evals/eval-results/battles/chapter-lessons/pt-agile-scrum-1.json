@@ -1,0 +1,221 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese\n      - This is a methodology chapter, should break down each Scrum element individually\n      - Should cover roles, events, and artifacts as separate lessons\n      - Should address anti-patterns as individual cautionary lessons\n      \n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n  \n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+  "judgedAt": "2026-01-15T20:54:32.702Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Best overall: 100 lessons, comprehensive coverage of all Scrum elements. Excellent breakdown with individual lessons for each role (PO, SM, Developers), events (Sprint, Planning, Daily, Review, Retro), artifacts (Product/Sprint Backlog, Increment, DoD, DoR), refinement techniques (INVEST, fatiamento vertical, critérios de aceitação), and extensive anti-patterns. Topics are appropriately granular (e.g., separate lessons for 'Ordenação do Product Backlog' vs 'Sprint Backlog atualizado diariamente'). Portuguese is accurate. Descriptions are concise without fluff. Logical progression from basics to advanced.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent depth with 100 lessons covering methodology comprehensively. Strong separation of concepts: empirismo, pilares individuais, valores, responsabilidades por papel. Good anti-pattern coverage with specific lessons like 'Anti-padrão: velocity como meta' and 'Anti-padrão: dependências escondidas'. Refinement section is thorough with story points, tamanho relativo, critérios de aceitação. Minor weakness: some lessons slightly overlap (e.g., DoD-related lessons could be more distinct). Portuguese quality is good.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "96 lessons with solid coverage. Good granularity on Sprint Planning (three separate 'Pergunta' lessons), refinement activities, and anti-patterns. Covers stakeholder representation separately which is valuable. Strong on Definition of Ready risks. Minor issues: some titles could be more specific (e.g., 'Responsabilidade central do Time de Desenvolvimento' is somewhat broad). Anti-patterns well-addressed but fewer than top models. Portuguese is accurate and professional.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "82 lessons with good structure. Strong on events breakdown (Sprint Planning/Daily/Review/Retro each have objective, participants, timebox, and technique lessons). Good coverage of DoD/DoR with practical examples. Refinement section includes specific techniques like Planning Poker and T-Shirt Sizing. Anti-patterns are comprehensive (22 listed). Some lessons slightly broad like 'O Scrum Team' covering multiple concepts. Good Portuguese quality.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "70 lessons with decent coverage. Includes DEEP principles (Detalhado, Emergente, Estimado, Priorizado) which is unique and valuable. Good refinement section with Three Amigos technique. Strong anti-patterns section. Some lessons are broader than ideal (e.g., 'Product Owner' combines multiple responsibilities). Missing some granularity on events. Portuguese is correct but some terms mixed with English (anti-padrão titles).",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "67 lessons covering core elements adequately. Good separation of Sprint Planning into three parts. Refinement section covers key activities. Anti-patterns present but could be more extensive. Some lessons are too broad (e.g., 'Os Três Pilares do Scrum' covers transparency, inspection, adaptation together when they should be separate). Definition of Ready lessons are well-structured. Portuguese quality is good.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "36 lessons - significantly fewer than expected for comprehensive coverage. Covers basics of roles, events, artifacts. Some good granularity (separate lessons for Pergunta 1/2 of Planning). Anti-patterns present but limited (7 total). Missing detailed refinement techniques, estimation methods, and many Scrum nuances. Portuguese is accurate. Descriptions are concise. Coverage is adequate but not extensive enough for the requirements.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "37 lessons - limited for a methodology chapter. Covers pilares individually (good), but events lack depth. Only 7 anti-patterns. Missing detailed refinement lessons, estimation techniques, DoR coverage beyond basics. 'O que é Scrum?' and 'Empirismo' shouldn't be in methodology chapter per se. Good structure but insufficient breadth. Portuguese quality is acceptable.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "67 lessons but many are too shallow or overlap. Some good specificity (e.g., 'Critério INVEST') but many lessons are too brief/surface-level (e.g., 'Propósito do DoD' is vague). Anti-patterns included but descriptions are minimal. Refinement section present but lacks depth on techniques. Some lessons use 'AND' implicitly (e.g., 'Priorização do Product Backlog'). Portuguese is correct. Structure needs more granular breakdown.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "xai/grok-4",
+          "reasoning": "55 lessons with basic coverage. Too many redundant or overlapping lessons (e.g., 'Product Owner' and 'Responsabilidades do Product Owner' could be one, or further split into specific responsibilities). Some titles vague like 'Atividades no Sprint Review'. Anti-patterns present but limited explanation. Missing key refinement techniques. Portuguese quality acceptable but descriptions often generic.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Only 27 lessons - far too few for comprehensive methodology chapter. Many critical topics missing (detailed refinement, estimation, timeboxing, multiple anti-patterns). Lessons present are reasonable but coverage is grossly insufficient. Requirements specify 'usually require more than 100 lessons' for complex topics. This fails the extensiveness requirement completely.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5",
+          "reasoning": "This model provided the most comprehensive and granular curriculum (~85 lessons). It excelled by breaking down complex topics into actionable lessons, such as specific techniques for splitting user stories (e.g., by business rules, data variations) and prioritization methods (RICE, WSJF). It strictly adhered to the granularity requirements and current Scrum Guide terminology.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "An excellent output that demonstrates a deep understanding of the 2020 Scrum Guide, correctly distinguishing between Artifacts and Commitments (Product Goal, Sprint Goal, DoD). The granularity is high (~73 lessons), and the lessons focus on specific accountabilities and behaviors rather than just generic descriptions.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "This model offers a very strong narrative flow with a high lesson count (~68). It effectively breaks down events into specific components (e.g., breaking Sprint Planning into the three specific questions). The titles are descriptive and professional, making it a very high-quality curriculum.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong content, particularly in the Refinement and Backlog Management sections, introducing concepts like DEEP, Three Amigos, and specific story splitting techniques. It covers the methodology well with ~60 lessons and includes a solid list of anti-patterns.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "A solid, comprehensive curriculum (~64 lessons) that covers all the basics well, including estimation techniques like Planning Poker and T-Shirt Sizing. It is slightly less granular in the advanced methodology topics compared to the higher-ranked models but remains a very good output.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "A good, straightforward breakdown (~57 lessons). It follows the requirements well, separating roles, events, and artifacts, and includes a distinct section for anti-patterns. However, the specific lessons are slightly more generic than the top-tier models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Satisfactory coverage (~53 lessons) with a clean structure. It hits all the main points but lacks the depth and granular breakdown found in the top models. The lessons are well-titled but cover slightly broader scopes.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "xai/grok-4",
+          "reasoning": "Adequate coverage (~55 lessons), but the titles and structure feel repetitive and formulaic. It meets the core requirements but fails to offer the insightful breakdown of concepts seen in better models.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Adheres well to the Scrum Guide 2020 terminology (Commitments), which is a plus, but the content is too sparse (~36 lessons) to be considered an 'extensive list' for a full chapter. Many lessons are too broad.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "The content is accurate, but the quantity (~37 lessons) is insufficient for the requested task. It groups too many concepts into single lessons, failing the granularity requirement.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model failed the granularity requirement significantly. With only ~27 lessons, it condensed entire roles and complex events into single lessons (e.g., 'Papel do Product Owner'), which contradicts the instruction to break topics down into small, tweet-sized concepts.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Entrega uma lista longa e bem estruturada em progressão do básico ao avançado, com unidades pequenas e títulos específicos (quase sempre um conceito por lição). Cobre papéis, eventos e artefatos, inclui compromissos (Product Goal, Sprint Goal, DoD) e traz muitos anti‑padrões como lições individuais. Linguagem PT-BR adequada e descrições objetivas. Ainda não chega a “100+” lições, mas é o mais próximo e o mais fiel ao recorte de metodologia Scrum.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Muito extenso (provavelmente o mais próximo do “extensivo”), com decomposição fina especialmente em refinamento, priorização e técnicas de fatiamento. Anti‑padrões aparecem como lições separadas e bem específicas. Boa progressão. Pequenos deslizes: inclui tópicos mais amplos/avançados e algumas lições já começam a parecer “toolbox” (RICE/WSJF) além do núcleo Scrum; ainda assim, atende muito bem ao objetivo do capítulo.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Boa granularidade e abrangência, inclui artefatos/compromissos (DoD/DoR) e várias técnicas (DEEP, Planning Poker, Three Amigos), além de anti‑padrões individuais. Problemas: mistura português com termos em inglês em títulos (\"Increment\", \"Assigning tasks externally\"), repete \"Product Backlog\" mais de uma vez como lição e parte do conteúdo vai além do Scrum Guide (Velocity como lição central) e pode fugir do recorte do capítulo.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Lista ampla, bem organizada por papéis, eventos e artefatos, com anti‑padrões separados e variados. Decomposição razoável (timeboxes, participantes, dinâmica). Porém ainda fica abaixo do “extensivo” (100+), inclui algumas lições potencialmente amplas (ex.: \"ScrumBut\" como anti‑padrão é ok, mas outras pedem mais divisão) e traz técnicas de retrospectiva que podem ser vistas como extras do capítulo (embora úteis).",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Cobertura sólida de papéis/eventos/artefatos e muitos anti‑padrões bem nomeados. Lições geralmente focadas e com descrições diretas. Limitações: começa com uma lição ampla de “visão geral do fluxo Scrum” (foge da regra de foco), e o volume ainda é moderado para a exigência de “mais de 100” em tópicos complexos.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Boa organização básica e inclui pilares/valores além de papéis/eventos/artefatos, com anti‑padrões individuais. Mas várias lições continuam amplas (ex.: “Responsabilidades do Product Owner/Developers”), e a lista é curta para o nível de decomposição pedido; faltam muitas microlições por elemento (ex.: múltiplas lições por parte do evento, detalhes de compromissos, etc.).",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Decompõe alguns tópicos em microlições (ex.: PO define visão, PO aceita incremento), inclui eventos, artefatos e vários anti‑padrões. Porém é inconsistente: traz “Definition of Ready” como se fosse elemento padrão e inclui regra “refinamento 10%” como fato; há erro de língua em título (“refinamento infrequent”), e a progressão/estrutura por blocos (roles/events/artifacts como “aulas” separadas) não fica explícita. Também é curto para o requisito de lista extensa.",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "xai/grok-4",
+          "reasoning": "Cobre o essencial (papéis, eventos, artefatos, DoD/DoR, refinamento) e adiciona anti‑padrões. Contudo, muitas lições são genéricas e largas (“Responsabilidades do X”, “Estrutura do Y”), várias poderiam/precisariam ser quebradas. Pouca profundidade e pouca decomposição em unidades de 10 tweets. Lista não é extensa.",
+          "score": 5.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Mistura elementos do Scrum com lições genéricas (“Transparência no Scrum”, “Adaptação Contínua”, “Colaboração no Time Scrum”) sem detalhar o framework em unidades pequenas. Alguns títulos (“Pergunta 1 do Planejamento/ Pergunta 2”) ficam ambíguos e ainda por cima estão incorretamente mapeados (o Planning clássico é Por quê/O quê/Como). Poucos artefatos/compromissos e anti‑padrões limitados; não atende ao nível de cobertura pedido.",
+          "score": 4.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Muito curto e superficial para o requisito de “extensa lista”. Apesar de cobrir pilares/valores, papéis, eventos e artefatos, vários itens ficam em nível de definição (pouca decomposição) e há problema conceitual de linguagem: chama DoD de “Definição de Pronto” (em PT-BR costuma ser “Definição de Pronto/Concluído”, mas o texto sugere ‘ready’), e a lista de anti‑padrões é pequena. Não satisfaz o formato de microlições em volume e profundidade.",
+          "score": 3.9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Extremamente curto, com lições grandes e genéricas (“Responsabilidades do Scrum Master”, “O Evento Sprint”), quase sem decomposição em unidades pequenas. Poucos anti‑padrões, pouca cobertura de detalhes dos eventos/artefatos e não atende ao requisito de progressão e lista extensa.",
+          "score": 2.8
+        }
+      ]
+    }
+  ],
+  "taskId": "chapter-lessons",
+  "testCaseId": "pt-agile-scrum-1"
+}

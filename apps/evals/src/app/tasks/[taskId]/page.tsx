@@ -14,6 +14,8 @@ import {
   ItemDescription,
   ItemTitle,
 } from "@zoonk/ui/components/item";
+import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
+import { MessageSquareTextIcon, SwordsIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
@@ -22,10 +24,13 @@ import {
   TaskPageBreadcrumb,
 } from "@/components/breadcrumb";
 import { ModelStatusBadge } from "@/components/model-status-badge";
+import { getBattleLeaderboard } from "@/lib/battle-loader";
 import { getModelDisplayName } from "@/lib/models";
+import { getModelsWithCompleteOutputs } from "@/lib/output-loader";
 import { getModelsWithResults, getSortedModels } from "@/lib/utils";
 import { getTaskById, RUNS_PER_TEST_CASE } from "@/tasks";
-import { Leaderboard } from "./leaderboard";
+import { runBattleModeAction } from "./actions";
+import { LeaderboardTabs } from "./leaderboard-tabs";
 
 type TaskPageProps = {
   params: Promise<{ taskId: string }>;
@@ -39,8 +44,15 @@ export default async function TaskPage({ params }: TaskPageProps) {
     notFound();
   }
 
-  const sortedModels = await getSortedModels(taskId);
-  const modelsWithResults = await getModelsWithResults(taskId);
+  const [sortedModels, modelsWithResults, battleEntries, modelsReadyForBattle] =
+    await Promise.all([
+      getSortedModels(taskId),
+      getModelsWithResults(taskId),
+      getBattleLeaderboard(taskId),
+      getModelsWithCompleteOutputs(taskId, task.testCases.length),
+    ]);
+
+  const canRunBattle = modelsReadyForBattle.length >= 2;
 
   return (
     <main className="flex flex-col gap-4">
@@ -58,10 +70,31 @@ export default async function TaskPage({ params }: TaskPageProps) {
             cases ({RUNS_PER_TEST_CASE} runs each)
           </ContainerDescription>
         </ContainerHeaderGroup>
+
+        <div className="flex items-center gap-2">
+          <Link
+            className={buttonVariants({ variant: "outline" })}
+            href={`/tasks/${taskId}/battles`}
+          >
+            <MessageSquareTextIcon className="size-4" />
+            View Judge Comments
+          </Link>
+
+          <form action={runBattleModeAction}>
+            <input name="taskId" type="hidden" value={taskId} />
+            <SubmitButton disabled={!canRunBattle} icon={<SwordsIcon />}>
+              Run Battle Mode
+            </SubmitButton>
+          </form>
+        </div>
       </ContainerHeader>
 
       <ContainerBody>
-        <Leaderboard results={modelsWithResults} taskId={taskId} />
+        <LeaderboardTabs
+          battleEntries={battleEntries}
+          results={modelsWithResults}
+          taskId={taskId}
+        />
 
         <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {sortedModels.map((model) => (

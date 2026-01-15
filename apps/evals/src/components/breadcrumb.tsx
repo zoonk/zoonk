@@ -68,6 +68,14 @@ function ModelPageBreadcrumb({ modelName }: { modelName: string }) {
   );
 }
 
+function BattlesPageBreadcrumb() {
+  return (
+    <BreadcrumbItem>
+      <BreadcrumbPage>Battles</BreadcrumbPage>
+    </BreadcrumbItem>
+  );
+}
+
 export {
   AppBreadcrumb,
   HomePageBreadcrumb,
@@ -75,4 +83,5 @@ export {
   TaskPageBreadcrumb,
   TaskLinkBreadcrumb,
   ModelPageBreadcrumb,
+  BattlesPageBreadcrumb,
 };

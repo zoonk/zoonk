@@ -1,0 +1,257 @@
+{
+  "expectations": "\n      - Prepare students for Python roles\n      - MUST be in Brazilian Portuguese\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises\n  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%\n\n    ",
+  "judgedAt": "2026-01-15T21:01:34.699Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Model B provides the most comprehensive and well-structured curriculum with 68 chapters covering everything from fundamentals to advanced topics like CPython internals, metaprogramming, cloud/serverless, and ethical considerations. The progression is logical, titles are concise and in Brazilian Portuguese, descriptions are detailed without fluff. It covers latest trends (subinterpreters, WASM, typing improvements 3.11-3.13). Strong coverage of career paths, security, compliance, and professional development. The depth is exceptional for preparing top-tier professionals.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model H delivers an excellent 86-chapter curriculum with outstanding breadth and depth. Covers fundamentals through advanced topics including internals, metaprogramming, distributed systems, and career preparation. Good progression from basics to mastery. Titles are concise and in Portuguese. Strong coverage of testing, architecture, observability, and ethics. Slightly less focused on cutting-edge trends compared to Model B, and some descriptions could be more concise, but overall excellent for preparing professionals.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model L offers a solid 68-chapter curriculum with excellent balance between depth and breadth. Strong coverage of fundamentals, advanced topics, MLOps, observability, and modern practices. Good progression, concise titles in Portuguese. Includes important topics like LLM integration concepts, ethics/privacy, and career guidance. Well-structured for professional preparation. Some chapters could benefit from more specific detail, but overall very comprehensive.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model C provides an extensive 107-chapter curriculum covering virtually every Python-related topic. Very comprehensive including specialized domains (quantum computing, bioinformatics, GIS, etc.). However, the sheer breadth may sacrifice depth in core areas. Good Portuguese titles, though some chapters feel overly specialized for a general Python preparation course. Excellent for showing the full ecosystem but may overwhelm learners.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A delivers a well-organized 33-chapter curriculum with good fundamentals coverage. Clean progression from basics to advanced topics like metaprogramming, security, and DevOps. Concise titles in Portuguese. However, it lacks depth in some advanced areas (no ML/DL coverage, limited data science, no internals discussion). Good for intermediate preparation but may not fully prepare for top 1% roles.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model G provides a comprehensive 83-chapter curriculum with solid coverage from basics through ML/DL, web development, and career preparation. Good structure and Portuguese titles. However, some titles are slightly verbose, and the curriculum could benefit from more coverage of modern trends, cloud-native patterns, and advanced architectural topics. Good overall but lacks some cutting-edge content.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model M offers a focused 52-chapter curriculum with good structure and concise titles. Covers fundamentals through advanced topics like internals, ML, and career preparation. However, it lacks some important topics like detailed database coverage beyond ORMs, comprehensive testing strategies, and some modern cloud/DevOps practices. The depth is good but breadth is somewhat limited for top-tier preparation.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model E provides a 48-chapter curriculum with good fundamentals but lacks specificity in many descriptions. Titles are somewhat generic (e.g., 'Fundamentos da computação'). While it covers important areas, the descriptions often lack technical detail needed for professional preparation. Missing some advanced topics like metaprogramming details, specific testing frameworks, and modern tooling.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-2.5-pro",
+          "reasoning": "Model I offers a 54-chapter curriculum with decent coverage but some inconsistencies. Good fundamentals and some advanced topics, but descriptions sometimes use filler words ('Fundamentos de...', 'Conceitos de...'). Missing some important advanced topics like CPython internals, comprehensive metaprogramming, and modern trends. Adequate but not comprehensive enough for top-tier preparation.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model D provides a 62-chapter curriculum but has issues with vendor names in descriptions (Django, Flask, FastAPI, PyTorch, TensorFlow mentioned explicitly). While coverage is reasonable, the descriptions are sometimes too focused on specific tools rather than concepts. Good progression but violates the guideline about avoiding vendor names in chapter details excessively.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "xai/grok-4-fast-reasoning",
+          "reasoning": "Model J offers only 28 chapters which is insufficient for comprehensive Python mastery. While the topics covered are relevant, the depth is severely lacking for preparing top-tier professionals. Missing many advanced topics (no internals, limited metaprogramming, minimal architecture coverage). Too brief for the stated goal of preparing for PhD-level work or top 1%.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model K provides 55 chapters with decent fundamentals but limited advanced coverage. Missing important topics like modern async patterns, comprehensive ML/DL, cloud/DevOps practices, and architectural patterns. Good for intermediate learners but insufficient depth for top-tier professional preparation.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-2.5-flash",
+          "reasoning": "Model F offers only 45 chapters with descriptions that sometimes use filler words ('Explora', 'Ensina', 'Guia'). Coverage is adequate for basics but lacks depth in advanced topics. Missing CPython internals, comprehensive metaprogramming, and modern trends. Not comprehensive enough for top-tier preparation.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5",
+          "reasoning": "This model provides the most comprehensive and mastery-focused curriculum, perfectly aligning with the 'top 1%' requirement. It covers deep technical topics often overlooked, such as CPython internals, C-API interoperability, memory management details, and emerging trends (WASM, subinterpreters). The titles are professional and mostly avoid vendor names, focusing on concepts. The descriptions are dense with relevant keywords, providing a clear and high-level syllabus without fluff.",
+          "score": 9.9
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Excellent curriculum that rivals Model B in depth and professionalism. It strictly adheres to all formatting constraints, with crisp, concept-focused titles (e.g., 'Bibliotecas científicas' instead of 'NumPy'). It covers advanced topics like C extensions, large-scale engineering, and internals. It scores slightly lower than B only because Model B's content feels marginally more exhaustive regarding the absolute latest trends and ecosystem breadth.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "A very strong curriculum with great depth in engineering, architecture, and data science. The descriptions are concise and informative lists of concepts. It loses points mainly for including specific vendor names in titles (e.g., 'NumPy', 'Pandas') which violates the negative constraint preference for conceptual titles, but otherwise, the content quality is top-tier.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good adherence to formatting rules, with clean, vendor-free titles. The content is comprehensive and covers the necessary progression from basics to advanced engineering. However, the descriptions are somewhat abstract compared to the concrete technical detail found in the top 3 models, making it feel slightly less rigorous for a 'mastery' goal.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model follows the formatting constraints perfectly, with the most concise titles of the bunch. However, with only 33 chapters, the content feels too compressed to truly take a student to the 'top 1%'. Topics like Data Science and APIs are covered in single chapters, lacking the granularity found in higher-ranked models.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "The content is extensive (60 chapters) and covers a vast amount of ground, suitable for mastery. However, the titles are consistently verbose (e.g., 'Controle de fluxo: condicionais', 'Persistência com bancos de dados relacionais'), which violates the instruction for concise titles. It avoids vendor names well, but the wordiness drags it down.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "A solid, average output. It covers the basics and some advanced topics, but lacks the distinctive depth of the top models. The titles are a bit wordy and the curriculum feels more like a standard intermediate course than a path to industry mastery.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good content coverage, but heavily relies on vendor names in titles (e.g., 'NumPy', 'Pandas'), which was discouraged. The titles are also occasionally verbose. It fails to abstract tools into concepts effectively.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "While the content is okay, the structure devolves into a tutorial for specific frameworks rather than a language course. Having separate chapters for 'FastAPI Basic', 'FastAPI Advanced', 'Django Basic', etc., violates the rule against using vendor names in titles and limits the course's conceptual longevity.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Heavily violates the vendor name rule in titles (TensorFlow, Keras, etc.) and uses very verbose titles ('Programação orientada a objetos: fundamentos'). The descriptions are filled with lists of libraries rather than concepts.",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "xai/grok-4-fast-reasoning",
+          "reasoning": "Similar to Model C and D, this model relies heavily on specific tools in titles and uses verbose descriptions. It fails to present a conceptual learning path, focusing instead on a stack of specific libraries.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-2.5-pro",
+          "reasoning": "Suffers from the same issues as the low-ranking models: verbose titles and heavy use of vendor names. The progression is standard but does not stand out for a mastery level.",
+          "score": 2.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-2.5-flash",
+          "reasoning": "This model completely ignored the negative constraint regarding description style. Every description starts with fluff words like 'Explora', 'Cobre', 'Ensina', which were explicitly forbidden. This major instruction violation results in the lowest score.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Cobertura extremamente completa e atual (typing moderno, structured concurrency, performance 3.11–3.13, supply chain, SBOM, LGPD, observabilidade, resiliência). Progressão bem pensada do zero ao avançado e até internals/arquitetura, com descrições objetivas. Evita capstone/exercícios. Pequenos deslizes: alguns títulos/descrições citam ferramentas específicas (p.ex., \"pyproject.toml\" no título) e há leve excesso de escopo (jogos/IoT/GUI), mas ainda coerente com “topo do campo”.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Trilha muito forte para formar liderança técnica: do básico a internals, arquitetura, segurança, CI/CD, observabilidade, ML/data engineering e tendências. Descrições diretas e com foco em decisões de engenharia. Menos “enciclopédico” que B, mas ainda bem abrangente. Pontos fracos: não deixa tão explícito o início “zero absoluto” quanto outros (embora cubra), e alguns tópicos ficam conceituais/altos demais sem granularidade.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excelente equilíbrio entre fundamentos de linguagem e engenharia de software em produção (SRE, escalabilidade, segurança, mensageria, ML/MLOps, LLMs como tendência). Títulos majoritariamente sem vendors e descrições concisas. Muito alinhado com preparar para projetos complexos. Fraquezas: muita coisa marcada como “conceitos”, o que pode reduzir profundidade prática; falta um pouco de detalhamento sobre web/backend moderno (ASGI etc.) sem citar frameworks, mas cobre bem em nível arquitetural.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Trilha longa, bem estruturada e progressiva, cobrindo desde fundamentos até internals, arquitetura em produção, escalabilidade, qualidade, colaboração e pesquisa/contribuição. Bom para formação avançada. Pontos negativos: é prolixo em vários títulos (muito “fundamentos de…” repetido), e fica mais generalista em tópicos de dados/ML (menos tendências específicas como MLOps moderno/LLMs).",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Cobertura ampla e bem organizada, com boa progressão e muitos tópicos necessários (tipagem, testes, concorrência, web, dados, ML, MLOps, performance, extensões). Descrições são em geral objetivas. Problemas: inclui título com vendor/tecnologia específica (“Dataclasses e Attrs” — Attrs é biblioteca), alguns trechos redundantes (programação funcional aparece duas vezes) e tendências recentes aparecem menos que nos melhores.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Conteúdo forte e relativamente vendor-neutral, com boa abrangência em engenharia de software, dados, segurança, observabilidade e produção. Progressão ok para iniciantes. Limitações: fica genérico demais em várias áreas (pouca profundidade de ferramentas/processos atuais), não aborda tão claramente tipagem moderna, empacotamento moderno, e tópicos de tendências (LLMs/MLOps detalhado).",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Muito extenso e abrangente, incluindo áreas avançadas e tópicos de pesquisa. Porém viola requisitos: vários títulos e descrições citam muitos vendors/bibliotecas (Flask, FastAPI, Django, NumPy, Pandas, Matplotlib, etc.; além de cloud providers e ferramentas). Também mistura bastante inglês (“Game development”, “Research”, etc.) e fica enciclopédico com escopo excessivo (quantum, bioinfo, web3) sem uma trilha claramente coesa para “Python roles” gerais.",
+          "score": 5.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Bom caminho do básico ao avançado, cobrindo web, dados, ML, performance e devops. Contudo infringe fortemente a regra de não usar vendors em títulos/descrições (VS Code, PyCharm, FastAPI, Django, Flask, NumPy, Pandas, PyTorch, TensorFlow, Kubernetes, AWS etc.). Além disso, há capítulos duplicando foco (muitos frameworks) e títulos pouco concisos por incluir nomes de ferramentas.",
+          "score": 4.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Boa base de linguagem e engenharia (POO, metaprogramação, concorrência, testes, segurança, performance, DevOps). Descrições são objetivas. Mas falta profundidade/atualidade para “topo do campo” (p.ex., tipagem moderna, observabilidade, arquitetura distribuída/resiliência, data/ML em produção) e inclui vendors em descrições (conda, poetry, pytest) e um capítulo de “carreira/portfólio” que, embora permitido, foge um pouco do foco técnico e não prepara para certificações avançadas de forma explícita.",
+          "score": 3.7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-2.5-pro",
+          "reasoning": "Cobertura razoável até intermediário/avançado (concorrência, web, dados, arquitetura). Entretanto há muitas menções a ferramentas específicas nas descrições (Pytest, Black, Flake8 etc.) e o conteúdo não chega perto do nível “mestrado/PhD”/liderança de projetos muito complexos: pouco sobre internals, sistemas distribuídos práticos, observabilidade avançada, empacotamento moderno detalhado e tendências recentes.",
+          "score": 3.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-2.5-flash",
+          "reasoning": "Trilha clara e progressiva, mas é superficial para o objetivo de “topo 1%” e preparação para estudos avançados: falta internals, arquitetura distribuída, observabilidade/SRE, empacotamento moderno, segurança de cadeia de suprimentos, tipagem avançada etc. Também tem descrições com verbos de ensino (“Explora”, “Ensina”, “Guia”) indo contra a diretriz de descrições diretas, e cita tools em títulos/descrições (pip, asyncio, NumPy, Pandas, Docker).",
+          "score": 2.4
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Bom para base/intermediário e cobre muitos tópicos importantes (algoritmos, concorrência, tipagem, empacotamento, internals). Porém ainda não atinge o nível de preparação para liderar projetos muito complexos (faltam arquitetura distribuída, observabilidade avançada, CI/CD moderno, tendências). Também tem algumas escolhas de título problemáticas (\"Dicionários e Hash Maps\"), e menções a ferramentas (mypy) e detalhes de setup antigos (setup.py) sem contextualizar estado atual.",
+          "score": 1.8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "xai/grok-4-fast-reasoning",
+          "reasoning": "Curto e muito vendor/framework-driven: títulos e descrições citam IDEs e muitos frameworks/bibliotecas (Flask, Django REST Framework, NumPy, Pandas, PyTorch etc.), contrariando a regra. Além disso, falta profundidade em engenharia avançada (observabilidade, arquitetura distribuída, tipagem moderna, empacotamento moderno, internals) e a progressão para “mestrado/PhD” é insuficiente.",
+          "score": 1.2
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "pt-python-1"
+}

@@ -1,0 +1,221 @@
+{
+  "expectations": "\n      - MUST be in US English\n      \n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n  \n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+  "judgedAt": "2026-01-15T20:55:03.737Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Model J provides the most comprehensive and granular lesson set with 189 lessons covering every aspect of the chapter in extreme detail. Each lesson is tightly focused on a single concept with concise, action-oriented descriptions. The lessons are well-organized into logical progressions covering portfolio strategy, project selection, case studies, technical writing, talks, community presence, and personal branding. The lesson titles are short and specific (e.g., 'Problem Statement', 'Audience Definition', 'Slide Density') and avoid the 'AND/VS' anti-pattern. Descriptions are direct without fluff words like 'learn' or 'understand'. The granularity is excellent - topics like SEO, analytics, accessibility, and even cookie consent are broken into individual focused lessons. Minor weakness: some lessons like 'Cookie Banner Choice' may be slightly tangential to the core chapter topic.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F delivers 108 highly focused, specific lessons with exceptional granularity. Each lesson targets a single concrete concept (e.g., 'Project count cap', 'Headshot selection criteria', 'Broken-link monitoring'). The descriptions are action-oriented and practical without fluff. The structure progresses logically from portfolio goal-setting through project selection, case studies, technical writing, talks, and community presence. Particularly strong in providing specific, actionable items (e.g., 'Polish checklist', 'README quickstart block'). The lessons avoid broad topics and consistently break down concepts appropriately. Slightly fewer lessons than Model J but maintains exceptional quality throughout.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E provides 105 well-structured lessons with good granularity. Lessons are focused on single concepts with clear, descriptive titles. The coverage is comprehensive across all chapter topics including portfolio purpose, project selection, case studies, technical writing, talks, and community presence. Descriptions are concise and avoid fluff. Good progression from basic to advanced concepts. Particularly strong on technical writing aspects (formatting, SEO, accessibility). Some lessons could be even more granular (e.g., 'Handling negative feedback' could potentially be split), but overall maintains consistent quality. Slightly less detailed than Model F in some areas.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model I delivers 127 lessons with good coverage of all chapter topics. The lessons progress logically from portfolio fundamentals through project selection, case studies, technical writing, talks, and community presence. Titles are generally specific, though some are slightly longer than ideal. Descriptions are clear and descriptive. Good granularity overall with topics broken into manageable units. However, some lessons have slightly wordy titles (e.g., 'Defining a Web Developer Portfolio Goal') and some descriptions include softer language. The structure is solid but slightly less polished than top performers.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model G provides 80 lessons covering all major chapter topics. The lessons are reasonably focused with clear descriptions. Good logical progression from portfolio basics through project selection, case studies, technical writing, talks, community presence, and personal branding. However, some lessons are broader than ideal (e.g., 'What Makes a Strong Developer Portfolio' could be split into multiple concepts). Some descriptions include softer language like 'How' and could be more direct. The lesson count is lower than top performers, suggesting some concepts could be broken down further.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model C provides 63 lessons with decent coverage but noticeable gaps in granularity. While topics are relevant, many lessons are too broad (e.g., 'Anatomy of a Case Study' should be multiple lessons, 'Finding Speaking Opportunities' covers too much). Contains problematic 'vs' in title ('Portfolio vs. Resume') which violates guidelines. Descriptions are generally clear but some concepts need further breakdown. Good coverage of talks and community presence but not as detailed as higher-ranked models. The lesson count of 63 is low for a complex chapter.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4",
+          "reasoning": "Model A provides 47 lessons which is insufficient for comprehensive chapter coverage. Many lessons are too broad (e.g., 'Core Components of a Portfolio', 'Online Presence in Communities'). Some good granularity in case study sections but technical writing and talks sections are underdeveloped. The descriptions are clear but the overall structure lacks the depth needed. Missing specific actionable lessons that other models provide. The progression is logical but the lesson count and granularity are below expectations for a chapter this complex.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model D provides 80 lessons but many are poorly structured or too abbreviated. Numerous lessons focus on project types (Frontend, Backend, Full-Stack, etc.) which feels like categorization rather than teaching concepts. Many lesson titles and descriptions are telegraphic to the point of being unclear (e.g., 'Case Study Repos', 'Talk Timing'). Some descriptions are just fragments rather than complete thoughts. The structure jumps between topics without clear progression. While it has quantity, the quality and clarity are lacking.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model B provides only 40 lessons which is significantly insufficient for comprehensive coverage. While individual lessons are well-focused with clear descriptions, the overall count is too low. Missing important topics like portfolio website design, social media optimization, detailed talk preparation, and comprehensive community engagement strategies. The lessons present are good quality but the chapter would be incomplete with this set. Some topics that should be multiple lessons are condensed into one.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model H provides only 27 lessons which is severely inadequate for this chapter. Major topic areas are missing or barely covered. Many core concepts like portfolio website design, detailed project selection criteria, comprehensive technical writing guidance, and full community presence strategies are absent. The lessons present are reasonable quality but the coverage is far too sparse. This would leave significant gaps in learner understanding. The chapter cannot be adequately taught with only 27 lessons.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model K provides 48 lessons which is below expectations for comprehensive coverage. While the lessons are focused and clear, major areas are underdeveloped. Community presence has only 4 lessons. Missing detailed coverage of portfolio website design, comprehensive talk preparation, and social media strategies. Some lessons are good (STAR Method, tech stack explanations) but overall the chapter would be incomplete. The progression is logical but truncated.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Model J follows all instructions perfectly. It provides an extensive list (119 lessons) that covers the chapter in impressive detail, breaking down complex topics (like bio writing, contact forms, and social media specifics) into granular, single-concept lessons. The titles are short, punchy, and strictly adhere to the negative constraints (no 'AND', 'OR', or 'VS'). The descriptions are concise and actionable without fluff. It includes essential topics often missed, such as 'NDA Compliance', 'UTM Tracking', and 'Redirect Setup', making it the most comprehensive and compliant output.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model F is excellent, offering a very high number of lessons (97) with high-quality, specific concepts (e.g., breaking down 'Proof points' into separate lessons for accessibility, performance, etc.). The descriptions are outstanding—very specific and practical. However, it contains a minor violation of the negative constraints in the title 'Speaker notes vs slides'. Despite this single slip, the quality and depth of the content place it firmly in second place.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model D provides a solid, extensive list (74 lessons) with excellent granularity, particularly in the types of projects (Full-Stack, Frontend, Backend, etc.). It adheres strictly to the negative constraints regarding title phrasing. The descriptions are concise and the flow is logical. It ranks below F because it is slightly less comprehensive in the later sections (community/branding specifics) and has a lower overall lesson count, but it is a very strong, compliant output.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E offers a good number of lessons (77) with concise titles and descriptions. It covers the material well. However, it fails the negative constraint check multiple times with titles like 'Live demo vs screenshots' and 'Recording and sharing talks'. The content quality keeps it high, but the formatting violations drop it below the strictly compliant Model D.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model I provides a large number of lessons (100), satisfying the 'extensive list' requirement well. However, the titles are often wordy and verbose (e.g., 'Choosing a Target Audience for Your Portfolio'), which conflicts with the 'short and specific' instruction. It also contains multiple violations of the 'AND/OR/VS' rule (e.g., 'Balancing Personal and Professional Projects'). The content is good, but the presentation is less refined than the higher-ranked models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model G offers a decent length (65 lessons) and covers the basics well. However, it has several violations of the negative constraints (e.g., 'Original Projects vs. Tutorial Clones', 'Attending Meetups and Conferences'). The titles are generally okay but sometimes drift into being a bit generic. It sits in the middle due to average quantity and compliance issues.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model C has a moderate lesson count (57) but struggles with constraints. Titles like 'Portfolio vs. Resume' and 'Quality Over Quantity' violate the negative rules. The content is acceptable but less granular than the top models, missing the opportunity to break down complex topics into smaller units.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model K is compliant with the title constraints (no obvious 'AND/OR/VS'), but the list is too short (47 lessons) for an 'extensive' coverage of this chapter. It breaks down project selection well but breezes through the rest of the topics. It ranks above A and B because it follows the title formatting rules better.",
+          "score": 4.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4",
+          "reasoning": "Model A is short (45 lessons) and uses somewhat academic/fluffy titles ('What is a Portfolio?', 'Role of Portfolios...'). It also violates the negative constraints with titles like 'Tools and Technologies'. The lack of granularity and the generic nature of the lessons make it a weaker entry.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model B is very short (40 lessons) and includes titles that violate constraints (e.g., 'Performance or Usability Impact'). The scope is too limited for the requested task, failing to provide the 'extensive list' required for a complex chapter.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model H is significantly lacking in content, providing only 27 lessons. This fails the core instruction to provide an extensive list covering all concepts. The depth is insufficient for a course chapter, making it the least useful output.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Most aligned with the core requirement: lessons are split into very small, single-concept units that are plausibly explainable in ~10 short tweets. Titles are short, specific, and avoid combining concepts with \"and/or/vs\" in titles. Clear logical progression from portfolio positioning → project selection → case studies → README artifacts → writing → talks → community presence → branding/website operations. Also provides a truly extensive list (closest to the 100+ expectation) while staying mostly on-chapter (portfolio/case studies/writing/talks/community/branding). Minor downside: a few items edge into broader site ops/analytics, but still relevant to a “professional presence” chapter.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Very comprehensive (well over 100), with many lessons broken into atomic skills (e.g., Open Graph, canonical URLs, sitemap submission, slide density). Generally concise, actionable, and single-concept. Strong progression across portfolio/website, case studies, writing, talks, and community. Main weaknesses: some lessons drift into general marketing/SEO/analytics depth that may be outside the chapter scope depending on the intended chapter, and there are some near-duplicates (e.g., Audience Persona appears twice in different sections; canonical tag appears multiple times). Still excellent overall.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Extensive and mostly well-decomposed into single concepts that fit the “10 tweets” constraint. Good coverage of portfolio selection, case study structure, writing mechanics (alt text, captions, MREs), talk mechanics, and community/professional presence. Weaknesses: several titles are sentence-cased and a bit generic; a few lessons feel slightly broader than necessary (e.g., “Security and privacy considerations” could be split), but overall adherence is strong and scope stays fairly relevant.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Large list with a generally logical progression and many lessons at an appropriate granularity. Titles are mostly specific and in US English. Weaknesses: includes several “either/or” style choices inside descriptions (acceptable) and some lessons are still a bit big (“Tailoring Portfolios for Different Audiences”, “Choosing the Right Talk Format”). Some redundancy across portfolio maintenance/selection criteria. Not as atomized or as consistently tight as E/F/J.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Covers many relevant concepts and has decent decomposition in the case study/talk/community sections. However, it becomes a checklist of project categories (Frontend Projects, Backend Projects, etc.) rather than teachable single concepts; some are more like “types of projects” than skills/knowledge. Also less cohesive progression and some items are oddly specific or prescriptive (e.g., exact talk timing percentages). Not as cleanly scoped as the top group.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Reasonable chapter coverage and mostly single-concept lessons, but the list is far too short relative to the expectation that complex topics usually require 100+ lessons. Several lessons remain broad (e.g., “Structuring Technical Tutorials”, “Engaging on Social Media”). Overall acceptable content quality, but insufficient granularity and completeness.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Clear and relevant topics, but lessons are consistently too broad (many would exceed “10 short tweets”), and titles often bundle multiple ideas in descriptions (e.g., “skills, communicates your value, and opens career opportunities”). Also not extensive enough. Good high-level outline, poor fit for the micro-lesson requirement.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Includes many relevant items, but repeatedly violates the “split if too broad” rule with lots of multi-part descriptions and some “vs” in a title (“Portfolio vs. Resume”), explicitly called out as something to avoid. Not extensive enough for the chapter complexity and includes broader site-building/design items that may or may not belong. Better than G on detail, but less compliant with the title constraints.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Too short and too high-level; many lessons are vague (“Content Formatting”, “Topic Ideation”, “Digital Networking”) and would require more than 10 tweets or need splitting into several smaller concepts. Doesn’t provide the extensive coverage required.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4",
+          "reasoning": "Not extensive enough and often uses fluffy phrasing (“Engaging Writing in Case Studies”, “Consistency in Community Presence”) with broad concepts that should be split further. Also includes multiple “What is X?” definitions but misses many practical, granular sub-skills expected for a complex chapter. Overall the least compliant with the expectation for 100+ tightly scoped micro-lessons.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Solid single-concept lesson titles and concise descriptions, but the list is far too short for the stated expectation and skips many necessary granular subtopics (portfolio structure/pages, visuals, README specifics, distribution/recording details, etc.). Good micro-lesson style, but incomplete coverage for the chapter.",
+          "score": 5.5
+        }
+      ]
+    }
+  ],
+  "taskId": "chapter-lessons",
+  "testCaseId": "en-portfolio-personal-branding-1"
+}

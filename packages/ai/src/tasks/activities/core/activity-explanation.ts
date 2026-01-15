@@ -9,10 +9,10 @@ const DEFAULT_MODEL =
 
 const FALLBACK_MODELS = [
   "anthropic/claude-opus-4.5",
-  "openai/gpt-5.1-instant",
+  "openai/gpt-5-mini",
   "google/gemini-3-flash",
-  "xai/grok-4.1-fast-reasoning",
   "google/gemini-3-pro-preview",
+  "xai/grok-4.1-fast-reasoning",
 ];
 
 const schema = z.object({

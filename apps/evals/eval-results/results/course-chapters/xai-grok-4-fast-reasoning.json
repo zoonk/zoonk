@@ -1,0 +1,330 @@
+{
+  "modelId": "xai/grok-4-fast-reasoning",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "The curriculum has two major omissions that prevent it from achieving the stated goal of preparing a learner to be in the \"top 1%\" of the field:\n1.  **Lack of a foundational Computer Science chapter on Algorithms and Data Structures:** The course covers Python's built-in data structures but completely misses the theoretical underpinnings, such as Big O notation, algorithm design paradigms (e.g., dynamic programming, greedy algorithms), and analysis of sorting, searching, and graph algorithms. This knowledge is non-negotiable for a top-tier software engineer.\n2.  **Absence of Type Hinting and Static Analysis:** The curriculum fails to mention type hints (PEP 484) and tools like `mypy`. In modern, large-scale Python development, static typing is crucial for code robustness, readability, and maintainability. Its omission is a critical flaw for a course aimed at mastery.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "There are some minor issues in the curriculum:\n1.  **Redundancy in Chapters:** Chapter 9, \"Gerenciamento de Dependências,\" partially overlaps with Chapter 1, \"Instalação e Ambiente de Desenvolvimento.\" Both cover virtual environments and pip. The content could be better structured, for example, by having a basic setup chapter and an advanced dependency management chapter later on.\n2.  **Inconsistent Adherence to Vendor Neutrality:** Several chapter titles name specific frameworks and libraries (e.g., \"Desenvolvimento Web com Flask e Django,\" \"Deep Learning com TensorFlow e PyTorch\"). While the instructions allow exceptions for widely accepted standards, using more generic titles like \"Web Frameworks\" and mentioning the tools in the description would be more consistent with the provided guidelines (e.g., the example of \"relational databases\" being better than \"MySQL/PostgreSQL\").",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "To truly create a curriculum for a \"top 1%\" Python developer, several advanced topics should be added:\n- **Python Internals:** A chapter explaining how the CPython interpreter works, the Global Interpreter Lock (GIL), memory management, and garbage collection.\n- **Advanced Metaprogramming:** A dedicated chapter going beyond decorators to cover metaclasses and dynamic class/attribute creation.\n- **Advanced Software Design:** A chapter on software architecture principles like SOLID, common design patterns (GoF), and architectural patterns (e.g., microservices, event-driven).\n- **Packaging and Distribution:** A chapter detailing how to package a library or application and distribute it on PyPI.\n- **Low-Level Networking:** A chapter on socket programming.\n- **Specialized Fields Expansion:** The existing chapters on data science, machine learning, and web development could be expanded with more advanced, granular topics like MLOps, Data Engineering pipelines (e.g., with Airflow), GraphQL, and WebSockets.",
+          "kind": "potentialImprovements",
+          "score": 7.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Prepare students for Python roles\n      - MUST be in Brazilian Portuguese\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises.\n\n    ",
+        "id": "pt-python-1",
+        "userInput": {
+          "courseTitle": "Python",
+          "locale": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The curriculum fails on two major requirements outlined in the prompt. First, it completely omits the deep, theoretical computer science topics (e.g., automata theory, compiler design, advanced algorithms, theory of computation) that are necessary to prepare a student for advanced studies like a PhD, a specific goal mentioned in the instructions. Second, it violates the vendor neutrality guideline by centering a significant portion of the curriculum on a specific technology stack (React and Node.js) and naming numerous other specific, non-standard tools and vendors (e.g., Next.js, PostgreSQL, MongoDB, AWS, Vite, Cypress). This creates a curriculum for a specialist in one ecosystem, not a universally-adaptable, top-1% expert as requested.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "The primary minor error is the repeated inclusion of specific, non-standard tool and vendor names within chapter descriptions (e.g., 'preprocessors like Sass', 'task runners like Webpack or Vite', 'server-side rendering with Next.js', 'using PostgreSQL', 'stores like MongoDB', 'cloud platforms like AWS or Vercel'). This consistently violates the vendor neutrality rule, even when the chapter title itself is neutral. Additionally, the overall structure is very front-end heavy at the start, which could be better balanced by introducing back-end and database concepts earlier.",
+          "kind": "minorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "To meet the prompt's requirements, the curriculum needs substantial improvements. First, a new section on foundational Computer Science theory must be added, with chapters covering topics like Advanced Data Structures & Algorithms, Operating Systems, Compiler Theory, and Theory of Computation to satisfy the 'PhD-ready' goal. Second, the curriculum should be restructured for true vendor neutrality: replace React-specific chapters with chapters on general front-end framework concepts (component models, state management patterns, routing) and remove all specific, non-standard product names from descriptions in favor of generic terms (e.g., 'relational databases' instead of 'PostgreSQL').",
+          "kind": "potentialImprovements",
+          "score": 6.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Prepare students for web developer roles\n      - MUST be in US English\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises.\n\n    ",
+        "id": "en-web-development-1",
+        "userInput": {
+          "courseTitle": "Web Development",
+          "locale": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The chapter \"Papéis Ágeis\" (Agile Roles) is slightly too generic. It lists roles like Product Owner and Scrum Master, which are specific to Scrum, but presents them as general agile roles before introducing the Scrum framework itself. It would be more accurate to introduce roles within the context of their specific frameworks (e.g., discussing Scrum roles within the Scrum section) since not all agile methodologies define roles in the same way (e.g., Kanban is less prescriptive about roles).",
+          "kind": "minorErrors",
+          "score": 9.5
+        },
+        {
+          "conclusion": "To truly meet the goal of preparing the top 1% of professionals, the curriculum could be expanded with more advanced and specialized topics. Suggestions include:\n1.  **Agile Product Discovery:** A dedicated chapter on techniques like Lean UX, Design Thinking, and continuous discovery to complement the delivery-focused chapters.\n2.  **Agile Coaching Mastery:** Expanding beyond the leadership chapter to delve into the specific competencies of an Agile Coach, such as professional coaching, mentoring, and facilitating at an organizational level.\n3.  **Business Agility:** A chapter focusing on how to apply agile principles across the entire organization (HR, finance, marketing) to create a truly responsive enterprise.\n4.  **Lean Portfolio Management:** A chapter on managing budgets, initiatives, and strategy at the portfolio level in an agile manner, a key skill in large-scale transformations.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - It's fine (and expected) to mention popular frameworks like Scrum and Kanban as part of the methodologies\n      - MUST be in Brazilian Portuguese\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises.\n\n    ",
+        "id": "pt-metodologias-ageis-1",
+        "userInput": {
+          "courseTitle": "Metodologias Ágeis",
+          "locale": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The curriculum is comprehensive, well-structured, and follows all major instructions. The progression from fundamentals to advanced topics is logical and mirrors a rigorous academic path toward mastery.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There is a minor typo ('Cinetica' should be 'Cinética'). More significantly, the curriculum lacks a dedicated chapter on Stereochemistry. This is a fundamental and complex topic in organic chemistry that is essential for reaching the 'top 1%' level, and its omission as a standalone topic is a notable gap in an otherwise comprehensive course.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "To better meet the goal of creating a 'top 1%' expert, the curriculum would be significantly improved by adding dedicated chapters on Stereochemistry, Polymer Chemistry, Advanced Organic Synthesis & Retrosynthesis, and Organometallic Chemistry. These topics are crucial for both advanced academic study and high-level industrial roles. Additionally, correcting the typo in 'Cinetica' and retitling the chapter to 'Cinética Química' would improve quality.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Spanish\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises.\n\n    ",
+        "id": "es-quimica-1",
+        "userInput": {
+          "courseTitle": "Química",
+          "locale": "es"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The curriculum is excellent and covers the equivalent of a strong undergraduate and master's degree in economics. However, to truly prepare someone to be in the 'top 1%', which implies readiness for PhD-level research and thought leadership, a few key areas could be added or expanded upon:\n\n1.  **Advanced Causal Inference**: While 'impact evaluation' is mentioned, a dedicated chapter on advanced causal inference methods (e.g., Instrumental Variables, Regression Discontinuity, Difference-in-Differences) is crucial for modern empirical work.\n2.  **Computational Economics**: A chapter on computational methods, including numerical optimization, simulation, and agent-based modeling, would cover a critical and growing skillset in the field.\n3.  **History of Economic Thought**: Adding a chapter on the evolution of economic ideas (Smith, Marx, Keynes, Hayek, etc.) would provide essential historical and philosophical context that is part of a truly deep education in the subject.\n4.  **Heterodox Economics**: To be a top-tier economist, one should be aware of critiques and alternative schools of thought (e.g., Post-Keynesian, Austrian, Feminist Economics).",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises.\n\n    ",
+        "id": "en-economics-1",
+        "userInput": {
+          "courseTitle": "Economics",
+          "locale": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The curriculum is highly comprehensive and well-structured. However, to truly prepare a learner to be in the 'top 1%' of the field as requested, it could be expanded to include a few more key sub-disciplines that are at the forefront of modern neuroscience. Suggested additions include: a chapter on Neuroimmunology (the interaction between the nervous and immune systems), Social Neuroscience (the neural basis of social cognition and behavior), the Neuroscience of Consciousness (a fundamental and advanced topic), and Comparative Neuroscience (to provide evolutionary context).",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises.\n\n    ",
+        "id": "pt-neurociencia-1",
+        "userInput": {
+          "courseTitle": "Neurociência",
+          "locale": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The curriculum is missing a dedicated chapter on progressive tenses (e.g., 'estoy comiendo'). This is a fundamental grammatical structure in Spanish, used to describe actions in progress, and its absence is a notable gap in an otherwise comprehensive course. It should ideally be introduced at the A2 level.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "The main improvement would be to add a dedicated chapter on Progressive Tenses. Another suggestion is to split the chapter \"Advanced Prepositions and Idioms\" into two separate chapters: one focusing specifically on advanced prepositions (like the crucial distinction between 'por' and 'para') and another on common idiomatic expressions suitable for an intermediate level. This would provide better focus and granularity before the C1/C2 level \"Idioms and Proverbs\" chapter.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - SHOULD cover everyday communication scenarios\n      - MUST be in English (teaching Spanish)\n      - Should reach at least A2 proficiency\n      - Don't add culture-specific chapters, just focus on language learning\n      - Don't add proficiency exam preparation chapters, just focus on language learning skills\n      - Don't add career chapter since this is an exception to the career-related rule. Main focus here is language learning\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises.\n\n    ",
+        "id": "en-spanish-1",
+        "userInput": {
+          "courseTitle": "Spanish",
+          "locale": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The curriculum fails to include several major and essential fields of Brazilian law, which is a significant omission for a course that aims to be comprehensive enough to train the 'top 1%'. Key missing areas include: Direito Agrário (Agrarian Law), Direito Urbanístico (Urban Law), and Direito Eleitoral (Electoral Law). These are not niche subjects in Brazil; they are substantial fields of practice and study, and their absence prevents the curriculum from being truly complete.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Some chapters on advanced or complex topics are too broad and lack the necessary depth. For instance, 'Direito Digital e Tecnologia' combines data protection, cybercrimes, and electronic contracts into one chapter, whereas each of these could be a detailed chapter on its own, especially data protection given the importance of Brazil's LGPD. Additionally, the description for 'Pesquisa jurídica' imprecisely refers to the STJ and STF (courts) as 'bases de dados' (databases), when they are the sources of the jurisprudence found in databases.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "To achieve the goal of creating a top-tier expert, the curriculum should be expanded. It would benefit from adding the missing major fields identified (Agrarian, Urban, Electoral Law). Furthermore, it should break down broad advanced topics into more specific chapters, such as creating dedicated modules for 'Proteção de Dados Pessoais (LGPD)', 'Legal Tech e Jurimetria', and 'Compliance'. Including chapters on practical skills like 'Oratória e Sustentação Oral' (Public Speaking and Oral Arguments) and theoretical foundations like 'Hermenêutica Jurídica' (Legal Hermeneutics) would also be crucial for reaching the highest level of expertise.",
+          "kind": "potentialImprovements",
+          "score": 7
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Should cover Brazilian Law\n      \n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises.\n\n    ",
+        "id": "pt-direito-1",
+        "userInput": {
+          "courseTitle": "Direito",
+          "locale": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The curriculum is excellent and highly comprehensive. However, to truly target the \"top 1%\" of professionals, a few additions could enhance it:\n1.  A dedicated chapter on the Cloud Operations Suite (formerly Stackdriver) would provide deeper insights into observability, covering Cloud Logging, Monitoring, Trace, and Profiler in more detail than what is implied in other chapters.\n2.  The \"GCP Compliance and Monitoring\" chapter could be split into two. Monitoring is a vast operational topic deserving its own focus, separate from the legal and regulatory aspects of compliance.\n3.  Adding a chapter on FinOps strategies would complement the \"GCP Cost Management\" chapter by covering the cultural and strategic practices of managing cloud spend, a crucial skill for leadership roles.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Can mention Google Cloud vendor since this is a vendor-specific course, so it's an exception to the rule of not using vendors.\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises.\n\n    ",
+        "id": "en-google-cloud-1",
+        "userInput": {
+          "courseTitle": "Google Cloud",
+          "locale": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The curriculum is factually accurate, up-to-date, and provides a comprehensive overview of UK law. It correctly identifies the distinct legal systems within the UK (England & Wales, Scotland, Northern Ireland), covers the core subjects of a qualifying law degree, and includes contemporary topics like the impact of Brexit and the new Solicitors Qualifying Examination (SQE) route.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The chapter titles and descriptions are concise and adhere to the specified format. The logical progression from foundational principles to specialized practice areas and advanced theory is excellent. The inclusion of practical skills chapters is a significant strength.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The curriculum is exceptionally thorough and it is difficult to suggest major improvements. To be even more forward-looking, a dedicated chapter on 'Legal Technology and the Future of Law' could be added, covering AI in law, legal tech startups, and the evolving role of legal professionals. Additionally, a specific chapter on 'Financial Services Regulation' could be beneficial, given its significance in the UK legal and economic landscape. However, these are minor additions to what is already a top-tier curriculum.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in UK English\n      - Should cover British Law\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises.\n\n    ",
+        "id": "en-uk-law-1",
+        "userInput": {
+          "courseTitle": "UK Law",
+          "locale": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The curriculum is historically accurate, covering the major periods and events of Brazilian history in a logical chronological order, followed by relevant thematic and historiographical deep dives. The key events, figures, and political/economic shifts are all correctly placed and identified.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The chapter \"Pedro I and Political Instability\" feels slightly redundant with \"Independence and the First Empire,\" as Pedro I's reign *was* the First Empire and was defined by political instability. These could be combined or re-scoped for better flow. Additionally, the description for \"The Slow Unwinding of Dictatorship\" mentions DOI-CODI, an organ of repression more strongly associated with the preceding, harsher period of the dictatorship (1968-1974) rather than the later 'abertura' period.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "While very comprehensive, to truly reach the \"top 1%\" or PhD-preparation level, the curriculum could benefit from a few more specific thematic chapters. For example, dedicated chapters on \"Brazilian Art History\" (beyond the mention of Modernism), \"Legal and Constitutional History\" (tracing the evolution through Brazil's many constitutions), and \"History of Science and Technology in Brazil\" would add even greater depth and specialized knowledge.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises.\n\n    ",
+        "id": "en-brazilian-history-1",
+        "userInput": {
+          "courseTitle": "Brazilian History",
+          "locale": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The curriculum is exceptionally comprehensive and well-structured. It covers the source material (the books), the adaptations (films), the expanded universe (plays, companion books, Pottermore), and the meta-context (fandom, cultural impact, literary analysis, and controversies). The progression from foundational knowledge to deep-dive analysis is logical. The breakdown of characters, magical elements, and book-by-book analysis is thorough and appropriate for someone aiming for 'top 1%' knowledge. There are no significant gaps or improvements to suggest.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n        - MUST be in US English\n        - Should not cover career-related chapters since this is a pop culture topic\n\n        \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises.\n\n      ",
+        "id": "en-harry-potter-1",
+        "userInput": {
+          "courseTitle": "Harry Potter",
+          "locale": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "course-chapters"
+}

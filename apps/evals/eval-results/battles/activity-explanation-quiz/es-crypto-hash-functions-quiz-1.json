@@ -1,0 +1,167 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: Questions, options, and feedback must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Security scenarios where learners must apply hash properties (irreversibility, avalanche effect, collision resistance) to real situations\n   - GOOD PATTERN: Situations requiring understanding of why certain hash behaviors matter for security\n   - BAD PATTERN: Asking to list hash properties or define terminology without application context\n   - BAD PATTERN: Questions about specific terms like \"avalanche effect\" without practical application\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Hashing being the same as encryption (hashing is ONE-WAY and irreversible; encryption is designed to be reversible with a key)\n   - Hash functions producing unique outputs (collisions are mathematically possible, just extremely unlikely for good functions)\n   - Longer hashes always being more secure (algorithm quality matters more than length)\n   - MD5 or SHA-1 being secure for cryptographic purposes (both have known vulnerabilities)\n\n3. FORMAT FIT: Multiple choice works for security scenarios. Match columns work for connecting hash properties to their practical implications.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-15T20:45:08.557Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model represents the gold standard for this task. It provides a robust set of 8 questions with diverse scenarios (software updates, bank passwords, forensic analysis). The feedback is exceptional—it not only confirms the correct answer but explicitly explains why the distractors are incorrect, tackling common misconceptions (like 'hashes are encryption'). The match-column question is well-designed, and the fill-in-the-blank template is clear. It perfectly adheres to the 'application over memorization' rule.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "An excellent output that closely rivals the top model. It uses varied formats effectively, including a 'Sort Order' question for authentication steps which fits the format criteria perfectly. The scenarios are practical (pharmaceutical supply chain, contract modification). The feedback is detailed and educational. It sits slightly below Model B only because Model B's feedback felt marginally more conversational and direct in addressing specific misconceptions.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very strong performance. It adopts a highly accessible, conversational tone ('Imagine you have...', 'You are reviewing...'). It includes a logical Sort Order question regarding the verification process. The scenarios are solid applications of the concepts. It receives a slightly lower score than B and C simply because it offers slightly fewer questions (6 vs 8), but the quality is high.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Technically superior in its nuance. Question 4, regarding the risk of deduplication using hashes, offers a sophisticated answer choice ('Reasonable but not absolute guarantee'), showing deep understanding of the topic. However, with only 5 questions, it has less breadth than the top-tier models. Ideally, a quiz of this quality would be slightly longer to cover more ground.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "A solid, adequate quiz. The scenarios are vivid (Digital Notary, Paint Mixing analogy). The content is accurate and the feedback is helpful. It falls into the middle tier because while good, it doesn't offer the depth of feedback found in B/C or the technical nuance of D.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Functional and accurate, but a bit dry. The scenarios are generic ('An application compares...', 'A system stores...'). While it avoids major pitfalls, the feedback is less comprehensive than higher-ranked models. It meets the requirements but doesn't exceed them.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Below average due to simplicity. While the questions are technically correct, they feel somewhat repetitive and basic. The scenarios don't challenge the learner as much as the others. Question 1's distractor explanation is a bit repetitive. It lacks the polish and depth of the better models.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model fails the 'Application vs Definition' criteria. Almost every question follows the pattern: 'Here is a scenario, which property is this?'. This tests vocabulary (labeling the property) rather than predicting outcomes or understanding mechanisms. The prompt specifically warned against questions about specific terms without practical application context.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Cumple muy bien el requisito de español y, sobre todo, plantea escenarios aplicados (integridad en descargas, forense, bases de datos grandes, mensajería, ataque por colisión). Evita confundir hashing con cifrado e incluye buenas explicaciones en feedback tanto para correctas como incorrectas. El único punto débil es que incluye un fillBlank algo más cercano a “recordar palabras” (fija/avalancha/irreversible), aunque está bien contextualizado y explicado.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Preguntas claramente situacionales y bien alineadas con aplicación (QA, efecto avalancha, filtración de hashes, deduplicación con matiz de colisiones). Excelente que corrija explícitamente el mito de “hash igual => idéntico con certeza absoluta”. Feedback sólido y formato coherente (MC + match). Cobertura algo más corta que B/C, pero no es requisito; la calidad es alta.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Conjunto amplio y mayormente aplicado con buen feedback. Incluye determinismo y lo usa bien en fillBlank. Sin embargo, tiene fallos/ambigüedades importantes: (1) en matchColumns asocia “Verificar que un software descargado… no fue alterado” con “Compresión a longitud fija” cuando la propiedad clave para detectar alteración es el efecto avalancha/integridad (la longitud fija ayuda pero no es lo principal); (2) en una opción incorrecta afirma que la resistencia a colisiones “asegura que cada fórmula diferente tenga un hash único”, lo cual sugiere unicidad absoluta (pitfall). Esos detalles bajan la precisión.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Correcto técnicamente, todo en español, y escenarios razonables. Buen matchColumns y MC centrados en propiedades prácticas. Aun así, varias preguntas se sienten más cercanas a identificar la “propiedad” correcta que a tomar decisiones o razonar sobre seguridad en un caso (ligeramente más reconocimiento que aplicación). Feedback correcto pero menos rico que en B/D.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Tiene escenarios y feedback aceptable, pero hay un error claro en el ejercicio de emparejar: vincula “Salida siempre del mismo tamaño” con “Compresión de datos” como si fuera la propiedad correcta (cuando debería ser longitud fija/salida de tamaño fijo; “compresión de datos” es engañoso en este contexto y puede inducir a confundir con compresión tipo ZIP). También algunas preguntas son más generales (“¿Para qué sirve comparar hashes?”) y menos situacionales que otras propuestas.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "En general correcto y en español, con escenarios simples. Problemas: varias preguntas se acercan a afirmaciones genéricas y previsibles; además hay errores de formato (comillas extra al final de varias preguntas) que afectan claridad. En la pregunta de colisiones dice “prácticamente imposible” para dos documentos distintos, lo cual es aceptable como probabilidad, pero podría matizar mejor que colisiones son posibles en teoría (D lo hace mejor).",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Mezcla escenarios con cierto tono metafórico (“átomo… galaxia”) y feedback algo florido; no es grave pero se aleja del estilo claro/conversacional recomendado. En el fillBlank usa ‘imposible’ como respuesta (“prácticamente imposible”), lo cual puede empujar a la idea de imposibilidad absoluta si el alumno no capta el matiz. El sortOrder es apropiado, pero el conjunto es menos preciso/riguroso que B/D/G.",
+          "score": 5.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Varias preguntas y feedback introducen metáforas explícitas (“como mezclar pintura”) y un fillBlank que depende de esa analogía, lo que choca con la guía de evitar referencias a metáforas/explicación. Además, algunos feedback usan exclamaciones y un tono menos profesional. Aunque el contenido central es mayormente correcto, la parte de fillBlank es más memorización/vocabulario y menos aplicación, y la analogía puede sesgar la evaluación.",
+          "score": 4.8
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model B provides 8 diverse, well-constructed questions in Spanish. Questions test understanding through novel scenarios (software updates, forensic analysis, database comparisons, messaging apps). All multiple choice questions have detailed feedback explaining WHY each option is correct/incorrect. The matchColumns format connects hash properties to practical implications appropriately. The fillBlank question tests conceptual understanding of hash function mechanisms. Questions avoid common accuracy pitfalls (no confusion of hashing with encryption). Feedback quality is excellent throughout. The forensic scenario (question 3) is particularly creative. Minor issue: one or two questions could be seen as slightly testing terminology rather than pure application, but overall excellent application focus.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model C offers 8 questions covering all key hash properties with novel scenarios (banking transactions, pharmaceutical supply chain, authentication login process). Excellent feedback quality explaining reasoning. The sortOrder question on authentication login is appropriately used - the concept genuinely involves a sequence. The matchColumns format connects scenarios to properties well. Questions are in Spanish with clear, conversational tone. Slight weakness: some questions (like Q1 about fixed-length output) are somewhat closer to identifying properties rather than applying them in complex scenarios. The pharmaceutical scenario (Q8) tests combining multiple properties well. Very solid overall.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model H provides 6 questions with good scenario variety (4K movie vs text file, 100-page contract, social network password breach). Feedback is generally good with explanations. The sortOrder question about verifying downloaded files is well-suited since it genuinely involves a sequence. The fillBlank question tests collision concept appropriately. Language is conversational Spanish. Weakness: some questions like Q1 and Q2 feel slightly simpler and more about identifying properties than applying them in complex decision-making scenarios. The matchColumns question is appropriate. Good quality but not quite as sophisticated in application as top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D has 5 questions that test hash concepts well. The scenarios are novel (QA team comparing downloads, cloud file deduplication). Question 4 about deduplication and collision risk is particularly nuanced - correctly noting that hash matching is 'reasonable but not absolute guarantee.' Feedback quality is good, explaining reasoning. The matchColumns format is appropriately used. Language is clear Spanish. However, only 5 questions may limit coverage. Some questions could push application deeper. The nuance in Q4 about collision risk is excellent and shows technical accuracy.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model F has 5 questions in Spanish. Good scenarios (notary verifying contracts, comparing 5KB vs 4GB files, social network database breach). Feedback is detailed and explanatory. The matchColumns question appropriately connects scenarios to properties. The fillBlank tests irreversibility and collision concepts. All content appears technically accurate. However, only 5 questions provides less coverage than some other models. Some questions feel slightly more straightforward than the top performers. Language is clear and conversational. Solid but not exceptional.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model G provides 5 questions testing hash properties. Questions are in Spanish with clear scenarios. However, some questions like Q1-Q4 feel more like 'identify which property this demonstrates' rather than 'apply your understanding to solve this novel situation.' The matchColumns question is appropriate but similar to other models. Feedback is adequate but less detailed than top performers. The questions are technically accurate but lean toward recognition/classification rather than deep application. Missing some scenario complexity seen in top models.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model E has 5 questions in Spanish. Questions cover key hash properties. However, several weaknesses: Q1 and Q2 are fairly straightforward property identification questions. The matchColumns connections are somewhat simplistic. Some feedback explanations are brief (e.g., 'Incorrecto. Un cambio pequeño provoca cambios masivos'). Questions are technically accurate but don't push application as deeply as higher-ranked models. The cooking recipe scenario (Q4) is a bit forced. Coverage is adequate but depth of application could be stronger.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model A has 5 questions but several issues: Questions lack proper Spanish accents (contrasena instead of contraseña, tamano instead of tamaño). Feedback is very brief - often just one sentence without much explanation of WHY answers are right/wrong. Question wording is abbreviated and less conversational ('¿Para que sirve comparar hashes?' lacks accent). Some scenarios feel minimal rather than rich contexts. The collision question (Q3) is good conceptually. While technically accurate, the overall polish and feedback quality are below other models.",
+          "score": 3
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-explanation-quiz",
+  "testCaseId": "es-crypto-hash-functions-quiz-1"
+}

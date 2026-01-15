@@ -1,0 +1,52 @@
+{
+  "generatedAt": "2026-01-15T19:15:16.546Z",
+  "modelId": "openai/gpt-4.1-nano",
+  "outputs": [
+    {
+      "duration": 2190.3091249999998,
+      "inputTokens": 1231,
+      "output": "{\n  \"description\": \"Frontend development involves creating the visual and interactive aspects of web applications. It enables the building of responsive, accessible interfaces, opening opportunities in tech companies, creative agencies, and freelance work.\"\n}",
+      "outputTokens": 41,
+      "systemPrompt": "",
+      "testCaseId": "en-frontend-development-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 3222.7499170000083,
+      "inputTokens": 1229,
+      "output": "{\n  \"description\": \"French language skills enhance communication in personal, academic, and professional settings, opening doors to international opportunities. Covers speaking, listening, reading, and writing to achieve functional proficiency. Prepares you for careers in diplomacy, tourism, education, and global business.\"\n}",
+      "outputTokens": 55,
+      "systemPrompt": "",
+      "testCaseId": "en-french-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 2257.834125000023,
+      "inputTokens": 1231,
+      "output": "{\n  \"description\": \"Inteligência Artificial desenvolve sistemas capazes de identificar padrões, tomar decisões e automatizar tarefas complexas. Cobre algoritmos, aprendizado de máquina e aplicações práticas que impulsionam inovação em diversos setores. Prepara profissionais para atuar em empresas de tecnologia, startups e pesquisa avançada.\"\n}",
+      "outputTokens": 62,
+      "systemPrompt": "",
+      "testCaseId": "pt-inteligencia-artificial-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 2697.5842080000148,
+      "inputTokens": 1230,
+      "output": "{\n  \"description\": \"El desarrollo web crea sitios y aplicaciones en línea, abordando desde el diseño hasta la implementación de funcionalidades. Incluye conceptos clave para construir experiencias digitales efectivas y seguras, preparándote para trabajar en agencias, startups o como freelancer en el ámbito tecnológico.\"\n}",
+      "outputTokens": 57,
+      "systemPrompt": "",
+      "testCaseId": "es-desarrollo-web-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 2872.4013749999867,
+      "inputTokens": 1230,
+      "output": "{\n  \"description\": \"The Matrix delves into the iconic sci-fi franchise, analyzing its themes, storytelling, visual effects, and cultural impact. Provides a comprehensive understanding of its influence on modern cinema and pop culture, ideal for enthusiasts and students of film and media.\"\n}",
+      "outputTokens": 53,
+      "systemPrompt": "",
+      "testCaseId": "en-the-matrix-1",
+      "userPrompt": ""
+    }
+  ],
+  "taskId": "course-description"
+}

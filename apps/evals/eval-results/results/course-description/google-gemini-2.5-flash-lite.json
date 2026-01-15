@@ -1,0 +1,141 @@
+{
+  "modelId": "google/gemini-2.5-flash-lite",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is excellent and follows all instructions perfectly. There are no necessary improvements. One could argue for a very minor stylistic change in the second sentence from the imperative \"Build...\" to a gerund like \"Building...\" to match the descriptive tone of the other two sentences, but the current version is arguably more direct and impactful. The quality is extremely high.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should define what frontend development is (creating user interfaces)\n      - Should NOT list technical tools/technologies (HTML, CSS, JavaScript, etc.)\n      - Should specify career opportunities\n      - Should be in US English\n\n      \n  - Must be **1-3 sentences** maximum\n  - Must be written in the specified language (en, pt, or es)\n  - Must go **straight to the point** — no fluff, fillers, or unnecessary words\n  - Must NEVER use words like \"learn\", \"understand\", \"explore\", \"introduction to\", \"basics of\", \"comprehensive guide to\", \"master\", etc.\n  - Must define **what the topic is**\n  - Must explain **what learners will gain** from the course\n  - Must convey **why this is important**\n  - Must **avoid technical jargon** — write for someone with no prior knowledge\n  - Must focus on outcomes and career opportunities rather than specific tools/technologies\n  - For professional topics: Must specify **career opportunities** and **work environments** (e.g., \"work at tech companies, agencies, or as a freelancer\")\n  - For languages: Must reference CEFR levels (A1 to C2) and communication abilities\n  - For hobbies/pop culture: Should focus on comprehensive coverage without career implications\n  - Should be **concise**, **clear**, and **specific**\n\n    ",
+        "id": "en-frontend-development-1",
+        "userInput": {
+          "locale": "en",
+          "title": "Frontend Development"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The response fully adheres to all instructions. It correctly identifies the course type (language) and includes the required elements such as CEFR levels (A1 to C2), communication abilities (conversation, reading, writing, listening), and career/personal opportunities (international business, diplomacy, tourism). It also respects the 1-3 sentence limit.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The wording is excellent and professional. It successfully avoids all forbidden words like 'learn' or 'master' while still conveying the course's objective clearly by using 'Achieve fluency'. The structure is logical and compelling.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The description is concise, informative, and inspiring, perfectly matching the user's request. It's difficult to see how this response could be improved without adding unnecessary words or sacrificing clarity. It serves as an exemplary response for the given prompt.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should define what French proficiency means\n      - Should mention CEFR progression (A1 to C2)\n      - Should explain communication abilities and opportunities\n      - Should be in US English\n\n      \n  - Must be **1-3 sentences** maximum\n  - Must be written in the specified language (en, pt, or es)\n  - Must go **straight to the point** — no fluff, fillers, or unnecessary words\n  - Must NEVER use words like \"learn\", \"understand\", \"explore\", \"introduction to\", \"basics of\", \"comprehensive guide to\", \"master\", etc.\n  - Must define **what the topic is**\n  - Must explain **what learners will gain** from the course\n  - Must convey **why this is important**\n  - Must **avoid technical jargon** — write for someone with no prior knowledge\n  - Must focus on outcomes and career opportunities rather than specific tools/technologies\n  - For professional topics: Must specify **career opportunities** and **work environments** (e.g., \"work at tech companies, agencies, or as a freelancer\")\n  - For languages: Must reference CEFR levels (A1 to C2) and communication abilities\n  - For hobbies/pop culture: Should focus on comprehensive coverage without career implications\n  - Should be **concise**, **clear**, and **specific**\n\n    ",
+        "id": "en-french-1",
+        "userInput": {
+          "locale": "en",
+          "title": "French"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response violates a key negative constraint provided in the expectations: \"Should NOT list specific subfields as technical details\". The second sentence lists several technical subfields of AI: \"algoritmos de aprendizado de máquina\" (machine learning algorithms), \"análise de dados\" (data analysis), and \"processamento de linguagem natural\" (natural language processing). This is a direct failure to follow the provided instructions and expectations.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "The phrasing of the second sentence, \"Este curso abrange...\" (\"This course covers...\"), is slightly weak and course-centric. The style guide advises against similar patterns like \"This course will teach you...\" to focus on outcomes rather than the course itself. Additionally, the career section mentions \"diversas indústrias\" (various industries), which is vaguer than the examples provided in the prompt (e.g., \"tech companies, consulting firms, or research institutions\").",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The description could be improved by removing the list of technical subfields and instead describing the capabilities learners will gain in more general terms. For example, instead of listing subfields, it could say something like \"it enables the creation of systems that make predictions, automate complex tasks, and process human language.\" The career section could also be more specific about the types of companies or work environments, as seen in the prompt's examples.",
+          "kind": "potentialImprovements",
+          "score": 7.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should define what artificial intelligence is\n      - Should NOT list specific subfields as technical details\n      - Should specify career opportunities\n      - Should be in Brazilian Portuguese\n\n      \n  - Must be **1-3 sentences** maximum\n  - Must be written in the specified language (en, pt, or es)\n  - Must go **straight to the point** — no fluff, fillers, or unnecessary words\n  - Must NEVER use words like \"learn\", \"understand\", \"explore\", \"introduction to\", \"basics of\", \"comprehensive guide to\", \"master\", etc.\n  - Must define **what the topic is**\n  - Must explain **what learners will gain** from the course\n  - Must convey **why this is important**\n  - Must **avoid technical jargon** — write for someone with no prior knowledge\n  - Must focus on outcomes and career opportunities rather than specific tools/technologies\n  - For professional topics: Must specify **career opportunities** and **work environments** (e.g., \"work at tech companies, agencies, or as a freelancer\")\n  - For languages: Must reference CEFR levels (A1 to C2) and communication abilities\n  - For hobbies/pop culture: Should focus on comprehensive coverage without career implications\n  - Should be **concise**, **clear**, and **specific**\n\n    ",
+        "id": "pt-inteligencia-artificial-1",
+        "userInput": {
+          "locale": "pt",
+          "title": "Inteligência Artificial"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response does not explicitly \"convey why this is important,\" which was a specific requirement in the prompt. While the importance is implied by the topic itself, the examples provided in the instructions (e.g., for Data Science: \"transforms raw data into actionable insights for business decisions\") show that an explicit statement of importance was expected.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The description is very good but could be improved by adding a phrase that directly states the importance of web development in the modern world, as per the instructions. The phrasing of the second sentence (\"Cubre la creación de...\") is slightly less outcome-oriented than the phrasing in the third sentence (\"Permite trabajar en...\"); aligning the style to be consistently focused on what it enables would make it stronger.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should define what web development is\n      - Should NOT list technical tools/technologies (HTML, CSS, JavaScript, etc.)\n      - Should specify career opportunities\n      - Should be in Latin American Spanish\n\n      \n  - Must be **1-3 sentences** maximum\n  - Must be written in the specified language (en, pt, or es)\n  - Must go **straight to the point** — no fluff, fillers, or unnecessary words\n  - Must NEVER use words like \"learn\", \"understand\", \"explore\", \"introduction to\", \"basics of\", \"comprehensive guide to\", \"master\", etc.\n  - Must define **what the topic is**\n  - Must explain **what learners will gain** from the course\n  - Must convey **why this is important**\n  - Must **avoid technical jargon** — write for someone with no prior knowledge\n  - Must focus on outcomes and career opportunities rather than specific tools/technologies\n  - For professional topics: Must specify **career opportunities** and **work environments** (e.g., \"work at tech companies, agencies, or as a freelancer\")\n  - For languages: Must reference CEFR levels (A1 to C2) and communication abilities\n  - For hobbies/pop culture: Should focus on comprehensive coverage without career implications\n  - Should be **concise**, **clear**, and **specific**\n\n    ",
+        "id": "es-desarrollo-web-1",
+        "userInput": {
+          "locale": "es",
+          "title": "Desarrollo Web"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response violates a key negative constraint by using the word 'explores'. The instructions explicitly state: 'NEVER use words like \"learn\", \"understand\", \"explore\", \"introduction to\", \"basics of\", \"comprehensive guide to\", \"master\", etc.'. Using a forbidden word is a major failure to follow the instructions.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "None.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The main improvement would be to rephrase the second sentence to avoid the forbidden word 'explores'. For example: 'It covers themes of control, free will, and the nature of existence...' Additionally, the phrase 'offer a deep dive' in the third sentence is a bit of an idiom that could be stated more directly to better align with the 'go straight to the point' instruction.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - Should define what The Matrix is\n      - Should convey cultural importance\n      - Should NOT mention career opportunities (pop culture topic)\n      - Should be in US English\n\n      \n  - Must be **1-3 sentences** maximum\n  - Must be written in the specified language (en, pt, or es)\n  - Must go **straight to the point** — no fluff, fillers, or unnecessary words\n  - Must NEVER use words like \"learn\", \"understand\", \"explore\", \"introduction to\", \"basics of\", \"comprehensive guide to\", \"master\", etc.\n  - Must define **what the topic is**\n  - Must explain **what learners will gain** from the course\n  - Must convey **why this is important**\n  - Must **avoid technical jargon** — write for someone with no prior knowledge\n  - Must focus on outcomes and career opportunities rather than specific tools/technologies\n  - For professional topics: Must specify **career opportunities** and **work environments** (e.g., \"work at tech companies, agencies, or as a freelancer\")\n  - For languages: Must reference CEFR levels (A1 to C2) and communication abilities\n  - For hobbies/pop culture: Should focus on comprehensive coverage without career implications\n  - Should be **concise**, **clear**, and **specific**\n\n    ",
+        "id": "en-the-matrix-1",
+        "userInput": {
+          "locale": "en",
+          "title": "The Matrix"
+        }
+      }
+    }
+  ],
+  "taskId": "course-description"
+}

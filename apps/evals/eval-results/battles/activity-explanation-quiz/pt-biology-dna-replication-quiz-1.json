@@ -1,0 +1,167 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: Questions, options, and feedback must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Scenarios requiring understanding of WHY replication works as it does (directionality constraints, error correction needs)\n   - GOOD PATTERN: Situations where learners must predict outcomes of replication errors or enzyme malfunctions\n   - BAD PATTERN: Asking to name enzymes or describe their functions without application context\n   - BAD PATTERN: Questions referencing the \"zipper\" metaphor or other explanation-specific content\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Both DNA strands being synthesized the same way (leading strand is continuous; lagging strand is synthesized in Okazaki fragments)\n   - DNA polymerase being able to start synthesis on its own (it needs a primer)\n   - Replication being error-free (proofreading catches most errors but some slip through)\n   - Replication happening randomly along the chromosome (it starts at specific origins)\n\n3. FORMAT FIT: Sort order works well for replication sequence. Fill blank works for enzyme roles. Multiple choice for understanding why the process works as it does.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-15T20:45:12.680Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model provides the highest quality output by focusing strictly on 'Understanding over Memorization'. The questions present novel biological scenarios (e.g., a specific mutation in helicase, a specific DNA sequence to replicate) that require the learner to apply their mental model of the process to predict outcomes, rather than just recalling facts. The feedback is excellent, explaining the 'why' behind the correct and incorrect answers. The format variety is appropriate, and the sequence generation question specifically tests the directionality concept rigorously.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model H excels at the 'Application to Novel Scenarios' criterion by using clever analogies (restoring a mosaic, bricklayers walking backwards, a typist using backspace) to test the underlying mechanisms of replication (templates, directionality, proofreading). This approach effectively bypasses rote memorization. The feedback ties the analogies back to the biological concepts perfectly. It is ranked slightly below Model A only because Model A's scenarios are more directly applicable to biological problem-solving.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C follows the guidelines well, offering creative scenarios (like the road painting machine) to test directionality concepts. The feedback is conversational and educational. It effectively uses the 'Match Columns' format to link concepts to objectives. It is a strong entry, though slightly less rigorous in its scientific application scenarios compared to Model A.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model uses 'scientific context' well (e.g., 'A researcher observes...', 'An experiment shows...'), which elevates the questions above simple recall. It adheres to all constraints, provides accurate feedback, and covers the necessary concepts (directionality, error rates). It is a solid, high-quality quiz.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model E provides a comprehensive set of questions with good variety. However, it leans a bit more towards recall (e.g., 'What must happen first?') compared to the top models. While it includes a good application question at the end (mutant bacteria), the earlier questions are somewhat standard. It is technically accurate and follows the format guidelines.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model D produces a competent but generic quiz. The questions are grammatically correct and scientifically accurate, but they represent standard textbook questions (e.g., 'Why does the cell copy its DNA?') rather than the application-based scenarios requested in the prompt. It meets the minimum requirements but fails to shine in 'Application to Novel Scenarios'.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model is penalized for explicitly violating the 'Topic-Specific Guidance' which listed 'Questions referencing the zipper metaphor' as a 'BAD PATTERN'. Question 6 directly asks the user to match 'Open zipper' to 'Helicase'. While the rest of the quiz is adequate, ignoring a specific negative constraint lowers the score significantly.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model B fails significantly on the Language Requirement. The Portuguese text completely lacks necessary diacritics/accents (e.g., 'celula' instead of 'célula', 'nao' instead of 'não', 'helice' instead of 'hélice'). This makes the output professionally unacceptable for an educational tool in that language. The content is also simplistic.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Conjunto forte de questões majoritariamente de aplicação (helicase inativa; defeito de proofreading; interpretação de forquilha com síntese contínua vs. fragmentada). Boa aderência aos “accuracy pitfalls” (explica 5'→3', fragmentos, erros existem e são corrigidos). Feedback geralmente explica por que as alternativas estão erradas. Único ponto fraco relevante: a questão de sequência complementar (ATGCCA→TACGGT) é mais procedimental/mecânica do que aplicação conceitual, aproximando-se de memorização de pareamento/orientação; ainda assim está correta e bem explicada. O sortOrder é bem encaixado no tema.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Boa qualidade geral, com cenários relativamente novos (bactéria com cromossomo de 4 milhões de pb; taxa de erro observada) e feedback explicativo. Cobre direção 5'→3', síntese em fragmentos e correção de erros sem afirmar que replicação é perfeita. Formatos usados têm bom “fit” (MC + sort + match + fill). Penalizações: usa metáfora de “zíper” explicitamente (banido) no matchColumns; e algumas perguntas ainda ficam um pouco próximas de “explicar a função” em vez de prever consequência em cenário (embora ainda contextualizadas).",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Ampla cobertura e, em geral, boa clareza e feedback. Inclui uma questão aplicada sobre bactéria sem correção (boa). Porém viola fortemente a orientação de não usar metáforas específicas: matchColumns e outros itens usam “zíper”, “escriba”, “revisor” etc., o que se aproxima de testar analogias/explicações em vez do mecanismo. Também há algumas questões mais descritivas (\"por que a fita antiga é essencial?\") com cara de função geral, menos de aplicação a um problema novo. Ainda assim, cientificamente correto e bem escrito.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Perguntas claras, com cenários e feedback razoáveis; aborda molde, limitação direcional e proofreading. Entretanto, depende bastante de analogias (mosaico, pedreiros, digitador/backspace), o que pode virar avaliação da metáfora mais do conceito; e não explora tanto previsão de consequências de falhas específicas quanto poderia. Não usa “zíper”, mas ainda cai na zona de “explicação por analogia” como eixo central. Cobertura e variedade ok, mas menos alinhada ao foco em aplicação mecanística direta.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Conteúdo conceitualmente correto (complementaridade, fragmentos por direção, mutações sem correção). Feedback geralmente explica. Problemas: várias questões estão muito perto de “função de X”/descrição (ex.: “O que faz a enzima que inicia a replicação?”) e citam enzimas diretamente, o que vai contra a orientação de evitar nomeação/função sem contexto aplicado. Também inclui analogias com “zíper” no matchColumns (explicitamente desaconselhado).",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Em geral correto quanto a contínua vs. descontínua e correção de erros, e usa sortOrder apropriado. Porém há violações claras: usa explicitamente a metáfora do “zíper” no enunciado (banido). Além disso, algumas questões são mais definicionais (\"Por que a célula copia seu DNA...\"; \"O que acontece com as fitas...\"), com menor exigência de raciocínio aplicado a cenários novos. Feedback é ok, mas às vezes genérico.",
+          "score": 5.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Tem bons formatos (match/sort/fill) e cobre pontos centrais, mas viola explicitamente a regra de não usar metáfora de “zíper” (aparece no feedback da Q1). Também depende fortemente de analogias extensas (manual secreto/caixa; máquina de pintar faixas), o que pode deslocar a avaliação do mecanismo real. O sortOrder contém uma ordem/descrição discutível: coloca “unir pedaços” antes de “corrigir falhas” e o feedback sugere que a correção é ‘por fim’, quando proofreading ocorre durante a síntese (embora reparos também possam ocorrer depois). Isso cria risco de concepção errada sobre o timing da correção.",
+          "score": 4.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Apesar de estar majoritariamente correto em alto nível, as perguntas são muito genéricas e frequentemente definicionais (primeiro passo; o que garante; como lida com erros), com pouca aplicação a cenários novos. Feedback tende a ser curto e às vezes superficial. Também há problemas de linguagem/acentuação (“celula”, “replicacao”, etc.) que prejudicam a exigência de português bem escrito. Não aborda pitfalls como primer/origens (não obrigatório), mas no conjunto fica aquém em profundidade e alinhamento com “understanding over memorization”.",
+          "score": 3.8
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model A provides an excellent quiz with high-quality, application-focused questions. Strong points: (1) Excellent scenario-based questions (helicase mutation, proofreading defect) that test understanding rather than memorization; (2) Includes a technical question on DNA sequence complementarity that genuinely tests understanding of directionality; (3) Feedback is detailed and explains WHY answers are correct/incorrect; (4) Good use of sortOrder format for the replication sequence; (5) Questions are in Portuguese as required; (6) No factual errors detected. Minor weaknesses: Only 5 questions total, and the sequence question might be too technical for some learners, but overall this is a well-designed quiz that prioritizes conceptual understanding.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model H delivers strong conceptual questions with excellent novel scenarios (mosaico floor restoration, construction workers analogy, typist with backspace). Strong points: (1) Questions test understanding rather than recall; (2) Novel analogies that weren't in the original explanation; (3) Includes semiconservative replication concept with good application; (4) Feedback explains reasoning well; (5) All in Portuguese; (6) No factual errors. Weaknesses: Only 5 questions with no variety in format (all multiple choice plus one sortOrder), though this isn't necessarily a problem if multiple choice tests well. The sortOrder has only 3 items which is a bit short. Overall excellent quality but slightly less depth than Model A.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model F provides a comprehensive quiz with 7 well-crafted questions. Strong points: (1) Good scenario-based questions (bacteria dividing, Y-structure observation, experimental low error rate); (2) Uses multiple formats appropriately (MC, sortOrder, matchColumns, fillBlank); (3) Detailed feedback that explains reasoning; (4) All in Portuguese; (5) Covers key concepts well. Weaknesses: Some questions are slightly more descriptive than application-focused (e.g., the matchColumns uses zipper metaphor which was warned against in guidance); the fillBlank has 5 blanks which may be excessive and tests more recall than understanding. The questions are good but lean slightly toward describing the process rather than predicting outcomes.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model E offers 8 questions with good variety of formats. Strong points: (1) Includes application scenarios (bacteria with defective correction enzymes); (2) Good feedback quality; (3) Uses multiple formats (MC, sortOrder, matchColumns, fillBlank); (4) Portuguese throughout; (5) Conceptually accurate. Weaknesses: The matchColumns uses the 'zipper' metaphor explicitly which was warned against in the guidance; some questions are more about describing what happens than predicting outcomes; the fillBlank question is relatively simple. The matchColumns format here tests recognition of metaphors rather than application of concepts. Overall solid but with some format fit issues.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model G provides 7 questions covering key concepts. Strong points: (1) Covers the main replication concepts; (2) Uses multiple formats; (3) Feedback explains reasoning; (4) Portuguese throughout; (5) Includes practical matchColumns. Weaknesses: Several questions are more recall-oriented ('O que faz a enzima que inicia a replicação?'); feedback is sometimes brief (e.g., 'Correto — enzimas como a helicase...'); the matchColumns uses zipper analogy explicitly (penalized in guidance); fillBlank question tests vocabulary ('original' and 'nova') more than concepts. Questions trend toward 'what is' rather than 'what would happen if' format.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C provides 5 questions with decent quality. Strong points: (1) Uses novel analogies (secret manual in a box, road painting machine); (2) Includes various formats; (3) Portuguese throughout; (4) Basic concepts covered. Weaknesses: The zipper metaphor appears in feedback ('como um zíper abrindo') - penalized in guidance; matchColumns format tests etapa→objetivo which is somewhat recall-based; fillBlank is simple with only 2 blanks; only 5 questions total; sortOrder feedback could be more detailed. Questions are decent but less application-focused than top models.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model D offers 5 questions with adequate quality. Strong points: (1) Covers basic concepts; (2) Portuguese throughout; (3) Uses sortOrder appropriately; (4) Feedback present for all options. Weaknesses: Uses the 'zipper' metaphor directly ('se abrindo como um zíper') - explicitly penalized in guidance; some questions are more recall-oriented; first question is relatively basic ('Por que a célula copia seu DNA?'); feedback quality is mixed (some brief); the sortOrder question oddly asks 'Por quê essa ordem faz sentido?' in the question which conflates format purposes. Less sophisticated scenario design.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model B provides only 4 questions, all multiple choice. Strong points: (1) Questions are in Portuguese; (2) Covers key concepts; (3) No major factual errors; (4) Feedback present. Significant weaknesses: (1) Only 4 questions which is minimal; (2) All are multiple choice with no format variety; (3) Some distractor options are absurd ('A cor da célula determina...', 'O formato do nucleo decide...') making questions too easy; (4) Missing accents throughout (celula, direcao, etc.) which is a language quality issue; (5) Feedback is brief and doesn't always explain WHY fully; (6) Questions lean toward 'what happens' rather than 'what would happen if'. Overall the weakest submission.",
+          "score": 3
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-explanation-quiz",
+  "testCaseId": "pt-biology-dna-replication-quiz-1"
+}

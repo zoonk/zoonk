@@ -1,0 +1,221 @@
+{
+  "expectations": "\n      - MUST be in US English\n      - This is a complex theoretical topic that needs careful breakdown\n      - Each econometric concept should be its own lesson\n      - Should separate theory from practical application\n      - Should break down assumptions individually\n      - Should not cover topics that belong to Econometric Theory II: Asymptotics: Fixed and random effects, clustered errors, dynamic panels, and difference-in-differences foundations\n      \n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n  \n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+  "judgedAt": "2026-01-15T20:54:58.209Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model A provides an outstanding lesson list with approximately 99 focused lessons covering OLS theory comprehensively. Each lesson targets a single, specific concept that can be explained within 10 short tweets. The progression from model setup through assumptions, identification, Gauss-Markov, inference, and diagnostics is logical and well-structured. Lessons are appropriately granular (e.g., separate lessons for projection matrix and residual maker matrix, individual assumption lessons). Titles are concise and specific. Descriptions are straightforward without filler. No prohibited topics (fixed/random effects, clustered errors, dynamic panels, DiD) are included. The coverage is thorough for an econometric theory course while avoiding summary/review lessons.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Model H offers approximately 87 well-focused lessons with excellent granularity and logical progression. Each lesson covers a single concept appropriately. Strong coverage of OLS geometry, assumptions, inference, and diagnostics. Notable strengths include separation of leverage concepts, DFBETAs, condition number, and proper treatment of Frisch-Waugh-Lovell. Descriptions are concise and technical. Some lessons could be slightly more specific (e.g., 'Linear Regression Model' is broad for a title), but overall the breakdown is excellent. No excluded topics appear.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model J provides approximately 98 lessons with strong focus on single concepts. Excellent progression through OLS theory, geometry, assumptions, and inference. Good separation of topics like TSS/ESS/RSS into individual lessons. Strong coverage of diagnostics and influence measures. The Frisch-Waugh-Lovell treatment is solid. Some lessons could be more granular in places, but overall very comprehensive. Descriptions are appropriately concise. No prohibited topics included.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D has approximately 98 lessons covering OLS comprehensively. Good logical progression and mostly focused lessons. However, some lessons are slightly broader than ideal (e.g., 'The Simple Linear Regression Model' could be broken down further). Strong coverage of inference, diagnostics, and robust standard errors. Includes AIC/BIC which may be borderline for this course level. Some minor redundancy exists. Overall well-structured but slightly less granular than top models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E provides approximately 68 lessons with good technical depth. Covers key OLS concepts including geometry, assumptions, Gauss-Markov, and diagnostics. Strong on robust inference topics. However, fewer lessons than expected for a complex theoretical topic - some areas could use more granularity. Missing some diagnostic details that other models include. The lesson count is below the 100+ recommendation for complex topics. Good technical descriptions but could be more comprehensive.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model K has approximately 80 lessons with decent coverage of OLS fundamentals. Logical progression from basics through inference and diagnostics. However, starts with 'What is Econometrics?' which may be too introductory and could belong elsewhere. Some lessons are appropriately focused while others could be split further. Good coverage of key concepts but less comprehensive than higher-ranked models. The RESET test and VIF coverage is good.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G provides approximately 49 lessons which is insufficient for comprehensive coverage of econometric theory. While the lessons present are well-focused and have clear titles, the overall count is too low for a complex theoretical topic. Missing important content on robust standard errors, many diagnostic tests, and detailed inference procedures. Good geometric interpretation coverage but incomplete overall.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model I has approximately 45 lessons which is significantly below what's needed. While lessons are focused and well-titled, major gaps exist in coverage including robust standard errors, multiple diagnostic tests, and detailed inference topics. Stops at Q-Q plots and residual plots without covering formal tests adequately. The foundation is solid but execution is incomplete.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model C provides approximately 56 lessons but has issues with focus and format. Many descriptions are overly terse to the point of being unclear (e.g., 'Residual sum of squares SSR' as a description). Some lessons conflate multiple concepts. The naming convention (MLR.1, MLR.2, etc.) may not be appropriate for general lesson titles. Less comprehensive than higher-ranked models with gaps in coverage.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model B has only approximately 45 lessons which is far too few for comprehensive coverage. Many lessons are too broad (e.g., 'Model Specification Errors' covers multiple concepts). Missing extensive content on inference procedures, many diagnostic tests, and detailed treatment of assumptions. Includes Durbin-Watson but this may touch on autocorrelation topics that could be considered beyond scope. Descriptions are sometimes vague.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4",
+          "reasoning": "Model F provides only approximately 46 lessons - far too few for a complex theoretical topic. Major gaps in coverage including detailed inference procedures, robust standard errors, influence diagnostics, and many other essential topics. Some lessons are overly broad (e.g., 'Specification Tests' could be multiple lessons). The brevity makes this inadequate for teaching econometric theory comprehensively.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Model H provides the most rigorous and compliant output. It adopts a matrix algebra approach suitable for a 'complex theoretical topic' and breaks down the chapter into 88 highly specific lessons. Crucially, it adheres strictly to the negative constraints regarding lesson titles: it splits concepts that other models combined (e.g., separate lessons for 'One-Sided t-Test' and 'Two-Sided t-Test') and avoids 'AND'/'VS' in titles almost entirely. The separation of theory, inference, and diagnostics is logical and clear.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model J offers a high-quality, granular list (approx. 90 lessons) with a strong focus on matrix geometry and theoretical rigor. It effectively covers the necessary components of the chapter. It scores slightly lower than Model H because of minor formatting choices in titles (using hyphens to list concepts like 'TSS-ESS-RSS') and slightly less precision in splitting specific hypothesis testing concepts.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D provides the most extensive list (104 lessons) and excellent granularity. It covers simple regression before moving to multiple regression, which is a valid pedagogical approach but perhaps less purely 'theoretical' than the matrix-first approach of H and J. It receives a lower score because it violates the title constraints several times (e.g., 'Residuals vs. Error Terms', 'Restricted vs. Unrestricted Models').",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E is a strong entry with good depth in matrix algebra and geometry (~75 lessons). Its descriptions are detailed and accurate. However, it violates the title constraints occasionally (e.g., 'Outlier versus influential observation') and is less comprehensive in lesson count compared to the top three.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model A has excellent content depth and granularity (~90 lessons), covering the geometry of OLS extensively. However, it flagrantly ignores the negative constraint regarding lesson titles, frequently using 'AND' and 'VS' (e.g., 'Fitted Values and Residuals', 'Exogeneity vs. Endogeneity', 'Type I and Type II Errors'). This necessitates a significant penalty despite the high quality of the content.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model K provides a decent list of 76 lessons but is less detailed than the higher-ranked models. It contains a few title violations ('Two-Tailed vs. One-Tailed') and lacks the deep geometric breakdown seen in models A, H, and J.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model C follows the formatting rules reasonably well but is too short (57 lessons) to fully cover the 'complex theoretical topic' with the required granularity. It misses the depth of diagnostic and inferential breakdown found in the top models.",
+          "score": 4.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G is too short (45 lessons) and misses significant detail required for a comprehensive theoretical chapter. The titles are clean, but the coverage is insufficient.",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4",
+          "reasoning": "Model F is very short (47 lessons) and lacks the necessary granularity. It reads more like a syllabus topic list than a breakdown of micro-lessons.",
+          "score": 2.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model I is too short (46 lessons) and fails the title constraints (e.g., 'Residual vs Fitted Plots'). The content is superficial compared to the requirements.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model B is the shortest list (44 lessons) and fails to provide the complex breakdown requested. It also violates title constraints ('Exogeneity vs. Endogeneity').",
+          "score": 1.2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Most complete and correctly sequenced progression for an OLS/CLM chapter: model setup → OLS algebra/geometry → rank/identification → assumptions broken out individually → finite-sample inference (t/F) → functional form tools and diagnostics. Also clearly distinguishes assumptions and includes practical diagnostic responses. Main drawback: includes explicit asymptotics (consistency/asymptotic normality) which the prompt says to avoid for this chapter, and the list is not “>100 lessons.” Still the strongest overall on content granularity and coverage.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very strong theory-first structure with good micro-topics and tight titles (no “and/or/vs”). Separates core geometry and inference cleanly, and includes robust inference and diagnostics. However, it goes further into asymptotic/robust theory (robust t/F justified by large-sample approximations) and adds some extra inference framing that may belong later. Also still far short of the “extensive” >100 lesson expectation.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5",
+          "reasoning": "High-quality breakdown with clear sequencing and many bite-sized concepts, plus helpful distinction between exact (normality-based) vs large-sample ideas. Good coverage of geometry, assumptions, inference, and diagnostics. Key violations: includes asymptotic normality/large-sample framing (disallowed per prompt) and adds several applied diagnostic plot topics that start to sprawl. Still, lesson granularity is generally excellent.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Solid coverage of core OLS machinery, assumptions, inference, and diagnostics; many lessons are specific and defensible as 10-tweet units. Problems: includes substantial asymptotics (consistency, asymptotic normality, sandwich) and Newey–West/autocorrelation robust SEs (often taught with time-series/HAC concerns and closer to later material). Also has occasional redundancy (e.g., multiple rank/full-rank lessons) and is not close to the requested scale.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Broad coverage including many practical diagnostics and common inference pieces. But it violates several constraints: includes AIC/BIC (model selection) which is off-chapter per the prompt’s focus; includes more time-series flavored items (strict vs contemporaneous exogeneity, autocorrelation tests, Newey–West) that drift toward later topics; and many lessons are too broad/introductory (“What is Econometrics?”, “Deriving OLS Estimators”). Not sufficiently atomized.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Decent CLM/OLS outline with diagnostics, but too many broad/intro lessons and multiple titles use “vs” (explicitly discouraged). Includes AIC/BIC-style model selection ideas indirectly via “model specification errors” and other extras; also contains underidentification/order condition content that feels more IV/identification-general than OLS chapter basics. Still coherent, but not as well scoped or granular.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good core geometry/MLR assumptions and classical inference pieces, with some nice micro-lessons. Weaknesses: several inaccuracies/awkwardness (e.g., “sample analogue y = Xβ + ε” wording; “Residual Plots Overview” mislabeled as SSR), and it includes Durbin–Watson/autocorrelation material and other diagnostics without clear theory/practice separation. Less polished and less aligned with the prompt than higher models.",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Reasonable set of OLS geometry and inference lessons, plus OVB and its formula. But it’s not very extensive, several lessons remain generic (“Sampling Distribution of Estimates”), and it includes combined concepts like “Spherical Errors” that compress multiple assumptions instead of splitting. Also lacks the prompt’s requested depth/granularity and practical separation.",
+          "score": 5.6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Covers many standard headings but stays high-level, with minimal atomization and little theory/practice separation. Mislabeling: calls zero conditional mean “Strict Exogeneity Assumption,” which is conceptually sloppy in many econometrics texts. Includes “Irrelevant Variable Inclusion” without building the needed scaffolding. Overall too generic and not careful enough for a complex theoretical topic.",
+          "score": 4.9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4",
+          "reasoning": "Too coarse and course-wide: many lessons are broad (“Hypothesis Testing Setup,” “Decision Rules in t-Tests”), and it introduces “Overidentification/Underidentification” (typically IV/structural identification) which is out of scope for an OLS chapter. Includes model selection criteria (AIC/BIC), violating the chapter focus. Not sufficiently broken down into small single-concept units.",
+          "score": 4.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Shortest and least comprehensive; many descriptions are vague and not clearly separable into theory vs application. Includes “No autocorrelation assumption” and Durbin–Watson despite the chapter focus and without adequate framing; lacks many core micro-topics the prompt expects and is far from the requested extensive list. Overall under-scoped and under-detailed.",
+          "score": 3.7
+        }
+      ]
+    }
+  ],
+  "taskId": "chapter-lessons",
+  "testCaseId": "en-economics-econometrics-1"
+}

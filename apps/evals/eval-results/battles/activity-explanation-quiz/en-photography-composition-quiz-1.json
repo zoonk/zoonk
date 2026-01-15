@@ -1,0 +1,167 @@
+{
+  "expectations": "\nSPECIAL CONSIDERATION: This is an edge case - a visual/practical skill where understanding is demonstrated through application to real scenarios, not visual recognition.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Photography scenarios where learners must decide subject placement to achieve specific visual effects\n   - GOOD PATTERN: Situations requiring understanding of WHY off-center placement creates visual interest\n   - BAD PATTERN: Asking to define the rule of thirds or describe the grid without application context\n   - BAD PATTERN: Questions about \"power points\" terminology without practical application\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Rule of thirds being mandatory (it's a guideline, not a rule - breaking it intentionally can be effective)\n   - Centered subjects always being wrong (centered composition works for symmetry and certain moods)\n   - The grid being visible in final photos (it's an imaginary guide)\n   - Rule of thirds being the only composition technique (leading lines, framing, and many others exist)\n\n3. FORMAT FIT: Multiple choice works for \"where would you place the subject\" scenarios. Match columns could connect composition choices to their visual effects. AVOID selectImage unless visual recognition is truly being tested.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-15T20:45:11.086Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model represents an exceptional output. It adheres perfectly to the instruction to prioritize application over memorization. The scenarios (lighthouse, soccer player, coffee cup) are evocative and practical. The feedback is outstanding—it doesn't just say 'correct', it explains the 'why' (visual journey, eye scanning) and specifically addresses misconceptions (e.g., acknowledging that centering isn't 'always' wrong, just different). It uses varied formats (Multiple Choice, Match Columns, Fill in the Blank) effectively without forcing them. The tone is conversational and encouraging.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F is excellent and very close to Model A in quality. It offers a good volume of questions (6) with strong practical scenarios (climber, dog running). The conceptual 'Fill in the Blank' question is well-designed to test the underlying mechanism of the rule. It loses a single point only because it uses the 'selectImage' format with text descriptions; while functional, Model A's approach of using standard Multiple Choice for text-based scenarios is slightly cleaner format usage.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model E provides high-quality content with detailed feedback that explains the 'why' behind the answers. The questions are well-written and test application well. It ranks slightly lower than A and F simply due to volume (4 questions vs 6-7), covering slightly less ground, but the quality of what is present is very high.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G is strong, with good descriptive scenarios and solid feedback. It effectively tests the concepts. It is ranked lower than the top tier because of the 'Sort Order' question (Q6). While the logic is sound, the prompt specifically advised to use Sort Order 'ONLY when the concept IS about sequence'. Composition is a fluid creative process, not a strict linear procedure, making this a slight case of 'forced variety', though it still offers educational value.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model B is a competent, 'safe' quiz. It meets the requirements and tests the concepts correctly. However, it lacks the depth and nuance of the higher-ranked models. The feedback is functional but less insightful (often just stating 'Incorrect' without deeply explaining the alternative), and the scenarios are somewhat generic compared to the specific imagery in Model A.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D includes strong application questions, but it commits a specific violation of the negative constraints. The prompt explicitly listed 'Questions about power points terminology without practical application' as a BAD PATTERN. Question 2 ('What are the grid intersections called?') is exactly this type of definition-based question. This violation significantly lowers its score despite the other questions being good.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model H provides only a single question. While the question itself is acceptable, a one-question quiz fails to adequately cover the topic or demonstrate the range of application requested.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "The model produced an empty questions array, failing the task completely.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Strong application focus with varied, well-fit formats (MCQ + matching + fill-in) that still test practical decisions (horizon placement, lead room, gaze direction, negative space). Feedback is consistently explanatory for both correct/incorrect options. Avoids major accuracy pitfalls (explicitly notes centering can work; rejects “official rulebook”). Only notable weakness: the fillBlank item is closer to re-stating a prepared explanation than a truly novel scenario (more memorization-prone than the others), but overall it’s the most complete and instruction-aligned set.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Consistently scenario-based and concept-applied; good feedback quality; explicitly avoids absolutes about centering. Matching item is well used to connect observations to principles. Main flaw: includes a sortOrder “steps” question—order isn’t conceptually essential to rule-of-thirds application, so this risks the “format for variety” anti-pattern and tests a workflow more than understanding.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good practical scenarios (horizon for sky emphasis; portrait with lead room) and strong feedback, plus a matching item that appropriately links scenario to horizon choice. Positively includes that centered horizon can be best for symmetry (addresses a key pitfall well). Main drawback: uses selectImage for what is essentially text-described placement; per guidance, selectImage is usually unnecessary here and doesn’t truly test visual recognition beyond reading prompts.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "All questions are application-oriented MCQs with generally clear scenarios and decent explanatory feedback. However, it leans into “power points” terminology (discouraged) and sometimes implies centering is typically wrong without clarifying when centering can be effective. Also smaller issue: the first horizon question is a bit under-specified (upper vs lower third depends on whether you want sky or sand; it doesn’t tie to a stated goal).",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good mix of scenario-based MCQ + matching + fillBlank; generally clear and applied (lead room, horizon/scale). Weaknesses: includes selectImage again where text-based options would suffice; feedback contains an overgeneralization (“eye hits it and stops”) and leans toward “center = less alive” without acknowledging strong use-cases (symmetry, formal calm). Still mostly accurate and helpful, but more absolutist than the best sets.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Several solid application MCQs (horizon for sky, gaze direction, off-center rationale) with decent feedback. Major issue: includes a memorization/vocabulary question (“What are the grid intersections called?”), explicitly a discouraged pattern; this tests terminology rather than understanding. Also uses “power points” as if it’s the key concept.",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Single question only (not penalized for count by itself), and it is scenario-based with explanatory feedback. However, it relies on “power point” terminology and makes a somewhat rigid claim (“power points are strongest for single subjects like this”), which is more prescriptive than warranted. Too limited coverage to demonstrate robust assessment quality.",
+          "score": 4.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Provides no questions, so it fails to meet the task of generating an assessment entirely.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model A provides 7 comprehensive questions with excellent variety and application focus. Questions test understanding through novel scenarios (lighthouse at sunset, soccer player movement, coffee cup still life). Feedback is thorough - explaining both why correct answers work AND why incorrect options don't. The fill-in-the-blank question tests conceptual understanding rather than recall. No accuracy pitfalls (doesn't claim centered is always wrong, treats rule of thirds as guideline). Match columns format connects scenarios to compositional approaches appropriately. Questions avoid memorization-based testing and use conversational tone. Minor weakness: one question asks beginner photographer for 'best explanation' which slightly borders on recall, but context saves it by having them apply understanding.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model E delivers 4 well-crafted questions with excellent scenario-based application. The sailboat/sunset question effectively tests horizon placement understanding. Portrait comparison question tests WHY off-center works without penalizing centered subjects (feedback correctly notes centered can work). Match columns appropriately connects scenarios to horizon placement. SelectImage format is well-used here since it tests application of placement concepts to visual scenarios. Feedback is explanatory and includes reasoning. However, fewer questions than Model A, and the selectImage question slightly tests visual recognition even though prompts describe compositions. Still very strong on conceptual application and accuracy.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G has 6 questions with good scenario variety (mural, landscape, cityscape). Questions test application well and feedback explains reasoning. The sortOrder question is somewhat problematic - the concept isn't inherently about sequence (there's no single 'correct' order for these steps in practice), which violates format guidance. However, it's not egregiously wrong. Match columns effectively connects observations to principles. Feedback quality is solid. Minor issue: one distractor mentions 'tilting camera' which could be valid artistic choice but is dismissed. Overall strong but the sortOrder format choice is slightly forced.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D provides 6 multiple choice questions covering various scenarios. Good application focus (city street, seascape, meadow tree, running person). However, Question 2 asks 'What are the grid intersections called?' which is pure terminology/recall - exactly the 'BAD PATTERN' noted in the task expectations about 'power points terminology without practical application.' Feedback is adequate but less detailed than top models. Some feedback is brief (e.g., 'Centering can feel stable and formal but often lacks the directional pull that makes an image feel dynamic' - could explain more). Otherwise solid conceptual coverage.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F has 6 questions with good variety. The mountain climber scenario is novel and effective. However, some issues: The selectImage format is used but with only 2 options, making it less discriminating. Fill-in-the-blank question asks about 'intersections' and 'movement' - somewhat recall-based as it tests specific terminology. Feedback uses the term 'power points' directly in the fill-blank feedback which feels like teaching terminology. Some feedback is brief (e.g., 'This would emphasize the ground below the climber, making the mountain above look smaller.'). The dog running question is good application. Match columns is solid. Overall decent but slightly more recall-oriented than top performers.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model B provides 4 questions which is limited in scope. Questions are scenario-based and test application reasonably well. However, feedback quality is notably weaker - many responses are brief and formulaic (e.g., 'Incorrect. Centering the runner typically reduces the sense of direction and movement.'). Some feedback lacks the 'why' explanation depth. Question 1's feedback for correct answer is quite brief. The beach dog horizon question is good. Runner movement question is effective. Overall competent but less thorough feedback and fewer questions than better models.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model H provides only 1 question, which is far too limited for a meaningful quiz. While the single question is well-constructed (sailboat scenario testing power point placement), with reasonable feedback explaining why other options don't work as well, the quiz fails to provide adequate coverage of the topic. One question cannot assess understanding of a compositional technique with multiple applications (horizon placement, subject direction, negative space, etc.). The question that exists is good quality but insufficient quantity is a significant failing.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model C returns an empty questions array - no quiz content whatsoever. This completely fails the task requirements. Cannot evaluate question quality, format appropriateness, feedback, or accuracy when no questions exist.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-explanation-quiz",
+  "testCaseId": "en-photography-composition-quiz-1"
+}

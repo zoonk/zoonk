@@ -1,0 +1,257 @@
+{
+  "expectations": "\n      - MUST be in US English\n      - Can mention Google Cloud vendor since this is a vendor-specific course, so it's an exception to the rule of not using vendors.\n\n      \n  - It should assume learners start with no prior knowledge of the subject\n  - Should create a progressive learning path going from basic/beginner to mastery of the subject\n  - By the end of this course, they should be able to lead very complex projects and tasks in this field\n  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD\n  - Should include **EVERYTHING** a student needs to be at the top 1% of the field\n  - Should follow the language specified by language parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Should cover latest trends in the field\n  - Don't use vendors in chapter titles or descriptions (e.g. \"npm\", \"yarn\", \"Redux\", etc.)\n    - Except are for widely known tools related to the course (e.g. \"Git\" in a programming course)\n  - This is an eval system for a learning platform, of course the definition of \"ready for a job\" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.\n  - You don't need to evaluate the output format here, just focus on the chapter content quality.\n  - Titles should be concise and straight to the point, no fluff/filler words. For example:\n    - Just \"HTML\" is better than \"HTML Structure and Semantics\" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just \"CSS\" is better than \"CSS Styling and Layout\".\n    - \"Front-end frameworks\" is better than \"Front-End UI Frameworks Overview\" (too verbose) or \"Front-End Frameworks: Core Concepts\" (core concepts is unnecessary fluff)\n    - \"Relational Databases\" is better than \"Relational Databases and SQL\" (SQL is implied, no need to mention)\n    - \"Introduction to Java\" is better than \"Introduction to Java and Setting Up Your Development Environment\" (too verbose)\n    - \"Lean Startup\" is better than \"The Lean Startup Methodology: An Overview\" (too verbose)\n    - \"Introduction to X\" is valid for titles of introductory chapters but we should avoid those words in descriptions\n  - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:\n    - \"Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" is better than \"Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles.\" - \"Master\" is fluff, and so are words like \"learn\", \"understand\", \"explore\", etc.\n    - \"Properties of matter, states, and phase transitions.\" is better than \"Explore the definition of Chemistry, properties of matter, states, and phase transitions.\" - \"Explore the definition of Chemistry\" are filler/unnecessary words.\n  - Don't add capstone/final projects, assessments, or exercises\n  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%\n\n    ",
+  "judgedAt": "2026-01-15T20:59:56.270Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Exceptionally comprehensive and well-structured course covering all aspects from fundamentals to advanced topics. Chapter titles are concise without fluff. Descriptions are direct and content-rich without using 'Learn', 'Master', or 'Explore'. Covers latest trends (generative AI, MLOps, FinOps, sustainability). Strong progressive learning path from beginner to expert. Includes career preparation and certification guidance. Covers enterprise patterns, security deep dives, and advanced architecture topics needed for top 1% proficiency without mentioning '1%'. Excellent balance of breadth and depth across 75 chapters.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Very comprehensive with 88 chapters covering virtually all GCP services and advanced topics. Well-organized progression from fundamentals to specialized solutions (healthcare, financial services, gaming). Titles are mostly concise. Descriptions are informative without excessive fluff. Good coverage of latest trends including generative AI, MLOps, and specialized industry solutions. Strong security, networking, and architecture coverage. Minor issues: some descriptions slightly verbose (e.g., 'Running event-driven code in a serverless environment').",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Excellent depth and breadth with 47 well-designed chapters. Strong coverage of advanced topics like distributed systems theory, networking internals, and research topics for PhD-level inquiry. Good progressive structure. Concise titles. Descriptions are mostly direct. Includes ethics/responsible AI and cutting-edge research topics. Coverage of open-source ecosystems is valuable. Career and certification chapters are appropriate. Some descriptions could be slightly more concise.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Strong comprehensive course with 91 chapters providing excellent depth. Good organization with clear progression. Covers advanced topics like database deep dives, sustainability, and forensics. Titles are concise. Strong coverage of enterprise patterns and specialized workloads. Includes generative AI and RAG patterns. Good security coverage. Minor issues: some chapter descriptions are quite terse which may lack clarity, and the sheer number of chapters might indicate some fragmentation.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Well-structured 51-chapter course with good progressive learning path. Covers fundamentals through advanced topics including generative AI, MLOps, and FinOps. Concise titles. Descriptions are direct and informative. Good coverage of enterprise considerations and stakeholder management. Includes sustainability and edge computing. Strong observability and security sections. Some descriptions use slightly verbose phrasing.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Comprehensive 64-chapter course with solid GCP coverage. Good breadth across compute, storage, databases, AI/ML, and operations. Includes certification topics and career guidance. Titles are reasonably concise. Descriptions are mostly direct. Covers sustainability and IoT. However, some chapters feel fragmented (e.g., separate chapters for Task Queues and Workflow Orchestration could be combined). IoT Core chapter mentions deprecated service. Some descriptions could be more informative.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Extensive 92-chapter course with very thorough coverage. Good progression from fundamentals to advanced topics. Includes generative AI, MLOps, and industry-specific solutions. Strong DevOps and security coverage. However, the large number of chapters creates some fragmentation. Some titles are slightly verbose (e.g., 'Vertex AI Prediction and Deployment'). Descriptions are informative but some include minor fluff words. Real-world case studies chapter is good addition.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Solid 38-chapter course with good structure and concise titles. Covers key topics including generative AI, MLOps, and FinOps. Good progression. However, fewer chapters means less depth in some areas compared to top competitors. Some important topics are bundled together (e.g., 'Databases' as single chapter covering SQL, AlloyDB, Spanner, Firestore, Bigtable). Career preparation chapter is included. Missing some advanced enterprise patterns and specialized workloads.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-2.5-pro",
+          "reasoning": "Good 70-chapter course with solid fundamentals and advanced topics. Includes Anthos, service mesh, and compliance. However, some titles are verbose (e.g., 'Interacting with Google Cloud: Console, CLI, and Cloud Shell'). Some descriptions use phrases like 'Introduction to' or 'Understanding' which add unnecessary words. Continuous Learning chapter is appropriate but 'Community Engagement' adds fluff. Missing some latest trends like generative AI depth.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Compact 33-chapter course covering essential topics but lacks depth for top 1% mastery. Many important advanced topics are missing or superficially covered. No dedicated generative AI chapter. Limited MLOps coverage. Career chapter is included but certification details are thin. Some chapters bundle too many concepts (e.g., 'Data Processing and Orchestration' covers Dataflow, Dataproc, and Composer together). Insufficient for advanced studies or PhD preparation.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Compact 38-chapter course with reasonable structure but insufficient depth for mastery-level preparation. Missing important advanced topics. Generative AI is covered but MLOps is limited. No dedicated disaster recovery chapter. Security coverage is bundled. Some titles use parenthetical abbreviations (e.g., 'Identity and Access Management (IAM)'). Career chapter is present but brief. Not comprehensive enough for certification preparation at professional level.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4-fast-reasoning",
+          "reasoning": "32-chapter course with decent structure but lacks sufficient depth. Some descriptions use filler phrases like 'Introduction to' and 'Overview of'. Missing advanced topics needed for expert-level mastery. GenAI coverage absent. Limited MLOps. Some chapters are too broad (e.g., 'GCP Database Services' covering SQL, NoSQL, and Bigtable together). Case studies chapter mentions 'Analyzing' which is filler. Career chapter present but insufficient certification guidance.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-2.5-flash",
+          "reasoning": "55-chapter course with reasonable coverage but several issues. Descriptions frequently use 'Understanding', 'Managing', and 'Utilizing' which are filler words. Some titles are verbose (e.g., 'Infrastructure as Code with Deployment Manager and Terraform'). Missing generative AI coverage. MLOps coverage is limited. Good breadth but descriptions could be more concise. Career paths chapter uses 'Exploring' which is filler. Insufficient for top 1% mastery.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model provides the most exceptional and comprehensive curriculum, featuring 90 chapters that cover not only the core services but also advanced topics like Chaos Engineering, specific verticals (Gaming, Healthcare), and emerging trends. It strictly adheres to the 'no fluff' rule in both titles and descriptions, and the sheer depth of content perfectly aligns with the goal of preparing a student for the top 1% of the field.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model F offers an excellent, professionally structured course. The titles are professional and descriptive without being verbose, and the descriptions are high-quality with significant technical depth. It covers advanced architecture and operations well, though it has slightly less granular coverage of niche services compared to Model M.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5",
+          "reasoning": "This model is extremely dense and technically rich, covering a vast amount of ground including specific features like BigLake and Dataplex. It is ranked slightly lower than Model F purely due to the stylistic choice of using sentence case for titles (e.g., 'Google Cloud fundamentals') which is less standard for course curriculums, although the content itself is top-tier.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model A presents a very solid, well-structured curriculum with 55 chapters. It covers all necessary bases with concise titles and descriptions. It follows all instructions well but lacks the extreme granularity and coverage of advanced/niche topics found in the top three models.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model provides good depth with 59 chapters. However, it falls slightly behind Model A due to minor 'fluff' in the descriptions (e.g., starting with 'Fundamentals of cloud computing...' or 'Creating and configuring...'), whereas the prompt requested cutting straight to the point.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G offers strong technical content and punchy descriptions. It is penalized primarily for using sentence case in titles, which makes the outline look less professional than the top contenders, and for having slightly less comprehensive coverage than the models ranked above it.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-2.5-pro",
+          "reasoning": "Model H has good breadth (58 chapters) and covers the material well. However, it consistently violates the style guidelines regarding descriptions, frequently using filler phrases like 'An introduction to...' or 'Understanding the...', which lowers its score.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "While Model L has good content depth, it significantly violates the constraint for concise titles. Titles like 'Cloud computing fundamentals and GCP landscape' or 'Compute options: virtual machines and autoscaling' are overly verbose and fluff-heavy compared to the requested format.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-2.5-flash",
+          "reasoning": "Model E provides a decent length (50 chapters) but suffers from significant fluff in the descriptions (e.g., 'An overview of', 'Understanding GCP's'). It also lacks the deep architectural focus seen in the higher-ranked models.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model B follows the formatting rules well and is very clean. However, with only 38 chapters, it is too brief to meet the requirement of preparing a student for the 'top 1%' of the field. It acts more as an overview than a mastery course.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model is well-formatted but too short (37 chapters). It covers the basics but misses the depth required for advanced certification or leading complex projects as requested in the prompt.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model K is very concise but far too superficial (33 chapters). It lacks the necessary detail to be considered a comprehensive path to mastery.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4-fast-reasoning",
+          "reasoning": "Model C is the weakest output. It is too short (32 chapters) and includes fluff in the descriptions (e.g., 'Overview of...', 'Introduction to...'), failing on multiple key constraints.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5",
+          "reasoning": "Most comprehensive and modern progression from fundamentals to deep specialty topics (SRE, supply chain security, RAG/vector search, lakehouse governance, performance/cost engineering, edge/distributed cloud). Titles are concise and largely non-fluffy. Strong coverage of latest trends (Gemini, RAG, vector search, SBOM/provenance, OpenTelemetry). Minimal violations of constraints, and the path plausibly prepares learners for senior leadership and advanced study.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent breadth and depth with a clear beginner-to-mastery ramp, including OS/Linux fundamentals, distributed systems, governance, privacy engineering, incident response, platform engineering, and leadership. Strong “top 1%” style completeness without explicitly saying so. A few titles are slightly less concise (e.g., longer phrases), and it’s a bit less Google-Cloud-specific in some sections than J, but still very high quality.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model L",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very strong, academically oriented and certification-ready path: includes distributed systems theory (Paxos/Raft, TrueTime), networking internals, responsible AI, research topics, and enterprise leadership. Good trend coverage. However, multiple chapter titles are longer/less concise and include tool/vendor terms in titles (e.g., Istio, Helm, Prometheus, Grafana, Terraform) which violates the “no vendors in titles” rule (even if widely known, several are not explicitly allowed).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Well-structured end-to-end curriculum with solid depth across architecture, governance, SRE, security ops, landing zones, FinOps, and leadership. Generally avoids vendor/tool names in titles and stays conceptual while still being Google Cloud-relevant. Slightly less concrete on specific Google Cloud products than the very top entries and misses some very current GenAI implementation details (e.g., RAG/vector search specifics) compared to J.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good progressive path with modern topics (Gemini, generative AI design, platform leadership). Chapter titles are concise and the scope is strong for senior work. Weaknesses: still somewhat high-level/aggregated for “everything needed” (fewer chapters, less depth on operations/security supply chain/data governance mechanics) and includes “Terraform” in a title, which violates the no-vendors-in-titles constraint.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model M",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Very detailed service-by-service coverage and includes modern items (Generative AI, Binary Authorization, chaos engineering, emerging trends). But it violates key constraints: multiple vendor/tool names in titles (Terraform, Kubeflow, Chaos Toolkit, TensorFlow, PyTorch, Sentinel, Firebase, etc.), and it includes deprecated/incorrect items (Cloud IoT Core is retired) presented as current. Overly long syllabus with some redundancy.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Deep and broad, but has major compliance issues: explicitly uses vendor/tool/package ecosystems in titles (e.g., \"Composer (Apache Airflow)\", and especially \"Artifact Registry and Container Registry\" mentioning npm/Maven/Python in the description/title area where vendors are disallowed). Also includes dated items (Dataprep) and is extremely long/less curated, with some chapter titles still containing product names and extra wording.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Very wide coverage of Google Cloud services and generally concise titles. However: includes disallowed “career/resume/interview” content (explicitly prohibited), includes deprecated/incorrect services (IoT Core), and has occasional inaccuracies/dated references (e.g., Velostrata). Also extremely enumerative (catalog-like) and less structured around conceptual mastery and leadership skills than top models.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-2.5-pro",
+          "reasoning": "Decent beginner progression and includes many core services, but has notable issues: uses vendor naming in a title (\"Dataprep by Trifacta\"), includes deprecated Dataprep context, and overall depth is moderate—insufficient for mastery/complex project leadership compared to stronger models. Some chapter titles are a bit verbose and the path is more survey than rigorous mastery.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-2.5-flash",
+          "reasoning": "Covers many basics but is mostly a service catalog with limited advanced depth (governance at scale, SRE rigor, security engineering, data/ML advanced patterns are comparatively thin). Several titles are wordy and the descriptions include filler (“exploring”). Does not convincingly reach the “lead very complex projects / top 1%” expectation.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Solid mid-level outline with reasonable progression and concise titles, but overall depth and completeness are limited for mastery (less on governance, security operations, supply chain, advanced observability, platform engineering). Also includes career/certification content in one chapter (allowed generally, but weaker given the platform rules elsewhere) and is not as trend-forward or detailed as higher-ranked models.",
+          "score": 1.5
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Reasonable baseline coverage, but starts abruptly without foundational cloud concepts (no explicit beginner ramp beyond infrastructure), lacks many advanced topics needed for complex leadership (SRE depth, governance at scale, security operations, data governance detail, GenAI architecture patterns). Overall too shallow and short for the stated expectations.",
+          "score": 2.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4-fast-reasoning",
+          "reasoning": "Clear beginner-friendly structure, but it’s too shallow and somewhat dated (Cloud IoT Core). Includes \"Starting a Career\" and certification-prep chapters (not inherently banned, but less aligned with the instruction set that focuses on chapter content and avoids job-prep fluff). Missing many advanced areas (FinOps depth, landing zones, supply chain security, platform engineering, advanced data governance, modern GenAI/RAG patterns).",
+          "score": 3.5
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "en-google-cloud-1"
+}

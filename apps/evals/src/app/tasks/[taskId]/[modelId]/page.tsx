@@ -15,7 +15,7 @@ import {
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { SubmitButton } from "@zoonk/ui/patterns/buttons/submit";
-import { PlayIcon } from "lucide-react";
+import { PlayIcon, SparklesIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import {
@@ -27,8 +27,9 @@ import {
 import { ModelStatusBadge } from "@/components/model-status-badge";
 import { getTaskResults } from "@/lib/eval-runner";
 import { EVAL_MODELS, getModelDisplayName } from "@/lib/models";
+import { getOutputStatus } from "@/lib/output-loader";
 import { TASKS } from "@/tasks";
-import { runEvalAction } from "./actions";
+import { generateOutputsAction, runEvalAction } from "./actions";
 import { EvalResults } from "./eval-results";
 
 export default async function TaskModelPage({
@@ -48,7 +49,13 @@ export default async function TaskModelPage({
     redirect(`/tasks/${taskId}`);
   }
 
-  const results = await getTaskResults(taskId, modelId);
+  const [results, outputStatus] = await Promise.all([
+    getTaskResults(taskId, modelId),
+    getOutputStatus(taskId, modelId, task.testCases.length),
+  ]);
+
+  const hasOutputs = outputStatus.status !== "missing";
+  const hasCompleteOutputs = outputStatus.status === "complete";
 
   return (
     <main className="flex flex-col gap-4">
@@ -64,7 +71,7 @@ export default async function TaskModelPage({
         <ContainerHeaderGroup>
           <ContainerTitle>{task.name}</ContainerTitle>
           <ContainerDescription>
-            Run evals and view results for this task
+            Generate outputs and run evaluations for this task
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>
@@ -73,7 +80,7 @@ export default async function TaskModelPage({
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              Run Eval
+              Actions
               <ModelStatusBadge modelId={modelId} taskId={taskId} />
             </CardTitle>
             <CardDescription>
@@ -81,21 +88,42 @@ export default async function TaskModelPage({
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="space-y-4">
-            <form action={runEvalAction}>
-              <input name="taskId" type="hidden" value={taskId} />
-              <input name="modelId" type="hidden" value={modelId} />
+          <CardContent className="flex flex-col gap-4">
+            <div className="flex items-center gap-4">
+              <form action={generateOutputsAction}>
+                <input name="taskId" type="hidden" value={taskId} />
+                <input name="modelId" type="hidden" value={modelId} />
+                <SubmitButton
+                  disabled={hasCompleteOutputs}
+                  icon={<SparklesIcon />}
+                >
+                  Generate Outputs
+                </SubmitButton>
+              </form>
 
-              <div className="flex items-center gap-4">
-                <SubmitButton icon={<PlayIcon />}>Run Eval</SubmitButton>
+              {hasOutputs && (
+                <span className="text-muted-foreground text-sm">
+                  {outputStatus.completedTestCases}/
+                  {outputStatus.totalTestCases} outputs generated
+                </span>
+              )}
+            </div>
 
-                <Link href={`/tasks/${taskId}`}>
-                  <Button type="button" variant="outline">
-                    Change Model
-                  </Button>
-                </Link>
-              </div>
-            </form>
+            <div className="flex items-center gap-4">
+              <form action={runEvalAction}>
+                <input name="taskId" type="hidden" value={taskId} />
+                <input name="modelId" type="hidden" value={modelId} />
+                <SubmitButton disabled={!hasOutputs} icon={<PlayIcon />}>
+                  Run Eval
+                </SubmitButton>
+              </form>
+
+              <Link href={`/tasks/${taskId}`}>
+                <Button type="button" variant="outline">
+                  Change Model
+                </Button>
+              </Link>
+            </div>
           </CardContent>
         </Card>
 

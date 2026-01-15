@@ -5,13 +5,14 @@ import { z } from "zod";
 import systemPrompt from "./lesson-activities.prompt.md";
 
 const DEFAULT_MODEL =
-  process.env.AI_MODEL_LESSON_ACTIVITIES ?? "google/gemini-3-flash";
+  process.env.AI_MODEL_LESSON_ACTIVITIES ?? "openai/gpt-5.2";
 
 const FALLBACK_MODELS = [
-  "google/gemini-3-pro-preview",
-  "xai/grok-4-fast-reasoning",
-  "openai/gpt-5.2",
+  "openai/gpt-5-mini",
+  "anthropic/claude-haiku-4.5",
+  "openai/gpt-5.1-instant",
   "anthropic/claude-opus-4.5",
+  "google/gemini-3-flash",
 ];
 
 const schema = z.object({

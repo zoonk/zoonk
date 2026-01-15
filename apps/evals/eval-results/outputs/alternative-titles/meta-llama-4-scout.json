@@ -1,0 +1,340 @@
+{
+  "generatedAt": "2026-01-15T19:15:16.497Z",
+  "modelId": "meta/llama-4-scout",
+  "outputs": [
+    {
+      "duration": 1508.4173749999609,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Frontend Engineering\",\n    \"Frontend Dev\",\n    \"Frontend Programming\",\n    \"Front-end Development\",\n    \"Front-end Engineering\",\n    \"Front-end Dev\",\n    \"Front-end Programming\",\n    \"Client-side Development\",\n    \"Client-side Engineering\",\n    \"Client-side Programming\",\n    \"Web Frontend Development\",\n    \"Web Frontend Engineering\",\n    \"Web Frontend Programming\"\n  ]\n}",
+      "outputTokens": 86,
+      "systemPrompt": "",
+      "testCaseId": "en-frontend-development-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1371.0440420000232,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Frontend Engineering\",\n    \"Frontend Dev\",\n    \"Frontend Programming\",\n    \"Front-end Development\",\n    \"Front-end Engineering\",\n    \"Front-end Dev\",\n    \"Front-end Programming\",\n    \"Client-side Development\",\n    \"Client-side Engineering\",\n    \"Client-side Programming\",\n    \"Web Frontend Development\",\n    \"Web Frontend Engineering\",\n    \"Web Frontend Programming\"\n  ]\n}",
+      "outputTokens": 86,
+      "systemPrompt": "",
+      "testCaseId": "en-frontend-development-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1475.428957999975,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Frontend Engineering\",\n    \"Frontend Dev\",\n    \"Frontend Programming\",\n    \"Front-end Development\",\n    \"Front-end Engineering\",\n    \"Front-end Dev\",\n    \"Front-end Programming\",\n    \"Client-side Development\",\n    \"Client-side Engineering\",\n    \"Client-side Programming\",\n    \"Web Frontend Development\",\n    \"Web Frontend Engineering\",\n    \"Web Frontend Programming\"\n  ]\n}",
+      "outputTokens": 86,
+      "systemPrompt": "",
+      "testCaseId": "en-frontend-development-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1240.3691659999895,
+      "inputTokens": 367,
+      "output": "{\n  \"alternatives\": [\n    \"F1\",\n    \"Formula One\",\n    \"Formula One Racing\",\n    \"Formula 1 Racing\",\n    \"F1 Racing\"\n  ]\n}",
+      "outputTokens": 40,
+      "systemPrompt": "",
+      "testCaseId": "en-formula-1-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1404.8273749999935,
+      "inputTokens": 367,
+      "output": "{\n  \"alternatives\": [\n    \"F1\",\n    \"Formula One\",\n    \"Formula One Racing\",\n    \"Formula 1 Racing\",\n    \"F1 Racing\"\n  ]\n}",
+      "outputTokens": 40,
+      "systemPrompt": "",
+      "testCaseId": "en-formula-1-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1241.7381250000326,
+      "inputTokens": 367,
+      "output": "{\n  \"alternatives\": [\n    \"F1\",\n    \"Formula One\",\n    \"Formula One Racing\",\n    \"Formula 1 Racing\",\n    \"F1 Racing\"\n  ]\n}",
+      "outputTokens": 40,
+      "systemPrompt": "",
+      "testCaseId": "en-formula-1-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 996.9519999999902,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"User Experience Design\",\n    \"User Interface Design\"\n  ]\n}",
+      "outputTokens": 24,
+      "systemPrompt": "",
+      "testCaseId": "en-ux-design-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1179.1430829999736,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"User Experience Design\",\n    \"User Interface Design\"\n  ]\n}",
+      "outputTokens": 24,
+      "systemPrompt": "",
+      "testCaseId": "en-ux-design-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1173.0406659999862,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"User Experience Design\",\n    \"User Interface Design\"\n  ]\n}",
+      "outputTokens": 24,
+      "systemPrompt": "",
+      "testCaseId": "en-ux-design-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1508.0098749999888,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Inglês\",\n    \"Língua Inglesa\",\n    \"Idioma Inglês\",\n    \"Inglês para Principiantes\",\n    \"Inglês Básico\",\n    \"Inglês Intermediário\",\n    \"Inglês Avançado\",\n    \"Lingua Inglesa\",\n    \"Ingles\"\n  ]\n}",
+      "outputTokens": 79,
+      "systemPrompt": "",
+      "testCaseId": "pt-ingles-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1420.237833000021,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Inglês\",\n    \"Língua Inglesa\",\n    \"Idioma Inglês\",\n    \"Inglês para Principiantes\",\n    \"Inglês Básico\",\n    \"Inglês Intermediário\",\n    \"Inglês Avançado\",\n    \"Lingua Inglesa\",\n    \"Ingles\"\n  ]\n}",
+      "outputTokens": 79,
+      "systemPrompt": "",
+      "testCaseId": "pt-ingles-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1419.2310840000282,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Inglês\",\n    \"Língua Inglesa\",\n    \"Idioma Inglês\",\n    \"Inglês para Principiantes\",\n    \"Inglês Básico\",\n    \"Inglês Intermediário\",\n    \"Inglês Avançado\",\n    \"Lingua Inglesa\",\n    \"Ingles\"\n  ]\n}",
+      "outputTokens": 79,
+      "systemPrompt": "",
+      "testCaseId": "pt-ingles-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1437.6152499999735,
+      "inputTokens": 367,
+      "output": "{\n  \"alternatives\": [\n    \"IA\",\n    \"Inteligência Artificial\",\n    \"Inteligencia Artificial\",\n    \"AI\",\n    \"Artificial Intelligence\",\n    \"Inteligência Artificial e Machine Learning\",\n    \"Inteligência Artificial e Aprendizado de Máquina\"\n  ]\n}",
+      "outputTokens": 61,
+      "systemPrompt": "",
+      "testCaseId": "pt-inteligencia-artificial-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1412.567665999988,
+      "inputTokens": 367,
+      "output": "{\n  \"alternatives\": [\n    \"IA\",\n    \"Inteligência Artificial\",\n    \"Inteligencia Artificial\",\n    \"AI\",\n    \"Artificial Intelligence\",\n    \"Inteligência Artificial Básica\",\n    \"Inteligência Artificial Avançada\",\n    \"Fundamentos de Inteligência Artificial\",\n    \"Introdução à Inteligência Artificial\"\n  ]\n}",
+      "outputTokens": 74,
+      "systemPrompt": "",
+      "testCaseId": "pt-inteligencia-artificial-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1759.2322080000304,
+      "inputTokens": 367,
+      "output": "{\n  \"alternatives\": [\n    \"IA\",\n    \"Inteligência Artificial\",\n    \"Inteligencia Artificial\",\n    \"AI\",\n    \"Artificial Intelligence\",\n    \"Inteligência Artificial e Machine Learning\",\n    \"Inteligência Artificial Básica\",\n    \"Inteligência Artificial Avançada\",\n    \"Inteligência Artificial para Iniciantes\",\n    \"Fundamentos de Inteligência Artificial\",\n    \"Conceitos de Inteligência Artificial\"\n  ]\n}",
+      "outputTokens": 95,
+      "systemPrompt": "",
+      "testCaseId": "pt-inteligencia-artificial-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1267.3053329999675,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Machine Learning\",\n    \"ML\",\n    \"Aprendizaje Automático\",\n    \"Aprendizaje de Máquina\",\n    \"Machine Learning Algorithms\",\n    \"Machine Learning Models\",\n    \"Machine Learning Techniques\",\n    \"Advanced Machine Learning\",\n    \"Machine Learning Fundamentals\",\n    \"Introduction to Machine Learning\"\n  ]\n}",
+      "outputTokens": 74,
+      "systemPrompt": "",
+      "testCaseId": "en-machine-learning-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1303.8974159999634,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Machine Learning\",\n    \"ML\",\n    \"Aprendizaje Automático\",\n    \"Aprendizaje de Máquina\",\n    \"Machine Learning Algorithms\",\n    \"Machine Learning Models\",\n    \"Machine Learning Techniques\",\n    \"Advanced Machine Learning\",\n    \"Machine Learning Fundamentals\",\n    \"Introduction to Machine Learning\"\n  ]\n}",
+      "outputTokens": 74,
+      "systemPrompt": "",
+      "testCaseId": "en-machine-learning-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1269.440917,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"ML\",\n    \"Machine Learning for Beginners\",\n    \"Advanced Machine Learning\",\n    \"Machine Learning Fundamentals\",\n    \"Introducción a Machine Learning\"\n  ]\n}",
+      "outputTokens": 43,
+      "systemPrompt": "",
+      "testCaseId": "en-machine-learning-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1326.728749999951,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Java Script\",\n    \"JS\",\n    \"JavaScript Programming\",\n    \"JavaScript Development\",\n    \"JavaScript Language\",\n    \"ECMAScript\"\n  ]\n}",
+      "outputTokens": 44,
+      "systemPrompt": "",
+      "testCaseId": "en-javascript-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1160.319582999975,
+      "inputTokens": 365,
+      "output": "{\n  \"alternatives\": [\n    \"Python Programming\",\n    \"Python Language\",\n    \"Python Development\",\n    \"Python Programming Language\",\n    \"Python for Beginners\",\n    \"Python Advanced Programming\"\n  ]\n}",
+      "outputTokens": 44,
+      "systemPrompt": "",
+      "testCaseId": "en-python-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1343.8967079999857,
+      "inputTokens": 365,
+      "output": "{\n  \"alternatives\": [\n    \"Python Programming\",\n    \"Python Language\",\n    \"Python Development\",\n    \"Python Programming Language\",\n    \"Python for Beginners\",\n    \"Python Advanced Programming\",\n    \"The Python Language\",\n    \"Python Scripting\"\n  ]\n}",
+      "outputTokens": 56,
+      "systemPrompt": "",
+      "testCaseId": "en-python-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1284.9143330000225,
+      "inputTokens": 365,
+      "output": "{\n  \"alternatives\": [\n    \"Python Programming\",\n    \"Python Language\",\n    \"Python Development\",\n    \"Python Programming Language\",\n    \"Python for Beginners\",\n    \"Python Advanced Programming\"\n  ]\n}",
+      "outputTokens": 44,
+      "systemPrompt": "",
+      "testCaseId": "en-python-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1338.049083000049,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Desarrollo de Sitios Web\",\n    \"Desarrollo Web Aplicaciones\",\n    \"Desarrollo de Aplicaciones Web\",\n    \"Web Development\"\n  ]\n}",
+      "outputTokens": 43,
+      "systemPrompt": "",
+      "testCaseId": "es-desarrollo-web-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1183.8853339999914,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Desarrollo Web\",\n    \"Desarrollo de Sitios Web\",\n    \"Desarrollo de Páginas Web\",\n    \"Web Development\"\n  ]\n}",
+      "outputTokens": 41,
+      "systemPrompt": "",
+      "testCaseId": "es-desarrollo-web-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1359.3727500000386,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Desarrollo de Aplicaciones Web\",\n    \"Programación Web\",\n    \"Desarrollo de Sitios Web\",\n    \"Creación de Sitios Web\",\n    \"Desarrollo Web Aplicaciones\",\n    \"Web Development\"\n  ]\n}",
+      "outputTokens": 58,
+      "systemPrompt": "",
+      "testCaseId": "es-desarrollo-web-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1723.074083000014,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Data Analysis\",\n    \"Data Analytics\",\n    \"Data Analysis and Science\",\n    \"Data Insights\",\n    \"Data Studies\",\n    \"Science of Data\",\n    \"Data Research\",\n    \"Data Mining and Analysis\",\n    \"Data Science and Analytics\",\n    \"Data Analytics and Science\",\n    \"Data Analysis and Modeling\",\n    \"Quantitative Data Analysis\",\n    \"Data Driven Decision Making\",\n    \"Data Informed Decision Making\"\n  ]\n}",
+      "outputTokens": 99,
+      "systemPrompt": "",
+      "testCaseId": "en-data-science-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1819.3954999999842,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Data Analysis\",\n    \"Data Analytics\",\n    \"Data Studies\",\n    \"Data Insight\",\n    \"Data Analysis and Interpretation\",\n    \"Science de Datos\",\n    \"Datová Věda\",\n    \"Dados Ciência\",\n    \"Analyse de Données\",\n    \"Datawissenschaft\",\n    \"Datos Ciencia\",\n    \"Tudomány\",\n    \"データ サイエンス\",\n    \"데이터 과학\"\n  ]\n}",
+      "outputTokens": 92,
+      "systemPrompt": "",
+      "testCaseId": "en-data-science-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1340.0819160000538,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Data Analysis\",\n    \"Data Analytics\",\n    \"Data Insights\",\n    \"Data Studies\",\n    \"Science de Datos\",\n    \"Dat Science\",\n    \"Datascience\",\n    \"Data Sciences\",\n    \"Data Science and Analytics\",\n    \"Data Analysis and Science\",\n    \"Data Analytics and Science\",\n    \"Science of Data\",\n    \"Data Intelligence\"\n  ]\n}",
+      "outputTokens": 84,
+      "systemPrompt": "",
+      "testCaseId": "en-data-science-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1043.0645420000073,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Matrix\",\n    \"The Matrix Film\",\n    \"The Matrix Movie\"\n  ]\n}",
+      "outputTokens": 27,
+      "systemPrompt": "",
+      "testCaseId": "en-the-matrix-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1215.458500000008,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Matrix\",\n    \"The Matrix Film\",\n    \"The Matrix Movie\"\n  ]\n}",
+      "outputTokens": 27,
+      "systemPrompt": "",
+      "testCaseId": "en-the-matrix-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1180.6413750000065,
+      "inputTokens": 366,
+      "output": "{\n  \"alternatives\": [\n    \"Matrix\",\n    \"The Matrix Film\",\n    \"The Matrix Movie\"\n  ]\n}",
+      "outputTokens": 27,
+      "systemPrompt": "",
+      "testCaseId": "en-the-matrix-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1556.713374999992,
+      "inputTokens": 365,
+      "output": "{\n  \"alternatives\": [\n    \"Calculus\",\n    \"Calculas\",\n    \"Infinitesimal Calculus\",\n    \"Differential Calculus\",\n    \"Integral Calculus\",\n    \"Calculus for Beginners\",\n    \"Advanced Calculus\",\n    \"Mathematical Calculus\"\n  ]\n}",
+      "outputTokens": 60,
+      "systemPrompt": "",
+      "testCaseId": "en-calculus-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1456.5520830000169,
+      "inputTokens": 365,
+      "output": "{\n  \"alternatives\": [\n    \"Calculus\",\n    \"Calculations\",\n    \"Differential Calculus\",\n    \"Integral Calculus\",\n    \"Infinitesimal Calculus\",\n    \"Mathematical Calculus\"\n  ]\n}",
+      "outputTokens": 42,
+      "systemPrompt": "",
+      "testCaseId": "en-calculus-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1380.7734579999815,
+      "inputTokens": 365,
+      "output": "{\n  \"alternatives\": [\n    \"Calculus\",\n    \"Calculations\",\n    \"Mathematical Calculus\",\n    \"Differential Calculus\",\n    \"Integral Calculus\",\n    \"Infinitesimal Calculus\",\n    \"Calculus Mathematics\",\n    \"Advanced Calculus\"\n  ]\n}",
+      "outputTokens": 59,
+      "systemPrompt": "",
+      "testCaseId": "en-calculus-3",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1362.2832909999997,
+      "inputTokens": 367,
+      "output": "{\n  \"alternatives\": [\n    \"WWII\",\n    \"Second World War\",\n    \"The Second World War\",\n    \"World War 2\",\n    \"World War Two\",\n    \"The World War II\",\n    \"Segunda Guerra Mundial\"\n  ]\n}",
+      "outputTokens": 55,
+      "systemPrompt": "",
+      "testCaseId": "en-world-war-2-1",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1177.729833999998,
+      "inputTokens": 367,
+      "output": "{\n  \"alternatives\": [\n    \"WWII\",\n    \"Second World War\",\n    \"World War 2\",\n    \"The Second World War\",\n    \"World War Two\",\n    \"The World War II\"\n  ]\n}",
+      "outputTokens": 49,
+      "systemPrompt": "",
+      "testCaseId": "en-world-war-2-2",
+      "userPrompt": ""
+    },
+    {
+      "duration": 1219.3122909999802,
+      "inputTokens": 367,
+      "output": "{\n  \"alternatives\": [\n    \"WWII\",\n    \"Second World War\",\n    \"The Second World War\",\n    \"World War 2\",\n    \"World War Two\",\n    \"The World War II\",\n    \"Segunda Guerra Mundial\"\n  ]\n}",
+      "outputTokens": 55,
+      "systemPrompt": "",
+      "testCaseId": "en-world-war-2-3",
+      "userPrompt": ""
+    }
+  ],
+  "taskId": "alternative-titles"
+}

@@ -1,0 +1,267 @@
+{
+  "modelId": "anthropic/claude-opus-4.5",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The lesson list is extremely thorough, follows the granularity constraints perfectly (e.g., separating every input type and image format), and adheres to the formatting rules. One very minor addition could have been the global `data-*` attributes, but given the already extensive scope covering structure and semantics, this is not a significant omission.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Should break down each HTML element type into separate lessons\n      - Should cover attributes, forms, multimedia, and accessibility as distinct concepts\n      - Should not group multiple element types together (e.g., not \"Lists and Tables\" but separate lessons)\n      \n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n  \n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "en-web-html-1",
+        "userInput": {
+          "chapterDescription": "Structure and semantics of web content using HTML: Elements, attributes, forms, multimedia, and accessibility.",
+          "chapterTitle": "HTML",
+          "courseTitle": "Web Development",
+          "locale": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The user instructions explicitly state: 'If you find yourself using AND, OR, or VS in a title, you should split it into separate lessons'. Several titles violate this negative constraint by using 'y' (Spanish for 'and') to combine concepts or comparisons. Examples include: 'Diferencias entre enlaces sigma y pi' (effectively Sigma vs Pi) and 'Relación entre orden, longitud y energía de enlace'. While these are logical topics, strict adherence to the prompt would require splitting or renaming to avoid the conjunction.",
+          "kind": "minorErrors",
+          "score": 9.2
+        },
+        {
+          "conclusion": "Although the list is very extensive and granular (especially the VSEPR and Hybridization sections), the 'Propiedades' lessons (e.g., 'Propiedades de los compuestos iónicos', 'Propiedades de los metales') combine multiple distinct physical phenomena (melting point, conductivity, brittleness, malleability) into single lessons. To be the 'most granular' list possible, these could be split into individual lessons explaining the molecular reason for each specific property.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Latin American Spanish\n      - Should break down each type of chemical bond into separate lessons\n      - Should cover VSEPR, hybridization, and polarity as individual topics\n      - Should not combine theoretical models in single lessons\n      \n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n  \n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "es-chemistry-bonds-1",
+        "userInput": {
+          "chapterDescription": "Iónico, covalente y metálico; VSEPR, enlace de valencia, orbitales moleculares, hibridación y polaridad.",
+          "chapterTitle": "Enlace químico y estructura molecular",
+          "courseTitle": "Química",
+          "locale": "es"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The user instructions explicitly stated: \"If you find yourself using 'AND', 'OR', or 'VS' in a title, you should split it into separate lessons.\" The response contains a few titles violating this, such as \"Residuals vs. Error Terms\", \"Restricted vs. Unrestricted Models\", and \"Comparing AIC and BIC\". Additionally, the lesson \"When R² Can Be Negative\" describes Adjusted R² in its description, creating a slight mismatch (Standard R² is typically non-negative in OLS with an intercept, while Adjusted R² can be negative).",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The lesson list includes \"Consistency of OLS\" and \"Asymptotic Normality of OLS\". While fundamental to econometrics, the chapter description provided (\"OLS geometry, assumptions, identification, Gauss–Markov, hypothesis testing, and model diagnostics\") focuses on finite-sample properties. Asymptotic properties are often reserved for a subsequent section or chapter (as hinted by the exclusion of 'Econometric Theory II: Asymptotics'), though their inclusion here is not a critical failure.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - This is a complex theoretical topic that needs careful breakdown\n      - Each econometric concept should be its own lesson\n      - Should separate theory from practical application\n      - Should break down assumptions individually\n      - Should not cover topics that belong to Econometric Theory II: Asymptotics: Fixed and random effects, clustered errors, dynamic panels, and difference-in-differences foundations\n      \n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n  \n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "en-economics-econometrics-1",
+        "userInput": {
+          "chapterDescription": "OLS geometry, assumptions, identification, Gauss–Markov, hypothesis testing, and model diagnostics.",
+          "chapterTitle": "Econometric Theory I: Linear Models",
+          "courseTitle": "Economics",
+          "locale": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The lesson title 'Definition of Done vs Definition of Ready' violates the specific negative constraint regarding titles: 'If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons'. Although the individual concepts were covered in previous lessons, this specific comparison lesson includes a prohibited keyword in the title.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The comparison lesson could be renamed to 'Diferença entre Done e Ready' to avoid the prohibited keyword while maintaining the specific concept of the relationship/distinction between the two artifacts. Alternatively, since the concepts are already covered individually, this comparison lesson could be removed to strictly adhere to the atomicity rule.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - This is a methodology chapter, should break down each Scrum element individually\n      - Should cover roles, events, and artifacts as separate lessons\n      - Should address anti-patterns as individual cautionary lessons\n      \n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n  \n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "pt-agile-scrum-1",
+        "userInput": {
+          "chapterDescription": "Papéis, eventos e artefatos; Definition of Done/Ready, refinamento eficaz e anti‑padrões comuns.",
+          "chapterTitle": "Scrum na Prática",
+          "courseTitle": "Metodologias Ágeis",
+          "locale": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The lesson title \"Indicative vs. Subjunctive\" contains \"vs.\", which violates the specific negative constraint: \"If you find yourself using 'AND', 'OR', or 'VS' in a title, you should split it into separate lessons\".",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Language learning chapter - should break down each grammar structure separately\n      - Should cover each tense/mood individually\n      - Should not combine multiple grammatical concepts\n      \n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n  \n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "en-spanish-subjunctive-1",
+        "userInput": {
+          "chapterDescription": "Influence, doubt, emotion, denial, volition, and impersonal expressions with triggers.",
+          "chapterTitle": "Subjunctive: Noun Clauses",
+          "courseTitle": "Spanish",
+          "locale": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The user instructions explicitly state: \"If you find yourself using 'AND', 'OR', or 'VS' in a title, you should split it into separate lessons\". The response contains the title \"Rigid vs. Flexible Constitutions\" and \"Suspension and Loss of Political Rights\", which violate this negative constraint. While the concepts are closely related, the prompt demanded granular splitting in these cases.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "To strictly adhere to the granularity instructions, the lesson \"Rigid vs. Flexible Constitutions\" should be split into \"Rigid Constitutions\" and \"Flexible Constitutions\". Similarly, \"Suspension and Loss of Political Rights\" refers to two distinct legal phenomena in Brazilian law (suspensão vs perda) and should be split. Additionally, \"Effects of Unconstitutionality Decisions\" describes ex tunc, ex nunc, and modulation; given the complexity of 'modulation of effects' in Brazilian law, this could have been broken down into 2-3 separate lessons for better bite-sized learning.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Legal topic requiring careful breakdown of each legal concept\n      - Should cover Brazilian-specific law separately from general principles\n      - Should break down constitutional vs civil vs criminal law topics individually\n      - This chapter has a broad scope that needs many granular lessons\n      \n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n  \n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "en-brazilian-law-constitutional-1",
+        "userInput": {
+          "chapterDescription": "Fundamental principles, fundamental rights and guarantees, State organization, Union powers, constitutionality control.",
+          "chapterTitle": "Constitutional Law",
+          "courseTitle": "Brazilian Law",
+          "locale": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The user explicitly requested: \"If you find yourself using 'AND', 'OR', or 'VS' in a title, you should split it into separate lessons\". The lesson titled \"Magical Ability: Inherited or Learned?\" contains the word \"or\". While the concept is singular (the origin of magic), the title violates the negative constraint regarding specific keywords.",
+          "kind": "minorErrors",
+          "score": 9.5
+        },
+        {
+          "conclusion": "The lesson \"Magical Ability: Inherited or Learned?\" could be retitled to \"The Origins of Magical Ability\" to adhere to the negative constraint while maintaining the concept's integrity.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - Creative/pop culture topic that still needs structured breakdown\n      - Should cover each spell category separately\n      - Should break down wand lore, magical creatures, and history as individual lessons\n      - Even though this is pop culture, lessons should still be focused and granular\n      \n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n  \n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "en-harry-potter-magic-system-1",
+        "userInput": {
+          "chapterDescription": "Types of magic, wand lore, spell categories, nonverbal magic, wandless magic, and the limits of magic.",
+          "chapterTitle": "The Magic System",
+          "courseTitle": "Harry Potter",
+          "locale": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The model failed to strictly follow the negative constraint regarding the use of 'AND' (or 'e' in Portuguese) in titles. The prompt explicitly states: 'If you find yourself using AND... you should split it'. Several titles violate this: 'ORCID e identificadores acadêmicos', 'ResearchGate e Academia.edu', 'Abordando professores e pesquisadores', and 'Bolsas FAPESP e fundações estaduais'. Additionally, a few early lessons (e.g., 'Competências técnicas em neurociência') group multiple distinct large topics (lab skills, data analysis, imaging) which arguably exceeds the '2-3 minute' single-concept limit.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The lessons containing 'e' (AND) in the title should be split into separate lessons to strictly adhere to the granularity requirements. For example, 'ResearchGate' and 'Academia.edu' could be two distinct lessons. The lesson on technical competencies should be broken down into specific skills (e.g., 'Noções de Imagem Cerebral', 'Análise de Dados Básica') rather than a broad list, to increase the lesson count towards the '100+' expectation for complex topics.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      \n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n  \n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "pt-mapeando-uma-trajetoria-de-carreira-1",
+        "userInput": {
+          "chapterDescription": "Competências nucleares, portfólio de projetos e branding profissional. Estratégias de estágio, bolsas e entrevistas.",
+          "chapterTitle": "Mapeando uma trajetória de carreira",
+          "courseTitle": "Neurociência",
+          "locale": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The user explicitly stated in the 'Critical Requirements' and 'Quality Checks' sections: 'If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons'. Several titles violate this negative constraint: 'Portfolio vs. Resume', 'Presenting Results and Impact', 'Attending Meetups and Conferences', and 'Balancing Self-Promotion and Humility'. While some represent a single cohesive concept (like the 'Balancing' lesson), others like 'Portfolio vs. Resume' and 'Meetups and Conferences' could have been split or renamed to strictly adhere to the prompt's formatting constraints.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "To strictly follow the negative constraints regarding title wording, 'Portfolio vs. Resume' could be split into specific comparison points or renamed. 'Attending Meetups and Conferences' could be split into two separate lessons as the dynamics of a local meetup differ from a large conference. 'Presenting Results and Impact' could be split into 'Presenting Quantitative Results' and 'Demonstrating Real-World Impact'.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      \n      \n  - Each lesson should cover a SINGLE, SPECIFIC concept that can be explained within 10 short tweets\n  - Break down topics into the smallest, most manageable units possible, so that each lesson can be learned in 2-3 minutes\n  - If a topic is too broad, split it into multiple lessons\n  - Each lesson should be extremely focused on a SINGLE concept\n  - If a lesson is too broad, split it into multiple lessons\n  - If you find yourself using \"AND\", \"OR\", or \"VS\" in a title, you should split it into separate lessons\n  - Lesson titles should be short and specific to the exact concept covered\n  - Build a logical progression from basic to advanced concepts\n  - Ensure lessons build on knowledge from previous lessons\n  - Focus lessons for this specific chapter, not the entire course\n  - Don't include summary or review lessons. For example, do NOT create a lesson title \"Summary of Key Concepts\" or \"Review of Chapter\"\n  - Don't include assessment or quiz lessons\n  - Don't include final project or capstone lessons\n  - Should follow the language specified by locale parameter\n  - Should follow title and description guidelines: no fluff, be concise, straight to the point\n  - Descriptions should be concise and straight to the point, no fluff/filler words (avoid \"learn\", \"understand\", \"explore\", \"introduction to\", etc.)\n  - You don't need to evaluate the output format here, just focus on the lesson content quality\n  - Include an extensive list of lessons to cover all the concepts needed to learn the chapter. Complex topics will usually requiere more than 100 lessons\n  \n  Things to check:\n  - Is each lesson too broad? If so, it should be broken down further\n  - Can each concept be explained in 10 short tweets or less? If not, it should be broken down\n  - Does each lesson focus on a single specific concept? If not, it should be split\n  - Does it have lessons that don't belong in this chapter? If so, they should be removed\n\n    ",
+        "id": "en-portfolio-personal-branding-1",
+        "userInput": {
+          "chapterDescription": "Project selection, case studies, technical writing, talks, and community presence.",
+          "chapterTitle": "Portfolio & personal branding",
+          "courseTitle": "Web Development",
+          "locale": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "chapter-lessons"
+}
