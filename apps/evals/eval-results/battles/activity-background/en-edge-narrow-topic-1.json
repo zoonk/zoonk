@@ -1,0 +1,138 @@
+{
+  "expectations": "\n      SPECIAL CONSIDERATION: This is a narrow topic (recursion in programming). The background should still have a narrative, but it may be shorter since the scope is focused.\n\n      Avoid explaining how to write recursive functions. Focus on WHY recursion was developed as a concept and what elegant problems it solved.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+  "judgedAt": "2026-01-15T20:20:43.110Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model is exceptional because it weaves a true historical narrative (Logicians, the hesitation of early languages, the etymology) into the explanation. It perfectly addresses the 'Why' by framing recursion as a discovery that solved a fundamental philosophical and practical problem, rather than just a coding technique. The tone is sophisticated yet accessible, and the flow is logical and gripping.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model excels at vividly describing the 'pain point' before recursion existed. The metaphors of 'sticky notes everywhere' and a 'cookbook written in panic' perfectly illustrate why iterative loops were insufficient for complex state management. It follows the tension-resolution arc beautifully, making the arrival of recursion feel like a genuine relief.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F adopts a highly conversational and relatable tone, effectively communicating the frustration of 'grunt work' and 'spaghetti code.' The narrative flow from the problem (tedious repetition) to the solution (a tiny idea with big teeth) is strong. It feels exactly like a curious friend explaining the concept.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "This model stands out for its punchy, high-energy style and specific historical details (John McCarthy, Lisp, 1958). It creates a strong sense of the 'mess' of early programming versus the 'magic' of recursion. While the style is slightly more aggressive/staccato than the top three, the content is deeply relevant to the prompt's focus on origins.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C uses beautiful imagery (nature, divers, mirrors) to explain the concept. It follows a clear narrative path. However, it feels slightly less grounded in the specific history of computing struggles compared to the models ranked higher. It leans more into the abstract beauty of the concept than the concrete problem-solving utility.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "This is a solid, competent output. It follows the narrative arc correctly (Problem -> Spark -> Solution). However, the writing is somewhat generic compared to the vivid metaphors in J or the historical depth in B. It meets the requirements but doesn't delight or surprise.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model I provides a serviceable narrative but feels a bit safe and abstract. The 'Mirror Moment' is a good header, but the text lacks the vivid punchiness found in the higher-ranked models. It covers the bases but lacks a distinct voice.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "This model is repetitive, using the 'Russian nesting doll' analogy in both step 1 and step 5. While the content is accurate, the narrative is flat and lacks the storytelling flair requested. It feels more like a simplified lesson than a story about origins.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "The prompt explicitly asked to avoid explaining *how* recursion works mechanically. This model spends significant space (steps 3 and 4) explaining the execution flow (passing bills, counting back up, base case). While the analogy is clear, it focuses on the mechanics rather than the 'Why' and the narrative origin.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "This model fails the storytelling and tone criteria. It reads like a textbook summary or a list of bullet points rather than a narrative. There is no tension or resolution, just a series of factual statements about what recursion is. It is the least engaging of the lot.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Best overall narrative arc: starts with a relatable closet scene, hits the tension (rigid assembly-line code vs twisty structures), shows the “sticky notes” pain, then the nesting-doll insight and the “stop sign” resolution, ending with why it matters as a mindset. Strong conversational tone and vivid metaphors. Minor knock: brief mention of stop-sign mechanics, but still framed as story/why.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Great conversational voice with varied everyday analogies (bookshelf screws, folders, spaghetti, recipe, map). Clear tension→idea→impact arc and stays mostly on “why.” Slight scope creep into examples like parsing/graphics, but still aligned. Mentions Euclid/history without overclaiming.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Most explicitly answers “why developed” with a strong historical/theory storyline (logicians, early language design hesitation). Vivid metaphors (dictionary self-definition, breadcrumbs). However, several steps exceed the 300-character limit by a lot, which is a key requirement. Also makes broad modern claims (undo button, search engines) without support.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Excellent scene-like imagery (hall of mirrors, cash-counting delegation) and very conversational. Good tension/resolution around the need for a stopping point and why recursion helps with messy structures. But it leans into explaining base case mechanics more than requested, and likely violates the 300-character limit in multiple steps.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Clean, friendly narrative with consistent metaphors (maze/map, mirror, echo). Stays on the “why” and appropriate scope. But scenes are less vivid/unique, and it’s a bit generic; some claims about recursion “shapes everything” are overstated. Character limits appear safe.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Meets the basic story beats (repetition pain → self-similar tasks → ‘call yourself’ → elegance → why today) with a clear doll metaphor. But it edges into “how” (functions calling themselves) and reads more like a simplified explanation than a vivid story. Still likely within length constraints.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Readable and metaphor-heavy (puzzle, mountain, mirror, Russian doll), but repetitive across steps and less scene-like—more slogan-like. Also drifts toward generic “breakthrough/impact” phrasing without much narrative tension or specificity. Mostly within limits.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong imagery (fern/snowflake, diver) and a decent arc, but it directly explains mechanics (base case, “chain reaction,” “exit”) and ends with “You’re about to learn…” which shifts into instruction/pitch. Also several steps likely exceed the 300-character cap.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Energetic voice and some strong metaphors, but it includes specific historical claims (e.g., “1958…unleashes Lisp…No loops needed”) that are misleading/overstated, and it slips into technical/implementation-ish phrasing (manual stacks, overflow). Multiple steps likely exceed length limits too.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Clear and structured, but it’s the most encyclopedic: it explicitly explains recursion mechanics (functions call themselves, base case) and leans on textbook examples (factorial/Fibonacci) rather than telling why the concept emerged. Least vivid/tension-driven narrative of the set, despite being within length limits.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-background",
+  "testCaseId": "en-edge-narrow-topic-1"
+}

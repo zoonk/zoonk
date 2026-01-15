@@ -5,14 +5,14 @@ import { z } from "zod";
 import systemPrompt from "./activity-background.prompt.md";
 
 const DEFAULT_MODEL =
-  process.env.AI_MODEL_ACTIVITY_BACKGROUND ?? "openai/gpt-5.1-instant";
+  process.env.AI_MODEL_ACTIVITY_BACKGROUND ?? "openai/gpt-5.2";
 
 const FALLBACK_MODELS = [
-  "openai/gpt-4.1-mini",
-  "xai/grok-4.1-fast-reasoning",
-  "google/gemini-3-flash",
+  "openai/gpt-5-mini",
+  "openai/gpt-5.1-instant",
   "anthropic/claude-opus-4.5",
-  "openai/gpt-5.2",
+  "google/gemini-3-flash",
+  "google/gemini-3-pro-preview",
 ];
 
 const schema = z.object({

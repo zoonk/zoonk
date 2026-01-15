@@ -1,0 +1,138 @@
+{
+  "expectations": "\n      Titles and descriptions must be in Portuguese.\n\n      Avoid diving into research methodologies or academic frameworks. The background should explain WHY humans started systematically studying society — not HOW sociologists conduct research.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+  "judgedAt": "2026-01-15T20:20:46.831Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model perfectly aligns with all evaluation criteria. It masterfully uses the requested everyday analogies (sports teams, cooking recipes, watching a game) to explain abstract sociological concepts. The conversational tone is engaging, the 'why' is clear, and the storytelling flow creates excellent tension and resolution. It transforms a history lesson into a relatable narrative.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "An excellent output that uses vivid imagery and strong metaphors ('norms as recipes', 'ship in fog', 'lanterns in ruins'). The narrative flow is logical and compelling. It misses the top spot only because Model A's conversational tone felt slightly more natural and the specific analogies were slightly more varied.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model excels at 'Vivid Scenes'. The descriptions of the Industrial Revolution ('machines roaring', 'grey cities') are immersive. While it relies more on narrative description than the specific everyday metaphors requested (sports/games), the storytelling quality is high and very engaging.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Uses strong, dramatic language ('Social Earthquake') and good metaphors ('Social Telescope'). The titles are catchy and the flow captures the urgency of the historical moment. It is a strong entry but feels slightly less 'conversational' than the top three.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "A solid, competent explanation. It uses clear metaphors ('sick organism', 'special glasses') and follows the narrative arc well. It effectively explains the 'why', though the writing lacks the creative spark and vividness found in the higher-ranked models.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This model follows the instructions well, using metaphors like 'puzzle' and 'weather forecasting'. However, the text steps are somewhat brief and feel a bit thin compared to the richer narratives of the top models. It meets requirements but doesn't exceed them.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "The writing quality is high, but the tone leans too heavily into the academic side by listing numerous philosophers (Rousseau, Voltaire, Saint-Simon, Comte, Durkheim, Marx, Weber). While factually rich, it drifts away from the 'chat with a curious friend' persona requested and feels more like a history lecture.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "This output is functional but generic. It follows the standard 'village to city' structure without adding unique flavor, vivid imagery, or the requested specific analogies. It feels like a standard template response.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Very basic. While it covers the prompt, it lacks creativity, vivid scenes, or engaging metaphors. The storytelling is flat and reads like a summary rather than a story.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "The weakest output. It reads like a textbook bulleted list with zero conversational flair. It completely fails the storytelling and metaphor criteria, offering dry facts instead of an engaging narrative.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Melhor arco narrativo: começa no “sempre foi assim”, acelera com industrialização, cria tensão (caos/desigualdade) e resolve com a ideia de olhar científico e a utilidade hoje. Tom bem conversado, cenas vívidas e metáforas frequentes (janela, time trocando técnico, receita/fogão, replay, óculos). Quase não cai em metodologia; só menciona “comparar, registrar” de forma leve e dentro do limite. Títulos e textos dentro dos limites aparentes.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Muito bom fluxo cinematográfico e imagens fortes (“terremoto social”, ritmo das estações, mapa na multidão). Metáfora central (“telescópio social”) funciona bem e mantém foco no porquê da Sociologia surgir. Pequena derrapada ao dizer “estudo rigoroso/ferramenta científica”, mas sem entrar em como fazer. Texto um pouco mais solene que conversacional, ainda assim envolvente.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Narrativa clara e bem encadeada (fé/tradição → revoluções → crise → nova ferramenta). Ótimas imagens (“organismo doente”, “óculos especial”). Leve menção a “observação e dados” (metodologia), mas não domina. Tom acessível e escopo adequado. Menos vívido que A/D, porém sólido.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Storytelling forte, com cenas e tensão (cidades cinzentas, cortiços, incêndios, trabalho infantil). Boa cadência e fechamento no presente. Porém entra mais em “do mesmo jeito que estudamos… com método, observação e análise” e lista clássicos (Durkheim/Marx/Weber) de forma um pouco enciclopédica; ainda aceitável, mas menos alinhado ao ‘evitar como’.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Bem escrito e com boas analogias (trem desgovernado, peixes e correnteza). Tem energia e cenas. Problema: afirmações específicas e arriscadas/factuais (ex.: Comte “acendendo a fogueira em 1838”) e entra em exemplos de obras (“Durkheim analisou suicídios…”) que podem soar mais acadêmicos/mecânicos. Ainda mantém foco no porquê, mas com mais ‘história da disciplina’.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Claro, conciso e com metáforas boas (quebra-cabeça, redemoinho, clima pela janela, óculos). Entretanto, o passo 3–4 enfatiza “métodos, dados, rigor / laboratório: observar, comparar” — cai no ‘como’ mais do que o pedido. Cenas menos vívidas; fica mais abstrato.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Metáforas excelentes (receitas de família, navio no nevoeiro, lanternas, microscópio), mas fere diretamente a instrução de evitar metodologias: vários passos são sobre “laboratório”, “colecionar relatos e números”, “entrevistas, estatísticas”. Vira quase uma mini-história de métodos, desviando do foco no porquê.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Tom amigável e fácil de ler, mas genérico e com pouca tensão/imagética comparado aos melhores. Também menciona claramente ‘coletar dados’ e ‘descobrir regras’, entrando no como. Metáforas fracas (“palco social”) e cenas pouco específicas.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Cumpre o básico, mas é o mais “resumo escolar”: pouca narrativa, pouca tensão e metáforas quase ausentes. Também introduz ‘métodos científicos’ explicitamente. As cenas não se destacam; fica abstrato e pouco envolvente.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "O mais enciclopédico e frio: frases genéricas, pouca imagem, quase sem analogias. Entra em detalhe específico (data/termo) e fala em “métodos científicos… descobrir suas leis e funcionamentos”, enfatizando mecânica/implementação. Menor qualidade de storytelling e engajamento.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-background",
+  "testCaseId": "pt-social-sociology-1"
+}

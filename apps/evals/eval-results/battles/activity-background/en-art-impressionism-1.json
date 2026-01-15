@@ -1,0 +1,138 @@
+{
+  "expectations": "\n      Avoid jumping into color theory rules or artistic techniques. The background should explain WHY artists became obsessed with light and color — not HOW to mix pigments.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+  "judgedAt": "2026-01-15T20:20:51.785Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model is the clear winner because it follows the 'conversational tone' and 'metaphors' constraints perfectly. It uses relatable, distinct analogies from everyday life (cooking for a picky critic, pinning a butterfly with boxing gloves, weather reports) to explain abstract art concepts. The narrative flow is excellent, explaining the 'why' (the speed of modern life) before the 'how'.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Model D is an outstanding piece of storytelling. It relies heavily on musical and dance analogies (orchestra vs. jazz, waltz vs. tap dance) which creates a beautiful, cohesive narrative. It falls just slightly behind Model G because G's analogies (cooking, sports) felt a bit more grounded in the 'everyday life' request, whereas D stayed within the arts, but the quality is nearly matched.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model effectively uses strong metaphors ('opera sung behind a velvet curtain', 'easels like picnic chairs', 'guitar riffs'). The storytelling is engaging and builds a good narrative arc. It is very similar in quality to Model D but feels slightly less poetically cohesive.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model F brings high energy and vivid scene-setting ('trains roared', 'factories hummed'). It connects well to the modern day ('Instagram filters'). While it is engaging, its metaphors ('piano keys') are good but not quite as clever or abundant as the top three models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model E provides a very clear, well-structured narrative with good vivid details (like the 'Roman emperor's toga'). However, it relies more on descriptive imagery than the specific 'everyday analogies' (sports, cooking, etc.) requested in the prompt, placing it in the middle tier.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This output is a solid, factual retelling of the story. It includes important details like the paint tubes and the 'wallpaper' insult. However, the tone is more standard storytelling rather than the conversational, metaphor-rich style requested. It gets the job done but lacks flair.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model J attempts a conversational tone ('painting inside a tiny box'), which is good. However, the steps feel a bit thin and abstract compared to the richer detail found in the higher-ranked models. It prioritizes brevity over storytelling depth.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A is a competent summary but fails to stand out. It reads more like a standard textbook introduction than a story told to a friend. It lacks the vivid metaphors and emotional hook requested in the evaluation criteria.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "This model is acceptable but generic. It uses cliché phrases ('Rebels', 'Stuffy art world') and standard descriptions without adding any unique imagery or analogies to help the user understand the 'why' on a deeper level.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Model C receives the lowest score because it fails the 'conversational tone' criteria. Words like 'immortalized', 'perceive', and 'visual culture' make it sound like an academic encyclopedia entry, which is exactly what the prompt asked to avoid.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Best narrative arc and scene-by-scene vividness. Strong conversational voice with memorable analogies (ball/muddy boots, bouncer, cooking for picky critic, butterfly with boxing gloves, weather report). Stays mostly on the “why” (modern life + gatekeeping + chasing fleeting moments). Minor technical drift (eye blending/mixing) but not overly instructional. Titles/text appear within limits.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Great tension/resolution: accelerating modern world + photography pressure → artists chase light and moments. Vivid imagery and strong metaphors (piano keys, Instagram filters). Mostly “why,” though it leans into technique a bit (“broken brushstrokes… pure blues, yellows”) but still framed as motivation/feel rather than a how-to. Length limits look fine.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Clean, conversational, and emotionally legible with a clear arc. Good metaphor (nickname meant to embarrass you) and “art as exploration, not an exam.” Stays on “why” with minimal technique. Slightly less concrete specificity/scene variety than top entries, but still engaging and within sizing constraints.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong storytelling flow and vivid scenes (toga in dim studio; sunlight dancing; mockery → embraced). Good focus on why (escaping academic expectations; capturing feeling/perception). One factual/claim risk: “our eyes don't see the world in sharp focus” is overstated, though it’s meant poetically. Otherwise within limits and not too technical.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Solid arc and readable scenes; good “problem (Salon/finish) → solution (plein air) → backlash → legacy.” However it slips into more “how” language (quick brushstrokes, bright unmixed colors) and includes a questionable overstatement (“had to look like photos”) given photography/academic painting nuance. Still within size limits and generally vivid.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Beautiful metaphors (opera curtain, guitar riffs, composer variations) and strong scene work (harbor morning, haystacks). But it repeatedly emphasizes technique mechanics (side-by-side color so the eye blends; haystack series as proof about color), drifting from “why” into “how it works.” Still engaging and within limits.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Very metaphor-heavy and scene-like, but Step 4 is explicitly about technique (“dabbing colors side-by-side… eyes blend hues”), which violates the “avoid how-to/implementation” expectation more than the top models. Also some phrasing is more performative than explanatory, so the “why” can feel buried under analogies.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Clear arc and some vividness, but it leans harder into mechanics (portable tubes, “slapped paint,” “eye blends color better than a palette”). Also includes a doubtful claim that critics called it “unfinished wallpaper” as a general fact. Conversational tone is okay but more blunt/expository.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Competent but more generic and list-like; weaker scene imagery. Directly violates the constraint by giving a fairly explicit technique instruction (“placed them side-by-side, letting the viewer's eye blend them”). Less metaphorical richness and curiosity-building than others.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Most encyclopedia-like and least vivid; fewer hooks, metaphors, or tension. Also includes technique talk (“short, broken brushstrokes and vivid colors”) without much emotional/story payoff. The “legacy in advertising/filmmaking” line feels broad and asserted rather than scene-based.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-background",
+  "testCaseId": "en-art-impressionism-1"
+}

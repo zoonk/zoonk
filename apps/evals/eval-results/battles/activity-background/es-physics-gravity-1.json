@@ -1,0 +1,138 @@
+{
+  "expectations": "\n      Titles and descriptions must be in Spanish.\n\n      Avoid diving into formulas or mathematical equations. The background should explain WHY gravity was such a mystery and what questions it answered — not HOW to calculate gravitational force.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+  "judgedAt": "2026-01-15T20:20:40.944Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model is exceptional. It perfectly adheres to the 'conversational tone' and 'metaphors' criteria. It explains the historical mystery (why people were confused) using brilliant analogies like 'a recipe without measures' and 'a bicycle with a thousand chains' to describe epicycles. The narrative arc from the separation of earth/sky to the unification is masterful.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Excellent storytelling with poetic and vivid imagery ('a house with two floors', 'a question that bit'). The flow is smooth, and it effectively creates tension before resolving it with Newton's insight. It feels very sophisticated yet accessible.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Very strong, energetic tone. It does a great job creating 'scenes' for Galileo and Kepler, using good analogies like 'cars on an oval track' and 'crazy clock'. It covers the historical context (the 'why') very well.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model stands out for its explanation of the orbit (Newton's cannon/falling without touching the ground). This directly addresses the 'questions it answered' part of the prompt with a vivid mental image. The storytelling is solid.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "A solid narrative with good dramatic tension ('The ancient world crumbled'). It captures the flow of discovery well, though the metaphors are slightly less creative than the top three models.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good use of metaphors (the 'leaking roof' analogy for a world without explanation is clever). The structure is logical and meets all criteria, though the writing is slightly less engaging than the higher-ranked models.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Competent and follows instructions. It uses standard metaphors ('invisible thread', 'glue'). It is a good output but lacks the unique flair or historical depth of the models ranked above it.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Acceptable but a bit dry. It follows the chronological steps but reads more like a summary than a story told to a friend. The imagery is generic ('puzzle', 'cosmic dance').",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "The tone feels a bit forced ('Boom!', 'Radical idea!'). It meets the basic requirements but lacks narrative sophistication. It tells rather than shows.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "The weakest output. It is too brief and reads like a bulleted summary rather than a narrative. It lacks the vivid scenes and storytelling flow requested in the prompt.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excelente arco narrativo: parte de “dos mundos” separados, acumula tensión con parches (epiciclos) y resuelve unificando cielo y Tierra. Tono muy conversacional, metáforas variadas (receta, bicicleta, chef, música). Enfoque en el “por qué” y la importancia, casi nada de mecánica. Títulos y textos dentro de límites.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Muy buen flujo y cohesión escena a escena; mantiene curiosidad (“dos mundos”, transición a Galileo y Newton) y cierra con impacto cotidiano. Buenas imágenes y analogías (techo que gotea, rompecabezas, “mismo idioma”). Sin tecnicismos. Cumple límites.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Narrativa potente y visual, con metáforas consistentes (casa de dos pisos, corredores cósmicos, llave maestra). Buen “por qué”. Baja un poco por incluir a Einstein y la sábana: se va un poco más allá del foco Newtoniano típico y roza explicación de “cómo” (curvatura del espacio), aunque sin fórmulas.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Conciso, claro y conversacional; buenas imágenes (dos idiomas, hilo invisible, abrazo). Mantiene el enfoque en por qué importó. Menos tensión/complicaciones intermedias: salta rápido a Newton, así que el arco es más simple y menos “misterio-resolución”.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Cumple y es fácil de seguir; metáforas simples (rompecabezas, danza cósmica). Pero el relato es más general y lineal, con menos escenas concretas y menos tensión acumulada. Se siente algo más “resumen” que historia viva.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Buen storytelling en escenas (niño, Luna, manzana) y buen ritmo. Penaliza por violar una expectativa: menciona explícitamente “una sola ecuación”, acercándose a lo que se pidió evitar (aunque no muestra fórmulas). Algunas afirmaciones muy tajantes (Aristóteles “sentenció” y nadie cuestionó) simplifican demasiado.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Imágenes vivas y analogías útiles (reloj, autos en pista, imán). Pero se mete en tecnicismo innecesario: menciona ‘fuerza inversa al cuadrado’ y ‘tres leyes’ de Kepler; además hay un error factual claro: Kepler no observó con telescopio (sus leyes se basaron en datos de Tycho).",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Tiene buen hilo (Galileo→Luna→Newton) y la metáfora del cañón es clara, pero se mete más en el “cómo” (aceleración, explicación de orbitar) y menos en el “por qué” como misterio histórico. Cierre algo enciclopédico. Dentro de límites.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Correcto pero genérico y con tono algo escolar. Incluye “lenguaje matemático” y un “¡Boom!” que suena poco natural en este contexto. Menos metáforas frescas y menos escenas; se siente como resumen de libro.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Demasiado superficial: pocos escalones narrativos, poca tensión y casi sin escenas; además contiene una inexactitud notable (“los planetas vagaban sin rumbo fijo”). Tono muy genérico y poco evocador; metáforas casi inexistentes.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-background",
+  "testCaseId": "es-physics-gravity-1"
+}

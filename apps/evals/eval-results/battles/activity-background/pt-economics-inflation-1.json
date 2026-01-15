@@ -1,0 +1,138 @@
+{
+  "expectations": "\n      Titles and descriptions must be in Portuguese.\n\n      Avoid diving into supply/demand curves or economic formulas. The background should explain WHY inflation matters and what historical problems it caused — not HOW central banks control it.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+  "judgedAt": "2026-01-15T20:20:44.616Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "This model is exceptional. It perfectly follows the narrative arc requirement by taking the reader through history—from direct barter to Roman coin debasement, French chaos, and Brazilian hyperinflation. It uses vivid imagery ('Silent Thief', 'Pizza Party') and explains the 'Why' and 'Origin' without getting bogged down in technical mechanics. The tone is perfectly conversational and dramatic.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent storytelling with some of the best metaphors in the set (the treadmill, the auction, the tape on a leaking pipe, arriving late to the buffet). The writing style is highly engaging and conversational. It falls just slightly behind Model I because it is more abstract about the history, whereas Model I provides concrete historical examples that ground the narrative.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Very strong content, particularly the inclusion of the Mansa Musa historical anecdote, which perfectly fits the request for 'historical problems'. The metaphors (termite, invisible tax) are effective. It ranks slightly lower than F because the narrative flow feels a bit more like a collection of interesting facts rather than a single cohesive story arc.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model maintains a consistent, poetic tone throughout ('leaking canoe', 'fever'). The narrative flow is smooth and meets all constraints regarding length and formatting. It explains the concepts well through analogy, though it lacks the specific historical richness found in the top three models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good narrative, specifically leveraging the Brazilian context (referencing the 80s) which adds high relevance. The 'diluting juice' metaphor is solid. However, the ending (Step 7) lists technical terms (IPCA, Central Bank targets) which leans slightly towards the 'How it is controlled' mechanic that the prompt asked to avoid.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "A solid, competent output. The 'juice dilution' analogy is clear and the narrative arc from stability to instability is present. It is ranked lower because it is somewhat brief and less creatively ambitious than the higher-ranked models, though it follows all instructions well.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Adequate performance. It uses good metaphors (holding water with hands), but the writing style is slightly less engaging and the phrasing feels a bit more generic compared to the vivid scenes painted by the top models.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The opening imagery is good, but the model loses points on the 'Focus on Why' criteria. Step 4 reverts to a standard textbook explanation of supply and demand ('factories', 'energy costs'), breaking the narrative immersion and conversational tone requested.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "This output is functional but dry. It reads more like a simplified explainer for a child than a compelling story for a curious friend. It lacks vivid historical scenes and leans too heavily on explaining the mechanics (demand vs products) rather than the narrative origin.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "This model fails to meet the core 'Storytelling Flow' and 'Conversational Tone' criteria. It presents a bulleted list of definitions ('Inflation is when...', 'It can occur for several reasons...') rather than a narrative. It reads like an encyclopedia entry, which the prompt explicitly forbade.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Melhor arco narrativo: começa com a experiência cotidiana, cria tensão (esteira acelerando, remendos) e fecha com resolução prática (medir/entender). Tom conversacional e cheio de cenas. Muitas metáforas boas (esteira, cano, buffet, clima). Evita fórmulas; menciona índices sem entrar em tecnicismo excessivo. Títulos e textos parecem dentro dos limites.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Fluxo bem construído, com cenas da feira e progressão clara até “por que importa”. Metáforas fortes (canoa, febre, fósforo/fogo). Porém escorrega um pouco para “como funciona” ao listar causas e falar de congelamento salarial/preços e ciclo autoalimentado (quase mecânico). Ainda assim, é envolvente e apropriado.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Narrativa viva, analogias excelentes (máquina do tempo, leilão, cupim). Boa tensão e relevância (Brasil e inflação alta) sem virar aula técnica. O exemplo do Mansa Musa é um “mini-conto” ótimo, embora possa soar como detalhe histórico específico (ainda plausível). Fecha bem no “por que importa”.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Muito bom tom de conversa e imagens (“nota encolheu”, “maré”, “ladrão”, “previsão do tempo”). Mantém foco no porquê e impacto. Peca por ficar um pouco genérico e por explicar causas em termos de demanda/capacidade (leve risco de entrar no “como”), mas sem fórmulas. Fluxo ok, pouca tensão/virada.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Tem energia e metáforas (tabuleiro, bolo, monstro, instrumento). Entretanto, a narrativa é um pouco repetitiva e menos “cênica” em alguns passos (mais slogan do que cena). Também menciona “controlar inflação” (cheiro de implementação) sem explicar, mas não aprofunda. Ainda funciona.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Claro e amigável, com algumas analogias (“dinheiro encolhe”, “regras do jogo”). Mas cai mais em explicação causal padrão (demanda x oferta, custos de produção) e tem menos narrativa/curiosidade e menos cenas históricas (pedidas pelo enunciado: problemas históricos). Fica didático demais.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Boa escrita e analogias (ingresso de cinema, último pedaço de bolo, suco diluído). Porém traz afirmação problemática/idealizada (“moeda comprava o mesmo por décadas”) e a linha “economia ficou mais movimentada” é vaga. O arco é curto e tende a explicar mecanismo (mais dinheiro vs bens) sem mostrar muito “dor histórica”.",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Muito correto e simples, mas soa como definição de livro: pouco cenário, pouca tensão e metáforas limitadas. Explica “por que acontece” de modo genérico e foca em decisões financeiras (poupar/investir), com menos história e menos emoção. Ainda dentro do tema, porém fraco em storytelling.",
+          "score": 5.1
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Tem um bom gancho familiar e um passo forte sobre Brasil anos 80, mas erra ao dizer que no escambo “não existia preço” e “preços fixos” (falso). Também entra em implementação (“metas de inflação, bancos centrais ajustam juros”) contrariando o foco no “por que” e evitando mecânica. Fluxo fica meio enciclopédico.",
+          "score": 4.3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Apesar de imagens fortes e bons trechos (Brasil anos 80), contém exageros/inverdades (“preços fixos, sem surpresas” no escambo; “caos total” na França séc. XVIII é amplo e simplificador) e desliza para fórmula/mecânica (“inflação é demais dinheiro perseguindo poucos bens”, “ajustando a impressora de dinheiro”). Mais sensacionalista e menos alinhado ao pedido de evitar ‘como’.",
+          "score": 3.6
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-background",
+  "testCaseId": "pt-economics-inflation-1"
+}

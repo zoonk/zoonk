@@ -1,0 +1,138 @@
+{
+  "expectations": "\n      Avoid diving into DNA mechanics or genetic terminology. The background should explain WHY the theory of evolution was developed and what questions it answered — not HOW natural selection works at a biological level.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+  "judgedAt": "2026-01-15T20:20:49.692Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model G is the strongest output because it perfectly balances storytelling with accessible, clever analogies. The 'furniture' metaphor for fixed species and the 'tickets for seats' analogy for resource scarcity are exceptional ways to explain abstract concepts without jargon. The flow is logical, building from the problem (missing mechanism) to the solution (natural selection) with a highly conversational and engaging tone.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E is an excellent entry with polished writing and vivid imagery. Metaphors like the 'messy kitchen,' 'tinkerer’s bench,' and the environment acting as a 'sieve' make the concepts immediately understandable. The narrative arc is strong, though Model G's analogies were slightly more intuitive for a lay audience.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Model D adheres strictly to the criteria with creative metaphors like 'Swiss Army knives' for beaks and species as 'recipes' being tweaked by a 'tasting spoon.' The writing is concise and engaging. It ranks slightly lower than E simply because 'tasting spoon' is a slightly more abstract metaphor for survival than a 'sieve' or 'filter.'",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model C uses strong narrative language ('finished masterpiece,' 'battlefield') to create tension and resolution. It explains the 'struggle for survival' very well. However, the text blocks are denser than the top models, and the metaphors, while good, are slightly less inventive than the 'furniture' or 'kitchen' analogies in G and E.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model F provides a high-quality, professional narrative. It includes key historical context (farmers/breeding) that helps explain the logic of selection. The writing is strong ('sculpted from below'), but the metaphors are somewhat standard compared to the creativity found in the higher-ranked models.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model I is concise and follows the instructions well. The 'coach choosing the best players' analogy is effective for explaining natural selection. However, the steps are quite brief, resulting in a narrative that feels a bit skeletal compared to the rich storytelling of the top tier.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Model A is a competent output that hits all the requirements. It uses the 'sculptor' metaphor and follows a logical flow. However, it feels the most generic of the acceptable models; it lacks the vivid, unique voice or specific creative analogies that distinguished the higher-ranked models.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model H offers good imagery ('static portrait,' 'sorting hat'), but it is significantly shorter (only 5 steps) than the others. It rushes through the narrative arc, missing the opportunity to build the tension of the 'missing mechanism' before revealing the solution.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model J attempts a conversational tone but overshoots into slang ('puking his guts out,' 'Boom'). While it is vivid, the tone feels too informal and distracting for an educational context, even a casual one. It effectively covers the content but fails the tonal requirement by being too bro-ish.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Model B is the weakest because it fails to meet the 'conversational' and 'vivid imagery' criteria. It reads like a dry textbook summary rather than a story told to a friend. It lacks the engaging metaphors and tension-building required by the prompt.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Best narrative arc and “why” framing: starts with the fixed-species worldview, introduces competing explanations and the need for a convincing driver, then resolves with a unifying idea and modern relevance. Strong conversational tone and frequent, clear metaphors (furniture, crates, road trip, test kitchens, tickets/seats, filter). Avoids heavy bio jargon; mechanics are mentioned but kept high-level. Step titles/text appear within limits.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Excellent storytelling with vivid scenes (detective voyage, workshop, sieve, compass) and a strong sense of why the theory mattered culturally/scientifically. Good flow from puzzle → clues → synthesis → impact → today. Slightly more “how” than ideal in the natural-selection step, but still not technical. Length limits look respected.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Very engaging, cinematic, and emotionally framed (backlash tension, “dangerous idea,” Wallace trigger). Great analogies (static painting/rough drafts, farmer breeding). However, it leans more into selection mechanics (“battlefield,” best traits survive) than the prompt prefers, and includes a few specifics (dates/20 years) that aren’t necessary, though not wrong.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Strong voice and vivid scenes; includes Lamarck as a narrative foil, which nicely motivates why Darwin’s theory was needed. Plenty of analogies (audition, Swiss Army knives). But it strays into edgy phrasing (“puking his guts out”) that may not fit general-audience educational tone, and it explains natural selection more mechanically than requested. Also “fossils that defied faith” is a loaded framing.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Smooth, compact arc with strong imagery and a memorable metaphor (“Sorting Hat,” sieve). Stays mostly on “why it was developed” and the unifying family-tree payoff. The natural selection step still gives a mini-mechanism explanation (survive/pass trait over millions of years), but it’s brief. Overall less textured than the top entries.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Conversational and metaphor-rich (figurines, rough drafts, coach, backstage pass) with decent flow. But it’s more generic and less scene-based than stronger versions, and it jumps quickly to the insight without building as much tension or conflict among explanations. Some “how” sneaks in but remains high-level.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Nice metaphors (statues, Swiss Army knives, recipes, game) and generally good flow. However, it becomes more list-like and explanatory in the middle, with two consecutive steps essentially describing natural selection, pushing into “how” territory. Less emotional tension/resolution than the best narratives.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Clear and organized, but reads more like a textbook summary than a story: fewer vivid scenes, weaker tension, and relatively plain language. Also contains more explicit mechanism phrasing (“helpful traits survive and pass them on”) and a modern-applications step that feels bolted on rather than integrated.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Decent arc and accessible metaphors, but it leans into naming and describing natural selection in a more definitional way (“Nature 'selects'… survive and reproduce… leads to new species”), which conflicts with the “avoid how” emphasis. Also less vivid/scene-like than others; feels like a standard intro paragraph sequence.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Most off-target for the prompt: it includes the DNA claim (“98% of your DNA with chimps”), which violates the instruction to avoid DNA/genetic framing, and it spends more time on mechanism/claims than on the motivating questions. Still readable, but the DNA line and stronger “how” emphasis are significant mismatches.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-background",
+  "testCaseId": "en-science-evolution-1"
+}

@@ -1,0 +1,138 @@
+{
+  "expectations": "\n      SPECIAL CONSIDERATION: This is a very recent topic (large language models). The \"history\" is short but still has a narrative arc of problems, attempts, and breakthroughs.\n\n      The story should still have tension (what was hard about AI before?) and resolution (what changed?) even if the timeline is compressed.\n\n      \n  EVALUATION CRITERIA (focus on storytelling quality, not specific content):\n\n  1. STORYTELLING FLOW: The steps should build curiosity and follow a narrative arc. Check for tension (the problem/limitation) and resolution (how it was solved).\n\n  2. STEP SIZING: Each step must have a title (max 50 chars) and text (max 300 chars). Verify lengths are within limits.\n\n  3. CONVERSATIONAL TONE: The writing should feel like talking to a curious friend, not reading an encyclopedia. Look for vivid imagery and emotional engagement.\n\n  4. METAPHORS & ANALOGIES: Check for analogies from everyday life (sports, cooking, games, music, travel) that make abstract concepts tangible.\n\n  5. FOCUS ON \"WHY\": The activity explains the origin and importance of a topic — NOT how it works technically. If the output dives into mechanics or implementation, that's a problem.\n\n  6. APPROPRIATE SCOPE: Content should match the lesson's scope exactly — not broader (covering the whole field) and not narrower (covering only a sub-topic).\n\n  7. VIVID SCENES: Each step should feel like a \"scene\" with imagery, not a bullet point of dry facts.\n\n  IMPORTANT: Do NOT penalize for specific historical facts, dates, or phases you might expect. Different valid narrative approaches exist. Focus on whether the story provided is engaging and explains WHY this topic matters.\n\n  IMPORTANT: Do NOT require a specific number of steps. Simple topics may need fewer steps; complex topics may need more. Judge quality, not quantity.\n\n  IMPORTANT: Make sure the output is factually correct. It should not include any information that is not true.\n\n    ",
+  "judgedAt": "2026-01-15T20:21:19.546Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model creates an exceptional narrative, using highly original metaphors ('wind-up toy', 'language is jazz', 'highlighter moment') that perfectly capture the tension between rigid rules and fluid language. The tone is consistently conversational and engaging, explaining the 'why' with profound clarity without relying on technical jargon. It creates the most vivid scenes and strongest narrative arc.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Excellent storytelling with a cohesive set of analogies (musicians learning by ear vs. reading a score). The tone is warm and evocative, fulfilling the 'curious friend' persona well. It effectively explains the paradigm shift from rules to patterns using imagery that makes abstract concepts tangible.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "A very strong entry that builds narrative tension immediately ('words were messy... everything computers hated'). The flow is logical and the imagery ('actors reading from terrible plays') is vivid. It captures the emotional frustration of early AI well, making the resolution satisfying.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This model uses beautiful, unique imagery, specifically the 'conductor sensing rhythm' analogy for Transformers. The tone is gentle and storytelling-focused. It ranks slightly lower than the top three only because the narrative punch is a bit softer, but it is otherwise a high-quality response.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "A solid, conversational entry that uses modern language ('vibes') to connect with the reader. The 'keyhole' analogy is effective. It meets all criteria well but feels slightly less creatively inspired than the models ranked above it.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Competent and clear. It successfully follows the narrative arc and uses decent analogies (actors, reader). However, the writing is safe and standard compared to the vivid, distinct voices of the higher-ranked models. It is a 'good' textbook explanation rather than a gripping story.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "The writing style is actually very vivid ('wild river', 'guzzled trillions'), but the model violates the negative constraint to avoid technical mechanics by explicitly naming N-grams, RNNs, and LSTMs. While accurate, this drifts into a technical history lesson rather than the requested narrative for a layperson.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Factually correct but stylistically dry. It fails to generate the requested 'vivid scenes' or emotional engagement, reading more like a simplified educational summary than a story told to a friend. The metaphors ('robot', 'brain') are generic.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "The narrative feels disjointed and simplistic. While it attempts a conversational tone, the execution is clunky, and the analogies (GPS, recipe) are not woven into a cohesive flow. It lacks the sophistication seen in other models.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "The weakest entry due to a complete lack of conversational tone or vivid imagery. It presents a dry, bulleted summary of facts that fails to engage the reader or tell a story, ignoring the primary stylistic requirements of the prompt.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong narrative arc with clear tension (rulebooks, brittle bots) → breakthrough (attention/scale) → present-day stakes (trust/bias). Conversational, vivid scenes (wind-up toy, jazz, highlighter), and stays mostly on “why it matters” without over-explaining mechanics. Step titles/text look within limits.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very engaging, scene-like progression with lots of everyday analogies (weather, immersion learning, musicians, spotlight). Clear “why care” ending that adds responsibility/impact. Slightly more list-like in the middle (stats→data→neural→transformer) but still flows well and avoids deep technicalities.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Smooth, friendly storytelling with consistent metaphors (tourist phrases, cooking, orchestra). Good emphasis on the shift in interface/importance. Less explicit tension/resolution than top picks and a bit generic, but still vivid and on-scope.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Strong narrative voice and tension (rule-writing nightmare) with a satisfying transformer/scale payoff. Good imagery (terrible plays, whole puzzle). Dips a bit into “how” via neural/statistical framing and the final examples (quantum physics in pirate speak) edge toward hype, but overall solid.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clear arc and approachable metaphors (librarian, keyhole, vibes). However, some claims get a bit squishy/overconfident (LLMs “understand context” / “digital intuition”), and a few steps lean toward mechanics (attention turning word-predictors into conversationalists) rather than focusing on origin/importance.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Readable and friendly with a few decent analogies (recipe, GPS). But it becomes more generic and “feature-y” (parameters, read the entire internet) with less scene-like specificity and weaker tension/resolution compared to stronger entries.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Meets basic arc (rules → data → neural nets → scale → impact) but feels compressed and abstract. Fewer vivid scenes and analogies; more like a summary than a story. Still largely on-scope and not very technical.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Competent but fairly bland: limited imagery, repetitive “rulebooks impossible” framing, and the middle steps drift into mild “how” talk (adjusting connections). The “LLMs: Language Masters” phrasing overstates and the scenes don’t feel very vivid.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Some strong metaphors (actors with short scripts, devouring the library), but it leans more technical and specific (transformer architecture details) and includes questionable/overstated claims (“entire internet,” “reasoning engines,” “simulating human reasoning”). Also several step texts likely exceed the 300-character limit.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Most technical and fact-assertive (RNNs/LSTMs, efficiency/parallelism, GPT timelines and scale), which violates the “focus on why, not how” expectation. Also includes dubious factual/quantitative claim (“nonsense 90% of the time”) and likely exceeds the 300-character limit in multiple steps despite good imagery.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-background",
+  "testCaseId": "en-edge-recent-topic-1"
+}
