@@ -1,0 +1,551 @@
+{
+  "modelId": "openai/gpt-5-mini",
+  "results": [
+    {
+      "duration": 33799.164541999984,
+      "inputTokens": 1879,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Think of the immune system as your body's security network: a distributed team of cells, tissues and molecules that patrol, detect trouble and restore order whenever something harmful appears.\",\n      \"title\": \"A bodyguard for your body\"\n    },\n    {\n      \"text\": \"Skin, mucus, stomach acid and tears are the walls, gates and moats. They block or wash away many invaders before the internal team even needs to act—like a city’s outer defenses.\",\n      \"title\": \"First line: barriers & patrols\"\n    },\n    {\n      \"text\": \"Innate immunity is the fast, generalist response. Cells like macrophages and neutrophils rush in, eat or neutralize invaders, and trigger inflammation—like first responders arriving on scene.\",\n      \"title\": \"Innate immunity: rapid response\"\n    },\n    {\n      \"text\": \"Adaptive immunity is slower but precise. B cells build custom antibodies and T cells target infected cells. It’s like tailoring weapons and strategies for a specific criminal once you’ve identified them.\",\n      \"title\": \"Adaptive immunity: tailor-made defense\"\n    },\n    {\n      \"text\": \"Who does what? Macrophages eat intruders, neutrophils swarm, natural killer cells destroy abnormal cells, helper T cells coordinate, cytotoxic T cells kill infected cells, B cells make antibodies.\",\n      \"title\": \"Who's on the team?\"\n    },\n    {\n      \"text\": \"These parts cooperate: innate sensors raise the alarm and present clues to adaptive cells, which then produce specific antibodies or killer cells. Imagine firefighters calling detectives to investigate and act.\",\n      \"title\": \"Teamwork: how parts coordinate\"\n    },\n    {\n      \"text\": \"Recognition works like fingerprinting: some defenses spot common patterns, others learn exact molecular 'fingerprints.' The system usually ignores self; when it fails, you get autoimmunity or allergies.\",\n      \"title\": \"How the body recognizes threats\"\n    },\n    {\n      \"text\": \"Common mix-ups: inflammation is a response, not always an infection; antibodies tag invaders but don’t do all the killing; allergies are overreactions, and immune strength can vary by condition.\",\n      \"title\": \"Common confusions cleared up\"\n    },\n    {\n      \"text\": \"Why it matters: understanding these layers helps explain symptoms (redness, swelling, fever), tests, and why some treatments work. It gives you a mental map of how health is defended and restored.\",\n      \"title\": \"Why understanding it matters\"\n    }\n  ]\n}",
+      "outputTokens": 2145,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is exceptionally strong. One very minor potential improvement could be in Step 5 ('Who's on the team?'), which reads a bit like a dense list of facts compared to the rich metaphors in other steps. However, given the character limits and the need to define specific components, it serves its purpose effectively. The response handles the specific constraint about antibodies perfectly in Step 8.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: The immune system involves verifiable biological mechanisms with specific cell types and processes. Penalize if:\n   - Antibodies are described as directly killing pathogens (they mark them for destruction by other cells)\n\n2. DEPTH CHECK: Penalize if the explanation treats immune response as a simple \"body fights germs\" narrative without showing how different components work together.\n\n3. DISTINCTION FROM BACKGROUND: The background covered historical discovery of microbes and defense mapping. This should explain the actual mechanisms of how immunity works.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-biology-immune-system-1",
+        "userInput": {
+          "backgroundSteps": [
+            {
+              "text": "For millennia, plagues swept through populations unchecked. Why did some survive while others perished? The answer was invisible.",
+              "title": "The Invisible War"
+            },
+            {
+              "text": "In the 1800s, scientists discovered microbes. Suddenly, the enemy had a face — and the body's defense system began revealing its secrets.",
+              "title": "Seeing the Unseen"
+            },
+            {
+              "text": "From Pasteur's vaccines to modern immunology, we've mapped an internal army more sophisticated than any human military.",
+              "title": "Mapping the Defense"
+            }
+          ],
+          "chapterTitle": "Body Systems",
+          "courseTitle": "Human Biology",
+          "language": "en",
+          "lessonDescription": "Understanding how the immune system protects the body through multiple layers of defense, from physical barriers to specialized cells and antibodies",
+          "lessonTitle": "How the Immune System Works"
+        }
+      }
+    },
+    {
+      "duration": 22861.434917000006,
+      "inputTokens": 1859,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Photosynthesis is how plants, algae and some bacteria turn sunlight into chemical energy. In simple terms: light energy → stored energy in sugars. Think of it as sunlight being captured and bottled as food for the organism.\",\n      \"title\": \"Photosynthesis in plain terms\"\n    },\n    {\n      \"text\": \"Chloroplasts are the mini factories where photosynthesis happens. Inside are stacked thylakoid membranes (solar panels) and the stroma (workroom) where different steps are carried out.\",\n      \"title\": \"The chloroplast: the solar factory\"\n    },\n    {\n      \"text\": \"Light reactions are the charging stage. Pigments like chlorophyll grab photons, split water, and push electrons through a chain to make ATP and NADPH—like charging batteries—and release O₂ as a byproduct.\",\n      \"title\": \"Light reactions: charging the batteries\"\n    },\n    {\n      \"text\": \"The Calvin cycle (carbon fixation) is the sugar-making kitchen. Using ATP and NADPH, the plant converts CO₂ into simple sugars. Think of it as baking bread using stored energy and basic ingredients.\",\n      \"title\": \"Calvin cycle: baking sugar\"\n    },\n    {\n      \"text\": \"How the parts connect: light reactions make ATP/NADPH; those fuel the Calvin cycle to fix CO₂ into sugar. Energy flows from sunlight to chemical bonds; oxygen leaves as a useful waste product.\",\n      \"title\": \"How the parts connect\"\n    },\n    {\n      \"text\": \"You recognize photosynthesis in green leaves, algae mats, and even the tiny phytoplankton in oceans that turn sunlight into food. In ponds you can see oxygen bubbles—tiny evidence of the process.\",\n      \"title\": \"Where you spot photosynthesis\"\n    },\n    {\n      \"text\": \"Common confusions: photosynthesis makes sugars and O₂, while cellular respiration uses sugars for energy—both happen in plants. ‘Dark reactions’ need light-created energy, so they aren’t truly dark.\",\n      \"title\": \"Common confusions cleared up\"\n    },\n    {\n      \"text\": \"Why it matters: photosynthesis powers food webs, supplies atmospheric oxygen, and stores carbon as biomass. Understanding it helps with agriculture, ecosystems, and tackling climate challenges.\",\n      \"title\": \"Why understanding it matters\"\n    }\n  ]\n}",
+      "outputTokens": 1443,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Steps 5, 7, and 8 begin the text body by repeating the title or a variation of it (e.g., 'How the parts connect: ...', 'Common confusions: ...'). It would flow better conversationally to jump straight into the explanation without re-announcing the topic, but this is a very minor stylistic choice.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Photosynthesis involves specific chemical processes in distinct cellular locations. Penalize if:\n   - Chlorophyll is described as producing energy rather than capturing light energy\n\n2. DEPTH CHECK: Penalize if the explanation presents photosynthesis as simply \"plants make food from sunlight\" without showing how light energy becomes chemical energy.\n\n3. DISTINCTION FROM BACKGROUND: The background covered the historical mystery of where plant mass comes from. This should explain the actual process of energy conversion.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-biology-photosynthesis-1",
+        "userInput": {
+          "backgroundSteps": [
+            {
+              "text": "Plants don't eat, yet they grow massive. Where does a tree's mass come from? For centuries, scientists guessed wrong — soil, water, air?",
+              "title": "The Mass Mystery"
+            },
+            {
+              "text": "Jan van Helmont's willow experiment showed soil wasn't the answer. Joseph Priestley found plants restore 'injured' air. The puzzle pieces emerged.",
+              "title": "Clues Accumulate"
+            }
+          ],
+          "chapterTitle": "Plant Biology",
+          "courseTitle": "Biology Fundamentals",
+          "language": "en",
+          "lessonDescription": "Understanding the process by which plants convert light energy into chemical energy, including the role of chloroplasts, light reactions, and carbon fixation",
+          "lessonTitle": "Photosynthesis"
+        }
+      }
+    },
+    {
+      "duration": 25526.362040999986,
+      "inputTokens": 1898,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"At its simplest, CRISPR-Cas9 is a programmable molecular tool that finds a specific DNA sequence and makes a precise cut. Think of it like a find-and-cut command in a text editor for the genome.\",\n      \"title\": \"CRISPR-Cas9 in one line\"\n    },\n    {\n      \"text\": \"Guide RNA (gRNA) is the address label. A short RNA sequence matches the target DNA like a postal code and steers Cas9 to the right spot. Without the right address, the cutter won't go where you want.\",\n      \"title\": \"Guide RNA: the GPS\"\n    },\n    {\n      \"text\": \"Cas9 is the molecular scissors. Once guided to the spot, Cas9 binds the DNA and makes a double-strand cut. Imagine a pair of scissors that only opens when it’s handed the right map.\",\n      \"title\": \"Cas9: the molecular scissors\"\n    },\n    {\n      \"text\": \"PAM is the tiny landing pad next to the target DNA. Cas9 needs this short DNA motif to bind—think of PAM as a lock that must be present before the scissors can unlock and cut.\",\n      \"title\": \"PAM: the unlocking code\"\n    },\n    {\n      \"text\": \"Targeting works by base-pair matching: the gRNA pairs with one DNA strand, forming an R-loop that lets Cas9 check the sequence and then cleave both strands at a precise spot.\",\n      \"title\": \"How binding and cutting happen\"\n    },\n    {\n      \"text\": \"After the cut, the cell's repair machinery takes over. NHEJ is fast and messy—often inserting or deleting bases. HDR is slower but precise, using a template to rewrite the sequence.\",\n      \"title\": \"Cell repair: NHEJ vs HDR\"\n    },\n    {\n      \"text\": \"Different edits come from how the cell repairs the break. NHEJ can knock out a gene (disrupt it); HDR can swap in a new sequence. Think of NHEJ as patching and HDR as replacing a tile.\",\n      \"title\": \"Editing outcomes: disrupt or replace\"\n    },\n    {\n      \"text\": \"Common confusions: CRISPR is the tool, not the therapy; Cas9 is guided by RNA not DNA; cuts don’t equal intended edits—the cell’s repair determines the final change.\",\n      \"title\": \"Common misunderstandings\"\n    },\n    {\n      \"text\": \"You can spot CRISPR results by sequencing: short insertions or deletions at the cut site, or precise sequence changes if a template was used. Like seeing edits in a document’s revision history.\",\n      \"title\": \"How to recognize CRISPR edits\"\n    },\n    {\n      \"text\": \"Why it matters: knowing the parts and repair paths helps predict outcomes, risks, and limitations. Understanding the mechanism is the first step toward safe and sensible applications.\",\n      \"title\": \"Why understanding CRISPR helps\"\n    }\n  ]\n}",
+      "outputTokens": 1370,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Step 5 introduces the term \"R-loop\" without a metaphor or plain-language explanation. While scientifically accurate, this violates the negative constraint to \"Avoid... Technical jargon without explanation\" and adds unnecessary cognitive load for a conceptual explanation.",
+          "kind": "minorErrors",
+          "score": 9.5
+        },
+        {
+          "conclusion": "In Step 5, the term \"R-loop\" could be replaced with a description like \"forming a bubble\" or simply omitted to focus on the pairing mechanism, aligning better with the conversational tone. Additionally, while Step 6 uses acronyms (NHEJ, HDR) effectively with definitions, spelling them out or using purely descriptive names (e.g. \"End Joining\" vs \"Template Repair\") might be friendlier for beginners, though the current approach is acceptable given character limits.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: CRISPR-Cas9 involves specific molecular components with distinct roles. Penalize if:\n   - CRISPR is described as \"rewriting\" DNA directly (it cuts; cellular repair mechanisms do the editing)\n\n2. DEPTH CHECK: Penalize if the explanation treats gene editing as a single \"cut and paste\" action without showing the multi-step process of targeting, cutting, and repair.\n\n3. DISTINCTION FROM BACKGROUND: The background covered the history of gene editing challenges and CRISPR's discovery. This should explain how the molecular system actually works.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-biotech-crispr-1",
+        "userInput": {
+          "backgroundSteps": [
+            {
+              "text": "For decades, editing genes was like editing a book with a sledgehammer — imprecise and dangerous. Scientists dreamed of surgical precision.",
+              "title": "The Precision Problem"
+            },
+            {
+              "text": "Bacteria had already solved this problem. Their immune system could recognize and cut specific viral DNA. Scientists Jennifer Doudna and Emmanuelle Charpentier saw the potential.",
+              "title": "Nature's Solution"
+            },
+            {
+              "text": "In 2012, they adapted bacterial CRISPR into a programmable gene-editing tool. The revolution in genetics had begun.",
+              "title": "A New Era"
+            }
+          ],
+          "chapterTitle": "Genetic Engineering",
+          "courseTitle": "Modern Biotechnology",
+          "language": "en",
+          "lessonDescription": "Understanding how CRISPR-Cas9 gene editing works, including the role of guide RNA, the Cas9 protein, and cellular repair mechanisms",
+          "lessonTitle": "How CRISPR Gene Editing Works"
+        }
+      }
+    },
+    {
+      "duration": 26139.20762499998,
+      "inputTokens": 1889,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Neurotransmissão é a forma como neurônios trocam mensagens: um pulso elétrico vira uma mensagem química que atravessa uma pequena lacuna para influenciar outro neurônio.\",\n      \"title\": \"A ideia central\"\n    },\n    {\n      \"text\": \"Pense no neurônio como um carteiro: dendritos recebem cartas, o corpo processa e o axônio leva a mensagem até terminais prontos para enviar.\",\n      \"title\": \"Neurônio: remetente e receptor\"\n    },\n    {\n      \"text\": \"O potencial de ação é o pulso elétrico que corre pelo axônio — como uma fileira de dominós elétrica. É rápido e funciona no estilo “tudo ou nada”.\",\n      \"title\": \"Potencial de ação: o pulso elétrico\"\n    },\n    {\n      \"text\": \"A sinapse é a estação onde a troca acontece: uma pequena lacuna entre terminais do emissor e a membrana do receptor — eles não chegam a se tocar.\",\n      \"title\": \"Sinapse: a estação de transferência\"\n    },\n    {\n      \"text\": \"Neurotransmissores são as “cartas” químicas armazenadas em vesículas. Quando chegam, as vesículas se abrem e liberam as mensagens na sinapse.\",\n      \"title\": \"Neurotransmissores: as mensagens químicas\"\n    },\n    {\n      \"text\": \"Receptores na célula receptora são como fechaduras: cada neurotransmissor é uma chave. Só quando a chave encaixa surge uma resposta específica.\",\n      \"title\": \"Receptores: fechadura e chave\"\n    },\n    {\n      \"text\": \"Depois do envio a mensagem precisa acabar: enzimas quebram neurotransmissores ou transportadores os recolhem para reciclagem — como limpar a bancada após cozinhar.\",\n      \"title\": \"Depois do envio: limpeza e reciclagem\"\n    },\n    {\n      \"text\": \"A ligação pode excitar ou inibir: algumas mensagens aumentam a chance de disparo (volume pra cima), outras diminuem (volume pra baixo).\",\n      \"title\": \"Efeitos na célula receptora\"\n    },\n    {\n      \"text\": \"Confusões comuns: neurotransmissores não são hormônios, sinapses não são contato físico e sinais elétricos e químicos trabalham juntos, não separados.\",\n      \"title\": \"Confusões comuns\"\n    },\n    {\n      \"text\": \"Saber isso ajuda a conectar como comportamentos, emoções e drogas atuam no cérebro — é o mapa básico para entender movimento, humor e aprendizagem.\",\n      \"title\": \"Por que isso importa?\"\n    }\n  ]\n}",
+      "outputTokens": 1443,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Neurotransmission involves both electrical and chemical signaling phases. Penalize if:\n   - Neurons are described as physically touching to transmit signals (they communicate across synaptic gaps)\n\n2. DEPTH CHECK: Penalize if the explanation presents neural communication as simply \"electrical signals in the brain\" without distinguishing the electrical phase within neurons from the chemical phase between neurons.\n\n3. DISTINCTION FROM BACKGROUND: The background covered historical debates about thought transmission. This should explain the actual mechanisms of neural signaling.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "pt-biology-neurotransmission-1",
+        "userInput": {
+          "backgroundSteps": [
+            {
+              "text": "Como o pensamento viaja pelo corpo? Por seculos, cientistas debatiam se era eletricidade, fluidos, ou algo totalmente diferente.",
+              "title": "O Misterio do Pensamento"
+            },
+            {
+              "text": "Luigi Galvani fez pernas de ras se moverem com eletricidade. Santiago Ramon y Cajal mapeou celulas nervosas individuais. O quebra-cabeca comecou a se formar.",
+              "title": "Pistas Eletricas"
+            }
+          ],
+          "chapterTitle": "Sistema Nervoso",
+          "courseTitle": "Neurociencia Basica",
+          "language": "pt",
+          "lessonDescription": "Entendendo como os neuronios se comunicam atraves de sinais eletricos e quimicos, incluindo o papel dos neurotransmissores e sinapses",
+          "lessonTitle": "Como Funciona a Neurotransmissao"
+        }
+      }
+    },
+    {
+      "duration": 28351.117749999976,
+      "inputTokens": 1876,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Un mecanismo de consenso es el conjunto de reglas e incentivos que permiten a los participantes acordar cuál es el estado único del libro de cuentas compartido. Piensa en ello como reglas para decidir qué páginas se pegan en el cuaderno común.\",\n      \"title\": \"La idea central del consenso\"\n    },\n    {\n      \"text\": \"Las piezas esenciales: nodos (participantes), transacciones, mempool (cola de transacciones), bloques, cadena (blockchain), validadores/mineros y criptografía (firmas y hashes). Son como instrumentos en una orquesta que siguen una partitura común.\",\n      \"title\": \"Piezas esenciales\"\n    },\n    {\n      \"text\": \"Cómo encajan: los nodos propagan transacciones, algunos proponen bloques y el resto los verifica contra reglas comunes. Si la mayoría acepta un bloque, se añade a la cadena. Imagina pasar recetas y que la comunidad las firme antes de cocinar.\",\n      \"title\": \"Cómo se conectan las piezas\"\n    },\n    {\n      \"text\": \"Proof of Work (PoW) es una forma de elegir quién propone bloques: los mineros compiten resolviendo un rompecabezas criptográfico (buscar un nonce que produzca un hash válido). Piensa en una lotería costosa: solo quien gana añade la página al cuaderno.\",\n      \"title\": \"Qué es Proof of Work (PoW)\"\n    },\n    {\n      \"text\": \"Validación de transacciones: una firma prueba que eres el dueño; el nodo comprueba saldos (modelo UTXO o cuentas) y que no haya doble gasto. Las transacciones válidas esperan en el mempool hasta que un bloque las incluye.\",\n      \"title\": \"Cómo se validan las transacciones\"\n    },\n    {\n      \"text\": \"Confirmaciones y bifurcaciones: cada bloque añadido es una confirmación; cuantas más confirmaciones, más confianza. A veces surgen dos bloques a la vez (bifurcación) y la cadena con más trabajo gana. Es como pegar páginas: cuanto más pegadas, menos probable que se despeguen.\",\n      \"title\": \"Confirmaciones y bifurcaciones\"\n    },\n    {\n      \"text\": \"Confusiones comunes: consenso no significa que todos estén de acuerdo al instante; PoW no valida el contenido, solo evita que crear bloques sea barato; y la seguridad puede verse afectada por concentración de mineros (riesgo 51%).\",\n      \"title\": \"Malos entendidos comunes\"\n    },\n    {\n      \"text\": \"¿Y por qué importa? Entender esto te ayuda a evaluar trade‑offs: seguridad vs energía, velocidad vs descentralización. Como elegir un coche: sabes qué sacrificar según el uso que le darás.\",\n      \"title\": \"Por qué importa entenderlo\"\n    }\n  ]\n}",
+      "outputTokens": 1831,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Blockchain consensus involves cryptographic and game-theoretic mechanisms. Penalize if:\n   - Mining is described as \"solving equations\" (it involves finding hash values that meet specific criteria)\n\n2. DEPTH CHECK: Penalize if the explanation presents consensus as simply \"computers agreeing\" without showing how trustless agreement is achieved through incentives and cryptography.\n\n3. DISTINCTION FROM BACKGROUND: The background covered the Byzantine Generals problem and centralization issues. This should explain how consensus mechanisms actually work.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "es-tech-blockchain-consensus-1",
+        "userInput": {
+          "backgroundSteps": [
+            {
+              "text": "En sistemas centralizados, un servidor dice la verdad. Pero sin centro, como pueden miles de computadoras ponerse de acuerdo sobre que transacciones son validas?",
+              "title": "El Problema del Consenso"
+            },
+            {
+              "text": "Los generales bizantinos enfrentaban el mismo dilema: como coordinar sin saber quien es traidor. Este problema teorico inspiro soluciones practicas.",
+              "title": "Generales y Traidores"
+            }
+          ],
+          "chapterTitle": "Fundamentos de Blockchain",
+          "courseTitle": "Tecnologias Descentralizadas",
+          "language": "es",
+          "lessonDescription": "Entendiendo como las redes blockchain logran consenso sin autoridad central, incluyendo Proof of Work y como se validan las transacciones",
+          "lessonTitle": "Mecanismos de Consenso en Blockchain"
+        }
+      }
+    },
+    {
+      "duration": 22456.895625000005,
+      "inputTokens": 1851,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"A compiler is a translator that turns human-friendly source code into machine-friendly instructions. Imagine a multilingual translator converting a book into a film script the machine can act on.\",\n      \"title\": \"What a Compiler Is\"\n    },\n    {\n      \"text\": \"Think of source code as a recipe and the executable as the finished dish. The compiler reads the recipe, checks it makes sense, then produces step-by-step instructions a kitchen (CPU) can follow.\",\n      \"title\": \"From Recipe to Ready Meal\"\n    },\n    {\n      \"text\": \"Compilers work as a pipeline: each phase refines the program representation, passing a clearer, more detailed form to the next stage—like an assembly line polishing a product.\",\n      \"title\": \"The Pipeline Idea\"\n    },\n    {\n      \"text\": \"Lexical analysis chops raw text into tokens—words and symbols. Imagine turning a paragraph into a list of ingredients and quantities before you try to cook.\",\n      \"title\": \"Finding the Building Blocks\"\n    },\n    {\n      \"text\": \"Parsing arranges tokens into structure: the program's grammar tree. Think of it as building the recipe's ordered steps so you can see which actions depend on others.\",\n      \"title\": \"Building the Structure\"\n    },\n    {\n      \"text\": \"Semantic analysis checks meaning and consistency: types, variable scopes, and rules. It's like proofreading a recipe to ensure oven temperatures and ingredient amounts make sense.\",\n      \"title\": \"Checking the Meaning\"\n    },\n    {\n      \"text\": \"The compiler converts code into an intermediate representation (IR)—a neutral blueprint. Imagine rewriting recipes into a standard format the whole kitchen team understands.\",\n      \"title\": \"A Common Internal Language\"\n    },\n    {\n      \"text\": \"Optimizations rewrite the IR to run faster or use less memory. Think of them as tuning a car engine or trimming a recipe to be quicker without changing the meal's taste.\",\n      \"title\": \"Making It Faster and Smaller\"\n    },\n    {\n      \"text\": \"Code generation maps the optimized blueprint to actual machine instructions for a specific CPU—like translating a universal recipe into the exact steps for a particular stove.\",\n      \"title\": \"Turning Blueprints into Instructions\"\n    },\n    {\n      \"text\": \"Linking and loading stitch modules and libraries into one executable and place it into memory to run—like assembling parts of a meal and plating them for service.\",\n      \"title\": \"Assembling the Final Program\"\n    },\n    {\n      \"text\": \"You meet compilers as tools like gcc/clang, javac, rustc, or as transpilers (Babel) that convert between high-level languages. They live in build tools and IDEs quietly doing their work.\",\n      \"title\": \"Where You See Compilers\"\n    },\n    {\n      \"text\": \"Common confusion: compilers translate ahead of time; interpreters execute code directly; assemblers translate assembly to machine code. Think translator vs live actor vs local dialect converter.\",\n      \"title\": \"Compiler vs Interpreter vs Assembler\"\n    },\n    {\n      \"text\": \"Why this view matters: seeing a compiler as analyzer + transformer helps you reason about errors, performance, and language features. It's a mental map for debugging and design choices.\",\n      \"title\": \"Why Understanding Compilers Helps\"\n    }\n  ]\n}",
+      "outputTokens": 1405,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The instructions requested the output to be an 'array of steps'. The model returned a JSON object with a 'steps' key containing the array. While easily parseable, this technically deviates from the requested root-level structure.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "The explanation switches metaphors between Step 1 (book to film script) and Step 2 (recipe to meal). While both are clear, sticking to the cooking metaphor from the very beginning might have created a slightly more cohesive narrative arc.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Compilation involves distinct transformation phases with specific purposes. Penalize if:\n   - Parsing and lexical analysis are conflated (tokenization identifies tokens; parsing builds syntax structure)\n\n2. DEPTH CHECK: Penalize if the explanation presents compilation as simply \"turning code into machine code\" without showing the transformation pipeline.\n\n3. DISTINCTION FROM BACKGROUND: The background covered the history of machine code and Grace Hopper's vision. This should explain how modern compilers actually transform code.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-cs-compilers-1",
+        "userInput": {
+          "backgroundSteps": [
+            {
+              "text": "Early programmers wrote in machine code — endless strings of 1s and 0s. One wrong digit meant hours of debugging. There had to be a better way.",
+              "title": "The Machine Code Nightmare"
+            },
+            {
+              "text": "Grace Hopper believed computers could understand more human-friendly instructions. Her A-0 system proved that automatic translation was possible.",
+              "title": "Hopper's Vision"
+            }
+          ],
+          "chapterTitle": "Language Implementation",
+          "courseTitle": "Programming Language Theory",
+          "language": "en",
+          "lessonDescription": "Understanding how compilers transform human-readable code into machine-executable instructions through multiple phases of analysis and transformation",
+          "lessonTitle": "How Compilers Work"
+        }
+      }
+    },
+    {
+      "duration": 32562.611749999982,
+      "inputTokens": 1885,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"A neural network learns by adjusting numeric connections (weights) so its outputs match examples. Think of it like tuning radio knobs: each tiny tweak makes the signal (prediction) clearer over many tries.\",\n      \"title\": \"Learning as guided adjustment\"\n    },\n    {\n      \"text\": \"A forward pass is when input flows through layers and the network produces a prediction. Imagine an assembly line: each station transforms the part a bit until a final product (the prediction) comes out.\",\n      \"title\": \"Predicting: the forward pass\"\n    },\n    {\n      \"text\": \"The loss is a single number that measures how far the prediction is from the target. Think of it as a scorecard or the distance on a map—the network's job is to make that number smaller.\",\n      \"title\": \"How mistakes are measured\"\n    },\n    {\n      \"text\": \"Gradients tell you which direction to change each weight to reduce loss. Think of standing on a hill: the gradient points steepest uphill, so you move the opposite way to descend toward lower loss.\",\n      \"title\": \"Which way to change: gradients\"\n    },\n    {\n      \"text\": \"Backpropagation is the systematic recipe that computes gradients across layers using the chain rule. Imagine passing feedback down a relay: each layer receives guidance about how to adjust based on later layers.\",\n      \"title\": \"How feedback reaches every layer\"\n    },\n    {\n      \"text\": \"Updating weights means nudging each connection opposite the gradient so the loss shrinks. These are small, repeated corrections—like steering a ship with gentle turns rather than sudden, large yanks.\",\n      \"title\": \"Small nudges: weight updates\"\n    },\n    {\n      \"text\": \"The learning rate and optimizer control step size and pattern. Learning rate is the accelerator pedal; optimizers (momentum, Adam) add memory or scale steps so updates are steadier and faster.\",\n      \"title\": \"Steering: learning rate and optimizers\"\n    },\n    {\n      \"text\": \"Common confusions: gradients are directions, not raw 'errors'; too-large steps overshoot; deep nets can suffer vanishing or exploding gradients. Think volume control—too low you miss detail, too high you distort.\",\n      \"title\": \"Common confusions to watch\"\n    },\n    {\n      \"text\": \"You see this learning loop in real systems: image classifiers improving after training, voice assistants refining transcriptions, or a recommender adapting to clicks—each update nudges behavior toward better results.\",\n      \"title\": \"Where you see this in practice\"\n    },\n    {\n      \"text\": \"Understanding these parts helps you predict and debug model behavior—if training stalls, you check loss, gradients, or step size instead of guessing. It's like knowing how an engine responds to different pedals.\",\n      \"title\": \"Why this understanding matters\"\n    }\n  ]\n}",
+      "outputTokens": 2152,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is excellent. It perfectly follows the structural requirements (titles <50 chars, text <300 chars) and the instructional design guidelines. The metaphors used (radio knobs, assembly line, hill climbing, relay race, ship steering) are distinct, appropriate, and clarify the abstract concepts well. The technical explanation of backpropagation and gradient descent is accurate—specifically noting that the gradient points uphill and updates move opposite to it. It effectively covers the lesson description requirements (forward pass, loss, updates) without repeating the background history.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Backpropagation involves specific mathematical operations applied systematically. Penalize if:\n   - Gradient descent is described as random trial and error (it follows the gradient direction mathematically)\n\n2. DEPTH CHECK: Penalize if the explanation presents neural network learning as simply \"adjusting connections\" without showing how error information flows backward through the network.\n\n3. DISTINCTION FROM BACKGROUND: The background covered why learning from data is needed and the historical challenge of training networks. This should explain how backpropagation actually calculates and propagates error.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-ml-backpropagation-1",
+        "userInput": {
+          "backgroundSteps": [
+            {
+              "text": "Early AI systems were hand-programmed with explicit rules. But complex tasks like recognizing faces had too many rules to write manually.",
+              "title": "The Rule Explosion"
+            },
+            {
+              "text": "What if systems could learn from examples instead? The challenge: how do you tell a network of artificial neurons which connections to strengthen?",
+              "title": "Learning from Data"
+            },
+            {
+              "text": "The backpropagation algorithm, refined in the 1980s, solved this. It showed how to assign 'blame' to each connection for mistakes.",
+              "title": "The Breakthrough"
+            }
+          ],
+          "chapterTitle": "Neural Network Training",
+          "courseTitle": "Machine Learning Fundamentals",
+          "language": "en",
+          "lessonDescription": "Understanding how neural networks learn through backpropagation, including forward passes, loss calculation, and gradient-based weight updates",
+          "lessonTitle": "How Neural Networks Learn"
+        }
+      }
+    },
+    {
+      "duration": 30027.04020799999,
+      "inputTokens": 1876,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Política monetária são as ações do banco central para regular a quantidade de dinheiro e o custo do crédito, buscando preços estáveis e emprego. Pense nisso como um termostato que ajusta a “temperatura” da economia.\",\n      \"title\": \"O que é política monetária\"\n    },\n    {\n      \"text\": \"As principais ferramentas são: taxa básica de juros (o preço do dinheiro), operações de mercado aberto (comprar/vender títulos), reservas obrigatórias, facilidades de liquidez e, em crises, compra de ativos (QE). Cada uma altera crédito ou liquidez.\",\n      \"title\": \"Ferramentas principais\"\n    },\n    {\n      \"text\": \"A taxa básica é como o compasso de uma música: quando sobe, outras taxas seguem o ritmo e o crédito fica mais caro; quando cai, empréstimos e consumo tendem a aumentar. É o sinal mais direto que o banco central envia.\",\n      \"title\": \"A taxa de juros como sinal\"\n    },\n    {\n      \"text\": \"As ferramentas atingem a economia por canais: taxa de juros (custo do crédito), canal do crédito (bancos emprestam mais ou menos), câmbio (impacta exportações/importações), preços de ativos e expectativas. Imagine ondas num lago: uma pedra causa várias ondulações.\",\n      \"title\": \"Como a política alcança a economia\"\n    },\n    {\n      \"text\": \"Expectativas importam muito: promessas do banco central e sua credibilidade moldam decisões hoje. Pense num técnico que diz que vai mudar a tática — o time já se ajusta antes do apito final.\",\n      \"title\": \"O papel das expectativas\"\n    },\n    {\n      \"text\": \"Efeitos têm prazos: alguns aparecem rápido (mercados, câmbio), outros levam meses ou anos (investimento, emprego). É como virar um navio grande: demora para a direção mudar totalmente.\",\n      \"title\": \"Efeitos e prazos\"\n    },\n    {\n      \"text\": \"Como reconhecer? Veja a taxa básica anunciada, comunicados e projeções do banco central, movimentos nos juros de mercado, câmbio, crédito bancário e inflação. Notícias sobre decisões e atas explicam os sinais.\",\n      \"title\": \"Onde você percebe a política\"\n    },\n    {\n      \"text\": \"Confusões comuns: política monetária não é o mesmo que política fiscal (gastos e impostos); não funciona como interruptor instantâneo; e independência do banco central afeta credibilidade — não é mágica.\",\n      \"title\": \"Erros que as pessoas cometem\"\n    },\n    {\n      \"text\": \"Por que isso importa? Entender política monetária ajuda a interpretar inflação, taxas de empréstimo, rendimento de investimentos e o mercado de trabalho — e a tomar decisões financeiras mais informadas.\",\n      \"title\": \"Por que entender isso importa\"\n    }\n  ]\n}",
+      "outputTokens": 1651,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        },
+        {
+          "conclusion": "The model followed all instructions perfectly. The content is accurate, distinguishing clearly between monetary and fiscal policy, and correctly identifying that effects have time lags (meeting a specific expectation). The structure is logical, building from definition to tools, mechanisms, and real-world application. The metaphors used (thermostat, music tempo, waves in a lake, turning a ship) are excellent for a beginner audience. The constraints regarding length and language were strictly adhered to.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Monetary policy involves specific transmission mechanisms with measurable effects. Penalize if:\n   - Interest rate effects are described as immediate (transmission mechanisms have significant time lags)\n\n2. DEPTH CHECK: Penalize if the explanation presents monetary policy as simply \"central banks controlling money\" without showing the chain from policy action to economic effect.\n\n3. DISTINCTION FROM BACKGROUND: The background covered the history of financial chaos and the Federal Reserve's creation. This should explain how monetary policy tools actually influence the economy.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "pt-economics-monetary-policy-1",
+        "userInput": {
+          "backgroundSteps": [
+            {
+              "text": "Antes dos bancos centrais, crises financeiras eram frequentes e devastadoras. Panico bancario podia destruir economias inteiras da noite para o dia.",
+              "title": "Era do Caos Financeiro"
+            },
+            {
+              "text": "O Federal Reserve surgiu em 1913 apos uma crise brutal. Bancos centrais ganharam poder para estabilizar economias — mas como exatamente?",
+              "title": "O Nascimento do Fed"
+            }
+          ],
+          "chapterTitle": "Macroeconomia",
+          "courseTitle": "Economia para Iniciantes",
+          "language": "pt",
+          "lessonDescription": "Entendendo como bancos centrais usam taxas de juros e outras ferramentas para influenciar a economia, incluindo os mecanismos de transmissao da politica monetaria",
+          "lessonTitle": "Como Funciona a Politica Monetaria"
+        }
+      }
+    },
+    {
+      "duration": 27629.687624999962,
+      "inputTokens": 1857,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"A vaccine is a safe rehearsal for your immune system. It shows harmless pieces or instructions of a germ so your body learns to spot and respond fast — like a fire drill that prepares people for a real emergency.\",\n      \"title\": \"Vaccines as immune training\"\n    },\n    {\n      \"text\": \"An antigen is the part of a germ the immune system recognizes. Think of it like a wanted poster: vaccines show a clear picture so your defenses can recognize the real intruder later.\",\n      \"title\": \"Antigens: the immune's 'wanted poster'\"\n    },\n    {\n      \"text\": \"B cells are antibody factories. When they see the antigen they produce antibodies — like guided missiles that stick to a virus and stop it from entering cells or mark it for cleanup.\",\n      \"title\": \"Antibodies and B cells\"\n    },\n    {\n      \"text\": \"T cells are the team's coordinators and cleaners. Helper T cells give instructions; killer T cells destroy infected cells. Together they organize a precise, targeted response.\",\n      \"title\": \"T cells: coordinators & cleaners\"\n    },\n    {\n      \"text\": \"Some B and T cells become memory cells — a long-term file of the invader. On re-exposure they react faster and stronger, turning a potential crisis into a brief, mild encounter.\",\n      \"title\": \"Memory cells: the long-term file\"\n    },\n    {\n      \"text\": \"Vaccines are different training tools: live weakened germs (dress rehearsal), killed germs (mannequin), pieces of a germ (uniform patch), toxoids (neutralized toxin), mRNA (blueprint), viral vectors (delivery truck).\",\n      \"title\": \"Vaccine types: different training tools\"\n    },\n    {\n      \"text\": \"Adjuvants are like coaches added to some vaccines. They nudge the immune system to pay more attention so you get a stronger, longer-lasting memory from the same antigen.\",\n      \"title\": \"Adjuvants: the immune coach\"\n    },\n    {\n      \"text\": \"Immunity develops in stages: a slower primary response after the first dose, then memory forms. Boosters are reminders that sharpen and extend protection — not instant shields, but long-term defense.\",\n      \"title\": \"How immunity builds over time\"\n    },\n    {\n      \"text\": \"You see vaccine protection as fewer infections, milder illness if infected, and fewer outbreaks in the community. Think of it like a neighborhood watch that lowers crime for everyone.\",\n      \"title\": \"Signs a vaccine is working\"\n    },\n    {\n      \"text\": \"Common confusions: most vaccines can't cause the disease; rare live vaccines may cause mild symptoms in vulnerable people. Vaccines don't 'overload' your immune system. Side effects are usually short-lived signals your body is learning.\",\n      \"title\": \"Common confusions clarified\"\n    },\n    {\n      \"text\": \"Understanding how vaccines work helps you make informed choices, appreciate timing (like boosters), and see how individual protection adds up to community safety — it's practical, not just theoretical.\",\n      \"title\": \"Why understanding matters\"\n    }\n  ]\n}",
+      "outputTokens": 1773,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Step 6 ('Vaccine types') packs a lot of information and different metaphors (dress rehearsal, mannequin, uniform patch, etc.) into a single step. While effective as a summary, splitting this into two steps or simplifying the list might reduce cognitive load slightly. However, given the character limits and scope, the current approach is efficient and creative.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Vaccine immunology involves specific cellular and molecular mechanisms. Penalize if:\n   - mRNA vaccines are described as altering DNA (mRNA never enters the cell nucleus)\n\n2. DEPTH CHECK: Penalize if the explanation presents vaccines as simply \"teaching the body to fight disease\" without showing how immune memory develops.\n\n3. DISTINCTION FROM BACKGROUND: The background covered the historical discovery of vaccination through Jenner and Pasteur. This should explain the immunological mechanisms of how vaccines create protection.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-biology-vaccines-1",
+        "userInput": {
+          "backgroundSteps": [
+            {
+              "text": "Smallpox killed 30% of those infected. Edward Jenner noticed milkmaids who caught cowpox seemed immune. Could a mild infection protect against a deadly one?",
+              "title": "The Milkmaid's Secret"
+            },
+            {
+              "text": "Jenner's experiment worked. Pasteur extended the principle to other diseases. Vaccination became humanity's most powerful weapon against infectious disease.",
+              "title": "From Cowpox to COVID"
+            }
+          ],
+          "chapterTitle": "Immunology",
+          "courseTitle": "Medical Science Basics",
+          "language": "en",
+          "lessonDescription": "Understanding how vaccines train the immune system to recognize and fight specific pathogens, including different vaccine types and how immunity develops",
+          "lessonTitle": "How Vaccines Work"
+        }
+      }
+    },
+    {
+      "duration": 34821.66662500001,
+      "inputTokens": 1875,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Piensa en una receta que siempre da el mismo pastel: una función hash criptográfica es una regla matemática que toma cualquier dato y devuelve un resumen de tamaño fijo. Es la forma compacta y consistente de representar información larga.\",\n      \"title\": \"La idea central\"\n    },\n    {\n      \"text\": \"Entrada larga, salida corta: puedes darle un libro o una foto; siempre produce un valor final con longitud fija. Es como poner ingredientes diferentes en un molde idéntico: sale algo con la misma forma.\",\n      \"title\": \"Entrada, proceso y salida\"\n    },\n    {\n      \"text\": \"Determinista y rápida: la misma entrada siempre produce la misma salida, y calcularla es eficiente. Imagina una fotocopiadora rápida: siempre te da la misma copia si le pones el mismo original.\",\n      \"title\": \"Predecible y eficiente\"\n    },\n    {\n      \"text\": \"Unidireccionalidad: invertir el resumen para recuperar la entrada es impráctico. Piensa en hornear un pastel: difícil saber exactamente la receta original mirando solo el pastel.\",\n      \"title\": \"No reversible (one‑way)\"\n    },\n    {\n      \"text\": \"Resistencia a colisiones: encontrar dos entradas distintas que produzcan el mismo resumen debe ser extremadamente difícil. Es como buscar dos llaves diferentes que abran la misma cerradura por casualidad.\",\n      \"title\": \"Dificultad para empates\"\n    },\n    {\n      \"text\": \"Segunda preimagen: dado un mensaje y su resumen, hallar otro mensaje con el mismo resumen debe ser inviable. Es distinto a la colisión general; aquí empiezas con una entrada concreta.\",\n      \"title\": \"Protección contra copias alternativas\"\n    },\n    {\n      \"text\": \"Cómo se arma por dentro: los datos se dividen en bloques, se mezclan y se condensan mediante rondas y funciones de compresión hasta obtener el resumen final. Piensa en una línea de cocina que va transformando ingredientes paso a paso.\",\n      \"title\": \"Componentes y flujo interno\"\n    },\n    {\n      \"text\": \"Dónde las ves en la vida real: direcciones de bloques, verificación rápida en sistemas, proteger contraseñas (con técnicas extra), y detectar duplicados en almacenamiento. Son herramientas para representar y comparar datos.\",\n      \"title\": \"Reconocerlas en aplicaciones\"\n    },\n    {\n      \"text\": \"Confusiones comunes: no son cifrado ni claves secretas; no garantizan ausencia absoluta de colisiones, sólo que encontrarlas es impráctico; y el contexto importa (por ejemplo, usar sal en contraseñas).\",\n      \"title\": \"Errores frecuentes y aclaraciones\"\n    },\n    {\n      \"text\": \"Por qué importa entenderlas: saber qué propiedades ofrecen te ayuda a evaluar riesgos y elegir soluciones: no es magia, es un conjunto de garantías matemáticas con límites prácticos.\",\n      \"title\": \"Por qué importa comprenderlas\"\n    }\n  ]\n}",
+      "outputTokens": 2272,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Cryptographic hash functions have specific mathematical properties that define their security. Penalize if:\n   - Hashing is conflated with encryption (hashing is one-way and irreversible; encryption is designed to be reversible with a key)\n\n2. DEPTH CHECK: Penalize if the explanation presents hash functions as simply \"creating fingerprints\" without showing why properties like collision resistance matter for security.\n\n3. DISTINCTION FROM BACKGROUND: The background covered the data integrity problem and the concept of digital fingerprints. This should explain how hash functions achieve their security properties.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "es-crypto-hash-functions-1",
+        "userInput": {
+          "backgroundSteps": [
+            {
+              "text": "Como verificas que un archivo no fue alterado sin compararlo byte por byte? El problema de la integridad de datos parecia no tener solucion eficiente.",
+              "title": "El Problema de Integridad"
+            },
+            {
+              "text": "Los matematicos descubrieron funciones que comprimen cualquier dato en una 'huella digital' unica. Cambiar un bit del original cambia completamente la huella.",
+              "title": "Huellas Digitales"
+            }
+          ],
+          "chapterTitle": "Fundamentos de Criptografia",
+          "courseTitle": "Seguridad Informatica",
+          "language": "es",
+          "lessonDescription": "Entendiendo como funcionan las funciones hash criptograficas, sus propiedades matematicas, y por que son fundamentales para la seguridad digital",
+          "lessonTitle": "Funciones Hash Criptograficas"
+        }
+      }
+    },
+    {
+      "duration": 29006.504000000015,
+      "inputTokens": 1854,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Plate tectonics is the idea that Earth's outer shell is broken into large, rigid slabs (plates) that slowly move and interact, shaping the planet's surface over millions of years.\",\n      \"title\": \"Plate tectonics in one line\"\n    },\n    {\n      \"text\": \"A tectonic plate is a chunk of the cool, strong outer shell (the lithosphere). It includes crust and the uppermost mantle — think of sturdy tiles floating on something softer beneath.\",\n      \"title\": \"What's a tectonic plate?\"\n    },\n    {\n      \"text\": \"Beneath the plates the asthenosphere is hotter and squishier. It flows very slowly, letting plates glide. Imagine heavy tiles sliding on warm, thick honey.\",\n      \"title\": \"The soft layer below the plates\"\n    },\n    {\n      \"text\": \"Plates meet at three main boundary types: pull apart (divergent), push together (convergent), or slide past (transform). Each type creates distinct behaviors and landforms.\",\n      \"title\": \"The three boundary types\"\n    },\n    {\n      \"text\": \"At divergent edges plates separate and new crust forms. Think of a zipper opening: molten rock wells up, cools, and builds ridges and rift valleys.\",\n      \"title\": \"Divergent boundaries\"\n    },\n    {\n      \"text\": \"At convergent edges one plate may dive under another (subduction) or two crumple up to form mountains. Picture one sheet sliding under a heavier one or two sheets folding together.\",\n      \"title\": \"Convergent boundaries\"\n    },\n    {\n      \"text\": \"Transform boundaries are where plates slide sideways past each other. Like two cars brushing past, stress builds and releases as earthquakes along faults.\",\n      \"title\": \"Transform boundaries\"\n    },\n    {\n      \"text\": \"What moves the plates? Slow mantle convection, the pull of dense, sinking plates, and gentle pushes from elevated ridges act like conveyor-belt forces that drive motion.\",\n      \"title\": \"What drives plate motion\"\n    },\n    {\n      \"text\": \"Different interactions create familiar features: mid-ocean ridges, deep trenches, volcanic arcs, mountain ranges, and earthquake zones — each tied to a boundary type.\",\n      \"title\": \"How plates build Earth’s features\"\n    },\n    {\n      \"text\": \"We recognize plate motion from earthquake patterns, volcanic arcs, GPS measurements that show slow drift, and chains of islands formed by moving plates over hotspots.\",\n      \"title\": \"How we spot plate movement\"\n    },\n    {\n      \"text\": \"Common confusions: plates are not the same as continents (continents ride on plates), motion is extremely slow (centimeters per year), and hotspots can sit away from boundaries.\",\n      \"title\": \"Common misunderstandings\"\n    },\n    {\n      \"text\": \"Why this matters: understanding plates explains why earthquakes and volcanoes happen, why mountains exist, and helps us assess hazards and where certain resources form.\",\n      \"title\": \"Why knowing this matters\"\n    }\n  ]\n}",
+      "outputTokens": 1871,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Plate tectonics involves specific geological mechanisms and processes. Penalize if:\n   - The mantle is described as liquid (it is solid rock that flows very slowly over geological time)\n\n2. DEPTH CHECK: Penalize if the explanation presents plate tectonics as simply \"continents moving\" without showing the driving mechanisms and how different boundary types create different geological features.\n\n3. DISTINCTION FROM BACKGROUND: The background covered the continental puzzle and Wegener's theory. This should explain how plate tectonics actually works as a mechanism.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-geology-plate-tectonics-1",
+        "userInput": {
+          "backgroundSteps": [
+            {
+              "text": "South America and Africa fit together like puzzle pieces. Fossils of the same species appear on continents separated by oceans. Coincidence?",
+              "title": "The Continental Puzzle"
+            },
+            {
+              "text": "Alfred Wegener proposed continents drift, but couldn't explain how. He was ridiculed. Decades later, seafloor mapping revealed the answer.",
+              "title": "Wegener's Vindication"
+            }
+          ],
+          "chapterTitle": "Earth's Structure",
+          "courseTitle": "Earth Science",
+          "language": "en",
+          "lessonDescription": "Understanding how Earth's tectonic plates move and interact, including the mechanisms that drive plate motion and the geological features they create",
+          "lessonTitle": "Plate Tectonics"
+        }
+      }
+    },
+    {
+      "duration": 51349.239833,
+      "inputTokens": 1879,
+      "output": "{\n  \"steps\": [\n    {\n      \"text\": \"Replicar DNA é copiar a informação genética para que cada célula filha receba o mesmo “manual”. Pense nisso como fazer uma cópia fiel de um livro de receitas, letra por letra.\",\n      \"title\": \"O núcleo da cópia\"\n    },\n    {\n      \"text\": \"A cópia começa em pontos específicos chamados origens de replicação. Em células eucarióticas existem muitas origens; em bactérias costuma haver uma única origem principal.\",\n      \"title\": \"Onde a cópia começa\"\n    },\n    {\n      \"text\": \"A helicase separa as duas fitas formando a forquilha de replicação — imagine um zíper sendo aberto. Proteínas SSB seguram as fitas abertas para que não se enrolem novamente.\",\n      \"title\": \"Abrindo a molécula: a forquilha\"\n    },\n    {\n      \"text\": \"DNA polimerases não iniciam sozinhas: a primase faz curtos primers de RNA que fornecem um ponto 3'-OH de partida — como um bloco inicial para o construtor começar a erguer a parede.\",\n      \"title\": \"O primeiro passo: primers\"\n    },\n    {\n      \"text\": \"A DNA polimerase acrescenta nucleotídeos seguindo as regras A–T e C–G e só sintetiza na direção 5'→3'. Pense num pedreiro que coloca tijolos sempre virados na mesma direção.\",\n      \"title\": \"O copiador principal: DNA polimerase\"\n    },\n    {\n      \"text\": \"Num lado a síntese é contínua (fita líder). No outro, a síntese é descontínua, formando fragmentos de Okazaki que depois são unidos — como montar um caminho com placas separadas.\",\n      \"title\": \"Fita líder vs fita descontínua\"\n    },\n    {\n      \"text\": \"A DNA ligase é o “soldador” que sela as junções entre fragmentos de Okazaki, transformando vários pedaços em uma fita uniforme — como colar páginas para formar um livro.\",\n      \"title\": \"Ligando os pedaços: ligase\"\n    },\n    {\n      \"text\": \"Ao desenrolar, o DNA adquire tensões e superenrolamentos. Topoisomerases aliviam essa torção cortando e religando o DNA — pense num técnico desenrolando um fio emaranhado.\",\n      \"title\": \"Aliviando a tensão: topoisomerase\"\n    },\n    {\n      \"text\": \"Enquanto copia, a polimerase também revisa: sua atividade exonuclease remove nucleotídeos errados (3'→5'), funcionando como um corretor ortográfico em tempo real.\",\n      \"title\": \"Revisão: proofreading\"\n    },\n    {\n      \"text\": \"Se algum erro escapar, sistemas de reparo pós-replicação (mismatch repair) detectam e corrigem pares incorretos, adicionando outra camada de verificação.\",\n      \"title\": \"Reparo pós-replicação\"\n    },\n    {\n      \"text\": \"Em cromossomos lineares, a cópia deixa as extremidades encurtadas a cada ciclo. Telomerase adiciona repetições nas células germinativas e em algumas células-tronco para proteger essas pontas.\",\n      \"title\": \"O problema das extremidades\"\n    },\n    {\n      \"text\": \"A replicação é feita por um replissoma — um conjunto de enzimas (helicase, polimerases, primase, ligase, etc.) que trabalham juntas, como uma equipe de construção coordenada.\",\n      \"title\": \"A equipe: o replissoma\"\n    },\n    {\n      \"text\": \"Saber como o DNA é copiado explica por que a informação é transmitida com tanta precisão e como falhas nesses passos podem levar a mutações ou doenças — é a base para entender muitos processos celulares.\",\n      \"title\": \"Por que isso importa\"\n    }\n  ]\n}",
+      "outputTokens": 2899,
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: Titles and text must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: DNA replication involves specific enzymes with distinct roles in a coordinated process. Penalize if:\n   - Both DNA strands are described as being copied the same way (leading and lagging strands are synthesized differently)\n\n2. DEPTH CHECK: Penalize if the explanation presents DNA replication as simply \"unzipping and copying\" without showing how multiple enzymes coordinate the process.\n\n3. DISTINCTION FROM BACKGROUND: The background covered the discovery of DNA structure and the templating concept. This should explain the actual molecular machinery of replication.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.\n\n2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.\n\n3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.\n\n6. FOCUS: Explains WHAT something IS, not history or origin stories.\n\n7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing components, phases, or concepts you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" explanation\n- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure\n- Different valid explanatory approaches exist - assess the quality of what IS provided\n\n    ",
+        "id": "pt-biology-dna-replication-1",
+        "userInput": {
+          "backgroundSteps": [
+            {
+              "text": "Watson e Crick revelaram a estrutura do DNA em 1953. Mas saber a forma nao explicava como a informacao genetica e copiada fielmente a cada divisao celular.",
+              "title": "Alem da Estrutura"
+            },
+            {
+              "text": "A dupla helice sugeriu a resposta: cada fita serve de molde para a outra. Mas como exatamente as celulas executam essa copia?",
+              "title": "O Molde Perfeito"
+            }
+          ],
+          "chapterTitle": "Genetica Molecular",
+          "courseTitle": "Biologia Celular",
+          "language": "pt",
+          "lessonDescription": "Entendendo o processo de replicacao do DNA, incluindo as enzimas envolvidas e como a informacao genetica e copiada com alta fidelidade",
+          "lessonTitle": "Como o DNA se Replica"
+        }
+      }
+    }
+  ],
+  "taskId": "activity-explanation"
+}
