@@ -1,6 +1,6 @@
 {
   "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Scenarios involving code errors where learners must identify which compilation phase would catch or miss them\n   - GOOD PATTERN: Situations requiring understanding of why phases must occur in a specific order\n   - BAD PATTERN: Asking to list phases, name outputs, or define terminology without application context\n   - BAD PATTERN: Questions about the \"assembly line\" metaphor or other explanation-specific content\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Lexical analysis and parsing being the same thing (lexical analysis produces tokens; parsing builds syntax trees from tokens)\n   - Compilers only producing machine code (many produce bytecode or intermediate representations)\n   - Optimization being optional or unimportant (it's crucial for performance)\n   - Semantic analysis happening before parsing (parsing must complete first)\n\n3. FORMAT FIT: Sort order works well for compiler pipeline stages. Match columns work for connecting error types to phases. Multiple choice for \"which phase catches this error.\"\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
-  "judgedAt": "2026-01-15T19:33:58.309Z",
+  "judgedAt": "2026-01-15T20:45:12.547Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -104,6 +104,59 @@
           "anonymousId": "Model F",
           "modelId": "xai/grok-4.1-fast-reasoning",
           "reasoning": "Only one question, and it’s close to a definitional check of lexical analysis output (token listing) with limited novelty and no broader testing of phase ordering, error attribution, or semantic vs syntax distinctions. While the item is accurate and feedback is okay, it doesn’t meet the overall expectations for applied coverage and conceptual breadth compared to other submissions.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D provides 8 well-crafted questions covering all compiler phases. Questions test application over memorization with novel scenarios (editor highlighting 'whlie', calculator analogy, student debugging comparison). Format choices are excellent: multiple choice for error identification, sortOrder for pipeline sequence (appropriate since order is conceptual), matchColumns for error-to-phase mapping. Feedback is thorough - explains why correct answers are right AND why incorrect answers are wrong. All factual content is accurate. One minor issue: Q4's last pair 'Unknown symbol func near line 10' might be confused as a parsing error rather than lexical, depending on interpretation. The 'whlie' question correctly identifies this as lexical analysis since it's about token recognition. Question 8 about why phases exist tests deeper understanding. Overall excellent quiz with strong application focus.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model A provides 8 questions with good conceptual coverage. Questions test application well - novel scenarios like syntax highlighter concept (Q7 student comparison), calculator example is different context. Format choices appropriate: multiple choice dominates but fits well, sortOrder for pipeline, matchColumns for error matching, fillBlank for process description. Feedback is comprehensive, explaining both why correct answers are right and incorrect are wrong. Factually accurate throughout. The fill-in-blank question asks for phase names directly which is slightly more recall-oriented than ideal, but the template requires understanding the sequence. Question 8 comparing two students' errors is particularly good for testing understanding of phase ordering. Minor weakness: some questions are slightly more straightforward than Model D's.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model H provides 6 solid questions with good variety. The reserved keyword scenario (Q1) is a novel and interesting case - correctly identifies lexical analysis catches this. Q2 and Q3 are standard but well-executed. sortOrder and matchColumns are appropriate. The fillBlank uses partial words ('tokens', 'tree', 'semantic', 'machine') which tests conceptual understanding reasonably well. Feedback is good quality, explaining reasoning. All factually accurate. Weakness: Fewer questions than top models, and some scenarios are more standard/predictable. The reserved keyword question is creative though.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model E provides 6 questions with reasonable coverage. Q1 about why stages exist is good conceptual question. Q2-Q3 test phase identification appropriately. Format choices are suitable - matchColumns for error types, sortOrder for phases, fillBlank for pipeline description. Feedback quality is adequate but somewhat brief (e.g., 'Right — lexical analysis groups characters into tokens...' is minimal). Factually accurate. The fillBlank template asks for 'lexical analysis', 'abstract syntax tree', 'code generation' - mixing terminology and concepts. Slightly more recall-oriented in places. Overall solid but less sophisticated than top models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model B provides 5 questions with creative scenarios. The syntax highlighter analogy (Q1) is excellent and novel. The 'green idea sleeps furiously' linguistic example (Q4) is creative for explaining semantic vs syntactic validity. matchColumns and sortOrder are appropriate. However, the sortOrder question asks to arrange 'artifacts' rather than phases/actions, which is slightly different but valid. The fillBlank has only 2 blanks and is somewhat simple. Feedback is good quality. Some issues: Q3 references 'assembly line' metaphor in the matchColumns question prompt (violation of guidance about metaphor-specific content). Overall creative but fewer questions and the metaphor reference is a problem.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model C provides 5 questions, all focused on identifying which phase catches an error. While factually accurate and feedback explains reasoning, the questions are somewhat repetitive - four multiple choice questions all asking 'which stage' in similar formats. The matchColumns question is appropriate. However, the quiz lacks variety in scenarios and doesn't test deeper understanding like 'why phases exist' or novel applications. Feedback is adequate but not as thorough as top models. Questions are clear but somewhat straightforward and don't challenge understanding as much. No major errors but limited depth.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G provides 5 questions but has significant issues. Q3 asks to match to 'the stage of the assembly line' - directly referencing the metaphor which violates guidance. The letter-writing analogy in Q1 is creative but the 'second error' description 'The blue fast runs tomorrow' would be semantic (meaning), not syntax - colors can be 'blue' and things can run, but the sentence structure is actually valid. This creates a factual accuracy issue. The chef/robot analogy in Q5 is reasonable. matchColumns is appropriate but references 'assembly line'. Feedback is briefer than ideal. The sortOrder question is appropriate. Some factual confusion and metaphor references are problems.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model F provides only 1 question, which is a serious deficiency for a quiz. While the single question is reasonably well-crafted (tests lexical analysis understanding with a code example), feedback is adequate, and it's factually accurate, a single question cannot adequately assess understanding of compiler stages. The question format is appropriate and the feedback explains why each option is correct/incorrect. However, with only one question covering one concept, this fails to provide meaningful assessment coverage of the topic.",
           "score": 3
         }
       ]

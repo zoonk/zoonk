@@ -1,6 +1,6 @@
 {
   "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Geographic scenarios where learners must explain geological features or patterns based on plate interactions\n   - GOOD PATTERN: Situations requiring prediction of geological activity based on understanding boundary types\n   - BAD PATTERN: Asking to name boundary types or list geological features without application context\n   - BAD PATTERN: Questions referencing the \"cracked shell\" or \"engine below\" metaphors from the explanation\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - The mantle being liquid or molten (it is SOLID rock that flows very slowly over geological time due to heat and pressure)\n   - Plates floating on liquid (they move on the slowly-flowing solid mantle)\n   - Earthquakes only happening at plate boundaries (intraplate earthquakes exist)\n   - Continental drift being the same as plate tectonics (continental drift was the early theory; plate tectonics is the modern mechanism)\n\n3. FORMAT FIT: Multiple choice works well for geological scenarios. Match columns work for connecting geological features to boundary types. Sort order could work for mountain-building sequences.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
-  "judgedAt": "2026-01-15T19:34:36.475Z",
+  "judgedAt": "2026-01-15T20:45:12.140Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -104,6 +104,59 @@
           "anonymousId": "Model B",
           "modelId": "google/gemini-3-pro-preview",
           "reasoning": "Contains multiple disallowed/penalized elements: explicitly uses the “engine” metaphor and “floating rafts” framing; the tomato-soup analogy strongly suggests plates floating on a liquid. While it later includes a good mantle-solid correction question, the first item conflicts with the accuracy/anti-metaphor guidance. Also includes a few format choices that feel like variety-for-variety (sort + fill) though they’re not terrible. Net result: significant rubric violations despite some strong questions.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent quiz with 7 well-crafted questions. Strong application focus throughout - seafloor age patterns, Himalayan growth, plate movement drivers, earthquake risk assessment, and addressing misconceptions about plate motion speed. All multiple choice and one match columns and one sort order are appropriate formats. Feedback is consistently excellent, explaining both why correct answers are right and why incorrect ones are wrong with additional insight. The sort order for ocean floor creation is conceptually appropriate (sequence matters). Match columns connecting observations to processes works well. Accurately handles the solid mantle concept ('Even though the mantle is solid rock, it's hot enough to flow very slowly'). No accuracy pitfalls. Clear, conversational tone throughout. The question about responding to a friend's argument is particularly good for testing conceptual understanding in a novel context.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong quiz with 6 questions covering diverse scenarios. Excellent application focus - GPS drift far from boundaries, mid-ocean ridge age patterns, oceanic-continental subduction, continent-continent collision, and convection demo analogy. All multiple choice questions are well-constructed with clear scenarios requiring understanding rather than recall. Match columns effectively connects observations to explanations. Feedback quality is good, though slightly less detailed than Model E. Correctly handles solid mantle concept ('mantle flow'). The question about GPS drift in a city far from plate boundaries is particularly clever for testing understanding that plates move as rigid units. No accuracy issues. Clear conversational tone.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Good quiz with 8 questions covering core concepts well. Strong application focus with novel scenarios - ocean floor age patterns, Atlantic cities moving apart, subduction zone earthquakes/volcanoes, continental collision. Multiple choice dominates appropriately. Match columns connects observations to plate interactions well. Sort order for heat-to-plate movement is appropriate. Fill blank is adequate but less engaging than other formats. Correctly states mantle is 'solid rock hot enough to flow very slowly.' The final question specifically addresses the solid-but-flowing mantle concept well. Feedback is generally good but occasionally slightly less detailed. One minor issue: the fill blank question feels more like vocabulary testing than conceptual application.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good quiz with 6 questions. The tomato soup analogy question is creative and tests understanding, though it uses an analogy which walks a line toward the guidance about avoiding metaphors. Strong on mantle being solid (correctly identifies mantle is solid, not liquid). Match columns is appropriate. Sort order for seafloor spreading works. Fill blank is decent. The science fiction movie question about the mantle is excellent for testing the solid-vs-liquid misconception. Continental collision question is well-designed. Feedback quality is good overall. Some questions are well-designed for application; the soup analogy might be seen as borderline since it creates a new analogy rather than referencing the lesson's analogy, which is acceptable.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Solid quiz with 6 questions. The cooled-planet hypothetical is creative for testing understanding of plate motion drivers. Seafloor drilling scenario is good. Match columns appropriately connects features to movements. Sort order for mantle convection is appropriate. Fill blank correctly tests solid mantle concept. The density-based collision question is good for application. However, one feedback uses the phrase 'engine' (guidance says avoid referencing metaphors from explanation). Some feedback is slightly thin. The phrase 'no 'engine'' in feedback could be problematic per guidance. Overall good but with minor issues.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Adequate quiz with 6 questions. Questions test concepts reasonably well. However, some questions feel closer to definition-testing than application - 'Which best describes the mantle?' and 'What primarily drives tectonic plate motion?' are somewhat direct rather than scenario-based. The mid-ocean ridge and continental collision questions are better for application. Match columns works well. Fill blank is decent. Correctly handles solid mantle. Feedback quality is acceptable but sometimes brief. Less engaging scenarios compared to top performers. Some questions could be answered by recall of facts rather than application of understanding.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Below average quiz with only 4 questions. Quantity is low, though quality matters more. Questions are decent but scenarios are thin - 'A coastal town notices the seafloor slowly spreading' is vague and somewhat leading. Match columns is basic but appropriate. Feedback is quite brief and doesn't always explain the 'why' sufficiently (e.g., 'Incorrect. Plates sliding past each other do not create new crust.' lacks depth). Mountain range question is reasonable. The scenarios lack the richness and novelty of higher-scoring models. Doesn't explicitly test or reinforce the solid mantle concept. Coverage is limited.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Very limited quiz with only 1 question. While the single question is well-constructed (novel scenario about Atlantic rock ages, good feedback, tests application), providing only one question is a significant limitation for assessing understanding of plate tectonics. The question does correctly address seafloor spreading and has appropriate feedback explaining why each option is right or wrong. However, it fails to cover the breadth of concepts that should be tested - no questions on collision zones, subduction, plate movement drivers, or the nature of the mantle. Cannot adequately assess learner understanding with such limited coverage.",
           "score": 3
         }
       ]

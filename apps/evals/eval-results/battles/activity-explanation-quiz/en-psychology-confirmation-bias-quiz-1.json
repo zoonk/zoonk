@@ -1,6 +1,6 @@
 {
   "expectations": "\nSPECIAL CONSIDERATION: This is an edge case - an abstract psychological concept where understanding means recognizing the bias in everyday situations.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Everyday scenarios where learners must recognize confirmation bias operating in someone's reasoning\n   - GOOD PATTERN: Situations requiring understanding of WHY the bias is unconscious and hard to overcome\n   - BAD PATTERN: Asking to define confirmation bias or list its characteristics without application context\n   - BAD PATTERN: Questions about the sports fan or political supporter examples from the explanation\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Confirmation bias being intentional deception (it's usually unconscious)\n   - Only unintelligent people having confirmation bias (everyone is susceptible, including experts)\n   - Confirmation bias being easy to overcome once you know about it (awareness helps but doesn't eliminate it)\n   - Confirmation bias only affecting beliefs about facts (it affects emotional and value-based beliefs too)\n\n3. FORMAT FIT: Multiple choice excels here - present scenarios and ask which demonstrates the bias. Match columns could connect cognitive biases to example scenarios. AVOID sort_order as the concept isn't sequential.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
-  "judgedAt": "2026-01-15T19:33:51.406Z",
+  "judgedAt": "2026-01-15T20:45:11.491Z",
   "judgments": [
     {
       "judgeId": "google/gemini-3-pro-preview",
@@ -104,6 +104,59 @@
           "anonymousId": "Model H",
           "modelId": "google/gemini-3-pro-preview",
           "reasoning": "The core scenario and correct option are fine, but the output is corrupted: the question text includes extraneous artifacts (\"} দাঁড়িয়েPhul:default_api:fillBlank{answers:[\") which makes it invalid/unclear for learners and breaks format adherence. With the malformed prompt, the item is not reliably usable despite otherwise reasonable content.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model G provides 8 comprehensive questions with excellent variety and quality. The multiple choice questions present novel scenarios (organic food believer, investor tracking stocks, pharmaceutical testing, political debate, detective investigation) that test conceptual understanding rather than recall. The match columns format is well-suited for connecting scenarios to psychological mechanisms. The fill-in-the-blank effectively tests understanding of key concepts. The sortOrder question, while noted as potentially problematic in the guidelines, does illustrate a logical progression of how confirmation bias operates (belief → encounter information → discomfort → selective attention → reinforcement). All feedback is thorough, explaining WHY answers are correct or incorrect. The quiz correctly emphasizes that bias is unconscious/automatic (not intentional), affects everyone including experts, and that awareness alone doesn't overcome it. Minor issues: some feedback could be slightly more concise, but overall this is an exceptional quiz.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model D provides 7 well-crafted questions with excellent novel scenarios (Maya researching electric cars, basketball fans, pharmaceutical testing, hiring manager with elite university bias, Jamie's attempt to overcome bias). All scenarios are distinct from any explanation examples. The match columns format effectively connects scenarios to psychological mechanisms. The fill-blank question tests understanding of the unconscious nature of bias. Feedback is thorough and explains reasoning. The quiz correctly emphasizes unconscious nature of bias, that experts are susceptible, and that willpower alone isn't sufficient (question 7 is excellent on this point). Very similar quality to Model G, but slightly less comprehensive (7 vs 8 questions) and the pharmaceutical question overlaps conceptually with Model G's approach. Still an excellent quiz.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model A provides 6 solid questions with good novel scenarios (Maya and unreliable coworker, Jordan and standing desk, soccer match fans, lab therapy testing). The match columns effectively connects behaviors to mechanisms. The sortOrder question is reasonable for showing the confirmation bias cycle. Feedback is generally good, explaining reasoning. The quiz correctly handles key concepts (unconscious filtering, everyone susceptible, need for external safeguards). However, some feedback is a bit shorter than ideal (e.g., 'Right. She's giving extra weight...' could elaborate more). The distractors effectively test understanding by including related but incorrect concepts (cognitive dissonance, sunk cost, availability heuristic). Slightly less comprehensive than Models G and D but still high quality.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model F provides 6 questions covering key concepts. The first question (Sam and brand reviews) tests identification of confirmation bias well. The second question about what's NOT confirmation bias is clever. The fill-blank and match columns are appropriate formats. The sortOrder question addresses the progression of confirmation bias. However, some scenarios are quite brief (Sam's scenario is just one sentence). Some feedback could be more detailed. The first scenario is fairly simple compared to the richer scenarios in other models. The quiz does correctly address safeguards and the unconscious nature of bias. Good quality overall but less sophisticated scenarios.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E provides 5 questions with creative scenarios (movie critic and 'genius' director, hiring manager with Ivy League bias). The match columns effectively connects behaviors to concepts. The fill-blank question is good. However, the sortOrder question about coffee brand reaction, while acceptable, is similar to what the guidelines warn against (though not identical to explanation examples). Some feedback is a bit brief ('Exactly. To avoid the discomfort of being wrong...'). The quiz correctly addresses key concepts but has fewer questions and somewhat less thorough feedback than higher-ranked models. The hiring manager scenario is excellent and novel. Overall good but not as comprehensive.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model C provides only 4 questions, which is relatively sparse. The scenarios are decent (friend accepting article, coworker meeting memory, basketball fan, researcher blind study) but some are fairly basic. The feedback is quite brief ('Right. They're favoring information that fits their existing belief without evaluating its quality.' - could explain more). No fill-blank, match-columns, or sortOrder questions to add variety or test different aspects. The third question about basketball fan watching a close game is similar to common examples about sports fans, though not identical to explanation examples. The quiz covers key concepts adequately but is less comprehensive and has weaker feedback than other models.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model B provides only 1 question, which is severely inadequate for testing understanding of confirmation bias. While the single question is reasonably well-crafted (coffee/heart disease scenario), one question cannot adequately assess comprehension of a psychological concept. The feedback is decent but not exceptional. The extremely limited scope makes this quiz inadequate for learning assessment purposes.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model H has a critical technical error - the JSON output contains corrupted text ('}দাঁড়িয়েPhul:default_api:fillBlank{answers:[') that appears to be a malformed response mixing different languages/formats. Only one complete question is provided before the corruption. While the single TechBrand X phone scenario question that is present is reasonable, the technical failure makes this output largely unusable. This is a fundamental failure that severely impacts the utility of the quiz.",
           "score": 2
         }
       ]
