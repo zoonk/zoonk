@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { getBattleLeaderboard } from "./battle-loader";
 import { generateBattleRankings } from "./battle-score";
 import {
   getAllOutputsForTask,
@@ -196,5 +197,11 @@ export async function runBattleMode(task: Task): Promise<void> {
     }),
   );
 
+  const leaderboard = await getBattleLeaderboard(task.id);
+
   console.info("\n=== Battle Mode Complete ===");
+  console.info("Top 3 models:");
+  leaderboard.slice(0, 3).forEach((entry, i) => {
+    console.info(`  ${i + 1}. ${entry.modelName}: ${entry.totalScore} points`);
+  });
 }
