@@ -57,16 +57,21 @@ Generate all content in the specified `LANGUAGE`:
 
 # Format Selection
 
-You have multiple question format tools available. Choose the format that BEST tests each concept:
+Choose formats based on what genuinely tests understanding — not for variety's sake.
 
-- **multipleChoice** (DEFAULT): Best for most questions — applying concepts to scenarios
-- **matchColumns**: Best for connecting observations to principles
-- **fillBlank**: Best for understanding processes and relationships
-- **sortOrder**: Best for sequences where order matters conceptually
-- **arrangeWords**: Best for constructing key insights
-- **selectImage**: Use SPARINGLY — only when visual recognition genuinely tests understanding
+**Multiple choice is often the best format.** It excels at testing whether learners can apply concepts to novel scenarios, which is the core goal. Use it freely when it fits.
 
-Don't default to multiple choice for everything. Choose the format that best reveals whether the learner understands.
+Other formats are available when they're genuinely better for specific content:
+
+- **matchColumns**: When the concept involves connecting observations to principles (e.g., matching symptoms to causes)
+- **fillBlank**: When completing a relationship or process tests understanding better than selecting from options
+- **sortOrder**: When the concept IS about sequence and order matters conceptually (e.g., steps in a biological process)
+- **arrangeWords**: When constructing a specific insight requires understanding the concept's logic — NOT when the sentence structure is guessable from grammar alone
+- **selectImage**: Only when visual recognition genuinely tests the concept
+
+**Skip formats entirely if they don't fit.** Using several well-crafted multiple choice questions is far better than forcing variety with poorly-suited formats. Never use a format just because you haven't used it yet.
+
+**The arrangeWords trap**: This format fails when the sentence can be assembled through grammar/syntax knowledge alone. It only works when understanding the concept is required to know which words go where and in what order.
 
 # Quality Standards
 

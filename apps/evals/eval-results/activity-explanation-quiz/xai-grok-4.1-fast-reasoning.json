@@ -1,0 +1,483 @@
+{
+  "modelId": "xai/grok-4.1-fast-reasoning",
+  "results": [
+    {
+      "duration": 8357.101207999978,
+      "inputTokens": 2858,
+      "output": "{\n  \"questions\": [\n    {\n      \"format\": \"multipleChoice\",\n      \"context\": {\n        \"description\": \"You've just stepped on a rusty nail and got a small cut. Blood flows a bit, but soon the area turns red and swells as white blood cells rush in to fight any bacteria.\",\n        \"kind\": \"text\"\n      },\n      \"options\": [\n        {\n          \"feedback\": \"Right! This quick, general swelling and redness is the innate response kicking in immediately with non-specific defenses like inflammation.\",\n          \"isCorrect\": true,\n          \"text\": \"This is your body's first line of defense responding instantly.\"\n        },\n        {\n          \"feedback\": \"No, the adaptive response takes days to ramp up and targets specific germs, not this immediate reaction.\",\n          \"isCorrect\": false,\n          \"text\": \"This shows the second line of defense remembering past infections.\"\n        },\n        {\n          \"feedback\": \"Wrong, antibodies are specific proteins from B cells, not the broad inflammation here.\",\n          \"isCorrect\": false,\n          \"text\": \"Antibodies are marking the bacteria for destruction.\"\n        },\n        {\n          \"feedback\": \"Not quite; memory cells speed up future responses but aren't causing the initial swelling.\",\n          \"isCorrect\": false,\n          \"text\": \"Memory cells are making this reaction faster than usual.\"\n        }\n      ],\n      \"question\": \"Which part of your immune system is at work here?\"\n    }\n  ]\n}",
+      "outputTokens": 734,
+      "steps": [
+        {
+          "conclusion": "The user explicitly requested \"4-8 questions covering the key concepts\" and instructions stated to \"Test each major concept\". The response provides only one single question, failing to create a full quiz and failing to cover the remaining concepts (macrophages, antibodies, memory cells).",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response needs to include at least 3-7 additional questions to meet the quantity and coverage requirements. Specifically, it needs questions addressing the functions of B cells/antibodies and the concept of immunological memory.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Scenarios where someone observes immune responses in everyday life (repeat exposure, recovery time, vaccination effects) and must explain the underlying mechanism\n   - GOOD PATTERN: Situations requiring prediction of immune outcomes based on understanding defense layers\n   - BAD PATTERN: Asking to name cells, list defense mechanisms, or recall definitions without application context\n   - BAD PATTERN: Questions referencing specific metaphors or examples from the explanation\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Antibodies directly killing pathogens (they MARK pathogens for destruction by other cells like macrophages)\n   - White blood cells being a single type (there are many types with different functions)\n   - Immune response being immediate (innate response is fast, adaptive takes days)\n   - Fever being harmful (it's often a beneficial immune response)\n\n3. FORMAT FIT: Multiple choice works well for \"which scenario shows X mechanism.\" Match columns work for connecting symptoms to immune responses. Sort order works for immune response sequence.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Arrange words: TRAP FORMAT. Only valid when understanding the concept is required to know which words go where. PENALIZE HEAVILY when the sentence can be assembled through grammar/syntax knowledge alone (e.g., basic sentence structure like \"Subject + verb + object\" that any native speaker could guess).\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - arrangeWords is used but the sentence structure is trivially guessable from grammar (this is a common failure mode)\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-biology-immune-system-quiz-1",
+        "userInput": {
+          "chapterTitle": "Body Systems",
+          "courseTitle": "Human Biology",
+          "explanationSteps": [
+            {
+              "text": "Your body has two defense systems working together. The first responds instantly to any threat. The second takes time but remembers enemies forever.",
+              "title": "Two Lines of Defense"
+            },
+            {
+              "text": "Physical barriers like skin and mucus stop most invaders. If they get through, patrolling cells called macrophages eat anything that looks foreign.",
+              "title": "The First Responders"
+            },
+            {
+              "text": "When threats persist, specialized cells called B cells create antibodies. These Y-shaped proteins stick to specific invaders, marking them for destruction.",
+              "title": "The Targeting System"
+            },
+            {
+              "text": "Some cells become memory cells after an infection. They remember the invader's shape for years, letting your body respond faster next time.",
+              "title": "Remembering Enemies"
+            }
+          ],
+          "language": "en",
+          "lessonDescription": "Understanding how the immune system protects the body through multiple layers of defense, from physical barriers to specialized cells and antibodies",
+          "lessonTitle": "How the Immune System Works"
+        }
+      }
+    },
+    {
+      "duration": 23401.342707999982,
+      "inputTokens": 2868,
+      "output": "{\n  \"questions\": [\n    {\n      \"format\": \"sortOrder\",\n      \"feedback\": \"Lexical analysis first tokenizes the source code, parsing then builds the syntactic structure from those tokens, semantic analysis verifies the meaning and types on top of that structure, and code generation finally produces executable machine instructions. Each phase depends on the output of the previous one.\",\n      \"items\": [\n        \"Lexical analysis\",\n        \"Parsing\",\n        \"Semantic analysis\",\n        \"Code generation\"\n      ],\n      \"question\": \"Put these compiler phases in the order they transform source code into machine instructions.\"\n    }\n  ]\n}",
+      "outputTokens": 1613,
+      "steps": [
+        {
+          "conclusion": "The prompt explicitly requested 'Aim for 4-8 questions' and to 'Test each major concept from EXPLANATION_STEPS at least once'. The AI generated only one single question. This is a critical failure to follow instructions regarding quantity and concept coverage, rendering the quiz incomplete and largely useless for the intended purpose.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None. The single question provided is factually accurate and uses the correct format (`sortOrder`) for testing a sequence.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response needs to include 3 to 7 additional questions to meet the user's requirements. Specifically, it should add multiple-choice or matching questions to test the distinction between lexical analysis (tokens) and parsing (structure), as well as scenarios distinguishing syntax errors from semantic errors.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Scenarios involving code errors where learners must identify which compilation phase would catch or miss them\n   - GOOD PATTERN: Situations requiring understanding of why phases must occur in a specific order\n   - BAD PATTERN: Asking to list phases, name outputs, or define terminology without application context\n   - BAD PATTERN: Questions about the \"assembly line\" metaphor or other explanation-specific content\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Lexical analysis and parsing being the same thing (lexical analysis produces tokens; parsing builds syntax trees from tokens)\n   - Compilers only producing machine code (many produce bytecode or intermediate representations)\n   - Optimization being optional or unimportant (it's crucial for performance)\n   - Semantic analysis happening before parsing (parsing must complete first)\n\n3. FORMAT FIT: Sort order works well for compiler pipeline stages. Match columns work for connecting error types to phases. Multiple choice for \"which phase catches this error.\"\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Arrange words: TRAP FORMAT. Only valid when understanding the concept is required to know which words go where. PENALIZE HEAVILY when the sentence can be assembled through grammar/syntax knowledge alone (e.g., basic sentence structure like \"Subject + verb + object\" that any native speaker could guess).\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - arrangeWords is used but the sentence structure is trivially guessable from grammar (this is a common failure mode)\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-cs-compilers-quiz-1",
+        "userInput": {
+          "chapterTitle": "Language Implementation",
+          "courseTitle": "Programming Language Theory",
+          "explanationSteps": [
+            {
+              "text": "A compiler reads your code in stages, like an assembly line. Each stage transforms the code into something closer to what the machine understands.",
+              "title": "The Assembly Line"
+            },
+            {
+              "text": "First, lexical analysis breaks your code into tokens - the smallest meaningful units. Keywords, variables, and operators each become distinct pieces.",
+              "title": "Breaking into Tokens"
+            },
+            {
+              "text": "The parser takes those tokens and builds a tree structure showing how statements relate. This catches syntax errors like missing parentheses.",
+              "title": "Building Structure"
+            },
+            {
+              "text": "Semantic analysis checks if your code makes logical sense. It catches errors like using a string where a number is required.",
+              "title": "Checking Meaning"
+            },
+            {
+              "text": "Finally, code generation translates the validated structure into machine instructions the processor can execute directly.",
+              "title": "Generating Output"
+            }
+          ],
+          "language": "en",
+          "lessonDescription": "Understanding how compilers transform human-readable code into machine-executable instructions through multiple phases of analysis and transformation",
+          "lessonTitle": "How Compilers Work"
+        }
+      }
+    },
+    {
+      "duration": 12266.027750000008,
+      "inputTokens": 2910,
+      "output": "{\n  \"questions\": [\n    {\n      \"format\": \"multipleChoice\",\n      \"context\": {\n        \"description\": \"Imagine que no Brasil há muito dinheiro circulando: as pessoas estão gastando à vontade em shoppings e restaurantes, comprando tudo o que veem.\",\n        \"kind\": \"text\"\n      },\n      \"options\": [\n        {\n          \"feedback\": \"Exato! Quando há excesso de dinheiro perseguindo os mesmos bens, os preços sobem porque a demanda explode.\",\n          \"isCorrect\": true,\n          \"text\": \"Os preços das coisas sobem bastante (inflação).\"\n        },\n        {\n          \"feedback\": \"Não, excesso de dinheiro acelera a economia no curto prazo, mas leva a inflação.\",\n          \"isCorrect\": false,\n          \"text\": \"A economia para completamente.\"\n        },\n        {\n          \"feedback\": \"Errado. Com tanto dinheiro, ninguém segura os preços baixos.\",\n          \"isCorrect\": false,\n          \"text\": \"Os preços caem ainda mais.\"\n        },\n        {\n          \"feedback\": \"Não é assim. O excesso estimula gastos, pressionando preços para cima.\",\n          \"isCorrect\": false,\n          \"text\": \"As pessoas param de gastar.\"\n        }\n      ],\n      \"question\": \"O que deve acontecer com os preços nesse caso?\\\"\\n</xai:function_call >\\n<xai:function_call name=\\\"multipleChoice\\\">\\n<parameter name=\\\"context\\\">{\\\"description\\\": \\\"O Banco Central decide subir a taxa básica de juros bem alto, tornando os empréstimos para carros e casas super caros.\\\", \\\"kind\\\": \\\"text\\\"}\"\n    }\n  ]\n}",
+      "outputTokens": 989,
+      "steps": [
+        {
+          "conclusion": "The response is critically flawed due to severe content corruption and format failure. The `question` field of the single generated item contains XML-like system tags (`</xai:function_call>`) and a raw string representation of a second function call. This indicates a complete breakdown in the generation process where internal control tokens leaked into the final output. Furthermore, the instructions requested 4-8 questions, but the model provided only one (which is broken and unusable).",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None. The major errors render the response unusable, so minor errors are not the primary concern.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The model must ensure it generates pure, valid JSON without leaking internal tool-use syntax or XML tags. It needs to generate the requested number of items (4-8 questions) instead of stopping after a single, malformed entry.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: Questions, options, and feedback must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Scenarios involving economic decisions (borrowing, spending, saving) where learners must predict effects of interest rate changes\n   - GOOD PATTERN: Situations requiring understanding of transmission delays between policy and economic outcomes\n   - BAD PATTERN: Asking to list monetary tools or define economic terms without application context\n   - BAD PATTERN: Questions referencing specific examples from the explanation\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Interest rate changes having immediate effects (transmission mechanisms have significant time lags of 6-18 months)\n   - Central banks directly controlling inflation (they influence it through indirect mechanisms)\n   - Lower interest rates always being good (they can fuel inflation and asset bubbles)\n   - Monetary policy being the only tool for economic stability (fiscal policy also plays a role)\n\n3. FORMAT FIT: Multiple choice works for cause-effect scenarios. Match columns work for connecting policy actions to economic effects. Sort order can work for transmission mechanism sequences.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Arrange words: TRAP FORMAT. Only valid when understanding the concept is required to know which words go where. PENALIZE HEAVILY when the sentence can be assembled through grammar/syntax knowledge alone (e.g., basic sentence structure like \"Subject + verb + object\" that any native speaker could guess).\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - arrangeWords is used but the sentence structure is trivially guessable from grammar (this is a common failure mode)\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+        "id": "pt-economics-monetary-policy-quiz-1",
+        "userInput": {
+          "chapterTitle": "Macroeconomia",
+          "courseTitle": "Economia para Iniciantes",
+          "explanationSteps": [
+            {
+              "text": "O banco central controla a quantidade de dinheiro circulando na economia. Quando ha dinheiro demais, os precos sobem. Quando ha pouco, a economia desacelera.",
+              "title": "Equilibrio Monetario"
+            },
+            {
+              "text": "A taxa basica de juros e a principal ferramenta. Juros altos tornam emprestimos caros, reduzindo gastos. Juros baixos estimulam emprestimos e consumo.",
+              "title": "A Alavanca dos Juros"
+            },
+            {
+              "text": "Mudancas nos juros levam meses para afetar a economia real. Empresas e consumidores ajustam seus planos gradualmente, nao instantaneamente.",
+              "title": "Efeito com Atraso"
+            },
+            {
+              "text": "Bancos centrais tambem compram e vendem titulos do governo. Comprando titulos, injetam dinheiro na economia. Vendendo, retiram dinheiro de circulacao.",
+              "title": "Operacoes de Mercado"
+            }
+          ],
+          "language": "pt",
+          "lessonDescription": "Entendendo como bancos centrais usam taxas de juros e outras ferramentas para influenciar a economia, incluindo os mecanismos de transmissao da politica monetaria",
+          "lessonTitle": "Como Funciona a Politica Monetaria"
+        }
+      }
+    },
+    {
+      "duration": 18961.730291999993,
+      "inputTokens": 2889,
+      "output": "{\n  \"questions\": [\n    {\n      \"format\": \"multipleChoice\",\n      \"context\": {\n        \"description\": \"Imagina que tienes una foto pequeña de 1 KB y un video de 2 horas que ocupa 4 GB. Usas la misma función hash en ambos.\",\n        \"kind\": \"text\"\n      },\n      \"options\": [\n        {\n          \"feedback\": \"Correcto. Las funciones hash criptográficas siempre producen una salida de longitud fija, sin importar el tamaño de la entrada. Esto permite manejar datos de cualquier tamaño de forma uniforme.\",\n          \"isCorrect\": true,\n          \"text\": \"Ambos archivos generan hashes del mismo tamaño.\"\n        },\n        {\n          \"feedback\": \"Incorrecto. El tamaño del hash no depende del input; es fijo para la función.\",\n          \"isCorrect\": false,\n          \"text\": \"El hash del video es más largo que el de la foto.\"\n        },\n        {\n          \"feedback\": \"Incorrecto. No varía por tamaño; es constante para la función.\",\n          \"isCorrect\": false,\n          \"text\": \"El tamaño del hash depende del tamaño del archivo.\"\n        },\n        {\n          \"feedback\": \"Incorrecto. Siempre es fijo, no proporcional.\",\n          \"isCorrect\": false,\n          \"text\": \"Los hashes son proporcionales al tamaño de los datos.\"\n        }\n      ],\n      \"question\": \"¿Qué pasa con el tamaño de sus hashes?\\\"\\n</xai:function_call name=\\\"multipleChoice\\\">\\n<parameter name=\\\"context\\\">{\\\"description\\\": \\\"Estás descargando un programa importante. Cambias por error un solo carácter en el código fuente antes de calcular su hash.\\\", \\\"kind\\\": \\\"text\\\"}\"\n    }\n  ]\n}",
+      "outputTokens": 1682,
+      "steps": [
+        {
+          "conclusion": "The response contains severe generation artifacts. The `question` field of the single generated item includes raw XML-like tags (`</xai:function_call>`) and parameters intended for internal tool use, effectively breaking the content. Furthermore, the user requested 4-8 questions, but the model provided only one question object, which is itself malformed.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The model must cleanly generate the JSON without including internal system tags or stop tokens in the string values. It must also ensure it generates the requested number of items (4-8) rather than stopping after a single incomplete entry.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: Questions, options, and feedback must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Security scenarios where learners must apply hash properties (irreversibility, avalanche effect, collision resistance) to real situations\n   - GOOD PATTERN: Situations requiring understanding of why certain hash behaviors matter for security\n   - BAD PATTERN: Asking to list hash properties or define terminology without application context\n   - BAD PATTERN: Questions about specific terms like \"avalanche effect\" without practical application\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Hashing being the same as encryption (hashing is ONE-WAY and irreversible; encryption is designed to be reversible with a key)\n   - Hash functions producing unique outputs (collisions are mathematically possible, just extremely unlikely for good functions)\n   - Longer hashes always being more secure (algorithm quality matters more than length)\n   - MD5 or SHA-1 being secure for cryptographic purposes (both have known vulnerabilities)\n\n3. FORMAT FIT: Multiple choice works for security scenarios. Match columns work for connecting hash properties to their practical implications.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Arrange words: TRAP FORMAT. Only valid when understanding the concept is required to know which words go where. PENALIZE HEAVILY when the sentence can be assembled through grammar/syntax knowledge alone (e.g., basic sentence structure like \"Subject + verb + object\" that any native speaker could guess).\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - arrangeWords is used but the sentence structure is trivially guessable from grammar (this is a common failure mode)\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+        "id": "es-crypto-hash-functions-quiz-1",
+        "userInput": {
+          "chapterTitle": "Fundamentos de Criptografia",
+          "courseTitle": "Seguridad Informatica",
+          "explanationSteps": [
+            {
+              "text": "Una funcion hash convierte cualquier dato en una cadena de longitud fija. Un archivo de 1KB y uno de 1GB producen hashes del mismo tamano.",
+              "title": "Compresion de Datos"
+            },
+            {
+              "text": "Cambiar un solo bit del archivo original cambia completamente el hash. Esta propiedad se llama efecto avalancha y es crucial para detectar alteraciones.",
+              "title": "Sensibilidad Extrema"
+            },
+            {
+              "text": "No puedes recuperar el archivo original desde su hash - el proceso es irreversible. Por eso se usan para almacenar contrasenas de forma segura.",
+              "title": "Camino de Ida"
+            },
+            {
+              "text": "Encontrar dos archivos diferentes con el mismo hash deberia ser practicamente imposible. Esta resistencia a colisiones es lo que hace a los hashes confiables.",
+              "title": "Unicidad Practica"
+            }
+          ],
+          "language": "es",
+          "lessonDescription": "Entendiendo como funcionan las funciones hash criptograficas, sus propiedades matematicas, y por que son fundamentales para la seguridad digital",
+          "lessonTitle": "Funciones Hash Criptograficas"
+        }
+      }
+    },
+    {
+      "duration": 20920.539875000017,
+      "inputTokens": 2851,
+      "output": "{\n  \"questions\": [\n    {\n      \"format\": \"sortOrder\",\n      \"feedback\": \"Training a neural network follows this exact sequence for learning: first, the forward pass generates a prediction from the input data. Then, the loss measures how wrong that prediction is compared to the true label. Next, backpropagation computes gradients to determine each weight's contribution to the error. Finally, weights are updated using those gradients to reduce future errors. This order ensures the network learns step-by-step without skipping crucial info.\",\n      \"items\": [\n        \"Forward pass: input data flows through layers to produce a prediction\",\n        \"Loss calculation: compare prediction to true target and quantify the error\",\n        \"Backward pass: error signal propagates back through layers to compute gradients for each weight\",\n        \"Weight update: adjust weights proportionally to their gradients, moving downhill on the error surface\"\n      ],\n      \"question\": \"Imagine training a network to detect handwritten digits like 3 vs 8. Put these key steps in the order they happen during one training example.\"\n    }\n  ]\n}",
+      "outputTokens": 1426,
+      "steps": [
+        {
+          "conclusion": "The user explicitly requested '4-8 questions' to cover the key concepts. The model provided only one single question. This is a severe failure to follow the volume and coverage instructions, rendering the output significantly less useful than requested.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The instruction 'Test each major concept from EXPLANATION_STEPS at least once' was not fully met. While the single question covers the high-level sequence of the steps, it fails to test the specific underlying concepts of the other steps individually (e.g., the logic of 'Small Steps Downhill' or the calculus of 'Assigning Blame') in novel contexts.",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "The single question provided is well-crafted. It correctly uses the `sortOrder` format for a procedural concept, includes a novel scenario (handwritten digits), provides excellent feedback, and accurately reflects the domain knowledge.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Training scenarios where learners must diagnose what's happening (overfitting, underfitting, vanishing gradients) based on observed behavior\n   - GOOD PATTERN: Situations requiring understanding of why the forward-backward process produces learning\n   - BAD PATTERN: Asking for formulas, definitions, or terminology without application context\n   - BAD PATTERN: Questions about specific metaphors like \"blame assignment\" from the explanation\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Gradient descent being random trial and error (it follows the mathematical gradient direction)\n   - Neural networks understanding concepts like humans (they learn statistical patterns)\n   - More layers always being better (can cause vanishing gradients and overfitting)\n   - Training stopping when error reaches zero (this indicates overfitting)\n\n3. FORMAT FIT: Multiple choice works for training scenarios. Sort order can work for the forward-backward pass sequence. Fill blank can work for the gradient flow process.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Arrange words: TRAP FORMAT. Only valid when understanding the concept is required to know which words go where. PENALIZE HEAVILY when the sentence can be assembled through grammar/syntax knowledge alone (e.g., basic sentence structure like \"Subject + verb + object\" that any native speaker could guess).\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - arrangeWords is used but the sentence structure is trivially guessable from grammar (this is a common failure mode)\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-ml-backpropagation-quiz-1",
+        "userInput": {
+          "chapterTitle": "Neural Network Training",
+          "courseTitle": "Machine Learning Fundamentals",
+          "explanationSteps": [
+            {
+              "text": "Training a neural network means adjusting connection strengths so outputs match desired results. The question is: which connections need adjusting and by how much?",
+              "title": "The Adjustment Problem"
+            },
+            {
+              "text": "First, data flows forward through the network, producing a prediction. The difference between prediction and reality is measured as error.",
+              "title": "Measuring Mistakes"
+            },
+            {
+              "text": "Error information then flows backward through the network. Each connection learns how much it contributed to the mistake using calculus.",
+              "title": "Assigning Blame"
+            },
+            {
+              "text": "Connections that contributed more to errors get larger adjustments. The network gradually improves by making small changes in the direction that reduces error.",
+              "title": "Small Steps Downhill"
+            }
+          ],
+          "language": "en",
+          "lessonDescription": "Understanding how neural networks learn through backpropagation, including forward passes, loss calculation, and gradient-based weight updates",
+          "lessonTitle": "How Neural Networks Learn"
+        }
+      }
+    },
+    {
+      "duration": 16402.161583999987,
+      "inputTokens": 2861,
+      "output": "{\n  \"questions\": [\n    {\n      \"format\": \"multipleChoice\",\n      \"context\": {\n        \"description\": \"Satellites show that the North American plate shifts about 2.5 cm each year toward the west, reshaping coastlines over eons.\",\n        \"kind\": \"text\"\n      },\n      \"options\": [\n        {\n          \"feedback\": \"Yes! Heat from the core drives convection currents in the mantle, which slowly drag the plates along like a conveyor belt.\",\n          \"isCorrect\": true,\n          \"text\": \"Convection currents in the mantle below pull and push the plates.\"\n        },\n        {\n          \"feedback\": \"No, the core is too deep and solid-liquid boundary doesn't directly move plates; convection in the mantle does.\",\n          \"isCorrect\": false,\n          \"text\": \"Liquid motion at the core-mantle boundary.\"\n        },\n        {\n          \"feedback\": \"No, while gravity influences subduction, it doesn't drive overall plate motion; mantle convection is the engine.\",\n          \"isCorrect\": false,\n          \"text\": \"Gravity sliding plates downhill.\"\n        },\n        {\n          \"feedback\": \"No, Earth's rotation affects weather but not the slow drift of plates; that's mantle-driven.\",\n          \"isCorrect\": false,\n          \"text\": \"The planet's spin creating centrifugal force.\"\n        }\n      ],\n      \"question\": \"What's powering this plate movement?\"\n    }\n  ]\n}",
+      "outputTokens": 1435,
+      "steps": [
+        {
+          "conclusion": "The user explicitly requested 4-8 questions and required that each major concept from the `EXPLANATION_STEPS` be tested at least once. The response contains only a single question covering only one concept (The Engine Below), leaving 'A Cracked Shell', 'Spreading Apart', and 'Collision Zones' untested. This is a significant failure in coverage and instruction following.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The single question provided includes a distractor regarding 'Gravity sliding plates downhill' which is marked as incorrect with feedback stating gravity doesn't drive overall plate motion. While this aligns with the simplified provided text ('The Engine Below'), it contradicts modern geological understanding where Slab Pull (gravity) is a primary driver. However, since the AI adhered to the provided source text, this is not penalized as an error, but noted.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "To improve, the model must generate at least 3 more questions to cover the remaining concepts: the nature of the plates/mantle (Cracked Shell), divergent boundaries (Spreading Apart), and convergent boundaries (Collision Zones).",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Geographic scenarios where learners must explain geological features or patterns based on plate interactions\n   - GOOD PATTERN: Situations requiring prediction of geological activity based on understanding boundary types\n   - BAD PATTERN: Asking to name boundary types or list geological features without application context\n   - BAD PATTERN: Questions referencing the \"cracked shell\" or \"engine below\" metaphors from the explanation\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - The mantle being liquid or molten (it is SOLID rock that flows very slowly over geological time due to heat and pressure)\n   - Plates floating on liquid (they move on the slowly-flowing solid mantle)\n   - Earthquakes only happening at plate boundaries (intraplate earthquakes exist)\n   - Continental drift being the same as plate tectonics (continental drift was the early theory; plate tectonics is the modern mechanism)\n\n3. FORMAT FIT: Multiple choice works well for geological scenarios. Match columns work for connecting geological features to boundary types. Sort order could work for mountain-building sequences.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Arrange words: TRAP FORMAT. Only valid when understanding the concept is required to know which words go where. PENALIZE HEAVILY when the sentence can be assembled through grammar/syntax knowledge alone (e.g., basic sentence structure like \"Subject + verb + object\" that any native speaker could guess).\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - arrangeWords is used but the sentence structure is trivially guessable from grammar (this is a common failure mode)\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-geology-plate-tectonics-quiz-1",
+        "userInput": {
+          "chapterTitle": "Earth's Structure",
+          "courseTitle": "Earth Science",
+          "explanationSteps": [
+            {
+              "text": "Earth's outer shell is cracked into massive pieces called plates. These plates sit on the mantle - solid rock so hot it flows like thick honey over millions of years.",
+              "title": "A Cracked Shell"
+            },
+            {
+              "text": "Heat from Earth's core creates circulation in the mantle. This slow churning drags the plates along, moving them centimeters per year.",
+              "title": "The Engine Below"
+            },
+            {
+              "text": "Where plates pull apart, magma rises to fill the gap, creating new crust. Mid-ocean ridges are underwater mountain chains formed this way.",
+              "title": "Spreading Apart"
+            },
+            {
+              "text": "Where plates collide, one may dive under the other, triggering earthquakes and volcanoes. Mountain ranges like the Himalayas form when neither plate sinks.",
+              "title": "Collision Zones"
+            }
+          ],
+          "language": "en",
+          "lessonDescription": "Understanding how Earth's tectonic plates move and interact, including the mechanisms that drive plate motion and the geological features they create",
+          "lessonTitle": "Plate Tectonics"
+        }
+      }
+    },
+    {
+      "duration": 38860.46074999997,
+      "inputTokens": 2916,
+      "output": "{\n  \"questions\": [\n    {\n      \"format\": \"multipleChoice\",\n      \"context\": {\n        \"description\": \"Imagine que o DNA de uma bactéria é marcado com um isótopo pesado em ambas as fitas. Após uma divisão celular, as novas células têm DNA com densidade intermediária.\",\n        \"kind\": \"text\"\n      },\n      \"options\": [\n        {\n          \"feedback\": \"Correto! Cada molécula de DNA filha contém uma fita original (molde) e uma fita recém-sintetizada, explicando a densidade mista.\",\n          \"isCorrect\": true,\n          \"text\": \"Cada nova dupla hélice tem uma fita velha e uma nova.\"\n        },\n        {\n          \"feedback\": \"Errado. Se fosse assim, todo o DNA novo seria leve, sem traço do original.\",\n          \"isCorrect\": false,\n          \"text\": \"As duas fitas novas são sintetizadas do zero, sem usar as antigas.\"\n        },\n        {\n          \"feedback\": \"Errado. Isso conservaria toda a densidade pesada em uma molécula só.\",\n          \"isCorrect\": false,\n          \"text\": \"A fita pesada é preservada inteira em uma das filhas.\"\n        },\n        {\n          \"feedback\": \"Errado. A replicação não mistura fitas aleatoriamente; cada molde gera uma específica.\",\n          \"isCorrect\": false,\n          \"text\": \"As fitas se misturam de forma randômica entre moléculas.\"\n        }\n      ],\n      \"question\": \"Por que isso ocorre na replicação do DNA?\"\n    }\n  ]\n}",
+      "outputTokens": 3247,
+      "steps": [
+        {
+          "conclusion": "The user explicitly requested '4-8 questions covering the key concepts'. The output contains only a single question. This is a critical failure to follow instructions regarding the quantity and scope of the quiz.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "Because only one question was generated, the quiz fails to cover 3 out of the 4 explanation steps provided (Unwinding, Directionality/Leading vs Lagging, and Error Correction). It only tests the concept of the template (semi-conservative replication).",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The single question provided is actually of high quality. It uses a novel scenario (Meselson-Stahl style isotope density) to test the concept of semi-conservative replication without referencing the text directly, matching the 'Understanding vs Memorization' philosophy perfectly. The language and feedback are also correct.",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: Questions, options, and feedback must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Scenarios requiring understanding of WHY replication works as it does (directionality constraints, error correction needs)\n   - GOOD PATTERN: Situations where learners must predict outcomes of replication errors or enzyme malfunctions\n   - BAD PATTERN: Asking to name enzymes or describe their functions without application context\n   - BAD PATTERN: Questions referencing the \"zipper\" metaphor or other explanation-specific content\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Both DNA strands being synthesized the same way (leading strand is continuous; lagging strand is synthesized in Okazaki fragments)\n   - DNA polymerase being able to start synthesis on its own (it needs a primer)\n   - Replication being error-free (proofreading catches most errors but some slip through)\n   - Replication happening randomly along the chromosome (it starts at specific origins)\n\n3. FORMAT FIT: Sort order works well for replication sequence. Fill blank works for enzyme roles. Multiple choice for understanding why the process works as it does.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Arrange words: TRAP FORMAT. Only valid when understanding the concept is required to know which words go where. PENALIZE HEAVILY when the sentence can be assembled through grammar/syntax knowledge alone (e.g., basic sentence structure like \"Subject + verb + object\" that any native speaker could guess).\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - arrangeWords is used but the sentence structure is trivially guessable from grammar (this is a common failure mode)\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+        "id": "pt-biology-dna-replication-quiz-1",
+        "userInput": {
+          "chapterTitle": "Genetica Molecular",
+          "courseTitle": "Biologia Celular",
+          "explanationSteps": [
+            {
+              "text": "Antes de uma celula se dividir, ela precisa copiar todo seu DNA. O processo comeca quando enzimas separam as duas fitas da dupla helice.",
+              "title": "Abrindo o Ziper"
+            },
+            {
+              "text": "Cada fita original serve de molde para uma nova. Enzimas chamadas DNA polimerases leem a fita antiga e constroem a nova, base por base.",
+              "title": "Lendo o Molde"
+            },
+            {
+              "text": "Ha um problema: a polimerase so consegue adicionar bases em uma direcao. Uma fita e copiada continuamente, mas a outra precisa ser copiada em pedacos.",
+              "title": "O Problema da Direcao"
+            },
+            {
+              "text": "Enzimas de correcao verificam cada base adicionada. Se encontram um erro, removem e substituem. Esse controle de qualidade mantem a fidelidade genetica.",
+              "title": "Corrigindo Erros"
+            }
+          ],
+          "language": "pt",
+          "lessonDescription": "Entendendo o processo de replicacao do DNA, incluindo as enzimas envolvidas e como a informacao genetica e copiada com alta fidelidade",
+          "lessonTitle": "Como o DNA se Replica"
+        }
+      }
+    },
+    {
+      "duration": 11216.109042000026,
+      "inputTokens": 2856,
+      "output": "{\n  \"questions\": [\n    {\n      \"format\": \"multipleChoice\",\n      \"context\": {\n        \"description\": \"You're shooting a portrait of your friend standing in a park. The background has trees and a path leading away.\",\n        \"kind\": \"text\"\n      },\n      \"options\": [\n        {\n          \"feedback\": \"Correct! Placing the subject off-center on a power point creates balance and draws the eye along the path naturally.\",\n          \"isCorrect\": true,\n          \"text\": \"Place your friend's face at one of the intersection points of the imaginary grid.\"\n        },\n        {\n          \"feedback\": \"Centering feels static; off-center adds interest by giving the eye space to explore.\",\n          \"isCorrect\": false,\n          \"text\": \"Center the face perfectly in the middle.\"\n        },\n        {\n          \"feedback\": \"The edge is too extreme and crops awkwardly; intersections guide the eye better.\",\n          \"isCorrect\": false,\n          \"text\": \"Put the face right on the edge of the frame.\"\n        },\n        {\n          \"feedback\": \"Multiple subjects complicate it; focus on key placement for the main one.\",\n          \"isCorrect\": false,\n          \"text\": \"Spread several elements across all nine grid sections.\"\n        }\n      ],\n      \"question\": \"Where should you position your friend for the most engaging shot?\"\n    }\n  ]\n}",
+      "outputTokens": 791,
+      "steps": [
+        {
+          "conclusion": "The user explicitly requested between 4 and 8 questions to cover the key concepts. The model generated only a single question. This is a significant failure to follow instructions regarding quantity and concept coverage (missing concepts include horizon placement and eye scanning patterns).",
+          "kind": "majorErrors",
+          "score": 6.5
+        },
+        {
+          "conclusion": "None. The single question provided is actually well-constructed, accurately follows the 'understanding vs. memorization' philosophy, uses a novel scenario, and provides good feedback.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The model needs to generate at least 3 more questions to meet the minimum requirement. These additional questions should cover the remaining explanation steps, such as placing horizons on the upper/lower lines to emphasize ground/sky and the concept of how eyes scan an image.",
+          "kind": "potentialImprovements",
+          "score": 6.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nSPECIAL CONSIDERATION: This is an edge case - a visual/practical skill where understanding is demonstrated through application to real scenarios, not visual recognition.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Photography scenarios where learners must decide subject placement to achieve specific visual effects\n   - GOOD PATTERN: Situations requiring understanding of WHY off-center placement creates visual interest\n   - BAD PATTERN: Asking to define the rule of thirds or describe the grid without application context\n   - BAD PATTERN: Questions about \"power points\" terminology without practical application\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Rule of thirds being mandatory (it's a guideline, not a rule - breaking it intentionally can be effective)\n   - Centered subjects always being wrong (centered composition works for symmetry and certain moods)\n   - The grid being visible in final photos (it's an imaginary guide)\n   - Rule of thirds being the only composition technique (leading lines, framing, and many others exist)\n\n3. FORMAT FIT: Multiple choice works for \"where would you place the subject\" scenarios. Match columns could connect composition choices to their visual effects. AVOID selectImage unless visual recognition is truly being tested.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Arrange words: TRAP FORMAT. Only valid when understanding the concept is required to know which words go where. PENALIZE HEAVILY when the sentence can be assembled through grammar/syntax knowledge alone (e.g., basic sentence structure like \"Subject + verb + object\" that any native speaker could guess).\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - arrangeWords is used but the sentence structure is trivially guessable from grammar (this is a common failure mode)\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-photography-composition-quiz-1",
+        "userInput": {
+          "chapterTitle": "Composition Basics",
+          "courseTitle": "Photography Fundamentals",
+          "explanationSteps": [
+            {
+              "text": "Most beginners center their subjects. While this works sometimes, placing subjects off-center often creates more dynamic, interesting images.",
+              "title": "Beyond the Center"
+            },
+            {
+              "text": "Imagine your frame divided by two horizontal and two vertical lines, creating nine equal sections. The four points where lines cross are power points.",
+              "title": "The Grid"
+            },
+            {
+              "text": "Placing your main subject on a power point or along a line draws the viewer's eye naturally. A horizon on the lower line emphasizes sky; on the upper line emphasizes ground.",
+              "title": "Strategic Placement"
+            },
+            {
+              "text": "This guideline works because our eyes naturally scan images in patterns. Off-center placement gives the eye somewhere to travel, making photos feel more alive.",
+              "title": "Why It Works"
+            }
+          ],
+          "language": "en",
+          "lessonDescription": "Understanding the rule of thirds and how strategic subject placement creates more visually engaging photographs",
+          "lessonTitle": "The Rule of Thirds"
+        }
+      }
+    },
+    {
+      "duration": 14137.291000000085,
+      "inputTokens": 2858,
+      "output": "{\n  \"questions\": [\n    {\n      \"format\": \"multipleChoice\",\n      \"context\": {\n        \"description\": \"You're super excited about a new electric car model, convinced it's the most reliable on the market based on early reviews. Then a trusted auto magazine publishes a long-term test showing frequent battery issues.\",\n        \"kind\": \"text\"\n      },\n      \"options\": [\n        {\n          \"feedback\": \"Yes! Our brains crave consistency, so conflicting info creates discomfort, pushing us to favor what aligns with our belief.\",\n          \"isCorrect\": true,\n          \"text\": \"You feel uneasy about the report and start hunting for owner stories praising the car's durability.\"\n        },\n        {\n          \"feedback\": \"No, this ignores the bias. We'd unconsciously downplay or avoid the bad news to keep our positive view intact.\",\n          \"isCorrect\": false,\n          \"text\": \"You immediately accept the report and swear off the car.\"\n        },\n        {\n          \"feedback\": \"No, close but not quite. We tend to filter out the negatives rather than over-focus on one positive detail.\",\n          \"isCorrect\": false,\n          \"text\": \"You zero in on the one part where it outperformed competitors and ignore the rest.\"\n        },\n        {\n          \"feedback\": \"No, this would be deliberate cherry-picking, but the bias works unconsciously by making supporting info stand out more.\",\n          \"isCorrect\": false,\n          \"text\": \"You consciously decide to only read pro reviews from now on.\"\n        }\n      ],\n      \"question\": \"How might confirmation bias show up here?\"\n    }\n  ]\n}",
+      "outputTokens": 1059,
+      "steps": [
+        {
+          "conclusion": "The user explicitly requested \"4-8 questions covering the key concepts.\" The model provided only one single question. This is a severe failure to follow the coverage and quantity instructions.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The single provided question contains a logical flaw/ambiguity. Option 3 (\"You zero in on the one part where it outperformed competitors and ignore the rest\") describes Confirmation Bias perfectly according to Explanation Step 2 (\"We notice evidence supporting our beliefs and unconsciously filter out... contradicting evidence\"). However, the model marks this as incorrect with confusing reasoning (\"We tend to filter out the negatives rather than over-focus on one positive detail\"). Since Option 3 is a valid manifestation of the bias, the question has two correct answers, making it unfair/invalid.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None. (While there are minor phrasing issues, they are overshadowed by the major errors above).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The model needs to generate the requested number of questions (minimum 4). Additionally, the distractors in the multiple-choice question must be clearly incorrect. Option 3 should be rewritten to describe a different behavior (e.g., changing one's mind immediately) so it doesn't overlap with the correct answer.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nSPECIAL CONSIDERATION: This is an edge case - an abstract psychological concept where understanding means recognizing the bias in everyday situations.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Everyday scenarios where learners must recognize confirmation bias operating in someone's reasoning\n   - GOOD PATTERN: Situations requiring understanding of WHY the bias is unconscious and hard to overcome\n   - BAD PATTERN: Asking to define confirmation bias or list its characteristics without application context\n   - BAD PATTERN: Questions about the sports fan or political supporter examples from the explanation\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Confirmation bias being intentional deception (it's usually unconscious)\n   - Only unintelligent people having confirmation bias (everyone is susceptible, including experts)\n   - Confirmation bias being easy to overcome once you know about it (awareness helps but doesn't eliminate it)\n   - Confirmation bias only affecting beliefs about facts (it affects emotional and value-based beliefs too)\n\n3. FORMAT FIT: Multiple choice excels here - present scenarios and ask which demonstrates the bias. Match columns could connect cognitive biases to example scenarios. AVOID sort_order as the concept isn't sequential.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Arrange words: TRAP FORMAT. Only valid when understanding the concept is required to know which words go where. PENALIZE HEAVILY when the sentence can be assembled through grammar/syntax knowledge alone (e.g., basic sentence structure like \"Subject + verb + object\" that any native speaker could guess).\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - arrangeWords is used but the sentence structure is trivially guessable from grammar (this is a common failure mode)\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+        "id": "en-psychology-confirmation-bias-quiz-1",
+        "userInput": {
+          "chapterTitle": "Cognitive Biases",
+          "courseTitle": "Introduction to Psychology",
+          "explanationSteps": [
+            {
+              "text": "Our brains prefer consistency. When we believe something, finding contradicting evidence feels uncomfortable - like a mental itch we want to scratch away.",
+              "title": "The Comfort of Consistency"
+            },
+            {
+              "text": "To avoid discomfort, our brains play tricks. We notice evidence supporting our beliefs and unconsciously filter out or dismiss contradicting evidence.",
+              "title": "Selective Attention"
+            },
+            {
+              "text": "This happens automatically, not deliberately. A sports fan genuinely sees more fouls by the opposing team. A political supporter honestly remembers more flaws in opponents.",
+              "title": "Unconscious Filtering"
+            },
+            {
+              "text": "Even scientists fall prey to this. That's why research uses blind studies and peer review - external checks against our natural tendency to see what we expect.",
+              "title": "Safeguards Help"
+            }
+          ],
+          "language": "en",
+          "lessonDescription": "Understanding confirmation bias - how our tendency to favor information that confirms existing beliefs affects our perception and decision-making",
+          "lessonTitle": "Confirmation Bias"
+        }
+      }
+    }
+  ],
+  "taskId": "activity-explanation-quiz"
+}

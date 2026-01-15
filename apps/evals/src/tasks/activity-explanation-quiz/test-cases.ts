@@ -11,14 +11,27 @@ EVALUATION CRITERIA:
    - Ask about facts that could only be known by reading this specific text
    - Test vocabulary definitions rather than concept application
 
-3. FORMAT APPROPRIATENESS: The format should match what the concept requires:
-   - Multiple choice (default): Best for applying concepts to scenarios
-   - Match columns: Best for connecting concepts to real-world manifestations
-   - Sort order: Best for processes where sequence matters
-   - Fill blank: Best for understanding relationships within processes
-   - Arrange words: Best for constructing key insights
-   - Select image: ONLY when visual recognition genuinely tests understanding
-   Penalize when a different format would clearly test the concept better.
+3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.
+
+   ANTI-PATTERN - "Forced variety": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.
+
+   Format guidance:
+   - Multiple choice: Often the BEST choice, not just a "default." It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.
+   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).
+   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).
+   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.
+   - Arrange words: TRAP FORMAT. Only valid when understanding the concept is required to know which words go where. PENALIZE HEAVILY when the sentence can be assembled through grammar/syntax knowledge alone (e.g., basic sentence structure like "Subject + verb + object" that any native speaker could guess).
+   - Select image: ONLY when visual recognition genuinely tests understanding.
+
+   PENALIZE when:
+   - arrangeWords is used but the sentence structure is trivially guessable from grammar (this is a common failure mode)
+   - Formats are used for variety rather than fit
+   - A different format would clearly test the concept better
+
+   Do NOT penalize when:
+   - Multiple choice is used repeatedly across several questions
+   - Some available formats are not used at all
+   - The quiz sticks to one or two well-suited formats
 
 4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:
    - For correct answers: Explains WHY it's right plus an additional insight
@@ -395,56 +408,6 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Entendendo o processo de replicacao do DNA, incluindo as enzimas envolvidas e como a informacao genetica e copiada com alta fidelidade",
       lessonTitle: "Como o DNA se Replica",
-    },
-  },
-  {
-    expectations: `
-SPECIAL CONSIDERATION: This is an edge case - language learning content where the subject (Spanish) is different from the quiz language (English).
-
-TOPIC-SPECIFIC GUIDANCE:
-
-1. APPLICATION CHECK:
-   - GOOD PATTERN: Scenarios where learners must apply conjugation patterns to NEW verbs not mentioned in the explanation
-   - GOOD PATTERN: Situations requiring understanding of WHY pronoun dropping works in Spanish
-   - BAD PATTERN: Asking for specific conjugations of verbs used in the explanation (hablar)
-   - BAD PATTERN: Asking to list endings without application to actual communication scenarios
-
-2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:
-   - All Spanish verbs following the same pattern (irregular verbs exist)
-   - Present tense only having one use (it can express habitual actions, current actions, and near future)
-   - Verb endings being arbitrary (they follow systematic patterns based on infinitive ending)
-   - Spanish having the same subject pronoun rules as English (Spanish often drops subject pronouns)
-
-3. FORMAT FIT: Fill blank works well for completing sentences with correct forms. Match columns work for connecting pronouns to endings. Multiple choice for applying patterns to new verbs.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-language-spanish-verbs-quiz",
-    userInput: {
-      chapterTitle: "Grammar Foundations",
-      courseTitle: "Spanish for Beginners",
-      explanationSteps: [
-        {
-          text: "Spanish verbs change their endings based on who's doing the action. The infinitive form - like 'hablar' (to speak) - is the starting point before conjugation.",
-          title: "Verbs Change Shape",
-        },
-        {
-          text: "Regular verbs follow predictable patterns. Verbs ending in -AR like 'hablar' use one set of endings. Verbs ending in -ER and -IR use slightly different sets.",
-          title: "Three Verb Families",
-        },
-        {
-          text: "For -AR verbs in present tense: remove -AR, then add -o (I), -as (you), -a (he/she), -amos (we), -an (they). So 'hablar' becomes 'hablo' for 'I speak.'",
-          title: "The -AR Pattern",
-        },
-        {
-          text: "Spanish often drops the subject pronoun because the verb ending already tells you who's acting. 'Hablo' alone means 'I speak' - no need for 'yo.'",
-          title: "Pronouns Are Optional",
-        },
-      ],
-      language: "en",
-      lessonDescription:
-        "Understanding how to conjugate regular Spanish verbs in the present tense, including the patterns for -AR, -ER, and -IR verb families",
-      lessonTitle: "Spanish Verb Conjugation",
     },
   },
   {
