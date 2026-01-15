@@ -1,56 +1,121 @@
 {
   "expectations": "\nSPECIAL CONSIDERATION: This is an edge case - an abstract psychological concept where understanding means recognizing the bias in everyday situations.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. APPLICATION CHECK:\n   - GOOD PATTERN: Everyday scenarios where learners must recognize confirmation bias operating in someone's reasoning\n   - GOOD PATTERN: Situations requiring understanding of WHY the bias is unconscious and hard to overcome\n   - BAD PATTERN: Asking to define confirmation bias or list its characteristics without application context\n   - BAD PATTERN: Questions about the sports fan or political supporter examples from the explanation\n\n2. ACCURACY PITFALLS - Penalize if any of these are stated or implied:\n   - Confirmation bias being intentional deception (it's usually unconscious)\n   - Only unintelligent people having confirmation bias (everyone is susceptible, including experts)\n   - Confirmation bias being easy to overcome once you know about it (awareness helps but doesn't eliminate it)\n   - Confirmation bias only affecting beliefs about facts (it affects emotional and value-based beliefs too)\n\n3. FORMAT FIT: Multiple choice excels here - present scenarios and ask which demonstrates the bias. Match columns could connect cognitive biases to example scenarios. AVOID sort_order as the concept isn't sequential.\n\n\nEVALUATION CRITERIA:\n\n1. UNDERSTANDING OVER MEMORIZATION: Questions must test conceptual understanding, not recall. A learner who understood the concept but never read this specific explanation should be able to answer correctly. Penalize questions that:\n   - Use phrases like \"according to the text,\" \"as described,\" or \"the explanation said\"\n   - Reference specific metaphors, analogies, or examples from the explanation steps\n   - Ask \"what is X?\" instead of \"what would happen if...\" or \"which scenario shows...\"\n\n2. APPLICATION TO NOVEL SCENARIOS: Questions should present concepts in new contexts the learner hasn't seen. The scenario in the question should be different from any examples in the explanation steps. Penalize questions that:\n   - Reuse scenarios from the explanation\n   - Ask about facts that could only be known by reading this specific text\n   - Test vocabulary definitions rather than concept application\n\n3. FORMAT APPROPRIATENESS: Evaluate whether the chosen format genuinely tests understanding.\n\n   ANTI-PATTERN - \"Forced variety\": Using different formats just for variety is a serious flaw. Multiple well-crafted questions of the same format are better than poorly-suited formats used for variety's sake. Do NOT penalize for using multiple choice repeatedly if it tests the concepts well.\n\n   Format guidance:\n   - Multiple choice: Often the BEST choice, not just a \"default.\" It excels at testing whether learners can apply concepts to novel scenarios. Use it freely.\n   - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).\n   - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).\n   - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.\n   - Select image: ONLY when visual recognition genuinely tests understanding.\n\n   PENALIZE when:\n   - Formats are used for variety rather than fit\n   - A different format would clearly test the concept better\n\n   Do NOT penalize when:\n   - Multiple choice is used repeatedly across several questions\n   - Some available formats are not used at all\n   - The quiz sticks to one or two well-suited formats\n\n4. FEEDBACK QUALITY: Feedback must explain reasoning, not just state correct/incorrect. Good feedback:\n   - For correct answers: Explains WHY it's right plus an additional insight\n   - For incorrect answers: Explains WHY it's wrong AND why the correct answer is right\n   Penalize feedback that only says \"Correct!\" or \"That's wrong.\"\n\n5. FACTUAL ACCURACY: All questions and answers must be scientifically/technically correct. Penalize:\n   - Incorrect facts presented as correct answers\n   - Correct facts marked as incorrect\n   - Misleading simplifications that create misconceptions\n\n6. QUESTION CLARITY: Questions must be unambiguous with a conversational tone. Penalize:\n   - Academic or formal phrasing\n   - Ambiguous scenarios where multiple answers could be valid\n   - Trick questions designed to confuse rather than test understanding\n\n7. APPROPRIATE DIFFICULTY: Questions should challenge understanding without being unfair. Penalize:\n   - Trivially easy questions anyone could guess\n   - Questions requiring knowledge beyond the lesson scope\n   - Trick questions that test careful reading rather than comprehension\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific question formats you might expect\n- Do NOT require a specific number of questions - quality matters more than quantity\n- Do NOT check against an imagined \"complete\" quiz you think should exist\n- Do NOT penalize for covering some concepts more than others if coverage is reasonable\n- Do NOT expect questions to follow any particular order or progression\n- ONLY penalize for: memorization-based questions, factual errors, poor feedback quality, unclear wording, or inappropriate format choices\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
-  "judgedAt": "2026-01-15T20:45:11.491Z",
+  "judgedAt": "2026-01-15T22:02:51.630Z",
   "judgments": [
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "anthropic/claude-opus-4.5",
       "rankings": [
         {
-          "anonymousId": "Model G",
+          "anonymousId": "Model A",
           "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "This model provided an exceptional response that perfectly aligned with all evaluation criteria. It generated a comprehensive set of 8 questions covering various aspects of the concept (unconscious filtering, memory distortion, safeguards). The scenarios were novel and distinct (organic food, investment strategy, detective work), avoiding the specific examples warned against in the prompt. The feedback was outstanding—detailed, educational, and explanatory, addressing exactly *why* an answer was correct or incorrect. It correctly used Sort Order for a process and Match Columns for concepts.",
+          "reasoning": "Model A provides an excellent quiz with 8 well-crafted questions testing confirmation bias through novel scenarios. Multiple choice questions are appropriately used with rich, detailed scenarios (Maya's organic food belief, James's investment memory, pharmaceutical trial, detective Lisa). The matchColumns format connects real-world situations to bias aspects effectively. The fillBlank tests conceptual understanding of the mechanism. The sortOrder, while noted as problematic in guidance, is actually appropriate here since it tests understanding of the psychological sequence (belief → encounter → discomfort → filtering → reinforcement). Feedback is outstanding - detailed explanations for both correct and incorrect answers that explain WHY. No factual errors - correctly emphasizes the unconscious nature of the bias, that experts are susceptible, and that awareness doesn't eliminate it. Questions are clear and conversational. Strong variety of scenarios without reusing examples.",
           "score": 10
         },
         {
-          "anonymousId": "Model D",
+          "anonymousId": "Model H",
           "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "This model was excellent, offering high-quality, novel scenarios (electric cars, hiring bias) that tested deep conceptual understanding. It specifically included a question about 'willpower vs. external safeguards,' which showed a sophisticated grasp of the topic. The feedback was conversational and thorough. It followed all formatting and content constraints perfectly. It falls just slightly behind Model G only because Model G had slightly more depth in its scenario variety.",
+          "reasoning": "Model H delivers 7 high-quality questions with excellent novel scenarios (Maya's electric car research, basketball game perception, hiring manager's university bias). Particularly strong is the question about Jamie trying to overcome bias through willpower - this directly tests understanding that awareness alone isn't sufficient. Feedback is detailed and educational. The matchColumns format is well-used connecting scenarios to psychological mechanisms. The fillBlank tests core concepts appropriately. No factual errors regarding the unconscious nature of bias. One minor issue: the basketball fans scenario is somewhat similar to the sports fan example mentioned in the task guidance as potentially problematic, though it's executed well enough. Questions are conversational and clear.",
           "score": 9
         },
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model G",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Model A produced a very strong quiz. The scenarios (coworker reliability, standing desk) were realistic and applied the concept well without relying on definitions. The use of multiple formats (Multiple Choice, Sort Order, Match Columns) was appropriate and adhered to the guidelines about when to use specific formats. The feedback was solid and accurate.",
+          "reasoning": "Model G provides 6 solid questions with good novel scenarios (Maya's unreliable coworker judgment, Jordan's standing desk, lab safeguards). Strong feedback that explains reasoning. The matchColumns format is well-applied. The sortOrder is appropriate for the confirmation bias cycle. Distinguishes confirmation bias from other biases (overconfidence, sunk cost) which adds educational value. One concern: the soccer match scenario with two fans perceiving referee bias differently is very close to the 'sports fan' example mentioned in the guidance as potentially problematic. However, execution is good and feedback is educational. Clear, conversational tone throughout.",
           "score": 8
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "This model provided good, creative scenarios (movie critic, coffee brand). The 'Sort Order' question correctly identified a sequence of reactions, and the 'Fill in the Blank' question effectively tested the 'automatic' nature of the bias. It is a strong entry, though the feedback was slightly less comprehensive than the top two models.",
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model I offers 6 questions with good novel scenarios (supplement research, neighborhood safety perception, supervisor's remote worker bias, clinic testing). Strong matchColumns connecting scenarios to concepts. Multiple choice options include good distractors about other biases. Feedback is clear and explains reasoning. However, one scenario (two friends watching soccer match with rival teams) is essentially the sports fan example mentioned as problematic in the guidance. The context field uses plain string instead of the expected object format, which is a minor technical issue. Overall solid but not quite as comprehensive or creative as top performers.",
           "score": 7
         },
         {
           "anonymousId": "Model F",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model F generated a competent quiz. However, the first question relied heavily on recognizing definitions of other biases (Sunk cost, Hindsight bias) in the options, which leans slightly towards terminology memorization rather than pure concept application. The scenarios were otherwise good, and the feedback was accurate.",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F has 5 questions with creative scenarios (movie critic praising 'intentional' blurry shots, hiring manager with Ivy League bias). The movie critic scenario is particularly clever and novel. Good matchColumns and fillBlank usage. However, the sortOrder uses 'Brand A coffee' which is a relatively simple, somewhat generic scenario. Feedback is adequate but less detailed than top performers. The fillBlank only has 2 blanks which tests less depth. The sports fan example in matchColumns (referee calls) touches on the problematic pattern mentioned in guidance. Overall good but less comprehensive.",
           "score": 6
         },
         {
-          "anonymousId": "Model C",
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B provides 6 questions but has some issues. The second question asks 'Which is NOT confirmation bias?' which tests definition/recognition rather than application to novel scenarios. The context for this question just states the question topic rather than providing a scenario. The sortOrder is appropriate for the bias cycle. The matchColumns includes a 'loyal sports fan notices more fouls' example which is close to the problematic sports fan pattern mentioned in guidance. Feedback is adequate but somewhat brief compared to top performers. Some questions feel more like concept identification than deep application.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "This model provided valid questions, but the scenarios were somewhat generic (e.g., 'A friend insists...', 'Two coworkers...'). While functionally correct, they lacked the narrative detail that makes application questions effective. The feedback was brief and often restated the definition rather than explaining the mechanism deeply.",
+          "reasoning": "Model E has 4 questions that are functional but relatively shallow. Scenarios are brief and less developed (friend trusting news article, coworkers watching meeting, basketball fan, researcher study design). Feedback is notably sparse - often just 1-2 sentences without deep explanation of WHY answers are correct/incorrect. The basketball fan scenario directly mirrors the sports fan example flagged as problematic. Questions test recognition of bias more than deep understanding of its mechanisms. Lacks variety - all multiple choice with no other formats. Less comprehensive coverage overall.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model C provides only 1 question, which is a significant limitation regardless of quality. The single question (coffee/heart study dismissal) is reasonably well-constructed with a novel scenario. Feedback uses informal language ('cognitive dissonance, that uncomfortable itch') but is adequate. However, with only one question, it cannot adequately test understanding of the concept across different aspects (selective attention, unconscious nature, need for safeguards, etc.). The quiz is simply too incomplete to effectively assess learner understanding.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model D has severe technical issues - the question text is corrupted with what appears to be debug output or encoding errors ('} দাঁড়িয়েPhul:default_api:fillBlank{answers:[' appears in the question string). This makes the quiz unusable. Beyond the technical failure, there's only 1 question which is insufficient coverage. The scenario about TechBrand X/Y phones is decent conceptually and the feedback explains filtering appropriately, but the corruption issue is a critical failure that makes this output unacceptable for actual use.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model demonstrated the best understanding of the constraints. While others relied heavily on the prohibited sports/politics examples for their scenarios, Model F introduced creative, novel contexts like a movie critic and a specific coffee brand narrative. Crucially, it used the 'Sort Order' format for a specific scenario sequence rather than a generic definition list, which is a superior application of the format. It only referenced the sports example briefly in a match column, avoiding the major penalty of building full questions around it. The feedback is conversational and educational.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Model I produced some of the most subtle and effective scenarios, particularly the 'neighborhood safety' question which perfectly illustrates the unconscious nature of the bias. The feedback is excellent, explaining the 'why' behind correct and incorrect answers. However, it lost points for including a full question about soccer fans and a match item about politics, both of which were explicitly flagged as bad patterns to avoid.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model provided strong, novel scenarios (coworker reliability, standing desk) with high-quality feedback that explained why distractors were incorrect. It ranks lower than the top two because it included a full question based on the prohibited sports fan scenario. Its sort order question was abstract rather than scenario-based, making it slightly less effective than Model F's approach.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model A offered a comprehensive quiz with good formatting and decent feedback. However, it heavily violated the negative constraints by including a full, detailed question about a political debate and a match item about a referee—both flagged as specific bad patterns. While the other questions were good, the reliance on these prohibited clichés lowers the score.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model H produced competent questions but relied the most heavily on the specific clichés to avoid, naming specific basketball teams (Lakers/Celtics) and using political views in the match column. While the 'willpower' question was a nice meta-cognitive addition, the heavy reliance on the prohibited examples makes it less creative than the higher-ranked models.",
           "score": 5
         },
         {
           "anonymousId": "Model B",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "The single question provided was high quality with good feedback. However, providing only one question for a quiz generation task is significantly less useful than the robust sets provided by other models. While the prompt did not set a specific number, a single item fails to adequately test the breadth of the topic.",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B leaned too much into testing definitions rather than application. Questions like 'What's happening here?' with options simply listing bias names (Confirmation bias vs Placebo effect) test vocabulary recall, which the prompt explicitly discouraged. It also used the prohibited sports fan example.",
           "score": 4
         },
         {
-          "anonymousId": "Model H",
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This model provided a valid quiz structure but had the weakest feedback quality, often just stating 'Correct' or 'Right' without sufficient explanation. It also utilized the prohibited sports fan scenario. The questions were serviceable but lacked the depth and instructional value of the others.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model C provided only a single question. While the question itself was acceptable, a one-question quiz fails to provide adequate coverage of the topic compared to the comprehensive quizzes provided by other models.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model D",
           "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "This model failed to generate valid JSON. The output cut off abruptly in the middle of the first question structure with gibberish/hallucinated text (`...situation?} দাঁড়িয়েPhul...`), rendering the output unparseable and unusable.",
+          "reasoning": "The output contained invalid JSON syntax, cutting off in the middle of a question with hallucinated text/code artifacts. It failed the basic format requirement.",
           "score": 1
         }
       ]
@@ -59,105 +124,58 @@
       "judgeId": "openai/gpt-5.2",
       "rankings": [
         {
-          "anonymousId": "Model G",
+          "anonymousId": "Model A",
           "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Consistently application-based with varied, realistic novel scenarios (organic food, investing, pharma trial, debate, detective). Explicitly treats the bias as unconscious, universal (including experts), and hard to overcome; includes external safeguards (blinding, peer review) and explains why. Feedback is detailed for correct/incorrect options and avoids the listed accuracy pitfalls. Formats used (mostly MC, plus match/fill/sort) generally fit the goal; sortOrder is acceptable here as a causal “cycle,” though not strictly necessary. Overall the strongest package.",
+          "reasoning": "Strong, application-first scenarios that require recognizing confirmation bias in novel contexts (shopping, investing, research blinding, debate perception, policing/detective work). Repeatedly emphasizes the key edge-case elements: unconscious/automatic filtering, discomfort/consistency, and the need for external safeguards. Feedback is consistently explanatory for both correct and incorrect options and avoids major accuracy pitfalls (does not frame bias as intentional or limited to “unintelligent” people). Only notable flaw: includes a sortOrder item even though the prompt warns order isn’t conceptually essential here; however, it’s still defensible as a “cycle” depiction and is well-explained. Overall the most complete and instruction-aligned set.",
           "score": 10
         },
         {
-          "anonymousId": "Model D",
+          "anonymousId": "Model H",
           "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Strong set of applied scenarios and especially good at the “unconscious and hard to overcome” angle (includes a direct item about willpower not being enough plus external checks). Feedback is thorough and accurate, and it avoids implying intentional deception or intelligence-based susceptibility. Minor weaknesses: the fillBlank is somewhat leading/rote (more like completing an explanation than diagnosing a scenario), and overall length is a bit heavy, but still clearly tests understanding well.",
+          "reasoning": "Excellent coverage with varied but well-chosen formats (mostly MC + match + fillBlank). Strongly meets the “edge case” requirement by explicitly testing that bias is unconscious and that willpower/awareness alone is insufficient, highlighting external checks. Feedback is detailed and correct, and scenarios are everyday and novel. Minor weakness: the fillBlank is closer to mechanistic recall (though still conceptually framed), and overall it’s slightly less rich than Model A’s set.",
           "score": 9
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Good breadth of scenarios and solid feedback that repeatedly highlights unconscious filtering and distinguishes from deliberate lying. Includes an item on scientific safeguards and a useful matchColumns. Main drawbacks: (1) includes a sports/soccer example explicitly called out as a “bad pattern” in the instructions, (2) uses sortOrder even though the guidance says avoid it for this concept (and the “cycle ordering” is somewhat debatable), and (3) a couple questions edge toward “name the bias” rather than purely recognition/application (though still scenario-based).",
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.2:high",
+          "reasoning": "Very solid application-based multiple choice set plus a good matchColumns. Scenarios are novel and clearly diagnostic (supplement article irritation, neighborhood cues, rival fans, supervisor recall, blinding). Feedback is consistently explanatory and accurate about unconsciousness and sincerity. Slight limitation: less direct probing of “why it’s hard to overcome” beyond discomfort/expectations; fewer explicit countermeasure/external-safeguard reasoning items than the very top models (though blinding question covers it).",
           "score": 8
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Generally accurate and uses multiple formats appropriately (MC, match, fillBlank, plus an applied question about double-blind/peer review). Feedback is explanatory and avoids major misconceptions. However, it leans more toward memorization than the best entries: one question is essentially “what’s happening here?” with a straightforward label, and the fillBlank about safeguards is closer to recall of terms than applying the concept in a novel situation. Still acceptable overall.",
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good breadth: multiple everyday scenarios, plus safeguards, matchColumns, and a short sortOrder. Generally accurate and focuses on unconscious filtering and discomfort. Feedback is mostly solid. Main weakness: one item (standing desk) flirts with sunk cost being a plausible competing explanation; the correct option frames it as confirmation-bias-driven dismissal, but the scenario includes a strong sunk-cost cue that could make the question less cleanly discriminating. Still overall strong.",
           "score": 7
         },
         {
-          "anonymousId": "Model E",
+          "anonymousId": "Model F",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Mostly good applied scenarios (critic reframing a flaw, hiring interview behavior) and explicitly distinguishes bias from lying/unconscious processing. Feedback is decent. Weaknesses: the matchColumns uses fairly generic labels (“Selective Attention,” “Safeguards,” etc.) that can feel definitional rather than diagnostic; the sortOrder is also somewhat forced for this topic; and one distractor (“director told the critic”) is speculative. Overall solid but less conceptually probing than the top models.",
+          "reasoning": "Good conceptual focus on unconsciousness and discomfort, and formats mostly fit. Scenarios (film critic, hiring manager stereotype) do test application. Feedback is generally explanatory. Weaknesses: some scenarios blur into other constructs (halo effect/attribution/stereotyping) rather than clean confirmation-bias evidence-seeking; sortOrder again is not ideal for this topic; and there are small writing issues (typo “grillng”).",
           "score": 6
         },
         {
           "anonymousId": "Model B",
-          "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Single multiple-choice item, but it is a legitimately novel scenario and the feedback notes discomfort/cognitive dissonance and that it’s not deliberate lying. Weaknesses: limited coverage (only one question), and the correct option frames it mainly as dissonance-avoidance rather than directly testing recognition of confirmation bias as selective evaluation of evidence; still generally aligned but not as strong or comprehensive as others.",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Adequate set with mostly appropriate formats, including safeguards (blind, peer review) and reasonable matchColumns. However, several questions are closer to identification/definition than rich application (e.g., ‘What’s happening here?’ with option literally naming confirmation bias; ‘Which is NOT confirmation bias?’ is more classification than scenario-based recognition). Feedback is okay but less insightful than stronger models. Includes a sortOrder that the task guidance discourages.",
           "score": 5
         },
         {
-          "anonymousId": "Model C",
+          "anonymousId": "Model E",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Multiple applied MC questions with mostly correct intent, but it repeatedly names “confirmation bias” directly as the correct option text, making it more label/term recognition than demonstrating understanding. Also includes a sports-fan/ref example (explicitly discouraged by the prompt). Feedback is brief and sometimes generic. Still mostly accurate, but less aligned with the “understanding over memorization” requirement.",
+          "reasoning": "Clear, everyday scenarios and generally accurate, with decent feedback. But the questions are comparatively shallow and label-forward (e.g., correct option explicitly says “confirmation bias”), and they don’t do much to test why it’s unconscious/hard to overcome beyond brief mentions. Limited variety of mechanisms (mostly just ‘selective memory/acceptance’) and less diagnostic distractors.",
           "score": 4
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "The core scenario and correct option are fine, but the output is corrupted: the question text includes extraneous artifacts (\"} দাঁড়িয়েPhul:default_api:fillBlank{answers:[\") which makes it invalid/unclear for learners and breaks format adherence. With the malformed prompt, the item is not reliably usable despite otherwise reasonable content.",
-          "score": 2
-        }
-      ]
-    },
-    {
-      "judgeId": "anthropic/claude-opus-4.5",
-      "rankings": [
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Model G provides 8 comprehensive questions with excellent variety and quality. The multiple choice questions present novel scenarios (organic food believer, investor tracking stocks, pharmaceutical testing, political debate, detective investigation) that test conceptual understanding rather than recall. The match columns format is well-suited for connecting scenarios to psychological mechanisms. The fill-in-the-blank effectively tests understanding of key concepts. The sortOrder question, while noted as potentially problematic in the guidelines, does illustrate a logical progression of how confirmation bias operates (belief → encounter information → discomfort → selective attention → reinforcement). All feedback is thorough, explaining WHY answers are correct or incorrect. The quiz correctly emphasizes that bias is unconscious/automatic (not intentional), affects everyone including experts, and that awareness alone doesn't overcome it. Minor issues: some feedback could be slightly more concise, but overall this is an exceptional quiz.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model D provides 7 well-crafted questions with excellent novel scenarios (Maya researching electric cars, basketball fans, pharmaceutical testing, hiring manager with elite university bias, Jamie's attempt to overcome bias). All scenarios are distinct from any explanation examples. The match columns format effectively connects scenarios to psychological mechanisms. The fill-blank question tests understanding of the unconscious nature of bias. Feedback is thorough and explains reasoning. The quiz correctly emphasizes unconscious nature of bias, that experts are susceptible, and that willpower alone isn't sufficient (question 7 is excellent on this point). Very similar quality to Model G, but slightly less comprehensive (7 vs 8 questions) and the pharmaceutical question overlaps conceptually with Model G's approach. Still an excellent quiz.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model A provides 6 solid questions with good novel scenarios (Maya and unreliable coworker, Jordan and standing desk, soccer match fans, lab therapy testing). The match columns effectively connects behaviors to mechanisms. The sortOrder question is reasonable for showing the confirmation bias cycle. Feedback is generally good, explaining reasoning. The quiz correctly handles key concepts (unconscious filtering, everyone susceptible, need for external safeguards). However, some feedback is a bit shorter than ideal (e.g., 'Right. She's giving extra weight...' could elaborate more). The distractors effectively test understanding by including related but incorrect concepts (cognitive dissonance, sunk cost, availability heuristic). Slightly less comprehensive than Models G and D but still high quality.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model F provides 6 questions covering key concepts. The first question (Sam and brand reviews) tests identification of confirmation bias well. The second question about what's NOT confirmation bias is clever. The fill-blank and match columns are appropriate formats. The sortOrder question addresses the progression of confirmation bias. However, some scenarios are quite brief (Sam's scenario is just one sentence). Some feedback could be more detailed. The first scenario is fairly simple compared to the richer scenarios in other models. The quiz does correctly address safeguards and the unconscious nature of bias. Good quality overall but less sophisticated scenarios.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model E provides 5 questions with creative scenarios (movie critic and 'genius' director, hiring manager with Ivy League bias). The match columns effectively connects behaviors to concepts. The fill-blank question is good. However, the sortOrder question about coffee brand reaction, while acceptable, is similar to what the guidelines warn against (though not identical to explanation examples). Some feedback is a bit brief ('Exactly. To avoid the discomfort of being wrong...'). The quiz correctly addresses key concepts but has fewer questions and somewhat less thorough feedback than higher-ranked models. The hiring manager scenario is excellent and novel. Overall good but not as comprehensive.",
-          "score": 6
-        },
-        {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model C provides only 4 questions, which is relatively sparse. The scenarios are decent (friend accepting article, coworker meeting memory, basketball fan, researcher blind study) but some are fairly basic. The feedback is quite brief ('Right. They're favoring information that fits their existing belief without evaluating its quality.' - could explain more). No fill-blank, match-columns, or sortOrder questions to add variety or test different aspects. The third question about basketball fan watching a close game is similar to common examples about sports fans, though not identical to explanation examples. The quiz covers key concepts adequately but is less comprehensive and has weaker feedback than other models.",
-          "score": 5
-        },
-        {
-          "anonymousId": "Model B",
           "modelId": "xai/grok-4.1-fast-reasoning",
-          "reasoning": "Model B provides only 1 question, which is severely inadequate for testing understanding of confirmation bias. While the single question is reasonably well-crafted (coffee/heart disease scenario), one question cannot adequately assess comprehension of a psychological concept. The feedback is decent but not exceptional. The extremely limited scope makes this quiz inadequate for learning assessment purposes.",
+          "reasoning": "Only one question, and while it is an applied scenario, it leans heavily on cognitive dissonance language and the correct option is more about discomfort than clearly distinguishing confirmation bias (it can be part of it, but the question doesn’t explicitly test selective seeking/weighting of confirming vs disconfirming evidence). Feedback for wrong answers is terse and sometimes assertion-like. Too minimal to meet the task’s intent compared to others.",
           "score": 3
         },
         {
-          "anonymousId": "Model H",
+          "anonymousId": "Model D",
           "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model H has a critical technical error - the JSON output contains corrupted text ('}দাঁড়িয়েPhul:default_api:fillBlank{answers:[') that appears to be a malformed response mixing different languages/formats. Only one complete question is provided before the corruption. While the single TechBrand X phone scenario question that is present is reasonable, the technical failure makes this output largely unusable. This is a fundamental failure that severely impacts the utility of the quiz.",
-          "score": 2
+          "reasoning": "Severely flawed/garbled output (broken question text with stray characters and what looks like template leakage). Only one question, and the formatting appears invalid. While the core scenario could test confirmation bias, the corrupted prompt undermines clarity and usability, failing the ‘question clarity’ and basic output quality requirements.",
+          "score": 1
         }
       ]
     }
