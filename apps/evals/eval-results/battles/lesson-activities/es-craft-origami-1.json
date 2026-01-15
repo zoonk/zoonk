@@ -1,0 +1,138 @@
+{
+  "expectations": "\n      Titles and descriptions must be in Spanish.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+  "judgedAt": "2026-01-15T20:25:47.640Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model provides the best balance of activity sizing and logical grouping. It breaks the process into four distinct, substantial phases that can easily accommodate ~10 steps each. The progression from the square base to the bird base, followed by thinning (afinar) and then the final detailing, is the most pedagogically sound structure for this specific lesson. The titles are clear and action-oriented.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model B offers a very strong, concise lesson plan. It groups the actions into three meaty phases. While it is slightly more condensed than Model E, it adheres perfectly to the requirement of avoiding single-action activities. The descriptions are accurate and use correct origami terminology.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model demonstrates high technical accuracy in its descriptions, mentioning specific folds (inside reverse, petal). However, it scores lower than E and B because it becomes too granular towards the end (separating the head fold from the wing fold) and includes a 'Presentation' activity (Step 7), which falls under the 'Fluff' prohibition.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model I has a logical flow, but the activities at the beginning and end are somewhat light. Step 1 is mostly preparation, and Step 5 covers actions (opening wings) that are very quick, barely justifying a full activity section. However, the core grouping of the body modeling is sound.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model splits the initial phase too much; creating creases and collapsing the base are usually taught as one phase (The Square Base). Separating them results in activities that are too small. The ending grouping is better than Model D, however.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D starts well but suffers significantly from granularity at the end. Steps 5 (folding the head) and 6 (opening the wings) are essentially single actions, violating the sizing criteria. It also includes a purely preparatory step 1.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "This model uses potentially confusing terminology ('Base de Cometa' is usually a step within the Bird Base process, not a standalone phase in this context). The final activities (folding wings, completing crane) are too small, consisting of single actions rather than full processes.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "The terminology in the first step is inaccurate (referring to the initial square base folds as 'base de cometa'). Furthermore, the final two activities are very insubstantial, failing the activity sizing criteria.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "The descriptions are vague ('pliegues específicos') and do not provide enough detail to judge the content properly. The titles are generic, and separating 'Forming wings' from 'Forming head' results in activities that are single actions.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model completely fails the activity sizing criteria. It breaks the process down into 8 steps, most of which are single actions (e.g., 'Formar el triángulo base', 'Formar las alas'). It also uses fluff language ('Aprende a...') in the descriptions.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Cobertura muy completa y bien agrupada de todo el proceso (preparación/corte a cuadrado, base cuadrada, base de pájaro, estrechado para cuello/cola, cabeza con pliegue inverso, alas/volumen). Los títulos son accionables y las actividades son lo bastante “grandes” como para desglosarse en ~10 pasos. El único punto débil es que la última actividad (“Ajustes finales y presentación”) roza la zona de retoques/presentación, pero sigue siendo trabajo de conformado más que “resumen/quiz”.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Fases lógicas y de buen tamaño: preparación, base cuadrada, base de pájaro, moldeado de alas/cola, cuello/cabeza/pico, y conformado final. Buen equilibrio entre claridad y alcance; evita acciones atómicas. Le falta un poco más de detalle/segmentación explícita en el paso de “moldear alas y cola” (mezcla varias transformaciones), pero sigue siendo una actividad sustancial.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Estructura clara y completa (preparación → pliegues guía → base cuadrada → base de pájaro → cuello/cola → cabeza/alas). Buen agrupamiento y títulos adecuados. Algunas actividades están algo cerca de “macro-pasos” típicos y podrían quedarse cortas para 10 subpasos (p. ej., “Completar la Cabeza y las Alas” combina bastante), pero en general cumple bien.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Buen encadenamiento y cobertura del núcleo (preparación, base preliminar, base de ave, modelado del cuerpo, alas/toques). Títulos claros. Sin embargo, varias actividades son algo genéricas (“Modelar el cuerpo…”, “Formar la base preliminar”) y podrían terminar siendo menos desglosables o ambiguas sobre qué pliegues incluyen.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Agrupación razonable (base cuadrada, base de pájaro, afinado, forma final). Cumple el alcance básico, pero solo 4 actividades: algunas quedan demasiado grandes y otras demasiado específicas sin separar bien (p. ej., “Afinar el Cuello y la Cola” puede ser una subsección dentro de un modelado más amplio). Aun así, no cae en acciones atómicas y mantiene lógica.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Cubre muchas etapas, pero la segmentación es menos canónica y algo redundante/confusa: “base diagonal” vs “cuadrado base”, luego “triángulo base” y “forma de diamante” se solapan con bases estándar (cometa/pájaro). Aun siendo actividades sustanciales, la claridad y el agrupamiento lógico empeoran.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Secuencia mayormente correcta (base, cometa, pájaro, alas, completar), pero varias actividades tienden a ser demasiado pequeñas o cercanas a pasos (p. ej., “Dar Forma a las Alas”, “Completar la Grulla”). Además, describe “crear las formas de las piernas” (terminología rara para grulla) y la cobertura de preparación/materiales no aparece.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Varias actividades son demasiado pequeñas y tipo “paso”: “Doblar la cabeza y la cola” es claramente una acción concreta; “Abrir las alas y finalizar” mezcla un paso de apertura con cierre general. También hay imprecisión: dice formar “base de cometa” directamente desde pliegues iniciales (normalmente se pasa por base cuadrada preliminar).",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Solo 3 actividades: demasiado grueso para ser útil y difícil de desglosar de forma consistente sin perder estructura. Además, “Esculpir y Terminar” junta demasiadas cosas y roza lenguaje de acabado sin detallar fases. Aunque cubre lo esencial, el dimensionamiento y la agrupación quedan débiles.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Títulos y descripciones muy genéricos y poco accionables (“Crear los Pliegues Básicos”, “Formar el Cuerpo”), con escasa referencia a transformaciones/estructuras clave (base cuadrada, base de pájaro, pliegue pétalo, etc.). Varias actividades parecen etiquetas vagas que podrían convertirse en 1-3 pasos o quedar ambiguas, incumpliendo sizing y claridad.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-activities",
+  "testCaseId": "es-craft-origami-1"
+}

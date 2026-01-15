@@ -1,0 +1,138 @@
+{
+  "expectations": "\n      Avoid granular steps like \"pour vinegar\" or \"add baking soda\" - these belong inside activities, not as activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+  "judgedAt": "2026-01-15T20:26:16.489Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model is exceptional. It perfectly addresses the difficulty of 'activity sizing' for this simple task by introducing logical, substantial phases like 'Design and Plan' and 'Dry Tests'. This ensures every listed activity has enough depth to warrant ~10 steps. The grouping is perfect, the scope is comprehensive (covering safety, design, testing, and iteration), and the titles are clear and action-oriented.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent output. It adheres strictly to the grouping and sizing constraints. It cleverly expands the scope of the final phase by including 'Run Variations', which makes the execution activity substantial enough to meet the criteria. The titles are clear and the flow is logical.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very good output that covers the full scope of a standard project, including the 'Decoration' phase which many others missed. It loses points slightly because Activity 4 ('Prepare Chemical Reactants') is a bit thin (mostly just measuring) and could have been grouped with the execution to form a more substantial phase, but overall it is well-structured.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Strong adherence to the grouping and sizing constraints. It avoids the common pitfall of listing single actions by combining loading and triggering into one robust activity. However, it is penalized for a narrower scope; it omits the decoration phase and cleanup, which are standard parts of this lesson.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Adequate. It successfully avoids single-action activities by grouping the mixing and pouring into 'Perform'. However, it is penalized for missing critical scope elements like preparation/safety and cleanup. It is better than lower-ranked models because it respects the 'Activity Sizing' constraint.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Below average. While it covers good scope (including decoration), it fails the 'Activity Sizing' and 'No Single Actions' criteria at the end. 'Prepare the Eruption Mixture' and 'Activate the Eruption' are too granular and should have been grouped. 'Activate' is essentially just pouring vinegar.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Poor. The sequencing is illogical (installing the reaction chamber *after* shaping the volcano). It also suffers from granularity issues at the end, with 'Measure' and 'Activate' (adding vinegar) listed as separate, small activities.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Very poor. While it covers the full scope (including cleaning), it completely fails the 'Activity Sizing' and 'Grouping' criteria. It breaks the process down into tiny, single-step activities (Create chamber, Prepare mixture, Activate, Observe), which the prompt explicitly forbade.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Bad. It creates separate activities for trivial steps like 'Add Color and Effects' and 'Activate' (pouring). It also fails to include decoration or cleanup. The activities are not substantial enough to support 10 detailed steps.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Unacceptable. It breaks the simple chemical reaction into four separate 'activities' (Mix, Fill, Create Reaction, Observe), each of which is basically a single step. It completely fails the sizing and grouping criteria and misses decoration and cleanup.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Best matches the sizing and grouping requirements: activities are substantial (planning/design, build, install/seal, mixture testing, activation/recording, cleanup/iterate) and each could expand into many steps. Avoids single-action activities and covers full scope including safety and iteration without turning into “review/assessment.” Titles are action-oriented and clear.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong logical grouping and scope: workspace/safety/materials, construction, loading base mixture, setting up activator, running variations, cleanup. Most activities are big enough for ~10 steps. Minor issue: a couple activities still lean toward recipe-like (“Set Up the Vinegar Activator”), but they’re framed broadly enough to be expandable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Complete end-to-end coverage (prep, build, chamber, decorate, mix, activate, observe/document, clean). Generally well-grouped and titles are clear. However, several activities are still fairly small/step-like (e.g., “Prepare the Eruption Mixture,” “Activate…”) and could collapse into fewer than ~10 steps without added complexity.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good structure and coverage (prep, build, install chamber, decorate, prep mixture, activate). Clear titles. Main weakness is activity sizing: “Prepare the Baking Soda Mixture” and “Activate…” are close to single-step recipe actions, and there’s no explicit observation/documentation or cleanup phase.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Reasonable phases (foundation/materials, construct, decorate, prepare reactants, execute/document). Titles are clear. But multiple activities are undersized and recipe-forward (“Prepare the Chemical Reactants,” “Execute…”), and it omits cleanup and iteration; overall feels more like a short procedure than robust activities.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Has some logical separation (structure, container, reaction, observe), but several activities are explicitly granular/step-level and violate the prompt’s examples (e.g., “Mix vinegar… pour it…”) and “Prepare the Eruption Container” is too small. Missing safety/cleanup and overall depth.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Covers basic flow including decoration, but most items are small and recipe-like (“Prepare the Eruption Mixture,” “Activate the Eruption”). Lacks safety, observation/documentation, and cleanup. Activities would not consistently expand to ~10 steps each.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Too granular and step-driven: “Add Color and Effects” is a sub-step, and “Pour vinegar…” is a single action. Overall scope is narrow (no safety, no cleanup, no documentation) and activity sizing is generally too small.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Overly minimal and misses key scope elements (workspace/safety, chamber integration, measurements, observation/documentation, cleanup). “Perform the Eruption” is basically a single combined step, and the set is not sized to expand into detailed procedures per activity.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Most noncompliant with sizing: only three activities, with the last one bundling several single actions into a single recipe-like step (“Add… then pour…”). Missing decoration/finishing, observation/documentation, cleanup, and any planning/testing. Activities are not substantial enough to expand into ~10 steps each.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-activities",
+  "testCaseId": "en-science-volcano-1"
+}

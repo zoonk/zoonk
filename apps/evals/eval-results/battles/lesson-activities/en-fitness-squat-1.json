@@ -1,0 +1,138 @@
+{
+  "expectations": "\n      Avoid granular cues like \"bend knees\" or \"keep back straight\" - these belong inside activities as steps, not as activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+  "judgedAt": "2026-01-15T20:26:26.804Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model provides the best balance of activity sizing and logical grouping. It breaks the setup into two distinct, substantial phases (Equipment vs. Body Position), separates the unrack/walkout, and clearly defines the descent, ascent, and rerack. Each activity is perfectly sized to support ~10 detailed steps without being too granular or too broad. The titles are clear and action-oriented.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent adherence to all criteria. The activities follow the natural flow of the movement perfectly. It is slightly ranked lower than the top model because it combines the 'Unrack' and 'Position Yourself' (walkout) into a single activity, which makes for a very dense section compared to separating them. However, it is still a high-quality output with no fluff.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "A very solid, standard breakdown of the lesson. It meets all criteria regarding sizing, grouping, and title clarity. It is ranked below the top two because the descriptions are somewhat brief and less detailed, but the structure is fundamentally sound and follows all rules.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model contains high-quality, expert-level content and logical breakdowns. However, it includes a 'Fix Common Form Errors' activity at the end, which violates the 'No Fluff' rule (no review/assessment activities). It also separates breathing/rhythm into its own activity, which is valid but borders on granular. Despite the fluff penalty, the core content is superior to the models below it.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "This model follows the rules well but is a bit too condensed. By merging 'Execute the Squat Ascent' and 'Rerack' into a single activity, it combines two distinct phases that have different safety requirements. While acceptable, it is less optimal than separating the rerack phase.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This output is overly granular and includes out-of-scope content. It includes a warm-up (borderline scope) and a fault identification section (fluff). Additionally, the activity 'Hold and initiate the ascent' focuses on a transition point that is difficult to expand into ~10 steps. However, the physical sequence described is accurate.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This model has a confusing sequence where 'Establish Your Squat Stance' is listed before 'Set Up Under the Barbell'. While it likely refers to foot placement for the unrack, the title is misleading as the actual squat stance is established after the walkout. It also includes a 'Review' activity (fluff).",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model has a major logical gap: it misses an explicit 'Unrack' or 'Walkout' phase. It goes from 'Position Under the Barbell' to 'Set Your Stance' to 'Descend'. While the walkout is implied, omitting it as a distinct activity in a squat lesson is a significant oversight for safety and logical flow.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "This model fails the 'Activity Sizing' and 'No Single Actions' criteria. 'Reach the Bottom Position' and 'Complete the Repetition' are momentary states or single actions, not substantial activities capable of supporting 10 steps. This results in a disjointed lesson plan.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "This model violates the explicit negative constraints regarding titles and descriptions. It uses prohibited vague vocabulary like 'Learn how to', 'Understand', and 'Learn' throughout the output, shifting the focus from performing the task to learning about it.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Best fit to the criteria: activities are substantial (each could expand into ~10 steps), logically grouped (equipment/safety/setup/walkout/descent/ascent/breathing/rerack/troubleshooting), and covers full squat lesson scope including safety/bailing and between-rep management without devolving into micro-cues as standalone activities. Titles are clear and action-oriented. Minor nit: last activity edges toward cue-listing but still scoped as a robust troubleshooting phase.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very complete and well-scoped with strong logical grouping (prep, warm-up, setup, unrack/balance, descent, bottom transition, ascent/breathing, rerack/post-set, troubleshooting). Activities are large enough to expand. Dings: includes some granular technique cues inside descriptions (fine) but also has a couple activities that are a bit “phase-splitting” (e.g., separate bottom hold/transition) and “post-set actions” can drift toward fluff if not kept substantive—though it’s framed as safety/recovery, not assessment.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good coverage from station prep through rerack, with appropriately grouped phases and generally solid sizing. Main issue: includes an explicitly disallowed/fluffy activity (“Review and Adjust Your Technique”) which reads like evaluation/review. Otherwise titles are clear and scope is appropriate.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Solid, conventional breakdown (equipment setup, bar position, walkout/stance, descent, ascent, rerack). Reasonably complete for a basic lesson and titles are clear. Weaknesses: several activities trend a bit small (some could be 3–6 steps rather than ~10), and safety/bailing and between-rep management are missing for a full-scope teaching sequence.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Clear, logical sequence and no fluff. However, the activities are relatively high-level but a bit compressed; several are close to “single maneuver” chunks (e.g., ‘Drive Up from the Bottom’, ‘Rerack’) and may not reliably expand to ~10 steps each without repeating cues. Also lacks explicit safety configuration/bailing and warm-up/context.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Reasonable grouping (setup under bar, stance, brace, descend, ascend, rack) with clear titles. But it fragments technique into smaller buckets like “Brace Your Core and Spine” and “Set Your Stance,” which can become cue collections rather than substantial activities. Missing equipment loading/safety setup and other completeness elements.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Several activities are too cue-sized (stance, bracing) and titles/descriptions use instructional framing (“Learn/Understand”) that the expectations discourage (titles should be action-oriented, not “learn”). Also mixes setup with unracking in a confusing way in the first activity. Coverage is decent but not robust.",
+          "score": 5.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Very minimal and somewhat step-like: each item is a short action cluster that may only expand to a few steps. Lacks meaningful phases for safety planning, warm-up, bar placement/grip details, and between-rep management. Clear titles, but overall under-scoped and too shallow.",
+          "score": 4.7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Over-compressed: only four activities, each crams many distinct phases together (especially combining ascent and rerack). This harms logical grouping and makes it hard to expand each activity into ~10 coherent steps without becoming unwieldy. Also includes lots of granular cues in descriptions and omits safety/bail planning and other completeness items.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Fails sizing and ‘no single actions’ expectations: activities are basically individual movement steps (prepare/descend/bottom/ascend/complete rep) and include granular cues (“keep back straight,” “chest up”). Missing equipment setup, unrack/walkout, rerack, safety considerations—overall incomplete and too narrow.",
+          "score": 2.9
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-activities",
+  "testCaseId": "en-fitness-squat-1"
+}

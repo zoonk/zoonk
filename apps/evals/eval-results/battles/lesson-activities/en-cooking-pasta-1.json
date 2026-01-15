@@ -1,0 +1,138 @@
+{
+  "expectations": "\n      Avoid granular steps like \"boil water\" or \"add salt\" - these belong inside activities, not as activities themselves.\n\n      \n  EVALUATION CRITERIA (focus on these, not specific phase names):\n\n  1. ACTIVITY SIZING: Each activity must be substantial enough to expand into ~10 detailed steps. If an activity could only be explained in 1-3 steps, it's TOO SMALL.\n\n  2. NO SINGLE ACTIONS: Activities must NOT be single actions like \"boil water\", \"click button\", \"hold item\". These are steps, not activities.\n\n  3. LOGICAL GROUPING: Related actions should be grouped into meaningful phases rather than listed separately.\n\n  4. COMPLETENESS: Activities should cover the full scope of the lesson - check if anything important is missing.\n\n  5. APPROPRIATE SCOPE: Content should match the lesson's scope - not broader, not narrower.\n\n  6. CLEAR TITLES: Titles should be short and action-oriented. No vague words like \"learn about\", \"understand\", \"explore\".\n\n  7. NO FLUFF: No summary, review, or assessment activities.\n\n  IMPORTANT: Do NOT penalize for missing specific phases you might expect. Different valid approaches exist. Focus on whether the activities provided are well-sized and cover the lesson scope.\n\n    ",
+  "judgedAt": "2026-01-15T20:26:43.583Z",
+  "judgments": [
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "This model provides the most logical and structurally sound breakdown of the lesson. By grouping all preparation steps (dicing meat, grating cheese, whisking eggs) into a comprehensive 'Prepare the Ingredients' activity, it satisfies the sizing requirement while avoiding the 'too small' activities seen in other models. Its sequence (Prep -> Render -> Cook Pasta -> Assemble) is the safest chronological order for execution, ensuring components are ready without ruining the pasta. The activities are substantial and well-titled.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D offers excellent, descriptive content and clear titles. The activity sizing is generally good, expanding the process into 6 substantial phases. However, the sequence of 'Cook Spaghetti' (Activity 3) followed by 'Prepare Egg-and-Cheese Sauce Base' (Activity 4) is risky; if followed linearly, the pasta would sit and cool while the user prepares the sauce, which is fatal for Carbonara. Despite this logical flaw, the quality of the content is high.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very similar to Model D in structure and quality, with clear titles and good descriptions. It suffers from the same potential sequencing issue (listing 'Cook Spaghetti' before 'Mix the Egg-and-Cheese Base'). The descriptions are slightly less detailed than Model D, placing it just behind.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model takes a unique approach by grouping parallel tasks (Cooking Pasta and Guanciale) into a single activity. This accurately reflects the reality of the kitchen and ensures substantial activity sizing. However, documenting parallel processes within a single activity list can be difficult for instructional writing compared to the sequential approach of Model F. It is logically sound but slightly less 'lesson-friendly'.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model J correctly identifies the 'Mise en place' approach for the first activity, which is excellent. However, its sequence places 'Cook the Spaghetti' before 'Sauté the Guanciale'. Since rendering fat typically takes longer than or equal time to boiling pasta, and pasta cannot sit, this sequence is functionally incorrect for a step-by-step guide. The activity sizing is otherwise good.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model has acceptable logic but suffers from inconsistent sizing. 'Make the Egg Mixture' and 'Combine and Toss' are borderline too small to expand into 10 detailed steps. The sequence also implies starting pasta before the other components are ready, which is risky.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "The titles are weak (e.g., 'Make the Guanciale' is semantically incorrect; one cooks or renders it). Several activities (Prepare Egg Mixture, Finish and Serve) are likely too small to meet the 'substantial' criteria. The content is thin compared to the top models.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "While the sequence (Meat -> Eggs -> Pasta) is actually logically safe, the activity sizing is poor. 'Make the Egg and Cheese Mixture', 'Combine', and 'Plate and Serve' are all too thin to justify separate 10-step activities. It fails the sizing criteria significantly.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This model fractures the process too much. It separates the preparation of the guanciale from the cooking of the guanciale with other steps in between, creating a disjointed workflow. The activities are granular and likely too small.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "This model creates separate activities for 'Combine Pasta and Fat', 'Emulsify', and 'Finalize'. These are individual actions that happen in seconds, not substantial activities. This is a clear violation of the 'No Single Actions' and 'Activity Sizing' criteria.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Best match to expectations: activities are well-sized (each could expand to ~10 steps), logically grouped (prep, render, cook pasta, make base, emulsify, plate), clear action titles, covers full carbonara workflow including temperature control/emulsification and finishing. Avoids step-level micro-actions as standalone activities and avoids fluff; only minor extra in “leftover-handling tips,” but still within serving scope.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very strong grouping and scope with substantial phases (prep, render, cook pasta, mix base, emulsify, plate). Titles are clear and action-oriented. Coverage is complete and appropriately scoped. Slightly more step-like detail in descriptions (e.g., “stir to prevent sticking”), but not broken into tiny activities.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-2.5-flash-lite",
+          "reasoning": "Comprehensive and logically ordered with good separation of concerns (render, cook pasta, make mixture, combine, emulsify, finalize). However, it becomes a bit over-segmented: “Combine Pasta and Fat” is relatively thin as an activity (could be only a few steps) and “Gather Ingredients and Equipment” is also somewhat small.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Covers the full workflow and includes important emphasis on station setup, timing coordination, heat management, and emulsification. Main weakness is redundancy/poor grouping: guanciale is addressed in both “Prep the Guanciale…” and later “Cook the Guanciale,” which could be one coherent phase; this hurts logical grouping and makes one activity less substantial.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Complete coverage and mostly clear titles, but it is too granular: separate activities for “Cook the Spaghetti,” “Make the Guanciale,” and “Prepare the Egg Mixture” are fairly small and step-like, and “Finish and Serve” is also small. Reads more like a step list than substantial lesson activities.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Reasonable end-to-end coverage and ordering, but multiple activities are undersized (“Prepare Your Ingredients,” “Make the Egg and Cheese Mixture,” “Plate and Serve”). Overall feels like a recipe outline broken into steps rather than sizable teachable activities.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Core process is present, but activity sizing is weak: several items are essentially single-step clusters (“Cook the Pasta,” “Cook the Pancetta,” “Make the Egg Mixture”). Missing a dedicated finishing/serving activity, and ingredient choice is narrowed to pancetta without acknowledging guanciale/pecorino as the authentic baseline (scope slightly off for an ‘authentic carbonara’ lesson).",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Too few and too compressed: “Prepare the Ingredients” bundles multiple distinct preparations, then separate “Render” and “Cook pasta,” then “Assemble.” It’s not logically broken into enough substantial, teachable phases (especially no distinct egg/cheese base-making activity), and the titles/structure read like condensed recipe steps rather than expandable lesson activities.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Only four activities and they’re mostly large recipe steps; lacks a dedicated plating/serving activity and misses some workflow/coordination detail. Also includes somewhat step-like phrasing (boil, reserve water) and doesn’t create enough distinct substantial activities to support a fuller lesson structure.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Under-scoped and too sparse (only three activities), with descriptions that bundle multiple operations and omit a clear finishing/plating activity. Activity sizing is uneven: “Emulsify the Sauce” is relatively narrow as a standalone activity, while key teaching points (timing coordination, serving/finishing) are missing. Overall least complete relative to the lesson scope.",
+          "score": 1
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-activities",
+  "testCaseId": "en-cooking-pasta-1"
+}
