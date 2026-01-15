@@ -194,7 +194,6 @@ async function runBattleForTestCase(
         expectations: testCase.expectations,
         judgeId,
         mapping,
-        testCaseId,
       });
 
       return {
