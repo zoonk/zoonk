@@ -66,12 +66,9 @@ Other formats are available when they're genuinely better for specific content:
 - **matchColumns**: When the concept involves connecting observations to principles (e.g., matching symptoms to causes)
 - **fillBlank**: When completing a relationship or process tests understanding better than selecting from options
 - **sortOrder**: When the concept IS about sequence and order matters conceptually (e.g., steps in a biological process)
-- **arrangeWords**: When constructing a specific insight requires understanding the concept's logic — NOT when the sentence structure is guessable from grammar alone
 - **selectImage**: Only when visual recognition genuinely tests the concept
 
 **Skip formats entirely if they don't fit.** Using several well-crafted multiple choice questions is far better than forcing variety with poorly-suited formats. Never use a format just because you haven't used it yet.
-
-**The arrangeWords trap**: This format fails when the sentence can be assembled through grammar/syntax knowledge alone. It only works when understanding the concept is required to know which words go where and in what order.
 
 # Quality Standards
 

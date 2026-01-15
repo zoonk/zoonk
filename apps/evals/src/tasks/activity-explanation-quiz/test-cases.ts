@@ -20,11 +20,9 @@ EVALUATION CRITERIA:
    - Match columns: Best when the concept involves connecting observations to principles (symptoms to causes, effects to mechanisms).
    - Sort order: ONLY when the concept IS about sequence — when order matters conceptually (biological processes, compilation phases).
    - Fill blank: Best for completing relationships or processes where the blank tests conceptual understanding.
-   - Arrange words: TRAP FORMAT. Only valid when understanding the concept is required to know which words go where. PENALIZE HEAVILY when the sentence can be assembled through grammar/syntax knowledge alone (e.g., basic sentence structure like "Subject + verb + object" that any native speaker could guess).
    - Select image: ONLY when visual recognition genuinely tests understanding.
 
    PENALIZE when:
-   - arrangeWords is used but the sentence structure is trivially guessable from grammar (this is a common failure mode)
    - Formats are used for variety rather than fit
    - A different format would clearly test the concept better
 
