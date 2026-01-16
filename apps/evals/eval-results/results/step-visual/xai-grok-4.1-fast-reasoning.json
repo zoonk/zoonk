@@ -1,0 +1,226 @@
+{
+  "modelId": "xai/grok-4.1-fast-reasoning",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "The user provided three distinct steps in the input (Index 0, 1, and 2). The instructions explicitly require generating 'ONE appropriate visual resource for EACH step provided'. The AI only generated a visual for Step 0, completely omitting Step 1 and Step 2. This is a critical failure to complete the requested task.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The model must generate visual resources for all provided steps. For Step 1 (Bastille), an image or timeline would be appropriate. For Step 2 (Liberty, Equality, Fraternity), a quote or image would be suitable.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nThis test covers historical content about the French Revolution (1789-1799).\n\nACCURACY CHECKS - PENALIZE if:\n- Any historical dates are wrong (key dates: 1789 Bastille, 1791 Constitution, 1793 Reign of Terror, 1799 Napoleon's coup)\n- Historical quotes are fabricated or misattributed\n- Cause-effect relationships are historically inaccurate\n\nREDUNDANCY CHECKS - PENALIZE if:\n- Multiple visuals cover the same historical events\n- The same dates/figures appear across different visuals without adding new information\n\nVISUAL-CONTENT FIT - PENALIZE if:\n- Code visual is used (no programming content)\n- Chart visual is used without meaningful numerical data\n\nDo NOT PENALIZE if:\n- All steps use image visuals (valid if each shows distinct content)\n- No timeline is used (historical content can be visualized many ways)\n- A diagram showing cause-effect is used instead of a timeline\n\n\nEVALUATION CRITERIA:\n\n1. COVERAGE: Every step must have exactly one visual. Check that the number of visuals equals the number of steps and stepIndex values are unique and complete (0 to N-1).\n\n2. NO REDUNDANCY: Each visual must add UNIQUE information. PENALIZE if:\n   - Multiple visuals repeat the same data points, events, or concepts\n   - A visual restates what another visual already showed\n   - Example: Two timelines covering overlapping periods with the same events\n\n3. VISUAL-CONTENT FIT: The visual type must make sense for the content. PENALIZE if:\n   - Code visual is used for non-programming content\n   - Chart is used without numerical/statistical data to display\n   - Timeline is used for content with no temporal/sequential element\n   - Quote is fabricated or misattributed (must be real, verifiable quotes)\n\n   Do NOT penalize if:\n   - Image is used for any content (image can visualize anything)\n   - Diagram is used instead of timeline (relationships can be shown multiple ways)\n   - Any visual type is used multiple times (if each instance adds unique value)\n\n4. TECHNICAL ACCURACY: Visual content must be factually correct:\n   - Code must be syntactically valid\n   - Historical dates and events must be accurate\n   - Scientific processes must be correctly represented\n   - Chart data must be realistic and internally consistent\n\n5. LANGUAGE CONSISTENCY: All text in visuals must match the specified language. PENALIZE any mixed-language content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual types based on topic (history does not require timeline; programming does not require code)\n- Do NOT penalize for using \"image\" as the visual type - it is a valid choice for any content\n- Do NOT penalize for using the same visual type multiple times IF each adds unique information\n- Do NOT require variety in visual types - consistency is fine if appropriate\n- ONLY penalize for: redundant information across visuals, visual type that cannot represent the content, technical inaccuracies, language errors, missing steps\n\n    ",
+        "id": "en-history-french-revolution-1",
+        "userInput": {
+          "chapterTitle": "Revolutionary Era",
+          "courseTitle": "World History",
+          "language": "en",
+          "lessonDescription": "Understanding the causes, key events, and lasting impact of the French Revolution on modern political systems",
+          "lessonTitle": "The French Revolution",
+          "steps": [
+            {
+              "text": "By 1789, France was in crisis. The monarchy was bankrupt, harvests had failed, and the common people were starving while the nobility lived in luxury.",
+              "title": "A Nation in Crisis"
+            },
+            {
+              "text": "On July 14, 1789, Parisians stormed the Bastille fortress. This wasn't just about freeing prisoners - it symbolized the people rising against tyranny.",
+              "title": "The Storming of the Bastille"
+            },
+            {
+              "text": "The revolutionaries declared that all men are born free and equal. This radical idea challenged centuries of aristocratic privilege and divine right of kings.",
+              "title": "Liberty, Equality, Fraternity"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response failed to generate visuals for all provided steps. The prompt explicitly requested 'ONE appropriate visual resource for EACH step provided', listing steps 0, 1, and 2. The model only returned a visual for step 0, omitting steps 1 and 2 entirely.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The model must generate the missing visuals for steps 1 and 2 to fulfill the user's request. For Step 1 (Functions Carrying Their Environment), a 'diagram' showing the relationship between the inner function and the heap/variables or a 'code' snippet demonstrating the return of a function would be appropriate. For Step 2 (Practical Use: Private State), a 'code' snippet demonstrating the module pattern or a counter example is the standard and most effective way to visualize this concept.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nThis test covers JavaScript closures - a programming concept.\n\nACCURACY CHECKS - PENALIZE if:\n- Code snippets have syntax errors\n- Code doesn't actually demonstrate closures (must show inner function accessing outer scope)\n- Technical explanations are incorrect\n\nREDUNDANCY CHECKS - PENALIZE if:\n- Multiple code snippets show essentially the same pattern\n- The same closure example is repeated across visuals\n\nVISUAL-CONTENT FIT - PENALIZE if:\n- Timeline is used (closures are not a historical/sequential topic)\n- Chart is used without numerical data\n\nDo NOT PENALIZE if:\n- Image visuals are used (can show conceptual diagrams of scope)\n- Diagram is used to show scope chains\n- Not all steps use code visuals\n\n\nEVALUATION CRITERIA:\n\n1. COVERAGE: Every step must have exactly one visual. Check that the number of visuals equals the number of steps and stepIndex values are unique and complete (0 to N-1).\n\n2. NO REDUNDANCY: Each visual must add UNIQUE information. PENALIZE if:\n   - Multiple visuals repeat the same data points, events, or concepts\n   - A visual restates what another visual already showed\n   - Example: Two timelines covering overlapping periods with the same events\n\n3. VISUAL-CONTENT FIT: The visual type must make sense for the content. PENALIZE if:\n   - Code visual is used for non-programming content\n   - Chart is used without numerical/statistical data to display\n   - Timeline is used for content with no temporal/sequential element\n   - Quote is fabricated or misattributed (must be real, verifiable quotes)\n\n   Do NOT penalize if:\n   - Image is used for any content (image can visualize anything)\n   - Diagram is used instead of timeline (relationships can be shown multiple ways)\n   - Any visual type is used multiple times (if each instance adds unique value)\n\n4. TECHNICAL ACCURACY: Visual content must be factually correct:\n   - Code must be syntactically valid\n   - Historical dates and events must be accurate\n   - Scientific processes must be correctly represented\n   - Chart data must be realistic and internally consistent\n\n5. LANGUAGE CONSISTENCY: All text in visuals must match the specified language. PENALIZE any mixed-language content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual types based on topic (history does not require timeline; programming does not require code)\n- Do NOT penalize for using \"image\" as the visual type - it is a valid choice for any content\n- Do NOT penalize for using the same visual type multiple times IF each adds unique information\n- Do NOT require variety in visual types - consistency is fine if appropriate\n- ONLY penalize for: redundant information across visuals, visual type that cannot represent the content, technical inaccuracies, language errors, missing steps\n\n    ",
+        "id": "en-programming-closures-1",
+        "userInput": {
+          "chapterTitle": "Advanced Functions",
+          "courseTitle": "JavaScript Fundamentals",
+          "language": "en",
+          "lessonDescription": "Understanding closures - how functions remember their lexical scope even when executed outside of it",
+          "lessonTitle": "Understanding Closures",
+          "steps": [
+            {
+              "text": "A closure is created when a function 'remembers' variables from its surrounding scope, even after that scope has finished executing.",
+              "title": "What is a Closure?"
+            },
+            {
+              "text": "When you return a function from another function, the inner function carries its environment with it. It can access variables that no longer exist in the call stack.",
+              "title": "Functions Carrying Their Environment"
+            },
+            {
+              "text": "Closures are commonly used to create private variables. The outer function's variables become hidden, accessible only through the returned function.",
+              "title": "Practical Use: Private State"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The AI failed to generate visuals for all provided steps. The input contained 3 steps (indices 0, 1, and 2), but the result only contains a visual for step 0. This violates the core instruction to 'Generate ONE appropriate visual resource for EACH step provided'.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "None. The single visual provided for step 0 is technically correct, uses the correct language (Portuguese), and fits the content.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response must include visuals for step 1 ('Os Ingredientes') and step 2 ('A Transformação') to be complete. Step 1 could be a diagram showing inputs (CO2, Water) entering the plant, and Step 2 could be a diagram or image representing the chemical conversion process.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nThis test covers photosynthesis - a biological process.\n\nLANGUAGE REQUIREMENT: All visual content must be in Portuguese.\n\nACCURACY CHECKS - PENALIZE if:\n- Scientific process is incorrect (inputs: light, CO2, H2O; outputs: glucose, O2)\n- Any text is in English instead of Portuguese\n- Biological terminology is wrong\n\nREDUNDANCY CHECKS - PENALIZE if:\n- Multiple visuals show the same stage of photosynthesis\n- The same chemical equation or process diagram is repeated\n\nVISUAL-CONTENT FIT - PENALIZE if:\n- Code visual is used (no programming content)\n- Timeline is used (photosynthesis is not a historical topic)\n\nDo NOT PENALIZE if:\n- Image visuals are used for all steps\n- Diagram is used to show the process flow\n- Chart showing energy conversion data is used\n\n\nEVALUATION CRITERIA:\n\n1. COVERAGE: Every step must have exactly one visual. Check that the number of visuals equals the number of steps and stepIndex values are unique and complete (0 to N-1).\n\n2. NO REDUNDANCY: Each visual must add UNIQUE information. PENALIZE if:\n   - Multiple visuals repeat the same data points, events, or concepts\n   - A visual restates what another visual already showed\n   - Example: Two timelines covering overlapping periods with the same events\n\n3. VISUAL-CONTENT FIT: The visual type must make sense for the content. PENALIZE if:\n   - Code visual is used for non-programming content\n   - Chart is used without numerical/statistical data to display\n   - Timeline is used for content with no temporal/sequential element\n   - Quote is fabricated or misattributed (must be real, verifiable quotes)\n\n   Do NOT penalize if:\n   - Image is used for any content (image can visualize anything)\n   - Diagram is used instead of timeline (relationships can be shown multiple ways)\n   - Any visual type is used multiple times (if each instance adds unique value)\n\n4. TECHNICAL ACCURACY: Visual content must be factually correct:\n   - Code must be syntactically valid\n   - Historical dates and events must be accurate\n   - Scientific processes must be correctly represented\n   - Chart data must be realistic and internally consistent\n\n5. LANGUAGE CONSISTENCY: All text in visuals must match the specified language. PENALIZE any mixed-language content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual types based on topic (history does not require timeline; programming does not require code)\n- Do NOT penalize for using \"image\" as the visual type - it is a valid choice for any content\n- Do NOT penalize for using the same visual type multiple times IF each adds unique information\n- Do NOT require variety in visual types - consistency is fine if appropriate\n- ONLY penalize for: redundant information across visuals, visual type that cannot represent the content, technical inaccuracies, language errors, missing steps\n\n    ",
+        "id": "pt-biology-photosynthesis-1",
+        "userInput": {
+          "chapterTitle": "Processos Celulares",
+          "courseTitle": "Biologia para Iniciantes",
+          "language": "pt",
+          "lessonDescription": "Entendendo como as plantas convertem luz solar em energia através da fotossíntese",
+          "lessonTitle": "Fotossíntese",
+          "steps": [
+            {
+              "text": "As plantas capturam energia da luz solar usando clorofila, o pigmento verde presente nas folhas. Essa energia será usada para criar alimento.",
+              "title": "Capturando Luz"
+            },
+            {
+              "text": "A planta absorve dióxido de carbono do ar pelos estômatos e água do solo pelas raízes. Esses são os ingredientes necessários.",
+              "title": "Os Ingredientes"
+            },
+            {
+              "text": "Usando a energia da luz, a planta combina CO2 e água para produzir glicose e oxigênio. A glicose é o alimento da planta.",
+              "title": "A Transformação"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The user provided 3 steps (indices 0, 1, and 2) and the instructions explicitly required generating 'ONE appropriate visual resource for EACH step provided'. The response only contains a single visual for stepIndex 0, completely missing visuals for steps 1 and 2. This represents a failure to fulfill the core request coverage.",
+          "kind": "majorErrors",
+          "score": 6
+        },
+        {
+          "conclusion": "The single visual provided for step 0 is a generic pie chart. While it accurately represents the concept of market share (summing to 100%), it uses placeholder names (Company A, B, C). Given that step 0 is a definition step, this is acceptable, but could be more engaging. However, no specific minor errors exist within the single generated item itself.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "To improve, the model must generate visuals for the missing steps. For Step 1 (Smartphone market), a chart showing specific manufacturer shares (e.g., Apple, Samsung, Xiaomi) would fit the text well. For Step 2 (Economies of Scale), a diagram or chart illustrating the inverse relationship between volume and unit cost would be appropriate.",
+          "kind": "potentialImprovements",
+          "score": 6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nThis test covers market share - an economics/business concept with numerical data.\n\nACCURACY CHECKS - PENALIZE if:\n- Chart data is unrealistic (e.g., market share values that don't make sense)\n- Economic concepts are incorrectly explained\n- Pie chart values don't sum to 100% (if pie chart is used)\n\nREDUNDANCY CHECKS - PENALIZE if:\n- Multiple charts show the same data\n- The same market share examples are repeated across visuals\n\nVISUAL-CONTENT FIT - PENALIZE if:\n- Code visual is used (no programming content)\n- Timeline is used for content that isn't about historical market evolution\n\nDo NOT PENALIZE if:\n- Image visuals are used\n- No chart is used (market share can be explained without charts)\n- Diagram showing market relationships is used\n\n\nEVALUATION CRITERIA:\n\n1. COVERAGE: Every step must have exactly one visual. Check that the number of visuals equals the number of steps and stepIndex values are unique and complete (0 to N-1).\n\n2. NO REDUNDANCY: Each visual must add UNIQUE information. PENALIZE if:\n   - Multiple visuals repeat the same data points, events, or concepts\n   - A visual restates what another visual already showed\n   - Example: Two timelines covering overlapping periods with the same events\n\n3. VISUAL-CONTENT FIT: The visual type must make sense for the content. PENALIZE if:\n   - Code visual is used for non-programming content\n   - Chart is used without numerical/statistical data to display\n   - Timeline is used for content with no temporal/sequential element\n   - Quote is fabricated or misattributed (must be real, verifiable quotes)\n\n   Do NOT penalize if:\n   - Image is used for any content (image can visualize anything)\n   - Diagram is used instead of timeline (relationships can be shown multiple ways)\n   - Any visual type is used multiple times (if each instance adds unique value)\n\n4. TECHNICAL ACCURACY: Visual content must be factually correct:\n   - Code must be syntactically valid\n   - Historical dates and events must be accurate\n   - Scientific processes must be correctly represented\n   - Chart data must be realistic and internally consistent\n\n5. LANGUAGE CONSISTENCY: All text in visuals must match the specified language. PENALIZE any mixed-language content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual types based on topic (history does not require timeline; programming does not require code)\n- Do NOT penalize for using \"image\" as the visual type - it is a valid choice for any content\n- Do NOT penalize for using the same visual type multiple times IF each adds unique information\n- Do NOT require variety in visual types - consistency is fine if appropriate\n- ONLY penalize for: redundant information across visuals, visual type that cannot represent the content, technical inaccuracies, language errors, missing steps\n\n    ",
+        "id": "en-economics-market-share-1",
+        "userInput": {
+          "chapterTitle": "Market Analysis",
+          "courseTitle": "Business Economics",
+          "language": "en",
+          "lessonDescription": "Understanding how market share is measured and what it reveals about competitive dynamics",
+          "lessonTitle": "Understanding Market Share",
+          "steps": [
+            {
+              "text": "Market share represents the percentage of total sales in an industry captured by a single company. A higher share often means more pricing power.",
+              "title": "What is Market Share?"
+            },
+            {
+              "text": "In the smartphone market, the top three manufacturers control over 60% of global sales. This concentration affects how the entire industry operates.",
+              "title": "Concentration in Action"
+            },
+            {
+              "text": "Companies with dominant market share can achieve economies of scale, spreading fixed costs over more units and lowering per-unit costs.",
+              "title": "The Scale Advantage"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The table used for Step 2 is technically valid as it presents structured reference data, but an image might have been more visually engaging for a list of benefits in a wellness course. However, the table effectively organizes the information provided in the text, so this is a matter of preference rather than a defect.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nThis test covers mindfulness - an abstract psychological/wellness concept.\n\nACCURACY CHECKS - PENALIZE if:\n- Quotes are fabricated or misattributed (if quotes are used, they must be real)\n- Scientific claims about mindfulness benefits are inaccurate\n\nREDUNDANCY CHECKS - PENALIZE if:\n- Multiple visuals depict the same mindfulness concept\n- The same breathing/meditation technique is shown repeatedly\n\nVISUAL-CONTENT FIT - PENALIZE if:\n- Code visual is used (no programming content)\n- Timeline is used (mindfulness is not a historical topic)\n- Chart is used without meaningful data\n\nDo NOT PENALIZE if:\n- Image visuals are used for all steps (very appropriate for abstract concepts)\n- No specialized visual types are used\n- Quotes from meditation teachers are used (if real and properly attributed)\n\n\nEVALUATION CRITERIA:\n\n1. COVERAGE: Every step must have exactly one visual. Check that the number of visuals equals the number of steps and stepIndex values are unique and complete (0 to N-1).\n\n2. NO REDUNDANCY: Each visual must add UNIQUE information. PENALIZE if:\n   - Multiple visuals repeat the same data points, events, or concepts\n   - A visual restates what another visual already showed\n   - Example: Two timelines covering overlapping periods with the same events\n\n3. VISUAL-CONTENT FIT: The visual type must make sense for the content. PENALIZE if:\n   - Code visual is used for non-programming content\n   - Chart is used without numerical/statistical data to display\n   - Timeline is used for content with no temporal/sequential element\n   - Quote is fabricated or misattributed (must be real, verifiable quotes)\n\n   Do NOT penalize if:\n   - Image is used for any content (image can visualize anything)\n   - Diagram is used instead of timeline (relationships can be shown multiple ways)\n   - Any visual type is used multiple times (if each instance adds unique value)\n\n4. TECHNICAL ACCURACY: Visual content must be factually correct:\n   - Code must be syntactically valid\n   - Historical dates and events must be accurate\n   - Scientific processes must be correctly represented\n   - Chart data must be realistic and internally consistent\n\n5. LANGUAGE CONSISTENCY: All text in visuals must match the specified language. PENALIZE any mixed-language content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual types based on topic (history does not require timeline; programming does not require code)\n- Do NOT penalize for using \"image\" as the visual type - it is a valid choice for any content\n- Do NOT penalize for using the same visual type multiple times IF each adds unique information\n- Do NOT require variety in visual types - consistency is fine if appropriate\n- ONLY penalize for: redundant information across visuals, visual type that cannot represent the content, technical inaccuracies, language errors, missing steps\n\n    ",
+        "id": "en-psychology-mindfulness-1",
+        "userInput": {
+          "chapterTitle": "Mental Wellness",
+          "courseTitle": "Introduction to Psychology",
+          "language": "en",
+          "lessonDescription": "Understanding mindfulness as a practice for improving mental clarity and emotional regulation",
+          "lessonTitle": "The Practice of Mindfulness",
+          "steps": [
+            {
+              "text": "Mindfulness means paying attention to the present moment without judgment. Instead of worrying about the future or dwelling on the past, you observe what's happening now.",
+              "title": "Being Present"
+            },
+            {
+              "text": "Your breath is always with you, making it a perfect anchor for attention. When your mind wanders, simply notice it and gently return to the breath.",
+              "title": "The Breath Anchor"
+            },
+            {
+              "text": "Regular mindfulness practice has been shown to reduce stress, improve focus, and help people respond rather than react to difficult situations.",
+              "title": "Benefits of Practice"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "step-visual"
+}

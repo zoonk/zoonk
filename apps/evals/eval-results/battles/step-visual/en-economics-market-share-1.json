@@ -1,0 +1,221 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nThis test covers market share - an economics/business concept with numerical data.\n\nACCURACY CHECKS - PENALIZE if:\n- Chart data is unrealistic (e.g., market share values that don't make sense)\n- Economic concepts are incorrectly explained\n- Pie chart values don't sum to 100% (if pie chart is used)\n\nREDUNDANCY CHECKS - PENALIZE if:\n- Multiple charts show the same data\n- The same market share examples are repeated across visuals\n\nVISUAL-CONTENT FIT - PENALIZE if:\n- Code visual is used (no programming content)\n- Timeline is used for content that isn't about historical market evolution\n\nDo NOT PENALIZE if:\n- Image visuals are used\n- No chart is used (market share can be explained without charts)\n- Diagram showing market relationships is used\n\n\nEVALUATION CRITERIA:\n\n1. COVERAGE: Every step must have exactly one visual. Check that the number of visuals equals the number of steps and stepIndex values are unique and complete (0 to N-1).\n\n2. NO REDUNDANCY: Each visual must add UNIQUE information. PENALIZE if:\n   - Multiple visuals repeat the same data points, events, or concepts\n   - A visual restates what another visual already showed\n   - Example: Two timelines covering overlapping periods with the same events\n\n3. VISUAL-CONTENT FIT: The visual type must make sense for the content. PENALIZE if:\n   - Code visual is used for non-programming content\n   - Chart is used without numerical/statistical data to display\n   - Timeline is used for content with no temporal/sequential element\n   - Quote is fabricated or misattributed (must be real, verifiable quotes)\n\n   Do NOT penalize if:\n   - Image is used for any content (image can visualize anything)\n   - Diagram is used instead of timeline (relationships can be shown multiple ways)\n   - Any visual type is used multiple times (if each instance adds unique value)\n\n4. TECHNICAL ACCURACY: Visual content must be factually correct:\n   - Code must be syntactically valid\n   - Historical dates and events must be accurate\n   - Scientific processes must be correctly represented\n   - Chart data must be realistic and internally consistent\n\n5. LANGUAGE CONSISTENCY: All text in visuals must match the specified language. PENALIZE any mixed-language content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual types based on topic (history does not require timeline; programming does not require code)\n- Do NOT penalize for using \"image\" as the visual type - it is a valid choice for any content\n- Do NOT penalize for using the same visual type multiple times IF each adds unique information\n- Do NOT require variety in visual types - consistency is fine if appropriate\n- ONLY penalize for: redundant information across visuals, visual type that cannot represent the content, technical inaccuracies, language errors, missing steps\n\n    ",
+  "judgedAt": "2026-01-16T22:58:50.092Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Covers all 3 steps with unique visuals. Step 0 uses a diagram showing market structure with percentages (40%+25%+20%+15%=100%), Step 1 shows smartphone market bar chart (24+20+16+40=100%), Step 2 uses a line chart for cost vs production volume which adds unique value showing economies of scale quantitatively. No redundancy - each visual shows different concept. The line chart for per-unit cost is an excellent choice for showing the relationship between volume and costs. All data is realistic and internally consistent.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Covers all 3 steps. Step 0 uses a diagram to explain the market share formula/concept (unique approach), Step 1 shows concentration with simple bar chart (62%+38%=100%), Step 2 uses line chart for cost vs output (unique data showing economies of scale). No redundancy between visuals - each adds distinct information. The formula diagram is a creative way to explain the concept. Data is realistic.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Covers all 3 steps with no redundancy. Step 0 pie chart (35+28+22+15=100%), Step 1 bar chart with real smartphone brands and realistic data (28+21+13+10+9+19=100%), Step 2 diagram shows the full causal chain from market share to profit margins. More detailed smartphone data with 6 categories. All visuals add unique value. Slight redundancy concern between the pie chart example and smartphone example (both showing market shares), but they represent different industries/concepts.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Covers all 3 steps. Step 0 pie chart (40+25+15+20=100%), Step 1 bar chart (24+20+18+38=100%), Step 2 comprehensive diagram with 5 nodes showing full chain. All data sums correctly. Minor redundancy between Steps 0 and 1 (both show market share distributions with similar structures), though one is generic and one is industry-specific. The diagram in Step 2 is well-constructed.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Covers all 3 steps. Step 0 pie chart (35+20+15+30=100%), Step 1 bar chart with real smartphone brands (24+20+17+8+31=100%), Step 2 diagram with 5 nodes. Some redundancy between Steps 0 and 1 (both show similar market share breakdowns). The diagram has slight awkwardness with two edges from lower_unit_cost. Overall solid but similar pattern to others.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Covers all 3 steps. Step 0 pie chart (40+25+20+15=100%), Step 1 bar chart (22+21+18+39=100%), Step 2 simple diagram. All data is correct. Some redundancy between Steps 0 and 1 as both show market share distributions in similar formats. The diagram is simpler than others with only 3 nodes. Solid but less comprehensive.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Covers all 3 steps. Step 0 pie chart for soft drinks (42+31+12+15=100%), Step 1 pie chart for smartphones with real brand names (27+20+14+39=100%), Step 2 diagram with 5 nodes. However, using two pie charts for different industries is somewhat redundant as a visual type choice - both show essentially the same concept. The diagram is well-constructed. Real brand names in smartphone chart add value.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Covers all 3 steps. Step 0 uses an image (valid per guidelines), Step 1 bar chart (25+20+18+37=100%), Step 2 simple diagram with 3 nodes. The image visual is acceptable but provides less concrete information than a chart would. The diagram is simpler than most others. Overall adequate but less detailed.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Covers all 3 steps. Step 0 diagram explaining concept, Step 1 simplified pie chart (60+40=100%), Step 2 diagram for economies of scale. However, there's some conceptual redundancy between the two diagrams (both relate to market share implications). The pie chart is overly simplified with only 2 categories. The first diagram has disconnected nodes (the edges don't fully connect all nodes logically).",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "moonshotai/kimi-k2-0905",
+          "reasoning": "Only provides 1 visual for what appears to be a 3-step task. Major coverage failure - missing stepIndex 1 and 2. The single pie chart is correct (35+25+15+25=100%) but incomplete coverage is a significant penalty.",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Only provides 1 visual for what appears to be a 3-step task. Major coverage failure - missing stepIndex 1 and 2. The single pie chart is correct (40+30+15+15=100%) but incomplete coverage is a significant penalty.",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Exceptional visual selection and educational value. Step 0 uses a diagram to visualize the formula for market share, which is a unique and highly effective way to explain the concept. Step 1 uses a bar chart for market concentration. Step 2 correctly identifies that 'Economies of Scale' (Cost vs Volume) is a continuous relationship best represented by a Line Chart. All data is accurate and fits the steps perfectly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Excellent output that shares the top tier with Model J due to the use of a Line Chart for Step 2, which is the most technically accurate way to visualize cost curves. Step 0 uses a diagram to show market topology, and Step 1 provides a detailed bar chart. The variety of visual types (Diagram, Bar, Line) is optimal for the content.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The best of the standard (Pie/Bar/Diagram) implementations. It excels by using specific, real-world data labels (Apple, Samsung, etc.) in Step 1, which adds significant context and realism compared to generic models. The technical accuracy is perfect, and the diagram in Step 2 is detailed.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very strong output, similar to Model E. It uses real-world brands for the smartphone market data, ensuring high relevance. The progression of visuals is logical, and all chart data sums correctly. It is slightly less detailed than Model E in the bar chart breakdown but still excellent.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "A solid, error-free execution of the task. It follows a logical flow (Pie -> Bar -> Diagram) and all data sums to 100%. It ranks below Models E and I because it uses generic labels ('Competitor A') rather than real-world examples, making it slightly less informative.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Equivalent quality to Model A. It provides a correct Pie chart, Bar chart, and Logic diagram. The data is consistent and accurate. Like Model A, the use of generic placeholder names prevents it from scoring higher.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good quality with accurate real-world data. It uses Pie charts for both Step 0 and Step 1. While the subject matter differs (Soft Drinks vs Smartphones), using two charts of the same type is slightly less optimal than varying the visual types (e.g., using a Bar chart for rankings).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Competent but less data-dense. Step 0 uses an image prompt (illustration) rather than a data visualization, which is valid but less educational than a chart or formula diagram. Step 2's diagram is somewhat simplistic.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Adequate but weak on detail. Step 1 uses a Pie chart with only two data points (60/40), which is minimal effort. Steps 0 and 2 are both diagrams covering similar conceptual ground (Share -> Power/Advantage), making the set feel repetitive.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "moonshotai/kimi-k2-0905",
+          "reasoning": "Major failure in coverage. The model provided only one visual, missing the subsequent steps present in all other comprehensive outputs.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Major failure in coverage. The model provided only one visual, failing to complete the full sequence.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Meets coverage (3 visuals with stepIndex 0–2). Pie sums to 100% and values are plausible. Bar chart adds distinct info (concentration breakdown) rather than duplicating the pie. Diagram correctly links market share to scale and lower unit costs. All text consistent (English). Overall cohesive and non-redundant.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Meets coverage (0–2). Pie and bar are related but not identical; bar reframes into “top 3 vs others” and title claim (>60%) matches data (24+20+18=62). Diagram is conceptually correct. Values sum properly and are realistic placeholders.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong visual-content fit: step 0 diagram explains the market share formula (useful and non-redundant), step 1 bar shows concentration, step 2 line shows economies of scale. Coverage complete and consistent language. Minor weakness: step 2 data are plausible but units/currency context is vague, and line chart uses categorical x labels (still acceptable).",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Coverage complete (0–2). Step 0 image prompt is acceptable and not redundant with later visuals. Bar chart sums to 100% and is plausible. Diagram is correct but a bit minimal compared to others (less economic nuance).",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Coverage complete (0–2). Pie sums to 100% and bar sums to 100%; diagram correctly ties share to scale and pricing/competitive pricing. Slight redundancy risk conceptually (both pie and bar are “market share breakdowns”), but they use different examples/brand sets, so still mostly additive.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Coverage complete (0–2). Pie and bar are different (generic example vs named smartphone brands). Diagram attempts to connect share→scale→cost/unit→advantage→margins, but edge labeling is somewhat sloppy/arguable (e.g., “through economies_scale -> fixed_costs” and “fixed_costs creates pricing_power” is conceptually muddled). Data sums are fine.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Coverage complete (0–2) and both pies sum to 100%. However, step 0 and step 1 are both pie charts of market share (different industries), which can feel repetitive (same concept shown twice with same visual form). Diagram is fine and accurate.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Coverage complete (0–2). Step 0 diagram embeds market-share percentages, step 1 bar gives another market-share breakdown that is very similar (borderline redundancy). Step 2 line (cost vs volume) fits economies of scale, but axis encoding is odd: x-values are treated as categorical labels and the numbers (costs) lack units/context. Still mostly coherent.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model K",
+          "modelId": "openai/gpt-4.1-mini",
+          "reasoning": "Coverage complete (0–2) and pie sums to 100%. However, step 0 diagram is internally confusing: an edge labeled “captures” from Company→Market Share is fine, but then “higher_market_share” is a separate node not connected to the measurement node, making the structure awkward. Step 2 diagram repeats similar relationships (share→pricing power/advantage) already implied in step 0, reducing uniqueness.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "moonshotai/kimi-k2-0905",
+          "reasoning": "Only one visual provided (stepIndex 0), failing the coverage expectation of one visual per step across 0–N-1 (implies missing steps 1 and 2 given the common 3-step structure in other outputs). The single pie is fine and sums to 100%, but incomplete overall.",
+          "score": 3.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Only one visual (stepIndex 0), so coverage is incomplete versus the multi-step expectation. Pie sums to 100% and is plausible, but missing additional steps/visuals.",
+          "score": 3.1
+        }
+      ]
+    }
+  ],
+  "taskId": "step-visual",
+  "testCaseId": "en-economics-market-share-1"
+}

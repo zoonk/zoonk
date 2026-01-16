@@ -10,6 +10,7 @@ import { courseDescriptionTask } from "./course-description/task";
 import { courseSuggestionsTask } from "./course-suggestions/task";
 import { lessonActivitiesTask } from "./lesson-activities/task";
 import { lessonKindTask } from "./lesson-kind/task";
+import { stepVisualTask } from "./step-visual/task";
 
 export const TASKS: readonly Task[] = [
   courseCategoriesTask,
@@ -23,6 +24,7 @@ export const TASKS: readonly Task[] = [
   activityBackgroundTask,
   activityExplanationTask,
   activityExplanationQuizTask,
+  stepVisualTask,
 ];
 
 // Number of times each test case should be run for more reliable results
