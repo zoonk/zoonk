@@ -7,7 +7,7 @@ const DEFAULT_MODEL = openai.image("gpt-image-1-mini");
 const DEFAULT_QUALITY = "low";
 
 export function getCourseThumbnailPrompt(title: string) {
-  return promptTemplate.replace("{{TITLE}}", title);
+  return promptTemplate.replace("{{TITLE}}", () => title);
 }
 
 export type CourseThumbnailParams = {
