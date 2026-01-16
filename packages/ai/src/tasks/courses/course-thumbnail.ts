@@ -1,19 +1,13 @@
 import { openai } from "@ai-sdk/openai";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { type GeneratedFile, generateImage, type ImageModel } from "ai";
+import promptTemplate from "./course-thumbnail.prompt.md";
 
 const DEFAULT_MODEL = openai.image("gpt-image-1-mini");
 const DEFAULT_QUALITY = "low";
 
 export function getCourseThumbnailPrompt(title: string) {
-  return `
-  Generate an icon to visually symbolize a topic using a simple, recognizable object.
-  Style: 3D rendered with vivid high-contrast colors, smooth matte surfaces,
-  clean sharp edges with slight bevels, realistic lighting and subtle shadows,
-  minimalist and modern design, subtle neutral background, no text, square format (1:1).
-
-  TOPIC: **${title}**
-  `;
+  return promptTemplate.replace("{{TITLE}}", title);
 }
 
 export type CourseThumbnailParams = {
