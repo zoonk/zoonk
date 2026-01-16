@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "@ai-sdk/gateway": "3.0.2",
-    "@ai-sdk/openai": "3.0.1",
+    "@ai-sdk/gateway": "3.0.16",
+    "@ai-sdk/openai": "3.0.12",
     "@zoonk/utils": "workspace:*",
-    "ai": "6.0.3"
+    "ai": "6.0.39"
   },
   "devDependencies": {
     "@types/node": "^24",

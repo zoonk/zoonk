@@ -1,10 +1,6 @@
 import { openai } from "@ai-sdk/openai";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import {
-  type Experimental_GeneratedImage as GeneratedImage,
-  generateImage,
-  type ImageModel,
-} from "ai";
+import { type GeneratedFile, generateImage, type ImageModel } from "ai";
 
 const DEFAULT_MODEL = openai.image("gpt-image-1-mini");
 const DEFAULT_QUALITY = "low";
@@ -30,7 +26,7 @@ export async function generateCourseThumbnail({
   title,
   model = DEFAULT_MODEL,
   quality = DEFAULT_QUALITY,
-}: CourseThumbnailParams): Promise<SafeReturn<GeneratedImage>> {
+}: CourseThumbnailParams): Promise<SafeReturn<GeneratedFile>> {
   const { data, error } = await safeAsync(() =>
     generateImage({
       maxImagesPerCall: 1,
