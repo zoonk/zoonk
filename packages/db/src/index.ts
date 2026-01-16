@@ -1,8 +1,7 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { attachDatabasePool } from "@vercel/functions";
 import { Pool } from "pg";
-// biome-ignore lint/style/noExportedImports: StepKind needs to be exported as a value for Prisma enum usage
-import { PrismaClient, StepKind } from "./generated/prisma/client";
+import { PrismaClient } from "./generated/prisma/client";
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
@@ -40,6 +39,7 @@ export type {
   Session,
   Step,
   StepAttempt,
+  StepKind,
   Subscription,
   User,
   UserProgress,
@@ -48,4 +48,4 @@ export type {
 
 export type { BatchPayload } from "./generated/prisma/internal/prismaNamespace";
 
-export { prisma, StepKind };
+export { prisma };
