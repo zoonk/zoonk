@@ -33,6 +33,7 @@
     "./orgs/find": "./src/orgs/find-org.ts",
     "./orgs/get": "./src/orgs/get-org.ts",
     "./orgs/permissions": "./src/orgs/org-permissions.ts",
+    "./steps/image": "./src/steps/step-image.ts",
     "./types": "./src/types.ts",
     "./users/orgs/list": "./src/users/list-user-orgs.ts",
     "./users/otp/send": "./src/users/send-otp.ts",
