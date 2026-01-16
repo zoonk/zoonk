@@ -39,6 +39,7 @@ export type {
   Session,
   Step,
   StepAttempt,
+  StepKind,
   Subscription,
   User,
   UserProgress,

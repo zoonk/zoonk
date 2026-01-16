@@ -28,6 +28,16 @@ enum ActivityKind {
   review
 }
 
+enum StepKind {
+  static
+  fillBlank      @map("fill_blank")
+  matchColumns   @map("match_columns")
+  multipleChoice @map("multiple_choice")
+  selectImage    @map("select_image")
+  sortOrder      @map("sort_order")
+  arrangeWords   @map("arrange_words")
+}
+
 enum StepVisualKind {
   code
   image
