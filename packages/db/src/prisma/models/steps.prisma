@@ -2,7 +2,7 @@ model Step {
   id            BigInt          @id @default(autoincrement())
   activityId    BigInt          @map("activity_id")
   activity      Activity        @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  kind          String          @db.VarChar(20)
+  kind          StepKind
   position      Int
   content       Json
   visualKind    StepVisualKind? @map("visual_kind")

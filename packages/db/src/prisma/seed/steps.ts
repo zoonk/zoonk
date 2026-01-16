@@ -2,11 +2,12 @@ import type {
   Organization,
   Prisma,
   PrismaClient,
+  StepKind,
   StepVisualKind,
 } from "../../generated/prisma/client";
 
 type StepSeedData = {
-  kind: string;
+  kind: StepKind;
   content: Prisma.InputJsonValue;
   visualKind?: StepVisualKind;
   visualContent?: Prisma.InputJsonValue;
@@ -118,7 +119,7 @@ const stepsData: ActivitySteps[] = [
           question:
             "What is the main difference between traditional programming and machine learning?",
         },
-        kind: "multiple_choice",
+        kind: "multipleChoice" as StepKind,
       },
       {
         content: {
@@ -134,7 +135,7 @@ const stepsData: ActivitySteps[] = [
             },
           ],
         },
-        kind: "match_columns",
+        kind: "matchColumns" as StepKind,
       },
       {
         content: {
@@ -145,7 +146,7 @@ const stepsData: ActivitySteps[] = [
             "In {0} learning, the algorithm learns from labeled data, while in {1} learning, it finds patterns without labels.",
           wordBank: ["supervised", "unsupervised", "reinforcement", "deep"],
         },
-        kind: "fill_blank",
+        kind: "fillBlank" as StepKind,
       },
       {
         content: {
@@ -158,7 +159,7 @@ const stepsData: ActivitySteps[] = [
           ],
           question: "Arrange the ML development process in the correct order:",
         },
-        kind: "sort_order",
+        kind: "sortOrder" as StepKind,
       },
       {
         content: {
@@ -180,7 +181,7 @@ const stepsData: ActivitySteps[] = [
           ],
           question: "Which diagram best represents a neural network?",
         },
-        kind: "select_image",
+        kind: "selectImage" as StepKind,
       },
     ],
   },
@@ -231,7 +232,7 @@ const stepsData: ActivitySteps[] = [
           question:
             "Your team discovers the training data has quality issues. What do you do?",
         },
-        kind: "multiple_choice",
+        kind: "multipleChoice" as StepKind,
       },
       {
         content: {
@@ -265,7 +266,7 @@ const stepsData: ActivitySteps[] = [
           question:
             "The model is underperforming. A team member suggests using a more complex architecture. What's your decision?",
         },
-        kind: "multiple_choice",
+        kind: "multipleChoice" as StepKind,
       },
     ],
   },

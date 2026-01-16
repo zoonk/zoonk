@@ -1,3 +1,4 @@
+import type { StepKind } from "@zoonk/db";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
@@ -71,7 +72,7 @@ async function createTestStep(orgId: number) {
     data: {
       activityId: activity.id,
       content: {},
-      kind: "multiple_choice",
+      kind: "multipleChoice" as StepKind,
       position: 0,
     },
   });
