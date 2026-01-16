@@ -26,6 +26,7 @@
     "./tasks/lessons/kind": "./src/tasks/lessons/lesson-kind.ts",
     "./tasks/steps/select-image": "./src/tasks/steps/select-image-step.ts",
     "./tasks/steps/visual": "./src/tasks/steps/step-visual.ts",
+    "./tasks/steps/visual-image": "./src/tasks/steps/step-visual-image.ts",
     "./types": "./src/types.ts"
   },
   "name": "@zoonk/ai",

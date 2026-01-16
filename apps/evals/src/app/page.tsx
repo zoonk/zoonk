@@ -71,6 +71,24 @@ export default function Home() {
           </ItemActions>
         </Item>
 
+        <Item variant="outline">
+          <ItemContent>
+            <ItemTitle>Visual Image Test</ItemTitle>
+            <ItemDescription>
+              Test AI-generated images for step visual resources
+            </ItemDescription>
+          </ItemContent>
+
+          <ItemActions>
+            <Link
+              className={buttonVariants({ variant: "outline" })}
+              href="/visual-image-test"
+            >
+              Test Images
+            </Link>
+          </ItemActions>
+        </Item>
+
         {TASKS.map((task) => (
           <Item key={task.id} variant="outline">
             <ItemContent>
