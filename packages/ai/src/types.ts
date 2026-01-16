@@ -1,4 +1,4 @@
-export type { Experimental_GeneratedImage as GeneratedImage } from "ai";
+export type { GeneratedFile } from "ai";
 
 export type ReasoningEffort = "auto" | "low" | "medium" | "high";
 
