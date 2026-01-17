@@ -13,7 +13,7 @@ const FALLBACK_MODELS = [
   "openai/gpt-5-mini",
   "google/gemini-3-pro-preview",
   "anthropic/claude-sonnet-4.5",
-  "anthropic/claude-haiku-4.5",
+  "google/gemini-3-flash",
 ];
 
 const effectSchema = z.object({

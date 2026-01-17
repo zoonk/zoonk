@@ -1,0 +1,149 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Portuguese.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Le Chatelier's principle must be correctly applied. Penalize if:\n   - Equilibrium shift directions are incorrect in consequences\n   - Temperature, pressure, concentration effects are misrepresented\n   - The principle is applied to situations where it doesn't hold\n\n2. DIMENSION CHECK: Dimensions should represent meaningful chemical process concerns like:\n   - Product Yield, Reaction Efficiency, Energy Consumption, Process Stability\n   - Should reflect how equilibrium adjustments affect industrial processes\n\n3. SCENARIO CHECK: The challenge should involve realistic chemical process decisions.\n\n4. CONSEQUENCE CHECK: Consequences should explain the chemical impact of process choices.\n\n\nEVALUATION CRITERIA:\n\n1. DIMENSION QUALITY: Dimension names used across all effects should:\n   - Connect meaningfully to lesson concepts (2-4 unique dimensions total)\n   - Create natural tension (trade-off axes)\n   - Be consistently named across all effects (same concept = same name)\n\n2. CONSEQUENCE QUALITY: Each option's consequence must:\n   - Explain what happens as a result of the choice\n   - Connect to lesson concepts (not generic outcomes)\n   - Teach something about trade-offs\n   - Be consistent with the stated effects (if effect is positive for dimension X, consequence should reflect improvement in X)\n\n3. TRADE-OFF DESIGN: No option should be obviously best. Options should affect multiple dimensions with mixed impacts (e.g., positive for one, negative for another). If one option has all positive effects, penalize.\n\n4. EFFECTS CONSISTENCY: Each option should have 1-3 effects. Dimension names should be reused consistently across options to create meaningful trade-offs (not random unique names for each effect).\n\n5. FORMAT COMPLIANCE: Verify these constraints:\n   - intro: Maximum 500 characters\n   - steps: 4-6 steps, each with context (max 500 chars), question (max 100 chars), and 3-4 options\n   - options: Each with text (max 80 chars), consequence (max 300 chars), effects array (1-3 items with dimension and impact)\n   - reflection: Maximum 500 characters\n\n6. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in intro and dialogue.\n\n7. CONCEPTUAL ACCURACY: Consequences and effects must make sense given the lesson content. If the lesson teaches that X leads to Y, effects should reflect this.\n\n8. DIALOGUE QUALITY: Context must be pure conversation with NO narrator text, NO character name prefixes, NO action descriptions.\n\n9. REFLECTION QUALITY: The reflection must tie the experience back to lesson principles and acknowledge that different approaches have merit.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario choices or dimension names\n- Do NOT require specific dimensions by name\n- ONLY penalize for: format violations, consequences that don't connect to lesson concepts, obviously dominant options, inconsistent dimension naming, narrator text in dialogue\n- Different valid challenge designs exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T19:43:06.255Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent overall quality. Uses 3 consistent dimensions (Produção, Custos Operacionais, Segurança) throughout all 5 steps. Le Chatelier applications are accurate: pressure effects on NH3 synthesis (fewer moles), temperature effects on exothermic reactions, product removal shifting equilibrium, inert gas (argon) not affecting equilibrium at constant volume - all correctly explained. Dialogue is natural with Marcos as the senior technician providing context. Trade-offs are well-designed with no obviously dominant options. All format constraints appear met. The scenario about the Haber process is realistic and educational. The reflection ties back to the lesson concepts effectively. Minor issue: the second option in step 1 about lowering temperature says 'Segurança: positive' which is reasonable but slightly less intuitive than other effects.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Very strong output with accurate Le Chatelier applications throughout. Uses consistent dimensions (Rendimento, Custo, Velocidade). The chemistry is correct: excess of cheaper reagent (N2) to maximize expensive reagent (H2) conversion, pressure effects, temperature trade-offs between thermodynamics and kinetics, and correctly explaining that catalysts don't shift equilibrium. Dialogue includes Carla as the senior engineer providing good context. The step about the financial director thinking catalysts shift equilibrium is pedagogically excellent. Trade-offs are well-designed. One concern: Step 1, option 1 (add N2 in excess) shows 'Custo: neutral' which is slightly generous - even cheap reagent has some cost. The intro is slightly long but within limits. Strong reflection connecting theory to practice.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong output with correct Le Chatelier applications. Uses 3 dimensions (Rendimento, Custos Operacionais, Velocidade da Reação) consistently. Chemistry is accurate: nitrogen addition, pressure effects on mole counts, exothermic temperature effects, inert gas at constant pressure not affecting equilibrium, and catalyst not shifting equilibrium but affecting kinetics. Trade-offs are well-designed. One issue: in step 4, the 'catalisador premium' option shows both Velocidade and Rendimento as positive, which could be seen as slightly dominant, though the consequence mentions it's expensive. The dialogue contexts are clear but lack a named character interacting with the user. The fourth option about catalysts is pedagogically valuable. Good reflection.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Good quality with accurate chemistry. Uses dimensions like Rendimento, Custo Operacional, Velocidade de Produção, and Durabilidade do Equipamento (4 dimensions, slightly more than ideal 2-4 but acceptable). Le Chatelier applications are correct throughout. Step 5 about catalysts is well-designed with the hybrid option showing both positive impacts, though consequences explain the trade-offs. The dialogue is functional but lacks a named character. Trade-offs are generally good. One concern: the 'neutral' rendimento options sometimes feel like safe middle choices. The reflection is solid but somewhat generic. All 5 steps are present and format appears compliant.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Solid output with 4 options per step (maximum allowed) and accurate Le Chatelier applications. Uses 3 dimensions (Rendimento de Produto, Custo Operacional, Segurança e Confiabilidade) consistently. The chemistry is correct: pressure effects, concentration effects, temperature trade-offs for exothermic reactions, and catalyst limitations. The language is slightly more informal/colloquial which works well for dialogue. Trade-offs are well-balanced with no obviously dominant options. The fourth option in each step adds variety but sometimes feels like 'wait and see' choices. Step 4 about catalysts correctly notes that catalysts don't change equilibrium position. Reflection is insightful. Minor issue: some dimension names are longer than others, slightly affecting consistency perception.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good technical accuracy with Le Chatelier applications. Uses 4 dimensions (Rendimento, Custo, Tempo, Segurança). Chemistry is correct: reagent excess, product removal, pressure effects on gas-phase equilibria, temperature effects on exothermic reactions, and catalyst role. The intro and context are somewhat terse and less engaging. The dialogue lacks a named character and feels more instructional than conversational. Trade-offs are designed but some options feel similar across steps. The scenario is generic (A + B ⇌ P) rather than using a specific industrial process like Haber, which reduces engagement but doesn't violate requirements. Reflection is brief but accurate. Format appears compliant.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Acceptable but less distinctive. Uses 3 dimensions (Rendimento, Custo Operacional, Estabilidade) consistently. Le Chatelier applications are generally correct but somewhat vague - the scenario doesn't specify which reaction or how many moles on each side, making pressure effects less concrete. The fifth step about catalysts correctly notes they don't change equilibrium. Trade-offs exist but feel somewhat formulaic. The scenario being a generic 'unidade piloto' with unspecified reaction reduces educational value for the Haber process context expected. Dialogue is functional but lacks character names and personality. Reflection is adequate but generic. No major errors but lacks the depth and specificity of higher-ranked outputs.",
+          "score": 7.3
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A is the strongest output. It perfectly applies Le Chatelier's principle to the Haber-Bosch process with high scientific precision. It explicitly addresses the conflict between thermodynamics (yield) and kinetics (speed) in the temperature step, and it correctly explains the often-misunderstood effect of inert gases (Argon) on partial pressures and equilibrium. The dimensions are consistent, the trade-offs are clear, and the format is perfectly adhered to.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model C is excellent, featuring a strong narrative setup involving a colleague ('Marcos') which adds immersion. It handles the chemistry accurately, including the inert gas effect (explicitly mentioning constant volume). It introduces a 'Safety' dimension which is very relevant. It is ranked slightly below A only because Model A's step-by-step structure (isolating one variable per step) is slightly more effective for teaching the specific causal relationships of the principle.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model D provides a very solid, accurate simulation. It introduces 'Durability' as a dimension, adding a realistic industrial concern regarding high pressure. The trade-offs are well-constructed, and the distinction between Ruthenium and Iron catalysts is a nice specific detail that adds realism.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model B is very good, with an engaging and accessible tone. It accurately reflects the cost difference between Hydrogen and Nitrogen. It is ranked lower than A/C/D simply because the consequences are slightly less detailed in their chemical explanation (the 'why'), though still accurate and effective.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E adopts a highly realistic 'Process Engineer' persona with industry jargon (CAPEX, OPEX, throughput). While this is impressive for realism, the complexity of the text might be slightly overwhelming for a learner compared to the clarity of Model A. The chemistry is flawless.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model G uses a generic 'A + B -> P' reaction instead of a real industrial scenario (like Ammonia). While the application of the principle is technically correct, it misses the 'Realistic Scenario Check' expectation by avoiding specific chemical substances (H2, N2) and their specific real-world properties/costs.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model F also relies on a generic, vague reaction ('unidade piloto', 'produto secundário'). The explanations are less precise than the others, and without a specific chemical context, the trade-offs feel abstract rather than realistic.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Cumpre muito bem o formato: intro/reflection curtos, 5 passos (dentro de 4–6), cada passo com pergunta e 4 opções (aceito) e efeitos 1–3 por opção. Diálogo é conversacional (sem narrador/ações/prefixos). Usa {{NAME}} em intro e ao longo. Dimensões são consistentes e poucas (Rendimento de Produto, Custo Operacional, Segurança e Confiabilidade), criando trade-offs claros sem opção “dominante”. Aplicação de Le Chatelier está correta (pressão ↑ favorece NH3; T ↑ em exotérmica reduz conversão de equilíbrio; remoção de produto puxa para produtos; catalisador não altera equilíbrio). Consequências conectam bem química a decisões industriais (compressor, refrigeração, gargalos).",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Excelente aderência a Le Chatelier e cenário industrial realista (Haber-Bosch). 5 passos (ok), consequências geralmente coerentes e trade-offs bons (rendimento vs custo vs durabilidade/velocidade). Dimensões são razoavelmente consistentes (Rendimento, Custo Operacional, Velocidade de Produção, Durabilidade do Equipamento). Porém há pequenas fragilidades: diálogo inclui um “Beleza,” e tons semi-narrativos, mas ainda majoritariamente conversa. Em um ponto (remoção contínua) dá efeito positivo em velocidade de produção automaticamente, o que pode ser plausível mas não é sempre garantido; ainda assim não é erro químico. No geral, muito forte.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Muito bom em realismo e em conectar decisões a Le Chatelier (pressão, temperatura, remoção de NH3, gás inerte). 5 passos (ok), efeitos 1–3, dimensões consistentes (Produção, Custos Operacionais, Segurança). Trade-offs aparecem bem e quase não há opção obviamente melhor. Pontos a perder: a “qualidade” de diálogo às vezes escorrega para explicação/exposição longa e há referências a colegas com nomes (ok) mas o texto fica mais instrucional do que conversacional em alguns trechos; também algumas opções têm muitos “neutros”, reduzindo tensão em certos passos.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Boa precisão conceitual na maior parte (pressão favorece produtos; T alta em exotérmica desfavorece; catalisador não muda equilíbrio; gás inerte geralmente não desloca a volume constante). Formato: 4 passos (ok), 3 opções por passo (ok), dimensões relativamente consistentes (Rendimento, Custos Operacionais, Velocidade da Reação). Problemas: diálogo inclui elogios do tipo “Excelente escolha técnica!” e frases absolutas/enganosas como “nunca é atingido plenamente” e “sem parar” ao remover NH3 continuamente (a ideia de deslocar é correta, mas a consequência é exagerada e pode ensinar errado). Além disso, na opção “catalisador premium” há dois impactos positivos (Velocidade e Rendimento) sem custo/contrapartida, criando uma opção quase dominante nesse passo.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Estrutura formalmente boa: 5 passos, 3 opções, dimensões reaproveitadas (Rendimento/Custo/Tempo/Segurança) e trade-offs presentes. Aplicação de Le Chatelier é majoritariamente correta (pressão, temperatura em exotérmica, gás inerte a volume constante, remoção de produto). Pontos fracos: cenário é genérico (A + B ⇌ P), menos “decisão industrial” concreta; algumas consequências são um pouco vagas e há tensão de dimensões, mas nem sempre amarrada a limitações reais do processo. Ainda assim, atende bem ao essencial.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Quimicamente em geral correto e com trade-offs claros (pressão/temperatura/catalisador/remoção de produto). Porém viola fortemente o requisito de diálogo: há narrador implícito e, sobretudo, prefixo/identificação de personagem (“Eu sou a Carla, sua engenheira sênior.”), o que fere a exigência de “sem prefixos de nome” e “context puro de conversa”. Também a intro é longa e inclui linguagem mais narrativa. Dimensões são consistentes (Rendimento, Custo, Velocidade).",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Cumpre o formato básico (5 passos, 3 opções, efeitos 1–3), e usa {{NAME}}. Entretanto é excessivamente genérico e, em alguns pontos, aplica Le Chatelier sem especificar condições necessárias (ex.: pressão “pode ajudar” sem afirmar diferença de mols; remoção de ‘produto secundário’ tratada como se sempre deslocasse o equilíbrio relevante). Há inconsistências de efeitos vs consequência (ex.: aumentar temperatura reduz rendimento mas marca Custo Operacional como positivo; isso pode ocorrer, mas não é explicado e soa incoerente). Dimensões (Rendimento/Estabilidade/Custo Operacional) são ok, mas o conteúdo ensina menos e as consequências são pouco químicas.",
+          "score": 6.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-challenge",
+  "testCaseId": "pt-chemistry-reaction-equilibrium-1"
+}

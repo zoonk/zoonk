@@ -1,5 +1,5 @@
 {
-  "modelId": "openai/gpt-5.2",
+  "modelId": "openai/gpt-5-mini",
   "results": [
     {
       "steps": [
@@ -9,14 +9,14 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The instructions specify that each option should have an 'effects' array of 1-3 items. The model provided exactly 4 effects for every single option throughout the response. While the dimensions chosen are relevant, listing all 4 every time violates the specific constraint to limit effects to 1-3 per option.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8.5
         },
         {
-          "conclusion": "None",
+          "conclusion": "The response could be improved by selecting only the most pertinent effects (1-3) for each option rather than a full scorecard of all 4 dimensions. This would better highlight the specific trade-offs (e.g., highlighting just 'Time Efficiency' and 'Space Usage' when those are the primary conflicting factors) and adhere to the constraints.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9
         }
       ],
       "testCase": {
@@ -56,17 +56,22 @@
     {
       "steps": [
         {
-          "conclusion": "None. The model followed all instructions regarding scenario setup, economic concepts, and negative constraints.",
+          "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "In Step 4, Option 4 ('Lean into PR heavily while keeping supply steady'), the effect on 'Sales Volume' is listed as 'negative'. Economically, if demand increases (via PR) and supply remains fixed (steady), the volume sold should remain constant (neutral) at the supply cap, not decrease, unless the shortage causes secondary damage (like delisting) which isn't mentioned in the consequence. However, this is a subtle nuance in a business context where 'missing growth' might be scored negatively.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 9.5
+          "score": 10
         },
         {
-          "conclusion": "None. The narrative is engaging, the dialogue is natural and persona-appropriate, and the trade-offs are excellent representations of the lesson concepts.",
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is flawlessly executed. It adheres strictly to all formatting constraints, including character limits and JSON structure. The economic concepts (elasticity, supply shifts vs. movements along the curve, substitution effects) are applied accurately to the scenario. The dimensions selected (Selling Price, Sales Volume, Profit Margin, Inventory Levels) are highly relevant to the lesson and consistent throughout. The trade-offs in every option are realistic and educational (e.g., differentiating products shifts the demand curve but likely comes with costs that keep margins neutral, creating a balanced choice). The dialogue is natural and correctly personalized.",
           "kind": "potentialImprovements",
           "score": 10
         }
@@ -108,19 +113,19 @@
     {
       "steps": [
         {
-          "conclusion": "None. The response provides a valid JSON structure with no major logical, content, or formatting errors. The scenario aligns perfectly with the lesson content.",
+          "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. All character limits are respected. The dialogue is purely conversational without narrator text. The dimensions are consistent and fall within the requested count (4 dimensions: Ecosystem Resilience, Species Balance, Community Support, Management Cost). {{NAME}} is used correctly.",
+          "conclusion": "In Step 4, Option 3 ('Create a managed habitat mosaic') appears to logically dominate Option 1 ('Allow natural succession'). Option 3 provides 'positive' Biodiversity (same as Option 1), 'neutral' Productivity (better than Option 1's 'negative'), and 'positive' Stakeholder Support (better than Option 1's absence). This creates a 'best answer' scenario relative to Option 1, which reduces the strategic tension required by the instructions.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 9
         },
         {
-          "conclusion": "None. The content is exceptionally well-crafted. The trade-offs are realistic and educational, forcing the user to balance social pressure, budget, and ecological health. The application of concepts like 'carrying capacity' and 'succession' in the consequences is accurate and insightful.",
+          "conclusion": "The dialogue in every step consistently starts with '{{NAME}}, ...'. While compliant with the instruction to use the placeholder, varying the sentence structure would make the conversation feel more natural and less robotic.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9
         }
       ],
       "testCase": {
@@ -165,9 +170,9 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "In Step 1, Option 3, the word \"Reintentar\" (meaning 'to re-attempt') appears to be a typo or hallucination for \"Reinjetar\" (to re-inject) in the context of a chemical flow. While understandable, it is not standard technical Portuguese. In Step 2, Option 3, the consequence states adding inert gas at constant volume provides \"pouco ganho de rendimento\" (little yield gain). Scientifically, for ideal gases, there is zero equilibrium shift (neutral), which the effect correctly identifies as \"neutral\". The text phrasing is slightly imprecise but acceptable.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 9.5
         },
         {
           "conclusion": "None",
@@ -212,19 +217,29 @@
     {
       "steps": [
         {
-          "conclusion": "No major errors found. The response fully adheres to the JSON schema, includes all required fields (intro, steps, reflection), and strictly follows the content constraints (character limits, Spanish language). The physics concepts (conservation, efficiency, losses in chain conversions, energy density) are applied accurately to the scenario.",
+          "conclusion": "The introduction establishes a clear scenario (microgrid design) and personalizes it using {{NAME}}. It clearly outlines the stakes (reliability, cost, environment). There is a minor typo ('util' instead of 'útil'), but the Spanish is otherwise natural and professional.",
+          "kind": "minorErrors",
+          "score": 9.5
+        },
+        {
+          "conclusion": "The physics principles regarding energy conservation are applied correctly. The distinction between energy density (fuels vs batteries) and conversion efficiency (AC vs DC, round-trip losses) is accurate. The trade-offs presented (e.g., efficiency vs cost vs reliability) are realistic for energy systems.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "No minor errors found. The dialogue is natural and consistently uses the {{NAME}} placeholder without slipping into narrator mode. The dimensions (Eficiencia Global, Costo Total, Confiabilidad Operativa, Complejidad del Sistema) are consistent across the steps and offer meaningful trade-offs.",
-          "kind": "minorErrors",
+          "conclusion": "The response strictly adheres to the dimension limits (using 4 consistent dimensions: Costo, Fiabilidad, Densidad Energética, Eficiencia). It effectively reuses them across options to create meaningful trade-offs.",
+          "kind": "potentialImprovements",
           "score": 10
         },
         {
-          "conclusion": "The response is excellent. The trade-offs are well-constructed, forcing the learner to balance physics principles (losses, density) against practical constraints (cost, reliability) without there being an obvious 'correct' answer.",
+          "conclusion": "The consequences clearly explain the physical and operational results of the choices. For example, explaining that multiple conversion steps (AC/DC) reduce efficiency, or that batteries have lower energy density than fuel. This connects well to the lesson content.",
           "kind": "potentialImprovements",
           "score": 10
+        },
+        {
+          "conclusion": "Grammar check: In Step 1, 'el costo operativo y las emisiones son elevados' is grammatically correct (compound subject taking masculine plural). The only detected error is the missing accent on 'útil' in the introduction. The formatting constraints (character limits, step counts) are fully met.",
+          "kind": "minorErrors",
+          "score": 9.8
         }
       ],
       "testCase": {

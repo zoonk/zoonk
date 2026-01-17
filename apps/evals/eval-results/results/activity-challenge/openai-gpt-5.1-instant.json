@@ -1,5 +1,5 @@
 {
-  "modelId": "openai/gpt-5.2",
+  "modelId": "openai/gpt-5.1-instant",
   "results": [
     {
       "steps": [
@@ -9,14 +9,14 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "In Step 2 (Sorting), the context specifies the input is 'usually random'. Option 3 suggests Insertion Sort. The consequence correctly notes it 'crashes in performance' on random spikes, but the metadata 'effects' array incorrectly lists 'Time Efficiency' as 'positive'. On random data, Insertion Sort is O(n²) and significantly slower than Quicksort or Mergesort, so the effect should be 'negative' or at best 'neutral' compared to the others. This is a contradiction between the lesson physics (consequence) and the game mechanics (effects).",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8.5
         },
         {
-          "conclusion": "None",
+          "conclusion": "In Step 3, Option 3 (Capped Array), 'Space Usage' is marked as 'negative'. While defensible if referring to pre-allocation waste (static vs dynamic), it contradicts the consequence which focuses on 'hitting capacity'. If the negative impact is running out of space, that is typically a Reliability or Scalability issue. However, this is a subtle interpretation point and acceptable within the context of trade-offs.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -56,19 +56,24 @@
     {
       "steps": [
         {
-          "conclusion": "None. The model followed all instructions regarding scenario setup, economic concepts, and negative constraints.",
+          "conclusion": "The response fails the 'Trade-off Design' constraint in Step 3, Option 1. The instructions explicitly state: 'If one option has all positive effects, penalize.' Option 1 has two positive effects (Inventory Stability: positive, Revenue: positive) and no negative effects, making it a universally best option mechanically, despite the text mentioning 'exhausted staff' and 'quality issues'.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6.5
         },
         {
-          "conclusion": "In Step 4, Option 4 ('Lean into PR heavily while keeping supply steady'), the effect on 'Sales Volume' is listed as 'negative'. Economically, if demand increases (via PR) and supply remains fixed (steady), the volume sold should remain constant (neutral) at the supply cap, not decrease, unless the shortage causes secondary damage (like delisting) which isn't mentioned in the consequence. However, this is a subtle nuance in a business context where 'missing growth' might be scored negatively.",
-          "kind": "minorErrors",
-          "score": 9.5
+          "conclusion": "There are logic dominance issues in Steps 1 and 4 where one option is strictly better than another based on the provided effects. In Step 4, Option 3 (Revenue: positive, Reach: neutral) strictly dominates Option 2 (Revenue: neutral, Reach: negative). In Step 1, Option 3 (Inventory: positive, Reach: neutral) dominates Option 2 (Revenue: neutral, Reach: negative). This removes the strategic element of the challenge.",
+          "kind": "majorErrors",
+          "score": 7
         },
         {
-          "conclusion": "None. The narrative is engaging, the dialogue is natural and persona-appropriate, and the trade-offs are excellent representations of the lesson concepts.",
+          "conclusion": "The dimensions chosen ('Revenue', 'Inventory Stability', 'Customer Reach') are generally good, but they were insufficient to capture the negative consequences described in the text for Step 3 (e.g., 'quality issues' or 'exhausted staff'). Adding a 'Brand Reputation' or 'Quality' dimension would have allowed the model to reflect these negatives in the effects array properly.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8
+        },
+        {
+          "conclusion": "The narrative content, dialogue, and application of economic concepts are excellent. The scenarios accurately reflect the lesson on supply and demand (elasticity, shifts, substitutes). The intro and reflection are well-written and follow constraints.",
+          "kind": "potentialImprovements",
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -108,19 +113,19 @@
     {
       "steps": [
         {
-          "conclusion": "None. The response provides a valid JSON structure with no major logical, content, or formatting errors. The scenario aligns perfectly with the lesson content.",
+          "conclusion": "In Step 2, Option 2 ('Reseed with a diverse native plant mix') has exclusively positive effects ('Biodiversity': 'positive', 'Ecosystem Stability': 'positive') with no negative trade-offs listed in the effects array. The instructions explicitly state: 'No option should be universally best... If one option has all positive effects, penalize.' This effectively makes it the correct answer, violating the challenge design.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 7
         },
         {
-          "conclusion": "None. All character limits are respected. The dialogue is purely conversational without narrator text. The dimensions are consistent and fall within the requested count (4 dimensions: Ecosystem Resilience, Species Balance, Community Support, Management Cost). {{NAME}} is used correctly.",
+          "conclusion": "In Step 2, Option 1 ('Use fast-growing monoculture reseeding') is assigned 'Ecosystem Stability': 'positive'. However, the lesson content explicitly states: 'Monocultures are efficient but fragile.' Assigning positive stability to a fragile system contradicts the provided educational material. It should likely be negative for stability, or positive for a different dimension like 'Stakeholder Support' (speed of recovery).",
+          "kind": "majorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "The dimensions chosen ('Biodiversity', 'Ecosystem Stability', 'Stakeholder Support') are used consistently and are relevant. However, the logic in Step 1, Option 1 is slightly confusing: it suggests predators show stress from reduced prey density immediately after a 'spike' in herbivores is culled. Unless the cull was excessive (below carrying capacity), predators would not typically be stressed by returning a population to normal levels.",
           "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None. The content is exceptionally well-crafted. The trade-offs are realistic and educational, forcing the user to balance social pressure, budget, and ecological health. The application of concepts like 'carrying capacity' and 'succession' in the consequences is accurate and insightful.",
-          "kind": "potentialImprovements",
-          "score": 10
+          "score": 9
         }
       ],
       "testCase": {
@@ -170,9 +175,9 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The mapping of consequences to dimensions is generally excellent, but faces a slight consistency challenge regarding 'Reaction Rate' vs 'Yield'. In Step 2, increased rate (from higher temp) improves 'Operational Cost' (presumably via time savings). In Step 5, increased rate (from catalyst) improves 'Stability', while 'Operational Cost' is negative due to the catalyst's price. While logical within the specific narrative of each step, mapping 'Rate/Throughput' benefits to 'Stability' is less intuitive than mapping it to 'Cost' or a dedicated 'Productivity' dimension. However, given the constraint on the number of dimensions, this is a minor design trade-off rather than an error.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -212,17 +217,17 @@
     {
       "steps": [
         {
-          "conclusion": "No major errors found. The response fully adheres to the JSON schema, includes all required fields (intro, steps, reflection), and strictly follows the content constraints (character limits, Spanish language). The physics concepts (conservation, efficiency, losses in chain conversions, energy density) are applied accurately to the scenario.",
+          "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "No minor errors found. The dialogue is natural and consistently uses the {{NAME}} placeholder without slipping into narrator mode. The dimensions (Eficiencia Global, Costo Total, Confiabilidad Operativa, Complejidad del Sistema) are consistent across the steps and offer meaningful trade-offs.",
+          "conclusion": "None",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "The response is excellent. The trade-offs are well-constructed, forcing the learner to balance physics principles (losses, density) against practical constraints (cost, reliability) without there being an obvious 'correct' answer.",
+          "conclusion": "The response is excellent and strictly adheres to all constraints, including the physics concepts (energy conservation, efficiency losses in conversion/storage). The narrative is consistent, the dimensions are used correctly to represent trade-offs, and the JSON structure is valid.",
           "kind": "potentialImprovements",
           "score": 10
         }
