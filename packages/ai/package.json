@@ -15,6 +15,7 @@
     "./tasks/activities/core/background": "./src/tasks/activities/core/activity-background.ts",
     "./tasks/activities/core/explanation": "./src/tasks/activities/core/activity-explanation.ts",
     "./tasks/activities/core/explanation-quiz": "./src/tasks/activities/core/activity-explanation-quiz.ts",
+    "./tasks/activities/core/mechanics": "./src/tasks/activities/core/activity-mechanics.ts",
     "./tasks/chapters/lessons": "./src/tasks/chapters/chapter-lessons.ts",
     "./tasks/courses/alternative-titles": "./src/tasks/courses/alternative-titles.ts",
     "./tasks/courses/categories": "./src/tasks/courses/course-categories.ts",
