@@ -68,16 +68,28 @@ Each variable must:
 - **Interact meaningfully**: Actions that help one variable should plausibly affect others
 - **Name precisely**: Use specific names (e.g., "Quantity Demanded" not "Market Demand")
 
-### Variable Definition Lock
+### Variable Naming Rule: Positive Polarity
 
-**Once defined, a variable's meaning is FIXED for all steps.**
+**All variables must be named so that HIGHER = BETTER.**
 
-Before creating effects, explicitly define what each variable measures. Then for EVERY effect on that variable, verify the justification uses THE SAME CONCEPT:
+This simple rule eliminates confusion about effect signs. When all variables are "good things to have more of," the math is intuitive:
 
-- ❌ "Production Throughput" defined as units manufactured per hour, but effect justified by "worker satisfaction" — these are different things
-- ✅ "Production Throughput" increases because "the new machinery processes components faster" — same concept
+- `+` means improvement (good outcome)
+- `-` means worsening (bad outcome)
 
-**The test:** Could you replace the variable name with its definition in the feedback and have it still make sense? If not, you've drifted.
+**Transform negative-polarity concepts into positive-polarity names:**
+
+| Instead of... | Use...              |
+| ------------- | ------------------- |
+| Cost          | Budget / Funds      |
+| Risk          | Safety / Security   |
+| Time          | Speed / Efficiency  |
+| Debt          | Financial Health    |
+| Errors        | Code Quality        |
+| Stress        | Team Morale         |
+| Waste         | Resource Efficiency |
+
+**The test:** Ask "Is more of this good?" If yes, the name works. If no, rename it.
 
 ### Win Conditions Structure
 
@@ -88,8 +100,8 @@ Each inventory item's `winConditions` array defines success criteria:
 
 **Common patterns:**
 
-- **Minimum threshold**: `[{ "operator": "gte", "value": 30 }]` — "Don't let Budget drop below 30"
-- **Maximum threshold**: `[{ "operator": "lte", "value": 70 }]` — "Keep Risk below 70"
+- **Minimum threshold**: `[{ "operator": "gte", "value": 30 }]` — "Keep Budget above 30"
+- **Maximum cap** (prevent runaway): `[{ "operator": "lte", "value": 80 }]` — "Don't overspend on Quality"
 - **Range constraint** (two conditions): `[{ "operator": "gte", "value": 20 }, { "operator": "lte", "value": 80 }]` — "Keep Budget balanced"
 
 **Example inventory item:**
@@ -169,53 +181,6 @@ Example effects structure:
 }
 ```
 
-## Effect Direction: The Measurement Rule
-
-**ONE RULE**: The sign reflects whether the MEASURED NUMBER goes up or down.
-
-### The Algorithm
-
-For EVERY effect, apply this test:
-
-1. Imagine a meter/gauge displaying the variable's current value as a number
-2. After this action, will the number on that meter be HIGHER or LOWER?
-3. Higher → positive (+) / Lower → negative (-)
-
-That's it. Ignore whether the outcome is "good" or "bad" for the player.
-
-### Why This Works
-
-Variables measure QUANTITIES. The sign indicates CHANGE IN QUANTITY:
-
-- Cost measures dollars spent → spending less → number goes DOWN → negative
-- Time measures duration → finishing faster → number goes DOWN → negative
-- Quality measures goodness → better work → number goes UP → positive
-- Risk measures danger level → safer choice → number goes DOWN → negative
-
-### Self-Check
-
-Before finalizing each effect, ask:
-
-> "If this variable were displayed as a number on screen, would this action make that number go UP or DOWN?"
-
-- UP → use positive (+)
-- DOWN → use negative (-)
-
-The player's happiness about the outcome is IRRELEVANT to the sign.
-
-### Feedback-Effect Coherence
-
-**The feedback text MUST match the effect direction.**
-
-Before writing feedback, check that your explanation matches the sign:
-
-- ❌ Effect: `{"variable": "Cost", "change": -10}` + Feedback: "This increases our costs" — CONTRADICTION
-- ✅ Effect: `{"variable": "Cost", "change": -10}` + Feedback: "This reduces our spending" — COHERENT
-- ❌ Effect: `{"variable": "Risk", "change": 15}` + Feedback: "This makes things safer" — CONTRADICTION
-- ✅ Effect: `{"variable": "Risk", "change": 15}` + Feedback: "This introduces more uncertainty" — COHERENT
-
-**The test:** Read your feedback aloud, then check the effect sign. Do they tell the same story?
-
 ## What to Avoid
 
 - **Dominant options**: No choice should be obviously best across all variables. For EACH step, compare options: if one option has BETTER OR EQUAL effects on ALL variables compared to another, it's dominant. Example: Option A (+10 Quality, -5 Budget) vs Option B (+5 Quality, -10 Budget) — A dominates B. Fix by giving B something A lacks, like +5 Morale.
@@ -224,7 +189,7 @@ Before writing feedback, check that your explanation matches the sign:
 - **Extreme swings**: Avoid changes that guarantee win/loss in one step
 - **Narrator text or descriptions**: Keep it pure dialogue
 - **Quiz-style questions**: This tests strategic thinking and problem-solving, not recall
-- **Inverted effect signs**: Never confuse "good outcome" with "positive change". Apply the Measurement Rule: would the NUMBER go up or down?
+- **Negative-polarity variables**: Never name variables where "more is worse" (like "Cost" or "Risk"). Use the transform table to rename them (Budget, Safety, etc.)
 - **Single-path variables**: NEVER create a variable that can only be improved by ONE option in the entire game. Every win condition variable MUST be influenceable by options in multiple steps. Otherwise, that option becomes mandatory and removes player agency
 
 ## Scope
@@ -290,7 +255,8 @@ Before finalizing, verify:
 
 - [ ] Does the intro clearly establish the scenario, goal, and stakes?
 - [ ] Do inventory variables connect meaningfully to lesson concepts?
-- [ ] MATHEMATICAL ACHIEVABILITY: For each win condition, is the target mathematically reachable given startValue and cumulative effect ranges? (Calculate: startValue + sum of max effects in desired direction)
+- [ ] POSITIVE POLARITY: For each variable, is "more" always better? (Budget not Cost, Safety not Risk, Speed not Time)
+- [ ] MATHEMATICAL ACHIEVABILITY: For each win condition, is the target mathematically reachable given startValue and cumulative effect ranges?
 - [ ] Does every option have genuine trade-offs (no dominant choices)?
 - [ ] Do effects make conceptual sense given the lesson content?
 - [ ] Is `{{NAME}}` used appropriately throughout?
@@ -301,12 +267,9 @@ Before finalizing, verify:
 - [ ] Is the step count between 3 and 6?
 - [ ] Do inventory values start in a reasonable range (typically 40-70)?
 - [ ] Are effect magnitudes reasonable (typically 5-20 points)?
-- [ ] For EACH effect, apply the Measurement Rule: if this variable were a number on screen, would this action make it go UP (+) or DOWN (-)?
 - [ ] Does EVERY step have at least 3 options? (Never just 2 options)
 - [ ] Does each inventory item have at least one win condition?
 - [ ] For each variable, are there multiple options across different steps that can affect it? (No single-path variables)
-- [ ] FEEDBACK-EFFECT COHERENCE: For each option, does the feedback text match the effect direction? (e.g., negative change + "reduces X" = coherent; negative change + "increases X" = contradiction)
-- [ ] VARIABLE DEFINITION: For each variable, is the justification in every feedback consistent with the variable's original definition?
 - [ ] DOMINANT OPTIONS: For each step, is there any option that beats another on ALL variables? If so, fix it by giving the weaker option a unique advantage.
 
 # Output Format

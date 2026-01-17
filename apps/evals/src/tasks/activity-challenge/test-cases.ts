@@ -3,31 +3,36 @@ EVALUATION CRITERIA:
 
 1. INVENTORY DESIGN: Variables must connect meaningfully to lesson concepts. Each variable should represent something the learner studied. Names should be intuitive and values should start in a reasonable range (typically 40-70).
 
-2. TRADE-OFF QUALITY: Every option must have genuine trade-offs. No option should be obviously dominant across all variables. Improving one variable should plausibly affect others based on lesson principles.
+2. POSITIVE POLARITY: All variables must be named so that HIGHER = BETTER. Check that no variable uses negative-polarity naming where "more is worse":
+   - BAD: Cost, Risk, Time, Debt, Errors, Stress, Waste
+   - GOOD: Budget/Funds, Safety/Security, Speed/Efficiency, Financial Health, Code Quality, Team Morale, Resource Efficiency
+   The simple test: "Is more of this good?" If no, the variable name is wrong.
 
-3. WIN CONDITION BALANCE: Win conditions must be achievable with strategic thinking but require understanding lesson concepts. Conditions should create strategic tension (meeting all should require careful planning). Each inventory item must have its own win conditions embedded.
+3. TRADE-OFF QUALITY: Every option must have genuine trade-offs. No option should be obviously dominant across all variables. Improving one variable should plausibly affect others based on lesson principles.
 
-4. FORMAT COMPLIANCE: Verify these constraints:
+4. WIN CONDITION BALANCE: Win conditions must be achievable with strategic thinking but require understanding lesson concepts. Conditions should create strategic tension (meeting all should require careful planning). Each inventory item must have its own win conditions embedded.
+
+5. FORMAT COMPLIANCE: Verify these constraints:
    - intro: Maximum 500 characters
    - inventory: 3-5 items, each with name, startValue, and winConditions array (1-2 conditions per item)
    - winConditions (per item): Array with operator (gte/lte/gt/lt/eq) and value
    - steps: 3-6 steps, each with context (max 500 chars), question (max 100 chars), and 3-4 options
    - options: Each with text (max 80 chars), effects array, and feedback (max 300 chars)
 
-5. FEEDBACK QUALITY: Each option's feedback must explain WHY the effects occur, connecting to lesson concepts. Feedback should help learners understand the reasoning behind trade-offs.
+6. FEEDBACK QUALITY: Each option's feedback must explain WHY the effects occur, connecting to lesson concepts. Feedback should help learners understand the reasoning behind trade-offs.
 
-6. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in intro and dialogue to personalize the experience.
+7. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in intro and dialogue to personalize the experience.
 
-7. CONCEPTUAL ACCURACY: Effects must make sense given the lesson content. If the lesson teaches that X leads to Y, the effects should reflect this relationship.
+8. CONCEPTUAL ACCURACY: Effects must make sense given the lesson content. If the lesson teaches that X leads to Y, the effects should reflect this relationship.
 
-8. DIALOGUE QUALITY: Context must be pure conversation with NO narrator text, NO character name prefixes, NO action descriptions. Should feel like colleagues working through a problem.
+9. DIALOGUE QUALITY: Context must be pure conversation with NO narrator text, NO character name prefixes, NO action descriptions. Should feel like colleagues working through a problem.
 
-9. EFFECT DESIGN: Effects should use realistic magnitudes (typically 5-20 points). Dramatic swings (30+) should be rare and justified.
+10. EFFECT DESIGN: Effects should use realistic magnitudes (typically 5-20 points). Dramatic swings (30+) should be rare and justified.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
-- Do NOT penalize for specific scenario choices or variable names
+- Do NOT penalize for specific scenario choices or variable names (as long as they follow positive polarity)
 - Do NOT require specific inventory variables by name
-- ONLY penalize for: format violations, dominant options with no trade-offs, effects that contradict lesson concepts, narrator/description text in dialogue, or unachievable win conditions
+- ONLY penalize for: format violations, negative-polarity variable names, dominant options with no trade-offs, effects that contradict lesson concepts, narrator/description text in dialogue, or unachievable win conditions
 - Different valid challenge designs exist - assess the quality of what IS provided
 `;
 
