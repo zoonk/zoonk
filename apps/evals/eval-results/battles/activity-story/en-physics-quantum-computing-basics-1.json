@@ -1,0 +1,191 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Quantum computing concepts must be physically accurate. Penalize if:\n   - Superposition is described as \"being in two places at once\" (it's about probability amplitudes)\n   - Quantum parallelism benefits are overstated or misrepresented\n   - Decoherence and error correction challenges are minimized\n\n2. SCENARIO CHECK: The workplace problem should involve realistic quantum computing challenges like: algorithm selection, hardware limitations, error mitigation, or identifying suitable problems for quantum advantage.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about when quantum approaches help and their fundamental limitations.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T15:53:45.958Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Excellent 10-scene story with pure dialogue, no narrator text. Drug discovery/molecular simulation is an accurate quantum computing use case. Educational decisions require reasoning about quantum concepts - error correction overhead, decoherence's impact on interference patterns, problem-tolerance matching, and when quantum provides advantage over classical. The plot twist (competitor claiming quantum advantage that turns out to be overhyped) is genuine and relevant. Feedback is thorough and educational. Distractor options are plausible and well-reasoned. {{NAME}} is used appropriately throughout. All format constraints appear to be met. Strong conceptual accuracy about superposition as probability amplitudes, measurement collapse, and the practical challenges of quantum error correction.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Strong 13-scene story with pure dialogue format. Good variety of quantum computing challenges covered - recommendation engine misconception, molecular simulation, error correction overhead, decoherence, superposition misconceptions, entanglement myths. The plot twist (CTO secretly running database queries on quantum computer, 10,000x slower) is genuine, surprising, and reinforces the main lesson. Excellent feedback quality explaining why options are right/wrong. Accurate quantum concepts. Good use of {{NAME}}. One minor issue: some dialogue blocks feel slightly expository rather than purely conversational. All distractors are plausible.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good 8-scene story with pure dialogue. Logistics optimization scenario with a pivot to molecular simulation works well. Accurate treatment of quantum concepts: interference/constructive amplification, measurement collapse, decoherence, entanglement for correlation, error correction overhead. The 'plot twist' of discovering molecular simulation as the better use case is somewhat mild but functional. Good feedback explaining concepts. Clean format compliance. However, some scenes feel like direct concept testing rather than natural problem-solving flow. The story could have developed more tension before the resolution.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Solid 9-scene story with pure dialogue. Route planning/logistics scenario with realistic corporate dynamics (VP promises, PM questions, legal compliance twist). The compliance/data policy twist is genuinely surprising and forces practical adaptation. Good accuracy on quantum concepts - parallelism limits, interference, NISQ constraints, QEC overhead. Feedback is clear and educational. Format compliance is good. The dialogue sometimes feels slightly more like a tutorial than natural conversation, but it maintains the pure dialogue requirement. All distractors are plausible workplace-realistic options.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good 11-scene story with pure dialogue. Biotech/protein folding scenario is appropriate for quantum computing. Accurate coverage of concepts: NISQ limitations, error correction overhead, decoherence, entanglement correlation vs communication, quantum advantage patterns. The competitor announcement twist is good and leads to valuable skepticism lesson. However, some scenes feel slightly expository. The feedback quality is strong. Format compliance appears good. Uses {{NAME}} appropriately. One weakness: could have gone deeper on some conceptual decisions.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Compact 8-scene story with pure dialogue. Hedge fund scenario effectively debunks common misconceptions. Strong conceptual accuracy: quantum parallelism limits, measurement giving one result, interference for amplification, entanglement for correlation, decoherence, error correction overhead, state preparation bottleneck. The twist about state preparation time being a showstopper is educational and genuine. Good feedback. However, the story is shorter and some scenes feel more like rapid-fire myth-busting than natural problem progression. The final pivot to 'quantum-inspired' algorithms is pragmatic but slightly anticlimactic.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Efficient 9-scene story with pure dialogue. Portfolio optimization via QAOA is a realistic NISQ use case. Good coverage of concepts: NISQ constraints, shallow circuits, entanglement tradeoffs, measurement strategies, error mitigation. The compliance twist (data cannot leave site, cloud-only quantum) is practical and forces creative problem-solving. Feedback is clear. However, some dialogue feels quite terse/minimal, almost bullet-point-like rather than natural conversation. The story could benefit from more character development and conversational flow. All distractors are plausible.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good 8-scene story with pure dialogue. Grover's algorithm scenario for search is appropriate. Accurate concepts: amplitude amplification, oracle/diffuser ordering, decoherence limiting iterations, QEC overhead, zero-noise extrapolation, hardware constraints. The hardware limitation twist (entanglement depth exceeds backend support) is relevant but somewhat technical rather than dramatic. Some decisions feel more like debugging exercises than strategic reasoning. The story ends somewhat abruptly after resolving the technical issues. Feedback is adequate but could be more detailed in places.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "10-scene story with mostly pure dialogue. Drug molecule simulation scenario is appropriate. Covers key concepts: decoherence, superposition parallelism, entanglement for readout, QEC overhead. However, there are some issues: the dialogue sometimes uses very technical jargon that feels less like natural conversation and more like textbook excerpts. The plot twist (client's drug candidate data was fabricated) is good and reinforces the lesson about appropriate use cases. Some feedback is quite terse. A few options have unusual phrasing. The story captures the key concepts but could flow more naturally.",
+          "score": 7.2
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model provides an excellent balance of narrative engagement and educational rigor. It covers a realistic scenario (biotech startup) and addresses nuanced concepts like the difference between correlation and communication (FTL myth), the reality of 'quantum advantage' press releases, and the limitations of current hardware. Crucially, it strictly adheres to all formatting constraints, including the 50-character limit for options, which many other models failed.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "A very strong, practical entry focusing on the business logic of scoping a quantum pilot. It effectively debunks the 'brute force' myth and handles legal/compliance constraints realistically. It strictly follows all character limit constraints. It is slightly less dramatic than Model F but equally effective educationally.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "A solid, error-free execution. It follows a classic learning arc (try wrong problem -> fail -> pivot to right problem). The physics explanations are accurate and the formatting constraints are met. It is slightly less detailed in its plot twists compared to F, but still excellent.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "This model is technically accurate and compliant with formatting constraints. The dialogue is a bit more jargon-heavy ('Hamiltonian', 'variational circuit') which might be slightly advanced for a general workplace scenario, but it is physically sound and follows instructions perfectly.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model contains perhaps the best educational insight regarding the 'Big Data' misconception (State Preparation bottleneck). However, it failed the strict 50-character limit for options in Scene 2 ('It checks all, but we only read one random result.' is 51 chars). The content is top-tier, but the formatting error necessitates a deduction.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Excellent narrative and pedagogical quality, similar to Model F. However, it failed the 50-character limit in Scene 1 ('Say we'll need to test their specific problem first' is 51 chars). Without this minor constraint violation, it would rank near the top.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "The content is good, focusing on hybrid approaches and compliance. However, it had multiple option text entries exceeding the 50-character limit (e.g., 52 and 54 characters).",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "While technically accurate regarding circuit design, the content feels more like a technical debugging quiz than a workplace scenario. It also violated the option text length constraint multiple times (e.g., 61 chars).",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model comprehensively addressed many myths, but it completely ignored the 50-character limit for option text, with many options being full sentences of 60+ characters. This significant formatting failure makes it the lowest ranked despite good content.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Best overall alignment. Pure colleague dialogue with no name prefixes or narration. Decision points consistently require reasoning about algorithm/problem fit, measurement limits, NISQ feasibility, and QEC overhead. Realistic workplace constraints (6-week pilot, vendor access, compliance). Clear second-to-last-scene twist (cannot use cloud due to data policy) and final scene resolves with an honest VP message reinforcing takeaway. Quantum descriptions are physically accurate and not hypey. Main weakness: many contexts exceed 500 characters and some questions/options may exceed the stated max lengths.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong conceptual focus on realistic NISQ optimization workflow: mapping to QUBO, choosing QAOA, sizing resources, depth vs decoherence, entanglement tailored to problem graph, sampling strategy, mitigation vs QEC. Includes a genuine plot twist in the second-to-last step (compliance blocks cloud hardware) and resolution in final pitch. Dialogue-only and {{NAME}} used. Weaknesses: many contexts likely exceed 500 chars; overall tone is more like structured consultation than natural back-and-forth; some options/text lengths may violate constraints.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Cohesive 11-scene workplace conversation with a clear twist in the second-to-last scene (competitor’s “quantum advantage” is overhyped) and a resolving final takeaway. Good accuracy on measurement limits, decoherence/QEC timelines, and no-FTL entanglement. Decision points generally reasoning-based and distractors plausible. Main weaknesses: several contexts likely exceed 500 characters; a couple of correct options are a bit assertive (e.g., protein simulation framed as a “sweet spot” without noting current limits until later).",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good story continuity and strong reasoning-driven choices about suitability, prototype-first honesty, QEC overhead, interference/noise, and niche-vs-general computing. Includes a clear plot twist in the second-to-last scene (competitor claims 10x faster) and a final resolution reinforcing the main lesson. Accurate about measurement limits and overhead; does not trivialize decoherence. Weaknesses: many contexts exceed 500 characters; some options’ texts exceed 50 characters; a few statements about protein folding “tolerance” and timelines are somewhat hand-wavy without clarifying that many useful chemistry targets still need high accuracy.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Comprehensive and mostly accurate coverage: measurement limitation, simulation suitability, QEC overhead, decoherence explanation, RSA timeline, correcting “both at once” wording, and no-FTL entanglement. Has a second-to-last scene twist (CTO secretly ran DB queries on quantum hardware) and final resolution with a one-sentence strategy. Weaknesses: many contexts exceed 500 chars; several option texts appear >50 chars; some steps feel like didactic Q&A rather than natural colleague conversation; a few answers oversimplify (e.g., “50 physical qubits might support 5–10 noisy logical qubits” is not generally valid—logical qubits via QEC are typically not available at that scale).",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Solid accuracy on superposition/measurement, interference, entanglement, decoherence, and QEC overhead; realistic “state preparation / data loading” bottleneck is a strong, often-missed limitation. Dialogue-only and coherent flow. Weaknesses: lacks the required twist in the second-to-last scene (it’s just another limitation, not a surprise reveal), and final scene doesn’t clearly resolve after a twist. Also several contexts likely exceed 500 chars and some option texts exceed 50 chars.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Accurate on interference, measurement limits, decoherence, entanglement, and QEC overhead; realistic pivot from ill-suited logistics to better-suited molecular simulation. Dialogue-only and uses {{NAME}}. Weaknesses: not compliant with no-character-name-prefix rule is met, but many contexts are long (>500 chars). The second-to-last scene is more of a normal progression than a true plot twist; resolution is okay but somewhat abrupt. Includes a prohibited framing (“Superposition to let them be in two places”) even though it’s marked incorrect—still a conceptual risk per guidance.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Technically decent and mostly accurate (Grover interference, decoherence limiting iterations, mitigation vs QEC, hardware connectivity/entanglement depth constraints). Dialogue-only, coherent progression, and includes a twist in the second-to-last scene (circuit exceeds hardware entanglement depth). Weaknesses: twist is mild; final resolution is brief. Less workplace-authentic (reads like lab troubleshooting checklist). Likely violates length constraints (contexts/options).",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Duplicate entry not applicable.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Major accuracy issues: repeatedly overstates “superposition parallelism” (e.g., “evaluating the Hamiltonian on 2^n states in parallel” as the practical mechanism), which misrepresents quantum speedup and measurement limits; suggests superposition as a way to proceed despite noise without addressing interference/algorithm design properly. Also claims “probabilities don't sum right” (shouldn’t happen after normalization; indicates misunderstanding). Presents QEC on a 3x3 surface-code grid as a practical step in a 20-qubit NISQ workflow—highly unrealistic. Dialogue is less natural and many constraints likely violated. Has a twist and resolution, but the physics problems are significant per rubric.",
+          "score": 4.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-story",
+  "testCaseId": "en-physics-quantum-computing-basics-1"
+}

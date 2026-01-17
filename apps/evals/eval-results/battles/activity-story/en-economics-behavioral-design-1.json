@@ -1,0 +1,185 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Behavioral economics concepts must reflect genuine research. Penalize if:\n   - Loss aversion magnitude is misrepresented (losses hurt roughly 2x gains)\n   - Framing effects are confused with actual preference changes\n   - Nudge principles are applied without understanding choice architecture\n\n2. SCENARIO CHECK: The workplace problem should involve realistic behavioral design challenges like: improving user engagement, designing incentive structures, reducing churn, or encouraging healthy behaviors.\n\n3. CONCEPTUAL FOCUS: Decisions should require reasoning about psychological biases and how to design for real human behavior.\n\n\nEVALUATION CRITERIA:\n\n1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like \"Sarah:\"), and no action descriptions. The learner should feel immersed in a real workplace conversation.\n\n2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.\n\n3. PLOT COHERENCE: Scenes must flow naturally as a continuous story where each scene builds from the previous dialogue. The second-to-last scene MUST introduce a genuine plot twist (surprise, complication, or revelation). The final scene must resolve the problem AND reinforce the main learning takeaway.\n\n4. FORMAT COMPLIANCE: Verify these constraints:\n   - context: Maximum 500 characters of pure dialogue\n   - question: Maximum 100 characters\n   - options: Exactly 4 objects, each with: text (max 50 chars), isCorrect (boolean), feedback (max 300 chars)\n   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false\n\n5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.\n\n6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.\n\n7. SCENE COUNT: Story must have between 7 and 20 scenes. Let problem complexity dictate length.\n\n8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific plot choices, character names, or scenario settings you might expect\n- Do NOT require specific scenes like \"investigation\" or \"resolution\" by name - focus on whether the story has good flow\n- Do NOT check against an imagined \"ideal\" story structure\n- ONLY penalize for: format violations, narrator/description text in dialogue, decisions that test memorization instead of reasoning, missing plot twist, poor distractor quality, or factually incorrect lesson application\n- Different valid story approaches exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T15:53:51.444Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model D is exceptional across all criteria. It has 16 scenes with excellent plot flow, building from retirement enrollment through defaults, framing, commitment devices, and culminating in a genuine plot twist (employees with dependents having lower enrollment due to real financial constraints, not behavioral issues). The dialogue is pure conversation with no narrator text or character prefixes. Every decision tests conceptual reasoning about behavioral economics principles (present bias, default effects, loss aversion, commitment devices) rather than memorization. The distractor options are all plausible and grounded in behavioral concepts. Feedback explains WHY answers are right or wrong with genuine insight. The scenario authentically addresses real-world tensions like legal pushback on defaults, ethical considerations of behavioral design, and the limits of nudges when facing genuine constraints. Loss aversion is correctly characterized (losses hurt about 2x gains). The final scene genuinely reinforces the key takeaway that behavioral design works when you understand actual constraints.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model A delivers 11 well-constructed scenes with a cohesive savings app scenario. Pure dialogue throughout with no narrator intrusions. The plot twist (legal wanting scary 'AUTOMATIC WITHDRAWALS' warning that would trigger loss aversion negatively) is well-integrated and creates genuine conflict. All behavioral concepts are accurately applied - present bias, default effects, social proof, loss aversion framing, commitment devices. Feedback is educational and explains reasoning well. Distractors are plausible. The scene where they discuss manipulation concerns with defaults demonstrates ethical nuance. Minor weakness: some questions feel slightly more like knowledge checks than pure reasoning applications, and the competitor app introduction feels slightly rushed. Overall excellent quality.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model F has 17 well-developed scenes with strong educational content. Pure dialogue format maintained throughout. The plot twist (CEO experiencing the treatment group and questioning the defaults) is creative and effective, leading to a productive discussion about behavioral design. Excellent coverage of behavioral principles with accurate application. Good balance of challenge levels across decisions. Strong feedback explaining reasoning. The scenario builds naturally from problem diagnosis through implementation to measurement. Minor issues: some transitions feel slightly mechanical, and a few feedback explanations could be more insightful. The 'how do you feel' question in the final scene is slightly weaker than it could be. Still a very strong entry.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model I is concise but effective with 9 scenes covering RoundUp save activation. Pure dialogue maintained. The plot twist (regulatory audit requiring consent and easy exit) works well and creates genuine tension. Behavioral concepts are accurately applied: defaults, present bias, commitment devices, loss aversion, social proof. Feedback is clear and educational. Good distractor quality. The scenario is realistic for a fintech product context. Weakness: the story feels slightly compressed, and some decisions could have deeper reasoning requirements. The resolution scene is effective but brief. Format compliance is excellent.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E has 9 scenes with a signup/conversion optimization scenario. Pure dialogue format maintained. The plot twist (mobile users defaulting invisibly due to UI issues) is practical and ties back to behavioral principles well. Concepts are generally applied correctly. Good distractor options. Feedback is helpful. However, the scenario occasionally feels more like UX optimization than deep behavioral economics application. Some decisions lean toward practical product decisions rather than requiring reasoning about psychological biases. The framing coverage is strong, but commitment devices and loss aversion sections are somewhat rushed. Still solid overall.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model C covers the right behavioral principles but has notable weaknesses. The dialogue uses informal/truncated language ('Boom, {{NAME}}', 'Sharp eye, {{NAME}}') that feels slightly unnatural. With 10 scenes, the pacing is reasonable. The plot twist (loss frame + round-ups creating panic opt-outs) is interesting but the resolution feels somewhat contrived. Feedback is generally accurate but sometimes too brief. Some decisions feel more like recitation of which principle to apply rather than reasoning through why. The final scenes feel rushed. Format compliance is good. Loss aversion magnitude is mentioned correctly. Overall acceptable but not as polished as top entries.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model G has only 7 scenes, which is at the minimum threshold but makes the story feel somewhat compressed. The dialogue is pure conversation without narrator text. Concepts are accurately applied. However, the plot twist element is weak - the VP suggesting hiding the cancel button is somewhat predictable rather than a genuine surprise. Some decisions feel like direct knowledge tests (which option uses X principle) rather than requiring reasoning through a novel situation. The scenario jumps between topics (landing page, signup flow, retention) without deep exploration of any. Feedback is adequate but sometimes shallow. Distractor quality is acceptable. The story resolves too quickly after the churn intervention.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B has only 7 scenes and some significant weaknesses. The dialogue is mostly clean but the scenario shifts awkwardly from 'Healthy Habits' savings app to 'Healthy Meal' tracker mid-story, breaking coherence. The plot twist (influencer calling app 'manipulative') is external rather than emerging from the story's internal logic. Some decisions are more straightforward than they should be - the correct answers are sometimes obviously the 'behavioral design' answer while distractors are weak. The loss aversion claim that 'losses hurt twice as much as gains feel good' is correctly stated. Format compliance is acceptable. The story feels episodic rather than building naturally. Some feedback is too brief.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model H has only 8 scenes and notable issues. While dialogue is pure conversation, the scenario feels somewhat contrived - the 'skip button pre-selected on some devices' twist comes across as manufactured rather than organic. Several decisions have distractors that are obviously wrong (e.g., 'Make skipping feel safe and easy' or 'Hide the skip button entirely'). The questions sometimes telegraph the correct answer by using principle names in the answer options. The story arc is thin - essentially one problem with variations. Feedback quality is mixed - some insightful, some too brief. The ending feels abrupt. Less depth in exploring behavioral economics concepts compared to stronger entries.",
+          "score": 5.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model F is the strongest output. It features immersive, natural dialogue that feels like a genuine workplace collaboration. The narrative arc is excellent, moving from diagnosis to intervention, then measurement, and finally a clever plot twist involving the CEO that reinforces the universality of behavioral biases (challenging the 'power user' fallacy). It strictly adheres to all formatting constraints, including the character limits for options, while delivering high-educational value.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model A is an exceptional entry that follows a similar trajectory to Model F but with a different, equally valid plot twist regarding legal compliance and negative framing. The dialogue is professional and clear. It perfectly adheres to all constraints. The logic for each decision is sound, and the progression of concepts (diagnosis -> defaults -> social proof -> commitment) is logical and educational.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Model C introduces a sophisticated behavioral insight: the interaction effect where loss framing combined with present bias can actually cause panic and opt-outs. This depth of understanding makes the scenario highly educational. The dialogue is a bit informal ('crushing it', 'boom'), but acceptable. It adheres to formatting constraints.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E focuses on the UX/UI aspect of behavioral design. The twist—that a default was ineffective on mobile because it wasn't visible—is a practical, real-world lesson in choice architecture (salience). The story flow is good and it meets all formatting requirements.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B is a solid, competent response. It hits all the required beats and concepts accurately. It is on the shorter side (7 scenes), making it feel slightly less developed than the top models, but it is fully compliant and educationally sound.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model H provides a valid scenario, but the plot twist (discovering a button was accidentally pre-selected) feels slightly more like a bug fix than a behavioral design breakthrough. However, it effectively illustrates the power of defaults (even accidental ones). It complies with formatting rules.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model G is compliant but feels the most simplistic. The conflict with the VP about dark patterns is a standard textbook example, and the dialogue feels a bit stiff. It meets the criteria but lacks the narrative engagement of the higher-ranked models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model I has a strong story with a realistic regulatory twist. However, it fails the formatting constraints in several places, with option text exceeding the 50-character limit (e.g., 'Use behavioral levers while preserving choice and transparency' is 62 characters).",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model D demonstrates the deepest conceptual understanding, distinguishing brilliantly between behavioral barriers and genuine financial constraints. However, it systematically violates the negative constraint regarding option text length. Almost every option exceeds the 50-character limit (some are 65+ characters), which would break the UI in a real application. Despite the high quality of content, the formatting failure is severe.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Strongest overall alignment with the spec: 7–20 scenes (12), continuous workplace dialogue, clear BE concepts (defaults/opt-out, present bias, loss aversion, framing, commitment devices) applied in realistic HR benefits setting. Includes a genuine second-to-last plot twist (vested-balance message increases opt-outs) and a final resolution with a clear learning takeaway. Loss aversion and present bias are mostly used appropriately; ethical choice-architecture discussion is credible. Minor issues: a few option texts exceed 50 chars (e.g., some long sentences), and some contexts likely exceed 500 chars. Also one scene conflates “hiding info” with framing a bit loosely.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Meets most requirements well: 9 scenes, realistic product/choice-architecture problem, good application of defaults, present bias, commitment devices, loss framing, transparency/ethics. Has a clear second-to-last plot twist (regulatory audit risk) and a resolving final scene. Feedback is generally explanatory and plausible distractors. Main weaknesses: several option texts appear >50 chars; some contexts likely >500 chars; a couple interventions lean slightly punitive (\"penalties\") though framed as optional/forfeitable and then corrected via transparency.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very strong format discipline in spirit: 9 scenes, coherent flow, clear plot twist in the second-to-last scene (mobile default invisibility causing accidental mid-tier selection), and resolution emphasizing ethical/transparent nudges. Concepts are applied correctly (loss aversion causing avoidance, defaults, present bias/commitment device). Dialogue is clean and workplace-realistic. Weaknesses: contexts include quotation marks but still pure dialogue; several option texts likely exceed 50 chars; some contexts may exceed 500 chars.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Rich, coherent 16-scene dialogue with a clear second-to-last twist (CEO accidentally in treatment group reacts to defaults) and resolution with measured results + takeaway. Behavioral concepts mostly accurate and used in design reasoning; distractors are plausible; personalization used. Weaknesses: many contexts likely exceed 500 chars; multiple option texts exceed 50 chars; a few conceptual stretches (\"gap framing\" labeled as loss aversion/\"incomplete goals\" mix; some social proof claim risks truthfulness).",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good behavioral-econ coverage and a realistic savings-app scenario; 11 scenes with a near-end complication (legal wants scary warning) and final resolution. Uses {{NAME}} properly and keeps dialogue-only. Accuracy generally solid (losses ~2x gains stated). Weaknesses: plot twist placement is not clearly second-to-last (it occurs earlier, then additional scenes follow), so it misses the “second-to-last scene twist” requirement. Many contexts almost certainly exceed 500 chars; some option texts likely >50 chars.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Coherent 7-scene workplace conversation with a strong mid-story crisis (influencer calls defaults manipulative) and resolution. Behavioral principles mostly correct and applied to realistic engagement/churn problems. Weaknesses: the “plot twist” is not in the second-to-last scene (it’s scene 6 of 7). Some wording is a bit didactic/summary-like. Many option texts exceed 50 chars; several contexts likely exceed 500 chars. Also minor domain confusion: app is called \"Healthy Habits\" but discusses savings goals throughout.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Solid concept accuracy and clean dialogue-only format in a realistic product context; 7 scenes, plausible distractors, and ethical nudge vs dark pattern discussion. Weaknesses: no clear second-to-last plot twist (it’s more a sequence of design tasks). Many option texts exceed 50 chars and contexts may exceed 500. Present-bias countermeasure via instant badge is plausible but a bit simplistic vs stronger structural tools (defaults/commitment).",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "8 scenes, dialogue-only, includes a second-to-last scene that is a real twist (skip button pre-selected). Final scene resolves with an implementation plan. Weaknesses: several conceptual misfires: it claims defaults won’t help goal-setting because it requires active input, yet later relies on defaulting; some options are vague (\"pair reassurance with a commitment device\") without specifying an actual mechanism; limited behavioral-econ depth vs spec. Likely option-length/context-length violations.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Has 11 scenes and attempts a twist near the end, but violates story authenticity: includes non-dialogue/meta text like “Plot twist was…” and “High-five!”, and tone is overly hype/telegraphic, reducing workplace realism. Also the twist is muddled (and explicitly labeled), and some reasoning is questionable (defaults dismissed early then used heavily; “twist: social proof underused here” is not a true revelation). Many option texts likely >50 chars; contexts likely >500.",
+          "score": 5.4
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-story",
+  "testCaseId": "en-economics-behavioral-design-1"
+}
