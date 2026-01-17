@@ -1,0 +1,167 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Machine learning examples must reflect genuine ML applications. Penalize if:\n   - Examples describe simple rule-based systems as ML (if-then rules aren't learning)\n   - Claims about ML capabilities are exaggerated beyond current technology\n\n2. CONTEXT CHECK: Penalize if examples are limited to tech companies. ML appears in medicine, agriculture, music recommendations, email filters, translation, photo organization, and fraud detection.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT machine learning is (learning from data vs explicit programming). This should show WHERE ML quietly powers everyday tools and services.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-WORLD RELEVANCE: Examples must be concrete, recognizable situations from everyday life. Penalize abstract or theoretical applications without clear real-world grounding.\n\n2. CONTEXT DIVERSITY: Content should show the topic across different life domains (daily life, work, entertainment, unexpected places, personal interests). Variety helps different learners connect.\n\n3. RECOGNITION FACTOR: Examples should create \"aha moments\" — helping learners see the topic in familiar places they hadn't noticed before.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like pointing out hidden patterns in everyday life. Include metaphors and analogies from familiar activities.\n\n6. FOCUS: Shows WHERE something appears (real-world contexts), not WHAT it is (definitions) or HOW it works (processes).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific life domains or contexts you might expect\n- Do NOT require a specific number of contexts or examples\n- Do NOT check against an imagined \"complete\" list of applications\n- ONLY penalize for: incorrect real-world claims, abstract examples without concrete situations, overlap with explanation content, or lack of variety in context types\n- Different valid sets of examples exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T14:32:26.819Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "10 examples covering face unlock, music, email spam, ads, Netflix, fraud detection, camera, search, fitness, social media. All are genuine ML applications grounded in recognizable everyday scenarios. Good conversational tone with phrases like 'It's not following a rigid rule' and 'that's ML finding patterns.' Strong recognition factor throughout. No overlap with explanation content (focuses on WHERE not WHAT). Minor issue: slightly repetitive structure (many follow 'when X happens, that's ML doing Y' pattern). All titles and texts within format limits. Diverse contexts: personal tech, entertainment, finance, health. Excellent quality overall.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "12 examples covering face recognition, music, Netflix, spam, shopping, fraud, social media, voice assistants, photo organization, autocorrect, navigation, smart home. All genuine ML applications with concrete scenarios. Good conversational tone. Strong diversity including smart home thermostats which is less common. Good recognition factor. All format requirements met. However, some examples lean slightly toward explaining HOW ML works rather than pure WHERE context (e.g., 'learned from billions of emails what spam looks like' is somewhat explanatory). Still excellent coverage and quality.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "12 examples covering social media, streaming, spam, voice assistants, navigation, face unlock, photo tagging, autocomplete, music discovery, credit decisions, shopping, smart email categories. All genuine ML applications. Good variety including credit decisions and smart email categories which are less common examples. Conversational but slightly more technical tone in places. All format requirements met. Includes 'instant credit decisions' which is a good unexpected context. Some examples could create stronger 'aha moments' - they're accurate but feel slightly textbook-like in places.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "7 examples covering Netflix, spam, photo search, fraud, traffic, social media, autocorrect. All genuine ML applications with concrete scenarios. Good conversational tone with nice specifics like 'Main Street at 5 PM on Fridays.' Strong recognition factor. All format requirements met. However, fewer examples than others limits diversity somewhat. The examples provided are high quality but could use more variety in life domains (missing health/fitness, voice assistants, shopping recommendations). Solid but less comprehensive.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "10 examples covering typing suggestions, social feeds, smart speakers, camera, shopping, spam, traffic, streaming, fraud, adaptive games. All genuine ML applications. Good use of analogies ('like a personal DJ', 'like a store clerk'). Includes adaptive difficulty in games which is a unique and interesting example. All format requirements met. Good conversational tone. Some examples are slightly less concrete than others (e.g., 'Some games adjust difficulty' is vaguer than naming specific games or scenarios). Overall strong quality with nice variety.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "12 examples covering predictive text, search, streaming, social feeds, spam, fraud, ride-share, face unlock/photos, voice assistants, camera, shopping, CAPTCHAs. Good variety including ride-share ETAs and CAPTCHAs which are unique examples. All genuine ML applications. Conversational but slightly informal in places. CAPTCHAs and bot detection is a nice 'unexpected places' example. All format requirements met. Some examples feel slightly compressed/rushed due to character limits. Good diversity across domains.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "12 examples covering photo organization, Netflix, email/calendar, navigation, shopping, smart home, social media, camera, health apps, medical imaging, fraud, call clarity. Good variety including medical imaging and call noise reduction which are unique. Nice use of analogies ('like a tidy shoebox', 'like a local navigator', 'like a DJ'). However, some examples are vaguer - 'Health & Fitness Apps' just lists features without a concrete scenario. 'Email and Calendar Helpers' bundles too much together. Medical imaging may feel less 'everyday' to many learners. Format requirements met. Mixed quality - some examples excellent, others too abstract.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Only 6 examples covering music, spam, portrait mode, social media, navigation, fraud. All are genuine ML applications with concrete scenarios. Good conversational tone and recognition factor. However, significantly fewer examples than other models, which limits diversity. Missing many common contexts (voice assistants, autocorrect, shopping, face unlock). The examples provided are high quality but the limited scope is a notable weakness. All format requirements met.",
+          "score": 6.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model is exceptional because it perfectly integrates the requested metaphors and analogies (e.g., 'like a tidy shoebox', 'like a local navigator') into the explanations, making the concepts immediately intuitive. It offers high context diversity with 12 distinct examples, ranging from common apps to specific use cases like noise reduction and medical imaging. The tone is warm and conversational, focusing entirely on real-world application contexts.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model F closely follows the tone requirements by consistently using analogies ('like a personal DJ', 'like a tiny photo editor') to explain the 'magic' of ML. It covers a solid range of 10 examples including gaming and smart speakers. It ranks slightly below Model D only because Model D provided a slightly wider breadth of examples (12 vs 10) and the metaphors in D were slightly more varied.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B provides excellent breadth with 12 concise, relatable examples. It includes unique contexts like CAPTCHAs and ride-share pricing. The tone is punchy and effective, creating 'aha moments' quickly. It ranks slightly lower than D and F simply because it relies less on the specific metaphors/analogies requested in the tone guidelines, though it is still a very strong output.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model A offers a strong set of 10 examples with a very good conversational tone. It effectively explains the 'hidden pattern' aspect of ML (e.g., distinguishing face unlock from simple rules). It is a high-quality response but falls slightly behind the top three in terms of volume (compared to D/B) or the vividness of its analogies (compared to D/F).",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model E provides a comprehensive list of 12 examples, meeting the diversity criteria well. However, its tone is slightly more technical and descriptive ('algorithms analyze', 'interprets your intent') rather than the conversational, metaphor-rich style requested. It is accurate and thorough but less engaging than the top models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model H delivers a solid, accurate list of 12 examples covering standard domains. It meets all formatting and accuracy requirements. However, the writing style is somewhat formulaic and generic compared to the engaging, metaphor-driven approaches of the higher-ranked models. It feels more like a textbook list than a conversational guide.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model G provides valid examples and accurate descriptions, but with only 7 steps, it lacks the context diversity found in the higher-ranked models. The tone is acceptable but standard, offering fewer opportunities for learners to connect with the topic across different domains.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model C provides accurate information but offers the fewest examples (only 6). While the quality of the individual steps is fine, the lack of breadth limits the 'Context Diversity' required by the prompt. It covers the basics but fails to explore the topic as thoroughly as the other models.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Meets format limits; highly concrete, everyday “where you see it” examples across many domains (typing, search, streaming, feeds/ads, spam, fraud, maps/ride-share, photos, voice, camera, shopping, CAPTCHAs). Conversational with light metaphors. Minimal overlap with defining ML; avoids rule-based mislabeling. Only minor nit: “ML-style forecasting” phrasing is a bit vague, but still grounded.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong variety and recognition factor (photo grouping, streaming, email/calendar helpers, navigation, shopping, smart home, social feeds, camera, fitness, medical imaging, fraud, noise reduction). Tone uses clear analogies. A few steps are slightly generic (“tiny helpers”) and some items bundle multiple tools in one step, but still stays focused on where ML shows up.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Clear, concrete everyday contexts with conversational metaphors (DJ, store clerk, navigator, friend). Good spread (typing, social, voice, camera, shopping, spam, traffic, streaming, fraud, games). One risk: “gets better… the more you talk” can be overstated (often personalization is limited), but generally plausible. Format constraints met.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Broad, recognizable set (feeds, streaming, spam, voice, maps, face unlock, photo tagging, autocomplete, music, credit decisions, shopping, email categorization). Mostly accurate and concrete. Slight drift into “how it works” in places (voice assistant ‘interprets intent, formulates responses’) and a few claims are a bit strong/absolute (“pure machine learning,” loan approvals framed as ML everywhere).",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Very solid breadth and concreteness (face, music, Netflix, spam, shopping, fraud, feeds, voice, photos, autocorrect, maps, thermostats). Generally accurate and within scope. Some text leans into training-process explanation (“trained on millions… learned from billions”) more than “where it appears,” and a few numbers/claims feel inflated, but still good.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "All examples are genuine and everyday (music, spam, portrait mode, social feed, maps traffic, bank fraud). Tone is clear and concrete, but context diversity is narrower (mostly consumer apps) and fewer “unexpected places.” Minor “trained on thousands” simplification, but acceptable.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Concrete and accurate set (streaming, spam, photo search, fraud, traffic, social feed, predictive text). Good recognition factor, but fewer domains and less stylistic/analogical flair. Minor overclaim (“stopping… in milliseconds”) and slight “how” emphasis in a couple steps.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Lots of strong everyday examples and variety (face unlock, music, spam, ads, streaming, fraud, camera, search, fitness tracker, social). However, multiple steps drift into explaining ML vs rules (“not following rigid…”, “it learned from…”) which risks overlapping with the prior “what is ML” explanation. Also an inaccuracy/exaggeration: face unlock learning from “thousands of selfies you’ve taken” is typically not true; many systems don’t train on your many selfies. Some other phrasing is overstated (“learns your taste in seconds”).",
+          "score": 7
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-examples",
+  "testCaseId": "en-cs-machine-learning-intro-1"
+}

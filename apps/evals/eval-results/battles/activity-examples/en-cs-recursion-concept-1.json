@@ -1,0 +1,167 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Recursion examples must genuinely involve self-reference or self-similarity. Penalize if:\n   - Examples describe simple repetition or loops instead of true recursion\n   - The base case concept is missing from examples that claim to show recursion\n\n2. CONTEXT CHECK: Penalize if examples are limited to coding. Recursion appears in nature (fractals, tree branches), art (Droste effect, mise en abyme), language (nested sentences), organizations (hierarchies), and problem-solving.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT recursion is (functions calling themselves). This should show WHERE recursive patterns appear in nature, art, and daily life.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-WORLD RELEVANCE: Examples must be concrete, recognizable situations from everyday life. Penalize abstract or theoretical applications without clear real-world grounding.\n\n2. CONTEXT DIVERSITY: Content should show the topic across different life domains (daily life, work, entertainment, unexpected places, personal interests). Variety helps different learners connect.\n\n3. RECOGNITION FACTOR: Examples should create \"aha moments\" — helping learners see the topic in familiar places they hadn't noticed before.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like pointing out hidden patterns in everyday life. Include metaphors and analogies from familiar activities.\n\n6. FOCUS: Shows WHERE something appears (real-world contexts), not WHAT it is (definitions) or HOW it works (processes).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific life domains or contexts you might expect\n- Do NOT require a specific number of contexts or examples\n- Do NOT check against an imagined \"complete\" list of applications\n- ONLY penalize for: incorrect real-world claims, abstract examples without concrete situations, overlap with explanation content, or lack of variety in context types\n- Different valid sets of examples exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T14:32:30.393Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model A provides 8 excellent examples with strong diversity: mirrors/reflections, viral social spreading, nature (ferns/fractals), organizational hierarchies, GPS navigation, nesting dolls, film (Inception), and task decomposition. All examples are genuinely recursive with self-reference clearly explained. The base case is explicitly mentioned with nesting dolls. Examples span nature, work, technology, entertainment, and daily life. The tone is conversational and creates good 'aha moments.' The GPS example slightly leans toward explaining HOW rather than WHERE, but it's still grounded in a familiar real-world context. Format requirements are met. Very strong overall.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model H provides only 6 examples but they are high quality: Romanesco broccoli, Matryoshka dolls, infinity mirror, computer folders, Droste effect, and dictionary definitions. Each example is genuinely recursive with clear self-reference. The dictionary example is particularly clever and creates a strong 'aha moment.' Base cases are mentioned where appropriate. The Droste effect is specifically named, adding depth. However, the limited number of examples (6 vs 8-12 in other models) reduces diversity - missing entertainment/games, social media, organizational structures. All examples are accurate and well-explained within format constraints.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E provides 10 diverse examples: folders, nesting dolls, nature (ferns/Romanesco), mirror reflections, fractal art, org charts, family trees/comment threads, games with nested maps, stuffed foods, and searching nested boxes. All are genuinely recursive. The stuffed foods example (turducken) is creative but somewhat weaker - it's more about nesting than true self-similarity. The 'searching nested boxes' example is excellent for creating recognition. Good conversational tone throughout. Examples span technology, nature, art, work, games, and daily life. Format requirements met. Solid overall with good variety.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F provides only 7 examples: nesting dolls, Romanesco, folders, Inception, social media comments, Droste effect, and potato peeling. All are genuinely recursive. The potato peeling example is particularly relatable and creates a good 'aha moment' - showing recursion in mundane tasks. Base case is well-explained with nesting dolls. Droste effect is properly named. However, fewer examples than top models and missing some domains (games, family trees, organizational charts). All examples are accurate and well-written with good conversational tone. Quality over quantity approach.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model D provides 10 examples with good variety: folders, Matryoshka dolls, fractal nature, fractal art, Inception, comment threads, to-do lists, procedural games, family trees/org charts, and engineering patterns. Most are genuinely recursive. However, the last step ('A pro's view: engineering patterns') leans too heavily into coding/technical territory and feels like explanation rather than real-world context. Some examples could be more specific - 'procedural worlds in games' is somewhat abstract. The to-do list example is good for daily life relevance. Format met, conversational tone is decent but slightly less engaging than top models.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model C provides 10 examples: mirrors, room cleaning, ferns, coastlines, chain messages, video game bosses, art containing itself, family trees, work task decomposition, and nesting dolls. Most are genuinely recursive. However, the 'tidying one spot at a time' example (#2) describes sequential repetition more than true recursion - there's no nested self-reference in cleaning corners one by one. The video game mini-boss example is creative but the 'repeating attack patterns' aspect isn't clearly recursive. Some examples lack the specificity of top models. The coastline example is good. Overall decent variety but a few examples are weaker on accuracy.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model G provides 12 examples but leans too heavily into technical/coding territory: file search, Google PageRank, Inception, fractals, family trees, merge sort, mirrors, compound interest, Tower of Hanoi, JSON parsing, nesting dolls, and debugging. Several examples are coding-centric (merge sort, JSON/XML parsing, debugging function calls, Tower of Hanoi algorithm). The compound interest example is interesting but the recursive nature isn't as intuitive. The task specifically penalizes being 'limited to coding' - at least 4-5 examples here are primarily technical. Quality examples exist (mirrors, family tree, Inception) but the overall balance violates context diversity requirements.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model B provides 10 examples: file search, nesting dolls, maze navigation, social media comments, corporate hierarchy, nested frames in film, search engines, musical themes, cell division, and cooking. Several examples have accuracy issues. The 'cooking complex dishes' example (breaking soup into smaller components) isn't genuinely recursive - it's sequential cooking steps. The search engine description is oversimplified and not accurately recursive. The musical themes example is valid but somewhat abstract. The maze example leans toward explaining HOW rather than WHERE. Cell division is more about exponential replication than true self-referential recursion. The mix of accurate and inaccurate examples brings down the score.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model provides the strongest set of examples with evocative, high-quality writing that perfectly matches the requested conversational tone. It offers excellent real-world breadth (nature, art, productivity, games) and specific 'aha' moments, such as the structure of to-do lists and procedural game worlds. The examples are rigorously recursive (strictly self-similar) rather than just nested.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model B offers a diverse and distinct set of examples, including creative applications in music (variations) and film (shot within a shot). The explanations are clear and accurate, effectively demonstrating the concept of self-similarity across different domains.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This output is very engaging and uses a highly accessible tone. The examples are fun and relatable. It ranks slightly below the top two because the 'stuffed food' (Turducken) example, while fun, represents nesting more than the strict self-similarity characteristic of recursion (a duck is not a smaller turkey), whereas ferns or fractals are mathematically self-similar.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model A provides a solid, accurate list of examples. It covers the basics well (mirrors, ferns, org charts). It ranks slightly lower than the top models because the descriptions for things like 'Cleaning the house' feel a bit more procedural/algorithmic compared to the vivid visual descriptions in Model D.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model provides high-quality examples, particularly the 'Dictionary Definition' which is a classic, intuitive explanation of recursion. However, it only provides 6 steps, whereas other models provided 8-10, making it slightly less comprehensive in scope.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The output is accurate but limited in quantity (7 steps). Additionally, the 'Potato Peeler' example describes a process that feels more like a loop (iteration) to a beginner ('peel one, then the rest') rather than a structural hierarchy, which can be pedagogically confusing.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "While most examples are good, the 'Tidying' example describes sequential iteration ('repeating the same pattern in the next corner') rather than recursive breakdown. This conflates loops with recursion, which is a specific inaccuracy penalised in the instructions.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model relies too heavily on technical and coding-related examples (Merge Sort, JSON, Debugging, PageRank) despite the prompt explicitly asking to branch out from coding explanations. While the examples are accurate, they fail the 'Context Check' for broad real-world variety meant for a general audience.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "All steps are clearly real-world (broccoli, dolls, mirrors, folders, packaging art, dictionaries) and genuinely self-similar/self-referential. Includes a clear stopping point/base-case idea in dolls and dictionary lookup. Conversational and “aha” oriented, with minimal drift into algorithm/how-it-works details. Titles and texts appear within limits.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Strong everyday contexts across domains (computer folders, produce, mirrors, art/visuals, orgs, family/comments, games, cooking, searching boxes). Mostly self-similarity and nested-structure recursion; generally avoids code. Minor issue: a couple examples (stuffed foods, games “maps within maps”) can feel more like nesting than a recursive process/base case, but still recognizable and concrete. Format constraints met.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very solid, concrete examples with good self-similarity (dolls, Romanesco, folders, Inception, comment threads, Droste). Includes explicit base case for dolls. Slight overlap into “what/how” (e.g., “file system is built on recursion,” “recursive stack of reality”) but still mainly “where it shows up.” Good conversational metaphors (potato peeling). Less domain breadth than top two.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "High recognition examples (mirrors, fractals/ferns, org chart, dolls with explicit base case, Inception, cleaning). Generally accurate and varied. Dings: “viral posts” is more iterative spreading than true recursion/self-similarity; GPS description leans into algorithmic problem-solving/how it works and doesn’t clearly show recursive self-reference in a real-life observable pattern. Some steps slightly long but likely within 300 chars.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good variety and mostly grounded (folders, dolls, nature fractals, fractal art, films, comment threads, to-do subtasks, procedural games, family/org charts). However, the last step (“engineering patterns: parsers/build systems”) drifts toward professional/abstract and overlaps with explanation/how. Some items (procedural worlds) assert recursion broadly without a concrete, recognizable everyday anchor.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Several strong self-similarity/nesting examples (mirrors, ferns, coastline zoom, art-within-art, nesting dolls, family tree). But a few are closer to repetition/decomposition than recursion (tidying corners, shrinking work tasks) without a stopping/base-case feel. “Video game mini-boss patterns” is vague and can be just repetition. Still conversational and diverse overall.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Some good everyday nested-structure examples (folders, dolls, maze/backtracking, comments, hierarchy, nested frames). But multiple steps drift into speculative/incorrect “how algorithms work” claims (Google/search engine recursion, query decomposition, pages leading to more results) and cooking example doesn’t demonstrate self-reference/recursion well. Variety is good, but accuracy and recursion-ness are uneven.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Mixes a few strong real-world recursion patterns (folders, fractals, mirrors, family tree, nesting dolls) with many items that are mainly CS/algorithm explanations (PageRank, merge sort, Tower of Hanoi, parsing JSON, debugging call stacks). Also includes a mismatched title/example (“Sorting Your Streaming Queue” but describes merge sort on a deck of cards). Compound interest is more recurrence than a self-similar structure learners can ‘see’ day-to-day. Violates the “not limited to coding” and “where not how” expectations most.",
+          "score": 5.6
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-examples",
+  "testCaseId": "en-cs-recursion-concept-1"
+}

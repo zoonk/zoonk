@@ -1,0 +1,167 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Compound interest examples must reflect accurate financial math. Penalize if:\n   - Examples confuse simple and compound interest\n   - Time horizons or rates produce mathematically implausible results\n\n2. CONTEXT CHECK: Penalize if examples are limited to savings accounts. Compound interest/growth appears in debt, population, viral spread, skill development, relationship investment, and content creation.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT compound interest is (earning interest on interest). This should show WHERE compounding effects shape finances, growth, and life outcomes.\n\n\nEVALUATION CRITERIA:\n\n1. REAL-WORLD RELEVANCE: Examples must be concrete, recognizable situations from everyday life. Penalize abstract or theoretical applications without clear real-world grounding.\n\n2. CONTEXT DIVERSITY: Content should show the topic across different life domains (daily life, work, entertainment, unexpected places, personal interests). Variety helps different learners connect.\n\n3. RECOGNITION FACTOR: Examples should create \"aha moments\" — helping learners see the topic in familiar places they hadn't noticed before.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like pointing out hidden patterns in everyday life. Include metaphors and analogies from familiar activities.\n\n6. FOCUS: Shows WHERE something appears (real-world contexts), not WHAT it is (definitions) or HOW it works (processes).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing specific life domains or contexts you might expect\n- Do NOT require a specific number of contexts or examples\n- Do NOT check against an imagined \"complete\" list of applications\n- ONLY penalize for: incorrect real-world claims, abstract examples without concrete situations, overlap with explanation content, or lack of variety in context types\n- Different valid sets of examples exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T14:32:40.094Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model C provides excellent context diversity covering retirement accounts, credit cards, early investing (Buffett example creates recognition factor), bank interest rates, student loans, YouTube growth, fitness, and skill development. All examples are concrete and recognizable. The math claims are plausible (e.g., $10k becoming $100k+ over 40 years at typical returns). Good conversational tone with phrases like 'working against you, silently inflating.' Covers both financial and non-financial domains well. All steps stay within character limits. Strong recognition factor with student loan deferment example many will relate to.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model G offers strong context diversity: savings accounts, credit cards, 401(k), student loans, dividends, YouTube, cash vs investing, real estate, payday loans, and early vs late investing. Math is generally accurate (the $43 on $1000 at ~4.3% is reasonable, $300k to $728k at 3% over 30 years is approximately correct). Good concrete examples throughout. Includes predatory lending which is an unexpected and valuable context. However, some examples feel more like explaining HOW compounding works rather than WHERE it appears (especially the first example breaking down the math). Still very comprehensive and diverse.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D provides good variety: early saving, credit cards, viral content, 1% improvement rule, inflation/groceries, and urban population growth. The 1% daily improvement claim (37x better in a year) is mathematically accurate. Urban population growth is a unique and valuable non-financial context. However, only 6 steps limits coverage. The skill improvement example is good but slightly abstract. Strong conversational tone. All examples are concrete. Good recognition factor with grocery inflation example.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model E has very good breadth with 10 steps covering: savings, retirement, credit cards, various loans, home appreciation, late fees, investment fees, side hustles, skills, and social media. Good variety of domains. The late fees and investment fees examples are unique and valuable contexts many overlook. Conversational tone is strong ('barely check,' 'echoing'). However, some examples are a bit vague (loans 'quietly get heavier' without concrete numbers). The side hustle example is good and different. Some overlap between retirement and early investing examples.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model A covers: college fund, credit cards, early vs late investing, bacteria, viral videos, mortgages, athletic training, and stock market. Good variety but the bacteria example, while accurate, feels more scientific than everyday life - it's used as an analogy rather than showing where compounding appears in daily life. The math is accurate throughout. Athletic training example is good. However, some content overlaps with explanation territory (the first example explicitly explains interest-on-interest). The mortgage example is valuable but could be more concrete. Overall solid but some examples drift toward WHAT rather than WHERE.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model B has only 6 steps but covers: 401(k), credit cards, 1% improvement, viral content, inflation/coffee, and real estate. The 1% daily improvement claim (37x in a year) is mathematically accurate. Coffee price example creates good recognition. However, the snowball metaphor in the first example is more about explaining the concept than showing where it appears. Only 6 examples limits diversity. Real estate example is solid. Some examples feel more like WHAT/HOW explanations than WHERE contexts.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model H covers: retirement, credit cards, dividends, mortgages, viral posts, skills, inflation, subscription businesses, and population growth. Good variety. Uses nice metaphors (seeds in garden, lasagna layers). However, some examples are somewhat abstract or brief. The subscription business example is unique and valuable. Population/viral growth example feels more scientific than everyday. Character limits are respected. Some examples lack concrete numbers which reduces recognition factor.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model F has only 7 steps covering: savings, credit cards, retirement, social media, plant growth, skills, and business reinvestment. The plant growth example is more of a metaphor/analogy than showing where compounding actually appears in life - plants don't literally compound like interest. The title 'Reinventing Profits' appears to be a typo for 'Reinvesting.' Limited diversity with only 7 examples. Some examples are quite brief and less concrete. The business example is good but overall the set feels less comprehensive than other models.",
+          "score": 6.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model provides the strongest response by combining precise mathematical examples with a wide variety of contexts (biology, sports, social media, finance). The specific arithmetic in the first step (calculating exactly how much the 'interest on interest' is) is excellent for clarity. It adheres perfectly to the tone and formatting constraints, and the diversity of examples prevents the content from feeling repetitive.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model offers excellent examples, particularly the '1% improvement rule' which includes the specific mathematical outcome (37x better), helping users grasp the magnitude of compounding. The inclusion of 'Urban Crowding' adds a unique systemic context. The writing is clear and conversational, though slightly less granular with the financial math than Model A.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "A very strong response that uses effective metaphors (snowball) and relatable examples like the price of coffee to explain inflation. It correctly handles the math for the 1% improvement example. It is ranked slightly lower than D simply because the writing in D felt marginally more explanatory regarding the 'how' within the examples.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "This model provides solid, relatable examples, particularly regarding student loan capitalization, which is highly relevant to learners. The distinction regarding skill acquisition (Python to JavaScript) was insightful. It ranks below the top three because the specific 'aha' moments created by the math in A and D were stronger.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This output offers a high volume of examples and good context diversity. However, it feels slightly repetitive with multiple steps focusing on different types of debt (credit cards, loans, late fees). The 'late fees' example is a bit borderline regarding the strict definition of compound interest compared to the other clearer examples.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "The metaphors here are creative (lasagna), but 'stacking layers' implies linear growth more than exponential compounding, making the analogy slightly less precise than others. It is a good response but lacks the mathematical clarity found in the higher-ranked models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "This model meets the requirements but is the most generic. The examples (plants growing, savings) are standard and lack the 'aha' factor or specific details present in better outputs. It is adequate but uninspired.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model is ranked last due to a factual error: it claims Netflix pays dividends, which it does not. Additionally, the math in the first step is confusing (implying a 4.3% return rate to get to $1043 without explanation), and the examples are heavily skewed toward finance (80%), failing the context diversity criteria.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Meets the strict title/text length limits, stays focused on WHERE compounding shows up (not defining mechanics), and has broad context diversity (savings, retirement, credit, loans/BNPL, housing, fees, investing costs, business reinvestment, skills, social growth). Conversational metaphors (snowball, leak in bucket) and high recognition factor. No obvious math errors because it avoids brittle numeric claims.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "All steps fit the character constraints and keep a conversational, pattern-spotting tone with everyday analogies (snowball, plant growth). Good spread across finance, social followers, skills, business. One wording issue: “Businesses Reinventing Profits” title typo and a bit generic, but overall solid and non-overlapping with the “what is compound interest” definition.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Within format limits and offers varied real-world contexts (401k, credit cards, dividends, mortgages, viral posts, skills, inflation, subscription business, population/biology). Tone uses familiar metaphors. A few items get slightly abstract/vague (population/viral growth) and some drift toward explaining “how” (dividends section) but still mostly “where it appears.”",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Meets the title/text length constraints, includes multiple domains (saving early, credit cards, viral spread, habits, inflation, city population). However, it includes the explicit “1% better → 37x” calculation (accurate) that leans into mechanism/how, and several claims are unquantified (“nearly double,” “decades”) without concrete anchors. Still recognizable contexts.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Strong conversational metaphors and recognition factor (snowball, coffee inflation, going viral). Good context diversity beyond savings. But the “$1,000 splurge can turn into $3,000” is an unsupported numeric claim (time horizon not stated) that risks being misleading, and the 1%/day section is more about explaining compounding math than pointing out where it appears.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Good variety (retirement, credit cards, famous investor timing, bank rate shopping, student loans, creator growth, fitness, skills). But it repeatedly slips into quasi-explanations (“interest compounds on unpaid interest,” “time is the secret ingredient”) rather than purely “where it shows up,” and several numeric outcomes are vague/hand-wavy ($10k→$100k+ without assumptions; 4.5% vs 0.5% ‘tens of thousands’ could be true but isn’t grounded).",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Nice breadth (bank interest, credit cards, 401k, student loans, dividends, social growth, opportunity cost, real estate, payday loans, starting early). However, it violates the required format: multiple texts exceed 300 characters, and some numeric examples are shaky or ambiguous (e.g., $1,000→$1,043 implies ~4.3% but explanation implies extra from compounding; 401k $200/mo→$500k is plausible but assumption-free; Netflix dividends is a questionable concrete example).",
+          "score": 5.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Has diverse contexts and some concrete scenarios, but repeatedly violates the format constraints: many texts are far over 300 characters. Also contains at least one clear math/plausibility issue (credit card: $5,000 at 20% APR to $5,083 after one month is incorrect; should be closer to ~$5,083 only at ~20% monthly). Some other numbers are oversimplified (mortgage example) and it leans into explaining “interest on interest.”",
+          "score": 4.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-examples",
+  "testCaseId": "en-finance-compound-interest-1"
+}
