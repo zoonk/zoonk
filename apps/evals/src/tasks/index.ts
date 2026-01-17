@@ -5,6 +5,7 @@ import { activityExamplesTask } from "./activity-examples/task";
 import { activityExplanationTask } from "./activity-explanation/task";
 import { activityExplanationQuizTask } from "./activity-explanation-quiz/task";
 import { activityMechanicsTask } from "./activity-mechanics/task";
+import { activityReviewTask } from "./activity-review/task";
 import { activityStoryTask } from "./activity-story/task";
 import { alternativeTitlesTask } from "./alternative-titles/task";
 import { chapterLessonsTask } from "./chapter-lessons/task";
@@ -32,6 +33,7 @@ export const TASKS: readonly Task[] = [
   activityExamplesTask,
   activityStoryTask,
   activityChallengeTask,
+  activityReviewTask,
   stepVisualTask,
 ];
 

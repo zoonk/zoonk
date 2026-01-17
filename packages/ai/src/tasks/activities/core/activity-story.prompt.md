@@ -62,6 +62,20 @@ Each step must have:
   - **isCorrect**: Boolean indicating if this is the correct answer (exactly 1 must be true)
   - **feedback**: Why this choice is right (with insight) or wrong (and what would be correct) — max 300 characters
 
+## Writing Great Feedback
+
+Feedback should feel like the colleague's natural reaction to your choice — not a score report.
+
+**For correct answers**: Celebrate the insight and reinforce why it was the right call. Keep the collaborative tone.
+
+**For wrong answers**: The colleague gently redirects — "Good instinct, but..." — and explains why another approach works better.
+
+**Examples of story-appropriate feedback:**
+
+- "Perfect call! That's exactly how we avoid the race condition — check first, then lock."
+- "I get why you'd think that, but that actually makes the deadlock worse. We need [X] to break the cycle."
+- "Close, but that's the symptom, not the cause. The real issue is [X] — once we fix that, everything else falls into place."
+
 ## Story Arc
 
 Your story must follow this structure:
@@ -217,6 +231,8 @@ Before finalizing, verify:
 - [ ] Does the resolution both solve the problem AND reinforce the main learning?
 - [ ] Is `{{NAME}}` used appropriately to personalize the dialogue?
 - [ ] Are all distractors plausible (not obviously silly)?
+- [ ] Does feedback feel like a natural colleague response (not a quiz score)?
+- [ ] Does wrong answer feedback gently guide toward the correct approach?
 - [ ] Does the story feel like a real workplace conversation, not a quiz in disguise?
 - [ ] Is the scope exactly the lesson topic — not broader or narrower?
 - [ ] Are all constraints met (context ≤500 chars, question ≤100 chars, options ≤50 chars each, feedback ≤300 chars each)?
@@ -231,6 +247,6 @@ Return an array of steps, each with:
 - **options**: Array of exactly 4 objects, each with:
   - **text**: The answer choice (max 50 chars)
   - **isCorrect**: Boolean (exactly 1 must be true, 3 must be false)
-  - **feedback**: Why right or wrong (max 300 chars)
+  - **feedback**: Why right (with insight) or wrong (and what would be correct) — max 300 chars
 
 Use 7-20 steps to tell a complete, engaging story. Let the problem's complexity dictate the length.

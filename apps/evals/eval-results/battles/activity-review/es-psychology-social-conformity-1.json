@@ -1,0 +1,131 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Spanish.\n\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Social psychology concepts must be accurately represented. Penalize if:\n   - Conformity studies are misattributed or misrepresented\n   - Obedience and conformity are conflated\n   - The role of situational vs dispositional factors is wrong\n   - Key experimental findings are incorrectly described\n\n2. TRANSFER CHECK: The inputs discuss Asch's line experiments and Milgram's obedience studies. Questions must use completely different scenarios (e.g., workplace dynamics, online communities, family decisions) to test the same concepts.\n\n3. INTEGRATION CHECK: Look for questions that connect WHY conformity exists (evolutionary benefits, social acceptance) with HOW social pressure operates (unanimity, authority) and WHERE these dynamics appear in modern life.\n\n4. MISCONCEPTION CHECK: Distractors should include common psychology misconceptions like:\n   - Thinking conformity only affects weak-willed people\n   - Believing obedience experiments wouldn't replicate today\n   - Confusing descriptive norms with injunctive norms\n   - Underestimating situational power over personality\n\n\nEVALUATION CRITERIA:\n\nSEVERITY GUIDE - Use this to calibrate your scoring:\n\nSEVERE ISSUES (heavy penalty):\n- Factual errors or hallucination (inventing facts not in the input)\n- Testing pure memorization (\"What metaphor did the text use?\")\n- Questions that reference \"the lesson,\" \"as explained,\" or similar meta-language\n- Wrong tone (stiff, academic, exam-like instead of conversational)\n- Format violations (wrong question count, missing fields, multiple correct answers)\n- Distractors that are obviously absurd or unrelated\n- Language purity violations (mixing languages)\n\nMODERATE ISSUES (medium penalty):\n- Coverage heavily skewed to one content type (e.g., 15 HOW questions, 0 WHY)\n- No integration questions connecting multiple content types\n- Feedback that just says \"correct/incorrect\" without insight\n- Questions answerable without understanding (too easy)\n\nMINOR ISSUES (light penalty or just note):\n- Reusing a scenario from the input (not ideal, but okay if the question still tests understanding)\n- Some questions slightly easier than others\n- Feedback could be friendlier but is still helpful\n- Minor missed opportunities for deeper insight\n\n1. CONCEPTUAL ACCURACY: Questions must be factually correct. SEVERELY penalize if:\n   - Questions contain factual errors or hallucinated information\n   - Correct answers are actually wrong based on the input content\n   - Feedback explains concepts incorrectly\n\n2. UNDERSTANDING VS MEMORIZATION: Questions must test thinking, not recall. SEVERELY penalize if:\n   - Questions ask \"What did the text say?\" or \"Which example was used?\"\n   - Questions reference \"the lesson,\" \"as explained,\" \"according to the text\"\n   - Questions can be answered by pattern-matching phrases from the input\n\n3. TONE & STYLE: Must feel conversational and friendly. SEVERELY penalize if:\n   - Language is stiff, formal, or exam-like\n   - Feedback sounds academic or preachy\n   - Questions use unexplained jargon\n\n4. FORMAT COMPLIANCE: Must meet structural requirements. SEVERELY penalize if:\n   - Question count outside 15-20 range\n   - Missing required fields or wrong types\n   - Multiple correct answers per question\n   - Character limits exceeded\n\n5. DISTRACTOR QUALITY: Wrong answers must be plausible. Penalize if:\n   - Distractors are obviously absurd or unrelated\n   - The correct answer is obvious without understanding\n   - Distractors don't represent real misconceptions\n\n6. CONTENT COVERAGE: Should test across content types. Penalize if:\n   - Any content type (WHY, WHAT, HOW, WHERE) is completely missing\n   - Coverage is heavily skewed\n\n7. FEEDBACK QUALITY: Should guide learning. Penalize if:\n   - Feedback just says \"correct\" or \"incorrect\" without insight\n   - Wrong answer feedback doesn't point toward the correct answer\n\n8. SCENARIO FRESHNESS (MINOR): Prefer novel scenarios, but don't heavily penalize reuse.\n   - Ideal: Questions use fresh scenarios not in the input\n   - Acceptable: Reusing input scenarios IF the question still tests understanding\n   - Only penalize if reused scenario makes the question pure recall\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT heavily penalize scenario reuse if the question still tests understanding\n- Do NOT require specific concepts to be tested by name\n- Do NOT check against an imagined \"complete\" set of questions\n- FOCUS penalties on: factual errors, memorization-based questions, wrong tone, format violations\n- Different valid quiz designs exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T21:34:57.162Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model A provides 20 questions with excellent quality. All questions use fresh, novel scenarios (workplace meetings, investment clubs, paramédicos, festivals, restaurants, etc.) that are completely different from the Asch/Milgram input scenarios - excellent transfer. The language is entirely in Spanish with a conversational, friendly tone throughout. Feedback is insightful and explains WHY answers are correct/incorrect rather than just stating facts. Distractors are plausible and represent real misconceptions (e.g., confusing obedience with conformity, misunderstanding desindividuación). Coverage spans WHY (question 18 on historical atrocities), WHAT (distinguishing types of influence), HOW (escalation mechanisms, proximity effects), and WHERE (modern contexts like social media, workplace, protests). Integration questions exist (questions 12, 15 combine multiple concepts). Concepts are accurately represented - conformity vs obedience distinction is correct, situational factors emphasized properly. Minor issue: one question (5) references 'experiment' scenarios somewhat similar to Milgram but uses it to test understanding of proximity principle rather than recall. Format compliance is perfect with 20 questions.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D provides 17 questions with very good quality. Excellent scenario freshness - uses everyday situations like elevators, hiking, weather apps, nightclub concerts, exams, corporate passwords. Spanish language is consistent and conversational throughout. Feedback is helpful and explains the reasoning well. Good conceptual accuracy - correctly distinguishes normative vs informational influence, explains escalation, proximity effects, and desindividuación properly. Coverage is balanced across content types including integration questions (question 17 combines escalation + proximity). Distractors are plausible and represent real misconceptions. One minor weakness: question 3 about the weather app scenario is slightly forced (the reasoning for ignoring clear evidence of rain is a bit weak). Question count (17) is within acceptable range. Overall very solid execution with fresh scenarios and accurate content.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F provides 15 questions with good quality. Scenarios are fresh (elegant dinners, gym trainers, festivals, social media likes, jury deliberations). Spanish is consistent with friendly, conversational tone. Feedback is insightful - explains concepts well. Conceptual accuracy is good overall. Question 1 about historical atrocities nicely sets up the WHY of studying social influence. Good coverage of concepts including escalation (question 7), diffusion of responsibility (question 8), desindividuación (question 9), and cascades (question 10). Some minor issues: Question 13 uses 'Conformidad interna' in a way that's accurate but the scenario (influencer fashion) is a bit weak for demonstrating true internal belief change. The question count is at the minimum (15) which is acceptable but provides less coverage. Overall solid execution.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Model C provides 15 questions with good quality. Fresh scenarios include train tickets in foreign city, caviar dinner, investment club, jury, recycling evolution. Spanish is fluent and conversational. Conceptual accuracy is good - correctly explains escalation, unanimity breaking, diffusion of responsibility. Good integration question (13) showing evolution from external to internal conformity. Feedback is helpful and explains reasoning. However, some weaknesses: Question 6 about hotel towel message is similar to a classic study example (though tests understanding not recall). Question 7 directly references 'atrocities' and 'following orders' which gets close to Milgram content. The scenario in question 8 about masked protest is somewhat similar to input content about Milgram variations. Distractor quality is good overall. Question count at minimum (15).",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model E provides 16 questions with adequate quality. Scenarios include friend groups, new cities, workplace meetings, virtual meetings. Spanish is consistent and mostly conversational. Conceptual accuracy is generally good - correctly distinguishes influence types, explains escalation and diffusion of responsibility. However, some issues: Some feedback is slightly more academic in tone than the best examples. Question 11 about medical authority is accurate but the scenario is somewhat similar to the Hofling nurse study mentioned in typical social psych content. Coverage is adequate but could integrate concepts more. Question 12 about protests with masks is similar to input content. Some questions are slightly easier to answer than others. Distractors are plausible but occasionally a bit obvious.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B provides 17 questions but with notable weaknesses. While scenarios are somewhat fresh, several questions are too abstract or lack rich context (e.g., question 1 just says 'committee decides risky plan'). The tone is more academic/stiff than conversational in places ('Exacto. Estudiar la influencia social ayuda a entender...'). Some questions test fairly basic recall-like understanding rather than transfer (question 3 about smiling and nodding in meeting is almost definitional). Coverage is adequate but questions sometimes feel like they're testing terminology rather than understanding. Question 2 about someone ignoring an injured person is close to the bystander effect classic example. Some feedback is less insightful and more explanatory/textbook-like. Distractors are reasonable but some are easily eliminable. The language stays in Spanish throughout. Question count (17) is acceptable.",
+          "score": 7.2
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "This model is the strongest performer. It adheres perfectly to the 'Transfer Check' by applying social psychology concepts to varied, fresh everyday scenarios (ordering food, buying tickets, jury duty) without relying on descriptions of the original experiments. The tone is lively and conversational ('¡Bingo!', '¡Exacto!'), and the feedback is highly educational, explaining clearly why the answer is correct and why the distractors are wrong.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Model A provides exceptional content depth and a comprehensive set of 20 questions. The explanations are sophisticated and accurate. It ranks second primarily because it explicitly reuses the 'electric shock' scenario in Question 5, which the prompt asked to avoid in favor of fresh scenarios (though the scoring guide notes this is a minor issue if it tests understanding, which it does). Otherwise, it is a high-quality output.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "Model E is a solid, reliable output. It successfully transfers concepts to new scenarios (e.g., using email vs. in-person requests to test proximity) and avoids references to the original experiments. The feedback is accurate and helpful, though slightly less engaging and charismatic than Model C. It covers all required content types effectively.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F has a friendly tone but struggles slightly with the 'fresh scenario' requirement. Question 14 describes the punishment experiment directly, and Question 1 is a bit academic ('Un historiador estudia...'). While the accuracy is good, it relies more on describing the concepts' history rather than applying them to modern life compared to the top models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B includes 'meta-questions' (Q1, Q2) about why one should study social psychology, which feels like filler in a quiz meant to test the concepts themselves. The feedback is functional but dry, lacking the conversational warmth requested in the prompt.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "This model is ranked lowest due to its robotic feedback style. Starting almost every feedback block with 'Sí.' or 'No:' makes the interaction feel mechanical rather than conversational. While the accuracy is acceptable, the scenarios feel repetitive and the user experience is the least engaging of the group.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Muy buena calidad global: 20 preguntas (cumple rango), todo en español, escenarios claramente distintos a Asch/Milgram pero transfieren bien los principios (unanimidad, disidente, proximidad de autoridad, normas descriptivas/prescriptivas, difusión de responsabilidad, desindividuación, escalada). Distingue obediencia vs conformidad con claridad y usa distractores plausibles que incluyen malentendidos comunes (p. ej., confundir obediencia con presión de pares; confundir normas). Feedback suele explicar por qué, no solo marcar correcto/incorrecto. Leve penalización: incluye algún dato muy específico no justificado por el “input” (p. ej., 95% de enfermeras) y alguna explicación algo categórica/overconfident en detalles de replicación; además el tono a veces se acerca a “mini-lección”, aunque sigue siendo bastante conversacional.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "18 preguntas (cumple), todo en español, tono conversacional y situaciones modernas variadas. Buena integración de “cómo opera” (unanimidad, disidente, proximidad, normas) y “dónde aparece” (oficina, redes, concierto, emergencias). Conceptualmente sólido: separa obediencia/conformidad, distingue normas descriptivas vs prescriptivas, y maneja difusión/desindividuación sin mezclarlas. Distractores son plausibles y a menudo reflejan confusiones reales. Penalización menor: menos énfasis explícito en el “por qué existe” la conformidad (beneficios evolutivos/aceptación) y algunas preguntas son bastante directas (un poco fáciles).",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "15 preguntas (cumple), español consistente, escenarios frescos y feedback útil. Buen manejo de proximidad de autoridad, normas descriptivas vs prescriptivas, disidente/unanimidad, escalada, difusión y desindividuación. Incluye algunas integraciones (p. ej., popularidad visible en redes como presión). Penalizaciones: en la primera pregunta usa formulaciones algo vagas y potencialmente “inventadas” (“estudio de la posguerra reveló…”) sin anclaje; y “cascada de conformidad” es entendible pero algo impreciso/mezcla de normativa e informacional (aun así no es un error grave).",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "15 preguntas (cumple), español y tono amigable. Conceptos centrales correctos (informacional vs normativa; obediencia; unanimidad; desindividuación; difusión; norma descriptiva/prescriptiva; pie en la puerta). Buen traspaso a escenarios distintos. Penalizaciones: aparece lenguaje meta tipo “lección” (“¡Esa es la lección difícil!”) que las expectativas desaconsejan; además incluye un anglicismo/elemento cultural (“llamó al 911”) que no es error conceptual pero resta naturalidad en español general. Cobertura correcta pero algo menos integrada que A/D.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-thinking",
+          "reasoning": "17 preguntas (cumple), todo en español y con escenarios modernos. En general es conceptualmente correcto y los distractores suelen ser plausibles, con feedback razonable. Penalizaciones: algunos ítems son menos precisos en la frontera obediencia vs responsabilidad (p. ej., “Difusión/delegación de responsabilidad aumenta obediencia”: la delegación puede relacionarse con desplazamiento de responsabilidad en obediencia, pero aquí se mezcla con “difusión” y queda algo confuso); también hay pequeñas erratas (“domína”). Menos integración explícita de por qué conformamos (aceptación/beneficios) más allá de menciones puntuales.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "16 preguntas (cumple), español y sin grandes errores de atribución; escenarios son distintos y varios conceptos están bien (informacional/normativa, obediencia, disidente, proximidad, difusión, desindividuación). Sin embargo, cobertura e integración son más débiles: varias preguntas son muy generales y tipo “¿por qué estudiar influencia social?”, lo que se siente más académico y menos aplicado. Algunos distractores son menos “misconcepción típica” y más opciones genéricas. Feedback es correcto pero a menudo formula explicaciones amplias en lugar de apuntar al mecanismo específico del escenario.",
+          "score": 6.9
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-review",
+  "testCaseId": "es-psychology-social-conformity-1"
+}

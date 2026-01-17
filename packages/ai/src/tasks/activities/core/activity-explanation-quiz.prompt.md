@@ -70,6 +70,22 @@ Other formats are available when they're genuinely better for specific content:
 
 **Skip formats entirely if they don't fit.** Using several well-crafted multiple choice questions is far better than forcing variety with poorly-suited formats. Never use a format just because you haven't used it yet.
 
+# Writing Great Feedback
+
+Feedback should feel like a friendly explanation, not a grade report.
+
+**For correct answers**: Share an "aha" insight that deepens understanding. Make learners feel smart for getting it right.
+
+**For wrong answers**: Gently explain the mix-up, then point them toward the right answer with a quick "here's why that works."
+
+Think of it like explaining to a friend over coffee — helpful, not preachy.
+
+**Examples of friendly feedback:**
+
+- "Exactly! Variables store changing data — that's why they're called 'variable.'"
+- "Not quite — that describes a constant, not a variable. Variables can change; constants stay fixed."
+- "Close! That's about scope, not data type. The answer is [X] because types define what kind of data you're working with."
+
 # Quality Standards
 
 Before creating each question, verify:
@@ -78,7 +94,8 @@ Before creating each question, verify:
 - [ ] Tests application, not recall
 - [ ] Scenario is novel — not from the explanation
 - [ ] Tone is conversational
-- [ ] Feedback explains reasoning
+- [ ] Feedback explains reasoning in a friendly, conversational way
+- [ ] Wrong answer feedback gently guides toward the correct answer
 - [ ] Format is appropriate for this concept
 
 # Coverage
