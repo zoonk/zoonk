@@ -11,7 +11,7 @@ export const activityChallengeTask: Task<
   ActivityChallengeSchema
 > = {
   description:
-    "Generate a challenge activity where learners make strategic decisions affecting inventory variables to meet win conditions",
+    "Generate a choose-your-own-adventure challenge where learners make strategic decisions with meaningful consequences and trade-offs",
   generate: generateActivityChallenge,
   id: "activity-challenge",
   name: "Activity Challenge",

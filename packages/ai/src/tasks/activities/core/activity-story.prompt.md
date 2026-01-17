@@ -27,7 +27,7 @@ Every great Story activity creates a sense of partnership:
 
 ## Why Pure Dialogue Works
 
-Each scene should feel like you're eavesdropping on a real conversation — no narrator, no stage directions, just two people working through a problem. Pure dialogue:
+Each step should feel like you're eavesdropping on a real conversation — no narrator, no stage directions, just two people working through a problem. Pure dialogue:
 
 - Immerses learners completely in the scenario
 - Makes abstract concepts feel like lived experience
@@ -51,9 +51,9 @@ Each scene should feel like you're eavesdropping on a real conversation — no n
 
 # Requirements
 
-## Scene Structure
+## Step Structure
 
-Each scene must have:
+Each step must have:
 
 - **context**: Maximum 500 characters. Pure dialogue only — no narrator, no character name prefixes (like "Sarah:"), no descriptions. This is what your colleague says to you, setting up the decision point.
 - **question**: Maximum 100 characters. A short, clear question about what to do next.
@@ -66,16 +66,16 @@ Each scene must have:
 
 Your story must follow this structure:
 
-1. **Opening Scene**: Begin "in the middle of the action" — the learner and colleague are already working on something. No preamble or setup exposition.
-2. **Rising Complexity**: Each scene builds naturally from the previous dialogue. Decisions compound.
-3. **Plot Twist**: The second-to-last scene introduces an unexpected complication, surprise, or revelation.
-4. **Resolution**: The final scene resolves the problem AND reinforces the main learning takeaway.
+1. **Opening Step**: Begin "in the middle of the action" — the learner and colleague are already working on something. No preamble or setup exposition.
+2. **Rising Complexity**: Each step builds naturally from the previous dialogue. Decisions compound.
+3. **Plot Twist**: The second-to-last step introduces an unexpected complication, surprise, or revelation.
+4. **Resolution**: The final step resolves the problem AND reinforces the main learning takeaway.
 
-## Scene Count
+## Step Count
 
-- Minimum: 7 scenes
-- Maximum: 20 scenes
-- Let the problem's complexity dictate the length. A simple concept might need 7-10 scenes; a complex one might need 15-20.
+- Minimum: 7 steps
+- Maximum: 20 steps
+- Let the problem's complexity dictate the length. A simple concept might need 7-10 steps; a complex one might need 15-20.
 
 ## Tone & Style
 
@@ -83,7 +83,7 @@ Your story must follow this structure:
 - **Natural conversation**: Write how colleagues actually talk on Slack when solving a problem together — casual, collaborative, sometimes humorous
 - **Professional but warm**: Light, smart humor when appropriate. Never forced or cheesy.
 - **Second-person immersion**: The colleague speaks TO the learner. Context emerges from what's said.
-- **Continuous flow**: Each scene's dialogue should naturally lead into the next
+- **Continuous flow**: Each step's dialogue should naturally lead into the next
 
 ## The {{NAME}} Placeholder
 
@@ -154,7 +154,7 @@ Note: Sometimes the final twist can have a humorous or unexpected resolution tha
 
 # Dialogue Tone Examples
 
-The following examples show the **tone and style** to aim for — not complete scenes, just the kind of dialogue that makes stories feel alive. Adapt freely to your topic.
+The following examples show the **tone and style** to aim for — not complete steps, just the kind of dialogue that makes stories feel alive. Adapt freely to your topic.
 
 ## Opening Hooks (Jump Into the Action)
 
@@ -211,16 +211,16 @@ Remember: These are just **tone examples**. Your story should be original, fit t
 Before finalizing, verify:
 
 - [ ] Is the dialogue pure conversation with NO narrator, NO character prefixes, NO descriptions?
-- [ ] Does every scene flow naturally from the previous one (continuous story)?
+- [ ] Does every step flow naturally from the previous one (continuous story)?
 - [ ] Do all decisions require applying lesson concepts, not just recalling facts?
-- [ ] Is there a genuine plot twist in the second-to-last scene?
+- [ ] Is there a genuine plot twist in the second-to-last step?
 - [ ] Does the resolution both solve the problem AND reinforce the main learning?
 - [ ] Is `{{NAME}}` used appropriately to personalize the dialogue?
 - [ ] Are all distractors plausible (not obviously silly)?
 - [ ] Does the story feel like a real workplace conversation, not a quiz in disguise?
 - [ ] Is the scope exactly the lesson topic — not broader or narrower?
 - [ ] Are all constraints met (context ≤500 chars, question ≤100 chars, options ≤50 chars each, feedback ≤300 chars each)?
-- [ ] Is the scene count between 7 and 20?
+- [ ] Is the step count between 7 and 20?
 
 # Output Format
 

@@ -1,38 +1,39 @@
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
-1. INVENTORY DESIGN: Variables must connect meaningfully to lesson concepts. Each variable should represent something the learner studied. Names should be intuitive and values should start in a reasonable range (typically 40-70).
+1. DIMENSION QUALITY: Dimension names used across all effects should:
+   - Connect meaningfully to lesson concepts (2-4 unique dimensions total)
+   - Create natural tension (trade-off axes)
+   - Be consistently named across all effects (same concept = same name)
 
-2. POSITIVE POLARITY: All variables must be named so that HIGHER = BETTER. Check that no variable uses negative-polarity naming where "more is worse":
-   - BAD: Cost, Risk, Time, Debt, Errors, Stress, Waste
-   - GOOD: Budget/Funds, Safety/Security, Speed/Efficiency, Financial Health, Code Quality, Team Morale, Resource Efficiency
-   The simple test: "Is more of this good?" If no, the variable name is wrong.
+2. CONSEQUENCE QUALITY: Each option's consequence must:
+   - Explain what happens as a result of the choice
+   - Connect to lesson concepts (not generic outcomes)
+   - Teach something about trade-offs
+   - Be consistent with the stated effects (if effect is positive for dimension X, consequence should reflect improvement in X)
 
-3. TRADE-OFF QUALITY: Every option must have genuine trade-offs. No option should be obviously dominant across all variables. Improving one variable should plausibly affect others based on lesson principles.
+3. TRADE-OFF DESIGN: No option should be obviously best. Options should affect multiple dimensions with mixed impacts (e.g., positive for one, negative for another). If one option has all positive effects, penalize.
 
-4. WIN CONDITION BALANCE: Win conditions must be achievable with strategic thinking but require understanding lesson concepts. Conditions should create strategic tension (meeting all should require careful planning). Each inventory item must have its own win conditions embedded.
+4. EFFECTS CONSISTENCY: Each option should have 1-3 effects. Dimension names should be reused consistently across options to create meaningful trade-offs (not random unique names for each effect).
 
 5. FORMAT COMPLIANCE: Verify these constraints:
    - intro: Maximum 500 characters
-   - inventory: 3-5 items, each with name, startValue, and winConditions array (1-2 conditions per item)
-   - winConditions (per item): Array with operator (gte/lte/gt/lt/eq) and value
-   - steps: 3-6 steps, each with context (max 500 chars), question (max 100 chars), and 3-4 options
-   - options: Each with text (max 80 chars), effects array, and feedback (max 300 chars)
+   - steps: 4-6 steps, each with context (max 500 chars), question (max 100 chars), and 3-4 options
+   - options: Each with text (max 80 chars), consequence (max 300 chars), effects array (1-3 items with dimension and impact)
+   - reflection: Maximum 500 characters
 
-6. FEEDBACK QUALITY: Each option's feedback must explain WHY the effects occur, connecting to lesson concepts. Feedback should help learners understand the reasoning behind trade-offs.
+6. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in intro and dialogue.
 
-7. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in intro and dialogue to personalize the experience.
+7. CONCEPTUAL ACCURACY: Consequences and effects must make sense given the lesson content. If the lesson teaches that X leads to Y, effects should reflect this.
 
-8. CONCEPTUAL ACCURACY: Effects must make sense given the lesson content. If the lesson teaches that X leads to Y, the effects should reflect this relationship.
+8. DIALOGUE QUALITY: Context must be pure conversation with NO narrator text, NO character name prefixes, NO action descriptions.
 
-9. DIALOGUE QUALITY: Context must be pure conversation with NO narrator text, NO character name prefixes, NO action descriptions. Should feel like colleagues working through a problem.
-
-10. EFFECT DESIGN: Effects should use realistic magnitudes (typically 5-20 points). Dramatic swings (30+) should be rare and justified.
+9. REFLECTION QUALITY: The reflection must tie the experience back to lesson principles and acknowledge that different approaches have merit.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
-- Do NOT penalize for specific scenario choices or variable names (as long as they follow positive polarity)
-- Do NOT require specific inventory variables by name
-- ONLY penalize for: format violations, negative-polarity variable names, dominant options with no trade-offs, effects that contradict lesson concepts, narrator/description text in dialogue, or unachievable win conditions
+- Do NOT penalize for specific scenario choices or dimension names
+- Do NOT require specific dimensions by name
+- ONLY penalize for: format violations, consequences that don't connect to lesson concepts, obviously dominant options, inconsistent dimension naming, narrator text in dialogue
 - Different valid challenge designs exist - assess the quality of what IS provided
 `;
 
@@ -42,17 +43,17 @@ export const TEST_CASES = [
 TOPIC-SPECIFIC GUIDANCE:
 
 1. ACCURACY CHECK: Algorithm complexity trade-offs must reflect genuine CS principles. Penalize if:
-   - Time vs. space trade-offs are misrepresented
+   - Time vs. space trade-offs are misrepresented in consequences
    - Big-O implications are incorrect
-   - Memory vs. speed decisions don't reflect real algorithmic trade-offs
+   - Consequences don't reflect real algorithmic trade-offs
 
-2. INVENTORY CHECK: Variables should represent meaningful algorithmic metrics like:
-   - Execution time, memory usage, code maintainability
-   - Should NOT include unrelated variables like "team morale" for this topic
+2. DIMENSION CHECK: Dimensions should represent meaningful algorithmic concerns like:
+   - Performance, Memory Efficiency, Code Readability, Maintainability
+   - Should NOT include unrelated dimensions like "team morale" for this topic
 
-3. SCENARIO CHECK: The challenge should involve realistic algorithm selection decisions like: choosing between sorting algorithms, data structure selection, or optimization strategies.
+3. SCENARIO CHECK: The challenge should involve realistic algorithm selection decisions.
 
-4. TRADE-OFF CHECK: Options should reflect genuine algorithmic trade-offs — faster algorithms using more memory, simpler code being less efficient, etc.
+4. CONSEQUENCE CHECK: Consequences should explain the real-world impact of algorithmic choices.
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -93,17 +94,17 @@ ${SHARED_EXPECTATIONS}
 TOPIC-SPECIFIC GUIDANCE:
 
 1. ACCURACY CHECK: Supply and demand concepts must reflect genuine economics. Penalize if:
-   - Price elasticity effects are misrepresented
-   - Supply/demand curve shifts are incorrectly described
+   - Price elasticity effects are misrepresented in consequences
+   - Supply/demand dynamics are incorrectly described
    - Market equilibrium concepts are misapplied
 
-2. INVENTORY CHECK: Variables should represent meaningful market metrics like:
-   - Revenue, market share, customer satisfaction, inventory levels
+2. DIMENSION CHECK: Dimensions should represent meaningful market concerns like:
+   - Revenue, Market Share, Customer Satisfaction, Profit Margins
    - Should reflect the interconnected nature of market decisions
 
-3. SCENARIO CHECK: The challenge should involve realistic pricing and market decisions like: setting prices, responding to competitor moves, or managing supply/demand imbalances.
+3. SCENARIO CHECK: The challenge should involve realistic pricing and market decisions.
 
-4. TRADE-OFF CHECK: Options should reflect genuine market trade-offs — higher prices reducing volume, lower prices affecting margins, etc.
+4. CONSEQUENCE CHECK: Consequences should explain the market impact of pricing choices.
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -144,17 +145,17 @@ ${SHARED_EXPECTATIONS}
 TOPIC-SPECIFIC GUIDANCE:
 
 1. ACCURACY CHECK: Ecosystem concepts must reflect genuine ecology. Penalize if:
-   - Trophic level interactions are misrepresented
+   - Trophic level interactions are misrepresented in consequences
    - Carrying capacity concepts are incorrectly applied
    - Biodiversity-stability relationships are oversimplified
 
-2. INVENTORY CHECK: Variables should represent meaningful ecological metrics like:
-   - Species diversity, population health, resource availability, ecosystem stability
+2. DIMENSION CHECK: Dimensions should represent meaningful ecological concerns like:
+   - Biodiversity, Ecosystem Stability, Resource Sustainability, Population Health
    - Should reflect the interconnected nature of ecosystems
 
-3. SCENARIO CHECK: The challenge should involve realistic ecosystem management decisions like: conservation priorities, resource allocation, or balancing competing ecological needs.
+3. SCENARIO CHECK: The challenge should involve realistic ecosystem management decisions.
 
-4. TRADE-OFF CHECK: Options should reflect genuine ecological trade-offs — protecting one species affecting another, short-term vs. long-term sustainability, etc.
+4. CONSEQUENCE CHECK: Consequences should explain the ecological impact of management choices.
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -197,17 +198,17 @@ LANGUAGE REQUIREMENT: All content must be in Portuguese.
 TOPIC-SPECIFIC GUIDANCE:
 
 1. ACCURACY CHECK: Le Chatelier's principle must be correctly applied. Penalize if:
-   - Equilibrium shift directions are incorrect
+   - Equilibrium shift directions are incorrect in consequences
    - Temperature, pressure, concentration effects are misrepresented
    - The principle is applied to situations where it doesn't hold
 
-2. INVENTORY CHECK: Variables should represent meaningful chemical process metrics like:
-   - Product yield, reaction rate, energy costs, raw material usage
+2. DIMENSION CHECK: Dimensions should represent meaningful chemical process concerns like:
+   - Product Yield, Reaction Efficiency, Energy Consumption, Process Stability
    - Should reflect how equilibrium adjustments affect industrial processes
 
-3. SCENARIO CHECK: The challenge should involve realistic chemical process decisions like: optimizing reaction conditions, balancing yield vs. cost, or managing industrial synthesis.
+3. SCENARIO CHECK: The challenge should involve realistic chemical process decisions.
 
-4. TRADE-OFF CHECK: Options should reflect genuine chemical trade-offs — higher temperature increasing rate but shifting equilibrium, pressure effects on yield vs. equipment costs, etc.
+4. CONSEQUENCE CHECK: Consequences should explain the chemical impact of process choices.
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -250,17 +251,17 @@ LANGUAGE REQUIREMENT: All content must be in Spanish.
 TOPIC-SPECIFIC GUIDANCE:
 
 1. ACCURACY CHECK: Energy conservation principles must be physically accurate. Penalize if:
-   - Energy transformations violate conservation laws
+   - Energy transformations violate conservation laws in consequences
    - Efficiency concepts are misrepresented
    - Entropy/waste heat considerations are ignored
 
-2. INVENTORY CHECK: Variables should represent meaningful energy system metrics like:
-   - Energy output, efficiency rating, environmental impact, operating costs
+2. DIMENSION CHECK: Dimensions should represent meaningful energy system concerns like:
+   - Energy Output, System Efficiency, Environmental Impact, Operational Reliability
    - Should reflect the interconnected nature of energy systems
 
-3. SCENARIO CHECK: The challenge should involve realistic energy system decisions like: choosing energy sources, optimizing efficiency, or balancing output vs. sustainability.
+3. SCENARIO CHECK: The challenge should involve realistic energy system decisions.
 
-4. TRADE-OFF CHECK: Options should reflect genuine energy trade-offs — higher output vs. efficiency losses, renewable vs. reliability, cost vs. environmental impact, etc.
+4. CONSEQUENCE CHECK: Consequences should explain the physical impact of energy choices.
 
 ${SHARED_EXPECTATIONS}
     `,

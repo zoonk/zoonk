@@ -17,13 +17,13 @@ const FALLBACK_MODELS = [
 ];
 
 const effectSchema = z.object({
-  change: z.number(),
-  variable: z.string(),
+  dimension: z.string(),
+  impact: z.enum(["positive", "neutral", "negative"]),
 });
 
 const optionSchema = z.object({
+  consequence: z.string(),
   effects: z.array(effectSchema),
-  feedback: z.string(),
   text: z.string(),
 });
 
@@ -33,20 +33,9 @@ const stepSchema = z.object({
   question: z.string(),
 });
 
-const winConditionSchema = z.object({
-  operator: z.enum(["gte", "lte", "gt", "lt", "eq"]),
-  value: z.number(),
-});
-
-const inventoryItemSchema = z.object({
-  name: z.string(),
-  startValue: z.number(),
-  winConditions: z.array(winConditionSchema).min(1),
-});
-
 const schema = z.object({
   intro: z.string(),
-  inventory: z.array(inventoryItemSchema),
+  reflection: z.string(),
   steps: z.array(stepSchema),
 });
 
