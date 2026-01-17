@@ -68,6 +68,17 @@ Each variable must:
 - **Interact meaningfully**: Actions that help one variable should plausibly affect others
 - **Name precisely**: Use specific names (e.g., "Quantity Demanded" not "Market Demand")
 
+### Variable Definition Lock
+
+**Once defined, a variable's meaning is FIXED for all steps.**
+
+Before creating effects, explicitly define what each variable measures. Then for EVERY effect on that variable, verify the justification uses THE SAME CONCEPT:
+
+- ❌ "Production Throughput" defined as units manufactured per hour, but effect justified by "worker satisfaction" — these are different things
+- ✅ "Production Throughput" increases because "the new machinery processes components faster" — same concept
+
+**The test:** Could you replace the variable name with its definition in the feedback and have it still make sense? If not, you've drifted.
+
 ### Win Conditions Structure
 
 Each inventory item's `winConditions` array defines success criteria:
@@ -192,9 +203,22 @@ Before finalizing each effect, ask:
 
 The player's happiness about the outcome is IRRELEVANT to the sign.
 
+### Feedback-Effect Coherence
+
+**The feedback text MUST match the effect direction.**
+
+Before writing feedback, check that your explanation matches the sign:
+
+- ❌ Effect: `{"variable": "Cost", "change": -10}` + Feedback: "This increases our costs" — CONTRADICTION
+- ✅ Effect: `{"variable": "Cost", "change": -10}` + Feedback: "This reduces our spending" — COHERENT
+- ❌ Effect: `{"variable": "Risk", "change": 15}` + Feedback: "This makes things safer" — CONTRADICTION
+- ✅ Effect: `{"variable": "Risk", "change": 15}` + Feedback: "This introduces more uncertainty" — COHERENT
+
+**The test:** Read your feedback aloud, then check the effect sign. Do they tell the same story?
+
 ## What to Avoid
 
-- **Dominant options**: No choice should be obviously best across all variables
+- **Dominant options**: No choice should be obviously best across all variables. For EACH step, compare options: if one option has BETTER OR EQUAL effects on ALL variables compared to another, it's dominant. Example: Option A (+10 Quality, -5 Budget) vs Option B (+5 Quality, -10 Budget) — A dominates B. Fix by giving B something A lacks, like +5 Morale.
 - **Trivial decisions**: Every step should require real thought about trade-offs
 - **Disconnected variables**: Effects should make conceptual sense
 - **Extreme swings**: Avoid changes that guarantee win/loss in one step
@@ -281,6 +305,9 @@ Before finalizing, verify:
 - [ ] Does EVERY step have at least 3 options? (Never just 2 options)
 - [ ] Does each inventory item have at least one win condition?
 - [ ] For each variable, are there multiple options across different steps that can affect it? (No single-path variables)
+- [ ] FEEDBACK-EFFECT COHERENCE: For each option, does the feedback text match the effect direction? (e.g., negative change + "reduces X" = coherent; negative change + "increases X" = contradiction)
+- [ ] VARIABLE DEFINITION: For each variable, is the justification in every feedback consistent with the variable's original definition?
+- [ ] DOMINANT OPTIONS: For each step, is there any option that beats another on ALL variables? If so, fix it by giving the weaker option a unique advantage.
 
 # Output Format
 

@@ -9,12 +9,12 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "In Step 1, Option 3 ('Use a tree-based map'), the Memory Footprint change is 0. Compared to the baseline 'linear scan' (likely a list or array), a tree structure requires significant overhead for pointers (left/right/parent) and metadata, so the memory footprint should strictly increase (positive change). Additionally, the Risk increase (+10) is questionable; while balancing issues exist, a tree's worst-case lookup (O(n)) is typically equivalent to, not worse than, the baseline linear scan.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 9
         },
         {
-          "conclusion": "In Step 2, the option to use a 'simpler top-K selection approach' results in increased P95 Latency compared to Quicksort. From a pure algorithmic complexity standpoint, Selection (O(N)) is faster than Sorting (O(N log N)). The feedback justifies this by citing 'extra filtering passes' implies a system-level side effect rather than raw algorithm speed. While plausible in a complex system scenario (e.g., if the UI requires a full list but gets a partial one), it might slightly confuse a learner focused purely on Big-O comparisons. Clarifying that the system requirement implies a full sort would make this trade-off intuitively sharper.",
+          "conclusion": "Adjust the Step 1 Option 3 effects to reflect the realistic memory overhead of tree structures (e.g., Memory +5) and set the Risk change to be neutral or slightly improved compared to the O(n) linear scan baseline, ensuring conceptual consistency.",
           "kind": "potentialImprovements",
           "score": 9.5
         }
@@ -56,19 +56,19 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "The variable 'Inventory Balance' is implemented as a 'health/optimality score'—it decreases when there is a surplus (Step 1 Opt 1) AND when there is a shortage (Step 1 Opt 2), while increasing when equilibrium is approached. However, the win conditions include a maximum cap (`lte: 70`). This is a major logic error: it penalizes the player for managing inventory 'too well' (i.e., getting the score above 70), effectively making high performance a lose condition.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 6.5
         },
         {
-          "conclusion": "None",
+          "conclusion": "Step 3, Option 3 ('Run targeted promos...') improves ALL four variables: Profit (+2), Inventory Balance (+7), Loyalty (+6), and Competitive Pressure (-1, which is good for the `lte` win condition). This violates the 'No Perfect Options' and 'Trade-Off Principle' requirements, as there is no downside to this choice.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "The 'Inventory Balance' win condition should be changed to a single `gte` threshold (e.g., `gte: 60`) to align with its behavior as a health score. Additionally, Step 3 Option 3 should include a negative effect (e.g., Profit -2) to represent the cost of the promotion and create a genuine trade-off.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 7
         }
       ],
       "testCase": {
@@ -113,12 +113,12 @@
           "score": 10
         },
         {
-          "conclusion": "There is a logical inconsistency in the definition of the 'Habitat Resource Use' variable. The intro defines it as ecological carrying capacity ('what the land can support'), and Step 2 reinforces this (restoration 'reduces resource stress'). However, Step 4 Option 1 justifies an increase in this variable by citing 'staff time' and 'management intensity', which conflates ecological load with management resources (budget/labor). This contradicts the established definition and the logic of previous steps (where labor-intensive restoration reduced the value). Additionally, in Step 2, Option 1 dominates Option 3 significantly (Option 1 is better for Biodiversity and Stability, and almost as good for Resource Use), making Option 3 a 'wrong' answer rather than a strategic trade-off.",
+          "conclusion": "In Step 4, Option 3 ('Install flow devices') strictly dominates Option 2 ('Relocate/remove') and Option 4 ('Harden banks'). Option 3 provides positive gains to Stability, Resilience, and Carrying Capacity while also reducing Herbivore Pressure (a desired outcome). Option 2 imposes penalties on all three positive stats and reduces Herbivore Pressure less effectively than Option 3 (-2 vs -4), making it a mathematically inferior choice. Option 4 imposes penalties on all positive stats and increases Herbivore Pressure (a negative outcome), acting as a 'trap' option with no strategic value. This violates the requirement for genuine trade-offs and no dominant options in each step.",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 8
         },
         {
-          "conclusion": "To resolve the variable ambiguity, 'Habitat Resource Use' should be consistently treated as 'Ecological Stress' or 'Carrying Capacity Load'. The feedback in Step 4 Option 1 could be adjusted to say that an increased predator population puts new demands on specific habitat niches, rather than citing 'staff time'. Step 2 Option 3 could be rebalanced to offer a unique, strong benefit (e.g., a massive immediate Stability gain) to make it a viable emergency choice despite the Biodiversity penalty.",
+          "conclusion": "To fix the dominance issue in Step 4, Option 3 should have a downside (e.g., a slight reduction in Carrying Capacity due to equipment occupying habitat, or a smaller reduction in Herbivore Pressure compared to Option 2). Additionally, Option 2 should be the most effective way to reduce Herbivore Pressure (e.g., -8) to create a real trade-off between stats and pressure control. Finally, the 'Herbivore Pressure' variable is quite easy to win (3 out of 4 options in Step 1 meet the condition immediately); tightening the starting value or target would increase strategic tension.",
           "kind": "potentialImprovements",
           "score": 8.5
         }
@@ -165,14 +165,14 @@
           "score": 10
         },
         {
-          "conclusion": "In Step 1, Option 3 ('Adicionar gás inerte'), the effect on 'Risco de Segurança' is -6 (reducing risk). However, the feedback states that this action 'increases total pressure and control complexity... affecting safety.' Physically, increasing total pressure in a vessel generally increases safety risk (danger), and the feedback implies negative consequences. Therefore, the risk value should likely be positive (+). Additionally, Step 3 Option 4 gives +5 Yield for adding a catalyst; while this is technically incorrect for 'Equilibrium Yield' (catalysts don't shift K), the feedback correctly identifies it as overcoming kinetic limitations, which is an acceptable simplification for industrial process simulation.",
+          "conclusion": "None",
           "kind": "minorErrors",
-          "score": 8.5
+          "score": 10
         },
         {
-          "conclusion": "The simulation is well-designed with clear trade-offs. The distinction between 'Equilibrium Yield' and 'Process Yield' (kinetically limited) could be made slightly sharper in Step 3 to avoid confusion for students strictly applying the rule that 'catalysts don't change yield.'",
+          "conclusion": "Step 1 Option 1 (Increasing Pressure) technically also increases reaction rate in reality (due to higher concentration), but the model omits this effect. While likely a deliberate game design choice to distinguish it from the Catalyst option (which only affects rate) and to force strategic trade-offs, adding a small positive effect to Rate here would increase physical accuracy. However, the current design is pedagogically effective for isolating variables.",
           "kind": "potentialImprovements",
-          "score": 9
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -217,14 +217,14 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "In Step 4, Option 2 ('Mejorar enfriamiento'), the variable 'Energía Perdida como Calor' (Energy Lost as Heat) decreases by 6. However, the feedback states that cooling 'extracts and dissipates energy that is lost anyway'. Physically, active cooling (HVAC) consumes energy (auxiliary load) and does not reduce the amount of energy converted to waste heat by the source; it merely manages the temperature. Reducing the 'Energy Lost' variable here implies a gain in conversion efficiency or reduction in joules lost, which contradicts the physics of adding a cooling load (which usually increases total energy usage). The variable definition shifts from 'Joules Lost' to 'Temperature/Heat Accumulation' in this step, violating the 'Variable Definition Lock'.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8.5
         },
         {
-          "conclusion": "The response is of high quality. The inventory variables are well-selected (Useful Energy, Thermal Losses, Mass/Vol, Cost) and accurately reflect the lesson on energy conservation and system design. The trade-offs are grounded in reality (e.g., batteries add mass and have cycle losses; efficiency costs money). The math for win conditions is sound: the Energy target (70) is achievable (starts at 55, max potential gain is +40, min required +15), but requires avoiding too many low-performance choices. The 'standard/cheap' path yields about +17 Energy, putting it dangerously close to the failure threshold of 69, which creates good tension. The dialogue is natural and fits the persona.",
+          "conclusion": "There are some potentially dominant options. In Step 2, Option 4 ('Almacenamiento mecánico') offers significantly better stats across Efficiency, Heat, and Budget compared to Option 1 ('Baterías grandes'), only sacrificing 3 points of Reliability. Given the magnitudes, Option 4 is almost always the better strategic choice. Similarly in Step 4, Option 1 ('Control inteligente') is likely dominant over Option 2 ('Enfriamiento') as it provides +6 Efficiency for only 2 more Budget cost, with similar Heat/Reliability impacts. Strengthening the unique benefits of the weaker options (e.g., higher Reliability boost for Batteries) would improve strategic balance.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8.5
         }
       ],
       "testCase": {
