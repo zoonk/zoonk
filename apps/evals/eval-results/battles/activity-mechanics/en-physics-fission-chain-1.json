@@ -1,0 +1,203 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\n1. ACCURACY CHECK: Nuclear fission chain reactions require specific conditions to sustain. Penalize if:\n   - Neutrons are described as being absorbed by all materials equally (only fissile materials sustain the chain)\n   - Critical mass is described as a fixed number rather than depending on geometry and material purity\n\n2. DEPTH CHECK: Penalize if the explanation treats it as \"atoms split and release energy\" without showing how one fission event triggers the next.\n\n3. DISTINCTION FROM EXPLANATION: The explanation covered WHAT fissile materials, neutrons, and binding energy ARE. This should show HOW the chain reaction propagates and either runs away or remains controlled.\n\n\nEVALUATION CRITERIA:\n\n1. FACTUAL ACCURACY: Any process descriptions, mechanisms, or cause-effect relationships must be correct. Penalize hallucinations, incorrect sequences, or wrong causal chains.\n\n2. PROCESS FOCUS: Content must show things HAPPENING, not just describe parts. Look for action verbs, cause-effect language, and sequential flow.\n\n3. DEPTH: Complex processes require multi-step explanations showing how one action triggers the next. Penalize oversimplified \"just happens\" explanations.\n\n4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).\n\n5. TONE: Conversational, like giving a behind-the-scenes tour. Include process metaphors from everyday life (assembly lines, relay races, domino chains).\n\n6. FOCUS: Explains HOW something works (processes in action), not WHAT it is (definitions) or WHY it exists (history).\n\n7. NO OVERLAP: Must not repeat content from the EXPLANATION_STEPS which covered the WHAT.\n\n8. SCOPE: Content matches the lesson scope exactly.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for missing process phases or steps you might expect\n- Do NOT require a specific number of steps\n- Do NOT check against an imagined \"complete\" process description\n- ONLY penalize for: factual errors, static descriptions instead of action-oriented content, missing cause-effect relationships, or poor process flow\n- Different valid process explanations exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-01-17T01:21:06.312Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.5",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Excellent coverage of the chain reaction process with strong cause-effect relationships. Includes critical details like delayed neutrons (unique insight for reactor control), proper explanation of critical mass as dependent on configuration (not fixed), and clear exponential growth description. Strong process focus with action verbs throughout. Metaphors are effective (gas pedal, wet firecracker). Covers both controlled (reactor) and uncontrolled (bomb) scenarios well. Minor issue: first step has a formatting error where title and text appear duplicated, but content quality is exceptional. Accurately describes neutron moderation implicitly through 'slow neutron' mention.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent technical accuracy with strong process focus. Unique and valuable coverage of thermal feedback effects, which is sophisticated content. Properly explains geometry's role in neutron escape, moderator function, and the multiplication factor. Good metaphors (pool table, grinding wheel sparks, pinball). Clear cause-effect throughout. Correctly distinguishes between sub-critical, critical, and supercritical states. The thermal feedback step adds depth not seen in most responses. Strong action-oriented language throughout.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Most comprehensive coverage including advanced topics like delayed neutrons, thermal feedback, prompt criticality, and SCRAM procedures. Very strong on cause-effect relationships and uses unique framing ('room acoustics for neutrons', k-factor explanation). However, 13 steps may exceed typical scope, and some steps feel slightly over-technical for the conversational tone expected. The phrase 'Watch as', 'See', 'Notice', 'Feel' used repeatedly creates a somewhat artificial observation frame. Still, excellent depth and accuracy throughout.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Strong process-focused explanation with excellent metaphors (piñata, sticky darts, dominoes creating more tiles). Good coverage of neutron moderation, critical balance, control mechanisms, and geometry effects. Accurate physics with proper cause-effect chains. The 'knife edge' balance description is vivid. Minor weaknesses: doesn't explicitly explain critical mass depending on geometry (mentions arrangement but not size), and the final step about heat outpacing control is slightly vague. Overall very good quality.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Clear and accurate process description with good flow from initial fission through chain propagation to control. Strong on the physical mechanism (wobbling, stretching, pinching). Good explanation of exponential growth and control rod function. Properly explains critical mass as dependent on size/geometry. The 'nets catching baseballs' metaphor is effective. Slightly less depth than top models - doesn't cover delayed neutrons, thermal feedback, or moderators explicitly, but what's covered is accurate and well-explained.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Very engaging with excellent metaphors (mousetraps with ping pong balls, cue ball, sponges). Clear exponential growth explanation with concrete numbers. Good coverage of critical mass concept and control mechanisms. Accurate physics throughout. Slightly less comprehensive - doesn't cover moderators, delayed neutrons, or thermal feedback. The 'density factor' title is slightly misleading (it's more about geometry than density per se), but the explanation is correct. Solid but less depth than top models.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Good process flow with action-oriented language (zip, vibrates, cleaves, scatter). Covers the chain reaction mechanism clearly with decent metaphors (relay race, traffic cops). Includes both reactor control and bomb scenarios. 'Supercritical Boom' step is accurate. However, doesn't explain moderators or why neutrons need slowing, and the description of criticality is somewhat simplified. Good but lacks some of the nuanced explanations of higher-ranked models.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Accurate with good process coverage from initial collision through power generation. Includes control rod mechanics and critical threshold explanation. The final step about electricity generation adds practical context. However, the statement 'The heat also triggers more fissions nearby' is slightly misleading - heat doesn't directly trigger fissions (neutrons do). The moderator concept is not explained. Decent metaphors but some steps are slightly less action-oriented than others.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good coverage with effective moderator explanation (slowing down for success). Strong metaphors (balloon, relay race, neutron sponges). Accurate physics overall. However, only 7 steps feels slightly abbreviated - doesn't cover geometry/critical mass dependence well, no mention of delayed neutrons or thermal feedback. The order is slightly unusual (runaway comes after control, which breaks the process flow slightly). Still accurate and engaging.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Covers the basic process accurately but lacks depth required by the task. Descriptions are more 'what happens' than 'how it happens in detail'. Step 6 incorrectly implies critical mass is simply 'reached' without explaining it depends on geometry/configuration - this is a specific penalization criterion. E=mc² mention in final step is correct but adds little to understanding the chain process. Metaphors are minimal (domino, messengers). Missing moderator explanation, delayed neutrons, thermal feedback. The most shallow of the responses.",
+          "score": 6.2
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "This model provides the most comprehensive and physics-literate explanation while maintaining an engaging, observational tone ('Watch...', 'See...'). It includes critical mechanisms that others missed, such as delayed neutrons (which allow for human control), temperature feedback loops, and the distinction between prompt and delayed criticality. It perfectly adheres to the 'process focus' by showing exactly how the variables interact dynamically.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent use of metaphors ('grinding wheel', 'cue ball') combined with high accuracy. It correctly explains the role of moderation (slowing neutrons) and geometry/reflection. It also introduces the concept of negative feedback loops ('heat changes the odds'), which is a sophisticated detail that explains stability. The tone is perfectly aligned with the 'behind-the-scenes' requirement.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Uses brilliant metaphors to explain complex concepts, specifically 'sticky darts' to explain why neutrons need to be slowed down (cross-section). The narrative flow is strong and logical. It covers the essential physics (moderation, control rods, geometry) better than most, though slightly less comprehensive on feedback loops than Model G or J.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "A very strong, clean explanation that correctly identifies the need for a moderator ('sticky' neutrons). The tone is good, and the process flow is logical. It is slightly less colorful than A and less detailed than J, but structurally sound and accurate.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good narrative energy and metaphors ('rubber band snapping'). It distinguishes well between bomb and reactor dynamics. However, it glosses over the mechanics of moderation (implying fast neutrons hit targets easily), which makes it slightly less physically accurate for the reactor context compared to the top models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Solid and descriptive, using the 'liquid drop' analogy effectively ('wobble violently'). It explains the basic chain well but misses the moderation/slowing down step, which is a key part of the 'HOW' for U-235 fission. The explanations are clear but standard.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Competent and conversational with decent metaphors ('traffic cops', 'baton'). The physics are standard and correct for a general overview, though it lacks the specific depth regarding neutron speeds or feedback mechanisms found in higher-ranked models.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "A basic, accurate explanation. It covers the essentials (critical mass, control rods) but feels a bit brief and generic compared to the rich metaphors and detailed process flows of the others.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "The content is actually high-quality (mentioning delayed neutrons), but the output contains a significant formatting glitch in Step 1, where the text repeats the title ('A Neutron Finds Its Target') instead of providing a description. This disruption in the process flow and quality control penalizes an otherwise strong entry.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "The weakest output. The tone is dry and passive ('is released', 'is achieved'), failing the requested conversational/behind-the-scenes style. The explanations are shallow and define terms rather than showing a dynamic process in action.",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.2",
+      "rankings": [
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Strong process focus with clear cause→effect across generations (k<1/k=1/k>1), moderation, geometry/reflectors, control rods, delayed neutrons, and shutdown/decay heat. Meets tone/metaphor requirement and avoids major factual traps (criticality depends on balance; geometry matters). Step titles/text appear within limits.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Good sequential propagation (neutron birth→moderation→loss vs multiplication→k concept), explicitly notes geometry dependence (avoids “fixed critical mass”), and includes feedback/runaway framing. Mostly accurate and action-oriented with metaphors. Minor risk: the heat-feedback step is a bit broad/hand-wavy but not wrong in principle.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.5",
+          "reasoning": "Clear chain propagation and loss mechanisms; includes delayed neutrons and control rods accurately; explains critical mass as a threshold for leakage (though could stress geometry/purity more explicitly). Format issue: first step duplicates title as text (one step has non-descriptive text identical to title), and there’s repeated title. Otherwise strong.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good behind-the-scenes flow: fission ejects neutrons, multiplication, moderator slowing, critical balance, control rods, runaway. Accurate on moderation and k≈1 idea. Slight overstatement that neutrons “must” bounce off a moderator (not universally true—fast systems exist), but acceptable in common reactor context.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-pro-preview",
+          "reasoning": "Good causal chain and metaphors (mousetraps/pool). Correctly ties sustaining reaction to leakage and size, and mentions control rods/boron. Less depth than top entries (no moderation/k framing), and “density factor” wording is a bit narrow vs geometry, but not fundamentally wrong.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Solid stepwise propagation and control concept; mentions critical mass as minimum size to retain neutrons (some geometry dependence implied but not explicit). Mostly process-based, but a bit more “what happens” than “how it stays controlled” (no moderator/delayed neutrons).",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "xai/grok-4.1-fast-reasoning",
+          "reasoning": "Clear domino/relay process and control rods, mentions geometry (“cram fissile material together”). However it implies “each new fission spawns more neutrons than the last round” as a general statement—growth depends on k, not automatically increasing. Still mostly correct overall.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "meta/llama-4-maverick",
+          "reasoning": "Meets basic propagation idea and control rods, but is comparatively shallow and drifts into definition/statement mode. Includes E=mc² as explanation for energy release (not necessary and can be misleading in this context). Critical mass phrasing is simplistic, with limited geometry dependence.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Good metaphors and includes moderation/control rods/k≈1 framing. But it contains a notable accuracy issue: suggests with “too reflective/too close… neutrons bounce around until they all hit something,” implying near-certain absorption by anything and overstating reflection/absorption. Also some speculative/overbroad claims about arrangement “overwhelming any control.”",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Has a clear chain narrative and control rods, but includes a factual miscue: “heat also triggers more fissions nearby” (heat doesn’t directly trigger fission; neutron economy does). Also criticality phrasing focuses on absorbed faster than fissions occur (mixes concepts; losses include leakage/nonfission capture). Title “Exponential Explosion” overstates reactor case.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-mechanics",
+  "testCaseId": "en-physics-fission-chain-1"
+}
