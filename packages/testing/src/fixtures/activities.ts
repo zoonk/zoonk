@@ -2,10 +2,7 @@ import { type Activity, type ActivityProgress, prisma } from "@zoonk/db";
 
 export function activityAttrs(
   attrs?: Partial<Activity>,
-): Omit<
-  Activity,
-  "id" | "createdAt" | "updatedAt" | "inventory" | "winCriteria"
-> {
+): Omit<Activity, "id" | "createdAt" | "updatedAt" | "content"> {
   return {
     description: "Test activity description",
     generationRunId: null,
@@ -27,7 +24,7 @@ export async function activityFixture(attrs?: Partial<Activity>) {
 }
 
 export async function activityProgressFixture(
-  attrs: Omit<ActivityProgress, "id" | "startedAt" | "inventoryFinal"> & {
+  attrs: Omit<ActivityProgress, "id" | "startedAt"> & {
     startedAt?: Date;
   },
 ) {
@@ -36,7 +33,6 @@ export async function activityProgressFixture(
       activityId: attrs.activityId,
       completedAt: attrs.completedAt,
       durationSeconds: attrs.durationSeconds,
-      passed: attrs.passed,
       startedAt: attrs.startedAt,
       userId: attrs.userId,
     },

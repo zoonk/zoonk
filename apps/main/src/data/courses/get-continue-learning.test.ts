@@ -175,7 +175,6 @@ describe("authenticated users", () => {
       activityId: activity1.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      passed: true,
       userId: Number(user.id),
     });
 
@@ -245,7 +244,6 @@ describe("authenticated users", () => {
       activityId: activity1.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      passed: true,
       userId: Number(user.id),
     });
 

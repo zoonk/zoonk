@@ -11,8 +11,7 @@ type ActivitySeedData = {
   kind: ActivityKind;
   title?: string;
   description?: string;
-  inventory?: Record<string, number>;
-  winCriteria?: Record<string, { operator: string; value: number }>;
+  content?: { intro?: string; reflection?: string };
 };
 
 type LessonActivities = {
@@ -55,21 +54,15 @@ const activitiesData: LessonActivities[] = [
         kind: "quiz",
       },
       {
-        generationStatus: "completed",
-        inventory: {
-          computeResources: 70,
-          dataQuality: 50,
-          modelAccuracy: 60,
-          teamMorale: 80,
+        content: {
+          intro:
+            "Welcome to TechCorp, {{NAME}}! You've just joined the ML team during a critical project phase. Your decisions will shape the outcome.",
+          reflection:
+            "Every ML project involves trade-offs between speed, quality, and team wellbeing. The best approach depends on your priorities and constraints.",
         },
+        generationStatus: "completed",
         isPublished: true,
         kind: "challenge",
-        winCriteria: {
-          computeResources: { operator: ">=", value: 50 },
-          dataQuality: { operator: ">=", value: 65 },
-          modelAccuracy: { operator: ">=", value: 75 },
-          teamMorale: { operator: ">=", value: 60 },
-        },
       },
       {
         generationStatus: "pending",
@@ -219,9 +212,9 @@ export async function seedActivities(
           data.activities.map((activityData, position) =>
             prisma.activity.upsert({
               create: {
+                content: activityData.content,
                 description: activityData.description,
                 generationStatus: activityData.generationStatus,
-                inventory: activityData.inventory,
                 isPublished: activityData.isPublished,
                 kind: activityData.kind,
                 language: data.language,
@@ -229,7 +222,6 @@ export async function seedActivities(
                 organizationId: org.id,
                 position,
                 title: activityData.title,
-                winCriteria: activityData.winCriteria,
               },
               update: {},
               where: {
